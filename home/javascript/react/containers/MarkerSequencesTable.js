@@ -56,7 +56,7 @@ const MarkerSequencesTable = ({markerId, showSummary}) => {
             )}
             <DataTable
                 columns={columns}
-                url={`/action/api/marker/${markerId}/sequences?${qs.stringify(params)}`}
+                dataUrl={`/action/api/marker/${markerId}/sequences?${qs.stringify(params)}`}
                 onDataLoaded={() => setHasData(true)}
                 pagination={!summary}
                 rowKey={row => row.zdbID}

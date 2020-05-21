@@ -1,4 +1,5 @@
 import DataTable from './DataTable';
+import DataList from './DataList';
 
 export const DEFAULT_TABLE_STATE = {
     limit: 10,
@@ -6,5 +7,7 @@ export const DEFAULT_TABLE_STATE = {
     sortBy: null,
     filter: {},
 };
+
+export { DataList };
 
 export default DataTable;

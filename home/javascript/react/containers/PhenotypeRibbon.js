@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 import qs from 'qs';
-import {useFetch, useRibbonState} from '../utils/effects';
+import {useFetch, useRibbonState, useTableState} from '../utils/effects';
 
 import GenericErrorMessage from '../components/GenericErrorMessage';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -16,8 +16,8 @@ import PhenotypeFigureGallery from './PhenotypeFigureGallery';
 
 const PhenotypeRibbon = ({geneId}) => {
     const data = useFetch(`/action/api/marker/${geneId}/phenotype/ribbon-summary`);
-    const [tableState, setTableState] = useState(DEFAULT_TABLE_STATE);
-    const [detailTableState, setDetailTableState] = useState(DEFAULT_TABLE_STATE);
+    const [summaryTableState, setSummaryTableState] = useTableState();
+    const [detailTableState, setDetailTableState] = useTableState();
     const [selectedRibbonTerm, setSelectedRibbonTerm] = useRibbonState();
     const [selectedTablePhenotype, setSelectedTablePhenotype] = useState(null);
     const [selectedTableIDs, setSelectedTableIDs] = useState(null);
@@ -45,7 +45,7 @@ const PhenotypeRibbon = ({geneId}) => {
     };
 
     const handleRibbonCellClick = (subject, group) => {
-        setTableState(DEFAULT_TABLE_STATE);
+        setSummaryTableState(DEFAULT_TABLE_STATE);
         setDetailTableState(DEFAULT_TABLE_STATE);
         setSelectedTablePhenotype(null);
         setSelectedTableIDs(null);
@@ -167,21 +167,21 @@ const PhenotypeRibbon = ({geneId}) => {
 
             {selectedRibbonTerm && !selectedTablePhenotype &&
             <DataTable
-                url={`/action/api/marker/${geneId}/phenotype/summary?${qs.stringify(summaryTableQuery)}`}
+                dataUrl={`/action/api/marker/${geneId}/phenotype/summary?${qs.stringify(summaryTableQuery)}`}
                 columns={columns}
                 rowKey={row => row.phenotype}
-                tableState={tableState}
-                onTableStateChange={setTableState}
+                tableState={summaryTableState}
+                setTableState={setSummaryTableState}
             />
             }
 
             {selectedTablePhenotype &&
             <DataTable
-                url={`/action/api/marker/${geneId}/phenotype/detail?${qs.stringify(detailTableQuery)}`}
+                dataUrl={`/action/api/marker/${geneId}/phenotype/detail?${qs.stringify(detailTableQuery)}`}
                 columns={columnsDetail}
                 rowKey={row => row.id}
                 tableState={detailTableState}
-                onTableStateChange={setDetailTableState}
+                setTableState={setDetailTableState}
             />
             }
         </div>

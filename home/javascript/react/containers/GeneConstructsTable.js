@@ -9,9 +9,9 @@ const MarkerList = ({focusMarkerId, markers}) => (
     <CommaSeparatedList>
         {markers.map(marker => {
             if (marker.zdbID === focusMarkerId) {
-                return <MarkerAbbreviation marker={marker} />;
+                return <MarkerAbbreviation key={marker.zdbID} marker={marker} />;
             } else {
-                return <MarkerLink marker={marker} />
+                return <MarkerLink key={marker.zdbID} marker={marker} />
             }
         })}
     </CommaSeparatedList>
@@ -65,7 +65,7 @@ const GeneConstructsTable = ({geneId}) => {
     return (
         <DataTable
             columns={columns}
-            url={`/action/api/marker/${geneId}/constructs`}
+            dataUrl={`/action/api/marker/${geneId}/constructs`}
             rowKey={row => row.construct.zdbID}
         />
     );

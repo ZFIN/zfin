@@ -1,16 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import qs from 'qs';
-import {useFetch, useRibbonState} from '../utils/effects';
+import {useFetch, useRibbonState, useTableState} from '../utils/effects';
 import LoadingSpinner from '../components/LoadingSpinner';
-
 import DataTable, {DEFAULT_TABLE_STATE} from '../components/data-table';
 import NoData from '../components/NoData';
 import Ribbon, {getSelectedTermQueryParams} from '../components/Ribbon';
 import GenericErrorMessage from '../components/GenericErrorMessage';
 
 const GeneOntologyRibbon = ({geneId}) => {
-    const [tableState, setTableState] = useState(DEFAULT_TABLE_STATE);
+    const [tableState, setTableState] = useTableState();
     const [selected, setSelected] = useRibbonState();
 
     const data = useFetch(`/action/api/marker/${geneId}/go/ribbon-summary`);
@@ -95,11 +94,11 @@ const GeneOntologyRibbon = ({geneId}) => {
 
             {selected &&
                 <DataTable
-                    url={`/action/api/marker/${geneId}/go?${qs.stringify(tableQuery)}`}
+                    dataUrl={`/action/api/marker/${geneId}/go?${qs.stringify(tableQuery)}`}
                     columns={columns}
                     rowKey='rowKey'
                     tableState={tableState}
-                    onTableStateChange={setTableState}
+                    setTableState={setTableState}
                 />
             }
         </div>

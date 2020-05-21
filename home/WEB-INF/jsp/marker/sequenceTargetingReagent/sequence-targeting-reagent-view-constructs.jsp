@@ -2,22 +2,12 @@
 
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.SequenceTargetingReagentBean" scope="request"/>
 
-<z:dataTable collapse="true"
-             hasData="${!empty formBean.constructs}">
-    <thead>
-    <tr>
-        <th>Construct</th>
-    </tr>
-    </thead>
-    <tbody>
-    <c:forEach var="construct" items="${formBean.constructs}" varStatus="loop">
-        <tr>
-            <td>
-                <zfin:link entity="${construct}"/>
-            </td>
-        </tr>
+<z:dataList hasData="${!empty formBean.constructs}">
+    <c:forEach var="construct" items="${formBean.constructs}">
+        <li>
+            <zfin:link entity="${construct}"/>
+        </li>
     </c:forEach>
-    </tbody>
-</z:dataTable>
+</z:dataList>
 
 

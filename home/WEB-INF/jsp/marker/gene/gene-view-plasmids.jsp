@@ -1,9 +1,9 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<z:dataTable hasData="${!empty formBean.plasmidDBLinks}">
-    <c:forEach var="link" items="${formBean.plasmidDBLinks}" varStatus="loop">
-        <tr>
-            <td><a href="${link.link}">${link.referenceDatabaseName}:${link.accNumDisplay}</a></td>
-        </tr>
+<z:dataList hasData="${!empty formBean.plasmidDBLinks}">
+    <c:forEach var="link" items="${formBean.plasmidDBLinks}">
+        <li>
+            <a href="${link.link}">${link.referenceDatabaseName}:${link.accNumDisplay}</a>
+        </li>
     </c:forEach>
-</z:dataTable>
+</z:dataList>

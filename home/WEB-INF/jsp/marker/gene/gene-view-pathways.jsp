@@ -1,9 +1,9 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<z:dataTable hasData="${!empty formBean.pathwayDBLinks}">
-    <c:forEach var="link" items="${formBean.pathwayDBLinks}" varStatus="loop">
-        <tr>
-            <td><a href="${link.link}">${link.referenceDatabaseName}</a></td>
-        </tr>
+<z:dataList hasData="${!empty formBean.pathwayDBLinks}">
+    <c:forEach var="link" items="${formBean.pathwayDBLinks}">
+        <li>
+            <a href="${link.link}">${link.referenceDatabaseName}</a>
+        </li>
     </c:forEach>
-</z:dataTable>
+</z:dataList>

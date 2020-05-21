@@ -25,12 +25,8 @@ const HeaderCell = ({column, defaultFilterValue, onChange}) => {
     const toggleFilter = () => setFilterOpen(prev => !prev);
     const handleClear = () => setFilterValue('');
 
-    if (!column || column.hidden) {
-        return null;
-    }
-
     return (
-        <th style={{width: column.width, textAlign: column.align}}>
+        <>
             {column.label} {column.filterName && (
                 <button className='btn text-muted bg-transparent border-0 p-0' onClick={toggleFilter} role='button'>
                     <i className='fas fa-filter' />
@@ -52,7 +48,7 @@ const HeaderCell = ({column, defaultFilterValue, onChange}) => {
                     </button>
                 </div>
             )}
-        </th>
+        </>
     );
 };
 

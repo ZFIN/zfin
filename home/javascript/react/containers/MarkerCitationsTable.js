@@ -1,14 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import DataTable from '../components/data-table';
+import { DataList } from '../components/data-table';
 
 const MarkerCitationsTable = ({markerId}) => {
-    const columns = [
-        {
-            label: 'Citation',
-            content: ({citation, zdbID}) => <a href={'/' + zdbID} dangerouslySetInnerHTML={{__html: citation}} />,
-        },
-    ];
+    const rowFormat = ({citation, zdbID}) => <a href={'/' + zdbID} dangerouslySetInnerHTML={{__html: citation}} />;
 
     const sortOptions = [
         'Year, Newest',
@@ -25,12 +20,12 @@ const MarkerCitationsTable = ({markerId}) => {
     ];
 
     return (
-        <DataTable
-            columns={columns}
+        <DataList
+            dataUrl={`/action/api/marker/${markerId}/citations`}
             downloadOptions={downloadOptions}
-            rowKey='zdbID'
+            rowFormat={rowFormat}
+            rowKey={row => row.zdbID}
             sortOptions={sortOptions}
-            url={`/action/api/marker/${markerId}/citations`}
         />
     );
 };

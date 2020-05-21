@@ -61,7 +61,7 @@ const OrthologyTable = ({geneId}) => {
         <DataTable
             columns={columns}
             downloadOptions={downloadOptions}
-            url={`/action/api/gene/${geneId}/orthologs`}
+            dataUrl={`/action/api/gene/${geneId}/orthologs`}
             pagination={false}
             rowKey={row => row.zdbID}
         />
