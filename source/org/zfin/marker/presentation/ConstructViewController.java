@@ -119,6 +119,7 @@ public class ConstructViewController {
         model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, markerBean.getMarkerTypeDisplay() + ": " + construct.getName());
 
+
         return "marker/construct/construct-view.page";
     }
 
