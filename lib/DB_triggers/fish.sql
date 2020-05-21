@@ -10,9 +10,10 @@ CREATE OR REPLACE FUNCTION fish_after()
   RETURNS trigger AS $BODY$
 
 begin                                         
-		    update fish
-                     set fish_name = get_fish_full_name(NEW.fish_zdb_id,NEW.fish_genotype_zdb_id, get_fish_name(NEW.fish_Zdb_id))
-                      where fish_zdb_id = NEW.fish_zdb_id;                                                                    
+                     update fish                                    
+                     set fish_name = get_fish_full_name(NEW.fish_Zdb_id,NEW.fish_genotype_zdb_id, get_fish_name(NEW.fish_zdb_id))
+                      where fish_zdb_id = NEW.fish_zdb_id;          
+                                                                    
                      return new;                                    
                      end;     
 
