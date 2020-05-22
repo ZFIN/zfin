@@ -2,20 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import DataTable from '../components/data-table';
 import CommaSeparatedList from '../components/CommaSeparatedList';
-import MarkerAbbreviation from '../components/MarkerAbbreviation';
-import MarkerLink from '../components/MarkerLink';
-
-const MarkerList = ({focusMarkerId, markers}) => (
-    <CommaSeparatedList>
-        {markers.map(marker => {
-            if (marker.zdbID === focusMarkerId) {
-                return <MarkerAbbreviation key={marker.zdbID} marker={marker} />;
-            } else {
-                return <MarkerLink key={marker.zdbID} marker={marker} />
-            }
-        })}
-    </CommaSeparatedList>
-);
+import { EntityLink, EntityList } from '../components/entity';
 
 const sortOptions = [
     {
@@ -60,19 +47,19 @@ const GeneConstructsTable = ({geneId}) => {
     const columns = [
         {
             label: 'Construct',
-            content: ({construct}) => <MarkerLink marker={construct}/>,
+            content: ({construct}) => <EntityLink entity={construct}/>,
             width: '150px',
             filterName: 'name',
         },
         {
             label: 'Regulatory Region',
-            content: ({regulatoryRegions}) => <MarkerList focusMarkerId={geneId} markers={regulatoryRegions}/>,
+            content: ({regulatoryRegions}) => <EntityList focusEntityId={geneId} entities={regulatoryRegions}/>,
             width: '120px',
             filterName: 'regulatoryRegion',
         },
         {
             label: 'Coding Sequence',
-            content: ({codingSequences}) => <MarkerList focusMarkerId={geneId} markers={codingSequences}/>,
+            content: ({codingSequences}) => <EntityList focusEntityId={geneId} entities={codingSequences}/>,
             width: '120px',
             filterName: 'codingSequence',
         },

@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import DataTable from '../components/data-table';
-import NoDataDisplay from '../components/NoDataDisplay';
-import Supplier from '../components/Supplier';
+import SupplierList from '../components/SupplierList';
+import {EntityLink} from '../components/entity';
+import NoData from '../components/NoData';
 
 const sortOptions = [
     {
@@ -35,40 +36,40 @@ const GeneAlleleTable = ({geneId}) => {
     const columns = [
         {
             label: 'Allele',
-            content: ({name}) => <a>{name}</a>,
-            width: '10%',
+            content: (allele) => <EntityLink entity={allele} />,
+            width: '100px',
         },
         {
             label: 'Type',
             content: ({type}) => type.display,
-            width: '13%',
+            width: '90px',
         },
         {
             label: 'Localization',
-            content: ({geneLocalizationStatement}) => <NoDataDisplay data={geneLocalizationStatement} noDataString='Unknown'/>,
-            width: '15%',
+            content: ({geneLocalizationStatement}) => (geneLocalizationStatement || <NoData placeholder='Unknown' />),
+            width: '100px',
         },
         {
             label: 'Consequence',
-            content: ({transcriptConsequenceStatement}) => <NoDataDisplay data={transcriptConsequenceStatement} noDataString='Unknown'/>,
-            width: '20%',
+            content: ({transcriptConsequenceStatement}) => (transcriptConsequenceStatement || <NoData placeholder='Unknown' />),
+            width: '110px',
         },
         {
             label: 'Mutagen',
-            content: ({featureAssay}) => <NoDataDisplay data={featureAssay.mutagen.value} noDataString='Unknown'/>,
-            width: '10%',
+            content: ({featureAssay}) => (featureAssay.mutagen.value || <NoData placeholder='Unknown' />),
+            width: '80px',
         },
         {
             label: 'Supplier',
-            content: ({suppliers}) => <Supplier suppliers={suppliers}  />,
-            width: '40%',
+            content: ({suppliers}) => <SupplierList suppliers={suppliers} />,
+            width: '200px',
         },
     ];
     return (
         <DataTable
             columns={columns}
             dataUrl={`/action/api/marker/${geneId}/mutations`}
-            rowKey='sdf'
+            rowKey='zdbID'
             sortOptions={sortOptions}
         />
     );

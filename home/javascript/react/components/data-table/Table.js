@@ -1,6 +1,8 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {stringToFunction} from '../../utils';
 import NoData from '../NoData';
+import {columnDefinitionType, resultResponseType} from '../../utils/types';
 
 const Table = ({columns, columnHeaderFormat, data, rowKey}) => {
     const {results, supplementalData, total} = data;
@@ -48,6 +50,13 @@ const Table = ({columns, columnHeaderFormat, data, rowKey}) => {
             </table>
         </div>
     );
+};
+
+Table.propTypes = {
+    columns: PropTypes.arrayOf(columnDefinitionType),
+    columnHeaderFormat: PropTypes.func,
+    data: resultResponseType,
+    rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
 };
 
 export default Table;

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import DataTable from '../components/data-table';
 import CommaSeparatedList from '../components/CommaSeparatedList';
-import MarkerLink from '../components/MarkerLink';
+import {EntityLink} from '../components/entity';
 
 const AccessionNumberList = ({dblinks}) => (
     <CommaSeparatedList>
@@ -32,7 +32,7 @@ const GeneMarkerRelationshipsTable = ({geneId}) => {
         },
         {
             label: 'Marker',
-            content: ({relatedMarker}) => <MarkerLink marker={relatedMarker} />,
+            content: ({relatedMarker}) => <EntityLink entity={relatedMarker} />,
             width: '150px',
         },
         {

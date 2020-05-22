@@ -1,4 +1,4 @@
-import PropTypes, {
+import {
     array,
     bool,
     func,
@@ -35,9 +35,19 @@ export const resultResponseType = shape({
 });
 
 export const downloadOptionType = shape({
-    format: PropTypes.string,
-    url: PropTypes.string,
+    format: string,
+    url: string,
 });
+
+export const sortOptionType = shape({
+    value: string,
+    label: node,
+});
+
+export const entityType = shape({
+    abbreviation: string.isRequired,
+    zdbID: string.isRequired,
+})
 
 export const tableStateType = shape({
     limit: number,

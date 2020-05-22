@@ -1,6 +1,6 @@
 import React  from 'react';
 import PropTypes from 'prop-types';
-import {columnDefinitionType, downloadOptionType, tableStateType} from '../../utils/types';
+import {columnDefinitionType, downloadOptionType, sortOptionType, tableStateType} from '../../utils/types';
 import DataProvider from './DataProvider';
 import Table from './Table';
 import HeaderCell from './HeaderCell';
@@ -68,7 +68,7 @@ DataTable.propTypes = {
     pagination: PropTypes.bool,
     rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
     setTableState: PropTypes.func,
-    sortOptions: PropTypes.arrayOf(PropTypes.string, PropTypes.string),
+    sortOptions: PropTypes.arrayOf(sortOptionType),
     tableState: tableStateType,
 };
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import {entityType} from '../../utils/types';
 
 const TYPE_CLASSES = [
     {
@@ -14,27 +14,24 @@ const TYPE_CLASSES = [
     },
 ];
 
-const MarkerAbbreviation = ({marker}) => {
+const EntityAbbreviation = ({entity}) => {
     let className;
-    const match = marker.zdbID.match(/^ZDB-([A-Za-z]+)-/)
+    const match = entity.zdbID.match(/^ZDB-([A-Za-z]+)-/)
 
     if (match) {
-        const markerType = match[1];
+        const type = match[1];
         for (const typeClass of TYPE_CLASSES) {
-            if (typeClass.types.indexOf(markerType) >= 0) {
+            if (typeClass.types.indexOf(type) >= 0) {
                 className = typeClass.className;
                 break;
             }
         }
     }
-    return <span className={className}>{marker.abbreviation}</span>;
+    return <span className={className}>{entity.abbreviation}</span>;
 };
 
-MarkerAbbreviation.propTypes = {
-    marker: PropTypes.shape({
-        zdbID: PropTypes.string.isRequired,
-        abbreviation: PropTypes.string.isRequired,
-    })
+EntityAbbreviation.propTypes = {
+    entity: entityType,
 };
 
-export default MarkerAbbreviation;
+export default EntityAbbreviation;

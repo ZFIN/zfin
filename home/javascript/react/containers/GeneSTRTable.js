@@ -1,25 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import DataTable from '../components/data-table';
-import CommaSeparatedList from '../components/CommaSeparatedList';
-import MarkerAbbreviation from '../components/MarkerAbbreviation';
-import MarkerLink from '../components/MarkerLink';
-
-const MarkerList = ({focusMarkerId, markers, notApplicable}) => {
-    if (!notApplicable) {
-        return <CommaSeparatedList>
-            {markers.map(marker => {
-                if (marker.zdbID === focusMarkerId) {
-                    return <MarkerAbbreviation marker={marker}/>;
-                } else {
-                    return <MarkerLink marker={marker}/>
-                }
-            })}
-        </CommaSeparatedList>
-    } else {
-        return <i className='no-data-tag'>N/A</i>
-    }
-};
+import {EntityLink, EntityList} from '../components/entity';
+import NoData from '../components/NoData';
 
 const sortOptions = [
     {
@@ -48,12 +31,17 @@ const GeneSTRTable = ({geneId}) => {
     const columns = [
         {
             label: 'Targeting Reagent',
-            content: ({marker}) => <MarkerLink marker={marker}/>,
+            content: ({marker}) => <EntityLink entity={marker}/>,
             width: '150px',
         },
         {
             label: 'Created Alleles',
-            content: ({genomicFeatures, marker}) => <MarkerList markers={genomicFeatures} notApplicable={marker.type === 'MRPHLNO'}/>,
+            content: ({genomicFeatures, marker}) => {
+                if (marker.type === 'MRPHLNO') {
+                    return <NoData placeholder='N/A' />
+                }
+                return <EntityList entities={genomicFeatures} />
+            },
             width: '120px',
         },
         {
@@ -67,7 +55,7 @@ const GeneSTRTable = ({geneId}) => {
         <DataTable
             columns={columns}
             dataUrl={`/action/api/marker/${geneId}/strs`}
-            rowKey='sdf'
+            rowKey={row => row.marker.zdbID}
             sortOptions={sortOptions}
         />
     );

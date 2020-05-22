@@ -28,7 +28,7 @@ DataList.propTypes = {
     downloadOptions: PropTypes.arrayOf(downloadOptionType),
     rowFormat: PropTypes.func,
     rowKey: PropTypes.func,
-    sortOptions: PropTypes.arrayOf(PropTypes.string),
+    sortOptions: PropTypes.arrayOf(downloadOptionType),
 };
 
 export default DataList;

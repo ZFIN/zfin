@@ -5,7 +5,7 @@ import LoadingSpinner from '../LoadingSpinner';
 import NoData from '../NoData';
 import produce from 'immer';
 import PropTypes from 'prop-types';
-import {downloadOptionType, tableStateType} from '../../utils/types';
+import {downloadOptionType, sortOptionType, tableStateType} from '../../utils/types';
 
 const DataProvider = ({
     dataUrl,
@@ -163,7 +163,7 @@ DataProvider.propTypes = {
     pagination: PropTypes.bool,
     renderData: PropTypes.func,
     setTableState: PropTypes.func,
-    sortOptions: PropTypes.arrayOf(PropTypes.string, PropTypes.string),
+    sortOptions: PropTypes.arrayOf(sortOptionType),
     tableState: tableStateType,
 };
 
