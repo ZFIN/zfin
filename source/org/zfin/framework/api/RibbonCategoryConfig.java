@@ -45,7 +45,6 @@ public class RibbonCategoryConfig {
                 .categoryTerm(ontologyRepository.getTermByOboID("ZFS:0100000"))
                 .slimTerms(ontologyService.getRibbonStages())
                 .allLabel("All stages")
-                .otherLabel("Unknown stage")
                 .build();
     }
 
