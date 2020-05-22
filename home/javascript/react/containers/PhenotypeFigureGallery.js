@@ -7,7 +7,7 @@ import NoData from '../components/NoData';
 import GenericErrorMessage from '../components/GenericErrorMessage';
 import {useFetch} from '../utils/effects';
 
-const PhenotypeFigureGallery = ({geneId,  selectedTermId}) => {
+const PhenotypeFigureGallery = ({geneId,  selectedTermId, selectedTermIsOther}) => {
     const [page, setPage] = useState(1);
     const [images, setImages] = useState([]);
     const [total, setTotal] = useState(0);
@@ -22,6 +22,9 @@ const PhenotypeFigureGallery = ({geneId,  selectedTermId}) => {
 
         if (selectedTermId) {
             url += '&termId=' + selectedTermId;
+        }
+        if (selectedTermIsOther) {
+            url += '&isOther=true';
         }
         http.get(url)
             .then(response => {
@@ -39,7 +42,7 @@ const PhenotypeFigureGallery = ({geneId,  selectedTermId}) => {
         setPage(1);
         setImages([]);
         fetchImages(1, results => setImages(results));
-    }, [geneId, selectedTermId]);
+    }, [geneId, selectedTermId, selectedTermIsOther]);
 
     // if the page changes, concatenate the new images to the old ones
     useEffect(() => {

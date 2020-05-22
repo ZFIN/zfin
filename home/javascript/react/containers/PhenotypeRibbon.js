@@ -130,6 +130,7 @@ const PhenotypeRibbon = ({geneId}) => {
     } else if (selectedRibbonTerm) {
         selectedTermName = selectedRibbonTerm.group.label;
         selectedTermIsOther = selectedRibbonTerm.group.type === 'Other';
+        Window.alert(selectedRibbonTerm.group.type);
         if (selectedRibbonTerm.group.type !== 'GlobalAll') {
             selectedTermId = selectedRibbonTerm.group.id;
         }
