@@ -402,8 +402,8 @@ public class RibbonService {
     }
 
 
-    public List<ExpressionRibbonDetail> buildExpressionRibbonDetail(String geneID, String ribbonTermID, boolean includeReporter, boolean onlyDirectlySubmitted) {
-        List<ExpressionRibbonDetail> details = getExpressionRibbonDetails(geneID, ribbonTermID, includeReporter, onlyDirectlySubmitted);
+    public List<ExpressionRibbonDetail> buildExpressionRibbonDetail(String geneID, String ribbonTermID, boolean includeReporter, boolean onlyDirectlySubmitted, boolean isOther) {
+        List<ExpressionRibbonDetail> details = getExpressionRibbonDetails(geneID, ribbonTermID, includeReporter, onlyDirectlySubmitted, isOther);
         if (details == null) {
             return null;
         }
@@ -436,13 +436,18 @@ public class RibbonService {
         return details;
     }
 
-    private List<ExpressionRibbonDetail> getExpressionRibbonDetails(String geneID, String ribbonTermID, boolean includeReporter, boolean onlyDirectlySubmitted) {
+    private List<ExpressionRibbonDetail> getExpressionRibbonDetails(String geneID, String ribbonTermID, boolean includeReporter, boolean onlyDirectlySubmitted, boolean isOther) {
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/expression-annotation");
         query.addFilterQuery("gene_zdb_id:" + geneID);
         if (StringUtils.isNotEmpty(ribbonTermID)) {
             String escapedTermID = ribbonTermID.replace(":", "\\:");
             query.addFilterQuery("term_id:" + escapedTermID);
+        }
+        if (isOther) {
+            ontologyRepository.getZfaRibbonTermIDs().forEach(t ->
+                    query.addFilterQuery("-term_id:" + SolrService.luceneEscape(t))
+            );
         }
         expressionService.addReporterFilter(query, includeReporter);
         expressionService.addDirectSubmissionFilter(query, onlyDirectlySubmitted);

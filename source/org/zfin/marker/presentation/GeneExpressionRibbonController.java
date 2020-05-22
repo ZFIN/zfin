@@ -84,11 +84,12 @@ public class GeneExpressionRibbonController {
                                                                                 @RequestParam(value = "filter.termName", required = false) String filterTermName,
                                                                                 @RequestParam(value = "includeReporter", required = false) boolean includeReporter,
                                                                                 @RequestParam(value = "onlyDirectlySubmitted", required = false) boolean onlyDirectlySubmitted,
+                                                                                @RequestParam(required = false) boolean isOther,
                                                                                 @Version Pagination pagination) {
         long startTime = System.currentTimeMillis();
         List<ExpressionRibbonDetail> allDetails;
         try {
-            allDetails = ribbonService.buildExpressionRibbonDetail(geneID, termID, includeReporter, onlyDirectlySubmitted );
+            allDetails = ribbonService.buildExpressionRibbonDetail(geneID, termID, includeReporter, onlyDirectlySubmitted, isOther );
         } catch (Exception e) {
             log.error("Error while retrieving ribbon details", e);
             RestErrorMessage error = new RestErrorMessage(404);
