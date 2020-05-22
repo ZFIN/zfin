@@ -14,6 +14,21 @@ import {
     GeneExpressionFigureGallery,
 } from '../components/gene-expression';
 
+const ribbonGroupHasData = (ribbonData, group) => {
+    if (!ribbonData) {
+        return false;
+    }
+    if (group.type === 'GlobalAll') {
+        return ribbonData.subjects[0].nb_annotations > 0;
+    }
+    let groupId = group.id;
+    if (group.type === 'Other') {
+        groupId += '-other';
+    }
+    return ribbonData.subjects[0].groups[groupId] &&
+        ribbonData.subjects[0].groups[groupId].ALL.nb_annotations > 0;
+}
+
 const GeneExpressionRibbon = ({geneId}) => {
     const [summaryTableState, setSummaryTableState] = useTableState();
     const [detailTableState, setDetailTableState] = useTableState();
@@ -62,6 +77,11 @@ const GeneExpressionRibbon = ({geneId}) => {
         selectedTermName = selectedRibbonTerm.group.label;
     }
 
+    if (selectedRibbonTerm && !data.loading && !ribbonGroupHasData(data.value, selectedRibbonTerm.group)) {
+        setSelectedRibbonTerm(null, null);
+        setSelectedTableEntity(null);
+    }
+
     return (
         <div>
             <div className='custom-control custom-checkbox'>
@@ -90,16 +110,21 @@ const GeneExpressionRibbon = ({geneId}) => {
             </div>
 
             { data.rejected && <GenericErrorMessage/> }
-            { data.pending && <LoadingSpinner/> }
-            { !data.pending && data.value && (data.value.subjects[0].nb_annotations === 0 ?
-                <NoData/> :
-                <Ribbon
-                    subjects={data.value.subjects}
-                    categories={data.value.categories}
-                    itemClick={handleRibbonCellClick}
-                    selected={selectedRibbonTerm}
-                />
-            )}
+
+            {/* this relative position container and absolute position loading spinner keeps the ribbon from */}
+            {/* bouncing around when new data is loaded because the checkboxes change */}
+            <div className='position-relative'>
+                { data.pending && <div className='position-absolute'><LoadingSpinner/></div> }
+                { data.value && (data.value.subjects[0].nb_annotations === 0 ?
+                    (!data.pending && <NoData />) :
+                    <Ribbon
+                        subjects={data.value.subjects}
+                        categories={data.value.categories}
+                        itemClick={handleRibbonCellClick}
+                        selected={selectedRibbonTerm}
+                    />
+                )}
+            </div>
 
             {selectedTableEntity &&
                 <button className=' btn btn-link btn-sm px-0' onClick={() => setSelectedTableEntity(null)}>
