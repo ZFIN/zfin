@@ -1,14 +1,22 @@
 import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
-import FigureGallery from '../components/FigureGallery';
-import FigureGalleryExpressionDetails from '../components/FigureGalleryExpressionDetails';
-import http from '../utils/http';
-import NoData from '../components/NoData';
-import GenericErrorMessage from '../components/GenericErrorMessage';
-import {useFetch} from '../utils/effects';
+import qs from 'qs';
+import FigureGallery from '../FigureGallery';
+import FigureGalleryExpressionDetails from './FigureGalleryExpressionDetails';
+import http from '../../utils/http';
+import NoData from '../NoData';
+import GenericErrorMessage from '../GenericErrorMessage';
+import {useFetch} from '../../utils/effects';
 
-const GeneExpressionFigureGallery = ({geneId, includeReporters, onlyDirectlySubmitted, selectedSubtermId, selectedSupertermId, selectedTermId, selectedTermIsOther}) => {
-
+const GeneExpressionFigureGallery = (
+    {
+        geneId,
+        includeReporters,
+        onlyDirectlySubmitted,
+        selectedRibbonTerm,
+        selectedTableEntity,
+    }
+) => {
     const [page, setPage] = useState(1);
     const [images, setImages] = useState([]);
     const [total, setTotal] = useState(0);
@@ -19,26 +27,28 @@ const GeneExpressionFigureGallery = ({geneId, includeReporters, onlyDirectlySubm
     // not using useFetch here because the image arrays sometimes need to be concatenated, not replaced
     const fetchImages = (page, resultHandler) => {
         setPending(true);
-        let url = `/action/api/marker/${geneId}/expression/images?page=${page}`;
+        const baseUrl = `/action/api/marker/${geneId}/expression/images`;
+        const params = { page };
         if (includeReporters) {
-            url += '&includeReporters=' + includeReporters;
+            params.includeReporters = includeReporters;
         }
         if (onlyDirectlySubmitted) {
-            url += '&onlyDirectlySubmitted=' + onlyDirectlySubmitted;
+            params.onlyDirectlySubmitted = onlyDirectlySubmitted;
         }
-        if (selectedTermId) {
-            url += '&termId=' + selectedTermId;
+        if (selectedTableEntity) {
+            params.supertermId = selectedTableEntity.superterm.oboID;
+            if (selectedTableEntity.subterm) {
+                params.subtermId = selectedTableEntity.subterm.oboID;
+            }
+        } else if (selectedRibbonTerm) {
+            if (selectedRibbonTerm.group.type !== 'GlobalAll') {
+                params.termId = selectedRibbonTerm.group.id
+            }
+            if (selectedRibbonTerm.group.type === 'Other') {
+                params.isOther = true;
+            }
         }
-        if (selectedSupertermId) {
-            url += '&supertermId=' + selectedSupertermId;
-        }
-        if (selectedSubtermId) {
-            url += '&subtermId=' + selectedSubtermId;
-        }
-        if (selectedTermIsOther) {
-            url += '&isOther=true';
-        }
-        http.get(url)
+        http.get(baseUrl + qs.stringify(params, { addQueryPrefix: true }))
             .then(response => {
                 resultHandler(response.results);
                 setTotal(response.total);
@@ -53,7 +63,7 @@ const GeneExpressionFigureGallery = ({geneId, includeReporters, onlyDirectlySubm
         setPage(1);
         setImages([]);
         fetchImages(1, results => setImages(results));
-    }, [geneId, selectedTermId, selectedTermIsOther]);
+    }, [geneId, includeReporters, onlyDirectlySubmitted, selectedTableEntity, selectedRibbonTerm]);
 
     // if the page changes, concatenate the new images to the old ones
     useEffect(() => {
@@ -74,7 +84,6 @@ const GeneExpressionFigureGallery = ({geneId, includeReporters, onlyDirectlySubm
 
     if (total === 0) {
         return <NoData placeholder={'No images available'} />;
-
     }
 
     return (
@@ -94,10 +103,8 @@ GeneExpressionFigureGallery.propTypes = {
     geneId: PropTypes.string,
     includeReporters: PropTypes.bool,
     onlyDirectlySubmitted: PropTypes.bool,
-    selectedSubtermId: PropTypes.string,
-    selectedSupertermId: PropTypes.string,
-    selectedTermId: PropTypes.string,
-    selectedTermIsOther: PropTypes.bool,
+    selectedRibbonTerm: PropTypes.object,
+    selectedTableEntity: PropTypes.object,
 };
 
 export default GeneExpressionFigureGallery;

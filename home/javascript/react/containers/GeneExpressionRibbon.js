@@ -5,13 +5,14 @@ import {useFetch, useRibbonState, useTableState} from '../utils/effects';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 import NoData from '../components/NoData';
-import Ribbon, {getSelectedTermQueryParams} from '../components/Ribbon';
+import Ribbon from '../components/Ribbon';
 import GenericErrorMessage from '../components/GenericErrorMessage';
-import DataTable, {DEFAULT_TABLE_STATE} from '../components/data-table';
-import AttributionLink from '../components/AttributionLink';
-import StageTimeline from '../components/StageTimeline';
-import GeneExpressionFigureGallery from './GeneExpressionFigureGallery';
-import StageTimelineHeader from '../components/StageTimelineHeader';
+import {DEFAULT_TABLE_STATE} from '../components/data-table';
+import {
+    GeneExpressionAnnotationDetailTable,
+    GeneExpressionAnnotationSummaryTable,
+    GeneExpressionFigureGallery,
+} from '../components/gene-expression';
 
 const GeneExpressionRibbon = ({geneId}) => {
     const [summaryTableState, setSummaryTableState] = useTableState();
@@ -39,6 +40,7 @@ const GeneExpressionRibbon = ({geneId}) => {
     const handleReporterSelection = (event) => {
         setIncludeReporter(event.target.checked);
     };
+
     const handleDirectSubmissionSelection = (event) => {
         setIsDirectlySubmitted(event.target.checked);
     };
@@ -50,113 +52,15 @@ const GeneExpressionRibbon = ({geneId}) => {
         setSelectedRibbonTerm(subject, group);
     };
 
-    const columnsDetail = [
-        {
-            label: 'Fish',
-            content: ({fish}) => <a href={`/${fish.zdbID}`} dangerouslySetInnerHTML={{__html: fish.displayName}}/>,
-            width: '200px',
-        },
-        {
-            label: 'Experiment',
-            content: ({experiment}) => experiment.conditions,
-            width: '200px',
-        },
-        {
-            label: 'Assay',
-            content: ({assay}) => assay.abbreviation,
-            width: '200px',
-        },
-        {
-            label: 'Stage',
-            content: 'startStage',
-            width: '200px',
-        },
-        {
-            label: 'Figure',
-            content: ({figure}) => <a href={`/${figure.zdbID}`} dangerouslySetInnerHTML={{__html: figure.label}}/>,
-            width: '200px',
-        },
-        {
-            label: 'Publication',
-            content: ({publication}) =>
-                <a href={`/${publication.zdbID}`} dangerouslySetInnerHTML={{__html: publication.shortAuthorList}}/>,
-            width: '200px',
-        },
-    ];
-
-    const columns = [
-        {
-            label: 'Expression Location',
-            content: ({entity}) =>
-                <a
-                    href='#'
-                    onClick={event => handleEntityNameClick(event, entity)}
-                    key={entity}
-                >
-                    {entity.superterm.termName} {entity.subterm && entity.subterm.termName}
-                </a>,
-            width: '140px',
-            filterName: 'termName',
-        },
-        {
-            label: <StageTimelineHeader />,
-            key: 'stages',
-            content: ({stages}, supplementalData) => (
-                <StageTimeline highlightedStages={stages} allStages={supplementalData.stages}/>
-            ),
-            width: '300px',
-        },
-        {
-            label: 'Citations',
-            content: row => (
-                <AttributionLink
-                    url={`/action/marker/${geneId}`}
-                    publicationCount={row.numberOfPublications}
-                    publication={row.publication}
-                    multiPubAccessionID={geneId}
-                    multiPubs={row.ribbonPubs}
-                />
-            ),
-            width: '120px',
-        },
-    ];
-
     let selectedTermName = '';
-    let selectedTermId = '';
-    let selectedSubtermId = '';
-    let selectedSupertermId = '';
-    let selectedTermIsOther = false;
     if (selectedTableEntity) {
         selectedTermName = selectedTableEntity.superterm.termName
         if (selectedTableEntity.subterm) {
             selectedTermName +=  ' ' + selectedTableEntity.subterm.termName
         }
-        selectedSupertermId = selectedTableEntity.superterm.oboID;
-        selectedTermId = selectedTableEntity.superterm.oboID;
-        if (selectedTableEntity.subterm) {
-            selectedSubtermId = selectedTableEntity.subterm.oboID;
-        }
     } else if (selectedRibbonTerm) {
         selectedTermName = selectedRibbonTerm.group.label;
-        selectedTermIsOther = selectedRibbonTerm.group.type === 'Other';
-        if (selectedRibbonTerm.group.type !== 'GlobalAll') {
-            selectedTermId = selectedRibbonTerm.group.id;
-        }
     }
-
-    const summaryTableQuery = {
-        ...getSelectedTermQueryParams(selectedRibbonTerm),
-        includeReporter: includeReporter,
-        onlyDirectlySubmitted: isDirectlySubmitted,
-    };
-
-    const detailTableQuery = {
-        supertermId: selectedSupertermId,
-        subtermId: selectedSubtermId,
-        termId: selectedSupertermId,
-        includeReporter: includeReporter,
-        onlyDirectlySubmitted: isDirectlySubmitted,
-    };
 
     return (
         <div>
@@ -198,42 +102,43 @@ const GeneExpressionRibbon = ({geneId}) => {
             )}
 
             {selectedTableEntity &&
-            <button className=' btn btn-link btn-sm px-0' onClick={() => setSelectedTableEntity(null)}>
-                <i className=' fas fa-chevron-left'/> Back to expression in {selectedRibbonTerm.group.label}
-            </button>
+                <button className=' btn btn-link btn-sm px-0' onClick={() => setSelectedTableEntity(null)}>
+                    <i className=' fas fa-chevron-left'/> Back to expression in {selectedRibbonTerm.group.label}
+                </button>
             }
             {selectedTermName && <h5>Expression in {selectedTermName}</h5>}
 
             {(selectedRibbonTerm || selectedTableEntity) &&
-            <GeneExpressionFigureGallery
-                geneId={geneId}
-                includeReporters={includeReporter}
-                onlyDirectlySubmitted={isDirectlySubmitted}
-                selectedTermId={selectedTermId}
-                selectedSubtermId={selectedSubtermId}
-                selectedSupertermId={selectedSupertermId}
-                selectedTermIsOther={selectedTermIsOther}
-            />
+                <GeneExpressionFigureGallery
+                    geneId={geneId}
+                    includeReporters={includeReporter}
+                    onlyDirectlySubmitted={isDirectlySubmitted}
+                    selectedRibbonTerm={selectedRibbonTerm}
+                    selectedTableEntity={selectedTableEntity}
+                />
             }
 
             {selectedRibbonTerm && !selectedTableEntity &&
-            <DataTable
-                dataUrl={`/action/api/marker/${geneId}/expression/ribbon-detail?${qs.stringify(summaryTableQuery)}`}
-                columns={columns}
-                rowKey={row => row.entity.superterm.oboID + (row.entity.subterm && ',' + row.entity.subterm.oboID)}
-                tableState={summaryTableState}
-                setTableState={setSummaryTableState}
-            />
+                <GeneExpressionAnnotationSummaryTable
+                    geneId={geneId}
+                    includeReporter={includeReporter}
+                    isDirectlySubmitted={isDirectlySubmitted}
+                    onEntityClick={handleEntityNameClick}
+                    selectedRibbonTerm={selectedRibbonTerm}
+                    setTableState={setSummaryTableState}
+                    tableState={summaryTableState}
+                />
             }
 
             {selectedTableEntity &&
-            <DataTable
-                dataUrl={`/action/api/marker/${geneId}/expression/ribbon-expression-detail?${qs.stringify(detailTableQuery)}`}
-                columns={columnsDetail}
-                rowKey={row => row.id}
-                tableState={detailTableState}
-                setTableState={setDetailTableState}
-            />
+                <GeneExpressionAnnotationDetailTable
+                    geneId={geneId}
+                    includeReporter={includeReporter}
+                    isDirectlySubmitted={isDirectlySubmitted}
+                    selectedEntity={selectedTableEntity}
+                    setTableState={setDetailTableState}
+                    tableState={detailTableState}
+                />
             }
         </div>
     );

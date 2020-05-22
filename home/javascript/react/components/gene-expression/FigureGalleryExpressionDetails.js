@@ -1,10 +1,10 @@
 import React from 'react';
-import {fetchType} from '../utils/types';
-import LoadingSpinner from './LoadingSpinner';
-import CommaSeparatedList from './CommaSeparatedList';
-import StageLink from './StageLink';
-import StarRating from './StarRating';
-import OverflowParagraph from './OverflowParagraph';
+import {fetchType} from '../../utils/types';
+import LoadingSpinner from '../LoadingSpinner';
+import CommaSeparatedList from '../CommaSeparatedList';
+import StageLink from '../StageLink';
+import StarRating from '../StarRating';
+import OverflowParagraph from '../OverflowParagraph';
 
 const FigureGalleryExpressionDetails = ({figureDetails}) => {
     if (figureDetails.pending) {
