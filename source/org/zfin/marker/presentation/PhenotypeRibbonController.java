@@ -47,12 +47,13 @@ public class PhenotypeRibbonController {
     public JsonResultResponse<PhenotypeRibbonSummary> getPhenotypeSummary(@PathVariable("zdbID") String geneID,
                                                                           @RequestParam(value = "termId", required = false) String termID,
                                                                           @RequestParam(value = "filter.termName", required = false) String filterTermName,
+                                                                          @RequestParam(required = false) boolean isOther,
                                                                           @Version Pagination pagination) {
         long startTime = System.currentTimeMillis();
         JsonResultResponse<PhenotypeRibbonSummary> response;
         pagination.addFieldFilter(FieldFilter.FILTER_TERM_NAME, filterTermName);
         try {
-            response = ribbonService.buildPhenotypeSummary(geneID, termID, pagination);
+            response = ribbonService.buildPhenotypeSummary(geneID, termID, pagination, isOther);
         } catch (Exception e) {
             log.error("Error while retrieving ribbon details", e);
             RestErrorMessage error = new RestErrorMessage(500);
@@ -96,8 +97,9 @@ public class PhenotypeRibbonController {
     @RequestMapping(value = "/marker/{zdbID}/phenotype/images")
     public JsonResultResponse<Image> getPhenotypeImages(@PathVariable String zdbID,
                                                         @RequestParam(required = false) String termId,
+                                                        @RequestParam(required = false) boolean isOther,
                                                         @Version Pagination pagination) throws IOException, SolrServerException {
-        JsonResultResponse<Image> response = phenotypeService.getPhenotypeImages(zdbID, termId, pagination);
+        JsonResultResponse<Image> response = phenotypeService.getPhenotypeImages(zdbID, termId, isOther, pagination);
         response.setHttpServletRequest(request);
         return response;
     }

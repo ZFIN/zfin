@@ -25,6 +25,7 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
+import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.ontology.service.OntologyService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.PublicationAuthorComparator;
@@ -45,6 +46,8 @@ import static org.zfin.repository.RepositoryFactory.*;
 public class PhenotypeService {
     @Autowired
     private FigureRepository figureRepository;
+    @Autowired
+    private OntologyRepository ontologyRepository;
 
     public static final String ANATOMY = "ANATOMY";
     public static final String GO = "GO";
@@ -543,7 +546,7 @@ public class PhenotypeService {
     }
 
 
-    public JsonResultResponse<Image> getPhenotypeImages(String geneId, String termId, Pagination pagination) throws IOException, SolrServerException {
+    public JsonResultResponse<Image> getPhenotypeImages(String geneId, String termId,  boolean isOther, Pagination pagination) throws IOException, SolrServerException {
         JsonResultResponse<Image> response = new JsonResultResponse<>();
 
         SolrQuery query = new SolrQuery();
@@ -552,6 +555,11 @@ public class PhenotypeService {
         query.addFilterQuery("has_image:true");
         if (org.apache.commons.lang3.StringUtils.isNotEmpty(termId)) {
             query.addFilterQuery("term_id:" + SolrService.luceneEscape(termId));
+        }
+        if (isOther) {
+            ontologyRepository.getZfaRibbonTermIDs().forEach(t ->
+                    query.addFilterQuery("-term_id:" + SolrService.luceneEscape(t))
+            );
         }
         String imageFieldName = FieldName.IMG_ZDB_ID.getName();
         query.addFacetField(imageFieldName);

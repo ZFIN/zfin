@@ -266,8 +266,8 @@ public class RibbonService {
         return response;
     }
 
-    public JsonResultResponse<PhenotypeRibbonSummary> buildPhenotypeSummary(String geneID, String termID, Pagination pagination) {
-        JsonResultResponse<PhenotypeRibbonSummary> response = getDetailPhenotypeInfo(geneID, termID, pagination);
+    public JsonResultResponse<PhenotypeRibbonSummary> buildPhenotypeSummary(String geneID, String termID, Pagination pagination, Boolean isOther) {
+        JsonResultResponse<PhenotypeRibbonSummary> response = getDetailPhenotypeInfo(geneID, termID, pagination, isOther);
         return response;
     }
 
@@ -280,13 +280,18 @@ public class RibbonService {
         return response;
     }
 
-    private JsonResultResponse<PhenotypeRibbonSummary> getDetailPhenotypeInfo(String geneID, String ribbonTermID, Pagination pagination) {
+    private JsonResultResponse<PhenotypeRibbonSummary> getDetailPhenotypeInfo(String geneID, String ribbonTermID, Pagination pagination, Boolean isOther) {
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/phenotype-annotation");
         query.addFilterQuery("gene_zdb_id:" + geneID);
         if (StringUtils.isNotEmpty(ribbonTermID)) {
             String escapedRibbonTermID = ribbonTermID.replace(":", "\\:");
             query.addFilterQuery("term_id:" + escapedRibbonTermID);
+        }
+        if (isOther) {
+            ontologyRepository.getZfaRibbonTermIDs().forEach(t ->
+                    query.addFilterQuery("-term_id:" + SolrService.luceneEscape(t))
+            );
         }
         final String filterValue = pagination.getFieldFilter(FieldFilter.FILTER_TERM_NAME);
         if (StringUtils.isNotEmpty(filterValue)) {
