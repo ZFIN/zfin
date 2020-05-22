@@ -311,6 +311,8 @@ public class OntologyService {
 
     public List<GenericTerm> getRibbonStages() {
         List<GenericTerm> stageSlim = ontologyRepository.getTermsInSubset("granular_stage");
+        stageSlim.remove(ontologyRepository.getTermByOboID("ZFS:0000000"));
+
 
         try {
             List<DevelopmentStage> stages = RepositoryFactory.getAnatomyRepository().getAllStagesWithoutUnknown();
@@ -346,6 +348,7 @@ public class OntologyService {
             log.info(e);
         }
         // add 'adult' manually. It technically is a superstage
+        stageSlim.add(ontologyRepository.getTermByOboID("ZFS:0000000"));
         return stageSlim;
     }
 }
