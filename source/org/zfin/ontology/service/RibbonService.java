@@ -414,8 +414,8 @@ public class RibbonService {
         }
 
         // remove BSPO
-        details.removeIf(ribbonDetail -> ribbonDetail.getEntity().getSubterm() != null
-                && ribbonDetail.getEntity().getSubterm().getOboID().startsWith("BSPO"));
+        /*details.removeIf(ribbonDetail -> ribbonDetail.getEntity().getSubterm() != null
+                && ribbonDetail.getEntity().getSubterm().getOboID().startsWith("BSPO"));*/
 
         // fixup single publications.
         PublicationRepository pubRepository = RepositoryFactory.getPublicationRepository();
@@ -509,8 +509,8 @@ public class RibbonService {
         });
 
         // remove BSPO
-        details.removeIf(ribbonDetail -> ribbonDetail.getEntity().getSubterm() != null
-                && ribbonDetail.getEntity().getSubterm().getOboID().startsWith("BSPO"));
+//        details.removeIf(ribbonDetail -> ribbonDetail.getEntity().getSubterm() != null
+         //       && ribbonDetail.getEntity().getSubterm().getOboID().startsWith("BSPO"));
 
         // fixup single publications.
         details.stream()
