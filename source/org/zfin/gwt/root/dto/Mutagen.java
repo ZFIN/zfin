@@ -1,8 +1,10 @@
 package org.zfin.gwt.root.dto;
 
-/**
- * FeatureAssay Mutagen.
- */
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonView;
+import org.zfin.framework.api.View;
+
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum Mutagen {
     NOT_SPECIFIED("not specified"),
     DNA("DNA"),
@@ -16,10 +18,9 @@ public enum Mutagen {
     CRISPR("CRISPR"),
     DNA_AND_TALEN("DNA and TALEN"),
     DNA_AND_CRISPR("DNA and CRISPR");
-
-
 //        RENAMED_THROUGH_THE_NOMENCLATURE_PIPELINE("renamed through the nomenclature pipeline");
 
+    @JsonView(View.API.class)
     private final String value;
 
     Mutagen(String type) {
@@ -29,6 +30,7 @@ public enum Mutagen {
     public String toString() {
         return this.value;
     }
+
     public static Mutagen getType(String type) {
         for (Mutagen t : values()) {
             if (t.toString().equals(type))

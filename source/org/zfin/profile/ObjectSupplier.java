@@ -1,6 +1,8 @@
 package org.zfin.profile;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.commons.lang.ObjectUtils;
+import org.zfin.framework.api.View;
 
 import java.io.Serializable;
 
@@ -10,11 +12,13 @@ import java.io.Serializable;
 public abstract class ObjectSupplier implements Serializable {
 
     protected String dataZdbID;
+    @JsonView(View.API.class)
     protected Organization organization;
 
     protected String accNum;
     protected String availState;
 
+    @JsonView(View.API.class)
     public String getOrderURL() {
         if (organization.getOrganizationOrderURL() != null && organization.getOrganizationOrderURL().getUrlPrefix() != null && accNum != null)
             return organization.getOrganizationOrderURL().getUrlPrefix() + accNum;

@@ -15,5 +15,6 @@ public class View {
         public static class MarkerRelationshipAPI extends API { }
         public static class GeneExpressionAPI extends API { }
         public static class CitationsAPI extends API { }
+        public static class SequenceTargetingReagentAPI extends API { }
 
 }

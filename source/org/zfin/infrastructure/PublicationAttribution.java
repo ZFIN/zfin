@@ -1,5 +1,7 @@
 package org.zfin.infrastructure;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import org.zfin.framework.api.View;
 import org.zfin.marker.Marker;
 import org.zfin.publication.Publication;
 
@@ -19,6 +21,7 @@ public class PublicationAttribution extends RecordAttribution implements Seriali
     @JoinColumn(name = "recattrib_data_zdb_id", insertable = false, updatable = false)
     protected Marker marker;
 
+    @JsonView(View.SequenceTargetingReagentAPI.class)
     public Publication getPublication() {
         return publication;
     }

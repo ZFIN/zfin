@@ -1,8 +1,10 @@
 package org.zfin.profile;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.zfin.feature.Feature;
+import org.zfin.framework.api.View;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Genotype;
@@ -18,10 +20,12 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
 
     public static final String ACTIVE_STATUS = "active";
 
+    @JsonView(View.API.class)
     private String zdbID;
 
     @NotNull(message = "Name is required")
     @Size(min = 1, max = 150, message = "Must not be empty and less than 150 characters.")
+    @JsonView(View.API.class)
     protected String name;
 
     @Size(max = 100, message = "Must be less than 100 characters.")

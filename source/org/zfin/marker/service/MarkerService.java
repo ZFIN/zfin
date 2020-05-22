@@ -5,6 +5,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
+import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.*;
 import org.zfin.framework.presentation.PaginationBean;
@@ -1251,6 +1252,54 @@ public class MarkerService {
             return bGeeIds;
         }
         return null;
+    }
+
+    public JsonResultResponse<SequenceTargetingReagentBean> getSTRJsonResultResponse(String zdbID, Pagination pagination) {
+        JsonResultResponse<SequenceTargetingReagentBean> response = new JsonResultResponse<>();
+        List<SequenceTargetingReagentBean> list = getMutantsOnGene(markerRepository.getMarker(zdbID)).getKnockdownReagents();
+        if (list == null)
+            return response;
+        response.setResults(list);
+        response.setTotal(list.size());
+
+        // sorting
+        if (pagination.getSortBy() != null) {
+            STRBeanSorting sorting = new STRBeanSorting();
+            list.sort(sorting.getComparator(pagination.getSortBy()));
+        }
+
+            response.setResults(list.stream()
+                .skip(pagination.getStart())
+                .limit(pagination.getLimit())
+                .collect(Collectors.toList()));
+        return response;
+    }
+
+    public JsonResultResponse<Feature> getFeatureJsonResultResponse(String zdbID, Pagination pagination) {
+        JsonResultResponse<Feature> response = new JsonResultResponse<>();
+        List<Feature> list = getMutantsOnGene(markerRepository.getMarker(zdbID)).getFeatures();
+        if (list == null)
+            return response;
+        response.setResults(list);
+        response.setTotal(list.size());
+
+        // filtering
+/*
+        FilterService<MarkerRelationshipPresentation> filterService = new FilterService<>(new MarkerRelationshipFiltering());
+        List<MarkerRelationshipPresentation> filteredMarkerRelationshipList = filterService.filterAnnotations(fullMarkerRelationships, pagination.getFieldFilterValueMap());
+*/
+
+        // sorting
+        if (pagination.getSortBy() != null) {
+            FeatureSorting sorting = new FeatureSorting();
+            list.sort(sorting.getComparator(pagination.getSortBy()));
+        }
+
+            response.setResults(list.stream()
+                .skip(pagination.getStart())
+                .limit(pagination.getLimit())
+                .collect(Collectors.toList()));
+        return response;
     }
 }
 

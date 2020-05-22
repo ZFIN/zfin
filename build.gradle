@@ -481,11 +481,29 @@ task getLatestSolrIndexFiles() {
     }
 }
 
+task getLatestSolrIndexFilesTrunk() {
+    doLast {
+        exec {
+            ignoreExitValue = true
+            commandLine "bash", "-c", "scp -r " + env['USER'] + "@thorax.zfin.org:/research/zunloads/solr/trunkdb/current current.solr.dump";
+        }
+    }
+}
+
 task getLatestPostgresFiles() {
     doLast {
         exec {
             ignoreExitValue = true
             commandLine "bash", "-c", "scp " + env['USER'] + "@thorax.zfin.org:/research/zunloads/databases/zfindb/current current.postgres.dump";
+        }
+    }
+}
+
+task getLatestPostgresFilesTrunk() {
+    doLast {
+        exec {
+            ignoreExitValue = true
+            commandLine "bash", "-c", "scp " + env['USER'] + "@thorax.zfin.org:/research/zunloads/databases/trunkdb/current current.postgres.dump";
         }
     }
 }

@@ -17,23 +17,62 @@ const MarkerList = ({focusMarkerId, markers}) => (
     </CommaSeparatedList>
 );
 
+const sortOptions = [
+    {
+        value: 'constructNameUp',
+        label: <span>Construct (Default) <i className='fas fa-sort-alpha-down' /></span>,
+    },
+    {
+        value: 'regulatoryRegionUp',
+        label: <span>Regulatory Region  <i className='fas fa-sort-alpha-down'/></span>,
+    },
+    {
+        value: 'regulatoryRegionDown',
+        label: <span>Regulatory Region <i className='fas fa-sort-alpha-up'/></span>,
+    },
+    {
+        value: 'codingSequenceUp',
+        label: <span>Coding Sequence  <i className='fas fa-sort-alpha-down'/></span>,
+    },
+    {
+        value: 'codingSequenceDown',
+        label: <span>Coding Sequence  <i className='fas fa-sort-alpha-up'/></span>,
+    },
+    {
+        value: 'speciesUp',
+        label: <span>Species  <i className='fas fa-sort-alpha-down'/></span>,
+    },
+    {
+        value: 'speciesDown',
+        label: <span>Species  <i className='fas fa-sort-alpha-up'/></span>,
+    },
+    {
+        value: 'citationMost',
+        label: <span>Citation <i className='fas fa-sort-numeric-up'/></span>,
+    },
+    {
+        value: 'citationLeast',
+        label: <span>Citation <i className='fas fa-sort-numeric-down'/></span>,
+    },
+];
+
 const GeneConstructsTable = ({geneId}) => {
     const columns = [
         {
             label: 'Construct',
-            content: ({construct}) => <MarkerLink marker={construct} />,
+            content: ({construct}) => <MarkerLink marker={construct}/>,
             width: '150px',
             filterName: 'name',
         },
         {
-            label: 'Regulatory Regions',
-            content: ({regulatoryRegions}) => <MarkerList focusMarkerId={geneId} markers={regulatoryRegions} />,
+            label: 'Regulatory Region',
+            content: ({regulatoryRegions}) => <MarkerList focusMarkerId={geneId} markers={regulatoryRegions}/>,
             width: '120px',
             filterName: 'regulatoryRegion',
         },
         {
-            label: 'Coding Sequences',
-            content: ({codingSequences}) => <MarkerList focusMarkerId={geneId} markers={codingSequences} />,
+            label: 'Coding Sequence',
+            content: ({codingSequences}) => <MarkerList focusMarkerId={geneId} markers={codingSequences}/>,
             width: '120px',
             filterName: 'codingSequence',
         },
@@ -67,6 +106,7 @@ const GeneConstructsTable = ({geneId}) => {
             columns={columns}
             dataUrl={`/action/api/marker/${geneId}/constructs`}
             rowKey={row => row.construct.zdbID}
+            sortOptions={sortOptions}
         />
     );
 };

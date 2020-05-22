@@ -56,10 +56,10 @@
 
         <z:section title="${MUTANTS}">
             <z:section title="Mutants">
-                <jsp:include page="gene-view-mutants.jsp"/>
+                <div class="__react-root" id="GeneAlleleTable" data-gene-id="${formBean.marker.zdbID}"></div>
             </z:section>
             <z:section title="Sequence Targeting Reagents">
-                <jsp:include page="gene-view-strs.jsp"/>
+                <div class="__react-root" id="GeneSTRTable" data-gene-id="${formBean.marker.zdbID}"></div>
             </z:section>
         </z:section>
 

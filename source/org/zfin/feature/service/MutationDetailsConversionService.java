@@ -1,5 +1,6 @@
 package org.zfin.feature.service;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.springframework.stereotype.Service;
@@ -89,8 +90,8 @@ public class MutationDetailsConversionService {
 
     public String getTranscriptMutationStatement(Feature feature, boolean showLinks) {
         Set<FeatureTranscriptMutationDetail> consequences = feature.getFeatureTranscriptMutationDetailSet();
-        if (consequences == null) {
-            return "";
+        if (CollectionUtils.isEmpty(consequences)) {
+            return null;
         }
         List<String> consequenceStatements = new ArrayList<>(consequences.size());
         for (FeatureTranscriptMutationDetail consequence : consequences) {
@@ -229,7 +230,7 @@ public class MutationDetailsConversionService {
      */
     public String geneLocalizationStatement(FeatureDnaMutationDetail dnaChange, boolean showLinks) {
         if (dnaChange == null || dnaChange.getGeneLocalizationTerm() == null) {
-            return  "";
+            return "";
         }
         GeneLocalizationTerm term = dnaChange.getGeneLocalizationTerm();
         switch (term.getZdbID()) {
@@ -268,7 +269,7 @@ public class MutationDetailsConversionService {
      * not be used in cases where both are needed (e.g. a splice junction). The preposition is prepended
      * to the location string.
      *
-     * @param dnaChange the dna change
+     * @param dnaChange   the dna change
      * @param preposition a string added to the beginning
      * @return a string which describes the location of either an exon or intron
      */
@@ -331,7 +332,7 @@ public class MutationDetailsConversionService {
      */
     public String positionStatement(FeatureDnaMutationDetail dnaChange) {
         if (dnaChange == null) {
-            return  "";
+            return "";
         }
         return positionStatement(dnaChange.getDnaPositionStart(), dnaChange.getDnaPositionEnd());
     }

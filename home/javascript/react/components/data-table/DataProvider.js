@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, {useEffect} from 'react';
 import {useTableDataFetch, useTableState} from '../../utils/effects';
 import GenericErrorMessage from '../GenericErrorMessage';
 import LoadingSpinner from '../LoadingSpinner';
@@ -62,12 +62,15 @@ const DataProvider = ({
         }))
     };
 
-    const handleSortChange = (sortBy) => {
+    const handleSortChange = (sortBy, label) => {
+        currentSortState = label;
         setTableState(produce(state => {
             state.page = 1;
             state.sortBy = sortBy;
-        }))
-    }
+        }));
+    };
+
+    let currentSortState;
 
     return (
         <>
@@ -87,16 +90,17 @@ const DataProvider = ({
 
                 {sortOptions && sortOptions.length > 0 &&
                 <div className='dropdown'>
+                    <span dangerouslySetInnerHTML={{__html: currentSortState}}/>
                     <button className='btn btn-sm dropdown-toggle' type='button' data-toggle='dropdown'>
                         Sort by
                     </button>
                     <div className='dropdown-menu dropdown-menu-right'>
-                        {sortOptions.map((option, idx) => {
-                            const isActive = (tableState.sortBy === null && idx === 0) || tableState.sortBy === option;
+                        {sortOptions.map((sort, idx) => {
+                            const isActive = (tableState.sortBy === null && idx === 0) || tableState.sortBy === sort.value;
                             return (
-                                <button key={option} className='dropdown-item' type='button' onClick={() => handleSortChange(option)}>
-                                    <i className={`fas fa-fw mr-1 ${isActive ? 'fa-check' : ''}`} />
-                                    {option}
+                                <button key={sort.value} className='dropdown-item' type='button' onClick={() => handleSortChange(sort.value, sort.label)}>
+                                    <i className={`fas fa-fw mr-1 ${isActive ? 'fa-check' : ''}`}/>
+                                    {sort.label}
                                 </button>
                             );
                         })}
@@ -159,7 +163,7 @@ DataProvider.propTypes = {
     pagination: PropTypes.bool,
     renderData: PropTypes.func,
     setTableState: PropTypes.func,
-    sortOptions: PropTypes.arrayOf(PropTypes.string),
+    sortOptions: PropTypes.arrayOf(PropTypes.string, PropTypes.string),
     tableState: tableStateType,
 };
 

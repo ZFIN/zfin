@@ -1,10 +1,12 @@
 package org.zfin.feature;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SortNatural;
 import org.zfin.feature.service.MutationDetailsConversionService;
+import org.zfin.framework.api.View;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.infrastructure.DataNote;
@@ -49,9 +51,11 @@ public class Feature implements EntityNotes, EntityZdbID {
                     @org.hibernate.annotations.Parameter(name = "insertActiveData", value = "true")
             })
     @Column(name = "feature_zdb_id")
+    @JsonView(View.API.class)
     private String zdbID;
     @Column(name = "feature_name", nullable = false)
     //@Audited
+    @JsonView(View.API.class)
     private String name;
     @OneToMany(mappedBy = "feature", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<FeatureNote> externalNotes;
@@ -65,7 +69,7 @@ public class Feature implements EntityNotes, EntityZdbID {
 
 
     @Column(name = "feature_abbrev", nullable = false)
-
+    @JsonView(View.API.class)
     private String abbreviation;
     @Column(name = "feature_tg_suffix")
     private String transgenicSuffix;
@@ -93,6 +97,7 @@ public class Feature implements EntityNotes, EntityZdbID {
     @Column(name = "feature_type")
     @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
             parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.gwt.root.dto.FeatureTypeEnum")})
+    @JsonView(View.API.class)
     private FeatureTypeEnum type;
     @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY)
     private Set<FeatureSupplier> suppliers;
@@ -102,6 +107,7 @@ public class Feature implements EntityNotes, EntityZdbID {
     @org.hibernate.annotations.OrderBy(clause = "dalias_alias_lower")
     private Set<FeatureAlias> aliases;
     @OneToOne(mappedBy = "feature", fetch = FetchType.EAGER)
+    @JsonView(View.API.class)
     private FeatureAssay featureAssay;
 
     @OneToMany(mappedBy = "feature", fetch = FetchType.EAGER)
@@ -229,6 +235,7 @@ public class Feature implements EntityNotes, EntityZdbID {
         this.type = type;
     }
 
+    @JsonView(View.API.class)
     public Set<FeatureSupplier> getSuppliers() {
         return suppliers;
     }
@@ -624,11 +631,12 @@ public class Feature implements EntityNotes, EntityZdbID {
         return null;
     }
 
-
+    @JsonView(View.API.class)
     public String getGeneLocalizationStatement() {
         return mutationDetailsConversionService.geneLocalizationStatement(getFeatureDnaMutationDetail());
     }
 
+    @JsonView(View.API.class)
     public String getTranscriptConsequenceStatement() {
         return mutationDetailsConversionService.getTranscriptMutationStatement(this);
     }

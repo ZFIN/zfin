@@ -68,7 +68,7 @@ DataTable.propTypes = {
     pagination: PropTypes.bool,
     rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
     setTableState: PropTypes.func,
-    sortOptions: PropTypes.arrayOf(PropTypes.string),
+    sortOptions: PropTypes.arrayOf(PropTypes.string, PropTypes.string),
     tableState: tableStateType,
 };
 

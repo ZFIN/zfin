@@ -1,9 +1,11 @@
 package org.zfin.marker.presentation;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
 import org.zfin.antibody.Antibody;
 import org.zfin.expression.presentation.MarkerExpression;
+import org.zfin.framework.api.View;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.mapping.presentation.MappedMarkerBean;
 import org.zfin.marker.AllianceGeneDesc;
@@ -24,6 +26,8 @@ import java.util.Set;
 @Setter
 @Getter
 public class MarkerBean extends PaginationBean {
+
+    @JsonView(View.API.class)
     protected Marker marker;
     protected String markerTypeDisplay;
     private String zdbID;

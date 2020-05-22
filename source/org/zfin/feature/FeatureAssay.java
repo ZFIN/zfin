@@ -1,6 +1,8 @@
 package org.zfin.feature;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.google.gwt.user.client.rpc.IsSerializable;
+import org.zfin.framework.api.View;
 import org.zfin.gwt.root.dto.Mutagee;
 import org.zfin.gwt.root.dto.Mutagen;
 
@@ -17,6 +19,7 @@ public class FeatureAssay implements IsSerializable {
     @Column(name = "featassay_mutagen")
     @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
             parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.gwt.root.dto.Mutagen")})
+    @JsonView(View.API.class)
     private Mutagen mutagen;
     @Column(name = "featassay_mutagee")
     @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",

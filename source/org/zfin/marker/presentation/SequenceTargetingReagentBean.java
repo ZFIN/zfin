@@ -1,9 +1,11 @@
 package org.zfin.marker.presentation;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zfin.expression.presentation.ExpressionDisplay;
 import org.zfin.feature.Feature;
+import org.zfin.framework.api.View;
 import org.zfin.gbrowse.presentation.GBrowseImage;
 import org.zfin.gbrowse.presentation.GBrowseImageSimilarComparator;
 import org.zfin.marker.Marker;
@@ -28,6 +30,7 @@ public class SequenceTargetingReagentBean extends MarkerBean{
     private String ncbiBlastUrl;
     private String sequenceAttribution;
     private List<Database> databases;
+    @JsonView(View.SequenceTargetingReagentAPI.class)
     private List<Feature> genomicFeatures;
     private List<PhenotypeDisplay> phenotypeDisplays;
     private Set<GBrowseImage> gBrowseImages;

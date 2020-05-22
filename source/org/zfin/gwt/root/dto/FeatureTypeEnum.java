@@ -1,9 +1,11 @@
 package org.zfin.gwt.root.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.google.gwt.user.client.rpc.IsSerializable;
+import org.zfin.framework.api.View;
 
-/**
- */
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum FeatureTypeEnum implements IsSerializable{
     TRANSGENIC_INSERTION("Transgenic Insertion"),
     POINT_MUTATION("Point Mutation"),
@@ -20,6 +22,7 @@ public enum FeatureTypeEnum implements IsSerializable{
     ;
 
 
+    @JsonView(View.API.class)
     private String display;
 
     FeatureTypeEnum(String value) {

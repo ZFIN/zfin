@@ -6,10 +6,22 @@ const MarkerCitationsTable = ({markerId}) => {
     const rowFormat = ({citation, zdbID}) => <a href={'/' + zdbID} dangerouslySetInnerHTML={{__html: citation}} />;
 
     const sortOptions = [
-        'Year, Newest',
-        'Year, Oldest',
-        'First Author, A to Z',
-        'First Author, Z to A',
+        {
+            value: 'Year, Newest',
+            label: 'Year, Newest',
+        },
+        {
+            value: 'Year, Oldest',
+            label: 'Year, Oldest',
+        },
+        {
+            value: 'First Author, A to Z',
+            label: 'First Author, A to Z',
+        },
+        {
+            value: 'First Author, Z to A',
+            label: 'First Author, Z to A',
+        },
     ];
 
     const downloadOptions = [

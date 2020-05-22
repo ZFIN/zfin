@@ -41,6 +41,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
     private String abbreviationOrder;
     private Set<ExpressionExperiment> probeExpressionExperiments;
     private Set<ExpressionExperiment> expressionExperiments;
+    @JsonView(View.SequenceTargetingReagentAPI.class)
     private Set<PublicationAttribution> publications;
     private HashMap<String, List<Publication>> pubsPerAnatomy;
     private Set<Figure> figures;
@@ -275,6 +276,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         this.featureMarkerRelationships = featureMarkerRelationships;
     }
 
+    @JsonView(View.API.class)
     public Type getType() {
         if (markerType == null)
             return null;

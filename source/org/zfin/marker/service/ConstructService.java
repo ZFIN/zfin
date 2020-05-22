@@ -7,6 +7,7 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.feature.repository.FeatureRepository;
+import org.zfin.framework.api.ConstructInfoSorting;
 import org.zfin.framework.api.FieldFilter;
 import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
@@ -60,6 +61,41 @@ public class ConstructService {
         addFilterQuery(query, FieldName.REGULATORY_REGION_AC, pagination.getFieldFilter(FieldFilter.REGULATORY_REGION));
         addFilterQuery(query, FieldName.CODING_SEQUENCE_AC, pagination.getFieldFilter(FieldFilter.CODING_SEQUENCE));
         addFilterQuery(query, FieldName.RELATED_SPECIES_NAME_AC, pagination.getFieldFilter(FieldFilter.SPECIES));
+
+        switch (StringUtils.defaultString(pagination.getSortBy())) {
+            case "constructNameUp":
+                query.addSort(SolrQuery.SortClause.asc(FieldName.NAME_SORT.getName()));
+                break;
+            case "constructNameDown":
+                query.addSort(SolrQuery.SortClause.desc(FieldName.NAME_SORT.getName()));
+                break;
+            case "regulatoryRegionUp":
+                query.addSort(SolrQuery.SortClause.asc(FieldName.REGULATORY_REGION_SORT.getName()));
+                break;
+            case "regulatoryRegionDown":
+                query.addSort(SolrQuery.SortClause.desc(FieldName.REGULATORY_REGION_SORT.getName()));
+                break;
+            case "codingSequenceUp":
+                query.addSort(SolrQuery.SortClause.asc(FieldName.CODING_SEQUENCE_SORT.getName()));
+                break;
+            case "codingSequenceDown":
+                query.addSort(SolrQuery.SortClause.desc(FieldName.CODING_SEQUENCE_SORT.getName()));
+                break;
+            case "speciesUp":
+                query.addSort(SolrQuery.SortClause.asc(FieldName.CONSTRUCT_SPECIES_SORT.getName()));
+                break;
+            case "speciesDown":
+                query.addSort(SolrQuery.SortClause.desc(FieldName.CONSTRUCT_SPECIES_SORT.getName()));
+                break;
+            case "citationLeast":
+                query.addSort(SolrQuery.SortClause.asc(FieldName.CONSTRUCT_CITATION_SORT.getName()));
+                break;
+            case "citationMost":
+                query.addSort(SolrQuery.SortClause.desc(FieldName.CONSTRUCT_CITATION_SORT.getName()));
+                break;
+            default:
+                //query.addSort(SolrQuery.SortClause.asc(FieldName.REGULATORY_REGION_AC.getName()));
+        }
 
         query.setFields(FieldName.ID.getName());
         query.setRows(pagination.getLimit());

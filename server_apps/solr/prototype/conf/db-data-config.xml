@@ -2068,6 +2068,17 @@
                     where="mrel_mrkr_1_zdb_id=construct.id"
             />
 
+            <entity name="construct_coding_promoter_sort"
+                    query="select mrel_mrkr_1_zdb_id,
+                    string_agg(lower(mrkr_abbrev),',' ORDER BY lower(mrkr_abbrev)) as regulatory_region_sort
+                    from marker_relationship, marker
+                    where mrel_type = 'promoter of'
+                    and mrel_mrkr_2_zdb_id = mrkr_zdb_id
+                    group by 1 ;"
+                    cacheImpl="SortedMapBackedCache"
+                    where="mrel_mrkr_1_zdb_id=construct.id"
+            />
+
             <entity name="construct_coding_sequence"
                     query="select
                             mrel_mrkr_1_zdb_id,
@@ -2081,13 +2092,55 @@
                     where="mrel_mrkr_1_zdb_id=construct.id"
             />
 
+            <entity name="construct_coding_sequence_sort"
+                    query="select mrel_mrkr_1_zdb_id,
+                    string_agg(lower(mrkr_abbrev),',' ORDER BY lower(mrkr_abbrev)) as coding_sequence_sort
+                    from marker_relationship, marker
+                    where mrel_type = 'coding sequence of'
+                    and mrel_mrkr_2_zdb_id = mrkr_zdb_id
+                    group by 1 ;"
+                    cacheImpl="SortedMapBackedCache"
+                    where="mrel_mrkr_1_zdb_id=construct.id"
+            />
+
             <entity name="construct_coding_sequence_species"
                     query="select cv_foreign_species || ' (' || cv_name_definition || ')' as coding_sequence_species,
                              cc_construct_zdb_id as construct_zdb_id
                                  from construct_component
                                   join controlled_vocabulary on cc_component_zdb_id = cv_zdb_id
-                              where cc_component_category = 'coding sequence component'
-                                and cv_foreign_species is not null;"
+                              where cv_foreign_species is not null;"
+                    cacheImpl="SortedMapBackedCache"
+                    where="construct_zdb_id=construct.id"
+            />
+
+            <entity name="construct_species_sort"
+                    query="select cc_construct_zdb_id as construct_zdb_id,
+                           string_agg(distinct coalesce(cv_name_definition, 'Danio rerio'), ',' ORDER by coalesce(cv_name_definition, 'Danio rerio')) as construct_species_sort
+                           from construct_component
+                           join controlled_vocabulary on cc_component_zdb_id = cv_zdb_id
+                           group by 1;"
+                    cacheImpl="SortedMapBackedCache"
+                    where="construct_zdb_id=construct.id"
+            />
+
+            <entity name="construct_citation_sort"
+                    query="select construct_zdb_id,
+                        (select count(distinct x.recattrib_source_zdb_id)
+                        from (
+                        select distinct ra.recattrib_source_zdb_id from record_attribution ra where recattrib_data_zdb_id = construct_zdb_id
+                        union all
+                        select distinct ra.recattrib_source_zdb_id from record_attribution ra, marker_relationship mr
+                        where mr.mrel_mrkr_2_zdb_id = construct_zdb_id AND ra.recattrib_data_zdb_id = mr.mrel_zdb_id
+                        union all
+                        select distinct ra.recattrib_source_zdb_id from record_attribution ra, marker_relationship mr
+                        where mr.mrel_mrkr_1_zdb_id = construct_zdb_id AND ra.recattrib_data_zdb_id = mr.mrel_zdb_id
+                        union all
+                        select distinct ra.recattrib_source_zdb_id
+                        from record_attribution ra ,  feature_marker_relationship fmr
+                        where  fmr.fmrel_ftr_zdb_id  = ra.recattrib_data_zdb_id
+                        and  fmr.fmrel_mrkr_zdb_id = construct_zdb_id
+                        ) construct_citation_sort )
+                        from construct;"
                     cacheImpl="SortedMapBackedCache"
                     where="construct_zdb_id=construct.id"
             />

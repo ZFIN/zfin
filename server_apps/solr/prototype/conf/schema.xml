@@ -839,6 +839,11 @@
         <field name="qualifier" type="string" indexed="true" stored="true" />
         <field name="evidence_code" type="string" indexed="true" stored="true" />
 
+        <field name="coding_sequence_sort" type="string" stored="true"/>
+        <field name="regulatory_region_sort" type="string" stored="true"/>
+        <field name="construct_species_sort" type="string" stored="true"/>
+        <field name="construct_citation_sort" type="slong" stored="true"/>
+
         <!-- catchall field, containing all other searchable text fields (implemented
              via copyField further on in this schema  -->
         <field name="text" type="text" indexed="true" stored="true" multiValued="true" termVectors="true" termPositions="true" termOffsets="true" />
