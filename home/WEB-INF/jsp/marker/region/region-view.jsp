@@ -33,12 +33,12 @@
             <jsp:include page="region-view-summary.jsp"/>
         </div>
 
-        <z:section title="${MUTATIONS}">
-            <z:section title="Mutations">
-                <jsp:include page="region-view-mutations.jsp"/>
+        <z:section title="${MUTANTS}">
+            <z:section title="Mutants">
+                <div class="__react-root" id="GeneAlleleTable" data-gene-id="${formBean.marker.zdbID}"></div>
             </z:section>
-            <z:section title="Sequence Targeting Reagent">
-                <jsp:include page="region-view-str.jsp"/>
+            <z:section title="Sequence Targeting Reagents">
+                <div class="__react-root" id="GeneSTRTable" data-gene-id="${formBean.marker.zdbID}"></div>
             </z:section>
         </z:section>
 
