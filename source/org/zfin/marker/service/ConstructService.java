@@ -7,7 +7,6 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.feature.repository.FeatureRepository;
-import org.zfin.framework.api.ConstructInfoSorting;
 import org.zfin.framework.api.FieldFilter;
 import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
@@ -111,7 +110,7 @@ public class ConstructService {
                     info.setConstruct(marker);
 
                     // Needs refactor
-                    List<MarkerRelationshipPresentation> mrkrRels = new ArrayList<>(markerRepository.getRelatedMarkerOrderDisplayForTypes(
+                    List<MarkerRelationshipPresentation> relationships = new ArrayList<>(markerRepository.getRelatedMarkerOrderDisplayForTypes(
                             marker,
                             true,
                             MarkerRelationship.Type.PROMOTER_OF,
@@ -119,13 +118,13 @@ public class ConstructService {
                             MarkerRelationship.Type.CONTAINS_REGION
                     ));
 
-                    List<Marker> regulatoryRegions = mrkrRels.stream()
+                    List<Marker> regulatoryRegions = relationships.stream()
                             // needs refactor: make enum of has Promoter
                             .filter(presentation -> presentation.getRelationshipType().equals("Has Promoter"))
                             .map(presentation -> markerRepository.getMarkerByID(presentation.getZdbId()))
                             .collect(Collectors.toList());
 
-                    List<Marker> codingSequences = mrkrRels.stream()
+                    List<Marker> codingSequences = relationships.stream()
                             // needs refactor: make enum of Has Coding Sequence
                             .filter(presentation -> presentation.getRelationshipType().equals("Has Coding Sequence"))
                             .map(presentation -> markerRepository.getMarkerByID(presentation.getZdbId()))

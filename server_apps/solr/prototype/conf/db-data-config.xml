@@ -2124,23 +2124,32 @@
             />
 
             <entity name="construct_citation_sort"
-                    query="select construct_zdb_id,
-                        (select count(distinct x.recattrib_source_zdb_id)
-                        from (
-                        select distinct ra.recattrib_source_zdb_id from record_attribution ra where recattrib_data_zdb_id = construct_zdb_id
-                        union all
-                        select distinct ra.recattrib_source_zdb_id from record_attribution ra, marker_relationship mr
-                        where mr.mrel_mrkr_2_zdb_id = construct_zdb_id AND ra.recattrib_data_zdb_id = mr.mrel_zdb_id
-                        union all
-                        select distinct ra.recattrib_source_zdb_id from record_attribution ra, marker_relationship mr
-                        where mr.mrel_mrkr_1_zdb_id = construct_zdb_id AND ra.recattrib_data_zdb_id = mr.mrel_zdb_id
-                        union all
-                        select distinct ra.recattrib_source_zdb_id
-                        from record_attribution ra ,  feature_marker_relationship fmr
-                        where  fmr.fmrel_ftr_zdb_id  = ra.recattrib_data_zdb_id
-                        and  fmr.fmrel_mrkr_zdb_id = construct_zdb_id
-                        ) construct_citation_sort )
-                        from construct;"
+                    query="
+                         SELECT construct_zdb_id,
+                               (SELECT Count(*)
+                                FROM   (SELECT DISTINCT recattrib_source_zdb_id
+                                        FROM   record_attribution ra
+                                        WHERE  recattrib_data_zdb_id = construct_zdb_id
+                                        UNION
+                                        SELECT DISTINCT ra.recattrib_source_zdb_id
+                                        FROM   record_attribution ra,
+                                               marker_relationship mr
+                                        WHERE  mr.mrel_mrkr_2_zdb_id = construct_zdb_id
+                                               AND ra.recattrib_data_zdb_id = mr.mrel_zdb_id
+                                        UNION
+                                        SELECT DISTINCT ra.recattrib_source_zdb_id
+                                        FROM   record_attribution ra,
+                                               marker_relationship mr
+                                        WHERE  mr.mrel_mrkr_1_zdb_id = construct_zdb_id
+                                               AND ra.recattrib_data_zdb_id = mr.mrel_zdb_id
+                                        UNION
+                                        SELECT DISTINCT ra.recattrib_source_zdb_id
+                                        FROM   record_attribution ra,
+                                               feature_marker_relationship fmr
+                                        WHERE  fmr.fmrel_ftr_zdb_id = ra.recattrib_data_zdb_id
+                                               AND fmr.fmrel_mrkr_zdb_id = construct_zdb_id) x) AS
+                               construct_citation_sort
+                        FROM   construct  ;"
                     cacheImpl="SortedMapBackedCache"
                     where="construct_zdb_id=construct.id"
             />

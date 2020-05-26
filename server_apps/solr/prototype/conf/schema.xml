@@ -842,7 +842,7 @@
         <field name="coding_sequence_sort" type="string" stored="true"/>
         <field name="regulatory_region_sort" type="string" stored="true"/>
         <field name="construct_species_sort" type="string" stored="true"/>
-        <field name="construct_citation_sort" type="slong" stored="true"/>
+        <field name="construct_citation_sort" type="integer" stored="true"/>
 
         <!-- catchall field, containing all other searchable text fields (implemented
              via copyField further on in this schema  -->
