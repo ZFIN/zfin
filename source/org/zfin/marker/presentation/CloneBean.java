@@ -22,6 +22,16 @@ public class CloneBean extends MarkerBean {
     private List<OrganizationLink> suppliers;
     private GBrowseImage image;
 
+    public String getDbSnps() {
+        return dbSnps;
+    }
+
+    public void setDbSnps(String dbSnps) {
+        this.dbSnps = dbSnps;
+    }
+
+    private String dbSnps;
+
     public SequenceInfo getSequenceInfo() {
         return sequenceInfo;
     }

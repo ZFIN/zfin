@@ -76,6 +76,9 @@ public class CloneViewController {
 
         // OTHER GENE / MARKER PAGES:
         cloneBean.addFakePubs(ensemblDatabase);
+        String snpsString = RepositoryFactory.getMarkerRepository().getDbsnps(clone.zdbID);
+        cloneBean.setDbSnps(snpsString);
+
 
         // iterate through related marker list to add snps to it (if a dna clone)
         // this is technically a small list, so should be cheap
