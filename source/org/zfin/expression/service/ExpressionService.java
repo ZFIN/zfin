@@ -32,7 +32,7 @@ import org.zfin.marker.presentation.LinkDisplay;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.repository.OntologyRepository;
+import org.zfin.ontology.service.RibbonService;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.FieldName;
@@ -66,7 +66,7 @@ public class ExpressionService {
     private FigureRepository figureRepository;
 
     @Autowired
-    private OntologyRepository ontologyRepository;
+    private RibbonService ribbonService;
 
     private static ExpressionRepository expressionRepository = RepositoryFactory.getExpressionRepository();
     private static SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
@@ -196,7 +196,9 @@ public class ExpressionService {
 
     public String getGeoLinkForMarkerZdbId(String markerZdbID) {
         Marker m = RepositoryFactory.getMarkerRepository().getMarkerByID(markerZdbID);
-        if (m == null) return null;
+        if (m == null) {
+            return null;
+        }
         return getGeoLinkForMarker(m);
     }
 
@@ -900,16 +902,14 @@ public class ExpressionService {
 
     }
 
-    public JsonResultResponse<Image> getExpressionImages(String geneId, String termId, String supertermId, String subtermId, boolean includeReporter, boolean onlyDirectlySubmitted,  boolean isOther, Pagination pagination) throws IOException, SolrServerException {
+    public JsonResultResponse<Image> getExpressionImages(String geneId, String termId, String supertermId, String subtermId, boolean includeReporter, boolean onlyDirectlySubmitted, boolean isOther, Pagination pagination) throws IOException, SolrServerException {
         JsonResultResponse<Image> response = new JsonResultResponse<>();
 
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/expression-annotation");
         query.addFilterQuery("gene_zdb_id:" + geneId);
         query.addFilterQuery("has_image:true");
-        if (StringUtils.isNotEmpty(termId)) {
-            query.addFilterQuery("term_id:" + SolrService.luceneEscape(termId));
-        }
+        ribbonService.addRibbonTermQuery(query, termId, isOther);
         if (StringUtils.isNotEmpty(supertermId)) {
             query.addFilterQuery("superterm_id:" + SolrService.luceneEscape(supertermId));
         }
@@ -918,11 +918,6 @@ public class ExpressionService {
         }
         addReporterFilter(query, includeReporter);
         addDirectSubmissionFilter(query, onlyDirectlySubmitted);
-        if (isOther) {
-            ontologyRepository.getZfaRibbonTermIDs().forEach(t ->
-                    query.addFilterQuery("-term_id:" + SolrService.luceneEscape(t))
-            );
-        }
         String imageFieldName = FieldName.IMG_ZDB_ID.getName();
         query.addFacetField(imageFieldName);
         query.setParam("facet.limit", Integer.toString(pagination.getLimit()));

@@ -25,8 +25,8 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
-import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.ontology.service.OntologyService;
+import org.zfin.ontology.service.RibbonService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.PublicationAuthorComparator;
 import org.zfin.repository.RepositoryFactory;
@@ -46,8 +46,9 @@ import static org.zfin.repository.RepositoryFactory.*;
 public class PhenotypeService {
     @Autowired
     private FigureRepository figureRepository;
+
     @Autowired
-    private OntologyRepository ontologyRepository;
+    private RibbonService ribbonService;
 
     public static final String ANATOMY = "ANATOMY";
     public static final String GO = "GO";
@@ -466,7 +467,7 @@ public class PhenotypeService {
                     if (sortBy.equals("fish")) {
                         key += pheno.getPhenotypeWarehouse().getFishExperiment().getFish().getZdbID();
                     }
-                } else if (groupBy.equals("str")){
+                } else if (groupBy.equals("str")) {
                     key = keyPheno;
                 } else {
                     key = keyPheno + pheno.getPhenotypeWarehouse().getFishExperiment().getFish().getZdbID();
@@ -505,10 +506,11 @@ public class PhenotypeService {
 
             if (phenoMap.values().size() > 0) {
                 phenoDisplays.addAll(phenoMap.values());
-                if (sortBy.equals("phenotypeStatement"))
+                if (sortBy.equals("phenotypeStatement")) {
                     Collections.sort(phenoDisplays);
-                else
+                } else {
                     Collections.sort(phenoDisplays, new PhenotypeDisplayFishComparator());
+                }
             }
 
             return phenoDisplays;
@@ -553,18 +555,11 @@ public class PhenotypeService {
         query.setRequestHandler("/phenotype-annotation");
         query.addFilterQuery("gene_zdb_id:" + geneId);
         query.addFilterQuery("has_image:true");
-        if (StringUtils.isNotEmpty(termId)) {
-            query.addFilterQuery("term_id:" + SolrService.luceneEscape(termId));
-        }
+        ribbonService.addRibbonTermQuery(query, termId, isOther);
         if (StringUtils.isNotEmpty(phenotypeIds)) {
             query.addFilterQuery(Arrays.stream(phenotypeIds.split(","))
                     .map(phenotypeId -> "id:psg-" + phenotypeId)
                     .collect(Collectors.joining(" OR ")));
-        }
-        if (isOther) {
-            ontologyRepository.getZfaRibbonTermIDs().forEach(t ->
-                    query.addFilterQuery("-term_id:" + SolrService.luceneEscape(t))
-            );
         }
         String imageFieldName = FieldName.IMG_ZDB_ID.getName();
         query.addFacetField(imageFieldName);

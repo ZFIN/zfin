@@ -23,9 +23,8 @@ import org.zfin.mutant.MarkerGoTermAnnotationExtn;
 import org.zfin.mutant.MarkerGoTermAnnotationExtnGroup;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.mutant.presentation.MarkerGoEvidencePresentation;
-import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.repository.MarkerGoTermEvidenceRepository;
-import org.zfin.ontology.repository.OntologyRepository;
+import org.zfin.ontology.service.RibbonService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationPresentation;
 import org.zfin.repository.RepositoryFactory;
@@ -47,7 +46,7 @@ public class MarkerGoService {
     private MarkerRepository markerRepository;
 
     @Autowired
-    private OntologyRepository ontologyRepository;
+    private RibbonService ribbonService;
 
     public static Logger log = LogManager.getLogger(MarkerGoService.class);
 
@@ -160,13 +159,7 @@ public class MarkerGoService {
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/go-annotation");
         query.addFilterQuery("gene_zdb_id:" + geneId);
-        if (StringUtils.isNotEmpty(termId)) {
-            query.addFilterQuery("term_id:" + SolrService.luceneEscape(termId));
-            if (isOther) {
-                List<GenericTerm> slimTerms = ontologyRepository.getTermsInSubset("goslim_agr");
-                slimTerms.forEach(term -> query.addFilterQuery("-term_id:" + SolrService.luceneEscape(term.getOboID())));
-            }
-        }
+        ribbonService.addRibbonTermQuery(query, termId, isOther);
         String termNameFilter = pagination.getFieldFilter(FieldFilter.FILTER_TERM_NAME);
         if (StringUtils.isNotEmpty(termNameFilter)) {
             query.addFilterQuery("name_ac:(" + SolrService.luceneEscape(termNameFilter) + ")");

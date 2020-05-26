@@ -288,15 +288,7 @@ public class RibbonService {
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/phenotype-annotation");
         query.addFilterQuery("gene_zdb_id:" + geneID);
-        if (StringUtils.isNotEmpty(ribbonTermID)) {
-            String escapedRibbonTermID = ribbonTermID.replace(":", "\\:");
-            query.addFilterQuery("term_id:" + escapedRibbonTermID);
-        }
-        if (isOther) {
-            ontologyRepository.getZfaRibbonTermIDs().forEach(t ->
-                    query.addFilterQuery("-term_id:" + SolrService.luceneEscape(t))
-            );
-        }
+        addRibbonTermQuery(query, ribbonTermID, isOther);
         final String filterValue = pagination.getFieldFilter(FieldFilter.FILTER_TERM_NAME);
         if (StringUtils.isNotEmpty(filterValue)) {
             query.addFilterQuery("phenotype_statement_ac:(" + filterValue.trim() + ")");
@@ -448,15 +440,7 @@ public class RibbonService {
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/expression-annotation");
         query.addFilterQuery("gene_zdb_id:" + geneID);
-        if (StringUtils.isNotEmpty(ribbonTermID)) {
-            String escapedTermID = ribbonTermID.replace(":", "\\:");
-            query.addFilterQuery("term_id:" + escapedTermID);
-        }
-        if (isOther) {
-            ontologyRepository.getZfaRibbonTermIDs().forEach(t ->
-                    query.addFilterQuery("-term_id:" + SolrService.luceneEscape(t))
-            );
-        }
+        addRibbonTermQuery(query, ribbonTermID, isOther);
         expressionService.addReporterFilter(query, includeReporter);
         expressionService.addDirectSubmissionFilter(query, onlyDirectlySubmitted);
         query.addFacetPivotField("postcomposed_term_id,stage_term_id,pub_zdb_id");
@@ -540,6 +524,21 @@ public class RibbonService {
             }
         }
         return details;
+    }
+
+    public void addRibbonTermQuery(SolrQuery query, String termId, boolean isOther) {
+        if (StringUtils.isEmpty(termId)) {
+            return;
+        }
+        query.addFilterQuery("term_id:" + SolrService.luceneEscape(termId));
+        if (isOther) {
+            RibbonCategoryConfig config = RibbonCategoryConfig.forTerm(termId);
+            if (config != null) {
+                config.getSlimTerms().forEach(term -> {
+                    query.addFilterQuery("-term_id:" + SolrService.luceneEscape(term.getOboID()));
+                });
+            }
+        }
     }
 
 }
