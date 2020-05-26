@@ -85,4 +85,8 @@ cloneHead.tag ... that's why there's no table tag here, just rows --%>
 
 <z:attributeListItem label="Note">
     <zfin2:entityNotes entity="${formBean.clone}"/>
+    <c:if test="${!empty formBean.dbSnps}">
+        Candidate SNPs in the zebrafish genome were mapped by <a href="/ZDB-PUB-070427-10">Bradley KM et al.</a> The list of reference SNPs mapped on this genomic clone has been retrieved through data exchange between NCBI and ZFIN. These reference SNP identifiers were created by NCBI during periodic 'builds' of the dbSNP database. NCBI has phased out support for non-human organisms in dbSNP and dbVar. Zebrafish SNP details can be obtained from the archive directory <a href="ftp://ftp.ncbi.nih.gov/snp/archive">ftp://ftp.ncbi.nih.gov/snp/archive</a>.<p>${formBean.dbSnps}</p>
+
+    </c:if>
 </z:attributeListItem>
