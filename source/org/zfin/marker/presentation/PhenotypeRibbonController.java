@@ -2,6 +2,7 @@ package org.zfin.marker.presentation;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.extern.log4j.Log4j2;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,15 +10,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.zfin.anatomy.repository.AnatomyRepository;
+import org.zfin.expression.Image;
 import org.zfin.framework.api.*;
 import org.zfin.mutant.PhenotypeObservationStatement;
-import org.zfin.ontology.service.RibbonService;
 import org.zfin.mutant.PhenotypeService;
+import org.zfin.ontology.service.RibbonService;
 import org.zfin.wiki.presentation.Version;
-import org.zfin.expression.Image;
-import org.apache.solr.client.solrj.SolrServerException;
-import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api")
@@ -78,7 +79,7 @@ public class PhenotypeRibbonController {
         JsonResultResponse<PhenotypeObservationStatement> response;
         pagination.addFieldFilter(FieldFilter.FILTER_TERM_NAME, filterTermName);
         try {
-            response = ribbonService.getPhenotypeDetailSolr(geneID, termID, pagination);
+            response = ribbonService.getPhenotypeDetails(geneID, termID, pagination);
         } catch (Exception e) {
             log.error("Error while retrieving ribbon details", e);
             RestErrorMessage error = new RestErrorMessage(500);

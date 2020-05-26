@@ -271,12 +271,16 @@ public class RibbonService {
         return response;
     }
 
-    public JsonResultResponse<PhenotypeObservationStatement> getPhenotypeDetailSolr(String geneID, String termID, Pagination pagination) {
-
-        List<PhenotypeObservationStatement> list = getMutantRepository().getPhenotypeStatements(geneID, termID);
+    public JsonResultResponse<PhenotypeObservationStatement> getPhenotypeDetails(String geneID, String termIDs, Pagination pagination) {
+        String[] termIDList = termIDs.split(",");
+        String paginatedTermIDs = Arrays.stream(termIDList)
+                .skip(pagination.getStart())
+                .limit(pagination.getLimit())
+                .collect(joining(","));
+        List<PhenotypeObservationStatement> list = getMutantRepository().getPhenotypeStatements(geneID, paginatedTermIDs);
         JsonResultResponse<PhenotypeObservationStatement> response = new JsonResultResponse<>();
         response.setResults(list);
-        response.setTotal(list.size());
+        response.setTotal(termIDList.length);
         return response;
     }
 
@@ -315,7 +319,7 @@ public class RibbonService {
             return response;
         }
 
-        List<DevelopmentStage> stageTerms = anatomyRepository.getAllStagesWithoutUnknown();
+        List<DevelopmentStage> stageTerms = anatomyRepository.getAllStages();
         Map<String, DevelopmentStage> stageTermMap = stageTerms.stream()
                 .collect(toMap(DevelopmentStage::getOboID, term -> term));
 
@@ -357,7 +361,6 @@ public class RibbonService {
                     List<String> pubRibbon = ribbonDetail1.getPubIDs();
                     ribbonDetail1.setRibbonPubs(pubRibbon);
                 });
-        phenotypeRibbonDetails.removeIf(phenotypeRibbonDetail -> phenotypeRibbonDetail.getStages() == null);
 
         JsonResultResponse<PhenotypeRibbonSummary> response = new JsonResultResponse<>();
         response.setTotal(queryResponse.getFieldStatsInfo().get("phenotype_statement_s").getCountDistinct());
