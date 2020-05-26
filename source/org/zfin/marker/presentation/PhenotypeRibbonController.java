@@ -99,8 +99,9 @@ public class PhenotypeRibbonController {
     public JsonResultResponse<Image> getPhenotypeImages(@PathVariable String zdbID,
                                                         @RequestParam(required = false) String termId,
                                                         @RequestParam(required = false) boolean isOther,
+                                                        @RequestParam(required = false) String phenotypeIds,
                                                         @Version Pagination pagination) throws IOException, SolrServerException {
-        JsonResultResponse<Image> response = phenotypeService.getPhenotypeImages(zdbID, termId, isOther, pagination);
+        JsonResultResponse<Image> response = phenotypeService.getPhenotypeImages(zdbID, termId, isOther, phenotypeIds, pagination);
         response.setHttpServletRequest(request);
         return response;
     }

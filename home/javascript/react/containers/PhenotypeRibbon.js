@@ -1,18 +1,17 @@
 import React, {useState} from 'react';
 import PropTypes from 'prop-types';
-import qs from 'qs';
 import {useFetch, useRibbonState, useTableState} from '../utils/effects';
 
 import GenericErrorMessage from '../components/GenericErrorMessage';
 import LoadingSpinner from '../components/LoadingSpinner';
 import NoData from '../components/NoData';
-import Ribbon, {getSelectedTermQueryParams} from '../components/Ribbon';
-import DataTable, {DEFAULT_TABLE_STATE} from '../components/data-table';
-import StageTimelineHeader from '../components/StageTimelineHeader';
-import StageTimeline from '../components/StageTimeline';
-import AttributionLink from '../components/AttributionLink';
-import Stage from '../components/Stage';
-import PhenotypeFigureGallery from './PhenotypeFigureGallery';
+import Ribbon from '../components/Ribbon';
+import {DEFAULT_TABLE_STATE} from '../components/data-table';
+import {
+    PhenotypeAnnotationDetailTable,
+    PhenotypeAnnotationSummaryTable,
+    PhenotypeFigureGallery,
+} from '../components/phenotype';
 
 const PhenotypeRibbon = ({geneId}) => {
     const data = useFetch(`/action/api/marker/${geneId}/phenotype/ribbon-summary`);
@@ -52,95 +51,17 @@ const PhenotypeRibbon = ({geneId}) => {
         setSelectedRibbonTerm(subject, group);
     };
 
-    const columnsDetail = [
-        {
-            label: 'Fish',
-            content: ({phenotypeSourceGenerated}) => <a href={`/${phenotypeSourceGenerated.fishExperiment.fish.zdbID}`} dangerouslySetInnerHTML={{__html: phenotypeSourceGenerated.fishExperiment.fish.displayName}}/>,
-            width: '200px',
-        },
-        {
-            label: 'Experiment',
-            content: ({phenotypeSourceGenerated}) => phenotypeSourceGenerated.fishExperiment.experiment.conditions,
-            width: '150px',
-        },
-        {
-            label: 'Stage',
-            content: row => (
-                <Stage
-                    startStage={row.phenotypeSourceGenerated.start}
-                    endStage={row.phenotypeSourceGenerated.end}
-                /> ),
-            width: '200px',
-        },
-        {
-            label: 'Figure',
-            content: ({phenotypeSourceGenerated}) => <a href={`/${phenotypeSourceGenerated.figure.zdbID}`} dangerouslySetInnerHTML={{__html: phenotypeSourceGenerated.figure.label}}/>,
-            width: '100px',
-        },
-        {
-            label: 'Publication',
-            content: ({phenotypeSourceGenerated}) => <a href={`/${phenotypeSourceGenerated.figure.publication.zdbID}`} dangerouslySetInnerHTML={{__html: phenotypeSourceGenerated.figure.publication.shortAuthorList}}/>,
-            width: '200px',
-        },
-    ];
-
-    const columns = [
-        {
-            label: 'Phenotype',
-            key: 'locations',
-            content: ({phenotype, phenotypeIDs}) =>
-                <a
-                    href='#'
-                    onClick={event => handleEntityNameClick(event, phenotypeIDs, phenotype)}
-                    dangerouslySetInnerHTML={{__html: phenotype}}
-                />,
-            width: '140px',
-            filterName: 'termName',
-        },
-        {
-            label: <StageTimelineHeader/>,
-            key: 'stages',
-            content: ({stages}, supplementalData) => (
-                <StageTimeline highlightedStages={stages} allStages={supplementalData.stages}/>
-            ),
-            width: '300px',
-        },
-        {
-            label: 'Citations',
-            content: row => (
-                <AttributionLink
-                    url={`/action/marker/${geneId}`}
-                    publicationCount={row.numberOfPublications}
-                    publication={row.publication}
-                    multiPubAccessionID={geneId}
-                    multiPubs={row.ribbonPubs}
-                />
-            ),
-            width: '120px',
-        },
-    ];
-
-    let selectedTermName = '';
-    let selectedTermId = '';
-    let selectedTermIsOther = false;
-    if (selectedTablePhenotype) {
-        selectedTermName = selectedTablePhenotype;
-        //todo: need to handle subterm also
-        selectedTermId = selectedRibbonTerm.group.id;
-    } else if (selectedRibbonTerm) {
-        selectedTermName = selectedRibbonTerm.group.label;
-        selectedTermIsOther = selectedRibbonTerm.group.type === 'Other';
-        Window.alert(selectedRibbonTerm.group.type);
-        if (selectedRibbonTerm.group.type !== 'GlobalAll') {
-            selectedTermId = selectedRibbonTerm.group.id;
-        }
+    const handleClearTableSelection = () => {
+        setSelectedTablePhenotype(null);
+        setSelectedTableIDs(null);
     }
 
-    const summaryTableQuery = getSelectedTermQueryParams(selectedRibbonTerm);
-
-    const detailTableQuery = {
-        termId: selectedTableIDs,
-    };
+    let selectedTermName = '';
+    if (selectedTablePhenotype) {
+        selectedTermName = selectedTablePhenotype;
+    } else if (selectedRibbonTerm) {
+        selectedTermName = selectedRibbonTerm.group.label;
+    }
 
     return (
         <div>
@@ -152,38 +73,37 @@ const PhenotypeRibbon = ({geneId}) => {
             />
 
             {selectedTablePhenotype &&
-            <button className=' btn btn-link btn-sm px-0' onClick={() => setSelectedTablePhenotype(null)}>
-                <i className=' fas fa-chevron-left'/> Back to phenotype in {selectedRibbonTerm.group.label}
-            </button>
+                <button className=' btn btn-link btn-sm px-0' onClick={handleClearTableSelection}>
+                    <i className=' fas fa-chevron-left'/> Back to phenotype in {selectedRibbonTerm.group.label}
+                </button>
             }
             {selectedTermName && <h5>Phenotype in <span dangerouslySetInnerHTML={{__html: selectedTermName}} /></h5>}
 
-            {(selectedRibbonTerm || selectedTablePhenotype) &&
-            <PhenotypeFigureGallery
-                geneId={geneId}
-                selectedTermId={selectedTermId}
-                selectedTermIsOther={selectedTermIsOther}
-            />
+            {(selectedRibbonTerm || selectedTableIDs) &&
+                <PhenotypeFigureGallery
+                    geneId={geneId}
+                    selectedRibbonTerm={selectedRibbonTerm}
+                    selectedTableIds={selectedTableIDs}
+                />
             }
 
             {selectedRibbonTerm && !selectedTablePhenotype &&
-            <DataTable
-                dataUrl={`/action/api/marker/${geneId}/phenotype/summary?${qs.stringify(summaryTableQuery)}`}
-                columns={columns}
-                rowKey={row => row.phenotype}
-                tableState={summaryTableState}
-                setTableState={setSummaryTableState}
-            />
+                <PhenotypeAnnotationSummaryTable
+                    geneId={geneId}
+                    onEntityClick={handleEntityNameClick}
+                    selectedRibbonTerm={selectedRibbonTerm}
+                    setTableState={setSummaryTableState}
+                    tableState={summaryTableState}
+                />
             }
 
             {selectedTablePhenotype &&
-            <DataTable
-                dataUrl={`/action/api/marker/${geneId}/phenotype/detail?${qs.stringify(detailTableQuery)}`}
-                columns={columnsDetail}
-                rowKey={row => row.id}
-                tableState={detailTableState}
-                setTableState={setDetailTableState}
-            />
+                <PhenotypeAnnotationDetailTable
+                    geneId={geneId}
+                    selectedPhenotypeIds={selectedTableIDs}
+                    setTableState={setDetailTableState}
+                    tableState={detailTableState}
+                />
             }
         </div>
     )

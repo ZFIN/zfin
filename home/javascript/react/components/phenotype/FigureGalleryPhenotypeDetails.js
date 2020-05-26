@@ -1,9 +1,9 @@
 import React from 'react';
-import { fetchType } from '../utils/types';
-import LoadingSpinner from './LoadingSpinner';
-import CommaSeparatedList from './CommaSeparatedList';
-import OverflowParagraph from './OverflowParagraph';
-import StageLink from './StageLink';
+import { fetchType } from '../../utils/types';
+import LoadingSpinner from '../LoadingSpinner';
+import CommaSeparatedList from '../CommaSeparatedList';
+import OverflowParagraph from '../OverflowParagraph';
+import StageLink from '../StageLink';
 
 
 const FigureGalleryPhenotypeDetails = ({figureDetails}) => {

@@ -1,7 +1,7 @@
 package org.zfin.mutant;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.FacetField;
@@ -546,15 +546,20 @@ public class PhenotypeService {
     }
 
 
-    public JsonResultResponse<Image> getPhenotypeImages(String geneId, String termId,  boolean isOther, Pagination pagination) throws IOException, SolrServerException {
+    public JsonResultResponse<Image> getPhenotypeImages(String geneId, String termId, boolean isOther, String phenotypeIds, Pagination pagination) throws IOException, SolrServerException {
         JsonResultResponse<Image> response = new JsonResultResponse<>();
 
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/phenotype-annotation");
         query.addFilterQuery("gene_zdb_id:" + geneId);
         query.addFilterQuery("has_image:true");
-        if (org.apache.commons.lang3.StringUtils.isNotEmpty(termId)) {
+        if (StringUtils.isNotEmpty(termId)) {
             query.addFilterQuery("term_id:" + SolrService.luceneEscape(termId));
+        }
+        if (StringUtils.isNotEmpty(phenotypeIds)) {
+            query.addFilterQuery(Arrays.stream(phenotypeIds.split(","))
+                    .map(phenotypeId -> "id:psg-" + phenotypeId)
+                    .collect(Collectors.joining(" OR ")));
         }
         if (isOther) {
             ontologyRepository.getZfaRibbonTermIDs().forEach(t ->
