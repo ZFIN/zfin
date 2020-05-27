@@ -15,7 +15,7 @@
     <zfin2:dataManager zdbID="${markerID}"
                        deleteURL="none"
                        mergeURL="${mergeURL}"
-                       editURL="${editURL}"
+                       editMarker="true"
                        prototypeURL="/action/marker/pseudogene/prototype-view/${formBean.marker.zdbID}"
     />
 
