@@ -5,10 +5,10 @@ import DataTable from '../data-table';
 import StageTimelineHeader from '../StageTimelineHeader';
 import StageTimeline from '../StageTimeline';
 import AttributionLink from '../AttributionLink';
-import {getSelectedTermQueryParams} from '../Ribbon';
+import {getSelectedTermQueryParams} from '../ribbon';
 import {tableStateType} from '../../utils/types';
 
-const PhenotypeAnnotationSummaryTable = ({geneId, onEntityClick, selectedRibbonTerm, setTableState, tableState}) => {
+const PhenotypeAnnotationSummaryTable = ({excludeEaps, geneId, onEntityClick, selectedRibbonTerm, setTableState, tableState}) => {
     const columns = [
         {
             label: 'Phenotype',
@@ -46,6 +46,9 @@ const PhenotypeAnnotationSummaryTable = ({geneId, onEntityClick, selectedRibbonT
     ];
 
     const summaryTableQuery = getSelectedTermQueryParams(selectedRibbonTerm);
+    if (excludeEaps) {
+        summaryTableQuery.excludeEaps = true;
+    }
 
     return (
         <DataTable
@@ -59,6 +62,7 @@ const PhenotypeAnnotationSummaryTable = ({geneId, onEntityClick, selectedRibbonT
 };
 
 PhenotypeAnnotationSummaryTable.propTypes = {
+    excludeEaps: PropTypes.bool,
     geneId: PropTypes.string,
     onEntityClick: PropTypes.func,
     selectedRibbonTerm: PropTypes.object,

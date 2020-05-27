@@ -4,6 +4,8 @@
 @import "~bootstrap/scss/mixins";
 @import "~@geneontology/ribbon/lib/main";
 
+$single-line-height: $line-height-base * $font-size-base;
+
 body.data-page {
     background: $grey-light !important;
 
@@ -164,6 +166,11 @@ tr.spaceUnder > td{
     background: #ccc;
 }
 
+.data-ribbon-container {
+    position: relative;
+    min-height: $single-line-height;
+}
+
 .ontology-ribbon-container {
     white-space: nowrap;
     margin-bottom: 1rem;
@@ -211,7 +218,7 @@ tr.spaceUnder > td{
 .stage-timeline-tick-container {
     position: relative;
     font-weight: normal;
-    height: $line-height-base * $font-size-base;
+    height: $single-line-height;
 }
 
 .stage-timeline-tick {

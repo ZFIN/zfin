@@ -5,7 +5,7 @@ import {useFetch, useRibbonState, useTableState} from '../utils/effects';
 import LoadingSpinner from '../components/LoadingSpinner';
 import DataTable, {DEFAULT_TABLE_STATE} from '../components/data-table';
 import NoData from '../components/NoData';
-import Ribbon, {getSelectedTermQueryParams} from '../components/Ribbon';
+import {Ribbon, getSelectedTermQueryParams} from '../components/ribbon';
 import GenericErrorMessage from '../components/GenericErrorMessage';
 
 const GeneOntologyRibbon = ({geneId}) => {

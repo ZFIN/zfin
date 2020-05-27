@@ -6160,6 +6160,10 @@ and child.term_ontology = 'disease_ontology';
                             || concat(psg_e2a_zdb_id,',')
                             || concat(psg_e2b_zdb_id,',')
                             || concat(psg_tag) as phenotype_statement_term_id,
+                        case
+                          when psg_mrkr_relation = 'expression' or psg_mrkr_relation = 'labeling' then 'true'
+                          else 'false'
+                        end as is_eap,
                         'pg-' || pg_id as pg_id,
                         'psg-' || psg_id as id
                     from phenotype_source_generated

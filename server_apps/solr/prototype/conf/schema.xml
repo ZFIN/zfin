@@ -832,6 +832,7 @@
         <field name="subterm_id" type="keyword" indexed="true" stored="true" multiValued="true"/>
         <field name="postcomposed_term_id" type="string" indexed="true" stored="true" multiValued="true"/>
         <field name="phenotype_statement_term_id" type="string" indexed="true" stored="true" multiValued="true"/>
+        <field name="is_eap" type="boolean" indexed="true" stored="true" />
         <field name="construct_name" type="construct_name" indexed="true" stored="true" multiValued="false" />
         <field name="construct_alias" type="construct_name" indexed="true" stored="true" multiValued="true" />
 

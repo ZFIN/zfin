@@ -8,7 +8,7 @@ import GenericErrorMessage from '../GenericErrorMessage';
 import {useFetch} from '../../utils/effects';
 import qs from 'qs';
 
-const PhenotypeFigureGallery = ({geneId, selectedTableIds, selectedRibbonTerm}) => {
+const PhenotypeFigureGallery = ({excludeEaps, geneId, selectedTableIds, selectedRibbonTerm}) => {
     const [page, setPage] = useState(1);
     const [images, setImages] = useState([]);
     const [total, setTotal] = useState(0);
@@ -21,6 +21,9 @@ const PhenotypeFigureGallery = ({geneId, selectedTableIds, selectedRibbonTerm}) 
         setPending(true);
         const baseUrl = `/action/api/marker/${geneId}/phenotype/images`;
         const params = { page };
+        if (excludeEaps) {
+            params.excludeEaps = true;
+        }
         if (selectedTableIds) {
             params.phenotypeIds = selectedTableIds;
         } else if (selectedRibbonTerm) {
@@ -46,7 +49,7 @@ const PhenotypeFigureGallery = ({geneId, selectedTableIds, selectedRibbonTerm}) 
         setPage(1);
         setImages([]);
         fetchImages(1, results => setImages(results));
-    }, [geneId, selectedRibbonTerm, selectedTableIds]);
+    }, [geneId, selectedRibbonTerm, selectedTableIds, excludeEaps]);
 
     // if the page changes, concatenate the new images to the old ones
     useEffect(() => {
@@ -83,6 +86,7 @@ const PhenotypeFigureGallery = ({geneId, selectedTableIds, selectedRibbonTerm}) 
 };
 
 PhenotypeFigureGallery.propTypes = {
+    excludeEaps: PropTypes.bool,
     geneId: PropTypes.string,
     selectedRibbonTerm: PropTypes.object,
     selectedTableIds: PropTypes.string,

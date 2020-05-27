@@ -5,6 +5,8 @@ import http from './http';
 import {DEFAULT_TABLE_STATE} from '../components/data-table';
 
 export const useFetch = (url) => {
+    // a container for mutable data
+    const status = {};
     const [data, setData] = useState({
         pending: false,
         rejected: false,
@@ -18,6 +20,7 @@ export const useFetch = (url) => {
         if (!url) {
             return;
         }
+        status.mounted = true;
         setData(produce(data => {
             data.pending = true;
             data.rejected = false;
@@ -28,13 +31,18 @@ export const useFetch = (url) => {
         }
         const xhr = http.get(url);
         setRequest(xhr);
-        xhr.then(result => setData(produce(data => {
-            data.fulfilled = true;
-            data.rejected = false;
-            data.value = result;
-            data.reason = null;
-        }))).fail(error => {
-            if (error.statusText === 'abort') {
+        xhr.then(result => {
+            if (!status.mounted) {
+                return;
+            }
+            setData(produce(data => {
+                data.fulfilled = true;
+                data.rejected = false;
+                data.value = result;
+                data.reason = null;
+            }))
+        }).fail(error => {
+            if (error.statusText === 'abort' || !status.mounted) {
                 return;
             }
             setData(produce(data => {
@@ -44,11 +52,17 @@ export const useFetch = (url) => {
                 data.reason = error;
             }))
         }).always(() => {
+            if (!status.mounted) {
+                return;
+            }
             setRequest(null);
             setData(produce(data => {
                 data.pending = false
             }));
         });
+        return () => {
+            status.mounted = false;
+        };
     }, [url]);
 
     return data;

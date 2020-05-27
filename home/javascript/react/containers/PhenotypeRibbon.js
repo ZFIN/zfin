@@ -1,41 +1,30 @@
 import React, {useState} from 'react';
 import PropTypes from 'prop-types';
-import {useFetch, useRibbonState, useTableState} from '../utils/effects';
-
-import GenericErrorMessage from '../components/GenericErrorMessage';
-import LoadingSpinner from '../components/LoadingSpinner';
-import NoData from '../components/NoData';
-import Ribbon from '../components/Ribbon';
+import qs from 'qs';
+import {useRibbonState, useTableState} from '../utils/effects';
+import {DataRibbon} from '../components/ribbon';
 import {DEFAULT_TABLE_STATE} from '../components/data-table';
 import {
     PhenotypeAnnotationDetailTable,
     PhenotypeAnnotationSummaryTable,
     PhenotypeFigureGallery,
 } from '../components/phenotype';
+import Checkbox from '../components/Checkbox';
 
 const PhenotypeRibbon = ({geneId}) => {
-    const data = useFetch(`/action/api/marker/${geneId}/phenotype/ribbon-summary`);
     const [summaryTableState, setSummaryTableState] = useTableState();
     const [detailTableState, setDetailTableState] = useTableState();
     const [selectedRibbonTerm, setSelectedRibbonTerm] = useRibbonState();
     const [selectedTablePhenotype, setSelectedTablePhenotype] = useState(null);
     const [selectedTableIDs, setSelectedTableIDs] = useState(null);
+    const [excludeEaps, setExcludeEaps] = useState(false);
 
-    if (data.rejected) {
-        return <GenericErrorMessage/>;
+    const baseUrl = `/action/api/marker/${geneId}/phenotype/ribbon-summary`;
+    const params = {};
+    if (excludeEaps) {
+        params.excludeEaps = true
     }
-
-    if (data.pending) {
-        return <LoadingSpinner/>;
-    }
-
-    if (!data.value) {
-        return null;
-    }
-
-    if (data.value.subjects[0].nb_annotations === 0) {
-        return <NoData/>
-    }
+    const ribbonDataUrl = baseUrl + qs.stringify(params, { addQueryPrefix: true });
 
     const handleEntityNameClick = (event, ids, phenotype) => {
         event.preventDefault();
@@ -56,6 +45,11 @@ const PhenotypeRibbon = ({geneId}) => {
         setSelectedTableIDs(null);
     }
 
+    const handleNoDataLoad = () => {
+        setSelectedRibbonTerm(null, null);
+        handleClearTableSelection();
+    }
+
     let selectedTermName = '';
     if (selectedTablePhenotype) {
         selectedTermName = selectedTablePhenotype;
@@ -65,10 +59,16 @@ const PhenotypeRibbon = ({geneId}) => {
 
     return (
         <div>
-            <Ribbon
-                subjects={data.value.subjects}
-                categories={data.value.categories}
-                itemClick={handleRibbonCellClick}
+            <div className='mb-2'>
+                <Checkbox checked={excludeEaps} id='excludeEapsCheckbox' onChange={e => setExcludeEaps(e.target.checked)}>
+                    Exclude altered gene expression phenotypes
+                </Checkbox>
+            </div>
+
+            <DataRibbon
+                dataUrl={ribbonDataUrl}
+                onNoDataLoad={handleNoDataLoad}
+                onRibbonCellClick={handleRibbonCellClick}
                 selected={selectedRibbonTerm}
             />
 
@@ -81,6 +81,7 @@ const PhenotypeRibbon = ({geneId}) => {
 
             {(selectedRibbonTerm || selectedTableIDs) &&
                 <PhenotypeFigureGallery
+                    excludeEaps={excludeEaps}
                     geneId={geneId}
                     selectedRibbonTerm={selectedRibbonTerm}
                     selectedTableIds={selectedTableIDs}
@@ -89,6 +90,7 @@ const PhenotypeRibbon = ({geneId}) => {
 
             {selectedRibbonTerm && !selectedTablePhenotype &&
                 <PhenotypeAnnotationSummaryTable
+                    excludeEaps={excludeEaps}
                     geneId={geneId}
                     onEntityClick={handleEntityNameClick}
                     selectedRibbonTerm={selectedRibbonTerm}

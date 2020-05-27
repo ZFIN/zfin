@@ -548,13 +548,17 @@ public class PhenotypeService {
     }
 
 
-    public JsonResultResponse<Image> getPhenotypeImages(String geneId, String termId, boolean isOther, String phenotypeIds, Pagination pagination) throws IOException, SolrServerException {
+    public JsonResultResponse<Image> getPhenotypeImages(String geneId, String termId, boolean isOther, String phenotypeIds, boolean excludeEaps,
+                                                        Pagination pagination) throws IOException, SolrServerException {
         JsonResultResponse<Image> response = new JsonResultResponse<>();
 
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/phenotype-annotation");
         query.addFilterQuery("gene_zdb_id:" + geneId);
         query.addFilterQuery("has_image:true");
+        if (excludeEaps) {
+            query.addFilterQuery("is_eap:false");
+        }
         ribbonService.addRibbonTermQuery(query, termId, isOther);
         if (StringUtils.isNotEmpty(phenotypeIds)) {
             query.addFilterQuery(Arrays.stream(phenotypeIds.split(","))

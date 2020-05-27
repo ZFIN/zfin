@@ -39,8 +39,9 @@ public class PhenotypeRibbonController {
     private AnatomyRepository anatomyRepository;
 
     @RequestMapping(value = "/marker/{zdbID}/phenotype/ribbon-summary")
-    public RibbonSummary getPhenotypeRibbonSummary(@PathVariable("zdbID") String zdbID) throws Exception {
-        return ribbonService.buildPhenotypeRibbonSummary(zdbID);
+    public RibbonSummary getPhenotypeRibbonSummary(@PathVariable("zdbID") String zdbID,
+                                                   @RequestParam(required = false) boolean excludeEaps) throws Exception {
+        return ribbonService.buildPhenotypeRibbonSummary(zdbID, excludeEaps);
     }
 
     @JsonView(View.GeneExpressionAPI.class)
@@ -49,12 +50,13 @@ public class PhenotypeRibbonController {
                                                                           @RequestParam(value = "termId", required = false) String termID,
                                                                           @RequestParam(value = "filter.termName", required = false) String filterTermName,
                                                                           @RequestParam(required = false) boolean isOther,
+                                                                          @RequestParam(required = false) boolean excludeEaps,
                                                                           @Version Pagination pagination) {
         long startTime = System.currentTimeMillis();
         JsonResultResponse<PhenotypeRibbonSummary> response;
         pagination.addFieldFilter(FieldFilter.FILTER_TERM_NAME, filterTermName);
         try {
-            response = ribbonService.buildPhenotypeSummary(geneID, termID, pagination, isOther);
+            response = ribbonService.buildPhenotypeSummary(geneID, termID, pagination, isOther, excludeEaps);
         } catch (Exception e) {
             log.error("Error while retrieving ribbon details", e);
             RestErrorMessage error = new RestErrorMessage(500);
@@ -100,8 +102,9 @@ public class PhenotypeRibbonController {
                                                         @RequestParam(required = false) String termId,
                                                         @RequestParam(required = false) boolean isOther,
                                                         @RequestParam(required = false) String phenotypeIds,
+                                                        @RequestParam(required = false) boolean excludeEaps,
                                                         @Version Pagination pagination) throws IOException, SolrServerException {
-        JsonResultResponse<Image> response = phenotypeService.getPhenotypeImages(zdbID, termId, isOther, phenotypeIds, pagination);
+        JsonResultResponse<Image> response = phenotypeService.getPhenotypeImages(zdbID, termId, isOther, phenotypeIds, excludeEaps, pagination);
         response.setHttpServletRequest(request);
         return response;
     }

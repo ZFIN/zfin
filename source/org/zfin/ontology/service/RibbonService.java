@@ -79,10 +79,13 @@ public class RibbonService {
         ));
     }
 
-    public RibbonSummary buildPhenotypeRibbonSummary(String zdbID) throws Exception {
+    public RibbonSummary buildPhenotypeRibbonSummary(String zdbID, boolean excludeEaps) throws Exception {
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/phenotype-annotation");
         query.addFilterQuery(FieldName.GENE_ZDB_ID.getName() + ":" + zdbID);
+        if (excludeEaps) {
+            query.addFilterQuery("is_eap:false");
+        }
         return buildRibbonSummary(zdbID, query, List.of(
                 RibbonCategoryConfig.anatomy(),
                 RibbonCategoryConfig.stage(),
@@ -266,29 +269,14 @@ public class RibbonService {
         return response;
     }
 
-    public JsonResultResponse<PhenotypeRibbonSummary> buildPhenotypeSummary(String geneID, String termID, Pagination pagination, Boolean isOther) {
-        JsonResultResponse<PhenotypeRibbonSummary> response = getDetailPhenotypeInfo(geneID, termID, pagination, isOther);
-        return response;
-    }
-
-    public JsonResultResponse<PhenotypeObservationStatement> getPhenotypeDetails(String geneID, String termIDs, Pagination pagination) {
-        String[] termIDList = termIDs.split(",");
-        String paginatedTermIDs = Arrays.stream(termIDList)
-                .skip(pagination.getStart())
-                .limit(pagination.getLimit())
-                .collect(joining(","));
-        List<PhenotypeObservationStatement> list = getMutantRepository().getPhenotypeStatements(geneID, paginatedTermIDs);
-        JsonResultResponse<PhenotypeObservationStatement> response = new JsonResultResponse<>();
-        response.setResults(list);
-        response.setTotal(termIDList.length);
-        return response;
-    }
-
-    private JsonResultResponse<PhenotypeRibbonSummary> getDetailPhenotypeInfo(String geneID, String ribbonTermID, Pagination pagination, Boolean isOther) {
+    public JsonResultResponse<PhenotypeRibbonSummary> buildPhenotypeSummary(String geneID, String termID, Pagination pagination, Boolean isOther, boolean excludeEaps) {
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/phenotype-annotation");
         query.addFilterQuery("gene_zdb_id:" + geneID);
-        addRibbonTermQuery(query, ribbonTermID, isOther);
+        addRibbonTermQuery(query, termID, isOther);
+        if (excludeEaps) {
+            query.addFilterQuery("is_eap:false");
+        }
         final String filterValue = pagination.getFieldFilter(FieldFilter.FILTER_TERM_NAME);
         if (StringUtils.isNotEmpty(filterValue)) {
             query.addFilterQuery("phenotype_statement_ac:(" + filterValue.trim() + ")");
@@ -358,6 +346,19 @@ public class RibbonService {
         response.setTotal(queryResponse.getFieldStatsInfo().get("phenotype_statement_s").getCountDistinct());
         response.setResults(phenotypeRibbonDetails);
 
+        return response;
+    }
+
+    public JsonResultResponse<PhenotypeObservationStatement> getPhenotypeDetails(String geneID, String termIDs, Pagination pagination) {
+        String[] termIDList = termIDs.split(",");
+        String paginatedTermIDs = Arrays.stream(termIDList)
+                .skip(pagination.getStart())
+                .limit(pagination.getLimit())
+                .collect(joining(","));
+        List<PhenotypeObservationStatement> list = getMutantRepository().getPhenotypeStatements(geneID, paginatedTermIDs);
+        JsonResultResponse<PhenotypeObservationStatement> response = new JsonResultResponse<>();
+        response.setResults(list);
+        response.setTotal(termIDList.length);
         return response;
     }
 

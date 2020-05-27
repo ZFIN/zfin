@@ -6,7 +6,7 @@ import {tableStateType} from '../../utils/types';
 import StageTimelineHeader from '../StageTimelineHeader';
 import StageTimeline from '../StageTimeline';
 import AttributionLink from '../AttributionLink';
-import {getSelectedTermQueryParams} from '../Ribbon';
+import {getSelectedTermQueryParams} from '../ribbon';
 
 const GeneExpressionAnnotationSummaryTable = (
     {

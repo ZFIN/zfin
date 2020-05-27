@@ -1,33 +1,15 @@
 import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 import qs from 'qs';
-import {useFetch, useRibbonState, useTableState} from '../utils/effects';
-import LoadingSpinner from '../components/LoadingSpinner';
-
-import NoData from '../components/NoData';
-import Ribbon from '../components/Ribbon';
-import GenericErrorMessage from '../components/GenericErrorMessage';
+import {useRibbonState, useTableState} from '../utils/effects';
+import { DataRibbon } from '../components/ribbon';
 import {DEFAULT_TABLE_STATE} from '../components/data-table';
 import {
     GeneExpressionAnnotationDetailTable,
     GeneExpressionAnnotationSummaryTable,
     GeneExpressionFigureGallery,
 } from '../components/gene-expression';
-
-const ribbonGroupHasData = (ribbonData, group) => {
-    if (!ribbonData) {
-        return false;
-    }
-    if (group.type === 'GlobalAll') {
-        return ribbonData.subjects[0].nb_annotations > 0;
-    }
-    let groupId = group.id;
-    if (group.type === 'Other') {
-        groupId += '-other';
-    }
-    return ribbonData.subjects[0].groups[groupId] &&
-        ribbonData.subjects[0].groups[groupId].ALL.nb_annotations > 0;
-}
+import Checkbox from '../components/Checkbox';
 
 const GeneExpressionRibbon = ({geneId}) => {
     const [summaryTableState, setSummaryTableState] = useTableState();
@@ -37,15 +19,15 @@ const GeneExpressionRibbon = ({geneId}) => {
     const [includeReporter, setIncludeReporter] = useState(false);
     const [isDirectlySubmitted, setIsDirectlySubmitted] = useState(false);
 
-    let url = `/action/api/marker/${geneId}/expression/ribbon-summary`;
-    let params = {};
+    const baseUrl = `/action/api/marker/${geneId}/expression/ribbon-summary`;
+    const params = {};
     if (includeReporter) {
         params.includeReporter = true;
     }
     if (isDirectlySubmitted) {
         params.onlyDirectlySubmitted = true;
     }
-    const data = useFetch(url + qs.stringify(params, { addQueryPrefix: true }));
+    const ribbonDataUrl = baseUrl + qs.stringify(params, { addQueryPrefix: true });
 
     const handleEntityNameClick = (event, entity) => {
         event.preventDefault();
@@ -67,6 +49,11 @@ const GeneExpressionRibbon = ({geneId}) => {
         setSelectedRibbonTerm(subject, group);
     };
 
+    const handleNoDataLoad = () => {
+        setSelectedRibbonTerm(null, null);
+        setSelectedTableEntity(null);
+    }
+
     let selectedTermName = '';
     if (selectedTableEntity) {
         selectedTermName = selectedTableEntity.superterm.termName
@@ -77,54 +64,23 @@ const GeneExpressionRibbon = ({geneId}) => {
         selectedTermName = selectedRibbonTerm.group.label;
     }
 
-    if (selectedRibbonTerm && !data.loading && !ribbonGroupHasData(data.value, selectedRibbonTerm.group)) {
-        setSelectedRibbonTerm(null, null);
-        setSelectedTableEntity(null);
-    }
-
     return (
         <div>
-            <div className='custom-control custom-checkbox'>
-                <input
-                    type='checkbox'
-                    id='reporterSelectionCheckbox'
-                    className='custom-control-input'
-                    onChange={(event) => handleReporterSelection(event)}
-                    checked={includeReporter}
-                />
-                <label className='custom-control-label' htmlFor='reporterSelectionCheckbox'>
+            <div className='mb-2'>
+                <Checkbox checked={includeReporter} id='reporterSelectionCheckbox' onChange={handleReporterSelection}>
                     Include Expression in Reporter Lines
-                </label>
-            </div>
-            <div className='custom-control custom-checkbox'>
-                <input
-                    type='checkbox'
-                    id='directSubmissionCheckbox'
-                    className='custom-control-input'
-                    onChange={(event) => handleDirectSubmissionSelection(event)}
-                    checked={isDirectlySubmitted}
-                />
-                <label className='custom-control-label' htmlFor='directSubmissionCheckbox'>
+                </Checkbox>
+                <Checkbox checked={isDirectlySubmitted} id='directSubmissionCheckbox' onChange={handleDirectSubmissionSelection}>
                     Show only Directly Submitted Expression Data
-                </label>
+                </Checkbox>
             </div>
 
-            { data.rejected && <GenericErrorMessage/> }
-
-            {/* this relative position container and absolute position loading spinner keeps the ribbon from */}
-            {/* bouncing around when new data is loaded because the checkboxes change */}
-            <div className='position-relative'>
-                { data.pending && <div className='position-absolute'><LoadingSpinner/></div> }
-                { data.value && (data.value.subjects[0].nb_annotations === 0 ?
-                    (!data.pending && <NoData />) :
-                    <Ribbon
-                        subjects={data.value.subjects}
-                        categories={data.value.categories}
-                        itemClick={handleRibbonCellClick}
-                        selected={selectedRibbonTerm}
-                    />
-                )}
-            </div>
+            <DataRibbon
+                dataUrl={ribbonDataUrl}
+                onNoDataLoad={handleNoDataLoad}
+                onRibbonCellClick={handleRibbonCellClick}
+                selected={selectedRibbonTerm}
+            />
 
             {selectedTableEntity &&
                 <button className=' btn btn-link btn-sm px-0' onClick={() => setSelectedTableEntity(null)}>
