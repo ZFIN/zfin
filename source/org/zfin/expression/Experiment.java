@@ -178,12 +178,17 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
         if (iterator.hasNext()) {
             ExperimentCondition firstExperimentCondition = (ExperimentCondition) iterator.next();
             displayConditions = firstExperimentCondition.getDisplayName();
+            if (firstExperimentCondition.getExperiment().isOnlyControl()) {
+                return "control";
+            }
             while (iterator.hasNext()) {
                 displayConditions += ", ";
                 ExperimentCondition experimentCondition = (ExperimentCondition) iterator.next();
                 displayConditions += experimentCondition.getDisplayName();
+
             }
         }
+
         return displayConditions;
     }
 
