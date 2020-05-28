@@ -11,6 +11,7 @@
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.GeneBean" scope="request"/>
 
 <c:set var="mergeURL">/action/marker/merge?zdbIDToDelete=${formBean.marker.zdbID}</c:set>
+    <c:set var="editURL">/action/marker/gene/edit/${formBean.marker.zdbID}</c:set>
 
     <zfin2:dataManager zdbID="${markerID}"
                        deleteURL="none"
