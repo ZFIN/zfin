@@ -20,13 +20,22 @@
         </ul>
     </z:attributeListItem>
 
-    <z:attributeListItem label="Type">
-        <zfin2:externalLink
-                href="http://www.sequenceontology.org/browser/current_svn/term/${formBean.zfinSoTerm.oboID}">${formBean.zfinSoTerm.termName}</zfin2:externalLink>
+    <z:attributeListItem>
+        <jsp:attribute name="label">
+            Transcript Type <a class="popup-link info-popup-link" href="/action/marker/transcript-types"></a>
+        </jsp:attribute>
+        <jsp:body>
+            ${formBean.transcript.transcriptType.display}
+        </jsp:body>
     </z:attributeListItem>
 
-    <z:attributeListItem label="Annotation Status">
-        ${formBean.transcript.status.display}
+    <z:attributeListItem>
+         <jsp:attribute name="label">
+             Annotation Status <a class="popup-link info-popup-link" href="/action/marker/transcript-statuses"></a>
+        </jsp:attribute>
+        <jsp:body>
+             ${formBean.transcript.status.display}
+        </jsp:body>
     </z:attributeListItem>
 
     <z:attributeListItem label="Associated With Genes">
