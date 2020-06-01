@@ -45,6 +45,14 @@
              <jsp:include page="transcript-view-targets.jsp"/>
             </z:section>
         </c:if>
+        
+        <z:section title="${SEQUENCE}">
+            <jsp:include page="transcript-view-sequence.jsp"/>
+        </z:section>
+
+        <z:section title="${GBROWSE}">
+            <jsp:include page="transcript-view-gbrowse.jsp"/>
+        </z:section>
 
         <z:section title="${RELATEDTRANSCRIPTS}">
             <z:section title="Confirmed Transcripts">
@@ -57,13 +65,7 @@
             </authz:authorize>
         </z:section>
 
-        <z:section title="${SEQUENCE}">
-            <jsp:include page="transcript-view-sequence.jsp"/>
-        </z:section>
 
-        <z:section title="${GBROWSE}">
-            <jsp:include page="transcript-view-gbrowse.jsp"/>
-        </z:section>
 
         <z:section title="${SEGMENTRELATIONSHIPS}">
             <div class="__react-root" id="GeneMarkerRelationshipsTable" data-gene-id="${formBean.marker.zdbID}"></div>
