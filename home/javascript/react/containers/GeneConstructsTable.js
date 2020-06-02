@@ -47,8 +47,8 @@ const GeneConstructsTable = ({geneId}) => {
     const columns = [
         {
             label: 'Construct',
-            content: ({construct}) => <EntityLink entity={construct}/>,
-            width: '150px',
+            content: ({construct}) => <span className='text-break'><EntityLink entity={construct}/></span>,
+            width: '200px',
             filterName: 'name',
         },
         {

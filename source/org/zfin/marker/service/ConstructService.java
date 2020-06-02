@@ -56,7 +56,7 @@ public class ConstructService {
                 FieldName.CATEGORY.getName() + ":" + Category.CONSTRUCT.getName(),
                 FieldName.RELATED_GENE_ZDB_ID.getName() + ":" + zdbID
         );
-        addFilterQuery(query, FieldName.NAME_AC, pagination.getFieldFilter(FieldFilter.NAME));
+        addFilterQuery(query, FieldName.CONSTRUCT_NAME, pagination.getFieldFilter(FieldFilter.NAME));
         addFilterQuery(query, FieldName.REGULATORY_REGION_AC, pagination.getFieldFilter(FieldFilter.REGULATORY_REGION));
         addFilterQuery(query, FieldName.CODING_SEQUENCE_AC, pagination.getFieldFilter(FieldFilter.CODING_SEQUENCE));
         addFilterQuery(query, FieldName.RELATED_SPECIES_NAME_AC, pagination.getFieldFilter(FieldFilter.SPECIES));
