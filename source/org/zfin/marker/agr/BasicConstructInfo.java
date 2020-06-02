@@ -67,8 +67,10 @@ public class BasicConstructInfo extends AbstractScriptWrapper {
                                 for (ConstructComponent component : components) {
                                     ConstructComponentDTO componentDTO = new ConstructComponentDTO();
                                     // currently only populate the component ZDB id when we've already submitted the gene in the BGI (ie: no EFGs, regions at this time)
-                                    if (component.getComponentZdbID().startsWith("ZDB-GENE"))
-                                        componentDTO.setComponentID("ZFIN:" + component.getComponentZdbID());
+                                    if (component.getComponentZdbID() != null) {
+                                        if (component.getComponentZdbID().startsWith("ZDB-GENE"))
+                                            componentDTO.setComponentID("ZFIN:" + component.getComponentZdbID());
+                                    }
                                     if (component.getType().equals(ConstructComponent.Type.CODING_SEQUENCE_OF) || component.getType().equals(ConstructComponent.Type.CODING_SEQUENCE_OF_)) {
                                         componentDTO.setComponentRelation("expresses");
                                     } else if (component.getType().equals(ConstructComponent.Type.PROMOTER_OF) || component.getType().equals(ConstructComponent.Type.PROMOTER_OF_)) {

@@ -13,10 +13,10 @@
 <c:set var="CITATIONS" value="Citations"/>
 
 <c:if test="${formBean.marker.transcriptType.display eq 'miRNA'}">
-    <c:set var="sections" value="${[SUMMARY, TARGETGENES, RELATEDTRANSCRIPTS, SEQUENCE, GBROWSE, SEGMENTRELATIONSHIPS, PROTEINS, SUPPORTINGSEQUENCES, CITATIONS]}"/>
+    <c:set var="sections" value="${[SUMMARY, TARGETGENES, SEQUENCE, GBROWSE, RELATEDTRANSCRIPTS, SEGMENTRELATIONSHIPS, PROTEINS, SUPPORTINGSEQUENCES, CITATIONS]}"/>
 </c:if>
 <c:if test="${formBean.marker.transcriptType.display ne 'miRNA'}">
-    <c:set var="sections" value="${[SUMMARY, RELATEDTRANSCRIPTS, SEQUENCE, GBROWSE, SEGMENTRELATIONSHIPS, PROTEINS, SUPPORTINGSEQUENCES, CITATIONS]}"/>
+    <c:set var="sections" value="${[SUMMARY, SEQUENCE, GBROWSE, RELATEDTRANSCRIPTS, SEGMENTRELATIONSHIPS, PROTEINS, SUPPORTINGSEQUENCES, CITATIONS]}"/>
 </c:if>
 
 <z:dataPage sections="${sections}">
