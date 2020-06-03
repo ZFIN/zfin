@@ -19,49 +19,35 @@ import java.util.List;
 @Log4j2
 public class CitationListController {
 
-    @RequestMapping(value = "data-citation-list/{ids}")
-    public String getCitationList(Model model, @PathVariable String ids) {
-        return featureMarkerelationCitationList(model, null, ids);
+    @RequestMapping(value = "data-citation-list/{zdbID}")
+    public String getCitationList(Model model, @PathVariable String zdbID) {
+        return featureMarkerelationCitationList(model, zdbID, null);
     }
 
-    @RequestMapping(value = "data-citation-list/{zdbID}/{ids}")
-    public String featureMarkerelationCitationList(Model model, @PathVariable String zdbID, @PathVariable String ids) {
-        if (zdbID != null)
+        @RequestMapping(value = "data-citation-list/{zdbID}/{ids}")
+        public String featureMarkerelationCitationList(Model model, @PathVariable String zdbID, @PathVariable String ids) {
             model.addAttribute("dataZdbID", zdbID);
-        List<Publication> publications = new ArrayList<>();
-        if (ids != null) {
-            List<String> pubIDs = List.of(ids.split(","));
-            for (String pubs : pubIDs) {
-                publications.add(RepositoryFactory.getPublicationRepository().getPublication(pubs));
+            List<Publication> publications = new ArrayList<>();
+            if (ids !=null) {
+                List<String> pubIDs = List.of(ids.split(","));
+                for (String pubs : pubIDs) {
+                    publications.add(RepositoryFactory.getPublicationRepository().getPublication(pubs));
+                }
             }
-        } else {
-            List<PublicationAttribution> publicationAttributions = RepositoryFactory.getInfrastructureRepository().getPublicationAttributions(zdbID);
-            for (PublicationAttribution pub : publicationAttributions) {
-                publications.add(pub.getPublication());
+            else{
+                List<PublicationAttribution> publicationAttributions = RepositoryFactory.getInfrastructureRepository().getPublicationAttributions(zdbID);
+                for (PublicationAttribution pub : publicationAttributions) {
+                    publications.add(pub.getPublication());
+                }
             }
+            model.addAttribute("pubCount", publications.size());
+            PublicationListBean citationBean = new PublicationListAdapter(publications);
+            citationBean.setOrderBy("author");
+            model.addAttribute("citationList", citationBean);
+            return "infrastructure/data-citation-list.page";
         }
-        model.addAttribute("pubCount", publications.size());
-        PublicationListBean citationBean = new PublicationListAdapter(publications);
-        citationBean.setOrderBy("author");
-        model.addAttribute("citationList", citationBean);
-        return "infrastructure/data-citation-list.page";
-    }
 
-    /*@RequestMapping(value = "data-citation-list/{zdbID}")
-    public String featureMarkerelationCitationList(Model model, @PathVariable String zdbID) {
-        model.addAttribute("dataZdbID", zdbID);
-        List<Publication> publications = new ArrayList<>();
-        List<PublicationAttribution> publicationAttributions = RepositoryFactory.getInfrastructureRepository().getPublicationAttributions(zdbID);
-        for (PublicationAttribution pub : publicationAttributions) {
-            publications.add(pub.getPublication());
-        }
-        model.addAttribute("pubCount", publications.size());
-        PublicationListBean citationBean = new PublicationListAdapter(publications);
-        citationBean.setOrderBy("author");
-        model.addAttribute("citationList", citationBean);
 
-        return "infrastructure/data-citation-list.page";
-    }*/
 }
 
 
