@@ -16,6 +16,7 @@ const MarkerSequencesTable = ({markerId, showSummary}) => {
             content: row => row.type,
             width: '80px',
             filterName: 'type',
+            filterOptions: ['Genomic', 'RNA', 'Polypeptide'],
         },
         {
             label: 'Accession #',

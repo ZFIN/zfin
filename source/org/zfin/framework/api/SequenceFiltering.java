@@ -14,7 +14,7 @@ public class SequenceFiltering extends Filtering<MarkerDBLink> {
             (dbLink, value) -> FilterFunction.contains(dbLink.getAccessionNumberDisplay(), value);
 
     public static FilterFunction<MarkerDBLink, String> typeFilter =
-            (dbLink, value) -> FilterFunction.contains(dbLink.getSequenceType().toLowerCase(), value);
+            (dbLink, value) -> FilterFunction.fullMatchMultiValueOR(dbLink.getSequenceType().toLowerCase(), value);
 
     //public static Map<FieldFilter, FilterFunction<MarkerDBLink, String>> filterFieldMap = new HashMap<>();
 

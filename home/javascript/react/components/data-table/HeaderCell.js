@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {columnDefinitionType} from '../../utils/types';
 import {useDebouncedValue} from '../../utils/effects';
+import TextBoxFilter from './TextBoxFilter';
+import CheckboxListFilter from './CheckboxListFilter';
 
 const UPDATE_TIMEOUT = 200;
 
@@ -23,7 +25,6 @@ const HeaderCell = ({column, defaultFilterValue, onChange}) => {
     }, [defaultFilterValue]);
 
     const toggleFilter = () => setFilterOpen(prev => !prev);
-    const handleClear = () => setFilterValue('');
 
     return (
         <>
@@ -33,20 +34,9 @@ const HeaderCell = ({column, defaultFilterValue, onChange}) => {
                 </button>
             )}
             {filterOpen && (
-                <div className='position-relative'>
-                    <input
-                        className='form-control form-control-sm'
-                        type='text'
-                        value={filterValue || ''}
-                        onChange={event => setFilterValue(event.target.value)}
-                    />
-                    <button
-                        className='input-overlay-button p-1'
-                        onClick={handleClear}
-                    >
-                        <i className='fas fa-times' />
-                    </button>
-                </div>
+                column.filterOptions ?
+                    <CheckboxListFilter options={column.filterOptions} value={filterValue} onChange={setFilterValue} /> :
+                    <TextBoxFilter value={filterValue} onChange={setFilterValue} />
             )}
         </>
     );
