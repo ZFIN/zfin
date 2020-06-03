@@ -46,7 +46,7 @@ const GeneSTRTable = ({geneId}) => {
         },
         {
             label: 'Citations',
-            content: ({marker}) => <a href='/action/marker/citation-list/'>{marker.publications.length}</a>,
+            content: ({marker}) => <a href={`/action/marker/citation-list/${marker.zdbID}`}>{marker.publications.length}</a>,
             width: '100px',
             align: 'right',
         },
