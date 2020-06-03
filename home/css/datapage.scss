@@ -166,6 +166,12 @@ tr.spaceUnder > td{
     background: #ccc;
 }
 
+.ontology-ribbon {
+    &, & * {
+        box-sizing: content-box;
+    }
+}
+
 .data-ribbon-container {
     position: relative;
     min-height: $single-line-height;
@@ -175,6 +181,22 @@ tr.spaceUnder > td{
     white-space: nowrap;
     margin-bottom: 1rem;
     position: relative;
+}
+
+.ontology-ribbon__category {
+    height: auto;
+}
+
+.gene-expression-ribbon .ontology-ribbon__category__block {
+    height: 130px;
+}
+
+.phenotype-ribbon .ontology-ribbon__category__block {
+    height: 150px;
+}
+
+.gene-ontology-ribbon .ontology-ribbon__category__block {
+    height: 190px;
 }
 
 .ontology-ribbon__block__tile {

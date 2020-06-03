@@ -58,7 +58,7 @@ const PhenotypeRibbon = ({geneId}) => {
     }
 
     return (
-        <div>
+        <div className='phenotype-ribbon'>
             <div className='mb-2'>
                 <Checkbox checked={excludeEaps} id='excludeEapsCheckbox' onChange={e => setExcludeEaps(e.target.checked)}>
                     Exclude altered gene expression phenotypes

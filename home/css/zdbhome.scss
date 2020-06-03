@@ -49,13 +49,14 @@ body.home {
 .section,
 .jq-modal {
     box-shadow: $shadow;
-    margin-bottom: 30px;
+    margin-bottom: 4rem;
     background: white;
     border-radius: $border-radius;
-    padding: 10px 15px 15px;
+    padding: 1rem;
 
     &.primary-link {
-        padding-right: 35px;
+        padding: 10px 35px 15px 15px;
+        margin-bottom: 2rem;
         position: relative;
         color: $grey;
         transition: transform 200ms, box-shadow 200ms;
@@ -112,9 +113,13 @@ body.home {
     // subsections
     & .section {
         box-shadow: none;
-        margin-bottom: 1rem;
+        margin-bottom: 3rem;
         border-radius: 0;
         padding: 0;
+
+        &:last-of-type {
+            margin-bottom: 0;
+        }
 
         .heading {
             font-size: 18.5px;

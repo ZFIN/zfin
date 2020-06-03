@@ -84,7 +84,7 @@ const GeneOntologyRibbon = ({geneId}) => {
     const tableQuery = getSelectedTermQueryParams(selected);
 
     return (
-        <div>
+        <div className='gene-ontology-ribbon'>
             <Ribbon
                 subjects={data.value.subjects}
                 categories={data.value.categories}

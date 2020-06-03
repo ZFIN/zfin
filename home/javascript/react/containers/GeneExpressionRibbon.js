@@ -65,7 +65,7 @@ const GeneExpressionRibbon = ({geneId}) => {
     }
 
     return (
-        <div>
+        <div className='gene-expression-ribbon'>
             <div className='mb-2'>
                 <Checkbox checked={includeReporter} id='reporterSelectionCheckbox' onChange={handleReporterSelection}>
                     Include Expression in Reporter Lines
