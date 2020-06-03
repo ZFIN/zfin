@@ -14,7 +14,7 @@
     </z:attributeListItem>
 
     <z:attributeListItem label="Cross-Species Comparison:">
-        <zfin2:externalLink href="https://alliancegenome.org/gene/ZFIN:${formBean.marker.zdbID}">Alliance
+        <zfin2:externalLink href="https://alliancegenome.org/gene/ZFIN:${formBean.marker.zdbID}#expression">Alliance
         </zfin2:externalLink>
         <c:if test="${bGeeIds != null}">
             <zfin2:externalLink href="https://bgee.org/?page=expression_comparison&gene_list=${bGeeIds}">&nbsp; Bgee

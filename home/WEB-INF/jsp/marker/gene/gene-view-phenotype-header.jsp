@@ -11,7 +11,7 @@
     </z:attributeListItem>
 
     <z:attributeListItem label="Cross-Species Comparison:">
-        <zfin2:externalLink href="https://alliancegenome.org/gene/ZFIN:${formBean.marker.zdbID}">Alliance
+        <zfin2:externalLink href="https://alliancegenome.org/gene/ZFIN:${formBean.marker.zdbID}#phenotypes">Alliance
         </zfin2:externalLink>
     </z:attributeListItem>
 </z:attributeList>
