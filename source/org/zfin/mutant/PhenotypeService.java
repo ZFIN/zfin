@@ -16,6 +16,7 @@ import org.zfin.figure.repository.FigureRepository;
 import org.zfin.fish.repository.FishService;
 import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
+import org.zfin.framework.api.RibbonType;
 import org.zfin.gwt.curation.dto.DiseaseAnnotationDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.mutant.presentation.FishModelDisplay;
@@ -559,7 +560,7 @@ public class PhenotypeService {
         if (excludeEaps) {
             query.addFilterQuery("is_eap:false");
         }
-        ribbonService.addRibbonTermQuery(query, termId, isOther);
+        ribbonService.addRibbonTermQuery(query, RibbonType.PHENOTYPE, termId, isOther);
         if (StringUtils.isNotEmpty(phenotypeIds)) {
             query.addFilterQuery(Arrays.stream(phenotypeIds.split(","))
                     .map(phenotypeId -> "id:psg-" + phenotypeId)

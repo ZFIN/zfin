@@ -98,11 +98,6 @@ public class GeneExpressionRibbonController {
         }
 
         // filtering
-/*
-        FilterService<MarkerDBLink> filterService = new FilterService<>(new SequenceFiltering());
-        List<MarkerDBLink> filteredDBLinksList = filterService.filterAnnotations(fullMarkerDBLinks, pagination.getFieldFilterValueMap());
-*/
-
         List<ExpressionRibbonDetail> filteredList = allDetails;
         if (StringUtils.isNotEmpty(filterTermName)) {
             filteredList = allDetails.stream()

@@ -341,11 +341,21 @@ public interface OntologyRepository {
 
     HumanGeneDetail getHumanGeneDetailById(String id);
 
-    Map<String, List<GenericTerm>> getRibbonClosure();
-
     List<GenericTerm> getZfaRibbonTerms();
 
-    List<GenericTerm> getGoCcRibbonTerms();
-
     List<String> getZfaRibbonTermIDs();
+
+    List<GenericTerm> getExpressionRibbonCellularComponentTerms();
+
+    List<GenericTerm> getPhenotypeRibbonMolecularFunctionTerms();
+
+    List<GenericTerm> getPhenotypeRibbonBiologicalProcessTerms();
+
+    List<GenericTerm> getPhenotypeRibbonCellularComponentTerms();
+
+    List<GenericTerm> getGORibbonMolecularFunctionTerms();
+
+    List<GenericTerm> getGORibbonBiologicalProcessTerms();
+
+    List<GenericTerm> getGORibbonCellularComponentTerms();
 }

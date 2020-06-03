@@ -22,8 +22,8 @@ import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Repository for Ontology-related actions: mostly lookup.
@@ -256,6 +256,18 @@ public class HibernateOntologyRepository implements OntologyRepository {
         criteria.setCacheable(true);
         GenericTerm term = (GenericTerm) criteria.uniqueResult();
         return term;
+    }
+
+    public List<GenericTerm> getTermsInOboIDList(List<String> oboIDs, boolean preserveOrder) {
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(GenericTerm.class);
+        criteria.add(Restrictions.in("oboID", oboIDs));
+        criteria.setCacheable(true);
+        List<GenericTerm> terms = criteria.list();
+        if (preserveOrder) {
+            terms.sort(Comparator.comparing(term -> oboIDs.indexOf(term.getOboID())));
+        }
+        return terms;
     }
 
     public List<GenericTermRelationship> getTermRelationshipsForTerms(List<Term> terms) {
@@ -1091,39 +1103,9 @@ public class HibernateOntologyRepository implements OntologyRepository {
         return (HumanGeneDetail) session.get(HumanGeneDetail.class, id);
     }
 
-    // cached
-    Map<String, List<GenericTerm>> closureMap;
-
-    @Override
-    public Map<String, List<GenericTerm>> getRibbonClosure() {
-        if (closureMap != null) {
-            return closureMap;
-        }
-        closureMap = new HashMap<>();
-
-        Stream.of(getZfaRibbonTerms(), getGoCcRibbonTerms(), List.of(getTermByOboID("ZFA:0100000")))
-                .flatMap(Collection::stream)
-                .forEach(term -> {
-                    List<TransitiveClosure> closure = getChildrenTransitiveClosures(term);
-                    closureMap.put(term.getOboID(), closure.stream().map(TransitiveClosure::getChild).collect(Collectors.toList()));
-                });
-        return closureMap;
-    }
-
     @Override
     public List<GenericTerm> getZfaRibbonTerms() {
-        List<GenericTerm> ribbonTerms = new ArrayList<>();
-        getZfaRibbonTermIDs().forEach(termID ->
-                ribbonTerms.add(getTermByOboID(termID))
-        );
-        return ribbonTerms;
-    }
-
-    @Override
-    public List<GenericTerm> getGoCcRibbonTerms() {
-        List<GenericTerm> goslim_agr = getTermsInSubset("goslim_agr");
-        goslim_agr.add(getTermByOboID("GO:0005575"));
-        return goslim_agr;
+        return getTermsInOboIDList(getZfaRibbonTermIDs(), true);
     }
 
     @Override
@@ -1147,5 +1129,80 @@ public class HibernateOntologyRepository implements OntologyRepository {
                 "ZFA:0001122", //primary germ layer
                 "ZFA:0000155"  //somite
         );
+    }
+
+    @Override
+    public List<GenericTerm> getExpressionRibbonCellularComponentTerms() {
+        return getTermsInOboIDList(List.of(
+                "GO:0030054", // cell junction
+                "GO:0042995", // cell projection
+                "GO:0005737", // cytoplasm
+                "GO:0016020", // membrane
+                "GO:0005739", // mitochondrion
+                "GO:0005634", // nucleus
+                "GO:0043226", // organelle
+                "GO:0032991", // protein-containing complex
+                "GO:0045202"  // synapse
+        ), true);
+    }
+
+    @Override
+    public List<GenericTerm> getPhenotypeRibbonMolecularFunctionTerms() {
+        return getTermsInOboIDList(List.of(
+                "GO:0005488", // binding
+                "GO:0003824", // catalytic activity
+                "GO:0038023", // signaling receptor activity
+                "GO:0005215", // transporter activity
+                "GO:0005198", // structural molecule activity"
+                "GO:0140110"  // transcription regulator activity
+        ), true);
+    }
+
+    @Override
+    public List<GenericTerm> getPhenotypeRibbonBiologicalProcessTerms() {
+        return getTermsInOboIDList(List.of(
+                "GO:0048856", // anatomical structure development
+                "GO:0030154", // cell differentiation
+                "GO:0007399", // nervous system development
+                "GO:0072359", // circulatory system development
+                "GO:0048880", // sensory system development
+                "GO:0023052", // signaling
+                "GO:0007389"  // pattern specification process
+        ), true);
+    }
+
+    @Override
+    public List<GenericTerm> getPhenotypeRibbonCellularComponentTerms() {
+        return getTermsInOboIDList(List.of(
+                "GO:0016020", // membrane
+                "GO:0045202", // synapse
+                "GO:0030054", // cell junction
+                "GO:0042995", // cell projection
+                "GO:0031982", // vesicle
+                "GO:0005829", // cytosol
+                "GO:0005739", // mitochondrion
+                "GO:0005634", // nucleus
+                "GO:0005694", // chromosome
+                "GO:0032991"  // protein-containing complex
+        ), true);
+    }
+
+    @Override
+    public List<GenericTerm> getGORibbonMolecularFunctionTerms() {
+        return filterTermsByOntology(getTermsInSubset("goslim_agr"), Ontology.GO_MF);
+    }
+
+    @Override
+    public List<GenericTerm> getGORibbonBiologicalProcessTerms() {
+        return filterTermsByOntology(getTermsInSubset("goslim_agr"), Ontology.GO_BP);
+    }
+
+    @Override
+    public List<GenericTerm> getGORibbonCellularComponentTerms() {
+        return filterTermsByOntology(getTermsInSubset("goslim_agr"), Ontology.GO_CC);
+    }
+
+    private List<GenericTerm> filterTermsByOntology(List<GenericTerm> terms, Ontology ontology) {
+        return terms.stream().filter(term -> term.getOntology() == ontology).collect(toList());
     }
 }

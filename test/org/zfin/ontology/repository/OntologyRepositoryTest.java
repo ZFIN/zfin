@@ -437,12 +437,6 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getRibbonClosure() {
-        Map<String, List<GenericTerm>> relationshipList = ontologyRepository.getRibbonClosure();
-        assertNotNull(relationshipList);
-    }
-
-    @Test
     public void getTermByExample() {
         GenericTerm term = new GenericTerm();
         term.setOboID("ZFA:0000123");

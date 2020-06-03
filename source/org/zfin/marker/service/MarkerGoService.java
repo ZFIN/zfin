@@ -11,9 +11,7 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.zfin.framework.api.FieldFilter;
-import org.zfin.framework.api.JsonResultResponse;
-import org.zfin.framework.api.Pagination;
+import org.zfin.framework.api.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.GeneOntologyAnnotationTableRow;
 import org.zfin.marker.presentation.MarkerGoViewTableRow;
@@ -159,7 +157,7 @@ public class MarkerGoService {
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/go-annotation");
         query.addFilterQuery("gene_zdb_id:" + geneId);
-        ribbonService.addRibbonTermQuery(query, termId, isOther);
+        ribbonService.addRibbonTermQuery(query, RibbonType.GENE_ONTOLOGY, termId, isOther);
         String termNameFilter = pagination.getFieldFilter(FieldFilter.FILTER_TERM_NAME);
         if (StringUtils.isNotEmpty(termNameFilter)) {
             query.addFilterQuery("name_ac:(" + SolrService.luceneEscape(termNameFilter) + ")");

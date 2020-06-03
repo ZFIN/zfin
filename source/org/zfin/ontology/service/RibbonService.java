@@ -37,6 +37,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.*;
+import static org.zfin.framework.api.RibbonCategoryConfig.*;
+import static org.zfin.framework.api.RibbonType.*;
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
 @Service
@@ -60,9 +62,9 @@ public class RibbonService {
         query.setRequestHandler("/go-annotation");
         query.addFilterQuery(FieldName.GENE_ZDB_ID.getName() + ":" + zdbID);
         return buildRibbonSummary(zdbID, query, List.of(
-                RibbonCategoryConfig.molecularFunction(),
-                RibbonCategoryConfig.biologicalProcess(),
-                RibbonCategoryConfig.cellularComponent()
+                RibbonCategoryConfig.forTerm(GENE_ONTOLOGY, GO_MF),
+                RibbonCategoryConfig.forTerm(GENE_ONTOLOGY, GO_BP),
+                RibbonCategoryConfig.forTerm(GENE_ONTOLOGY, GO_CC)
         ));
     }
 
@@ -73,9 +75,9 @@ public class RibbonService {
         expressionService.addReporterFilter(query, includeReporter);
         expressionService.addDirectSubmissionFilter(query, onlyDirectlySubmitted);
         return buildRibbonSummary(zdbID, query, List.of(
-                RibbonCategoryConfig.anatomy(),
-                RibbonCategoryConfig.stage(),
-                RibbonCategoryConfig.cellularComponent()
+                RibbonCategoryConfig.forTerm(EXPRESSION, ANATOMY),
+                RibbonCategoryConfig.forTerm(EXPRESSION, STAGE),
+                RibbonCategoryConfig.forTerm(EXPRESSION, GO_CC)
         ));
     }
 
@@ -87,11 +89,11 @@ public class RibbonService {
             query.addFilterQuery("is_eap:false");
         }
         return buildRibbonSummary(zdbID, query, List.of(
-                RibbonCategoryConfig.anatomy(),
-                RibbonCategoryConfig.stage(),
-                RibbonCategoryConfig.molecularFunction(),
-                RibbonCategoryConfig.biologicalProcess(),
-                RibbonCategoryConfig.cellularComponent()
+                RibbonCategoryConfig.forTerm(PHENOTYPE, ANATOMY),
+                RibbonCategoryConfig.forTerm(PHENOTYPE, STAGE),
+                RibbonCategoryConfig.forTerm(PHENOTYPE, GO_MF),
+                RibbonCategoryConfig.forTerm(PHENOTYPE, GO_BP),
+                RibbonCategoryConfig.forTerm(PHENOTYPE, GO_CC)
         ));
     }
 
@@ -273,7 +275,7 @@ public class RibbonService {
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/phenotype-annotation");
         query.addFilterQuery("gene_zdb_id:" + geneID);
-        addRibbonTermQuery(query, termID, isOther);
+        addRibbonTermQuery(query, PHENOTYPE, termID, isOther);
         if (excludeEaps) {
             query.addFilterQuery("is_eap:false");
         }
@@ -441,7 +443,7 @@ public class RibbonService {
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/expression-annotation");
         query.addFilterQuery("gene_zdb_id:" + geneID);
-        addRibbonTermQuery(query, ribbonTermID, isOther);
+        addRibbonTermQuery(query, EXPRESSION, ribbonTermID, isOther);
         expressionService.addReporterFilter(query, includeReporter);
         expressionService.addDirectSubmissionFilter(query, onlyDirectlySubmitted);
         query.addFacetPivotField("postcomposed_term_id,stage_term_id,pub_zdb_id");
@@ -496,10 +498,6 @@ public class RibbonService {
             details.add(detail);
         });
 
-        // remove BSPO
-//        details.removeIf(ribbonDetail -> ribbonDetail.getEntity().getSubterm() != null
-         //       && ribbonDetail.getEntity().getSubterm().getOboID().startsWith("BSPO"));
-
         // fixup single publications.
         details.stream()
                 .filter(ribbonDetail -> ribbonDetail.getPubIDs().size() == 1)
@@ -513,9 +511,6 @@ public class RibbonService {
                     ribbonDetail1.setRibbonPubs(pubRibbon);
                 });
 
-        // keep only the ones that pertain to the given super / ribbon term: ribbonTermID
-        Map<String, List<GenericTerm>> getClosureForRibbonTerms = ontologyRepository.getRibbonClosure();
-
         if (ribbonTermID != null) {
 
             // filter by stage
@@ -527,13 +522,13 @@ public class RibbonService {
         return details;
     }
 
-    public void addRibbonTermQuery(SolrQuery query, String termId, boolean isOther) {
+    public void addRibbonTermQuery(SolrQuery query, RibbonType ribbon, String termId, boolean isOther) {
         if (StringUtils.isEmpty(termId)) {
             return;
         }
         query.addFilterQuery("term_id:" + SolrService.luceneEscape(termId));
         if (isOther) {
-            RibbonCategoryConfig config = RibbonCategoryConfig.forTerm(termId);
+            RibbonCategoryConfig config = RibbonCategoryConfig.forTerm(ribbon, termId);
             if (config != null) {
                 config.getSlimTerms().forEach(term -> {
                     query.addFilterQuery("-term_id:" + SolrService.luceneEscape(term.getOboID()));

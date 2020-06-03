@@ -3,14 +3,11 @@ package org.zfin.framework.api;
 import lombok.Builder;
 import lombok.Getter;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.Ontology;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.ontology.service.OntologyService;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.List;
-
-import static java.util.stream.Collectors.toList;
 
 @Builder
 @Getter
@@ -37,11 +34,8 @@ public class RibbonCategoryConfig {
     public static final String GO_BP = "GO:0008150";
     public static final String GO_CC = "GO:0005575";
 
-    public static RibbonCategoryConfig forTerm(String termOboID) {
+    public static RibbonCategoryConfig forTerm(RibbonType ribbon, String termOboID) {
         GenericTerm term = ontologyRepository.getTermByOboID(termOboID);
-        if (term == null) {
-            return null;
-        }
         RibbonCategoryConfigBuilder builder = RibbonCategoryConfig.builder().categoryTerm(term);
         switch (termOboID) {
             case ANATOMY:
@@ -49,55 +43,50 @@ public class RibbonCategoryConfig {
                         .allLabel("All anatomical structures")
                         .otherLabel("Other structures");
                 break;
+
             case STAGE:
                 builder.slimTerms(ontologyService.getRibbonStages())
                         .allLabel("All stages")
                         .includeOther(false);
                 break;
+
             case GO_MF:
-                builder.slimTerms(filterTermsByOntology(
-                        ontologyRepository.getTermsInSubset("goslim_agr"),
-                        Ontology.GO_MF
-                ));
+                switch (ribbon) {
+                    case PHENOTYPE:
+                        builder.slimTerms(ontologyRepository.getPhenotypeRibbonMolecularFunctionTerms());
+                        break;
+                    case GENE_ONTOLOGY:
+                        builder.slimTerms(ontologyRepository.getGORibbonMolecularFunctionTerms());
+                        break;
+                }
                 break;
+
             case GO_BP:
-                builder.slimTerms(filterTermsByOntology(
-                        ontologyRepository.getTermsInSubset("goslim_agr"),
-                        Ontology.GO_BP
-                ));
+                switch (ribbon) {
+                    case PHENOTYPE:
+                        builder.slimTerms(ontologyRepository.getPhenotypeRibbonBiologicalProcessTerms());
+                        break;
+                    case GENE_ONTOLOGY:
+                        builder.slimTerms(ontologyRepository.getGORibbonBiologicalProcessTerms());
+                        break;
+                }
                 break;
+
             case GO_CC:
-                builder.slimTerms(filterTermsByOntology(
-                        ontologyRepository.getTermsInSubset("goslim_agr"),
-                        Ontology.GO_CC
-                ));
+                switch (ribbon) {
+                    case EXPRESSION:
+                        builder.slimTerms(ontologyRepository.getExpressionRibbonCellularComponentTerms());
+                        break;
+                    case PHENOTYPE:
+                        builder.slimTerms(ontologyRepository.getPhenotypeRibbonCellularComponentTerms());
+                        break;
+                    case GENE_ONTOLOGY:
+                        builder.slimTerms(ontologyRepository.getGORibbonCellularComponentTerms());
+                        break;
+                }
                 break;
         }
         return builder.build();
-    }
-
-    public static RibbonCategoryConfig anatomy() {
-        return forTerm(ANATOMY);
-    }
-
-    public static RibbonCategoryConfig stage() {
-        return forTerm(STAGE);
-    }
-
-    public static RibbonCategoryConfig molecularFunction() {
-        return forTerm(GO_MF);
-    }
-
-    public static RibbonCategoryConfig biologicalProcess() {
-        return forTerm(GO_BP);
-    }
-
-    public static RibbonCategoryConfig cellularComponent() {
-        return forTerm(GO_CC);
-    }
-
-    private static List<GenericTerm> filterTermsByOntology(List<GenericTerm> terms, Ontology ontology) {
-        return terms.stream().filter(term -> term.getOntology() == ontology).collect(toList());
     }
 
 }

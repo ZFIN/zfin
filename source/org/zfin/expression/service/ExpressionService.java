@@ -20,6 +20,7 @@ import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.figure.repository.FigureRepository;
 import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
+import org.zfin.framework.api.RibbonType;
 import org.zfin.gwt.root.dto.ExpressionPhenotypeExperimentDTO;
 import org.zfin.gwt.root.dto.ExpressionPhenotypeStatementDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
@@ -909,7 +910,7 @@ public class ExpressionService {
         query.setRequestHandler("/expression-annotation");
         query.addFilterQuery("gene_zdb_id:" + geneId);
         query.addFilterQuery("has_image:true");
-        ribbonService.addRibbonTermQuery(query, termId, isOther);
+        ribbonService.addRibbonTermQuery(query, RibbonType.EXPRESSION, termId, isOther);
         if (StringUtils.isNotEmpty(supertermId)) {
             query.addFilterQuery("superterm_id:" + SolrService.luceneEscape(supertermId));
         }
