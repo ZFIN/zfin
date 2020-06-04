@@ -8,14 +8,8 @@
     <z:attributeListItem label="Antibody Name">
         ${formBean.marker.name}
     </z:attributeListItem>
-
-    <z:attributeListItem label="Synonyms">
-        <ul class="comma-separated">
-            <c:forEach var="markerAlias" items="${formBean.previousNames}" varStatus="loop">
-                <li>${markerAlias.linkWithAttribution}</li>
-            </c:forEach>
-        </ul>
-    </z:attributeListItem>
+    
+    <zfin2:markerPreviousNamesAttributeListItem previousNames="${formBean.previousNames}" />
 
     <z:attributeListItem label="Host Organism">
         <div>${formBean.marker.hostSpecies}</div>
@@ -53,11 +47,10 @@
     </z:attributeListItem>
 
     <z:attributeListItem label="Antibody Registry ID">
-        <c:if  test="${formBean.abRegistryID != null}">
-        <zfin2:externalLink href="http://antibodyregistry.org/search.php?q=${formBean.abRegistryID}">
-            ${formBean.abRegistryID}
-        </zfin2:externalLink>
-        </c:if>
+        <z:ifHasData test="${formBean.abRegistryID != null}" noDataMessage="None">
+            <c:set var="url">http://antibodyregistry.org/search.php?q=${formBean.abRegistryID}</c:set>
+            <zfin2:externalLink href="${url}">${formBean.abRegistryID}</zfin2:externalLink>
+        </z:ifHasData>
     </z:attributeListItem>
 
     <z:attributeListItem label="Source">
@@ -72,4 +65,6 @@
         </script>
         <span id="wikiLink"> </span>
     </z:attributeListItem>
+    
+    <zfin2:entityNotesAttributeListItems entity="${formBean.marker}" />
 </z:attributeList>

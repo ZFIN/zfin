@@ -12,13 +12,7 @@
         <zfin:name entity="${formBean.marker}"/>
     </z:attributeListItem>
 
-    <z:attributeListItem label="Previous Names">
-        <ul class="comma-separated">
-            <c:forEach var="markerAlias" items="${formBean.previousNames}">
-                <li>${markerAlias.linkWithAttribution}</li>
-            </c:forEach>
-        </ul>
-    </z:attributeListItem>
+    <zfin2:markerPreviousNamesAttributeListItem previousNames="${formBean.previousNames}" />
 
     <z:attributeListItem>
         <jsp:attribute name="label">
@@ -50,21 +44,16 @@
         <zfin2:toggledLinkList collection="${formBean.nonReferenceStrains}" maxNumber="6"/>
     </z:attributeListItem>
 
-    <z:attributeListItem label="Genome Resources">
-        <ul class="comma-separated">
-            <c:forEach var="link" items="${formBean.otherMarkerPages}">
-                <c:if test="${!link.displayName.contains('VEGA')}">
-                    <li><a href="${link.link}">${link.displayName}</a> ${link.attributionLink}</li>
-                </c:if>
-            </c:forEach>
-        </ul>
-    </z:attributeListItem>
+    <zfin2:markerGenomeResourcesAttributeListItem links="${formBean.otherMarkerPages}" />
 
     <z:attributeListItem label="RNACentral">
         <c:if test="${formBean.rnaCentralLink eq 'yes'}">
             <a href=""><b>RNACentral</b></a>
         </c:if>
     </z:attributeListItem>
+    
+    <zfin2:entityNotesAttributeListItems entity="${formBean.transcript}" />
+
 </z:attributeList>
 
 

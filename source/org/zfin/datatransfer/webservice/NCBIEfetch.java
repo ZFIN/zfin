@@ -157,7 +157,7 @@ public class NCBIEfetch {
         }
         try {
             StringBuilder sb = new StringBuilder();
-            sb.append("<a href=\"http://www.ncbi.nlm.nih.gov/geoprofiles?term=");
+            sb.append("<a class=\"external\" href=\"http://www.ncbi.nlm.nih.gov/geoprofiles?term=");
             sb.append(createMicroarrayQuery(accessions, abbreviation));
             sb.append("\">GEO</a> ");
             sb.append("(<a href=\"/ZDB-PUB-071218-1\">1</a>)")

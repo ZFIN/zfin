@@ -137,7 +137,7 @@ const FigureGalleryExpressionDetails = ({figureDetails}) => {
                         {expression.probe.rating !== null &&
                             <React.Fragment>
                                 <strong className='ml-2'><a href='/zf_info/stars.html'>Quality:</a></strong>
-                                <StarRating rating={expression.probe.rating + 1} />
+                                <StarRating rating={expression.probe.rating} />
                             </React.Fragment>
                         }
                     </dd>

@@ -26,13 +26,7 @@
         ${formBean.marker.name}
     </z:attributeListItem>
 
-    <z:attributeListItem label="Synonyms">
-        <ul class="comma-separated">
-            <c:forEach var="markerAlias" items="${formBean.previousNames}">
-                <li>${markerAlias.linkWithAttribution}</li>
-            </c:forEach>
-        </ul>
-    </z:attributeListItem>
+    <zfin2:markerPreviousNamesAttributeListItem previousNames="${formBean.previousNames}" />
 
     <z:attributeListItem label="${targetsLabel}">
         <ul class="comma-separated">
@@ -83,6 +77,7 @@
             conduct independent sequence analysis before ordering any reagent.
         </c:if>
     </z:attributeListItem>
-</z:attributeList>
+    
+    <zfin2:entityNotesAttributeListItems entity="${formBean.marker}" />
 
-<zfin2:entityNotes entity="${marker}"/>
+</z:attributeList>

@@ -4,14 +4,5 @@
 <c:set var="markerExpression" value="${formBean.markerExpression}"/>
 
 <z:attributeList>
-    <z:attributeListItem label="All Expression Data:">
-        <c:if test="${
-                (!empty markerExpression.allExpressionData and empty markerExpression.directlySubmittedExpression)
-                or
-                (markerExpression.allExpressionData.figureCount > markerExpression.directlySubmittedExpression.figureCount)
-                }"><zfin2:expressionLink marker="${formBean.marker}" markerExpression="${markerExpression}"/>
-        </c:if>
-    </z:attributeListItem>
-
-
+    <zfin2:expressionAllAttributeListItem marker="${formBean.marker}" markerExpression="${markerExpression}" />
 </z:attributeList>

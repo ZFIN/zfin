@@ -12,27 +12,27 @@
 </p><p>
 </p><table cellspacing="4" cols="2" width="80%">
 <tr>
-<td align="center" width="15%"><img border="0" src="/images/50stars.gif">
+<td align="center" width="15%"><zfin2:starRating rating="4" />
 </td>
 <td>Simple to use, intense expression pattern restricted to a few structures.</td>
 </tr>
 <tr>
-<td align="center" width="15%"><img border="0" src="/images/40stars.gif">
+<td align="center" width="15%"><zfin2:starRating rating="3" />
 </td>
 <td>Nice strong expression pattern.</td>
 </tr>
 <tr>
-<td align="center" width="15%"><img border="0" src="/images/30stars.gif">
+<td align="center" width="15%"><zfin2:starRating rating="2" />
 </td>
 <td>Moderate expression pattern.</td>
 </tr>
 <tr>
-<td align="center" width="15%"><img border="0" src="/images/20stars.gif">
+<td align="center" width="15%"><zfin2:starRating rating="1" />
 </td>
 <td>Weak expression pattern.</td>
 </tr>
 <tr>
-<td align="center" width="15%"><img border="0" src="/images/10stars.gif">
+<td align="center" width="15%"><zfin2:starRating rating="0" />
 </td>
 <td>Probe is difficult to use. General basal level of expression with more intense labeling in particular
             structure.

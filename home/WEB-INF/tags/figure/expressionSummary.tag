@@ -86,7 +86,7 @@
 
                             <c:if test="${!empty summary.probe.rating}">
                                 &nbsp; <strong><a href="/zf_info/stars.html">Quality:</a></strong>
-                                <img src="/images/${summary.probe.rating+1}0stars.gif" alt="Rating ${summary.probe.rating +1}">
+                                <zfin2:starRating rating="${summary.probe.rating}" />
                             </c:if>
                         </td>
                     </tr>

@@ -103,7 +103,7 @@ cloneHead.tag ... that's why there's no table tag here, just rows --%>
             <a href="/zf_info/stars.html">Quality:</a>
         </th>
         <td>
-            <img src="/images/${clone.rating+1}0stars.gif" alt="Rating ${clone.rating +1}">
+            <zfin2:starRating rating="${clone.rating}" />
             (
             <c:choose>
                 <c:when test="${clone.rating eq 0}">Probe is difficult to use. Generally basal level of expression with more intense labeling in particular structure. </c:when>

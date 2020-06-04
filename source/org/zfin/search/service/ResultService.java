@@ -6,7 +6,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.TransformerUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.antibody.Antibody;
@@ -26,6 +27,7 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.marker.presentation.MarkerRelationshipPresentation;
+import org.zfin.marker.presentation.PreviousNameLight;
 import org.zfin.mutant.*;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.Term;
@@ -42,8 +44,6 @@ import org.zfin.sequence.presentation.DBLinkPresentation;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-
-import org.zfin.marker.presentation.PreviousNameLight;
 
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
@@ -463,7 +463,7 @@ public class ResultService {
                 result.addAttribute(CLONE_PROBLEM_TYPE, clone.getProblem().name() + " <img src=\"/images/warning-noborder.gif\" width=\"20\" height=\"20\" align=\"top\"/>");
             }
             if (clone.getRating() != null) {
-                result.addAttribute(QUALITY, "<img src='/images/" + (clone.getRating() + 1) + "0stars.gif'>");
+                result.addAttribute(QUALITY, "<span class='stars stars-" + clone.getRating() + "'></span>");
             }
         }
 

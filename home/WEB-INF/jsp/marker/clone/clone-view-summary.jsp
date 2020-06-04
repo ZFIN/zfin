@@ -13,30 +13,15 @@
         <zfin:abbrev entity="${formBean.marker}"/>
     </z:attributeListItem>
 
-    <z:attributeListItem label="Previous Names">
-        <ul class="comma-separated">
-            <c:forEach var="markerAlias" items="${formBean.previousNames}">
-                <li>${markerAlias.linkWithAttribution}</li>
-            </c:forEach>
-        </ul>
-    </z:attributeListItem>
+    <zfin2:markerPreviousNamesAttributeListItem previousNames="${formBean.previousNames}" />
 
-    <z:attributeListItem label="Type">
-        <zfin2:externalLink
-                href="http://www.sequenceontology.org/browser/current_svn/term/${formBean.zfinSoTerm.oboID}">${formBean.zfinSoTerm.termName}</zfin2:externalLink>
-    </z:attributeListItem>
+    <zfin2:markerSOTypeAttributeListItem soTerm="${formBean.zfinSoTerm}" />
 
     <z:attributeListItem label="Location">
         <zfin2:displayLocation entity="${formBean.marker}" longDetail="true"/>
     </z:attributeListItem>
 
-    <z:attributeListItem label="Genome Resources">
-        <ul class="comma-separated">
-            <c:forEach var="link" items="${formBean.otherMarkerPages}">
-                <li><a href="${link.link}">${link.displayName}</a> ${link.attributionLink}</li>
-            </c:forEach>
-        </ul>
-    </z:attributeListItem>
+    <zfin2:markerGenomeResourcesAttributeListItem links="${formBean.otherMarkerPages}" />
 
     <c:if test="${!empty formBean.clone.problem}">
         <z:attributeListItem label="Clone Problem Type">${formBean.clone.problem} <img

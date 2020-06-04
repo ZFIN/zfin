@@ -1218,3 +1218,49 @@ input + label {
     height: 1.5em;
     background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1) 90%);
 }
+
+.stars {
+    color: goldenrod;
+    font-family: "Font Awesome 5 Free";
+    font-size: 90%;
+}
+.stars-0:before {
+    font-weight: 900;
+    content: '\f005';
+}
+.stars-0:after {
+    font-weight: 400;
+    content: '\f005\f005\f005\f005';
+}
+.stars-1:before {
+    font-weight: 900;
+    content: '\f005\f005';
+}
+.stars-1:after {
+    font-weight: 400;
+    content: '\f005\f005\f005';
+}
+.stars-2:before {
+    font-weight: 900;
+    content: '\f005\f005\f005';
+}
+.stars-2:after {
+    font-weight: 400;
+    content: '\f005\f005';
+}
+.stars-3:before {
+    font-weight: 900;
+    content: '\f005\f005\f005\f005';
+}
+.stars-3:after {
+    font-weight: 400;
+    content: '\f005';
+}
+.stars-4:before {
+    font-weight: 900;
+    content: '\f005\f005\f005\f005\f005';
+}
+.stars-4:after {
+    font-weight: 400;
+    content: '';
+}
