@@ -7,23 +7,23 @@ import NoData from '../components/NoData';
 const sortOptions = [
     {
         value: 'strUp',
-        label: <span>STR (Default) <i className='fas fa-sort-alpha-down' /></span>,
+        label: 'STR (Default), A to Z ',
     },
     {
         value: 'createdAlleleUp',
-        label: <span>Created Alleles <i className='fas fa-sort-alpha-down' /></span>,
+        label: 'Created Alleles, A to Z ',
     },
     {
         value: 'createdAlleleDown',
-        label: <span>Created Alleles <i className='fas fa-sort-alpha-up' /></span>,
+        label: 'Created Alleles, Z to A ',
     },
     {
         value: 'citationMost',
-        label: <span>Citation <i className='fas fa-sort-numeric-up' /></span>,
+        label: 'Citation, Most ',
     },
     {
         value: 'citationLeast',
-        label: <span>Citation <i className='fas fa-sort-numeric-down' /></span>,
+        label: 'Citation, Least ',
     },
 ];
 

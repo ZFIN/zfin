@@ -8,27 +8,27 @@ import NoData from '../components/NoData';
 const sortOptions = [
     {
         value: 'alleleUp',
-        label: <span>Allele (Default) <i className='fas fa-sort-alpha-down' /></span>,
+        label: 'Allele (Default), A to Z',
     },
     {
         value: 'typeUp',
-        label: <span>Type <i className='fas fa-sort-alpha-down' /></span>,
+        label: 'Type, A to Z',
     },
     {
         value: 'typeDown',
-        label: <span>Type <i className='fas fa-sort-alpha-up' /></span>,
+        label: 'Type, Z to A',
     },
     {
         value: 'consequenceUp',
-        label: <span>Consequence <i className='fas fa-sort-alpha-down' /></span>,
+        label: 'Consequence, A to Z',
     },
     {
         value: 'consequenceDown',
-        label: <span>Consequence <i className='fas fa-sort-alpha-up' /></span>,
+        label: 'Consequence, Z to A',
     },
     {
         value: 'supplierUp',
-        label: <span>Supplier <i className='fas fa-sort-alpha-up' /></span>,
+        label: 'Supplier, A to Z',
     },
 ];
 

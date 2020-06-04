@@ -78,7 +78,7 @@ public class STRBeanSorting implements Sorting<SequenceTargetingReagentBean> {
 
     enum Field {
         STR_UP("strUp"), STR_DOWN("strDown"),
-        ALLELE_UP("createdAlleleUp"), ALLELE_DOWN("createdAlleleDown"), CITATION_UP("citationMost"), CITATION_DOWN("citationLeast");
+        ALLELE_UP("createdAlleleUp"), ALLELE_DOWN("createdAlleleDown"), CITATION_UP("citationLeast"), CITATION_DOWN("citationMost");
 
         private String val;
 

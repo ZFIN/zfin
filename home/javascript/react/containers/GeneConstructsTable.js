@@ -7,39 +7,39 @@ import { EntityLink, EntityList } from '../components/entity';
 const sortOptions = [
     {
         value: 'constructNameUp',
-        label: <span>Construct (Default) <i className='fas fa-sort-alpha-down' /></span>,
+        label: 'Construct (Default), A to Z ',
     },
     {
         value: 'regulatoryRegionUp',
-        label: <span>Regulatory Region  <i className='fas fa-sort-alpha-down'/></span>,
+        label: 'Regulatory Region, A to Z ',
     },
     {
         value: 'regulatoryRegionDown',
-        label: <span>Regulatory Region <i className='fas fa-sort-alpha-up'/></span>,
+        label: 'Regulatory Region, Z to A ',
     },
     {
         value: 'codingSequenceUp',
-        label: <span>Coding Sequence  <i className='fas fa-sort-alpha-down'/></span>,
+        label: 'Coding Sequence, A to Z ',
     },
     {
         value: 'codingSequenceDown',
-        label: <span>Coding Sequence  <i className='fas fa-sort-alpha-up'/></span>,
+        label: 'Coding Sequence, Z to A ',
     },
     {
         value: 'speciesUp',
-        label: <span>Species  <i className='fas fa-sort-alpha-down'/></span>,
+        label: 'Species, A to Z ',
     },
     {
         value: 'speciesDown',
-        label: <span>Species  <i className='fas fa-sort-alpha-up'/></span>,
+        label: 'Species, Z to A ',
     },
     {
         value: 'citationMost',
-        label: <span>Citation <i className='fas fa-sort-numeric-up'/></span>,
+        label: 'Citation, Most ',
     },
     {
         value: 'citationLeast',
-        label: <span>Citation <i className='fas fa-sort-numeric-down'/></span>,
+        label: 'Citation, Least ',
     },
 ];
 
