@@ -6,17 +6,16 @@
 <c:set var="TARGETGENES" value="Target Genes"/>
 <c:set var="RELATEDTRANSCRIPTS" value="Related Transcripts"/>
 <c:set var="SEQUENCE" value="Sequence"/>
-<c:set var="GBROWSE" value="Gbrowse"/>
 <c:set var="SEGMENTRELATIONSHIPS" value="Segment Relationships"/>
 <c:set var="PROTEINS" value="Protein Products"/>
 <c:set var="SUPPORTINGSEQUENCES" value="Supporting Sequences"/>
 <c:set var="CITATIONS" value="Citations"/>
 
 <c:if test="${formBean.marker.transcriptType.display eq 'miRNA'}">
-    <c:set var="sections" value="${[SUMMARY, TARGETGENES, SEQUENCE, GBROWSE, RELATEDTRANSCRIPTS, SEGMENTRELATIONSHIPS, PROTEINS, SUPPORTINGSEQUENCES, CITATIONS]}"/>
+    <c:set var="sections" value="${[SUMMARY, TARGETGENES, SEQUENCE, RELATEDTRANSCRIPTS, SEGMENTRELATIONSHIPS, PROTEINS, SUPPORTINGSEQUENCES, CITATIONS]}"/>
 </c:if>
 <c:if test="${formBean.marker.transcriptType.display ne 'miRNA'}">
-    <c:set var="sections" value="${[SUMMARY, SEQUENCE, GBROWSE, RELATEDTRANSCRIPTS, SEGMENTRELATIONSHIPS, PROTEINS, SUPPORTINGSEQUENCES, CITATIONS]}"/>
+    <c:set var="sections" value="${[SUMMARY, SEQUENCE, RELATEDTRANSCRIPTS, SEGMENTRELATIONSHIPS, PROTEINS, SUPPORTINGSEQUENCES, CITATIONS]}"/>
 </c:if>
 
 <z:dataPage sections="${sections}">
@@ -50,22 +49,9 @@
             <jsp:include page="transcript-view-sequence.jsp"/>
         </z:section>
 
-        <z:section title="${GBROWSE}">
-            <jsp:include page="transcript-view-gbrowse.jsp"/>
-        </z:section>
-
         <z:section title="${RELATEDTRANSCRIPTS}">
-            <z:section title="Confirmed Transcripts">
-                <jsp:include page="transcript-view-related-transcripts.jsp"/>
-            </z:section>
-            <authz:authorize access="hasRole('root')">
-                <z:section title="Withdrawn Transcripts">
-                    <jsp:include page="transcript-view-withdrawn-transcripts.jsp"/>
-                </z:section>
-            </authz:authorize>
+            <jsp:include page="transcript-view-related-transcripts.jsp"/>
         </z:section>
-
-
 
         <z:section title="${SEGMENTRELATIONSHIPS}">
             <div class="__react-root" id="GeneMarkerRelationshipsTable" data-gene-id="${formBean.marker.zdbID}"></div>

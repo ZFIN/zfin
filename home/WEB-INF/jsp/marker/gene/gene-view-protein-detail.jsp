@@ -16,21 +16,32 @@
         <tbody>
             <c:forEach var="category" items="${formBean.proteinDetailDomainBean.interProDomains}">
                 <tr>
-                    <%--<td>${category.proDetail.upID}</td>
-                    <td>${category.proDetail.upLength}</td>--%>
-
-                    <td> <zfin:link entity="${category.proDBLink}"/><br> <zfin2:externalLink
-                            href="https://www.ebi.ac.uk/interpro/protein/UniProt/${category.proDBLink.accessionNumber}">InterPro</zfin2:externalLink>
-                            <c:if test="${category.PDB}"><zfin2:externalLink href="https://www.rcsb.org/pdb/protein/${category.proDBLink.accessionNumber}">, PDB</zfin2:externalLink> </c:if>
-
-                    </td>
-                            <td>${category.proDBLink.length}</td>
-                    <c:forEach var="entry" items="${category.interProDomain}">
-                        <td style="padding-center: 1em;">
-                            <c:if test="${fn:contains(entry.value,'X')}">
-                                <i class="fas fa-check"></i>
-                            </td>
+                    <td class="text-nowrap">
+                        <zfin:link entity="${category.proDBLink}"/>
+                        <z:otherPagesDropdown>
+                            <zfin2:externalLink
+                                    className="dropdown-item"
+                                    href="https://www.ebi.ac.uk/interpro/protein/UniProt/${category.proDBLink.accessionNumber}"
+                            >
+                                InterPro
+                            </zfin2:externalLink>
+                            <c:if test="${category.PDB}">
+                                <zfin2:externalLink
+                                        className="dropdown-item"
+                                        href="https://www.rcsb.org/pdb/protein/${category.proDBLink.accessionNumber}"
+                                >
+                                    PDB
+                                </zfin2:externalLink>
                             </c:if>
+                        </z:otherPagesDropdown>
+                    </td>
+                    <td>${category.proDBLink.length}</td>
+                    <c:forEach var="entry" items="${category.interProDomain}">
+                        <td>
+                            <c:if test="${fn:contains(entry.value, 'X')}">
+                                <i class="fas fa-check"></i>
+                            </c:if>
+                        </td>
                     </c:forEach>
                 </tr>
             </c:forEach>

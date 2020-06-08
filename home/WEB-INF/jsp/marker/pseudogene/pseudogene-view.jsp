@@ -64,14 +64,7 @@
         </z:section>
 
         <z:section title="${TRANSCRIPTS}">
-            <z:section title="Confirmed Transcripts">
-                <jsp:include page="pseudogene-view-transcripts.jsp"/>
-            </z:section>
-            <authz:authorize access="hasRole('root')">
-                <z:section title="Withdrawn Transcripts">
-                    <jsp:include page="pseudogene-view-withdrawn-transcripts.jsp"/>
-                </z:section>
-            </authz:authorize>
+            <jsp:include page="pseudogene-view-transcripts.jsp"/>
         </z:section>
 
         <z:section title="${SEQUENCES}">
