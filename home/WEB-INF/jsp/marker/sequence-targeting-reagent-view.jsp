@@ -127,8 +127,7 @@
     <c:choose>
         <c:when test="${formBean.phenoMartBeingRegened}">
             <div>
-                <img src="/images/warning-noborder.gif" alt="transcript withdrawn" width="20" height="20" align="top"
-                     class="blast-key"/>
+                <i class="warning-icon" title="transcript withdrawn"></i>
                 Data in this section is temporarily unavailable, please reload in a few minutes.
             </div>
         </c:when>

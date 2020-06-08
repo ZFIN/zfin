@@ -24,8 +24,9 @@
     <zfin2:markerGenomeResourcesAttributeListItem links="${formBean.otherMarkerPages}" />
 
     <c:if test="${!empty formBean.clone.problem}">
-        <z:attributeListItem label="Clone Problem Type">${formBean.clone.problem} <img
-                src="/images/warning-noborder.gif" width="20" height="20" align="top"></z:attributeListItem>
+        <z:attributeListItem label="Clone Problem Type">
+            ${formBean.clone.problem} <i class="warning-icon"></i>
+        </z:attributeListItem>
     </c:if>
 
     <z:attributeListItem label="Species">

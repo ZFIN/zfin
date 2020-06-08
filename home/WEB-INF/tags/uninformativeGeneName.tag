@@ -12,7 +12,7 @@
                             :
                             "This gene was based on a non-zebrafish clone and has been withdrawn."
                             }
-                <img src="/images/warning-noborder.gif" title="Withdrawn" alt="Withdrawn" width="20" height="20" align="top">
+                <i class="warning-icon" title="Withdrawn"></i>
             </p>
         </c:when>
         <c:when test="${fn:startsWith(name,'ch:')}">

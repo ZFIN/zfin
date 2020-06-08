@@ -19,7 +19,7 @@
                 <c:forEach var="supplier" items="${genotype.suppliers}" varStatus="status">
                     <c:choose>
                         <c:when test="${genotype.extinct}">
-                            ${supplier.organization.name}&nbsp;&nbsp;<font size="3" color="red">Extinct</font><img src="/images/warning-noborder.gif" border="0" alt="extinct" width="20" align="top" height="20">&nbsp;
+                            ${supplier.organization.name}&nbsp;&nbsp;<font size="3" color="red">Extinct</font> <i class="warning-icon" title="Extinct"></i>>&nbsp;
                         </c:when>
                         <c:otherwise>
                             <a href="/action/profile/view/${supplier.organization.zdbID}"
@@ -57,9 +57,7 @@
             <c:otherwise>
                 <c:choose>
                     <c:when test="${genotype.extinct}">
-                        <font size="3" color="red">extinct</font> <img src="/images/warning-noborder.gif"
-                                                                       alt="extinct" width="20" align="top"
-                                                                       height="20">
+                        <font size="3" color="red">extinct</font> <i class="warning-icon" title="Extinct"></i>
                     </c:when>
                     <c:otherwise>
                         No data available

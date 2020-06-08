@@ -23,7 +23,7 @@
     <c:if test="${!empty cloneBean.clone.problem}">
     <tr>
         <th>Clone Problem Type:</th>
-        <td valign="middle">${cloneBean.clone.problem} <img src="/images/warning-noborder.gif" width="20" height="20" align="top"></td>
+        <td valign="middle">${cloneBean.clone.problem} <i class="warning-icon"></i></td>
     </c:if>
 
     <%--<zfin2:cloneData clone="${cloneBean.clone}" isThisseProbe="${cloneBean.isThisseProbe}"/>--%>

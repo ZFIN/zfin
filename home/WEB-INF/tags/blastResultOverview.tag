@@ -8,7 +8,7 @@
 <img src="/images/G_letter.png" class="blast-key"> GO Annotations
 <img src="/images/P_letter.png" class="blast-key"> Phenotype Data
 <img src="/images/P_camera.png" class="blast-key"> with Images
-<img src="/images/warning-noborder.gif" alt="transcript withdrawn" width="20" height="20" align="top" class="blast-key" > Withdrawn
+<i class="warning-icon" title="transcript withdrawn"></i> Withdrawn
 <table class="searchresults rowstripes">
     <%--<tr bgcolor="darkgray">--%>
     <tr>

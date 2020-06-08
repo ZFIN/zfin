@@ -275,9 +275,7 @@
                                 
                                 <c:forEach var="genotypeDisplay" items="${formBean.genotypeDisplays}" varStatus="loop">
                                     <c:if test="${genotypeDisplay.genotype.extinct}">
-                                        <font size="3" color="red">extinct</font> <img src="/images/warning-noborder.gif"
-                                                                                       alt="extinct" width="20" align="top"
-                                                                                       height="20">
+                                        <font size="3" color="red">extinct</font> <i class="warning-icon" title="extinct"></i>
                                     </c:if>
                                 </c:forEach>
                             </c:when>

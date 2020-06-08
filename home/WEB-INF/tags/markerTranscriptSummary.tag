@@ -155,8 +155,7 @@
                                                                               style="display: none;" href="javascript:;"
                                                                               onclick="hideWithdrawnTranscripts(${fn:length(relatedTranscriptDisplay.withdrawnTranscripts)})"><img
                                     src="/images/minus-13.png" style="border:none;" title="hide withdrawn transcripts"></a>&nbsp;Withdrawn
-                                Transcripts<img src="/images/warning-noborder.gif" border="0" alt="extinct" width="20"
-                                                align="top" height="20"></strong></td>
+                                Transcripts <i class="warning-icon" title="Extinct"></i></strong></td>
                             <td width="22%"></td>
                             <td width="15%"></td>
                             <td width="25%"></td>

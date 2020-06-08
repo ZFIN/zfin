@@ -11,7 +11,7 @@
                             :
                             "This clone has been derived from a non-zebrafish species and has been withdrawn."
                             }
-                <img src="/images/warning-noborder.gif" title="Withdrawn" alt="Withdrawn" width="20" height="20" align="top">
+                <i class="warning-icon" title="Withdrawn"></i>
             </p>
         </c:if>
 </c:if>

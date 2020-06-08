@@ -12,8 +12,7 @@ public abstract class EntityPresentation {
 
     private static final Logger logger = LogManager.getLogger(EntityPresentation.class);
     protected static final String NONGENEDOMMARKER = "nongenedommarker";
-    protected static final String WITHDRAWN_PREFIX = "&nbsp;<img src='/images/warning-noborder.gif' title='Withdrawn' alt='Withdrawn' width='20' height='20'";
-    public static final String WITHDRAWN = WITHDRAWN_PREFIX + " align='top' />";
+    public static final String WITHDRAWN = " <i class=\"warning-icon\" title=\"Withdrawn\"></i>";
     public static final String ZFIN_JUMP_URL = "/";
     public static String domain;
 

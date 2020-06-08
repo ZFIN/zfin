@@ -460,7 +460,7 @@ public class ResultService {
                 result.addAttribute(QUALITY, clone.getRating().toString());
             }
             if (clone.getProblem() != null) {
-                result.addAttribute(CLONE_PROBLEM_TYPE, clone.getProblem().name() + " <img src=\"/images/warning-noborder.gif\" width=\"20\" height=\"20\" align=\"top\"/>");
+                result.addAttribute(CLONE_PROBLEM_TYPE, clone.getProblem().name() + " <i class=\"warning-icon\"></i>");
             }
             if (clone.getRating() != null) {
                 result.addAttribute(QUALITY, "<span class='stars stars-" + clone.getRating() + "'></span>");
