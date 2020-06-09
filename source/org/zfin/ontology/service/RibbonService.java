@@ -1,14 +1,19 @@
 package org.zfin.ontology.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.PivotField;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.util.NamedList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.expression.ExpressionFigureStage;
@@ -31,8 +36,6 @@ import org.zfin.search.service.SolrService;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -56,6 +59,8 @@ public class RibbonService {
 
     @Autowired
     private PublicationRepository publicationRepository;
+
+    private static final String GLOBAL_ALL = "GlobalAll";
 
     public RibbonSummary buildGORibbonSummary(String zdbID) throws Exception {
         SolrQuery query = new SolrQuery();
@@ -113,17 +118,19 @@ public class RibbonService {
                 .collect(toList());
 
         // get the counts for the All annotation blocks and the slim blocks
-        Map<String, Integer> allCounts = getRibbonCounts(partialQuery, categoryIDs);
-        Map<String, Integer> slimCounts = getRibbonCounts(partialQuery, slimIDs);
+        Map<String, RibbonSubjectGroupCounts> allCounts = getRibbonCounts(partialQuery, categoryIDs);
+        Map<String, RibbonSubjectGroupCounts> slimCounts = getRibbonCounts(partialQuery, slimIDs);
         // other counts have to be done one category at a time so that post-composed terms which are included
         // under a slim term of one category aren't excluded from the Other of another category
-        Map<String, Integer> otherCounts = new HashMap<>();
+        Map<String, RibbonSubjectGroupCounts> otherCounts = new HashMap<>();
         for (RibbonCategoryConfig category : categoryConfigs) {
-            otherCounts.putAll(getRibbonCounts(
-                    partialQuery,
-                    List.of(category.getCategoryTerm().getOboID()),
-                    category.getSlimTerms().stream().map(GenericTerm::getOboID).collect(toList())
-            ));
+            if (category.isIncludeOther()) {
+                otherCounts.putAll(getRibbonCounts(
+                        partialQuery,
+                        List.of(category.getCategoryTerm().getOboID()),
+                        category.getSlimTerms().stream().map(GenericTerm::getOboID).collect(toList())
+                ));
+            }
         }
 
         // build the categories field with term names and definitions
@@ -182,20 +189,18 @@ public class RibbonService {
         // build the groups field from the counts from solr. the All and Other counts should
         // always be there. the slim terms only need to be there if the count is over 0
         Map<String, Map<String, RibbonSubjectGroupCounts>> groups = Stream.concat(
-                slimCounts.entrySet().stream().filter(count -> count.getValue() > 0),
+                slimCounts.entrySet().stream().filter(count -> count.getValue().getNumberOfAnnotations() > 0),
                 Stream.concat(allCounts.entrySet().stream(), otherCounts.entrySet().stream()))
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
-                        count -> {
-                            RibbonSubjectGroupCounts groupCounts = new RibbonSubjectGroupCounts();
-                            groupCounts.setNumberOfAnnotations(count.getValue());
-                            return Map.of("ALL", groupCounts);
-                        }
+                        count -> Map.of("ALL", count.getValue())
                 ));
         RibbonSubject subject = new RibbonSubject();
         subject.setId(zdbID);
-        subject.setNumberOfAnnotations(allCounts.values().stream().mapToInt(Integer::intValue).sum());
         subject.setGroups(groups);
+        Map<String, RibbonSubjectGroupCounts> globalAllCounts = getRibbonCounts(partialQuery, Collections.emptyList());
+        subject.setNumberOfAnnotations(globalAllCounts.get(GLOBAL_ALL).getNumberOfAnnotations());
+        subject.setNumberOfClasses(globalAllCounts.get(GLOBAL_ALL).getNumberOfClasses());
 
         // build the final result object
         RibbonSummary summary = new RibbonSummary();
@@ -204,28 +209,62 @@ public class RibbonService {
         return summary;
     }
 
-    public Map<String, Integer> getRibbonCounts(SolrQuery defaultQuery, List<String> includeTermIDs)
+    public Map<String, RibbonSubjectGroupCounts> getRibbonCounts(SolrQuery defaultQuery, List<String> includeTermIDs)
             throws SolrServerException, IOException {
         return getRibbonCounts(defaultQuery, includeTermIDs, Collections.emptyList());
     }
 
-    public Map<String, Integer> getRibbonCounts(SolrQuery partialQuery, List<String> includeTermIDs, List<String> excludeTermIDs)
+    public Map<String, RibbonSubjectGroupCounts> getRibbonCounts(SolrQuery partialQuery, List<String> includeTermIDs, List<String> excludeTermIDs)
             throws SolrServerException, IOException {
-        Map<String, Integer> termCounts = new HashMap<>(includeTermIDs.size());
+        Map<String, RibbonSubjectGroupCounts> termCounts = new HashMap<>(includeTermIDs.size());
 
         SolrQuery query = partialQuery.getCopy();
         query.setQuery("*:*");
-        includeTermIDs.forEach(t -> query.addFacetQuery("term_id:" + SolrService.luceneEscape(t)));
+
+        // start building the JSON object which specifies the facet query
+        final JsonNodeFactory jsonFactory = JsonNodeFactory.instance;
+        final ObjectNode jsonFacetQuery = jsonFactory.objectNode();
+        // an empty includeTermIDs indicates this is the query for the GlobalAll field.
+        // TODO: refactor to allow the GlobalAll numbers to be fetched in the same query as ribbon terms?
+        if (CollectionUtils.isEmpty(includeTermIDs)) {
+            jsonFacetQuery.put("num_terms", "unique(name_s)");
+        }
+        includeTermIDs.forEach(t -> {
+            final ObjectNode termQuery = jsonFactory.objectNode();
+            final ObjectNode termQueryFacet = jsonFactory.objectNode();
+            termQuery.put("type", "query");
+            termQuery.put("q", "term_id:" + SolrService.luceneEscape(t));
+            termQueryFacet.put("num_terms", "unique(name_s)");
+            termQuery.set("facet", termQueryFacet);
+            jsonFacetQuery.set(t, termQuery);
+        });
+        // serialize the JSON object and add it to the query
+        query.set("json.facet", new ObjectMapper().writeValueAsString(jsonFacetQuery));
         excludeTermIDs.forEach(t -> query.addFilterQuery("-term_id:" + SolrService.luceneEscape(t)));
 
-        QueryResponse response = SolrService.getSolrClient("prototype").query(query);
+        // need to POST here because otherwise the underlying URI gets too long
+        QueryResponse response = SolrService.getSolrClient("prototype").query(query, SolrRequest.METHOD.POST);
 
-        Pattern pattern = Pattern.compile("([A-Z]+:\\d+)");
-        for (Map.Entry<String, Integer> entry : response.getFacetQuery().entrySet()) {
-            Matcher matcher = pattern.matcher(entry.getKey().replace("\\", ""));
-            if (matcher.find()) {
-                String termID = matcher.group(1);
-                termCounts.put(termID, entry.getValue());
+        // the json facet API isn't well-supported by SolrJ so there a lot of getting
+        // fields by name and casting from Object here
+        NamedList<Object> facets = (NamedList<Object>) response.getResponse().get("facets");
+        if (CollectionUtils.isEmpty(includeTermIDs)) {
+            RibbonSubjectGroupCounts counts = new RibbonSubjectGroupCounts();
+            counts.setNumberOfAnnotations((Integer) Optional.ofNullable(facets.get("count")).orElse(0));
+            counts.setNumberOfClasses((Integer) Optional.ofNullable(facets.get("num_terms")).orElse(0));
+            termCounts.put(GLOBAL_ALL, counts);
+        } else {
+            for (String id : includeTermIDs) {
+                NamedList<Object> facet = (NamedList<Object>) facets.get(id);
+                RibbonSubjectGroupCounts counts = new RibbonSubjectGroupCounts();
+                if (facet != null) {
+                    counts.setNumberOfAnnotations((Integer) Optional.ofNullable(facet.get("count")).orElse(0));
+                    counts.setNumberOfClasses((Integer) Optional.ofNullable(facet.get("num_terms")).orElse(0));
+                } else {
+                    counts.setNumberOfAnnotations(0);
+                    counts.setNumberOfClasses(0);
+                }
+                termCounts.put(id, counts);
             }
         }
 

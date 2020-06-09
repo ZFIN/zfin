@@ -6139,8 +6139,7 @@ and child.term_ontology = 'disease_ontology';
                         'Phenotype Observation' as category,
                         '/' || pg_fig_zdb_id as url,
                         pg_fig_zdb_id as figure_id,
-                        fish_name || ' from ' || nvl(pub_mini_ref,'--')
-                            || ' ' ||  nvl(fig_label,'') || psg_short_name as name,
+                        psg_short_name as name,
                         fish_name || ' from ' || nvl(pub_mini_ref,'--')
                             || ' ' ||  nvl(fig_label,'') || psg_short_name as full_name,
                         fish_name_order || pub_mini_ref || fig_full_label || psg_short_name as name_order,
