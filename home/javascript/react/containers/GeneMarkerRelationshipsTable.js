@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import DataTable from '../components/data-table';
 import CommaSeparatedList from '../components/CommaSeparatedList';
+import AttributionLink from '../components/AttributionLink';
 import {EntityLink} from '../components/entity';
 
 const AccessionNumberList = ({dblinks}) => (
@@ -43,11 +44,17 @@ const GeneMarkerRelationshipsTable = ({geneId}) => {
         },
         {
             label: 'Citations',
-            content: row => (row.numberOfPublications > 0 &&
-            <a href={`/action/infrastructure/data-citation-list/${row.markerRelationshipZdbId}`}>{row.numberOfPublications}</a>),
+            content: row => (
+                <AttributionLink
+                    url={row.url}
+                    publicationCount={row.numberOfPublications}
+                    publication={row.singlePublication}
+                    multiPubAccessionID={row.markerRelationshipZdbId}
+                />
+            ),
             width: '100px',
             align: 'right',
-        }
+        },
     ];
     return (
         <DataTable
