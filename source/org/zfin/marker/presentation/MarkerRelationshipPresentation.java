@@ -7,10 +7,14 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.zfin.framework.api.View;
 import org.zfin.framework.presentation.ProvidesLink;
+import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationPresentation;
+import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.marker.Marker;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -49,6 +53,21 @@ public class MarkerRelationshipPresentation implements ProvidesLink {
     private List<MarkerDBLink> otherMarkerGenBankDBLink;
     @JsonView(View.MarkerRelationshipAPI.class)
     private int numberOfPublications;
+    @JsonView(View.MarkerRelationshipAPI.class)
+    public Publication getSinglePublication() {
+        List<Publication> publications = new ArrayList<>();
+        List<PublicationAttribution> publicationAttributions = RepositoryFactory.getInfrastructureRepository().getPublicationAttributions(markerRelationshipZdbId);
+        for (PublicationAttribution pub : publicationAttributions) {
+            publications.add(pub.getPublication());
+        }
+        if (publications.size()==1){
+            return publications.iterator().next();
+        } else {
+            return null;
+        }
+    }
+
+
 
     public Marker getRelatedMarker() {
         return relatedMarker;
@@ -123,6 +142,8 @@ public class MarkerRelationshipPresentation implements ProvidesLink {
 
         return sb.toString();
     }
+
+
 
     public String getOrderThisLink() {
 

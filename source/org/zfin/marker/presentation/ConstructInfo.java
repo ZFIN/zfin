@@ -6,6 +6,8 @@ import lombok.Setter;
 import org.zfin.framework.api.View;
 import org.zfin.infrastructure.ControlledVocab;
 import org.zfin.marker.Marker;
+import org.zfin.publication.Publication;
+import org.zfin.repository.RepositoryFactory;
 
 import java.util.List;
 
@@ -25,5 +27,15 @@ public class ConstructInfo {
     private List<ControlledVocab> species;
     @JsonView(View.API.class)
     private int numberOfPublications;
+    @JsonView(View.API.class)
+    public Publication getSinglePublication() {
+
+        List<Publication>pub=RepositoryFactory.getPublicationRepository().getPubsForDisplay(construct.zdbID);
+        if (pub.size()==1){
+            return pub.iterator().next();
+        } else {
+            return null;
+        }
+    }
 
 }

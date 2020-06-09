@@ -133,6 +133,7 @@ public class ConstructService {
                     info.setRegulatoryRegions(regulatoryRegions);
                     info.setCodingSequences(codingSequences);
                     info.setNumberOfPublications(publicationRepository.getNumberAssociatedPublicationsForZdbID(marker.getZdbID()));
+
                     info.setNumberOfTransgeniclines(featureRepository.getNumberOfFeaturesForConstruct(marker));
                     List<ControlledVocab> species = infrastructureRepository.getControlledVocabsForSpeciesByConstruct(marker);
                     species.add(zebrafish);

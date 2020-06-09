@@ -15,6 +15,8 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.presentation.DiseaseDisplay;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
+import org.zfin.publication.Publication;
+import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.InterProProtein;
 
 import java.util.Collection;
@@ -72,5 +74,7 @@ public class MarkerBean extends PaginationBean {
     public Person getUser() {
         return ProfileService.getCurrentSecurityUser();
     }
+
+
 
 }

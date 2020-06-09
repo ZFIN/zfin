@@ -11,6 +11,8 @@ import org.zfin.gbrowse.presentation.GBrowseImageSimilarComparator;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.presentation.PhenotypeDisplay;
 import org.zfin.profile.MarkerSupplier;
+import org.zfin.publication.Publication;
+import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.STRMarkerSequence;
 import org.zfin.sequence.blast.Database;
 
@@ -161,6 +163,20 @@ public class SequenceTargetingReagentBean extends MarkerBean{
 
     public void setPhenoMartBeingRegened(boolean phenoMartBeingRegened) {
         this.phenoMartBeingRegened = phenoMartBeingRegened;
+    }
+    @JsonView(View.API.class)
+    public Publication getSinglePublication() {
+
+        List<Publication>pub=RepositoryFactory.getPublicationRepository().getPubsForDisplay(marker.zdbID);
+        if (pub.size()==1){
+            return pub.iterator().next();
+        } else {
+            return null;
+        }
+    }
+    @JsonView(View.API.class)
+    public int getNumberOfPublications(){
+        return RepositoryFactory.getPublicationRepository().getNumberAssociatedPublicationsForZdbID(marker.getZdbID());
     }
 }
 
