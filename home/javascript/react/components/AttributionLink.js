@@ -7,7 +7,7 @@ const AttributionLink = ({accession, url, publicationCount, publication, multiPu
         if (accession) {
             return (
                 <span>
-                    <a href={url}>{accession}</a> <a href={`/${publication.zdbID}`}>{publicationCount}</a>
+                    <a href={url}>{accession}</a> (<a href={`/${publication.zdbID}`}>{publicationCount}</a>)
                 </span>
             );
         } else {
@@ -19,13 +19,13 @@ const AttributionLink = ({accession, url, publicationCount, publication, multiPu
         if (multiPubAccessionID) {
             return (
                 <span>
-                    <a href={url}>{accession}</a> <a href={`/action/infrastructure/data-citation-list/${multiPubAccessionID}/${multiPubs}`}>{publicationCount}</a>
+                    <a href={url}>{accession}</a> (<a href={`/action/infrastructure/data-citation-list/${multiPubAccessionID}/${multiPubs}`}>{publicationCount}</a>)
                 </span>
             );
         } else {
             return (
                 <span>
-                    <a href={url}>{accession}</a> <a href={`/action/infrastructure/data-citation-list/${multiPubs}`}>{publicationCount}</a>
+                    <a href={url}>{accession}</a> (<a href={`/action/infrastructure/data-citation-list/${multiPubs}`}>{publicationCount}</a>)
                 </span>
             );
         }

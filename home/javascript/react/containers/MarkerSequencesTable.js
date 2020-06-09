@@ -5,6 +5,7 @@ import DataTable from '../components/data-table';
 import AttributionLink from '../components/AttributionLink';
 import BlastDropDown from '../components/BlastDropDown';
 import DataTableSummaryToggle from '../components/DataTableSummaryToggle';
+import SequenceType from '../components/SequenceType';
 
 const MarkerSequencesTable = ({markerId, showSummary}) => {
     const [summary, setSummary] = useState(showSummary === 'true');
@@ -13,7 +14,14 @@ const MarkerSequencesTable = ({markerId, showSummary}) => {
     const columns = [
         {
             label: 'Type',
-            content: row => row.type,
+            content: row => (
+                <SequenceType
+                    type={row.type}
+                    value={summary}
+                    markerID={markerId}
+                />
+            ),
+
             width: '80px',
             filterName: 'type',
             filterOptions: ['Genomic', 'RNA', 'Polypeptide'],
