@@ -49,7 +49,7 @@ const GeneMarkerRelationshipsTable = ({geneId}) => {
                     url={row.url}
                     publicationCount={row.numberOfPublications}
                     publication={row.singlePublication}
-                    multiPubAccessionID={row.markerRelationshipZdbId}
+                    multiPubs={row.markerRelationshipZdbId}
                 />
             ),
             width: '100px',
