@@ -294,7 +294,7 @@ project(':server_apps:DB_maintenance') {
     }
 }
 
-project('cgi-bin') {
+project(':cgi-bin') {
     task "deployFiles"(type: ZfinTargetCopy) {
         from(project.projectDir) {
             ttNameMap.each { name, value ->
