@@ -43,19 +43,29 @@ const PhenotypeRibbon = ({geneId}) => {
     const handleClearTableSelection = () => {
         setSelectedTablePhenotype(null);
         setSelectedTableIDs(null);
-    }
+    };
 
     const handleNoDataLoad = () => {
         setSelectedRibbonTerm(null, null);
         handleClearTableSelection();
-    }
+    };
 
     let selectedTermName = '';
+    let headerText = '';
     if (selectedTablePhenotype) {
         selectedTermName = selectedTablePhenotype;
+        headerText += 'Phenotype in ' +  selectedTermName
     } else if (selectedRibbonTerm) {
         selectedTermName = selectedRibbonTerm.group.label;
+        if (selectedRibbonTerm.group.id.indexOf('ZFS') === -1) {
+            headerText += 'Phenotype in ' + selectedTermName
+
+        }
+        else {
+            headerText += 'Phenotype at ' + selectedTermName + '  stage'
+        }
     }
+
 
     return (
         <div className='phenotype-ribbon'>
@@ -77,7 +87,8 @@ const PhenotypeRibbon = ({geneId}) => {
                     <i className=' fas fa-chevron-left'/> Back to phenotype in {selectedRibbonTerm.group.label}
                 </button>
             }
-            {selectedTermName && <h5>Phenotype in <span dangerouslySetInnerHTML={{__html: selectedTermName}} /></h5>}
+            {/*{selectedTermName && <h5>Phenotype in <span dangerouslySetInnerHTML={{__html: selectedTermName}} /></h5>}*/}
+            {selectedTermName && <h5>{headerText} </h5>}
 
             {(selectedRibbonTerm || selectedTableIDs) &&
                 <PhenotypeFigureGallery

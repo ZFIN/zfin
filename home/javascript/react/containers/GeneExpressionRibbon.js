@@ -52,16 +52,25 @@ const GeneExpressionRibbon = ({geneId}) => {
     const handleNoDataLoad = () => {
         setSelectedRibbonTerm(null, null);
         setSelectedTableEntity(null);
-    }
+    };
 
     let selectedTermName = '';
+    let headerText = '';
     if (selectedTableEntity) {
-        selectedTermName = selectedTableEntity.superterm.termName
+        selectedTermName = selectedTableEntity.superterm.termName;
         if (selectedTableEntity.subterm) {
             selectedTermName +=  ' ' + selectedTableEntity.subterm.termName
         }
+        headerText += 'Expression in ' +  selectedTermName
     } else if (selectedRibbonTerm) {
         selectedTermName = selectedRibbonTerm.group.label;
+        if (selectedRibbonTerm.group.id.indexOf('ZFS') === -1) {
+            headerText += 'Expression in ' + selectedTermName
+
+        }
+        else {
+            headerText += 'Expression at ' + selectedTermName + '  stage'
+        }
     }
 
     return (
@@ -87,7 +96,8 @@ const GeneExpressionRibbon = ({geneId}) => {
                     <i className=' fas fa-chevron-left'/> Back to expression in {selectedRibbonTerm.group.label}
                 </button>
             }
-            {selectedTermName && <h5>Expression in {selectedTermName}</h5>}
+
+            {selectedTermName && <h5>{headerText} </h5>}
 
             {(selectedRibbonTerm || selectedTableEntity) &&
                 <GeneExpressionFigureGallery
