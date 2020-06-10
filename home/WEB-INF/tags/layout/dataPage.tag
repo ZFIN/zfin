@@ -10,9 +10,11 @@
     <div class="data-page-nav-container">
         <ul class="nav nav-pills flex-column">
             <li class="nav-item w-100">
-                <h5 class="p-3 m-0 border-bottom text-truncate">
-                    <jsp:invoke fragment="entityName" />
-                </h5>
+                <a href="#" class="back-to-top-link" title="Back to top">
+                    <h5 class="p-3 m-0 border-bottom text-truncate">
+                        <jsp:invoke fragment="entityName" />
+                    </h5>
+                </a>
             </li>
             <c:forEach var="section" items="${sections}">
                 <li class="nav-item" role="presentation">

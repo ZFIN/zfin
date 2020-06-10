@@ -26,6 +26,9 @@ body.data-page {
         position: sticky;
         top: 0;
         border-bottom: 1px solid white;
+        max-height: 100vh;
+        overflow-y: auto;
+        flex-wrap: nowrap;
     }
 
     .nav-pills > li > a {
@@ -273,5 +276,14 @@ tr.spaceUnder > td{
 
     .tipsy-inner {
         max-width: 400px;
+    }
+}
+
+.back-to-top-link {
+    display: block;
+    color: inherit !important;
+
+    &:hover {
+        background: $grey-light;
     }
 }
