@@ -9,15 +9,14 @@
 <c:set var="CONSTRUCTS" value="Constructs"/>
 <c:set var="EXPRESSION" value="Expression"/>
 <c:set var="PHENOTYPE" value="Phenotype"/>
-<c:set var="OTHERPAGES" value="Genome Resources"/>
 <c:set var="CITATIONS" value="Citations"/>
 
 
 <c:if test="${typeName ne 'MRPHLNO'}">
-        <c:set var="sections" value="${[SUMMARY, TARGETLOCATION, CONSTRUCTS, GENOMICFEATURES, EXPRESSION, PHENOTYPE, OTHERPAGES, CITATIONS]}"/>
+        <c:set var="sections" value="${[SUMMARY, TARGETLOCATION, CONSTRUCTS, GENOMICFEATURES, EXPRESSION, PHENOTYPE, CITATIONS]}"/>
 </c:if>
 <c:if test="${typeName eq 'MRPHLNO'}">
-        <c:set var="sections" value="${[SUMMARY, TARGETLOCATION, GENOMICFEATURES, EXPRESSION, PHENOTYPE, OTHERPAGES, CITATIONS]}"/>
+        <c:set var="sections" value="${[SUMMARY, TARGETLOCATION, GENOMICFEATURES, EXPRESSION, PHENOTYPE, CITATIONS]}"/>
 </c:if>
 
     <z:dataPage sections="${sections}">
@@ -69,10 +68,6 @@
             <z:section title="Phenotype of all Fish created by or utilizing ${formBean.marker.name}">
                 <jsp:include page="sequence-targeting-reagent-view-fish-phenotype.jsp" />
             </z:section>
-        </z:section>
-
-        <z:section title="${OTHERPAGES}">
-        <zfin2:markerSummaryReport marker="${formBean.marker}" links="${formBean.otherMarkerPages}"/>
         </z:section>
 
         <z:section title="${CITATIONS}">

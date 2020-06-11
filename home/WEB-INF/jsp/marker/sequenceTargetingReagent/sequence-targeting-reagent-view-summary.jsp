@@ -71,6 +71,7 @@
         </z:attributeListItem>
     </c:if>
 
+
     <z:attributeListItem label="Disclaimer">
         <c:if test="${!empty formBean.marker.sequence}">
             Although ZFIN verifies reagent sequence data, we recommend that you
@@ -79,5 +80,7 @@
     </z:attributeListItem>
     
     <zfin2:entityNotesAttributeListItems entity="${formBean.marker}" />
+
+    <zfin2:markerGenomeResourcesAttributeListItem links="${formBean.otherMarkerPages}" />
 
 </z:attributeList>
