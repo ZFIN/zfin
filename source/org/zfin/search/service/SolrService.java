@@ -940,5 +940,21 @@ public class SolrService {
         }
     }
 
+    public static void deleteByIds(List<String> ids, boolean commit)  {
+        try {
+            getSolrClient().deleteById(ids);
+        } catch (Exception e) {
+            logger.error(e);
+        }
+
+        if (commit) {
+            try {
+                getSolrClient().commit();
+            } catch (Exception e) {
+                logger.error(e);
+            }
+        }
+
+    }
 }
 

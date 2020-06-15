@@ -27,6 +27,7 @@ import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.search.service.SolrService;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.sequence.MarkerDBLink;
@@ -696,7 +697,7 @@ public class GafService {
 
         // delete record attributions and then evidences directly
         RepositoryFactory.getInfrastructureRepository().deleteRecordAttributionByDataZdbIDs(zdbIDs);
-
+        SolrService.deleteByIds(zdbIDs, true);
         return markerGoTermEvidenceRepository.deleteMarkerGoTermEvidenceByZdbIDs(zdbIDs);
     }
 
