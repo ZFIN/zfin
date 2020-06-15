@@ -1,5 +1,6 @@
 import {
     array,
+    arrayOf,
     bool,
     func,
     node,
@@ -25,6 +26,7 @@ export const columnDefinitionType = shape({
     content: oneOfType([string, func]).isRequired,
     key: string,
     filterName: string,
+    filterOptions: arrayOf(string),
 });
 
 export const resultResponseType = shape({
@@ -53,5 +55,5 @@ export const tableStateType = shape({
     limit: number,
     page: number,
     sortBy: string,
-    filter: object,
+    filter: oneOfType([object, string]),
 });

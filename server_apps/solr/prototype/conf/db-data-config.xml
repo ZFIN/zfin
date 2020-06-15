@@ -4754,7 +4754,7 @@ and child.term_ontology = 'disease_ontology';
         <entity name="publication"
                 query="select zdb_id as id,
                              title as name,
-                             title as full_name,
+                             get_pub_citation(zdb_id) as full_name,
                              zero_pad(pub_mini_ref) as name_sort,
                              pub_mini_ref as alias,
                              'Publication' as category,

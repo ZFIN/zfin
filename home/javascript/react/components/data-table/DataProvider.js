@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import {downloadOptionType, sortOptionType, tableStateType} from '../../utils/types';
 
 const DataProvider = ({
+    additionalControls,
     dataUrl,
     downloadOptions,
     onDataLoaded,
@@ -62,21 +63,20 @@ const DataProvider = ({
         }))
     };
 
-    const handleSortChange = (sortBy, label) => {
-        currentSortState = label;
+    const handleSortChange = (sortBy) => {
         setTableState(produce(state => {
             state.page = 1;
             state.sortBy = sortBy;
         }));
     };
 
-    let currentSortState;
-
     return (
         <>
-            <div className='d-flex justify-content-end'>
+            <div className='d-flex justify-content-end align-items-start'>
+                {additionalControls}
+
                 {downloadOptions && downloadOptions.length > 0 &&
-                <div className='dropdown'>
+                <div className='btn-group'>
                     <button className='btn btn-sm dropdown-toggle' type='button' data-toggle='dropdown'>
                         Download
                     </button>
@@ -89,8 +89,7 @@ const DataProvider = ({
                 }
 
                 {sortOptions && sortOptions.length > 0 &&
-                <div className='dropdown'>
-                    <span dangerouslySetInnerHTML={{__html: currentSortState}}/>
+                <div className='btn-group'>
                     <button className='btn btn-sm dropdown-toggle' type='button' data-toggle='dropdown'>
                         Sort by
                     </button>
@@ -98,7 +97,7 @@ const DataProvider = ({
                         {sortOptions.map((sort, idx) => {
                             const isActive = (tableState.sortBy === null && idx === 0) || tableState.sortBy === sort.value;
                             return (
-                                <button key={sort.value} className='dropdown-item' type='button' onClick={() => handleSortChange(sort.value, sort.label)}>
+                                <button key={sort.value} className='dropdown-item' type='button' onClick={() => handleSortChange(sort.value)}>
                                     <i className={`fas fa-fw mr-1 ${isActive ? 'fa-check' : ''}`}/>
                                     {sort.label}
                                 </button>
@@ -157,6 +156,7 @@ const DataProvider = ({
 }
 
 DataProvider.propTypes = {
+    additionalControls: PropTypes.node,
     dataUrl: PropTypes.string.isRequired,
     downloadOptions: PropTypes.arrayOf(downloadOptionType),
     onDataLoaded: PropTypes.func,

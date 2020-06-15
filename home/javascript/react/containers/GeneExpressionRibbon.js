@@ -77,10 +77,10 @@ const GeneExpressionRibbon = ({geneId}) => {
         <div className='gene-expression-ribbon'>
             <div className='mb-2'>
                 <Checkbox checked={includeReporter} id='reporterSelectionCheckbox' onChange={handleReporterSelection}>
-                    Include Expression in Reporter Lines
+                    Include expression in reporter lines
                 </Checkbox>
                 <Checkbox checked={isDirectlySubmitted} id='directSubmissionCheckbox' onChange={handleDirectSubmissionSelection}>
-                    Show only Directly Submitted Expression Data
+                    Show only directly submitted expression data
                 </Checkbox>
             </div>
 

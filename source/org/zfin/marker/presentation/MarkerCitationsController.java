@@ -6,7 +6,9 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.zfin.framework.api.FieldFilter;
 import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.api.View;
@@ -21,7 +23,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -39,9 +43,13 @@ public class MarkerCitationsController {
     @JsonView(View.CitationsAPI.class)
     @RequestMapping("/marker/{zdbID}/citations")
     public JsonResultResponse<Publication> getMarkerCitations(@PathVariable String zdbID,
+                                                              @RequestParam(required = false) boolean includeUnpublished,
+                                                              @RequestParam(required = false) String filter,
                                                               @Version Pagination pagination) throws IOException, SolrServerException {
 
-        JsonResultResponse<Publication> response = publicationService.getCitationsByXref(zdbID, pagination);
+        List<Publication.Type> excludeTypes = getExcludedTypes(includeUnpublished);
+        pagination.addFieldFilter(FieldFilter.CITATION, filter);
+        JsonResultResponse<Publication> response = publicationService.getCitationsByXref(zdbID, excludeTypes, pagination);
         response.setHttpServletRequest(request);
 
         return response;
@@ -49,7 +57,9 @@ public class MarkerCitationsController {
 
     @RequestMapping("/marker/{zdbID}/citations.tsv")
     public void downloadMarkerCitations(@PathVariable String zdbID,
+                                        @RequestParam(required = false) boolean includeUnpublished,
                                         HttpServletResponse response) throws IOException, SolrServerException {
+        List<Publication.Type> excludeTypes = getExcludedTypes(includeUnpublished);
         response.setContentType(MediaType.TEXT_PLAIN);
         String attachmentName = zdbID + "_citations_" + DateTimeFormatter.ISO_INSTANT.format(Instant.now());
         response.setHeader("Content-Disposition", String.format("attachment; filename=\"%s.tsv\"", attachmentName));
@@ -64,7 +74,7 @@ public class MarkerCitationsController {
                 "Volume",
                 "Pages"
         ));
-        publicationService.getAllCitationsByXref(zdbID, (publications) -> {
+        publicationService.getAllCitationsByXref(zdbID, excludeTypes, (publications) -> {
             publications.forEach(pub -> {
                 Object[] row = new Object[]{
                         pub.getZdbID(),
@@ -82,5 +92,14 @@ public class MarkerCitationsController {
                 );
             });
         });
+    }
+
+    private List<Publication.Type> getExcludedTypes(boolean includeUnpublished) {
+        if (includeUnpublished) {
+            return new ArrayList<>();
+        }
+        return Arrays.stream(Publication.Type.values())
+                    .filter(type -> !type.isPublished())
+                    .collect(Collectors.toList());
     }
 }

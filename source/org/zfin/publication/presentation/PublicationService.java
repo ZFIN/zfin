@@ -11,6 +11,7 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.expression.Figure;
+import org.zfin.framework.api.FieldFilter;
 import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
 import org.zfin.mutant.repository.PhenotypeRepository;
@@ -495,17 +496,21 @@ public class PublicationService {
         return strings;
     }
 
-    private SolrQuery getCitationQuery(String xref) {
+    private SolrQuery getCitationQuery(String xref, List<Publication.Type> excludeTypes) {
         SolrQuery query = new SolrQuery();
         query.addFilterQuery(FieldName.CATEGORY.getName() + ":" + Category.PUBLICATION.getName());
         query.addFilterQuery(FieldName.XREF.getName() + ":" + xref);
         query.setFields(FieldName.ID.getName());
+        excludeTypes.forEach(type -> query.addFilterQuery("-" + FieldName.PUBLICATION_TYPE + ":\"" + type.toString() + "\""));
         return query;
     }
 
-    public JsonResultResponse<Publication> getCitationsByXref(String xref, Pagination pagination) throws IOException, SolrServerException {
-        SolrQuery query = getCitationQuery(xref);
-
+    public JsonResultResponse<Publication> getCitationsByXref(String xref, List<Publication.Type> excludeTypes, Pagination pagination) throws IOException, SolrServerException {
+        SolrQuery query = getCitationQuery(xref, excludeTypes);
+        String filter = pagination.getFieldFilter(FieldFilter.CITATION);
+        if (StringUtils.isNotEmpty(filter)) {
+            query.addFilterQuery(FieldName.FULL_NAME_AC.getName() + ":(" + filter + ")");
+        }
         query.setStart(pagination.getStart());
         query.setRows(pagination.getLimit());
 
@@ -540,8 +545,8 @@ public class PublicationService {
         return response;
     }
 
-    public void getAllCitationsByXref(String xref, Consumer<List<Publication>> consumer) throws IOException, SolrServerException {
-        SolrQuery query = getCitationQuery(xref);
+    public void getAllCitationsByXref(String xref, List<Publication.Type> excludedTypes, Consumer<List<Publication>> consumer) throws IOException, SolrServerException {
+        SolrQuery query = getCitationQuery(xref, excludedTypes);
         SolrService.getAllResults(query, response -> {
             List<String> ids = response.getResults().stream()
                     .map(doc -> (String) doc.getFieldValue(FieldName.ID.getName()))

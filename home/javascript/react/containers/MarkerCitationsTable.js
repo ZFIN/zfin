@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import qs from 'qs';
 import { DataList } from '../components/data-table';
+import Checkbox from '../components/Checkbox';
 
 const MarkerCitationsTable = ({markerId}) => {
+    const [includeUnpublished, setIncludeUnpublished] = useState(false);
+
     const rowFormat = ({citation, zdbID}) => <a href={'/' + zdbID} dangerouslySetInnerHTML={{__html: citation}} />;
 
     const sortOptions = [
@@ -24,21 +28,37 @@ const MarkerCitationsTable = ({markerId}) => {
         },
     ];
 
+    const queryParams = qs.stringify({
+        includeUnpublished
+    }, { addQueryPrefix: true });
+
     const downloadOptions = [
         {
             format: 'TSV',
-            url: `/action/api/marker/${markerId}/citations.tsv`,
+            url: `/action/api/marker/${markerId}/citations.tsv${queryParams}`,
         },
     ];
 
     return (
-        <DataList
-            dataUrl={`/action/api/marker/${markerId}/citations`}
-            downloadOptions={downloadOptions}
-            rowFormat={rowFormat}
-            rowKey={row => row.zdbID}
-            sortOptions={sortOptions}
-        />
+        <>
+            <div className='mb-2'>
+                <Checkbox
+                    checked={includeUnpublished}
+                    id='includeUnpublishedCheckbox'
+                    onChange={e => setIncludeUnpublished(e.target.checked)}
+                >
+                    Include unpublished citations
+                </Checkbox>
+            </div>
+            <DataList
+                dataUrl={`/action/api/marker/${markerId}/citations${queryParams}`}
+                downloadOptions={downloadOptions}
+                filterable
+                rowFormat={rowFormat}
+                rowKey={row => row.zdbID}
+                sortOptions={sortOptions}
+            />
+        </>
     );
 };
 

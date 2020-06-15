@@ -1,11 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {resultResponseType} from '../../utils/types';
+import NoData from '../NoData';
 
-const List = ({data, rowFormat, rowKey}) => {
+const List = ({items, rowFormat, rowKey, total}) => {
+    if (total === 0) {
+        return (
+            <div className='text-center'>
+                <NoData placeholder='No items match filter' />
+            </div>
+        );
+    }
+
     return (
         <ul>
-            {data.results.map(result => (
+            {items.map(result => (
                 <li key={rowKey(result)}>
                     {rowFormat(result)}
                 </li>
@@ -15,9 +23,10 @@ const List = ({data, rowFormat, rowKey}) => {
 };
 
 List.propTypes = {
-    data: resultResponseType,
+    items: PropTypes.array,
     rowFormat: PropTypes.func,
     rowKey: PropTypes.func,
+    total: PropTypes.number,
 };
 
 export default List

@@ -22,6 +22,9 @@ const DataTable = ({
 
     const handleFilterChange = (field, value) => {
         setTableState(produce(state => {
+            if (!state.filter) {
+                state.filter = {};
+            }
             state.page = 1;
             state.filter[field] = value;
         }));
@@ -30,8 +33,8 @@ const DataTable = ({
     const columnHeaderFormat = column => (
         <HeaderCell
             column={column}
-            defaultFilterValue={tableState.filter[column.filterName]}
-            onChange={handleFilterChange}
+            filterValue={tableState.filter && tableState.filter[column.filterName]}
+            onFilterChange={handleFilterChange}
         />
     );
 

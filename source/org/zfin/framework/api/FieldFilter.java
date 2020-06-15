@@ -10,7 +10,8 @@ public enum FieldFilter {
     NAME("name"),
     REGULATORY_REGION("regulatoryRegion"),
     CODING_SEQUENCE("codingSequence"),
-    SPECIES("species")
+    SPECIES("species"),
+    CITATION("citation"),
     ;
     private String name;
 

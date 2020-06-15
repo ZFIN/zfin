@@ -5,7 +5,7 @@ export const DEFAULT_TABLE_STATE = {
     limit: 10,
     page: 1,
     sortBy: null,
-    filter: {},
+    filter: null,
 };
 
 export { DataList };

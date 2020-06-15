@@ -1,29 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {columnDefinitionType} from '../../utils/types';
-import {useDebouncedValue} from '../../utils/effects';
-import TextBoxFilter from './TextBoxFilter';
 import CheckboxListFilter from './CheckboxListFilter';
+import TextBoxFilter from './TextBoxFilter';
 
-const UPDATE_TIMEOUT = 200;
-
-const HeaderCell = ({column, defaultFilterValue, onChange}) => {
+const HeaderCell = ({column, filterValue, onFilterChange}) => {
     const [filterOpen, setFilterOpen] = useState(false);
-    const [filterValue, setFilterValue] = useState(defaultFilterValue);
-    const debouncedValue = useDebouncedValue(filterValue, UPDATE_TIMEOUT);
-    useEffect(() => {
+    const handleFilterChange = (newValue) => {
         if (!column.filterName) {
             return;
         }
-        onChange(column.filterName, debouncedValue);
-    }, [debouncedValue]);
-    useEffect(() => {
-        setFilterValue(defaultFilterValue);
-        if (typeof defaultFilterValue === 'undefined') {
-            setFilterOpen(false);
-        }
-    }, [defaultFilterValue]);
-
+        onFilterChange(column.filterName, newValue);
+    }
     const toggleFilter = () => setFilterOpen(prev => !prev);
 
     return (
@@ -35,8 +23,8 @@ const HeaderCell = ({column, defaultFilterValue, onChange}) => {
             )}
             {filterOpen && (
                 column.filterOptions ?
-                    <CheckboxListFilter options={column.filterOptions} value={filterValue} onChange={setFilterValue} /> :
-                    <TextBoxFilter value={filterValue} onChange={setFilterValue} />
+                    <CheckboxListFilter options={column.filterOptions} value={filterValue} onChange={handleFilterChange} /> :
+                    <TextBoxFilter value={filterValue} onChange={handleFilterChange} />
             )}
         </>
     );
@@ -44,8 +32,8 @@ const HeaderCell = ({column, defaultFilterValue, onChange}) => {
 
 HeaderCell.propTypes = {
     column: columnDefinitionType,
-    defaultFilterValue: PropTypes.string,
-    onChange: PropTypes.func,
+    filterValue: PropTypes.string,
+    onFilterChange: PropTypes.func,
 };
 
 export default HeaderCell;
