@@ -38,7 +38,7 @@
                                      accessionNumber="${antibody.zdbID}"
                                      organization=""/>
                 </td>
-                <td class="text-right">
+                <td>
                     <a href="/action/antibody/antibody-publication-list?antibodyID=${antibodyBean.antibody.zdbID}&orderBy=author">${antibodyBean.numPubs}</a>
                 </td>
             </tr>

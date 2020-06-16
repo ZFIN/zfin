@@ -53,7 +53,6 @@ const GeneExpressionAnnotationSummaryTable = (
                 />
             ),
             width: '120px',
-            align: 'right',
         },
     ];
 

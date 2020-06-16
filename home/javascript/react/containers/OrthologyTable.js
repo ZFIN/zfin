@@ -18,7 +18,6 @@ const OrthologyTable = ({geneId}) => {
         {
             label: 'Chromosome',
             content: row => row.chromosome,
-            align: 'right',
             width: '100px',
         },
         {

@@ -80,7 +80,6 @@ const GeneConstructsTable = ({geneId}) => {
                 <a href={`/search?category=Mutation+/+Tg&q=&fq=xref:${row.construct.zdbID}`}>{row.numberOfTransgeniclines}</a>
             ),
             width: '60px',
-            align: 'right',
         },
         {
             label: 'Citations',
@@ -93,7 +92,6 @@ const GeneConstructsTable = ({geneId}) => {
                 />
             ),
             width: '100px',
-            align: 'right',
         },
     ];
     return (

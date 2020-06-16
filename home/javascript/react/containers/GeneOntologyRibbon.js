@@ -73,7 +73,7 @@ const GeneOntologyRibbon = ({geneId}) => {
             width: '130px',
         },
         {
-            label: 'Publications',
+            label: 'Citations',
             content: ({publications}) => publications.map(pub => (
                 <div key={pub.zdbID}><a href={'/' + pub.zdbID} dangerouslySetInnerHTML={{__html: pub.shortAuthorList}} /></div>
             )),

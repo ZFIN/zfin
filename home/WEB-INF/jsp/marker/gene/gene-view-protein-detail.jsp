@@ -7,7 +7,7 @@
         <thead>
             <tr>
                 <th>Protein</th>
-                <th>Length</th>
+                <th class="text-right">Length</th>
                 <c:forEach var="category" items="${formBean.proteinType}">
                     <th>${category}</th>
                 </c:forEach>
@@ -35,7 +35,7 @@
                             </c:if>
                         </z:otherPagesDropdown>
                     </td>
-                    <td>${category.proDBLink.length}</td>
+                    <td class="text-right">${category.proDBLink.length}</td>
                     <c:forEach var="entry" items="${category.interProDomain}">
                         <td>
                             <c:if test="${fn:contains(entry.value, 'X')}">

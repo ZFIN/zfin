@@ -57,7 +57,6 @@ const GeneSTRTable = ({geneId}) => {
                 />
             ),
             width: '100px',
-            align: 'right',
         },
 
     ];

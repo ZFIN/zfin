@@ -53,7 +53,6 @@ const GeneMarkerRelationshipsTable = ({geneId}) => {
                 />
             ),
             width: '100px',
-            align: 'right',
         },
     ];
     return (

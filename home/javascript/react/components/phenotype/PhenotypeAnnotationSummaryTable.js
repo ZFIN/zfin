@@ -42,7 +42,6 @@ const PhenotypeAnnotationSummaryTable = ({excludeEaps, geneId, onEntityClick, se
                 />
             ),
             width: '120px',
-            align: 'right',
         },
     ];
 
