@@ -912,6 +912,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
 
     public String getCommonPublicationSQL(String zdbID) {
+        // Changes to this query need to be kept in sync with the analogous query
+        // in db-data-config.sql!
+
         ActiveData.Type dataType = ActiveData.getType(zdbID);
         String commonPubSQL =
                 " select * from (select ra.recattrib_source_zdb_id   " +

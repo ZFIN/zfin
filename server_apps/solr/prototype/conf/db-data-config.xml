@@ -4860,103 +4860,126 @@ and child.term_ontology = 'disease_ontology';
 
             <entity name="pub_gene2"
                     query="
-                     select recattrib_source_zdb_id as pub_zdb_id,
-                          mrkr_abbrev as gene,
-                          mrkr_name as gene_full_name,
-                          mrkr_zdb_id as xref
-                      from record_attribution ra , marker_relationship mr, marker
-                      where mrkr_zdb_id = mr.mrel_mrkr_2_zdb_id
-                      and ra.recattrib_data_zdb_id = mr.mrel_zdb_id
-                      and mrkr_type in ('GENE', 'GENEP')
-                   UNION
-                      select recattrib_source_zdb_id as pub_zdb_id,
-                          mrkr_abbrev as gene,
-                          mrkr_name as gene_full_name,
-                          mrkr_zdb_id as xref
-                      from marker, record_attribution
-                      where recattrib_data_zdb_id = mrkr_zdb_id
-                      and mrkr_type in ('GENE', 'GENEP')
-                    UNION
-                       select recattrib_source_zdb_id as pub_zdb_id,
-                          mrkr_abbrev as gene,
-                          mrkr_name as gene_full_name,
-                          mrkr_zdb_id as xref
-                        from record_attribution ra , data_alias da, marker
-                        where da.dalias_zdb_id = ra.recattrib_data_zdb_id
-                        and mrkr_zdb_Id = da.dalias_data_zdb_id
-                        and mrkr_type in ('GENE','GENEP')
-                    UNION
-                      select recattrib_source_zdb_id as pub_zdb_id,
-                          mrkr_abbrev as gene,
-                          mrkr_name as gene_full_name,
-                          mrkr_zdb_id as xref
-                      from record_attribution ra , marker_relationship mr , marker
-                      where mrkr_zdb_id = mr.mrel_mrkr_2_zdb_id
-                      and  ra.recattrib_data_zdb_id = mr.mrel_mrkr_1_zdb_id
-                      and  mr.mrel_mrkr_1_zdb_id = mrkr_zdb_id
-                    UNION
-                      select recattrib_source_zdb_id as pub_zdb_id,
-                          mrkr_abbrev as gene,
-                          mrkr_name as gene_full_name,
-                          mrkr_zdb_id as xref
-                        from record_attribution ra , db_link dbl , marker_relationship mr, marker
-                        where  dbl.dblink_zdb_id  = ra.recattrib_data_zdb_id
-                        and dbl.dblink_linked_recid = mr.mrel_mrkr_2_zdb_id
-                        and  mrkr_zdb_id = mr.mrel_mrkr_1_zdb_id
-                        and  mr.mrel_type = 'gene encodes small segment'
-                      UNION
-                        select recattrib_source_zdb_id as pub_zdb_id,
-                          mrkr_abbrev as gene,
-                          mrkr_name as gene_full_name,
-                          mrkr_zdb_id as xref
-                        from record_attribution ra ,  ortholog_evidence ev, marker, ortholog
-                        where  ev.oev_ortho_zdb_id = ra.recattrib_data_zdb_id
-			            and ortholog.ortho_zdb_id = ev.oev_ortho_Zdb_id
-                        and  mrkr_zdb_Id = ortho_zebrafish_gene_zdb_id
-                      UNION
-                        select recattrib_source_zdb_id as pub_zdb_id,
-                          mrkr_abbrev as gene,
-                          mrkr_name as gene_full_name,
-                          mrkr_zdb_id as xref
-                        from record_attribution ra ,  marker_go_term_evidence ev, marker
-                        where  ev.mrkrgoev_zdb_id  = ra.recattrib_data_zdb_id
-                        and  mrkr_zdb_id = ev.mrkrgoev_mrkr_zdb_id
-                      UNION
-                        select recattrib_source_zdb_id as pub_zdb_id,
-                          mrkr_abbrev as gene,
-                          mrkr_name as gene_full_name,
-                          mrkr_zdb_id as xref
-                        from record_attribution ra ,  feature_marker_relationship fmr, marker
-                        where  fmr.fmrel_ftr_zdb_id  = ra.recattrib_data_zdb_id
-                        and  mrkr_zdb_id = fmr.fmrel_mrkr_zdb_id and fmrel_type='is allele of'
-                        and mrkr_type in ('GENE','GENEP')
-                      UNION
-                        select recattrib_source_zdb_id as pub_zdb_id,
-                          mrkr_abbrev as gene,
-                          mrkr_name as gene_full_name,
-                          mrkr_zdb_id as xref
-                        from record_attribution ra ,  feature_marker_relationship fmr, genotype_feature gf, marker
-                        where  gf.genofeat_geno_zdb_id  = ra.recattrib_data_zdb_id
-                        and  mrkr_zdb_id = fmr.fmrel_mrkr_zdb_id
-                        and fmr.fmrel_ftr_zdb_id  = gf.genofeat_feature_zdb_id
-                        and mrkr_type in ('GENE','GENEP')
-                      UNION
-                        select recattrib_source_zdb_id as pub_zdb_id,
-                          mrkr_abbrev as gene,
-                          mrkr_name as gene_full_name,
-                          mrkr_zdb_id as xref
-                        from record_attribution ra ,  genotype_feature gf, marker
-                        where  gf.genofeat_geno_zdb_id  = ra.recattrib_data_zdb_id
-                        and  mrkr_zdb_id = gf.genofeat_feature_zdb_id
-                        and mrkr_type in ('GENE','GENEP')
-                      UNION
-                        select xpatex_source_zdb_id as pub_zdb_id,
-                          mrkr_abbrev as gene,
-                          mrkr_name as gene_full_name,
-                          mrkr_zdb_id as xref
-                        from expression_experiment ra , marker
-                        where  mrkr_zdb_id = ra.xpatex_gene_zdb_Id
-                        and mrkr_type in ('GENE','GENEP')"
+                    select recattrib_source_zdb_id as pub_zdb_id,
+                        m.mrkr_abbrev as gene,
+                        m.mrkr_name as gene_full_name,
+                        m.mrkr_zdb_id as xref
+                    from record_attribution ra, marker m
+                    where m.mrkr_zdb_id = ra.recattrib_data_zdb_id
+                    and m.mrkr_type in ('GENE', 'GENEP')
+                    union
+                    select recattrib_source_zdb_id as pub_zdb_id,
+                        m.mrkr_abbrev as gene,
+                        m.mrkr_name as gene_full_name,
+                        m.mrkr_zdb_id as xref
+                    from record_attribution ra, marker_relationship mr, marker m
+                    where m.mrkr_zdb_id = mr.mrel_mrkr_2_zdb_id
+                    and ra.recattrib_data_zdb_id = mr.mrel_zdb_id
+                    and m.mrkr_type in ('GENE', 'GENEP')
+                    union
+                    select recattrib_source_zdb_id as pub_zdb_id,
+                        m.mrkr_abbrev as gene,
+                        m.mrkr_name as gene_full_name,
+                        m.mrkr_zdb_id as xref
+                    from record_attribution ra, marker_relationship mr, marker m
+                    where m.mrkr_zdb_id = mr.mrel_mrkr_1_zdb_id
+                    and ra.recattrib_data_zdb_id = mr.mrel_zdb_id
+                    and m.mrkr_type in ('GENE', 'GENEP')
+                    union
+                    select recattrib_source_zdb_id as pub_zdb_id,
+                        m.mrkr_abbrev as gene,
+                        m.mrkr_name as gene_full_name,
+                        m.mrkr_zdb_id as xref
+                    from record_attribution ra, marker_relationship mr, marker m, marker str
+                    where m.mrkr_zdb_id = mr.mrel_mrkr_2_zdb_id
+                    and ra.recattrib_data_zdb_id = mr.mrel_mrkr_1_zdb_id
+                    and mr.mrel_mrkr_1_zdb_id = str.mrkr_zdb_id
+                    and str.mrkr_type in ('MRPHLNO', 'TALEN', 'CRISPR')
+                    and m.mrkr_type in ('GENE', 'GENEP')
+                    union
+                    select recattrib_source_zdb_id as pub_zdb_id,
+                        m.mrkr_abbrev as gene,
+                        m.mrkr_name as gene_full_name,
+                        m.mrkr_zdb_id as xref
+                    from record_attribution ra, data_alias da, marker m
+                    where da.dalias_zdb_id = ra.recattrib_data_zdb_id
+                    and m.mrkr_zdb_id = da.dalias_data_zdb_id
+                    and m.mrkr_type in ('GENE', 'GENEP')
+                    union
+                    select recattrib_source_zdb_id as pub_zdb_id,
+                        m.mrkr_abbrev as gene,
+                        m.mrkr_name as gene_full_name,
+                        m.mrkr_zdb_id as xref
+                    from record_attribution ra, db_link dbl, marker m
+                    where dbl.dblink_zdb_id = ra.recattrib_data_zdb_id
+                    and m.mrkr_zdb_id = dbl.dblink_linked_recid
+                    and m.mrkr_type in ('GENE', 'GENEP')
+                    union
+                    select recattrib_source_zdb_id as pub_zdb_id,
+                        m.mrkr_abbrev as gene,
+                        m.mrkr_name as gene_full_name,
+                        m.mrkr_zdb_id as xref
+                    from record_attribution ra, db_link dbl, marker_relationship mr, marker m
+                    where dbl.dblink_zdb_id = ra.recattrib_data_zdb_id
+                    and dbl.dblink_linked_recid = mr.mrel_mrkr_2_zdb_id
+                    and mr.mrel_type = 'gene encodes small segment'
+                    and m.mrkr_zdb_id = mr.mrel_mrkr_1_zdb_id
+                    and m.mrkr_type in ('GENE', 'GENEP')
+                    union
+                    select recattrib_source_zdb_id as pub_zdb_id,
+                        m.mrkr_abbrev as gene,
+                        m.mrkr_name as gene_full_name,
+                        m.mrkr_zdb_id as xref
+                    from record_attribution ra, ortholog_evidence oe, ortholog o, marker m
+                    where ra.recattrib_data_zdb_id = oe.oev_ortho_zdb_id
+                    and oe.oev_ortho_zdb_id = o.ortho_zdb_id
+                    and m.mrkr_zdb_id = o.ortho_zebrafish_gene_zdb_id
+                    and m.mrkr_type in ('GENE', 'GENEP')
+                    union
+                    select recattrib_source_zdb_id as pub_zdb_id,
+                        m.mrkr_abbrev as gene,
+                        m.mrkr_name as gene_full_name,
+                        m.mrkr_zdb_id as xref
+                    from record_attribution ra, marker_go_term_evidence ev, marker m
+                    where ev.mrkrgoev_zdb_id = ra.recattrib_data_zdb_id
+                    and m.mrkr_zdb_id = ev.mrkrgoev_mrkr_zdb_id
+                    and m.mrkr_type in ('GENE', 'GENEP')
+                    union
+                    select recattrib_source_zdb_id as pub_zdb_id,
+                        m.mrkr_abbrev as gene,
+                        m.mrkr_name as gene_full_name,
+                        m.mrkr_zdb_id as xref
+                    from record_attribution ra, feature_marker_relationship fmr, marker m
+                    where fmr.fmrel_ftr_zdb_id = ra.recattrib_data_zdb_id
+                    and m.mrkr_zdb_id = fmr.fmrel_mrkr_zdb_id
+                    and m.mrkr_type in ('GENE', 'GENEP')
+                    union
+                    select recattrib_source_zdb_id as pub_zdb_id,
+                        m.mrkr_abbrev as gene,
+                        m.mrkr_name as gene_full_name,
+                        m.mrkr_zdb_id as xref
+                    from record_attribution ra, feature_marker_relationship fmr, genotype_feature gf, marker m
+                    where gf.genofeat_geno_zdb_id = ra.recattrib_data_zdb_id
+                    and m.mrkr_zdb_id = fmr.fmrel_mrkr_zdb_id
+                    and fmr.fmrel_ftr_zdb_id = gf.genofeat_feature_zdb_id
+                    and m.mrkr_type in ('GENE', 'GENEP')
+                    union
+                    select xpatex_source_zdb_id as pub_zdb_id,
+                        m.mrkr_abbrev as gene,
+                        m.mrkr_name as gene_full_name,
+                        m.mrkr_zdb_id as xref
+                    from expression_experiment, marker m
+                    where m.mrkr_zdb_id = xpatex_gene_zdb_id
+                    and m.mrkr_type in ('GENE', 'GENEP')
+                    union
+                    select recattrib_source_zdb_id as pub_zdb_id,
+                        m.mrkr_abbrev as gene,
+                        m.mrkr_name as gene_full_name,
+                        m.mrkr_zdb_id as xref
+                    from record_attribution ra, marker_history mh, marker m
+                    where mh.mhist_zdb_id = ra.recattrib_data_zdb_id
+                    and m.mrkr_zdb_id = mh.mhist_mrkr_zdb_id
+                    and m.mrkr_type in ('GENE', 'GENEP')"
                     cacheImpl="SortedMapBackedCache"
                     where="pub_zdb_id=publication.id"
             />
