@@ -88,7 +88,7 @@ public class GeneViewController {
     @Autowired
     private ExpressionSearchController expressionSearchController;
 
-    private void prepareGeneView(Model model, String zdbID) throws Exception {
+    private void prepareGeneView(Model model, String zdbID) {
         // set base bean
         GeneBean geneBean = new GeneBean();
 
@@ -109,7 +109,7 @@ public class GeneViewController {
         List<LinkDisplay> otherMarkerDBLinksLinks = geneBean.getOtherMarkerPages();
         otherMarkerDBLinksLinks.addAll(markerRepository.getVegaGeneDBLinksTranscript(
                 gene, DisplayGroup.GroupName.SUMMARY_PAGE));
-        Collections.sort(otherMarkerDBLinksLinks, linkDisplayOtherComparator);
+        otherMarkerDBLinksLinks.sort(linkDisplayOtherComparator);
         geneBean.setOtherMarkerPages(otherMarkerDBLinksLinks);
 
 

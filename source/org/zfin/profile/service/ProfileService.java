@@ -78,6 +78,7 @@ public class ProfileService {
         if (authentication == null) {
             Person person = new Person();
             person.setShortName("Guest");
+            person.setFullName("Guest");
             person.setLastName("User");
             person.setFirstName("Guest");
             return person;

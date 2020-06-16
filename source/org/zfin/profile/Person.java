@@ -259,6 +259,17 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
         return fullName;
     }
 
+    public String getFirstLastName(){
+        String ret = "";
+        if(firstName != null) {
+            ret += firstName;
+            ret += " ";
+        }
+        if(lastName != null)
+            ret += lastName;
+        return ret;
+    }
+
     public void setFullName(String fullName) {
         this.fullName = fullName;
     }

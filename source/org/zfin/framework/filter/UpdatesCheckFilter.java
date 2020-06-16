@@ -3,6 +3,7 @@ package org.zfin.framework.filter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
 import org.nocrala.tools.texttablefmt.CellStyle;
 import org.nocrala.tools.texttablefmt.Table;
 import org.springframework.security.core.Authentication;
@@ -66,6 +67,10 @@ public class UpdatesCheckFilter implements Filter {
         }
         List<TableLock> locks = null;
         try {
+            if (ProfileService.getCurrentSecurityUser() != null) {
+                ThreadContext.put("login", ProfileService.getCurrentSecurityUser().getFirstLastName());
+            }
+
             filterChain.doFilter(servletRequest, servletResponse);
         } catch (Exception e) {
             StringBuffer message = new StringBuffer("Unhandled Exception");

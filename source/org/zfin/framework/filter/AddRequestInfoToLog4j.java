@@ -1,6 +1,10 @@
 package org.zfin.framework.filter;
 
 import org.apache.logging.log4j.ThreadContext;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.zfin.profile.service.ProfileService;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +25,9 @@ public class AddRequestInfoToLog4j implements Filter {
             HttpServletRequest request = (HttpServletRequest) req;
             // add map to mapped diagnostic context so it gets picked up by the JSONEventLayout
             ThreadContext.put("uri", request.getRequestURI());
-            ThreadContext.put("queryString", request.getQueryString());
+            if (request.getQueryString() != null) {
+                ThreadContext.put("queryString", request.getQueryString());
+            }
             ThreadContext.put("sessionID", request.getSession().getId());
             ThreadContext.put("method", request.getMethod());
             ThreadContext.put("url", request.getRequestURL().toString());

@@ -1,5 +1,6 @@
 package org.zfin.framework.api;
 
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @ControllerAdvice
+@Log4j2
 public class ZfinGlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 
@@ -36,9 +38,12 @@ public class ZfinGlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public String customHandleGeneralException(Exception exception, WebRequest request, Model model) {
         //RestErrorMessage error = restErrorException.getError();
-        if (exception.getMessage() != null)
+        if (exception.getMessage() != null) {
             model.addAttribute("error", exception.getMessage());
-
+            log.error(exception.getMessage(), exception);
+        } else {
+            log.error("General Error", exception);
+        }
         if (ProfileService.isRootUser()) {
             model.addAttribute("exception", exception);
             model.addAttribute("stackTrace", ExceptionUtils.getFullStackTrace(exception));
