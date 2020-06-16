@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import qs from 'qs';
 import DataTable from '../data-table';
 import {tableStateType} from '../../utils/types';
+import StageRange from '../StageRange';
 
 const GeneExpressionAnnotationDetailTable = (
     {
@@ -18,27 +19,27 @@ const GeneExpressionAnnotationDetailTable = (
         {
             label: 'Fish',
             content: ({fish}) => <a href={`/${fish.zdbID}`} dangerouslySetInnerHTML={{__html: fish.displayName}}/>,
-            width: '200px',
+            width: '150px',
         },
         {
             label: 'Experiment',
             content: ({experiment}) => experiment.conditions,
-            width: '200px',
+            width: '150px',
         },
         {
             label: 'Assay',
             content: ({assay}) => assay.abbreviation,
-            width: '200px',
+            width: '75px',
         },
         {
             label: 'Stage',
-            content: 'startStage',
+            content: ({endStage, startStage}) => <StageRange start={startStage} end={endStage} />,
             width: '200px',
         },
         {
             label: 'Figure',
             content: ({figure}) => <a href={`/${figure.zdbID}`} dangerouslySetInnerHTML={{__html: figure.label}}/>,
-            width: '200px',
+            width: '100px',
         },
         {
             label: 'Publication',

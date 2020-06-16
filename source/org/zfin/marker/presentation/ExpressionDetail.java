@@ -3,6 +3,7 @@ package org.zfin.marker.presentation;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
+import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.Antibody;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.ExpressionAssay;
@@ -26,9 +27,9 @@ public class ExpressionDetail {
     @JsonView(View.API.class)
     private Set<PostComposedEntity> entities;
     @JsonView(View.API.class)
-    private String startStage;
+    private DevelopmentStage startStage;
     @JsonView(View.API.class)
-    private String endStage;
+    private DevelopmentStage endStage;
     @JsonView(View.API.class)
     private Publication publication;
     @JsonView(View.API.class)

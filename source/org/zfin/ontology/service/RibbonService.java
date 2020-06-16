@@ -285,8 +285,8 @@ public class RibbonService {
                     ExpressionDetail detail = new ExpressionDetail();
                     detail.setPublication(expression.getExpressionExperiment().getPublication());
                     detail.setEntities(expression.getExpressionResultSet().stream().map(ExpressionResult2::getEntity).collect(toSet()));
-                    detail.setStartStage(expression.getStartStage().getName());
-                    detail.setEndStage(expression.getEndStage().getName());
+                    detail.setStartStage(expression.getStartStage());
+                    detail.setEndStage(expression.getEndStage());
                     detail.setFish(expression.getExpressionExperiment().getFishExperiment().getFish());
                     detail.setFigure(expression.getFigure());
                     detail.setGene(expression.getExpressionExperiment().getGene());

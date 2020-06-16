@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import qs from 'qs';
 import DataTable from '../data-table';
-import Stage from '../Stage';
+import StageRange from '../StageRange';
 import {tableStateType} from '../../utils/types';
 
 const PhenotypeAnnotationDetailTable = ({geneId, selectedPhenotypeIds, setTableState, tableState}) => {
@@ -19,11 +19,12 @@ const PhenotypeAnnotationDetailTable = ({geneId, selectedPhenotypeIds, setTableS
         },
         {
             label: 'Stage',
-            content: row => (
-                <Stage
-                    startStage={row.phenotypeSourceGenerated.start}
-                    endStage={row.phenotypeSourceGenerated.end}
-                /> ),
+            content: ({phenotypeSourceGenerated}) => (
+                <StageRange
+                    start={phenotypeSourceGenerated.start}
+                    end={phenotypeSourceGenerated.end}
+                />
+            ),
             width: '200px',
         },
         {
