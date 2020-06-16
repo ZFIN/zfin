@@ -6,6 +6,7 @@ import NoData from '../NoData';
 import produce from 'immer';
 import PropTypes from 'prop-types';
 import {downloadOptionType, sortOptionType, tableStateType} from '../../utils/types';
+import {isEmptyObject} from '../../utils';
 
 const DataProvider = ({
     additionalControls,
@@ -40,7 +41,7 @@ const DataProvider = ({
 
     const {returnedRecords, total} = data.value;
 
-    if (total === 0 && Object.keys(tableState.filter).length === 0) {
+    if (total === 0 && isEmptyObject(tableState.filter)) {
         return <NoData/>
     }
 

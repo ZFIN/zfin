@@ -93,7 +93,13 @@
     },
     "rules": {
       "curly": "error",
-      "eqeqeq": "error",
+      "eqeqeq": [
+        "error",
+        "always",
+        {
+          "null": "ignore"
+        }
+      ],
       "indent": [
         "warn",
         4,

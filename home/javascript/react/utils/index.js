@@ -7,5 +7,8 @@ export const stringToFunction = getter => (
 );
 
 export const isEmptyObject = obj => {
+    if (obj == null) {
+        return true;
+    }
     return Object.keys(obj).length === 0 && obj.constructor === Object;
 };
