@@ -24,7 +24,7 @@
                 </div>
             </zfin2:mailTo>
 
-            <a href="https://twitter.com/ZFINmod">
+            <a class="no-icon" href="https://twitter.com/ZFINmod">
                 <div class="contact-info">
                         <div class="contact-icon"><i class="fab fa-fw fa-twitter"></i></div>
                         <div class="contact-details">@ZFINmod</div>
@@ -93,8 +93,8 @@
 
     <div class="footer-row copyright-row">
         <div>
-            <a href="http://www.uoregon.edu/"><img src="/images/UOSignature-WHT.png"></a>
-            <a href="http://www.alliancegenome.org/"><img src="/images/AllianceLogoWhite.png"></a>
+            <a class="no-icon" href="http://www.uoregon.edu/"><img src="/images/UOSignature-WHT.png"></a>
+            <a class="no-icon" href="http://www.alliancegenome.org/"><img src="/images/AllianceLogoWhite.png"></a>
         </div>
         <div class="nav-column right-align">
             <div class="nowrap">&copy; 1994&ndash;${copyrightYear} University of Oregon</div>

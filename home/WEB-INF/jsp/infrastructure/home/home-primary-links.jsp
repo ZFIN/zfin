@@ -50,13 +50,13 @@
         </a>
     </div>
     <div class="col-lg-6">
-        <a href="https://zebrafish.org" class="section primary-link" target="_blank" rel="noopener noreferrer">
+        <a href="https://zebrafish.org" class="no-icon section primary-link" target="_blank" rel="noopener noreferrer">
             <div class="title external">ZIRC</div>
             <div class="description">Browse or request products and services from the Zebrafish International Resource Center</div>
         </a>
     </div>
     <div class="col-lg-6">
-        <a href="https://www.alliancegenome.org" class="section primary-link" target="_blank" rel="noopener noreferrer">
+        <a href="https://www.alliancegenome.org" class="no-icon section primary-link" target="_blank" rel="noopener noreferrer">
             <div class="title external">Alliance of Genome Resources</div>
             <div class="description">Explore genetic/genomic data from multiple model organisms</div>
         </a>

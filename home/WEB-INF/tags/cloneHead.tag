@@ -15,7 +15,9 @@
     <tr>
         <th>Sequence Ontology ID :</th>
         <td>
-            <a href="http://www.sequenceontology.org/browser/current_svn/term/${soTerm.oboID}"/> ${soTerm.oboID}</td></a>
+            <c:if test="${!empty soTerm.oboID}">
+                <a href="http://www.sequenceontology.org/browser/current_svn/term/${soTerm.oboID}">${soTerm.oboID}</a>
+            </c:if>
         </td>
     </tr>
     <zfin2:previousNamesFast label="Previous Name" previousNames="${cloneBean.previousNames}"/>

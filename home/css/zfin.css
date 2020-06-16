@@ -2,6 +2,29 @@ a {
     text-decoration: none;
 }
 
+.external:after,
+a[href^="http://"]:not([href*="zfin.org"]):after,
+a[href^="https://"]:not([href*="zfin.org"]):after {
+    content: '\00a0\f35d';
+    display: inline-block;
+    font-family: "Font Awesome 5 Free";
+    font-size: 0.75em;
+    font-style: normal;
+    font-variant: normal;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: auto;
+    line-height: 1;
+    font-weight: 900;
+    position: relative;
+    bottom: 0.125em;
+}
+
+.no-icon:after {
+    content: '' !important;
+    display: none !important;
+}
+
 html,
 body {
     height: 100%;
@@ -256,21 +279,6 @@ a.small-new-link:hover {
 .small {
     text-decoration: none;
     font-size: 75%;
-}
-
-.external::after {
-    content: '\f35d';
-    display: inline-block;
-    font-family: "Font Awesome 5 Free";
-    font-size: 0.75em;
-    font-style: normal;
-    font-variant: normal;
-    font-weight: 900;
-    margin-left: 0.3em;
-    text-rendering: auto;
-    vertical-align: baseline;
-    position: relative;
-    bottom: 0.15em;
 }
 
 img.blast-key {
