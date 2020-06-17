@@ -372,7 +372,8 @@ project(':server_apps:data_transfer:PUBMED') {
     }
 }
 
-project(':server_apps:data_transfer:ExpressionAtlas') {
+
+project(':server_apps:data_transfer:RNASeqCuration') {
     task "deployFiles"(type: ZfinTargetCopy) {
         from(project.projectDir) {
             ttNameMap.each { name, value ->

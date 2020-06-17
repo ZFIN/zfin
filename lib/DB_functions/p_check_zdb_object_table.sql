@@ -1,6 +1,6 @@
 --P_CHECK_ZDB_OBJECT_TABLE
   ------------------------------------------------------
-  --procedure that checks to make sure tables and columns in 
+ --procedure that checks to make sure tables and columns in 
   --zdb_object_type table exist in pg_tables and pg_attributes.
   --REPLACES:
   --sub zdbObjectHomeTableColumnExist 
@@ -19,6 +19,8 @@
    vOkInSystables = (select count(*) 
 			  from pg_tables
 			  where tablename = vTableName);
+  raise notice 'vOkInSystables: %', vOkInSystables;
+  raise notice 'vTableid: %', vTableid;
 
   if vOkInSystables < 1 then
     raise exception 'FAIL!: table name not in systables';
@@ -27,6 +29,7 @@
 	 			 from pg_attribute 
   				 where attrelid = vTableid
 				 and attname = vColumnName);
+	raise notice 'vColumnName: %', vColumnName;
 
 	if vOkInSyscolumns < 1 then
 	  raise exception 'FAIL!: column name not in syscolumns';
