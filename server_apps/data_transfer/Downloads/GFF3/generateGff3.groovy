@@ -216,6 +216,10 @@ def generateGenesAndTranscripts() {
 
         gff += ";dbxref=" + xrefs.join(",")
 
+        if (row.gff_id.startsWith("ENSDART")) {
+            gff += ";transcript_id=ENSDART:" + row.gff_id
+        }
+
         if (secondaryIds[zdbId] && !secondaryIds[zdbId].isEmpty() ) {
             gff += ";secondaryIds=" + secondaryIds[zdbId].join(",")
         }
@@ -274,7 +278,6 @@ def generateGenesAndTranscripts() {
                 transcript.setSource("ZFIN")
                 zfinGenesWriter.println(transcript.toString())
                 ensemblFeatureMap[transcript.getId()].each { GenomeFeature region ->
-                    if (region.getType() == "CDS") { println region.toString() }
                     region.setSource("ZFIN")
                     zfinGenesWriter.println(region)
                 }
