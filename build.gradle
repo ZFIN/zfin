@@ -462,7 +462,6 @@ task make(type: GradleBuild) {
              ':server_apps:data_transfer:deployFiles',
              ':server_apps:data_transfer:Ensembl:deployFiles',
              ':server_apps:data_transfer:PUBMED:deployFiles',
-             ':server_apps:data_transfer:ExpressionAtlas:deployFiles',
              ':server_apps:data_transfer:ResourceCenters:deployFiles',
              ':server_apps:data_transfer:GO:deployFiles',
              ':server_apps:data_transfer:ORTHO:deployFiles',
