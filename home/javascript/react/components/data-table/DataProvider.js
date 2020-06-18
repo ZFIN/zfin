@@ -20,6 +20,15 @@ const DataProvider = ({
     tableState,
 }) => {
     [tableState, setTableState] = useTableState(tableState, setTableState);
+    // if the base url changes, go back to the first page. doing this here can cause a request with the wrong page
+    // to be fired and then immediately cancelled by a new request with the right page.
+    // TODO: can the base url and page change be synchronized without making individual tables manage the state?
+    useEffect(() => {
+        setTableState(produce(state => {
+            state.page = 1;
+        }));
+    }, [dataUrl]);
+
     const data = useTableDataFetch(dataUrl, tableState);
     useEffect(() => {
         if (typeof onDataLoaded === 'function' && !data.loading && !data.rejected && data.value && data.value.total > 0) {
