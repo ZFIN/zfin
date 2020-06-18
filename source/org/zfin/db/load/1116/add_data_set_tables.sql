@@ -17,16 +17,16 @@ create table htp_dataset(hd_zdb_id text not null primary key,
 	                 hd_date_curated timestamp not null default now(),
 			 hd_subseries_id text);
 
-create unique index hd_title_summary_unique_index (hd_title, hd_summary);
+create unique index hd_title_summary_unique_index on htp_dataset(hd_title, hd_summary);
 
 alter table htp_dataset
  add constraint hd_id_unique unique (hd_title, hd_summary);
 
 create table htp_dataset_alternate_identifier(hdai_pk_id serial8 not null primary key,
-						hdai_hd_zdb_id not null,
+						hdai_hd_zdb_id text not null,
 						hdai_accession_number text not null);
 
-create unqiue index hdai_hd_zdb_id_accession_number_index on hpt_dataset_alteranate_identifier(hdai_hd_zdb_id,
+create unique index hdai_hd_zdb_id_accession_number_index on htp_dataset_alternate_identifier(hdai_hd_zdb_id,
 			hdai_accession_number);
 
 alter table htp_dataset_alternate_identifier
