@@ -2,31 +2,21 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 
-const SequenceType = ({type, value, markerID}) => {
-    if (value) {
-        if (type.indexOf('Polypeptide') === 0) {
-            return (
-                <span>
-                    {type}
-                    <a
-                        className='popup-link data-popup-link'
-                        href={`/action/marker/gene-product-description/${markerID}`}
-                    />
-                </span>
-            );
-        }
-        else {
-            return type;
-        }
-    }
-    if (!value) {
-        return type;
-    }
+const SequenceType = ({type, showPopup, markerID}) => {
+    return (
+        <span>
+            {type}
+            {(showPopup && type === 'Polypeptide') &&<a
+                className='popup-link data-popup-link'
+                href={`/action/marker/gene-product-description/${markerID}`}
+            />}
+        </span>
+    );
 };
 
 SequenceType.propTypes = {
     type: PropTypes.string,
-    value: PropTypes.bool,
+    showPopup: PropTypes.bool,
     markerID: PropTypes.string,
 };
 export default SequenceType;

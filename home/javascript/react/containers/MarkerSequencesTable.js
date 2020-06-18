@@ -17,7 +17,7 @@ const MarkerSequencesTable = ({markerId, showSummary}) => {
             content: row => (
                 <SequenceType
                     type={row.type}
-                    value={summary}
+                    showPopup={summary}
                     markerID={markerId}
                 />
             ),
@@ -61,7 +61,7 @@ const MarkerSequencesTable = ({markerId, showSummary}) => {
     return (
         <>
             {showSummary && hasData && (
-                <DataTableSummaryToggle detailLabel='All Sequences' value={summary} onChange={setSummary} />
+                <DataTableSummaryToggle detailLabel='All Sequences' showPopup={summary} onChange={setSummary} />
             )}
             <DataTable
                 columns={columns}
