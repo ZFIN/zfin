@@ -14,7 +14,7 @@
             <td>UniProt ID: <a href="https://www.uniprot.org/uniprot/${geneProductBean.accession}">${geneProductBean.accession}</a></td>
         </tr>
         <tr>
-            <td><KBD>${geneProductBean.comment}</KBD></td>
+            <td style="word-wrap: break-word">${geneProductBean.comment}</td>
         </tr>
     </table>
 </c:forEach>
