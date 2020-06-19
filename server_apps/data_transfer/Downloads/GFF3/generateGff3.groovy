@@ -142,6 +142,17 @@ def generateGenesAndTranscripts() {
         }
     }
 
+    def proteinIds = [:]
+    db.eachRow("""
+        select dblink_linked_recid, dblink_acc_num from db_link where dblink_acc_num like 'ENSDARP%';
+    """) { row ->
+
+        if (!proteinIds[row.dblink_linked_recid]) {
+            proteinIds[row.dblink_linked_recid] = [row.dblink_acc_num]
+        } else {
+            proteinIds[row.dblink_linked_recid].add(row.dblink_acc_num)
+        }
+    }
 
     def secondaryIds = [:]
     db.eachRow("""
@@ -248,8 +259,16 @@ def generateGenesAndTranscripts() {
             gene.addAttribute("secondaryIds",secondaryIds[gene.id].join(','))
         }
 
+        if (proteinIds[gene.id]) {
+            gene.addAttribute("protein_id", proteinIds[gene.id].join(','))
+        }
+
         if (!gene.getAttribute("curie") && gene.getId().startsWith("ZDB")) {
             gene.addAttribute("curie", "ZFIN:" + gene.getId())
+        }
+
+        if (!gene.getAttribute("gene_id") && gene.getId().startsWith("ZDB")) {
+            gene.addAttribute("gene_id", "ZFIN:" + gene.getId())
         }
 
         //Alliance requirements are that we use gene rather than protein_coding_gene in gff3 files
