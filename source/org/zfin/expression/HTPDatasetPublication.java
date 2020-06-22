@@ -21,7 +21,7 @@ public class HTPDatasetPublication {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "hdp_pk_id")
     private long ID;
-    
+
 
     @ManyToOne
     @JoinColumn(name = "hd_dataset_zdb_id")

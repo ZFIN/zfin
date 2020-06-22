@@ -3,7 +3,7 @@ package org.zfin.expression;
 import lombok.Getter;
 import lombok.Setter;
 import org.zfin.mutant.Fish;
-import org.zfin.ontology.Term;
+import org.zfin.ontology.GenericTerm;
 
 import javax.persistence.*;
 
@@ -23,26 +23,26 @@ public class HTPDatasetSampleDetail {
 
     @ManyToOne
     @JoinColumn(name = "hds_stage_term_Zdb_id")
-    private Term stage;
+    private GenericTerm stage;
 
     @ManyToOne
     @JoinColumn(name = "hds_anatomy_super_term_Zdb_id")
-    private Term anatomySuperTerm;
+    private GenericTerm anatomySuperTerm;
     @ManyToOne
     @JoinColumn(name = "hds_anatomy_sub_term_Zdb_id")
-    private Term anatomySubTerm;
+    private GenericTerm anatomySubTerm;
 
     @ManyToOne
     @JoinColumn(name = "hds_anatomy_super_qualifier_term_Zdb_id")
-    private Term anatomySuperQualifierTerm;
+    private GenericTerm anatomySuperQualifierTerm;
     @ManyToOne
     @JoinColumn(name = "hds_anatomy_sub_qualifier_term_Zdb_id")
-    private Term anatomySubQualifierTerm;
+    private GenericTerm anatomySubQualifierTerm;
 
     @ManyToOne
     @JoinColumn(name = "hds_cellular_component_term_Zdb_id")
-    private Term cellularComponentTerm;
+    private GenericTerm cellularComponentTerm;
     @ManyToOne
     @JoinColumn(name = "hds_cellular_component_qualifier_term_Zdb_id")
-    private Term cellularComponentQualifierTerm;
+    private GenericTerm cellularComponentQualifierTerm;
 }
