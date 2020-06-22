@@ -315,6 +315,16 @@
 
 
      </class>-->
+    <class name="org.zfin.marker.TranscriptSequence" table="transcript_sequence">
+        <id name="zdbID" type="string">
+            <column name="ts_transcript_zdb_id" not-null="true"/>
+        </id>
+
+        <property name="ottdartid" column="ts_transcript_ottdart_id"/>
+        <property name="sequence" column="ts_sequence" />
+
+
+    </class>
 
     <class name="org.zfin.marker.Vector" table="vector">
         <id name="name" type="string">
