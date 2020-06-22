@@ -4,12 +4,13 @@
 create table htp_dataset_sample (hds_pk_id serial8 not null primary key,
 				 hds_sample_id text,
 				 hds_sample_title text,
-			         hds_sample_type text,
+			         hds_sample_type text not null,
 				 hds_fish_zdb_id text,
 				 hds_sex text,
-				 hds_assay_type text,
+				 hds_assay_type text not null,
 				 hds_sequencing_format text,
-				 hds_hd_zdb_id text)
+				 hds_hd_zdb_id text,
+				 hds_abundance text)
 ;
 
 create unique index hds_sample_id_sample_title_index on htp_dataset_sample(hds_sample_id, hds_sample_title);
