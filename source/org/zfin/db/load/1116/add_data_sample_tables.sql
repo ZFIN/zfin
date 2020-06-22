@@ -36,7 +36,7 @@ alter table htp_dataset_sample
 alter table htp_dataset_sample
   add constraint hds_alternate_key unique (hds_sample_title, hds_sample_id);  
 
-create table htp_dataset_sample_stage(hdss_hds_pk_id serial8 not null primary key,
+create table htp_dataset_sample_stage(hdss_pk_id serial8 not null primary key,
 					hdss_hds_id int8 not null,
 					hdss_stage_term_zdb_id text not null,
 					hdss_anatomy_super_term_zdb_id text not null,
