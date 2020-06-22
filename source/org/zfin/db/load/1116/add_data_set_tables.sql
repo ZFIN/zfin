@@ -15,7 +15,7 @@ create table htp_dataset(hd_zdb_id text not null primary key,
 			 hd_title text,
                          hd_summary text,
 	                 hd_date_curated timestamp not null default now(),
-			 hd_subseries_id text
+			 hd_subseries_id text,
 			 hd_original_dataset_id text not null);
 
 create unique index hd_title_summary_unique_index on htp_dataset(hd_title, hd_summary);
