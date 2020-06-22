@@ -243,19 +243,19 @@
 
     <target name="start-solr" description="Start up Solr ">
         <echo message="Source: ${solr}"/>
-        <exec executable="${solr}/solr-mac.sh">
+        <exec executable="${solr}/solr.sh">
             <arg value="start"/>
         </exec>
     </target>
 
     <target name="stop-solr" description="Stop Solr ">
-        <exec executable="${solr}/solr-mac.sh">
+        <exec executable="${solr}/solr.sh">
             <arg value="stop"/>
         </exec>
     </target>
 
     <target name="restart-solr" description="Restart up Solr">
-        <exec executable="${solr}/solr-mac.sh">
+        <exec executable="${solr}/solr.sh">
             <arg value="restart"/>
         </exec>
     </target>
