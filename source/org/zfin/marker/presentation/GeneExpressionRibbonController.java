@@ -89,7 +89,7 @@ public class GeneExpressionRibbonController {
         long startTime = System.currentTimeMillis();
         List<ExpressionRibbonDetail> allDetails;
         try {
-            allDetails = ribbonService.buildExpressionRibbonDetail(geneID, termID, includeReporter, onlyDirectlySubmitted, isOther );
+            allDetails = ribbonService.buildExpressionRibbonDetail(geneID, termID, includeReporter, onlyDirectlySubmitted, isOther);
         } catch (Exception e) {
             log.error("Error while retrieving ribbon details", e);
             RestErrorMessage error = new RestErrorMessage(404);
@@ -107,7 +107,7 @@ public class GeneExpressionRibbonController {
 
         // sorting
         if (filteredList != null) {
-            filteredList.sort(Comparator.comparing(detail -> detail.getEntity().getDisplayName()));
+            filteredList.sort(Comparator.comparing(detail -> detail.getEntity().getDisplayName().toLowerCase()));
         }
 
         // paginating
@@ -136,7 +136,7 @@ public class GeneExpressionRibbonController {
                                                          @RequestParam(required = false) boolean onlyDirectlySubmitted,
                                                          @RequestParam(required = false) boolean isOther,
                                                          @Version Pagination pagination) throws IOException, SolrServerException {
-        JsonResultResponse<Image> response = expressionService.getExpressionImages(zdbID, termId, supertermId, subtermId, includeReporter,onlyDirectlySubmitted, isOther, pagination);
+        JsonResultResponse<Image> response = expressionService.getExpressionImages(zdbID, termId, supertermId, subtermId, includeReporter, onlyDirectlySubmitted, isOther, pagination);
         response.setHttpServletRequest(request);
         return response;
     }
