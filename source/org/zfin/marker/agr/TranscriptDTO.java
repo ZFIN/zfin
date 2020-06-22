@@ -9,23 +9,49 @@ public class TranscriptDTO extends ZfinDTO {
 
     private String symbol;
     private String name;
+
+    public String getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(String sequence) {
+        this.sequence = sequence;
+    }
+
     private String soTermId;
+    private String sequence;
 
-    private List<CrossReferenceTranscriptsDTO> crossReferences;
-    private List<GeneTscriptDTO> genes;
-
-
-
-    public List<GeneTscriptDTO> getGenes() {
-        return genes;
-    }
-
-    public void setGenes(List<GeneTscriptDTO> genes) {
-        this.genes = genes;
+    public List<String> getSymbolSynonyms() {
+        return symbolSynonyms;
     }
 
 
 
+    public void setSymbolSynonyms(List<String> symbolSynonyms) {
+        this.symbolSynonyms = symbolSynonyms;
+    }
+
+    private String url;
+    protected List<String> symbolSynonyms;
+
+    public List<String> getCrossReferenceIds() {
+        return crossReferenceIds;
+    }
+
+    public void setCrossReferenceIds(List<String> crossReferenceIds) {
+        this.crossReferenceIds = crossReferenceIds;
+    }
+
+    private List<String> crossReferenceIds;
+    private GeneTscriptDTO gene;
+
+    public GeneTscriptDTO getGene() {
+        return gene;
+    }
+
+    public void setGene(GeneTscriptDTO gene) {
+        this.gene = gene;
+    }
 
     public String getSymbol() {
         return symbol;
@@ -52,12 +78,13 @@ public class TranscriptDTO extends ZfinDTO {
         this.soTermId = soTermId;
     }
 
-    public List<CrossReferenceTranscriptsDTO> getCrossReferences() {
-        return crossReferences;
+
+    public String getUrl() {
+        return url;
     }
 
-    public void setCrossReferences(List<CrossReferenceTranscriptsDTO> crossReferences) {
-        this.crossReferences = crossReferences;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     //public String getGeneLiteratureUrl() {

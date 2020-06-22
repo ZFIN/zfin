@@ -19,17 +19,19 @@ public class GeneTscriptDTO {
         this.synonyms = synonyms;
     }
 
+    public String getGeneId() {
+        return geneId;
+    }
+
+    public void setGeneId(String geneId) {
+        this.geneId = geneId;
+    }
+
     private List<String> synonyms;
 
-    public String getPrimaryId() {
-        return primaryId;
-    }
 
-    public void setPrimaryId(String primaryId) {
-        this.primaryId = primaryId;
-    }
 
-    private String primaryId;
+    private String geneId;
 
 
 

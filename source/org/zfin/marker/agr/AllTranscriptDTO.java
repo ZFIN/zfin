@@ -8,7 +8,7 @@ public class AllTranscriptDTO {
 
     @JsonProperty("data")
     private List<TranscriptDTO> transcripts;
-    private MetaDataDTO metaData;
+    private RNACentralMetaDataDTO metaData;
 
     public List<TranscriptDTO> getTranscripts() {
         return transcripts;
@@ -18,11 +18,11 @@ public class AllTranscriptDTO {
         this.transcripts = transcripts;
     }
 
-    public MetaDataDTO getMetaData() {
+    public RNACentralMetaDataDTO getMetaData() {
         return metaData;
     }
 
-    public void setMetaData(MetaDataDTO metaData) {
+    public void setMetaData(RNACentralMetaDataDTO metaData) {
         this.metaData = metaData;
     }
 }

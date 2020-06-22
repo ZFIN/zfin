@@ -35,6 +35,7 @@ import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.server.DTOMarkerService;
 import org.zfin.infrastructure.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.mapping.VariantSequence;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.*;
 import org.zfin.marker.service.MarkerRelationshipPresentationTransformer;
@@ -396,7 +397,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         String hql = " select mr1.secondMarker from MarkerRelationship mr1,  Marker m " +
                 " where mr1.firstMarker.zdbID=m.zdbID " +
                 " and mr1.firstMarker.markerType in (:markerType) " +
-                " and mr1.type = :markerRelationshipType1 " +
+                " and mr1.type = :markerRelationshipType1" +
                 " ";
 
 
@@ -2490,6 +2491,23 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 ;
     }
 
+
+    public Marker getGeneforTranscript(Marker tscript) {
+
+        String hql = " select m from MarkerRelationship mr1,  Marker m " +
+                " where mr1.firstMarker.zdbID=m.zdbID " +
+                " and mr1.secondMarker.zdbID = :markerZdbID " +
+                " and mr1.type = :markerRelationshipType1 " +
+                " ";
+
+        return (Marker) HibernateUtil.currentSession().createQuery(hql)
+                .setString("markerZdbID", tscript.getZdbID())
+                .setParameter("markerRelationshipType1", MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT)
+                .setMaxResults(1)
+                .uniqueResult();
+
+    }
+
     public List<Marker> getCodingSequence(Marker gene) {
 
 
@@ -3458,6 +3476,14 @@ public class HibernateMarkerRepository implements MarkerRepository {
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameterList("IDs", antibodyIds);
         return new HashSet<>((List<Antibody>) query.list());
+    }
+
+    public TranscriptSequence getTranscriptSequence(Transcript transcript) {
+        Session session = HibernateUtil.currentSession();
+        String hqlSeq = " select ts from  TranscriptSequence ts where ts.zdbID =:tsID";
+        Query query = session.createQuery(hqlSeq);
+        query.setParameter("tsID", transcript.getZdbID());
+        return (TranscriptSequence) query.uniqueResult();
     }
 
 }

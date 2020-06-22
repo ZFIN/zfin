@@ -1,6 +1,7 @@
 package org.zfin.marker;
 
 import org.zfin.sequence.DisplayGroup;
+
 import org.zfin.sequence.TranscriptDBLink;
 import org.zfin.sequence.service.TranscriptService;
 
@@ -17,6 +18,19 @@ public class Transcript extends Marker {
     private Set<TranscriptDBLink> transcriptDBLinks;
     private String ensdartId;
     private String loadId;
+    private TranscriptSequence trSequence;
+
+
+
+    public TranscriptSequence getTrSequence() {
+        return trSequence;
+    }
+
+    public void setTrSequence(TranscriptSequence trSequence) {
+        this.trSequence = trSequence;
+    }
+
+
 
     public TranscriptType getTranscriptType() {
         return transcriptType;

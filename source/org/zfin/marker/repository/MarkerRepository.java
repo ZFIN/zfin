@@ -434,6 +434,7 @@ public interface MarkerRepository {
 
     List<Marker> getCodingSequence(Marker construct);
     List<Marker> getGenesforTranscript(Marker tscript);
+    Marker getGeneforTranscript(Marker tscript);
 
     List<SupplierLookupEntry> getSupplierNamesForString(String lookupString);
 
@@ -518,4 +519,5 @@ public interface MarkerRepository {
     List<AntibodyLookupEntry> getAntibodyForString(String lookupString, String type);
 
     Set<Antibody> getAntibodies(Set<String> antibodyIds);
+    TranscriptSequence getTranscriptSequence(Transcript transcript);
 }

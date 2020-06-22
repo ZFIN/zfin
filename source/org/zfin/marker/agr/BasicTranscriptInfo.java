@@ -12,6 +12,7 @@ import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.TranscriptDBLink;
+import org.zfin.marker.TranscriptSequence;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -63,7 +64,14 @@ public class BasicTranscriptInfo extends AbstractScriptWrapper {
     }
 
     public AllTranscriptDTO getAllTranscriptInfo() {
-        List<Transcript> allTranscripts = getMarkerRepository().getTranscriptsForNonCodingGenes();
+        List<Transcript> allTranscriptsInDb = getMarkerRepository().getTranscriptsForNonCodingGenes();
+        List<Transcript> allTranscripts = new ArrayList<>();
+        for (Transcript tscript: allTranscriptsInDb){
+            if (!tscript.isWithdrawn()){
+                if (getMarkerRepository().getTranscriptSequence(tscript)!=null)
+                allTranscripts.add(tscript);
+            }
+        }
         System.out.println(allTranscripts.size());
 
         List<TranscriptDTO> allTranscriptDTOList = allTranscripts.stream()
@@ -73,65 +81,73 @@ public class BasicTranscriptInfo extends AbstractScriptWrapper {
                             dto.setName(transcript.name);
                             dto.setSymbol(transcript.getAbbreviation());
                             dto.setPrimaryId(transcript.getZdbID());
-
                             dto.setSoTermId(transcript.getTranscriptType().getSoID());
-
+                            dto.setUrl("http://zfin.org/"+transcript.getZdbID());
+                            if (getMarkerRepository().getTranscriptSequence(transcript)!=null){
+                                dto.setSequence(getMarkerRepository().getTranscriptSequence(transcript).getSequence());
+                            }
                             if (CollectionUtils.isNotEmpty(transcript.getAliases())) {
                                 List<String> aliasList = new ArrayList<>(transcript.getAliases().size());
                                 for (MarkerAlias alias : transcript.getAliases()) {
                                     aliasList.add(alias.getAlias());
                                 }
-                                dto.setSynonyms(aliasList);
+                                dto.setSymbolSynonyms(aliasList);
                             }
                             if (CollectionUtils.isNotEmpty(transcript.getSecondMarkerRelationships())) {
-                                List<GeneTscriptDTO> genes = new ArrayList<>(getMarkerRepository().getGenesforTranscript(transcript).size());
-
-                                for (Marker relatedGenes : getMarkerRepository().getGenesforTranscript(transcript)) {
-                                    GeneTscriptDTO geneDTO = new GeneTscriptDTO();
-                                    geneDTO.setPrimaryId(relatedGenes.getZdbID());
-                                    geneDTO.setSymbol(relatedGenes.getAbbreviation());
-                                    geneDTO.setName(relatedGenes.getName());
-                                    if (CollectionUtils.isNotEmpty(relatedGenes.getAliases())) {
-                                        List<String> aliasList = new ArrayList<>(relatedGenes.getAliases().size());
-                                        for (MarkerAlias alias : relatedGenes.getAliases()) {
-                                            aliasList.add(alias.getAlias());
-                                        }
-                                        geneDTO.setSynonyms(aliasList);
+                                Marker relatedGene = getMarkerRepository().getGeneforTranscript(transcript);
+                                GeneTscriptDTO geneDTO = new GeneTscriptDTO();
+                                geneDTO.setGeneId("ZFIN:"+relatedGene.getZdbID());
+                                geneDTO.setSymbol(relatedGene.getAbbreviation());
+                                geneDTO.setName(relatedGene.getName());
+                                if (CollectionUtils.isNotEmpty(relatedGene.getAliases())) {
+                                    List<String> aliasList = new ArrayList<>(relatedGene.getAliases().size());
+                                    for (MarkerAlias alias : relatedGene.getAliases()) {
+                                        aliasList.add(alias.getAlias());
                                     }
-                                    genes.add(geneDTO);
+                                    geneDTO.setSynonyms(aliasList);
                                 }
-                                dto.setGenes(genes);
+                                dto.setGene(geneDTO);
                             }
-                            List<CrossReferenceTranscriptsDTO> dbLinkList = new ArrayList<>(transcript.getTranscriptDBLinks().size() + 1);
+                                List<CrossReferenceTranscriptsDTO> dbLinkList = new ArrayList<>(transcript.getTranscriptDBLinks().size() + 1);
+                            List<String> dbLinks=new ArrayList<>(transcript.getTranscriptDBLinks().size() + 1);
+                                if (CollectionUtils.isNotEmpty(transcript.getTranscriptDBLinks())) {
 
-                            if (CollectionUtils.isNotEmpty(transcript.getTranscriptDBLinks())) {
+                                    for (TranscriptDBLink link : transcript.getTranscriptDBLinks()) {
 
-                                for (TranscriptDBLink link : transcript.getTranscriptDBLinks()) {
+                                        String dbName = DataProvider.getExternalDatabaseName(link.getReferenceDatabase().getForeignDB().getDbName());
 
-                                    String dbName = DataProvider.getExternalDatabaseName(link.getReferenceDatabase().getForeignDB().getDbName());
+                                        if (dbName == null)
+                                            continue;
+                                        // do not include ENSDARP records
+                                        if (dbName.equals(ForeignDB.AvailableName.ENSEMBL.toString()) && link.getAccessionNumber().startsWith("ENSDARP"))
+                                            continue;
 
-                                    if (dbName == null)
-                                        continue;
-                                    // do not include ENSDARP records
-                                    if (dbName.equals(ForeignDB.AvailableName.ENSEMBL.toString()) && link.getAccessionNumber().startsWith("ENSDARP"))
-                                        continue;
-
-                                    CrossReferenceTranscriptsDTO xRefDto = new CrossReferenceTranscriptsDTO(dbName, link.getAccessionNumber());
-                                    dbLinkList.add(xRefDto);
+                                        CrossReferenceTranscriptsDTO xRefDto = new CrossReferenceTranscriptsDTO(dbName, link.getAccessionNumber());
+                                        String xRef=dbName.toUpperCase()+":"+link.getAccessionNumber().trim();
+                                        xRef=xRef.replace("MIRBASE MATURE","MIRBASE");
+                                        dbLinks.add(xRef);
+                                        dbLinkList.add(xRefDto);
+                                    }
                                 }
-                            }
-                            dto.setCrossReferences(dbLinkList);
-                            return dto;
-                        })
+                               // dto.setCrossReferenceIds(dbLinkList);
+                            dto.setCrossReferenceIds(dbLinks);
+                                return dto;
+                            })
                 .collect(Collectors.toList());
-        AllTranscriptDTO AllTranscriptDTO = new AllTranscriptDTO();
-        AllTranscriptDTO.setTranscripts(allTranscriptDTOList);
-        String dataProvider = "ZFIN";
-        List<String> pages = new ArrayList<>();
-        pages.add("homepage");
-        DataProviderDTO dp = new DataProviderDTO("curated", new CrossReferenceDTO(dataProvider, dataProvider, pages));
-        MetaDataDTO meta = new MetaDataDTO(new DataProviderDTO("curated", new CrossReferenceDTO(dataProvider, dataProvider, pages)));
-        AllTranscriptDTO.setMetaData(meta);
-        return AllTranscriptDTO;
+                            AllTranscriptDTO AllTranscriptDTO = new AllTranscriptDTO();
+                            AllTranscriptDTO.setTranscripts(allTranscriptDTOList);
+                            RNACentralMetaDataDTO meta = new RNACentralMetaDataDTO();
+                            meta.setDataProvider("ZFIN");
+                            meta.setSchemaVersion("0.4.0");
+                            //List<String> pubs = new ArrayList<>(List.of("PMID: 30407545"));
+        List<String> pubs = new ArrayList<String>();
+        pubs.add("PMID: 30407545");
+
+
+                            meta.setPublications(pubs);
+        System.out.println(meta.getPublications().size());
+                            AllTranscriptDTO.setMetaData(meta);
+                            return AllTranscriptDTO;
+                        }
+
     }
-}
