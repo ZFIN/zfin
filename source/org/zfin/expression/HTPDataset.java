@@ -28,8 +28,6 @@ public class HTPDataset {
             })
     @Column(name = "hd_zdb_id")
     private String zdbID;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "xpatex_source_zdb_id")
 
     @Column(name = "hd_original_dataset_id")
     private String original_dataset_id;
