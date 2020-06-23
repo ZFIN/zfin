@@ -51,6 +51,8 @@ public class RibbonCategoryConfig {
                 break;
 
             case GO_MF:
+                builder.allLabel("All molecular functions");
+                builder.otherLabel("Other molecular functions");
                 switch (ribbon) {
                     case PHENOTYPE:
                         builder.slimTerms(ontologyRepository.getPhenotypeRibbonMolecularFunctionTerms());
@@ -62,6 +64,8 @@ public class RibbonCategoryConfig {
                 break;
 
             case GO_BP:
+                builder.allLabel("All biological processes");
+                builder.otherLabel("Other biological processes");
                 switch (ribbon) {
                     case PHENOTYPE:
                         builder.slimTerms(ontologyRepository.getPhenotypeRibbonBiologicalProcessTerms());
@@ -73,6 +77,8 @@ public class RibbonCategoryConfig {
                 break;
 
             case GO_CC:
+                builder.allLabel("All cellular components");
+                builder.otherLabel("Other cellular components");
                 switch (ribbon) {
                     case EXPRESSION:
                         builder.slimTerms(ontologyRepository.getExpressionRibbonCellularComponentTerms());
