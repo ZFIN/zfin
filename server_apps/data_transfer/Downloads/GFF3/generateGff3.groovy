@@ -148,9 +148,9 @@ def generateGenesAndTranscripts() {
     """) { row ->
 
         if (!proteinIds[row.dblink_linked_recid]) {
-            proteinIds[row.dblink_linked_recid] = [row.dblink_acc_num]
+            proteinIds[row.dblink_linked_recid] = ["ENSEMBL:" + row.dblink_acc_num]
         } else {
-            proteinIds[row.dblink_linked_recid].add(row.dblink_acc_num)
+            proteinIds[row.dblink_linked_recid].add("ENSEMBL:" + row.dblink_acc_num)
         }
     }
 
