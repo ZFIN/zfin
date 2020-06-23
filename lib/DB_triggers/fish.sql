@@ -13,6 +13,17 @@ begin
                      update fish                                    
                      set fish_name = get_fish_full_name(NEW.fish_Zdb_id,NEW.fish_genotype_zdb_id, get_fish_name(NEW.fish_zdb_id))
                       where fish_zdb_id = NEW.fish_zdb_id;          
+			
+		     update fish
+		      set fish_phenotypic_construct_count = (Select count(fmrel_ftr_zdb_id) from
+			genotype_feature, feature_marker_relationship
+			where genofeat_geno_zdb_id = NEW.fish_genotype_zdb_id
+			and fmrel_type = 'contains phenotypic sequence feature'
+			and fmrel_ftr_zdb_id = genofeat_feature_zdb_id)
+		      where exists (select 'x' from genotype_feature, feature_marker_relationship
+                        where genofeat_geno_zdb_id = NEW.fish_genotype_zdb_id
+                        and fmrel_type = 'contains phenotypic sequence feature'
+                        and fmrel_ftr_zdb_id = genofeat_feature_zdb_id);
                                                                     
                      return new;                                    
                      end;     

@@ -9,5 +9,6 @@
     <include file="source/org/zfin/db/load/1116/add_object_types_htp.sql"/>
     <include file="source/org/zfin/db/load/1116/add_htpdset_sequence.sql"/>
     <include file="source/org/zfin/db/load/1116/transcript_sequence.sql"/>
+    <include file="source/org/zfin/db/load/1116/add_construct_count_to_fish.sql"/>
 
 </databaseChangeLog>

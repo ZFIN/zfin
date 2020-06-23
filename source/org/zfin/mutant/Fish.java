@@ -31,7 +31,15 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
     private Set<SecondaryFish> secondaryFishSet;
     private Set<FishSupplier> suppliers;
     private Set<FishExperiment> fishExperiments;
+    private long fishPhenotypicConstructCount;
 
+    public long getFishPhenotypicConstructCount() {
+        return fishPhenotypicConstructCount;
+    }
+
+    public void setFishPhenotypicConstructCount(long fishPhenotypicConstructCount) {
+        this.fishPhenotypicConstructCount = fishPhenotypicConstructCount;
+    }
 
     private List<SequenceTargetingReagent> strList;
     private long fishFunctionalAffectedGeneCount;

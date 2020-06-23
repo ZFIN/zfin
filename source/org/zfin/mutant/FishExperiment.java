@@ -131,6 +131,8 @@ public class FishExperiment implements Comparable<FishExperiment> {
             return true;
         if (getFish().getFishFunctionalAffectedGeneCount() == 0 && getExperiment().getExperimentConditions().size() >= 2 )
             return true;
+        if (getFish().getFishPhenotypicConstructCount() + getFish().getFishFunctionalAffectedGeneCount() > 1)
+            return true;
 
         return false;
     }
