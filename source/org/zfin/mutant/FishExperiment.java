@@ -125,13 +125,13 @@ public class FishExperiment implements Comparable<FishExperiment> {
     }
 
     public boolean isAmelioratedOrExacerbated() {
-        if (getFish().getFishFunctionalAffectedGeneCount() >= 2)
+        Long totalCount = getFish().getFishFunctionalAffectedGeneCount() + getFish().getFishPhenotypicConstructCount();
+
+        if (totalCount >= 2)
             return true;
-        if (getFish().getFishFunctionalAffectedGeneCount() == 1 && !isStandardOrGenericControl())
+        if (totalCount == 1 && !isStandardOrGenericControl())
             return true;
-        if (getFish().getFishFunctionalAffectedGeneCount() == 0 && getExperiment().getExperimentConditions().size() >= 2 )
-            return true;
-        if (getFish().getFishPhenotypicConstructCount() + getFish().getFishFunctionalAffectedGeneCount() > 1)
+        if (totalCount == 0 && getExperiment().getExperimentConditions().size() >= 2 )
             return true;
 
         return false;
