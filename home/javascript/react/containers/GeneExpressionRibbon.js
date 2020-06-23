@@ -3,13 +3,13 @@ import PropTypes from 'prop-types';
 import qs from 'qs';
 import {useRibbonState, useTableState} from '../utils/effects';
 import { DataRibbon } from '../components/ribbon';
-import {DEFAULT_TABLE_STATE} from '../components/data-table';
 import {
     GeneExpressionAnnotationDetailTable,
     GeneExpressionAnnotationSummaryTable,
     GeneExpressionFigureGallery,
 } from '../components/gene-expression';
 import Checkbox from '../components/Checkbox';
+import produce from 'immer';
 
 const GeneExpressionRibbon = ({geneId}) => {
     const [summaryTableState, setSummaryTableState] = useTableState();
@@ -42,9 +42,13 @@ const GeneExpressionRibbon = ({geneId}) => {
         setIsDirectlySubmitted(event.target.checked);
     };
 
+    const goToFirstPage = produce(state => {
+        state.page = 1;
+    });
+
     const handleRibbonCellClick = (subject, group) => {
-        setSummaryTableState(DEFAULT_TABLE_STATE);
-        setDetailTableState(DEFAULT_TABLE_STATE);
+        setSummaryTableState(goToFirstPage);
+        setDetailTableState(goToFirstPage);
         setSelectedTableEntity(null);
         setSelectedRibbonTerm(subject, group);
     };
