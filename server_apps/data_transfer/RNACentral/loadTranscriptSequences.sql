@@ -1,6 +1,6 @@
 -- loadTranscriptSequences.sql
 
-begn work;
+begin work;
 create  table tscriptsequence (tscriptid text, tscriptottdart text, tscriptseq text );
 
 \copy tscriptsequence from '/opt/zfin/www_homes/polka/server_apps/data_transfer/RNACentral/loadedSeq.txt' delimiter E'\t';
