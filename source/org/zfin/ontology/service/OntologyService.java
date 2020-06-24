@@ -25,6 +25,7 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.ForeignDB;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -262,8 +263,9 @@ public class OntologyService {
 
     public static String getDisplayName(GenericTerm superterm, GenericTerm subterm) {
         StringBuilder builder = new StringBuilder();
-        if (superterm != null)
+        if (superterm != null) {
             builder.append(superterm.getTermName());
+        }
         if (subterm != null) {
             builder.append(" : ");
             builder.append(subterm.getTermName());
@@ -301,8 +303,9 @@ public class OntologyService {
     }
 
     public static boolean hasChild(TermDTO root, TermDTO allegedChildTerm) {
-        if (allegedChildTerm.getOboID().equals(root.getOboID()))
+        if (allegedChildTerm.getOboID().equals(root.getOboID())) {
             return true;
+        }
         GenericTerm term = getOntologyRepository().getTermByOboID(root.getOboID());
         // check the closure if the given term is a child
         List<TransitiveClosure> transitiveClosures = getOntologyRepository().getChildrenTransitiveClosures(term);
@@ -311,45 +314,29 @@ public class OntologyService {
 
     public List<GenericTerm> getRibbonStages() {
         List<GenericTerm> stageSlim = ontologyRepository.getTermsInSubset("granular_stage");
-        stageSlim.remove(ontologyRepository.getTermByOboID("ZFS:0000000"));
-
-
-        try {
-            List<DevelopmentStage> stages = RepositoryFactory.getAnatomyRepository().getAllStagesWithoutUnknown();
-            stageSlim.sort((stageOne, stageTwo) -> {
-                int stageOneIndex = 0;
-                for (DevelopmentStage term : stages) {
-                    stageOneIndex++;
-                    String prefixOne;
-                    if (term.getName().equalsIgnoreCase("adult"))
-                        prefixOne = "adult";
-                    else
-                        prefixOne = term.getName().substring(0, term.getName().indexOf(":") - 1);
-                    if (stageOne.getTermName().toLowerCase().contains(prefixOne.toLowerCase())) {
-                        break;
-                    }
-                }
-                int stageTwoIndex = 0;
-                for (DevelopmentStage term : stages) {
-                    stageTwoIndex++;
-                    String prefixOne;
-                    if (term.getName().equalsIgnoreCase("adult"))
-                        prefixOne = "adult";
-                    else
-                        prefixOne = term.getName().substring(0, term.getName().indexOf(":") - 1);
-                    if (stageTwo.getTermName().toLowerCase().contains(prefixOne.toLowerCase())) {
-                        break;
-                    }
-                }
-                return stageOneIndex - stageTwoIndex;
-            });
-
-        } catch (Exception e) {
-            log.info(e);
-        }
-        // add 'adult' manually. It technically is a superstage
-        stageSlim.add(ontologyRepository.getTermByOboID("ZFS:0000000"));
+        stageSlim.sort((termA, termB) -> {
+            DevelopmentStage stageA = getFirstDevelopmentStageForTerm(termA);
+            if (stageA == null) {
+                return 1;
+            }
+            DevelopmentStage stageB = getFirstDevelopmentStageForTerm(termB);
+            if (stageB == null) {
+                return -1;
+            }
+            return stageA.compareTo(stageB);
+        });
         return stageSlim;
+    }
+
+    @Nullable
+    public DevelopmentStage getFirstDevelopmentStageForTerm(GenericTerm superStageTerm) {
+        List<DevelopmentStage> stages = RepositoryFactory.getAnatomyRepository().getAllStagesWithoutUnknown();
+        for (DevelopmentStage stage : stages) {
+            if (stage.getName().toLowerCase().startsWith(superStageTerm.getTermName().toLowerCase())) {
+                return stage;
+            }
+        }
+        return null;
     }
 }
 

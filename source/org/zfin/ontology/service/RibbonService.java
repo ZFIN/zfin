@@ -40,7 +40,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.*;
-import static org.zfin.framework.api.RibbonCategoryConfig.*;
 import static org.zfin.framework.api.RibbonType.*;
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
@@ -67,9 +66,9 @@ public class RibbonService {
         query.setRequestHandler("/go-annotation");
         query.addFilterQuery(FieldName.GENE_ZDB_ID.getName() + ":" + zdbID);
         return buildRibbonSummary(zdbID, query, List.of(
-                RibbonCategoryConfig.forTerm(GENE_ONTOLOGY, GO_MF),
-                RibbonCategoryConfig.forTerm(GENE_ONTOLOGY, GO_BP),
-                RibbonCategoryConfig.forTerm(GENE_ONTOLOGY, GO_CC)
+                new RibbonCategoryConfig.GeneOntologyMolecularFunction(),
+                new RibbonCategoryConfig.GeneOntologyBiologicalProcess(),
+                new RibbonCategoryConfig.GeneOntologyCellularComponent()
         ));
     }
 
@@ -80,9 +79,9 @@ public class RibbonService {
         expressionService.addReporterFilter(query, includeReporter);
         expressionService.addDirectSubmissionFilter(query, onlyDirectlySubmitted);
         return buildRibbonSummary(zdbID, query, List.of(
-                RibbonCategoryConfig.forTerm(EXPRESSION, ANATOMY),
-                RibbonCategoryConfig.forTerm(EXPRESSION, STAGE),
-                RibbonCategoryConfig.forTerm(EXPRESSION, GO_CC)
+                new RibbonCategoryConfig.Anatomy(),
+                new RibbonCategoryConfig.Stage(),
+                new RibbonCategoryConfig.ExpressionCellularComponent()
         ));
     }
 
@@ -94,11 +93,11 @@ public class RibbonService {
             query.addFilterQuery("is_eap:false");
         }
         return buildRibbonSummary(zdbID, query, List.of(
-                RibbonCategoryConfig.forTerm(PHENOTYPE, ANATOMY),
-                RibbonCategoryConfig.forTerm(PHENOTYPE, STAGE),
-                RibbonCategoryConfig.forTerm(PHENOTYPE, GO_MF),
-                RibbonCategoryConfig.forTerm(PHENOTYPE, GO_BP),
-                RibbonCategoryConfig.forTerm(PHENOTYPE, GO_CC)
+                new RibbonCategoryConfig.Anatomy(),
+                new RibbonCategoryConfig.Stage(),
+                new RibbonCategoryConfig.PhenotypeMolecularFunction(),
+                new RibbonCategoryConfig.PhenotypeBiologicalProcess(),
+                new RibbonCategoryConfig.PhenotypeCellularComponent()
         ));
     }
 
@@ -108,8 +107,7 @@ public class RibbonService {
 
         // pull out just the IDs
         List<String> categoryIDs = categoryConfigs.stream()
-                .map(RibbonCategoryConfig::getCategoryTerm)
-                .map(GenericTerm::getOboID)
+                .map(RibbonCategoryConfig::getCategoryId)
                 .collect(toList());
         List<String> slimIDs = categoryConfigs.stream()
                 .map(RibbonCategoryConfig::getSlimTerms)
@@ -127,7 +125,7 @@ public class RibbonService {
             if (category.isIncludeOther()) {
                 otherCounts.putAll(getRibbonCounts(
                         partialQuery,
-                        List.of(category.getCategoryTerm().getOboID()),
+                        List.of(category.getCategoryId()),
                         category.getSlimTerms().stream().map(GenericTerm::getOboID).collect(toList())
                 ));
             }
@@ -137,19 +135,17 @@ public class RibbonService {
         List<RibbonCategory> categories = categoryConfigs.stream()
                 .map(categoryConfig -> {
                     RibbonCategory category = new RibbonCategory();
-                    GenericTerm categoryTerm = categoryConfig.getCategoryTerm();
-                    String termNameDisplay = categoryTerm.getTermName().replace('_', ' ');
 
-                    category.setDescription(categoryTerm.getDefinition());
-                    category.setId(categoryTerm.getOboID());
-                    category.setLabel(termNameDisplay);
+                    category.setDescription(categoryConfig.getCategoryDefinition());
+                    category.setId(categoryConfig.getCategoryId());
+                    category.setLabel(categoryConfig.getCategoryLabel());
                     List<RibbonGroup> groups = new ArrayList<>();
 
                     if (categoryConfig.isIncludeAll()) {
                         RibbonGroup allGroup = new RibbonGroup();
-                        allGroup.setId(categoryTerm.getOboID());
-                        allGroup.setLabel(StringUtils.defaultIfEmpty(categoryConfig.getAllLabel(), "All " + termNameDisplay));
-                        allGroup.setDescription(StringUtils.defaultIfEmpty(categoryConfig.getAllDescription(), "Show all " + termNameDisplay + " annotations"));
+                        allGroup.setId(categoryConfig.getCategoryId());
+                        allGroup.setLabel(categoryConfig.getAllLabel());
+                        allGroup.setDescription(categoryConfig.getAllDescription());
                         allGroup.setType(RibbonGroup.Type.ALL);
                         groups.add(allGroup);
                     }
@@ -158,7 +154,7 @@ public class RibbonService {
                             .map(slimTerm -> {
                                 RibbonGroup group = new RibbonGroup();
                                 group.setId(slimTerm.getOboID());
-                                group.setLabel(slimTerm.getTermName());
+                                group.setLabel(categoryConfig.getSlimTermLabel(slimTerm));
                                 group.setDescription(slimTerm.getDefinition());
                                 group.setType(RibbonGroup.Type.TERM);
                                 return group;
@@ -168,9 +164,9 @@ public class RibbonService {
 
                     if (categoryConfig.isIncludeOther()) {
                         RibbonGroup otherGroup = new RibbonGroup();
-                        otherGroup.setId(categoryTerm.getOboID());
-                        otherGroup.setLabel(StringUtils.defaultIfEmpty(categoryConfig.getOtherLabel(), "Other " + termNameDisplay));
-                        otherGroup.setDescription(StringUtils.defaultIfEmpty(categoryConfig.getOtherDescription(), "Show all " + termNameDisplay + " annotations not mapped to a specific term"));
+                        otherGroup.setId(categoryConfig.getCategoryId());
+                        otherGroup.setLabel(categoryConfig.getOtherLabel());
+                        otherGroup.setDescription(categoryConfig.getOtherDescription());
                         otherGroup.setType(RibbonGroup.Type.OTHER);
                         groups.add(otherGroup);
                     }
