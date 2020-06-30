@@ -576,6 +576,7 @@
         <field name="name_sort" type="sortable-string" indexed="true" stored="true" />
         <field name="author_sort" type="sortable-string" indexed="true" stored="true" />
         <field name="gene_sort" type="sortable-string" indexed="true" stored="true" />
+        <field name="phenotype_statement_sort" type="sortable-string" indexed="true" stored="true" />
 
         <field name="regulatory_region" type="keyword" indexed="true" stored="true" multiValued="true"   />
         <field name="regulatory_region_species" type="keyword" indexed="true" stored="true" multiValued="true"  />
@@ -1062,6 +1063,7 @@
     <copyField source="construct" dest="construct_t"/>
     <copyField source="phenotype_statement" dest="phenotype_statement_t"/>
     <copyField source="phenotype_statement" dest="phenotype_statement_s"/>
+    <copyField source="phenotype_statement" dest="phenotype_statement_sort"/>
     <copyField source="phenotype_statement" dest="phenotype_statement_ac"/>
     <copyField source="synonym_phenotype_statement" dest="synonym_phenotype_statement_t"/>
     <copyField source="affected_anatomy" dest="affected_anatomy_t"/>

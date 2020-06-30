@@ -319,10 +319,10 @@ public class RibbonService {
             query.addFilterQuery("phenotype_statement_ac:(" + filterValue.trim() + ")");
         }
         // get Facet for the ao term and the PK of the expression record.
-        query.addFacetPivotField("phenotype_statement_s,phenotype_statement_term_id,stage_term_id,pub_zdb_id,id");
-        query.setParam("f.phenotype_statement_s.facet.offset", String.valueOf(pagination.getStart()));
-        query.setParam("f.phenotype_statement_s.facet.limit", String.valueOf(pagination.getLimit()));
-        query.setParam("f.phenotype_statement_s.facet.sort", "index");
+        query.addFacetPivotField("phenotype_statement_sort,phenotype_statement,phenotype_statement_term_id,stage_term_id,pub_zdb_id,id");
+        query.setParam("f.phenotype_statement_sort.facet.offset", String.valueOf(pagination.getStart()));
+        query.setParam("f.phenotype_statement_sort.facet.limit", String.valueOf(pagination.getLimit()));
+        query.setParam("f.phenotype_statement_sort.facet.sort", "index");
         query.setGetFieldStatistics("{!countDistinct=true}phenotype_statement_s");
 
         QueryResponse queryResponse = null;
@@ -341,28 +341,31 @@ public class RibbonService {
                 .collect(toMap(DevelopmentStage::getOboID, term -> term));
 
         List<PhenotypeRibbonSummary> phenotypeRibbonDetails = new ArrayList<>();
-        queryResponse.getFacetPivot().forEach((pivotFieldName, pivotFields) -> pivotFields.forEach(pivotField -> {
-            PhenotypeRibbonSummary detail = new PhenotypeRibbonSummary();
-            detail.setPhenotype((String) pivotField.getValue());
-            // stage pivot
-            PivotField pivotField2 = pivotField.getPivot().get(0);
-            detail.setId((String) pivotField2.getValue());
-            pivotField2.getPivot().stream()
-                    .filter(pivotField1 -> stageTermMap.containsKey(pivotField1.getValue()))
-                    .forEach(pivot -> {
-                        String stageID = (String) pivot.getValue();
-                        detail.addStage(stageTermMap.get(stageID));
-                        detail.addPublications(pivot.getPivot().stream().map(pivotField1 -> (String) pivotField1.getValue()).collect(toList()));
-                        detail.addPhenotypeIds(pivot.getPivot().stream()
-                                .map(pivotPubs -> pivotPubs.getPivot().stream()
-                                        .map(pivotID -> ((String) pivotID.getValue()).replace("psg-", ""))
-                                        .collect(Collectors.toList()))
-                                .flatMap(Collection::stream)
-                                .collect(Collectors.toList())
-                        );
+        queryResponse.getFacetPivot().forEach((pivotFieldName, pivotFields) ->
+                pivotFields.forEach(field -> {
+                    field.getPivot().forEach(pivotField -> {
+                        PhenotypeRibbonSummary detail = new PhenotypeRibbonSummary();
+                        detail.setPhenotype((String) pivotField.getValue());
+                        // stage pivot
+                        PivotField pivotField2 = pivotField.getPivot().get(0);
+                        detail.setId((String) pivotField2.getValue());
+                        pivotField2.getPivot().stream()
+                                .filter(pivotField1 -> stageTermMap.containsKey(pivotField1.getValue()))
+                                .forEach(pivot -> {
+                                    String stageID = (String) pivot.getValue();
+                                    detail.addStage(stageTermMap.get(stageID));
+                                    detail.addPublications(pivot.getPivot().stream().map(pivotField1 -> (String) pivotField1.getValue()).collect(toList()));
+                                    detail.addPhenotypeIds(pivot.getPivot().stream()
+                                            .map(pivotPubs -> pivotPubs.getPivot().stream()
+                                                    .map(pivotID -> ((String) pivotID.getValue()).replace("psg-", ""))
+                                                    .collect(Collectors.toList()))
+                                            .flatMap(Collection::stream)
+                                            .collect(Collectors.toList())
+                                    );
+                                });
+                        phenotypeRibbonDetails.add(detail);
                     });
-            phenotypeRibbonDetails.add(detail);
-        }));
+                }));
 
 
         // fixup single publications.
