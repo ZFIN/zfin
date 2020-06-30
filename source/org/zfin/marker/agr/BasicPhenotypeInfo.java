@@ -15,10 +15,10 @@ import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
 public class BasicPhenotypeInfo extends AbstractScriptWrapper {
 
-    private int numfOfRecords = 0;
+    private int numOfRecords = 0;
 
     public BasicPhenotypeInfo(int number) {
-        numfOfRecords = number;
+        numOfRecords = number;
     }
 
 
@@ -34,7 +34,7 @@ public class BasicPhenotypeInfo extends AbstractScriptWrapper {
 
     private void init() throws IOException {
         initAll();
-        AllPhenotypeDTO basicPhenotypeDTO = getBasicPhenotypeInfo(numfOfRecords);
+        AllPhenotypeDTO basicPhenotypeDTO = getBasicPhenotypeInfo(numOfRecords);
         ObjectMapper mapper = new ObjectMapper();
         ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
 
@@ -45,7 +45,7 @@ public class BasicPhenotypeInfo extends AbstractScriptWrapper {
         }
     }
 
-    public AllPhenotypeDTO getBasicPhenotypeInfo(int numberOrRecords) {
+    public AllPhenotypeDTO getBasicPhenotypeInfo(int numOfRecords) {
         List<BasicPhenotypeDTO> basicPhenoDTOList = getMutantRepository().getBasicPhenotypeDTOObjects();
 
         AllPhenotypeDTO allPhenotypeDTO = new AllPhenotypeDTO();

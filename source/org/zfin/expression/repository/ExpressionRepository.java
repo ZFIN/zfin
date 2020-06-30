@@ -9,6 +9,7 @@ import org.zfin.gwt.root.dto.ExpressedTermDTO;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.marker.agr.BasicExpressionDTO;
+import org.zfin.marker.agr.BasicRNASeqMetaDatasetDTO;
 import org.zfin.marker.agr.ImageDTO;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.FishExperiment;
@@ -21,10 +22,7 @@ import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.util.TermFigureStageRange;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * ToDo: ADD DOCUMENTATION!
@@ -463,4 +461,9 @@ public interface ExpressionRepository {
     List<ExpressionExperiment2> getExpressionExperiment2ByPub(String pubID, String geneID);
 
     List<ExpressionFigureStage> getExperimentFigureStagesByIds(List<Integer> expressionIDs);
+
+    ArrayList<HTPDataset> getAllHTPDatasets();
+    ArrayList<String> getHTPSecondaryIds(String datasetId);
+
+    ArrayList<String> getCategoryTags(String datasetId);
 }

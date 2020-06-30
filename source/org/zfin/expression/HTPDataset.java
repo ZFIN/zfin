@@ -6,18 +6,18 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.GregorianCalendar;
-import java.util.HashSet;
-import java.util.Set;
+
 
 /**
  * High throughput meta dataset object
  */
 @Entity
-@Table(name = "htp_dataset")
-@Setter
 @Getter
+@Setter
+@Table(name = "htp_dataset")
 
 public class HTPDataset {
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfin")
     @GenericGenerator(name = "zfin",
@@ -37,5 +37,6 @@ public class HTPDataset {
     private String summary;
     @Column(name = "hd_date_curated")
     private GregorianCalendar dateCurated;
+
 
 }

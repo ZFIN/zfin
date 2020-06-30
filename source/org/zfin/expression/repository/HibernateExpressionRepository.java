@@ -2655,4 +2655,37 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return (List<ExpressionFigureStage>) query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
 
+
+    @Override
+    public ArrayList<HTPDataset> getAllHTPDatasets() {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select htpdset from HTPDataset htpdset";
+        Query query = session.createQuery(hql);
+        return (ArrayList<HTPDataset>) query.list();
+    }
+
+    @Override
+    public ArrayList<String> getHTPSecondaryIds(String datasetId) {
+
+        Session session = HibernateUtil.currentSession();
+        String hql = "select htpaid.accessionNumber from HTPDatasetAlternateIdentifier htpaid" +
+                "     where htpaid.htpDataset.zdbID = :datasetId";
+        Query query = session.createQuery(hql);
+        query.setParameter("datasetId", datasetId);
+        return (ArrayList<String>) query.list();
+    }
+
+
+    @Override
+    public ArrayList<String> getCategoryTags(String datasetId) {
+
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select cvtag.categoryTag from HTPDatasetCategoryTag xtag, HTPCategoryTag cvtag" +
+                "     where xtag.htpDataset.zdbID = :datasetId" +
+                "     and  cvtag.zdbID = xtag.categoryTag ";
+        Query query = session.createQuery(hql);
+        query.setParameter("datasetId", datasetId);
+        return (ArrayList<String>) query.list();
+    }
 }

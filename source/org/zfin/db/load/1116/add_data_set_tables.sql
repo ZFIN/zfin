@@ -20,6 +20,12 @@ create table htp_dataset(hd_zdb_id text not null primary key,
 
 create unique index hd_title_summary_unique_index on htp_dataset(hd_title, hd_summary);
 
+create unique index ht_zdb_id_unique_index on htp_dataset(hd_zdb_id);
+
+alter table htp_dataset
+ add constraint hd_zdb_id_fk_odc foreign key (hd_zdb_id)
+  references zdb_active_data(zactvd_zdb_id) on delete cascade;
+
 alter table htp_dataset
  add constraint hd_id_unique unique (hd_title, hd_summary);
 

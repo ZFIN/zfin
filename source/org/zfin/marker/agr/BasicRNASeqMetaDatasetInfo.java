@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.commons.collections.CollectionUtils;
-import org.zfin.expression.*;
+import org.zfin.expression.HTPDataset;
 
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 
@@ -12,6 +12,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import org.zfin.expression.HTPDataset;
+import org.zfin.expression.HTPDatasetAlternateIdentifier;
+import org.zfin.expression.HTPDatasetCategoryTag;
+import org.zfin.expression.HTPDatasetPublication;
+import org.zfin.marker.agr.AllRNASeqMetaDatasetDTO;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,10 +27,10 @@ import static org.zfin.repository.RepositoryFactory.getExpressionRepository;
 public class BasicRNASeqMetaDatasetInfo extends AbstractScriptWrapper {
 
 
-    private int numfOfRecords = 0;
+    private int numOfRecords = 0;
 
     public BasicRNASeqMetaDatasetInfo(int number) {
-        numfOfRecords = number;
+        numOfRecords = number;
     }
 
     public static void main(String[] args) throws IOException {
@@ -50,8 +56,48 @@ public class BasicRNASeqMetaDatasetInfo extends AbstractScriptWrapper {
     }
 
     public AllRNASeqMetaDatasetDTO getAllDatasetInfo() {
+        ArrayList<HTPDataset> allDatasets = getExpressionRepository().getAllHTPDatasets();
+        System.out.println(allDatasets.size());
+
+        List<BasicRNASeqMetaDatasetDTO> allDatasetDTOList = allDatasets.stream()
+                .map(
+                        dataset -> {
+                            BasicRNASeqMetaDatasetDTO dto = new BasicRNASeqMetaDatasetDTO();
+                            HtpIDDTO datasetId = new HtpIDDTO();
+                            datasetId.setPrimaryId("ZFIN:"+dataset.getZdbID().toString());
+
+                            ArrayList<String> htpSecondaryIds = new ArrayList<String>();
+                            if (CollectionUtils.isNotEmpty(getExpressionRepository().getHTPSecondaryIds(dataset.getZdbID()))){
+                                for (String secId : getExpressionRepository().getHTPSecondaryIds(dataset.getZdbID())){
+                                    htpSecondaryIds.add(secId);
+                                }
+                                datasetId.setSecondaryId(htpSecondaryIds);
+                            }
+                            dto.setDatasetId(datasetId);
+
+                            dto.setDateAssigned(dataset.getDateCurated());
+                            dto.setSummary(dataset.getSummary());
+                            dto.setTitle(dataset.getTitle());
+
+                            if (CollectionUtils.isNotEmpty(getExpressionRepository().getCategoryTags(dataset.getZdbID()))){
+                                ArrayList<String> categoryTags = new ArrayList<>();
+                                for (String ctag : getExpressionRepository().getCategoryTags(dataset.getZdbID())) {
+                                    categoryTags.add(ctag);
+                                }
+                                dto.setCategoryTags(categoryTags);
+                            }
+                            return dto;
+                        })
+                .collect(Collectors.toList());
+
 
         AllRNASeqMetaDatasetDTO allRNASeqMetaDatasetDTO = new AllRNASeqMetaDatasetDTO();
+        allRNASeqMetaDatasetDTO.setDatasetList(allDatasetDTOList);
+        String dataProvider = "ZFIN";
+        List<String> pages = new ArrayList<>();
+        pages.add("homepage");
+        MetaDataDTO meta = new MetaDataDTO(new DataProviderDTO("curated", new CrossReferenceDTO(dataProvider, dataProvider, pages)));
+        allRNASeqMetaDatasetDTO.setMetaData(meta);
         return allRNASeqMetaDatasetDTO;
     }
 }

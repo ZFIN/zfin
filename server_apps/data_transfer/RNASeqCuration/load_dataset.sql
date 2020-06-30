@@ -1,5 +1,8 @@
 begin work;
-
+delete from htp_dataset_category_tag;
+delete from htp_category_tag;
+delete from htp_dataset_alternate_identifier;
+delete from htp_dataset_publication;
 delete from htp_dataset;
 
 create temp table tmp_dataset (datasetId text,
@@ -34,9 +37,17 @@ insert into tmp_pubs_pmid(datasetId,pub)
  select datasetId, cast(replace(pub, 'PMID:','') as integer)
    from tmp_pubs;
 
+create temp table tmp_id_map (zdb_id text, oid text);
+insert into tmp_id_map(zdb_id, oid)
+  select get_id('HTPDSET'), datasetid from tmp_dataset;
+
+insert into zdb_active_data (zactvd_zdb_id)
+  select zdb_id from tmp_id_map;
+
 insert into htp_dataset(hd_zdb_id, hd_original_dataset_id, hd_title, hd_summary, hd_date_curated)
-  select get_id('HTPDSET'), datasetid, title, summary, now()
-    from tmp_dataset
+  select zdb_id, datasetid, replace(title,'"','' ), replace(summary,'"','' ), now()
+    from tmp_dataset, tmp_id_map
+    where datasetid = oid
   ;
 
 create temp table tmp_ids(hd_zdb_id text, hd_acc_num text);
