@@ -1202,6 +1202,11 @@ public class HibernateOntologyRepository implements OntologyRepository {
         return filterTermsByOntology(getTermsInSubset("goslim_agr"), Ontology.GO_CC);
     }
 
+    @Override
+    public boolean termExists(String oboID) {
+        return getTermByOboID(oboID) != null;
+    }
+
     private List<GenericTerm> filterTermsByOntology(List<GenericTerm> terms, Ontology ontology) {
         return terms.stream().filter(term -> term.getOntology() == ontology).collect(toList());
     }

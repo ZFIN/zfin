@@ -25,6 +25,7 @@
     <property name="goQualifierSourceURL" value="go-qualifier-source.txt"/>
 -->
     <property name="zroSourceURL" value="file:///home/informix/Curation/zfin-ro.obo"/>
+    <property name="obiURL" value="file:///home/informix/Curation/obi.obo"/>
     <property name="goQualifierSourceURL" value="file:///home/informix/Curation/go-qualifier.obo"/>
     <property name="goQualifierOboURL" value="go-qualifier.obo"/>
     <property name="zecoOboURL" value="/home/informix/Curation/zeco.obo"/>
@@ -97,6 +98,10 @@
 
     <target name="load-mmo-ontology" depends="init">
         <load-ontology oboDirectory="${run-directory}" oboFileName="mmo.obo"/>
+    </target>
+
+    <target name="load-obi-ontology" depends="init">
+        <load-ontology oboDirectory="${run-directory}" oboFileName="obi.obo"/>
     </target>
 
 
@@ -274,6 +279,8 @@
 
     <target name="load-mmo" depends="download-mmo-ontology,load-mmo-ontology"/>
 
+    <target name="load-obi" depends="download-obi-ontology,load-obi-ontology"/>
+
     <target name="load-gene" depends="download-gene-ontology,load-gene-ontology"/>
 
     <target name="load-chebi" depends="download-chebi-ontology,load-chebi-ontology"/>
@@ -312,6 +319,12 @@
     <target name="download-quality-ontology">
         <property name="localOboFile" value="quality.obo"/>
         <property name="oboFileURL" value="${qualityOboURL}"/>
+        <antcall target="download-ontology"/>
+    </target>
+
+    <target name="download-obi-ontology">
+        <property name="localOboFile" value="obi.obo"/>
+        <property name="oboFileURL" value="${obiURL}"/>
         <antcall target="download-ontology"/>
     </target>
 

@@ -358,4 +358,6 @@ public interface OntologyRepository {
     List<GenericTerm> getGORibbonBiologicalProcessTerms();
 
     List<GenericTerm> getGORibbonCellularComponentTerms();
+
+    boolean termExists(String id);
 }

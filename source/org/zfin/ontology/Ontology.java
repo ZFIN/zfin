@@ -57,7 +57,8 @@ public enum Ontology implements Serializable {
     ZFIN_RO("zfin-ro", "ZFIN Relation Ontology", false, "RO:"),
     UBERON("uberon", "Uberon Ontology", false, "UBERON:"),
     GO_QUALIFIER("go_qualifier", "GO Qualifier for GO Annotations", false, "RO:"),
-    MMO("Measurement Methods Ontology", "Measurement Methods Ontology", false, "MMO:", true, true);
+    MMO("Measurement Methods Ontology", "Measurement Methods Ontology", false, "MMO:", true, true),
+    OBI("obi", "Ontology for Biomedical Investigations", false, "OBI:", false, false);
 
     private String ontologyName;
     private String commonName;
@@ -305,5 +306,9 @@ public enum Ontology implements Serializable {
         if (ontology.getOboIdPrefix() == null)
             return false;
         return termID.toLowerCase().startsWith(ontology.getOboIdPrefix().toLowerCase());
+    }
+
+    public boolean containsTerm(String id) {
+        return id.startsWith(oboIdPrefix);
     }
 }
