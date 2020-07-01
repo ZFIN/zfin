@@ -1,4 +1,6 @@
-;(function () {
+import Bloodhound from 'corejs-typeahead/dist/bloodhound';
+
+(function () {
     angular
         .module('app')
         .directive('pubLookup', pubLookup);
