@@ -259,6 +259,9 @@ public class GeneViewController {
         if (gene.getOrthologyNote() != null)
             model.addAttribute("orthologyNote", gene.getOrthologyNote().getNote());
 
+        String ensdarg = otherMarkerDBLinksLinks.stream().filter(linkDisplay -> linkDisplay.getAccession().startsWith("ENSDARG")).findFirst().get().getAccession();
+        model.addAttribute("geneTree", ensdarg);
+
         model.addAttribute(LookupStrings.FORM_BEAN, geneBean);
         model.addAttribute("markerHistoryReasonCodes", MarkerHistory.Reason.values());
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.GENE.getTitleString() + gene.getAbbreviation());
