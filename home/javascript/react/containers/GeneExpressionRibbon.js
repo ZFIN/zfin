@@ -84,7 +84,7 @@ const GeneExpressionRibbon = ({geneId}) => {
                     Include expression in reporter lines
                 </Checkbox>
                 <Checkbox checked={isDirectlySubmitted} id='directSubmissionCheckbox' onChange={handleDirectSubmissionSelection}>
-                    Show only directly submitted expression data
+                    Show only directly submitted expression data (Thisse etc.)
                 </Checkbox>
             </div>
 
