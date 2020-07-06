@@ -54,7 +54,7 @@ public class DownloadOntology extends AbstractScriptWrapper {
         LOG.info("Loading obo file: " + path);
 
         DownloadOntology download = new DownloadOntology(path, downloadUrl);
-        int returnCode = download.downloadOntology() ? 1 : -1;
+        int returnCode = download.downloadOntology() ? 0 : -1;
         System.exit(returnCode);
     }
 
