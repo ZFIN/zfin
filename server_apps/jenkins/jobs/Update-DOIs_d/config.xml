@@ -18,13 +18,13 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Ant plugin="ant@1.2">
-      <targets>update-dois -DjobName=Update-DOIs_w</targets>
+      <targets>update-dois -DjobName=Update-DOIs_d</targets>
       <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
     </hudson.tasks.Ant>
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/DB_maintenance/report_data/Update-DOIs_w/*</artifacts>
+      <artifacts>server_apps/DB_maintenance/report_data/Update-DOIs_d/*</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
@@ -32,8 +32,8 @@
       <reportTargets>
         <htmlpublisher.HtmlPublisherTarget>
           <reportName>Updated DOIs Report</reportName>
-          <reportDir>server_apps/DB_maintenance/report_data/Update-DOIs_w</reportDir>
-          <reportFiles>Update-DOIs_w.html</reportFiles>
+          <reportDir>server_apps/DB_maintenance/report_data/Update-DOIs_d</reportDir>
+          <reportFiles>Update-DOIs_d.html</reportFiles>
           <keepAll>false</keepAll>
           <allowMissing>true</allowMissing>
           <wrapperName>htmlpublisher-wrapper.html</wrapperName>
@@ -47,7 +47,7 @@
           <email>
             <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&quot;server_apps/DB_maintenance/report_data/Update-DOIs_w/Update-DOIs_w.html&quot;}
+            <body>${FILE,path=&quot;server_apps/DB_maintenance/report_data/Update-DOIs_d/Update-DOIs_d.html&quot;}
 
               See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
             </body>
@@ -66,7 +66,7 @@
           <email>
             <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&quot;server_apps/DB_maintenance/report_data/Update-DOIs_w/Update-DOIs_w.html&quot;}
+            <body>${FILE,path=&quot;server_apps/DB_maintenance/report_data/Update-DOIs_d/Update-DOIs_d.html&quot;}
 
               See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
             </body>
