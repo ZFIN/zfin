@@ -51,7 +51,7 @@ foreach $pmid (sort keys %pmids) {
   
   $pubZdbId = $pmids{$pmid};
   
-  $url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=".$pmid."&retmode=xml";
+  $url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&api_key=47c9eadd39b0bcbfac58e3e911930d143109&id=".$pmid."&retmode=xml";
   try {
     $twig = XML::Twig->nparse($url);
   } catch {

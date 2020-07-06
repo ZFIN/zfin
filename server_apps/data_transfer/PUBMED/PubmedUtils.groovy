@@ -89,7 +89,7 @@ class PubmedUtils {
         // made using the HTTP POST method" ... okay pubmed, you're such a good guy, we'll play
         // by your rules
         def url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
-        def query = "db=pubmed&id=${id}&retmode=xml"
+        def query = "db=pubmed&api_key=47c9eadd39b0bcbfac58e3e911930d143109&id=${id}&retmode=xml"
         def connection = new URL(url).openConnection()
         connection.setRequestMethod("POST")
         connection.setDoOutput(true)
@@ -107,7 +107,7 @@ class PubmedUtils {
         // made using the HTTP POST method" ... okay pubmed, you're such a good guy, we'll play
         // by your rules
         def url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
-        def query = "db=pubmed&id=${ids.join(",")}&retmode=xml"
+        def query = "db=pubmed&api_key=47c9eadd39b0bcbfac58e3e911930d143109&id=${ids.join(",")}&retmode=xml"
 
         def connection = new URL(url).openConnection()
         connection.setRequestMethod("POST")
@@ -122,7 +122,7 @@ class PubmedUtils {
 
     static Iterator<GPathResult> searchPubmed(query, daysBack = 500) {
         def url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/" +
-                "esearch.fcgi?db=pubmed&term=${URLEncoder.encode(query, "UTF-8")}" +
+                "esearch.fcgi?db=pubmed&api_key=47c9eadd39b0bcbfac58e3e911930d143109&term=${URLEncoder.encode(query, "UTF-8")}" +
                 "&usehistory=y&reldate=${daysBack}&datetype=edat"
         def searchResult = new XmlSlurper().parse(url)
         Integer count = searchResult.Count.toInteger()
@@ -276,7 +276,7 @@ class PubmedUtils {
         private void fetch() {
             def attempt = 0
             def fetchUrl = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/" +
-                    "efetch.fcgi?db=pubmed&query_key=${queryKey}&WebEnv=${webEnv}" +
+                    "efetch.fcgi?db=pubmed&api_key=47c9eadd39b0bcbfac58e3e911930d143109&query_key=${queryKey}&WebEnv=${webEnv}" +
                     "&retmode=xml&retstart=${start}&retmax=${max}"
             while (attempt < 3) {
                 attempt += 1

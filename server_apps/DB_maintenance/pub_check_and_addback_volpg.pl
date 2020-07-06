@@ -98,7 +98,7 @@ my $notupdated = 0;
 foreach $key (sort keys %pmids) {
   $ctTotal++;
 
-  my $url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=".$pmids{$key}."&retmode=xml";
+  my $url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&&api_key=47c9eadd39b0bcbfac58e3e911930d143109&id=".$pmids{$key}."&retmode=xml";
   my $twig = XML::Twig->nparse($url);
   my $root = $twig->root;
   my $xmlIssue = first_descendant_text($root, "Issue");
