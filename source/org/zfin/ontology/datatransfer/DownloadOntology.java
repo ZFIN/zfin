@@ -54,10 +54,11 @@ public class DownloadOntology extends AbstractScriptWrapper {
         LOG.info("Loading obo file: " + path);
 
         DownloadOntology download = new DownloadOntology(path, downloadUrl);
-        download.downloadOntology();
+        int returnCode = download.downloadOntology() ? 1 : -1;
+        System.exit(returnCode);
     }
 
-    public void downloadOntology() {
+    public boolean downloadOntology() {
         URLConnection uRLConnection;
         String urlString = downloadUrl;
         try {
@@ -70,6 +71,8 @@ public class DownloadOntology extends AbstractScriptWrapper {
                     HttpURLConnection httpURLConnection = (HttpURLConnection) uRLConnection;
                     switch (httpURLConnection.getResponseCode()) {
                         case HttpURLConnection.HTTP_MOVED_PERM:
+                        case HttpURLConnection.HTTP_NOT_FOUND:
+                            throw new Exception("Could not find URL");
                         case HttpURLConnection.HTTP_MOVED_TEMP:
                             urlString = httpURLConnection.getHeaderField("Location");
                             continue;
@@ -77,9 +80,9 @@ public class DownloadOntology extends AbstractScriptWrapper {
                 }
                 break;
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOG.error("Could not connect to URL: " + downloadUrl, e);
-            return;
+            return false;
         }
         InputStream is = null;
         OutputStream os = null;
@@ -104,6 +107,7 @@ public class DownloadOntology extends AbstractScriptWrapper {
                 LOG.error("could not close resources");
             }
         }
+        return true;
     }
 
 }
