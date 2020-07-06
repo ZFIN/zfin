@@ -18,7 +18,7 @@
     <property name="cellOboURL" value="http://purl.obolibrary.org/obo/cl.obo"/>
     <property name="cellOboFile" value="file:///home/informix/Curation/cell.obo"/>
     <property name="soOboURL"
-              value="https://raw.githubusercontent.com/The-Sequence-Ontology/SO-Ontologies/master/so.obo"/>
+              value="https://raw.githubusercontent.com/The-Sequence-Ontology/SO-Ontologies/master/Ontology_Files/so.obo"/>
     <property name="zecoTaxonomyOboURL" value="file:///home/informix/Curation/zeco-taxonomy.obo"/>
     <property name="zecoTaxonomySourceURL" value="/home/informix/Curation/zeco-taxonomy-source.txt"/>
 <!-- For local development
