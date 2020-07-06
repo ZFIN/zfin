@@ -143,7 +143,7 @@ To obtain previous versions you have to check the archive of the external source
             <a HREF="http://purl.obolibrary.org/obo/zfa.obo">zebrafish_anatomy.obo</a>
         </td>
         <td>
-            monthly
+            quarterly
         </td>
         <td>
             OBO file format
