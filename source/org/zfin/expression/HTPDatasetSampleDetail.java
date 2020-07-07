@@ -11,38 +11,38 @@ import javax.persistence.*;
  * High throughput meta datasample detailing which structures at what stages were sampled.
  */
 @Entity
-@Table(name = "htp_dataset_sample_stage")
+@Table(name = "htp_dataset_sample_detail")
 @Setter
 @Getter
 
 public class HTPDatasetSampleDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "hdss_pk_id")
+    @Column(name = "hdsd_pk_id")
     private long ID;
 
     @ManyToOne
-    @JoinColumn(name = "hdss_anatomy_super_term_Zdb_id")
+    @JoinColumn(name = "hdsd_anatomy_super_term_Zdb_id")
     private GenericTerm anatomySuperTerm;
     @ManyToOne
-    @JoinColumn(name = "hdss_anatomy_sub_term_Zdb_id")
+    @JoinColumn(name = "hdsd_anatomy_sub_term_Zdb_id")
     private GenericTerm anatomySubTerm;
 
     @ManyToOne
-    @JoinColumn(name = "hdss_anatomy_super_term_qualifier_zdb_id")
+    @JoinColumn(name = "hdsd_anatomy_super_term_qualifier_zdb_id")
     private GenericTerm anatomySuperQualifierTerm;
     @ManyToOne
-    @JoinColumn(name = "hdss_anatomy_sub_term_qualifier_zdb_id ")
+    @JoinColumn(name = "hdsd_anatomy_sub_term_qualifier_zdb_id ")
     private GenericTerm anatomySubQualifierTerm;
 
     @ManyToOne
-    @JoinColumn(name = "hdss_cellular_component_term_Zdb_id")
+    @JoinColumn(name = "hdsd_cellular_component_term_Zdb_id")
     private GenericTerm cellularComponentTerm;
     @ManyToOne
-    @JoinColumn(name = "hdss_cellular_component_term_qualifier_Zdb_id")
+    @JoinColumn(name = "hdsd_cellular_component_term_qualifier_Zdb_id")
     private GenericTerm cellularComponentQualifierTerm;
 
     @ManyToOne
-    @JoinColumn(name = "hdss_hds_id")
+    @JoinColumn(name = "hdsd_hds_id")
     private HTPDatasetSample htpDatasetSample;
 }

@@ -10,7 +10,6 @@ import org.zfin.expression.HTPDatasetSampleDetail;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.datatransfer.GenericCronJobReport;
-import sun.net.www.content.text.Generic;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -97,28 +96,38 @@ public class BasicRNASeqMetaDatasampleInfo extends AbstractScriptWrapper {
 
 
                             ArrayList<HTPDatasetSampleDetail> anatomySampleDetails = getExpressionRepository().getSampleDetail(datasample);
+
                             ArrayList<ExpressionTermIdentifiersDTO> anatomies = new ArrayList<>();
                             ArrayList<ExpressionTermIdentifiersDTO> sampleLocations = new ArrayList<>();
                             for (HTPDatasetSampleDetail anatomyDetail : anatomySampleDetails) {
-                                ExpressionTermIdentifiersDTO anatomy = new ExpressionTermIdentifiersDTO();
-
+                                String whereExpressedStatement = null;
                                 HashSet<UberonSlimTermDTO> uberonSlimTermDTOs = new HashSet<>();
                                 UberonSlimTermDTO anatomyUberonTerm = new UberonSlimTermDTO("");
                                 uberonSlimTermDTOs.add(anatomyUberonTerm);
+                                String superTerm = null;
+                                String subTerm = null;
+                                String cellularComponent = null;
+                                String superQ = null;
 
                                 if (anatomyDetail.getAnatomySuperTerm() != null) {
-                                    anatomy.setAnatomicalStructureTermId(anatomyDetail.getAnatomySuperTerm().getOboID());
+                                    superTerm = anatomyDetail.getAnatomySuperTerm().getOboID();
                                 }
                                 if (anatomyDetail.getAnatomySubTerm() != null) {
-                                    anatomy.setAnatomicalSubStructureTermId(anatomyDetail.getAnatomySubTerm().getOboID());
+                                    subTerm = anatomyDetail.getAnatomySubTerm().getOboID();
                                 }
                                 if (anatomyDetail.getCellularComponentTerm() != null) {
-                                    anatomy.setCellularComponentTermId(anatomyDetail.getCellularComponentTerm().getOboID());
+                                    cellularComponent = anatomyDetail.getCellularComponentTerm().getOboID();
                                 }
                                 if (anatomyDetail.getAnatomySuperQualifierTerm() != null) {
-                                    anatomy.setAnatomicalStructureQualifierTermId(anatomyDetail.getAnatomySuperQualifierTerm().getOboID());
+                                    superQ = anatomyDetail.getAnatomySuperQualifierTerm().getOboID();
                                 }
-                                anatomy.setAnatomicalStructureUberonSlimTermIds(uberonSlimTermDTOs);
+                                ExpressionTermIdentifiersDTO anatomy =
+                                        new ExpressionTermIdentifiersDTO(whereExpressedStatement,
+                                                cellularComponent,
+                                                superTerm,
+                                                subTerm,
+                                                superQ,
+                                                uberonSlimTermDTOs);
                                 anatomies.add(anatomy);
                             }
                             dto.setSampleLocation(anatomies);

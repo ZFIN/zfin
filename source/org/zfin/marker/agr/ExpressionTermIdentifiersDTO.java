@@ -74,5 +74,4 @@ public class ExpressionTermIdentifiersDTO {
 
     }
 
-    public ExpressionTermIdentifiersDTO();
 }

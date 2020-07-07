@@ -24,6 +24,7 @@ create temp table tmp_datasample(datasample_id text,
 		datasetId text);
 
 \copy tmp_datasample from '/opt/zfin/source_roots/swirl/ZFIN_WWW/server_apps/data_transfer/RNASeqCuration/data_sample.txt' with delimiter E'\t' null as '';
+delete from tmp_datasample where sampleType is null;
 
 insert into htp_dataset_sample(hds_sample_id, 
 				hds_sample_title,
@@ -35,7 +36,8 @@ insert into htp_dataset_sample(hds_sample_id,
 				hds_hd_zdb_id,
 				hds_abundance,
 				hds_assembly,
-				hds_notes)
+				hds_notes,
+				hds_stage_term_zdb_id)
 select distinct datasample_id,
 	sample_title,
 	sampleType,
@@ -47,40 +49,21 @@ select distinct datasample_id,
 		where hd_original_dataset_id = datasetId),
 	abundance,
 	assembly,
-	notes
+	notes,
+	  (select term_zdb_id from term where term_ont_id = sampleStage)
   from tmp_datasample
-  where datasetId like 'GEO%';
+;
 
-insert into htp_dataset_sample(hds_sample_id, 
-                                hds_sample_title,
-                                hds_sample_type,
-                                hds_fish_Zdb_id,
-                                hds_sex,
-                                hds_assay_type,
-                                hds_sequencing_format,
-                                hds_hd_zdb_id,
-				hds_abundance)
-select distinct datasample_id,
-        sample_title,
-        sampleType,
-        bioSampleID,
-        sex,
-        assayType,
-        sequencingFormat,
-        (select	hd_zdb_id from htp_dataset
-                where hd_original_dataset_id = datasetId),
-	abundance
-  from tmp_datasample
-  where	datasetId like 'ArrayExpress%';
+update htp_dataset_sample
+  set hds_sample_id = hds_sample_title where hds_sample_id is null or hds_sample_id = '';
 
-insert  into htp_dataset_sample_stage(hdss_hds_id, hdss_stage_term_zdb_id,
-					hdss_anatomy_super_term_zdb_id,
-					hdss_anatomy_sub_term_zdb_id,
-					hdss_anatomy_super_term_qualifier_zdb_id,
-					hdss_anatomy_sub_term_qualifier_zdb_id,
-					hdss_cellular_component_term_qualifier_Zdb_id)
-select distinct hds_pk_id, 
-	(select term_zdb_id from term where term_ont_id = sampleStage),
+insert  into htp_dataset_sample_detail(hdsd_hds_id,
+					hdsd_anatomy_super_term_zdb_id,
+					hdsd_anatomy_sub_term_zdb_id,
+					hdsd_anatomy_super_term_qualifier_zdb_id,
+					hdsd_anatomy_sub_term_qualifier_zdb_id,
+					hdsd_cellular_component_term_qualifier_Zdb_id)
+select distinct hds_pk_id,
 	(select term_zdb_id from term where term_ont_id = anatomicalStructureTerm),
 	(select term_zdb_id from term where term_ont_id = anatomicalSubStructureTerm),
 	(select term_zdb_id from term where term_ont_id = anatomicalStructureQualifier),
