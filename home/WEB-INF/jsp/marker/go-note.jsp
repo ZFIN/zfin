@@ -13,14 +13,15 @@
     <ul>
         <li><b>Molecular Function</b>: Terms that describe a gene product function at a biochemical level.</li>
         <li><b>Biological Process</b>: Pathways and larger processes accomplished by ordered assemblies of molecular functions.</li>
-        <li><b>Cellular Component</b>: Subcellular structures and macromolecular complexes in the cell where a gene product is active..</li>
+        <li><b>Cellular Component</b>: Subcellular structures and macromolecular complexes in the cell where a gene product is active.</li>
     </ul>
     <p>
-        GO annotations consist at minimum of the gene product, the GO term, an <a href="http://geneontology.org/docs/guide-go-evidence-codes/">evidence code </p><a> , and a reference
+        GO annotations consist at minimum of the gene product, the GO term, an <a href="http://geneontology.org/docs/guide-go-evidence-codes/">evidence code</a> , and a reference.
     </p>
     The GO annotations in ZFIN come from multiple sources including expert curation of the published literature, as well as automated processes which predict GO terms based on various attributes of gene products.
-    The ribbon view lists high-level terms from each aspect. Clicking on a colored cell will open the corresponding more detailed view of the annotations
+    The ribbon view lists high-level terms from each aspect. Clicking on a colored cell will open the corresponding more detailed view of the annotations.
     ZFIN began including GO annotations in 2003.
     <p>If you have questions or suggestions, please <a
-            href="mailto:zfinadmn@zfin.org">contact us</a>
+            href="mailto:zfinadmn@zfin.org">contact us</a>.
+    </p>
 </div>
