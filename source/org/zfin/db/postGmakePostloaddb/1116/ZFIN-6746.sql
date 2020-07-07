@@ -8,5 +8,5 @@
  update transcript_type set tscriptt_so_id='SO:0000101' where tscriptt_type='transposable element';
  update transcript_type set tscriptt_so_id='SO:0000673' where tscriptt_type='transcript';
  update transcript_type set tscriptt_so_id='SO:0000644' where tscriptt_type='antisense';
- 
+
 
