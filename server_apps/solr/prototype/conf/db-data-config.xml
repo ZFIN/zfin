@@ -6163,9 +6163,9 @@ and child.term_ontology = 'disease_ontology';
                         '/' || pg_fig_zdb_id as url,
                         pg_fig_zdb_id as figure_id,
                         psg_short_name as name,
+                        psg_short_name as name_sort,
                         fish_name || ' from ' || nvl(pub_mini_ref,'--')
                             || ' ' ||  nvl(fig_label,'') || psg_short_name as full_name,
-                        fish_name_order || pub_mini_ref || fig_full_label || psg_short_name as name_order,
                         fig_zdb_id as xref,
                         pub_date as date,
                         publication.zdb_id as pub_zdb_id,

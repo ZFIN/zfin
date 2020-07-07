@@ -319,10 +319,10 @@ public class RibbonService {
             query.addFilterQuery("phenotype_statement_ac:(" + filterValue.trim() + ")");
         }
         // get Facet for the ao term and the PK of the expression record.
-        query.addFacetPivotField("phenotype_statement_sort,phenotype_statement,phenotype_statement_term_id,stage_term_id,pub_zdb_id,id");
-        query.setParam("f.phenotype_statement_sort.facet.offset", String.valueOf(pagination.getStart()));
-        query.setParam("f.phenotype_statement_sort.facet.limit", String.valueOf(pagination.getLimit()));
-        query.setParam("f.phenotype_statement_sort.facet.sort", "index");
+        query.addFacetPivotField("name_sort,phenotype_statement,phenotype_statement_term_id,stage_term_id,pub_zdb_id,id");
+        query.setParam("f.name_sort.facet.offset", String.valueOf(pagination.getStart()));
+        query.setParam("f.name_sort.facet.limit", String.valueOf(pagination.getLimit()));
+        query.setParam("f.name_sort.facet.sort", "index");
         query.setGetFieldStatistics("{!countDistinct=true}phenotype_statement_s");
 
         QueryResponse queryResponse = null;
