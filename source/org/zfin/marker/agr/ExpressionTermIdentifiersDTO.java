@@ -73,4 +73,6 @@ public class ExpressionTermIdentifiersDTO {
         this.anatomicalStructureUberonSlimTermIds = anatomicalStructureUberonSlimTermIds;
 
     }
+
+    public ExpressionTermIdentifiersDTO();
 }

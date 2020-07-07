@@ -1,15 +1,12 @@
 package org.zfin.marker.agr;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class BioSampleAgeDTO {
 
     private ExpressionStageIdentifiersDTO stage;
-
-    public ExpressionStageIdentifiersDTO getStage() {
-        return stage;
-    }
-
-    public void setStage(ExpressionStageIdentifiersDTO stage) {
-        this.stage = stage;
-    }
 
 }

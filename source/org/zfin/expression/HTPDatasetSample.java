@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import javax.persistence.*;
 import org.zfin.mutant.Fish;
+import org.zfin.ontology.GenericTerm;
 
 /**
  * High throughput meta datasample object
@@ -26,7 +27,7 @@ public class HTPDatasetSample {
     private String sampleType;
     @Column(name = "hds_sex")
     private String sex;
-    @Column(name = "hds_sequencing_formant")
+    @Column(name = "hds_sequencing_format")
     private String sequencingFormat;
     @Column(name = "hds_abundance")
     private String abundance;
@@ -36,6 +37,14 @@ public class HTPDatasetSample {
     private String notes;
 
     @ManyToOne
+    @JoinColumn(name = "hds_hd_zdb_id")
+    private HTPDataset htpDataset;
+
+    @ManyToOne
     @JoinColumn(name = "hds_fish_Zdb_id")
     private Fish fish;
+
+    @ManyToOne
+    @JoinColumn(name = "hds_stage_term_zdb_id")
+    private GenericTerm stage;
 }

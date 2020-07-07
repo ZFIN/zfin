@@ -463,7 +463,10 @@ public interface ExpressionRepository {
     List<ExpressionFigureStage> getExperimentFigureStagesByIds(List<Integer> expressionIDs);
 
     ArrayList<HTPDataset> getAllHTPDatasets();
+    ArrayList<HTPDatasetSample> getAllHTPDatasetSamples();
+    ArrayList<HTPDatasetSampleDetail> getAllHTPDatasetSampleDetails();
     ArrayList<String> getHTPSecondaryIds(String datasetId);
 
     ArrayList<String> getCategoryTags(String datasetId);
+    ArrayList<HTPDatasetSampleDetail> getSampleDetail(HTPDatasetSample sample);
 }

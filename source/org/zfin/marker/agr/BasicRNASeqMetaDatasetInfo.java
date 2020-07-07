@@ -11,13 +11,7 @@ import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import org.zfin.expression.HTPDataset;
-import org.zfin.expression.HTPDatasetAlternateIdentifier;
-import org.zfin.expression.HTPDatasetCategoryTag;
-import org.zfin.expression.HTPDatasetPublication;
-import org.zfin.marker.agr.AllRNASeqMetaDatasetDTO;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;

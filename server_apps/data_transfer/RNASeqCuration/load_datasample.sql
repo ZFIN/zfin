@@ -35,7 +35,6 @@ insert into htp_dataset_sample(hds_sample_id,
 				hds_hd_zdb_id,
 				hds_abundance,
 				hds_assembly,
-				hds_sequencingFormat,
 				hds_notes)
 select distinct datasample_id,
 	sample_title,
@@ -46,7 +45,9 @@ select distinct datasample_id,
 	sequencingFormat,
 	(select hd_zdb_id from htp_dataset
 		where hd_original_dataset_id = datasetId),
-	abundance
+	abundance,
+	assembly,
+	notes
   from tmp_datasample
   where datasetId like 'GEO%';
 

@@ -1,23 +1,12 @@
 package org.zfin.marker.agr;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class HtpGenomicInformationDTO {
     private String biosampleId;
     private String idType;
-
-    public String getBiosampleId() {
-        return biosampleId;
-    }
-
-    public void setBiosampleId(String biosampleId) {
-        this.biosampleId = biosampleId;
-    }
-
-    public String getIdType() {
-        return idType;
-    }
-
-    public void setIdType(String idType) {
-        this.idType = idType;
-    }
 
 }

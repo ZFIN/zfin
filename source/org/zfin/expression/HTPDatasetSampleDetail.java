@@ -22,27 +22,27 @@ public class HTPDatasetSampleDetail {
     private long ID;
 
     @ManyToOne
-    @JoinColumn(name = "hds_stage_term_Zdb_id")
-    private GenericTerm stage;
-
-    @ManyToOne
-    @JoinColumn(name = "hds_anatomy_super_term_Zdb_id")
+    @JoinColumn(name = "hdss_anatomy_super_term_Zdb_id")
     private GenericTerm anatomySuperTerm;
     @ManyToOne
-    @JoinColumn(name = "hds_anatomy_sub_term_Zdb_id")
+    @JoinColumn(name = "hdss_anatomy_sub_term_Zdb_id")
     private GenericTerm anatomySubTerm;
 
     @ManyToOne
-    @JoinColumn(name = "hds_anatomy_super_qualifier_term_Zdb_id")
+    @JoinColumn(name = "hdss_anatomy_super_term_qualifier_zdb_id")
     private GenericTerm anatomySuperQualifierTerm;
     @ManyToOne
-    @JoinColumn(name = "hds_anatomy_sub_qualifier_term_Zdb_id")
+    @JoinColumn(name = "hdss_anatomy_sub_term_qualifier_zdb_id ")
     private GenericTerm anatomySubQualifierTerm;
 
     @ManyToOne
-    @JoinColumn(name = "hds_cellular_component_term_Zdb_id")
+    @JoinColumn(name = "hdss_cellular_component_term_Zdb_id")
     private GenericTerm cellularComponentTerm;
     @ManyToOne
-    @JoinColumn(name = "hds_cellular_component_qualifier_term_Zdb_id")
+    @JoinColumn(name = "hdss_cellular_component_term_qualifier_Zdb_id")
     private GenericTerm cellularComponentQualifierTerm;
+
+    @ManyToOne
+    @JoinColumn(name = "hdss_hds_id")
+    private HTPDatasetSample htpDatasetSample;
 }

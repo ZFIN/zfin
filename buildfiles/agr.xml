@@ -13,6 +13,7 @@
         <antcall target="create-zfin-expression"/>
         <antcall target="create-construct"/>
         <antcall target="create-htpdataset"/>
+        <antcall target="create-htpdatasample"/>
     </target>
 
     <target name="create-bgi-test" >
@@ -22,8 +23,11 @@
         <antcall target="create-construct-file-test"  />
     </target>
 
-    <target name="create-htpdatset-test" >
+    <target name="create-htpdataset-test" >
         <antcall target="create-htpdataset-file-test"  />
+    </target>
+    <target name="create-htpdatasample-test" >
+        <antcall target="create-htpdatasample-file-test"  />
     </target>
     <target name="create-fish-test" >
         <antcall target="create-basic-fish-info-file-test"  />
@@ -64,6 +68,10 @@
     </target>
     <target name="create-htpdataset" >
         <antcall target="create-hptdataset-file"  />
+    </target>
+
+    <target name="create-htpdatasample" >
+        <antcall target="create-hptdatasample-file"  />
     </target>
     <target name="create-fish" >
         <antcall target="create-basic-fish-info-file"  />
@@ -125,6 +133,14 @@
         </java>
     </target>
 
+    <target name="create-hptdatasample-file" depends=""
+            description="Tests to make sure that the system is alive and working properly.">
+        <echo message="Check entity changes"/>
+        <java classname="org.zfin.marker.agr.BasicRNASeqMetaDatasampleInfo" fork="yes" classpathref="extended.classpath"
+              failonerror="true" maxmemory="6G">
+            <classpath refid="classpath"/>
+        </java>
+    </target>
 
     <target name="create-basic-fish-info-file" depends=""
             description="Tests to make sure that the system is alive and working properly.">

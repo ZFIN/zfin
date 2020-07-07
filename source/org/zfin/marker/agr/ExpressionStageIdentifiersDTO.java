@@ -1,5 +1,8 @@
 package org.zfin.marker.agr;
 
+
+import lombok.Getter;
+import lombok.Setter;
 public class ExpressionStageIdentifiersDTO {
 
     private String stageName;
@@ -12,27 +15,4 @@ public class ExpressionStageIdentifiersDTO {
         this.stageUberonSlimTerm = stageUberonSlimTerm;
     }
 
-    public String getStageName() {
-        return stageName;
-    }
-
-    public void setStageName(String stageName) {
-        this.stageName = stageName;
-    }
-
-    public String getStageTermId() {
-        return stageTermId;
-    }
-
-    public void setStageTermId(String stageTermId) {
-        this.stageTermId = stageTermId;
-    }
-
-    public UberonSlimTermDTO getStageUberonSlimTerm() {
-        return stageUberonSlimTerm;
-    }
-
-    public void setStageUberonSlimTerm(UberonSlimTermDTO stageUberonSlimTerm) {
-        this.stageUberonSlimTerm = stageUberonSlimTerm;
-    }
 }

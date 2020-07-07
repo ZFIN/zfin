@@ -2688,4 +2688,32 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         query.setParameter("datasetId", datasetId);
         return (ArrayList<String>) query.list();
     }
+
+    @Override
+    public ArrayList<HTPDatasetSample> getAllHTPDatasetSamples() {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select htpdsetsample from HTPDatasetSample htpdsetsample";
+        Query query = session.createQuery(hql);
+        return (ArrayList<HTPDatasetSample>) query.list();
+    }
+
+    @Override
+    public ArrayList<HTPDatasetSampleDetail> getAllHTPDatasetSampleDetails() {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select htpdsetsampledetail from HTPDatasetSampleDetail htpdsetsampledetail";
+        Query query = session.createQuery(hql);
+        return (ArrayList<HTPDatasetSampleDetail>) query.list();
+    }
+
+    @Override
+    public ArrayList<HTPDatasetSampleDetail> getSampleDetail(HTPDatasetSample sample) {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select htpdsetsampledetail from HTPDatasetSampleDetail htpdsetsampledetail" +
+                "where htpdsetsampledetail.sample = :sample";
+        Query query = session.createQuery(hql);
+        query.setParameter("sample", sample);
+        return (ArrayList<HTPDatasetSampleDetail>) query.list();
+    }
+
+
 }
