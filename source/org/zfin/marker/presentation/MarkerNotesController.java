@@ -48,6 +48,55 @@ public class MarkerNotesController {
     public String getOmimPhenotypeNote() {
         return "marker/omim-phenotype-note.insert";
     }
+    @RequestMapping("/note/transcripts")
+    public String getTranscriptNote() {
+        return "marker/transcript-note.insert";
+    }
+    @RequestMapping("/note/sequences")
+    public String geSequencesNote() {
+        return "marker/sequences-note.insert";
+    }
+    @RequestMapping("/note/markerrelationships")
+    public String getMarkerRelationshipNote() {
+        return "marker/markerrelationships-note.insert";
+    }
+    @RequestMapping("/note/antibodies")
+    public String getAntibodyNote() {
+        return "marker/antibody-note.insert";
+    }
+    @RequestMapping("/note/orthology")
+    public String getOrthologyNote() {
+        return "marker/orthology-note.insert";
+    }
+    @RequestMapping("/note/citations")
+    public String getCitationsNote() {
+        return "marker/citations-note.insert";
+    }
+
+    @RequestMapping("/note/proteins")
+    public String getProteinNote() {
+        return "marker/protein-note.insert";
+    }
+    @RequestMapping("/note/mutants")
+    public String getMutantsNote() {
+        return "marker/mutants-note.insert";
+    }
+
+    @RequestMapping("/note/str")
+    public String getSTRNote() {
+        return "marker/str-note.insert";
+    }
+
+    @RequestMapping("/note/construct")
+    public String getConstructNote() {
+        return "marker/construct-note.insert";
+    }
+
+    @RequestMapping("/note/go")
+    public String getGoNote() {
+        return "marker/go-note.insert";
+    }
+
     @RequestMapping("/note/automated-gene-desc")
     public String getGeneDescription() {
         return "marker/automated-gene-desc-note.insert";

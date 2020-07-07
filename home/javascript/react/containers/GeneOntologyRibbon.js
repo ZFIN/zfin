@@ -3,10 +3,11 @@ import PropTypes from 'prop-types';
 import qs from 'qs';
 import {useFetch, useRibbonState, useTableState} from '../utils/effects';
 import LoadingSpinner from '../components/LoadingSpinner';
-import DataTable, {DEFAULT_TABLE_STATE} from '../components/data-table';
+import DataTable from '../components/data-table';
 import NoData from '../components/NoData';
 import {Ribbon, getSelectedTermQueryParams} from '../components/ribbon';
 import GenericErrorMessage from '../components/GenericErrorMessage';
+import {produce} from 'immer';
 
 const GeneOntologyRibbon = ({geneId}) => {
     const [tableState, setTableState] = useTableState();
@@ -31,7 +32,7 @@ const GeneOntologyRibbon = ({geneId}) => {
     }
 
     const handleRibbonSelect = (subject, group) => {
-        setTableState(DEFAULT_TABLE_STATE);
+        setTableState(produce(state => { state.page = 1; }));
         setSelected(subject, group);
     }
 

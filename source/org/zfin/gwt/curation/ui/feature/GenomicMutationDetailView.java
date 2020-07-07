@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.Label;
 
 import org.zfin.gwt.curation.ui.AbstractViewComposite;
 import org.zfin.gwt.root.dto.FeatureGenomeMutationDetailChangeDTO;
+import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.gwt.root.dto.MutationDetailDnaChangeDTO;
 import org.zfin.gwt.root.ui.*;
 import org.zfin.gwt.root.util.WidgetUtil;
@@ -141,10 +142,12 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
         return dto;
     }
 
-    public void showFields(FeatureAddView.MutationDetailType type) {
+    public void showFields(FeatureAddView.MutationDetailType type,boolean knownInsertionSite) {
         switch (type) {
             case POINT_MUTATION:
-                showBoth();
+
+                    showBoth();
+
                 break;
             case INSERTION:
                 showVariantSeq();
@@ -153,7 +156,14 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
                 showReferenceSeq();
                 break;
             case TRANSGENIC_INSERTION:
-                showTgFields();
+               // showTgFields();
+                if (knownInsertionSite) {
+
+                    showBoth();
+                }
+                else{
+                    showTgFields();
+                }
                 break;
             case SEQUENCE_VARIANT:
                 showTgFields();
@@ -213,7 +223,7 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
     }
 
 
-    public void populateFields(FeatureGenomeMutationDetailChangeDTO dto) {
+    public void populateFields(FeatureGenomeMutationDetailChangeDTO dto, FeatureTypeEnum type, Boolean knownInsSite) {
         if (dto == null) {
 
             seqReference.clear();
@@ -222,6 +232,41 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
         }
         seqReference.setText(dto.getFgmdSeqRef());
         seqVariant.setText(dto.getFgmdSeqVar());
+        switch (type) {
+            case POINT_MUTATION:
+
+                showBoth();
+
+                break;
+            case INSERTION:
+                showVariantSeq();
+                break;
+            case DELETION:
+                showReferenceSeq();
+                break;
+            case TRANSGENIC_INSERTION:
+                // showTgFields();
+                if (knownInsSite) {
+
+                    showBoth();
+                }
+                else{
+                    showTgFields();
+                }
+                break;
+            case SEQUENCE_VARIANT:
+                showTgFields();
+                break;
+            case INDEL:
+                showBoth();
+                break;
+            case MNV:
+                showBoth();
+                break;
+        }
+
+
+
     }
 
 

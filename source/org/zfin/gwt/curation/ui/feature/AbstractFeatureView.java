@@ -241,10 +241,11 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         errorLabel.clearAllErrors();
         message.setText("");
         String featureType = featureTypeBox.getSelected();
+
         if (hasMutationDetails()) {
             showMutationDetail();
             mutationDetailDnaView.showFields(MutationDetailType.getType(featureType));
-            genomicMutationDetailView.showFields(MutationDetailType.getType(featureType));
+            genomicMutationDetailView.showFields(MutationDetailType.getType(featureType),knownInsertionCheckBox.getValue());
         } else {
             hideMutationDetail();
             mutationDetailDnaView.changePanel.setVisible(false);

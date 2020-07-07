@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,7 +22,6 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.mail.AbstractZfinMailSender;
 import org.zfin.framework.mail.MailSender;
 import org.zfin.gwt.root.util.StringUtils;
-import org.zfin.infrastructure.presentation.JSONStatusResponse;
 import org.zfin.profile.Lab;
 import org.zfin.profile.Person;
 import org.zfin.profile.repository.ProfileRepository;
@@ -89,6 +90,10 @@ public class SubmissionFormController {
         }
         return "zebrashare/new-submission.page";
     }
+
+
+
+
 
     @RequestMapping(value = "/new", method = RequestMethod.POST)
     public String processSubmissionForm(@Valid @ModelAttribute("formBean") SubmissionFormBean formBean,

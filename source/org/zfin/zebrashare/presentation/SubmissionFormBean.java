@@ -1,7 +1,9 @@
 package org.zfin.zebrashare.presentation;
 
 import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.web.multipart.MultipartFile;
+import javax.validation.constraints.AssertTrue;
 
 import javax.validation.constraints.NotNull;
 
@@ -25,7 +27,7 @@ public class SubmissionFormBean {
     private String labZdbId;
     private String[] editors;
 
-    @NotNull(message = "Submission workbook must be provided")
+
     private MultipartFile dataFile;
 
     private MultipartFile[] imageFiles;
@@ -94,7 +96,10 @@ public class SubmissionFormBean {
     public void setDataFile(MultipartFile dataFile) {
         this.dataFile = dataFile;
     }
-
+    @AssertTrue(message = "File must be provided")
+    public boolean isDataFile() {
+        return (dataFile != null) && ( ! dataFile.isEmpty());
+    }
     public MultipartFile[] getImageFiles() {
         return imageFiles;
     }

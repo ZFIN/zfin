@@ -18,7 +18,7 @@ PubmedUtils.psql DBNAME, """
   WHERE pdx_fdbcont_zdb_id = 'ZDB-FDBCONT-070919-1' ) to '$GEO_PRE' delimiter '|';
 """
 
-def searchUrl = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gds&term=\"Danio+rerio\"[Organism]+AND+\"gse\"[Filter]&usehistory=y"
+def searchUrl = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gds&api_key=47c9eadd39b0bcbfac58e3e911930d143109&term=\"Danio+rerio\"[Organism]+AND+\"gse\"[Filter]&usehistory=y"
 println("Requesting: $searchUrl")
 def searchResult = (new XmlSlurper()).parse(searchUrl)
 def queryKey = searchResult.QueryKey
@@ -27,7 +27,7 @@ println("Response:")
 println("  QueryKey: $queryKey")
 println("  WebEnv: $webEnv")
 
-def summaryUrl = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=gds&version=2.0&query_key=$queryKey&WebEnv=$webEnv"
+def summaryUrl = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=gds&api_key=47c9eadd39b0bcbfac58e3e911930d143109&version=2.0&query_key=$queryKey&WebEnv=$webEnv"
 println("Requesting: $summaryUrl")
 def summaryResult = (new XmlSlurper()).parse(summaryUrl)
 println("Response: Found ${summaryResult.DocumentSummarySet.DocumentSummary.size()} documents")

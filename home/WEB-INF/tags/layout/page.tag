@@ -45,7 +45,7 @@
             </c:choose>
         </script>
     </head>
-    <body class="${bodyClass}" data-spy="scroll" data-target=".data-page-nav-container">
+    <body class="${bodyClass}" data-spy="scroll" data-target=".data-page-nav-container" data-offset="96">
         <z:pageHeader/>
         <main>
             <jsp:doBody/>

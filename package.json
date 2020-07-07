@@ -7,7 +7,7 @@
   "devDependencies": {
     "babel-eslint": "10.0.1",
     "eslint": "5.16.0",
-    "eslint-plugin-react": "7.13.0"
+    "eslint-plugin-react": "7.20.1"
   },
   "scripts": {
     "clean": "rm -rf $TARGETROOT/home/dist",
@@ -25,9 +25,9 @@
     "@geneontology/ribbon": "1.11.2",
     "angular": "1.5.8",
     "babel-loader": "8.0.5",
-    "bloodhound-js": "1.2.3",
     "bootstrap": "4.3.1",
     "bootstrap-datepicker": "^1.8.0",
+    "corejs-typeahead": "1.3.1",
     "css-loader": "^2.1.1",
     "exports-loader": "^0.7.0",
     "file-loader": "^3.0.1",
@@ -50,7 +50,6 @@
     "react-timeago": "4.4.0",
     "sass-loader": "^7.1.0",
     "sorttable": "1.0.2",
-    "typeahead.js": "0.11.1",
     "url-loader": "^1.1.2",
     "webpack": "^4.30.0",
     "webpack-assets-manifest": "^3.1.1",

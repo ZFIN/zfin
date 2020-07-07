@@ -899,6 +899,9 @@ public class LoadOntology extends AbstractValidateDataReportTask {
             if (obj instanceof OBOClass) {
                 OBOClass term = (OBOClass) obj;
                 if (!term.getID().startsWith("obo:")) {
+                    // only add terms that belong to the ontology in question
+                    if (!ontology.containsTerm(term.getID()))
+                        continue;
                     numberOfTerms++;
                     pushToParsedTerms(term);
                     if (term.isObsolete()) {
@@ -918,6 +921,13 @@ public class LoadOntology extends AbstractValidateDataReportTask {
                         validator.addParentRelationship(parentTermID, type);
                         if (!validator.isValidParentRelationshipUnit())
                             throw new RuntimeException(validator.getErrorMessage());
+                        // if related term is not of the current ontology and
+                        // also is not in the TERM table (mireot) then
+                        // do not create a relationship
+                        if (!ontology.containsTerm(parentTermID)) {
+                            if (!getOntologyRepository().termExists(parentTermID))
+                                continue;
+                        }
                         appendFormattedRecord(UnloadFile.TERM_RELATIONSHIPS, parentTermID, term.getID(), type);
                     }
                     if (term.getReplacedBy() != null) {
@@ -1074,7 +1084,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
         if (term.isObsolete())
             obsolete = "t";
         if (StringUtils.isEmpty(term.getName())) {
-            throw new InvalidOBOFileException("Term with id " + term.getID() + " has no name attribute");
+            throw new InvalidOBOFileException("Term with id [" + term.getID() + "] has no name attribute");
         }
         appendFormattedRecord(UnloadFile.TERM_PARSED, term.getID(),
                 term.getName(), term.getNamespace().getID(), term.getDefinition(), term.getComment(), obsolete);

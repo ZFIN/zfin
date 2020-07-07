@@ -35,10 +35,8 @@
             <a class="dropdown-item" href="/${formBean.marker.zdbID}">Old View</a>
         </z:dataManagerDropdown>
 
-        <div class="small text-uppercase text-muted">${formBean.marker.markerType.displayName}</div>
-        <h1><zfin:abbrev entity="${formBean.marker}"/></h1>
-
         <div id="${zfn:makeDomIdentifier(SUMMARY)}">
+            <zfin2:markerDataPageHeader marker="${formBean.marker}" />
             <jsp:include page="gene-view-summary.jsp"/>
         </div>
 
@@ -57,10 +55,10 @@
         </z:section>
 
         <z:section title="${MUTANTS}">
-            <z:section title="Mutants">
+            <z:section title="Mutants" infoPopup="/action/marker/note/mutants">
                 <div class="__react-root" id="GeneAlleleTable" data-gene-id="${formBean.marker.zdbID}"></div>
             </z:section>
-            <z:section title="Sequence Targeting Reagents">
+            <z:section title="Sequence Targeting Reagents" infoPopup="/action/marker/note/str">
                 <div class="__react-root" id="GeneSTRTable" data-gene-id="${formBean.marker.zdbID}"></div>
             </z:section>
         </z:section>
@@ -74,11 +72,11 @@
             </z:section>
         </z:section>
 
-        <z:section title="${GO}">
+        <z:section title="${GO}" infoPopup="/action/marker/note/go">
             <div class="__react-root" id="GeneOntologyRibbon" data-gene-id="${formBean.marker.zdbID}"></div>
         </z:section>
 
-        <z:section title="${PROTEINS}">
+        <z:section title="${PROTEINS}" infoPopup="/action/marker/note/proteins">
             <z:section title="Domain, Family, and Site Summary">
                 <jsp:include page="gene-view-proteins.jsp"/>
             </z:section>
@@ -87,7 +85,7 @@
             </z:section>
         </z:section>
 
-        <z:section title="${TRANSCRIPTS}">
+        <z:section title="${TRANSCRIPTS}" infoPopup="/action/marker/note/transcripts">
             <jsp:include page="gene-view-transcripts.jsp"/>
         </z:section>
 
@@ -95,7 +93,7 @@
             <jsp:include page="gene-view-pathways.jsp"/>
         </z:section>
 
-        <z:section title="${ANTIBODIES}">
+        <z:section title="${ANTIBODIES}" infoPopup="/action/marker/note/antibodies">
             <jsp:include page="gene-view-antibodies.jsp"/>
         </z:section>
 
@@ -103,17 +101,17 @@
             <jsp:include page="gene-view-plasmids.jsp"/>
         </z:section>
 
-        <z:section title="${CONSTRUCTS}">
+        <z:section title="${CONSTRUCTS}" infoPopup="/action/marker/note/construct">
             <div class="__react-root" id="GeneConstructsTable" data-gene-id="${formBean.marker.zdbID}"></div>
         </z:section>
 
-        <z:section title="${MARKERRELATIONSHIPS}">
+        <z:section title="${MARKERRELATIONSHIPS}" infoPopup="/action/marker/note/markerrelationships">
             <div class="__react-root" id="GeneMarkerRelationshipsTable" data-gene-id="${formBean.marker.zdbID}"></div>
         </z:section>
 
 
 
-        <z:section title="${SEQUENCES}">
+        <z:section title="${SEQUENCES}" infoPopup="/action/marker/note/sequences">
             <div
                 class="__react-root"
                 id="MarkerSequencesTable"
@@ -123,11 +121,11 @@
             </div>
         </z:section>
 
-        <z:section title="${ORTHOLOGY}">
+        <z:section title="${ORTHOLOGY}" infoPopup="/action/marker/note/orthology">
             <jsp:include page="gene-view-orthology.jsp"/>
         </z:section>
 
-        <z:section title="${CITATIONS}">
+        <z:section title="${CITATIONS}" infoPopup="/action/marker/note/citations">
             <div class="__react-root" id="MarkerCitationsTable" data-marker-id="${formBean.marker.zdbID}"></div>
         </z:section>
     </jsp:body>

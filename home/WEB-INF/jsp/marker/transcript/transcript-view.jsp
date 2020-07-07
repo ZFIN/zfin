@@ -32,10 +32,8 @@
             <a class="dropdown-item" href="/${formBean.marker.zdbID}">Old View</a>
         </z:dataManagerDropdown>
 
-        <div class="small text-uppercase text-muted">${formBean.marker.markerType.displayName}</div>
-        <h1><zfin:abbrev entity="${formBean.marker}"/></h1>
-
         <div id="${zfn:makeDomIdentifier(SUMMARY)}">
+            <zfin2:markerDataPageHeader marker="${formBean.marker}" />
             <jsp:include page="transcript-view-summary.jsp"/>
         </div>
 

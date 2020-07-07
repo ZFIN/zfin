@@ -3,13 +3,13 @@ import PropTypes from 'prop-types';
 import qs from 'qs';
 import {useRibbonState, useTableState} from '../utils/effects';
 import {DataRibbon} from '../components/ribbon';
-import {DEFAULT_TABLE_STATE} from '../components/data-table';
 import {
     PhenotypeAnnotationDetailTable,
     PhenotypeAnnotationSummaryTable,
     PhenotypeFigureGallery,
 } from '../components/phenotype';
 import Checkbox from '../components/Checkbox';
+import produce from 'immer';
 
 const PhenotypeRibbon = ({geneId}) => {
     const [summaryTableState, setSummaryTableState] = useTableState();
@@ -32,9 +32,13 @@ const PhenotypeRibbon = ({geneId}) => {
         setSelectedTablePhenotype(phenotype);
     };
 
+    const goToPageOne = produce(state => {
+        state.page = 1;
+    })
+
     const handleRibbonCellClick = (subject, group) => {
-        setSummaryTableState(DEFAULT_TABLE_STATE);
-        setDetailTableState(DEFAULT_TABLE_STATE);
+        setSummaryTableState(goToPageOne);
+        setDetailTableState(goToPageOne);
         setSelectedTablePhenotype(null);
         setSelectedTableIDs(null);
         setSelectedRibbonTerm(subject, group);

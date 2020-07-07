@@ -25,6 +25,9 @@ const Ribbon = (props) => {
                 maxColor={[style.primaryR, style.primaryG, style.primaryB]}
                 {...props}
             />
+            <small className='text-muted'>
+                Click a filled square to see annotations
+            </small>
         </div>
     );
 }

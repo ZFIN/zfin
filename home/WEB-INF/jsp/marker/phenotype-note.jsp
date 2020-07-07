@@ -14,10 +14,13 @@
         <li> OMIM Phenotype names and IDs associated with the human ortholog for the zebrafish gene.
     </ol>
 
-    <p>ZFIN began to include published figures in 2004 and to annotate detailed phenotype information in 2006. We are
-        currently able to add figures from older publications only on an ad hoc basis. A more complete incorporation of
-        figures from the older literature is a long-term goal.
 
+<p>
+    ZFIN began to include published figures in 2004 and to annotate detailed phenotype information in 2006. We are currently able to add figures from older publications only on an ad hoc basis. A more complete incorporation of figures from the older literature is a long-term goal.
+    The ribbon view represents a high-level summary of phenotype.
+    Click on a shaded box in the ribbon to view the corresponding detailed phenotype annotations
+
+</p>
     <p>If you have questions or suggestions or would like to submit phenotype data or images to ZFIN, please <a
             href="mailto:zfinadmn@zfin.org">contact us</a>.
 </div>

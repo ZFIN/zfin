@@ -89,7 +89,7 @@
 
     <h3>Files</h3>
     <div class="form-group row">
-        <label class="col-md-3 col-form-label">Submission Workbook</label>
+        <label class="col-md-3 col-form-label">Submission Workbook(*<i>required</i>)</label>
         <div class="col-md-8">
             <label class="btn btn-outline-secondary">
                 Choose file
@@ -98,6 +98,7 @@
             </label>
             <span id="dataFileName"></span>
             <form:errors path="dataFile" cssClass="text-danger" />
+
         </div>
     </div>
 

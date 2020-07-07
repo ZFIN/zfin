@@ -12,6 +12,7 @@ const HeaderCell = ({column, filterValue, onFilterChange}) => {
         }
         onFilterChange(column.filterName, newValue);
     }
+    const filterText = 'filter'
     const toggleFilter = () => setFilterOpen(prev => !prev);
 
     return (
@@ -24,7 +25,7 @@ const HeaderCell = ({column, filterValue, onFilterChange}) => {
             {filterOpen && (
                 column.filterOptions ?
                     <CheckboxListFilter options={column.filterOptions} value={filterValue} onChange={handleFilterChange} /> :
-                    <TextBoxFilter value={filterValue} onChange={handleFilterChange} />
+                    <TextBoxFilter value={filterValue} onChange={handleFilterChange} placeholder={filterText}/>
             )}
         </>
     );

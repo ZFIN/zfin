@@ -878,6 +878,7 @@ public class DTOConversionService {
             }
             featureDTO.setProteinChangeDTO(convertToMutationDetailProteinDTO(feature.getFeatureProteinMutationDetail()));
             featureDTO.setDnaChangeDTO(convertToMutationDetailDnaDTO(feature.getFeatureDnaMutationDetail()));
+
             featureDTO.setFgmdChangeDTO(convertToFeatureGenomicMutationDetailDTO(feature.getFeatureGenomicMutationDetail()));
             if (CollectionUtils.isNotEmpty(feature.getFeatureTranscriptMutationDetailSet())) {
                 Set<MutationDetailTranscriptChangeDTO> set = new HashSet<>(3);
@@ -933,6 +934,7 @@ public class DTOConversionService {
         if (detail == null) {
             return null;
         }
+
         FeatureGenomeMutationDetailChangeDTO dto = new FeatureGenomeMutationDetailChangeDTO();
         dto.setZdbID(detail.getZdbID());
 
