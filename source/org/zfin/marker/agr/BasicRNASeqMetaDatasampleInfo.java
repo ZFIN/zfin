@@ -98,10 +98,6 @@ public class BasicRNASeqMetaDatasampleInfo extends AbstractScriptWrapper {
                             ArrayList<HTPDatasetSampleDetail> anatomySampleDetails = getExpressionRepository().getSampleDetail(datasample);
                             ArrayList<ExpressionTermIdentifiersDTO> anatomies = new ArrayList<>();
 
-                            System.out.println("details");
-                            System.out.println(anatomySampleDetails.size());
-                            System.out.println(datasample.getSampleId());
-
                             for (HTPDatasetSampleDetail anatomyDetail : anatomySampleDetails) {
                                 String whereExpressedStatement = null;
 
@@ -138,8 +134,6 @@ public class BasicRNASeqMetaDatasampleInfo extends AbstractScriptWrapper {
                                                 superQ,
                                                 uberonSlimTermDTOs);
                                 anatomies.add(anatomy);
-                                System.out.println("whereExpressed");
-                                System.out.println(anatomy.getWhereExpressedStatement());
                             }
                             dto.setSampleLocation(anatomies);
 
