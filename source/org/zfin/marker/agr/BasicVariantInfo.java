@@ -96,9 +96,6 @@ public class BasicVariantInfo extends AbstractScriptWrapper {
                                         } else if (featureType == "INDEL") {
                                             dto.setType("SO:1000032");
                                             dto.setGenomicVariantSequence(variant.getFgmdSeqVar());
-                                            if (variant.getFgmdSeqVar() == null || variant.getFgmdSeqVar() == ""){
-                                                System.out.println(feature.getZdbID());
-                                            }
                                         } else {
                                             System.out.println("invalid feature type");
                                         }

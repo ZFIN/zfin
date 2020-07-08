@@ -96,11 +96,15 @@ public class BasicRNASeqMetaDatasampleInfo extends AbstractScriptWrapper {
 
 
                             ArrayList<HTPDatasetSampleDetail> anatomySampleDetails = getExpressionRepository().getSampleDetail(datasample);
-
                             ArrayList<ExpressionTermIdentifiersDTO> anatomies = new ArrayList<>();
-                            ArrayList<ExpressionTermIdentifiersDTO> sampleLocations = new ArrayList<>();
+
+                            System.out.println("details");
+                            System.out.println(anatomySampleDetails.size());
+                            System.out.println(datasample.getSampleId());
+
                             for (HTPDatasetSampleDetail anatomyDetail : anatomySampleDetails) {
                                 String whereExpressedStatement = null;
+
                                 HashSet<UberonSlimTermDTO> uberonSlimTermDTOs = new HashSet<>();
                                 UberonSlimTermDTO anatomyUberonTerm = new UberonSlimTermDTO("");
                                 uberonSlimTermDTOs.add(anatomyUberonTerm);
@@ -111,16 +115,21 @@ public class BasicRNASeqMetaDatasampleInfo extends AbstractScriptWrapper {
 
                                 if (anatomyDetail.getAnatomySuperTerm() != null) {
                                     superTerm = anatomyDetail.getAnatomySuperTerm().getOboID();
+                                    whereExpressedStatement = anatomyDetail.getAnatomySuperTerm().getTermName();
                                 }
                                 if (anatomyDetail.getAnatomySubTerm() != null) {
                                     subTerm = anatomyDetail.getAnatomySubTerm().getOboID();
+                                    whereExpressedStatement = whereExpressedStatement + " " + anatomyDetail.getAnatomySubTerm().getTermName();
                                 }
                                 if (anatomyDetail.getCellularComponentTerm() != null) {
                                     cellularComponent = anatomyDetail.getCellularComponentTerm().getOboID();
+                                    whereExpressedStatement = whereExpressedStatement + " " + anatomyDetail.getCellularComponentTerm().getTermName();
                                 }
                                 if (anatomyDetail.getAnatomySuperQualifierTerm() != null) {
                                     superQ = anatomyDetail.getAnatomySuperQualifierTerm().getOboID();
+                                    whereExpressedStatement = whereExpressedStatement + " " + anatomyDetail.getAnatomySuperQualifierTerm().getTermName();
                                 }
+                                System.out.println(superTerm);
                                 ExpressionTermIdentifiersDTO anatomy =
                                         new ExpressionTermIdentifiersDTO(whereExpressedStatement,
                                                 cellularComponent,
@@ -129,6 +138,8 @@ public class BasicRNASeqMetaDatasampleInfo extends AbstractScriptWrapper {
                                                 superQ,
                                                 uberonSlimTermDTOs);
                                 anatomies.add(anatomy);
+                                System.out.println("whereExpressed");
+                                System.out.println(anatomy.getWhereExpressedStatement());
                             }
                             dto.setSampleLocation(anatomies);
 

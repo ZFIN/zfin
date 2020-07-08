@@ -1,10 +1,13 @@
 package org.zfin.marker.agr;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.zfin.sequence.ForeignDB;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 
 public enum DataProvider {
     ZFIN("ZFIN", ForeignDB.AvailableName.ZFIN),

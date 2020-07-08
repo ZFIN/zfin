@@ -99,7 +99,7 @@ public class BasicSTRInfo extends AbstractScriptWrapper {
                 .collect(Collectors.toList());
 
         AllSTRDTO allSTRDTO = new AllSTRDTO();
-        allSTRDTO.setSTRs(allSTRDTOList);
+        allSTRDTO.setStrs(allSTRDTOList);
         String dataProvider = "ZFIN";
         List<String> pages = new ArrayList<>();
         pages.add("homepage");

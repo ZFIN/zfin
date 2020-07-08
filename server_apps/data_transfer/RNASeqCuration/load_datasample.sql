@@ -54,6 +54,10 @@ select distinct datasample_id,
   from tmp_datasample
 ;
 
+update tmp_datasample
+  set datasample_id = sample_title
+   where datasample_id is null or datasample_id = '';
+
 update htp_dataset_sample
   set hds_sample_id = hds_sample_title where hds_sample_id is null or hds_sample_id = '';
 
