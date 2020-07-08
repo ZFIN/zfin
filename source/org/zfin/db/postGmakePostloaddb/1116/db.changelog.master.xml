@@ -11,5 +11,6 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1116/obi.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1116/ZFIN-6746.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1116/JENK-504.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1116/zfin-6764.sql" />
 
 </databaseChangeLog>
