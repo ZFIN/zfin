@@ -11,6 +11,7 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.agr.BasicExpressionDTO;
 import org.zfin.marker.agr.BasicRNASeqMetaDatasetDTO;
 import org.zfin.marker.agr.ImageDTO;
+import org.zfin.marker.agr.UberonSlimTermDTO;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.Genotype;
@@ -53,6 +54,7 @@ public interface ExpressionRepository {
     int getExpressionFigureCountForClone(Clone clone);
 
     List<BasicExpressionDTO> getBasicExpressionDTOObjects();
+    Map<String, List<UberonSlimTermDTO>> getAllZfaUberonMap();
 
     Map<String, List<ImageDTO>> getDirectSubmissionImageDTOMap();
 

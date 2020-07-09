@@ -1,8 +1,6 @@
 package org.zfin.marker.agr;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.Set;
 
@@ -11,7 +9,6 @@ public class ExpressionTermIdentifiersDTO {
 
     private String whereExpressedStatement;
     private String cellularComponentTermId;
-    private String anatomicalStructureTermId;
 
     public String getWhereExpressedStatement() {
         return whereExpressedStatement;
@@ -61,6 +58,7 @@ public class ExpressionTermIdentifiersDTO {
         this.anatomicalStructureUberonSlimTermIds = anatomicalStructureUberonSlimTermIds;
     }
 
+    private String anatomicalStructureTermId;
     private String anatomicalSubStructureTermId;
     private String anatomicalStructureQualifierTermId;
     private Set<UberonSlimTermDTO> anatomicalStructureUberonSlimTermIds;

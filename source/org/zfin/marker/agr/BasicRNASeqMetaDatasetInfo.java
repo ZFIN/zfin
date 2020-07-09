@@ -61,12 +61,15 @@ public class BasicRNASeqMetaDatasetInfo extends AbstractScriptWrapper {
                             datasetId.setPrimaryId("ZFIN:"+dataset.getZdbID().toString());
 
                             ArrayList<String> htpSecondaryIds = new ArrayList<String>();
-                            if (CollectionUtils.isNotEmpty(getExpressionRepository().getHTPSecondaryIds(dataset.getZdbID()))){
+                            // purposefully commented out because the HTP metadata schema is broken and doesn't
+                            // allow secondaryIds to validate -- so leaving out for 3.1.1, but this code works
+                            // and should be uncommented when the valdiation schema works.
+                            /*if (CollectionUtils.isNotEmpty(getExpressionRepository().getHTPSecondaryIds(dataset.getZdbID()))){
                                 for (String secId : getExpressionRepository().getHTPSecondaryIds(dataset.getZdbID())){
                                     htpSecondaryIds.add(secId);
                                 }
                                 datasetId.setSecondaryId(htpSecondaryIds);
-                            }
+                            }*/
                             dto.setDatasetId(datasetId);
 
                             dto.setDateAssigned(dataset.getDateCurated());

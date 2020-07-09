@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.zfin.expression.HTPDataset;
 import org.zfin.expression.HTPDatasetSample;
 import org.zfin.expression.HTPDatasetSampleDetail;
@@ -14,9 +15,10 @@ import org.zfin.ontology.datatransfer.GenericCronJobReport;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
+
+import org.zfin.anatomy.DevelopmentStage;
+
 import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getExpressionRepository;
@@ -67,7 +69,13 @@ public class BasicRNASeqMetaDatasampleInfo extends AbstractScriptWrapper {
 
                             dto.setAbundance(datasample.getAbundance());
                             dto.setAssayType(datasample.getSampleType());
-                            dto.setAssemblyVersion(datasample.getAssembly());
+                            ArrayList<String> versions = new ArrayList<>();
+
+                            if (datasample.getAssembly() != null) {
+                                versions.add(datasample.getAssembly());
+                                dto.setAssemblyVersion(versions);
+                            }
+
 
                             dto.setSampleType(datasample.getSampleType());
                             dto.setSex(datasample.getSex());
@@ -80,14 +88,32 @@ public class BasicRNASeqMetaDatasampleInfo extends AbstractScriptWrapper {
                             dto.setDateAssigned(datasample.getHtpDataset().getDateCurated());
                             dto.setSequencingFormat(datasample.getSequencingFormat());
 
-                            HtpGenomicInformationDTO biosample = new HtpGenomicInformationDTO();
+                            // purposefully commented out because the HTP metadata schema is broken and doesn't
+                            // allow biosamples to validate -- so leaving out for 3.1.1, but this code works
+                            // and should be uncommented when the schema is fixed.
+
+/*                            HtpGenomicInformationDTO biosample = new HtpGenomicInformationDTO();
                             biosample.setBiosampleId(datasample.getFish().getZdbID());
                             biosample.setIdType("fish");
-                            dto.setGenomicInformation(biosample);
+                            dto.setGenomicInformation(biosample);*/
 
                             // for each sample detail - get whenExpressed object (stageid and stagename)
                             // put stageid and stagename into an object called whenExpressed
+
                             UberonSlimTermDTO stageUberonTerm = new UberonSlimTermDTO("");
+                            DevelopmentStage stage = getOntologyRepository().getDevelopmentStageFromTerm(datasample.getStage());
+                            if (stage.getName().startsWith("Hatching") || stage.getName().startsWith("Larval") || stage.getName().startsWith("Juvenile")) {
+                                stageUberonTerm.setUberonTerm("post embryonic, pre-adult");
+
+                            }
+                            if (stage.getName().startsWith("Adult")) {
+                                stageUberonTerm.setUberonTerm("UBERON:0000113");
+
+                            }
+                            if (stage.getHoursEnd() <= 48.00) {
+                                stageUberonTerm.setUberonTerm("UBERON:0000068");
+                            }
+
                             BioSampleAgeDTO sampleAge = new BioSampleAgeDTO();
                             ExpressionStageIdentifiersDTO stageInfo = new ExpressionStageIdentifiersDTO(datasample.getStage().getTermName(),
                                     datasample.getStage().getOboID(), stageUberonTerm);
@@ -98,12 +124,11 @@ public class BasicRNASeqMetaDatasampleInfo extends AbstractScriptWrapper {
                             ArrayList<HTPDatasetSampleDetail> anatomySampleDetails = getExpressionRepository().getSampleDetail(datasample);
                             ArrayList<ExpressionTermIdentifiersDTO> anatomies = new ArrayList<>();
 
+                            Map<String, List<UberonSlimTermDTO>> zfaUberonMap = getExpressionRepository().getAllZfaUberonMap();
                             for (HTPDatasetSampleDetail anatomyDetail : anatomySampleDetails) {
                                 String whereExpressedStatement = null;
 
-                                HashSet<UberonSlimTermDTO> uberonSlimTermDTOs = new HashSet<>();
-                                UberonSlimTermDTO anatomyUberonTerm = new UberonSlimTermDTO("");
-                                uberonSlimTermDTOs.add(anatomyUberonTerm);
+                                Set<UberonSlimTermDTO> anatomicalStructureUberonSlimTermIds = new HashSet<>();
                                 String superTerm = null;
                                 String subTerm = null;
                                 String cellularComponent = null;
@@ -112,10 +137,16 @@ public class BasicRNASeqMetaDatasampleInfo extends AbstractScriptWrapper {
                                 if (anatomyDetail.getAnatomySuperTerm() != null) {
                                     superTerm = anatomyDetail.getAnatomySuperTerm().getOboID();
                                     whereExpressedStatement = anatomyDetail.getAnatomySuperTerm().getTermName();
+                                    if (zfaUberonMap.get(anatomyDetail.getAnatomySuperTerm().getZdbID()) != null) {
+                                        anatomicalStructureUberonSlimTermIds.addAll(zfaUberonMap.get(anatomyDetail.getAnatomySuperTerm().getOboID()));
+                                    }
                                 }
                                 if (anatomyDetail.getAnatomySubTerm() != null) {
                                     subTerm = anatomyDetail.getAnatomySubTerm().getOboID();
                                     whereExpressedStatement = whereExpressedStatement + " " + anatomyDetail.getAnatomySubTerm().getTermName();
+                                    if (zfaUberonMap.get(anatomyDetail.getAnatomySubTerm().getOboID()) != null) {
+                                        anatomicalStructureUberonSlimTermIds.addAll(zfaUberonMap.get(anatomyDetail.getAnatomySubTerm().getOboID()));
+                                    }
                                 }
                                 if (anatomyDetail.getCellularComponentTerm() != null) {
                                     cellularComponent = anatomyDetail.getCellularComponentTerm().getOboID();
@@ -125,14 +156,17 @@ public class BasicRNASeqMetaDatasampleInfo extends AbstractScriptWrapper {
                                     superQ = anatomyDetail.getAnatomySuperQualifierTerm().getOboID();
                                     whereExpressedStatement = whereExpressedStatement + " " + anatomyDetail.getAnatomySuperQualifierTerm().getTermName();
                                 }
-                                System.out.println(superTerm);
+
+                                if (CollectionUtils.isEmpty(anatomicalStructureUberonSlimTermIds)) {
+                                    anatomicalStructureUberonSlimTermIds.add(new UberonSlimTermDTO("Other"));
+                                }
                                 ExpressionTermIdentifiersDTO anatomy =
                                         new ExpressionTermIdentifiersDTO(whereExpressedStatement,
                                                 cellularComponent,
                                                 superTerm,
                                                 subTerm,
                                                 superQ,
-                                                uberonSlimTermDTOs);
+                                                anatomicalStructureUberonSlimTermIds);
                                 anatomies.add(anatomy);
                             }
                             dto.setSampleLocation(anatomies);

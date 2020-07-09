@@ -243,7 +243,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     }
 
 
-    private Map<String, List<UberonSlimTermDTO>> getAllZfaUberonMap() {
+    public Map<String, List<UberonSlimTermDTO>> getAllZfaUberonMap() {
         final String zumQueryString = "select distinct contained.term_ont_id, zum_uberon_id " +
                 " from term as contained " +
                 "     join all_term_contains on alltermcon_contained_zdb_id = contained.term_zdb_id" +
