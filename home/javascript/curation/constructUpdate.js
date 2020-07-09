@@ -76,7 +76,7 @@ $(function () {
 
         jQuery.ajax({
             url: "/action/construct/update-comments/" + constructID
-                + "/constructEditComments/" + constructUpdateComments1,
+                + "/constructEditComments/" + constructUpdateComments,
             type: 'POST',
             //data: param,
             success: function (response) {
