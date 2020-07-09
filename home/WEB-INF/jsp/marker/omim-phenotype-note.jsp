@@ -1,6 +1,3 @@
-<style type="text/css">
-    div.summary li { padding-top: .1em; padding-bottom: .1em; }
-</style>
 
 <div class="popup-header">
     Online Mendelian Inheritance in Man (OMIM) Phenotype for human ortholog
@@ -23,8 +20,6 @@
     <p>For more information on OMIM, please visit their FAQ at: <a href="http://omim.org/help/faq">http://omim.org/help/faq</a></p>
 
     <p>For more information on the Disease Ontology, please visit: <a href="http://disease-ontology.org">http://disease-ontology.org</a></p>
-
-
 
 </div>
 

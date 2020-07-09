@@ -1,6 +1,4 @@
-<style type="text/css">
-    div.summary li { padding-top: .1em; padding-bottom: .1em; }
-</style>
+<%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <div class="popup-header">
     Phenotype Note
@@ -21,6 +19,5 @@
     Click on a shaded box in the ribbon to view the corresponding detailed phenotype annotations
 
 </p>
-    <p>If you have questions or suggestions or would like to submit phenotype data or images to ZFIN, please <a
-            href="mailto:zfinadmn@zfin.org">contact us</a>.
+    <p>If you have questions or suggestions, please <zfin2:mailTo>contact us</zfin2:mailTo>.</p>
 </div>

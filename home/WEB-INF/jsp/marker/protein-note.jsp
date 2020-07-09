@@ -1,6 +1,4 @@
-<style type="text/css">
-    div.summary li { padding-top: .1em; padding-bottom: .1em; }
-</style>
+<%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <div class="popup-header">
     Proteins
@@ -11,6 +9,5 @@
     The Domain, Family, and Site Summary includes a simple listing of InterPro binding sites, domains, and families associated with products of the gene.
     The Domain Details Per Protein section shows which domain/site/family is associated with each specific protein product of the gene.
 
-    <p>If you have questions or suggestions, please <a
-            href="mailto:zfinadmn@zfin.org">contact us</a>.
+    <p>If you have questions or suggestions, please <zfin2:mailTo>contact us</zfin2:mailTo>.</p>
 </div>
