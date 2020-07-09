@@ -8,6 +8,7 @@ import org.zfin.framework.api.View;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Objects;
 
 @Entity
 @Table(name = "STAGE")
@@ -220,6 +221,20 @@ public class DevelopmentStage implements Serializable, Comparable<DevelopmentSta
 
     public boolean equals(DevelopmentStage anotherStage) {
         return anotherStage.getZdbID().equalsIgnoreCase(zdbID);
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DevelopmentStage that = (DevelopmentStage) o;
+        return Objects.equals(zdbID, that.zdbID);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(zdbID);
     }
 
     public static boolean stageRangeOverlapsRange(DevelopmentStage start, DevelopmentStage end, DevelopmentStage intervalStart, DevelopmentStage intervalEnd) {

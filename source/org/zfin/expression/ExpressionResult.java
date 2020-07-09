@@ -36,7 +36,6 @@ public class ExpressionResult implements Comparable<ExpressionResult> {
     private String comment;
 
 
-
     public boolean isExpressionFound() {
         return expressionFound;
     }
@@ -171,5 +170,10 @@ public class ExpressionResult implements Comparable<ExpressionResult> {
         if (!nameOne.equals(nameTwo))
             return nameOne.compareTo(nameTwo);
         return 0;
+    }
+
+    @Override
+    public String toString() {
+        return entity + " : " + startStage.toString() + " : " + endStage.toString();
     }
 }

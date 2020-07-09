@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.ExternalNote;
 import org.zfin.antibody.Antibody;
+import org.zfin.antibody.AntibodyService;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.marker.service.AntibodyMarkerService;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.repository.SequenceRepository;
@@ -60,8 +60,9 @@ public class AntibodyViewController {
         antibodyBean.setExternalNotes(listOfNotes);
 
         // set labeling
-        antibodyBean.setAntibodyDetailedLabelings(AntibodyMarkerService.getAntibodyDetailedLabelings(antibody));
-        antibodyBean.setNumberOfDistinctComposedTerms(AntibodyMarkerService.getNumberOfDistinctComposedTerms(antibody));
+        AntibodyService service = new AntibodyService(antibody);
+        antibodyBean.setAntibodyDetailedLabelings(service.getAntibodyDetailedLabelings());
+        antibodyBean.setNumberOfDistinctComposedTerms(service.getNumberOfDistinctComposedTerms());
 
         // set source
         antibodyBean.setSuppliers(markerRepository.getSuppliersForMarker(antibody.getZdbID()));
@@ -104,8 +105,9 @@ public class AntibodyViewController {
         antibodyBean.setExternalNotes(listOfNotes);
 
         // set labeling
-        antibodyBean.setAntibodyDetailedLabelings(AntibodyMarkerService.getAntibodyDetailedLabelings(antibody));
-        antibodyBean.setNumberOfDistinctComposedTerms(AntibodyMarkerService.getNumberOfDistinctComposedTerms(antibody));
+        AntibodyService service = new AntibodyService(antibody);
+        antibodyBean.setAntibodyDetailedLabelings(service.getAntibodyDetailedLabelings());
+        antibodyBean.setNumberOfDistinctComposedTerms(service.getNumberOfDistinctComposedTerms());
 
         // set source
         antibodyBean.setSuppliers(markerRepository.getSuppliersForMarker(antibody.getZdbID()));

@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.anatomy.presentation.AnatomyLabel;
 import org.zfin.antibody.presentation.AntibodySearchCriteria;
 import org.zfin.expression.*;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.getAnatomyRepository;
 import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
@@ -521,6 +523,17 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         AntibodyService service = new AntibodyService(antibody);
         List<ExpressionStatement> labeledTerms = service.getAntibodyLabelingStatements();
         assertNotNull(labeledTerms);
+    }
+
+    @Test
+    public void getAntibodyDetailedLabelings() {
+        // znp-1
+        String antibodyID = "ZDB-ATB-081002-25";
+        Antibody antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByID(antibodyID);
+        AntibodyService service = new AntibodyService(antibody);
+        List<AnatomyLabel> labeledTerms = service.getAntibodyDetailedLabelings();
+        assertNotNull(labeledTerms);
+        assertThat(labeledTerms.size(), greaterThan(100));
     }
 
     public GenericTerm createMinimalGenericTerm(GenericTerm genericTerm, Ontology ontology) {
