@@ -663,21 +663,6 @@ public class AntibodyService {
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
 
-        // group expression results by superterm/subterm/startStage/endStage
-        Map<GenericTerm, Map<Optional<GenericTerm>, Map<DevelopmentStage, Map<DevelopmentStage, List<ExpressionResult>>>>> groupBySuperTermAndSubTerm =
-                allExpressionResults
-                        .stream()
-                        .filter(ExpressionResult::isExpressionFound)
-                        .collect(groupingBy(ExpressionResult::getSuperTerm,
-                                groupingBy(result -> Optional.ofNullable(result.getSubTerm()),
-                                        groupingBy(ExpressionResult::getStartStage,
-                                                groupingBy(ExpressionResult::getEndStage)))));
-
-        // remove the subterm == null elements
-        // they are handled in the pure map
-        groupBySuperTermAndSubTerm.forEach((superTerm, subTermMap) -> subTermMap.entrySet().removeIf(optionalMapEntry -> !optionalMapEntry.getKey().isPresent()));
-        groupBySuperTermAndSubTerm.entrySet().removeIf(entry -> entry.getValue().size() == 0);
-
         // group expression results by superterm/startStage/endStage
         Map<GenericTerm, Map<DevelopmentStage, Map<DevelopmentStage, List<ExpressionResult>>>> groupBySuperTermOnly =
                 allExpressionResults
@@ -688,17 +673,6 @@ public class AntibodyService {
                                         groupingBy(ExpressionResult::getEndStage))));
 
         List<AnatomyLabel> labels = new ArrayList<>();
-
-        groupBySuperTermAndSubTerm.forEach((superTerm, subTermMap) -> subTermMap
-                .forEach((subTerm, startStageMap) ->
-                        startStageMap.forEach((startStage, endStageMap) -> {
-                            endStageMap.forEach((endStage, expressionResults) -> {
-                                final AnatomyLabel anatomyLabel = populateLabels(expressionResults, false);
-                                if (anatomyLabel != null)
-                                    labels.add(anatomyLabel);
-                            });
-                        })));
-
 
         groupBySuperTermOnly.forEach((superTerm, startStageMapMap) -> startStageMapMap.forEach((startStage, endStageListMap) -> {
             endStageListMap.forEach((developmentStage, expressionResults) -> {
