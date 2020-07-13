@@ -298,15 +298,11 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                     }
                 }
             }
-            /*if (!fgmd.equals(oldDetail)) {
-                System.out.println(oldDetail.getFgmdSeqRef());
-                infrastructureRepository.insertMutationDetailAttribution(fgmd.getZdbID(), featureDTO.getPublicationZdbID());
-            }*/
+
         } else {
             // remove existing record
             if (fgmd != null) {
                 featureRepository.deleteFeatureGenomicMutationDetail(fgmd);
-                //          infrastructureRepository.deleteMutationDetailAttribution(proteinDetail.getZdbID(), featureDTO.getPublicationZdbID());
             }
 
         }
