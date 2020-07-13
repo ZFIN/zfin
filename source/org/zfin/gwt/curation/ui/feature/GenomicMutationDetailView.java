@@ -231,7 +231,41 @@ public class GenomicMutationDetailView extends AbstractViewComposite {
         }
         seqReference.setText(dto.getFgmdSeqRef());
         seqVariant.setText(dto.getFgmdSeqVar());
-        showFields(type,knownInsSite);
+        switch (type) {
+            case POINT_MUTATION:
+
+                showBoth();
+
+                break;
+            case INSERTION:
+                showVariantSeq();
+                break;
+            case DELETION:
+                showReferenceSeq();
+                break;
+            case TRANSGENIC_INSERTION:
+                // showTgFields();
+                if (knownInsSite) {
+
+                    showBoth();
+                }
+                else{
+                    showTgFields();
+                }
+                break;
+            case SEQUENCE_VARIANT:
+                showTgFields();
+                break;
+            case INDEL:
+                showBoth();
+                break;
+            case MNV:
+                showBoth();
+                break;
+        }
+
+
+
     }
 
 }
