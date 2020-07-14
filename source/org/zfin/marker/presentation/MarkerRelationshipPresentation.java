@@ -1,5 +1,6 @@
 package org.zfin.marker.presentation;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
@@ -54,18 +55,12 @@ public class MarkerRelationshipPresentation implements ProvidesLink {
     @JsonView(View.MarkerRelationshipAPI.class)
     private int numberOfPublications;
     @JsonView(View.MarkerRelationshipAPI.class)
-    public Publication getSinglePublication() {
-        List<Publication> publications = new ArrayList<>();
-        List<PublicationAttribution> publicationAttributions = RepositoryFactory.getInfrastructureRepository().getPublicationAttributions(markerRelationshipZdbId);
-        for (PublicationAttribution pub : publicationAttributions) {
-            publications.add(pub.getPublication());
-        }
-        if (publications.size()==1){
-            return publications.iterator().next();
-        } else {
-            return null;
-        }
+    public Publication singlePublication;
+
+    public void setSinglePublication(Publication singlePublication) {
+        this.singlePublication = singlePublication;
     }
+
 
 
 

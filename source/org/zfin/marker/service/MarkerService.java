@@ -1211,6 +1211,17 @@ public class MarkerService {
             mrelP.setOtherMarkerGenBankDBLink(mdbLink);
             mrelP.setNumberOfPublications(RepositoryFactory.getPublicationRepository().getNumberAssociatedPublicationsForZdbID(mrelP.getMarkerRelationshipZdbId()));
             mrelP.setRelatedMarker(relatedMarker);
+            List<Publication> publications = new ArrayList<>();
+            List<PublicationAttribution> publicationAttributions = RepositoryFactory.getInfrastructureRepository().getPublicationAttributions(mrelP.getMarkerRelationshipZdbId());
+            for (PublicationAttribution pub : publicationAttributions) {
+                publications.add(pub.getPublication());
+            }
+            if (publications.size()==1){
+                mrelP.setSinglePublication(publications.iterator().next());
+            }
+
+
+
         }
 
         Collections.sort(fullMarkerRelationships, markerRelationshipSupplierComparator);

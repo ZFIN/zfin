@@ -124,7 +124,7 @@ public class SubmissionFormController {
                     publication,
                     publicationRepository.getPublicationFileTypeByName(PublicationFileType.Name.OTHER),
                     formBean.getDataFile());
-        } catch (IOException e) {
+        } catch (IOException  e) {
             LOG.error(e);
             return "zebrashare/new-submission.page";
         }

@@ -30,6 +30,9 @@ public class SubmissionFormBean {
 
     private MultipartFile dataFile;
 
+    @NotNull(message = "Submission workbook must be provided")
+    private MultipartFile dataFileName;
+
     private MultipartFile[] imageFiles;
     private String[] captions;
 
