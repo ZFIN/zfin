@@ -13,9 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
-import org.zfin.expression.ExpressionFigureStage;
-import org.zfin.expression.ExpressionResult2;
-import org.zfin.expression.Figure;
+import org.zfin.expression.*;
 import org.zfin.expression.presentation.*;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.marker.Marker;
@@ -23,6 +21,7 @@ import org.zfin.marker.MarkerNotFoundException;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.Fish;
+import org.zfin.mutant.FishExperiment;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
@@ -37,7 +36,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.zfin.search.service.SolrQueryFacade.addTo;
 
@@ -74,7 +72,7 @@ public class ExpressionSearchService {
                 + FieldName.REPORTER_GENE + ":[* TO *])");
 
         // only interested in expression with some kind of result
-        solrQuery.addFilterQuery(FieldName.XPATRES_ID  + ":[* TO *]");
+        solrQuery.addFilterQuery(FieldName.XPATRES_ID + ":[* TO *]");
 
         if (CollectionUtils.isNotEmpty(criteria.getAnatomy())) {
             FieldName anatomyWithoutCousins = criteria.isIncludeSubstructures() ?
@@ -300,6 +298,13 @@ public class ExpressionSearchService {
                 .map(ExpressionResult2::getExpressionFigureStage)
                 .collect(Collectors.toList());
 
+        Set<Experiment> experiments = results.stream()
+                .map(ExpressionResult2::getExpressionFigureStage)
+                .map(ExpressionFigureStage::getExpressionExperiment)
+                .map(ExpressionExperiment2::getFishExperiment)
+                .map(FishExperiment::getExperiment)
+                .collect(Collectors.toSet());
+
         Set<Fish> fish = expressionFigureStages.stream()
                 .map(efs -> efs.getExpressionExperiment().getFishExperiment().getFish())
                 .collect(Collectors.toCollection(TreeSet::new));
@@ -319,6 +324,7 @@ public class ExpressionSearchService {
                 .orElse(null);
 
         figureResult.setFigure(figure);
+        figureResult.setExperiments(experiments);
         figureResult.setId(figure.getZdbID());
         figureResult.setPublication(publication);
         figureResult.setFish(fish);
@@ -561,8 +567,12 @@ public class ExpressionSearchService {
         }
 
         public LinkBuilder anatomyTerm(Term anatomyTerm) {
-            if (anatomyTerm == null) { return this; }
-            if (anatomyTerms == null) { anatomyTerms = new ArrayList<>();  }
+            if (anatomyTerm == null) {
+                return this;
+            }
+            if (anatomyTerms == null) {
+                anatomyTerms = new ArrayList<>();
+            }
 
             anatomyTerms.add(anatomyTerm);
 

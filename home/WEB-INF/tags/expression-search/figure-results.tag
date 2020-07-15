@@ -27,6 +27,7 @@
         <th>Data</th>
         <th></th>
         <th>Fish</th>
+        <th>Condition</th>
         <th>Stage Range</th>
         <th>Anatomy</th>
     </tr>
@@ -52,6 +53,13 @@
                 <c:forEach items="${result.fish}" var="fish">
                     <div class="nowrap">
                         <zfin:link entity="${fish}" />
+                    </div>
+                </c:forEach>
+            </td>
+            <td>
+                <c:forEach items="${result.experiments}" var="experiment">
+                    <div class="nowrap">
+                        <zfin:link entity="${experiment}" />
                     </div>
                 </c:forEach>
             </td>
