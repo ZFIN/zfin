@@ -1,10 +1,6 @@
 package org.zfin.framework.filter;
 
 import org.apache.logging.log4j.ThreadContext;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.zfin.profile.service.ProfileService;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
