@@ -253,16 +253,14 @@ public class GeneViewController {
         // orthology
         List<Ortholog> orthologList = getOrthologyRepository().getOrthologs(gene);
         List<String> bGeeIds = markerService.getBeeGeeStrings(otherMarkerDBLinksLinks, orthologList);
-        if (CollectionUtils.isNotEmpty(bGeeIds))
+        if (CollectionUtils.isNotEmpty(bGeeIds)) {
             model.addAttribute("bGeeIds", String.join(",", bGeeIds));
+            model.addAttribute("geneTree", otherMarkerDBLinksLinks.stream().filter(linkDisplay -> linkDisplay.getAccession().startsWith("ENSDARG")).findFirst().get().getAccession());
+        }
         model.addAttribute("hasOrthology", CollectionUtils.isNotEmpty(orthologList));
         if (gene.getOrthologyNote() != null)
             model.addAttribute("orthologyNote", gene.getOrthologyNote().getNote());
 
-        String ensdarg = otherMarkerDBLinksLinks.stream().filter(linkDisplay -> linkDisplay.getAccession().startsWith("ENSDARG")).findFirst().get().getAccession();
-        if (ensdarg!=null) {
-            model.addAttribute("geneTree", ensdarg);
-        }
         model.addAttribute(LookupStrings.FORM_BEAN, geneBean);
         model.addAttribute("markerHistoryReasonCodes", MarkerHistory.Reason.values());
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.GENE.getTitleString() + gene.getAbbreviation());
