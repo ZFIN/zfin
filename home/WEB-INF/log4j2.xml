@@ -16,15 +16,15 @@
         <RollingFile name="rollingJSONFileAppender" fileName="${env:CATALINA_BASE}/logs/catalina.json"
                      filePattern="${env:CATALINA_BASE}/logs/catalina.json.%i.log" filePermissions="rw-r--r--">
             <JsonLayout complete="false" compact="false">
-                <KeyValuePair key="uri" value="$${ctx:uri}"/>
-                <KeyValuePair key="sessionID" value="$${ctx:sessionID}"/>
-                <KeyValuePair key="queryString" value="$${ctx:queryString}"/>
-                <KeyValuePair key="url" value="$${ctx:url}"/>
-                <KeyValuePair key="sessionID" value="$${ctx:sessionID}"/>
-                <KeyValuePair key="login" value="$${ctx:login}"/>
-                <KeyValuePair key="host" value="$${env:HOST:-unknown}"/>
+                <KeyValuePair key="uri" value="$${ctx:uri:-}"/>
+                <KeyValuePair key="sessionID" value="$${ctx:sessionID:-}"/>
+                <KeyValuePair key="queryString" value="$${ctx:queryString:-}"/>
+                <KeyValuePair key="url" value="$${ctx:url:-}"/>
+                <KeyValuePair key="sessionID" value="$${ctx:sessionID:-}"/>
+                <KeyValuePair key="login" value="$${ctx:login:-}"/>
+                <KeyValuePair key="instance" value="$${env:INSTANCE:-unknown}"/>
                 <KeyValuePair key="date" value="$${date:yyyy-MM-dd HH:mm:ss}" />
-                <KeyValuePair key="cookie" value="$${ctx:cookie}" />
+                <KeyValuePair key="cookie" value="$${ctx:cookie:-}" />
             </JsonLayout>
             <Policies>
                 <SizeBasedTriggeringPolicy size="10MB"/>
