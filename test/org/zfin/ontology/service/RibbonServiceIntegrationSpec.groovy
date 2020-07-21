@@ -7,6 +7,7 @@ import org.zfin.expression.repository.ExpressionRepository
 import org.zfin.framework.api.JsonResultResponse
 import org.zfin.framework.api.Pagination
 import org.zfin.framework.api.RibbonCategory
+import org.zfin.framework.api.RibbonSubjectGroupCounts
 import org.zfin.framework.api.RibbonSummary
 import org.zfin.marker.presentation.ExpressionDetail
 import org.zfin.marker.presentation.ExpressionRibbonDetail
@@ -33,12 +34,12 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
         SolrQuery query = new SolrQuery();
         query.setRequestHandler(handler);
         query.addFilterQuery(FieldName.GENE_ZDB_ID.getName() + ":" + zdbID);
-        Map<String, Integer> termCounts = ribbonService.getRibbonCounts(query, [termID])
+        Map<String, RibbonSubjectGroupCounts> termCounts = ribbonService.getRibbonCounts(query, [termID])
 
         then:
         termCounts
         termCounts.get(termID) != null
-        termCounts.get(termID) > 0
+        termCounts.get(termID).numberOfAnnotations > 0
 
         where:
         handler                  | zdbID                  | termID
@@ -73,15 +74,16 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
     @Unroll
     def "at least #min found for #geneID and #ribbonTermID with includeReporter: #includeReporter and onlyDirectSubmitted: #onlyDirectSubmitted "() {
         when:
-        List<ExpressionRibbonDetail> termCounts = ribbonService.buildExpressionRibbonDetail(geneID, ribbonTermID, includeReporter, onlyDirectlySubmitted)
+        List<ExpressionRibbonDetail> termCounts = ribbonService.buildExpressionRibbonDetail(geneID, ribbonTermID, includeReporter, onlyDirectlySubmitted, isOther)
 
         then:
+        termCounts
         termCounts.size() > min
 
         where:
-        geneID                | ribbonTermID  | min | includeReporter | onlyDirectlySubmitted
-        "ZDB-GENE-990415-8"   | "ZFA:0000396" | 60  | false           | false
-        "ZDB-GENE-050419-145" | "ZFA:0000396" | 1   | false           | false
+        geneID                | ribbonTermID  | min | includeReporter | onlyDirectlySubmitted | isOther
+        "ZDB-GENE-990415-8"   | "ZFA:0000396" | 60  | false           | false                 | false
+        "ZDB-GENE-050419-145" | "ZFA:0000396" | 1   | false           | false                 | false
     }
 
     @Unroll
@@ -133,20 +135,20 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
     @Unroll
     def "#geneID phenotype detail response with #termID filter should return more than #numberOfRecords "() {
         when:
-        JsonResultResponse<PhenotypeRibbonSummary> response = ribbonService.buildPhenotypeSummary(geneID, termID, new Pagination())
+        JsonResultResponse<PhenotypeRibbonSummary> response = ribbonService.buildPhenotypeSummary(geneID, termID, new Pagination(), isOther, excludeEaps)
 
         then:
         response
         response.getTotal() > numberOfRecords
 
         where:
-        geneID               | termID        | numberOfRecords
+        geneID               | termID        | isOther | excludeEaps | numberOfRecords
         // all records
-        "ZDB-GENE-990415-30" | ""            | 15
+        "ZDB-GENE-990415-30" | ""            | false   | false       | 15
         // pax2a             anatomical entity
-        "ZDB-GENE-990415-8"  | "ZFA:0100000" | 100
+        "ZDB-GENE-990415-8"  | "ZFA:0100000" | false   | false       | 100
         // pax2a              nervous system
-        "ZDB-GENE-990415-8"  | "ZFA:0000396" | 60
+        "ZDB-GENE-990415-8"  | "ZFA:0000396" | false   | false       | 60
     }
 
     @Unroll
