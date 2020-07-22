@@ -501,6 +501,7 @@
                 name_t
                 alias_t
                 full_name_t
+                id
             </str>
             <str name="bf">recip(complexity,1,1,1)^10 sqrt(popularity)^20</str>
             <str name="fq">-category:Publication -category:Figure</str>
@@ -515,6 +516,7 @@
                 name_t
                 alias_t
                 full_name_t
+                id
             </str>
             <str name="hl.simple.pre"><![CDATA[<span class="search-result-highlight">]]></str>
             <str name="hl.simple.post"><![CDATA[</span>]]></str>
