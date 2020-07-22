@@ -15,6 +15,6 @@
     <h1>Edit ${gene.zdbID}</h1>
 
     <z:section title="${test}">
-        <div class="__react-root" id="MarkerEditTest"></div>
+        <div class="__react-root" id="MarkerEditTest" data-ortho-pubs='${orthoPubsJSON}'></div>
     </z:section>
 </z:dataPage>
