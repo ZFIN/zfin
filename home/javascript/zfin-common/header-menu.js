@@ -48,6 +48,9 @@ $(() => {
     $('.fs-autocomplete').each(function () {
         const autocomplete = $(this);
         const $input = autocomplete.find('input[type="text"]');
+        const limit = 5;
+        const storageKey = 'fs-autocomplete-defaults';
+
         autocomplete.find('.category-dropdown a').on('click', function (e) {
             e.preventDefault();
             const category = $(this).text();
@@ -68,6 +71,7 @@ $(() => {
         };
         $input
             .autocompletify('/action/quicksearch/autocomplete?q=%QUERY', {
+                limit: limit,
                 templates: {
                     suggestion: item => (`
                         <a href="${item.url}">
@@ -86,10 +90,24 @@ $(() => {
                     }
                     return settings;
                 },
-                storageKey: 'fs-autocomplete-defaults',
+                defaultSuggestions: JSON.parse(localStorage.getItem(storageKey)),
             })
             .on('typeahead:select', function (evt, suggestion) {
+                // send a google analytics event
                 ga('send', 'event', 'FS autocomplete', 'Go to page', `${suggestion.value} [${suggestion.category}]`);
+
+                // get what's already stored or an empty array
+                const stored = JSON.parse(localStorage.getItem(storageKey)) || [];
+                // if the selected suggestion was already in the store, remove the old one
+                const deduped = stored.filter(item => item.id !== suggestion.id);
+                // put the suggestion at the front of the list
+                deduped.unshift(suggestion);
+                // if we have more than enough, remove the last
+                if (deduped.length > limit) {
+                    deduped.pop();
+                }
+                // push the list back into the store
+                localStorage.setItem(storageKey, JSON.stringify(deduped));
             });
     });
 });
