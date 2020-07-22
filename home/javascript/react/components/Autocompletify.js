@@ -9,7 +9,7 @@ const Autocompletify = ({url, onChange, typeaheadOptions, value, ...rest}) => {
     // event listener which causes a suggestion selection to be treated
     // like a normal change event
     const refCallback = useCallback(element => {
-        if (element === null) {
+        if (element === null || $input.current !== null) {
             return;
         }
         $input.current = $(element)
