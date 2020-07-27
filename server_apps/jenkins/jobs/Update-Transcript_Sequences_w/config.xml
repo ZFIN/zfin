@@ -39,7 +39,6 @@
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
             <sendToRecipientList>true</sendToRecipientList>
-            <attachmentsPattern>$TARGETROOT/server_apps/data_transfer/RNACentral/*Sequence*</attachmentsPattern>
             <attachBuildLog>false</attachBuildLog>
             <compressBuildLog>false</compressBuildLog>
             <replyTo></replyTo>
@@ -55,7 +54,6 @@
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
             <sendToRecipientList>true</sendToRecipientList>
-            <attachmentsPattern>server_apps/data_transfer/RNACentral/orth*.txt</attachmentsPattern>
             <attachBuildLog>false</attachBuildLog>
             <compressBuildLog>false</compressBuildLog>
             <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>
