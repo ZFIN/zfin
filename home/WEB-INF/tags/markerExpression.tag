@@ -94,12 +94,12 @@
                         </td>
                     </tr>
                 </c:if>
-                <c:if test="${markerExpression.geoLink !=null}">
+                <c:if test="${(markerExpression.geoLink !=null) or (markerExpression.expressionAtlasLink.link != null)}">
                     <tr>
                         <td class="data-label"><b>High Throughput Expression:</b></td>
                         <td align="left">
                             ${markerExpression.geoLink}
-                                <c:if test="${markerExpression.expressionAtlasLink.link != null}">, <a href="${markerExpression.expressionAtlasLink.link}">Expression Atlas</a>${markerExpression.expressionAtlasLink.attributionLink}
+                                <c:if test="${markerExpression.expressionAtlasLink.link != null}"> <a href="${markerExpression.expressionAtlasLink.link}">Expression Atlas</a>${markerExpression.expressionAtlasLink.attributionLink}
                                 </c:if>
                         </td>
                     </tr>

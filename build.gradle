@@ -72,7 +72,7 @@ task loadDatabase() {
             commandLine 'dropdb', dbname
         }
         exec { commandLine 'createdb', dbname }
-        exec { commandLine "bash", "-c", "pg_restore -j 4 -d $dbname $unloadPath" }
+        exec { commandLine "bash", "-c", "pg_restore -j 8 -d $dbname $unloadPath" }
         exec { commandLine "bash", "-c", "echo 'vacuum (analyze)' | psql $dbname" }
 
     }

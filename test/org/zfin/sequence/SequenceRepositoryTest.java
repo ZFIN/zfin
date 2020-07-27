@@ -116,7 +116,7 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getReferenceDatabasesWithInternalBlast() {
-        List<ReferenceDatabase> referenceDatabases = RepositoryFactory.getSequenceRepository().getReferenceDatabasesWithInternalBlast();
+        List<ReferenceDatabase> referenceDatabases = getReferenceDatabasesWithInternalBlast();
         assertTrue("should be at least 10 of these things", referenceDatabases.size() > 10);
         for (ReferenceDatabase referenceDatabase : referenceDatabases) {
             assertNotNull("must have blast databases", referenceDatabase.getPrimaryBlastDatabase());
