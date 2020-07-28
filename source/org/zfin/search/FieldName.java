@@ -113,6 +113,7 @@ public enum FieldName {
     MISEXPRESSED_GENE("misexpressed_gene"),
     MOLECULAR_FUNCTION("molecular_function"),
     MOLECULAR_FUNCTION_TF("molecular_function_tf"),
+    MONOGENIC_GENE_ZDB_ID("monogenic_gene_zdb_id"),
     MUTAGEN("mutagen"),
     MUTATION_TYPE("mutation_type"),
     NAME("name","Abbreviation"),

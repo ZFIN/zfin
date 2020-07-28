@@ -541,7 +541,7 @@
 
     <requestHandler name="/phenotype-annotation" class="solr.StandardRequestHandler">
         <lst name="appends">
-            <str name="fq">category:"Phenotype Observation" AND is_monogenic:true</str>
+            <str name="fq">category:"Phenotype Observation" AND is_monogenic:true AND phenotype_statement_tag:abnormal</str>
             <str name="q">*:*</str>
         </lst>
         <lst name="defaults">

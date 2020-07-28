@@ -6176,6 +6176,7 @@ and child.term_ontology = 'disease_ontology';
                             || '|' || pg_end_stg_zdb_id
                             as pgcmid,
                         psg_short_name as phenotype_statement,
+                        psg_tag as phenotype_statement_tag,
                         concat(psg_e1a_zdb_id,',')
                             || concat(psg_e1b_zdb_id,',')
                             || concat(psg_quality_zdb_id,',')
@@ -6315,10 +6316,13 @@ and child.term_ontology = 'disease_ontology';
 
             <entity name="phenotype_observation_is_monogenic"
                     query="select 'true' as is_monogenic,
+                           mfs_mrkr_zdb_id as monogenic_gene_zdb_id,
                            'psg-' || psg_id as psg_id
                            from phenotype_source_generated
                              join phenotype_observation_generated on pg_id = psg_pg_id
-                             join mutant_fast_search on pg_genox_zdb_id = mfs_genox_zdb_id;"
+                             join mutant_fast_search on pg_genox_zdb_id = mfs_genox_zdb_id
+                             join marker on mfs_mrkr_zdb_id = mrkr_zdb_id
+                             where mrkr_type = 'GENE';"
                     cacheImpl="SortedMapBackedCache"
                     where="psg_id=phenotype_observation.id"
             />

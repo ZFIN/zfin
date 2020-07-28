@@ -88,7 +88,7 @@ public class RibbonService {
     public RibbonSummary buildPhenotypeRibbonSummary(String zdbID, boolean excludeEaps) throws Exception {
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/phenotype-annotation");
-        query.addFilterQuery(FieldName.GENE_ZDB_ID.getName() + ":" + zdbID);
+        query.addFilterQuery(FieldName.MONOGENIC_GENE_ZDB_ID.getName() + ":" + zdbID);
         if (excludeEaps) {
             query.addFilterQuery("is_eap:false");
         }
@@ -309,7 +309,7 @@ public class RibbonService {
     public JsonResultResponse<PhenotypeRibbonSummary> buildPhenotypeSummary(String geneID, String termID, Pagination pagination, Boolean isOther, boolean excludeEaps) {
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/phenotype-annotation");
-        query.addFilterQuery("gene_zdb_id:" + geneID);
+        query.addFilterQuery(FieldName.MONOGENIC_GENE_ZDB_ID + ":" + geneID);
         addRibbonTermQuery(query, PHENOTYPE, termID, isOther);
         if (excludeEaps) {
             query.addFilterQuery("is_eap:false");

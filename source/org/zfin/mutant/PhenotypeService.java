@@ -555,7 +555,7 @@ public class PhenotypeService {
 
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/phenotype-annotation");
-        query.addFilterQuery("gene_zdb_id:" + geneId);
+        query.addFilterQuery(FieldName.MONOGENIC_GENE_ZDB_ID + ":" + geneId);
         query.addFilterQuery("has_image:true");
         if (excludeEaps) {
             query.addFilterQuery("is_eap:false");
