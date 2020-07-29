@@ -76,10 +76,22 @@
             <ul class="nav navbar-nav mr-auto" id="curation-tabs" role="tablist">
                 <c:forEach var="curationTab" items="${curationTabs}">
                     <li class="nav-item" role="presentation">
+
+                        <c:if test="${curationTab.displayName ne 'GO' && currentUser.zdbID ne 'ZDB-PERS-050429-23'}">
                         <a href="#${curationTab.value}" aria-controls="${curationTab.value}" role="tab" class="nav-link nav-tabs-loading ${curationTab.value eq currentTab ? 'active' : ''}"
                            onclick="handleTabToggle('${curationTab.value}')" data-toggle="tab" id="${curationTab.value}-tab">
-                                ${curationTab.displayName}
+
+                                 ${curationTab.displayName}
                         </a>
+                        </c:if>
+
+                        <c:if test="${currentUser.zdbID eq 'ZDB-PERS-050429-23'}">
+                        <a href="#${curationTab.value}" aria-controls="${curationTab.value}" role="tab" class="nav-link nav-tabs-loading ${curationTab.value eq currentTab ? 'active' : ''}"
+                           onclick="handleTabToggle('${curationTab.value}')" data-toggle="tab" id="${curationTab.value}-tab">
+
+                            ${curationTab.displayName}
+                        </a>
+                        </c:if>
                     </li>
                 </c:forEach>
                 <li class="nav-item">
