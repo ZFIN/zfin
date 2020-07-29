@@ -63,6 +63,7 @@ create temporary table tmp_go (mv_zdb_id text,
 			 mv_ev_code text,
 			 if_from text,
 			 mv_flag text,
+			 mv_qualifier text,
 			 t_ont text,
 			 mv_date_modified timestamp without time zone,
 			 mv_created_by text,
@@ -81,6 +82,7 @@ insert into tmp_go (mv_zdb_id,
        mv_ev_code,
        if_from,
        mv_flag,
+       mv_qualifier,
        t_ont,
        mv_date_modified,
        mv_created_by,
@@ -89,14 +91,15 @@ insert into tmp_go (mv_zdb_id,
        geneproduct_id,doi_id,goref_id
 )
 select mrkrgoev_zdb_id,
-				mrkr_zdb_id, mrkr_abbrev, mrkr_name, term_ont_id, mrkrgoev_source_zdb_id,
+				mrkr_zdb_id, mrkr_abbrev, mrkr_name, a.term_ont_id, mrkrgoev_source_zdb_id,
 				accession_no, mrkrgoev_evidence_code, infgrmem_inferred_from, mrkrgoev_gflag_name,
-				upper(substring(term_ontology from 1 for 1)), mrkrgoev_date_modified, 
+				b.term_name,upper(substring(a.term_ontology from 1 for 1)), mrkrgoev_date_modified,
                                 mrkrgoev_annotation_organization_created_by,goid3tmp,lower(szm_term_name),proteinid,pub_doi,pub_goref_id
 			   from marker_go_term_evidence
 
 			   join marker on mrkrgoev_mrkr_zdb_id = mrkr_zdb_id
-			   join term on mrkrgoev_term_zdb_id = term_zdb_id
+			   join term a on mrkrgoev_term_zdb_id = a.term_zdb_id
+			   join term b on mrkrgoev_relation_term_zdb_id = b.term_zdb_id
 			   join publication on mrkrgoev_source_zdb_id  = zdb_id
 			   join so_zfin_mapping on mrkr_type = szm_object_type
 		           full outer join inference_group_member on mrkrgoev_zdb_id = infgrmem_mrkrgoev_zdb_id

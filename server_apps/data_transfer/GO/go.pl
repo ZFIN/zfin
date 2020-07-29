@@ -76,6 +76,34 @@ try {
   warn "Failed at gzip gene_association.zfin - $_";
   exit -1;
 };
+try {
+  ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f gofile.sql");
+} catch {
+  warn "Failed at gofile.sql - $_";
+  exit -1;
+};
+
+try {
+  ZFINPerlModules->doSystemCommand("./goparser2.2.pl");
+} catch {
+  warn "Failed at goparser2.2.pl - $_";
+  exit -1;
+};
+
+try {
+  ZFINPerlModules->doSystemCommand("/bin/rm -f gene_association2.2.zfin.gz");
+} catch {
+  warn "Failed at rm -f gene_association2.2.zfin.gz - $_";
+  exit -1;
+};
+
+try {
+  ZFINPerlModules->doSystemCommand("/local/bin/gzip gene_association2.2.zfin");
+} catch {
+  warn "Failed at gzip gene_association2.2.zfin - $_";
+  exit -1;
+};
+
 
 exit;
 

@@ -69,18 +69,18 @@ while ($line = <INDEXFILE>) {
       $mrkrname=$fields[3];
       $qualifier=goQlf($fields[9]);
       $goid=$fields[4];
-      $pubid=goPub($fields[5],$fields[6],$fields[17],$fields[18]);
+      $pubid=goPub($fields[5],$fields[6],$fields[18],$fields[19]);
       $evidence=$fields[7];
       $inf=goInf($fields[8]);
       push(@inf_array, $inf);
-      $go_o=goAspect($fields[10]);
-      $ev_date=goDate($fields[11]);
-      $mod_by=goMod($fields[12]);
-      $aliases=$fields[13];
-      $relation=$fields[14];
-      $proteinid=$fields[16];
-      $pubdoi=$fields[17];
-      $pubgoref=$fields[18];
+      $go_o=goAspect($fields[11]);
+      $ev_date=goDate($fields[12]);
+      $mod_by=goMod($fields[13]);
+      $aliases=$fields[14];
+      $relation=$fields[15];
+      $proteinid=$fields[17];
+      $pubdoi=$fields[18];
+      $pubgoref=$fields[19];
 
 
 
