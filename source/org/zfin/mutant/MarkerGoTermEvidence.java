@@ -24,8 +24,18 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
     // this may need to be moved to its own
     private GoEvidenceCode evidenceCode;
     private GoEvidenceQualifier flag;
+
+    public GenericTerm getQualifierRelation() {
+        return qualifierRelation;
+    }
+
+    public void setQualifierRelation(GenericTerm qualifierRelation) {
+        this.qualifierRelation = qualifierRelation;
+    }
+
     private Publication source;
     private GenericTerm goTerm;
+    private GenericTerm qualifierRelation;
     private String note;
     private Set<InferenceGroupMember> inferredFrom;
     private Set<MarkerGoTermAnnotationExtnGroup> goTermAnnotationExtnGroup;
@@ -231,6 +241,7 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
         if (!marker.equals(that.marker)) return false;
         if (!source.equals(that.source)) return false;
         if (flag != that.flag) return false;
+        if (qualifierRelation != that.qualifierRelation) return false;
         if (geneProductFormID != that.geneProductFormID) return false;
         if (inferredFrom != null ? !this.containsAllInferences(that) : that.inferredFrom != null) return false;
         if ((CollectionUtils.isNotEmpty(goTermAnnotationExtnGroup) && CollectionUtils.isEmpty(that.getAnnotationExtensions())) ||
@@ -260,6 +271,7 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
 
         if (evidenceCode != null ? !evidenceCode.equals(that.evidenceCode) : that.evidenceCode != null) return false;
         if (flag != that.flag) return false;
+        if (qualifierRelation != that.qualifierRelation) return false;
 //        if (goTerm != null ? !goTerm.getZdbID().equals(that.goTerm.getZdbID()) : that.goTerm != null) return false;
         if (goTerm != null ? !goTerm.equals(that.goTerm) : that.goTerm != null) return false;
         if (marker != null ? !marker.equals(that.marker) : that.marker != null) return false;
@@ -278,6 +290,7 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
         result = 31 * result + (marker != null ? marker.hashCode() : 0);
         result = 31 * result + (evidenceCode != null ? evidenceCode.hashCode() : 0);
         result = 31 * result + (flag != null ? flag.hashCode() : 0);
+        result = 31 * result + (qualifierRelation != null ? qualifierRelation.hashCode() : 0);
         result = 31 * result + (source != null ? source.hashCode() : 0);
         result = 31 * result + (geneProductFormID != null ? geneProductFormID.hashCode() : 0);
         result = 31 * result + (goTerm != null ? goTerm.hashCode() : 0);
@@ -416,6 +429,7 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
         sb.append(", marker='").append(marker.getAbbreviation()).append('\'');
         sb.append(", evidenceCode='").append(evidenceCode.getName()).append('\'');
         sb.append(", flag='").append((flag != null ? flag.name() : "null ")).append('\'');
+        sb.append(", qualifierRelation='").append((qualifierRelation != null ? qualifierRelation : "null ")).append('\'');
         sb.append(", source='").append(source.getZdbID()).append('\'');
         sb.append(", goTerm='").append(goTerm.getTermName()).append('\'');
         sb.append(", note='").append(note).append('\'');

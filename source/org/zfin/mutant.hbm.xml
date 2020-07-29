@@ -145,6 +145,7 @@
         </set>
 
         <property name="flag" column="mrkrgoev_gflag_name" not-null="false" type="goFlag"/>
+        <many-to-one name="qualifierRelation" column="mrkrgoev_relation_term_zdb_id" not-null="true"/>
         <many-to-one name="geneProductFormID"  column="mrkrgoev_protein_dblink_zdb_id"/>
 
         <set name="inferredFrom" lazy="false" inverse="true">
