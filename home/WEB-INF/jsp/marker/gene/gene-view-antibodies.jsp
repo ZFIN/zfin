@@ -3,13 +3,14 @@
 <z:dataTable collapse="true" hasData="${!empty formBean.antibodyBeans}">
     <thead>
         <tr>
-            <th style="width: 17%">Name</th>
-            <th style="width: 17%">Type</th>
-            <th style="width: 10%">Isotype</th>
-            <th style="width: 17%">Host Organism</th>
-            <th style="width: 17%">Assay <a class="popup-link info-popup-link" href="/ZFIN/help_files/antibody_assay_help.html"></a></th>
-            <th style="width: 17%">Source</th>
-            <th style="width: 5%">Citations</th>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Antigen Genes</th>
+            <th>Isotype</th>
+            <th>Host Organism</th>
+            <th>Assay <a class="popup-link info-popup-link" href="/ZFIN/help_files/antibody_assay_help.html"></a></th>
+            <th>Source</th>
+            <th>Citations</th>
         </tr>
     </thead>
     <tbody>
@@ -18,6 +19,13 @@
             <tr>
                 <td><zfin:link entity="${antibody}"/></td>
                 <td>${antibody.clonalType}</td>
+                <td>
+                    <ul class="comma-separated">
+                        <c:forEach var="gene" items="${antibodyBean.antigenGenes}">
+                                <li><zfin:link entity="${gene}"/></li>
+                        </c:forEach>
+                    </ul>
+                </td>
                 <td>
                         ${antibody.heavyChainIsotype}
                     <c:if test="${antibody.heavyChainIsotype != null && antibody.lightChainIsotype != null}">, </c:if>

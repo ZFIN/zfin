@@ -233,6 +233,8 @@ public class GeneViewController {
                         AntibodyMarkerBean antibodyBean = new AntibodyMarkerBean();
                         antibodyBean.setAntibody(antibody);
                         antibodyBean.setNumPubs(RepositoryFactory.getPublicationRepository().getNumberDirectPublications(antibody.getZdbID()));
+                        antibodyBean.setAntigenGenes( markerRepository.getRelatedMarkerDisplayForTypes(
+                                antibody, false, MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY));
                         return antibodyBean;
                     })
                     .collect(Collectors.toList());
