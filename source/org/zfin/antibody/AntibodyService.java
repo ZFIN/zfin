@@ -24,9 +24,6 @@ import org.zfin.util.MatchType;
 import org.zfin.util.MatchingService;
 
 import java.util.*;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.groupingBy;
 
 /**
  * Class that contains various methods retrieving aggregated info from
@@ -57,12 +54,11 @@ public class AntibodyService {
      * @return ist of distinct and sorted AO terms.
      */
 
-    public String getRegistryID() {
-        Marker abMrkr = RepositoryFactory.getMarkerRepository().getMarkerByID(antibody.getZdbID());
+    public String getRegistryID(){
+        Marker abMrkr=RepositoryFactory.getMarkerRepository().getMarkerByID(antibody.getZdbID());
         return RepositoryFactory.getMarkerRepository().getABRegID(abMrkr.zdbID);
 
     }
-
     public List<Term> getDistinctAnatomyTerms() {
         List<Term> distinctAoTerms = new ArrayList<>();
         Set<ExpressionExperiment> labelings = antibody.getAntibodyLabelings();
@@ -319,7 +315,7 @@ public class AntibodyService {
         }
     }
 
-    protected void addMatchOnAntibody() {
+    protected void     addMatchOnAntibody() {
 
         if (StringUtils.isEmpty(antibodySearchCriteria.getName())) {
             return;
@@ -572,6 +568,120 @@ public class AntibodyService {
         }
     }
 
+    public List<AnatomyLabel> getAntibodyDetailedLabelings() {
+        // a map of AOname-CCname-startStageName-EndStageNames as keys and display objects as values
+        Map<String, AnatomyLabel> map = new HashMap<>();
+
+        // get a set of ExpressionExperiment objects associated with the antibody
+        Set<ExpressionExperiment> experiments = antibody.getAntibodyLabelings();
+
+        // loop thru the set of ExpressionExperiment objects to get the related data
+        for (ExpressionExperiment exp : experiments) {
+            // need to get a Genotype object to check for wildtype; do nothing if not wildtype
+            Genotype geno = exp.getFishExperiment().getFish().getGenotype();
+
+            if (geno.isWildtype() && exp.getFishExperiment().isStandardOrGenericControl()) {
+                ExpressionAssay assay = exp.getAssay();
+                Marker gene = exp.getGene();
+
+                // get a set of ExpressionResult objects
+                Set<ExpressionResult> results = exp.getExpressionResults();
+
+                // loop through the set of ExpressionResult objects to get the related data
+                for (ExpressionResult result : results) {
+                    if (result.isExpressionFound()) {
+
+                        Term subterm = result.getSubTerm();
+                        Term superterm = result.getSuperTerm();
+
+                        DevelopmentStage startStage = result.getStartStage();
+                        String startStageName;
+
+                        if (startStage == null) {
+                            startStageName = "";
+                        } else {
+                            startStageName = startStage.getName();
+                        }
+
+                        DevelopmentStage endStage = result.getEndStage();
+                        String endStageName;
+                        if (endStage == null) {
+                            endStageName = "";
+                        } else {
+                            endStageName = endStage.getName();
+                        }
+
+                        // form the key
+                        String key = superterm.getZdbID() + startStageName + endStageName;
+                        if (subterm != null) {
+                            key += subterm.getZdbID();
+                        }
+
+                        AnatomyLabel labeling;
+
+                        // if the key is not in the map, instantiate a display (AnatomyLabel) object and add it to the map
+                        // otherwise, just get the display object from the map
+                        if (!map.containsKey(key)) {
+                            labeling = new AnatomyLabel(result);
+                            map.put(key, labeling);
+                        } else {
+                            labeling = map.get(key);
+                        }
+
+                        if (labeling.getAssays() == null) {
+                            SortedSet<ExpressionAssay> assays = new TreeSet<>();
+                            labeling.setAssays(assays);
+                        }
+
+                        if (assay != null) {
+                            labeling.getAssays().add(assay);
+                        }
+
+                        if (labeling.getGenes() == null) {
+                            SortedSet<Marker> genes = new TreeSet<>();
+                            labeling.setGenes(genes);
+                        }
+
+                        if (gene != null) {
+                            labeling.getGenes().add(gene);
+                        }
+
+                        // get the figures associated
+                        Set<Figure> figures = result.getFigures();
+
+                        if (figures != null && !figures.isEmpty()) {
+                            labeling.getFigures().addAll(figures);
+                        }
+
+                        Publication pub = exp.getPublication();
+                        if (pub != null) {
+                            labeling.getPublications().add(pub);
+                        }
+
+                        Set<Figure> allFigures = labeling.getFigures();
+                        for (Figure fig : allFigures) {
+                            if (fig.getType() == Figure.Type.FIGURE) {
+                                labeling.setNotAllFiguresTextOnly(true);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // use SortedSet to hold the values of the map so that the data could be displayed in order
+        List<AnatomyLabel> labelingDisplays = new ArrayList<>();
+
+        if (map.values().size() > 0) {
+            labelingDisplays.addAll(map.values());
+        }
+        ////ToDo
+        Collections.sort(labelingDisplays, new AntibodyLabelingDetailComparator());
+
+        return labelingDisplays;
+    }
+
     public ExpressionSummaryCriteria createExpressionSummaryCriteria(GenericTerm superterm, GenericTerm subterm, DevelopmentStage startStage, DevelopmentStage endStage, boolean withImgOnly) {
         ExpressionSummaryCriteria criteria = new ExpressionSummaryCriteria();
 
@@ -650,78 +760,4 @@ public class AntibodyService {
     public void setFigureSummary(List<FigureSummaryDisplay> figureSummary) {
         this.figureSummary = figureSummary;
     }
-
-    public List<AnatomyLabel> getAntibodyDetailedLabelings() {
-        Set<ExpressionExperiment> experiments = antibody.getAntibodyLabelings();
-
-        // collect all ExpressionResults into one list
-        List<ExpressionResult> allExpressionResults = experiments.stream()
-                .filter(exp -> exp.getFishExperiment().isStandardOrGenericControl() && exp.getFishExperiment().getFish().isWildtype())
-                .map(exp -> exp.getExpressionResults().stream()
-                        .filter(ExpressionResult::isExpressionFound)
-                        .collect(Collectors.toList()))
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
-
-        // group expression results by superterm/startStage/endStage
-        Map<GenericTerm, Map<DevelopmentStage, Map<DevelopmentStage, List<ExpressionResult>>>> groupBySuperTermOnly =
-                allExpressionResults
-                        .stream()
-                        .filter(ExpressionResult::isExpressionFound)
-                        .collect(groupingBy(ExpressionResult::getSuperTerm,
-                                groupingBy(ExpressionResult::getStartStage,
-                                        groupingBy(ExpressionResult::getEndStage))));
-
-        List<AnatomyLabel> labels = new ArrayList<>();
-
-        groupBySuperTermOnly.forEach((superTerm, startStageMapMap) -> startStageMapMap.forEach((startStage, endStageListMap) -> {
-            endStageListMap.forEach((developmentStage, expressionResults) -> {
-                final AnatomyLabel anatomyLabel = populateLabels(expressionResults, true);
-                if (anatomyLabel != null)
-                    labels.add(anatomyLabel);
-            });
-        }));
-
-        labels.sort(new AntibodyLabelingDetailComparator());
-        return labels;
-    }
-
-    private static AnatomyLabel populateLabels(List<ExpressionResult> expressionResults, boolean isSuperTerms) {
-        AnatomyLabel labeling;
-        ExpressionResult firstResult = expressionResults.get(0);
-        if (isSuperTerms) {
-            // get a pure superTerm
-            ExpressionResult result = expressionResults.stream().filter(expressionResult -> expressionResult.getSubTerm() == null).findFirst().orElse(null);
-            if (result == null) {
-                result = new ExpressionResult();
-                result.setSuperTerm(firstResult.getSuperTerm());
-                result.setExpressionFound(firstResult.isExpressionFound());
-                result.setExpressionExperiment(firstResult.getExpressionExperiment());
-                result.setStartStage(firstResult.getStartStage());
-                result.setEndStage(firstResult.getEndStage());
-            }
-            labeling = new AnatomyLabel(result);
-
-        } else {
-            labeling = new AnatomyLabel(firstResult);
-        }
-
-        expressionResults.forEach(result -> {
-            labeling.addPublication(result.getExpressionExperiment().getPublication());
-            labeling.addFigures(result.getFigures());
-            labeling.addAssay(result.getExpressionExperiment().getAssay());
-            labeling.addGene(result.getExpressionExperiment().getGene());
-        });
-        Set<Figure> allFigures = labeling.getFigures();
-        for (Figure fig : allFigures) {
-            if (fig.getType() == Figure.Type.FIGURE) {
-                labeling.setNotAllFiguresTextOnly(true);
-                break;
-            }
-        }
-        return labeling;
-    }
-
-
 }
-

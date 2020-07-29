@@ -24,12 +24,14 @@ import org.zfin.framework.api.RibbonType;
 import org.zfin.gwt.root.dto.ExpressionPhenotypeExperimentDTO;
 import org.zfin.gwt.root.dto.ExpressionPhenotypeStatementDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
+import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Clone;
 import org.zfin.marker.ExpressedGene;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.LinkDisplay;
+import org.zfin.marker.presentation.MarkerReferenceBean;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.ontology.GenericTerm;
@@ -45,13 +47,15 @@ import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.util.ExpressionResultSplitStatement;
 import org.zfin.util.TermFigureStageRange;
 import org.zfin.util.TermStageSplitStatement;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.io.UnsupportedEncodingException;
 
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.zfin.repository.RepositoryFactory.getExpressionRepository;
-import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 /**
  * Service Class that deals with Marker related logic.
@@ -216,18 +220,42 @@ public class ExpressionService {
     }
 
     public LinkDisplay getExpressionAtlasForMarker(String mrkrZdbID, ForeignDB.AvailableName foreignDBName) {
-        DBLink gxaLink;
-        gxaLink = sequenceRepository.getAtlasDBLink(mrkrZdbID, foreignDBName.toString());
-        LOG.debug("gxaLink" + gxaLink);
-        if (gxaLink == null) {
-            return null;
-        } else {
-            List<LinkDisplay> linkDisplays = markerRepository.getMarkerLinkDisplay(gxaLink.getZdbID());
-            if (linkDisplays.size() > 1) {
-                LOG.error("too many LinkDisplays returned for " + gxaLink.getZdbID());
+        LinkDisplay gxaLinkDisplay = new LinkDisplay();
+        List<DBLink> gxaLinks = sequenceRepository.getAtlasDBLink(mrkrZdbID, foreignDBName.toString());
+        String accNumString = new String();
+        String linkPrefix = "[{";
+        String linkSuffix = "]";
+
+        int counter = 0;
+        for (DBLink gxaDBLink : gxaLinks) {
+            counter++;
+            if (gxaLinks.size() > 0) {
+                accNumString = accNumString + "\"" + "value\":\"" + gxaDBLink.getAccessionNumber() + "\"}";
+                if (counter < gxaLinks.size()) {
+                    accNumString = accNumString + ",{";
+                }
             }
-            return linkDisplays.get(0);
         }
+
+        try {
+            String accessionNumber = URLEncoder.encode(linkPrefix + accNumString, StandardCharsets.UTF_8.toString());
+            gxaLinkDisplay.setAccession(accessionNumber);
+        }
+        catch (UnsupportedEncodingException ex) {
+            throw new RuntimeException(ex.getCause());
+        }
+        gxaLinkDisplay.setMarkerZdbID(mrkrZdbID);
+        gxaLinkDisplay.setReferenceDatabaseName("ExpressionAtlas");
+        Set<MarkerReferenceBean> gxaReferences = new HashSet<>();
+        MarkerReferenceBean gxaReference = new MarkerReferenceBean();
+        gxaReference.setZdbID("ZDB-PUB-200103-6");
+        gxaLinkDisplay.setUrlPrefix(sequenceRepository.getReferenceDatabaseByID("ZDB-FDBCONT-200123-1").getBaseURL());
+        gxaLinkDisplay.setUrlSuffix(linkSuffix);
+        Publication gxaPub = getPublicationRepository().getPublication("ZDB-PUB-200103-6");
+        gxaReference.setTitle(gxaPub.getTitle());
+        gxaReferences.add(gxaReference);
+        gxaLinkDisplay.setReferences(gxaReferences);
+        return gxaLinkDisplay;
     }
 
     public String getGeoLinkForMarkerIfExists(Marker marker) {
@@ -257,12 +285,14 @@ public class ExpressionService {
         logger.debug(ForeignDB.AvailableName.EXPRESSIONATLAS);
 
         LinkDisplay atlasLink = getExpressionAtlasForMarker(marker.getZdbID(), ForeignDB.AvailableName.EXPRESSIONATLAS);
-        logger.debug("got the newLink");
+        System.out.println(atlasLink.getLink());
         if (atlasLink != null) {
-            markerExpression.setExpressionAtlasLink(getExpressionAtlasForMarker(marker.getZdbID(), ForeignDB.AvailableName.EXPRESSIONATLAS));
+            markerExpression.setExpressionAtlasLink(atlasLink);
+            System.out.println(atlasLink.getLink());
+            logger.debug(atlasLink.getLink());
         }
-        logger.info("executed expression atlas link");
-        logger.info(markerExpression.getExpressionAtlasLink());
+        logger.debug("executed expression atlas link");
+        logger.debug(markerExpression.getExpressionAtlasLink());
 
         // all expression
         MarkerExpressionInstance allMarkerExpressionInstance = new MarkerExpressionInstance();

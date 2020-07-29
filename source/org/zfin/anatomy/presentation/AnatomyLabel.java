@@ -1,6 +1,7 @@
 package org.zfin.anatomy.presentation;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.ExpressionAssay;
@@ -17,6 +18,7 @@ import java.text.ChoiceFormat;
 import java.util.*;
 
 @Getter
+@Setter
 public class AnatomyLabel implements Comparable<AnatomyLabel> {
 
     private ExpressionResult expressionResult;
