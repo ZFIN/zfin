@@ -319,6 +319,9 @@ public class GafService {
         GoEvidenceQualifier goEvidenceQualifier = getQualifier(gafEntry, goTerm);
         markerGoTermEvidenceToAdd.setFlag(goEvidenceQualifier);
 
+        GenericTerm relTerm=getRelQualifier(gafEntry, goTerm);
+        markerGoTermEvidenceToAdd.setQualifierRelation(relTerm);
+
         // validate evidence code
         GoEvidenceCode goEvidenceCode = markerGoTermEvidenceRepository.getGoEvidenceCode(gafEntry.getEvidenceCode());
         if (goEvidenceCode == null) {
@@ -506,7 +509,7 @@ public class GafService {
     protected GoEvidenceQualifier getQualifier(GafEntry gafEntry, GenericTerm goTerm) throws GafValidationError {
         if (!gafEntry.getQualifier().isEmpty()) {
             // they use "contributes_to" and "NOT"
-            if (gafEntry.getQualifier().equals("NOT")) {
+            if (gafEntry.getQualifier().contains("NOT")) {
                 return GoEvidenceQualifier.NOT;
             } else if (gafEntry.getQualifier().equals("contributes_to")) {
                 return GoEvidenceQualifier.CONTRIBUTES_TO;
@@ -523,6 +526,44 @@ public class GafService {
             return null;
         }
     }
+
+
+    protected GenericTerm getRelQualifier(GafEntry gafEntry, GenericTerm goTerm) throws GafValidationError {
+        List<Ontology> ontologies = new ArrayList<>(2);
+        String relationName;
+        GenericTerm relationTerm;
+        ontologies.add(Ontology.ZFIN_RO);
+        ontologies.add(Ontology.GO_QUALIFIER);
+        if (!gafEntry.getQualifier().isEmpty()) {
+            // they use "contributes_to" and "NOT"
+            if (gafEntry.getQualifier().contains("|")) {
+                int pipeIndex = gafEntry.getQualifier().indexOf("|");
+                relationName = gafEntry.getQualifier().substring(pipeIndex + 1, gafEntry.getQualifier().length());
+            } else {
+                relationName = gafEntry.getQualifier();
+            }
+            if (relationName.equals("contributes_to")){
+                relationName=GoEvidenceQualifier.CONTRIBUTES_TO.toString();
+            }
+            if (relationName.equals("colocalizes_with")){
+                relationName=GoEvidenceQualifier.COLOCALIZES_WITH.toString();
+            }
+            if (relationName.contains("RO:")||relationName.contains("BFO:")){
+                 relationTerm = RepositoryFactory.getOntologyRepository().getTermByOboID(relationName);
+            }
+            else {
+                 relationTerm = RepositoryFactory.getOntologyRepository().getTermByName(relationName, ontologies);
+            }
+            if (relationTerm == null) {
+                throw new GafValidationError("RO term  " + relationName + " does not exist", gafEntry);
+            } else {
+                return relationTerm;
+            }
+        } else {
+            return null;
+        }
+    }
+
 
     protected Publication getPublication(GafEntry gafEntry) throws GafValidationError {
         String pubMedID = gafEntry.getPubmedId();

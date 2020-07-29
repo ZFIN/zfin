@@ -102,8 +102,8 @@ public class GpadParser extends FpInferenceGafParser {
 
             // fixed set of qualifiers
             // if thw incoming one is not one of them discard the value
-            if (!Qualifier.exists(gafEntry.getQualifier()))
-                gafEntry.setQualifier("");
+           /* if (!Qualifier.exists(gafEntry.getQualifier()))
+                gafEntry.setQualifier("");*/
         });
     }
 
