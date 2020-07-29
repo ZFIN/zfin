@@ -210,6 +210,12 @@ public enum OntologyDTO implements IsSerializable {
             return null;
         }
     },
+    OBI(25,"Ontology for Biomedical Investigations", "obi",false){
+        @Override
+        public OntologyDTO getAssociatedQualityOntology() {
+            return null;
+        }
+    },
             ;
 
     private int index;
