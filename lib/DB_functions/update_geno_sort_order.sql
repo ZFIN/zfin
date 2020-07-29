@@ -1,5 +1,5 @@
 create or replace function update_geno_sort_order (genoZdbId text)
-  returns text as $complexitySortValue$ 
+  returns int as $complexitySortValue$ 
   
   declare featureId  feature.feature_zdb_id%TYPE; 
    	  complexitySortValue  feature_type_ordering.fto_priority%TYPE;
