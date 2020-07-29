@@ -1758,6 +1758,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "and fe.genox_is_std_or_generic_control='t' " +
                 "and er.xpatres_expression_found='t' " +
                 "and g.geno_is_wildtype='t' " +
+                "and fish.fish_is_wildtype = 't'" +
                 "and (exists (select 'x' from clone where ee.xpatex_probe_feature_zdb_id = clone_mrkr_zdb_id  " +
                 "and (clone_problem_type !='Chimeric' or clone_problem_type is null)) " +
                 "or ee.xpatex_probe_feature_Zdb_id is null)";

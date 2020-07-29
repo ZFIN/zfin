@@ -8,7 +8,9 @@ insert into regen_ce_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
     where rggz_genox_zdb_id = genox_zdb_id
     and genox_fish_Zdb_id = fish_zdb_id
     and fish_is_wildtype = 't'
-    and rggz_mrkr_Zdb_id like 'ZDB-GENE%';
+    and rggz_mrkr_Zdb_id like 'ZDB-GENE%'
+    and not exists (Select 'x' from fish_str where fishstr_fish_zdb_id = genox_fish_zdb_id)
+    ;
 
 insert into regen_ce_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
   select distinct rggz_mrkr_zdb_id, rggz_genox_zdb_id
