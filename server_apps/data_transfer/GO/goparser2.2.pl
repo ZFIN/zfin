@@ -10,15 +10,16 @@
 ## system("/local/bin/wget $url -O gaf_from_go.gz");
 
 ## system("/local/bin/gunzip gaf_from_go.gz");
+## system("/local/bin/cp gene_association.zfin gene_association2.2.zfin");
+## system("/local/bin/cp gene_association.zfin.gz gene_association2.2.zfin.gz");
+## system("/local/bin/gunzip gene_association2.2.zfin.gz");
 
-system("/local/bin/gunzip gene_association2.2.zfin.gz");
-
-open (OLDGAF1, "gene_association2.2.zfin") or die "Cannot open gene_association2.2.zfin : $!\n";
-while ($line = <OLDGAF1>) {
-   $gaf_version = $line if $line =~ m/!gaf-version/;
-   $versionNumber = $1 if $line =~ m/!Version:\s+([0123456789\.]+)/;
-}
-close OLDGAF1;
+## open (OLDGAF1, "gene_association2.2.zfin") or die "Cannot open gene_association2.2.zfin : $!\n";
+## while ($line = <OLDGAF1>) {
+##    $gaf_version = $line if $line =~ m/!gaf-version/;
+##    $versionNumber = $1 if $line =~ m/!Version:\s+([0123456789\.]+)/;
+## }
+## close OLDGAF1;
 
 system("/bin/rm -f gene_association2.2.zfin");
 
@@ -41,7 +42,7 @@ $db='ZFIN';
 
 open (INDEXFILE1, "go.zfin") or die "open failed";
 while ($line = <INDEXFILE1>) {
-      print "here";
+
       chomp $line;
       @fields = split /\t/, $line;
       $mrkrgoev=$fields[0];
