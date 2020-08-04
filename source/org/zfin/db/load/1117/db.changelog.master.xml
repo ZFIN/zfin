@@ -6,5 +6,5 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
     <include file="source/org/zfin/db/load/1117/add_relation_to_qualifier_go.sql"/>
     <include file="source/org/zfin/db/load/1117/drop_function.sql"/>
-    <include file="source/org/zfin/db/load/1117/genotype_components.sql"/>
+
 </databaseChangeLog>
