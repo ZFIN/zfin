@@ -8,6 +8,7 @@ $single-line-height: $line-height-base * $font-size-base;
 
 body.data-page {
     background: $grey-light !important;
+    position: relative;
 
     main {
         margin: -10px 0 0 0;
@@ -20,6 +21,7 @@ body.data-page {
     background: white;
     z-index: 1;
     box-shadow: $shadow;
+    overflow-anchor: none;
 
     .nav {
         position: -webkit-sticky;
