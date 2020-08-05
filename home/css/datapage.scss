@@ -204,6 +204,17 @@ tr.spaceUnder > td{
     height: 190px;
 }
 
+.ontology-ribbon__block__title {
+    transform-origin: -8px -4px;
+}
+
+.ontology-ribbon__block__title:hover {
+    transform-origin: -8px -4px;
+    transform: rotate(-45deg);
+    cursor: default;
+    font-weight: bold;
+}
+
 .ontology-ribbon__block__tile {
     display: inline-flex;
     align-items: center;
