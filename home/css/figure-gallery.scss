@@ -1,3 +1,5 @@
+@import "theme";
+
 #imagebox_maxnote {
     font-size: .7em;
 }
@@ -87,7 +89,9 @@ $figure-gallery-image-margin: 0.5rem;
 .figure-gallery-image {
     height: $figure-gallery-image-height;
     display: inline-block;
-    margin: 0 $figure-gallery-image-margin $figure-gallery-image-margin 0;
-    border: 1px solid black;
+    margin: 0 $figure-gallery-image-margin*2 $figure-gallery-image-margin 0;
+    padding: 0.25rem;
+    border: 1px solid $border-color;
     cursor: pointer;
+    box-shadow: $shadow;
 }
