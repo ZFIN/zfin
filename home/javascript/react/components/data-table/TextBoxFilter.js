@@ -17,12 +17,6 @@ const TextBoxFilter = ({value, onChange, placeholder}) => {
                 value={inputValue || ''}
                 onChange={event => setInputValue(event.target.value)}
             />
-            <button
-                className='input-overlay-button p-1'
-                onClick={() => setInputValue('')}
-            >
-                <i className='fas fa-times' />
-            </button>
         </div>
     )
 };
