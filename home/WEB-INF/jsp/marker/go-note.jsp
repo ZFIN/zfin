@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <div class="popup-header">
-    Gene Ontology Note
+    Gene Ontology
 </div>
 <div class="popup-body">
     Gene Ontology (GO) terms are derived from dynamic controlled vocabularies, or ontologies, produced by the <a href="www.geneontology.org">Gene Ontology Consortium</a>
