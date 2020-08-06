@@ -85,7 +85,7 @@ public class EfgViewController {
                         antibodyBean.setAntigenGenes( markerRepository.getRelatedMarkerDisplayForTypes(
                                 antibody, false, MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY));
                         return antibodyBean;
-                        
+
                     })
                     .collect(Collectors.toList());
             markerBean.setAntibodyBeans(beans);
