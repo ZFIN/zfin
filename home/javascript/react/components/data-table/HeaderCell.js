@@ -12,7 +12,7 @@ const HeaderCell = ({column, filterValue, onFilterChange}) => {
         }
         onFilterChange(column.filterName, newValue);
     }
-    const filterText = 'filter'
+    const filterText = 'enter keyword'
     const toggleFilter = () => setFilterOpen(prev => !prev);
 
     return (
