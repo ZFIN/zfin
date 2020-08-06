@@ -6089,6 +6089,7 @@ and child.term_ontology = 'disease_ontology';
                        else img_image end as image,
                        img_thumbnail as thumbnail,
                        img_zdb_id,
+                       get_expression_image_sort_order(img_zdb_id) as expression_image_sort,
                        'true' as has_image,
                        'xpatres-' || xpatres_pk_id as id
                        from expression_experiment2

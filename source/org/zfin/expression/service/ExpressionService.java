@@ -6,8 +6,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.util.NamedList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.anatomy.DevelopmentStage;
@@ -24,7 +24,6 @@ import org.zfin.framework.api.RibbonType;
 import org.zfin.gwt.root.dto.ExpressionPhenotypeExperimentDTO;
 import org.zfin.gwt.root.dto.ExpressionPhenotypeStatementDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
-import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Clone;
@@ -38,7 +37,6 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.service.RibbonService;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.search.FieldName;
 import org.zfin.search.service.SolrService;
 import org.zfin.sequence.DBLink;
 import org.zfin.sequence.ForeignDB;
@@ -47,11 +45,11 @@ import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.util.ExpressionResultSplitStatement;
 import org.zfin.util.TermFigureStageRange;
 import org.zfin.util.TermStageSplitStatement;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.io.UnsupportedEncodingException;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -949,20 +947,32 @@ public class ExpressionService {
         }
         addReporterFilter(query, includeReporter);
         addDirectSubmissionFilter(query, onlyDirectlySubmitted);
-        String imageFieldName = FieldName.IMG_ZDB_ID.getName();
-        query.addFacetField(imageFieldName);
-        query.setParam("facet.limit", Integer.toString(pagination.getLimit()));
-        query.setParam("facet.offset", Integer.toString(pagination.getStart()));
-        query.setGetFieldStatistics("{!countDistinct=true}" + imageFieldName);
+
+        String jsonFacet = "{" +
+            "  images: {" +
+            "    terms: {" +
+            "      field: img_zdb_id," +
+            "      limit: " + pagination.getLimit() + "," +
+            "      offset: " + pagination.getStart() + "," +
+            "      numBuckets: true," +
+            "      sort: \"img_order desc\"," +
+            "      facet : {" +
+            "        img_order: \"max(expression_image_sort)\"" +
+            "      }" +
+            "    }" +
+            "  }" +
+            "}";
+        query.set("json.facet", jsonFacet);
 
         QueryResponse queryResponse = SolrService.getSolrClient().query(query);
-        List<String> imageIds = queryResponse
-                .getFacetField(imageFieldName)
-                .getValues()
-                .stream()
-                .map(FacetField.Count::getName)
+
+        NamedList<Object> facets = (NamedList<Object>) queryResponse.getResponse().get("facets");
+        NamedList<Object> imagesBucket = (NamedList<Object>) facets.get("images");
+        Integer total = (Integer) imagesBucket.get("numBuckets");
+        List<String> imageIds = ((List<NamedList<Object>>) imagesBucket.get("buckets")).stream()
+                .map(bucket -> bucket.get("val").toString())
                 .collect(Collectors.toList());
-        response.setTotal(queryResponse.getFieldStatsInfo().get(imageFieldName).getCountDistinct());
+        response.setTotal(total);
         response.setResults(figureRepository.getImages(imageIds));
 
         return response;

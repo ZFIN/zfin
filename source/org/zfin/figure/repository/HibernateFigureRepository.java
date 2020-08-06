@@ -20,10 +20,8 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.PublicationTrackingStatus;
 import org.zfin.repository.RepositoryFactory;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Calendar.YEAR;
 
@@ -144,9 +142,11 @@ public class HibernateFigureRepository implements FigureRepository {
         if (CollectionUtils.isEmpty(zdbIDs)) {
             return Collections.emptyList();
         }
-        return HibernateUtil.currentSession()
+        return ((List<Image>) HibernateUtil.currentSession()
                 .createCriteria(Image.class)
-                .add(Restrictions.in("zdbID", zdbIDs)).list();
+                .add(Restrictions.in("zdbID", zdbIDs)).list()).stream()
+                .sorted(Comparator.comparing(img -> zdbIDs.indexOf(img.getZdbID())))
+                .collect(Collectors.toList());
     }
 
     public List<Image> getRecentlyCuratedImages() {
