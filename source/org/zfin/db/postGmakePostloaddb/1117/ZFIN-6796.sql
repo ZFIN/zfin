@@ -22,7 +22,8 @@ update withdrawn_data
 
 update zdb_active_data
  set zactvd_zdb_id = replace(zactvd_zdb_id, 'GENE', 'LNCRNAG')
- where zactvd_zdb_id in (('ZDB-GENE-131127-227', 'ZDB-GENE-081104-166', 'ZDB-GENE-091125-1', 'ZDB-GENE-141216-212', 'ZDB-GENE-140804-1'););
+ where zactvd_zdb_id in ('ZDB-GENE-131127-227', 'ZDB-GENE-081104-166', 'ZDB-GENE-091125-1', 'ZDB-GENE-141216-212', 'ZDB-GENE-140804-1');
+
 
 insert into zdb_replaced_data (zrepld_new_zdb_id, zrepld_old_zdb_id)
  values('ZDB-LNCRNAG-131127-227', 'ZDB-GENE-131127-227');
