@@ -9,7 +9,7 @@ const GeneExpressionAnnotationDetailTable = (
     {
         geneId,
         includeReporter,
-        isDirectlySubmitted,
+        onlyInSitu,
         selectedEntity,
         setTableState,
         tableState,
@@ -52,7 +52,7 @@ const GeneExpressionAnnotationDetailTable = (
     const detailTableQuery = {
         supertermId: selectedEntity.superterm.oboID,
         includeReporter: includeReporter,
-        onlyDirectlySubmitted: isDirectlySubmitted,
+        onlyInSitu: onlyInSitu,
     };
     if (selectedEntity.subterm) {
         detailTableQuery.subtermId = selectedEntity.subterm.oboID;
@@ -72,7 +72,7 @@ const GeneExpressionAnnotationDetailTable = (
 GeneExpressionAnnotationDetailTable.propTypes = {
     geneId: PropTypes.string,
     includeReporter: PropTypes.bool,
-    isDirectlySubmitted: PropTypes.bool,
+    onlyInSitu: PropTypes.bool,
     selectedEntity: PropTypes.object,
     setTableState: PropTypes.func,
     tableState: tableStateType,

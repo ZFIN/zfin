@@ -931,7 +931,7 @@ public class ExpressionService {
 
     }
 
-    public JsonResultResponse<Image> getExpressionImages(String geneId, String termId, String supertermId, String subtermId, boolean includeReporter, boolean onlyDirectlySubmitted, boolean isOther, Pagination pagination) throws IOException, SolrServerException {
+    public JsonResultResponse<Image> getExpressionImages(String geneId, String termId, String supertermId, String subtermId, boolean includeReporter, boolean onlyInSitu, boolean isOther, Pagination pagination) throws IOException, SolrServerException {
         JsonResultResponse<Image> response = new JsonResultResponse<>();
 
         SolrQuery query = new SolrQuery();
@@ -946,7 +946,7 @@ public class ExpressionService {
             query.addFilterQuery("subterm_id:" + SolrService.luceneEscape(subtermId));
         }
         addReporterFilter(query, includeReporter);
-        addDirectSubmissionFilter(query, onlyDirectlySubmitted);
+        addInSituFilter(query, onlyInSitu);
 
         String jsonFacet = "{" +
             "  images: {" +
@@ -967,13 +967,18 @@ public class ExpressionService {
         QueryResponse queryResponse = SolrService.getSolrClient().query(query);
 
         NamedList<Object> facets = (NamedList<Object>) queryResponse.getResponse().get("facets");
-        NamedList<Object> imagesBucket = (NamedList<Object>) facets.get("images");
-        Integer total = (Integer) imagesBucket.get("numBuckets");
-        List<String> imageIds = ((List<NamedList<Object>>) imagesBucket.get("buckets")).stream()
-                .map(bucket -> bucket.get("val").toString())
-                .collect(Collectors.toList());
-        response.setTotal(total);
-        response.setResults(figureRepository.getImages(imageIds));
+        NamedList<Object> images = (NamedList<Object>) facets.get("images");
+        if (images == null) {
+            response.setTotal(0);
+            response.setResults(Collections.emptyList());
+        } else {
+            Integer total = (Integer) Optional.of(images.get("numBuckets")).orElse(0);
+            List<String> imageIds = ((List<NamedList<Object>>) images.get("buckets")).stream()
+                    .map(bucket -> bucket.get("val").toString())
+                    .collect(Collectors.toList());
+            response.setTotal(total);
+            response.setResults(figureRepository.getImages(imageIds));
+        }
 
         return response;
     }
@@ -986,9 +991,9 @@ public class ExpressionService {
         }
     }
 
-    public void addDirectSubmissionFilter(SolrQuery query, boolean onlyDirectlySubmitted) {
-        if (onlyDirectlySubmitted) {
-            query.addFilterQuery("is_directly_submitted:true");
+    public void addInSituFilter(SolrQuery query, boolean onlyInSitu) {
+        if (onlyInSitu) {
+            query.addFilterQuery("assay:\"mRNA in situ hybridization\"");
         }
     }
 }

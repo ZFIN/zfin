@@ -27,7 +27,6 @@ import org.zfin.marker.presentation.PhenotypeRibbonSummary;
 import org.zfin.mutant.PhenotypeObservationStatement;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.PostComposedEntity;
-import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -40,7 +39,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.*;
-import static org.zfin.framework.api.RibbonType.*;
+import static org.zfin.framework.api.RibbonType.EXPRESSION;
+import static org.zfin.framework.api.RibbonType.PHENOTYPE;
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
 @Service
@@ -52,9 +52,6 @@ public class RibbonService {
 
     @Autowired
     private ExpressionService expressionService;
-
-    @Autowired
-    private OntologyRepository ontologyRepository;
 
     @Autowired
     private PublicationRepository publicationRepository;
@@ -72,12 +69,12 @@ public class RibbonService {
         ));
     }
 
-    public RibbonSummary buildExpressionRibbonSummary(String zdbID, boolean includeReporter, boolean onlyDirectlySubmitted) throws Exception {
+    public RibbonSummary buildExpressionRibbonSummary(String zdbID, boolean includeReporter, boolean onlyInSitu) throws Exception {
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/expression-annotation");
         query.addFilterQuery(FieldName.GENE_ZDB_ID.getName() + ":" + zdbID);
         expressionService.addReporterFilter(query, includeReporter);
-        expressionService.addDirectSubmissionFilter(query, onlyDirectlySubmitted);
+        expressionService.addInSituFilter(query, onlyInSitu);
         return buildRibbonSummary(zdbID, query, List.of(
                 new RibbonCategoryConfig.Anatomy(),
                 new RibbonCategoryConfig.Stage(),
@@ -267,8 +264,8 @@ public class RibbonService {
         return termCounts;
     }
 
-    public JsonResultResponse<ExpressionDetail> buildExpressionDetail(String geneID, String supertermID, String subtermID, boolean includeReporter, boolean onlyDirectlySubmitted, Pagination pagination) {
-        HashSet<String> expressionIDs = getDetailExpressionInfo(geneID, supertermID, subtermID, includeReporter, onlyDirectlySubmitted);
+    public JsonResultResponse<ExpressionDetail> buildExpressionDetail(String geneID, String supertermID, String subtermID, boolean includeReporter, boolean onlyInSitu, Pagination pagination) {
+        HashSet<String> expressionIDs = getDetailExpressionInfo(geneID, supertermID, subtermID, includeReporter, onlyInSitu);
         if (expressionIDs == null || CollectionUtils.isEmpty(expressionIDs)) {
             return null;
         }
@@ -402,7 +399,7 @@ public class RibbonService {
         return response;
     }
 
-    private HashSet<String> getDetailExpressionInfo(String geneID, String termID, String subtermID, boolean includeReporter, boolean onlyDirectlySubmitted) {
+    private HashSet<String> getDetailExpressionInfo(String geneID, String termID, String subtermID, boolean includeReporter, boolean onlyInSitu) {
 
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/expression-annotation");
@@ -416,7 +413,7 @@ public class RibbonService {
         }
 
         expressionService.addReporterFilter(query, includeReporter);
-        expressionService.addDirectSubmissionFilter(query, onlyDirectlySubmitted);
+        expressionService.addInSituFilter(query, onlyInSitu);
 
         // get Facet for the ao term and the PK of the expression record.
         query.addFacetField("efs_id");
@@ -443,8 +440,8 @@ public class RibbonService {
     }
 
 
-    public List<ExpressionRibbonDetail> buildExpressionRibbonDetail(String geneID, String ribbonTermID, boolean includeReporter, boolean onlyDirectlySubmitted, boolean isOther) {
-        List<ExpressionRibbonDetail> details = getExpressionRibbonDetails(geneID, ribbonTermID, includeReporter, onlyDirectlySubmitted, isOther);
+    public List<ExpressionRibbonDetail> buildExpressionRibbonDetail(String geneID, String ribbonTermID, boolean includeReporter, boolean onlyInSitu, boolean isOther) {
+        List<ExpressionRibbonDetail> details = getExpressionRibbonDetails(geneID, ribbonTermID, includeReporter, onlyInSitu, isOther);
         if (details == null) {
             return null;
         }
@@ -477,13 +474,13 @@ public class RibbonService {
         return details;
     }
 
-    private List<ExpressionRibbonDetail> getExpressionRibbonDetails(String geneID, String ribbonTermID, boolean includeReporter, boolean onlyDirectlySubmitted, boolean isOther) {
+    private List<ExpressionRibbonDetail> getExpressionRibbonDetails(String geneID, String ribbonTermID, boolean includeReporter, boolean onlyInSitu, boolean isOther) {
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/expression-annotation");
         query.addFilterQuery("gene_zdb_id:" + geneID);
         addRibbonTermQuery(query, EXPRESSION, ribbonTermID, isOther);
         expressionService.addReporterFilter(query, includeReporter);
-        expressionService.addDirectSubmissionFilter(query, onlyDirectlySubmitted);
+        expressionService.addInSituFilter(query, onlyInSitu);
         query.addFacetPivotField("postcomposed_term_id,stage_term_id,pub_zdb_id");
         query.setStart(0);
         // get them all

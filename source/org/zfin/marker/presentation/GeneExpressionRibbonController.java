@@ -14,7 +14,6 @@ import org.zfin.expression.Image;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.api.*;
 import org.zfin.gwt.root.util.StringUtils;
-import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.ontology.service.RibbonService;
 import org.zfin.wiki.presentation.Version;
 
@@ -35,9 +34,6 @@ public class GeneExpressionRibbonController {
     private AnatomyRepository anatomyRepository;
 
     @Autowired
-    private OntologyRepository ontologyRepository;
-
-    @Autowired
     private HttpServletRequest request;
 
     @Autowired
@@ -46,25 +42,25 @@ public class GeneExpressionRibbonController {
     @Autowired
     private RibbonService ribbonService;
 
-    @RequestMapping(value = "/marker/{zdbID}/expression/ribbon-summary")
-    public RibbonSummary getExpressionRibbonSummary(@PathVariable("zdbID") String zdbID,
+    @RequestMapping(value = "/marker/{geneId}/expression/ribbon-summary")
+    public RibbonSummary getExpressionRibbonSummary(@PathVariable String geneId,
                                                     @RequestParam(required = false) boolean includeReporter,
-                                                    @RequestParam(required = false) boolean onlyDirectlySubmitted) throws Exception {
-        return ribbonService.buildExpressionRibbonSummary(zdbID, includeReporter, onlyDirectlySubmitted);
+                                                    @RequestParam(required = false) boolean onlyInSitu) throws Exception {
+        return ribbonService.buildExpressionRibbonSummary(geneId, includeReporter, onlyInSitu);
     }
 
     @JsonView(View.GeneExpressionAPI.class)
-    @RequestMapping(value = "/marker/{zdbID}/expression/ribbon-expression-detail")
-    public JsonResultResponse<ExpressionDetail> getRibbonExpressionDetail(@PathVariable("zdbID") String geneID,
-                                                                          @RequestParam(value = "supertermId", required = false) String supertermID,
-                                                                          @RequestParam(value = "subtermId", required = false) String subtermID,
-                                                                          @RequestParam(value = "includeReporter", required = false) boolean includeReporter,
-                                                                          @RequestParam(value = "onlyDirectlySubmitted", required = false) boolean onlyDirectlySubmitted,
+    @RequestMapping(value = "/marker/{geneId}/expression/ribbon-expression-detail")
+    public JsonResultResponse<ExpressionDetail> getRibbonExpressionDetail(@PathVariable String geneId,
+                                                                          @RequestParam(required = false) String supertermId,
+                                                                          @RequestParam(required = false) String subtermId,
+                                                                          @RequestParam(required = false) boolean includeReporter,
+                                                                          @RequestParam(required = false) boolean onlyInSitu,
                                                                           @Version Pagination pagination) {
         long startTime = System.currentTimeMillis();
         JsonResultResponse<ExpressionDetail> response;
         try {
-            response = ribbonService.buildExpressionDetail(geneID, supertermID, subtermID, includeReporter, onlyDirectlySubmitted, pagination);
+            response = ribbonService.buildExpressionDetail(geneId, supertermId, subtermId, includeReporter, onlyInSitu, pagination);
         } catch (Exception e) {
             log.error("Error while retrieving ribbon details", e);
             RestErrorMessage error = new RestErrorMessage(500);
@@ -78,18 +74,18 @@ public class GeneExpressionRibbonController {
     }
 
     @JsonView(View.GeneExpressionAPI.class)
-    @RequestMapping(value = "/marker/{geneID}/expression/ribbon-detail")
-    public JsonResultResponse<ExpressionRibbonDetail> getExpressionRibbonDetail(@PathVariable("geneID") String geneID,
-                                                                                @RequestParam(value = "termId", required = false) String termID,
+    @RequestMapping(value = "/marker/{geneId}/expression/ribbon-detail")
+    public JsonResultResponse<ExpressionRibbonDetail> getExpressionRibbonDetail(@PathVariable String geneId,
+                                                                                @RequestParam(required = false) String termId,
                                                                                 @RequestParam(value = "filter.termName", required = false) String filterTermName,
-                                                                                @RequestParam(value = "includeReporter", required = false) boolean includeReporter,
-                                                                                @RequestParam(value = "onlyDirectlySubmitted", required = false) boolean onlyDirectlySubmitted,
+                                                                                @RequestParam(required = false) boolean includeReporter,
+                                                                                @RequestParam(required = false) boolean onlyInSitu,
                                                                                 @RequestParam(required = false) boolean isOther,
                                                                                 @Version Pagination pagination) {
         long startTime = System.currentTimeMillis();
         List<ExpressionRibbonDetail> allDetails;
         try {
-            allDetails = ribbonService.buildExpressionRibbonDetail(geneID, termID, includeReporter, onlyDirectlySubmitted, isOther);
+            allDetails = ribbonService.buildExpressionRibbonDetail(geneId, termId, includeReporter, onlyInSitu, isOther);
         } catch (Exception e) {
             log.error("Error while retrieving ribbon details", e);
             RestErrorMessage error = new RestErrorMessage(404);
@@ -127,16 +123,16 @@ public class GeneExpressionRibbonController {
     }
 
     @JsonView(View.GeneExpressionAPI.class)
-    @RequestMapping(value = "/marker/{zdbID}/expression/images")
-    public JsonResultResponse<Image> getExpressionImages(@PathVariable String zdbID,
+    @RequestMapping(value = "/marker/{geneId}/expression/images")
+    public JsonResultResponse<Image> getExpressionImages(@PathVariable String geneId,
                                                          @RequestParam(required = false) String termId,
                                                          @RequestParam(required = false) String supertermId,
                                                          @RequestParam(required = false) String subtermId,
                                                          @RequestParam(required = false) boolean includeReporter,
-                                                         @RequestParam(required = false) boolean onlyDirectlySubmitted,
+                                                         @RequestParam(required = false) boolean onlyInSitu,
                                                          @RequestParam(required = false) boolean isOther,
                                                          @Version Pagination pagination) throws IOException, SolrServerException {
-        JsonResultResponse<Image> response = expressionService.getExpressionImages(zdbID, termId, supertermId, subtermId, includeReporter, onlyDirectlySubmitted, isOther, pagination);
+        JsonResultResponse<Image> response = expressionService.getExpressionImages(geneId, termId, supertermId, subtermId, includeReporter, onlyInSitu, isOther, pagination);
         response.setHttpServletRequest(request);
         return response;
     }

@@ -12,7 +12,7 @@ const GeneExpressionAnnotationSummaryTable = (
     {
         geneId,
         includeReporter,
-        isDirectlySubmitted,
+        onlyInSitu,
         onEntityClick,
         selectedRibbonTerm,
         setTableState,
@@ -59,7 +59,7 @@ const GeneExpressionAnnotationSummaryTable = (
     const query = {
         ...getSelectedTermQueryParams(selectedRibbonTerm),
         includeReporter: includeReporter,
-        onlyDirectlySubmitted: isDirectlySubmitted,
+        onlyInSitu: onlyInSitu,
     };
 
     return (
@@ -76,7 +76,7 @@ const GeneExpressionAnnotationSummaryTable = (
 GeneExpressionAnnotationSummaryTable.propTypes = {
     geneId: PropTypes.string,
     includeReporter: PropTypes.bool,
-    isDirectlySubmitted: PropTypes.bool,
+    onlyInSitu: PropTypes.bool,
     onEntityClick: PropTypes.func,
     selectedRibbonTerm: PropTypes.object,
     setTableState: PropTypes.func,

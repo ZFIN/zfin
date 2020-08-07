@@ -4,16 +4,11 @@ import org.apache.solr.client.solrj.SolrQuery
 import org.springframework.beans.factory.annotation.Autowired
 import org.zfin.ZfinIntegrationSpec
 import org.zfin.expression.repository.ExpressionRepository
-import org.zfin.framework.api.JsonResultResponse
-import org.zfin.framework.api.Pagination
-import org.zfin.framework.api.RibbonCategory
-import org.zfin.framework.api.RibbonSubjectGroupCounts
-import org.zfin.framework.api.RibbonSummary
+import org.zfin.framework.api.*
 import org.zfin.marker.presentation.ExpressionDetail
 import org.zfin.marker.presentation.ExpressionRibbonDetail
 import org.zfin.marker.presentation.PhenotypeRibbonSummary
 import org.zfin.search.FieldName
-import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Unroll
 
@@ -72,39 +67,39 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
     }
 
     @Unroll
-    def "at least #min found for #geneID and #ribbonTermID with includeReporter: #includeReporter and onlyDirectSubmitted: #onlyDirectSubmitted "() {
+    def "at least #min found for #geneID and #ribbonTermID with includeReporter: #includeReporter and onlyInSitu: #onlyInSitu "() {
         when:
-        List<ExpressionRibbonDetail> termCounts = ribbonService.buildExpressionRibbonDetail(geneID, ribbonTermID, includeReporter, onlyDirectlySubmitted, isOther)
+        List<ExpressionRibbonDetail> termCounts = ribbonService.buildExpressionRibbonDetail(geneID, ribbonTermID, includeReporter, onlyInSitu, isOther)
 
         then:
         termCounts
         termCounts.size() > min
 
         where:
-        geneID                | ribbonTermID  | min | includeReporter | onlyDirectlySubmitted | isOther
-        "ZDB-GENE-990415-8"   | "ZFA:0000396" | 60  | false           | false                 | false
-        "ZDB-GENE-050419-145" | "ZFA:0000396" | 1   | false           | false                 | false
+        geneID                | ribbonTermID  | min | includeReporter | onlyInSitu | isOther
+        "ZDB-GENE-990415-8"   | "ZFA:0000396" | 60  | false           | false      | false
+        "ZDB-GENE-050419-145" | "ZFA:0000396" | 1   | false           | false      | false
     }
 
     @Unroll
     def "#geneID expression detail response with #termID filter should return more than #numberOfRecords "() {
         when:
-        JsonResultResponse<ExpressionDetail> response = ribbonService.buildExpressionDetail(geneID, supertermID, subtermID, includeReporter, onlyDirectSubmission, new Pagination())
+        JsonResultResponse<ExpressionDetail> response = ribbonService.buildExpressionDetail(geneID, supertermID, subtermID, includeReporter, onlyInSitu, new Pagination())
 
         then:
         response
         response.getTotal() >= numberOfRecords
 
         where:
-        geneID                  |   supertermID        | subtermID      | includeReporter | onlyDirectSubmission | numberOfRecords
-          "ZDB-GENE-050419-145" | "ZFA:0009280"        | "GO:0097450"   | true            | false                | 1
-          "ZDB-GENE-050419-145" | "ZFA:0000107"        | null           | true            | false                | 2
+        geneID                | supertermID   | subtermID    | includeReporter | onlyInSitu | numberOfRecords
+        "ZDB-GENE-050419-145" | "ZFA:0009280" | "GO:0097450" | true            | false      | 1
+        "ZDB-GENE-050419-145" | "ZFA:0000107" | null         | true            | false      | 2
     }
 
     @Unroll
     def "All figures for #supertermID #subtermID expression detail for #geneID should be directly annotated"() {
         when:
-        JsonResultResponse<ExpressionDetail> response = ribbonService.buildExpressionDetail(geneID, supertermID, subtermID, includeReporter, onlyDirectSubmission, new Pagination())
+        JsonResultResponse<ExpressionDetail> response = ribbonService.buildExpressionDetail(geneID, supertermID, subtermID, includeReporter, onlyInSitu, new Pagination())
 
         Set<String> superterms = new HashSet<>()
         Set<String> subterms = new HashSet<>()
@@ -112,7 +107,9 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
         response.results.each { result ->
             result.entities.each { entity ->
                 superterms.add(entity.superterm.oboID)
-                if (entity.subterm) { subterms.add(entity.subterm.oboID) }
+                if (entity.subterm) {
+                    subterms.add(entity.subterm.oboID)
+                }
             }
         }
 
@@ -120,16 +117,20 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
         response
         response.getResults()
         superterms
-        if (subtermID) { subterms && !subterms.isEmpty() }
+        if (subtermID) {
+            subterms && !subterms.isEmpty()
+        }
         superterms.contains(supertermID)
-        if (subtermID) { subterms.contains(subtermID) }
+        if (subtermID) {
+            subterms.contains(subtermID)
+        }
 
 
         where:
-        geneID                | supertermID        | subtermID     | includeReporter | onlyDirectSubmission
-        "ZDB-GENE-990415-8"   | "ZFA:0001135"      | "ZFA:0009052" | false           | false
-        "ZDB-GENE-990415-72"  | "ZFA:0000648"      | null          | false           | false
-        "ZDB-GENE-050419-145" | "ZFA:0009280"      | "GO:0097450"  | true            | false
+        geneID                | supertermID   | subtermID     | includeReporter | onlyInSitu
+        "ZDB-GENE-990415-8"   | "ZFA:0001135" | "ZFA:0009052" | false           | false
+        "ZDB-GENE-990415-72"  | "ZFA:0000648" | null          | false           | false
+        "ZDB-GENE-050419-145" | "ZFA:0009280" | "GO:0097450"  | true            | false
     }
 
     @Unroll

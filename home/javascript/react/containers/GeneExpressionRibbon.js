@@ -17,15 +17,15 @@ const GeneExpressionRibbon = ({geneId}) => {
     const [selectedRibbonTerm, setSelectedRibbonTerm] = useRibbonState();
     const [selectedTableEntity, setSelectedTableEntity] = useState(null);
     const [includeReporter, setIncludeReporter] = useState(false);
-    const [isDirectlySubmitted, setIsDirectlySubmitted] = useState(false);
+    const [onlyInSitu, setOnlyInSitu] = useState(false);
 
     const baseUrl = `/action/api/marker/${geneId}/expression/ribbon-summary`;
     const params = {};
     if (includeReporter) {
         params.includeReporter = true;
     }
-    if (isDirectlySubmitted) {
-        params.onlyDirectlySubmitted = true;
+    if (onlyInSitu) {
+        params.onlyInSitu = true;
     }
     const ribbonDataUrl = baseUrl + qs.stringify(params, { addQueryPrefix: true });
 
@@ -36,10 +36,6 @@ const GeneExpressionRibbon = ({geneId}) => {
 
     const handleReporterSelection = (event) => {
         setIncludeReporter(event.target.checked);
-    };
-
-    const handleDirectSubmissionSelection = (event) => {
-        setIsDirectlySubmitted(event.target.checked);
     };
 
     const goToFirstPage = produce(state => {
@@ -83,8 +79,8 @@ const GeneExpressionRibbon = ({geneId}) => {
                 <Checkbox checked={includeReporter} id='reporterSelectionCheckbox' onChange={handleReporterSelection}>
                     Include expression in reporter lines
                 </Checkbox>
-                <Checkbox checked={isDirectlySubmitted} id='directSubmissionCheckbox' onChange={handleDirectSubmissionSelection}>
-                    Show only directly submitted expression data (Thisse etc.)
+                <Checkbox checked={onlyInSitu} id='directSubmissionCheckbox' onChange={e => setOnlyInSitu(e.target.checked)}>
+                    Show in situs only
                 </Checkbox>
             </div>
 
@@ -107,7 +103,7 @@ const GeneExpressionRibbon = ({geneId}) => {
                 <GeneExpressionFigureGallery
                     geneId={geneId}
                     includeReporters={includeReporter}
-                    onlyDirectlySubmitted={isDirectlySubmitted}
+                    onlyInSitu={onlyInSitu}
                     selectedRibbonTerm={selectedRibbonTerm}
                     selectedTableEntity={selectedTableEntity}
                 />
@@ -117,7 +113,7 @@ const GeneExpressionRibbon = ({geneId}) => {
                 <GeneExpressionAnnotationSummaryTable
                     geneId={geneId}
                     includeReporter={includeReporter}
-                    isDirectlySubmitted={isDirectlySubmitted}
+                    onlyInSitu={onlyInSitu}
                     onEntityClick={handleEntityNameClick}
                     selectedRibbonTerm={selectedRibbonTerm}
                     setTableState={setSummaryTableState}
@@ -129,7 +125,7 @@ const GeneExpressionRibbon = ({geneId}) => {
                 <GeneExpressionAnnotationDetailTable
                     geneId={geneId}
                     includeReporter={includeReporter}
-                    isDirectlySubmitted={isDirectlySubmitted}
+                    isDirectlySubmitted={onlyInSitu}
                     selectedEntity={selectedTableEntity}
                     setTableState={setDetailTableState}
                     tableState={detailTableState}

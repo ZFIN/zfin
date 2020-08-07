@@ -11,7 +11,7 @@ const GeneExpressionFigureGallery = (
     {
         geneId,
         includeReporters,
-        onlyDirectlySubmitted,
+        onlyInSitu,
         selectedRibbonTerm,
         selectedTableEntity,
     }
@@ -24,8 +24,8 @@ const GeneExpressionFigureGallery = (
     if (includeReporters) {
         params.includeReporters = includeReporters;
     }
-    if (onlyDirectlySubmitted) {
-        params.onlyDirectlySubmitted = onlyDirectlySubmitted;
+    if (onlyInSitu) {
+        params.onlyInSitu = onlyInSitu;
     }
     if (selectedTableEntity) {
         params.supertermId = selectedTableEntity.superterm.oboID;
@@ -76,7 +76,7 @@ const GeneExpressionFigureGallery = (
 GeneExpressionFigureGallery.propTypes = {
     geneId: PropTypes.string,
     includeReporters: PropTypes.bool,
-    onlyDirectlySubmitted: PropTypes.bool,
+    onlyInSitu: PropTypes.bool,
     selectedRibbonTerm: PropTypes.object,
     selectedTableEntity: PropTypes.object,
 };
