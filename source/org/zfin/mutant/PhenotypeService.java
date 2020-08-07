@@ -549,7 +549,7 @@ public class PhenotypeService {
     }
 
 
-    public JsonResultResponse<Image> getPhenotypeImages(String geneId, String termId, boolean isOther, String phenotypeIds, boolean excludeEaps,
+    public JsonResultResponse<Image> getPhenotypeImages(String geneId, String termId, boolean isOther, String phenotypeIds, boolean excludeEaps, boolean excludeSTRs,
                                                         Pagination pagination) throws IOException, SolrServerException {
         JsonResultResponse<Image> response = new JsonResultResponse<>();
 
@@ -559,6 +559,9 @@ public class PhenotypeService {
         query.addFilterQuery("has_image:true");
         if (excludeEaps) {
             query.addFilterQuery("is_eap:false");
+        }
+        if (excludeSTRs) {
+            query.addFilterQuery("has_str:false");
         }
         ribbonService.addRibbonTermQuery(query, RibbonType.PHENOTYPE, termId, isOther);
         if (StringUtils.isNotEmpty(phenotypeIds)) {

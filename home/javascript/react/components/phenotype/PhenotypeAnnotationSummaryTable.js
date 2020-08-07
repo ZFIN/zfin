@@ -8,7 +8,7 @@ import AttributionLink from '../AttributionLink';
 import {getSelectedTermQueryParams} from '../ribbon';
 import {tableStateType} from '../../utils/types';
 
-const PhenotypeAnnotationSummaryTable = ({excludeEaps, geneId, onEntityClick, selectedRibbonTerm, setTableState, tableState}) => {
+const PhenotypeAnnotationSummaryTable = ({excludeEaps, excludeSTRs, geneId, onEntityClick, selectedRibbonTerm, setTableState, tableState}) => {
     const columns = [
         {
             label: 'Phenotype',
@@ -49,6 +49,9 @@ const PhenotypeAnnotationSummaryTable = ({excludeEaps, geneId, onEntityClick, se
     if (excludeEaps) {
         summaryTableQuery.excludeEaps = true;
     }
+    if (excludeSTRs) {
+        summaryTableQuery.excludeSTRs = true;
+    }
 
     return (
         <DataTable
@@ -63,6 +66,7 @@ const PhenotypeAnnotationSummaryTable = ({excludeEaps, geneId, onEntityClick, se
 
 PhenotypeAnnotationSummaryTable.propTypes = {
     excludeEaps: PropTypes.bool,
+    excludeSTRs: PropTypes.bool,
     geneId: PropTypes.string,
     onEntityClick: PropTypes.func,
     selectedRibbonTerm: PropTypes.object,

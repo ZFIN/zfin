@@ -6188,6 +6188,10 @@ and child.term_ontology = 'disease_ontology';
                           when psg_mrkr_relation = 'expression' or psg_mrkr_relation = 'labeling' then 'true'
                           else 'false'
                         end as is_eap,
+                        case
+                          when exists (select 'x' from fish_str where fishstr_fish_zdb_id = fish_zdb_id) then 'true'
+                          else 'false'
+                        end as has_str,
                         'pg-' || pg_id as pg_id,
                         'psg-' || psg_id as id
                     from phenotype_source_generated

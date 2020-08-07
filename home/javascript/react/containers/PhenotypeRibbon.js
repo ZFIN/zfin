@@ -18,11 +18,15 @@ const PhenotypeRibbon = ({geneId}) => {
     const [selectedTablePhenotype, setSelectedTablePhenotype] = useState(null);
     const [selectedTableIDs, setSelectedTableIDs] = useState(null);
     const [excludeEaps, setExcludeEaps] = useState(false);
+    const [excludeSTRs, setExcludeSTRs] = useState(false);
 
     const baseUrl = `/action/api/marker/${geneId}/phenotype/ribbon-summary`;
     const params = {};
     if (excludeEaps) {
         params.excludeEaps = true
+    }
+    if (excludeSTRs) {
+        params.excludeSTRs = true
     }
     const ribbonDataUrl = baseUrl + qs.stringify(params, { addQueryPrefix: true });
 
@@ -78,6 +82,11 @@ const PhenotypeRibbon = ({geneId}) => {
                     Exclude altered gene expression phenotypes
                 </Checkbox>
             </div>
+            <div className='mb-2'>
+                <Checkbox checked={excludeSTRs} id='excludeSTRsCheckbox' onChange={e => setExcludeSTRs(e.target.checked)}>
+                    Exclude morphant phenotypes
+                </Checkbox>
+            </div>
 
             <DataRibbon
                 dataUrl={ribbonDataUrl}
@@ -97,15 +106,17 @@ const PhenotypeRibbon = ({geneId}) => {
             {(selectedRibbonTerm || selectedTableIDs) &&
                 <PhenotypeFigureGallery
                     excludeEaps={excludeEaps}
+                    excludeSTRs={excludeSTRs}
                     geneId={geneId}
                     selectedRibbonTerm={selectedRibbonTerm}
                     selectedTableIds={selectedTableIDs}
                 />
             }
-
+            
             {selectedRibbonTerm && !selectedTablePhenotype &&
                 <PhenotypeAnnotationSummaryTable
                     excludeEaps={excludeEaps}
+                    excludeSTRs={excludeSTRs}
                     geneId={geneId}
                     onEntityClick={handleEntityNameClick}
                     selectedRibbonTerm={selectedRibbonTerm}

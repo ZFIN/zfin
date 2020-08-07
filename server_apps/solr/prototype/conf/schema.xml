@@ -788,6 +788,7 @@
         <field name="is_wildtype" type="string" indexed="true" stored="true" />
         <field name="is_genotype_wildtype" type="boolean" indexed="true" stored="true" />
         <field name="is_monogenic" type="string" indexed="true" stored="true" />
+        <field name="has_strs" type="string" indexed="true" stored="true" />
         <field name="monogenic_gene_zdb_id" type="string" indexed="true" stored="true" />
         <field name="is_zebrashare" type="string" indexed="true" stored="false" />
         <field name="has_orthology" type="string" indexed="true" stored="true" />
@@ -834,6 +835,7 @@
         <field name="postcomposed_term_id" type="string" indexed="true" stored="true" multiValued="true"/>
         <field name="phenotype_statement_term_id" type="string" indexed="true" stored="true" multiValued="true"/>
         <field name="is_eap" type="boolean" indexed="true" stored="true" />
+        <field name="has_str" type="boolean" indexed="true" stored="true" />
         <field name="construct_name" type="construct_name" indexed="true" stored="true" multiValued="false" />
         <field name="construct_alias" type="construct_name" indexed="true" stored="true" multiValued="true" />
 

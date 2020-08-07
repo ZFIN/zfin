@@ -82,12 +82,15 @@ public class RibbonService {
         ));
     }
 
-    public RibbonSummary buildPhenotypeRibbonSummary(String zdbID, boolean excludeEaps) throws Exception {
+    public RibbonSummary buildPhenotypeRibbonSummary(String zdbID, boolean excludeEaps, boolean excludeSTRs) throws Exception {
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/phenotype-annotation");
         query.addFilterQuery(FieldName.MONOGENIC_GENE_ZDB_ID.getName() + ":" + zdbID);
         if (excludeEaps) {
             query.addFilterQuery("is_eap:false");
+        }
+        if (excludeSTRs) {
+            query.addFilterQuery("has_str:false");
         }
         return buildRibbonSummary(zdbID, query, List.of(
                 new RibbonCategoryConfig.Anatomy(),
@@ -303,13 +306,16 @@ public class RibbonService {
         return response;
     }
 
-    public JsonResultResponse<PhenotypeRibbonSummary> buildPhenotypeSummary(String geneID, String termID, Pagination pagination, Boolean isOther, boolean excludeEaps) {
+    public JsonResultResponse<PhenotypeRibbonSummary> buildPhenotypeSummary(String geneID, String termID, Pagination pagination, Boolean isOther, boolean excludeEaps,  boolean excludeSTRs) {
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/phenotype-annotation");
         query.addFilterQuery(FieldName.MONOGENIC_GENE_ZDB_ID + ":" + geneID);
         addRibbonTermQuery(query, PHENOTYPE, termID, isOther);
         if (excludeEaps) {
             query.addFilterQuery("is_eap:false");
+        }
+        if (excludeSTRs) {
+            query.addFilterQuery("has_str:false");
         }
         final String filterValue = pagination.getFieldFilter(FieldFilter.FILTER_TERM_NAME);
         if (StringUtils.isNotEmpty(filterValue)) {

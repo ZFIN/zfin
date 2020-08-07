@@ -136,20 +136,20 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
     @Unroll
     def "#geneID phenotype detail response with #termID filter should return more than #numberOfRecords "() {
         when:
-        JsonResultResponse<PhenotypeRibbonSummary> response = ribbonService.buildPhenotypeSummary(geneID, termID, new Pagination(), isOther, excludeEaps)
+        JsonResultResponse<PhenotypeRibbonSummary> response = ribbonService.buildPhenotypeSummary(geneID, termID, new Pagination(), isOther, excludeEaps, excludeSTRs)
 
         then:
         response
         response.getTotal() > numberOfRecords
 
         where:
-        geneID               | termID        | isOther | excludeEaps | numberOfRecords
+        geneID               | termID        | isOther | excludeEaps | numberOfRecords | exludeSTRs
         // all records
-        "ZDB-GENE-990415-30" | ""            | false   | false       | 15
+        "ZDB-GENE-990415-30" | ""            | false   | false       | 15 | false
         // pax2a             anatomical entity
-        "ZDB-GENE-990415-8"  | "ZFA:0100000" | false   | false       | 100
+        "ZDB-GENE-990415-8"  | "ZFA:0100000" | false   | false       | 100 | false
         // pax2a              nervous system
-        "ZDB-GENE-990415-8"  | "ZFA:0000396" | false   | false       | 60
+        "ZDB-GENE-990415-8"  | "ZFA:0000396" | false   | false       | 60  | false
     }
 
     @Unroll

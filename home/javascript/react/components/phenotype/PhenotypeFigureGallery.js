@@ -7,7 +7,7 @@ import GenericErrorMessage from '../GenericErrorMessage';
 import {useAppendingFetch, useFetch} from '../../utils/effects';
 import qs from 'qs';
 
-const PhenotypeFigureGallery = ({excludeEaps, geneId, selectedTableIds, selectedRibbonTerm}) => {
+const PhenotypeFigureGallery = ({excludeEaps, excludeSTRs, geneId, selectedTableIds, selectedRibbonTerm}) => {
     const [page, setPage] = useState(1);
     const [selectedImage, setSelectedImage] = useState(null);
 
@@ -15,6 +15,9 @@ const PhenotypeFigureGallery = ({excludeEaps, geneId, selectedTableIds, selected
     const params = {};
     if (excludeEaps) {
         params.excludeEaps = true;
+    }
+    if (excludeSTRs) {
+        params.excludeSTRs = true;
     }
     if (selectedTableIds) {
         params.phenotypeIds = selectedTableIds;
@@ -61,6 +64,7 @@ const PhenotypeFigureGallery = ({excludeEaps, geneId, selectedTableIds, selected
 
 PhenotypeFigureGallery.propTypes = {
     excludeEaps: PropTypes.bool,
+    excludeSTRs: PropTypes.bool,
     geneId: PropTypes.string,
     selectedRibbonTerm: PropTypes.object,
     selectedTableIds: PropTypes.string,
