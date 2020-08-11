@@ -13,10 +13,11 @@
     <li>     Coding Sequences are the regulated sequences expressed in the transgenic zebrafish. These sequences include, but are not limited to cDNA, engineered foreign genes (such as fluorescent proteins), tags that direct expression to a cell component and sgRNA target sequences.
     <li>     Species of construct components. Other species regulatory or coding elements are frequently used in transgenes. If components of this type are used in a construct, they are listed here.
     </ol>
-
-    In addition, links to the transgenic lines in which the constructs are inserted and the associated publications are provided
-
+<p>
+    In addition, links to the transgenic lines in which the constructs are inserted and the associated publications are provided.
+</p>
+    <p>
     ZFIN began to include transgenic constructs and transgenic lines in 2007.
-
+    </p>
     <p>If you have questions or suggestions, please <zfin2:mailTo>contact us</zfin2:mailTo>.</p>
 </div>
