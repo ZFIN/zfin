@@ -266,7 +266,7 @@ public class GeneViewController {
     }
 
     @RequestMapping(value = "/gene/view/{zdbID}")
-    public String getGenePrototypeView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
+    public String getGeneView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
         zdbID = markerService.getActiveMarkerID(zdbID);
         if (!markerService.isOfTypeGene(zdbID)) {
             return "redirect:/" + zdbID;
