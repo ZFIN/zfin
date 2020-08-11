@@ -22,7 +22,7 @@ import java.util.List;
 public final class AlternateGeneEditController extends AbstractFullMarkerEditController<MarkerDTO> {
 
     // gui elements
-    private ViewClickLabel<MarkerDTO> geneViewClickLabel = new ViewClickLabel<MarkerDTO>("[View Gene]", "/action/marker/gene-view?zdbID=", "Discard");
+    private ViewClickLabel<MarkerDTO> geneViewClickLabel = new ViewClickLabel<>("[View Gene]", "/action/marker/gene/gene-view?zdbID=", "Discard");
     private GeneHeaderEdit geneHeaderEdit = new GeneHeaderEdit(headerDiv);
     private DBLinkTable dbLinkTable = new HandledDBLinkTable();
 

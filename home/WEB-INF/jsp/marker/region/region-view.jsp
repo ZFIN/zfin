@@ -20,8 +20,8 @@
 
     <jsp:body>
         <z:dataManagerDropdown>
-            <a class="dropdown-item" href="/action/marker/gene/edit/">Edit</a>
-            <a class="dropdown-item" href="/action/marker/merge?zdbIDToDelete=">Merge</a>
+            <a class="dropdown-item" href="/action/marker/gene/edit/${formBean.marker.zdbID}">Edit</a>
+            <a class="dropdown-item" href="/action/marker/merge?zdbIDToDelete=${formBean.marker.zdbID}">Merge</a>
         </z:dataManagerDropdown>
 
         <div id="${zfn:makeDomIdentifier(SUMMARY)}">
@@ -29,7 +29,7 @@
             <jsp:include page="region-view-summary.jsp"/>
         </div>
 
-        <z:section title="${MUTANTS}">
+        <z:section title="${MUTATIONS}">
             <z:section title="Mutants">
                 <div class="__react-root" id="GeneAlleleTable" data-gene-id="${formBean.marker.zdbID}"></div>
             </z:section>
