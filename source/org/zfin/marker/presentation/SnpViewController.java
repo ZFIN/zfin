@@ -1,6 +1,7 @@
 package org.zfin.marker.presentation;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -67,18 +68,6 @@ public class SnpViewController {
         model.addAttribute(LookupStrings.FORM_BEAN, snpMarkerBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, marker.getType().toString() + marker.getAbbreviation());
 
-        return "marker/snp-view.page";
-    }
-
-
-    @RequestMapping(value = "/snp/view-new/{zdbID}")
-    public String getSNPViewNew(Model model, @PathVariable("zdbID") String zdbID
-    ) throws Exception {
-        // set base bean
-        getView(model, zdbID);
-        //  model.addAttribute(LookupStrings.DYNAMIC_TITLE, Marker.Type.getType(markerBean.getMarkerTypeDisplay()) + region.getAbbreviation());
-
         return "marker/snp/snp-view.page";
     }
-
 }

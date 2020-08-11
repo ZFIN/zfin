@@ -27,11 +27,8 @@
 
     <jsp:body>
         <z:dataManagerDropdown>
-            <a class="dropdown-item active" href="/action/marker/pseudogene/prototype-view/${formBean.marker.zdbID}">View</a>
             <a class="dropdown-item" href="/action/marker/gene/edit/${formBean.marker.zdbID}">Edit</a>
             <a class="dropdown-item" href="/action/marker/merge?zdbIDToDelete=${formBean.marker.zdbID}">Merge</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="/${formBean.marker.zdbID}">Old View</a>
         </z:dataManagerDropdown>
 
         <div id="${zfn:makeDomIdentifier(SUMMARY)}">

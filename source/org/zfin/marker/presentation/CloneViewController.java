@@ -1,6 +1,7 @@
 package org.zfin.marker.presentation;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,7 +33,7 @@ public class CloneViewController {
 
     private Logger logger = LogManager.getLogger(CloneViewController.class);
 
-    private ReferenceDatabase ensemblDatabase = null;
+    private ReferenceDatabase ensemblDatabase;
 
     @Autowired
     private ExpressionService expressionService;
@@ -55,59 +56,6 @@ public class CloneViewController {
         );
         HibernateUtil.closeSession();
     }
-    private void prepareCloneView(Model model, String zdbID) throws Exception {
-        CloneBean cloneBean = new CloneBean();
-        zdbID = markerService.getActiveMarkerID(zdbID);
-        logger.info("zdbID: " + zdbID);
-        Clone clone = markerRepository.getCloneById(zdbID);
-        logger.info("clone: " + clone);
-        cloneBean.setMarker(clone);
-        MarkerService.createDefaultViewForMarker( cloneBean);
-
-        // if it is a gene, also add any clones if related via a transcript
-        MarkerService.pullGeneOntoCloneFromTranscript(cloneBean);
-
-        List<OrganizationLink> suppliers = RepositoryFactory.getProfileRepository().getSupplierLinksForZdbId(clone.getZdbID());
-        cloneBean.setSuppliers(suppliers);
-
-        if (clone.isRnaClone()) {
-            cloneBean.setMarkerExpression(expressionService.getExpressionForRnaClone(clone));
-        }
-
-        // OTHER GENE / MARKER PAGES:
-        cloneBean.addFakePubs(ensemblDatabase);
-        String snpsString = RepositoryFactory.getMarkerRepository().getDbsnps(clone.zdbID);
-        cloneBean.setDbSnps(snpsString);
-
-
-        // iterate through related marker list to add snps to it (if a dna clone)
-        // this is technically a small list, so should be cheap
-        if (!clone.isRnaClone() && RepositoryFactory.getMarkerRepository().cloneHasSnp(clone)) {
-            List<MarkerRelationshipPresentation> markerRelationshipPresentationList = cloneBean.getMarkerRelationshipPresentationList();
-            MarkerRelationshipPresentation snpPresentation = new SnpMarkerRelationshipPresentation();
-            snpPresentation.setZdbId(zdbID);
-            markerRelationshipPresentationList.add(snpPresentation);
-        }
-
-        // check whether we are a thisse probe
-        cloneBean.setThisseProbe(expressionService.isThisseProbe(clone));
-
-        // gbrowse image
-        cloneBean.setImage(GBrowseImage.builder()
-                .landmark("genomic_clone:" + clone.getZdbID())
-                .highlight(clone.getAbbreviation())
-                .tracks(GBrowseTrack.COMPLETE_CLONES, GBrowseTrack.GENES, GBrowseTrack.TRANSCRIPTS)
-                .build()
-        );
-
-        model.addAttribute(LookupStrings.FORM_BEAN, cloneBean);
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.CLONE.getTitleString() + clone.getAbbreviation());
-
-
-    }
-
-
-
 
     @RequestMapping(value = "/clone/view/{zdbID}")
     public String getCloneView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
@@ -120,7 +68,7 @@ public class CloneViewController {
         logger.info("clone: " + clone);
         cloneBean.setMarker(clone);
 
-        MarkerService.createDefaultViewForMarker( cloneBean);
+        MarkerService.createDefaultViewForMarker(cloneBean);
 
         // if it is a gene, also add any clones if related via a transcript
         MarkerService.pullGeneOntoCloneFromTranscript(cloneBean);
@@ -158,32 +106,21 @@ public class CloneViewController {
         model.addAttribute(LookupStrings.FORM_BEAN, cloneBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.CLONE.getTitleString() + clone.getAbbreviation());
 
-        return "marker/clone-view.page";
-    }
-
-
-    @RequestMapping(value = "/clone/prototype-view/{zdbID}")
-    public String getClonePrototypeView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
-        zdbID = markerService.getActiveMarkerID(zdbID);
-
-        prepareCloneView(model, zdbID);
-
         return "marker/clone/clone-view.page";
     }
-
 
     @RequestMapping(value = "/clone/view/{zdbID}/expression")
     public String getCloneExpressionView(@PathVariable("zdbID") String zdbID) throws MarkerNotFoundException {
         return expressionSearchService.forwardToExpressionSearchForMarker(zdbID);
     }
 
-    @RequestMapping( value = "/dbsnp",method = RequestMethod.GET)
+    @RequestMapping(value = "/dbsnp", method = RequestMethod.GET)
     protected String getDbsnpView(
             Model model
-            ,@RequestParam("cloneId") String cloneId
-            ,@ModelAttribute("formBean") MarkerBean formBean
-            ,BindingResult result
-    ) throws Exception {
+            , @RequestParam("cloneId") String cloneId
+            , @ModelAttribute("formBean") MarkerBean formBean
+            , BindingResult result
+    ) {
 
         Marker clone = RepositoryFactory.getMarkerRepository().getMarkerByID(cloneId);
 

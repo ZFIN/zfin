@@ -29,12 +29,11 @@ public class AntibodyViewController {
 
     @Autowired
     private MarkerRepository markerRepository;
-    private SequenceRepository sequenceRepository;
 
     @Autowired
     private MarkerService markerService;
 
-    @RequestMapping(value = "/view-new/{zdbID}")
+    @RequestMapping(value = "/view/{zdbID}")
     public String getNewAntibodyView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
         // set base bean
         AntibodyMarkerBean antibodyBean = new AntibodyMarkerBean();
@@ -78,48 +77,4 @@ public class AntibodyViewController {
         return "marker/antibody/antibody-view.page";
     }
 
-
-    @RequestMapping(value = "/view/{zdbID}")
-    public String getAntibodyView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
-        // set base bean
-        AntibodyMarkerBean antibodyBean = new AntibodyMarkerBean();
-
-        zdbID = markerService.getActiveMarkerID(zdbID);
-        logger.info("zdbID: " + zdbID);
-        Antibody antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByID(zdbID);
-        logger.info("antibody: " + antibody);
-        antibodyBean.setMarker(antibody);
-
-
-        // set standard stuff
-        antibodyBean.setMarkerTypeDisplay(MarkerService.getMarkerTypeString(antibody));
-        antibodyBean.setPreviousNames(markerRepository.getPreviousNamesLight(antibody));
-        antibodyBean.setHasMarkerHistory(markerRepository.getHasMarkerHistory(zdbID));
-
-        // set other antibody data
-        antibodyBean.setAntigenGenes(markerRepository.getRelatedMarkerDisplayForTypes(antibody, false, MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY));
-
-        // set external notes (same as orthology)
-        List<ExternalNote> listOfNotes = new ArrayList<>();
-        listOfNotes.addAll(antibody.getExternalNotes());
-        antibodyBean.setExternalNotes(listOfNotes);
-
-        // set labeling
-        AntibodyService service = new AntibodyService(antibody);
-        antibodyBean.setAntibodyDetailedLabelings(service.getAntibodyDetailedLabelings());
-        antibodyBean.setNumberOfDistinctComposedTerms(service.getNumberOfDistinctComposedTerms());
-
-        // set source
-        antibodyBean.setSuppliers(markerRepository.getSuppliersForMarker(antibody.getZdbID()));
-
-        antibodyBean.setAbRegistryID(markerRepository.getABRegID(antibody.getZdbID()));
-
-//      CITATIONS
-        antibodyBean.setNumPubs(RepositoryFactory.getPublicationRepository().getNumberDirectPublications(antibody.getZdbID()));
-
-        model.addAttribute(LookupStrings.FORM_BEAN, antibodyBean);
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.ANTIBODY.getTitleString() + antibody.getName());
-
-        return "marker/antibody-view.page";
-    }
 }

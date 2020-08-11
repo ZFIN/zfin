@@ -30,16 +30,6 @@ public class NTRViewController {
     @Autowired
     private EfgViewController efgViewController;
 
-    @RequestMapping(value = "/region/view/{zdbID}")
-    public String getNontranscribedRegionView(Model model, @PathVariable("zdbID") String zdbID
-    ) throws Exception {
-        // set base bean
-        setBaseBean(model, zdbID);
-        //  model.addAttribute(LookupStrings.DYNAMIC_TITLE, Marker.Type.getType(markerBean.getMarkerTypeDisplay()) + region.getAbbreviation());
-
-        return "marker/region-view.page";
-    }
-
     private void setBaseBean(Model model, @PathVariable("zdbID") String zdbID) throws MarkerNotFoundException {
         MarkerBean markerBean = new MarkerBean();
 
@@ -87,7 +77,7 @@ public class NTRViewController {
         model.addAttribute("markerHistoryReasonCodes", MarkerHistory.Reason.values());
     }
 
-    @RequestMapping(value = "/region/view-new/{zdbID}")
+    @RequestMapping(value = "/region/view/{zdbID}")
     public String getNontranscribedRegionViewNew(Model model, @PathVariable("zdbID") String zdbID
     ) throws Exception {
         // set base bean

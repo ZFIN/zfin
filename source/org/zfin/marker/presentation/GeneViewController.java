@@ -85,9 +85,6 @@ public class GeneViewController {
     @Autowired
     SearchPrototypeController searchController;
 
-    @Autowired
-    private ExpressionSearchController expressionSearchController;
-
     private void prepareGeneView(Model model, String zdbID) {
         // set base bean
         GeneBean geneBean = new GeneBean();
@@ -268,19 +265,7 @@ public class GeneViewController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.GENE.getTitleString() + gene.getAbbreviation());
     }
 
-
     @RequestMapping(value = "/gene/view/{zdbID}")
-    public String getGeneView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
-        zdbID = markerService.getActiveMarkerID(zdbID);
-        if (!markerService.isOfTypeGene(zdbID)) {
-            return "redirect:/" + zdbID;
-        }
-        prepareGeneView(model, zdbID);
-
-        return "marker/gene-view.page";
-    }
-
-    @RequestMapping(value = "/gene/prototype-view/{zdbID}")
     public String getGenePrototypeView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
         zdbID = markerService.getActiveMarkerID(zdbID);
         if (!markerService.isOfTypeGene(zdbID)) {

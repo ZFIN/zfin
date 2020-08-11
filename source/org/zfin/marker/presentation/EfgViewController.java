@@ -97,7 +97,7 @@ public class EfgViewController {
         model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.EFG.getTitleString() + efg.getAbbreviation());
 
-        return "marker/efg-view.page";
+        return "marker/efg/efg-view.page";
     }
 
     @RequestMapping(value = "/efg/view/{zdbID}/expression")
@@ -141,13 +141,5 @@ public class EfgViewController {
         return "marker/efg-all-constructs.ajax";
     }
 
-    @RequestMapping(value = "/efg/view-new/{zdbID}")
-    public String getNontranscribedRegionViewNew(Model model, @PathVariable("zdbID") String zdbID
-    ) throws Exception {
-        // set base bean
-        getView(model, zdbID);
-        //  model.addAttribute(LookupStrings.DYNAMIC_TITLE, Marker.Type.getType(markerBean.getMarkerTypeDisplay()) + region.getAbbreviation());
 
-        return "marker/efg/efg-view.page";
-    }
 }

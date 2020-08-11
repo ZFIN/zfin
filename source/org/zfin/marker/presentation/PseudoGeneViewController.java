@@ -87,15 +87,6 @@ public class PseudoGeneViewController {
         model.addAttribute("markerHistoryReasonCodes", MarkerHistory.Reason.values());
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.PSEUDOGENE.getTitleString() + gene.getAbbreviation());
 
-        return "marker/pseudogene-view.page";
-    }
-
-
-    @RequestMapping(value = "/pseudogene/prototype-view/{zdbID}")
-    public String getPseudoGenePrototypeView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
-
-        getGeneView(model, zdbID);
-
         return "marker/pseudogene/pseudogene-view.page";
     }
 

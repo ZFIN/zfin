@@ -22,8 +22,6 @@
         <z:dataManagerDropdown>
             <a class="dropdown-item" href="/action/marker/gene/edit/">Edit</a>
             <a class="dropdown-item" href="/action/marker/merge?zdbIDToDelete=">Merge</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="/${formBean.marker.zdbID}">Old View</a>
         </z:dataManagerDropdown>
 
         <div id="${zfn:makeDomIdentifier(SUMMARY)}">

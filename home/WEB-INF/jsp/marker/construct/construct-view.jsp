@@ -16,13 +16,6 @@
     </jsp:attribute>
 
     <jsp:body>
-        <z:dataManagerDropdown>
-            <a class="dropdown-item active"
-               href="/action/marker/construct/prototype-view/${formBean.marker.zdbID}">View</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="/${formBean.marker.zdbID}">Old View</a>
-        </z:dataManagerDropdown>
-
         <div id="${zfn:makeDomIdentifier(SUMMARY)}">
             <zfin2:markerDataPageHeader marker="${formBean.marker}" />
             <jsp:include page="construct-view-summary.jsp"/>
