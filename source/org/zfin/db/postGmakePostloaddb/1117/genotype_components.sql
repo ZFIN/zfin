@@ -7,6 +7,11 @@ insert into genotype_component_significance(gcs_mrkr_type, gcs_ftr_type, gcs_fmr
     where marker_type like '%G'
 and gcs_mrkr_type = 'GENE';
 
+insert into genotype_component_significance(gcs_mrkr_type, gcs_ftr_type, gcs_fmrel_type, gcs_significance)
+ select gcs_mrkr_type, 'MNV', gcs_fmrel_type, gcs_significance  
+   from genotype_component_significance
+    where gcs_ftr_type = 'INDEL'; 
+
 update genotype
   set geno_display_name = get_genotype_display(geno_Zdb_id)
  where geno_display_name = '';
