@@ -13,7 +13,7 @@ create temp table tmp_dataset (datasetId text,
 				subseries text,
 				category_tag_list text);
 
-\copy tmp_dataset from '/opt/zfin/source_roots/swirl/ZFIN_WWW/server_apps/data_transfer/RNASeqCuration/data_set.txt' with delimiter E'\t' null as '';
+\copy tmp_dataset from '/opt/zfin/source_roots/watson/ZFIN_WWW/server_apps/data_transfer/RNASeqCuration/data_set.txt' with delimiter E'\t' null as '';
 
 create temp table tmp_category_Tags (datasetId text, tag text);
 insert into tmp_category_tags(datasetId, tag)

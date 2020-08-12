@@ -23,7 +23,7 @@ create temp table tmp_datasample(datasample_id text,
 		notes text,
 		datasetId text);
 
-\copy tmp_datasample from '/opt/zfin/source_roots/swirl/ZFIN_WWW/server_apps/data_transfer/RNASeqCuration/data_sample.txt' with delimiter E'\t' null as '';
+\copy tmp_datasample from '/opt/zfin/source_roots/watson/ZFIN_WWW/server_apps/data_transfer/RNASeqCuration/data_sample.txt' with delimiter E'\t' null as '';
 delete from tmp_datasample where sampleType is null;
 
 insert into htp_dataset_sample(hds_sample_id, 
