@@ -17,7 +17,7 @@ public enum Ontology implements Serializable {
     CHEBI("chebi_ontology", "Chebi", false, "CHEBI:"),
     DISEASE_ONTOLOGY("disease_ontology", "Human Disease", false, "DOID:"),
     ECO("eco", "Evidence Ontology", false, "ECO:"),
-    GO_ONTOLOGY("gene_ontology", "Full Gene Ontology: Default namespace", true),
+    GO_ONTOLOGY("gene_ontology", "Full Gene Ontology: Default namespace", true, "GO:"),
     // full GO ontology
     GO("cellular_component,molecular_function,biological_process", "Gene Ontology", true, "GO:"),
     // Subset of GO: Cellular Components
