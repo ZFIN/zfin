@@ -5,7 +5,6 @@
 <c:set var="SUMMARY" value="Summary"/>
 <c:set var="MUTATIONS" value="Mutations and Sequence Targeting Reagent"/>
 <c:set var="GO" value="Gene Ontology"/>
-<c:set var="TRANSCRIPTS" value="Transcripts"/>
 <c:set var="CONSTRUCTS" value="Constructs with Sequences"/>
 <c:set var="MARKERRELATIONSHIPS" value="Marker Relationships"/>
 <c:set var="PATHWAYS" value="Interactions and Pathways"/>
@@ -13,7 +12,7 @@
 <c:set var="ORTHOLOGY" value="Orthology"/>
 <c:set var="CITATIONS" value="Citations"/>
 
-<z:dataPage sections="${[SUMMARY, MUTATIONS, GO, TRANSCRIPTS, CONSTRUCTS, PATHWAYS, SEQUENCE, ORTHOLOGY, CITATIONS]}">
+<z:dataPage sections="${[SUMMARY, MUTATIONS, GO, CONSTRUCTS, PATHWAYS, SEQUENCE, ORTHOLOGY, CITATIONS]}">
     <jsp:attribute name="entityName">
         <zfin:abbrev entity="${formBean.marker}"/>
     </jsp:attribute>
@@ -40,10 +39,6 @@
 
         <z:section title="${GO}">
             <div class="__react-root" id="GeneOntologyRibbon" data-gene-id="${formBean.marker.zdbID}"></div>
-        </z:section>
-
-        <z:section title="${TRANSCRIPTS}">
-            <jsp:include page="../gene/gene-view-transcripts.jsp"/>
         </z:section>
 
         <z:section title="${CONSTRUCTS}">

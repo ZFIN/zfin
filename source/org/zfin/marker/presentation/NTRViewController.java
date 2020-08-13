@@ -78,12 +78,10 @@ public class NTRViewController {
     }
 
     @RequestMapping(value = "/region/view/{zdbID}")
-    public String getNontranscribedRegionViewNew(Model model, @PathVariable("zdbID") String zdbID
+    public String getNontranscribedRegionViewNew(Model model,
+                                                 @PathVariable("zdbID") String zdbID
     ) throws Exception {
-        // set base bean
         setBaseBean(model, zdbID);
-        //  model.addAttribute(LookupStrings.DYNAMIC_TITLE, Marker.Type.getType(markerBean.getMarkerTypeDisplay()) + region.getAbbreviation());
-
         return "marker/region/region-view.page";
     }
 }
