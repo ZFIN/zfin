@@ -64,6 +64,8 @@ while ($line = <INDEXFILE1>) {
 	  @inf_array = ();
 
       }
+
+
       @rel_array = ();
       $lastmrkrgoev = $mrkrgoev;
       $mrkrid=$fields[1];
@@ -87,44 +89,44 @@ while ($line = <INDEXFILE1>) {
 
 
 
-      if ($fields[15] eq "gene") {
+      if ($fields[16] eq "gene") {
 	  $gene_product = 'protein';
       }
-      elsif  ($fields[15] eq "lncrna_gene") {
+      elsif  ($fields[16] eq "lncrna_gene") {
 	  $gene_product = 'lnc_RNA';
       }
-      elsif  ($fields[15] eq "pseudogene") {
+      elsif  ($fields[16] eq "pseudogene") {
 	  $gene_product = 'pseudogene';
       }
-      elsif  ($fields[15] eq "lincrna_gene") {
+      elsif  ($fields[16] eq "lincrna_gene") {
 	  $gene_product = 'lincRNA';
       }
-      elsif  ($fields[15] eq "mirna_gene") {
+      elsif  ($fields[16] eq "mirna_gene") {
 	  $gene_product = 'miRNA';
       }
-      elsif  ($fields[15] eq "pirna_gene") {
+      elsif  ($fields[16] eq "pirna_gene") {
 	  $gene_product = 'piRNA';
       }
-      elsif  ($fields[15] eq "scrna_gene") {
+      elsif  ($fields[16] eq "scrna_gene") {
 	  $gene_product = 'scRNA';
       }
-      elsif  ($fields[15] eq "snorna_gene") {
+      elsif  ($fields[16] eq "snorna_gene") {
 	  $gene_product = 'snoRNA';
       }
-      elsif  ($fields[15] eq "trna_gene") {
+      elsif  ($fields[16] eq "trna_gene") {
 	  $gene_product = 'tRNA';
       }
-      elsif  ($fields[15] eq "rrna_gene") {
+      elsif  ($fields[16] eq "rrna_gene") {
 	  $gene_product = 'rRNA';
       }
-      elsif  ($fields[15] eq "ncrna_gene") {
+      elsif  ($fields[16] eq "ncrna_gene") {
 	  $gene_product = 'ncRNA';
       }
-      elsif  ($fields[15] eq "srp_rna_gene") {
+      elsif  ($fields[16] eq "srp_rna_gene") {
 	  $gene_product = 'SRP_RNA';
       }
       else {
-	  $gene_product=$fields[15];
+	  $gene_product=$fields[16];
       }
       $aliases=~s/,/|/g;
       $aliases=~s/Sierra/,/g;
@@ -140,19 +142,16 @@ sub goQlf()
  {
      $qualf = $_[0];
      $relation = $_[1];
-     if (length($relation)==0){
-        $qualf = 'NOT' if $qualf eq 'not';
-        $qualf = 'contributes_to' if $qualf eq 'contributes to';
-        $qualf = 'colocalizes_with' if $qualf eq 'colocalizes with';
-     }
-     else   {
-        if (length($qualf)!=0){
+
+    if (length($qualf)!=0){
+        if ($qualf eq 'not'){
             $qualf = 'NOT'.'|'. $relation
         }
-        else {
-            $qualf =  $relation
-         }
      }
+    else {
+            $qualf =  $relation
+          }
+
      return $qualf;
  }
 
