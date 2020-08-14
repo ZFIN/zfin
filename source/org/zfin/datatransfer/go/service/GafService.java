@@ -520,7 +520,8 @@ public class GafService {
                 }
                 return GoEvidenceQualifier.COLOCALIZES_WITH;
             } else {
-                throw new GafValidationError("unable to identify GoFlag [" + gafEntry.getQualifier() + "]", gafEntry);
+                return null;
+                //throw new GafValidationError("unable to identify GoFlag [" + gafEntry.getQualifier() + "]", gafEntry);
             }
         } else {
             return null;
@@ -548,12 +549,19 @@ public class GafService {
             if (relationName.equals("colocalizes_with")){
                 relationName=GoEvidenceQualifier.COLOCALIZES_WITH.toString();
             }
+            if (relationName.contains("positive")){
+                relationName=relationName.replace("_positive",",_positive");
+            }
+            if (relationName.contains("negative")){
+                relationName=relationName.replace("_negative",",_negative");
+            }
             if (relationName.contains("RO:")||relationName.contains("BFO:")){
                  relationTerm = RepositoryFactory.getOntologyRepository().getTermByOboID(relationName);
             }
             else {
                  relationTerm = RepositoryFactory.getOntologyRepository().getTermByName(relationName, ontologies);
             }
+            System.out.println(relationName);
             if (relationTerm == null) {
                 throw new GafValidationError("RO term  " + relationName + " does not exist", gafEntry);
             } else {
