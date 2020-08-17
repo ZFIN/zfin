@@ -318,9 +318,10 @@ public class GafService {
         // validate qualifier
         GoEvidenceQualifier goEvidenceQualifier = getQualifier(gafEntry, goTerm);
         markerGoTermEvidenceToAdd.setFlag(goEvidenceQualifier);
-
-        GenericTerm relTerm=getRelQualifier(gafEntry, goTerm);
-        markerGoTermEvidenceToAdd.setQualifierRelation(relTerm);
+        if (!gafEntry.getQualifier().equals("NOT")) {
+            GenericTerm relTerm = getRelQualifier(gafEntry, goTerm);
+            markerGoTermEvidenceToAdd.setQualifierRelation(relTerm);
+        }
 
         // validate evidence code
         GoEvidenceCode goEvidenceCode = markerGoTermEvidenceRepository.getGoEvidenceCode(gafEntry.getEvidenceCode());
@@ -536,6 +537,7 @@ public class GafService {
         ontologies.add(Ontology.ZFIN_RO);
         ontologies.add(Ontology.GO_QUALIFIER);
         if (!gafEntry.getQualifier().isEmpty()) {
+
             // they use "contributes_to" and "NOT"
             if (gafEntry.getQualifier().contains("|")) {
                 int pipeIndex = gafEntry.getQualifier().indexOf("|");
@@ -567,7 +569,8 @@ public class GafService {
             } else {
                 return relationTerm;
             }
-        } else {
+        }
+        else {
             return null;
         }
     }
