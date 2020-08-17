@@ -83,7 +83,7 @@
                         <li><a href="https://@WIKI_HOST@/display/prot">Protocol Wiki</a></li>
                         <li><a href="https://@WIKI_HOST@/display/AB">Antibody Wiki</a></li>
                         <li><a href="https://@WIKI_HOST@/display/general/Anatomy+Atlases+and+Resources">Anatomy Atlases</a></li>
-                        <li><a href="/zf_info/news/education.html">Resources for Students and Educators</a></li>
+                        <li><a href="https://@WIKI_HOST@/display/general/Educational+Resources">Resources for Students and Educators</a></li>
                     </ul>
                 </div>
                 <div class="nav-column">
