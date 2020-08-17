@@ -13,7 +13,6 @@ import org.zfin.datatransfer.go.GafParserUnitTest;
 import org.zfin.datatransfer.go.service.FpInferenceGafServiceTest;
 import org.zfin.datatransfer.go.service.GafServiceTest;
 import org.zfin.datatransfer.go.service.GoaGafServiceTest;
-import org.zfin.datatransfer.go.service.PaintGafServiceTest;
 import org.zfin.expression.FigureServiceTest;
 import org.zfin.expression.repository.ExpressionRepositoryTest;
 import org.zfin.expression.service.ExpressionServiceTest;
@@ -130,7 +129,6 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         OrthologyRepositoryTest.class,
         OrthologyTest.class,
         PaginationResultTest.class,
-        PaintGafServiceTest.class,
         PhenotypeRepositoryTest.class,
         PhenotypeServiceDBTest.class,
         ProfileRepositoryTest.class,

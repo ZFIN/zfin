@@ -68,7 +68,7 @@ public class GafParserUnitTest {
         assertThat(gafEntries, hasSize(11));
         GafEntry gafEntry = gafEntries.get(0);
         assertThat("ZDB-GENE-040426-2330", equalTo(gafEntry.getEntryId()));
-        assertThat("", equalTo(gafEntry.getQualifier()));
+        assertThat("acts_upstream_of", equalTo(gafEntry.getQualifier()));
         assertEquals("GO:0002244", gafEntry.getGoTermId());
         assertEquals("ZFIN:ZDB-PUB-170214-264", gafEntry.getPubmedId());
         assertEquals("IMP", gafEntry.getEvidenceCode());

@@ -188,7 +188,7 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         assertThat("first removed", gafReport1.getRemovedEntries(), hasSize(0));
         assertThat("first updated", gafReport1.getUpdateEntries(), hasSize(0));
 
-        assertThat("second new", gafReport2.getNewEntries(), hasSize(0));
+        assertThat("second new", gafReport2.getNewEntries(), hasSize(1));
         assertThat("second existing", gafReport2.getExistingEntries(), hasSize(3));
         assertThat("second errors", gafReport2.getErrors(), hasSize(0));
         assertThat("second removed", gafReport2.getRemovedEntries(), hasSize(0));
@@ -223,7 +223,7 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         logger.debug("errors: " + gafReport2.getErrors());
 
 
-        assertThat("first new", gafReport1.getNewEntries(), hasSize(3));
+        assertThat("first new", gafReport1.getNewEntries(), hasSize(2));
         assertThat("first existing", gafReport1.getExistingEntries(), hasSize(0));
         assertThat("first errors", gafReport1.getErrors(), hasSize(0));
         assertThat("first removed", gafReport1.getRemovedEntries(), hasSize(0));
