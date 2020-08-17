@@ -14,5 +14,6 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1117/genotype_components.sql"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1117/ZFIN-6676.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1117/ZFIN-6796.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1117/PUB-665.sql" />
 
 </databaseChangeLog>
