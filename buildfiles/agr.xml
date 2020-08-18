@@ -195,6 +195,14 @@
             <classpath refid="classpath"/>
         </java>
     </target>
+    <target name="create-gpi2.0-file" depends=""
+            description="Generates tab delimited file for GO/Noctua(Ver 2.0)">
+        <echo message="Check entity changes"/>
+        <java classname="org.zfin.marker.GPIFileVer2" classpathref="extended.classpath"
+              failonerror="true" maxmemory="6G" fork="yes">
+            <classpath refid="classpath"/>
+        </java>
+    </target>
     <target name="create-disease-info-file" depends=""
             description="Tests to make sure that the system is alive and working properly.">
         <echo message="Check entity changes"/>
