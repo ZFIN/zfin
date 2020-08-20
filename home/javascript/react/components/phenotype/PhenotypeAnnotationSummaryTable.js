@@ -54,13 +54,18 @@ const PhenotypeAnnotationSummaryTable = ({excludeEaps, excludeSTRs, geneId, onEn
     }
 
     return (
-        <DataTable
-            dataUrl={`/action/api/marker/${geneId}/phenotype/summary?${qs.stringify(summaryTableQuery)}`}
-            columns={columns}
-            rowKey={row => row.phenotype}
-            tableState={tableState}
-            setTableState={setTableState}
-        />
+        <div>
+            <DataTable
+                dataUrl={`/action/api/marker/${geneId}/phenotype/summary?${qs.stringify(summaryTableQuery)}`}
+                columns={columns}
+                rowKey={row => row.phenotype}
+                tableState={tableState}
+                setTableState={setTableState}
+            />
+            <small className='text-muted'>
+                Click a phenotype to see annotation details
+            </small>
+        </div>
     )
 };
 

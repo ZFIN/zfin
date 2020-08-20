@@ -63,13 +63,19 @@ const GeneExpressionAnnotationSummaryTable = (
     };
 
     return (
-        <DataTable
-            dataUrl={`/action/api/marker/${geneId}/expression/ribbon-detail?${qs.stringify(query)}`}
-            columns={columns}
-            rowKey={row => row.entity.superterm.oboID + (row.entity.subterm && ',' + row.entity.subterm.oboID)}
-            tableState={tableState}
-            setTableState={setTableState}
-        />
+        <div>
+            <DataTable
+                dataUrl={`/action/api/marker/${geneId}/expression/ribbon-detail?${qs.stringify(query)}`}
+                columns={columns}
+                rowKey={row => row.entity.superterm.oboID + (row.entity.subterm && ',' + row.entity.subterm.oboID)}
+                tableState={tableState}
+                setTableState={setTableState}
+            />
+            <small className='text-muted'>
+                Click a location to see annotation details
+            </small>
+
+        </div>
     );
 };
 
