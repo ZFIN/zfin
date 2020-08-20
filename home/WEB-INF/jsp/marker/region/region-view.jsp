@@ -63,7 +63,7 @@
         </z:section>
 
         <z:section title="${ORTHOLOGY}">
-            <jsp:include page="../gene/gene-view-orthology.jsp"/>
+            <jsp:include page="../region/region-view-orthology.jsp"/>
         </z:section>
 
         <z:section title="${CITATIONS}">
