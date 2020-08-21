@@ -4,7 +4,8 @@
     Phenotype Note
 </div>
 <div class="popup-body">
-    ZFIN displays three kinds of phenotype data:
+    <p>
+    ZFIN displays three kinds of phenotype data:</p>
     <ol>
         <li> Annotated figures from the current literature. Images and captions are displayed when copyright permissions
             are available.

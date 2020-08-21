@@ -1,12 +1,15 @@
 
 <div class="popup-header">
-    Disease Associations for  for Human Ortholog
+    Disease Associations for Human Ortholog
 </div>
 <div class="popup-body">
 
 
-    Data in this table represents Disease Ontology terms and OMIM Phenotype names and IDs associated with the human ortholog for the zebrafish gene.
-    <p>Disease Ontology terms are mapped to OMIM Phenotype terms using OMIM IDs that are listed as cross-references in the Disease Ontology file. A Disease Ontology term may map to more than one OMIM Phenotype ID. Disease Ontology terms are linked to term pages that provide more information about the disease term. </p>
+    <p>Data in this table represents Disease Ontology terms and OMIM Phenotype names and IDs associated with the human ortholog for the zebrafish gene.</p>
+
+    <p>Disease Ontology terms are mapped to OMIM Phenotype terms using OMIM IDs that are listed as cross-references in the Disease Ontology file.
+        A Disease Ontology term may map to more than one OMIM Phenotype ID. Disease Ontology terms are linked to term pages that provide more information about the disease term.
+    </p>
     <p>OMIM Phenotype IDs are linked to the OMIM records where the phenotype is described; in some cases more than one related phenotype may be included on an OMIM Phenotype record. Phenotypes that lack OMIM Phenotype IDs are usually included on the associated human gene records in OMIM.</p>
 
     <p>OMIM also makes use of brackets, braces and numbers in the phenotype descriptions. These mean the following:</p>

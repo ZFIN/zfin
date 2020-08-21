@@ -4,8 +4,9 @@
     Citations
 </div>
 <div class="popup-body">
-    Publications in this list have data associated with the linked genes, mutants or reagents. These associations are made by curators.
-    If we have missed an important paper,  please <zfin2:mailTo>contact us</zfin2:mailTo>.
+    <p>Publications in this list have data associated with the linked genes, mutants or reagents. These associations are made by curators.
+        If we have missed an important paper,  please <zfin2:mailTo>contact us</zfin2:mailTo>.</p>
+
     <p>
     Click on the reference to see all curated data from that publication.
     Figures are displayed for open access publications or when we have specific permission from the publishers.

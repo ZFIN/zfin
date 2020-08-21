@@ -3,10 +3,13 @@
     Gene Ontology
 </div>
 <div class="popup-body">
+    <p><
     Gene Ontology (GO) terms are derived from dynamic controlled vocabularies, or ontologies, produced by the <a href="www.geneontology.org">Gene Ontology Consortium</a>
     to describe the roles of genes and gene products in all organisms.
+    </p>
+    <p>
     The Gene Ontology Consortium has developed and continues to expand ontologies of terms that define the molecular functions, biological processes, and cellular components:
-
+    </p>
     <ul>
         <li><b>Molecular Function</b>: Terms that describe a gene product function at a biochemical level.</li>
         <li><b>Biological Process</b>: Pathways and larger processes accomplished by ordered assemblies of molecular functions.</li>

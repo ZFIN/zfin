@@ -4,7 +4,7 @@
 </div>
 <div class="popup-body">
 
-    Sequence Targeting Reagents are used to decrease the amount of gene product either transiently for Morpholinos  or in a more permanent manner for TALENs and CRISPRs.
+    <p>Sequence Targeting Reagents are used to decrease the amount of gene product either transiently for Morpholinos  or in a more permanent manner for TALENs and CRISPRs.</p>
     <p>
     Information including target sequences comes from either published works or community databases <a href="https://zfin.org/ZDB-PUB-151007-9">(Burgess, et al.)</a>
     ZFIN verifies reagent sequence data when we add them to the database.
