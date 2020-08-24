@@ -68,6 +68,7 @@ public class DeleteRecordController {
             rule.logDeleteOperation();
             formBean.setRecordToDeleteViewString(rule.getEntity().getEntityName());
             formBean.setPublicationCurated(rule.getPublication());
+            getInfrastructureRepository().deletePubProcessingInfo(zdbID);
             getInfrastructureRepository().deleteActiveEntity(zdbID);
 
             HibernateUtil.currentSession().flush();

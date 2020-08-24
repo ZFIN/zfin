@@ -1879,15 +1879,26 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     public List<ControlledVocab> getControlledVocabsForSpeciesByConstruct(Marker construct) {
         Session session = currentSession();
         String hql = "SELECT DISTINCT cv FROM ControlledVocab as cv, " +
-                     " ConstructComponent AS cc " +
-                     " WHERE cv.zdbID = cc.componentZdbID " +
-                     "   AND cv.cvForeignSpecies is not null " +
-                     "   AND cc.constructZdbID = :constructId ";
+                " ConstructComponent AS cc " +
+                " WHERE cv.zdbID = cc.componentZdbID " +
+                "   AND cv.cvForeignSpecies is not null " +
+                "   AND cc.constructZdbID = :constructId ";
 
         Query query = session.createQuery(hql);
         query.setParameter("constructId", construct.getZdbID());
 
         return (List<ControlledVocab>) query.list();
+    }
+
+    @Override
+    public void deletePubProcessingInfo(String zdbID) {
+
+        String sql = "delete from PublicationProcessingChecklistEntry where " +
+                " publication.zdbID = :ID ";
+        final Query query = HibernateUtil.currentSession().createQuery(sql);
+        query.setParameter("ID", zdbID);
+        query.executeUpdate();
+
     }
 }
 

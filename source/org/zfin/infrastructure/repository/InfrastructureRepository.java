@@ -454,6 +454,8 @@ public interface InfrastructureRepository {
     List<Date> getDistinctDatesFromAnnualStats();
 
     List<ControlledVocab> getControlledVocabsForSpeciesByConstruct(Marker construct);
+
+    void deletePubProcessingInfo(String zdbID);
 }
 
 
