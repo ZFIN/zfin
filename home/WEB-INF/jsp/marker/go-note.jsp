@@ -3,7 +3,7 @@
     Gene Ontology
 </div>
 <div class="popup-body">
-    <p><
+    <p>
     Gene Ontology (GO) terms are derived from dynamic controlled vocabularies, or ontologies, produced by the <a href="www.geneontology.org">Gene Ontology Consortium</a>
     to describe the roles of genes and gene products in all organisms.
     </p>
