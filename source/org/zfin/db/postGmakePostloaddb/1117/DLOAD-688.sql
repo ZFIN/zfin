@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset pm DLOAD-688.sql
+--changeset pm:DLOAD-688.sql
 
 create temp table tscripts (tscript text, ensdart text,gene text);
 insert into tscripts (select tscript_mrkr_zdb_id , tscript_ensdart_id,mrel_mrkr_1_zdb_id from transcript, marker_relationship where tscript_mrkr_zdb_id=mrel_mrkr_2_zdb_id and tscript_ensdart_id is not null and mrel_type='gene produces transcript');
