@@ -566,6 +566,7 @@ public class SearchPrototypeController {
         if (!solrService.allowDownload(q, filterQuery)) {
             try {
                 response.sendError(403);
+                return;
             } catch (IOException e) {
                 logger.error(e);
             }
