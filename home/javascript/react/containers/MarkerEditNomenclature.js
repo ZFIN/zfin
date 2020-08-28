@@ -1,29 +1,22 @@
-import React, { useMemo, useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import useFetch from '../hooks/useFetch';
 import { useForm } from 'react-form';
 import InputField from '../components/form/InputField';
 import LoadingButton from '../components/LoadingButton';
 import http from '../utils/http';
+import useMutableFetch from '../hooks/useMutableFetch';
 
 const MarkerEditNomenclature = ({markerId}) => {
-    const [mutatedValue, setMutatedValue] = useState(null);
     const {
-        value: nomenclature
-    } = useFetch(`/action/marker/${markerId}/nomenclature`);
-
-    const defaultValues = useMemo(() => {
-        if (mutatedValue) {
-            return mutatedValue;
+        value: nomenclature,
+        setValue
+    } = useMutableFetch(
+        `/action/marker/${markerId}/nomenclature`,
+        {
+            name: '',
+            abbreviation: '',
         }
-        if (!nomenclature) {
-            return {
-                name: '',
-                abbreviation: ''
-            }
-        }
-        return nomenclature;
-    }, [nomenclature, mutatedValue]);
+    );
 
     const {
         Form,
@@ -31,7 +24,7 @@ const MarkerEditNomenclature = ({markerId}) => {
         setMeta,
         meta: { isTouched, isValid, isSubmitting, isSubmitted, serverError }
     } = useForm({
-        defaultValues,
+        defaultValues: nomenclature,
         onSubmit: async (values) => {
             try {
                 const updated = await http.post(`/action/marker/${markerId}/nomenclature`, values);
@@ -39,7 +32,7 @@ const MarkerEditNomenclature = ({markerId}) => {
                     isTouched: false,
                     serverError: null,
                 });
-                setMutatedValue(updated);
+                setValue(updated);
             } catch (error) {
                 setMeta({ serverError: error });
                 throw error;
@@ -56,7 +49,7 @@ const MarkerEditNomenclature = ({markerId}) => {
                         field='name'
                         id='inputName'
                         validate={(value, { debounce }) => debounce(async () => {
-                            if (value === defaultValues.name) {
+                            if (value === nomenclature.name) {
                                 return false;
                             }
                             if (!value) {
@@ -79,7 +72,7 @@ const MarkerEditNomenclature = ({markerId}) => {
                         field='abbreviation'
                         id='inputName'
                         validate={(value, { debounce }) => debounce(async () => {
-                            if (value === defaultValues.abbreviation) {
+                            if (value === nomenclature.abbreviation) {
                                 return false;
                             }
                             if (!value) {
