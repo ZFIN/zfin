@@ -55,6 +55,7 @@ public class BasicRNASeqMetaDatasetInfo extends AbstractScriptWrapper {
 
         List<BasicRNASeqMetaDatasetDTO> allDatasetDTOList = allDatasets.stream()
                 .map(
+
                         dataset -> {
                             BasicRNASeqMetaDatasetDTO dto = new BasicRNASeqMetaDatasetDTO();
                             HtpIDDTO datasetId = new HtpIDDTO();
