@@ -5,7 +5,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.*;
-import org.hibernate.criterion.*;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.hibernate.transform.DistinctRootEntityResultTransformer;
 import org.hibernate.transform.ResultTransformer;
@@ -2751,5 +2754,18 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 .createCriteria(PubmedPublicationAuthor.class)
                 .add(Restrictions.eq("publication", publication))
                 .list();
+    }
+
+    @Override
+    public boolean isNewGenePubAttribution(Marker marker, String publicationId) {
+        String hql = "select pa from PublicationAttribution as pa where " +
+                " pa.dataZdbID = :markerID AND pa.sourceType = :source ";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("markerID", marker.getZdbID());
+        query.setParameter("source", RecordAttribution.SourceType.STANDARD);
+        List<PublicationAttribution> pubAttrList = query.list();
+        Set<String> pubList = pubAttrList.stream().map(attribution -> attribution.getPublication().getZdbID()).collect(Collectors.toSet());
+        return CollectionUtils.isNotEmpty(pubList) && pubList.size() == 1 && pubList.contains(publicationId);
     }
 }
