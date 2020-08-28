@@ -112,13 +112,13 @@ public class MarkerEditController {
 
     @ResponseBody
     @RequestMapping(value = "/lookup", method = RequestMethod.GET)
-    public boolean queryMarkerLookup(@RequestParam(required = false) String markerName,
-                                     @RequestParam(required = false) String markerAbbrev) {
-        if (StringUtils.isNotEmpty(markerName)) {
-            return markerRepository.getMarkerByName(markerName) != null;
+    public boolean queryMarkerLookup(@RequestParam(required = false) String name,
+                                     @RequestParam(required = false) String abbreviation) {
+        if (StringUtils.isNotEmpty(name)) {
+            return markerRepository.getMarkerByName(name) != null;
         }
-        if (StringUtils.isNotEmpty(markerAbbrev)) {
-            return markerRepository.getMarkerByAbbreviation(markerAbbrev) != null;
+        if (StringUtils.isNotEmpty(abbreviation)) {
+            return markerRepository.getMarkerByAbbreviation(abbreviation) != null;
         }
         return false;
     }
