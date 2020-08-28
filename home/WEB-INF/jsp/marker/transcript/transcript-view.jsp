@@ -24,6 +24,10 @@
     </jsp:attribute>
 
     <jsp:body>
+        <z:dataManagerDropdown>
+            <a class="dropdown-item" href="/action/marker/marker-edit?zdbID=${formBean.marker.zdbID}">Edit</a>
+        </z:dataManagerDropdown>
+
         <div id="${zfn:makeDomIdentifier(SUMMARY)}">
             <zfin2:markerDataPageHeader marker="${formBean.marker}" />
             <jsp:include page="transcript-view-summary.jsp"/>
