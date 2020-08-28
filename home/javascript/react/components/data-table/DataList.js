@@ -4,7 +4,7 @@ import DataProvider from './DataProvider';
 import List from './List';
 import {downloadOptionType} from '../../utils/types';
 import produce from 'immer';
-import {useTableState} from '../../utils/effects';
+import useTableState from '../../hooks/useTableState';
 import TextBoxFilter from './TextBoxFilter';
 
 const DataList = ({

@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import qs from 'qs';
-import {useFetch, useRibbonState, useTableState} from '../utils/effects';
+import useFetch from '../hooks/useFetch';
+import useRibbonState from '../hooks/useRibbonState';
+import useTableState from '../hooks/useTableState';
 import LoadingSpinner from '../components/LoadingSpinner';
 import DataTable from '../components/data-table';
 import NoData from '../components/NoData';

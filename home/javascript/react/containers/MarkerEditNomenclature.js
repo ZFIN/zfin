@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useFetch } from '../utils/effects';
+import useFetch from '../hooks/useFetch';
 import { useForm } from 'react-form';
 import InputField from '../components/form/InputField';
 import LoadingButton from '../components/LoadingButton';

@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 import qs from 'qs';
-import {useRibbonState, useTableState} from '../utils/effects';
+import useRibbonState from '../hooks/useRibbonState';
+import useTableState from '../hooks/useTableState';
 import {DataRibbon} from '../components/ribbon';
 import {
     PhenotypeAnnotationDetailTable,

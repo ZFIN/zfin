@@ -4,7 +4,8 @@ import FigureGallery from '../FigureGallery';
 import FigureGalleryPhenotypeDetails from './FigureGalleryPhenotypeDetails';
 import NoData from '../NoData';
 import GenericErrorMessage from '../GenericErrorMessage';
-import {useAppendingFetch, useFetch} from '../../utils/effects';
+import useAppendingFetch from '../../hooks/useAppendingFetch';
+import useFetch from '../../hooks/useFetch';
 import qs from 'qs';
 
 const PhenotypeFigureGallery = ({excludeEaps, excludeSTRs, geneId, selectedTableIds, selectedRibbonTerm}) => {

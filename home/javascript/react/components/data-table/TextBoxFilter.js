@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
-import {useDebouncedValue} from '../../utils/effects';
+import useDebouncedValue from '../../hooks/useDebouncedValue';
 
 const UPDATE_TIMEOUT = 200;
 
