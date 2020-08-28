@@ -1,5 +1,8 @@
 package org.zfin.nomenclature.presentation;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Nomenclature {
 
     private String comments;
@@ -8,6 +11,7 @@ public class Nomenclature {
     private String abbreviation;
     private String newAlias;
     private String attribution;
+    private Map<String, Object> meta = new HashMap<>();
 
     public String getReason() {
         return reason;
@@ -64,4 +68,13 @@ public class Nomenclature {
     public void setNewAlias(String newAlias) {
         this.newAlias = newAlias;
     }
+
+    public void putMeta(String key, Object value) {
+        meta.put(key, value);
+    }
+
+    public Map<String, Object> getMeta() {
+        return meta;
+    }
+
 }
