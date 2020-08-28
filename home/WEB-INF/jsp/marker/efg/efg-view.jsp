@@ -15,6 +15,10 @@
     </jsp:attribute>
 
     <jsp:body>
+        <z:dataManagerDropdown>
+            <a class="dropdown-item" href="/action/marker/gene/edit/${formBean.marker.zdbID}">Edit</a>
+        </z:dataManagerDropdown>
+
         <div id="${zfn:makeDomIdentifier(SUMMARY)}">
             <zfin2:markerDataPageHeader marker="${formBean.marker}" />
             <jsp:include page="efg-view-summary.jsp"/>
