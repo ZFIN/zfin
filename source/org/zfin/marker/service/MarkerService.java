@@ -1,5 +1,6 @@
 package org.zfin.marker.service;
 
+import com.zerog.ia.platform.Sys;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.logging.log4j.LogManager;
@@ -813,6 +814,7 @@ public class MarkerService {
 
 
     public static PhenotypeOnMarkerBean getPhenotypeOnGene(Marker gene) {
+        System.out.println(gene.zdbID);
         PhenotypeOnMarkerBean phenotypeOnMarkerBean = new PhenotypeOnMarkerBean();
         phenotypeOnMarkerBean.setNumFigures(RepositoryFactory.getPhenotypeRepository().getNumPhenotypeFigures(gene));
         phenotypeOnMarkerBean.setNumPublications(RepositoryFactory.getPhenotypeRepository().getNumPhenotypePublications(gene));
@@ -823,6 +825,7 @@ public class MarkerService {
         if (phenotypeOnMarkerBean.getNumFigures() == 1) {
             phenotypeOnMarkerBean.setSingleFigureLink(RepositoryFactory.getPhenotypeRepository().getPhenotypeFirstFigure(gene));
         }
+       System.out.println(phenotypeOnMarkerBean.getNumFigures());
 
         return phenotypeOnMarkerBean;
     }
