@@ -42,7 +42,7 @@ public class BasicRNASeqMetaDatasampleInfo extends AbstractScriptWrapper {
         System.exit(0);
     }
 
-    
+
     private void init() throws IOException {
         initAll();
         ALLRNASeqMetaDatasampleDTO allDatasampleDTO = getAllDatasampleInfo();
