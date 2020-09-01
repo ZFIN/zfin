@@ -37,6 +37,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private GregorianCalendar publicationDate;
     private GregorianCalendar closeDate;
     private GregorianCalendar entryDate;
+    @JsonView(View.Default.class)
     private Journal journal;
     private Set<ExpressionExperiment> expressionExperiments;
     private Set<Figure> figures;

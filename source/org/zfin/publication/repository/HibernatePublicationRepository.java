@@ -1214,6 +1214,12 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         }
         return (List<Marker>) getMarkersByPublication(pubID, markerTypes);
     }
+    public List<Marker> getSTRByPublication(String pubID) {
+        Marker.TypeGroup typeGroup = Marker.TypeGroup.KNOCKDOWN_REAGENT;
+        List<MarkerType> markerTypes = markerRepository.getMarkerTypesByGroup(typeGroup);
+
+        return (List<Marker>) getMarkersByPublication(pubID, markerTypes);
+    }
 
     public List<Marker> getGenesAndMarkersByPublication(String pubID) {
         // directly annotated markers
@@ -2760,6 +2766,19 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public boolean isNewGenePubAttribution(Marker marker, String publicationId) {
         String hql = "select pa from PublicationAttribution as pa where " +
                 " pa.dataZdbID = :markerID AND pa.sourceType = :source ";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("markerID", marker.getZdbID());
+        query.setParameter("source", RecordAttribution.SourceType.STANDARD);
+        List<PublicationAttribution> pubAttrList = query.list();
+        Set<String> pubList = pubAttrList.stream().map(attribution -> attribution.getPublication().getZdbID()).collect(Collectors.toSet());
+        return CollectionUtils.isNotEmpty(pubList) && pubList.size() == 1 && pubList.contains(publicationId);
+    }
+
+    @Override
+    public boolean hasCuratedOrthology(Marker marker,String publicationId) {
+        String hql = "select pa from PublicationAttribution as pa, Ortholog as o where " +
+                " pa.dataZdbID = o.zdbID AND o.zebrafishGene.zdbID = :markerID AND  pa.sourceType = :source ";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("markerID", marker.getZdbID());
