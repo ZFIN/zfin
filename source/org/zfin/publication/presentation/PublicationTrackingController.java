@@ -92,8 +92,8 @@ public class PublicationTrackingController {
         model.addAttribute("allowCuration", publicationService.allowCuration(publication));
         model.addAttribute("hasCorrespondence", publicationService.hasCorrespondence(publication));
         model.addAttribute("loggedInUser", ProfileService.getCurrentSecurityUser());
-       // return "publication/track-publication.page";
-        return "publication/publication-tracker.page";
+        return "publication/track-publication.page";
+       // return "publication/publication-tracker.page";
     }
 
     @ResponseBody
