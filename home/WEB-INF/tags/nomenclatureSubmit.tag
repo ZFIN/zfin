@@ -26,11 +26,11 @@
     <h3>Contact Information</h3>
     <dl>
         <dt>Name</dt>
-        <dd>${submission.name}</dd>
+        <dd><c:out value="${submission.name}" /></dd>
         <dt>Email</dt>
-        <dd>${submission.email2}</dd>
+        <dd><c:out value="${submission.email2}" /></dd>
         <dt>Laboratory</dt>
-        <dd>${submission.laboratory}</dd>
+        <dd><c:out value="${submission.laboratory}" /></dd>
     </dl>
 
     <jsp:doBody />
@@ -38,16 +38,16 @@
     <h3>Publication Status</h3>
     <dl>
         <dt>Status</dt>
-        <dd>${submission.pubStatus}</dd>
+        <dd><c:out value="${submission.pubStatus}" /></dd>
         <c:if test="${!empty submission.citations}">
             <dt>Citations</dt>
-            <dd>${submission.citations}</dd>
+            <dd><c:out value="${submission.citations}" /></dd>
         </c:if>
 
         <jsp:invoke fragment="keepPrivateOption" />
     </dl>
 
     <h3>Additional Comments</h3>
-    ${submission.comments}
+    <c:out value="${submission.comments}" />
 
 </div>

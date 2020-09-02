@@ -3,11 +3,6 @@
 <table width="50%">
     <tr>
         <td>
-            Dear ${formBean.firstName}:
-        </td>
-    </tr>
-    <tr>
-        <td>
             Thank you for using ZFIN. Your suggestion is very important to us.
             We will respond to it as soon as possible.
         </td>
