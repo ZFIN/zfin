@@ -8,6 +8,7 @@
     <button
        class='btn btn-outline-secondary btn-sm dropdown-toggle'
        data-toggle='dropdown'
+       data-boundary='window'
        aria-haspopup='true'
        aria-expanded='false'
     >
