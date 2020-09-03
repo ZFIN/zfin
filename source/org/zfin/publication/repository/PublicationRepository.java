@@ -632,5 +632,7 @@ public interface PublicationRepository extends PaginationParameter {
 
     boolean isNewGenePubAttribution(Marker marker, String publicationId);
 
+    boolean isNewFeaturePubAttribution(Feature feature, String publicationId);
+
     boolean hasCuratedOrthology(Marker marker,String publicationId);
 }

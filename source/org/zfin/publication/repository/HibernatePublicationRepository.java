@@ -2774,6 +2774,18 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Set<String> pubList = pubAttrList.stream().map(attribution -> attribution.getPublication().getZdbID()).collect(Collectors.toSet());
         return CollectionUtils.isNotEmpty(pubList) && pubList.size() == 1 && pubList.contains(publicationId);
     }
+    @Override
+    public boolean isNewFeaturePubAttribution(Feature marker, String publicationId) {
+        String hql = "select pa from PublicationAttribution as pa where " +
+                " pa.dataZdbID = :featureID AND pa.sourceType = :source ";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("featureID", marker.getZdbID());
+        query.setParameter("source", RecordAttribution.SourceType.STANDARD);
+        List<PublicationAttribution> pubAttrList = query.list();
+        Set<String> pubList = pubAttrList.stream().map(attribution -> attribution.getPublication().getZdbID()).collect(Collectors.toSet());
+        return CollectionUtils.isNotEmpty(pubList) && pubList.size() == 1 && pubList.contains(publicationId);
+    }
 
     @Override
     public boolean hasCuratedOrthology(Marker marker,String publicationId) {

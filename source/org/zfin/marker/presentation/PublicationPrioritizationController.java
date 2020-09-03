@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.zfin.expression.presentation.MarkerExpression;
 import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerType;
+import org.zfin.feature.Feature;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.mutant.DiseaseAnnotationModel;
@@ -91,18 +91,9 @@ public class PublicationPrioritizationController {
                 .map(marker -> {
                     Prioritization prioritization = new Prioritization();
                     prioritization.setId(marker.getZdbID());
-                    //     prioritization.setMarker(marker);
                     prioritization.setName(marker.getAbbreviation());
-                    prioritization.setNewWithThisPaper(getPublicationRepository().isNewGenePubAttribution(marker, publicationId));
-
-                    prioritization.setHasOrthology(getPublicationRepository().hasCuratedOrthology(marker, publicationId));
                     PhenotypeOnMarkerBean phenotypeOnMarkerBean=MarkerService.getPhenotypeOnGene(marker);
                     prioritization.setPhenoOnMarker(phenotypeOnMarkerBean);
-
-                    List<DiseaseAnnotationModel> diseaseAnnotationModels = getPhenotypeRepository().getDiseaseAnnotationModelsByGene(marker);
-                    if (diseaseAnnotationModels != null)
-                        prioritization.setAssociatedDiseases(diseaseAnnotationModels.size());
-
                     return prioritization;
                 })
                 .collect(Collectors.toList());
@@ -121,8 +112,23 @@ public class PublicationPrioritizationController {
     @RequestMapping(value = "/{publicationId}/prioritization/features")
     public JsonResultResponse<Prioritization> getFeaturePubPrioritization(@PathVariable String publicationId)
             throws Exception {
+        List<Feature> attributedFeatures = getPublicationRepository().getFeaturesByPublication(publicationId);
+        List<Prioritization> prioList = attributedFeatures.stream()
+                .map(feature -> {
+                    Prioritization prioritization = new Prioritization();
+                    prioritization.setId(feature.getZdbID());
+                    prioritization.setName(feature.getAbbreviation());
+                    prioritization.setNewWithThisPaper(getPublicationRepository().isNewFeaturePubAttribution(feature, publicationId));
+                    return prioritization;
+                })
+                .collect(Collectors.toList());
+        JsonResultResponse<Prioritization> response = new JsonResultResponse<>();
+        response.setTotal(prioList.size());
 
-        return null;
+        response.setResults(prioList);
+        response.setHttpServletRequest(request);
+
+        return response;
     }
 
 }
