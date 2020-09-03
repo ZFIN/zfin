@@ -12,13 +12,7 @@ class PubTrackerTopicsSection extends React.Component {
         super(props);
         this.state = {
             curatedEntities: [],
-
             topics: [],
-            status: {},
-            statusLoading: false,
-            indexed: null,
-            indexedLoading: false,
-            statuses: [],
             locations: [],
             curators: [],
             validationWarnings: [],

@@ -1,24 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import produce from 'immer';
 
 import {
-    addNote,
-    addTopic,
-    deleteNote,
-    getCuratedEntities,
     getCurators,
     getIndexed,
     getLocations,
-    getNotes,
     getStatus,
     getStatuses,
-    getTopics,
-    sendAuthorNotification,
     updateIndexed,
-    updateNote,
     updateStatus,
-    updateTopic,
     validate,
 } from '../api/publication';
 import intertab from '../utils/intertab';
@@ -35,7 +25,6 @@ class PubTrackerStatusSection extends React.Component {
             curatedEntities: [],
             notificationLoading: false,
             notes: [],
-            topics: [],
             status: {},
             statusLoading: false,
             indexed: null,
@@ -49,10 +38,6 @@ class PubTrackerStatusSection extends React.Component {
         this.handleCloseValidate = this.handleCloseValidate.bind(this);
         this.handleValidationCancel = this.handleValidationCancel.bind(this);
         this.handleIndexedToggle = this.handleIndexedToggle.bind(this);
-        this.handleTopicSave = this.handleTopicSave.bind(this);
-        this.handleAddNote = this.handleAddNote.bind(this);
-        this.handleEditNote = this.handleEditNote.bind(this);
-        this.handleDeleteNote = this.handleDeleteNote.bind(this);
 
     }
 
@@ -63,8 +48,6 @@ class PubTrackerStatusSection extends React.Component {
         getCurators().then(curators => this.setState({curators}));
         getStatus(pubId).then(status => this.setState({status}));
         getIndexed(pubId).then(indexed => this.setState({indexed}));
-        getNotes(pubId).then(notes => this.setState({notes}));
-        getTopics(pubId).then(topics => this.setState({topics}));
     }
 
     handleStatusSave(status, options = {}) {
@@ -77,9 +60,7 @@ class PubTrackerStatusSection extends React.Component {
                 validationWarnings: [],
             });
             intertab.fireEvent(intertab.EVENTS.PUB_STATUS);
-            if (status.status.type === 'CLOSED' || options.resetTopics) {
-                getTopics(pubId).then(topics => this.setState({topics}));
-            }
+
         });
     }
 
@@ -111,64 +92,7 @@ class PubTrackerStatusSection extends React.Component {
         }));
     }
 
-    handleTopicSave(topic) {
-        let request;
-        if (topic.zdbID) {
-            request = updateTopic(topic.zdbID, topic);
-        } else {
-            request = addTopic(this.props.pubId, topic);
-        }
-        request.then(topic => {
-            const idx = this.state.topics.findIndex(other => other.topic === topic.topic);
-            this.setState(produce(state => {
-                state.topics[idx] = topic;
-            }));
-        });
-    }
 
-    handleAddNote(note) {
-        return addNote(this.props.pubId, note).then(note => {
-            this.setState(produce(state => {
-                state.notes.unshift(note);
-            }));
-        });
-    }
-
-    handleEditNote(note) {
-        const {notes} = this.state;
-        const idx = notes.findIndex(other => other.zdbID === note.zdbID);
-        return updateNote(note.zdbID, note).then(note => {
-            this.setState(produce(state => {
-                state.notes[idx] = note;
-            }));
-        });
-    }
-
-    handleDeleteNote(note) {
-        const {notes} = this.state;
-        const idx = notes.findIndex(other => other.zdbID === note.zdbID);
-        return deleteNote(note.zdbID).then(() => {
-            this.setState(produce(state => {
-                state.notes.splice(idx, 1);
-            }));
-        });
-    }
-
-    handleNotificationEdit() {
-        this.setState({notificationLoading: true});
-        return getCuratedEntities(this.props.pubId)
-            .then((curatedEntities) => this.setState({
-                curatedEntities,
-                notificationLoading: false,
-            }));
-    }
-
-    handleNotificationSend(notification, note) {
-        this.setState({notificationLoading: true});
-        return sendAuthorNotification(this.props.pubId, notification)
-            .then(() => this.handleAddNote(note))
-            .always(() => this.setState({notificationLoading: false}));
-    }
 
     render() {
         const {pubId, userId} = this.props;
