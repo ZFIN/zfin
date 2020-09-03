@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import DataTable from '../components/data-table';
 
 
-const sortOptions = [
+/*const sortOptions = [
     {
         value: 'strUp',
         label: 'STR (Default), A to Z ',
@@ -24,36 +24,24 @@ const sortOptions = [
         value: 'citationLeast',
         label: 'Citation, Least ',
     },
-];
+];*/
 
 const PubAlleleTable = ({pubId}) => {
     const columns = [
         {
             label: 'Name',
-            // content: ({marker}) => <EntityLink entity={marker}/>,
+            content: row => <a href={`/${row.id}`}>{row.name}</a>,
             width: '150px',
         },
         {
             label: 'New with this paper',
-            /*  content: ({genomicFeatures, marker}) => {
-                  if (marker.type === 'MRPHLNO') {
-                      return <NoData placeholder='N/A' />
-                  }
-                  return <EntityList entities={genomicFeatures} />
-              },*/
+            content: row =>row.newWithThisPaper ? <i className='text-muted'>Yes </i>: <i className='text-muted'>No</i>,
             width: '120px',
         },
 
         {
             label: 'Phenotype Data',
-            /*      content: row => (
-                      <AttributionLink
-                          url={row.url}
-                          publicationCount={row.numberOfPublications}
-                          publication={row.singlePublication}
-                          multiPubs={row.marker.zdbID}
-                      />
-                  ),*/
+            content: row =>row.newWithThisPaper ? <i className='text-muted'>Yes </i>: <i className='text-muted'>No</i>,
             width: '100px',
         },
 
@@ -61,9 +49,9 @@ const PubAlleleTable = ({pubId}) => {
     return (
         <DataTable
             columns={columns}
-            dataUrl={`/action/api/publication/${pubId}/prioritization/alleles`}
-            rowKey={row => row.marker.zdbID}
-            sortOptions={sortOptions}
+            dataUrl={`/action/api/publication/${pubId}/prioritization/features`}
+            rowKey={row => row.id}
+            //sortOptions={sortOptions}
         />
     );
 };

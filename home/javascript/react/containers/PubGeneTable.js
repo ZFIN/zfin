@@ -23,8 +23,7 @@ const PubGeneTable = ({pubId}) => {
     const columns = [
         {
             label: 'Symbol',
-            //  content: ({marker}) => <EntityLink entity={marker}/>,
-            content: row => row.name,
+            content: row => <a href={`/${row.id}`}>{row.name}</a>,
             width: '100px',
         },
         {

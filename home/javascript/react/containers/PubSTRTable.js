@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import DataTable from '../components/data-table';
 
-const sortOptions = [
+/*const sortOptions = [
     {
         value: 'strUp',
         label: 'STR (Default), A to Z ',
@@ -23,23 +23,21 @@ const sortOptions = [
         value: 'citationLeast',
         label: 'Citation, Least ',
     },
-];
+];*/
 
 const PubSTRTable = ({pubId}) => {
     const columns = [
         {
             label: 'Name',
-            //content: ({marker}) => <EntityLink entity={marker}/>,
+            content: row => <a href={`/${row.id}`}>{row.name}</a>,
             width: '150px',
         },
         {
             label: 'Phenotype Data',
-            /* content: ({genomicFeatures, marker}) => {
-                if (marker.type === 'MRPHLNO') {
-                    return <NoData placeholder='N/A' />
-                }
-                return <EntityList entities={genomicFeatures} />
-            },*/
+            content: row => (row.phenoOnMarker.numFigures > 0 &&
+                <a href={`/action/marker/${row.id}/phenotype-summary`}>{row.phenoOnMarker.numFigures} figures from {row.phenoOnMarker.numPublications} pubs</a>
+
+            ),
             width: '120px',
         },
 
@@ -50,8 +48,8 @@ const PubSTRTable = ({pubId}) => {
         <DataTable
             columns={columns}
             dataUrl={`/action/api/publication/${pubId}/prioritization/strs`}
-            rowKey={row => row.marker.zdbID}
-            sortOptions={sortOptions}
+            rowKey={row => row.id}
+            //sortOptions={sortOptions}
         />
     );
 };
