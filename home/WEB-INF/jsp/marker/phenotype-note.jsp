@@ -4,22 +4,13 @@
     Phenotype Note
 </div>
 <div class="popup-body">
-    <p>
-    ZFIN displays three kinds of phenotype data:</p>
-    <ol>
-        <li> Annotated figures from the current literature. Images and captions are displayed when copyright permissions
-            are available.
-        <li> Submitted images and annotations that have been electronically derived from older data in ZFIN.
-        <li> OMIM Phenotype names and IDs associated with the human ortholog for the zebrafish gene.
-    </ol>
-
 
 <p>
-    ZFIN began to include published figures in 2004 and to annotate detailed phenotype information in 2006. We are currently able to add figures from older publications only on an ad hoc basis. A more complete incorporation of figures from the older literature is a long-term goal.
+    ZFIN annotates phenotype data using the Phenotype and Trait Ontology (PATO), the Zebrafish Anatomical Ontology (ZFA), and the Gene Ontology (GO). Phenotype data is annotated from figures in the current literature, as well as data that is directly submitted to ZFIN.
 </p>
     <p>
-    The ribbon view represents a high-level summary of phenotype.
-    Click on a shaded box in the ribbon to view the corresponding detailed phenotype annotations. Unfilled boxes in the ribbon indicate that there are no annotations currently available in ZFIN. An unfilled box does not imply the absence of phenotypes for the structures, stages and Gene Ontology terms listed in the ribbon.
+        The ribbon view represents a high-level phenotype summary for mutant and gene knockdown fish, denoting which systems, stages, molecular functions and biological processes have phenotype annotations.
+        Clicking on a shaded box in the ribbon view will open a table to view more detailed phenotype annotations. Associated figures are displayed when available.
     </p>
 
 
