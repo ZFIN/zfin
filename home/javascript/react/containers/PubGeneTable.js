@@ -1,0 +1,88 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+import DataTable from '../components/data-table';
+
+
+const sortOptions = [
+    {
+        value: 'symbolUp',
+        label: 'Gene, A to Z ',
+    },
+    {
+        value: 'expDataUp',
+        label: 'Expression Date, least to most ',
+    },
+    {
+        value: 'phenoDataUp',
+        label: 'Phenotype Data, leats to most ',
+    },
+
+];
+
+const PubGeneTable = ({pubId}) => {
+    const columns = [
+        {
+            label: 'Symbol',
+            //  content: ({marker}) => <EntityLink entity={marker}/>,
+            content: row => row.name,
+            width: '100px',
+        },
+        {
+            label: 'New with this paper',
+            content: row =>row.newWithThisPaper ? <i className='text-muted'>Yes </i>: <i className='text-muted'>No</i>,
+
+            width: '100px',
+        },
+
+        {
+            label: 'Expression data',
+            content: row => row.expressionData, /* (
+
+                <MarkerExpressionLink
+                    numFigures={row.allExpressionData.numFigures}
+                    numPubs={row.allExpressionData.publicationCount}
+                    inSituFigures={row.directlySubmittedExpression.figureCount}
+                />
+
+            ),*/
+            width: '150px',
+        },
+        {
+            label: 'Phenotype Data',
+
+            content: row => (row.phenoOnMarker.numFigures > 0 &&
+                <a href={`/action/marker/${row.id}/phenotype-summary`}>{row.phenoOnMarker.numFigures} figures from {row.phenoOnMarker.numPublications} pubs</a>
+
+            ),
+            width: '150px',
+        },
+        {
+            label: 'Associated Disease',
+            content:
+                row => row.associatedDiseases,
+
+            width: '100px',
+        },
+        {
+            label: 'Has Orthology',
+            content: row => row.hasOrthology ? <i className='text-muted'>Yes </i>: <i className='text-muted'>No</i>,
+            width: '100px',
+        },
+
+
+    ];
+    return (
+        <DataTable
+            columns={columns}
+            dataUrl={`/action/api/publication/${pubId}/prioritization/genes`}
+            rowKey={row => row.id}
+            sortOptions={sortOptions}
+        />
+    );
+};
+
+PubGeneTable.propTypes = {
+    pubId: PropTypes.string,
+};
+
+export default PubGeneTable;
