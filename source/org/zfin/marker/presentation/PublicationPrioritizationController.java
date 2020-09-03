@@ -7,15 +7,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.zfin.expression.presentation.MarkerExpression;
-import org.zfin.framework.api.JsonResultResponse;
-import org.zfin.marker.Marker;
-import org.zfin.feature.Feature;
-import org.zfin.marker.service.MarkerService;
 import org.zfin.expression.service.ExpressionService;
+import org.zfin.feature.Feature;
+import org.zfin.framework.api.JsonResultResponse;
+import org.zfin.framework.api.Pagination;
+import org.zfin.framework.api.PubPrioritizationGeneSorting;
+import org.zfin.marker.Marker;
+import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.DiseaseAnnotationModel;
-import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.wiki.presentation.Version;
-import org.zfin.framework.api.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
 import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
-import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 
 @RestController
@@ -38,25 +37,26 @@ public class PublicationPrioritizationController {
     private ExpressionService expressionService;
 
     @RequestMapping(value = "/{publicationId}/prioritization/genes")
-    public JsonResultResponse<Prioritization> getGenePubPrioritization(@PathVariable String publicationId,@Version Pagination pagination)
-            throws Exception {
+    public JsonResultResponse<Prioritization> getGenePubPrioritization(@PathVariable String publicationId,
+                                                                       @Version Pagination pagination) {
 
         List<Marker> attributedMarker = getPublicationRepository().getGenesByPublication(publicationId);
         List<Prioritization> prioList = attributedMarker.stream()
                 .map(marker -> {
                     Prioritization prioritization = new Prioritization();
                     prioritization.setId(marker.getZdbID());
-               //     prioritization.setMarker(marker);
+                    //     prioritization.setMarker(marker);
                     prioritization.setName(marker.getAbbreviation());
                     prioritization.setNewWithThisPaper(getPublicationRepository().isNewGenePubAttribution(marker, publicationId));
 
                     prioritization.setHasOrthology(getPublicationRepository().hasCuratedOrthology(marker, publicationId));
-                    PhenotypeOnMarkerBean phenotypeOnMarkerBean=MarkerService.getPhenotypeOnGene(marker);
+                    PhenotypeOnMarkerBean phenotypeOnMarkerBean = MarkerService.getPhenotypeOnGene(marker);
                     prioritization.setPhenoOnMarker(phenotypeOnMarkerBean);
-                    MarkerExpression markerExpression=expressionService.getExpressionForGene(marker);
+                    MarkerExpression markerExpression = expressionService.getExpressionForGene(marker);
                     if (marker.isGenedom()) {
+                        prioritization.setMarkerExpression(markerExpression);
                         prioritization.setExpressionData(markerExpression.getAllExpressionData().getFigureCount() + " ( " +
-                        (markerExpression.getDirectlySubmittedExpression().getFigureCount()+ " in situs)" +  " figures from " +  markerExpression.getExpressionPubCount() + " Pubs"));
+                                (markerExpression.getDirectlySubmittedExpression().getFigureCount() + " in situs)" + " figures from " + markerExpression.getExpressionPubCount() + " Pubs"));
                     }
                     List<DiseaseAnnotationModel> diseaseAnnotationModels = getPhenotypeRepository().getDiseaseAnnotationModelsByGene(marker);
                     if (diseaseAnnotationModels != null)
@@ -68,7 +68,7 @@ public class PublicationPrioritizationController {
         response.setTotal(prioList.size());
         response.setResults(prioList);
         if (pagination.getSortBy() != null) {
-            PubGeneSorting sorting = new PubGeneSorting();
+            PubPrioritizationGeneSorting sorting = new PubPrioritizationGeneSorting();
             prioList.sort(sorting.getComparator(pagination.getSortBy()));
         }
 
@@ -92,19 +92,17 @@ public class PublicationPrioritizationController {
                     Prioritization prioritization = new Prioritization();
                     prioritization.setId(marker.getZdbID());
                     prioritization.setName(marker.getAbbreviation());
-                    PhenotypeOnMarkerBean phenotypeOnMarkerBean=MarkerService.getPhenotypeOnGene(marker);
+                    PhenotypeOnMarkerBean phenotypeOnMarkerBean = MarkerService.getPhenotypeOnGene(marker);
                     prioritization.setPhenoOnMarker(phenotypeOnMarkerBean);
                     return prioritization;
                 })
                 .collect(Collectors.toList());
         JsonResultResponse<Prioritization> response = new JsonResultResponse<>();
         response.setTotal(prioList.size());
-
         response.setResults(prioList);
         response.setHttpServletRequest(request);
 
         return response;
-
 
 
     }

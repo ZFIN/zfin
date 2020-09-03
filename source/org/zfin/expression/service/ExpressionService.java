@@ -220,7 +220,7 @@ public class ExpressionService {
     public LinkDisplay getExpressionAtlasForMarker(String mrkrZdbID, ForeignDB.AvailableName foreignDBName) {
         LinkDisplay gxaLinkDisplay = new LinkDisplay();
         List<DBLink> gxaLinks = sequenceRepository.getAtlasDBLink(mrkrZdbID, foreignDBName.toString());
-        String accNumString = new String();
+        String accNumString = "";
         String linkPrefix = "[{";
         String linkSuffix = "]";
 
@@ -228,7 +228,7 @@ public class ExpressionService {
         for (DBLink gxaDBLink : gxaLinks) {
             counter++;
             if (gxaLinks.size() > 0) {
-                accNumString = accNumString + "\"" + "value\":\"" + gxaDBLink.getAccessionNumber() + "\"}";
+                accNumString += "\"" + "value\":\"" + gxaDBLink.getAccessionNumber() + "\"}";
                 if (counter < gxaLinks.size()) {
                     accNumString = accNumString + ",{";
                 }
@@ -283,10 +283,8 @@ public class ExpressionService {
         logger.debug(ForeignDB.AvailableName.EXPRESSIONATLAS);
 
         LinkDisplay atlasLink = getExpressionAtlasForMarker(marker.getZdbID(), ForeignDB.AvailableName.EXPRESSIONATLAS);
-        System.out.println(atlasLink.getLink());
         if (atlasLink != null) {
             markerExpression.setExpressionAtlasLink(atlasLink);
-            System.out.println(atlasLink.getLink());
             logger.debug(atlasLink.getLink());
         }
         logger.debug("executed expression atlas link");
