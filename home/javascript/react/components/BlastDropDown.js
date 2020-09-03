@@ -9,6 +9,7 @@ const BlastDropDown = ({dbLink}) => {
                 href='#'
                 role='button'
                 data-toggle='dropdown'
+                data-boundary='window'
                 aria-haspopup='true'
                 aria-expanded='false'
             >
