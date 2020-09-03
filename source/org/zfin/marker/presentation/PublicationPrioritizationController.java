@@ -14,6 +14,8 @@ import org.zfin.marker.service.MarkerService;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.mutant.DiseaseAnnotationModel;
 import org.zfin.mutant.SequenceTargetingReagent;
+import org.zfin.wiki.presentation.Version;
+import org.zfin.framework.api.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -36,7 +38,7 @@ public class PublicationPrioritizationController {
     private ExpressionService expressionService;
 
     @RequestMapping(value = "/{publicationId}/prioritization/genes")
-    public JsonResultResponse<Prioritization> getGenePubPrioritization(@PathVariable String publicationId)
+    public JsonResultResponse<Prioritization> getGenePubPrioritization(@PathVariable String publicationId,@Version Pagination pagination)
             throws Exception {
 
         List<Marker> attributedMarker = getPublicationRepository().getGenesByPublication(publicationId);
@@ -65,6 +67,16 @@ public class PublicationPrioritizationController {
         JsonResultResponse<Prioritization> response = new JsonResultResponse<>();
         response.setTotal(prioList.size());
         response.setResults(prioList);
+        if (pagination.getSortBy() != null) {
+            PubGeneSorting sorting = new PubGeneSorting();
+            prioList.sort(sorting.getComparator(pagination.getSortBy()));
+        }
+
+        response.setResults(prioList.stream()
+                .skip(pagination.getStart())
+                .limit(pagination.getLimit())
+                .collect(Collectors.toList()));
+
         response.setHttpServletRequest(request);
 
         return response;
