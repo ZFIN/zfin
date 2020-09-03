@@ -147,6 +147,13 @@ update mapped_marker
 update db_link
  set dblink_linked_recid = replace(dblink_linked_recid, 'GENE', 'LNCRNAG')
  where dblink_linked_recid in ('ZDB-GENE-131127-227', 'ZDB-GENE-081104-166', 'ZDB-GENE-091125-1', 'ZDB-GENE-141216-212', 'ZDB-GENE-140804-1');
+ update db_link
+ set dblink_acc_num = replace(dblink_acc_num, 'GENE', 'LNCRNAG')
+ where dblink_acc_num in ('ZDB-GENE-131127-227', 'ZDB-GENE-081104-166', 'ZDB-GENE-091125-1', 'ZDB-GENE-141216-212', 'ZDB-GENE-140804-1');
+ update db_link
+ set dblink_acc_num_display = replace(dblink_acc_num_display, 'GENE', 'LNCRNAG')
+ where dblink_acc_num_display in ('ZDB-GENE-131127-227', 'ZDB-GENE-081104-166', 'ZDB-GENE-091125-1', 'ZDB-GENE-141216-212', 'ZDB-GENE-140804-1');
+
 
 update data_note
  set dnote_data_zdb_id = replace(dnote_data_zdb_id, 'GENE', 'LNCRNAG')
