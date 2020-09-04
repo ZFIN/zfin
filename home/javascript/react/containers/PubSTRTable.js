@@ -34,9 +34,8 @@ const PubSTRTable = ({pubId}) => {
         },
         {
             label: 'Phenotype Data',
-            content: row => (row.phenoOnMarker.numFigures > 0 &&
-                <a href={`/action/marker/${row.id}/phenotype-summary`}>{row.phenoOnMarker.numFigures} figures from {row.phenoOnMarker.numPublications} pubs</a>
-
+            content: row => (row.phenotypeFigures > 0 &&
+                <a href={`/action/marker/${row.id}/phenotype-summary`}>{row.phenotypeFigures} figures from {row.phenotypePublication} pubs</a>
             ),
             width: '120px',
         },

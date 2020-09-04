@@ -33,14 +33,10 @@ public class PubPrioritizationGeneSorting implements Sorting<Prioritization> {
             Comparator.comparing(Prioritization::getName, String.CASE_INSENSITIVE_ORDER);
 
     private static Comparator<Prioritization> expDataOrder =
-            Comparator.comparingInt(info -> {
-                if (info.getMarkerExpression() != null)
-                    return info.getMarkerExpression().getExpressionFigureCount();
-                return 0;
-            });
+            Comparator.comparingInt(Prioritization::getExpressionFigures);
 
     private static Comparator<Prioritization> phenoDataOrder =
-            Comparator.comparingInt(info -> info.getPhenoOnMarker().getNumFigures());
+            Comparator.comparingInt(Prioritization::getPhenotypeFigures);
 
     public Comparator<Prioritization> getComparator(String value) {
         Field field = Field.getField(value);

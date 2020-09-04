@@ -1214,6 +1214,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         }
         return (List<Marker>) getMarkersByPublication(pubID, markerTypes);
     }
+
     public List<Marker> getSTRByPublication(String pubID) {
         Marker.TypeGroup typeGroup = Marker.TypeGroup.KNOCKDOWN_REAGENT;
         List<MarkerType> markerTypes = markerRepository.getMarkerTypesByGroup(typeGroup);
@@ -2774,6 +2775,26 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Set<String> pubList = pubAttrList.stream().map(attribution -> attribution.getPublication().getZdbID()).collect(Collectors.toSet());
         return CollectionUtils.isNotEmpty(pubList) && pubList.size() == 1 && pubList.contains(publicationId);
     }
+
+    @Override
+    public Map<Marker, Boolean> areNewGenePubAttribution(List<Marker> attributedMarker, String publicationId) {
+        String hql = "select pa.dataZdbID, count(pa) as ct from PublicationAttribution as pa where " +
+                " pa.dataZdbID in (:markerIDs) AND pa.sourceType = :source " +
+                " group by pa.dataZdbID ";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameterList("markerIDs", attributedMarker.stream().map(Marker::getZdbID).collect(Collectors.toList()));
+        query.setParameter("source", RecordAttribution.SourceType.STANDARD);
+        List<Object[]> pubAttrList = query.list();
+        Map<Marker, Boolean> map = new HashMap<>();
+        attributedMarker.forEach(marker -> {
+            map.put(marker, pubAttrList.stream()
+                    .anyMatch(pubAttribution -> pubAttribution[0].equals(marker.getZdbID())
+                            && ((Long) pubAttribution[1]) == 1));
+        });
+        return map;
+    }
+
     @Override
     public boolean isNewFeaturePubAttribution(Feature marker, String publicationId) {
         String hql = "select pa from PublicationAttribution as pa where " +
@@ -2788,7 +2809,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     @Override
-    public boolean hasCuratedOrthology(Marker marker,String publicationId) {
+    public boolean hasCuratedOrthology(Marker marker, String publicationId) {
         String hql = "select pa from PublicationAttribution as pa, Ortholog as o where " +
                 " pa.dataZdbID = o.zdbID AND o.zebrafishGene.zdbID = :markerID AND  pa.sourceType = :source ";
 
@@ -2799,4 +2820,5 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Set<String> pubList = pubAttrList.stream().map(attribution -> attribution.getPublication().getZdbID()).collect(Collectors.toSet());
         return CollectionUtils.isNotEmpty(pubList) && pubList.size() == 1 && pubList.contains(publicationId);
     }
+
 }
