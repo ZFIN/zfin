@@ -14,7 +14,7 @@ const sortOptions = [
     },
     {
         value: 'phenoDataUp',
-        label: 'Phenotype Data, leats to most ',
+        label: 'Phenotype Data, least to most ',
     },
 
 ];
@@ -36,7 +36,7 @@ const PubGeneTable = ({pubId}) => {
         {
             label: 'Expression data',
             content: row => (row.expressionFigures > 0 &&
-                <>{row.expressionFigures} figures ({row.expressionInSitu} in situ) from {row.expressionPublication} pubs</>
+                <a href={`/action/marker/${row.id}/expression`}>{row.expressionFigures} figures ({row.expressionInSitu} in situ) from {row.expressionPublication} pubs</a>
             ),
 
             width: '150px',
