@@ -14,7 +14,30 @@ body.data-page {
         margin: -10px 0 0 0;
     }
 }
+.subsection {
+    margin-bottom: 4rem;
+    clear: left;
+    position: relative;
 
+    h3 {
+        border-bottom: 1px solid $border-color;
+        padding-bottom: 8px;
+        margin-bottom: 1rem;
+    }
+
+    h3, h4, h5 {
+        position: relative;
+    }
+
+    .target {
+        display: block;
+        visibility: hidden;
+        position: absolute;
+        top: -1rem;
+        bottom: 0;
+        width: 100%;
+    }
+}
 .data-page-nav-container {
     width: 200px;
     flex-shrink: 0;

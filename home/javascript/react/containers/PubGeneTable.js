@@ -38,6 +38,7 @@ const PubGeneTable = ({pubId}) => {
             content: row => (row.expressionFigures > 0 &&
                 <>{row.expressionFigures} figures ({row.expressionInSitu} in situ) from {row.expressionPublication} pubs</>
             ),
+
             width: '150px',
         },
         {

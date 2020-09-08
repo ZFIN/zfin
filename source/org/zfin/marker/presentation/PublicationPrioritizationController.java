@@ -57,7 +57,6 @@ public class PublicationPrioritizationController {
                     prioritization.setPhenotypePublication(phenotypeOnMarkerBean.getNumPublications());
                     MarkerExpression markerExpression = expressionService.getExpressionForGene(marker);
                     if (marker.isGenedom()) {
-
                         prioritization.setExpressionFigures(markerExpression.getAllExpressionData().getFigureCount());
                         prioritization.setExpressionInSitu(markerExpression.getDirectlySubmittedExpression().getFigureCount());
                         prioritization.setExpressionPublication(markerExpression.getExpressionPubCount());
