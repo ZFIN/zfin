@@ -220,7 +220,7 @@ public class ExpressionService {
     public LinkDisplay getExpressionAtlasForMarker(String mrkrZdbID, ForeignDB.AvailableName foreignDBName) {
         LinkDisplay gxaLinkDisplay = new LinkDisplay();
         List<DBLink> gxaLinks = sequenceRepository.getAtlasDBLink(mrkrZdbID, foreignDBName.toString());
-        String accNumString = new String();
+        String accNumString = "";
         String linkPrefix = "[{";
         String linkSuffix = "]";
 
@@ -228,7 +228,7 @@ public class ExpressionService {
         for (DBLink gxaDBLink : gxaLinks) {
             counter++;
             if (gxaLinks.size() > 0) {
-                accNumString = accNumString + "\"" + "value\":\"" + gxaDBLink.getAccessionNumber() + "\"}";
+                accNumString += "\"" + "value\":\"" + gxaDBLink.getAccessionNumber() + "\"}";
                 if (counter < gxaLinks.size()) {
                     accNumString = accNumString + ",{";
                 }
@@ -277,21 +277,6 @@ public class ExpressionService {
             return markerExpression;
         }
 
-        markerExpression.setGeoLink(getGeoLinkForMarkerIfExists(marker));
-        logger.debug("got the geo link");
-        logger.debug(marker.getZdbID());
-        logger.debug(ForeignDB.AvailableName.EXPRESSIONATLAS);
-
-        LinkDisplay atlasLink = getExpressionAtlasForMarker(marker.getZdbID(), ForeignDB.AvailableName.EXPRESSIONATLAS);
-        System.out.println(atlasLink.getLink());
-        if (atlasLink != null) {
-            markerExpression.setExpressionAtlasLink(atlasLink);
-            System.out.println(atlasLink.getLink());
-            logger.debug(atlasLink.getLink());
-        }
-        logger.debug("executed expression atlas link");
-        logger.debug(markerExpression.getExpressionAtlasLink());
-
         // all expression
         MarkerExpressionInstance allMarkerExpressionInstance = new MarkerExpressionInstance();
 
@@ -305,28 +290,10 @@ public class ExpressionService {
                 expressionRepository.getExpressionFigureCountForGene(marker));
         markerExpression.setAllExpressionData(allMarkerExpressionInstance);
 
-        if (allMarkerExpressionInstance.getFigureCount() == 1) {
-            allMarkerExpressionInstance.setSingleFigure(expressionRepository.getExpressionSingleFigure(marker));
-        }
-
         // directly submitted
         logger.info("setting directly submitted expression");
         markerExpression.setDirectlySubmittedExpression(getDirectlySubmittedExpressionGene(marker));
         logger.info("got directly submitted expression");
-
-
-        // wildtype stages
-        // todo: when we handle genes, we need to get this
-        WildTypeExpression wildTypeExpression = new WildTypeExpression();
-        List<ExpressedStructurePresentation> expressedStructures = expressionRepository.getWildTypeExpressionExperiments(marker.getZdbID());
-        Collections.sort(expressedStructures);
-        wildTypeExpression.setExpressedStructures(expressedStructures);
-
-        StageExpressionPresentation expressionPresentation = expressionRepository.getStageExpressionForMarker(marker.getZdbID());
-        wildTypeExpression.setExpressionPresentation(expressionPresentation);
-
-        markerExpression.setWildTypeStageExpression(wildTypeExpression);
-
 
         return markerExpression;
     }

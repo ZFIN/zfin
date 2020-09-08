@@ -361,6 +361,7 @@ public interface PublicationRepository extends PaginationParameter {
     List<Marker> getGenesByPublication(String pubID);
 
     List<Marker> getGenesByPublication(String pubID, boolean includeEFGs);
+    List<Marker> getSTRByPublication(String pubID);
 
     List<Marker> getGenesAndMarkersByPublication(String pubID);
 
@@ -628,4 +629,12 @@ public interface PublicationRepository extends PaginationParameter {
     PublicationProcessingChecklistEntry getProcessingChecklistEntry(long id);
 
     List<PubmedPublicationAuthor> getPubmedPublicationAuthorsByPublication(Publication publication);
+
+    boolean isNewGenePubAttribution(Marker marker, String publicationId);
+
+    boolean isNewFeaturePubAttribution(Feature feature, String publicationId);
+
+    boolean hasCuratedOrthology(Marker marker,String publicationId);
+
+    Map<Marker, Boolean> areNewGenePubAttribution(List<Marker> attributedMarker, String publicationId);
 }

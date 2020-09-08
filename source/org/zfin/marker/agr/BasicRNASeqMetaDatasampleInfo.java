@@ -42,6 +42,7 @@ public class BasicRNASeqMetaDatasampleInfo extends AbstractScriptWrapper {
         System.exit(0);
     }
 
+
     private void init() throws IOException {
         initAll();
         ALLRNASeqMetaDatasampleDTO allDatasampleDTO = getAllDatasampleInfo();
@@ -73,7 +74,7 @@ public class BasicRNASeqMetaDatasampleInfo extends AbstractScriptWrapper {
 
                             if (datasample.getAssembly() != null) {
                                 versions.add(datasample.getAssembly());
-                                dto.setAssemblyVersion(versions);
+                                dto.setAssemblyVersions(versions);
                             }
 
 
@@ -83,7 +84,7 @@ public class BasicRNASeqMetaDatasampleInfo extends AbstractScriptWrapper {
                             //This lack of pluralization comes from the Alliance schema.
                             ArrayList<String> datasetIds = new ArrayList<>();
                             datasetIds.add("ZFIN:" + datasample.getHtpDataset().getZdbID());
-                            dto.setDatasetId(datasetIds);
+                            dto.setDatasetIds(datasetIds);
 
                             dto.setDateAssigned(datasample.getHtpDataset().getDateCurated());
                             dto.setSequencingFormat(datasample.getSequencingFormat());
@@ -169,7 +170,7 @@ public class BasicRNASeqMetaDatasampleInfo extends AbstractScriptWrapper {
                                                 anatomicalStructureUberonSlimTermIds);
                                 anatomies.add(anatomy);
                             }
-                            dto.setSampleLocation(anatomies);
+                            dto.setSampleLocations(anatomies);
 
                             dto.setSampleAge(sampleAge);
                             return dto;

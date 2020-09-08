@@ -116,8 +116,9 @@ class PubTrackerAuthorNotification extends Component {
     }
 
     render() {
-        const { curatorName, curatorEmail, curatedEntities, loading, pub } = this.props;
+        const { curatorName, curatorEmail, curatedEntities, loading } = this.props;
         const {
+            pub,
             additionalRecipients,
             customNote,
             editing,

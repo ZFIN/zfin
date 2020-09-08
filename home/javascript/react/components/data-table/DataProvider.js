@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react';
-import {useTableDataFetch, useTableState} from '../../utils/effects';
+import useTableDataFetch from '../../hooks/useTableDataFetch';
+import useTableState from '../../hooks/useTableState';
 import GenericErrorMessage from '../GenericErrorMessage';
 import LoadingSpinner from '../LoadingSpinner';
 import NoData from '../NoData';

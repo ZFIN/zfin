@@ -1,8 +1,11 @@
 package org.zfin.marker.presentation;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,16 +19,21 @@ import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.marker.*;
+import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.nomenclature.presentation.Nomenclature;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
-import static org.zfin.repository.RepositoryFactory.*;
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
+import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 /**
+ *
  */
 @Controller
 @RequestMapping("/marker")
@@ -33,6 +41,9 @@ public class MarkerEditController {
 
     public static final String BR = "<br/>";
     private static Logger logger = LogManager.getLogger(MarkerEditController.class);
+
+    @Autowired
+    private MarkerRepository markerRepository;
 
     @RequestMapping("/marker-edit")
     public String getMarkerEdit(Model model
@@ -43,7 +54,7 @@ public class MarkerEditController {
         MarkerBean markerBean = new MarkerBean();
 
         if (zdbID.startsWith("ZDB-TSCRIPT-")) {
-            Transcript transcript = RepositoryFactory.getMarkerRepository().getTranscriptByZdbID(zdbID);
+            Transcript transcript = markerRepository.getTranscriptByZdbID(zdbID);
             if (transcript != null) {
                 markerBean.setMarker(transcript);
                 model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
@@ -65,7 +76,7 @@ public class MarkerEditController {
 
 
         // handle things that mark to clone
-        Clone clone = RepositoryFactory.getMarkerRepository().getCloneById(zdbID);
+        Clone clone = markerRepository.getCloneById(zdbID);
         if (clone != null) {
             markerBean.setMarker(clone);
             model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
@@ -77,20 +88,116 @@ public class MarkerEditController {
         return LookupStrings.RECORD_NOT_FOUND_PAGE;
     }
 
+    private MarkerHistory newMarkerHistory(Marker marker, MarkerHistory.Event event, String reason, String comments) {
+        MarkerHistory history = new MarkerHistory();
+        history.setComments(comments);
+        history.setReason(MarkerHistory.Reason.getReason(reason));
+        history.setEvent(event);
+        history.setMarker(marker);
+        return history;
+    }
+
+    private Nomenclature getNomenclatureForMarker(Marker marker) {
+        Nomenclature nomenclature = new Nomenclature();
+        nomenclature.setName(marker.getName());
+        nomenclature.setAbbreviation(marker.getAbbreviation());
+        nomenclature.setReason("");
+        nomenclature.setComments("");
+        nomenclature.putMeta("reasons", Arrays.stream(MarkerHistory.Reason.values())
+                .map(MarkerHistory.Reason::toString)
+                .toArray()
+        );
+        return nomenclature;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/lookup", method = RequestMethod.GET)
+    public boolean queryMarkerLookup(@RequestParam(required = false) String name,
+                                     @RequestParam(required = false) String abbreviation) {
+        if (StringUtils.isNotEmpty(name)) {
+            return markerRepository.getMarkerByName(name) != null;
+        }
+        if (StringUtils.isNotEmpty(abbreviation)) {
+            return markerRepository.getMarkerByAbbreviation(abbreviation) != null;
+        }
+        return false;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/{markerID}/nomenclature", method = RequestMethod.GET)
+    public Nomenclature getMarkerNomenclature(@PathVariable String markerID) {
+        Marker marker = markerRepository.getMarkerByID(markerID);
+        if (marker == null) {
+            throw new InvalidWebRequestException("No Marker record found");
+        }
+        return getNomenclatureForMarker(marker);
+    }
+
+    // This serves the new gene edit page which allows updating name and abbreviation simultaneously
+    @ResponseBody
+    @RequestMapping(value = "/{markerID}/nomenclature", method = RequestMethod.POST)
+    public Nomenclature updateMarkerNomenclature(@PathVariable String markerID,
+                                                 @RequestBody Nomenclature nomenclature) {
+        Marker marker = markerRepository.getMarkerByID(markerID);
+        if (marker == null) {
+            throw new InvalidWebRequestException("No Marker record found");
+        }
+
+        Transaction tx = null;
+        try {
+            tx = HibernateUtil.createTransaction();
+            boolean nameChanged = !Objects.equals(marker.getName(), nomenclature.getName());
+            boolean abbreviationChanged = !Objects.equals(marker.getAbbreviation(), nomenclature.getAbbreviation());
+            if (nameChanged) {
+                MarkerHistory history = newMarkerHistory(marker, MarkerHistory.Event.RENAMED, nomenclature.getReason(), nomenclature.getComments());
+                history.setOldMarkerName(marker.getName());
+                history.setSymbol(marker.getAbbreviation());
+                history.setName(nomenclature.getName());
+                getInfrastructureRepository().insertMarkerHistory(history);
+            }
+            if (abbreviationChanged) {
+                MarkerHistory history = newMarkerHistory(marker, MarkerHistory.Event.REASSIGNED, nomenclature.getReason(), nomenclature.getComments());
+                history.setOldMarkerName(marker.getAbbreviation());
+                history.setSymbol(nomenclature.getAbbreviation());
+                history.setName(marker.getName());
+                MarkerAlias alias = markerRepository.addMarkerAlias(marker, marker.getAbbreviation(), null);
+                history.setMarkerAlias(alias);
+                getInfrastructureRepository().insertMarkerHistory(history);
+            }
+            marker.setAbbreviation(nomenclature.getAbbreviation());
+            marker.setName(nomenclature.getName());
+            tx.commit();
+        } catch (Exception e) {
+            try {
+                if (tx != null) {
+                    tx.rollback();
+                }
+            } catch (HibernateException he) {
+                logger.error("Error during roll back of transaction", he);
+            }
+            logger.error("Error in Transaction", e);
+            throw new InvalidWebRequestException(getExceptionErrorMessages("Could not update marker", e), null);
+        }
+
+        return getNomenclatureForMarker(marker);
+    }
+
+    // This serves the old gene edit page which updates name and abbreviation independently
     @ResponseBody
     @RequestMapping(value = "edit/{zdbID}", method = RequestMethod.POST)
     public Boolean editNameAndAbbreviation(@PathVariable String zdbID,
                                            @RequestBody Nomenclature nomenclature) throws InvalidWebRequestException {
-        Marker marker = getMarkerRepository().getMarkerByID(zdbID);
-        if (marker == null)
+        Marker marker = markerRepository.getMarkerByID(zdbID);
+        if (marker == null) {
             throw new InvalidWebRequestException("No Marker record found");
+        }
 
         Transaction tx = null;
 
         try {
             tx = HibernateUtil.createTransaction();
 
-            if(ActiveData.isInGroupGenedom(zdbID)||marker.isInTypeGroup(Marker.TypeGroup.KNOCKDOWN_REAGENT)) {
+            if (ActiveData.isInGroupGenedom(zdbID) || marker.isInTypeGroup(Marker.TypeGroup.KNOCKDOWN_REAGENT)) {
                 MarkerHistory history = new MarkerHistory();
                 history.setComments(nomenclature.getComments());
                 history.setReason(MarkerHistory.Reason.getReason(nomenclature.getReason()));
@@ -101,7 +208,7 @@ public class MarkerEditController {
                     history.setOldMarkerName(marker.getAbbreviation());
                     history.setSymbol(nomenclature.getAbbreviation());
                     history.setName(marker.getName());
-                    MarkerAlias alias = getMarkerRepository().addMarkerAlias(marker, marker.getAbbreviation(), null);
+                    MarkerAlias alias = markerRepository.addMarkerAlias(marker, marker.getAbbreviation(), null);
                     history.setMarkerAlias(alias);
                     marker.setAbbreviation(nomenclature.getAbbreviation());
                 } else if (nomenclature.isGeneNameChange()) {
@@ -118,8 +225,9 @@ public class MarkerEditController {
             tx.commit();
         } catch (Exception e) {
             try {
-                if (tx != null)
+                if (tx != null) {
                     tx.rollback();
+                }
             } catch (HibernateException he) {
                 logger.error("Error during roll back of transaction", he);
             }
@@ -132,12 +240,14 @@ public class MarkerEditController {
 
     private String getExceptionErrorMessages(String header, Exception e) {
         String errorMessage = "";
-        if (header != null)
+        if (header != null) {
             errorMessage += header;
+        }
         errorMessage += BR;
         errorMessage += e.getMessage();
-        if (e.getCause() != null)
+        if (e.getCause() != null) {
             errorMessage += BR + e.getCause().getMessage();
+        }
         return errorMessage;
     }
 
@@ -145,26 +255,29 @@ public class MarkerEditController {
     @RequestMapping(value = "{zdbID}/addAlias", method = RequestMethod.POST)
     public Boolean addAlias(@PathVariable String zdbID,
                             @RequestBody Nomenclature nomenclature) throws InvalidWebRequestException {
-        Marker marker = getMarkerRepository().getMarkerByID(zdbID);
-        if (marker == null)
+        Marker marker = markerRepository.getMarkerByID(zdbID);
+        if (marker == null) {
             throw new InvalidWebRequestException("No Marker record found");
+        }
 
         Publication publication = null;
         if (nomenclature.getAttribution() != null) {
             publication = getPublicationRepository().getPublication(nomenclature.getAttribution());
-            if (publication == null)
+            if (publication == null) {
                 throw new InvalidWebRequestException("No valid publication record found");
+            }
         }
 
         Transaction tx = null;
         try {
             tx = HibernateUtil.createTransaction();
-            MarkerAlias alias = getMarkerRepository().addMarkerAlias(marker, nomenclature.getNewAlias(), publication);
+            MarkerAlias alias = markerRepository.addMarkerAlias(marker, nomenclature.getNewAlias(), publication);
             tx.commit();
         } catch (Exception e) {
             try {
-                if (tx != null)
+                if (tx != null) {
                     tx.rollback();
+                }
             } catch (HibernateException he) {
                 logger.error("Error during roll back of transaction", he);
             }
@@ -179,22 +292,25 @@ public class MarkerEditController {
     @RequestMapping(value = "{zdbID}/remove-alias/{aliasZdbID}", method = RequestMethod.DELETE)
     public Boolean deleteAlias(@PathVariable String zdbID,
                                @PathVariable String aliasZdbID) {
-        Marker marker = getMarkerRepository().getMarkerByID(zdbID);
-        if (marker == null)
+        Marker marker = markerRepository.getMarkerByID(zdbID);
+        if (marker == null) {
             throw new RuntimeException("No Marker record found");
-        MarkerAlias alias = getMarkerRepository().getMarkerAlias(aliasZdbID);
-        if (alias == null)
+        }
+        MarkerAlias alias = markerRepository.getMarkerAlias(aliasZdbID);
+        if (alias == null) {
             throw new RuntimeException("No Marker alias record found");
+        }
 
         Transaction tx = null;
         try {
             tx = HibernateUtil.createTransaction();
-            getMarkerRepository().deleteMarkerAlias(marker, alias);
+            markerRepository.deleteMarkerAlias(marker, alias);
             tx.commit();
         } catch (Exception e) {
             try {
-                if (tx != null)
+                if (tx != null) {
                     tx.rollback();
+                }
             } catch (HibernateException he) {
                 logger.error("Error during roll back of transaction", he);
             }
@@ -208,9 +324,10 @@ public class MarkerEditController {
     @ResponseBody
     @RequestMapping(value = "alias/attributions/{aliasZdbID}", method = RequestMethod.GET)
     public List<PublicationDTO> getAttributions(@PathVariable String aliasZdbID) {
-        MarkerAlias history = getMarkerRepository().getMarkerAlias(aliasZdbID);
-        if (history == null)
+        MarkerAlias history = markerRepository.getMarkerAlias(aliasZdbID);
+        if (history == null) {
             throw new RuntimeException("No Marker Alias found for ID: " + aliasZdbID);
+        }
         List<PublicationAttribution> attributionList = getInfrastructureRepository().getPublicationAttributions(aliasZdbID);
         List<PublicationDTO> dtoList = new ArrayList<>(attributionList.size());
         for (PublicationAttribution attribution : attributionList) {
@@ -222,10 +339,11 @@ public class MarkerEditController {
     @ResponseBody
     @RequestMapping(value = "previous-name-list/{zdbID}", method = RequestMethod.GET)
     public List<PreviousNameLight> getPreviousNameList(@PathVariable String zdbID) {
-        Marker marker = getMarkerRepository().getMarkerByID(zdbID);
-        if (marker == null)
+        Marker marker = markerRepository.getMarkerByID(zdbID);
+        if (marker == null) {
             throw new RuntimeException("No Marker found for ID: " + zdbID);
-        return getMarkerRepository().getPreviousNamesLight(marker);
+        }
+        return markerRepository.getPreviousNamesLight(marker);
     }
 
     @ResponseBody
@@ -233,11 +351,13 @@ public class MarkerEditController {
     public List<PublicationDTO> deleteAttribution(@PathVariable String zdbID,
                                                   @PathVariable String pubID) {
         Publication publication = getPublicationRepository().getPublication(pubID);
-        if (publication == null)
+        if (publication == null) {
             throw new RuntimeException("No publication found");
-        MarkerAlias history = getMarkerRepository().getMarkerAlias(zdbID);
-        if (history == null)
+        }
+        MarkerAlias history = markerRepository.getMarkerAlias(zdbID);
+        if (history == null) {
             throw new RuntimeException("No Marker Alias record found");
+        }
 
         Transaction tx = null;
 
@@ -247,8 +367,9 @@ public class MarkerEditController {
             tx.commit();
         } catch (Exception e) {
             try {
-                if (tx != null)
+                if (tx != null) {
                     tx.rollback();
+                }
             } catch (HibernateException he) {
                 logger.error("Error during roll back of transaction", he);
             }
@@ -264,11 +385,13 @@ public class MarkerEditController {
     public List<PublicationDTO> addAttribution(@PathVariable String zdbID,
                                                @RequestBody String pubID) throws InvalidWebRequestException {
         Publication publication = getPublicationRepository().getPublication(pubID);
-        if (publication == null)
+        if (publication == null) {
             throw new InvalidWebRequestException("No publication found for ID: " + pubID, null);
-        MarkerAlias history = getMarkerRepository().getMarkerAlias(zdbID);
-        if (history == null)
+        }
+        MarkerAlias history = markerRepository.getMarkerAlias(zdbID);
+        if (history == null) {
             throw new InvalidWebRequestException("No Marker Alias record found for ID: " + zdbID, null);
+        }
 
         Transaction tx = null;
 
@@ -278,8 +401,9 @@ public class MarkerEditController {
             tx.commit();
         } catch (Exception e) {
             try {
-                if (tx != null)
+                if (tx != null) {
                     tx.rollback();
+                }
             } catch (HibernateException he) {
                 logger.error("Error during roll back of transaction", he);
             }

@@ -18,7 +18,7 @@ public class BasicRNASeqMetaDatasetDTO {
     private HtpIDDTO datasetId;
     @JsonSerialize(using = JsonDateSerializer.class)
     private GregorianCalendar dateAssigned;
-    private List<PublicationAgrDTO> publication;
+    private List<PublicationAgrDTO> publications;
     private String summary;
     private List<String> categoryTags;
 

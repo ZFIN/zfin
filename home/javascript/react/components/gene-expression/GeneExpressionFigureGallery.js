@@ -5,7 +5,8 @@ import FigureGallery from '../FigureGallery';
 import FigureGalleryExpressionDetails from './FigureGalleryExpressionDetails';
 import NoData from '../NoData';
 import GenericErrorMessage from '../GenericErrorMessage';
-import {useAppendingFetch, useFetch} from '../../utils/effects';
+import useAppendingFetch from '../../hooks/useAppendingFetch';
+import useFetch from '../../hooks/useFetch';
 
 const GeneExpressionFigureGallery = (
     {

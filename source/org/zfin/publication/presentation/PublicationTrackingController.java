@@ -92,7 +92,8 @@ public class PublicationTrackingController {
         model.addAttribute("allowCuration", publicationService.allowCuration(publication));
         model.addAttribute("hasCorrespondence", publicationService.hasCorrespondence(publication));
         model.addAttribute("loggedInUser", ProfileService.getCurrentSecurityUser());
-        return "publication/track-publication.page";
+       // return "publication/track-publication.page";
+        return "publication/publication-tracker.page";
     }
 
     @ResponseBody
@@ -489,6 +490,7 @@ public class PublicationTrackingController {
     @RequestMapping(value = "{id}/details", method = RequestMethod.GET)
     public PublicationDTO getPublicationDetails(@PathVariable String id) {
         Publication publication = publicationRepository.getPublication(id);
+        System.out.println(publication.getZdbID());
         return DTOConversionService.convertToPublicationDTO(publication);
     }
 

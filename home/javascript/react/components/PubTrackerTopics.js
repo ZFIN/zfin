@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import RelativeDate from './RelativeDate';
 
+
 const PubTrackerTopics = ({onTopicSave, topics}) => {
 
     const isNewTopic = (topic) => !topic.openedDate && !topic.closedDate;
@@ -24,6 +25,7 @@ const PubTrackerTopics = ({onTopicSave, topics}) => {
             dataFound,
         });
     };
+
 
     const onOpenTopic = (topic) => {
         onTopicSave({

@@ -4,6 +4,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.owasp.html.PolicyFactory;
+import org.owasp.html.Sanitizers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.springframework.security.core.Authentication;
@@ -33,6 +35,7 @@ import java.util.stream.Collectors;
 public class ProfileService {
 
     public static final String SALT = "dedicated to George Streisinger";
+    private static final PolicyFactory POLICY = Sanitizers.FORMATTING.and(Sanitizers.LINKS);
 
     private Logger logger = LogManager.getLogger(ProfileService.class);
     private Md5PasswordEncoder encoder = new Md5PasswordEncoder();
@@ -615,6 +618,13 @@ public class ProfileService {
             , final String securityPersonZdbId) {
         try {
             HibernateUtil.createTransaction();
+
+            for (BeanFieldUpdate field : fields) {
+                if (field.getTo() instanceof String) {
+                    field.setTo(POLICY.sanitize(String.valueOf(field.getTo())));
+                }
+            }
+
             updateProfileWithFields(zdbID, fields, securityPersonZdbId);
 
             final ProfileUpdateMessageBean profileUpdateMessageBean = new ProfileUpdateMessageBean();

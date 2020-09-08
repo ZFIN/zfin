@@ -5,7 +5,7 @@ import DataProvider from './DataProvider';
 import Table from './Table';
 import HeaderCell from './HeaderCell';
 import produce from 'immer';
-import {useTableState} from '../../utils/effects';
+import useTableState from '../../hooks/useTableState';
 
 const DataTable = ({
     columns,

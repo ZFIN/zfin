@@ -19,12 +19,12 @@ public class BasicRNASeqMetaDatasampleDTO {
     private String abundance;
     private String sampleType;
     private BioSampleAgeDTO sampleAge;
-    private List<ExpressionTermIdentifiersDTO> sampleLocation;
+    private List<ExpressionTermIdentifiersDTO> sampleLocations;
     private HtpGenomicInformationDTO genomicInformation;
     private String sex;
     private String assayType;
-    private List<String> assemblyVersion;
-    private List<String> datasetId;
+    private List<String> assemblyVersions;
+    private List<String> datasetIds;
     @JsonSerialize(using = JsonDateSerializer.class)
     private GregorianCalendar dateAssigned;
     private String sequencingFormat;

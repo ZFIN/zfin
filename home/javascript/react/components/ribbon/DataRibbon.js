@@ -4,7 +4,7 @@ import GenericErrorMessage from '../GenericErrorMessage';
 import LoadingSpinner from '../LoadingSpinner';
 import NoData from '../NoData';
 import Ribbon from './Ribbon';
-import {useFetch} from '../../utils/effects';
+import useFetch from '../../hooks/useFetch';
 import {ribbonGroupHasData} from './utils';
 
 const DataRibbon = ({dataUrl, onRibbonCellClick, onNoDataLoad, selected}) => {

@@ -5,7 +5,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.*;
-import org.hibernate.criterion.*;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.hibernate.transform.DistinctRootEntityResultTransformer;
 import org.hibernate.transform.ResultTransformer;
@@ -1209,6 +1212,13 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         if (includeEFGs) {
             markerTypes.add(markerRepository.getMarkerTypeByName(Marker.Type.EFG.toString()));
         }
+        return (List<Marker>) getMarkersByPublication(pubID, markerTypes);
+    }
+
+    public List<Marker> getSTRByPublication(String pubID) {
+        Marker.TypeGroup typeGroup = Marker.TypeGroup.KNOCKDOWN_REAGENT;
+        List<MarkerType> markerTypes = markerRepository.getMarkerTypesByGroup(typeGroup);
+
         return (List<Marker>) getMarkersByPublication(pubID, markerTypes);
     }
 
@@ -2752,4 +2762,63 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 .add(Restrictions.eq("publication", publication))
                 .list();
     }
+
+    @Override
+    public boolean isNewGenePubAttribution(Marker marker, String publicationId) {
+        String hql = "select pa from PublicationAttribution as pa where " +
+                " pa.dataZdbID = :markerID AND pa.sourceType = :source ";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("markerID", marker.getZdbID());
+        query.setParameter("source", RecordAttribution.SourceType.STANDARD);
+        List<PublicationAttribution> pubAttrList = query.list();
+        Set<String> pubList = pubAttrList.stream().map(attribution -> attribution.getPublication().getZdbID()).collect(Collectors.toSet());
+        return CollectionUtils.isNotEmpty(pubList) && pubList.size() == 1 && pubList.contains(publicationId);
+    }
+
+    @Override
+    public Map<Marker, Boolean> areNewGenePubAttribution(List<Marker> attributedMarker, String publicationId) {
+        String hql = "select pa.dataZdbID, count(pa) as ct from PublicationAttribution as pa where " +
+                " pa.dataZdbID in (:markerIDs) AND pa.sourceType = :source " +
+                " group by pa.dataZdbID ";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameterList("markerIDs", attributedMarker.stream().map(Marker::getZdbID).collect(Collectors.toList()));
+        query.setParameter("source", RecordAttribution.SourceType.STANDARD);
+        List<Object[]> pubAttrList = query.list();
+        Map<Marker, Boolean> map = new HashMap<>();
+        attributedMarker.forEach(marker -> {
+            map.put(marker, pubAttrList.stream()
+                    .anyMatch(pubAttribution -> pubAttribution[0].equals(marker.getZdbID())
+                            && ((Long) pubAttribution[1]) == 1));
+        });
+        return map;
+    }
+
+    @Override
+    public boolean isNewFeaturePubAttribution(Feature marker, String publicationId) {
+        String hql = "select pa from PublicationAttribution as pa where " +
+                " pa.dataZdbID = :featureID AND pa.sourceType = :source ";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("featureID", marker.getZdbID());
+        query.setParameter("source", RecordAttribution.SourceType.STANDARD);
+        List<PublicationAttribution> pubAttrList = query.list();
+        Set<String> pubList = pubAttrList.stream().map(attribution -> attribution.getPublication().getZdbID()).collect(Collectors.toSet());
+        return CollectionUtils.isNotEmpty(pubList) && pubList.size() == 1 && pubList.contains(publicationId);
+    }
+
+    @Override
+    public boolean hasCuratedOrthology(Marker marker, String publicationId) {
+        String hql = "select pa from PublicationAttribution as pa, Ortholog as o where " +
+                " pa.dataZdbID = o.zdbID AND o.zebrafishGene.zdbID = :markerID AND  pa.sourceType = :source ";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("markerID", marker.getZdbID());
+        query.setParameter("source", RecordAttribution.SourceType.STANDARD);
+        List<PublicationAttribution> pubAttrList = query.list();
+        Set<String> pubList = pubAttrList.stream().map(attribution -> attribution.getPublication().getZdbID()).collect(Collectors.toSet());
+        return CollectionUtils.isNotEmpty(pubList) && pubList.size() == 1 && pubList.contains(publicationId);
+    }
+
 }

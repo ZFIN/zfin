@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {addCorrespondence, deleteCorrespondence, getCorrespondences, getDetails} from '../api/publication';
 import PubCorrespondenceEmailForm from '../components/PubCorrespondenceEmailForm';
 import Alert from '../components/Alert';
 import {splitEmailRecipientListString} from '../utils/publication';
-import {addCorrespondence, deleteCorrespondence, getCorrespondences} from '../api/publication';
 import PubCorrespondenceList from '../components/PubCorrespondenceList';
 import intertab from '../utils/intertab';
 
@@ -14,7 +14,7 @@ const prependSubject = (subject) => {
     return subject;
 };
 
-class PubCorrespondence extends React.Component {
+class PubCorrespondenceSection extends React.Component {
     constructor(props) {
         super(props);
 
@@ -24,7 +24,9 @@ class PubCorrespondence extends React.Component {
             loading: false,
             successMessage: '',
             errorMessage: '',
+            pubDetails: null
         };
+
 
         this.openOutgoingForm = this.openOutgoingForm.bind(this);
         this.openIncomingForm = this.openIncomingForm.bind(this);
@@ -41,11 +43,12 @@ class PubCorrespondence extends React.Component {
     }
 
     componentDidMount() {
+        getDetails(this.props.pubId).then(pubDetails => this.setState({pubDetails}));
         getCorrespondences(this.props.pubId).then(correspondences => this.setState({correspondences}));
     }
 
     openOutgoingForm() {
-        const { userId, userEmail } = this.props;
+        const {userId, userEmail} = this.props;
         this.setState({
             email: {
                 outgoing: true,
@@ -59,7 +62,7 @@ class PubCorrespondence extends React.Component {
     }
 
     openIncomingForm() {
-        const { userId, userEmail } = this.props;
+        const {userId, userEmail} = this.props;
         this.setState({
             email: {
                 outgoing: false,
@@ -77,7 +80,7 @@ class PubCorrespondence extends React.Component {
     }
 
     handleTemplateSelect(subject, body) {
-        const { pubDetails, userName } = this.props;
+        const {pubDetails, userName} = this.props;
         this.setState(state => ({
             email: {
                 ...state.email,
@@ -92,7 +95,7 @@ class PubCorrespondence extends React.Component {
     }
 
     addCorrespondence(correspondence) {
-        this.setState({ loading: true });
+        this.setState({loading: true});
         addCorrespondence(this.props.pubId, correspondence)
             .then(correspondence => this.setState(state => ({
                 correspondences: [
@@ -114,9 +117,9 @@ class PubCorrespondence extends React.Component {
     }
 
     handleEmailComplete() {
-        const { email } = this.state;
+        const {email} = this.state;
         const combinedRecipients = email.to.concat(
-            splitEmailRecipientListString(email.additionalTo).map(email => ({ email }))
+            splitEmailRecipientListString(email.additionalTo).map(email => ({email}))
         );
         this.addCorrespondence({
             ...email,
@@ -135,7 +138,7 @@ class PubCorrespondence extends React.Component {
     }
 
     handleRecordReply(correspondence) {
-        const { userId, userEmail } = this.props;
+        const {userId, userEmail} = this.props;
         this.setState({
             email: {
                 outgoing: false,
@@ -149,7 +152,7 @@ class PubCorrespondence extends React.Component {
     }
 
     handleSendReply(correspondence) {
-        const { userId, userEmail } = this.props;
+        const {userId, userEmail} = this.props;
         this.setState({
             email: {
                 reply: true,
@@ -177,23 +180,29 @@ class PubCorrespondence extends React.Component {
     }
 
     clearSuccessMessage() {
-        this.setState({ successMessage: '' });
+        this.setState({successMessage: ''});
     }
 
     clearErrorMessage() {
-        this.setState({ errorMessage: '' });
+        this.setState({errorMessage: ''});
     }
 
     render() {
-        const { pubDetails } = this.props;
-        const { correspondences, email, successMessage, errorMessage } = this.state;
+        const {pubDetails} = this.state;
+
+        if (!pubDetails) {
+            return null;
+        }
+        const {correspondences, email, successMessage, errorMessage} = this.state;
 
         return (
             <div>
                 <div className='row bottom-buffer'>
                     <div className='col-md-12 horizontal-buttons'>
-                        <button className='btn btn-outline-secondary' onClick={this.openOutgoingForm}>Send Email</button>
-                        <button className='btn btn-outline-secondary' onClick={this.openIncomingForm}>Record Reply</button>
+                        <button className='btn btn-outline-secondary' onClick={this.openOutgoingForm}>Send Email
+                        </button>
+                        <button className='btn btn-outline-secondary' onClick={this.openIncomingForm}>Record Reply
+                        </button>
                     </div>
                 </div>
 
@@ -227,7 +236,7 @@ class PubCorrespondence extends React.Component {
     }
 }
 
-PubCorrespondence.propTypes = {
+PubCorrespondenceSection.propTypes = {
     pubDetails: PropTypes.object,
     pubId: PropTypes.string,
     userEmail: PropTypes.string,
@@ -235,4 +244,4 @@ PubCorrespondence.propTypes = {
     userName: PropTypes.string,
 };
 
-export default PubCorrespondence;
+export default PubCorrespondenceSection;
