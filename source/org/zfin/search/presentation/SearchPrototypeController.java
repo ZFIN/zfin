@@ -351,6 +351,7 @@ public class SearchPrototypeController {
         }
         model.addAttribute("rowsUrlSeparator", rowsUrlSeparator);
         model.addAttribute("rows", rows);
+        model.addAttribute("allowDownload", solrService.allowDownload(q,filterQuery));
         model.addAttribute("downloadUrl", baseUrl.replaceAll("^/search", "/action/quicksearch/download"));
 
         paginationBean.setPage(page.toString());
@@ -561,6 +562,15 @@ public class SearchPrototypeController {
                                 @RequestParam(value = "keepfacets", required = false) Boolean isKeptFacets,
                                 HttpServletResponse response,
                                 HttpServletRequest request) {
+
+        if (!solrService.allowDownload(q, filterQuery)) {
+            try {
+                response.sendError(403);
+                return;
+            } catch (IOException e) {
+                logger.error(e);
+            }
+        }
 
         response.setContentType("data:text/csv;charset=utf-8");
         response.setHeader("Content-Disposition", "attachment; filename=\"zfin_search_results.csv\"");

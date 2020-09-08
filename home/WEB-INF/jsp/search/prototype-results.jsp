@@ -174,8 +174,10 @@
                 <div class="row">
                     <div class="col-12 center">
                         <div class="float-left">
-                            <c:if test="${!galleryMode}">
-                                <a href="${downloadUrl}" class="btn btn-outline-secondary">
+                            <c:if test="${!galleryMode && allowDownload}">
+                                <a href="#"
+                                   class="btn btn-outline-secondary"
+                                   onclick="window.location.replace('${downloadUrl}');" >
                                     <i class="fas fa-download"></i> Download
                                 </a>
                             </c:if>
