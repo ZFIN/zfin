@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.zfin.expression.FigureService;
-import org.zfin.expression.presentation.ExpressionSearchController;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.expression.service.ExpressionSearchService;
 import org.zfin.expression.service.ExpressionService;
@@ -284,11 +283,10 @@ public class GeneViewController {
         zdbID = markerService.getActiveMarkerID(zdbID);
         logger.info("zdbID: " + zdbID);
 
-        if (!markerService.isOfTypeGene(zdbID)) {
+        Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbID);
+        if (!gene.isGenedom()) {
             return "redirect:/" + zdbID;
         }
-
-        Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbID);
         logger.info("gene: " + gene);
         geneBean.setMarker(gene);
 

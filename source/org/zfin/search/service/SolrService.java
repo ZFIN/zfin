@@ -1,6 +1,7 @@
 package org.zfin.search.service;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.apache.http.NameValuePair;
@@ -956,5 +957,22 @@ public class SolrService {
         }
 
     }
+
+    public boolean allowDownload(String q, String[] filterQuery) {
+        if (q != null && StringUtils.isNotEmpty(q.trim()) && !StringUtils.equals(q,"*:*")) {
+            return true;
+        }
+
+        if (ArrayUtils.isNotEmpty(filterQuery)) {
+            Map<String, List<String>> fqMap = getFilterQueryMap(filterQuery);
+            fqMap.remove("category");
+            if (fqMap.size() > 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 }
 
