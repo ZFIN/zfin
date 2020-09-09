@@ -84,26 +84,16 @@ public class TranscriptViewController {
         transcriptBean.setRelatedGenes(TranscriptService.getRelatedGenes(transcript));
 
 
-        //MicroRNA transcripts get a more simple data structure, because grouping by gene
-        //leads to a very silly display.  The important thing is that we want to populate
-        //either one of these data structures or the other.  The jsp will just dumbly
-        //display whatever this smarty pants controller hands to it.
-        // (ie, the brains are in the control layer, not the view layer)
+        //build the collection of relatedTranscripts for each gene
+        boolean showGBrowse = true;
 
-        if (transcript.getTranscriptType().getType().equals(TranscriptType.Type.MIRNA)) {
-            transcriptBean.setMicroRNARelatedTranscripts(TranscriptService.getRelatedTranscriptsForTranscript(transcript));
-        } else {
-            //build the collection of relatedTranscripts for each gene
-            boolean showGBrowse = true;
+        List<RelatedTranscriptDisplay> relatedTranscriptDisplayList = new ArrayList<RelatedTranscriptDisplay>();
 
-            List<RelatedTranscriptDisplay> relatedTranscriptDisplayList = new ArrayList<RelatedTranscriptDisplay>();
-
-            for (RelatedMarker relatedGene : transcriptBean.getRelatedGenes()) {
-                Marker gene = relatedGene.getMarker();
-                relatedTranscriptDisplayList.add(TranscriptService.getRelatedTranscriptsForGene(gene, transcript, showGBrowse));
-            }
-            transcriptBean.setRelatedTranscriptDisplayList(relatedTranscriptDisplayList);
+        for (RelatedMarker relatedGene : transcriptBean.getRelatedGenes()) {
+            Marker gene = relatedGene.getMarker();
+            relatedTranscriptDisplayList.add(TranscriptService.getRelatedTranscriptsForGene(gene, transcript, showGBrowse));
         }
+        transcriptBean.setRelatedTranscriptDisplayList(relatedTranscriptDisplayList);
 
 
         // setting supporting sequences
@@ -154,12 +144,14 @@ public class TranscriptViewController {
                     }
                 }
 
-                if (false == hasSequence) {
+                if (!hasSequence) {
                     unableToFindDbLinks.add(transcriptDBLink);
                 }
             }
             transcriptBean.setUnableToFindDBLinks(unableToFindDbLinks);
         }
+
+
 
 
         logger.info("transcriptviewcontroller # of seq: " + sequences.size());
