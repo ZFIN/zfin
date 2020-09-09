@@ -1,6 +1,7 @@
 package org.zfin.sequence.service;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zfin.Species;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gbrowse.GBrowseTrack;
@@ -13,7 +14,6 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.Genotype;
 import org.zfin.profile.service.ProfileService;
-import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 
@@ -254,7 +254,7 @@ public class TranscriptService {
         HibernateUtil.currentSession().save(transcript);
         HibernateUtil.currentSession().flush();
         //finally, run the regen names script
-      //  markerRepository.runMarkerNameFastSearchUpdate(transcript);
+        //  markerRepository.runMarkerNameFastSearchUpdate(transcript);
 
         return transcript;
     }
@@ -330,38 +330,6 @@ public class TranscriptService {
     }
 
 
-    /**
-     * Count the number of total attributions to for a Transcript object including
-     * attributions to:
-     * aliases
-     * dblinks
-     * marker relationships
-     *
-     * @param transcript Transcript to get citations for
-     * @return number of unique publications associated with this Transcript or it's components
-     */
-    public static Set<Publication> getAllAttributionPublications(Transcript transcript) {
-        Set<Publication> publications = new HashSet<Publication>();
-
-        // add alias associated publictions
-        for (Publication pub : MarkerService.getAliasAttributions(transcript)) {
-            publications.add(pub);
-        }
-
-        //add attributions from marker relationships
-        for (Publication pub : MarkerService.getMarkerRelationshipAttributions(transcript)) {
-            publications.add(pub);
-        }
-
-        //add attributions from dblinks
-        for (Publication pub : MarkerService.getDBLinkPublicaions(transcript)) {
-            publications.add(pub);
-        }
-
-        return publications;
-    }
-
-
     public static List<TranscriptTypeStatusDefinition> getAllTranscriptTypeStatusDefinitions() {
         MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
         return markerRepository.getAllTranscriptTypeStatusDefinitions();
@@ -381,12 +349,12 @@ public class TranscriptService {
         List<RelatedMarker> transcriptsAsMRelatedMarker = new ArrayList<>();
         for (RelatedMarker marker : transcripts) {
             Transcript transcript = TranscriptService.convertMarkerToTranscript(marker.getMarker());
-            if (withdrawn)  {
+            if (withdrawn) {
                 if (transcript.isWithdrawn()) {
                     transcriptsAsMRelatedMarker.add(marker);
                     transcriptlist.add(transcript);
                 }
-            }  else {
+            } else {
                 if (!transcript.isWithdrawn()) {
                     transcriptsAsMRelatedMarker.add(marker);
                     transcriptlist.add(transcript);
@@ -395,14 +363,14 @@ public class TranscriptService {
         }
 
         List<RelatedMarker> sortedTranscripts = new ArrayList<>();
-        if (transcriptsAsMRelatedMarker.size() > 0)  {
+        if (transcriptsAsMRelatedMarker.size() > 0) {
             transcriptlist.sort(
                     Comparator.comparing(Transcript::getTranscriptType).thenComparing(Transcript::getAbbreviationOrder)
             );
             ;
             for (Transcript t : transcriptlist) {
                 for (RelatedMarker m : transcriptsAsMRelatedMarker) {
-                    if(t == TranscriptService.convertMarkerToTranscript(m.getMarker())) {
+                    if (t == TranscriptService.convertMarkerToTranscript(m.getMarker())) {
                         sortedTranscripts.add(m);
                     }
                 }

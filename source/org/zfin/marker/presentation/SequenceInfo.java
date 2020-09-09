@@ -3,15 +3,18 @@ package org.zfin.marker.presentation;
 import org.zfin.sequence.DBLink;
 import org.zfin.sequence.MarkerDBLink;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  */
-public class SequenceInfo  {
+public class SequenceInfo {
 
     private List<DBLink> dbLinks;
     private int numberDBLinks;
-    private boolean isSorted = false ;
+    private boolean isSorted = false;
     private Comparator<DBLink> comparator = new DbLinkDisplayComparator();
     private boolean hasMoreLinks = false;
 
@@ -29,15 +32,15 @@ public class SequenceInfo  {
         for (DBLink dbLink : links) {
             addDBLink(dbLink);
         }
-        isSorted = false ;
+        isSorted = false;
     }
 
     public void addDBLink(DBLink dblink) {
-        if(dbLinks == null){
-            dbLinks = new ArrayList<DBLink>();
+        if (dbLinks == null) {
+            dbLinks = new ArrayList<>();
         }
         dbLinks.add(dblink);
-        isSorted = false ;
+        isSorted = false;
     }
 
     public int getNumberDBLinks() {
@@ -93,7 +96,7 @@ public class SequenceInfo  {
 //    }
 
     public List<DBLink> getDbLinks() {
-        if(dbLinks!=null && !isSorted){
+        if (dbLinks != null && !isSorted) {
             dbLinks.sort(comparator);
             isSorted = true;
         }
