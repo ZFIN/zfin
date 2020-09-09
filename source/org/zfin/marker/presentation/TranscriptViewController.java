@@ -24,6 +24,7 @@ import org.zfin.sequence.service.TranscriptService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/marker")
@@ -87,7 +88,8 @@ public class TranscriptViewController {
         //build the collection of relatedTranscripts for each gene
         boolean showGBrowse = true;
 
-        List<RelatedTranscriptDisplay> relatedTranscriptDisplayList = new ArrayList<RelatedTranscriptDisplay>();
+
+        List<RelatedTranscriptDisplay> relatedTranscriptDisplayList = new ArrayList<>();
 
         for (RelatedMarker relatedGene : transcriptBean.getRelatedGenes()) {
             Marker gene = relatedGene.getMarker();
