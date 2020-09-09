@@ -99,26 +99,11 @@ public class TranscriptViewController {
         // setting supporting sequences
         SequenceInfo sequenceInfo = TranscriptService.getSupportingSequenceInfo(transcript);
         transcriptBean.setSequenceInfo(sequenceInfo);
-        /*List<Transcript> tscript = RepositoryFactory.getMarkerRepository().getTranscriptsForNonCodingGenes();
-        for (Transcript ttcript:tscript){
-
-            if (transcript.zdbID.equals(ttcript.zdbID)){
-                System.out.println("rnacentarl");
-                transcriptBean.setRnaCentralLink("yes");
-            }
-        }*/
-
-
-        //get the "other transcript.name pages" dblink set
-        // should be handled by default "other" in MarkerService.createDefaultView
-//        transcriptBean.setSummaryDBLinkDisplay(TranscriptService.getSummaryPages(transcript));
 
         //get the protein summary pages
         transcriptBean.setProteinProductDBLinkDisplay(TranscriptService.getProteinProductDBLinks(transcript));
 
-        //the targets of the transcript, should only get filled for
-        //microRNA - but should that restriction come from the DB or code?
-//        if (transcript.getTranscriptType().getType().equals(TranscriptType.Type.MIRNA.toString())) {
+        //the targets of the transcript, should only get filled for microRNA
         if (transcript.getTranscriptType().getType() == TranscriptType.Type.MIRNA) {
             transcriptBean.setTranscriptTargets(TranscriptService.getTranscriptTargets(transcript));
         }
