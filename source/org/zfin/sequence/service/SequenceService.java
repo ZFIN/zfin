@@ -1,6 +1,7 @@
 package org.zfin.sequence.service;
 
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.Species;
@@ -10,6 +11,7 @@ import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.Transcript;
 import org.zfin.marker.presentation.DbLinkDisplayComparator;
 import org.zfin.marker.presentation.RelatedMarkerDBLinkDisplay;
+import org.zfin.marker.presentation.SequenceInfo;
 import org.zfin.marker.presentation.SummaryDBLinkDisplay;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
@@ -102,7 +104,6 @@ public class SequenceService {
     }
 
 
-
     public JsonResultResponse<MarkerDBLink> getMarkerDBLinkJsonResultResponse(String zdbID,
                                                                               Pagination pagination,
                                                                               boolean summary) {
@@ -120,13 +121,16 @@ public class SequenceService {
 
         List<MarkerDBLink> allDBLinks = new ArrayList<>();
 
-        if (marker.getType() == Marker.Type.TSCRIPT) {
-            allDBLinks.addAll(TranscriptService.getSupportingSequenceInfo((Transcript) marker)
-                    .getDbLinks()
-                    .stream()
-                    .map(dbLink -> MarkerService.getMarkerDBLink(marker, dbLink))
-                    .collect(Collectors.toList())
-            );
+        if (marker.getType().equals(Marker.Type.TSCRIPT)) {
+            SequenceInfo supportingSequenceInfo = TranscriptService.getSupportingSequenceInfo((Transcript) marker);
+            if (CollectionUtils.isNotEmpty(supportingSequenceInfo.getDbLinks())) {
+                allDBLinks.addAll(supportingSequenceInfo
+                        .getDbLinks()
+                        .stream()
+                        .map(dbLink -> MarkerService.getMarkerDBLink(marker, dbLink))
+                        .collect(Collectors.toList())
+                );
+            }
         } else {
             allDBLinks.addAll(sequenceRepository
                     .getDBLinksForMarker(marker.getZdbID(), ForeignDBDataType.SuperType.SEQUENCE)
