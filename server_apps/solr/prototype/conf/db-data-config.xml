@@ -6327,7 +6327,9 @@ and child.term_ontology = 'disease_ontology';
                              join phenotype_observation_generated on pg_id = psg_pg_id
                              join mutant_fast_search on pg_genox_zdb_id = mfs_genox_zdb_id
                              join marker on mfs_mrkr_zdb_id = mrkr_zdb_id
-                             where mrkr_type = 'GENE';"
+                             join marker_type_group_member on mtgrpmem_mrkr_type = mrkr_type
+                                         and (mtgrpmem_mrkr_type_group in ('GENEDOM','EFG'))
+                             ;"
                     cacheImpl="SortedMapBackedCache"
                     where="psg_id=phenotype_observation.id"
             />
