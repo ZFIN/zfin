@@ -23,10 +23,10 @@ def pgdata = env['PGDATA']
 String targetroot = env['TARGETROOT']
 
 dependencies {
-    compile 'org.liquibase:liquibase-core:3.4.1'
-    compile "org.liquibase:liquibase-gradle-plugin:1.1.1"
-    compile gradleApi()
-    compile localGroovy()
+    implementation 'org.liquibase:liquibase-core:3.4.1'
+    implementation "org.liquibase:liquibase-gradle-plugin:1.1.1"
+    implementation gradleApi()
+    implementation localGroovy()
 }
 
 task deployPostgres(dependsOn: ['deployPostgresFunctions',
@@ -574,10 +574,10 @@ task createSchemaSpy() {
 
 class ZfinTargetCopy extends Copy {
 
+    @Input
     String projectName
+    @Input
     String pName
-    Map ttMap
-    String target
 
     ZfinTargetCopy() {
         projectName = project.path
