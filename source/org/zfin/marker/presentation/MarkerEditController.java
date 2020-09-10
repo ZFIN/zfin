@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,16 +19,14 @@ import org.zfin.gwt.root.dto.PublicationDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.infrastructure.presentation.JSONMessageList;
 import org.zfin.marker.*;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.nomenclature.presentation.Nomenclature;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
@@ -44,6 +43,9 @@ public class MarkerEditController {
 
     @Autowired
     private MarkerRepository markerRepository;
+
+    @Autowired
+    private MessageSource messageSource;
 
     @RequestMapping("/marker-edit")
     public String getMarkerEdit(Model model
@@ -111,16 +113,25 @@ public class MarkerEditController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/lookup", method = RequestMethod.GET)
-    public boolean queryMarkerLookup(@RequestParam(required = false) String name,
-                                     @RequestParam(required = false) String abbreviation) {
+    @RequestMapping(value = "/validate", method = RequestMethod.GET)
+    public JSONMessageList queryMarkerLookup(@RequestParam(required = false) String name,
+                                             @RequestParam(required = false) String abbreviation) {
+        JSONMessageList response = new JSONMessageList();
+        List<String> errors = new ArrayList<>();
         if (StringUtils.isNotEmpty(name)) {
-            return markerRepository.getMarkerByName(name) != null;
+            String result = NomenclatureValidationService.validateMarkerName(name);
+            if (result != null) {
+                errors.add(messageSource.getMessage(result, null, Locale.ENGLISH));
+            }
         }
         if (StringUtils.isNotEmpty(abbreviation)) {
-            return markerRepository.getMarkerByAbbreviation(abbreviation) != null;
+            String result = NomenclatureValidationService.validateMarkerAbbreviation(abbreviation);
+            if (result != null) {
+                errors.add(messageSource.getMessage(result, null, Locale.ENGLISH));
+            }
         }
-        return false;
+        response.setErrors(errors);
+        return response;
     }
 
     @ResponseBody

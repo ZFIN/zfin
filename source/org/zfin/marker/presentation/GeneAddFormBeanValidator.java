@@ -5,13 +5,9 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 import org.zfin.marker.Marker;
-import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.publication.presentation.PublicationValidator;
-import org.zfin.repository.RepositoryFactory;
 
 public class GeneAddFormBeanValidator implements Validator {
-
-    private MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
 
     @Override
     public boolean supports(Class<?> aClass) {
@@ -26,26 +22,19 @@ public class GeneAddFormBeanValidator implements Validator {
 
         ValidationUtils.rejectIfEmpty(errors, "type", "gene.type.empty");
 
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "gene.name.empty");
-        if (markerRepository.getMarkerByName(form.getName()) != null) {
-            errors.rejectValue("name", "gene.name.inuse");
+        boolean isEFG = StringUtils.equals(form.getType(), Marker.Type.EFG.name());
+        String nameValidationResult = NomenclatureValidationService.validateMarkerName(form.getName(), isEFG);
+        if (nameValidationResult != null) {
+            errors.rejectValue("name", nameValidationResult);
         }
 
-        if (StringUtils.equals(form.getType(), Marker.Type.EFG.name())) {
-            // if this is an EFG, abbreviation is not on the form, and the abbreviation will
-            // be set using the name value, so make sure it isn't used
-            if (markerRepository.isMarkerExists(form.getName())) {
-                errors.rejectValue("name", "gene.name.inuse");
-            }
-        } else {
-            // if this is not an EFG, there is an abbrevation field on the form. make sure
-            // it is filled out, not already used, and is just lowercase letters and numebrs
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "abbreviation", "gene.abbreviation.empty");
-            if (markerRepository.isMarkerExists(form.getAbbreviation())) {
-                errors.rejectValue("abbreviation", "gene.abbreviation.inuse");
-            }
-            if (!form.getAbbreviation().matches("[a-z0-9_:.-]+")) {
-                errors.rejectValue("abbreviation", "gene.abbreviation.invalidcharacters");
+
+        if (!isEFG) {
+            // if this is not an EFG, there is an abbreviation field on the form. make sure
+            // it is filled out, not already used, and is just lowercase letters and numbers
+            String abbreviationValidationResult = NomenclatureValidationService.validateMarkerAbbreviation(form.getAbbreviation());
+            if (abbreviationValidationResult != null) {
+                errors.rejectValue("abbreviation", abbreviationValidationResult);
             }
         }
     }

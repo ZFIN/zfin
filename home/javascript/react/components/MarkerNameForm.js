@@ -55,11 +55,8 @@ const MarkerNameForm = ({markerId}) => {
                             if (!value) {
                                 return 'A name is required';
                             }
-                            const markerExists = await http.get(`/action/marker/lookup?name=${value}`);
-                            if (markerExists) {
-                                return 'This name is already in use';
-                            }
-                            return false;
+                            const validation = await http.get(`/action/marker/validate?name=${value}`);
+                            return validation.errors[0];
                         }, 300)}
                     />
                 </div>
@@ -78,11 +75,8 @@ const MarkerNameForm = ({markerId}) => {
                             if (!value) {
                                 return 'An abbreviation is required';
                             }
-                            const markerExists = await http.get(`/action/marker/lookup?abbreviation=${value}`);
-                            if (markerExists) {
-                                return 'This abbreviation is already in use';
-                            }
-                            return false;
+                            const validation = await http.get(`/action/marker/validate?abbreviation=${value}`);
+                            return validation.errors[0];
                         }, 300)}
                     />
                 </div>
