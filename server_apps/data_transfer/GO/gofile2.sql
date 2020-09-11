@@ -118,6 +118,12 @@ update tmp_go set mv_qualifier =(select term_zdb_id from term where term_ont_id=
 where t_ont_id in (select term_ont_id from term where term_ontology='cellular_component'and term_zdb_id!='ZDB-TERM-091209-16423') and mv_qualifier is null and mv_created_by!='GO_Noctua';
 
 update tmp_go set mv_qualifier=(select term_name from term where mv_qualifier=term_zdb_id) from term where mv_qualifier=term_zdb_id;
+update tmp_go set mv_qualifier ='contributes_to' where mv_qualifier='contributes to';
+update tmp_go set mv_qualifier ='colocalizes_with' where mv_qualifier='colocalizes with';
+update tmp_go set mv_flag='contributes_to' where mv_flag='contributes to';
+update tmp_go set mv_flag ='colocalizes_with' where mv_flag='colocalizes with';
+
+
 
 
 
