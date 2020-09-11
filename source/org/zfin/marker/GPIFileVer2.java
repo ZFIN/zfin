@@ -37,9 +37,13 @@ public class GPIFileVer2 extends AbstractScriptWrapper {
         File gpiFile = new File(ZfinPropertiesEnum.TARGETROOT + "/server_apps/data_transfer/GO/zfin.gpi2.gz");
 
         OutputStream os = new GZIPOutputStream(new FileOutputStream(gpiFile));
+       // OutputStream os = new FileOutputStream(gpiFile);
         String encoding = "UTF-8";
-        try (OutputStreamWriter osw = new OutputStreamWriter(os, encoding)) {
-            BufferedWriter bw = new BufferedWriter(osw);
+        OutputStreamWriter osw = new OutputStreamWriter(os, encoding);
+        Writer bw = null;
+        try {
+
+             bw = new BufferedWriter(osw);
 
             List<Marker> genes = getMarkerRepository().getMarkerByGroup(Marker.TypeGroup.GENEDOM, numfOfRecords);
 
@@ -121,6 +125,11 @@ public class GPIFileVer2 extends AbstractScriptWrapper {
                 geneRow.append("");
                 geneRow.append('\n');
                 bw.write(geneRow.toString());
+            }
+        }
+        finally{
+            if (bw != null) {
+                bw.close();
             }
         }
     }
