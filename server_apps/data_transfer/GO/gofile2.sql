@@ -1,5 +1,7 @@
 begin work ;
-		 
+
+
+
 create temporary table tmp_identifiers (id text, id2 text);
 \copy tmp_identifiers from '<!--|ROOT_PATH|-->/server_apps/data_transfer/GO/ids.unl' (delimiter '|');
 
@@ -63,6 +65,7 @@ create temporary table tmp_go (mv_zdb_id text,
 			 mv_ev_code text,
 			 if_from text,
 			 mv_flag text,
+			 mv_qualifier text,
 			 t_ont text,
 			 mv_date_modified timestamp without time zone,
 			 mv_created_by text,
@@ -74,13 +77,14 @@ create temporary table tmp_go (mv_zdb_id text,
 insert into tmp_go (mv_zdb_id,
        m_zdb_id,
        m_abbrev,
-       m_name,
+       m_name, 
        t_ont_id,
        mv_source_id,
        ac_no,
        mv_ev_code,
        if_from,
        mv_flag,
+       mv_qualifier,
        t_ont,
        mv_date_modified,
        mv_created_by,
@@ -89,19 +93,33 @@ insert into tmp_go (mv_zdb_id,
        geneproduct_id,doi_id,goref_id
 )
 select mrkrgoev_zdb_id,
-				mrkr_zdb_id, mrkr_abbrev, mrkr_name, term_ont_id, mrkrgoev_source_zdb_id,
+				mrkr_zdb_id, mrkr_abbrev, mrkr_name, a.term_ont_id, mrkrgoev_source_zdb_id,
 				accession_no, mrkrgoev_evidence_code, infgrmem_inferred_from, mrkrgoev_gflag_name,
-				upper(substring(term_ontology from 1 for 1)), mrkrgoev_date_modified,
+				mrkrgoev_relation_term_zdb_id,upper(substring(a.term_ontology from 1 for 1)), mrkrgoev_date_modified,
                                 mrkrgoev_annotation_organization_created_by,goid3tmp,lower(szm_term_name),proteinid,pub_doi,pub_goref_id
 			   from marker_go_term_evidence
 
 			   join marker on mrkrgoev_mrkr_zdb_id = mrkr_zdb_id
-			   join term on mrkrgoev_term_zdb_id = term_zdb_id
+			   join term a on mrkrgoev_term_zdb_id = a.term_zdb_id
 			   join publication on mrkrgoev_source_zdb_id  = zdb_id
 			   join so_zfin_mapping on mrkr_type = szm_object_type
 		           full outer join inference_group_member on mrkrgoev_zdb_id = infgrmem_mrkrgoev_zdb_id
 		           full outer join tmp_go_identifiers_pipes on  mrkrgoev_zdb_id=goidtmp
 			         full outer join tmp_go_proteinid on mrkrgoev_zdb_id=mgev_zdb_id   ;
+
+update tmp_go set mv_qualifier ='ZDB-TERM-180228-3' where mv_flag='contributes to';
+update tmp_go set mv_qualifier ='ZDB-TERM-180228-2' where mv_flag='colocalizes with';
+
+
+update tmp_go set mv_qualifier ='ZDB-TERM-180228-4' where t_ont_id in (select term_ont_id from term where term_ontology='molecular_function') and mv_qualifier is null and mv_created_by!='GO_Noctua';
+update tmp_go set mv_qualifier ='ZDB-TERM-181002-287' where t_ont_id in (select term_ont_id from term where term_ontology='biological_process') and mv_qualifier is null and mv_created_by!='GO_Noctua' ;
+update tmp_go set mv_qualifier ='ZDB-TERM-180228-1' where t_ont_id in (select term_ont_id from term where term_ontology='cellular_component' and term_zdb_id='ZDB-TERM-091209-16423') and mv_qualifier is null and mv_created_by!='GO_Noctua';
+update tmp_go set mv_qualifier =(select term_zdb_id from term where term_ont_id='RO:0001025') 
+where t_ont_id in (select term_ont_id from term where term_ontology='cellular_component'and term_zdb_id!='ZDB-TERM-091209-16423') and mv_qualifier is null and mv_created_by!='GO_Noctua';
+
+update tmp_go set mv_qualifier=(select term_name from term where mv_qualifier=term_zdb_id) from term where mv_qualifier=term_zdb_id;
+
+
 
 
 select distinct gene_type from tmp_go where gene_type is not null;
@@ -112,8 +130,9 @@ update tmp_go
 update tmp_go
 set mv_created_by='UniProt' where mv_created_by='UniProtKB';
 
+update tmp_go
+set mv_qualifier=replace(mv_qualifier,',_','_') where mv_qualifier like '%,_%';
 
-
-\copy (select * from tmp_go) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/GO/go.zfin' with delimiter as '	' null as '';
+\copy (select * from tmp_go) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/GO/go.zfin2' with delimiter as '	' null as '';
 
 commit work;
