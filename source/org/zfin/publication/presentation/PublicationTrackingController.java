@@ -93,7 +93,6 @@ public class PublicationTrackingController {
         model.addAttribute("hasCorrespondence", publicationService.hasCorrespondence(publication));
         model.addAttribute("loggedInUser", ProfileService.getCurrentSecurityUser());
         return "publication/track-publication.page";
-
     }
 
     @ResponseBody

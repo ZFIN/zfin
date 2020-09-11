@@ -1,7 +1,7 @@
 import React from 'react';
 import Tabs from '../components/Tabs';
 import Tab from '../components/Tab';
-import PubTrackerStatusTab from './PubTrackerStatusTab';
+import PubTrackerStatusTab1 from './PubTrackerStatusTab1';
 import PropTypes from 'prop-types';
 import PubCorrespondence from './PubCorrespondenceSection';
 import {getDetails} from '../api/publication';
@@ -29,7 +29,7 @@ class PubTracker extends React.Component {
         return(
             <Tabs>
                 <Tab label='Status'>
-                    <PubTrackerStatusTab
+                    <PubTrackerStatusTab1
                         pubDetails={pubDetails}
                         pubId={pubId}
                         userEmail={userEmail}
