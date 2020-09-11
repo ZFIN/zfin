@@ -142,9 +142,10 @@ sub goQlf()
  {
      $qualf = $_[0];
      $relation = $_[1];
-     print $relation;
+
      $relation = 'contributes_to' if $relation eq 'contributes to';
      $relation = 'colocalizes_with' if $relation eq 'colocalizes with';
+
     if (length($qualf)!=0){
         if ($qualf eq 'not'){
             $qualf = 'NOT'.'|'. $relation
