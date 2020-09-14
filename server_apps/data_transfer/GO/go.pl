@@ -77,9 +77,9 @@ try {
   exit -1;
 };
 try {
-  ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f gofile.sql");
+  ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f gofile2.sql");
 } catch {
-  warn "Failed at gofile.sql - $_";
+  warn "Failed at gofile2.sql - $_";
   exit -1;
 };
 

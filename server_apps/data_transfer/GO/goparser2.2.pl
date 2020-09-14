@@ -40,7 +40,7 @@ $lastgrp=0;
 @rel_array= ();
 $db='ZFIN';
 
-open (INDEXFILE1, "go.zfin") or die "open failed";
+open (INDEXFILE1, "go.zfin2") or die "open failed";
 while ($line = <INDEXFILE1>) {
 
       chomp $line;
@@ -142,8 +142,10 @@ sub goQlf()
  {
      $qualf = $_[0];
      $relation = $_[1];
+
      $relation = 'contributes_to' if $relation eq 'contributes to';
      $relation = 'colocalizes_with' if $relation eq 'colocalizes with';
+
     if (length($qualf)!=0){
         if ($qualf eq 'not'){
             $qualf = 'NOT'.'|'. $relation

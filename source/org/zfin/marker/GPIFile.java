@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.zip.GZIPOutputStream;
+import org.apache.commons.io.FileUtils;
 
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
@@ -33,13 +34,13 @@ public class GPIFile extends AbstractScriptWrapper {
 
     private void init() throws IOException {
         initAll();
-
         File gpiFile = new File(ZfinPropertiesEnum.TARGETROOT + "/server_apps/data_transfer/GO/zfin.gpi.gz");
-
         OutputStream os = new GZIPOutputStream(new FileOutputStream(gpiFile));
-        String encoding = "UTF-8";
-        try (OutputStreamWriter osw = new OutputStreamWriter(os, encoding)) {
-            BufferedWriter bw = new BufferedWriter(osw);
+        String encoding = "UTF8";
+        OutputStreamWriter osw = new OutputStreamWriter(os, encoding);
+        Writer bw = null;
+        try {
+             bw = new BufferedWriter(osw);
 
             List<Marker> genes = getMarkerRepository().getMarkerByGroup(Marker.TypeGroup.GENEDOM, numfOfRecords);
 
@@ -118,5 +119,14 @@ public class GPIFile extends AbstractScriptWrapper {
                 bw.write(geneRow.toString());
             }
         }
+             finally{
+                if (bw != null) {
+                    bw.close();
+                }
+            }
+        }
+
+
     }
-}
+
+
