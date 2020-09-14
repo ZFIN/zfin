@@ -26,7 +26,6 @@ const MarkerNameForm = ({markerId}) => {
         values,
         meta: { isValid, isSubmitting, isSubmitted, serverError }
     } = useForm({
-        debugForm: true,
         defaultValues: nomenclature,
         onSubmit: async (values) => {
             try {
