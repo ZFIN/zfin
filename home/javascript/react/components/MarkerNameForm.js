@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import useMutableFetch from '../hooks/useMutableFetch';
+import equal from 'fast-deep-equal';
 import { useForm } from 'react-form';
 import http from '../utils/http';
 import InputField from './form/InputField';
@@ -22,8 +23,10 @@ const MarkerNameForm = ({markerId}) => {
         Form,
         reset,
         setMeta,
-        meta: { isTouched, isValid, isSubmitting, isSubmitted, serverError }
+        values,
+        meta: { isValid, isSubmitting, isSubmitted, serverError }
     } = useForm({
+        debugForm: true,
         defaultValues: nomenclature,
         onSubmit: async (values) => {
             try {
@@ -39,6 +42,10 @@ const MarkerNameForm = ({markerId}) => {
             }
         },
     });
+
+    // not sure if we'll want to do this on other forms. if we do, it may be worth looking at packages
+    // other than react-form because it doesn't have a strong distinction between "touched" and "changed"
+    const isPristine = useMemo(() => equal(values, nomenclature), [values, nomenclature]);
 
     return (
         <Form>
@@ -56,7 +63,7 @@ const MarkerNameForm = ({markerId}) => {
                                 return 'A name is required';
                             }
                             const validation = await http.get(`/action/marker/validate?name=${value}`);
-                            return validation.errors[0];
+                            return validation.errors[0] || false;
                         }, 300)}
                     />
                 </div>
@@ -76,13 +83,13 @@ const MarkerNameForm = ({markerId}) => {
                                 return 'An abbreviation is required';
                             }
                             const validation = await http.get(`/action/marker/validate?abbreviation=${value}`);
-                            return validation.errors[0];
+                            return validation.errors[0] || false;
                         }, 300)}
                     />
                 </div>
             </div>
 
-            {isTouched &&
+            {!isPristine &&
             <>
                 <div className='form-group row'>
                     <label htmlFor='inputReason' className='col-md-2 col-form-label'>Reason</label>
@@ -117,7 +124,7 @@ const MarkerNameForm = ({markerId}) => {
                     <button
                         type='button'
                         className='btn btn-outline-secondary'
-                        disabled={isSubmitting || !isTouched}
+                        disabled={isSubmitting || isPristine}
                         onClick={reset}
                     >
                         Reset
@@ -127,7 +134,7 @@ const MarkerNameForm = ({markerId}) => {
                         loading={isSubmitting}
                         type='submit'
                         className='btn btn-primary'
-                        disabled={isSubmitting || !isTouched || !isValid}
+                        disabled={isSubmitting || isPristine || !isValid}
                     >
                         Save
                     </LoadingButton>
