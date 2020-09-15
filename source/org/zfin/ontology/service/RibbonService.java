@@ -267,8 +267,8 @@ public class RibbonService {
         return termCounts;
     }
 
-    public JsonResultResponse<ExpressionDetail> buildExpressionDetail(String geneID, String supertermID, String subtermID, boolean includeReporter, boolean onlyInSitu, Pagination pagination) {
-        HashSet<String> expressionIDs = getDetailExpressionInfo(geneID, supertermID, subtermID, includeReporter, onlyInSitu);
+    public JsonResultResponse<ExpressionDetail> buildExpressionDetail(String geneID, String supertermID, String subtermID, String ribbonTermID, boolean includeReporter, boolean onlyInSitu, Pagination pagination) {
+        HashSet<String> expressionIDs = getDetailExpressionInfo(geneID, supertermID, subtermID, ribbonTermID, includeReporter, onlyInSitu);
         if (expressionIDs == null || CollectionUtils.isEmpty(expressionIDs)) {
             return null;
         }
@@ -405,17 +405,20 @@ public class RibbonService {
         return response;
     }
 
-    private HashSet<String> getDetailExpressionInfo(String geneID, String termID, String subtermID, boolean includeReporter, boolean onlyInSitu) {
+    private HashSet<String> getDetailExpressionInfo(String geneID, String supertermID, String subtermID, String ribbonTermID, boolean includeReporter, boolean onlyInSitu) {
 
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/expression-annotation");
         query.addFilterQuery("gene_zdb_id:" + geneID);
 
-        if (StringUtils.isNotEmpty(termID)) {
-            query.addFilterQuery("superterm_id:" + SolrService.luceneEscape(termID));
+        if (StringUtils.isNotEmpty(supertermID)) {
+            query.addFilterQuery("superterm_id:" + SolrService.luceneEscape(supertermID));
         }
         if (StringUtils.isNotEmpty(subtermID)) {
             query.addFilterQuery("subterm_id:" + SolrService.luceneEscape(subtermID));
+        }
+        if (StringUtils.isNotEmpty(ribbonTermID)) {
+            query.addFilterQuery("term_id:" + SolrService.luceneEscape(ribbonTermID));
         }
 
         expressionService.addReporterFilter(query, includeReporter);

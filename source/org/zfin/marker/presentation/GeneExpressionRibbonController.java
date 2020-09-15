@@ -54,13 +54,14 @@ public class GeneExpressionRibbonController {
     public JsonResultResponse<ExpressionDetail> getRibbonExpressionDetail(@PathVariable String geneId,
                                                                           @RequestParam(required = false) String supertermId,
                                                                           @RequestParam(required = false) String subtermId,
+                                                                          @RequestParam(required = false) String ribbonTermId,
                                                                           @RequestParam(required = false) boolean includeReporter,
                                                                           @RequestParam(required = false) boolean onlyInSitu,
                                                                           @Version Pagination pagination) {
         long startTime = System.currentTimeMillis();
         JsonResultResponse<ExpressionDetail> response;
         try {
-            response = ribbonService.buildExpressionDetail(geneId, supertermId, subtermId, includeReporter, onlyInSitu, pagination);
+            response = ribbonService.buildExpressionDetail(geneId, supertermId, subtermId, ribbonTermId, includeReporter, onlyInSitu, pagination);
         } catch (Exception e) {
             log.error("Error while retrieving ribbon details", e);
             RestErrorMessage error = new RestErrorMessage(500);
