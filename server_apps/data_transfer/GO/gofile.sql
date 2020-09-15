@@ -103,7 +103,6 @@ select mrkrgoev_zdb_id,
 		           full outer join tmp_go_identifiers_pipes on  mrkrgoev_zdb_id=goidtmp
 			         full outer join tmp_go_proteinid on mrkrgoev_zdb_id=mgev_zdb_id   ;
 
-
 select distinct gene_type from tmp_go where gene_type is not null;
 
 update tmp_go
@@ -111,8 +110,6 @@ update tmp_go
       	    	    where m_zdb_id = id); 
 update tmp_go
 set mv_created_by='UniProt' where mv_created_by='UniProtKB';
-
-
 
 \copy (select * from tmp_go) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/GO/go.zfin' with delimiter as '	' null as '';
 
