@@ -23,7 +23,6 @@ import {
 } from '../api/publication';
 import intertab from '../utils/intertab';
 
-import PubTrackerPanel from '../components/PubTrackerPanel';
 import PubTrackerStatus from '../components/PubTrackerStatus';
 import PubTrackerIndexed from '../components/PubTrackerIndexed';
 import PubTrackerTopics from '../components/PubTrackerTopics';
@@ -32,22 +31,22 @@ import PubGeneTable from './PubGeneTable';
 import PubAlleleTable from './PubAlleleTable';
 import PubSTRTable from './PubSTRTable';
 import PubTrackerAuthorNotification from '../components/PubTrackerAuthorNotification';
-import Section from '../components/Section';
-import PageNav from '../components/PageNav';
+import Section from '../components/layout/Section';
+import DataPage from '../components/layout/DataPage';
 
 const STATUS = 'Status';
 const TOPICS = 'Topics';
 const NOTES = 'Notes';
-const DATAOBJECTS = 'Data Objects';
-const CONTACTAUTHORS = 'Contact';
+const DATA_OBJECTS = 'Data Objects';
+const CONTACT_AUTHORS = 'Contact';
 
 
 const SECTIONS = [
-    {name: STATUS},
-    {name: TOPICS},
-    {name: NOTES},
-    {name: DATAOBJECTS},
-    {name: CONTACTAUTHORS},
+    STATUS,
+    TOPICS,
+    NOTES,
+    DATA_OBJECTS,
+    CONTACT_AUTHORS,
 ];
 
 class PubTrackerStatusTab extends React.Component {
@@ -80,19 +79,19 @@ class PubTrackerStatusTab extends React.Component {
     }
 
     componentDidMount() {
-        const {pubId} = this.props;
-        getStatuses().then(statuses => this.setState({statuses}));
-        getLocations().then(locations => this.setState({locations}));
-        getCurators().then(curators => this.setState({curators}));
-        getStatus(pubId).then(status => this.setState({status}));
-        getIndexed(pubId).then(indexed => this.setState({indexed}));
-        getNotes(pubId).then(notes => this.setState({notes}));
-        getTopics(pubId).then(topics => this.setState({topics}));
+        const { pubId } = this.props;
+        getStatuses().then(statuses => this.setState({ statuses }));
+        getLocations().then(locations => this.setState({ locations }));
+        getCurators().then(curators => this.setState({ curators }));
+        getStatus(pubId).then(status => this.setState({ status }));
+        getIndexed(pubId).then(indexed => this.setState({ indexed }));
+        getNotes(pubId).then(notes => this.setState({ notes }));
+        getTopics(pubId).then(topics => this.setState({ topics }));
     }
 
     handleStatusSave(status, options = {}) {
-        const {pubId} = this.props;
-        this.setState({statusLoading: true});
+        const { pubId } = this.props;
+        this.setState({ statusLoading: true });
         updateStatus(pubId, status, options).then(status => {
             this.setState({
                 status,
@@ -101,13 +100,13 @@ class PubTrackerStatusTab extends React.Component {
             });
             intertab.fireEvent(intertab.EVENTS.PUB_STATUS);
             if (status.status.type === 'CLOSED' || options.resetTopics) {
-                getTopics(pubId).then(topics => this.setState({topics}));
+                getTopics(pubId).then(topics => this.setState({ topics }));
             }
         });
     }
 
     handleCloseValidate(status) {
-        this.setState({statusLoading: true});
+        this.setState({ statusLoading: true });
         validate(this.props.pubId).then(validation => {
             if (validation.warnings.length > 0) {
                 this.setState({
@@ -127,7 +126,7 @@ class PubTrackerStatusTab extends React.Component {
     }
 
     handleIndexedToggle(indexed) {
-        this.setState({indexedLoading: true});
+        this.setState({ indexedLoading: true });
         updateIndexed(this.props.pubId, indexed).then(indexed => this.setState({
             indexed,
             indexedLoading: false
@@ -178,7 +177,7 @@ class PubTrackerStatusTab extends React.Component {
     }
 
     handleNotificationEdit() {
-        this.setState({notificationLoading: true});
+        this.setState({ notificationLoading: true });
         return getCuratedEntities(this.props.pubId)
             .then((curatedEntities) => this.setState({
                 curatedEntities,
@@ -187,14 +186,14 @@ class PubTrackerStatusTab extends React.Component {
     }
 
     handleNotificationSend(notification, note) {
-        this.setState({notificationLoading: true});
+        this.setState({ notificationLoading: true });
         return sendAuthorNotification(this.props.pubId, notification)
             .then(() => this.handleAddNote(note))
-            .always(() => this.setState({notificationLoading: false}));
+            .always(() => this.setState({ notificationLoading: false }));
     }
 
     render() {
-        const { pubDetails, pubId, userId, userName, userEmail,  } = this.props;
+        const { pubDetails, pubId, userId, userName, userEmail, } = this.props;
         const {
             curatedEntities,
             curators,
@@ -210,109 +209,87 @@ class PubTrackerStatusTab extends React.Component {
             validationWarnings
         } = this.state;
 
-        const statusHeader = [
-            'Status',
-            <span className='float-right' key='history'>
-                <small>
-                    <a href={`/action/publication/${pubId}/status-history`} target='_blank' rel='noopener noreferrer'>
-                        History <i className='fas fa-external-link-alt' />
-                    </a>
-                </small>
-            </span>
-        ];
-
         return (
-
-
-            <div className='d-flex h-100'>
-                <PageNav  sections={SECTIONS} />
-                <div className='data-page-content-container'>
-                    <Section hideTitle title={STATUS}>
-                        <PubTrackerPanel title={statusHeader}>
-
-                            <div className='row clearfix'>
-                                <div className='col-6 border-right'>
-                                    {curators.length > 0 && statuses.length > 0 && locations.length > 0 &&
-                                    <PubTrackerStatus
-                                        curators={curators}
-                                        defaultLocation={status.location}
-                                        defaultOwner={status.owner}
-                                        defaultStatus={status.status}
-                                        loading={statusLoading}
-                                        locations={locations}
-                                        onSave={this.handleStatusSave}
-                                        onValidate={this.handleCloseValidate}
-                                        onValidateCancel={this.handleValidationCancel}
-                                        statuses={statuses}
-                                        userId={userId}
-                                        warnings={validationWarnings}
+            <DataPage sections={SECTIONS}>
+                <Section title={STATUS}>
+                    <div className='row clearfix'>
+                        <div className='col-6 border-right'>
+                            {curators.length > 0 && statuses.length > 0 && locations.length > 0 &&
+                            <PubTrackerStatus
+                                curators={curators}
+                                defaultLocation={status.location}
+                                defaultOwner={status.owner}
+                                defaultStatus={status.status}
+                                loading={statusLoading}
+                                locations={locations}
+                                onSave={this.handleStatusSave}
+                                onValidate={this.handleCloseValidate}
+                                onValidateCancel={this.handleValidationCancel}
+                                statuses={statuses}
+                                userId={userId}
+                                warnings={validationWarnings}
+                            />
+                            }
+                        </div>
+                        <div className='col-5'>
+                            <div className='row'>
+                                <div className='offset-1 mt-2'>
+                                    <PubTrackerIndexed
+                                        indexed={indexed}
+                                        onToggle={this.handleIndexedToggle}
+                                        saving={indexedLoading}
                                     />
-                                    }
-                                </div>
-                                <div className='col-5'>
-                                    <div className='row'>
-                                        <div className='offset-1 mt-2'>
-                                            <PubTrackerIndexed
-                                                indexed={indexed}
-                                                onToggle={this.handleIndexedToggle}
-                                                saving={indexedLoading}
-                                            />
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
-                        </PubTrackerPanel>
+                        </div>
+                    </div>
+                    <small>
+                        <a href={`/action/publication/${pubId}/status-history`} target='_blank' rel='noopener noreferrer'>
+                            History <i className='fas fa-external-link-alt' />
+                        </a>
+                    </small>
+                </Section>
+
+                <Section title={TOPICS}>
+                    <PubTrackerTopics
+                        onTopicSave={this.handleTopicSave}
+                        topics={topics}
+                    />
+                </Section>
+
+                <Section title={NOTES}>
+                    <PubTrackerNotes
+                        notes={notes}
+                        onAddNote={this.handleAddNote}
+                        onDeleteNote={this.handleDeleteNote}
+                        onEditNote={this.handleEditNote}
+                    />
+                </Section>
+
+                <Section title={DATA_OBJECTS}>
+                    <Section title='Genes'>
+                        <PubGeneTable pubId={pubId} />
                     </Section>
-                    <Section hideTitle title={TOPICS}>
-                        <PubTrackerPanel title='Topics'>
-                            <PubTrackerTopics
-                                onTopicSave={this.handleTopicSave}
-                                topics={topics}
-                            />
-                        </PubTrackerPanel>
+                    <Section title='Alleles'>
+                        <PubAlleleTable pubId={pubId} />
                     </Section>
-                    <Section hideTitle title={NOTES}>
-                        <PubTrackerPanel title='Notes'>
-                            <PubTrackerNotes
-                                notes={notes}
-                                onAddNote={this.handleAddNote}
-                                onDeleteNote={this.handleDeleteNote}
-                                onEditNote={this.handleEditNote}
-                            />
-                        </PubTrackerPanel>
+                    <Section title='Sequence Targeting Reagents'>
+                        <PubSTRTable pubId={pubId} />
                     </Section>
-                    <Section hideTitle title={DATAOBJECTS}>
-                        <PubTrackerPanel title='Genes'>
-                            <PubGeneTable
-                                pubId={pubId}
-                            />
-                        </PubTrackerPanel>
-                        <PubTrackerPanel title='Alleles'>
-                            <PubAlleleTable
-                                pubId={pubId}
-                            />
-                        </PubTrackerPanel>
-                        <PubTrackerPanel title='STRs'>
-                            <PubSTRTable
-                                pubId={pubId}
-                            />
-                        </PubTrackerPanel>
-                    </Section>
-                    <Section hideTitle title={CONTACTAUTHORS}>
-                        <PubTrackerPanel title='Contact'>
-                            <PubTrackerAuthorNotification
-                                curatorName={userName}
-                                curatorEmail={userEmail}
-                                pub={pubDetails}
-                                curatedEntities={curatedEntities}
-                                loading={notificationLoading}
-                                onEditNotification={this.handleNotificationEdit}
-                                onSendNotification={this.handleNotificationSend}
-                            />
-                        </PubTrackerPanel>
-                    </Section>
-                </div>
-            </div>
+                </Section>
+
+                <Section title={CONTACT_AUTHORS}>
+                    <PubTrackerAuthorNotification
+                        curatorName={userName}
+                        curatorEmail={userEmail}
+                        pub={pubDetails}
+                        curatedEntities={curatedEntities}
+                        loading={notificationLoading}
+                        onEditNotification={this.handleNotificationEdit}
+                        onSendNotification={this.handleNotificationSend}
+                    />
+                </Section>
+            </DataPage>
         )
     }
 }

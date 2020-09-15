@@ -1,9 +1,7 @@
 import React from 'react';
-import Tabs from '../components/Tabs';
-import Tab from '../components/Tab';
 import PubTrackerStatusTab from './PubTrackerStatusTab';
 import PropTypes from 'prop-types';
-import PubCorrespondence from './PubCorrespondenceSection';
+// import PubCorrespondence from './PubCorrespondenceSection';
 import {getDetails} from '../api/publication';
 
 class PubTracker extends React.Component {
@@ -27,27 +25,13 @@ class PubTracker extends React.Component {
         }
 
         return(
-            <Tabs>
-                <Tab label='Status'>
-                    <PubTrackerStatusTab
-                        pubDetails={pubDetails}
-                        pubId={pubId}
-                        userEmail={userEmail}
-                        userId={userId}
-                        userName={userName}
-                    />
-                </Tab>
-
-                <Tab label='Correspondence'>
-                    <PubCorrespondence
-                        pubDetails={pubDetails}
-                        pubId={pubId}
-                        userEmail={userEmail}
-                        userId={userId}
-                        userName={userName}
-                    />
-                </Tab>
-            </Tabs>
+            <PubTrackerStatusTab
+                pubDetails={pubDetails}
+                pubId={pubId}
+                userEmail={userEmail}
+                userId={userId}
+                userName={userName}
+            />
         );
     }
 }
