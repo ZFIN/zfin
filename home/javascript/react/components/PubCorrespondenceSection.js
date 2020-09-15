@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {addCorrespondence, deleteCorrespondence, getCorrespondences, getDetails} from '../api/publication';
-import PubCorrespondenceEmailForm from '../components/PubCorrespondenceEmailForm';
-import Alert from '../components/Alert';
-import {splitEmailRecipientListString} from '../utils/publication';
-import PubCorrespondenceList from '../components/PubCorrespondenceList';
+import { addCorrespondence, deleteCorrespondence, getCorrespondences } from '../api/publication';
+import PubCorrespondenceEmailForm from './PubCorrespondenceEmailForm';
+import Alert from './Alert';
+import { splitEmailRecipientListString } from '../utils/publication';
+import PubCorrespondenceList from './PubCorrespondenceList';
 import intertab from '../utils/intertab';
 
 const prependSubject = (subject) => {
@@ -24,9 +24,7 @@ class PubCorrespondenceSection extends React.Component {
             loading: false,
             successMessage: '',
             errorMessage: '',
-            pubDetails: null
         };
-
 
         this.openOutgoingForm = this.openOutgoingForm.bind(this);
         this.openIncomingForm = this.openIncomingForm.bind(this);
@@ -43,18 +41,17 @@ class PubCorrespondenceSection extends React.Component {
     }
 
     componentDidMount() {
-        getDetails(this.props.pubId).then(pubDetails => this.setState({pubDetails}));
-        getCorrespondences(this.props.pubId).then(correspondences => this.setState({correspondences}));
+        getCorrespondences(this.props.pubId).then(correspondences => this.setState({ correspondences }));
     }
 
     openOutgoingForm() {
-        const {userId, userEmail} = this.props;
+        const { userId, userEmail } = this.props;
         this.setState({
             email: {
                 outgoing: true,
                 additionalTo: '',
                 to: [],
-                from: {zdbID: userId, email: userEmail},
+                from: { zdbID: userId, email: userEmail },
                 subject: '',
                 message: '',
             }
@@ -62,13 +59,13 @@ class PubCorrespondenceSection extends React.Component {
     }
 
     openIncomingForm() {
-        const {userId, userEmail} = this.props;
+        const { userId, userEmail } = this.props;
         this.setState({
             email: {
                 outgoing: false,
                 additionalTo: '',
-                to: [{zdbID: userId, email: userEmail}],
-                from: {email: ''},
+                to: [{ zdbID: userId, email: userEmail }],
+                from: { email: '' },
                 subject: '',
                 message: '',
             }
@@ -76,11 +73,11 @@ class PubCorrespondenceSection extends React.Component {
     }
 
     handleEmailUpdate(email) {
-        this.setState({email});
+        this.setState({ email });
     }
 
     handleTemplateSelect(subject, body) {
-        const {pubDetails, userName} = this.props;
+        const { pubDetails, userName } = this.props;
         this.setState(state => ({
             email: {
                 ...state.email,
@@ -91,11 +88,11 @@ class PubCorrespondenceSection extends React.Component {
     }
 
     handleEmailCancel() {
-        this.setState({email: null});
+        this.setState({ email: null });
     }
 
     addCorrespondence(correspondence) {
-        this.setState({loading: true});
+        this.setState({ loading: true });
         addCorrespondence(this.props.pubId, correspondence)
             .then(correspondence => this.setState(state => ({
                 correspondences: [
@@ -117,9 +114,9 @@ class PubCorrespondenceSection extends React.Component {
     }
 
     handleEmailComplete() {
-        const {email} = this.state;
+        const { email } = this.state;
         const combinedRecipients = email.to.concat(
-            splitEmailRecipientListString(email.additionalTo).map(email => ({email}))
+            splitEmailRecipientListString(email.additionalTo).map(email => ({ email }))
         );
         this.addCorrespondence({
             ...email,
@@ -138,13 +135,13 @@ class PubCorrespondenceSection extends React.Component {
     }
 
     handleRecordReply(correspondence) {
-        const {userId, userEmail} = this.props;
+        const { userId, userEmail } = this.props;
         this.setState({
             email: {
                 outgoing: false,
                 additionalTo: '',
-                to: [{zdbID: userId, email: userEmail}],
-                from: {email: correspondence.to.map(t => t.email).join(', ')},
+                to: [{ zdbID: userId, email: userEmail }],
+                from: { email: correspondence.to.map(t => t.email).join(', ') },
                 subject: prependSubject(correspondence.subject),
                 message: ''
             }
@@ -152,14 +149,14 @@ class PubCorrespondenceSection extends React.Component {
     }
 
     handleSendReply(correspondence) {
-        const {userId, userEmail} = this.props;
+        const { userId, userEmail } = this.props;
         this.setState({
             email: {
                 reply: true,
                 outgoing: true,
                 to: [],
                 additionalTo: correspondence.from.email,
-                from: {zdbID: userId, email: userEmail},
+                from: { zdbID: userId, email: userEmail },
                 subject: prependSubject(correspondence.subject),
                 message: ''
             }
@@ -180,28 +177,36 @@ class PubCorrespondenceSection extends React.Component {
     }
 
     clearSuccessMessage() {
-        this.setState({successMessage: ''});
+        this.setState({ successMessage: '' });
     }
 
     clearErrorMessage() {
-        this.setState({errorMessage: ''});
+        this.setState({ errorMessage: '' });
     }
 
     render() {
-        const {pubDetails} = this.state;
+        const { pubDetails } = this.props;
+        const { correspondences, email, successMessage, errorMessage } = this.state;
 
         if (!pubDetails) {
             return null;
         }
-        const {correspondences, email, successMessage, errorMessage} = this.state;
 
         return (
             <div>
                 <div className='row bottom-buffer'>
                     <div className='col-md-12 horizontal-buttons'>
-                        <button className='btn btn-outline-secondary' onClick={this.openOutgoingForm}>Send Email
+                        <button
+                            className='btn btn-outline-secondary'
+                            onClick={this.openOutgoingForm}
+                        >
+                            Send Email
                         </button>
-                        <button className='btn btn-outline-secondary' onClick={this.openIncomingForm}>Record Reply
+                        <button
+                            className='btn btn-outline-secondary'
+                            onClick={this.openIncomingForm}
+                        >
+                            Record Reply
                         </button>
                     </div>
                 </div>
