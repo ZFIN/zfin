@@ -139,6 +139,7 @@ class PubTrackerAuthorNotification extends Component {
                         <div className='form-group'>
                             <label>Registered Authors</label>
                             <AuthorEmailCheckboxList
+                                id='notification-authors'
                                 value={registeredRecipients}
                                 authors={pub.registeredAuthors}
                                 onChange={registeredRecipients => this.setState({registeredRecipients})}
@@ -234,7 +235,11 @@ class PubTrackerAuthorNotification extends Component {
 PubTrackerAuthorNotification.propTypes = {
     curatorName: PropTypes.string,
     curatorEmail: PropTypes.string,
-    pub: PropTypes.object,
+    pub: PropTypes.shape({
+        citation: PropTypes.string,
+        registeredAuthors: PropTypes.array,
+        zdbID: PropTypes.string,
+    }),
     loading: PropTypes.bool,
     curatedEntities: PropTypes.array,
     onEditNotification: PropTypes.func,

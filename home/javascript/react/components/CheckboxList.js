@@ -4,7 +4,7 @@ import { makeId } from '../utils';
 
 const identityFunc = a => a;
 
-const CheckboxList = ({getItemDisplay, getItemKey, items, value, onChange}) => {
+const CheckboxList = ({getItemDisplay, getItemKey, itemIdPrefix = '', items, onChange, value}) => {
 
     const handleChange = (checked, item) => {
         let newValue;
@@ -19,30 +19,34 @@ const CheckboxList = ({getItemDisplay, getItemKey, items, value, onChange}) => {
 
     return (
         <div>
-            {items && items.map(item => (
-                <div key={getItemKey(item)} className='form-check'>
-                    <input
-                        id={makeId(getItemKey(item))}
-                        className='form-check-input'
-                        type='checkbox'
-                        checked={value && value.indexOf(getItemKey(item)) >= 0}
-                        onChange={e => handleChange(e.target.checked, item)}
-                    />
-                    <label className='form-check-label' htmlFor={makeId(getItemKey(item))}>
-                        {getItemDisplay(item)}
-                    </label>
-                </div>
-            ))}
+            {items && items.map(item => {
+                const id = itemIdPrefix + makeId(getItemKey(item));
+                return (
+                    <div key={getItemKey(item)} className='form-check'>
+                        <input
+                            id={id}
+                            className='form-check-input'
+                            type='checkbox'
+                            checked={value && value.indexOf(getItemKey(item)) >= 0}
+                            onChange={e => handleChange(e.target.checked, item)}
+                        />
+                        <label className='form-check-label' htmlFor={id}>
+                            {getItemDisplay(item)}
+                        </label>
+                    </div>
+                )
+            })}
         </div>
     );
 };
 
 CheckboxList.propTypes = {
-    getItemKey: PropTypes.func,
     getItemDisplay: PropTypes.func,
+    getItemKey: PropTypes.func,
+    itemIdPrefix: PropTypes.string,
     items: PropTypes.array,
-    value: PropTypes.array,
     onChange: PropTypes.func,
+    value: PropTypes.array,
 };
 
 CheckboxList.defaultProps = {

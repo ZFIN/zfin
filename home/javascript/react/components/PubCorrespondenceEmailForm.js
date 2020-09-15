@@ -62,7 +62,14 @@ const PubCorrespondenceEmailForm = ({authors, email, onCancel, onUpdate, onCompl
                 <div className='col-md-6'>
                     {email.outgoing ?
                         <div>
-                            {!email.reply && <AuthorEmailCheckboxList value={email.to} authors={authors} onChange={handleRegisteredRecipientChange} />}
+                            {!email.reply && (
+                                <AuthorEmailCheckboxList
+                                    id='correspondence-authors'
+                                    value={email.to}
+                                    authors={authors}
+                                    onChange={handleRegisteredRecipientChange}
+                                />
+                            )}
                             <div>
                                 <input className='form-control' placeholder='alice@example.edu' value={email.additionalTo} onChange={handleAdditionalRecipientChange} />
                             </div>
