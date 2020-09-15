@@ -183,6 +183,8 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
         return accessionNumber;
     }
 
+    @JsonView(View.PubTrackerAPI.class)
+    @JsonProperty("pdfPath")
     public String getFileName() {
         for (PublicationFile file : files) {
             if (file.getType().getName() == PublicationFileType.Name.ORIGINAL_ARTICLE) {

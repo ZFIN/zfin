@@ -31,6 +31,7 @@ import PubAlleleTable from './PubAlleleTable';
 import PubSTRTable from './PubSTRTable';
 import PubTrackerAuthorNotification from '../components/PubTrackerAuthorNotification';
 import PubCorrespondenceSection from '../components/PubCorrespondenceSection';
+import PubPDFLink from '../components/PubPDFLink';
 
 const STATUS = 'Status';
 const TOPICS = 'Topics';
@@ -214,6 +215,12 @@ class PubTracker extends React.Component {
 
         return (
             <DataPage sections={SECTIONS}>
+                {pubDetails && (
+                    <h4 className='mb-5'>
+                        <a href={`/${pubDetails.zdbID}`} dangerouslySetInnerHTML={{__html: pubDetails.title}} />{' '}
+                        <PubPDFLink publication={pubDetails} />
+                    </h4>
+                )}
                 <Section title={STATUS}>
                     <div className='row clearfix'>
                         <div className='col-6 border-right'>
