@@ -1,5 +1,6 @@
 package org.zfin.publication.presentation;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -19,12 +20,11 @@ import org.zfin.database.InformixUtil;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.api.View;
 import org.zfin.framework.mail.AbstractZfinMailSender;
 import org.zfin.framework.mail.MailSender;
 import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.gwt.root.dto.PublicationDTO;
-import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.presentation.JSONMessageList;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.PhenotypeExperiment;
@@ -486,11 +486,10 @@ public class PublicationTrackingController {
     }
 
     @ResponseBody
+    @JsonView(View.PubTrackerAPI.class)
     @RequestMapping(value = "{id}/details", method = RequestMethod.GET)
-    public PublicationDTO getPublicationDetails(@PathVariable String id) {
-        Publication publication = publicationRepository.getPublication(id);
-        System.out.println(publication.getZdbID());
-        return DTOConversionService.convertToPublicationDTO(publication);
+    public Publication getPublicationDetails(@PathVariable String id) {
+        return publicationRepository.getPublication(id);
     }
 
     @ResponseBody

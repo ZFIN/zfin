@@ -9,7 +9,7 @@ export const buildRecipientList = (authors) => {
             if (!email) { return; }
             recipients.push({
                 email,
-                name: author.display,
+                name: author.fullName,
             });
         });
     });

@@ -16,5 +16,6 @@ public class View {
         public static class GeneExpressionAPI extends API { }
         public static class CitationsAPI extends API { }
         public static class SequenceTargetingReagentAPI extends API { }
+        public static class PubTrackerAPI extends API { }
 
 }

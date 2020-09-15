@@ -1,5 +1,6 @@
 package org.zfin.publication;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.zfin.curation.PublicationNote;
 import org.zfin.expression.ExpressionExperiment;
@@ -42,6 +43,8 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private Set<ExpressionExperiment> expressionExperiments;
     private Set<Figure> figures;
     //yes, should be authors, but that conflicts with the string field
+    @JsonView(View.PubTrackerAPI.class)
+    @JsonProperty("registeredAuthors")
     private Set<Person> people;
     private SortedSet<MeshHeading> meshHeadings;
     private Set<PublicationNote> notes;
@@ -337,7 +340,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
         this.processingChecklistEntries = processingChecklistEntries;
     }
 
-    @JsonView(View.CitationsAPI.class)
+    @JsonView({View.CitationsAPI.class, View.PubTrackerAPI.class})
     public String getCitation() {
         StringBuilder sb = new StringBuilder();
         sb.append(authors);

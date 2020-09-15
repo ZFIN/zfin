@@ -1,8 +1,10 @@
 package org.zfin.profile;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.zfin.framework.api.View;
 import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.framework.presentation.ProvidesLink;
 import org.zfin.infrastructure.EntityZdbID;
@@ -24,14 +26,17 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
 
     @NotNull
     @Size(min = 17, max = 50)
+    @JsonView(View.Default.class)
     private String zdbID;
 
     @NotNull
     @Size(max = 40, message = "Must not be empty and less than 40 characters.")
+    @JsonView(View.Default.class)
     private String firstName;
 
     @NotNull
     @Size(max = 40, message = "Must not be empty and less than 40 characters.")
+    @JsonView(View.Default.class)
     private String lastName;
 
 
@@ -51,9 +56,11 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
     @Size(max = 150, message = "Must not be empty and less than 150 characters.")
     private String shortName;
 
+    @JsonView(View.Default.class)
     private String fullName;
 
     @Size(max = 150, message = "Must not be empty and less than 150 characters.")
+    @JsonView(View.Default.class)
     private String email;
 
     @Size(max = 100, message = "Must not be empty and less than 100 characters.")

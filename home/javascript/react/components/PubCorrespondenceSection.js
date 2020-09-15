@@ -242,7 +242,10 @@ class PubCorrespondenceSection extends React.Component {
 }
 
 PubCorrespondenceSection.propTypes = {
-    pubDetails: PropTypes.object,
+    pubDetails: PropTypes.shape({
+        citation: PropTypes.string,
+        registeredAuthors: PropTypes.array,
+    }),
     pubId: PropTypes.string,
     userEmail: PropTypes.string,
     userId: PropTypes.string,
