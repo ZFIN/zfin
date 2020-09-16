@@ -9,6 +9,11 @@
 
 <c:set var="sections" value="${[SUMMARY, MARKERRELATIONSHIPS, SEQUENCES, CITATIONS]}"/>
 <c:set var="deleteURL">/action/infrastructure/deleteRecord/${formBean.marker.zdbID}</c:set>
+<c:set var="typeName">${formBean.marker.markerType.name}</c:set>
+<c:if test="${typeName eq 'RAPD'}">
+    <c:set var="sections" value="${[SUMMARY, CITATIONS]}"/>
+</c:if>
+
 
 <z:dataPage sections="${sections}">
 
@@ -29,7 +34,7 @@
             <zfin2:markerDataPageHeader marker="${formBean.marker}"/>
             <jsp:include page="generic-marker-view-summary.jsp"/>
         </div>
-
+        <c:if test="${typeName ne 'RAPD'}">
         <z:section title="${MARKERRELATIONSHIPS}">
             <div class="__react-root" id="GeneMarkerRelationshipsTable" data-gene-id="${formBean.marker.zdbID}"></div>
         </z:section>
@@ -42,7 +47,7 @@
             >
             </div>
         </z:section>
-
+</c:if>
         <z:section title="${CITATIONS}">
             <div class="__react-root" id="MarkerCitationsTable" data-marker-id="${formBean.marker.zdbID}"></div>
         </z:section>
