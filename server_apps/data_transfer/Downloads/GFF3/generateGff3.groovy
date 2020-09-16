@@ -228,7 +228,7 @@ def generateGenesAndTranscripts() {
         gff += ";dbxref=" + xrefs.join(",")
 
         if (row.gff_id.startsWith("ENSDART")) {
-            gff += ";transcript_id=ENSDART:" + row.gff_id
+            gff += ";transcript_id=ENSEMBL:" + row.gff_id
         }
 
         if (secondaryIds[zdbId] && !secondaryIds[zdbId].isEmpty() ) {
