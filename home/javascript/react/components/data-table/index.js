@@ -1,5 +1,6 @@
 import DataTable from './DataTable';
 import DataList from './DataList';
+import CollapseTable from './CollapseTable';
 
 export const DEFAULT_TABLE_STATE = {
     limit: 10,
@@ -8,6 +9,9 @@ export const DEFAULT_TABLE_STATE = {
     filter: null,
 };
 
-export { DataList };
+export {
+    DataList,
+    CollapseTable,
+};
 
 export default DataTable;

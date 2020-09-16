@@ -2,10 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {stringToFunction} from '../../utils';
 import NoData from '../NoData';
-import {columnDefinitionType, resultResponseType} from '../../utils/types';
+import {columnDefinitionType} from '../../utils/types';
 
-const Table = ({columns, columnHeaderFormat, data, rowKey}) => {
-    const {results, supplementalData, total} = data;
+const Table = ({
+    columnHeaderFormat,
+    columns,
+    data,
+    rowKey,
+    supplementalData,
+    total,
+}) => {
     return (
         <div className='horizontal-scroll-container'>
             <table className='data-table table-fixed'>
@@ -22,7 +28,7 @@ const Table = ({columns, columnHeaderFormat, data, rowKey}) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {results.map(row => (
+                    {data.map(row => (
                         <tr key={stringToFunction(rowKey)(row)}>
                             {columns.map(column => {
                                 if (column.hidden) {
@@ -53,10 +59,12 @@ const Table = ({columns, columnHeaderFormat, data, rowKey}) => {
 };
 
 Table.propTypes = {
-    columns: PropTypes.arrayOf(columnDefinitionType),
     columnHeaderFormat: PropTypes.func,
-    data: resultResponseType,
+    columns: PropTypes.arrayOf(columnDefinitionType),
+    data: PropTypes.array,
     rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
+    supplementalData: PropTypes.object,
+    total: PropTypes.number,
 };
 
 export default Table;

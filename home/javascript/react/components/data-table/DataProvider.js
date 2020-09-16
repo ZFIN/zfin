@@ -8,6 +8,7 @@ import produce from 'immer';
 import PropTypes from 'prop-types';
 import {downloadOptionType, sortOptionType, tableStateType} from '../../utils/types';
 import {isEmptyObject} from '../../utils';
+import SortByDropdown from './SortByDropdown';
 
 const DataProvider = ({
     additionalControls,
@@ -99,24 +100,7 @@ const DataProvider = ({
                 </div>
                 }
 
-                {sortOptions && sortOptions.length > 0 &&
-                <div className='btn-group'>
-                    <button className='btn btn-sm dropdown-toggle' type='button' data-toggle='dropdown'>
-                        Sort by
-                    </button>
-                    <div className='dropdown-menu dropdown-menu-right'>
-                        {sortOptions.map((sort, idx) => {
-                            const isActive = (tableState.sortBy === null && idx === 0) || tableState.sortBy === sort.value;
-                            return (
-                                <button key={sort.value} className='dropdown-item' type='button' onClick={() => handleSortChange(sort.value)}>
-                                    <i className={`fas fa-fw mr-1 ${isActive ? 'fa-check' : ''}`}/>
-                                    {sort.label}
-                                </button>
-                            );
-                        })}
-                    </div>
-                </div>
-                }
+                <SortByDropdown options={sortOptions} value={tableState.sortBy} onChange={handleSortChange} />
             </div>
 
             {renderData(data.value)}

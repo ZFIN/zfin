@@ -76,11 +76,6 @@ public class PublicationPrioritizationController {
             prioList.sort(sorting.getComparator(pagination.getSortBy()));
         }
 
-        response.setResults(prioList.stream()
-                .skip(pagination.getStart())
-                .limit(pagination.getLimit())
-                .collect(Collectors.toList()));
-
         response.setHttpServletRequest(request);
 
         return response;

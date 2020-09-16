@@ -38,12 +38,14 @@ const DataTable = ({
         />
     );
 
-    const renderData = data => (
+    const renderData = response => (
         <Table
-            columns={columns}
             columnHeaderFormat={columnHeaderFormat}
-            data={data}
+            columns={columns}
+            data={response.results}
             rowKey={rowKey}
+            supplementalData={response.supplementalData}
+            total={response.total}
         />
     );
 

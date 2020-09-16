@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import DataTable from '../components/data-table';
+import { CollapseTable } from '../components/data-table';
 
 
 /*const sortOptions = [
@@ -47,7 +47,7 @@ const PubAlleleTable = ({pubId}) => {
 
     ];
     return (
-        <DataTable
+        <CollapseTable
             columns={columns}
             dataUrl={`/action/api/publication/${pubId}/prioritization/features`}
             rowKey={row => row.id}
