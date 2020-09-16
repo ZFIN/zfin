@@ -11,6 +11,7 @@ const GeneExpressionAnnotationDetailTable = (
         includeReporter,
         onlyInSitu,
         selectedEntity,
+        selectedRibbonTerm,
         setTableState,
         tableState,
     }
@@ -54,6 +55,9 @@ const GeneExpressionAnnotationDetailTable = (
         includeReporter: includeReporter,
         onlyInSitu: onlyInSitu,
     };
+    if (selectedRibbonTerm.group.id !== 'all') {
+        detailTableQuery.ribbonTermId = selectedRibbonTerm.group.id;
+    }
     if (selectedEntity.subterm) {
         detailTableQuery.subtermId = selectedEntity.subterm.oboID;
     }
@@ -74,6 +78,7 @@ GeneExpressionAnnotationDetailTable.propTypes = {
     includeReporter: PropTypes.bool,
     onlyInSitu: PropTypes.bool,
     selectedEntity: PropTypes.object,
+    selectedRibbonTerm: PropTypes.object,
     setTableState: PropTypes.func,
     tableState: tableStateType,
 };

@@ -41,7 +41,7 @@ insert into regen_ce_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
     and not exists (Select 'x' from fish_Str b
     	    	   	   where b.fishstr_fish_Zdb_id = a.fishstr_fish_zdb_id
 			   and b.fishstr_str_zdb_id != a.fishstr_str_zdb_id)
-    and rggz_mrkr_Zdb_id not like 'ZDB-GENE%';
+    and (rggz_mrkr_Zdb_id like 'ZDB-MRPHLNO%' or rggz_mrkr_zdb_id like 'ZDB-CRISPR%' or rggz_mrkr_zdb_id like 'ZDB-TALEN%');
 
 
 insert into regen_ce_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
@@ -58,11 +58,10 @@ insert into regen_ce_temp (rggt_mrkr_zdb_id, rggt_genox_zdb_id)
     and fmrel.fmrel_ftr_zdb_id = genofeat.genofeat_feature_zdb_id
     and fmrel.fmrel_type = 'contains innocuous sequence feature'
     and not exists (Select 'x' from genotype_feature c, feature_marker_relationship d
-    	    	   	       where genofeat.genofeat_geno_zdb_id = c.genofeat_Geno_Zdb_id
-			       and genofeat.genofeat_feature_zdb_id != c.genofeat_feature_zdb_id
-			       and c.genofeat_feature_zdb_id = d.fmrel_ftr_zdb_id
-			       and d.fmrel_type != 'contains innocuous sequence feature')
-    and rggz_mrkr_Zdb_id not like 'ZDB-GENE%';
+                               where genofeat.genofeat_geno_zdb_id = c.genofeat_Geno_Zdb_id
+                               and c.genofeat_feature_zdb_id = d.fmrel_ftr_zdb_id
+                               and d.fmrel_type in ('is allele of','contains phenotypic sequence feature','markers missing','markers present','markers moved','created by'))
+    and (rggz_mrkr_Zdb_id like 'ZDB-MRPHLNO%' or rggz_mrkr_zdb_id like 'ZDB-CRISPR%' or rggz_mrkr_zdb_id like 'ZDB-TALEN%');
 
 end ;
 $$ LANGUAGE plpgsql;

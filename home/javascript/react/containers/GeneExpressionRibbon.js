@@ -126,8 +126,9 @@ const GeneExpressionRibbon = ({geneId}) => {
                 <GeneExpressionAnnotationDetailTable
                     geneId={geneId}
                     includeReporter={includeReporter}
-                    isDirectlySubmitted={onlyInSitu}
+                    onlyInSitu={onlyInSitu}
                     selectedEntity={selectedTableEntity}
+                    selectedRibbonTerm={selectedRibbonTerm}
                     setTableState={setDetailTableState}
                     tableState={detailTableState}
                 />

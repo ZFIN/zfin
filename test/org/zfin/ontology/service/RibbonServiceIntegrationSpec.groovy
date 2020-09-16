@@ -84,22 +84,22 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
     @Unroll
     def "#geneID expression detail response with #termID filter should return more than #numberOfRecords "() {
         when:
-        JsonResultResponse<ExpressionDetail> response = ribbonService.buildExpressionDetail(geneID, supertermID, subtermID, includeReporter, onlyInSitu, new Pagination())
+        JsonResultResponse<ExpressionDetail> response = ribbonService.buildExpressionDetail(geneID, supertermID, subtermID, ribbonTermID, includeReporter, onlyInSitu, new Pagination())
 
         then:
         response
         response.getTotal() >= numberOfRecords
 
         where:
-        geneID                | supertermID   | subtermID    | includeReporter | onlyInSitu | numberOfRecords
-        "ZDB-GENE-050419-145" | "ZFA:0009280" | "GO:0097450" | true            | false      | 1
-        "ZDB-GENE-050419-145" | "ZFA:0000107" | null         | true            | false      | 2
+        geneID                | supertermID   | subtermID    | ribbonTermID  | includeReporter | onlyInSitu | numberOfRecords
+        "ZDB-GENE-050419-145" | "ZFA:0009280" | "GO:0097450" | "ZFA:0000396" | true            | false      | 1
+        "ZDB-GENE-050419-145" | "ZFA:0000107" | null         | "ZFS:0000044" | true            | false      | 2
     }
 
     @Unroll
     def "All figures for #supertermID #subtermID expression detail for #geneID should be directly annotated"() {
         when:
-        JsonResultResponse<ExpressionDetail> response = ribbonService.buildExpressionDetail(geneID, supertermID, subtermID, includeReporter, onlyInSitu, new Pagination())
+        JsonResultResponse<ExpressionDetail> response = ribbonService.buildExpressionDetail(geneID, supertermID, subtermID, ribbonTermID, includeReporter, onlyInSitu, new Pagination())
 
         Set<String> superterms = new HashSet<>()
         Set<String> subterms = new HashSet<>()
@@ -127,10 +127,12 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
 
 
         where:
-        geneID                | supertermID   | subtermID     | includeReporter | onlyInSitu
-        "ZDB-GENE-990415-8"   | "ZFA:0001135" | "ZFA:0009052" | false           | false
-        "ZDB-GENE-990415-72"  | "ZFA:0000648" | null          | false           | false
-        "ZDB-GENE-050419-145" | "ZFA:0009280" | "GO:0097450"  | true            | false
+        geneID                | supertermID   | subtermID     | ribbonTermID  | includeReporter | onlyInSitu
+        "ZDB-GENE-990415-8"   | "ZFA:0001135" | "ZFA:0009052" | "ZFA:0001135" | false           | false
+        "ZDB-GENE-990415-8"   | "ZFA:0001135" | "ZFA:0009052" | "ZFS:0000050" | false           | false
+        "ZDB-GENE-990415-72"  | "ZFA:0000648" | null          | "ZFA:0000108" | false           | false
+        "ZDB-GENE-050419-145" | "ZFA:0009280" | "GO:0097450"  | "GO:0042995"  | true            | false
+        "ZDB-GENE-050419-145" | "ZFA:0009280" | "GO:0097450"  | "ZFS:0000044" | true            | false
     }
 
     @Unroll
@@ -143,13 +145,13 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
         response.getTotal() > numberOfRecords
 
         where:
-        geneID               | termID        | isOther | excludeEaps | numberOfRecords | exludeSTRs
+        geneID               | termID        | isOther | excludeEaps | numberOfRecords | excludeSTRs
         // all records
-        "ZDB-GENE-990415-30" | ""            | false   | false       | 15 | false
+        "ZDB-GENE-990415-30" | ""            | false   | false       | 15              | false
         // pax2a             anatomical entity
-        "ZDB-GENE-990415-8"  | "ZFA:0100000" | false   | false       | 100 | false
+        "ZDB-GENE-990415-8"  | "ZFA:0100000" | false   | false       | 100             | false
         // pax2a              nervous system
-        "ZDB-GENE-990415-8"  | "ZFA:0000396" | false   | false       | 60  | false
+        "ZDB-GENE-990415-8"  | "ZFA:0000396" | false   | false       | 60              | false
     }
 
     @Unroll
