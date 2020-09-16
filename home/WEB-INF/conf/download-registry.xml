@@ -209,10 +209,11 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
             </Query>
             <Column id="1" unique="true">ZFIN ID</Column>
             <Column id="2">Symbol</Column>
-            <Column id="3">Panel Symbol</Column>
-            <Column id="4">Chromosome</Column>
-            <Column id="5">Location</Column>
-            <Column id="6">Metric</Column>
+            <Column id="3">SO ID</Column>
+            <Column id="4">Panel Symbol</Column>
+            <Column id="5">Chromosome</Column>
+            <Column id="6">Location</Column>
+            <Column id="7">Metric</Column>
         </Download>
 
         <Download orderIndex="1">
