@@ -2676,6 +2676,17 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return (ArrayList<String>) query.list();
     }
 
+    @Override
+    public ArrayList<Publication> getHTPPubs(String datasetId) {
+
+        Session session = HibernateUtil.currentSession();
+        String hql = "select htppid.publication from HTPDatasetPublication htppid" +
+                "     where htppid.htpDataset.zdbID = :datasetId";
+        Query query = session.createQuery(hql);
+        query.setParameter("datasetId", datasetId);
+        return (ArrayList<Publication>) query.list();
+    }
+
 
     @Override
     public ArrayList<String> getCategoryTags(String datasetId) {

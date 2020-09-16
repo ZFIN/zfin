@@ -8,10 +8,7 @@ import org.zfin.expression.presentation.StageExpressionPresentation;
 import org.zfin.gwt.root.dto.ExpressedTermDTO;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
-import org.zfin.marker.agr.BasicExpressionDTO;
-import org.zfin.marker.agr.BasicRNASeqMetaDatasetDTO;
-import org.zfin.marker.agr.ImageDTO;
-import org.zfin.marker.agr.UberonSlimTermDTO;
+import org.zfin.marker.agr.*;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.Genotype;
@@ -468,6 +465,7 @@ public interface ExpressionRepository {
     ArrayList<HTPDatasetSample> getAllHTPDatasetSamples();
     ArrayList<HTPDatasetSampleDetail> getAllHTPDatasetSampleDetails();
     ArrayList<String> getHTPSecondaryIds(String datasetId);
+    ArrayList<Publication> getHTPPubs(String datasetId);
 
     ArrayList<String> getCategoryTags(String datasetId);
     ArrayList<HTPDatasetSampleDetail> getSampleDetail(HTPDatasetSample sample);

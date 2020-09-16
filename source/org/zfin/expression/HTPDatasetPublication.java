@@ -24,11 +24,11 @@ public class HTPDatasetPublication {
 
 
     @ManyToOne
-    @JoinColumn(name = "hd_dataset_zdb_id")
+    @JoinColumn(name = "hdp_dataset_zdb_id")
     private HTPDataset htpDataset;
 
     @ManyToOne
-    @JoinColumn(name = "hd_pub_zdb_id")
+    @JoinColumn(name = "hdp_pub_zdb_id")
     private Publication publication;
 
 }

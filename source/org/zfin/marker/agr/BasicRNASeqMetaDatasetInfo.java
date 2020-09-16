@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.commons.collections.CollectionUtils;
 import org.zfin.expression.HTPDataset;
+import org.zfin.publication.Publication;
 
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 
@@ -55,22 +56,19 @@ public class BasicRNASeqMetaDatasetInfo extends AbstractScriptWrapper {
 
         List<BasicRNASeqMetaDatasetDTO> allDatasetDTOList = allDatasets.stream()
                 .map(
-
                         dataset -> {
                             BasicRNASeqMetaDatasetDTO dto = new BasicRNASeqMetaDatasetDTO();
                             HtpIDDTO datasetId = new HtpIDDTO();
                             datasetId.setPrimaryId("ZFIN:"+dataset.getZdbID().toString());
 
                             ArrayList<String> htpSecondaryIds = new ArrayList<String>();
-                            // purposefully commented out because the HTP metadata schema is broken and doesn't
-                            // allow secondaryIds to validate -- so leaving out for 3.1.1, but this code works
-                            // and should be uncommented when the valdiation schema works.
-                            /*if (CollectionUtils.isNotEmpty(getExpressionRepository().getHTPSecondaryIds(dataset.getZdbID()))){
+
+                            if (CollectionUtils.isNotEmpty(getExpressionRepository().getHTPSecondaryIds(dataset.getZdbID()))){
                                 for (String secId : getExpressionRepository().getHTPSecondaryIds(dataset.getZdbID())){
                                     htpSecondaryIds.add(secId);
                                 }
                                 datasetId.setSecondaryId(htpSecondaryIds);
-                            }*/
+                            }
                             dto.setDatasetId(datasetId);
 
                             dto.setDateAssigned(dataset.getDateCurated());
@@ -84,6 +82,26 @@ public class BasicRNASeqMetaDatasetInfo extends AbstractScriptWrapper {
                                 }
                                 dto.setCategoryTags(categoryTags);
                             }
+
+                            if (CollectionUtils.isNotEmpty(getExpressionRepository().getHTPPubs(dataset.getZdbID()))){
+                                ArrayList<PublicationAgrDTO> datasetPubs = new ArrayList<>();
+                                for (Publication pub : getExpressionRepository().getHTPPubs(dataset.getZdbID())) {
+                                    PublicationAgrDTO fixedPub = new PublicationAgrDTO();
+                                    List<String> pubPages = new ArrayList<>();
+                                    pubPages.add("reference");
+                                    CrossReferenceDTO pubXref = new CrossReferenceDTO("ZFIN", pub.getZdbID(), pubPages);
+                                    if (pub.getAccessionNumber() != null) {
+                                        fixedPub.setPublicationId("PMID:"+pub.getAccessionNumber());
+                                        fixedPub.setCrossReference(pubXref);
+                                    }
+                                    else {
+                                        fixedPub.setPublicationId("ZFIN:"+pub.getZdbID());
+                                    }
+                                    datasetPubs.add(fixedPub);
+                                }
+                                dto.setPublications(datasetPubs);
+                            }
+
                             return dto;
                         })
                 .collect(Collectors.toList());
