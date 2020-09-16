@@ -1,46 +1,53 @@
-<%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
-<script src="${zfn:getAssetPath("angular.js")}"></script>
-
-<authz:authorize access="hasRole('root')">
-    <div ng-app="app" ng-controller="EditController as eControl" ng-init="init('${gene.name}','${gene.abbreviation}')">
-</authz:authorize>
 
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.MarkerBean" scope="request"/>
 
+<c:set var="SUMMARY" value="Summary"/>
+<c:set var="MARKERRELATIONSHIPS" value="Marker Relationships"/>
+<c:set var="SEQUENCES" value="Sequences"/>
+<c:set var="CITATIONS" value="Citations"/>
+
+<c:set var="sections" value="${[SUMMARY, MARKERRELATIONSHIPS, SEQUENCES, CITATIONS]}"/>
 <c:set var="deleteURL">/action/infrastructure/deleteRecord/${formBean.marker.zdbID}</c:set>
-<c:set var="mergeURL">/action/marker/merge?zdbIDToDelete=${formBean.marker.zdbID}</c:set>
 
-<zfin2:dataManager zdbID="${formBean.marker.zdbID}"
-                   deleteURL="${deleteURL}"
-                   mergeURL="${mergeURL}"
-                   editMarker="true"/>
+<z:dataPage sections="${sections}">
 
-    <zfin2:markerHead marker="${formBean.marker}" previousNames="${formBean.previousNames}" showEditControls="true" soTerm="${formBean.zfinSoTerm}" userID="${formBean.user.zdbID}" />
+    <jsp:attribute name="entityName">
+        <zfin:abbrev entity="${formBean.marker}"/>
+    </jsp:attribute>
 
-    <%--MARKER RELATIONSHIPTS--%>
-    <c:if test="${formBean.marker.type ne 'RAPD'}">
-        <zfin2:markerRelationshipsLight relationships="${formBean.markerRelationshipPresentationList}"
-                                        marker="${formBean.marker}"  title="${fn:toUpperCase('MARKER RELATIONSHIPS')}" interactsWith="no"/>
-    </c:if>
+    <jsp:body>
+        <z:dataManagerDropdown>
+<%-- Need to implement a DeleteRuleClass for STS
+            <a class="dropdown-item" href="${deleteURL}">Delete</a>
+--%>
+            <a class="dropdown-item" href="/action/marker/marker-edit?zdbID=${formBean.marker.zdbID}">Edit</a>
+            <a class="dropdown-item" href="/action/marker/merge?zdbIDToDelete=${formBean.marker.zdbID}">Merge</a>
+        </z:dataManagerDropdown>
 
-    <%--SEQUENCE INFORMATION--%>
-    <c:if test="${formBean.marker.type ne 'RAPD'}">
-        <zfin2:markerSequenceInformationSummary marker="${formBean.marker}" sequenceInfo="${formBean.sequenceInfo}"
-                                                title="SEQUENCE INFORMATION" showAllSequences="false"/>
-    </c:if>
+        <div id="${zfn:makeDomIdentifier(SUMMARY)}">
+            <zfin2:markerDataPageHeader marker="${formBean.marker}"/>
+            <jsp:include page="generic-marker-view-summary.jsp"/>
+        </div>
 
-    <%--OTHER GENE/Marker Pages--%>
-    <c:if test="${formBean.marker.type eq 'BAC_END'}">
-        <zfin2:markerSummaryReport marker="${formBean.marker}" links="${formBean.otherMarkerPages}"/>
-    </c:if>
+        <z:section title="${MARKERRELATIONSHIPS}">
+            <div class="__react-root" id="GeneMarkerRelationshipsTable" data-gene-id="${formBean.marker.zdbID}"></div>
+        </z:section>
 
-    <%--CITATIONS--%>
-    <zfin2:citationFooter numPubs="${formBean.numPubs}" marker="${formBean.marker}"/>
+        <z:section title="${SEQUENCES}">
+            <div
+                    class="__react-root"
+                    id="MarkerSequencesTable"
+                    data-marker-id="${formBean.marker.zdbID}"
+            >
+            </div>
+        </z:section>
 
-<authz:authorize access="hasRole('root')">
-    </div>
-</authz:authorize>
+        <z:section title="${CITATIONS}">
+            <div class="__react-root" id="MarkerCitationsTable" data-marker-id="${formBean.marker.zdbID}"></div>
+        </z:section>
+    </jsp:body>
+</z:dataPage>
+
+
+

@@ -1,6 +1,5 @@
 package org.zfin.marker.service;
 
-import com.zerog.ia.platform.Sys;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.logging.log4j.LogManager;
@@ -56,7 +55,7 @@ import static java.util.stream.Collectors.toList;
 import static org.zfin.repository.RepositoryFactory.*;
 
 /**
- * Sevice Class that deals with Marker related logic.
+ * Service Class that deals with Marker related logic.
  */
 @Service
 public class MarkerService {
@@ -78,7 +77,7 @@ public class MarkerService {
      * Looks for firstMarkers in Genedom and returns the entire relation.
      *
      * @param marker Marker in firstMarkerRelation.
-     * @return Retuns set of marker relationships related by GENEDOM.
+     * @return Returns set of marker relationships related by GENEDOM.
      */
     public static Set<MarkerRelationship> getRelatedGenedomMarkerRelations(Marker marker) {
         Set<MarkerRelationship> markerRelationships = new HashSet<>();
@@ -699,14 +698,9 @@ public class MarkerService {
 
     public static Set<Publication> getMarkerRelationshipAttributions(Marker marker) {
         Set<Publication> publications = new HashSet<>();
-        Set<MarkerRelationship> allRelationships = new HashSet<>();
 
-        for (MarkerRelationship mrel : marker.getFirstMarkerRelationships()) {
-            allRelationships.add(mrel);
-        }
-        for (MarkerRelationship mrel : marker.getSecondMarkerRelationships()) {
-            allRelationships.add(mrel);
-        }
+        Set<MarkerRelationship> allRelationships = new HashSet<>(marker.getFirstMarkerRelationships());
+        allRelationships.addAll(marker.getSecondMarkerRelationships());
 
         for (MarkerRelationship mrel : allRelationships) {
             Set<PublicationAttribution> mrelPubs = mrel.getPublications();
@@ -1003,7 +997,7 @@ public class MarkerService {
         List<MarkerRelationshipPresentation> cloneRelationships = new ArrayList<>();
         cloneRelationships.addAll(MarkerService.getRelatedMarkerDisplayExcludeType(marker, true));
         cloneRelationships.addAll(MarkerService.getRelatedMarkerDisplayExcludeType(marker, false));
-        Collections.sort(cloneRelationships, markerRelationshipSupplierComparator);
+        cloneRelationships.sort(markerRelationshipSupplierComparator);
         markerBean.setMarkerRelationshipPresentationList(cloneRelationships);
 
 //      CITATIONS
@@ -1023,7 +1017,7 @@ public class MarkerService {
                 markerRelationshipPresentationList.add(markerRelationshipPresentation);
             }
         }
-        Collections.sort(markerRelationshipPresentationList, markerRelationshipSupplierComparator);
+        markerRelationshipPresentationList.sort(markerRelationshipSupplierComparator);
         geneBean.setMarkerRelationshipPresentationList(markerRelationshipPresentationList);
         return geneBean;
     }
@@ -1040,7 +1034,7 @@ public class MarkerService {
                 markerRelationshipPresentationList.add(markerRelationshipPresentation);
             }
         }
-        Collections.sort(markerRelationshipPresentationList, markerRelationshipSupplierComparator);
+        markerRelationshipPresentationList.sort(markerRelationshipSupplierComparator);
         cloneBean.setMarkerRelationshipPresentationList(markerRelationshipPresentationList);
         return cloneBean;
     }
@@ -1063,8 +1057,7 @@ public class MarkerService {
      */
     public static String getEnsemblAccessionId(Marker marker) {
         Database.AvailableAbbrev database = Database.AvailableAbbrev.ENSEMBL_ZF;
-        String accessionID = getMarkerRepository().getAccessionNumber(marker, database);
-        return accessionID;
+        return getMarkerRepository().getAccessionNumber(marker, database);
     }
 
     public static List<GenotypeFigure> getPhenotypeDataForSTR(SequenceTargetingReagent str) {
@@ -1225,7 +1218,7 @@ public class MarkerService {
 
         }
 
-        Collections.sort(fullMarkerRelationships, markerRelationshipSupplierComparator);
+        fullMarkerRelationships.sort(markerRelationshipSupplierComparator);
 
         // filtering
         FilterService<MarkerRelationshipPresentation> filterService = new FilterService<>(new MarkerRelationshipFiltering());
