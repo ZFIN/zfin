@@ -50,6 +50,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import java.util.function.Predicate;
+
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static org.zfin.repository.RepositoryFactory.*;
@@ -1258,6 +1260,29 @@ public class MarkerService {
         }
         return null;
     }
+
+    public String getGeneTreeEnsdarg(Marker gene) {
+
+        List<LinkDisplay> dbLinks = markerRepository.getMarkerDBLinksFast(gene, DisplayGroup.GroupName.SUMMARY_PAGE);
+        Predicate<LinkDisplay> byEnsdarg = ensdarg -> ensdarg.getAccNumDisplay().startsWith("ENSDARG");
+        List<LinkDisplay> ensdargLinks = dbLinks.stream().filter(byEnsdarg)
+                .collect(Collectors.toList());
+        for (LinkDisplay ensdarg : ensdargLinks) {
+            for (PublicationAttribution pubAttr : infrastructureRepository.getPublicationAttributions(ensdarg.getDblinkZdbID())) {
+                if (pubAttr.getPublication().getZdbID().contains("ZDB-PUB-061101-1")) {
+                    return ensdarg.getAccNumDisplay();
+                }
+                if (pubAttr.getPublication().getZdbID().contains("ZDB-PUB-190221-12")) {
+                    return ensdarg.getAccNumDisplay();
+                }
+
+            }
+        }
+
+       
+        return null;
+    }
+
 
     public JsonResultResponse<SequenceTargetingReagentBean> getSTRJsonResultResponse(String zdbID, Pagination pagination) {
         JsonResultResponse<SequenceTargetingReagentBean> response = new JsonResultResponse<>();
