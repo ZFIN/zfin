@@ -28,5 +28,6 @@ public class BasicRNASeqMetaDatasampleDTO {
     @JsonSerialize(using = JsonDateSerializer.class)
     private GregorianCalendar dateAssigned;
     private String sequencingFormat;
+    private String taxonId;
 
 }

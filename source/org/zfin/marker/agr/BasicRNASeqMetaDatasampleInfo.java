@@ -120,6 +120,7 @@ public class BasicRNASeqMetaDatasampleInfo extends AbstractScriptWrapper {
                                     datasample.getStage().getOboID(), stageUberonTerm);
                             sampleAge.setStage(stageInfo);
                             dto.setSampleAge(sampleAge);
+                            dto.setTaxonId("NCBITaxon:7955");
 
 
                             ArrayList<HTPDatasetSampleDetail> anatomySampleDetails = getExpressionRepository().getSampleDetail(datasample);
