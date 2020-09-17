@@ -1,13 +1,13 @@
 package org.zfin.feature.presentation;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
-import org.zfin.feature.Feature;
 import org.zfin.fish.repository.FishService;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.mutant.*;
@@ -39,7 +39,7 @@ public class GenotypeDetailController {
             Genotype geno = fish.getGenotype();
             Genotype genotype = mutantRepository.getGenotypeByID(geno.getZdbID());
             form.setGenotype(genotype);
-            retrieveGenotypeAndFeatureData(form, genotype);
+            retrieveGenotypeFeatureData(form, genotype);
             retrieveSequenceTargetingReagentData(form, fish);
             model.addAttribute(LookupStrings.FORM_BEAN, form);
             String genotypeName = genotype.getName();
@@ -71,7 +71,7 @@ public class GenotypeDetailController {
 
             form.setGenotype(genotype);
             if (!genotype.isWildtype()) {
-                retrieveGenotypeAndFeatureData(form, genotype);
+                retrieveGenotypeFeatureData(form, genotype);
 
             }
             model.addAttribute("affectedMarkerList", GenotypeService.getAffectedMarker(genotype));
@@ -111,18 +111,15 @@ public class GenotypeDetailController {
         form.setGenotype(genotype);
         retrievePublicationData(form, genotype);
         if (!genotype.isWildtype()) {
-            retrieveGenotypeAndFeatureData(form, genotype);
+            retrieveGenotypeFeatureData(form, genotype);
 
             List<GenotypeFishResult> allFish = new ArrayList<>();
 
-                    List<GenotypeFishResult> fishSummaryList = FishService.getFishExperimentSummaryForGenotype(genotype);
-                    for (GenotypeFishResult fishSummary : fishSummaryList) {
-                        if (fishSummary.getFish().getStrList().isEmpty()) {
-                            fishSummary.setAffectedMarkers(GenotypeService.getAffectedMarker(genotype));
-                            allFish.add(fishSummary);
-
-                        }
-                    }
+            List<GenotypeFishResult> fishSummaryList = FishService.getFishExperimentSummaryForGenotype(genotype);
+            for (GenotypeFishResult fishSummary : fishSummaryList) {
+                fishSummary.setAffectedMarkers(GenotypeService.getAffectedMarker(genotype));
+                allFish.add(fishSummary);
+            }
 
 
             model.addAttribute("fishList", allFish);
@@ -137,7 +134,7 @@ public class GenotypeDetailController {
         return "genotype/genotype-detail.page";
     }
 
-    private void retrieveGenotypeAndFeatureData(GenotypeBean form, Genotype genotype) {
+    private void retrieveGenotypeFeatureData(GenotypeBean form, Genotype genotype) {
         List<GenotypeFeature> genotypeFeatures = mutantRepository.getGenotypeFeaturesByGenotype(genotype);
         form.setGenotypeFeatures(genotypeFeatures);
 
