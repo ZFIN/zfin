@@ -7,6 +7,7 @@ import LoadingSpinner from '../LoadingSpinner';
 import Table from './Table';
 import SortByDropdown from './SortByDropdown';
 import produce from 'immer';
+import NoData from '../NoData';
 
 const CollapseTable = ({
     dataUrl,
@@ -40,6 +41,10 @@ const CollapseTable = ({
         } else {
             return null;
         }
+    }
+
+    if (value.results.length === 0) {
+        return <NoData />;
     }
 
     const fullLength = value.results.length;
