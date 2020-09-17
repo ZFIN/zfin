@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
-import LoadingButton from './LoadingButton';
-import {buildRecipientList, splitEmailRecipientListString} from '../utils/publication';
+import LoadingButton from '../LoadingButton';
+import {buildRecipientList, splitEmailRecipientListString} from '../../utils/publication';
 import AuthorEmailCheckboxList from './AuthorEmailCheckboxList';
 
 class PubTrackerAuthorNotification extends Component {

@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import ObjectSelectBox from './ObjectSelectBox';
-import LoadingButton from './LoadingButton';
-import {isEmptyObject} from '../utils';
+import ObjectSelectBox from '../ObjectSelectBox';
+import LoadingButton from '../LoadingButton';
+import {isEmptyObject} from '../../utils';
 
 const getId = (obj) => obj && obj.id;
 const getZdbId = (obj) => obj && obj.zdbID;

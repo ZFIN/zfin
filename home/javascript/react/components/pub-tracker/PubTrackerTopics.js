@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import RelativeDate from './RelativeDate';
+import RelativeDate from '../RelativeDate';
 
 
 const PubTrackerTopics = ({onTopicSave, topics}) => {

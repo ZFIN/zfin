@@ -22,15 +22,17 @@ import intertab from '../utils/intertab';
 import produce from 'immer';
 import DataPage from '../components/layout/DataPage';
 import Section from '../components/layout/Section';
-import PubTrackerStatus from '../components/PubTrackerStatus';
-import PubTrackerIndexed from '../components/PubTrackerIndexed';
-import PubTrackerTopics from '../components/PubTrackerTopics';
-import PubTrackerNotes from '../components/PubTrackerNotes';
-import PubGeneTable from './PubGeneTable';
-import PubAlleleTable from './PubAlleleTable';
-import PubSTRTable from './PubSTRTable';
-import PubTrackerAuthorNotification from '../components/PubTrackerAuthorNotification';
-import PubCorrespondenceSection from '../components/PubCorrespondenceSection';
+import {
+    PubTrackerStatus,
+    PubTrackerIndexed,
+    PubTrackerTopics,
+    PubTrackerNotes,
+    PubGeneTable,
+    PubAlleleTable,
+    PubSTRTable,
+    PubTrackerAuthorNotification,
+    PubCorrespondenceSection,
+} from '../components/pub-tracker';
 import PubPDFLink from '../components/PubPDFLink';
 
 const STATUS = 'Status';

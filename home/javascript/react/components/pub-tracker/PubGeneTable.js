@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { CollapseTable } from '../components/data-table';
+import { CollapseTable } from '../../components/data-table';
 
 
 const sortOptions = [

@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { addCorrespondence, deleteCorrespondence, getCorrespondences } from '../api/publication';
+import { addCorrespondence, deleteCorrespondence, getCorrespondences } from '../../api/publication';
 import PubCorrespondenceEmailForm from './PubCorrespondenceEmailForm';
-import Alert from './Alert';
-import { splitEmailRecipientListString } from '../utils/publication';
+import Alert from '../Alert';
+import { splitEmailRecipientListString } from '../../utils/publication';
 import PubCorrespondenceList from './PubCorrespondenceList';
-import intertab from '../utils/intertab';
+import intertab from '../../utils/intertab';
 
 const prependSubject = (subject) => {
     if (subject.toLowerCase().substr(0, 3) !== 're:') {

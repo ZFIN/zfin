@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import LoadingSpinner from './LoadingSpinner';
+import LoadingSpinner from '../LoadingSpinner';
 
 const PubTrackerIndexed = ({indexed, onToggle, saving}) => {
     const handleToggle = event => onToggle({

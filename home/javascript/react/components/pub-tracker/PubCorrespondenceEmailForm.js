@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import AuthorEmailCheckboxList from './AuthorEmailCheckboxList';
-import LoadingButton from './LoadingButton';
+import LoadingButton from '../LoadingButton';
 import PubCorrespondenceTemplateSelector from './PubCorrespondenceTemplateSelector';
 
 const PubCorrespondenceEmailForm = ({authors, email, onCancel, onUpdate, onComplete, onTemplateSelect, loading}) => {
