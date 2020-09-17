@@ -10,6 +10,7 @@ const Ribbon = (props) => {
             return;
         }
         ribbonRef.current.querySelectorAll('.ontology-ribbon__item').forEach(item => {
+            // warning! changing the 'No annotations' text here may break a style selector in datapage.scss
             const title = item.getAttribute('title')
                 .replace(/class(e?)/, 'term')
                 .replace(/^0 term, 0 annotation$/, 'No annotations');
