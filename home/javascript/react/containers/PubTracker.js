@@ -92,6 +92,18 @@ class PubTracker extends React.Component {
         getIndexed(pubId).then(indexed => this.setState({ indexed }));
         getNotes(pubId).then(notes => this.setState({ notes }));
         getTopics(pubId).then(topics => this.setState({ topics }));
+
+        // if there is a section id in the url hash, scroll it into view. can't rely on the
+        // default browser behavior to do this since sections are loaded after the page load
+        // event fires
+        if (location.hash) {
+            const section = document.getElementById(location.hash.substring(1));
+            if (section) {
+                // ideally we'd wait for all the async requests to settle before doing this scroll
+                // too make sure we don't bounce around too much, but this is a cheap, good-enough solution.
+                setTimeout(() => section.scrollIntoView(), 300);
+            }
+        }
     }
 
     handleStatusSave(status, options = {}) {
