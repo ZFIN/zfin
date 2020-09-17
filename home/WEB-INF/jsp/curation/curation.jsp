@@ -13,6 +13,8 @@
 
 <div ng-app="app">
 
+        <p/>
+        <p/>
     <zfin2:dataManager zdbID="${publication.zdbID}"
                        showLastUpdate="true"
                        viewURL="/${publication.zdbID}"
