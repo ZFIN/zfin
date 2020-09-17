@@ -52,10 +52,12 @@ const GeneExpressionAnnotationDetailTable = (
 
     const detailTableQuery = {
         supertermId: selectedEntity.superterm.oboID,
-        ribbonTermId: selectedRibbonTerm.group.id,
         includeReporter: includeReporter,
         onlyInSitu: onlyInSitu,
     };
+    if (selectedRibbonTerm.group.id !== 'all') {
+        detailTableQuery.ribbonTermId = selectedRibbonTerm.group.id;
+    }
     if (selectedEntity.subterm) {
         detailTableQuery.subtermId = selectedEntity.subterm.oboID;
     }
