@@ -247,7 +247,17 @@ tr.spaceUnder > td{
 .ontology-ribbon__block__tile--selected {
     transform: none;
     text-shadow: none;
-    color: color-yiq($primary);
+    // choose between very dark gray and white to provide good contrast with the primary background
+    color: color-yiq($primary, $gray-900, white);
+}
+
+// always use dark gray on unfilled blocks because the background is white.
+// this is an extremely fragile selector but the ribbon doesn't provide a
+// better way to style filled and unfilled blocks differently
+[title="No annotations"] {
+    .ontology-ribbon__block__tile--selected {
+        color: $gray-900;
+    }
 }
 
 .ontology-ribbon__block__tile:hover {
