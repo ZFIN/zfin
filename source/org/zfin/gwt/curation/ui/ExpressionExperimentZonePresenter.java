@@ -589,7 +589,9 @@ public class ExpressionExperimentZonePresenter implements Presenter {
             StringListBox assayList = view.getAssayList();
             assayList.clear();
             for (String assay : assays) {
-                assayList.addItem(assay);
+                if (!assay.startsWith("Primer")) {
+                    assayList.addItem(assay);
+                }
             }
         }
 
