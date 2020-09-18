@@ -68,5 +68,8 @@
         on
         the genes or gene-combinations which are most important to pattern tissues.
     </p>
+    <p class="lead">
+        <a href="/search?q=&category=Mutation+%2F+Tg&fq=is_zebrashare%3A%22true%22">Find all ZebraShare alleles in ZFIN</a>
+    </p>
 
 </div>
