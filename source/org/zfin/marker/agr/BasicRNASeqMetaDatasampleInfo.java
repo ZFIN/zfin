@@ -93,7 +93,7 @@ public class BasicRNASeqMetaDatasampleInfo extends AbstractScriptWrapper {
                             // and should be uncommented when the schema is fixed.
 
                             HtpGenomicInformationDTO biosample = new HtpGenomicInformationDTO();
-                            biosample.setBiosampleId(datasample.getFish().getZdbID());
+                            biosample.setBiosampleId("ZFIN:"+datasample.getFish().getZdbID());
                             biosample.setIdType("fish");
                             dto.setGenomicInformation(biosample);
 
