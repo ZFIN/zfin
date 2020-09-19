@@ -16,6 +16,7 @@ public class HtpIDDTO {
 
     private String primaryId;
     private List<String> secondaryId;
-    private CrossReferenceDTO crossReference;
+    private List<CrossReferenceDTO> crossReferences;
+    private CrossReferenceDTO preferredCrossReference;
 
 }

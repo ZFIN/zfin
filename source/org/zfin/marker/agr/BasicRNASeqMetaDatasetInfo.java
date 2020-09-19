@@ -59,13 +59,19 @@ public class BasicRNASeqMetaDatasetInfo extends AbstractScriptWrapper {
                         dataset -> {
                             BasicRNASeqMetaDatasetDTO dto = new BasicRNASeqMetaDatasetDTO();
                             HtpIDDTO datasetId = new HtpIDDTO();
-                            datasetId.setPrimaryId("ZFIN:"+dataset.getZdbID().toString());
+                            datasetId.setPrimaryId("ZFIN:"+dataset.getZdbID());
 
-                            ArrayList<String> htpSecondaryIds = new ArrayList<String>();
-
+                            ArrayList<String> htpSecondaryIds = new ArrayList<>();
+                            ArrayList<CrossReferenceDTO> crossReferences = new ArrayList<>();
                             if (CollectionUtils.isNotEmpty(getExpressionRepository().getHTPSecondaryIds(dataset.getZdbID()))){
                                 for (String secId : getExpressionRepository().getHTPSecondaryIds(dataset.getZdbID())){
                                     htpSecondaryIds.add(secId);
+                                    List<String> xpages = new ArrayList<>();
+                                    xpages.add("htp/dataset");
+                                    secId = secId.split(":")[1];
+                                    CrossReferenceDTO preferredCrossReference = new CrossReferenceDTO("GEO", secId, xpages);
+                                    crossReferences.add(preferredCrossReference);
+                                    datasetId.setPreferredCrossReference(preferredCrossReference);
                                 }
                                 datasetId.setSecondaryId(htpSecondaryIds);
                             }

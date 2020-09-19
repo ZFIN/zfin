@@ -25,6 +25,8 @@ public class HTPDatasetSample {
     private String sampleTitle;
     @Column(name = "hds_sample_type")
     private String sampleType;
+    @Column(name = "hds_assay_type")
+    private String assayType;
     @Column(name = "hds_sex")
     private String sex;
     @Column(name = "hds_sequencing_format")

@@ -52,6 +52,7 @@ public class CrossReferenceDTO {
         dbNameMap.put("PMID", "PMID");
         dbNameMap.put("PANTHER", "PANTHER");
         dbNameMap.put("miRBASE Mature", "miRBASE");
+        dbNameMap.put("GEO", "GEO");
     }
 
 }

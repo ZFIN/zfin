@@ -42,7 +42,6 @@ public class BasicRNASeqMetaDatasampleInfo extends AbstractScriptWrapper {
         System.exit(0);
     }
 
-
     private void init() throws IOException {
         initAll();
         ALLRNASeqMetaDatasampleDTO allDatasampleDTO = getAllDatasampleInfo();
@@ -69,15 +68,15 @@ public class BasicRNASeqMetaDatasampleInfo extends AbstractScriptWrapper {
                             dto.setSampleTitle(datasample.getSampleTitle());
 
                             dto.setAbundance(datasample.getAbundance());
-                            dto.setAssayType(datasample.getSampleType());
+                            dto.setSampleType(datasample.getSampleType());
+                            dto.setAssayType(datasample.getAssayType());
                             ArrayList<String> versions = new ArrayList<>();
 
                             if (datasample.getAssembly() != null) {
                                 versions.add(datasample.getAssembly());
                                 dto.setAssemblyVersions(versions);
                             }
-
-
+                            dto.setAssayType(datasample.getAssayType());
                             dto.setSampleType(datasample.getSampleType());
                             dto.setSex(datasample.getSex());
 
@@ -93,10 +92,10 @@ public class BasicRNASeqMetaDatasampleInfo extends AbstractScriptWrapper {
                             // allow biosamples to validate -- so leaving out for 3.1.1, but this code works
                             // and should be uncommented when the schema is fixed.
 
-/*                            HtpGenomicInformationDTO biosample = new HtpGenomicInformationDTO();
+                            HtpGenomicInformationDTO biosample = new HtpGenomicInformationDTO();
                             biosample.setBiosampleId(datasample.getFish().getZdbID());
                             biosample.setIdType("fish");
-                            dto.setGenomicInformation(biosample);*/
+                            dto.setGenomicInformation(biosample);
 
                             // for each sample detail - get whenExpressed object (stageid and stagename)
                             // put stageid and stagename into an object called whenExpressed
