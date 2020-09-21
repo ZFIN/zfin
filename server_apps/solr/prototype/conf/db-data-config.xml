@@ -4913,7 +4913,6 @@ and child.term_ontology = 'disease_ontology';
                     from record_attribution ra, db_link dbl, marker m
                     where dbl.dblink_zdb_id = ra.recattrib_data_zdb_id
                     and m.mrkr_zdb_id = dbl.dblink_linked_recid
-                    and m.mrkr_type in ('GENE', 'GENEP')
                     union
                     select recattrib_source_zdb_id as pub_zdb_id,
                         m.mrkr_abbrev as gene,
