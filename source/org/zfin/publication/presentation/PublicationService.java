@@ -312,16 +312,6 @@ public class PublicationService {
         return suggestions;
     }
 
-    public PublicationFilePresentationBean convertToPublicationFilePresentationBean(PublicationFile file) {
-        PublicationFilePresentationBean bean = new PublicationFilePresentationBean();
-        bean.setId(file.getId());
-        bean.setPubZdbId(file.getPublication().getZdbID());
-        bean.setType(file.getType().getName().toString());
-        bean.setFileName(ZfinPropertiesEnum.PDF_LOAD + "/" + file.getFileName());
-        bean.setOriginalFileName(file.getOriginalFileName());
-        return bean;
-    }
-
     public PublicationFile processPublicationFile(Publication publication, String fileName, PublicationFileType fileType, InputStream fileData) throws IOException {
         File fileRoot = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString());
 

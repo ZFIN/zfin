@@ -1,7 +1,9 @@
 package org.zfin.publication;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.hibernate.annotations.*;
+import org.zfin.framework.api.View;
 
 import javax.persistence.*;
 import javax.persistence.Entity;
@@ -34,12 +36,14 @@ public class PublicationFileType implements Comparable<PublicationFileType> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "pft_pk_id")
+    @JsonView(View.Default.class)
     private long id;
 
     @Column(name = "pft_type")
     @Type(type = "org.zfin.framework.StringEnumValueUserType", parameters = {
             @org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.publication.PublicationFileType$Name")
     })
+    @JsonView(View.Default.class)
     private Name name;
 
     @Column(name = "pft_type_order")

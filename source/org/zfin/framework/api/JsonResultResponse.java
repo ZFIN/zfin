@@ -21,7 +21,7 @@ public class JsonResultResponse<T> {
 
 
     @JsonView(View.Default.class)
-    private List<T> results = new ArrayList<T>();
+    private Collection<T> results = new ArrayList<T>();
     @JsonView(View.Default.class)
     private long total;
     @JsonView({View.Default.class})
@@ -53,7 +53,7 @@ public class JsonResultResponse<T> {
         requestDuration = duration.toString();
     }
 
-    public void setResults(List<T> results) {
+    public void setResults(Collection<T> results) {
         this.results = results;
         if (results != null) {
             returnedRecords = results.size();
@@ -63,8 +63,9 @@ public class JsonResultResponse<T> {
     }
 
     public void setHttpServletRequest(HttpServletRequest request) {
-        if (request == null)
+        if (request == null) {
             return;
+        }
         this.request = new Request();
         this.request.setUri(URLDecoder.decode(request.getRequestURI()));
         this.request.setParameterMap(request.getParameterMap());
@@ -86,8 +87,9 @@ public class JsonResultResponse<T> {
         }
         Optional<Map.Entry<String, List<String>>> entry = params.entrySet().stream().filter(stringListEntry -> stringListEntry.getKey().equals("page"))
                 .findFirst();
-        if (pagination == null)
+        if (pagination == null) {
             return "";
+        }
         // replace current page with next page
         entry.ifPresent(page -> page.setValue(List.of(String.valueOf(pagination.getNextPage()))));
 
@@ -100,8 +102,9 @@ public class JsonResultResponse<T> {
     }
 
     public void addSupplementalData(String attribute, Object object) {
-        if (supplementalData == null)
+        if (supplementalData == null) {
             supplementalData = new LinkedHashMap<>();
+        }
         supplementalData.put(attribute, object);
     }
 

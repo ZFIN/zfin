@@ -1,21 +1,25 @@
 package org.zfin.publication.presentation;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import com.fasterxml.jackson.annotation.JsonView;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.api.JsonResultResponse;
+import org.zfin.framework.api.View;
 import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.publication.Publication;
 import org.zfin.publication.PublicationFile;
 import org.zfin.publication.PublicationFileType;
 import org.zfin.publication.repository.PublicationRepository;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/publication")
@@ -26,23 +30,32 @@ public class PublicationFileController {
     @Autowired
     private PublicationRepository publicationRepository;
 
-    @Autowired
-    private PublicationService publicationService;
+    private JsonResultResponse<PublicationFile> getViewForPublication(Publication publication) {
+        JsonResultResponse<PublicationFile> response = new JsonResultResponse<>();
+        response.setResults(publication.getFiles());
+        response.setTotal(publication.getFiles().size());
+        response.addSupplementalData("fileTypes", publicationRepository.getAllPublicationFileTypes());
+        return response;
+    }
 
     @ResponseBody
     @RequestMapping(value = "/{id}/files", method = RequestMethod.GET)
-    public Collection<PublicationFilePresentationBean> getPublicationFiles(@PathVariable String id) {
+    @JsonView(View.Default.class)
+    public JsonResultResponse<PublicationFile> getPublicationFiles(@PathVariable String id,
+                                                                   HttpServletRequest request) {
         Publication publication = publicationRepository.getPublication(id);
-        return publication.getFiles().stream()
-                .map(publicationService::convertToPublicationFilePresentationBean)
-                .collect(Collectors.toList());
+        JsonResultResponse<PublicationFile> response = getViewForPublication(publication);
+        response.setHttpServletRequest(request);
+        return response;
     }
 
     @ResponseBody
     @RequestMapping(value = "/{id}/files", method = RequestMethod.POST)
-    public Collection<PublicationFilePresentationBean> addPublicationFile(@PathVariable String id,
-                                                                          @RequestParam int fileType,
-                                                                          @RequestParam MultipartFile file) {
+    @JsonView(View.Default.class)
+    public JsonResultResponse<PublicationFile> addPublicationFile(@PathVariable String id,
+                                                                  @RequestParam int fileType,
+                                                                  @RequestParam MultipartFile file,
+                                                                  HttpServletRequest request) {
         Publication publication = publicationRepository.getPublication(id);
         PublicationFileType type = publicationRepository.getPublicationFileType(fileType);
 
@@ -54,9 +67,9 @@ public class PublicationFileController {
         }
 
         // return the whole list because we might have replaced the original article, and to keep the sorting right
-        return publication.getFiles().stream()
-                .map(publicationService::convertToPublicationFilePresentationBean)
-                .collect(Collectors.toList());
+        JsonResultResponse<PublicationFile> response = getViewForPublication(publication);
+        response.setHttpServletRequest(request);
+        return response;
     }
 
     @ResponseBody

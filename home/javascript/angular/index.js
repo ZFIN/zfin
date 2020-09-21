@@ -26,8 +26,6 @@ require('./marker-notes.directive');
 require('./marker-relationships.directive');
 require('./marker-suppliers.directive');
 require('./other-markers.directive');
-require('./pub-file-edit.directive');
-require('./pub-file-upload.directive');
 require('./pub-lookup.directive');
 require('./public-note.directive');
 require('./quick-figure.directive');

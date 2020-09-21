@@ -997,6 +997,10 @@ nav.pub-navigator .navbar-nav a.active:focus {
     cursor: pointer;
 }
 
+.file-drag-target > p {
+    margin: 0;
+}
+
 .figure-delete-button {
     display: inline-block;
 }

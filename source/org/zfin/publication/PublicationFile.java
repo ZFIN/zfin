@@ -1,16 +1,24 @@
 package org.zfin.publication;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.ObjectUtils;
+import org.zfin.framework.api.View;
+import org.zfin.properties.ZfinPropertiesEnum;
 
 import javax.persistence.*;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "publication_file")
 public class PublicationFile implements Comparable<PublicationFile> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "pf_pk_id")
+    @JsonView(View.Default.class)
     private long id;
 
     @ManyToOne
@@ -21,50 +29,17 @@ public class PublicationFile implements Comparable<PublicationFile> {
     private String fileName;
 
     @Column(name = "pf_original_file_name")
+    @JsonView(View.Default.class)
     private String originalFileName;
 
     @ManyToOne
     @JoinColumn(name = "pf_file_type_id")
+    @JsonView(View.Default.class)
     private PublicationFileType type;
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public Publication getPublication() {
-        return publication;
-    }
-
-    public void setPublication(Publication publication) {
-        this.publication = publication;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
-    public String getOriginalFileName() {
-        return originalFileName;
-    }
-
-    public void setOriginalFileName(String originalFileName) {
-        this.originalFileName = originalFileName;
-    }
-
-    public PublicationFileType getType() {
-        return type;
-    }
-
-    public void setType(PublicationFileType type) {
-        this.type = type;
+    @JsonView(View.Default.class)
+    public String getFullPath() {
+        return ZfinPropertiesEnum.PDF_LOAD + "/" + fileName;
     }
 
     @Override

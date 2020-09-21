@@ -13,13 +13,14 @@ export default {
         })
     },
 
-    post: (url, data) => {
+    post: (url, data, options) => {
         return $.ajax({
             type: 'POST',
             url,
             data: JSON.stringify(data),
             dataType: 'json',
             contentType: 'application/json',
+            ...options
         });
     },
 

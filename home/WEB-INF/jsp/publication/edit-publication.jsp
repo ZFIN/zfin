@@ -46,11 +46,9 @@
             <zfin2:publicationForm publicationBean="${publication}" error="${error}"/>
         </div>
         <div role="tabpanel" class="tab-pane" id="files">
-            <div pub-file-edit pub-id="${pubID}"></div>
             <div class="__react-root"
-                 id="ProcessorApproval__pdf"
+                 id="PubEditFiles"
                  data-pub-id="${pubID}"
-                 data-task="ADD_PDF"
             >
             </div>
         </div>
