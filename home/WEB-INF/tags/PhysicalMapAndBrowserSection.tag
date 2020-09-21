@@ -25,18 +25,29 @@
                             <th style="width: 200px">Genome Browser</th>
                             <th style="width: 100px">Chr</th>
                             <th style="width: 500px">Position</th>
+                            <th style="width: 500px">Assembly</th>
                         </tr>
                         <c:forEach var="genomeLocation" items="${locations}" varStatus="loop">
                             <zfin:alternating-tr loopName="loop">
+                                
+                                <c:if test="${genomeLocation.source.displayName eq 'Direct Data Submission'}">
 
-                                <td nowrap><a href="${genomeLocation.url}">${genomeLocation.source.displayName}</a>
-                                </td>
+                                    <td nowrap>${genomeLocation.source.displayName}
+                                    </td>
+                                </c:if>
+                                <c:if test="${genomeLocation.source.displayName ne 'Direct Data Submission'}">
+
+                                    <td nowrap><a href="${genomeLocation.url}">${genomeLocation.source.displayName}</a>
+                                    </td>
+                                </c:if>
 
                                 <td>${genomeLocation.chromosome}</td>
                                 <td nowrap>
                                     <fmt:formatNumber value="${genomeLocation.start}" pattern="##,###"/> -
                                     <fmt:formatNumber value="${genomeLocation.end}" pattern="##,###"/>
                                 </td>
+                                <td>${genomeLocation.assembly}</td>
+
                             </zfin:alternating-tr>
                         </c:forEach>
                     </table>
