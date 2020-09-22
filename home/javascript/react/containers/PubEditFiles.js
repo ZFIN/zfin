@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import useMutableFetch from '../hooks/useMutableFetch';
 import PubFileRow from '../components/pub-edit/PubFileRow';
@@ -6,6 +6,7 @@ import http from '../utils/http';
 import PubFileUpload from '../components/pub-edit/PubFileUpload';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ProcessorApproval from './ProcessorApproval';
+import PubFileEditModal from '../components/pub-edit/PubFileEditModal';
 
 const PubEditFiles = ({ pubId }) => {
     const {
@@ -13,6 +14,7 @@ const PubEditFiles = ({ pubId }) => {
         value,
         setValue,
     } = useMutableFetch(`/action/publication/${pubId}/files`);
+    const [editFile, setEditFile] = useState(null);
 
     const handleDelete = async (file) => {
         await http.delete('/action/publication/files/' + file.id);
@@ -28,12 +30,12 @@ const PubEditFiles = ({ pubId }) => {
 
     return (
         <>
-            <table className='table'>
+            <table className='table table-hover'>
                 <thead>
                     <tr>
                         <th width='175px'>Type</th>
                         <th>File</th>
-                        <th width='75px'>Remove</th>
+                        <th width='75px' />
                     </tr>
                 </thead>
                 <tbody>
@@ -43,10 +45,16 @@ const PubEditFiles = ({ pubId }) => {
                         </tr>
                     }
                     {value.results.map(file => (
-                        <PubFileRow key={file.originalFileName} file={file} onDelete={handleDelete} />
+                        <PubFileRow
+                            key={file.originalFileName}
+                            file={file}
+                            onDelete={handleDelete}
+                            onEdit={setEditFile}
+                        />
                     ))}
                 </tbody>
             </table>
+
             <h4>Upload New File</h4>
             <PubFileUpload
                 pubId={pubId}
@@ -54,6 +62,13 @@ const PubEditFiles = ({ pubId }) => {
                 fileTypeOptions={value.supplementalData.fileTypes}
                 onSuccess={setValue}
             />
+
+            <PubFileEditModal
+                file={editFile}
+                onClose={() => setEditFile(null)}
+                onDelete={handleDelete}
+            />
+
             <ProcessorApproval
                 pubId={pubId}
                 task='ADD_PDF'

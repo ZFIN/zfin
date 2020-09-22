@@ -1,35 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
-const PubFileRow = ({ file, onDelete }) => {
-    const [deleting, setDeleting] = useState(false);
+const PubFileRow = ({ file, onEdit }) => {
 
-    const handleDelete = async () => {
-        setDeleting(true);
-        try {
-            await onDelete(file);
-        } catch (e) {
-            setDeleting(false);
-            throw e;
-        }
+    const handleEditClick = (e) => {
+        e.preventDefault();
+        onEdit(file);
     }
 
     return (
         <tr key={file.originalFileName}>
             <td>{file.type.name}</td>
             <td><a href={file.fullPath}>{file.originalFileName}</a></td>
-            <td>
-                <div className='figure-delete-button float-right'>
-                    <button
-                        className='btn btn-dense btn-link'
-                        title='Remove file'
-                        onClick={handleDelete}
-                        disabled={deleting}
-                    >
-                        <i className='fas fa-trash' />
-                    </button>
-                </div>
-            </td>
+            <td><a className='show-on-hover' href='#' onClick={handleEditClick}>Edit</a></td>
         </tr>
     )
 };
@@ -44,6 +27,7 @@ PubFileRow.propTypes = {
         }),
     }),
     onDelete: PropTypes.func,
+    onEdit: PropTypes.func,
 };
 
 export default PubFileRow;

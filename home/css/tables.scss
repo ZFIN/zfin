@@ -58,6 +58,16 @@
   }
 }
 
+.show-on-hover {
+  display: none;
+}
+
+tr:hover {
+  .show-on-hover {
+    display: unset;
+  }
+}
+
 .table-fixed {
   table-layout: fixed;
 }
