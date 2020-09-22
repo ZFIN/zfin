@@ -66,7 +66,7 @@
                         var numExpr = $button.data('expr-count');
                         var numPheno = $button.data('pheno-count');
                         if (numExpr || numPheno) {
-                            var title = 'This figure is used in ';
+                            var title = 'This figure cannot be delete because it is used in ';
                             if (numExpr) {
                                 title += '<b>' + numExpr + ' expression</b> ';
                             }
