@@ -2624,6 +2624,19 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     }
 
     @Override
+    public List<ExpressionFigureStage> getExperimentFigureStageByFigure(Figure fig) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "from ExpressionFigureStage  " +
+                "      where figure.zdbID = :figID " ;
+
+        Query query = session.createQuery(hql);
+        query.setParameter("figID", fig.getZdbID());
+
+        return (List<ExpressionFigureStage>) query.list();
+    }
+
+    @Override
     public List<MarkerDBLink> getAllDbLinks(ForeignDB.AvailableName database) {
         Session session = HibernateUtil.currentSession();
         Query query = session.createQuery("from MarkerDBLink " +

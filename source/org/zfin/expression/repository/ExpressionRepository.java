@@ -452,6 +452,7 @@ public interface ExpressionRepository {
     void saveExperiment(Experiment experiment);
 
     ExpressionFigureStage getExperimentFigureStage(long id);
+    List<ExpressionFigureStage> getExperimentFigureStageByFigure(Figure fig);
 
     List<MarkerDBLink> getAllDbLinks(ForeignDB.AvailableName database);
 

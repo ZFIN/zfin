@@ -1,14 +1,17 @@
 package org.zfin.expression;
 
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.expression.repository.ExpressionRepository;
+import org.zfin.expression.repository.HibernateExpressionRepository;
 import org.zfin.figure.presentation.FigurePresentationBean;
 import org.zfin.figure.presentation.ImagePresentationBean;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
+import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
@@ -277,7 +280,9 @@ public class FigureService {
         bean.setPubZdbId(figure.getPublication().getZdbID());
         bean.setLabel(figure.getLabel());
         bean.setCaption(figure.getCaption());
-        bean.setNumExpressionStatements(figure.getExpressionResults() == null ? 0 : figure.getExpressionResults().size());
+        int expCount = expressionRepository.getExperimentFigureStageByFigure(figure)== null ? 0 :expressionRepository.getExperimentFigureStageByFigure(figure).size();
+        bean.setNumExpressionStatements(expCount);
+       // bean.setNumExpressionStatements(figure.getExpressionResults() == null ? 0 : figure.getExpressionResults().size());
         bean.setNumPhenotypeStatements(figure.getPhenotypeExperiments() == null ? 0 : figure.getPhenotypeExperiments().size());
         if (figure.getImages() != null) {
             bean.setImages(figure.getImages().stream()
