@@ -73,6 +73,27 @@ public class PublicationFileController {
     }
 
     @ResponseBody
+    @RequestMapping(value = "/files/{id}", method = RequestMethod.POST)
+    @JsonView(View.Default.class)
+    public JsonResultResponse<PublicationFile> editPublicationFile(@PathVariable long id,
+                                      @RequestBody PublicationFile updated,
+                                      HttpServletRequest request) {
+        PublicationFile pubFile = publicationRepository.getPublicationFile(id);
+        Publication publication = pubFile.getPublication();
+
+        pubFile.setType(publicationRepository.getPublicationFileType(updated.getType().getId()));
+
+        HibernateUtil.createTransaction();
+        HibernateUtil.currentSession().update(pubFile);
+        HibernateUtil.flushAndCommitCurrentSession();
+
+        // return the whole list because we might have replaced the original article, and to keep the sorting right
+        JsonResultResponse<PublicationFile> response = getViewForPublication(publication);
+        response.setHttpServletRequest(request);
+        return response;
+    }
+
+    @ResponseBody
     @RequestMapping(value = "/files/{id}", method = RequestMethod.DELETE)
     public String deletePublicationFile(@PathVariable long id) {
         PublicationFile pubFile = publicationRepository.getPublicationFile(id);

@@ -1194,6 +1194,10 @@ input + label {
     margin-right: 5px;
 }
 
+.horizontal-buttons > *:last-child {
+    margin-right: 0;
+}
+
 .scale
 {
     height: 1em;

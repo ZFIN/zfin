@@ -17,12 +17,17 @@ const PubEditFiles = ({ pubId }) => {
     const [editFile, setEditFile] = useState(null);
 
     const handleDelete = async (file) => {
-        await http.delete('/action/publication/files/' + file.id);
+        await http.delete(`/action/publication/files/${file.id}`);
         setValue({
             ...value,
             results: value.results.filter(keepFile => keepFile.id !== file.id)
         });
     };
+
+    const handleSave = async (file) => {
+        const updatedValue = await http.post(`/action/publication/files/${file.id}`, file);
+        setValue(updatedValue);
+    }
 
     if (pending || !value) {
         return <LoadingSpinner />
@@ -65,8 +70,10 @@ const PubEditFiles = ({ pubId }) => {
 
             <PubFileEditModal
                 file={editFile}
+                fileTypeOptions={value.supplementalData.fileTypes}
                 onClose={() => setEditFile(null)}
                 onDelete={handleDelete}
+                onSave={handleSave}
             />
 
             <ProcessorApproval
