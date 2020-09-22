@@ -130,9 +130,13 @@ header {
         justify-content: center;
         align-items: center;
 
-        &:hover {
+        &.open {
             color: white;
             background: $primary;
+
+            .dropdown {
+                visibility: visible;
+            }
         }
 
         &.root-only {

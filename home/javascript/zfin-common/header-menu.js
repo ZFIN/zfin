@@ -2,7 +2,10 @@ import Popper from 'popper.js';
 
 $(() => {
     const poppers = [];
-    $('header .reference').each(function () {
+    const openState = [];
+    const openDelay = 200;
+    let openTimer;
+    $('header .reference').each(function (idx) {
         const menu = this;
         const dropdown = menu.querySelector('.dropdown');
         if (!dropdown) {
@@ -24,8 +27,22 @@ $(() => {
             }
         }));
         $(menu)
-            .on('mouseover', () => dropdown.style.visibility = 'visible')
-            .on('mouseout', () => dropdown.style.visibility = 'hidden');
+            .on('mouseenter', () => {
+                const anyOpen = openState.some(open => open);
+                const delay = anyOpen ? 0 : openDelay;
+                clearTimeout(openTimer);
+                openTimer = setTimeout(() => {
+                    openState[idx] = true;
+                    $(menu).addClass('open');
+                }, delay);
+            })
+            .on('mouseleave', () => {
+                clearTimeout(openTimer);
+                setTimeout(() => {
+                    openState[idx] = false;
+                    $(menu).removeClass('open');
+                }, 25);
+            });
     });
 
     $('.mobile-menu').on('click', function (e) {
