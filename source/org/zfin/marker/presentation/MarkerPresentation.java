@@ -267,7 +267,13 @@ public class MarkerPresentation extends EntityPresentation {
         } else {
             cssClassName = NONGENEDOMMARKER;
         }
-        return getSpanTagWithID(cssClassName, marker.getName(), marker.getAbbreviation(), "Gene Symbol");
+
+        String abbreviation = marker.getAbbreviation();
+        if (marker.isInTypeGroup(Marker.TypeGroup.CONSTRUCT) || marker.isInTypeGroup(Marker.TypeGroup.ATB)) {
+            abbreviation = marker.getName();
+        }
+
+        return getSpanTagWithID(cssClassName, marker.getName(), abbreviation, "Gene Symbol");
     }
 
     /**
