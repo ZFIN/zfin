@@ -1336,21 +1336,25 @@
             />
 
             <entity name="reporter_line_image"
-                    query="select distinct
-                     case
-                       when img_image_with_annotation is not null
-                       then img_image_with_annotation
-                       else img_image end as image,
-                       img_thumbnail as thumbnail,
-                       'true' as has_image,
-                       img_zdb_id,
-                       fish_zdb_id
-                       from fish
-                            join fish_experiment on genox_fish_zdb_id = fish_zdb_id
-                            join expression_experiment on genox_zdb_id = xpatex_genox_zdb_id
-                            join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
-                            join image on img_fig_zdb_id = efs_fig_zdb_id
-                      where fish_genotype_zdb_id in (
+                    query="
+                      select distinct
+                        case
+                          when img_image_with_annotation is not null
+                          then img_image_with_annotation
+                          else img_image end as image,
+                        img_thumbnail as thumbnail,
+                        'true' as has_image,
+                        img_zdb_id,
+                        fish_zdb_id
+                      from fish
+                        join fish_experiment on genox_fish_zdb_id = fish_zdb_id
+                        join expression_experiment on genox_zdb_id = xpatex_genox_zdb_id
+                        join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                        join image on img_fig_zdb_id = efs_fig_zdb_id
+                        join figure on img_fig_zdb_id = fig_zdb_id
+                        join publication on fig_source_zdb_id = zdb_id
+                      where pub_can_show_images = 't'
+                        and fish_genotype_zdb_id in (
                                  select genofeat_geno_zdb_id
                                  from genotype_feature
                                       join feature_marker_relationship
@@ -2502,17 +2506,21 @@
             </entity>
 
             <entity name="phenotype_image"
-                    query="select
-                       case
-                       when img_image_with_annotation is not null
-                       then img_image_with_annotation
-                       else img_image end as image,
-                       img_thumbnail as thumbnail,
-                       'true' as has_image,
-                       img_zdb_id,
-                       'pg-' || pg_id as pg_id
-                       from phenotype_source_generated
-                            join image on img_fig_zdb_id = pg_fig_zdb_id;"
+                    query="
+                      select
+                        case
+                          when img_image_with_annotation is not null
+                          then img_image_with_annotation
+                          else img_image end as image,
+                        img_thumbnail as thumbnail,
+                        'true' as has_image,
+                        img_zdb_id,
+                        'pg-' || pg_id as pg_id
+                      from phenotype_source_generated
+                        join image on img_fig_zdb_id = pg_fig_zdb_id
+                        join figure on img_fig_zdb_id = fig_zdb_id
+                        join publication on fig_source_zdb_id = zdb_id
+                      where pub_can_show_images = 't';"
                     cacheImpl="SortedMapBackedCache"
                     where="pg_id=phenotype.id"
             />
@@ -3226,18 +3234,22 @@
             />
 
             <entity name="expression_image"
-                    query="select
-                     case
-                       when img_image_with_annotation is not null
-                       then img_image_with_annotation
-                       else img_image end as image,
-                       img_thumbnail as thumbnail,
-                       img_zdb_id,
-                       'true' as has_image,
-                       'xpatex-' || efs_pk_id as efs_pk_id
-                       from expression_experiment2
-                            join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
-                            join image on img_fig_zdb_id = efs_fig_zdb_id;"
+                    query="
+                      select
+                        case
+                          when img_image_with_annotation is not null
+                          then img_image_with_annotation
+                          else img_image end as image,
+                        img_thumbnail as thumbnail,
+                        img_zdb_id,
+                        'true' as has_image,
+                        'xpatex-' || efs_pk_id as efs_pk_id
+                      from expression_experiment2
+                        join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                        join image on img_fig_zdb_id = efs_fig_zdb_id
+                        join figure on img_fig_zdb_id = fig_zdb_id
+                        join publication on fig_source_zdb_id = zdb_id
+                      where pub_can_show_images = 't';"
                     cacheImpl="SortedMapBackedCache"
                     where="efs_pk_id=expression.id"
             />
@@ -4793,8 +4805,10 @@ and child.term_ontology = 'disease_ontology';
                                'true' as has_image,
                                fig_source_zdb_id as pub_zdb_id
                             from image
-                                 join figure on img_fig_zdb_id = fig_zdb_id
-                            where fig_source_zdb_id in (
+                                 inner join figure on img_fig_zdb_id = fig_zdb_id
+                                 inner join publication on fig_source_zdb_id = zdb_id
+                            where pub_can_show_images = 't'
+                            and fig_source_zdb_id in (
                               select publication.zdb_id
                               from publication
                               where (select count(fig_zdb_id) from figure where publication.zdb_id = fig_source_zdb_id ) &lt; 100
@@ -5238,11 +5252,15 @@ and child.term_ontology = 'disease_ontology';
                            when img_image_with_annotation is not null
                            then img_image_with_annotation
                            else img_image end as image,
-                           img_thumbnail as thumbnail,
-                           'true' as has_image,
-                           img_zdb_id,
-                           img_fig_zdb_id as fig_zdb_id
-                           from image where img_fig_zdb_id is not null;"
+                         img_thumbnail as thumbnail,
+                         'true' as has_image,
+                         img_zdb_id,
+                         img_fig_zdb_id as fig_zdb_id
+                       from image
+                         inner join figure on img_fig_zdb_id = fig_zdb_id
+                         inner join publication on fig_source_zdb_id = zdb_id
+                       where img_fig_zdb_id is not null
+                         and pub_can_show_images = 't';"
                     cacheImpl="SortedMapBackedCache"
                     where="fig_zdb_id=figure.id"
             />
@@ -6081,20 +6099,25 @@ and child.term_ontology = 'disease_ontology';
                     where="id=expression_result.id"/>
 
             <entity name="expression_result_image"
-                    query="select
-                     case
-                       when img_image_with_annotation is not null
-                       then img_image_with_annotation
-                       else img_image end as image,
-                       img_thumbnail as thumbnail,
-                       img_zdb_id,
-                       get_expression_image_sort_order(img_zdb_id) as expression_image_sort,
-                       'true' as has_image,
-                       'xpatres-' || xpatres_pk_id as id
-                       from expression_experiment2
-                            join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
-                            join expression_result2 on xpatres_efs_id = efs_pk_id
-                            join image on img_fig_zdb_id = efs_fig_zdb_id where xpatres_expression_found = 't';"
+                    query="
+                      select
+                        case
+                          when img_image_with_annotation is not null
+                          then img_image_with_annotation
+                          else img_image end as image,
+                        img_thumbnail as thumbnail,
+                        img_zdb_id,
+                        get_expression_image_sort_order(img_zdb_id) as expression_image_sort,
+                        'true' as has_image,
+                        'xpatres-' || xpatres_pk_id as id
+                      from expression_experiment2
+                        join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                        join expression_result2 on xpatres_efs_id = efs_pk_id
+                        join image on img_fig_zdb_id = efs_fig_zdb_id
+                        join figure on img_fig_zdb_id = fig_zdb_id
+                        join publication on fig_source_zdb_id = zdb_id
+                      where xpatres_expression_found = 't'
+                        and pub_can_show_images = 't';"
                     cacheImpl="SortedMapBackedCache"
                     where="id=expression_result.id"
             />
@@ -6254,18 +6277,22 @@ and child.term_ontology = 'disease_ontology';
             />
 
             <entity name="phenotype_observation_image"
-                    query="select
-                       case
-                       when img_image_with_annotation is not null
-                       then img_image_with_annotation
-                       else img_image end as image,
-                       img_thumbnail as thumbnail,
-                       'true' as has_image,
-                       img_zdb_id,
-                       'psg-' || psg_id as psg_id
-                       from phenotype_source_generated
-                            join phenotype_observation_generated on pg_id = psg_pg_id
-                            join image on img_fig_zdb_id = pg_fig_zdb_id;"
+                    query="
+                      select
+                        case
+                          when img_image_with_annotation is not null
+                          then img_image_with_annotation
+                          else img_image end as image,
+                        img_thumbnail as thumbnail,
+                        'true' as has_image,
+                        img_zdb_id,
+                        'psg-' || psg_id as psg_id
+                      from phenotype_source_generated
+                        join phenotype_observation_generated on pg_id = psg_pg_id
+                        join image on img_fig_zdb_id = pg_fig_zdb_id
+                        join figure on img_fig_zdb_id = fig_zdb_id
+                        join publication on fig_source_zdb_id = zdb_id
+                      where pub_can_show_images = 't';"
                     cacheImpl="SortedMapBackedCache"
                     where="psg_id=phenotype_observation.id"
             />
