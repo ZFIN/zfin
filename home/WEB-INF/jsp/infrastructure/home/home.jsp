@@ -32,15 +32,15 @@
             </div>
 
             <z:section title="News">
-                <div class="__react-root" id="NewsFeed"></div>
+                <div class="__react-root" id="WikiNewsFeed"></div>
             </z:section>
 
             <z:section title="Upcoming Meetings">
-                <div class="__react-root" id="MeetingsFeed"></div>
+                <div class="__react-root" id="WikiMeetingsFeed"></div>
             </z:section>
 
             <z:section title="Zebrafish-Related Job Announcements">
-                <div class="__react-root" id="JobsFeed"></div>
+                <div class="__react-root" id="WikiJobsFeed"></div>
             </z:section>
         </div>
 

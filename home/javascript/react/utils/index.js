@@ -12,3 +12,16 @@ export const isEmptyObject = obj => {
     }
     return Object.keys(obj).length === 0 && obj.constructor === Object;
 };
+
+export function parseDate(string) {
+    // matches string in YYYY-MM-DD format and returns a Date object. The Date constructor can
+    // identify this format but it interprets it as a UTC time instead of local timezone
+    const match = string.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (!match) {
+        return;
+    }
+    const year = parseInt(match[1], 10);
+    const month = parseInt(match[2], 10);
+    const date = parseInt(match[3], 10);
+    return new Date(year, month - 1, date); // month is 0-indexed!
+}
