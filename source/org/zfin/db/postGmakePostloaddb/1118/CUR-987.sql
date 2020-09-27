@@ -6,7 +6,7 @@
 update construct set construct_name='Tg(5xUAS:eNpHR3-YFP,myl7:EGFP)' where construct_zdb_id='ZDB-TGCONSTRCT-200722-2';
 update marker set mrkr_name='Tg(5xUAS:eNpHR3-YFP,myl7:EGFP)' where mrkr_zdb_id='ZDB-TGCONSTRCT-200722-2';
 update marker set mrkr_abbrev='Tg(5xUAS:eNpHR3-YFP,myl7:EGFP)' where mrkr_zdb_id='ZDB-TGCONSTRCT-200722-2';
-Tg(5xUAS:eNpHR3-YFP)
+
 
 update construct_component set cc_component=','  where cc_component_zdb_id='ZDB-CV-150506-8' and cc_construct_zdb_id='ZDB-TGCONSTRCT-200722-2';
 update construct_component set cc_component_category='cassette delimiter'  where cc_component_zdb_id='ZDB-CV-150506-8' and cc_construct_zdb_id='ZDB-TGCONSTRCT-200722-2';
