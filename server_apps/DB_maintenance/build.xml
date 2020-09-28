@@ -114,7 +114,7 @@
             <arg value="${validateData}/gafLoad"/>
             <arg value="${jobName}"/>
             <arg value="FP Inferences"/>
-            <arg value="http://build.berkeleybop.org/view/GAF/job/gaf-check-zfin/lastSuccessfulBuild/artifact/gene_association.zfin.inf.gaf"/>
+            <arg value="http://current.geneontology.org/products/annotations/zfin-prediction.gaf"/>
             <arg value="org.zfin.datatransfer.go.FpInferenceGafParser"/>
         </java>
     </target>
