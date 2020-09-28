@@ -692,6 +692,13 @@ public class GafService {
     }
 
     protected Integer getPubMedId(String pubMedId) {
+        if (pubMedId.startsWith(PUBMED_PREFIX)&&pubMedId.contains("ZFIN")){
+
+            int startZFIN = pubMedId.indexOf("|");
+            String pubMedStr= pubMedId.substring(0, startZFIN);
+            String pubMedIdStr=pubMedStr.substring(PUBMED_PREFIX.length());
+            return Integer.parseInt(pubMedIdStr.trim());
+        }
         if (pubMedId.startsWith(PUBMED_PREFIX)) {
             String pubMedIdStr=pubMedId.substring(PUBMED_PREFIX.length());
            // return Integer.parseInt(pubMedId.trim().substring(PUBMED_PREFIX.length()));
