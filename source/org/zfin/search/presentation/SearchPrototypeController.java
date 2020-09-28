@@ -805,35 +805,13 @@ public class SearchPrototypeController {
     }
 
 
+
     private void injectHighlighting(List<SearchResult> results, QueryResponse response) {
+
+        if (response.getHighlighting() == null) {  return; }
+
         for (SearchResult result : results) {
-            String id = result.getId();
-            List<String> highlightSnippets = new ArrayList<String>();
-            if (response.getHighlighting() != null && response.getHighlighting().get(id) != null) {
-
-                for (String highlightField : response.getHighlighting().get(id).keySet()) {
-                    logger.debug("highlight field keys? => " + response.getHighlighting().get(id).keySet());
-                    if (response.getHighlighting().get(id).get(highlightField) != null) {
-                        for (String snippet : response.getHighlighting().get(id).get(highlightField)) {
-                            logger.debug("snippet: " + snippet);
-
-                            highlightSnippets.add("<tr><td class=\"snippet-label\">"
-                                    + SolrService.getPrettyFieldName(highlightField) + "</td><td class=\"snippet-value\"> " + snippet + "</td></tr>");
-
-                        }
-                    }
-                }
-            }
-            if (!highlightSnippets.isEmpty()) {
-                StringBuilder out = new StringBuilder();
-                out.append("<table class=\"search-result-snippet\">");
-                for (String snippet : highlightSnippets) {
-                    out.append(snippet);
-                }
-                out.append("</table>");
-                result.setMatchingText(out.toString());
-
-            }
+            result.setHighlights(solrService.getHighlights(result.getId(), response));
         }
 
     }

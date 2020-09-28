@@ -974,5 +974,21 @@ public class SolrService {
         return false;
     }
 
+    public Map<String, List<String>> getHighlights(String id, QueryResponse response) {
+        Map<String, List<String>> highlights = new HashMap<>();
+
+        if (response == null || response.getHighlighting() == null || response.getHighlighting().get(id) == null) {
+            return highlights;
+        }
+
+        for (String field : response.getHighlighting().get(id).keySet()) {
+            if (CollectionUtils.isNotEmpty(response.getHighlighting().get(id).get(field))) {
+                highlights.put(getPrettyFieldName(field), response.getHighlighting().get(id).get(field));
+            }
+        }
+
+        return highlights;
+    }
+
 }
 

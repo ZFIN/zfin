@@ -119,12 +119,24 @@
 
     <div class="result-matching-text search-result-snippet">
 
-        <c:if test="${!empty result.matchingText}">
+        <c:if test="${!empty result.highlights}">
             <div class="snippet-title">
                 Matching Text:
             </div>
+            <table class="search-result-snippet">
+                <c:forEach var="entry" items="${result.highlights}" varStatus="loop">
+                    <c:if test="${loop.index < 4}"> <!-- limit to 4 fields -->
+                        <tr>
+                            <td class="snippet-label">${entry.key}</td>
+                            <td class="snippet-value">
+                                ${fn:join(entry.value.toArray(),'...')}
+                            </td>
+                        </tr>
+                    </c:if>
+                </c:forEach>
+            </table>
         </c:if>
-        ${result.matchingText}
+
 
         <authz:authorize access="hasRole('root')">
             <jsp:invoke fragment="curatorContent"/>

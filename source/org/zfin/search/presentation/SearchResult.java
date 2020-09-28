@@ -1,5 +1,7 @@
 package org.zfin.search.presentation;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.beans.Field;
@@ -17,6 +19,8 @@ import java.util.Map;
 /*
  * This should match the fl parameter set as default in solrconfig
  * */
+@Getter
+@Setter
 public class SearchResult implements ProvidesLink {
 
     //fields mapped to the Solr index
@@ -49,6 +53,7 @@ public class SearchResult implements ProvidesLink {
 
     //fields that need to be injected after
     private String matchingText;
+    private Map<String, List<String>> highlights;
 
     /* this is only used when the search result is an autocomplete response */
     private String autocompleteLabel;
