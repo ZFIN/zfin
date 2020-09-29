@@ -34,15 +34,10 @@ public class TranscriptBean extends MarkerBean {
     private String vegaID;
     private List<DBLink> unableToFindDBLinks;
     private Genotype strain; // genotype strain pulled from the clone library
-    private String rnaCentralLink;
+    private List<LinkDisplay> rnaCentralLink;
 
-    public String getRnaCentralLink() {
-        return rnaCentralLink;
-    }
 
-    public void setRnaCentralLink(String rnaCentralLink) {
-        this.rnaCentralLink = rnaCentralLink;
-    }
+
 
     public Set<RelatedMarker> getRelatedGenes() {
         return relatedGenes;
@@ -58,6 +53,14 @@ public class TranscriptBean extends MarkerBean {
 
     public void setRelatedTranscriptDisplayList(List<RelatedTranscriptDisplay> relatedTranscriptDisplayList) {
         this.relatedTranscriptDisplayList = relatedTranscriptDisplayList;
+    }
+
+    public List<LinkDisplay> getRnaCentralLink() {
+        return rnaCentralLink;
+    }
+
+    public void setRnaCentralLink(List<LinkDisplay> rnaCentralLink) {
+        this.rnaCentralLink = rnaCentralLink;
     }
 
     public Set<RelatedMarker> getMicroRNARelatedTranscripts() {

@@ -25,6 +25,9 @@ import org.zfin.sequence.service.TranscriptService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.Arrays;
+
+import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 @Controller
 @RequestMapping("/marker")
@@ -103,6 +106,7 @@ public class TranscriptViewController {
 
         //get the protein summary pages
         transcriptBean.setProteinProductDBLinkDisplay(TranscriptService.getProteinProductDBLinks(transcript));
+        transcriptBean.setRnaCentralLink(markerRepository.getMarkerDBLinksFast(transcript, DisplayGroup.GroupName.OTHER_MARKER_PAGES));
 
         //the targets of the transcript, should only get filled for microRNA
         if (transcript.getTranscriptType().getType() == TranscriptType.Type.MIRNA) {
@@ -137,7 +141,17 @@ public class TranscriptViewController {
             transcriptBean.setUnableToFindDBLinks(unableToFindDbLinks);
         }
 
-
+        List<Transcript> allTranscriptsInDb = getMarkerRepository().getTranscriptsForNonCodingGenes();
+        List<Transcript> allTranscripts = new ArrayList<>();
+        for (Transcript tscript: allTranscriptsInDb){
+            if (!tscript.isWithdrawn()){
+                if (getMarkerRepository().getTranscriptSequence(tscript)!=null)
+                    allTranscripts.add(tscript);
+            }
+        }
+        if (allTranscripts.contains(transcript)){
+            System.out.println(transcript.zdbID);
+        }
 
 
         logger.info("transcriptviewcontroller # of seq: " + sequences.size());

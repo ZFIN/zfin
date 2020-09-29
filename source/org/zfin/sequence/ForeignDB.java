@@ -170,7 +170,7 @@ public class ForeignDB implements Comparable<ForeignDB> {
         AGR_GENE("Alliance"),
         AGR_DISEASE("Alliance"),
         CZRC("CZRC"),
-        PDB("PDB");
+        PDB("PDB"),RNA_CENTRAL("RNACentral");
 
 
         private final String value;
