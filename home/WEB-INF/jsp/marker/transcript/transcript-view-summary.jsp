@@ -46,12 +46,9 @@
 
     <zfin2:markerGenomeResourcesAttributeListItem links="${formBean.otherMarkerPages}" />
 
-    <z:attributeListItem label="RNACentral">
-        <c:if test="${formBean.rnaCentralLink eq 'yes'}">
-            <a href=""><b>RNACentral</b></a>
-        </c:if>
-    </z:attributeListItem>
-    
+    <zfin2:rnaCentral links="${formBean.rnaCentralLink}" />
+
+
     <zfin2:entityNotesAttributeListItems entity="${formBean.transcript}" />
 
 </z:attributeList>
