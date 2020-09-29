@@ -1,7 +1,7 @@
 --liquibase formatted sql
 --changeset pm:ZFIN-6289
 
-insert into foreign_db (fdb_db_name, fdb_db_query,fdb_db_display_name,fdb_db_significance) values ('RNA Central', 'http://rnacentral.org/link/zfin:','RNAcentral',2);
+insert into foreign_db (fdb_db_name, fdb_db_query,fdb_db_display_name,fdb_db_significance) values ('RNA Central', 'http://rnacentral.org/rna/','RNAcentral',2);
 
 create temp table pre_foreign_db_contains (
         prefbct_fdbcont_organism_common_name varchar(30) not null,
