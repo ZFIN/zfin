@@ -14,7 +14,10 @@
         <tr>
             <th width="75px">Dates</th>
             <td>
-                <form:select path="queryType" items="${queryTypes}" itemLabel="display" />
+                <form:select path="queryType">
+                    <form:option value="" />
+                    <form:options items="${queryTypes}" itemLabel="display" />
+                </form:select>
                 <span class="control-group">
                     <form:input path="fromDate" cssClass="date-mask" />
                     <form:label path="fromDate">From</form:label>
@@ -42,6 +45,15 @@
                     <li>Dates are the date a publication changed state (i.e. curation status, location, indexed status)</li>
                     <li>Counts are number of publications which changed to the listed state on that date</li>
                     <li>Because multiple state changes for a single publication can occur on the same day, month, or year, the same publication may be counted in multiple rows</li>
+                </ul>
+                <ul class="metrics-help cumulative">
+                    <li>Statistics are computed based on how many days a publication spent in a given status or location <b>once it has left that status or location</b></li>
+                    <li>Use caution when interpreting these statistics for Closed statuses because most papers never leave the Closed status</li>
+                    <li>This query mimics the old Average-Time-In-Bins-Cumulative_m Jenkins job</li>
+                </ul>
+                <ul class="metrics-help snapshot">
+                    <li>Statistics are computed based on how many days a publication has spent in a given status or location <b>up until now</b></li>
+                    <li>This query gives a snapshot of the current state of the system. Therefore no dates can be provided.</li>
                 </ul>
             </td>
         </tr>
@@ -101,7 +113,7 @@
         <tr ${row.key == 'All' ? 'style="font-weight: bold;"' : ''}>
             <td>${row.key}</td>
             <c:forEach items="${row.value}" var="column">
-                <td>
+                <td class="right-align">
                     <c:if test="${column.value == null}">--</c:if>
                     <fmt:formatNumber value="${column.value}" maxFractionDigits="1" />
                 </td>
@@ -138,22 +150,33 @@
             .on('change', function () {
                 $('.metrics-help').hide();
                 if (this.value === 'CUMULATIVE') {
-                    $('[name="fromDate"]').attr("disabled", "disabled");
+                    $('[name="fromDate"]').attr("disabled", "disabled").val('');
+                    $('[name="toDate"]').removeAttr("disabled", "disabled");
                     $('[name="groupBy"]').attr("disabled", "disabled");
                     $('[value="ACTIVE"]').attr("disabled", "disabled");
                     $('[value="INDEXED"]').attr("disabled", "disabled");
+                    $('.metrics-help.cumulative').show();
                 } else if (this.value === 'STATUS_DATE') {
                     $('[name="fromDate"]').removeAttr("disabled");
+                    $('[name="toDate"]').removeAttr("disabled");
                     $('[name="groupBy"]').removeAttr("disabled");
                     $('[value="ACTIVE"]').attr("disabled", "disabled");
                     $('[value="INDEXED"]').removeAttr("disabled");
                     $('.metrics-help.status-date').show();
-                } else {
+                } else if (this.value === 'PET_DATE') {
                     $('[name="fromDate"]').removeAttr("disabled");
+                    $('[name="toDate"]').removeAttr("disabled");
                     $('[name="groupBy"]').removeAttr("disabled");
                     $('[value="ACTIVE"]').removeAttr("disabled");
                     $('[value="INDEXED"]').removeAttr("disabled");
                     $('.metrics-help.pet-date').show();
+                } else if (this.value === 'SNAPSHOT') {
+                    $('[name="fromDate"]').attr("disabled", "disabled").val('');
+                    $('[name="toDate"]').attr("disabled", "disabled").val('');
+                    $('[name="groupBy"]').attr("disabled", "disabled");
+                    $('[value="ACTIVE"]').attr("disabled", "disabled");
+                    $('[value="INDEXED"]').attr("disabled", "disabled");
+                    $('.metrics-help.snapshot').show();
                 }
                 if ($('[name="groupType"]').find(":selected").attr("disabled")) {
                     $('[name="groupType"]').val(null).trigger('change');

@@ -2708,7 +2708,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     @Override
-    public List<CumulativeStatisticsBean> getCumulativeMetrics(Calendar end, PublicationMetricsFormBean.GroupType groupType) {
+    public List<MetricsOnDateBean> getCumulativeMetrics(Calendar end, PublicationMetricsFormBean.GroupType groupType) {
         String groupExpression = "";
         switch (groupType) {
             case STATUS:
@@ -2737,7 +2737,45 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return HibernateUtil.currentSession().createSQLQuery(sql)
                 .setParameter("end", end)
                 .setParameter("type", Publication.Type.JOURNAL.getDisplay())
-                .setResultTransformer(Transformers.aliasToBean(CumulativeStatisticsBean.class))
+                .setResultTransformer(Transformers.aliasToBean(MetricsOnDateBean.class))
+                .list();
+    }
+
+    @Override
+    public List<MetricsOnDateBean> getSnapshotMetrics(PublicationMetricsFormBean.GroupType groupType) {
+        String groupExpression = "";
+        switch (groupType) {
+            case STATUS:
+                groupExpression = "status.pts_status_display";
+                break;
+            case LOCATION:
+                groupExpression = "location.ptl_location_display";
+                break;
+        }
+        String sql = String.format(
+                "select " +
+                        "  grouper as category, " +
+                        "  avg(age) as average, " +
+                        "  stddev(age) as \"standardDeviation\", " +
+                        "  min(age) as minimum, " +
+                        "  max(age) as maximum, " +
+                        "  avg_of_largest(cast(age as numeric)) as \"oldestAverage\" " +
+                        "from ( " +
+                        "  select " +
+                        "    %1$s as grouper, " +
+                        "    extract(day from (current_date - history.pth_status_insert_date)) as age " +
+                        "  from " +
+                        "    pub_tracking_history history " +
+                        "        inner join publication pub on pub.zdb_id = history.pth_pub_zdb_id " +
+                        "        left outer join pub_tracking_status status on history.pth_status_id = status.pts_pk_id " +
+                        "        left outer join pub_tracking_location location on history.pth_location_id = location.ptl_pk_id " +
+                        "        where history.pth_status_is_current = 't' " +
+                        "        and pub.jtype = :type " +
+                        ") as subq " +
+                        "group by grouper;", groupExpression);
+        return HibernateUtil.currentSession().createSQLQuery(sql)
+                .setParameter("type", Publication.Type.JOURNAL.getDisplay())
+                .setResultTransformer(Transformers.aliasToBean(MetricsOnDateBean.class))
                 .list();
     }
 

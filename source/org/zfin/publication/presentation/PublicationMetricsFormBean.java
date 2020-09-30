@@ -1,5 +1,6 @@
 package org.zfin.publication.presentation;
 
+import lombok.Getter;
 import org.zfin.publication.Publication;
 import org.zfin.publication.PublicationTrackingLocation;
 import org.zfin.publication.PublicationTrackingStatus;
@@ -9,19 +10,21 @@ import java.util.Calendar;
 
 public class PublicationMetricsFormBean implements Serializable {
 
+    @Getter
     public enum QueryType {
-        PET_DATE("PET Date"),
-        STATUS_DATE("Status Change Date"),
-        CUMULATIVE("Cumulative Stats");
+        PET_DATE("PET Date", true, true),
+        STATUS_DATE("Status Change Date", true, true),
+        CUMULATIVE("Cumulative Stats", false, true),
+        SNAPSHOT("Snapshot", false, false);
 
-        private String display;
+        private final String display;
+        private final boolean fromRequired;
+        private final boolean toRequired;
 
-        QueryType(String display) {
+        QueryType(String display, boolean fromRequired, boolean toRequired) {
             this.display = display;
-        }
-
-        public String getDisplay() {
-            return display;
+            this.fromRequired = fromRequired;
+            this.toRequired = toRequired;
         }
     }
 
@@ -58,7 +61,8 @@ public class PublicationMetricsFormBean implements Serializable {
         AVERAGE("Average Days in Status"),
         STANDARD_DEVIATION("Standard Deviation Days in Status"),
         MINIMUM("Minimum Days in Status"),
-        MAXIMUM("Maximum Days in Status");
+        MAXIMUM("Maximum Days in Status"),
+        OLDEST_AVERAGE("Average Age of 10 Oldest");
 
         private String display;
 

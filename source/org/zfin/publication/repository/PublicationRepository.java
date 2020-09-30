@@ -26,7 +26,7 @@ import org.zfin.ontology.Term;
 import org.zfin.orthology.Ortholog;
 import org.zfin.profile.Person;
 import org.zfin.publication.*;
-import org.zfin.publication.presentation.CumulativeStatisticsBean;
+import org.zfin.publication.presentation.MetricsOnDateBean;
 import org.zfin.publication.presentation.DashboardPublicationList;
 import org.zfin.publication.presentation.MetricsByDateBean;
 import org.zfin.publication.presentation.PublicationMetricsFormBean;
@@ -622,7 +622,9 @@ public interface PublicationRepository extends PaginationParameter {
                                              PublicationMetricsFormBean.Interval groupInterval,
                                              PublicationMetricsFormBean.GroupType groupType);
 
-    List<CumulativeStatisticsBean> getCumulativeMetrics(Calendar end, PublicationMetricsFormBean.GroupType groupType);
+    List<MetricsOnDateBean> getCumulativeMetrics(Calendar end, PublicationMetricsFormBean.GroupType groupType);
+
+    List<MetricsOnDateBean> getSnapshotMetrics(PublicationMetricsFormBean.GroupType groupType);
 
     ProcessingChecklistTask getProcessingChecklistTask(ProcessingChecklistTask.Task task);
 
