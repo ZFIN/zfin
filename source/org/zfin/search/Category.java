@@ -155,7 +155,8 @@ public enum Category {
             FieldName.SEQUENCE_TARGETING_REAGENT
     ),
     COMMUNITY("Community",
-            TYPE
+            TYPE,
+            COUNTRY
     ),
     FISH("Fish",
             AFFECTED_GENE,

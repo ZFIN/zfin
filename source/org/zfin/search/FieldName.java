@@ -51,6 +51,7 @@ public enum FieldName {
     CONSTRUCT_CITATION_SORT("construct_citation_sort"),
     CONSTRUCT_NAME("construct_name"),
     CONSTRUCT_SPECIES_SORT("construct_species_sort"),
+    COUNTRY("country"),
     CURATION_LOCATION("location"),
     CURATION_STATUS("curation_status"),
     CURATOR("curator"),

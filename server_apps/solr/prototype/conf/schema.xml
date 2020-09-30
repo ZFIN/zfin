@@ -411,6 +411,25 @@
             </analyzer>
         </fieldType>
 
+        <fieldType name="country_field" class="solr.TextField" omitNorms="true">
+            <analyzer type="index">
+                <tokenizer class="solr.KeywordTokenizerFactory"/>
+                <filter class="solr.TrimFilterFactory" />
+                <filter class="solr.SynonymGraphFilterFactory"
+                        synonyms="country-synonyms.txt"
+                        tokenizerFactory="solr.KeywordTokenizerFactory"
+                />
+                <filter class="solr.FlattenGraphFilterFactory"/>
+            </analyzer>
+            <analyzer type="query">
+                <tokenizer class="solr.KeywordTokenizerFactory"/>
+                <filter class="solr.SynonymGraphFilterFactory"
+                        synonyms="country-synonyms.txt"
+                        tokenizerFactory="solr.KeywordTokenizerFactory"
+                />
+            </analyzer>
+        </fieldType>
+
         <fieldType name="chromosome" class="solr.TextField" omitNorms="true" positionIncrementGap="100">
             <analyzer type="index">
                 <tokenizer class="solr.KeywordTokenizerFactory" />
@@ -802,6 +821,7 @@
         <field name="biography" type="text" indexed="true" stored="true"   />
         <field name="postal_address" type="text" indexed="true" stored="true"   />
         <field name="email_address" type="text" indexed="true" stored="true"   />
+        <field name="country" type="country_field" indexed="true" stored="true" />
         <!-- only bringing this in for joining at index time, and maybe debugging... -->
         <field name="internal_id" type="string" indexed="true" stored="true"   />
 
