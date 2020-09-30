@@ -33,6 +33,8 @@ const PubEditFiles = ({ pubId }) => {
         return <LoadingSpinner />
     }
 
+    const pubHasOriginalArticle = value.results.some(file => file.type.name === 'Original Article');
+
     return (
         <>
             <table className='table table-hover'>
@@ -63,7 +65,7 @@ const PubEditFiles = ({ pubId }) => {
             <h4>Upload New File</h4>
             <PubFileUpload
                 pubId={pubId}
-                pubHasOriginalArticle={value.results.some(file => file.type.name === 'Original Article')}
+                pubHasOriginalArticle={pubHasOriginalArticle}
                 fileTypeOptions={value.supplementalData.fileTypes}
                 onSuccess={setValue}
             />
@@ -71,6 +73,7 @@ const PubEditFiles = ({ pubId }) => {
             <PubFileEditModal
                 file={editFile}
                 fileTypeOptions={value.supplementalData.fileTypes}
+                pubHasOriginalArticle={pubHasOriginalArticle}
                 onClose={() => setEditFile(null)}
                 onDelete={handleDelete}
                 onSave={handleSave}

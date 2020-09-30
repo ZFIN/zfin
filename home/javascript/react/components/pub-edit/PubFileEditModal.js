@@ -4,17 +4,31 @@ import Modal from '../Modal';
 import LoadingButton from '../LoadingButton';
 import ObjectSelectBox from '../ObjectSelectBox';
 
-const PubFileEditModal = ({ file, fileTypeOptions, onClose, onDelete, onSave }) => {
+const PubFileEditModal = ({ file, fileTypeOptions, pubHasOriginalArticle, onClose, onDelete, onSave }) => {
     const [deleting, setDeleting] = useState(false);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');
     const [formType, setFormType] = useState(null);
+    const [valid, setValid] = useState(true);
+
     useEffect(() => {
         if (!file) {
             return;
         }
         setFormType(file.type);
+        setError('');
+        setValid(true);
     }, [file]);
+
+    const handleChange = (value) => {
+        setFormType(value);
+        if (pubHasOriginalArticle && value.name === 'Original Article') {
+            setError('Publication can only have one Original Article. Delete or change type of existing Original Article before continuing.');
+            setValid(false);
+            return;
+        }
+        setValid(true);
+    }
 
     const handleDelete = async () => {
         setDeleting(true);
@@ -56,7 +70,7 @@ const PubFileEditModal = ({ file, fileTypeOptions, onClose, onDelete, onSave }) 
                                 className='form-control'
                                 options={fileTypeOptions}
                                 value={formType}
-                                onChange={setFormType}
+                                onChange={handleChange}
                                 getDisplay='name'
                                 getValue='id'
                             />
@@ -76,6 +90,7 @@ const PubFileEditModal = ({ file, fileTypeOptions, onClose, onDelete, onSave }) 
                             <button className='btn btn-outline-secondary' onClick={onClose} type='button'>Cancel</button>
                             <LoadingButton
                                 className='btn btn-primary'
+                                disabled={!valid}
                                 type='button'
                                 loading={saving}
                                 onClick={handleSave}
@@ -95,6 +110,7 @@ const PubFileEditModal = ({ file, fileTypeOptions, onClose, onDelete, onSave }) 
 PubFileEditModal.propTypes = {
     file: PropTypes.object,
     fileTypeOptions: PropTypes.array,
+    pubHasOriginalArticle: PropTypes.bool,
     onClose: PropTypes.func,
     onDelete: PropTypes.func,
     onSave: PropTypes.func,
