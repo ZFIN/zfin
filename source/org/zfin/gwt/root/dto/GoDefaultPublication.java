@@ -98,7 +98,6 @@ public enum GoDefaultPublication implements PubEnum {
             goRefPubs.add(GOREF_UNIPROTKB_SUBCELL2);
             goRefPubs.add(GOREF_UNIPATHWAY);
             goRefPubs.add(GOREF_UNIRULE);
-            goRefPubs.add(GOREF_HAMAP);
             goRefPubs.add(GOREF_ENSEMBL);
             goRefPubs.add(GOREF_UNIPROT);
             goRefPubs.add(GOREF_PAINT);
@@ -117,7 +116,6 @@ public enum GoDefaultPublication implements PubEnum {
             ieaPubs.add(GOREF_UNIPROTKB_SUBCELL2);
             ieaPubs.add(GOREF_UNIPATHWAY);
             goRefPubs.add(GOREF_UNIRULE);
-            ieaPubs.add(GOREF_HAMAP);
             ieaPubs.add(GOREF_ENSEMBL);
         }
         return ieaPubs;
