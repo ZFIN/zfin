@@ -13,7 +13,6 @@ public enum GoDefaultPublication implements PubEnum {
     ISS_REF_GENOME("ISS from Ref. Genome", "ZDB-PUB-071010-1"),
     ISS_MANUAL_CURATED("ISS from Manually Curated Orthology", "ZDB-PUB-040216-1"),
     GOREF_ENSEMBL("GO_REF:0000035", "ZDB-PUB-110127-1", InferenceCategory.ENSEMBL, false),
-    GOREF_HAMAP("GO_REF:0000020", "ZDB-PUB-110127-2", InferenceCategory.HAMAP, false),
 //    GOREF_SP_SL("GO_REF:0000023", "ZDB-PUB-110127-3", InferenceCategory.SP_SL, false),
 //    GOREF_UNIPROTKB_SUBCELL1("GO_REF:0000039", "ZDB-PUB-120306-2", InferenceCategory.UNIPROTKB_SUBCELL, false),
     GOREF_UNIPROTKB_SUBCELL2("GO_REF:0000044", "ZDB-PUB-120306-4", InferenceCategory.UNIPROTKB_SUBCELL, false),
