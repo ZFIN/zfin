@@ -132,6 +132,7 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
                         FieldName.INSERTED_IN_GENE,
                         FieldName.REGULATORY_REGION,
                         FieldName.REGULATORY_REGION_SPECIES,
+                        FieldName.LAB_OF_ORIGIN,
                         FieldName.REPORTER_COLOR,
                         FieldName.TYPE
                 ],
@@ -184,7 +185,8 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
                         FieldName.TERM_STATUS
                 ],
                 (Category.COMMUNITY)                 : [
-                        FieldName.TYPE
+                        FieldName.TYPE,
+                        FieldName.COUNTRY
                 ],
                 (Category.PUBLICATION)               : [
                         FieldName.GENE,
@@ -239,13 +241,13 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
         Category.FISH                       | ["Affected Genomic Region", "Is Model Of", "Expression Anatomy", "Phenotype", "Sequence Targeting Reagent (STR)", "Construct", "Mutation / Tg", "Background", "Source"]
         Category.REPORTER_LINE              | ["Reporter Gene", "Expression Anatomy", "Regulatory Region", "Stage", "Source"]
         Category.MUTANT                     | ["Type", "Affected Genomic Region", "Phenotype", "Consequence", "Mutagen", "Source", "Lab of Origin", "Institution", "Is ZebraShare", "Construct Regulatory Region", "Construct Coding Sequence"]
-        Category.CONSTRUCT                  | ["Type", "Regulatory Region", "Regulatory Region Species", "Coding Sequence", "Coding Sequence Species", "Inserted In Gene", "Expressed In", "Reporter Color", "Engineered Region"]
+        Category.CONSTRUCT                  | ["Type", "Regulatory Region", "Regulatory Region Species", "Coding Sequence", "Coding Sequence Species", "Inserted In Gene", "Expressed In", "Lab Of Origin", "Reporter Color", "Engineered Region"]
         Category.SEQUENCE_TARGETING_REAGENT | ["Type", "Target"]
         Category.ANTIBODY                   | ["Type", "Antigen Gene", "Labeled Structure", "Assay", "Source", "Host Organism"]
         Category.MARKER                     | ["Type", "Location", "Source"]
         Category.FIGURE                     | ["Expression Anatomy", "Expressed Gene", "Phenotype", "Construct", "Registered Author", "Has Image"]
         Category.ANATOMY                    | ["Ontology", "Term Status"]
-        Category.COMMUNITY                  | ["Type"]
+        Category.COMMUNITY                  | ["Type", "Country"]
         Category.PUBLICATION                | ["Curation", "Gene", "Mutation / Tg", "Human Disease", "Registered Author", "Journal", "Keyword", "MeSH Term", "Publication Type", "Publication Date"]
         Category.JOURNAL                    | ["Accession"]
     }

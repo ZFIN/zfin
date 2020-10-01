@@ -5,8 +5,8 @@
 <z:attributeListItem label="Previous Names">
     <z:ifHasData test="${!empty previousNames}" noDataMessage="None">
         <ul class="comma-separated">
-            <c:forEach var="markerAlias" items="${previousNames}">
-                <li>${markerAlias.linkWithAttribution}</li>
+            <c:forEach var="markerAlias" items="${previousNames}" varStatus="loop">
+                <li id="previous-name-${loop.index}">${markerAlias.linkWithAttribution}</li>
             </c:forEach>
         </ul>
     </z:ifHasData>

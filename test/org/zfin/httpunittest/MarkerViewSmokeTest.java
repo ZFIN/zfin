@@ -1,8 +1,10 @@
 package org.zfin.httpunittest;
 
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -11,7 +13,6 @@ import org.zfin.marker.Marker;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
@@ -42,8 +43,8 @@ public class MarkerViewSmokeTest extends AbstractSmokeTest {
     public void testGenePagePhenotypeAnchor() throws IOException {
         // gene eya1 with phenotype data
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/ZDB-GENE-990712-18");
-        List<?> pubs = page.getByXPath("//a[@name='phenotype']");
-        assertEquals(1, pubs.size());
+        DomElement phenotypeSection = page.getElementById("phenotype");
+        assertNotNull("No element with id='phenotype' found", phenotypeSection);
     }
 
 

@@ -2,7 +2,7 @@
 
 <z:attributeList>
     <z:attributeListItem label="Antibody ID">
-        ${formBean.marker.zdbID}
+        <span id="marker-id">${formBean.marker.zdbID}</span>
     </z:attributeListItem>
 
     <z:attributeListItem label="Antibody Name">
@@ -12,11 +12,11 @@
     <zfin2:markerPreviousNamesAttributeListItem previousNames="${formBean.previousNames}" />
 
     <z:attributeListItem label="Host Organism">
-        <div>${formBean.marker.hostSpecies}</div>
+        <span id="host-organism">${formBean.marker.hostSpecies}</span>
     </z:attributeListItem>
 
     <z:attributeListItem label="Immunogen Organism">
-        <div>${formBean.marker.immunogenSpecies}</div>
+        <span id="immunogen-organism">${formBean.marker.immunogenSpecies}</span>
     </z:attributeListItem>
 
     <z:attributeListItem label="Isotype">
@@ -27,7 +27,7 @@
     </z:attributeListItem>
 
     <z:attributeListItem label="Type">
-        <div>${formBean.marker.clonalType}</div>
+        <span id="clonal-type">${formBean.marker.clonalType}</span>
     </z:attributeListItem>
 
     <z:attributeListItem label="Assays">

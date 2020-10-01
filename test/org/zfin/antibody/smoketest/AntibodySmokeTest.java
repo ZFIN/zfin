@@ -1,10 +1,7 @@
 package org.zfin.antibody.smoketest;
 
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlSpan;
-import com.gargoylesoftware.htmlunit.html.HtmlTableDataCell;
+import com.gargoylesoftware.htmlunit.html.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -53,11 +50,11 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
         String zdbID = "ZDB-ATB-081002-3";
         String uri = "/" + zdbID;
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + uri);
-        HtmlTableDataCell cell = (HtmlTableDataCell) page.getByXPath("//table[@class='data_manager']//td").get(0);
-        assertTrue(cell.getTextContent().contains(zdbID));
-        assertNotNull("find the ID on the page", page.getByXPath("//table[@class='data_manager']//td").get(0));
+        HtmlSpan markerId = (HtmlSpan) page.getElementById("marker-id");
+        assertNotNull("find the ID on the page", markerId);
+        assertTrue(markerId.getTextContent().contains(zdbID));
         assertNotNull("renders the end of the page sources ", page.getByXPath("//a[@href='http://zebrafish.org/']").get(0));
-        assertNotNull("renders the end of the page citations ", page.getByXPath("//a[. ='CITATIONS']").get(0));
+        assertNotNull("renders the end of the page citations ", page.getElementById("citations"));
     }
 
 
@@ -126,11 +123,11 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
                 labPage.getTitleText(), is("Zebrafish International Resource Center"));
 
         // check alias
-        HtmlSpan span = (HtmlSpan) page.getElementById("previous-name-0");
-        assertThat("Synonym should be present", span.getTextContent(), startsWith("zn5 ("));
+        DomElement prevName = page.getElementById("previous-name-0");
+        assertThat("Synonym should be present", prevName.getTextContent(), startsWith("zn5 ("));
 
         // check host organism
-        span = (HtmlSpan) page.getElementById("host-organism");
+        HtmlSpan span = (HtmlSpan) page.getElementById("host-organism");
         assertThat("Host organism should be listed", span.getTextContent(), is("Mouse"));
 
         // check immunogen organism

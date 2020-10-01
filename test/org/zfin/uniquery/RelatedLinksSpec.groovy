@@ -59,7 +59,7 @@ class RelatedLinksSpec extends ZfinIntegrationSpec {
 
     def "Diamond-Blackfan anemia should have related genes"() {
         when:
-        SearchResult result = new SearchResult(id: "DOID:1339", name: "Diamond-Blackfan anemia", categories: [Category.DISEASE.name])
+        SearchResult result = new SearchResult(id: "DOID:0111895", name: "Diamond-Blackfan anemia 1", categories: [Category.DISEASE.name])
         List<String> links = relatedDataService.getRelatedDataLinks(result)
 
         then:

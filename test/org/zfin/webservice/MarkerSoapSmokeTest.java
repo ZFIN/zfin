@@ -66,8 +66,8 @@ public class MarkerSoapSmokeTest extends WebServiceGatewaySupport {
         JAXBElement<String> geneRequest = objectFactory.createGeneExpressionAnatomyWildTypeRequest(testZdbID);
         GeneExpressionAnatomyWildTypeResponse anatomyExpressionRetrieveResponse = (GeneExpressionAnatomyWildTypeResponse) getWebServiceTemplate().marshalSendAndReceive(url, geneRequest);
         assertNotNull(anatomyExpressionRetrieveResponse);
-        assertTrue(anatomyExpressionRetrieveResponse.getAnatomy().size() > 40);
-        assertTrue(anatomyExpressionRetrieveResponse.getAnatomy().size() < 60);
+        assertTrue(anatomyExpressionRetrieveResponse.getAnatomy().size() > 50);
+        assertTrue(anatomyExpressionRetrieveResponse.getAnatomy().size() < 70);
     }
 
     @Test
