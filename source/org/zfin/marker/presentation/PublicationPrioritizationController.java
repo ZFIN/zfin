@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.zfin.expression.presentation.MarkerExpression;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.feature.Feature;
+import org.zfin.feature.repository.FeatureService;
 import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.api.PubPrioritizationGeneSorting;
@@ -82,8 +83,7 @@ public class PublicationPrioritizationController {
     }
 
     @RequestMapping(value = "/{publicationId}/prioritization/strs")
-    public JsonResultResponse<Prioritization> getStrPubPrioritization(@PathVariable String publicationId)
-            throws Exception {
+    public JsonResultResponse<Prioritization> getStrPubPrioritization(@PathVariable String publicationId) {
 
         List<Marker> attributedStrs = getPublicationRepository().getSTRByPublication(publicationId);
         List<Prioritization> prioList = attributedStrs.stream()
@@ -108,8 +108,7 @@ public class PublicationPrioritizationController {
     }
 
     @RequestMapping(value = "/{publicationId}/prioritization/features")
-    public JsonResultResponse<Prioritization> getFeaturePubPrioritization(@PathVariable String publicationId)
-            throws Exception {
+    public JsonResultResponse<Prioritization> getFeaturePubPrioritization(@PathVariable String publicationId) {
         List<Feature> attributedFeatures = getPublicationRepository().getFeaturesByPublication(publicationId);
         List<Prioritization> prioList = attributedFeatures.stream()
                 .map(feature -> {
@@ -117,6 +116,11 @@ public class PublicationPrioritizationController {
                     prioritization.setId(feature.getZdbID());
                     prioritization.setName(feature.getAbbreviation());
                     prioritization.setNewWithThisPaper(getPublicationRepository().isNewFeaturePubAttribution(feature, publicationId));
+                    PhenotypeOnMarkerBean bean = FeatureService.getPhenotypeOnFeature(feature);
+                    if (bean != null) {
+                        prioritization.setPhenotypeFigures(bean.getNumFigures());
+                        prioritization.setPhenotypePublication(bean.getNumPublications());
+                    }
                     return prioritization;
                 })
                 .collect(Collectors.toList());

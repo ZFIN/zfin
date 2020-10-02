@@ -7,25 +7,30 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.zfin.Species;
 import org.zfin.feature.*;
+import org.zfin.fish.repository.FishService;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gbrowse.GBrowseTrack;
 import org.zfin.gbrowse.presentation.GBrowseImage;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
+import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.mapping.*;
 import org.zfin.marker.Marker;
+import org.zfin.marker.presentation.PhenotypeOnMarkerBean;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.mutant.presentation.FishGenotypePhenotypeStatistics;
+import org.zfin.mutant.presentation.GenotypeFishResult;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
-import org.zfin.zebrashare.FeatureCommunityContribution;
-import org.zfin.zebrashare.repository.HibernateZebrashareRepository;
 
+import javax.validation.constraints.NotNull;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 import static org.zfin.sequence.ForeignDB.AvailableName;
 import static org.zfin.sequence.ForeignDBDataType.DataType;
-
 
 
 @Service
@@ -180,7 +185,6 @@ public class FeatureService {
     }
 
 
-
     public static String getAALink(Feature feature) {
         String aaLink = RepositoryFactory.getFeatureRepository().getAALink(feature);
 
@@ -257,7 +261,9 @@ public class FeatureService {
         }
         FeatureGenomeLocation featureLocation = locations.get(0);
 
-        if (featureLocation.getStart() == null || featureLocation.getEnd() == null) { return null; }
+        if (featureLocation.getStart() == null || featureLocation.getEnd() == null) {
+            return null;
+        }
 
         // gbrowse has a location for this feature. if there is a feature marker relationship AND we know where
         // that marker is, show the feature in the context of the marker. Otherwise just show the feature with
@@ -363,5 +369,38 @@ public class FeatureService {
                 .filter(evidenceEntry -> evidenceEntry.getValue().equals(evidenceCode))
                 .findAny();
         return entry.map(Map.Entry::getKey).orElse(null);
+    }
+
+    public static PhenotypeOnMarkerBean getPhenotypeOnFeature(@NotNull Feature feature) {
+        // do not include multi-allelic features
+        // include TG features if relationship is: innocuous
+        if (feature.isMultiAllelic() || (!feature.isInnocuousOnlyTG() && feature.getType().equals(FeatureTypeEnum.TRANSGENIC_INSERTION)))
+            return null;
+
+        List<GenotypeFishResult> fishSummaryList = feature.getGenotypeFeatures().stream()
+                .map(genotypeFeature -> FishService.getFishExperimentSummaryForGenotype(genotypeFeature.getGenotype()))
+                .flatMap(Collection::stream)
+//                .filter(genotypeFishResult -> genotypeFishResult.getFish().isClean())
+                .sorted(Comparator.comparing(genotypeFishResult -> genotypeFishResult.getFish().getDisplayName()))
+                .collect(Collectors.toList());
+        PhenotypeOnMarkerBean phenotypeOnMarkerBean = new PhenotypeOnMarkerBean();
+        int numOfFigures = fishSummaryList.stream()
+                .filter(genotypeFishResult -> genotypeFishResult.getFishGenotypePhenotypeStatistics() != null)
+                .map(GenotypeFishResult::getFishGenotypePhenotypeStatistics)
+                .filter(fishGenotypePhenotypeStatistics -> fishGenotypePhenotypeStatistics.getFigures() != null)
+                .map(FishGenotypePhenotypeStatistics::getFigures)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toSet()).size();
+        phenotypeOnMarkerBean.setNumFigures(numOfFigures);
+        int numOfPubs = fishSummaryList.stream()
+                .filter(genotypeFishResult -> genotypeFishResult.getFishGenotypePhenotypeStatistics() != null)
+                .map(GenotypeFishResult::getFishGenotypePhenotypeStatistics)
+                .filter(fishGenotypePhenotypeStatistics -> fishGenotypePhenotypeStatistics.getPublicationPaginationResult().getTotalCount() > 0)
+                .map(FishGenotypePhenotypeStatistics::getPublicationPaginationResult)
+                .map(PaginationResult::getPopulatedResults)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toSet()).size();
+        phenotypeOnMarkerBean.setNumPublications(numOfPubs);
+        return phenotypeOnMarkerBean;
     }
 }

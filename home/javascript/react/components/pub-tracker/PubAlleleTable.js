@@ -1,30 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { CollapseTable } from '../../components/data-table';
+import {CollapseTable} from '../../components/data-table';
+import SingularPlural from '../SingularPlural';
 
-
-/*const sortOptions = [
-    {
-        value: 'strUp',
-        label: 'STR (Default), A to Z ',
-    },
-    {
-        value: 'createdAlleleUp',
-        label: 'Created Alleles, A to Z ',
-    },
-    {
-        value: 'createdAlleleDown',
-        label: 'Created Alleles, Z to A ',
-    },
-    {
-        value: 'citationMost',
-        label: 'Citation, Most ',
-    },
-    {
-        value: 'citationLeast',
-        label: 'Citation, Least ',
-    },
-];*/
 
 const PubAlleleTable = ({pubId}) => {
     const columns = [
@@ -35,13 +13,15 @@ const PubAlleleTable = ({pubId}) => {
         },
         {
             label: 'New with this paper',
-            content: row =>row.newWithThisPaper ? <i className='text-muted'>Yes </i>: <i className='text-muted'>No</i>,
+            content: row => row.newWithThisPaper ? <i className='text-muted'>Yes </i> : <i className='text-muted'>No</i>,
             width: '120px',
         },
-
         {
             label: 'Phenotype Data',
-            content: row =>row.newWithThisPaper ? <i className='text-muted'>Yes </i>: <i className='text-muted'>No</i>,
+            content: row => (row.phenotypeFigures > 0 &&
+                <> <SingularPlural singular='figure' plural='figures' value={row.phenotypeFigures}/> from &nbsp;
+                    <SingularPlural singular='pub' plural='pubs' value={row.phenotypePublication}/></>
+            ),
             width: '100px',
         },
 

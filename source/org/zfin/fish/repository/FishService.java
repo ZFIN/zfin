@@ -562,6 +562,7 @@ public class FishService {
                 FishGenotypePhenotypeStatistics pheno = stat.getFishGenotypePhenotypeStatistics();
                 if (pheno == null) {
                     pheno = new FishGenotypePhenotypeStatistics(fish);
+                    pheno.addFishExperiment(fishExperiment);
                     stat.setFishGenotypePhenotypeStatistics(pheno);
                 }
                 FishGenotypeExpressionStatistics expression = stat.getFishGenotypeExpressionStatistics();

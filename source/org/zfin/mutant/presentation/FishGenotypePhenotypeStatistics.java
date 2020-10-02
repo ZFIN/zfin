@@ -9,10 +9,8 @@ import org.zfin.mutant.PhenotypeExperiment;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.publication.Publication;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This class is a statistics class about Fish for given genotype
@@ -46,6 +44,17 @@ public class FishGenotypePhenotypeStatistics extends EntityStatistics {
                 }
         }
         return figures.size();
+    }
+
+    public Set<Figure> getFigures() {
+        if (figures == null) {
+            figures = fishExperimentList.stream()
+                    .map(FishExperiment::getPhenotypeExperiments)
+                    .flatMap(Collection::stream)
+                    .map(PhenotypeExperiment::getFigure)
+                    .collect(Collectors.toSet());
+        }
+        return figures;
     }
 
     public boolean isImgInFigure() {
@@ -84,7 +93,7 @@ public class FishGenotypePhenotypeStatistics extends EntityStatistics {
     }
 
     @Override
-    protected PaginationResult<Publication> getPublicationPaginationResult() {
+    public PaginationResult<Publication> getPublicationPaginationResult() {
         Set<Publication> pubs = new HashSet<>(5);
         for (FishExperiment fishExperiment : fishExperimentList)
             for (PhenotypeExperiment phenotype : fishExperiment.getPhenotypeExperiments()) {

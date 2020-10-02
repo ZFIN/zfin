@@ -19,10 +19,10 @@ import org.zfin.mutant.GenotypeFeature;
 import org.zfin.profile.FeatureSource;
 import org.zfin.profile.FeatureSupplier;
 import org.zfin.sequence.FeatureDBLink;
-import org.zfin.mapping.FeatureLocation;
 
 import javax.persistence.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Feature business entity.
@@ -130,7 +130,6 @@ public class Feature implements EntityNotes, EntityZdbID {
     @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
     @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     private Set<FeatureDnaMutationDetail> featureDnaMutationDetailSet;
-
 
 
     @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
@@ -398,6 +397,7 @@ public class Feature implements EntityNotes, EntityZdbID {
     public Set<FeatureDnaMutationDetail> getFeatureDnaMutationDetailSet() {
         return featureDnaMutationDetailSet;
     }
+
     public void setFeatureDnaMutationDetailSet(Set<FeatureDnaMutationDetail> featureDnaMutationDetailSet) {
         this.featureDnaMutationDetailSet = featureDnaMutationDetailSet;
     }
@@ -631,6 +631,17 @@ public class Feature implements EntityNotes, EntityZdbID {
         return null;
     }
 
+    public boolean isMultiAllelic() {
+        if (featureMarkerRelations == null) {
+            return false;
+        }
+        Set<Marker> allelicMarker = featureMarkerRelations.stream()
+                .filter(relationship -> relationship.getType().equals(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF))
+                .map(FeatureMarkerRelationship::getMarker)
+                .collect(Collectors.toSet());
+        return allelicMarker.size() > 1;
+    }
+
     @JsonView(View.API.class)
     public String getGeneLocalizationStatement() {
         return mutationDetailsConversionService.geneLocalizationStatement(getFeatureDnaMutationDetail());
@@ -691,5 +702,20 @@ public class Feature implements EntityNotes, EntityZdbID {
                     .orElse(null) != null;
         }
         return true;
+    }
+
+    public boolean isInnocuousOnlyTG() {
+        if (CollectionUtils.isEmpty(featureMarkerRelations))
+            return false;
+        if (!type.equals(FeatureTypeEnum.TRANSGENIC_INSERTION))
+            return false;
+        List<FeatureMarkerRelationshipTypeEnum> relationships = featureMarkerRelations.stream()
+                .map(FeatureMarkerRelationship::getType)
+                .collect(Collectors.toList());
+        if (relationships.contains(FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE))
+            return false;
+        if (relationships.contains(FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE))
+            return true;
+        return false;
     }
 }
