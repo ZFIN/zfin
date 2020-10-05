@@ -79,6 +79,8 @@ insert into db_link (dblink_linked_recid,dblink_acc_num, dblink_zdb_id ,dblink_a
 insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
 select dblinkid,'ZDB-PUB-200928-1' from tmp_rnac_zfin;
 
+"""
+
 
 
 
