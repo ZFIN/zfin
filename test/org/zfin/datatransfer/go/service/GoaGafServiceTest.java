@@ -561,7 +561,7 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         logger.debug("existing: " + gafReport1.getExistingEntries());
         logger.debug("errors: " + gafReport1.getErrors());
 
-        assertThat("new", gafReport1.getNewEntries(), hasSize(2));
+        assertThat("new", gafReport1.getNewEntries(), hasSize(1));
         assertThat("existing", gafReport1.getExistingEntries(), hasSize(0));
         assertThat("errors", gafReport1.getErrors(), hasSize(2));
         assertThat("removed", gafReport1.getRemovedEntries(), hasSize(0));
@@ -581,7 +581,7 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         GafJobData gafReport1 = new GafJobData();
         gafService.processEntries(gafEntries, gafReport1);
 
-        assertThat("first new", gafReport1.getNewEntries(), hasSize(2));
+        assertThat("first new", gafReport1.getNewEntries(), hasSize(1));
         assertThat("first existing", gafReport1.getExistingEntries(), hasSize(0));
         assertThat("first errors", gafReport1.getErrors(), hasSize(2));
         assertThat("first removed", gafReport1.getRemovedEntries(), hasSize(0));
