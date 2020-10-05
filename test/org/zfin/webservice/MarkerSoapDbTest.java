@@ -8,6 +8,7 @@ import org.zfin.webservice.schema.*;
 
 import javax.xml.bind.JAXBElement;
 
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.*;
 
 /**
@@ -38,8 +39,7 @@ public class MarkerSoapDbTest extends AbstractDatabaseTest {
         JAXBElement<String> geneRequest = objectFactory.createGeneExpressionAnatomyWildTypeRequest(testZdbID);
         GeneExpressionAnatomyWildTypeResponse anatomyExpressionRetrieveResponse = endpoint.getGeneAnatomyExpression(geneRequest);
         assertNotNull(anatomyExpressionRetrieveResponse);
-        assertTrue(anatomyExpressionRetrieveResponse.getAnatomy().size() > 40);
-        assertTrue(anatomyExpressionRetrieveResponse.getAnatomy().size() < 60);
+        assertThat(anatomyExpressionRetrieveResponse.getAnatomy().size(), greaterThan(40) );
     }
 
     @Test
