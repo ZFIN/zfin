@@ -533,7 +533,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         AntibodyService service = new AntibodyService(antibody);
         List<AnatomyLabel> labeledTerms = service.getAntibodyDetailedLabelings();
         assertNotNull(labeledTerms);
-        assertThat(labeledTerms.size(), greaterThan(100));
+        assertThat(labeledTerms.size(), greaterThan(70));
     }
 
     public GenericTerm createMinimalGenericTerm(GenericTerm genericTerm, Ontology ontology) {
