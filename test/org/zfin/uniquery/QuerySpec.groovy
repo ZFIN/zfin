@@ -179,6 +179,7 @@ class QuerySpec extends ZfinIntegrationSpec {
 
     }
 
+    /**
     @Unroll
     def "a query in category #category for '#queryA' and a query for '#queryB' should return the same results"() {
         when: "Solr is queried for both queries"
@@ -214,7 +215,8 @@ class QuerySpec extends ZfinIntegrationSpec {
         Category.PHENOTYPE.name | "vasculature torn" | "vasculature ruptured"   //Case 11266
         ""                      | "znf zmp mouse"    | "znf zmp Mouse"          //Case 11330
     }
-
+*/
+    
     def "a query for #queryString should bring back #resultName as the first result"() {
         when: "Solr is queried for this string"
         query.setQuery(queryManipulationService.processQueryString(queryString))
