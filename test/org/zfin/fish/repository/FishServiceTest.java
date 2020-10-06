@@ -4,6 +4,7 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.expression.Figure;
@@ -107,6 +108,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
     }
 
     @Test
+    @Ignore
     public void checkMisfortunes() {
         FishExperiment fishExperiment = RepositoryFactory.getMutantRepository().getFishExperiment("ZDB-GENOX-110718-1");
         assertTrue("Fish experiment should not have 2 or more misfortunes", !fishExperiment.isAmelioratedOrExacerbated());
