@@ -27,7 +27,15 @@ const EntityAbbreviation = ({entity}) => {
             }
         }
     }
-    return <span className={className}>{entity.abbreviation}</span>;
+
+    let linktext;
+    if (['ETCONSTRCT', 'GTCONSTRCT', 'PTCONSTRCT', 'TGCONSTRCT','ATB'].includes(match[1])) {
+        linktext = entity.name;
+    } else {
+        linktext = entity.abbreviation;
+    }
+
+    return <span className={className}>{linktext}</span>;
 };
 
 EntityAbbreviation.propTypes = {

@@ -36,5 +36,6 @@ public class SequenceFeature {
         this.name = name;
     }
 
+    @JsonView(View.API.class)
     public String name;
 }
