@@ -81,7 +81,7 @@ public class FeatureServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void checkFeatureWithCleanPhenotypeOnPub() {
-        Feature feature = featureRepository.getFeatureByID("ZDB-ALT-201001-2");
+        Feature feature = featureRepository.getFeatureByID("ZDB-ALT-190821-6");
         PhenotypeOnMarkerBean bean = FeatureService.getPhenotypeOnFeature(feature);
         assertNotNull(bean);
     }
