@@ -597,7 +597,7 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         assertThat("second existing", gafReport2.getExistingEntries(), hasSize(0));
         assertThat("second errors", gafReport2.getErrors(), hasSize(3));
         assertThat("second removed", gafReport2.getRemovedEntries(), hasSize(0));
-        assertThat("second updated", gafReport2.getUpdateEntries(), hasSize(2));
+        assertThat("second updated", gafReport2.getUpdateEntries(), hasSize(1));
     }
 
     @Test
