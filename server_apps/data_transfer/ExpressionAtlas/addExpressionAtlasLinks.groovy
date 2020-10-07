@@ -46,6 +46,7 @@ fmsURL = "https://fms.alliancegenome.org/api/snapshot/release/" + allianceReleas
 crossReferencePath = ""
 
 fmsJson = new JsonSlurper().parseText(new URL(fmsURL).text)
+
 fmsJson.snapShot.dataFiles.each{
     dataFile ->
         s3Path = dataFile.s3Path
@@ -59,13 +60,19 @@ fmsJson.snapShot.dataFiles.each{
         }
 }
 
-def jsonSlurper =  new JsonSlurper()
+
+def geneids=new ArrayList<String>()
+def outCSV=new File('geneDesc.csv')
 def reader = new BufferedReader(new InputStreamReader(new FileInputStream(crossReferencePath.tokenize("/")[-1]),"UTF-8"))
-def crossReferences = jsonSlurper.parse(reader)
+def jsonSlurper =  new JsonSlurper()
+def json = jsonSlurper.parse(reader)
+
 new File("loadableGXALinks.txt").withWriter { output ->
-    crossReferences.each{ if (it.ResourceDescriptorPage == "gene/expressionAtlas" && it.GeneID.startsWith("ZFIN")) {
-        output.writeLine([it.GeneID.tokenize(":")[-1],it.CrossReferenceCompleteURL.tokenize("/")[-1].toUpperCase()].join(","))
-        } }
+    json.data.each {
+        if (it.ResourceDescriptorPage == "gene/expressionAtlas" && it.GeneID.startsWith("ZFIN")) {
+            output.writeLine([it.GeneID.tokenize(":")[-1], it.CrossReferenceCompleteURL.tokenize("/")[-1].toUpperCase()].join(","))
+        }
+    }
 }
 
 //TODO: pull these two methods out into a class for all data_transfer scripts to use
