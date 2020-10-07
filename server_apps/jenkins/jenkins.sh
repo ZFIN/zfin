@@ -6,7 +6,7 @@ DESC="Jenkins CI Server"
 PID_FILE=$JENKINS_HOME/jenkins.pid
 COMMAND="java -jar $SOURCEROOT/server_apps/jenkins/jenkins.war  --httpPort=$JENKINS_PORT --prefix=/jobs"
 
-export JAVA_HOME="/usr/lib/jvm/java-1.8.0"
+#export JAVA_HOME="/usr/lib/jvm/java-1.8.0"
 
 echo SOURCEROOT    $SOURCEROOT
 echo JENKINS_HOME  $JENKINS_HOME
