@@ -62,7 +62,7 @@
   display: none;
 }
 
-tr:hover {
+tr:hover, li:hover {
   .show-on-hover {
     display: unset;
   }
