@@ -5,11 +5,11 @@
 <c:set var="SUMMARY" value="Summary"/>
 <c:set var="CONSTRUCTS" value="Constructs"/>
 <c:set var="ANTIBODIES" value="Antibodies"/>
-<c:set var="EXPRESSION" value="Expression"/>
+<c:set var="GENOTYPE" value="Expression"/>
 <c:set var="SEQUENCE" value="Sequence Information"/>
 <c:set var="CITATIONS" value="Citations"/>
 
-<z:dataPage sections="${[SUMMARY, EXPRESSION, CONSTRUCTS, ANTIBODIES, SEQUENCE, CITATIONS]}">
+<z:dataPage sections="${[SUMMARY, GENOTYPE, CONSTRUCTS, ANTIBODIES, SEQUENCE, CITATIONS]}">
     <jsp:attribute name="entityName">
         <zfin:abbrev entity="${formBean.marker}"/>
     </jsp:attribute>
@@ -25,7 +25,7 @@
             <jsp:include page="efg-view-summary.jsp"/>
         </div>
 
-        <z:section title="${EXPRESSION}">
+        <z:section title="${GENOTYPE}">
             <jsp:include page="efg-view-expression-header.jsp"/>
         </z:section>
 

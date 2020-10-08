@@ -7,16 +7,16 @@
 <c:set var="TARGETLOCATION" value="Target Location"/>
 <c:set var="GENOMICFEATURES" value="Genomic Features"/>
 <c:set var="CONSTRUCTS" value="Constructs"/>
-<c:set var="EXPRESSION" value="Expression"/>
+<c:set var="GENOTYPE" value="Expression"/>
 <c:set var="PHENOTYPE" value="Phenotype"/>
 <c:set var="CITATIONS" value="Citations"/>
 
 
 <c:if test="${typeName ne 'MRPHLNO'}">
-        <c:set var="sections" value="${[SUMMARY, TARGETLOCATION, CONSTRUCTS, GENOMICFEATURES, EXPRESSION, PHENOTYPE, CITATIONS]}"/>
+        <c:set var="sections" value="${[SUMMARY, TARGETLOCATION, CONSTRUCTS, GENOMICFEATURES, GENOTYPE, PHENOTYPE, CITATIONS]}"/>
 </c:if>
 <c:if test="${typeName eq 'MRPHLNO'}">
-        <c:set var="sections" value="${[SUMMARY, TARGETLOCATION, GENOMICFEATURES, EXPRESSION, PHENOTYPE, CITATIONS]}"/>
+        <c:set var="sections" value="${[SUMMARY, TARGETLOCATION, GENOMICFEATURES, GENOTYPE, PHENOTYPE, CITATIONS]}"/>
 </c:if>
 
     <z:dataPage sections="${sections}">
@@ -51,7 +51,7 @@
             <jsp:include page="sequence-targeting-reagent-view-genonomicfeatures.jsp"/>
         </z:section>
 
-        <z:section title="${EXPRESSION}">
+        <z:section title="${GENOTYPE}">
             <z:section title="Gene expression in Wild Types + ${formBean.marker.name}">
                 <jsp:include page="sequence-targeting-reagent-view-expression.jsp"/>
             </z:section>

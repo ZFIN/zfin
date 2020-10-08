@@ -1,5 +1,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
+<jsp:useBean id="formBean" class="org.zfin.marker.presentation.GeneBean" scope="request"/>
+
 <z:attributeList>
     <z:attributeListItem label="ID">
         ${formBean.marker.zdbID}
