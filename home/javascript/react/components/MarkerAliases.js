@@ -22,6 +22,10 @@ const MarkerAliases = ({markerId}) => {
         });
     }
 
+    const handleDelete = () => {
+        setValue(aliases.filter(alias => alias.zdbID !== modalAlias.zdbID));
+    }
+
     const handleSave = (newAlias) => {
         setValue([
             ...aliases,
@@ -46,6 +50,7 @@ const MarkerAliases = ({markerId}) => {
                 alias={modalAlias}
                 markerId={markerId}
                 onClose={() => setModalAlias(null)}
+                onDelete={handleDelete}
                 onSave={handleSave}
             />
         </>
