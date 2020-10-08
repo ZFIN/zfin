@@ -1,10 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import MarkerNameForm from '../components/MarkerNameForm';
+import Section from '../components/layout/Section';
+import MarkerAliases from '../components/MarkerAliases';
 
-const MarkerEditNomenclature = ({markerId}) => {
+const MarkerEditNomenclature = ({ markerId }) => {
     return (
-        <MarkerNameForm markerId={markerId} />
+        <>
+            <MarkerNameForm markerId={markerId} />
+            <Section title='Previous Names'>
+                <MarkerAliases markerId={markerId} />
+            </Section>
+        </>
     )
 };
 

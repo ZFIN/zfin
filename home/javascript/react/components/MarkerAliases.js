@@ -1,0 +1,59 @@
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import useMutableFetch from '../hooks/useMutableFetch';
+import MarkerAliasEditModal from './MarkerAliasEditModal';
+
+const MarkerAliases = ({markerId}) => {
+    const {
+        value: aliases,
+        setValue,
+    } = useMutableFetch(`/action/marker/${markerId}/aliases`, []);
+    const [modalAlias, setModalAlias] = useState(null);
+
+    const handleEditClick = (event, alias) => {
+        event.preventDefault();
+        setModalAlias(alias)
+    }
+
+    const handleAddClick = () => {
+        setModalAlias({
+            alias: '',
+            references: [{ zdbID: '' }],
+        });
+    }
+
+    const handleSave = (newAlias) => {
+        setValue([
+            ...aliases,
+            newAlias
+        ]);
+    }
+
+    return (
+        <>
+            <ul className='list-unstyled'>
+                {aliases.map(alias => (
+                    <li key={alias.zdbID}>
+                        {alias.alias} {alias.references.length > 0 && <>({alias.references.length})</>}
+                        <a className='show-on-hover px-1' href='#' onClick={e => handleEditClick(e, alias)}>Edit</a>
+                    </li>
+                ))}
+            </ul>
+
+            <button type='button' className='btn btn-link px-0' onClick={handleAddClick}>Add</button>
+
+            <MarkerAliasEditModal
+                alias={modalAlias}
+                markerId={markerId}
+                onClose={() => setModalAlias(null)}
+                onSave={handleSave}
+            />
+        </>
+    )
+};
+
+MarkerAliases.propTypes = {
+    markerId: PropTypes.string,
+};
+
+export default MarkerAliases;
