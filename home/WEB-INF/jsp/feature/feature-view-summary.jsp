@@ -58,7 +58,7 @@
     </z:attributeListItem>
 
     <z:attributeListItem label="Type">
-        ${formBean.feature.type.display}
+        ${formBean.feature.displayType}
         <c:if test="${!empty formBean.featureTypeAttributions}">
             <c:choose>
                 <c:when test="${fn:length(formBean.featureTypeAttributions) == 1 }">

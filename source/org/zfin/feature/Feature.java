@@ -694,6 +694,15 @@ public class Feature implements EntityNotes, EntityZdbID {
         return false;
     }
 
+    public boolean hasAlleleOfRelationship() {
+        if (CollectionUtils.isEmpty(featureMarkerRelations))
+            return false;
+        for (FeatureMarkerRelationship featureMarkerRelationship : featureMarkerRelations)
+            if (featureMarkerRelationship.getType().equals(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF))
+                return true;
+        return false;
+    }
+
     public boolean isReadyForCuration() {
         if (type.equals(FeatureTypeEnum.TRANSGENIC_INSERTION)) {
             return featureMarkerRelations.stream()
@@ -717,5 +726,11 @@ public class Feature implements EntityNotes, EntityZdbID {
         if (relationships.contains(FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE))
             return true;
         return false;
+    }
+
+    public String getDisplayType() {
+        if (type.equals(FeatureTypeEnum.TRANSGENIC_INSERTION) && hasAlleleOfRelationship())
+            return "Allele causes by " + type.getTypeDisplay();
+        return type.getTypeDisplay();
     }
 }
