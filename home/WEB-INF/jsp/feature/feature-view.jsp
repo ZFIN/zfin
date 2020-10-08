@@ -11,7 +11,7 @@
 <c:set var="CITATIONS" value="Citations"/>
 
 <z:dataPage
-        sections="${[SUMMARY, MUTATION_DETAILS, GENOTYPE, FISH, SUPPLEMENTAL, SEQUENCES, CITATIONS]}"
+        sections="${[SUMMARY, CITATIONS]}"
 >
     <jsp:attribute name="entityName">
         <zfin:abbrev entity="${formBean.feature}"/>
@@ -29,7 +29,7 @@
         </div>
 
         <z:section title="${CITATIONS}" >
-            <div class="__react-root" id="MarkerCitationsTable" data-marker-id="${formBean.feature.zdbID}" ></div>
+            <div class="__react-root" id="CitationTable" data-marker-id="${formBean.feature.zdbID}" ></div>
         </z:section>
 
     </jsp:body>
