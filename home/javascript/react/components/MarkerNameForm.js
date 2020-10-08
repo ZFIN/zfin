@@ -4,8 +4,8 @@ import useMutableFetch from '../hooks/useMutableFetch';
 import equal from 'fast-deep-equal';
 import { useForm } from 'react-form';
 import http from '../utils/http';
-import InputField from './form/InputField';
 import LoadingButton from './LoadingButton';
+import FormGroup from './form/FormGroup';
 
 const MarkerNameForm = ({markerId}) => {
     const {
@@ -48,73 +48,57 @@ const MarkerNameForm = ({markerId}) => {
 
     return (
         <Form>
-            <div className='form-group row'>
-                <label htmlFor='inputName' className='col-md-2 col-form-label'>Name</label>
-                <div className='col-md-4'>
-                    <InputField
-                        field='name'
-                        id='inputName'
-                        validate={(value, { debounce }) => debounce(async () => {
-                            if (value === nomenclature.name) {
-                                return false;
-                            }
-                            if (!value) {
-                                return 'A name is required';
-                            }
-                            const validation = await http.get(`/action/marker/validate?name=${value}`);
-                            return validation.errors[0] || false;
-                        }, 300)}
-                    />
-                </div>
-            </div>
+            <FormGroup
+                label='Name'
+                field='name'
+                id='inputName'
+                validate={(value, { debounce }) => debounce(async () => {
+                    if (value === nomenclature.name) {
+                        return false;
+                    }
+                    if (!value) {
+                        return 'A name is required';
+                    }
+                    const validation = await http.get(`/action/marker/validate?name=${value}`);
+                    return validation.errors[0] || false;
+                }, 300)}
+            />
 
-            <div className='form-group row'>
-                <label htmlFor='inputName' className='col-md-2 col-form-label'>Abbreviation</label>
-                <div className='col-md-4'>
-                    <InputField
-                        field='abbreviation'
-                        id='inputName'
-                        validate={(value, { debounce }) => debounce(async () => {
-                            if (value === nomenclature.abbreviation) {
-                                return false;
-                            }
-                            if (!value) {
-                                return 'An abbreviation is required';
-                            }
-                            const validation = await http.get(`/action/marker/validate?abbreviation=${value}`);
-                            return validation.errors[0] || false;
-                        }, 300)}
-                    />
-                </div>
-            </div>
+            <FormGroup
+                label='Abbreviation'
+                field='abbreviation'
+                id='inputAbbreviation'
+                validate={(value, { debounce }) => debounce(async () => {
+                    if (value === nomenclature.abbreviation) {
+                        return false;
+                    }
+                    if (!value) {
+                        return 'An abbreviation is required';
+                    }
+                    const validation = await http.get(`/action/marker/validate?abbreviation=${value}`);
+                    return validation.errors[0] || false;
+                }, 300)}
+            />
 
             {!isPristine &&
             <>
-                <div className='form-group row'>
-                    <label htmlFor='inputReason' className='col-md-2 col-form-label'>Reason</label>
-                    <div className='col-md-4'>
-                        <InputField
-                            tag='select'
-                            field='reason'
-                            id='inputReason'
-                        >
-                            <option />
-                            {nomenclature.meta.reasons.map(reason => <option key={reason}>{reason}</option>)}
-                        </InputField>
-                    </div>
-                </div>
+                <FormGroup
+                    label='Reason'
+                    tag='select'
+                    field='reason'
+                    id='inputReason'
+                >
+                    <option />
+                    {nomenclature.meta.reasons.map(reason => <option key={reason}>{reason}</option>)}
+                </FormGroup>
 
-                <div className='form-group row'>
-                    <label htmlFor='inputComments' className='col-md-2 col-form-label'>Comments</label>
-                    <div className='col-md-4'>
-                        <InputField
-                            tag='textarea'
-                            field='comments'
-                            id='inputReason'
-                            rows='3'
-                        />
-                    </div>
-                </div>
+                <FormGroup
+                    label='Comments'
+                    tag='textarea'
+                    field='comments'
+                    id='inputComments'
+                    rows='3'
+                />
             </>
             }
 
