@@ -8,10 +8,8 @@ import InputField from './form/InputField';
 import PublicationInput from './PublicationInput';
 import http from '../utils/http';
 
-const MarkerAliasEditModal = ({ alias, markerId, onClose, onSave }) => {
-    // eslint-disable-next-line no-unused-vars
+const MarkerAliasEditModal = ({ alias, markerId, onClose, onDelete, onSave }) => {
     const [deleting, setDeleting] = useState(false);
-    const handleDelete = () => {};
 
     const isEdit = alias && alias.zdbID;
 
@@ -33,15 +31,28 @@ const MarkerAliasEditModal = ({ alias, markerId, onClose, onSave }) => {
             } catch (error) {
                 if (error.responseJSON && error.responseJSON.fieldErrors && error.responseJSON.fieldErrors.length > 0) {
                     error.responseJSON.fieldErrors.forEach(fieldError => {
-                        setFieldMeta(fieldError.field, { error: fieldError.message })
+                        setFieldMeta(fieldError.field, { error: fieldError.message });
                     })
                 } else {
-                    setMeta({ error: 'Update not saved. Try again later.' })
+                    setMeta({ error: 'Update not saved. Try again later.' });
                 }
                 throw error;
             }
         },
     });
+
+    const handleDelete = async () => {
+        setDeleting(true);
+        try {
+            await http.delete(`/action/marker/alias/${alias.zdbID}`);
+            onDelete();
+            onClose();
+        } catch (error) {
+            setMeta({ error: 'Could not delete alias. Try again later.' });
+            throw error;
+        }
+        setDeleting(false);
+    };
 
     return (
         <Modal open={values !== null}>
@@ -69,7 +80,11 @@ const MarkerAliasEditModal = ({ alias, markerId, onClose, onSave }) => {
                                     />
                                 ))
                             }
-                            <button type='button' className='btn btn-link px-0' onClick={() => pushFieldValue('references', {zdbID: ''})}>
+                            <button
+                                type='button'
+                                className='btn btn-link px-0'
+                                onClick={() => pushFieldValue('references', { zdbID: '' })}
+                            >
                                 Add Reference
                             </button>
                         </div>
@@ -88,7 +103,13 @@ const MarkerAliasEditModal = ({ alias, markerId, onClose, onSave }) => {
                             <span />
                         }
                         <span className='horizontal-buttons'>
-                            <button className='btn btn-outline-secondary' onClick={onClose} type='button'>Cancel</button>
+                            <button
+                                className='btn btn-outline-secondary'
+                                onClick={onClose}
+                                type='button'
+                            >
+                                Cancel
+                            </button>
                             <LoadingButton
                                 className='btn btn-primary'
                                 disabled={isSubmitting || !isValid}
@@ -100,7 +121,7 @@ const MarkerAliasEditModal = ({ alias, markerId, onClose, onSave }) => {
                         </span>
                     </div>
 
-                    {error && <span className='text-danger'>{error}</span> }
+                    {error && <span className='text-danger'>{error}</span>}
                 </Form>
                 }
             </div>
@@ -112,7 +133,8 @@ MarkerAliasEditModal.propTypes = {
     alias: PropTypes.object,
     markerId: PropTypes.string,
     onClose: PropTypes.func,
+    onDelete: PropTypes.func,
     onSave: PropTypes.func,
-}
+};
 
 export default MarkerAliasEditModal;
