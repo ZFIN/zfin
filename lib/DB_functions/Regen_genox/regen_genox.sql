@@ -29,6 +29,9 @@ create or replace function regen_genox()
        insert into regen_genox_input_zdb_id_temp ( rggz_zdb_id )
           select mrkr_zdb_id from marker where mrkr_type in ('GENE','MRPHLNO','TALEN', 'CRISPR', 'LNCRNAG', 'LINCRNAG','MIRNAG','PIRNAG','SCRNAG','SNORNAG', 'TRNAG','RRNAG','NCRNAG','SRPRNAG');
 
+       insert into regen_genox_input_zdb_id_temp ( rggz_zdb_id )
+          select feature_zdb_id from feature;
+
        errorHint = 'insert into mutant_fast_search_new';
 
     -- takes regen_genox_input_zdb_id_temp as input, adds recs to regen_genox_temp
