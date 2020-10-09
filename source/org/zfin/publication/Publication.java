@@ -607,4 +607,11 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
         return sb.toString();
     }
 
+    @JsonView(View.Default.class)
+    public String getIndexedOpenStatus() {
+        String ret = isOpen() ? "OPEN" : "CLOSED";
+        if (isIndexed())
+            ret += ", INDEXED";
+        return ret;
+    }
 }

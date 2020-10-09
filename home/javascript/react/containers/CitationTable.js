@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 import qs from 'qs';
-import { DataList } from '../components/data-table';
+import {DataList} from '../components/data-table';
 import Checkbox from '../components/Checkbox';
 
 const CitationTable = ({markerId}) => {
     const [includeUnpublished, setIncludeUnpublished] = useState(false);
 
-    const rowFormat = ({citation, zdbID}) => <a href={'/' + zdbID} dangerouslySetInnerHTML={{__html: citation}} />;
+    const rowFormat = ({citation, zdbID, indexedOpenStatus}) => <>
+        <a href={'/' + zdbID} dangerouslySetInnerHTML={{__html: citation}}/> {indexedOpenStatus}
+    </>;
 
     const sortOptions = [
         {
@@ -30,7 +32,7 @@ const CitationTable = ({markerId}) => {
 
     const queryParams = qs.stringify({
         includeUnpublished
-    }, { addQueryPrefix: true });
+    }, {addQueryPrefix: true});
 
     const downloadOptions = [
         {
