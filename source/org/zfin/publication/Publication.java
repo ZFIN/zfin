@@ -8,6 +8,7 @@ import org.zfin.expression.Figure;
 import org.zfin.framework.api.View;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.profile.Person;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.zebrashare.ZebrashareEditor;
 
 import java.io.Serializable;
@@ -609,6 +610,8 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
 
     @JsonView(View.Default.class)
     public String getIndexedOpenStatus() {
+        if (!ProfileService.isRootUser())
+            return "";
         String ret = isOpen() ? "OPEN" : "CLOSED";
         if (isIndexed())
             ret += ", INDEXED";
