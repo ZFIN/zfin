@@ -20,6 +20,8 @@ import org.zfin.publication.repository.PublicationRepository;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/marker")
@@ -80,6 +82,47 @@ public class MarkerAliasController {
 
         HibernateUtil.createTransaction();
         MarkerAlias alias = markerRepository.addMarkerAlias(marker, newAlias.getAlias(), publication);
+        HibernateUtil.flushAndCommitCurrentSession();
+
+        return MarkerAliasBean.convert(alias);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/alias/{aliasID}", method = RequestMethod.POST)
+    public MarkerAliasBean updateMarkerAlias(@PathVariable String aliasID,
+                                             @Valid @RequestBody MarkerAliasBean updatedAlias,
+                                             BindingResult errors) {
+        MarkerAlias alias = markerRepository.getMarkerAlias(aliasID);
+
+        if (!Objects.equals(alias.getAlias(), updatedAlias.getAlias()) &&
+                MarkerService.markerHasAlias(alias.getMarker(), updatedAlias.getAlias())) {
+            errors.rejectValue("alias", "marker.alias.inuse");
+        }
+
+        if (errors.hasErrors()) {
+            throw new InvalidWebRequestException("Invalid alias", errors);
+        }
+
+        Collection<String> currentPubZdbIDs = alias.getPublications().stream()
+                .map(PublicationAttribution::getPublication)
+                .map(Publication::getZdbID)
+                .collect(Collectors.toList());
+        Collection<String> updatedPubZdbIDs = updatedAlias.getReferences().stream()
+                .map(MarkerReferenceBean::getZdbID)
+                .collect(Collectors.toList());
+        Collection<String> refsToAdd = CollectionUtils.subtract(updatedPubZdbIDs, currentPubZdbIDs);
+        Collection<String> refsToRemove = CollectionUtils.subtract(currentPubZdbIDs, updatedPubZdbIDs);
+
+        HibernateUtil.createTransaction();
+        for (String pubZdbID : refsToAdd) {
+            Publication publication = publicationRepository.getPublication(pubZdbID);
+            markerRepository.addDataAliasAttribution(alias, publication, alias.getMarker());
+        }
+        for (String pubZdbID : refsToRemove) {
+            infrastructureRepository.deleteRecordAttribution(aliasID, pubZdbID);
+        }
+        alias.setAlias(updatedAlias.getAlias());
+        HibernateUtil.currentSession().saveOrUpdate(alias);
         HibernateUtil.flushAndCommitCurrentSession();
 
         return MarkerAliasBean.convert(alias);

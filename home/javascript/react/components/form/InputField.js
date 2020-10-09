@@ -22,7 +22,7 @@ const InputField = React.forwardRef((props, ref) => {
     return (
         <>
             <Wrapper {...getInputProps({ ref, ...rest })} className={`form-control ${invalid ? 'is-invalid' : ''}`} />
-            {invalid && <div className='invalid-feedback'>{error}</div>}
+            {invalid && <div className='text-danger small'>{error}</div>}
         </>
     );
 });
