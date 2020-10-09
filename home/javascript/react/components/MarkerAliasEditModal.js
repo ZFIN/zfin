@@ -8,38 +8,64 @@ import InputField from './form/InputField';
 import PublicationInput from './PublicationInput';
 import http from '../utils/http';
 
-const MarkerAliasEditModal = ({ alias, markerId, onClose, onDelete, onSave }) => {
+const MarkerAliasEditModal = ({ alias, markerId, onAdd, onClose, onDelete, onEdit }) => {
     const [deleting, setDeleting] = useState(false);
 
     const isEdit = alias && alias.zdbID;
 
     const {
         Form,
+        meta: { isValid, isSubmitting, serverError, error },
         pushFieldValue,
-        setMeta,
+        removeFieldValue,
+        reset,
         setFieldMeta,
+        setMeta,
         values,
-        meta: { isValid, isSubmitting, error }
     } = useForm({
         debugForm: true,
         defaultValues: alias,
+        validate: values => {
+            if (values.references.length === 0) {
+                return 'At least one reference is required';
+            }
+            return false;
+        },
         onSubmit: async (values) => {
             try {
-                const updated = await http.post(`/action/marker/${markerId}/aliases`, values);
-                onSave(updated);
+                if (isEdit) {
+                    const updated = await http.post(`/action/marker/alias/${alias.zdbID}`, values);
+                    onEdit(updated);
+                } else {
+                    const added = await http.post(`/action/marker/${markerId}/aliases`, values);
+                    onAdd(added);
+                }
                 onClose();
             } catch (error) {
                 if (error.responseJSON && error.responseJSON.fieldErrors && error.responseJSON.fieldErrors.length > 0) {
                     error.responseJSON.fieldErrors.forEach(fieldError => {
-                        setFieldMeta(fieldError.field, { error: fieldError.message });
+                        // react-form gets a little confused when we set a fieldMeta with the field 'references'. We
+                        // should probably be using the nested field version (i.e. 'references.0.zdbID') but we can't do
+                        // that now because it would break the existing STR editing interface. So for now, limit
+                        // field-specific errors to just 'alias'
+                        if (fieldError.field === 'alias') {
+                            setFieldMeta(fieldError.field, { error: fieldError.message });
+                        } else {
+                            setMeta({ serverError: fieldError.message });
+                        }
                     })
                 } else {
-                    setMeta({ error: 'Update not saved. Try again later.' });
+                    setMeta({ serverError: 'Update not saved. Try again later.' });
                 }
                 throw error;
             }
         },
     });
+
+    const handleCancel = () => {
+        reset();
+        onClose();
+    }
 
     const handleDelete = async () => {
         setDeleting(true);
@@ -69,15 +95,31 @@ const MarkerAliasEditModal = ({ alias, markerId, onClose, onDelete, onSave }) =>
                     />
 
                     <div className='form-group row'>
-                        <label className='col-md-2 col-form-label'>References</label>
+                        <label className='col-md-2 col-form-label'>Citations</label>
                         <div className='col-md-10'>
                             {
                                 values.references.map((reference, idx) => (
-                                    <InputField
-                                        tag={PublicationInput}
-                                        key={idx}
-                                        field={`references.${idx}.zdbID`}
-                                    />
+                                    <div key={idx} className='d-flex align-items-baseline'>
+                                        <div className='flex-grow-1'>
+                                            <InputField
+                                                tag={PublicationInput}
+                                                field={`references.${idx}.zdbID`}
+                                                validate={value => {
+                                                    if (!value) {
+                                                        return 'A publication ZDB ID is required';
+                                                    }
+                                                    return false
+                                                }}
+                                            />
+                                        </div>
+                                        <button
+                                            type='button'
+                                            onClick={() => removeFieldValue('references', idx)}
+                                            className='btn btn-link'
+                                        >
+                                            <i className='fas fa-times' />
+                                        </button>
+                                    </div>
                                 ))
                             }
                             <button
@@ -87,6 +129,11 @@ const MarkerAliasEditModal = ({ alias, markerId, onClose, onDelete, onSave }) =>
                             >
                                 Add Reference
                             </button>
+
+                            {(error || serverError) &&
+                                <div className='text-danger small'>{serverError} {error}</div>
+                            }
+
                         </div>
                     </div>
 
@@ -105,7 +152,7 @@ const MarkerAliasEditModal = ({ alias, markerId, onClose, onDelete, onSave }) =>
                         <span className='horizontal-buttons'>
                             <button
                                 className='btn btn-outline-secondary'
-                                onClick={onClose}
+                                onClick={handleCancel}
                                 type='button'
                             >
                                 Cancel
@@ -120,8 +167,6 @@ const MarkerAliasEditModal = ({ alias, markerId, onClose, onDelete, onSave }) =>
                             </LoadingButton>
                         </span>
                     </div>
-
-                    {error && <span className='text-danger'>{error}</span>}
                 </Form>
                 }
             </div>
@@ -132,9 +177,10 @@ const MarkerAliasEditModal = ({ alias, markerId, onClose, onDelete, onSave }) =>
 MarkerAliasEditModal.propTypes = {
     alias: PropTypes.object,
     markerId: PropTypes.string,
+    onAdd: PropTypes.func,
     onClose: PropTypes.func,
     onDelete: PropTypes.func,
-    onSave: PropTypes.func,
+    onEdit: PropTypes.func,
 };
 
 export default MarkerAliasEditModal;

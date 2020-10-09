@@ -26,10 +26,19 @@ const MarkerAliases = ({markerId}) => {
         setValue(aliases.filter(alias => alias.zdbID !== modalAlias.zdbID));
     }
 
-    const handleSave = (newAlias) => {
+    const handleAdd = (newAlias) => {
         setValue([
             ...aliases,
             newAlias
+        ]);
+    }
+
+    const handleEdit = (updated) => {
+        const updatedIdx = aliases.findIndex(alias => alias.zdbID === modalAlias.zdbID);
+        setValue([
+            ...aliases.slice(0, updatedIdx),
+            updated,
+            ...aliases.slice(updatedIdx + 1)
         ]);
     }
 
@@ -49,9 +58,10 @@ const MarkerAliases = ({markerId}) => {
             <MarkerAliasEditModal
                 alias={modalAlias}
                 markerId={markerId}
+                onAdd={handleAdd}
                 onClose={() => setModalAlias(null)}
                 onDelete={handleDelete}
-                onSave={handleSave}
+                onEdit={handleEdit}
             />
         </>
     )
