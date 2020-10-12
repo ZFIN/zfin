@@ -63,7 +63,7 @@
                             <div class="search-result-thumbnail">
                                 <a href="${result.url}">
                                     <img style="max-width: 150px; max-height: 70px;"
-                                         src="<%=ZfinPropertiesEnum.IMAGE_LOAD.value()%>/${result.profileImage}">
+                                         src="${ZfinPropertiesEnum.IMAGE_LOAD.value()}/${result.profileImage}">
                                 </a>
                             </div>
                         </div>

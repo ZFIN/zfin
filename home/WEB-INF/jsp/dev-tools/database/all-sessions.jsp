@@ -21,7 +21,7 @@
 <%--
         <td>
             <c:choose><c:when test="${empty formBean.dbname }">
-                <a href="?dbname=<%= ZfinPropertiesEnum.DB_NAME %>">My DB </a>
+                <a href="?dbname=${ZfinPropertiesEnum.DB_NAME}">My DB </a>
             </c:when><c:otherwise>
                 <a href="?dbname=">All</a>
             </c:otherwise></c:choose>

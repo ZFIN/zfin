@@ -21,8 +21,8 @@
         <c:when test="${allowReset}">
 
 
-            <c:set var='secure' value="<%=ZfinPropertiesEnum.SECURE_HTTP.toString()%>"/>
-            <c:set var='domain' value="<%=ZfinPropertiesEnum.DOMAIN_NAME.toString()%>"/>
+            <c:set var='secure' value="${ZfinPropertiesEnum.SECURE_HTTP.toString()}"/>
+            <c:set var='domain' value="${ZfinPropertiesEnum.DOMAIN_NAME.toString()}"/>
             <c:set var='secureServer' value="${secure}${domain}"/>
 
             <div class="login-container">

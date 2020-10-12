@@ -18,7 +18,7 @@
         <c:otherwise>
             <div class="alert alert-danger">
                 <strong>Looks like something went wrong on our end.</strong> You can either try again later or
-                <a href="mailto:<%= ZfinPropertiesEnum.NOMEN_COORDINATOR.value()%>">email your submission directly to us</a>.
+                <a href="mailto:${ZfinPropertiesEnum.NOMEN_COORDINATOR.value()}">email your submission directly to us</a>.
             </div>
         </c:otherwise>
     </c:choose>

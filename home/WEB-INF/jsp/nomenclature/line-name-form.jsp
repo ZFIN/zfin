@@ -4,9 +4,9 @@
 <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
 <script src="${zfn:getAssetPath("bootstrap.js")}"></script>
 
-<c:set var="NOMEN_COORDINATOR" value="<%= ZfinPropertiesEnum.NOMEN_COORDINATOR.value()%>" />
-<c:set var="ZFIN_ADMIN" value="<%= ZfinPropertiesEnum.ZFIN_ADMIN.value() %>" />
-<c:set var="WIKI_HOST" value="<%= ZfinPropertiesEnum.WIKI_HOST.value() %>" />
+<c:set var="NOMEN_COORDINATOR" value="${ZfinPropertiesEnum.NOMEN_COORDINATOR.value()}" />
+<c:set var="ZFIN_ADMIN" value="${ZfinPropertiesEnum.ZFIN_ADMIN.value()}" />
+<c:set var="WIKI_HOST" value="${ZfinPropertiesEnum.WIKI_HOST.value()}" />
 
 <zfin2:nomenclatureForm headerText="Submit a Proposed Mutant/Transgenic Line Name">
     <jsp:attribute name="resourcesList">

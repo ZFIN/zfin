@@ -3,7 +3,7 @@
 
 <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
 
-<c:set var="NOMEN_COORDINATOR" value="<%= ZfinPropertiesEnum.NOMEN_COORDINATOR.value()%>" />
+<c:set var="NOMEN_COORDINATOR" value="${ZfinPropertiesEnum.NOMEN_COORDINATOR.value()}" />
 
 <zfin2:nomenclatureForm headerText="Submit a Proposed Gene Name">
     <jsp:attribute name="resourcesList">

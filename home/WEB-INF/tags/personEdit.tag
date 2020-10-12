@@ -187,8 +187,8 @@
             <%--<table>--%>
             <%--<tr valign="top">--%>
             <%--<td rowspan="2">--%>
-            <c:set var='secure' value="<%=ZfinPropertiesEnum.SECURE_HTTP.toString()%>"/>
-            <c:set var='domain' value="<%=ZfinPropertiesEnum.DOMAIN_NAME.toString()%>"/>
+            <c:set var='secure' value="${ZfinPropertiesEnum.SECURE_HTTP.toString()}"/>
+            <c:set var='domain' value="${ZfinPropertiesEnum.DOMAIN_NAME.toString()}"/>
             <c:set var='secureServer' value="${secure}${domain}"/>
             <%--${secureServer}--%>
             <%--action="/action/profile/person/edit-user-details/${person.zdbID}" enctype="multipart/form-data"--%>
