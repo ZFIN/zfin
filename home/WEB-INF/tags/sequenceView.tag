@@ -24,7 +24,7 @@
                             </td>
 
                             <td  width="35%">
-                                <a href="/action/blast/download-sequence?<%=LookupStrings.ACCESSION%>=${sequence.dbLink.accessionNumber}">
+                                <a href="/action/blast/download-sequence?${LookupStrings.ACCESSION}=${sequence.dbLink.accessionNumber}">
                                     [Download]
                                 </a>
                             </td>

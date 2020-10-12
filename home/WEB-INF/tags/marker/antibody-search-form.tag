@@ -201,7 +201,7 @@
         document.getElementById("antibodyCriteria.assay").value = 'Any';
         document.getElementById("antibodyCriteria.clonalType3").checked = true;
         document.getElementById("antibodyCriteria.zircOnly2").checked = true;
-        document.getElementById("maxDisplayRecords").value = <%= PaginationBean.MAX_DISPLAY_RECORDS_DEFAULT %>;
+        document.getElementById("maxDisplayRecords").value = ${PaginationBean.MAX_DISPLAY_RECORDS_DEFAULT};
         document.getElementById("startStage").selectedIndex = 0;
         document.getElementById("endStage").selectedIndex = document.getElementById("endStage").options.length - 1;
         document.getElementById("antibodyCriteria.includeSubstructures1").checked = true;
@@ -240,7 +240,7 @@
             // if not defined, then keep going
         }
         var form = document.getElementById("Antibody Search");
-        var pageField = document.getElementById("<%= PaginationBean.PAGE %>");
+        var pageField = document.getElementById("${PaginationBean.PAGE}");
         if (pageField != null)
             pageField.value = page;
         try {

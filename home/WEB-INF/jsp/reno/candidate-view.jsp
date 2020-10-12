@@ -30,7 +30,7 @@ Candidate:
                 <%-- todo: set action=unlock--%>
 
                 <input type="submit" value="Unlock"
-                        onclick="document.forms.candidateform.action.value = '<%= CandidateBean.UNLOCK_RECORD %>';">
+                        onclick="document.forms.candidateform.action.value = '${CandidateBean.UNLOCK_RECORD}';">
             </c:if>
             <c:if test="${!formBean.ownerViewing}">
                 <!-- todo: replace with link tag for person, once link tag supports person -->
@@ -42,7 +42,7 @@ Candidate:
         <c:otherwise>
             <%--todo: set action=lock--%>
             <input type="submit" value="Lock and Edit"
-                    onclick="document.forms.candidateform.action.value = '<%= CandidateBean.LOCK_RECORD %>';">
+                    onclick="document.forms.candidateform.action.value = '${CandidateBean.LOCK_RECORD}';">
         </c:otherwise>
     </c:choose>
 
@@ -76,7 +76,7 @@ Candidate:
                 <br>
                     <%--todo: set action=savenote--%>
                 <input type="submit" value="Save note" style="margin-top: .3em;"
-                        onclick="document.forms.candidateform.action.value = '<%= CandidateBean.SAVE_NOTE %>';">
+                        onclick="document.forms.candidateform.action.value = '${CandidateBean.SAVE_NOTE}';">
             </td>
 
         </tr>

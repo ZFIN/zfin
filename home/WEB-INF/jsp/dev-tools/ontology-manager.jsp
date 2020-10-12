@@ -9,7 +9,7 @@
 <span style="width:300px">
 </span>
 
-Ontologies loaded and available for use: (${fn:length(formBean.ontologyManager.ontologyMap)} of <%=OntologyManager.NUMBER_OF_SERIALIZABLE_ONTOLOGIES%>)
+Ontologies loaded and available for use: (${fn:length(formBean.ontologyManager.ontologyMap)} of ${OntologyManager.NUMBER_OF_SERIALIZABLE_ONTOLOGIES})
 <script type="text/javascript" src="/gwt/org.zfin.gwt.lookup.Lookup/org.zfin.gwt.lookup.Lookup.nocache.js"></script>
 
 <table width="100%">

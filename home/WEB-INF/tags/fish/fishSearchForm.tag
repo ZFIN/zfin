@@ -287,7 +287,7 @@
             // if not defined, then keep going
         }
         var form = document.getElementById("fish-search-form");
-        var pageField = document.getElementById("<%= PaginationBean.PAGE %>");
+        var pageField = document.getElementById("${PaginationBean.PAGE}");
         if (pageField != null)
             pageField.value = page;
 

@@ -28,12 +28,12 @@
             <b title="Global Reference used on this page" id="Def-Pub-field">Enter Pub ID:</b>
         </td>
         <td>
-            <form:input path="<%= AntibodyUpdateDetailBean.AB_DEFPUB_ZDB_ID%>" size="25" id="Def-Pub"
+            <form:input path="${AntibodyUpdateDetailBean.AB_DEFPUB_ZDB_ID}" size="25" id="Def-Pub"
                         onblur="updateSelectionBox(this.value);"
                         onkeydown="k = (navigator.appName == 'Netscape') ? event.which : window.event.keyCode;
 		                        if (k == 13 ) { getPubDetail(this.value);}"/>
             <span id="def-pub-error-message">
-                <form:errors path="<%= AntibodyUpdateDetailBean.AB_DEFPUB_ZDB_ID%>"
+                <form:errors path="${AntibodyUpdateDetailBean.AB_DEFPUB_ZDB_ID}"
                              cssClass="error indented-error"/>
             </span>
         </td>

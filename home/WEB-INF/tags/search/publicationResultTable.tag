@@ -3,9 +3,9 @@
 
 <%@attribute name="results" required="true" type="java.util.List" %>
 
-<c:set var="abstrct" value="<%= ResultService.ABSTRACT %>"/>
-<c:set var="authors" value="<%= ResultService.AUTHORS %>"/>
-<c:set var="journal" value="<%= ResultService.JOURNAL %>"/>
+<c:set var="abstrct" value="${ResultService.ABSTRACT}"/>
+<c:set var="authors" value="${ResultService.AUTHORS}"/>
+<c:set var="journal" value="${ResultService.JOURNAL}"/>
 
 <table class="table-results searchresults" style="display: none;">
     <tr>

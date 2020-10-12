@@ -33,7 +33,7 @@
                     </td>
 
                     <td align=center>
-                            <A class="devtools" HREF="/action/<%= LoginController.LOGOUT%>">Logout</a>
+                            <A class="devtools" HREF="/action/${LoginController.LOGOUT}">Logout</a>
                     </td>
                 </tr>
             </table>

@@ -12,7 +12,7 @@
 </div>
 
 
-<form:form name="formBean" commandName="<%=LookupStrings.FORM_BEAN%>"
+<form:form name="formBean" commandName="${LookupStrings.FORM_BEAN}"
            method="get" action="/action/profile/person/search/execute"
         >
     <table width="100%" class="searchform">

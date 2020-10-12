@@ -8,14 +8,14 @@
 <html>
 <form:form action="do-submit" commandName="formBean" method="post">
     <label for="antibodyName" class="indented-label">Antibody name:</label>
-    <form:input path="<%= CreateAntibodyFormBean.NEW_AB_NAME%>" size="25"
+    <form:input path="${CreateAntibodyFormBean.NEW_AB_NAME}" size="25"
                 onkeypress="return noenter(event)"></form:input>
-    <form:errors path="<%= CreateAntibodyFormBean.NEW_AB_NAME%>" cssClass="error indented-error"/>
+    <form:errors path="${CreateAntibodyFormBean.NEW_AB_NAME}" cssClass="error indented-error"/>
     <p>
         <label for="antibodyPublicationZdbID" class="indented-label">Publication:</label>
-            <form:input path="<%= CreateAntibodyFormBean.AB_PUBLICATION_ZDB_ID%>" size="25"
+            <form:input path="${CreateAntibodyFormBean.AB_PUBLICATION_ZDB_ID}" size="25"
                         onkeypress="return noenter(event)"></form:input>
-            <form:errors path="<%= CreateAntibodyFormBean.AB_PUBLICATION_ZDB_ID%>" cssClass="error indented-error" value="${formBean.antibodyPublicationZdbID}"/>
+            <form:errors path="${CreateAntibodyFormBean.AB_PUBLICATION_ZDB_ID}" cssClass="error indented-error" value="${formBean.antibodyPublicationZdbID}"/>
 
     <p>
         <input type=submit name=s_new value="Submit new Antibody">

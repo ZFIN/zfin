@@ -114,7 +114,7 @@
     <authz:authorize access="hasRole('root')">
         <span id="enter-pub-id" style="display: none;">
                 <strong title="Global Reference used on this page" id="Def-Pub-field">Enter Pub ID:</strong><form:input
-                path="<%= AntibodyBean.AB_NEWPUB_ZDB_ID%>" size="20"></form:input>
+                path="${AntibodyBean.AB_NEWPUB_ZDB_ID}" size="20"></form:input>
               <input value="Add this publication"
                      onclick="associatePublication('antibody-citation-associate-publication?entityID=${formBean.antibody.zdbID}<c:if test="${formBean.orderBy == 'author'}">&orderBy=author</c:if><c:if test="${formBean.orderBy == 'date'}">&orderBy=date</c:if><c:if test="${formBean.update}">&update=true</c:if>');"
                      type="button">

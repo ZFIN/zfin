@@ -50,15 +50,15 @@
                 <tr>
                     <td>
                             <%--<label for="nomenclaturePublicationZdbID" class="indented-label" />--%>
-                        <form:label path="<%= RunBean.NOMENCLATURE_PUBLICATION_ZDB_ID%>"
+                        <form:label path="${RunBean.NOMENCLATURE_PUBLICATION_ZDB_ID}"
                                     cssClass="indented-label">Nomenclature Publication:</form:label>
 
-                        <form:input path="<%= RunBean.NOMENCLATURE_PUBLICATION_ZDB_ID%>" size="30"/>
+                        <form:input path="${RunBean.NOMENCLATURE_PUBLICATION_ZDB_ID}" size="30"/>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <zfin2:errors path="<%= RunBean.NOMENCLATURE_PUBLICATION_ZDB_ID%>"/>
+                        <zfin2:errors path="${RunBean.NOMENCLATURE_PUBLICATION_ZDB_ID}"/>
                     </td>
                 </tr>
 
@@ -68,7 +68,7 @@
                         <tr>
                             <td>
                                 Orthology Publication:
-                                <form:input path="<%= RunBean.ORTHOLOGY_PUBLICATION_ZDB_ID%>" size="30"/>
+                                <form:input path="${RunBean.ORTHOLOGY_PUBLICATION_ZDB_ID}" size="30"/>
                             </td>
                         </tr>
                         <tr>
@@ -78,7 +78,7 @@
                                         Orthology publication required to save changes!
                                     </div>
                                 </c:if>
-                                <zfin2:errors errorResult="${errors}" path="<%= RunBean.ORTHOLOGY_PUBLICATION_ZDB_ID%>"/>
+                                <zfin2:errors errorResult="${errors}" path="${RunBean.ORTHOLOGY_PUBLICATION_ZDB_ID}"/>
                             </td>
                         </tr>
                     </c:when>
@@ -86,10 +86,10 @@
                     <c:otherwise>
                         <tr>
                             <td>
-                                <form:label path="<%= RunBean.RELATION_PUBLICATION_ZDB_ID%>"
+                                <form:label path="${RunBean.RELATION_PUBLICATION_ZDB_ID}"
                                             cssClass="indented-label">Link Publication:
                                 </form:label>
-                                <form:input path="<%= RunBean.RELATION_PUBLICATION_ZDB_ID%>" size="30"/>
+                                <form:input path="${RunBean.RELATION_PUBLICATION_ZDB_ID}" size="30"/>
                             </td>
                             <c:if test="${formBean.relationPublicationZdbID eq null}">
                                 <td class="Error">Relation publication required to save changes!</td>
@@ -100,7 +100,7 @@
                                 <c:if test="${formBean.relationPublicationZdbID eq null}">
                                     <div class="Error">Relation publication required to save changes!</div>
                                 </c:if>
-                                <zfin2:errors errorResult="${errors}" path="<%= RunBean.RELATION_PUBLICATION_ZDB_ID%>"/>
+                                <zfin2:errors errorResult="${errors}" path="${RunBean.RELATION_PUBLICATION_ZDB_ID}"/>
                             </td>
                         </tr>
                     </c:otherwise>
@@ -113,7 +113,7 @@
                             <a onclick="setRemainderToNovel = function () {
                                     var really = confirm('Really set remainder to novel?');
                                     if(really){
-                                    window.location = '/action/reno/candidate/inqueue/${formBean.run.zdbID}?action=<%=RunBean.FINISH_REMAINDER%>' ;
+                                    window.location = '/action/reno/candidate/inqueue/${formBean.run.zdbID}?action=${RunBean.FINISH_REMAINDER}' ;
                                     }
                                     else{
                                     alert('too chicken?') ;
@@ -176,7 +176,7 @@
                         <img src=/images/glasses.jpg height=25 border=0 alt="look"></a></td>
                     <td>
                         <c:if test="${formBean.relationPublicationZdbID ne null || formBean.orthologyPublicationZdbID ne null}">
-                        <a href="/action/reno/candidate-view/${rc.zdbID}?action=<%=CandidateBean.LOCK_RECORD%>">
+                        <a href="/action/reno/candidate-view/${rc.zdbID}?action=${CandidateBean.LOCK_RECORD}">
                             <img src=/images/lock_yellow.jpg height=25 border=0 alt="lock"></a>
                         </c:if>
                     <td>

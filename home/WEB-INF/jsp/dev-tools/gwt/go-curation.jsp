@@ -27,20 +27,20 @@
 
 <br>
 
-<div id="<%=GoCurationModule.GO_ADD_LINK%>"></div>
+<div id="${GoCurationModule.GO_ADD_LINK}"></div>
 
 <br>
 
-<div id="<%=GoCurationModule.GO_EVIDENCE_ADD%>"></div>
+<div id="${GoCurationModule.GO_EVIDENCE_ADD}"></div>
 
 <br>
 <table width="100%" bgcolor="#33cc99" border="0" cellpadding="0">
     <tr><td>
-    <div id="<%=GoCurationModule.GO_EVIDENCE_DISPLAY_FILTER%>"></div>
+    <div id="${GoCurationModule.GO_EVIDENCE_DISPLAY_FILTER}"></div>
 </td></tr></table>
 <br>
 
-<div id="<%=GoCurationModule.GO_EVIDENCE_DISPLAY%>"></div>
+<div id="${GoCurationModule.GO_EVIDENCE_DISPLAY}"></div>
 <%--
 Add ontology name as a hidden field
 --%>

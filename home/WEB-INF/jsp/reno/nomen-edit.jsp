@@ -23,13 +23,13 @@
 
 <div style="border: 1px solid #ccc; background: #bbddf6; width: 28em; padding: .25em;">
     <label for="geneName" class="indented-label">Gene Name:</label>
-    <form:input path="<%= CandidateBean.NEW_GENE_NAME%>" size="25"></form:input>
-    <form:errors path="<%= CandidateBean.NEW_GENE_NAME%>" cssClass="error indented-error"/>
+    <form:input path="${CandidateBean.NEW_GENE_NAME}" size="25"></form:input>
+    <form:errors path="${CandidateBean.NEW_GENE_NAME}" cssClass="error indented-error"/>
     <br>
     <label for="geneAbbreviation" class="indented-label">Gene Symbol:</label>
-    <form:input path="<%= CandidateBean.NEW_ABBREVIATION%>" size="25"></form:input>
+    <form:input path="${CandidateBean.NEW_ABBREVIATION}" size="25"></form:input>
     <br>
-    <form:errors path="<%= CandidateBean.NEW_ABBREVIATION%>" cssClass="error indented-error"/>
+    <form:errors path="${CandidateBean.NEW_ABBREVIATION}" cssClass="error indented-error"/>
     <br>
 
     <label for="humanOrthologAbbrev" class="indented-label">Human:</label>
@@ -45,22 +45,22 @@
 that would be better --%>
     <label for="humanOrthologyEvidence1"><%= EvidenceCode.Code.AA.name()%>
     </label>
-    <form:checkbox path="<%= CandidateBean.HUMAN_ORTHOLOGY_EVIDENCE %>"
+    <form:checkbox path="${CandidateBean.HUMAN_ORTHOLOGY_EVIDENCE}"
                    value="<%= EvidenceCode.Code.AA.name()%>"></form:checkbox>
     <label for="humanOrthologyEvidence2"><%= EvidenceCode.Code.CL.name()%>
     </label>
-    <form:checkbox path="<%= CandidateBean.HUMAN_ORTHOLOGY_EVIDENCE %>"
+    <form:checkbox path="${CandidateBean.HUMAN_ORTHOLOGY_EVIDENCE}"
                    value="<%= EvidenceCode.Code.CL.name()%>"></form:checkbox>
     <label for="humanOrthologyEvidence3"><%= EvidenceCode.Code.NT.name()%>
     </label>
-    <form:checkbox path="<%= CandidateBean.HUMAN_ORTHOLOGY_EVIDENCE %>"
+    <form:checkbox path="${CandidateBean.HUMAN_ORTHOLOGY_EVIDENCE}"
                    value="<%= EvidenceCode.Code.NT.name()%>"></form:checkbox>
 
     <label for="humanOrthologyEvidence4"><%= EvidenceCode.Code.PT.name()%>
     </label>
-    <form:checkbox path="<%= CandidateBean.HUMAN_ORTHOLOGY_EVIDENCE %>"
+    <form:checkbox path="${CandidateBean.HUMAN_ORTHOLOGY_EVIDENCE}"
                    value="<%= EvidenceCode.Code.PT.name()%>"></form:checkbox>
-    <form:errors path="<%= CandidateBean.HUMAN_ORTHOLOGY_EVIDENCE %>" cssClass="error indented-error"/>
+    <form:errors path="${CandidateBean.HUMAN_ORTHOLOGY_EVIDENCE}" cssClass="error indented-error"/>
 
 
     <form:errors path="humanOrthologAbbrev.entrezAccession.entrezAccNum" cssClass="error indented-error"/>
@@ -77,22 +77,22 @@ that would be better --%>
 
     <label for="mouseOrthologyEvidence1"><%= EvidenceCode.Code.AA.name()%>
     </label>
-    <form:checkbox path="<%= CandidateBean.MOUSE_ORTHOLOGY_EVIDENCE %>"
+    <form:checkbox path="${CandidateBean.MOUSE_ORTHOLOGY_EVIDENCE}"
                    value="<%= EvidenceCode.Code.AA.name()%>"></form:checkbox>
     <label for="mouseOrthologyEvidence2"><%= EvidenceCode.Code.CL.name()%>
     </label>
-    <form:checkbox path="<%= CandidateBean.MOUSE_ORTHOLOGY_EVIDENCE %>"
+    <form:checkbox path="${CandidateBean.MOUSE_ORTHOLOGY_EVIDENCE}"
                    value="<%= EvidenceCode.Code.CL.name()%>"></form:checkbox>
     <label for="mouseOrthologyEvidence3"><%= EvidenceCode.Code.NT.name()%>
     </label>
-    <form:checkbox path="<%= CandidateBean.MOUSE_ORTHOLOGY_EVIDENCE %>"
+    <form:checkbox path="${CandidateBean.MOUSE_ORTHOLOGY_EVIDENCE}"
                    value="<%= EvidenceCode.Code.NT.name()%>"></form:checkbox>
     <label for="mouseOrthologyEvidence4"><%= EvidenceCode.Code.PT.name()%>
     </label>
-    <form:checkbox path="<%= CandidateBean.MOUSE_ORTHOLOGY_EVIDENCE %>"
+    <form:checkbox path="${CandidateBean.MOUSE_ORTHOLOGY_EVIDENCE}"
                    value="<%= EvidenceCode.Code.PT.name()%>"></form:checkbox>
 
-    <form:errors path="<%= CandidateBean.MOUSE_ORTHOLOGY_EVIDENCE %>" cssClass="error indented-error"/>
+    <form:errors path="${CandidateBean.MOUSE_ORTHOLOGY_EVIDENCE}" cssClass="error indented-error"/>
     <form:errors path="mouseOrthologAbbrev.entrezAccession.entrezAccNum" cssClass="error indented-error"/>
 
     <br>
@@ -109,17 +109,17 @@ that would be better --%>
     <br>
     <br>
 
-    <label for="<%= RunBean.NOMENCLATURE_PUBLICATION_ZDB_ID%>" class="indented-label">Nomen Pub:</label>
-    <form:input path="<%= RunBean.NOMENCLATURE_PUBLICATION_ZDB_ID%>" size="25"></form:input>
-    <form:errors path="<%= RunBean.NOMENCLATURE_PUBLICATION_ZDB_ID%>" cssClass="error indented-error"/>
+    <label for="${RunBean.NOMENCLATURE_PUBLICATION_ZDB_ID}" class="indented-label">Nomen Pub:</label>
+    <form:input path="${RunBean.NOMENCLATURE_PUBLICATION_ZDB_ID}" size="25"></form:input>
+    <form:errors path="${RunBean.NOMENCLATURE_PUBLICATION_ZDB_ID}" cssClass="error indented-error"/>
     <br>
-    <label for="<%= RunBean.ORTHOLOGY_PUBLICATION_ZDB_ID%>" class="indented-label">Orthology Pub:</label>
-    <form:input path="<%= RunBean.ORTHOLOGY_PUBLICATION_ZDB_ID%>" size="25"></form:input>
-    <form:errors path="<%= RunBean.ORTHOLOGY_PUBLICATION_ZDB_ID%>" cssClass="error indented-error"/>
+    <label for="${RunBean.ORTHOLOGY_PUBLICATION_ZDB_ID}" class="indented-label">Orthology Pub:</label>
+    <form:input path="${RunBean.ORTHOLOGY_PUBLICATION_ZDB_ID}" size="25"></form:input>
+    <form:errors path="$RunBean.ORTHOLOGY_PUBLICATION_ZDB_ID}" cssClass="error indented-error"/>
     <br><br>
     <%--todo: set action=done--%>
     <input value="done" type="submit" style="margin-left: 15em; margin-top: .5em; margin-bottom:.25em;"
-           onclick=" document.forms.candidateform.action.value = '<%=CandidateBean.DONE%>'; ">
+           onclick=" document.forms.candidateform.action.value = '${CandidateBean.DONE}'; ">
     <form:errors path="action" cssClass="error"/>
 
 </div>

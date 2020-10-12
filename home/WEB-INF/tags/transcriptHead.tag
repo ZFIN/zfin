@@ -23,7 +23,7 @@
             <td>
                     ${transcript.status.display}
                 <c:if test="${transcript.withdrawn}">
-                    <%=EntityPresentation.WITHDRAWN%>
+                    ${EntityPresentation.WITHDRAWN}
                 </c:if>
             </td>
         </tr>

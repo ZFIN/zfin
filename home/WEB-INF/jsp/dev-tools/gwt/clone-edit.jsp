@@ -53,7 +53,7 @@
     </tr>
     <tr>
         <td>
-            <div id="<%=CloneEditController.genesTitle%>"></div>
+            <div id="${CloneEditController.genesTitle}"></div>
             <div id="<%=StandardDivNames.geneDiv%>"></div>
         </td>
     </tr>

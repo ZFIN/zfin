@@ -24,7 +24,7 @@
 
     <div class='panes'>
         <div id='information'>
-            <form:form method="post" commandName="<%=LookupStrings.FORM_BEAN%>"
+            <form:form method="post" commandName="${LookupStrings.FORM_BEAN}"
                        action="/action/profile/lab/edit/${lab.zdbID}" enctype="multipart/form-data"
                        cssClass="edit-box mark-dirty">
                 <table>

@@ -17,10 +17,10 @@
 
 <script type="text/javascript">
     var MarkerProperties= {
-        <%=GoMarkerEditController.STATE_STRING%>: "<%=GoMarkerEditController.GO_EVIDENCE_DISPLAY%>",
-    <%=GoMarkerEditController.LOOKUP_ZDBID%> : "<%= zdbID%>",
-    <%=GoMarkerEditController.GENE_ZDBID%>: "<%= markerID %>",
-    <%=GoMarkerEditController.PUB_ZDBID%> : "<%= pubID%>"
+        ${GoMarkerEditController.STATE_STRING}: "${GoMarkerEditController.GO_EVIDENCE_DISPLAY}",
+    ${GoMarkerEditController.LOOKUP_ZDBID} : "<%= zdbID%>",
+    ${GoMarkerEditController.GENE_ZDBID}: "<%= markerID %>",
+    ${GoMarkerEditController.PUB_ZDBID} : "<%= pubID%>"
     <%--pubID : "<%= pubID%>"--%>
     <%--goID : "<%= goID%>"--%>
     } 

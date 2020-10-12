@@ -11,8 +11,8 @@
 <table cellpadding="10">
     <tr align="left">
         <td colspan="1">
-            <div id="<%=GoMarkerEditController.GO_ADD_LINK%>"></div>
-            <div id="<%=GoMarkerEditController.GO_EVIDENCE_ADD%>"></div>
+            <div id="${GoMarkerEditController.GO_ADD_LINK}"></div>
+            <div id="${GoMarkerEditController.GO_EVIDENCE_ADD}"></div>
         </td>
     </tr>
     <tr align="center">

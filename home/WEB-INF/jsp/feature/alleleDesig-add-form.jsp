@@ -6,14 +6,14 @@
 <html>
 <form:form  commandName="formBean" method="post">
     <label for="lineDesig" class="indented-label">Company/Lab Line Designation:</label>
-    <form:input path="<%= CreateAlleleDesignationFormBean.NEW_LINE_DESIG%>" size="25"
+    <form:input path="${CreateAlleleDesignationFormBean.NEW_LINE_DESIG}" size="25"
                 onkeypress="return noenter(event)"></form:input>
-    <form:errors path="<%= CreateAlleleDesignationFormBean.NEW_LINE_DESIG%>" cssClass="error indented-error"/>
+    <form:errors path="${CreateAlleleDesignationFormBean.NEW_LINE_DESIG}" cssClass="error indented-error"/>
     <p>
         <label for="lineLocation" class="indented-label">Institution/Company:</label>
-            <form:input path="<%= CreateAlleleDesignationFormBean.NEW_LINE_LOCN%>" size="25"
+            <form:input path="${CreateAlleleDesignationFormBean.NEW_LINE_LOCN}" size="25"
                         onkeypress="return noenter(event)"></form:input>
-            <form:errors path="<%= CreateAlleleDesignationFormBean.NEW_LINE_LOCN%>" cssClass="error indented-error"/>
+            <form:errors path="${CreateAlleleDesignationFormBean.NEW_LINE_LOCN}" cssClass="error indented-error"/>
 
     <p>
         <input type=submit name=s_new value="Submit new LineDesignation">

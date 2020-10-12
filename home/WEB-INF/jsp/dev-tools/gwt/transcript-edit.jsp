@@ -55,15 +55,15 @@
         </td>
         <td colspan="1" valign="top">
             <div class="summaryTitle">Contained in Clone</div>
-            <div id="<%=TranscriptEditController.cloneRelatedDiv%>"></div>
+            <div id="${TranscriptEditController.cloneRelatedDiv}"></div>
             <a target="_blank" href="/action/marker/clone-add" class="external">Add New Clone</a>
         </td>
     </tr>
     <tr>
         <td colspan="2">
             <div class="summaryTitle"
-                 id="<%=TranscriptEditController.targetedGenesTitle%>">Targeted Genes:</div>
-            <div id="<%=TranscriptEditController.targetedGeneDiv%>"></div>
+                 id="${TranscriptEditController.targetedGenesTitle}">Targeted Genes:</div>
+            <div id="${TranscriptEditController.targetedGeneDiv}"></div>
         </td>
 
     </tr>
@@ -71,9 +71,9 @@
         <td>
             <a name="proteinLookup"/>
             <div class="summaryTitle"
-                 id="<%=TranscriptEditController.proteinTitle%>">Protein Products:</div>
-            <div id="<%=TranscriptEditController.proteinDiv%>"></div>
-            <div id="<%=TranscriptEditController.newProteinDiv%>"></div>
+                 id="${TranscriptEditController.proteinTitle}">Protein Products:</div>
+            <div id="${TranscriptEditController.proteinDiv}"></div>
+            <div id="${TranscriptEditController.newProteinDiv}"></div>
         </td>
     </tr>
     <tr>
@@ -91,7 +91,7 @@
         <td colspan="2">
             <a name="sequence"></a>
             <div class="summaryTitle">RNA Sequences:</div>
-            <div id="<%=TranscriptEditController.rnaDiv%>"></div>
+            <div id="${TranscriptEditController.rnaDiv}"></div>
         </td>
      </tr>
 </table>
