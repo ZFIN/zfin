@@ -23,7 +23,7 @@
 <script language="javascript" src="/gwt/org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
 
 <%--define the lookups up here--%>
-<div id="<%=StandardDivNames.directAttributionDiv%>"></div>
+<div id="${StandardDivNames.directAttributionDiv}"></div>
 
 <br>
 

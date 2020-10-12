@@ -31,49 +31,49 @@
 
 <table cellpadding="10">
     <tr><td align="center" colspan="2">
-        <div id="<%=StandardDivNames.viewDiv%>"></div>
+        <div id="${StandardDivNames.viewDiv}"></div>
     </td></tr>
     <tr>
         <td>
-            <div id="<%=StandardDivNames.headerDiv%>"></div>
+            <div id="${StandardDivNames.headerDiv}"></div>
             <br>
             <b>Alias:</b>
-            <div id="<%=StandardDivNames.previousNameDiv%>"></div>
+            <div id="${StandardDivNames.previousNameDiv}"></div>
             <br>
         </td>
         <td valign="top">
-            <div id="<%=StandardDivNames.publicationLookupDiv%>"></div>
+            <div id="${StandardDivNames.publicationLookupDiv}"></div>
         </td>
     </tr>
     <tr>
         <td colspan="2">
             <h3>Antibody Data</h3>
-            <div id="<%=StandardDivNames.dataDiv%>"></div>
+            <div id="${StandardDivNames.dataDiv}"></div>
         </td>
     </tr>
     <tr>
         <td>
             <b>Antigen Genes:</b>
-            <div id="<%=StandardDivNames.geneDiv%>"></div>
+            <div id="${StandardDivNames.geneDiv}"></div>
         </td>
     </tr>
     <tr>
         <td colspan="2">
             <b>Notes:</b>
             <br>
-            <div id="<%=StandardDivNames.noteDiv%>"></div>
+            <div id="${StandardDivNames.noteDiv}"></div>
         </td>
     </tr>
     <tr>
         <td colspan="2">
             <b>Suppliers:</b>
             <br>
-            <div id="<%=StandardDivNames.supplierDiv%>"></div>
+            <div id="${StandardDivNames.supplierDiv}"></div>
         </td>
     </tr>
     <tr>
         <td colspan="2">
-            <div id="<%=StandardDivNames.directAttributionDiv%>"></div>
+            <div id="${StandardDivNames.directAttributionDiv}"></div>
         </td>
     </tr>
 </table>

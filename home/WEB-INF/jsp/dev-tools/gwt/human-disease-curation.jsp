@@ -24,7 +24,7 @@
     &nbsp;<input type="submit" value="Submit"/>
 </form>
 
-<div id="<%=StandardDivNames.directAttributionDiv%>"></div>
+<div id="${StandardDivNames.directAttributionDiv}"></div>
 
 <div id="humanDiseaseZone"></div>
 

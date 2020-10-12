@@ -24,7 +24,7 @@
 </label>
     &nbsp;<input type="submit" value="Submit"/>
 </form>
-<div id="<%=StandardDivNames.directAttributionDiv%>"></div>
+<div id="${StandardDivNames.directAttributionDiv}"></div>
 <span id="show-hide-experiments"></span>
 
 <div id="display-experiment"></div>

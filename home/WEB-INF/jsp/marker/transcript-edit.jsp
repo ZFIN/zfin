@@ -18,33 +18,33 @@
 
 <table cellpadding="10">
     <tr><td align="center" colspan="2">
-        <div id="<%=StandardDivNames.viewDiv%>"></div>
+        <div id="${StandardDivNames.viewDiv}"></div>
     </td></tr>
     <tr>
         <td>
-            <div id="<%=StandardDivNames.headerDiv%>"></div>
+            <div id="${StandardDivNames.headerDiv}"></div>
             <br>
             <br>
-            <div id="<%=StandardDivNames.directAttributionDiv%>"></div>
+            <div id="${StandardDivNames.directAttributionDiv}"></div>
             <br>
             <div class="summaryTitle">Alias:</div>
-            <div id="<%=StandardDivNames.previousNameDiv%>"></div>
+            <div id="${StandardDivNames.previousNameDiv}"></div>
         </td>
         <td valign="top">
-            <div id="<%=StandardDivNames.publicationLookupDiv%>"></div>
+            <div id="${StandardDivNames.publicationLookupDiv}"></div>
         </td>
     </tr>
     <tr>
         <td colspan="2">
             <div class="summaryTitle">Notes:</div>
-            <div id="<%=StandardDivNames.noteDiv%>"></div>
+            <div id="${StandardDivNames.noteDiv}"></div>
         </td>
     </tr>
     <tr>
         <td>
             <div class="summaryTitle">Produced by Genes:</div>
             Please add this relationship on the gene page
-            <div id="<%=StandardDivNames.geneDiv%>"></div>
+            <div id="${StandardDivNames.geneDiv}"></div>
         </td>
         <td colspan="1" valign="top">
             <div class="summaryTitle">Contained in Clone</div>
@@ -77,7 +77,7 @@
     <tr>
         <td colspan="2">
             <div class="summaryTitle">Supporting Sequences:</div>
-            <div id="<%=StandardDivNames.dbLinkDiv%>"></div>
+            <div id="${StandardDivNames.dbLinkDiv}"></div>
         </td>
     </tr>
     <tr>

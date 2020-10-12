@@ -26,31 +26,31 @@
 
 <table cellpadding="10">
     <tr><td align="center" colspan="2">
-        <div id="<%=StandardDivNames.viewDiv%>"></div>
+        <div id="${StandardDivNames.viewDiv}"></div>
     </td></tr>
     <tr>
         <td>
-            <div id="<%=StandardDivNames.headerDiv%>"></div>
+            <div id="${StandardDivNames.headerDiv}"></div>
             <br>
-            <div id="<%=StandardDivNames.supplierDiv%>"></div>
+            <div id="${StandardDivNames.supplierDiv}"></div>
             <br>
             <b>Previous Name(s):</b>
-            <div id="<%=StandardDivNames.previousNameDiv%>"></div>
+            <div id="${StandardDivNames.previousNameDiv}"></div>
         </td>
         <td valign="top">
-            <div id="<%=StandardDivNames.publicationLookupDiv%>"></div>
+            <div id="${StandardDivNames.publicationLookupDiv}"></div>
         </td>
     </tr>
     <tr>
         <td colspan="2">
             <b>Notes:</b>
             <br>
-            <div id="<%=StandardDivNames.noteDiv%>"></div>
+            <div id="${StandardDivNames.noteDiv}"></div>
         </td>
     </tr>
     <tr>
         <td>
-            <div id="<%=StandardDivNames.geneDiv%>"></div>
+            <div id="${StandardDivNames.geneDiv}"></div>
         </td>
     </tr>
     <tr>
@@ -62,12 +62,12 @@
         <td colspan="2">
             <b>Sequences:</b>
             <br>
-            <div id="<%=StandardDivNames.dbLinkDiv%>"></div>
+            <div id="${StandardDivNames.dbLinkDiv}"></div>
         </td>
     </tr>
     <tr>
         <td colspan="2">
-            <div id="<%=StandardDivNames.directAttributionDiv%>"></div>
+            <div id="${StandardDivNames.directAttributionDiv}"></div>
             <br>
         </td>
     </tr>

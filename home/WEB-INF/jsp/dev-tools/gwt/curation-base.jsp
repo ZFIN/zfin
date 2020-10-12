@@ -22,7 +22,7 @@
 
 <%--define the lookups up here--%>
 
-<div id="<%=StandardDivNames.directAttributionDiv%>"></div>
+<div id="${StandardDivNames.directAttributionDiv}"></div>
 
 
 <%--</authz:authorize>--%>

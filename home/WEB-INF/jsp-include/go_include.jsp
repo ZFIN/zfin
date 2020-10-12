@@ -17,7 +17,7 @@
     </tr>
     <tr align="center">
         <td colspan="2">
-            <div id="<%=StandardDivNames.viewDiv%>"></div>
+            <div id="${StandardDivNames.viewDiv}"></div>
         </td>
     </tr>
     <tr align="center">
@@ -27,7 +27,7 @@
     </tr>
     <tr align="center">
         <td colspan="2">
-            <div id="<%=StandardDivNames.directAttributionDiv%>"></div>
+            <div id="${StandardDivNames.directAttributionDiv}"></div>
         </td>
     </tr>
 </table>

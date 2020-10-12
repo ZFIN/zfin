@@ -15,6 +15,7 @@ import org.zfin.gwt.root.event.RelatedEntityChangeListener;
 import org.zfin.gwt.root.event.RelatedEntityEvent;
 import org.zfin.gwt.root.ui.MarkerEditCallBack;
 import org.zfin.gwt.root.ui.PublicationSessionKey;
+import org.zfin.gwt.root.ui.StandardDivNames;
 
 import java.util.List;
 
@@ -29,9 +30,9 @@ public final class CloneEditController extends AbstractFullMarkerEditController<
     // gui elements
     private ViewClickLabel cloneViewClickLabel = new ViewClickLabel("[View Clone]", "/", "Discard");
     private HTML relatedGeneTitle = new HTML("Contains Gene:");
-    private CloneHeaderEdit cloneHeaderEdit = new CloneHeaderEdit(headerDiv);
-    private CloneBox cloneBox = new CloneBox(dataDiv);
-    private RelatedMarkerBox relatedGenesBox = new RelatedGeneLookupBox(MarkerRelationshipEnumTypeGWTHack.CLONE_CONTAINS_GENE, true, geneDiv);
+    private CloneHeaderEdit cloneHeaderEdit = new CloneHeaderEdit(StandardDivNames.headerDiv);
+    private CloneBox cloneBox = new CloneBox(StandardDivNames.dataDiv);
+    private RelatedMarkerBox relatedGenesBox = new RelatedGeneLookupBox(MarkerRelationshipEnumTypeGWTHack.CLONE_CONTAINS_GENE, true, StandardDivNames.geneDiv);
     private SupplierNameList supplierNameList = new SupplierNameList();
     private DBLinkTable dbLinkTable = new HandledDBLinkTable();
 
