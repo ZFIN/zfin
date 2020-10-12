@@ -31,7 +31,7 @@ begin
  
 
  --   let errorHint = "mutant_fast_search_new create another index";
-    create index mutant_fast_search_mrkr_zdb_id_foreign_key_index_transient
+    create index mutant_fast_search_data_zdb_id_foreign_key_index_transient
       on mutant_fast_search_new (mfs_data_zdb_id);
    --   fillfactor 100
    --   in idxdbs1;
@@ -50,7 +50,7 @@ begin
      -- let errorHint = "rename table ";
       alter table  mutant_fast_search_new rename to mutant_fast_search;
 
-      alter index  mutant_fast_search_data_zdb_id_foreign_key_index_transient
+      alter index mutant_fast_search_data_zdb_id_foreign_key_index_transient
         rename to mutant_fast_search_data_zdb_id_foreign_key_index;
       alter index  mutant_fast_search_genox_zdb_id_foreign_key_index_transient 
         rename to mutant_fast_search_genox_zdb_id_foreign_key_index;
@@ -67,10 +67,10 @@ begin
          add constraint mutant_fast_search_primary_key_index
 	primary key using index mutant_fast_search_primary_key_index;
 
-   --   let errorHint = "mfs_mrkr_zdb_id FK constraint";
-      alter table mutant_fast_search add constraint mutant_fast_search_mrkr_Zdb_id_foreign_key_odc
+   --   let errorHint = "mfs_data_zdb_id FK constraint";
+      alter table mutant_fast_search add constraint mutant_fast_search_data_Zdb_id_foreign_key_odc
         foreign key (mfs_data_zdb_id)
-        references marker (mrkr_zdb_id)
+        references zdb_active_data (zactvd_zdb_id)
         on delete cascade ;
   
 

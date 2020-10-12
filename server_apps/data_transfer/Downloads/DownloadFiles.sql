@@ -1823,8 +1823,8 @@ and mrkr_zdb_id = geneid
 and dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
 and fdbc.fdbcont_fdb_db_id = fdb.fdb_db_pk_id
 and fdb.fdb_db_name = 'UniProtKB'
-and mfs_mrkr_zdb_id = geneid
-and substring(mfs_mrkr_zdb_id from 1 for 8) in ('ZDB-GENE', 'ZDB-EFG-', 'ZDB-LNCR','ZDB-LINC','ZDB-TRNA','ZDB-RRNA','ZDB-MIRN','ZDB-SNOR','ZDB-NCRN','ZDB-PIRN')
+and mfs_data_zdb_id = geneid
+and substring(mfs_data_zdb_id from 1 for 8) in ('ZDB-GENE', 'ZDB-EFG-', 'ZDB-LNCR','ZDB-LINC','ZDB-TRNA','ZDB-RRNA','ZDB-MIRN','ZDB-SNOR','ZDB-NCRN','ZDB-PIRN')
 and phenos_phenox_pk_id = phenox_pk_id
 and phenox_fig_zdb_id = fig_zdb_id
 and fig_source_zdb_id = zdb_id
@@ -1844,8 +1844,8 @@ and fdbc.fdbcont_fdb_db_id=fdb.fdb_db_pk_id
 and szm_object_type = mrkr_type
 and mrkr_zdb_id = geneid
 and fdb.fdb_db_name = 'UniProtKB'
-and mfs_mrkr_zdb_id = mrel_mrkr_1_zdb_id
-and substring(mfs_mrkr_zdb_id from 1 for 10) in ('ZDB-MRPHLN', 'ZDB-TALEN-', 'ZDB-CRISPR')
+and mfs_data_zdb_id = mrel_mrkr_1_zdb_id
+and substring(mfs_data_zdb_id from 1 for 10) in ('ZDB-MRPHLN', 'ZDB-TALEN-', 'ZDB-CRISPR')
 and mrel_mrkr_2_zdb_id = geneid
 and phenos_phenox_pk_id = phenox_pk_id
 and phenox_fig_zdb_id = fig_zdb_id
@@ -1905,10 +1905,10 @@ and geneid = dblink_linked_recid
 and dblink_fdbcont_zdb_id = fdbc.fdbcont_zdb_id
 and fdbc.fdbcont_fdb_db_id=fdb.fdb_db_pk_id
 and fdb.fdb_db_name = 'UniProtKB'
-and mfs_mrkr_zdb_id = geneid
+and mfs_data_zdb_id = geneid
 and szm_object_type = mrkr_type
 and mrkr_zdb_id = geneid
-and substring(mfs_mrkr_zdb_id from 1 for 8) in ('ZDB-GENE', 'ZDB-EFG-', 'ZDB-LNCR','ZDB-LINC','ZDB-TRNA','ZDB-RRNA','ZDB-MIRN','ZDB-SNOR','ZDB-NCRN','ZDB-PIRN')
+and substring(mfs_data_zdb_id from 1 for 8) in ('ZDB-GENE', 'ZDB-EFG-', 'ZDB-LNCR','ZDB-LINC','ZDB-TRNA','ZDB-RRNA','ZDB-MIRN','ZDB-SNOR','ZDB-NCRN','ZDB-PIRN')
 and phenos_phenox_pk_id = phenox_pk_id
 and phenox_fig_zdb_id = fig_zdb_id
 and fig_source_zdb_id = zdb_id
@@ -1928,8 +1928,8 @@ and fdbc.fdbcont_fdb_db_id = fdb.fdb_db_pk_id
 and szm_object_type = mrkr_type
 and mrkr_zdb_id = geneid
 and fdb.fdb_db_name = 'UniProtKB'
-and mfs_mrkr_zdb_id = mrel_mrkr_1_zdb_id
-and substring(mfs_mrkr_zdb_id from 1 for 10) in ('ZDB-MRPHLN', 'ZDB-TALEN-', 'ZDB-CRISPR')
+and mfs_data_zdb_id = mrel_mrkr_1_zdb_id
+and substring(mfs_data_zdb_id from 1 for 10) in ('ZDB-MRPHLN', 'ZDB-TALEN-', 'ZDB-CRISPR')
 and mrel_mrkr_2_zdb_id = geneid
 and phenos_phenox_pk_id = phenox_pk_id
 and phenox_fig_zdb_id = fig_zdb_id
@@ -2207,7 +2207,7 @@ DROP TABLE tmp_mutation_details;
 create temp table tmp_dumpCleanPheno as
  select  psg_id as phenos_id,
          pg_id as phenox_id,
-         mfs_mrkr_zdb_id as gene_Zdb_id,
+         mfs_data_zdb_id as gene_Zdb_id,
          '                                                                     ' as fish_full_name,
                  pg_fig_zdb_id as fig_id,
                  fig_source_zdb_id as pub_id,
@@ -2225,12 +2225,12 @@ create temp table tmp_dumpCleanPheno as
     and psg_pg_id = pg_id
     and mfs_genox_zdb_id = genox_zdb_id
     and fig_zdb_id = pg_fig_zdb_id
-    and substring(mfs_mrkr_zdb_id from 1 for 8) in ('ZDB-GENE', 'ZDB-EFG-', 'ZDB-LNCR','ZDB-LINC','ZDB-TRNA','ZDB-RRNA','ZDB-MIRN','ZDB-SNOR','ZDB-NCRN','ZDB-PIRN')
+    and substring(mfs_data_zdb_id from 1 for 8) in ('ZDB-GENE', 'ZDB-EFG-', 'ZDB-LNCR','ZDB-LINC','ZDB-TRNA','ZDB-RRNA','ZDB-MIRN','ZDB-SNOR','ZDB-NCRN','ZDB-PIRN')
     and not exists (Select 'x' from fish_str where fishstr_fish_Zdb_id = genox_fish_Zdb_id)
 union
  select  psg_id,
          pg_id as phenox_id,
-         mfs_mrkr_zdb_id as gene_Zdb_id,
+         mfs_data_zdb_id as gene_Zdb_id,
          '                                                                     ' as fish_full_name,
          pg_fig_zdb_id as fig_id,
          fig_source_zdb_id,
@@ -2250,7 +2250,7 @@ union
     and psg_pg_id = pg_id
     and genox_fish_zdb_id = fishstr_fish_Zdb_id
     and mfs_genox_zdb_id = genox_zdb_id
-    and substring(mfs_mrkr_zdb_id from 1 for 8) in ('ZDB-GENE', 'ZDB-EFG-', 'ZDB-LNCR','ZDB-LINC','ZDB-TRNA','ZDB-RRNA','ZDB-MIRN','ZDB-SNOR','ZDB-NCRN','ZDB-PIRN')
+    and substring(mfs_data_zdb_id from 1 for 8) in ('ZDB-GENE', 'ZDB-EFG-', 'ZDB-LNCR','ZDB-LINC','ZDB-TRNA','ZDB-RRNA','ZDB-MIRN','ZDB-SNOR','ZDB-NCRN','ZDB-PIRN')
 ;
 
 \echo 'update gene_display name'

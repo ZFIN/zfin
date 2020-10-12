@@ -21,9 +21,9 @@ select featassay_feature_zdb_id, featassay_mutagen, featassay_mutagee, feature_t
 drop view mutagenMutagee;
 
 create view cleanPhenotype as
-select mfs_mrkr_zdb_id, genox_fish_zdb_id, genox_exp_zdb_id
+select mfs_data_zdb_id, genox_fish_zdb_id, genox_exp_zdb_id
  from mutant_fast_search, fish_experiment
-  where mfs_mrkr_zdb_id like 'ZDB-GENE%'
+  where mfs_data_zdb_id like 'ZDB-GENE%'
  and mfs_genox_zdb_id = genox_zdb_id
 ;
 \copy (select * from cleanPhenotype) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/intermineData/cleanPhenotype/cleanPhenotype.txt' with delimiter as '|' null as '';

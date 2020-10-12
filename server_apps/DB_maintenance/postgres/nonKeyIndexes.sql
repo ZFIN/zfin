@@ -330,7 +330,7 @@ create index mesh_heading_pub_foreign_key_index on mesh_heading(mh_pub_zdb_id);
 create index mesh_heading_id_foreign_key_index on mesh_heading_qualifier(mhq_mesh_heading_id);
 create index mesh_mesht_mesh_qualifier_id_foreign_key_index on mesh_heading_qualifier(mhq_mesht_mesh_qualifier_id);
 create index mutant_fast_search_genox_zdb_id_foreign_key_index on mutant_fast_search(mfs_genox_zdb_id);
-create index mutant_fast_search_mrkr_zdb_id_foreign_key_index on mutant_fast_search(mfs_mrkr_zdb_id);
+create index mutant_fast_search_mrkr_zdb_id_foreign_key_index on mutant_fast_search(mfs_data_zdb_id);
 create index noi_organism_index on ncbi_ortholog(noi_taxid);
 create index noer_fdbcont_zdb_id_fk_index on ncbi_ortholog_external_reference(noer_fdbcont_zdb_id);
 create index noer_other_species_ncbi_gene_id_fk_index on ncbi_ortholog_external_reference(noer_other_species_ncbi_gene_id);

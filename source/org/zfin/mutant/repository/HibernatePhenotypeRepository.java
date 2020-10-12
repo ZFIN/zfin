@@ -499,7 +499,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         String sql = " select count(*) from ( " +
                 "     select distinct pg_fig_zdb_id  " +
                 "      from phenotype_source_generated, mutant_fast_search  " +
-                "     where mfs_mrkr_zdb_id =  :markerZdbId " +
+                "     where mfs_data_zdb_id =  :markerZdbId " +
                 "       and pg_genox_zdb_id = mfs_genox_zdb_id  " +
                 "       and exists (select NOTnormal.psg_id  " +
                 "                     from phenotype_observation_generated NOTnormal  " +
@@ -518,7 +518,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
                 "     select " +
                 "pg_fig_zdb_id, f.fig_label " +
                 "from phenotype_source_generated, mutant_fast_search, figure f " +
-                "where mfs_mrkr_zdb_id = :markerZdbId " +
+                "where mfs_data_zdb_id = :markerZdbId " +
                 "and f.fig_zdb_id= pg_fig_zdb_id " +
                 "and pg_genox_zdb_id = mfs_genox_zdb_id " +
                 "and exists " +
@@ -603,7 +603,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         String sql = " " +
                 "   select p.zdb_id , p.pub_mini_ref " +
                 "        from phenotype_source_generated, figure, publication p, mutant_fast_search  " +
-                "       where mfs_mrkr_zdb_id = :markerZdbId  " +
+                "       where mfs_data_zdb_id = :markerZdbId  " +
                 "         and mfs_genox_zdb_id = pg_genox_zdb_id  " +
                 "         and pg_fig_zdb_id = fig_zdb_id  " +
                 "         and fig_source_zdb_id = zdb_id  " +
@@ -634,7 +634,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         String sql = " select count(*) from ( " +
                 "   select distinct pub_mini_ref, zdb_id  " +
                 "        from phenotype_source_generated, figure, publication, mutant_fast_search  " +
-                "       where mfs_mrkr_zdb_id = :markerZdbId  " +
+                "       where mfs_data_zdb_id = :markerZdbId  " +
                 "         and mfs_genox_zdb_id = pg_genox_zdb_id  " +
                 "         and pg_fig_zdb_id = fig_zdb_id  " +
                 "         and fig_source_zdb_id = zdb_id  " +
@@ -714,7 +714,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
                 "                mutant_fast_search mfs , " +
                 "                phenotype_source_generated psg               " +
                 "            where " +
-                "                mfs.mfs_mrkr_Zdb_id = :markerZdbId               " +
+                "                mfs.mfs_data_Zdb_id = :markerZdbId               " +
                 "                and mfs.mfs_genox_zdb_id = psg.pg_genox_zdb_id     " +
                 "     ) " +
                 " ";
@@ -737,7 +737,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
                 "                mutant_fast_search mfs , " +
                 "                phenotype_source_generated psg               " +
                 "            where " +
-                "                mfs.mfs_mrkr_Zdb_id = :markerZdbId               " +
+                "                mfs.mfs_data_Zdb_id = :markerZdbId               " +
                 "                and mfs.mfs_genox_zdb_id = psg.pg_genox_zdb_id    " +
                 "     ) " +
                 " ";
@@ -1001,7 +1001,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         String sql = "select distinct damo_pk_id " +
                      "  from disease_annotation_model, mutant_fast_search " +
                      " where mfs_genox_zdb_id = damo_genox_zdb_id " +
-                     "   and mfs_mrkr_zdb_id = :geneZdbID ";
+                     "   and mfs_data_zdb_id = :geneZdbID ";
 
         List<BigInteger> modelZdbIds = (List<BigInteger>) HibernateUtil.currentSession().createSQLQuery(sql)
                 .setString("geneZdbID", gene.getZdbID())

@@ -616,7 +616,7 @@ public class HibernateMutantRepository implements MutantRepository {
                 "                                     where fmrel1.fmrel_zdb_id != fmrel2.fmrel_zdb_id and fmrel1.fmrel_ftr_zdb_id = fmrel2.fmrel_ftr_zdb_id" +
                 "                                     and fmrel2.fmrel_type != 'created by')";
 
-        final String geneQueryString = "select distinct mfs_mrkr_zdb_id, psg_short_name, zdb_id, accession_no as accession_no," +
+        final String geneQueryString = "select distinct mfs_data_zdb_id, psg_short_name, zdb_id, accession_no as accession_no," +
                 "                e1a.term_ont_id as psg_e1a_id, e1b.term_ont_id as psg_e1b_id, e2a.term_ont_id as psg_e2a_id, " +
                 "                e2b.term_ont_id as psg_e2b_id, quality.term_ont_id as psg_quality_id, genox_fish_zdb_id" +
                 "                        from mutant_fast_search" +
@@ -630,7 +630,7 @@ public class HibernateMutantRepository implements MutantRepository {
                 "                        left outer join term as e1b on e1b.term_zdb_id = psg_e1b_zdb_id" +
                 "                        left outer join term as e2a on e2a.term_zdb_id = psg_e2a_zdb_id" +
                 "                        left outer join term as e2b on e2b.term_zdb_id = psg_e2b_zdb_id" +
-                "                        where get_obj_type(mfs_mrkr_zdb_id) not in ('CRISPR','TALEN','MRPHLNO')";
+                "                        where get_obj_type(mfs_data_zdb_id) not in ('CRISPR','TALEN','MRPHLNO')";
 
         final String fishQueryString = "select distinct fish.fish_zdb_id, psg_short_name, zdb_id, accession_no as accession_no," +
                 "                e1a.term_ont_id as psg_e1a_id, e1b.term_ont_id as psg_e1b_id, e2a.term_ont_id as psg_e2a_id, e2b.term_ont_id as psg_e2b_id, quality.term_ont_id as psg_quality_id" +
