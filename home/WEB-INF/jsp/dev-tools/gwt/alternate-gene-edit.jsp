@@ -3,20 +3,13 @@
 
 
 <%--<authz:authorize access="hasRole('root')">--%>
-<%
-    String zdbID = request.getParameter("zdbID");
-    if(zdbID==null){
-        zdbID = "AlternateZDB-GENE-001103-2" ;
-    }
-    String personID = request.getParameter("personID");
-    if(personID==null){
-        personID = "ZDB-PERS-960805-676";
-    }
-%>
-
+<c:set var="zdbID" value="${param.zdbID}" />
+<c:if test="${empty zdbID}">
+    <c:set var="zdbID" value="AlternateZDB-GENE-001103-2" />
+</c:if>
 <script type="text/javascript">
     var MarkerProperties= {
-        zdbID : "<%= zdbID %>"
+        zdbID : "${zdbID}"
     } ;
 
 </script>

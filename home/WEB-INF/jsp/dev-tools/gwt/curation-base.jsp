@@ -3,16 +3,14 @@
 
 
 <%--Adds the GOEditController.--%>
-<%
-    String pubID = request.getParameter("zdbID");
-    if(pubID ==null){
-        pubID = "ZDB-PUB-080701-3" ;
-    }
-%>
+<c:set var="pubID" value="${param.zdbID}" />
+<c:if test="${empty pubID}">
+    <c:set var="pubID" value="ZDB-PUB-080701-3" />
+</c:if>
 
 <script type="text/javascript">
     var curationProperties = {
-        zdbID : "<%=pubID%>",
+        zdbID : "${pubID}",
         moduleType: "ENVIRONMENT_CURATION",
         debug: "false"
     }

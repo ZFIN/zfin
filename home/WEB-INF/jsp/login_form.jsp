@@ -14,11 +14,11 @@
     </div>
     </zfin:databaseLock>
 
-    <% if (request.getParameter("error") != null) { %>
-    <div class="alert alert-danger" role="alert">
-        Incorrect username or password. Please try again or contact <a href="mailto:zfinadmn@zfin.org">zfinadmn@zfin.org</a>.
-    </div>
-    <% } %>
+    <c:if test="${!empty param.error}">
+        <div class="alert alert-danger" role="alert">
+            Incorrect username or password. Please try again or contact <a href="mailto:zfinadmn@zfin.org">zfinadmn@zfin.org</a>.
+        </div>
+    </c:if>
 
     <form id="login" name="login" action="/action/j_security-check" method="POST" accept-charset="UTF-8">
         <input type='hidden' name='_spring_security_remember_me' value="true"/>

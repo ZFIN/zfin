@@ -8,7 +8,7 @@
 
 
 <p>
-<%= request.getAttribute(WebAttributes.ACCESS_DENIED_403)%>
+${param.get(WebAttributes.ACCESS_DENIED_403)}
 
 <p>
 

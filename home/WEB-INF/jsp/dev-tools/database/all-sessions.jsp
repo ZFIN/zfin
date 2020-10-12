@@ -2,8 +2,8 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <script>
-    dbname = <%= request.getParameter("dbname")%>;
-    state = <%= request.getParameter("active")%>;
+    dbname = ${param.dbname};
+    state = ${param.active};
 </script>
 <table cellpadding="2" cellspacing="1" border="0" width="70%">
     <tr>

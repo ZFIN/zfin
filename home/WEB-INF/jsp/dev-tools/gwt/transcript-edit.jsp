@@ -4,18 +4,15 @@
 
 
 <%--<authz:authorize access="hasRole('root')">--%>
-
-<%
-    String zdbID = request.getParameter("zdbID");
-    if(zdbID==null){
-        zdbID = "ZDB-TSCRIPT-090929-6229" ;
-    }
-%>
+<c:set var="zdbID" value="${param.zdbID}" />
+<c:if test="${empty zdbID}">
+    <c:set var="zdbID" value="ZDB-TSCRIPT-090929-6229" />
+</c:if>
 
 
 <script type="text/javascript">
     var MarkerProperties= {
-        zdbID : "<%= zdbID %>"
+        zdbID : "${zdbID}"
     } ;
 
 </script>

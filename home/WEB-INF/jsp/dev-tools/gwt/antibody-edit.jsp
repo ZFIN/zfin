@@ -3,26 +3,16 @@
 
 
 <%--<authz:authorize access="hasRole('root')">--%>
-<%
-    String zdbID = request.getParameter("zdbID");
-    if(zdbID==null){
-        zdbID = "ZDB-ATB-110131-2" ;
-    }
-
-    String antibodyDefPubZdbID = request.getParameter("antibodyDefPubZdbID");
-//    if(antibodyDefPubZdbID==null){
-//        antibodyDefPubZdbID = "" ;
-//    }
-    String personID = request.getParameter("personID");
-    if(personID==null){
-        personID = "ZDB-PERS-960805-676";
-    }
-%>
+<c:set var="zdbID" value="${param.zdbID}" />
+<c:if test="${empty zdbID}">
+    <c:set var="zdbID" value="ZDB-ATB-110131-2" />
+</c:if>
+<c:set var="antibodyDefPubZdbID" value="${param.antibodyDefPubZdbID}" />
 
 <script type="text/javascript">
     var MarkerProperties= {
-        zdbID : "<%= zdbID %>",
-        antibodyDefPubZdbID: "<%=antibodyDefPubZdbID%>"
+        zdbID : "${zdbID}",
+        antibodyDefPubZdbID: "${antibodyDefPubZdbID}"
     } ;
 </script>
 

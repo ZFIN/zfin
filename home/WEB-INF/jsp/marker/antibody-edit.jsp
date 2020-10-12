@@ -1,10 +1,6 @@
 <%@ page import="org.zfin.gwt.root.ui.StandardDivNames" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<%
-    String antibodyDefPubZdbID = request.getParameter("antibodyDefPubZdbID");
-%>
-
 <script>
     if (opener != null)
         opener.fireCreateMarkerEvent();
@@ -13,7 +9,7 @@
 <script type="text/javascript">
     var MarkerProperties= {
         zdbID : "${formBean.marker.zdbID}",
-        antibodyDefPubZdbID: "<%=antibodyDefPubZdbID%>"
+        antibodyDefPubZdbID: "${param.antibodyDefPubZdbID}"
     } ;
 
 </script>
