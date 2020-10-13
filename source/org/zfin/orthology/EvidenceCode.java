@@ -43,13 +43,16 @@ public class EvidenceCode implements Comparable<EvidenceCode>, Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null)
+        }
+        if (o == null) {
             return false;
+        }
 
-        if (!(o instanceof EvidenceCode))
+        if (!(o instanceof EvidenceCode)) {
             return false;
+        }
 
         EvidenceCode that = (EvidenceCode) o;
         return !(code != null ? !code.equals(that.getCode()) : that.getCode() != null);
@@ -67,22 +70,4 @@ public class EvidenceCode implements Comparable<EvidenceCode>, Serializable {
                 '}';
     }
 
-    public enum Code {
-        AA,
-        CE,
-        CL,
-        FC,
-        NT,
-        OT,
-        PT;
-
-        public String toString() {
-            return name();
-        }
-
-        public String getString(){
-            return name() ;
-        }
-
-    }
 }
