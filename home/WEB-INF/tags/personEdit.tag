@@ -173,7 +173,7 @@
                 <zfin2:errors errorResult="${errors}" path="nonZfinPublications"/>
 
                 <p style="font-size: small;">If you would like to include a Zebrafish publication please contact
-                    <a href="mailto:<%=ZfinProperties.getAdminEmailAddresses()[0]%>">ZFIN</a>.<br/>
+                    <zfin2:mailTo>ZFIN</zfin2:mailTo>.<br/>
                 </p>
                 <br/>
                 <input type="submit" value="Save"/>
