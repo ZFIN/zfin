@@ -1,5 +1,5 @@
 <%@ tag import="org.zfin.ontology.Ontology" %>
-<%@ tag import="org.zfin.gwt.root.ui.LookupComposite" %>
+<%@ tag import="org.zfin.framework.presentation.LookupStrings" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ attribute name="formBean" type="org.zfin.anatomy.presentation.AnatomySearchBean" required="true" %>
@@ -21,7 +21,7 @@
             </td>
             <td rowspan="3" valign="top" align="right" width="5%">
                 <zfin2:lookup ontologyName="${Ontology.ANATOMY.toString()}"
-                              action="<%= LookupComposite.ACTION_ANATOMY_SEARCH %>"
+                              action="${LookupStrings.ACTION_ANATOMY_SEARCH}"
                               wildcard="true" useIdAsTerm="false" termsWithDataOnly="false"/>
             </td>
         </c:if>

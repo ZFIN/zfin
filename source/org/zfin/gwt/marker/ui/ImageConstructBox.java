@@ -2,6 +2,7 @@ package org.zfin.gwt.marker.ui;
 
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.dto.ImageDTO;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.event.RelatedEntityAdapter;
@@ -25,7 +26,7 @@ public class ImageConstructBox extends AbstractStackComposite<ImageDTO> { //Rela
     }
 
     public void initGUI() {
-        constructInput.setType(LookupComposite.CONSTRUCT_LOOKUP);
+        constructInput.setType(LookupStrings.CONSTRUCT_LOOKUP);
         constructInput.setInputName("construct_search");
         constructInput.setShowError(true);
         constructInput.setWildCard(false);

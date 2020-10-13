@@ -8,6 +8,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.*;
+import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.gwt.root.event.CheckSubsetEventHandler;
@@ -56,16 +57,6 @@ public class LookupComposite extends Composite implements Revertible {
     private boolean suggestBoxHasFocus = true;
     private boolean useTermInfoUpdates = true;
 
-    // lookup types
-    public final static String GENEDOM_AND_EFG = "GENEDOM_AND_EFG_LOOKUP";
-    public final static String GENEDOM = "GENEDOM";
-    public final static String MARKER_LOOKUP = "MARKER_LOOKUP";
-    public final static String ANTIBODY_LOOKUP = "ANTIBODY_LOOKUP";
-    public final static String TYPE_SUPPLIER = "SUPPLIER";
-    public final static String FEATURE_LOOKUP = "FEATURE_LOOKUP";
-    public final static String GDAG_TERM_LOOKUP = "GDAG_TERM_LOOKUP";
-    public static final String MARKER_LOOKUP_AND_TYPE = "MARKER_LOOKUP_AND_TYPE";
-    public static final String CONSTRUCT_LOOKUP = "CONSTRUCT_LOOKUP";
     private Collection<String> types = new ArrayList<String>(10);
     private OntologyDTO ontology;
     private String pubZdb;
@@ -74,12 +65,6 @@ public class LookupComposite extends Composite implements Revertible {
     // variables
     private final static String EMPTY_STRING = "&nbsp;";
 
-    // actions
-    public final static String ACTION_ANATOMY_SEARCH = "ANATOMY_SEARCH";
-    public final static String ACTION_TERM_SEARCH = "TERM_SEARCH";
-    public final static String ACTION_GENEDOM_AND_EFG_SEARCH = "GENEDOM_AND_EFG_SEARCH";
-    public final static String ACTION_MARKER_ATTRIBUTE = "MARKER_ATTRIBUTE";
-    public final static String ACTION_FEATURE_ATTRIBUTE = "FEATURE_ATTRIBUTE";
     private SubmitAction action = null;
     private HighlightAction highlightAction = null;
     private String onclick;
@@ -91,7 +76,7 @@ public class LookupComposite extends Composite implements Revertible {
     protected String inputName = "search";
     protected boolean showError = true;
     protected String buttonText = null;
-    protected String type = GDAG_TERM_LOOKUP;
+    protected String type = LookupStrings.GDAG_TERM_LOOKUP;
     protected boolean wildCard = true;
     protected int suggestBoxWidth = 30;
     protected String oId = null;
@@ -113,14 +98,14 @@ public class LookupComposite extends Composite implements Revertible {
     private TermDTO selectedTerm;
 
     public LookupComposite() {
-        types.add(TYPE_SUPPLIER);
-        types.add(MARKER_LOOKUP);
-        types.add(MARKER_LOOKUP_AND_TYPE);
-        types.add(ANTIBODY_LOOKUP);
-        types.add(GENEDOM_AND_EFG);
-        types.add(FEATURE_LOOKUP);
-        types.add(GDAG_TERM_LOOKUP);
-        types.add(CONSTRUCT_LOOKUP);
+        types.add(LookupStrings.TYPE_SUPPLIER);
+        types.add(LookupStrings.MARKER_LOOKUP);
+        types.add(LookupStrings.MARKER_LOOKUP_AND_TYPE);
+        types.add(LookupStrings.ANTIBODY_LOOKUP);
+        types.add(LookupStrings.GENEDOM_AND_EFG);
+        types.add(LookupStrings.FEATURE_LOOKUP);
+        types.add(LookupStrings.GDAG_TERM_LOOKUP);
+        types.add(LookupStrings.CONSTRUCT_LOOKUP);
     }
 
     public LookupComposite(boolean useTermInfoUpdates) {

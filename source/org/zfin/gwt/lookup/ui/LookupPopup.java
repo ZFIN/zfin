@@ -2,7 +2,7 @@ package org.zfin.gwt.lookup.ui;
 
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.PopupPanel;
-import org.zfin.gwt.root.ui.LookupComposite;
+import org.zfin.framework.presentation.LookupStrings;
 
 /**
  */
@@ -38,7 +38,7 @@ public class LookupPopup extends PopupPanel {
 
     public void showPopup(String zdbID) {
         String url;
-        if (type.equals(LookupComposite.MARKER_LOOKUP)) {
+        if (type.equals(LookupStrings.MARKER_LOOKUP)) {
             url = MARKER_BASE_URL + zdbID;
         } else {
             url = ANATOMY_BASE_URL + zdbID;

@@ -1,7 +1,7 @@
 <%@ tag import="org.zfin.fish.presentation.SortBy" %>
 <%@ tag import="org.zfin.framework.presentation.PaginationBean" %>
-<%@ tag import="org.zfin.gwt.root.ui.LookupComposite" %>
 <%@ tag import="org.zfin.ontology.Ontology" %>
+<%@ tag import="org.zfin.framework.presentation.LookupStrings" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 
@@ -106,9 +106,9 @@
                     </c:if>
                     hiddenNames:"anatomyTermNames",
                     hiddenIds:"anatomyTermIDs",
-                    type:"<%= LookupComposite.GDAG_TERM_LOOKUP %>",
+                    type:"${LookupStrings.GDAG_TERM_LOOKUP}",
                     ontologyName:"${Ontology.AOGO.toString()}",
-                    action:"<%= LookupComposite.ACTION_ANATOMY_SEARCH %>",
+                    action:"${LookupStrings.ACTION_ANATOMY_SEARCH}",
                     width:30,
                     wildcard:false,
                     termsWithDataOnly:true,

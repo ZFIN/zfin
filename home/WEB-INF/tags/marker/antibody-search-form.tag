@@ -1,8 +1,8 @@
-<%@ tag import="org.zfin.gwt.root.ui.LookupComposite" %>
 <%@ tag import="org.zfin.ontology.Ontology" %>
 <%@ tag import="org.zfin.util.FilterType" %>
 <%@ tag import="org.zfin.framework.presentation.PaginationBean" %>
 <%@ tag import="org.zfin.antibody.AntibodyType" %>
+<%@ tag import="org.zfin.framework.presentation.LookupStrings" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ attribute name="formBean" type="org.zfin.antibody.presentation.AntibodySearchFormBean" required="true" %>
@@ -70,7 +70,7 @@
                         </c:if>
                         hiddenNames: "antibodyCriteria.anatomyTermNames",
                         hiddenIds: "antibodyCriteria.anatomyTermIDs",
-                        type: "<%= LookupComposite.GDAG_TERM_LOOKUP %>",
+                        type: "${LookupStrings.GDAG_TERM_LOOKUP}",
                         ontologyName: "${Ontology.ANATOMY.toString()}",
                         width: 40,
                         wildcard: false,

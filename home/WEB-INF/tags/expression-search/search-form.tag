@@ -1,5 +1,5 @@
-<%@ tag import="org.zfin.gwt.root.ui.LookupComposite" %>
 <%@ tag import="org.zfin.ontology.Ontology" %>
+<%@ tag import="org.zfin.framework.presentation.LookupStrings" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@attribute name="title" type="java.lang.String" required="true" %>
@@ -77,9 +77,9 @@
                     </c:if>
                     hiddenNames: "anatomyTermNames",
                     hiddenIds: "anatomyTermIDs",
-                    type: "<%= LookupComposite.GDAG_TERM_LOOKUP %>",
+                    type: "${LookupStrings.GDAG_TERM_LOOKUP}",
                     ontologyName: "${Ontology.ANATOMY.toString()}",
-                    action: "<%= LookupComposite.ACTION_ANATOMY_SEARCH %>",
+                    action: "${LookupStrings.ACTION_ANATOMY_SEARCH}",
                     width: 40,
                     wildcard: false,
                     termsWithDataOnly: true,

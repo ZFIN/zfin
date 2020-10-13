@@ -1,5 +1,5 @@
-<%@ page import="org.zfin.gwt.root.ui.LookupComposite" %>
 <%@ page import="org.zfin.ontology.Ontology" %>
+<%@ page import="org.zfin.framework.presentation.LookupStrings" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <jsp:useBean id="formBean" class="org.zfin.ontology.presentation.OntologyBean" scope="request"/>
@@ -18,7 +18,7 @@
             <td rowspan="3" valign="top" align="right" width="5%">
                 <span style="font-size: 12px">
                 Search Ontology: <zfin2:lookup ontologyName="${Ontology.AOGODO.toString()}"
-                                               action="<%= LookupComposite.ACTION_TERM_SEARCH %>"
+                                               action="${LookupStrings.ACTION_TERM_SEARCH}"
                                                wildcard="true" useIdAsTerm="true" termsWithDataOnly="false"/>
                     </span>
             </td>
