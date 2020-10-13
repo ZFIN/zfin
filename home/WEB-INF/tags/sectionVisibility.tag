@@ -1,14 +1,11 @@
-<%@ tag import="org.zfin.framework.presentation.SectionVisibility" %>
-<%
-    /*
+<%@ tag import="org.zfin.framework.presentation.SectionVisibilityAction" %>
+<%--
     This tag is used to display show/hide links on a given section.
     The section name and the visibility map is passed in.
     The third parameter is a boolean triggering to display the show/hide feature at all.
     If there are no data within the section to be expanded you probably do not
     want to offer a 'show' link.
-    */
-
-%>
+--%>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@attribute name="sectionName" type="java.lang.String" required="true" %>
@@ -20,9 +17,9 @@
 <%-- hyperlinke name attribute of links that need to be adjusted in order
      to keep the expansion/collapse state--%>
 <%@attribute name="hyperlinkName" type="java.lang.String" required="false" %>
-<% // Only in conjunction with the showAll tag some functions are defined %>
+<%-- Only in conjunction with the showAll tag some functions are defined --%>
 <%@attribute name="showAllUsed" type="java.lang.Boolean" required="false" %>
-<% // Name of section for display %>
+<%-- Name of section for display --%>
 <%@attribute name="displaySectionName" type="java.lang.String" required="false" %>
 
 <c:if test="${propertyName == null}">
@@ -113,7 +110,7 @@
         var addParameter = '${propertyName}';
         var removeParameter = '${propertyName}';
         if (show) {
-            addParameter += '<%= SectionVisibility.Action.SHOW_SECTION.toString()%>';
+            addParameter += '${SectionVisibilityAction.SHOW_SECTION.toString()}';
             addParameter += '=' + sectionID;
             if (link.indexOf(addParameter) == -1 && link.indexOf("?") == -1) {
                 link += "?" + addParameter;
@@ -121,7 +118,7 @@
                 link += "&" + addParameter;
             }
         } else {
-            removeParameter += '<%= SectionVisibility.Action.SHOW_SECTION.toString()%>';
+            removeParameter += '${SectionVisibilityAction.SHOW_SECTION.toString()}';
             removeParameter += '=' + sectionID;
             link = link.replace("&" + removeParameter, "");
             link = link.replace("?" + removeParameter, "");

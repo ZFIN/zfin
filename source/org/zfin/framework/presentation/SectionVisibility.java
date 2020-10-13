@@ -49,8 +49,9 @@ public class SectionVisibility<K extends Enum<K>> {
      */
     public SectionVisibility(Class<K> enumType, boolean show) {
         super();
-        if (enumType == null)
+        if (enumType == null) {
             throw new NullPointerException("No class provided");
+        }
         sectionDisplayVisibility = new EnumMap<K, Boolean>(enumType);
         sectionDataExistence = new EnumMap<K, Boolean>(enumType);
         K[] enums = enumType.getEnumConstants();
@@ -90,8 +91,9 @@ public class SectionVisibility<K extends Enum<K>> {
      */
     public void setVisibility(K enumeration, boolean show) {
         Boolean section = sectionDisplayVisibility.get(enumeration);
-        if (section == null)
+        if (section == null) {
             throw new NullPointerException("No enumeration " + enumeration.toString() + " found!");
+        }
 
         sectionDisplayVisibility.put(enumeration, show);
     }
@@ -104,8 +106,9 @@ public class SectionVisibility<K extends Enum<K>> {
      */
     public void setSectionData(K enumeration, boolean exists) {
         Boolean section = sectionDataExistence.get(enumeration);
-        if (section == null)
+        if (section == null) {
             throw new NullPointerException("No enumeration " + enumeration.toString() + " found!");
+        }
 
         sectionDataExistence.put(enumeration, exists);
     }
@@ -118,8 +121,9 @@ public class SectionVisibility<K extends Enum<K>> {
      */
     public boolean isVisible(K enumeration) {
         Boolean section = sectionDisplayVisibility.get(enumeration);
-        if (section == null)
+        if (section == null) {
             throw new NullPointerException("No enumeration " + enumeration.toString() + " found!");
+        }
 
         return sectionDisplayVisibility.get(enumeration);
     }
@@ -132,8 +136,9 @@ public class SectionVisibility<K extends Enum<K>> {
      */
     public boolean hasData(K enumeration) {
         Boolean section = sectionDataExistence.get(enumeration);
-        if (section == null)
+        if (section == null) {
             throw new NullPointerException("No enumeration " + enumeration.toString() + " found!");
+        }
 
         return sectionDataExistence.get(enumeration);
     }
@@ -142,8 +147,9 @@ public class SectionVisibility<K extends Enum<K>> {
         K enumeration = getSectionEnumeration(sectionName);
 
         Boolean section = sectionDisplayVisibility.get(enumeration);
-        if (section == null)
+        if (section == null) {
             throw new NullPointerException("No enumeration " + enumeration.toString() + " found!");
+        }
 
         return sectionDisplayVisibility.get(enumeration);
     }
@@ -157,15 +163,18 @@ public class SectionVisibility<K extends Enum<K>> {
     public boolean hasData(String sectionName) {
         K enumeration = null;
         for (K enumerationIntern : sectionDataExistence.keySet()) {
-            if (enumerationIntern.toString().equals(sectionName))
+            if (enumerationIntern.toString().equals(sectionName)) {
                 enumeration = enumerationIntern;
+            }
         }
-        if (enumeration == null)
+        if (enumeration == null) {
             throw new RuntimeException("No enumeration element with name " + sectionName + " found");
+        }
 
         Boolean section = sectionDataExistence.get(enumeration);
-        if (section == null)
+        if (section == null) {
             throw new NullPointerException("No enumeration " + enumeration.toString() + " found!");
+        }
 
         return sectionDataExistence.get(enumeration);
     }
@@ -177,8 +186,9 @@ public class SectionVisibility<K extends Enum<K>> {
      */
     public boolean isHasData() {
         for (K enumeration : sectionDataExistence.keySet()) {
-            if (sectionDataExistence.get(enumeration))
+            if (sectionDataExistence.get(enumeration)) {
                 return true;
+            }
         }
         return false;
     }
@@ -190,8 +200,9 @@ public class SectionVisibility<K extends Enum<K>> {
      */
     public boolean isAllSectionsVisible() {
         for (K enumerationIntern : sectionDisplayVisibility.keySet()) {
-            if (!isVisible(enumerationIntern))
+            if (!isVisible(enumerationIntern)) {
                 return false;
+            }
         }
         return true;
     }
@@ -203,8 +214,9 @@ public class SectionVisibility<K extends Enum<K>> {
      */
     public boolean isAllSectionsInvisible() {
         for (K enumerationIntern : sectionDisplayVisibility.keySet()) {
-            if (isVisible(enumerationIntern))
+            if (isVisible(enumerationIntern)) {
                 return false;
+            }
         }
         return true;
     }
@@ -242,8 +254,9 @@ public class SectionVisibility<K extends Enum<K>> {
      * @param sectionNames string
      */
     public void setSectionVisible(String sectionNames) {
-        if (sectionNames == null)
+        if (sectionNames == null) {
             throw new RuntimeException("No section name found");
+        }
         String[] sectionNameArray = sectionNames.split(",");
         setSectionsVisible(sectionNameArray);
     }
@@ -292,8 +305,9 @@ public class SectionVisibility<K extends Enum<K>> {
     public List<String> getVisibleSections() {
         List<String> visibleSection = new ArrayList<String>();
         for (K enumeration : sectionDisplayVisibility.keySet()) {
-            if (isVisible(enumeration))
+            if (isVisible(enumeration)) {
                 visibleSection.add(enumeration.toString());
+            }
         }
         return visibleSection;
     }
@@ -306,8 +320,9 @@ public class SectionVisibility<K extends Enum<K>> {
     public String[] getVisibleSectionsWithData() {
         List<String> visibleSection = new ArrayList<String>();
         for (K enumeration : sectionDisplayVisibility.keySet()) {
-            if (isVisible(enumeration) && hasData(enumeration))
+            if (isVisible(enumeration) && hasData(enumeration)) {
                 visibleSection.add(enumeration.toString());
+            }
         }
         return visibleSection.toArray(new String[visibleSection.size()]);
     }
@@ -321,8 +336,9 @@ public class SectionVisibility<K extends Enum<K>> {
     public String[] getSectionsWithData() {
         List<String> sectionsWithData = new ArrayList<String>();
         for (K enumeration : sectionDisplayVisibility.keySet()) {
-            if (hasData(enumeration))
+            if (hasData(enumeration)) {
                 sectionsWithData.add(enumeration.toString());
+            }
         }
         return sectionsWithData.toArray(new String[sectionsWithData.size()]);
     }
@@ -330,31 +346,14 @@ public class SectionVisibility<K extends Enum<K>> {
     private K getSectionEnumeration(String sectionName) {
         K enumeration = null;
         for (K enumerationIntern : sectionDisplayVisibility.keySet()) {
-            if (enumerationIntern.toString().equals(sectionName))
+            if (enumerationIntern.toString().equals(sectionName)) {
                 enumeration = enumerationIntern;
+            }
         }
-        if (enumeration == null)
+        if (enumeration == null) {
             throw new RuntimeException("No enumeration element with name " + sectionName + " found");
+        }
         return enumeration;
     }
 
-    public static enum Action {
-        SHOW_SECTION("showSection"),
-        HIDE_SECTION("hideSection"),
-        SHOW_ALL("showAll"),
-        HIDE_ALL("hideAll");
-        private String value;
-
-        private Action(String value) {
-            this.value = value;
-        }
-
-        public String toString() {
-            return value;
-        }
-
-        public static Action[] getActionItems() {
-            return values();
-        }
-    }
 }
