@@ -23,7 +23,7 @@ class PubmedUtils {
 
     static GPathResult getFullText(pmcId) {
         def url = "https://www.ncbi.nlm.nih.gov/pmc/oai/oai.cgi?verb=GetRecord&identifier=oai:pubmedcentral.nih.gov:$pmcId&metadataPrefix=pmc"
-        new XmlSlurper().parse(url)
+        getParser().parse(url)
     }
 
     static GPathResult getPdfMetaDataRecord(pmcId){
@@ -37,7 +37,7 @@ class PubmedUtils {
         writer.flush()
         writer.close()
         connection.connect()
-        new XmlSlurper().parse(connection.inputStream)
+        getParser().parse(connection.inputStream)
     }
 
 //
@@ -98,7 +98,7 @@ class PubmedUtils {
         writer.flush()
         writer.close()
         connection.connect()
-        new XmlSlurper().parse(connection.inputStream)
+        getParser().parse(connection.inputStream)
     }
 
 
@@ -117,14 +117,14 @@ class PubmedUtils {
         writer.flush()
         writer.close()
         connection.connect()
-        new XmlSlurper().parse(connection.inputStream)
+        getParser().parse(connection.inputStream)
     }
 
     static Iterator<GPathResult> searchPubmed(query, daysBack = 500) {
         def url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/" +
                 "esearch.fcgi?db=pubmed&api_key=47c9eadd39b0bcbfac58e3e911930d143109&term=${URLEncoder.encode(query, "UTF-8")}" +
                 "&usehistory=y&reldate=${daysBack}&datetype=edat"
-        def searchResult = new XmlSlurper().parse(url)
+        def searchResult = getParser().parse(url)
         Integer count = searchResult.Count.toInteger()
         String queryKey = searchResult.QueryKey.text()
         String webEnv = searchResult.WebEnv.text()
@@ -282,7 +282,7 @@ class PubmedUtils {
                 attempt += 1
                 println("attempt" + "$attempt: $fetchUrl")
                 try {
-                    def articles = new XmlSlurper().parse(fetchUrl).PubmedArticle
+                    def articles = getParser().parse(fetchUrl).PubmedArticle
                     if (articles.size() > 0) {
                         println("articleSize: " + articles.size())
                         articles.each { queue.push(it) }
@@ -296,8 +296,13 @@ class PubmedUtils {
             }
             println("fetching done")
             throw new RuntimeException("Giving up after 3 attempt to fetch from NCBI")
-
-
         }
     }
+
+        private static XmlSlurper getParser() {
+            XmlSlurper parser = new XmlSlurper()
+            parser.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false)
+            parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+       	    return parser;
+        }
 }

@@ -31,7 +31,7 @@
 <!--|GOOGLE_ANALYTICS_ID|-->	0
 <!--|GO_EMAIL_CURATOR|-->	dhowe\@zfin.org xshao\@zfin.org
 <!--|GO_EMAIL_ERR|-->	dhowe\@zfin.org informix\@zfin.org
-<!--|GROOVY_CLASSPATH|-->	/opt/zfin/www_homes/test/home/WEB-INF/lib*:/opt/zfin/source_roots/test/ZFIN_WWW/lib/Java/*:/opt/zfin/www_homes/test/home/WEB-INF/classes:/opt/apache/apache-tomcat/endorsed/*
+<!--|GROOVY_CLASSPATH|-->	/opt/zfin/www_homes/test/home/WEB-INF/lib*:/opt/zfin/source_roots/test/ZFIN_WWW/lib/Java/*:/opt/zfin/www_homes/test/home/WEB-INF/classes:/opt/misc/groovy/lib/*
 <!--|HAS_PARTNER|-->	false
 <!--|IMAGE_LOAD|-->	/imageLoadUp
 <!--|INSPECTLET_ID|-->	0000000000

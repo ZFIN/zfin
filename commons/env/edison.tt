@@ -31,7 +31,7 @@
 <!--|GOOGLE_ANALYTICS_ID|-->	0
 <!--|GO_EMAIL_CURATOR|-->	pm\@zfin.org
 <!--|GO_EMAIL_ERR|-->	pm\@zfin.org
-<!--|GROOVY_CLASSPATH|-->	/opt/zfin/www_homes/edison/home/WEB-INF/lib*:/research/zusers/pm/Projects/releases/gitMaster/ZFIN_WWW//lib/Java/*:/opt/zfin/www_homes/edison/home/WEB-INF/classes:/opt/apache/apache-tomcat/endorsed/*
+<!--|GROOVY_CLASSPATH|-->	/opt/zfin/www_homes/edison/home/WEB-INF/lib*:/research/zusers/pm/Projects/releases/gitMaster/ZFIN_WWW//lib/Java/*:/opt/zfin/www_homes/edison/home/WEB-INF/classes:/opt/misc/groovy/lib/*
 <!--|HAS_PARTNER|-->	false
 <!--|IMAGE_LOAD|-->	/imageLoadUp
 <!--|INSPECTLET_ID|-->	0000000000

@@ -388,8 +388,11 @@ test(s) need to be run before committing changes or pushing files to production 
 
 
     <taskdef name="groovyc"
-             classname="org.codehaus.groovy.ant.Groovyc"
-             classpathref="classpath"/>
+             classname="org.codehaus.groovy.ant.Groovyc">
+		<classpath>
+		<fileset  dir="/opt/misc/groovy/lib" includes="*.jar"/>
+		</classpath>
+</taskdef>
 
 
 
@@ -400,7 +403,7 @@ test(s) need to be run before committing changes or pushing files to production 
                fork="no"
                encoding="${encoding}"
                memoryMaximumSize="256m">
-            <javac encoding="${encoding}" deprecation="${javac.deprecation}" debug="on" />
+            <javac encoding="${encoding}" deprecation="${javac.deprecation}" debug="off" />
         </groovyc>
 
         <!--

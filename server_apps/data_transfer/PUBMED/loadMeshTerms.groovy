@@ -31,6 +31,7 @@ def withMeshFtpSite (closure) {
 
 def parse (InputStream inputStream) {
   parser = new XmlSlurper()
+  parser.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false)
   parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
   parser.parse(inputStream)
 }

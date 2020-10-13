@@ -1,5 +1,5 @@
 #!/bin/bash
-//opt/misc/groovy/bin/groovy -cp "<!--|GROOVY_CLASSPATH|-->:." "$0" $@; exit $?
+//usr/bin/env groovy -cp "$GROOVY_CLASSPATH:." "$0" $@; exit $?
 
 import org.zfin.properties.ZfinProperties
 import org.zfin.util.ReportGenerator
@@ -20,7 +20,10 @@ PubmedUtils.psql DBNAME, """
 
 def searchUrl = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gds&api_key=47c9eadd39b0bcbfac58e3e911930d143109&term=\"Danio+rerio\"[Organism]+AND+\"gse\"[Filter]&usehistory=y"
 println("Requesting: $searchUrl")
-def searchResult = (new XmlSlurper()).parse(searchUrl)
+XmlSlurper parser = new XmlSlurper()
+parser.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false)
+parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+def searchResult = parser.parse(searchUrl)
 def queryKey = searchResult.QueryKey
 def webEnv = searchResult.WebEnv
 println("Response:")
@@ -29,7 +32,7 @@ println("  WebEnv: $webEnv")
 
 def summaryUrl = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=gds&api_key=47c9eadd39b0bcbfac58e3e911930d143109&version=2.0&query_key=$queryKey&WebEnv=$webEnv"
 println("Requesting: $summaryUrl")
-def summaryResult = (new XmlSlurper()).parse(summaryUrl)
+def summaryResult = parser.parse(summaryUrl)
 println("Response: Found ${summaryResult.DocumentSummarySet.DocumentSummary.size()} documents")
 
 new File(GEO_TO_LOAD).withWriter { output ->

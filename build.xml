@@ -325,6 +325,9 @@
         <fileset dir="${gwt.lib}">
             <include name="*.jar"/>
         </fileset>
+        <fileset dir="/opt/misc/groovy/lib">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <path id="unittest.classpath">
@@ -803,6 +806,10 @@
             <arg value="lint"/>
         </exec>
     </target>
+
+    <taskdef name="groovy"
+             classname="org.codehaus.groovy.ant.Groovy"
+             classpathref="extended.classpath"/>
 
 </project>
 

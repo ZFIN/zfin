@@ -31,7 +31,7 @@
 <!--|GOOGLE_ANALYTICS_ID|-->	0
 <!--|GO_EMAIL_CURATOR|-->	ryanm\@zfin.org
 <!--|GO_EMAIL_ERR|-->	ryanm\@zfin.org
-<!--|GROOVY_CLASSPATH|-->	/opt/zfin/www_homes/dazed/home/WEB-INF/lib*:/opt/zfin/source_roots/dazed/ZFIN_WWW/lib/Java/*:/opt/zfin/www_homes/dazed/home/WEB-INF/classes:/opt/apache/apache-tomcat/endorsed/*
+<!--|GROOVY_CLASSPATH|-->	/opt/zfin/www_homes/dazed/home/WEB-INF/lib*:/opt/zfin/source_roots/dazed/ZFIN_WWW/lib/Java/*:/opt/zfin/www_homes/dazed/home/WEB-INF/classes:/opt/misc/groovy/lib/*
 <!--|HAS_PARTNER|-->	false
 <!--|IMAGE_LOAD|-->	/imageLoadUp
 <!--|INSPECTLET_ID|-->	0000000000
