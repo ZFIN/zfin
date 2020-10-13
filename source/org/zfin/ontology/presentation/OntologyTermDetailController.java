@@ -1,6 +1,5 @@
 package org.zfin.ontology.presentation;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -8,7 +7,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.anatomy.presentation.AnatomySearchBean;
 import org.zfin.framework.presentation.*;
 import org.zfin.gwt.root.dto.OntologyDTO;
@@ -25,9 +23,7 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationListAdapter;
 import org.zfin.publication.presentation.PublicationListBean;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.DisplayGroup;
 
-import java.net.URL;
 import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.*;
@@ -156,19 +152,19 @@ public class OntologyTermDetailController {
         List<RelationshipPresentation> termRelationships = OntologyService.getRelatedTermsWithoutStages(term);
 
         SectionVisibility sectionVisibility = form.getSectionVisibility();
-        if (sectionVisibility.isVisible(OntologyBean.Section.EXPRESSION)) {
-            sectionVisibility.setSectionData(OntologyBean.Section.EXPRESSION, true);
+        if (sectionVisibility.isVisible(OntologySection.EXPRESSION)) {
+            sectionVisibility.setSectionData(OntologySection.EXPRESSION, true);
         } else {
             // check if there are any data in this section.
             if (term.getOntology().isExpressionData()) {
-                sectionVisibility.setSectionData(OntologyBean.Section.EXPRESSION, hasExpressionData(term));
+                sectionVisibility.setSectionData(OntologySection.EXPRESSION, hasExpressionData(term));
             }
         }
-        if (sectionVisibility.isVisible(OntologyBean.Section.PHENOTYPE)) {
-            sectionVisibility.setSectionData(OntologyBean.Section.PHENOTYPE, true);
+        if (sectionVisibility.isVisible(OntologySection.PHENOTYPE)) {
+            sectionVisibility.setSectionData(OntologySection.PHENOTYPE, true);
         } else {
             if (term.getOntology().isPhenotypeData()) {
-                sectionVisibility.setSectionData(OntologyBean.Section.PHENOTYPE, hasPhenotypeData(term));
+                sectionVisibility.setSectionData(OntologySection.PHENOTYPE, hasPhenotypeData(term));
             }
         }
 

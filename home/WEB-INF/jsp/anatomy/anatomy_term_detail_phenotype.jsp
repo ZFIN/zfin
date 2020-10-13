@@ -1,10 +1,10 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-<%@ page import="org.zfin.ontology.presentation.OntologyBean" %>
+<%@ page import="org.zfin.ontology.presentation.OntologySection" %>
 
 <jsp:useBean id="formBean" class="org.zfin.ontology.presentation.OntologyBean" scope="request"/>
 
 <!-- Phenotype section -->
-<c:set var="phenotypeSection" value="<%=OntologyBean.Section.PHENOTYPE.toString()%>" scope="page"/>
+<c:set var="phenotypeSection" value="${OntologySection.PHENOTYPE.toString()}" scope="page"/>
 <div class="summary">
     <zfin2:sectionVisibility sectionName="${phenotypeSection}"
                              sectionVisibility="${formBean.sectionVisibility}"

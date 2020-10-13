@@ -5,11 +5,9 @@ import org.zfin.anatomy.service.AnatomyService;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.SectionVisibility;
 import org.zfin.gwt.root.dto.TermDTO;
-import org.zfin.marker.presentation.LinkDisplay;
 import org.zfin.mutant.OmimPhenotype;
 import org.zfin.ontology.*;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.DBLink;
 
 import java.util.*;
 
@@ -37,7 +35,7 @@ public class OntologyBean extends PaginationBean {
 
     private Set<OmimPhenotype> omimPheno;
     private Set<TermDBLink> agrDiseaseLinks;
-    private SectionVisibility sectionVisibility = new SectionVisibility<OntologyBean.Section>(OntologyBean.Section.class);
+    private SectionVisibility sectionVisibility = new SectionVisibility<OntologySection>(OntologySection.class);
 
     public String getAction() {
         return action;
@@ -214,20 +212,6 @@ public class OntologyBean extends PaginationBean {
 
     public void setSectionVisibility(SectionVisibility sectionVisibility) {
         this.sectionVisibility = sectionVisibility;
-    }
-
-    public static enum Section {
-        EXPRESSION,
-        PHENOTYPE;
-
-        public static String[] getValues() {
-            String[] values = new String[values().length];
-            int index = 0;
-            for (Section section : values()) {
-                values[index++] = section.toString();
-            }
-            return values;
-        }
     }
 
 

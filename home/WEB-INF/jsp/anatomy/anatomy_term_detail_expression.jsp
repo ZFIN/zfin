@@ -1,9 +1,9 @@
-<%@ page import="org.zfin.ontology.presentation.OntologyBean" %>
+<%@ page import="org.zfin.ontology.presentation.OntologySection" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <jsp:useBean id="formBean" class="org.zfin.ontology.presentation.OntologyBean" scope="request"/>
 
-<c:set var="expressionSection" value="<%=OntologyBean.Section.EXPRESSION.toString()%>"
+<c:set var="expressionSection" value="${OntologySection.EXPRESSION.toString()}"
        scope="request"/>
 <div class="summary">
     <zfin2:sectionVisibility sectionName="${expressionSection}"
