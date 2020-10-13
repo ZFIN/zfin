@@ -1,10 +1,10 @@
-<%@ page import="org.zfin.publication.Publication" %>
+<%@ page import="org.zfin.publication.PublicationType" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <meta name="all-figure-view-page"/> <%-- this is used by the web testing framework to know which page it is --%>
 
-<c:set var="UNPUBLISHED" value="<%=Publication.Type.UNPUBLISHED %>"/>
-<c:set var="CURATION" value="<%=Publication.Type.CURATION %>"/>
+<c:set var="UNPUBLISHED" value="${PublicationType.UNPUBLISHED}"/>
+<c:set var="CURATION" value="${PublicationType.CURATION}"/>
 
 
 <zfin-figure:publicationInfo publication="${publication}"

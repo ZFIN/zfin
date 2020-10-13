@@ -1,5 +1,4 @@
-<%@ page import="org.zfin.publication.Publication" %>
-<%@ page import="org.zfin.properties.ZfinProperties" %>
+<%@ page import="org.zfin.publication.PublicationType" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <meta name="image-view-page"/> <%-- this is used by the web testing framework to know which page this is--%>
@@ -8,8 +7,8 @@
      Nothing is stored in the updates table for figures, so no lastUpdated date is passed in
 --%>
 
-<c:set var="UNPUBLISHED" value="<%=Publication.Type.UNPUBLISHED %>"/>
-<c:set var="CURATION" value="<%=Publication.Type.CURATION %>"/>
+<c:set var="UNPUBLISHED" value="${PublicationType.UNPUBLISHED}"/>
+<c:set var="CURATION" value="${PublicationType.CURATION}"/>
 
 <c:set var="editURL">/action/publication/image-edit?zdbID=${image.zdbID}</c:set>
 <c:set var="deleteURL">/action/infrastructure/deleteRecord/${image.zdbID}</c:set>

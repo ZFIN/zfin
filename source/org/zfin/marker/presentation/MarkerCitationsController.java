@@ -13,6 +13,7 @@ import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.api.View;
 import org.zfin.publication.Publication;
+import org.zfin.publication.PublicationType;
 import org.zfin.publication.presentation.PublicationService;
 import org.zfin.wiki.presentation.Version;
 
@@ -47,7 +48,7 @@ public class MarkerCitationsController {
                                                               @RequestParam(required = false) String filter,
                                                               @Version Pagination pagination) throws IOException, SolrServerException {
 
-        List<Publication.Type> excludeTypes = getExcludedTypes(includeUnpublished);
+        List<PublicationType> excludeTypes = getExcludedTypes(includeUnpublished);
         pagination.addFieldFilter(FieldFilter.CITATION, filter);
         JsonResultResponse<Publication> response = publicationService.getCitationsByXref(zdbID, excludeTypes, pagination);
         response.setHttpServletRequest(request);
@@ -59,7 +60,7 @@ public class MarkerCitationsController {
     public void downloadMarkerCitations(@PathVariable String zdbID,
                                         @RequestParam(required = false) boolean includeUnpublished,
                                         HttpServletResponse response) throws IOException, SolrServerException {
-        List<Publication.Type> excludeTypes = getExcludedTypes(includeUnpublished);
+        List<PublicationType> excludeTypes = getExcludedTypes(includeUnpublished);
         response.setContentType(MediaType.TEXT_PLAIN);
         String attachmentName = zdbID + "_citations_" + DateTimeFormatter.ISO_INSTANT.format(Instant.now());
         response.setHeader("Content-Disposition", String.format("attachment; filename=\"%s.tsv\"", attachmentName));
@@ -94,11 +95,11 @@ public class MarkerCitationsController {
         });
     }
 
-    private List<Publication.Type> getExcludedTypes(boolean includeUnpublished) {
+    private List<PublicationType> getExcludedTypes(boolean includeUnpublished) {
         if (includeUnpublished) {
             return new ArrayList<>();
         }
-        return Arrays.stream(Publication.Type.values())
+        return Arrays.stream(PublicationType.values())
                     .filter(type -> !type.isPublished())
                     .collect(Collectors.toList());
     }

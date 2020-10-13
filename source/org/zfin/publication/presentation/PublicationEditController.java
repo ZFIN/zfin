@@ -23,6 +23,7 @@ import org.zfin.profile.Person;
 import org.zfin.profile.service.BeanFieldUpdate;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
+import org.zfin.publication.PublicationType;
 import org.zfin.publication.PubmedPublicationAuthor;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -89,7 +90,7 @@ public class PublicationEditController {
     public String showNewPublicationForm(@ModelAttribute PublicationBean publicationBean, Model model) {
         // default type should be journal
         Publication publication = new Publication();
-        publication.setType(Publication.Type.JOURNAL);
+        publication.setType(PublicationType.JOURNAL);
         publicationBean.setPublication(publication);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add Publication");
         return "publication/add-publication.page";
@@ -183,8 +184,8 @@ public class PublicationEditController {
     }
 
     @ModelAttribute("typeList")
-    public List<Publication.Type> getTypeList() {
-        return Arrays.asList(Publication.Type.values());
+    public List<PublicationType> getTypeList() {
+        return Arrays.asList(PublicationType.values());
     }
 
     @RequestMapping(value = "/{zdbID}/link")

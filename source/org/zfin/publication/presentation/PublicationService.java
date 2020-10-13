@@ -486,7 +486,7 @@ public class PublicationService {
         return strings;
     }
 
-    private SolrQuery getCitationQuery(String xref, List<Publication.Type> excludeTypes) {
+    private SolrQuery getCitationQuery(String xref, List<PublicationType> excludeTypes) {
         SolrQuery query = new SolrQuery();
         query.addFilterQuery(FieldName.CATEGORY.getName() + ":" + Category.PUBLICATION.getName());
         query.addFilterQuery(FieldName.XREF.getName() + ":" + xref);
@@ -495,7 +495,7 @@ public class PublicationService {
         return query;
     }
 
-    public JsonResultResponse<Publication> getCitationsByXref(String xref, List<Publication.Type> excludeTypes, Pagination pagination) throws IOException, SolrServerException {
+    public JsonResultResponse<Publication> getCitationsByXref(String xref, List<PublicationType> excludeTypes, Pagination pagination) throws IOException, SolrServerException {
         SolrQuery query = getCitationQuery(xref, excludeTypes);
         String filter = pagination.getFieldFilter(FieldFilter.CITATION);
         if (StringUtils.isNotEmpty(filter)) {
@@ -535,7 +535,7 @@ public class PublicationService {
         return response;
     }
 
-    public void getAllCitationsByXref(String xref, List<Publication.Type> excludedTypes, Consumer<List<Publication>> consumer) throws IOException, SolrServerException {
+    public void getAllCitationsByXref(String xref, List<PublicationType> excludedTypes, Consumer<List<Publication>> consumer) throws IOException, SolrServerException {
         SolrQuery query = getCitationQuery(xref, excludedTypes);
         SolrService.getAllResults(query, response -> {
             List<String> ids = response.getResults().stream()

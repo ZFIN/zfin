@@ -2,6 +2,7 @@ package org.zfin.publication.presentation;
 
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.publication.Publication;
+import org.zfin.publication.PublicationType;
 
 import java.util.List;
 
@@ -47,7 +48,7 @@ public class PublicationSearchBean extends PaginationBean {
     private YearType yearType;
     private String century;
     private String twoDigitYear;
-    private Publication.Type pubType;
+    private PublicationType pubType;
     private Sort sort;
     private Integer petFromMonth;
     private Integer petFromDay;
@@ -134,11 +135,11 @@ public class PublicationSearchBean extends PaginationBean {
         this.twoDigitYear = twoDigitYear;
     }
 
-    public Publication.Type getPubType() {
+    public PublicationType getPubType() {
         return pubType;
     }
 
-    public void setPubType(Publication.Type pubType) {
+    public void setPubType(PublicationType pubType) {
         this.pubType = pubType;
     }
 

@@ -2702,7 +2702,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return HibernateUtil.currentSession().createSQLQuery(sql)
                 .setParameter("start", start)
                 .setParameter("end", end)
-                .setParameter("type", Publication.Type.JOURNAL.getDisplay())
+                .setParameter("type", PublicationType.JOURNAL.getDisplay())
                 .setResultTransformer(Transformers.aliasToBean(MetricsByDateBean.class))
                 .list();
     }
@@ -2736,7 +2736,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                         "group by %1$s", groupExpression);
         return HibernateUtil.currentSession().createSQLQuery(sql)
                 .setParameter("end", end)
-                .setParameter("type", Publication.Type.JOURNAL.getDisplay())
+                .setParameter("type", PublicationType.JOURNAL.getDisplay())
                 .setResultTransformer(Transformers.aliasToBean(MetricsOnDateBean.class))
                 .list();
     }
@@ -2774,7 +2774,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                         ") as subq " +
                         "group by grouper;", groupExpression);
         return HibernateUtil.currentSession().createSQLQuery(sql)
-                .setParameter("type", Publication.Type.JOURNAL.getDisplay())
+                .setParameter("type", PublicationType.JOURNAL.getDisplay())
                 .setResultTransformer(Transformers.aliasToBean(MetricsOnDateBean.class))
                 .list();
     }

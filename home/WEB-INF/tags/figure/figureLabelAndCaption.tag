@@ -1,8 +1,8 @@
-<%@ tag import="org.zfin.publication.Publication" %>
+<%@ tag import="org.zfin.publication.PublicationType" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ attribute name="figure" type="org.zfin.expression.Figure" rtexprvalue="true" required="true" %>
 
-<c:set var="UNPUBLISHED" value="<%=Publication.Type.UNPUBLISHED %>"/>
+<c:set var="UNPUBLISHED" value="${PublicationType.UNPUBLISHED}"/>
 
 <p class="fig">
     <strong>

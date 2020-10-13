@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.profile.repository.ProfileRepository;
-import org.zfin.publication.Publication;
+import org.zfin.publication.PublicationType;
 import org.zfin.publication.repository.PublicationRepository;
 
 import javax.servlet.http.HttpServletRequest;
@@ -74,8 +74,8 @@ public class PublicationSearchController {
         }
         model.addAttribute("formBean", formBean);
         model.addAttribute("yearTypes", PublicationSearchBean.YearType.values());
-        Publication.Type[] pubTypes = Publication.Type.values();
-        Arrays.sort(pubTypes, Comparator.comparingInt(Publication.Type::getDisplayOrder));
+        PublicationType[] pubTypes = PublicationType.values();
+        Arrays.sort(pubTypes, Comparator.comparingInt(PublicationType::getDisplayOrder));
         model.addAttribute("pubTypes", pubTypes);
         model.addAttribute("sortOrders", PublicationSearchBean.Sort.values());
         model.addAttribute("curators", profileRepository.getCurators());
