@@ -1,7 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page import="org.zfin.ontology.OntologyManager" %>
-<%@ page import="org.zfin.ontology.presentation.OntologyBean" %>
-<%@ page import="org.zfin.ontology.Ontology" %>
+<%@ page import="org.zfin.ontology.presentation.ActionType" %>
 
 <jsp:useBean id="formBean" class="org.zfin.ontology.presentation.OntologyBean" scope="request"/>
 
@@ -76,34 +75,34 @@ Ontologies loaded and available for use: (${fn:length(formBean.ontologyManager.o
                             <fmt:formatNumber value="${value.value.lastLoad.totalNumberOfTerms}" />
                         </td>
                         <td class="listContentBold">
-                            <a href="/action/ontology/terms?action=<%= OntologyBean.ActionType.SHOW_ALL_TERMS%>&ontologyName=${value.value.ontology.ontologyName}"
+                            <a href="/action/ontology/terms?action=${ActionType.SHOW_ALL_TERMS}&ontologyName=${value.value.ontology.ontologyName}"
                                target="term-window">
                                 <fmt:formatNumber value="${value.value.lastLoad.numberOfTerms}" /></a>
                         </td>
                         <td class="listContentBold">
-                            <a href="/action/ontology/terms?action=<%= OntologyBean.ActionType.SHOW_OBSOLETE_TERMS%>&ontologyName=${value.value.ontology.ontologyName}"
+                            <a href="/action/ontology/terms?action=${ActionType.SHOW_OBSOLETE_TERMS}&ontologyName=${value.value.ontology.ontologyName}"
                                target="term-window">
                                 <fmt:formatNumber value="${value.value.lastLoad.numberOfObsoletedTerms}" /></a>
                         </td>
                         <td class="listContentBold">
-                            <a href="/action/ontology/terms?action=<%= OntologyBean.ActionType.SHOW_ALIASES%>&ontologyName=${value.value.ontology.ontologyName}"
+                            <a href="/action/ontology/terms?action=${ActionType.SHOW_ALIASES}&ontologyName=${value.value.ontology.ontologyName}"
                                target="term-window">
                                 <fmt:formatNumber value="${value.value.lastLoad.numberOfAliases}" /></a>
                         </td>
                         <td class="listContentBold">
-                            <a href="/action/ontology/terms?action=<%= OntologyBean.ActionType.SHOW_KEYS%>&ontologyName=${value.value.ontology.ontologyName}"
+                            <a href="/action/ontology/terms?action=${ActionType.SHOW_KEYS}&ontologyName=${value.value.ontology.ontologyName}"
                                target="term-window">
                                 <fmt:formatNumber value="${value.value.lastLoad.numberOfKeys}" />
                             </a>
                         </td>
                         <td class="listContentBold">
-                            <a href="/action/ontology/terms?action=<%= OntologyBean.ActionType.SHOW_VALUES%>&ontologyName=${value.value.ontology.ontologyName}"
+                            <a href="/action/ontology/terms?action=${ActionType.SHOW_VALUES}&ontologyName=${value.value.ontology.ontologyName}"
                                target="term-window">
                                 <fmt:formatNumber value="${value.value.lastLoad.numberOfValues}" />
                             </a>
                         </td>
                         <td class="listContentBold">
-                            <a href="/action/ontology/terms?action=<%= OntologyBean.ActionType.SHOW_RELATIONSHIP_TYPES%>&ontologyName=${value.value.ontology.ontologyName}"
+                            <a href="/action/ontology/terms?action=${ActionType.SHOW_RELATIONSHIP_TYPES}&ontologyName=${value.value.ontology.ontologyName}"
                                target="term-window">
                                 Show distinct relationships
                                 <%--<c:out value="${fn:length(zfn:getDistinctRelationshipTypes(value.value.ontology))}" />--%>
@@ -132,7 +131,7 @@ Ontologies loaded and available for use: (${fn:length(formBean.ontologyManager.o
             <tr>
                 <td>
                     <p></p>
-                    <a href="?action=<%= OntologyBean.ActionType.LOAD_FROM_DATABASE%>">
+                    <a href="?action=${ActionType.LOAD_FROM_DATABASE}">
                         Re-load </a> from database again.<br/>
                 </td>
             </tr>
@@ -141,9 +140,9 @@ Ontologies loaded and available for use: (${fn:length(formBean.ontologyManager.o
             <tr>
                 <td>
                     Ontologies are not loaded yet.<br/>
-                    <a href="?action=<%= OntologyBean.ActionType.LOAD_FROM_SERIALIZED_FILE%>">
+                    <a href="?action=${ActionType.LOAD_FROM_SERIALIZED_FILE}">
                         Load </a> from a serialized file.<br/>
-                    <a href="?action=<%= OntologyBean.ActionType.LOAD_FROM_DATABASE%>">
+                    <a href="?action=${ActionType.LOAD_FROM_DATABASE}">
                         Load </a> from a the database.<br/>
                 </td>
             </tr>
@@ -151,4 +150,4 @@ Ontologies loaded and available for use: (${fn:length(formBean.ontologyManager.o
     </c:choose>
 </table>
 <p></p>
-<a href="?action=<%= OntologyBean.ActionType.SERIALIZE_ONTOLOGIES%>">Serialize Ontologies</a>
+<a href="?action=${ActionType.SERIALIZE_ONTOLOGIES}">Serialize Ontologies</a>

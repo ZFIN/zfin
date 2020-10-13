@@ -51,7 +51,7 @@ public class OntologyTermController {
         form.setOntology(Ontology.getOntology(ontologyName));
         model.addAttribute("formBean", form);
         form.setAction(action);
-        OntologyBean.ActionType actionType = form.getActionType();
+        ActionType actionType = form.getActionType();
         Ontology ontology = Ontology.getOntology(ontologyName);
         if (actionType != null) {
 //            List<Term> values = new ArrayList<Term>() ;
