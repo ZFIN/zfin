@@ -27,29 +27,33 @@
         <td valign=top class="listContentBold">
             Session ID: </td>
         <td colspan="2" class="listContent">
-            <%= request.getSession().getId() %>
+            ${pageContext.session.id}
         </td>
     </tr>
     <tr>
         <td valign=top class="listContentBold">
             Session Expiration Time: </td>
         <td colspan="2" class="listContent">
-            <%= request.getSession().getMaxInactiveInterval() %> seconds
-            (<%= request.getSession().getMaxInactiveInterval()/60 %> minutes) 
+            ${pageContext.session.maxInactiveInterval} seconds
+            (${pageContext.session.maxInactiveInterval/60} minutes)
         </td>
     </tr>
     <tr>
         <td valign=top class="listContentBold">
             Date of Session Creation: </td>
         <td colspan="2" class="listContent">
-            <%= new Date(request.getSession().getCreationTime()) %>
+            <jsp:useBean id="createDate" class="java.util.Date"/>
+            <jsp:setProperty name="createDate" property="time" value="${pageContext.session.creationTime}"/>
+            <fmt:formatDate value="${createDate}" type="both" />
         </td>
     </tr>
     <tr>
         <td valign=top class="listContentBold">
             Date last accessed Session: </td>
         <td colspan="2" class="listContent">
-            <%= new Date(request.getSession().getLastAccessedTime()) %>
+            <jsp:useBean id="accessedDate" class="java.util.Date"/>
+            <jsp:setProperty name="accessedDate" property="time" value="${pageContext.session.lastAccessedTime}"/>
+            <fmt:formatDate value="${accessedDate}" type="both" />
         </td>
     </tr>
     <tr>

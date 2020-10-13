@@ -71,6 +71,15 @@
 
         </table>
         </c:if>
+
+<%--
+trying to remove scriptlets from JSP on 10/13/2020. this page is broken due to problems
+on the backend (ClasspathInfoController) probably caused by not keeping this page in sync
+with Java version upgrades. instead of attempt to fix the entire page, i am just replacing
+the scriptlets with comments. when the overall page is fixed, we'll need to figure out
+how to recreate the commented-out functionality without scriptlets, if we want to keep that
+functionality at all
+--%>
 <tr>
     <td align="center">
         <table cellpadding="2" cellspacing="1" border="0" width="95%">
@@ -83,58 +92,36 @@
                     ClassLoader:
                 </td>
                 <td class="listContent">
-                    <%= this.getClass().getClassLoader().getClass().getName()
-                    %>
+<%--                    this.getClass().getClassLoader().getClass().getName()--%>
+
                 </td>
             </tr>
-            <%
-                ClassLoader loader = this.getClass().getClassLoader().getParent();
-                boolean firstTime = true;
-            %>
+<%--            --%>
+<%--                ClassLoader loader = this.getClass().getClassLoader().getParent();--%>
+<%--                boolean firstTime = true;--%>
+<%--            --%>
             <tr>
                 <td class="listContent">Parent(s):</td>
-                <%
-
-
-
-
-
-
-                
-
-
-
-                    while (loader != null) {
-                        if (firstTime) {
-                            firstTime = false;
-                        } else {
-
-
-
-                
-
-
-
-
-
-
-                %>
+<%--                --%>
+<%--                    while (loader != null) {--%>
+<%--                        if (firstTime) {--%>
+<%--                            firstTime = false;--%>
+<%--                        } else {--%>
+<%--                --%>
             <tr>
                 <td class="listContent"></td>
-                <% } %>
+<%--                 } --%>
                 <td class="listContent">
-                    <%= loader.getClass().getName() %>
+<%--                     loader.getClass().getName() --%>
                 </td>
             </tr>
-            <%
-
-                    loader = loader.getParent();
-                }
-                if (!firstTime) {
-            %>
+<%--                    loader = loader.getParent();--%>
+<%--                }--%>
+<%--                if (!firstTime) {--%>
+<%--            --%>
             <tr>
                 <td class="listContent"></td>
-                <% } %>
+<%--                 } --%>
                 <td class="listContent">Bootstrap classloader</td>
             </tr>
         </table>

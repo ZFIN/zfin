@@ -9,7 +9,7 @@
 
 <div class="summary">
     <div class="summaryTitle">Number of Threads: ${threadMXBean.threadCount}
-    <div class="summaryTitle"> Current Thread: <%= Thread.currentThread().getName()%></div>
+    <div class="summaryTitle"> Current Thread: ${currentThread.name}</div>
     <div class="summaryTitle"> Deadlocked Threads: ${deadlockedThreads}</div>
     <div class="summaryTitle"> Monitor Deadlocked Threads: ${monitorDeadlockedThreads}</div>
     </div>

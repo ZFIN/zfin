@@ -1,6 +1,6 @@
-<%@ page import="com.mchange.v2.c3p0.ComboPooledDataSource" %>
-<%@ page import="javax.naming.InitialContext" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+
+<jsp:useBean id="pds" type="com.mchange.v2.c3p0.ComboPooledDataSource" scope="request" />
 
 <table cellpadding="2" cellspacing="1" border="0" width="80%">
     <tr>
@@ -51,40 +51,30 @@
     <tr>
         <td valign="top">DB Connection Pool Info</td>
         <td>
-            <%
-                InitialContext ictx = new InitialContext();
-                ComboPooledDataSource pds = (ComboPooledDataSource) ictx.lookup("java:comp/env/jdbc/zfin");
-            %>
             <table>
                 <tr>
-                    <td>Max Number of Connections</td>:</td>
-                    <td><%=pds.getMaxPoolSize()%>
-                    </td>
+                    <td>Max Number of Connections:</td>
+                    <td>${pds.maxPoolSize}</td>
                 </tr>
                 <tr>
-                    <td>Min Number of Connections</td>:</td>
-                    <td><%=pds.getMinPoolSize()%>
-                    </td>
+                    <td>Min Number of Connections:</td>
+                    <td>${pds.minPoolSize}</td>
                 </tr>
                 <tr>
                     <td>Number of Connections in the Pool:</td>
-                    <td><%=pds.getNumConnectionsDefaultUser()%>
-                    </td>
+                    <td>${pds.numConnectionsDefaultUser}</td>
                 </tr>
                 <tr>
                     <td>Number of Busy Connections:</td>
-                    <td><%=pds.getNumBusyConnectionsDefaultUser()%>
-                    </td>
+                    <td>${pds.numBusyConnectionsDefaultUser}</td>
                 </tr>
                 <tr>
                     <td>Number of Idle Connections:</td>
-                    <td><%=pds.getNumIdleConnectionsDefaultUser()%>
-                    </td>
+                    <td>${pds.numIdleConnectionsDefaultUser}</td>
                 </tr>
                 <tr>
                     <td>Number of Thread pool active threads:</td>
-                    <td><%=pds.getThreadPoolNumActiveThreads()%>
-                    </td>
+                    <td>${pds.threadPoolNumActiveThreads}</td>
                 </tr>
             </table>
         </td>

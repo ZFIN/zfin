@@ -1,7 +1,3 @@
-<%@ page import="java.sql.Connection" %>
-<%@ page import="java.sql.SQLException" %>
-<%@ page import="org.hibernate.jdbc.ReturningWork" %>
-<%@ page import="org.zfin.framework.HibernateUtil" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <table cellpadding="2" cellspacing="1" border="0" width="50%">
@@ -58,15 +54,7 @@
             Transaction Isolation on this connection
         </td>
         <td class="listContent">
-            <%
-                Connection conn = HibernateUtil.currentSession().doReturningWork(new ReturningWork<Connection>(){
-                    @Override
-                    public Connection execute(Connection connection) throws SQLException {
-                        return connection;
-                    }
-                });
-            %>
-            <%= conn.getTransactionIsolation()%>
+            ${conn.transactionIsolation}
         </td>
     </tr>
 
@@ -75,7 +63,7 @@
             Catalog
         </td>
         <td class="listContent">
-            <%= conn.getCatalog()%>
+            ${conn.catalog}
         </td>
     </tr>
 

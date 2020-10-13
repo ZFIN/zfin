@@ -48,12 +48,17 @@ public class DatabaseInfoController {
     protected String showDatabaseInfo(Model model) throws Exception {
         model.addAttribute("metadata", getMetaData());
         model.addAttribute("unloadDate", getInfrastructureRepository().getUnloadInfo());
+        Connection conn = HibernateUtil.currentSession().doReturningWork(connection -> connection);
+        model.addAttribute("conn", conn);
         return "dev-tools/view-database-info.page";
     }
 
     @RequestMapping("/jdbc-driver-info")
-    public String showJdbcDriverInfo(Model model) throws ServletException {
+    public String showJdbcDriverInfo(Model model) throws ServletException, NamingException {
         model.addAttribute("metadata", getMetaData());
+        InitialContext ictx = new InitialContext();
+        ComboPooledDataSource pds = (ComboPooledDataSource) ictx.lookup("java:comp/env/jdbc/zfin");
+        model.addAttribute("pds", pds);
         return "jdbc-metadata.page";
     }
 
@@ -68,6 +73,8 @@ public class DatabaseInfoController {
 
         }
         model.addAttribute("properties", props);
+        model.addAttribute("runtime", Runtime.getRuntime());
+        model.addAttribute("defaultTimeZone", TimeZone.getDefault());
         return "java-properties.page";
     }
 
@@ -171,6 +178,7 @@ public class DatabaseInfoController {
         List<ThreadInfo> threadInfos = Arrays.asList(attributeValue);
         Collections.sort(threadInfos, new ThreadInfoSorting());
         model.addAttribute("allThreads", threadInfos);
+        model.addAttribute("currentThread", currentThread);
         model.addAttribute("deadlockedThreads", mxbean.findDeadlockedThreads());
         model.addAttribute("monitorDeadlockedThreads", mxbean.findMonitorDeadlockedThreads());
         return "thread-info.page";
@@ -190,12 +198,15 @@ public class DatabaseInfoController {
             public int compare(Object a, Object b) {
                 Thread threadOne = (Thread) a;
                 Thread threadTwo = (Thread) b;
-                if (threadOne == null && threadTwo != null)
+                if (threadOne == null && threadTwo != null) {
                     return 1;
-                if (threadOne != null && threadTwo == null)
+                }
+                if (threadOne != null && threadTwo == null) {
                     return -1;
-                if (threadOne == null && threadTwo == null)
+                }
+                if (threadOne == null && threadTwo == null) {
                     return 0;
+                }
                 return threadOne.getThreadGroup().getName().compareToIgnoreCase(threadTwo.getThreadGroup().getName());
             }
         });
