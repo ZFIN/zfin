@@ -30,7 +30,7 @@ public class MarkerViewSmokeTest extends AbstractSmokeTest {
 
     static {
         markerTypes.put("fgf8a", "Gene");
-        markerTypes.put("zgc:55262", "Gene");
+        markerTypes.put("capn1", "Gene");
         markerTypes.put("si:dkey-21k10.2", "Gene");
         markerTypes.put("cb46", "Clone");
         markerTypes.put("MGC:55191", "Clone");
