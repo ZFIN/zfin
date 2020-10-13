@@ -71,7 +71,7 @@
                         hiddenNames: "antibodyCriteria.anatomyTermNames",
                         hiddenIds: "antibodyCriteria.anatomyTermIDs",
                         type: "<%= LookupComposite.GDAG_TERM_LOOKUP %>",
-                        ontologyName: "<%= Ontology.ANATOMY %>",
+                        ontologyName: "${Ontology.ANATOMY.toString()}",
                         width: 40,
                         wildcard: false,
                         useTermTable: true,
@@ -144,12 +144,12 @@
                 </table>
             </td>
             <td align="left">
-                <form:radiobutton path="antibodyCriteria.clonalType" value="<%= AntibodyType.MONOCLONAL.getValue()%>" autocomplete="off"/>
+                <form:radiobutton path="antibodyCriteria.clonalType" value="${AntibodyType.MONOCLONAL.toString()}" autocomplete="off"/>
                 <label for="antibodyCriteria.clonalType">Monoclonal</label>
                 &nbsp; <br/>
-                <form:radiobutton path="antibodyCriteria.clonalType" value="<%= AntibodyType.POLYCLONAL.getValue()%>" autocomplete="off"/>
+                <form:radiobutton path="antibodyCriteria.clonalType" value="${AntibodyType.POLYCLONAL.toString()}" autocomplete="off"/>
                 <label for="antibodyCriteria.clonalType">Polyclonal </label> &nbsp;<br/>
-                <form:radiobutton path="antibodyCriteria.clonalType" value="<%= AntibodyType.ANY.getValue()%>" autocomplete="off"/>
+                <form:radiobutton path="antibodyCriteria.clonalType" value="${AntibodyType.ANY.toString()}" autocomplete="off"/>
                 <label for="antibodyCriteria.clonalType">Both</label>
                 Types
             </td>
@@ -194,7 +194,7 @@
 <script type="text/javascript">
 
     function call_reset() {
-        document.getElementById("antibodyNameFilterType").value = '<%= FilterType.CONTAINS.getName()%>';
+        document.getElementById("antibodyNameFilterType").value = '${FilterType.CONTAINS.toString()}';
         document.getElementById("antibodyCriteria.name").value = '';
         document.getElementById("antibodyCriteria.antigenGeneName").value = '';
         document.getElementById("antibodyCriteria.hostSpecies").value = 'Any';

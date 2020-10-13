@@ -78,7 +78,7 @@
                     hiddenNames: "anatomyTermNames",
                     hiddenIds: "anatomyTermIDs",
                     type: "<%= LookupComposite.GDAG_TERM_LOOKUP %>",
-                    ontologyName: "<%= Ontology.ANATOMY %>",
+                    ontologyName: "${Ontology.ANATOMY.toString()}",
                     action: "<%= LookupComposite.ACTION_ANATOMY_SEARCH %>",
                     width: 40,
                     wildcard: false,

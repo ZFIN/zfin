@@ -107,7 +107,7 @@
                     hiddenNames:"anatomyTermNames",
                     hiddenIds:"anatomyTermIDs",
                     type:"<%= LookupComposite.GDAG_TERM_LOOKUP %>",
-                    ontologyName:"<%= Ontology.AOGO %>",
+                    ontologyName:"${Ontology.AOGO.toString()}",
                     action:"<%= LookupComposite.ACTION_ANATOMY_SEARCH %>",
                     width:30,
                     wildcard:false,
@@ -267,7 +267,7 @@
         jQuery('input[name=filter1]').filter('[value="showAll"]').attr('checked', true);
         jQuery('input[name=filter1]').change();
         jQuery('#max-display-records-hidden').val('20');
-        jQuery('input[name=sortBy]').val('<%= SortBy.BEST_MATCH %>');
+        jQuery('input[name=sortBy]').val('${SortBy.BEST_MATCH}');
         jQuery('#sort-by-pulldown').val('0');
         clearTable();
         decorateTermList();

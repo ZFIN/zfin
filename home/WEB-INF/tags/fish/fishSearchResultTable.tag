@@ -20,9 +20,9 @@
         Sort by
         <label for="sort-by-pulldown">
             <select name="sortByPulldown" id="sort-by-pulldown">
-                <option value="<%= SortBy.BEST_MATCH %>" id="sort-by-best-match">Fish (Best Match)</option>
-                <option value="<%= SortBy.GENES %>" id="sort-by-genes">Affected Genomic Region</option>
-                <option value="<%= SortBy.FEATURES %>" id="sort-by-features">Line/Reagent</option>
+                <option value="${SortBy.BEST_MATCH}" id="sort-by-best-match">Fish (Best Match)</option>
+                <option value="${SortBy.GENES}" id="sort-by-genes">Affected Genomic Region</option>
+                <option value="${SortBy.FEATURES}" id="sort-by-features">Line/Reagent</option>
             </select>
         </label>
     </div>--%>

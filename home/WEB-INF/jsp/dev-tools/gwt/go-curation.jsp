@@ -42,7 +42,7 @@
 <%--
 Add ontology name as a hidden field
 --%>
-<div class="GO_TERM_single" aria-hidden="true" style="display: none;"><%=OntologyDTO.GO.getOntologyName()%></div>
+<div class="GO_TERM_single" aria-hidden="true" style="display: none;">${OntologyDTO.GO.ontologyName}</div>
 
 <%--</authz:authorize>--%>
 </script>

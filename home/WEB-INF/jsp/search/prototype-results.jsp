@@ -3,19 +3,19 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<c:set var="geneCategoryName" value="<%=Category.GENE.getName()%>"/>
-<c:set var="expressionCategoryName" value="<%=Category.EXPRESSIONS.getName()%>"/>
-<c:set var="phenotypeCategoryName" value="<%=Category.PHENOTYPE.getName()%>"/>
-<c:set var="diseaseCategoryName" value="<%=Category.DISEASE.getName()%>"/>
-<c:set var="mutationCategoryName" value="<%=Category.MUTANT.getName()%>"/>
-<c:set var="publicationCategoryName" value="<%=Category.PUBLICATION.getName()%>"/>
-<c:set var="constructCategoryName" value="<%=Category.CONSTRUCT.getName()%>"/>
-<c:set var="strCategoryName" value="<%=Category.SEQUENCE_TARGETING_REAGENT.getName()%>"/>
-<c:set var="abCategoryName" value="<%=Category.ANTIBODY.getName()%>"/>
-<c:set var="anatomyCategoryName" value="<%=Category.ANATOMY.getName()%>"/>
-<c:set var="markerCategoryName" value="<%=Category.MARKER.getName()%>"/>
-<c:set var="communityCategoryName" value="<%=Category.COMMUNITY.getName()%>"/>
-<c:set var="figureCategoryName" value="<%=Category.FIGURE.getName()%>"/>
+<c:set var="geneCategoryName" value="${Category.GENE.name}"/>
+<c:set var="expressionCategoryName" value="${Category.EXPRESSIONS.name}"/>
+<c:set var="phenotypeCategoryName" value="${Category.PHENOTYPE.name}>"/>
+<c:set var="diseaseCategoryName" value="${Category.DISEASE.name}"/>
+<c:set var="mutationCategoryName" value="${Category.MUTANT.name}"/>
+<c:set var="publicationCategoryName" value="${Category.PUBLICATION.name}"/>
+<c:set var="constructCategoryName" value="${Category.CONSTRUCT.name}"/>
+<c:set var="strCategoryName" value="${Category.SEQUENCE_TARGETING_REAGENT.name}"/>
+<c:set var="abCategoryName" value="${Category.ANTIBODY.name}"/>
+<c:set var="anatomyCategoryName" value="${Category.ANATOMY.name}"/>
+<c:set var="markerCategoryName" value="${Category.MARKER.name}"/>
+<c:set var="communityCategoryName" value="${Category.COMMUNITY.name}"/>
+<c:set var="figureCategoryName" value="${Category.FIGURE.name}"/>
 
 <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
 
