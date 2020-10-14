@@ -3,12 +3,21 @@ import produce from 'immer';
 import http from '../utils/http';
 import { DEFAULT_FETCH_STATE } from './constants';
 
-export default function useFetch(url) {
+export default function useFetch(url, options = {}) {
     // a container for mutable data
     const status = {};
 
-    const [data, setData] = useState(DEFAULT_FETCH_STATE);
+    const [data, setData] = useState({
+        ...DEFAULT_FETCH_STATE,
+        value: options.defaultValue || null,
+    });
     const [request, setRequest] = useState(null);
+
+    const setValue = (value) => {
+        setData(produce(data => {
+            data.value = value;
+        }));
+    };
 
     const doFetch = () => {
         if (!url) {
@@ -65,6 +74,7 @@ export default function useFetch(url) {
 
     return {
         ...data,
+        setValue,
         refetch: doFetch,
     };
 }

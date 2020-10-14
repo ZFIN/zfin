@@ -3,17 +3,19 @@ import PropTypes from 'prop-types';
 import MarkerNameForm from '../components/MarkerNameForm';
 import Section from '../components/layout/Section';
 import MarkerAliases from '../components/MarkerAliases';
-import useMutableFetch from '../hooks/useMutableFetch';
+import useFetch from '../hooks/useFetch';
 
 const MarkerEditNomenclature = ({ markerId }) => {
     const {
         value: nomenclature,
         setValue: setNomenclature,
-    } = useMutableFetch(
+    } = useFetch(
         `/action/marker/${markerId}/nomenclature`,
         {
-            name: '',
-            abbreviation: '',
+            defaultValue: {
+                name: '',
+                abbreviation: '',
+            }
         }
     );
 
@@ -21,7 +23,7 @@ const MarkerEditNomenclature = ({ markerId }) => {
         value: aliases,
         setValue: setAliases,
         refetch: refetchAliases,
-    } = useMutableFetch(`/action/marker/${markerId}/aliases`, []);
+    } = useFetch(`/action/marker/${markerId}/aliases`, { defaultValue: [] });
 
     return (
         <>
