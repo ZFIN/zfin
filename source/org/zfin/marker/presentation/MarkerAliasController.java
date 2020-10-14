@@ -21,6 +21,7 @@ import org.zfin.publication.repository.PublicationRepository;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -77,12 +78,16 @@ public class MarkerAliasController {
             throw new InvalidWebRequestException("Invalid alias", errors);
         }
 
-        // when creating a new alias, the assumption is that there is only one reference
-        String pubID = newAlias.getReferences().iterator().next().getZdbID();
-        Publication publication = publicationRepository.getPublication(pubID);
+        // alias is created with the first reference. others added after the alias is created.
+        Iterator<MarkerReferenceBean> referenceBeanIterator = newAlias.getReferences().iterator();
+        Publication publication = publicationRepository.getPublication(referenceBeanIterator.next().getZdbID());
 
         HibernateUtil.createTransaction();
         MarkerAlias alias = markerRepository.addMarkerAlias(marker, newAlias.getAlias(), publication);
+        while (referenceBeanIterator.hasNext()) {
+            publication = publicationRepository.getPublication(referenceBeanIterator.next().getZdbID());
+            markerRepository.addDataAliasAttribution(alias, publication, marker);
+        }
         HibernateUtil.flushAndCommitCurrentSession();
 
         return MarkerAliasBean.convert(alias);
