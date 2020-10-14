@@ -83,7 +83,7 @@ const MarkerAliasEditModal = ({ alias, markerId, onAdd, onClose, onDelete, onEdi
     return (
         <Modal open={values !== null}>
             <div className='popup-header'>{isEdit ? 'Edit' : 'Add'} Alias</div>
-            <div className='popup-body'>
+            <div className='popup-body show-overflow'>
                 {values &&
                 <Form>
                     <FormGroup

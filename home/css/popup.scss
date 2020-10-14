@@ -3,6 +3,10 @@
 div.popup-body {
     max-height: 450px;
     overflow-y: auto;
+
+    &.show-overflow {
+        overflow: visible;
+    }
 }
 
 div.popup-actions {
