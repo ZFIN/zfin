@@ -1,5 +1,5 @@
 <%@ page import="org.zfin.gwt.root.ui.StandardDivNames" %>
-<%@ page import="org.zfin.gwt.root.ui.AbstractGoViewTable" %>
+<%@ page import="org.zfin.gwt.curation.ui.GoCurationModule" %>
 <%@ page import="org.zfin.gwt.marker.ui.GoMarkerEditController" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
@@ -22,7 +22,7 @@
     </tr>
     <tr align="center">
         <td colspan="2">
-            <div id="<%=AbstractGoViewTable.GO_EVIDENCE_DISPLAY%>"></div>
+            <div id="${GoCurationModule.GO_EVIDENCE_DISPLAY}"></div>
         </td>
     </tr>
     <tr align="center">
