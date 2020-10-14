@@ -60,7 +60,7 @@ public class PublicationPrioritizationController {
                     if (marker.isGenedom()) {
                         prioritization.setExpressionFigures(markerExpression.getAllExpressionData().getFigureCount());
                         prioritization.setExpressionInSitu(markerExpression.getDirectlySubmittedExpression().getFigureCount());
-                        prioritization.setExpressionPublication(markerExpression.getExpressionPubCount());
+                        prioritization.setExpressionPublication(markerExpression.getAllExpressionData().getPublicationCount());
 
                     }
                     List<DiseaseAnnotationModel> diseaseAnnotationModels = getPhenotypeRepository().getDiseaseAnnotationModelsByGene(marker);
