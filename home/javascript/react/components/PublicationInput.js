@@ -19,6 +19,8 @@ const PublicationInput = ({defaultPubs, limit = 50, ...rest}) => {
                                 <div class="text-muted">${item.name}</div>
                             </div>
                         `),
+                    notFound: '<i class="tt-item text-muted">No publications match query</i>',
+                    pending: '<span class="tt-item text-muted"><span><i class="fas fa-spinner fa-spin"></i> Searching</span></span>'
                 }
             }}
             {...rest}
