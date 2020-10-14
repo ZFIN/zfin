@@ -10,7 +10,7 @@ export default function useFetch(url) {
     const [data, setData] = useState(DEFAULT_FETCH_STATE);
     const [request, setRequest] = useState(null);
 
-    useEffect(() => {
+    const doFetch = () => {
         if (!url) {
             return;
         }
@@ -54,10 +54,17 @@ export default function useFetch(url) {
                 data.pending = false
             }));
         });
+    }
+
+    useEffect(() => {
+        doFetch();
         return () => {
             status.mounted = false;
         };
     }, [url]);
 
-    return data;
+    return {
+        ...data,
+        refetch: doFetch,
+    };
 }

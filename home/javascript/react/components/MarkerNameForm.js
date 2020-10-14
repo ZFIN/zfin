@@ -1,24 +1,12 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import useMutableFetch from '../hooks/useMutableFetch';
 import equal from 'fast-deep-equal';
 import { useForm } from 'react-form';
 import http from '../utils/http';
 import LoadingButton from './LoadingButton';
 import FormGroup from './form/FormGroup';
 
-const MarkerNameForm = ({markerId}) => {
-    const {
-        value: nomenclature,
-        setValue
-    } = useMutableFetch(
-        `/action/marker/${markerId}/nomenclature`,
-        {
-            name: '',
-            abbreviation: '',
-        }
-    );
-
+const MarkerNameForm = ({markerId, nomenclature, setNomenclature, onSave}) => {
     const {
         Form,
         reset,
@@ -34,7 +22,8 @@ const MarkerNameForm = ({markerId}) => {
                     isTouched: false,
                     serverError: null,
                 });
-                setValue(updated);
+                setNomenclature(updated);
+                onSave();
             } catch (error) {
                 setMeta({ serverError: error });
                 throw error;
@@ -133,6 +122,9 @@ const MarkerNameForm = ({markerId}) => {
 
 MarkerNameForm.propTypes = {
     markerId: PropTypes.string,
+    nomenclature: PropTypes.object,
+    setNomenclature: PropTypes.func,
+    onSave: PropTypes.func,
 };
 
 export default MarkerNameForm;
