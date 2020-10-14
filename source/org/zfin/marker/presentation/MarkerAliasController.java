@@ -1,6 +1,7 @@
 package org.zfin.marker.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -94,6 +95,7 @@ public class MarkerAliasController {
                                              BindingResult errors) {
         MarkerAlias alias = markerRepository.getMarkerAlias(aliasID);
 
+        // if the alias changed, make sure it isn't already on the marker
         if (!Objects.equals(alias.getAlias(), updatedAlias.getAlias()) &&
                 MarkerService.markerHasAlias(alias.getMarker(), updatedAlias.getAlias())) {
             errors.rejectValue("alias", "marker.alias.inuse");
@@ -113,19 +115,24 @@ public class MarkerAliasController {
         Collection<String> refsToAdd = CollectionUtils.subtract(updatedPubZdbIDs, currentPubZdbIDs);
         Collection<String> refsToRemove = CollectionUtils.subtract(currentPubZdbIDs, updatedPubZdbIDs);
 
-        HibernateUtil.createTransaction();
+        Transaction tx = HibernateUtil.createTransaction();
+        // add new attributions
         for (String pubZdbID : refsToAdd) {
             Publication publication = publicationRepository.getPublication(pubZdbID);
             markerRepository.addDataAliasAttribution(alias, publication, alias.getMarker());
         }
+        // remove old attributions
         for (String pubZdbID : refsToRemove) {
             infrastructureRepository.deleteRecordAttribution(aliasID, pubZdbID);
         }
+        // update the alias itself
         alias.setAlias(updatedAlias.getAlias());
-        HibernateUtil.currentSession().saveOrUpdate(alias);
-        HibernateUtil.flushAndCommitCurrentSession();
+        HibernateUtil.currentSession().update(alias);
+        tx.commit();
 
-        return MarkerAliasBean.convert(alias);
+        // ensure the changes are fully sync'd up and return the updated object
+        HibernateUtil.currentSession().evict(alias);
+        return MarkerAliasBean.convert(markerRepository.getMarkerAlias(aliasID));
     }
 
     @ResponseBody
