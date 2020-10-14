@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import MarkerAliasEditModal from './MarkerAliasEditModal';
+import NoData from './NoData';
 
 const MarkerAliases = ({markerId, aliases, setAliases}) => {
 
@@ -40,6 +41,8 @@ const MarkerAliases = ({markerId, aliases, setAliases}) => {
 
     return (
         <>
+            {aliases.length === 0 && <NoData placeholder='None' />}
+
             <ul className='list-unstyled'>
                 {aliases.map(alias => (
                     <li key={alias.zdbID}>

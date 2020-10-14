@@ -127,7 +127,7 @@ const MarkerAliasEditModal = ({ alias, markerId, onAdd, onClose, onDelete, onEdi
                                 className='btn btn-link px-0'
                                 onClick={() => pushFieldValue('references', { zdbID: '' })}
                             >
-                                Add Reference
+                                Add Citation
                             </button>
 
                             {(error || serverError) &&
