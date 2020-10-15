@@ -52,7 +52,7 @@ public class PublicationPrioritizationController {
                     prioritization.setName(marker.getAbbreviation());
                     prioritization.setNewWithThisPaper(isNewGeneMap.get(marker));
 
-                    prioritization.setHasOrthology(getPublicationRepository().hasCuratedOrthology(marker, publicationId));
+                    prioritization.setHasOrthology(getPublicationRepository().hasCuratedOrthology(marker));
                     PhenotypeOnMarkerBean phenotypeOnMarkerBean = MarkerService.getPhenotypeOnGene(marker);
                     prioritization.setPhenotypeFigures(phenotypeOnMarkerBean.getNumFigures());
                     prioritization.setPhenotypePublication(phenotypeOnMarkerBean.getNumPublications());
