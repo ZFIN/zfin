@@ -1197,7 +1197,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     public boolean getGeneHasPhenotype(Marker gene) {
         String sql = "SELECT count(phenox_pk_id) " +
                 "FROM mutant_fast_search, phenotype_experiment " +
-                "WHERE mfs_mrkr_zdb_id = :geneZdbID " +
+                "WHERE mfs_data_zdb_id = :geneZdbID " +
                 "AND mfs_genox_zdb_id = phenox_genox_zdb_id ";
         Query query = currentSession().createSQLQuery(sql);
         query.setString("geneZdbID", gene.getZdbID());
@@ -1209,7 +1209,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         String sql = " " +
                 "SELECT phenox_fig_zdb_id " +
                 "FROM mutant_fast_search, phenotype_experiment, image " +
-                "WHERE mfs_mrkr_zdb_id = :geneZdbID " +
+                "WHERE mfs_data_zdb_id = :geneZdbID " +
                 "AND mfs_genox_zdb_id = phenox_genox_zdb_id " +
                 "AND phenox_fig_zdb_id = img_fig_zdb_id";
         Query query = currentSession().createSQLQuery(sql);

@@ -7,8 +7,6 @@
   top: 100px !important;
   margin-top: 0 !important;
   z-index: $modal-z-index + 1 !important;
-  max-height: 450px;
-  overflow-y: auto;
 }
 
 .jquery-modal.blocker {
@@ -31,7 +29,6 @@
     font-size: 1rem;
     font-weight: 900;
     color: $grey;
-
   }
 }
 

@@ -1,13 +1,10 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import useMutableFetch from '../hooks/useMutableFetch';
 import MarkerAliasEditModal from './MarkerAliasEditModal';
+import NoData from './NoData';
 
-const MarkerAliases = ({markerId}) => {
-    const {
-        value: aliases,
-        setValue,
-    } = useMutableFetch(`/action/marker/${markerId}/aliases`, []);
+const MarkerAliases = ({markerId, aliases, setAliases}) => {
+
     const [modalAlias, setModalAlias] = useState(null);
 
     const handleEditClick = (event, alias) => {
@@ -23,11 +20,11 @@ const MarkerAliases = ({markerId}) => {
     }
 
     const handleDelete = () => {
-        setValue(aliases.filter(alias => alias.zdbID !== modalAlias.zdbID));
+        setAliases(aliases.filter(alias => alias.zdbID !== modalAlias.zdbID));
     }
 
     const handleAdd = (newAlias) => {
-        setValue([
+        setAliases([
             ...aliases,
             newAlias
         ]);
@@ -35,7 +32,7 @@ const MarkerAliases = ({markerId}) => {
 
     const handleEdit = (updated) => {
         const updatedIdx = aliases.findIndex(alias => alias.zdbID === modalAlias.zdbID);
-        setValue([
+        setAliases([
             ...aliases.slice(0, updatedIdx),
             updated,
             ...aliases.slice(updatedIdx + 1)
@@ -44,6 +41,8 @@ const MarkerAliases = ({markerId}) => {
 
     return (
         <>
+            {aliases.length === 0 && <NoData placeholder='None' />}
+
             <ul className='list-unstyled'>
                 {aliases.map(alias => (
                     <li key={alias.zdbID}>
@@ -69,6 +68,8 @@ const MarkerAliases = ({markerId}) => {
 
 MarkerAliases.propTypes = {
     markerId: PropTypes.string,
+    aliases: PropTypes.array,
+    setAliases: PropTypes.func,
 };
 
 export default MarkerAliases;

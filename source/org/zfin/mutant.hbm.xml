@@ -385,7 +385,7 @@
 
     <class name="org.zfin.mutant.GeneGenotypeExperiment" table="mutant_fast_Search">
         <composite-id>
-            <key-many-to-one name="gene" column="mfs_mrkr_zdb_id"/>
+            <key-many-to-one name="gene" column="mfs_data_zdb_id"/>
             <key-many-to-one name="fishExperiment" column="mfs_genox_zdb_id"/>
         </composite-id>
     </class>

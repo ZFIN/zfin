@@ -1,8 +1,11 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ attribute name="previousNames" required="true" type="java.util.List" %>
+<%@ attribute name="name" required="false" type="java.lang.String"  %>
 
-<z:attributeListItem label="Previous Names">
+<c:set var="title" value="${(empty name) ? 'Previous Name' : name}" />
+
+<z:attributeListItem label="${title}">
     <z:ifHasData test="${!empty previousNames}" noDataMessage="None">
         <ul class="comma-separated">
             <c:forEach var="markerAlias" items="${previousNames}" varStatus="loop">

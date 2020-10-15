@@ -110,6 +110,15 @@
                 </g:customCell>
             </g:row>
             <g:row>
+                <g:cell styleName="{style.grey-background}">Assembly information not known as of (enter date in mm/dd/yy format)</g:cell>
+                <g:customCell>
+                <g:HorizontalPanel>
+
+                <zfin:StringTextBox ui:field="assemblyInfoDate" visibleLength="8"/>
+                </g:HorizontalPanel>
+                </g:customCell>
+            </g:row>
+            <g:row>
 
                     <g:cell styleName="{style.grey-background}">Chromosome</g:cell>
                 <g:customCell>
@@ -187,7 +196,13 @@
                         <g:row>
                             <g:cell>Public:</g:cell>
                             <g:customCell>
+                                <g:HorizontalPanel>
                                 <g:TextArea ui:field="publicNoteBox" width="400px"/>
+                                    <g:Label text="&nbsp;&nbsp;&nbsp;&nbsp;Feature:"/>
+                                    <g:CheckBox ui:field="featureNoteCheckBox" enabled="true"/>
+                                    <g:Label text="&nbsp;&nbsp;&nbsp;&nbsp;Variant:"/>
+                                    <g:CheckBox ui:field="variantNoteCheckBox" enabled="false"/>
+                                </g:HorizontalPanel>
                             </g:customCell>
                         </g:row>
                         <g:row>

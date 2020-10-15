@@ -25,13 +25,13 @@ create or replace function regen_genox_create_temp_tables()
 
     create table mutant_fast_search_new 
       (
-        mfs_mrkr_zdb_id text not null,
+        mfs_data_zdb_id text not null,
         mfs_genox_zdb_id text not null
       );
  
 
     create temporary table if not exists regen_genox_input_zdb_id_temp  
-    -- can be either a marker or a genox zdb_id
+    -- can be a feature, marker or a genox zdb_id
       (
 	rggz_zdb_id		text,
         primary key (rggz_zdb_id)
@@ -45,7 +45,7 @@ create or replace function regen_genox_create_temp_tables()
 
     create temp table regen_genox_temp
       (
-	rggt_mrkr_zdb_id         text not null,
+	rggt_data_zdb_id         text not null,
 	rggt_genox_zdb_id        text not null
       ) ;
 

@@ -1778,6 +1778,34 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return orthologList;
     }
 
+
+    @Override
+    public List<Ortholog> getOrthologListByPubAndMrkr(String pubID, String mrkrID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select distinct ortho, ortho.zebrafishGene.abbreviationOrder, ortho.ncbiOtherSpeciesGene.organism.displayOrder " +
+                "from Ortholog as ortho " +
+                "join ortho.evidenceSet as evidence " +
+                "where evidence.publication.zdbID = :pubID " +
+                "and ortho.zebrafishGene.zdbID = :mrkrID " +
+                "order by ortho.zebrafishGene.abbreviationOrder, ortho.ncbiOtherSpeciesGene.organism.displayOrder";
+        Query query = session.createQuery(hql);
+        query.setString("pubID", pubID);
+        query.setString("mrkrID", mrkrID);
+        query.setResultTransformer(new ResultTransformer() {
+            @Override
+            public Object transformTuple(Object[] objects, String[] strings) {
+                return objects[0];
+            }
+
+            @Override
+            public List transformList(List collection) {
+                return collection;
+            }
+        });
+        List<Ortholog> orthologList = (List<Ortholog>) query.list();
+        return orthologList;
+    }
     @Override
     public PaginationResult<Ortholog> getOrthologPaginationByPub(String pubID, GeneBean searchBean) {
         Session session = HibernateUtil.currentSession();
@@ -2848,15 +2876,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     @Override
     public boolean hasCuratedOrthology(Marker marker, String publicationId) {
-        String hql = "select pa from PublicationAttribution as pa, Ortholog as o where " +
-                " pa.dataZdbID = o.zdbID AND o.zebrafishGene.zdbID = :markerID AND  pa.sourceType = :source ";
 
-        Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setParameter("markerID", marker.getZdbID());
-        query.setParameter("source", RecordAttribution.SourceType.STANDARD);
-        List<PublicationAttribution> pubAttrList = query.list();
-        Set<String> pubList = pubAttrList.stream().map(attribution -> attribution.getPublication().getZdbID()).collect(Collectors.toSet());
-        return CollectionUtils.isNotEmpty(pubList) && pubList.size() == 1 && pubList.contains(publicationId);
+        return CollectionUtils.isNotEmpty(getOrthologListByPubAndMrkr(publicationId,marker.zdbID));
     }
 
 }

@@ -3,7 +3,7 @@
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.GeneBean" scope="request"/>
 
 <c:set var="SUMMARY" value="Summary"/>
-<c:set var="EXPRESSION" value="Expression"/>
+<c:set var="GENOTYPE" value="Expression"/>
 <c:set var="PHENOTYPE" value="Phenotype"/>
 <c:set var="ANTIBODIES" value="Antibodies"/>
 <c:set var="PLASMIDS" value="Plasmids"/>
@@ -20,7 +20,7 @@
 <c:set var="CITATIONS" value="Citations"/>
 
 <z:dataPage
-        sections="${[SUMMARY, EXPRESSION, PHENOTYPE, MUTANTS, DISEASES, GO, PROTEINS, TRANSCRIPTS, PATHWAYS, ANTIBODIES, PLASMIDS, CONSTRUCTS, MARKERRELATIONSHIPS, SEQUENCES, ORTHOLOGY, CITATIONS]}"
+        sections="${[SUMMARY, GENOTYPE, PHENOTYPE, MUTANTS, DISEASES, GO, PROTEINS, TRANSCRIPTS, PATHWAYS, ANTIBODIES, PLASMIDS, CONSTRUCTS, MARKERRELATIONSHIPS, SEQUENCES, ORTHOLOGY, CITATIONS]}"
 >
     <jsp:attribute name="entityName">
         <zfin:abbrev entity="${formBean.marker}"/>
@@ -39,7 +39,7 @@
             <jsp:include page="gene-view-summary.jsp"/>
         </div>
 
-        <z:section title="${EXPRESSION}" infoPopup="/ZFIN/help_files/expression_help.html">
+        <z:section title="${GENOTYPE}" infoPopup="/ZFIN/help_files/expression_help.html">
             <jsp:include page="gene-view-expression-header.jsp"/>
             <z:section title="Wild Type Expression Summary">
                 <div class="__react-root" id="GeneExpressionRibbon" data-gene-id="${formBean.marker.zdbID}"></div>
@@ -125,7 +125,7 @@
         </z:section>
 
         <z:section title="${CITATIONS}" infoPopup="/action/marker/note/citations">
-            <div class="__react-root" id="MarkerCitationsTable" data-marker-id="${formBean.marker.zdbID}"></div>
+            <div class="__react-root" id="CitationTable" data-marker-id="${formBean.marker.zdbID}"></div>
         </z:section>
     </jsp:body>
 

@@ -23,10 +23,10 @@ const MarkerAliasEditModal = ({ alias, markerId, onAdd, onClose, onDelete, onEdi
         setMeta,
         values,
     } = useForm({
-        debugForm: true,
+        debugForm: false,
         defaultValues: alias,
         validate: values => {
-            if (values.references.length === 0) {
+            if (values && values.references.length === 0) {
                 return 'At least one reference is required';
             }
             return false;
@@ -83,7 +83,7 @@ const MarkerAliasEditModal = ({ alias, markerId, onAdd, onClose, onDelete, onEdi
     return (
         <Modal open={values !== null}>
             <div className='popup-header'>{isEdit ? 'Edit' : 'Add'} Alias</div>
-            <div className='popup-body'>
+            <div className='popup-body show-overflow'>
                 {values &&
                 <Form>
                     <FormGroup
@@ -99,7 +99,7 @@ const MarkerAliasEditModal = ({ alias, markerId, onAdd, onClose, onDelete, onEdi
                         <div className='col-md-10'>
                             {
                                 values.references.map((reference, idx) => (
-                                    <div key={idx} className='d-flex align-items-baseline'>
+                                    <div key={idx} className={`d-flex align-items-baseline ${idx > 0 ? 'mt-2' : ''}`}>
                                         <div className='flex-grow-1'>
                                             <InputField
                                                 tag={PublicationInput}
@@ -127,7 +127,7 @@ const MarkerAliasEditModal = ({ alias, markerId, onAdd, onClose, onDelete, onEdi
                                 className='btn btn-link px-0'
                                 onClick={() => pushFieldValue('references', { zdbID: '' })}
                             >
-                                Add Reference
+                                Add Citation
                             </button>
 
                             {(error || serverError) &&

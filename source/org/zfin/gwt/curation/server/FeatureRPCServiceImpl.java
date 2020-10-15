@@ -39,6 +39,9 @@ import org.zfin.sequence.*;
 import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.zebrashare.repository.ZebrashareRepository;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -109,6 +112,8 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
      * @throws DuplicateEntryException
      */
     public FeatureDTO editFeatureDTO(FeatureDTO featureDTO) throws DuplicateEntryException, ValidationException {
+        DateFormat dateFormat = new SimpleDateFormat("mm/dd/yy");
+        Date entryDate;
 
         checkDupes(featureDTO);
         validateUnspecified(featureDTO);
@@ -164,12 +169,24 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         if (featureDTO.getMutagee() != null) {
             featureAssay.setMutagee(Mutagee.getType(featureDTO.getMutagee()));
         }
+        if (featureDTO.getAssemblyInfoDate()!=null) {
+            try {
+                 entryDate = dateFormat.parse(featureDTO.getAssemblyInfoDate());
+            } catch (ParseException e) {
+                entryDate = new Date(0);
+            }
+            feature.setFtrAssemblyInfoDate(entryDate);
+        }
+
         FeatureLocation fgl = featureRepository.getFeatureLocation(feature);
         if (fgl == null) {
             fgl = new FeatureLocation();
             fgl.setFeature(feature);
         }
         if (StringUtils.isNotEmpty(featureDTO.getFeatureChromosome())) {
+
+
+            feature.setFtrAssemblyInfoDate(null);
             fgl.setFtrChromosome(featureDTO.getFeatureChromosome());
             fgl.setFtrAssembly(featureDTO.getFeatureAssembly());
             fgl.setFtrStartLocation(featureDTO.getFeatureStartLoc());

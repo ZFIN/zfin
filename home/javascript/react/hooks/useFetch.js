@@ -3,14 +3,23 @@ import produce from 'immer';
 import http from '../utils/http';
 import { DEFAULT_FETCH_STATE } from './constants';
 
-export default function useFetch(url) {
+export default function useFetch(url, options = {}) {
     // a container for mutable data
     const status = {};
 
-    const [data, setData] = useState(DEFAULT_FETCH_STATE);
+    const [data, setData] = useState({
+        ...DEFAULT_FETCH_STATE,
+        value: options.defaultValue || null,
+    });
     const [request, setRequest] = useState(null);
 
-    useEffect(() => {
+    const setValue = (value) => {
+        setData(produce(data => {
+            data.value = value;
+        }));
+    };
+
+    const doFetch = () => {
         if (!url) {
             return;
         }
@@ -54,10 +63,18 @@ export default function useFetch(url) {
                 data.pending = false
             }));
         });
+    }
+
+    useEffect(() => {
+        doFetch();
         return () => {
             status.mounted = false;
         };
     }, [url]);
 
-    return data;
+    return {
+        ...data,
+        setValue,
+        refetch: doFetch,
+    };
 }

@@ -43,7 +43,7 @@ $sqlGetGenesNoProteinButHavingXpatOrPheno = "select distinct mrkr_abbrev, mrkr_z
                                                                   and dblink_fdbcont_zdb_id = fdbcont_zdb_id 
                                                                   and fdb_db_pk_id = fdbcont_fdb_db_id) 
                                                 and (exists(select 'x' from expression_experiment where xpatex_gene_zdb_id = mrkr_zdb_id) 
-                                                  or exists(select 'x' from mutant_fast_Search where mfs_mrkr_zdb_id = mrkr_zdb_id))
+                                                  or exists(select 'x' from mutant_fast_Search where mfs_data_zdb_id = mrkr_zdb_id))
                                                 order by mrkr_abbrev;";
 
 
@@ -105,7 +105,7 @@ $sqlGetGenesWithProteinAndXpatOrPheno = "select distinct mrkr_abbrev, mrkr_zdb_i
                                                           and dblink_fdbcont_zdb_id = fdbcont_zdb_id
                                                           and fdb_db_pk_id = fdbcont_fdb_db_id)
                                             and (exists(select 'x' from expression_experiment where xpatex_gene_zdb_id = mrkr_zdb_id)
-                                              or exists(select 'x' from mutant_fast_Search where mfs_mrkr_zdb_id = mrkr_zdb_id))
+                                              or exists(select 'x' from mutant_fast_Search where mfs_data_zdb_id = mrkr_zdb_id))
                                        order by mrkr_abbrev;";
 
 

@@ -116,6 +116,15 @@
                 </g:customCell>
             </g:row>
             <g:row>
+                <g:cell styleName="{style.grey-background}">Assembly information not known as of (enter date in mm/dd/yy format)</g:cell>
+                <g:customCell>
+                    <g:HorizontalPanel>
+
+                        <zfin:StringTextBox ui:field="assemblyInfoDate" visibleLength="12"/>
+                    </g:HorizontalPanel>
+                </g:customCell>
+            </g:row>
+            <g:row>
 
                 <g:cell styleName="{style.grey-background}">Chromosome</g:cell>
                 <g:customCell>

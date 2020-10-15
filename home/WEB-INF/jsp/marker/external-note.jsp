@@ -1,12 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<style type="text/css">
-    div.summary li {
-        padding-top: .1em;
-        padding-bottom: .1em;
-    }
-</style>
-
 <div class="popup-header">
     Orthology Note for <zfin:link entity="${marker}"/>
 </div>

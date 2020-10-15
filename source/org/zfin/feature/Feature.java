@@ -71,6 +71,9 @@ public class Feature implements EntityNotes, EntityZdbID {
     @Column(name = "feature_abbrev", nullable = false)
     @JsonView(View.API.class)
     private String abbreviation;
+
+
+
     @Column(name = "feature_tg_suffix")
     private String transgenicSuffix;
     @OneToMany(fetch = FetchType.LAZY)
@@ -91,6 +94,8 @@ public class Feature implements EntityNotes, EntityZdbID {
     private Boolean isDominantFeature;
     @Column(name = "feature_unspecified")
     private Boolean isUnspecifiedFeature;
+    @Column(name = "ftr_chr_info_date")
+    private Date ftrAssemblyInfoDate;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "feature", fetch = FetchType.LAZY)
     @SortNatural
     private Set<FeatureMarkerRelationship> featureMarkerRelations;
@@ -306,6 +311,13 @@ public class Feature implements EntityNotes, EntityZdbID {
 
     public void setAbbreviationOrder(String abbreviationOrder) {
         this.abbreviationOrder = abbreviationOrder;
+    }
+    public Date getFtrAssemblyInfoDate() {
+        return ftrAssemblyInfoDate;
+    }
+
+    public void setFtrAssemblyInfoDate(Date ftrAssemblyInfoDate) {
+        this.ftrAssemblyInfoDate = ftrAssemblyInfoDate;
     }
 
 
@@ -694,6 +706,15 @@ public class Feature implements EntityNotes, EntityZdbID {
         return false;
     }
 
+    public boolean hasAlleleOfRelationship() {
+        if (CollectionUtils.isEmpty(featureMarkerRelations))
+            return false;
+        for (FeatureMarkerRelationship featureMarkerRelationship : featureMarkerRelations)
+            if (featureMarkerRelationship.getType().equals(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF))
+                return true;
+        return false;
+    }
+
     public boolean isReadyForCuration() {
         if (type.equals(FeatureTypeEnum.TRANSGENIC_INSERTION)) {
             return featureMarkerRelations.stream()
@@ -717,5 +738,11 @@ public class Feature implements EntityNotes, EntityZdbID {
         if (relationships.contains(FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE))
             return true;
         return false;
+    }
+
+    public String getDisplayType() {
+        if (type.equals(FeatureTypeEnum.TRANSGENIC_INSERTION) && hasAlleleOfRelationship())
+            return "Allele causes by " + type.getTypeDisplay();
+        return type.getTypeDisplay();
     }
 }

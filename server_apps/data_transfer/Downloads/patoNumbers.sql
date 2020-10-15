@@ -118,14 +118,14 @@ insert into tmp_pheno_genes
     from fish_components, fish_experiment, mutant_fast_Search
     where fc_fish_zdb_id = genox_fish_zdb_id
     and mfs_genox_zdb_id = genox_zdb_id
-    and mfs_mrkr_zdb_id = fc_gene_zdb_id; 
+    and mfs_data_zdb_id = fc_gene_zdb_id;
 
 insert into tmp_pheno_genes
   select distinct fc_gene_zdb_id
     from fish_components, fish_experiment, mutant_fast_Search
     where fc_fish_zdb_id = genox_fish_zdb_id
     and mfs_genox_zdb_id = genox_zdb_id
-    and mfs_mrkr_zdb_id = fc_affector_zdb_id ;
+    and mfs_data_zdb_id = fc_affector_zdb_id ;
 
 create temp table tmp_unique (gene_id text);
 
@@ -167,7 +167,7 @@ select ortho_zdb_id, gene_id, mrkr_abbrev, ortho_other_Species_symbol, organism_
     full outer join term e on e.term_zdb_id = phenos_quality_zdb_id
     join mutant_fast_search on genox_zdb_id = mfs_genox_zdb_id
     where fmrel_type = 'is allele of'
-      and mfs_mrkr_zdb_id = mrkr_zdb_id
+      and mfs_data_zdb_id = mrkr_zdb_id
       and phenos_tag != 'normal'
 union
   select ortho_zdb_id, gene_id,  mrkr_abbrev, ortho_other_species_symbol, organism_common_name,
@@ -191,8 +191,8 @@ union
     full outer join term d on d.term_zdb_id = phenos_entity_2_subterm_zdb_id
     full outer join term e on e.term_zdb_id = phenos_quality_zdb_id
     join mutant_fast_search on mfs_genox_zdb_id = genox_zdb_id
-    where mfs_mrkr_zdb_id = mrkr_zdb_id
-      and mfs_mrkr_zdb_id like 'ZDB-GENE%'
+    where mfs_data_zdb_id = mrkr_zdb_id
+      and mfs_data_zdb_id like 'ZDB-GENE%'
       and phenos_tag != 'normal'
 ;
 

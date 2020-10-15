@@ -154,10 +154,10 @@ select count(*), 'Expression & Phenotype', 'Phenotype statements', now() from ph
 
 --Clean phenotype
 insert into annual_stats(as_count, as_section, as_type, as_date)
-select count(distinct (mfs_mrkr_Zdb_id)), 'Expression & Phenotype', 'Genes with a phenotype', now() from phenotype_statement, phenotype_Experiment, mutant_fast_search
+select count(distinct (mfs_data_Zdb_id)), 'Expression & Phenotype', 'Genes with a phenotype', now() from phenotype_statement, phenotype_Experiment, mutant_fast_search
  where phenox_pk_id = phenos_phenox_pk_id 
  and phenox_genox_zdb_id = mfs_genox_zdb_id
-and (mfs_mrkr_zdb_id like 'ZDB-GENE%' or mfs_mrkr_zdb_id like '%RNAG%');
+and (mfs_data_zdb_id like 'ZDB-GENE%' or mfs_data_zdb_id like '%RNAG%');
 
 -- number of diseases with fish models
 insert into annual_stats(as_count, as_section, as_type, as_date)

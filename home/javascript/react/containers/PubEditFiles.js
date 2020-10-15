@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import useMutableFetch from '../hooks/useMutableFetch';
 import PubFileRow from '../components/pub-edit/PubFileRow';
 import http from '../utils/http';
 import PubFileUpload from '../components/pub-edit/PubFileUpload';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ProcessorApproval from './ProcessorApproval';
 import PubFileEditModal from '../components/pub-edit/PubFileEditModal';
+import useFetch from '../hooks/useFetch';
 
 const PubEditFiles = ({ pubId }) => {
     const {
         pending,
         value,
         setValue,
-    } = useMutableFetch(`/action/publication/${pubId}/files`);
+    } = useFetch(`/action/publication/${pubId}/files`);
     const [editFile, setEditFile] = useState(null);
 
     const handleDelete = async (file) => {

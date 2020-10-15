@@ -3,12 +3,6 @@
 -->
 <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<style type="text/css">
-    div.summary li {
-        padding-top: .1em;
-        padding-bottom: .1em;
-    }
-</style>
 
 <div class='popup-header'>
     Searching for names with non-English characters

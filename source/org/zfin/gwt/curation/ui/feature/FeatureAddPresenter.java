@@ -191,6 +191,7 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
             @Override
             public void onSuccess(final FeatureDTO result) {
                 //Window.alert("Feature successfully created");
+                view.assemblyInfoDate.setText("");
                 view.featureTypeBox.setSelectedIndex(0);
                 view.featureChromosome.clear();
                 view.featureStartLoc.clear();

@@ -29,7 +29,7 @@ const Modal = ({ children, open = false, onClose }) => {
     }, [open]);
 
     return (
-        <div className='jq-modal curation' ref={modalRefCallback}>
+        <div className='jq-modal' ref={modalRefCallback}>
             {children}
         </div>
     );
