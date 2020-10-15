@@ -39,6 +39,8 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
     @UiField
     StringListBox mutagenBox;
     @UiField
+    StringTextBox assemblyInfoDate;
+    @UiField
     StringTextBox featureChromosome;
     @UiField
     StringListBox featureAssembly;

@@ -32,8 +32,17 @@ public class FeatureDTO extends RelatedEntityDTO implements HasExternalNotes, Fi
     protected FeatureTypeEnum featureType;
     protected String lineNumber;
     protected String labPrefix;
-
+    protected String assemblyInfoDate;
     protected String evidence;
+
+    public String getAssemblyInfoDate() {
+        return assemblyInfoDate;
+    }
+
+    public void setAssemblyInfoDate(String assemblyInfoDate) {
+        this.assemblyInfoDate = assemblyInfoDate;
+    }
+
     protected String assembly;
     protected String fgmdSeqVar;
     protected String fgmdSeqRef;
@@ -367,6 +376,7 @@ public class FeatureDTO extends RelatedEntityDTO implements HasExternalNotes, Fi
         featureDTO.transgenicSuffix = transgenicSuffix;
         featureDTO.mutagee = mutagee;
         featureDTO.mutagen = mutagen;
+        featureDTO.assemblyInfoDate = assemblyInfoDate;
         return featureDTO;
     }
 

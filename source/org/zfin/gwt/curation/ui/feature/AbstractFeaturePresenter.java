@@ -214,7 +214,7 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
         featureDTO.setPublicationZdbID(dto.getPublicationZdbID());
         featureDTO.setTransgenicSuffix(view.featureSuffixBox.getSelectedText());
         featureDTO.setAbbreviation(FeatureValidationService.getAbbreviationFromName(featureDTO));
-
+        featureDTO.setAssemblyInfoDate(view.assemblyInfoDate.getText());
         // genome Location
         featureDTO.setEvidence(view.featureEvidenceCode.getSelectedItemText());
         featureDTO.setFeatureChromosome(view.featureChromosome.getText());

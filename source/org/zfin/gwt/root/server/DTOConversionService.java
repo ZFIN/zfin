@@ -49,6 +49,9 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.presentation.DBLinkPresentation;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.*;
@@ -58,6 +61,7 @@ import static org.zfin.repository.RepositoryFactory.*;
 /**
  */
 public class DTOConversionService {
+    public static DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 
     private static Logger logger = LogManager.getLogger(DTOConversionService.class);
 //    private static SynonymSorting synonymSorting = new SynonymSorting();
@@ -599,12 +603,22 @@ public class DTOConversionService {
     }
 
     public static Feature convertToFeature(FeatureDTO featureDTO) {
+        DateFormat dateFormat = new SimpleDateFormat("mm/dd/yy");
+        Date entryDate;
         Feature feature = new Feature();
         feature.setAbbreviation(escapeString(featureDTO.getAbbreviation()));
         feature.setName(escapeString(featureDTO.getName()));
 
         // these two need to be added, but a trigger fixes them
         feature.setAbbreviationOrder(featureDTO.getAbbreviation());
+        if (StringUtils.isNotEmpty(featureDTO.getAssemblyInfoDate())) {
+            try {
+                entryDate = dateFormat.parse(featureDTO.getAssemblyInfoDate());
+            } catch (ParseException e) {
+                entryDate = null;
+            }
+            feature.setFtrAssemblyInfoDate(entryDate);
+        }
         feature.setNameOrder(featureDTO.getAbbreviation());
 
         feature.setType(featureDTO.getFeatureType());
@@ -812,7 +826,14 @@ public class DTOConversionService {
                     featureDTO.setMutagen(feature.getFeatureAssay().getMutagen().toString());
                 }
             }
-            logger.debug(feature.getAbbreviation());
+            if (feature.getFtrAssemblyInfoDate()!=null){
+                SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/YY");
+                String s = formatter.format(feature.getFtrAssemblyInfoDate());
+                featureDTO.setAssemblyInfoDate(s);
+            }
+
+
+
             //FeatureLocation ftrLocation = RepositoryFactory.getFeatureRepository().getFeatureLocation(feature);
             FeatureLocation ftrLocation = RepositoryFactory.getFeatureRepository().getLocationByFeature(feature);
             if (ftrLocation != null) {
