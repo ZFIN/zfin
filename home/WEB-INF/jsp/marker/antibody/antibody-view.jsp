@@ -28,12 +28,16 @@
             <jsp:include page="antibody-view-notes.jsp"/>
         </z:section>
 
-        <z:section title="${LABELING}">
-            <jsp:include page="antibody-view-labeling.jsp"/>
+       <z:section title="${LABELING}" infoPopup="/ZFIN/help_files/expression_help.html">
+            <jsp:include page="../gene/gene-view-expression-header.jsp"/>
+            <z:section title="Wild Type Expression Summary">
+                <div class="__react-root" id="GeneExpressionRibbon" data-gene-id="${formBean.marker.zdbID}"></div>
+            </z:section>
         </z:section>
 
         <z:section title="${CITATIONS}">
-            <div class="__react-root" id="CitationTable" data-marker-id="${formBean.marker.zdbID}"></div>
+            <div class="__react-root" id="MarkerCitationsTable" data-marker-id="${formBean.marker.zdbID}"></div>
         </z:section>
+
     </jsp:body>
 </z:dataPage>
