@@ -1786,8 +1786,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         String hql = "select distinct ortho, ortho.zebrafishGene.abbreviationOrder, ortho.ncbiOtherSpeciesGene.organism.displayOrder " +
                 "from Ortholog as ortho " +
                 "join ortho.evidenceSet as evidence " +
-                "where "
-                "ortho.zebrafishGene.zdbID = :mrkrID " +
+                "where ortho.zebrafishGene.zdbID = :mrkrID " +
                 "order by ortho.zebrafishGene.abbreviationOrder, ortho.ncbiOtherSpeciesGene.organism.displayOrder";
         Query query = session.createQuery(hql);
         query.setString("mrkrID", mrkrID);
