@@ -500,7 +500,7 @@ public interface PublicationRepository extends PaginationParameter {
 
     List<Ortholog> getOrthologListByPub(String pubID);
 
-    List<Ortholog> getOrthologListByPubAndMrkr(String pubID, String mrkrID);
+    List<Ortholog> getOrthologListByMrkr(String mrkrID);
 
     PaginationResult<Ortholog> getOrthologPaginationByPub(String pubID, GeneBean searchBean);
 
@@ -638,7 +638,7 @@ public interface PublicationRepository extends PaginationParameter {
 
     boolean isNewFeaturePubAttribution(Feature feature, String publicationId);
 
-    boolean hasCuratedOrthology(Marker marker,String publicationId);
+    boolean hasCuratedOrthology(Marker marker);
 
     Map<Marker, Boolean> areNewGenePubAttribution(List<Marker> attributedMarker, String publicationId);
 }
