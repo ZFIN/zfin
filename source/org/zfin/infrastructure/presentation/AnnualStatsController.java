@@ -1,15 +1,11 @@
 package org.zfin.infrastructure.presentation;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.infrastructure.AnnualStats;
-import org.zfin.infrastructure.PublicationAttribution;
-import org.zfin.publication.Publication;
-import org.zfin.publication.presentation.PublicationListAdapter;
-import org.zfin.publication.presentation.PublicationListBean;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
@@ -286,7 +282,7 @@ public class AnnualStatsController {
         model.addAttribute("orthStats", orthStats);
         model.addAttribute("totalNumOrthStats", orthStats.size());
 
-        return "infrastructure/annual-stats-view.page";
+        return "infrastructure/annual-stats-view";
     }
 }
 

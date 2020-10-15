@@ -1,11 +1,14 @@
 package org.zfin.infrastructure.presentation;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.construct.ConstructComponent;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
@@ -15,11 +18,10 @@ import org.zfin.infrastructure.delete.DeleteFeatureRule;
 import org.zfin.infrastructure.delete.DeleteValidationReport;
 import org.zfin.marker.service.DeleteService;
 
-import javax.validation.Valid;
 import java.util.List;
 
-import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 import static org.zfin.repository.RepositoryFactory.getConstructRepository;
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 
 /**
  * Attempts to delete a marker and lands on a splash page to indicate success/failure.
@@ -49,7 +51,7 @@ public class DeleteRecordController {
         }
         formBean.setRecordToDeleteViewString(zdbIDToDelete);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "delete " + zdbIDToDelete);
-        return "infrastructure/delete-record.page";
+        return "infrastructure/delete-record";
     }
 
     @RequestMapping(value = "/record-deleted")
@@ -89,7 +91,7 @@ public class DeleteRecordController {
         }
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "record deleted");
-        return "infrastructure/record-deleted.page";
+        return "infrastructure/record-deleted";
     }
 
     @RequestMapping(value = "/controlled-vocabulary-delete")
@@ -103,7 +105,7 @@ public class DeleteRecordController {
             model.addAttribute("controlledVocab", controlledVocab);
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, "record could not be deleted");
             model.addAttribute("constructComponents", constructComponents);
-            return "infrastructure/controlled-vocabulary-added.page";
+            return "infrastructure/controlled-vocabulary-added";
         }
 
         try {
@@ -118,6 +120,6 @@ public class DeleteRecordController {
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Controlled Vocabulary record deleted");
 
-        return "infrastructure/controlled-vocabulary-add.page";
+        return "infrastructure/controlled-vocabulary-add";
     }
 }

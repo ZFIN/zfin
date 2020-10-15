@@ -50,7 +50,7 @@ public class ZfinGlobalExceptionHandler extends ResponseEntityExceptionHandler {
         }
         model.addAttribute("pageURL", ((ServletWebRequest) request).getRequest().getRequestURI());
         advice.populateModelAttributes(model);
-        return "infrastructure/exception.page";
+        return "infrastructure/exception";
     }
 
     @ExceptionHandler(RestErrorException.class)
