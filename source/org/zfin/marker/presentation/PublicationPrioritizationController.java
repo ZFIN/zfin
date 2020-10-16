@@ -42,7 +42,7 @@ public class PublicationPrioritizationController {
     public JsonResultResponse<Prioritization> getGenePubPrioritization(@PathVariable String publicationId,
                                                                        @Version Pagination pagination) {
 
-        List<Marker> attributedMarker = getPublicationRepository().getGenesByPublication(publicationId);
+        List<Marker> attributedMarker = getPublicationRepository().getGenesByPublication(publicationId,false);
         Map<Marker, Boolean> isNewGeneMap = getPublicationRepository().areNewGenePubAttribution(attributedMarker, publicationId);
         List<Prioritization> prioList = attributedMarker.stream()
                 .map(marker -> {
