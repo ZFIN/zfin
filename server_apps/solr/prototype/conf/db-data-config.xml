@@ -4904,7 +4904,6 @@ and child.term_ontology = 'disease_ontology';
                     from record_attribution ra, data_alias da, marker m
                     where da.dalias_zdb_id = ra.recattrib_data_zdb_id
                     and m.mrkr_zdb_id = da.dalias_data_zdb_id
-                    and m.mrkr_type in ('GENE', 'GENEP')
                     union
                     select recattrib_source_zdb_id as pub_zdb_id,
                         m.mrkr_abbrev as gene,
@@ -4952,7 +4951,6 @@ and child.term_ontology = 'disease_ontology';
                     from record_attribution ra, feature_marker_relationship fmr, marker m
                     where fmr.fmrel_ftr_zdb_id = ra.recattrib_data_zdb_id
                     and m.mrkr_zdb_id = fmr.fmrel_mrkr_zdb_id
-                    and m.mrkr_type in ('GENE', 'GENEP')
                     union
                     select recattrib_source_zdb_id as pub_zdb_id,
                         m.mrkr_abbrev as gene,
