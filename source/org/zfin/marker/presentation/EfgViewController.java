@@ -97,7 +97,7 @@ public class EfgViewController {
         model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.EFG.getTitleString() + efg.getAbbreviation());
 
-        return "marker/efg/efg-view.page";
+        return "marker/efg/efg-view";
     }
 
     @RequestMapping(value = "/efg/view/{zdbID}/expression")
@@ -138,7 +138,7 @@ public class EfgViewController {
         markerBean.setConstructs(markerSet);
         markerBean.setNumberOfConstructs(relatedMarker.getTotalCount());
         model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
-        return "marker/efg-all-constructs.ajax";
+        return "marker/efg-all-constructs";
     }
 
 

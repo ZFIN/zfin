@@ -58,7 +58,7 @@ public class DeleteMarkerController {
                 }
 
                 formBean.addError("Antibody can not be deleted, being used in " + numExpression + " expression records in " + pubs.size() + " pubs: <br>" + argString);
-                return "marker/delete-marker.page";
+                return "marker/delete-marker";
             }
         }
 
@@ -74,6 +74,6 @@ public class DeleteMarkerController {
             formBean.addError("Failed to delete marker: " + formBean  + "<br>" + e.getMessage());
         }
 
-        return "marker/delete-marker.page";
+        return "marker/delete-marker";
     }
 }

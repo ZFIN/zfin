@@ -61,7 +61,7 @@ public class MarkerEditController {
                 markerBean.setMarker(transcript);
                 model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
                 model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.TRANSCRIPT.getEditTitleString() + transcript.getAbbreviation());
-                return "marker/transcript-edit.page";
+                return "marker/transcript-edit";
             }
         }
 
@@ -72,7 +72,7 @@ public class MarkerEditController {
                 markerBean.setMarker(antibody);
                 model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
                 model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.ANTIBODY.getEditTitleString() + antibody.getAbbreviation());
-                return "marker/antibody-edit.page";
+                return "marker/antibody-edit";
             }
         }
 
@@ -83,7 +83,7 @@ public class MarkerEditController {
             markerBean.setMarker(clone);
             model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.CLONE.getEditTitleString() + clone.getAbbreviation());
-            return "marker/clone-edit.page";
+            return "marker/clone-edit";
         }
 
         model.addAttribute(LookupStrings.ZDB_ID, zdbID);

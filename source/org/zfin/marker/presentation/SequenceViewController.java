@@ -59,7 +59,7 @@ public class SequenceViewController {
         model.addAttribute(LookupStrings.FORM_BEAN, sequenceInfo);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Sequences for Gene: " + marker.getAbbreviation());
 
-        return "marker/sequence-view.page";
+        return "marker/sequence-view";
     }
 
 
@@ -96,6 +96,6 @@ public class SequenceViewController {
         model.addAttribute(LookupStrings.FORM_BEAN, sequenceInfo);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Sequences for Gene: " + marker.getAbbreviation());
 
-        return "marker/sequence-edit.page";
+        return "marker/sequence-edit";
     }
 }

@@ -4,44 +4,42 @@
 
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.CreateAntibodyFormBean" scope="request"/>
 
+<z:page>
+    <form:form action="do-submit" commandName="formBean" method="post">
+        <label for="antibodyName" class="indented-label">Antibody name:</label>
+        <form:input path="${CreateAntibodyFormBean.NEW_AB_NAME}" size="25"
+                    onkeypress="return noenter(event)"></form:input>
+        <form:errors path="${CreateAntibodyFormBean.NEW_AB_NAME}" cssClass="error indented-error"/>
+        <p>
+            <label for="antibodyPublicationZdbID" class="indented-label">Publication:</label>
+                <form:input path="${CreateAntibodyFormBean.AB_PUBLICATION_ZDB_ID}" size="25"
+                            onkeypress="return noenter(event)"></form:input>
+                <form:errors path="${CreateAntibodyFormBean.AB_PUBLICATION_ZDB_ID}" cssClass="error indented-error" value="${formBean.antibodyPublicationZdbID}"/>
 
-<html>
-<form:form action="do-submit" commandName="formBean" method="post">
-    <label for="antibodyName" class="indented-label">Antibody name:</label>
-    <form:input path="${CreateAntibodyFormBean.NEW_AB_NAME}" size="25"
-                onkeypress="return noenter(event)"></form:input>
-    <form:errors path="${CreateAntibodyFormBean.NEW_AB_NAME}" cssClass="error indented-error"/>
-    <p>
-        <label for="antibodyPublicationZdbID" class="indented-label">Publication:</label>
-            <form:input path="${CreateAntibodyFormBean.AB_PUBLICATION_ZDB_ID}" size="25"
-                        onkeypress="return noenter(event)"></form:input>
-            <form:errors path="${CreateAntibodyFormBean.AB_PUBLICATION_ZDB_ID}" cssClass="error indented-error" value="${formBean.antibodyPublicationZdbID}"/>
+        <p>
+            <input type=submit name=s_new value="Submit new Antibody">
+        </p>
 
-    <p>
-        <input type=submit name=s_new value="Submit new Antibody">
-    </p>
+    </form:form>
 
-</form:form>
+    <script type="text/javascript">
 
-</html>
+        function noenter(e) {
+            var ENTER_KEY = 13;
+            var code = "";
 
-<script type="text/javascript">
+            if (window.event) // IE
+            {
+                code = e.keyCode;
+            }
+            else if (e.which) // Netscape/Firefox/Opera
+            {
+                code = e.which;
+            }
 
-    function noenter(e) {
-        var ENTER_KEY = 13;
-        var code = "";
-
-        if (window.event) // IE
-        {
-            code = e.keyCode;
+            if (code == ENTER_KEY) {
+                return false;
+            }
         }
-        else if (e.which) // Netscape/Firefox/Opera
-        {
-            code = e.which;
-        }
-
-        if (code == ENTER_KEY) {
-            return false;
-        }
-    }
-</script>
+    </script>
+</z:page>

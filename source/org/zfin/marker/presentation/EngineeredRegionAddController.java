@@ -55,7 +55,7 @@ public class EngineeredRegionAddController {
     protected String showForm(Model model) throws Exception {
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add Engineered Region");
-        return "marker/engineeredRegion-add.page";
+        return "marker/engineeredRegion-add";
     }
 
     private
@@ -72,7 +72,7 @@ public class EngineeredRegionAddController {
                             BindingResult result) throws Exception {
 
         if (result.hasErrors())
-            return "marker/engineeredRegion-add.page";
+            return "marker/engineeredRegion-add";
 
         String regionName = formBean.getRegionName();
 

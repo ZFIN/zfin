@@ -120,7 +120,7 @@ public class ConstructViewController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, markerBean.getMarkerTypeDisplay() + ": " + construct.getName());
 
 
-        return "marker/construct/construct-view.page";
+        return "marker/construct/construct-view";
     }
 
     private void sortRelationships(List<MarkerRelationshipPresentation> cloneRelationships) {

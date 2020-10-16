@@ -58,7 +58,7 @@ public class AntibodyCreateController {
     protected String showForm(Model model) throws Exception {
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add Antibody");
-        return "marker/antibody-add-form.page";
+        return "marker/antibody-add-form";
     }
 
     private @Autowired
@@ -75,7 +75,7 @@ public class AntibodyCreateController {
                               BindingResult result) throws Exception {
 
         if(result.hasErrors())
-            return "marker/antibody-add-form.page";
+            return "marker/antibody-add-form";
         String antibodyName = formBean.getAntibodyName();
 
         Antibody newAntibody = new Antibody();

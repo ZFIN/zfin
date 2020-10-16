@@ -1,6 +1,7 @@
 package org.zfin.marker.presentation;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -11,7 +12,6 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Clone;
 import org.zfin.marker.service.MarkerService;
-import org.zfin.profile.Person;
 import org.zfin.repository.RepositoryFactory;
 
 /**
@@ -33,7 +33,7 @@ public class CloneAddController {
         model.addAttribute("cloneMarkerTypes", MarkerService.getCloneMarkerTypes());
         model.addAttribute("cloneLibraries", RepositoryFactory.getMarkerRepository().getProbeLibraries());
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add Clone");
-        return "marker/clone-add.page";
+        return "marker/clone-add";
     }
 
 

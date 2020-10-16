@@ -1,6 +1,7 @@
 package org.zfin.marker.presentation;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ *
  */
 @Controller
 @RequestMapping("/marker")
@@ -37,79 +39,87 @@ public class MarkerNotesController {
 
     @RequestMapping("/note/phenotype")
     public String getPhenotypeSelectNote() {
-        return "marker/phenotype-note.insert";
+        return "marker/phenotype-note";
     }
+
     @RequestMapping("/note/phenotype-summary-note")
     public String getPhenotypeSummarySelectNote() {
-        return "marker/phenotype-summary-note.insert";
+        return "marker/phenotype-summary-note";
     }
 
     @RequestMapping("/note/omim-phenotype")
     public String getOmimPhenotypeNote() {
-        return "marker/omim-phenotype-note.insert";
+        return "marker/omim-phenotype-note";
     }
+
     @RequestMapping("/note/transcripts")
     public String getTranscriptNote() {
-        return "marker/transcript-note.insert";
+        return "marker/transcript-note";
     }
+
     @RequestMapping("/note/sequences")
     public String geSequencesNote() {
-        return "marker/sequences-note.insert";
+        return "marker/sequences-note";
     }
+
     @RequestMapping("/note/markerrelationships")
     public String getMarkerRelationshipNote() {
-        return "marker/markerrelationships-note.insert";
+        return "marker/markerrelationships-note";
     }
+
     @RequestMapping("/note/antibodies")
     public String getAntibodyNote() {
-        return "marker/antibody-note.insert";
+        return "marker/antibody-note";
     }
+
     @RequestMapping("/note/orthology")
     public String getOrthologyNote() {
-        return "marker/orthology-note.insert";
+        return "marker/orthology-note";
     }
+
     @RequestMapping("/note/citations")
     public String getCitationsNote() {
-        return "marker/citations-note.insert";
+        return "marker/citations-note";
     }
 
     @RequestMapping("/note/proteins")
     public String getProteinNote() {
-        return "marker/protein-note.insert";
+        return "marker/protein-note";
     }
+
     @RequestMapping("/note/mutants")
     public String getMutantsNote() {
-        return "marker/mutants-note.insert";
+        return "marker/mutants-note";
     }
 
     @RequestMapping("/note/str")
     public String getSTRNote() {
-        return "marker/str-note.insert";
+        return "marker/str-note";
     }
 
     @RequestMapping("/note/construct")
     public String getConstructNote() {
-        return "marker/construct-note.insert";
+        return "marker/construct-note";
     }
 
     @RequestMapping("/note/go")
     public String getGoNote() {
-        return "marker/go-note.insert";
+        return "marker/go-note";
     }
 
     @RequestMapping("/note/automated-gene-desc")
     public String getGeneDescription() {
-        return "marker/automated-gene-desc-note.insert";
+        return "marker/automated-gene-desc-note";
     }
 
     @RequestMapping("/note/disease-model")
     public String getDiseaseModelNote() {
-        return "marker/disease-model-note.insert";
+        return "marker/disease-model-note";
     }
 
     @RequestMapping("/note/sequence-targeting-reagent-gbrowse")
     public String getSTRGbrowseNote() {
-        return "marker/sequence-targeting-reagent-gbrowse-note.insert";
+        return "marker/sequence-targeting-reagent-gbrowse-note";
     }
 
     @RequestMapping("/gene-product-description/{zdbID}")
@@ -125,7 +135,7 @@ public class MarkerNotesController {
         }
 
         if (marker == null) {
-            model.addAttribute(LookupStrings.ZDB_ID, zdbID) ;
+            model.addAttribute(LookupStrings.ZDB_ID, zdbID);
             return "record-not-found.popup";
         } else {
             geneProductsBeans = markerRepository.getGeneProducts(marker.getZdbID());
@@ -140,7 +150,7 @@ public class MarkerNotesController {
         }
         model.addAttribute(LookupStrings.FORM_BEAN, geneProductsBeans);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Gene Products: " + marker.getAbbreviation());
-        return "marker/gene-product-description.insert";
+        return "marker/gene-product-description";
     }
 
     @RequestMapping("/snp-publication-list")
@@ -156,7 +166,7 @@ public class MarkerNotesController {
         }
 
         if (marker == null) {
-            model.addAttribute(LookupStrings.ZDB_ID, zdbID) ;
+            model.addAttribute(LookupStrings.ZDB_ID, zdbID);
             return "record-not-found.page";
         }
 
@@ -174,7 +184,7 @@ public class MarkerNotesController {
         model.addAttribute(LookupStrings.FORM_BEAN, bean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "SNP Publication List");
 
-        return "marker/snp-publication-list.page";
+        return "marker/snp-publication-list";
     }
 
     @ResponseBody
@@ -246,7 +256,7 @@ public class MarkerNotesController {
     private Marker getReplacedMarker(String markerZdbId) {
         String replacedZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(markerZdbId);
         Marker replacedMarker = null;
-        if(replacedZdbID !=null){
+        if (replacedZdbID != null) {
             logger.debug("found a replaced zdbID for: " + markerZdbId + "->" + replacedZdbID);
             replacedMarker = markerRepository.getMarkerByID(replacedZdbID);
         }

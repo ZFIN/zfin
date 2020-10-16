@@ -10,59 +10,6 @@
         <put-attribute name="body" value="/WEB-INF/jsp/{1}.jsp"/>
     </definition>
 
-    <!--marker definitions-->
-    <definition name="marker/gene/*.page" extends="main_layout">
-        <put-attribute name="bodyClass" value="data-page" />
-        <put-attribute name="body" value="/WEB-INF/jsp/marker/gene/{1}.jsp" />
-    </definition>
-    <definition name="marker/pseudogene/pseudogene-view.page" extends="main_layout">
-        <put-attribute name="bodyClass" value="data-page" />
-        <put-attribute name="body" value="/WEB-INF/jsp/marker/pseudogene/pseudogene-view.jsp" />
-    </definition>
-    <definition name="marker/antibody/antibody-view.page" extends="main_layout">
-        <put-attribute name="bodyClass" value="data-page" />
-        <put-attribute name="body" value="/WEB-INF/jsp/marker/antibody/antibody-view.jsp" />
-    </definition>
-    <definition name="marker/clone/clone-view.page" extends="main_layout">
-        <put-attribute name="bodyClass" value="data-page" />
-        <put-attribute name="body" value="/WEB-INF/jsp/marker/clone/clone-view.jsp" />
-    </definition>
-    <definition name="marker/sequenceTargetingReagent/sequence-targeting-reagent-view.page" extends="main_layout">
-        <put-attribute name="bodyClass" value="data-page" />
-        <put-attribute name="body" value="/WEB-INF/jsp/marker/sequenceTargetingReagent/sequence-targeting-reagent-view.jsp" />
-    </definition>
-    <definition name="marker/construct/construct-view.page" extends="main_layout">
-        <put-attribute name="bodyClass" value="data-page" />
-        <put-attribute name="body" value="/WEB-INF/jsp/marker/construct/construct-view.jsp" />
-    </definition>
-    <definition name="marker/transcript/transcript-view.page" extends="main_layout">
-        <put-attribute name="bodyClass" value="data-page" />
-        <put-attribute name="body" value="/WEB-INF/jsp/marker/transcript/transcript-view.jsp" />
-    </definition>
-    <definition name="marker/region/region-view.page" extends="main_layout">
-        <put-attribute name="bodyClass" value="data-page" />
-        <put-attribute name="body" value="/WEB-INF/jsp/marker/region/region-view.jsp" />
-    </definition>
-    <definition name="marker/efg/efg-view.page" extends="main_layout">
-        <put-attribute name="bodyClass" value="data-page" />
-        <put-attribute name="body" value="/WEB-INF/jsp/marker/efg/efg-view.jsp" />
-    </definition>
-    <definition name="marker/snp/snp-view.page" extends="main_layout">
-        <put-attribute name="bodyClass" value="data-page" />
-        <put-attribute name="body" value="/WEB-INF/jsp/marker/snp/snp-view.jsp" />
-    </definition>
-    <definition name="marker/marker-view.page" extends="main_layout">
-        <put-attribute name="bodyClass" value="data-page" />
-        <put-attribute name="body" value="/WEB-INF/jsp/marker/marker-view.jsp" />
-    </definition>
-
-    <definition name="marker/*.page" extends="main_layout">
-        <put-attribute name="body" value="/WEB-INF/jsp/marker/{1}.jsp"/>
-    </definition>
-    <definition name="marker/*.popup" extends="popup_layout">
-        <put-attribute name="body" value="/WEB-INF/jsp/marker/{1}.jsp"/>
-    </definition>
-
     <definition name="construct/*.page" extends="main_layout">
         <put-attribute name="body" value="/WEB-INF/jsp/construct/{1}.jsp"/>
     </definition>
@@ -80,8 +27,6 @@
     <definition name="curation/curation.page" extends="main_layout">
         <put-attribute name="body" value="/WEB-INF/jsp/curation/curation.jsp"/>
     </definition>
-
-    <definition name="marker/*.ajax" template="/WEB-INF/jsp/marker/{1}.jsp"/>
 
     <definition name="publication/*.ajax" template="/WEB-INF/jsp/publication/{1}.jsp"/>
 
@@ -101,9 +46,6 @@
     <definition name="database/*.popup" extends="popup_layout">
         <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/{1}.jsp"/>
     </definition>
-
-
-    <definition name="marker/*.insert" template="/WEB-INF/jsp/marker/{1}.jsp"/>
 
     <!--feature definitions-->
     <definition name="feature/*.page" extends="main_layout">

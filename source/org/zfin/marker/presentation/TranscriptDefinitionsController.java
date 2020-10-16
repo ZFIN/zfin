@@ -10,30 +10,13 @@ import org.zfin.sequence.service.TranscriptService;
 @RequestMapping("/marker")
 public class TranscriptDefinitionsController {
 
-
-//    @RequestMapping(value = "/transcript-definitions")
-//    public String getTranscriptDefinitions(Model model) throws Exception {
-//
-//        TranscriptBean transcriptBean = new TranscriptBean();
-//
-//
-//        transcriptBean.setTranscriptTypeStatusDefinitionList(TranscriptService.getAllTranscriptTypeStatusDefinitions());
-//        transcriptBean.setTranscriptTypeList(TranscriptService.getAllTranscriptTypes());
-//
-//        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Transcript Type and Status Definitions");
-//        model.addAttribute(LookupStrings.FORM_BEAN, transcriptBean) ;
-//
-//        return "marker/transcript-definitions.page";
-//
-//    }
-
     @RequestMapping(value = "/transcript-types")
     public String getTranscriptTypes(Model model) throws Exception {
         TranscriptBean transcriptBean = new TranscriptBean();
         transcriptBean.setTranscriptTypeList(TranscriptService.getAllTranscriptTypes());
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Transcript Types");
         model.addAttribute(LookupStrings.FORM_BEAN, transcriptBean) ;
-        return "marker/transcript-types.insert";
+        return "marker/transcript-types";
     }
 
 
@@ -43,6 +26,6 @@ public class TranscriptDefinitionsController {
         transcriptBean.setTranscriptTypeStatusDefinitionList(TranscriptService.getAllTranscriptTypeStatusDefinitions());
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Transcript Statuses");
         model.addAttribute(LookupStrings.FORM_BEAN, transcriptBean) ;
-        return "marker/transcript-statuses.insert";
+        return "marker/transcript-statuses";
     }
 }

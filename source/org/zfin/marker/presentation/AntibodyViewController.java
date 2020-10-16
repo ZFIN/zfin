@@ -16,7 +16,6 @@ import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.repository.SequenceRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,7 +73,7 @@ public class AntibodyViewController {
         model.addAttribute(LookupStrings.FORM_BEAN, antibodyBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.ANTIBODY.getTitleString() + antibody.getName());
 
-        return "marker/antibody/antibody-view.page";
+        return "marker/antibody/antibody-view";
     }
 
 }

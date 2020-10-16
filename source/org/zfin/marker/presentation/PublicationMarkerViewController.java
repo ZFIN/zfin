@@ -4,8 +4,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationListAdapter;
@@ -32,7 +30,7 @@ public class PublicationMarkerViewController {
         citationBean.setOrderBy("author");
         model.addAttribute("citationList",citationBean);
 
-        return "marker/citation-list.page";
+        return "marker/citation-list";
     }
 
     @RequestMapping("/go-citation-list/markerID/{markerZdbID}/mrkrGoEvdTermZdbID/{markerGoEvdTermZdbID}/evidenceCode/{evdCode}/inference/{inf}")
@@ -50,7 +48,7 @@ public class PublicationMarkerViewController {
         citationBean.setOrderBy("author");
         model.addAttribute("citationList",citationBean);
 
-        return "marker/go-citation-list.page";
+        return "marker/go-citation-list";
     }
 
 }
