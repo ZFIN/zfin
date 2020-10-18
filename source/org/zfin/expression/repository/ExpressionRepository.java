@@ -423,6 +423,8 @@ public interface ExpressionRepository {
 
     List<ExpressionResult2> getPhenotypeFromExpressionsByFigureFish(String publicationID, String figureID, String fishID, String featureID);
 
+    List<ExpressionResult2> getPhenotypeFromExpressionsByFeature(String featureID);
+
     /**
      * Retrieve list of expression experiment2 records for a given antibody.
      * @return list of expression experiment2 records

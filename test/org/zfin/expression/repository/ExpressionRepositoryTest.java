@@ -32,6 +32,7 @@ import org.zfin.util.TermFigureStageRange;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -555,6 +556,20 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(expressionExperiment2s);
         List<ExpressionPhenotypeExperimentDTO> list = ExpressionService.createPhenotypeFromExpressions(expressionExperiment2s);
         assertNotNull(list);
+    }
+
+    @Test
+    public void getPhenotypeFromExpressionsByFeature() {
+        String featureID = "ZDB-ALT-161121-6";
+        List<ExpressionResult2> expressionExperiment2s = getExpressionRepository().getPhenotypeFromExpressionsByFeature(featureID);
+        assertNotNull(expressionExperiment2s);
+
+        Set<Figure> figures = expressionExperiment2s.stream()
+                .map(expressionResult2 ->
+                        expressionResult2.getExpressionFigureStage().getFigure()
+                )
+                .collect(Collectors.toSet());
+        assertNotNull(figures);
     }
 
     @Test
