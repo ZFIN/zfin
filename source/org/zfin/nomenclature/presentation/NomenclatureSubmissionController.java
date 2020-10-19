@@ -49,7 +49,7 @@ public class NomenclatureSubmissionController {
         model.addAttribute("markerHistoryReasonCodes", MarkerHistory.Reason.values());
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Marker History");
-        return "nomenclature/history-view.page";
+        return "nomenclature/history-view";
     }
 
     @RequestMapping(value = "/view/{zdbID}")
@@ -64,7 +64,7 @@ public class NomenclatureSubmissionController {
         }
         model.addAttribute("markerHistory", history);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Marker History Event");
-        return "nomenclature/event-view.page";
+        return "nomenclature/event-view";
     }
 
     @RequestMapping(value = "/gene-name", method = RequestMethod.GET)
@@ -73,7 +73,7 @@ public class NomenclatureSubmissionController {
         submission.setHomologyInfoList(Arrays.asList(new HomologyInfo()));
         model.addAttribute("submission", submission);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Submit a Proposed Gene Name");
-        return "nomenclature/gene-name-form.page";
+        return "nomenclature/gene-name-form";
     }
 
     @RequestMapping(value = "/gene-name", method = RequestMethod.POST)
@@ -84,7 +84,7 @@ public class NomenclatureSubmissionController {
         removeEmptyRows(submission.getHomologyInfoList());
 
         model.addAttribute("sent", sendNameSubmissionEmail(submission));
-        return "nomenclature/gene-name-submit.page";
+        return "nomenclature/gene-name-submit";
     }
 
     @RequestMapping(value = "/line-name", method = RequestMethod.GET)
@@ -93,7 +93,7 @@ public class NomenclatureSubmissionController {
         submission.setLineDetails(Arrays.asList(new LineInfo()));
         model.addAttribute("submission", submission);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Submit a Proposed Mutant/Transgenic Line Name");
-        return "nomenclature/line-name-form.page";
+        return "nomenclature/line-name-form";
     }
 
     @RequestMapping(value = "/line-name", method = RequestMethod.POST)
@@ -104,7 +104,7 @@ public class NomenclatureSubmissionController {
         removeEmptyRows(submission.getLineDetails());
 
         model.addAttribute("sent", sendNameSubmissionEmail(submission));
-        return "nomenclature/line-name-submit.page";
+        return "nomenclature/line-name-submit";
     }
 
     @ModelAttribute("pubStatusOptions")
