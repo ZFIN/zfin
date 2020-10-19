@@ -10,10 +10,6 @@
         <put-attribute name="body" value="/WEB-INF/jsp/{1}.jsp"/>
     </definition>
 
-    <definition name="anatomy/*.page" extends="main_layout">
-        <put-attribute name="body" value="/WEB-INF/jsp/anatomy/{1}.jsp"/>
-    </definition>
-
     <definition name="database/*.page" extends="main_layout">
         <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/{1}.jsp"/>
     </definition>
@@ -43,7 +39,6 @@
     </definition>
 
     <definition name="feature/*.insert" template="/WEB-INF/jsp/feature/{1}.jsp"/>
-    <definition name="anatomy/*.ajax" template="/WEB-INF/jsp/anatomy/{1}.jsp"/>
 
     <!--genotype definitions-->
     <definition name="genotype/*.page" extends="main_layout">

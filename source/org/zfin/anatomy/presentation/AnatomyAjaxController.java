@@ -73,7 +73,7 @@ public class AnatomyAjaxController {
         form.setAoTerm(term);
         retrieveExpressedGenesData(term, form);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
-        return "anatomy/show-expressed-genes.ajax";
+        return "anatomy/show-expressed-genes";
     }
 
     @RequestMapping(value = "/show-expressed-insitu-probes/{zdbID}")
@@ -89,7 +89,7 @@ public class AnatomyAjaxController {
         form.setAoTerm(term);
         retrieveHighQualityProbeData(term, form);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
-        return "anatomy/show-expressed-insitu-probes.ajax";
+        return "anatomy/show-expressed-insitu-probes";
     }
 
     @RequestMapping(value = "/show-labeled-antibodies/{zdbID}")
@@ -105,7 +105,7 @@ public class AnatomyAjaxController {
         form.setAoTerm(term);
         retrieveAntibodyData(term, form);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
-        return "anatomy/show-labeled-antibodies.ajax";
+        return "anatomy/show-labeled-antibodies";
     }
 
     @RequestMapping(value = "/show-clean-fish/{zdbID}")
@@ -122,7 +122,7 @@ public class AnatomyAjaxController {
         form.setAoTerm(term);
         retrieveMutantData(term, form, false);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
-        return "anatomy/show-clean-fish.ajax";
+        return "anatomy/show-clean-fish";
     }
 
     @RequestMapping(value = "/show-all-clean-fish/{zdbID}")
@@ -170,7 +170,7 @@ public class AnatomyAjaxController {
         retrieveMutantData(term, form, true);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         model.addAttribute("includingSubstructures", true);
-        return "anatomy/show-all-phenotype-mutants.page";
+        return "anatomy/show-all-phenotype-mutants";
     }
 
     @RequestMapping(value = "/{oboID}/phenotype-summary/{fishID}")
