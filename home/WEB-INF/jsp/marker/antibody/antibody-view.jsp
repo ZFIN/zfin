@@ -28,9 +28,8 @@
             <jsp:include page="antibody-view-notes.jsp"/>
         </z:section>
 
-       <z:section title="${LABELING}" infoPopup="/ZFIN/help_files/expression_help.html">
-            <jsp:include page="../gene/gene-view-expression-header.jsp"/>
-            <z:section title="Wild Type Expression Summary">
+       <z:section title="${LABELING}" infoPopup="/ZFIN/help_files/atb_expression_help.html">
+            <z:section title="Antibody Labeling Summary">
                 <div class="__react-root" id="GeneExpressionRibbon" data-gene-id="${formBean.marker.zdbID}"></div>
             </z:section>
         </z:section>
