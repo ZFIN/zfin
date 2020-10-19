@@ -18,7 +18,6 @@ import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.EntityID;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
-import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.PublicationTrackingStatus;
 import org.zfin.publication.presentation.PublicationService;
@@ -123,7 +122,7 @@ public class CurationController implements CurationService {
         model.addAttribute("curatingStatus", publicationRepository.getPublicationStatusByName(PublicationTrackingStatus.Name.CURATING));
         model.addAttribute("hasCorrespondence", publicationService.hasCorrespondence(publication));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Curate: " + publication.getTitle());
-        return "curation/curation.page";
+        return "curation/curation";
     }
 
     @ResponseBody
