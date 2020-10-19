@@ -87,7 +87,7 @@ public class FigureViewController {
         model.addAttribute("showElsevierMessage", figureViewService.showElsevierMessage(figure.getPublication()));
         model.addAttribute("hasAcknowledgment", figureViewService.hasAcknowledgment(figure.getPublication()));
 
-        return "figure/figure-view.page";
+        return "figure/figure-view";
     }
 
 
@@ -158,7 +158,7 @@ public class FigureViewController {
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "All Figures, " + publication.getShortAuthorList());
 
-        return "figure/all-figure-view.page";
+        return "figure/all-figure-view";
 
     }
 

@@ -449,7 +449,7 @@ public class PublicationViewController {
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Image: " + figureViewService.getFullFigureLabel(image.getFigure()));
         }
 
-        return "figure/image-edit.page";
+        return "figure/image-edit";
     }
 
 
