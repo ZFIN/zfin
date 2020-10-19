@@ -32,7 +32,7 @@ public class AlleleDesignationCreateController {
     @RequestMapping("/alleleDesig-add-form")
     protected String showForm(Model model) throws Exception {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add Line Designation");
-        return "feature/alleleDesig-add-form.page";
+        return "feature/alleleDesig-add-form";
     }
 
     @InitBinder("formBean")
@@ -45,7 +45,7 @@ public class AlleleDesignationCreateController {
                                 BindingResult result) throws Exception {
 
         if (result.hasErrors())
-            return "feature/alleleDesig-add-form.page";
+            return "feature/alleleDesig-add-form";
         String labPrefix = formBean.getLineDesig();
 
         try {

@@ -103,7 +103,7 @@ public class FeatureDetailController {
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.FEATURE.getTitleString() + feature.getName());
 
-        return "feature/feature-detail.page";
+        return "feature/feature-detail";
     }
 
     @RequestMapping(value = "view/prototype/{zdbID}")
@@ -161,11 +161,11 @@ public class FeatureDetailController {
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.FEATURE.getTitleString() + feature.getName());
 
-        return "feature/feature-view.page";
+        return "feature/feature-view";
     }
     @RequestMapping("/flank-seq")
     public String getFlankingSequenceNote() {
-        return "feature/flank-seq-note.insert";
+        return "feature/flank-seq-note";
     }
 
 
@@ -203,7 +203,7 @@ public class FeatureDetailController {
         }
         bean.setOrderBy(orderBy);
         model.addAttribute(LookupStrings.FORM_BEAN, bean);
-        return "feature/mutation-detail-citation-list.page";
+        return "feature/mutation-detail-citation-list";
     }
 
     private void retrieveSortedGenotypeData(Feature feature, FeatureBean form) {
@@ -240,7 +240,7 @@ public class FeatureDetailController {
         citationBean.setOrderBy("author");
         model.addAttribute("citationList",citationBean);
 
-        return "feature/type-citation-list.page";
+        return "feature/type-citation-list";
     }
 
 }

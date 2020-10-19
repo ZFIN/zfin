@@ -205,7 +205,7 @@ public class PublicationViewController {
         model.addAttribute("featureList", featureList);
         model.addAttribute("publication", publication);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication, "Mutations and Transgenics"));
-        return "feature/feature-per-publication.page";
+        return "feature/feature-per-publication";
     }
 
     @RequestMapping("/publication/{pubID}/genotype-list")
@@ -228,7 +228,7 @@ public class PublicationViewController {
         model.addAttribute("genotypeList", genotypeList);
         model.addAttribute("publication", publication);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication, "Genotypes"));
-        return "feature/genotype-per-publication.page";
+        return "feature/genotype-per-publication";
     }
 
     @RequestMapping("/publication/{pubID}/fish-list")
