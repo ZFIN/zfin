@@ -10,16 +10,6 @@
         <put-attribute name="body" value="/WEB-INF/jsp/{1}.jsp"/>
     </definition>
 
-    <definition name="construct/*.page" extends="main_layout">
-        <put-attribute name="body" value="/WEB-INF/jsp/construct/{1}.jsp"/>
-    </definition>
-    <definition name="construct/construct-add.page" extends="popup_layout">
-        <put-attribute name="body" value="/WEB-INF/jsp/construct/construct-add.jsp"/>
-    </definition>
-    <definition name="construct/construct-update.page" extends="popup_layout">
-        <put-attribute name="body" value="/WEB-INF/jsp/construct/construct-update.jsp"/>
-    </definition>
-
     <definition name="orthology/*.page" extends="main_layout">
         <put-attribute name="body" value="/WEB-INF/jsp/orthology/{1}.jsp"/>
     </definition>

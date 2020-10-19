@@ -68,7 +68,7 @@ public class ConstructAddController {
     protected String showForm(Model model) throws Exception {
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add Construct");
-        return "construct/construct-add.page";
+        return "construct/construct-add";
     }
 
 
