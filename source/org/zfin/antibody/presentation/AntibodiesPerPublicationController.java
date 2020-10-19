@@ -43,7 +43,7 @@ public class AntibodiesPerPublicationController {
         model.addAttribute(LookupStrings.FORM_BEAN, antibodies);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "antibody list for " + publication.getShortAuthorList().replaceAll("<[^>]+>", ""));
 
-        return "antibody/antibodies-per-publication.page";
+        return "antibody/antibodies-per-publication";
     }
 
 }
