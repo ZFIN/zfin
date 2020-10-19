@@ -32,10 +32,6 @@
         <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/database/{1}.jsp"/>
     </definition>
 
-    <definition name="zebrashare/*.page" extends="main_layout">
-        <put-attribute name="body" value="/WEB-INF/jsp/zebrashare/{1}.jsp" />
-    </definition>
-
     <definition name="zf_info/*" template="/WEB-INF/jsp/zf_info/{1}.jsp"/>
 
 </tiles-definitions>

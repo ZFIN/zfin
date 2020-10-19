@@ -78,7 +78,7 @@ public class LineEditController {
         model.addAttribute(LookupStrings.FORM_BEAN, bean);
         addModelAttributes(model, feature);
 
-        return "zebrashare/line-edit.page";
+        return "zebrashare/line-edit";
     }
 
     @RequestMapping(value = "/line-edit/{id}", method = RequestMethod.POST)
@@ -120,7 +120,7 @@ public class LineEditController {
             LOG.error(e);
             tx.rollback();
             model.addAttribute("error", "There was an error while saving your update.");
-            return "zebrashare/line-edit.page";
+            return "zebrashare/line-edit";
         }
 
         redirectAttributes.addFlashAttribute("success", "Update saved");

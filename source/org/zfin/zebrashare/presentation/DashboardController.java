@@ -39,7 +39,7 @@ public class DashboardController {
         model.addAttribute("publications", publications);
         model.addAttribute("features", features);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "ZebraShare Submissions");
-        return "zebrashare/dashboard.page";
+        return "zebrashare/dashboard";
     }
 
 }
