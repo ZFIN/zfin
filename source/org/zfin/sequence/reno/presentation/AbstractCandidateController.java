@@ -78,13 +78,13 @@ public abstract class AbstractCandidateController {
     public String handleGet(CandidateBean candidateBean, Model model) {
         //we will eventually return this map, basically just as a holder for the bean
         model.addAttribute(LookupStrings.FORM_BEAN, candidateBean);
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, candidateBean.getRunCandidate().getZdbID());
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "ReNo " + candidateBean.getRunCandidate().getZdbID());
 
         // transaction is necessary to handle locks placed from within the view
         HibernateUtil.createTransaction();
         handleView(candidateBean);
         HibernateUtil.flushAndCommitCurrentSession();
-        return "reno/candidate-view.page";
+        return "reno/candidate-view";
     }
 
 
