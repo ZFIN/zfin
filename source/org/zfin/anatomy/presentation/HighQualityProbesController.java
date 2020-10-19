@@ -54,7 +54,7 @@ public class HighQualityProbesController {
         anatomyForm.setTotalRecords(hqp.getTotalCount());
         model.addAttribute(LookupStrings.FORM_BEAN, anatomyForm);
 
-        return "anatomy/show-high-quality-probes.page";
+        return "anatomy/show-high-quality-probes";
     }
 
     @RequestMapping(value = "/show-high-quality-probes-substructures/{zdbID}")
@@ -81,7 +81,7 @@ public class HighQualityProbesController {
         anatomyForm.setTotalRecords(hqp.getTotalCount());
         model.addAttribute(LookupStrings.FORM_BEAN, anatomyForm);
 
-        return "anatomy/show-high-quality-probes.page";
+        return "anatomy/show-high-quality-probes";
     }
 
 }

@@ -1,6 +1,7 @@
 package org.zfin.anatomy.presentation;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,7 +23,6 @@ import org.zfin.marker.presentation.ExpressedGeneDisplay;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Fish;
-import org.zfin.mutant.Genotype;
 import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.mutant.presentation.FishStatistics;
 import org.zfin.mutant.repository.MutantRepository;
@@ -137,7 +137,7 @@ public class AnatomyAjaxController {
         form.setAoTerm(term);
         retrieveMutantData(term, form, false);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
-        return "anatomy/show-all-clean-fish.page";
+        return "anatomy/show-all-clean-fish";
     }
 
     @RequestMapping(value = "/show-all-clean-fish-include-substructures/{zdbID}")
@@ -153,23 +153,7 @@ public class AnatomyAjaxController {
         form.setAoTerm(term);
         retrieveMutantData(term, form, true);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
-        return "anatomy/show-all-clean-fish.page";
-    }
-
-    @RequestMapping(value = "/show-all-in-situ-probes/{zdbID}")
-    public String showAllInSituProbes(Model model
-            , @ModelAttribute("formBean") AnatomySearchBean form
-            , @PathVariable("zdbID") String termID
-    ) throws Exception {
-
-        GenericTerm term = ontologyRepository.getTermByZdbID(termID);
-        if (term == null)
-            return "";
-
-        form.setAoTerm(term);
-        retrieveMutantData(term, form, false);
-        model.addAttribute(LookupStrings.FORM_BEAN, form);
-        return "anatomy/show-all-in-situ-probes.page";
+        return "anatomy/show-all-clean-fish";
     }
 
     @RequestMapping(value = "/show-all-phenotype-mutants-substructures/{zdbID}")
@@ -219,7 +203,7 @@ public class AnatomyAjaxController {
         model.addAttribute("includingSubstructures", true);
         model.addAttribute("fish", fish);
         model.addAttribute("entity", term);
-        return "anatomy/phenotype-summary.page";
+        return "anatomy/phenotype-summary";
     }
 
     private void retrieveAntibodyData(GenericTerm aoTerm, AnatomySearchBean form) {

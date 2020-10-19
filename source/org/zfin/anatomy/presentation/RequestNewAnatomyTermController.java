@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.zfin.framework.mail.AbstractZfinMailSender;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 
 import javax.validation.Valid;
@@ -44,7 +43,7 @@ public class RequestNewAnatomyTermController {
     @RequestMapping("/request-new-anatomy-term")
     protected String showRequestForm(Model model) throws Exception {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Request new anatomy term");
-        return "anatomy/request-new-anatomy-term.page";
+        return "anatomy/request-new-anatomy-term";
     }
 
     @RequestMapping(value = "/request-new-anatomy-term-submit", method = RequestMethod.POST)
@@ -83,7 +82,7 @@ public class RequestNewAnatomyTermController {
         AbstractZfinMailSender.getInstance().sendMail("Request for new Anatomical Structure", emailContents.toString(),
                 false, formBean.getEmail(),ZfinPropertiesEnum.JSD_EMAIL.value().split(" "));
 
-        return "anatomy/request-term-feedback.page";
+        return "anatomy/request-term-feedback";
     }
 
 }
