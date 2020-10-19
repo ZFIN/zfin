@@ -2,25 +2,26 @@
 
 <jsp:useBean id="formBean" class="org.zfin.fish.presentation.FishSearchFormBean" scope="request"/>
 
-<zfin-fish:fishSearchFormPage formBean="${formBean}"/>
+<z:page>
+    <zfin-fish:fishSearchFormPage formBean="${formBean}"/>
 
-<c:choose>
-    <c:when test="${formBean.totalRecords > 0}">
-        <zfin-fish:fishSearchResultTable formBean="${formBean}"/>
-    </c:when>
-    <c:otherwise>
-        <div class="no-results-found-message" style="margin-bottom: 1em;">
-            No matching fish were found.
-        </div>
-    </c:otherwise>
-</c:choose>
+    <c:choose>
+        <c:when test="${formBean.totalRecords > 0}">
+            <zfin-fish:fishSearchResultTable formBean="${formBean}"/>
+        </c:when>
+        <c:otherwise>
+            <div class="no-results-found-message" style="margin-bottom: 1em;">
+                No matching fish were found.
+            </div>
+        </c:otherwise>
+    </c:choose>
 
-<script language="JavaScript" type="text/javascript">
+    <script language="JavaScript" type="text/javascript">
 
-    var sortBy = document.getElementById("sort-by").value;
-    jQuery('#sort-by-pulldown option[value="' + sortBy + '"]').attr('selected', 'selected');
+        var sortBy = document.getElementById("sort-by").value;
+        jQuery('#sort-by-pulldown option[value="' + sortBy + '"]').attr('selected', 'selected');
 
-    jQuery('#fish-form-loading-notify').hide();
+        jQuery('#fish-form-loading-notify').hide();
 
-</script>
-
+    </script>
+</z:page>

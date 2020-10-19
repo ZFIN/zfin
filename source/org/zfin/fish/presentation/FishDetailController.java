@@ -1,13 +1,9 @@
 package org.zfin.fish.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapIterator;
 import org.apache.commons.collections.Predicate;
-import org.apache.commons.collections.keyvalue.MultiKey;
-import org.apache.commons.collections.map.MultiKeyMap;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,21 +14,21 @@ import org.zfin.expression.presentation.GeneCentricExpressionData;
 import org.zfin.expression.presentation.ProteinExpressionDisplay;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.expression.service.ExpressionService;
-import org.zfin.feature.presentation.GenotypeDetailController;
 import org.zfin.fish.FeatureGene;
 import org.zfin.fish.MutationType;
 import org.zfin.fish.repository.FishService;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.ExpressedGene;
-import org.zfin.mutant.*;
-import org.zfin.mutant.presentation.DiseaseModelDisplay;
-import org.zfin.ontology.GenericTerm;
+import org.zfin.mutant.DiseaseAnnotationModel;
+import org.zfin.mutant.Fish;
+import org.zfin.mutant.PhenotypeService;
+import org.zfin.mutant.PhenotypeStatementWarehouse;
 import org.zfin.ontology.service.OntologyService;
-import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
-import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
@@ -105,7 +101,7 @@ public class FishDetailController {
         model.addAttribute("fishIsWildtypeWithoutReagents", fish.isWildtypeWithoutReagents());
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Fish: " + getTitle(fish.getName()));
 
-        return "fish/fish-detail.page";
+        return "fish/fish-detail";
     }
 
     private String getTitle(String fishName) {

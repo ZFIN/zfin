@@ -2,6 +2,6 @@
 
 <jsp:useBean id="formBean" class="org.zfin.fish.presentation.FishSearchFormBean" scope="request"/>
 
-
-<zfin-fish:fishSearchFormPage formBean="${formBean}"/>
-
+<z:page>
+    <zfin-fish:fishSearchFormPage formBean="${formBean}"/>
+</z:page>

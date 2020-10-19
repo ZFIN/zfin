@@ -250,7 +250,7 @@ public class PublicationViewController {
         model.addAttribute("fishList", featureList);
         model.addAttribute("publication", publication);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication, "Fish"));
-        return "fish/fish-per-publication.page";
+        return "fish/fish-per-publication";
     }
 
 

@@ -1,7 +1,8 @@
 package org.zfin.fish.presentation;
 
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -9,19 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.expression.Figure;
-import org.zfin.expression.FigureExpressionSummary;
-import org.zfin.expression.presentation.FigureExpressionSummaryDisplay;
-import org.zfin.feature.presentation.GenotypeBean;
-import org.zfin.fish.FishSearchCriteria;
 import org.zfin.fish.repository.FishService;
-import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.framework.presentation.PresentationConverter;
 import org.zfin.publication.presentation.FigurePresentation;
-
-import java.util.Collections;
-import java.util.List;
-
-import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
 /**
  * This class serves the phenotype summary page.
@@ -52,7 +42,7 @@ public class FishExpressionController {
                                            @ModelAttribute("formBean") FishSearchFormBean formBean,
                                            Model model) throws Exception {
 
-        return "fish/fish-expression-figure-summary.page";
+        return "fish/fish-expression-figure-summary";
     }
 
     private String figureViewPage(Figure figure) {
