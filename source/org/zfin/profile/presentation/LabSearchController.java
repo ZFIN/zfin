@@ -29,7 +29,7 @@ public class LabSearchController {
         formBean.setMaxDisplayRecords("25");
         model.addAttribute(LookupStrings.FORM_BEAN, formBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Lab Search");
-        return "profile/lab-search.page";
+        return "profile/lab-search";
     }
 
     @RequestMapping(value = "/lab/search/execute", method = RequestMethod.GET)
@@ -47,11 +47,11 @@ public class LabSearchController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Lab Search");
 
         if (searchBean.getView().equalsIgnoreCase(AbstractProfileSearchBean.PRINT_VIEW)) {
-            return "profile/organization-print.print";
+            return "profile/organization-print";
         } else if (searchBean.getView().equalsIgnoreCase(AbstractProfileSearchBean.HTML_VIEW)) {
-            return "profile/lab-search.page";
+            return "profile/lab-search";
         } else {
-            return "profile/lab-search.page";
+            return "profile/lab-search";
         }
     }
 
@@ -61,7 +61,7 @@ public class LabSearchController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.LAB.getTitleString() + " All");
         model.addAttribute("type", "LAB");
         model.addAttribute("orgs",labs);
-        return "profile/list-all-organizations.page";
+        return "profile/list-all-organizations";
     }
 
 

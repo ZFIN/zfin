@@ -639,7 +639,7 @@ public class ProfileService {
             HibernateUtil.currentSession().getTransaction().commit();
 
 
-            return "profile/profile-edit.page";
+            return "profile/profile-edit";
         } catch (ConstraintViolationException cve) {
             logger.error("Constraint violation when updating lab", cve);
             HibernateUtil.rollbackTransaction();
@@ -649,12 +649,12 @@ public class ProfileService {
                         , "Invalid formatting of field [" + constraintViolation.getPropertyPath() + "].  "
                                 + constraintViolation.getMessage());
             }
-            return "profile/profile-edit.page";
+            return "profile/profile-edit";
         } catch (Exception e) {
             logger.error("Failed to update", e);
             HibernateUtil.rollbackTransaction();
             errors.reject("", "There was a problem updated the user record");
-            return "profile/profile-edit.page";
+            return "profile/profile-edit";
         }
 
     }

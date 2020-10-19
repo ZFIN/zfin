@@ -32,16 +32,6 @@
         <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/database/{1}.jsp"/>
     </definition>
 
-    <!-- profile defintions -->
-    <definition name="profile/*.page" extends="main_layout">
-        <put-attribute name="body" value="/WEB-INF/jsp/profile/{1}.jsp" />
-    </definition>
-
-
-    <!-- profile defintions -->
-    <definition name="profile/*.print" template="/WEB-INF/jsp/profile/{1}.jsp"/>
-    <definition name="profile/*.insert" template="/WEB-INF/jsp/profile/{1}.jsp"/>
-
     <!-- reno defintions -->
     <definition name="reno/*.page" extends="main_layout">
         <put-attribute name="staticTitle" value="ZFIN ReNo" />

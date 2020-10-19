@@ -92,7 +92,7 @@ public class CompanyController {
         prefixes.add(0, "- None -");
         model.addAttribute("prefixes", prefixes);
         company.setPrefix(featureRepository.getCurrentPrefixForLab(zdbID));
-        return "profile/profile-edit.page";
+        return "profile/profile-edit";
     }
 
 
@@ -123,7 +123,7 @@ public class CompanyController {
         model.addAttribute(LookupStrings.SELECTED_TAB, TAB_INDEX.INFORMATION.getLabel());
 
         if (errors.hasErrors()) {
-            return "profile/profile-edit.page";
+            return "profile/profile-edit";
         }
 
         final List<BeanFieldUpdate> fields = new ArrayList<>();
@@ -136,7 +136,7 @@ public class CompanyController {
         }
 
         if (errors.hasErrors()) {
-            return "profile/profile-edit.page";
+            return "profile/profile-edit";
         }
 
         return profileService.handleInfoUpdate(errors, company.getZdbID(), fields, securityPersonZdbId);
@@ -165,7 +165,7 @@ public class CompanyController {
         model.addAttribute("country", profileService.getCountryDisplayName(company.getCountry()));
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.COMPANY.getTitleString() + company.getName());
-        return "profile/profile-view.page";
+        return "profile/profile-view";
     }
 
 
@@ -173,7 +173,7 @@ public class CompanyController {
     public String createCompanySetup(Model model, Company company) {
         model.addAttribute(LookupStrings.FORM_BEAN, company);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add Company");
-        return "profile/create-company.page";
+        return "profile/create-company";
     }
 
     @RequestMapping(value = "/company/create", method = RequestMethod.POST)

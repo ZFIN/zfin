@@ -91,7 +91,7 @@ public class PersonController {
         model.addAttribute("showDeceasedCheckBox", showDeceasedCheckBox);
         model.addAttribute("countryList", profileService.getCountries());
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.PERSON.getTitleString() + person.getFullName());
-        return "profile/profile-edit.page";
+        return "profile/profile-edit";
     }
 
 
@@ -105,7 +105,7 @@ public class PersonController {
         model.addAttribute(LookupStrings.SELECTED_TAB, TAB_INDEX.BIOGRAPHY.getLabel());
 
         if (errors.hasErrors()) {
-            return "profile/profile-edit.page";
+            return "profile/profile-edit";
         }
 
         final List<BeanFieldUpdate> fields = new ArrayList<>();
@@ -118,7 +118,7 @@ public class PersonController {
         }
 
         if (errors.hasErrors()) {
-            return "profile/profile-edit.page";
+            return "profile/profile-edit";
         }
 
         return profileService.handleInfoUpdate(errors, person.getZdbID(), fields, securityPersonZdbId);
@@ -136,7 +136,7 @@ public class PersonController {
         model.addAttribute(LookupStrings.SELECTED_TAB, TAB_INDEX.PUBLICATIONS.getLabel());
 
         if (errors.hasErrors()) {
-            return "profile/profile-edit.page";
+            return "profile/profile-edit";
         }
 
         final List<BeanFieldUpdate> fields = new ArrayList<>();
@@ -148,7 +148,7 @@ public class PersonController {
         }
 
         if (errors.hasErrors()) {
-            return "profile/profile-edit.page";
+            return "profile/profile-edit";
         }
 
         return profileService.handleInfoUpdate(errors, person.getZdbID(), fields, securityPersonZdbId);
@@ -186,7 +186,7 @@ public class PersonController {
         }
 
         if (errors.hasErrors()) {
-            return "profile/profile-edit.page";
+            return "profile/profile-edit";
         }
 
 
@@ -200,7 +200,7 @@ public class PersonController {
         }
 
         if (errors.hasErrors()) {
-            return "profile/profile-edit.page";
+            return "profile/profile-edit";
         }
 
         try {
@@ -217,7 +217,7 @@ public class PersonController {
             HibernateUtil.currentSession().flush();
             HibernateUtil.currentSession().getTransaction().commit();
 
-            return "profile/profile-edit.page";
+            return "profile/profile-edit";
         } catch (ConstraintViolationException cve) {
             logger.error("Constraint violation when updating person", cve);
             HibernateUtil.rollbackTransaction();
@@ -229,12 +229,12 @@ public class PersonController {
                                     + constraintViolation.getMessage());
                 }
             }
-            return "profile/profile-edit.page";
+            return "profile/profile-edit";
         } catch (Exception e) {
             logger.error("Failed to update person", e);
             HibernateUtil.rollbackTransaction();
             errors.reject("", "There was a problem updated the user record");
-            return "profile/profile-edit.page";
+            return "profile/profile-edit";
         }
 
     }
@@ -260,7 +260,7 @@ public class PersonController {
         model.addAttribute("countryList", profileService.getCountries());
 
         if (errors.hasErrors()) {
-            return "profile/profile-edit.page";
+            return "profile/profile-edit";
         }
 
         final List<BeanFieldUpdate> fields = new ArrayList<>();
@@ -274,7 +274,7 @@ public class PersonController {
         }
 
         if (errors.hasErrors()) {
-            return "profile/profile-edit.page";
+            return "profile/profile-edit";
         }
 
         return profileService.handleInfoUpdate(errors, person.getZdbID(), fields, securityPersonZdbId);
@@ -305,7 +305,7 @@ public class PersonController {
         model.addAttribute("labs", labs);
         model.addAttribute("country", profileService.getCountryDisplayName(person.getCountry()));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.PERSON.getTitleString() + person.getFullName());
-        return "profile/profile-view.page";
+        return "profile/profile-view";
     }
 
     @RequestMapping(value = "/person/create", method = RequestMethod.GET)
@@ -320,7 +320,7 @@ public class PersonController {
             return createPersonSetupWithOrganization(organizationZdbId, model, person, errors);
         }
 
-        return "profile/create-person.page";
+        return "profile/create-person";
     }
 
 
@@ -354,7 +354,7 @@ public class PersonController {
 
         }
 
-        return "profile/create-person.page";
+        return "profile/create-person";
     }
 
 
@@ -365,7 +365,7 @@ public class PersonController {
         createPersonValidator.validate(person, errors);
         if (errors.hasErrors()) {
             model.addAttribute(LookupStrings.ERRORS, errors);
-            return "profile/create-person.page";
+            return "profile/create-person";
         }
 
         Organization organization = profileRepository.getOrganizationByZdbID(person.getOrganizationZdbId());
