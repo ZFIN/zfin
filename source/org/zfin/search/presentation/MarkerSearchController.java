@@ -46,7 +46,7 @@ public class MarkerSearchController {
         model.addAttribute("criteria", criteria);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Marker Search");
 
-        return "search/marker-search-results.page";
+        return "search/marker-search-results";
     }
 
     @RequestMapping(value = "/search-results")
@@ -68,7 +68,7 @@ public class MarkerSearchController {
         criteria.setSearchHappened(true);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Marker Search Results");
 
-        return "search/marker-search-results.page";
+        return "search/marker-search-results";
     }
 
     private PaginationBean generatePaginationBean(MarkerSearchCriteria criteria, String queryString) {
