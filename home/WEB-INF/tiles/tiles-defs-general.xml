@@ -28,10 +28,6 @@
         <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/gwt/{1}.jsp"/>
     </definition>
 
-    <definition name="mapping/*.page" extends="main_layout">
-        <put-attribute name="body" value="/WEB-INF/jsp/mapping/{1}.jsp"/>
-    </definition>
-
     <definition name="dev-tools/database/*.page" extends="main_layout">
         <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/database/{1}.jsp"/>
     </definition>

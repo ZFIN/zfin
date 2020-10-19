@@ -2,13 +2,13 @@ package org.zfin.mapping.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.feature.Feature;
-import org.zfin.feature.FeatureTranscriptMutationDetail;
 import org.zfin.feature.repository.FeatureService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.Area;
@@ -19,14 +19,10 @@ import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.EntityZdbID;
-import org.zfin.infrastructure.PublicationAttribution;
-import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.mutant.GenotypeDisplay;
-import org.zfin.mutant.GenotypeFeature;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
@@ -50,7 +46,7 @@ public class MappingDetailController {
         model.addAttribute("panel", panel);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Mapping Panel: " + panel.getName());
         model.addAttribute("citationCount", getPublicationRepository().getNumberDirectPublications(panelID));
-        return "mapping/panel-detail.page";
+        return "mapping/panel-detail";
     }
 
     @RequestMapping("/all-panels")
@@ -60,7 +56,7 @@ public class MappingDetailController {
         List<RadiationPanel> radiationPanels = getLinkageRepository().getRadiationPanels();
         model.addAttribute(meioticPanels);
         model.addAttribute(radiationPanels);
-        return "mapping/all-panels.page";
+        return "mapping/all-panels";
     }
 
     @RequestMapping("/show-scoring")
@@ -96,7 +92,7 @@ public class MappingDetailController {
         } else {
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Scoring: " + marker.getAbbreviation() + " on " + panel.getName());
         }
-        return "mapping/show-scoring.page";
+        return "mapping/show-scoring";
     }
 
     @RequestMapping("/summary/{markerID}")
@@ -135,7 +131,7 @@ public class MappingDetailController {
         Linkage linkage = getLinkageRepository().getLinkage(linkageID);
         model.addAttribute("linkage", linkage);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Linkage: " + linkageID);
-        return "mapping/linkage.page";
+        return "mapping/linkage";
     }
 
     @RequestMapping(value = "/linkage/edit-comment", method = RequestMethod.POST)
@@ -201,7 +197,7 @@ public class MappingDetailController {
                 model.addAttribute("otherMappingDetail", isOtherMappingDetail);
                 model.addAttribute("gbrowseImage", FeatureService.getGbrowseImage(feature));
                 model.addAttribute("locations", MappingService.getGenomeBrowserLocations(feature));
-                return "mapping/mapping-detail-pure-feature.page";
+                return "mapping/mapping-detail-pure-feature";
             }
             markerID = marker.getZdbID();
         }
@@ -276,7 +272,7 @@ public class MappingDetailController {
 
         model.addAttribute("otherMappingDetail", isOtherMappingDetail);
 
-        return "mapping/mapping-detail.page";
+        return "mapping/mapping-detail";
     }
 
     private boolean setOtherMappingInfo(Model model, Marker marker, Feature feature) {
@@ -397,7 +393,7 @@ public class MappingDetailController {
         List<EntityZdbID> mappedEntities = getLinkageRepository().getMappedEntitiesByPub(publication);
         model.addAttribute("mappedEntities", mappedEntities);
         model.addAttribute("publication", publication);
-        return "mapping/mapped-data-per-publication.page";
+        return "mapping/mapped-data-per-publication";
     }
 
 
