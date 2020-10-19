@@ -28,13 +28,6 @@
         <put-attribute name="body" value="/WEB-INF/jsp/dev-tools/gwt/{1}.jsp"/>
     </definition>
 
-    <!--genotype definitions-->
-    <definition name="genotype/*.page" extends="main_layout">
-        <put-attribute name="staticTitle" value="Genotype: "/>
-        <put-attribute name="body" value="/WEB-INF/jsp/feature/{1}.jsp"/>
-    </definition>
-
-
     <definition name="search/*.page" extends="main_layout">
         <put-attribute name="body" value="/WEB-INF/jsp/search/{1}.jsp"/>
     </definition>
