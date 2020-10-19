@@ -3,7 +3,8 @@ package org.zfin.publication.presentation;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,7 +32,6 @@ import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.mutant.repository.PhenotypeRepository;
 import org.zfin.orthology.Ortholog;
-import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
@@ -43,8 +43,10 @@ import org.zfin.zebrashare.repository.ZebrashareRepository;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 
 @Controller
 public class PublicationViewController {
@@ -108,7 +110,7 @@ public class PublicationViewController {
         }
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication));
-        return "publication/publication-view.page";
+        return "publication/publication-view";
     }
 
     @RequestMapping("/publication/view")
@@ -181,7 +183,7 @@ public class PublicationViewController {
         model.addAttribute("orthologyBeanList", beanList);
         model.addAttribute("publication", publication);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication, "Orthology"));
-        return "publication/publication-orthology-list.page";
+        return "publication/publication-orthology-list";
     }
 
     @RequestMapping("/publication/{pubID}/feature-list")
@@ -264,7 +266,7 @@ public class PublicationViewController {
         model.addAttribute("publication", publication);
         model.addAttribute("diseases", phenotypeRepository.getHumanDiseaseModels(publication.getZdbID()));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication, "Human Disease / Zebrafish Models"));
-        return "publication/publication-disease.page";
+        return "publication/publication-disease";
     }
 
     @RequestMapping("/publication/{zdbID}/genes")
@@ -287,7 +289,7 @@ public class PublicationViewController {
         model.addAttribute("publication", publication);
         model.addAttribute("markers", markers);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication, "Genes / Markers"));
-        return "publication/publication-marker-list.page";
+        return "publication/publication-marker-list";
     }
 
     @RequestMapping("/publication/{zdbID}/efgs")
@@ -312,7 +314,7 @@ public class PublicationViewController {
 
         model.addAttribute("markers", markers);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication, "Engineered Foreign Genes"));
-        return "publication/publication-egf-list.page";
+        return "publication/publication-egf-list";
     }
 
     @RequestMapping("/publication/{zdbID}/clones")
@@ -342,7 +344,7 @@ public class PublicationViewController {
         model.addAttribute("publication", publication);
         model.addAttribute("clones", clones.getPopulatedResults());
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication, "Clones and Probes"));
-        return "publication/publication-clone-list.page";
+        return "publication/publication-clone-list";
     }
 
     @ResponseBody
@@ -388,7 +390,7 @@ public class PublicationViewController {
         model.addAttribute("numSTRs", strs.size());
         model.addAttribute("rows", rows);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication, markerType.getDisplayName() + " List"));
-        return "publication/publication-str-list.page";
+        return "publication/publication-str-list";
     }
 
     @ResponseBody
@@ -426,7 +428,7 @@ public class PublicationViewController {
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, title);
 
-        return "publication/journal-view.page";
+        return "publication/journal-view";
     }
 
 
@@ -464,7 +466,7 @@ public class PublicationViewController {
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
         model.addAttribute("formattedDate", sdf.format(new Date()));
 
-        return "publication/printable.ajax";
+        return "publication/printable";
     }
 
     private Publication getPublication(String zdbID) {
@@ -519,7 +521,7 @@ public class PublicationViewController {
         List<String> directedAttributedIds = RepositoryFactory.getPublicationRepository().getDirectlyAttributedZdbids(pubID);
         model.addAttribute("directedAttributedData", directedAttributedIds);
         model.addAttribute("publication", publication);
-        return "publication/publication-directly-attributed.page";
+        return "publication/publication-directly-attributed";
     }
 }
 

@@ -10,8 +10,6 @@
         <put-attribute name="body" value="/WEB-INF/jsp/{1}.jsp"/>
     </definition>
 
-    <definition name="publication/*.ajax" template="/WEB-INF/jsp/publication/{1}.jsp"/>
-
     <definition name="antibody/*.page" extends="main_layout">
         <put-attribute name="body" value="/WEB-INF/jsp/antibody/{1}.jsp"/>
     </definition>
@@ -91,16 +89,6 @@
     <!-- profile defintions -->
     <definition name="profile/*.print" template="/WEB-INF/jsp/profile/{1}.jsp"/>
     <definition name="profile/*.insert" template="/WEB-INF/jsp/profile/{1}.jsp"/>
-
-    <!-- publication definitions -->
-    <definition name="publication/track-publication.page" extends="main_layout">
-        <put-attribute name="bodyClass" value="data-page" />
-        <put-attribute name="body" value="/WEB-INF/jsp/publication/track-publication.jsp" />
-    </definition>
-    <definition name="publication/*.page" extends="main_layout">
-        <put-attribute name="body" value="/WEB-INF/jsp/publication/{1}.jsp"/>
-    </definition>
-
 
     <!-- reno defintions -->
     <definition name="reno/*.page" extends="main_layout">

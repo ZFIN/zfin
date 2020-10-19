@@ -52,7 +52,7 @@ public class PublicationMetricsController {
         model.addAttribute("errors", errors);
 
         if (showEmptyForm) {
-            return "publication/metrics.page";
+            return "publication/metrics";
         }
 
         if (formBean.getQueryType() == null) {
@@ -90,7 +90,7 @@ public class PublicationMetricsController {
             }
         }
         if (errors.size() > 0) {
-            return "publication/metrics.page";
+            return "publication/metrics";
         }
 
         Map<String, Map<String, Number>> resultTable = new LinkedHashMap<>();
@@ -200,7 +200,7 @@ public class PublicationMetricsController {
         model.addAttribute("resultsTable", resultTable);
 
 
-        return "publication/metrics.page";
+        return "publication/metrics";
     }
 
 }

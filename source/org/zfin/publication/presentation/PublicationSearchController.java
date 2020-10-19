@@ -82,7 +82,7 @@ public class PublicationSearchController {
         model.addAttribute("oldestPubEntryDate", oldestPubEntryDate.getTime());
         model.addAttribute("newestPubEntryDate", newestPubEntryDate.getTime());
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication Search");
-        return "publication/publication-search.page";
+        return "publication/publication-search";
     }
 
     @RequestMapping(value = "/search/printable", method = RequestMethod.GET)
@@ -94,7 +94,7 @@ public class PublicationSearchController {
         model.addAttribute("resultBeans", publicationSearchService.getResultsAsResultBeans(formBean));
         model.addAttribute("today", new Date());
         // this isn't really called via an ajax request, but this is how you get an unstyled page so...
-        return "publication/printable-results.ajax";
+        return "publication/printable-results";
     }
 
     @RequestMapping(value = "/search/refer", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
