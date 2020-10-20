@@ -46,7 +46,7 @@ public class ExternalBlastAccessionController extends AbstractExternalBlastContr
 
 
         if (CollectionUtils.isEmpty(blastBean.getSequences())) {
-            return "external-blast.page";
+            return "blast/external_blast_redirect";
         }
 
         if (blastBean.getSequences().size() == 2) {
@@ -55,7 +55,7 @@ public class ExternalBlastAccessionController extends AbstractExternalBlastContr
 
         Sequence sequence = blastBean.getSequence();
         blastBean.setHiddenProperties(getHiddenVariables(sequence,database,referenceDatabase.isShortSequence()));
-        return "external-blast.page";
+        return "blast/external_blast_redirect";
     }
 
     private static Logger logger = LogManager.getLogger(ExternalBlastAccessionController.class);

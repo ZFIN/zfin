@@ -59,7 +59,7 @@ public class XMLBlastViewController {
 
                 // spring 3 now makes that hard to happen
                 if (fileName == null) {
-                    return "blast-fetch-null.page";
+                    return "blast/bad_ticket";
                 }
 
                 xmlBlastBean.setResultFile(new File(fileName));
@@ -76,14 +76,14 @@ public class XMLBlastViewController {
 //            if (BlastThreadService.isJobInQueue(xmlBlastBean, BlastQueryThreadCollection.getInstance())) {
             if (BlastThreadService.isJobInQueue(xmlBlastBean, getQueryThreadCollection())) {
 //                if (false == BlastQueryThreadCollection.getInstance().isBlastThreadDone(xmlBlastBean)) {
-                returnView = "blast-processing.page";
+                returnView = "blast/blast_processing";
             }
             // the thread is done processing
             else {
                 // if it is done processing and no file exists, then there is a serious problem
                 // failed to find the blast ticket
                 if (!xmlBlastBean.isFileExists()) {
-                    returnView = "bad-blast-ticket.page";
+                    returnView = "blast/bad_blast_ticket";
                 }
                 // if the file exists, then life is good and we can return the result
                 else {
@@ -120,7 +120,7 @@ public class XMLBlastViewController {
                     xmlBlastBean.setBlastResultBean(BlastResultMapper.createBlastResultBean(blastOutput));
 
                     // get result and process via biojava
-                    returnView = "blast-result.page";
+                    returnView = "blast/blast_result";
                 }
             }
             return returnView;
@@ -129,7 +129,7 @@ public class XMLBlastViewController {
             errorString += fileName;
             errorString += " tries: " + tries;
             logger.error(errorString, e);
-            return "bad-blast-result.page";
+            return "blast/bad_blast_result";
         }
     }
 
