@@ -1,7 +1,6 @@
 package org.zfin.framework.presentation;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
@@ -15,62 +14,57 @@ public class SimplePassThroughController {
 
     @RequestMapping("/gwt/lookup")
     protected String showLookupTestPage() throws Exception {
-        return "lookup";
+        return "dev-tools/gwt/lookup";
     }
 
     @RequestMapping("/gwt/lookup-table")
     protected String showLookupTableTestPage() throws Exception {
-        return "lookup-table";
+        return "dev-tools/gwt/lookup-table";
     }
 
     @RequestMapping("/gwt/curation-base")
     protected String showCurationBase() throws Exception {
-        return "curation-base";
+        return "dev-tools/gwt/curation-base";
     }
 
     @RequestMapping("/gwt/transcript-edit")
     protected String showTranscriptEdit() throws Exception {
-        return "transcript-edit";
+        return "dev-tools/gwt/transcript-edit";
     }
 
     @RequestMapping("/gwt/clone-edit")
     protected String showCloneEdit() throws Exception {
-        return "clone-edit";
+        return "dev-tools/gwt/clone-edit";
     }
 
     @RequestMapping("/gwt/go-edit")
     protected String showGoEdit() throws Exception {
-        return "go-edit";
+        return "dev-tools/gwt/go-edit";
     }
 
     @RequestMapping("/gwt/antibody-edit")
     protected String showAntibodyEdit() throws Exception {
-        return "antibody-edit";
+        return "dev-tools/gwt/antibody-edit";
     }
 
     @RequestMapping("/gwt/gene-edit")
     protected String showGeneEdit() throws Exception {
-        return "gene-edit";
+        return "dev-tools/gwt/gene-edit";
     }
 
     @RequestMapping("/gwt/alternate-gene-edit")
     protected String showAlternateGeneEdit() throws Exception {
-        return "alternate-gene-edit";
+        return "dev-tools/gwt/alternate-gene-edit";
     }
 
     @RequestMapping("/gwt/test-composite")
     protected String showTestComposite() throws Exception {
-        return "test-composite";
+        return "dev-tools/gwt/test-composite";
     }
 
     @RequestMapping("/gwt/image-edit-test")
     protected String showimageEditTest() throws Exception {
-        return "image-edit-test";
+        return "dev-tools/gwt/image-edit-test";
     }
-    @RequestMapping("/gwt/image-edit")
-    protected String showimageEdit() throws Exception {
-        return "image-edit";
-    }
-
 
 }

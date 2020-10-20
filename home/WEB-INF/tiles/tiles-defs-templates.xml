@@ -10,10 +10,6 @@
         <put-attribute name="staticTitle" value="ZFIN " />
     </definition>
 
-    <definition name="dev_layout" extends="main_layout">
-        <put-attribute name="header" value="/WEB-INF/tiles/header_dev_tools.jsp"/>
-    </definition>
-
     <definition name="popup_layout" template="/WEB-INF/tiles/popup_layout.jsp"/>
 
 

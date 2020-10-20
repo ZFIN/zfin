@@ -3,28 +3,26 @@
 
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
+<z:devtoolsPage title="GWT Feature Curation">
+    <%--Adds the GOEditController.--%>
+    <c:set var="pubID" value="${param.zdbID}" />
+    <c:if test="${empty pubID}">
+        <c:set var="pubID" value="ZDB-PUB-080701-3" />
+    </c:if>
 
-<%--Adds the GOEditController.--%>
-<c:set var="pubID" value="${param.zdbID}" />
-<c:if test="${empty pubID}">
-    <c:set var="pubID" value="ZDB-PUB-080701-3" />
-</c:if>
+    <script type="text/javascript">
+        var curationProperties = {
+            zdbID : "${pubID}",
+            moduleType: "FEATURE_CURATION",
+            debug: "false"
+        }
+    </script>
 
-<script type="text/javascript">
-    var curationProperties = {
-        zdbID : "${pubID}",
-        moduleType: "FEATURE_CURATION",
-        debug: "false"
-    }
-</script>
+    <script language="javascript" src="/gwt/org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
 
-<script language="javascript" src="/gwt/org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
-
-<%--define the lookups up here--%>
-<div id="${StandardDivNames.directAttributionDiv}"></div>
-
-
-<%--</authz:authorize>--%>
+    <%--define the lookups up here--%>
+    <div id="${StandardDivNames.directAttributionDiv}"></div>
 
 
-
+    <%--</authz:authorize>--%>
+</z:devtoolsPage>

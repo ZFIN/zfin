@@ -39,6 +39,6 @@ public class OntologyManagerController {
         // allow handleCurationEvent of the page without submitting the action again.
         if (actionType != null)
             return "redirect:ontology-caching";
-        return "dev-tools/ontology-manager.page";
+        return "dev-tools/ontology-manager";
     }
 }

@@ -17,7 +17,7 @@ public class CurationTestController {
 
     @RequestMapping("/gwt/modules")
     protected String gwtModulesSummaryPage() throws Exception {
-        return "dev-tools/gwt/modules.page";
+        return "dev-tools/gwt/modules";
     }
 
     @RequestMapping("/gwt/fx-curation")
@@ -29,7 +29,7 @@ public class CurationTestController {
         }
         Publication publication = RepositoryFactory.getPublicationRepository().getPublication(publicationID);
         model.addAttribute(publication);
-        return "dev-tools/gwt/fx-curation.page";
+        return "dev-tools/gwt/fx-curation";
     }
 
     @RequestMapping("/gwt/human-disease-curation")
@@ -41,7 +41,7 @@ public class CurationTestController {
         }
         Publication publication = RepositoryFactory.getPublicationRepository().getPublication(publicationID);
         model.addAttribute(publication);
-        return "dev-tools/gwt/human-disease-curation.page";
+        return "dev-tools/gwt/human-disease-curation";
     }
 
     @RequestMapping("/gwt/fish-tab-curation")
@@ -53,7 +53,7 @@ public class CurationTestController {
         }
         Publication publication = RepositoryFactory.getPublicationRepository().getPublication(publicationID);
         model.addAttribute(publication);
-        return "dev-tools/gwt/fish-tab-curation.page";
+        return "dev-tools/gwt/fish-tab-curation";
     }
     @RequestMapping("/gwt/construct-curation")
     protected String constructCuration(@RequestParam(required = false) String publicationID,
@@ -64,7 +64,7 @@ public class CurationTestController {
         }
         Publication publication = RepositoryFactory.getPublicationRepository().getPublication(publicationID);
         model.addAttribute(publication);
-        return "dev-tools/gwt/construct-curation.page";
+        return "dev-tools/gwt/construct-curation";
     }
 
     @RequestMapping("/gwt/phenotype-curation")
@@ -76,7 +76,7 @@ public class CurationTestController {
         }
         Publication publication = RepositoryFactory.getPublicationRepository().getPublication(publicationID);
         model.addAttribute(publication);
-        return "dev-tools/gwt/phenotype-curation.page";
+        return "dev-tools/gwt/phenotype-curation";
     }
 
     @RequestMapping("/gwt/feature-curation")
@@ -88,7 +88,7 @@ public class CurationTestController {
         }
         Publication publication = RepositoryFactory.getPublicationRepository().getPublication(publicationID);
         model.addAttribute(publication);
-        return "dev-tools/gwt/feature-curation.page";
+        return "dev-tools/gwt/feature-curation";
     }
 
     @RequestMapping("/gwt/go-curation")
@@ -100,7 +100,7 @@ public class CurationTestController {
         }
         Publication publication = RepositoryFactory.getPublicationRepository().getPublication(publicationID);
         model.addAttribute(publication);
-        return "dev-tools/gwt/go-curation.page";
+        return "dev-tools/gwt/go-curation";
     }
 
 }

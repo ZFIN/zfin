@@ -18,6 +18,6 @@ public class BlastJobsController {
         blastJobsBean.setBlastThreadCollection(BlastQueryThreadCollection.getInstance());
         blastJobsBean.setBlastStatistics(BlastStatistics.getInstance());
 
-        return "dev-tools/blast-jobs.page";
+        return "dev-tools/blast-jobs";
     }
 }

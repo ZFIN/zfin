@@ -50,7 +50,7 @@ public class DatabaseInfoController {
         model.addAttribute("unloadDate", getInfrastructureRepository().getUnloadInfo());
         Connection conn = HibernateUtil.currentSession().doReturningWork(connection -> connection);
         model.addAttribute("conn", conn);
-        return "dev-tools/view-database-info.page";
+        return "dev-tools/view-database-info";
     }
 
     @RequestMapping("/jdbc-driver-info")
@@ -59,7 +59,7 @@ public class DatabaseInfoController {
         InitialContext ictx = new InitialContext();
         ComboPooledDataSource pds = (ComboPooledDataSource) ictx.lookup("java:comp/env/jdbc/zfin");
         model.addAttribute("pds", pds);
-        return "jdbc-metadata.page";
+        return "dev-tools/view-database-driver-info";
     }
 
     @RequestMapping("/java-properties")
@@ -75,25 +75,12 @@ public class DatabaseInfoController {
         model.addAttribute("properties", props);
         model.addAttribute("runtime", Runtime.getRuntime());
         model.addAttribute("defaultTimeZone", TimeZone.getDefault());
-        return "java-properties.page";
-    }
-
-    @RequestMapping("/view-hibernate-info")
-    public String viewHibernateInfo(Model model) throws ServletException {
-        Properties properties = new Properties();
-        Enumeration propEnum = properties.propertyNames();
-        Map<String, String> props = new TreeMap<>();
-        while (propEnum.hasMoreElements()) {
-            String key = (String) propEnum.nextElement();
-            props.put(key, properties.getProperty(key));
-
-        }
-        return "view-hibernate-info";
+        return "dev-tools/java-properties";
     }
 
     @RequestMapping("/test-browser")
     protected String showBrowserInfo() throws Exception {
-        return "dev-tools/test-browser.page";
+        return "dev-tools/test-browser";
     }
 
     @RequestMapping("/view-session-info")
@@ -102,7 +89,7 @@ public class DatabaseInfoController {
         ZfinSessionBean form = new ZfinSessionBean();
         form.setRequest(request);
         model.addAttribute("formBean", form);
-        return "view-session-info.page";
+        return "dev-tools/view-session-info";
     }
 
     @RequestMapping("/deployed-version")
@@ -113,14 +100,14 @@ public class DatabaseInfoController {
         model.addAttribute("commit", reader.readLine());
         model.addAttribute("branch", reader.readLine());
         model.addAttribute("domain", ZfinPropertiesEnum.DOMAIN_NAME.value());
-        return "deployed-version";
+        return "dev-tools/deployed-version";
     }
 
     @RequestMapping("/phenotype-curation-history")
     public String viewPhenotypeHistory(Model model) {
         List<PhenotypeExperiment> phenotypeExperiments = RepositoryFactory.getPhenotypeRepository().getLatestPhenotypeExperiments(5);
         model.addAttribute("phenotypeExperiments", phenotypeExperiments);
-        return "phenotype-curation-history.page";
+        return "dev-tools/phenotype-curation-history";
     }
 
     @RequestMapping("/phenotype-curation-history-statements/{ID}")
@@ -129,14 +116,14 @@ public class DatabaseInfoController {
         int experimentID = Integer.parseInt(experimentIDString);
         List<PhenotypeStatement> phenotypeStatements = RepositoryFactory.getPhenotypeRepository().getLatestPhenotypeStatements(experimentID, 2);
         model.addAttribute("phenotypeStatements", phenotypeStatements);
-        return "phenotype-curation-history-statements.page";
+        return "dev-tools/phenotype-curation-history-statements";
     }
 
     @RequestMapping("/phenotype-curation-history-statements")
     public String viewPhenotypeHistoryStatements(Model model) {
         List<PhenotypeStatement> phenotypeStatements = RepositoryFactory.getPhenotypeRepository().getLatestPhenotypeStatements(0, 2);
         model.addAttribute("phenotypeStatements", phenotypeStatements);
-        return "phenotype-curation-history-statements.page";
+        return "dev-tools/phenotype-curation-history-statements";
     }
 
     @RequestMapping("/single-thread-info/{id}")
@@ -147,7 +134,7 @@ public class DatabaseInfoController {
         int threadID = Integer.parseInt(threadId);
         // stack trace depth: show all
         model.addAttribute("thread", mxbean.getThreadInfo(threadID, Integer.MAX_VALUE));
-        return "single-thread-info.page";
+        return "dev-tools/single-thread-info";
     }
 
     @RequestMapping("/thread-info")
@@ -181,13 +168,13 @@ public class DatabaseInfoController {
         model.addAttribute("currentThread", currentThread);
         model.addAttribute("deadlockedThreads", mxbean.findDeadlockedThreads());
         model.addAttribute("monitorDeadlockedThreads", mxbean.findMonitorDeadlockedThreads());
-        return "thread-info.page";
+        return "dev-tools/thread-info";
     }
 
     @RequestMapping("/home-carousel-items")
     public String showHomeCarouselItems(Model model) {
         model.addAttribute("carouselImages", figureRepository.getRecentlyCuratedImages());
-        return "home-carousel-items";
+        return "dev-tools/home-carousel-items";
     }
 
     public List<Thread> getThreads(ThreadGroup group) {

@@ -22,7 +22,7 @@ public class DevToolHomeController {
 
     @RequestMapping("devtool/home")
     public String homePage() throws Exception {
-        return "dev-tools/home.page";
+        return "dev-tools/home";
     }
 
     @RequestMapping("devtool/system-status")
