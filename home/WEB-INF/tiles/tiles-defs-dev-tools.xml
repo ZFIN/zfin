@@ -6,16 +6,6 @@
 
 <tiles-definitions>
 
-    <definition name="login" extends="main_layout">
-        <put-attribute name="staticTitle" value="ZFIN Login"/>
-        <put-attribute name="body" value="/WEB-INF/jsp/login_form.jsp"/>
-    </definition>
-
-    <definition name="access-denied" extends="main_layout">
-        <put-attribute name="staticTitle" value="ZFIN Login Access Denied"/>
-        <put-attribute name="body" value="/WEB-INF/jsp/access_denied.jsp"/>
-    </definition>
-
     <definition name="error-page" extends="main_layout">
         <put-attribute name="staticTitle" value="Error Page"/>
         <put-attribute name="body" value="/WEB-INF/jsp/error-page.jsp"/>

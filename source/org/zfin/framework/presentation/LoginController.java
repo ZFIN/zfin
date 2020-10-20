@@ -25,7 +25,7 @@ public class LoginController {
         // Sometimes a query string is not recognized as a parameter
         // that's why we check both cases.
         if (accessDenied != null || (queryString != null && queryString.startsWith(ACCESS_DENIED)))
-            return "access-denied";
+            return "access_denied";
         return "redirect:/action/login-redirect";
     }
 
@@ -40,8 +40,8 @@ public class LoginController {
         // Sometimes a query string is not recognized as a parameter
         // that's why we check both cases.
         if (accessDenied != null || (queryString != null && queryString.startsWith(ACCESS_DENIED)))
-            return "access-denied";
-        return "login";
+            return "access_denied";
+        return "login_form";
     }
 
 }
