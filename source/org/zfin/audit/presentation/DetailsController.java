@@ -23,6 +23,6 @@ public class DetailsController {
         List<AuditLogItem> items = alr.getAuditLogItems(auditLogForm.getZdbID());
         auditLogForm.setItems(items);
 
-        return "audit-log-details";
+        return "auditLog/audit_log_details";
     }
 }
