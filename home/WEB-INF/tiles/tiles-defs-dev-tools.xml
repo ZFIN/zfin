@@ -6,11 +6,6 @@
 
 <tiles-definitions>
 
-    <definition name="error-page" extends="main_layout">
-        <put-attribute name="staticTitle" value="Error Page"/>
-        <put-attribute name="body" value="/WEB-INF/jsp/error-page.jsp"/>
-    </definition>
-
     <definition name="unload/*.page" extends="main_layout">
         <put-attribute name="staticTitle" value="Downloads Archive: "/>
         <put-attribute name="body" value="/WEB-INF/jsp/unload/{1}.jsp"/>

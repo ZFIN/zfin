@@ -42,10 +42,6 @@ public class OrthologyController {
         }
 
         EvidenceCode code = getOrthologyRepository().getEvidenceCode(evidenceCode);
-        if (code == null) {
-            return LookupStrings.ERROR_PAGE;
-        }
-
         OrthologPublicationListBean bean = new OrthologPublicationListBean();
         bean.setOrtholog(ortholog);
         bean.setEvidenceCode(code);

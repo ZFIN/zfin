@@ -10,7 +10,7 @@
     <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
         <property name="exceptionMappings">
             <props>
-                <prop key="java.lang.Exception">error-page</prop>
+                <prop key="java.lang.Exception">infrastructure/exception</prop>
             </props>
         </property>
     </bean>
