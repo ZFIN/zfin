@@ -111,7 +111,7 @@ public class MappingDetailController {
         Marker marker = markerRepository.getMarkerByID(markerID);
         model.addAttribute("marker", marker);
 
-        return "mapping-summary.simple-page";
+        return "mapping/mapping-summary";
     }
 
     @ModelAttribute("linkage")
