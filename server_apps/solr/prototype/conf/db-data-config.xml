@@ -5884,6 +5884,7 @@ and child.term_ontology = 'disease_ontology';
                                 image as profile_image,
                                 bio as biography,
                                 address as postal_address,
+                             nvl(person_country, 'Unknown') as country,
                                 email as email_address
                          from company;"
         >
