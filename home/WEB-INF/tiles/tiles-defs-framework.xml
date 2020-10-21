@@ -14,12 +14,4 @@
         <put-attribute name="body" value="/WEB-INF/jsp/record_not_found.jsp"/>
     </definition>
 
-    <definition name="prototype-home.page" extends="main_layout">
-        <put-attribute name="body" value="/WEB-INF/jsp/prototype-home.jsp"/>
-    </definition>
-
-    <definition name="prototype-autocomplete-demo.page" extends="main_layout">
-        <put-attribute name="body" value="/WEB-INF/jsp/autocomplete-demo.jsp"/>
-    </definition>
-
 </tiles-definitions>
