@@ -74,7 +74,7 @@ public class ExpressionSearchController {
     @RequestMapping("/search")
     public String search(Model model, @ModelAttribute("criteria") ExpressionSearchCriteria criteria) {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Expression Search");
-        return "expression/search.page";
+        return "expression/search";
     }
 
 
@@ -106,7 +106,7 @@ public class ExpressionSearchController {
 
         model.addAttribute("criteria", criteria);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Expression Search Results");
-        return "expression/results.page";
+        return "expression/results";
     }
 
     @RequestMapping("/xpatselect")
