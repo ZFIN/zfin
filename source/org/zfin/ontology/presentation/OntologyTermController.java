@@ -38,7 +38,7 @@ public class OntologyTermController {
                                       Model model) throws Exception {
         Ontology ontology = Ontology.ANATOMY;
         model.addAttribute("terms", OntologyManager.getInstance().getAllTerms(ontology));
-        return "ontology/show-all-terms.page";
+        return "ontology/show-all-terms";
     }
 
 
@@ -82,7 +82,7 @@ public class OntologyTermController {
             }
         }
         form.setOntology(ontology);
-        return "ontology/ontology_terms.page";
+        return "ontology/ontology_terms";
     }
 
     private Map<TermDTO, List<String>> createValueMap(PatriciaTrieMultiMap<TermDTO> termOntologyMap) {

@@ -73,7 +73,7 @@ public class OntologyTermDetailController {
             anatomySearchBean.setOntologyName(ontologyName);
             model.addAttribute("formBean", anatomySearchBean);
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, " Ontology Search");
-            return "ontology/show-all-terms.page";
+            return "ontology/show-all-terms";
         } else {
             term = RepositoryFactory.getOntologyRepository().getTermByName(name, ontology);
             if (term != null)
@@ -188,7 +188,7 @@ public class OntologyTermDetailController {
         }
         model.addAttribute("isDiseaseTerm", isDiseaseTerm);
         model.addAttribute("showPhenotypeSection", !term.getOntology().equals(Ontology.ECO));
-        return "ontology/ontology-term.page";
+        return "ontology/ontology-term";
 
     }
 
@@ -229,7 +229,7 @@ public class OntologyTermDetailController {
 
         model.addAttribute("term", term);
         model.addAttribute("termRelationships", termRelationships);
-        return "ontology/ontology-term-popup.popup";
+        return "ontology/ontology-term-popup";
     }
 
     @RequestMapping(value = {("/term-citations/{oboID}")})
@@ -242,7 +242,7 @@ public class OntologyTermDetailController {
         }
         model.addAttribute("term", term);
         model.addAttribute("jspFunctions", new ZfinJSPFunctions());
-        return "ontology/term-citations.page";
+        return "ontology/term-citations";
     }
 
     @RequestMapping(value = {("/post-composed-term-detail")})
@@ -265,7 +265,7 @@ public class OntologyTermDetailController {
         model.addAttribute("entity", entity);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Post-Composed Term: " +
                 entity.getSuperterm().getTermName() + " " + entity.getSubterm().getTermName());
-        return "ontology/post-composed-term-detail.page";
+        return "ontology/post-composed-term-detail";
     }
 
     @RequestMapping(value = {("/post-composed-term-detail-popup")})
@@ -286,7 +286,7 @@ public class OntologyTermDetailController {
         }
 
         model.addAttribute("entity", entity);
-        return "ontology/post-composed-term-detail-popup.popup";
+        return "ontology/post-composed-term-detail-popup";
     }
 
     private boolean hasExpressionData(Term anatomyTerm) {
@@ -336,7 +336,7 @@ public class OntologyTermDetailController {
         citationBean.setOrderBy(orderBy);
         model.addAttribute("citationList", citationBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication List");
-        return "ontology/disease-publication-list.page";
+        return "ontology/disease-publication-list";
     }
 
     @RequestMapping("/fish-model-publication-list/{termID}/{id}")
@@ -380,12 +380,12 @@ public class OntologyTermDetailController {
         citationBean.setOrderBy(orderBy);
         model.addAttribute("citationList", citationBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication List");
-        return "ontology/fish-model-publication-list.page";
+        return "ontology/fish-model-publication-list";
     }
 
     @RequestMapping("/note/ontology-relationship")
     public String getOntologyRelationshipNote() {
-        return "ontology/ontology-relationship-note.insert";
+        return "ontology/ontology-relationship-note";
     }
 
 }
