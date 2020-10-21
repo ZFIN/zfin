@@ -7,6 +7,10 @@
         ${formBean.feature.zdbID}
     </z:attributeListItem>
 
+    <z:attributeListItem label="Name">
+        ${formBean.feature.name}
+    </z:attributeListItem>
+
     <zfin2:markerPreviousNamesAttributeListItem previousNames="${formBean.synonyms}" name="Synonyms"/>
 
     <z:attributeListItem label="Affected Genomic Region">
@@ -122,37 +126,7 @@
         </c:choose>
     </z:attributeListItem>
 
-    <z:attributeListItem label="Location">
-        <c:choose>
-            <c:when test="${fn:length(formBean.featureLocations)>0}">
-
-                <zfin2:displayFullLocation location="${formBean.featureLocations[0]}" hideLink="${empty formBean.feature.affectedGenes}"/>
-
-            </c:when>
-            <c:otherwise>
-                <zfin2:displayLocation entity="${formBean.feature}" hideLink="${empty formBean.feature.affectedGenes}"/>
-            </c:otherwise>
-        </c:choose>
-    </z:attributeListItem>
-
-    <z:attributeListItem label="Sequence">
-        <c:forEach var="featureGenbankLink" items="${formBean.genbankDbLinks}" varStatus="loop">
-            <zfin:link entity="${featureGenbankLink}"/>
-            <c:if test="${featureGenbankLink.publicationCount > 0}">
-                <c:choose>
-                    <c:when test="${featureGenbankLink.publicationCount == 1}">
-                        (<a href="/${featureGenbankLink.singlePublication.zdbID}">${featureGenbankLink.publicationCount}</a>)
-                    </c:when>
-                    <c:otherwise>
-                        (<a href="/action/infrastructure/data-citation-list/${featureGenbankLink.zdbID}">${featureGenbankLink.publicationCount}</a>)
-                    </c:otherwise>
-                </c:choose>
-            </c:if>
-            <c:if test="${!loop.last}">,&nbsp;</c:if>
-        </c:forEach>
-    </z:attributeListItem>
-
-    <z:attributeListItem label="Current Sources">
+    <z:attributeListItem label="Current Source">
         <c:choose>
             <c:when test="${formBean.feature.suppliers ne null && fn:length(formBean.feature.suppliers) > 0}">
                 <c:forEach var="supplier" items="${formBean.feature.suppliers}" varStatus="status">
@@ -185,6 +159,11 @@
             </c:otherwise>
         </c:choose>
     </z:attributeListItem>
+
+    <z:attributeListItem label="Other Pages">
+        <a href="https://www.alliancegenome.org/ZFIN:${formBean.feature.zdbID}">Alliance</a>
+    </z:attributeListItem>
+
 
     <zfin2:entityNotesAttributeListItems entity="${formBean.feature}" />
 
