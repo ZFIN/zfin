@@ -35,7 +35,7 @@
         </z:section>
 
         <z:section title="${CITATIONS}">
-            <div class="__react-root" id="MarkerCitationsTable" data-marker-id="${formBean.marker.zdbID}"></div>
+            <div class="__react-root" id="CitationTable" data-marker-id="${formBean.marker.zdbID}"></div>
         </z:section>
 
     </jsp:body>
