@@ -12,16 +12,28 @@ public class NoteDTO implements IsSerializable {
     protected String dataZdbID ;
     protected String noteData ;
     protected String publicationZdbID;
+    protected String noteType;
+    protected String noteTag;
     protected PublicationDTO publicationDTO;
     protected NoteEditMode noteEditMode;
 
     public NoteDTO(){}
+
+    public NoteDTO(String zdbId, String dataZdbID,NoteEditMode noteEditMode,String note, String noteType, String noteTag){
+        this.zdbID = zdbId ;
+        this.dataZdbID = dataZdbID ;
+        this.noteEditMode = noteEditMode;
+        this.noteData = note;
+        this.noteType = noteType;
+        this.noteTag = noteTag;
+    }
 
     public NoteDTO(String zdbId, String dataZdbID,NoteEditMode noteEditMode,String note){
         this.zdbID = zdbId ;
         this.dataZdbID = dataZdbID ;
         this.noteEditMode = noteEditMode;
         this.noteData = note;
+
     }
 
     public NoteDTO(String dataZdbID,NoteEditMode noteEditMode,String note){
@@ -42,7 +54,16 @@ public class NoteDTO implements IsSerializable {
         noteDTO.setNoteData(noteData);
         noteDTO.setPublicationZdbID(publicationZdbID);
         noteDTO.setNoteEditMode(noteEditMode);
+        noteDTO.setNoteType(noteType);
+        noteDTO.setNoteTag(noteTag);
         return noteDTO;
+    }
+    public String getNoteType() {
+        return noteType;
+    }
+
+    public void setNoteType(String noteType) {
+        this.noteType = noteType;
     }
 
     public String getZdbID() {
@@ -97,6 +118,14 @@ public class NoteDTO implements IsSerializable {
         return noteData==null || noteData.trim().length()==0 ;
     }
 
+    public String getNoteTag() {
+        return noteTag;
+    }
+
+    public void setNoteTag(String noteTag) {
+        this.noteTag = noteTag;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("NoteDTO");
@@ -105,6 +134,7 @@ public class NoteDTO implements IsSerializable {
         sb.append(", noteData='").append(noteData).append('\'');
         sb.append(", editMode='").append(noteEditMode).append('\'');
         sb.append(", publicationZdbID='").append(publicationZdbID).append('\'');
+        sb.append(", noteType='").append(noteType).append('\'');
         sb.append('}');
         return sb.toString();
     }

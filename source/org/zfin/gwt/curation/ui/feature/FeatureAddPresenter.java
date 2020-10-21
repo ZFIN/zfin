@@ -134,11 +134,19 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
         if (StringUtils.isNotEmptyTrim(view.featureAliasBox.getText())) {
             featureDTO.setAlias(view.featureAliasBox.getText());
         }
+
         if (StringUtils.isNotEmptyTrim(view.publicNoteBox.getText())) {
+
             NoteDTO publicNoteDTO = new NoteDTO();
             publicNoteDTO.setNoteData(view.publicNoteBox.getText());
             publicNoteDTO.setPublicationZdbID(publicationID);
+      publicNoteDTO.setNoteType(view.noteType.getSelected());
+
+
+
             featureDTO.addPublicNote(publicNoteDTO);
+
+
         }
 
         if (StringUtils.isNotEmptyTrim(view.curatorNoteBox.getText())) {

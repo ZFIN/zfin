@@ -506,4 +506,6 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         featureAssembly.addItem("Zv9");
     }
 
+
+
 }

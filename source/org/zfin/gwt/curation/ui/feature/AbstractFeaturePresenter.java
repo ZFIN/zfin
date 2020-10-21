@@ -211,6 +211,7 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
         featureDTO.setMutagee(view.mutageeBox.getSelected());
         featureDTO.setDominant(view.dominantCheckBox.getValue());
         featureDTO.setKnownInsertionSite(view.knownInsertionCheckBox.getValue());
+
         featureDTO.setPublicationZdbID(dto.getPublicationZdbID());
         featureDTO.setTransgenicSuffix(view.featureSuffixBox.getSelectedText());
         featureDTO.setAbbreviation(FeatureValidationService.getAbbreviationFromName(featureDTO));

@@ -1,6 +1,7 @@
 package org.zfin.gwt.curation.ui.feature;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -38,6 +39,10 @@ public class FeatureNotesView extends AbstractViewComposite {
     RevertibleTextArea newNoteTextArea;
     @UiField
     StringListBox typeListBox;
+    @UiField
+    StringListBox noteTypeListBox;
+
+
 
     public FeatureNotesView() {
         initWidget(uiBinder.createAndBindUi(this));
@@ -52,6 +57,19 @@ public class FeatureNotesView extends AbstractViewComposite {
     void onClickCancelButton(@SuppressWarnings("unused") ClickEvent event) {
         clearGUI();
     }
+
+    @UiHandler("typeListBox")
+    void onChangeNoteType(@SuppressWarnings("unused") ChangeEvent event) {
+        String noteType=typeListBox.getSelected();
+        if (noteType.equals("Public")) {
+            noteTypeListBox.setVisible(true);
+        }
+        else{
+            noteTypeListBox.setVisible(false);
+            }
+        }
+
+
 
     public void addNoteReferenceCell(NoteDTO noteDTO, int rowindex) {
         dataTable.resizeRows(rowindex + 1);
@@ -71,10 +89,14 @@ public class FeatureNotesView extends AbstractViewComposite {
         textArea.setWidth("600");
         dataTable.setWidget(rowindex, 1, textArea);
     }
+    public void addNoteTagCell(Label textArea, int rowindex) {
+
+        dataTable.setWidget(rowindex, 2, textArea);
+    }
 
     public void addControlCell(Button saveButton, Button revertButton, DeleteImage deleteImage, int rowindex) {
         HorizontalPanel panel = getControllPanel(saveButton, revertButton, deleteImage);
-        dataTable.setWidget(rowindex, 2, panel);
+        dataTable.setWidget(rowindex, 3, panel);
     }
 
     private HorizontalPanel getControllPanel(Button saveButton, Button revertButton, DeleteImage deleteImage) {
@@ -93,13 +115,16 @@ public class FeatureNotesView extends AbstractViewComposite {
         int col = 0;
         dataTable.setWidget(lastRow, col++, typeListBox);
         dataTable.setWidget(lastRow, col++, newNoteTextArea);
+        dataTable.setWidget(lastRow, col++, noteTypeListBox);;
         dataTable.setWidget(lastRow, col++, getControllPanel(addButton, cancelButton, null));
+
     }
 
 
     public void resetGUI() {
         newNoteTextArea.setText("");
         typeListBox.setSelectedIndex(0);
+        noteTypeListBox.setVisible(false);
         dataTable.resizeRows(0);
         endTableUpdate();
     }
@@ -107,6 +132,7 @@ public class FeatureNotesView extends AbstractViewComposite {
     public void clearGUI() {
         newNoteTextArea.setText("");
         typeListBox.setSelectedIndex(0);
+        noteTypeListBox.setVisible(false);
     }
 
 
@@ -114,6 +140,7 @@ public class FeatureNotesView extends AbstractViewComposite {
     public Set<IsDirtyWidget> getValueFields() {
         Set<IsDirtyWidget> fields = new HashSet<>();
         fields.add(newNoteTextArea);
+        fields.add(noteTypeListBox);
         return fields;
 
     }

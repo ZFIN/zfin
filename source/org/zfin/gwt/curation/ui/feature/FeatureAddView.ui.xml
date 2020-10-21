@@ -198,11 +198,14 @@
                             <g:customCell>
                                 <g:HorizontalPanel>
                                 <g:TextArea ui:field="publicNoteBox" width="400px"/>
-                                    <g:Label text="&nbsp;&nbsp;&nbsp;&nbsp;Feature:"/>
+                                    <!--<g:Label text="&nbsp;&nbsp;&nbsp;&nbsp;Feature:"/>
                                     <g:CheckBox ui:field="featureNoteCheckBox" enabled="true"/>
                                     <g:Label text="&nbsp;&nbsp;&nbsp;&nbsp;Variant:"/>
-                                    <g:CheckBox ui:field="variantNoteCheckBox" enabled="false"/>
+                                    <g:CheckBox ui:field="variantNoteCheckBox" enabled="true"/>-->
+                                    <zfin:StringListBox ui:field="noteType"/>
                                 </g:HorizontalPanel>
+
+
                             </g:customCell>
                         </g:row>
                         <g:row>

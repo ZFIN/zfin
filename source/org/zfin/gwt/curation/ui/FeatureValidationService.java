@@ -13,6 +13,7 @@ public class FeatureValidationService {
     public static String isValidToSave(FeatureDTO featureDTO) {
 
         // should never get here
+
         if (!isFeatureSaveable(featureDTO))
             return "You must specify a lab prefix, feature type, and feature line number,assembly, start and end positions.";
 
@@ -22,6 +23,7 @@ public class FeatureValidationService {
                 return "Start location cannot be greater than end location";
             }
         }
+
         FeatureTypeEnum featureTypeEnum = featureDTO.getFeatureType();
         switch (featureTypeEnum) {
             case COMPLEX_SUBSTITUTION:

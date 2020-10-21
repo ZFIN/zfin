@@ -14,6 +14,15 @@
                         <g:item value="Public">Public</g:item>
                         <g:item value="Private">Private</g:item>
                     </zfin:StringListBox>
+
+                </g:customCell>
+                <g:cell/>
+                <g:customCell>
+                    <zfin:StringListBox ui:field="noteTypeListBox" width="120px" visible="false">
+                        <g:item value="----">----</g:item>
+                        <g:item value="feature">Feature</g:item>
+                        <g:item value="variant">Variant</g:item>
+                    </zfin:StringListBox>
                 </g:customCell>
                 <g:customCell>
                     <zfin:RevertibleTextArea ui:field="newNoteTextArea" width="600"/>
@@ -23,8 +32,11 @@
                     <g:HorizontalPanel horizontalAlignment="left">
                         <g:Button ui:field="addButton" text="Add Note"/>
                         <g:Button ui:field="cancelButton" text="Cancel"/>
+
+
                     </g:HorizontalPanel>
                 </g:customCell>
+
             </g:row>
         </g:Grid>
         <zfin:SimpleErrorElement ui:field="errorLabel" styleName="clickable-error"/>
