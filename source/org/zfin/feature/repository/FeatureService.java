@@ -252,10 +252,13 @@ public class FeatureService {
     public static List<FeatureNote> getSortedExternalNotes(Feature feature) {
         List<FeatureNote> notes = new ArrayList<FeatureNote>();
         notes.addAll(feature.getExternalNotes());
+
         Collections.sort(notes);
 
         return notes;
     }
+
+
 
     public static GBrowseImage getGbrowseImage(Feature feature) {
         Set<FeatureMarkerRelationship> featureMarkerRelationships = feature.getFeatureMarkerRelations();

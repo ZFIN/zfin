@@ -27,6 +27,7 @@ import java.util.TreeSet;
 public interface FeatureRepository {
 
     public Feature getFeatureByID(String zdbID);
+    public FeatureGenomicMutationDetail getFgmdByID(String zdbID);
 
     DataAlias getSpecificDataAlias(Feature feature, String alias);
 
