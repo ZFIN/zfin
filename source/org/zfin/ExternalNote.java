@@ -32,13 +32,25 @@ public class ExternalNote implements Comparable<ExternalNote> {
     private String zdbID;
     @Column(name = "extnote_note")
     protected String note;
+    @Column(name = "extnote_tag")
+    protected String tag;
     @Column(name = "extnote_note_type", insertable = false, updatable = false)
     private String type;
     @ManyToOne
     @JoinColumn(name = "extnote_source_zdb_id")
     protected Publication publication;
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "recattrib_data_zdb_id")
+
     protected Set<PersonAttribution> personAttributions;
     @Column(name = "extnote_data_zdb_id", insertable = false, updatable = false)
     private String externalDataZdbID;
@@ -111,6 +123,8 @@ public class ExternalNote implements Comparable<ExternalNote> {
     public enum Type {
         ORTHOLOGY("orthology"),
         FEATURE("feature"),
+        VARIANT("variant"),
+        FEATUREVARIANT("featurevariant"),
         GENOTYPE("genotype"),
         CURATOR_NOTE("curator note"),
         ORIGINAL_SUBMITTER_COMMENTS("original submitter comments"),
