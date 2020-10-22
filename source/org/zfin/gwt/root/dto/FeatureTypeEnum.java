@@ -16,7 +16,7 @@ public enum FeatureTypeEnum implements IsSerializable{
     INVERSION("Inversion", "Inversion"),
     DEFICIENCY("Deficiency", "Deficiency"),
     COMPLEX_SUBSTITUTION("Complex", "Allele with multiple variants"),
-    SEQUENCE_VARIANT("Unknown", "Transgenic insertion"),
+    SEQUENCE_VARIANT("Unknown", "unknown"),
     UNSPECIFIED("Unspecified", "Unspecified Allele"),
     MNV("MNV", "Allele with one MNV")
     ;
