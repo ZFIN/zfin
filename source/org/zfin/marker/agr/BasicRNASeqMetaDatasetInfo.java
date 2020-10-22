@@ -69,16 +69,18 @@ public class BasicRNASeqMetaDatasetInfo extends AbstractScriptWrapper {
                                     List<String> xpages = new ArrayList<>();
                                     xpages.add("htp/dataset");
                                     secId = secId.split(":")[1];
+                                    String dataProvider;
                                     if (secId.startsWith("ArrayExpress")) {
-                                        CrossReferenceDTO preferredCrossReference = new CrossReferenceDTO("ArrayExpress", secId, xpages);
-                                        crossReferences.add(preferredCrossReference);
-                                        datasetId.setPreferredCrossReference(preferredCrossReference);
+                                        dataProvider = "ArrayExpress";
                                     }
                                     else {
-                                        CrossReferenceDTO preferredCrossReference = new CrossReferenceDTO("GEO", secId, xpages);
-                                        crossReferences.add(preferredCrossReference);
-                                        datasetId.setPreferredCrossReference(preferredCrossReference);
+                                        dataProvider = "GEO";
                                     }
+
+                                    CrossReferenceDTO preferredCrossReference = new CrossReferenceDTO(dataProvider, secId, xpages);
+                                    crossReferences.add(preferredCrossReference);
+                                    datasetId.setPreferredCrossReference(preferredCrossReference);
+
                                 }
                                 datasetId.setSecondaryId(htpSecondaryIds);
                             }
