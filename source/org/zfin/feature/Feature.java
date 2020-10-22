@@ -53,12 +53,18 @@ public class Feature implements EntityNotes, EntityZdbID {
     @Column(name = "feature_zdb_id")
     @JsonView(View.API.class)
     private String zdbID;
+
+
+
     @Column(name = "feature_name", nullable = false)
     //@Audited
+
     @JsonView(View.API.class)
     private String name;
     @OneToMany(mappedBy = "feature", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<FeatureNote> externalNotes;
+    @OneToMany(mappedBy = "feature", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+
     @Transient
     private String publicComments;
     @Column(name = "feature_line_number")
@@ -682,6 +688,8 @@ public class Feature implements EntityNotes, EntityZdbID {
         externalNotes.add(note);
     }
 
+
+
     public void addMutationDetailTranscript(FeatureTranscriptMutationDetail detail) {
         if (featureTranscriptMutationDetailSet == null)
             featureTranscriptMutationDetailSet = new TreeSet<>();
@@ -742,7 +750,7 @@ public class Feature implements EntityNotes, EntityZdbID {
 
     public String getDisplayType() {
         if (type.equals(FeatureTypeEnum.TRANSGENIC_INSERTION) && hasAlleleOfRelationship())
-            return "Allele causes by " + type.getTypeDisplay();
+            return "Allele caused by " + type.getTypeDisplay();
         return type.getTypeDisplay();
     }
 }

@@ -2538,6 +2538,18 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     }
 
     @Override
+    public List<ExpressionResult2> getPhenotypeFromExpressionsByFeature(String featureID) {
+        String hql = "select result from ExpressionResult2 result, GenotypeFeature genoFeature " +
+                "     where result.phenotypeTermSet IS NOT EMPTY " +
+                " AND genoFeature.feature.zdbID = :zdbID " +
+                " AND genoFeature in elements(result.expressionFigureStage.expressionExperiment.fishExperiment.fish.genotype.genotypeFeatures) ";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setString("zdbID", featureID);
+
+        return (List<ExpressionResult2>) query.list();
+    }
+
+    @Override
     public List<ExpressionExperiment2> getExperiment2sByAntibody(Antibody antibody) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(ExpressionExperiment2.class);
@@ -2628,7 +2640,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql = "from ExpressionFigureStage  " +
-                "      where figure.zdbID = :figID " ;
+                "      where figure.zdbID = :figID ";
 
         Query query = session.createQuery(hql);
         query.setParameter("figID", fig.getZdbID());

@@ -64,6 +64,10 @@ public class HibernateFeatureRepository implements FeatureRepository {
         return (Feature) HibernateUtil.currentSession().get(Feature.class, zdbID);
     }
 
+    public FeatureGenomicMutationDetail getFgmdByID(String zdbID) {
+        return (FeatureGenomicMutationDetail) HibernateUtil.currentSession().get(FeatureGenomicMutationDetail.class, zdbID);
+    }
+
     public DataAlias getSpecificDataAlias(Feature feature, String alias) {
         Session session = currentSession();
         Criteria criteria = session.createCriteria(DataAlias.class);

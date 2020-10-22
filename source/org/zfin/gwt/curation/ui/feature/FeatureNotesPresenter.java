@@ -5,6 +5,7 @@ import com.google.gwt.event.dom.client.*;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import org.zfin.gwt.curation.ui.FeatureRPCService;
 import org.zfin.gwt.root.dto.*;
@@ -67,9 +68,20 @@ public class FeatureNotesPresenter {
         TextArea noteText = new TextArea();
         noteText.setText(noteDTO.getNoteData());
         view.addNoteTextAreaCell(noteText, elementIndex);
+        if (noteDTO.getNoteTag()!=null) {
+            Label noteTag = new Label();
+            if (noteDTO.getNoteTag().contains("variant")) {
+                noteTag.setText("variant");
+            }
+            else
+                noteTag.setText(noteDTO.getNoteTag());
+
+            view.addNoteTagCell(noteTag, elementIndex);
+        }
         if (noteDTO.getNoteEditMode().equals(NoteEditMode.PRIVATE) && !isMyCuratorNote(noteDTO)) {
             noteText.setEnabled(false);
         }
+
         DeleteImage deleteImage = new DeleteImage("Delete Note " + noteDTO.getZdbID());
         deleteImage.addClickHandler(new DeleteExternalFeatureNote(noteDTO));
         Button saveButton = new Button("Save");
@@ -93,6 +105,10 @@ public class FeatureNotesPresenter {
         }
 
         if (view.typeListBox.getSelected() == null) {
+            view.setError("Must select Public or Private type of note to add.");
+            return;
+        }
+        if (view.noteTypeListBox.getSelected() == null) {
             view.setError("Must select type of note to add.");
             return;
         }
@@ -101,10 +117,14 @@ public class FeatureNotesPresenter {
 
         if (noteEditMode == NoteEditMode.PUBLIC) {
             final NoteDTO noteDTO = new PublicNoteDTO();
-            noteDTO.setDataZdbID(featureDTO.getZdbID());
+
+                noteDTO.setDataZdbID(featureDTO.getZdbID());
+
+
             noteDTO.setNoteData(view.newNoteTextArea.getText());
             noteDTO.setPublicationZdbID(publicationID);
             noteDTO.setNoteEditMode(noteEditMode);
+            noteDTO.setNoteType(view.noteTypeListBox.getSelected());
             FeatureRPCService.App.getInstance().editPublicNote(noteDTO, new FeatureEditCallBack<FeatureDTO>("Failed to update public note") {
                 @Override
                 public void onSuccess(FeatureDTO featureDTOReturn) {

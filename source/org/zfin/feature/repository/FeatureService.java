@@ -6,6 +6,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.zfin.Species;
+import org.zfin.expression.ExpressionResult2;
+import org.zfin.expression.Figure;
 import org.zfin.feature.*;
 import org.zfin.fish.repository.FishService;
 import org.zfin.framework.presentation.PaginationResult;
@@ -21,6 +23,7 @@ import org.zfin.marker.presentation.PhenotypeOnMarkerBean;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.presentation.FishGenotypePhenotypeStatistics;
 import org.zfin.mutant.presentation.GenotypeFishResult;
+import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 
@@ -28,6 +31,8 @@ import javax.validation.constraints.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.junit.Assert.assertNotNull;
+import static org.zfin.repository.RepositoryFactory.getExpressionRepository;
 import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 import static org.zfin.sequence.ForeignDB.AvailableName;
 import static org.zfin.sequence.ForeignDBDataType.DataType;
@@ -247,10 +252,13 @@ public class FeatureService {
     public static List<FeatureNote> getSortedExternalNotes(Feature feature) {
         List<FeatureNote> notes = new ArrayList<FeatureNote>();
         notes.addAll(feature.getExternalNotes());
+
         Collections.sort(notes);
 
         return notes;
     }
+
+
 
     public static GBrowseImage getGbrowseImage(Feature feature) {
         Set<FeatureMarkerRelationship> featureMarkerRelationships = feature.getFeatureMarkerRelations();
@@ -384,23 +392,33 @@ public class FeatureService {
                 .sorted(Comparator.comparing(genotypeFishResult -> genotypeFishResult.getFish().getDisplayName()))
                 .collect(Collectors.toList());
         PhenotypeOnMarkerBean phenotypeOnMarkerBean = new PhenotypeOnMarkerBean();
-        int numOfFigures = fishSummaryList.stream()
+
+        Set<Figure> figures = fishSummaryList.stream()
                 .filter(genotypeFishResult -> genotypeFishResult.getFishGenotypePhenotypeStatistics() != null)
                 .map(GenotypeFishResult::getFishGenotypePhenotypeStatistics)
                 .filter(fishGenotypePhenotypeStatistics -> fishGenotypePhenotypeStatistics.getFigures() != null)
                 .map(FishGenotypePhenotypeStatistics::getFigures)
                 .flatMap(Collection::stream)
-                .collect(Collectors.toSet()).size();
-        phenotypeOnMarkerBean.setNumFigures(numOfFigures);
-        int numOfPubs = fishSummaryList.stream()
+                .collect(Collectors.toSet());
+        Set<Publication> publications = fishSummaryList.stream()
                 .filter(genotypeFishResult -> genotypeFishResult.getFishGenotypePhenotypeStatistics() != null)
                 .map(GenotypeFishResult::getFishGenotypePhenotypeStatistics)
                 .filter(fishGenotypePhenotypeStatistics -> fishGenotypePhenotypeStatistics.getPublicationPaginationResult().getTotalCount() > 0)
                 .map(FishGenotypePhenotypeStatistics::getPublicationPaginationResult)
                 .map(PaginationResult::getPopulatedResults)
                 .flatMap(Collection::stream)
-                .collect(Collectors.toSet()).size();
-        phenotypeOnMarkerBean.setNumPublications(numOfPubs);
+                .collect(Collectors.toSet());
+
+        // add the EaPs now
+        List<ExpressionResult2> expressionExperiment2s = getExpressionRepository().getPhenotypeFromExpressionsByFeature(feature.getZdbID());
+        assertNotNull(expressionExperiment2s);
+        figures.addAll(expressionExperiment2s.stream().map(expression -> expression.getExpressionFigureStage().getFigure()).collect(Collectors.toList()));
+        publications.addAll(expressionExperiment2s.stream().map(expression -> expression.getExpressionFigureStage().getFigure().getPublication()).collect(Collectors.toList()));
+
+        phenotypeOnMarkerBean.setNumFigures(figures.size());
+        phenotypeOnMarkerBean.setNumPublications(publications.size());
+
+
         return phenotypeOnMarkerBean;
     }
 }

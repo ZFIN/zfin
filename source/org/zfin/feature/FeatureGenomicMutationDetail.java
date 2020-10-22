@@ -2,6 +2,8 @@ package org.zfin.feature;
 
 import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "feature_genomic_mutation_detail")
@@ -30,6 +32,8 @@ public class FeatureGenomicMutationDetail implements Cloneable {
     private String fgmdVarStrand;
     @Column(name = "fgmd_padded_base")
     private String fgmdPaddedBase;
+    @OneToMany(mappedBy = "featureGenomicMutationDetail", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<VariantNote> externalNotes;
 
 
     public Feature getFeature() {
@@ -43,6 +47,14 @@ public class FeatureGenomicMutationDetail implements Cloneable {
 
     public String getZdbID() {
         return zdbID;
+    }
+
+    public Set<VariantNote> getExternalNotes() {
+        return externalNotes;
+    }
+
+    public void setExternalNotes(Set<VariantNote> externalNotes) {
+        this.externalNotes = externalNotes;
     }
 
     public void setZdbID(String zdbID) {
@@ -128,6 +140,13 @@ public class FeatureGenomicMutationDetail implements Cloneable {
         result = 31 * result + (fgmdVarStrand != null ? fgmdVarStrand.hashCode() : 0);
 
         return result;
+    }
+
+    public void addExternalNote(VariantNote note) {
+        if (externalNotes == null) {
+            externalNotes = new HashSet<>();
+        }
+        externalNotes.add(note);
     }
     
 }

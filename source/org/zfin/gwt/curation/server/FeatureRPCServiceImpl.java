@@ -580,6 +580,37 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
 
             getFeatureRepository().saveFeature(feature, publication);
+            if (CollectionUtils.isNotEmpty(featureDTO.getPublicNoteList())) {
+
+                HashSet<FeatureNote> featureNoteSet = new HashSet<>(featureDTO.getPublicNoteList().size());
+                feature.setExternalNotes(featureNoteSet);
+            }
+
+            for (NoteDTO note : featureDTO.getPublicNoteList()) {
+
+
+
+
+                FeatureNote featureNote = new FeatureNote();
+                featureNote.setFeature(feature);
+                featureNote.setNote(note.getNoteData());
+                if (note.getPublicationZdbID() != null) {
+                    featureNote.setPublication(getPublicationRepository().getPublication(note.getPublicationZdbID()));
+                }
+                if (note.getNoteType().equals("variant")) {
+                    if (feature.getFeatureGenomicMutationDetail() != null) {
+                        featureNote.setTag("variant with ID" + feature.getFeatureGenomicMutationDetail().getZdbID());
+                    } else {
+                        featureNote.setTag("variant");
+                    }
+                }
+                else {
+                    featureNote.setTag("feature");
+                }
+
+                feature.getExternalNotes().add(featureNote);
+            }
+
 
             if (StringUtils.isNotEmpty((featureDTO.getFeatureChromosome()))) {
                 FeatureLocation fgl = new FeatureLocation();
@@ -849,30 +880,44 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     public FeatureDTO editPublicNote(NoteDTO noteDTO) {
         HibernateUtil.createTransaction();
         Feature feature = featureRepository.getFeatureByID(noteDTO.getDataZdbID());
-        // new note
-        if (noteDTO.getZdbID() == null) {
-            FeatureNote note = new FeatureNote();
-            note.setNote(noteDTO.getNoteData());
-            note.setFeature(feature);
-            note.setPublication(getPublicationRepository().getPublication(noteDTO.getPublicationZdbID()));
-            feature.addExternalNote(note);
-        } else {
-            for (FeatureNote note : feature.getExternalNotes()) {
-                if (note.getZdbID().equals(noteDTO.getZdbID())) {
-                    String oldNote = note.getNote();
-                    String newNote = noteDTO.getNoteData();
-                    if (!StringUtils.equals(newNote, oldNote)) {
-                        note.setNote(newNote);
-                        infrastructureRepository.insertUpdatesTable(feature.getZdbID(), "Public Note", oldNote, newNote);
+            // new note
+            if (noteDTO.getZdbID() == null) {
+                FeatureNote note = new FeatureNote();
+                note.setNote(noteDTO.getNoteData());
+                note.setFeature(feature);
+
+               if (noteDTO.getNoteType().equals("feature")) {
+                    note.setTag("feature");
+                }
+                if (noteDTO.getNoteType().equals("variant")) {
+                    if (feature.getFeatureGenomicMutationDetail() != null) {
+                        note.setTag("variant with ID " + feature.getFeatureGenomicMutationDetail().getZdbID());
+                    } else {
+                        note.setTag("variant");
+                    }
+                }
+
+                note.setPublication(getPublicationRepository().getPublication(noteDTO.getPublicationZdbID()));
+                feature.addExternalNote(note);
+            }
+            else{
+                for (FeatureNote note : feature.getExternalNotes()) {
+                    if (note.getZdbID().equals(noteDTO.getZdbID())) {
+                        String oldNote = note.getNote();
+                        String newNote = noteDTO.getNoteData();
+                        if (!StringUtils.equals(newNote, oldNote)) {
+                            note.setNote(newNote);
+                            infrastructureRepository.insertUpdatesTable(feature.getZdbID(), "Public Note", oldNote, newNote);
+                        }
                     }
                 }
             }
+            HibernateUtil.flushAndCommitCurrentSession();
+            return DTOConversionService.convertToFeatureDTO(feature);
+
         }
-        HibernateUtil.flushAndCommitCurrentSession();
 
 
-        return DTOConversionService.convertToFeatureDTO(feature);
-    }
 
     @Override
     public CuratorNoteDTO addCuratorNote(CuratorNoteDTO noteDTO) {

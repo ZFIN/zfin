@@ -77,6 +77,7 @@
         <mapping class="org.zfin.feature.FeatureMarkerRelationship"/>
         <mapping class="org.zfin.feature.FeatureMarkerRelationshipType"/>
         <mapping class="org.zfin.feature.FeatureNote"/>
+        <mapping class="org.zfin.feature.VariantNote"/>
         <mapping class="org.zfin.feature.FeaturePrefix"/>
         <mapping class="org.zfin.feature.FeatureProteinMutationDetail"/>
         <mapping class="org.zfin.feature.FeatureGenomicMutationDetail"/>

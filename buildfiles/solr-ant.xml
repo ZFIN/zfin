@@ -62,7 +62,6 @@
         <antcall target="build-solr-index"/>
         <antcall target="backup-solr-core-jenkins"/>
         <antcall target="check-indexer"/>
-        <antcall target="add-abstracts-to-pubs"/>
 
     </target>
 
@@ -72,9 +71,6 @@
         <echo message="Starting Solr index build via http..."/>
         <exec executable="curl">
             <arg value="-s"/>
-            <!--
-               this does not commit on it's own, the add-abstracts-to-pubs target handles the commit
-            -->
             <arg value="http://localhost:${SOLR_PORT}/solr/prototype/dataimport?command=full-import&amp;optimize=true&amp;clean=true&amp;wt=json&amp;indent=true"/>
         </exec>
         <echo message=" ---- "/>
@@ -85,9 +81,6 @@
         <echo message="Starting Solr index build via http..."/>
         <exec executable="curl">
             <arg value="-s"/>
-            <!--
-               this does not commit on it's own, the add-abstracts-to-pubs target handles the commit
-            -->
             <arg value="http://localhost:${SOLR_PORT}/solr/prototype/dataimport?command=full-import&amp;clean=false&amp;entity=publication&amp;wt=json&amp;indent=true"/>
         </exec>
         <echo message=" ---- "/>
@@ -157,10 +150,6 @@
                 sleep(60 * 1000)
             }
         </groovy>
-    </target>
-
-    <target name="add-abstracts-to-pubs">
-        <exec executable="server_apps/solr/scripts/AddAbstractsToPublications.groovy"/>
     </target>
 
     <target name="reload-solr-core">

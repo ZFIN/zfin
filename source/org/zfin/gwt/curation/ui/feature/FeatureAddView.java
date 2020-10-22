@@ -7,9 +7,11 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextArea;
+import javassist.compiler.ast.StringL;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.gwt.root.dto.Mutagee;
 import org.zfin.gwt.root.dto.TransgenicSuffix;
@@ -30,6 +32,14 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
     ZfinAccessionBox featureSequenceBox;
     @UiField
     TextArea curatorNoteBox;
+    /*@UiField
+    CheckBox featureNoteCheckBox;
+    @UiField
+    CheckBox variantNoteCheckBox*/;
+    @UiField
+    StringListBox noteType;
+
+
     @UiField
     TextArea publicNoteBox;
 
@@ -47,8 +57,14 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
         mutageeBox.addEnumValues(Mutagee.values());
         setFeatureEvidenceCodeList();
         setFeatureAssemblyList();
+        setNoteType();
     }
+    void setNoteType() {
+        noteType.addItem("");
+        noteType.addItem("feature");
+        noteType.addItem("variant");
 
+    }
     @UiHandler("saveButton")
     void onClickSaveButton(@SuppressWarnings("unused") ClickEvent event) {
         super.onclickSaveButton(event);
@@ -131,10 +147,6 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
         featureSequenceBox.getAccessionNumber().setEnabled(false);
         publicNoteBox.setEnabled(false);
         curatorNoteBox.setEnabled(false);
-        /*featureChromosome.setEnabled(false);
-        featureChrAssembly.setEnabled(false);
-        featureStartLoc.setEnabled(false);
-        featureEndLoc.setEnabled(false);*/
 
     }
 

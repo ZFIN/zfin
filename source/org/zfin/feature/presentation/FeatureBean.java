@@ -17,6 +17,7 @@ import org.zfin.mutant.presentation.GenoExpStatistics;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.FeatureDBLink;
 import org.zfin.zebrashare.FeatureCommunityContribution;
+import org.zfin.ExternalNote;
 
 import java.util.Collection;
 import java.util.List;
@@ -49,6 +50,7 @@ public class FeatureBean {
     private List<PublicationAttribution> proteinConsequenceAttributions;
     private List<PublicationAttribution> varSeqAttributions;
     private List<FeatureNote> externalNotes;
+    private List<ExternalNote> allNotes;
     private FeatureCommunityContribution ftrCommContr;
     private Publication ZShareOrigPub;
     private String aaLink;
