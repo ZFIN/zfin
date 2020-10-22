@@ -129,7 +129,7 @@ public class FishDetailController {
 
         model.addAttribute("fish", fish);
         model.addAttribute("fishGenomicFeatures", genomicFeatures);
-        return "fish/fish-detail-popup.popup";
+        return "fish/fish-detail-popup";
     }
 
 

@@ -58,7 +58,7 @@ public class FishExpressionController {
 
         boolean hasImages = FishService.hasImagesOnExpressionFigures(fishID);
         model.addAttribute("hasImages", hasImages);
-        return "fish/image-camera-icon.popup";
+        return "fish/image-camera-icon";
     }
 
 }

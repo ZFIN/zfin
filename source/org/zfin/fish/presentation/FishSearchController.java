@@ -122,7 +122,7 @@ public class FishSearchController {
             model.addAttribute(LookupStrings.FORM_BEAN, formBean);
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, "");
 
-            return "fish/matching-detail.popup";
+            return "fish/matching-detail";
         }
         else
         {
@@ -134,7 +134,7 @@ public class FishSearchController {
             model.addAttribute(LookupStrings.FORM_BEAN, formBean);
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, "");
 
-            return "fish/matching-detail.popup";
+            return "fish/matching-detail";
         }
 
     }

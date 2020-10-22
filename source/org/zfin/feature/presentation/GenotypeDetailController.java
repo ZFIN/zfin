@@ -47,7 +47,7 @@ public class GenotypeDetailController {
 
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, genotypeName);
 
-            return "genotype/genotype-detail-popup.popup";
+            return "feature/genotype-detail-popup";
         } else {
             Genotype genotype = mutantRepository.getGenotypeByID(zdbID);
 
@@ -81,7 +81,7 @@ public class GenotypeDetailController {
             genotypeName = genotypeName.replaceAll("</sup>", "");
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, genotypeName);
 
-            return "genotype/genotype-detail-popup.popup";
+            return "feature/genotype-detail-popup";
         }
     }
 
