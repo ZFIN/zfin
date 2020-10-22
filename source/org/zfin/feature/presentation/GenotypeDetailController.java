@@ -66,7 +66,7 @@ public class GenotypeDetailController {
             }
             if (genotype == null) {
                 model.addAttribute(LookupStrings.ZDB_ID, zdbID);
-                return "record-not-found.popup";
+                return LookupStrings.RECORD_NOT_FOUND_POPUP;
             }
 
             form.setGenotype(genotype);

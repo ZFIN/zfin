@@ -120,10 +120,10 @@ public class OntologyTermController {
     private ModelAndView getModelAndViewForSingleTerm(OntologyBean form) {
         String termID = form.getTermID();
         if (termID == null)
-            return new ModelAndView("record-not-found.page", LookupStrings.ZDB_ID, "");
+            return new ModelAndView(LookupStrings.RECORD_NOT_FOUND_PAGE, LookupStrings.ZDB_ID, "");
         GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByZdbID(termID);
         if (term == null)
-            return new ModelAndView("record-not-found.page", LookupStrings.ZDB_ID, termID);
+            return new ModelAndView(LookupStrings.RECORD_NOT_FOUND_PAGE, LookupStrings.ZDB_ID, termID);
         form.setTerm(term);
         form.setAllChildren(ontologyRepository.getChildrenTransitiveClosures(term));
         return new ModelAndView(viewName, LookupStrings.FORM_BEAN, form);

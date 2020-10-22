@@ -37,7 +37,7 @@ public class ExperimentDetailController {
 
         if (experiment == null) {
             model.addAttribute(LookupStrings.ZDB_ID, id);
-            return "record-not-found.popup";
+            return LookupStrings.RECORD_NOT_FOUND_POPUP;
         }
 
         model.addAttribute("experiment", experiment);

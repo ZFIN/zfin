@@ -28,7 +28,7 @@ public class AntibodiesPerPublicationController {
         PublicationRepository pr = RepositoryFactory.getPublicationRepository();
         Publication publication = pr.getPublication(publicationID);
         if (publication == null)
-            return "record-not-found.page";
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
 
         AntibodyRepository ar = RepositoryFactory.getAntibodyRepository();
         List<Antibody> antibodies = ar.getAntibodiesByPublication(publication);

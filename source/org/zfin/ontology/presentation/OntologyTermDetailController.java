@@ -222,7 +222,7 @@ public class OntologyTermDetailController {
 
         if (term == null) {
             model.addAttribute(LookupStrings.ZDB_ID, termID);
-            return "record-not-found.popup";
+            return LookupStrings.RECORD_NOT_FOUND_POPUP;
         }
 
         List<RelationshipPresentation> termRelationships = OntologyService.getRelatedTermsWithoutStages(term);
@@ -278,11 +278,11 @@ public class OntologyTermDetailController {
 
         if (entity.getSuperterm() == null) {
             model.addAttribute(LookupStrings.ZDB_ID, superTermID);
-            return "record-not-found.popup";
+            return LookupStrings.RECORD_NOT_FOUND_POPUP;
         }
         if (entity.getSubterm() == null) {
             model.addAttribute(LookupStrings.ZDB_ID, subTermID);
-            return "record-not-found.popup";
+            return LookupStrings.RECORD_NOT_FOUND_POPUP;
         }
 
         model.addAttribute("entity", entity);

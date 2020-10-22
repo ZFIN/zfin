@@ -70,7 +70,7 @@ public class AntibodyFigureSummaryController {
 
         Antibody ab = antibodyRepository.getAntibodyByID(antibodyID);
         if (ab == null)
-            return "record-not-found.page";
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Antibody figure summary: " + ab.getName());
         GenericTerm superterm = ontologyRepository.getTermByZdbID(supertermID);

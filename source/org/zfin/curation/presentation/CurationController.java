@@ -114,7 +114,7 @@ public class CurationController implements CurationService {
                                   Model model) throws Exception {
         Publication publication = publicationRepository.getPublication(pubID);
         if (publication == null) {
-            return "record-not-found.page";
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
         model.addAttribute("publication", publication);
         model.addAttribute("curationTabs", CurationModuleType.values());

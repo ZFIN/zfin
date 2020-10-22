@@ -19,11 +19,8 @@ public class LookupStrings {
     public final static String BLAST_DB = "blastDB";
 
 
-    public static final String RECORD_NOT_FOUND_PAGE = "record-not-found.page";
-
-    // suffix
-    public final static String PAGE_SUFFIX = ".page";
-    public final static String INSERT_SUFFIX = ".insert";
+    public static final String RECORD_NOT_FOUND_PAGE = "record_not_found";
+    public static final String RECORD_NOT_FOUND_POPUP = "record_not_found_popup";
 
     // form processing
     public static final String SELECTED_TAB = "selectedTab";

@@ -38,7 +38,7 @@ public class OntologyController {
         Ontology ontology = Ontology.getOntology(ontologyName);
         if (ontology == null) {
             model.addAttribute(LookupStrings.ZDB_ID, ontologyName);
-            return "record-not-found.popup";
+            return LookupStrings.RECORD_NOT_FOUND_POPUP;
         }
         OntologyManager.getInstance().reloadOntology(ontology);
         return "redirect:version-info";
@@ -50,7 +50,7 @@ public class OntologyController {
         Ontology ontology = Ontology.getOntology(ontologyName);
         if (ontology == null) {
             model.addAttribute(LookupStrings.ZDB_ID, ontologyName);
-            return "record-not-found.popup";
+            return LookupStrings.RECORD_NOT_FOUND_POPUP;
         }
         OntologyMetadata metadata = RepositoryFactory.getOntologyRepository().getOntologyMetadata(ontologyName);
         try {

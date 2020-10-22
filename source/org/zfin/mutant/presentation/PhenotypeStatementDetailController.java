@@ -37,7 +37,7 @@ public class PhenotypeStatementDetailController {
         if (phenotypeStatement == null) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             model.addAttribute(LookupStrings.ZDB_ID, id);
-            return "record-not-found.page";
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
 
         model.addAttribute("phenotypeStatement", phenotypeStatement);
@@ -62,7 +62,7 @@ public class PhenotypeStatementDetailController {
         if (phenotypeStatement == null) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             model.addAttribute(LookupStrings.ZDB_ID, id);
-            return "record-not-found.popup";
+            return LookupStrings.RECORD_NOT_FOUND_POPUP;
         }
 
         model.addAttribute("phenotypeStatement", phenotypeStatement);
