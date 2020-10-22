@@ -99,7 +99,7 @@ public class ImageViewController {
         LOG.debug("Image.Figure zdbID: " + image.getFigure().getZdbID());
         form.setImage(image);
         form.setExpressionGenes(figureViewService.getExpressionGenes(image.getFigure()));
-        return "image-popup.page";
+        return "publication/image-popup";
     }
 
     @RequestMapping("/{zdbID}/summary")
