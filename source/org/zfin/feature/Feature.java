@@ -750,7 +750,7 @@ public class Feature implements EntityNotes, EntityZdbID {
 
     public String getDisplayType() {
         if (type.equals(FeatureTypeEnum.TRANSGENIC_INSERTION) && hasAlleleOfRelationship())
-            return "Allele causes by " + type.getTypeDisplay();
+            return "Allele caused by " + type.getTypeDisplay();
         return type.getTypeDisplay();
     }
 }
