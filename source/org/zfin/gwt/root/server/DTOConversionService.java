@@ -688,41 +688,6 @@ public class DTOConversionService {
             }
         }
 
-
-        /*if (CollectionUtils.isNotEmpty(featureDTO.getPublicNoteList())) {
-
-            HashSet<FeatureNote> featureNoteSet = new HashSet<>(featureDTO.getPublicNoteList().size());
-            feature.setExternalNotes(featureNoteSet);
-        }
-
-            for (NoteDTO note : featureDTO.getPublicNoteList()) {
-
-
-
-
-                        FeatureNote featureNote = new FeatureNote();
-                        featureNote.setFeature(feature);
-                        featureNote.setNote(note.getNoteData());
-                if (note.getPublicationZdbID() != null) {
-                    featureNote.setPublication(getPublicationRepository().getPublication(note.getPublicationZdbID()));
-                }
-                if (note.getNoteType().equals("variant")) {
-                    if (feature.getFeatureGenomicMutationDetail() != null) {
-                        featureNote.setTag("variant with ID" + feature.getFeatureGenomicMutationDetail().getZdbID());
-                    } else {
-                        featureNote.setTag("variant");
-                    }
-                }
-                else {
-                    featureNote.setTag("feature");
-                }
-
-                        feature.getExternalNotes().add(featureNote);
-                    }
-
-*/
-
-
         if (CollectionUtils.isNotEmpty(featureDTO.getTranscriptChangeDTOSet())) {
             for (MutationDetailTranscriptChangeDTO dto : featureDTO.getTranscriptChangeDTOSet()) {
                 FeatureTranscriptMutationDetail detail = new FeatureTranscriptMutationDetail();
@@ -880,9 +845,16 @@ public class DTOConversionService {
 
                 List<NoteDTO> curatorNoteDTOs = new ArrayList<>();
                 for (FeatureNote dataNote : featureNotes) {
-                    NoteDTO noteDTO = new NoteDTO(dataNote.getZdbID(), feature.getZdbID(), NoteEditMode.PUBLIC, DTOConversionService.unescapeString(dataNote.getNote()),dataNote.getType(),dataNote.getTag());
-                    noteDTO.setPublicationDTO(convertToPublicationDTO(dataNote.getPublication()));
-                    curatorNoteDTOs.add(noteDTO);
+                 if (dataNote.getTag()!=null) {
+                     NoteDTO noteDTO = new NoteDTO(dataNote.getZdbID(), feature.getZdbID(), NoteEditMode.PUBLIC, DTOConversionService.unescapeString(dataNote.getNote()), dataNote.getType(), dataNote.getTag());
+                     noteDTO.setPublicationDTO(convertToPublicationDTO(dataNote.getPublication()));
+                     curatorNoteDTOs.add(noteDTO);
+                 }
+                 else{
+                     NoteDTO noteDTO = new NoteDTO(dataNote.getZdbID(), feature.getZdbID(), NoteEditMode.PUBLIC, DTOConversionService.unescapeString(dataNote.getNote()), dataNote.getType(),"");
+                     noteDTO.setPublicationDTO(convertToPublicationDTO(dataNote.getPublication()));
+                     curatorNoteDTOs.add(noteDTO);
+                 }
                 }
                 featureDTO.setPublicNoteList(curatorNoteDTOs);
             }

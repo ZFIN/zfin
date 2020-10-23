@@ -3,10 +3,12 @@ package org.zfin.gwt.curation.server;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
+import org.zfin.ExternalNote;
 import org.zfin.Species;
 import org.zfin.feature.*;
 import org.zfin.feature.repository.FeatureRepository;
@@ -50,19 +52,17 @@ import static org.zfin.repository.RepositoryFactory.*;
 
 public class FeatureRPCServiceImpl extends RemoteServiceServlet implements FeatureRPCService {
 
-    private transient Logger logger = LogManager.getLogger(FeatureRPCServiceImpl.class);
-    private final MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
-    private final PublicationRepository pubRepository = RepositoryFactory.getPublicationRepository();
-    private final SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
+    private final static String MESSAGE_UNSPECIFIED_FEATURE = "An unspecified feature name must have a valid gene abbreviation.";
     private static InfrastructureRepository infrastructureRepository = getInfrastructureRepository();
     private static FeatureRepository featureRepository = getFeatureRepository();
     private static ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();
     private static OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
     private static ZebrashareRepository zebrashareRepository = RepositoryFactory.getZebrashareRepository();
+    private final MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
+    private final PublicationRepository pubRepository = RepositoryFactory.getPublicationRepository();
+    private final SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
+    private transient Logger logger = LogManager.getLogger(FeatureRPCServiceImpl.class);
     private List<Organization> labsOfOrigin = null;
-
-
-    private final static String MESSAGE_UNSPECIFIED_FEATURE = "An unspecified feature name must have a valid gene abbreviation.";
 
     public FeatureDTO getFeature(String featureZdbID) {
         Feature feature = (Feature) HibernateUtil.currentSession().get(Feature.class, featureZdbID);
@@ -169,13 +169,15 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         if (featureDTO.getMutagee() != null) {
             featureAssay.setMutagee(Mutagee.getType(featureDTO.getMutagee()));
         }
-        if (featureDTO.getAssemblyInfoDate()!=null) {
+        if (org.zfin.gwt.root.util.StringUtils.isNotEmpty(featureDTO.getAssemblyInfoDate())) {
             try {
-                 entryDate = dateFormat.parse(featureDTO.getAssemblyInfoDate());
+                entryDate = dateFormat.parse(featureDTO.getAssemblyInfoDate());
             } catch (ParseException e) {
-                entryDate = new Date(0);
+                entryDate = null;
             }
             feature.setFtrAssemblyInfoDate(entryDate);
+        } else {
+            feature.setFtrAssemblyInfoDate(null);
         }
 
         FeatureLocation fgl = featureRepository.getFeatureLocation(feature);
@@ -195,15 +197,11 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             fgl.setFtrLocEvidence(ontologyRepository.getTermByZdbID(FeatureService.getFeatureGenomeLocationEvidenceCodeTerm(featureDTO.getEvidence())));
             HibernateUtil.currentSession().save(fgl);
             infrastructureRepository.insertPublicAttribution(fgl.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.STANDARD);
-        }
-        else{
+        } else {
 
             infrastructureRepository.deleteActiveDataByZdbID(fgl.getZdbID());
         }
 
-
-
-        
 
         // get labs of origin for feature
         Organization existingLabOfOrigin = featureRepository.getLabByFeature(feature);
@@ -298,7 +296,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 feature.setFeatureGenomicMutationDetail(fgmd);
             }
             FeatureGenomicMutationDetail oldDetail = fgmd.clone();
-            
+
 
             DTOConversionService.updateFeatureGenomicMutationDetailWithDTO(fgmd, featureDTO.getFgmdChangeDTO());
             if (fgmd.getZdbID() == null) {
@@ -360,14 +358,14 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         }
         try {
 
-                featureRepository.update(feature, addTranscriptAttribution, featureDTO.getPublicationZdbID());
+            featureRepository.update(feature, addTranscriptAttribution, featureDTO.getPublicationZdbID());
 
         } catch (ConstraintViolationException e) {
 
-                String message = "FEATURE_TRACKING table violation: feature with name " + feature.getName() + " already exists in tracking table";
-                DuplicateEntryException duplicateEntryException = new DuplicateEntryException(message);
-                e.printStackTrace();
-                throw duplicateEntryException;
+            String message = "FEATURE_TRACKING table violation: feature with name " + feature.getName() + " already exists in tracking table";
+            DuplicateEntryException duplicateEntryException = new DuplicateEntryException(message);
+            e.printStackTrace();
+            throw duplicateEntryException;
 
 
         }
@@ -519,17 +517,6 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         }
     }
 
-
-    private class SupplierCacheThread extends Thread {
-
-        @Override
-        public void run() {
-            labsOfOrigin = null;
-            getLabsOfOriginWithPrefix();
-            HibernateUtil.closeSession();
-        }
-    }
-
     public void deleteFeature(String zdbID) {
         HibernateUtil.createTransaction();
         infrastructureRepository.deleteActiveDataByZdbID(zdbID);
@@ -541,8 +528,8 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         return DTOConversionService.convertToFeaturePrefixDTO(featureRepository.getLabPrefixes(labName));
     }
 
-    public String getNextZFLineNum(){
-        String nextLineNum=featureRepository.getNextZFLineNum();
+    public String getNextZFLineNum() {
+        String nextLineNum = featureRepository.getNextZFLineNum();
         return nextLineNum;
     }
 
@@ -589,23 +576,20 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             for (NoteDTO note : featureDTO.getPublicNoteList()) {
 
 
-
-
                 FeatureNote featureNote = new FeatureNote();
                 featureNote.setFeature(feature);
                 featureNote.setNote(note.getNoteData());
                 if (note.getPublicationZdbID() != null) {
                     featureNote.setPublication(getPublicationRepository().getPublication(note.getPublicationZdbID()));
                 }
-                if (note.getNoteType().equals("variant")) {
+                if (note.getNoteType().equals(ExternalNote.Type.VARIANT.toString())) {
                     if (feature.getFeatureGenomicMutationDetail() != null) {
-                        featureNote.setTag("variant with ID" + feature.getFeatureGenomicMutationDetail().getZdbID());
+                        featureNote.setTag(ExternalNote.Type.VARIANT.toString()  +  feature.getFeatureGenomicMutationDetail().getZdbID());
                     } else {
-                        featureNote.setTag("variant");
+                        featureNote.setTag(ExternalNote.Type.VARIANT.toString());
                     }
-                }
-                else {
-                    featureNote.setTag("feature");
+                } else {
+                    featureNote.setTag(ExternalNote.Type.FEATURE.toString());
                 }
 
                 feature.getExternalNotes().add(featureNote);
@@ -624,16 +608,15 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 fgl.setFtrLocEvidence(ontologyRepository.getTermByZdbID(FeatureService.getFeatureGenomeLocationEvidenceCodeTerm(featureDTO.getEvidence())));
                 HibernateUtil.currentSession().save(fgl);
 
-                    PublicationAttribution pa = new PublicationAttribution();
-                    pa.setSourceZdbID(publication.getZdbID());
-                    pa.setDataZdbID(fgl.getZdbID());
-                    pa.setSourceType(RecordAttribution.SourceType.STANDARD);
-                    pa.setPublication(publication);
-                    Set<PublicationAttribution> pubattr = new HashSet<>();
-                    pubattr.add(pa);
+                PublicationAttribution pa = new PublicationAttribution();
+                pa.setSourceZdbID(publication.getZdbID());
+                pa.setDataZdbID(fgl.getZdbID());
+                pa.setSourceType(RecordAttribution.SourceType.STANDARD);
+                pa.setPublication(publication);
+                Set<PublicationAttribution> pubattr = new HashSet<>();
+                pubattr.add(pa);
 
-                    currentSession().save(pa);
-
+                currentSession().save(pa);
 
 
             }
@@ -655,9 +638,6 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 pubattr1.add(pa1);
                 currentSession().save(pa1);
             }*/
-
-
-
 
 
             if (StringUtils.isNotEmpty(featureDTO.getFeatureSequence())) {
@@ -809,7 +789,6 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         }
     }
 
-
     public void deleteFeatureMarkerRelationship(FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO) {
 
         HibernateUtil.createTransaction();
@@ -826,11 +805,9 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         HibernateUtil.flushAndCommitCurrentSession();
     }
 
-
     public List<String> getRelationshipTypesForFeatureType(FeatureTypeEnum ftrTypeDisplay) {
         return featureRepository.getRelationshipTypesForFeatureType(ftrTypeDisplay);
     }
-
 
     public List<MarkerDTO> getMarkersForFeatureRelationAndSource(String featureTypeName, String publicationZdbID) {
         List<Marker> markers = featureRepository.getMarkersForFeatureRelationAndSource(featureTypeName, publicationZdbID);
@@ -880,44 +857,50 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     public FeatureDTO editPublicNote(NoteDTO noteDTO) {
         HibernateUtil.createTransaction();
         Feature feature = featureRepository.getFeatureByID(noteDTO.getDataZdbID());
-            // new note
-            if (noteDTO.getZdbID() == null) {
-                FeatureNote note = new FeatureNote();
-                note.setNote(noteDTO.getNoteData());
-                note.setFeature(feature);
+        // new note
+        if (noteDTO.getZdbID() == null) {
+            FeatureNote note = new FeatureNote();
+            note.setNote(noteDTO.getNoteData());
+            note.setFeature(feature);
 
-               if (noteDTO.getNoteType().equals("feature")) {
-                    note.setTag("feature");
-                }
-                if (noteDTO.getNoteType().equals("variant")) {
-                    if (feature.getFeatureGenomicMutationDetail() != null) {
-                        note.setTag("variant with ID " + feature.getFeatureGenomicMutationDetail().getZdbID());
-                    } else {
-                        note.setTag("variant");
-                    }
-                }
-
-                note.setPublication(getPublicationRepository().getPublication(noteDTO.getPublicationZdbID()));
-                feature.addExternalNote(note);
+            if (noteDTO.getNoteType().equals(ExternalNote.Type.FEATURE.toString())) {
+                note.setTag(ExternalNote.Type.FEATURE.toString());
             }
-            else{
-                for (FeatureNote note : feature.getExternalNotes()) {
-                    if (note.getZdbID().equals(noteDTO.getZdbID())) {
-                        String oldNote = note.getNote();
-                        String newNote = noteDTO.getNoteData();
-                        if (!StringUtils.equals(newNote, oldNote)) {
-                            note.setNote(newNote);
-                            infrastructureRepository.insertUpdatesTable(feature.getZdbID(), "Public Note", oldNote, newNote);
-                        }
-                    }
+            if (noteDTO.getNoteType().equals(ExternalNote.Type.VARIANT.toString())) {
+                if (feature.getFeatureGenomicMutationDetail() != null) {
+                    note.setTag(ExternalNote.Type.VARIANT.toString() + feature.getFeatureGenomicMutationDetail().getZdbID());
+                } else {
+                    note.setTag(ExternalNote.Type.VARIANT.toString());
                 }
             }
-            HibernateUtil.flushAndCommitCurrentSession();
-            return DTOConversionService.convertToFeatureDTO(feature);
 
+            note.setPublication(getPublicationRepository().getPublication(noteDTO.getPublicationZdbID()));
+            feature.addExternalNote(note);
+        } else {
+            for (FeatureNote note : feature.getExternalNotes()) {
+                if (note.getZdbID().equals(noteDTO.getZdbID())) {
+                    String oldNote = note.getNote();
+                    String newNote = noteDTO.getNoteData();
+                    if (!StringUtils.equals(newNote, oldNote)) {
+                        note.setNote(newNote);
+                        infrastructureRepository.insertUpdatesTable(feature.getZdbID(), "Public Note", oldNote, newNote);
+                    }
+                    String oldNoteType = note.getType();
+                    String newNoteType = noteDTO.getNoteType();
+                    String newNoteTag = noteDTO.getNoteType();
+                    String oldNoteTag = note.getTag();
+                    if (!StringUtils.equals(newNoteTag, oldNoteTag)) {
+                        note.setType(newNoteType);
+                        note.setTag(newNoteTag);
+                        infrastructureRepository.insertUpdatesTable(feature.getZdbID(), "Public Note Type", oldNoteType, newNoteType);
+                    }
+                }
+            }
         }
+        HibernateUtil.flushAndCommitCurrentSession();
+        return DTOConversionService.convertToFeatureDTO(feature);
 
-
+    }
 
     @Override
     public CuratorNoteDTO addCuratorNote(CuratorNoteDTO noteDTO) {
@@ -1000,7 +983,6 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         return DTOConversionService.convertToPersonDTO(ProfileService.getCurrentSecurityUser());
     }
 
-
     @Override
     public List<MutationDetailControlledVocabularyTermDTO> getDnaChangeList() {
         List<DnaMutationTerm> list = getDnaMutationTermRepository().getControlledVocabularyTermList();
@@ -1059,6 +1041,16 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         } else {
             ReferenceDatabase referenceDatabase = FeatureService.getForeignDbMutationDetailProtein(accessionNumber);
             return referenceDatabase != null ? referenceDatabase.getForeignDB().getDbName().toString() : null;
+        }
+    }
+
+    private class SupplierCacheThread extends Thread {
+
+        @Override
+        public void run() {
+            labsOfOrigin = null;
+            getLabsOfOriginWithPrefix();
+            HibernateUtil.closeSession();
         }
     }
 }

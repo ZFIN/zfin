@@ -77,6 +77,7 @@ public class FeatureNotesView extends AbstractViewComposite {
             Anchor pubAnchor = new Anchor(SafeHtmlUtils.fromTrustedString(noteDTO.getPublicationDTO().getMiniRef()), "/" +
                     noteDTO.getPublicationDTO().getZdbID());
             dataTable.setWidget(rowindex, 0, pubAnchor);
+
         }
     }
 
@@ -89,14 +90,17 @@ public class FeatureNotesView extends AbstractViewComposite {
         textArea.setWidth("600");
         dataTable.setWidget(rowindex, 1, textArea);
     }
+    public void addNoteTypeListBox(StringListBox textArea, int rowindex) {
+        dataTable.setWidget(rowindex, 2, textArea);
+    }
     public void addNoteTagCell(Label textArea, int rowindex) {
 
-        dataTable.setWidget(rowindex, 2, textArea);
+        dataTable.setWidget(rowindex, 3, textArea);
     }
 
     public void addControlCell(Button saveButton, Button revertButton, DeleteImage deleteImage, int rowindex) {
         HorizontalPanel panel = getControllPanel(saveButton, revertButton, deleteImage);
-        dataTable.setWidget(rowindex, 3, panel);
+        dataTable.setWidget(rowindex, 4, panel);
     }
 
     private HorizontalPanel getControllPanel(Button saveButton, Button revertButton, DeleteImage deleteImage) {
@@ -124,7 +128,8 @@ public class FeatureNotesView extends AbstractViewComposite {
     public void resetGUI() {
         newNoteTextArea.setText("");
         typeListBox.setSelectedIndex(0);
-        noteTypeListBox.setVisible(false);
+        noteTypeListBox.setVisible(true);
+        noteTypeListBox.setSelectedIndex(0);
         dataTable.resizeRows(0);
         endTableUpdate();
     }
@@ -132,7 +137,8 @@ public class FeatureNotesView extends AbstractViewComposite {
     public void clearGUI() {
         newNoteTextArea.setText("");
         typeListBox.setSelectedIndex(0);
-        noteTypeListBox.setVisible(false);
+        noteTypeListBox.setVisible(true);
+        noteTypeListBox.setSelectedIndex(0);
     }
 
 

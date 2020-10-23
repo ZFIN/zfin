@@ -32,10 +32,7 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
     ZfinAccessionBox featureSequenceBox;
     @UiField
     TextArea curatorNoteBox;
-    /*@UiField
-    CheckBox featureNoteCheckBox;
-    @UiField
-    CheckBox variantNoteCheckBox*/;
+    ;
     @UiField
     StringListBox noteType;
 

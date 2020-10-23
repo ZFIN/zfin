@@ -5,10 +5,15 @@ import org.zfin.gwt.root.dto.FeatureDTO;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.gwt.root.util.StringUtils;
 
+
+
 /**
  */
 public class FeatureValidationService {
+
     public static final String UNSPECIFIED_FEATURE_NAME = "_unspecified";
+    private static final String DATE_PATTERN = "/^\\d{2}[//-]\\d{2}[//-]\\d{2}$/";
+
 
     public static String isValidToSave(FeatureDTO featureDTO) {
 
@@ -21,6 +26,12 @@ public class FeatureValidationService {
 
             if (featureDTO.getFeatureStartLoc()>featureDTO.getFeatureEndLoc()){
                 return "Start location cannot be greater than end location";
+            }
+        }
+
+        if (StringUtils.isNotEmpty(featureDTO.getAssemblyInfoDate())) {
+            if (featureDTO.getAssemblyInfoDate().length() != 8 || !(featureDTO.getAssemblyInfoDate().contains("/"))) {
+                return "Please enter date in mm/dd/yy format";
             }
         }
 

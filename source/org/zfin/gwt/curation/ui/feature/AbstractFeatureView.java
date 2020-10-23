@@ -164,6 +164,11 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         handleChanges();
     }
 
+    @UiHandler("assemblyInfoDate")
+    void onKeyUpDate(@SuppressWarnings("unused") KeyUpEvent event) {
+        handleChanges();
+    }
+
     @UiHandler("featureChromosome")
     void onKeyUpChr(@SuppressWarnings("unused") KeyUpEvent event) {
         handleChanges();
@@ -374,6 +379,7 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         featureChromosome.setDirty(false);
         featureChromosome.clear();
         featureAssembly.setSelectedIndex(0);
+        assemblyInfoDate.clear();
         featureAssembly.setDirty(false);
         featureStartLoc.setDirty(false);
         featureStartLoc.clear();

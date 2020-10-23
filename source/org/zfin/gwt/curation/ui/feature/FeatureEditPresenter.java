@@ -146,35 +146,16 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         col.addBoolean(view.mutageeBox.isDirty(dto.getMutagee()));
         col.addBoolean(view.mutagenBox.isDirty(dto.getMutagen()));
         col.addBoolean(view.featureChromosome.isDirty((dto.getFeatureChromosome())));
-                col.addBoolean(view.featureStartLoc.isDirty((dto.getFeatureStartLoc())));
-        /*col.addBoolean(view.genomicMutationDetailView.seqReference.isDirty(dto.getFgmdSeqRef()));
-        col.addBoolean(view.genomicMutationDetailView.seqVariant.isDirty(dto.getFgmdSeqVar()));*/
+        col.addBoolean(view.featureStartLoc.isDirty((dto.getFeatureStartLoc())));
         col.addBoolean(view.featureEndLoc.isDirty((dto.getFeatureEndLoc())));
         col.addBoolean(view.featureEvidenceCode.isDirty((dto.getEvidence())));
         col.addBoolean(view.featureAssembly.isDirty((dto.getFeatureAssembly())));
-
         col.addBoolean(view.labDesignationBox.isDirty(dto.getLabPrefix()));
         col.addBoolean(view.featureSuffixBox.isDirty(dto.getTransgenicSuffix()));
         col.addBoolean(view.lineNumberBox.isDirty(dto.getLineNumber()));
         col.addBoolean(view.labOfOriginBox.isDirty(dto.getLabOfOrigin()));
         col.addBoolean(view.assemblyInfoDate.isDirty(dto.getAssemblyInfoDate()));
-
         col.addBoolean(mutationDetailPresenter.isDirty());
-       /* col.addBoolean(view.genomicMutationDetailView.seqReference.isDirty(dto.getFgmdSeqRef()));
-        col.addBoolean(view.genomicMutationDetailView.seqVariant.isDirty(dto.getFgmdSeqVar()));*/
-       /* if (view.genomicMutationDetailView.seqVariant.getText() != dto.getFgmdSeqVar()) {
-            System.out.println(view.genomicMutationDetailView.seqVariant.getText());
-            System.out.println(dto.getFgmdSeqVar());
-
-            view.saveButton.setEnabled(true);
-            col.addBoolean(true);
-        }
-        if (view.genomicMutationDetailView.seqReference.getText() != dto.getFgmdSeqRef()) {
-            view.saveButton.setEnabled(true);
-            col.addBoolean(true);
-        }*/
-
-
         return col.arrivedValue();
     }
 

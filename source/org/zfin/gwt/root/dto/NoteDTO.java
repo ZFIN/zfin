@@ -27,6 +27,14 @@ public class NoteDTO implements IsSerializable {
         this.noteType = noteType;
         this.noteTag = noteTag;
     }
+    public NoteDTO(String zdbId, String dataZdbID,NoteEditMode noteEditMode,String note, String noteType){
+        this.zdbID = zdbId ;
+        this.dataZdbID = dataZdbID ;
+        this.noteEditMode = noteEditMode;
+        this.noteData = note;
+        this.noteType = noteType;
+
+    }
 
     public NoteDTO(String zdbId, String dataZdbID,NoteEditMode noteEditMode,String note){
         this.zdbID = zdbId ;

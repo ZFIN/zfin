@@ -11,6 +11,7 @@ import org.zfin.gwt.curation.ui.FeatureRPCService;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.ui.FeatureEditCallBack;
 import org.zfin.gwt.root.ui.IsDirtyWidget;
+import org.zfin.gwt.root.ui.StringListBox;
 import org.zfin.gwt.root.ui.ZfinAsyncCallback;
 import org.zfin.gwt.root.util.DeleteImage;
 
@@ -68,16 +69,23 @@ public class FeatureNotesPresenter {
         TextArea noteText = new TextArea();
         noteText.setText(noteDTO.getNoteData());
         view.addNoteTextAreaCell(noteText, elementIndex);
-        if (noteDTO.getNoteTag()!=null) {
-            Label noteTag = new Label();
-            if (noteDTO.getNoteTag().contains("variant")) {
-                noteTag.setText("variant");
-            }
-            else
-                noteTag.setText(noteDTO.getNoteTag());
+            StringListBox noteType = new StringListBox();
+            noteType.addItem("");
+            noteType.addItem("feature");
+            noteType.addItem("variant");
 
-            view.addNoteTagCell(noteTag, elementIndex);
+            if (noteDTO.getNoteTag().contains("variant")) {
+                noteType.setIndexForText("variant");
+            }
+        if (noteDTO.getNoteTag().contains("feature")) {
+            noteType.setIndexForText("feature");
         }
+        if (noteDTO.getNoteTag()==null) {
+            noteType.setIndexForText("");
+        }
+            view.addNoteTypeListBox(noteType, elementIndex);
+
+
         if (noteDTO.getNoteEditMode().equals(NoteEditMode.PRIVATE) && !isMyCuratorNote(noteDTO)) {
             noteText.setEnabled(false);
         }
@@ -90,7 +98,10 @@ public class FeatureNotesPresenter {
         if (noteDTO.getNoteEditMode().equals(NoteEditMode.PUBLIC) || isMyCuratorNote(noteDTO))
             view.addControlCell(saveButton, revertButton, deleteImage, elementIndex);
         // wire-up the field's dependencies....
-        new SingleFeatureNoteControlls(noteDTO, noteText, saveButton, revertButton);
+
+            new SingleFeatureNoteControlls(noteDTO, noteText, noteType, saveButton, revertButton);
+
+
     }
 
     private boolean isMyCuratorNote(NoteDTO noteDTO) {
@@ -108,7 +119,7 @@ public class FeatureNotesPresenter {
             view.setError("Must select Public or Private type of note to add.");
             return;
         }
-        if (view.noteTypeListBox.getSelected() == null) {
+        if (view.noteTypeListBox.getSelected() == "") {
             view.setError("Must select type of note to add.");
             return;
         }
@@ -125,6 +136,7 @@ public class FeatureNotesPresenter {
             noteDTO.setPublicationZdbID(publicationID);
             noteDTO.setNoteEditMode(noteEditMode);
             noteDTO.setNoteType(view.noteTypeListBox.getSelected());
+            noteDTO.setNoteTag(view.noteTypeListBox.getSelected());
             FeatureRPCService.App.getInstance().editPublicNote(noteDTO, new FeatureEditCallBack<FeatureDTO>("Failed to update public note") {
                 @Override
                 public void onSuccess(FeatureDTO featureDTOReturn) {
@@ -221,14 +233,17 @@ public class FeatureNotesPresenter {
 
     private class SingleFeatureNoteControlls {
         private TextArea noteTextArea;
+        private StringListBox noteTypeBox;
         private Button saveButton;
         private Button revertButton;
         private NoteDTO noteDTO;
 
 
-        public SingleFeatureNoteControlls(NoteDTO noteDTO, TextArea noteTextArea, Button saveButton, Button revertButton) {
+        public SingleFeatureNoteControlls(NoteDTO noteDTO, TextArea noteTextArea, StringListBox noteTypeBox, Button saveButton, Button revertButton) {
             this.noteDTO = noteDTO;
             this.noteTextArea = noteTextArea;
+            this.noteTypeBox = noteTypeBox;
+
             revertButton.setEnabled(false);
             saveButton.setEnabled(false);
             this.revertButton = revertButton;
@@ -243,8 +258,20 @@ public class FeatureNotesPresenter {
                     handleDirty();
                 }
             });
+            noteTypeBox.addChangeHandler(new ChangeHandler() {
+                @Override
+                public void onChange(ChangeEvent event) {
+                    handleDirty();
+                }
+            });
 
             noteTextArea.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    handleDirty();
+                }
+            });
+            noteTypeBox.addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
                     handleDirty();
@@ -261,6 +288,16 @@ public class FeatureNotesPresenter {
                     // changing the style messes stuff up
                 }
             });
+            noteTypeBox.addKeyPressHandler(new KeyPressHandler() {
+                @Override
+                public void onKeyPress(KeyPressEvent event) {
+                    boolean dirty = isDirty();
+                    saveButton.setEnabled(dirty);
+                    revertButton.setEnabled(dirty);
+                    noteTypeBox.setFocus(true);
+                    // changing the style messes stuff up
+                }
+            });
 
             revertButton.addClickHandler(new ClickHandler() {
                 @Override
@@ -273,10 +310,13 @@ public class FeatureNotesPresenter {
                 @Override
                 public void onClick(ClickEvent clickEvent) {
                     noteDTO.setNoteData(noteTextArea.getText());
+                    noteDTO.setNoteType(noteTypeBox.getSelected());
+                    noteDTO.setNoteTag(noteTypeBox.getSelected());
                     if (noteDTO.getNoteEditMode().equals(NoteEditMode.PUBLIC)) {
                         FeatureRPCService.App.getInstance().editPublicNote(noteDTO, new FeatureEditCallBack<FeatureDTO>("Failed to update public note") {
                             @Override
-                            public void onSuccess(FeatureDTO dto) {
+                            public void onSuccess(FeatureDTO dto)
+                            {
                                 revertGUI();
                             }
                         });
@@ -298,6 +338,13 @@ public class FeatureNotesPresenter {
 
         protected void revertGUI() {
             noteTextArea.setText(noteDTO.getNoteData());
+            if (noteDTO.getNoteTag()!=null) {
+                noteTypeBox.setIndexForText(noteDTO.getNoteTag());
+            }
+            else
+            {
+                noteTypeBox.setIndexForText("");
+            }
             handleDirty();
         }
 
@@ -307,14 +354,17 @@ public class FeatureNotesPresenter {
             revertButton.setEnabled(dirty);
             if (dirty) {
                 noteTextArea.setStyleName(IsDirtyWidget.DIRTY_STYLE);
+                noteTypeBox.setStyleName(IsDirtyWidget.DIRTY_STYLE);
             } else {
                 noteTextArea.setStyleName(IsDirtyWidget.CLEAN_STYLE);
+                noteTypeBox.setStyleName(IsDirtyWidget.CLEAN_STYLE);
             }
             return dirty;
         }
 
         public boolean isDirty() {
-            return (!noteTextArea.getText().equals(noteDTO.getNoteData()));
+
+            return (!noteTextArea.getText().equals(noteDTO.getNoteData())||!noteTypeBox.getSelected().equals(noteDTO.getNoteTag()));
         }
 
     }

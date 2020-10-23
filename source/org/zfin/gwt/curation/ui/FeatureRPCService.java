@@ -90,6 +90,7 @@ public interface FeatureRPCService extends RemoteService {
 
     List<MutationDetailControlledVocabularyTermDTO> getAminoAcidList();
 
+
     String isValidAccession(String accessionNumber, String type);
 
 

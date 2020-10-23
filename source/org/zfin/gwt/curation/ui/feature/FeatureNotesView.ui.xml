@@ -18,10 +18,10 @@
                 </g:customCell>
                 <g:cell/>
                 <g:customCell>
-                    <zfin:StringListBox ui:field="noteTypeListBox" width="120px" visible="false">
+                    <zfin:StringListBox ui:field="noteTypeListBox" width="120px" visible="true">
                         <g:item value="----">----</g:item>
-                        <g:item value="feature">Feature</g:item>
-                        <g:item value="variant">Variant</g:item>
+                        <g:item value="feature">feature</g:item>
+                        <g:item value="variant">variant</g:item>
                     </zfin:StringListBox>
                 </g:customCell>
                 <g:customCell>
