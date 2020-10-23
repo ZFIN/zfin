@@ -53,12 +53,8 @@ public class Feature implements EntityNotes, EntityZdbID {
     @Column(name = "feature_zdb_id")
     @JsonView(View.API.class)
     private String zdbID;
-
-
-
     @Column(name = "feature_name", nullable = false)
     //@Audited
-
     @JsonView(View.API.class)
     private String name;
     @OneToMany(mappedBy = "feature", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
@@ -72,14 +68,9 @@ public class Feature implements EntityNotes, EntityZdbID {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "feature_lab_prefix_id")
     private FeaturePrefix featurePrefix;
-
-
     @Column(name = "feature_abbrev", nullable = false)
     @JsonView(View.API.class)
     private String abbreviation;
-
-
-
     @Column(name = "feature_tg_suffix")
     private String transgenicSuffix;
     @OneToMany(fetch = FetchType.LAZY)
@@ -687,8 +678,6 @@ public class Feature implements EntityNotes, EntityZdbID {
         }
         externalNotes.add(note);
     }
-
-
 
     public void addMutationDetailTranscript(FeatureTranscriptMutationDetail detail) {
         if (featureTranscriptMutationDetailSet == null)

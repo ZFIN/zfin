@@ -4,7 +4,11 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "feature_genomic_mutation_detail")
 public class FeatureGenomicMutationDetail implements Cloneable {
@@ -47,14 +51,6 @@ public class FeatureGenomicMutationDetail implements Cloneable {
 
     public String getZdbID() {
         return zdbID;
-    }
-
-    public Set<VariantNote> getExternalNotes() {
-        return externalNotes;
-    }
-
-    public void setExternalNotes(Set<VariantNote> externalNotes) {
-        this.externalNotes = externalNotes;
     }
 
     public void setZdbID(String zdbID) {

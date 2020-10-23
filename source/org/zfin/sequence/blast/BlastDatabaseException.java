@@ -1,4 +1,4 @@
-package org.zfin.sequence.blast;
+ package org.zfin.sequence.blast;
 
 /**
  */

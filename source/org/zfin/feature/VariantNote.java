@@ -4,6 +4,12 @@ import org.zfin.ExternalNote;
 
 import javax.persistence.*;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+
 /**
  * Note entered by Curators concerning the existence or absence of orthology.
  */
@@ -14,13 +20,5 @@ public class VariantNote extends ExternalNote {
     @ManyToOne
     @JoinColumn(name = "extnote_data_zdb_id")
     private FeatureGenomicMutationDetail featureGenomicMutationDetail;
-
-    public FeatureGenomicMutationDetail getFeatureGenomicMutationDetail() {
-        return featureGenomicMutationDetail;
-    }
-
-    public void setFeatureGenomicMutationDetail(FeatureGenomicMutationDetail featureGenomicMutationDetail) {
-        this.featureGenomicMutationDetail = featureGenomicMutationDetail;
-    }
 
 }

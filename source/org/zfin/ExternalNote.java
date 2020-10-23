@@ -20,6 +20,17 @@ import java.util.Set;
 @Table(name = "external_note")
 public class ExternalNote implements Comparable<ExternalNote> {
 
+    @Column(name = "extnote_note")
+    protected String note;
+    @Column(name = "extnote_tag")
+    protected String tag;
+    @ManyToOne
+    @JoinColumn(name = "extnote_source_zdb_id")
+    protected Publication publication;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "recattrib_data_zdb_id")
+
+    protected Set<PersonAttribution> personAttributions;
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
     @GenericGenerator(name = "zfinGenerator",
@@ -30,15 +41,10 @@ public class ExternalNote implements Comparable<ExternalNote> {
             })
     @Column(name = "extnote_zdb_id")
     private String zdbID;
-    @Column(name = "extnote_note")
-    protected String note;
-    @Column(name = "extnote_tag")
-    protected String tag;
     @Column(name = "extnote_note_type", insertable = false, updatable = false)
     private String type;
-    @ManyToOne
-    @JoinColumn(name = "extnote_source_zdb_id")
-    protected Publication publication;
+    @Column(name = "extnote_data_zdb_id", insertable = false, updatable = false)
+    private String externalDataZdbID;
 
     public String getTag() {
         return tag;
@@ -47,13 +53,6 @@ public class ExternalNote implements Comparable<ExternalNote> {
     public void setTag(String tag) {
         this.tag = tag;
     }
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "recattrib_data_zdb_id")
-
-    protected Set<PersonAttribution> personAttributions;
-    @Column(name = "extnote_data_zdb_id", insertable = false, updatable = false)
-    private String externalDataZdbID;
 
     public String getExternalDataZdbID() {
         return externalDataZdbID;
@@ -119,7 +118,6 @@ public class ExternalNote implements Comparable<ExternalNote> {
     }
 
 
-
     public enum Type {
         ORTHOLOGY("orthology"),
         FEATURE("feature"),
@@ -136,16 +134,16 @@ public class ExternalNote implements Comparable<ExternalNote> {
             this.value = value;
         }
 
-        public String toString() {
-            return this.value;
-        }
-
         public static Type getType(String type) {
             for (Type t : values()) {
                 if (t.toString().equals(type))
                     return t;
             }
             throw new RuntimeException("No run type of string " + type + " found.");
+        }
+
+        public String toString() {
+            return this.value;
         }
 
     }
