@@ -563,7 +563,7 @@ public class GafService {
             else {
                  relationTerm = RepositoryFactory.getOntologyRepository().getTermByName(relationName, ontologies);
             }
-            System.out.println(relationName);
+
             if (relationTerm == null) {
                 throw new GafValidationError("RO term  " + relationName + " does not exist", gafEntry);
             } else {
@@ -702,7 +702,14 @@ public class GafService {
         if (pubMedId.startsWith(PUBMED_PREFIX)) {
             String pubMedIdStr=pubMedId.substring(PUBMED_PREFIX.length());
            // return Integer.parseInt(pubMedId.trim().substring(PUBMED_PREFIX.length()));
-            return Integer.parseInt(pubMedIdStr.trim());
+            if (pubMedIdStr.matches("\\d+"))
+            {
+                return Integer.parseInt(pubMedIdStr.trim());
+            }
+            else
+            {
+                return null;
+            }
         }
         return null;
     }
