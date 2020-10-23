@@ -109,7 +109,7 @@ public abstract class AbstractCandidateController {
             handleDone(candidateBean, errors);
             if (errors.hasErrors()) {
                 HibernateUtil.rollbackTransaction();
-                ModelAndView modelAndView = new ModelAndView("reno/candidate-view.page");
+                ModelAndView modelAndView = new ModelAndView("reno/candidate-view");
                 modelAndView.addObject(LookupStrings.FORM_BEAN, candidateBean);
                 modelAndView.addObject(LookupStrings.DYNAMIC_TITLE, candidateBean.getRunCandidate().getZdbID());
                 return modelAndView;

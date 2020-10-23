@@ -101,7 +101,7 @@ public class PasswordResetController {
                                       @RequestParam String resetKey,
                                       Model model) {
         
-        String page = "profile/reset-password.page";
+        String page = "profile/reset-password";
 
         Person person = profileRepository.getPerson(zdbId);
 

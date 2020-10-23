@@ -19,10 +19,10 @@ import org.zfin.publication.repository.PublicationRepository;
 public class PublicationDashboardController {
 
     public enum Page {
-        PROCESSING_BIN("Processing Bin", "publication/processing-bin.page", "/action/publication/processing-bin"),
-        INDEXING_BIN("Indexing Bin", "publication/indexing-bin.page", "/action/publication/indexing-bin"),
-        CURATING_BIN("Curation Bins", "publication/curating-bin.page", "/action/publication/curating-bin"),
-        DASHBOARD("My Dashboard", "publication/dashboard.page", "/action/publication/dashboard");
+        PROCESSING_BIN("Processing Bin", "publication/processing-bin", "/action/publication/processing-bin"),
+        INDEXING_BIN("Indexing Bin", "publication/indexing-bin", "/action/publication/indexing-bin"),
+        CURATING_BIN("Curation Bins", "publication/curating-bin", "/action/publication/curating-bin"),
+        DASHBOARD("My Dashboard", "publication/dashboard", "/action/publication/dashboard");
 
         private String title;
         private String view;
