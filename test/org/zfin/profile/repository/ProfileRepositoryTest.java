@@ -162,7 +162,7 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest {
 
         // test has source url
         organizationLinks = profileRepository.getSupplierLinksForZdbId("ZDB-GENO-960809-7");
-        assertEquals(2, organizationLinks.size());
+        assertEquals(1, organizationLinks.size());
         String linkText2 = "<a href=\"/action/profile/view/ZDB-LAB-130607-1\">European Zebrafish Resource Center (EZRC)</a>";
         linkText2 += " ";
         linkText2 += "<span style=\"font-size: small;\">(<a href=\"http://www.ezrc.kit.edu/catalog.php?text=ZDB-GENO-960809-7\">order this</a>)</span>";
