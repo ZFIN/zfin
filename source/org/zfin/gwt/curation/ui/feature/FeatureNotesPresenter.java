@@ -68,24 +68,27 @@ public class FeatureNotesPresenter {
     private void addCommonNoteInfo(int elementIndex, NoteDTO noteDTO) {
         TextArea noteText = new TextArea();
         noteText.setText(noteDTO.getNoteData());
+
         view.addNoteTextAreaCell(noteText, elementIndex);
             StringListBox noteType = new StringListBox();
             noteType.addItem("");
             noteType.addItem("feature");
             noteType.addItem("variant");
-
+        if (noteDTO.getNoteEditMode().equals(NoteEditMode.PUBLIC)) {
             if (noteDTO.getNoteTag().contains("variant")) {
                 noteType.setIndexForText("variant");
             }
-        if (noteDTO.getNoteTag().contains("feature")) {
-            noteType.setIndexForText("feature");
-        }
-        if (noteDTO.getNoteTag()==null) {
-            noteType.setIndexForText("");
-        }
+            if (noteDTO.getNoteTag().contains("feature")) {
+                noteType.setIndexForText("feature");
+            }
+            if (noteDTO.getNoteTag() == null) {
+                noteType.setIndexForText("");
+            }
+
+
             view.addNoteTypeListBox(noteType, elementIndex);
 
-
+        }
         if (noteDTO.getNoteEditMode().equals(NoteEditMode.PRIVATE) && !isMyCuratorNote(noteDTO)) {
             noteText.setEnabled(false);
         }
@@ -115,15 +118,17 @@ public class FeatureNotesPresenter {
             return;
         }
 
-        if (view.typeListBox.getSelected() == null) {
+        if (view.typeListBox.getSelected().contains("--")) {
             view.setError("Must select Public or Private type of note to add.");
             return;
         }
-        if (view.noteTypeListBox.getSelected() == "") {
-            view.setError("Must select type of note to add.");
+
+        if (view.noteTypeListBox.getSelected().contains("--")) {
+            view.setError("Must select Feature or Variant note type .");
             return;
         }
 
+view.setError("");
         NoteEditMode noteEditMode = NoteEditMode.valueOf(view.typeListBox.getSelected().toUpperCase());
 
         if (noteEditMode == NoteEditMode.PUBLIC) {

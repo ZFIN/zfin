@@ -3,6 +3,7 @@ package org.zfin.gwt.curation.ui;
 import com.google.gwt.user.client.Window;
 import org.zfin.gwt.root.dto.FeatureDTO;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
+import org.zfin.gwt.root.dto.NoteDTO;
 import org.zfin.gwt.root.util.StringUtils;
 
 
@@ -32,6 +33,11 @@ public class FeatureValidationService {
         if (StringUtils.isNotEmpty(featureDTO.getAssemblyInfoDate())) {
             if (featureDTO.getAssemblyInfoDate().length() != 8 || !(featureDTO.getAssemblyInfoDate().contains("/"))) {
                 return "Please enter date in mm/dd/yy format";
+            }
+        }
+        for (NoteDTO note : featureDTO.getPublicNoteList()) {
+            if (StringUtils.isEmpty(note.getNoteType())){
+                return "please enter note type";
             }
         }
 
