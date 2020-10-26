@@ -5960,8 +5960,8 @@ and child.term_ontology = 'disease_ontology';
                                from marker_go_term_evidence
                                inner join marker_go_term_annotation_extension_group mgtaeg on marker_go_term_evidence.mrkrgoev_zdb_id = mgtaeg.mgtaeg_mrkrgoev_zdb_id
                                inner join marker_go_term_annotation_extension mgtae on mgtaeg.mgtaeg_annotation_extension_group_id = mgtae.mgtae_extension_group_id
-                           ) as grouped_extensions on grouped_extensions.mrkrgoev_zdb_id = marker_go_term_evidence.mrkrgoev_zdb_id"
-        >
+                           ) as grouped_extensions on grouped_extensions.mrkrgoev_zdb_id = marker_go_term_evidence.mrkrgoev_zdb_id">
+
             <!-- enfocing container.term_ontology = contained.term_ontology prevents looking at cross-aspect relationships -->
             <entity name="go_annotation_term_id"
                     query="select container.term_ont_id as term_id, mrkrgoev_zdb_id as id
@@ -5978,13 +5978,14 @@ and child.term_ontology = 'disease_ontology';
         <entity name="expression_result"
                 query="select
                         'Expression Result' as category,
-                        'xpatres-' || 'gene-' || xpatres_pk_id as id,
+                        'xpatres-' || xpatres_pk_id as id,
                         efs_pk_id as efs_id,
                         efs_xpatex_zdb_id as xpat_zdb_id,
                         fig_zdb_id as fig_zdb_id,
                         fish_name as fish,
                         fish_zdb_id as fish_zdb_id,
                         xpatex_gene_zdb_id as gene_zdb_id,
+                        xpatex_atb_zdb_id as antibody_zdb_id,
                         xpatex_assay_name as assay,
                         fig_label as figure,
                         '/' || fig_zdb_id as url,
@@ -6011,43 +6012,6 @@ and child.term_ontology = 'disease_ontology';
                              join fish_experiment on xpatex_genox_zdb_id = genox_zdb_id
                              join fish on genox_fish_zdb_id = fish_zdb_id
                              join figure on efs_fig_zdb_id = fig_zdb_id
-                             join publication on fig_source_zdb_id = publication.zdb_id where xpatres_expression_found = 't'
-                    union
-                    select
-                        'Expression Result' as category,
-                        'xpatres-' || 'atb-' || xpatres_pk_id as id,
-                        efs_pk_id as efs_id,
-                        efs_xpatex_zdb_id as xpat_zdb_id,
-                        fig_zdb_id as fig_zdb_id,
-                        fish_name as fish,
-                        fish_zdb_id as fish_zdb_id,
-                        xpatex_atb_zdb_id as gene_zdb_id,
-                        xpatex_assay_name as assay,
-                        fig_label as figure,
-                        '/' || fig_zdb_id as url,
-                        pub_date as date,
-                        pub_mini_ref as publication,
-                        publication.zdb_id as pub_zdb_id,
-                        authors as author_string,
-                        year(pub_date) as year,
-                        (select mrkr_abbrev_order from marker where mrkr_zdb_id = xpatex_atb_zdb_id) as gene_sort,
-                        superterm.term_ont_id as superterm_id,
-                        nvl(subterm.term_ont_id,'') as subterm_id,
-                        case when xpatres_subterm_zdb_id is null then superterm.term_ont_id
-                             else concat(superterm.term_ont_id, concat(',',subterm.term_ont_id)) end
-                             as postcomposed_term_id,
-                        concat(superterm.term_name, ' ' || subterm.term_name) as name,
-                        xpatres_pk_id as full_name,
-                        xpatres_pk_id as name_sort,
-                        to_date(get_date_from_id(efs_xpatex_zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date
-                    from expression_experiment2
-                             join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
-                             join expression_result2 on xpatres_efs_id = efs_pk_id
-                             join term superterm on xpatres_superterm_zdb_id = superterm.term_zdb_id
-                             left outer join term subterm on xpatres_subterm_zdb_id = subterm.term_zdb_id
-                             join fish_experiment on xpatex_genox_zdb_id = genox_zdb_id
-                             join fish on genox_fish_zdb_id = fish_zdb_id
-                             join figure on efs_fig_zdb_id = fig_zdb_id
                              join publication on fig_source_zdb_id = publication.zdb_id where xpatres_expression_found = 't'">
 
             <entity name="expression_result_term_id"
@@ -6055,27 +6019,14 @@ and child.term_ontology = 'disease_ontology';
                             term_ont_id as xref,
                             term_ont_id as term_id,
                             term_ont_id as anatomy_term_id,
-                            'xpatres-' ||  'gene-' || xpatres_pk_id as id
+                            'xpatres-' || xpatres_pk_id as id
                             from expression_experiment2
                                  join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
                                  join expression_result2 on xpatres_efs_id = efs_pk_id
                                  join all_term_contains on (xpatres_superterm_zdb_id = alltermcon_contained_zdb_id OR xpatres_subterm_zdb_id = alltermcon_contained_zdb_id)
                                  join term on alltermcon_container_zdb_id = term_zdb_id
                             where xpatres_expression_found = 't'
-                            and xpatex_gene_zdb_id is not null
-                            union
-                            select term_name as expression_anatomy_parent,
-                            term_ont_id as xref,
-                            term_ont_id as term_id,
-                            term_ont_id as anatomy_term_id,
-                            'xpatres-' ||  'atb-' || xpatres_pk_id as id
-                            from expression_experiment2
-                                 join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
-                                 join expression_result2 on xpatres_efs_id = efs_pk_id
-                                 join all_term_contains on (xpatres_superterm_zdb_id = alltermcon_contained_zdb_id OR xpatres_subterm_zdb_id = alltermcon_contained_zdb_id)
-                                 join term on alltermcon_container_zdb_id = term_zdb_id
-                            where xpatres_expression_found = 't'
-                            and xpatex_atb_zdb_id is not null"
+                            and xpatex_gene_zdb_id is not null"
                     cacheImpl="SortedMapBackedCache"
                     where="id=expression_result.id"/>
 
@@ -6083,7 +6034,7 @@ and child.term_ontology = 'disease_ontology';
             <entity name="expression_result_parent_stage"
                     query="select distinct container.term_ont_id as term_id,
                                    container.term_ont_id as stage_term_id,
-                                   'xpatres-' ||  'gene-' || xpatres_pk_id as id
+                                   'xpatres-' || xpatres_pk_id as id
                             from expression_experiment2
                                      join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
                                      join expression_result2 on xpatres_efs_id = efs_pk_id
@@ -6097,25 +6048,7 @@ and child.term_ontology = 'disease_ontology';
                                where start_stage.stg_name != 'Unknown'
                                 and end_stage.stg_name != 'Unknown'
                                 and this_stage.stg_name != 'Unknown'
-                                and xpatex_gene_zdb_id is not null
-                           union
-                           select distinct container.term_ont_id as term_id,
-                                   container.term_ont_id as stage_term_id,
-                                   'xpatres-' ||  'atb-' || xpatres_pk_id as id
-                            from expression_experiment2
-                                     join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
-                                     join expression_result2 on xpatres_efs_id = efs_pk_id
-                                     join stage start_stage on efs_start_stg_zdb_id = start_stage.stg_zdb_id
-                                     join stage end_stage on efs_end_stg_zdb_id = end_stage.stg_zdb_id
-                                     join stage this_stage on this_stage.stg_hours_start &gt;= start_stage.stg_hours_start
-                                                                                     and this_stage.stg_hours_end &lt;= end_stage.stg_hours_end
-                                     join term contained on this_stage.stg_obo_id = contained.term_ont_id
-                                     join all_term_contains on contained.term_zdb_id = alltermcon_contained_zdb_id
-                                     join term container on alltermcon_container_zdb_id = container.term_zdb_id
-                               where start_stage.stg_name != 'Unknown'
-                                 and end_stage.stg_name != 'Unknown'
-                                 and this_stage.stg_name != 'Unknown'
-                                 and xpatex_atb_zdb_id is not null;"
+                                and xpatex_gene_zdb_id is not null;"
                     cacheImpl="SortedMapBackedCache"
                     where="id=expression_result.id"/>
 
@@ -6123,7 +6056,7 @@ and child.term_ontology = 'disease_ontology';
             <entity name="expression_result_parent_stage_unknown"
                     query="select distinct container.term_ont_id as term_id,
                                             container.term_ont_id as stage_term_id,
-                                   'xpatres-' ||  'gene-' || xpatres_pk_id as id
+                                   'xpatres-' || xpatres_pk_id as id
                             from expression_experiment2
                                      join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
                                      join expression_result2 on xpatres_efs_id = efs_pk_id
@@ -6134,22 +6067,7 @@ and child.term_ontology = 'disease_ontology';
                                      join term container on alltermcon_container_zdb_id = container.term_zdb_id
                             where (start_stage.stg_name = 'Unknown'
                                 OR end_stage.stg_name = 'Unknown')
-                                and xpatex_gene_zdb_id is not null
-                            union
-                            select distinct container.term_ont_id as term_id,
-                                            container.term_ont_id as stage_term_id,
-                                   'xpatres-' ||  'atb-' || xpatres_pk_id as id
-                            from expression_experiment2
-                                     join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
-                                     join expression_result2 on xpatres_efs_id = efs_pk_id
-                                     join stage start_stage on efs_start_stg_zdb_id = start_stage.stg_zdb_id
-                                     join stage end_stage on efs_end_stg_zdb_id = end_stage.stg_zdb_id
-                                     join term contained on end_stage.stg_obo_id = contained.term_ont_id
-                                     join all_term_contains on contained.term_zdb_id = alltermcon_contained_zdb_id
-                                     join term container on alltermcon_container_zdb_id = container.term_zdb_id
-                            where (start_stage.stg_name = 'Unknown'
-                                OR end_stage.stg_name = 'Unknown')
-                                and xpatex_atb_zdb_id is not null;"
+                                and xpatex_gene_zdb_id is not null;"
                     cacheImpl="SortedMapBackedCache"
                     where="id=expression_result.id"/>
 
@@ -6163,28 +6081,12 @@ and child.term_ontology = 'disease_ontology';
                        img_zdb_id,
                        get_expression_image_sort_order(img_zdb_id) as expression_image_sort,
                        'true' as has_image,
-                       'xpatres-' ||  'gene-' || xpatres_pk_id as id
+                       'xpatres-' || xpatres_pk_id as id
                        from expression_experiment2
                             join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
                             join expression_result2 on xpatres_efs_id = efs_pk_id
                             join image on img_fig_zdb_id = efs_fig_zdb_id where xpatres_expression_found = 't'
-                            and xpatex_gene_zdb_id is not null
-                     union
-                     select
-                     case
-                       when img_image_with_annotation is not null
-                       then img_image_with_annotation
-                       else img_image end as image,
-                       img_thumbnail as thumbnail,
-                       img_zdb_id,
-                       get_expression_image_sort_order(img_zdb_id) as expression_image_sort,
-                       'true' as has_image,
-                       'xpatres-' ||  'atb-' || xpatres_pk_id as id
-                       from expression_experiment2
-                            join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
-                            join expression_result2 on xpatres_efs_id = efs_pk_id
-                            join image on img_fig_zdb_id = efs_fig_zdb_id where xpatres_expression_found = 't'
-                        and xpatex_atb_zdb_id is not null;"
+                            and xpatex_gene_zdb_id is not null"
                     cacheImpl="SortedMapBackedCache"
                     where="id=expression_result.id"
             />
@@ -6196,36 +6098,21 @@ and child.term_ontology = 'disease_ontology';
                            else TRIM('false') end
                            as is_wildtype,
                            geno_is_wildtype as is_genotype_wildtype,
-                                   'xpatres-' ||  'gene-' || xpatres_pk_id as id
+                                   'xpatres-' || xpatres_pk_id as id
                             from expression_experiment2
                                  join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
                                  join expression_result2 on xpatres_efs_id = efs_pk_id
                                  join fish_experiment on genox_zdb_id = xpatex_genox_zdb_id
                                  join fish on genox_fish_zdb_id = fish_zdb_id
                                  join genotype on geno_zdb_id = fish_genotype_zdb_id
-                             where xpatex_gene_zdb_id is not null
-                           union
-                           select
-                           case when genox_is_std_or_generic_control = 't' and geno_is_wildtype = 't'  and fish_functional_affected_gene_count = 0
-                           then TRIM('true')
-                           else TRIM('false') end
-                           as is_wildtype,
-                           geno_is_wildtype as is_genotype_wildtype,
-                                   'xpatres-' ||  'atb-' || xpatres_pk_id as id
-                            from expression_experiment2
-                                 join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
-                                 join expression_result2 on xpatres_efs_id = efs_pk_id
-                                 join fish_experiment on genox_zdb_id = xpatex_genox_zdb_id
-                                 join fish on genox_fish_zdb_id = fish_zdb_id
-                                 join genotype on geno_zdb_id = fish_genotype_zdb_id
-                             where xpatex_atb_zdb_id is not null;"
+                             where xpatex_gene_zdb_id is not null"
                     cacheImpl="SortedMapBackedCache"
                     where="id=expression_result.id"/>
 
             <!-- expression_result_is_reporter -->
             <entity name="expression_result_is_reporter"
                     query="select 'true' as is_reporter,
-                                   'xpatres-' || 'gene-' ||  xpatres_pk_id as id
+                                   'xpatres-' || xpatres_pk_id as id
                             from expression_experiment2
                                      join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
                                      join expression_result2 on xpatres_efs_id = efs_pk_id
@@ -6235,57 +6122,29 @@ and child.term_ontology = 'disease_ontology';
                             where geno_is_wildtype = false
                                   and exists (select 'x' from clean_expression_fast_search
                                               where cefs_genox_zdb_id = xpatex_genox_zdb_id)
-                            and xpatex_gene_zdb_id is not null
-                            union
-                            select 'true' as is_reporter,
-                                   'xpatres-' || 'atb-' ||  xpatres_pk_id as id
-                            from expression_experiment2
-                                     join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
-                                     join expression_result2 on xpatres_efs_id = efs_pk_id
-                                     join fish_experiment on genox_zdb_id = xpatex_genox_zdb_id
-                                     join fish on genox_fish_zdb_id = fish_zdb_id
-                                     join genotype on geno_zdb_id = fish_genotype_zdb_id
-                            where geno_is_wildtype = false
-                                  and exists (select 'x' from clean_expression_fast_search
-                                              where cefs_genox_zdb_id = xpatex_genox_zdb_id)
-                            and xpatex_atb_zdb_id is not null;"
+                            and xpatex_gene_zdb_id is not null"
                     cacheImpl="SortedMapBackedCache"
                     where="id=expression_result.id"/>
 
             <!-- expression_result_journal_type -->
             <entity name="expression_result_is_directly_submitted"
-                    query="select 'true' as is_directly_submitted , 'xpatres-' ||  'gene-'|| xpatres_pk_id as id
+                    query="select 'true' as is_directly_submitted , 'xpatres-' || xpatres_pk_id as id
                            from expression_experiment2
                             join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
                             join expression_result2 on xpatres_efs_id = efs_pk_id
                             join publication as pub on xpatex_source_zdb_id = pub.zdb_id
                             where jtype='Unpublished'
-                            and xpatex_gene_zdb_id is not null
-                            union
-                            select 'true' as is_directly_submitted , 'xpatres-' || 'atb-'|| xpatres_pk_id as id
-                           from expression_experiment2
-                            join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
-                            join expression_result2 on xpatres_efs_id = efs_pk_id
-                            join publication as pub on xpatex_source_zdb_id = pub.zdb_id
-                            where jtype='Unpublished'
-                            and xpatex_atb_zdb_id is not null;"
+                            and xpatex_gene_zdb_id is not null"
                     cacheImpl="SortedMapBackedCache"
                     where="id=expression_result.id"/>
 
             <entity name="expression_result_journal_type"
-                    query="select jtype as journal_type, 'xpatres-' ||  'gene-'|| xpatres_pk_id as id
+                    query="select jtype as journal_type, 'xpatres-' || xpatres_pk_id as id
                            from expression_experiment2
                             join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
                             join expression_result2 on xpatres_efs_id = efs_pk_id
                             join publication as pub on xpatex_source_zdb_id = pub.zdb_id
-                            where xpatex_gene_zdb_id is not null
-                            union
-                           select jtype as journal_type, 'xpatres-' ||  'atb-'|| xpatres_pk_id as id
-                           from expression_experiment2
-                            join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
-                            join expression_result2 on xpatres_efs_id = efs_pk_id
-                            join publication as pub on xpatex_source_zdb_id = pub.zdb_id
-                            where xpatex_atb_zdb_id is not null;"
+                            where xpatex_gene_zdb_id is not null"
                     cacheImpl="SortedMapBackedCache"
                     where="id=expression_result.id"/>
             />

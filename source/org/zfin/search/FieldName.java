@@ -28,6 +28,7 @@ public enum FieldName {
     ANATOMY("anatomy"),
     ANATOMY_TF("anatomy_tf"),
     ANTIBODY_TYPE("antibody_type","Type"),
+    ANTIBODY_ZDB_ID("antibody_zdb_id"),
     ANTIGEN_GENE("antigen_gene"),
     ASSAY("assay"),
     AUTHOR("registered_author"),
