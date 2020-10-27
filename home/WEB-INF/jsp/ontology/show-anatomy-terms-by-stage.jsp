@@ -37,7 +37,7 @@
         </tr>
         <TR>
             <TD colspan="2">
-                <tiles:insertTemplate template="/WEB-INF/jsp/anatomy/anatomy_list.jsp" flush="false"/>
+                <jsp:include page="../anatomy/anatomy_list.jsp" />
             </TD>
         </TR>
     </TABLE>

@@ -153,12 +153,12 @@
         </c:if>
 
         <c:if test="${formBean.term.ontology.expressionData}">
-            <tiles:insertTemplate template="/WEB-INF/jsp/anatomy/anatomy_term_detail_expression.jsp" flush="false"/>
+            <jsp:include page="../anatomy/anatomy_term_detail_expression.jsp" />
         </c:if>
 
 
         <c:if test="${showPhenotypeSection}">
-            <tiles:insertTemplate template="/WEB-INF/jsp/anatomy/anatomy_term_detail_phenotype.jsp" flush="false"/>
+            <jsp:include page="../anatomy/anatomy_term_detail_phenotype.jsp" />
         </c:if>
 
         <zfin2:ExpandRequestSections sectionVisibility="${formBean.sectionVisibility}"/>

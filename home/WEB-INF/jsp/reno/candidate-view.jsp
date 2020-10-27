@@ -64,10 +64,10 @@
                     <td valign="top">
                         <c:choose>
                             <c:when test="${formBean.runCandidate.run.nomenclature}">
-                                <tiles:insertTemplate template="/WEB-INF/jsp/reno/nomen-edit.jsp" flush="false"/>
+                                <jsp:include page="nomen-edit.jsp" />
                             </c:when>
                             <c:when test="${formBean.runCandidate.run.redundancy}">
-                                <tiles:insertTemplate template="/WEB-INF/jsp/reno/redundancy-edit.jsp" flush="false"/>
+                                <jsp:include page="redundancy-edit.jsp" />
                             </c:when>
                         </c:choose>
                     </td>
@@ -89,11 +89,11 @@
 
     <c:choose>
         <c:when test="${formBean.runCandidate.run.nomenclature}">
-            <tiles:insertTemplate template="/WEB-INF/jsp/reno/nomen-hit-list.jsp" flush="false"/>
+            <jsp:include page="nomen-hit-list.jsp" />
             <!-- include jsp for nomenclature table -->
         </c:when>
         <c:when test="${formBean.runCandidate.run.redundancy}">
-            <tiles:insertTemplate template="/WEB-INF/jsp/reno/redundancy-hit-list.jsp" flush="false"/>
+            <jsp:include page="redundancy-hit-list.jsp" />
             <!-- include jsp for redundancy table -->
         </c:when>
     </c:choose>
