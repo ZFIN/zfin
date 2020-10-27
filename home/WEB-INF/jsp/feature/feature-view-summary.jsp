@@ -16,23 +16,21 @@
     <z:attributeListItem label="Affected Genomic Region">
         <c:choose>
             <c:when test="${fn:length(formBean.feature.affectedGenes) > 0 }">
-                <c:forEach var="mRel" items="${formBean.feature.affectedGenesReln}" varStatus="loop">
-                    <a href="/${mRel.marker.zdbID}"><i>${mRel.marker.abbreviation}</i></a>
-
-
-                    <c:if test="${mRel.publicationCount > 0}">
-                        <c:choose>
-                            <c:when test="${mRel.publicationCount == 1}">
-                                (<a href="/${mRel.singlePublication.zdbID}">${mRel.publicationCount}</a>)<c:if
-                                    test="${!loop.last}">, </c:if>
-                            </c:when>
-                            <c:otherwise>
-                                (<a href="/action/infrastructure/data-citation-list/${mRel.zdbID}">${mRel.publicationCount}</a>)<c:if
-                                    test="${!loop.last}">, </c:if>
-                            </c:otherwise>
-                        </c:choose>
-                    </c:if>
-                </c:forEach>
+                <ul class="comma-separated">
+                    <c:forEach var="mRel" items="${formBean.feature.affectedGenesReln}" varStatus="loop">
+                        <li><a href="/${mRel.marker.zdbID}"><i>${mRel.marker.abbreviation}</i></a>
+                        <c:if test="${mRel.publicationCount > 0}">
+                            <c:choose>
+                                <c:when test="${mRel.publicationCount == 1}">
+                                    (<a href="/${mRel.singlePublication.zdbID}">${mRel.publicationCount}</a>)
+                                </c:when>
+                                <c:otherwise>
+                                    (<a href="/action/infrastructure/data-citation-list/${mRel.zdbID}">${mRel.publicationCount}</a>)
+                                </c:otherwise>
+                            </c:choose>
+                        </c:if></li>
+                    </c:forEach>
+                </ul>
             </c:when>
             <c:otherwise>
                 <c:if test="${formBean.feature.type.transgenic}">
@@ -45,20 +43,24 @@
     </z:attributeListItem>
 
     <z:attributeListItem label="Construct">
-        <c:forEach var="mRel" items="${formBean.sortedConstructRelationships}" varStatus="loop">
-            <a href="/${mRel.marker.zdbID}"><i>${mRel.marker.name}</i></a>
-            <c:if test="${mRel.publicationCount > 0}">
-                <c:choose>
-                    <c:when test="${mRel.publicationCount == 1}">
-                        (<a href="/${mRel.singlePublication.zdbID}">${mRel.publicationCount}</a>)<c:if
-                            test="${!loop.last}">, </c:if>
-                    </c:when>
-                    <c:otherwise>
-                        (<a href="/action/infrastructure/data-citation-list/${mRel.zdbID}">${mRel.publicationCount}</a>)<c:if test="${!loop.last}">, </c:if>
-                    </c:otherwise>
-                </c:choose>
-            </c:if>
-        </c:forEach>
+        <z:ifHasData test="${!empty formBean.sortedConstructRelationships}" noDataMessage="None">
+            <ul class="comma-separated">
+                <c:forEach var="mRel" items="${formBean.sortedConstructRelationships}">
+                    <li><a href="/${mRel.marker.zdbID}"><i>${mRel.marker.name}</i></a>
+                        <c:if test="${mRel.publicationCount > 0}">
+                            <c:choose>
+                                <c:when test="${mRel.publicationCount == 1}">
+                                    (<a href="/${mRel.singlePublication.zdbID}">${mRel.publicationCount}</a>)
+                                </c:when>
+                                <c:otherwise>
+                                    (<a href="/action/infrastructure/data-citation-list/${mRel.zdbID}">${mRel.publicationCount}</a>)
+                                </c:otherwise>
+                            </c:choose>
+                        </c:if>
+                    </li>
+                </c:forEach>
+            </ul>
+        </z:ifHasData>
     </z:attributeListItem>
 
     <z:attributeListItem label="Type">
@@ -86,25 +88,22 @@
             <c:when test="${mutagee eq zfn:getMutagee('not specified') && mutagen ne zfn:getMutagen('not specified')}">
                 ${mutagen.toString()}&nbsp;
                 <c:if test="${formBean.createdByRelationship ne null && fn:length(formBean.createdByRelationship) > 0}">
-                    <c:forEach var="createdBy" items="${formBean.createdByRelationship}" varStatus="loop">
-                        <zfin:link entity="${createdBy.marker}"/>
-
-                        <c:if test="${!loop.last}">,&nbsp;</c:if>
-
-                    </c:forEach>
+                    <ul class="comma-separated">
+                        <c:forEach var="createdBy" items="${formBean.createdByRelationship}">
+                            <li><zfin:link entity="${createdBy.marker}"/></li>
+                        </c:forEach>
+                    </ul>
                 </c:if>
             </c:when>
             <c:otherwise>
                 <c:choose>
                     <c:when test="${formBean.createdByRelationship ne null && fn:length(formBean.createdByRelationship) > 0}">
                         ${mutagee.toString()} treated with
-                        <c:forEach var="createdBy" items="${formBean.createdByRelationship}" varStatus="loop">
-                            <zfin:link entity="${createdBy.marker}"/>
-
-                            <c:if test="${!loop.last}">,&nbsp;</c:if>
-
-                        </c:forEach>
-
+                        <ul class="comma-separated">
+                            <c:forEach var="createdBy" items="${formBean.createdByRelationship}">
+                                <li><zfin:link entity="${createdBy.marker}"/></li>
+                            </c:forEach>
+                        </ul>
                     </c:when>
                     <c:otherwise>
                         ${mutagee.toString()} treated with ${mutagen.toString()}
@@ -115,15 +114,14 @@
     </z:attributeListItem>
 
     <z:attributeListItem label="Lab of Origin">
-        <c:choose>
-            <c:when test="${formBean.feature.sources ne null && fn:length(formBean.feature.sources) > 0}">
-                <c:forEach var="source" items="${formBean.feature.sources}" varStatus="status">
-                    <c:if test="${source.organization.zdbID != 'ZDB-LAB-000914-1'}">
-                        <zfin:link entity="${source.organization}"/>
-                    </c:if>
-                </c:forEach>
-            </c:when>
-        </c:choose>
+        <z:ifHasData test="${formBean.feature.sources ne null && fn:length(formBean.feature.sources) > 0}"
+                     noDataMessage="None">
+            <c:forEach var="source" items="${formBean.feature.sources}">
+                <c:if test="${source.organization.zdbID != 'ZDB-LAB-000914-1'}">
+                    <zfin:link entity="${source.organization}"/>
+                </c:if>
+            </c:forEach>
+        </z:ifHasData>
     </z:attributeListItem>
 
     <z:attributeListItem label="Current Source">
@@ -137,11 +135,11 @@
                         <zfin2:orderThis organization="${supplier.organization}"
                                          accessionNumber="${formBean.feature.zdbID}"/>
                     </c:if>
-                    <c:if test="${supplier.moensLab}">&nbsp;(<a href="http://labs.fhcrc.org/moens/Tilling_Mutants/${formBean.feature.singleRelatedMarker.abbreviation}"><font size="-1">request this mutant</font></a>)
+                    <c:if test="${supplier.moensLab}">&nbsp;(<a href="http://labs.fhcrc.org/moens/Tilling_Mutants/${formBean.feature.singleRelatedMarker.abbreviation}"><span style="font-size: smaller; ">request this mutant</span></a>)
                     </c:if>
-                    <c:if test="${supplier.solnicaLab}">&nbsp;(<a href="http://devbio.wustl.edu/solnicakrezellab/${formBean.feature.singleRelatedMarker.abbreviation}.htm"><font size="-1">request this mutant</font></a>)
+                    <c:if test="${supplier.solnicaLab}">&nbsp;(<a href="http://devbio.wustl.edu/solnicakrezellab/${formBean.feature.singleRelatedMarker.abbreviation}.htm"><span style="font-size: smaller; ">request this mutant</span></a>)
                     </c:if>
-                    <c:if test="${supplier.riken}">&nbsp;(<a href="http://www.shigen.nig.ac.jp/zebrafish/strainDetailAction.do?zfinId=${formBean.feature.singleRelatedGenotype.zdbID}"><font size="-1">order this</font></a>)
+                    <c:if test="${supplier.riken}">&nbsp;(<a href="http://www.shigen.nig.ac.jp/zebrafish/strainDetailAction.do?zfinId=${formBean.feature.singleRelatedGenotype.zdbID}"><span style="font-size: smaller; ">order this</span></a>)
                     </c:if>
                     <c:if test="${!status.last}"><br/></c:if>
                 </c:forEach>
@@ -150,7 +148,8 @@
 
                 <c:forEach var="genotypeDisplay" items="${formBean.genotypeDisplays}" varStatus="loop">
                     <c:if test="${genotypeDisplay.genotype.extinct}">
-                        <font size="3" color="red">extinct</font> <i class="warning-icon" title="extinct"></i>
+                        <span style="font-size: small; color: red; ">extinct</span> <i class="warning-icon"
+                                                                                       title="extinct"></i>
                     </c:if>
                 </c:forEach>
             </c:when>
@@ -161,10 +160,10 @@
     </z:attributeListItem>
 
     <z:attributeListItem label="Other Pages">
-        <a href="https://www.alliancegenome.org/ZFIN:${formBean.feature.zdbID}">Alliance</a>
+        <a href="https://www.alliancegenome.org/allele/ZFIN:${formBean.feature.zdbID}">Alliance</a>
     </z:attributeListItem>
 
 
-    <zfin2:entityNotesAttributeListItems entity="${formBean.feature}" />
+    <zfin2:entityNotesAttributeListItems entity="${formBean.feature}"/>
 
 </z:attributeList>
