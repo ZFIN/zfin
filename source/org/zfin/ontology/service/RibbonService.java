@@ -72,7 +72,7 @@ public class RibbonService {
     public RibbonSummary buildExpressionRibbonSummary(String zdbID, boolean includeReporter, boolean onlyInSitu) throws Exception {
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/expression-annotation");
-        query = addExpressionMarkerConstraint(query, zdbID);
+        query.addFilterQuery(FieldName.XREF.getName() + ":" + zdbID);
         expressionService.addReporterFilter(query, includeReporter);
         expressionService.addInSituFilter(query, onlyInSitu);
         return buildRibbonSummary(zdbID, query, List.of(
@@ -579,15 +579,6 @@ public class RibbonService {
                 });
             }
         }
-    }
-
-    private SolrQuery addExpressionMarkerConstraint(SolrQuery query, String zdbID) {
-        if (StringUtils.startsWith(zdbID, "ZDB-ATB-")) {
-            query.addFilterQuery(FieldName.ANTIBODY_ZDB_ID.getName() + ":" + zdbID);
-        } else {
-            query.addFilterQuery(FieldName.GENE_ZDB_ID.getName() + ":" + zdbID);
-        }
-        return query;
     }
 
 }

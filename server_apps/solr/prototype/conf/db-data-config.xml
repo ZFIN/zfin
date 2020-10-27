@@ -5985,7 +5985,7 @@ and child.term_ontology = 'disease_ontology';
                         fish_name as fish,
                         fish_zdb_id as fish_zdb_id,
                         xpatex_gene_zdb_id as gene_zdb_id,
-                        xpatex_atb_zdb_id as antibody_zdb_id,
+                        xpatex_gene_zdb_id as xref,
                         xpatex_assay_name as assay,
                         fig_label as figure,
                         '/' || fig_zdb_id as url,
@@ -6013,6 +6013,15 @@ and child.term_ontology = 'disease_ontology';
                              join fish on genox_fish_zdb_id = fish_zdb_id
                              join figure on efs_fig_zdb_id = fig_zdb_id
                              join publication on fig_source_zdb_id = publication.zdb_id where xpatres_expression_found = 't'">
+
+            <entity name="expression_result_antibody_xref"
+                    query="select xpatex_atb_zdb_id as xref, 'xpatres-' || xpatres_pk_id as id
+                           from expression_experiment2
+                                 join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                                 join expression_result2 on xpatres_efs_id = efs_pk_id"
+                    cacheImpl="SortedMapBackedCache"
+                    where="id=expression_result.id"
+            />
 
             <entity name="expression_result_term_id"
                     query="select term_name as expression_anatomy_parent,
