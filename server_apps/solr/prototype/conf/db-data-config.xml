@@ -6034,8 +6034,7 @@ and child.term_ontology = 'disease_ontology';
                                  join expression_result2 on xpatres_efs_id = efs_pk_id
                                  join all_term_contains on (xpatres_superterm_zdb_id = alltermcon_contained_zdb_id OR xpatres_subterm_zdb_id = alltermcon_contained_zdb_id)
                                  join term on alltermcon_container_zdb_id = term_zdb_id
-                            where xpatres_expression_found = 't'
-                            and xpatex_gene_zdb_id is not null"
+                            where xpatres_expression_found = 't'"
                     cacheImpl="SortedMapBackedCache"
                     where="id=expression_result.id"/>
 
@@ -6056,8 +6055,7 @@ and child.term_ontology = 'disease_ontology';
                                      join term container on alltermcon_container_zdb_id = container.term_zdb_id
                                where start_stage.stg_name != 'Unknown'
                                 and end_stage.stg_name != 'Unknown'
-                                and this_stage.stg_name != 'Unknown'
-                                and xpatex_gene_zdb_id is not null;"
+                                and this_stage.stg_name != 'Unknown';"
                     cacheImpl="SortedMapBackedCache"
                     where="id=expression_result.id"/>
 
@@ -6075,8 +6073,7 @@ and child.term_ontology = 'disease_ontology';
                                      join all_term_contains on contained.term_zdb_id = alltermcon_contained_zdb_id
                                      join term container on alltermcon_container_zdb_id = container.term_zdb_id
                             where (start_stage.stg_name = 'Unknown'
-                                OR end_stage.stg_name = 'Unknown')
-                                and xpatex_gene_zdb_id is not null;"
+                                OR end_stage.stg_name = 'Unknown');"
                     cacheImpl="SortedMapBackedCache"
                     where="id=expression_result.id"/>
 
@@ -6094,8 +6091,7 @@ and child.term_ontology = 'disease_ontology';
                        from expression_experiment2
                             join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
                             join expression_result2 on xpatres_efs_id = efs_pk_id
-                            join image on img_fig_zdb_id = efs_fig_zdb_id where xpatres_expression_found = 't'
-                            and xpatex_gene_zdb_id is not null"
+                            join image on img_fig_zdb_id = efs_fig_zdb_id where xpatres_expression_found = 't'"
                     cacheImpl="SortedMapBackedCache"
                     where="id=expression_result.id"
             />
@@ -6113,8 +6109,7 @@ and child.term_ontology = 'disease_ontology';
                                  join expression_result2 on xpatres_efs_id = efs_pk_id
                                  join fish_experiment on genox_zdb_id = xpatex_genox_zdb_id
                                  join fish on genox_fish_zdb_id = fish_zdb_id
-                                 join genotype on geno_zdb_id = fish_genotype_zdb_id
-                             where xpatex_gene_zdb_id is not null"
+                                 join genotype on geno_zdb_id = fish_genotype_zdb_id"
                     cacheImpl="SortedMapBackedCache"
                     where="id=expression_result.id"/>
 
@@ -6130,8 +6125,7 @@ and child.term_ontology = 'disease_ontology';
                                      join genotype on geno_zdb_id = fish_genotype_zdb_id
                             where geno_is_wildtype = false
                                   and exists (select 'x' from clean_expression_fast_search
-                                              where cefs_genox_zdb_id = xpatex_genox_zdb_id)
-                            and xpatex_gene_zdb_id is not null"
+                                              where cefs_genox_zdb_id = xpatex_genox_zdb_id)"
                     cacheImpl="SortedMapBackedCache"
                     where="id=expression_result.id"/>
 
@@ -6142,8 +6136,7 @@ and child.term_ontology = 'disease_ontology';
                             join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
                             join expression_result2 on xpatres_efs_id = efs_pk_id
                             join publication as pub on xpatex_source_zdb_id = pub.zdb_id
-                            where jtype='Unpublished'
-                            and xpatex_gene_zdb_id is not null"
+                            where jtype='Unpublished'"
                     cacheImpl="SortedMapBackedCache"
                     where="id=expression_result.id"/>
 
@@ -6152,8 +6145,7 @@ and child.term_ontology = 'disease_ontology';
                            from expression_experiment2
                             join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
                             join expression_result2 on xpatres_efs_id = efs_pk_id
-                            join publication as pub on xpatex_source_zdb_id = pub.zdb_id
-                            where xpatex_gene_zdb_id is not null"
+                            join publication as pub on xpatex_source_zdb_id = pub.zdb_id"
                     cacheImpl="SortedMapBackedCache"
                     where="id=expression_result.id"/>
             />

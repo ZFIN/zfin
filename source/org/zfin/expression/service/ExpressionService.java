@@ -903,15 +903,22 @@ public class ExpressionService {
 
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/expression-annotation");
-        query.addFilterQuery("gene_zdb_id:" + geneId);
+        query.addFilterQuery("xref:" + geneId);
         query.addFilterQuery("has_image:true");
         ribbonService.addRibbonTermQuery(query, RibbonType.EXPRESSION, termId, isOther);
+
+        String postcomposedTermId = null;
+
         if (StringUtils.isNotEmpty(supertermId)) {
-            query.addFilterQuery("superterm_id:" + SolrService.luceneEscape(supertermId));
+            postcomposedTermId = SolrService.luceneEscape(supertermId);
         }
         if (StringUtils.isNotEmpty(subtermId)) {
-            query.addFilterQuery("subterm_id:" + SolrService.luceneEscape(subtermId));
+            postcomposedTermId = postcomposedTermId + "," + SolrService.luceneEscape(subtermId);
         }
+        if (StringUtils.isNotEmpty(postcomposedTermId)) {
+            query.addFilterQuery("postcomposed_term_id:" + postcomposedTermId);
+        }
+
         addReporterFilter(query, includeReporter);
         addInSituFilter(query, onlyInSitu);
 

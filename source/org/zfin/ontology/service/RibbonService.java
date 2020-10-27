@@ -409,14 +409,20 @@ public class RibbonService {
 
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/expression-annotation");
-        query.addFilterQuery("gene_zdb_id:" + geneID);
+        query.addFilterQuery("xref:" + geneID);
+
+        String postcomposedTermId = null;
 
         if (StringUtils.isNotEmpty(supertermID)) {
-            query.addFilterQuery("superterm_id:" + SolrService.luceneEscape(supertermID));
+            postcomposedTermId = SolrService.luceneEscape(supertermID);
         }
         if (StringUtils.isNotEmpty(subtermID)) {
-            query.addFilterQuery("subterm_id:" + SolrService.luceneEscape(subtermID));
+            postcomposedTermId = postcomposedTermId + "," + SolrService.luceneEscape(subtermID);
         }
+        if (StringUtils.isNotEmpty(postcomposedTermId)) {
+            query.addFilterQuery("postcomposed_term_id:" + postcomposedTermId);
+        }
+
         if (StringUtils.isNotEmpty(ribbonTermID)) {
             query.addFilterQuery("term_id:" + SolrService.luceneEscape(ribbonTermID));
         }
@@ -486,7 +492,7 @@ public class RibbonService {
     private List<ExpressionRibbonDetail> getExpressionRibbonDetails(String geneID, String ribbonTermID, boolean includeReporter, boolean onlyInSitu, boolean isOther) {
         SolrQuery query = new SolrQuery();
         query.setRequestHandler("/expression-annotation");
-        query.addFilterQuery("gene_zdb_id:" + geneID);
+        query.addFilterQuery("xref:" + geneID);
         addRibbonTermQuery(query, EXPRESSION, ribbonTermID, isOther);
         expressionService.addReporterFilter(query, includeReporter);
         expressionService.addInSituFilter(query, onlyInSitu);
