@@ -4,7 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * This Controller just takes the tiles view name and returns that ModelAndView object
+ * This Controller just takes the view name and returns that ModelAndView object
  * in case you do not have any logic to perform in the Controller other than
  * passing through to the view handler.
  */
