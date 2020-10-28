@@ -180,6 +180,20 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return query.list();
     }
 
+    @Override
+    public List<Publication> getExpressionPubInSitu(Marker marker) {
+        String sql = "  select distinct p from Publication p " +
+                "join p.expressionExperiments ee " +
+                "where ee.gene = :gene " +
+                "and ee.assay.name = 'mRNA in situ hybridization' " +
+                "and not exists (from Clone as clone " +
+                "where ee.probe = clone and clone.problem = :chimeric)";
+        Query query = HibernateUtil.currentSession().createQuery(sql);
+        query.setString("gene", marker.getZdbID());
+        query.setParameter("chimeric", Clone.ProblemType.CHIMERIC);
+        return query.list();
+    }
+
     public int getExpressionPubCountForGene(Marker marker) {
         String sql = "  select count(distinct xpatex_source_zdb_id) " +
                 "      from expression_experiment join " +
@@ -531,6 +545,35 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         Object result = query.uniqueResult();
         return Integer.parseInt(result.toString());
     }
+
+
+    public int getExpressionFigureCountForGeneInSitu(Marker marker) {
+        String sql = "   select count(distinct xpatfig_fig_zdb_id) " +
+                "           from expression_pattern_figure " +
+                "                join expression_result " +
+                "			on xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
+                "                join expression_experiment " +
+                "			on xpatex_zdb_id = xpatres_xpatex_zdb_id " +
+                "          where xpatex_gene_zdb_id = :markerZdbID " +
+                "          and xpatex_assay_name = 'mRNA in situ hybridization' " +
+                "         and not exists " +
+                "         ( " +
+                "           select 'x' from marker " +
+                "             where mrkr_zdb_id = xpatex_probe_feature_zdb_id " +
+                "             and substring(mrkr_abbrev from 1 for 10) = 'WITHDRAWN:' " +
+                "         ) " +
+                "         and not exists " +
+                "         ( " +
+                "          select 'x' from clone " +
+                "             where clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id " +
+                "             and clone_problem_type = 'Chimeric' " +
+                "         ) ";
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
+        query.setString("markerZdbID", marker.getZdbID());
+        Object result = query.uniqueResult();
+        return Integer.parseInt(result.toString());
+    }
+
 
     public int getExpressionFigureCountForFish(Fish fish) {
         String sql = "   select count(distinct xpatfig_fig_zdb_id) " +

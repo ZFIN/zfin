@@ -288,12 +288,18 @@ public class ExpressionService {
         }
         allMarkerExpressionInstance.setFigureCount(
                 expressionRepository.getExpressionFigureCountForGene(marker));
+
         markerExpression.setAllExpressionData(allMarkerExpressionInstance);
 
         // directly submitted
         logger.info("setting directly submitted expression");
         markerExpression.setDirectlySubmittedExpression(getDirectlySubmittedExpressionGene(marker));
         logger.info("got directly submitted expression");
+
+        logger.info("setting only in situ expression for pub tracking");
+
+        markerExpression.setInSituFigCount(expressionRepository.getExpressionFigureCountForGeneInSitu(marker));
+        logger.info("got in situ expression for pub tracking");
 
         return markerExpression;
     }
