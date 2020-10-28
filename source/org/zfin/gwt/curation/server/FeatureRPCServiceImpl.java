@@ -112,7 +112,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
      * @throws DuplicateEntryException
      */
     public FeatureDTO editFeatureDTO(FeatureDTO featureDTO) throws DuplicateEntryException, ValidationException {
-        DateFormat dateFormat = new SimpleDateFormat("mm/dd/yy");
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yy");
         Date entryDate;
 
         checkDupes(featureDTO);
@@ -168,13 +168,15 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         }
         if (featureDTO.getMutagee() != null) {
             featureAssay.setMutagee(Mutagee.getType(featureDTO.getMutagee()));
-        }
+        }System.out.println(featureDTO.getAssemblyInfoDate());
+
         if (org.zfin.gwt.root.util.StringUtils.isNotEmpty(featureDTO.getAssemblyInfoDate())) {
             try {
+                System.out.println(dateFormat.parse(featureDTO.getAssemblyInfoDate()));
                 entryDate = dateFormat.parse(featureDTO.getAssemblyInfoDate());
             } catch (ParseException e) {
                 entryDate = null;
-            }
+            }System.out.println(entryDate);
             feature.setFtrAssemblyInfoDate(entryDate);
         } else {
             feature.setFtrAssemblyInfoDate(null);
