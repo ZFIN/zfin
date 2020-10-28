@@ -3,9 +3,9 @@
 
 <%@attribute name="results" required="true" type="java.util.List" %>
 
-<c:set var="definitionAttribute" value="<%=ResultService.DEFINITION%>"/>
-<c:set var="stageAttribute" value="<%=ResultService.EXISTS_DURING%>"/>
-<c:set var="aliasAttribute" value="<%=ResultService.SYNONYMS%>"/>
+<c:set var="definitionAttribute" value="${ResultService.DEFINITION}"/>
+<c:set var="stageAttribute" value="${ResultService.EXISTS_DURING}"/>
+<c:set var="aliasAttribute" value="${ResultService.SYNONYMS}"/>
 
 
 <table class="table-results searchresults" style="display: none;">

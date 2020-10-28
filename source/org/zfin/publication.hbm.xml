@@ -7,7 +7,7 @@
 
 
     <typedef class="org.zfin.framework.StringEnumValueUserType" name="publicationType">
-        <param name="enumClassname">org.zfin.publication.Publication$Type</param>
+        <param name="enumClassname">org.zfin.publication.PublicationType</param>
     </typedef>
 
     <typedef class="org.zfin.framework.StringEnumValueUserType" name="publicationStatus">

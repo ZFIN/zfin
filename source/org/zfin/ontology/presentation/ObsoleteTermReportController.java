@@ -80,7 +80,7 @@ public class ObsoleteTermReportController {
             model.addAttribute("numberOfObsoletedTermsGoEvidences", expressionObsoleteTermReports.size());
         }
 
-        return "ontology/obsolete-term-report.page";
+        return "ontology/obsolete-term-report";
     }
 
 

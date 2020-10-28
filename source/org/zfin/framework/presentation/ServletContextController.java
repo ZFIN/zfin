@@ -18,6 +18,6 @@ public class ServletContextController {
                                         HttpServletRequest request) throws Exception {
 
         form.setContext(request.getSession().getServletContext());
-        return "servlet-context-info";
+        return "dev-tools/servlet-context-info";
     }
 }

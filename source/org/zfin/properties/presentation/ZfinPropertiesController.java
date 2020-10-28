@@ -9,6 +9,6 @@ public class ZfinPropertiesController {
 
     @RequestMapping(value = "/zfin-properties")
     protected String showZfinProperties() throws Exception {
-        return "dev-tools/zfin-properties.page";
+        return "dev-tools/zfin-properties";
     }
 }

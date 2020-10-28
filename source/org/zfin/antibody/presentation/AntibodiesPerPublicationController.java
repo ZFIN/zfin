@@ -28,7 +28,7 @@ public class AntibodiesPerPublicationController {
         PublicationRepository pr = RepositoryFactory.getPublicationRepository();
         Publication publication = pr.getPublication(publicationID);
         if (publication == null)
-            return "record-not-found.page";
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
 
         AntibodyRepository ar = RepositoryFactory.getAntibodyRepository();
         List<Antibody> antibodies = ar.getAntibodiesByPublication(publication);
@@ -43,7 +43,7 @@ public class AntibodiesPerPublicationController {
         model.addAttribute(LookupStrings.FORM_BEAN, antibodies);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "antibody list for " + publication.getShortAuthorList().replaceAll("<[^>]+>", ""));
 
-        return "antibody/antibodies-per-publication.page";
+        return "antibody/antibodies-per-publication";
     }
 
 }

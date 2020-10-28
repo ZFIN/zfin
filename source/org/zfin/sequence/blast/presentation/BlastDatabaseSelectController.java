@@ -16,6 +16,6 @@ public class BlastDatabaseSelectController {
         boolean isRoot = Person.isCurrentSecurityUserRoot();
         blastInfoBean.setNucleotideDatabasesFromRoot(RepositoryFactory.getBlastRepository().getDatabases(Database.Type.NUCLEOTIDE, !isRoot, true));
         blastInfoBean.setProteinDatabasesFromRoot(RepositoryFactory.getBlastRepository().getDatabases(Database.Type.PROTEIN, !isRoot, true));
-        return "blast-database-select.page";
+        return "blast/blast_database_select";
     }
 }

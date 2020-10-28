@@ -392,7 +392,7 @@ public class SearchPrototypeController {
         model.addAttribute("fishCategoryName", Category.FISH.getName());
 
 
-        return "search/prototype-results.page";
+        return "search/prototype-results";
     }
 
 
@@ -687,7 +687,7 @@ public class SearchPrototypeController {
             model.addAttribute("allExpressionLink", SolrService.getAllExpressionLink(gene.getAbbreviation()));
             model.addAttribute("wtExpressionLink", SolrService.getWildtypeExpressionLink(gene.getAbbreviation()));
         }
-        return "search/gene-expression.popup";
+        return "search/gene-expression";
     }
 
     @RequestMapping(value = "/phenotype/{geneZdbID}")
@@ -703,7 +703,7 @@ public class SearchPrototypeController {
         model.addAttribute("allPhenotypeLink", SolrService.getAllPhenotypeLink(gene.getAbbreviation(), true));
         model.addAttribute("allPhenotypeInvolvingLink", SolrService.getAllPhenotypeLink(gene.getAbbreviation(), false));
 
-        return "search/phenotype.popup";
+        return "search/phenotype";
     }
 
     public Model handleSorting(Model model, SolrQuery query, String baseUrl, String sort) {

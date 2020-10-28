@@ -67,7 +67,7 @@ public class ImageController {
         final String securityPersonZdbId = profileService.isEditableBySecurityPerson(person);
         if (securityPersonZdbId == null) {
             model.addAttribute("errors", "User may not edit this user.");
-            return "profile/profile-edit.page";
+            return "profile/profile-edit";
         }
 
         HibernateUtil.createTransaction();
@@ -91,7 +91,7 @@ public class ImageController {
             final String securityPersonZdbId = profileService.isEditableBySecurityPerson(person);
             if (securityPersonZdbId == null) {
                 model.addAttribute("errors", "User may not edit this user.");
-                return "profile/profile-edit.page";
+                return "profile/profile-edit";
             }
 
             long size = file.getSize();

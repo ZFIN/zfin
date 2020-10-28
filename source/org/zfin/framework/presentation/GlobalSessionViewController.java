@@ -20,6 +20,6 @@ public class GlobalSessionViewController {
                                        HttpServletRequest servletRequest) throws Exception {
         form.setCurrentSession(servletRequest.getSession(false));
         form.setSessionRegistry(sessionRegistry);
-        return "view-global-session-info.page";
+        return "dev-tools/view-global-session-info";
     }
 }

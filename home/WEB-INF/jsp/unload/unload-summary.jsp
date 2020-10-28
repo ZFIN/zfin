@@ -15,7 +15,7 @@ Back to <a href="/action/devtool/home">Dev Tools Home Page</a>
     </tr>
     <tr>
         <th>Unloads Directory</th>
-        <td><%=ZfinPropertiesEnum.DATABASE_UNLOAD_DIRECTORY %>
+        <td>${ZfinPropertiesEnum.DATABASE_UNLOAD_DIRECTORY}
         </td>
     </tr>
     <tr>

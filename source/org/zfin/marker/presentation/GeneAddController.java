@@ -1,7 +1,8 @@
 package org.zfin.marker.presentation;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.infrastructure.DataAlias;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
 import org.zfin.marker.repository.MarkerRepository;
@@ -20,13 +20,12 @@ import org.zfin.marker.service.MarkerSolrService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.search.Category;
-import org.zfin.search.FieldName;
-import org.zfin.search.service.SolrService;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/marker")
@@ -73,7 +72,7 @@ public class GeneAddController {
     @RequestMapping(value = "/gene-add", method = RequestMethod.GET)
     public String showGeneAddForm(Model model) throws IOException, SolrServerException {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add New Gene");
-        return "marker/gene-add.page";
+        return "marker/gene-add";
     }
 
     @RequestMapping(value = "/gene-add", method = RequestMethod.POST)

@@ -43,7 +43,7 @@ public class DownloadableSequencesController {
             }
         }
 
-        return "downloadable-sequences.page";
+        return "blast/sequences-download";
     }
 
     private String download(String name, String data, HttpServletResponse response) throws Exception {

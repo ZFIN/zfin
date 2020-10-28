@@ -9,10 +9,7 @@ import org.zfin.gwt.marker.event.*;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.event.RelatedEntityChangeListener;
 import org.zfin.gwt.root.event.RelatedEntityEvent;
-import org.zfin.gwt.root.ui.AbstractListBox;
-import org.zfin.gwt.root.ui.MarkerEditCallBack;
-import org.zfin.gwt.root.ui.PublicationSessionKey;
-import org.zfin.gwt.root.ui.RelatedEntityBox;
+import org.zfin.gwt.root.ui.*;
 
 import java.util.List;
 
@@ -33,7 +30,7 @@ public final class TranscriptEditController extends AbstractFullMarkerEditContro
     private final ViewClickLabel transcriptViewClickLabel = new ViewClickLabel("[View Transcript]", "/", "Ignore");
     private final TranscriptHeaderEdit transcriptHeaderEdit = new TranscriptHeaderEdit();
     private final RelatedMarkerBox relatedGenesBox =
-            new RelatedGeneLookupBox(MarkerRelationshipEnumTypeGWTHack.GENE_PRODUCES_TRANSCRIPT, false, geneDiv);
+            new RelatedGeneLookupBox(MarkerRelationshipEnumTypeGWTHack.GENE_PRODUCES_TRANSCRIPT, false, StandardDivNames.geneDiv);
     private final RelatedMarkerBox targetedGenesBox =
             new RelatedGeneLookupBox(MarkerRelationshipEnumTypeGWTHack.TRANSCRIPT_TARGETS_GENE, true, targetedGeneDiv);
     private final RelatedMarkerBox relatedClonesBox =

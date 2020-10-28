@@ -44,7 +44,7 @@ public class MiniGeneController {
         model.addAttribute("showClose", showClose);
         model.addAttribute("external", external);
 
-        return "marker/mini-gene.insert";
+        return "marker/mini-gene";
 
     }
 }

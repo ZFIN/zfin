@@ -68,13 +68,13 @@ public class EngrRegionViewController {
         model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.EREGION.getTitleString() + region.getAbbreviation());
 
-        return "marker/engrRegion-view.page";
+        return "marker/engrRegion-view";
     }
 
     @RequestMapping("/view-all-engineered-regions/")
     public String viewAllEngineeredRegions(Model model) {
         List<Marker> engineeredRegions = markerRepository.getAllEngineeredRegions();
         model.addAttribute("engineeredRegions", engineeredRegions);
-        return "marker/view-all-engineered-regions.page";
+        return "marker/view-all-engineered-regions";
     }
 }

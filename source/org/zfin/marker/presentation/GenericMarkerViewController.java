@@ -37,7 +37,7 @@ public class GenericMarkerViewController {
         model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, markerBean.getMarkerTypeDisplay() + ": " + marker.getAbbreviation());
 
-        return "marker/marker-view.page";
+        return "marker/marker-view";
     }
 
 }

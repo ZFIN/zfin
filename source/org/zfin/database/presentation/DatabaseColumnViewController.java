@@ -1,10 +1,8 @@
 package org.zfin.database.presentation;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,7 +29,7 @@ public class DatabaseColumnViewController {
 
     @RequestMapping(value = "/browse-database")
     protected String browseDatabaseTables() {
-        return "database/browse-database-tables.page";
+        return "dev-tools/browse-database-tables";
     }
 
     @RequestMapping(value = "/view-record/{ID}")
@@ -45,7 +43,7 @@ public class DatabaseColumnViewController {
         model.addAttribute("foreignKeyResultList", foreignKeyResultList);
         model.addAttribute("flattenedForeignKeyResultList", getFlattenedView(foreignKeyResultList));
         model.addAttribute("ID", id);
-        return "database/table-record-view.page";
+        return "dev-tools/table-record-view";
     }
 
     @RequestMapping(value = "/view-records/{table}")
@@ -60,7 +58,7 @@ public class DatabaseColumnViewController {
         model.addAttribute("foreignKeyResultList", foreignKeyResultList);
         model.addAttribute("flattenedForeignKeyResultList", getFlattenedView(foreignKeyResultList));
 
-        return "database/table-record-view.page";
+        return "dev-tools/table-record-view";
     }
 
     @RequestMapping(value = "/fetch-entity-name/{ID}")
@@ -72,7 +70,7 @@ public class DatabaseColumnViewController {
         if (entityTable.getEntityName(id) != null)
             name = entityTable.getEntityName(id);
         model.addAttribute("entityName", name);
-        return "database/entity-name.popup";
+        return "dev-tools/entity-name";
     }
 
     @RequestMapping(value = "/view-table-statistics/{tableName}")
@@ -89,7 +87,7 @@ public class DatabaseColumnViewController {
         DatabaseJdbcStatement firstTenRecords = new DatabaseJdbcStatement();
         firstTenRecords.addQueryPart("select first 15 * from " + entityTable.getTableName());
         runQuery(model, entityTable, firstTenRecords);
-        return "database/view-table-stats.page";
+        return "dev-tools/view-table-stats";
     }
 
     private void addNumberOfRecordsForRefTables(List<Column> columnMetaData) {

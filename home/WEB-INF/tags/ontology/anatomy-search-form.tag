@@ -1,4 +1,4 @@
-<%@ tag import="org.zfin.gwt.root.ui.LookupComposite" %>
+<%@ tag import="org.zfin.framework.presentation.LookupStrings" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ attribute name="formBean" type="org.zfin.anatomy.presentation.AnatomySearchBean" required="true" %>
@@ -50,7 +50,7 @@
                     </TD>
                     <TD valign="top">
                         <span id="aogo">
-                        <zfin2:lookup action="<%= LookupComposite.ACTION_ANATOMY_SEARCH%>"
+                        <zfin2:lookup action="${LookupStrings.ACTION_ANATOMY_SEARCH}"
                                       wildcard="true" useIdAsTerm="false" termsWithDataOnly="false"
                                       ontologyName="${formBean.ontologyName}"/>
                             </span>

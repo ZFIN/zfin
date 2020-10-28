@@ -4,6 +4,7 @@ import com.google.gwt.event.dom.client.*;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
+import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.dto.EntityPart;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.TermDTO;
@@ -165,7 +166,7 @@ public class TermEntry extends HorizontalPanel {
         // set default ontology
         final OntologyDTO defaultOntology = getDefaultOntology();
         termTextBox.setOntology(defaultOntology);
-        termTextBox.setType(LookupComposite.GDAG_TERM_LOOKUP);
+        termTextBox.setType(LookupStrings.GDAG_TERM_LOOKUP);
         termTextBox.setInputName(termPart.name());
         termTextBox.setShowError(true);
         termTextBox.setWildCard(false);
@@ -401,7 +402,7 @@ public class TermEntry extends HorizontalPanel {
     private class OntologyChangeHandler implements ChangeHandler {
 
         public void onChange(ChangeEvent event) {
-            termTextBox.setType(LookupComposite.GDAG_TERM_LOOKUP);
+            termTextBox.setType(LookupStrings.GDAG_TERM_LOOKUP);
             termTextBox.setOntology(getSelectedOntology());
             if (termInfoComposite != null && termInfoComposite.getCurrentTermInfoDTO() != null && termTextBox.getTextBox().getText() != null) {
                 termTextBox.markUnValidateText();

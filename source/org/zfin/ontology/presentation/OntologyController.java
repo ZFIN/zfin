@@ -29,7 +29,7 @@ public class OntologyController {
         model.addAttribute("formBean", form);
         OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
         form.setMetadataList(ontologyRepository.getAllOntologyMetadata());
-        return "ontology/version-info.page";
+        return "ontology/version-info";
     }
 
     @RequestMapping("/reload-ontology")
@@ -38,7 +38,7 @@ public class OntologyController {
         Ontology ontology = Ontology.getOntology(ontologyName);
         if (ontology == null) {
             model.addAttribute(LookupStrings.ZDB_ID, ontologyName);
-            return "record-not-found.popup";
+            return LookupStrings.RECORD_NOT_FOUND_POPUP;
         }
         OntologyManager.getInstance().reloadOntology(ontology);
         return "redirect:version-info";
@@ -50,7 +50,7 @@ public class OntologyController {
         Ontology ontology = Ontology.getOntology(ontologyName);
         if (ontology == null) {
             model.addAttribute(LookupStrings.ZDB_ID, ontologyName);
-            return "record-not-found.popup";
+            return LookupStrings.RECORD_NOT_FOUND_POPUP;
         }
         OntologyMetadata metadata = RepositoryFactory.getOntologyRepository().getOntologyMetadata(ontologyName);
         try {

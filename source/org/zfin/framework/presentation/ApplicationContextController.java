@@ -44,7 +44,7 @@ public class ApplicationContextController {
         model.addAttribute("runtimeMXBean", runtime);
         Field jvm = runtime.getClass().getDeclaredField("jvm");
         jvm.setAccessible(true);
-        return "dev-tools/application-context.page";
+        return "dev-tools/application-context";
     }
 
     @RequestMapping("/fx-stage-range-violations")
@@ -72,7 +72,7 @@ public class ApplicationContextController {
         model.addAttribute("expressionResultDisplays", displaySet.values());
         model.addAttribute("violations", expressionResultsViolateStageRanges);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
-        return "dev-tools/fx-stage-range-violations.page";
+        return "dev-tools/fx-stage-range-violations";
     }
 
     @RequestMapping("/merged-terms-used-in-relationships")
@@ -82,7 +82,7 @@ public class ApplicationContextController {
         List<GenericTerm> expressionResultsViolateStageRanges = getOntologyRepository().getMergedTermsInTermRelationships();
         model.addAttribute("mergeTerms", expressionResultsViolateStageRanges);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
-        return "dev-tools/merged-terms-used-in-relationships.page";
+        return "dev-tools/merged-terms-used-in-relationships";
     }
 
     @RequestMapping("/terms-without-relationships")
@@ -92,7 +92,7 @@ public class ApplicationContextController {
         List<GenericTerm> expressionResultsViolateStageRanges = getOntologyRepository().getActiveTermsWithoutRelationships();
         model.addAttribute("activeTerms", expressionResultsViolateStageRanges);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
-        return "dev-tools/terms-without-relationships.page";
+        return "dev-tools/terms-without-relationships";
     }
 
 
@@ -119,7 +119,7 @@ public class ApplicationContextController {
         model.addAttribute("expressionResultDisplays", displaySet.values());
         model.addAttribute("violations", expressionResultsViolateStageRanges);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
-        return "dev-tools/fx-stage-range-violations.page";
+        return "dev-tools/fx-stage-range-violations";
     }
 
 

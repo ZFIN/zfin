@@ -1,9 +1,9 @@
 package org.zfin.marker.presentation;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.antibody.Antibody;
@@ -23,7 +23,6 @@ import org.zfin.mutant.Fish;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.orthology.presentation.OrthologySlimPresentation;
-import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationLink;
 import org.zfin.repository.RepositoryFactory;
@@ -31,12 +30,7 @@ import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.presentation.AccessionPresentation;
 import org.zfin.sequence.presentation.STRsequencePresentation;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.Collections;
+import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getAntibodyRepository;
 
@@ -67,9 +61,9 @@ public class MergeMarkerController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, markerToDelete.getAbbreviation());
 
         if (type.startsWith("ATB")) {
-            return "marker/merge-antibody.page";
+            return "marker/merge-antibody";
         } else {
-            return "marker/merge-marker.page";
+            return "marker/merge-marker";
         }
     }
 
@@ -121,7 +115,7 @@ public class MergeMarkerController {
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, markerToDelete.getAbbreviation());
         }
 
-        return "marker/merge-marker-finish.page";
+        return "marker/merge-marker-finish";
     }
 
     // looks up gene to be merged into

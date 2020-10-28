@@ -1,6 +1,5 @@
 <%@ tag import="static org.zfin.framework.presentation.SectionVisibility.Action.SHOW_ALL" %>
-<%
-    /*
+<%--
     This tag is used to display the [Show All] or [Hide All] link
 
     Parameters:
@@ -11,9 +10,7 @@
     3) enumeration: the String array of the section names. Used to remove any visiblity-related query strings on the
     request object.
     4) sectionVisiblity: The section visiblity object used to
-    */
-
-%>
+--%>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@attribute name="sectionVisibility" type="org.zfin.framework.presentation.SectionVisibility" required="true" %>

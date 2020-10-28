@@ -56,12 +56,12 @@ public class SingleRunController {
 
         if (run != null) {
             setFormData(form, run, candidateTypeEnum);
-            model.addAttribute(LookupStrings.DYNAMIC_TITLE, run.getName());
+            model.addAttribute(LookupStrings.DYNAMIC_TITLE, "ReNo " + run.getName());
         } else {
-            model.addAttribute(LookupStrings.DYNAMIC_TITLE, runZdbID);
+            model.addAttribute(LookupStrings.DYNAMIC_TITLE, "ReNo " + runZdbID);
         }
 
-        return "reno/candidate-" + candidateType + ".page";
+        return "reno/candidate-" + candidateType;
     }
 
     @RequestMapping(value = "/candidate/{candidateType}/{runZdbID}", method = RequestMethod.POST)
@@ -81,7 +81,7 @@ public class SingleRunController {
         form.setRun(run);
 
         model.addAttribute(LookupStrings.FORM_BEAN, form);
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, run.getName());
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "ReNo " + run.getName());
 
         validator.validate(form, errors);
 
@@ -111,7 +111,7 @@ public class SingleRunController {
 
         setFormData(form, run, candidateTypeEnum);
 
-        return "reno/candidate-" + candidateType + ".page";
+        return "reno/candidate-" + candidateType;
     }
 
     /**

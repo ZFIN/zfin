@@ -19,21 +19,6 @@ public abstract class Figure implements Serializable, Comparable<Figure> {
 
     public static String GELI = "GELI";
 
-    public enum Type {
-        FIGURE("figure"),
-        TOD("text only");
-
-        private String name;
-
-        Type(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
-    }
-
     @JsonView(View.API.class)
     private String zdbID;
     private String caption;
@@ -174,7 +159,7 @@ public abstract class Figure implements Serializable, Comparable<Figure> {
         this.updatedBy = updatedBy;
     }
 
-    public abstract Type getType();
+    public abstract FigureType getType();
 
     public boolean equals(Object otherFigure) {
         if (!(otherFigure instanceof Figure)) {

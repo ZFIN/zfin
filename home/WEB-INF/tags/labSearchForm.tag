@@ -15,7 +15,7 @@
 
 
 <%--style="border: 2px solid gray; padding:  10px;  background-color: #FEF7D6; width: 70%;"--%>
-<form:form name="formBean" commandName="<%=LookupStrings.FORM_BEAN%>"
+<form:form name="formBean" commandName="${LookupStrings.FORM_BEAN}"
            method="get" action="/action/profile/lab/search/execute"
         >
 

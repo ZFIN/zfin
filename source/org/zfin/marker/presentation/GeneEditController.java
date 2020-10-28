@@ -21,7 +21,7 @@ public class GeneEditController {
         Marker gene = markerRepository.getMarkerByID(zdbID);
         model.addAttribute("gene", gene);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Edit Gene: " + gene.getAbbreviation());
-        return "marker/gene/gene-edit.page";
+        return "marker/gene/gene-edit";
     }
 
 }

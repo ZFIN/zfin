@@ -4,50 +4,46 @@
 <%@ page import="org.zfin.gwt.root.dto.OntologyDTO" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
+<z:devtoolsPage title="GWT GO Curation">
+    <c:set var="pubID" value="${param.zdbID}" />
+    <c:if test="${empty pubID}">
+        <c:set var="pubID" value="ZDB-PUB-080701-3" />
+    </c:if>
 
-<%
-    String pubID = request.getParameter("zdbID");
-    if(pubID ==null){
-        pubID = "ZDB-PUB-080701-3" ;
-    }
-%>
+    <script type="text/javascript">
+        var curationProperties = {
+            zdbID : "${pubID}",
+            moduleType: "GO_CURATION",
+            debug: "false"
+        }
+    </script>
 
-<script type="text/javascript">
-    var curationProperties = {
-        zdbID : "<%=pubID%>",
-        moduleType: "GO_CURATION",
-        debug: "false"
-    }
-</script>
+    <script language="javascript" src="/gwt/org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
 
-<script language="javascript" src="/gwt/org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
+    <%--define the lookups up here--%>
+    <div id="${StandardDivNames.directAttributionDiv}"></div>
 
-<%--define the lookups up here--%>
-<div id="<%=StandardDivNames.directAttributionDiv%>"></div>
+    <br>
 
-<br>
+    <div id="${GoCurationModule.GO_ADD_LINK}"></div>
 
-<div id="<%=GoCurationModule.GO_ADD_LINK%>"></div>
+    <br>
 
-<br>
+    <div id="${GoCurationModule.GO_EVIDENCE_ADD}"></div>
 
-<div id="<%=GoCurationModule.GO_EVIDENCE_ADD%>"></div>
+    <br>
+    <table width="100%" bgcolor="#33cc99" border="0" cellpadding="0">
+        <tr><td>
+        <div id="${GoCurationModule.GO_EVIDENCE_DISPLAY_FILTER}"></div>
+    </td></tr></table>
+    <br>
 
-<br>
-<table width="100%" bgcolor="#33cc99" border="0" cellpadding="0">
-    <tr><td>
-    <div id="<%=GoCurationModule.GO_EVIDENCE_DISPLAY_FILTER%>"></div>
-</td></tr></table>
-<br>
+    <div id="${GoCurationModule.GO_EVIDENCE_DISPLAY}"></div>
+    <%--
+    Add ontology name as a hidden field
+    --%>
+    <div class="GO_TERM_single" aria-hidden="true" style="display: none;">${OntologyDTO.GO.ontologyName}</div>
 
-<div id="<%=GoCurationModule.GO_EVIDENCE_DISPLAY%>"></div>
-<%--
-Add ontology name as a hidden field
---%>
-<div class="GO_TERM_single" aria-hidden="true" style="display: none;"><%=OntologyDTO.GO.getOntologyName()%></div>
-
-<%--</authz:authorize>--%>
-</script>
-
-
-
+    <%--</authz:authorize>--%>
+    </script>
+</z:devtoolsPage>

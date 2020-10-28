@@ -34,7 +34,7 @@ public class LabEditController {
     @RequestMapping(value={"/profile/editLabPrefix/{id}"},method = RequestMethod.GET)
     public ModelAndView editLabPrefix(@PathVariable("id") String labZdbId){
         Lab lab = profileRepository.getLabById(labZdbId) ;
-        ModelAndView modelAndView = new ModelAndView("profile/lab-edit-popup.page");
+        ModelAndView modelAndView = new ModelAndView("profile/lab-edit-popup");
         modelAndView.addObject("lab",lab);
         List<String> prefixes = featureRepository.getAllFeaturePrefixes() ;
         modelAndView.addObject("prefixes",prefixes);

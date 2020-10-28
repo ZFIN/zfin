@@ -3,6 +3,7 @@ package org.zfin.gwt.root.ui;
 import com.google.gwt.event.dom.client.*;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.*;
+import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.event.PublicationChangeEvent;
 import org.zfin.gwt.root.event.RelatedEntityChangeListener;
@@ -68,7 +69,7 @@ public abstract class AbstractGoBox extends AbstractHeaderEdit<GoEvidenceDTO> {
         ((GoEditTable) table).setButtonPanel(buttonPanel);
         ((GoEditTable) table).setErrorLabel(errorLabel);
 
-        goTermBox.setType(LookupComposite.GDAG_TERM_LOOKUP);
+        goTermBox.setType(LookupStrings.GDAG_TERM_LOOKUP);
         goTermBox.setOntology(OntologyDTO.GO);
         goTermBox.setWildCard(false);
         goTermBox.setSuggestBoxWidth(60);

@@ -25,6 +25,7 @@ import org.zfin.mutant.FishExperiment;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
+import org.zfin.publication.PublicationType;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.Category;
@@ -162,9 +163,9 @@ public class ExpressionSearchService {
         }
 
         if (criteria.getJournalType() == ExpressionSearchCriteria.JournalTypeOption.DIRECT) {
-            addTo(solrQuery).fq(Publication.Type.UNPUBLISHED.getDisplay(), FieldName.JOURNAL_TYPE);
+            addTo(solrQuery).fq(PublicationType.UNPUBLISHED.getDisplay(), FieldName.JOURNAL_TYPE);
         } else if (criteria.getJournalType() == ExpressionSearchCriteria.JournalTypeOption.PUBLISHED) {
-            addTo(solrQuery).fqNot(Publication.Type.UNPUBLISHED.getDisplay(), FieldName.JOURNAL_TYPE);
+            addTo(solrQuery).fqNot(PublicationType.UNPUBLISHED.getDisplay(), FieldName.JOURNAL_TYPE);
         }
 
         solrQuery.setRows(criteria.getRows());

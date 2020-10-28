@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionResult2;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.mutant.MarkerGoTermEvidence;
@@ -29,7 +28,7 @@ public class OntologyReportsController {
 
     @RequestMapping("/reports")
     private String createTermUsageReport() {
-        return "ontology/reports.page";
+        return "ontology/reports";
     }
 
     @RequestMapping("/secondary-term-report")
@@ -86,7 +85,7 @@ public class OntologyReportsController {
             model.addAttribute("numberOfGoEvidenceOnSecondaryTerms", goEvidenceSecondaryTermReports.size());
         }
 
-        return "ontology/secondary-term-report.page";
+        return "ontology/secondary-term-report";
     }
 
 

@@ -1,20 +1,17 @@
 package org.zfin.gwt.lookup.ui;
 
-import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.i18n.client.Dictionary;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
+import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.dto.TermStatus;
 import org.zfin.gwt.root.ui.LookupComposite;
 import org.zfin.gwt.root.util.LookupRPCService;
-import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
 
@@ -29,13 +26,6 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
     public static final String SEPARATOR = ",";
     public static final String NAME_SEPARATOR = "|";
     public static final String NAME_SEPARATOR_SPLIT = "\\|";
-    public static final String JSREF_HIDDEN_NAME = "hiddenNames";
-    public static final String JSREF_HIDDEN_IDS = "hiddenIds";
-    public static final String JSREF_PREVIOUS_TABLE_VALUES = "previousTableValues";
-    public static final String JSREF_IMAGE_URL = "imageURL";
-    public static final String JSREF_USE_TERM_TABLE = "useTermTable";
-    public static final String JSREF_INPUT_DIV = "inputDiv";
-    public static final String JSREF_TERM_LIST_DIV = "termListDiv";
 
     // GUI elements
     private FlexTable table = new FlexTable();
@@ -94,57 +84,57 @@ public class LookupTable extends Lookup implements LookupFieldValidator, HasRemo
 
     private void handleProperties(Dictionary lookupProperties) {
         Set keySet = lookupProperties.keySet();
-        if (keySet.contains(JSREF_INPUT_NAME)) {
-            lookup.setInputName(lookupProperties.get(JSREF_INPUT_NAME));
+        if (keySet.contains(LookupStrings.JSREF_INPUT_NAME)) {
+            lookup.setInputName(lookupProperties.get(LookupStrings.JSREF_INPUT_NAME));
         }
-        if (keySet.contains(JSREF_INPUT_DIV)) {
-            inputDiv = lookupProperties.get(JSREF_INPUT_DIV);
+        if (keySet.contains(LookupStrings.JSREF_INPUT_DIV)) {
+            inputDiv = lookupProperties.get(LookupStrings.JSREF_INPUT_DIV);
         }
-        if (keySet.contains(JSREF_TERM_LIST_DIV)) {
-            termListDiv = lookupProperties.get(JSREF_TERM_LIST_DIV);
+        if (keySet.contains(LookupStrings.JSREF_TERM_LIST_DIV)) {
+            termListDiv = lookupProperties.get(LookupStrings.JSREF_TERM_LIST_DIV);
         }
-        if (keySet.contains(JSREF_TYPE)) {
-            lookup.setType(lookupProperties.get(JSREF_TYPE));
+        if (keySet.contains(LookupStrings.JSREF_TYPE)) {
+            lookup.setType(lookupProperties.get(LookupStrings.JSREF_TYPE));
         }
-        if (keySet.contains(JSREF_ONTOLOGY_NAME)) {
-            lookup.setOntologyName(lookupProperties.get(JSREF_ONTOLOGY_NAME));
+        if (keySet.contains(LookupStrings.JSREF_ONTOLOGY_NAME)) {
+            lookup.setOntologyName(lookupProperties.get(LookupStrings.JSREF_ONTOLOGY_NAME));
         }
-        if (keySet.contains(JSREF_BUTTONTEXT)) {
-            lookup.setButtonText(lookupProperties.get(JSREF_BUTTONTEXT));
+        if (keySet.contains(LookupStrings.JSREF_BUTTONTEXT)) {
+            lookup.setButtonText(lookupProperties.get(LookupStrings.JSREF_BUTTONTEXT));
         }
-        if (keySet.contains(JSREF_SHOWERROR)) {
-            lookup.setShowError(Boolean.valueOf(lookupProperties.get(JSREF_SHOWERROR)));
+        if (keySet.contains(LookupStrings.JSREF_SHOWERROR)) {
+            lookup.setShowError(Boolean.valueOf(lookupProperties.get(LookupStrings.JSREF_SHOWERROR)));
         }
-        if (keySet.contains(JSREF_WILDCARD)) {
-            lookup.setWildCard(Boolean.valueOf(lookupProperties.get(JSREF_WILDCARD)));
+        if (keySet.contains(LookupStrings.JSREF_WILDCARD)) {
+            lookup.setWildCard(Boolean.valueOf(lookupProperties.get(LookupStrings.JSREF_WILDCARD)));
         }
-        if (keySet.contains(JSREF_WIDTH)) {
-            lookup.setSuggestBoxWidth(Integer.parseInt(lookupProperties.get(JSREF_WIDTH)));
+        if (keySet.contains(LookupStrings.JSREF_WIDTH)) {
+            lookup.setSuggestBoxWidth(Integer.parseInt(lookupProperties.get(LookupStrings.JSREF_WIDTH)));
         }
-        if (keySet.contains(JSREF_LIMIT)) {
-            lookup.setLimit(Integer.parseInt(lookupProperties.get(JSREF_LIMIT)));
+        if (keySet.contains(LookupStrings.JSREF_LIMIT)) {
+            lookup.setLimit(Integer.parseInt(lookupProperties.get(LookupStrings.JSREF_LIMIT)));
         }
-        if (keySet.contains(JSREF_DIV_NAME)) {
-            setDivName(lookupProperties.get(JSREF_DIV_NAME));
+        if (keySet.contains(LookupStrings.JSREF_DIV_NAME)) {
+            setDivName(lookupProperties.get(LookupStrings.JSREF_DIV_NAME));
         }
-        if (keySet.contains(JSREF_HIDDEN_NAME)) {
-            setHiddenNames(lookupProperties.get(JSREF_HIDDEN_NAME));
+        if (keySet.contains(LookupStrings.JSREF_HIDDEN_NAME)) {
+            setHiddenNames(lookupProperties.get(LookupStrings.JSREF_HIDDEN_NAME));
         }
-        if (keySet.contains(JSREF_HIDDEN_IDS)) {
-            setHiddenIDs(lookupProperties.get(JSREF_HIDDEN_IDS));
+        if (keySet.contains(LookupStrings.JSREF_HIDDEN_IDS)) {
+            setHiddenIDs(lookupProperties.get(LookupStrings.JSREF_HIDDEN_IDS));
         }
-        if (keySet.contains(JSREF_IMAGE_URL)) {
-            setImageURL(lookupProperties.get(JSREF_IMAGE_URL));
+        if (keySet.contains(LookupStrings.JSREF_IMAGE_URL)) {
+            setImageURL(lookupProperties.get(LookupStrings.JSREF_IMAGE_URL));
         }
 
-        if (keySet.contains(JSREF_PREVIOUS_TABLE_VALUES)) {
-            prepopulateTable(lookupProperties.get(JSREF_PREVIOUS_TABLE_VALUES));
+        if (keySet.contains(LookupStrings.JSREF_PREVIOUS_TABLE_VALUES)) {
+            prepopulateTable(lookupProperties.get(LookupStrings.JSREF_PREVIOUS_TABLE_VALUES));
         }
-        if (keySet.contains(JSREF_USE_TERM_TABLE)) {
-            setUseTermTable(Boolean.valueOf(lookupProperties.get(JSREF_USE_TERM_TABLE)));
+        if (keySet.contains(LookupStrings.JSREF_USE_TERM_TABLE)) {
+            setUseTermTable(Boolean.valueOf(lookupProperties.get(LookupStrings.JSREF_USE_TERM_TABLE)));
         }
-        if (keySet.contains(JSREF_TERMS_WITH_DATA_ONLY)) {
-            lookup.setUseTermsWithDataOnly(Boolean.valueOf(lookupProperties.get(JSREF_TERMS_WITH_DATA_ONLY)));
+        if (keySet.contains(LookupStrings.JSREF_TERMS_WITH_DATA_ONLY)) {
+            lookup.setUseTermsWithDataOnly(Boolean.valueOf(lookupProperties.get(LookupStrings.JSREF_TERMS_WITH_DATA_ONLY)));
         }
 
     }

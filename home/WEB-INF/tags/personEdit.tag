@@ -30,7 +30,7 @@
     <div class='panes'>
         <div id='information'>
             ${person.emailList and empty person.email ? '<div style="color: red;">Please provide a valid email if on distribution list.</div>' : '' }
-            <form:form method="post" commandName="<%=LookupStrings.FORM_BEAN%>"
+            <form:form method="post" commandName="${LookupStrings.FORM_BEAN}"
                        action="/action/profile/person/edit/${person.zdbID}" enctype="multipart/form-data"
                        cssClass="edit-box mark-dirty" id="person-edit-information">
 
@@ -144,7 +144,7 @@
             </form:form>
         </div>
         <div id="biography">
-            <form:form method="post" commandName="<%=LookupStrings.FORM_BEAN%>"
+            <form:form method="post" commandName="${LookupStrings.FORM_BEAN}"
                        action="/action/profile/person/update-biography/${person.zdbID}" enctype="multipart/form-data"
                        id="person-edit-biography" cssClass="mark-dirty"
                     >
@@ -164,7 +164,7 @@
 
         </div>
         <div id="publications">
-            <form:form method="post" commandName="<%=LookupStrings.FORM_BEAN%>"
+            <form:form method="post" commandName="${LookupStrings.FORM_BEAN}"
                        action="/action/profile/person/update-publications/${person.zdbID}" enctype="multipart/form-data"
                        id="person-edit-publications" cssClass="mark-dirty"
                     >
@@ -173,7 +173,7 @@
                 <zfin2:errors errorResult="${errors}" path="nonZfinPublications"/>
 
                 <p style="font-size: small;">If you would like to include a Zebrafish publication please contact
-                    <a href="mailto:<%=ZfinProperties.getAdminEmailAddresses()[0]%>">ZFIN</a>.<br/>
+                    <zfin2:mailTo>ZFIN</zfin2:mailTo>.<br/>
                 </p>
                 <br/>
                 <input type="submit" value="Save"/>
@@ -187,12 +187,12 @@
             <%--<table>--%>
             <%--<tr valign="top">--%>
             <%--<td rowspan="2">--%>
-            <c:set var='secure' value="<%=ZfinPropertiesEnum.SECURE_HTTP.toString()%>"/>
-            <c:set var='domain' value="<%=ZfinPropertiesEnum.DOMAIN_NAME.toString()%>"/>
+            <c:set var='secure' value="${ZfinPropertiesEnum.SECURE_HTTP.toString()}"/>
+            <c:set var='domain' value="${ZfinPropertiesEnum.DOMAIN_NAME.toString()}"/>
             <c:set var='secureServer' value="${secure}${domain}"/>
             <%--${secureServer}--%>
             <%--action="/action/profile/person/edit-user-details/${person.zdbID}" enctype="multipart/form-data"--%>
-            <form:form method="post" commandName="<%=LookupStrings.FORM_BEAN%>"
+            <form:form method="post" commandName="${LookupStrings.FORM_BEAN}"
                        action="${secureServer}/action/profile/person/edit-user-details/${person.zdbID}"
                        enctype="multipart/form-data" id="person-edit-login" cssClass="mark-dirty"
                     >

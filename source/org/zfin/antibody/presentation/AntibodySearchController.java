@@ -51,7 +51,7 @@ public class AntibodySearchController {
     @RequestMapping("/search")
     protected String showSearchForm(Model model) throws Exception {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Antibody Search");
-        return "antibody/antibody-search-form.page";
+        return "antibody/antibody-search-form";
     }
 
     private
@@ -72,7 +72,7 @@ public class AntibodySearchController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Antibody Search");
         if (numberOfRecords != 1) {
             antibodySearchFormBean.setAntibodies(antibodies.getPopulatedResults());
-            return "antibody/antibody-search-result.page";
+            return "antibody/antibody-search-result";
         } else {
             return "redirect:/" + antibodies.getPopulatedResults().get(0).getZdbID();
         }

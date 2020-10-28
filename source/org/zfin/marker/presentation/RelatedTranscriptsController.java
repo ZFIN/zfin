@@ -33,6 +33,6 @@ public class RelatedTranscriptsController {
 
         model.addAttribute(LookupStrings.FORM_BEAN, transcriptBean);
 
-        return "marker/related-transcripts.insert";
+        return "marker/related-transcripts";
     }
 }

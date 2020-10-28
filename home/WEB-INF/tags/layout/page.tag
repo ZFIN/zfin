@@ -4,8 +4,14 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ tag import="org.zfin.properties.ZfinPropertiesEnum" %>
 
-<%@ attribute name="title" rtexprvalue="true" required="true" type="java.lang.String" %>
+<%@ attribute name="title" rtexprvalue="true" required="false" type="java.lang.String" %>
 <%@ attribute name="bodyClass" rtexprvalue="true" required="false" type="java.lang.String" %>
+
+<c:if test="${empty title}">
+    <c:set var="title">
+        ZFIN ${dynamicTitle}
+    </c:set>
+</c:if>
 
 <html lang="en">
     <!-- Server: @INSTANCE@ -->

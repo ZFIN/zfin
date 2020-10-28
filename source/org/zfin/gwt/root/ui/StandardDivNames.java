@@ -3,18 +3,18 @@ package org.zfin.gwt.root.ui;
 /**
  * Div names to connect.
  */
-public interface StandardDivNames {
+public class StandardDivNames {
 
-    String viewDiv = "viewName";
-    String headerDiv = "headerName";
-    String directAttributionDiv = "directAttributionName";
-    String previousNameDiv = "aliasName";
-    String abRegistryDiv = "abRegistryID" ;
-    String publicationLookupDiv = "publicationName";
-    String dbLinkDiv = "dbLinksName";
-    String geneDiv = "geneName";
-    String dataDiv = "dataName";
-    String supplierDiv = "supplierName";
-    String noteDiv = "curatorNoteName";
+    public static final String viewDiv = "viewName";
+    public static final String headerDiv = "headerName";
+    public static final String directAttributionDiv = "directAttributionName";
+    public static final String previousNameDiv = "aliasName";
+    public static final String abRegistryDiv = "abRegistryID" ;
+    public static final String publicationLookupDiv = "publicationName";
+    public static final String dbLinkDiv = "dbLinksName";
+    public static final String geneDiv = "geneName";
+    public static final String dataDiv = "dataName";
+    public static final String supplierDiv = "supplierName";
+    public static final String noteDiv = "curatorNoteName";
 
 }

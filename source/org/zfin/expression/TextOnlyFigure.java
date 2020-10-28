@@ -7,7 +7,7 @@ package org.zfin.expression;
  */
 public class TextOnlyFigure extends Figure {
 
-    public Type getType(){
-        return Type.TOD;
+    public FigureType getType(){
+        return FigureType.TOD;
     }
 }

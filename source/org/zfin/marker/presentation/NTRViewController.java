@@ -82,6 +82,6 @@ public class NTRViewController {
                                                  @PathVariable("zdbID") String zdbID
     ) throws Exception {
         setBaseBean(model, zdbID);
-        return "marker/region/region-view.page";
+        return "marker/region/region-view";
     }
 }

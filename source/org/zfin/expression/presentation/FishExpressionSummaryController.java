@@ -13,7 +13,6 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PresentationConverter;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Fish;
-import org.zfin.mutant.Genotype;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.repository.RepositoryFactory;
@@ -61,7 +60,7 @@ public class FishExpressionSummaryController {
         model.addAttribute("figureSummaryDisplayList", figureSummaryDisplayList);
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, genox.getFish().getName() + " Expression Figure Summary");
-        return "expression/genotype-figure-summary.page";
+        return "expression/genotype-figure-summary";
     }
 
 
@@ -92,7 +91,7 @@ public class FishExpressionSummaryController {
         model.addAttribute("figureSummaryDisplayList", figureSummaryDisplayList);
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, fish.getName() + " Expression Figure Summary");
-        return "expression/genotype-figure-summary.page";
+        return "expression/genotype-figure-summary";
 
     }
 
@@ -122,7 +121,7 @@ public class FishExpressionSummaryController {
         model.addAttribute("figureSummaryDisplayList", figureSummaryDisplayList);
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, fish.getName() + " Expression Figure Summary");
-        return "expression/genotype-figure-summary.page";
+        return "expression/genotype-figure-summary";
 
     }
 
@@ -152,7 +151,7 @@ public class FishExpressionSummaryController {
         model.addAttribute("figureSummaryDisplayList", figureSummaryDisplayList);
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, sequenceTargetingReagent.getName() + " Expression Figure Summary");
-        return "expression/genotype-figure-summary.page";
+        return "expression/genotype-figure-summary";
 
     }
 
@@ -180,7 +179,7 @@ public class FishExpressionSummaryController {
         model.addAttribute("figureCount", getExpressionRepository().getExpressionFigureCountForFish(fish));
         model.addAttribute("figureSummaryDisplayList", figureExpressionSummaryDisplayList);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, fish.getName() + " Expression Figure Summary");
-        return "expression/fish-expression-figure-summary.page";
+        return "expression/fish-expression-figure-summary";
 
     }
 }

@@ -89,7 +89,7 @@ public class AlignmentsControllerTest extends AbstractDatabaseTest {
         BindException errors = new BindException(request, "test");
         Model model = new ExtendedModelMap();
         String returnView = controller.handle(zdbID, new CandidateBean(), errors, model);
-        assertEquals("reno/alignments-list.page", returnView);
+        assertEquals("reno/alignments-list", returnView);
 
         CandidateBean formBean;
         assertNotNull("Returns valid model", model);

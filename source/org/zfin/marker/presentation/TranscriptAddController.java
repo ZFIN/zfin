@@ -57,7 +57,7 @@ public class TranscriptAddController {
         model.addAttribute("types", types);
         model.addAttribute("statuses", statuses);
 
-        return "marker/transcript-add.page";
+        return "marker/transcript-add";
     }
 
 

@@ -30,14 +30,14 @@ public class LineDesignationController {
         model.addAttribute(LookupStrings.FORM_BEAN, lineDesignationBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Line Designations");
 
-        return "feature/line-designation.page";
+        return "feature/line-designation";
     }
 
     @RequestMapping(value = "/features-for-lab/{zdbID}")
     public String getFeatureForLab(@PathVariable String zdbID, Model model) throws Exception {
         model.addAttribute("features", RepositoryFactory.getFeatureRepository().getFeaturesForLab(zdbID, 50));
         model.addAttribute("labID", zdbID);
-        return "feature/features-for-lab.insert";
+        return "feature/features-for-lab";
     }
 
     @RequestMapping(value = "/alleles/{prefix}")
@@ -65,7 +65,7 @@ public class LineDesignationController {
 
         model.addAttribute(LookupStrings.FORM_BEAN, allelesForPrefixBean);
 
-        return "feature/alleles-for-feature-prefix.insert";
+        return "feature/alleles-for-feature-prefix";
     }
 
     private void processCurrentLabs(List<FeatureLabEntry> featureLabEntries, Map<String, LabEntry> labEntries) {

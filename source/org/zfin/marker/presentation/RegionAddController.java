@@ -70,7 +70,7 @@ public class RegionAddController {
     @RequestMapping(value = "/nonTranscribedRegion-add", method = RequestMethod.GET)
     public String showRegionAddForm(Model model) {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add New NTR");
-        return "marker/nonTranscribedRegion-add.page";
+        return "marker/nonTranscribedRegion-add";
     }
 
     @RequestMapping(value = "/nonTranscribedRegion-add", method = RequestMethod.POST)

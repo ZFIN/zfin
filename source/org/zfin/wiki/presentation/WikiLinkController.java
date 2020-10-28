@@ -42,6 +42,6 @@ public class WikiLinkController {
             logger.error("Unable to find antibody for key: " + zdbID);
         }
 
-        return "wiki/wiki-link.insert";
+        return "wiki/wiki-link";
     }
 }

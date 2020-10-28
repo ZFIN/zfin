@@ -13,7 +13,7 @@
     <!--the rest of this could get moved into its own webapp file-->
 
     <import resource="spring/mvc-webapp.xml"/>
-    <import resource="spring/tiles.xml"/>
+    <import resource="spring/views.xml"/>
 
 
 </beans>

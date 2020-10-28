@@ -22,10 +22,7 @@ import org.zfin.antibody.AntibodyExternalNote;
 import org.zfin.construct.ConstructComponent;
 import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.presentation.ConstructComponentPresentation;
-import org.zfin.expression.Figure;
-import org.zfin.expression.FigureFigure;
-import org.zfin.expression.Image;
-import org.zfin.expression.TextOnlyFigure;
+import org.zfin.expression.*;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupEntry;
@@ -1379,7 +1376,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             String figID = (String) record[4];
             String label = (String) record[5];
             Figure figure = null;
-            if (label != null && label.equals(Figure.Type.TOD.toString())) {
+            if (label != null && label.equals(FigureType.TOD.toString())) {
                 figure = new TextOnlyFigure();
             } else {
                 figure = new FigureFigure();

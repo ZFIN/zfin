@@ -2,13 +2,13 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@attribute name="results" required="true" type="java.util.List" %>
-<c:set var="aliasAttribute" value="<%=ResultService.SYNONYMS%>"/>
-<c:set var="commentAttribute" value="<%=ResultService.COMMENT%>"/>
-<c:set var="locationAttribute" value="<%=ResultService.LOCATION%>"/>
-<c:set var="ccgAttribute" value="<%=ResultService.CLONE_CONTAINS_GENES%>"/>
-<c:set var="ceAttribute" value="<%=ResultService.CLONE_ENCODED_BY_GENES%>"/>
-<c:set var="problemTypeAttribute" value="<%=ResultService.CLONE_PROBLEM_TYPE%>"/>
-<c:set var="qualityAttribute" value="<%=ResultService.QUALITY%>"/>
+<c:set var="aliasAttribute" value="${ResultService.SYNONYMS}"/>
+<c:set var="commentAttribute" value="${ResultService.COMMENT}"/>
+<c:set var="locationAttribute" value="${ResultService.LOCATION}"/>
+<c:set var="ccgAttribute" value="${ResultService.CLONE_CONTAINS_GENES}"/>
+<c:set var="ceAttribute" value="${ResultService.CLONE_ENCODED_BY_GENES}"/>
+<c:set var="problemTypeAttribute" value="${ResultService.CLONE_PROBLEM_TYPE}"/>
+<c:set var="qualityAttribute" value="${ResultService.QUALITY}"/>
 
 <table class="table-results searchresults" style="display: none;">
     <th>Name</th>

@@ -84,7 +84,7 @@ public class SequenceTargetingReagentAddController {
     protected String showForm(Model model) throws Exception {
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add Sequence Targeting Reagent");
-        return "marker/sequence-targeting-reagent-add.page";
+        return "marker/sequence-targeting-reagent-add";
     }
 
     @RequestMapping(value = "/sequence-targeting-reagent-add", method = RequestMethod.POST)

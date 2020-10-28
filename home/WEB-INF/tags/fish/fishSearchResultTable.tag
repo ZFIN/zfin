@@ -20,9 +20,9 @@
         Sort by
         <label for="sort-by-pulldown">
             <select name="sortByPulldown" id="sort-by-pulldown">
-                <option value="<%= SortBy.BEST_MATCH %>" id="sort-by-best-match">Fish (Best Match)</option>
-                <option value="<%= SortBy.GENES %>" id="sort-by-genes">Affected Genomic Region</option>
-                <option value="<%= SortBy.FEATURES %>" id="sort-by-features">Line/Reagent</option>
+                <option value="${SortBy.BEST_MATCH}" id="sort-by-best-match">Fish (Best Match)</option>
+                <option value="${SortBy.GENES}" id="sort-by-genes">Affected Genomic Region</option>
+                <option value="${SortBy.FEATURES}" id="sort-by-features">Line/Reagent</option>
             </select>
         </label>
     </div>--%>
@@ -125,7 +125,7 @@
                     </c:if>
                     <%-- case of multiple figures --%>
                     <c:if test="${result.phenotypeFigureCount > 1}">
-                        <a href="phenotype-summary?fishID=${result.fish.fishID}&<%= request.getQueryString()%>">
+                        <a href="phenotype-summary?fishID=${result.fish.fishID}&${pageContext.request.queryString}">
                             <zfin:choice choicePattern="0# Figures| 1# Figure| 2# Figures" includeNumber="true"
                                          integerEntity="${result.phenotypeFigureCount}"/>
                         </a>

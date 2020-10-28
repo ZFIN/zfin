@@ -15,7 +15,7 @@ The form bean has to extend PaginationBean to make this work.
                     <td align="center" valign="top">
                         <c:choose>
                             <c:when test="${!paginationBean.firstPage}">
-                                <a href="${paginationBean.actionUrl}<%= PaginationBean.PAGE%>=${paginationBean.previousPage}">&laquo;
+                                <a href="${paginationBean.actionUrl}${PaginationBean.PAGE}=${paginationBean.previousPage}">&laquo;
                                     previous</a>
                             </c:when>
                             <c:otherwise>
@@ -23,12 +23,12 @@ The form bean has to extend PaginationBean to make this work.
                             </c:otherwise>
                         </c:choose>
                         <c:if test="${paginationBean.showFirstPage}">
-                            <a href="${paginationBean.actionUrl}<%= PaginationBean.PAGE%>=1">1</a>
+                            <a href="${paginationBean.actionUrl}${PaginationBean.PAGE}=1">1</a>
                         </c:if><c:if test="${paginationBean.elisionForLowerPages}">
                         ...
                     </c:if><c:forEach var="currentPage" items="${paginationBean.pageList}">
                         <c:if test="${currentPage != paginationBean.page}">
-                            <a href="${paginationBean.actionUrl}<%= PaginationBean.PAGE%>=${currentPage}">
+                            <a href="${paginationBean.actionUrl}${PaginationBean.PAGE}=${currentPage}">
                                     ${currentPage}</a>
                         </c:if>
                         <c:if test="${currentPage == paginationBean.page}">
@@ -39,11 +39,11 @@ The form bean has to extend PaginationBean to make this work.
                             ...
                         </c:if>
                         <c:if test="${paginationBean.showLastPage}">
-                            <a href="${paginationBean.actionUrl}<%= PaginationBean.PAGE%>=${paginationBean.totalNumPages}">${paginationBean.totalNumPages}</a>
+                            <a href="${paginationBean.actionUrl}${PaginationBean.PAGE}=${paginationBean.totalNumPages}">${paginationBean.totalNumPages}</a>
                         </c:if>
                         <c:choose>
                             <c:when test="${!paginationBean.lastPage}">
-                                <a href="${paginationBean.actionUrl}<%= PaginationBean.PAGE%>=${paginationBean.nextPage}">next &raquo;</a>
+                                <a href="${paginationBean.actionUrl}${PaginationBean.PAGE}=${paginationBean.nextPage}">next &raquo;</a>
                             </c:when>
                             <c:otherwise>
                     <span class="disabled">

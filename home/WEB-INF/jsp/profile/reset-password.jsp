@@ -1,28 +1,29 @@
 <%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<script>
-    $(document).ready(function() {
-        $('.password-input').on('input', function() {
-            var pass1 = $('#pass1');
-            var pass2 = $('#pass2');
-            var submit = $('#submit');
-            var invalid = pass1.val() === undefined
-                || pass2.val() === undefined
-                || pass1.val() !== pass2.val();
-            submit.prop('disabled', invalid);
+<z:page>
+    <script>
+        $(document).ready(function() {
+            $('.password-input').on('input', function() {
+                var pass1 = $('#pass1');
+                var pass2 = $('#pass2');
+                var submit = $('#submit');
+                var invalid = pass1.val() === undefined
+                    || pass2.val() === undefined
+                    || pass1.val() !== pass2.val();
+                submit.prop('disabled', invalid);
+            });
         });
-    });
-</script>
+    </script>
 
-<link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
+    <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
 
     <c:choose>
         <c:when test="${allowReset}">
 
 
-            <c:set var='secure' value="<%=ZfinPropertiesEnum.SECURE_HTTP.toString()%>"/>
-            <c:set var='domain' value="<%=ZfinPropertiesEnum.DOMAIN_NAME.toString()%>"/>
+            <c:set var='secure' value="${ZfinPropertiesEnum.SECURE_HTTP.toString()}"/>
+            <c:set var='domain' value="${ZfinPropertiesEnum.DOMAIN_NAME.toString()}"/>
             <c:set var='secureServer' value="${secure}${domain}"/>
 
             <div class="login-container">
@@ -78,10 +79,4 @@
             </div>
         </c:otherwise>
     </c:choose>
-
-
-
-
-
-
-
+</z:page>

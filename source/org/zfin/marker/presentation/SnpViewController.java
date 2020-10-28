@@ -68,6 +68,6 @@ public class SnpViewController {
         model.addAttribute(LookupStrings.FORM_BEAN, snpMarkerBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, marker.getType().toString() + marker.getAbbreviation());
 
-        return "marker/snp/snp-view.page";
+        return "marker/snp/snp-view";
     }
 }

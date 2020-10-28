@@ -38,14 +38,14 @@ public class OntologySearchController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "AO / GO Search");
         form.setOntologyName(Ontology.AOGODO.getOntologyName());
         model.addAttribute("formBean", form);
-        return "ontology/search-form.page";
+        return "ontology/search-form";
     }
 
     @RequestMapping(value = "/show-anatomy-terms-by-stage", method = RequestMethod.GET)
     public String showAnatomyTermsByStage(@ModelAttribute("formBean") AnatomySearchBean anatomyForm) throws Exception {
         LOG.debug("Start Action Class");
         doTermSearchByStage(anatomyForm);
-        return "ontology/show-anatomy-terms-by-stage.page";
+        return "ontology/show-anatomy-terms-by-stage";
     }
 
     private void doTermSearchByStage(AnatomySearchBean anatomyForm) {

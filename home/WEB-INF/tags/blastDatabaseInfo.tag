@@ -11,7 +11,6 @@
 </span>
 </c:if>
 <span>
-    <c:set var="orginationType"><%= Origination.Type.GENERATED %></c:set>
     ${database.database.description}
     <c:if test="${!empty database.databaseStatistics.modifiedDate}">
         (<fmt:formatDate value="${database.databaseStatistics.modifiedDate}"  dateStyle="medium" />)

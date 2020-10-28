@@ -19,7 +19,7 @@ public class HibernateStatisticsController {
         Statistics stats = HibernateUtil.getSessionFactory().getStatistics();
         stats.setStatisticsEnabled(true);
         form.setStatistics(stats);
-        return "hibernate-statistics-view.page";
+        return "dev-tools/hibernate-statistics-view";
     }
 
     @RequestMapping("/view-hibernate-statistics/reset")

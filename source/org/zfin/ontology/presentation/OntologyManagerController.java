@@ -16,7 +16,7 @@ public class OntologyManagerController {
     protected String handle(@ModelAttribute("formBean") OntologyBean form,
                             Model model) throws Exception {
 
-        OntologyBean.ActionType actionType = form.getActionType();
+        ActionType actionType = form.getActionType();
         if (actionType != null) {
             switch (actionType) {
                 case SERIALIZE_ONTOLOGIES:
@@ -39,6 +39,6 @@ public class OntologyManagerController {
         // allow handleCurationEvent of the page without submitting the action again.
         if (actionType != null)
             return "redirect:ontology-caching";
-        return "dev-tools/ontology-manager.page";
+        return "dev-tools/ontology-manager";
     }
 }

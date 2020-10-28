@@ -23,6 +23,7 @@ import org.zfin.profile.Person;
 import org.zfin.profile.service.BeanFieldUpdate;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
+import org.zfin.publication.PublicationType;
 import org.zfin.publication.PubmedPublicationAuthor;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -89,10 +90,10 @@ public class PublicationEditController {
     public String showNewPublicationForm(@ModelAttribute PublicationBean publicationBean, Model model) {
         // default type should be journal
         Publication publication = new Publication();
-        publication.setType(Publication.Type.JOURNAL);
+        publication.setType(PublicationType.JOURNAL);
         publicationBean.setPublication(publication);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add Publication");
-        return "publication/add-publication.page";
+        return "publication/add-publication";
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.POST)
@@ -103,7 +104,7 @@ public class PublicationEditController {
 
         if (result.hasErrors()) {
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add Publication");
-            return "publication/add-publication.page";
+            return "publication/add-publication";
         }
 
         Publication newPublication = new Publication();
@@ -116,7 +117,7 @@ public class PublicationEditController {
         } catch (Exception e) {
             model.addAttribute("error", "Error saving publication.");
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add Publication");
-            return "publication/add-publication.page";
+            return "publication/add-publication";
         }
         return "redirect:/" + newPublication.getZdbID();
     }
@@ -138,7 +139,7 @@ public class PublicationEditController {
         model.addAttribute("allowCuration", publicationService.allowCuration(publication));
         model.addAttribute("hasCorrespondence", publicationService.hasCorrespondence(publication));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Edit Pub: " + publication.getTitle());
-        return "publication/edit-publication.page";
+        return "publication/edit-publication";
     }
 
     @RequestMapping(value = "/{zdbID}/edit", method = RequestMethod.POST)
@@ -160,7 +161,7 @@ public class PublicationEditController {
         }
 
         if (result.hasErrors()) {
-            return "publication/edit-publication.page";
+            return "publication/edit-publication";
         }
 
         try {
@@ -171,7 +172,7 @@ public class PublicationEditController {
             }
         } catch (Exception e) {
             model.addAttribute("error", "Error saving publication.");
-            return "publication/edit-publication.page";
+            return "publication/edit-publication";
         }
         return "redirect:/" + existingPublication.getZdbID();
     }
@@ -183,8 +184,8 @@ public class PublicationEditController {
     }
 
     @ModelAttribute("typeList")
-    public List<Publication.Type> getTypeList() {
-        return Arrays.asList(Publication.Type.values());
+    public List<PublicationType> getTypeList() {
+        return Arrays.asList(PublicationType.values());
     }
 
     @RequestMapping(value = "/{zdbID}/link")
@@ -221,7 +222,7 @@ public class PublicationEditController {
         model.addAttribute("hasCorrespondence", publicationService.hasCorrespondence(publication));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Link Authors: " + publication.getTitle());
 
-        return "publication/link-authors.page";
+        return "publication/link-authors";
     }
 
     @RequestMapping(value = "/{zdbID}/author-strings")

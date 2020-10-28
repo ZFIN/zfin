@@ -37,7 +37,7 @@ public class MarkerGoViewController {
         model.addAttribute("markerGoViewTableRows",markerGoService.getMarkerGoViewTableRows(marker));
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "GO Details: " + marker.getAbbreviation());
 
-        return "marker/marker-go-view.page";
+        return "marker/marker-go-view";
     }
 
     @RequestMapping("/marker-go-edit/{markerZdbId}")
@@ -49,7 +49,7 @@ public class MarkerGoViewController {
         model.addAttribute("marker",marker);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "GO Update: " + marker.getAbbreviation());
 
-        return "marker/marker-go-edit.page";
+        return "marker/marker-go-edit";
     }
 
 

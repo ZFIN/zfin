@@ -18,7 +18,7 @@
         <jsp:invoke fragment="resourcesList"/>
     </ul>
     <p>
-        <b>Need additional assistance? <a href="mailto:<%= ZfinPropertiesEnum.NOMEN_COORDINATOR.value()%>">Contact the
+        <b>Need additional assistance? <a href="mailto:${ZfinPropertiesEnum.NOMEN_COORDINATOR.value()}">Contact the
             Nomenclature Coordinator</a></b>
     </p>
 

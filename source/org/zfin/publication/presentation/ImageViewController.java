@@ -1,6 +1,7 @@
 package org.zfin.publication.presentation;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,12 +11,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
-import org.zfin.figure.presentation.*;
+import org.zfin.figure.presentation.FigureExpressionSummary;
+import org.zfin.figure.presentation.FigureFromPublicationLink;
+import org.zfin.figure.presentation.FigureGalleryImagePresentation;
+import org.zfin.figure.presentation.FigurePhenotypeSummary;
 import org.zfin.figure.repository.FigureRepository;
 import org.zfin.figure.service.FigureViewService;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Clone;
-import org.zfin.mutant.PhenotypeWarehouse;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.publication.repository.PublicationRepository;
@@ -24,11 +27,7 @@ import org.zfin.search.Category;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import static org.zfin.repository.RepositoryFactory.getFigureRepository;
-import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
 
 /**
  * For display of figure information
@@ -84,7 +83,7 @@ public class ImageViewController {
             model.addAttribute("probe", probe);
         }
 
-        return "figure/image-view.page";
+        return "figure/image-view";
     }
 
 
@@ -100,7 +99,7 @@ public class ImageViewController {
         LOG.debug("Image.Figure zdbID: " + image.getFigure().getZdbID());
         form.setImage(image);
         form.setExpressionGenes(figureViewService.getExpressionGenes(image.getFigure()));
-        return "image-popup.page";
+        return "publication/image-popup";
     }
 
     @RequestMapping("/{zdbID}/summary")
@@ -150,7 +149,7 @@ public class ImageViewController {
         }
 
         model.addAttribute("bean", bean);
-        return "figure/figure-summary.fragment";
+        return "figure/figure-summary";
     }
 
 }

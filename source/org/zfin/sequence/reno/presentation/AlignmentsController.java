@@ -42,9 +42,9 @@ public class AlignmentsController {
             errors.reject("no message key", "Invalidate RunCandidate zdbID[" + runCandidateZdbID + "]");
         }
         model.addAttribute(LookupStrings.FORM_BEAN, candidateBean);
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, " Redundancy Candidate: "+runCandidateZdbID);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "ReNo Redundancy Candidate: "+runCandidateZdbID);
 
-        return "reno/alignments-list.page";
+        return "reno/alignments-list";
 
     }
 

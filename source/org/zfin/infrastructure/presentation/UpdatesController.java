@@ -24,7 +24,7 @@ public class UpdatesController {
         model.addAttribute("zdbID", zdbID);
         model.addAttribute("updates", updates);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Updates for " + zdbID);
-        return "infrastructure/view-updates.page";
+        return "infrastructure/view-updates";
     }
 
 }

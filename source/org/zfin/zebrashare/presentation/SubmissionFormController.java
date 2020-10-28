@@ -3,13 +3,9 @@ package org.zfin.zebrashare.presentation;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -30,6 +26,7 @@ import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 import org.zfin.publication.PublicationFileType;
 import org.zfin.publication.PublicationTrackingStatus;
+import org.zfin.publication.PublicationType;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.zebrashare.ZebrashareEditor;
 import org.zfin.zebrashare.repository.ZebrashareRepository;
@@ -74,7 +71,7 @@ public class SubmissionFormController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String home(@ModelAttribute("formBean") SubmissionFormBean formBean) {
-        return "zebrashare/home.page";
+        return "zebrashare/home";
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
@@ -88,7 +85,7 @@ public class SubmissionFormController {
                 formBean.setSubmitterEmail(user.getEmail());
             }
         }
-        return "zebrashare/new-submission.page";
+        return "zebrashare/new-submission";
     }
 
 
@@ -103,7 +100,7 @@ public class SubmissionFormController {
             for (ObjectError error : result.getAllErrors()) {
                 LOG.error(error.toString());
             }
-            return "zebrashare/new-submission.page";
+            return "zebrashare/new-submission";
         }
 
         Publication publication = new Publication();
@@ -111,7 +108,7 @@ public class SubmissionFormController {
         publication.setAuthors(formBean.getAuthors());
         publication.setAbstractText(formBean.getAbstractText());
         publication.setJournal(publicationRepository.getJournalByID("ZDB-JRNL-181119-2"));
-        publication.setType(Publication.Type.UNPUBLISHED);
+        publication.setType(PublicationType.UNPUBLISHED);
         publication.setEntryDate(new GregorianCalendar());
         publication.setPublicationDate(new GregorianCalendar());
         publication.setCuratable(true);
@@ -126,7 +123,7 @@ public class SubmissionFormController {
                     formBean.getDataFile());
         } catch (IOException  e) {
             LOG.error(e);
-            return "zebrashare/new-submission.page";
+            return "zebrashare/new-submission";
         }
 
         zebrashareRepository.addZebrashareSubmissionMetadata(
@@ -146,7 +143,7 @@ public class SubmissionFormController {
         int numCaptions = formBean.getCaptions() == null ? 0 : formBean.getCaptions().length;
         if (numImages != numCaptions) {
             LOG.error("Mismatched number of images and captions: " + numImages + " vs " + numCaptions);
-            return "zebrashare/new-submission.page";
+            return "zebrashare/new-submission";
         }
         Transaction tx = HibernateUtil.createTransaction();
         for (int i = 0; i < imageFiles.length; i++) {
@@ -170,7 +167,7 @@ public class SubmissionFormController {
                 HibernateUtil.currentSession().save(image);
             } catch (IOException e) {
                 LOG.error(e);
-                return "zebrashare/new-submission.page";
+                return "zebrashare/new-submission";
             }
 
         }
@@ -217,7 +214,7 @@ public class SubmissionFormController {
         if (publication.getZdbID() == null) {
             return "redirect:new";
         }
-        return "zebrashare/success.page";
+        return "zebrashare/success";
     }
 
 }

@@ -5,7 +5,7 @@
 
 <c:choose>
     <c:when test="${!empty value.image}">
-        <img class="${className}" src="<%=ZfinPropertiesEnum.IMAGE_LOAD.value()%>/${value.image}">
+        <img class="${className}" src="${ZfinPropertiesEnum.IMAGE_LOAD.value()}/${value.image}">
     </c:when>
     <c:otherwise>
         <img class="${className}" src="/images/LOCAL/smallogo.gif">

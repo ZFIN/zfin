@@ -24,8 +24,6 @@ import org.zfin.sequence.service.TranscriptService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.Arrays;
 
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
@@ -160,7 +158,7 @@ public class TranscriptViewController {
         model.addAttribute(LookupStrings.FORM_BEAN, transcriptBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.TRANSCRIPT.getTitleString() + transcript.getAbbreviation());
 
-        return "marker/transcript/transcript-view.page";
+        return "marker/transcript/transcript-view";
     }
 
 }

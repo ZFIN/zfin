@@ -87,7 +87,7 @@ public class LabController {
 
         // designations // if submit, only show if root
 
-        return "profile/profile-edit.page";
+        return "profile/profile-edit";
     }
 
 
@@ -96,7 +96,7 @@ public class LabController {
         profileService.validateLab(newLab, errors);
 
         if (errors.hasErrors()) {
-            return "profile/profile-edit.page";
+            return "profile/profile-edit";
         }
 
         final Lab lab = profileRepository.getLabById(zdbID);
@@ -131,7 +131,7 @@ public class LabController {
         }
 
         if (errors.hasErrors()) {
-            return "profile/profile-edit.page";
+            return "profile/profile-edit";
         }
 
         return profileService.handleInfoUpdate(errors, lab.getZdbID(), fields, securityPersonZdbId);
@@ -184,21 +184,21 @@ public class LabController {
         model.addAttribute("numOfFeatures", RepositoryFactory.getFeatureRepository().getFeaturesForLabCount(zdbID));
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.LAB.getTitleString() + lab.getName());
-        return "profile/profile-view.page";
+        return "profile/profile-view";
     }
 
 
     @RequestMapping(value = "/lab/create", method = RequestMethod.GET)
     public String createLabSetup(Model model, @ModelAttribute("formBean") Lab lab) {
 		model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add Lab");
-        return "profile/create-lab.page";
+        return "profile/create-lab";
     }
 
     @RequestMapping(value = "/lab/create", method = RequestMethod.POST)
     public String createLab(@ModelAttribute("formBean") Lab lab, BindingResult bindingResult) {
         profileService.validateLab(lab, bindingResult);
         if (bindingResult.hasErrors()) {
-            return "profile/create-lab.page";
+            return "profile/create-lab";
         }
         HibernateUtil.createTransaction();
         profileService.createLab(lab);
