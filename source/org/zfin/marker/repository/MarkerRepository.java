@@ -148,6 +148,8 @@ public interface MarkerRepository {
 
     void addMarkerRelationshipAttribution(MarkerRelationship mrel, Publication attribution, Marker marker);
 
+    void addDBLinkAttribution(DBLink dbLink, Publication attribution, String dataZdbId);
+
     void addDBLinkAttribution(DBLink dbLink, Publication attribution, Marker marker);
 
     /**

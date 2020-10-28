@@ -22,21 +22,13 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.sequence.DBLink;
-import org.zfin.sequence.DisplayGroup;
-import org.zfin.sequence.MarkerDBLink;
-import org.zfin.sequence.ReferenceDatabase;
+import org.zfin.sequence.*;
 import org.zfin.sequence.repository.DisplayGroupRepository;
 import org.zfin.sequence.repository.SequenceRepository;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
-
-import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 @Controller
 @RequestMapping("/marker")
@@ -90,8 +82,9 @@ public class MarkerLinkController {
         DisplayGroup.GroupName group = DisplayGroup.GroupName.getGroup(groupName);
 
         List<LinkDisplay> links = markerRepository.getMarkerDBLinksFast(marker, group);
-        if (groupName.equals(DisplayGroup.GroupName.OTHER_MARKER_PAGES.toString()))
+        if (groupName.equals(DisplayGroup.GroupName.OTHER_MARKER_PAGES.toString())) {
             links.addAll(markerRepository.getVegaGeneDBLinksTranscript(marker, DisplayGroup.GroupName.SUMMARY_PAGE));
+        }
         return links;
     }
 
@@ -107,9 +100,6 @@ public class MarkerLinkController {
         DBLink link = null;
 
         HibernateUtil.createTransaction();
-        // assume there's only one pub coming in on a new db link
-        String pubId = newLink.getReferences().stream().findFirst().get().getZdbID();
-        Publication publication = getPublicationRepository().getPublication(pubId);
 
         if (!errors.hasErrors()) {
             marker = markerRepository.getMarkerByID(markerId);
@@ -120,14 +110,7 @@ public class MarkerLinkController {
             if (CollectionUtils.isNotEmpty(links)) {
                 for (DBLink dbLink : marker.getDbLinks()) {
                     if (dbLink.getReferenceDatabase().equals(refDB) && dbLink.getAccessionNumber().equals(accessionNo)) {
-                        List<Publication> publications = dbLink.getPublications().stream().map(PublicationAttribution::getPublication).collect(Collectors.toList());
-                        if (publications.contains(publication)) {
-                            errors.reject("marker.dbLink.duplicate");
-                        } else {
-                            PublicationAttribution pa = getPublicationRepository().createPublicationAttribution(publication, marker);
-                            dbLink.getPublications().add(pa);
-                            link = dbLink;
-                        }
+                        errors.reject("marker.link.duplicate");
                     }
                 }
             }
@@ -137,8 +120,11 @@ public class MarkerLinkController {
             throw new InvalidWebRequestException("Invalid marker DBLink", errors);
         }
 
+        Iterator<MarkerReferenceBean> references = newLink.getReferences().iterator();
+
         if (link == null) {
             final String length = newLink.getLength();
+            String pubId = references.next().getZdbID();
             if (StringUtils.isNotEmpty(length)) {
                 int len = 0;
                 try {
@@ -152,8 +138,58 @@ public class MarkerLinkController {
                 link = markerRepository.addDBLink(marker, accessionNo, refDB, pubId);
             }
         }
+        while (references.hasNext()) {
+            Publication publication = publicationRepository.getPublication(references.next().getZdbID());
+            markerRepository.addDBLinkAttribution(link, publication, marker);
+        }
         HibernateUtil.flushAndCommitCurrentSession();
 
+        return getLinkDisplayById(link.getZdbID());
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/link/{linkId}", method = RequestMethod.POST)
+    public LinkDisplay updateMarkerLink(@PathVariable String linkId,
+                                        @Valid @RequestBody LinkDisplay updatedLink,
+                                        BindingResult errors) {
+        DBLink link = sequenceRepository.getDBLinkByID(linkId);
+        boolean accessionUpdated = !StringUtils.equals(link.getAccessionNumber(), updatedLink.getAccession());
+        boolean databaseUpdated = !StringUtils.equals(link.getReferenceDatabase().getZdbID(), updatedLink.getReferenceDatabaseZdbID());
+
+        ReferenceDatabase database = sequenceRepository.getReferenceDatabaseByID(updatedLink.getReferenceDatabaseZdbID());;
+        if (!errors.hasErrors() && (accessionUpdated || databaseUpdated)) {
+            DBLink existingLink = sequenceRepository.getDBLinkByAlternateKey(updatedLink.getAccession(), link.getDataZdbID(), database);
+            if (existingLink != null) {
+                errors.reject("marker.link.duplicate");
+            }
+        }
+
+        if (errors.hasErrors()) {
+            throw new InvalidWebRequestException("Invalid marker DBLink", errors);
+        }
+
+        List<String> currentPublicationIds = link.getPublications().stream()
+                .map(PublicationAttribution::getPublication)
+                .map(Publication::getZdbID)
+                .collect(Collectors.toList());
+        List<String> updatedPublicationIds = updatedLink.getReferences().stream()
+                .map(MarkerReferenceBean::getZdbID)
+                .collect(Collectors.toList());
+        Collection<String> publicationsToAdd = CollectionUtils.subtract(updatedPublicationIds, currentPublicationIds);
+        Collection<String> publicationsToRemove = CollectionUtils.subtract(currentPublicationIds, updatedPublicationIds);
+
+        HibernateUtil.createTransaction();
+        link.setAccessionNumber(updatedLink.getAccession());
+        link.setReferenceDatabase(database);
+        for (String pubId : publicationsToAdd) {
+            Publication publication = publicationRepository.getPublication(pubId);
+            markerRepository.addDBLinkAttribution(link, publication, link.getDataZdbID());
+        }
+        for (String pubId : publicationsToRemove) {
+            infrastructureRepository.deleteRecordAttribution(linkId, pubId);
+        }
+        HibernateUtil.flushAndCommitCurrentSession();
+        HibernateUtil.currentSession().evict(link);
         return getLinkDisplayById(link.getZdbID());
     }
 
