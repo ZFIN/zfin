@@ -36,7 +36,7 @@ const PubGeneTable = ({pubId}) => {
         {
             label: 'Expression data',
             content: row => (row.expressionFigures > 0 &&
-                <a href={`/action/marker/${row.id}/expression`}>{row.expressionFigures} figures ({row.expressionInSitu} in situ) from {row.expressionPublication} pubs</a>
+                <a href={`/action/marker/${row.id}/expression`}>{row.expressionFigures} figures  (<a href={`/action/expression/results?geneField=${row.name}&assayName=mRNA+in+situ+hybridization`}>{row.expressionInSitu} in situ</a>)  from {row.expressionPublication} pubs</a>
             ),
 
             width: '150px',
