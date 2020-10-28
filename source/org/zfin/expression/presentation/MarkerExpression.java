@@ -12,6 +12,7 @@ public class MarkerExpression {
     private WildTypeExpression wildTypeStageExpression;
     private String geoLink;
     private LinkDisplay expressionAtlasLink;
+    private int inSituFigCount;
 
     public LinkDisplay getExpressionAtlasLink() {
         return expressionAtlasLink;
@@ -20,6 +21,7 @@ public class MarkerExpression {
     public void setExpressionAtlasLink(LinkDisplay expressionAtlasLink) {
         this.expressionAtlasLink = expressionAtlasLink;
     }
+
 
 
     private String geoGeneSymbol ;
@@ -83,6 +85,22 @@ public class MarkerExpression {
 
     public void setWildTypeStageExpression(WildTypeExpression wildTypeStageExpression) {
         this.wildTypeStageExpression = wildTypeStageExpression;
+    }
+
+    public int getInSituFigCount() {
+        return inSituFigCount;
+    }
+
+    public void setInSituFigCount(int inSituFigCount) {
+        this.inSituFigCount = inSituFigCount;
+    }
+
+    public MarkerExpressionInstance getAllMarkerExpressionInstance() {
+        return allMarkerExpressionInstance;
+    }
+
+    public void setAllMarkerExpressionInstance(MarkerExpressionInstance allMarkerExpressionInstance) {
+        this.allMarkerExpressionInstance = allMarkerExpressionInstance;
     }
 
     public String getGeoLink() {
