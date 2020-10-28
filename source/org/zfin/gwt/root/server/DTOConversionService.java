@@ -603,7 +603,7 @@ public class DTOConversionService {
     }
 
     public static Feature convertToFeature(FeatureDTO featureDTO) {
-        DateFormat dateFormat = new SimpleDateFormat("mm/dd/yy");
+        DateFormat dateFormat = new SimpleDateFormat("mm-dd-yyyy");
         Date entryDate;
         Feature feature = new Feature();
         feature.setAbbreviation(escapeString(featureDTO.getAbbreviation()));

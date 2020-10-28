@@ -4,6 +4,7 @@ import com.google.gwt.user.client.Window;
 import org.zfin.gwt.root.dto.FeatureDTO;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.gwt.root.dto.NoteDTO;
+import org.zfin.gwt.root.util.CollectionUtils;
 import org.zfin.gwt.root.util.StringUtils;
 
 
@@ -35,9 +36,12 @@ public class FeatureValidationService {
                 return "Please enter date in mm/dd/yy format";
             }
         }
-        for (NoteDTO note : featureDTO.getPublicNoteList()) {
-            if (StringUtils.isEmpty(note.getNoteType())){
-                return "please enter note type";
+
+        if (featureDTO.getPublicNoteList()!=null) {
+            for (NoteDTO note : featureDTO.getPublicNoteList()) {
+                if (StringUtils.isEmpty(note.getNoteType())) {
+                    return "please enter note type";
+                }
             }
         }
 
