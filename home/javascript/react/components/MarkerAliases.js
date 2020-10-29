@@ -1,67 +1,102 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import MarkerAliasEditModal from './MarkerAliasEditModal';
-import NoData from './NoData';
+import useAddEditDeleteForm from '../hooks/useAddEditDeleteForm';
+import AddEditList from './AddEditList';
+import AddEditDeleteModal from './AddEditDeleteModal';
+import FormGroup from './form/FormGroup';
+import InputField from './form/InputField';
+import PublicationInput from './PublicationInput';
 
 const MarkerAliases = ({markerId, aliases, setAliases}) => {
-
     const [modalAlias, setModalAlias] = useState(null);
+    const isEdit = modalAlias && modalAlias.zdbID;
 
-    const handleEditClick = (event, alias) => {
-        event.preventDefault();
-        setModalAlias(alias)
-    }
+    const {
+        pushFieldValue,
+        removeFieldValue,
+        values,
+        modalProps
+    } = useAddEditDeleteForm({
+        addUrl: `/action/marker/${markerId}/aliases`,
+        editUrl: isEdit ? `/action/marker/alias/${modalAlias.zdbID}` : '',
+        deleteUrl: isEdit ? `/action/marker/alias/${modalAlias.zdbID}` : '',
+        onSuccess: () => setModalAlias(null),
+        items: aliases,
+        setItems: setAliases,
+        defaultValues: modalAlias,
+        validate: values => {
+            if (values && values.references.length === 0) {
+                return 'At least one reference is required';
+            }
+            return false;
+        },
+    });
 
-    const handleAddClick = () => {
-        setModalAlias({
-            alias: '',
-            references: [{ zdbID: '' }],
-        });
-    }
-
-    const handleDelete = () => {
-        setAliases(aliases.filter(alias => alias.zdbID !== modalAlias.zdbID));
-    }
-
-    const handleAdd = (newAlias) => {
-        setAliases([
-            ...aliases,
-            newAlias
-        ]);
-    }
-
-    const handleEdit = (updated) => {
-        const updatedIdx = aliases.findIndex(alias => alias.zdbID === modalAlias.zdbID);
-        setAliases([
-            ...aliases.slice(0, updatedIdx),
-            updated,
-            ...aliases.slice(updatedIdx + 1)
-        ]);
+    const formatAlias = (alias) => {
+        return <>{alias.alias} {alias.references.length > 0 && <>({alias.references.length})</>}</>
     }
 
     return (
         <>
-            {aliases.length === 0 && <NoData placeholder='None' />}
-
-            <ul className='list-unstyled'>
-                {aliases.map(alias => (
-                    <li key={alias.zdbID}>
-                        {alias.alias} {alias.references.length > 0 && <>({alias.references.length})</>}
-                        <a className='show-on-hover px-1' href='#' onClick={e => handleEditClick(e, alias)}>Edit</a>
-                    </li>
-                ))}
-            </ul>
-
-            <button type='button' className='btn btn-link px-0' onClick={handleAddClick}>Add</button>
-
-            <MarkerAliasEditModal
-                alias={modalAlias}
-                markerId={markerId}
-                onAdd={handleAdd}
-                onClose={() => setModalAlias(null)}
-                onDelete={handleDelete}
-                onEdit={handleEdit}
+            <AddEditList
+                formatItem={formatAlias}
+                items={aliases}
+                newItem={{
+                    alias: '',
+                    references: [{ zdbID: '' }],
+                }}
+                setModalItem={setModalAlias}
             />
+
+            <AddEditDeleteModal {...modalProps} itemType='Previous Name'>
+                {values && <>
+                    <FormGroup
+                        inputClassName='col-md-10'
+                        label='Name'
+                        id='alias'
+                        field='alias'
+                        validate={value => value ? false : 'An alias is required'}
+                    />
+
+                    <div className='form-group row'>
+                        <label className='col-md-2 col-form-label'>Citations</label>
+                        <div className='col-md-10'>
+                            {
+                                values.references.map((reference, idx) => (
+                                    <div key={idx} className={`d-flex align-items-baseline ${idx > 0 ? 'mt-2' : ''}`}>
+                                        <div className='flex-grow-1'>
+                                            <InputField
+                                                tag={PublicationInput}
+                                                field={`references.${idx}.zdbID`}
+                                                validate={value => {
+                                                    if (!value) {
+                                                        return 'A publication ZDB ID is required';
+                                                    }
+                                                    return false
+                                                }}
+                                            />
+                                        </div>
+                                        <button
+                                            type='button'
+                                            onClick={() => removeFieldValue('references', idx)}
+                                            className='btn btn-link'
+                                        >
+                                            <i className='fas fa-times' />
+                                        </button>
+                                    </div>
+                                ))
+                            }
+                            <button
+                                type='button'
+                                className='btn btn-link px-0'
+                                onClick={() => pushFieldValue('references', { zdbID: '' })}
+                            >
+                                Add Citation
+                            </button>
+                        </div>
+                    </div>
+                </>}
+            </AddEditDeleteModal>
         </>
     )
 };
