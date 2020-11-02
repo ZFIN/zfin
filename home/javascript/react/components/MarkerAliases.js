@@ -48,7 +48,7 @@ const MarkerAliases = ({markerId, aliases, setAliases}) => {
                 setModalItem={setModalAlias}
             />
 
-            <AddEditDeleteModal {...modalProps} itemType='Previous Name'>
+            <AddEditDeleteModal {...modalProps} header='Previous Name'>
                 {values && <>
                     <FormGroup
                         inputClassName='col-md-10'

@@ -71,7 +71,7 @@ const MarkerEditGenomeResources = ({markerId, group = 'other marker pages'}) => 
                 setModalItem={setModalLink}
             />
 
-            <AddEditDeleteModal {...modalProps} itemType='Genome Resource'>
+            <AddEditDeleteModal {...modalProps} header='Genome Resource'>
                 {values && <>
                     <FormGroup
                         inputClassName='col-md-10'
