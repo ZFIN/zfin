@@ -26,7 +26,7 @@ public class FigurePresentation extends EntityPresentation {
         Figure figure = new FigureFigure();
         figure.setZdbID(zdbID);
         figure.setLabel(linkText);
-        return getLink(figure);
+        return getSimpleLink(figure);
     }
 
     /**
