@@ -39,8 +39,9 @@ export default function useAddEditDeleteForm({
                         // react-form gets a little confused when we set a fieldMeta with the field 'references'. We
                         // should probably be using the nested field version (i.e. 'references.0.zdbID') but we can't do
                         // that now because it would break the existing STR editing interface. So for now, limit
-                        // field-specific errors to just 'alias'
-                        if (fieldError.field === 'alias') {
+                        // field-specific errors to just simple fields
+                        const fieldValue = formInstance.getFieldValue(fieldError.field);
+                        if (fieldValue !== undefined && !Array.isArray(fieldValue)) {
                             formInstance.setFieldMeta(fieldError.field, { error: fieldError.message });
                         } else {
                             formInstance.setMeta({ serverError: fieldError.message });
