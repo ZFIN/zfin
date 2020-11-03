@@ -5,7 +5,7 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import useAddEditDeleteForm from '../hooks/useAddEditDeleteForm';
 import FormGroup from '../components/form/FormGroup';
 import InputField from '../components/form/InputField';
-import PublicationInput from '../components/PublicationInput';
+import PublicationInput from '../components/form/PublicationInput';
 import AddEditList from '../components/AddEditList';
 import AddEditDeleteModal from '../components/AddEditDeleteModal';
 

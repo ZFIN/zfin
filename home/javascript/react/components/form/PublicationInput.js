@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Autocompletify from './Autocompletify';
+import Autocompletify from '../Autocompletify';
 
 const PublicationInput = ({defaultPubs, limit = 50, ...rest}) => {
     return (

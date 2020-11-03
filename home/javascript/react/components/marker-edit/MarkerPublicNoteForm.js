@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useForm } from 'react-form';
-import http from '../utils/http';
+import http from '../../utils/http';
 import equal from 'fast-deep-equal';
-import InputField from './form/InputField';
-import LoadingButton from './LoadingButton';
+import InputField from '../form/InputField';
+import LoadingButton from '../LoadingButton';
 
 const MarkerPublicNoteForm = ({markerId, note, onSave}) => {
     const defaultValues = note || { noteData: '' };

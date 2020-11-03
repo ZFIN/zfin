@@ -2,9 +2,9 @@ import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import equal from 'fast-deep-equal';
 import { useForm } from 'react-form';
-import http from '../utils/http';
-import LoadingButton from './LoadingButton';
-import FormGroup from './form/FormGroup';
+import http from '../../utils/http';
+import LoadingButton from '../LoadingButton';
+import FormGroup from '../form/FormGroup';
 
 const MarkerNameForm = ({markerId, nomenclature, setNomenclature, onSave}) => {
     const {

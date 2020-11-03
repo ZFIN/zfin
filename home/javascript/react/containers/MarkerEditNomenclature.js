@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import MarkerNameForm from '../components/MarkerNameForm';
+import MarkerNameForm from '../components/marker-edit/MarkerNameForm';
 import Section from '../components/layout/Section';
-import MarkerAliases from '../components/MarkerAliases';
+import MarkerAliases from '../components/marker-edit/MarkerAliases';
 import useFetch from '../hooks/useFetch';
 
 const MarkerEditNomenclature = ({ markerId }) => {

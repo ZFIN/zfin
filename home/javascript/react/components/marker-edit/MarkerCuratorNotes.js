@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import AddEditList from './AddEditList';
-import useAddEditDeleteForm from '../hooks/useAddEditDeleteForm';
-import AddEditDeleteModal from './AddEditDeleteModal';
-import InputField from './form/InputField';
+import AddEditList from '../AddEditList';
+import useAddEditDeleteForm from '../../hooks/useAddEditDeleteForm';
+import AddEditDeleteModal from '../AddEditDeleteModal';
+import InputField from '../form/InputField';
 
 const MarkerCuratorNotes = ({markerId, notes, setNotes}) => {
     const [modalNote, setModalNote] = useState(null);

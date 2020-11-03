@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import useAddEditDeleteForm from '../hooks/useAddEditDeleteForm';
-import AddEditList from './AddEditList';
-import AddEditDeleteModal from './AddEditDeleteModal';
-import FormGroup from './form/FormGroup';
-import InputField from './form/InputField';
-import PublicationInput from './PublicationInput';
+import useAddEditDeleteForm from '../../hooks/useAddEditDeleteForm';
+import AddEditList from '../AddEditList';
+import AddEditDeleteModal from '../AddEditDeleteModal';
+import FormGroup from '../form/FormGroup';
+import InputField from '../form/InputField';
+import PublicationInput from '../form/PublicationInput';
 
 const MarkerAliases = ({markerId, aliases, setAliases}) => {
     const [modalAlias, setModalAlias] = useState(null);

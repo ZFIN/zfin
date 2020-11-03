@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import useFetch from '../hooks/useFetch';
 import Section from '../components/layout/Section';
 import LoadingSpinner from '../components/LoadingSpinner';
-import MarkerPublicNoteForm from '../components/MarkerPublicNoteForm';
-import MarkerCuratorNotes from '../components/MarkerCuratorNotes';
+import MarkerPublicNoteForm from '../components/marker-edit/MarkerPublicNoteForm';
+import MarkerCuratorNotes from '../components/marker-edit/MarkerCuratorNotes';
 
 const MarkerEditNotes = ({markerId}) => {
     const {
