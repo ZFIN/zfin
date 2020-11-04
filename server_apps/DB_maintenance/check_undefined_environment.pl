@@ -77,7 +77,7 @@ $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $passwor
 
 $sql = "select exp_zdb_id, exp_name, exp_source_zdb_id
           from experiment, curation
-         where not exists (select 'x' from experiment_condition where exp_zdb_id = expcond_exp_zdb_id) and exp_name <> '_Generic-control' and exp_source_zdb_id = cur_pub_zdb_id and cur_closed_date is not null and cur_closed_date is not null ;";
+         where not exists (select 'x' from experiment_condition where exp_zdb_id = expcond_exp_zdb_id) and exp_name <> '_Generic-control' and exp_source_zdb_id = cur_pub_zdb_id and cur_closed_date is not null;";
 
 $cur = $dbh->prepare($sql);
 $cur ->execute();
@@ -110,7 +110,8 @@ foreach $key (sort keys %pubIds) {
                                where exp_zdb_id = expcond_exp_zdb_id)
                                  and exp_name <> '_Generic-control'
                                  and cur_pub_zdb_id = exp_source_zdb_id
-                                 and cur_topic in ('Antibodies', 'Expression', 'Features (Mutant)', 'Genotype', 'Phenotype', 'Transcripts', 'Transgenic Construct')
+                                 and cur_topic in ('Antibodies', 'Expression', 'Features (Mutant)', 'Genotype', 'Phenotype', 'Transcripts', 'Transgenic Construct', 'Disease')
+                                 and cur_closed_date is not null
                                  and exp_zdb_id = ?
                                  and exp_source_zdb_id = ?; " ;
  
