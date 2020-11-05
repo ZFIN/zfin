@@ -45,7 +45,7 @@
                 1: Dirty reads are possible<br>
                 2: No dirty reads<br>
                 4: No dirty reads and no non-repeatable reads<br>
-                4: No dirty reads and no non-repeatable reads and no phanotm reads<br>
+                4: No dirty reads and no non-repeatable reads and no phantom reads<br>
             </td>
         </tr>
 
