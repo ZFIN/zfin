@@ -1,5 +1,6 @@
 import React, { useState, useRef, useLayoutEffect } from 'react';
 import PropTypes from 'prop-types';
+import NoData from '../components/NoData';
 
 // when you request a gbrowse image of a specific width, the image that comes back is actually 90 pixels wider
 const GBROWSE_PADDING = 90;
@@ -20,6 +21,10 @@ const GbrowseImage = ({imageUrl, linkUrl, build}) => {
 
     // useLayoutEffect instead of useEffect since we're going to measure elements inside
     useLayoutEffect(() => {
+        if (!containerRef.current) {
+            return;
+        }
+
         const doUpdate = () => {
             const containerWidth = containerRef.current.clientWidth;
             const imgWidth = Math.max(Math.floor(containerWidth / IMAGE_SIZE_STEP) * IMAGE_SIZE_STEP, IMAGE_SIZE_STEP);
@@ -36,6 +41,10 @@ const GbrowseImage = ({imageUrl, linkUrl, build}) => {
         window.addEventListener('resize', debouncedUpdate);
         return () => window.removeEventListener('resize', debouncedUpdate);
     }, []);
+
+    if (!imageUrl) {
+        return <NoData />;
+    }
 
     return (
         <div className='position-relative'>

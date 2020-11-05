@@ -9,10 +9,11 @@
 <c:set var="FISH" value="Fish"/>
 <c:set var="SUPPLEMENTAL" value="Supplemental Information"/>
 <c:set var="SEQUENCES" value="Sequences"/>
+<c:set var="GBROWSE" value="Genome Browser"/>
 <c:set var="CITATIONS" value="Citations"/>
 
 <z:dataPage
-        sections="${[SUMMARY, VARIANTS, SUPPLEMENTAL, CITATIONS]}"
+        sections="${[SUMMARY, GBROWSE, VARIANTS, SUPPLEMENTAL, CITATIONS]}"
 >
     <jsp:attribute name="entityName">
         <zfin:abbrev entity="${formBean.feature}"/>
@@ -28,6 +29,16 @@
             <h1><zfin:abbrev entity="${formBean.feature}"/></h1>
             <jsp:include page="feature-view-summary.jsp"/>
         </div>
+
+        <z:section title="${GBROWSE}">
+            <div class="__react-root"
+                 id="GbrowseImage"
+                 data-image-url="${formBean.GBrowseImage.imageUrl}"
+                 data-link-url="${formBean.GBrowseImage.linkUrl}"
+                 data-build="${formBean.GBrowseImage.build}"
+            >
+            </div>
+        </z:section>
 
         <z:section title="${VARIANTS}" >
             <z:section title="">
