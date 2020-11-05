@@ -603,7 +603,7 @@ public class DTOConversionService {
     }
 
     public static Feature convertToFeature(FeatureDTO featureDTO) {
-        DateFormat dateFormat = new SimpleDateFormat("mm-dd-yyyy");
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yy");
         Date entryDate;
         Feature feature = new Feature();
         feature.setAbbreviation(escapeString(featureDTO.getAbbreviation()));
@@ -611,14 +611,20 @@ public class DTOConversionService {
 
         // these two need to be added, but a trigger fixes them
         feature.setAbbreviationOrder(featureDTO.getAbbreviation());
-        if (StringUtils.isNotEmpty(featureDTO.getAssemblyInfoDate())) {
+
+
+
+        if (org.zfin.gwt.root.util.StringUtils.isNotEmpty(featureDTO.getAssemblyInfoDate())) {
             try {
                 entryDate = dateFormat.parse(featureDTO.getAssemblyInfoDate());
             } catch (ParseException e) {
                 entryDate = null;
             }
             feature.setFtrAssemblyInfoDate(entryDate);
+        } else {
+            feature.setFtrAssemblyInfoDate(null);
         }
+
         feature.setNameOrder(featureDTO.getAbbreviation());
 
         feature.setType(featureDTO.getFeatureType());
