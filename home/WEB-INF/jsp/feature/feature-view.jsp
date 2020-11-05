@@ -41,9 +41,8 @@
         </z:section>
 
         <z:section title="${VARIANTS}" >
-            <z:section title="">
             <jsp:include page="feature-view-variants.jsp"/>
-        </z:section>
+
             <z:section title="Effect on DNA/cDNA, transcript, protein (from publications)">
                 <jsp:include page="feature-view-mut-details.jsp"/>
             </z:section>
@@ -51,13 +50,17 @@
 
 
         <z:section title="${SUPPLEMENTAL}" >
-            <z:section title="">
-                <jsp:include page="feature-view-zirc.jsp"/>
-            </z:section>
-            <c:if  test="${!empty formBean.ftrCommContr}">
-            <z:section title="Zebrashare Submission <a href='/${formBean.ZShareOrigPub.zdbID}'>(1)"></a>
-                <jsp:include page="feature-view-supplemental.jsp"/>
-            </z:section>
+            <jsp:include page="feature-view-zirc.jsp"/>
+
+            <c:if test="${!empty formBean.ftrCommContr}">
+                <z:section>
+                    <jsp:attribute name="title">
+                        ZebraShare Submission <a href='/${formBean.ZShareOrigPub.zdbID}'>(1)</a>
+                    </jsp:attribute>
+                    <jsp:body>
+                        <jsp:include page="feature-view-supplemental.jsp"/>
+                    </jsp:body>
+                </z:section>
             </c:if>
         </z:section>
 
