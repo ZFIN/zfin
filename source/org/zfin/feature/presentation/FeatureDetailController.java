@@ -142,6 +142,7 @@ public class FeatureDetailController {
         form.setSummaryPageDbLinks(FeatureService.getSummaryDbLinks(feature));
         form.setExternalNotes(FeatureService.getSortedExternalNotes(feature));
         form.setMutationDetails(mutationDetailsConversionService.convert(feature, true));
+        form.setFeatureLocations(FeatureService.getPhysicalLocations(feature));
         form.setDnaChangeAttributions(FeatureService.getDnaChangeAttributions(feature));
         form.setTranscriptConsequenceAttributions(FeatureService.getTranscriptConsequenceAttributions(feature));
         form.setProteinConsequenceAttributions(FeatureService.getProteinConsequenceAttributions(feature));
