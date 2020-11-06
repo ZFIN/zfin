@@ -113,6 +113,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
      */
     public FeatureDTO editFeatureDTO(FeatureDTO featureDTO) throws DuplicateEntryException, ValidationException {
         DateFormat dateFormat = new SimpleDateFormat("MM/dd/yy");
+        dateFormat.setLenient(false);
         Date entryDate;
 
         checkDupes(featureDTO);
@@ -176,8 +177,9 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             try {
 
                 entryDate = dateFormat.parse(featureDTO.getAssemblyInfoDate());
+
             } catch (ParseException e) {
-                entryDate = null;
+                throw new ValidationException("Incorrect date format, please check");
             }
             feature.setFtrAssemblyInfoDate(entryDate);
         } else {
