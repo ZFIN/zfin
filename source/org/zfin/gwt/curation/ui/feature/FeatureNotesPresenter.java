@@ -5,7 +5,6 @@ import com.google.gwt.event.dom.client.*;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import org.zfin.gwt.curation.ui.FeatureRPCService;
 import org.zfin.gwt.root.dto.*;
@@ -19,9 +18,9 @@ import java.util.ArrayList;
 
 public class FeatureNotesPresenter {
 
+    FeatureDTO featureDTO;
     private FeatureNotesView view;
     private String publicationID;
-    FeatureDTO featureDTO;
     private PersonDTO curator;
 
     public FeatureNotesPresenter(String publicationID, FeatureNotesView view) {
@@ -70,10 +69,10 @@ public class FeatureNotesPresenter {
         noteText.setText(noteDTO.getNoteData());
 
         view.addNoteTextAreaCell(noteText, elementIndex);
-            StringListBox noteType = new StringListBox();
-            noteType.addItem("");
-            noteType.addItem("feature");
-            noteType.addItem("variant");
+        StringListBox noteType = new StringListBox();
+        noteType.addItem("");
+        noteType.addItem("feature");
+        noteType.addItem("variant");
         if (noteDTO.getNoteEditMode().equals(NoteEditMode.PUBLIC)) {
             if (noteDTO.getNoteTag().contains("variant")) {
                 noteType.setIndexForText("variant");
@@ -102,7 +101,7 @@ public class FeatureNotesPresenter {
             view.addControlCell(saveButton, revertButton, deleteImage, elementIndex);
         // wire-up the field's dependencies....
 
-            new SingleFeatureNoteControlls(noteDTO, noteText, noteType, saveButton, revertButton);
+        new SingleFeatureNoteControlls(noteDTO, noteText, noteType, saveButton, revertButton);
 
 
     }
@@ -113,6 +112,8 @@ public class FeatureNotesPresenter {
     }
 
     public void addNote() {
+
+        NoteEditMode noteEditMode = NoteEditMode.valueOf(view.typeListBox.getSelected().toUpperCase());
         if (isClean()) {
             view.setError("Nothing to add.");
             return;
@@ -122,21 +123,19 @@ public class FeatureNotesPresenter {
             view.setError("Must select Public or Private type of note to add.");
             return;
         }
-
-        if (view.noteTypeListBox.getSelected().contains("--")) {
-            view.setError("Must select Feature or Variant note type .");
-            return;
+        if (noteEditMode == NoteEditMode.PUBLIC) {
+            if (view.noteTypeListBox.getSelected().contains("--")) {
+                view.setError("Must select Feature or Variant note type .");
+                return;
+            }
         }
 
-view.setError("");
-        NoteEditMode noteEditMode = NoteEditMode.valueOf(view.typeListBox.getSelected().toUpperCase());
+        view.setError("");
+
 
         if (noteEditMode == NoteEditMode.PUBLIC) {
             final NoteDTO noteDTO = new PublicNoteDTO();
-
-                noteDTO.setDataZdbID(featureDTO.getZdbID());
-
-
+            noteDTO.setDataZdbID(featureDTO.getZdbID());
             noteDTO.setNoteData(view.newNoteTextArea.getText());
             noteDTO.setPublicationZdbID(publicationID);
             noteDTO.setNoteEditMode(noteEditMode);
@@ -320,8 +319,7 @@ view.setError("");
                     if (noteDTO.getNoteEditMode().equals(NoteEditMode.PUBLIC)) {
                         FeatureRPCService.App.getInstance().editPublicNote(noteDTO, new FeatureEditCallBack<FeatureDTO>("Failed to update public note") {
                             @Override
-                            public void onSuccess(FeatureDTO dto)
-                            {
+                            public void onSuccess(FeatureDTO dto) {
                                 revertGUI();
                             }
                         });
@@ -343,11 +341,9 @@ view.setError("");
 
         protected void revertGUI() {
             noteTextArea.setText(noteDTO.getNoteData());
-            if (noteDTO.getNoteTag()!=null) {
+            if (noteDTO.getNoteTag() != null) {
                 noteTypeBox.setIndexForText(noteDTO.getNoteTag());
-            }
-            else
-            {
+            } else {
                 noteTypeBox.setIndexForText("");
             }
             handleDirty();
@@ -369,7 +365,7 @@ view.setError("");
 
         public boolean isDirty() {
 
-            return (!noteTextArea.getText().equals(noteDTO.getNoteData())||!noteTypeBox.getSelected().equals(noteDTO.getNoteTag()));
+            return (!noteTextArea.getText().equals(noteDTO.getNoteData()) || !noteTypeBox.getSelected().equals(noteDTO.getNoteTag()));
         }
 
     }
