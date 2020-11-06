@@ -1,61 +1,33 @@
 package org.zfin.mutant.presentation;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
+import org.zfin.framework.api.View;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Fish;
 
-import java.util.List;
 import java.util.SortedSet;
 
 /**
  * This class is a statistics class about Fish for given genotype
  */
+@Setter
+@Getter
 public class GenotypeFishResult implements Comparable<GenotypeFishResult> {
 
+    @JsonView(View.API.class)
     private Fish fish;
-  //  private List<Marker> affectedMarkers;
+    @JsonView(View.API.class)
     private SortedSet<Marker> affectedMarkers;
+    @JsonView(View.API.class)
     private FishGenotypePhenotypeStatistics fishGenotypePhenotypeStatistics;
+    @JsonView(View.API.class)
     private FishGenotypeExpressionStatistics fishGenotypeExpressionStatistics;
-
-    public GenotypeFishResult(Fish fish) {
-        this.fish = fish;
-    }
-
-    public SortedSet<Marker> getAffectedMarkers() {
-        return affectedMarkers;
-    }
-
-    public void setAffectedMarkers(SortedSet<Marker> affectedMarkers) {
-        this.affectedMarkers = affectedMarkers;
-    }
-
-    public Fish getFish() {
-        return fish;
-    }
-
-    public FishGenotypeExpressionStatistics getFishGenotypeExpressionStatistics() {
-        return fishGenotypeExpressionStatistics;
-    }
-
-    public void setFishGenotypeExpressionStatistics(FishGenotypeExpressionStatistics fishGenotypeExpressionStatistics) {
-        this.fishGenotypeExpressionStatistics = fishGenotypeExpressionStatistics;
-    }
-
-    public FishGenotypePhenotypeStatistics getFishGenotypePhenotypeStatistics() {
-        return fishGenotypePhenotypeStatistics;
-    }
-
-    public void setFishGenotypePhenotypeStatistics(FishGenotypePhenotypeStatistics fishGenotypePhenotypeStatistics) {
-        this.fishGenotypePhenotypeStatistics = fishGenotypePhenotypeStatistics;
-    }
-
-   /* public List<Marker> getAffectedMarkers() {
-        return affectedMarkers;
-    }
-
-    public void setAffectedMarkers(List<Marker> affectedMarkers) {
-        this.affectedMarkers = affectedMarkers;
-    }*/
+    @JsonView(View.API.class)
+    private String zygosity;
+    @JsonView(View.API.class)
+    private String parentalZygosity;
 
     @Override
     public boolean equals(Object o) {

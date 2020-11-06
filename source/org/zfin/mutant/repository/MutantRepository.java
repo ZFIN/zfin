@@ -466,6 +466,7 @@ public interface MutantRepository {
     FishExperiment getFishExperiment(String zdbID);
 
     List<FishExperiment> getFishExperiment(Genotype genotype);
+    List<FishExperiment> getFishExperimentsByFish(Fish fish);
 
     /**
      * Retrieve list of all zygosities

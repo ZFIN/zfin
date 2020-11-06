@@ -11,11 +11,16 @@ import java.util.*;
  */
 public class GenotypeDisplay implements Comparable<GenotypeDisplay> {
 
+    public static final String COMPLEX = "Complex";
+    public static final String UNKNOWN = "Unknown";
+    public static final String HOMOZYGOUS = "Homozygous";
+    public static final String HETEROZYGOUS = "Heterozygous";
+
     private static final List<String> ZYGOSITY_ORDER = Arrays.asList(
-            "Homozygous",
-            "Heterozygous",
-            "Complex",
-            "Unknown"
+            HOMOZYGOUS,
+            HETEROZYGOUS,
+            COMPLEX,
+            UNKNOWN
     );
 
     private Genotype genotype;
@@ -37,19 +42,19 @@ public class GenotypeDisplay implements Comparable<GenotypeDisplay> {
         }
 
         if (genotype.getGenotypeFeatures().size() > 1) {
-            setZygosity("Complex");
+            setZygosity(COMPLEX);
         } else {
             String zygocityName = genotype.getGenotypeFeatures().iterator().next().getZygosity().getName();
             if (zygocityName == null) {
-                setZygosity("Unknown");
-            } else if (zygocityName.equalsIgnoreCase("homozygous")) {
-                setZygosity("Homozygous");
-            } else if (zygocityName.equalsIgnoreCase("heterozygous")) {
-                setZygosity("Heterozygous");
-            } else if (zygocityName.equalsIgnoreCase("complex")) {
-                setZygosity("Complex");
-            } else if (zygocityName.equalsIgnoreCase("unknown")) {
-                setZygosity("Unknown");
+                setZygosity(UNKNOWN);
+            } else if (zygocityName.equalsIgnoreCase(HOMOZYGOUS)) {
+                setZygosity(HOMOZYGOUS);
+            } else if (zygocityName.equalsIgnoreCase(HETEROZYGOUS)) {
+                setZygosity(HETEROZYGOUS);
+            } else if (zygocityName.equalsIgnoreCase(COMPLEX)) {
+                setZygosity(COMPLEX);
+            } else if (zygocityName.equalsIgnoreCase(UNKNOWN)) {
+                setZygosity(UNKNOWN);
             } else {
                 setZygosity(zygocityName);
             }

@@ -1946,6 +1946,13 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     @Override
+    public List<FishExperiment> getFishExperimentsByFish(Fish fish) {
+        Query query = HibernateUtil.currentSession().createQuery("from FishExperiment exp where exp.fish = :fish");
+        query.setParameter("fish", fish);
+        return query.list();
+    }
+
+    @Override
     public List<Zygosity> getListOfZygosity() {
         Session session = HibernateUtil.currentSession();
         String hql = "FROM  Zygosity ";
