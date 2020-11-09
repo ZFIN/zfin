@@ -3,11 +3,12 @@
 <jsp:useBean id="formBean" class="org.zfin.feature.presentation.FeatureBean" scope="request"/>
 
 
-    <z:ifHasData test="${!empty formBean.ftrCommContr}" noDataMessage="None">
+    <z:ifHasData test="${!empty formBean.zircGenoLink}" noDataMessage="None">
     <z:attributeList>
 
         <z:attributeListItem label="Genotyping protocol">
-            ${formBean.ftrCommContr.functionalConsequence.toString()}
+            <a href="/zebrafish.org/fish/pdf/pcr/${formBean.zircGenoLink.accessionNumberDisplay}">${formBean.zircGenoLink.accessionNumberDisplay}</a>
+
         </z:attributeListItem>
 
 

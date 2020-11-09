@@ -13,7 +13,7 @@
 <c:set var="CITATIONS" value="Citations"/>
 
 <z:dataPage
-        sections="${[SUMMARY, GBROWSE, VARIANTS, SUPPLEMENTAL, CITATIONS]}"
+        sections="${[SUMMARY, GBROWSE, VARIANTS, SEQUENCES, SUPPLEMENTAL, CITATIONS]}"
 >
     <jsp:attribute name="entityName">
         <zfin:abbrev entity="${formBean.feature}"/>
@@ -48,6 +48,11 @@
             </z:section>
         </z:section>
 
+        <z:section title="${SEQUENCES}" >
+            <jsp:include page="feature-view-sequence.jsp"/>
+
+
+        </z:section>
 
         <z:section title="${SUPPLEMENTAL}" >
             <jsp:include page="feature-view-zirc.jsp"/>
