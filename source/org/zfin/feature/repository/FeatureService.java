@@ -19,6 +19,7 @@ import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.mapping.*;
 import org.zfin.marker.Marker;
+import org.zfin.marker.presentation.LinkDisplay;
 import org.zfin.marker.presentation.PhenotypeOnMarkerBean;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.presentation.FishGenotypePhenotypeStatistics;
@@ -76,11 +77,32 @@ public class FeatureService {
     public static Set<FeatureDBLink> getGenbankDbLinks(Feature feature) {
         Set<FeatureDBLink> genbankLinks = new HashSet<>();
         for (FeatureDBLink featureDBLink : feature.getDbLinks()) {
-            if (!featureDBLink.getReferenceDatabase().isInDisplayGroup(DisplayGroup.GroupName.SUMMARY_PAGE)) {
+            if (!featureDBLink.getReferenceDatabase().isInDisplayGroup(DisplayGroup.GroupName.SUMMARY_PAGE)&&(!featureDBLink.getAccessionNumber().contains("pdf"))) {
+
+
+
                 genbankLinks.add(featureDBLink);
             }
         }
         return genbankLinks;
+    }
+
+    public static FeatureDBLink getZIRCGenoLink(Feature feature) {
+
+
+        for (FeatureDBLink featureDBLink : feature.getDbLinks()) {
+            if (featureDBLink.getAccessionNumber().contains("pdf")) {
+                return featureDBLink;
+            }
+        }
+
+
+        return null;
+
+
+
+
+
     }
 
     public static Set<FeatureMarkerRelationship> getCreatedByRelationship(Feature feature) {

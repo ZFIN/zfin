@@ -140,6 +140,7 @@ public class FeatureDetailController {
         form.setFeatureTypeAttributions(FeatureService.getFeatureTypeAttributions(feature));
         form.setFeatureMap(FeatureService.getFeatureMap(feature));
         form.setSummaryPageDbLinks(FeatureService.getSummaryDbLinks(feature));
+        form.setGenbankDbLinks(FeatureService.getGenbankDbLinks(feature));
         form.setExternalNotes(FeatureService.getSortedExternalNotes(feature));
         form.setMutationDetails(mutationDetailsConversionService.convert(feature, true));
         form.setFeatureLocations(FeatureService.getPhysicalLocations(feature));

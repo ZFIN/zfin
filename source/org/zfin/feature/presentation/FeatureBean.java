@@ -55,6 +55,7 @@ public class FeatureBean {
     private Publication ZShareOrigPub;
     private String aaLink;
     private VariantSequence varSequence;
+    private FeatureDBLink zircGenoLink;
 
     public String getDeleteURL() {
         return "";
