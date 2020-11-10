@@ -1,7 +1,8 @@
 package org.zfin.feature.repository;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
@@ -27,13 +28,10 @@ import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
-import org.zfin.mapping.FeatureGenomeLocation;
 import org.zfin.mapping.FeatureLocation;
 import org.zfin.mapping.VariantSequence;
 import org.zfin.marker.Marker;
-import org.zfin.marker.agr.*;
 import org.zfin.marker.presentation.PreviousNameLight;
-import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.profile.FeatureSource;
@@ -115,36 +113,50 @@ public class HibernateFeatureRepository implements FeatureRepository {
     }
 
 
-
     @SuppressWarnings("unchecked")
     @Override
     public List<Marker> getConstruct(String featureZdbId) {
-            String hql = "select distinct fmrel1.marker from FeatureMarkerRelationship fmrel1" +
-                    " where fmrel1.type in (:innocuous, :phenotypic) " +
-                    " and fmrel1.feature = :featureZdbId" ;
+        String hql = "select distinct fmrel1.marker from FeatureMarkerRelationship fmrel1" +
+                " where fmrel1.type in (:innocuous, :phenotypic) " +
+                " and fmrel1.feature = :featureZdbId";
 
-            Query query = currentSession().createQuery(hql);
-            query.setString("innocuous", FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString());
-            query.setString("phenotypic", FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString());
-            query.setString("featureZdbId", featureZdbId);
+        Query query = currentSession().createQuery(hql);
+        query.setString("innocuous", FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString());
+        query.setString("phenotypic", FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString());
+        query.setString("featureZdbId", featureZdbId);
 
-            return (List<Marker>) query.list();
+        return (List<Marker>) query.list();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<Feature> getSingleAffectedGeneAlleles() {
+        return getSingleAffectedGeneAlleles(null);
+    }
+
+    public List<Feature> getSingleAffectedGeneAlleles(Feature feature) {
         String hql = "select distinct fmrel1.feature from FeatureMarkerRelationship fmrel1, Feature ftr" +
                 " where ftr = fmrel1.feature" +
-                " and ftr.type not in (:transversion, :deficiency, :inversion)"
-                ;
+                " and ftr.type not in (:transversion, :deficiency, :inversion)";
+        if (feature != null) {
+            hql += " and ftr = :feature ";
+        }
 
         Query query = currentSession().createQuery(hql);
         query.setString("transversion", FeatureTypeEnum.TRANSLOC.toString());
         query.setString("deficiency", FeatureTypeEnum.DEFICIENCY.toString());
         query.setString("inversion", FeatureTypeEnum.INVERSION.toString());
-
+        if (feature != null) {
+            query.setParameter("feature", feature);
+        }
         return (List<Feature>) query.list();
+    }
+
+    @Override
+    public boolean isSingleAffectedGeneAlleles(Feature feature) {
+        List<Feature> list = getSingleAffectedGeneAlleles(feature);
+        if (list == null)
+            return false;
+        return list.size() > 0;
     }
 
     @SuppressWarnings("unchecked")
@@ -156,6 +168,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
         return (List<Feature>) query.list();
     }
+
     @SuppressWarnings("unchecked")
     @Override
     public List<Feature> getFeaturesWithGenomicMutDets() {
@@ -165,6 +178,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
         return (List<Feature>) query.list();
     }
+
     @SuppressWarnings("unchecked")
     @Override
     public List<Feature> getNonSaFeaturesWithGenomicMutDets() {
@@ -180,15 +194,12 @@ public class HibernateFeatureRepository implements FeatureRepository {
     public List<Feature> getDeletionFeatures() {
 
 
-            Session session = HibernateUtil.currentSession();
-            Criteria criteria = session.createCriteria(Feature.class);
-            criteria.add(Restrictions.eq("type", FeatureTypeEnum.DELETION));
-            criteria.addOrder(Order.asc("abbreviationOrder"));
-            return (List<Feature>) criteria.list();
-        }
-
-
-
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(Feature.class);
+        criteria.add(Restrictions.eq("type", FeatureTypeEnum.DELETION));
+        criteria.addOrder(Order.asc("abbreviationOrder"));
+        return (List<Feature>) criteria.list();
+    }
 
 
     @SuppressWarnings("unchecked")
@@ -432,8 +443,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
 
         FeatureLocation fl = (FeatureLocation) query.uniqueResult();
-        if (fl==null)
-        {
+        if (fl == null) {
             String hql1 = "select fs  from  FeatureLocation fs " +
                     "     where fs.feature = :feature and fs.ftrAssembly like '%9%' order by fs.ftrAssembly desc ";
 
@@ -448,8 +458,6 @@ public class HibernateFeatureRepository implements FeatureRepository {
         return fl;
 
     }
-
-
 
 
     public String getPrefixById(int labPrefixID) {
@@ -506,13 +514,12 @@ public class HibernateFeatureRepository implements FeatureRepository {
         return getLabPrefixes(labName, true);
     }
 
-    public String getNextZFLineNum(){
+    public String getNextZFLineNum() {
         String sql = "select max(cast(coalesce(feature_line_number,'0') as integer)) + 1 from feature where feature_lab_prefix_id = 194";
-         Query query=HibernateUtil.currentSession().createSQLQuery(sql);
-        return  query.uniqueResult().toString();
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
+        return query.uniqueResult().toString();
 
     }
-
 
 
     public List<FeaturePrefix> getLabPrefixes(String labName, boolean assignIfEmpty) {
@@ -665,15 +672,14 @@ public class HibernateFeatureRepository implements FeatureRepository {
     public FeatureLocation getAllFeatureLocationsOnGRCz11(Feature feature) {
         Criteria featureLocationCriteria = HibernateUtil.currentSession().createCriteria(FeatureLocation.class);
         featureLocationCriteria.add(Restrictions.eq("ftrAssembly", "GRCz11"));
-        featureLocationCriteria.add(Restrictions.eq("feature",feature));
+        featureLocationCriteria.add(Restrictions.eq("feature", feature));
         featureLocationCriteria.setMaxResults(1);
         FeatureLocation ftrLoc = (FeatureLocation) featureLocationCriteria.uniqueResult();
         return ftrLoc;
     }
 
 
-
-    public List<FeatureGenomicMutationDetail> getAllFeatureGenomicMutationDetails(){
+    public List<FeatureGenomicMutationDetail> getAllFeatureGenomicMutationDetails() {
         Criteria fgmdCriteria = HibernateUtil.currentSession().createCriteria(FeatureGenomicMutationDetail.class);
         return fgmdCriteria.list();
     }
@@ -1305,10 +1311,12 @@ public class HibernateFeatureRepository implements FeatureRepository {
         //I changed this to delete this record entirely from zdb active data so as to remove lingering record attributions as well.
         infrastructureRepository.deleteActiveDataByZdbID(detail.getZdbID());
     }
+
     public void deleteFeatureGenomicMutationDetail(FeatureGenomicMutationDetail detail) {
         //I changed this to delete this record entirely from zdb active data so as to remove lingering record attributions as well.
         infrastructureRepository.deleteActiveDataByZdbID(detail.getZdbID());
     }
+
     @Override
     public Long getFeaturesForLabCount(String zdbID) {
         String hql = " select count(*) from Feature f join f.sources s " +

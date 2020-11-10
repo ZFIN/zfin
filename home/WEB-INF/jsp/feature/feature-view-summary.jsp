@@ -180,9 +180,11 @@
                 <li><a href="/AdamAmsterdamFiles/${formBean.aaLink}">File:${formBean.feature.name}</a> <a
                         href="ZDB-PUB-050913-8">(1)</a></li>
             </c:if>
-            <li>
-                <a href="https://www.alliancegenome.org/allele/ZFIN:${formBean.feature.zdbID}">Alliance</a>
-            </li>
+            <c:if test="${formBean.singleAffectedGeneFeature}">
+                <li>
+                    <a href="https://www.alliancegenome.org/allele/ZFIN:${formBean.feature.zdbID}">Alliance</a>
+                </li>
+            </c:if>
         </ul>
     </z:attributeListItem>
 

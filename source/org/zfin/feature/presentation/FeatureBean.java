@@ -56,6 +56,7 @@ public class FeatureBean {
     private String aaLink;
     private VariantSequence varSequence;
     private FeatureDBLink zircGenoLink;
+    private boolean isSingleAffectedGeneFeature;
 
     public String getDeleteURL() {
         return "";

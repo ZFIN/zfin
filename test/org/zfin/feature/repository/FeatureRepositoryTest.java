@@ -1,13 +1,11 @@
 package org.zfin.feature.repository;
 
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
-import org.zfin.TestConfiguration;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.feature.FeaturePrefix;
@@ -34,13 +32,13 @@ import java.util.List;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.*;
+import static org.zfin.repository.RepositoryFactory.getFeatureRepository;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
+@Log4j2
 public class FeatureRepositoryTest extends AbstractDatabaseTest {
 
-    private Logger logger = LogManager.getLogger(FeatureRepositoryTest.class);
-
-    private static FeatureRepository featureRepository = RepositoryFactory.getFeatureRepository();
+    private static final FeatureRepository featureRepository = RepositoryFactory.getFeatureRepository();
 
     @After
     public void closeSession() {
@@ -131,7 +129,7 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getMarkersForFeatureRelationAndSource() {
         List<Marker> attributedMarkers = getMarkerRepository().getMarkersForAttribution("ZDB-PUB-090324-13");
-        assertThat(attributedMarkers.size(),greaterThan(10));
+        assertThat(attributedMarkers.size(), greaterThan(10));
     }
 
     @Test
@@ -240,7 +238,7 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
     public void getLabsOfOriginWithPrefix() {
         List<Organization> labs = featureRepository.getLabsOfOriginWithPrefix();
         assertNotNull(labs);
-        logger.info("number of lab: " + labs.size());
+        log.info("number of lab: " + labs.size());
         assertTrue(labs.size() > 200);
         // just choose the first 5
         for (int i = 0; i < 5; i++) {
@@ -428,6 +426,17 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
             fail();
         }
         assertNotNull(dto);
+    }
+
+    @Test
+    public void getSingleAffectedFeatures() {
+        // This takes too long to test.
+        //List<Feature> features = getFeatureRepository().getSingleAffectedGeneAlleles();
+        Feature feature = getFeatureRepository().getFeatureByID("ZDB-ALT-991130-131");
+        assertFalse(getFeatureRepository().isSingleAffectedGeneAlleles(feature));
+
+        feature = getFeatureRepository().getFeatureByID("ZDB-ALT-161003-14982");
+        assertTrue(getFeatureRepository().isSingleAffectedGeneAlleles(feature));
     }
 
 }

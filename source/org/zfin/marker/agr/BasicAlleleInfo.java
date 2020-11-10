@@ -3,9 +3,10 @@ package org.zfin.marker.agr;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections.CollectionUtils;
-import org.zfin.feature.Feature;
 import org.zfin.ExternalNote;
+import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureAlias;
 import org.zfin.feature.SecondaryFeature;
 import org.zfin.marker.Marker;
@@ -22,19 +23,19 @@ import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getFeatureRepository;
 
+@Log4j2
 public class BasicAlleleInfo extends AbstractScriptWrapper {
 
-    private int numfOfRecords = 0;
+    private int numfOfRecords;
 
     public BasicAlleleInfo(int number) {
         numfOfRecords = number;
     }
 
-
     public static void main(String[] args) throws IOException {
         int number = 0;
         if (args.length > 0) {
-            number = Integer.valueOf(args[0]);
+            number = Integer.parseInt(args[0]);
         }
         BasicAlleleInfo basicAlleleInfo = new BasicAlleleInfo(number);
         basicAlleleInfo.init();
@@ -56,7 +57,7 @@ public class BasicAlleleInfo extends AbstractScriptWrapper {
 
     public AllAlleleDTO getAllAlleleInfo() {
         List<Feature> allAlleles = getFeatureRepository().getSingleAffectedGeneAlleles();
-        System.out.println(allAlleles.size());
+        log.info("Alleles exported: " + allAlleles.size());
 
         List<AlleleDTO> allAlleleDTOList = allAlleles.stream()
                 .map(
@@ -72,7 +73,7 @@ public class BasicAlleleInfo extends AbstractScriptWrapper {
                                     AlleleRelationDTO cobjectRelation = new AlleleRelationDTO();
                                     ObjectRelationDTO constructRelation = new ObjectRelationDTO();
                                     constructRelation.setAssociationType("contains");
-                                    constructRelation.setConstruct("ZFIN:"+construct.getZdbID());
+                                    constructRelation.setConstruct("ZFIN:" + construct.getZdbID());
                                     cobjectRelation.setObjectRelation(constructRelation);
                                     alleleObjectRelations.add(cobjectRelation);
                                 }
@@ -82,13 +83,13 @@ public class BasicAlleleInfo extends AbstractScriptWrapper {
                                 AlleleRelationDTO gobjectRelation = new AlleleRelationDTO();
                                 ObjectRelationDTO geneRelation = new ObjectRelationDTO();
                                 geneRelation.setAssociationType("allele_of");
-                                geneRelation.setGene("ZFIN:"+gene.getZdbID());
+                                geneRelation.setGene("ZFIN:" + gene.getZdbID());
                                 gobjectRelation.setObjectRelation(geneRelation);
                                 alleleObjectRelations.add(gobjectRelation);
                             }
                             if (CollectionUtils.isNotEmpty(feature.getExternalNotes())) {
                                 String alleleDescription = null;
-                                for (ExternalNote note: feature.getExternalNotes()){
+                                for (ExternalNote note : feature.getExternalNotes()) {
                                     alleleDescription = alleleDescription + " " + note.getNote();
                                 }
                                 dto.setAlleleDescription(alleleDescription);
@@ -124,8 +125,7 @@ public class BasicAlleleInfo extends AbstractScriptWrapper {
         allAlleleDTOList.forEach(alleleDTO -> {
                     if (!(alleleDTO.getAlleleObjectRelations().isEmpty())) {
                         allAlleleDTOListRemoveNulls.add(alleleDTO);
-                    }
-                    else {
+                    } else {
                         System.out.println("alleles with more than one construct");
                         System.out.println(alleleDTO.getPrimaryId());
                     }

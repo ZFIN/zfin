@@ -1,6 +1,7 @@
 package org.zfin.feature.presentation;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -134,27 +135,17 @@ public class FeatureDetailController {
         FeatureBean form = new FeatureBean();
         form.setZdbID(zdbID);
         form.setFeature(feature);
-        form.setGBrowseImage(FeatureService.getGbrowseImage(feature));
-        form.setSortedConstructRelationships(FeatureService.getSortedConstructRelationships(feature));
-        form.setCreatedByRelationship(FeatureService.getCreatedByRelationship(feature));
-        form.setFeatureTypeAttributions(FeatureService.getFeatureTypeAttributions(feature));
-        form.setFeatureMap(FeatureService.getFeatureMap(feature));
         form.setSummaryPageDbLinks(FeatureService.getSummaryDbLinks(feature));
         form.setGenbankDbLinks(FeatureService.getGenbankDbLinks(feature));
         form.setExternalNotes(FeatureService.getSortedExternalNotes(feature));
         form.setMutationDetails(mutationDetailsConversionService.convert(feature, true));
         form.setFeatureLocations(FeatureService.getPhysicalLocations(feature));
-        form.setDnaChangeAttributions(FeatureService.getDnaChangeAttributions(feature));
-        form.setTranscriptConsequenceAttributions(FeatureService.getTranscriptConsequenceAttributions(feature));
-        form.setProteinConsequenceAttributions(FeatureService.getProteinConsequenceAttributions(feature));
-        form.setVarSequence(RepositoryFactory.getFeatureRepository().getFeatureVariant(feature));
-        form.setVarSeqAttributions(FeatureService.getFlankSeqAttr(feature));
         if (feature.getAbbreviation().startsWith("hi")) {
             form.setAaLink(FeatureService.getAALink(feature));
         }
         form.setFtrCommContr(zebrashareRepository.getLatestCommunityContribution(feature));
         form.setZShareOrigPub(zebrashareRepository.getZebraSharePublicationForFeature(feature));
-
+        form.setSingleAffectedGeneFeature(featureRepository.isSingleAffectedGeneAlleles(feature));
         retrieveSortedGenotypeData(feature, form);
         retrievePubData(feature, form);
 
@@ -163,6 +154,7 @@ public class FeatureDetailController {
 
         return "feature/feature-view";
     }
+
     @RequestMapping("/flank-seq")
     public String getFlankingSequenceNote() {
         return "feature/flank-seq-note";
@@ -226,9 +218,9 @@ public class FeatureDetailController {
     }
 
     @RequestMapping("/type-citation-list/{zdbID}")
-    public String getFeatureTypePublicationList(@PathVariable String zdbID,Model model){
+    public String getFeatureTypePublicationList(@PathVariable String zdbID, Model model) {
         Feature feature = featureRepository.getFeatureByID(zdbID);
-        model.addAttribute("feature",feature);
+        model.addAttribute("feature", feature);
         PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
         List<String> publicationIDs = publicationRepository.getPublicationIdsForFeatureType(zdbID);
         List<Publication> publications = new ArrayList<>();
@@ -238,7 +230,7 @@ public class FeatureDetailController {
         model.addAttribute("pubCount", publications.size());
         PublicationListBean citationBean = new PublicationListAdapter(publications);
         citationBean.setOrderBy("author");
-        model.addAttribute("citationList",citationBean);
+        model.addAttribute("citationList", citationBean);
 
         return "feature/type-citation-list";
     }
