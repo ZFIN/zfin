@@ -5,8 +5,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.response.QueryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.Species;
@@ -28,16 +26,15 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.LinkDisplay;
 import org.zfin.marker.presentation.PhenotypeOnMarkerBean;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.mutant.Fish;
 import org.zfin.mutant.GenotypeDisplay;
 import org.zfin.mutant.GenotypeFeature;
 import org.zfin.mutant.presentation.FishGenotypePhenotypeStatistics;
 import org.zfin.mutant.presentation.GenotypeFishResult;
+import org.zfin.mutant.repository.FishGenotypeFeature;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.search.Category;
-import org.zfin.search.FieldName;
-import org.zfin.search.service.SolrService;
 import org.zfin.sequence.*;
 
 import javax.validation.constraints.NotNull;
@@ -45,8 +42,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertNotNull;
-import static org.zfin.repository.RepositoryFactory.getExpressionRepository;
-import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 import static org.zfin.sequence.ForeignDB.AvailableName;
 import static org.zfin.sequence.ForeignDBDataType.DataType;
 
@@ -464,46 +460,31 @@ public class FeatureService {
 
     @SneakyThrows
     public JsonResultResponse<GenotypeFishResult> getFishContainingFeature(String featureZdbID, Pagination pagination) {
-        SolrQuery query = new SolrQuery();
-        query.setFilterQueries(
-                FieldName.CATEGORY + ":" + Category.FISH.getName(),
-                FieldName.XREF + ":" + featureZdbID
-        );
-        query.setFields(FieldName.ID.getName());
-        query.setRows(pagination.getLimit());
-        query.setStart(pagination.getStart());
+        PaginationResult<FishGenotypeFeature> fishByFeature = mutantRepository.getFishByFeature(featureZdbID, pagination);
 
-        QueryResponse queryResponse = SolrService.getSolrClient().query(query);
-
-        List<GenotypeFishResult> results = queryResponse.getResults().stream()
-                .map(doc -> (String) doc.getFieldValue(FieldName.ID.getName()))
-                .map(mutantRepository::getFish)
-                .map(fish -> {
+        List<GenotypeFishResult> results = fishByFeature.getPopulatedResults().stream()
+                .map(fishGenotypeFeature -> {
+                    Fish fish = fishGenotypeFeature.getFish();
                     GenotypeFishResult result = FishService.getFishExperimentSummaryForFish(fish);
-                    GenotypeFeature genotypeFeature = fish.getGenotype().getGenotypeFeatures().stream()
-                            .filter(gf -> gf.getFeature().getZdbID().equals(featureZdbID))
-                            .findAny()
-                            .orElse(null);
-                    if (genotypeFeature != null) {
-                        GenotypeDisplay genotypeDisplay = new GenotypeDisplay();
-                        genotypeDisplay.setGenotype(genotypeFeature.getGenotype());
-                        genotypeDisplay.setDadZygosity(genotypeFeature.getDadZygosity());
-                        genotypeDisplay.setMomZygosity(genotypeFeature.getMomZygosity());
-                        if (CollectionUtils.isNotEmpty(fish.getStrList())) {
-                            result.setZygosity(GenotypeDisplay.COMPLEX);
-                        } else {
-                            result.setZygosity(genotypeDisplay.getZygosity());
-                        }
-                        result.setParentalZygosity(genotypeDisplay.getParentalZygosityDisplay());
+                    GenotypeFeature genotypeFeature = fishGenotypeFeature.getGenotypeFeature();
+                    GenotypeDisplay genotypeDisplay = new GenotypeDisplay();
+                    genotypeDisplay.setGenotype(genotypeFeature.getGenotype());
+                    genotypeDisplay.setDadZygosity(genotypeFeature.getDadZygosity());
+                    genotypeDisplay.setMomZygosity(genotypeFeature.getMomZygosity());
+                    if (CollectionUtils.isNotEmpty(fish.getStrList())) {
+                        result.setZygosity(GenotypeDisplay.COMPLEX);
+                    } else {
+                        result.setZygosity(genotypeDisplay.getZygosity());
                     }
+                    result.setParentalZygosity(genotypeDisplay.getParentalZygosityDisplay());
                     result.setAffectedMarkers(new TreeSet<>(FishService.getAffectedGenes(fish)));
                     return result;
                 })
                 .collect(Collectors.toList());
 
         JsonResultResponse<GenotypeFishResult> response = new JsonResultResponse<>();
-        response.setTotal(queryResponse.getResults().getNumFound());
         response.setResults(results);
+        response.setTotal(fishByFeature.getTotalCount());
 
         return response;
     }

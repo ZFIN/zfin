@@ -16,6 +16,7 @@ import org.zfin.expression.ExpressionStatement;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureAlias;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
@@ -206,6 +207,57 @@ public class HibernateMutantRepository implements MutantRepository {
         Genotype genotype = new Genotype();
         genotype.setZdbID(genotypeID);
         return getGenotypeFeaturesByGenotype(genotype);
+    }
+
+    public GenotypeFeature getGenotypeFeature(String genoFeatId) {
+        return (GenotypeFeature) HibernateUtil.currentSession().get(GenotypeFeature.class, genoFeatId);
+    }
+
+    public PaginationResult<FishGenotypeFeature> getFishByFeature(String featureId, Pagination pagination) {
+        Query query = HibernateUtil.currentSession().createSQLQuery(
+                "select " +
+                        "genofeat_zdb_id, " +
+                        "fish_zdb_id, " +
+                        "(select string_agg(mrkr_abbrev_order, ',' order by mrkr_abbrev_order) " +
+                        "   from fish_components inner join marker on fc_gene_zdb_id = mrkr_zdb_id " +
+                        "   where fc_fish_zdb_id = fish_zdb_id " +
+                        ") as affected_gene_list, " +
+                        "(select count(*) from fish_components where fc_fish_zdb_id = fish_zdb_id and fc_gene_zdb_id is not null) as affected_count " +
+                        "from fish " +
+                        "  inner join genotype_feature on genofeat_geno_zdb_id = fish_genotype_zdb_id " +
+                        "  inner join zygocity on genofeat_zygocity = zyg_zdb_id " +
+                        "where genofeat_feature_zdb_id = :feature_id " +
+                        "order by " +
+                        "  ( " +
+                        "    case " +
+                        "      when (select count(*) from genotype_feature others where others.genofeat_geno_zdb_id = fish_genotype_zdb_id) > 1 then 4 " +
+                        "      when exists (select 'x' from fish_components inner join marker on fc_affector_zdb_id = mrkr_zdb_id and fc_fish_zdb_id = fish_zdb_id) = 't' then 4 " +
+                        "      when zyg_name = 'homozygous' then 1 " +
+                        "      when zyg_name = 'heterozygous' then 2 " +
+                        "      when zyg_name = 'unknown' then 3 " +
+                        "      when zyg_name = 'complex' then 4 " +
+                        "      else 5 " +
+                        "    end " +
+                        "  ) asc, " +
+                        "  affected_count asc, " +
+                        "  affected_gene_list asc, " +
+                        "  fish_name_order asc;"
+        );
+        query.setParameter("feature_id", featureId);
+        query.setResultTransformer(new BasicTransformerAdapter() {
+            @Override
+            public FishGenotypeFeature transformTuple(Object[] objects, String[] strings) {
+                String genotypeFeatureId = (String) objects[0];
+                String fishId = (String) objects[1];
+
+                GenotypeFeature genotypeFeature = getGenotypeFeature(genotypeFeatureId);
+                Fish fish = getFish(fishId);
+
+                return new FishGenotypeFeature(fish, genotypeFeature);
+            }
+        });
+
+        return PaginationResultFactory.createResultFromScrollableResultAndClose(pagination.getStart(), pagination.getEnd(), query.scroll());
     }
 
     public int getNumberOfImagesPerAnatomyAndMutant(GenericTerm term, Genotype genotype) {
