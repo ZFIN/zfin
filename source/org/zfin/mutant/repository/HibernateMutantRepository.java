@@ -213,25 +213,39 @@ public class HibernateMutantRepository implements MutantRepository {
         return (GenotypeFeature) HibernateUtil.currentSession().get(GenotypeFeature.class, genoFeatId);
     }
 
-    public PaginationResult<FishGenotypeFeature> getFishByFeature(String featureId, Pagination pagination) {
+    public PaginationResult<FishGenotypeFeature> getFishByFeature(String featureId, boolean excludeFishWithSTR, Pagination pagination) {
+        String excludeStrClause = "";
+        if (excludeFishWithSTR) {
+            excludeStrClause = "where str_count = 0 ";
+        }
+
         Query query = HibernateUtil.currentSession().createSQLQuery(
-                "select " +
-                        "genofeat_zdb_id, " +
-                        "fish_zdb_id, " +
-                        "(select string_agg(mrkr_abbrev_order, ',' order by mrkr_abbrev_order) " +
-                        "   from fish_components inner join marker on fc_gene_zdb_id = mrkr_zdb_id " +
-                        "   where fc_fish_zdb_id = fish_zdb_id " +
-                        ") as affected_gene_list, " +
-                        "(select count(*) from fish_components where fc_fish_zdb_id = fish_zdb_id and fc_gene_zdb_id is not null) as affected_count " +
-                        "from fish " +
-                        "  inner join genotype_feature on genofeat_geno_zdb_id = fish_genotype_zdb_id " +
-                        "  inner join zygocity on genofeat_zygocity = zyg_zdb_id " +
-                        "where genofeat_feature_zdb_id = :feature_id " +
+                "select * " +
+                        "from ( " +
+                        "    select " +
+                        "      self.genofeat_zdb_id, " +
+                        "      fish_zdb_id, " +
+                        "      zyg_name, " +
+                        "      string_agg(distinct affected_gene.mrkr_abbrev_order, ',' order by affected_gene.mrkr_abbrev_order) as affected_list, " +
+                        "      count(distinct affected_gene.mrkr_zdb_id) as affected_count, " +
+                        "      count(distinct fish_str.mrkr_zdb_id) as str_count, " +
+                        "      count(distinct other.genofeat_zdb_id) as feature_count " +
+                        "    from fish " +
+                        "      inner join genotype_feature self on self.genofeat_geno_zdb_id = fish_genotype_zdb_id " +
+                        "      inner join zygocity on genofeat_zygocity = zyg_zdb_id " +
+                        "      left outer join fish_components on fc_fish_zdb_id = fish_zdb_id " +
+                        "      left outer join marker affected_gene on fc_gene_zdb_id = affected_gene.mrkr_zdb_id " +
+                        "      left outer join marker fish_str on fc_affector_zdb_id = fish_str.mrkr_zdb_id " +
+                        "      left outer join genotype_feature other on other.genofeat_geno_zdb_id = fish_genotype_zdb_id " +
+                        "    where self.genofeat_feature_zdb_id = :feature_id " +
+                        "    group by self.genofeat_zdb_id, fish_zdb_id, zyg_name " +
+                        ") as sub " +
+                        excludeStrClause +
                         "order by " +
                         "  ( " +
                         "    case " +
-                        "      when (select count(*) from genotype_feature others where others.genofeat_geno_zdb_id = fish_genotype_zdb_id) > 1 then 4 " +
-                        "      when exists (select 'x' from fish_components inner join marker on fc_affector_zdb_id = mrkr_zdb_id and fc_fish_zdb_id = fish_zdb_id) = 't' then 4 " +
+                        "      when feature_count > 1 then 4 " +
+                        "      when str_count > 0 then 4 " +
                         "      when zyg_name = 'homozygous' then 1 " +
                         "      when zyg_name = 'heterozygous' then 2 " +
                         "      when zyg_name = 'unknown' then 3 " +
@@ -240,8 +254,7 @@ public class HibernateMutantRepository implements MutantRepository {
                         "    end " +
                         "  ) asc, " +
                         "  affected_count asc, " +
-                        "  affected_gene_list asc, " +
-                        "  fish_name_order asc;"
+                        "  affected_list asc;"
         );
         query.setParameter("feature_id", featureId);
         query.setResultTransformer(new BasicTransformerAdapter() {

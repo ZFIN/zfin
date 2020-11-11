@@ -459,8 +459,8 @@ public class FeatureService {
     }
 
     @SneakyThrows
-    public JsonResultResponse<GenotypeFishResult> getFishContainingFeature(String featureZdbID, Pagination pagination) {
-        PaginationResult<FishGenotypeFeature> fishByFeature = mutantRepository.getFishByFeature(featureZdbID, pagination);
+    public JsonResultResponse<GenotypeFishResult> getFishContainingFeature(String featureZdbID, boolean excludeFishWithSTR, Pagination pagination) {
+        PaginationResult<FishGenotypeFeature> fishByFeature = mutantRepository.getFishByFeature(featureZdbID, excludeFishWithSTR, pagination);
 
         List<GenotypeFishResult> results = fishByFeature.getPopulatedResults().stream()
                 .map(fishGenotypeFeature -> {

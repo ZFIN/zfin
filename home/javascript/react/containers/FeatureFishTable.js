@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import DataTable from '../components/data-table';
 import { EntityList } from '../components/entity';
 import FigureSummary from '../components/FigureSummary';
+import Checkbox from '../components/Checkbox';
+import qs from 'qs';
 
 const FeatureFishTable = ({featureId}) => {
+    const [excludeFishWithSTR, setExcludeFishWithSTR] = useState(false);
+
     const columns = [
         {
             label: 'Fish',
@@ -47,12 +51,28 @@ const FeatureFishTable = ({featureId}) => {
             width: '200px',
         }
     ];
+
+    const baseUrl = `/action/api/feature/${featureId}/fish`;
+    const params = {};
+    if (excludeFishWithSTR) {
+        params.excludeFishWithSTR = true;
+    }
+    const dataUrl = baseUrl + qs.stringify(params, { addQueryPrefix: true });
+
     return (
-        <DataTable
-            columns={columns}
-            dataUrl={`/action/api/feature/${featureId}/fish`}
-            rowKey={row => row.fish.zdbID}
-        />
+        <>
+            <div className='mb-2'>
+                <Checkbox checked={excludeFishWithSTR} id='excludeSTRCheckbox' onChange={e => setExcludeFishWithSTR(e.target.checked)}>
+                    Show only fish without sequence targeting reagents
+                </Checkbox>
+            </div>
+
+            <DataTable
+                columns={columns}
+                dataUrl={dataUrl}
+                rowKey={row => row.fish.zdbID}
+            />
+        </>
     )
 };
 

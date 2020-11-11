@@ -60,7 +60,7 @@ public interface MutantRepository {
 
     GenotypeFeature getGenotypeFeature(String genoFeatId);
 
-    PaginationResult<FishGenotypeFeature> getFishByFeature(String featureId, Pagination pagination);
+    PaginationResult<FishGenotypeFeature> getFishByFeature(String featureId, boolean excludeFishWithSTR, Pagination pagination);
 
     /**
      * Retrieve the number of images associated to a mutant marker and a given
