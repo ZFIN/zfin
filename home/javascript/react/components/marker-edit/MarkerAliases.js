@@ -32,8 +32,8 @@ const MarkerAliases = ({markerId, aliases, setAliases}) => {
         },
     });
 
-    const formatAlias = (alias) => {
-        return <>{alias.alias} {alias.references.length > 0 && <>({alias.references.length})</>}</>
+    const formatAlias = (alias, editLink) => {
+        return <>{alias.alias} {alias.references.length > 0 && <>({alias.references.length})</>} {editLink}</>
     }
 
     return (

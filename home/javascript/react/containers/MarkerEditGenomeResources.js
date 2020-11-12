@@ -37,14 +37,14 @@ const MarkerEditGenomeResources = ({markerId, group = 'other marker pages'}) => 
         },
     });
 
-    const formatLink = (link) => {
+    const formatLink = (link, editLink) => {
         return (
             <>
                 <a href={link.link}>
                     {link.referenceDatabaseName}:{link.accession}
                 </a>
                 {' '}
-                {link.references && link.references.length && <>({link.references.length})</>}
+                {link.references && link.references.length && <>({link.references.length})</>} {editLink}
             </>
         );
     }

@@ -6,7 +6,7 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import MarkerPublicNoteForm from '../components/marker-edit/MarkerPublicNoteForm';
 import MarkerCuratorNotes from '../components/marker-edit/MarkerCuratorNotes';
 
-const MarkerEditNotes = ({markerId}) => {
+const MarkerEditNotes = ({currentUserId, markerId}) => {
     const {
         value: allNotes,
         pending,
@@ -37,13 +37,19 @@ const MarkerEditNotes = ({markerId}) => {
                 <MarkerPublicNoteForm markerId={markerId} note={publicNote} onSave={setPublicNote} />
             </Section>
             <Section title='Curator Notes'>
-                <MarkerCuratorNotes markerId={markerId} notes={privateNotes} setNotes={setPrivateNotes} />
+                <MarkerCuratorNotes
+                    currentUserId={currentUserId}
+                    markerId={markerId}
+                    notes={privateNotes}
+                    setNotes={setPrivateNotes}
+                />
             </Section>
         </>
     );
 };
 
 MarkerEditNotes.propTypes = {
+    currentUserId: PropTypes.string,
     markerId: PropTypes.string,
 };
 

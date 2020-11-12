@@ -24,6 +24,10 @@
     </z:section>
 
     <z:section title="${NOTES}">
-        <div class="__react-root" id="MarkerEditNotes" data-marker-id="${gene.zdbID}"></div>
+        <div class="__react-root"
+             id="MarkerEditNotes"
+             data-current-user-id="${currentUser.zdbID}"
+             data-marker-id="${gene.zdbID}">
+        </div>
     </z:section>
 </z:dataPage>
