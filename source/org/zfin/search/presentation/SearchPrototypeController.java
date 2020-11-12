@@ -488,7 +488,7 @@ public class SearchPrototypeController {
                                         @RequestParam(required = false) String category,
                                         @RequestParam(required = false) String type,
                                         @RequestParam(required = false) Integer rows) {
-        SolrClient server = SolrService.getSolrClient("prototype");
+        SolrClient server = SolrService.getSolrClient();
         SolrQuery query = new SolrQuery();
 
         query.setRequestHandler("/name-autocomplete");

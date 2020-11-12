@@ -239,7 +239,7 @@ public class RibbonService {
         excludeTermIDs.forEach(t -> query.addFilterQuery("-term_id:" + SolrService.luceneEscape(t)));
 
         // need to POST here because otherwise the underlying URI gets too long
-        QueryResponse response = SolrService.getSolrClient("prototype").query(query, SolrRequest.METHOD.POST);
+        QueryResponse response = SolrService.getSolrClient().query(query, SolrRequest.METHOD.POST);
 
         // the json facet API isn't well-supported by SolrJ so there a lot of getting
         // fields by name and casting from Object here

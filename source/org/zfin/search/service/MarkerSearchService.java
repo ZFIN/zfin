@@ -195,13 +195,21 @@ public class MarkerSearchService {
         if (StringUtils.isNotEmpty(criteria.getName())) {
 
             if (StringUtils.equals(criteria.getMatchType(),BEGINS_WITH)) {
-                query.setQuery(SolrService.dismax(criteria.getName(),startsWithFields));
+                query.set("qf", startsWithFields.keySet().stream()
+                        .map(FieldName::getName).toArray(String[]::new));
+                query.setQuery(criteria.getName());
             } else if (StringUtils.equals(criteria.getMatchType(),CONTAINS)) {
                 //String wildcardQuery = "*" + SolrService.luceneEscape(criteria.getName() + "*");
                 String wildcardQuery = "*" + criteria.getName();
-                query.setQuery(SolrService.dismax(wildcardQuery, matchesFields, false));
+                query.setQuery(wildcardQuery);
+                query.set("qf", matchesFields.keySet().stream()
+                        .map(FieldName::getName).toArray(String[]::new));
+                //query.setQuery(SolrService.dismax(wildcardQuery, matchesFields, false));
             } else {  //default to MATCHES
-                query.setQuery(SolrService.dismax(criteria.getName(), matchesFields));
+                query.set("qf", matchesFields.keySet().stream()
+                        .map(FieldName::getName).toArray(String[]::new));
+                query.setQuery(SolrService.luceneEscape(criteria.getName()));
+                //query.setQuery(SolrService.dismax(criteria.getName(), matchesFields));
             }
 
 

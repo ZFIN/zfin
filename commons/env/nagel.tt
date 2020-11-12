@@ -31,7 +31,7 @@
 <!--|GOOGLE_ANALYTICS_ID|-->	0
 <!--|GO_EMAIL_CURATOR|-->	cmpich\@zfin.org
 <!--|GO_EMAIL_ERR|-->	cmpich\@zfin.org
-<!--|GROOVY_CLASSPATH|-->	/opt/zfin/www_homes/nagel/home/WEB-INF/lib*:/opt/zfin/source_roots/nagel/lib/Java/*:/opt/zfin/www_homes/nagel/home/WEB-INF/classes
+<!--|GROOVY_CLASSPATH|-->	/opt/zfin/www_homes/nagel/home/WEB-INF/lib*:/opt/zfin/source_roots/nagel/lib/Java/*:/opt/zfin/www_homes/nagel/home/WEB-INF/classes:/opt/apache/apache-tomcat/endorsed/*
 <!--|HAS_PARTNER|-->	false
 <!--|IMAGE_LOAD|-->	/imageLoadUp
 <!--|INSPECTLET_ID|-->	0000000000

@@ -10,7 +10,7 @@
     </condition>
 
     <target name="deploy-solr">
-        <copySolr from="server_apps/solr" to="${env.SOLR_HOME}" overwrite="true"/>
+        <copySolr from="server_apps/solr/site_index" to="${env.SOLR_HOME}" overwrite="true"/>
     </target>
 
     <path id="classpath">
@@ -32,29 +32,24 @@
             <echo message="@{from}"/>
             <copy todir="@{to}" overwrite="@{overwrite}">
                 <fileset dir="@{from}">
+                    <include name="**/core.properties"/>
                     <include name="**/*.xml"/>
                     <include name="**/*.conf"/>
                     <include name="**/*.sql"/>
                     <exclude name="start-solr.sh"/>
-                    <exclude name="**/*.svn"/>
                 </fileset>
                 <filterset refid="allfilters"/>
             </copy>
             <copy todir="@{to}" overwrite="@{overwrite}">
                 <fileset dir="@{from}">
                     <include name="**"/>
+                    <exclude name="**/core.properties"/>
                     <exclude name="**/*.xml"/>
                     <exclude name="**/*.conf"/>
                     <exclude name="**/*.sql"/>
                     <exclude name="start-solr.sh"/>
-                    <exclude name="**/*.svn"/>
                 </fileset>
             </copy>
-            <chmod perm="ug+x" type="file" verbose="true">
-                <fileset dir="@{to}">
-                    <include name="**/solr"/>
-                </fileset>
-            </chmod>
         </sequential>
     </macrodef>
 
@@ -67,24 +62,24 @@
 
 
     <target name="build-solr-index">
-        <groovy src="${env.TARGETROOT}/server_apps/solr/prototype/conf/index-solr.groovy" />
+        <groovy src="${env.TARGETROOT}/server_apps/solr/${SOLR_CORE}/conf/index-solr.groovy" />
         <echo message="Starting Solr index build via http..."/>
         <exec executable="curl">
             <arg value="-s"/>
-            <arg value="http://localhost:${SOLR_PORT}/solr/prototype/dataimport?command=full-import&amp;optimize=true&amp;clean=true&amp;wt=json&amp;indent=true"/>
+            <arg value="http://localhost:${SOLR_PORT}/solr/${SOLR_CORE}/dataimport?command=full-import&amp;optimize=true&amp;clean=true&amp;wt=json&amp;indent=true"/>
         </exec>
         <echo message=" ---- "/>
-        <echo message="You can watch progress at http://${DOMAIN_NAME}/solr/prototype/dataimport"/>
+        <echo message="You can watch progress at http://${DOMAIN_NAME}/solr/${SOLR_CORE}/dataimport"/>
     </target>
 
     <target name="build-solr-publication-index">
         <echo message="Starting Solr index build via http..."/>
         <exec executable="curl">
             <arg value="-s"/>
-            <arg value="http://localhost:${SOLR_PORT}/solr/prototype/dataimport?command=full-import&amp;clean=false&amp;entity=publication&amp;wt=json&amp;indent=true"/>
+            <arg value="http://localhost:${SOLR_PORT}/solr/${SOLR_CORE}/dataimport?command=full-import&amp;clean=false&amp;entity=publication&amp;wt=json&amp;indent=true"/>
         </exec>
         <echo message=" ---- "/>
-        <echo message="You can watch progress at http://${DOMAIN_NAME}/solr/prototype/dataimport"/>
+        <echo message="You can watch progress at http://${DOMAIN_NAME}/solr/${SOLR_CORE}/dataimport"/>
     </target>
 
     <target name="build-solr-publication-index-jenkins">
@@ -94,7 +89,7 @@
 
     <target name="delete-solr-fish-documents">
         <exec executable="curl">
-            <arg value="http://localhost:${SOLR_PORT}/solr/prototype/update?commit=true"/>
+            <arg value="http://localhost:${SOLR_PORT}/solr/${SOLR_CORE}/update?commit=true"/>
             <arg value="-sH"/>
             <arg value="Content-Type: text/xml"/>
             <arg value="--data-binary"/>
@@ -106,10 +101,10 @@
         <echo message="Starting Solr index build via http..."/>
         <exec executable="curl">
             <arg value="-s"/>
-            <arg value="http://localhost:${SOLR_PORT}/solr/prototype/dataimport?command=full-import&amp;clean=false&amp;commit=true&amp;entity=fish&amp;wt=json&amp;indent=true"/>
+            <arg value="http://localhost:${SOLR_PORT}/solr/${SOLR_CORE}/dataimport?command=full-import&amp;clean=false&amp;commit=true&amp;entity=fish&amp;wt=json&amp;indent=true"/>
         </exec>
         <echo message=" ---- "/>
-        <echo message="You can watch progress at http://${DOMAIN_NAME}/solr/prototype/dataimport"/>
+        <echo message="You can watch progress at http://${DOMAIN_NAME}/solr/${SOLR_CORE}/dataimport"/>
     </target>
 
     <target name="build-solr-fish-index-jenkins">
@@ -123,7 +118,7 @@
             import groovy.json.JsonSlurper
 
             String port = System.getenv('SOLR_PORT')
-            String core = 'prototype';
+            String core = System.getenv('SOLR_CORE')
             def url = "http://localhost:$port/solr/$core/dataimport?wt=json&amp;indent=true"
             println url
             println "Indexing ..."
@@ -152,11 +147,17 @@
         </groovy>
     </target>
 
+    <target name="drs" depends="deploy-solr,reload-solr-core"/>
+
+    <target name="reload-solr">
+        <antcall target="reload-solr-core"/>
+    </target>
+
     <target name="reload-solr-core">
         <echo message="Reloading solr core via http..."/>
         <exec executable="curl">
             <arg value="-s"/>
-            <arg value="http://localhost:${SOLR_PORT}/solr/admin/cores?action=RELOAD&amp;core=prototype"/>
+            <arg value="http://localhost:${SOLR_PORT}/solr/admin/cores?action=RELOAD&amp;core=${SOLR_CORE}"/>
         </exec>
     </target>
 
@@ -175,7 +176,7 @@
         <mkdir dir="${this.backup.dir}"/>
 
         <copy todir="${this.backup.dir}" overwrite="false">
-            <fileset dir="${env.SOLR_HOME}/prototype">
+            <fileset dir="${env.SOLR_HOME}/${SOLR_CORE}">
                 <include name="**"/>
             </fileset>
         </copy>
@@ -188,18 +189,18 @@
         <antcall target="stop-solr"/>
         <echo message="restoring from ${RESTORE_FROM}"/>
         <delete>
-            <fileset dir="${env.SOLR_HOME}/prototype/">
+            <fileset dir="${env.SOLR_HOME}/site_index/">
                 <include name="**"/>
             </fileset>
         </delete>
-        <copy todir="${env.SOLR_HOME}/prototype">
+        <copy todir="${env.SOLR_HOME}/${SOLR_CORE}">
             <fileset dir="${RESTORE_FROM}">
                 <include name="**"/>
             </fileset>
         </copy>
         <echo message="Copying correct db-data-config.xml into place, it may not match your data, but allows for indexing after doing a restore"/>
-        <copy todir="${env.SOLR_HOME}/prototype/conf/" overwrite="false">
-            <fileset dir="server_apps/solr/prototype/conf/">
+        <copy todir="${env.SOLR_HOME}/${SOLR_CORE}/conf/" overwrite="false">
+            <fileset dir="server_apps/solr/site_index/conf/">
                 <include name="db-data-config.xml"/>
             </fileset>
             <filterset refid="allfilters"/>
@@ -228,24 +229,28 @@
         </delete>
     </target>
 
-    <target name="upgrade-solr" depends="stop-solr,remove-solr-home,remove-solr-client-lib,deploy-solr,start-solr"/>
-
     <target name="start-solr" description="Start up Solr ">
         <echo message="Source: ${solr}"/>
-        <exec executable="${solr}/solr.sh">
+        <exec executable="/bin/sudo">
+            <arg value="systemctl"/>
             <arg value="start"/>
+            <arg value="solr"/>
         </exec>
     </target>
 
     <target name="stop-solr" description="Stop Solr ">
-        <exec executable="${solr}/solr.sh">
+        <exec executable="/bin/sudo">
+            <arg value="systemctl"/>
             <arg value="stop"/>
+            <arg value="solr"/>
         </exec>
     </target>
 
     <target name="restart-solr" description="Restart up Solr">
-        <exec executable="${solr}/solr.sh">
+        <exec executable="/bin/sudo">
+            <arg value="systemctl"/>
             <arg value="restart"/>
+            <arg value="solr"/>
         </exec>
     </target>
 

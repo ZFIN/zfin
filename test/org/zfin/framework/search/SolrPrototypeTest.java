@@ -26,7 +26,7 @@ public class SolrPrototypeTest extends AbstractSolrTest {
 
     @Test
     public void getAResult() {
-        SolrClient server = solrService.getSolrClient(CORE);
+        SolrClient server = solrService.getSolrClient();
 
         String name = "fgf8a";
 
@@ -55,7 +55,7 @@ public class SolrPrototypeTest extends AbstractSolrTest {
 
     @Test
     public void getFacets() {
-        SolrClient server = solrService.getSolrClient(CORE);
+        SolrClient server = solrService.getSolrClient();
 
         String name = "fgf8a";
 
@@ -91,7 +91,7 @@ public class SolrPrototypeTest extends AbstractSolrTest {
      */
     @Test
     public void walkUpAnatomy() {
-        SolrClient server = solrService.getSolrClient(CORE);
+        SolrClient server = solrService.getSolrClient();
 
         List<String> terms = new ArrayList<String>();
         terms.add("primary olfactory fiber layer");

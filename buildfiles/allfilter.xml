@@ -133,6 +133,7 @@
 <filter token="SHOW_SQL" value="${SHOW_SQL}"/>
 <filter token="SHUTDOWNPORT" value="${SHUTDOWNPORT}"/>
 <filter token="SOLR_CONTEXT" value="${SOLR_CONTEXT}"/>
+<filter token="SOLR_CORE" value="${SOLR_CORE}"/>
 <filter token="SOLR_CREATE_BACKUPS" value="${SOLR_CREATE_BACKUPS}"/>
 <filter token="SOLR_HOME" value="${SOLR_HOME}"/>
 <filter token="SOLR_HOST" value="${SOLR_HOST}"/>

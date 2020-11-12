@@ -29,9 +29,9 @@
 <!--|GBROWSE_PATH_FROM_ROOT|-->	action/gbrowse/
 <!--|GENBANK_DAILY_EMAIL|-->	informix\@zfin.org
 <!--|GOOGLE_ANALYTICS_ID|-->	UA-2417927-5
-<!--|GO_EMAIL_CURATOR|-->	dhowe\@zfin.org xshao\@zfin.org
+<!--|GO_EMAIL_CURATOR|-->	dhowe\@zfin.org
 <!--|GO_EMAIL_ERR|-->	dhowe\@zfin.org informix\@zfin.org
-<!--|GROOVY_CLASSPATH|-->	/opt/zfin/www_homes/trunk/home/WEB-INF/lib*:/opt/zfin/source_roots/trunk/ZFIN_WWW/lib/Java/*:/opt/zfin/www_homes/trunk/home/WEB-INF/classes
+<!--|GROOVY_CLASSPATH|-->	/opt/zfin/www_homes/trunk/home/WEB-INF/lib*:/opt/zfin/source_roots/trunk/ZFIN_WWW/lib/Java/*:/opt/zfin/www_homes/trunk/home/WEB-INF/classes:/opt/apache/apache-tomcat/endorsed/*
 <!--|HAS_PARTNER|-->	false
 <!--|IMAGE_LOAD|-->	/imageLoadUp
 <!--|INSPECTLET_ID|-->	0000000000
@@ -48,7 +48,7 @@
 <!--|PARTNER_DBNAME|-->	false
 <!--|PARTNER_INTERNAL_INSTANCE|-->	false
 <!--|PARTNER_SOURCEROOT|-->	false
-<!--|PATO_EMAIL_CURATOR|-->	informix\@zfin.org xshao\@zfin.org
+<!--|PATO_EMAIL_CURATOR|-->	informix\@zfin.org
 <!--|PDF_LOAD|-->	/PDFLoadUp
 <!--|PGBINDIR|-->	/opt/postgres/postgresql/bin
 <!--|PGDATA|-->	/opt/postgres/data
@@ -59,9 +59,9 @@
 <!--|SOURCEROOT|-->	/opt/zfin/source_roots/trunk/ZFIN_WWW
 <!--|SQLHOSTS_FILE|-->	sqlhosts
 <!--|SQLHOSTS_HOST|-->	thorax.zfin.org
-<!--|SWISSPROT_EMAIL_CURATOR|-->	informix\@zfin.org xshao\@zfin.org
-<!--|SWISSPROT_EMAIL_ERR|-->	informix\@zfin.org xshao\@zfin.org
-<!--|SWISSPROT_EMAIL_REPORT|-->	informix\@zfin.org xshao\@zfin.org
+<!--|SWISSPROT_EMAIL_CURATOR|-->	informix\@zfin.org
+<!--|SWISSPROT_EMAIL_ERR|-->	informix\@zfin.org
+<!--|SWISSPROT_EMAIL_REPORT|-->	informix\@zfin.org
 <!--|TARGETROOT|-->	/opt/zfin/www_homes/trunk
 <!--|VALIDATION_EMAIL_AD|-->	informix\@zfin.org
 <!--|VALIDATION_EMAIL_CURATOR|-->	informix\@zfin.org

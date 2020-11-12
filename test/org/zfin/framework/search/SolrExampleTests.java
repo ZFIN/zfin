@@ -22,7 +22,7 @@ public class SolrExampleTests extends AbstractSolrTest {
 
     @Test
     public void getAResult() {
-        SolrClient server = solrService.getSolrClient(CORE);
+        SolrClient server = solrService.getSolrClient();
 
         String name = "fgf8a";
 
@@ -53,7 +53,7 @@ public class SolrExampleTests extends AbstractSolrTest {
 
     @Test
     public void getFacets() {
-        SolrClient server = solrService.getSolrClient(CORE);
+        SolrClient server = solrService.getSolrClient();
 
         String name = "fgf8a";
 

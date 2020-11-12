@@ -59,7 +59,7 @@ public class FishService {
 
         SolrQuery query = generateFishSearchSolrQuery(criteria);
 
-        SolrClient solrClient = SolrService.getSolrClient("prototype");
+        SolrClient solrClient = SolrService.getSolrClient();
         QueryResponse response;
         try {
             response = solrClient.query(query);
@@ -456,7 +456,7 @@ public class FishService {
             return null;
         }
 
-        SolrClient server = SolrService.getSolrClient("prototype");
+        SolrClient server = SolrService.getSolrClient();
 
         SolrQuery query = new SolrQuery();
         query.setFields(FieldName.ID.getName(), FieldName.FIGURE_ID.getName(), FieldName.THUMBNAIL.getName());

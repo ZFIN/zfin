@@ -19,7 +19,7 @@ class SearchSuggestionServiceSpec extends ZfinIntegrationSpec {
 
     //sets up for all tests in class
     public def setupSpec() {
-    //    client = SolrService.getSolrClient("prototype")
+    //    client = SolrService.getSolrClient()
     }
 
     public def cleanSpec() {

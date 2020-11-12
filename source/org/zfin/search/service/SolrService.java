@@ -51,11 +51,11 @@ public class SolrService {
     private static final Pattern LUCENE_PATTERN = Pattern.compile(LUCENE_ESCAPE_CHARS);
     private static final String REPLACEMENT_STRING = "\\\\$0";
     private static final String SEARCH_URL = "/search";
-    private static final String PRIMARY_CORE = "prototype";
+    private static final String PRIMARY_CORE = ZfinPropertiesEnum.SOLR_CORE.value();
     private static final String IDLE = "idle";
     private static final int CURSOR_BATCH_SIZE = 100;
 
-    private static SolrClient prototype;
+    private static SolrClient solrClient;
 
     public static SolrClient getSolrClient() {
         return getSolrClient(PRIMARY_CORE);
@@ -63,7 +63,7 @@ public class SolrService {
 
     public static SolrClient getSolrClient(String core) {
 
-        if (prototype == null) {
+        if (solrClient == null) {
 
             StringBuilder solrUrl = new StringBuilder();
             solrUrl.append("http://");
@@ -78,13 +78,13 @@ public class SolrService {
 
 
             try {
-                prototype = new HttpSolrClient(solrUrl.toString());
+                solrClient = new HttpSolrClient.Builder(solrUrl.toString()).build();
             } catch (Exception e) {
                 logger.error("couldn't get SolrServer", e);
             }
         }
 
-        return prototype;
+        return solrClient;
     }
 
 
@@ -201,7 +201,7 @@ public class SolrService {
 
 
     public static String getExpressionLink(String geneSymbol, boolean onlyWildtype) {
-        SolrClient server = getSolrClient("prototype");
+        SolrClient server = getSolrClient();
         SolrQuery query = new SolrQuery();
         query.addFilterQuery("zebrafish_gene:\"" + geneSymbol + "\"");
         if (onlyWildtype) {
@@ -255,7 +255,7 @@ public class SolrService {
     }
 
     public static Map<String, String> getExpressionTermLinks(String geneSymbol) {
-        SolrClient server = getSolrClient("prototype");
+        SolrClient server = getSolrClient();
         SolrQuery query = new SolrQuery();
         query.addFilterQuery("zebrafish_gene:\"" + geneSymbol + "\"");
         query.addFilterQuery("is_wildtype:\"true\"");
@@ -317,7 +317,7 @@ public class SolrService {
     public static String getExpressionLink(String geneSymbol, String termName, String fieldName) {
         //query Solr to get the count...
 
-        SolrClient server = getSolrClient("prototype");
+        SolrClient server = getSolrClient();
         SolrQuery query = new SolrQuery();
         query.addFilterQuery("zebrafish_gene:\"" + geneSymbol + "\"");
         query.addFilterQuery(fieldName + ":\"" + termName + "\"");
@@ -394,7 +394,7 @@ public class SolrService {
     }
 
     protected static QueryResponse getGenePhenotypeQuery(String geneSymbol, boolean isMonogenic) {
-        SolrClient server = getSolrClient("prototype");
+        SolrClient server = getSolrClient();
         SolrQuery query = new SolrQuery();
         query.addFilterQuery("gene:" + geneSymbol);
         if (isMonogenic) {
@@ -424,7 +424,7 @@ public class SolrService {
 
     public QueryResponse getRelatedDataResponse(String id) {
         String field = "category";
-        SolrClient server = getSolrClient("prototype");
+        SolrClient server = getSolrClient();
         SolrQuery query = new SolrQuery();
         query.addFilterQuery("xref:\"" + id + "\"");
         query.setRows(0);
@@ -897,19 +897,6 @@ public class SolrService {
         return "{!edismax qf='" +
                 fields.stream().map(FieldName::getName).collect(Collectors.joining(" ")) +
                 "'}" + SolrService.luceneEscape(value);
-    }
-
-    public static String dismax(String value, Map<FieldName, String> fields) {
-        return dismax(value, fields, true);
-    }
-
-    public static String dismax(String value, Map<FieldName, String> fields, boolean escapeQuery) {
-        if (escapeQuery) {
-            value = luceneEscape(value);
-        }
-        return "{!edismax qf='" +
-                fields.keySet().stream().map(fieldName -> fieldName.getName() + fields.get(fieldName)).collect(Collectors.joining(" ")) +
-                "'}" + value;
     }
 
     public static URL getUrlForQuery(SolrQuery query) throws MalformedURLException {

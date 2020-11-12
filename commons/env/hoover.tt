@@ -31,7 +31,7 @@
 <!--|GOOGLE_ANALYTICS_ID|-->	0
 <!--|GO_EMAIL_CURATOR|-->	smoxon\@zfin.org
 <!--|GO_EMAIL_ERR|-->	smoxon\@zfin.org
-<!--|GROOVY_CLASSPATH|-->	/opt/zfin/www_homes/hoover/home/WEB-INF/lib*:/opt/zfin/source_roots/hoover/ZFIN_WWW_hoover/lib/Java/*:/opt/zfin/www_homes/hoover/home/WEB-INF/classes
+<!--|GROOVY_CLASSPATH|-->	/opt/zfin/www_homes/hoover/home/WEB-INF/lib*:/opt/zfin/source_roots/hoover/ZFIN_WWW_hoover/lib/Java/*:/opt/zfin/www_homes/hoover/home/WEB-INF/classes:/opt/apache/apache-tomcat/endorsed/*
 <!--|HAS_PARTNER|-->	false
 <!--|IMAGE_LOAD|-->	/imageLoadUp
 <!--|INSPECTLET_ID|-->	0000000000

@@ -176,7 +176,7 @@ public class MarkerGoService {
         query.addSort(FieldName.EVIDENCE_CODE.getName(), SolrQuery.ORDER.asc);
         query.addSort(FieldName.GROUP_KEY.getName(), SolrQuery.ORDER.asc);
 
-        QueryResponse queryResponse = SolrService.getSolrClient("prototype").query(query);
+        QueryResponse queryResponse = SolrService.getSolrClient().query(query);
         GroupCommand groupResults = queryResponse.getGroupResponse().getValues().get(0);
         MarkerGoTermEvidenceRepository repository = RepositoryFactory.getMarkerGoTermEvidenceRepository();
 

@@ -1,8 +1,0 @@
-<?xml version="1.0" ?>
-<enumsConfig>
-    <enum name="ontology">
-        <value>molecular_function</value>
-        <value>biological_process</value>
-        <value>cellular_component</value>
-    </enum>
-</enumsConfig>
