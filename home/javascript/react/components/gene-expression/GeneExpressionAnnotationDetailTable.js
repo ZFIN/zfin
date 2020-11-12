@@ -4,6 +4,7 @@ import qs from 'qs';
 import DataTable from '../data-table';
 import {tableStateType} from '../../utils/types';
 import StageRange from '../StageRange';
+import PublicationCitationLink from '../PublicationCitationLink';
 
 const GeneExpressionAnnotationDetailTable = (
     {
@@ -44,8 +45,7 @@ const GeneExpressionAnnotationDetailTable = (
         },
         {
             label: 'Publication',
-            content: ({publication}) =>
-                <a href={`/${publication.zdbID}`} dangerouslySetInnerHTML={{__html: publication.shortAuthorList}}/>,
+            content: ({publication}) => <PublicationCitationLink publication={publication} />,
             width: '200px',
         },
     ];

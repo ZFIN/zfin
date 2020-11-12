@@ -4,6 +4,7 @@ import qs from 'qs';
 import DataTable from '../data-table';
 import StageRange from '../StageRange';
 import {tableStateType} from '../../utils/types';
+import PublicationCitationLink from '../PublicationCitationLink';
 
 const PhenotypeAnnotationDetailTable = ({geneId, selectedPhenotypeIds, setTableState, tableState}) => {
     const columns = [
@@ -34,7 +35,7 @@ const PhenotypeAnnotationDetailTable = ({geneId, selectedPhenotypeIds, setTableS
         },
         {
             label: 'Publication',
-            content: ({phenotypeSourceGenerated}) => <a href={`/${phenotypeSourceGenerated.figure.publication.zdbID}`} dangerouslySetInnerHTML={{__html: phenotypeSourceGenerated.figure.publication.shortAuthorList}}/>,
+            content: ({phenotypeSourceGenerated}) => <PublicationCitationLink publication={phenotypeSourceGenerated.figure.publication} />,
             width: '200px',
         },
     ];

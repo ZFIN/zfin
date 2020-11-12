@@ -1,4 +1,5 @@
 import React from 'react';
+import PublicationCitationLink from './PublicationCitationLink';
 
 const AttributionLink = ({accession, url, publicationCount, publication, multiPubAccessionID, multiPubs}) => {
     if (publicationCount === 0) {
@@ -11,9 +12,7 @@ const AttributionLink = ({accession, url, publicationCount, publication, multiPu
                 </span>
             );
         } else {
-            return (
-                <a href={`/${publication.zdbID}`} dangerouslySetInnerHTML={{__html: publication.shortAuthorList}}/>
-            );
+            return <PublicationCitationLink publication={publication} />;
         }
     } else {
         if (multiPubAccessionID) {

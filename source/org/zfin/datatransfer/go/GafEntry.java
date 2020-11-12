@@ -11,6 +11,7 @@ public class GafEntry {
 
     private String entryId; // 2
     private String qualifier; // 4
+    private String relation;
     private String goTermId;  // 5
     private String pubmedId;  // 6
     private String evidenceCode;  // 7
@@ -170,6 +171,13 @@ public class GafEntry {
         this.annotationProperties = annotationProperties;
     }
 
+    public String getRelation() {
+        return relation;
+    }
+
+    public void setRelation(String relation) {
+        this.relation = relation;
+    }
 
     @Override
     public String toString() {

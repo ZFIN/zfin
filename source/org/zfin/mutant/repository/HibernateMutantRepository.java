@@ -16,6 +16,7 @@ import org.zfin.expression.ExpressionStatement;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureAlias;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
@@ -206,6 +207,70 @@ public class HibernateMutantRepository implements MutantRepository {
         Genotype genotype = new Genotype();
         genotype.setZdbID(genotypeID);
         return getGenotypeFeaturesByGenotype(genotype);
+    }
+
+    public GenotypeFeature getGenotypeFeature(String genoFeatId) {
+        return (GenotypeFeature) HibernateUtil.currentSession().get(GenotypeFeature.class, genoFeatId);
+    }
+
+    public PaginationResult<FishGenotypeFeature> getFishByFeature(String featureId, boolean excludeFishWithSTR, Pagination pagination) {
+        String excludeStrClause = "";
+        if (excludeFishWithSTR) {
+            excludeStrClause = "where str_count = 0 ";
+        }
+
+        Query query = HibernateUtil.currentSession().createSQLQuery(
+                "select * " +
+                        "from ( " +
+                        "    select " +
+                        "      self.genofeat_zdb_id, " +
+                        "      fish_zdb_id, " +
+                        "      zyg_name, " +
+                        "      string_agg(distinct affected_gene.mrkr_abbrev_order, ',' order by affected_gene.mrkr_abbrev_order) as affected_list, " +
+                        "      count(distinct affected_gene.mrkr_zdb_id) as affected_count, " +
+                        "      count(distinct fish_str.mrkr_zdb_id) as str_count, " +
+                        "      count(distinct other.genofeat_zdb_id) as feature_count " +
+                        "    from fish " +
+                        "      inner join genotype_feature self on self.genofeat_geno_zdb_id = fish_genotype_zdb_id " +
+                        "      inner join zygocity on genofeat_zygocity = zyg_zdb_id " +
+                        "      left outer join fish_components on fc_fish_zdb_id = fish_zdb_id " +
+                        "      left outer join marker affected_gene on fc_gene_zdb_id = affected_gene.mrkr_zdb_id " +
+                        "      left outer join marker fish_str on fc_affector_zdb_id = fish_str.mrkr_zdb_id " +
+                        "      left outer join genotype_feature other on other.genofeat_geno_zdb_id = fish_genotype_zdb_id " +
+                        "    where self.genofeat_feature_zdb_id = :feature_id " +
+                        "    group by self.genofeat_zdb_id, fish_zdb_id, zyg_name " +
+                        ") as sub " +
+                        excludeStrClause +
+                        "order by " +
+                        "  ( " +
+                        "    case " +
+                        "      when feature_count > 1 then 4 " +
+                        "      when str_count > 0 then 4 " +
+                        "      when zyg_name = 'homozygous' then 1 " +
+                        "      when zyg_name = 'heterozygous' then 2 " +
+                        "      when zyg_name = 'unknown' then 3 " +
+                        "      when zyg_name = 'complex' then 4 " +
+                        "      else 5 " +
+                        "    end " +
+                        "  ) asc, " +
+                        "  affected_count asc, " +
+                        "  affected_list asc;"
+        );
+        query.setParameter("feature_id", featureId);
+        query.setResultTransformer(new BasicTransformerAdapter() {
+            @Override
+            public FishGenotypeFeature transformTuple(Object[] objects, String[] strings) {
+                String genotypeFeatureId = (String) objects[0];
+                String fishId = (String) objects[1];
+
+                GenotypeFeature genotypeFeature = getGenotypeFeature(genotypeFeatureId);
+                Fish fish = getFish(fishId);
+
+                return new FishGenotypeFeature(fish, genotypeFeature);
+            }
+        });
+
+        return PaginationResultFactory.createResultFromScrollableResultAndClose(pagination.getStart(), pagination.getEnd(), query.scroll());
     }
 
     public int getNumberOfImagesPerAnatomyAndMutant(GenericTerm term, Genotype genotype) {
@@ -1943,6 +2008,13 @@ public class HibernateMutantRepository implements MutantRepository {
             result.add((FishExperiment) o[0]);
         }
         return result;
+    }
+
+    @Override
+    public List<FishExperiment> getFishExperimentsByFish(Fish fish) {
+        Query query = HibernateUtil.currentSession().createQuery("from FishExperiment exp where exp.fish = :fish");
+        query.setParameter("fish", fish);
+        return query.list();
     }
 
     @Override

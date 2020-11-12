@@ -5,7 +5,7 @@ import useAddEditDeleteForm from '../../hooks/useAddEditDeleteForm';
 import AddEditDeleteModal from '../AddEditDeleteModal';
 import InputField from '../form/InputField';
 
-const MarkerCuratorNotes = ({markerId, notes, setNotes}) => {
+const MarkerCuratorNotes = ({currentUserId, markerId, notes, setNotes}) => {
     const [modalNote, setModalNote] = useState(null);
     const isEdit = modalNote && !!modalNote.zdbID;
 
@@ -22,15 +22,16 @@ const MarkerCuratorNotes = ({markerId, notes, setNotes}) => {
         defaultValues: modalNote
     });
 
-    const formatListItem = (note) => {
+    const formatListItem = (note, editLink) => {
         const noteDate = new Date(note.date);
         return (
             <>
                 <div className='mt-2'>
                     <b className='mr-1'>{note.curator.firstName} {note.curator.lastName}</b>
                     {noteDate.toLocaleString()}
+                    {note.curator.zdbID === currentUserId && editLink}
                 </div>
-                <span className='keep-breaks'>{note.noteData}</span>
+                <div className='keep-breaks'>{note.noteData}</div>
             </>
         )
     }
@@ -62,6 +63,7 @@ const MarkerCuratorNotes = ({markerId, notes, setNotes}) => {
 };
 
 MarkerCuratorNotes.propTypes = {
+    currentUserId: PropTypes.string,
     markerId: PropTypes.string,
     notes: PropTypes.arrayOf(PropTypes.shape({
         zdbID: PropTypes.string,

@@ -1,15 +1,19 @@
 package org.zfin.feature.repository;
 
+import lombok.SneakyThrows;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.Species;
 import org.zfin.expression.ExpressionResult2;
 import org.zfin.expression.Figure;
 import org.zfin.feature.*;
 import org.zfin.fish.repository.FishService;
+import org.zfin.framework.api.JsonResultResponse;
+import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gbrowse.GBrowseTrack;
 import org.zfin.gbrowse.presentation.GBrowseImage;
@@ -22,8 +26,13 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.LinkDisplay;
 import org.zfin.marker.presentation.PhenotypeOnMarkerBean;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.mutant.Fish;
+import org.zfin.mutant.GenotypeDisplay;
+import org.zfin.mutant.GenotypeFeature;
 import org.zfin.mutant.presentation.FishGenotypePhenotypeStatistics;
 import org.zfin.mutant.presentation.GenotypeFishResult;
+import org.zfin.mutant.repository.FishGenotypeFeature;
+import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
@@ -33,8 +42,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertNotNull;
-import static org.zfin.repository.RepositoryFactory.getExpressionRepository;
-import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 import static org.zfin.sequence.ForeignDB.AvailableName;
 import static org.zfin.sequence.ForeignDBDataType.DataType;
 
@@ -43,6 +51,9 @@ import static org.zfin.sequence.ForeignDBDataType.DataType;
 public class FeatureService {
 
     private static Logger logger = LogManager.getLogger(FeatureService.class);
+
+    @Autowired
+    private MutantRepository mutantRepository;
 
     public static Set<FeatureMarkerRelationship> getSortedMarkerRelationships(Feature feature) {
         Set<FeatureMarkerRelationship> fmrelationships = feature.getFeatureMarkerRelations();
@@ -281,7 +292,6 @@ public class FeatureService {
     }
 
 
-
     public static GBrowseImage getGbrowseImage(Feature feature) {
         Set<FeatureMarkerRelationship> featureMarkerRelationships = feature.getFeatureMarkerRelations();
         List<FeatureGenomeLocation> locations = getFeatureGenomeLocationsInGbrowse(feature);
@@ -342,14 +352,16 @@ public class FeatureService {
                 Species.Type.ZEBRAFISH);
 
         ReferenceDatabase databaseMatch = checkRefDatabase(accessionNumber, refDatabaseList);
-        if (databaseMatch != null)
+        if (databaseMatch != null) {
             return databaseMatch;
+        }
 
         // if not found check Accession, aka accession_bank
         List<Accession> accessionList = getSequenceRepository().getAccessionsByNumber(accessionNumber);
         for (Accession accession : accessionList) {
-            if (refDatabaseList.contains(accession.getReferenceDatabase()))
+            if (refDatabaseList.contains(accession.getReferenceDatabase())) {
                 return accession.getReferenceDatabase();
+            }
         }
         return null;
     }
@@ -376,8 +388,9 @@ public class FeatureService {
                 Species.Type.ZEBRAFISH);
         for (ReferenceDatabase referenceDatabase : genBankRefDB) {
             List<DBLink> links = getSequenceRepository().getDBLinks(accessionNumber, referenceDatabase);
-            if (CollectionUtils.isNotEmpty(links))
+            if (CollectionUtils.isNotEmpty(links)) {
                 return referenceDatabase;
+            }
         }
         return null;
     }
@@ -404,8 +417,9 @@ public class FeatureService {
     public static PhenotypeOnMarkerBean getPhenotypeOnFeature(@NotNull Feature feature) {
         // do not include multi-allelic features
         // include TG features if relationship is: innocuous
-        if (feature.isMultiAllelic() || (!feature.isInnocuousOnlyTG() && feature.getType().equals(FeatureTypeEnum.TRANSGENIC_INSERTION)))
+        if (feature.isMultiAllelic() || (!feature.isInnocuousOnlyTG() && feature.getType().equals(FeatureTypeEnum.TRANSGENIC_INSERTION))) {
             return null;
+        }
 
         List<GenotypeFishResult> fishSummaryList = feature.getGenotypeFeatures().stream()
                 .map(genotypeFeature -> FishService.getFishExperimentSummaryForGenotype(genotypeFeature.getGenotype()))
@@ -442,5 +456,36 @@ public class FeatureService {
 
 
         return phenotypeOnMarkerBean;
+    }
+
+    @SneakyThrows
+    public JsonResultResponse<GenotypeFishResult> getFishContainingFeature(String featureZdbID, boolean excludeFishWithSTR, Pagination pagination) {
+        PaginationResult<FishGenotypeFeature> fishByFeature = mutantRepository.getFishByFeature(featureZdbID, excludeFishWithSTR, pagination);
+
+        List<GenotypeFishResult> results = fishByFeature.getPopulatedResults().stream()
+                .map(fishGenotypeFeature -> {
+                    Fish fish = fishGenotypeFeature.getFish();
+                    GenotypeFishResult result = FishService.getFishExperimentSummaryForFish(fish);
+                    GenotypeFeature genotypeFeature = fishGenotypeFeature.getGenotypeFeature();
+                    GenotypeDisplay genotypeDisplay = new GenotypeDisplay();
+                    genotypeDisplay.setGenotype(genotypeFeature.getGenotype());
+                    genotypeDisplay.setDadZygosity(genotypeFeature.getDadZygosity());
+                    genotypeDisplay.setMomZygosity(genotypeFeature.getMomZygosity());
+                    if (CollectionUtils.isNotEmpty(fish.getStrList())) {
+                        result.setZygosity(GenotypeDisplay.COMPLEX);
+                    } else {
+                        result.setZygosity(genotypeDisplay.getZygosity());
+                    }
+                    result.setParentalZygosity(genotypeDisplay.getParentalZygosityDisplay());
+                    result.setAffectedMarkers(new TreeSet<>(FishService.getAffectedGenes(fish)));
+                    return result;
+                })
+                .collect(Collectors.toList());
+
+        JsonResultResponse<GenotypeFishResult> response = new JsonResultResponse<>();
+        response.setResults(results);
+        response.setTotal(fishByFeature.getTotalCount());
+
+        return response;
     }
 }

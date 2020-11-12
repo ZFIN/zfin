@@ -207,6 +207,9 @@ public class GafService {
     }
 
     protected Collection<Marker> getGenes(String entryId) throws GafValidationError {
+        if (entryId.startsWith("ZFIN:")){
+            entryId=StringUtils.substring(entryId,5,entryId.length());
+        }
         Set<Marker> returnGenes = new HashSet<>();
         if (entryId.startsWith("ZDB-GENE-") || entryId.contains("RNAG")) {
             Marker gene = markerRepository.getGeneByID(entryId);
@@ -320,6 +323,13 @@ public class GafService {
         markerGoTermEvidenceToAdd.setFlag(goEvidenceQualifier);
         if (!gafEntry.getQualifier().equals("NOT")) {
             GenericTerm relTerm = getRelQualifier(gafEntry, goTerm);
+            markerGoTermEvidenceToAdd.setQualifierRelation(relTerm);
+        }
+        if(gafEntry.getRelation()!=null){
+            GenericTerm relTerm = RepositoryFactory.getOntologyRepository().getTermByOboID(gafEntry.getRelation());
+            if (relTerm==null){
+                throw new GafValidationError("RO term  " + gafEntry.getRelation() + " does not exist", gafEntry);
+            }
             markerGoTermEvidenceToAdd.setQualifierRelation(relTerm);
         }
 
@@ -534,6 +544,7 @@ public class GafService {
         List<Ontology> ontologies = new ArrayList<>(2);
         String relationName;
         GenericTerm relationTerm;
+        GenericTerm relationTerm1;
         ontologies.add(Ontology.ZFIN_RO);
         ontologies.add(Ontology.GO_QUALIFIER);
         if (!gafEntry.getQualifier().isEmpty()) {
@@ -570,6 +581,7 @@ public class GafService {
                 return relationTerm;
             }
         }
+
         else {
             return null;
         }
@@ -786,6 +798,10 @@ public class GafService {
         for (GafEntry gafEntry : gafEntries) {
 
             // replace the ZDB Id with replaced one for column 2, object id
+            if (StringUtils.startsWith(gafEntry.getEntryId(), "ZFIN:")) {
+
+                replaceAttributeOnGafEntry(gafEntry, "entryId", oldNewZDBIds);
+            }
             if (StringUtils.startsWith(gafEntry.getEntryId(), "ZDB-")) {
                 replaceAttributeOnGafEntry(gafEntry, "entryId", oldNewZDBIds);
             }

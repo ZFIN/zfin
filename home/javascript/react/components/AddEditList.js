@@ -17,12 +17,18 @@ const AddEditList = ({items, setModalItem, itemKeyProp = 'zdbID', newItem, forma
             {items.length === 0 && <NoData placeholder='None' />}
 
             <ul className='list-unstyled'>
-                {items.map(item => (
-                    <li key={item[itemKeyProp]}>
-                        {formatItem(item)}
-                        <a className='show-on-hover px-1' href='#' onClick={e => handleEditClick(e, item)}>Edit</a>
-                    </li>
-                ))}
+                {items.map(item => {
+                    const editLink = (
+                        <a className='show-on-hover px-1' href='#' onClick={e => handleEditClick(e, item)}>
+                            Edit
+                        </a>
+                    );
+                    return (
+                        <li key={item[itemKeyProp]}>
+                            {formatItem(item, editLink)}
+                        </li>
+                    );
+                })}
             </ul>
 
             <button type='button' className='btn btn-link px-0' onClick={handleAddClick}>Add</button>

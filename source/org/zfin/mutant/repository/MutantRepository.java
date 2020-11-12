@@ -5,6 +5,7 @@ import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionStatement;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureAlias;
+import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
@@ -56,6 +57,10 @@ public interface MutantRepository {
     List<GenotypeFeature> getGenotypeFeaturesByGenotype(Genotype genotype);
 
     List<GenotypeFeature> getGenotypeFeaturesByGenotype(String genotypeID);
+
+    GenotypeFeature getGenotypeFeature(String genoFeatId);
+
+    PaginationResult<FishGenotypeFeature> getFishByFeature(String featureId, boolean excludeFishWithSTR, Pagination pagination);
 
     /**
      * Retrieve the number of images associated to a mutant marker and a given
@@ -466,6 +471,7 @@ public interface MutantRepository {
     FishExperiment getFishExperiment(String zdbID);
 
     List<FishExperiment> getFishExperiment(Genotype genotype);
+    List<FishExperiment> getFishExperimentsByFish(Fish fish);
 
     /**
      * Retrieve list of all zygosities
