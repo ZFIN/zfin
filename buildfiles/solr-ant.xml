@@ -165,7 +165,7 @@
         <echo message="Creating solr core via http..."/>
         <exec executable="curl">
             <arg value="-s"/>
-            <arg value="http://localhost:${SOLR_PORT}/solr/admin/cores?action=CREATE&amp;core=${SOLR_CORE}"/>
+            <arg value="http://localhost:${SOLR_PORT}/solr/admin/cores?action=CREATE&amp;name=${SOLR_CORE}&amp;instanceDir=${SOLR_CORE}"/>
         </exec>
     </target>
 
