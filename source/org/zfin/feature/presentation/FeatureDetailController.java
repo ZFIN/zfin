@@ -135,6 +135,7 @@ public class FeatureDetailController {
         FeatureBean form = new FeatureBean();
         form.setZdbID(zdbID);
         form.setFeature(feature);
+        form.setGBrowseImage(FeatureService.getGbrowseImage(feature));
         form.setSummaryPageDbLinks(FeatureService.getSummaryDbLinks(feature));
         form.setGenbankDbLinks(FeatureService.getGenbankDbLinks(feature));
         form.setExternalNotes(FeatureService.getSortedExternalNotes(feature));
@@ -146,6 +147,7 @@ public class FeatureDetailController {
         form.setFtrCommContr(zebrashareRepository.getLatestCommunityContribution(feature));
         form.setZShareOrigPub(zebrashareRepository.getZebraSharePublicationForFeature(feature));
         form.setSingleAffectedGeneFeature(featureRepository.isSingleAffectedGeneAlleles(feature));
+        form.setVarSequence(RepositoryFactory.getFeatureRepository().getFeatureVariant(feature));
         retrieveSortedGenotypeData(feature, form);
         retrievePubData(feature, form);
 
