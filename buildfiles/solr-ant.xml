@@ -60,7 +60,7 @@
 
 
     <target name="build-solr-index">
-        <groovy src="${env.TARGETROOT}/server_apps/solr/${SOLR_CORE}/conf/index-solr.groovy" />
+        <groovy src="server_apps/solr/site_index/conf/index-solr.groovy" />
         <echo message="Starting Solr index build via http..."/>
         <exec executable="curl">
             <arg value="-s"/>
