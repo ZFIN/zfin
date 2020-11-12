@@ -7,5 +7,7 @@
     <include file="source/org/zfin/db/load/1119/update_mfs.sql"/>
     <include file="source/org/zfin/db/load/1119/add_chr_date.sql"/>
     <include file="source/org/zfin/db/load/1119/add_tag_extnote.sql"/>
+    <include file="source/org/zfin/db/load/1119/update_fish_name.sql"/>
+    
 
 </databaseChangeLog>
