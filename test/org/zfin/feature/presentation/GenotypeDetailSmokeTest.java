@@ -11,6 +11,10 @@ import org.zfin.AbstractSmokeTest;
 import java.io.IOException;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 @RunWith(Parameterized.class)
 public class GenotypeDetailSmokeTest extends AbstractSmokeTest {
 
@@ -27,11 +31,11 @@ public class GenotypeDetailSmokeTest extends AbstractSmokeTest {
         webClient.waitForBackgroundJavaScript(2000);
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + pageUrl);
         webClient.waitForBackgroundJavaScriptStartingBefore(1000);
-        assertEquals("Genotype: hand2^s40", page.getTitleText());
+        assertThat("Page title should be correct", page.getTitleText(), equalTo("ZFIN Genotype: hand2^s40"));
 
         //get a feature link by zdb_id put in the dom id field...
         HtmlAnchor featureLink = (HtmlAnchor) page.getByXPath("//a[@id='ZDB-ALT-050916-2']").get(0);
-        assertNotNull(featureLink);
+        assertThat("Link to ZDB-ALT-050916-2 should exist", featureLink, notNullValue());
     }
 
     @Test
@@ -39,11 +43,11 @@ public class GenotypeDetailSmokeTest extends AbstractSmokeTest {
         webClient.waitForBackgroundJavaScript(2000);
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + pageUrl);
         webClient.waitForBackgroundJavaScriptStartingBefore(1000);
-        assertEquals("Genotype: hand2^s40", page.getTitleText());
+        assertThat("Page title should be correct", page.getTitleText(), equalTo("ZFIN Genotype: hand2^s40"));
 
         //get a feature link by zdb_id put in the dom id field...
         HtmlAnchor featureLink = (HtmlAnchor) page.getByXPath("//a[@id='ZDB-ALT-050916-2']").get(0);
-        assertNotNull(featureLink);
+        assertThat("Link to ZDB-ALT-050916-2 should exist", featureLink, notNullValue());
     }
 
     @Test

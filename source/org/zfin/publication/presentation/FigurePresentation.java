@@ -4,8 +4,6 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.FigureFigure;
 import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.infrastructure.ZfinEntity;
-import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.Term;
 
 /**
  * To get/create output from a Figure object
@@ -36,7 +34,7 @@ public class FigurePresentation extends EntityPresentation {
      * @return html for Figure link
      */
     public static String getSimpleLink(Figure figure) {
-        return getViewLink(figure.getZdbID(), "1 Figure", null, "figure-link simple-figure-link");
+        return getViewLink(figure.getZdbID(), "1 Figure", null, "figure-link");
     }
 
     public static String getUrl(Figure figure) {
