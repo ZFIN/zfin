@@ -41,6 +41,7 @@
                                 text="${note.note}"
                                 idName="${zfn:generateRandomDomID()}"
                                 shortLength="80"
+                                section="variants"
                         />
                          <div>
                               <zfin:link entity="${note.publication}"/>
