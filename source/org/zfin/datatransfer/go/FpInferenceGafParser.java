@@ -109,7 +109,6 @@ public class FpInferenceGafParser {
 
         gafEntry.setEntryId(entries[1]); // uniprot ID for GOA, ZDB-GENE for ZFIN
         gafEntry.setQualifier(entries[3]);
-        gafEntry.setRelation("");
         gafEntry.setGoTermId(entries[4]);
         gafEntry.setPubmedId(entries[5]);
         if (entries[6] == null) {
