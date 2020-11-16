@@ -4,7 +4,7 @@
 
 <c:set var="service" value="${formBean.downloadFileService}"/>
 
-<z:page title="ZFIN Download Archive Error">
+<z:page title="ZFIN Downloads Archive Error">
     <h3>Download Archive Error:</h3>
 
     <c:choose>
