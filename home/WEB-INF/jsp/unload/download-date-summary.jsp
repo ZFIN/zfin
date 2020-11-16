@@ -2,7 +2,7 @@
 
 <jsp:useBean id="formBean" class="org.zfin.util.database.presentation.UnloadBean" scope="request"/>
 
-<z:page title="ZFIN Download Archive: ${dynamicTitle}">
+<z:page title="ZFIN Downloads Archive: ${dynamicTitle}">
     <table width="100%">
         <tr>
             <td>

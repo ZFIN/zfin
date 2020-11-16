@@ -135,17 +135,28 @@ public class FeatureDetailController {
         FeatureBean form = new FeatureBean();
         form.setZdbID(zdbID);
         form.setFeature(feature);
+        form.setGBrowseImage(FeatureService.getGbrowseImage(feature));
+        form.setSortedConstructRelationships(FeatureService.getSortedConstructRelationships(feature));
+        form.setCreatedByRelationship(FeatureService.getCreatedByRelationship(feature));
+        form.setFeatureTypeAttributions(FeatureService.getFeatureTypeAttributions(feature));
+        form.setFeatureMap(FeatureService.getFeatureMap(feature));
         form.setSummaryPageDbLinks(FeatureService.getSummaryDbLinks(feature));
-        form.setGenbankDbLinks(FeatureService.getGenbankDbLinks(feature));
         form.setExternalNotes(FeatureService.getSortedExternalNotes(feature));
         form.setMutationDetails(mutationDetailsConversionService.convert(feature, true));
         form.setFeatureLocations(FeatureService.getPhysicalLocations(feature));
+        form.setDnaChangeAttributions(FeatureService.getDnaChangeAttributions(feature));
+        form.setTranscriptConsequenceAttributions(FeatureService.getTranscriptConsequenceAttributions(feature));
+        form.setProteinConsequenceAttributions(FeatureService.getProteinConsequenceAttributions(feature));
+        form.setVarSequence(RepositoryFactory.getFeatureRepository().getFeatureVariant(feature));
+        form.setVarSeqAttributions(FeatureService.getFlankSeqAttr(feature));
         if (feature.getAbbreviation().startsWith("hi")) {
             form.setAaLink(FeatureService.getAALink(feature));
         }
         form.setFtrCommContr(zebrashareRepository.getLatestCommunityContribution(feature));
+        form.setZircGenoLink(FeatureService.getZIRCGenoLink(feature));
         form.setZShareOrigPub(zebrashareRepository.getZebraSharePublicationForFeature(feature));
         form.setSingleAffectedGeneFeature(featureRepository.isSingleAffectedGeneAlleles(feature));
+        form.setVarSequence(RepositoryFactory.getFeatureRepository().getFeatureVariant(feature));
         retrieveSortedGenotypeData(feature, form);
         retrievePubData(feature, form);
 

@@ -225,6 +225,7 @@ public class HibernateMutantRepository implements MutantRepository {
                         "    select " +
                         "      self.genofeat_zdb_id, " +
                         "      fish_zdb_id, " +
+                        "      fish_name_order, " +
                         "      zyg_name, " +
                         "      string_agg(distinct affected_gene.mrkr_abbrev_order, ',' order by affected_gene.mrkr_abbrev_order) as affected_list, " +
                         "      count(distinct affected_gene.mrkr_zdb_id) as affected_count, " +
@@ -254,7 +255,8 @@ public class HibernateMutantRepository implements MutantRepository {
                         "    end " +
                         "  ) asc, " +
                         "  affected_count asc, " +
-                        "  affected_list asc;"
+                        "  affected_list asc, " +
+                        "  fish_name_order asc;"
         );
         query.setParameter("feature_id", featureId);
         query.setResultTransformer(new BasicTransformerAdapter() {

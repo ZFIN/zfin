@@ -10,6 +10,11 @@ import org.zfin.AbstractSmokeTest;
 import java.io.IOException;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
+
 @RunWith(Parameterized.class)
 public class DownloadSmokeTest extends AbstractSmokeTest {
 
@@ -23,7 +28,7 @@ public class DownloadSmokeTest extends AbstractSmokeTest {
     @Test
     public void testMainDownloadPage() throws IOException {
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/unload/downloads");
-        assertTrue("Downloads Archive", page.getTitleText().contains("Downloads Archive"));
+        assertThat("Page title contains \"Downloads Archive\"", page.getTitleText(), containsString("Downloads Archive"));
     }
 
     /**
@@ -32,7 +37,7 @@ public class DownloadSmokeTest extends AbstractSmokeTest {
     @Test
     public void testDeveloperDownloadPage() throws IOException {
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/unload/downloads/archive");
-        assertTrue("Downloads Archive", page.getTitleText().contains("Downloads Archive"));
+        assertThat("Page title contains \"Downloads Archive\"", page.getTitleText(), containsString("Downloads Archive"));
     }
 
     /**
@@ -43,11 +48,11 @@ public class DownloadSmokeTest extends AbstractSmokeTest {
         for (WebClient webClient : publicWebClients) {
             try {
                 HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/unload/downloads");
-                assertTrue("Downloads Archive:",  page.getTitleText().startsWith("Downloads Archive:"));
+                assertThat("Page title contains \"Downloads Archive:\"",  page.getTitleText(), containsString("Downloads Archive:"));
                 List<?> downloadFileLink = page.getByXPath("//a[@id='antibodies.txt']");
                 // exactly one link
-                assertNotNull("could not find antibodies.txt download link", downloadFileLink);
-                assertEquals(1, downloadFileLink.size());
+                assertThat("antibodies.txt download should exist", downloadFileLink, notNullValue());
+                assertThat("one link to antibodies.txt should exist", downloadFileLink, hasSize(1));
             } catch (IOException e) {
                 fail(e.toString());
             }

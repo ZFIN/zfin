@@ -2,21 +2,8 @@
 //usr/bin/env groovy -cp "$GROOVY_CLASSPATH" "$0" $@; exit $?
 
 import groovy.json.JsonSlurper
-import org.hibernate.Session
-import org.zfin.framework.HibernateSessionCreator
-import org.zfin.framework.HibernateUtil
-import org.zfin.Species
-import org.zfin.infrastructure.RecordAttribution
 import org.zfin.properties.ZfinProperties
-import org.zfin.repository.RepositoryFactory
-import org.zfin.sequence.ForeignDB
-import org.zfin.sequence.ForeignDBDataType
-import org.zfin.sequence.MarkerDBLink
-import org.zfin.sequence.ReferenceDatabase
 import org.zfin.util.ReportGenerator
-
-import java.util.zip.GZIPInputStream
-import java.util.zip.ZipException
 
 
 cli = new CliBuilder(usage: 'LoadAddgene')
@@ -28,19 +15,6 @@ options = cli.parse(args)
 if (!options) {
     System.exit(1)
 }
-
-
-
-
-
-
-/*addgeneDb = RepositoryFactory.sequenceRepository.getReferenceDatabase(
-        ForeignDB.AvailableName.ADDGENE,
-        ForeignDBDataType.DataType.OTHER,
-        ForeignDBDataType.SuperType.SUMMARY_PAGE,
-        Species.Type.ZEBRAFISH)
-entrezGeneDb = session.get(ReferenceDatabase.class, 'ZDB-FDBCONT-040412-1')*/
-
 
 
 ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")

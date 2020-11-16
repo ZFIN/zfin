@@ -105,16 +105,12 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
                 hyperlink.getHrefAttribute(), containsString("ZDB-PUB-990507-16"));
 
         // alcama antigen gene: check this antigen gene is present
-        HtmlAnchor geneHyperlink = (HtmlAnchor) page.getElementById("ZDB-GENE-990415-30");
+        HtmlAnchor geneHyperlink = page.getAnchorByText("alcama");
+        assertThat("Link to antigen gene page should be present", geneHyperlink, notNullValue());
         HtmlPage genePage = geneHyperlink.click();
         // cannot check the title of the page as it is not in the <head> segment!
         //assertEquals("ZFIN: Gene: alcama", genePage.getTitleText());
         assertThat("Link to antigen gene page should load", genePage, notNullValue());
-
-        // check figure view:  Fig. 7 from Chen et al., 2008
-        hyperlink = (HtmlAnchor) page.getElementById("ZDB-FIG-140206-11");
-        HtmlPage figurePage = hyperlink.click();
-        assertThat("Link to figure page should load", figurePage, notNullValue());
 
         // Source: check ZIRC is one of them
         HtmlAnchor sourceHyperlink = (HtmlAnchor) page.getElementById("ZDB-LAB-991005-53");

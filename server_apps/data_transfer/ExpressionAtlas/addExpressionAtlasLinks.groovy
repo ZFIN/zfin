@@ -1,8 +1,11 @@
 #!/bin/bash
 //usr/bin/env groovy -cp "$GROOVY_CLASSPATH:." "$0" $@; exit $?
 import groovy.json.*
-
+import groovy.time.TimeCategory
+import groovy.time.TimeDuration
 import org.zfin.properties.ZfinProperties
+
+import java.util.zip.GZIPInputStream
 
 ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
 CROSS_REFERENCE_FILE = ""
@@ -18,8 +21,6 @@ if (!options) {
 }
 
 ZfinProperties.init("${System.getenv()['TARGETROOT']}/home/WEB-INF/zfin.properties")
-//new HibernateSessionCreator()
-
 
 print "Loading local JSON file ... "
 
@@ -44,31 +45,43 @@ allianceReleaseVersion = releaseIds.max()
 
 fmsURL = "https://fms.alliancegenome.org/api/snapshot/release/" + allianceReleaseVersion
 crossReferencePath = ""
-
 fmsJson = new JsonSlurper().parseText(new URL(fmsURL).text)
 
-fmsJson.snapShot.dataFiles.each{
+fmsJson.snapShot.dataFiles.each {
     dataFile ->
-        s3Path = dataFile.s3Path
+        s3Path = dataFile.s3Url
 
-        if (dataFile.dataType.name == 'GENECROSSREFERENCEJSON'){
-            crossReferencePath = "https://download.alliancegenome.org/" + s3Path
+        if (dataFile.dataType.name == 'GENECROSSREFERENCEJSON') {
+
+            crossReferencePath = s3Path
             def file = new FileOutputStream(crossReferencePath.tokenize("/")[-1])
             def out = new BufferedOutputStream(file)
             out << new URL(crossReferencePath).openStream()
+            fname = crossReferencePath.tokenize("/")[-1]
+            fpath = "${System.getenv()['TARGETROOT']}/server_apps/data_transfer/ExpressionAtlas/" + fname
+            print fname + "\n"
+            print "made it to the unzip" + "\n"
+            def gziped_bundle = fpath
+            if (fname.indexOf(".") > 0) {
+                fname = fname.substring(0, fname.lastIndexOf("."))
+            }
+
+            def unzipped_output = "${System.getenv()['TARGETROOT']}/server_apps/data_transfer/ExpressionAtlas/" + fname
+            File unzippedFile = new File(unzipped_output)
+            if (!unzippedFile.exists()) {
+                print unzipped_output
+                gunzip(gziped_bundle, unzipped_output)
+            }
             out.close()
         }
 }
 
-
-def geneids=new ArrayList<String>()
-def outCSV=new File('geneDesc.csv')
-def reader = new BufferedReader(new InputStreamReader(new FileInputStream(crossReferencePath.tokenize("/")[-1]),"UTF-8"))
-def jsonSlurper =  new JsonSlurper()
-def json = jsonSlurper.parse(reader)
+def jsonSlurper = new JsonSlurper()
+def reader = new BufferedReader(new InputStreamReader(new FileInputStream("${System.getenv()['TARGETROOT']}/server_apps/data_transfer/ExpressionAtlas/" + fname),"UTF-8"))
+def crossReferencesFile = jsonSlurper.parse(reader)
 
 new File("loadableGXALinks.txt").withWriter { output ->
-    json.data.each {
+    crossReferencesFile.data.each {
         if (it.ResourceDescriptorPage == "gene/expressionAtlas" && it.GeneID.startsWith("ZFIN")) {
             output.writeLine([it.GeneID.tokenize(":")[-1], it.CrossReferenceCompleteURL.tokenize("/")[-1].toUpperCase()].join(","))
         }
@@ -173,3 +186,18 @@ println ("done with loading expression atlas links into db")
 
 
 System.exit(0)
+
+static gunzip(String file_input, String file_output) {
+    FileInputStream fis = new FileInputStream(file_input)
+    FileOutputStream fos = new FileOutputStream(file_output)
+    GZIPInputStream gzis = new GZIPInputStream(fis)
+    byte[] buffer = new byte[1024]
+    int len = 0
+
+    while ((len = gzis.read(buffer)) > 0) {
+        fos.write(buffer, 0, len)
+    }
+    fos.close()
+    fis.close()
+    gzis.close()
+}

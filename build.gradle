@@ -74,7 +74,7 @@ task loadDatabase() {
         exec { ignoreExitValue = true
 		commandLine 'createdb', dbname }
         exec { ignoreExitValue = true
-		commandLine "bash", "-c", "pg_restore -j 8 -d $dbname $unloadPath" }
+		commandLine "bash", "-c", "pg_restore -c -j 8 -d $dbname $unloadPath" }
         exec { ignoreExitValue = true
 		commandLine "bash", "-c", "echo 'vacuum (analyze)' | psql $dbname" }
 

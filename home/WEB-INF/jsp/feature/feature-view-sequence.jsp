@@ -3,48 +3,54 @@
 
 
 <z:attributeList>
-    <z:attributeListItem label="Flanking Sequence">
-        <jsp:body>
-        <z:ifHasData test="${!empty formBean.feature.featureGenomicMutationDetailSet && !(formBean.varSequence.vfsVariation.contains('null'))}"
-                     noDataMessage="None">
-        <span style="word-wrap: break-word;">${formBean.varSequence.vfsLeftEnd}
-            <br>
-        <span style="color: red;">
-                ${formBean.varSequence.vfsVariation}
-        </span>
-        <c:if test="${formBean.varSequence.vfsVariation.length()>450}">
-            <zfin2:toggleTextLength text="${formBean.varSequence.vfsRightEnd}"
-                                    idName="${zfn:generateRandomDomID()}"
-                                    shortLength="80"/>
-        </c:if>
-        <c:if test="${formBean.varSequence.vfsVariation.length()<450}">
+    <z:ifHasData
+            test="${!empty formBean.feature.featureGenomicMutationDetailSet && !(formBean.varSequence.vfsVariation.contains('null'))}"
+            noDataMessage="None">
+        <z:attributeListItem label="Flanking Sequence">
+            <jsp:body>
 
-            ${formBean.varSequence.vfsRightEnd}
-        </c:if>
-        <c:if test="${empty formBean.varSequence.vfsVariation}">
+                <span style="word-wrap: break-word;">${formBean.varSequence.vfsLeftEnd}
+                <br>
+                <span style="color: red;">
+                        ${formBean.varSequence.vfsVariation}
+                </span>
+                <c:if test="${formBean.varSequence.vfsVariation.length()>450}">
+                    <zfin2:toggleTextLength text="${formBean.varSequence.vfsRightEnd}"
+                                            idName="${zfn:generateRandomDomID()}"
+                                            shortLength="80"/>
+                </c:if>
+                <c:if test="${formBean.varSequence.vfsVariation.length()<450}">
 
-            ${formBean.varSequence.vfsRightEnd}
-        </c:if>
+                    ${formBean.varSequence.vfsRightEnd}
+                </c:if>
+                <c:if test="${empty formBean.varSequence.vfsVariation}">
 
-        </z:ifHasData>
-        </jsp:body>
-    </z:attributeListItem>
+                    ${formBean.varSequence.vfsRightEnd}
+                </c:if>
 
-    <z:attributeListItem label="Sequence">
-        <c:forEach var="featureGenbankLink" items="${formBean.genbankDbLinks}" varStatus="loop">
-            <zfin:link entity="${featureGenbankLink}"/>
-            <c:if test="${featureGenbankLink.publicationCount > 0}">
-                <c:choose>
-                    <c:when test="${featureGenbankLink.publicationCount == 1}">
-                        (<a href="/${featureGenbankLink.singlePublication.zdbID}">${featureGenbankLink.publicationCount}</a>)
-                    </c:when>
-                    <c:otherwise>
-                        (<a href="/action/infrastructure/data-citation-list/${featureGenbankLink.zdbID}">${featureGenbankLink.publicationCount}</a>)
-                    </c:otherwise>
-                </c:choose>
-            </c:if>
-            <c:if test="${!loop.last}">,&nbsp;</c:if>
-        </c:forEach>
 
-    </z:attributeListItem>
+            </jsp:body>
+        </z:attributeListItem>
+    </z:ifHasData>
+
+    <z:ifHasData test="${!empty formBean.genbankDbLinks}" noDataMessage="None">
+
+        <z:attributeListItem label="Sequence">
+            <c:forEach var="featureGenbankLink" items="${formBean.genbankDbLinks}" varStatus="loop">
+                <zfin:link entity="${featureGenbankLink}"/>
+                <c:if test="${featureGenbankLink.publicationCount > 0}">
+                    <c:choose>
+                        <c:when test="${featureGenbankLink.publicationCount == 1}">
+                            (<a href="/${featureGenbankLink.singlePublication.zdbID}">${featureGenbankLink.publicationCount}</a>)
+                        </c:when>
+                        <c:otherwise>
+                            (<a href="/action/infrastructure/data-citation-list/${featureGenbankLink.zdbID}">${featureGenbankLink.publicationCount}</a>)
+                        </c:otherwise>
+                    </c:choose>
+                </c:if>
+                <c:if test="${!loop.last}">,&nbsp;</c:if>
+            </c:forEach>
+
+        </z:attributeListItem>
+    </z:ifHasData>
 </z:attributeList>

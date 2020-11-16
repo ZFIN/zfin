@@ -7,8 +7,8 @@
 
     <c:when test="${markerExpression.allExpressionData.figureCount == 1}">
 
-        ${markerExpression.allExpressionData.figureCount} figure
-
+        <a href="/${marker.zdbID}/expression">${markerExpression.allExpressionData.figureCount} figure
+        </a>
     </c:when>
     <c:otherwise>
         <a href="/${marker.zdbID}/expression">

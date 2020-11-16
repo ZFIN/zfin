@@ -2,7 +2,7 @@
 
 <jsp:useBean id="formBean" class="org.zfin.util.database.presentation.UnloadBean" scope="request"/>
 
-<z:page title="ZFIN Download Archive">
+<z:page title="ZFIN Downloads Archive">
     <h3>Download Archive:</h3>
 
 

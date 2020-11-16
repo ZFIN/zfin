@@ -3,7 +3,7 @@
 <%@ attribute name="previousNames" required="true" type="java.util.List" %>
 <%@ attribute name="name" required="false" type="java.lang.String"  %>
 
-<c:set var="title" value="${(empty name) ? 'Previous Name' : name}" />
+<c:set var="title" value="${(empty name) ? 'Previous Names' : name}" />
 
 <z:attributeListItem label="${title}">
     <z:ifHasData test="${!empty previousNames}" noDataMessage="None">
