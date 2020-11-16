@@ -58,11 +58,11 @@ public class ExternalBlastSequenceController extends AbstractExternalBlastContro
 
 
         if (CollectionUtils.isEmpty(blastBean.getSequences())) {
-            return "external-blast.page";
+            return "blast/external_blast_redirect";
         }
 
         blastBean.setHiddenProperties(getHiddenVariables(sequence,database,true));
 
-        return "external-blast.page";
+        return "blast/external_blast_redirect";
     }
 }

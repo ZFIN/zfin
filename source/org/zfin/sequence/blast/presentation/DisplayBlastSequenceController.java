@@ -38,7 +38,7 @@ public class DisplayBlastSequenceController {
             }
         }
 
-        return "display-blast-sequence.page";
+        return "blast/display_blast_sequence";
     }
 
     private Logger logger = LogManager.getLogger(DisplayBlastSequenceController.class);

@@ -37,7 +37,7 @@ public class PhenotypeStatementDetailController {
         if (phenotypeStatement == null) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             model.addAttribute(LookupStrings.ZDB_ID, id);
-            return "record-not-found.page";
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
 
         model.addAttribute("phenotypeStatement", phenotypeStatement);
@@ -46,10 +46,10 @@ public class PhenotypeStatementDetailController {
 
         if (phenotypeStatement.isMorphologicalPhenotype()) {
             model.addAttribute("uniqueTerms", getUniqueTerms(phenotypeStatement));
-            return "phenotype/phenotype-statement.page";
+            return "phenotype/phenotype-statement";
         } else {
             model.addAttribute("genePreviousNames", markerRepository.getPreviousNamesLight(phenotypeStatement.getGene()));
-            return "phenotype/phenotypic-expression-statement.page";
+            return "phenotype/phenotypic-expression-statement";
         }
     }
 
@@ -62,7 +62,7 @@ public class PhenotypeStatementDetailController {
         if (phenotypeStatement == null) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             model.addAttribute(LookupStrings.ZDB_ID, id);
-            return "record-not-found.popup";
+            return LookupStrings.RECORD_NOT_FOUND_POPUP;
         }
 
         model.addAttribute("phenotypeStatement", phenotypeStatement);
@@ -70,10 +70,10 @@ public class PhenotypeStatementDetailController {
 
         if (phenotypeStatement.isMorphologicalPhenotype()) {
             model.addAttribute("uniqueTerms", getUniqueTerms(phenotypeStatement));
-            return "phenotype/phenotype-statement-popup.popup";
+            return "phenotype/phenotype-statement-popup";
         } else {
             model.addAttribute("genePreviousNames", markerRepository.getPreviousNamesLight(phenotypeStatement.getGene()));
-            return "phenotype/phenotypic-expression-statement-popup.popup";
+            return "phenotype/phenotypic-expression-statement-popup";
         }
     }
 

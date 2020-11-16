@@ -92,7 +92,7 @@ public class PublicationTrackingController {
         model.addAttribute("allowCuration", publicationService.allowCuration(publication));
         model.addAttribute("hasCorrespondence", publicationService.hasCorrespondence(publication));
         model.addAttribute("loggedInUser", ProfileService.getCurrentSecurityUser());
-        return "publication/track-publication.page";
+        return "publication/track-publication";
     }
 
     @ResponseBody
@@ -282,7 +282,7 @@ public class PublicationTrackingController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Status History for " + publication.getTitle());
         model.addAttribute("publication", publication);
         model.addAttribute("events", events);
-        return "publication/status-history.page";
+        return "publication/status-history";
     }
 
     @ResponseBody

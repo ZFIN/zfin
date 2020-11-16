@@ -138,19 +138,19 @@ public enum OntologyDTO implements IsSerializable {
     },
 
 
-     MPATH_NEOPLASM(16, "MPATH-Neoplasm","mouse_pathology.ontology","mpath_neoplasm", false) {
+    MPATH_NEOPLASM(16, "MPATH-Neoplasm", "mouse_pathology.ontology", "mpath_neoplasm", false) {
         @Override
         public OntologyDTO getAssociatedQualityOntology() {
             return null;
         }
     },
-     SO(17, "SO","sequence", false) {
+    SO(17, "SO", "sequence", false) {
         @Override
         public OntologyDTO getAssociatedQualityOntology() {
             return null;
         }
     },
-     ECO(20, "ECO","eco", false) {
+    ECO(20, "ECO", "eco", false) {
         @Override
         public OntologyDTO getAssociatedQualityOntology() {
             return null;
@@ -204,19 +204,19 @@ public enum OntologyDTO implements IsSerializable {
             return null;
         }
     },
-    MMO(24,"Measurement Methods Ontology", "mmo",false){
+    MMO(24, "Measurement Methods Ontology", "mmo", false) {
         @Override
         public OntologyDTO getAssociatedQualityOntology() {
             return null;
         }
     },
-    OBI(25,"Ontology for Biomedical Investigations", "obi",false){
+    OBI(25, "Ontology for Biomedical Investigations", "obi", false) {
         @Override
         public OntologyDTO getAssociatedQualityOntology() {
             return null;
         }
     },
-            ;
+    ;
 
     private int index;
     private String displayName;
@@ -262,35 +262,40 @@ public enum OntologyDTO implements IsSerializable {
 
     public static OntologyDTO getOntologyByDisplayName(String name) {
         for (OntologyDTO ontology : values()) {
-            if (ontology.getDisplayName().equals(name))
+            if (ontology.getDisplayName().equals(name)) {
                 return ontology;
+            }
         }
         return null;
     }
 
     public static OntologyDTO getOntologyByName(String name) {
         for (OntologyDTO ontology : values()) {
-            if (ontology.getOntologyName().equals(name))
+            if (ontology.getOntologyName().equals(name)) {
                 return ontology;
+            }
         }
         return null;
     }
 
-    public List<OntologyDTO> getComposedOntologies(){
-        if(!composedOntologies)
+    public List<OntologyDTO> getComposedOntologies() {
+        if (!composedOntologies) {
             return null;
+        }
 
         String[] individualOntologies = ontologyName.split(",");
         List<OntologyDTO> composedOntologies = new ArrayList<OntologyDTO>(individualOntologies.length);
-        for(String individualOntology: individualOntologies)
+        for (String individualOntology : individualOntologies) {
             composedOntologies.add(getOntologyByName(individualOntology));
+        }
         return composedOntologies;
     }
 
     public static OntologyDTO getOntologyByDescriptor(String descriptorName) {
         for (OntologyDTO ontology : values()) {
-            if (ontology.getOntologyName().equals(descriptorName))
+            if (ontology.getOntologyName().equals(descriptorName)) {
                 return ontology;
+            }
         }
         return null;
     }
@@ -300,18 +305,24 @@ public enum OntologyDTO implements IsSerializable {
     }
 
     public static boolean isGoOntology(OntologyDTO name) {
-        if (name == null)
+        if (name == null) {
             return false;
-        if (name.equals(GO_BP))
+        }
+        if (name.equals(GO_BP)) {
             return true;
-        if (name.equals(GO_CC))
+        }
+        if (name.equals(GO_CC)) {
             return true;
-        if (name.equals(GO_MF))
+        }
+        if (name.equals(GO_MF)) {
             return true;
+        }
         return false;
     }
 
-    public abstract OntologyDTO getAssociatedQualityOntology();
+    public OntologyDTO getAssociatedQualityOntology() {
+        return null;
+    }
 
     public String getSubtreeOntology() {
         return subtreeOntology;

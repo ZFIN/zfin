@@ -69,6 +69,15 @@ public class HibernateSequenceRepository implements SequenceRepository {
         return getReferenceDatabase(foreignDBName, type, ForeignDBDataType.SuperType.SEQUENCE, Species.Type.ZEBRAFISH);
     }
 
+    public List<ReferenceDatabase> getReferenceDatabasesByForeignDBName(ForeignDB.AvailableName dbName) {
+        String hql = " from ReferenceDatabase referenceDatabase " +
+                " join fetch referenceDatabase.foreignDB " +
+                " where referenceDatabase.foreignDB.dbName = :dbName ";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setString("dbName", dbName.toString());
+        return query.list();
+    }
+
     public List<ReferenceDatabase> getSequenceReferenceDatabases(ForeignDB.AvailableName name, ForeignDBDataType.DataType type) {
 
         String hql = " from ReferenceDatabase referenceDatabase " +
@@ -498,7 +507,6 @@ public class HibernateSequenceRepository implements SequenceRepository {
         InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
         if (dbLinkZdbIdsToDelete.size() > 0) {
             ir.deleteActiveDataByZdbID(dbLinkZdbIdsToDelete);
-            dbLinksToRemove.clear();
         }
         session.flush();  // test
 

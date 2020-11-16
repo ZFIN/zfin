@@ -1,7 +1,9 @@
 package org.zfin.framework.presentation;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
+import org.zfin.framework.api.View;
 import org.zfin.marker.Marker;
 import org.zfin.publication.Publication;
 
@@ -21,6 +23,7 @@ public abstract class EntityStatistics {
     private Set<Publication> pubs = new HashSet<Publication>();
     private Set<Image> images = new HashSet<Image>();
 
+    @JsonView(View.API.class)
     public int getNumberOfPublications() {
         if (numberOfPublications == -1) {
             PaginationResult<Publication> pubs = getPublicationPaginationResult();
@@ -64,8 +67,27 @@ public abstract class EntityStatistics {
         return pubs.iterator().next();
     }
 
+    @JsonView(View.API.class)
+    public Publication getFirstPublication() {
+        if (getNumberOfPublications() == 0) {
+            return null;
+        } else {
+            return getPublicationPaginationResult().getPopulatedResults().get(0);
+        }
+    }
+
+    @JsonView(View.API.class)
     public int getNumberOfFigures() {
         return figs.size();
+    }
+
+    @JsonView(View.API.class)
+    public Figure getFirstFigure() {
+        if (getNumberOfFigures() == 0) {
+            return null;
+        } else {
+            return figs.iterator().next();
+        }
     }
 
     public void addFigure(Figure figure) {
@@ -125,6 +147,7 @@ public abstract class EntityStatistics {
         return genes;
     }
 
+    @JsonView(View.API.class)
     public boolean isImgInFigure() {
         return false;
     }

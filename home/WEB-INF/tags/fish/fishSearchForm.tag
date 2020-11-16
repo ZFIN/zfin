@@ -1,7 +1,7 @@
 <%@ tag import="org.zfin.fish.presentation.SortBy" %>
 <%@ tag import="org.zfin.framework.presentation.PaginationBean" %>
-<%@ tag import="org.zfin.gwt.root.ui.LookupComposite" %>
 <%@ tag import="org.zfin.ontology.Ontology" %>
+<%@ tag import="org.zfin.framework.presentation.LookupStrings" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 
@@ -106,9 +106,9 @@
                     </c:if>
                     hiddenNames:"anatomyTermNames",
                     hiddenIds:"anatomyTermIDs",
-                    type:"<%= LookupComposite.GDAG_TERM_LOOKUP %>",
-                    ontologyName:"<%= Ontology.AOGO %>",
-                    action:"<%= LookupComposite.ACTION_ANATOMY_SEARCH %>",
+                    type:"${LookupStrings.GDAG_TERM_LOOKUP}",
+                    ontologyName:"${Ontology.AOGO.toString()}",
+                    action:"${LookupStrings.ACTION_ANATOMY_SEARCH}",
                     width:30,
                     wildcard:false,
                     termsWithDataOnly:true,
@@ -267,7 +267,7 @@
         jQuery('input[name=filter1]').filter('[value="showAll"]').attr('checked', true);
         jQuery('input[name=filter1]').change();
         jQuery('#max-display-records-hidden').val('20');
-        jQuery('input[name=sortBy]').val('<%= SortBy.BEST_MATCH %>');
+        jQuery('input[name=sortBy]').val('${SortBy.BEST_MATCH}');
         jQuery('#sort-by-pulldown').val('0');
         clearTable();
         decorateTermList();
@@ -287,7 +287,7 @@
             // if not defined, then keep going
         }
         var form = document.getElementById("fish-search-form");
-        var pageField = document.getElementById("<%= PaginationBean.PAGE %>");
+        var pageField = document.getElementById("${PaginationBean.PAGE}");
         if (pageField != null)
             pageField.value = page;
 

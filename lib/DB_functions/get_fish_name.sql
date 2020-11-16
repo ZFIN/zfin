@@ -1,6 +1,8 @@
-create or replace function get_fish_name (vFishZdbId varchar) returns varchar as $fishName$
+create or replace function get_fish_name (vFishZdbId varchar, vFishGenoZdbId varchar) returns varchar as $fishName$
 
-declare 
+declare  
+
+ backgroundList varchar := get_genotype_backgrounds(vFishGenoZdbId);
  fishName  fish.fish_name%TYPE;
  mrkrAbbrev  marker.mrkr_abbrev%TYPE;
  genoWT  genotype.geno_is_wildtype%TYPE := (Select geno_is_wildtype 
@@ -39,6 +41,13 @@ then
 end if;
 
 raise notice 'fishName2 %', fishName; 
+
+IF (backgroundList IS NOT NULL AND backgroundList != '')
+  THEN
+    fishName := fishName || '(' || backgroundList || ')';
+ELSE
+    fishName := fishName;
+END IF;
 
 return fishName;
 end

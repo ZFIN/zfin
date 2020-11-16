@@ -78,14 +78,14 @@
                     ${hit.targetAccession.organism.toString()}
                     <%--<c:forEach var="relatedAccession" items="${hit.targetAccession.relatedEntrezAccessions}">
                     <c:if test="${relatedAccession eq null}">
-                        <%=CandidateBean.ZEBRAFISH%>
+                        ${CandidateBean.ZEBRAFISH}
                     </c:if>
                    '<c:out value="${relatedAccession.organism}"/>'
                     <c:if test="${relatedAccession.organism ne null}">
                       <c:out value="${relatedAccession.organism}"/>
                     </c:if>
                     --%><%--<c:if test="${relatedAccession.organism eq null}">
-                          <%=CandidateBean.ZEBRAFISH%>
+                          ${CandidateBean.ZEBRAFISH}
                         </c:if>--%><%--
                     </c:forEach>--%>
 

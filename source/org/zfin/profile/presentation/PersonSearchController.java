@@ -30,7 +30,7 @@ public class PersonSearchController {
         model.addAttribute(LookupStrings.FORM_BEAN, formBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Person Search");
 
-        return "profile/person-search.page" ;
+        return "profile/person-search" ;
     }
 
     @RequestMapping(value = "/person/search/execute", method = RequestMethod.GET)
@@ -47,7 +47,7 @@ public class PersonSearchController {
         model.addAttribute(LookupStrings.FORM_BEAN, searchBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Person Search");
 
-        return "profile/person-search.page";
+        return "profile/person-search";
 
     }
 
@@ -63,6 +63,6 @@ public class PersonSearchController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.PERSON.getTitleString()
                 + " Last Name Starts with " + lastNameStartsWith);
         model.addAttribute("people", personList);
-        return "profile/list-all-people.page";
+        return "profile/list-all-people";
     }
 }

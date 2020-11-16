@@ -5,6 +5,6 @@
 
     <import resource="spring/applicationContext.xml"/>
     <import resource="spring/mvc.xml"/>
-    <import resource="spring/tiles.xml"/>
+    <import resource="spring/views.xml"/>
 
 </beans>

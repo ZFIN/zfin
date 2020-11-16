@@ -32,6 +32,8 @@ public interface SequenceRepository {
     ReferenceDatabase getZebrafishSequenceReferenceDatabase(ForeignDB.AvailableName foreignDBName,
                                                             ForeignDBDataType.DataType type);
 
+    List<ReferenceDatabase> getReferenceDatabasesByForeignDBName(ForeignDB.AvailableName dbName);
+
     Accession getAccessionByAlternateKey(String number, ReferenceDatabase... referenceDatabase);
 
     List<Accession> getAccessionsByNumber(String number);

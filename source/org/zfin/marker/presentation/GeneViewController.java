@@ -274,7 +274,7 @@ public class GeneViewController {
         }
         prepareGeneView(model, zdbID);
 
-        return "marker/gene/gene-view.page";
+        return "marker/gene/gene-view";
     }
 
     @RequestMapping(value = "/gene/edit/{zdbID}")
@@ -324,7 +324,7 @@ public class GeneViewController {
         model.addAttribute("markerHistoryReasonCodes", MarkerHistory.Reason.values());
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.GENE.getEditTitleString() + gene.getAbbreviation());
 
-        return "marker/gene-edit.page";
+        return "marker/gene-edit";
     }
 
     public void setExpressionService(ExpressionService expressionService) {
@@ -351,7 +351,7 @@ public class GeneViewController {
         //retrieveMutantData(term, form, true);
         //model.addAttribute(LookupStrings.FORM_BEAN, form);
         model.addAttribute("marker", marker);
-        return "marker/phenotype-summary.page";
+        return "marker/phenotype-summary";
     }
 
     @RequestMapping(value = {"/{geneID}/expression", "/gene/view/{geneID}/expression"})

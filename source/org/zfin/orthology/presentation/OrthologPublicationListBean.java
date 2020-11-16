@@ -33,9 +33,11 @@ public class OrthologPublicationListBean extends PublicationListBean {
     @Override
     public Set<Publication> getPublications() {
         Set<Publication> publications = new HashSet<>();
-        for (OrthologEvidence evidence : ortholog.getEvidenceSet()) {
-            if (evidence.getEvidenceCode().equals(evidenceCode)) {
-                publications.add(evidence.getPublication());
+        if (evidenceCode != null) {
+            for (OrthologEvidence evidence : ortholog.getEvidenceSet()) {
+                if (evidence.getEvidenceCode().equals(evidenceCode)) {
+                    publications.add(evidence.getPublication());
+                }
             }
         }
         return publications;

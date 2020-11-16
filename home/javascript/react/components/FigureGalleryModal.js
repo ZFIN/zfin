@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
+import PublicationCitationLink from './PublicationCitationLink';
 
 class FigureGalleryModal extends Component {
     constructor(props) {
@@ -62,9 +63,9 @@ class FigureGalleryModal extends Component {
                                 {image && (
                                     <h4 className='modal-title'>
                                         <a href={`/${image.figure.zdbID}`}>{image.figure.label}</a> {image.figure.publication && (
-                                            <React.Fragment>
-                                                from <a href={`/${image.figure.publication.zdbID}`} dangerouslySetInnerHTML={{__html: image.figure.publication.shortAuthorList}} />
-                                            </React.Fragment>)}
+                                            <>
+                                                from <PublicationCitationLink publication={image.figure.publication} />
+                                            </>)}
                                     </h4>
                                 )}
                                 <div className='figure-gallery-modal-details'>

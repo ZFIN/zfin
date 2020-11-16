@@ -786,6 +786,10 @@ public class GafService {
         for (GafEntry gafEntry : gafEntries) {
 
             // replace the ZDB Id with replaced one for column 2, object id
+            if (StringUtils.startsWith(gafEntry.getEntryId(), "ZFIN:")) {
+
+                replaceAttributeOnGafEntry(gafEntry, "entryId", oldNewZDBIds);
+            }
             if (StringUtils.startsWith(gafEntry.getEntryId(), "ZDB-")) {
                 replaceAttributeOnGafEntry(gafEntry, "entryId", oldNewZDBIds);
             }

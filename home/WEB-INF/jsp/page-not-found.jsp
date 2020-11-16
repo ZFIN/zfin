@@ -1,5 +1,5 @@
-<title>
-    Page not found. 
-</title>
+<%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<div class="error">Unable to find the requested page.</div>
+<z:page title="Page not found">
+    Unable to find the requested page
+</z:page>

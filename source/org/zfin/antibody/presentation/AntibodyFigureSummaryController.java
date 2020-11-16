@@ -70,7 +70,7 @@ public class AntibodyFigureSummaryController {
 
         Antibody ab = antibodyRepository.getAntibodyByID(antibodyID);
         if (ab == null)
-            return "record-not-found.page";
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Antibody figure summary: " + ab.getName());
         GenericTerm superterm = ontologyRepository.getTermByZdbID(supertermID);
@@ -97,7 +97,7 @@ public class AntibodyFigureSummaryController {
         form.setAntibodyStat(abStat);
         form.setAntibody(ab);
 
-        return "antibody/antibody-figure-summary.page";
+        return "antibody/antibody-figure-summary";
     }
 
     @RequestMapping("/antibody-publication-list")
@@ -118,7 +118,7 @@ public class AntibodyFigureSummaryController {
 
         bean.setAntibody(ab);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication List");
-        return "antibody/antibody-publication-list.page";
+        return "antibody/antibody-publication-list";
     }
 
     @RequestMapping("/antibody-citation-disassociate-publication")
@@ -148,7 +148,7 @@ public class AntibodyFigureSummaryController {
 
         bean.setAntibody(ab);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication List");
-        return "antibody/antibody-publication-list.page";
+        return "antibody/antibody-publication-list";
     }
 
     @InitBinder("formBean")
@@ -164,7 +164,7 @@ public class AntibodyFigureSummaryController {
         bean.setAntibody(ab);
         if (errors.getErrorCount() > 0) {
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication List");
-            return "antibody/antibody-publication-list.page";
+            return "antibody/antibody-publication-list";
         }
 
         String pubID = bean.getAntibodyNewPubZdbID();
@@ -192,7 +192,7 @@ public class AntibodyFigureSummaryController {
         bean.setAntibodyNewPubZdbID("");
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication List");
-        return "antibody/antibody-publication-list.page";
+        return "antibody/antibody-publication-list";
     }
 
 }

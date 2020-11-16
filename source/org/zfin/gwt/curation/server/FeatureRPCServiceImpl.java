@@ -112,7 +112,8 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
      * @throws DuplicateEntryException
      */
     public FeatureDTO editFeatureDTO(FeatureDTO featureDTO) throws DuplicateEntryException, ValidationException {
-        DateFormat dateFormat = new SimpleDateFormat("mm/dd/yy");
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yy");
+        dateFormat.setLenient(false);
         Date entryDate;
 
         checkDupes(featureDTO);
@@ -169,17 +170,21 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         if (featureDTO.getMutagee() != null) {
             featureAssay.setMutagee(Mutagee.getType(featureDTO.getMutagee()));
         }
+
+
+
         if (org.zfin.gwt.root.util.StringUtils.isNotEmpty(featureDTO.getAssemblyInfoDate())) {
             try {
+
                 entryDate = dateFormat.parse(featureDTO.getAssemblyInfoDate());
+
             } catch (ParseException e) {
-                entryDate = null;
+                throw new ValidationException("Incorrect date format, please check");
             }
             feature.setFtrAssemblyInfoDate(entryDate);
         } else {
             feature.setFtrAssemblyInfoDate(null);
         }
-
         FeatureLocation fgl = featureRepository.getFeatureLocation(feature);
         if (fgl == null) {
             fgl = new FeatureLocation();
@@ -572,29 +577,29 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 HashSet<FeatureNote> featureNoteSet = new HashSet<>(featureDTO.getPublicNoteList().size());
                 feature.setExternalNotes(featureNoteSet);
             }
+            if (CollectionUtils.isNotEmpty(featureDTO.getPublicNoteList())) {
+                for (NoteDTO note : featureDTO.getPublicNoteList()) {
 
-            for (NoteDTO note : featureDTO.getPublicNoteList()) {
 
-
-                FeatureNote featureNote = new FeatureNote();
-                featureNote.setFeature(feature);
-                featureNote.setNote(note.getNoteData());
-                if (note.getPublicationZdbID() != null) {
-                    featureNote.setPublication(getPublicationRepository().getPublication(note.getPublicationZdbID()));
-                }
-                if (note.getNoteType().equals(ExternalNote.Type.VARIANT.toString())) {
-                    if (feature.getFeatureGenomicMutationDetail() != null) {
-                        featureNote.setTag(ExternalNote.Type.VARIANT.toString()  +  feature.getFeatureGenomicMutationDetail().getZdbID());
-                    } else {
-                        featureNote.setTag(ExternalNote.Type.VARIANT.toString());
+                    FeatureNote featureNote = new FeatureNote();
+                    featureNote.setFeature(feature);
+                    featureNote.setNote(note.getNoteData());
+                    if (note.getPublicationZdbID() != null) {
+                        featureNote.setPublication(getPublicationRepository().getPublication(note.getPublicationZdbID()));
                     }
-                } else {
-                    featureNote.setTag(ExternalNote.Type.FEATURE.toString());
+                    if (note.getNoteType().equals(ExternalNote.Type.VARIANT.toString())) {
+                        if (feature.getFeatureGenomicMutationDetail() != null) {
+                            featureNote.setTag(ExternalNote.Type.VARIANT.toString() + feature.getFeatureGenomicMutationDetail().getZdbID());
+                        } else {
+                            featureNote.setTag(ExternalNote.Type.VARIANT.toString());
+                        }
+                    } else {
+                        featureNote.setTag(ExternalNote.Type.FEATURE.toString());
+                    }
+
+                    feature.getExternalNotes().add(featureNote);
                 }
-
-                feature.getExternalNotes().add(featureNote);
             }
-
 
             if (StringUtils.isNotEmpty((featureDTO.getFeatureChromosome()))) {
                 FeatureLocation fgl = new FeatureLocation();

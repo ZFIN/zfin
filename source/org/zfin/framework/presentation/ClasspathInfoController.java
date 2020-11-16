@@ -56,7 +56,7 @@ public class ClasspathInfoController {
                 }
             }
         }
-        return "classpath-info.page";
+        return "dev-tools/classpath-info";
     }
 
     private List<ClassLibraryWrapper> createClassLoaderParents(ClassLoader classLoader) {

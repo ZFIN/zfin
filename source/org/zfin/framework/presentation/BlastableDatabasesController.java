@@ -33,7 +33,7 @@ public class BlastableDatabasesController {
         blastableDatabasesBean.setDatabaseToSetAsPrimaryZdbID(null);
         blastableDatabasesBean.setSelectedReferenceDatabaseZdbID(null);
 
-        return "dev-tools/blastable-databases.page";
+        return "dev-tools/blastable-databases";
     }
 
     private void handleCommand(BlastableDatabasesBean blastableDatabasesBean) {

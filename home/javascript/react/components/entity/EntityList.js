@@ -8,7 +8,7 @@ import {entityType} from '../../utils/types';
 const EntityList = ({entities, focusEntityId}) => (
     <CommaSeparatedList>
         {entities.map(entity => {
-            if (entity.zdbID === focusEntityId) {
+            if (focusEntityId && entity.zdbID === focusEntityId) {
                 return <EntityAbbreviation key={entity.zdbID} entity={entity} />;
             } else {
                 return <EntityLink key={entity.zdbID} entity={entity} />

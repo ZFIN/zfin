@@ -22,10 +22,7 @@ import org.zfin.antibody.AntibodyExternalNote;
 import org.zfin.construct.ConstructComponent;
 import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.presentation.ConstructComponentPresentation;
-import org.zfin.expression.Figure;
-import org.zfin.expression.FigureFigure;
-import org.zfin.expression.Image;
-import org.zfin.expression.TextOnlyFigure;
+import org.zfin.expression.*;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupEntry;
@@ -35,7 +32,6 @@ import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.server.DTOMarkerService;
 import org.zfin.infrastructure.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
-import org.zfin.mapping.VariantSequence;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.*;
 import org.zfin.marker.service.MarkerRelationshipPresentationTransformer;
@@ -837,7 +833,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         infrastructureRepository.insertUpdatesTable(marker, "", "new attribution, marker relationship: " + mrel.getZdbID() + " with pub: " + attributionZdbID, attributionZdbID, "");
     }
 
-    public void addDBLinkAttribution(DBLink dbLink, Publication attribution, Marker marker) {
+    public void addDBLinkAttribution(DBLink dbLink, Publication attribution, String dataZdbId) {
         String linkId = dbLink.getZdbID();
         String attrId = attribution.getZdbID();
 
@@ -847,7 +843,11 @@ public class HibernateMarkerRepository implements MarkerRepository {
         }
 
         infrastructureRepository.insertPublicAttribution(linkId, attrId);
-        infrastructureRepository.insertUpdatesTable(marker, "", "new attribution, marker dblink: " + linkId + " with pub: " + attrId, attrId, "");
+        infrastructureRepository.insertUpdatesTable(dataZdbId, "", "new attribution, marker dblink: " + linkId + " with pub: " + attrId, attrId, "");
+    }
+
+    public void addDBLinkAttribution(DBLink dbLink, Publication attribution, Marker marker) {
+        addDBLinkAttribution(dbLink, attribution, marker.getZdbID());
     }
 
     public void addMarkerPub(Marker marker, Publication publication) {
@@ -1376,7 +1376,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
             String figID = (String) record[4];
             String label = (String) record[5];
             Figure figure = null;
-            if (label != null && label.equals(Figure.Type.TOD.toString())) {
+            if (label != null && label.equals(FigureType.TOD.toString())) {
                 figure = new TextOnlyFigure();
             } else {
                 figure = new FigureFigure();
@@ -2595,7 +2595,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
             return new ArrayList<LinkDisplay>();
         }
 
-        String sql = "    SELECT DISTINCT fdbdt.fdbdt_data_type, dbl.dblink_length, " +
+        String sql = "SELECT DISTINCT " +
+                "        fdbdt.fdbdt_data_type, " +
+                "        dbl.dblink_length, " +
                 "        dbl.dblink_linked_recid," +
                 "        dbl.dblink_acc_num," +
                 "        fdb.fdb_db_name," +
@@ -2603,7 +2605,8 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 "        fdb.fdb_url_suffix," +
                 "        ra.recattrib_source_zdb_id," +
                 "        fdb.fdb_db_significance," +
-                "        dbl.dblink_zdb_id " +
+                "        dbl.dblink_zdb_id, " +
+                "        fdbc.fdbcont_zdb_id " +
                 "    FROM" +
                 "        db_link dbl  " +
                 "    JOIN" +

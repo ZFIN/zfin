@@ -116,7 +116,7 @@ public class XMLBlastController {
         model.addAttribute("sequenceTypes", XMLBlastBean.SequenceType.values());
         model.addAttribute("matrices", XMLBlastBean.Matrix.values());
         model.addAttribute("programs", XMLBlastBean.Program.values());
-        return "blast-setup.page";
+        return "blast/blast_setup";
     }
 
     @Autowired
@@ -299,7 +299,7 @@ public class XMLBlastController {
         if (result.hasErrors()) {
             setDatabases(inputXMLBlastBean);
             model.addAttribute("programs", XMLBlastBean.Program.values());
-            return "blast-setup.page";
+            return "blast/blast_setup";
         }
         // count the number of sequences put in so we can create the correct number of blast files
         BufferedReader bufferedReader = new BufferedReader(in);
@@ -353,7 +353,7 @@ public class XMLBlastController {
             inputXMLBlastBean = resultXMLBlastBeans.get(0);
         }
 	model.addAttribute(LookupStrings.FORM_BEAN, inputXMLBlastBean);
-        return "blast-processing.page";
+        return "blast/blast_processing";
     }
 
     protected void scheduleBlast(XMLBlastBean blastBean) {

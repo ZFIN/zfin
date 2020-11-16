@@ -4,10 +4,11 @@
 <%@attribute name="markerExpression" type="org.zfin.expression.presentation.MarkerExpression" %>
 
 <c:choose>
+
     <c:when test="${markerExpression.allExpressionData.figureCount == 1}">
 
-        ${markerExpression.allExpressionData.singleFigure.link}
-
+        <a href="/${marker.zdbID}/expression">${markerExpression.allExpressionData.figureCount} figure
+        </a>
     </c:when>
     <c:otherwise>
         <a href="/${marker.zdbID}/expression">

@@ -71,7 +71,7 @@
                     addLink($scope.markerId, seqInfoCtrl.newDatabase, seqInfoCtrl.newAccession.toUpperCase(), seqInfoCtrl.newReference, seqInfoCtrl.newLength)
                         .then(function (link) {
                             getSequences();
-                            if (!seqInfoCtrl.errorRef) {
+                            if (!seqInfoCtrl.errorMessage) {
                                 close();
                             }
                         })
@@ -215,7 +215,11 @@
                 };
                 return $http.post('/action/marker/' + markerId + '/links', link)
                     .then(returnResponseData).catch(function (error) {
-                        seqInfoCtrl.errorMessage = error.data.message;
+                        let errorMessage = error.data.message;
+                        if (error.data.fieldErrors.length) {
+                            errorMessage = error.data.fieldErrors[0].message;
+                        }
+                        seqInfoCtrl.errorMessage = errorMessage;
                     });
             }
 

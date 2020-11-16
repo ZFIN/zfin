@@ -49,7 +49,7 @@ public class Log4jConfigurationController {
                 .collect(Collectors.toSet());
 
         form.setAppenders(new ArrayList<>(appenderSet));
-        return "log4j-configuration.page";
+        return "dev-tools/log4j-configuration";
     }
 
     private void createLogger(Log4JConfigurationFormBean form) {

@@ -10,6 +10,7 @@ import NoData from '../components/NoData';
 import {Ribbon, getSelectedTermQueryParams} from '../components/ribbon';
 import GenericErrorMessage from '../components/GenericErrorMessage';
 import {produce} from 'immer';
+import PublicationCitationLink from '../components/PublicationCitationLink';
 
 const GeneOntologyRibbon = ({geneId}) => {
     const [tableState, setTableState] = useTableState();
@@ -78,7 +79,7 @@ const GeneOntologyRibbon = ({geneId}) => {
         {
             label: 'Citations',
             content: ({publications}) => publications.map(pub => (
-                <div key={pub.zdbID}><a href={'/' + pub.zdbID} dangerouslySetInnerHTML={{__html: pub.shortAuthorList}} /></div>
+                <div key={pub.zdbID}><PublicationCitationLink publication={pub} /></div>
             )),
             width: '120px',
         },

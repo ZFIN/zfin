@@ -7,6 +7,8 @@
     (!empty markerExpression.allExpressionData and empty markerExpression.directlySubmittedExpression)
     or
     (markerExpression.allExpressionData.figureCount > markerExpression.directlySubmittedExpression.figureCount)
+    or
+    (markerExpression.directlySubmittedExpression.figureCount > 0)
 }"/>
 
 <z:attributeListItem label="All Expression Data">

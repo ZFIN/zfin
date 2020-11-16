@@ -4,7 +4,6 @@ import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.event.PublicationChangeEvent;
 import org.zfin.gwt.root.event.PublicationChangeListener;
 import org.zfin.gwt.root.ui.HandlesError;
-import org.zfin.gwt.root.ui.StandardDivNames;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +11,7 @@ import java.util.List;
 /**
  * Base class for editing markers.
  */
-public abstract class AbstractRelatedEntityEditController<T extends RelatedEntityDTO> implements PublicationChangeListener, HandlesError, StandardDivNames {
+public abstract class AbstractRelatedEntityEditController<T extends RelatedEntityDTO> implements PublicationChangeListener, HandlesError {
 
 
     // internal data

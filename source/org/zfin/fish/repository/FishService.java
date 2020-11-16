@@ -541,6 +541,17 @@ public class FishService {
         return figureEntities;
     }
 
+    public static GenotypeFishResult getFishExperimentSummaryForFish(Fish fish) {
+        List<FishExperiment> fishExperimentList = getMutantRepository().getFishExperimentsByFish(fish);
+        if (CollectionUtils.isNotEmpty(fishExperimentList)) {
+            return createResult(fishExperimentList).get(0);
+        } else {
+            GenotypeFishResult result = new GenotypeFishResult();
+            result.setFish(fish);
+            return result;
+        }
+    }
+
     public static List<GenotypeFishResult> getFishExperimentSummaryForGenotype(Genotype genotype) {
         MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
         List<FishExperiment> fishExperimentList = mutantRepository.getFishExperiment(genotype);
@@ -557,7 +568,8 @@ public class FishService {
 
             GenotypeFishResult stat = statisticsMap.get(fish);
             if (stat == null) {
-                stat = new GenotypeFishResult(fish);
+                stat = new GenotypeFishResult();
+                stat.setFish(fish);
 //                stat.setAffectedMarkers(getAffectedGenes(fish));
                 FishGenotypePhenotypeStatistics pheno = stat.getFishGenotypePhenotypeStatistics();
                 if (pheno == null) {
@@ -587,7 +599,8 @@ public class FishService {
             fishGenotypePhenotypeStatisticsList = new ArrayList<>(fishList.size());
         }
         for (Fish fish : fishList) {
-            GenotypeFishResult result = new GenotypeFishResult(fish);
+            GenotypeFishResult result = new GenotypeFishResult();
+            result.setFish(fish);
             if (!fishGenotypePhenotypeStatisticsList.contains(result)) {
                 fishGenotypePhenotypeStatisticsList.add(result);
             }

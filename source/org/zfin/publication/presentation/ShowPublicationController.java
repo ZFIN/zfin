@@ -33,7 +33,7 @@ public class ShowPublicationController {
             bean.setOrderBy(orderBy);
         model.addAttribute("formBean", bean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "publication list");
-        return "publication/publication-list.page";
+        return "publication/publication-list";
     }
 
 

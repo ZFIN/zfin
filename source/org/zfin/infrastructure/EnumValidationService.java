@@ -14,7 +14,7 @@ import org.zfin.gwt.root.dto.*;
 import org.zfin.mapping.GenomeLocation;
 import org.zfin.marker.*;
 import org.zfin.mutant.Genotype;
-import org.zfin.orthology.EvidenceCode;
+import org.zfin.orthology.EvidenceCodeCode;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.ProcessingChecklistTask;
 import org.zfin.publication.PublicationTrackingLocation;
@@ -235,7 +235,7 @@ public class EnumValidationService {
     public void validateOrthoEvidenceCode() throws EnumValidationException {
         String hql = "select code from EvidenceCode";
         List typeList = HibernateUtil.currentSession().createQuery(hql).list();
-        checkEnumVersusDatabaseCollection(typeList, EvidenceCode.Code.values());
+        checkEnumVersusDatabaseCollection(typeList, EvidenceCodeCode.values());
     }
 
     @ServiceTest

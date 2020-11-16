@@ -60,16 +60,16 @@ public class BlastDatabaseInfoController {
             cacheStatistics(blastInfoBean);
             if (Person.isCurrentSecurityUserRoot()) {
 //                String remoteString = httpServletRequest.getParameter("remote") ;
-                return "blast-database-table.page";
+                return "blast/blast-database-table";
             } else {
-                return "blast-database-info.page";
+                return "blast/blast_database_info";
             }
         } else {
 //        if(abbreviation!=null && abbreviation.trim().length()==0){
-            return "no-database-selected.page";
+            return "blast/no_database_selected";
         }
         cacheStatistics(blastInfoBean);
-        return "single-blast-database-info.page";
+        return "blast/blast_database_info";
     }
 
     protected BlastInfoBean cacheStatistics(BlastInfoBean blastInfoBean) {

@@ -16,6 +16,7 @@ import org.zfin.antibody.presentation.AntibodySearchCriteria;
 import org.zfin.expression.Assay;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
+import org.zfin.expression.FigureType;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
@@ -703,7 +704,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         // spinal cord
         GenericTerm aoTerm = getOntologyRepository().getTermByName("spinal cord", Ontology.ANATOMY);
 
-        int numOfFigures = getAntibodyRepository().getNumberOfFiguresPerAoTerm(antibody, aoTerm, Figure.Type.FIGURE);
+        int numOfFigures = getAntibodyRepository().getNumberOfFiguresPerAoTerm(antibody, aoTerm, FigureType.FIGURE);
         assertTrue(numOfFigures > 0);
         assertThat(numOfFigures, greaterThan(0));
 

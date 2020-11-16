@@ -29,7 +29,7 @@ public class CompanySearchController {
         formBean.setMaxDisplayRecords("25");
         model.addAttribute(LookupStrings.FORM_BEAN, formBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Company Search");
-        return "profile/company-search.page";
+        return "profile/company-search";
     }
 
     @RequestMapping(value = "/company/search/execute", method = RequestMethod.GET)
@@ -47,17 +47,17 @@ public class CompanySearchController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Company Search");
 
         if (searchBean.getView().equalsIgnoreCase(AbstractProfileSearchBean.PRINT_VIEW)) {
-            return "profile/organization-print.print";
+            return "profile/organization-print";
         } else if (searchBean.getView().equalsIgnoreCase(AbstractProfileSearchBean.HTML_VIEW)) {
-            return "profile/company-search.page";
+            return "profile/company-search";
         } else {
-            return "profile/company-search.page";
+            return "profile/company-search";
         }
     }
 
     @RequestMapping(value = "/company/search/disclaimer")
     public String companySearchDisclaimer() {
-        return "profile/company-search-disclaimer.insert";
+        return "profile/company-search-disclaimer";
     }
 
     @RequestMapping("/company/all-companies")
@@ -66,7 +66,7 @@ public class CompanySearchController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.COMPANY.getTitleString() + " All");
         model.addAttribute("orgs", companies);
         model.addAttribute("type", Area.COMPANY.name());
-        return "profile/list-all-organizations.page";
+        return "profile/list-all-organizations";
     }
 
 

@@ -2,6 +2,7 @@
 
 <jsp:useBean id="formBean" class="org.zfin.anatomy.presentation.AnatomySearchBean" scope="request"/>
 
-<zfin-ontology:anatomy-search-form formBean="${formBean}"/>
-
+<z:page>
+    <zfin-ontology:anatomy-search-form formBean="${formBean}"/>
+</z:page>
 

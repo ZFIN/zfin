@@ -27,7 +27,7 @@ public class WildtypeListController {
         List<Genotype> wildtypes = mutantRepository.getAllWildtypeGenotypes();
         model.addAttribute("wildtypes", wildtypes);
 
-        return "feature/wildtype-lines.page";
+        return "feature/wildtype-lines";
     }
 
 }

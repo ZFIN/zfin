@@ -2,7 +2,7 @@ package org.zfin.framework.presentation;
 
 import org.junit.Test;
 import org.zfin.anatomy.presentation.AnatomySearchBean;
-import org.zfin.ontology.presentation.OntologyBean;
+import org.zfin.ontology.presentation.OntologySection;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -40,20 +40,20 @@ public class FunctionsTest {
 
     @Test
     public void sectionVisibilityDefaultFalse() {
-        SectionVisibility vis = new SectionVisibility<OntologyBean.Section>(OntologyBean.Section.class);
-        boolean isSectionVisible = ZfinJSPFunctions.isSectionVisible(OntologyBean.Section.EXPRESSION.toString(), vis);
+        SectionVisibility vis = new SectionVisibility<OntologySection>(OntologySection.class);
+        boolean isSectionVisible = ZfinJSPFunctions.isSectionVisible(OntologySection.EXPRESSION.toString(), vis);
         assertTrue(!isSectionVisible);
     }
 
     @Test
     public void sectionVisibilityDefaultTrue() {
-        SectionVisibility vis = new SectionVisibility<OntologyBean.Section>(OntologyBean.Section.class, true);
-        boolean visible = ZfinJSPFunctions.isSectionVisible(OntologyBean.Section.EXPRESSION.toString(), vis);
+        SectionVisibility vis = new SectionVisibility<OntologySection>(OntologySection.class, true);
+        boolean visible = ZfinJSPFunctions.isSectionVisible(OntologySection.EXPRESSION.toString(), vis);
         assertTrue(visible);
-        vis.setVisibility(OntologyBean.Section.EXPRESSION, false);
-        visible = ZfinJSPFunctions.isSectionVisible(OntologyBean.Section.EXPRESSION.toString(), vis);
+        vis.setVisibility(OntologySection.EXPRESSION, false);
+        visible = ZfinJSPFunctions.isSectionVisible(OntologySection.EXPRESSION.toString(), vis);
         assertTrue(!visible);
-        visible = ZfinJSPFunctions.isSectionVisible(OntologyBean.Section.PHENOTYPE.toString(), vis);
+        visible = ZfinJSPFunctions.isSectionVisible(OntologySection.PHENOTYPE.toString(), vis);
         assertTrue(visible);
     }
 

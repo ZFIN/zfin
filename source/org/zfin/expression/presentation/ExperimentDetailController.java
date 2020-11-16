@@ -5,12 +5,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.expression.Experiment;
-import org.zfin.expression.ExperimentCondition;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.repository.RepositoryFactory;
-
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * Show pages and popups for Experiments, primarily listing conditions with notes
@@ -31,7 +27,7 @@ public class ExperimentDetailController {
 
         model.addAttribute("experiment", experiment);
 
-        return "expression/experiment.page";
+        return "expression/experiment";
     }
 
 
@@ -41,12 +37,12 @@ public class ExperimentDetailController {
 
         if (experiment == null) {
             model.addAttribute(LookupStrings.ZDB_ID, id);
-            return "record-not-found.popup";
+            return LookupStrings.RECORD_NOT_FOUND_POPUP;
         }
 
         model.addAttribute("experiment", experiment);
 
-        return "expression/experiment-popup.popup";
+        return "expression/experiment-popup";
     }
 
 }

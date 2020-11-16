@@ -57,3 +57,9 @@ export const tableStateType = shape({
     sortBy: string,
     filter: oneOfType([object, string]),
 });
+
+export const publicationType = shape({
+    zdbID: string,
+    title: string,
+    shortAuthorList: string,
+});

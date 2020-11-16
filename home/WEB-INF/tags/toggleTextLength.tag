@@ -15,7 +15,10 @@
 <%@attribute name="idName" type="java.lang.String" %>
 <%@attribute name="shortLength" type="java.lang.Integer" %>
 <%@ attribute name="url" %>
-
+<%@ attribute name="section" %>
+<c:if test="${empty section}">
+    <c:set var="section" value=""/>
+</c:if>
 <span id="notesS_${idName}">
     <c:if test="${  not empty url}"><a href="/${url}"></c:if>
     <zfin:toggleTextLength text="${text}" shortLength="${shortLength}" shortVersion="true"
@@ -24,7 +27,7 @@
     <c:if test="${fn:length(text) > shortLength}">
         <span onclick="toggleVersion('${idName}', true)" title="Show full text">
             &nbsp;...
-            <a href="#" onclick="toggleVersion('${idName}', true)" title="Show full text">
+            <a href="#'${section}'" onclick="toggleVersion('${idName}', true)" title="Show full text">
                 <i class="fas fa-caret-right"></i>
             </a>
         </span>
@@ -35,9 +38,11 @@
     ${zfn:escapeHtml(text, false)}
     <c:if test="${  not empty url}"></a></c:if>
 &nbsp;
-    <a href="#" onclick="toggleVersion('${idName}', false)" title="Show beginning text">
+
+    <a href="#'${section}'" onclick="toggleVersion('${idName}', false)" title="Show beginning text">
         <i class="fas fa-caret-left"></i>
     </a>
+
 </span>
 
 <script type="text/javascript">

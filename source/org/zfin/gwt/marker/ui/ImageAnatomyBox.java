@@ -2,6 +2,7 @@ package org.zfin.gwt.marker.ui;
 
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.dto.ImageDTO;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.TermDTO;
@@ -28,7 +29,7 @@ public class ImageAnatomyBox extends AbstractStackComposite<ImageDTO> { //Relate
 
     public void initGUI() {
         termInput.setOntology(OntologyDTO.ANATOMY);
-        termInput.setType(LookupComposite.GDAG_TERM_LOOKUP);
+        termInput.setType(LookupStrings.GDAG_TERM_LOOKUP);
         termInput.setInputName("anatomy_search");
         termInput.setShowError(true);
         termInput.setWildCard(false);

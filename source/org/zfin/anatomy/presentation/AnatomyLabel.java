@@ -4,10 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
 import org.zfin.anatomy.DevelopmentStage;
-import org.zfin.expression.ExpressionAssay;
-import org.zfin.expression.ExpressionResult;
-import org.zfin.expression.ExpressionStatement;
-import org.zfin.expression.Figure;
+import org.zfin.expression.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
 import org.zfin.ontology.PostComposedEntity;
@@ -99,7 +96,7 @@ public class AnatomyLabel implements Comparable<AnatomyLabel> {
         if (notAllFiguresTextOnly)
             return getNumberOfFigures() + " " + figureChoice.format(getNumberOfFigures());
         else
-            return Figure.Type.TOD.getName();
+            return FigureType.TOD.getName();
     }
 
     public Publication getSinglePublication() {

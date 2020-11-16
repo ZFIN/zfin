@@ -47,7 +47,7 @@
                                      organization=""/>
                 </td>
                 <td>
-                    <a href="/action/antibody/antibody-publication-list?antibodyID=${antibodyBean.antibody.zdbID}&orderBy=author">${antibodyBean.numPubs}</a>
+                    <a href="/action/antibody/antibody-publication-list?antibodyID=${antibodyBean.antibody.zdbID}&orderBy=date">${antibodyBean.numPubs}</a>
                 </td>
             </tr>
         </c:forEach>

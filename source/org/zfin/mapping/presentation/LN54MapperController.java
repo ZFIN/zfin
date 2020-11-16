@@ -1,7 +1,8 @@
 package org.zfin.mapping.presentation;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -12,7 +13,6 @@ import org.zfin.framework.mail.AbstractZfinMailSender;
 import org.zfin.framework.mail.IntegratedJavaMailSender;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
-import org.zfin.sequence.blast.presentation.XMLBlastValidator;
 
 import javax.validation.Valid;
 
@@ -26,7 +26,7 @@ public class LN54MapperController {
 
     @RequestMapping(value = "/ln54mapper", method = RequestMethod.GET)
     protected String showLN54MapperPage(@ModelAttribute("formBean") LN54MapperBean form) throws Exception {
-        return "ln54mapper-request.page";
+        return "mapping/ln54mapper-request";
     }
 
     @Autowired
@@ -38,7 +38,7 @@ public class LN54MapperController {
 
         validator.validate(form, result);
         if (result.hasErrors())
-            return "ln54mapper-request.page";
+            return "mapping/ln54mapper-request";
 
         String emailContents = "Request for LN mapping";
         emailContents += "\n";
@@ -65,7 +65,7 @@ public class LN54MapperController {
         logger.debug("ZfinProperties.getAdminEmailAddresses()[0]: " + ZfinProperties.getAdminEmailAddresses()[0]);
         mailSender.sendMail("Request for new LN 54 mapping", emailContents, false, ZfinPropertiesEnum.LN54_CONTACT_EMAIL.value(), emails);
 
-        return "ln54mapper-result.page";
+        return "mapping/ln54mapper-result";
     }
 
 }

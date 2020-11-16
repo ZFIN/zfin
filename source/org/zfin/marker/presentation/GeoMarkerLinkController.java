@@ -27,7 +27,7 @@ public class GeoMarkerLinkController {
 
         model.addAttribute("geolink", expressionService.getGeoLinkForMarkerIfExists(marker));
 
-        return "marker/geo-link.insert";
+        return "marker/geo-link";
     }
 
 }

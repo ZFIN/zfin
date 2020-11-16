@@ -23,7 +23,7 @@
         <form:label path="associatedGeneField" cssClass="indented-label">Associate with:</form:label>
         <form:select path="associatedGeneField">
             <c:if test="${!formBean.suggestedNameExists}">
-                <form:option value="<%=CandidateBean.NOVEL%>"
+                <form:option value="${CandidateBean.NOVEL}"
                              label="${formBean.runCandidate.candidate.suggestedName} (novel)"></form:option>
             </c:if>
             <c:if test="${!formBean.alreadyAssociatedGenes}">

@@ -6,7 +6,7 @@ package org.zfin.expression;
  */
 public class FigureFigure extends Figure {
 
-    public Type getType(){
-        return Type.FIGURE;
+    public FigureType getType(){
+        return FigureType.FIGURE;
     }
 }

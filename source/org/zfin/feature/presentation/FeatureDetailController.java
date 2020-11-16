@@ -1,6 +1,7 @@
 package org.zfin.feature.presentation;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -104,7 +105,7 @@ public class FeatureDetailController {
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.FEATURE.getTitleString() + feature.getName());
 
-        return "feature/feature-detail.page";
+        return "feature/feature-detail";
     }
 
     @RequestMapping(value = "view/prototype/{zdbID}")
@@ -142,6 +143,7 @@ public class FeatureDetailController {
         form.setSummaryPageDbLinks(FeatureService.getSummaryDbLinks(feature));
         form.setExternalNotes(FeatureService.getSortedExternalNotes(feature));
         form.setMutationDetails(mutationDetailsConversionService.convert(feature, true));
+        form.setFeatureLocations(FeatureService.getPhysicalLocations(feature));
         form.setDnaChangeAttributions(FeatureService.getDnaChangeAttributions(feature));
         form.setTranscriptConsequenceAttributions(FeatureService.getTranscriptConsequenceAttributions(feature));
         form.setProteinConsequenceAttributions(FeatureService.getProteinConsequenceAttributions(feature));
@@ -151,19 +153,22 @@ public class FeatureDetailController {
             form.setAaLink(FeatureService.getAALink(feature));
         }
         form.setFtrCommContr(zebrashareRepository.getLatestCommunityContribution(feature));
+        form.setZircGenoLink(FeatureService.getZIRCGenoLink(feature));
         form.setZShareOrigPub(zebrashareRepository.getZebraSharePublicationForFeature(feature));
-
+        form.setSingleAffectedGeneFeature(featureRepository.isSingleAffectedGeneAlleles(feature));
+        form.setVarSequence(RepositoryFactory.getFeatureRepository().getFeatureVariant(feature));
         retrieveSortedGenotypeData(feature, form);
         retrievePubData(feature, form);
 
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.FEATURE.getTitleString() + feature.getName());
 
-        return "feature/feature-view.page";
+        return "feature/feature-view";
     }
+
     @RequestMapping("/flank-seq")
     public String getFlankingSequenceNote() {
-        return "feature/flank-seq-note.insert";
+        return "feature/flank-seq-note";
     }
 
 
@@ -201,7 +206,7 @@ public class FeatureDetailController {
         }
         bean.setOrderBy(orderBy);
         model.addAttribute(LookupStrings.FORM_BEAN, bean);
-        return "feature/mutation-detail-citation-list.page";
+        return "feature/mutation-detail-citation-list";
     }
 
     private void retrieveSortedGenotypeData(Feature feature, FeatureBean form) {
@@ -224,9 +229,9 @@ public class FeatureDetailController {
     }
 
     @RequestMapping("/type-citation-list/{zdbID}")
-    public String getFeatureTypePublicationList(@PathVariable String zdbID,Model model){
+    public String getFeatureTypePublicationList(@PathVariable String zdbID, Model model) {
         Feature feature = featureRepository.getFeatureByID(zdbID);
-        model.addAttribute("feature",feature);
+        model.addAttribute("feature", feature);
         PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
         List<String> publicationIDs = publicationRepository.getPublicationIdsForFeatureType(zdbID);
         List<Publication> publications = new ArrayList<>();
@@ -236,9 +241,9 @@ public class FeatureDetailController {
         model.addAttribute("pubCount", publications.size());
         PublicationListBean citationBean = new PublicationListAdapter(publications);
         citationBean.setOrderBy("author");
-        model.addAttribute("citationList",citationBean);
+        model.addAttribute("citationList", citationBean);
 
-        return "feature/type-citation-list.page";
+        return "feature/type-citation-list";
     }
 
 }

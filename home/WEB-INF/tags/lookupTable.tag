@@ -1,7 +1,4 @@
-<%@ tag import="org.zfin.gwt.root.ui.LookupComposite" %>
-<%@ tag import="org.zfin.gwt.lookup.ui.Lookup" %>
-<%@ tag import="org.zfin.gwt.lookup.ui.LookupTable" %>
-<%@ tag import="org.zfin.ontology.Ontology" %>
+<%@ tag import="org.zfin.framework.presentation.LookupStrings" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 
@@ -25,29 +22,28 @@
         hiddenNames: "${hiddenName}",
         hiddenIds: "${hiddenId}",
         width: 40,
-    <%= Lookup.JSREF_DIV_NAME%>:    "term-${id}",
-    <%= Lookup.JSREF_INPUT_NAME%>:    "searchTerm",
-    <%= Lookup.JSREF_SHOWERROR%>:  true,
-            <c:if test='${goTermNames != null}' >
-            previousTableValues       :    "${goTermNames}",
-    </c:if>
-    <c:if test="${not empty action}">
-    <%= Lookup.JSREF_ACTION%>:       "${action}",
-    </c:if>
-    <%= Lookup.JSREF_TYPE%>:      "<%= LookupComposite.GDAG_TERM_LOOKUP%>",
-    <c:choose>
-    <c:when test="${!empty ontology}">
-    <%= Lookup.JSREF_ONTOLOGY_NAME%>:    "${ontology.ontologyName}",
-    </c:when>
-    <c:when test="${!empty ontologyName}">
-    <%= Lookup.JSREF_ONTOLOGY_NAME%>:    "${ontologyName}",
-    </c:when>
-    </c:choose>
-    <%= Lookup.JSREF_WILDCARD%>: ${wildcard},
-    <%= LookupTable.JSREF_USE_TERM_TABLE%>:      true,
-    <%= Lookup.JSREF_LIMIT%>:     25
+        ${LookupStrings.JSREF_DIV_NAME}: "term-${id}",
+        ${LookupStrings.JSREF_INPUT_NAME}: "searchTerm",
+        ${LookupStrings.JSREF_SHOWERROR}: true,
+        <c:if test='${goTermNames != null}' >
+        previousTableValues: "${goTermNames}",
+        </c:if>
+        <c:if test="${not empty action}">
+        ${LookupStrings.JSREF_ACTION}: "${action}",
+        </c:if>
+        ${LookupStrings.JSREF_TYPE}: "${LookupStrings.GDAG_TERM_LOOKUP}",
+        <c:choose>
+        <c:when test="${!empty ontology}">
+        ${LookupStrings.JSREF_ONTOLOGY_NAME}: "${ontology.ontologyName}",
+        </c:when>
+        <c:when test="${!empty ontologyName}">
+        ${LookupStrings.JSREF_ONTOLOGY_NAME}: "${ontologyName}",
+        </c:when>
+        </c:choose>
+        ${LookupStrings.JSREF_WILDCARD}: ${wildcard},
+        ${LookupStrings.JSREF_USE_TERM_TABLE}: true,
+        ${LookupStrings.JSREF_LIMIT}: 25
     }
-
 </script>
 
 <div id="term-${id}"></div>

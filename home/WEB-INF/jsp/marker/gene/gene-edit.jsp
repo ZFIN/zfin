@@ -1,8 +1,10 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <c:set var="NOMENCLATURE" value="Nomenclature" />
+<c:set var="RESOURCES" value="Genome Resources" />
+<c:set var="NOTES" value="Notes" />
 
-<z:dataPage sections="${[NOMENCLATURE]}">
+<z:dataPage sections="${[NOMENCLATURE, RESOURCES, NOTES]}">
     <z:dataManagerDropdown>
         <a class="dropdown-item" href="/${gene.zdbID}">View</a>
         <a class="dropdown-item active" href="/action/marker/gene/edit/${gene.zdbID}">Edit</a>
@@ -15,5 +17,17 @@
 
     <z:section title="${NOMENCLATURE}">
         <div class="__react-root" id="MarkerEditNomenclature" data-marker-id="${gene.zdbID}"></div>
+    </z:section>
+
+    <z:section title="${RESOURCES}">
+        <div class="__react-root" id="MarkerEditGenomeResources" data-marker-id="${gene.zdbID}"></div>
+    </z:section>
+
+    <z:section title="${NOTES}">
+        <div class="__react-root"
+             id="MarkerEditNotes"
+             data-current-user-id="${currentUser.zdbID}"
+             data-marker-id="${gene.zdbID}">
+        </div>
     </z:section>
 </z:dataPage>

@@ -19,7 +19,7 @@ public class ErrorController extends ResponseEntityExceptionHandler {
 
         logger.error("Exception caught by ErrorController",ex);
 
-        return "infrastructure/exception.page";
+        return "infrastructure/exception";
 
     }
 

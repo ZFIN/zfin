@@ -27,6 +27,7 @@ import java.util.TreeSet;
 public interface FeatureRepository {
 
     public Feature getFeatureByID(String zdbID);
+
     public FeatureGenomicMutationDetail getFgmdByID(String zdbID);
 
     DataAlias getSpecificDataAlias(Feature feature, String alias);
@@ -56,15 +57,21 @@ public interface FeatureRepository {
      * Save a new Lab object. If it exists a runtime exception is thrown.
      */
     Organization getLabByFeature(Feature ftr);
+
     FeatureLocation getLocationByFeature(Feature ftr);
 
     String getPrefixById(int labPrefixID);
 
     List<FeaturePrefix> getLabPrefixes(String labName);
+
     List<Feature> getFeaturesWithLocationOnAssembly11();
+
     List<Feature> getFeaturesWithGenomicMutDets();
+
     List<Feature> getNonSaFeaturesWithGenomicMutDets();
+
     List<Feature> getDeletionFeatures();
+
     String getNextZFLineNum();
 
     List<FeaturePrefix> getLabPrefixes(String labName, boolean assignIfEmpty);
@@ -90,9 +97,13 @@ public interface FeatureRepository {
     FeatureAssay addFeatureAssay(Feature feature, Mutagen mutagen, Mutagee mutagee);
 
     FeatureAssay getFeatureAssay(Feature feature);
+
     VariantSequence getFeatureVariant(Feature feature);
+
     String getAALink(Feature feature);
+
     FeatureLocation getFeatureLocation(Feature feature);
+
     FeatureGenomicMutationDetail getFeatureGenomicDetail(Feature feature);
 
     FeatureLocation getAllFeatureLocationsOnGRCz11(Feature feature);
@@ -132,7 +143,11 @@ public interface FeatureRepository {
 
 
     List<String> getAllFeaturePrefixes();
+
     List<Feature> getSingleAffectedGeneAlleles();
+
+    boolean isSingleAffectedGeneAlleles(Feature feature);
+
     List<Marker> getConstruct(String featureZdbId);
 
 
@@ -182,6 +197,7 @@ public interface FeatureRepository {
     List<Feature> getFeaturesByMarker(Marker marker);
 
     List<Feature> getFeaturesByConstruct(Marker marker);
+
     List<Marker> getConstructsByFeature(Feature feature);
 
     int deleteFeatureFromTracking(String featureZdbId);
@@ -201,6 +217,7 @@ public interface FeatureRepository {
     void update(Feature feature, Set<FeatureTranscriptMutationDetail> addTranscriptAttribution, String publicationID);
 
     void deleteFeatureProteinMutationDetail(FeatureProteinMutationDetail detail);
+
     void deleteFeatureGenomicMutationDetail(FeatureGenomicMutationDetail detail);
 
 

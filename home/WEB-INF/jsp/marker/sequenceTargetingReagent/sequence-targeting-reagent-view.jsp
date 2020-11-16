@@ -19,7 +19,7 @@
         <c:set var="sections" value="${[SUMMARY, TARGETLOCATION, GENOMICFEATURES, GENOTYPE, PHENOTYPE, CITATIONS]}"/>
 </c:if>
 
-    <z:dataPage sections="${sections}">
+<z:dataPage sections="${sections}">
 
     <jsp:attribute name="entityName">
         <zfin:abbrev entity="${formBean.marker}"/>

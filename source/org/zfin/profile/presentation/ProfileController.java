@@ -52,7 +52,7 @@ public class ProfileController {
 
     @RequestMapping(value = "/help/international-characters")
     public String getInternationalCharactersHelp() {
-        return "international-characters.popup";
+        return "international-characters";
     }
 
 }

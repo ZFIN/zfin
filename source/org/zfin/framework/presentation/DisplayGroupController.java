@@ -1,12 +1,12 @@
 package org.zfin.framework.presentation;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DisplayGroup;
@@ -45,12 +45,9 @@ public class DisplayGroupController {
         formBean.setDisplayGroups(displayGroups);
 
         formBean.setReferenceDatabases(new TreeSet<ReferenceDatabase>(HibernateUtil.currentSession().createCriteria(ReferenceDatabase.class).list()));
-
-        ModelAndView modelAndView = new ModelAndView("display-groups.page");
-        modelAndView.addObject(LookupStrings.FORM_BEAN, formBean);
-
         formBean.clear();
-        return "dev-tools/display-groups.page";
+
+        return "dev-tools/display-groups";
     }
 
     private Logger logger = LogManager.getLogger(DisplayGroupController.class);

@@ -15,7 +15,7 @@ public class AssayController {
     @RequestMapping("/assay-abbrev-popup")
     public String getExperimentPopup(Model model) {
         model.addAttribute("assay", infrastructureRepository.getAllAssays());
-        return "expression/assay-abbrev-popup.popup";
+        return "expression/assay-abbrev-popup";
     }
 
 }

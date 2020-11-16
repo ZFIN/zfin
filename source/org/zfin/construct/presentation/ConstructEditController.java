@@ -71,7 +71,7 @@ public class ConstructEditController {
     @RequestMapping("/construct-update")
     protected String showSearchForm(Model model) throws Exception {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Construct Update");
-        return "construct/construct-update.page";
+        return "construct/construct-update";
     }
 
     private

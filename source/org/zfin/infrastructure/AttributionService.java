@@ -1,9 +1,9 @@
 package org.zfin.infrastructure;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.publication.Publication;
+import org.zfin.publication.PublicationType;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
@@ -29,7 +29,7 @@ public class AttributionService {
 
         for (RecordAttribution attrib : attribs) {
             Publication pub = publicationRepository.getPublication(attrib.getSourceZdbID());
-            if (pub.getType() != Publication.Type.CURATION)
+            if (pub.getType() != PublicationType.CURATION)
                 return false;
         }
         return true;

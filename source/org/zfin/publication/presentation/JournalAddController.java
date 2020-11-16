@@ -1,7 +1,8 @@
 package org.zfin.publication.presentation;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,35 +10,22 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.gwt.root.ui.PublicationSessionKey;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
-import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerRelationship;
-import org.zfin.marker.MarkerType;
-import org.zfin.marker.presentation.SequenceTargetingReagentAddBean;
-import org.zfin.marker.presentation.SequenceTargetingReagentAddBeanValidator;
-import org.zfin.marker.presentation.SupplierLookupEntry;
-import org.zfin.marker.presentation.TargetGeneLookupEntry;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.marker.service.MarkerService;
-import org.zfin.mutant.SequenceTargetingReagent;
-import org.zfin.profile.Organization;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.publication.Journal;
-import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.STRMarkerSequence;
 import org.zfin.sequence.repository.SequenceRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/publication")
@@ -65,7 +53,7 @@ public class JournalAddController {
     protected String showForm(Model model) throws Exception {
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add Journal");
-        return "publication/journal-add.page";
+        return "publication/journal-add";
     }
 
     @RequestMapping(value = "/journal-add", method = RequestMethod.POST)

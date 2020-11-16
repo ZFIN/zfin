@@ -7,7 +7,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.dto.NcbiOtherSpeciesGeneDTO;
@@ -43,10 +42,6 @@ public class OrthologyController {
         }
 
         EvidenceCode code = getOrthologyRepository().getEvidenceCode(evidenceCode);
-        if (code == null) {
-            return LookupStrings.ERROR_PAGE;
-        }
-
         OrthologPublicationListBean bean = new OrthologPublicationListBean();
         bean.setOrtholog(ortholog);
         bean.setEvidenceCode(code);
@@ -55,7 +50,7 @@ public class OrthologyController {
         }
         model.addAttribute("formBean", bean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "publication list");
-        return "orthology/ortholog-publication-list.page";
+        return "orthology/ortholog-publication-list";
     }
 
     @ResponseBody

@@ -41,6 +41,14 @@ public class FeatureServiceTest extends AbstractDatabaseTest {
         Set<FeatureDBLink> genbankFeatureDbLinks = FeatureService.getGenbankDbLinks(feature);
         assertThat("Feature has genbank dblinks", genbankFeatureDbLinks, is(notNullValue()));
     }
+    @Test
+    public void zircLinksTest() {
+        Feature feature = featureRepository.getFeatureByID("ZDB-ALT-020426-42");
+
+        Set<FeatureDBLink> featureDbLinks = FeatureService.getSummaryDbLinks(feature);
+        FeatureDBLink zircGenoLink = FeatureService.getZIRCGenoLink(feature);
+        assertThat("Feature has zirc genotyping protocol", zircGenoLink, is(notNullValue()));
+    }
 
     @Test
     public void getReferenceDatabaseDna() {

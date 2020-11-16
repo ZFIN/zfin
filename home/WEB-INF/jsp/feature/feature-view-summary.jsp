@@ -19,16 +19,16 @@
                 <ul class="comma-separated">
                     <c:forEach var="mRel" items="${formBean.feature.affectedGenesReln}" varStatus="loop">
                         <li><a href="/${mRel.marker.zdbID}"><i>${mRel.marker.abbreviation}</i></a>
-                        <c:if test="${mRel.publicationCount > 0}">
-                            <c:choose>
-                                <c:when test="${mRel.publicationCount == 1}">
-                                    (<a href="/${mRel.singlePublication.zdbID}">${mRel.publicationCount}</a>)
-                                </c:when>
-                                <c:otherwise>
-                                    (<a href="/action/infrastructure/data-citation-list/${mRel.zdbID}">${mRel.publicationCount}</a>)
-                                </c:otherwise>
-                            </c:choose>
-                        </c:if></li>
+                            <c:if test="${mRel.publicationCount > 0}">
+                                <c:choose>
+                                    <c:when test="${mRel.publicationCount == 1}">
+                                        (<a href="/${mRel.singlePublication.zdbID}">${mRel.publicationCount}</a>)
+                                    </c:when>
+                                    <c:otherwise>
+                                        (<a href="/action/infrastructure/data-citation-list/${mRel.zdbID}">${mRel.publicationCount}</a>)
+                                    </c:otherwise>
+                                </c:choose>
+                            </c:if></li>
                     </c:forEach>
                 </ul>
             </c:when>
@@ -160,7 +160,32 @@
     </z:attributeListItem>
 
     <z:attributeListItem label="Other Pages">
-        <a href="https://www.alliancegenome.org/allele/ZFIN:${formBean.feature.zdbID}">Alliance</a>
+        <ul class="comma-separated">
+            <c:forEach var="link" items="${formBean.summaryPageDbLinks}" varStatus="loop">
+                <li>
+                    <zfin:link entity="${link}"/>
+                    <c:if test="${link.publicationCount > 0}">
+                        <c:choose>
+                            <c:when test="${link.publicationCount == 1}">
+                                (<a href="/${link.singlePublication.zdbID}">${link.publicationCount}</a>)
+                            </c:when>
+                            <c:otherwise>
+                                (<a href="/action/infrastructure/data-citation-list/${link.zdbID}">${link.publicationCount}</a>)
+                            </c:otherwise>
+                        </c:choose>
+                    </c:if>
+                </li>
+            </c:forEach>
+            <c:if test="${!empty formBean.aaLink}">
+                <li><a href="/AdamAmsterdamFiles/${formBean.aaLink}">File:${formBean.feature.name}</a> <a
+                        href="ZDB-PUB-050913-8">(1)</a></li>
+            </c:if>
+            <c:if test="${formBean.singleAffectedGeneFeature}">
+                <li>
+                    <a href="https://www.alliancegenome.org/allele/ZFIN:${formBean.feature.zdbID}">Alliance</a>
+                </li>
+            </c:if>
+        </ul>
     </z:attributeListItem>
 
 

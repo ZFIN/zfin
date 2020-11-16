@@ -47,7 +47,7 @@ public class GenotypeDetailController {
 
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, genotypeName);
 
-            return "genotype/genotype-detail-popup.popup";
+            return "feature/genotype-detail-popup";
         } else {
             Genotype genotype = mutantRepository.getGenotypeByID(zdbID);
 
@@ -66,7 +66,7 @@ public class GenotypeDetailController {
             }
             if (genotype == null) {
                 model.addAttribute(LookupStrings.ZDB_ID, zdbID);
-                return "record-not-found.popup";
+                return LookupStrings.RECORD_NOT_FOUND_POPUP;
             }
 
             form.setGenotype(genotype);
@@ -81,7 +81,7 @@ public class GenotypeDetailController {
             genotypeName = genotypeName.replaceAll("</sup>", "");
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, genotypeName);
 
-            return "genotype/genotype-detail-popup.popup";
+            return "feature/genotype-detail-popup";
         }
     }
 
@@ -130,8 +130,8 @@ public class GenotypeDetailController {
         String genotypeName = genotype.getName();
         genotypeName = genotypeName.replaceAll("<sup>", "^");
         genotypeName = genotypeName.replaceAll("</sup>", "");
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, genotypeName);
-        return "genotype/genotype-detail.page";
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Genotype: " + genotypeName);
+        return "feature/genotype-detail";
     }
 
     private void retrieveGenotypeFeatureData(GenotypeBean form, Genotype genotype) {
@@ -186,7 +186,7 @@ public class GenotypeDetailController {
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "All Phenotypes with " + genotype.getName());
 
-        return "genotype/genotype-all-phenotype.page";
+        return "feature/genotype-all-phenotype";
     }
 
     @RequestMapping(value = {"genotype-phenotype-figure-summary"})
@@ -208,7 +208,7 @@ public class GenotypeDetailController {
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "All Phenotypes with " + genotype.getName());
 
-        return "genotype/genotype-phenotype-figure-summary.page";
+        return "feature/genotype-phenotype-figure-summary";
     }
 
 }

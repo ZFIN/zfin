@@ -1,6 +1,5 @@
 package org.zfin.profile.presentation;
 
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,16 +10,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.mail.AbstractZfinMailSender;
 import org.zfin.framework.mail.MailSender;
-import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.profile.Person;
 import org.zfin.profile.UserService;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.properties.ZfinPropertiesEnum;
-import org.zfin.repository.RepositoryFactory;
-
-import javax.ws.rs.Path;
 
 @Controller
 @RequestMapping(value = "/profile")
@@ -34,7 +29,7 @@ public class PasswordResetController {
     
     @RequestMapping(value = "/forgot-password", method = RequestMethod.GET)
     public String forgotPasswordForm() {
-        return "profile/forgot-password-form.page";
+        return "profile/forgot-password-form";
     }
 
     @RequestMapping(value = "/forgot-password", method = RequestMethod.POST)
@@ -74,7 +69,7 @@ public class PasswordResetController {
         }
 
 
-        return "profile/forgot-password-response.page";
+        return "profile/forgot-password-response";
     }
 
     @RequestMapping(value = "/password-reset/{zdbId}", method = RequestMethod.GET)
@@ -96,7 +91,7 @@ public class PasswordResetController {
             model.addAttribute("errorMessage", "Password reset key is no longer valid");
         }
 
-        return "profile/reset-password.page";
+        return "profile/reset-password";
     }
 
     @RequestMapping(value = "/password-reset/{zdbId}", method = RequestMethod.POST)
@@ -106,7 +101,7 @@ public class PasswordResetController {
                                       @RequestParam String resetKey,
                                       Model model) {
         
-        String page = "profile/reset-password.page";
+        String page = "profile/reset-password";
 
         Person person = profileRepository.getPerson(zdbId);
 

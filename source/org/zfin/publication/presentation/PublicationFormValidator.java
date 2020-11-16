@@ -6,6 +6,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 import org.zfin.publication.Publication;
+import org.zfin.publication.PublicationType;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.List;
@@ -45,7 +46,7 @@ public class PublicationFormValidator implements Validator {
             }
         }
 
-        if (publication.getType() != null && publication.getType() == Publication.Type.THESIS) {
+        if (publication.getType() != null && publication.getType() == PublicationType.THESIS) {
             if (!publication.getJournal().getName().contains("Thesis")) {
                 errors.rejectValue("journal", "journal.type.thesis");
             }

@@ -3,9 +3,9 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@attribute name="results" required="true" type="java.util.List" %>
-<c:set var="emailAttribute" value="<%=ResultService.EMAIL%>"/>
-<c:set var="addressAttribute" value="<%=ResultService.ADDRESS%>"/>
-<c:set var="lineDesigAttribute" value="<%=ResultService.LINE_DESIGNATION%>"/>
+<c:set var="emailAttribute" value="${ResultService.EMAIL}"/>
+<c:set var="addressAttribute" value="${ResultService.ADDRESS}"/>
+<c:set var="lineDesigAttribute" value="${ResultService.LINE_DESIGNATION}"/>
 
 <c:choose>
     <c:when test="${fn:contains(result.id, 'PERS')}">
@@ -63,7 +63,7 @@
                             <div class="search-result-thumbnail">
                                 <a href="${result.url}">
                                     <img style="max-width: 150px; max-height: 70px;"
-                                         src="<%=ZfinPropertiesEnum.IMAGE_LOAD.value()%>/${result.profileImage}">
+                                         src="${ZfinPropertiesEnum.IMAGE_LOAD.value()}/${result.profileImage}">
                                 </a>
                             </div>
                         </div>

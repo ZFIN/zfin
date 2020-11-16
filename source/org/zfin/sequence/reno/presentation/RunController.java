@@ -28,7 +28,7 @@ public class RunController {
         form.setRedundancyRuns(redundancyRuns);
         form.setNomenclatureRuns(nomenclatureRuns);
 
-        return new ModelAndView("reno/run-list.page", LookupStrings.FORM_BEAN, form);
+        return new ModelAndView("reno/run-list", LookupStrings.FORM_BEAN, form);
     }
 
 }

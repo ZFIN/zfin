@@ -2,7 +2,6 @@
 .gradle
 git-info.txt
 home/WEB-INF/classes/
-home/WEB-INF/jsp/dev-tools/zfin-properties.jsp
 home/WEB-INF/log4j.xml
 home/WEB-INF/zfin.properties
 lib/DB_functions/**/*.so

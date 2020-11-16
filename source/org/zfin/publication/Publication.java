@@ -29,7 +29,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private String abstractText;
     private String volume;
     private String pages;
-    private Type type;
+    private PublicationType type;
     private Integer accessionNumber;
     private String doi;
     private String acknowledgment;
@@ -39,7 +39,6 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private GregorianCalendar publicationDate;
     private GregorianCalendar closeDate;
     private GregorianCalendar entryDate;
-    @JsonView(View.Default.class)
     private Journal journal;
     private Set<ExpressionExperiment> expressionExperiments;
     private Set<Figure> figures;
@@ -172,11 +171,11 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
         this.volume = volume;
     }
 
-    public Type getType() {
+    public PublicationType getType() {
         return type;
     }
 
-    public void setType(Type type) {
+    public void setType(PublicationType type) {
         this.type = type;
     }
 
@@ -507,64 +506,6 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
         return title;
     }
 
-    public enum Type {
-        ABSTRACT("Abstract", true, 3, true),
-        ACTIVE_CURATION("Active Curation", false, 9, false),
-        BOOK("Book", true, 5, true),
-        CHAPTER("Chapter", true, 6, true),
-        CURATION("Curation", false, 8, false),
-        JOURNAL("Journal", true, 1, true),
-        MOVIE("Movie", true, 4, true),
-        OTHER("Other", true, 10, true),
-        REVIEW("Review", true, 2, true),
-        UNKNOWN("Unknown", true, 12, true),
-        UNPUBLISHED("Unpublished", false, 11, false),
-        THESIS("Thesis", true, 7, true);
-
-        private final String display;
-        private final boolean curationAllowed;
-        private final int displayOrder;
-        private final boolean published;
-
-        Type(String type, Boolean curationAllowed, int displayOrder, boolean published) {
-            this.display = type;
-            this.curationAllowed = curationAllowed;
-            this.displayOrder = displayOrder;
-            this.published = published;
-        }
-
-        public String getDisplay() {
-            return display;
-        }
-
-        public boolean isCurationAllowed() {
-            return curationAllowed;
-        }
-
-        public int getDisplayOrder() {
-            return displayOrder;
-        }
-
-        public boolean isPublished() {
-            return published;
-        }
-
-        @Override
-        public String toString() {
-            return display;
-        }
-
-        public static Type fromString(String display) {
-            for (Type type : values()) {
-                if (type.display.equals(display)) {
-                    return type;
-                }
-            }
-            return null;
-        }
-
-    }
-
     public enum Status {
         ACTIVE("active"),
         INACTIVE("inactive"),
@@ -608,7 +549,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
         return sb.toString();
     }
 
-    @JsonView(View.Default.class)
+    @JsonView(View.CitationsAPI.class)
     public String getIndexedOpenStatus() {
         if (!ProfileService.isRootUser())
             return "";

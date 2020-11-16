@@ -5,11 +5,9 @@ import org.zfin.anatomy.service.AnatomyService;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.SectionVisibility;
 import org.zfin.gwt.root.dto.TermDTO;
-import org.zfin.marker.presentation.LinkDisplay;
 import org.zfin.mutant.OmimPhenotype;
 import org.zfin.ontology.*;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.DBLink;
 
 import java.util.*;
 
@@ -37,7 +35,7 @@ public class OntologyBean extends PaginationBean {
 
     private Set<OmimPhenotype> omimPheno;
     private Set<TermDBLink> agrDiseaseLinks;
-    private SectionVisibility sectionVisibility = new SectionVisibility<OntologyBean.Section>(OntologyBean.Section.class);
+    private SectionVisibility sectionVisibility = new SectionVisibility<OntologySection>(OntologySection.class);
 
     public String getAction() {
         return action;
@@ -216,20 +214,6 @@ public class OntologyBean extends PaginationBean {
         this.sectionVisibility = sectionVisibility;
     }
 
-    public static enum Section {
-        EXPRESSION,
-        PHENOTYPE;
-
-        public static String[] getValues() {
-            String[] values = new String[values().length];
-            int index = 0;
-            for (Section section : values()) {
-                values[index++] = section.toString();
-            }
-            return values;
-        }
-    }
-
 
     public Set<OmimPhenotype> getOmimPheno() {
         return omimPheno;
@@ -239,29 +223,4 @@ public class OntologyBean extends PaginationBean {
         this.omimPheno = omimPheno;
     }
 
-    public static enum ActionType {
-        SERIALIZE_ONTOLOGIES,
-        LOAD_FROM_DATABASE,
-        LOAD_FROM_SERIALIZED_FILE,
-        SHOW_ALIASES,
-        SHOW_EXACT,
-        SHOW_OBSOLETE_TERMS,
-        SHOW_ALL_TERMS,
-        SHOW_TERM,
-        SHOW_KEYS,
-        SHOW_VALUES,
-        SHOW_RELATIONSHIP_TYPES;
-
-        public static ActionType getActionType(String type) {
-            for (ActionType t : values()) {
-                if (t.toString().equals(type))
-                    return t;
-            }
-            throw new RuntimeException("No action type of string " + type + " found.");
-        }
-
-        public String getName() {
-            return name();
-        }
-    }
 }

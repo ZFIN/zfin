@@ -2,8 +2,8 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@attribute name="results" required="true" type="java.util.List" %>
-<c:set var="aliasAttribute" value="<%=ResultService.SYNONYMS%>"/>
-<c:set var="notesAttribute" value="<%=ResultService.NOTE%>"/>
+<c:set var="aliasAttribute" value="${ResultService.SYNONYMS}"/>
+<c:set var="notesAttribute" value="${ResultService.NOTE}"/>
 
 <table class="table-results searchresults" style="display: none;">
     <th>Name</th>

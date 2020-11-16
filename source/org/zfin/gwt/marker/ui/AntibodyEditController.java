@@ -4,7 +4,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.Dictionary;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
-import com.google.gwt.user.client.Window;
 import org.zfin.gwt.marker.event.DirectAttributionAddsRelatedEntityListener;
 import org.zfin.gwt.marker.event.MarkerLoadEvent;
 import org.zfin.gwt.marker.event.MarkerLoadListener;
@@ -17,6 +16,7 @@ import org.zfin.gwt.root.event.RelatedEntityChangeListener;
 import org.zfin.gwt.root.event.RelatedEntityEvent;
 import org.zfin.gwt.root.ui.MarkerEditCallBack;
 import org.zfin.gwt.root.ui.PublicationSessionKey;
+import org.zfin.gwt.root.ui.StandardDivNames;
 
 /**
  */
@@ -27,7 +27,7 @@ public final class AntibodyEditController extends AbstractFullMarkerEditControll
     private final ViewClickLabel antibodyViewClickLabel = new ViewClickLabel("[View Antibody]", "/", "Discard");
     private final AntibodyHeaderEdit antibodyHeaderEdit = new AntibodyHeaderEdit();
     private final AntibodyBox antibodyBox = new AntibodyBox();
-    private final RelatedMarkerBox relatedGenesBox = new RelatedGeneLookupBox(MarkerRelationshipEnumTypeGWTHack.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY, true, geneDiv);
+    private final RelatedMarkerBox relatedGenesBox = new RelatedGeneLookupBox(MarkerRelationshipEnumTypeGWTHack.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY, true, StandardDivNames.geneDiv);
     private final SupplierNameLookup supplierNameLookup = new SupplierNameLookup();
 
     public void initGUI() {

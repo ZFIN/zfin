@@ -557,7 +557,7 @@ public class AntibodyService {
 
                         Set<Figure> allFigures = labeling.getFigures();
                         for (Figure fig : allFigures) {
-                            if (fig.getType() == Figure.Type.FIGURE) {
+                            if (fig.getType() == FigureType.FIGURE) {
                                 labeling.setNotAllFiguresTextOnly(true);
                                 break;
                             }
@@ -660,7 +660,7 @@ public class AntibodyService {
 
                         Set<Figure> allFigures = labeling.getFigures();
                         for (Figure fig : allFigures) {
-                            if (fig.getType() == Figure.Type.FIGURE) {
+                            if (fig.getType() == FigureType.FIGURE) {
                                 labeling.setNotAllFiguresTextOnly(true);
                                 break;
                             }

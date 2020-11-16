@@ -106,7 +106,7 @@ public class CloneViewController {
         model.addAttribute(LookupStrings.FORM_BEAN, cloneBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.CLONE.getTitleString() + clone.getAbbreviation());
 
-        return "marker/clone/clone-view.page";
+        return "marker/clone/clone-view";
     }
 
     @RequestMapping(value = "/clone/view/{zdbID}/expression")
@@ -131,6 +131,6 @@ public class CloneViewController {
         model.addAttribute(LookupStrings.FORM_BEAN, formBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, clone.getAbbreviation());
 
-        return "marker/dbsnp-view.page";
+        return "marker/dbsnp-view";
     }
 }

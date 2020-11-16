@@ -19,6 +19,7 @@ import org.zfin.gwt.curation.dto.DiseaseAnnotationDTO;
 import org.zfin.gwt.curation.dto.DiseaseAnnotationModelDTO;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.*;
+import org.zfin.gwt.root.ui.ValidationException;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.EntityZdbID;
@@ -602,8 +603,9 @@ public class DTOConversionService {
         return returnDTO;
     }
 
-    public static Feature convertToFeature(FeatureDTO featureDTO) {
-        DateFormat dateFormat = new SimpleDateFormat("mm/dd/yy");
+    public static Feature convertToFeature(FeatureDTO featureDTO) throws  ValidationException {
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yy");
+        dateFormat.setLenient(false);
         Date entryDate;
         Feature feature = new Feature();
         feature.setAbbreviation(escapeString(featureDTO.getAbbreviation()));
@@ -611,14 +613,20 @@ public class DTOConversionService {
 
         // these two need to be added, but a trigger fixes them
         feature.setAbbreviationOrder(featureDTO.getAbbreviation());
-        if (StringUtils.isNotEmpty(featureDTO.getAssemblyInfoDate())) {
+
+
+
+        if (org.zfin.gwt.root.util.StringUtils.isNotEmpty(featureDTO.getAssemblyInfoDate())) {
             try {
                 entryDate = dateFormat.parse(featureDTO.getAssemblyInfoDate());
             } catch (ParseException e) {
-                entryDate = null;
+                throw new ValidationException("Incorrect date format, please check");
             }
             feature.setFtrAssemblyInfoDate(entryDate);
+        } else {
+            feature.setFtrAssemblyInfoDate(null);
         }
+
         feature.setNameOrder(featureDTO.getAbbreviation());
 
         feature.setType(featureDTO.getFeatureType());

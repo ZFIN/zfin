@@ -61,7 +61,7 @@ public class FishSearchController {
         if (result.getErrorCount() > 0){
             LOG.info("Errors found during form binding: " + result);
             attachMetaData(model, formBean);
-            return "fish/fish-search-result.page";
+            return "fish/fish-search-result";
         }
 
         formBean.setQueryString(request.getQueryString());
@@ -74,7 +74,7 @@ public class FishSearchController {
         }
         attachMetaData(model, formBean);
 
-        return "fish/fish-search-result.page";
+        return "fish/fish-search-result";
     }
 
     private void attachMetaData(Model model, FishSearchFormBean formBean) {
@@ -95,7 +95,7 @@ public class FishSearchController {
         formBean.setSummary(fishRepository.getWarehouseSummary(WarehouseSummary.Mart.FISH_MART));
         model.addAttribute(LookupStrings.FORM_BEAN, formBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Fish Search");
-        return "fish/fish-search.page";
+        return "fish/fish-search";
     }
 
     /**
@@ -122,7 +122,7 @@ public class FishSearchController {
             model.addAttribute(LookupStrings.FORM_BEAN, formBean);
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, "");
 
-            return "fish/matching-detail.popup";
+            return "fish/matching-detail";
         }
         else
         {
@@ -134,7 +134,7 @@ public class FishSearchController {
             model.addAttribute(LookupStrings.FORM_BEAN, formBean);
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, "");
 
-            return "fish/matching-detail.popup";
+            return "fish/matching-detail";
         }
 
     }

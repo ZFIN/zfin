@@ -49,7 +49,7 @@ public class ControlledVocabularyAddController {
     protected String showForm(Model model) throws Exception {
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add Controlled Vocabulary");
-        return "infrastructure/controlled-vocabulary-add.page";
+        return "infrastructure/controlled-vocabulary-add";
     }
 
     @RequestMapping(value = "/controlled-vocabulary-add", method = RequestMethod.POST)
@@ -98,6 +98,6 @@ public class ControlledVocabularyAddController {
 
         model.addAttribute("newlyCreatedControlledVocab", newlyCreatedControlledVocab);
 
-        return "infrastructure/controlled-vocabulary-added.page";
+        return "infrastructure/controlled-vocabulary-added";
     }
 }

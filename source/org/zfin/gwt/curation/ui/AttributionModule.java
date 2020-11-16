@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
+import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.curation.event.CurationEvent;
 import org.zfin.gwt.curation.event.EventType;
 import org.zfin.gwt.root.dto.AttributionType;
@@ -117,7 +118,7 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
 
     @Override
     protected void initGUI() {
-        markerLookupComposite.setType(LookupComposite.MARKER_LOOKUP_AND_TYPE);
+        markerLookupComposite.setType(LookupStrings.MARKER_LOOKUP_AND_TYPE);
         markerLookupComposite.setButtonText("Attr Marker");
         markerLookupComposite.setWildCard(false);
         markerLookupComposite.setSubmitOnEnter(true);
@@ -131,7 +132,7 @@ public class AttributionModule extends AbstractRevertibleComposite<RelatedEntity
         container.add(markerLookupComposite);
         container.add(new HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"));
 
-        featureLookupComposite.setType(LookupComposite.FEATURE_LOOKUP);
+        featureLookupComposite.setType(LookupStrings.FEATURE_LOOKUP);
         featureLookupComposite.setButtonText("Attr Feature");
         featureLookupComposite.setWildCard(false);
         featureLookupComposite.setSubmitOnEnter(true);

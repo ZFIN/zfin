@@ -1,8 +1,8 @@
-<%@ tag import="org.zfin.gwt.root.ui.LookupComposite" %>
 <%@ tag import="org.zfin.ontology.Ontology" %>
 <%@ tag import="org.zfin.util.FilterType" %>
 <%@ tag import="org.zfin.framework.presentation.PaginationBean" %>
 <%@ tag import="org.zfin.antibody.AntibodyType" %>
+<%@ tag import="org.zfin.framework.presentation.LookupStrings" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ attribute name="formBean" type="org.zfin.antibody.presentation.AntibodySearchFormBean" required="true" %>
@@ -70,8 +70,8 @@
                         </c:if>
                         hiddenNames: "antibodyCriteria.anatomyTermNames",
                         hiddenIds: "antibodyCriteria.anatomyTermIDs",
-                        type: "<%= LookupComposite.GDAG_TERM_LOOKUP %>",
-                        ontologyName: "<%= Ontology.ANATOMY %>",
+                        type: "${LookupStrings.GDAG_TERM_LOOKUP}",
+                        ontologyName: "${Ontology.ANATOMY.toString()}",
                         width: 40,
                         wildcard: false,
                         useTermTable: true,
@@ -144,12 +144,12 @@
                 </table>
             </td>
             <td align="left">
-                <form:radiobutton path="antibodyCriteria.clonalType" value="<%= AntibodyType.MONOCLONAL.getValue()%>" autocomplete="off"/>
+                <form:radiobutton path="antibodyCriteria.clonalType" value="${AntibodyType.MONOCLONAL.toString()}" autocomplete="off"/>
                 <label for="antibodyCriteria.clonalType">Monoclonal</label>
                 &nbsp; <br/>
-                <form:radiobutton path="antibodyCriteria.clonalType" value="<%= AntibodyType.POLYCLONAL.getValue()%>" autocomplete="off"/>
+                <form:radiobutton path="antibodyCriteria.clonalType" value="${AntibodyType.POLYCLONAL.toString()}" autocomplete="off"/>
                 <label for="antibodyCriteria.clonalType">Polyclonal </label> &nbsp;<br/>
-                <form:radiobutton path="antibodyCriteria.clonalType" value="<%= AntibodyType.ANY.getValue()%>" autocomplete="off"/>
+                <form:radiobutton path="antibodyCriteria.clonalType" value="${AntibodyType.ANY.toString()}" autocomplete="off"/>
                 <label for="antibodyCriteria.clonalType">Both</label>
                 Types
             </td>
@@ -194,14 +194,14 @@
 <script type="text/javascript">
 
     function call_reset() {
-        document.getElementById("antibodyNameFilterType").value = '<%= FilterType.CONTAINS.getName()%>';
+        document.getElementById("antibodyNameFilterType").value = '${FilterType.CONTAINS.toString()}';
         document.getElementById("antibodyCriteria.name").value = '';
         document.getElementById("antibodyCriteria.antigenGeneName").value = '';
         document.getElementById("antibodyCriteria.hostSpecies").value = 'Any';
         document.getElementById("antibodyCriteria.assay").value = 'Any';
         document.getElementById("antibodyCriteria.clonalType3").checked = true;
         document.getElementById("antibodyCriteria.zircOnly2").checked = true;
-        document.getElementById("maxDisplayRecords").value = <%= PaginationBean.MAX_DISPLAY_RECORDS_DEFAULT %>;
+        document.getElementById("maxDisplayRecords").value = ${PaginationBean.MAX_DISPLAY_RECORDS_DEFAULT};
         document.getElementById("startStage").selectedIndex = 0;
         document.getElementById("endStage").selectedIndex = document.getElementById("endStage").options.length - 1;
         document.getElementById("antibodyCriteria.includeSubstructures1").checked = true;
@@ -240,7 +240,7 @@
             // if not defined, then keep going
         }
         var form = document.getElementById("Antibody Search");
-        var pageField = document.getElementById("<%= PaginationBean.PAGE %>");
+        var pageField = document.getElementById("${PaginationBean.PAGE}");
         if (pageField != null)
             pageField.value = page;
         try {

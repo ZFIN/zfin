@@ -2,10 +2,10 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@attribute name="results" required="true" type="java.util.List" %>
-<c:set var="aliasAttribute" value="<%=ResultService.SYNONYMS%>"/>
-<c:set var="sourceAttribute" value="<%=ResultService.SOURCE%>"/>
-<c:set var="typeAttribute" value="<%=ResultService.TYPE%>"/>
-<c:set var="hostOrganismAttribute" value="<%=ResultService.HOST_ORGANISM%>"/>
+<c:set var="aliasAttribute" value="${ResultService.SYNONYMS}"/>
+<c:set var="sourceAttribute" value="${ResultService.SOURCE}"/>
+<c:set var="typeAttribute" value="${ResultService.TYPE}"/>
+<c:set var="hostOrganismAttribute" value="${ResultService.HOST_ORGANISM}"/>
 
 
 <table class="table-results searchresults" style="display: none;">

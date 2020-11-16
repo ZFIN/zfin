@@ -1,25 +1,24 @@
 package org.zfin.fish.presentation;
 
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.zfin.expression.Figure;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.fish.FishSearchCriteria;
 import org.zfin.fish.repository.FishService;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.infrastructure.ZfinFigureEntity;
 import org.zfin.mutant.Fish;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
-import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 /**
  * This class serves the phenotype summary page.
@@ -52,27 +51,6 @@ public class FishPhenotypeController {
         Fish fish = getMutantRepository().getFish(fishID);
         model.addAttribute("fish", fish);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Phenotype Summary");
-        return "fish/fish-phenotype-figure-summary.page";
-    }
-
-    @RequestMapping(value = "/phenotype/figures", method = RequestMethod.GET)
-    public String getFishPhenotypeFigsPopup(@RequestParam(value = "fishID", required = true) String fishID,
-                                            @ModelAttribute("formBean") FishSearchFormBean formBean,
-                                            Model model) throws Exception {
-		LOG.info("Fish phenotype figures");
-		FishSearchCriteria criteria = new FishSearchCriteria(formBean);
-
-        Set<ZfinFigureEntity> zfinFigureEntities = FishService.getFiguresByFishAndTerms(fishID, criteria.getPhenotypeAnatomyCriteria().getValues());
-
-        if (zfinFigureEntities == null)
-            return "record-not-found.popup";
-
-        SortedSet<Figure> figures = new TreeSet<>();
-        for (ZfinFigureEntity figureEntity : zfinFigureEntities) {
-           Figure figure = getPublicationRepository().getFigure(figureEntity.getID());
-           figures.add(figure);
-        }
-        model.addAttribute("phenotypeFigures", figures);
-        return "fish/fish-phenotype-figures.insert";
+        return "fish/fish-phenotype-figure-summary";
     }
 }

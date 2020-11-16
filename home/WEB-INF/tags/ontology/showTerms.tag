@@ -1,4 +1,5 @@
 <%@ tag import="org.zfin.ontology.presentation.OntologyBean" %>
+<%@ tag import="org.zfin.ontology.presentation.ActionType" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ attribute name="formBean" type="org.zfin.ontology.presentation.OntologyBean" required="true" %>
@@ -6,18 +7,18 @@
 
 <h2>List of
     <c:choose>
-        <c:when test="${action eq '<%=OntologyBean.ActionType.SHOW_OBSOLETE_TERMS%>'}">
-        Obsolete Terms
+        <c:when test="${action eq ActionType.SHOW_OBSOLETE_TERMS}">
+            Obsolete Terms
         </c:when>
-    <c:when test="${action eq '<%=OntologyBean.ActionType.SHOW_ALIASES%>'}">
-        Obsolete Terms
+        <c:when test="${action eq ActionType.SHOW_ALIASES}">
+            Obsolete Terms
         </c:when>
-    <c:when test="${action eq '<%=OntologyBean.ActionType.SHOW_EXACT%>'}">
-        Exact Terms
+        <c:when test="${action eq ActionType.SHOW_EXACT}">
+            Exact Terms
         </c:when>
-    <c:otherwise>
-        All
-    </c:otherwise>
+        <c:otherwise>
+            All
+        </c:otherwise>
     </c:choose>
     Terms for [${formBean.ontologyName}] ontology
 </h2>

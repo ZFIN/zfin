@@ -158,7 +158,7 @@ public class ZfinJSPFunctions {
 
         String valueTrue = "=true";
         String valueFalse = "=false";
-        for (SectionVisibility.Action action : SectionVisibility.Action.getActionItems()) {
+        for (SectionVisibilityAction action : SectionVisibilityAction.getActionItems()) {
             String pairPlusAmpersand = "&" + prefix + action.toString();
             if (queryString.indexOf(pairPlusAmpersand) > 0) {
                 queryString = queryString.replace(pairPlusAmpersand + valueTrue, "");
@@ -190,7 +190,7 @@ public class ZfinJSPFunctions {
             prefix = "sectionVisibility.";
         }
 
-        for (SectionVisibility.Action action : SectionVisibility.Action.getActionItems()) {
+        for (SectionVisibilityAction action : SectionVisibilityAction.getActionItems()) {
             String prefixedValue = prefix + action.toString();
             queryString = removeBooleanParameters(queryString, prefixedValue);
         }
@@ -205,9 +205,9 @@ public class ZfinJSPFunctions {
     }
 
     private static String removeShowAndHideSections(String queryString, String prefix, String value) {
-        String prefixedValue = prefix + SectionVisibility.Action.SHOW_SECTION.toString() + "=" + value;
+        String prefixedValue = prefix + SectionVisibilityAction.SHOW_SECTION.toString() + "=" + value;
         queryString = removeQueryParameter(queryString, prefixedValue);
-        prefixedValue = SectionVisibility.Action.HIDE_SECTION.toString() + "=" + value;
+        prefixedValue = SectionVisibilityAction.HIDE_SECTION.toString() + "=" + value;
         return removeQueryParameter(queryString, prefixedValue);
     }
 

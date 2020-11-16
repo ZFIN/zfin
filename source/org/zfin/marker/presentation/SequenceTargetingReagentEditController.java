@@ -30,7 +30,7 @@ public class SequenceTargetingReagentEditController {
         model.addAttribute("user", ProfileService.getCurrentSecurityUser());
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Edit " + str.getAbbreviation());
 
-        return "marker/sequence-targeting-reagent-edit.page";
+        return "marker/sequence-targeting-reagent-edit";
     }
 
 }

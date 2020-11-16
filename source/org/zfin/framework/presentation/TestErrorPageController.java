@@ -22,7 +22,7 @@ public class TestErrorPageController {
 
     @RequestMapping(value = "/test-error-page", method = RequestMethod.GET)
     protected String testErrorsStart() throws Exception {
-        return "dev-tools/create-error.page";
+        return "dev-tools/create-error";
     }
 
 }

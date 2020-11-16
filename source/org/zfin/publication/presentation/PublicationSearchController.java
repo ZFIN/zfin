@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.profile.repository.ProfileRepository;
-import org.zfin.publication.Publication;
+import org.zfin.publication.PublicationType;
 import org.zfin.publication.repository.PublicationRepository;
 
 import javax.servlet.http.HttpServletRequest;
@@ -74,15 +74,15 @@ public class PublicationSearchController {
         }
         model.addAttribute("formBean", formBean);
         model.addAttribute("yearTypes", PublicationSearchBean.YearType.values());
-        Publication.Type[] pubTypes = Publication.Type.values();
-        Arrays.sort(pubTypes, Comparator.comparingInt(Publication.Type::getDisplayOrder));
+        PublicationType[] pubTypes = PublicationType.values();
+        Arrays.sort(pubTypes, Comparator.comparingInt(PublicationType::getDisplayOrder));
         model.addAttribute("pubTypes", pubTypes);
         model.addAttribute("sortOrders", PublicationSearchBean.Sort.values());
         model.addAttribute("curators", profileRepository.getCurators());
         model.addAttribute("oldestPubEntryDate", oldestPubEntryDate.getTime());
         model.addAttribute("newestPubEntryDate", newestPubEntryDate.getTime());
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication Search");
-        return "publication/publication-search.page";
+        return "publication/publication-search";
     }
 
     @RequestMapping(value = "/search/printable", method = RequestMethod.GET)
@@ -94,7 +94,7 @@ public class PublicationSearchController {
         model.addAttribute("resultBeans", publicationSearchService.getResultsAsResultBeans(formBean));
         model.addAttribute("today", new Date());
         // this isn't really called via an ajax request, but this is how you get an unstyled page so...
-        return "publication/printable-results.ajax";
+        return "publication/printable-results";
     }
 
     @RequestMapping(value = "/search/refer", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)

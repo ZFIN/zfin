@@ -644,15 +644,6 @@
         <attribute name="overwrite" default="false"/>
         <sequential>
             <echo message="copying the webapp from @{from} to @{to}"/>
-            <exportProperties
-                    file="${commons.dir}/${INSTANCE}.properties"
-                    target="@{from}/WEB-INF/jsp/dev-tools/zfin-properties.jsp"
-                    headerFile="${buildfiles.dir}/zfin_properties_header.jsp"
-                    keyValueExpressionFile="${buildfiles.dir}/zfin_properties_entry.jsp"
-                    footerFile="${buildfiles.dir}/zfin_properties_footer.jsp"
-                    suppressKeyValue="true"
-                    footer=""
-            />
             <copy todir="@{to}" overwrite="@{overwrite}">
                 <fileset dir="@{from}">
                     <include name="WEB-INF/**"/>

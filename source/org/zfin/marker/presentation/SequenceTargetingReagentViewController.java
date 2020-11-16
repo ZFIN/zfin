@@ -155,7 +155,7 @@ public class SequenceTargetingReagentViewController {
         model.addAttribute(LookupStrings.FORM_BEAN, sequenceTargetingReagentBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, strType + ": " + sequenceTargetingReagent.getAbbreviation());
 
-        return "marker/sequenceTargetingReagent/sequence-targeting-reagent-view.page";
+        return "marker/sequenceTargetingReagent/sequence-targeting-reagent-view";
     }
 
     @RequestMapping(value = "/view/{zdbID}/str-targeted-genes", method = RequestMethod.GET)
@@ -169,7 +169,7 @@ public class SequenceTargetingReagentViewController {
         model.addAttribute(LookupStrings.FORM_BEAN, sequenceTargetingReagentBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, sequenceTargetingReagent.getAbbreviation() + " Target Locations");
 
-        return "marker/sequence-targeting-reagent-target-view.page";
+        return "marker/sequence-targeting-reagent-target-view";
     }
 
 
@@ -194,7 +194,7 @@ public class SequenceTargetingReagentViewController {
 
         model.addAttribute(LookupStrings.FORM_BEAN, sequenceTargetingReagentBean);
 
-        return "marker/sequence-targeting-reagent-popup.popup";
+        return "marker/sequence-targeting-reagent-popup";
     }
 
 
@@ -225,31 +225,6 @@ public class SequenceTargetingReagentViewController {
         sequenceTargetingReagentBean.setConstructs(markerSet);
         sequenceTargetingReagentBean.setNumberOfConstructs(relatedMarker.getTotalCount());
     }
-
-    @RequestMapping(value = "/str/constructs/{zdbID}")
-    public String getAllConstructs(Model model,
-                                   @PathVariable("zdbID") String zdbID
-    ) throws Exception {
-        // set base bean
-        SequenceTargetingReagentBean strBean = new SequenceTargetingReagentBean();
-        Marker str = markerRepository.getMarkerByID(zdbID);
-        logger.info("gene: " + str);
-        strBean.setMarker(str);
-        // (CONSTRUCTS)
-        Set<MarkerRelationship.Type> types = new HashSet<>();
-        types.add(MarkerRelationship.Type.PROMOTER_OF);
-        types.add(MarkerRelationship.Type.CODING_SEQUENCE_OF);
-        types.add(MarkerRelationship.Type.CONTAINS_REGION);
-        Set<Marker> markerSet = new TreeSet<>();
-        // get all constructs
-        PaginationResult<Marker> relatedMarker = MarkerService.getRelatedMarker(str, types, -1);
-        markerSet.addAll(relatedMarker.getPopulatedResults());
-        strBean.setConstructs(markerSet);
-        strBean.setNumberOfConstructs(relatedMarker.getTotalCount());
-        model.addAttribute(LookupStrings.FORM_BEAN, strBean);
-        return "marker/str-all-constructs.ajax";
-    }
-
 
     private void addKnockdownRelationships(SequenceTargetingReagent sequenceTargetingReagent,
                                            SequenceTargetingReagentBean sequenceTargetingReagentBean) {

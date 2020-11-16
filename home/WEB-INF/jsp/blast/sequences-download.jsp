@@ -4,26 +4,26 @@
 
 
 <%--<jsp:useBean id="formBean" --%>
+<z:page title="ZFIN: Sequences Download">
+    <ul>
 
-<ul>
+        <%--from getShortSeq.pl--%>
+        <li><a href="/action/blast/blast-files?action=MORPHOLINO">zfin_mrph</a>
+            <li><a href="/action/blast/blast-files?action=TALEN">zfin_talen</a>
+            <li><a href="/action/blast/blast-files?action=CRISPR">zfin_crispr</a>
 
-    <%--from getShortSeq.pl--%>
-    <li><a href="/action/blast/blast-files?action=MORPHOLINO">zfin_mrph</a>
-        <li><a href="/action/blast/blast-files?action=TALEN">zfin_talen</a>
-        <li><a href="/action/blast/blast-files?action=CRISPR">zfin_crispr</a>
+            <%--from getZfinGbAcc.pl--%>
+            <%--should be all genbank--%>
+        <li><a href="/action/blast/blast-files?action=GENBANK_ALL">zfin_genbank_all</a>
+        <li><a href="/action/blast/blast-files?action=GENBANK_CDNA">zfin_genbank_cdna</a>
 
-        <%--from getZfinGbAcc.pl--%>
-        <%--should be all genbank--%>
-    <li><a href="/action/blast/blast-files?action=GENBANK_ALL">zfin_genbank_all</a>
-    <li><a href="/action/blast/blast-files?action=GENBANK_CDNA">zfin_genbank_cdna</a>
-
-        <%--these 2 are the same--%>
-        <%--<li><a href="">ZfinGenesWithExpression</a>--%>
-    <li><a href="/action/blast/blast-files?action=GENBANK_XPAT_CDNA">zfin_genbank_xpat_cdna</a>
+            <%--these 2 are the same--%>
+            <%--<li><a href="">ZfinGenesWithExpression</a>--%>
+        <li><a href="/action/blast/blast-files?action=GENBANK_XPAT_CDNA">zfin_genbank_xpat_cdna</a>
 
 
-        <%--from ZfinGenomicDNAAll--%>
-    <li><a href="/action/blast/blast-files?action=GENOMIC_REFSEQ">zfin_genomic_refseq</a> (probably 0)
-    <li><a href="/action/blast/blast-files?action=GENOMIC_GENBANK">zfin_genomic_genbank</a> (~17K)
-</ul>
-
+            <%--from ZfinGenomicDNAAll--%>
+        <li><a href="/action/blast/blast-files?action=GENOMIC_REFSEQ">zfin_genomic_refseq</a> (probably 0)
+        <li><a href="/action/blast/blast-files?action=GENOMIC_GENBANK">zfin_genomic_genbank</a> (~17K)
+    </ul>
+</z:page>

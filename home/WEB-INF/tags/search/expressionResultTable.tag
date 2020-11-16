@@ -3,8 +3,8 @@
 
 <%@attribute name="results" required="true" type="java.util.List" %>
 
-<c:set var="conditionsAttribute" value="<%=ResultService.CONDITIONS%>"/>
-<c:set var="expressionAttribute" value="<%=ResultService.EXPRESSION%>"/>
+<c:set var="conditionsAttribute" value="${ResultService.CONDITIONS}"/>
+<c:set var="expressionAttribute" value="${ResultService.EXPRESSION}"/>
 
 
 <table class="table-results searchresults" style="display: none;">

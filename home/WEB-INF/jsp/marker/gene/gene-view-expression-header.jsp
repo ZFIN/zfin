@@ -7,4 +7,5 @@
     <zfin2:expressionAllAttributeListItem marker="${formBean.marker}" markerExpression="${markerExpression}" />
     <zfin2:expressionCrossSpeciesAttributeListItem marker="${formBean.marker}" bgeeIdList="${bGeeIds}" />
     <zfin2:expressionHighThroughputAttributeListItem markerExpression="${markerExpression}" />
+    <zfin2:thisseExpression markerExpression="${markerExpression}" />
 </z:attributeList>

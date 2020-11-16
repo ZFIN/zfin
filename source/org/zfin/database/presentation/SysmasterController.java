@@ -25,7 +25,7 @@ public class SysmasterController {
      */
     @RequestMapping(value = "/overview")
     protected String overview() {
-        return "dev-tools/database/overview.page";
+        return "dev-tools/database/overview";
     }
 
     @RequestMapping(value = "/database-summary")
@@ -34,7 +34,7 @@ public class SysmasterController {
                                      DatabaseFormBean formBean) {
         List<PostgresSession> databases = PostgresRepository.getSystemDatabases(formBean);
         model.addAttribute("databases", databases);
-        return "dev-tools/database/summary.page";
+        return "dev-tools/database/summary";
     }
 
     @RequestMapping(value = "/all-sessions")
@@ -45,7 +45,7 @@ public class SysmasterController {
         model.addAttribute("sessions", sessions);
         model.addAttribute("dbnameList", getDbNameList());
         model.addAttribute("formBean", formBean);
-        return "dev-tools/database/all-sessions.page";
+        return "dev-tools/database/all-sessions";
     }
 
     @RequestMapping(value = "/view-session/{ID}")
@@ -55,7 +55,7 @@ public class SysmasterController {
                                  @PathVariable("ID") String idString) {
         int id = Integer.valueOf(idString);
         //model.addAttribute("session", session);
-        return "dev-tools/database/view-session.page";
+        return "dev-tools/database/view-session";
     }
 
     public Map<String, String> getDbNameList() {

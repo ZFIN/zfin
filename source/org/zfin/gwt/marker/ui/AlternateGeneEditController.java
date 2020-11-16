@@ -13,6 +13,7 @@ import org.zfin.gwt.root.event.RelatedEntityEvent;
 import org.zfin.gwt.root.ui.MarkerEditCallBack;
 import org.zfin.gwt.root.ui.MarkerRPCService;
 import org.zfin.gwt.root.ui.PublicationSessionKey;
+import org.zfin.gwt.root.ui.StandardDivNames;
 
 import java.util.List;
 
@@ -23,7 +24,7 @@ public final class AlternateGeneEditController extends AbstractFullMarkerEditCon
 
     // gui elements
     private ViewClickLabel<MarkerDTO> geneViewClickLabel = new ViewClickLabel<>("[View Gene]", "/action/marker/gene/gene-view?zdbID=", "Discard");
-    private GeneHeaderEdit geneHeaderEdit = new GeneHeaderEdit(headerDiv);
+    private GeneHeaderEdit geneHeaderEdit = new GeneHeaderEdit(StandardDivNames.headerDiv);
     private DBLinkTable dbLinkTable = new HandledDBLinkTable();
 
 

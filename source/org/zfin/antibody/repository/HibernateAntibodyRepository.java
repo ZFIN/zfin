@@ -16,6 +16,7 @@ import org.zfin.antibody.presentation.AntibodyAOStatistics;
 import org.zfin.antibody.presentation.AntibodySearchCriteria;
 import org.zfin.expression.Figure;
 import org.zfin.expression.FigureFigure;
+import org.zfin.expression.FigureType;
 import org.zfin.expression.TextOnlyFigure;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
@@ -256,10 +257,10 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         return PaginationResultFactory.createResultFromScrollableResultAndClose(paginationBean, query.scroll());
     }
 
-    public int getNumberOfFiguresPerAoTerm(Antibody antibody, GenericTerm aoTerm, Figure.Type figureType) {
+    public int getNumberOfFiguresPerAoTerm(Antibody antibody, GenericTerm aoTerm, FigureType figureType) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria;
-        if (figureType != null && figureType == Figure.Type.TOD) {
+        if (figureType != null && figureType == FigureType.TOD) {
             criteria = session.createCriteria(TextOnlyFigure.class);
         } else {
             criteria = session.createCriteria(FigureFigure.class);

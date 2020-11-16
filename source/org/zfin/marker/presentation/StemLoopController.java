@@ -61,6 +61,6 @@ public class StemLoopController {
         }
 
         model.addAttribute(LookupStrings.FORM_BEAN,sequences);
-        return "marker/stemloop-sequence.insert";
+        return "marker/stemloop-sequence";
     }
 }

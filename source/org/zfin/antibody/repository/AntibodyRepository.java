@@ -5,6 +5,7 @@ import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.presentation.AntibodySearchCriteria;
 import org.zfin.expression.Figure;
+import org.zfin.expression.FigureType;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.mutant.presentation.AntibodyStatistics;
@@ -108,7 +109,7 @@ public interface AntibodyRepository {
      *                 all figures (if null)
      * @return number
      */
-    int getNumberOfFiguresPerAoTerm(Antibody antibody, GenericTerm aoTerm, Figure.Type type);
+    int getNumberOfFiguresPerAoTerm(Antibody antibody, GenericTerm aoTerm, FigureType type);
 
     /**
      * Get all figures for a given antibody and ao term.

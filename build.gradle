@@ -65,15 +65,18 @@ task loadDatabase() {
         println "Loading $unloadPath into $dbname"
         exec {
             ignoreExitValue = true
-            commandLine "bash", "-c", "echo 'select pg_terminate_backend(pg_stat_activity.pid) from pg_stat_activity where pid <> pg_backend_pid();' | psql $dbname";
+            commandLine "bash", "-c", "echo 'select pg_terminate_backend(pg_stat_activity.pid) from pg_stat_activity where pid <> pg_backend_pid();' | psql $dbname"
         }
         exec {
             ignoreExitValue = true
             commandLine 'dropdb', dbname
         }
-        exec { commandLine 'createdb', dbname }
-        exec { commandLine "bash", "-c", "pg_restore -j 8 -d $dbname $unloadPath" }
-        exec { commandLine "bash", "-c", "echo 'vacuum (analyze)' | psql $dbname" }
+        exec { ignoreExitValue = true
+		commandLine 'createdb', dbname }
+        exec { ignoreExitValue = true
+		commandLine "bash", "-c", "pg_restore -c -j 8 -d $dbname $unloadPath" }
+        exec { ignoreExitValue = true
+		commandLine "bash", "-c", "echo 'vacuum (analyze)' | psql $dbname" }
 
     }
 }
@@ -487,7 +490,7 @@ task getLatestSolrIndexFiles() {
     doLast {
         exec {
             ignoreExitValue = true
-            commandLine "bash", "-c", "scp -r " + env['USER'] + "@thorax.zfin.org:/research/zunloads/solr/zfindb/current current.solr.dump";
+            commandLine "bash", "-c", "scp -r " + env['USER'] + "@thorax.zfin.org:/research/zunloads/solr/zfindb/current current.solr.dump"
         }
     }
 }
@@ -496,7 +499,7 @@ task getLatestSolrIndexFilesTrunk() {
     doLast {
         exec {
             ignoreExitValue = true
-            commandLine "bash", "-c", "scp -r " + env['USER'] + "@thorax.zfin.org:/research/zunloads/solr/trunkdb/current current.solr.dump";
+            commandLine "bash", "-c", "scp -r " + env['USER'] + "@thorax.zfin.org:/research/zunloads/solr/trunkdb/current current.solr.dump"
         }
     }
 }
@@ -505,7 +508,7 @@ task getLatestPostgresFiles() {
     doLast {
         exec {
             ignoreExitValue = true
-            commandLine "bash", "-c", "scp " + env['USER'] + "@thorax.zfin.org:/research/zunloads/databases/zfindb/current current.postgres.dump";
+            commandLine "bash", "-c", "scp " + env['USER'] + "@thorax.zfin.org:/research/zunloads/databases/zfindb/current current.postgres.dump"
         }
     }
 }
@@ -514,7 +517,7 @@ task getLatestPostgresFilesTrunk() {
     doLast {
         exec {
             ignoreExitValue = true
-            commandLine "bash", "-c", "scp " + env['USER'] + "@thorax.zfin.org:/research/zunloads/databases/trunkdb/current current.postgres.dump";
+            commandLine "bash", "-c", "scp " + env['USER'] + "@thorax.zfin.org:/research/zunloads/databases/trunkdb/current current.postgres.dump"
         }
     }
 }
@@ -524,14 +527,14 @@ task getLatestSolrIndex() {
         println 'Upgrade Solr index to the latest production one...'
         println "latest index: " + "find ./* -type d -prune -exec ls -d ".execute().text
 
-        def folder = "/research/zunloads/solr/zfindb";
-        def baseDir = new File(folder);
-        def files = baseDir.listFiles();
+        def folder = "/research/zunloads/solr/zfindb"
+        def baseDir = new File(folder)
+        def files = baseDir.listFiles()
         Arrays.sort(files, new Comparator<File>() {
-            public int compare(File f1, File f2) {
-                return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified());
+            int compare(File f1, File f2) {
+                return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified())
             }
-        });
+        })
         def latestIndex = files[0]
         println latestIndex
         def sout = new StringBuilder(), serr = new StringBuilder()
@@ -562,7 +565,7 @@ task createSchemaSpy() {
                     "-host",
                     "localhost",
                     "-dp",
-                    "lib/Java/postgresql-42.2.5.jar",
+                    "lib/Java/postgresql-42.2.18.jar",
                     "-s",
                     "public",
                     "-o",

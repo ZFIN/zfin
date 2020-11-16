@@ -12,7 +12,7 @@ import org.zfin.Species;
 import org.zfin.TestConfiguration;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.orthology.EvidenceCode;
+import org.zfin.orthology.EvidenceCodeCode;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ForeignDBDataType;
@@ -154,8 +154,8 @@ public class NomenclatureCandidateControllerTest {
                 Species.Type.MOUSE);
         //copied the acc_num out of the database, maybe this will change?
 
-        Set<EvidenceCode.Code> orthoEvidencesMouse = new HashSet<>();
-        orthoEvidencesMouse.add(EvidenceCode.Code.NT);
+        Set<EvidenceCodeCode> orthoEvidencesMouse = new HashSet<>();
+        orthoEvidencesMouse.add(EvidenceCodeCode.NT);
         //candidateBean.setMouseOrthologyEvidence(orthoEvidencesMouse);
 
         candidateBean.setRunCandidate(runCandidate);

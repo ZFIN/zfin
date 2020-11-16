@@ -65,7 +65,7 @@
             </td>
             <td>
                 <c:forEach var="lab" items="${labFeaturePrefixRow.labList}" varStatus="stat">
-                    <a href="/<%=ZfinPropertiesEnum.CGI_BIN_DIR_NAME.value()%>/ZFIN_jump?record=${lab.zdbID}">${lab.name}</a>${!stat.last? "," : ""}
+                    <a href="/${lab.zdbID}">${lab.name}</a>${!stat.last? "," : ""}
                 </c:forEach>
             </td>
         </tr>
