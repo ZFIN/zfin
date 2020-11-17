@@ -57,12 +57,13 @@ public class PatoPileStructureValidator extends AbstractPileStructureValidator<P
         }
 
         // Check valid combinations of ontologies
-        if (qualityTerm.isSubsetOf(SubsetDTO.RELATIONAL_SLIM)) {
+        //Doesnt seem to be needed CUR-997, commenting until its been tested
+        /*if (qualityTerm.isSubsetOf(SubsetDTO.RELATIONAL_SLIM)) {
             if (!EntityRelatedEntityOntologyPair.isValidCombination(phenotypeTerm)) {
                 errorMessages.add("Not a valid combination of ontologies for a relational quality term!");
                 return false;
             }
-        }
+        }*/
 
         return true;
     }
