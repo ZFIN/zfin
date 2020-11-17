@@ -1876,7 +1876,7 @@ public class HibernateMutantRepository implements MutantRepository {
     public List<Fish> getFishList(String publicationID) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select fish from Fish fish, PublicationAttribution attrib " +
+        String hql = "select distinct fish from Fish fish, PublicationAttribution attrib " +
                 "     where attrib.publication.zdbID = :publicationID AND " +
                 "attrib.dataZdbID = fish.zdbID AND " +
                 "attrib.sourceType = :sourceType " +
