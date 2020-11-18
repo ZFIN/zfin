@@ -286,7 +286,7 @@ public class GeneViewController {
         logger.info("zdbID: " + zdbID);
 
         Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbID);
-        if (!gene.isGenedom()) {
+        if (!gene.isGenedom()&&!gene.isInTypeGroup(Marker.TypeGroup.EFG)) {
             return "redirect:/" + zdbID;
         }
         logger.info("gene: " + gene);
