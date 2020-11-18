@@ -196,12 +196,14 @@ public class PatoPileStructureValidator extends AbstractPileStructureValidator<P
         AO_x_AO_AO(ANATOMY, null, ANATOMY, ANATOMY),
         AO_x_AO_CC(ANATOMY, null, ANATOMY, GO_CC),
         AO_x_AO_SP(ANATOMY, null, ANATOMY, SPATIAL),
+        AO_x_AO_CHEBI(ANATOMY, null, ANATOMY, CHEBI),
 
         AO_AO_AO_x(ANATOMY, ANATOMY, ANATOMY, null),
         AO_AO_AO_AO(ANATOMY, ANATOMY, ANATOMY, ANATOMY),
         AO_AO_AO_CC(ANATOMY, ANATOMY, ANATOMY, GO_CC),
         AO_AO_AO_SP(ANATOMY, ANATOMY, ANATOMY, SPATIAL),
         AO_AO_AO_MPATH(ANATOMY, ANATOMY, ANATOMY, MPATH_NEOPLASM),
+        AO_AO_AO_CHEBI(ANATOMY, ANATOMY, ANATOMY, CHEBI),
 
         AO_CC_AO_x(ANATOMY, GO_CC, ANATOMY, null),
         AO_CC_AO_AO(ANATOMY, GO_CC, ANATOMY, ANATOMY),
@@ -276,10 +278,13 @@ public class PatoPileStructureValidator extends AbstractPileStructureValidator<P
                 if (!isEqualsNullSafe(pair.getEntitySuper(), entitySuperO))
                     continue;
                 if (!isEqualsNullSafe(pair.getEntitySub(), entitySubO))
+
                     continue;
                 if (!isEqualsNullSafe(pair.getRelatedEntitySuper(), relEntitySuperO))
+
                     continue;
                 if (!isEqualsNullSafe(pair.getRelatedEntitySub(), relEntitySubO)) {
+
                     continue;
                 }
                 return true;
