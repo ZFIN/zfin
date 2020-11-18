@@ -111,7 +111,7 @@ const MarkerNameForm = ({markerId, nomenclature, setNomenclature, onSave}) => {
                         Save
                     </LoadingButton>
 
-                    {isSubmitted && <span className='text-success'><i className='fas fa-check'/> Saved</span>}
+                    {isSubmitted && isPristine && <span className='text-success'><i className='fas fa-check'/> Saved</span>}
 
                     {serverError && <span className='text-danger'>Update not saved. Try again later.</span>}
                 </div>
