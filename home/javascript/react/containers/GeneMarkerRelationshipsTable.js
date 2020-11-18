@@ -59,7 +59,7 @@ const GeneMarkerRelationshipsTable = ({geneId}) => {
         <DataTable
             columns={columns}
             dataUrl={`/action/api/marker/${geneId}/relationships`}
-            rowKey={row => row.zdbID}
+            rowKey={row => row.markerRelationshipZdbId}
         />
     );
 };
