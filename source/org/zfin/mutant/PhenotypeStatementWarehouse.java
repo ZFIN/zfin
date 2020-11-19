@@ -201,6 +201,9 @@ public class PhenotypeStatementWarehouse implements Comparable<PhenotypeStatemen
         if (getRelatedEntity() != null ? !getRelatedEntity().equals(phenotypeStatement.getRelatedEntity()) : phenotypeStatement.getRelatedEntity() != null) {
             return false;
         }
+        if (markerRelationship != null ? !markerRelationship.equals(phenotypeStatement.getMarkerRelationship()) : phenotypeStatement.getMarkerRelationship() != null) {
+            return false;
+        }
         if (!tag.equals(phenotypeStatement.getTag())) {
             return false;
         }
