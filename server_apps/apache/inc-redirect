@@ -153,6 +153,7 @@ RewriteRule ^/action/quicksearch/query  /search?q=%1   [NC,R=301]
 RewriteRule /action/anatomy/anatomy-search    /action/ontology/ontology-search [NC,R=301]
 
 RewriteRule ^/action/anatomy/anatomy-view/(.+) /action/ontology/term-detail/$1 [NC]
+RewriteRule ^/action/marker/marker-go-view/(.+) /$1#gene-ontology [NC]
 
 RewriteCond %{QUERY_STRING}    ^MIval=aa-anatdict.apg
 RewriteRule ^/cgi-bin/webdriver/action/ontology/search? [NC,R=301]
