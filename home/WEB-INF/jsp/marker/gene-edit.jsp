@@ -23,8 +23,6 @@
         <zfin2:geneHead gene="${formBean.marker}" previousNames="${formBean.previousNames}"
                         soTerm="${formBean.zfinSoTerm}" geneDesc="${formBean.allianceGeneDesc}" userID="${formBean.user.zdbID}"/>
 
-        <%-- gene ontology--%>
-        <zfin2:geneOntology geneOntologyOnMarker="${formBean.geneOntologyOnMarkerBeans}" marker="${formBean.marker}"/>
 
         <%--SEGMENT (CLONE AND PROBE) RELATIONSHIPS--%>
         <zfin2:markerRelationshipsLight relationships="${formBean.markerRelationshipPresentationList}"
