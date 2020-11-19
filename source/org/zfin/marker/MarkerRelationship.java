@@ -1,5 +1,6 @@
 package org.zfin.marker;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.zfin.framework.api.View;
 import org.zfin.infrastructure.EntityAttribution;
@@ -16,9 +17,9 @@ import java.util.Set;
 public class MarkerRelationship implements Comparable, EntityAttribution, AbstractMarkerRelationshipInterface {
 
     public enum Type {
-	BAC_CONTAINS_GENEDOM("BAC contains GENEDOM"),
-	BAC_CONTAINS_NTR("BAC contains NTR"),
-	GENEDOM_CONTAINS_NTR("GENEDOM contains NTR"),
+        BAC_CONTAINS_GENEDOM("BAC contains GENEDOM"),
+        BAC_CONTAINS_NTR("BAC contains NTR"),
+        GENEDOM_CONTAINS_NTR("GENEDOM contains NTR"),
         CLONE_CONTAINS_GENE("clone contains gene"),
         CLONE_CONTAINS_SMALL_SEGMENT("clone contains small segment"),
         CLONE_CONTAINS_TRANSCRIPT("clone contains transcript"),
@@ -37,45 +38,53 @@ public class MarkerRelationship implements Comparable, EntityAttribution, Abstra
         CRISPR_TARGETS_REGION("crispr targets region"),
         TALEN_TARGETS_REGION("talen targets region"),
         CONTAINS_REGION("contains region"),
-	NTR_INTERACTS_WITH_GENE("NTR interacts with GENE"),
+        NTR_INTERACTS_WITH_GENE("NTR interacts with GENE"),
         NTR_INTERACTS_WITH_GENEP("NTR interacts with GENEP"),
-	NTR_INTERACTS_WITH_NTR("NTR interacts with NTR"),
-	RNAGENE_INTERACTS_WITH_GENE("RNAGENE interacts with GENE"),
-	RNAGENE_INTERACTS_WITH_GENEP("RNAGENE interacts with GENEP"),
-	RNAGENE_INTERACTS_WITH_NTR("RNAGENE interacts with NTR"),
-	RNAGENE_INTERACTS_WITH_RNAGENE("RNAGENE interacts with RNAGENE"),
-	PAC_CONTAINS_NTR("PAC contains NTR"),
-	PAC_CONTAINS_GENEDOM("PAC contains GENEDOM"),
-	FOSMID_CONTAINS_GENEDOM("FOSMID contains GENEDOM"),
-	FOSMID_CONTAINS_NTR("FOSMID contains NTR")
-;
-        @JsonView(View.MarkerRelationshipAPI.class)
+        NTR_INTERACTS_WITH_NTR("NTR interacts with NTR"),
+        RNAGENE_INTERACTS_WITH_GENE("RNAGENE interacts with GENE"),
+        RNAGENE_INTERACTS_WITH_GENEP("RNAGENE interacts with GENEP"),
+        RNAGENE_INTERACTS_WITH_NTR("RNAGENE interacts with NTR"),
+        RNAGENE_INTERACTS_WITH_RNAGENE("RNAGENE interacts with RNAGENE"),
+        PAC_CONTAINS_NTR("PAC contains NTR"),
+        PAC_CONTAINS_GENEDOM("PAC contains GENEDOM"),
+        FOSMID_CONTAINS_GENEDOM("FOSMID contains GENEDOM"),
+        FOSMID_CONTAINS_NTR("FOSMID contains NTR");
+
         private final String value;
 
         Type(String value) {
             this.value = value;
         }
 
+        @JsonValue
         public String toString() {
             return value;
         }
 
         public static Type getType(String type) {
             for (Type t : values()) {
-                if (t.toString().equals(type))
+                if (t.toString().equals(type)) {
                     return t;
+                }
             }
             throw new RuntimeException("No MarkerRelationship type of string " + type + " found.");
         }
     }
+
     @JsonView(View.MarkerRelationshipAPI.class)
     private String zdbID;
-    @JsonView(View.MarkerRelationshipAPI.class)
+
     private Type type;
+
+    @JsonView(View.MarkerRelationshipAPI.class)
     private Marker firstMarker;
+
+    @JsonView(View.MarkerRelationshipAPI.class)
     private Marker secondMarker;
 
+    @JsonView(View.MarkerRelationshipAPI.class)
     private MarkerRelationshipType markerRelationshipType;
+
     @JsonView(View.MarkerRelationshipAPI.class)
     private Set<PublicationAttribution> publications;
 
@@ -151,8 +160,9 @@ public class MarkerRelationship implements Comparable, EntityAttribution, Abstra
     }
 
     public Set<PublicationAttribution> getPublications() {
-        if (publications == null)
+        if (publications == null) {
             return new HashSet<PublicationAttribution>();
+        }
         return publications;
     }
 
@@ -161,10 +171,11 @@ public class MarkerRelationship implements Comparable, EntityAttribution, Abstra
     }
 
     public int getPublicationCount() {
-        if (publications == null)
+        if (publications == null) {
             return 0;
-        else
+        } else {
             return publications.size();
+        }
     }
 
     public Publication getSinglePublication() {

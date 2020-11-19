@@ -15,13 +15,16 @@ public class PublicationAttribution extends RecordAttribution implements Seriali
 
     @ManyToOne
     @JoinColumn(name = "recattrib_source_zdb_id", insertable = false, updatable = false)
+    @JsonView({
+            View.SequenceTargetingReagentAPI.class,
+            View.MarkerRelationshipAPI.class
+    })
     protected Publication publication;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recattrib_data_zdb_id", insertable = false, updatable = false)
     protected Marker marker;
 
-    @JsonView(View.SequenceTargetingReagentAPI.class)
     public Publication getPublication() {
         return publication;
     }

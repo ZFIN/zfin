@@ -1,13 +1,19 @@
 package org.zfin.marker;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import org.zfin.framework.api.View;
+
 /**
  * mapped to marker_relationship_type
  */
-public class MarkerRelationshipType {
+public class MarkerRelationshipType implements Comparable<MarkerRelationshipType> {
+    @JsonView(View.MarkerRelationshipAPI.class)
     private String name;
     private MarkerTypeGroup firstMarkerTypeGroup;
     private MarkerTypeGroup secondMarkerTypeGroup;
+    @JsonView(View.MarkerRelationshipAPI.class)
     private String firstToSecondLabel;
+    @JsonView(View.MarkerRelationshipAPI.class)
     private String secondToFirstLabel;
 
     public String getName() {
@@ -68,5 +74,10 @@ public class MarkerRelationshipType {
         result = 31 * result + (firstToSecondLabel != null ? firstToSecondLabel.hashCode() : 0);
         result = 31 * result + (secondToFirstLabel != null ? secondToFirstLabel.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public int compareTo(MarkerRelationshipType o) {
+        return getName().compareTo(o.getName());
     }
 }

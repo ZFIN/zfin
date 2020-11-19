@@ -23,8 +23,10 @@ public class MarkerRelationshipBeanValidator implements Validator {
     public void validate(Object o, Errors errors) {
         MarkerRelationshipBean bean = (MarkerRelationshipBean) o;
 
-        MarkerRelationship.Type type = MarkerRelationship.Type.getType(bean.getRelationship());
-        if (type == null) {
+        try {
+            // this method throws an exception if the relationship type is invalid
+            MarkerRelationship.Type.getType(bean.getRelationship());
+        } catch (Exception e) {
             errors.rejectValue("relationship", "marker.relationship.type.invalid");
         }
 
