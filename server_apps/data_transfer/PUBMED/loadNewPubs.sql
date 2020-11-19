@@ -115,10 +115,20 @@ set journal_zdb_id = (select id from tmp_first_journal_to_match
 where trim(lower(iso)) = jrnl_abbrev_lower)
 where journal_zdb_id is null;
 
+select count(*),issn from tmp_first_journal_to_match, tmp_new_pubs
+where issn is not null
+and issn = jrnl_print_issn
+group by issn having count(*) > 1;
+
+select count(*),issn,jrnl_print_issn from tmp_first_journal_to_match, tmp_new_pubs
+where issn is not null
+and issn = jrnl_print_issn
+group by issn,jrnl_print_issn having count(*) > 1;
+
 update tmp_new_pubs
 set journal_zdb_id = (select id from tmp_first_journal_to_match
-where issn is not null
-        and issn = jrnl_print_issn)
+				where issn is not null
+        			and issn = jrnl_print_issn)
 where journal_zdb_id is null;
 
 update tmp_new_pubs
