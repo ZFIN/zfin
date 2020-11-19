@@ -16,7 +16,7 @@ echo JAVA_HOME $JAVA_HOME
 
 start_jenkins() {
 echo 'Starting Jenkins...'
-    nohup $JAVA_HOME/bin/java -Dinstance=$INSTANCE -jar $SOURCEROOT/server_apps/jenkins/jenkins.war  --httpPort=$JENKINS_PORT --sessionTimeout=0 --sessionEviction=0 --prefix=/jobs  > $JENKINS_HOME/logs/jenkins.log 2>&1 & echo $! > $JENKINS_HOME/jenkins.pid
+    nohup $JAVA_HOME/bin/java -Dinstance=$INSTANCE -jar $SOURCEROOT/server_apps/jenkins/jenkins.war  --httpPort=$JENKINS_PORT --sessionTimeout=604800 --sessionEviction=604800 --prefix=/jobs  > $JENKINS_HOME/logs/jenkins.log 2>&1 & echo $! > $JENKINS_HOME/jenkins.pid
     echo pid: $(cat $PID_FILE)
 #	start-stop-daemon --start --quiet --background --make-pidfile --pidfile $PIDFILE --chuid $RUN_AS --exec $COMMAND
 }
