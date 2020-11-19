@@ -1,5 +1,7 @@
 package org.zfin.antibody;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.anatomy.DevelopmentStage;
@@ -34,6 +36,9 @@ import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
  * Tests AntibodyService class.
  */
 public class AntibodyServiceTest extends AbstractDatabaseTest {
+
+    private static final Logger logger = LogManager.getLogger(AntibodyServiceTest.class);
+
 
     @Test
     public void distinctAOTermList() {
@@ -79,7 +84,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         AntibodyService as = new AntibodyService(ab);
 
         Set<Term> aoTerms = as.getDistinctAoTerms();
-        assertNotNull(aoTerms);
+        assertTrue(aoTerms != null);
         assertEquals(3, aoTerms.size());
     }
 
@@ -128,7 +133,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         AntibodyService as = new AntibodyService(ab);
 
         Set<Term> aoTerms = as.getDistinctAoTerms();
-        assertNotNull(aoTerms);
+        assertTrue(aoTerms != null);
         assertEquals(2, aoTerms.size());
     }
 
@@ -165,7 +170,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         AntibodyService as = new AntibodyService(ab);
 
         Set<Term> aoTerms = as.getDistinctAoTerms();
-        assertNotNull(aoTerms);
+        assertTrue(aoTerms != null);
         assertEquals(3, aoTerms.size());
     }
 
@@ -207,7 +212,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         AntibodyService as = new AntibodyService(ab);
 
         Set<Term> goTerms = as.getDistinctGoTermsWTAndStandard();
-        assertNotNull(goTerms);
+        assertTrue(goTerms != null);
         assertEquals(1, goTerms.size());
     }
 
@@ -230,7 +235,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         AntibodyService as = new AntibodyService(ab);
 
         Set<Term> goTerms = as.getDistinctGoTermsWTAndStandard();
-        assertNotNull(goTerms);
+        assertTrue(goTerms != null);
         assertEquals(0, goTerms.size());
     }
 
@@ -263,7 +268,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         AntibodyService as = new AntibodyService(ab);
 
         Set<Term> goTerms = as.getDistinctGoTermsWTAndStandard();
-        assertNotNull(goTerms);
+        assertTrue(goTerms != null);
         assertEquals(2, goTerms.size());
     }
 
@@ -313,7 +318,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         AntibodyService as = new AntibodyService(ab);
 
         Set<Term> goTerms = as.getDistinctGoTermsWTAndStandard();
-        assertNotNull(goTerms);
+        assertTrue(goTerms != null);
         assertEquals(2, goTerms.size());
     }
 
@@ -350,7 +355,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         AntibodyService as = new AntibodyService(ab);
 
         Set<Term> goTerms = as.getDistinctGoTermsWTAndStandard();
-        assertNotNull(goTerms);
+        assertTrue(goTerms != null);
         assertEquals(1, goTerms.size());
     }
 

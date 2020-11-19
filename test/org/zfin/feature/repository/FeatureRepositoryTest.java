@@ -73,9 +73,9 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
     public void getUniqueFeatureListForPublication() {
         String pubID = "ZDB-PUB-130710-52";
         List<Feature> features = featureRepository.getFeaturesByPublication(pubID);
-        CollectionUtils.isNotEmpty(features);
+        assertNotNull("feature list exists", CollectionUtils.isNotEmpty(features));
         HashSet<Feature> set = new HashSet<>(features);
-        assertEquals("contains duplicate features", features.size(), set.size());
+        assertTrue("contains duplicate features", features.size() == set.size());
     }
 
     /**
@@ -106,7 +106,7 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getFeatureRelationshipTypesForPointMutationType() {
-        List<String> pointMutantTypes = new ArrayList<>();
+        List<String> pointMutantTypes = new ArrayList<String>();
         pointMutantTypes.add(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF.toString());
         pointMutantTypes.add(FeatureMarkerRelationshipTypeEnum.CREATED_BY.toString());
 
@@ -116,7 +116,7 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getFeatureRelationshipTypesForTransgenicInsertionType() {
-        List<String> tgInsertionTypes = new ArrayList<>();
+        List<String> tgInsertionTypes = new ArrayList<String>();
         tgInsertionTypes.add(FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString());
         tgInsertionTypes.add(FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString());
         tgInsertionTypes.add(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF.toString());
@@ -253,6 +253,16 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
         List<FeaturePrefix> featurePrefixes = featureRepository.getLabPrefixes("Stainier Lab");
         assertNotNull(featurePrefixes);
         assertTrue(featurePrefixes.size() > 3);
+/*
+        assertEquals("s", featurePrefixes.get(0).getPrefixString());
+        assertTrue(featurePrefixes.get(0).isActiveForSet());
+        assertEquals("m", featurePrefixes.get(1).getPrefixString());
+        assertFalse(featurePrefixes.get(1).isActiveForSet());
+        assertEquals("sk", featurePrefixes.get(2).getPrefixString());
+        assertFalse(featurePrefixes.get(2).isActiveForSet());
+        assertEquals("st", featurePrefixes.get(3).getPrefixString());
+        assertFalse(featurePrefixes.get(3).isActiveForSet());
+*/
     }
 
     @Test

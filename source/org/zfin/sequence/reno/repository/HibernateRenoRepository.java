@@ -1,12 +1,16 @@
+/**
+ * Class HibernateRenoRepository.
+ */
 package org.zfin.sequence.reno.repository;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+//import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.profile.Person;
@@ -17,8 +21,6 @@ import org.zfin.sequence.reno.Run;
 import org.zfin.sequence.reno.RunCandidate;
 import org.zfin.sequence.reno.presentation.RunBean;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,21 +29,26 @@ public class HibernateRenoRepository implements RenoRepository {
 
     private static final Logger LOG = LogManager.getLogger(HibernateRenoRepository.class);
 
+
     public List<RedundancyRun> getRedundancyRuns() {
         Session session = HibernateUtil.currentSession();
-        return session.createQuery("FROM RedundancyRun", RedundancyRun.class).getResultList();
+        Criteria criteria = session.createCriteria(RedundancyRun.class);
+        return criteria.list();
+
     }
 
 
     public List<NomenclatureRun> getNomenclatureRuns() {
         Session session = HibernateUtil.currentSession();
-        return session.createQuery("FROM NomenclatureRun", NomenclatureRun.class).getResultList();
+        Criteria criteria = session.createCriteria(NomenclatureRun.class);
+//        criteria.add(Restrictions.eq("type", Run.Type.NOMENCLATURE));
+        return criteria.list();
     }
 
     public int getQueueCandidateCount(Run oneRun) {
         Session session = HibernateUtil.currentSession();
         Query query = session.createQuery("select count(*) from RunCandidate rc " +
-                "where rc.run = :run and rc.done = false and rc.lockPerson is null");
+                "where rc.run = :run and rc.done = 'f' and rc.lockPerson is null");
         query.setParameter("run", oneRun);
         return ((Number) query.uniqueResult()).intValue();
     }
@@ -49,7 +56,7 @@ public class HibernateRenoRepository implements RenoRepository {
     public int getPendingCandidateCount(Run oneRun) {
         Session session = HibernateUtil.currentSession();
         Query query = session.createQuery("select count(*) from RunCandidate rc " +
-                "where rc.run = :run and rc.done = false and rc.lockPerson is not null");
+                "where rc.run = :run and rc.done = 'f' and rc.lockPerson is not null");
         query.setParameter("run", oneRun);
         return ((Number) query.uniqueResult()).intValue();
     }
@@ -57,7 +64,7 @@ public class HibernateRenoRepository implements RenoRepository {
     public int getFinishedCandidateCount(Run oneRun) {
         Session session = HibernateUtil.currentSession();
         Query query = session.createQuery("select count(*) from RunCandidate rc " +
-                "where rc.run = :run and rc.done = true and rc.lockPerson is null");
+                "where rc.run = :run and rc.done = 't' and rc.lockPerson is null");
         query.setParameter("run", oneRun);
         return ((Number) query.uniqueResult()).intValue();
     }
@@ -70,9 +77,9 @@ public class HibernateRenoRepository implements RenoRepository {
     public Run castRun(Run run) {
 
         if (run.isRedundancy() && !(run instanceof RedundancyRun)) {
-            return HibernateUtil.currentSession().load(RedundancyRun.class, run.getZdbID());
+            return (RedundancyRun) HibernateUtil.currentSession().load(RedundancyRun.class, run.getZdbID());
         } else if (run.isNomenclature() && !(run instanceof NomenclatureRun)) {
-            return HibernateUtil.currentSession().load(NomenclatureRun.class, run.getZdbID());
+            return (NomenclatureRun) HibernateUtil.currentSession().load(NomenclatureRun.class, run.getZdbID());
         } else {
             LOG.warn("run type was not recast: \n" + this);
             return run;
@@ -82,7 +89,10 @@ public class HibernateRenoRepository implements RenoRepository {
 
 
     public Run getRunByID(String zdbID) {
-        return HibernateUtil.currentSession().get(Run.class, zdbID);
+        Session session = HibernateUtil.currentSession();
+        Criteria criteria = session.createCriteria(Run.class);
+        criteria.add(Restrictions.eq("zdbID", zdbID));
+        return (Run) criteria.uniqueResult();
     }
 
 
@@ -90,12 +100,12 @@ public class HibernateRenoRepository implements RenoRepository {
 
         Session session = HibernateUtil.currentSession();
         String hql = " from RunCandidate rc " +
-                " where rc.run.zdbID = :runid and rc.done= false and rc.lockPerson is null " +
+                " where rc.run.zdbID = :runid and rc.done='f' and rc.lockPerson is null " +
                 " and rc.candidate.suggestedName like 'si:%'";
 
-        Query<RunCandidate> query = session.createQuery(hql, RunCandidate.class);
+        Query query = session.createQuery(hql);
         query.setParameter("runid", run.getZdbID());
-        return query.getResultList();
+        return query.list();
     }
 
     /**
@@ -120,7 +130,7 @@ public class HibernateRenoRepository implements RenoRepository {
 
         String orderBy;
 
-        List<RunCandidate> list = new ArrayList<>();
+        List<RunCandidate> list = new ArrayList<RunCandidate>();
 
         if (comparator.equals(RunBean.SORT_BY_OCCURRENCE_DSC)) {
             orderBy = "runCandidate.candidate.problem asc, runCandidate.occurrenceOrder desc, hit.expectValue asc, max(hit.score) desc";
@@ -149,7 +159,7 @@ public class HibernateRenoRepository implements RenoRepository {
                 "ORDER BY " + orderBy;
         Query query = session.createQuery(hql);
         query.setParameter("run", run);
-        query.setParameter("done", false);
+        query.setBoolean("done", false);
         query.setMaxResults(maxNumRecords);
         List<Object> runs = query.list();
         for (Object runObjects : runs) {
@@ -169,7 +179,7 @@ public class HibernateRenoRepository implements RenoRepository {
                     "      not exists (select 1 from Hit hit where hit.query = query) ";
             Query nonHitQuery = session.createQuery(hql1);
             nonHitQuery.setParameter("run", run);
-            nonHitQuery.setParameter("done", false);
+            nonHitQuery.setBoolean("done", false);
             nonHitQuery.setMaxResults(maxNumRecords - runs.size());
             List<RunCandidate> nonHitRuns = nonHitQuery.list();
             list.addAll(nonHitRuns);
@@ -187,7 +197,7 @@ public class HibernateRenoRepository implements RenoRepository {
 
         String orderBy;
 
-        List<RunCandidate> list = new ArrayList<>();
+        List<RunCandidate> list = new ArrayList<RunCandidate>();
 
 
         String hql = "SELECT runCandidate.zdbID , hit.expectValue, max(hit.score ), runCandidate.candidate.lastFinishedDate , runCandidate.occurrenceOrder, runCandidate.candidate.problem " +
@@ -221,7 +231,7 @@ public class HibernateRenoRepository implements RenoRepository {
 
         Query query = session.createQuery(hql);
         query.setParameter("run", run);
-        query.setParameter("done", false);
+        query.setBoolean("done", false);
         query.setMaxResults(maxNumRecords);
         List runs = query.list();
         for (Object runObjects : runs) {
@@ -239,11 +249,12 @@ public class HibernateRenoRepository implements RenoRepository {
                     "      runCandidate.done = :done AND " +
                     "      runCandidate.lockPerson is null  AND " +
                     "      not exists (select 1 from Hit hit where hit.query = query) ";
-            Query<RunCandidate> nonHitQuery = session.createQuery(hql1, RunCandidate.class);
+            Query nonHitQuery = session.createQuery(hql1);
             nonHitQuery.setParameter("run", run);
-            nonHitQuery.setParameter("done", false);
+            nonHitQuery.setBoolean("done", false);
             nonHitQuery.setMaxResults(maxNumRecords - runs.size());
-            list.addAll(nonHitQuery.getResultList());
+            List<RunCandidate> nonHitRuns = nonHitQuery.list();
+            list.addAll(nonHitRuns);
         }
         session.setCacheMode(oldCacheMode);
 
@@ -295,11 +306,11 @@ public class HibernateRenoRepository implements RenoRepository {
     public List<RunCandidate> getPendingCandidates(Run run) {
         Session session = HibernateUtil.currentSession();
         String hql = " from RunCandidate rc " +
-                " where rc.run = :run and rc.done= false and rc.lockPerson is not null";
+                " where rc.run = :run and rc.done='f' and rc.lockPerson is not null";
 
-        Query<RunCandidate> query = session.createQuery(hql, RunCandidate.class);
+        Query query = session.createQuery(hql);
         query.setParameter("run", run);
-        return query.getResultList();
+        return query.list();
     }
 
     public boolean lock(Person newOwner, RunCandidate rc) {

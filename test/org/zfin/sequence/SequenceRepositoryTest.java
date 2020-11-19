@@ -2,7 +2,7 @@ package org.zfin.sequence;
 
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
-import org.hibernate.query.Query;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -21,10 +21,14 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 
+/**
+ * Class SequenceRepositoryTest.
+ */
+
 public class SequenceRepositoryTest extends AbstractDatabaseTest {
 
     private final static Logger logger = LogManager.getLogger(SequenceRepositoryTest.class);
-    private final SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
+    private SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
 
 
     @Test
@@ -43,9 +47,10 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
         accession1.setReferenceDatabase(genBankRefDB);
         session.save(accession1);
         String hsqlString = "from Accession acc where acc.number = :number";
-        Query<Accession> query = session.createQuery(hsqlString, Accession.class);
-        query.setParameter("number", number);
-        Accession accession = query.uniqueResult();
+        Query query = session.createQuery(hsqlString);
+        query.setString("number", number);
+//            query.setMaxResults(1) ;
+        Accession accession = (Accession) query.uniqueResult();
         assertNotNull("database contains at least one accession", accession);
         assertEquals("abbrevs are equal", abbrev, accession.getAbbreviation());
     }
@@ -76,7 +81,7 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
                 ForeignDBDataType.DataType.GENOMIC,
                 ForeignDBDataType.SuperType.SEQUENCE,
                 Species.Type.ZEBRAFISH);
-        assertEquals("ReferenceDatabase ZDBid is ZDB-FDBCONT-040412-36", "ZDB-FDBCONT-040412-36", refDb.getZdbID());
+        assertTrue("ReferenceDatabase ZDBid is ZDB-FDBCONT-040412-36", refDb.getZdbID().equals("ZDB-FDBCONT-040412-36"));
     }
 
     @Test
@@ -87,14 +92,14 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
                 ForeignDBDataType.DataType.GENOMIC,
                 ForeignDBDataType.SuperType.SEQUENCE,
                 Species.Type.ZEBRAFISH);
-        assertEquals("ReferenceDatabase ZDBid is ZDB-FDBCONT-040412-36", "ZDB-FDBCONT-040412-36", refDb.getZdbID());
+        assertTrue("ReferenceDatabase ZDBid is ZDB-FDBCONT-040412-36", refDb.getZdbID().equals("ZDB-FDBCONT-040412-36"));
     }
 
     @Test
     public void testGetForeignDBByName() {
         SequenceRepository sr = RepositoryFactory.getSequenceRepository();
         ForeignDB foreignDB = sr.getForeignDBByName(ForeignDB.AvailableName.GENBANK);
-        assertSame("ForeignDB name is:Genbank", foreignDB.getDbName(), ForeignDB.AvailableName.GENBANK);
+        assertTrue("ForeignDB name is:Genbank", foreignDB.getDbName() == ForeignDB.AvailableName.GENBANK);
     }
 
     //this test will only work when the data is not reloaded;
@@ -106,7 +111,7 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
                 ForeignDBDataType.DataType.GENOMIC,
                 ForeignDBDataType.SuperType.SEQUENCE,
                 Species.Type.ZEBRAFISH);
-        assertEquals("ReferenceDatabase ZDBid is ZDB-FDBCONT-040412-36", "ZDB-FDBCONT-040412-36", refDb.getZdbID());
+        assertTrue("ReferenceDatabase ZDBid is ZDB-FDBCONT-040412-36", refDb.getZdbID().equals("ZDB-FDBCONT-040412-36"));
     }
 
     @Test
@@ -156,7 +161,7 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
     public void getFirst10Sequences() {
         List<String> markerTypes = sequenceRepository.getAllNSequences(10);
         assertNotNull(markerTypes);
-        assertEquals(10, markerTypes.size());
+        assertTrue(markerTypes.size() == 10);
     }
 
     @Test

@@ -25,12 +25,6 @@ public class DeleteFeatureRule extends AbstractDeleteEntityRule implements Delet
         Feature feature = RepositoryFactory.getFeatureRepository().getFeatureByID(zdbID);
         addToValidationReport(feature.getAbbreviation() + " is used in the following list of genotypes: ", getMutantRepository().getGenotypesByFeature(feature));
 
-        // Can't delete the feature if it has more than 1 publications
-        SortedSet<Publication> featurePublications = RepositoryFactory.getPublicationRepository().getAllPublicationsForFeature(feature);
-        if (CollectionUtils.isNotEmpty(featurePublications) && featurePublications.size() > 1) {
-            addToValidationReport(feature.getAbbreviation() + " associated with more than one publication: ", featurePublications);
-        }
-
         // Can't delete the feature if it has a source
         if (CollectionUtils.isNotEmpty(feature.getSuppliers())) {
             List<Organization> organizationList = new ArrayList<>(feature.getSuppliers().size());
@@ -40,11 +34,16 @@ public class DeleteFeatureRule extends AbstractDeleteEntityRule implements Delet
             addToValidationReport(feature.getAbbreviation() + " is provided by the following suppliers: ", organizationList);
         }
 
-        // Can't delete the feature if it has accession #
+        // Can't delete the feature if has accession #
         if (CollectionUtils.isNotEmpty(feature.getDbLinks())) {
             addToValidationReport(feature.getAbbreviation() + " has the following accession numbers associated: ", feature.getDbLinks());
         }
 
+        // Can't delete the feature if it has more than 1 publications
+        SortedSet<Publication> featurePublications = RepositoryFactory.getPublicationRepository().getAllPublicationsForFeature(feature);
+        if (CollectionUtils.isNotEmpty(featurePublications) && featurePublications.size() > 1) {
+            addToValidationReport(feature.getAbbreviation() + " associated with more than one publication: ", featurePublications);
+        }
         return validationReportList;
 
     }

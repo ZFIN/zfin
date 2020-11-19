@@ -23,11 +23,15 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 
+/**
+ * Class RenoRepositoryTest.
+ */
+
 public class RenoRepositoryTest extends AbstractDatabaseTest {
 
-    private static final RenoRepository repository = RepositoryFactory.getRenoRepository();
+    private static RenoRepository repository = RepositoryFactory.getRenoRepository();
 
-    private final RenoService renoService = new RenoService();
+    private RenoService renoService = new RenoService();
 
     @After
     public void closeSession() {
@@ -62,6 +66,7 @@ public class RenoRepositoryTest extends AbstractDatabaseTest {
     @Test
     // Test that there are nomenclature runs in the database
     public void getNomenclatureRuns() {
+        Session session = HibernateUtil.currentSession();
         List<NomenclatureRun> nomenclatureRuns = repository.getNomenclatureRuns();
         int oldSize = nomenclatureRuns.size();
         insertTestData();
@@ -95,6 +100,7 @@ public class RenoRepositoryTest extends AbstractDatabaseTest {
      */
     @Test
     public void queryCandidates() {
+        Session session = HibernateUtil.currentSession();
         assertEquals("No query candidates", 0, repository.getQueueCandidateCount(null));
         Map<String, Object> returnMap = insertTestData();
         Run run = (Run) returnMap.get("run1");

@@ -25,6 +25,7 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.ForeignDB;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -327,6 +328,7 @@ public class OntologyService {
         return stageSlim;
     }
 
+    @Nullable
     public DevelopmentStage getFirstDevelopmentStageForTerm(GenericTerm superStageTerm) {
         List<DevelopmentStage> stages = RepositoryFactory.getAnatomyRepository().getAllStagesWithoutUnknown();
         for (DevelopmentStage stage : stages) {

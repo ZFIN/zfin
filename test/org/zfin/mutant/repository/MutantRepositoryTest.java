@@ -1,9 +1,10 @@
 package org.zfin.mutant.repository;
 
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
 import org.zfin.expression.ExpressionFigureStage;
@@ -13,6 +14,7 @@ import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.marker.Marker;
+import org.zfin.marker.agr.*;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
@@ -87,9 +89,9 @@ public class MutantRepositoryTest {
         for (GenericTerm term : terms) {
             if (term.getTermName().equals("dark red brown")) {
                 findKnown = true;
-                break;
             }
         }
+
         assertThat(findKnown, is(true));
     }
 
@@ -113,8 +115,14 @@ public class MutantRepositoryTest {
     @Test
     public void createDefaultPhenotype() {
         String genoxID = "ZDB-GENOX-100111-1";
-        FishExperiment experiment = getMutantRepository().getGenotypeExperiment(genoxID);
-        assertNotNull(experiment);
+
+        Session session = HibernateUtil.currentSession();
+        Transaction tx = session.beginTransaction();
+        try {
+            getMutantRepository().getGenotypeExperiment(genoxID);
+        } finally {
+            tx.rollback();
+        }
     }
 
     @Test
@@ -190,6 +198,15 @@ public class MutantRepositoryTest {
         } finally {
             HibernateUtil.rollbackTransaction();
         }
+    }
+
+    @Test
+    public void getSTRsWithMarkerRelationships() {
+        List<STRMarkerSequence> sequenceTargetingReagents = mutantRepository.getSequenceTargetingReagentsWithMarkerRelationships();
+        assertThat(sequenceTargetingReagents, notNullValue());
+        LOG.info("# of sequence targeting reagents: " + sequenceTargetingReagents.size());
+        assertThat(sequenceTargetingReagents, hasSize(greaterThan(3000)));
+        assertThat(sequenceTargetingReagents.get(0).getSequence(), notNullValue());
     }
 
     @Test
@@ -334,14 +351,14 @@ public class MutantRepositoryTest {
 
     @Test
     public void checkExistingFish() {
-        String genotypeID = "ZDB-GENO-010924-10";
-        String strID = "ZDB-MRPHLNO-080930-1";
+        String genotypeID = "ZDB-GENO-960809-7";
+        String strID = "ZDB-TALEN-150413-1";
         Fish fish = new Fish();
         fish.setGenotype(mutantRepository.getGenotypeByID(genotypeID));
         List<SequenceTargetingReagent> strList = new ArrayList<>(2);
         strList.add((SequenceTargetingReagent) getMarkerRepository().getMarkerByID(strID));
         fish.setStrList(strList);
-        RepositoryFactory.getMutantRepository().getFishByGenoStr(fish);
+        Fish zFish = RepositoryFactory.getMutantRepository().getFishByGenoStr(fish);
     }
 
     @Test
@@ -355,7 +372,7 @@ public class MutantRepositoryTest {
         strList.add((SequenceTargetingReagent) getMarkerRepository().getMarkerByID(strID));
         strList.add((SequenceTargetingReagent) getMarkerRepository().getMarkerByID(str1ID));
         fish.setStrList(strList);
-        RepositoryFactory.getMutantRepository().getFishByGenoStr(fish);
+        Fish zFish = RepositoryFactory.getMutantRepository().getFishByGenoStr(fish);
     }
 
     @Test
@@ -384,7 +401,7 @@ public class MutantRepositoryTest {
         model.setDisease(disease);
         model.setPublication(pub);
         model.setEvidenceCode("IC");
-        RepositoryFactory.getMutantRepository().getDiseaseModel(model);
+        DiseaseAnnotation fishModel = RepositoryFactory.getMutantRepository().getDiseaseModel(model);
     }
 
     @Test
@@ -493,7 +510,7 @@ public class MutantRepositoryTest {
 
     @Test
     public void getPhenotypeStatementsRibbon() {
-        List<PhenotypeObservationStatement> models = getMutantRepository().getPhenotypeStatements("ZDB-GENE-990415-30", "261210722,261213179");
+        List<PhenotypeObservationStatement> models = getMutantRepository().getPhenotypeStatements("ZDB-GENE-990415-30","261210722,261213179");
         assertNotNull(models);
     }
 

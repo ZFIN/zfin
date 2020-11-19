@@ -17,9 +17,9 @@ import static org.hamcrest.Matchers.*;
 
 public class CurationRepositoryTest extends AbstractDatabaseTest {
 
-    private static final CurationRepository curationRepository = new HibernateCurationRepository();
-    private static final PublicationRepository publicationRepository = new HibernatePublicationRepository();
-    private static final ProfileRepository profileRepository = new HibernateProfileRepository();
+    private static CurationRepository curationRepository = new HibernateCurationRepository();
+    private static PublicationRepository publicationRepository = new HibernatePublicationRepository();
+    private static ProfileRepository profileRepository = new HibernateProfileRepository();
 
     @Test
     public void getCurationForPub() {

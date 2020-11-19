@@ -13,8 +13,8 @@ import java.util.Set;
 public class MarkerHistory implements Comparable<MarkerHistory>, EntityZdbID {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGeneratorMarkerHistory")
-    @GenericGenerator(name = "zfinGeneratorMarkerHistory",
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
+    @GenericGenerator(name = "zfinGenerator",
             strategy = "org.zfin.database.ZdbIdGenerator",
             parameters = {
                     @org.hibernate.annotations.Parameter(name = "type", value = "NOMEN"),

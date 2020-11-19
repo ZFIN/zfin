@@ -17,6 +17,7 @@ import org.zfin.security.UserDetailServiceImpl;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
@@ -27,10 +28,10 @@ import static org.junit.Assert.*;
  */
 
 public class ProfileRepositoryTest extends AbstractDatabaseTest {
-    private static final String REAL_PERSON_1_ZDB_ID = "ZDB-PERS-960805-676"; //Monte;
-    private static final String REAL_PERSON_2_ZDB_ID = "ZDB-PERS-970321-3"; //George S.
+    private static String REAL_PERSON_1_ZDB_ID = "ZDB-PERS-960805-676"; //Monte;
+    private static String REAL_PERSON_2_ZDB_ID = "ZDB-PERS-970321-3"; //George S.
 
-    private static final ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();
+    private static ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();
 
 
     @After
@@ -79,12 +80,12 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest {
 
     }
 
+    @Test
     /**
      * Test that creation of a new person object including a user object
      * creates a single PK for both of them. User is a value object and is
      * tied to the Person object: one-to-one relationhip.
      */
-    @Test
     public void createPersonWithAccountInfo() {
         Person person = getTestPerson();
         HibernateUtil.currentSession().save(person);
@@ -106,7 +107,7 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest {
 
         String personID = person.getZdbID();
         assertTrue("PK created", personID != null && personID.startsWith("ZDB-PERS"));
-        assertNull("No user object created", person.getAccountInfo());
+        assertTrue("No user object created", person.getAccountInfo() == null);
     }
 
     @Test
@@ -114,8 +115,8 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest {
         // monte
         String zdbID = "ZDB-PERS-960805-676";
         Person person = profileRepository.getPerson(zdbID);
-        assertNotNull(person);
-        assertNotNull(person.getAccountInfo());
+        assertTrue(person != null);
+        assertTrue(person.getAccountInfo() != null);
     }
 
     private Person getTestPerson() {
@@ -136,15 +137,16 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest {
     public void getMatchingOrganizations() {
         String name = "zeb";
         List<Organization> orgs = profileRepository.getOrganizationsByName(name);
-        assertNotNull(orgs);
+        assertTrue(orgs != null);
 
     }
 
 
     @Test
     public void getOrganizationToWork() {
-        Organization organization1 = HibernateUtil.currentSession().get(Organization.class, "ZDB-LAB-001018-2");
+        Organization organization1 = (Organization) HibernateUtil.currentSession().get(Organization.class, "ZDB-LAB-001018-2");
         assertNotNull(organization1);
+        organization1.toString();
     }
 
     @Test
@@ -161,8 +163,12 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest {
         // test has source url
         organizationLinks = profileRepository.getSupplierLinksForZdbId("ZDB-GENO-960809-7");
         assertEquals(1, organizationLinks.size());
-        String linkText2 = "<a href=\"/action/profile/view/ZDB-LAB-991005-53\">Zebrafish International Resource Center (ZIRC)</a> <span style=\"font-size: small;\">(<a href=\"http://zebrafish.org?OID=ZDB-GENO-960809-7\">order this</a>)</span>";
+        String linkText2 = "<a href=\"/action/profile/view/ZDB-LAB-130607-1\">European Zebrafish Resource Center (EZRC)</a>";
+        linkText2 += " ";
+        linkText2 += "<span style=\"font-size: small;\">(<a href=\"http://www.ezrc.kit.edu/catalog.php?text=ZDB-GENO-960809-7\">order this</a>)</span>";
         assertEquals(linkText2, organizationLinks.iterator().next().getLinkWithAttributionAndOrderThis());
+
+
     }
 
     @Test
@@ -172,7 +178,7 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getPersonFields() {
+    public void getPersonFields() throws Exception {
         Person person = profileRepository.getPerson("ZDB-PERS-960805-676");
         assertTrue(person.getPersonalBio().contains("Princeton University"));
         assertTrue(person.getNonZfinPublications().contains("Westerfield"));
@@ -196,6 +202,8 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getLabMembers() {
         List<PersonMemberPresentation> personMemberPresentations = profileRepository.getLabMembers("ZDB-LAB-000914-1");
+        PersonMemberPresentation personMemberPresentation = personMemberPresentations.get(0);
+        String link = personMemberPresentation.getLink();
         assertThat(personMemberPresentations.size(), greaterThan(10));
         assertThat(personMemberPresentations.size(), lessThan(100));
     }
@@ -210,6 +218,8 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getCompanyMembers() {
         List<PersonMemberPresentation> personMemberPresentations = profileRepository.getCompanyMembers("ZDB-COMPANY-000713-1");
+        PersonMemberPresentation personMemberPresentation = personMemberPresentations.get(0);
+        String link = personMemberPresentation.getLink();
         assertThat(personMemberPresentations.size(), greaterThan(5));
         assertThat(personMemberPresentations.size(), lessThan(30));
     }
@@ -266,7 +276,7 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void removeLabMember() {
-        int result;
+        int result = -1;
         result = profileRepository.removeLabMember("ZDB-PERS-000329-1", "ZDB-LAB-000914-1");
         assertEquals(0, result);
         result = profileRepository.addLabMember("ZDB-PERS-000329-1", "ZDB-LAB-000914-1", 4);
@@ -277,7 +287,7 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void removeCompanyMember() {
-        int result;
+        int result = -1;
         result = profileRepository.removeCompanyMember("ZDB-PERS-000329-1", "ZDB-COMPANY-001017-1");
         assertEquals(0, result);
         result = profileRepository.addCompanyMember("ZDB-PERS-000329-1", "ZDB-COMPANY-001017-1", 3);
@@ -288,12 +298,15 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void checkPasswords() throws ParseException {
-        List<Person> list = HibernateUtil.currentSession().createQuery("from Person", Person.class).getResultList();
+        List<Person> list = (List<Person>) HibernateUtil.currentSession().createQuery("from Person").list();
+        int index = 0;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date when = sdf.parse("2017-3-31");
 
         //System.out.println("date1 : " + sdf.format(when));
-        for (Person person : list) {
+        Iterator<Person> iterator = list.iterator();
+        while (iterator.hasNext()) {
+            Person person = iterator.next();
             AccountInfo info = person.getAccountInfo();
             if (info != null) {
                 String saltedLogin = new Md5PasswordEncoder().encodePassword(info.getLogin(), "dedicated to George Streisinger");
@@ -307,6 +320,7 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest {
             }
 
         }
+        ;
     }
 
     @Test

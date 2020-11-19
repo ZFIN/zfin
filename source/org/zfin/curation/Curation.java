@@ -12,8 +12,8 @@ import java.util.Date;
 public class Curation {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGeneratorCuration")
-    @GenericGenerator(name = "zfinGeneratorCuration",
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
+    @GenericGenerator(name = "zfinGenerator",
             strategy = "org.zfin.database.ZdbIdGenerator",
             parameters = {
                     @org.hibernate.annotations.Parameter(name = "type", value = "CUR"),

@@ -8,7 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
-import org.hibernate.query.Query;
+import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.Example;
@@ -164,7 +164,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     @Override
     public void insertPublicAttribution(Genotype genotype, String sourceZdbID) {
-        Publication publication = HibernateUtil.currentSession().get(Publication.class, sourceZdbID);
+        Publication publication = (Publication) HibernateUtil.currentSession().get(Publication.class, sourceZdbID);
         insertPublicAttribution(genotype, publication);
     }
 
@@ -274,10 +274,11 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         String hql = "from PublicationAttribution " +
                 "where publication = :publication AND" +
                 "      dataZdbID = :dataID ";
-        Query<PublicationAttribution> query = session.createQuery(hql, PublicationAttribution.class);
+        Query query = session.createQuery(hql);
         query.setParameter("publication", attribution.getPublication());
         query.setParameter("dataID", attribution.getDataZdbID());
-        return query.uniqueResult();
+
+        return (PublicationAttribution) query.uniqueResult();
     }
 
     @SuppressWarnings("unchecked")
@@ -317,6 +318,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
      * @return list of GenericTerm
      * exception: If no ontology provided a NullPointerException is thrown.
      */
+    @SuppressWarnings("unchecked")
     public List<GenericTerm> getTermsByName(String termName, List<Ontology> ontologies) {
         if (ontologies == null || ontologies.isEmpty()) {
             throw new NullPointerException("No Ontology provided");
@@ -325,6 +327,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         for (Ontology ontology : ontologies) {
             ontologyNameStrings.add(ontology.getOntologyName());
         }
+
 
         String hql = "select distinct term from GenericTerm term  " +
                 "where lower(term.termName) like :name " +
@@ -337,15 +340,15 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         hql += " order by term.termName";
 
         Session session = HibernateUtil.currentSession();
-        Query<GenericTerm> query = session.createQuery(hql, GenericTerm.class);
-        query.setParameter("name", "%" + termName.toLowerCase() + "%");
+        Query query = session.createQuery(hql);
+        query.setString("name", "%" + termName.toLowerCase() + "%");
         if (ontologies.size() == 1) {
             query.setParameter("ontology", ontologies.get(0));
         } else {
             query.setParameterList("ontology", ontologyNameStrings);
         }
-        query.setParameter("obsolete", false);
-        List<GenericTerm> list = query.getResultList();
+        query.setBoolean("obsolete", false);
+        List<GenericTerm> list = (List<GenericTerm>) query.list();
 
         hql = "select alias.term from TermAlias alias " +
                 "where  alias.aliasLowerCase like :name " +
@@ -356,18 +359,19 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
             hql += " AND alias.term.ontology in  (:ontology) ";
         }
         hql += " order by alias.term.termName";
-        Query<GenericTerm> queryTwo = session.createQuery(hql, GenericTerm.class);
-        queryTwo.setParameter("name", "%" + termName.toLowerCase() + "%");
+        Query queryTwo = session.createQuery(hql);
+        queryTwo.setString("name", "%" + termName.toLowerCase() + "%");
         if (ontologies.size() == 1) {
             queryTwo.setParameter("ontology", ontologies.get(0));
         } else {
             queryTwo.setParameterList("ontology", ontologies);
         }
-        queryTwo.setParameter("obsolete", false);
-        List<GenericTerm> synonyms = queryTwo.getResultList();
+        queryTwo.setBoolean("obsolete", false);
+        List<GenericTerm> synonyms = (List<GenericTerm>) queryTwo.list();
         list.addAll(synonyms);
         Set<GenericTerm> distinctSet = new HashSet<>(list);
-        return new ArrayList<>(distinctSet);
+        List<GenericTerm> distinctList = new ArrayList<>(distinctSet);
+        return distinctList;
     }
 
     /**
@@ -447,13 +451,15 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
      * @param termID term id
      * @return Generic Term
      */
+    @SuppressWarnings("unchecked")
     public GenericTerm getTermByID(String termID) {
         if (StringUtils.isEmpty(termID)) {
             return null;
         }
 
         Session session = HibernateUtil.currentSession();
-        GenericTerm term = session.get(GenericTerm.class, termID);
+        GenericTerm term = null;
+        term = (GenericTerm) session.get(GenericTerm.class, termID);
         if (term == null) {
             return null;
         }
@@ -734,8 +740,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                         "      and dalias_data_zdb_id = :zdbID" +
                         "      and recattrib_source_zdb_id = :pubZdbID" +
                         " ")
-                        .setParameter("zdbID", zdbID)
-                        .setParameter("pubZdbID", pubZdbID)
+                        .setString("zdbID", zdbID)
+                        .setString("pubZdbID", pubZdbID)
                         .uniqueResult().toString()
         );
     }
@@ -748,8 +754,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                                 "where ortho.ortho_zebrafish_gene_zdb_id = :zdbID " +
                                 "and   ortho.ortho_zdb_id = oe.oev_ortho_zdb_id " +
                                 "and   oe.oev_pub_zdb_id =  :pubZdbID")
-                        .setParameter("zdbID", zdbID)
-                        .setParameter("pubZdbID", pubZdbID)
+                        .setString("zdbID", zdbID)
+                        .setString("pubZdbID", pubZdbID)
                         .uniqueResult().toString()
         );
     }
@@ -762,8 +768,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                         "      and fmrel_mrkr_zdb_id = :zdbID" +
                         "      and recattrib_source_zdb_id = :pubZdbID" +
                         " ")
-                        .setParameter("zdbID", zdbID)
-                        .setParameter("pubZdbID", pubZdbID)
+                        .setString("zdbID", zdbID)
+                        .setString("pubZdbID", pubZdbID)
                         .uniqueResult().toString()
         );
     }
@@ -778,8 +784,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                         "      and fmrel_mrkr_zdb_id = :zdbID" +
                         "      and recattrib_source_zdb_id = :pubZdbID" +
                         " ")
-                        .setParameter("zdbID", zdbID)
-                        .setParameter("pubZdbID", pubZdbID)
+                        .setString("zdbID", zdbID)
+                        .setString("pubZdbID", pubZdbID)
                         .uniqueResult().toString()
         );
     }
@@ -792,8 +798,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                         "      and genofeat_feature_zdb_id = :zdbID" +
                         "      and recattrib_source_zdb_id = :pubZdbID" +
                         " ")
-                        .setParameter("zdbID", zdbID)
-                        .setParameter("pubZdbID", pubZdbID)
+                        .setString("zdbID", zdbID)
+                        .setString("pubZdbID", pubZdbID)
                         .uniqueResult().toString()
         );
     }
@@ -807,8 +813,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 "      and mrkrgoev_mrkr_zdb_id = :zdbID" +
                 "      and recattrib_source_zdb_id = :pubZdbID  " +
                 "")
-                .setParameter("zdbID", zdbID)
-                .setParameter("pubZdbID", pubZdbID)
+                .setString("zdbID", zdbID)
+                .setString("pubZdbID", pubZdbID)
                 .uniqueResult().toString()
         );
     }
@@ -821,8 +827,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 "      and dblink_linked_recid = :zdbID" +
                 "      and recattrib_source_zdb_id = :pubZdbID  " +
                 "")
-                .setParameter("zdbID", zdbID)
-                .setParameter("pubZdbID", pubZdbID)
+                .setString("zdbID", zdbID)
+                .setString("pubZdbID", pubZdbID)
                 .uniqueResult().toString()
         );
     }
@@ -837,8 +843,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 "     and mrel_type = 'gene encodes small segment' " +
                 "      and recattrib_source_zdb_id = :pubZdbID  " +
                 "")
-                .setParameter("zdbID", zdbID)
-                .setParameter("pubZdbID", pubZdbID)
+                .setString("zdbID", zdbID)
+                .setString("pubZdbID", pubZdbID)
                 .uniqueResult().toString()
         );
     }
@@ -859,8 +865,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 "      and mrel_mrkr_2_zdb_id = :zdbID" +
                 "      and recattrib_source_zdb_id = :pubZdbID  " +
                 "")
-                .setParameter("zdbID", zdbID)
-                .setParameter("pubZdbID", pubZdbID)
+                .setString("zdbID", zdbID)
+                .setString("pubZdbID", pubZdbID)
                 .uniqueResult().toString()
         );
     }
@@ -880,8 +886,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 "      and mrel_mrkr_1_zdb_id = :zdbID" +
                 "      and recattrib_source_zdb_id = :pubZdbID  " +
                 "")
-                .setParameter("zdbID", zdbID)
-                .setParameter("pubZdbID", pubZdbID)
+                .setString("zdbID", zdbID)
+                .setString("pubZdbID", pubZdbID)
                 .uniqueResult().toString()
         );
     }
@@ -895,8 +901,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                     " and ee.xpatex_atb_zdb_id = :zdbID " +
                     " and ee.xpatex_source_zdb_id = :pubZdbID " +
                     "")
-                    .setParameter("zdbID", m.getZdbID())
-                    .setParameter("pubZdbID", pubZdbID)
+                    .setString("zdbID", m.getZdbID())
+                    .setString("pubZdbID", pubZdbID)
                     .uniqueResult().toString()
             );
         }
@@ -909,8 +915,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                     " and ee.xpatex_gene_zdb_id = :zdbID " +
                     " and ee.xpatex_source_zdb_id = :pubZdbID " +
                     "")
-                    .setParameter("zdbID", m.getZdbID())
-                    .setParameter("pubZdbID", pubZdbID)
+                    .setString("zdbID", m.getZdbID())
+                    .setString("pubZdbID", pubZdbID)
                     .uniqueResult().toString()
             );
         } else if (m.isInTypeGroup(Marker.TypeGroup.CDNA_AND_EST)) {
@@ -921,8 +927,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                     " and ee.xpatex_probe_feature_zdb_id = :zdbID " +
                     " and ee.xpatex_source_zdb_id = :pubZdbID " +
                     "")
-                    .setParameter("zdbID", m.getZdbID())
-                    .setParameter("pubZdbID", pubZdbID)
+                    .setString("zdbID", m.getZdbID())
+                    .setString("pubZdbID", pubZdbID)
                     .uniqueResult().toString()
             );
         } else {
@@ -938,8 +944,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 " and str.fishstr_str_zdb_id = :zdbID " +
                 " and  ra.recattrib_source_zdb_id = :pubZdbID " +
                 "")
-                .setParameter("zdbID", zdbID)
-                .setParameter("pubZdbID", pubZdbID)
+                .setString("zdbID", zdbID)
+                .setString("pubZdbID", pubZdbID)
                 .uniqueResult().toString()
         );
     }
@@ -954,8 +960,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 " and fish.fish_genotype_zdb_id = :genotypeID " +
                 " and  ra.recattrib_source_zdb_id = :pubZdbID " +
                 "")
-                .setParameter("genotypeID", genotypeID)
-                .setParameter("pubZdbID", pubZdbID)
+                .setString("genotypeID", genotypeID)
+                .setString("pubZdbID", pubZdbID)
                 .uniqueResult().toString()
         );
     }
@@ -973,8 +979,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 " phenox.fishExperiment.fish.genotype.id = :genotypeID and " +
                 " phenox.figure.publication.id = :publicationID ";
         Query query = session.createQuery(hql);
-        query.setParameter("genotypeID", genotypeID);
-        query.setParameter("publicationID", publicationID);
+        query.setString("genotypeID", genotypeID);
+        query.setString("publicationID", publicationID);
         List list = query.list();
 
         return list == null ? 0 : list.size();
@@ -1412,8 +1418,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 " and pa.publication.zdbID = :pubZdbId  " +
                 " ";
         return HibernateUtil.currentSession().createQuery(hql)
-                .setParameter("type", markerType.name())
-                .setParameter("pubZdbId", microarrayPubZdbID)
+                .setString("type", markerType.name())
+                .setString("pubZdbId", microarrayPubZdbID)
                 .list();
     }
 
@@ -1486,7 +1492,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 "  select p.dataZdbID from Marker m join m.publications p where p.sourceZdbID = :pubZdbIDs " +
                 " ";
         return HibernateUtil.currentSession().createQuery(hql)
-                .setParameter("pubZdbIDs", microarrayPub)
+                .setString("pubZdbIDs", microarrayPub)
                 .list();
     }
 
@@ -1500,8 +1506,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 "and ra.recattrib_source_type='standard' " +
                 " ";
         int numPubs = Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(sql)
-                .setParameter("zdbID", zdbID)
-                .setParameter("pubZdbID", microarrayPub)
+                .setString("zdbID", zdbID)
+                .setString("pubZdbID", microarrayPub)
                 .uniqueResult().toString());
 
         return numPubs > 0;
@@ -1527,8 +1533,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 ") as subquery" +
                 " ";
         int numPubs = Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(sql)
-                .setParameter("zdbID", zdbID)
-                .setParameter("pubZdbID", microarrayPub)
+                .setString("zdbID", zdbID)
+                .setString("pubZdbID", microarrayPub)
                 .uniqueResult().toString());
 
         return numPubs > 0;
@@ -1640,8 +1646,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 " and ge.genox_fish_zdb_id = :zdbID " +
                 " and  ra.recattrib_source_zdb_id = :pubZdbID " +
                 "")
-                .setParameter("zdbID", zdbID)
-                .setParameter("pubZdbID", pubZdbID)
+                .setString("zdbID", zdbID)
+                .setString("pubZdbID", pubZdbID)
                 .uniqueResult().toString()
         );
     }
@@ -1864,7 +1870,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     public List<Date> getDistinctDatesFromAnnualStats() {
         String sql = "select distinct as_date from annual_stats order by as_date;";
         Session session = HibernateUtil.currentSession();
-        Query sqlQuery = session.createSQLQuery(sql);
+        SQLQuery sqlQuery = session.createSQLQuery(sql);
 
         return (List<Date>) sqlQuery.list();
     }
@@ -1878,9 +1884,10 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 "   AND cv.cvForeignSpecies is not null " +
                 "   AND cc.constructZdbID = :constructId ";
 
-        Query<ControlledVocab> query = session.createQuery(hql, ControlledVocab.class);
+        Query query = session.createQuery(hql);
         query.setParameter("constructId", construct.getZdbID());
-        return query.getResultList();
+
+        return (List<ControlledVocab>) query.list();
     }
 
     @Override

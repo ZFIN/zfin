@@ -2,19 +2,19 @@ package org.zfin.gwt.root.server;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.query.Query;
 import org.zfin.Species;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
 import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.ConstructRelationship;
 import org.zfin.construct.repository.ConstructRepository;
+import org.zfin.database.InformixUtil;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.*;
@@ -36,6 +36,8 @@ import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.profile.Organization;
+import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -47,7 +49,6 @@ import java.util.*;
 import static org.zfin.repository.RepositoryFactory.*;
 
 /**
- *
  */
 public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements MarkerRPCService {
 
@@ -72,6 +73,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         noteDTO.setZdbID(dataNote.getZdbID());
         return noteDTO;
     }
+
 
 
     /**
@@ -329,7 +331,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         session.beginTransaction();
         Publication publication = null;
         if (StringUtils.isNotEmpty(relatedEntityDTO.getPublicationZdbID())) {
-            publication = session.get(Publication.class, relatedEntityDTO.getPublicationZdbID());
+            publication = (Publication) session.get(Publication.class, relatedEntityDTO.getPublicationZdbID());
         }
         DataAlias dataAlias = markerRepository.getSpecificDataAlias(marker, aliasName);
         if (dataAlias == null) {
@@ -358,7 +360,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
 
     public List<MarkerDTO> getMarkersForRelation(String featureTypeName, String publicationZdbID) {
         List<Marker> markers = markerRepository.getMarkersForRelation(featureTypeName, publicationZdbID);
-        List<MarkerDTO> markerDTOs = new ArrayList<>();
+        List<MarkerDTO> markerDTOs = new ArrayList<MarkerDTO>();
         for (Marker m : markers) {
             markerDTOs.add(DTOConversionService.convertToMarkerDTO(m));
         }
@@ -373,7 +375,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         Session session = HibernateUtil.currentSession();
         HibernateUtil.createTransaction();
         DataAlias dataAlias = markerRepository.getSpecificDataAlias(marker, aliasName);
-        Publication publication = session.get(Publication.class, relatedEntityDTO.getPublicationZdbID());
+        Publication publication = (Publication) session.get(Publication.class, relatedEntityDTO.getPublicationZdbID());
         if (publication != null) {
             markerRepository.addDataAliasAttribution(dataAlias, publication, marker);
         }
@@ -423,7 +425,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         Transaction transaction = session.beginTransaction();
 
         try {
-            ReferenceDatabase referenceDatabase = session.get(ReferenceDatabase.class, referenceZdbID);
+            ReferenceDatabase referenceDatabase = (ReferenceDatabase) session.get(ReferenceDatabase.class, referenceZdbID);
             // get the appropriate referenceDatabase
             logger.info("referenceDB zdbID: " + referenceZdbID);
             logger.info("referenceDB: " + referenceDatabase);
@@ -456,7 +458,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         Transaction transaction = session.beginTransaction();
 
         try {
-            ReferenceDatabase referenceDatabase = session.get(ReferenceDatabase.class, referenceZdbID);
+            ReferenceDatabase referenceDatabase = (ReferenceDatabase) session.get(ReferenceDatabase.class, referenceZdbID);
             // get the appropriate referenceDatabase
             logger.info("referenceDB zdbID: " + referenceZdbID);
             logger.info("referenceDB: " + referenceDatabase);
@@ -498,7 +500,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         ReferenceDatabaseDTO referenceDatabaseDTO;
         for (Iterator<ReferenceDatabaseDTO> iter = referenceDatabaseDTOs.iterator();
              iter.hasNext() && referenceDBFound == false;
-        ) {
+                ) {
             referenceDatabaseDTO = iter.next();
             if (true == dbLink.getReferenceDatabase().getZdbID().equalsIgnoreCase(referenceDatabaseDTO.getZdbID())) {
                 return true;
@@ -567,7 +569,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
 
         // set publicationattribution
         if (StringUtils.isNotEmpty(dbLinkDTO.getPublicationZdbID())) {
-            Set<PublicationAttribution> publications = new HashSet<>();
+            Set<PublicationAttribution> publications = new HashSet<PublicationAttribution>();
             infrastructureRepository.insertPublicAttribution(dbLinkDTO.getZdbID(),
                     dbLinkDTO.getPublicationZdbID());
             PublicationAttribution publicationAttribQuery = new PublicationAttribution();
@@ -580,7 +582,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         session.update(dbLink);
         session.flush();
 
-        Marker marker = session.get(Marker.class, dbLink.getDataZdbID());
+        Marker marker = (Marker) session.get(Marker.class, dbLink.getDataZdbID());
 
         List<DBLinkDTO> dbLinkDTOs = DTOConversionService.convertToDBLinkDTOs(dbLink, marker.getZdbID(), marker.getAbbreviation());
         // if it fails, it will automatically roll-back and automatically throws exception up
@@ -601,7 +603,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         String dblinkZdbID = sequenceDTO.getZdbID();
         String dblinkDataZdbID = sequenceDTO.getDataZdbID();
 
-        DBLink dbLink;
+        DBLink dbLink = null;
         if (dblinkZdbID == null && sequenceDTO.getDataName() != null && sequenceDTO.getDataZdbID() != null) {
             dbLink = RepositoryFactory.getSequenceRepository().getDBLinkByAlternateKey(sequenceDTO.getName(),
                     dblinkDataZdbID, DTOConversionService.convertToReferenceDatabase(sequenceDTO.getReferenceDatabaseDTO()));
@@ -658,7 +660,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
     public DBLinkDTO removeDBLink(DBLinkDTO dbLinkDTO) {
         Session session = HibernateUtil.currentSession();
         Transaction transaction = session.beginTransaction();
-        DBLink dbLink = session.get(DBLink.class, dbLinkDTO.getZdbID());
+        DBLink dbLink = (DBLink) session.get(DBLink.class, dbLinkDTO.getZdbID());
         if (dbLink == null && dbLinkDTO.getDataZdbID() != null && dbLinkDTO.getName() != null) {
             dbLink = RepositoryFactory.getSequenceRepository().
                     getDBLink(dbLinkDTO.getDataZdbID(),
@@ -685,7 +687,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         Session session = HibernateUtil.currentSession();
         Transaction transaction = session.beginTransaction();
         // need to get the marker for the dblink
-        DBLink dbLink = session.get(DBLink.class, dbLinkDTO.getZdbID());
+        DBLink dbLink = (DBLink) session.get(DBLink.class, dbLinkDTO.getZdbID());
 
         dbLinkDTO.setZdbID(dbLink.getZdbID());
         infrastructureRepository.deleteRecordAttribution(dbLink.getZdbID(), dbLinkDTO.getPublicationZdbID());
@@ -703,7 +705,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
 
         Publication pub = publicationRepository.getPublication(dbLinkDTO.getPublicationZdbID());
         Marker marker = markerRepository.getMarkerByID(dbLinkDTO.getDataZdbID());
-        DBLink dbLink = session.get(DBLink.class, dbLinkDTO.getZdbID());
+        DBLink dbLink = (DBLink) session.get(DBLink.class, dbLinkDTO.getZdbID());
 
         String updateComment = "Updating " + dbLink.getAccessionNumber()
                 + " length, changing from " + dbLink.getLength()
@@ -827,7 +829,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         if (organization == null) {
             throw new RuntimeException("orginziation not found: " + name);
         }
-        Marker marker = session.get(Marker.class, markerZdbID);
+        Marker marker = (Marker) session.get(Marker.class, markerZdbID);
 
         Transaction transaction = session.beginTransaction();
         MarkerSupplier markerSupplier = new MarkerSupplier();
@@ -846,12 +848,12 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
     public void removeMarkerSupplier(String name, String markerZdbID) {
         Session session = HibernateUtil.currentSession();
 
-        Marker marker = session.get(Marker.class, markerZdbID);
+        Marker marker = (Marker) session.get(Marker.class, markerZdbID);
 
         String hql = " from MarkerSupplier ms where ms.marker.zdbID = :markerZdbID and ms.organization.name = :supplierName";
         Query query = session.createQuery(hql);
-        query.setParameter("markerZdbID", markerZdbID);
-        query.setParameter("supplierName", name);
+        query.setString("markerZdbID", markerZdbID);
+        query.setString("supplierName", name);
         MarkerSupplier markerSupplier = (MarkerSupplier) query.uniqueResult();
 
         if (markerSupplier != null) {
@@ -867,7 +869,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
 
     public List<ConstructRelationshipDTO> getConstructMarkerRelationshipsForPub(String publicationZdbID) {
 
-        List<ConstructRelationshipDTO> constructRelnDTOs = new ArrayList<>();
+        List<ConstructRelationshipDTO> constructRelnDTOs = new ArrayList<ConstructRelationshipDTO>();
         List<ConstructRelationship> constructMarkerRelationships = constructRepository.getConstructRelationshipsByPublication(publicationZdbID);
         if (CollectionUtils.isNotEmpty(constructMarkerRelationships)) {
             for (ConstructRelationship markerRelationship : constructMarkerRelationships) {
@@ -1020,7 +1022,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
 
     public List<ConstructDTO> getConstructsForPub(String pubZdbId) {
         //Publication pub=publicationRepository.getPublication(pubZdbId);
-        List<ConstructDTO> constructDTOs = new ArrayList<>();
+        List<ConstructDTO> constructDTOs = new ArrayList<ConstructDTO>();
         List<ConstructCuration> constructs = markerRepository.getConstructsForAttribution(pubZdbId);
         if (CollectionUtils.isNotEmpty(constructs)) {
             for (ConstructCuration m : constructs) {
@@ -1062,7 +1064,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         if (dbLinks == null || dbLinks.size() == 0) {
             return null;
         } else {
-            List<String> zdbIDs = new ArrayList<>();
+            List<String> zdbIDs = new ArrayList<String>();
             for (DBLink dbLink : dbLinks) {
                 zdbIDs.add(dbLink.getDataZdbID());
             }
@@ -1116,7 +1118,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
     public void updateMarkerHeaders(MarkerDTO markerDTO) {
         Session session = HibernateUtil.currentSession();
         Transaction transaction = session.beginTransaction();
-        Marker gene = session.get(Marker.class, markerDTO.getZdbID());
+        Marker gene = (Marker) session.get(Marker.class, markerDTO.getZdbID());
 
         // set name
 
@@ -1146,7 +1148,7 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
 
         dblinkGeneAddReferenceDatabases.clear();
         Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID(markerZdbID);
-        List<ReferenceDatabase> referenceDatabases = new ArrayList<>();
+        List<ReferenceDatabase> referenceDatabases = new ArrayList<ReferenceDatabase>();
         if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM_AND_EFG)) {
             referenceDatabases.add(RepositoryFactory.getSequenceRepository().getReferenceDatabase(
                     ForeignDB.AvailableName.GENBANK,

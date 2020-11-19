@@ -1,10 +1,9 @@
 package org.zfin.profile.repository;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
-import org.hibernate.query.Query;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -24,8 +23,6 @@ import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
 
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
 import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
@@ -43,14 +40,16 @@ public class HibernateProfileRepository implements ProfileRepository {
     private OrganizationLookupTransformer organizationLookupEntryTransformer = new OrganizationLookupTransformer();
 
     public Person getPerson(String zdbID) {
-        return HibernateUtil.currentSession().get(Person.class, zdbID);
+        return (Person) HibernateUtil.currentSession().createCriteria(Person.class)
+                .add(Restrictions.eq("zdbID", zdbID))
+                .uniqueResult();
     }
 
     public Organization getOrganizationByName(String name) {
         Session session = HibernateUtil.currentSession();
         String hql = "select distinct o  from  Organization o" +
                 "     where o.name = :name";
-        Query<Organization> query = session.createQuery(hql, Organization.class);
+        Query query = session.createQuery(hql);
         query.setParameter("name", name);
         return ((Organization) query.uniqueResult());
     }
@@ -307,13 +306,13 @@ public class HibernateProfileRepository implements ProfileRepository {
     }
 
     /*
-     * Gets person records by fullName, "Westerfield, Monte"
-     *
-     * Since it requires an equals match, it will only return
-     * more than one person for non-unique full names, but
-     * the interface needs to handle that in some way.
-     *
-     * */
+    * Gets person records by fullName, "Westerfield, Monte"
+    *
+    * Since it requires an equals match, it will only return
+    * more than one person for non-unique full names, but
+    * the interface needs to handle that in some way.
+    *
+    * */
     public List<Person> getPeopleByFullName(String fullName) {
         List<Person> people = new ArrayList<Person>();
         Session session = HibernateUtil.currentSession();
@@ -401,10 +400,10 @@ public class HibernateProfileRepository implements ProfileRepository {
                 "                    ON comp.zdb_id = id.idsup_supplier_zdb_id" +
                 "       LEFT OUTER JOIN lab l" +
                 "                    ON l.zdb_id = id.idsup_supplier_zdb_id " +
-                "WHERE  id.idsup_data_zdb_id =  :OID  ";
+                "WHERE  id.idsup_data_zdb_id =  :OID  " ;
 
-        return HibernateUtil.currentSession().createNativeQuery(sql)
-                .setParameter("OID", zdbID)
+        return HibernateUtil.currentSession().createSQLQuery(sql)
+                .setString("OID", zdbID)
                 .setResultTransformer(new BasicTransformerAdapter() {
                     @Override
                     public Object transformTuple(Object[] tuple, String[] aliases) {
@@ -436,7 +435,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 
     @Override
     public Company getCompanyById(String zdbID) {
-        return HibernateUtil.currentSession().get(Company.class, zdbID);
+        return (Company) HibernateUtil.currentSession().get(Company.class, zdbID);
     }
 
     @Override
@@ -452,7 +451,7 @@ public class HibernateProfileRepository implements ProfileRepository {
                 "    and target_id=b.zdb_id  " +
                 "    and a.position_id=c.compos_pk_id  " +
                 "    order by c.compos_order desc;";
-        return (List<CompanyPresentation>) HibernateUtil.currentSession().createNativeQuery(sql)
+        return (List<CompanyPresentation>) HibernateUtil.currentSession().createSQLQuery(sql)
                 .setParameter("zdbID", zdbID)
                 .setResultTransformer(new BasicTransformerAdapter() {
                     @Override
@@ -509,7 +508,7 @@ public class HibernateProfileRepository implements ProfileRepository {
                 " and a.position_id = c.labpos_pk_id " +
                 " order by c.labpos_order,b.last_name, b.first_name ";
         return HibernateUtil.currentSession().createSQLQuery(sql)
-                .setParameter("zdbID", zdbID)
+                .setString("zdbID", zdbID)
                 .setResultTransformer(new BasicTransformerAdapter() {
                     @Override
                     public PersonMemberPresentation transformTuple(Object[] tuple, String[] aliases) {
@@ -568,7 +567,7 @@ public class HibernateProfileRepository implements ProfileRepository {
                 "        c.compos_position, " +
                 "        b.last_name , b.first_name ";
         return HibernateUtil.currentSession().createSQLQuery(sql)
-                .setParameter("zdbID", zdbID)
+                .setString("zdbID", zdbID)
                 .setResultTransformer(new BasicTransformerAdapter() {
                     @Override
                     public PersonMemberPresentation transformTuple(Object[] tuple, String[] aliases) {
@@ -759,7 +758,9 @@ public class HibernateProfileRepository implements ProfileRepository {
 
     @Override
     public Organization getOrganizationByZdbID(String orgZdbID) {
-        return HibernateUtil.currentSession().get(Organization.class,orgZdbID);
+        return (Organization) HibernateUtil.currentSession().createCriteria(Organization.class)
+                .add(Restrictions.eq("zdbID", orgZdbID))
+                .uniqueResult();
     }
 
     @Override
@@ -894,8 +895,8 @@ public class HibernateProfileRepository implements ProfileRepository {
                 "union  " +
                 "select ipl.source_id, ipl.target_id from int_person_lab ipl " +
                 "where ipl.source_id=:personZdbID  and ipl.target_id= :organizationZdbID  ")
-                .setParameter("personZdbID", personZdbID)
-                .setParameter("organizationZdbID", organizationZdbID)
+                .setString("personZdbID", personZdbID)
+                .setString("organizationZdbID", organizationZdbID)
                 .list()
                 .size() > 0
                 ;

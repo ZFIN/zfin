@@ -1,7 +1,8 @@
 package org.zfin.sequence;
 
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.query.Query;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
@@ -19,16 +20,38 @@ import static org.junit.Assert.*;
 
 public class DisplayGroupRepositoryTest extends AbstractDatabaseTest {
 
+    private Logger logger = LogManager.getLogger(DisplayGroupRepositoryTest.class);
+
     @Test
     public void testDisplayGroupMapping() {
         Session session = HibernateUtil.currentSession();
-        Query<DisplayGroup> query = session.createQuery("from DisplayGroup dg where dg.groupName = :groupName ", DisplayGroup.class);
-        query.setParameter("groupName", DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE.toString());
+        Query query = session.createQuery("from DisplayGroup dg where dg.groupName = :groupName ");
+        query.setString("groupName", DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE.toString());
         List<DisplayGroup> displayGroups = query.list();
         for (DisplayGroup displayGroup : displayGroups) {
             assertEquals(DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE, displayGroup.getGroupName());
         }
     }
+
+    @Test
+    public void testDisplayGroupData() {
+        Session session = HibernateUtil.currentSession();
+        Query query = session.createQuery("select dg.referenceDatabases from DisplayGroup dg where dg.groupName = :groupName ");
+        query.setString("groupName", DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE.toString());
+        List<ReferenceDatabase> referenceDatabaseList = query.list();
+        for (ReferenceDatabase referenceDatabase : referenceDatabaseList) {
+            boolean hasDisplayGroup = false;
+            Set<DisplayGroup> displayGroups = referenceDatabase.getDisplayGroups();
+//            logger.info("# of display groups: "+ displayGroups.size());
+            for (DisplayGroup displayGroup : displayGroups) {
+                if (displayGroup.getGroupName().equals(DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE)) {
+                    hasDisplayGroup = true;
+                }
+            }
+            assertTrue("has displayed group", hasDisplayGroup);
+        }
+    }
+
 
     @Test
     public void dblinkIsInDisplayGroup() {
@@ -38,7 +61,7 @@ public class DisplayGroupRepositoryTest extends AbstractDatabaseTest {
                 "join rdb.displayGroups dg where dg.groupName = :groupName " +
                 "";
         Query query = session.createQuery(hql);
-        query.setParameter("groupName", DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE.toString());
+        query.setString("groupName", DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE.toString());
         query.setMaxResults(3); // test 3
         List<DBLink> dbLinks = query.list();
         for (DBLink dbLink : dbLinks) {
@@ -56,7 +79,7 @@ public class DisplayGroupRepositoryTest extends AbstractDatabaseTest {
                 "join rdb.displayGroups dg where dg.groupName = :groupName " +
                 "";
         Query query = session.createQuery(hql);
-        query.setParameter("groupName", DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE.toString());
+        query.setString("groupName", DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE.toString());
         List<ReferenceDatabase> referenceDatabases = query.list();
         for (ReferenceDatabase referenceDatabase : referenceDatabases) {
             assertTrue("is in display group", referenceDatabase.isInDisplayGroup(DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE));
@@ -74,13 +97,13 @@ public class DisplayGroupRepositoryTest extends AbstractDatabaseTest {
 
         String hql = "select rd from DisplayGroup dg join dg.referenceDatabases rd where rd.foreignDB.dbName = :dbName ";
         Query query = session.createQuery(hql);
-        query.setParameter("dbName", ForeignDB.AvailableName.GENPEPT.toString());
+        query.setString("dbName", ForeignDB.AvailableName.GENPEPT.toString());
         // display groups from query
         List<ReferenceDatabase> referenceDatabasesFromQuery = query.list();
 
         String hql2 = "select dg from DisplayGroup dg where dg.groupName = :groupName ";
         Query query2 = session.createQuery(hql2);
-        query2.setParameter("groupName", DisplayGroup.GroupName.DBLINK_ADDING_ON_TRANSCRIPT_EDIT.toString());
+        query2.setString("groupName", DisplayGroup.GroupName.DBLINK_ADDING_ON_TRANSCRIPT_EDIT.toString());
         DisplayGroup displayGroup = (DisplayGroup) query2.uniqueResult();
         Set<ReferenceDatabase> referenceDatabasesFromDisplayGroup = displayGroup.getReferenceDatabases();
 

@@ -1,5 +1,7 @@
 package org.zfin.expression.repository;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.junit.After;
 import org.junit.Assert;
@@ -41,9 +43,11 @@ import static org.zfin.repository.RepositoryFactory.*;
  */
 public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
-    private final ExpressionRepository expRep = RepositoryFactory.getExpressionRepository();
+    private static Logger log = LogManager.getLogger(ExpressionRepositoryTest.class);
 
-    private final ExpressionService expressionService = new ExpressionService();
+    private ExpressionRepository expRep = RepositoryFactory.getExpressionRepository();
+
+    private ExpressionService expressionService = new ExpressionService();
 
     @After
     public void closeSession() {
@@ -56,7 +60,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     public void getExperimentByID() {
         String experimentID = "ZDB-XPAT-090417-2";
         ExpressionExperiment experiment = expRep.getExpressionExperiment(experimentID);
-        assertNotNull(experiment);
+        assertTrue(experiment != null);
     }
 
 
@@ -64,13 +68,15 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     public void getMarkerDBLinkByID() {
         String dbLinkID = "ZDB-DBLINK-020710-33129";
         MarkerDBLink experiment = expRep.getMarkDBLink(dbLinkID);
-        assertNotNull(experiment);
+        assertTrue(experiment != null);
+
     }
 
     @Test
     public void getAllPantherIds() {
         List<MarkerDBLink> dbLinks = expRep.getAllDbLinks(ForeignDB.AvailableName.PANTHER);
-        assertNotNull(dbLinks);
+        assertTrue(dbLinks != null);
+
     }
 
     @Test
@@ -85,14 +91,16 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     public void getExperiment() {
         String experimentID = "ZDB-EXP-070511-5";
         Experiment experiment = expRep.getExperimentByID(experimentID);
-        assertNotNull(experiment);
+        assertTrue(experiment != null);
+
     }
 
     @Test
     public void getGenotype() {
         String genotypeID = "ZDB-GENO-960809-7";
         Genotype genotype = expRep.getGenotypeByID(genotypeID);
-        assertNotNull(genotype);
+        assertTrue(genotype != null);
+
     }
 
 
@@ -101,7 +109,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         String experimentID = "ZDB-EXP-070511-5";
         String genotypeID = "ZDB-GENO-960809-7";
         FishExperiment genox = expRep.createFishExperiment(experimentID, genotypeID);
-        assertNotNull(genox.getZdbID());
+        assertTrue(genox.getZdbID() != null);
     }
 
     @Test
@@ -126,7 +134,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         ExpressionExperiment2 expressionExperiment = new ExpressionExperiment2();
 
         expRep.createExpressionExperiment(expressionExperiment);
-        assertNotNull(expressionExperiment.getZdbID());
+        assertTrue(expressionExperiment.getZdbID() != null);
     }
 
 
@@ -148,7 +156,8 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getExpressionFromIDs() {
-        List<Integer> ids = new ArrayList<>();
+        String pubID = "ZDB-PUB-071023-13";
+        List ids = new ArrayList();
         ids.add(1);
         List<ExpressionFigureStage> experiment = expRep.getExperimentFigureStagesByIds(ids);
         assertNotNull(experiment);
@@ -209,11 +218,11 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         String zdbID = "ZDB-PUB-990507-16";
 
         List<ExpressionExperiment> experiments = expRep.getExperiments(zdbID);
-        assertNotNull(experiments);
+        assertTrue(experiments != null);
         // alcam
         String geneID = "ZDB-GENE-990415-30";
         experiments = expRep.getExperimentsByGeneAndFish2(zdbID, geneID, null);
-        assertNotNull(experiments);
+        assertTrue(experiments != null);
 
         // alcam and WT
 //        String fishName = "WT";
@@ -221,7 +230,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 //        assertTrue(experiments != null);
         String fishZdbID = "ZDB-GENO-030619-2";
         experiments = expRep.getExperimentsByGeneAndFish2(zdbID, geneID, fishZdbID);
-        assertNotNull(experiments);
+        assertTrue(experiments != null);
     }
 
     @Test
@@ -229,7 +238,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         String zdbID = "ZDB-PUB-990507-16";
 
         List<ExpressionExperiment2> experiments = expRep.getExperiments2(zdbID);
-        assertNotNull(experiments);
+        assertTrue(experiments != null);
         // alcam
         String geneID = "ZDB-GENE-990415-30";
         experiments = expRep.getExperimentsByGeneAndFish(zdbID, geneID, null);
@@ -243,7 +252,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
 
         String fishZdbID = "ZDB-GENO-030619-2";
         experiments = expRep.getExperimentsByGeneAndFish(zdbID, geneID, fishZdbID);
-        assertNotNull(experiments);
+        assertTrue(experiments != null);
     }
 
     @Test
@@ -303,7 +312,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void testDirectlySubmittedExpression() {
         Session session = HibernateUtil.currentSession();
-        Clone clone = session.get(Clone.class, "ZDB-CDNA-040425-873");
+        Clone clone = (Clone) session.get(Clone.class, "ZDB-CDNA-040425-873");
 
         DirectlySubmittedExpression directlySubmittedExpression = expressionService.getDirectlySubmittedExpressionClone(clone);
 //        assertEquals(117, numFigs);
@@ -314,15 +323,6 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
         assertEquals(6, markerExpressionInstance.getNumFigures());
         assertEquals(10, markerExpressionInstance.getNumImages());
         assertEquals("ZDB-PUB-040907-1", markerExpressionInstance.getPublicationZdbID());
-    }
-
-    @Test
-    public void testCloneExpression() {
-        Session session = HibernateUtil.currentSession();
-        Clone clone = session.get(Clone.class, "ZDB-CDNA-040425-873");
-
-        int count = expRep.getExpressionPubCountForClone(clone);
-        assertEquals(1, count);
     }
 
     @Test
@@ -348,6 +348,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void getAnatomyForMarker() {
 
         String zdbID = "ZDB-GENE-980526-333";
@@ -366,8 +367,8 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
                 "ORDER BY term_name asc";
         List<Object[]> termZdbIds = (List<Object[]>) HibernateUtil.currentSession().createSQLQuery(sql)
                 .setParameter("zdbID", zdbID)
-                .setParameter("expressionFound", true)
-                .setParameter("wildType", true)
+                .setBoolean("expressionFound", true)
+                .setBoolean("wildType", true)
                 .list();
         List<GenericTerm> anatomyItems = expRep.getWildTypeAnatomyExpressionForMarker(zdbID);
         assertEquals(termZdbIds.size(), anatomyItems.size());
@@ -413,7 +414,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getDirectlySubmittedExpression() {
         Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
-        List<PublicationExpressionBean> pubList = expRep.getDirectlySubmittedExpressionForGene(m);
+        List pubList = expRep.getDirectlySubmittedExpressionForGene(m);
         assertEquals(1, pubList.size());
 
         // this may give duplicates
@@ -587,14 +588,6 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     public void getExpressionById() {
         ExpressionFigureStage stage = getExpressionRepository().getExperimentFigureStage(78214);
         assertNotNull(stage);
-    }
-
-    @Test
-    public void getExpressionNonEfg() {
-        String fishID = "ZDB-FISH-150901-6359";
-        Fish fish = getMutantRepository().getFish(fishID);
-        List<ExpressionResult> results = getExpressionRepository().getNonEfgExpressionResultsByFish(fish);
-        assertNotNull(results);
     }
 
 }

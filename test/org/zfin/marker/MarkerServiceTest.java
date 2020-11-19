@@ -1,5 +1,6 @@
 package org.zfin.marker;
 
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,9 @@ import java.util.*;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
-import static org.zfin.repository.RepositoryFactory.*;
+import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
+import static org.zfin.repository.RepositoryFactory.getProfileRepository;
+import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 /**
  * Tests for org.zfin.marker.service.MarkerService
@@ -39,6 +42,8 @@ import static org.zfin.repository.RepositoryFactory.*;
 @ContextConfiguration(classes = {AppConfig.class})
 @WebAppConfiguration
 public class MarkerServiceTest extends AbstractDatabaseTest {
+
+    private Logger logger = LogManager.getLogger(MarkerServiceTest.class);
 
     @Test
     public void getRelatedMarkerDisplayTest() {
@@ -119,6 +124,11 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
     @Test
     public void mergeMarkerTest() {
         MergeMarkerValidator validator = new MergeMarkerValidator();
+//        Antibody a = new Antibody();
+//        a.setHeavyChainIsotype("a");
+//
+//        Antibody b = new Antibody();
+//        b.setHeavyChainIsotype("b");
 
         assertFalse(validator.isEqualOrUnspecified("a", "b"));
         assertTrue(validator.isEqualOrUnspecified("a", "a"));
@@ -215,6 +225,22 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
         dbLink = iter.next();
         assertEquals(ForeignDBDataType.DataType.RNA, dbLink.getReferenceDatabase().getForeignDBDataType().getDataType());
         assertEquals(ForeignDB.AvailableName.GENBANK, dbLink.getReferenceDatabase().getForeignDB().getDbName());
+//        dbLink = iter.next();
+//        assertEquals(ForeignDBDataType.DataType.RNA,dbLink.getReferenceDatabase().getForeignDBDataType().getDataType());
+//        assertEquals(ForeignDB.AvailableName.GENBANK,dbLink.getReferenceDatabase().getForeignDB().getDbName());
+
+//        dbLink = iter.next();
+//        assertEquals(ForeignDBDataType.DataType.POLYPEPTIDE,dbLink.getReferenceDatabase().getForeignDBDataType().getDataType());
+//        assertEquals(ForeignDB.AvailableName.UNIPROTKB,dbLink.getReferenceDatabase().getForeignDB().getDbName());
+//
+//        dbLink = iter.next();
+//        assertEquals(ForeignDBDataType.DataType.POLYPEPTIDE,dbLink.getReferenceDatabase().getForeignDBDataType().getDataType());
+//        assertEquals(ForeignDB.AvailableName.REFSEQ,dbLink.getReferenceDatabase().getForeignDB().getDbName());
+
+//        dbLink = iter.next();
+//        assertEquals(ForeignDBDataType.DataType.POLYPEPTIDE,dbLink.getReferenceDatabase().getForeignDBDataType().getDataType());
+//        assertEquals(ForeignDB.AvailableName.GENPEPT,dbLink.getReferenceDatabase().getForeignDB().getDbName());
+
 
         MarkerDBLink markerDBLink;
 
@@ -408,6 +434,7 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
                 assertThat(publications.iterator().next(), is(publication));
             }
         }
+
     }
 
     @Test

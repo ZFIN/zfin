@@ -24,8 +24,8 @@ public class DevelopmentStage implements Serializable, Comparable<DevelopmentSta
     public static final Float MAX = 17520f;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGeneratorStage")
-    @GenericGenerator(name = "zfinGeneratorStage",
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
+    @GenericGenerator(name = "zfinGenerator",
             strategy = "org.zfin.database.ZdbIdGenerator",
             parameters = {
                     @Parameter(name = "type", value = "STAGE")

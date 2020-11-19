@@ -14,8 +14,8 @@ import lombok.Setter;
 public class FeatureGenomicMutationDetail implements Cloneable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGeneratorFGMutationDetail")
-    @GenericGenerator(name = "zfinGeneratorFGMutationDetail",
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
+    @GenericGenerator(name = "zfinGenerator",
             strategy = "org.zfin.database.ZdbIdGenerator",
             parameters = {
                     @org.hibernate.annotations.Parameter(name = "type", value = "FGMD"),

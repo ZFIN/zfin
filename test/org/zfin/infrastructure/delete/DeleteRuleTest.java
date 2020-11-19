@@ -4,13 +4,8 @@ import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.marker.service.DeleteService;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -27,8 +22,7 @@ public class DeleteRuleTest extends AbstractDatabaseTest {
         assertNotNull(reportList);
         assertTrue(reportList.size() > 0);
         assertTrue(reportList.get(0).getValidationMessage().contains("genotypes"));
-        assertTrue(reportList.get(1).getValidationMessage().contains("publication"));
-        assertTrue(reportList.get(2).getValidationMessage().contains("suppliers"));
+        assertTrue(reportList.get(1).getValidationMessage().contains("suppliers"));
     }
 
     @Test
@@ -168,6 +162,6 @@ public class DeleteRuleTest extends AbstractDatabaseTest {
         assertTrue(reportList.size() > 0);
         assertTrue(reportList.get(0).getValidationMessage().contains("fish"));
         assertTrue(reportList.get(1).getValidationMessage().contains("GO annotation"));
-        // assertTrue(reportList.get(2).getValidationMessage().contains("publication"));
+       // assertTrue(reportList.get(2).getValidationMessage().contains("publication"));
     }
 }

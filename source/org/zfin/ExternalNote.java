@@ -32,8 +32,8 @@ public class ExternalNote implements Comparable<ExternalNote> {
 
     protected Set<PersonAttribution> personAttributions;
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGeneratorExternalNote")
-    @GenericGenerator(name = "zfinGeneratorExternalNote",
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
+    @GenericGenerator(name = "zfinGenerator",
             strategy = "org.zfin.database.ZdbIdGenerator",
             parameters = {
                     @org.hibernate.annotations.Parameter(name = "type", value = "EXTNOTE"),

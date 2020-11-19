@@ -67,8 +67,9 @@ public class FishServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void getPhenotypeStatementsPerFigureAndFish() {
+        //todo: this should be done by fish_zdb_id, once they're generated
         // WT+MO1-pitx3
-        Fish fish = getMutantRepository().getFish("ZDB-FISH-150901-6359");
+        Fish fish = getFishRepository().getFishByName("WT + MO1-pitx3");
 
         assertNotNull(fish);
         String fishID = fish.getZdbID();
@@ -118,6 +119,8 @@ public class FishServiceTest extends AbstractDatabaseTest {
         fishExperiment = RepositoryFactory.getMutantRepository().getFishExperiment("ZDB-GENOX-070807-5");
         assertTrue("Fish experiment should have 2 or more misfortunes", fishExperiment.isAmelioratedOrExacerbated());
     }
+
+
     @Test
     public void matchingOnGeneAbbreviation() {
         String fishID = "ZDB-FISH-150901-19155";

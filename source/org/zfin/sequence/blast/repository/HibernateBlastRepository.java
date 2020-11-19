@@ -1,25 +1,26 @@
 package org.zfin.sequence.blast.repository;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
-import org.hibernate.query.Query;
+import org.hibernate.Query;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.StandardBasicTypes;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.sequence.blast.BlastRegenerationCache;
-import org.zfin.sequence.blast.Database;
-import org.zfin.sequence.blast.DatabaseRelationship;
-import org.zfin.sequence.blast.Origination;
+import org.zfin.sequence.blast.*;
 
+import java.math.BigInteger;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
- *
  */
 public class HibernateBlastRepository implements BlastRepository {
 
@@ -147,6 +148,31 @@ public class HibernateBlastRepository implements BlastRepository {
         }
 
 
+        // repeat the pattern above for the accession bank blast databases
+/*
+
+        sql =  " select bdb.blastdb_abbrev, count(ab.accbk_acc_num) " +
+                " from accession_bank ab " +
+                " join foreign_db_contains fdbc " +
+                "    on ab.accbk_fdbcont_zdb_id=fdbc.fdbcont_zdb_id  " +
+                " join blast_database bdb " +
+                "    on fdbc.fdbcont_primary_blastdb_zdb_id=bdb.blastdb_zdb_id " +
+                "  group by bdb.blastdb_abbrev ";
+        query = HibernateUtil.currentSession().createSQLQuery(sql);
+        blastDatabaseCounts = query.list();
+
+        if (blastDatabaseCounts == null)
+            return null;
+
+        for (Object[] o : blastDatabaseCounts) {
+            String blastDatabaseAbbrev = (String)o[0];
+            Integer accessionCount = ((BigDecimal)o[1]).intValue();
+
+            accessionCountMap.put(blastDatabaseAbbrev, accessionCount);
+        }
+*/
+
+
         //now handle databases that don't show up in either
         List<Database> databases = getDatabaseByOrigination(Origination.Type.CURATED, Origination.Type.LOADED, Origination.Type.MARKERSEQUENCE);
         for (Database database : databases) {
@@ -155,7 +181,10 @@ public class HibernateBlastRepository implements BlastRepository {
                 accessionCountMap.put(database.getAbbrev().toString(), 0);
             }
         }
+
+
         return accessionCountMap;
+
     }
 
     /**

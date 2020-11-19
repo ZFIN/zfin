@@ -426,7 +426,12 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     public Publication getPublication(String zdbID) {
         Session session = HibernateUtil.currentSession();
-        return session.get(Publication.class, zdbID.toUpperCase());
+        // this will automatically close the session
+//        Publication pub = (Publication) session.load(Publication.class, zdbID);
+        Criteria query = session.createCriteria(Publication.class);
+        query.add(Restrictions.eq("zdbID", zdbID.toUpperCase()));
+        Publication pub = (Publication) query.uniqueResult();
+        return pub;
     }
 
     public List<Publication> getPublications(List<String> zdbIDs) {
@@ -1406,7 +1411,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Session session = HibernateUtil.currentSession();
 
         Criteria crit = session.createCriteria(Experiment.class);
-        crit.add(Restrictions.in("name", Experiment.STANDARD, Experiment.GENERIC_CONTROL));
+        crit.add(Restrictions.in("name", new String[]{Experiment.STANDARD, Experiment.GENERIC_CONTROL}));
         List<Experiment> experimentList = (List<Experiment>) crit.list();
 
 
@@ -1799,7 +1804,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         List<Ortholog> orthologList = (List<Ortholog>) query.list();
         return orthologList;
     }
-
     @Override
     public PaginationResult<Ortholog> getOrthologPaginationByPub(String pubID, GeneBean searchBean) {
         Session session = HibernateUtil.currentSession();

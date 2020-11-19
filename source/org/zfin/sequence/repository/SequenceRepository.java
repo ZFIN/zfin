@@ -50,7 +50,7 @@ public interface SequenceRepository {
 
     List<MarkerDBLink> getMarkerDBLinksForAccession(String accessionString, ReferenceDatabase... referenceDatabases);
 
-    List getTranscriptDBLinksForAccession(String accessionString, ReferenceDatabase... referenceDatabases);
+    List<TranscriptDBLink> getTranscriptDBLinksForAccession(String accessionString, ReferenceDatabase... referenceDatabases);
 
     List<TranscriptDBLink> getTranscriptDBLinksForAccession(String accessionString, Transcript transcript);
 

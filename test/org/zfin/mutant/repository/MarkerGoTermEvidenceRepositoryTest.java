@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
 public class MarkerGoTermEvidenceRepositoryTest extends AbstractDatabaseTest {
 
     private Logger logger = LogManager.getLogger(MarkerGoTermEvidenceRepositoryTest.class);
-    private static final MarkerGoTermEvidenceRepository markerGoTermEvidenceRepository =
+    private static MarkerGoTermEvidenceRepository markerGoTermEvidenceRepository =
             RepositoryFactory.getMarkerGoTermEvidenceRepository();
 
 

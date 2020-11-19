@@ -4,6 +4,7 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 
 import org.hibernate.InvalidMappingException;
+import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
@@ -58,11 +59,6 @@ public class HibernateSessionCreator {
         this.autocommit = autocommit;
         LOG.info("Start Hibernate Session Creation");
         this.showSql = showSql;
-        createJndi(db);
-        HibernateUtil.init();
-    }
-
-    public void initq(boolean showSql, boolean autocommit, String db) {
         String configDirectory = ZfinPropertiesEnum.HIBERNATE_CONFIGURATION_DIRECTORY.value();
         String showSqlString = ZfinPropertiesEnum.SHOW_SQL.value();
         if (showSqlString != null && showSqlString.equals("true")) {
@@ -158,7 +154,7 @@ public class HibernateSessionCreator {
     }
 
     private Configuration createConfiguration(String db) {
-        Configuration config = new Configuration();
+        Configuration config = new AnnotationConfiguration();
         config.setInterceptor(new StringCleanInterceptor());
         config.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQL9Dialect");
         config.setProperty("hibernate.connection.driver_class", "org.postgresql.Driver");
@@ -192,24 +188,26 @@ public class HibernateSessionCreator {
                     "org.apache.naming.java.javaURLContextFactory");
             System.setProperty(Context.URL_PKG_PREFIXES,
                     "org.apache.naming");
-            Context ic = new InitialContext();
+            InitialContext ic = new InitialContext();
             ic.createSubcontext("java:");
-            ic.createSubcontext("java:comp");
-            ic.createSubcontext("java:comp/env");
-            ic.createSubcontext("java:comp/env/jdbc");
+            ic.createSubcontext("java:/comp");
+            ic.createSubcontext("java:/comp/env");
+            ic.createSubcontext("java:/comp/env/jdbc");
 
             // Construct DataSource
             ComboPooledDataSource cpds = new ComboPooledDataSource();
-            cpds.setDriverClass("org.postgresql.Driver");
+            cpds.setDriverClass("com.informix.jdbc.IfxDriver"); //loads the jdbc driver
             cpds.setJdbcUrl(jdbcUrl);
+            cpds.setUser("zfinner");
+            cpds.setPassword("Rtwm4ts");
             cpds.setMaxPoolSize(4);
             cpds.setMinPoolSize(2);
             cpds.setIdleConnectionTestPeriod(1200);
-            ic.bind(getJndiAccessName(), cpds);
+            ic.bind(getJndiAccessName(db), cpds);
         } catch (NamingException | PropertyVetoException ex) {
-            if (!(ex instanceof NameAlreadyBoundException)) {
+            if (!(ex instanceof NameAlreadyBoundException))
                 LOG.warn(ex);
-            } else
+            else
                 LOG.error(ex);
         }
 
@@ -221,8 +219,8 @@ public class HibernateSessionCreator {
         return jdbcUrl;
     }
 
-    private String getJndiAccessName() {
-        return "java:comp/env/jdbc/zfin";
+    private String getJndiAccessName(String db) {
+        return "java:/comp/env/jdbc/" + db;
     }
 
 

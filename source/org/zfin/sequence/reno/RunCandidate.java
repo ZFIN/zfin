@@ -20,8 +20,8 @@ import java.util.*;
 public class RunCandidate {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGeneratorRunCandidate")
-    @GenericGenerator(name = "zfinGeneratorRunCandidate",
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
+    @GenericGenerator(name = "zfinGenerator",
             strategy = "org.zfin.database.ZdbIdGenerator",
             parameters = {
                     @org.hibernate.annotations.Parameter(name = "type", value = "RUNCAN")

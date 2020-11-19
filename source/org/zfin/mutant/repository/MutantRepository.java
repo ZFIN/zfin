@@ -72,6 +72,8 @@ public interface MutantRepository {
      */
     int getNumberOfImagesPerAnatomyAndMutant(GenericTerm item, Genotype genotype);
 
+    int getNumberOfPublicationsPerAnatomyAndMutantWithFigures(GenericTerm item, Genotype genotype);
+
     /**
      * Retrieve a genotype,feature and marker object by PK.
      *
@@ -162,6 +164,8 @@ public interface MutantRepository {
     int getNumberMarkerGoTermEvidences(MarkerGoTermEvidence markerGoTermEvidence);
 
     List<BasicPhenotypeDTO> getBasicPhenotypeDTOObjects();
+
+    List<STRMarkerSequence> getSequenceTargetingReagentsWithMarkerRelationships();
 
     List<STRMarkerSequence> getMorpholinosWithMarkerRelationships();
 
@@ -351,7 +355,7 @@ public interface MutantRepository {
      */
     List<SequenceTargetingReagent> getStrList(String publicationID);
 
-    void createFish(Fish fish, Publication publication);
+    boolean createFish(Fish fish, Publication publication);
 
     /**
      * Retrieve all fish attributed to a given pub

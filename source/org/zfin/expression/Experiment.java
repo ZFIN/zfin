@@ -20,8 +20,8 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
     public static final String GENERIC_CONTROL = "_Generic-control";
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGeneratorExperiment")
-    @GenericGenerator(name = "zfinGeneratorExperiment",
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
+    @GenericGenerator(name = "zfinGenerator",
             strategy = "org.zfin.database.ZdbIdGenerator",
             parameters = {
                     @org.hibernate.annotations.Parameter(name = "type", value = "EXP"),

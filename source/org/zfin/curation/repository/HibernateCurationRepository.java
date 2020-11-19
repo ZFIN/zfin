@@ -1,9 +1,10 @@
 package org.zfin.curation.repository;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 import org.zfin.curation.Curation;
 import org.zfin.framework.HibernateUtil;
@@ -22,7 +23,7 @@ public class HibernateCurationRepository implements CurationRepository {
                 "and c.topic != :linkedAuthors";
 
         return HibernateUtil.currentSession()
-                .createQuery(hql, Curation.class)
+                .createQuery(hql)
                 .setParameter("pub", pub)
                 .setParameter("linkedAuthors", Curation.Topic.LINKED_AUTHORS)
                 .list();
@@ -34,7 +35,7 @@ public class HibernateCurationRepository implements CurationRepository {
                 " and c.openedDate is not null " +
                 " and c.closedDate is null " +
                 " and c.topic != :linkedAuthors";
-        Query<Curation> query = HibernateUtil.currentSession().createQuery(hql, Curation.class);
+        Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("pubID", pubZdbID);
         query.setParameter("linkedAuthors", Curation.Topic.LINKED_AUTHORS);
         return query.list();

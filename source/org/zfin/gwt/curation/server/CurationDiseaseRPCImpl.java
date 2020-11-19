@@ -1,8 +1,7 @@
 package org.zfin.gwt.curation.server;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
@@ -270,9 +269,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             fishDTO.setGenotypeDTO(genoDTO);
             Fish newFish = createFish(publication, fishDTO, report);
             HibernateUtil.flushAndCommitCurrentSession();
-            HibernateUtil.createTransaction();
             getMutantRepository().updateFishAffectedGeneCount(newFish);
-            HibernateUtil.flushAndCommitCurrentSession();
         } catch (ConstraintViolationException e) {
             HibernateUtil.rollbackTransaction();
             String message = e.getMessage();
@@ -371,15 +368,12 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
 
     protected Fish createFish(Publication publication, FishDTO newFish, GenotypeCreationReportDTO report) throws TermNotFoundException {
         Fish fish = DTOConversionService.convertToFishFromFishDTO(newFish);
-        Fish existingFish = getMutantRepository().getFishByGenoStr(fish);
-        if (existingFish != null) {
-            fish = existingFish;
-            report.addMessage("imported fish " + fish.getHandle());
-        } else {
-            getMutantRepository().createFish(fish, publication);
+
+        if (getMutantRepository().createFish(fish, publication)) {
             report.addMessage("created new fish " + fish.getHandle());
+        } else {
+            report.addMessage("imported fish " + fish.getHandle());
         }
-        getInfrastructureRepository().insertRecordAttribution(fish, publication);
         return fish;
     }
 

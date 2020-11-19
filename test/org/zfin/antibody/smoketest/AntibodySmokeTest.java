@@ -104,6 +104,14 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
         assertThat("Link to Fashena et al. should be present",
                 hyperlink.getHrefAttribute(), containsString("ZDB-PUB-990507-16"));
 
+        // alcama antigen gene: check this antigen gene is present
+        HtmlAnchor geneHyperlink = page.getAnchorByText("alcama");
+        assertThat("Link to antigen gene page should be present", geneHyperlink, notNullValue());
+        HtmlPage genePage = geneHyperlink.click();
+        // cannot check the title of the page as it is not in the <head> segment!
+        //assertEquals("ZFIN: Gene: alcama", genePage.getTitleText());
+        assertThat("Link to antigen gene page should load", genePage, notNullValue());
+
         // Source: check ZIRC is one of them
         HtmlAnchor sourceHyperlink = (HtmlAnchor) page.getElementById("ZDB-LAB-991005-53");
         HtmlPage labPage = sourceHyperlink.click();

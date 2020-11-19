@@ -1,5 +1,6 @@
 package org.zfin.expression.service;
 
+import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.expression.presentation.MarkerExpression;
@@ -16,11 +17,12 @@ import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.*;
 
 /**
- *
  */
 public class ExpressionServiceTest extends AbstractDatabaseTest {
 
-    private final ExpressionService expressionService = new ExpressionService();
+    private Logger logger = LogManager.getLogger(ExpressionServiceTest.class);
+
+    private ExpressionService expressionService = new ExpressionService();
 
 
     @Test
@@ -76,7 +78,7 @@ public class ExpressionServiceTest extends AbstractDatabaseTest {
 
 
     @Test
-    public void isThisseProbe() {
+    public void isThisseProbe(){
         Clone c = RepositoryFactory.getMarkerRepository().getCloneById("ZDB-CDNA-080114-24");
         assertTrue(expressionService.isThisseProbe(c));
     }
