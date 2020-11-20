@@ -26,6 +26,7 @@ const MarkerEditMarkerRelationships = ({markerId, relationshipTypeData}) => {
         pushFieldValue,
         removeFieldValue,
         values,
+        setValues,
         modalProps
     } = useAddEditDeleteForm({
         addUrl: `/action/api/marker/${markerId}/relationship`,
@@ -56,6 +57,45 @@ const MarkerEditMarkerRelationships = ({markerId, relationshipTypeData}) => {
             </>
         );
     };
+
+    // this change needs to be handled manually because the first and second marker values
+    // need to be reset when the relationship changes
+    const handleRelationshipTypeChange = (event) => {
+        const value = event.target.value;
+        if (!value) {
+            return;
+        }
+        const selectedType = relationshipTypeData.find(d => d.type === value);
+        // these setValues calls would be better as updater functions instead of replacing
+        // the whole object, but: https://github.com/tannerlinsley/react-form/issues/376
+        if (selectedType['1to2']) {
+            setValues({
+                ...values,
+                markerRelationshipType: { name: value },
+                firstMarker: {
+                    zdbID: markerId,
+                    abbreviation: '',
+                },
+                secondMarker: {
+                    zdbID: '',
+                    abbreviation: '',
+                },
+            });
+        } else {
+            setValues({
+                ...values,
+                markerRelationshipType: { name: value },
+                firstMarker: {
+                    zdbID: '',
+                    abbreviation: '',
+                },
+                secondMarker: {
+                    zdbID: markerId,
+                    abbreviation: '',
+                },
+            });
+        }
+    }
 
     if (pending) {
         return <LoadingSpinner />;
@@ -97,6 +137,7 @@ const MarkerEditMarkerRelationships = ({markerId, relationshipTypeData}) => {
                         field='markerRelationshipType.name'
                         tag='select'
                         validate={value => value ? false : 'A relationship type is required'}
+                        onChange={handleRelationshipTypeChange}
                     >
                         <option value='' />
                         {relationshipTypeData.map(d => (
