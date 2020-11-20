@@ -10,6 +10,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.presentation.LookupEntry;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.ui.PublicationSessionKey;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
@@ -202,14 +203,14 @@ public class SequenceTargetingReagentAddController {
     @RequestMapping(value = "/find-targetGenes", method = RequestMethod.GET)
     public
     @ResponseBody
-    List<TargetGeneLookupEntry> lookupTargetGenes(@RequestParam("term") String lookupString) {
+    List<LookupEntry> lookupTargetGenes(@RequestParam("term") String lookupString) {
         return mr.getGeneSuggestionList(lookupString);
     }
 
     @RequestMapping(value = "/find-relationshipTargets", method = RequestMethod.GET)
     public
     @ResponseBody
-    List<TargetGeneLookupEntry> lookupRelationshipTargets(@RequestParam("term") String lookupString) {
+    List<LookupEntry> lookupRelationshipTargets(@RequestParam("term") String lookupString) {
 
         return mr.getRelationshipTargetsForString(lookupString);
     }

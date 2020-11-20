@@ -2815,33 +2815,13 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     }
 
-    public List<TargetGeneLookupEntry> getRelationshipTargetsForString(String lookupString) {
-        List<MarkerType> markerTypes = getMarkerTypesByGroup(Marker.TypeGroup.GENEDOM_AND_NTR);
-        markerTypes.addAll(getMarkerTypesByGroup(Marker.TypeGroup.SMALLSEG));
-        markerTypes.addAll(getMarkerTypesByGroup(Marker.TypeGroup.SMALLSEG_NO_ESTCDNA));
-        markerTypes.addAll(getMarkerTypesByGroup(Marker.TypeGroup.TRANSCRIPT));
-        String hql = " select targetGene from Marker targetGene " +
-                "where " +
-                "lower(targetGene.abbreviation) like :lookupString " +
-                "and targetGene.markerType in (:markerType)  " +
-                "order by targetGene.abbreviation  ";
-
-        return HibernateUtil.currentSession().createQuery(hql)
-                .setString("lookupString", "%" + lookupString.toLowerCase() + "%")
-                .setParameterList("markerType", markerTypes)
-                .setResultTransformer(new BasicTransformerAdapter() {
-                    @Override
-                    public Object transformTuple(Object[] tuple, String[] targetGeneAbrevs) {
-                        Marker targetGene = (Marker) tuple[0];
-                        TargetGeneLookupEntry targetGeneSuggestionList = new TargetGeneLookupEntry();
-                        targetGeneSuggestionList.setId(targetGene.getZdbID());
-                        targetGeneSuggestionList.setLabel(targetGene.getAbbreviation());
-                        targetGeneSuggestionList.setValue(targetGene.getAbbreviation());
-                        return targetGeneSuggestionList;
-                    }
-                })
-                .list()
-                ;
+    public List<LookupEntry> getRelationshipTargetsForString(String lookupString) {
+        return getMarkerSuggestionList(lookupString,
+                Marker.TypeGroup.GENEDOM_AND_NTR,
+                Marker.TypeGroup.SMALLSEG,
+                Marker.TypeGroup.SMALLSEG_NO_ESTCDNA,
+                Marker.TypeGroup.TRANSCRIPT
+        );
     }
 
 
@@ -2866,7 +2846,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         List<LookupEntry> targetGeneSuggestionList = new ArrayList<>();
         for (Object[] objects : results) {
-            TargetGeneLookupEntry probe = new TargetGeneLookupEntry();
+            LookupEntry probe = new LookupEntry();
             probe.setLabel((String) objects[0] + " (" + (String) objects[1] + ")");
             probe.setValue((String) objects[0]);
             targetGeneSuggestionList.add(probe);
@@ -3002,13 +2982,19 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     @Override
-    public List<TargetGeneLookupEntry> getGeneSuggestionList(String lookupString) {
-        List<MarkerType> markerTypes = getMarkerTypesByGroup(Marker.TypeGroup.GENEDOM_AND_NTR);
-        String hql = " select targetGene from Marker targetGene " +
+    public List<LookupEntry> getMarkerSuggestionList(String lookupString, Marker.TypeGroup ...groups) {
+        List<MarkerType> markerTypes = new ArrayList<>();
+        for (Marker.TypeGroup group : groups) {
+            markerTypes.addAll(getMarkerTypesByGroup(group));
+        }
+
+        String hql = " select marker from Marker marker " +
                 "where " +
-                "lower(targetGene.abbreviation) like :lookupString " +
-                "and targetGene.markerType in (:markerType)  " +
-                "order by targetGene.abbreviation  ";
+                "lower(marker.abbreviation) like :lookupString ";
+        if (!markerTypes.isEmpty()) {
+            hql += "and marker.markerType in (:markerType)  ";
+        }
+        hql += "order by marker.abbreviation  ";
 
         return HibernateUtil.currentSession().createQuery(hql)
                 .setString("lookupString", "%" + lookupString.toLowerCase() + "%")
@@ -3017,15 +3003,19 @@ public class HibernateMarkerRepository implements MarkerRepository {
                     @Override
                     public Object transformTuple(Object[] tuple, String[] targetGeneAbrevs) {
                         Marker targetGene = (Marker) tuple[0];
-                        TargetGeneLookupEntry targetGeneSuggestionList = new TargetGeneLookupEntry();
+                        LookupEntry targetGeneSuggestionList = new LookupEntry();
                         targetGeneSuggestionList.setId(targetGene.getZdbID());
                         targetGeneSuggestionList.setLabel(targetGene.getAbbreviation());
                         targetGeneSuggestionList.setValue(targetGene.getAbbreviation());
                         return targetGeneSuggestionList;
                     }
                 })
-                .list()
-                ;
+                .list();
+    }
+
+    @Override
+    public List<LookupEntry> getGeneSuggestionList(String lookupString) {
+        return getMarkerSuggestionList(lookupString, Marker.TypeGroup.GENEDOM_AND_NTR);
     }
 
     @Override
@@ -3487,6 +3477,11 @@ public class HibernateMarkerRepository implements MarkerRepository {
         Query query = session.createQuery(hqlSeq);
         query.setParameter("tsID", transcript.getZdbID());
         return (TranscriptSequence) query.uniqueResult();
+    }
+
+    @Override
+    public MarkerRelationshipType getMarkerRelationshipType(String name) {
+        return (MarkerRelationshipType) HibernateUtil.currentSession().get(MarkerRelationshipType.class, name);
     }
 
 }

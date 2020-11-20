@@ -122,10 +122,10 @@ public class MergeMarkerController {
     @RequestMapping(value = "/find-gene-to-merge-into", method = RequestMethod.GET)
     public
     @ResponseBody
-    List<TargetGeneLookupEntry> lookupGeneToMergeInto(@RequestParam("term") String lookupString, @RequestParam("exclude") String zdbId) {
-        List<TargetGeneLookupEntry> genesFound = RepositoryFactory.getMarkerRepository().getGeneSuggestionList(lookupString);
-        List<TargetGeneLookupEntry> processedFoundGeneList = new ArrayList<>();
-        for (TargetGeneLookupEntry gene : genesFound) {
+    List<LookupEntry> lookupGeneToMergeInto(@RequestParam("term") String lookupString, @RequestParam("exclude") String zdbId) {
+        List<LookupEntry> genesFound = RepositoryFactory.getMarkerRepository().getGeneSuggestionList(lookupString);
+        List<LookupEntry> processedFoundGeneList = new ArrayList<>();
+        for (LookupEntry gene : genesFound) {
             if (!gene.getId().equals(zdbId)) {
                 processedFoundGeneList.add(gene);
             }
