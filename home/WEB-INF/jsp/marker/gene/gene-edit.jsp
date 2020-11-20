@@ -36,7 +36,7 @@
         <div class="__react-root"
              id="MarkerEditMarkerRelationships"
              data-marker-id="${gene.zdbID}"
-             data-relationship-types="${markerRelationshipTypes}">
+             data-relationship-type-data='${markerRelationshipTypes}'>
         </div>
     </z:section>
 </z:dataPage>

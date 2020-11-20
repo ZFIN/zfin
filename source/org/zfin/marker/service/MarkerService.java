@@ -947,8 +947,9 @@ public class MarkerService {
         Collection<Ortholog> orthologs = getOrthologyRepository().getOrthologs(gene);
         if (orthologs != null) {
             return getOrthologyPresentationBean(orthologs, gene, publication);
-        } else
+        } else {
             return null;
+        }
     }
 
     public static OrthologyPresentationBean getOrthologyEvidence(Marker gene) {
@@ -1154,10 +1155,12 @@ public class MarkerService {
         MarkerTypeGroup group = markerRepository.getMarkerTypeGroupByName(Marker.TypeGroup.GENEDOM.toString());
 
         Marker marker = markerRepository.getMarkerByID(zdbID);
-        if (!group.hasType(marker.getType()))
+        if (!group.hasType(marker.getType())) {
             return false;
-        if (marker.getType().equals(Marker.Type.GENEP) || marker.getType().equals(Marker.Type.GENEFAMILY))
+        }
+        if (marker.getType().equals(Marker.Type.GENEP) || marker.getType().equals(Marker.Type.GENEFAMILY)) {
             return false;
+        }
         return true;
     }
 
@@ -1212,10 +1215,9 @@ public class MarkerService {
             for (PublicationAttribution pub : publicationAttributions) {
                 publications.add(pub.getPublication());
             }
-            if (publications.size()==1){
+            if (publications.size() == 1) {
                 mrelP.setSinglePublication(publications.iterator().next());
             }
-
 
 
         }
@@ -1279,7 +1281,7 @@ public class MarkerService {
             }
         }
 
-       
+
         return null;
     }
 
@@ -1287,8 +1289,9 @@ public class MarkerService {
     public JsonResultResponse<SequenceTargetingReagentBean> getSTRJsonResultResponse(String zdbID, Pagination pagination) {
         JsonResultResponse<SequenceTargetingReagentBean> response = new JsonResultResponse<>();
         List<SequenceTargetingReagentBean> list = getMutantsOnGene(markerRepository.getMarker(zdbID)).getKnockdownReagents();
-        if (list == null)
+        if (list == null) {
             return response;
+        }
         response.setResults(list);
         response.setTotal(list.size());
 
@@ -1298,7 +1301,7 @@ public class MarkerService {
             list.sort(sorting.getComparator(pagination.getSortBy()));
         }
 
-            response.setResults(list.stream()
+        response.setResults(list.stream()
                 .skip(pagination.getStart())
                 .limit(pagination.getLimit())
                 .collect(Collectors.toList()));
@@ -1308,8 +1311,9 @@ public class MarkerService {
     public JsonResultResponse<Feature> getFeatureJsonResultResponse(String zdbID, Pagination pagination) {
         JsonResultResponse<Feature> response = new JsonResultResponse<>();
         List<Feature> list = getMutantsOnGene(markerRepository.getMarker(zdbID)).getFeatures();
-        if (list == null)
+        if (list == null) {
             return response;
+        }
         response.setResults(list);
         response.setTotal(list.size());
 
@@ -1325,11 +1329,35 @@ public class MarkerService {
             list.sort(sorting.getComparator(pagination.getSortBy()));
         }
 
-            response.setResults(list.stream()
+        response.setResults(list.stream()
                 .skip(pagination.getStart())
                 .limit(pagination.getLimit())
                 .collect(Collectors.toList()));
         return response;
+    }
+
+    public List<MarkerRelationshipEditMetadata> getMarkerRelationshipEditMetadata(Marker marker,
+                                                                                   MarkerRelationship.Type... types) {
+        return Arrays.stream(types)
+                .map(typeEnum -> {
+                    MarkerRelationshipType type = markerRepository.getMarkerRelationshipType(typeEnum.toString());
+                    Marker.Type markerType = marker.getType();
+                    MarkerRelationshipEditMetadata metadata = new MarkerRelationshipEditMetadata();
+                    metadata.setType(type.getName());
+                    if (type.getFirstMarkerTypeGroup().hasType(markerType)) {
+                        metadata.set1to2(true);
+                        metadata.setRelatedMarkerTypeGroup(type.getSecondMarkerTypeGroup().getName());
+                        return metadata;
+                    }
+                    if (type.getSecondMarkerTypeGroup().hasType(markerType)) {
+                        metadata.set1to2(false);
+                        metadata.setRelatedMarkerTypeGroup(type.getFirstMarkerTypeGroup().getName());
+                        return metadata;
+                    }
+                    return null;
+                })
+                .filter(Objects::nonNull)
+                .collect(toList());
     }
 }
 

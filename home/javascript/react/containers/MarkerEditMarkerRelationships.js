@@ -9,13 +9,16 @@ import AddEditDeleteModal from '../components/AddEditDeleteModal';
 import FormGroup from '../components/form/FormGroup';
 import InputField from '../components/form/InputField';
 import PublicationInput from '../components/form/PublicationInput';
+import MarkerInput from '../components/form/MarkerInput';
 
-const MarkerEditMarkerRelationships = ({markerId, relationshipTypes}) => {
+const MarkerEditMarkerRelationships = ({markerId, relationshipTypeData}) => {
+    relationshipTypeData = JSON.parse(relationshipTypeData);
+    const relationshipTypeNameList = relationshipTypeData.map(d => d.type).join(',');
     const {
         value: relationships,
         setValue,
         pending,
-    } = useFetch(`/action/api/marker/${markerId}/editableRelationships?relationshipTypes=${relationshipTypes}`);
+    } = useFetch(`/action/api/marker/${markerId}/editableRelationships?relationshipTypes=${relationshipTypeNameList}`);
     const [modalRelationship, setModalRelationship] = useState(null);
     const isEdit = modalRelationship && !!modalRelationship.zdbID;
 
@@ -38,6 +41,7 @@ const MarkerEditMarkerRelationships = ({markerId, relationshipTypes}) => {
             }
             return false;
         },
+        debugForm: true
     });
 
     const formatRelationship = ({ markerRelationshipType, firstMarker, secondMarker, references }, editLink) => {
@@ -59,6 +63,14 @@ const MarkerEditMarkerRelationships = ({markerId, relationshipTypes}) => {
 
     if (!relationships) {
         return null;
+    }
+
+    let isModalRelationship1to2 = false;
+    let relatedMarkerTypeGroup = '';
+    if (values && values.markerRelationshipType.name) {
+        const selectedType = relationshipTypeData.find(d => d.type === values.markerRelationshipType.name);
+        isModalRelationship1to2 = selectedType['1to2'];
+        relatedMarkerTypeGroup = selectedType.relatedMarkerTypeGroup;
     }
 
     return (
@@ -87,24 +99,32 @@ const MarkerEditMarkerRelationships = ({markerId, relationshipTypes}) => {
                         validate={value => value ? false : 'A relationship type is required'}
                     >
                         <option value='' />
-                        {relationshipTypes.split(',').map(type => (
-                            <option value={type} key={type}>{type}</option>
+                        {relationshipTypeData.map(d => (
+                            <option value={d.type} key={d.type}>{d.type}</option>
                         ))}
                     </FormGroup>
 
-                    <FormGroup
-                        inputClassName='col-md-10'
-                        label='Related Marker'
-                        id='first-marker'
-                        field='firstMarker.abbreviation'
-                    />
+                    {!isModalRelationship1to2 &&
+                        <FormGroup
+                            inputClassName='col-md-10'
+                            label='Related Marker'
+                            id='first-marker'
+                            field='firstMarker.abbreviation'
+                            tag={MarkerInput}
+                            typeGroup={relatedMarkerTypeGroup}
+                        />
+                    }
 
-                    <FormGroup
-                        inputClassName='col-md-10'
-                        label='Related Marker'
-                        id='second-marker'
-                        field='secondMarker.abbreviation'
-                    />
+                    {isModalRelationship1to2 &&
+                        <FormGroup
+                            inputClassName='col-md-10'
+                            label='Related Marker'
+                            id='second-marker'
+                            field='secondMarker.abbreviation'
+                            tag={MarkerInput}
+                            typeGroup={relatedMarkerTypeGroup}
+                        />
+                    }
 
                     <div className='form-group row'>
                         <label className='col-md-2 col-form-label'>Citations</label>
@@ -151,7 +171,7 @@ const MarkerEditMarkerRelationships = ({markerId, relationshipTypes}) => {
 
 MarkerEditMarkerRelationships.propTypes = {
     markerId: PropTypes.string,
-    relationshipTypes: PropTypes.string,
+    relationshipTypeData: PropTypes.string,
 }
 
 export default MarkerEditMarkerRelationships;
