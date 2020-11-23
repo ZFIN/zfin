@@ -174,32 +174,36 @@
         <mkdir dir="${this.backup.dir}"/>
 
         <copy todir="${this.backup.dir}" overwrite="false">
-            <fileset dir="${env.SOLR_HOME}/${SOLR_CORE}">
+            <fileset dir="${env.SOLR_HOME}">
                 <include name="**"/>
             </fileset>
         </copy>
         <echo message="Moving db-data-config.xml aside, contains site-specific jdbc connect info"/>
         <move file="${this.backup.dir}/conf/db-data-config.xml"
               tofile="${this.backup.dir}/conf/archived-db-data-config.xml"/>
+        <echo message="Moving db-data-config.xml aside, contains site-specific jdbc connect info"/>
+        <move file="${this.backup.dir}/core.properties"
+              tofile="${this.backup.dir}/conf/archived-core.properties"/>
     </target>
 
     <target name="restore-solr-core">
         <antcall target="stop-solr"/>
         <echo message="restoring from ${RESTORE_FROM}"/>
         <delete>
-            <fileset dir="${env.SOLR_HOME}/site_index/">
+            <fileset dir="${env.SOLR_HOME}/data">
                 <include name="**"/>
             </fileset>
         </delete>
-        <copy todir="${env.SOLR_HOME}/${SOLR_CORE}">
+        <copy todir="${env.SOLR_HOME}">
             <fileset dir="${RESTORE_FROM}">
                 <include name="**"/>
             </fileset>
         </copy>
         <echo message="Copying correct db-data-config.xml into place, it may not match your data, but allows for indexing after doing a restore"/>
-        <copy todir="${env.SOLR_HOME}/${SOLR_CORE}/conf/" overwrite="false">
-            <fileset dir="server_apps/solr/site_index/conf/">
-                <include name="db-data-config.xml"/>
+        <copy todir="${env.SOLR_HOME}/conf/" overwrite="false">
+            <fileset dir="server_apps/solr/site_index/">
+                <include name="**/db-data-config.xml"/>
+                <include name="core.properties"/>
             </fileset>
             <filterset refid="allfilters"/>
         </copy>
