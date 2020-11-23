@@ -2,6 +2,7 @@ package org.zfin.marker.service;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
@@ -46,11 +47,10 @@ import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.sequence.service.TranscriptService;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import java.util.function.Predicate;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -333,6 +333,11 @@ public class MarkerService {
         return getRelatedMarker(marker, types);
     }
 
+    public static Set<Marker> getRelatedMarkers(Marker marker, MarkerRelationshipType markerRelationshipType) {
+        MarkerRelationship.Type type = MarkerRelationship.Type.getType(markerRelationshipType.getName());
+        return getRelatedMarker(marker, type);
+    }
+
 
     /**
      * Get RelatedMarker TreeSet (ordered) for a specific relationship type.
@@ -582,6 +587,14 @@ public class MarkerService {
         markerRelationship.setType(markerRelationshipType);
         // also inserts attribution
         return markerRepository.addMarkerRelationship(markerRelationship, pubZdbID);
+    }
+
+    public static MarkerRelationship addMarkerRelationship(Marker firstMarker,
+                                                           Marker secondMarker,
+                                                           Publication publication,
+                                                           MarkerRelationshipType markerRelationshipType) {
+        MarkerRelationship.Type type = MarkerRelationship.Type.getType(markerRelationshipType.getName());
+        return addMarkerRelationship(firstMarker, secondMarker, publication.getZdbID(), type);
     }
 
 
@@ -1358,6 +1371,16 @@ public class MarkerService {
                 })
                 .filter(Objects::nonNull)
                 .collect(toList());
+    }
+
+    public Marker getMarkerByIdOrAbbreviation(String id, String abbreviation) {
+        if (StringUtils.isNotEmpty(id)) {
+            return markerRepository.getMarker(id);
+        }
+        if (StringUtils.isNotEmpty(abbreviation)) {
+            return markerRepository.getMarkerByAbbreviation(abbreviation);
+        }
+        return null;
     }
 }
 

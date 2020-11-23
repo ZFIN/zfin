@@ -146,7 +146,7 @@ public interface MarkerRepository {
 
     void addDataAliasAttribution(DataAlias alias, Publication attribution, Marker marker);
 
-    void addMarkerRelationshipAttribution(MarkerRelationship mrel, Publication attribution, Marker marker);
+    void addMarkerRelationshipAttribution(MarkerRelationship mrel, Publication attribution);
 
     void addDBLinkAttribution(DBLink dbLink, Publication attribution, String dataZdbId);
 

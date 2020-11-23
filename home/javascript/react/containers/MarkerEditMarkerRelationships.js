@@ -29,7 +29,7 @@ const MarkerEditMarkerRelationships = ({markerId, relationshipTypeData}) => {
         setValues,
         modalProps
     } = useAddEditDeleteForm({
-        addUrl: `/action/api/marker/${markerId}/relationship`,
+        addUrl: `/action/api/marker/${markerId}/relationships`,
         editUrl: isEdit ? `/action/marker/relationship/${modalRelationship.zdbID}` : '',
         deleteUrl: isEdit ? `/action/marker/relationship/${modalRelationship.zdbID}` : '',
         onSuccess: () => setModalRelationship(null),
@@ -153,6 +153,7 @@ const MarkerEditMarkerRelationships = ({markerId, relationshipTypeData}) => {
                             field='firstMarker.abbreviation'
                             tag={MarkerInput}
                             typeGroup={relatedMarkerTypeGroup}
+                            validate={value => value ? false : 'A related marker is required'}
                         />
                     }
 
@@ -164,6 +165,7 @@ const MarkerEditMarkerRelationships = ({markerId, relationshipTypeData}) => {
                             field='secondMarker.abbreviation'
                             tag={MarkerInput}
                             typeGroup={relatedMarkerTypeGroup}
+                            validate={value => value ? false : 'A related marker is required'}
                         />
                     }
 

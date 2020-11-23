@@ -10,7 +10,6 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.InvalidWebRequestException;
-import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
@@ -37,9 +36,9 @@ public class MarkerRelationshipController {
     @Autowired
     private InfrastructureRepository infrastructureRepository;
     private static Logger logger = LogManager.getLogger(MarkerRelationshipController.class);
-    @InitBinder("markerRelationshipBean")
+    @InitBinder("markerRelationshipFormBean")
     public void initRelationshipBinder(WebDataBinder binder) {
-        binder.setValidator(new MarkerRelationshipBeanValidator());
+        binder.setValidator(new MarkerRelationshipFormBeanValidator());
     }
 
     @InitBinder("markerReferenceBean")
@@ -65,14 +64,14 @@ public class MarkerRelationshipController {
 
     @ResponseBody
     @RequestMapping(value = "/{markerId}/relationships", method = RequestMethod.GET)
-    public Collection<MarkerRelationshipBean> getMarkerRelationships(@PathVariable String markerId) {
+    public Collection<MarkerRelationshipFormBean> getMarkerRelationships(@PathVariable String markerId) {
         Marker marker = markerRepository.getMarkerByID(markerId);
         Collection<MarkerRelationship> allRelationships = new ArrayList<>();
         allRelationships.addAll(marker.getFirstMarkerRelationships());
         allRelationships.addAll(marker.getSecondMarkerRelationships());
-        Collection<MarkerRelationshipBean> beans = new ArrayList<>();
+        Collection<MarkerRelationshipFormBean> beans = new ArrayList<>();
         for (MarkerRelationship relationship : allRelationships) {
-            beans.add(MarkerRelationshipBean.convert(relationship));
+            beans.add(MarkerRelationshipFormBean.convert(relationship));
         }
         return beans;
         }
@@ -140,15 +139,15 @@ public class MarkerRelationshipController {
 
     @ResponseBody
     @RequestMapping(value = "/relationship", method = RequestMethod.POST)
-    public MarkerRelationshipBean addMarkerRelationship(@Valid @RequestBody MarkerRelationshipBean newRelationship,
-                                                        BindingResult errors) {
+    public MarkerRelationshipFormBean addMarkerRelationship(@Valid @RequestBody MarkerRelationshipFormBean newRelationship,
+                                                            BindingResult errors) {
         if (errors.hasErrors()) {
             throw new InvalidWebRequestException("Invalid marker relationship", errors);
         }
         MarkerRelationship.Type mkrType;
-        Marker first = getMarkerByIdOrAbbrev(newRelationship.getFirst());
-        Marker second = getMarkerByIdOrAbbrev(newRelationship.getSecond());
-         mkrType = MarkerRelationship.Type.getType(newRelationship.getRelationship());
+        Marker first = getMarkerByIdOrAbbrev(newRelationship.getFirstMarker());
+        Marker second = getMarkerByIdOrAbbrev(newRelationship.getSecondMarker());
+         mkrType = MarkerRelationship.Type.getType(newRelationship.getMarkerRelationshipType().getName());
         if (second.isInTypeGroup(Marker.TypeGroup.NONTSCRBD_REGION)){
             if (first.getType()==Marker.Type.CRISPR){
                  mkrType = MarkerRelationship.Type.CRISPR_TARGETS_REGION;
@@ -189,24 +188,24 @@ public class MarkerRelationshipController {
         MarkerRelationship relationship = MarkerService.addMarkerRelationship(first, second, pubId, mkrType);
         HibernateUtil.flushAndCommitCurrentSession();
 
-        return MarkerRelationshipBean.convert(relationship);
+        return MarkerRelationshipFormBean.convert(relationship);
     }
 
     @ResponseBody
     @RequestMapping(value = "/gene-relationship", method = RequestMethod.POST)
-    public Collection<MarkerRelationshipPresentation>  addGeneMarkerRelationship(@Valid @RequestBody MarkerRelationshipBean newRelationship,
+    public Collection<MarkerRelationshipPresentation>  addGeneMarkerRelationship(@Valid @RequestBody MarkerRelationshipFormBean newRelationship,
                                                         BindingResult errors) {
        /* if (errors.hasErrors()) {
             throw new InvalidWebRequestException("Invalid marker relationship", errors);
         }*/
        String pubZDB;
         MarkerRelationshipSupplierComparator markerRelationshipSupplierComparator = new MarkerRelationshipSupplierComparator();
-        Marker first = getMarkerByIdOrAbbrev(newRelationship.getFirst());
-        Marker second = getMarkerByIdOrAbbrev(newRelationship.getSecond());
+        Marker first = getMarkerByIdOrAbbrev(newRelationship.getFirstMarker());
+        Marker second = getMarkerByIdOrAbbrev(newRelationship.getSecondMarker());
         if (second==null){
             throw new InvalidWebRequestException("Invalid marker", errors);
         }
-        MarkerRelationship.Type type = MarkerRelationship.Type.getType(newRelationship.getRelationship());
+        MarkerRelationship.Type type = MarkerRelationship.Type.getType(newRelationship.getMarkerRelationshipType().getName());
 
         Collection<Marker> related = MarkerService.getRelatedMarker(first, type);
         if (CollectionUtils.isNotEmpty(related) && related.contains(second)) {
@@ -246,7 +245,7 @@ public class MarkerRelationshipController {
         }*/
 
         HibernateUtil.createTransaction();
-        if (!newRelationship.getRelationship().equals("clone contains gene")) {
+        if (!newRelationship.getMarkerRelationshipType().equals("clone contains gene")) {
             MarkerRelationship relationship = MarkerService.addMarkerRelationship(first, second,  pubZDB, type);
         }
         else{
@@ -277,9 +276,9 @@ public class MarkerRelationshipController {
 
     @ResponseBody
     @RequestMapping(value = "/relationship/{relationshipId}/references", method = RequestMethod.POST)
-    public MarkerRelationshipBean addMarkerRelationshipReference(@PathVariable String relationshipId,
-                                                                 @Valid @RequestBody MarkerReferenceBean newReference,
-                                                                 BindingResult errors) {
+    public MarkerRelationshipFormBean addMarkerRelationshipReference(@PathVariable String relationshipId,
+                                                                     @Valid @RequestBody MarkerReferenceBean newReference,
+                                                                     BindingResult errors) {
         if (errors.hasErrors()) {
             throw new InvalidWebRequestException("Invalid reference", errors);
         }
@@ -295,48 +294,10 @@ public class MarkerRelationshipController {
         }
 
         HibernateUtil.createTransaction();
-        markerRepository.addMarkerRelationshipAttribution(relationship, publication, relationship.getFirstMarker());
+        markerRepository.addMarkerRelationshipAttribution(relationship, publication);
         HibernateUtil.flushAndCommitCurrentSession();
 
-        return MarkerRelationshipBean.convert(relationship);
-    }
-
-    @ResponseBody
-    @RequestMapping(value = "/relationship/{relationshipId}/addreferences", method = RequestMethod.POST)
-    public Collection<MarkerRelationshipPresentation> addGeneMarkerRelationshipReference(@PathVariable String relationshipId,
-                                                                 @Valid @RequestBody MarkerReferenceBean newReference,
-                                                                 BindingResult errors) {
-        String pubZDB;
-        if (errors.hasErrors()) {
-            throw new InvalidWebRequestException("Invalid reference", errors);
-        }
-        if (PublicationValidator.isShortVersion(newReference.getZdbID())) {
-            pubZDB=PublicationValidator.completeZdbID(newReference.getZdbID());
-        } else {
-            pubZDB=newReference.getZdbID();
-        }
-        MarkerRelationship relationship = markerRepository.getMarkerRelationshipByID(relationshipId);
-        Publication publication = publicationRepository.getPublication(pubZDB);
-
-        for (PublicationAttribution reference : relationship.getPublications()) {
-            if (reference.getPublication().equals(publication)) {
-                errors.rejectValue("zdbID", "marker.reference.inuse");
-                throw new InvalidWebRequestException("Invalid reference", errors);
-            }
-        }
-
-        HibernateUtil.createTransaction();
-        markerRepository.addMarkerRelationshipAttribution(relationship, publication, relationship.getFirstMarker());
-        HibernateUtil.flushAndCommitCurrentSession();
-        MarkerRelationshipSupplierComparator markerRelationshipSupplierComparator = new MarkerRelationshipSupplierComparator();
-        Marker first = relationship.getFirstMarker();
-        Marker second = relationship.getSecondMarker();
-        List<MarkerRelationshipPresentation> cloneRelationships = new ArrayList<>();
-        cloneRelationships.addAll(MarkerService.getRelatedMarkerDisplayExcludeType(first, true));
-        cloneRelationships.addAll(MarkerService.getRelatedMarkerDisplayExcludeType(first, false));
-        Collections.sort(cloneRelationships, markerRelationshipSupplierComparator);
-
-        return cloneRelationships;
+        return MarkerRelationshipFormBean.convert(relationship);
     }
 
     @ResponseBody
@@ -350,11 +311,11 @@ public class MarkerRelationshipController {
         return "OK";
     }
 
-    private Marker getMarkerByIdOrAbbrev(MarkerDTO dto) {
-        if (dto.getZdbID() != null) {
-            return markerRepository.getMarkerByID(dto.getZdbID());
-        } else if (dto.getName() != null) {
-            return markerRepository.getMarkerByAbbreviation(dto.getName());
+    private Marker getMarkerByIdOrAbbrev(Marker marker) {
+        if (marker.getZdbID() != null) {
+            return markerRepository.getMarkerByID(marker.getZdbID());
+        } else if (marker.getName() != null) {
+            return markerRepository.getMarkerByAbbreviation(marker.getAbbreviation());
         }
         return null;
     }

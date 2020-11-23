@@ -184,7 +184,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select  ptp from ProteinToPDB ptp " +
-                "      where ptp.uniProtID = :uniProtID " ;
+                "      where ptp.uniProtID = :uniProtID ";
 
 
         Query query = session.createQuery(hql);
@@ -235,8 +235,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
         criteria.add(Restrictions.eq("name", name));
         return (Marker) criteria.uniqueResult();
     }
-
-
 
     //this is kind of awful...
     public List<Marker> getMarkersByZdbIdPrefix(String prefix) {
@@ -522,21 +520,8 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         //now deal with attribution
         if (sourceZdbID != null && sourceZdbID.length() > 0) {
-//            currentSession().flush() ;
-//            RepositoryFactory.getInfrastructureRepository().insertRecordAttribution(mrel.getZdbID(), sourceZdbID);
-            PublicationAttribution pa = new PublicationAttribution();
-            pa.setSourceZdbID(sourceZdbID);
-            pa.setDataZdbID(mrel.getZdbID());
-            pa.setSourceType(RecordAttribution.SourceType.STANDARD);
-            //mrel.setPublications(pubattr);
-            currentSession().save(pa);
             Publication publication = RepositoryFactory.getPublicationRepository().getPublication(sourceZdbID);
-            pa.setPublication(publication);
-
-            addMarkerPub(marker1, publication);
-            addMarkerPub(marker2, publication);
-
-            currentSession().refresh(mrel);
+            addMarkerRelationshipAttribution(mrel, publication);
         }
 
         return mrel;
@@ -695,8 +680,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
             marker.setAliases(markerAliases);
         } else {
             // if alias exists do not add continue...
-            if (!marker.getAliases().add(markerAlias))
+            if (!marker.getAliases().add(markerAlias)) {
                 return null;
+            }
         }
 
         currentSession().save(markerAlias);
@@ -808,7 +794,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         infrastructureRepository.insertUpdatesTable(marker, "", "new attribution, data alias: " + alias.getAlias() + " with pub: " + attributionZdbID, attributionZdbID, "");
     }
 
-    public void addMarkerRelationshipAttribution(MarkerRelationship mrel, Publication attribution, Marker marker) {
+    public void addMarkerRelationshipAttribution(MarkerRelationship mrel, Publication attribution) {
 
         String attributionZdbID = attribution.getZdbID();
         String relZdbID = mrel.getZdbID();
@@ -828,9 +814,11 @@ public class HibernateMarkerRepository implements MarkerRepository {
             pa.setPublication(attribution);
             currentSession().save(pa);
             currentSession().refresh(mrel);
-            addMarkerPub(marker, attribution);
+            addMarkerPub(mrel.getFirstMarker(), attribution);
+            addMarkerPub(mrel.getSecondMarker(), attribution);
         }
-        infrastructureRepository.insertUpdatesTable(marker, "", "new attribution, marker relationship: " + mrel.getZdbID() + " with pub: " + attributionZdbID, attributionZdbID, "");
+        infrastructureRepository.insertUpdatesTable(mrel.getFirstMarker(), "", "new attribution, marker relationship: " + mrel.getZdbID() + " with pub: " + attributionZdbID, attributionZdbID, "");
+        infrastructureRepository.insertUpdatesTable(mrel.getSecondMarker(), "", "new attribution, marker relationship: " + mrel.getZdbID() + " with pub: " + attributionZdbID, attributionZdbID, "");
     }
 
     public void addDBLinkAttribution(DBLink dbLink, Publication attribution, String dataZdbId) {
@@ -2045,7 +2033,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
             if (tuple[6] != null) {
                 linkDisplay.setUrlSuffix(tuple[6].toString());
-;
+                ;
             }
             if (tuple[7] != null) {
                 MarkerReferenceBean reference = new MarkerReferenceBean();
@@ -2288,7 +2276,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 " FROM InterProProtein ip, MarkerToProtein mtp, ProteinToInterPro pti " +
                 " WHERE ip.ipID = pti.interProID " +
                 " AND pti.uniProtID = mtp.mtpUniProtID " +
-                " AND mtp.marker = :marker order by ip.ipType" ;
+                " AND mtp.marker = :marker order by ip.ipType";
         Query query = session.createQuery(sql);
 
         query.setParameter("marker", marker);
@@ -2296,15 +2284,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         return (List<InterProProtein>) query.list();
     }
-
-
-
-
-
-
-
-
-
 
 
     public List<String> getIPNames(String uniprot) {
@@ -2319,19 +2298,12 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
 
-
-
-
-
-
     @Override
     public List<String> getProteinType(Marker gene) {
         String sql = " select distinct ip_name " +
                 " from marker_to_protein, protein_to_interpro,interpro_protein " +
                 " where mtp_mrkr_zdb_id=:markerzdb and mtp_uniprot_id=pti_uniprot_id and pti_interpro_id=ip_interpro_id " +
                 " order by ip_name ";
-
-
 
 
         return HibernateUtil.currentSession().createSQLQuery(sql)
@@ -2982,7 +2954,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     @Override
-    public List<LookupEntry> getMarkerSuggestionList(String lookupString, Marker.TypeGroup ...groups) {
+    public List<LookupEntry> getMarkerSuggestionList(String lookupString, Marker.TypeGroup... groups) {
         List<MarkerType> markerTypes = new ArrayList<>();
         for (Marker.TypeGroup group : groups) {
             markerTypes.addAll(getMarkerTypesByGroup(group));
@@ -3204,7 +3176,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                     promMRel.setSecondMarker(promMarkers);
                     promMRel.setType(MarkerRelationship.Type.PROMOTER_OF);
                     currentSession().save(promMRel);
-                    addMarkerRelationshipAttribution(promMRel, pr.getPublication(pubID), marker);
+                    addMarkerRelationshipAttribution(promMRel, pr.getPublication(pubID));
                 }
                 // ir.insertRecordAttribution(promMRel.getZdbID(),pubID);
 
@@ -3219,7 +3191,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                     codingRel.setSecondMarker(codingMarkers);
                     codingRel.setType(MarkerRelationship.Type.CODING_SEQUENCE_OF);
                     currentSession().save(codingRel);
-                    addMarkerRelationshipAttribution(codingRel, pr.getPublication(pubID), marker);
+                    addMarkerRelationshipAttribution(codingRel, pr.getPublication(pubID));
                 }
                 //    ir.insertRecordAttribution(codingRel.getZdbID(),pubID);
 
@@ -3326,8 +3298,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
         // only do the eager join when retrieving all records otherwise the
         // number of records setting won't work, i.e. Hibernate would not set the
         // max number of records.
-        if (number < 1)
+        if (number < 1) {
             hql += "left join fetch marker.dbLinks ";
+        }
         hql += "where marker.markerType.name in (:names) " +
                 "   and mrkr_abbrev not like :withdrawn ";
         Query query = HibernateUtil.currentSession().createQuery(hql);

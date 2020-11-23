@@ -1,16 +1,12 @@
 package org.zfin.marker;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.fasterxml.jackson.annotation.JsonView;
-import org.zfin.framework.api.View;
 import org.zfin.infrastructure.EntityAttribution;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.publication.Publication;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 
 /**
@@ -73,18 +69,10 @@ public class MarkerRelationship implements Comparable, EntityAttribution, Abstra
         }
     }
 
-    @JsonView(View.MarkerRelationshipAPI.class)
     private String zdbID;
-
     private Type type;
-
-    @JsonView(View.MarkerRelationshipAPI.class)
     private Marker firstMarker;
-
-    @JsonView(View.MarkerRelationshipAPI.class)
     private Marker secondMarker;
-
-    @JsonView(View.MarkerRelationshipAPI.class)
     private MarkerRelationshipType markerRelationshipType;
 
     private Set<PublicationAttribution> publications;
@@ -185,11 +173,6 @@ public class MarkerRelationship implements Comparable, EntityAttribution, Abstra
         } else {
             return null;
         }
-    }
-
-    @JsonView(View.MarkerRelationshipAPI.class)
-    public List<Publication> getReferences() {
-        return publications.stream().map(PublicationAttribution::getPublication).collect(Collectors.toList());
     }
 
     public int compareTo(Object anotherMarkerRelationship) {
