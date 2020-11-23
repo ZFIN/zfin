@@ -150,7 +150,7 @@
     </target>
 
     <target name="unittests" depends="compile,build-tests" description="Unit tests.">
-        <runTest testClass="org.zfin.framework.GroovyTest" outfile="groovy-${unitTestFile}" verbose="true"/>
+<!--        <runTest testClass="org.zfin.framework.GroovyTest" outfile="groovy-${unitTestFile}" verbose="true"/> -->
         <junit fork="true"
                printsummary="yes"
                haltonfailure="yes"
