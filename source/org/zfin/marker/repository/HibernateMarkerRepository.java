@@ -1709,7 +1709,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         Session session = HibernateUtil.currentSession();
 
         Criteria criteria = session.createCriteria(Marker.class);
-        criteria.add(Restrictions.eq("abbreviation", abbreviation.toLowerCase()));
+        criteria.add(Restrictions.eq("abbreviation", abbreviation).ignoreCase());
         Marker marker = (Marker) criteria.uniqueResult();
         return marker != null;
     }

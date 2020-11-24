@@ -14,12 +14,15 @@ import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.api.View;
 import org.zfin.framework.presentation.InvalidWebRequestException;
+import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.MarkerRelationshipType;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.publication.Publication;
+import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.wiki.presentation.Version;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,9 +37,13 @@ import java.util.stream.Collectors;
 public class MarkerRelationshipAPIController {
 
     @Autowired
+    private InfrastructureRepository infrastructureRepository;
+    @Autowired
     private MarkerService markerService;
     @Autowired
     private MarkerRepository markerRepository;
+    @Autowired
+    private PublicationRepository publicationRepository;
     @Autowired
     private HttpServletRequest request;
 
@@ -95,8 +102,8 @@ public class MarkerRelationshipAPIController {
             throw new InvalidWebRequestException("Invalid marker relationship", errors);
         }
 
-        Marker firstMarker = markerService.getMarkerByIdOrAbbreviation(form.getFirstMarker().getZdbID(), form.getFirstMarker().getAbbreviation());
-        Marker secondMarker = markerService.getMarkerByIdOrAbbreviation(form.getSecondMarker().getZdbID(), form.getSecondMarker().getAbbreviation());
+        Marker firstMarker = markerRepository.getMarkerByAbbreviation(form.getFirstMarker().getAbbreviation());
+        Marker secondMarker = markerRepository.getMarkerByAbbreviation(form.getSecondMarker().getAbbreviation());
         MarkerRelationshipType markerRelationshipType = markerRepository.getMarkerRelationshipType(form.getMarkerRelationshipType().getName());
         MarkerRelationshipFormBeanValidator.validateMarkerRelationshipType(firstMarker, secondMarker, markerRelationshipType, errors);
         if (errors.hasErrors()) {
@@ -118,10 +125,76 @@ public class MarkerRelationshipAPIController {
         }
         HibernateUtil.flushAndCommitCurrentSession();
 
-        // in order for the next fetch to pick up all of the record attributions
+        return MarkerRelationshipFormBean.convert(markerRepository.getMarkerRelationshipByID(relationship.getZdbID()));
+    }
+
+    @JsonView(View.MarkerRelationshipAPI.class)
+    @RequestMapping(value = "/marker/relationships/{relationshipZdbID}", method = RequestMethod.POST)
+    public MarkerRelationshipFormBean updateMarkerRelationship(@PathVariable String relationshipZdbID,
+                                                               @Valid @RequestBody MarkerRelationshipFormBean form,
+                                                               BindingResult errors) {
+        if (errors.hasErrors()) {
+            throw new InvalidWebRequestException("Invalid marker relationship", errors);
+        }
+
+        MarkerRelationship relationship = markerRepository.getMarkerRelationshipByID(form.getZdbID());
+        Marker firstMarker = markerRepository.getMarkerByAbbreviation(form.getFirstMarker().getAbbreviation());
+        Marker secondMarker = markerRepository.getMarkerByAbbreviation(form.getSecondMarker().getAbbreviation());
+        MarkerRelationshipType markerRelationshipType = markerRepository.getMarkerRelationshipType(form.getMarkerRelationshipType().getName());
+        MarkerRelationshipFormBeanValidator.validateMarkerRelationshipType(firstMarker, secondMarker, markerRelationshipType, errors);
+        if (errors.hasErrors()) {
+            throw new InvalidWebRequestException("Invalid marker relationship", errors);
+        }
+
+        boolean firstMarkerChanged = !relationship.getFirstMarker().equals(firstMarker);
+        boolean secondMarkerChanged = !relationship.getSecondMarker().equals(secondMarker);
+        boolean relationshipTypeChanged = !relationship.getMarkerRelationshipType().equals(markerRelationshipType);
+        if (firstMarkerChanged || secondMarkerChanged || relationshipTypeChanged) {
+            Collection<Marker> related = MarkerService.getRelatedMarkers(firstMarker, markerRelationshipType);
+            if (CollectionUtils.isNotEmpty(related) && related.contains(secondMarker)) {
+                errors.reject("marker.relationship.duplicate");
+                throw new InvalidWebRequestException("Invalid marker relationship", errors);
+            }
+        }
+
+        Collection<String> currentPubIds = relationship.getPublications().stream()
+                .map(PublicationAttribution::getPublication)
+                .map(Publication::getZdbID)
+                .collect(Collectors.toList());
+        Collection<String> updatedPubIds = form.getReferences().stream()
+                .map(Publication::getZdbID)
+                .collect(Collectors.toList());
+        Collection<String> pubsToAdd = CollectionUtils.subtract(updatedPubIds, currentPubIds);
+        Collection<String> pubsToRemove = CollectionUtils.subtract(currentPubIds, updatedPubIds);
+
+        HibernateUtil.createTransaction();
+
+        if (relationshipTypeChanged) {
+            MarkerRelationship.Type type = MarkerRelationship.Type.getType(markerRelationshipType.getName());
+            relationship.setMarkerRelationshipType(markerRelationshipType);
+            relationship.setType(type);
+        }
+
+        if (firstMarkerChanged) {
+            relationship.setFirstMarker(firstMarker);
+        }
+
+        if (secondMarkerChanged) {
+            relationship.setSecondMarker(secondMarker);
+        }
+
+        for (String pubId : pubsToAdd) {
+            Publication publication = publicationRepository.getPublication(pubId);
+            markerRepository.addMarkerRelationshipAttribution(relationship, publication);
+        }
+
+        for (String pubToRemove : pubsToRemove) {
+            infrastructureRepository.deleteRecordAttribution(relationship.getZdbID(), pubToRemove);
+        }
+        HibernateUtil.flushAndCommitCurrentSession();
         HibernateUtil.currentSession().evict(relationship);
 
-        return MarkerRelationshipFormBean.convert(markerRepository.getMarkerRelationshipByID(relationship.getZdbID()));
+        return MarkerRelationshipFormBean.convert(markerRepository.getMarkerRelationshipByID(relationshipZdbID));
     }
 
 }

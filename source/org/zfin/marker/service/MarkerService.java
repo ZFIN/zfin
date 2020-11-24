@@ -2,7 +2,6 @@ package org.zfin.marker.service;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
@@ -1371,16 +1370,6 @@ public class MarkerService {
                 })
                 .filter(Objects::nonNull)
                 .collect(toList());
-    }
-
-    public Marker getMarkerByIdOrAbbreviation(String id, String abbreviation) {
-        if (StringUtils.isNotEmpty(id)) {
-            return markerRepository.getMarker(id);
-        }
-        if (StringUtils.isNotEmpty(abbreviation)) {
-            return markerRepository.getMarkerByAbbreviation(abbreviation);
-        }
-        return null;
     }
 }
 

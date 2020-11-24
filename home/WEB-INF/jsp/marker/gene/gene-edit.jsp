@@ -35,6 +35,7 @@
     <z:section title="${MARKER_RELATIONSHIPS}">
         <div class="__react-root"
              id="MarkerEditMarkerRelationships"
+             data-marker-abbreviation="${gene.abbreviation}"
              data-marker-id="${gene.zdbID}"
              data-relationship-type-data='${markerRelationshipTypes}'>
         </div>

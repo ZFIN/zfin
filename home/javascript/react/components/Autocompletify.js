@@ -37,7 +37,7 @@ const Autocompletify = ({url, onChange, typeaheadOptions, value, ...rest}) => {
     }, [url, typeaheadOptions]);
 
     return (
-        <input ref={refCallback} onChange={onChange} value={value} {...rest} />
+        <input ref={refCallback} onChange={onChange} value={value} autoComplete='off' {...rest} />
     );
 };
 

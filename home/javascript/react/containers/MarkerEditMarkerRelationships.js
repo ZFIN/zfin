@@ -11,7 +11,7 @@ import InputField from '../components/form/InputField';
 import PublicationInput from '../components/form/PublicationInput';
 import MarkerInput from '../components/form/MarkerInput';
 
-const MarkerEditMarkerRelationships = ({markerId, relationshipTypeData}) => {
+const MarkerEditMarkerRelationships = ({markerAbbreviation, markerId, relationshipTypeData}) => {
     relationshipTypeData = JSON.parse(relationshipTypeData);
     const relationshipTypeNameList = relationshipTypeData.map(d => d.type).join(',');
     const {
@@ -30,7 +30,7 @@ const MarkerEditMarkerRelationships = ({markerId, relationshipTypeData}) => {
         modalProps
     } = useAddEditDeleteForm({
         addUrl: `/action/api/marker/${markerId}/relationships`,
-        editUrl: isEdit ? `/action/marker/relationship/${modalRelationship.zdbID}` : '',
+        editUrl: isEdit ? `/action/api/marker/relationships/${modalRelationship.zdbID}` : '',
         deleteUrl: isEdit ? `/action/marker/relationship/${modalRelationship.zdbID}` : '',
         onSuccess: () => setModalRelationship(null),
         items: relationships,
@@ -74,7 +74,7 @@ const MarkerEditMarkerRelationships = ({markerId, relationshipTypeData}) => {
                 markerRelationshipType: { name: value },
                 firstMarker: {
                     zdbID: markerId,
-                    abbreviation: '',
+                    abbreviation: markerAbbreviation,
                 },
                 secondMarker: {
                     zdbID: '',
@@ -91,7 +91,7 @@ const MarkerEditMarkerRelationships = ({markerId, relationshipTypeData}) => {
                 },
                 secondMarker: {
                     zdbID: markerId,
-                    abbreviation: '',
+                    abbreviation: markerAbbreviation,
                 },
             });
         }
@@ -213,6 +213,7 @@ const MarkerEditMarkerRelationships = ({markerId, relationshipTypeData}) => {
 };
 
 MarkerEditMarkerRelationships.propTypes = {
+    markerAbbreviation: PropTypes.string,
     markerId: PropTypes.string,
     relationshipTypeData: PropTypes.string,
 }
