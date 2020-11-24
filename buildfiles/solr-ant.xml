@@ -184,16 +184,16 @@
         <echo message="Moving db-data-config.xml aside, contains site-specific jdbc connect info"/>
         <move file="${this.backup.dir}/conf/db-data-config.xml"
               tofile="${this.backup.dir}/conf/archived-db-data-config.xml"/>
-        <echo message="Moving db-data-config.xml aside, contains site-specific jdbc connect info"/>
+        <echo message="Moving core.properties aside, contains site-specific info"/>
         <move file="${this.backup.dir}/core.properties"
-              tofile="${this.backup.dir}/conf/archived-core.properties"/>
+              tofile="${this.backup.dir}/core.properties.archived"/>
     </target>
 
     <target name="restore-solr-core">
         <antcall target="stop-solr"/>
         <echo message="restoring from ${RESTORE_FROM}"/>
         <delete>
-            <fileset dir="${env.SOLR_HOME}/data">
+            <fileset dir="${env.SOLR_HOME}/">
                 <include name="**"/>
             </fileset>
         </delete>
@@ -206,7 +206,7 @@
         <copy todir="${env.SOLR_HOME}/conf/" overwrite="false">
             <fileset dir="server_apps/solr/site_index/">
                 <include name="**/db-data-config.xml"/>
-                <include name="core.properties"/>
+                <include name="**/core.properties"/>
             </fileset>
             <filterset refid="allfilters"/>
         </copy>
