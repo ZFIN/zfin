@@ -181,6 +181,9 @@ public class MarkerLinkController {
         HibernateUtil.createTransaction();
         link.setAccessionNumber(updatedLink.getAccession());
         link.setReferenceDatabase(database);
+        if (StringUtils.isNotEmpty(updatedLink.getLength())) {
+            link.setLength(Integer.parseInt(updatedLink.getLength()));
+        }
         for (String pubId : publicationsToAdd) {
             Publication publication = publicationRepository.getPublication(pubId);
             markerRepository.addDBLinkAttribution(link, publication, link.getDataZdbID());
