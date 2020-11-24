@@ -19,6 +19,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.zip.GZIPOutputStream;
+import javax.servlet.WriteListener;
 
 
 /**
@@ -303,6 +304,16 @@ public class CompressionResponseStream
     public boolean closed() {
 
         return (this.closed);
+
+    }
+
+    @Override
+    public boolean isReady() {
+        return false;
+    }
+
+    @Override
+    public void setWriteListener(WriteListener writeListener) {
 
     }
 

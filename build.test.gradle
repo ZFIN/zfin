@@ -1,0 +1,158 @@
+apply plugin: 'war'
+apply plugin: 'groovy'
+
+sourceCompatibility = 11
+targetCompatibility = 11
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.8.11'
+    implementation group: 'commons-collections', name: 'commons-collections', version: '3.2.1'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.2'
+    implementation group: 'org.hibernate', name: 'hibernate-core', version: '4.3.5.Final'
+    implementation group: 'org.hibernate', name: 'hibernate-validator', version: '4.2.0.Final'
+    implementation group: 'org.springframework', name: 'spring-orm', version: '4.2.2.RELEASE'
+    implementation group: 'org.springframework', name: 'spring-core', version: '4.2.2.RELEASE'
+    implementation group: 'org.springframework.security', name: 'spring-security-core', version: '4.0.3.RELEASE'
+    implementation group: 'org.springframework', name: 'spring-webmvc', version: '4.2.2.RELEASE'
+    implementation group: 'org.springframework', name: 'spring-web', version: '4.2.2.RELEASE'
+    implementation group: 'org.springframework', name: 'spring-context-support', version: '4.2.2.RELEASE'
+    implementation group: 'org.springframework.security', name: 'spring-security-web', version: '4.0.3.RELEASE'
+    implementation group: 'javax.validation', name: 'validation-api', version: '1.0.0.GA'
+    implementation group: 'commons-lang', name: 'commons-lang', version: '2.6'
+    runtimeOnly group: 'com.google.gwt', name: 'gwt-servlet', version: '2.9.0'
+    providedCompile('com.google.gwt:gwt-user:2.9.0')
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.3.1'
+    implementation group: 'org.projectlombok', name: 'lombok', version: '1.18.16'
+    implementation group: 'org.apache.httpcomponents', name: 'httpcore', version: '4.4.1'
+    implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.4.1'
+    implementation group: 'javax.annotation', name: 'javax.annotation-api', version: '1.3.2'
+    implementation group: 'com.google.code.gson', name: 'gson', version: '2.2.4'
+    implementation group: 'org.fusesource.restygwt', name: 'restygwt', version: '2.2.0'
+    implementation group: 'javax.ws.rs', name: 'jsr311-api', version: '1.1.1'
+    implementation group: 'org.apache.solr', name: 'solr-solrj', version: '6.4.2'
+    implementation group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.1'
+    implementation group: 'commons-cli', name: 'commons-cli', version: '1.2'
+    implementation group: 'org.freemarker', name: 'freemarker', version: '2.3.20'
+    implementation group: 'org.apache.lucene', name: 'lucene-core', version: '2.3.1'
+    implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.4.0-b180830.0359'
+    implementation('org.glassfish.jaxb:jaxb-runtime:2.3.0')
+    implementation group: 'com.mchange', name: 'c3p0', version: '0.9.5.2'
+    implementation group: 'javax.mail', name: 'mail', version: '1.4'
+    implementation group: 'org.apache.commons', name: 'commons-exec', version: '1.0'
+    implementation group: 'javax.servlet.jsp', name: 'jsp-api', version: '2.0'
+    implementation group: 'javax.servlet', name: 'jstl', version: '1.1.0'
+    implementation files('home/WEB-INF/lib/patricia-trie-0.2.jar')
+    implementation files('home/WEB-INF/lib/confluence-soap-v2.jar')
+    implementation files('home/WEB-INF/lib/cvu.jar')
+    implementation files('home/WEB-INF/lib/commons-configuration-ant-task-0.9.6.jar')
+    implementation files('home/WEB-INF/lib/obo.jar')
+    implementation files('home/WEB-INF/lib/bbop.jar')
+    implementation files('home/WEB-INF/lib/blast-serialization-1.0.jar')
+    implementation files('home/WEB-INF/lib/text-table-formatter-1.0.jar')
+    // maven reference does not have version 1.0, so using the plain jar file
+    //implementation group: 'org.nocrala.tools.texttablefmt', name: 'text-table-formatter', version: '1.2.4'
+    implementation files('lib/Java/serlvet-api-2.4.jar')
+    implementation group: 'net.sourceforge.htmlunit', name: 'htmlunit', version: '2.9'
+    implementation group: 'commons-configuration', name: 'commons-configuration', version: '1.6'
+    implementation group: 'commons-net', name: 'commons-net', version: '1.4.1'
+    implementation group: 'org.apache.commons', name: 'commons-csv', version: '1.4'
+    implementation group: 'com.github.samtools', name: 'htsjdk', version: '2.20.3'
+    implementation group: 'org.jdom', name: 'jdom', version: '1.1'
+    implementation group: 'org.springframework.ws', name: 'spring-ws-core', version: '2.2.2.RELEASE'
+    implementation group: 'org.codehaus.castor', name: 'castor-xml', version: '1.3'
+    implementation group: 'com.googlecode.owasp-java-html-sanitizer', name: 'owasp-java-html-sanitizer', version: '20200713.1'
+    implementation group: 'org.imgscalr', name: 'imgscalr-lib', version: '4.2'
+    implementation group: 'org.biojava', name: 'core', version: '1.9.4'
+    //implementation group: 'org.apache.tomcat', name: 'tomcat-servlet-api', version: '9.0.39'
+    implementation group: 'org.apache.ant', name: 'ant', version: '1.8.2'
+    implementation group: 'org.apache.axis', name: 'axis', version: '1.4'
+    implementation group: 'javax.xml.rpc', name: 'javax.xml.rpc-api', version: '1.1.2'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-web', version: '2.11.2'
+    implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.18'
+    implementation group: 'com.google.guava', name: 'guava', version: '27.1-jre'
+
+    annotationProcessor 'org.projectlombok:lombok:1.18.8'
+    //implementation group: 'log4j', name: 'log4j', version: '1.2.15'
+
+//Thanks for using https://jar-download.com
+
+
+    //implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
+
+    implementation 'junit:junit:4.11'
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.4.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.4.2")
+//    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.4.2")
+    testImplementation group: 'org.junit.platform', name: 'junit-platform-suite-api', version: '1.7.0'
+
+//    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.7.0'
+    testImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
+    testImplementation group: 'net.sourceforge.jwebunit', name: 'jwebunit-core', version: '2.4'
+    implementation group: 'org.springframework', name: 'spring-test', version: '4.2.2.RELEASE'
+    testImplementation group: 'org.gebish', name: 'geb-spock', version: '0.9.2'
+//    testCompile group: 'org.openqa.selenium', name: 'selenium', version: '0.8.1'
+
+//    testImplementation('org.codehaus.groovy:groovy-all:2.4.4')
+    testImplementation group: 'org.spockframework', name: 'spock-core', version: '2.0-M4-groovy-3.0'
+    testImplementation('org.spockframework:spock-core:1.0-groovy-2.4')
+    testImplementation group: 'net.sourceforge.htmlunit', name: 'htmlunit', version: '2.12'
+    testImplementation group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.30'
+
+    implementation group: 'org.apache.commons', name: 'commons-math', version: '2.2'
+
+    // not working: odd
+    //testCompile group: 'org.jenkins-ci.plugins', name: 'testInProgress-client', version: '1.1'
+    implementation files('lib/Java/testInProgress-client-1.1.jar')
+    implementation files('lib/Java/zfin-soap-client.jar')
+    implementation files('lib/Java/selenium-api-2.35.0.jar')
+    implementation files('lib/Java/selenium-htmlunit-driver-2.35.0.jar')
+    implementation files('lib/Java/selenium-remote-driver-2.35.0.jar')
+    // not working :(
+    //testImplementation group: 'org.seleniumhq.selenium', name: 'htmlunit-driver', version: '2.35'
+
+    testAnnotationProcessor "org.projectlombok:lombok:1.18.6"
+}
+
+def env = System.getenv()
+def dbname = env['DBNAME']
+def sourceroot = env['SOURCEROOT']
+String targetroot = env['TARGETROOT']
+
+sourceSets {
+    main {
+        java.srcDirs = ['source']
+        resources.srcDirs = ['home']
+    }
+
+    test {
+        //java.srcDirs = ['test']
+        groovy.srcDirs = ['test']
+        resources.srcDirs = ['test']
+    }
+}
+
+test {
+    useJUnitPlatform()
+    filter {
+        //include specific method in any of the tests
+//        includeTestsMatching "*ActiveDataTest"
+    }
+}
+
+
+
+reporting.baseDir = "my-reports"
+testResultsDirName = "$buildDir/my-test-results"
+
+task showDirs {
+    doLast {
+        logger.quiet(rootDir.toPath().relativize(project.reportsDir.toPath()).toString())
+        logger.quiet(rootDir.toPath().relativize(project.testResultsDir.toPath()).toString())
+    }
+}
+
+

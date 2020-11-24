@@ -1,9 +1,8 @@
 package org.zfin.marker.service;
 
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.GroupCommand;
@@ -37,6 +36,7 @@ import java.util.stream.Collectors;
 /**
  * Created by kschaper on 12/16/14.
  */
+@Log4j2
 @Service
 public class MarkerGoService {
 
@@ -45,8 +45,6 @@ public class MarkerGoService {
 
     @Autowired
     private RibbonService ribbonService;
-
-    public static Logger log = LogManager.getLogger(MarkerGoService.class);
 
     public List<MarkerGoViewTableRow> getMarkerGoViewTableRows(Marker marker) {
         return getMarkerGoViewTableRows(marker, marker.getGoTermEvidence());

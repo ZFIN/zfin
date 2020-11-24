@@ -19,7 +19,7 @@ public class MarkerSoapClientSmokeTest extends WebServiceGatewaySupport {
 
     public MarkerSoapClientSmokeTest() {
         TestConfiguration.configure();
-        service = new ZfinService().getZfinSoap11();
+//        service = new ZfinService().getZfinSoap11();
     }
 
     @Test

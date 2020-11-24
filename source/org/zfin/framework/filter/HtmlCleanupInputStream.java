@@ -2,6 +2,7 @@ package org.zfin.framework.filter;
 
 import javax.servlet.ServletInputStream;
 import java.io.IOException;
+import javax.servlet.ReadListener;
 
 /**
  * Created by IntelliJ IDEA.
@@ -71,6 +72,17 @@ public class HtmlCleanupInputStream extends ServletInputStream{
                 break;
         }
         return (n);
+    }
+
+    public void setReadListener(ReadListener listener) {
+    }
+
+    public boolean isReady() {
+        return true;
+    }
+
+    public boolean isFinished() {
+        return true;
     }
 
 }

@@ -119,7 +119,6 @@ public class MicroarrayParseTest {
 
     @Test
     public void microarrayBeanTest() throws IOException {
-        System.out.println(System.getProperty("java.io.tmpdir"));
         MicroarrayBean microarrayBean = new MicroarrayBean();
         File file = microarrayBean.getFile();
         microarrayBean.addMessage("asdfa");

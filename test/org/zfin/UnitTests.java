@@ -15,7 +15,6 @@ import org.zfin.database.presentation.TableTest;
 import org.zfin.datatransfer.microarray.MicroarrayParseTest;
 import org.zfin.expression.CurationExperimentTest;
 import org.zfin.expression.ExpressionExperimentTest;
-import org.zfin.feature.service.MutationDetailsConversionServiceSpec;
 import org.zfin.framework.ExecProcessTest;
 import org.zfin.framework.mail.MailTest;
 import org.zfin.framework.presentation.*;
@@ -32,7 +31,6 @@ import org.zfin.gwt.root.util.StageRangeIntersectionTest;
 import org.zfin.gwt.root.util.StageRangeUnionTest;
 import org.zfin.gwt.root.util.WidgetUtilTest;
 import org.zfin.infrastructure.ActiveDataTest;
-import org.zfin.infrastructure.ActiveSourceTest;
 import org.zfin.infrastructure.SerializationTests;
 import org.zfin.infrastructure.TrieMapTest;
 import org.zfin.infrastructure.ant.ReportConfigurationTest;
@@ -52,11 +50,8 @@ import org.zfin.profile.OrganizationUrlTest;
 import org.zfin.profile.ProfileUnitTests;
 import org.zfin.profile.service.BeanCompareServiceTest;
 import org.zfin.properties.ZfinPropertiesTest;
-import org.zfin.publication.MeshHeadingSpec;
 import org.zfin.publication.PubMedValidationReportTest;
 import org.zfin.publication.PublicationTest;
-import org.zfin.search.service.SolrQueryFacadeSpec;
-import org.zfin.search.service.SolrServiceSpec;
 import org.zfin.security.Md5PasswordEncoderTest;
 import org.zfin.sequence.blast.SequenceTest;
 import org.zfin.sequence.blast.presentation.BlastPresentationServiceTest;
@@ -73,7 +68,7 @@ import org.zfin.util.*;
 @BatchTestRunner.BatchTestInclude("**.*Suite")
 @Suite.SuiteClasses({
         ActiveDataTest.class,
-        ActiveSourceTest.class,
+//        ActiveSourceTest.class,
         AnatomyPresentationTest.class,
         AntibodySearchCriteriaTest.class,
         ApgPaginationBeanTest.class,
@@ -107,9 +102,7 @@ import org.zfin.util.*;
         MatchTypeTest.class,
         Md5PasswordEncoderTest.class,
         MergeMarkerUnitTest.class,
-        ///MeshHeadingSpec.class,
         MicroarrayParseTest.class,
-        ///MutationDetailsConversionServiceSpec.class,
         OntologyServiceTest.class,
         OntologyTokenizationTest.class,
         OrganizationUrlTest.class,
@@ -124,22 +117,18 @@ import org.zfin.util.*;
         PubMedValidationReportTest.class,
         RelationshipTypeSortingTest.class,
         ReportConfigurationTest.class,
-        ///ReportGeneratorSpec.class,
         RunCandidatePresentationTest.class,
         RunPresentationTest.class,
         SearchCriterionTest.class,
         SectionVisibilityTest.class,
         SequenceTest.class,
         SerializationTests.class,
-        ///SolrQueryFacadeSpec.class,
-        ///SolrServiceSpec.class,
         SortAnatomyResultsTest.class,
         StagePresentationTest.class,
         StageRangeIntersectionTest.class,
         StageRangeUnionTest.class,
         TableTest.class,
         TermStageSplitStatementTest.class,
-        TermStageUpdateFileParserTest.class,
         TrieMapTest.class,
         UIFieldTransformerTest.class,
         UrlCreatorTest.class,

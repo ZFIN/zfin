@@ -54,7 +54,7 @@ public class Faidx {
                 while (buffer.hasRemaining()) {
                     char x = (char) buffer.get();
 
-                    if (!CharMatcher.ASCII.matches(x)) {
+                    if (!CharMatcher.ascii().matches(x)) {
                         throw new UnindexableFastaFileException();
                     }
 

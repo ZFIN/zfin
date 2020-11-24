@@ -13,9 +13,8 @@ import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyManager;
 
 import java.util.List;
-
-import static org.hibernate.validator.util.Contracts.assertNotNull;
-import static org.springframework.ws.test.support.AssertionErrors.assertTrue;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
 
 
 /**

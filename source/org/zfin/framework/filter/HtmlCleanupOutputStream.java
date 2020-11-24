@@ -2,6 +2,7 @@ package org.zfin.framework.filter;
 
 import javax.servlet.ServletOutputStream;
 import java.io.IOException;
+import javax.servlet.WriteListener;
 
 /**
  * Created by IntelliJ IDEA.
@@ -39,4 +40,13 @@ public class HtmlCleanupOutputStream extends ServletOutputStream{
         write(buf, 0, buf.length);
     }
 
+    @Override
+    public boolean isReady() {
+        return false;
+    }
+
+    @Override
+    public void setWriteListener(WriteListener writeListener) {
+
+    }
 }

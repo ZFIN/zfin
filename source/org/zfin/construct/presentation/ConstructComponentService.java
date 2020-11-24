@@ -1,6 +1,5 @@
 package org.zfin.construct.presentation;
 
-import com.zerog.common.java.lang.StringUtil;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;

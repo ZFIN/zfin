@@ -2,8 +2,8 @@ package org.zfin.mapping;
 
 import org.junit.Test;
 
-import static org.hibernate.validator.util.Contracts.assertNotNull;
-import static org.springframework.test.util.AssertionErrors.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
 
 
 public class EnsemblDataServiceTest {

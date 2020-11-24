@@ -26,7 +26,6 @@ import org.zfin.fish.repository.FishRepositoryTest;
 import org.zfin.fish.repository.FishServiceTest;
 import org.zfin.gbrowse.GBrowseServiceTest;
 import org.zfin.gbrowse.presentation.GBrowseImageSpec;
-import org.zfin.gwt.GwtConversionTest;
 import org.zfin.gwt.curation.CurationRPCTest;
 import org.zfin.gwt.marker.GoEvidenceTest;
 import org.zfin.gwt.root.server.DTOConversionServiceTest;
@@ -108,7 +107,6 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         GeneAddFormBeanValidatorSpec.class,
         GoaGafServiceTest.class,
         GoEvidenceTest.class,
-        GwtConversionTest.class,
         ImageServiceSpec.class,
         InformixUtilTest.class,
         InfrastructureRepositoryTest.class,

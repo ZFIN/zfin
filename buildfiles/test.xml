@@ -149,28 +149,7 @@
         <runTest testClass="${testClass}" outfile="${testClass}" verbose="true"/>
     </target>
 
-    <target name="unittests" depends="compile,build-tests" description="Unit tests.">
-<!--        <runTest testClass="org.zfin.framework.GroovyTest" outfile="groovy-${unitTestFile}" verbose="true"/> -->
-        <junit fork="true"
-               printsummary="yes"
-               haltonfailure="yes"
-               haltonerror="yes"
-               maxmemory="2024m"
-               showoutput="false"
-	       includeantruntime="false">
-
-            <test name="org.zfin.UnitTests" todir="${test.reports.dir}"
-		  haltonerror="false" haltonfailure="false"
-                  failureproperty="test.failure"
-                  outfile="${unitTestFile}">
-                <formatter type="brief"/>
-                <formatter type="xml"/>
-            </test>
-            <classpath refid="unittest.classpath"/>
-            <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
-            <jvmarg line="${junit.jvmargs}"/>
-            <jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
-        </junit>
+    <target name="unittests" depends="unittests-quiet" description="Unit tests.">
         <echo message=":UNIT TESTS SUCCESSFUL:"/>
     </target>
 
@@ -179,8 +158,8 @@
         <echo message=":UNIT TESTS SUCCESSFUL:"/>
     </target>
 
-    <target name="unittests-quiet" depends="compile,build-tests" description="Runs database and unit tests quietly">
-        <runTest testclass="org.zfin.UnitTests" outfile="${unitTestFile}" verbose="false"/>
+    <target name="unittests-quiet" description="Runs database and unit tests quietly">
+        <gradleTest task="UnitTests"/>
     </target>
 
     <target name="ontology-test" depends="compile,build-tests" description="Runs database and unit tests quietly">
@@ -612,5 +591,24 @@ test(s) need to be run before committing changes or pushing files to production 
     <target name="serviceTests" depends="dirtydeploy,build-tests" description="Unit tests for DataExchange module">
         <runDBTest testclass="org.zfin.ThirdPartyServiceTests" outfile="service-result" verbose="true"/>
     </target>
+
+    <target name="unit-tests">
+        <gradleTest task="UnitTests" />
+    </target>
+
+    <target name="db-tests">
+        <gradleTest task="DbUnitTests" />
+    </target>
+
+    <macrodef name="gradleTest">
+        <attribute name="task" />
+        <sequential>
+            <exec executable="gradle" failonerror="true">
+                <arg value="test" />
+                <arg value="--tests" />
+                <arg value="@{task}" />
+            </exec>
+        </sequential>
+    </macrodef>
 
 </project>
