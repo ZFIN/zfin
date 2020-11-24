@@ -197,6 +197,18 @@ public class MarkerRelationshipAPIController {
         return MarkerRelationshipFormBean.convert(markerRepository.getMarkerRelationshipByID(relationshipZdbID));
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/marker/relationships/{relationshipZdbID}", method = RequestMethod.DELETE, produces = "text/plain")
+    public String deleteMarkerRelationship(@PathVariable String relationshipZdbID) {
+        MarkerRelationship relationship = markerRepository.getMarkerRelationshipByID(relationshipZdbID);
+
+        HibernateUtil.createTransaction();
+        markerRepository.deleteMarkerRelationship(relationship);
+        HibernateUtil.flushAndCommitCurrentSession();
+
+        return "OK";
+    }
+
 }
 
 

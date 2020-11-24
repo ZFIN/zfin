@@ -31,7 +31,7 @@ const MarkerEditMarkerRelationships = ({markerAbbreviation, markerId, relationsh
     } = useAddEditDeleteForm({
         addUrl: `/action/api/marker/${markerId}/relationships`,
         editUrl: isEdit ? `/action/api/marker/relationships/${modalRelationship.zdbID}` : '',
-        deleteUrl: isEdit ? `/action/marker/relationship/${modalRelationship.zdbID}` : '',
+        deleteUrl: isEdit ? `/action/api/marker/relationships/${modalRelationship.zdbID}` : '',
         onSuccess: () => setModalRelationship(null),
         items: relationships,
         setItems: setValue,
@@ -42,7 +42,6 @@ const MarkerEditMarkerRelationships = ({markerAbbreviation, markerId, relationsh
             }
             return false;
         },
-        debugForm: true
     });
 
     const formatRelationship = ({ markerRelationshipType, firstMarker, secondMarker, references }, editLink) => {
