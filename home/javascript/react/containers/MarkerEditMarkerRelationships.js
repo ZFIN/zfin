@@ -112,6 +112,10 @@ const MarkerEditMarkerRelationships = ({markerAbbreviation, markerId, relationsh
         relatedMarkerTypeGroup = selectedType.relatedMarkerTypeGroup;
     }
 
+    // because the labels on this form are sort of long
+    const labelClass = 'col-md-3 col-form-label';
+    const inputClass = 'col-md-9';
+
     return (
         <>
             <AddEditList
@@ -130,8 +134,9 @@ const MarkerEditMarkerRelationships = ({markerAbbreviation, markerId, relationsh
             <AddEditDeleteModal {...modalProps} header='Marker Relationship'>
                 {values && <>
                     <FormGroup
-                        inputClassName='col-md-10'
-                        label='Relationship'
+                        inputClassName={inputClass}
+                        labelClassName={labelClass}
+                        label='Relationship Type'
                         id='relationship-type'
                         field='markerRelationshipType.name'
                         tag='select'
@@ -146,7 +151,8 @@ const MarkerEditMarkerRelationships = ({markerAbbreviation, markerId, relationsh
 
                     {!isModalRelationship1to2 &&
                         <FormGroup
-                            inputClassName='col-md-10'
+                            inputClassName={inputClass}
+                            labelClassName={labelClass}
                             label='Related Marker'
                             id='first-marker'
                             field='firstMarker.abbreviation'
@@ -158,7 +164,8 @@ const MarkerEditMarkerRelationships = ({markerAbbreviation, markerId, relationsh
 
                     {isModalRelationship1to2 &&
                         <FormGroup
-                            inputClassName='col-md-10'
+                            inputClassName={inputClass}
+                            labelClassName={labelClass}
                             label='Related Marker'
                             id='second-marker'
                             field='secondMarker.abbreviation'
@@ -169,8 +176,8 @@ const MarkerEditMarkerRelationships = ({markerAbbreviation, markerId, relationsh
                     }
 
                     <div className='form-group row'>
-                        <label className='col-md-2 col-form-label'>Citations</label>
-                        <div className='col-md-10'>
+                        <label className={labelClass}>Citations</label>
+                        <div className={inputClass}>
                             {
                                 values.references.map((reference, idx) => (
                                     <div key={idx} className={`d-flex align-items-baseline ${idx > 0 ? 'mt-2' : ''}`}>
