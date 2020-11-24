@@ -108,9 +108,9 @@
 
         function addRelationship(first, second, type, pubId) {
             var relationship = {
-                "relationship": type,
-                "first": first,
-                "second": second,
+                "markerRelationshipType": { name: type },
+                "firstMarker": first,
+                "secondMarker": second,
                 "references": [{"zdbID": pubId}]
             };
             return $http.post('/action/marker/relationship', relationship)
@@ -119,9 +119,9 @@
 
         function addGeneRelationship(first, second, type, pubId) {
             var relationship = {
-                "relationship": type,
-                "first": first,
-                "second": second,
+                "markerRelationshipType": { name: type },
+                "firstMarker": first,
+                "secondMarker": second,
                 "references": [{"zdbID": pubId}]
             };
             return $http.post('/action/marker/gene-relationship', relationship)

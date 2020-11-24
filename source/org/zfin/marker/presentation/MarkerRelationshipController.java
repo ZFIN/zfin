@@ -1,6 +1,8 @@
 package org.zfin.marker.presentation;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.api.View;
 import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
@@ -62,6 +65,7 @@ public class MarkerRelationshipController {
 
 
 
+    @JsonView(View.MarkerRelationshipAPI.class)
     @ResponseBody
     @RequestMapping(value = "/{markerId}/relationships", method = RequestMethod.GET)
     public Collection<MarkerRelationshipFormBean> getMarkerRelationships(@PathVariable String markerId) {
@@ -137,6 +141,7 @@ public class MarkerRelationshipController {
         return nonDuplicateCloneRelashionships;
     }
 
+    @JsonView(View.MarkerRelationshipAPI.class)
     @ResponseBody
     @RequestMapping(value = "/relationship", method = RequestMethod.POST)
     public MarkerRelationshipFormBean addMarkerRelationship(@Valid @RequestBody MarkerRelationshipFormBean newRelationship,
@@ -156,7 +161,7 @@ public class MarkerRelationshipController {
                 mkrType = MarkerRelationship.Type.TALEN_TARGETS_REGION;
             }
             if (first.getType()==Marker.Type.MRPHLNO){
-                errors.rejectValue("second", "marker.relationship.duplicate");
+                errors.rejectValue("secondMarker", "marker.relationship.duplicate");
                 throw new InvalidWebRequestException("Invalid marker relationship", errors);
             }
         }
@@ -164,7 +169,7 @@ public class MarkerRelationshipController {
 
         Collection<Marker> related = MarkerService.getRelatedMarker(first, mkrType);
         if (CollectionUtils.isNotEmpty(related) && related.contains(second)) {
-            errors.rejectValue("second", "marker.relationship.duplicate");
+            errors.rejectValue("secondMarker", "marker.relationship.duplicate");
             throw new InvalidWebRequestException("Invalid marker relationship", errors);
         }
         /*if ((type==GENE_CONTAINS_SMALL_SEGMENT)){
@@ -191,6 +196,7 @@ public class MarkerRelationshipController {
         return MarkerRelationshipFormBean.convert(relationship);
     }
 
+    @JsonView(View.MarkerRelationshipAPI.class)
     @ResponseBody
     @RequestMapping(value = "/gene-relationship", method = RequestMethod.POST)
     public Collection<MarkerRelationshipPresentation>  addGeneMarkerRelationship(@Valid @RequestBody MarkerRelationshipFormBean newRelationship,
@@ -245,7 +251,7 @@ public class MarkerRelationshipController {
         }*/
 
         HibernateUtil.createTransaction();
-        if (!newRelationship.getMarkerRelationshipType().equals("clone contains gene")) {
+        if (!newRelationship.getMarkerRelationshipType().getName().equals("clone contains gene")) {
             MarkerRelationship relationship = MarkerService.addMarkerRelationship(first, second,  pubZDB, type);
         }
         else{
@@ -274,6 +280,7 @@ public class MarkerRelationshipController {
         return "OK";
     }
 
+    @JsonView(View.MarkerRelationshipAPI.class)
     @ResponseBody
     @RequestMapping(value = "/relationship/{relationshipId}/references", method = RequestMethod.POST)
     public MarkerRelationshipFormBean addMarkerRelationshipReference(@PathVariable String relationshipId,
@@ -312,9 +319,9 @@ public class MarkerRelationshipController {
     }
 
     private Marker getMarkerByIdOrAbbrev(Marker marker) {
-        if (marker.getZdbID() != null) {
+        if (StringUtils.isNotEmpty(marker.getZdbID())) {
             return markerRepository.getMarkerByID(marker.getZdbID());
-        } else if (marker.getName() != null) {
+        } else if (StringUtils.isNotEmpty(marker.getAbbreviation())) {
             return markerRepository.getMarkerByAbbreviation(marker.getAbbreviation());
         }
         return null;

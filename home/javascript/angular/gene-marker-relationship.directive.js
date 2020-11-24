@@ -80,7 +80,7 @@
                 mkrreln.errorMessage = '';
                 mkrreln.processing = true;
                 var first = {zdbID: mkrreln.markerId};
-                var second = {name: mkrreln.newGene};
+                var second = {abbreviation: mkrreln.newGene};
                 //var reln="gene contains small segment"
                 MarkerService.addGeneRelationship(first, second, mkrreln.newRelationship, mkrreln.newAttribution)
                     .then(function (relationship) {

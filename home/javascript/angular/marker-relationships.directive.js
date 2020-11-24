@@ -46,7 +46,7 @@
                 .then(function (relationships) {
 
                     vm.relationships = relationships.filter(function (relationship) {
-                        return relationship.relationship === vm.relationship;
+                        return relationship.markerRelationshipType.name === vm.relationship;
                     });
                 })
                 .catch(function (error) {
@@ -57,7 +57,7 @@
         function add() {
             vm.processing = true;
             var first = {zdbID: vm.markerId};
-            var second = {name: vm.newGene};
+            var second = {abbreviation: vm.newGene};
             MarkerService.addRelationship(first, second, vm.relationship, vm.newReference)
                 .then(function (relationship) {
                     vm.relationships.unshift(relationship);

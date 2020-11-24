@@ -2,7 +2,7 @@
     <div class="form-row align-items-end">
         <div class="form-group col-md-3">
             <label>Gene</label>
-            <p class="text-danger" ng-repeat="error in vm.errors.second">{{error}}</p>
+            <p class="text-danger" ng-repeat="error in vm.errors.secondMarker">{{error}}</p>
             <input class="form-control"
                    url="/action/marker/find-targetGenes?term=%QUERY"
                     ng-model="vm.newGene"
@@ -32,7 +32,7 @@
         <table class="table" ng-show="vm.relationships.length">
             <tr ng-repeat="relationship in vm.relationships">
                 <td>
-                    {{relationship.second.name}} ({{relationship.references.length}})
+                    {{relationship.secondMarker.abbreviation}} ({{relationship.references.length}})
                     <span class="small float-right">
                         <a href ng-click="vm.edit(relationship)">Edit References</a>
                         <span ng-show="vm.relationships.length > 1">
@@ -47,7 +47,7 @@
 
 <div reference-editor
      show="vm.editing != null"
-     entity="vm.editing.second.name"
+     entity="vm.editing.secondMarker.abbreviation"
      references="vm.editing.references"
      on-add="vm.addReference(pubId)"
      on-remove="vm.removeReference(reference, index)"
