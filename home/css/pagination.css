@@ -1,5 +1,4 @@
 div.zf-pagination {
-    padding: -5px;
     width: 100%;
     font-weight: bold;
     white-space: nowrap;
@@ -8,6 +7,10 @@ div.zf-pagination {
 .zf-pagination {
     padding: 3px 3px;
     font-weight: bold;
+}
+
+.zf-pagination table {
+    margin: 0 auto;
 }
 
 .zf-pagination a {
