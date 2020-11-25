@@ -1,9 +1,7 @@
 <jsp:useBean id="submission" scope="request" type="org.zfin.nomenclature.GeneNameSubmission"/>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<z:page>
-    <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
-
+<z:page bootstrap="true">
     <zfin2:nomenclatureSubmit headerText="Submit a Proposed Gene Name">
         <h3>Proposed Nomenclature</h3>
         <dl>

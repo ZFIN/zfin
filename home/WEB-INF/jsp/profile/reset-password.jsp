@@ -1,7 +1,7 @@
 <%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<z:page>
+<z:page bootstrap="true">
     <script>
         $(document).ready(function() {
             $('.password-input').on('input', function() {
@@ -15,8 +15,6 @@
             });
         });
     </script>
-
-    <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
 
     <c:choose>
         <c:when test="${allowReset}">

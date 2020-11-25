@@ -1,12 +1,9 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<z:page>
-  <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
+<jsp:useBean id="formBean" class="org.zfin.infrastructure.presentation.ControlledVocabularyAddBean" scope="request"/>
 
-
-  <jsp:useBean id="formBean" class="org.zfin.infrastructure.presentation.ControlledVocabularyAddBean" scope="request"/>
-
+<z:page bootstrap="true">
   <authz:authorize access="hasRole('root')">
     <c:if test="${empty controlledVocab}">
     <div class="container-fluid">

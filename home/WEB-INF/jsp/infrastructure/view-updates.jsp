@@ -1,9 +1,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<z:page>
-    <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
-
+<z:page bootstrap="true">
     <div class="container-fluid">
         <h3 class="page-header">Updates for ${zdbID}</h3>
         <c:if test="${empty updates}">

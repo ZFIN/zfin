@@ -1,12 +1,10 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<z:page>
-    <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
+<jsp:useBean id="formBean" class="org.zfin.marker.presentation.SequenceTargetingReagentAddBean" scope="request"/>
 
+<z:page bootstrap="true">
     <script src="${zfn:getAssetPath("angular.js")}"></script>
-
-    <jsp:useBean id="formBean" class="org.zfin.marker.presentation.SequenceTargetingReagentAddBean" scope="request"/>
 
     <div class="container-fluid">
         <h2 class="page-header">New Sequence Targeting Reagent</h2>

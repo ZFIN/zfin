@@ -2,9 +2,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page session="false" %>
 
-<z:page title="ZFIN Login">
-    <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
-
+<z:page title="ZFIN Login" bootstrap="true">
     <div class="login-container">
         <h1>Sign in to ZFIN</h1>
 

@@ -1,11 +1,8 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 
-<z:page>
-    <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
-
+<z:page bootstrap="true">
     <script src="${zfn:getAssetPath("angular.js")}"></script>
-    <script src="${zfn:getAssetPath("bootstrap.js")}"></script>
     <script src="${zfn:getAssetPath("curation.js")}"></script>
 
     <c:if test="${hasCorrespondence}">

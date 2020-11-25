@@ -2,10 +2,7 @@
 
 <%@ attribute name="title" rtexprvalue="true" required="false" type="java.lang.String" %>
 
-<z:page title="${title}">
-    <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
-    <script src="${zfn:getAssetPath("bootstrap.js")}"></script>
-
+<z:page title="${title}" bootstrap="true">
     <style type="text/css">
         a.devtools:hover {
             color:white;

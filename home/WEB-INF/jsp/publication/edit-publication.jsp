@@ -1,9 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<z:page>
-    <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
-
-    <script src="${zfn:getAssetPath("bootstrap.js")}"></script>
+<z:page bootstrap="true">
     <script src="${zfn:getAssetPath("angular.js")}"></script>
 
     <c:set var="pubID">${publicationBean.publication.zdbID}</c:set>

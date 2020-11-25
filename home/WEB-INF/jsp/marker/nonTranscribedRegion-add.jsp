@@ -1,13 +1,9 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<z:page>
-    <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
+<jsp:useBean id="formBean" class="org.zfin.marker.presentation.RegionAddFormBean" scope="request"/>
 
-
-    <jsp:useBean id="formBean" class="org.zfin.marker.presentation.RegionAddFormBean" scope="request"/>
-
-
+<z:page bootstrap="true">
     <div class="container-fluid">
         <h2 class="page-header">New NTR</h2>
         <form:form id="nonTranscribedRegion-add" cssClass="form-horizontal" commandName="formBean" action="nonTranscribedRegion-add">

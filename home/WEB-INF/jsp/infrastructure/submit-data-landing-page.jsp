@@ -1,8 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<z:page>
-    <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
-
+<z:page bootstrap="true">
     <div class="container-fluid">
         <h1>Submitting Data to ZFIN</h1>
 

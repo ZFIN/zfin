@@ -1,9 +1,7 @@
 <%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
-
-<z:page>
+<z:page bootstrap="true">
     <div class="container-fluid">
         <p class="lead">
             <a href="/${publication.zdbID}">${publication.title}</a>

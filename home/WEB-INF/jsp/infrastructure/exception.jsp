@@ -1,9 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<z:page>
-    <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
-    <script src="${zfn:getAssetPath("bootstrap.js")}"></script>
-
+<z:page bootstrap="true">
     <div class='container-fluid'>
         <div class="alert alert-danger" role="alert">
             An error occurred! ${error}

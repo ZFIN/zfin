@@ -6,6 +6,7 @@
 
 <%@ attribute name="title" rtexprvalue="true" required="false" type="java.lang.String" %>
 <%@ attribute name="bodyClass" rtexprvalue="true" required="false" type="java.lang.String" %>
+<%@ attribute name="bootstrap" required="false" type="java.lang.Boolean" %>
 
 <c:if test="${empty title}">
     <c:set var="title">
@@ -31,6 +32,11 @@
         <script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
         <script src="${zfn:getAssetPath("vendor-common.js")}"></script>
         <script src="${zfn:getAssetPath("zfin-common.js")}"></script>
+
+        <c:if test="${bootstrap}">
+            <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
+            <script src="${zfn:getAssetPath("bootstrap.js")}"></script>
+        </c:if>
 
         <script>
             <c:choose>

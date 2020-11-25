@@ -1,9 +1,6 @@
-
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<z:page>
-    <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
-
+<z:page bootstrap="true">
     <div class="login-container">
         <c:choose>
             <c:when test="${!empty errorMessage}">

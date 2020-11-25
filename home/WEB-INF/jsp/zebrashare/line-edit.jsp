@@ -2,9 +2,7 @@
 
 <jsp:useBean id="formBean" class="org.zfin.zebrashare.presentation.LineEditBean" scope="request"/>
 
-<z:page>
-    <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
-
+<z:page bootstrap="true">
     <div class="container-fluid">
         <c:if test="${!empty publication}">
             <span class="float-right">

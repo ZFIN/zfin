@@ -1,11 +1,9 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<z:page>
-  <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
+<jsp:useBean id="formBean" class="org.zfin.marker.presentation.GeneAddFormBean" scope="request"/>
 
-  <jsp:useBean id="formBean" class="org.zfin.marker.presentation.GeneAddFormBean" scope="request"/>
-
+<z:page bootstrap="true">
   <div class="container-fluid">
     <h2 class="page-header">New Gene</h2>
     <form:form id="gene-add" cssClass="form-horizontal" commandName="formBean" action="gene-add">

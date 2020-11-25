@@ -17,12 +17,9 @@
 <c:set var="communityCategoryName" value="${Category.COMMUNITY.name}"/>
 <c:set var="figureCategoryName" value="${Category.FIGURE.name}"/>
 
-<z:page>
-    <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
-
+<z:page bootstrap="true">
     <script src="${zfn:getAssetPath("angular.js")}"></script>
     <script src="${zfn:getAssetPath("search.js")}"></script>
-    <script src="${zfn:getAssetPath("bootstrap.js")}"></script>
 
     <div class="container-fluid">
         <div class="row">

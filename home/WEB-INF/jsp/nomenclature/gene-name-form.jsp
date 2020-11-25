@@ -1,11 +1,9 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 
-<z:page>
-    <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
+<c:set var="NOMEN_COORDINATOR" value="${ZfinPropertiesEnum.NOMEN_COORDINATOR.value()}" />
 
-    <c:set var="NOMEN_COORDINATOR" value="${ZfinPropertiesEnum.NOMEN_COORDINATOR.value()}" />
-
+<z:page bootstrap="true">
     <zfin2:nomenclatureForm headerText="Submit a Proposed Gene Name">
         <jsp:attribute name="resourcesList">
             <li>

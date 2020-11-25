@@ -1,9 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<z:page bodyClass="home">
-    <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
-    <script src="${zfn:getAssetPath("bootstrap.js")}"></script>
-
+<z:page bodyClass="home" bootstrap="true">
     <%@ include file="home-search.jsp" %>
 
     <div class="container">

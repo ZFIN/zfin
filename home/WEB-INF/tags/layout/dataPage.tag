@@ -5,10 +5,7 @@
 
 <jsp:invoke fragment="entityName" var="entityNameValue" />
 
-<z:page bodyClass="data-page">
-    <link rel="stylesheet" href="${zfn:getAssetPath("bootstrap.css")}">
-    <script src="${zfn:getAssetPath("bootstrap.js")}"></script>
-
+<z:page bodyClass="data-page" bootstrap="true">
     <div class="d-flex h-100">
         <div class="data-page-nav-container">
             <ul class="nav nav-pills flex-column">
