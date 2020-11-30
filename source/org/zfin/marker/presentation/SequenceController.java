@@ -67,5 +67,10 @@ public class SequenceController {
         return response;
     }
 
+    @JsonView(View.OrthologyAPI.class)
+    @RequestMapping(value = "/marker/{markerZdbID}/orthologs", method = RequestMethod.POST)
+    public OrthologDTO addOrtholog(@PathVariable String markerZdbID, @RequestBody OrthologDTO newOrtholog) {
+        return orthologyController.createOrthologFromNcbi(markerZdbID, newOrtholog.getNcbiOtherSpeciesGeneDTO().getID());
+    }
 
 }
