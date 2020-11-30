@@ -1,14 +1,20 @@
 package org.zfin.orthology.presentation;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import org.zfin.framework.api.View;
 import org.zfin.gwt.root.dto.PublicationDTO;
 import org.zfin.gwt.root.dto.TermDTO;
 
 public class OrthologEvidenceDTO {
 
+    @JsonView(View.OrthologyAPI.class)
     private String evidenceCode;
+    @JsonView(View.OrthologyAPI.class)
     private String evidenceName;
+    @JsonView(View.OrthologyAPI.class)
     private TermDTO evidenceTerm;
     private OrthologDTO ortholog;
+    @JsonView(View.OrthologyAPI.class)
     private PublicationDTO publication;
 
     public TermDTO getEvidenceTerm() {

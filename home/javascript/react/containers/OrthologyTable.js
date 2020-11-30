@@ -8,12 +8,12 @@ const OrthologyTable = ({geneId}) => {
         {
             label: 'Species',
             content: row => row.orthologousGene.organism,
-            width: '100px',
+            width: '70px',
         },
         {
             label: 'Symbol',
             content: row => row.symbol,
-            width: '100px',
+            width: '70px',
         },
         {
             label: 'Chromosome',
@@ -29,7 +29,7 @@ const OrthologyTable = ({geneId}) => {
                     </div>
                 ))
             ),
-            width: '150px',
+            width: '215px',
         },
         {
             label: 'Evidence',
@@ -60,7 +60,7 @@ const OrthologyTable = ({geneId}) => {
         <DataTable
             columns={columns}
             downloadOptions={downloadOptions}
-            dataUrl={`/action/api/gene/${geneId}/orthologs`}
+            dataUrl={`/action/api/marker/${geneId}/orthologs`}
             pagination={false}
             rowKey={row => row.zdbID}
         />

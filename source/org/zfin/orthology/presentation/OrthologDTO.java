@@ -5,11 +5,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import org.zfin.framework.api.View;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.dto.NcbiOtherSpeciesGeneDTO;
-import org.zfin.orthology.presentation.OrthologEvidenceDTO;
-import org.zfin.orthology.presentation.OrthologEvidenceGroupedByCode;
-import org.zfin.orthology.presentation.OrthologExternalReferenceDTO;
 
-import java.util.List;
 import java.util.Set;
 
 public class OrthologDTO {
@@ -20,6 +16,7 @@ public class OrthologDTO {
     @JsonView(View.OrthologyAPI.class)
     @JsonProperty("orthologousGene")
     private NcbiOtherSpeciesGeneDTO ncbiOtherSpeciesGeneDTO;
+    @JsonView(View.OrthologyAPI.class)
     private Set<OrthologEvidenceDTO> evidenceSet;
     @JsonView(View.OrthologyAPI.class)
     @JsonProperty("evidence")

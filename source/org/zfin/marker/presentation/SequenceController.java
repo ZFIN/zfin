@@ -54,7 +54,7 @@ public class SequenceController {
 
 
     @JsonView(View.OrthologyAPI.class)
-    @RequestMapping(value = "/gene/{geneID}/orthologs", method = RequestMethod.GET)
+    @RequestMapping(value = "/marker/{geneID}/orthologs", method = RequestMethod.GET)
     public JsonResultResponse<OrthologDTO> listOrthologsApi(@PathVariable String geneID) throws InvalidWebRequestException {
         JsonResultResponse<OrthologDTO> response = new JsonResultResponse<>();
         List<OrthologDTO> list = orthologyController.listOrthologs(geneID);
@@ -62,6 +62,7 @@ public class SequenceController {
             response.setResults(list);
             response.setTotal(list.size());
         }
+        response.addSupplementalData("evidenceCodes", orthologyController.listOrthologyEvidenceCodes());
         response.setHttpServletRequest(request);
         return response;
     }

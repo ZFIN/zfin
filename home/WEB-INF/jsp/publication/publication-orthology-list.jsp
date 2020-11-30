@@ -4,7 +4,7 @@
 <z:page bodyClass="data-page" bootstrap="true">
     <div class="data-page-content-container">
         <h1 class="mb-3">
-            Orthology established by <zfin:link entity="${publication}"/></span> (${formBean.totalRecords} genes)
+            Orthology established by <zfin:link entity="${publication}"/> (${formBean.totalRecords} genes)
         </h1>
 
         <z:section>

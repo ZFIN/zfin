@@ -3,25 +3,21 @@
 <c:set var="NOMENCLATURE" value="Nomenclature" />
 <c:set var="RESOURCES" value="Genome Resources" />
 <c:set var="NOTES" value="Notes" />
-
 <c:set var="MARKER_RELATIONSHIPS" value="Marker Relationships" />
 <c:set var="SEQUENCES" value="Sequences" />
+<c:set var="ORTHOLOGY" value="Orthology" />
 
-<script type="text/javascript" language="javascript"
-        src="/gwt/org.zfin.gwt.marker.Marker/org.zfin.gwt.marker.Marker.nocache.js"></script>
+<z:dataPage sections="${[NOMENCLATURE, RESOURCES, NOTES, MARKER_RELATIONSHIPS, SEQUENCES, ORTHOLOGY]}">
 
+    <script type="text/javascript" language="javascript"
+            src="/gwt/org.zfin.gwt.marker.Marker/org.zfin.gwt.marker.Marker.nocache.js"></script>
 
+    <script type="text/javascript">
+        var MarkerProperties= {
+            zdbID: "${formBean.marker.zdbID}"
+        };
+    </script>
 
-<script type="text/javascript">
-    var MarkerProperties= {
-        zdbID: "${formBean.marker.zdbID}"
-    };
-
-
-</script>
-
-
-<z:dataPage sections="${[NOMENCLATURE, RESOURCES, NOTES, MARKER_RELATIONSHIPS, SEQUENCES]}">
     <z:dataManagerDropdown>
         <a class="dropdown-item" href="/${gene.zdbID}">View</a>
         <a class="dropdown-item active" href="/action/marker/gene/edit/${gene.zdbID}">Edit</a>
@@ -48,7 +44,6 @@
         </div>
     </z:section>
 
-
     <z:section title="${MARKER_RELATIONSHIPS}">
         <div class="__react-root"
              id="MarkerEditMarkerRelationships"
@@ -60,15 +55,22 @@
 
     <z:section title="${SEQUENCES}">
         <div class="__react-root" id="MarkerEditSequences" data-marker-id="${gene.zdbID}"></div>
+
         <c:if test="${!fn:contains(gene.zdbID,'MIRNAG')}">
-         <div class="__react-root" id="MarkerAddProteinSequences" data-marker-id="${gene.zdbID}"></div>
+            <div class="__react-root" id="MarkerAddProteinSequences" data-marker-id="${gene.zdbID}"></div>
         </c:if>
+
         <div class="__react-root" id="MarkerAddNucleotideSequences" data-marker-id="${gene.zdbID}"></div>
+
         <div id="newProteinSequence"></div>
 
         <div id="newStemLoopSequence"></div>
-
     </z:section>
 
-
+    <z:section title="${ORTHOLOGY}">
+        <div class="__react-root"
+             id="MarkerEditOrthology"
+             data-marker-id="${gene.zdbID}">
+        </div>
+    </z:section>
 </z:dataPage>
