@@ -28,6 +28,7 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.util.TermFigureStageRange;
+import org.junit.Ignore;
 
 import java.util.ArrayList;
 import java.util.List;
