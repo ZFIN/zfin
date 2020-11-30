@@ -2,16 +2,20 @@ package org.zfin.marker.presentation;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.extern.log4j.Log4j2;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.FieldFilter;
 import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.api.View;
 import org.zfin.framework.presentation.InvalidWebRequestException;
+import org.zfin.orthology.Ortholog;
 import org.zfin.orthology.presentation.OrthologDTO;
 import org.zfin.orthology.presentation.OrthologyController;
+import org.zfin.orthology.repository.OrthologyRepository;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.sequence.service.SequenceService;
 import org.zfin.wiki.presentation.Version;
@@ -33,6 +37,9 @@ public class SequenceController {
 
     @Autowired
     private OrthologyController orthologyController;
+
+    @Autowired
+    private OrthologyRepository orthologyRepository;
 
     @Autowired
     private HttpServletRequest request;
@@ -73,4 +80,24 @@ public class SequenceController {
         return orthologyController.createOrthologFromNcbi(markerZdbID, newOrtholog.getNcbiOtherSpeciesGeneDTO().getID());
     }
 
+    @RequestMapping(value = "/marker/orthologs/{orthoZdbID}", method = RequestMethod.DELETE, produces = "text/plain")
+    public String deleteOrtholog(@PathVariable String orthoZdbID) {
+        Ortholog ortholog = orthologyRepository.getOrtholog(orthoZdbID);
+        if (ortholog == null) {
+            throw new InvalidWebRequestException("No Ortholog with ID " + orthoZdbID + " found", null);
+        }
+
+        Transaction tx = null;
+        try {
+            tx = HibernateUtil.createTransaction();
+            orthologyRepository.deleteOrtholog(ortholog);
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            throw new InvalidWebRequestException("Error while deleting Ortholog: " + orthoZdbID + ": " + e.getMessage(), null);
+        }
+        return "OK";
+    }
 }

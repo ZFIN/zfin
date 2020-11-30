@@ -3,6 +3,7 @@ package org.zfin.orthology.repository;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.transform.BasicTransformerAdapter;
+import org.springframework.stereotype.Repository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.Updates;
 import org.zfin.marker.Marker;
@@ -20,6 +21,7 @@ import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 /**
  * This class creates the calls to Hibernate to retrieve the Orthology information.
  */
+@Repository
 public class HibernateOrthologyRepository implements OrthologyRepository {
 
     public static final String AND = " AND ";

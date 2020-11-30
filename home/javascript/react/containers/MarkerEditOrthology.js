@@ -6,10 +6,16 @@ import Table from '../components/data-table/Table';
 import EditOrthologyEvidenceCell from '../components/marker-edit/EditOrthologyEvidenceCell';
 import http from '../utils/http';
 import produce from 'immer';
+import Modal from '../components/Modal';
+import LoadingButton from '../components/LoadingButton';
 
-const MarkerEditOrthology = ({markerId}) => {
+const MarkerEditOrthology = ({ markerId }) => {
     const [ncbiGeneId, setNcbiGeneId] = useState('');
     const [ncbiGeneError, setNcbiGeneError] = useState('');
+    const [deleteOrtholog, setDeleteOrtholog] = useState(null);
+    const [deleting, setDeleting] = useState(false);
+    const [genericError, setGenericError] = useState('');
+
     const {
         value,
         setValue,
@@ -19,27 +25,27 @@ const MarkerEditOrthology = ({markerId}) => {
     const columns = [
         {
             label: '',
-            content: () => <a href='#'>Delete</a>,
+            content: (ortholog) => <a href='#' onClick={handleDeleteLinkClick(ortholog)}>Delete</a>,
             width: '65px',
         },
         {
             label: 'Species',
-            content: ({orthologousGene}) => orthologousGene.organism,
+            content: ({ orthologousGene }) => orthologousGene.organism,
             width: '75px',
         },
         {
             label: 'Symbol',
-            content: ({orthologousGene}) => orthologousGene.abbreviation,
+            content: ({ orthologousGene }) => orthologousGene.abbreviation,
             width: '75px',
         },
         {
             label: 'Chromosome',
-            content: ({chromosome}) => chromosome,
+            content: ({ chromosome }) => chromosome,
             width: '100px',
         },
         {
             label: 'Accession #',
-            content: ({orthologousGeneReference}) => (
+            content: ({ orthologousGeneReference }) => (
                 <ul className='list-unstyled'>
                     {orthologousGeneReference.map(({ accession }) => (
                         <li key={accession.url}><a href={accession.url}>{accession.name}</a></li>
@@ -50,10 +56,37 @@ const MarkerEditOrthology = ({markerId}) => {
         },
         {
             label: 'Evidence',
-            content: ({evidenceSet}) => <EditOrthologyEvidenceCell evidenceSet={evidenceSet} />,
+            content: ({ evidenceSet }) => <EditOrthologyEvidenceCell evidenceSet={evidenceSet} />,
             width: '200px',
         }
     ];
+
+    const handleDeleteLinkClick = (ortholog) => {
+        return (event) => {
+            event.preventDefault();
+            setGenericError('');
+            setDeleteOrtholog(ortholog);
+        }
+    };
+
+    const handleDeleteModalClose = () => {
+        setDeleteOrtholog(null);
+    }
+
+    const handleDeleteOrtholog = async () => {
+        setDeleting(true);
+        try {
+            await http.delete(`/action/api/marker/orthologs/${deleteOrtholog.zdbID}`)
+            setValue(produce(value, prevValue => {
+                prevValue.results = prevValue.results.filter(o => o.zdbID !== deleteOrtholog.zdbID)
+            }));
+        } catch (error) {
+            console.error(error);
+            setGenericError(error.responseJSON.message);
+        }
+        setDeleting(false);
+        setDeleteOrtholog(null);
+    }
 
     const handleNcbiGeneIdChange = (event) => {
         setNcbiGeneError('');
@@ -67,7 +100,7 @@ const MarkerEditOrthology = ({markerId}) => {
             return;
         }
         try {
-            const newOrtholog = await http.post(`/action/api/marker/${markerId}/orthologs`, { orthologousGene: { ID: ncbiGeneId }});
+            const newOrtholog = await http.post(`/action/api/marker/${markerId}/orthologs`, { orthologousGene: { ID: ncbiGeneId } });
             setValue(produce(value, prevValue => {
                 prevValue.results.push(newOrtholog);
             }));
@@ -112,6 +145,27 @@ const MarkerEditOrthology = ({markerId}) => {
                 <Table data={value.results} columns={columns} rowKey='zdbID' />
                 <div className='data-pagination-container' />
             </div>
+
+            {genericError && <div className='error'>{genericError}</div> }
+
+            <Modal open={deleteOrtholog !== null}>
+                {deleteOrtholog && <>
+                    <h4 className='mb-3'>
+                        Delete {deleteOrtholog.orthologousGene.organism} {deleteOrtholog.orthologousGene.abbreviation} ortholog?
+                    </h4>
+                    <div className='horizontal-buttons'>
+                        <button className='btn btn-outline-secondary' onClick={handleDeleteModalClose} type='button'>Cancel</button>
+                        <LoadingButton
+                            className='btn btn-danger'
+                            type='button'
+                            loading={deleting}
+                            onClick={handleDeleteOrtholog}
+                        >
+                            Delete
+                        </LoadingButton>
+                    </div>
+                </>}
+            </Modal>
         </>
     );
 };
