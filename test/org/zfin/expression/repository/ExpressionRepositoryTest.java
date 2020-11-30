@@ -484,6 +484,7 @@ public class ExpressionRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    @Ignore
     public void getExpressionSingleFigure() {
         Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-040112-1");
         assertNotNull(m);
