@@ -42,6 +42,7 @@ public class FeatureServiceTest extends AbstractDatabaseTest {
         assertThat("Feature has genbank dblinks", genbankFeatureDbLinks, is(notNullValue()));
     }
     @Test
+    @Ignore
     public void zircLinksTest() {
         Feature feature = featureRepository.getFeatureByID("ZDB-ALT-020426-42");
 
