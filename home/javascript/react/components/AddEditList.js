@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import NoData from './NoData';
 
-const AddEditList = ({items, setModalItem, itemKeyProp = 'zdbID', newItem, formatItem}) => {
+const AddEditList = ({items, setModalItem, itemKeyProp = 'zdbID', newItem, formatItem,title}) => {
     const handleEditClick = (e, item) => {
         e.preventDefault();
         setModalItem(item);
@@ -31,7 +31,7 @@ const AddEditList = ({items, setModalItem, itemKeyProp = 'zdbID', newItem, forma
                 })}
             </ul>
 
-            <button type='button' className='btn btn-link px-0' onClick={handleAddClick}>Add</button>
+            <button type='button' className='btn btn-link px-0' onClick={handleAddClick}>Add {title}</button>
         </>
     );
 };
@@ -42,6 +42,7 @@ AddEditList.propTypes = {
     newItem: PropTypes.object,
     setModalItem: PropTypes.func,
     formatItem: PropTypes.func,
+    title:PropTypes.string,
 };
 
 export default AddEditList;
