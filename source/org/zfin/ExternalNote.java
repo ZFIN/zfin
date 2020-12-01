@@ -1,6 +1,9 @@
 package org.zfin;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.hibernate.annotations.GenericGenerator;
+import org.zfin.framework.api.View;
 import org.zfin.infrastructure.PersonAttribution;
 import org.zfin.publication.Publication;
 
@@ -20,6 +23,7 @@ import java.util.Set;
 @Table(name = "external_note")
 public class ExternalNote implements Comparable<ExternalNote> {
 
+    @JsonView(View.API.class)
     @Column(name = "extnote_note")
     protected String note;
     @Column(name = "extnote_tag")
@@ -39,10 +43,13 @@ public class ExternalNote implements Comparable<ExternalNote> {
                     @org.hibernate.annotations.Parameter(name = "type", value = "EXTNOTE"),
                     @org.hibernate.annotations.Parameter(name = "insertActiveData", value = "true")
             })
+    @JsonView(View.API.class)
     @Column(name = "extnote_zdb_id")
     private String zdbID;
     @Column(name = "extnote_note_type", insertable = false, updatable = false)
     private String type;
+    @JsonView(View.API.class)
+    @JsonProperty("dataZdbID")
     @Column(name = "extnote_data_zdb_id", insertable = false, updatable = false)
     private String externalDataZdbID;
 

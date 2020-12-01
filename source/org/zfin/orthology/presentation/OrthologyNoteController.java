@@ -1,48 +1,43 @@
 package org.zfin.orthology.presentation;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import com.fasterxml.jackson.annotation.JsonView;
+import lombok.extern.log4j.Log4j2;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.springframework.stereotype.Controller;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.api.View;
 import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.marker.Marker;
 import org.zfin.marker.OrthologyNote;
-import org.zfin.marker.presentation.OrthologyNoteDTO;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.repository.RepositoryFactory;
 
 /**
  * Add or update a note for orthology on a given marker.
  */
-@Controller
+@RestController
+@RequestMapping("/api")
+@Log4j2
 public class OrthologyNoteController {
 
-    private MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
-    private static Logger LOG = LogManager.getLogger(OrthologyNoteController.class);
+    @Autowired
+    private MarkerRepository markerRepository;
 
-    @ResponseBody
-    @RequestMapping(value = "/gene/{geneID}/orthology-note", method = RequestMethod.GET)
-    public OrthologyNoteDTO getOrthologyNote(@PathVariable String geneID) {
-        Marker gene = markerRepository.getMarkerByID(geneID);
+    @JsonView(View.OrthologyAPI.class)
+    @RequestMapping(value = "/marker/{markerZdbID}/orthology-note", method = RequestMethod.GET)
+    public OrthologyNote getOrthologyNote(@PathVariable String markerZdbID) {
+        Marker gene = markerRepository.getMarkerByID(markerZdbID);
         if (gene == null) {
-            throw new InvalidWebRequestException("No zebrafish gene with ID " + geneID + " found", null);
+            throw new InvalidWebRequestException("No zebrafish gene with ID " + markerZdbID + " found", null);
         }
-        OrthologyNote note = gene.getOrthologyNote();
-        OrthologyNoteDTO dto = new OrthologyNoteDTO();
-        if (note != null) {
-            dto.setZdbID(note.getZdbID());
-            dto.setGeneID(note.getExternalDataZdbID());
-            dto.setNote(note.getNote());
-        }
-        return dto;
+        return gene.getOrthologyNote();
     }
 
-    @ResponseBody
-    @RequestMapping(value = "/gene/{geneID}/orthology-note", method = RequestMethod.POST)
-    public OrthologyNoteDTO setOrthologyNote(@PathVariable String geneID,
-                                             @RequestBody OrthologyNoteDTO dto) {
+    @JsonView(View.OrthologyAPI.class)
+    @RequestMapping(value = "/marker/{geneID}/orthology-note", method = RequestMethod.POST)
+    public OrthologyNote setOrthologyNote(@PathVariable String geneID,
+                                          @RequestBody OrthologyNote dto) {
         Marker gene = markerRepository.getMarkerByID(geneID);
         Session session = HibernateUtil.currentSession();
         Transaction tx = session.beginTransaction();
@@ -54,12 +49,7 @@ public class OrthologyNoteController {
             tx.rollback();
             throw new InvalidWebRequestException("Couldn't save note", null);
         }
-        if (note != null) {
-            dto.setZdbID(note.getZdbID());
-            dto.setGeneID(note.getMarker().getZdbID());
-            dto.setNote(note.getNote());
-        }
-        return dto;
+        return note;
     }
 
 }

@@ -239,7 +239,7 @@
                     vm.orthologsLoading = false;
                 });
 
-            $http.get('/action/gene/' + vm.gene + '/orthology-note')
+            $http.get('/action/api/marker/' + vm.gene + '/orthology-note')
                 .then(function (resp) {
                     vm.note = resp.data;
                 })
@@ -383,7 +383,7 @@
         }
 
         function saveNoteEdit() {
-            return $http.post('/action/gene/' + vm.gene + '/orthology-note', {note: vm.note.note})
+            return $http.post('/action/api/marker/' + vm.gene + '/orthology-note', {note: vm.note.note})
                 .then(function (resp) {
                     vm.note = resp.data;
                 })

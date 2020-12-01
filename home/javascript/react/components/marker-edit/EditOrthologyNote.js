@@ -5,9 +5,16 @@ import http from '../../utils/http';
 import equal from 'fast-deep-equal';
 import InputField from '../form/InputField';
 import LoadingButton from '../LoadingButton';
+import useFetch from '../../hooks/useFetch';
+import LoadingSpinner from '../LoadingSpinner';
 
-const MarkerPublicNoteForm = ({markerId, note, onSave}) => {
-    const defaultValues = note || { noteData: '' };
+const EditOrthologyNote = ({markerId}) => {
+    const {
+        value: note,
+        pending,
+        setValue: setNote,
+    } = useFetch(`/action/api/marker/${markerId}/orthology-note`);
+
     const {
         Form,
         meta: { isSubmitting, isValid, isSubmitted, serverError},
@@ -15,15 +22,15 @@ const MarkerPublicNoteForm = ({markerId, note, onSave}) => {
         reset,
         values
     } = useForm({
-        defaultValues,
+        defaultValues: note,
         onSubmit: async (values) => {
             try {
-                const updated = await http.post(`/action/marker/${markerId}/public-note`, values);
+                const updated = await http.post(`/action/api/marker/${markerId}/orthology-note`, values);
                 setMeta({
                     isTouched: false,
                     serverError: null,
                 });
-                onSave(updated);
+                setNote(updated);
             } catch (error) {
                 setMeta({ serverError: error });
                 throw error;
@@ -33,13 +40,21 @@ const MarkerPublicNoteForm = ({markerId, note, onSave}) => {
 
     const isPristine = useMemo(() => equal(values, note), [values, note]);
 
+    if (pending) {
+        return <LoadingSpinner />
+    }
+
+    if (!note) {
+        return null;
+    }
+
     return (
         <Form>
             <div className='form-group'>
                 <InputField
                     tag='textarea'
                     rows='5'
-                    field='noteData'
+                    field='note'
                     id='publicNote'
                 />
             </div>
@@ -73,12 +88,8 @@ const MarkerPublicNoteForm = ({markerId, note, onSave}) => {
     );
 };
 
-MarkerPublicNoteForm.propTypes = {
+EditOrthologyNote.propTypes = {
     markerId: PropTypes.string,
-    note: PropTypes.shape({
-        noteData: PropTypes.string,
-    }),
-    onSave: PropTypes.func,
 };
 
-export default MarkerPublicNoteForm;
+export default EditOrthologyNote;

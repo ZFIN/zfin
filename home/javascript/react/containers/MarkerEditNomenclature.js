@@ -27,12 +27,15 @@ const MarkerEditNomenclature = ({ markerId }) => {
 
     return (
         <>
-            <MarkerNameForm
-                markerId={markerId}
-                nomenclature={nomenclature}
-                setNomenclature={setNomenclature}
-                onSave={refetchAliases}
-            />
+            <Section>
+                <MarkerNameForm
+                    markerId={markerId}
+                    nomenclature={nomenclature}
+                    setNomenclature={setNomenclature}
+                    onSave={refetchAliases}
+                />
+            </Section>
+
             <Section title='Previous Names'>
                 <MarkerAliases
                     markerId={markerId}
