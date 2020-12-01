@@ -277,7 +277,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
     }
 
 
-    protected List<Sequence> getSequencesForMarker(Marker marker, DisplayGroup.GroupName... groupNames) throws BlastDatabaseException {
+    public List<Sequence> getSequencesForMarker(Marker marker, DisplayGroup.GroupName... groupNames) throws BlastDatabaseException {
         List<ReferenceDatabase> referenceDatabases = RepositoryFactory.getDisplayGroupRepository().getReferenceDatabasesForDisplayGroup(groupNames);
         return getSequencesForMarker(marker, referenceDatabases.toArray(new ReferenceDatabase[referenceDatabases.size()]));
     }
