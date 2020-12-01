@@ -10,7 +10,15 @@ import CheckboxList from '../CheckboxList';
 import http from '../../utils/http';
 import LoadingButton from '../LoadingButton';
 
-const ORTHO_CURATION_PUB = 'ZDB-PUB-030905-1';
+const ORTHO_CURATION_PUB_ID = 'ZDB-PUB-030905-1';
+const ORTHO_CURATION_PUB_NAME = 'Ortho Curation Pub';
+
+const DEFAULT_PUBS = [
+    {
+        id: ORTHO_CURATION_PUB_ID,
+        name: ORTHO_CURATION_PUB_NAME,
+    },
+];
 
 function zdbIdToDate(id) {
     const parts = id.split('-');
@@ -26,10 +34,10 @@ function zdbIdToDate(id) {
 function comparePubs (a, b) {
     const aPubId = a[0];
     const bPubId = b[0];
-    if (aPubId === ORTHO_CURATION_PUB) {
+    if (aPubId === ORTHO_CURATION_PUB_ID) {
         return -1;
     }
-    if (bPubId === ORTHO_CURATION_PUB) {
+    if (bPubId === ORTHO_CURATION_PUB_ID) {
         return 1;
     }
 
@@ -92,7 +100,7 @@ const EditOrthologyEvidenceCell = ({evidenceCodes, evidenceSet, orthoZdbId, onSa
         return (
             <>
                 <a href={'/' + pubId}>
-                    {pubId === ORTHO_CURATION_PUB ? 'Ortho Curation Pub' : pubId}
+                    {pubId === ORTHO_CURATION_PUB_ID ? ORTHO_CURATION_PUB_NAME : pubId}
                 </a>: {codes.sort().join(', ')} {editLink}
             </>
         )
@@ -124,6 +132,7 @@ const EditOrthologyEvidenceCell = ({evidenceCodes, evidenceSet, orthoZdbId, onSa
                                 id={`${orthoZdbId}-pub-id`}
                                 label='Publication'
                                 tag={PublicationInput}
+                                defaultPubs={DEFAULT_PUBS}
                                 field='publicationID'
                                 inputClassName='col-md-10'
                                 validate={value => {
