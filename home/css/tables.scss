@@ -62,10 +62,9 @@
   display: none;
 }
 
-tr:hover, li:hover {
-  .show-on-hover {
-    display: unset;
-  }
+tr:hover > td > .show-on-hover,
+li:hover > .show-on-hover {
+  display: unset;
 }
 
 .table-fixed {

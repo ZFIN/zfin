@@ -56,10 +56,24 @@ const MarkerEditOrthology = ({ markerId }) => {
         },
         {
             label: 'Evidence',
-            content: ({ evidenceSet }) => <EditOrthologyEvidenceCell evidenceSet={evidenceSet} />,
+            content: ({ evidenceSet, zdbID }) => (
+                <EditOrthologyEvidenceCell
+                    evidenceCodes={value.supplementalData.evidenceCodes}
+                    evidenceSet={evidenceSet}
+                    orthoZdbId={zdbID}
+                    onSave={handleEvidenceUpdate}
+                />
+            ),
             width: '200px',
         }
     ];
+
+    const handleEvidenceUpdate = (ortholog) => {
+        setValue(produce(value, initialValue => {
+            const idx = initialValue.results.findIndex(o => o.zdbID === ortholog.zdbID);
+            initialValue.results[idx] = ortholog;
+        }));
+    }
 
     const handleDeleteLinkClick = (ortholog) => {
         return (event) => {

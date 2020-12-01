@@ -39,7 +39,7 @@ const AddEditList = ({items, setModalItem, itemKeyProp = 'zdbID', newItem, forma
 AddEditList.propTypes = {
     items: PropTypes.array,
     itemKeyProp: PropTypes.string,
-    newItem: PropTypes.object,
+    newItem: PropTypes.any,
     setModalItem: PropTypes.func,
     formatItem: PropTypes.func,
     title:PropTypes.string,

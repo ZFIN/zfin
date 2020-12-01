@@ -169,7 +169,7 @@ public class OrthologyController {
     @RequestMapping(value = "/gene/{geneID}/ortholog/evidence", method = RequestMethod.POST, produces = "text/plain")
     public
     @ResponseBody
-    String createOrthologFromNcbi(@PathVariable String geneID,
+    String updateOrthologEvidence(@PathVariable String geneID,
                                   @RequestBody OrthologPublicationEvidenceCodeDTO orthologDTO) throws InvalidWebRequestException {
 
         Transaction tx = HibernateUtil.createTransaction();

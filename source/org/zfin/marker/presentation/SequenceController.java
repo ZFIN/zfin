@@ -12,8 +12,10 @@ import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.api.View;
 import org.zfin.framework.presentation.InvalidWebRequestException;
+import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.orthology.Ortholog;
 import org.zfin.orthology.presentation.OrthologDTO;
+import org.zfin.orthology.presentation.OrthologPublicationEvidenceCodeDTO;
 import org.zfin.orthology.presentation.OrthologyController;
 import org.zfin.orthology.repository.OrthologyRepository;
 import org.zfin.sequence.MarkerDBLink;
@@ -99,5 +101,18 @@ public class SequenceController {
             throw new InvalidWebRequestException("Error while deleting Ortholog: " + orthoZdbID + ": " + e.getMessage(), null);
         }
         return "OK";
+    }
+
+    @JsonView(View.OrthologyAPI.class)
+    @RequestMapping(value = "/marker/orthologs/{orthoZdbID}/evidence", method = RequestMethod.POST)
+    public OrthologDTO updateOrthologEvidence(@PathVariable String orthoZdbID,
+                                              @RequestBody OrthologPublicationEvidenceCodeDTO orthologDTO) {
+        Ortholog ortholog = orthologyRepository.getOrtholog(orthoZdbID);
+        if (ortholog == null) {
+            throw new InvalidWebRequestException("No Ortholog with ID " + orthoZdbID + " found", null);
+        }
+
+        orthologyController.updateOrthologEvidence(ortholog.getZebrafishGene().getZdbID(), orthologDTO);
+        return DTOConversionService.convertToOrthologDTO(ortholog);
     }
 }

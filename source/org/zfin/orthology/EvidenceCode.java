@@ -1,44 +1,28 @@
 package org.zfin.orthology;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
+import org.zfin.framework.api.View;
+
 import java.io.Serializable;
 
 /**
  * Business object used to hold an evidence code which gets associated with an orthologous gene.
  */
+@Getter
+@Setter
 public class EvidenceCode implements Comparable<EvidenceCode>, Serializable {
 
+    @JsonView(View.API.class)
     private String code;
+    @JsonView(View.API.class)
     private Integer order;
+    @JsonView(View.API.class)
     private String name;
-
-
-    public Integer getOrder() {
-        return order;
-    }
-
-    public void setOrder(Integer order) {
-        this.order = order;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getCode() {
-        return code;
-    }
 
     public int compareTo(EvidenceCode e) {
         return code.compareTo(e.getCode());
-    }
-
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     @Override

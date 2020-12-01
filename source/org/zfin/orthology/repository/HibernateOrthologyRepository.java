@@ -2,6 +2,7 @@ package org.zfin.orthology.repository;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Order;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.springframework.stereotype.Repository;
 import org.zfin.framework.HibernateUtil;
@@ -161,7 +162,10 @@ public class HibernateOrthologyRepository implements OrthologyRepository {
 
     @Override
     public List<EvidenceCode> getEvidenceCodes() {
-        return HibernateUtil.currentSession().createCriteria(EvidenceCode.class).list();
+        return HibernateUtil.currentSession()
+                .createCriteria(EvidenceCode.class)
+                .addOrder(Order.asc("order"))
+                .list();
     }
 
     @Override
