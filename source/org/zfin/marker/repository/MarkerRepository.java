@@ -506,6 +506,8 @@ public interface MarkerRepository {
 
     DBLink addDBLinkWithLenth(Marker marker, String accessionNumber, ReferenceDatabase refdb, String attributionZdbID, int length);
 
+
+
     List<Marker> getMarkerByGroup(Marker.TypeGroup group, int number);
      List<Transcript> getAllNonCodingTranscripts();
     List<Transcript> getTranscriptsForNonCodingGenes();

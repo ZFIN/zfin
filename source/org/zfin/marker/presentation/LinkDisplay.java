@@ -30,6 +30,7 @@ public class LinkDisplay implements ProvidesLink {
     private Integer typeOrder;
     @JsonView(View.MarkerRelationshipAPI.class)
     private String accNumDisplay;
+    private String sequenceString;
 
     public String getDisplayName() {
         if (accession.contains("ZDB")) {
@@ -172,6 +173,14 @@ public class LinkDisplay implements ProvidesLink {
 
     public void setReferenceDatabaseZdbID(String referenceDatabaseZdbID) {
         this.referenceDatabaseZdbID = referenceDatabaseZdbID;
+    }
+
+    public String getSequenceString() {
+        return sequenceString;
+    }
+
+    public void setSequenceString(String sequenceString) {
+        this.sequenceString = sequenceString;
     }
 
     public String getLength() {

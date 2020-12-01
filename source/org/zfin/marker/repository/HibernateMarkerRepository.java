@@ -29,7 +29,10 @@ import org.zfin.framework.presentation.LookupEntry;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
+import org.zfin.gwt.root.dto.DBLinkDTO;
+import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.server.DTOMarkerService;
+import org.zfin.gwt.root.ui.BlastDatabaseAccessException;
 import org.zfin.infrastructure.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.*;
@@ -50,6 +53,7 @@ import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.Database;
+import org.zfin.sequence.blast.MountedWublastBlastService;
 import org.zfin.util.NumberAwareStringComparator;
 
 import java.util.*;
@@ -3290,6 +3294,8 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         return mdb;
     }
+
+
 
     @Override
     public List<Marker> getMarkerByGroup(Marker.TypeGroup group, int number) {

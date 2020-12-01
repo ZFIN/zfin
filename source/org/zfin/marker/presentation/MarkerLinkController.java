@@ -4,6 +4,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -12,8 +14,10 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.InvalidWebRequestException;
+import org.zfin.gwt.marker.ui.SequenceValidator;
 import org.zfin.gwt.root.dto.ReferenceDatabaseDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
+import org.zfin.gwt.root.ui.BlastDatabaseAccessException;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.presentation.JSONMessageList;
@@ -23,6 +27,9 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.sequence.*;
+import org.zfin.sequence.blast.BlastDatabaseException;
+import org.zfin.sequence.blast.MountedWublastBlastService;
+import org.zfin.sequence.blast.ProteinInternalAccessionGenerator;
 import org.zfin.sequence.repository.DisplayGroupRepository;
 import org.zfin.sequence.repository.SequenceRepository;
 
@@ -67,6 +74,20 @@ public class MarkerLinkController {
     public Collection<ReferenceDatabaseDTO> getLinkDatabases(@RequestParam(name = "group", required = true) String groupName) {
         DisplayGroup.GroupName group = DisplayGroup.GroupName.getGroup(groupName);
         List<ReferenceDatabase> databases = displayGroupRepository.getReferenceDatabasesForDisplayGroup(group);
+        List<ReferenceDatabaseDTO> databaseNames = new ArrayList<>(databases.size());
+        for (ReferenceDatabase database : databases) {
+            databaseNames.add(DTOConversionService.convertToReferenceDatabaseDTO(database));
+        }
+        return databaseNames;
+    }
+
+    @ResponseBody
+    @RequestMapping("/link/nuclDatabases")
+    public Collection<ReferenceDatabaseDTO> getNuclDatabases(@RequestParam(name = "group", required = true) String groupName) {
+        DisplayGroup.GroupName group = DisplayGroup.GroupName.GENE_EDIT_ADDABLE_NUCLEOTIDE_SEQUENCE;
+        List<ReferenceDatabase> databases = displayGroupRepository.getReferenceDatabasesForDisplayGroup(group);
+        List<ReferenceDatabase> databases1=displayGroupRepository.getReferenceDatabasesForDisplayGroup(DisplayGroup.GroupName.TRANSCRIPT_EDIT_ADDABLE_NUCLEOTIDE_SEQUENCE);
+        databases.addAll(databases1);
         List<ReferenceDatabaseDTO> databaseNames = new ArrayList<>(databases.size());
         for (ReferenceDatabase database : databases) {
             databaseNames.add(DTOConversionService.convertToReferenceDatabaseDTO(database));
@@ -146,6 +167,122 @@ public class MarkerLinkController {
 
         return getLinkDisplayById(link.getZdbID());
     }
+
+//method for fetching protein sequences
+@ResponseBody
+@RequestMapping(value = "/{markerId}/geneProtSequences", method = RequestMethod.GET)
+public List<Sequence> getGeneProtSequences(@PathVariable String markerId,
+                                        @RequestParam(name = "group", required = true) String groupName) throws Exception {
+    Marker marker = markerRepository.getMarkerByID(markerId);
+    DisplayGroup.GroupName group = DisplayGroup.GroupName.getGroup(groupName);
+    List<Sequence> returnSequences = null;
+
+        returnSequences = MountedWublastBlastService.getInstance().getSequencesForMarker(marker, DisplayGroup.GroupName.GENE_EDIT_ADDABLE_PROTEIN_SEQUENCE);
+
+
+    return returnSequences;
+}
+    @ResponseBody
+    @RequestMapping(value = "/{markerId}/geneNuclSequences", method = RequestMethod.GET)
+    public List<Sequence> getGeneNuclSequences(@PathVariable String markerId,
+                                           @RequestParam(name = "group", required = true) String groupName) throws Exception {
+        Marker marker = markerRepository.getMarkerByID(markerId);
+
+        List<Sequence> returnSequences = null;
+
+        returnSequences = MountedWublastBlastService.getInstance().getSequencesForMarker(marker, DisplayGroup.GroupName.GENE_EDIT_ADDABLE_NUCLEOTIDE_SEQUENCE);
+
+
+        return returnSequences;
+    }
+
+
+    //new method for adding protein sequence
+
+    @ResponseBody
+    @RequestMapping(value = "/{markerId}/{type}/seqLinks", method = RequestMethod.POST)
+    public LinkDisplay addGeneSeqLink(@PathVariable String markerId,@PathVariable String type,
+                                     @Valid @RequestBody LinkDisplay newLink,
+                                     BindingResult errors)  throws Exception{
+        Marker marker = null;
+
+        ReferenceDatabase refDB = null;
+        String sequenceStr = null;
+        String accessionNo = null;
+Sequence sequence = null;
+        DBLink link = null;
+
+        HibernateUtil.createTransaction();
+
+        if (!errors.hasErrors()) {
+            marker = markerRepository.getMarkerByID(markerId);
+            accessionNo = ProteinInternalAccessionGenerator.getInstance().generateAccession();;
+            refDB = sequenceRepository.getReferenceDatabaseByID(newLink.getReferenceDatabaseZdbID());
+
+            Collection<? extends DBLink> links = marker.getDbLinks();
+            if (CollectionUtils.isNotEmpty(links)) {
+                for (DBLink dbLink : marker.getDbLinks()) {
+                    if (dbLink.getReferenceDatabase().equals(refDB) && dbLink.getAccessionNumber().equals(accessionNo)) {
+                        errors.reject("marker.link.duplicate");
+                    }
+                }
+            }
+        }
+
+        if (errors.hasErrors()) {
+            throw new InvalidWebRequestException("Invalid marker DBLink", errors);
+        }
+
+        Iterator<MarkerReferenceBean> references = newLink.getReferences().iterator();
+
+        if (link == null) {
+            sequenceStr = newLink.getSequenceString();
+
+            String pubId = references.next().getZdbID();
+            Session session = HibernateUtil.currentSession();
+            Transaction transaction = session.beginTransaction();
+
+            try {
+
+
+                if (type.equals("protein")) {
+                    int invalidSequenceCharacter = SequenceValidator.validatePolypeptideSequence(sequenceStr);
+                    if (invalidSequenceCharacter != SequenceValidator.NOT_FOUND) {
+                        errors.reject( "Letter " + "[" + sequenceStr.substring(invalidSequenceCharacter, invalidSequenceCharacter + 1) + "]" + " at position " + (invalidSequenceCharacter + 1) + " is not a valid protein symbol.");
+                    } else {
+                        return null;
+                    }
+                     sequence = MountedWublastBlastService.getInstance().addProteinToMarker(marker, sequenceStr, pubId, refDB);
+                } else{
+                    int invalidSequenceCharacter = SequenceValidator.validateNucleotideSequence(sequenceStr);
+                    if (invalidSequenceCharacter != SequenceValidator.NOT_FOUND) {
+                        errors.reject( "Letter " + "[" + sequenceStr.substring(invalidSequenceCharacter, invalidSequenceCharacter + 1) + "]" + " at position " + (invalidSequenceCharacter + 1) + " is not a valid nucleotide symbol.");
+                    } else {
+                        return null;
+                    }
+                     sequence = MountedWublastBlastService.getInstance().addSequenceToMarker(marker, sequenceStr, pubId, refDB);
+            }
+
+
+                transaction.commit();
+                link=sequence.getDbLink();
+            } catch (Exception e) {
+                transaction.rollback();
+                throw new BlastDatabaseAccessException("Failed to add  sequence.", e);
+            }
+
+
+        }
+        while (references.hasNext()) {
+            Publication publication = publicationRepository.getPublication(references.next().getZdbID());
+            markerRepository.addDBLinkAttribution(link, publication, marker);
+        }
+        HibernateUtil.flushAndCommitCurrentSession();
+
+        return getLinkDisplayById(link.getZdbID());
+    }
+
+
 
     @ResponseBody
     @RequestMapping(value = "/link/{linkId}", method = RequestMethod.POST)
