@@ -829,7 +829,7 @@ a
         <field name="construct_name" type="construct_name" indexed="true" stored="true" multiValued="false" />
         <field name="construct_alias" type="construct_name" indexed="true" stored="true" multiValued="true" />
 
-        <field name="term_ontology" type="ontology_enum" indexed="true" stored="true" />
+        <field name="term_ontology" type="ontology_enum" indexed="true" stored="true" docValues="true"/>
         <field name="qualifier" type="string" indexed="true" stored="true" />
         <field name="evidence_code" type="string" indexed="true" stored="true" />
 
