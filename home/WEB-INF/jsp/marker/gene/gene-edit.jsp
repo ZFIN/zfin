@@ -8,16 +8,6 @@
 <c:set var="ORTHOLOGY" value="Orthology" />
 
 <z:dataPage sections="${[NOMENCLATURE, RESOURCES, NOTES, MARKER_RELATIONSHIPS, SEQUENCES, ORTHOLOGY]}">
-
-    <script type="text/javascript" language="javascript"
-            src="/gwt/org.zfin.gwt.marker.Marker/org.zfin.gwt.marker.Marker.nocache.js"></script>
-
-    <script type="text/javascript">
-        var MarkerProperties= {
-            zdbID: "${formBean.marker.zdbID}"
-        };
-    </script>
-
     <z:dataManagerDropdown>
         <a class="dropdown-item" href="/${gene.zdbID}">View</a>
         <a class="dropdown-item active" href="/action/marker/gene/edit/${gene.zdbID}">Edit</a>
@@ -54,17 +44,19 @@
     </z:section>
 
     <z:section title="${SEQUENCES}">
-        <div class="__react-root" id="MarkerEditSequences" data-marker-id="${gene.zdbID}"></div>
+        <z:section>
+            <div class="__react-root" id="MarkerEditSequences" data-marker-id="${gene.zdbID}"></div>
+        </z:section>
 
         <c:if test="${!fn:contains(gene.zdbID,'MIRNAG')}">
-            <div class="__react-root" id="MarkerAddProteinSequences" data-marker-id="${gene.zdbID}"></div>
+            <z:section title="Protein Sequences">
+                <div class="__react-root" id="MarkerAddProteinSequences" data-marker-id="${gene.zdbID}"></div>
+            </z:section>
         </c:if>
 
-        <div class="__react-root" id="MarkerAddNucleotideSequences" data-marker-id="${gene.zdbID}"></div>
-
-        <div id="newProteinSequence"></div>
-
-        <div id="newStemLoopSequence"></div>
+        <z:section title="Nucleotide Sequences">
+            <div class="__react-root" id="MarkerAddNucleotideSequences" data-marker-id="${gene.zdbID}"></div>
+        </z:section>
     </z:section>
 
     <z:section title="${ORTHOLOGY}">
