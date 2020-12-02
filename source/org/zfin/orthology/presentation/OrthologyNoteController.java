@@ -31,7 +31,13 @@ public class OrthologyNoteController {
         if (gene == null) {
             throw new InvalidWebRequestException("No zebrafish gene with ID " + markerZdbID + " found", null);
         }
-        return gene.getOrthologyNote();
+        OrthologyNote note = gene.getOrthologyNote();
+        if (note == null) {
+            note = new OrthologyNote();
+            note.setMarker(gene);
+            note.setNote("");
+        }
+        return note;
     }
 
     @JsonView(View.OrthologyAPI.class)

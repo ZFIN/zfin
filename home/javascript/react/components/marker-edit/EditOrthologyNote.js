@@ -7,6 +7,7 @@ import InputField from '../form/InputField';
 import LoadingButton from '../LoadingButton';
 import useFetch from '../../hooks/useFetch';
 import LoadingSpinner from '../LoadingSpinner';
+import useCurationTabLoadEvent from '../../hooks/useCurationTabLoadEvent';
 
 const EditOrthologyNote = ({markerId}) => {
     const {
@@ -14,6 +15,8 @@ const EditOrthologyNote = ({markerId}) => {
         pending,
         setValue: setNote,
     } = useFetch(`/action/api/marker/${markerId}/orthology-note`);
+
+    useCurationTabLoadEvent('ORTHOLOGY', pending);
 
     const {
         Form,
@@ -53,9 +56,9 @@ const EditOrthologyNote = ({markerId}) => {
             <div className='form-group'>
                 <InputField
                     tag='textarea'
-                    rows='5'
+                    rows='3'
                     field='note'
-                    id='publicNote'
+                    id='orthologyNote'
                 />
             </div>
 

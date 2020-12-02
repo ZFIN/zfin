@@ -1,1 +1,4 @@
-<div ortho-edit pub="${publication.zdbID}" edit="true" showDownloadLink="false"></div>
+<div class="__react-root"
+     id="CurateOrthology"
+     data-pub-id="${publication.zdbID}">
+</div>

@@ -8,8 +8,9 @@ import http from '../../utils/http';
 import produce from 'immer';
 import Modal from '../../components/Modal';
 import LoadingButton from '../../components/LoadingButton';
+import useCurationTabLoadEvent from '../../hooks/useCurationTabLoadEvent';
 
-const EditOrthologyTable = ({ markerId }) => {
+const EditOrthologyTable = ({ defaultPubId, markerId }) => {
     const [ncbiGeneId, setNcbiGeneId] = useState('');
     const [ncbiGeneError, setNcbiGeneError] = useState('');
     const [deleteOrtholog, setDeleteOrtholog] = useState(null);
@@ -21,6 +22,8 @@ const EditOrthologyTable = ({ markerId }) => {
         setValue,
         pending,
     } = useFetch(`/action/api/marker/${markerId}/orthologs`);
+
+    useCurationTabLoadEvent('ORTHOLOGY', pending);
 
     const columns = [
         {
@@ -56,11 +59,13 @@ const EditOrthologyTable = ({ markerId }) => {
         },
         {
             label: 'Evidence',
-            content: ({ evidenceSet, zdbID }) => (
+            content: ({ evidenceSet, orthologousGene, zdbID }) => (
                 <EditOrthologyEvidenceCell
+                    defaultPubId={defaultPubId}
                     evidenceCodes={value.supplementalData.evidenceCodes}
                     evidenceSet={evidenceSet}
                     orthoZdbId={zdbID}
+                    ortholog={orthologousGene}
                     onSave={handleEvidenceUpdate}
                 />
             ),
@@ -156,7 +161,13 @@ const EditOrthologyTable = ({ markerId }) => {
             </form>
 
             <div className='data-table-container'>
-                <Table data={value.results} columns={columns} rowKey='zdbID' />
+                <Table
+                    data={value.results}
+                    columns={columns}
+                    rowKey='zdbID'
+                    total={value.total}
+                    noDataMessage='No Orthologs Yet'
+                />
                 <div className='data-pagination-container' />
             </div>
 
@@ -185,7 +196,8 @@ const EditOrthologyTable = ({ markerId }) => {
 };
 
 EditOrthologyTable.propTypes = {
-    markerId: PropTypes.string,
+    defaultPubId: PropTypes.string,
+    markerId: PropTypes.string.isRequired,
 }
 
 export default EditOrthologyTable;

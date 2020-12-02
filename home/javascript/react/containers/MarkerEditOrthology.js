@@ -4,11 +4,11 @@ import EditOrthologyTable from '../components/marker-edit/EditOrthologyTable';
 import Section from '../components/layout/Section';
 import EditOrthologyNote from '../components/marker-edit/EditOrthologyNote';
 
-const MarkerEditOrthology = ({ markerId }) => {
+const MarkerEditOrthology = ({ defaultPubId, markerId }) => {
     return (
         <>
             <Section>
-                <EditOrthologyTable markerId={markerId} />
+                <EditOrthologyTable markerId={markerId} defaultPubId={defaultPubId} />
             </Section>
 
             <Section title='Orthology Note'>
@@ -19,6 +19,7 @@ const MarkerEditOrthology = ({ markerId }) => {
 };
 
 MarkerEditOrthology.propTypes = {
+    defaultPubId: PropTypes.string,
     markerId: PropTypes.string,
 }
 

@@ -13,7 +13,7 @@ import LoadingButton from '../LoadingButton';
 const ORTHO_CURATION_PUB_ID = 'ZDB-PUB-030905-1';
 const ORTHO_CURATION_PUB_NAME = 'Ortho Curation Pub';
 
-const DEFAULT_PUBS = [
+const DEFAULT_PUB_SUGGESTIONS = [
     {
         id: ORTHO_CURATION_PUB_ID,
         name: ORTHO_CURATION_PUB_NAME,
@@ -47,9 +47,10 @@ function comparePubs (a, b) {
     return bDate.getTime() - aDate.getTime();
 }
 
-const EditOrthologyEvidenceCell = ({evidenceCodes, evidenceSet, orthoZdbId, onSave}) => {
+const EditOrthologyEvidenceCell = ({defaultPubId, evidenceCodes, evidenceSet, orthoZdbId, ortholog, onSave}) => {
     const [modalEvidence, setModalEvidence] = useState(null);
     const [modalError, setModalError] = useState('');
+    const [modalWarning, setModalWarning] = useState('');
     const [deleting, setDeleting] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
 
@@ -94,47 +95,72 @@ const EditOrthologyEvidenceCell = ({evidenceCodes, evidenceSet, orthoZdbId, onSa
         evidenceGroupedByPub[evidence.publication.zdbID].push(evidence.evidenceCode);
     });
 
-    const items = Object.entries(evidenceGroupedByPub).sort(comparePubs);
+    const items = Object.entries(evidenceGroupedByPub)
+        .sort(comparePubs)
+        .map(([pubId, codes]) => ({
+            publicationID: pubId,
+            orthologID: orthoZdbId,
+            evidenceCodeList: codes,
+        }));
 
-    const formatItem = ([pubId, codes], editLink) => {
+    const formatItem = ({ publicationID, evidenceCodeList }, editLink) => {
         return (
             <>
-                <a href={'/' + pubId}>
-                    {pubId === ORTHO_CURATION_PUB_ID ? ORTHO_CURATION_PUB_NAME : pubId}
-                </a>: {codes.sort().join(', ')} {editLink}
+                <a href={'/' + publicationID}>
+                    {publicationID === ORTHO_CURATION_PUB_ID ? ORTHO_CURATION_PUB_NAME : publicationID}
+                </a>: {evidenceCodeList.sort().join(', ')} {editLink}
             </>
         )
+    }
+
+    const setModalItem = (item, isEdit, isInputChange) => {
+        const exists = evidenceGroupedByPub.hasOwnProperty(item.publicationID);
+        if ((!isEdit || isInputChange) && exists) {
+            setModalWarning(`${item.publicationID} is already a reference for ${ortholog.organism} ${ortholog.abbreviation} orthology. You are now editing the existing record.`);
+        } else {
+            setModalWarning('');
+        }
+        setIsEdit(isEdit);
+        setModalEvidence(item);
+    };
+
+    const handlePubInputChange = (event) => {
+        const pubId = event.target.value;
+        const isEdit = evidenceGroupedByPub.hasOwnProperty(pubId);
+        setModalItem({
+            publicationID: pubId,
+            orthologID: orthoZdbId,
+            evidenceCodeList: evidenceGroupedByPub[pubId] || [],
+        }, isEdit, true);
     }
 
     return (
         <>
             <AddEditList
                 items={items}
-                itemKeyProp='0'
+                itemKeyProp='publicationID'
                 formatItem={formatItem}
-                newItem={['', []]}
-                setModalItem={([pubId, codes]) => {
-                    setIsEdit(pubId !== '');
-                    setModalEvidence({
-                        publicationID: pubId,
-                        orthologID: orthoZdbId,
-                        evidenceCodeList: codes,
-                    });
+                newItem={{
+                    publicationID: defaultPubId || '',
+                    orthologID: orthoZdbId,
+                    evidenceCodeList: defaultPubId ? (evidenceGroupedByPub[defaultPubId] || []) : [],
                 }}
+                setModalItem={setModalItem}
             />
 
             <Modal open={modalEvidence !== null}>
                 {values && <>
-                    <div className='popup-header'>Evidence for...</div>
+                    <div className='popup-header'>Evidence for {ortholog.organism} {ortholog.abbreviation} ortholog</div>
                     <div className='popup-body show-overflow'>
                         <Form>
                             <FormGroup
                                 id={`${orthoZdbId}-pub-id`}
                                 label='Publication'
                                 tag={PublicationInput}
-                                defaultPubs={DEFAULT_PUBS}
+                                defaultPubs={DEFAULT_PUB_SUGGESTIONS}
                                 field='publicationID'
                                 inputClassName='col-md-10'
+                                onChange={handlePubInputChange}
                                 validate={value => {
                                     if (!value) {
                                         return 'A publication ZDB ID is required';
@@ -142,6 +168,8 @@ const EditOrthologyEvidenceCell = ({evidenceCodes, evidenceSet, orthoZdbId, onSa
                                     return false;
                                 }}
                             />
+
+                            {modalWarning && <div className='alert alert-warning'>{modalWarning}</div>}
 
                             <div className='form-group row'>
                                 <label className='col-md-2 col-form-label'>Evidence Codes</label>
@@ -198,6 +226,7 @@ const EditOrthologyEvidenceCell = ({evidenceCodes, evidenceSet, orthoZdbId, onSa
 };
 
 EditOrthologyEvidenceCell.propTypes = {
+    defaultPubId: PropTypes.string,
     evidenceCodes: PropTypes.arrayOf(PropTypes.shape({
         name: PropTypes.string,
         code: PropTypes.string,
@@ -208,6 +237,10 @@ EditOrthologyEvidenceCell.propTypes = {
         publication: publicationType,
     })),
     orthoZdbId: PropTypes.string,
+    ortholog: PropTypes.shape({
+        abbreviation: PropTypes.string,
+        organism: PropTypes.string,
+    }),
     onSave: PropTypes.func,
 };
 

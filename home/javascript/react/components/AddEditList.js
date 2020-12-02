@@ -5,11 +5,11 @@ import NoData from './NoData';
 const AddEditList = ({items, setModalItem, itemKeyProp = 'zdbID', newItem, formatItem,title}) => {
     const handleEditClick = (e, item) => {
         e.preventDefault();
-        setModalItem(item);
+        setModalItem(item, true);
     };
 
     const handleAddClick = () => {
-        setModalItem(newItem);
+        setModalItem(newItem, false);
     };
 
     return (

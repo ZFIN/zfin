@@ -9,10 +9,7 @@
         <c:set var="correspondenceURL">/action/publication/${publication.zdbID}/track#correspondence</c:set>
     </c:if>
 
-    <div ng-app="app">
-
-            <p/>
-            <p/>
+    <div ng-app="app" class="pt-3">
         <zfin2:dataManager zdbID="${publication.zdbID}"
                            showLastUpdate="true"
                            viewURL="/${publication.zdbID}"
@@ -71,7 +68,7 @@
             </div>
         </div>
 
-        <nav class="pub-navigator navbar navbar-expand-sm" id="curation-nav">
+        <nav class="pub-navigator navbar navbar-expand-sm m-0" id="curation-nav">
             <div class="container-fluid">
                 <ul class="nav navbar-nav mr-auto" id="curation-tabs" role="tablist">
                     <c:forEach var="curationTab" items="${curationTabs}">
@@ -134,7 +131,8 @@
           }
 
           function refreshOrthologyGeneList () {
-            angular.element(document.getElementById("evidence-modal")).scope().vm.fetchGenes()
+            var event = new Event('UpdateGeneList');
+            document.dispatchEvent(event);
           }
 
           function displayLoadingStatus (tabName, isLoading) {
@@ -142,6 +140,21 @@
           }
 
           $(function () {
+            var pendingEvents = {};
+            document.addEventListener('CurationTabLoad', function (event) {
+                if (!pendingEvents.hasOwnProperty(event.detail.tab)) {
+                    pendingEvents[event.detail.tab] = 0;
+                }
+
+                if (event.detail.pending) {
+                    pendingEvents[event.detail.tab] += 1;
+                } else {
+                    pendingEvents[event.detail.tab] = Math.max(0, pendingEvents[event.detail.tab] - 1);
+                }
+
+                displayLoadingStatus(event.detail.tab, pendingEvents[event.detail.tab] > 0);
+            });
+
             $('.zfin-tooltip').tipsy({gravity: 's'});
 
             function goToTab (hash) {
@@ -305,4 +318,6 @@
         <script type="text/javascript" language="javascript"
                 src="/gwt/org.zfin.gwt.curation.Curation/org.zfin.gwt.curation.Curation.nocache.js"></script>
     </div>
+
+    <script src="${zfn:getAssetPath("react.js")}"></script>
 </z:page>

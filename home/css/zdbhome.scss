@@ -54,6 +54,12 @@ body.home {
     border-radius: $border-radius;
     padding: 1rem;
 
+    &.no-border {
+        box-shadow: none;
+        padding: 0;
+        border-radius: 0;
+    }
+
     &.primary-link {
         padding: 10px 35px 15px 15px;
         margin-bottom: 2rem;

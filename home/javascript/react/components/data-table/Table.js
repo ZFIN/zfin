@@ -8,6 +8,7 @@ const Table = ({
     columnHeaderFormat,
     columns,
     data,
+    noDataMessage = 'No rows match filters',
     rowKey,
     supplementalData,
     total,
@@ -48,7 +49,7 @@ const Table = ({
                     {total === 0 && (
                         <tr>
                             <td className='text-center' colSpan={columns.length}>
-                                <NoData placeholder='No rows match filters' />
+                                <NoData placeholder={noDataMessage} />
                             </td>
                         </tr>
                     )}
@@ -62,6 +63,7 @@ Table.propTypes = {
     columnHeaderFormat: PropTypes.func,
     columns: PropTypes.arrayOf(columnDefinitionType),
     data: PropTypes.array,
+    noDataMessage: PropTypes.string,
     rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
     supplementalData: PropTypes.object,
     total: PropTypes.number,
