@@ -200,7 +200,6 @@ public class FigureService {
             Figure figure = statement.getPhenotypeExperiment().getFigure();
             Publication pub = figure.getPublication();
             String key = pub.getZdbID() + figure.getZdbID();
-
             // if the key is not in the map, instantiate a display object and add it to the map
             // otherwise, get the display object from the map
             if (!map.containsKey(key)) {
@@ -232,6 +231,7 @@ public class FigureService {
         // a map of publicationID-FigureID as keys and figure summary display objects as values
         Map<String, FigureSummaryDisplay> map = new HashMap<>();
         for (PhenotypeStatementWarehouse statement : statements) {
+            LOG.info("shortName: " + statement.getShortName());
             Figure figure = statement.getPhenotypeExperiment().getFigure();
             Publication pub = figure.getPublication();
             String key = pub.getZdbID() + figure.getZdbID();

@@ -99,7 +99,7 @@ public class PhenotypeStatementWarehouse implements Comparable<PhenotypeStatemen
     @Override
     public String toString() {
         String message = "";
-        message += getDisplayNameWithoutTag();
+        message += shortName;
         if (gene != null) {
             message += ": ";
             message += gene.getAbbreviation();
@@ -187,27 +187,13 @@ public class PhenotypeStatementWarehouse implements Comparable<PhenotypeStatemen
         if (phenotypeObserved == null) {
             return -1;
         }
-        return getDisplayNameWithoutTag().compareToIgnoreCase(phenotypeObserved.getDisplayNameWithoutTag());
-
+        return shortName.compareToIgnoreCase(phenotypeObserved.getShortName());
     }
 
     public boolean equalsByName(PhenotypeStatementWarehouse phenotypeStatement) {
-        if (getEntity() != null ? !getEntity().equals(phenotypeStatement.getEntity()) : phenotypeStatement.getEntity() != null) {
+        if (shortName != null ? !shortName.equals(phenotypeStatement.getShortName()) : phenotypeStatement.getShortName() != null) {
             return false;
         }
-        if (quality != null ? !quality.equals(phenotypeStatement.getQuality()) : phenotypeStatement.getQuality() != null) {
-            return false;
-        }
-        if (getRelatedEntity() != null ? !getRelatedEntity().equals(phenotypeStatement.getRelatedEntity()) : phenotypeStatement.getRelatedEntity() != null) {
-            return false;
-        }
-        if (markerRelationship != null ? !markerRelationship.equals(phenotypeStatement.getMarkerRelationship()) : phenotypeStatement.getMarkerRelationship() != null) {
-            return false;
-        }
-        if (!tag.equals(phenotypeStatement.getTag())) {
-            return false;
-        }
-
         return true;
     }
 
