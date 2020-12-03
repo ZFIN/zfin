@@ -48,15 +48,7 @@
             <div class="__react-root" id="MarkerEditSequences" data-marker-id="${gene.zdbID}"></div>
         </z:section>
 
-        <c:if test="${!fn:contains(gene.zdbID,'MIRNAG')}">
-            <z:section title="Protein Sequences">
-                <div class="__react-root" id="MarkerAddProteinSequences" data-marker-id="${gene.zdbID}"></div>
-            </z:section>
-        </c:if>
-
-        <z:section title="Nucleotide Sequences">
-            <div class="__react-root" id="MarkerAddNucleotideSequences" data-marker-id="${gene.zdbID}"></div>
-        </z:section>
+        <jsp:include page="gene-edit-sequences.jsp"/>
     </z:section>
 
     <z:section title="${ORTHOLOGY}">
