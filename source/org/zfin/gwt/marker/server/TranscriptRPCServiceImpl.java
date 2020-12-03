@@ -604,7 +604,7 @@ public class TranscriptRPCServiceImpl extends ZfinRemoteServiceServlet implement
         if (geneEditAddableNucleotideReferenceDatabases == null) {
             geneEditAddableNucleotideReferenceDatabases = new ArrayList<ReferenceDatabaseDTO>();
             List<ReferenceDatabase> refdbs;
-            refdbs = RepositoryFactory.getDisplayGroupRepository().getReferenceDatabasesForDisplayGroup(DisplayGroup.GroupName.GENE_EDIT_ADDABLE_NUCLEOTIDE_SEQUENCE);
+            refdbs = RepositoryFactory.getDisplayGroupRepository().getReferenceDatabasesForDisplayGroup(DisplayGroup.GroupName.GENE_EDIT_ADDABLE_NUCLEOTIDE_SEQUENCE,DisplayGroup.GroupName.TRANSCRIPT_EDIT_ADDABLE_NUCLEOTIDE_SEQUENCE);
 
             for (ReferenceDatabase refdb : refdbs) {
                 geneEditAddableNucleotideReferenceDatabases.add(DTOConversionService.convertToReferenceDatabaseDTO(refdb));

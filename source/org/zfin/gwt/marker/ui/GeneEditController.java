@@ -68,7 +68,7 @@ public final class GeneEditController extends AbstractMarkerEditController<Marke
                     setVisible(false);
                     proteinSequenceArea.activate();
                     proteinSequenceArea.resetAndHide();
-                    Window.open(url + dto.getZdbID(), "_self", "");
+                    Window.open(dto.getZdbID(), "_self", "");
                 }
             });
         }

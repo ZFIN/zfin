@@ -24,8 +24,8 @@ public class ProteinSequenceArea extends Composite implements HandlesError, Requ
     private final NewSequenceBox newSequenceBox = new NewSequenceBox();
     private final Label errorLabel = new Label();
 
-    private final static String RIGHT_ARROW = "<a href=#proteinLookup><img align=\"top\" src=\"/images/right.gif\" >Add Protein</a>";
-    private final static String DOWN_ARROW = "<a href=#proteinLookup><img align=\"top\" src=\"/images/down.gif\" >Add Protein</a>";
+    private final static String RIGHT_ARROW = "<a href=#proteinLookup><img align=\"top\" src=\"/images/right.gif\" >Add Protein Sequence</a>";
+    private final static String DOWN_ARROW = "<a href=#proteinLookup><img align=\"top\" src=\"/images/down.gif\" >Add Protein Sequence</a>";
 
     // listeners
     private final List<SequenceAddListener> sequenceAddListeners = new ArrayList<SequenceAddListener>();
