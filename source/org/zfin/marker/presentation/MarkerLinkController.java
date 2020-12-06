@@ -4,8 +4,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -27,8 +25,8 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.sequence.*;
-import org.zfin.sequence.blast.BlastDatabaseException;
 import org.zfin.sequence.blast.MountedWublastBlastService;
+import org.zfin.sequence.blast.NucleotideInternalAccessionGenerator;
 import org.zfin.sequence.blast.ProteinInternalAccessionGenerator;
 import org.zfin.sequence.repository.DisplayGroupRepository;
 import org.zfin.sequence.repository.SequenceRepository;
@@ -82,12 +80,24 @@ public class MarkerLinkController {
     }
 
     @ResponseBody
-    @RequestMapping("/link/nuclDatabases")
-    public Collection<ReferenceDatabaseDTO> getNuclDatabases(@RequestParam(name = "group", required = true) String groupName) {
-        DisplayGroup.GroupName group = DisplayGroup.GroupName.GENE_EDIT_ADDABLE_NUCLEOTIDE_SEQUENCE;
+    @RequestMapping("/{markerId}/link/{type}")
+    public Collection<ReferenceDatabaseDTO> getNuclDatabases(@PathVariable String markerId, @PathVariable String type,@RequestParam(name = "group", required = true) String groupName) {
+        DisplayGroup.GroupName group = null;
+        if (type.contains("Nucleotide")) {
+            if (markerId.contains("GENE")) {
+                group = DisplayGroup.GroupName.TRANSCRIPT_EDIT_ADDABLE_NUCLEOTIDE_SEQUENCE;
+
+            }
+            if (markerId.contains("RNAG")) {
+                group = DisplayGroup.GroupName.GENE_EDIT_ADDABLE_NUCLEOTIDE_SEQUENCE;
+            }
+        }
+        if (type.contains("Protein")) {
+
+            group = DisplayGroup.GroupName.GENE_EDIT_ADDABLE_PROTEIN_SEQUENCE;
+        }
+
         List<ReferenceDatabase> databases = displayGroupRepository.getReferenceDatabasesForDisplayGroup(group);
-        List<ReferenceDatabase> databases1=displayGroupRepository.getReferenceDatabasesForDisplayGroup(DisplayGroup.GroupName.TRANSCRIPT_EDIT_ADDABLE_NUCLEOTIDE_SEQUENCE);
-        databases.addAll(databases1);
         List<ReferenceDatabaseDTO> databaseNames = new ArrayList<>(databases.size());
         for (ReferenceDatabase database : databases) {
             databaseNames.add(DTOConversionService.convertToReferenceDatabaseDTO(database));
@@ -108,6 +118,36 @@ public class MarkerLinkController {
         }
         return links;
     }
+
+    @ResponseBody
+    @RequestMapping(value = "/{markerId}/{type}/links", method = RequestMethod.GET)
+    public List<LinkDisplay> getMarkerSeqLinks(@PathVariable String markerId,@PathVariable String type,
+                                            @RequestParam(name = "group", required = true) String groupName) {
+        Marker marker = markerRepository.getMarkerByID(markerId);
+        DisplayGroup.GroupName group = null;
+        if (type.contains("Nucleotide")) {
+            if (markerId.contains("GENE")) {
+                group = DisplayGroup.GroupName.TRANSCRIPT_EDIT_ADDABLE_NUCLEOTIDE_SEQUENCE;
+
+            }
+            if (markerId.contains("RNAG")) {
+                group = DisplayGroup.GroupName.GENE_EDIT_ADDABLE_NUCLEOTIDE_SEQUENCE;
+            }
+        }
+        if (type.contains("Protein")) {
+
+            group = DisplayGroup.GroupName.GENE_EDIT_ADDABLE_PROTEIN_SEQUENCE;
+        }
+
+
+        List<LinkDisplay> links = markerRepository.getMarkerDBLinksFast(marker, group);
+        if (groupName.equals(DisplayGroup.GroupName.OTHER_MARKER_PAGES.toString())) {
+            links.addAll(markerRepository.getVegaGeneDBLinksTranscript(marker, DisplayGroup.GroupName.SUMMARY_PAGE));
+        }
+        return links;
+    }
+
+
 
     @ResponseBody
     @RequestMapping(value = "/{markerId}/links", method = RequestMethod.POST)
@@ -168,120 +208,90 @@ public class MarkerLinkController {
         return getLinkDisplayById(link.getZdbID());
     }
 
-//method for fetching protein sequences
-@ResponseBody
-@RequestMapping(value = "/{markerId}/geneProtSequences", method = RequestMethod.GET)
-public List<Sequence> getGeneProtSequences(@PathVariable String markerId,
-                                        @RequestParam(name = "group", required = true) String groupName) throws Exception {
-    Marker marker = markerRepository.getMarkerByID(markerId);
-    DisplayGroup.GroupName group = DisplayGroup.GroupName.getGroup(groupName);
-    List<Sequence> returnSequences = null;
 
-        returnSequences = MountedWublastBlastService.getInstance().getSequencesForMarker(marker, DisplayGroup.GroupName.GENE_EDIT_ADDABLE_PROTEIN_SEQUENCE);
+    //new method for adding protein sequence
+    public String getSequenceAsString(String seq) {
+        char[] chars = seq.toCharArray();
+        StringBuffer buffer = new StringBuffer();
+        for (char aChar : chars) {
+            if (Character.isLetter(aChar)) {
+                buffer.append(aChar);
+            } else if (aChar == '-' || aChar == '*') {
+                buffer.append(aChar);
+            }
+        }
 
-
-    return returnSequences;
-}
-    @ResponseBody
-    @RequestMapping(value = "/{markerId}/geneNuclSequences", method = RequestMethod.GET)
-    public List<Sequence> getGeneNuclSequences(@PathVariable String markerId,
-                                           @RequestParam(name = "group", required = true) String groupName) throws Exception {
-        Marker marker = markerRepository.getMarkerByID(markerId);
-
-        List<Sequence> returnSequences = null;
-
-        returnSequences = MountedWublastBlastService.getInstance().getSequencesForMarker(marker, DisplayGroup.GroupName.GENE_EDIT_ADDABLE_NUCLEOTIDE_SEQUENCE);
-
-
-        return returnSequences;
+        return buffer.toString().toUpperCase();
     }
 
 
-    //new method for adding protein sequence
-
     @ResponseBody
     @RequestMapping(value = "/{markerId}/{type}/seqLinks", method = RequestMethod.POST)
-    public LinkDisplay addGeneSeqLink(@PathVariable String markerId,@PathVariable String type,
-                                     @Valid @RequestBody LinkDisplay newLink,
-                                     BindingResult errors)  throws Exception{
+    public LinkDisplay addGeneSeqLink(@PathVariable String markerId, @PathVariable String type,
+                                      @Valid @RequestBody SequenceFormBean newLink,
+                                      BindingResult errors) throws Exception {
         Marker marker = null;
 
         ReferenceDatabase refDB = null;
         String sequenceStr = null;
-        String accessionNo = null;
-Sequence sequence = null;
+        Sequence sequence = null;
         DBLink link = null;
 
-        HibernateUtil.createTransaction();
 
         if (!errors.hasErrors()) {
             marker = markerRepository.getMarkerByID(markerId);
-            accessionNo = ProteinInternalAccessionGenerator.getInstance().generateAccession();;
             refDB = sequenceRepository.getReferenceDatabaseByID(newLink.getReferenceDatabaseZdbID());
-
-            Collection<? extends DBLink> links = marker.getDbLinks();
-            if (CollectionUtils.isNotEmpty(links)) {
-                for (DBLink dbLink : marker.getDbLinks()) {
-                    if (dbLink.getReferenceDatabase().equals(refDB) && dbLink.getAccessionNumber().equals(accessionNo)) {
-                        errors.reject("marker.link.duplicate");
-                    }
-                }
-            }
         }
 
-        if (errors.hasErrors()) {
-            throw new InvalidWebRequestException("Invalid marker DBLink", errors);
-        }
-
-        Iterator<MarkerReferenceBean> references = newLink.getReferences().iterator();
 
         if (link == null) {
-            sequenceStr = newLink.getSequenceString();
+            Iterator<Publication> publicationIterator = newLink.getReferences().iterator();
 
-            String pubId = references.next().getZdbID();
-            Session session = HibernateUtil.currentSession();
-            Transaction transaction = session.beginTransaction();
+            HibernateUtil.createTransaction();
 
             try {
 
-
-                if (type.equals("protein")) {
+                sequenceStr = getSequenceAsString(newLink.getData()).toUpperCase();
+                if (type.equals("Protein")) {
                     int invalidSequenceCharacter = SequenceValidator.validatePolypeptideSequence(sequenceStr);
                     if (invalidSequenceCharacter != SequenceValidator.NOT_FOUND) {
-                        errors.reject( "Letter " + "[" + sequenceStr.substring(invalidSequenceCharacter, invalidSequenceCharacter + 1) + "]" + " at position " + (invalidSequenceCharacter + 1) + " is not a valid protein symbol.");
-                    } else {
-                        return null;
+                        errors.reject("Letter " + "[" + sequenceStr.substring(invalidSequenceCharacter, invalidSequenceCharacter + 1) + "]" + " at position " + (invalidSequenceCharacter + 1) + " is not a valid protein symbol.");
                     }
-                     sequence = MountedWublastBlastService.getInstance().addProteinToMarker(marker, sequenceStr, pubId, refDB);
-                } else{
+
+
+                    sequence = MountedWublastBlastService.getInstance().addProteinToMarker(marker, sequenceStr, publicationIterator.next().getZdbID(), refDB);
+                } else {
                     int invalidSequenceCharacter = SequenceValidator.validateNucleotideSequence(sequenceStr);
                     if (invalidSequenceCharacter != SequenceValidator.NOT_FOUND) {
-                        errors.reject( "Letter " + "[" + sequenceStr.substring(invalidSequenceCharacter, invalidSequenceCharacter + 1) + "]" + " at position " + (invalidSequenceCharacter + 1) + " is not a valid nucleotide symbol.");
-                    } else {
-                        return null;
+                        errors.reject("Letter " + "[" + sequenceStr.substring(invalidSequenceCharacter, invalidSequenceCharacter + 1) + "]" + " at position " + (invalidSequenceCharacter + 1) + " is not a valid nucleotide symbol.");
                     }
-                     sequence = MountedWublastBlastService.getInstance().addSequenceToMarker(marker, sequenceStr, pubId, refDB);
-            }
 
 
-                transaction.commit();
-                link=sequence.getDbLink();
+                    sequence = MountedWublastBlastService.getInstance().addSequenceToMarker(marker, sequenceStr, publicationIterator.next().getZdbID(), refDB);
+                }
+
+
+                link = sequence.getDbLink();
+                while (publicationIterator.hasNext()) {
+                    markerRepository.addDBLinkAttribution(link, publicationIterator.next(), marker);
+                }
+
             } catch (Exception e) {
-                transaction.rollback();
+                LOG.error("Failure to add internal protein sequence", e);
+                LOG.info("fail");
+
+
                 throw new BlastDatabaseAccessException("Failed to add  sequence.", e);
             }
 
 
         }
-        while (references.hasNext()) {
-            Publication publication = publicationRepository.getPublication(references.next().getZdbID());
-            markerRepository.addDBLinkAttribution(link, publication, marker);
-        }
+
+
         HibernateUtil.flushAndCommitCurrentSession();
 
         return getLinkDisplayById(link.getZdbID());
     }
-
 
 
     @ResponseBody
@@ -293,7 +303,8 @@ Sequence sequence = null;
         boolean accessionUpdated = !StringUtils.equals(link.getAccessionNumber(), updatedLink.getAccession());
         boolean databaseUpdated = !StringUtils.equals(link.getReferenceDatabase().getZdbID(), updatedLink.getReferenceDatabaseZdbID());
 
-        ReferenceDatabase database = sequenceRepository.getReferenceDatabaseByID(updatedLink.getReferenceDatabaseZdbID());;
+        ReferenceDatabase database = sequenceRepository.getReferenceDatabaseByID(updatedLink.getReferenceDatabaseZdbID());
+        ;
         if (!errors.hasErrors() && (accessionUpdated || databaseUpdated)) {
             DBLink existingLink = sequenceRepository.getDBLinkByAlternateKey(updatedLink.getAccession(), link.getDataZdbID(), database);
             if (existingLink != null) {
