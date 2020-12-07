@@ -68,6 +68,7 @@ const EditOrthologyEvidenceCell = ({defaultPubId, evidenceCodes, evidenceSet, or
         Form,
         meta: { isSubmitting, isValid },
         values,
+        getFieldValue,
         setFieldValue,
     } = useForm({
         defaultValues: modalEvidence,
@@ -130,7 +131,7 @@ const EditOrthologyEvidenceCell = ({defaultPubId, evidenceCodes, evidenceSet, or
         setModalItem({
             publicationID: pubId,
             orthologID: orthoZdbId,
-            evidenceCodeList: evidenceGroupedByPub[pubId] || [],
+            evidenceCodeList: evidenceGroupedByPub[pubId] || getFieldValue('evidenceCodeList'),
         }, isEdit, true);
     }
 
