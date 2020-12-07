@@ -6,7 +6,9 @@ import FormGroup from '../components/form/FormGroup';
 import InputField from '../components/form/InputField';
 import PublicationInput from '../components/form/PublicationInput';
 import AddEditDeleteModal from '../components/AddEditDeleteModal';
-import AddList from '../components/AddList';
+import AddEditList from '../components/AddEditList';
+import LoadingSpinner from '../components/LoadingSpinner';
+
 
 const MarkerAddSequences = ({markerId, type, group = 'gene edit addable nucleotide sequence', groupDB = 'gene edit addable nucleotide sequence'}) => {
     const links = useFetch(`/action/marker/${markerId}/${type}/links?group=${group}`);
@@ -41,21 +43,43 @@ const MarkerAddSequences = ({markerId, type, group = 'gene edit addable nucleoti
             return false;
         },
     });
+    const formatLink = (link, editLink) => {
+        return (
+            <>
+                <a href={link.link}>
+                    {link.referenceDatabaseName}:{link.accession}
+                </a>
+                {' '}
+                {link.references && link.references.length && <>({link.references.length})</>} {editLink}
+            </>
+        );
+    }
 
+    if (links.pending || databases.pending) {
+        return <LoadingSpinner/>;
+    }
+
+    if (!links.value) {
+        return null;
+    }
 
     return (
         <>
-            <AddList
+
+            <AddEditList
                 title={hdr}
+                formatItem={formatLink}
+                itemKeyProp='dblinkZdbID'
+                items={links.value}
                 newItem={{
                     accession: '',
                     length: '',
-                    sequence: '',
                     referenceDatabaseZdbID: '',
                     references: [{zdbID: ''}],
                 }}
                 setModalItem={setModalLink}
             />
+
             <AddEditDeleteModal {...modalProps} header={hdr}>
 
                 {values && <>
