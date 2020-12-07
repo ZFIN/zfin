@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <schema name="solr" version="1.6">
-a
     <types>
 
         <fieldType name="string" class="solr.StrField" sortMissingLast="true" docValues="true" />

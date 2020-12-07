@@ -423,6 +423,7 @@
 
 
       <str name="q.alt">*:*</str>
+      <str name="q.op">AND</str>
       <str name="defType">edismax</str>
       <!-- there is an override in SearchPrototypeController that mirrors this list but includes an extra, so they should be updated in tandem -->
       <!--screen used to be here, removed as a result of case 11323-->
@@ -668,6 +669,7 @@
       <str name="wt">json</str>
       <str name="indent">true</str>
       <str name="q.alt">*:*</str>
+      <str name="q.op">AND</str>
       <str name="qf">
         name_ac^10
         full_name_ac^5
@@ -707,6 +709,7 @@
     </lst>
     <lst name="defaults">
       <str name="defType">edismax</str>
+      <str name="q.op">AND</str>
       <str name="df">id</str>
       <str name="wt">json</str>
       <str name="pretty">true</str>
@@ -739,6 +742,7 @@
     </lst>
     <lst name="defaults">
       <str name="defType">edismax</str>
+      <str name="q.op">AND</str>
       <str name="df">id</str>
       <str name="wt">json</str>
       <str name="pretty">true</str>
@@ -797,6 +801,7 @@
       <str name="sort">score desc, name_sort asc</str>
 
       <str name="q.alt">*:*</str>
+      <str name="q.op">AND</str>
       <str name="defType">edismax</str>
       <!-- This list needs to match the fl for the primary requesthandler, or, more importantly, it needs to match the annotations in SearchResult.java  -->
       <str name="fl">name, type, id, category, full_name, url, thumbnail, image, profile_image, date, attribution_count, has_orthology, xpat_zdb_id, fig_zdb_id, score, pgcmid, is_curatable</str>
@@ -860,6 +865,7 @@
       <str name="wt">json</str>
       <str name="indent">true</str>
       <str name="df">id</str>
+      <str name="q.op">AND</str>
       <str name="rows">20</str>
 
       <!-- name searching gets fancy sorting in the controller -->
