@@ -3,8 +3,9 @@
 <jsp:useBean id="str" class="org.zfin.mutant.SequenceTargetingReagent" scope="request"/>
 
 <c:set var="NOMENCLATURE" value="Nomenclature" />
+<c:set var="TARGETS" value="Targets" />
 
-<z:dataPage sections="${[NOMENCLATURE]}">
+<z:dataPage sections="${[NOMENCLATURE, TARGETS]}">
     <z:dataManagerDropdown>
         <a class="dropdown-item" href="/${str.zdbID}">View</a>
         <a class="dropdown-item" href="/action/str/${str.zdbID}/edit">Edit</a>
@@ -22,6 +23,16 @@
              data-marker-id="${str.zdbID}"
              data-show-abbreviation-field="false"
              data-show-reason-fields="false">
+        </div>
+    </z:section>
+
+    <z:section title="${TARGETS}">
+        <div class="__react-root"
+             id="MarkerEditMarkerRelationships"
+             data-marker-abbreviation="${str.abbreviation}"
+             data-marker-id="${str.zdbID}"
+             data-show-relationship-type="false"
+             data-relationship-type-data='${markerRelationshipTypes}'>
         </div>
     </z:section>
 </z:dataPage>

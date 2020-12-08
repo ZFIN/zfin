@@ -28,3 +28,7 @@ export function parseDate(string) {
     const date = parseInt(match[3], 10);
     return new Date(year, month - 1, date); // month is 0-indexed!
 }
+
+export function stringToBool(str) {
+    return str && str.toLowerCase() === 'true';
+}

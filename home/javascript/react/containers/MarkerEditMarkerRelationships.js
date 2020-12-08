@@ -10,8 +10,9 @@ import FormGroup from '../components/form/FormGroup';
 import InputField from '../components/form/InputField';
 import PublicationInput from '../components/form/PublicationInput';
 import MarkerInput from '../components/form/MarkerInput';
+import { stringToBool } from '../utils';
 
-const MarkerEditMarkerRelationships = ({markerAbbreviation, markerId, relationshipTypeData}) => {
+const MarkerEditMarkerRelationships = ({markerAbbreviation, markerId, relationshipTypeData, showRelationshipType = 'true'}) => {
     relationshipTypeData = JSON.parse(relationshipTypeData);
     const relationshipTypeNameList = relationshipTypeData.map(d => d.type).join(',');
     const {
@@ -50,7 +51,7 @@ const MarkerEditMarkerRelationships = ({markerAbbreviation, markerId, relationsh
         const displayMarker = is1to2 ? secondMarker : firstMarker;
         return (
             <>
-                {typeLabel} <EntityLink entity={displayMarker} />
+                {stringToBool(showRelationshipType) && typeLabel} <EntityLink entity={displayMarker} />
                 {references.length > 0 && <> ({references.length})</>}
                 {editLink}
             </>
@@ -222,6 +223,7 @@ MarkerEditMarkerRelationships.propTypes = {
     markerAbbreviation: PropTypes.string,
     markerId: PropTypes.string,
     relationshipTypeData: PropTypes.string,
+    showRelationshipType: PropTypes.string,
 }
 
 export default MarkerEditMarkerRelationships;

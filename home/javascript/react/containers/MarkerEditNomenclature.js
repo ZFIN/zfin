@@ -4,10 +4,7 @@ import MarkerNameForm from '../components/marker-edit/MarkerNameForm';
 import Section from '../components/layout/Section';
 import MarkerAliases from '../components/marker-edit/MarkerAliases';
 import useFetch from '../hooks/useFetch';
-
-function toBool(str) {
-    return str && str.toLowerCase() === 'true';
-}
+import { stringToBool } from '../utils';
 
 const MarkerEditNomenclature = ({ markerId, showAbbreviationField, showReasonFields }) => {
     const {
@@ -37,8 +34,8 @@ const MarkerEditNomenclature = ({ markerId, showAbbreviationField, showReasonFie
                     nomenclature={nomenclature}
                     setNomenclature={setNomenclature}
                     onSave={refetchAliases}
-                    showAbbreviationField={toBool(showAbbreviationField)}
-                    showReasonFields={toBool(showReasonFields)}
+                    showAbbreviationField={stringToBool(showAbbreviationField)}
+                    showReasonFields={stringToBool(showReasonFields)}
                 />
             </Section>
 
