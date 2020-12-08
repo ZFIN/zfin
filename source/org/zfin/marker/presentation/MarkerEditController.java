@@ -154,6 +154,10 @@ public class MarkerEditController {
             throw new InvalidWebRequestException("No Marker record found");
         }
 
+        if (marker.isInTypeGroup(Marker.TypeGroup.ABBREV_EQ_NAME)) {
+            nomenclature.setAbbreviation(nomenclature.getName());
+        }
+
         Transaction tx = null;
         try {
             tx = HibernateUtil.createTransaction();

@@ -12,13 +12,12 @@ import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.profile.service.ProfileService;
 
 @Controller
-@RequestMapping("/str")
 public class SequenceTargetingReagentEditController {
 
     @Autowired
     MarkerRepository markerRepository;
 
-    @RequestMapping("/{zdbID}/edit")
+    @RequestMapping("/str/{zdbID}/edit")
     public String showEditPublicationForm(Model model, @PathVariable String zdbID) {
         SequenceTargetingReagent str = markerRepository.getSequenceTargetingReagent(zdbID);
         if (str == null) {
@@ -31,6 +30,19 @@ public class SequenceTargetingReagentEditController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Edit " + str.getAbbreviation());
 
         return "marker/sequence-targeting-reagent-edit";
+    }
+
+    @RequestMapping("/marker/str/prototype-edit/{zdbID}")
+    public String showSTRPrototypeEdit(Model model, @PathVariable String zdbID) {
+        SequenceTargetingReagent str = markerRepository.getSequenceTargetingReagent(zdbID);
+        if (str == null) {
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
+        model.addAttribute("str", str);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Edit " + str.getAbbreviation());
+
+        return "marker/sequenceTargetingReagent/sequence-targeting-reagent-edit";
     }
 
 }

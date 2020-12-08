@@ -5,7 +5,11 @@ import Section from '../components/layout/Section';
 import MarkerAliases from '../components/marker-edit/MarkerAliases';
 import useFetch from '../hooks/useFetch';
 
-const MarkerEditNomenclature = ({ markerId }) => {
+function toBool(str) {
+    return str && str.toLowerCase() === 'true';
+}
+
+const MarkerEditNomenclature = ({ markerId, showAbbreviationField, showReasonFields }) => {
     const {
         value: nomenclature,
         setValue: setNomenclature,
@@ -33,6 +37,8 @@ const MarkerEditNomenclature = ({ markerId }) => {
                     nomenclature={nomenclature}
                     setNomenclature={setNomenclature}
                     onSave={refetchAliases}
+                    showAbbreviationField={toBool(showAbbreviationField)}
+                    showReasonFields={toBool(showReasonFields)}
                 />
             </Section>
 
@@ -49,6 +55,8 @@ const MarkerEditNomenclature = ({ markerId }) => {
 
 MarkerEditNomenclature.propTypes = {
     markerId: PropTypes.string.isRequired,
+    showAbbreviationField: PropTypes.string,
+    showReasonFields: PropTypes.string,
 };
 
 export default MarkerEditNomenclature;

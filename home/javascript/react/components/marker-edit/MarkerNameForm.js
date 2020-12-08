@@ -6,7 +6,14 @@ import http from '../../utils/http';
 import LoadingButton from '../LoadingButton';
 import FormGroup from '../form/FormGroup';
 
-const MarkerNameForm = ({markerId, nomenclature, setNomenclature, onSave}) => {
+const MarkerNameForm = ({
+    markerId,
+    nomenclature,
+    setNomenclature,
+    onSave,
+    showAbbreviationField = true,
+    showReasonFields = true
+}) => {
     const {
         Form,
         reset,
@@ -53,23 +60,25 @@ const MarkerNameForm = ({markerId, nomenclature, setNomenclature, onSave}) => {
                 }, 300)}
             />
 
-            <FormGroup
-                label='Abbreviation'
-                field='abbreviation'
-                id='inputAbbreviation'
-                validate={(value, { debounce }) => debounce(async () => {
-                    if (value === nomenclature.abbreviation) {
-                        return false;
-                    }
-                    if (!value) {
-                        return 'An abbreviation is required';
-                    }
-                    const validation = await http.get(`/action/marker/validate?abbreviation=${value}`);
-                    return validation.errors[0] || false;
-                }, 300)}
-            />
+            { showAbbreviationField &&
+                <FormGroup
+                    label='Abbreviation'
+                    field='abbreviation'
+                    id='inputAbbreviation'
+                    validate={(value, { debounce }) => debounce(async () => {
+                        if (value === nomenclature.abbreviation) {
+                            return false;
+                        }
+                        if (!value) {
+                            return 'An abbreviation is required';
+                        }
+                        const validation = await http.get(`/action/marker/validate?abbreviation=${value}`);
+                        return validation.errors[0] || false;
+                    }, 300)}
+                />
+            }
 
-            {!isPristine &&
+            {!isPristine && showReasonFields &&
             <>
                 <FormGroup
                     label='Reason'
@@ -125,6 +134,8 @@ MarkerNameForm.propTypes = {
     nomenclature: PropTypes.object,
     setNomenclature: PropTypes.func,
     onSave: PropTypes.func,
+    showAbbreviationField: PropTypes.bool,
+    showReasonFields: PropTypes.bool,
 };
 
 export default MarkerNameForm;
