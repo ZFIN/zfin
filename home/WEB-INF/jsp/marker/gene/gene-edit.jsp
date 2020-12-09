@@ -23,7 +23,7 @@
     </z:section>
 
     <z:section title="${RESOURCES}">
-        <div class="__react-root" id="MarkerEditGenomeResources" data-marker-id="${gene.zdbID}"></div>
+        <div class="__react-root" id="MarkerEditDbLinks" data-marker-id="${gene.zdbID}"></div>
     </z:section>
 
     <z:section title="${NOTES}">

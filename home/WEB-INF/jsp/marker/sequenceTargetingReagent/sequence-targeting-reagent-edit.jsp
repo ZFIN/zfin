@@ -5,8 +5,9 @@
 <c:set var="NOMENCLATURE" value="Nomenclature" />
 <c:set var="TARGETS" value="Targets" />
 <c:set var="NOTES" value="Notes" />
+<c:set var="OTHERPAGES" value="Other Pages" />
 
-<z:dataPage sections="${[NOMENCLATURE, TARGETS, NOTES]}">
+<z:dataPage sections="${[NOMENCLATURE, TARGETS, NOTES, OTHERPAGES]}">
     <z:dataManagerDropdown>
         <a class="dropdown-item" href="/${str.zdbID}">View</a>
         <a class="dropdown-item" href="/action/str/${str.zdbID}/edit">Edit</a>
@@ -41,6 +42,14 @@
         <div class="__react-root"
              id="MarkerEditNotes"
              data-current-user-id="${currentUser.zdbID}"
+             data-marker-id="${str.zdbID}">
+        </div>
+    </z:section>
+
+    <z:section title="${OTHERPAGES}">
+        <div class="__react-root"
+             id="MarkerEditDbLinks"
+             data-group="summary page"
              data-marker-id="${str.zdbID}">
         </div>
     </z:section>

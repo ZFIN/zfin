@@ -9,7 +9,7 @@ import PublicationInput from '../components/form/PublicationInput';
 import AddEditList from '../components/AddEditList';
 import AddEditDeleteModal from '../components/AddEditDeleteModal';
 
-const MarkerEditGenomeResources = ({markerId, group = 'other marker pages'}) => {
+const MarkerEditDbLinks = ({markerId, group = 'other marker pages'}) => {
     const links = useFetch(`/action/marker/${markerId}/links?group=${group}`);
     const databases = useFetch(`/action/marker/link/databases?group=${group}`);
     const [modalLink, setModalLink] = useState(null);
@@ -138,9 +138,9 @@ const MarkerEditGenomeResources = ({markerId, group = 'other marker pages'}) => 
     );
 };
 
-MarkerEditGenomeResources.propTypes = {
+MarkerEditDbLinks.propTypes = {
     markerId: PropTypes.string,
     group: PropTypes.string,
 };
 
-export default MarkerEditGenomeResources;
+export default MarkerEditDbLinks;
