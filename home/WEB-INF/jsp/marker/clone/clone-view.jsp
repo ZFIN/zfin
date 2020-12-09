@@ -25,8 +25,11 @@
 
     <jsp:body>
         <z:dataManagerDropdown>
+            <a class="dropdown-item" href="/${formBean.marker.zdbID}">View</a>
             <a class="dropdown-item" href="/action/marker/marker-edit?zdbID=${formBean.marker.zdbID}">Edit</a>
             <a class="dropdown-item" href="/action/marker/merge?zdbIDToDelete=${formBean.marker.zdbID}">Merge</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="/action/marker/clone/prototype-edit/${formBean.marker.zdbID}">Prototype Edit</a>
         </z:dataManagerDropdown>
 
         <div id="${zfn:makeDomIdentifier(SUMMARY)}">
