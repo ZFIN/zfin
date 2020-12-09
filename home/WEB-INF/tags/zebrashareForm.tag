@@ -42,7 +42,8 @@
     <div class="form-group row">
         <label class="col-md-3 col-form-label">Title</label>
         <div class="col-md-8">
-            <form:textarea path="title" cssClass="form-control" placeholder="e.g. A CRISPR Mutagenesis Screen of Sox9a"/>
+            <form:textarea path="title" cssClass="form-control" placeholder="e.g. A CRISPR Mutagenesis Screen of yfg1a
+"/>
             <form:errors path="title" cssClass="text-danger" />
         </div>
     </div>
@@ -50,7 +51,7 @@
     <div class="form-group row">
         <label class="col-md-3 col-form-label">Abstract</label>
         <div class="col-md-8">
-            <form:textarea path="abstractText" cssClass="form-control" rows="8" placeholder="e.g. CRISPRs were used to create premature stops in each exon of the sox9a gene. Only mutations in exon 1 and 2 resulted in any observable phenotype, which included small eyes."/>
+            <form:textarea path="abstractText" cssClass="form-control" rows="8" placeholder="e.g. CRISPRs were used to create premature stops in each exon of 'your favorite gene 1a' (yfg1a). Only mutations in yfg1a exon 1 and 2 resulted in any observable phenotype, which included small eyes (N=20/20 exon 1 mutants, N=17/17 exon 2 mutants, and 0/17 exon 3 mutants have small eyes)."/>
             <form:errors path="abstractText" cssClass="text-danger" />
         </div>
     </div>
