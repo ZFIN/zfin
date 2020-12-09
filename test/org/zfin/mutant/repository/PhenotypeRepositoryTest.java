@@ -385,14 +385,7 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
         assertEquals("Dee <i>et al.</i>, 2008", publicationLink.getLinkContent());
     }
 
-    @Test
-    public void getFirstPhenotypeFigure() {
-        Marker m = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-MRPHLNO-070305-1");
-        FigureLink figureLink = getPhenotypeRepository().getPhenotypeFirstFigure(m);
-        assertEquals("ZDB-FIG-070307-8", figureLink.getFigureZdbId());
-        assertEquals("Fig. 7", figureLink.getLinkContent());
-        assertEquals("<a href=\"/ZDB-FIG-070307-8\" class=\"figure-link\" >Fig.&nbsp;7</a>", figureLink.getLink());
-    }
+
 
     @Test
     public void getPhenotypeAnatomy() {
