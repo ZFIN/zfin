@@ -739,6 +739,7 @@ test {
         includeTestsMatching "org.zfin.httpunittest.MarkerViewSmokeTest"
         includeTestsMatching "org.zfin.sebservice.MarkerRestSmokeTest"
         includeTestsMatching "org.zfin.publication.repository.PublicationRepositorySpec"
+        includeTestsMatching "org.zfin.infrastructure.ActiveSourceTest"
         //include specific method in any of the tests
 //        includeTestsMatching "*ActiveDataTest"
     }
