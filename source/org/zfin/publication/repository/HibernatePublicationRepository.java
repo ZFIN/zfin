@@ -2059,28 +2059,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return getCount(sql, publication.getZdbID());
     }
 
-    public List<Marker> getMarkers(Publication publication) {
-        //return new ArrayList<Marker>();
-        String hql = "from PublicationAttribution pa where pa.publication.zdbID = :pubZdbID";
-        Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setParameter("pubZdbID", publication.getZdbID());
-        List<PublicationAttribution> publicationAttributionList = query.list();
-        List<Marker> markerList = new ArrayList<>();
-        logger.error(publicationAttributionList);
-/*        for (PublicationAttribution pa : publicationAttributionList) {
-            if (!markerList.contains(pa.getMarker())) {
-                markerList.add(pa.getMarker());
-            }
-        }
-        logger.error(markerList);*/
-        return markerList;
-/*        return publicationAttributionList
-                .stream()
-                .map(PublicationAttribution::getMarker)
-                .collect(Collectors.toList());*/
-    }
-
-
     public long getMorpholinoCount(Publication publication) {
         return getMarkerCountByMarkerType(publication.getZdbID(), Marker.Type.MRPHLNO.toString());
     }
