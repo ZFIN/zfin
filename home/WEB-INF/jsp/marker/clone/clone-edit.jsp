@@ -2,8 +2,9 @@
 
 <c:set var="NOMENCLATURE" value="Nomenclature" />
 <c:set var="NOTES" value="Notes" />
+<c:set var="MARKER_RELATIONSHIPS" value="Marker Relationships" />
 
-<z:dataPage sections="${[NOMENCLATURE, NOTES]}">
+<z:dataPage sections="${[NOMENCLATURE, NOTES, MARKER_RELATIONSHIPS]}">
     <z:dataManagerDropdown>
         <a class="dropdown-item" href="/${clone.zdbID}">View</a>
         <a class="dropdown-item" href="/action/marker/marker-edit?zdbID=${clone.zdbID}">Edit</a>
@@ -28,6 +29,15 @@
              id="MarkerEditNotes"
              data-current-user-id="${currentUser.zdbID}"
              data-marker-id="${clone.zdbID}">
+        </div>
+    </z:section>
+
+    <z:section title="${MARKER_RELATIONSHIPS}">
+        <div class="__react-root"
+             id="MarkerEditMarkerRelationships"
+             data-marker-abbreviation="${clone.abbreviation}"
+             data-marker-id="${clone.zdbID}"
+             data-relationship-type-data='${markerRelationshipTypes}'>
         </div>
     </z:section>
 </z:dataPage>
