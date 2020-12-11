@@ -16,7 +16,7 @@ const TYPE_CLASSES = [
 
 const EntityAbbreviation = ({entity}) => {
     let className;
-    const match = entity.zdbID.match(/^ZDB-([A-Za-z]+)-/)
+    const match = entity.zdbID.match(/^ZDB-([A-Za-z_]+)-/)
 
     if (match) {
         const type = match[1];

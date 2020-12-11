@@ -33,7 +33,8 @@ public class CloneEditController {
         model.addAttribute("clone", clone);
         model.addAttribute("markerRelationshipTypes", new ObjectMapper().writeValueAsString(
                 markerService.getMarkerRelationshipEditMetadata(clone,
-                        MarkerRelationship.Type.CLONE_CONTAINS_GENE
+                        MarkerRelationship.Type.CLONE_CONTAINS_GENE,
+                        MarkerRelationship.Type.CLONE_CONTAINS_SMALL_SEGMENT
                 )));
         return "marker/clone/clone-edit";
     }
