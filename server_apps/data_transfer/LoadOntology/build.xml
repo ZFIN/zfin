@@ -69,12 +69,6 @@
             <include name="*.jar"/>
             <include name="*.zip"/>
         </fileset>
-        <fileset dir="${gwt.lib}">
-            <include name="*.jar"/>
-        </fileset>
-        <fileset dir="${jwebunit.lib}">
-            <include name="*.jar"/>
-        </fileset>
     </path>
 
     <target name="load-sm">
@@ -164,13 +158,17 @@
         <load-ontology oboDirectory="${run-directory}" oboFileName="eco-ontology.obo"
                        scripts="${scriptFilesNoAnnotation}"/>
     </target>
-    <taskdef name="groovy"
-             classname="org.codehaus.groovy.ant.Groovy"
-             classpathref="classpath"/>
 
+
+    <taskdef name="groovyc"
+             classname="org.codehaus.groovy.ant.Groovyc">
+        <classpath>
+            <fileset  dir="/opt/misc/groovy/lib" includes="*.jar"/>
+        </classpath>
+    </taskdef>
 
     <target name="get-ecogo-mapping">
-        <groovy src="../eco_go_mapping/getECOGOMapping.groovy"/>
+        <groovyc src="../eco_go_mapping/getECOGOMapping.groovy"/>
     </target>
 
     <target name="load-disease-ontology" depends="init">

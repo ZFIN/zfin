@@ -11,7 +11,7 @@ import java.util.*;
 public enum Ontology implements Serializable {
 
     ANATOMY("zebrafish_anatomy", "Anatomy Ontology", false, "ZFA:", true, true),
-    ANATOMY_FULL("zebrafish_anatomical_ontology", "Anatomy Ontology including stage ontology", false),
+    ANATOMY_FULL("zebrafish_anatomical_ontology", "Anatomy Ontology including stage ontology", false, "ZFA:", true, true),
     // stages
     STAGE("zebrafish_stages", "Zebrafish Stage Ontology", false, "ZFS:"),
     CHEBI("chebi_ontology", "Chebi", false, "CHEBI:"),
