@@ -30,7 +30,7 @@ const MarkerEditSequences = ({markerId, group = 'marker linked sequence', groupD
         itemKeyProp: 'dblinkZdbID',
         defaultValues: modalLink,
         validate: values => {
-            if (values && values.references.length === 0) {
+            if (values && (!Array.isArray(values.references) || values.references.length === 0)) {
                 return 'At least one reference is required';
             }
             return false;
@@ -43,11 +43,11 @@ const MarkerEditSequences = ({markerId, group = 'marker linked sequence', groupD
                 <a href={link.link}>
                     {link.referenceDatabaseName}:{link.accession}
                 </a>
-                {' '}
-                {link.references && link.references.length && <>({link.references.length})</>} {editLink}
+                {link.length && <> &ndash; {link.length} nt/aa</>}
+                {link.references && link.references.length && <> ({link.references.length})</>} {editLink}
             </>
         );
-    }
+    };
 
     if (links.pending || databases.pending) {
         return <LoadingSpinner/>;
@@ -126,7 +126,7 @@ const MarkerEditSequences = ({markerId, group = 'marker linked sequence', groupD
                         <label className='col-md-2 col-form-label'>Citations</label>
                         <div className='col-md-10'>
                             {
-                                values.references.map((reference, idx) => (
+                                values.references && values.references.map((reference, idx) => (
                                     <div key={idx} className={`d-flex align-items-baseline ${idx > 0 ? 'mt-2' : ''}`}>
                                         <div className='flex-grow-1'>
                                             <InputField
