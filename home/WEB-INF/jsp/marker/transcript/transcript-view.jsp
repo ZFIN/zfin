@@ -24,8 +24,13 @@
     </jsp:attribute>
 
     <jsp:body>
+
         <z:dataManagerDropdown>
             <a class="dropdown-item" href="/action/marker/marker-edit?zdbID=${formBean.marker.zdbID}">Edit</a>
+            <a class="dropdown-item" href="/action/marker/merge?zdbIDToDelete=${formBean.marker.zdbID}">Merge</a>
+            <a class="dropdown-item" href="/action/infrastructure/deleteRecord/${formBean.marker.zdbID}">Delete</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="/action/marker/transcript/prototype-edit/${formBean.marker.zdbID}">Prototype Edit</a>
         </z:dataManagerDropdown>
 
         <div id="${zfn:makeDomIdentifier(SUMMARY)}">
