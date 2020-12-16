@@ -1,0 +1,96 @@
+task createBasicGeneInfoFile(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.marker.agr.BasicGeneInfo'
+}
+task createBasicGeneInfoFileTest(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.marker.agr.BasicGeneInfo'
+    args '5'
+}
+
+task createConstructFile(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.marker.agr.BasicConstructInfo'
+}
+
+task createHtpdatasetFile(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.marker.agr.BasicRNASeqMetaDatasetInfo'
+}
+
+task createHtpdatasampleFile(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.marker.agr.BasicRNASeqMetaDatasampleInfo'
+}
+
+task createBasicFishInfoFile(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.marker.agr.BasicFishInfo'
+}
+
+task createBasicSTRInfoFile(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.marker.agr.BasicSTRInfo'
+}
+
+task createBasicVariantInfoFile(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.marker.agr.BasicVariantInfo'
+}
+
+task createZfinExpressionInfoFile(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.marker.agr.ZFINExpressionInfo'
+}
+
+task createBasicAlleleInfoFile(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.marker.agr.BasicAlleleInfo'
+}
+
+task createGPIFile(type: JavaExec) {
+    description 'Generates tab delimited file for GO/Noctua'
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.marker.GPIFile'
+}
+
+task createGPI2File(type: JavaExec) {
+    description 'Generates tab delimited file for GO/Noctua(Ver 2.0)'
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.marker.GPIFileVer2'
+}
+
+task createDiseaseInfoFile(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.marker.agr.DiseaseInfo'
+}
+task createDiseaseInfoFileTest(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.marker.agr.DiseaseInfo'
+    args '100'
+}
+
+task createBasicPhenotypeInfoFile(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.marker.agr.BasicPhenotypeInfo'
+}
+
+task createBasicWTExpressionInfoFile(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.marker.agr.BasicExpressionInfo'
+}
+
+task createAllianceFiles {
+    dependsOn createDiseaseInfoFile
+    dependsOn createBasicPhenotypeInfoFile
+    dependsOn createBasicWTExpressionInfoFile
+    dependsOn createBasicAlleleInfoFile
+    dependsOn createBasicGeneInfoFile
+    dependsOn createBasicFishInfoFile
+    dependsOn createBasicSTRInfoFile
+    dependsOn createBasicVariantInfoFile
+    dependsOn createZfinExpressionInfoFile
+    dependsOn createConstructFile
+    dependsOn createHtpdatasetFile
+    dependsOn createHtpdatasampleFile
+}

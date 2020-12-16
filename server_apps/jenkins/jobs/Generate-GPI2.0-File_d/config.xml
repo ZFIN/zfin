@@ -17,10 +17,9 @@
   <concurrentBuild>false</concurrentBuild>
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
-    <hudson.tasks.Ant plugin="ant@1.2">
-      <targets>create-gpi2.0-file</targets>
-      <buildFile>$SOURCEROOT/build.xml</buildFile>
-    </hudson.tasks.Ant>
+    <hudson.tasks.Shell>
+      <command>cd $SOURCEROOT &amp;&amp; gradle createGPI2File</command>
+    </hudson.tasks.Shell>
     <hudson.tasks.Shell>
       <command>cp $TARGETROOT/server_apps/data_transfer/GO/zfin.gpi2.gz $DOWNLOAD_DIRECTORY/current/</command>
     </hudson.tasks.Shell>
