@@ -2,6 +2,11 @@ String webDir = "${project.rootDir}/home/WEB-INF"
 String validateData = "${project.rootDir}/server_apps/DB_maintenance"
 def env = System.getenv()
 def dbname = env['DBNAME']
+if (project.hasProperty("jobName")) {
+    ext.cmdargs = project.getProperty("jobName")
+} else {
+    ext.cmdargs = ""
+}
 
 
 task updateDOIs(type: JavaExec) {
@@ -167,13 +172,13 @@ task microarrayUpdate(type: JavaExec) {
 task validateDataReportSimple(type: JavaExec) {
 
 println "Create Validation Report"
+    //how do you specify "jobName" here...It will get passed as a parameter in Jenkisn config.xml
     println "Use database: ${dbname}"
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.infrastructure.ant.CreateValidateDataReportTask'
     args = [
             "${dbname}",
-            "${jobName}",
-            "Microarray-Update_w",
+            "${cmdargs}",
             "${webDir}/zfin.properties",
             "${validateData}/report_data",
 
