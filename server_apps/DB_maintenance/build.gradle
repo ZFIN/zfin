@@ -114,7 +114,7 @@ task validateZebrafishBookPermissions(type: JavaExec) {
             "${validateData}/report_data",
             "Set-Permissions-Zebrafish-Book-Wiki_d",
     ]
-    echo "Check file: ${validateData}/validatedata/Set-Permissions-Zebrafish-Book-Wiki_d/Set-Permissions-Zebrafish-Book-Wiki_d.faulty-pages.txt"
+    println "Check file: ${validateData}/validatedata/Set-Permissions-Zebrafish-Book-Wiki_d/Set-Permissions-Zebrafish-Book-Wiki_d.faulty-pages.txt"
 }
 task cleanWikiSandbox(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
@@ -166,8 +166,8 @@ task microarray-update(type: JavaExec) {
 }
 task validate-data-report-simple(type: JavaExec) {
 
-echo "Create Validation Report"
-    echo "Use database: ${dbname}"
+println "Create Validation Report"
+    println "Use database: ${dbname}"
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.infrastructure.ant.CreateValidateDataReportTask'
     args = [
