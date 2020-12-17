@@ -2,6 +2,9 @@ String webDir = "${project.rootDir}/home/WEB-INF"
 String validateData = "${project.rootDir}/server_apps/DB_maintenance"
 def env = System.getenv()
 def dbname = env['DBNAME']
+
+//not sure about this part
+
 if (project.hasProperty("jobName")) {
     ext.cmdargs = project.getProperty("jobName")
 } else {
