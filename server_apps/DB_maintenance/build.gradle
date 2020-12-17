@@ -126,7 +126,7 @@ task cleanWikiSandbox(type: JavaExec) {
     ]
 
 }
-task set-wiki-page-permissions-to-owner(type: JavaExec) {
+task setWikiPagePermissionsToOwner(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.wiki.jobs.SetPermissionsToOwnerJob'
     args = [
@@ -137,7 +137,7 @@ task set-wiki-page-permissions-to-owner(type: JavaExec) {
 
 }
 
-task remove-go-terms-from-withdrawn-markers(type: JavaExec) {
+task removeGoTermsFromWithdrawnMarkers(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.ontology.jobs.RemoveGoTermsFromWithdrawnMarkersJob'
     args = [
@@ -148,7 +148,7 @@ task remove-go-terms-from-withdrawn-markers(type: JavaExec) {
 
 }
 
-task microarray-update(type: JavaExec) {
+task microarrayUpdate(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.datatransfer.microarray.MicroarrayWebserviceJob'
     args = [
@@ -164,7 +164,7 @@ task microarray-update(type: JavaExec) {
     </fail>*/
 
 }
-task validate-data-report-simple(type: JavaExec) {
+task validateDataReportSimple(type: JavaExec) {
 
 println "Create Validation Report"
     println "Use database: ${dbname}"
