@@ -1,0 +1,183 @@
+String webDir = "${project.rootDir}/home/WEB-INF"
+String validateData = "${project.rootDir}/server_apps/DB_maintenance"
+def env = System.getenv()
+def dbname = env['DBNAME']
+
+
+task updateDOIs(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.datatransfer.doi.UpdateDOIJob'
+    args= [  10,
+            "${webDir}/zfin.properties",
+            "${validateData}/report_data",
+            "Update-DOIs_m"
+            ]
+}
+
+
+task regenerateWebhostCuratedDatabases(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.sequence.blast.RegenerateWebHostCuratedDatabasesJob'
+    args = [
+            "${webDir}/zfin.properties",
+            "${validateData}/report_data",
+            "Regenerate-WebHost-Curated-Databases_d"
+    ]
+}
+task validateBlastDatabases(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.sequence.blast.ValidateBlastDatabases'
+    args = [
+            "${webDir}/zfin.properties",
+            "${validateData}/report_data",
+            "Validate-Blast-Databases_d"
+    ]
+}
+task loadGafGoa(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.datatransfer.go.service.GafLoadJob'
+    args = [
+            "${webDir}/zfin.properties",
+            "${validateData}/gafLoad",
+            "Load-GAF-GOA_m",
+            "GOA",
+            "ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/goa_zebrafish.gaf.gz",
+            "org.zfin.datatransfer.go.GoaGafParser",
+            "ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/goa_zebrafish_isoform.gaf.gz",
+            "ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/goa_zebrafish_rna.gaf.gz",
+            "org.zfin.datatransfer.go.GoaGafParser"
+
+    ]
+}
+
+task loadGafFPInference(type: JavaExec) {
+        classpath = sourceSets.main.runtimeClasspath
+        main = 'org.zfin.datatransfer.go.service.GafLoadJob'
+        args = [
+                "${webDir}/zfin.properties",
+                "${validateData}/gafLoad",
+                "Load-GAF-FP-Inference_m",
+                "FP Inferences",
+                "http://current.geneontology.org/products/annotations/zfin-prediction.gaf",
+                "org.zfin.datatransfer.go.FpInferenceGafParser"
+
+        ]
+
+    }
+
+task loadNoctuaGpad(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.datatransfer.go.service.GafLoadJob'
+    args = [
+            "${webDir}/zfin.properties",
+            "${validateData}/gafLoad",
+            "Load-GPAD-Noctua",
+            "Noctua",
+            "http://snapshot.geneontology.org/products/annotations/noctua_zfin.gpad.gz",
+            "org.zfin.datatransfer.go.GoaGafParser"
+    ]
+
+
+}
+
+
+task loadFlankSeq(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.datatransfer.flankingsequence.FlankSeqLoadJob'
+}
+
+task synchronizeAntibodies(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.wiki.jobs.AntibodyWikiSynchronizationJob'
+    args = [
+            "${webDir}/zfin.properties",
+            "${validateData}/report_data",
+            "Synchronize-Antibodies-Zfin-Wiki_w",
+    ]
+}
+
+task checkEapPatoTerms(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.ontology.jobs.CheckEapPatoTermsJob'
+    args = [
+            "${webDir}/zfin.properties",
+            "${validateData}/report_data",
+            "Check-Eap-Pato-Terms_d",
+    ]
+}
+
+task validateZebrafishBookPermissions(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.wiki.jobs.ValidatePermissionsForZebrafishBookJob'
+    args = [
+            "${webDir}/zfin.properties",
+            "${validateData}/report_data",
+            "Set-Permissions-Zebrafish-Book-Wiki_d",
+    ]
+    echo "Check file: ${validateData}/validatedata/Set-Permissions-Zebrafish-Book-Wiki_d/Set-Permissions-Zebrafish-Book-Wiki_d.faulty-pages.txt"
+}
+task cleanWikiSandbox(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.wiki.jobs.ValidatePermissionsForZebrafishBookJob'
+    args = [
+            "${webDir}/zfin.properties",
+            "${validateData}/report_data",
+            "Clean-Wiki-Sandbox_w",
+    ]
+
+}
+task set-wiki-page-permissions-to-owner(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.wiki.jobs.SetPermissionsToOwnerJob'
+    args = [
+            "${webDir}/zfin.properties",
+            "${validateData}/report_data",
+            "Set-Wiki-Page-Permissions-To-Owner_d"
+    ]
+
+}
+
+task remove-go-terms-from-withdrawn-markers(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.ontology.jobs.RemoveGoTermsFromWithdrawnMarkersJob'
+    args = [
+            "${webDir}/zfin.properties",
+            "${validateData}/report_data",
+            "Remove-GO-Terms-From-Withdrawn-Markers_w"
+    ]
+
+}
+
+task microarray-update(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.datatransfer.microarray.MicroarrayWebserviceJob'
+    args = [
+            "${webDir}/zfin.properties",
+            "${validateData}/report_data",
+            "Microarray-Update_w"
+    ]
+//not sure how to convert
+   /* <fail message="Error in microarray update">
+    <condition>
+    <resourcecontains resource="${validateData}/report_data/${jobName}/${jobName}.html" substring="Error"/>
+            </condition>
+    </fail>*/
+
+}
+task validate-data-report-simple(type: JavaExec) {
+
+echo "Create Validation Report"
+    echo "Use database: ${dbname}"
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.infrastructure.ant.CreateValidateDataReportTask'
+    args = [
+            "${dbname}",
+            "${jobName}",
+            "Microarray-Update_w",
+            "${webDir}/zfin.properties",
+            "${validateData}/report_data",
+
+    ]
+}
+
+
