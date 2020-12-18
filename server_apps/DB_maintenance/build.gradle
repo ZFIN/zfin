@@ -100,7 +100,7 @@ task synchronizeAntibodies(type: JavaExec) {
     args = [
             "${webDir}/zfin.properties",
             "${validateData}/report_data",
-            "Synchronize-Antibodies-Zfin-Wiki_w",
+            "Synchronize-Antibodies-Zfin-Wiki_w"
     ]
 }
 
@@ -110,7 +110,7 @@ task checkEapPatoTerms(type: JavaExec) {
     args = [
             "${webDir}/zfin.properties",
             "${validateData}/report_data",
-            "Check-Eap-Pato-Terms_d",
+            "Check-Eap-Pato-Terms_d"
     ]
 }
 
@@ -120,7 +120,7 @@ task validateZebrafishBookPermissions(type: JavaExec) {
     args = [
             "${webDir}/zfin.properties",
             "${validateData}/report_data",
-            "Set-Permissions-Zebrafish-Book-Wiki_d",
+            "Set-Permissions-Zebrafish-Book-Wiki_d"
     ]
     println "Check file: ${validateData}/validatedata/Set-Permissions-Zebrafish-Book-Wiki_d/Set-Permissions-Zebrafish-Book-Wiki_d.faulty-pages.txt"
 }
@@ -130,7 +130,7 @@ task cleanWikiSandbox(type: JavaExec) {
     args = [
             "${webDir}/zfin.properties",
             "${validateData}/report_data",
-            "Clean-Wiki-Sandbox_w",
+            "Clean-Wiki-Sandbox_w"
     ]
 
 }
@@ -165,6 +165,9 @@ task microarrayUpdate(type: JavaExec) {
             "Microarray-Update_w"
     ]
 //not sure how to convert
+    if ("${validateData}/report_data/Microarray-Update_w/Microarray-Update_w.html".contains("Error")){
+        throw new GradleException("Error in microarray update")
+    }
    /* <fail message="Error in microarray update">
     <condition>
     <resourcecontains resource="${validateData}/report_data/${jobName}/${jobName}.html" substring="Error"/>
