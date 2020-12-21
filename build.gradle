@@ -11,6 +11,7 @@ plugins {
 apply plugin: 'java'
 apply plugin: 'groovy'
 apply from: 'agr.gradle'
+
 //apply from: file('setupTestsReports.gradle')
 
 sourceCompatibility = 11
@@ -669,9 +670,12 @@ dependencies {
     testImplementation group: 'org.gebish', name: 'geb-spock', version: '0.9.2'
 //    testCompile group: 'org.openqa.selenium', name: 'selenium', version: '0.8.1'
 
-//    testImplementation('org.codehaus.groovy:groovy-all:2.4.4')
+    //testImplementation('org.codehaus.groovy:groovy-all:3.0.6')
     testImplementation group: 'org.spockframework', name: 'spock-core', version: '2.0-M4-groovy-3.0'
-    testImplementation('org.spockframework:spock-core:1.0-groovy-2.4')
+    //changed this from groovy-2.4
+    testImplementation('org.spockframework:spock-core:1.0-groovy-3.0')
+
+
     testImplementation group: 'net.sourceforge.htmlunit', name: 'htmlunit', version: '2.12'
     testImplementation group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.30'
     testImplementation group: 'org.javassist', name: 'javassist', version: '3.27.0-GA'
@@ -715,12 +719,35 @@ test {
     }
     filter {
         includeTestsMatching "org.zfin.UnitTests"
+        //spock tests
         includeTestsMatching "org.zfin.publication.MeshHeadingSpec"
+        includeTestsMatching "org.zfin.publication.PublicationServiceSpec"
+        includeTestsMatching "org.zfin.publication.presentation.PublicationValidatorSpec"
+        includeTestsMatching "org.zfin.publication.repository.PublicationRepositorySpec"
+        includeTestsMatching "org.zfin.publication.PublicationServiceSpec"
         includeTestsMatching "org.zfin.feature.service.MutationDetailsConversionServiceSpec"
         includeTestsMatching "org.zfin.util.ReportGeneratorSpec"
         includeTestsMatching "org.zfin.search.service.SolrServiceSpec"
         includeTestsMatching "org.zfin.search.service.SolrQueryFacadeSpec"
-
+        includeTestsMatching "org.zfin.search.service.MarkerSearchServiceSpec"
+        includeTestsMatching "org.zfin.search.service.SearchSuggestionServiceSpec"
+        includeTestsMatching "org.zfin.sequence.repository.SequenceRepositorySpec"
+        includeTestsMatching "org.zfin.feature.FeatureServiceSpec"
+        includeTestsMatching "org.zfin.curation.service.CurationDTOConversionServiceSpec"
+        includeTestsMatching "org.zfin.expression.ExpressionSearchSpec"
+        includeTestsMatching "org.zfin.figure.presentation.FigureViewWebSpec"
+        includeTestsMatching "org.zfin.figure.repository.FigureRepositorySpec"
+        includeTestsMatching "org.zfin.figure.service.FigureViewServiceSpec"
+        includeTestsMatching "org.zfin.figure.service.ImageServiceSpec"
+        includeTestsMatching "org.zfin.figure.service.VideoServiceSpec"
+        includeTestsMatching "org.zfin.framework.GroovyWebSpec"
+        includeTestsMatching "org.zfin.gbrowse.presentation.GBrowseImageSpec"
+        includeTestsMatching "org.zfin.marker.presentation.GeneAddFormBeanValidatorSpec"
+        includeTestsMatching "org.zfin.marker.presentation.MarkerGoServiceIntegrationSpec"
+        includeTestsMatching "org.zfin.marker.presentation.SequenceTargetingReagentAddBeanValidatorSpec"
+        includeTestsMatching "org.zfin.marker.MarkerselectWebSpec"
+        includeTestsMatching "org.zfin.ontology.presentation.OntologyWebSpec"
+        includeTestsMatching "org.zfin.ontology.service.RibbonServiceIntergrationSpec"
 
         // db unit tests
         includeTestsMatching "org.zfin.DbUnitTests"
