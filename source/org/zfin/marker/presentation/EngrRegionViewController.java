@@ -32,7 +32,7 @@ public class EngrRegionViewController {
     @Autowired
     private EfgViewController efgViewController;
 
-    @RequestMapping(value = "/engregion/view/{zdbID}")
+    @RequestMapping(value = "/eregion/view/{zdbID}")
     public String getView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
         // set base bean
         MarkerBean markerBean = new MarkerBean();
@@ -68,7 +68,7 @@ public class EngrRegionViewController {
         model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.EREGION.getTitleString() + region.getAbbreviation());
 
-        return "marker/engrRegion-view";
+        return "marker/eregion/eregion-view";
     }
 
     @RequestMapping("/view-all-engineered-regions/")
