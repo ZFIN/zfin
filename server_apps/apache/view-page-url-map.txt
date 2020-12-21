@@ -67,7 +67,7 @@ PTCONSTRCT	/action/marker/construct/view/ZDB-PTCONSTRCT
 PUB	/action/publication/view/ZDB-PUB
 RAPD	/action/marker/generic/view/ZDB-RAPD
 REFCROSS	/action/mapping/panel-detail/ZDB-REFCROSS
-EREGION	/action/marker/generic/view/ZDB-EREGION
+EREGION	/action/marker/eregion/view/ZDB-EREGION
 SNP	/action/marker/snp/view/ZDB-SNP
 SSLP	/action/marker/generic/view/ZDB-SSLP
 STS	/action/marker/generic/view/ZDB-STS
