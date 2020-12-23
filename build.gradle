@@ -720,6 +720,7 @@ test {
     filter {
         includeTestsMatching "org.zfin.UnitTests"
         //spock tests
+
         includeTestsMatching "org.zfin.publication.MeshHeadingSpec"
         includeTestsMatching "org.zfin.publication.PublicationServiceSpec"
         includeTestsMatching "org.zfin.publication.presentation.PublicationValidatorSpec"
@@ -735,9 +736,9 @@ test {
         includeTestsMatching "org.zfin.feature.FeatureServiceSpec"
         includeTestsMatching "org.zfin.curation.service.CurationDTOConversionServiceSpec"
         includeTestsMatching "org.zfin.expression.ExpressionSearchSpec"
-        includeTestsMatching "org.zfin.figure.presentation.FigureViewWebSpec"
-        includeTestsMatching "org.zfin.figure.repository.FigureRepositorySpec"
-        includeTestsMatching "org.zfin.figure.service.FigureViewServiceSpec"
+        //includeTestsMatching "org.zfin.figure.presentation.FigureViewWebSpec"
+        //includeTestsMatching "org.zfin.figure.repository.FigureRepositorySpec"
+        /*includeTestsMatching "org.zfin.figure.service.FigureViewServiceSpec"
         includeTestsMatching "org.zfin.figure.service.ImageServiceSpec"
         includeTestsMatching "org.zfin.figure.service.VideoServiceSpec"
         includeTestsMatching "org.zfin.framework.GroovyWebSpec"
@@ -747,7 +748,7 @@ test {
         includeTestsMatching "org.zfin.marker.presentation.SequenceTargetingReagentAddBeanValidatorSpec"
         includeTestsMatching "org.zfin.marker.MarkerselectWebSpec"
         includeTestsMatching "org.zfin.ontology.presentation.OntologyWebSpec"
-        includeTestsMatching "org.zfin.ontology.service.RibbonServiceIntergrationSpec"
+        includeTestsMatching "org.zfin.ontology.service.RibbonServiceIntegrationSpec"*/
 
         // db unit tests
         includeTestsMatching "org.zfin.DbUnitTests"
