@@ -139,7 +139,7 @@ public class FeatureNotesPresenter {
             noteDTO.setNoteData(view.newNoteTextArea.getText());
             noteDTO.setPublicationZdbID(publicationID);
             noteDTO.setNoteEditMode(noteEditMode);
-            noteDTO.setNoteType(view.noteTypeListBox.getSelected());
+            noteDTO.setNoteType(view.typeListBox.getSelected());
             noteDTO.setNoteTag(view.noteTypeListBox.getSelected());
             FeatureRPCService.App.getInstance().editPublicNote(noteDTO, new FeatureEditCallBack<FeatureDTO>("Failed to update public note") {
                 @Override

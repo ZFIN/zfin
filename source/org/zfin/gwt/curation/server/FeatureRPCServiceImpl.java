@@ -868,10 +868,10 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             note.setNote(noteDTO.getNoteData());
             note.setFeature(feature);
 
-            if (noteDTO.getNoteType().equals(ExternalNote.Type.FEATURE.toString())) {
+            if (noteDTO.getNoteTag().equals(ExternalNote.Type.FEATURE.toString())) {
                 note.setTag(ExternalNote.Type.FEATURE.toString());
             }
-            if (noteDTO.getNoteType().equals(ExternalNote.Type.VARIANT.toString())) {
+            if (noteDTO.getNoteTag().equals(ExternalNote.Type.VARIANT.toString())) {
                 if (feature.getFeatureGenomicMutationDetail() != null) {
                     note.setTag(ExternalNote.Type.VARIANT.toString() + feature.getFeatureGenomicMutationDetail().getZdbID());
                 } else {
