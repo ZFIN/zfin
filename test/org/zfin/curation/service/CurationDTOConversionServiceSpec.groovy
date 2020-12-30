@@ -1,6 +1,7 @@
 package org.zfin.curation.service
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.zfin.AbstractZfinSpec
 import org.zfin.TestConfiguration
 import org.zfin.ZfinIntegrationSpec
 import org.zfin.curation.Curation
@@ -14,10 +15,11 @@ import org.zfin.publication.PublicationTrackingStatus
 import spock.lang.Shared
 import spock.lang.Unroll
 
-class CurationDTOConversionServiceSpec extends ZfinIntegrationSpec {
+class CurationDTOConversionServiceSpec extends AbstractZfinSpec {
 
-    @Autowired
-    CurationDTOConversionService converter
+    @Shared
+
+    CurationDTOConversionService converter = new CurationDTOConversionService()
 
     @Shared person = [
             patrick: new Person(
