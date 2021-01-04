@@ -744,6 +744,10 @@ test {
         includeTestsMatching "org.zfin.gbrowse.presentation.GBrowseImageSpec"
         includeTestsMatching "org.zfin.marker.presentation.SequenceTargetingReagentAddBeanValidatorSpec"
         includeTestsMatching "org.zfin.ontology.service.RibbonServiceIntegrationSpec"
+
+        //these tests use GebSpec. From here, it appears that  current master of Geb still depends on spock-1.3-groovy-2.5
+        //https://github.com/geb/geb/blob/master/geb.gradle#L45
+        
         /*includeTestsMatching "org.zfin.marker.MarkerselectWebSpec"
         includeTestsMatching "org.zfin.ontology.presentation.OntologyWebSpec"
         includeTestsMatching "org.zfin.figure.service.FigureViewServiceSpec"
