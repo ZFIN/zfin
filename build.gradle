@@ -736,19 +736,19 @@ test {
         includeTestsMatching "org.zfin.feature.FeatureServiceSpec"
         includeTestsMatching "org.zfin.curation.service.CurationDTOConversionServiceSpec"
         includeTestsMatching "org.zfin.expression.ExpressionSearchSpec"
-        //includeTestsMatching "org.zfin.figure.presentation.FigureViewWebSpec"
-        //includeTestsMatching "org.zfin.figure.repository.FigureRepositorySpec"
-        /*includeTestsMatching "org.zfin.figure.service.FigureViewServiceSpec"
-        includeTestsMatching "org.zfin.figure.service.ImageServiceSpec"
-        includeTestsMatching "org.zfin.figure.service.VideoServiceSpec"
-        includeTestsMatching "org.zfin.framework.GroovyWebSpec"
-        includeTestsMatching "org.zfin.gbrowse.presentation.GBrowseImageSpec"
+        includeTestsMatching "org.zfin.figure.repository.FigureRepositorySpec"
         includeTestsMatching "org.zfin.marker.presentation.GeneAddFormBeanValidatorSpec"
         includeTestsMatching "org.zfin.marker.presentation.MarkerGoServiceIntegrationSpec"
+        includeTestsMatching "org.zfin.figure.service.ImageServiceSpec"
+        includeTestsMatching "org.zfin.figure.service.VideoServiceSpec"
+        includeTestsMatching "org.zfin.gbrowse.presentation.GBrowseImageSpec"
         includeTestsMatching "org.zfin.marker.presentation.SequenceTargetingReagentAddBeanValidatorSpec"
-        includeTestsMatching "org.zfin.marker.MarkerselectWebSpec"
+        includeTestsMatching "org.zfin.ontology.service.RibbonServiceIntegrationSpec"
+        /*includeTestsMatching "org.zfin.marker.MarkerselectWebSpec"
         includeTestsMatching "org.zfin.ontology.presentation.OntologyWebSpec"
-        includeTestsMatching "org.zfin.ontology.service.RibbonServiceIntegrationSpec"*/
+        includeTestsMatching "org.zfin.figure.service.FigureViewServiceSpec"
+        includeTestsMatching "org.zfin.framework.GroovyWebSpec"*/
+
 
         // db unit tests
         includeTestsMatching "org.zfin.DbUnitTests"
