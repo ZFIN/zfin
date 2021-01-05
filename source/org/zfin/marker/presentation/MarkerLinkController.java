@@ -88,6 +88,10 @@ public class MarkerLinkController {
                 group = DisplayGroup.GroupName.TRANSCRIPT_EDIT_ADDABLE_NUCLEOTIDE_SEQUENCE;
 
             }
+            if (markerId.contains("TSCRIPT")) {
+                group = DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE;
+
+            }
             if (markerId.contains("RNAG")) {
                 group = DisplayGroup.GroupName.GENE_EDIT_ADDABLE_NUCLEOTIDE_SEQUENCE;
             }
@@ -132,6 +136,10 @@ public class MarkerLinkController {
             }
             if (markerId.contains("RNAG")) {
                 group = DisplayGroup.GroupName.GENE_EDIT_ADDABLE_NUCLEOTIDE_SEQUENCE;
+            }
+            if (markerId.contains("TSCRIPT")) {
+                group = DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE;
+
             }
         }
         if (type.contains("Protein")) {
