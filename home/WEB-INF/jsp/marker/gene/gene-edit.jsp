@@ -1,11 +1,11 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<c:set var="NOMENCLATURE" value="Nomenclature" />
-<c:set var="RESOURCES" value="Genome Resources" />
-<c:set var="NOTES" value="Notes" />
-<c:set var="MARKER_RELATIONSHIPS" value="Marker Relationships" />
-<c:set var="SEQUENCES" value="Sequences" />
-<c:set var="ORTHOLOGY" value="Orthology" />
+<c:set var="NOMENCLATURE" value="Nomenclature"/>
+<c:set var="RESOURCES" value="Genome Resources"/>
+<c:set var="NOTES" value="Notes"/>
+<c:set var="MARKER_RELATIONSHIPS" value="Marker Relationships"/>
+<c:set var="SEQUENCES" value="Sequences"/>
+<c:set var="ORTHOLOGY" value="Orthology"/>
 
 <z:dataPage sections="${[NOMENCLATURE, RESOURCES, NOTES, MARKER_RELATIONSHIPS, SEQUENCES, ORTHOLOGY]}">
     <z:dataManagerDropdown>
@@ -44,16 +44,21 @@
     </z:section>
 
     <z:section title="${SEQUENCES}">
-        <z:section>
+        <z:section title="Sequences">
             <div class="__react-root" id="MarkerEditSequences" data-marker-id="${gene.zdbID}"></div>
-            <div class="__react-root" id="MarkerAddSequences" data-marker-id="${gene.zdbID}" data-type="Nucleotide"></div>
-            <c:if test="${typeName ne 'MIRNAG'}">
-            <div class="__react-root" id="MarkerAddSequences" data-marker-id="${gene.zdbID}" data-type="Protein"></div>
-            </c:if>
         </z:section>
-
-        <%--<jsp:include page="gene-edit-sequences.jsp"/>--%>
+        <z:section title="Nucleotide Sequences">
+            <div class="__react-root" id="MarkerAddSequences" data-marker-id="${gene.zdbID}"
+                 data-type="Nucleotide"></div>
+        </z:section>
+        <c:if test="${typeName ne 'MIRNAG'}">
+            <z:section title="Protein Sequences">
+                <div class="__react-root" id="MarkerAddSequences" data-marker-id="${gene.zdbID}"
+                     data-type="Protein"></div>
+            </z:section>
+        </c:if>
     </z:section>
+
 
     <z:section title="${ORTHOLOGY}">
         <div class="__react-root"

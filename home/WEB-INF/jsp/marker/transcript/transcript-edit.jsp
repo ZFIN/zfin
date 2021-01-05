@@ -5,9 +5,22 @@
 <c:set var="NOMENCLATURE" value="Nomenclature" />
 <c:set var="RELATIONSHIPS" value="Transcript Relationships" />
 <c:set var="NOTES" value="Notes" />
-<c:set var="SEQUENCES" value="Sequences" />
+<c:set var="SUPPSEQUENCES" value="Supporting Sequences" />
+<c:set var="RNASEQUENCES" value="RNA Sequences" />
+<c:set var="PROTSEQUENCES" value="Protein Sequences" />
 
-<z:dataPage sections="${[NOMENCLATURE, RELATIONSHIPS, NOTES, SEQUENCES]}">
+<c:set var="typeName">${transcript.transcriptType.display}</c:set>
+
+<c:if test="${typeName ne 'mRNA'}">
+    <c:set var="sections" value="${[NOMENCLATURE, RELATIONSHIPS, NOTES, SUPPSEQUENCES, RNASEQUENCES]}"/>
+</c:if>
+<c:if test="${typeName eq 'mRNA'}">
+    <c:set var="sections" value="${[NOMENCLATURE, RELATIONSHIPS, NOTES, SUPPSEQUENCES, RNASEQUENCES, PROTSEQUENCES]}"/>
+</c:if>
+
+<z:dataPage sections="${sections}">
+
+
     <z:dataManagerDropdown>
         <a class="dropdown-item" href="/${transcript.zdbID}">View</a>
         <a class="dropdown-item" href="/action/marker/marker-edit?zdbID=${transcript.zdbID}">Edit</a>
@@ -35,7 +48,7 @@
              data-marker-id="${transcript.zdbID}"
              data-show-relationship-type="true"
              data-relationship-type-data='${markerRelationshipTypes}'
-             data-relationship-type-data-add='${markerRelationshipTypeAdd}'>
+
 
         </div>
     </z:section>
@@ -48,11 +61,17 @@
         </div>
     </z:section>
 
-    <z:section title="${SEQUENCES}">
-    <z:section>
+    <z:section title="${SUPPSEQUENCES}">
         <div class="__react-root" id="MarkerEditSequences" data-marker-id="${transcript.zdbID}"></div>
+    </z:section>
+    <z:section title="${RNASEQUENCES}">
         <div class="__react-root" id="MarkerAddSequences" data-marker-id="${transcript.zdbID}" data-type="Nucleotide"></div>
+    </z:section>
+    <c:if test="${typeName eq 'mRNA'}">
+     <z:section title="${PROTSEQUENCES}">
         <div class="__react-root" id="MarkerAddSequences" data-marker-id="${transcript.zdbID}" data-type="Protein"></div>
-    </z:section>
-    </z:section>
+     </z:section>
+    </c:if>
+
+
 </z:dataPage>
