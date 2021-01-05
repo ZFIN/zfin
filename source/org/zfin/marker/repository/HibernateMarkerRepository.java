@@ -15,7 +15,6 @@ import org.hibernate.transform.ResultTransformer;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
-import org.zfin.ExternalNote;
 import org.zfin.Species;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
@@ -29,10 +28,7 @@ import org.zfin.framework.presentation.LookupEntry;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
-import org.zfin.gwt.root.dto.DBLinkDTO;
-import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.server.DTOMarkerService;
-import org.zfin.gwt.root.ui.BlastDatabaseAccessException;
 import org.zfin.infrastructure.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.*;
@@ -53,7 +49,6 @@ import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.Database;
-import org.zfin.sequence.blast.MountedWublastBlastService;
 import org.zfin.util.NumberAwareStringComparator;
 
 import java.util.*;
@@ -652,14 +647,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
         }
         return extnote;
     }
-
-    public void editAntibodyExternalNote(String notezdbid, String note) {
-        logger.debug("enter addExtDataNote");
-        ExternalNote extnote = infrastructureRepository.getExternalNoteByID(notezdbid);
-        extnote.setNote(note);
-        HibernateUtil.currentSession().update(extnote);
-    }
-
 
     /**
      * Create a new alias for a given marker. If no alias is found no alias is created.

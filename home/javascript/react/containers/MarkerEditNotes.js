@@ -5,23 +5,28 @@ import Section from '../components/layout/Section';
 import LoadingSpinner from '../components/LoadingSpinner';
 import MarkerPublicNoteForm from '../components/marker-edit/MarkerPublicNoteForm';
 import MarkerCuratorNotes from '../components/marker-edit/MarkerCuratorNotes';
+import { stringToBool } from '../utils';
+import MarkerExternalNotes from '../components/marker-edit/MarkerExternalNotes';
 
-const MarkerEditNotes = ({currentUserId, markerId}) => {
+const MarkerEditNotes = ({ currentUserId, markerId, showExternalNotes = 'false' }) => {
     const {
         value: allNotes,
         pending,
     } = useFetch(`/action/marker/${markerId}/notes`);
 
     const [privateNotes, setPrivateNotes] = useState([]);
+    const [externalNotes, setExternalNotes] = useState([]);
     const [publicNote, setPublicNote] = useState(null);
+    const showExternalNotesBool = stringToBool(showExternalNotes);
 
     useEffect(() => {
         if (!allNotes) {
             return;
         }
         setPublicNote(allNotes.find(note => note.noteEditMode === 'PUBLIC'));
-        setPrivateNotes(allNotes.filter(note => note.noteEditMode === 'PRIVATE'))
-    }, [allNotes, setPrivateNotes, setPublicNote]);
+        setExternalNotes(allNotes.filter(note => note.noteEditMode === 'EXTERNAL'));
+        setPrivateNotes(allNotes.filter(note => note.noteEditMode === 'PRIVATE'));
+    }, [allNotes, setPrivateNotes, setPublicNote, setExternalNotes]);
 
     if (pending) {
         return <LoadingSpinner />;
@@ -44,6 +49,16 @@ const MarkerEditNotes = ({currentUserId, markerId}) => {
                     setNotes={setPrivateNotes}
                 />
             </Section>
+            {showExternalNotesBool &&
+                <Section title='External Notes'>
+                    <MarkerExternalNotes
+                        markerId={markerId} 
+                        notes={externalNotes}
+                        setNotes={setExternalNotes}
+                        type='antibody'
+                    />
+                </Section>
+            }
         </>
     );
 };
@@ -51,6 +66,7 @@ const MarkerEditNotes = ({currentUserId, markerId}) => {
 MarkerEditNotes.propTypes = {
     currentUserId: PropTypes.string,
     markerId: PropTypes.string,
+    showExternalNotes: PropTypes.string,
 };
 
 export default MarkerEditNotes;

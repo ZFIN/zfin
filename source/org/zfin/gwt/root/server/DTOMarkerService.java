@@ -2,6 +2,7 @@ package org.zfin.gwt.root.server;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.zfin.ExternalNote;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
 import org.zfin.gwt.root.dto.*;
@@ -154,14 +155,18 @@ public class DTOMarkerService {
     public static List<NoteDTO> getExternalNoteDTOs(Antibody antibody) {
         List<NoteDTO> externalNotes = new ArrayList<NoteDTO>();
         for (AntibodyExternalNote antibodyExternalNote : antibody.getExternalNotes()) {
-            NoteDTO antibodyExternalNoteDTO = new NoteDTO();
-            antibodyExternalNoteDTO.setZdbID(antibodyExternalNote.getZdbID());
-            antibodyExternalNoteDTO.setNoteEditMode(NoteEditMode.EXTERNAL);
-            antibodyExternalNoteDTO.setDataZdbID(antibody.getZdbID());
-            antibodyExternalNoteDTO.setPublicationZdbID(antibodyExternalNote.getPublication().getZdbID());
-            antibodyExternalNoteDTO.setNoteData(DTOConversionService.unescapeString(antibodyExternalNote.getNote()));
-            externalNotes.add(antibodyExternalNoteDTO);
+            externalNotes.add(convertToNoteDTO(antibodyExternalNote));
         }
         return externalNotes;
+    }
+
+    public static NoteDTO convertToNoteDTO(ExternalNote note) {
+        NoteDTO dto = new NoteDTO();
+        dto.setZdbID(note.getZdbID());
+        dto.setNoteEditMode(NoteEditMode.EXTERNAL);
+        dto.setDataZdbID(note.getExternalDataZdbID());
+        dto.setPublicationZdbID(note.getPublication().getZdbID());
+        dto.setNoteData(DTOConversionService.unescapeString(note.getNote()));
+        return dto;
     }
 }

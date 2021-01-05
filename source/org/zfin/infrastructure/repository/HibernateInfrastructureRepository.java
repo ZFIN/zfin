@@ -685,6 +685,28 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return (ExternalNote) session.get(ExternalNote.class, zdbID);
     }
 
+    public ExternalNote updateExternalNote(ExternalNote note, String text) {
+        return updateExternalNote(note, text, null);
+    }
+
+    public ExternalNote updateExternalNote(ExternalNote note, String text, Publication publication) {
+        String oldText = note.getNote();
+        Session session = HibernateUtil.currentSession();
+        note.setNote(text);
+        if (publication != null) {
+            note.setPublication(publication);
+        }
+        session.save(note);
+        insertUpdatesTable(note.getExternalDataZdbID(), "external note", oldText, text, "for " + publication.getZdbID());
+        return note;
+    }
+
+    public void deleteExternalNote(ExternalNote note) {
+        Session session = HibernateUtil.currentSession();
+        insertUpdatesTable(note.getExternalDataZdbID(), "external note", "removed note for " + note.getPublication().getZdbID());
+        session.delete(note);
+    }
+
     // Todo: ReplacementZdbID is a composite key (why?) and thus this
     // could retrieve more than one record. If so then it throws an exception,
     // meaning the id was replaced more than once and then we would not know which one to use.

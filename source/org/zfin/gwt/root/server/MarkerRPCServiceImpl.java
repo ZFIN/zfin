@@ -2,19 +2,20 @@ package org.zfin.gwt.root.server;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
+import org.zfin.ExternalNote;
 import org.zfin.Species;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
 import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.ConstructRelationship;
 import org.zfin.construct.repository.ConstructRepository;
-import org.zfin.database.InformixUtil;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.*;
@@ -36,8 +37,6 @@ import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.profile.Organization;
-import org.zfin.properties.ZfinProperties;
-import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -1090,9 +1089,8 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
     @Override
     public void editExternalNote(NoteDTO noteDTO) {
         HibernateUtil.createTransaction();
-        Antibody antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByID(noteDTO.getDataZdbID());
-        markerRepository.editAntibodyExternalNote(noteDTO.getZdbID(), noteDTO.getNoteData());
-        infrastructureRepository.insertUpdatesTable(antibody, "updated notes", "");
+        ExternalNote note = infrastructureRepository.getExternalNoteByID(noteDTO.getZdbID());
+        infrastructureRepository.updateExternalNote(note, noteDTO.getNoteData());
         HibernateUtil.flushAndCommitCurrentSession();
     }
 

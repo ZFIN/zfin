@@ -6,7 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.zfin.ExternalNote;
+import org.zfin.antibody.Antibody;
+import org.zfin.antibody.repository.AntibodyRepository;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.dto.CuratorNoteDTO;
 import org.zfin.gwt.root.dto.NoteDTO;
@@ -16,6 +20,7 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.publication.Publication;
+import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;
@@ -32,10 +37,16 @@ public class MarkerNotesController {
     private Logger logger = LogManager.getLogger(SequenceViewController.class);
 
     @Autowired
+    private AntibodyRepository antibodyRepository;
+
+    @Autowired
     private InfrastructureRepository infrastructureRepository;
 
     @Autowired
     private MarkerRepository markerRepository;
+
+    @Autowired
+    private PublicationRepository publicationRepository;
 
     @RequestMapping("/note/phenotype")
     public String getPhenotypeSelectNote() {
@@ -193,6 +204,9 @@ public class MarkerNotesController {
         Marker marker = markerRepository.getMarkerByID(markerId);
         List<? super NoteDTO> notes = DTOMarkerService.getCuratorNoteDTOs(marker);
         notes.add(DTOMarkerService.getPublicNoteDTO(marker));
+        if (marker instanceof Antibody) {
+            notes.addAll(DTOMarkerService.getExternalNoteDTOs((Antibody) marker));
+        }
         return notes;
     }
 
@@ -248,6 +262,49 @@ public class MarkerNotesController {
 
         HibernateUtil.createTransaction();
         markerRepository.removeCuratorNote(marker, note);
+        HibernateUtil.flushAndCommitCurrentSession();
+
+        return "OK";
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/{markerId}/external-notes", method = RequestMethod.POST)
+    public NoteDTO addExternalNote(@PathVariable String markerId,
+                                   @RequestParam String type,
+                                   @RequestBody NoteDTO noteDTO) {
+        switch (type) {
+            case "antibody":
+                Antibody antibody = antibodyRepository.getAntibodyByID(markerId);
+                HibernateUtil.createTransaction();
+                ExternalNote note = markerRepository.addAntibodyExternalNote(antibody, noteDTO.getNoteData(), noteDTO.getPublicationZdbID());
+                HibernateUtil.flushAndCommitCurrentSession();
+                return DTOMarkerService.convertToNoteDTO(note);
+            default:
+                throw new InvalidWebRequestException("Unhandled external note type: " + type);
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/external-notes/{noteID}", method = RequestMethod.POST)
+    public NoteDTO updateExternalNote(@PathVariable String noteID,
+                                              @RequestBody NoteDTO noteDTO) {
+        ExternalNote note = infrastructureRepository.getExternalNoteByID(noteID);
+        Publication publication = publicationRepository.getPublication(noteDTO.getPublicationZdbID());
+
+        HibernateUtil.createTransaction();
+        note = infrastructureRepository.updateExternalNote(note, noteDTO.getNoteData(), publication);
+        HibernateUtil.flushAndCommitCurrentSession();
+
+        return DTOMarkerService.convertToNoteDTO(note);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/external-notes/{noteID}", method = RequestMethod.DELETE, produces = "text/plain")
+    public String deleteExternalNote(@PathVariable String noteID) {
+        ExternalNote note = infrastructureRepository.getExternalNoteByID(noteID);
+
+        HibernateUtil.createTransaction();
+        infrastructureRepository.deleteExternalNote(note);
         HibernateUtil.flushAndCommitCurrentSession();
 
         return "OK";

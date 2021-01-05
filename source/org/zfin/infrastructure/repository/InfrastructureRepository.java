@@ -152,6 +152,12 @@ public interface InfrastructureRepository {
      */
     ExternalNote getExternalNoteByID(String zdbID);
 
+    ExternalNote updateExternalNote(ExternalNote note, String text);
+
+    ExternalNote updateExternalNote(ExternalNote note, String text, Publication publication);
+
+    void deleteExternalNote(ExternalNote note);
+
     /**
      * Retrieves standard PublicationAttributions.
      *

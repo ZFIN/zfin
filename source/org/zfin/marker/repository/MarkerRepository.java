@@ -112,8 +112,6 @@ public interface MarkerRepository {
      */
     OrthologyNote createOrUpdateOrthologyExternalNote(Marker gene, String note);
 
-    void editAntibodyExternalNote(String notezdbid, String note);
-
     /**
      * Create a new alias for a given marker. IF no alias is found no alias is created.
      *
