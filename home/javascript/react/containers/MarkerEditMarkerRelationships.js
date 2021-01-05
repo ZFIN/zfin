@@ -13,7 +13,9 @@ import MarkerInput from '../components/form/MarkerInput';
 import { stringToBool } from '../utils';
 
 const MarkerEditMarkerRelationships = ({markerAbbreviation, markerId, relationshipTypeData, showRelationshipType = 'true'}) => {
+
     relationshipTypeData = JSON.parse(relationshipTypeData);
+
     const relationshipTypeNameList = relationshipTypeData.map(d => d.type).join(',');
     const {
         value: relationships,
