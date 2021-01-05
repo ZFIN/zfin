@@ -38,7 +38,8 @@ public class GeneEditController {
                         MarkerRelationship.Type.GENE_HAS_ARTIFACT,
                         MarkerRelationship.Type.GENE_HYBRIDIZED_BY_SMALL_SEGMENT,
                         MarkerRelationship.Type.RNAGENE_INTERACTS_WITH_GENE,
-                        MarkerRelationship.Type.NTR_INTERACTS_WITH_GENE
+                        MarkerRelationship.Type.NTR_INTERACTS_WITH_GENE,
+                        MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT
                 )));
         return "marker/gene/gene-edit";
     }
