@@ -83,6 +83,7 @@ const MarkerAddSequences = ({markerId, type, group = 'gene edit addable nucleoti
             <AddEditDeleteModal {...modalProps} header={hdr}>
 
                 {values && <>
+                    {!isEdit &&
                     <FormGroup
                         inputClassName='col-md-10'
                         label='Database'
@@ -100,10 +101,18 @@ const MarkerAddSequences = ({markerId, type, group = 'gene edit addable nucleoti
                             >{database.name}-{database.type}</option>
                         ))}
 
-
                     </FormGroup>
+                    }
+                    {isEdit &&
+                    <FormGroup
+                        label='Database'
+                        id='referenceDatabaseName'
+                        field='referenceDatabaseName'
+                        readOnly
 
-
+                    />
+                    }
+                    {!isEdit &&
                     <FormGroup
                         inputClassName='col-md-10'
                         label='Length'
@@ -112,7 +121,8 @@ const MarkerAddSequences = ({markerId, type, group = 'gene edit addable nucleoti
                         readOnly
 
                     />
-
+                    }
+                    {!isEdit &&
                     <FormGroup
                         inputClassName='col-md-10'
                         label='Sequence'
@@ -120,6 +130,7 @@ const MarkerAddSequences = ({markerId, type, group = 'gene edit addable nucleoti
                         field='data'
                         validate={value => value ? false : 'A sequence is required'}
                     />
+                    }
                     <div className='form-group row'>
                         <label className='col-md-2 col-form-label'>Citations</label>
                         <div className='col-md-10'>
