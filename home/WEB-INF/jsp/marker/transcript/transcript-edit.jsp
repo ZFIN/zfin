@@ -3,11 +3,11 @@
 <jsp:useBean id="transcript" class="org.zfin.marker.Transcript" scope="request"/>
 
 <c:set var="NOMENCLATURE" value="Nomenclature" />
-<c:set var="TARGETS" value="Targets" />
+<c:set var="RELATIONSHIPS" value="Transcript Relationships" />
 <c:set var="NOTES" value="Notes" />
 <c:set var="SEQUENCES" value="Sequences" />
 
-<z:dataPage sections="${[NOMENCLATURE, TARGETS, NOTES, SEQUENCES]}">
+<z:dataPage sections="${[NOMENCLATURE, RELATIONSHIPS, NOTES, SEQUENCES]}">
     <z:dataManagerDropdown>
         <a class="dropdown-item" href="/${transcript.zdbID}">View</a>
         <a class="dropdown-item" href="/action/marker/marker-edit?zdbID=${transcript.zdbID}">Edit</a>
@@ -28,13 +28,15 @@
         </div>
     </z:section>
 
-    <z:section title="${TARGETS}">
+    <z:section title="${RELATIONSHIPS}">
         <div class="__react-root"
              id="MarkerEditMarkerRelationships"
              data-marker-abbreviation="${transcript.abbreviation}"
              data-marker-id="${transcript.zdbID}"
-             data-show-relationship-type="false"
-             data-relationship-type-data='${markerRelationshipTypes}'>
+             data-show-relationship-type="true"
+             data-relationship-type-data='${markerRelationshipTypes}'
+             data-relationship-type-data-add='${markerRelationshipTypeAdd}'>
+
         </div>
     </z:section>
 
