@@ -39,21 +39,24 @@ public class TranscriptEditController {
         }
 
         model.addAttribute("transcript", transcript);
-        System.out.println(transcript.getTranscriptType().getDisplay());
-        if (transcript.getTranscriptType().getDisplay().contains("ncRNA")) {
-            model.addAttribute("markerRelationshipTypes", new ObjectMapper().writeValueAsString(
-                    markerService.getMarkerRelationshipEditMetadata(transcript,
-                            MarkerRelationship.Type.TRANSCRIPT_TARGETS_GENE,
-                            MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT,
-                            MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT
-                    )));
+        if (!transcript.getTranscriptType().getDisplay().equals("mRNA"))  {
+
+                model.addAttribute("markerRelationshipTypes", new ObjectMapper().writeValueAsString(
+                        markerService.getMarkerRelationshipEditMetadata(transcript,
+                                MarkerRelationship.Type.TRANSCRIPT_TARGETS_GENE,
+                                MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT,
+                                MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT
+                        )));
+
         }
         else{
-            model.addAttribute("markerRelationshipTypes", new ObjectMapper().writeValueAsString(
-                    markerService.getMarkerRelationshipEditMetadata(transcript,
-                            MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT,
-                            MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT
-                    )));
+
+                model.addAttribute("markerRelationshipTypes", new ObjectMapper().writeValueAsString(
+                        markerService.getMarkerRelationshipEditMetadata(transcript,
+                                MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT,
+                                MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT
+                        )));
+
         }
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Edit " + transcript.getAbbreviation());
 
