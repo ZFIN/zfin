@@ -45,7 +45,7 @@
     </z:section>
         <z:section title="${ATTRIBUTES}">
             <div class="__react-root"
-                 id="MarkerEditAttributes"
+                 id="MarkerEditNomenclature"
                  data-marker-id="${transcript.zdbID}"
                  data-show-abbreviation-field="false"
                  data-show-reason-fields="false">
@@ -58,9 +58,7 @@
              data-marker-abbreviation="${transcript.abbreviation}"
              data-marker-id="${transcript.zdbID}"
              data-show-relationship-type="true"
-             data-relationship-type-data='${markerRelationshipTypes}'
-
-
+             data-relationship-type-data='${markerRelationshipTypes}'>
         </div>
     </z:section>
 
