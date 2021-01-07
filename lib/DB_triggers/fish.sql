@@ -13,7 +13,7 @@ CREATE OR REPLACE FUNCTION fish_after()
 
   BEGIN                                        
     update fish                                    
-      set fish_name = get_fish_name(NEW.fish_zdb_id, NEW.fish_geno_zdb_id)
+      set fish_name = get_fish_name(NEW.fish_zdb_id, NEW.fish_genotype_zdb_id)
                       where fish_zdb_id = NEW.fish_zdb_id;          
     update fish 
       set fish_phenotypic_construct_count = (Select count(fmrel_ftr_zdb_id) from genotype_feature, feature_marker_relationship
