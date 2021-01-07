@@ -12,12 +12,19 @@ const MarkerEditNotes = ({ currentUserId, markerId, showExternalNotes = 'false' 
     const {
         value: allNotes,
         pending,
+        refetch,
     } = useFetch(`/action/marker/${markerId}/notes`);
 
     const [privateNotes, setPrivateNotes] = useState([]);
     const [externalNotes, setExternalNotes] = useState([]);
     const [publicNote, setPublicNote] = useState(null);
     const showExternalNotesBool = stringToBool(showExternalNotes);
+
+    // a little hack to allow components without a parent-child relationship to communicate
+    useEffect(() => {
+        document.addEventListener('UpdateMarkerNotesList', refetch);
+        return () => document.removeEventListener('UpdateMarkerNotesList', refetch);
+    });
 
     useEffect(() => {
         if (!allNotes) {
