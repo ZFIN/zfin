@@ -176,6 +176,8 @@ update tmp_new_pubs
  set pubtype = 'Review'
  where pubtype = 'review';
 
+delete from tmp_new_pubs where pubtype='preprint';
+
 insert into zdb_active_source
   select zdb_id from tmp_new_pubs;
 

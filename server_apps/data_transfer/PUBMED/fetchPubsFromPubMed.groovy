@@ -110,6 +110,10 @@ def processArticle = { CSVPrinter printer, GPathResult pubmedArticle, int idx ->
             isReview = 'review'
             //print("pub is identified as review " + pmid + "\n")
         }
+        if (pubtype == 'Preprint'){
+            isReview = 'preprint'
+            //print("pub is identified as review " + pmid + "\n")
+        }
     }
     row.push(isReview)
     
