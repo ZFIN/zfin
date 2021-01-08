@@ -290,6 +290,7 @@ public class ExpressionService {
                 expressionRepository.getExpressionFigureCountForGene(marker));
 
         markerExpression.setAllExpressionData(allMarkerExpressionInstance);
+        markerExpression.setExpressionAtlasLink(getExpressionAtlasForMarker(marker.zdbID,ForeignDB.AvailableName.EXPRESSIONATLAS));
 
         // directly submitted
         logger.info("setting directly submitted expression");
