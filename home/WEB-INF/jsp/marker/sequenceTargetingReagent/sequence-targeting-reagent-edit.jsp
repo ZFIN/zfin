@@ -5,10 +5,11 @@
 <c:set var="NOMENCLATURE" value="Nomenclature" />
 <c:set var="SEQUENCE" value="Sequence" />
 <c:set var="TARGETS" value="Targets" />
+<c:set var="SUPPLIERS" value="Suppliers" />
 <c:set var="NOTES" value="Notes" />
 <c:set var="OTHERPAGES" value="Other Pages" />
 
-<z:dataPage sections="${[NOMENCLATURE, SEQUENCE, TARGETS, NOTES, OTHERPAGES]}">
+<z:dataPage sections="${[NOMENCLATURE, SEQUENCE, TARGETS, SUPPLIERS, NOTES, OTHERPAGES]}">
     <z:dataManagerDropdown>
         <a class="dropdown-item" href="/${str.zdbID}">View</a>
         <a class="dropdown-item" href="/action/str/${str.zdbID}/edit">Edit</a>
@@ -43,6 +44,13 @@
              data-marker-id="${str.zdbID}"
              data-show-relationship-type="false"
              data-relationship-type-data='${markerRelationshipTypes}'>
+        </div>
+    </z:section>
+
+    <z:section title="${SUPPLIERS}">
+        <div class="__react-root"
+             id="MarkerEditSuppliers"
+             data-marker-id="${str.zdbID}">
         </div>
     </z:section>
 

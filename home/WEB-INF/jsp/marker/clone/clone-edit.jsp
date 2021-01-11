@@ -4,8 +4,9 @@
 <c:set var="NOTES" value="Notes" />
 <c:set var="MARKER_RELATIONSHIPS" value="Marker Relationships" />
 <c:set var="SEQUENCES" value="Sequences" />
+<c:set var="SUPPLIERS" value="Suppliers" />
 
-<z:dataPage sections="${[NOMENCLATURE, NOTES, MARKER_RELATIONSHIPS, SEQUENCES]}">
+<z:dataPage sections="${[NOMENCLATURE, NOTES, MARKER_RELATIONSHIPS, SEQUENCES, SUPPLIERS]}">
     <z:dataManagerDropdown>
         <a class="dropdown-item" href="/${clone.zdbID}">View</a>
         <a class="dropdown-item" href="/action/marker/marker-edit?zdbID=${clone.zdbID}">Edit</a>
@@ -47,6 +48,13 @@
              id="MarkerEditSequences"
              data-group="dblink adding on clone-edit"
              data-group-d-b="dblink adding on clone-edit"
+             data-marker-id="${clone.zdbID}">
+        </div>
+    </z:section>
+
+    <z:section title="${SUPPLIERS}">
+        <div class="__react-root"
+             id="MarkerEditSuppliers"
              data-marker-id="${clone.zdbID}">
         </div>
     </z:section>

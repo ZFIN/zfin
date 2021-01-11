@@ -3,8 +3,9 @@
 <jsp:useBean id="antibody" class="org.zfin.antibody.Antibody" scope="request"/>
 
 <c:set var="NOTES" value="Notes" />
+<c:set var="SUPPLIERS" value="Suppliers" />
 
-<z:dataPage sections="${[NOTES]}">
+<z:dataPage sections="${[NOTES, SUPPLIERS]}">
     <z:dataManagerDropdown>
         <a class="dropdown-item" href="/${antibody.zdbID}">View</a>
         <a class="dropdown-item" href="/action/marker/marker-edit?zdbID=${antibody.zdbID}">Edit</a>
@@ -22,6 +23,13 @@
              data-current-user-id="${currentUser.zdbID}"
              data-marker-id="${antibody.zdbID}"
              data-show-external-notes="true">
+        </div>
+    </z:section>
+
+    <z:section title="${SUPPLIERS}">
+        <div class="__react-root"
+             id="MarkerEditSuppliers"
+             data-marker-id="${antibody.zdbID}">
         </div>
     </z:section>
 </z:dataPage>
