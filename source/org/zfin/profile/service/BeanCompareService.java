@@ -60,7 +60,7 @@ public class BeanCompareService {
         return beanFieldUpdate;
     }
 
-    protected void applyUpdates(Object objectToBeUpdated, List<BeanFieldUpdate> fields) throws Exception {
+    public void applyUpdates(Object objectToBeUpdated, List<BeanFieldUpdate> fields) throws Exception {
         for (BeanFieldUpdate field : fields) {
             applyUpdate(objectToBeUpdated, field);
         }

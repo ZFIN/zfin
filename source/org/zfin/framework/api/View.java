@@ -39,4 +39,7 @@ public class View {
         public static class PubTrackerAPI extends API {
         }
 
+        public static class AntibodyDetailsAPI extends API {
+        }
+
 }

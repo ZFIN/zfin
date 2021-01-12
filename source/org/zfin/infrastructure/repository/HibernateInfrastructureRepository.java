@@ -534,6 +534,13 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
     @Override
+    public void insertUpdatesTable(String recID, List<BeanFieldUpdate> beanFieldUpdates) {
+        for (BeanFieldUpdate update : beanFieldUpdates) {
+            insertUpdatesTable(recID, update);
+        }
+    }
+
+    @Override
     public void insertUpdatesTable(EntityZdbID entity, BeanFieldUpdate beanFieldUpdate, String comment) {
         insertUpdatesTable(entity.getZdbID(), beanFieldUpdate, comment);
     }

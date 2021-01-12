@@ -1,7 +1,9 @@
 package org.zfin.antibody;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.commons.collections.CollectionUtils;
 import org.zfin.expression.ExpressionExperiment;
+import org.zfin.framework.api.View;
 import org.zfin.marker.Marker;
 
 import java.util.ArrayList;
@@ -15,10 +17,15 @@ import java.util.stream.Collectors;
  */
 public class Antibody extends Marker {
 
+    @JsonView(View.AntibodyDetailsAPI.class)
     private String hostSpecies;
+    @JsonView(View.AntibodyDetailsAPI.class)
     private String immunogenSpecies;
+    @JsonView(View.AntibodyDetailsAPI.class)
     private String heavyChainIsotype;
+    @JsonView(View.AntibodyDetailsAPI.class)
     private String lightChainIsotype;
+    @JsonView(View.AntibodyDetailsAPI.class)
     private String clonalType;
     private Set<ExpressionExperiment> antibodyLabelings;
     private Set<AntibodyExternalNote> externalNotes;
