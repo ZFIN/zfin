@@ -24,7 +24,7 @@ system("/bin/rm -f gene_association.zfin");
 
 $versionNumber += 0.001;
 
-open (UNL, ">gene_association.zfin") or die "Cannot open exppat.unl";
+open (UNL, ">gene_association.zfin") or die "Cannot open gene_association.zfin";
 
 print UNL "!gaf_version: 2.1\n";
 printf UNL "!Version: %.3f\n", $versionNumber;
@@ -38,6 +38,7 @@ $lastgrp=0;
 @inf_array = ();
 @rel_array= ();
 $db='ZFIN';
+
 
 open (INDEXFILE, "go.zfin") or die "open failed";
 while ($line = <INDEXFILE>) {

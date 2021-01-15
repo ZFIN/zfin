@@ -64,5 +64,7 @@
     <include file="source/org/zfin/db/load/1119/db.changelog.master.xml" />
     <include file="source/org/zfin/db/load/1120/db.changelog.master.xml" />
 
+    <include file="source/org/zfin/db/load/1121/db.changelog.master.xml" />
+
 
 </databaseChangeLog>
