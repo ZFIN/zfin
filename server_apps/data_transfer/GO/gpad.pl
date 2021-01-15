@@ -23,17 +23,23 @@ try {
   exit -1;
 };
 
-open (UNLGPAD, ">gpad2.0.zfin") or die "Cannot open gpad.zfin"
+open (UNLGPAD, ">gpad2.0.zfin") or die "Cannot open gpad.zfin";
 
 print UNLGPAD "!gpa-version: 2.0\n";
-
 print UNLGPAD "!Date: ".`/bin/date +%Y/%m/%d`;
-print UNLGPAD "!From: ZFIN (https://zfin.org) \n";
+print UNLGPAD "!From: ZFIN (zfin.org) \n";
 print UNLGPAD "! \n";
 
-open (GPADDUMP, "gpad2.0.zfin") or die ("gpad2.0 sql dump failed");
+open (GPADDUMP, "gpad.zfin") or die ("gpad2.0 sql dump failed");
 while ($gpadline = <GPADDUMP>) {
     print UNLGPAD "$gpadline"
 }
 
 close (UNLGPAD);
+
+try {
+  ZFINPerlModules->doSystemCommand("/local/bin/gzip gpad2.0.zfin");
+} catch {
+  warn "Failed at gzip gpad2.0.zfin - $_";
+  exit -1;
+};
