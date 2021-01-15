@@ -139,18 +139,6 @@ public class TranscriptViewController {
             transcriptBean.setUnableToFindDBLinks(unableToFindDbLinks);
         }
 
-        List<Transcript> allTranscriptsInDb = getMarkerRepository().getTranscriptsForNonCodingGenes();
-        List<Transcript> allTranscripts = new ArrayList<>();
-        for (Transcript tscript: allTranscriptsInDb){
-            if (!tscript.isWithdrawn()){
-                if (getMarkerRepository().getTranscriptSequence(tscript)!=null)
-                    allTranscripts.add(tscript);
-            }
-        }
-        if (allTranscripts.contains(transcript)){
-            System.out.println(transcript.zdbID);
-        }
-
 
         logger.info("transcriptviewcontroller # of seq: " + sequences.size());
         transcriptBean.setNucleotideSequences(sequences);
