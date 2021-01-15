@@ -20,9 +20,7 @@
 </c:if>
 
 <z:dataPage sections="${sections}">
-<jsp:attribute name="entityName">
-        <zfin:abbrev entity="${formBean.marker}"/>
-    </jsp:attribute>
+
     <jsp:body>
     <z:dataManagerDropdown>
         <a class="dropdown-item" href="/${transcript.zdbID}">View</a>
@@ -45,10 +43,10 @@
     </z:section>
         <z:section title="${ATTRIBUTES}">
             <div class="__react-root"
-                 id="MarkerEditNomenclature"
-                 data-marker-id="${transcript.zdbID}"
-                 data-show-abbreviation-field="false"
-                 data-show-reason-fields="false">
+                 id="TranscriptEditAttributes"
+                 data-transcript-id="${transcript.zdbID}"
+                 data-transcript-types='${transcriptTypes}'
+                 data-transcript-status='${transcriptStatus}'>
             </div>
         </z:section>
 
