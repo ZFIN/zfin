@@ -1,5 +1,7 @@
 package org.zfin.marker;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import org.zfin.framework.api.View;
 import org.zfin.sequence.DisplayGroup;
 
 import org.zfin.sequence.TranscriptDBLink;
@@ -12,9 +14,12 @@ import java.util.Set;
 /**
  */
 public class Transcript extends Marker {
-
+    @JsonView(View.TranscriptDetailsAPI.class)
     private TranscriptType transcriptType;
+
+    @JsonView(View.TranscriptDetailsAPI.class)
     private TranscriptStatus status;
+
     private Set<TranscriptDBLink> transcriptDBLinks;
     private String ensdartId;
     private String loadId;

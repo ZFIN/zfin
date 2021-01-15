@@ -42,4 +42,7 @@ public class View {
         public static class AntibodyDetailsAPI extends API {
         }
 
+        public static class TranscriptDetailsAPI extends API {
+        }
+
 }
