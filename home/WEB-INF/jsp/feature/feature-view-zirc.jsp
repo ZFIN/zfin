@@ -7,7 +7,7 @@
     <z:attributeList>
 
         <z:attributeListItem label="Genotyping protocol">
-            <a href="/zebrafish.org/fish/pdf/pcr/${formBean.zircGenoLink.accessionNumberDisplay}">${formBean.zircGenoLink.accessionNumberDisplay}</a>
+            <a href="zebrafish.org/fish/pdf/pcr/${formBean.zircGenoLink.accessionNumberDisplay}">${formBean.zircGenoLink.accessionNumberDisplay}</a>
 
         </z:attributeListItem>
 
