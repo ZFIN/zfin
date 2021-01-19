@@ -119,7 +119,7 @@ const MarkerEditSequences = ({markerId, group = 'marker linked sequence', groupD
                         label='Length'
                         id='length'
                         field='length'
-                        validate={value => value ? false : 'An accession is required'}
+                        validate={value => value ? false : 'A length is required'}
                     />
 
                     <div className='form-group row'>
