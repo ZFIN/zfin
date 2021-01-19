@@ -259,7 +259,7 @@ public class DiseaseModelPresenter implements Presenter {
                     }
                 });
             }
-           // view.getFishSelectionBox().clear();
+           view.getFishSelectionBox().clear();
             fishList = list;
             view.getFishSelectionBox().addItem("None");
             for (FishDTO dto : list) {
