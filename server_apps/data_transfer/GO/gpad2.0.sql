@@ -67,9 +67,9 @@ select mrkrgoev_zdb_id,
              where term_zdb_id = egm_term_zdb_id
              and mrkrgoev_evidence_code = egm_go_evidence_code)
              end) as evidence_type,
-          'NCBITaxon:7955' as interacting_taxon,
+          '' as interacting_taxon,
           mrkrgoev_date_entered,
-          'ZFIN'
+          'ZFIN' as assigned_by
   from marker_go_term_evidence
   where mrkrgoev_annotation_organization = 1;
 
@@ -80,6 +80,6 @@ update gpad_format_without_grouping
                       where mrkrgoev_zdb_id = infgrmem_mrkrgoev_zdb_id
                       group by mrkrgoev_zdb_id);
 
-\copy (select * from gpad_format_without_grouping) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/GO/gpad.zfin' with delimiter as '	' null as '';
+\copy (select objectId, negation, relation, ontology_class_id, reference, evidence_type, with_from, interacting_taxon, date_entered::date, assigned_by, null, null from gpad_format_without_grouping) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/GO/gpad.zfin' with delimiter as '	' null as '';
 
 

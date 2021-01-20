@@ -15,6 +15,7 @@ $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $passwor
 
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/GO";
 
+system("/local/bin/gunzip gpad2.0.zfin.gz");
 
 try {
   ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f gpad2.0.sql");
@@ -43,3 +44,5 @@ try {
   warn "Failed at gzip gpad2.0.zfin - $_";
   exit -1;
 };
+
+system("/local/bin/gunzip gpad2.0.zfin");
