@@ -105,7 +105,8 @@ select mrkrgoev_zdb_id,
 			   join so_zfin_mapping on mrkr_type = szm_object_type
 		           full outer join inference_group_member on mrkrgoev_zdb_id = infgrmem_mrkrgoev_zdb_id
 		           full outer join tmp_go_identifiers_pipes on  mrkrgoev_zdb_id=goidtmp
-			         full outer join tmp_go_proteinid on mrkrgoev_zdb_id=mgev_zdb_id   ;
+			         full outer join tmp_go_proteinid on mrkrgoev_zdb_id=mgev_zdb_id
+			   where mrkrgoev_annotation_organization not in (1, 6);
 
 update tmp_go set mv_qualifier ='ZDB-TERM-180228-3' where mv_flag='contributes to';
 update tmp_go set mv_qualifier ='ZDB-TERM-180228-2' where mv_flag='colocalizes with';
@@ -122,9 +123,6 @@ update tmp_go set mv_qualifier ='contributes_to' where mv_qualifier='contributes
 update tmp_go set mv_qualifier ='colocalizes_with' where mv_qualifier='colocalizes with';
 update tmp_go set mv_flag='contributes_to' where mv_flag='contributes to';
 update tmp_go set mv_flag ='colocalizes_with' where mv_flag='colocalizes with';
-
-
-
 
 
 
