@@ -27,8 +27,8 @@ try {
 open (UNLGPAD, ">gpad2.0.zfin") or die "Cannot open gpad.zfin";
 
 print UNLGPAD "!gpa-version: 2.0\n";
-print UNLGPAD "!Date: ".`/bin/date +%Y/%m/%d`;
-print UNLGPAD "!From: ZFIN (zfin.org) \n";
+print UNLGPAD "!date-generated: ".`/bin/date +%Y/%m/%d`;
+print UNLGPAD "!generated-by: ZFIN (zfin.org) \n";
 print UNLGPAD "! \n";
 
 open (GPADDUMP, "gpad.zfin") or die ("gpad2.0 sql dump failed");
