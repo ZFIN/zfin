@@ -16,8 +16,6 @@ import org.zfin.figure.service.FigureViewService;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.gwt.root.dto.MarkerDTO;
-import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
@@ -345,17 +343,6 @@ public class PublicationViewController {
         model.addAttribute("clones", clones.getPopulatedResults());
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication, "Clones and Probes"));
         return "publication/publication-clone-list";
-    }
-
-    @ResponseBody
-    @RequestMapping(value = "/publication/{zdbID}/genes", method = RequestMethod.GET)
-    public List<MarkerDTO> getPublicationGenes(@PathVariable String zdbID) {
-        List<Marker> genes = publicationRepository.getGenesByPublication(zdbID, false);
-        List<MarkerDTO> dtos = new ArrayList<>();
-        for (Marker gene : genes) {
-            dtos.add(DTOConversionService.convertToMarkerDTO(gene));
-        }
-        return dtos;
     }
 
     @RequestMapping("/publication/{zdbID}/strs")
