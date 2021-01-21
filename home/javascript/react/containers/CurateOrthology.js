@@ -12,7 +12,7 @@ const CurateOrthology = ({pubId}) => {
         value: genes,
         pending,
         refetch,
-    } = useFetch(`/action/publication/${pubId}/genes`);
+    } = useFetch(`/action/api/publication/${pubId}/genes`);
 
     useEffect(() => {
         document.addEventListener('UpdateGeneList', refetch);

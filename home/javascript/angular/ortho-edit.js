@@ -188,7 +188,7 @@
 
         function fetchGenes() {
             vm.loading.push(true);
-            $http.get('/action/publication/' + vm.pub + '/genes')
+            $http.get('/action/api/publication/' + vm.pub + '/genes')
                 .then(function (resp) {
                     vm.genes = resp.data;
                     finishAjaxCall()

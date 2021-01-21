@@ -38,19 +38,19 @@ def processArticle = { CSVPrinter printer, GPathResult pubmedArticle, int idx ->
         mId = pubMedData.ArticleList.ArticleId.text()
 
     }
-    row.push(pmcId)
-    row.push(mId)
+    row.add(pmcId)
+    row.add(mId)
     pmid = medlineCitation.PMID.text()
     if (pmid == '28539358') {
         return
     }
 
-    row.push(pmid)
-    row.push(medlineCitation.KeywordList.Keyword.iterator().collect { it.text().trim() }.join(", "))
+    row.add(pmid)
+    row.add(medlineCitation.KeywordList.Keyword.iterator().collect { it.text().trim() }.join(", "))
 
     article = medlineCitation.Article
-    row.push(getTextWithMarkup(article.ArticleTitle).replaceAll(/\.+$/, ''))
-    row.push(article.Pagination.text())
+    row.add(getTextWithMarkup(article.ArticleTitle).replaceAll(/\.+$/, ''))
+    row.add(article.Pagination.text())
 
     fullAbstract = ''
     article.Abstract.AbstractText.each { abstractText ->
@@ -62,33 +62,33 @@ def processArticle = { CSVPrinter printer, GPathResult pubmedArticle, int idx ->
             fullAbstract += text
         }
     }
-    row.push(fullAbstract)
+    row.add(fullAbstract)
 
     authors = []
     article.AuthorList.Author.each { author ->
         if (!author.CollectiveName.isEmpty()) {
-            authors.push(author.CollectiveName.text())
+            authors.add(author.CollectiveName.text())
         } else {
             lastName = author.LastName.text()
             initials = author.Initials.text()
-            authors.push("${lastName}, ${initials.split('').join('.')}.")
+            authors.add("${lastName}, ${initials.split('').join('.')}.")
         }
     }
-    row.push(authors.join(', '))
-    row.push(authors.size())
+    row.add(authors.join(', '))
+    row.add(authors.size())
 
     LocalDate pubDate = PubmedUtils.getPublicationDate(pubmedArticle)
-    row.push(pubDate ? pubDate.getYear() : '')
-    row.push(pubDate ? pubDate.getMonthValue() : '')
-    row.push(pubDate ? pubDate.getDayOfMonth() : '')
+    row.add(pubDate ? pubDate.getYear() : '')
+    row.add(pubDate ? pubDate.getMonthValue() : '')
+    row.add(pubDate ? pubDate.getDayOfMonth() : '')
 
     journal = article.Journal
     journalIssue = journal.JournalIssue
-    row.push(journal.ISSN.text())
-    row.push(journalIssue.Volume.text())
-    row.push(journalIssue.Issue.text())
-    row.push(journal.Title.text())
-    row.push(journal.ISOAbbreviation.text())
+    row.add(journal.ISSN.text())
+    row.add(journalIssue.Volume.text())
+    row.add(journalIssue.Issue.text())
+    row.add(journal.Title.text())
+    row.add(journal.ISOAbbreviation.text())
 
 
     medlineCitation.MeshHeadingList.MeshHeading.each { meshHeading ->
@@ -103,7 +103,7 @@ def processArticle = { CSVPrinter printer, GPathResult pubmedArticle, int idx ->
         }
     }
 
-    row.push(pubmedArticle.PubmedData.PublicationStatus.text())
+    row.add(pubmedArticle.PubmedData.PublicationStatus.text())
     def isReview = ''
     article.PublicationTypeList.PublicationType.each { pubtype ->
         if (pubtype == 'Review'){
@@ -115,7 +115,7 @@ def processArticle = { CSVPrinter printer, GPathResult pubmedArticle, int idx ->
             //print("pub is identified as review " + pmid + "\n")
         }
     }
-    row.push(isReview)
+    row.add(isReview)
     
     printer.printRecord(row.collect { col -> col.toString().replace('\n', '\\n') })
 }

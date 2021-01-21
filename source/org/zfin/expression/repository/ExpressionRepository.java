@@ -64,6 +64,9 @@ public interface ExpressionRepository {
      * @return List of Object[int figureCount,String pubZdbID,String cloneZdbID)
      */
     List<PublicationExpressionBean> getDirectlySubmittedExpressionForGene(Marker marker);
+    List<PublicationExpressionBean> getThisseExpressionForGene(Marker marker, Set<String> pubList) ;
+
+
 
     List<PublicationExpressionBean> getDirectlySubmittedExpressionForEfg(Marker marker);
 

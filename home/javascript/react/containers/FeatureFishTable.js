@@ -21,7 +21,7 @@ const FeatureFishTable = ({featureId}) => {
             width: '100px',
         },
         {
-            label: 'Paternal Zygosity',
+            label: 'Parental Zygosity',
             content: ({parentalZygosity}) => <span dangerouslySetInnerHTML={{__html: parentalZygosity }} />,
             width: '100px',
         },
