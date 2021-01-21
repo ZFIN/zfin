@@ -749,6 +749,63 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return pubList;
     }
 
+    public List<PublicationExpressionBean> getThisseExpressionForGene(Marker marker, Set<String> pubList) {
+
+        String sql = "  select count(distinct xpatfig_fig_zdb_id), " +
+                "		pub.zdb_id, pub.pub_mini_ref,m.mrkr_abbrev, m.mrkr_zdb_id " +
+                "           from expression_pattern_figure " +
+                "                join expression_result on xpatfig_xpatres_zdb_id = xpatres_zdb_id " +
+                "                join expression_experiment on xpatex_zdb_id = xpatres_xpatex_zdb_id " +
+                "                join publication pub on pub.zdb_id = xpatex_source_zdb_id " +
+                "                join marker m on m.mrkr_zdb_id=xpatex_probe_feature_zdb_id " +
+                "          where xpatex_gene_zdb_id = :markerZdbID " +
+                "          and pub.jtype = 'Unpublished' " +
+                "          and pub.zdb_id in (:pubList) " +
+                "          and not exists( " +
+                "             select 'x' from clone " +
+                "             where clone_mrkr_zdb_id=xpatex_probe_feature_zdb_id " +
+                "             and clone_problem_type = 'Chimeric' " +
+                "          ) " +
+                "          and not exists ( " +
+                "             select 'x' from marker " +
+                "             where mrkr_zdb_id = xpatex_probe_feature_zdb_id " +
+                "             and substring(mrkr_abbrev from 1 for 10) = 'WITHDRAWN:' " +
+                "         ) " +
+                "         group by m.mrkr_zdb_id, m.mrkr_abbrev, pub.zdb_id, pub.pub_mini_ref ";
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
+        query.setString("markerZdbID", marker.getZdbID());
+        query.setParameterList("pubList", pubList);
+
+        query.setResultTransformer(new ResultTransformer() {
+            @Override
+            public Object transformTuple(Object[] tuple, String[] aliases) {
+                PublicationExpressionBean publicationExpressionBean = new PublicationExpressionBean();
+                publicationExpressionBean.setNumFigures(Integer.parseInt(tuple[0].toString()));
+                publicationExpressionBean.setPublicationZdbID(tuple[1].toString());
+                publicationExpressionBean.setMiniAuth(tuple[2].toString());
+                if (tuple[3] != null) {
+                    publicationExpressionBean.setProbeFeatureAbbrev(tuple[3].toString());
+                }
+                if (tuple[4] != null) {
+                    publicationExpressionBean.setProbeFeatureZdbId(tuple[4].toString());
+                }
+                return publicationExpressionBean;
+            }
+
+            @Override
+            public List transformList(List collection) {
+                List<PublicationExpressionBean> list = new ArrayList<PublicationExpressionBean>();
+                for (Object o : collection) {
+                    list.add((PublicationExpressionBean) o);
+                }
+                return list;
+            }
+        });
+        List<PublicationExpressionBean> pubExpList = query.list();
+        return pubExpList;
+    }
+
+
 
     @SuppressWarnings("unchecked")
     public ExpressionExperiment getExpressionExperiment(String experimentID) {
