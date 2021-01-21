@@ -42,8 +42,7 @@ create or replace function regen_fish_components()
       	      select fish_zdb_id, fishstr_str_zdb_id, mrel_mrkr_2_zdb_id, fish_name, fish_genotype_zdb_id
 	      	from fish ,fish_str,marker_relationship
 		where fishstr_str_zdb_id = mrel_mrkr_1_zdb_id
-		and  fish_zdb_id = fishstr_fish_zdb_id
-		and mrel_mrkr_2_Zdb_id like 'ZDB-GENE%';
+		and  fish_zdb_id = fishstr_fish_zdb_id;
 		
 
     insert into tmp_fish_components_distinct (fish_id, affector_id, gene_id, construct_id, fish_name, genotype_id)	 
