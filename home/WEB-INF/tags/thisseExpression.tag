@@ -4,14 +4,14 @@
 <%@ attribute name="markerExpression" required="true" type="org.zfin.expression.presentation.MarkerExpression" %>
 
 
-<c:set var="hasData" value="${markerExpression.directlySubmittedExpression ne null}"/>
+<c:set var="hasData" value="${markerExpression.onlyThisse ne null}"/>
 
 
 <z:attributeListItem label="Thisse Expression Data">
     <z:ifHasData test="${hasData}">
         <ul class="comma-separated">
             <c:forEach var="directlySubmittedExpression"
-                       items="${markerExpression.directlySubmittedExpression.markerExpressionInstances}"
+                       items="${markerExpression.onlyThisse.markerExpressionInstances}"
                        varStatus="index">
                 <li>
                     <c:if test="${marker.markerType.type != 'EFG'  }">
