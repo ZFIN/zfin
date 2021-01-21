@@ -8,6 +8,7 @@ public class MarkerExpression {
 
     private MarkerExpressionInstance allMarkerExpressionInstance;
     private DirectlySubmittedExpression directlySubmittedExpression;
+    private DirectlySubmittedExpression onlyThisse;
 //    private List<MarkerDBLink> microarrayLinks = new ArrayList<MarkerDBLink>();
     private WildTypeExpression wildTypeStageExpression;
     private String geoLink;
@@ -97,6 +98,14 @@ public class MarkerExpression {
 
     public MarkerExpressionInstance getAllMarkerExpressionInstance() {
         return allMarkerExpressionInstance;
+    }
+
+    public DirectlySubmittedExpression getOnlyThisse() {
+        return onlyThisse;
+    }
+
+    public void setOnlyThisse(DirectlySubmittedExpression onlyThisse) {
+        this.onlyThisse = onlyThisse;
     }
 
     public void setAllMarkerExpressionInstance(MarkerExpressionInstance allMarkerExpressionInstance) {

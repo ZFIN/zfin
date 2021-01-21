@@ -115,6 +115,21 @@ public class ExpressionService {
         return false;
     }
 
+    public DirectlySubmittedExpression getDirectlySubmittedThisseExpression(Marker marker) {
+        // this is almost always 1
+        List<PublicationExpressionBean> pubList = expressionRepository.getThisseExpressionForGene(marker,getThissePublicationZdbIDs());
+
+        // this is almost always 1, so not too expensive
+        for (PublicationExpressionBean publicationExpressionBean : pubList) {
+            publicationExpressionBean.setNumImages(expressionRepository.getImagesFromPubAndClone(publicationExpressionBean));
+        }
+
+        DirectlySubmittedExpression directlySubmittedExpression = new DirectlySubmittedExpression();
+        directlySubmittedExpression.setMarkerExpressionInstances(pubList);
+
+        return directlySubmittedExpression;
+    }
+
     public DirectlySubmittedExpression getDirectlySubmittedExpressionEfg(Marker marker) {
         // this is almost always 1
         List<PublicationExpressionBean> pubList = expressionRepository.getDirectlySubmittedExpressionForEfg(marker);
@@ -295,6 +310,11 @@ public class ExpressionService {
         logger.info("setting directly submitted expression");
         markerExpression.setDirectlySubmittedExpression(getDirectlySubmittedExpressionGene(marker));
         logger.info("got directly submitted expression");
+
+        logger.info("setting directly submitted Thisse expression");
+        markerExpression.setOnlyThisse(getDirectlySubmittedThisseExpression(marker));
+        logger.info("got directly submitted expression");
+
 
         logger.info("setting only in situ expression for pub tracking");
 
