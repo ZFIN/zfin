@@ -580,6 +580,8 @@ public interface PublicationRepository extends PaginationParameter {
 
     List<PublicationTrackingLocation> getAllPublicationLocations();
 
+    List<Publication> getAllPublications();
+
     PublicationTrackingLocation getPublicationTrackingLocation(long id);
 
     DashboardPublicationList getPublicationsByStatus(Long status, Long location, String owner, int count, int offset, String sort);

@@ -2354,6 +2354,12 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 .list();
     }
 
+    public List<Publication> getAllPublications(){
+        return HibernateUtil.currentSession()
+                .createCriteria(Publication.class)
+                .list();
+    };
+
     public PublicationTrackingLocation getPublicationTrackingLocation(long id) {
         return (PublicationTrackingLocation) HibernateUtil.currentSession().get(PublicationTrackingLocation.class, id);
     }

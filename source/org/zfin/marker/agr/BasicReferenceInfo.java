@@ -6,21 +6,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.commons.collections.CollectionUtils;
 import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerAlias;
-import org.zfin.marker.SecondaryMarker;
-import org.zfin.mutant.SequenceTargetingReagent;
+import org.zfin.publication.Publication;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.HashSet;
+
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.zfin.repository.RepositoryFactory.getMutantRepository;
+import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 public class BasicReferenceInfo extends AbstractScriptWrapper {
 
@@ -54,8 +51,8 @@ public class BasicReferenceInfo extends AbstractScriptWrapper {
     }
 
     public AllReferenceDTO getAllReferenceInfo() {
-        List<Publication> allReferences = //getMutantRepository().getAllSTRs();
-        System.out.println(allReferencess.size());
+        List<Publication> allReferences = getPublicationRepository().getAllPublications();
+        System.out.println(allReferences.size());
 
         List<ReferenceDTO> allReferenceDTOList = allReferences.stream()
                 .map(
@@ -63,15 +60,16 @@ public class BasicReferenceInfo extends AbstractScriptWrapper {
                             ReferenceDTO dto = new ReferenceDTO();
                             dto.setPrimaryId(reference.getZdbID());
                             dto.setTitle(reference.getTitle());
-                            if (CollectionUtils.isNotEmpty(reference.getTargetGenes())) {
-                                List<String> geneList = new ArrayList<>(reference.getTargetGenes().size());
-                                for (Marker gene : reference.getTargetGenes()) {
-                                    geneList.add("ZFIN:" + gene.getZdbID());
+                            if (CollectionUtils.isNotEmpty(reference.getMeshHeadings())) {
+                                List<String> meshHeadings = new ArrayList<>(reference.getMeshHeadings().size());
+                                for (MeshHeading meshHeading: reference.getMeshHeadings()) {
+                                    meshHeadings.add(meshHeading.getZdbID());
                                 }
-                                dto.setTargetGeneIds(geneList);
+                                dto.setMeshTerms(meshHeadings);
                             }
 
                             dto.setTaxonId(dto.getTaxonId());
+
                             if (reference.getZdbID().startsWith("ZDB-MRPH")){
                                 dto.setSoTermId("SO:0000034");
                             }
