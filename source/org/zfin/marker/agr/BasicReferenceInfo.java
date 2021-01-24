@@ -84,7 +84,8 @@ public class BasicReferenceInfo extends AbstractScriptWrapper {
                             dto.setVolume(reference.getVolume());
                             dto.setResourceAbbreviation(reference.getJournal().getAbbreviation());
                             List<AuthorReferenceDTO> authorReferences = new ArrayList<>();
-                            
+                            if (CollectionUtils.isNotEmpty(reference.getA()))
+
 
                             return dto;
                         })
