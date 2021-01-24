@@ -5,8 +5,10 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.commons.collections.CollectionUtils;
-import org.zfin.marker.Marker;
+import org.zfin.publication.MeshTerm;
 import org.zfin.publication.Publication;
+import org.zfin.publication.MeshHeading;
+import org.zfin.publication.MeshHeadingTerm;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 
 import java.io.FileOutputStream;
@@ -20,7 +22,6 @@ import java.util.stream.Collectors;
 import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 public class BasicReferenceInfo extends AbstractScriptWrapper {
-
 
     private int numfOfRecords = 0;
 
@@ -61,21 +62,30 @@ public class BasicReferenceInfo extends AbstractScriptWrapper {
                             dto.setPrimaryId(reference.getZdbID());
                             dto.setTitle(reference.getTitle());
                             if (CollectionUtils.isNotEmpty(reference.getMeshHeadings())) {
-                                List<String> meshHeadings = new ArrayList<>(reference.getMeshHeadings().size());
+                                List<MESHDetailDTO> meshDetails = new ArrayList<>();
                                 for (MeshHeading meshHeading: reference.getMeshHeadings()) {
-                                    meshHeadings.add(meshHeading.getZdbID());
+                                   MESHDetailDTO meshDetail = new MESHDetailDTO();
+                                   for (MeshHeadingTerm mtqualifer : meshHeading.getQualifiers()) {
+                                       meshDetail.setMeshHeadingTerm(meshHeading.getDescriptor().getTerm().getId());
+                                       meshDetail.setMeshQualifierTerm(mtqualifer.getTerm().getId());
+                                       meshDetails.add(meshDetail);
+                                   }
                                 }
-                                dto.setMeshTerms(meshHeadings);
+                                dto.setMeshTerms(meshDetails);
                             }
+                            dto.setAbstractText(reference.getAbstractText());
+                            dto.setCitation(reference.getCitation());
+                            dto.setDatePublished(reference.getPublicationDate());
+                            dto.setDateArrivedInPubMed(reference.getEntryDate());
+                            List<String> keywords = new ArrayList<>();
+                            keywords.add(reference.getKeywords());
+                            dto.setKeywords(keywords);
+                            dto.setPages(reference.getPages());
+                            dto.setVolume(reference.getVolume());
+                            dto.setResourceAbbreviation(reference.getJournal().getAbbreviation());
+                            List<AuthorReferenceDTO> authorReferences = new ArrayList<>();
+                            
 
-                            dto.setTaxonId(dto.getTaxonId());
-
-                            if (reference.getZdbID().startsWith("ZDB-MRPH")){
-                                dto.setSoTermId("SO:0000034");
-                            }
-                            else if (reference.getZdbID().startsWith("ZDB-CRISPR")){
-                                dto.setSoTermId("SO:0001429");
-                            }
                             return dto;
                         })
                 .collect(Collectors.toList());
