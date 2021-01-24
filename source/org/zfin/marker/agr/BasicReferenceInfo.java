@@ -5,10 +5,7 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.commons.collections.CollectionUtils;
-import org.zfin.publication.MeshTerm;
-import org.zfin.publication.Publication;
-import org.zfin.publication.MeshHeading;
-import org.zfin.publication.MeshHeadingTerm;
+import org.zfin.publication.*;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 
 import java.io.FileOutputStream;
@@ -84,9 +81,75 @@ public class BasicReferenceInfo extends AbstractScriptWrapper {
                             dto.setVolume(reference.getVolume());
                             dto.setResourceAbbreviation(reference.getJournal().getAbbreviation());
                             List<AuthorReferenceDTO> authorReferences = new ArrayList<>();
-                            if (CollectionUtils.isNotEmpty(reference.getA()))
+                            if (CollectionUtils.isNotEmpty(reference.getAuthorPubs())){
+                                for (PubmedPublicationAuthor authorPub: reference.getAuthorPubs()){
+                                    AuthorReferenceDTO authorRef = new AuthorReferenceDTO();
+                                    authorRef.setFirstName(authorPub.getFirstName());
+                                    authorRef.setLastName(authorPub.getLastName());
+                                    authorRef.setName(authorPub.getLastName()+","+authorPub.getFirstName().charAt(0)+".");
+                                    authorReferences.add(authorRef);
+                                }
+                                dto.setAuthors(authorReferences);
+                            }
+                            else {
+                                AuthorReferenceDTO nonPubMedAuthors = new AuthorReferenceDTO();
+                                nonPubMedAuthors.setName(reference.getAuthors());
+                            }
+                            List<MODReferenceTypeDTO> MODreferenceTypes = new ArrayList<>();
+                            MODReferenceTypeDTO pubType = new MODReferenceTypeDTO();
+                            pubType.setSource("ZFIN");
+                            pubType.setReferenceType(reference.getType().getDisplay());
+                            MODreferenceTypes.add(pubType);
+                            dto.setMODReferenceTypes(MODreferenceTypes);
+                            String allianceCategory = "";
+                            String type = reference.getType().getDisplay();
+                            if (type.equals("Journal")){
+                                allianceCategory = "Research Article";
+                            }
+                            else if (type.equals("Unpublished") ||
+                                     type.equals("Curation") ||
+                                     type.equals("Active Curation") ){
+                                allianceCategory = "Internal Process Reference";
+                            }
+                            else if (type.equals("Unknown")){
+                                allianceCategory = type;
+                            }
+                            else if (type.equals("Other") || type.equals("Movie") || type.equals("Abstract")){
+                                allianceCategory = type;
+                            }
+                            else if (type.equals("Review")){
+                                allianceCategory = "Review Article";
+                            }
+                            else if (type.equals("Book") || type.equals("Chapter")){
+                                allianceCategory = "Book";
+                            }
+                            else if (type.equals("Thesis")){
+                                allianceCategory = type;
+                            }
+                            else if (type.equals("Movie")){
 
+                            }
+                            else {
+                                allianceCategory = "Other";
+                            }
+                            dto.setAllianceCategory(allianceCategory);
+                            List<String> pages = new ArrayList<>();
+                            pages.add("reference");
+                            List<CrossReferenceDTO> xrefs = new ArrayList<>();
+                            if (reference.getAccessionNumber() != null){
+                                dto.setPrimaryId("PMID:"+reference.getAccessionNumber());
+                                CrossReferenceDTO crossReference = new CrossReferenceDTO("ZFIN",reference.getZdbID(),pages);
 
+                                xrefs.add(crossReference);
+                            }
+                            else {
+                                dto.setPrimaryId("ZFIN:"+reference.getZdbID());
+                                CrossReferenceDTO crossReference = new CrossReferenceDTO("ZFIN",reference.getZdbID(),pages);
+
+                                xrefs.add(crossReference);
+                            }
+                            dto.setCrossReferences(xrefs);
+                            
                             return dto;
                         })
                 .collect(Collectors.toList());

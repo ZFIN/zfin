@@ -24,6 +24,10 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     @JsonView(View.Default.class)
     private String title;
     private String authors;
+
+
+
+    private List<PubmedPublicationAuthor> authorPubs;
     @JsonView(View.Default.class)
     private String shortAuthorList;
     private String abstractText;
@@ -64,7 +68,13 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private boolean indexed;
     private GregorianCalendar indexedDate;
     private Person indexedBy;
+    public List<PubmedPublicationAuthor> getAuthorPubs() {
+        return authorPubs;
+    }
 
+    public void setAuthorPubs(List<PubmedPublicationAuthor> authorPubs) {
+        this.authorPubs = authorPubs;
+    }
     private Set<ZebrashareEditor> zebrashareEditors;
 
     public String getZdbID() {

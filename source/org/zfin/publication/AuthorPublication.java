@@ -1,7 +1,6 @@
 package org.zfin.publication;
 
 import javax.persistence.*;
-import org.zfin.publication.Author;
 
 @Entity
 @Table(name = "author_publication")
@@ -40,5 +39,5 @@ public class AuthorPublication {
     public void setAuthor(Author author) {
         this.author = author;
     }
-    
+
 }
