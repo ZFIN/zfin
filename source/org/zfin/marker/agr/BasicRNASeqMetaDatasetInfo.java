@@ -21,7 +21,6 @@ import static org.zfin.repository.RepositoryFactory.getExpressionRepository;
 
 public class BasicRNASeqMetaDatasetInfo extends AbstractScriptWrapper {
 
-
     private int numOfRecords = 0;
 
     public BasicRNASeqMetaDatasetInfo(int number) {

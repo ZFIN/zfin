@@ -20,7 +20,6 @@ import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
 public class BasicFishInfo extends AbstractScriptWrapper {
 
-
     private int numfOfRecords = 0;
 
     public BasicFishInfo(int number) {

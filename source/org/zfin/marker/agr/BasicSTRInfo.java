@@ -23,6 +23,7 @@ import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
 public class BasicSTRInfo extends AbstractScriptWrapper {
 
+
     private int numfOfRecords = 0;
 
     public BasicSTRInfo(int number) {

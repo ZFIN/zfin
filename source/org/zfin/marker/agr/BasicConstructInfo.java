@@ -25,6 +25,7 @@ public class BasicConstructInfo extends AbstractScriptWrapper {
 
     private int numfOfRecords = 0;
 
+
     public BasicConstructInfo(int number) {
         numfOfRecords = number;
     }

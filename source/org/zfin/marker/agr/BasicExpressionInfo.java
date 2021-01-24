@@ -17,6 +17,7 @@ public class BasicExpressionInfo extends AbstractScriptWrapper{
 
         private int numfOfRecords = 0;
 
+
         public BasicExpressionInfo(int number) {
             numfOfRecords = number;
     }

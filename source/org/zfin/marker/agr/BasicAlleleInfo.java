@@ -26,6 +26,7 @@ import static org.zfin.repository.RepositoryFactory.getFeatureRepository;
 @Log4j2
 public class BasicAlleleInfo extends AbstractScriptWrapper {
 
+
     private int numfOfRecords;
 
     public BasicAlleleInfo(int number) {

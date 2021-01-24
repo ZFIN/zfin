@@ -26,7 +26,6 @@ import static org.zfin.infrastructure.ant.AbstractValidateDataReportTask.getProp
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 public class BasicTranscriptInfo extends AbstractScriptWrapper {
-
     private int numfOfRecords = 0;
 
     public BasicTranscriptInfo(int number) {

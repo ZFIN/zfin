@@ -32,6 +32,7 @@ public class BasicRNASeqMetaDatasampleInfo extends AbstractScriptWrapper {
         numOfRecords = number;
     }
 
+
     public static void main(String[] args) throws IOException {
         int number = 0;
         if (args.length > 0) {

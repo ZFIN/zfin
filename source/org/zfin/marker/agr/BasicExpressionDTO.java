@@ -14,6 +14,7 @@ import lombok.Setter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BasicExpressionDTO {
 
+
     @JsonSerialize(using = JsonDateSerializer.class)
     private GregorianCalendar dateAssigned = new GregorianCalendar();
 
