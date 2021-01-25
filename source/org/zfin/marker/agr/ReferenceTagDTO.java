@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 
-public class ReferenceTagDTO extends ZfinDTO {
+public class ReferenceTagDTO {
 
     private String referenceId;
     private String tagName;

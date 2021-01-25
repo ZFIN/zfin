@@ -164,12 +164,12 @@ public class BasicReferenceInfo extends AbstractScriptWrapper {
                                 }
                                 ReferenceTagDTO incorpusTag = new ReferenceTagDTO();
                                 incorpusTag.setTagName("inCorpus");
-                                incorpusTag.setReferenceId("PMID:"+reference.getAccessionNumber());
+                                incorpusTag.setReferenceId("ZFIN:"+reference.getZdbID());
                                 tags.add(incorpusTag);
                                 xrefs.add(crossReference);
                             }
                             if (reference.getDoi() != null){
-                                CrossReferenceDTO crossReference = new CrossReferenceDTO("DOI",reference.getZdbID(),pages);
+                                CrossReferenceDTO crossReference = new CrossReferenceDTO("DOI",reference.getDoi(),pages);
                                 xrefs.add(crossReference);
                             }
                             dto.setCrossReferences(xrefs);
