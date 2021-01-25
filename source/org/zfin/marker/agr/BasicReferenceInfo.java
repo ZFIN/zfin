@@ -43,7 +43,7 @@ public class BasicReferenceInfo extends AbstractScriptWrapper {
         ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
 
         String jsonInString = writer.writeValueAsString(allReferenceDTO);
-        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.1.1_Reference.json"))) {
+        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.1.4_Reference.json"))) {
             out.print(jsonInString);
         }
     }
@@ -136,20 +136,45 @@ public class BasicReferenceInfo extends AbstractScriptWrapper {
                             List<String> pages = new ArrayList<>();
                             pages.add("reference");
                             List<CrossReferenceDTO> xrefs = new ArrayList<>();
+                            List<ReferenceTagDTO> tags = new ArrayList<>();
+                            ReferenceTagDTO tag = new ReferenceTagDTO();
                             if (reference.getAccessionNumber() != null){
                                 dto.setPrimaryId("PMID:"+reference.getAccessionNumber());
                                 CrossReferenceDTO crossReference = new CrossReferenceDTO("ZFIN",reference.getZdbID(),pages);
-
+                                if (reference.isCanShowImages()) {
+                                    tag.setReferenceId("PMID:"+reference.getAccessionNumber());
+                                    tag.setSource("ZFIN");
+                                    tag.setTagName("canShowImages");
+                                    tags.add(tag);
+                                }
+                                ReferenceTagDTO incorpusTag = new ReferenceTagDTO();
+                                incorpusTag.setTagName("inCorpus");
+                                incorpusTag.setReferenceId("PMID:"+reference.getAccessionNumber());
+                                tags.add(incorpusTag);
                                 xrefs.add(crossReference);
                             }
                             else {
                                 dto.setPrimaryId("ZFIN:"+reference.getZdbID());
                                 CrossReferenceDTO crossReference = new CrossReferenceDTO("ZFIN",reference.getZdbID(),pages);
-
+                                if (reference.isCanShowImages()) {
+                                    tag.setReferenceId("ZFIN:"+reference.getZdbID());
+                                    tag.setTagName("canShowImages");
+                                    tag.setSource("ZFIN");
+                                    tags.add(tag);
+                                }
+                                ReferenceTagDTO incorpusTag = new ReferenceTagDTO();
+                                incorpusTag.setTagName("inCorpus");
+                                incorpusTag.setReferenceId("PMID:"+reference.getAccessionNumber());
+                                tags.add(incorpusTag);
+                                xrefs.add(crossReference);
+                            }
+                            if (reference.getDoi() != null){
+                                CrossReferenceDTO crossReference = new CrossReferenceDTO("DOI",reference.getZdbID(),pages);
                                 xrefs.add(crossReference);
                             }
                             dto.setCrossReferences(xrefs);
-                            
+
+                            dto.setTags(tags);
                             return dto;
                         })
                 .collect(Collectors.toList());
