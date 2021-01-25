@@ -16,6 +16,19 @@ public class ExperimentConditionDTO extends ZfinDTO {
     private String geneOntologyId;
     private String NCBITaxonId;
     private String ChemicalOntologyId;
+    private String zecoId;
+
+    public String getZecoId() {
+        return zecoId;
+    }
+
+    public void setZecoId(String zecoId) {
+        this.zecoId = zecoId;
+    }
+
+    public ExperimentConditionDTO(String zecoId) {
+        this.zecoId = zecoId;
+    }
 
     public String getConditionStatement() {
         return conditionStatement;

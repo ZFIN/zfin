@@ -10,6 +10,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.springframework.stereotype.Repository;
+import org.zfin.expression.ExperimentCondition;
 import org.zfin.expression.ExpressionFigureStage;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionStatement;
@@ -25,6 +26,7 @@ import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.marker.Marker;
+import org.zfin.expression.Experiment;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.agr.BasicPhenotypeDTO;
 import org.zfin.marker.agr.CrossReferenceDTO;
@@ -1414,6 +1416,15 @@ public class HibernateMutantRepository implements MutantRepository {
         }
         return query.list();
     }
+
+    public List<ExperimentCondition> getExperimentConditions (Experiment experiment){
+        return HibernateUtil.currentSession()
+                .createCriteria(ExperimentCondition.class)
+                .add(Restrictions.eq("experiment", experiment))
+                .list();
+    }
+
+
 
     public List<ExpressionResult> getConstructExpressionSummary(List<String> genoxIds) {
         if (CollectionUtils.isEmpty(genoxIds)) {

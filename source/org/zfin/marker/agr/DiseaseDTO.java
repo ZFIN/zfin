@@ -21,7 +21,7 @@ public class DiseaseDTO {
     private GregorianCalendar dateAssigned = new GregorianCalendar();
     private List<DataProviderDTO> dataProviderList;
     private EvidenceDTO evidence;
-    private Set<ExperimentalConditionDTO> experimentalConditions;
+    private Set<ExperimentConditionDTO> experimentConditions;
     private RelationshipDTO objectRelation;
     private List<ConditionRelationDTO> conditionRelations;
     private List<String> primaryGeneticEntityIDs;
@@ -91,12 +91,12 @@ public class DiseaseDTO {
         this.evidence = evidence;
     }
 
-    public Set<ExperimentalConditionDTO> getExperimentalConditions() {
-        return experimentalConditions;
+    public Set<ExperimentConditionDTO> getExperimentConditions() {
+        return experimentConditions;
     }
 
-    public void setExperimentalConditions(Set<ExperimentalConditionDTO> experimentalConditions) {
-        this.experimentalConditions = experimentalConditions;
+    public void setExperimentConditions(Set<ExperimentConditionDTO> experimentConditions) {
+        this.experimentConditions = experimentConditions;
     }
 
     public GregorianCalendar getDateAssigned() {
