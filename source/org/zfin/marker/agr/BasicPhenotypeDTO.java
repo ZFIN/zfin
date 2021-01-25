@@ -18,6 +18,16 @@ public class BasicPhenotypeDTO{
     private String phenotypeStatement;
     private List<String> primaryGeneticEntityIDs;
 
+    private List<ConditionRelationDTO> conditionRelations;
+
+    public List<ConditionRelationDTO> getConditionRelations() {
+        return conditionRelations;
+    }
+
+    public void setConditionRelations(List<ConditionRelationDTO> conditionRelations) {
+        this.conditionRelations = conditionRelations;
+    }
+
     public List<String> getPrimaryGeneticEntityIDs() {
         return primaryGeneticEntityIDs;
     }

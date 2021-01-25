@@ -3,6 +3,7 @@ package org.zfin.marker.agr;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.spockframework.runtime.Condition;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.util.JsonDateSerializer;
 
@@ -23,7 +24,13 @@ public class DiseaseDTO {
     private EvidenceDTO evidence;
     private Set<ExperimentalConditionDTO> experimentalConditions;
     private RelationshipDTO objectRelation;
+    private List<ConditionRelationDTO> conditionRelations;
     private List<String> primaryGeneticEntityIDs;
+
+    public void setConditionRelations(List<ConditionRelationDTO> conditionRelations) {
+        this.conditionRelations = conditionRelations;
+    }
+
 
     public List<String> getPrimaryGeneticEntityIDs() {
         return primaryGeneticEntityIDs;
