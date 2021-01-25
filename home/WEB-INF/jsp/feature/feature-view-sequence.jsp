@@ -3,10 +3,11 @@
 
 
 <z:attributeList>
+    <z:attributeListItem label="Flanking Sequence">
     <z:ifHasData
             test="${!empty formBean.feature.featureGenomicMutationDetailSet && !(formBean.varSequence.vfsVariation.contains('null'))}"
             noDataMessage="None">
-        <z:attributeListItem label="Flanking Sequence">
+
             <jsp:body>
 
                 <span style="word-wrap: break-word;">${formBean.varSequence.vfsLeftEnd}
@@ -30,12 +31,14 @@
 
 
             </jsp:body>
-        </z:attributeListItem>
+
     </z:ifHasData>
+    </z:attributeListItem>
 
-    <z:ifHasData test="${!empty formBean.genbankDbLinks}" noDataMessage="None">
 
-        <z:attributeListItem label="Sequence">
+
+        <z:attributeListItem label="Additional Sequence">
+            <z:ifHasData test="${!empty formBean.genbankDbLinks}" noDataMessage="None">
             <c:forEach var="featureGenbankLink" items="${formBean.genbankDbLinks}" varStatus="loop">
                 <zfin:link entity="${featureGenbankLink}"/>
                 <c:if test="${featureGenbankLink.publicationCount > 0}">
@@ -50,7 +53,7 @@
                 </c:if>
                 <c:if test="${!loop.last}">,&nbsp;</c:if>
             </c:forEach>
-
+            </z:ifHasData>
         </z:attributeListItem>
-    </z:ifHasData>
+
 </z:attributeList>
