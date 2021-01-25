@@ -82,11 +82,6 @@
             <one-to-many class="org.zfin.publication.MeshHeading"/>
         </set>
 
-        <set name="authorObjs" sort="natural">
-            <key column="authorpub_pub_zdb_id"/>
-            <one-to-many class="org.zfin.publication.AuthorPublication"/>
-        </set>
-
         <set name="notes" lazy="true" table="publication_note" order-by="pnote_date desc">
             <key column="pnote_pub_zdb_id"/>
             <one-to-many class="org.zfin.curation.PublicationNote"/>
@@ -205,16 +200,5 @@
         </set>
     </class>
 
-    <class name="org.zfin.publication.AuthorPublication" table="author_publication">
-        <id name="id" type="long" column="authorpub_pk_id"/>
-
-        <component name="author" class="org.zfin.profile.Author">
-            <many-to-one name="author" column="authorpub_author_id"/>
-        </component>
-
-        <component name="publication" class="org.zfin.publication.Publication">
-            <many-to-one name="publication" column="athorpub_pub_zdb_id"/>
-        </component>
-    </class>
 
 </hibernate-mapping>

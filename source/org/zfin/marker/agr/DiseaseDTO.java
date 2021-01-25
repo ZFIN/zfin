@@ -3,7 +3,6 @@ package org.zfin.marker.agr;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.spockframework.runtime.Condition;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.util.JsonDateSerializer;
 

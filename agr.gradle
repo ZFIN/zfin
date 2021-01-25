@@ -80,6 +80,12 @@ task createBasicWTExpressionInfoFile(type: JavaExec) {
     main = 'org.zfin.marker.agr.BasicExpressionInfo'
 }
 
+task createReferenceInfoFile(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.marker.agr.BasicReferenceInfo'
+}
+
+
 task createAllianceFiles {
     dependsOn createDiseaseInfoFile
     dependsOn createBasicPhenotypeInfoFile
@@ -93,4 +99,5 @@ task createAllianceFiles {
     dependsOn createConstructFile
     dependsOn createHtpdatasetFile
     dependsOn createHtpdatasampleFile
+    dependsOn createReferenceInfoFile
 }

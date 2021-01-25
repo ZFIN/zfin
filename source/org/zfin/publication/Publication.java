@@ -24,9 +24,6 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     @JsonView(View.Default.class)
     private String title;
     private String authors;
-
-
-
     private List<PubmedPublicationAuthor> authorPubs;
     @JsonView(View.Default.class)
     private String shortAuthorList;
