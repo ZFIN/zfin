@@ -93,6 +93,8 @@ public class Feature implements EntityNotes, EntityZdbID {
     private Boolean isUnspecifiedFeature;
     @Column(name = "ftr_chr_info_date")
     private Date ftrAssemblyInfoDate;
+    @Column(name="feature_date_entered")
+    private Date ftrEntryDate;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "feature", fetch = FetchType.LAZY)
     @SortNatural
     private Set<FeatureMarkerRelationship> featureMarkerRelations;
@@ -741,5 +743,13 @@ public class Feature implements EntityNotes, EntityZdbID {
         if (type.equals(FeatureTypeEnum.TRANSGENIC_INSERTION) && hasAlleleOfRelationship())
             return "Allele caused by " + type.getTypeDisplay();
         return type.getTypeDisplay();
+    }
+
+    public Date getFtrEntryDate() {
+        return ftrEntryDate;
+    }
+
+    public void setFtrEntryDate(Date ftrEntryDate) {
+        this.ftrEntryDate = ftrEntryDate;
     }
 }
