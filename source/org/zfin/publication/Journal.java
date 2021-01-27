@@ -16,6 +16,7 @@ public class Journal implements Serializable, EntityZdbID {
     private String name;
     private String abbreviation;
     private String medAbbrev;
+    private String isoAbbrev;
     private String publisher;
     private String printIssn;
     private String onlineIssn;
@@ -116,6 +117,16 @@ public class Journal implements Serializable, EntityZdbID {
             return abbreviation;
 
         return medAbbrev;
+    }
+
+    public String getIsoAbbrev() {
+        if (isoAbbrev == null)
+            return abbreviation;
+        return isoAbbrev;
+    }
+
+    public void setIsoAbbrev(String isoAbbrev) {
+        this.isoAbbrev = isoAbbrev;
     }
 
     public void setMedAbbrev(String medAbbrev) {

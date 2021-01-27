@@ -18,6 +18,15 @@ public class VariantDTO {
     private String type;
     private String consequence;
     private List<PublicationAgrDTO> references;
+    private List<String> notes;
+
+    public List<String> getNotes() {
+        return notes;
+    }
+
+    public void setNotes(List<String> notes) {
+        this.notes = notes;
+    }
 
     public String getAlleleId() {
         return alleleId;

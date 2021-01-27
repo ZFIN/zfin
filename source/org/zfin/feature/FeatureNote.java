@@ -26,4 +26,8 @@ public class FeatureNote extends ExternalNote {
         this.feature = feature;
     }
 
+    public boolean isVariantNote() {
+        return tag.contains("variant");
+    }
+
 }

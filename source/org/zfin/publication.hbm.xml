@@ -156,6 +156,10 @@
             <column name="jrnl_medabbrev" not-null="false"/>
         </property>
 
+        <property name="isoAbbrev">
+            <column name="jrnl_isoabbrev" not-null="false"/>
+        </property>
+
         <property name="publisher">
             <column name="jrnl_publisher" not-null="true"/>
         </property>

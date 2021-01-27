@@ -864,6 +864,14 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return (Journal) criteria.uniqueResult();
     }
 
+    @Override
+    public List<Journal> getAllJournals() {
+        Session session = HibernateUtil.currentSession();
+        Criteria jrnlCriteria = session.createCriteria(Journal.class);
+        jrnlCriteria.addOrder(Order.asc("name"));
+        return jrnlCriteria.list();
+    }
+
     public void createJournal(Journal journal) {
         if (journal.getName() == null) {
             throw new RuntimeException("Cannot create a new journal without a name.");

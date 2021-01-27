@@ -306,7 +306,7 @@ public interface PublicationRepository extends PaginationParameter {
     List<Figure> getFiguresByGeneAndAnatomy(Marker gene, GenericTerm anatomyTerm);
 
     List<Publication> getPubsForDisplay(String zdbID);
-
+    List<Journal> getAllJournals();
     Journal getJournalByTitle(String journalTitle);
 
     Journal findJournalByAbbreviation(String abbrevation);

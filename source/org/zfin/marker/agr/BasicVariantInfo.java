@@ -3,8 +3,10 @@ package org.zfin.marker.agr;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import org.apache.commons.collections.CollectionUtils;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureGenomicMutationDetail;
+import org.zfin.feature.FeatureNote;
 import org.zfin.mapping.FeatureLocation;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 
@@ -112,6 +114,32 @@ public class BasicVariantInfo extends AbstractScriptWrapper {
                                         dto.setStart(ftrLoc.getFtrStartLocation());
                                         dto.setEnd(ftrLoc.getFtrEndLocation());
                                         dto.setChromosome(ftrLoc.getFtrChromosome());
+
+                                        if (CollectionUtils.isNotEmpty(feature.getExternalNotes())) {
+                                            List<String> noteList = new ArrayList<>(feature.getExternalNotes().size());
+                                            ArrayList<PublicationAgrDTO> datasetPubs = new ArrayList<>();
+                                            PublicationAgrDTO fixedPub = new PublicationAgrDTO();
+                                            List<String> pubPages = new ArrayList<>();
+                                            pubPages.add("reference");
+
+                                            for (FeatureNote varNote : feature.getExternalNotes()) {
+                                                if (varNote.isVariantNote()) {
+                                                    noteList.add(varNote.getNote());
+                                                    if (varNote.getPublication().getAccessionNumber() != null) {
+                                                        CrossReferenceDTO pubXref = new CrossReferenceDTO("ZFIN", varNote.getPublication().getZdbID(), pubPages);
+                                                        fixedPub.setPublicationId("PMID:" + varNote.getPublication().getAccessionNumber());
+                                                        fixedPub.setCrossReference(pubXref);
+                                                    } else {
+                                                        fixedPub.setPublicationId("ZFIN:" + varNote.getPublication().getZdbID());
+                                                    }
+                                                    datasetPubs.add(fixedPub);
+                                                }
+                                                dto.setNotes(noteList);
+                                                dto.setReferences(datasetPubs);
+                                            }
+                                        }
+
+
                                     }
                                 }
 

@@ -42,6 +42,12 @@ import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DBLink;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.Period;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -153,10 +159,34 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
     @Override
     public boolean isSingleAffectedGeneAlleles(Feature feature) {
+
+
+
         List<Feature> list = getSingleAffectedGeneAlleles(feature);
-        if (list == null)
+        if (list == null) {
             return false;
-        return list.size() > 0;
+        }
+        else {
+            SimpleDateFormat formatter = new SimpleDateFormat("MMM dd yyyy");
+            if (feature.getFtrEntryDate() != null) {
+                String s = formatter.format(feature.getFtrEntryDate());
+                DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("MMM dd yyyy");
+                LocalDate date1 = LocalDate.parse(s, formatter1);
+                //Alliance loads may happen only twice  a year..chekcing if date of feature is greater than 6 months
+                Date today = new Date();
+                String currentDate = formatter.format(today);
+                LocalDate date2 = LocalDate.parse(currentDate, formatter1);
+                if (date2.toEpochDay() - date1.toEpochDay() > 180) {
+                    return list.size() > 0;
+                } else {
+                    return false;
+                }
+            }
+            else{
+                return false;
+            }
+        }
+
     }
 
     @SuppressWarnings("unchecked")

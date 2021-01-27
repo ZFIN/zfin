@@ -47,6 +47,11 @@ task createBasicAlleleInfoFile(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.marker.agr.BasicAlleleInfo'
 }
+task createBasicResourceInfoFile(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.marker.agr.BasicResourceInfo'
+}
+
 
 task createGPIFile(type: JavaExec) {
     description 'Generates tab delimited file for GO/Noctua'
