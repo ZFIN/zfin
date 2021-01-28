@@ -16,7 +16,7 @@
 
 <c:if test="${hit.hasGO}">
 
-    <a href="/${hit.gene.zdbID#gene-ontology}"><img src="/images/G_letter.png" title="view GO annotation" alt="has GO annotation" border="0" class="blast"></a>
+    <a href="/${hit.gene.zdbID}#gene-ontology"><img src="/images/G_letter.png" title="view GO annotation" alt="has GO annotation" border="0" class="blast"></a>
 </c:if>
 
 <c:choose>
