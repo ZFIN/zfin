@@ -4,8 +4,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.GregorianCalendar;
 import java.util.List;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.Setter;
+import org.zfin.util.JsonDateSerializer;
 
 @Getter
 @Setter
@@ -15,11 +18,11 @@ public class ReferenceDTO {
 
     private String primaryId;
     private String title;
-    private GregorianCalendar datePublished;
+    private String datePublished;
     private String citation;
     private String allianceCategory;
-    private GregorianCalendar dateArrivedInPubMed;
-    private GregorianCalendar dateLastModified;
+    private String dateArrivedInPubMed;
+    private String dateLastModified;
     private String volume;
     private String pages;
     private List<String> keywords;
@@ -49,11 +52,11 @@ public class ReferenceDTO {
         this.title = title;
     }
 
-    public GregorianCalendar getDatePublished() {
+    public String getDatePublished() {
         return datePublished;
     }
 
-    public void setDatePublished(GregorianCalendar datePublished) {
+    public void setDatePublished(String datePublished) {
         this.datePublished = datePublished;
     }
 
@@ -73,19 +76,18 @@ public class ReferenceDTO {
         this.allianceCategory = allianceCategory;
     }
 
-    public GregorianCalendar getDateArrivedInPubMed() {
+    public String getDateArrivedInPubMed() {
         return dateArrivedInPubMed;
     }
 
-    public void setDateArrivedInPubMed(GregorianCalendar dateArrivedInPubMed) {
+    public void setDateArrivedInPubMed(String dateArrivedInPubMed) {
         this.dateArrivedInPubMed = dateArrivedInPubMed;
     }
-
-    public GregorianCalendar getDateLastModified() {
+    public String getDateLastModified() {
         return dateLastModified;
     }
 
-    public void setDateLastModified(GregorianCalendar dateLastModified) {
+    public void setDateLastModified(String dateLastModified) {
         this.dateLastModified = dateLastModified;
     }
 

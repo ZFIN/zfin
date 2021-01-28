@@ -12,6 +12,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.GregorianCalendar;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -76,10 +78,13 @@ public class BasicReferenceInfo extends AbstractScriptWrapper {
                                 }
                                 dto.setMeshTerms(meshDetails);
                             }
+
+                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                            String datePublished = format.format(reference.getPublicationDate().getTime());
+
                             dto.setAbstractText(reference.getAbstractText());
                             dto.setCitation(reference.getCitation());
-                            dto.setDatePublished(reference.getPublicationDate());
-                            dto.setDateArrivedInPubMed(reference.getEntryDate());
+                            dto.setDatePublished(datePublished);
                             List<String> keywords = new ArrayList<>();
                             keywords.add(reference.getKeywords());
                             dto.setKeywords(keywords);
@@ -96,6 +101,7 @@ public class BasicReferenceInfo extends AbstractScriptWrapper {
                                     if (authorPub.getFirstName().length() > 0) {
                                         authorRef.setName(authorPub.getLastName() + "," + authorPub.getFirstName().charAt(0) + ".");
                                     }
+                                    authorRef.setReferenceId("PMID:"+reference.getAccessionNumber());
                                     authorReferences.add(authorRef);
                                 }
                                 dto.setAuthors(authorReferences);
@@ -103,6 +109,7 @@ public class BasicReferenceInfo extends AbstractScriptWrapper {
                             else {
                                 AuthorReferenceDTO nonPubMedAuthors = new AuthorReferenceDTO();
                                 nonPubMedAuthors.setName(reference.getAuthors());
+                                nonPubMedAuthors.setReferenceId("ZFIN:"+reference.getZdbID());
                             }
                             List<MODReferenceTypeDTO> MODReferenceTypes = new ArrayList<>();
                             MODReferenceTypeDTO pubType = new MODReferenceTypeDTO();

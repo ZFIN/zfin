@@ -99,10 +99,8 @@ task createAllianceFiles {
     dependsOn createBasicGeneInfoFile
     dependsOn createBasicFishInfoFile
     dependsOn createBasicSTRInfoFile
-    dependsOn createBasicVariantInfoFile
     dependsOn createZfinExpressionInfoFile
     dependsOn createConstructFile
     dependsOn createHtpdatasetFile
     dependsOn createHtpdatasampleFile
-    dependsOn createReferenceInfoFile
 }
