@@ -72,7 +72,7 @@ public class BasicReferenceInfo extends AbstractScriptWrapper {
                                            meshDetail.setReferenceId("ZFIN:"+reference.getZdbID());
                                        }
                                        meshDetail.setMeshHeadingTerm(meshHeading.getDescriptor().getTerm().getId());
-                                       meshDetail.setMeshQualifierTerm(mtqualifer.getTerm().getId());
+                                       meshDetail.setMeshQualfierTerm(mtqualifer.getTerm().getId());
                                        meshDetails.add(meshDetail);
                                    }
                                 }
@@ -113,7 +113,7 @@ public class BasicReferenceInfo extends AbstractScriptWrapper {
                             }
                             List<MODReferenceTypeDTO> MODReferenceTypes = new ArrayList<>();
                             MODReferenceTypeDTO pubType = new MODReferenceTypeDTO();
-                            pubType.setSource("ZFIN");
+                            pubType.setTagSource("ZFIN");
                             pubType.setReferenceType(reference.getType().getDisplay());
                             MODReferenceTypes.add(pubType);
                             dto.setMODReferenceTypes(MODReferenceTypes);
@@ -166,6 +166,7 @@ public class BasicReferenceInfo extends AbstractScriptWrapper {
                                 ReferenceTagDTO incorpusTag = new ReferenceTagDTO();
                                 incorpusTag.setTagName("inCorpus");
                                 incorpusTag.setReferenceId("PMID:"+reference.getAccessionNumber());
+                                incorpusTag.setSource("ZFIN");
                                 tags.add(incorpusTag);
                                 xrefs.add(crossReference);
                             }

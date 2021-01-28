@@ -10,7 +10,7 @@ import lombok.Setter;
 public class MODReferenceTypeDTO  {
 
     private String referenceType;
-    private String source;
+    private String tagSource;
 
     public String getReferenceType() {
         return referenceType;
@@ -21,10 +21,10 @@ public class MODReferenceTypeDTO  {
     }
 
     public String getSource() {
-        return source;
+        return tagSource;
     }
 
     public void setSource(String source) {
-        this.source = source;
+        this.tagSource = source;
     }
 }

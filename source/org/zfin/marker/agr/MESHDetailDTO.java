@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MESHDetailDTO {
-    private String meshQualifierTerm;
+    private String meshQualfierTerm;
     private String meshHeadingTerm;
     private String referenceId;
     public String getReferenceId() {
@@ -29,11 +29,11 @@ public class MESHDetailDTO {
     }
 
     public String getMeshQualifierTerm() {
-        return meshQualifierTerm;
+        return meshQualfierTerm;
     }
 
     public void setMeshQualifierTerm(String meshQualifierTerm) {
-        this.meshQualifierTerm = meshQualifierTerm;
+        this.meshQualfierTerm = meshQualifierTerm;
     }
 
 

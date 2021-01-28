@@ -90,6 +90,10 @@ task createReferenceInfoFile(type: JavaExec) {
     main = 'org.zfin.marker.agr.BasicReferenceInfo'
 }
 
+task createReferenceExchangeInfoFile(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.marker.agr.BasicReferenceExchangeInfo'
+}
 
 task createAllianceFiles {
     dependsOn createDiseaseInfoFile

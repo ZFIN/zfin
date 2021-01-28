@@ -14,14 +14,14 @@ public class ReferenceTagDTO {
     private String tagName;
 
     public String getSource() {
-        return source;
+        return tagSource;
     }
 
-    public void setSource(String source) {
-        this.source = source;
+    public void setSource(String tagSource) {
+        this.tagSource = tagSource;
     }
 
-    private String source;
+    private String tagSource;
 
     public String getReferenceId() {
         return referenceId;
