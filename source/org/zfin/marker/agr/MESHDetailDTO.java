@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class MESHDetailDTO extends ZfinDTO  {
+public class MESHDetailDTO {
     private String meshQualifierTerm;
     private String meshHeadingTerm;
 

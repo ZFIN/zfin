@@ -3,7 +3,6 @@ package org.zfin.marker.agr;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import net.sourceforge.serialver.CommentOut;
 import org.zfin.expression.ExperimentCondition;
 import org.zfin.feature.Feature;
 import org.zfin.marker.Marker;
@@ -22,7 +21,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.zfin.repository.RepositoryFactory.getFishRepository;
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
 public class DiseaseInfo extends AbstractScriptWrapper {
@@ -50,7 +48,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
         ObjectMapper mapper = new ObjectMapper();
         ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
         String jsonInString = writer.writeValueAsString(allDiseaseDTO);
-        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.1.1_disease.daf.json"))) {
+        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.1.4_disease.daf.json"))) {
             out.print(jsonInString);
         }
     }
@@ -135,10 +133,10 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                                         FeatureDiseaseDto.setPrimaryGeneticEntityIDs(geneticEntityIds);
                                         FeatureDiseaseDto.setObjectRelation(alleleRelationship);
                                         FeatureDiseaseDto.setEvidence(getEvidenceDTO(publication, evidenceSet));
-                                        ConditionRelationDTO condition = populateExperimentConditions(fishExperiment, FeatureDiseaseDto);
-                                        List<ConditionRelationDTO> conditions = new ArrayList<>();
-                                        conditions.add(condition);
-                                        FeatureDiseaseDto.setConditionRelations(conditions);
+//                                        ConditionRelationDTO condition = populateExperimentConditions(fishExperiment, FeatureDiseaseDto);
+//                                        List<ConditionRelationDTO> conditions = new ArrayList<>();
+//                                        conditions.add(condition);
+//                                        FeatureDiseaseDto.setConditionRelations(conditions);
                                         diseaseDTOList.add(FeatureDiseaseDto);
 
                                         DiseaseDTO geneDiseaseDto = getBaseDiseaseDTO(gene.getZdbID(), gene.getAbbreviation(), disease);
@@ -148,10 +146,10 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                                         geneDiseaseDto.setPrimaryGeneticEntityIDs(geneGeneticEntityIds);
                                         geneDiseaseDto.setObjectRelation(relationship);
                                         geneDiseaseDto.setEvidence(getEvidenceDTO(publication, evidenceSet));
-                                        ConditionRelationDTO condition2 = populateExperimentConditions(fishExperiment, FeatureDiseaseDto);
-                                        List<ConditionRelationDTO> conditions2 = new ArrayList<>();
-                                        conditions.add(condition2);
-                                        FeatureDiseaseDto.setConditionRelations(conditions2);
+//                                        ConditionRelationDTO condition2 = populateExperimentConditions(fishExperiment, geneDiseaseDto);
+//                                        List<ConditionRelationDTO> conditions2 = new ArrayList<>();
+//                                        conditions.add(condition2);
+//                                        geneDiseaseDto.setConditionRelations(conditions2);
                                         diseaseDTOList.add(geneDiseaseDto);
 
                                     } else {
@@ -162,11 +160,11 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                                         FeatureDiseaseDto.setPrimaryGeneticEntityIDs(geneticEntityIds);
                                         FeatureDiseaseDto.setObjectRelation(relationship);
                                         FeatureDiseaseDto.setEvidence(getEvidenceDTO(publication, evidenceSet));
-                                        populateExperimentConditions(fishExperiment, FeatureDiseaseDto);
-                                        ConditionRelationDTO condition = populateExperimentConditions(fishExperiment, FeatureDiseaseDto);
-                                        List<ConditionRelationDTO> conditions = new ArrayList<>();
-                                        conditions.add(condition);
-                                        FeatureDiseaseDto.setConditionRelations(conditions);
+//                                        populateExperimentConditions(fishExperiment, FeatureDiseaseDto);
+//                                        ConditionRelationDTO condition = populateExperimentConditions(fishExperiment, FeatureDiseaseDto);
+//                                        List<ConditionRelationDTO> conditions = new ArrayList<>();
+//                                        conditions.add(condition);
+//                                        FeatureDiseaseDto.setConditionRelations(conditions);
                                         diseaseDTOList.add(FeatureDiseaseDto);
 
                                     }
@@ -240,7 +238,6 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                 expconds.add(expcond);
             }
             relation.setConditions(expconds);
-
 
         }
         return relation;

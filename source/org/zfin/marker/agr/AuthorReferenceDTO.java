@@ -9,7 +9,7 @@ import java.util.List;
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 
-public class AuthorReferenceDTO extends ZfinDTO {
+public class AuthorReferenceDTO {
 
     private String firstName;
     private String lastName;

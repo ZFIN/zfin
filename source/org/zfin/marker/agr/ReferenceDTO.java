@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 
-public class ReferenceDTO extends ZfinDTO {
+public class ReferenceDTO {
 
     private String primaryId;
     private String title;
@@ -33,12 +33,10 @@ public class ReferenceDTO extends ZfinDTO {
     private List<AuthorReferenceDTO> authors;
     private String abstractText;
 
-    @Override
     public String getPrimaryId() {
         return primaryId;
     }
 
-    @Override
     public void setPrimaryId(String primaryId) {
         this.primaryId = primaryId;
     }

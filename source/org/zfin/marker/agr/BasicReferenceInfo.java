@@ -81,12 +81,17 @@ public class BasicReferenceInfo extends AbstractScriptWrapper {
                             dto.setVolume(reference.getVolume());
                             dto.setResourceAbbreviation(reference.getJournal().getAbbreviation());
                             List<AuthorReferenceDTO> authorReferences = new ArrayList<>();
+
                             if (CollectionUtils.isNotEmpty(reference.getAuthorPubs())){
                                 for (PubmedPublicationAuthor authorPub: reference.getAuthorPubs()){
+                                    System.out.println(authorPub.getLastName());
+                                    System.out.println(reference.getTitle());
                                     AuthorReferenceDTO authorRef = new AuthorReferenceDTO();
                                     authorRef.setFirstName(authorPub.getFirstName());
                                     authorRef.setLastName(authorPub.getLastName());
-                                    authorRef.setName(authorPub.getLastName()+","+authorPub.getFirstName().charAt(0)+".");
+                                    if (authorPub.getFirstName().length() > 0) {
+                                        authorRef.setName(authorPub.getLastName() + "," + authorPub.getFirstName().charAt(0) + ".");
+                                    }
                                     authorReferences.add(authorRef);
                                 }
                                 dto.setAuthors(authorReferences);
