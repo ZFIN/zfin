@@ -1532,6 +1532,25 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     @Override
+    public List<DiseaseAnnotationModel> getDiseaseAnnotationModelsNoStd(int numofRecords){
+        String hql = " from DiseaseAnnotationModel model " +
+                "join fetch model.fishExperiment " +
+                "join fetch model.fishExperiment.fish " +
+                "join fetch model.fishExperiment.experiment " +
+                "join fetch model.diseaseAnnotation " +
+                "join fetch model.diseaseAnnotation.disease " +
+                "join fetch model.diseaseAnnotation.publication " +
+                "where model.fishExperiment.standardOrGenericControl = :notTrue";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        if (numofRecords > 0)
+            query.setMaxResults(numofRecords);
+
+        query.setParameter("notTrue", 'f');
+        return (List<DiseaseAnnotationModel>) query.list();
+
+    }
+    @Override
     public List<GeneGenotypeExperiment> getGeneDiseaseAnnotationModels(int numfOfRecords) {
         String hql = "select distinct geneGenotype from GeneGenotypeExperiment geneGenotype, DiseaseAnnotationModel diseaseAnnotationModel " +
                 "join fetch geneGenotype.gene " +

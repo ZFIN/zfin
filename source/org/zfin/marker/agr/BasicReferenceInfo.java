@@ -63,6 +63,12 @@ public class BasicReferenceInfo extends AbstractScriptWrapper {
                                 for (MeshHeading meshHeading: reference.getMeshHeadings()) {
                                    MESHDetailDTO meshDetail = new MESHDetailDTO();
                                    for (MeshHeadingTerm mtqualifer : meshHeading.getQualifiers()) {
+                                       if (reference.getAccessionNumber() != null){
+                                           meshDetail.setReferenceId("PMID:"+reference.getAccessionNumber());
+                                       }
+                                       else {
+                                           meshDetail.setReferenceId("ZFIN:"+reference.getZdbID());
+                                       }
                                        meshDetail.setMeshHeadingTerm(meshHeading.getDescriptor().getTerm().getId());
                                        meshDetail.setMeshQualifierTerm(mtqualifer.getTerm().getId());
                                        meshDetails.add(meshDetail);
@@ -84,8 +90,6 @@ public class BasicReferenceInfo extends AbstractScriptWrapper {
 
                             if (CollectionUtils.isNotEmpty(reference.getAuthorPubs())){
                                 for (PubmedPublicationAuthor authorPub: reference.getAuthorPubs()){
-                                    System.out.println(authorPub.getLastName());
-                                    System.out.println(reference.getTitle());
                                     AuthorReferenceDTO authorRef = new AuthorReferenceDTO();
                                     authorRef.setFirstName(authorPub.getFirstName());
                                     authorRef.setLastName(authorPub.getLastName());
@@ -100,12 +104,12 @@ public class BasicReferenceInfo extends AbstractScriptWrapper {
                                 AuthorReferenceDTO nonPubMedAuthors = new AuthorReferenceDTO();
                                 nonPubMedAuthors.setName(reference.getAuthors());
                             }
-                            List<MODReferenceTypeDTO> MODreferenceTypes = new ArrayList<>();
+                            List<MODReferenceTypeDTO> MODReferenceTypes = new ArrayList<>();
                             MODReferenceTypeDTO pubType = new MODReferenceTypeDTO();
                             pubType.setSource("ZFIN");
                             pubType.setReferenceType(reference.getType().getDisplay());
-                            MODreferenceTypes.add(pubType);
-                            dto.setMODReferenceTypes(MODreferenceTypes);
+                            MODReferenceTypes.add(pubType);
+                            dto.setMODReferenceTypes(MODReferenceTypes);
                             String allianceCategory = "";
                             String type = reference.getType().getDisplay();
                             if (type.equals("Journal")){

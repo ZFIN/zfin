@@ -9,6 +9,16 @@ import lombok.Setter;
 public class MESHDetailDTO {
     private String meshQualifierTerm;
     private String meshHeadingTerm;
+    private String referenceId;
+    public String getReferenceId() {
+        return referenceId;
+    }
+
+    public void setReferenceId(String referenceId) {
+        this.referenceId = referenceId;
+    }
+
+
 
     public String getMeshHeadingTerm() {
         return meshHeadingTerm;

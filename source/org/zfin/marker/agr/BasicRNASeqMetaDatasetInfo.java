@@ -44,7 +44,7 @@ public class BasicRNASeqMetaDatasetInfo extends AbstractScriptWrapper {
         ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
 
         String jsonInString = writer.writeValueAsString(allDatasetDTO);
-        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.1.1_HTP_Dataset.json"))) {
+        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.1.4_HTP_Dataset.json"))) {
             out.print(jsonInString);
         }
     }

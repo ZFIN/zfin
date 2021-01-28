@@ -50,7 +50,7 @@ public class BasicRNASeqMetaDatasampleInfo extends AbstractScriptWrapper {
         ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
 
         String jsonInString = writer.writeValueAsString(allDatasampleDTO);
-        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.1.1_HTP_DatasetSample.json"))) {
+        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.1.4_HTP_DatasetSample.json"))) {
             out.print(jsonInString);
         }
     }

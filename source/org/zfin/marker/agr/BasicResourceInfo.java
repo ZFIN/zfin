@@ -48,7 +48,7 @@ public class BasicResourceInfo extends AbstractScriptWrapper {
         ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
 
         String jsonInString = writer.writeValueAsString(allResourceDTO);
-        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.1.1_Resource.json"))) {
+        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.1.4_Resource.json"))) {
             out.print(jsonInString);
         }
     }
@@ -61,23 +61,28 @@ public class BasicResourceInfo extends AbstractScriptWrapper {
                 .map(
                         jrnl -> {
                             ResourceDTO dto = new ResourceDTO();
-                            dto.setPrimaryId(jrnl.getZdbID());
-                            dto.setName(jrnl.getName());
-                            dto.setMedAbbrev(jrnl.getMedAbbrev());
-                            dto.setIsoAbbrev(jrnl.getIsoAbbrev());
-                            dto.setPublisher(jrnl.getPublisher());
-                            dto.setPrintIssn(jrnl.getPrintIssn());
-                            dto.setOnlineIssn(jrnl.getOnlineIssn());
-                            dto.setPublisher(jrnl.getPublisher());
-                            //TODO: get target gene ids
-
-                            if (CollectionUtils.isNotEmpty(jrnl.getAliases())) {
-                                List<String> aliasList = new ArrayList<>(jrnl.getAliases().size());
-                                for (SourceAlias alias : jrnl.getAliases()) {
-                                    aliasList.add(alias.getAlias());
-                                }
-                                dto.setAliases(aliasList);
+                            if (jrnl.getNlmID() != null) {
+                                dto.setPrimaryId(jrnl.getNlmID());
                             }
+                            else {
+                                dto.setPrimaryId("ZFIN:" + jrnl.getZdbID());
+                            }
+                            System.out.println("ZFIN:"+jrnl.getZdbID());
+                            dto.setTitle(jrnl.getName());
+                            dto.setMedlineAbbreviation(jrnl.getMedAbbrev());
+                            dto.setIsoAbbreviation(jrnl.getIsoAbbrev());
+                            dto.setPublisher(jrnl.getPublisher());
+                            dto.setPrintISSN(jrnl.getPrintIssn());
+                            dto.setOnlineISSN(jrnl.getOnlineIssn());
+                            dto.setPublisher(jrnl.getPublisher());
+
+//                            if (CollectionUtils.isNotEmpty(jrnl.getAliases())) {
+//                                List<String> aliasList = new ArrayList<>(jrnl.getAliases().size());
+//                                for (SourceAlias alias : jrnl.getAliases()) {
+//                                    aliasList.add(alias.getAlias());
+//                                }
+//                                dto.setAliases(aliasList);
+//                            }
                             List<String> pages = new ArrayList<>();
                             pages.add("journal");
                             pages.add("journal/references");

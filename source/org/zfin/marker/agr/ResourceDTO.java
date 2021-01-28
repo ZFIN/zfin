@@ -15,16 +15,15 @@ import lombok.Setter;
 @Setter
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ResourceDTO extends ZfinDTO {
-    private String name;
+public class ResourceDTO {
+    private String primaryId;
+    private String title;
     private String abbreviation;
-    private String medAbbrev;
-    private String isoAbbrev;
+    private String medlineAbbreviation;
+    private String isoAbbreviation;
     private String publisher;
-    private String printIssn;
-    private String onlineIssn;
-    private String nlmID;
-    private List<String> aliases;
+    private String printISSN;
+    private String onlineISSN;
     private List<CrossReferenceDTO> crossReferences;
 
 
