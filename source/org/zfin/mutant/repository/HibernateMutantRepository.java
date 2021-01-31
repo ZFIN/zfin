@@ -28,10 +28,7 @@ import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.expression.Experiment;
 import org.zfin.marker.MarkerRelationship;
-import org.zfin.marker.agr.BasicPhenotypeDTO;
-import org.zfin.marker.agr.CrossReferenceDTO;
-import org.zfin.marker.agr.PhenotypeTermIdentifierDTO;
-import org.zfin.marker.agr.PublicationAgrDTO;
+import org.zfin.marker.agr.*;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
@@ -742,6 +739,35 @@ public class HibernateMutantRepository implements MutantRepository {
                     basicPheno.setPrimaryGeneticEntityIDs(primaryGeneticEntityIDs);
                 }
             }
+            else {
+                List<ConditionRelationDTO> conditionsN = new ArrayList<>();
+                List<ExperimentCondition> allConditions = getMutantRepository().getExperimentConditions(fishExperiment.getExperiment());
+                ConditionRelationDTO relation = new ConditionRelationDTO();
+                relation.setConditionRelationType("has_condition");
+                List<ExperimentConditionDTO> expconds = new ArrayList<>();
+                for (ExperimentCondition condition : allConditions) {
+                    ExperimentConditionDTO expcond = new ExperimentConditionDTO(condition.getZecoTerm().getOboID());
+                    if (condition.getAoTerm() != null) {
+                        expcond.setAnatomicalOntologyId(condition.getAoTerm().getOboID());
+                    }
+                    if (condition.getChebiTerm() != null) {
+                        expcond.setChemicalOntologyId(condition.getChebiTerm().getOboID());
+                        System.out.println(condition.getChebiTerm());
+                    }
+                    if (condition.getGoCCTerm() != null) {
+                        expcond.setGeneOntologyId(condition.getGoCCTerm().getOboID());
+                    }
+                    if (condition.getTaxaonymTerm() != null) {
+                        expcond.setTaxonId(condition.getTaxaonymTerm().getOboID());
+                    }
+                    expcond.setConditionClassId(condition.getZecoTerm().getOboID());
+                    //expcond.setConditionStatement();
+                    expconds.add(expcond);
+                }
+                relation.setConditions(expconds);
+                conditionsN.add(relation);
+                basicPheno.setConditionRelations(conditionsN);
+            }
             basicPheno.setObjectId("ZFIN:" + basicPhenoObjects[0].toString());
             basicPheno.setPhenotypeStatement(basicPhenoObjects[1].toString());
             PublicationAgrDTO pubDto = new PublicationAgrDTO();
@@ -1424,6 +1450,23 @@ public class HibernateMutantRepository implements MutantRepository {
                 .list();
     }
 
+    public List<ExperimentCondition> getExperimentConditionsByExpId (String experiment){
+
+
+        String hql = " select distinct expressionResult from ExpressionResult expressionResult where " +
+                " expressionResult.expressionExperiment.fishExperiment.zdbID in (:genoxIds) AND " +
+                " expressionResult.expressionExperiment.gene is not null";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameterList("genoxIds", genoxIds);
+
+        return query.list();
+
+        return HibernateUtil.currentSession()
+                .createCriteria(ExperimentCondition.class)
+                .add(Restrictions.eq("experiment", experiment))
+                .list();
+    };
 
 
     public List<ExpressionResult> getConstructExpressionSummary(List<String> genoxIds) {

@@ -315,6 +315,7 @@ public interface MutantRepository {
      */
     List<ExpressionResult> getExpressionSummary(Set<FishExperiment> fishOx, String geneID);
     List<ExperimentCondition> getExperimentConditions (Experiment experiment);
+    List<ExperimentCondition> getExperimentConditionsByExpId (String experiment);
     List<ExpressionResult> getConstructExpressionSummary(List<String> genoxIds);
 
 
