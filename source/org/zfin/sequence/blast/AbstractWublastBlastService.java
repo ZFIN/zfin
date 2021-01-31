@@ -894,7 +894,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
         } catch (Exception e) {
             logger.error("Failed to xdget, stderr: " + System.lineSeparator() + execProcess.getStandardError());
             logger.error("Failed to xdget, stdout: " + System.lineSeparator() + execProcess.getStandardOutput());
-            logger.error("Failed to retrieve sequences with command [" + commandList.toString().replaceAll(",", " ") + "\n", e);
+            logger.info("Failed to retrieve sequences with command [" + commandList.toString().replaceAll(",", " ") + "\n", e);
             return new ArrayList<>();
         } finally {
             unlockForce(blastDatabase);
