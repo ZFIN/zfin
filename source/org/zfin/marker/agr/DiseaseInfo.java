@@ -195,7 +195,6 @@ public class DiseaseInfo extends AbstractScriptWrapper {
 
         // get all genes from mutant_fast_search table and list their disease info
         List<DiseaseAnnotationModel> damos = getMutantRepository().getDiseaseAnnotationModelsNoStd(numfOfRecords);
-
         for (DiseaseAnnotationModel damo : damos) {
             Fish fish = damo.getFishExperiment().getFish();
             DiseaseAnnotation disease = damo.getDiseaseAnnotation();
@@ -245,8 +244,6 @@ public class DiseaseInfo extends AbstractScriptWrapper {
             List<ExperimentConditionDTO> expconds = new ArrayList<>();
             for (ExperimentCondition condition : allConditions) {
                 ExperimentConditionDTO expcond = new ExperimentConditionDTO(condition.getZecoTerm().getOboID());
-                System.out.println(condition.getZecoTerm().getTermName());
-                System.out.println(condition.getDisplayName());
                 if (condition.getAoTerm() != null) {
                     expcond.setAnatomicalOntologyId(condition.getAoTerm().getOboID());
                 }
@@ -345,3 +342,4 @@ public class DiseaseInfo extends AbstractScriptWrapper {
         //constructors, getter/setters
     }
 }
+//test

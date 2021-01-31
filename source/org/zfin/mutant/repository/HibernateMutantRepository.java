@@ -1529,10 +1529,11 @@ public class HibernateMutantRepository implements MutantRepository {
         if (numfOfRecords > 0)
             query.setMaxResults(numfOfRecords);
         return (List<DiseaseAnnotationModel>) query.list();
+
     }
 
     @Override
-    public List<DiseaseAnnotationModel> getDiseaseAnnotationModelsNoStd(int numofRecords){
+    public List<DiseaseAnnotationModel> getDiseaseAnnotationModelsNoStd(int numfOfRecords) {
         String hql = " from DiseaseAnnotationModel model " +
                 "join fetch model.fishExperiment " +
                 "join fetch model.fishExperiment.fish " +
@@ -1540,16 +1541,15 @@ public class HibernateMutantRepository implements MutantRepository {
                 "join fetch model.diseaseAnnotation " +
                 "join fetch model.diseaseAnnotation.disease " +
                 "join fetch model.diseaseAnnotation.publication " +
-                "where model.fishExperiment.standardOrGenericControl = :notTrue";
+                "where model.fishExperiment.standardOrGenericControl=false";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
-        if (numofRecords > 0)
-            query.setMaxResults(numofRecords);
-
-        query.setParameter("notTrue", 'f');
+        if (numfOfRecords > 0)
+            query.setMaxResults(numfOfRecords);
         return (List<DiseaseAnnotationModel>) query.list();
 
     }
+
     @Override
     public List<GeneGenotypeExperiment> getGeneDiseaseAnnotationModels(int numfOfRecords) {
         String hql = "select distinct geneGenotype from GeneGenotypeExperiment geneGenotype, DiseaseAnnotationModel diseaseAnnotationModel " +
