@@ -196,19 +196,21 @@ public class DiseaseInfo extends AbstractScriptWrapper {
         // get all genes from mutant_fast_search table and list their disease info
         List<DiseaseAnnotationModel> damos = getMutantRepository().getDiseaseAnnotationModelsNoStd(numfOfRecords);
 
-//        for (DiseaseAnnotationModel damo : damos) {
-//            Fish fish = damo.getFishExperiment().getFish();
-//            DiseaseAnnotation disease = damo.getDiseaseAnnotation();
-//            DiseaseDTO fishDiseaseDto = getBaseDiseaseDTO(fish.getZdbID(), fish.getName(), disease);
-//            RelationshipDTO fishRelationship = new RelationshipDTO(RelationshipDTO.IS_MODEL_OF, RelationshipDTO.FISH);
-//            fishDiseaseDto.setObjectRelation(fishRelationship);
-//            fishDiseaseDto.setEvidence(getEvidenceDTO(publication, evidenceSet));
-//            ConditionRelationDTO condition = populateExperimentConditions(fishExperiment, fishDiseaseDto);
-//            List<ConditionRelationDTO> conditions = new ArrayList<>();
-//            conditions.add(condition);
-//            fishDiseaseDto.setConditionRelations(conditions);
-//            diseaseDTOList.add(fishDiseaseDto);
-//        }
+        for (DiseaseAnnotationModel damo : damos) {
+            Fish fish = damo.getFishExperiment().getFish();
+            DiseaseAnnotation disease = damo.getDiseaseAnnotation();
+            DiseaseDTO fishDiseaseDto = getBaseDiseaseDTO(fish.getZdbID(), fish.getName(), disease.getDisease());
+            RelationshipDTO fishRelationship = new RelationshipDTO(RelationshipDTO.IS_MODEL_OF, RelationshipDTO.FISH);
+            fishDiseaseDto.setObjectRelation(fishRelationship);
+            List<String> evidenceSet = new ArrayList<>();
+            evidenceSet.add(damo.getDiseaseAnnotation().getEvidenceCode());
+            fishDiseaseDto.setEvidence(getEvidenceDTO(damo.getDiseaseAnnotation().getPublication(), evidenceSet));
+            ConditionRelationDTO condition = populateExperimentConditions(damo.getFishExperiment(), fishDiseaseDto);
+            List<ConditionRelationDTO> conditions = new ArrayList<>();
+            conditions.add(condition);
+            fishDiseaseDto.setConditionRelations(conditions);
+            diseaseDTOList.add(fishDiseaseDto);
+        }
 
 
         AllDiseaseDTO allDiseaseDTO = new AllDiseaseDTO();

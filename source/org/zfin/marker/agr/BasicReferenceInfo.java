@@ -86,8 +86,10 @@ public class BasicReferenceInfo extends AbstractScriptWrapper {
                             dto.setCitation(reference.getCitation());
                             dto.setDatePublished(datePublished);
                             List<String> keywords = new ArrayList<>();
-                            keywords.add(reference.getKeywords());
-                            dto.setKeywords(keywords);
+                            if (!(reference.getKeywords() == null)) {
+                                keywords.add(reference.getKeywords());
+                                dto.setKeywords(keywords);
+                            }
                             dto.setPages(reference.getPages());
                             dto.setVolume(reference.getVolume());
                             dto.setResourceAbbreviation(reference.getJournal().getAbbreviation());
@@ -106,20 +108,20 @@ public class BasicReferenceInfo extends AbstractScriptWrapper {
                                 }
                                 dto.setAuthors(authorReferences);
                             }
-                            else {
+                            if (reference.getAccessionNumber() == null){
                                 AuthorReferenceDTO nonPubMedAuthors = new AuthorReferenceDTO();
                                 nonPubMedAuthors.setName(reference.getAuthors());
                                 nonPubMedAuthors.setReferenceId("ZFIN:"+reference.getZdbID());
                             }
                             List<MODReferenceTypeDTO> MODReferenceTypes = new ArrayList<>();
                             MODReferenceTypeDTO pubType = new MODReferenceTypeDTO();
-                            pubType.setTagSource("ZFIN");
+                            pubType.setSource("ZFIN");
                             pubType.setReferenceType(reference.getType().getDisplay());
                             MODReferenceTypes.add(pubType);
                             dto.setMODReferenceTypes(MODReferenceTypes);
                             String allianceCategory = "";
                             String type = reference.getType().getDisplay();
-                            if (type.equals("Journal")){
+                            if (type.equals("Journal") || type.equals("Abstract")){
                                 allianceCategory = "Research Article";
                             }
                             else if (type.equals("Unpublished") ||
@@ -130,9 +132,6 @@ public class BasicReferenceInfo extends AbstractScriptWrapper {
                             else if (type.equals("Unknown")){
                                 allianceCategory = type;
                             }
-                            else if (type.equals("Other") || type.equals("Movie") || type.equals("Abstract")){
-                                allianceCategory = type;
-                            }
                             else if (type.equals("Review")){
                                 allianceCategory = "Review Article";
                             }
@@ -141,9 +140,6 @@ public class BasicReferenceInfo extends AbstractScriptWrapper {
                             }
                             else if (type.equals("Thesis")){
                                 allianceCategory = type;
-                            }
-                            else if (type.equals("Movie")){
-
                             }
                             else {
                                 allianceCategory = "Other";
@@ -159,14 +155,14 @@ public class BasicReferenceInfo extends AbstractScriptWrapper {
                                 CrossReferenceDTO crossReference = new CrossReferenceDTO("ZFIN",reference.getZdbID(),pages);
                                 if (reference.isCanShowImages()) {
                                     tag.setReferenceId("PMID:"+reference.getAccessionNumber());
-                                    tag.setSource("ZFIN");
+                                    tag.setTagSource("ZFIN");
                                     tag.setTagName("canShowImages");
                                     tags.add(tag);
                                 }
                                 ReferenceTagDTO incorpusTag = new ReferenceTagDTO();
                                 incorpusTag.setTagName("inCorpus");
                                 incorpusTag.setReferenceId("PMID:"+reference.getAccessionNumber());
-                                incorpusTag.setSource("ZFIN");
+                                incorpusTag.setTagSource("ZFIN");
                                 tags.add(incorpusTag);
                                 xrefs.add(crossReference);
                             }
@@ -176,12 +172,13 @@ public class BasicReferenceInfo extends AbstractScriptWrapper {
                                 if (reference.isCanShowImages()) {
                                     tag.setReferenceId("ZFIN:"+reference.getZdbID());
                                     tag.setTagName("canShowImages");
-                                    tag.setSource("ZFIN");
+                                    tag.setTagSource("ZFIN");
                                     tags.add(tag);
                                 }
                                 ReferenceTagDTO incorpusTag = new ReferenceTagDTO();
                                 incorpusTag.setTagName("inCorpus");
                                 incorpusTag.setReferenceId("ZFIN:"+reference.getZdbID());
+                                incorpusTag.setTagSource("ZFIN");
                                 tags.add(incorpusTag);
                                 xrefs.add(crossReference);
                             }
