@@ -699,7 +699,8 @@ public class HibernateMutantRepository implements MutantRepository {
                 "                        where get_obj_type(mfs_data_zdb_id) not in ('CRISPR','TALEN','MRPHLNO')";
 
         final String fishQueryString = "select distinct fish.fish_zdb_id, psg_short_name, zdb_id, accession_no as accession_no," +
-                "                e1a.term_ont_id as psg_e1a_id, e1b.term_ont_id as psg_e1b_id, e2a.term_ont_id as psg_e2a_id, e2b.term_ont_id as psg_e2b_id, quality.term_ont_id as psg_quality_id" +
+                "                e1a.term_ont_id as psg_e1a_id, e1b.term_ont_id as psg_e1b_id, e2a.term_ont_id as psg_e2a_id, e2b.term_ont_id as psg_e2b_id, quality.term_ont_id as psg_quality_id, " +
+                "                genox_zdb_id" +
                 "                from feature_marker_relationship fmrel1" +
                 "                join genotype_feature on fmrel_ftr_zdb_id = genofeat_feature_zdb_id" +
                 "                join fish on genofeat_geno_zdb_id = fish_genotype_zdb_id" +
@@ -733,40 +734,44 @@ public class HibernateMutantRepository implements MutantRepository {
 
             if (basicPhenoObjects[0].toString().startsWith("ZDB-ALT") || basicPhenoObjects[0].toString().startsWith("ZDB-GENE")) {
                 if (basicPhenoObjects[9] != null) {
-                    //System.out.println(basicPhenoObjects[0].toString());
-                    //System.out.println(basicPhenoObjects[9]);
                     primaryGeneticEntityIDs.add("ZFIN:"+basicPhenoObjects[9].toString());
                     basicPheno.setPrimaryGeneticEntityIDs(primaryGeneticEntityIDs);
                 }
-            }
-            else {
-                List<ConditionRelationDTO> conditionsN = new ArrayList<>();
-                List<ExperimentCondition> allConditions = getMutantRepository().getExperimentConditions(fishExperiment.getExperiment());
-                ConditionRelationDTO relation = new ConditionRelationDTO();
-                relation.setConditionRelationType("has_condition");
-                List<ExperimentConditionDTO> expconds = new ArrayList<>();
-                for (ExperimentCondition condition : allConditions) {
-                    ExperimentConditionDTO expcond = new ExperimentConditionDTO(condition.getZecoTerm().getOboID());
-                    if (condition.getAoTerm() != null) {
-                        expcond.setAnatomicalOntologyId(condition.getAoTerm().getOboID());
-                    }
-                    if (condition.getChebiTerm() != null) {
-                        expcond.setChemicalOntologyId(condition.getChebiTerm().getOboID());
-                        System.out.println(condition.getChebiTerm());
-                    }
-                    if (condition.getGoCCTerm() != null) {
-                        expcond.setGeneOntologyId(condition.getGoCCTerm().getOboID());
-                    }
-                    if (condition.getTaxaonymTerm() != null) {
-                        expcond.setTaxonId(condition.getTaxaonymTerm().getOboID());
-                    }
-                    expcond.setConditionClassId(condition.getZecoTerm().getOboID());
-                    //expcond.setConditionStatement();
-                    expconds.add(expcond);
+            } else {
+                String fishox = basicPhenoObjects[9].toString();
+                if (fishox != null) {
+                    List<ConditionRelationDTO> conditionsN = new ArrayList<>();
+                    FishExperiment fishExperiment = getMutantRepository().getFishExperiment(fishox);
+                    System.out.println(fishExperiment.getExperiment().getZdbID());
+                    List<ExperimentCondition> allConditions = getMutantRepository().getExperimentConditions(fishExperiment.getExperiment());
+//                    ConditionRelationDTO relation = new ConditionRelationDTO();
+//                    relation.setConditionRelationType("has_condition");
+//                    List<ExperimentConditionDTO> expconds = new ArrayList<>();
+//                    if (!allConditions.isEmpty()) {
+//                        for (ExperimentCondition condition : allConditions) {
+//                            ExperimentConditionDTO expcond = new ExperimentConditionDTO(condition.getZecoTerm().getOboID());
+//                            if (condition.getAoTerm() != null) {
+//                                expcond.setAnatomicalOntologyId(condition.getAoTerm().getOboID());
+//                            }
+//                            if (condition.getChebiTerm() != null) {
+//                                expcond.setChemicalOntologyId(condition.getChebiTerm().getOboID());
+//                                System.out.println(condition.getChebiTerm());
+//                            }
+//                            if (condition.getGoCCTerm() != null) {
+//                                expcond.setGeneOntologyId(condition.getGoCCTerm().getOboID());
+//                            }
+//                            if (condition.getTaxaonymTerm() != null) {
+//                                expcond.setNCBITaxonId(condition.getTaxaonymTerm().getOboID());
+//                            }
+//                            expcond.setConditionClassId(condition.getZecoTerm().getOboID());
+//                            expconds.add(expcond);
+//
+//                        }
+//                        relation.setConditions(expconds);
+//                        conditionsN.add(relation);
+//                        basicPheno.setConditionRelations(conditionsN);
+//                    }
                 }
-                relation.setConditions(expconds);
-                conditionsN.add(relation);
-                basicPheno.setConditionRelations(conditionsN);
             }
             basicPheno.setObjectId("ZFIN:" + basicPhenoObjects[0].toString());
             basicPheno.setPhenotypeStatement(basicPhenoObjects[1].toString());
@@ -1450,22 +1455,18 @@ public class HibernateMutantRepository implements MutantRepository {
                 .list();
     }
 
-    public List<ExperimentCondition> getExperimentConditionsByExpId (String experiment){
+    public List<ExperimentCondition> getExperimentConditionsByExp (Experiment experiment){
 
 
         String hql = " select distinct expressionResult from ExpressionResult expressionResult where " +
-                " expressionResult.expressionExperiment.fishExperiment.zdbID in (:genoxIds) AND " +
+                " expressionResult.expressionExperiment.fishExperiment.experiment= :exp AND " +
                 " expressionResult.expressionExperiment.gene is not null";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
-        query.setParameterList("genoxIds", genoxIds);
+        query.setParameter("exp", experiment);
 
         return query.list();
 
-        return HibernateUtil.currentSession()
-                .createCriteria(ExperimentCondition.class)
-                .add(Restrictions.eq("experiment", experiment))
-                .list();
     };
 
 
@@ -1578,12 +1579,6 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public List<DiseaseAnnotationModel> getDiseaseAnnotationModelsNoStd(int numfOfRecords) {
         String hql = " from DiseaseAnnotationModel model " +
-                "join fetch model.fishExperiment " +
-                "join fetch model.fishExperiment.fish " +
-                "join fetch model.fishExperiment.experiment " +
-                "join fetch model.diseaseAnnotation " +
-                "join fetch model.diseaseAnnotation.disease " +
-                "join fetch model.diseaseAnnotation.publication " +
                 "where model.fishExperiment.standardOrGenericControl=false";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);

@@ -103,22 +103,36 @@ public class BasicReferenceInfo extends AbstractScriptWrapper {
                                     if (authorPub.getFirstName().length() > 0) {
                                         authorRef.setName(authorPub.getLastName() + "," + authorPub.getFirstName().charAt(0) + ".");
                                     }
+                                    else if (authorPub.getLastName().length() >0 ){
+                                        authorRef.setName(authorPub.getLastName());
+                                    }
+                                    else {
+                                        authorRef.setName("ZFIN");
+                                    }
                                     authorRef.setReferenceId("PMID:"+reference.getAccessionNumber());
                                     authorReferences.add(authorRef);
                                 }
-                                dto.setAuthors(authorReferences);
                             }
-                            if (reference.getAccessionNumber() == null){
-                                AuthorReferenceDTO nonPubMedAuthors = new AuthorReferenceDTO();
-                                nonPubMedAuthors.setName(reference.getAuthors());
-                                nonPubMedAuthors.setReferenceId("ZFIN:"+reference.getZdbID());
+                            else {
+                                    AuthorReferenceDTO nonPubMedAuthors = new AuthorReferenceDTO();
+                                    nonPubMedAuthors.setName(reference.getAuthors());
+                                    nonPubMedAuthors.setReferenceId("ZFIN:"+reference.getZdbID());
+                                    authorReferences.add(nonPubMedAuthors);
+                            }
+                            dto.setAuthors(authorReferences);
+                            if (dto.getAuthors().isEmpty()) {
+                                AuthorReferenceDTO finalTry = new AuthorReferenceDTO();
+                                finalTry.setName(reference.getAuthors());
+                                finalTry.setReferenceId("ZFIN:"+reference.getZdbID());
+                                authorReferences.add(finalTry);
+                                dto.setAuthors(authorReferences);
                             }
                             List<MODReferenceTypeDTO> MODReferenceTypes = new ArrayList<>();
                             MODReferenceTypeDTO pubType = new MODReferenceTypeDTO();
                             pubType.setSource("ZFIN");
                             pubType.setReferenceType(reference.getType().getDisplay());
                             MODReferenceTypes.add(pubType);
-                            dto.setMODReferenceTypes(MODReferenceTypes);
+                            dto.setSMODReferenceTypes(MODReferenceTypes);
                             String allianceCategory = "";
                             String type = reference.getType().getDisplay();
                             if (type.equals("Journal") || type.equals("Abstract")){
