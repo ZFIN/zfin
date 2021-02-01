@@ -77,6 +77,7 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                             if (CollectionUtils.isNotEmpty(gene.getAliases())) {
                                 List<String> aliasList = new ArrayList<>(gene.getAliases().size());
                                 for (MarkerAlias alias : gene.getAliases()) {
+
                                     aliasList.add(alias.getAlias());
                                 }
                                 bgeDto.setSynonyms(aliasList);
