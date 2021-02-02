@@ -737,44 +737,49 @@ public class HibernateMutantRepository implements MutantRepository {
                     primaryGeneticEntityIDs.add("ZFIN:"+basicPhenoObjects[9].toString());
                     basicPheno.setPrimaryGeneticEntityIDs(primaryGeneticEntityIDs);
                 }
+            } else {
+                List<ConditionRelationDTO> conditionsN = new ArrayList<>();
+                String fishox = basicPhenoObjects[9].toString();
+                if (fishox != null && fishox.startsWith("ZDB-GENOX-99")) {
+                    FishExperiment fishExperiment = getMutantRepository().getFishExperiment(fishox);
+                    if (fishExperiment != null) {
+                        List<ExperimentCondition> allConditions = getMutantRepository().getExperimentConditions(fishExperiment.getExperiment());
+                        if (!allConditions.isEmpty()) {
+                            ConditionRelationDTO relation = new ConditionRelationDTO();
+                            relation.setConditionRelationType("has_condition");
+                            List<ExperimentConditionDTO> expconds = new ArrayList<>();
+                            for (ExperimentCondition condition : allConditions) {
+                                String conditionStatement = condition.getZecoTerm().getTermName();
+                                ExperimentConditionDTO expcond = new ExperimentConditionDTO();
+                                if (condition.getAoTerm() != null) {
+                                    conditionStatement = conditionStatement + " " + condition.getAoTerm().getTermName();
+                                    expcond.setAnatomicalOntologyId(condition.getAoTerm().getOboID());
+                                }
+                                if (condition.getChebiTerm() != null) {
+                                    expcond.setChemicalOntologyId(condition.getChebiTerm().getOboID());
+                                    conditionStatement = conditionStatement + " " + condition.getChebiTerm().getTermName();
+                                }
+                                if (condition.getGoCCTerm() != null) {
+                                    expcond.setGeneOntologyId(condition.getGoCCTerm().getOboID());
+                                    conditionStatement = conditionStatement + " " + condition.getGoCCTerm().getTermName();
+                                }
+                                if (condition.getTaxaonymTerm() != null) {
+                                    expcond.setNCBITaxonId(condition.getTaxaonymTerm().getOboID());
+                                    conditionStatement = conditionStatement + " " + condition.getTaxaonymTerm().getTermName();
+                                }
+                                expcond.setConditionClassId(condition.getZecoTerm().getOboID());
+                                expcond.setConditionStatement(conditionStatement);
+                                expconds.add(expcond);
+                            }
+                            relation.setConditions(expconds);
+                            conditionsN.add(relation);
+                        }
+                    }
+                }
+                if (!conditionsN.isEmpty()) {
+                    basicPheno.setConditionRelations(conditionsN);
+                }
             }
-//            else {
-//                List<ConditionRelationDTO> conditionsN = new ArrayList<>();
-//                String fishox = basicPhenoObjects[9].toString();
-//                if (fishox != null && fishox.startsWith("ZDB-GENOX-99")) {
-//                    FishExperiment fishExperiment = getMutantRepository().getFishExperiment(fishox);
-//                    if (fishExperiment != null) {
-//                        List<ExperimentCondition> allConditions = getMutantRepository().getExperimentConditions(fishExperiment.getExperiment());
-//                        if (!allConditions.isEmpty()) {
-//                            ConditionRelationDTO relation = new ConditionRelationDTO();
-//                            relation.setConditionRelationType("has_condition");
-//                            List<ExperimentConditionDTO> expconds = new ArrayList<>();
-//                            for (ExperimentCondition condition : allConditions) {
-//                                ExperimentConditionDTO expcond = new ExperimentConditionDTO(condition.getZecoTerm().getOboID());
-//                                if (condition.getAoTerm() != null) {
-//                                    expcond.setAnatomicalOntologyId(condition.getAoTerm().getOboID());
-//                                }
-//                                if (condition.getChebiTerm() != null) {
-//                                    expcond.setChemicalOntologyId(condition.getChebiTerm().getOboID());
-//                                }
-//                                if (condition.getGoCCTerm() != null) {
-//                                    expcond.setGeneOntologyId(condition.getGoCCTerm().getOboID());
-//                                }
-//                                if (condition.getTaxaonymTerm() != null) {
-//                                    expcond.setNCBITaxonId(condition.getTaxaonymTerm().getOboID());
-//                                }
-//                                expcond.setConditionClassId(condition.getZecoTerm().getOboID());
-//                                expconds.add(expcond);
-//                            }
-//                            relation.setConditions(expconds);
-//                            conditionsN.add(relation);
-//                        }
-//                    }
-//                }
-//                if (!conditionsN.isEmpty()) {
-//                    basicPheno.setConditionRelations(conditionsN);
-//                }
-//            }
 
             basicPheno.setObjectId("ZFIN:" + basicPhenoObjects[0].toString());
             basicPheno.setPhenotypeStatement(basicPhenoObjects[1].toString());

@@ -215,7 +215,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                 for (ExperimentCondition conditionz : allConditions) {
 
 
-                    ExperimentConditionDTO expconda = new ExperimentConditionDTO(conditionz.getZecoTerm().getOboID());
+                    ExperimentConditionDTO expconda = new ExperimentConditionDTO();
                     if (conditionz.getAoTerm() != null) {
                         expconda.setAnatomicalOntologyId(conditionz.getAoTerm().getOboID());
                     }
@@ -271,22 +271,26 @@ public class DiseaseInfo extends AbstractScriptWrapper {
             relation.setConditionRelationType("has_condition");
             List<ExperimentConditionDTO> expconds = new ArrayList<>();
             for (ExperimentCondition condition : allConditions) {
-                ExperimentConditionDTO expcond = new ExperimentConditionDTO(condition.getZecoTerm().getOboID());
+                ExperimentConditionDTO expcond = new ExperimentConditionDTO();
+                String conditionStatement = condition.getZecoTerm().getTermName();
                 if (condition.getAoTerm() != null) {
+                    conditionStatement = conditionStatement + " " +condition.getAoTerm().getTermName();
                     expcond.setAnatomicalOntologyId(condition.getAoTerm().getOboID());
                 }
                 if (condition.getChebiTerm() != null) {
                     expcond.setChemicalOntologyId(condition.getChebiTerm().getOboID());
-                    System.out.println(condition.getChebiTerm());
+                    conditionStatement = conditionStatement + " " +condition.getChebiTerm().getTermName();
                 }
                 if (condition.getGoCCTerm() != null) {
                     expcond.setGeneOntologyId(condition.getGoCCTerm().getOboID());
+                    conditionStatement = conditionStatement + " " +condition.getGoCCTerm().getTermName();
                 }
                 if (condition.getTaxaonymTerm() != null) {
                     expcond.setNCBITaxonId(condition.getTaxaonymTerm().getOboID());
+                    conditionStatement = conditionStatement + " " + condition.getTaxaonymTerm().getTermName();
                 }
                 expcond.setConditionClassId(condition.getZecoTerm().getOboID());
-                //expcond.setConditionStatement();
+                expcond.setConditionStatement(conditionStatement);
                 expconds.add(expcond);
             }
             relation.setConditions(expconds);
@@ -311,12 +315,6 @@ public class DiseaseInfo extends AbstractScriptWrapper {
         EvidenceDTO evDto = new EvidenceDTO(fixedPub);
         evDto.setEvidenceCodes(evidences);
         return evDto;
-    }
-
-    public Set<ExperimentConditionDTO> getExperimentalConditionDTOS(FishExperiment fishExperiment) {
-        return fishExperiment.getExperiment().getExperimentConditions().stream()
-                .map(expCondition -> new ExperimentConditionDTO(expCondition.getZecoTerm().getOboID()))
-                .collect(Collectors.toSet());
     }
 
     // hard-coded for now as the ECO ontology does not provide the codes in
