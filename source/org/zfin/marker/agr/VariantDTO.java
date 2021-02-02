@@ -17,8 +17,20 @@ public class VariantDTO {
     private String genomicVariantSequenceAccessionNumber;
     private String type;
     private String consequence;
-    private List<PublicationAgrDTO> references;
+   // private List<PublicationAgrDTO> references;
+
+    public List<String> getNote() {
+        return note;
+    }
+
+    public void setNote(List<String> note) {
+        this.note = note;
+    }
+
+    private List<String> references;
     private List<String> notes;
+    private List<String> note;
+    private List<CrossReferenceDTO> crossReferences;
 
     public List<String> getNotes() {
         return notes;
@@ -88,6 +100,22 @@ public class VariantDTO {
         return genomicVariantSequence;
     }
 
+    public List<String> getReferences() {
+        return references;
+    }
+
+    public void setReferences(List<String> references) {
+        this.references = references;
+    }
+
+    public List<CrossReferenceDTO> getCrossReferences() {
+        return crossReferences;
+    }
+
+    public void setCrossReferences(List<CrossReferenceDTO> crossReferences) {
+        this.crossReferences = crossReferences;
+    }
+
     public void setGenomicVariantSequence(String genomicVariantSequence) {
         this.genomicVariantSequence = genomicVariantSequence;
     }
@@ -116,13 +144,7 @@ public class VariantDTO {
         this.consequence = consequence;
     }
 
-    public List<PublicationAgrDTO> getReferences() {
-        return references;
-    }
 
-    public void setReferences(List<PublicationAgrDTO> references) {
-        this.references = references;
-    }
 
 
 

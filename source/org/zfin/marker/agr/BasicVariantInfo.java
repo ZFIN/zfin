@@ -3,19 +3,20 @@ package org.zfin.marker.agr;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import org.apache.commons.collections.CollectionUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureGenomicMutationDetail;
-import org.zfin.feature.FeatureNote;
 import org.zfin.mapping.FeatureLocation;
+import org.zfin.feature.FeatureNote;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
-
+import org.apache.commons.collections.CollectionUtils;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.apache.commons.lang.StringUtils;
 
 import static org.zfin.repository.RepositoryFactory.getFeatureRepository;
 
@@ -114,30 +115,32 @@ public class BasicVariantInfo extends AbstractScriptWrapper {
                                         dto.setStart(ftrLoc.getFtrStartLocation());
                                         dto.setEnd(ftrLoc.getFtrEndLocation());
                                         dto.setChromosome(ftrLoc.getFtrChromosome());
-
-                                        if (CollectionUtils.isNotEmpty(feature.getExternalNotes())) {
-                                            List<String> noteList = new ArrayList<>(feature.getExternalNotes().size());
-                                            ArrayList<PublicationAgrDTO> datasetPubs = new ArrayList<>();
-                                            PublicationAgrDTO fixedPub = new PublicationAgrDTO();
-                                            List<String> pubPages = new ArrayList<>();
-                                            pubPages.add("reference");
-
+String varNotes;
+                                       if (CollectionUtils.isNotEmpty(feature.getExternalNotes())) {
+                                            List<String> noteList = new ArrayList<>();
                                             for (FeatureNote varNote : feature.getExternalNotes()) {
                                                 if (varNote.isVariantNote()) {
-                                                    noteList.add(varNote.getNote());
-                                                    if (varNote.getPublication().getAccessionNumber() != null) {
-                                                        CrossReferenceDTO pubXref = new CrossReferenceDTO("ZFIN", varNote.getPublication().getZdbID(), pubPages);
-                                                        fixedPub.setPublicationId("PMID:" + varNote.getPublication().getAccessionNumber());
-                                                        fixedPub.setCrossReference(pubXref);
-                                                    } else {
-                                                        fixedPub.setPublicationId("ZFIN:" + varNote.getPublication().getZdbID());
+                                                    if (varNote.getNote()!=null || varNote.getNote()!="" ) {
+                                                       if (!varNote.getNote().contains("href")||!varNote.getNote().contains("\\n")) {
+                                                           noteList.add(varNote.getNote());
+                                                       }
                                                     }
-                                                    datasetPubs.add(fixedPub);
+                                                    if (varNote.getNote()==null || varNote.getNote()=="" || (varNote.getNote().contains("href"))|| (varNote.getNote().contains("\\n"))) {
+                                                        System.out.println(feature.getZdbID());
+                                                    }
                                                 }
-                                                dto.setNotes(noteList);
-                                                dto.setReferences(datasetPubs);
+                                                if (CollectionUtils.isNotEmpty(noteList)) {
+                                                    dto.setNote(noteList);
+                                                }
                                             }
                                         }
+                                        List<String> pages = new ArrayList<>();
+                                        pages.add("variation");
+                                        List<CrossReferenceDTO> xRefs = new ArrayList<>();
+                                        CrossReferenceDTO xref = new CrossReferenceDTO("ZFIN", feature.getZdbID(), pages);
+                                        xRefs.add(xref);
+                                        dto.setCrossReferences(xRefs);
+
 
 
                                     }
