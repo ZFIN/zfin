@@ -740,7 +740,7 @@ public class HibernateMutantRepository implements MutantRepository {
             } else {
                 List<ConditionRelationDTO> conditionsN = new ArrayList<>();
                 String fishox = basicPhenoObjects[9].toString();
-                if (fishox != null && fishox.startsWith("ZDB-GENOX-99")) {
+                if (fishox != null && fishox.startsWith("ZDB-GENOX")) {
                     FishExperiment fishExperiment = getMutantRepository().getFishExperiment(fishox);
                     if (fishExperiment != null) {
                         List<ExperimentCondition> allConditions = getMutantRepository().getExperimentConditions(fishExperiment.getExperiment());
