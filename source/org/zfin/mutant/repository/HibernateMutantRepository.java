@@ -713,7 +713,7 @@ public class HibernateMutantRepository implements MutantRepository {
                 "                join term as quality on psg_quality_zdb_id = quality.term_zdb_id" +
                 "                left outer join term as e1b on e1b.term_zdb_id = psg_e1b_zdb_id" +
                 "                left outer join term as e2a on e2a.term_zdb_id = psg_e2a_zdb_id" +
-                "                left outer join term as e2b on e2b.term_zdb_id = psg_e2b_zdb_id";
+                "                left outer join term as e2b on e2b.term_zdb_id = psg_e2b_zdb_id" ;
 
         final Query alleleQuery = HibernateUtil.currentSession().createSQLQuery(alleleQueryString);
         final Query geneQuery = HibernateUtil.currentSession().createSQLQuery(geneQueryString);
@@ -737,42 +737,45 @@ public class HibernateMutantRepository implements MutantRepository {
                     primaryGeneticEntityIDs.add("ZFIN:"+basicPhenoObjects[9].toString());
                     basicPheno.setPrimaryGeneticEntityIDs(primaryGeneticEntityIDs);
                 }
-            } else {
-                String fishox = basicPhenoObjects[9].toString();
-                if (fishox != null) {
-                    List<ConditionRelationDTO> conditionsN = new ArrayList<>();
-                    FishExperiment fishExperiment = getMutantRepository().getFishExperiment(fishox);
-                    System.out.println(fishExperiment.getExperiment().getZdbID());
-                    List<ExperimentCondition> allConditions = getMutantRepository().getExperimentConditions(fishExperiment.getExperiment());
-//                    ConditionRelationDTO relation = new ConditionRelationDTO();
-//                    relation.setConditionRelationType("has_condition");
-//                    List<ExperimentConditionDTO> expconds = new ArrayList<>();
-//                    if (!allConditions.isEmpty()) {
-//                        for (ExperimentCondition condition : allConditions) {
-//                            ExperimentConditionDTO expcond = new ExperimentConditionDTO(condition.getZecoTerm().getOboID());
-//                            if (condition.getAoTerm() != null) {
-//                                expcond.setAnatomicalOntologyId(condition.getAoTerm().getOboID());
-//                            }
-//                            if (condition.getChebiTerm() != null) {
-//                                expcond.setChemicalOntologyId(condition.getChebiTerm().getOboID());
-//                                System.out.println(condition.getChebiTerm());
-//                            }
-//                            if (condition.getGoCCTerm() != null) {
-//                                expcond.setGeneOntologyId(condition.getGoCCTerm().getOboID());
-//                            }
-//                            if (condition.getTaxaonymTerm() != null) {
-//                                expcond.setNCBITaxonId(condition.getTaxaonymTerm().getOboID());
-//                            }
-//                            expcond.setConditionClassId(condition.getZecoTerm().getOboID());
-//                            expconds.add(expcond);
-//
-//                        }
-//                        relation.setConditions(expconds);
-//                        conditionsN.add(relation);
-//                        basicPheno.setConditionRelations(conditionsN);
-//                    }
-                }
             }
+//            else {
+//                List<ConditionRelationDTO> conditionsN = new ArrayList<>();
+//                String fishox = basicPhenoObjects[9].toString();
+//                if (fishox != null && fishox.startsWith("ZDB-GENOX-99")) {
+//                    FishExperiment fishExperiment = getMutantRepository().getFishExperiment(fishox);
+//                    if (fishExperiment != null) {
+//                        List<ExperimentCondition> allConditions = getMutantRepository().getExperimentConditions(fishExperiment.getExperiment());
+//                        if (!allConditions.isEmpty()) {
+//                            ConditionRelationDTO relation = new ConditionRelationDTO();
+//                            relation.setConditionRelationType("has_condition");
+//                            List<ExperimentConditionDTO> expconds = new ArrayList<>();
+//                            for (ExperimentCondition condition : allConditions) {
+//                                ExperimentConditionDTO expcond = new ExperimentConditionDTO(condition.getZecoTerm().getOboID());
+//                                if (condition.getAoTerm() != null) {
+//                                    expcond.setAnatomicalOntologyId(condition.getAoTerm().getOboID());
+//                                }
+//                                if (condition.getChebiTerm() != null) {
+//                                    expcond.setChemicalOntologyId(condition.getChebiTerm().getOboID());
+//                                }
+//                                if (condition.getGoCCTerm() != null) {
+//                                    expcond.setGeneOntologyId(condition.getGoCCTerm().getOboID());
+//                                }
+//                                if (condition.getTaxaonymTerm() != null) {
+//                                    expcond.setNCBITaxonId(condition.getTaxaonymTerm().getOboID());
+//                                }
+//                                expcond.setConditionClassId(condition.getZecoTerm().getOboID());
+//                                expconds.add(expcond);
+//                            }
+//                            relation.setConditions(expconds);
+//                            conditionsN.add(relation);
+//                        }
+//                    }
+//                }
+//                if (!conditionsN.isEmpty()) {
+//                    basicPheno.setConditionRelations(conditionsN);
+//                }
+//            }
+
             basicPheno.setObjectId("ZFIN:" + basicPhenoObjects[0].toString());
             basicPheno.setPhenotypeStatement(basicPhenoObjects[1].toString());
             PublicationAgrDTO pubDto = new PublicationAgrDTO();

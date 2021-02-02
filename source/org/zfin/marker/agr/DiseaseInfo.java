@@ -253,7 +253,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
 
     public DiseaseDTO getBaseDiseaseDTO(String zdbID, String abbreviation, GenericTerm disease) {
         DiseaseDTO strDiseaseDto = new DiseaseDTO();
-        strDiseaseDto.setObjectId(zdbID);
+        strDiseaseDto.setObjectId("ZFIN:"+zdbID);
         strDiseaseDto.setObjectName(abbreviation);
         List<String> pages = new ArrayList<>();
         pages.add("disease");
