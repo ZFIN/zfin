@@ -18,7 +18,7 @@
             <td>${result.attributes[aliasAttribute]}</td>
 
             <td>${result.attributes[affGenesAttribute]}</td>
-            <td>${result.type}</td>
+            <td>${result.type.typeDisplay}</td>
 
             <%--<td style="white-space: nowrap"> <c:if test="${!empty result.displayedID}">${result.id}</c:if> </td>--%>
             <td><zfin-search:relatedLinkMenu links="${result.relatedLinks}"/></td>

@@ -85,7 +85,7 @@
                         </td>
                         <td title="Mutation Type">
                             <c:if test="${!empty featureGene.feature}">
-                                ${featureGene.feature.type.display}
+                                ${featureGene.feature.type.typeDisplay}
                             </c:if>
                         </td>
                         <td title="Construct">
