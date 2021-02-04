@@ -48,7 +48,7 @@
             </z:section>
         </z:section>
 
-        <z:section title="${SEQUENCES}" infoPopup="/action/feature/flank-seq"> 
+        <z:section title="${SEQUENCES}" infoPopup="/action/feature/flank-seq">
             <jsp:include page="feature-view-sequence.jsp"/>
         </z:section>
 
