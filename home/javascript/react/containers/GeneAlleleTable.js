@@ -41,7 +41,7 @@ const GeneAlleleTable = ({geneId}) => {
         },
         {
             label: 'Type',
-            content: ({type}) => type.display,
+            content: ({type}) => type.typeDisplay,
             width: '90px',
         },
         {
