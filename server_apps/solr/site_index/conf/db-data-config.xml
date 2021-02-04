@@ -3769,7 +3769,11 @@
                 query="select
                         feature_zdb_id as id,
                         'Mutation / Tg' as category,
-                        ftrtype_type_display as type,
+                         case when ftrtype_type_display in ('Point Mutation','Deletion','Insertion', 'MNV') then 'Allele with one ' || lower(ftrtype_type_display)
+                           when ftrtype_type_display = 'Complex' then 'Allele with multiple variants'
+                           when ftrtype_type_display = 'Indel' then 'Delins'
+                           else ftrtype_type_display
+                        end as type,
                         feature_name as name,
                         feature_name as proper_name,
                         feature_name as full_name,

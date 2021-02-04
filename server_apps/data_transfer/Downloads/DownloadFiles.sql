@@ -1160,8 +1160,13 @@ select distinct
 	construct_name,
 	construct_zdb_id
  from tmp_geno_data
- order by genotype_id, geno_display_name
-;
+ order by genotype_id, geno_display_name;
+ update genotype_features set feature_type_display=(case when ftrtype_type_display in ('Point Mutation','Deletion','Insertion', 'MNV') then 'Allele with one ' || lower(ftrtype_type_display)
+                           when ftrtype_type_display = 'Complex' then 'Allele with multiple variants'
+                           when ftrtype_type_display = 'Indel' then 'Delins'
+                           else ftrtype_type_display
+                           end);
+
 \copy (select * from genotype_features) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_features.txt' with delimiter as '	' null as '';
 drop view genotype_features;
 drop table tmp_dups;
@@ -2048,6 +2053,12 @@ update tmp_features
   set construct_so_id = (select szm_term_ont_id from so_zfin_mapping
       		      		where get_obj_type(construct_id) = szm_object_type)
  where construct_id is not null;
+
+update tmp_features set feature_type_display=(case when ftrtype_type_display in ('Point Mutation','Deletion','Insertion', 'MNV') then 'Allele with one ' || lower(ftrtype_type_display)
+                           when ftrtype_type_display = 'Complex' then 'Allele with multiple variants'
+                           when ftrtype_type_display = 'Indel' then 'Delins'
+                           else ftrtype_type_display
+                           end);
 
 \echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/features.txt' with delimiter as '	' null as '';'
 \copy (select * from tmp_features) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/features.txt' with delimiter as '	' null as '';
