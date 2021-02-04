@@ -24,6 +24,7 @@ public enum FeatureTypeEnum implements IsSerializable{
 
     @JsonView(View.API.class)
     private String display;
+    @JsonView(View.API.class)
     private String typeDisplay;
 
     FeatureTypeEnum(String value, String typeDisplay) {
