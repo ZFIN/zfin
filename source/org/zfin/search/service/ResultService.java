@@ -332,7 +332,7 @@ public class ResultService {
                 result.addAttribute(AFFECTED_GENES, withCommas(affectedGenes));
             }
 
-            result.addAttribute(TYPE, feature.getType().getDisplay());
+            result.addAttribute(TYPE, feature.getType().getTypeDisplay());
             Set<FeatureTranscriptMutationDetail> consequences = feature.getFeatureTranscriptMutationDetailSet();
             List<String> consequenceStatements = new ArrayList<>(consequences.size());
             for (FeatureTranscriptMutationDetail consequence : consequences) {
