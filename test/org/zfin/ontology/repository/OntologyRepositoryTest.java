@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.ExpressionResult2;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.*;
@@ -418,7 +419,7 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
     @Test
     @Ignore("do not include in regular tests as it takes more than a minute")
     public void getExpressionAnnotationStageViolations() {
-        List<ExpressionResult> expressionResultList = ontologyRepository.getExpressionResultsViolateStageRanges();
+        List<ExpressionResult2> expressionResultList = ontologyRepository.getExpressionResultsViolateStageRanges();
         assertNotNull(expressionResultList);
     }
 

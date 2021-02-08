@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.ExpressionResult2;
 import org.zfin.expression.presentation.ExpressionResultDisplay;
 import org.zfin.expression.presentation.ExpressionResultFormBean;
 import org.zfin.ontology.GenericTerm;
@@ -51,9 +52,9 @@ public class ApplicationContextController {
     protected String showStageRangeViolations(@ModelAttribute("formBean") ExpressionResultFormBean form,
                                               Model model)
             throws Exception {
-        List<ExpressionResult> expressionResultsViolateStageRanges = getOntologyRepository().getExpressionResultsViolateStageRanges();
+        List<ExpressionResult2> expressionResultsViolateStageRanges = getOntologyRepository().getExpressionResultsViolateStageRanges();
         Map<String, ExpressionResultDisplay> displaySet = new HashMap<>();
-        for (ExpressionResult result : expressionResultsViolateStageRanges) {
+        for (ExpressionResult2 result : expressionResultsViolateStageRanges) {
             ExpressionResultDisplay display = new ExpressionResultDisplay(result);
             String key = display.getUniqueKey();
             ExpressionResultDisplay existingDisplay = displaySet.get(key);
@@ -100,9 +101,9 @@ public class ApplicationContextController {
     protected String editStageRangeViolations(@ModelAttribute("formBean") ExpressionResultFormBean form,
                                               Model model)
             throws Exception {
-        List<ExpressionResult> expressionResultsViolateStageRanges = getOntologyRepository().getExpressionResultsViolateStageRanges();
+        List<ExpressionResult2> expressionResultsViolateStageRanges = getOntologyRepository().getExpressionResultsViolateStageRanges();
         Map<String, ExpressionResultDisplay> displaySet = new HashMap<>();
-        for (ExpressionResult result : expressionResultsViolateStageRanges) {
+        for (ExpressionResult2 result : expressionResultsViolateStageRanges) {
             ExpressionResultDisplay display = new ExpressionResultDisplay(result);
             String key = display.getUniqueKey();
             ExpressionResultDisplay existingDisplay = displaySet.get(key);

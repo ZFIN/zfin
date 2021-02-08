@@ -275,7 +275,7 @@ public interface OntologyRepository {
      *
      * @return list of expression results records.
      */
-    List<ExpressionResult> getExpressionResultsViolateStageRanges();
+    List<ExpressionResult2> getExpressionResultsViolateStageRanges();
 
     /**
      * Retrieve a generic term by one or more of its values.

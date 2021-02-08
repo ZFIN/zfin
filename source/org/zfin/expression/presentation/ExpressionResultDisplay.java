@@ -2,6 +2,7 @@ package org.zfin.expression.presentation;
 
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.ExpressionResult2;
 import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 
@@ -16,15 +17,15 @@ import java.util.TreeSet;
 public class ExpressionResultDisplay {
 
     private Term superterm;
-    private List<ExpressionResult> expressionResultList = new ArrayList<ExpressionResult>();
+    private List<ExpressionResult2> expressionResultList = new ArrayList<>();
     private DevelopmentStage start;
     private DevelopmentStage end;
 
 
-    public ExpressionResultDisplay(ExpressionResult expressionResult) {
+    public ExpressionResultDisplay(ExpressionResult2 expressionResult) {
         this.superterm = expressionResult.getSuperTerm();
-        this.start = expressionResult.getStartStage();
-        this.end = expressionResult.getEndStage();
+        this.start = expressionResult.getExpressionFigureStage().getStartStage();
+        this.end = expressionResult.getExpressionFigureStage().getEndStage();
         expressionResultList.add(expressionResult);
     }
 
@@ -46,11 +47,11 @@ public class ExpressionResultDisplay {
         return end;
     }
 
-    public void addExpressionResult(ExpressionResult expressionResult) {
+    public void addExpressionResult(ExpressionResult2 expressionResult) {
         expressionResultList.add(expressionResult);
     }
 
-    public List<ExpressionResult> getExpressionResultList() {
+    public List<ExpressionResult2> getExpressionResultList() {
         return expressionResultList;
     }
 
@@ -60,8 +61,8 @@ public class ExpressionResultDisplay {
 
     public Set<Publication> getDistinctPublications(){
         Set<Publication> publicationSet = new TreeSet<Publication>();
-        for (ExpressionResult result : expressionResultList)
-            publicationSet.add(result.getExpressionExperiment().getPublication());
+        for (ExpressionResult2 result : expressionResultList)
+            publicationSet.add(result.getExpressionFigureStage().getExpressionExperiment().getPublication());
         return publicationSet;
     }
 }

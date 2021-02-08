@@ -21,7 +21,9 @@ import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.ontology.*;
 
+import java.math.BigInteger;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -948,18 +950,38 @@ public class HibernateOntologyRepository implements OntologyRepository {
      * @return list of expression results records.
      */
     @Override
-    public List<ExpressionResult> getExpressionResultsViolateStageRanges() {
+    public List<ExpressionResult2> getExpressionResultsViolateStageRanges() {
         Session session = HibernateUtil.currentSession();
-        String hql = "select result from ExpressionResult result " +
-                " where ( result.startStage.hoursStart > result.entity.superterm.end.hoursStart  " +
-                " AND result.entity.superterm.end.name != :excludedStageName " +
-                " AND result.startStage.name != :excludedStageName ) OR " +
-                " (result.endStage.hoursStart < result.entity.superterm.start.hoursStart " +
-                " AND result.entity.superterm.start.name != :excludedStageName " +
-                " AND result.endStage.name != :excludedStageName )  ";
-        Query query = session.createQuery(hql);
-        query.setParameter("excludedStageName", DevelopmentStage.UNKNOWN);
-        return query.list();
+        String sql = "SELECT xpatres_pk_id " +
+                "FROM   expression_result2 " +
+                "   LEFT OUTER JOIN term sub" +
+                "      ON xpatres_subterm_zdb_id = sub.term_zdb_id" +
+                "   JOIN expression_figure_stage" +
+                "      ON xpatres_efs_id = efs_pk_id" +
+                "   JOIN figure " +
+                "      ON efs_fig_zdb_id = fig_zdb_id" +
+                "   JOIN term super" +
+                "      ON xpatres_superterm_zdb_id = super.term_zdb_id" +
+                "   JOIN stage s1" +
+                "      ON efs_start_stg_zdb_id = s1.stg_zdb_id" +
+                "   JOIN stage s2" +
+                "      ON efs_end_stg_zdb_id = s2.stg_zdb_id" +
+                "   JOIN term_stage" +
+                "      ON super.term_zdb_id = ts_term_zdb_id" +
+                "   JOIN stage s3" +
+                "      ON ts_start_stg_zdb_id = s3.stg_zdb_id" +
+                "   JOIN stage s4" +
+                "      ON ts_end_stg_zdb_id = s4.stg_zdb_id " +
+                " WHERE  Aoterm_overlaps_stg_window(xpatres_superterm_zdb_id, efs_start_stg_zdb_id, efs_end_stg_zdb_id) = 'f' ";
+        Query query = session.createSQLQuery(sql);
+        //query.setParameter("excludedStageName", DevelopmentStage.UNKNOWN);
+        final List<BigInteger> list = query.list();
+
+        String hql = "from ExpressionResult2 where ID in (:IDs) ";
+        query = session.createQuery(hql);
+        query.setParameterList("IDs", list.stream().map(BigInteger::longValue).collect(Collectors.toSet()));
+        List<ExpressionResult2> results = query.list();
+        return results;
     }
 
     /**
