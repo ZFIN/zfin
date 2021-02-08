@@ -1,5 +1,6 @@
 package org.zfin.ontology.repository;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Repository;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.presentation.RelationshipSorting;
 import org.zfin.datatransfer.go.EcoGoEvidenceCodeMapping;
-import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionResult2;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.RelationshipType;
@@ -976,7 +976,8 @@ public class HibernateOntologyRepository implements OntologyRepository {
         Query query = session.createSQLQuery(sql);
         //query.setParameter("excludedStageName", DevelopmentStage.UNKNOWN);
         final List<BigInteger> list = query.list();
-
+        if (CollectionUtils.isEmpty(list))
+            return new ArrayList<>();
         String hql = "from ExpressionResult2 where ID in (:IDs) ";
         query = session.createQuery(hql);
         query.setParameterList("IDs", list.stream().map(BigInteger::longValue).collect(Collectors.toSet()));
