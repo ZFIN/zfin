@@ -746,11 +746,10 @@ test {
         includeTestsMatching "org.zfin.UnitTests"
         //spock tests
 
-        /*includeTestsMatching "org.zfin.publication.MeshHeadingSpec"
-        includeTestsMatching "org.zfin.publication.PublicationServiceSpec"
+        includeTestsMatching "org.zfin.publication.MeshHeadingSpec"
+
         includeTestsMatching "org.zfin.publication.presentation.PublicationValidatorSpec"
         includeTestsMatching "org.zfin.publication.repository.PublicationRepositorySpec"
-        includeTestsMatching "org.zfin.publication.PublicationServiceSpec"
         includeTestsMatching "org.zfin.feature.service.MutationDetailsConversionServiceSpec"
         includeTestsMatching "org.zfin.util.ReportGeneratorSpec"
         includeTestsMatching "org.zfin.search.service.SolrServiceSpec"
@@ -761,23 +760,30 @@ test {
         includeTestsMatching "org.zfin.feature.FeatureServiceSpec"
         includeTestsMatching "org.zfin.curation.service.CurationDTOConversionServiceSpec"
         includeTestsMatching "org.zfin.expression.ExpressionSearchSpec"
-        includeTestsMatching "org.zfin.figure.repository.FigureRepositorySpec"
         includeTestsMatching "org.zfin.marker.presentation.GeneAddFormBeanValidatorSpec"
         includeTestsMatching "org.zfin.marker.presentation.MarkerGoServiceIntegrationSpec"
-        includeTestsMatching "org.zfin.figure.service.ImageServiceSpec"
-        includeTestsMatching "org.zfin.figure.service.VideoServiceSpec"
-        includeTestsMatching "org.zfin.gbrowse.presentation.GBrowseImageSpec"
         includeTestsMatching "org.zfin.marker.presentation.SequenceTargetingReagentAddBeanValidatorSpec"
-        includeTestsMatching "org.zfin.ontology.service.RibbonServiceIntegrationSpec"*/
+        includeTestsMatching "org.zfin.figure.repository.FigureRepositorySpec"
+        includeTestsMatching "org.zfin.gbrowse.presentation.GBrowseImageSpec"
+        includeTestsMatching "org.zfin.figure.service.ImageServiceSpec"
 
-        //these tests use GebSpec. From here, it appears that  current master of Geb still depends on spock-1.3-groovy-2.5
-        //https://github.com/geb/geb/blob/master/geb.gradle#L45
-        
-        /*includeTestsMatching "org.zfin.marker.MarkerselectWebSpec"
-        includeTestsMatching "org.zfin.ontology.presentation.OntologyWebSpec"
-        includeTestsMatching "org.zfin.figure.service.FigureViewServiceSpec"
-        includeTestsMatching "org.zfin.framework.GroovyWebSpec"*/
+        /*need to figure out ..all tests fail here
+        includeTestsMatching "org.zfin.figure.service.FigureViewServiceSpec"*/
 
+        //includeTestsMatching "org.zfin.publication.PublicationServiceSpec"
+        // PublicationServiceSpec > #authorString should bring back #author FAILED
+        //org.spockframework.runtime.SpockAssertionError at UnrollIterationNameProvider.java:80
+
+
+        /*includeTestsMatching "org.zfin.figure.service.ImageServiceSpec" (needs fixing..null pointer here:  tempDir.newFolder(ZfinPropertiesEnum.IMAGE_LOAD.toString(), "medium"))
+        includeTestsMatching "org.zfin.figure.service.VideoServiceSpec"*/
+
+        /*//following use geb..likely not to fix
+
+        includeTestsMatching "org.zfin.figure.presentation.FigureViewWebSpec" (geb test)
+        includeTestsMatching "org.zfin.marker.MarkerselectWebSpec" (geb test)
+        includeTestsMatching "org.zfin.framework.GroovyWebSpec"(geb test)
+        includeTestsMatching "org.zfin.ontology.service.RibbonServiceIntegrationSpec"(geb test)*/
 
         // db unit tests
         includeTestsMatching "org.zfin.DbUnitTests"
