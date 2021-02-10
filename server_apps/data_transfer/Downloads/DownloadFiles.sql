@@ -367,6 +367,7 @@ create view fly_orthos as
     LEFT OUTER JOIN tmp_flybase ON ortho_zdb_id = tmp_flybase.ortho_id
     LEFT OUTER JOIN tmp_gene ON ortho_zdb_id = tmp_gene.ortho_id
     WHERE organism_common_name = 'Fruit fly'
+    AND  ortho_other_species_ncbi_gene_is_obsolete ='f'
     ORDER BY mrkr_zdb_id;
 \copy (select * from fly_orthos) TO '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fly_orthos.txt' with delimiter as '	' null as '';
 drop view fly_orthos;    
@@ -382,6 +383,7 @@ create view mouse_orthos as
     LEFT OUTER JOIN tmp_mgi ON ortho_zdb_id = tmp_mgi.ortho_id
     LEFT OUTER JOIN tmp_gene ON ortho_zdb_id = tmp_gene.ortho_id
     WHERE organism_common_name = 'Mouse'
+    AND  ortho_other_species_ncbi_gene_is_obsolete ='f'
     ORDER BY mrkr_zdb_id;
 \copy (select * from mouse_orthos) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/mouse_orthos.txt' with delimiter as '	' null as '';
 drop view mouse_orthos;
