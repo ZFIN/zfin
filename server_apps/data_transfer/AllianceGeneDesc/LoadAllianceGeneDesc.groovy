@@ -60,17 +60,39 @@ DOWNLOAD_URL = "https://download.alliancegenome.org/" + s3Path
 DOWNLOAD_URL=DOWNLOAD_URL.replace("[","")
 DOWNLOAD_URL=DOWNLOAD_URL.replace("]","")
 
-def file = new FileOutputStream(DOWNLOAD_URL.tokenize("/")[-1])
+
+crossReferencePath = "https://download.alliancegenome.org/" + s3Path
+crossReferencePath=crossReferencePath.replace("[","")
+crossReferencePath=crossReferencePath.replace("]","")
+def file = new FileOutputStream(crossReferencePath.tokenize("/")[-1])
 def out = new BufferedOutputStream(file)
-out << new URL(DOWNLOAD_URL).openStream()
+out << new URL(crossReferencePath).openStream()
+fname = crossReferencePath.tokenize("/")[-1]
+fpath = "${System.getenv()['TARGETROOT']}/server_apps/data_transfer/AllianceGeneDesc/" + fname
+print fname + "\n"
+print "made it to the unzip" + "\n"
+def gziped_bundle = fpath
+if (fname.indexOf(".") > 0) {
+    fname = fname.substring(0, fname.lastIndexOf("."))
+}
+
+def unzipped_output = "${System.getenv()['TARGETROOT']}/server_apps/data_transfer/AllianceGeneDesc/" + fname
+File unzippedFile = new File(unzipped_output)
+if (!unzippedFile.exists()) {
+    print unzipped_output
+    gunzip(gziped_bundle, unzipped_output)
+}
 out.close()
 
+
 def proc1 = "rm -rf geneDesc.csv".execute()
+
 proc1
     print "Loading local JSON file ... "
 //    json = new JsonSlurper().parse(new FileReader("GENE-DESCRIPTION-JSON_ZFIN_28.json"))
-def jsonSlurper =  new JsonSlurper()
-def reader = new BufferedReader(new InputStreamReader(new FileInputStream(DOWNLOAD_URL.tokenize("/")[-1]),"UTF-8"))
+def jsonSlurper = new JsonSlurper()
+def reader = new BufferedReader(new InputStreamReader(new FileInputStream("${System.getenv()['TARGETROOT']}/server_apps/data_transfer/AllianceGeneDesc/" + fname),"UTF-8"))
+
 def json = jsonSlurper.parse(reader)
 
 def geneids=new ArrayList<String>()
@@ -154,4 +176,17 @@ if (args) {
 
 
 System.exit(0)
+static gunzip(String file_input, String file_output) {
+    FileInputStream fis = new FileInputStream(file_input)
+    FileOutputStream fos = new FileOutputStream(file_output)
+    GZIPInputStream gzis = new GZIPInputStream(fis)
+    byte[] buffer = new byte[1024]
+    int len = 0
 
+    while ((len = gzis.read(buffer)) > 0) {
+        fos.write(buffer, 0, len)
+    }
+    fos.close()
+    fis.close()
+    gzis.close()
+}
