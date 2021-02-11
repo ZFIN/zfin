@@ -11,33 +11,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.api.View;
 import org.zfin.framework.presentation.InvalidWebRequestException;
-import org.zfin.gwt.marker.server.TranscriptRPCServiceImpl;
-import org.zfin.gwt.marker.ui.TranscriptTypeStatusMismatchException;
 import org.zfin.infrastructure.InfrastructureService;
 import org.zfin.infrastructure.PublicationAttribution;
+import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Transcript;
 import org.zfin.marker.TranscriptStatus;
 import org.zfin.marker.TranscriptType;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.api.View;
-import org.zfin.infrastructure.repository.InfrastructureRepository;
-import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.marker.MarkerRelationship;
-import org.zfin.marker.service.MarkerService;
-import org.zfin.profile.MarkerSupplier;
-import org.zfin.profile.presentation.SupplierBean;
 import org.zfin.profile.service.BeanCompareService;
-import org.zfin.profile.service.BeanFieldUpdate;
 import org.zfin.publication.Publication;
+import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
@@ -64,25 +54,25 @@ public class TranscriptDetailsController {
         binder.setValidator(new TranscriptUpdateValidator());
     }
 
+
     @JsonView(View.TranscriptDetailsAPI.class)
     @ResponseBody
     @RequestMapping(value = "/transcript/{TranscriptZdbId}/details", method = RequestMethod.GET)
     public TranscriptAttributeBean getTranscriptDetails(@PathVariable String TranscriptZdbId) {
-         Transcript transcript=markerRepository.getTranscriptByZdbID(TranscriptZdbId);
+        Transcript transcript = markerRepository.getTranscriptByZdbID(TranscriptZdbId);
         TranscriptAttributeBean transcriptDTO = new TranscriptAttributeBean();
-        System.out.println(transcript.getTranscriptType().getDisplay());
+
         transcriptDTO.setTranscriptType(transcript.getTranscriptType().getType().toString());
-        if (transcript.getStatus()!=null) {
+        if (transcript.getStatus() != null) {
             transcriptDTO.setTranscriptStatus(transcript.getStatus().getStatus().toString());
-        }
-        else {
+        } else {
             transcriptDTO.setTranscriptStatus("");
         }
-        System.out.println(transcript.getPublications().size());
+
         transcriptDTO.setReferences(transcript.getPublications().stream()
                 .map(PublicationAttribution::getPublication)
                 .collect(Collectors.toList()));
-        System.out.println(transcriptDTO.getReferences().size());
+
         return transcriptDTO;
 
     }
@@ -91,87 +81,73 @@ public class TranscriptDetailsController {
     @JsonView(View.TranscriptDetailsAPI.class)
     @RequestMapping(value = "/transcript/{TranscriptZdbId}/details", method = RequestMethod.POST)
     public TranscriptAttributeBean updateTranscriptDetails(@PathVariable String TranscriptZdbId,
-                                          @RequestBody TranscriptAttributeBean formData, BindingResult result) {
+                                                           @RequestBody TranscriptAttributeBean formData, BindingResult result) {
         Transcript transcript = markerRepository.getTranscriptByZdbID(TranscriptZdbId);
 
-
-
         // create transcript
-        if(result.hasErrors()){
-            throw  new InvalidWebRequestException("Invalid transcript status-type", result);
+        if (result.hasErrors()) {
+
+            throw new InvalidWebRequestException("Invalid transcript status-type", result);
         }
         //
-
 
 
         Session session = HibernateUtil.currentSession();
         Transaction transaction = session.beginTransaction();
 
-            TranscriptType newType = RepositoryFactory.getMarkerRepository().getTranscriptTypeForName(formData.getTranscriptType());
-            if (!transcript.getTranscriptType().equals(newType)) {
-                TranscriptType oldType = transcript.getTranscriptType();
-                transcript.setTranscriptType(newType);
-                InfrastructureService.insertUpdate(transcript, "Transcript Type", oldType.getDisplay(), newType.getDisplay());
-            }
+        TranscriptType newType = RepositoryFactory.getMarkerRepository().getTranscriptTypeForName(formData.getTranscriptType());
+        if (!transcript.getTranscriptType().equals(newType)) {
+            TranscriptType oldType = transcript.getTranscriptType();
+            transcript.setTranscriptType(newType);
+            InfrastructureService.insertUpdate(transcript, "Transcript Type", oldType.getDisplay(), newType.getDisplay());
+        }
 
 
-            TranscriptStatus oldStatus = transcript.getStatus();
-            TranscriptStatus newStatus;
-            if (formData.getTranscriptStatus() == null
-                    || formData.getTranscriptStatus().equals("null")
-                    || formData.getTranscriptStatus().equals("")) {
-                newStatus = null;
-            } else {
-                newStatus = RepositoryFactory.getMarkerRepository().getTranscriptStatusForName(formData.getTranscriptStatus());
-            }
-
-            if (false == TranscriptStatus.equals(newStatus, oldStatus)) {
-
-                List<TranscriptStatus.Status> statuses = TranscriptType.Type.getStatusList(newType.getType());
-                if (newStatus != null && false == statuses.contains(newStatus.getStatus())) {
-                    List<String> statusStrings = new ArrayList<String>();
-                    for (TranscriptStatus.Status status : statuses) {
-                        statusStrings.add(status.toString());
-                    }
-
-                    throw new TranscriptTypeStatusMismatchException(statusStrings);
-                }
+        TranscriptStatus oldStatus = transcript.getStatus();
+        TranscriptStatus newStatus;
+        if (formData.getTranscriptStatus() == null
+                || formData.getTranscriptStatus().equals("null")
+                || formData.getTranscriptStatus().equals("")) {
+            newStatus = null;
+        } else {
+            newStatus = RepositoryFactory.getMarkerRepository().getTranscriptStatusForName(formData.getTranscriptStatus());
+        }
 
 
-                transcript.setStatus(newStatus);
+        transcript.setStatus(newStatus);
 
-                String oldStatusString = (oldStatus == null) ? "null" : oldStatus.getDisplay();
-                String newStatusString = (newStatus == null) ? "null" : newStatus.getDisplay();
+        String oldStatusString = (oldStatus == null) ? "null" : oldStatus.getDisplay();
+        String newStatusString = (newStatus == null) ? "null" : newStatus.getDisplay();
 
-                InfrastructureService.insertUpdate(transcript, "Transcript Status", oldStatusString, newStatusString);
-            }
-            Collection<String> currentPubIds = transcript.getPublications().stream()
-                    .map(PublicationAttribution::getPublication)
-                    .map(Publication::getZdbID)
-                    .collect(Collectors.toList());
-            Collection<String> updatedPubIds = formData.getReferences().stream()
-                    .map(Publication::getZdbID)
-                    .collect(Collectors.toList());
-            Collection<String> pubsToAdd = CollectionUtils.subtract(updatedPubIds, currentPubIds);
-            Collection<String> pubsToRemove = CollectionUtils.subtract(currentPubIds, updatedPubIds);
+        InfrastructureService.insertUpdate(transcript, "Transcript Status", oldStatusString, newStatusString);
 
-
+        Collection<String> currentPubIds = transcript.getPublications().stream()
+                .map(PublicationAttribution::getPublication)
+                .map(Publication::getZdbID)
+                .collect(Collectors.toList());
+        Collection<String> updatedPubIds = formData.getReferences().stream()
+                .map(Publication::getZdbID)
+                .collect(Collectors.toList());
+        Collection<String> pubsToAdd = CollectionUtils.subtract(updatedPubIds, currentPubIds);
+        Collection<String> pubsToRemove = CollectionUtils.subtract(currentPubIds, updatedPubIds);
 
 
-            for (String pubId : pubsToAdd) {
-                Publication publication = publicationRepository.getPublication(pubId);
-                markerRepository.addMarkerPub(transcript, publication);
-            }
+        for (String pubId : pubsToAdd) {
+            Publication publication = publicationRepository.getPublication(pubId);
+            markerRepository.addMarkerPub(transcript, publication);
+        }
 
-            for (String pubToRemove : pubsToRemove) {
-                infrastructureRepository.deleteRecordAttribution(transcript.getZdbID(), pubToRemove);
-            }
+        for (String pubToRemove : pubsToRemove) {
+            infrastructureRepository.deleteRecordAttribution(transcript.getZdbID(), pubToRemove);
+        }
+
         HibernateUtil.currentSession().save(transcript);
-                HibernateUtil.flushAndCommitCurrentSession();
-                return TranscriptAttributeBean.convert(transcript);
-            }
 
-
+        HibernateUtil.flushAndCommitCurrentSession();
+        return TranscriptAttributeBean.convert(transcript);
     }
+
+
+}
 
 
