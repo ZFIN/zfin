@@ -2,9 +2,10 @@
 <jsp:useBean id="formBean" class="org.zfin.feature.presentation.FeatureBean" scope="request"/>
 
 <c:set var="location" value="${formBean.featureLocations[0]}"/>
+
 <z:attributeList>
     <z:attributeListItem label="Variant Type">
-        ${formBean.feature.type.display}
+        ${formBean.varType}
     </z:attributeListItem>
 
     <z:attributeListItem label="Variant Location">
