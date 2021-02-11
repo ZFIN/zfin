@@ -154,7 +154,8 @@ const TranscriptEditAttributes = ({
                     {isSubmitted && isPristine &&
                     <span className='text-success'><i className='fas fa-check'/> Saved</span>}
 
-                    {serverError && <span className='text-danger'>Update not saved. Try again later.</span>}
+                    {serverError && <span className='text-danger'>Update not saved. Try again later. Check Transcript Status-Type mismatch</span>}
+
                 </div>
             </div>
         </Form>
