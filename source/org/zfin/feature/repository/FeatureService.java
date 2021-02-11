@@ -232,6 +232,18 @@ public class FeatureService {
         return aaLink;
     }
 
+    public static String getVarType(Feature feature){
+        String varType=feature.getType().getDisplay();
+        if (feature.getType().getDisplay().contains("Indel")){
+             varType="Delins";
+        }
+        if (feature.getType().getDisplay().contains("Complex")||feature.getType().getDisplay().contains("Translocation")||feature.getType().getDisplay().contains("Deficiency")){
+             varType="";
+        }
+  return varType;
+
+    }
+
     public static Set<FeatureMarkerRelationship> getSortedConstructRelationships(Feature feature) {
         Set<FeatureMarkerRelationship> fmrelationships = feature.getFeatureMarkerRelations();
         if (fmrelationships == null) {

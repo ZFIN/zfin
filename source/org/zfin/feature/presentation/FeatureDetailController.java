@@ -98,6 +98,7 @@ public class FeatureDetailController {
         }
         form.setFtrCommContr(zebrashareRepository.getLatestCommunityContribution(feature));
         form.setZShareOrigPub(zebrashareRepository.getZebraSharePublicationForFeature(feature));
+        form.setVarType(FeatureService.getVarType(feature));
 
         retrieveSortedGenotypeData(feature, form);
         retrievePubData(feature, form);
@@ -158,6 +159,7 @@ public class FeatureDetailController {
         form.setZShareOrigPub(zebrashareRepository.getZebraSharePublicationForFeature(feature));
         form.setSingleAffectedGeneFeature(featureRepository.isSingleAffectedGeneAlleles(feature));
         form.setVarSequence(RepositoryFactory.getFeatureRepository().getFeatureVariant(feature));
+        form.setVarType(FeatureService.getVarType(feature));
         retrieveSortedGenotypeData(feature, form);
         retrievePubData(feature, form);
 
