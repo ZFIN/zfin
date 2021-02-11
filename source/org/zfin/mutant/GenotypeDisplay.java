@@ -84,7 +84,12 @@ public class GenotypeDisplay implements Comparable<GenotypeDisplay> {
     }
 
     public String getParentalZygosityDisplay() {
-        return GenotypeService.getParentalZygosityDisplay(momZygosity, dadZygosity);
+        if (zygosity.equalsIgnoreCase(COMPLEX)){
+            return null;
+        }
+        else {
+            return GenotypeService.getParentalZygosityDisplay(momZygosity, dadZygosity);
+        }
     }
 
     public SortedSet<Marker> getAffectedGenes() {
