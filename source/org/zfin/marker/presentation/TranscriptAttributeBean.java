@@ -29,8 +29,8 @@ public class TranscriptAttributeBean {
     public static TranscriptAttributeBean convert(Transcript transcript) {
         TranscriptAttributeBean newBean = new TranscriptAttributeBean();
         newBean.setTranscriptType(transcript.getTranscriptType().getDisplay());
-        if (transcript.getStatus().getStatus().toString()!=null) {
-            newBean.setTranscriptStatus(transcript.getStatus().getDisplay());
+        if (transcript.getStatus()!=null) {
+            newBean.setTranscriptStatus(transcript.getStatus().getStatus().toString());
         }
 
         newBean.setReferences(transcript.getPublications().stream()
