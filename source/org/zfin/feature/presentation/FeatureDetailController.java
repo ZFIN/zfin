@@ -174,6 +174,15 @@ public class FeatureDetailController {
         return "feature/flank-seq-note";
     }
 
+    @RequestMapping("/note/citations")
+    public String getCitationsNote() {
+        return "feature/citations-note";
+    }
+
+    @RequestMapping("/note/genomebrowser")
+    public String getGBrowseNote() {
+        return "feature/gbrowse-note";
+    }
 
     @RequestMapping(value = "/feature/view/{zdbID}")
     public String retrieveFeatureDetail(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
