@@ -30,7 +30,7 @@
             <jsp:include page="feature-view-summary.jsp"/>
         </div>
 
-        <z:section title="${GBROWSE}">
+        <z:section title="${GBROWSE}" infoPopup="/action/feature/note/genomebrowser">>
             <div class="__react-root"
                  id="GbrowseImage"
                  data-image-url="${formBean.GBrowseImage.imageUrl}"
@@ -71,7 +71,7 @@
             </c:if>
         </z:section>
 
-        <z:section title="${CITATIONS}" >
+        <z:section title="${CITATIONS}" infoPopup="/action/feature/note/citations">
             <div class="__react-root" id="CitationTable" data-marker-id="${formBean.feature.zdbID}" ></div>
         </z:section>
 
