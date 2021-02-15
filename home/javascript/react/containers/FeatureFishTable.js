@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 import DataTable from '../components/data-table';
-import { EntityList } from '../components/entity';
+import {EntityList} from '../components/entity';
 import FigureSummary from '../components/FigureSummary';
 import Checkbox from '../components/Checkbox';
 import qs from 'qs';
@@ -9,10 +9,23 @@ import qs from 'qs';
 const FeatureFishTable = ({featureId}) => {
     const [excludeFishWithSTR, setExcludeFishWithSTR] = useState(false);
 
+
     const columns = [
         {
             label: 'Fish',
-            content: ({fish}) => <a className='text-break' href={`/${fish.zdbID}`} dangerouslySetInnerHTML={{__html: fish.displayName}} />,
+            content: ({fish}) =>
+                <span className='text-break'>
+                    <a
+                        className='text-break'
+                        href={`/${fish.zdbID}`}
+                        dangerouslySetInnerHTML={{__html: fish.displayName}}
+                    />
+                    <a
+                        className='popup-link data-popup-link'
+                        href={`/action/fish/fish-detail-popup/${fish.zdbID}`}
+                    />
+                </span>
+            ,
             width: '200px',
         },
         {
@@ -22,12 +35,12 @@ const FeatureFishTable = ({featureId}) => {
         },
         {
             label: 'Parental Zygosity',
-            content: ({parentalZygosity}) => <span dangerouslySetInnerHTML={{__html: parentalZygosity }} />,
+            content: ({parentalZygosity}) => <span dangerouslySetInnerHTML={{__html: parentalZygosity}}/>,
             width: '100px',
         },
         {
             label: 'Affected Genomic Regions',
-            content: ({affectedMarkers}) => <EntityList entities={affectedMarkers} />,
+            content: ({affectedMarkers}) => <EntityList entities={affectedMarkers}/>,
             width: '150px',
         },
         {
@@ -57,12 +70,16 @@ const FeatureFishTable = ({featureId}) => {
     if (excludeFishWithSTR) {
         params.excludeFishWithSTR = true;
     }
-    const dataUrl = baseUrl + qs.stringify(params, { addQueryPrefix: true });
+    const dataUrl = baseUrl + qs.stringify(params, {addQueryPrefix: true});
 
     return (
         <>
             <div className='mb-2'>
-                <Checkbox checked={excludeFishWithSTR} id='excludeSTRCheckbox' onChange={e => setExcludeFishWithSTR(e.target.checked)}>
+                <Checkbox
+                    checked={excludeFishWithSTR}
+                    id='excludeSTRCheckbox'
+                    onChange={e => setExcludeFishWithSTR(e.target.checked)}
+                >
                     Show only fish without sequence targeting reagents
                 </Checkbox>
             </div>
