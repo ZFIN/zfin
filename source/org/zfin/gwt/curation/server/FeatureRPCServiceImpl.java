@@ -712,7 +712,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             Map<FieldName, Object> solrDoc = new HashMap<>(12);
             solrDoc.put(FieldName.ID, feature.getZdbID());
             solrDoc.put(FieldName.CATEGORY, Category.MUTANT.getName());
-            solrDoc.put(FieldName.TYPE, feature.getType().getDisplay());
+            solrDoc.put(FieldName.TYPE, feature.getType().getTypeDisplay());
             solrDoc.put(FieldName.NAME, feature.getName());
             solrDoc.put(FieldName.PROPER_NAME, feature.getName());
             solrDoc.put(FieldName.FULL_NAME, feature.getName());
