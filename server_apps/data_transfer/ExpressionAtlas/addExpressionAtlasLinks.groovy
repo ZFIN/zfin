@@ -30,14 +30,17 @@ releaseIds = new ArrayList<>()
 
 releaseVersionJson.each {
     releases ->
-        releaseVersion = releases.releaseVersion
-        versionNumbers = releaseVersion.tokenize(".")
-        def minimalVersion = ""
-        for (i=0; i<3; i++){
-            minimalVersion = minimalVersion + "." + versionNumbers[i]
+        if  (releases.keySet().contains("defaultSchemaVersion")) {
+            releaseVersion = releases.releaseVersion
+            versionNumbers = releaseVersion.tokenize(".")
+            def minimalVersion = ""
+            for (i = 0; i < 3; i++) {
+                minimalVersion = minimalVersion + "." + versionNumbers[i]
+            }
+            print minimalVersion
+            minimalVersion = minimalVersion.substring(1)
+            releaseIds.add(minimalVersion)
         }
-        minimalVersion = minimalVersion.substring(1)
-        releaseIds.add(minimalVersion)
 
 }
 
