@@ -9,9 +9,9 @@ import org.zfin.framework.api.View;
 public enum FeatureTypeEnum implements IsSerializable{
     TRANSGENIC_INSERTION("Transgenic Insertion", "Transgenic insertion"),
     POINT_MUTATION("Point Mutation", "Allele with one point mutation"),
-    DELETION("Small Deletion", "Allele with one Deletion"),
-    INSERTION("Insertion", "Allele with one Insertion"),
-    INDEL("Indel", "Allele with one Delins"),
+    DELETION("Small Deletion", "Allele with one deletion"),
+    INSERTION("Insertion", "Allele with one insertion"),
+    INDEL("Indel", "Allele with one delins"),
     TRANSLOC("Translocation", "Translocation"),
     INVERSION("Inversion", "Inversion"),
     DEFICIENCY("Deficiency", "Deficiency"),
