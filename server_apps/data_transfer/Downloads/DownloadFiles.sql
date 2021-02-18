@@ -1143,6 +1143,16 @@ insert into tmp_geno_data(
 ) select * from tmp_extras;
 
 
+update tmp_geno_data set feature_type_display=(case when feature_type_display in ('Point Mutation','Small Deletion','Insertion', 'MNV') then 'Allele with one ' || lower(feature_type_display)
+                           when feature_type_display = 'Complex' then 'Allele with multiple variants'
+                           when feature_type_display = 'Indel' then 'Allele with one delins'
+                           else feature_type_display
+                           end);
+ update tmp_geno_data set feature_type=(case when feature_type  = 'indel' then 'delins'
+                           when feature_type = 'unknown' then 'sequence alteration'
+                           else feature_type
+                           end);
+
 \echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_features.txt' with delimiter as '	' null as '';'
 create view genotype_features as
 select distinct
@@ -1161,15 +1171,7 @@ select distinct
 	construct_zdb_id
  from tmp_geno_data
  order by genotype_id, geno_display_name;
- update genotype_features set feature_type_display=(case when ftrtype_type_display in ('Point Mutation','Small Deletion','Insertion', 'MNV') then 'Allele with one ' || lower(ftrtype_type_display)
-                           when ftrtype_type_display = 'Complex' then 'Allele with multiple variants'
-                           when ftrtype_type_display = 'Indel' then 'Allele with one delins'
-                           else ftrtype_type_display
-                           end);
- update genotype_features set feature_type=(case when ftrtype_type  = 'indel' then 'delins'
-                           when ftrtype_type = 'unknown' then 'sequence alteration'
-                           else ftrtype_type
-                           end);
+
 
 \copy (select * from genotype_features) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_features.txt' with delimiter as '	' null as '';
 drop view genotype_features;
@@ -2058,10 +2060,10 @@ update tmp_features
       		      		where get_obj_type(construct_id) = szm_object_type)
  where construct_id is not null;
 
-update tmp_features set feature_type_display=(case when ftrtype_type_display in ('Point Mutation','Small Deletion','Insertion', 'MNV') then 'Allele with one ' || lower(ftrtype_type_display)
-                           when ftrtype_type_display = 'Complex' then 'Allele with multiple variants'
-                           when ftrtype_type_display = 'Indel' then 'Allele with one delins'
-                           else ftrtype_type_display
+update tmp_features set ftypedisp=(case when ftypedisp in ('Point Mutation','Small Deletion','Insertion', 'MNV') then 'Allele with one ' || lower(ftypedisp)
+                           when ftypedisp = 'Complex' then 'Allele with multiple variants'
+                           when ftypedisp = 'Indel' then 'Allele with one delins'
+                           else ftypedisp
                            end);
 
 \echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/features.txt' with delimiter as '	' null as '';'
