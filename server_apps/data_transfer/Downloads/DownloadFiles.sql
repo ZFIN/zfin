@@ -1161,10 +1161,14 @@ select distinct
 	construct_zdb_id
  from tmp_geno_data
  order by genotype_id, geno_display_name;
- update genotype_features set feature_type_display=(case when ftrtype_type_display in ('Point Mutation','Deletion','Insertion', 'MNV') then 'Allele with one ' || lower(ftrtype_type_display)
+ update genotype_features set feature_type_display=(case when ftrtype_type_display in ('Point Mutation','Small Deletion','Insertion', 'MNV') then 'Allele with one ' || lower(ftrtype_type_display)
                            when ftrtype_type_display = 'Complex' then 'Allele with multiple variants'
-                           when ftrtype_type_display = 'Indel' then 'Delins'
+                           when ftrtype_type_display = 'Indel' then 'Allele with one delins'
                            else ftrtype_type_display
+                           end);
+ update genotype_features set feature_type=(case when ftrtype_type  = 'indel' then 'delins'
+                           when ftrtype_type = 'unknown' then 'sequence alteration'
+                           else ftrtype_type
                            end);
 
 \copy (select * from genotype_features) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/genotype_features.txt' with delimiter as '	' null as '';
@@ -2054,9 +2058,9 @@ update tmp_features
       		      		where get_obj_type(construct_id) = szm_object_type)
  where construct_id is not null;
 
-update tmp_features set feature_type_display=(case when ftrtype_type_display in ('Point Mutation','Deletion','Insertion', 'MNV') then 'Allele with one ' || lower(ftrtype_type_display)
+update tmp_features set feature_type_display=(case when ftrtype_type_display in ('Point Mutation','Small Deletion','Insertion', 'MNV') then 'Allele with one ' || lower(ftrtype_type_display)
                            when ftrtype_type_display = 'Complex' then 'Allele with multiple variants'
-                           when ftrtype_type_display = 'Indel' then 'Delins'
+                           when ftrtype_type_display = 'Indel' then 'Allele with one delins'
                            else ftrtype_type_display
                            end);
 
