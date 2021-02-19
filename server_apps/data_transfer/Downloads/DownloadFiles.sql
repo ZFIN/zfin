@@ -1151,7 +1151,8 @@ update tmp_geno_data set feature_type_display=(case when feature_type_display in
                            else feature_type_display
                            end);
  update tmp_geno_data set feature_type=(case when feature_type  = 'indel' then 'delins'
-                           when feature_type = 'unknown' then 'sequence alteration'
+                           when feature_type like '%sequence_variant%' then 'sequence alteration'
+                           when feature_type like '%complex_substitution%' then 'allele'
                            else feature_type
                            end);
 
