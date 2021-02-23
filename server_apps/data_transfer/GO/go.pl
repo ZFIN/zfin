@@ -99,7 +99,7 @@ try {
 
 # Note: this file gene_association2.2.zfin.gz ONLY serves the annotations that are not curated by ZFIN
 # (either curated in ZFIN or in Nocuta). It should not be used for serving all GO annotations to ZFIN
-# users via GAF2.2 format.
+# users via GAF2.2 format.  See: https://docs.google.com/document/d/1q5tXBJgbXSmrrN0ME12qLxQm7KrFhsu_wSkkj3fmBkA/edit
 
 try {
   ZFINPerlModules->doSystemCommand("/bin/rm -f gene_association2.2.zfin.gz");
