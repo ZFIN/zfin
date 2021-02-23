@@ -17,8 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
+import org.zfin.publication.Publication;
 
+import static org.zfin.repository.RepositoryFactory.getExpressionRepository;
 import static org.zfin.repository.RepositoryFactory.getFeatureRepository;
+import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 public class BasicVariantInfo extends AbstractScriptWrapper {
 
@@ -115,8 +118,29 @@ public class BasicVariantInfo extends AbstractScriptWrapper {
                                         dto.setStart(ftrLoc.getFtrStartLocation());
                                         dto.setEnd(ftrLoc.getFtrEndLocation());
                                         dto.setChromosome(ftrLoc.getFtrChromosome());
-String varNotes;
-                                       if (CollectionUtils.isNotEmpty(feature.getExternalNotes())) {
+                                        if (CollectionUtils.isNotEmpty(getPublicationRepository().getAllPublicationsForFeature(feature))){
+                                            ArrayList<PublicationAgrDTO> datasetPubs = new ArrayList<>();
+                                            for (Publication pub : getPublicationRepository().getAllPublicationsForFeature(feature)) {
+
+                                                PublicationAgrDTO fixedPub = new PublicationAgrDTO();
+                                                List<String> pubPages = new ArrayList<>();
+                                                pubPages.add("reference");
+                                                CrossReferenceDTO pubXref = new CrossReferenceDTO("ZFIN", pub.getZdbID(), pubPages);
+                                                if (pub.getAccessionNumber() != null) {
+                                                    fixedPub.setPublicationId("PMID:"+pub.getAccessionNumber());
+                                                    fixedPub.setCrossReference(pubXref);
+                                                }
+                                                else {
+                                                    fixedPub.setPublicationId("ZFIN:"+pub.getZdbID());
+                                                }
+                                                datasetPubs.add(fixedPub);
+//
+                                            }
+                                            System.out.println(datasetPubs.size());
+                                            dto.setReferences(datasetPubs);
+                                        }
+                                        String varNotes;
+                                         if (CollectionUtils.isNotEmpty(feature.getExternalNotes())) {
                                             List<String> noteList = new ArrayList<>();
                                             for (FeatureNote varNote : feature.getExternalNotes()) {
                                                 if (varNote.isVariantNote()) {
