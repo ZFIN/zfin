@@ -97,6 +97,10 @@ try {
   exit -1;
 };
 
+# Note: this file gene_association2.2.zfin.gz ONLY serves the annotations that are not curated by ZFIN
+# (either curated in ZFIN or in Nocuta). It should not be used for serving all GO annotations to ZFIN
+# users via GAF2.2 format.
+
 try {
   ZFINPerlModules->doSystemCommand("/bin/rm -f gene_association2.2.zfin.gz");
 } catch {
@@ -112,19 +116,6 @@ try {
 };
 
 
-#try {
-#  ZFINPerlModules->doSystemCommand("/bin/rm -f gene_association2.2_only_automated.zfin.gz");
-#} catch {
-#  warn "Failed at rm -f gene_association2.2_only_automated.zfin.gz - $_";
-#  exit -1;
-#};
-
-#try {
-#  ZFINPerlModules->doSystemCommand("/local/bin/gzip gene_association2.2_only_automated.zfin");
-#} catch {
-#  warn "Failed at gzip gene_association2.2_only_automated.zfin - $_";
-#  exit -1;
-#};
 
 
 exit;

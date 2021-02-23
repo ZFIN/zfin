@@ -20,7 +20,7 @@ select distinct mrkrgoev_zdb_id,
        term
   where mrkrgoev_zdb_id= mgtaeg_mrkrgoev_zdb_id
       and mgtae_relationship_term_zdb_id=term_zdb_id
-      and mgtae_extension_group_id=mgtaeg_annotation_extension_group_id ;
+      and mgtae_extension_group_id=mgtaeg_annotation_extension_group_id;
 
 create temporary table tmp_go_identifiers (goid text, goid2 bigint,goid3 text);
 
@@ -106,7 +106,13 @@ select mrkrgoev_zdb_id,
 		           full outer join inference_group_member on mrkrgoev_zdb_id = infgrmem_mrkrgoev_zdb_id
 		           full outer join tmp_go_identifiers_pipes on  mrkrgoev_zdb_id=goidtmp
 			         full outer join tmp_go_proteinid on mrkrgoev_zdb_id=mgev_zdb_id
-			   where mrkrgoev_annotation_organization not in (1, 6);
+			   where ((mrkrgoev_annotation_organization not in (1, 6)) or
+			          (mrkrgoev_annotation_organization = 1 and mrkrgoev_evidence_code = 'IEA'
+			            and mrkrgoev_source_zdb_id in ('ZDB-PUB-031118-3',
+			                                           'ZDB-PUB-020723-1',
+			                                           'ZDB-PUB-020724-1',
+			                                           'ZDB-PUB-170525-1')))
+            and mrkrgoev_evidence_code != 'IBA';
 
 update tmp_go set mv_qualifier ='ZDB-TERM-180228-3' where mv_flag='contributes to';
 update tmp_go set mv_qualifier ='ZDB-TERM-180228-2' where mv_flag='colocalizes with';
