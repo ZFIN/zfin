@@ -62,11 +62,17 @@ try {
   warn "Failed at gpad2.0.sql - $_";
   exit -1;
 };
-
 try {
   ZFINPerlModules->doSystemCommand("./goparser.pl");
 } catch {
   warn "Failed at goparser.pl - $_";
+  exit -1;
+};
+
+try {
+  ZFINPerlModules->doSystemCommand("./gpad.pl");
+} catch {
+  warn "Failed at gpad.pl - $_";
   exit -1;
 };
 
