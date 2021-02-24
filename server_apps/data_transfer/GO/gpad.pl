@@ -44,5 +44,3 @@ try {
   warn "Failed at gzip gpad2.0.zfin - $_";
   exit -1;
 };
-
-system("/local/bin/gunzip gpad2.0.zfin");
