@@ -75,7 +75,7 @@ select mrkrgoev_zdb_id,
           mrkrgoev_date_entered,
           'ZFIN' as assigned_by,
           null,
-          null
+          'contributor-id=GOC:zfin_curators'
   from marker_go_term_evidence
   where mrkrgoev_annotation_organization = 1;
 
