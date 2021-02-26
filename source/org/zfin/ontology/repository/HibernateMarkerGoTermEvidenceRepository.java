@@ -225,7 +225,6 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
         } else {
             hql += " and ev.qualifierRelation is null ";
         }
-
         Query query = HibernateUtil.currentSession().createQuery(hql)
                 .setParameter("pub", markerGoTermEvidenceToAdd.getSource())
                 .setParameter("marker", markerGoTermEvidenceToAdd.getMarker())
