@@ -225,6 +225,7 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
         } else {
             hql += " and ev.qualifierRelation is null ";
         }
+
         Query query = HibernateUtil.currentSession().createQuery(hql)
                 .setParameter("pub", markerGoTermEvidenceToAdd.getSource())
                 .setParameter("marker", markerGoTermEvidenceToAdd.getMarker())
@@ -234,7 +235,8 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
             query.setString("flag", markerGoTermEvidenceToAdd.getFlag().toString());
         }
         if (markerGoTermEvidenceToAdd.getQualifierRelation() != null) {
-            query.setString("qualifierRelation", markerGoTermEvidenceToAdd.getQualifierRelation().getOboID());
+            query.setParameter("qualifierRelation", markerGoTermEvidenceToAdd.getQualifierRelation());
+
         }
 
         return (List<MarkerGoTermEvidence>) query.list();
