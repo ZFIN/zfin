@@ -56,15 +56,6 @@
     <z:attributeListItem label="Source">
         <zfin2:orderThis markerSuppliers="${formBean.suppliers}" accessionNumber="${formBean.marker.zdbID}"/>
     </z:attributeListItem>
-
-    <z:attributeListItem label="Wiki">
-        <script type="text/javascript">
-            jQuery(document).ready(function () {
-                jQuery('#wikiLink').load('/action/wiki/wikiLink/${formBean.marker.zdbID}');
-            });
-        </script>
-        <span id="wikiLink"> </span>
-    </z:attributeListItem>
     
     <zfin2:entityNotesAttributeListItems entity="${formBean.marker}" />
 </z:attributeList>
