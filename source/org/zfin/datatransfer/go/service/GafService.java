@@ -22,6 +22,7 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.Subset;
 import org.zfin.ontology.Term;
+import org.zfin.ontology.repository.HibernateOntologyRepository;
 import org.zfin.ontology.repository.MarkerGoTermEvidenceRepository;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.publication.Publication;
@@ -155,6 +156,7 @@ public class GafService {
 
                 }
             } catch (GafAnnotationExistsError gafAnnotationExistsError) {
+
                 /* if the annotation already exists, check to see if the incoming date is newer than
                  * the stored modified date. If the incoming date is newer, the record needs to be
                  * updated. Otherwise, just add it to the list of existing entries.
@@ -231,9 +233,11 @@ public class GafService {
 
 
     public void generateRemovedEntriesReport(GafJobData gafJobData, Collection<String> zdbIdsToDrop) {
+
         if (CollectionUtils.isNotEmpty(zdbIdsToDrop)) {
             for (String zdbIdToDrop : zdbIdsToDrop) {
                 MarkerGoTermEvidence markerGoTermEvidence = markerGoTermEvidenceRepository.getMarkerGoTermEvidenceByZdbID(zdbIdToDrop);
+
                 gafJobData.addRemoved(markerGoTermEvidence);
             }
         }
@@ -248,6 +252,7 @@ public class GafService {
      */
     public Collection<String> findOutdatedEntries(GafJobData gafJobData, GafOrganization gafOrganization) {
         Set<String> existingZfinZdbIDs = new TreeSet<>(markerGoTermEvidenceRepository.getEvidencesForGafOrganization(gafOrganization));
+
         if (CollectionUtils.isEmpty(existingZfinZdbIDs))
             return null;
 
@@ -255,12 +260,14 @@ public class GafService {
 
         for (GafJobEntry gafJobEntry : gafJobData.getExistingEntries()) {
             newGafEntryZdbIds.add(gafJobEntry.getZdbID());
+
         }
 
         for (MarkerGoTermEvidence gafReportAnnotation : gafJobData.getNewEntries()) {
             if (gafReportAnnotation.getZdbID() != null)
                 newGafEntryZdbIds.add(gafReportAnnotation.getZdbID());
         }
+
         for (MarkerGoTermEvidence updated : gafJobData.getUpdateEntries()) {
             newGafEntryZdbIds.add(updated.getZdbID());
         }
@@ -270,6 +277,7 @@ public class GafService {
 
     public void generateRemovedEntries(GafJobData gafJobData, GafOrganization gafOrganization) {
         Collection<String> zdbIdsOutdated = findOutdatedEntries(gafJobData, gafOrganization);
+
         if (zdbIdsOutdated != null)
             generateRemovedEntriesReport(gafJobData, zdbIdsOutdated);
     }
@@ -317,7 +325,9 @@ public class GafService {
 
         // validate qualifier
         GoEvidenceQualifier goEvidenceQualifier = getQualifier(gafEntry, goTerm);
+
         markerGoTermEvidenceToAdd.setFlag(goEvidenceQualifier);
+
         if (!gafEntry.getQualifier().equals("NOT")) {
             GenericTerm relTerm = getRelQualifier(gafEntry, goTerm);
             markerGoTermEvidenceToAdd.setQualifierRelation(relTerm);
@@ -355,6 +365,7 @@ public class GafService {
          * If there is an existing annotation with the same or more specific go term
          * with either more or the same inferences then do not add.
          */
+
         for (MarkerGoTermEvidence existingMarkerGoTermEvidence : existingEvidenceList) {
             if (isMoreSpecificAnnotation(existingMarkerGoTermEvidence, markerGoTermEvidenceToAdd)) {
                 throw new GafAnnotationExistsError(gafEntry, existingMarkerGoTermEvidence);
@@ -508,6 +519,7 @@ public class GafService {
 
 
     protected GoEvidenceQualifier getQualifier(GafEntry gafEntry, GenericTerm goTerm) throws GafValidationError {
+
         if (!gafEntry.getQualifier().isEmpty()) {
             // they use "contributes_to" and "NOT"
             if (gafEntry.getQualifier().contains("NOT")) {
@@ -543,8 +555,10 @@ public class GafService {
                 int pipeIndex = gafEntry.getQualifier().indexOf("|");
                 relationName = gafEntry.getQualifier().substring(pipeIndex + 1, gafEntry.getQualifier().length());
             } else {
+
                 relationName = gafEntry.getQualifier();
             }
+
             if (relationName.equals("contributes_to")){
                 relationName=GoEvidenceQualifier.CONTRIBUTES_TO.toString();
             }
@@ -567,6 +581,7 @@ public class GafService {
             if (relationTerm == null) {
                 throw new GafValidationError("RO term  " + relationName + " does not exist", gafEntry);
             } else {
+
                 return relationTerm;
             }
         }

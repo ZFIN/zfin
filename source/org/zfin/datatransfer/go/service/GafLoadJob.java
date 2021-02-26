@@ -144,8 +144,8 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
 
             gafService.generateRemovedEntries(gafJobData, gafOrganization);
 
-
-            removeAnnotations(gafJobData);
+         System.out.println("done generatind removed entries");
+          removeAnnotations(gafJobData);
             FileWriter summary = new FileWriter(new File(new File(dataDirectory, jobName), jobName + "_summary.txt"));
             FileWriter details = new FileWriter(new File(new File(dataDirectory, jobName), jobName + "_details.txt"));
 
@@ -243,7 +243,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
 
     private void updateAnnotations(GafJobData gafJobData) {
         Set<MarkerGoTermEvidence> evidencesToUpdate = gafJobData.getUpdateEntries();
-        System.out.println(gafJobData.getUpdateEntries().size());
+        System.out.println("updateAnnotatons "+ gafJobData.getUpdateEntries().size());
         Iterator<MarkerGoTermEvidence> iteratorToUpdate = evidencesToUpdate.iterator();
 
         while (iteratorToUpdate.hasNext()) {
@@ -273,6 +273,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
 
     private void removeAnnotations(GafJobData gafJobData) {
         List<GafJobEntry> evidencesToRemove = gafJobData.getRemovedEntries();
+
         Iterator<GafJobEntry> iteratorToRemove = evidencesToRemove.iterator();
 
         // create batch
