@@ -772,16 +772,18 @@ public class GafService {
         }
     }
 
-    public int removeEntriesBatch(List<GafJobEntry> batchToRemove, GafJobData gafJobData) {
+    public void removeEntriesBatch(List<GafJobEntry> batchToRemove, GafJobData gafJobData) {
         List<String> zdbIDs = new ArrayList<>();
         for (GafJobEntry gafJobEntry : batchToRemove) {
             zdbIDs.add(gafJobEntry.getZdbID());
+
+            RepositoryFactory.getInfrastructureRepository().deleteActiveDataByZdbID(gafJobEntry.getZdbID());
         }
 
         // delete record attributions and then evidences directly
-        RepositoryFactory.getInfrastructureRepository().deleteRecordAttributionByDataZdbIDs(zdbIDs);
+        //RepositoryFactory.getInfrastructureRepository().deleteRecordAttributionByDataZdbIDs(zdbIDs);;
         SolrService.deleteByIds(zdbIDs, true);
-        return markerGoTermEvidenceRepository.deleteMarkerGoTermEvidenceByZdbIDs(zdbIDs);
+        //return markerGoTermEvidenceRepository.deleteMarkerGoTermEvidenceByZdbIDs(zdbIDs);
     }
 
     public void updateEntriesBatch(List<MarkerGoTermEvidence> batchToUpdate) {
