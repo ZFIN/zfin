@@ -37,11 +37,10 @@ public class FeatureValidationService {
             }
         }
 
-        if (featureDTO.getPublicNoteList()!=null) {
+        if (featureDTO.getPublicNote()!=null) {
+            if (featureDTO.getPublicNote().getNoteTag()==null) {
 
-
-            for (NoteDTO note : featureDTO.getPublicNoteList()) {
-                if (StringUtils.isEmpty(note.getNoteTag())) {
+                {
                     return "please enter note type";
                 }
             }
