@@ -6,6 +6,14 @@
 </c:if>
 
 <z:attributeList>
+
+
+
+    <z:attributeListItem label="Comparative Orthology">
+
+                <zfin2:externalLink href="${allianceUrl}">Alliance</zfin2:externalLink>
+
+    </z:attributeListItem>
     <c:if test="${!empty ensemblUrl}">
         <z:attributeListItem label="Gene Tree">
             <zfin2:externalLink href="${ensemblUrl}">Ensembl</zfin2:externalLink>
