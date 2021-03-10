@@ -81,66 +81,6 @@ public class FeatureDetailController {
         form.setCreatedByRelationship(FeatureService.getCreatedByRelationship(feature));
         form.setFeatureTypeAttributions(FeatureService.getFeatureTypeAttributions(feature));
         form.setFeatureMap(FeatureService.getFeatureMap(feature));
-        form.setFeatureLocations(FeatureService.getPhysicalLocations(feature));
-        form.setSummaryPageDbLinks(FeatureService.getSummaryDbLinks(feature));
-        form.setGenbankDbLinks(FeatureService.getGenbankDbLinks(feature));
-        form.setExternalNotes(FeatureService.getSortedExternalNotes(feature));
-        form.setExternalNotes(FeatureService.getSortedExternalNotes(feature));
-        form.setMutationDetails(mutationDetailsConversionService.convert(feature, true));
-        form.setDnaChangeAttributions(FeatureService.getDnaChangeAttributions(feature));
-        form.setTranscriptConsequenceAttributions(FeatureService.getTranscriptConsequenceAttributions(feature));
-        form.setProteinConsequenceAttributions(FeatureService.getProteinConsequenceAttributions(feature));
-        form.setVarSequence(RepositoryFactory.getFeatureRepository().getFeatureVariant(feature));
-        form.setVarSeqAttributions(FeatureService.getFlankSeqAttr(feature));
-        if (feature.getAbbreviation().startsWith("hi")) {
-
-            form.setAaLink(FeatureService.getAALink(feature));
-        }
-        form.setFtrCommContr(zebrashareRepository.getLatestCommunityContribution(feature));
-        form.setZShareOrigPub(zebrashareRepository.getZebraSharePublicationForFeature(feature));
-        form.setVarType(FeatureService.getVarType(feature));
-
-        retrieveSortedGenotypeData(feature, form);
-        retrievePubData(feature, form);
-
-        model.addAttribute(LookupStrings.FORM_BEAN, form);
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.FEATURE.getTitleString() + feature.getName());
-
-        return "feature/feature-detail";
-    }
-
-    @RequestMapping(value = "view/prototype/{zdbID}")
-    protected String getPrototypeFeatureDetail(@PathVariable String zdbID, Model model) {
-        LOG.info("Start Feature Detail Controller");
-        Feature feature = featureRepository.getFeatureByID(zdbID);
-        if (feature == null) {
-            String repldFtr = infrastructureRepository.getReplacedZdbID(zdbID);
-            if (repldFtr != null) {
-                feature = featureRepository.getFeatureByID(repldFtr);
-            } else {
-                // check if there exists a feature_tracking record for the given ID and if found and the feature is
-                // one of the two Burgess / Linn feature types redirect to pub otherwise display: feature not found.
-                String ftr = featureRepository.getFeatureByIDInTrackingTable(zdbID);
-                if (ftr != null) {
-                    if (zdbID.startsWith("ZDB-ALT-120130") || (zdbID.startsWith("ZDB-ALT-120806"))) {
-                        return "redirect:/ZDB-PUB-121121-2";
-                    }
-                }
-            }
-        }
-        if (feature == null) {
-            model.addAttribute(LookupStrings.ZDB_ID, zdbID);
-            return LookupStrings.RECORD_NOT_FOUND_PAGE;
-        }
-
-        FeatureBean form = new FeatureBean();
-        form.setZdbID(zdbID);
-        form.setFeature(feature);
-        form.setGBrowseImage(FeatureService.getGbrowseImage(feature));
-        form.setSortedConstructRelationships(FeatureService.getSortedConstructRelationships(feature));
-        form.setCreatedByRelationship(FeatureService.getCreatedByRelationship(feature));
-        form.setFeatureTypeAttributions(FeatureService.getFeatureTypeAttributions(feature));
-        form.setFeatureMap(FeatureService.getFeatureMap(feature));
         form.setSummaryPageDbLinks(FeatureService.getSummaryDbLinks(feature));
         form.setExternalNotes(FeatureService.getSortedExternalNotes(feature));
         form.setMutationDetails(mutationDetailsConversionService.convert(feature, true));
