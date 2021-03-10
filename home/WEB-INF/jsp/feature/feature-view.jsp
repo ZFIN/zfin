@@ -20,10 +20,6 @@
     </jsp:attribute>
 
     <jsp:body>
-        <z:dataManagerDropdown>
-            <a class="dropdown-item" href="/${formBean.feature.zdbID}">Classic View</a>
-        </z:dataManagerDropdown>
-
         <div id="${zfn:makeDomIdentifier(SUMMARY)}">
             <div class="small text-uppercase text-muted">Genomic Feature</div>
             <h1><zfin:abbrev entity="${formBean.feature}"/></h1>
