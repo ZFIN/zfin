@@ -293,22 +293,6 @@
         </java>
     </target>
 
-    <target name="validate-publications-with-PubMed" description="">
-        <echo message="Create Validation Report"/>
-        <echo message="Use database: ${DBNAME}"/>
-        <property name="JobName" value="Compare-Publication-With-PubMed_w"/>
-        <java classname="org.zfin.publication.PubMedValidationReport" fork="yes"
-              classpathref="extended.classpath"
-              failonerror="true">
-            <arg value="-jobName"/>
-            <arg value="${JobName}"/>
-            <arg value="-baseDir"/>
-            <arg value="${validateData}/validatedata"/>
-            <arg value="-propertyFilePath"/>
-            <arg value="${web-inf.dir}/zfin.properties"/>
-        </java>
-    </target>
-
     <target name="fetch-publications-from-ncbi" description="">
         <echo message="Create get-publication-from-ncbi Report"/>
         <echo message="Use database: ${DBNAME}"/>
