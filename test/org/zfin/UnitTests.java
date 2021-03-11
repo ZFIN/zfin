@@ -50,7 +50,6 @@ import org.zfin.profile.OrganizationUrlTest;
 import org.zfin.profile.ProfileUnitTests;
 import org.zfin.profile.service.BeanCompareServiceTest;
 import org.zfin.properties.ZfinPropertiesTest;
-import org.zfin.publication.PubMedValidationReportTest;
 import org.zfin.publication.PublicationTest;
 import org.zfin.security.Md5PasswordEncoderTest;
 import org.zfin.sequence.blast.SequenceTest;
@@ -114,7 +113,6 @@ import org.zfin.util.*;
         PhenotypeStructureTest.class,
         ProfileUnitTests.class,
         PublicationTest.class,
-        PubMedValidationReportTest.class,
         RelationshipTypeSortingTest.class,
         ReportConfigurationTest.class,
         RunCandidatePresentationTest.class,
