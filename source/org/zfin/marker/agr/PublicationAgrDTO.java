@@ -7,8 +7,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class PublicationAgrDTO {
     public static final String PMID = "PMID:";
 
-    private String publicationId;
+
     private CrossReferenceDTO crossReference;
+    private String publicationId;
 
 
     public String getPublicationId() {

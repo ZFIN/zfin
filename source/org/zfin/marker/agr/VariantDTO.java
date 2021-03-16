@@ -17,9 +17,25 @@ public class VariantDTO {
     private String genomicVariantSequenceAccessionNumber;
     private String type;
     private String consequence;
+    private List<NoteDTO> notes;
+
+    public List<PublicationAgrDTO> getReferences() {
+        return references;
+    }
+
     private List<PublicationAgrDTO> references;
 
+
+    public List<NoteDTO> getNotes() {
+        return notes;
+    }
+
+    public void setNotes(List<NoteDTO> notes) {
+        this.notes = notes;
+    }
+
     public List<String> getNote() {
+
         return note;
     }
 
@@ -32,17 +48,11 @@ public class VariantDTO {
     }
 
 
-    private List<String> notes;
+
     private List<String> note;
     private List<CrossReferenceDTO> crossReferences;
 
-    public List<String> getNotes() {
-        return notes;
-    }
 
-    public void setNotes(List<String> notes) {
-        this.notes = notes;
-    }
 
     public String getAlleleId() {
         return alleleId;
