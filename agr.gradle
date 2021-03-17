@@ -107,4 +107,5 @@ task createAllianceFiles {
     dependsOn createConstructFile
     dependsOn createHtpdatasetFile
     dependsOn createHtpdatasampleFile
+    dependsOn createBasicVariantInfoFile
 }
