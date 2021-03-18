@@ -86,6 +86,7 @@
                     <li><a href="https://@WIKI_HOST@/display/general/ZFIN+Database+Information">About ZFIN</a></li>
                     <li><a href="https://@WIKI_HOST@/display/general/ZFIN+Database+Information">Citing ZFIN</a></li>
                     <li><a href="https://@WIKI_HOST@/display/general/ZFIN+Contact+Information">Contact Information</a></li>
+                    <li><a href="https://zfin.atlassian.net/wiki/spaces/jobs/pages/2996503058/ZFIN+Jobs">Jobs at ZFIN</a></li>
                 </ul>
             </div>
         </div>
