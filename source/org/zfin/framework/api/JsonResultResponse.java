@@ -4,6 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URLDecoder;
@@ -72,6 +76,29 @@ public class JsonResultResponse<T> {
         long duration = (System.currentTimeMillis() - startTime) / 1000;
         requestDuration = Long.toString(duration) + "s";
 
+    }
+
+    @JsonView({View.Default.class})
+    public String getNextPageURL() {
+        String uri = request.getUri();
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        for (Map.Entry<String, List<String>> entry : request.getParameterMap().entrySet()) {
+            entry.getValue().forEach(value -> params.add(entry.getKey(), value));
+        }
+        Optional<Map.Entry<String, List<String>>> entry = params.entrySet().stream().filter(stringListEntry -> stringListEntry.getKey().equals("page"))
+                .findFirst();
+        if (pagination == null) {
+            return "";
+        }
+        // replace current page with next page
+        entry.ifPresent(page -> page.setValue(List.of(String.valueOf(pagination.getNextPage()))));
+
+        UriComponents uriComponents = UriComponentsBuilder.newInstance()
+                .path(uri)
+                .queryParams(params)
+                .build();
+
+        return uriComponents.toUriString();
     }
 
     public void addSupplementalData(String attribute, Object object) {

@@ -3,14 +3,18 @@ package org.zfin.wiki.service;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.zfin.framework.api.Pagination;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.wiki.*;
 
 import javax.xml.rpc.ServiceException;
-import java.util.ArrayList;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.rmi.RemoteException;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Please see http://confluence.atlassian.com/display/DOC/Remote+API+Specification
@@ -57,7 +61,10 @@ public class WikiWebService {
 
     private static WikiWebService instance = null;
 
+    private CacheUpdater cacheUpdater = new CacheUpdater("meetings");
+
     protected WikiWebService() {
+//        cacheUpdater.start();
     }
 
     public static WikiWebService getInstance() throws WikiLoginException {
@@ -119,16 +126,18 @@ public class WikiWebService {
             String wikiServer = WEBSERVICE_PROTOCOL + wikiHost + ENDPOINT_SUFFIX;
             serviceLocator.setConfluenceserviceV2EndpointAddress(wikiServer);
             service = serviceLocator.getConfluenceserviceV2();
-            token = service.login(wikiUserName, wikiPassword);
+            //token = service.login(wikiUserName, wikiPassword);
             logger.info("logging into " + wikiServer);
 
             if (service == null) {
                 throw new WikiLoginException("service is null, failed to instantiate");
             }
 
+/*
             if (token == null) {
                 throw new WikiLoginException("token is null, failed to set");
             }
+*/
 
             return true;
         } catch (Exception e) {
@@ -213,14 +222,12 @@ public class WikiWebService {
                 logger.debug("processing page[" + page.getTitle() + "] type[" + page.getType() + "]");
                 // don't no why but this page throws an exception: should have the id: 131090 but
                 // has 131089 which does not exist. Must be a bug in Confluence
-                if (page.getUrl().endsWith("wiki.zfin.org/display/AB")) {
+                if (page.getUrl().endsWith("wiki.zfin.org/display/AB"))
                     continue;
-                }
                 pageSummary = service.getPage(token, page.getId());
                 // do not work on deleted pages
-                if (pageSummary.getContentStatus().equals("deleted")) {
+                if (pageSummary.getContentStatus().equals("deleted"))
                     continue;
-                }
                 logger.info(page.getTitle());
                 if (page.getType().equals(PAGE_TYPE) && service.getContentPermissionSets(token, page.getId()).length == 0) {
                     logger.debug("processing page[" + page.getTitle() + "] type[" + page.getType() + "] # perm["
@@ -309,4 +316,79 @@ public class WikiWebService {
     public RemoteBlogEntry getBlogPage(long id) throws Exception {
         return service.getBlogEntry(token, id);
     }
+
+    public List<String> getLabels(long id) throws RemoteException {
+        final RemoteLabel[] labelsById = service.getLabelsById(token, id);
+        return Arrays.stream(labelsById)
+                .map(RemoteLabel::getName)
+                .collect(Collectors.toList());
+    }
+
+    public LocalDate getDateLabel(long id) {
+        final List<String> labels;
+        try {
+            labels = getLabels(id);
+            return labels.stream()
+                    .filter(label -> Pattern.compile("^\\d{4}-\\d{2}-\\d{2}$").matcher(label).matches())
+                    .map(LocalDate::parse)
+                    .findFirst().orElse(null);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // Cached variable
+    private List<RemotePageSummary> pageSummaries;
+
+    public List<RemotePageSummary> getPagesSorted(String wikiSpace, Pagination pagination) {
+        if (pageSummaries == null)
+//            return null;
+            populateRemotePageSummaries(wikiSpace);
+        return pageSummaries.stream()
+                .skip(pagination.getStart())
+                .limit(pagination.getLimit())
+                .collect(Collectors.toList());
+    }
+
+    private void populateRemotePageSummaries(String spaceName) {
+        RemotePageSummary[] pageSummariesLocal = instance.getAllPagesForSpace(spaceName);
+
+        Map<Long, LocalDate> pageDateMap = new HashMap<>();
+        Arrays.stream(pageSummariesLocal)
+                .forEach(page -> {
+                    LocalDate date = getDateLabel(page.getId());
+                    if (date != null)
+                        pageDateMap.put(page.getId(), date);
+                });
+
+        pageSummaries = Arrays.stream(pageSummariesLocal)
+                .filter(remotePageSummary -> pageDateMap.get(remotePageSummary.getId()) != null)
+                .sorted(Comparator.comparing(page -> pageDateMap.get(page.getId())))
+                .collect(Collectors.toList());
+    }
+
+
+    class CacheUpdater extends Thread {
+
+        String cacheSpace;
+
+        public CacheUpdater(String cacheSpaceName) {
+            cacheSpace = cacheSpaceName;
+        }
+
+        @Override
+        public void run() {
+            while (true) {
+                populateRemotePageSummaries(cacheSpace);
+                try {
+                    TimeUnit.MINUTES.sleep(2);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+
 }

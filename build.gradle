@@ -669,6 +669,9 @@ dependencies {
     implementation group: 'org.apache.logging.log4j', name: 'log4j-web', version: '2.11.2'
     implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.18'
     implementation group: 'com.google.guava', name: 'guava', version: '27.1-jre'
+    implementation group: 'org.apache.cxf', name: 'cxf-rt-rs-client', version: '3.4.2'
+    implementation group: 'com.fasterxml.jackson.jaxrs', name: 'jackson-jaxrs-json-provider', version: '2.12.2'
+    implementation group: 'org.json', name: 'json', version: '20210307'
 
     annotationProcessor 'org.projectlombok:lombok:1.18.8'
     //implementation group: 'log4j', name: 'log4j', version: '1.2.15'
