@@ -168,7 +168,7 @@
     </taskdef>
 
     <target name="get-ecogo-mapping">
-        <groovyc src="../eco_go_mapping/getECOGOMapping.groovy"/>
+        <exec dir="../eco_go_mapping" executable="getECOGOMapping.groovy" />
     </target>
 
     <target name="load-disease-ontology" depends="init">
