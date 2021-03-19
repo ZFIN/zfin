@@ -121,16 +121,6 @@
         <addTriggerForAllJobs/>
     </target>
 
-    <target name="deploy-production-jobs" depends="_copyDefaultConfig" description="Copy jobs into Jenkins_home">
-        <tstamp/>
-        <echo message="Deploy production jobs into: ${JENKINS_HOME}"/>
-        <antcall target="copy-production-jobs"/>
-        <antcall target="add-triggers"/>
-        <antcall target="add-email-notifications"/>
-        <antcall target="deploy-email-templates"/>
-        <antcall target="copy-report-files"/>
-    </target>
-
     <property name="emailTemplates" value="${JENKINS_HOME}/email-templates"/>
 
     <target name="deploy-email-templates" depends="_deploy-log-parser-rules" description="Copy jobs into Jenkins_home">
@@ -345,30 +335,6 @@
     </target>
 
     <property name="singleJobName" value="harry"/>
-    <target name="copy-production-jobs">
-        <property name="sourceJobFile"
-                  value="${basedir}/server_apps/jenkins/jobs.production.properties"/>
-        <echo message="Source Directory of Jobs: ${sourceJobsDir}"/>
-        <groovy>
-            def dir = new File(properties.sourceJobsDir)
-            def jobs = dir.list()
-            // load defined jobs
-            def props = new Properties()
-
-            new File(properties.sourceJobFile).withInputStream {
-                stream -> props.load(stream)
-            }
-
-            jobs.eachWithIndex { value, i ->
-                job = value
-                if (props[value] != null) {
-                    //println "production job: " + value
-                    properties.singleJobName = value
-                    ant.project.executeTarget('copy-single-job')
-                }
-            }
-        </groovy>
-    </target>
 
     <target name="copy-single-job">
         <!--
