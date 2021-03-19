@@ -36,7 +36,11 @@ public class HomeController {
         // shuffling with this seed causes the carousel image set to change only once a day
         long seed = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).toEpochSecond();
         Collections.shuffle(recentlyCuratedImages, new Random(seed));
-        List<Image> carouselImages = recentlyCuratedImages.subList(0, 10);
+        List<Image> carouselImages;
+        if (recentlyCuratedImages.size() > 5)
+            carouselImages = recentlyCuratedImages.subList(0, 10);
+        else
+            carouselImages = recentlyCuratedImages;
         List<String> sanitizedCaptions = carouselImages.stream()
                 .map(Image::getFigure)
                 .map(Figure::getCaption)
