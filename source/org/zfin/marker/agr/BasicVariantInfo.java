@@ -145,19 +145,27 @@ public class BasicVariantInfo extends AbstractScriptWrapper {
                                             if (varNote.isVariantNote()) {
                                                 if (varNote.getNote() != null || varNote.getNote() != "") {
                                                     if (!varNote.getNote().contains("href") || !varNote.getNote().contains("\\n")) {
-                                                       // noteList.add(varNote.getNote());
-                                                        PublicationAgrDTO fixedPub = new PublicationAgrDTO();
-                                                        List<String> pubPages = new ArrayList<>();
-                                                        pubPages.add("reference");
-                                                        CrossReferenceDTO pubXref = new CrossReferenceDTO("ZFIN", varNote.getPublication().getZdbID(), pubPages);
-                                                        if (varNote.getPublication().getAccessionNumber() != null) {
-                                                            fixedPub.setPublicationId("PMID:" + varNote.getPublication().getAccessionNumber());
-                                                            fixedPub.setCrossReference(pubXref);
-                                                        } else {
-                                                            fixedPub.setPublicationId("ZFIN:" + varNote.getPublication().getZdbID());
-                                                        }
-                                                        NoteDTO noteDto = new NoteDTO(fixedPub);
-                                                        //noteDto.setNote(noteList);
+
+
+                                                        ArrayList<PublicationAgrDTO> datasetPubs = new ArrayList<>();
+
+
+                                                            PublicationAgrDTO fixedPub = new PublicationAgrDTO();
+                                                            List<String> pubPages = new ArrayList<>();
+                                                            pubPages.add("reference");
+
+                                                            CrossReferenceDTO pubXref = new CrossReferenceDTO("ZFIN", varNote.getPublication().getZdbID(), pubPages);
+                                                            if (varNote.getPublication().getAccessionNumber() != null) {
+                                                                fixedPub.setPublicationId("PMID:" + varNote.getPublication().getAccessionNumber());
+                                                                fixedPub.setCrossReference(pubXref);
+                                                            } else {
+                                                                fixedPub.setPublicationId("ZFIN:" + varNote.getPublication().getZdbID());
+                                                            }
+                                                            datasetPubs.add(fixedPub);
+
+
+
+                                                        NoteDTO noteDto = new NoteDTO(datasetPubs);
                                                         noteDto.setNote(varNote.getNote());
                                                         noteDTOS.add(noteDto);
                                                     }
