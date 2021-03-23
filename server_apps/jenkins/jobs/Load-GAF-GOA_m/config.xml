@@ -80,7 +80,7 @@ See full details at ${BUILD_URL}artifact/server_apps/DB_maintenance/gafLoad/Load
   <buildWrappers>
       <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@1.19">
           <strategy class="hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy">
-              <timeoutMinutes>20</timeoutMinutes>
+              <timeoutMinutes>90</timeoutMinutes>
           </strategy>
           <operationList/>
       </hudson.plugins.build__timeout.BuildTimeoutWrapper>
