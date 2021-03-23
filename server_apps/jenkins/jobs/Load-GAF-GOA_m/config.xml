@@ -78,7 +78,13 @@ See full details at ${BUILD_URL}artifact/server_apps/DB_maintenance/gafLoad/Load
     </hudson.plugins.emailext.ExtendedEmailPublisher>
   </publishers>
   <buildWrappers>
-    <EnvInjectBuildWrapper plugin="envinject@1.89">
+      <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@1.19">
+          <strategy class="hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy">
+              <timeoutMinutes>20</timeoutMinutes>
+          </strategy>
+          <operationList/>
+      </hudson.plugins.build__timeout.BuildTimeoutWrapper>
+      <EnvInjectBuildWrapper plugin="envinject@1.89">
       <info>
         <propertiesFilePath>$TARGETROOT/home/WEB-INF/zfin.properties</propertiesFilePath>
         <loadFilesFromMaster>false</loadFilesFromMaster>
