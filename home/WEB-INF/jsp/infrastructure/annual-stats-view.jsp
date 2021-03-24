@@ -10,7 +10,6 @@
             </c:forEach>
         </tr>
 
-        <c:if test="${totalNumGenesStats % numberOfYears == 0}">
             <tr style="background-color: #b4b4b4; border: 1px solid black;">
                 <td><strong>Genes</strong></td>
                 <c:forEach var="y" items="${years}">
@@ -28,9 +27,7 @@
                     </tr>
                 </c:if>
             </c:forEach>
-        </c:if>
 
-        <c:if test="${totalNumGeneticsStats % numberOfYears == 0}">
             <tr style="background-color: #b4b4b4; border: 1px solid black;">
                 <td><strong>Genetics</strong></td>
                 <c:forEach var="y" items="${years}">
@@ -48,9 +45,7 @@
                     </tr>
                 </c:if>
             </c:forEach>
-        </c:if>
 
-        <c:if test="${totalNumFAstats % numberOfYears == 0}">
             <tr style="background-color: #b4b4b4; border: 1px solid black;">
                 <td><strong>Functional Annotation</strong></td>
                 <c:forEach var="y" items="${years}">
@@ -68,9 +63,7 @@
                     </tr>
                 </c:if>
             </c:forEach>
-        </c:if>
 
-        <c:if test="${totalNumReagentStats % numberOfYears == 0}">
             <tr style="background-color: #b4b4b4; border: 1px solid black;">
                 <td><strong>Reagents</strong></td>
                 <c:forEach var="y" items="${years}">
@@ -88,9 +81,7 @@
                     </tr>
                 </c:if>
             </c:forEach>
-        </c:if>
 
-        <c:if test="${totalNumXpPhenoStats % numberOfYears == 0}">
             <tr style="background-color: #b4b4b4; border: 1px solid black;">
                 <td><strong>Expression & Phenotype</strong></td>
                 <c:forEach var="y" items="${years}">
@@ -108,9 +99,7 @@
                     </tr>
                 </c:if>
             </c:forEach>
-        </c:if>
 
-        <c:if test="${totalNumGenomicsStats % numberOfYears == 0}">
             <tr style="background-color: #b4b4b4; border: 1px solid black;">
                 <td><strong>Genomics</strong></td>
                 <c:forEach var="y" items="${years}">
@@ -128,9 +117,7 @@
                     </tr>
                 </c:if>
             </c:forEach>
-        </c:if>
 
-        <c:if test="${totalNumCommStats % numberOfYears == 0}">
             <tr style="background-color: #b4b4b4; border: 1px solid black;">
                 <td><strong>Community Information</strong></td>
                 <c:forEach var="y" items="${years}">
@@ -148,9 +135,7 @@
                     </tr>
                 </c:if>
             </c:forEach>
-        </c:if>
 
-        <c:if test="${totalNumOrthStats % numberOfYears == 0}">
             <tr style="background-color: #b4b4b4; border: 1px solid black;">
                 <td><strong>Orthology</strong></td>
                 <c:forEach var="y" items="${years}">
@@ -168,6 +153,5 @@
                     </tr>
                 </c:if>
             </c:forEach>
-        </c:if>
     </table>
 </z:page>
