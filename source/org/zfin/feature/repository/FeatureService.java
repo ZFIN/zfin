@@ -488,7 +488,12 @@ public class FeatureService {
                     } else {
                         result.setZygosity(genotypeDisplay.getZygosity());
                     }
-                    result.setParentalZygosity(genotypeDisplay.getParentalZygosityDisplay());
+                    if (result.getZygosity().equals(GenotypeDisplay.COMPLEX)){
+                        result.setParentalZygosity("");
+                    }
+                    else {
+                        result.setParentalZygosity(genotypeDisplay.getParentalZygosityDisplay());
+                    }
                     result.setAffectedMarkers(new TreeSet<>(FishService.getAffectedGenes(fish)));
                     return result;
                 })
