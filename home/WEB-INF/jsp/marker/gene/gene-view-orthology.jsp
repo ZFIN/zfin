@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.GeneBean" scope="request" />
-
+<c:set var="allianceUrl">https://alliancegenome.org/gene/ZFIN:${formBean.marker.zdbID}#orthology</c:set>
 <c:if test="${!empty geneTree}">
     <c:set var="ensemblUrl">https://ensembl.org/Danio_rerio/Gene/Compara_Tree?g=${geneTree}</c:set>
 </c:if>
