@@ -141,6 +141,7 @@ public class GenotypeService {
             unknown = false;
         }
 
+
         if (unknown) {
             return "Unknown";
         }
