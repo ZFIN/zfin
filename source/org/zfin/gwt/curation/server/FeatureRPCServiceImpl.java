@@ -104,6 +104,17 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
     }
 
+    private void updateFeatureLocation(FeatureLocation fl, FeatureDTO dto){
+        fl.setFtrChromosome(dto.getFeatureChromosome());
+        fl.setFtrAssembly(dto.getFeatureAssembly());
+        fl.setFtrStartLocation(dto.getFeatureStartLoc());
+        fl.setFtrEndLocation(dto.getFeatureEndLoc());
+        // convert code into TermID and then get GenericTerm
+        fl.setFtrLocEvidence(ontologyRepository.getTermByZdbID(FeatureService.getFeatureGenomeLocationEvidenceCodeTerm(dto.getEvidence())));
+        HibernateUtil.currentSession().save(fl);
+        infrastructureRepository.insertPublicAttribution(fl.getZdbID(), dto.getPublicationZdbID(), RecordAttribution.SourceType.STANDARD);
+
+    }
     /**
      * Here, we edit everything but the notes (done in-line) and the alias (also done in-line).
      *
@@ -171,13 +182,9 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             featureAssay.setMutagee(Mutagee.getType(featureDTO.getMutagee()));
         }
 
-
-
         if (org.zfin.gwt.root.util.StringUtils.isNotEmpty(featureDTO.getAssemblyInfoDate())) {
             try {
-
                 entryDate = dateFormat.parse(featureDTO.getAssemblyInfoDate());
-
             } catch (ParseException e) {
                 throw new ValidationException("Incorrect date format, please check");
             }
@@ -185,27 +192,26 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         } else {
             feature.setFtrAssemblyInfoDate(null);
         }
-        FeatureLocation fgl = featureRepository.getFeatureLocation(feature);
+
+//update FeatureLocation information
+        FeatureLocation fgl = featureRepository.getLocationByFeature(feature);
         if (fgl == null) {
             fgl = new FeatureLocation();
             fgl.setFeature(feature);
+            if (StringUtils.isNotEmpty(featureDTO.getFeatureChromosome())) {
+                updateFeatureLocation(fgl, featureDTO);
+            }
         }
-        if (StringUtils.isNotEmpty(featureDTO.getFeatureChromosome())) {
-
-
-            feature.setFtrAssemblyInfoDate(null);
-            fgl.setFtrChromosome(featureDTO.getFeatureChromosome());
-            fgl.setFtrAssembly(featureDTO.getFeatureAssembly());
-            fgl.setFtrStartLocation(featureDTO.getFeatureStartLoc());
-            fgl.setFtrEndLocation(featureDTO.getFeatureEndLoc());
-            // convert code into TermID and then get GenericTerm
-            fgl.setFtrLocEvidence(ontologyRepository.getTermByZdbID(FeatureService.getFeatureGenomeLocationEvidenceCodeTerm(featureDTO.getEvidence())));
-            HibernateUtil.currentSession().save(fgl);
-            infrastructureRepository.insertPublicAttribution(fgl.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.STANDARD);
-        } else {
-
-            infrastructureRepository.deleteActiveDataByZdbID(fgl.getZdbID());
+        else{
+            if (!featureDTO.getFeatureChromosome().equals(fgl.getFtrChromosome())||
+                    (!featureDTO.getFeatureAssembly().equals(fgl.getFtrAssembly())||
+                            (!featureDTO.getFeatureStartLoc().equals(fgl.getFtrStartLocation())||
+                                    (!featureDTO.getFeatureEndLoc().equals(fgl.getFtrEndLocation())))))
+            {
+                updateFeatureLocation(fgl, featureDTO);
+            }
         }
+
 
 
         // get labs of origin for feature
