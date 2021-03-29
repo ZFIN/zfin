@@ -9,6 +9,10 @@ import org.zfin.infrastructure.AnnualStats;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 
 @Controller
 @RequestMapping("/infrastructure")
@@ -34,255 +38,87 @@ public class AnnualStatsController {
                 yearStrings.add(year);
             }
         }
-        model.addAttribute("years", yearStrings);
-        int numerOfYears = yearStrings.size();
-        model.addAttribute("numberOfYears", numerOfYears);
 
         List<AnnualStats> annualStatsList = RepositoryFactory.getInfrastructureRepository().getAnnualStats();
-        List<AnnualStatsDisplay> genesStats = new ArrayList<>();
-        List<AnnualStatsDisplay> geneticsStats = new ArrayList<>();
-        List<AnnualStatsDisplay> faStats = new ArrayList<>();
-        List<AnnualStatsDisplay> reagentsStats = new ArrayList<>();
-        List<AnnualStatsDisplay> xpPhenoStats = new ArrayList<>();
-        List<AnnualStatsDisplay> genomicsStats = new ArrayList<>();
-        List<AnnualStatsDisplay> communityStats = new ArrayList<>();
-        List<AnnualStatsDisplay> orthStats = new ArrayList<>();
-        for (AnnualStats stat : annualStatsList) {
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(stat.getDate());
-            int year = cal.get(Calendar.YEAR);
-            int month = cal.get(Calendar.MONTH);
-            int day = cal.get(Calendar.DAY_OF_MONTH);
-            if (year != 2015 && ((month == 0 && day == 1) || (month == 0 && day == 31)) && !stat.getType().equals("Full length cDNA clones (ZGC)")) {
-                AnnualStatsDisplay annualStatsDisplay = new AnnualStatsDisplay();
-                int ct = stat.getCount();
-                if (ct == 0) {
-                    annualStatsDisplay.setCount("");
-                } else {
-                    annualStatsDisplay.setCount(ct + "");
-                }
-                if (stat.getType().equals("Genes")) {
-                    annualStatsDisplay.setCategory("Gene Records");
-                    annualStatsDisplay.setOrder(0);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    genesStats.add(annualStatsDisplay);
-                } else if (stat.getType().equals("Genes on Assembly")) {
-                    annualStatsDisplay.setCategory("Genes on Assembly");
-                    annualStatsDisplay.setOrder(1);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    genesStats.add(annualStatsDisplay);
-                } else if (stat.getType().equals("Transcripts")) {
-                    annualStatsDisplay.setCategory("Transcripts");
-                    annualStatsDisplay.setOrder(2);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    genesStats.add(annualStatsDisplay);
-                } else if (stat.getType().equals("EST/cDNAs")) {
-                    annualStatsDisplay.setCategory("EST/cDNAs");
-                    annualStatsDisplay.setOrder(3);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    genesStats.add(annualStatsDisplay);
-                } else if (stat.getType().equals("Features")) {
-                    annualStatsDisplay.setCategory("Genomic Features");
-                    annualStatsDisplay.setOrder(0);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    geneticsStats.add(annualStatsDisplay);
-                } else if (stat.getType().equals("Transgenic Features")) {
-                    annualStatsDisplay.setCategory("Transgenic Insertions");
-                    annualStatsDisplay.setOrder(1);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    geneticsStats.add(annualStatsDisplay);
-                } else if (stat.getType().equals("Transgenic Constructs")) {
-                    annualStatsDisplay.setCategory("Transgenic Constructs");
-                    annualStatsDisplay.setOrder(2);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    geneticsStats.add(annualStatsDisplay);
-                } else if (stat.getType().equals("Transgenic Genotypes")) {
-                    annualStatsDisplay.setCategory("Transgenic Genotypes");
-                    annualStatsDisplay.setOrder(3);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    geneticsStats.add(annualStatsDisplay);
-                } else if (stat.getType().equals("Genotypes")) {
-                    annualStatsDisplay.setCategory("Genotypes");
-                    annualStatsDisplay.setOrder(4);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    geneticsStats.add(annualStatsDisplay);
-                } else if (stat.getType().equals("Genes with GO annotations")) {
-                    annualStatsDisplay.setCategory("Genes with Any GO annotations");
-                    annualStatsDisplay.setOrder(0);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    faStats.add(annualStatsDisplay);
-                } else if (stat.getType().equals("Genes with IEA GO annotations")) {
-                    annualStatsDisplay.setCategory("Genes with Automated GO Annotation");
-                    annualStatsDisplay.setOrder(1);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    faStats.add(annualStatsDisplay);
-                } else if (stat.getType().equals("Genes with Non-IEA GO Annotation")) {
-                    annualStatsDisplay.setCategory("Genes with Curated GO");
-                    annualStatsDisplay.setOrder(2);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    faStats.add(annualStatsDisplay);
-                } else if (stat.getType().equals("Total GO Annotations")) {
-                    annualStatsDisplay.setCategory("Total GO Annotations");
-                    annualStatsDisplay.setOrder(3);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    faStats.add(annualStatsDisplay);
-                } else if (stat.getType().equals("Genes with OMIM phenotypes")) {
-                    annualStatsDisplay.setCategory("Genes with OMIM phenotypes");
-                    annualStatsDisplay.setOrder(4);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    faStats.add(annualStatsDisplay);
-                } else if (stat.getType().equals("Morpholinos")) {
-                    annualStatsDisplay.setCategory("Morpholinos");
-                    annualStatsDisplay.setOrder(0);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    reagentsStats.add(annualStatsDisplay);
-                } else if (stat.getType().equals("TALEN")) {
-                    annualStatsDisplay.setCategory("TALEN");
-                    annualStatsDisplay.setOrder(1);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    reagentsStats.add(annualStatsDisplay);
-                } else if (stat.getType().equals("CRISPR")) {
-                    annualStatsDisplay.setCategory("CRISPR");
-                    annualStatsDisplay.setOrder(2);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    reagentsStats.add(annualStatsDisplay);
-                } else if (stat.getType().equals("Antibodies")) {
-                    annualStatsDisplay.setCategory("Antibodies");
-                    annualStatsDisplay.setOrder(3);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    reagentsStats.add(annualStatsDisplay);
-                } else if (stat.getType().equals("Gene expression patterns")) {
-                    annualStatsDisplay.setCategory("Gene Expression Annotations");
-                    annualStatsDisplay.setOrder(0);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    xpPhenoStats.add(annualStatsDisplay);
-                } else if (stat.getType().equals("Gene expression experiments")) {
-                    annualStatsDisplay.setCategory("Gene Expression Experiments");
-                    annualStatsDisplay.setOrder(1);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    xpPhenoStats.add(annualStatsDisplay);
-                } else if (stat.getType().equals("Phenotype statements")) {
-                    annualStatsDisplay.setCategory("Phenotype Annotations");
-                    annualStatsDisplay.setOrder(2);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    xpPhenoStats.add(annualStatsDisplay);
-                } else if (stat.getType().equals("Images")) {
-                    annualStatsDisplay.setCategory("Images");
-                    annualStatsDisplay.setOrder(3);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    xpPhenoStats.add(annualStatsDisplay);
-                } else if (stat.getType().equals("Anatomical structures")) {
-                    annualStatsDisplay.setCategory("Anatomical Structures");
-                    annualStatsDisplay.setOrder(4);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    xpPhenoStats.add(annualStatsDisplay);
-                } else if (stat.getType().equals("Genes with expression data")) {
-                    annualStatsDisplay.setCategory("Genes with Expression Data");
-                    annualStatsDisplay.setOrder(5);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    xpPhenoStats.add(annualStatsDisplay);
-                } else if (stat.getType().equals("Genes with a phenotype")) {
-                    annualStatsDisplay.setCategory("Genes with Curated Phenotype");
-                    annualStatsDisplay.setOrder(6);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    xpPhenoStats.add(annualStatsDisplay);
-                }  else if (stat.getType().equals("Expression Phenotype")) {
-                    annualStatsDisplay.setCategory("Expression Phenotype");
-                    annualStatsDisplay.setOrder(7);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    xpPhenoStats.add(annualStatsDisplay);
-                }  else if (stat.getType().equals("Diseases with Models")) {
-                    annualStatsDisplay.setCategory("Diseases with Models");
-                    annualStatsDisplay.setOrder(8);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    xpPhenoStats.add(annualStatsDisplay);
-                }  else if (stat.getType().equals("Disease Models")) {
-                    annualStatsDisplay.setCategory("Disease Models");
-                    annualStatsDisplay.setOrder(9);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    xpPhenoStats.add(annualStatsDisplay);
-                } else if (stat.getType().equals("Mapped markers")) {
-                    annualStatsDisplay.setCategory("Mapped Markers");
-                    annualStatsDisplay.setOrder(0);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    genomicsStats.add(annualStatsDisplay);
-                } else if (stat.getType().equals("Links to other databases")) {
-                    annualStatsDisplay.setCategory("Links to Other Databases");
-                    annualStatsDisplay.setOrder(1);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    genomicsStats.add(annualStatsDisplay);
-                } else if (stat.getType().equals("All Publications")) {
-                    annualStatsDisplay.setCategory("All Publications");
-                    annualStatsDisplay.setOrder(0);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    communityStats.add(annualStatsDisplay);
-                } else if (stat.getType().equals("Journal Publications")) {
-                    annualStatsDisplay.setCategory("Journal Publications");
-                    annualStatsDisplay.setOrder(1);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    communityStats.add(annualStatsDisplay);
-                } else if (stat.getType().equals("Researchers")) {
-                    annualStatsDisplay.setCategory("Researchers");
-                    annualStatsDisplay.setOrder(2);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    communityStats.add(annualStatsDisplay);
-                } else if (stat.getType().equals("Laboratories")) {
-                    annualStatsDisplay.setCategory("Laboratories");
-                    annualStatsDisplay.setOrder(3);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    communityStats.add(annualStatsDisplay);
-                } else if (stat.getType().equals("Companies")) {
-                    annualStatsDisplay.setCategory("Companies");
-                    annualStatsDisplay.setOrder(4);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    communityStats.add(annualStatsDisplay);
-                } else if (stat.getType().equals("Genes w/Human Orthology")) {
-                    annualStatsDisplay.setCategory("Genes with Curated Human Orthology");
-                    annualStatsDisplay.setOrder(0);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    orthStats.add(annualStatsDisplay);
-                } else if (stat.getType().equals("Genes w/Mouse Orthology")) {
-                    annualStatsDisplay.setCategory("Genes with Curated Mouse Orthology");
-                    annualStatsDisplay.setOrder(1);
-                    annualStatsDisplay.setAnnualStats(stat);
-                    orthStats.add(annualStatsDisplay);
-                }
-            }
+
+        Calendar cal = Calendar.getInstance();
+        // category, type, list of stats
+        Map<String, Map<String, List<AnnualStats>>> categoryTypeStats = annualStatsList.stream()
+                .filter(stat -> {
+                    cal.setTime(stat.getDate());
+                    int year = cal.get(Calendar.YEAR);
+                    int month = cal.get(Calendar.MONTH);
+                    int day = cal.get(Calendar.DAY_OF_MONTH);
+                    return year != 2015 && ((month == 0 && day == 1) || (month == 0 && day == 31)) && !stat.getType().equals("Full length cDNA clones (ZGC)");
+                })
+                // sort by section first
+                // then by type
+                // to have the groupings sorted
+                .sorted(Comparator.comparing((AnnualStats stat) -> titles.indexOf(stat.getSection()))
+                        .thenComparing((AnnualStats stat) -> categories.indexOf(stat.getType())))
+                .collect(groupingBy(AnnualStats::getSection, LinkedHashMap::new,
+                        groupingBy(AnnualStats::getType, LinkedHashMap::new, Collectors.collectingAndThen(toList(), annualStats -> {
+                            annualStats.sort(Comparator.comparing(AnnualStats::getDate));
+                            return annualStats;
+                        }))));
+
+
+        model.addAttribute("statsMap", categoryTypeStats);
+        int numberOfYears = categoryTypeStats.entrySet().iterator().next().getValue().entrySet().iterator().next().getValue().size();
+        if(numberOfYears != yearStrings.size()) {
+            yearStrings.remove(yearStrings.size() - 1);
         }
-
-        Collections.sort(genesStats);
-        model.addAttribute("genesStats", genesStats);
-        model.addAttribute("totalNumGenesStats", genesStats.size());
-
-        Collections.sort(geneticsStats);
-        model.addAttribute("geneticsStats", geneticsStats);
-        model.addAttribute("totalNumGeneticsStats", geneticsStats.size());
-
-        Collections.sort(faStats);
-        model.addAttribute("faStats", faStats);
-        model.addAttribute("totalNumFAstats", faStats.size());
-
-        Collections.sort(reagentsStats);
-        model.addAttribute("reagentsStats", reagentsStats);
-        model.addAttribute("totalNumReagentStats", reagentsStats.size());
-
-        Collections.sort(xpPhenoStats);
-        model.addAttribute("xpPhenoStats", xpPhenoStats);
-        model.addAttribute("totalNumXpPhenoStats", xpPhenoStats.size());
-
-        Collections.sort(genomicsStats);
-        model.addAttribute("genomicsStats", genomicsStats);
-        model.addAttribute("totalNumGenomicsStats", genomicsStats.size());
-
-        Collections.sort(communityStats);
-        model.addAttribute("communityStats", communityStats);
-        model.addAttribute("totalNumCommStats", communityStats.size());
-
-        Collections.sort(orthStats);
-        model.addAttribute("orthStats", orthStats);
-        model.addAttribute("totalNumOrthStats", orthStats.size());
+        model.addAttribute("years", yearStrings);
 
         return "infrastructure/annual-stats-view";
     }
+
+    static List<String> categories = List.of("Genes",
+            "Genes on Assembly",
+            "Transcripts",
+            "EST/cDNAs",
+            "Features",
+            "Transgenic Features",
+            "Transgenic Constructs",
+            "Transgenic Genotypes",
+            "Genotypes",
+            "Genes with Any GO annotations",
+            "Genes with IEA GO annotations",
+            "Genes with Non-IEA GO Annotation",
+            "Total GO Annotations",
+            "Genes with OMIM phenotypes",
+            "Morpholinos",
+            "TALEN",
+            "CRISPR",
+            "Antibodies",
+            "Gene expression patterns",
+            "Gene expression experiments",
+            "Phenotype statements",
+            "Images",
+            "Anatomical structures",
+            "Genes with expression data",
+            "Genes with a phenotype",
+            "Expression Phenotype",
+            "Diseases with Models",
+            "Disease Models",
+            "Mapped markers",
+            "Links to other databases",
+            "All Publications",
+            "Journal Publications",
+            "Researchers",
+            "Laboratories",
+            "Companies",
+            "Genes w/Human Orthology",
+            "Genes w/Mouse Orthology"
+    );
+
+    static List<String> titles = List.of("Genes",
+            "Genetics",
+            "Functional Annotation",
+            "Reagents",
+            "Expression & Phenotype",
+            "Genomics",
+            "Community information",
+            "Orthology");
 }
 
