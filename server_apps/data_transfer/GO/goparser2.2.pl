@@ -27,10 +27,10 @@ $versionNumber += 0.001;
 
 open (UNL1, ">gene_association2.2.zfin") or die "Cannot open exppat.UNL1";
 
-print UNL1 "!gaf_version: 2.2\n";
+print UNL1 "!gaf-version: 2.2\n";
 printf UNL1 "!Version: %.3f\n", $versionNumber;
-print UNL1 "!Date: ".`/bin/date +%Y/%m/%d`;
-print UNL1 "!From: ZFIN (zfin.org) \n";
+print UNL1 "!date-generated: ".`/bin/date +%Y-%m-%d`;
+print UNL1 "!generated-by: ZFIN \n";
 print UNL1 "! \n";
 
 # set count to 0 before processing, increment it with each row processed.
