@@ -26,6 +26,11 @@ print all_annot "!date-generated: ".`/bin/date +%Y-%m-%d`;
 print all_annot "!generated-by: ZFIN \n";
 print all_annot "! \n";
 
+print UNL1 "!gaf-version: 2.2\n";
+printf UNL1 "!Version: %.3f\n", $versionNumber;
+print UNL1 "!date-generated: ".`/bin/date +%Y-%m-%d`;
+print UNL1 "!generated-by: ZFIN \n";
+print UNL1 "! \n";
 
 # set count to 0 before processing, increment it with each row processed.
 $lastmrkrgoev = '';
