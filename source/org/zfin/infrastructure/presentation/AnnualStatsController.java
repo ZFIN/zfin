@@ -49,7 +49,7 @@ public class AnnualStatsController {
                     int year = cal.get(Calendar.YEAR);
                     int month = cal.get(Calendar.MONTH);
                     int day = cal.get(Calendar.DAY_OF_MONTH);
-                    return year != 2015 && ((month == 0 && day == 1) || (month == 0 && day == 31)) && !stat.getType().equals("Full length cDNA clones (ZGC)");
+                    return year != 2015 && ((month == 0 && day == 1) || (month == 0 && day == 31) || (month == 11 && day == 31)) && !stat.getType().equals("Full length cDNA clones (ZGC)");
                 })
                 // sort by section first
                 // then by type
