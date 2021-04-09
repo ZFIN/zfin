@@ -9,9 +9,9 @@
     <changeSet author="cmpich" id="ZFIN-7029">
         <loadData file="source/org/zfin/db/postGmakePostloaddb/1123/annual-stats-2020.csv"
                   tableName="annual_stats" encoding="UTF-8">
-            <column name="as_count"  type="integer"/>
+            <column name="as_count"  type="numeric"/>
             <column name="as_section"  type="String"/>
-            <column name="as_Type"  type="String"/>
+            <column name="as_type"  type="String"/>
             <column name="as_date"  type="date"/>
         </loadData>
 
