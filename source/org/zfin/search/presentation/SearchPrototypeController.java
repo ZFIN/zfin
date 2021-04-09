@@ -12,6 +12,8 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
+import org.owasp.html.PolicyFactory;
+import org.owasp.html.Sanitizers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
@@ -80,6 +82,8 @@ public class SearchPrototypeController {
 
     }
 
+    private static final PolicyFactory POLICY = Sanitizers.FORMATTING.and(Sanitizers.LINKS);
+
     @RequestMapping(value = "/prototype")
     public String viewResults(@RequestParam(value = "q", required = false) String q,
                               @RequestParam(value = "fq", required = false) String[] filterQuery,
@@ -96,6 +100,7 @@ public class SearchPrototypeController {
         if (page == null) {
             page = 1;
         }
+        category = POLICY.sanitize(String.valueOf(category));
 
         if (StringUtils.isNotEmpty(q)) {
             q = q.trim();
