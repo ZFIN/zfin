@@ -215,7 +215,7 @@ public class HibernateSessionCreator {
 
     private String getJdbcUrl(String db) {
         String jdbcUrl;
-        jdbcUrl = "jdbc:postgresql://localhost:5432/" + db;
+        jdbcUrl = "jdbc:postgresql://" + ZfinPropertiesEnum.PGHOST.value() + ":5432/" + db;
         return jdbcUrl;
     }
 

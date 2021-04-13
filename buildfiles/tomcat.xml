@@ -25,6 +25,19 @@
         <echo message=":ZFISHWEB TOMCAT STOP SUCCESSFUL:"/>
     </target>
 
+    <target name="docker-tomcat-start" if="isdocker" description="Starts tomcat if docker">
+        <exec executable="/bin/true" failifexecutionfails="true">
+            <arg value="start"/>
+        </exec>
+        <echo message=":TOMCAT START SUCCESSFUL:"/>
+    </target>
+
+    <target name="docker-tomcat-stop" if="isdocker" description="Stops tomcat if docker">
+        <exec executable="/bin/true" failifexecutionfails="true">
+            <arg value="stop"/>
+        </exec>
+        <echo message=":TOMCAT STOP SUCCESSFUL:"/>
+    </target>
 
     <target name="mutant-tomcat-start" if="ismutant" description="Starts tomcat if mutant">
         <exec executable="${tomcat-script-mutant}" failifexecutionfails="true">
@@ -40,9 +53,9 @@
         <echo message=":TOMCAT STOP SUCCESSFUL:"/>
     </target>
 
-    <target name="tomcat-stop" depends="mutant-tomcat-stop,informix-zfishweb-tomcat-stop"
+    <target name="tomcat-stop" depends="mutant-tomcat-stop,informix-zfishweb-tomcat-stop,docker-tomcat-stop"
             description="Stops tomcat by calling all tomcat stop targets"/>
-    <target name="tomcat-start" depends="mutant-tomcat-start,informix-zfishweb-tomcat-start"
+    <target name="tomcat-start" depends="mutant-tomcat-start,informix-zfishweb-tomcat-start,docker-tomcat-start"
             description="Starts tomcat by calling all tomcat stop targets"/>
 
 
@@ -144,6 +157,7 @@
                 <filter token="DOMAIN-NAME" value="${DOMAIN_NAME}"/>
                 <filter token="GBROWSE_DB" value="${GBROWSE_DB}"/>
                 <filter token="GBROWSE_DB_HOST" value="${GBROWSE_DB_HOST}"/>
+                <filter token="PGHOST" value="${PGHOST}"/>
             </filterset>
         </copy>
         <antcall target="set-catalina-base-perms"/>

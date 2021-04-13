@@ -120,6 +120,7 @@
 <filter token="PGBINDIR" value="${PGBINDIR}"/>
 <filter token="PGDATA" value="${PGDATA}"/>
 <filter token="PGDATABASE" value="${PGDATABASE}"/>
+<filter token="PGHOST" value="${PGHOST}"/>
 <filter token="PRIMARY_COLOR" value="${PRIMARY_COLOR}"/>
 <filter token="PRODUCTION_NOTIFICATION_EMAIL" value="${PRODUCTION_NOTIFICATION_EMAIL}"/>
 <filter token="REQUEST_NEW_ANATOMY_EMAIL" value="${REQUEST_NEW_ANATOMY_EMAIL}"/>

@@ -24,6 +24,7 @@ def dbname = env['DBNAME']
 def sourceroot = env['SOURCEROOT']
 def pgbindir = env['PGBINDIR']
 def pgdata = env['PGDATA']
+def pghost = env['PGHOST']
 String targetroot = env['TARGETROOT']
 
 /*
@@ -121,7 +122,7 @@ task liquibasePreBuild() {
                 main {
                     println preChangeLog
                     changeLogFile preChangeLog
-                    url 'jdbc:postgresql://localhost:5432/' + dbname
+                    url 'jdbc:postgresql://' + pghost + ':5432/' + dbname
                 }
             }
         }
@@ -141,7 +142,7 @@ task liquibasePostBuild() {
                     Properties properties = new Properties()
                     properties.setProperty("SOURCEROOT", ".")
                     changeLogFile postChangeLog
-                    url 'jdbc:postgresql://localhost:5432/' + dbname
+                    url 'jdbc:postgresql://' + pghost + ':5432/' + dbname
                 }
             }
         }
@@ -586,7 +587,7 @@ task createSchemaSpy() {
                     "-u",
                     ttNameMap.get('USER'),
                     "-host",
-                    "localhost",
+                    pghost,
                     "-dp",
                     "lib/Java/postgresql-42.2.18.jar",
                     "-s",

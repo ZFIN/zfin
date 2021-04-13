@@ -105,6 +105,10 @@
         <equals arg1="${USER}" arg2="informix"/>
     </condition>
 
+    <condition property="isdocker">
+        <equals arg1="${INSTANCE}" arg2="docker"/>
+    </condition>
+
     <condition property="isalmost">
         <equals arg1="${INSTANCE}" arg2="almost"/>
     </condition>
@@ -142,9 +146,14 @@
     </condition>
 
     <condition property="ismutant">
-        <not>
-            <equals arg1="${USER}" arg2="informix"/>
-        </not>
+	<and>
+            <not>
+                <equals arg1="${USER}" arg2="informix"/>
+            </not>
+            <not>
+                <equals arg1="${INSTANCE}" arg2="docker"/>
+            </not>
+        </and>
     </condition>
 
 
@@ -156,6 +165,7 @@
         <echo message="DBNAME:               ${DBNAME}"/>
         <echo message="INFORMIX_SERVER:      ${INFORMIX_SERVER}"/>
         <echo message="isinformix:           ${isinformix}"/>
+        <echo message="isdocker:             ${isdocker}"/>
         <echo message="isalmost:             ${isalmost}"/>
         <echo message="isproduction:         ${isproduction}"/>
         <echo message="notproduction:        ${notproduction}"/>

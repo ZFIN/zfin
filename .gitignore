@@ -14,6 +14,9 @@ server_apps/data_transfer/LoadOntology/reload-status/
 server_apps/data_transfer/LoadOntology/obo-files
 server_apps/data_transfer/LoadOntology/logs
 
+# Docker config
+docker/pg_pass
+
 # IntelliJ things
 .idea
 *.iml

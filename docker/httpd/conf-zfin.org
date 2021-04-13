@@ -1,0 +1,188 @@
+<VirtualHost *:80>
+    ServerName	zfin.org
+    ServerAlias     clone.zfin.org
+    ServerAlias     watson.zfin.org
+    ServerAlias     crick.zfin.org
+    ServerAlias     stage.zfin.org
+    DocumentRoot	/srv/www/zfin.org/home
+    LogFormat "%h %V %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\" %T" timing
+    LogFormat "{ \"@timestamp\": \"%{%Y-%m-%dT%H:%M:%S%z}t\", \"@fields\": { \"client\": \"%a\", \"duration_usec\": %D, \"status\": %s, \"request\": \"%U%q\", \"method\": \"%m\", \"referrer\": \"%{Referer}i\" } }" logstash_json
+    CustomLog	/var/log/httpd/zfin_access timing
+    ErrorLog	/var/log/httpd/zfin_errors
+    CustomLog       /var/log/httpd/zfin_access.json logstash_json
+
+    <Location /server-status>
+        SetHandler server-status
+        Require env ZfinRestrictedHosts
+    </Location>
+    <Location /server-info>
+        SetHandler server-info
+        Require env ZfinRestrictedHosts
+    </Location>
+    #FIXME: Where should this point?
+    Alias		/zfin_doc /research/zprod/Commons/doc
+    ScriptAlias	/cgi-bin /srv/www/zfin.org/cgi-bin
+
+    RedirectMatch permanent /zirc(.*)      http://zebrafish.org/zirc$1
+    RedirectMatch permanent /zf_info/stckctr/* http://zebrafish.org/zirc/home/guide.php
+
+    Redirect permanent /ZDB/PAPERS http://zfin.org/zf_info/dbase/PAPERS
+    Redirect permanent /cgi-bin/Webdriver http://zfin.org/unavailable/unsupportedLink.html
+    Redirect permanent /cgi-bin_B/webdriver http://zfin.org/unavailable/unsupportedLink.html
+    Redirect permanent /cgi-bin_B/Webdriver http://zfin.org/unavailable/unsupportedLink.html
+    Redirect /cgi-bin/downloads http://zfin.org/downloads
+    Redirect /tutorial http://zfin.org/zf_info/2006_tutorial/tutorial.html
+    Redirect /DataModel http://zfin.org/zf_info/dbase/PAPERS/CurrentDataModel/Database/DataModel/index.htm 
+
+    #Require https for /build & jobs
+    RewriteCond %{HTTPS} =off
+    RewriteCond %{REQUEST_URI} ^/build
+    RewriteRule ^(.*)$ https://%{SERVER_NAME}/$1 [R=301,L]
+    RewriteCond %{HTTPS} =off
+    RewriteCond %{REQUEST_URI} ^/jobs
+    RewriteRule ^(.*)$ https://%{SERVER_NAME}/$1 [R=301,L]
+
+    Include /srv/www/zfin.org/server_apps/apache/inc-redirect
+
+    ProxyRequests Off
+    ProxyPreserveHost On
+    ProxyPass /action/ http://tomcat:2008/action/
+    ProxyPassReverse /action/ http://tomcat:2008/action/
+    #ProxyPass /blast/ http://genomix.cs.uoregon.edu/cgi-bin/zfin/
+    #ProxyPassReverse /blast/ http://genomix.cs.uoregon.edu/cgi-bin/zfin/
+    ProxyPass /ajax/ http://tomcat:2008/ajax/
+    ProxyPassReverse /ajax/ http://tomcat:2008/ajax/ 
+
+    ProxyPass /gb2/ http://gbrowse1.zfin.org/gb2/
+    ProxyPassReverse /gb2/ http://gbrowse1.zfin.org/gb2/
+    ProxyPass /gbrowse2/ http://gbrowse1.zfin.org/gbrowse2/
+    ProxyPassReverse /gbrowse2/ http://gbrowse1.zfin.org/gbrowse2/
+
+    ProxyPass /webapp/ http://tomcat:2008/webapp/
+    ProxyPassReverse /webapp/ http://tomcat:2008/webapp/
+    ProxyPass /webservice/ http://tomcat:2008/webservice/
+    ProxyPassReverse /webservice/ http://tomcat:2008/webservice/
+    #for using the prototype search from kinetix/zfin.org
+    ProxyPass /zfinlabs/ http://zygotix.zfin.org:9109/action/quicksearch/
+    ProxyPassReverse /zfinlabs/ http://zygotix.zfin.org:9109/action/quicksearch/
+    <Location /build>
+        SSLRequireSSL
+        Require env ZfinRestrictedHosts
+        ProxyPass         http://localhost:8282/build
+        ProxyPassReverse  http://localhost:8282/build
+        #ProxyPassReverse  http://zfin.org/build
+        ProxyPassReverse  http://stage.zfin.org/build
+    </Location>
+    <Location /jobs>
+        SSLRequireSSL
+        Require env ZfinRestrictedHosts
+        ProxyPass         http://localhost:9499/jobs
+        ProxyPassReverse  http://localhost:9499/jobs
+        ProxyPassReverse  http://zfin.org/jobs
+        ProxyPassReverse  http://clone.zfin.org/jobs
+        ProxyPassReverse  http://watson.zfin.org/jobs
+        ProxyPassReverse  http://crick.zfin.org/jobs
+        ProxyPassReverse  http://stage.zfin.org/jobs
+    </Location>
+</VirtualHost>
+
+<VirtualHost *:443>
+    SSLEngine on
+    #SSLProtocol all -SSLv2 -SSLv3
+    #SSLCipherSuite HIGH:MEDIUM:!aNULL:!RC4:!MD5:!SEED:!IDEA
+    ServerName zfin.org
+    ServerAlias clone.zfin.org
+    ServerAlias watson.zfin.org
+    ServerAlias crick.zfin.org
+    ServerAlias stage.zfin.org
+    SSLProxyEngine on
+    DocumentRoot	/srv/www/zfin.org/home
+    ScriptAlias	/cgi-bin /srv/www/zfin.org/cgi-bin
+    CustomLog	/var/log/httpd/zfin_access combined
+    ErrorLog	/var/log/httpd/zfin_errors
+    <Location /server-status>
+        SetHandler server-status
+        Require env ZfinRestrictedHosts
+    </Location>
+    <Location /server-info>
+        SetHandler server-info
+        Require env ZfinRestrictedHosts
+    </Location>
+
+    ProxyRequests Off
+    ProxyPreserveHost On
+    SSLProxyEngine on
+    SSLProxyVerify none
+    SSLProxyCheckPeerCN off
+    SSLProxyCheckPeerName off
+    SSLProxyCheckPeerExpire off
+    ProxyPass /action/ https://tomcat:8443/action/
+    ProxyPassReverse /action/ https://tomcat:8443/action/
+    ProxyPass /ajax/ https://tomcat:8443/ajax/
+    ProxyPassReverse /ajax/ https://tomcat:8443/ajax/ 
+    ProxyPass /webapp/ https://tomcat:8443/webapp/
+    ProxyPassReverse /webapp/ https://tomcat:8443/webapp/
+    ProxyPass /webservice/ https://tomcat:8443/webservice/
+    ProxyPassReverse /webservice/ https://tomcat:8443/webservice/
+
+    ProxyPass /gb2/ http://gbrowse1.zfin.org/gb2/
+    ProxyPassReverse /gb2/ http://gbrowse1.zfin.org/gb2/
+    ProxyPass /gbrowse2/ http://gbrowse1.zfin.org/gbrowse2/
+    ProxyPassReverse /gbrowse2/ http://gbrowse1.zfin.org/gbrowse2/
+
+    #for using the prototype search from kinetix/zfin.org
+    ProxyPass /zfinlabs/ http://zygotix.zfin.org:9109/action/quicksearch/
+    ProxyPassReverse /zfinlabs/ http://zygotix.zfin.org:9109/action/quicksearch/
+    <Location /build>
+    	Require env ZfinRestrictedHosts
+        ProxyPass         http://localhost:8282/build
+        ProxyPassReverse  http://localhost:8282/build
+        #ProxyPassReverse  http://zfin.org/build
+        ProxyPassReverse  http://stage.zfin.org/build
+    </Location>
+    <Location /jobs>
+        Require env ZfinRestrictedHosts
+        AuthName "LDAP Login - Any User"
+        AuthType Basic
+        AuthBasicProvider ldap
+        AuthLDAPUrl "ldaps://bouncer1.zfin.org bouncer2.zfin.org/cn=users,cn=accounts,dc=zfin,dc=org?uid"
+        <RequireAll>
+          Require env ZfinHosts
+          Require valid-user
+        </RequireAll>
+        ProxyPass         http://localhost:9499/jobs
+        ProxyPassReverse  http://localhost:9499/jobs
+        ProxyPassReverse  http://zfin.org/jobs
+        ProxyPassReverse  http://clone.zfin.org/jobs
+        ProxyPassReverse  http://watson.zfin.org/jobs
+        ProxyPassReverse  http://crick.zfin.org/jobs
+        ProxyPassReverse  http://stage.zfin.org/jobs
+    </Location>
+    <Location /solr>
+      # Make sure you're using HTTPS, or anyone can read your LDAP password.
+      SSLRequireSSL
+
+      ################
+      ### Any User ###
+      ################
+      AuthName "LDAP Login - Any User"
+      AuthType Basic
+      AuthBasicProvider ldap
+      AuthLDAPUrl "ldaps://bouncer1.zfin.org bouncer2.zfin.org/cn=users,cn=accounts,dc=zfin,dc=org?uid"
+      <RequireAll>
+        Require env ZfinRestrictedHosts
+        Require valid-user
+      </RequireAll>
+      #Satisfy any
+
+      ProxyPass         http://localhost:8983/solr
+      ProxyPassReverse  http://localhost:8983/solr
+    </Location>
+            
+    Include /srv/www/zfin.org/server_apps/apache/inc-redirect
+</VirtualHost>
+
+<VirtualHost *:80>
+    ServerName	www.zfin.org
+    Redirect permanent / http://zfin.org/
+</VirtualHost>

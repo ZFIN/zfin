@@ -66,7 +66,7 @@
         <echo message="Starting Solr index build via http..."/>
         <exec executable="curl">
             <arg value="-s"/>
-            <arg value="http://localhost:${SOLR_PORT}/solr/${SOLR_CORE}/dataimport?command=full-import&amp;optimize=true&amp;clean=true&amp;wt=json&amp;indent=true"/>
+            <arg value="http://${SOLR_HOST}:${SOLR_PORT}/solr/${SOLR_CORE}/dataimport?command=full-import&amp;optimize=true&amp;clean=true&amp;wt=json&amp;indent=true"/>
         </exec>
         <echo message=" ---- "/>
         <echo message="You can watch progress at http://${DOMAIN_NAME}/solr/${SOLR_CORE}/dataimport"/>
@@ -76,7 +76,7 @@
         <echo message="Starting Solr index build via http..."/>
         <exec executable="curl">
             <arg value="-s"/>
-            <arg value="http://localhost:${SOLR_PORT}/solr/${SOLR_CORE}/dataimport?command=full-import&amp;clean=false&amp;entity=publication&amp;wt=json&amp;indent=true"/>
+            <arg value="http://${SOLR_HOST}:${SOLR_PORT}/solr/${SOLR_CORE}/dataimport?command=full-import&amp;clean=false&amp;entity=publication&amp;wt=json&amp;indent=true"/>
         </exec>
         <echo message=" ---- "/>
         <echo message="You can watch progress at http://${DOMAIN_NAME}/solr/${SOLR_CORE}/dataimport"/>
@@ -89,7 +89,7 @@
 
     <target name="delete-solr-fish-documents">
         <exec executable="curl">
-            <arg value="http://localhost:${SOLR_PORT}/solr/${SOLR_CORE}/update?commit=true"/>
+            <arg value="http://${SOLR_HOST}:${SOLR_PORT}/solr/${SOLR_CORE}/update?commit=true"/>
             <arg value="-sH"/>
             <arg value="Content-Type: text/xml"/>
             <arg value="--data-binary"/>
@@ -101,7 +101,7 @@
         <echo message="Starting Solr index build via http..."/>
         <exec executable="curl">
             <arg value="-s"/>
-            <arg value="http://localhost:${SOLR_PORT}/solr/${SOLR_CORE}/dataimport?command=full-import&amp;clean=false&amp;commit=true&amp;entity=fish&amp;wt=json&amp;indent=true"/>
+            <arg value="http://${SOLR_HOST}:${SOLR_PORT}/solr/${SOLR_CORE}/dataimport?command=full-import&amp;clean=false&amp;commit=true&amp;entity=fish&amp;wt=json&amp;indent=true"/>
         </exec>
         <echo message=" ---- "/>
         <echo message="You can watch progress at http://${DOMAIN_NAME}/solr/${SOLR_CORE}/dataimport"/>
@@ -127,7 +127,7 @@
         <echo message="Reloading solr core via http..."/>
         <exec executable="curl">
             <arg value="-s"/>
-            <arg value="http://localhost:${SOLR_PORT}/solr/admin/cores?action=RELOAD&amp;core=${SOLR_CORE}"/>
+            <arg value="http://${SOLR_HOST}:${SOLR_PORT}/solr/admin/cores?action=RELOAD&amp;core=${SOLR_CORE}"/>
         </exec>
     </target>
 

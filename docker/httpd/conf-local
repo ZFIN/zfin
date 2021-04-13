@@ -1,0 +1,136 @@
+# Global zfin.org setup
+# this applies to all virtual hosts
+#
+SSLCACertificateFile /etc/pki/tls/certs/incommon_intermediate_bundle.crt
+SSLCertificateFile   /etc/pki/tls/certs/zfin_2021.crt
+SSLCertificateKeyFile   /etc/pki/tls/private/zfin_2021.key
+
+Timeout 1200
+
+# IP              Host                                  Purpose
+# 128.223.5[6|7]  research park                         office access
+# 184.171.92.     *.zfin.org                            server subnet
+# 128.223.*       uoregon.edu                           Anyone on campus.
+# 67.171.232.56   c-67-171-232-56.client.comcast.net    Monte at home
+
+#SetEnvIf Remote_Addr "(128.223.5[67])|(184.171.92.)" ZfinRestrictedHosts
+SetEnvIf Remote_Addr "(128.223.(4.124|5[67]|28))|(128.223.5.177)|(128.223.4.107)|(128.223.4.120)|(184.171.92.)" ZfinRestrictedHosts
+ 
+#SetEnvIf Remote_Addr "(128.223.|67.171.232.56|184.171.92.)" ZfinHosts
+SetEnvIfExpr "-R '128.223.0.0/16' || -R '67.171.232.56' || -R '184.171.0.0/17' || -R '163.41.128.0/17' || -R '10.128.0.0/16' || -R '10.108.0.0/14' || -R '10.174.0.0/20'" ZfinHosts
+
+# Here's some people we don't want to hear from
+SetEnvIf User-Agent "(Website Quester - www.asona.org)|(Offline Explorer/*)|(Web2Map/*)|(Mozilla/5.0 (compatible; Yahoo! Slurp; http://help.yahoo.com/help/us/ysearch/slurp))|MJ12bot|Baiduspider|Sogou|Yandex" RejectRequest
+SetEnvIf User-Agent "^$" RejectRequest
+
+#DPC Also disable a few bad IPs
+#DPC 204.251.10.202   findexe.com
+#DPC 155.230.158.26   molgen.kyungpook.ac.kr
+#PRS 66.249.67.166    crawl-66-249-67-166.googlebot.com
+#PRS 76.169.230.33    cpe-76-169-230-33.socal.res.rr.com
+#PRS 68.48.9.55       c-68-48-9-55.hsd1.md.comcast.net
+SetEnvIf Remote_Addr "(87.245.153.182)|(204.251.10.202)|(155.230.158.26)|(38.99.44.102)|(66.249.67.166)|(76.169.230.33)|(68.48.9.55)|(140.121.200.218)|(67.195.37.111)|(162.105.248.186)|(91.224.161.250)|(209.144.20.18)|(66.249.67.235)|(220.181.125.154)|(64.69.57.32)|(64.69.57.33)|(13.92.137.116)|(100.27.42.242)" RejectRequest
+
+<Directory />
+  AllowOverride None
+  Require all denied
+</Directory>
+
+#limit proxy to limited set of hosts 
+<Proxy *>
+  <RequireAll>
+    Require all granted
+    Require not env RejectRequest
+  </RequireAll>
+</Proxy>
+
+# setup all homes to have the same restrictions
+<Directory /srv/www/*/home>
+  Options FollowSymLinks ExecCGI IncludesNOEXEC
+  <RequireAll>
+    Require all granted
+    Require not env RejectRequest
+  </RequireAll>
+</Directory>
+<Directory /srv/www/*/cgi-bin*>
+  Options FollowSymLinks
+  <RequireAll>
+    Require all granted
+    Require not env RejectRequest
+  </RequireAll>
+</Directory>
+<Directory /srv/www/*/home/WEB-INF>
+  Require all denied
+</Directory>
+<Directory /srv/www/*/home/ZFIN/APP_PAGES>
+  Require all denied
+</Directory>
+
+#Don't expire webpack controlled files
+<Directory /srv/www/*/home/dist>
+  ExpiresActive On
+  ExpiresDefault "access 1 year"
+</Directory>
+
+# Add alias for images stored in filesystem
+Alias /imageLoadUp "/opt/zfin/loadUp/pubs"
+Alias /PDFLoadUp "/opt/zfin/loadUp/pubs"
+<Directory "/opt/zfin/loadUp/pubs">
+  AllowOverride None
+  <RequireAll>
+   Require all granted
+   Require not env RejectRequest
+  </RequireAll>
+  <FilesMatch ".+\.(?i)(pdf|doc|docx|xls|xlsx|nxml)$">
+    SSLRequireSSL
+    Require env ZfinHosts
+    AuthName "LDAP Login - Any User"
+    AuthType Basic
+    AuthBasicProvider ldap
+    AuthLDAPUrl "ldaps://bouncer1.zfin.org bouncer2.zfin.org/cn=users,cn=accounts,dc=zfin,dc=org?uid"
+    Require valid-user
+  </FilesMatch>
+</Directory>
+ 
+# Add alias for pdfs stored in filesystem
+#Alias /PDFLoadUp "/opt/zfin/loadUp/PDFLoadUp"
+#<Directory "/opt/zfin/loadUp/PDFLoadUp">
+#  AllowOverride None
+#  Require env ZfinRestrictedHosts
+#</Directory>
+
+# Add alias for videos stored in filesystem
+Alias /videoLoadUp "/opt/zfin/loadUp/pubs/videoLoadUp"
+<Directory "/opt/zfin/loadUp/pubs/videoLoadUp">
+  AllowOverride None
+  <RequireAll>
+   Require all granted
+   Require not env RejectRequest
+  </RequireAll>
+</Directory>
+
+# Add alias for van der Ven Histology Atlas
+Alias /hh_atlas "/opt/zfin/hh_atlas"
+<Directory "/opt/zfin/hh_atlas">
+  AllowOverride None
+  <RequireAll>
+   Require all granted
+   Require not env RejectRequest
+  </RequireAll>
+</Directory>
+
+# Add alias for AdamAmsterdam files stored in filesystem
+Alias /AdamAmsterdamFiles "/opt/zfin/loadUp/pubs/AdamAmsterdamFiles"
+<Directory "/opt/zfin/loadUp/pubs/AdamAmsterdamFiles">
+  AllowOverride None
+  <RequireAll>
+   Require all granted
+   Require not env RejectRequest
+  </RequireAll>
+</Directory> 
+
+#
+#Load up the Virtual Hosts
+#
+Include conf/zfin/conf-zfin.org
+#Include conf/zfin/conf-wiki.zfin.org
