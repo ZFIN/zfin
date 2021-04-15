@@ -52,6 +52,7 @@
 <!--|PDF_LOAD|-->	/PDFLoadUp
 <!--|PGBINDIR|-->	/opt/postgres/postgresql/bin
 <!--|PGDATA|-->	/opt/postgres/data
+<!--|PGHOST|-->	localhost
 <!--|REQUEST_NEW_ANATOMY_EMAIL|-->	informix\@zfin.org
 <!--|ROOT_PATH|-->	/opt/zfin/www_homes/sandbox
 <!--|SECURE_HTTP|-->	https://
