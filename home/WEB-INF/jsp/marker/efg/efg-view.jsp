@@ -18,6 +18,8 @@
         <z:dataManagerDropdown>
             <a class="dropdown-item" href="/action/marker/gene/edit/${formBean.marker.zdbID}">Edit</a>
             <a class="dropdown-item" href="/action/infrastructure/deleteRecord/${formBean.marker.zdbID}">Delete</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="/action/marker/efg/prototype-edit/${formBean.marker.zdbID}">Prototype Edit</a>
         </z:dataManagerDropdown>
 
         <div id="${zfn:makeDomIdentifier(SUMMARY)}">
