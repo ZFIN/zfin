@@ -94,16 +94,6 @@ task loadFlankSeq(type: JavaExec) {
     main = 'org.zfin.datatransfer.flankingsequence.FlankSeqLoadJob'
 }
 
-task synchronizeAntibodies(type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    main = 'org.zfin.wiki.jobs.AntibodyWikiSynchronizationJob'
-    args = [
-            "${webDir}/zfin.properties",
-            "${validateData}/report_data",
-            "Synchronize-Antibodies-Zfin-Wiki_w"
-    ]
-}
-
 task checkEapPatoTerms(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.ontology.jobs.CheckEapPatoTermsJob'
@@ -112,37 +102,6 @@ task checkEapPatoTerms(type: JavaExec) {
             "${validateData}/report_data",
             "Check-Eap-Pato-Terms_d"
     ]
-}
-
-task validateZebrafishBookPermissions(type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    main = 'org.zfin.wiki.jobs.ValidatePermissionsForZebrafishBookJob'
-    args = [
-            "${webDir}/zfin.properties",
-            "${validateData}/report_data",
-            "Set-Permissions-Zebrafish-Book-Wiki_d"
-    ]
-    println "Check file: ${validateData}/validatedata/Set-Permissions-Zebrafish-Book-Wiki_d/Set-Permissions-Zebrafish-Book-Wiki_d.faulty-pages.txt"
-}
-task cleanWikiSandbox(type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    main = 'org.zfin.wiki.jobs.ValidatePermissionsForZebrafishBookJob'
-    args = [
-            "${webDir}/zfin.properties",
-            "${validateData}/report_data",
-            "Clean-Wiki-Sandbox_w"
-    ]
-
-}
-task setWikiPagePermissionsToOwner(type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    main = 'org.zfin.wiki.jobs.SetPermissionsToOwnerJob'
-    args = [
-            "${webDir}/zfin.properties",
-            "${validateData}/report_data",
-            "Set-Wiki-Page-Permissions-To-Owner_d"
-    ]
-
 }
 
 task removeGoTermsFromWithdrawnMarkers(type: JavaExec) {
