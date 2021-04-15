@@ -47,15 +47,6 @@ public class EfgEditController {
         }
 
         model.addAttribute("efg", efg);
-
-/*
-        addJsonAttribute(model, "hostSpeciesList", mapSpeciesCommonNames(antibodyRepository.getHostSpeciesList()));
-        addJsonAttribute(model, "immunogenSpeciesList", mapSpeciesCommonNames(antibodyRepository.getImmunogenSpeciesList()));
-        addJsonAttribute(model, "heavyChainIsotypes", mapString(Isotype.HeavyChain.values()));
-        addJsonAttribute(model, "lightChainIsotypes", mapString(Isotype.LightChain.values()));
-        addJsonAttribute(model, "clonalTypes", new String[]{ AntibodyType.MONOCLONAL.getValue(), AntibodyType.POLYCLONAL.getValue() });
-*/
-
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Edit " + efg.getAbbreviation());
 
         return "marker/efg/efg-edit";
