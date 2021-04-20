@@ -70,7 +70,7 @@ public class SearchPrototypeController {
 
 
     public String viewWtExpressionGalleryResults(String geneZdbId, Model model, HttpServletRequest request) {
-        String fq[] = { "category:\"Expression\"",
+        String fq[] = {"category:\"Expression\"",
                 "conditions:\"standard or control\"",
                 "-sequence_targeting_reagent:[* TO *]",
                 "is_genotype_wildtype:true",
@@ -100,7 +100,8 @@ public class SearchPrototypeController {
         if (page == null) {
             page = 1;
         }
-        category = POLICY.sanitize(String.valueOf(category));
+        if (category != null)
+            category = POLICY.sanitize(category);
 
         if (StringUtils.isNotEmpty(q)) {
             q = q.trim();
@@ -356,7 +357,7 @@ public class SearchPrototypeController {
         }
         model.addAttribute("rowsUrlSeparator", rowsUrlSeparator);
         model.addAttribute("rows", rows);
-        model.addAttribute("allowDownload", solrService.allowDownload(q,filterQuery));
+        model.addAttribute("allowDownload", solrService.allowDownload(q, filterQuery));
         model.addAttribute("downloadUrl", baseUrl.replaceAll("^/search", "/action/quicksearch/download"));
 
         paginationBean.setPage(page.toString());
@@ -581,7 +582,7 @@ public class SearchPrototypeController {
         response.setHeader("Content-Disposition", "attachment; filename=\"zfin_search_results.csv\"");
 
         SolrQuery query = new SolrQuery();
-        query.setParam("wt","csv");
+        query.setParam("wt", "csv");
 
         category = getCategory(filterQuery, category);
 
@@ -699,8 +700,8 @@ public class SearchPrototypeController {
     public String phenotypeModal(Model model, @PathVariable String geneZdbID) {
         Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(geneZdbID);
         // graceful return.
-        if(gene == null)
-            return "No gene found by ID: "+geneZdbID;
+        if (gene == null)
+            return "No gene found by ID: " + geneZdbID;
         SolrService.getPhenotypeLink(gene.getAbbreviation());
         Map<String, String> phenotypeLinks = SolrService.getPhenotypeLink(gene.getAbbreviation());
         model.addAttribute("phenotypeLinks", phenotypeLinks);
@@ -810,10 +811,11 @@ public class SearchPrototypeController {
     }
 
 
-
     private void injectHighlighting(List<SearchResult> results, QueryResponse response) {
 
-        if (response.getHighlighting() == null) {  return; }
+        if (response.getHighlighting() == null) {
+            return;
+        }
 
         for (SearchResult result : results) {
             result.setHighlights(solrService.getHighlights(result.getId(), response));
