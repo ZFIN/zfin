@@ -7,7 +7,8 @@ system("/bin/rm -f gene_association2.2.zfin");
 system("/bin/rm -f gene_association2.2_all.zfin");
 $versionNumber += 0.001;
 
-open (UNL1, ">gene_association2.2.zfin") or die "Cannot open gene_association2.2.zfin";
+
+open (UNL1, ">gene_association2.2_automated_only.zfin") or die "Cannot open gene_association2.2_automated_only.zfin";
 
 print UNL1 "!gaf-version: 2.2\n";
 printf UNL1 "!Version: %.3f\n", $versionNumber;
@@ -16,7 +17,7 @@ print UNL1 "!generated-by: ZFIN \n";
 print UNL1 "! \n";
 
 
-open (UNL2, ">gene_association2.2_all.zfin") or die "Cannot open gene_association2.2_all.zfin";
+open (UNL2, ">gene_association2.2.zfin") or die "Cannot open gene_association2.2.zfin";
 
 print UNL2 "!gaf-version: 2.2\n";
 printf UNL2 "!Version: %.3f\n", $versionNumber;
