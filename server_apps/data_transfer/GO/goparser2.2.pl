@@ -4,26 +4,26 @@
 #
 
 system("/bin/rm -f gene_association2.2.zfin");
-system("/bin/rm -f gene_association2.2_all.zfin");
+system("/bin/rm -f gene_association2.2_automated_only.zfin");
 $versionNumber += 0.001;
 
 
-open (UNL1, ">gene_association2.2_automated_only.zfin") or die "Cannot open gene_association2.2_automated_only.zfin";
+open (automated_only, ">gene_association2.2_automated_only.zfin") or die "Cannot open gene_association2.2_automated_only.zfin";
 
-print UNL1 "!gaf-version: 2.2\n";
-printf UNL1 "!Version: %.3f\n", $versionNumber;
-print UNL1 "!date-generated: ".`/bin/date +%Y-%m-%d`;
-print UNL1 "!generated-by: ZFIN \n";
-print UNL1 "! \n";
+print automated_only "!gaf-version: 2.2\n";
+print automated_only "!Version: %.3f\n", $versionNumber;
+print automated_only "!date-generated: ".`/bin/date +%Y-%m-%d`;
+print automated_only "!generated-by: ZFIN \n";
+print automated_only "! \n";
 
 
-open (UNL2, ">gene_association2.2.zfin") or die "Cannot open gene_association2.2.zfin";
+open (all_annot, ">gene_association2.2.zfin") or die "Cannot open gene_association2.2.zfin";
 
-print UNL2 "!gaf-version: 2.2\n";
-printf UNL2 "!Version: %.3f\n", $versionNumber;
-print UNL2 "!date-generated: ".`/bin/date +%Y-%m-%d`;
-print UNL2 "!generated-by: ZFIN \n";
-print UNL2 "! \n";
+print all_annot "!gaf-version: 2.2\n";
+print all_annot "!Version: %.3f\n", $versionNumber;
+print all_annot "!date-generated: ".`/bin/date +%Y-%m-%d`;
+print all_annot "!generated-by: ZFIN \n";
+print all_annot "! \n";
 
 
 # set count to 0 before processing, increment it with each row processed.
@@ -33,11 +33,11 @@ $lastgrp=0;
 @rel_array= ();
 $db='ZFIN';
 
-open (INDEXFILE1, "go.zfin2") or die "open failed";
-open (INDEXFILE2, "go.zfin2_all") or die "open failed";
+open (automated_only_annots, "go.zfin2") or die "open failed";
+open (all_annots, "go.zfin2_all") or die "open failed";
 
-while ($line = <INDEXFILE1>) {
-      process($line, \*UNL1);
+while ($line = <automated_only_annots>) {
+      process($line, \*automated_only);
 }
 
 # set count to 0 before processing, increment it with each row processed.
@@ -47,8 +47,8 @@ $lastgrp=0;
 @rel_array= ();
 $db='ZFIN';
 
-while ($line2 = <INDEXFILE2>){
-    process($line2, \*UNL2);
+while ($line2 = <all_annots>){
+    process($line2, \*all_annot);
 }
 
 sub process() {

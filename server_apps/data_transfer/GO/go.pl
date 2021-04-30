@@ -123,9 +123,9 @@ try {
 };
 
 try {
-  ZFINPerlModules->doSystemCommand("/bin/rm -f gene_association2.2_all.zfin.gz");
+  ZFINPerlModules->doSystemCommand("/bin/rm -f gene_association2.2_automated_only.zfin.gz");
 } catch {
-  warn "Failed at rm -f gene_association2.2.zfin.gz - $_";
+  warn "Failed at rm -f gene_association2.2_automated_only.zfin.gz - $_";
   exit -1;
 };
 
@@ -138,9 +138,9 @@ try {
 };
 
 try {
-  ZFINPerlModules->doSystemCommand("/local/bin/gzip gene_association2.2_all.zfin");
+  ZFINPerlModules->doSystemCommand("/local/bin/gzip gene_association2.2_automated_only.zfin");
 } catch {
-  warn "Failed at gzip gene_association2.2.zfin - $_";
+  warn "Failed at gzip gene_association2.2_automated_only.zfin - $_";
   exit -1;
 };
 
