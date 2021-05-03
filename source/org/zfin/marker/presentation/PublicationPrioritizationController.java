@@ -42,7 +42,7 @@ public class PublicationPrioritizationController {
     public JsonResultResponse<Prioritization> getGenePubPrioritization(@PathVariable String publicationId,
                                                                        @Version Pagination pagination) {
 
-        List<Marker> attributedMarker = getPublicationRepository().getGenesByPublication(publicationId,false);
+        List<Marker> attributedMarker = getPublicationRepository().getGenesByPublication(publicationId, false);
         Map<Marker, Boolean> isNewGeneMap = getPublicationRepository().areNewGenePubAttribution(attributedMarker, publicationId);
         List<Prioritization> prioList = attributedMarker.stream()
                 .map(marker -> {
@@ -116,9 +116,10 @@ public class PublicationPrioritizationController {
                     prioritization.setId(feature.getZdbID());
                     prioritization.setName(feature.getAbbreviation());
                     prioritization.setNewWithThisPaper(getPublicationRepository().isNewFeaturePubAttribution(feature, publicationId));
-                    prioritization.setAffectedMarkerId(feature.getAllelicGene().getZdbID());
-                    //     prioritization.setMarker(marker);
-                    prioritization.setAffectedMarkerName(feature.getAllelicGene().getAbbreviation());
+                    if (feature.getAllelicGene() != null) {
+                        prioritization.setAffectedMarkerId(feature.getAllelicGene().getZdbID());
+                        prioritization.setAffectedMarkerName(feature.getAllelicGene().getAbbreviation());
+                    }
                     PhenotypeOnMarkerBean bean = FeatureService.getPhenotypeOnFeature(feature);
                     if (bean != null) {
                         prioritization.setPhenotypeFigures(bean.getNumFigures());
