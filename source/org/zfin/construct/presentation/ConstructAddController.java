@@ -95,9 +95,6 @@ public class ConstructAddController {
 
         if (markerList.size() > 0) {
             return "\"" + constructName + "\" is not a unique name";
-        } else if (constructName.contains(".-")) {
-            return "\"" + constructName + "\" contains a dot followed by a hyphen, Please check";
-
         } else if (constructName.contains("..")) {
             return "\"" + constructName + "\" contains a dot followed by a dot, Please check";
         } else if (constructName.contains(".,")) {
