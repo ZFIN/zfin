@@ -116,6 +116,9 @@ public class PublicationPrioritizationController {
                     prioritization.setId(feature.getZdbID());
                     prioritization.setName(feature.getAbbreviation());
                     prioritization.setNewWithThisPaper(getPublicationRepository().isNewFeaturePubAttribution(feature, publicationId));
+                    prioritization.setAffectedMarkerId(feature.getAllelicGene().getZdbID());
+                    //     prioritization.setMarker(marker);
+                    prioritization.setAffectedMarkerName(feature.getAllelicGene().getAbbreviation());
                     PhenotypeOnMarkerBean bean = FeatureService.getPhenotypeOnFeature(feature);
                     if (bean != null) {
                         prioritization.setPhenotypeFigures(bean.getNumFigures());

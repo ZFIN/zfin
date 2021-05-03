@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
 import org.zfin.framework.api.View;
+import org.zfin.marker.Marker;
+
+import java.util.List;
 
 @Setter
 @Getter
@@ -31,4 +34,8 @@ public class Prioritization {
     private Integer expressionPublication = 0;
     @JsonView(View.API.class)
     private Integer expressionInSitu = 0;
+    @JsonView(View.API.class)
+    private String affectedMarkerId;
+    @JsonView(View.API.class)
+    private String affectedMarkerName;
 }

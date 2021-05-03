@@ -12,6 +12,11 @@ const PubAlleleTable = ({pubId}) => {
             width: '150px',
         },
         {
+            label: 'Is allele of',
+            content: row => <a href={`/${row.affectedMarkerId}`}>{row.affectedMarkerName}</a>,
+            width: '100px',
+        },
+        {
             label: 'New with this paper',
             content: row => row.newWithThisPaper ? <i className='text-muted'>Yes </i> : <i className='text-muted'>No</i>,
             width: '120px',
