@@ -117,7 +117,7 @@ public class ExpressionService {
 
     public DirectlySubmittedExpression getDirectlySubmittedThisseExpression(Marker marker) {
         // this is almost always 1
-        List<PublicationExpressionBean> pubList = expressionRepository.getThisseExpressionForGene(marker,getThissePublicationZdbIDs());
+        List<PublicationExpressionBean> pubList = expressionRepository.getThisseExpressionForGene(marker, getThissePublicationZdbIDs());
 
         // this is almost always 1, so not too expensive
         for (PublicationExpressionBean publicationExpressionBean : pubList) {
@@ -127,7 +127,7 @@ public class ExpressionService {
         DirectlySubmittedExpression directlySubmittedExpression = new DirectlySubmittedExpression();
         directlySubmittedExpression.setMarkerExpressionInstances(pubList);
 
-        return directlySubmittedExpression;
+        return CollectionUtils.isEmpty(directlySubmittedExpression.getMarkerExpressionInstances()) ? null : directlySubmittedExpression;
     }
 
     public DirectlySubmittedExpression getDirectlySubmittedExpressionEfg(Marker marker) {
@@ -253,8 +253,7 @@ public class ExpressionService {
         try {
             String accessionNumber = URLEncoder.encode(linkPrefix + accNumString, StandardCharsets.UTF_8.toString());
             gxaLinkDisplay.setAccession(accessionNumber);
-        }
-        catch (UnsupportedEncodingException ex) {
+        } catch (UnsupportedEncodingException ex) {
             throw new RuntimeException(ex.getCause());
         }
         gxaLinkDisplay.setMarkerZdbID(mrkrZdbID);
@@ -305,7 +304,7 @@ public class ExpressionService {
                 expressionRepository.getExpressionFigureCountForGene(marker));
 
         markerExpression.setAllExpressionData(allMarkerExpressionInstance);
-        markerExpression.setExpressionAtlasLink(getExpressionAtlasForMarker(marker.zdbID,ForeignDB.AvailableName.EXPRESSIONATLAS));
+        markerExpression.setExpressionAtlasLink(getExpressionAtlasForMarker(marker.zdbID, ForeignDB.AvailableName.EXPRESSIONATLAS));
 
         // directly submitted
         logger.info("setting directly submitted expression");
@@ -950,19 +949,19 @@ public class ExpressionService {
         addInSituFilter(query, onlyInSitu);
 
         String jsonFacet = "{" +
-            "  images: {" +
-            "    terms: {" +
-            "      field: img_zdb_id," +
-            "      limit: " + pagination.getLimit() + "," +
-            "      offset: " + pagination.getStart() + "," +
-            "      numBuckets: true," +
-            "      sort: \"img_order desc\"," +
-            "      facet : {" +
-            "        img_order: \"max(expression_image_sort)\"" +
-            "      }" +
-            "    }" +
-            "  }" +
-            "}";
+                "  images: {" +
+                "    terms: {" +
+                "      field: img_zdb_id," +
+                "      limit: " + pagination.getLimit() + "," +
+                "      offset: " + pagination.getStart() + "," +
+                "      numBuckets: true," +
+                "      sort: \"img_order desc\"," +
+                "      facet : {" +
+                "        img_order: \"max(expression_image_sort)\"" +
+                "      }" +
+                "    }" +
+                "  }" +
+                "}";
         query.set("json.facet", jsonFacet);
 
         QueryResponse queryResponse = SolrService.getSolrClient().query(query);
