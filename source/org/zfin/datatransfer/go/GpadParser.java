@@ -86,7 +86,6 @@ public class GpadParser extends FpInferenceGafParser {
         gafEntries.forEach(gafEntry -> {
             // replace ECO ID by GO Evidence Code (3-letter codes)
             GenericTerm term = RepositoryFactory.getOntologyRepository().getTermByOboID(gafEntry.getEvidenceCode());
-            System.out.println(gafEntry.getEvidenceCode());
             EcoGoEvidenceCodeMapping ecoCodeMap = RepositoryFactory.getOntologyRepository().getEcoEvidenceCode(term);
             if (ecoCodeMap == null) {
                 logger.error("invalid eco code" + gafEntry.getEvidenceCode());
