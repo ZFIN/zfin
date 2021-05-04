@@ -646,11 +646,13 @@ public class GafService {
     protected GenericTerm getGoTerm(GafEntry gafEntry) throws GafValidationError {
         String inferences = gafEntry.getInferences();
         if (inferences != null && inferences.startsWith("GO:")) {
-            GenericTerm goTermInference = ontologyRepository.getTermByOboID(inferences);
-            validateGoTerm(goTermInference.getOboID(), gafEntry, "Inference");
+            String[] terms = inferences.split("\\|");
+            for (String inference : terms) {
+                validateGoTerm(inference, gafEntry, "Inference");
+            }
         }
         GenericTerm goTerm = ontologyRepository.getTermByOboID(gafEntry.getGoTermId());
-        validateGoTerm(goTerm.getOboID(), gafEntry, "GO Term");
+        validateGoTerm(gafEntry.getGoTermId(), gafEntry, "GO Term");
         return goTerm;
     }
 
