@@ -55,7 +55,7 @@ const MarkerNameForm = ({
                     if (!value) {
                         return 'A name is required';
                     }
-                    const validation = await http.get(`/action/marker/validate?name=${value}`);
+                    const validation = await http.get(`/action/marker/${markerId}/validate?name=${value}`);
                     return validation.errors[0] || false;
                 }, 300)}
             />
@@ -72,7 +72,7 @@ const MarkerNameForm = ({
                         if (!value) {
                             return 'An abbreviation is required';
                         }
-                        const validation = await http.get(`/action/marker/validate?abbreviation=${value}`);
+                        const validation = await http.get(`/action/marker/${markerId}/validate?abbreviation=${value}`);
                         return validation.errors[0] || false;
                     }, 300)}
                 />

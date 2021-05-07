@@ -113,8 +113,9 @@ public class MarkerEditController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/validate", method = RequestMethod.GET)
-    public JSONMessageList queryMarkerLookup(@RequestParam(required = false) String name,
+    @RequestMapping(value = "/{markerID}/validate", method = RequestMethod.GET)
+    public JSONMessageList queryMarkerLookup(@PathVariable String markerID,
+                                             @RequestParam(required = false) String name,
                                              @RequestParam(required = false) String abbreviation) {
         JSONMessageList response = new JSONMessageList();
         List<String> errors = new ArrayList<>();
@@ -124,7 +125,9 @@ public class MarkerEditController {
                 errors.add(messageSource.getMessage(result, null, Locale.ENGLISH));
             }
         }
-        if (StringUtils.isNotEmpty(abbreviation)) {
+        boolean isEFG = ActiveData.getType(markerID).equals(ActiveData.Type.EFG);
+        // do not validate EFG abbreviation.
+        if (StringUtils.isNotEmpty(abbreviation) && !isEFG) {
             String result = NomenclatureValidationService.validateMarkerAbbreviation(abbreviation);
             if (result != null) {
                 errors.add(messageSource.getMessage(result, null, Locale.ENGLISH));
