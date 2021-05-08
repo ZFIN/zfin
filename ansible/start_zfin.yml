@@ -1,0 +1,14 @@
+---
+- hosts: localhost
+  gather_facts: yes
+  tasks:
+    - name: Create ZFIN network
+      docker_network:
+        name: zfin
+
+    - name: Start ZFIN
+      block:
+        - include_tasks: tasks/start_postgres.yml
+        - include_tasks: tasks/start_solr.yml
+        - include_tasks: tasks/start_tomcat.yml
+        - include_tasks: tasks/start_apache.yml
