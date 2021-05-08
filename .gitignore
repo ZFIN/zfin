@@ -16,6 +16,7 @@ server_apps/data_transfer/LoadOntology/logs
 
 # Docker config
 docker/pg_pass
+ansible/pg_pass
 
 # IntelliJ things
 .idea

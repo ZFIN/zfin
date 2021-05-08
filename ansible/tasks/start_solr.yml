@@ -1,0 +1,14 @@
+    - name: Running Solr
+      docker_container:
+        name: "solr"
+        image: "docker_solr"
+        log_driver: "json-file"
+        output_logs: yes
+        state: started
+        interactive: yes
+        #ports:
+        #  - "443:443"
+        networks:
+          - name: "zfin"
+        volumes:
+          - docker_solr_data:/var/solr
