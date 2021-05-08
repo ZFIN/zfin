@@ -1,3 +1,17 @@
+if ("`whoami`" == "root") then
+    set Prompt="# "
+else
+    set Prompt="% "
+endif
+
+if ($?tcsh) then
+ set prompt = "%m [%c3]$Prompt"
+else
+  alias setprompt set prompt = '"`hostname` [$cwd]${Prompt}"'
+  alias cd chdir \!\#\* \; setprompt
+  setprompt
+endif
+
 umask 002
 cd /opt/zfin/source_roots/zfin.org
 source commons/env/docker.env
