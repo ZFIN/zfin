@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- For more compact output, use the xmlcompact option -->
+<BlastOutput>
+    <ZFINParameters/>
+    <BlastOutput_program>blastn</BlastOutput_program>
+    <BlastOutput_version>2.0MP-WashU [04-May-2006] [macosx-10.4-x64-I32LPF64 2006-09-21T14:14:58]</BlastOutput_version>
+    <BlastOutput_reference>Gish, W. (1996-2006) http://blast.wustl.edu</BlastOutput_reference>
+    <BlastOutput_db>/research/zusers/ndunn/ogon_blastfiles/ZFINGenesWithExpression</BlastOutput_db>
+    <BlastOutput_query-ID>your_seq</BlastOutput_query-ID>
+    <BlastOutput_query-def></BlastOutput_query-def>
+    <BlastOutput_query-len>865</BlastOutput_query-len>
+    <BlastOutput_param>
+        <Parameters>
+            <Parameters_expect>1e-25</Parameters_expect>
+            <Parameters_sc-match>1</Parameters_sc-match>
+            <Parameters_sc-mismatch>-3</Parameters_sc-mismatch>
+            <Parameters_gap-open>5</Parameters_gap-open>
+            <Parameters_gap-extend>2</Parameters_gap-extend>
+        </Parameters>
+    </BlastOutput_param>
+    <BlastOutput_iterations>
+        <Iteration>
+            <Iteration_iter-num>1</Iteration_iter-num>
+            <Iteration_hits>
+            </Iteration_hits>
+            <Iteration_stat>
+                <Statistics>
+                    <Statistics_db-num>39910</Statistics_db-num>
+                    <Statistics_db-len>52650686</Statistics_db-len>
+                    <Statistics_hsp-len>18</Statistics_hsp-len>
+                    <Statistics_eff-space>8.88601e+10</Statistics_eff-space>
+                    <Statistics_kappa>0.711</Statistics_kappa>
+                    <Statistics_lambda>1.3741</Statistics_lambda>
+                    <Statistics_entropy>1.3073</Statistics_entropy>
+                </Statistics>
+            </Iteration_stat>
+        </Iteration>
+    </BlastOutput_iterations>
+</BlastOutput>

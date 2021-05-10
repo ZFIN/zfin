@@ -1,0 +1,41 @@
+$primary: #008080 !default; // can be overridden by variable injected by webpack
+$primary-light: scale-color(mix(white, $primary, 90%), $saturation: -50%);
+$primary-dark: darken($primary, 5%);
+
+$grey: #757575;
+$grey-light: #F5F5F5;
+$grey-dark: #424242;
+
+$border-color: #CCCCCC;
+$border-radius: 3px;
+$border-width-heavy: 4px;
+
+$data-popup-icon-color: #196666;
+
+$break-lg: 1200px;
+$break-md: 992px;
+
+$modal-z-index: 1001;
+$input-welcome-z-index: 501;
+$header-z-index: 101;
+$footer-z-index: 1;
+
+$shadow: 0 2px 1px -1px rgba(0,0,0,0.2), 0 1px 1px 0 rgba(0,0,0,0.14), 0 1px 3px 0 rgba(0,0,0,0.12);
+$shadow-elevated: 0 5px 5px -3px rgba(0,0,0,0.2), 0 8px 10px 1px rgba(0,0,0,0.14), 0 3px 14px 2px rgba(0,0,0,0.12);
+
+// ribbon overrides
+$ribbon-species-icon: '';
+$ribbon-primary-color: $primary;
+$ribbon-strip-font-default: inherit;
+$ribbon-strip-tile-border-radius: 0;
+$ribbon-strip-tile-border-color: $border-color;
+$ribbon-strip-tile-border-color-hover: $border-color;
+$ribbon-strip-tile-tile-width: 20px;
+
+// bootstrap overrides
+$font-size-base: 0.875rem;
+$table-cell-padding: 0.5rem;
+$label-margin-bottom: 0.3125rem;
+$font-family-sans-serif: Arial, sans-serif;
+$link-color: blue;
+$modal-md: 600px;

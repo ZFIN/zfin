@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <include file="source/org/zfin/db/postGmakePostloaddb/1106/CUR-885.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1106/CUR-887.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1106/CUR-890.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1106/CUR-888.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1106/ZFIN-6158.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1106/ZFIN-6179.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1106/CUR-891.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1106/ZFIN-6166.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1106/ONT-677.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1106/ZFIN-6093.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1106/DLOAD-621_pre.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1106/DLOAD-621.xml" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1106/DLOAD-621.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1106/DLOAD-621b_pre.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1106/DLOAD-621b.xml" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1106/DLOAD-621b.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1106/DLOAD-621c_pre.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1106/DLOAD-621c.xml" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1106/DLOAD-621c.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1106/DLOAD-621chr_pre.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1106/DLOAD-621chr.xml" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1106/DLOAD-621chr.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1106/DLOAD-621flanking.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1106/DLOAD-621mutdets_pre.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1106/DLOAD-621mutdets.xml" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1106/DLOAD-621mutdets.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1106/DLOAD-621conseq_pre.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1106/DLOAD-621conseq.xml" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1106/DLOAD-621conseq.sql" />
+
+</databaseChangeLog>

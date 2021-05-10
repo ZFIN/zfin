@@ -1,0 +1,1192 @@
+#zebrafish staging 
+zygote - one cell (0h)
+	cell
+	yolk 
+cleavage - 2 cell (0.75h)
+	blastomere 
+	extraembryoni
+		yolk
+cleavage - 4 cell (1h)
+	blastomere 
+	extraembryonic
+		yolk
+cleavage - 8 cell (1.25h)
+	blastomere 
+	extraembryonic
+		yolk
+cleavage - 16 cell (1.5h)
+	blastomere 
+	extraembryonic
+		yolk
+cleavage - 32 cell (1.75h)
+	blastomere 
+	extraembryonic
+		yolk
+cleavage - 64 cell (2h)
+	embryo
+		deep blastomere 
+	extraembryonic
+		yolk
+		EVL blastomere
+blastula - 128 cell (2.25h)
+	embryo
+		deep blastomere 
+	extraembryonic
+		yolk
+		EVL blastomere
+blastula - 256 cell (2.5h)
+	embryo
+		deep blastomere 
+	extraembryonic
+		yolk
+		EVL blastomere
+blastula - 512 cell (2.75h, midblastula transition)
+	embryo
+		deep blastomere 
+	extraembryonic
+		yolk
+		EVL blastomere
+blastula - 1K cell (3h)
+	embryo
+		deep blastomere 
+	extraembryonic
+		yolk
+		EVL 
+		YSL
+blastula - high (3.3h)
+	embryo
+		deep blastomere 
+	extraembryonic
+		yolk
+		EVL
+		YSL
+		marginal blastomere? 
+blastula - oblong (3.7h)
+	embryo
+		superficial, deep blastomere 
+	extraembryonic
+		yolk
+		EVL
+		I-ESL, E-YSL 
+blastula - sphere (4h)
+	embryo
+			superficial, deep blastomere 
+	extraembryonic
+		yolk
+		EVL
+		I -ESL, E-YSL
+blastula - dome (4.3h)
+	embryo
+		superficial, deep blastomere 
+	extraembryonic
+		yolk
+		EVL
+		I-ESL, E-YSL 
+blastula - 30	 epiboly (4.7h)
+	embryo, blastoderm
+		deep cell multilayer (DEL)
+	extraembryonic
+		yolk
+		EVL
+		I-ESL, E-YSL 
+gastrula - 50	 epiboly (5.25h)
+	embryo, blastoderm 
+		deep cell multilayer (DEL)
+		forerunner cells
+	extraembryonic
+		yolk
+		EVL
+		I-ESL, E-YSL 
+gastrula - germ ring (5.7h)
+	embryo, blastoderm 
+		deep cell multilayer (DEL)
+		germ ring 
+			epiblast
+			hypoblast
+		forerunner cells
+	extraembryonic
+		yolk
+		EVL
+		I-ESL, E-YSL 
+gastrula - shield (6h)
+	embryo, blastoderm 
+		deep cell multilayer (DEL)
+		germ ring 
+			epiblast
+			hypoblast
+		shield 
+		epiblast
+		hypoblast
+		forerunner cells
+	extraembryonic
+		yolk
+		EVL
+		I-ESL, E-YSL 
+gastrula - 75	 epiboly (8h)
+	embryo
+		deep cell multilayer (DEL)
+		epiblast
+		hypoblast
+			anterior axial hypoblast (fut. prechordal plate)
+		mesoderm
+			axial chorda mesoderm, paraxial segmental plate
+		forerunner cells
+	extraembryonic
+		yolk
+		EVL
+		I-ESL, E-YSL 
+gastrula - 90	 epiboly (9h)
+	embryo
+		Brachet's cleft (marker)
+		DEL cells (future notochord, somites, some neurons) 
+		epiblast 
+		neural plate (dorsal epiblast)
+		hypoblast
+			anterior axial hypoblast (fut. prechordal plate)
+		mesoderm
+			axial chorda mesoderm
+			paraxial segmental plate
+		forerunner cells
+	extraembryonic
+		yolk
+		EVL
+		I-ESL, E-YSL 
+gastrula - bud (10h)
+	embryo
+		Brachet's cleft (marker)
+		DEL cells (future notochord, somites, some neurons) 
+		epiblast 
+			neural plate 
+			presumptive neural tube 
+		hypoblast
+			prechordal plate
+			polster
+		mesoderm
+			axial chorda mesoderm
+			paraxial segmental plate
+		tail bud
+		forerunner cells
+		forerunner cells
+	extraembryonic
+		yolk
+		EVL
+		I-ESL, E-YSL 
+segmentation - 1 somite (10.5h)
+	embryo
+		Brachet's cleft (marker still?)
+		presumptive central nervous system 
+			pre-brain region 
+			early neural tube 
+			optic primordium (late stage)
+		endoderm
+		mesoderm
+			axial chorda mesoderm
+			paraxial segmental plate 
+				somite 1
+			polster
+			prechordal plate
+		tail bud
+		forerunner cells
+	extraembryonic
+		yolk
+		EVL
+		I-ESL, E-YSL 
+segmentation - 5 somite (11.7h) 
+	embryo
+		Brachet's cleft (marker still?)
+		presumptive central nervous system 
+			pre-brain region 
+			neural keel
+			neural plate (future spinal cord) 
+			optic primordium
+			notochord (mid stage)
+		endoderm
+		mesoderm
+			axial chorda mesoderm
+			paraxial segmental plate 
+				somites 1-5
+			polster
+			prechordal plate
+		sensory system
+			optic vesicle
+		tail bud
+			Kupffer's vesicle (future mesoderm, notochord)
+	extraembryonic
+		yolk
+		EVL
+		I-ESL, E-YSL 
+segmentation - 8 somite substage? (12.5h) 
+	embryo
+		presumptive central nervous system 
+			brain region 
+			neural keel 
+			neural plate (future spinal cord) 
+			optic vesicle 
+			neural crest migration (cephalic, trunk)
+			trigeminal (V) placode
+		endoderm
+		mesoderm
+			axial chorda mesoderm
+			notochord 
+			paraxial segmental plate 
+			somites 1-8
+			prechordal plate
+			polster
+		tail bud
+			Kupffer's vesicle (future mesoderm, notochord)
+	extraembryonic
+		yolk
+		EVL
+		I-ESL, E-YSL 
+segmentation 14 somite (16h)
+	Embryo
+		ectoderm
+		endoderm
+		mesoderm
+			axial chorda mesoderm
+			paraxial segmental plate 
+				somites 1-14
+			myotomes with epaxial & hypaxial regions
+				muscle pioneer cells
+			notochord
+			polster
+			prechordal plate
+		neural crest 
+			cephalic
+			trunk
+		organ system
+			nervous system
+				central nervous system
+					brain
+						forebrain
+							telencephalon (N1)
+							diencephalon (N2)
+						midbrain (N3)
+						hindbrain
+							rhombomeres r2-r6 (N4-8)
+					neural rod (future spinal cord) 
+				peripheral nervous system
+					peripheral sensory axons
+					trigeminal (V) placode
+			sensory system 
+				eye
+					lens primordium ??
+					optic primordium 
+				otic placode
+			urogenital system 
+				pronephric duct
+		tail bud
+			Kupffer's vesicle (future mesoderm, notochord)
+	extraembryonic
+		yolk
+			ball
+			extension
+		EVL
+		I-ESL, E-YSL
+segmentation - 20 somite (19h)
+	embryo
+		ectoderm
+			lateral line primordium
+		endoderm
+		mesoderm
+			axial chorda mesoderm
+			intermediate mass of mesoderm (future blood islands)
+			paraxial segmental plate 
+				somites 1-17
+				myotomes with epaxial & hypaxial regions
+				muscle pioneer cells
+				sclerotome at this stage?
+			notochord
+			prechordal plate
+			polster
+		neural crest
+			cephalic
+			trunk
+		organ system
+			nervous system
+				central nervous system
+					brain add ventricles
+						forebrain
+							telencephalon (N1)
+								interneurons
+							diencephalon (N2)
+								interneurons
+						midbrain (N3)
+								interneurons
+						hindbrain
+							cerebellum primordium 
+							rhombomeres r2-r8 (N4-10)
+								interneurons
+								Mauthner neuron (r4)
+					neural tube
+						primary neurons
+						primary motorneurons
+						Rohon-Beard neurons
+				peripheral nervous system
+					trigeminal (V) ganglion
+						neurons 
+			sensory system 
+				eye
+					optic vesicle
+					lens 
+				ear
+					otic vesicle
+					otoliths
+			urogenital system
+				pronephric duct 
+				pronephros ??
+		phryngeal arch primordium now or later??
+		tail 
+			Kupffer's vesicle (future mesoderm, notochord)
+			Somites 18-20
+	extraembryonic
+		yolk
+			ball
+			extension
+		EVL
+		I-ESL, E-YSL
+segmentation - 26 somite (22h, prim-3)
+	embryo
+		cavity
+			pericardial sac - mid stage??
+		ectoderm
+			lateral line primordium
+		endoderm
+		mesoderm
+			axial chorda mesoderm
+			blood islands
+			paraxial segmental plate 
+				somites 1-17
+				myotomes with epaxial & hypaxial regions
+				sclerotome
+			notochord
+			polster
+			prechordal plate
+		neural crest 
+			cephalic
+			trunk
+		organ system
+			cardiovascular system 
+				heart
+					heart rudiment - mid stage??
+			nervous system
+				central nervous system - ventricles??
+					brain
+						forebrain
+							telencephalon
+							diencephalon
+								epiphysis
+								hypothalamus
+						midbrain
+						hindbrain
+							cerebellum primordium 
+							rhombomeres r2-r8
+					neural tube 
+						primary neurons
+						primary motorneurons
+						Rohon-Beard neurons
+				peripheral nervous system
+					trigeminal (V) ganglion
+						neurons 
+			sensory system 
+				eye
+					optic vesicle
+					lens 
+				ear
+					otic vesicle 
+					otoliths
+			urogenital system
+				pronephric duct 
+				pronephros
+		phryngeal arch primordium now or later??
+		tail 
+			Kupffer's vesicle (future mesoderm, notochord)
+			median finfold
+	somites 18-26
+	extraembryonic
+		yolk
+		ball
+		extension
+		EVL
+		I-ESL, E-YSL
+pharyngula - prim 5 (24h)
+	embryo
+		cavity
+			pericardial sac
+		ectoderm
+			hatching gland
+			lateral line 
+			early melanophores
+		fins
+			dorsal fin fold
+			median fin 
+			pectoral fin bud (late stage)
+				mesenchyme condensations (mid stage)
+		mesoderm
+			axial chorda mesoderm
+			blood islands
+			head mesoderm
+			lateral plate mesoderm
+			paraxial segmental plate 
+				somites 1-17 (body)
+				myotomes with epaxial & hypaxial regions
+				sclerotome
+			notochord
+				hypochord
+			polster
+			prechordal plate
+		neural crest 
+			cephalic
+			trunk
+		organ system
+			cardiovascular system 
+				arterial system
+					carotid artery
+					dorsal aorta
+						caudal artery
+				heart
+					primitive heart tube
+						cardiac ventricle
+					outflow tract
+					sinus venosus
+				venous system does this system form now or a bit latter?
+					cardinal system
+						anterior cardinal veins
+						common cardinal veins (duct of Cuvier)
+						posterior cardinal veins
+					median axial vein?
+			nervous system
+				central nervous system - ventricles??
+					brain
+						forebrain (prosencephalon)
+							third ventricle
+								optic recess
+							telencephalon
+								floorplate
+							diencephalon
+								epiphysis
+								hypothalamus
+								optic stalk
+								postoptic commissure
+								TPOC??
+						midbrain (mesencphalon)
+							tectal ventricle
+						hindbrain 
+							fourth ventricle
+							cerebellum primordium 
+							rhombomeres r2-r8
+					spinal cord 
+						floorplate
+						primary neurons
+						primary motorneurons
+						Rohon-Beard neurons
+				peripheral nervous system
+					lateral nerve ganglion
+					trigeminal (V) ganglion
+						neurons 
+			sensory systems 
+				eye
+					retina (optic cup)
+						neural layer
+						presumptive PRE
+					lens 
+				ear
+					otic vesicle 
+					otoliths
+				nose
+					olfactory placode
+						nasal pit
+			visceral systems
+				alimentary system
+					endoderm
+					primitive gut
+						proctodeum
+				liver and ?? biliary system
+					liver primordium
+				urogenital system
+					pronephric duct 
+					pronephros
+		phryngeal arch 
+			1st arch 
+				mesenchyme (mandibular arch primordium)
+			2nd arch
+				mesenchyme (hyoid arch primordium)
+		tail 
+			Kupffer's vesicle (future mesoderm, notochord)
+			median finfold
+			somites 18-30
+	extraembryonic
+		yolk
+		ball
+		extension
+		EVL
+		I-ESL, E-YSL
+pharyngula - prim 15 (30h)
+pharyngula - prim 25 (36h)
+pharyngula - high pec (42h)
+hatching - long pec (48h)
+have sections
+hatching - pec fin (60h)
+hatching - protruding mouth (72h)
+have sections
+Adult
+Terms of direction
+	Dorsal
+	Ventral
+	Rostral (anterior)
+	Caudal (posterior)
+	Medial
+	Lateral
+
+Surface Anatomy
+	Dorsal Fin
+	Caudal Fin (tail)
+	Anal Fin
+	Pectoral Fin (2)
+	Pelvic Fin (2)
+	Eye (2)
+	Nares (2) (nostril)
+	Mouth (no teeth)
+		Premaxilla
+		Maxilla
+		Mandible
+	Barble (2)
+	Gill
+		Opercle
+		Subopercle
+		Preopercle
+		Interopercle
+		Branchiostegal membrane
+	Vent
+	Caudal Peduncle
+	Lateral line
+
+Integument
+	Scales
+
+Skeletal System
+	Neurocranium (skull)
+		Ethmoid region
+			Lateral ethmoids
+			Mesethmoid
+			Vomer
+			Nasal bones
+		Supraorbital bridge
+			Frontals
+			Orbitosphenoid
+			Pterosphenoids
+		Infraorbital bridge
+			Parashenoid
+			Basisphenoid
+		Cranial vault
+			Sphenoptics
+			Prootics
+			Pterotics
+			Parietals
+			Epioccipitals
+			Supraoccipitals
+			Exoccipitals
+			Intercalars
+			Basioccipital
+	Suspensoria
+		Lateral plate
+		Autopalatines
+		Metapterygoids
+		Quadrates
+		Hyomandibulae
+		Symplectics
+		Dermopalatines
+		Ectopterygoids
+		Endopterygoids
+		Preopercles
+	Opercular-branchiostegal series
+		Opercles
+		Subopercles
+		Interopercles
+		Branchiostegal rays
+	Hyoid Bars
+		Rostral (anterior) ceratohyal
+		Caudal (posterior) ceratohyal
+		Interhyal
+		Dorsal hypohyal
+		Ventral hypohyal
+		Urohyal
+	Circumorbital series
+		Infraorbital series
+			Lachrymal
+			???
+			Dermosphenotic
+		Supraorbital series
+			Supraorbitals
+			Antorbital
+	Oral Jaw
+		Premaxillae
+		Maxillae
+		Supramaxillae (?)
+	Mandible
+		Dentary
+		Articular
+		Retroarticular
+		Angular
+	Branchial Arches
+		Epibranchials (4 pairs ?)
+		Ceratobranchials (5 pairs)
+			teeth
+		Pharyngobranchials (3-4 ?)
+		Upper pharyngeal jaws (?)
+		Hypbranchials
+		Basibranchial
+		basihyal
+	Weberian Ossicles
+		Tripus
+		Intercalarium
+		Scaphium
+		Claustrum
+	Body
+		Precaudal Vertebrae
+		Caudal Verebrae
+		Pleural Ribs (abdominal region)
+		Intermuscular bones
+			Epineurals
+			Epicentrals
+			epipleurals
+		Hemal arches (caudal region)
+	Dorsal fin
+		Supraneurals (predorsals)
+		Proximal pterygiophores
+		Medial pterygiophores
+		Distal pterygiophores
+	Pectoral Girdle
+		Postemporal
+		Supracleithrum
+		Cleithrum
+		Postcleithrum
+		Extrascapular
+		Scapula
+		Coracoid
+		Mesocoracoid
+		Radials
+	Pelvic Girdle
+		Basipterygia
+		Pelvic radials
+	Anal Fin
+		Proximal pterygiophores
+		Medial pterygiophores
+		Distal pterygiophores
+	Caudal fin (Tail)
+		Last preural centrum
+		Parhyural
+		Ural ossifications (2) (urostyle)
+		Hypurals
+		Epurals (?)
+		Uroneurals (?)
+
+Musculature System
+	Cephalic Musculature
+		Mandibular muscles
+			Sternohyoid
+			Levator Arcus Palatini
+			Dilator operculi
+			Adductor mandibulae complex
+			Intermandibularis
+		Hyoid muscles
+			Adductor arcus palatini
+			Adductor operculi
+			Levator operculi
+			Protractor hyoidei
+			inferior hyohyoid
+			abductor hyohyoid
+			adductor hyohyoid
+		Branchial muscles
+			external levatores
+			caudal levator
+			internal Levator
+			dorsal Oblique
+			caudal Oblique
+			dorsal transverse
+			dorsal retractor
+			Adductor
+			oesophagial sphincter
+			ventral oblique
+			ventral transverse
+			ventral recti
+			Pharyngohyoid
+			internal pharyngoclavicularis
+			external pharyngoclavicularis
+
+		Extraocular muscles
+			Dorsal oblique
+			Ventral oblique
+			Medial rectus
+			Lateral rectus
+			Dorsal rectus
+			Ventral rectus
+	Body Musculature
+		Myomeres
+			Vertical myoseptum
+			Horizontal myoseptum
+		Epaxialis
+		Hypaxialis
+		superficial lateralis
+		Supracarinalis
+		Infracarinalis
+	Fin musculature
+		Dorsal fin
+			Dorsal Erector
+			Dorsal Depressor
+			Dorsal Inclinator
+		Anal fin
+			Anal Erector
+			Anal Depressor
+			Anal Inclinator
+		Pectoral fin
+			Superficial abductor
+			Abductor profundus
+			Superficial adductor
+			Adductor profundus
+			Dorsal arrector
+			ventral arrector
+			coracoradialis
+		Pelvic fin
+			dorsal pelvic arrector
+			ventral pelvic arrector
+			superficial pelvic abductor
+			pelvic abductor profundus
+			superficial pelvic adductor
+			pelvic adductor profundus
+		Caudal fin
+			dorsal flexor
+			superior dorsal flexor
+			ventral flexor
+			inferior ventral flexor
+			external ventral flexor
+			longitudinal hypochordal
+			interradialis
+
+Digestive System
+	Labial Cavity
+		Upper oral valve
+		Lower oral valve
+	Oral Cavity
+	Pharynx
+		Branchial bars
+		Pharyngeal teeth (on 5th ceratobrachial bone)
+	Dental Plate
+	Esophagus
+	Stomach
+	Duodenum
+	Small intestine
+	Large intestine
+	Cloacal chamber
+	Liver
+	Gall Bladder
+	Pancreas
+	Spleen
+
+Excretory System
+	Kidney
+	Mesonephric duct
+
+Reproductive System
+	Ovaries
+		Mesovarium
+	Oviduct
+	Testes
+
+Cardiovascular System
+	Pericardial sac
+	Heart
+		Hypobranchial vessels (from gills)
+		Sinus venosus
+		Atrium
+			Sinoatrial valve
+		Ventricle
+		Bulbus arteriosus
+	Common cardinal veins
+	Hepatic veins
+	Ventral aorta
+	Hypobranchial artery
+	Afferent branchial artery
+	Filamental arteries
+	Efferent branchial artery
+	Dorsal aorta
+	Segmental intercostal arteries
+	Celiacomesenteric artery
+	Renal arteries
+	Spinal arteries
+	Caudal vein
+	Renal Portal vein
+	Caudal (Posterior) cardinal vein
+	Rostral (Anterior) cardinal vein
+	mandibular arch
+	hyoid arch
+	first branchial arch
+	second branchial arch
+	third branchial arch
+	fourth branchial arch
+	afferent branchial artery
+	efferent branchial artery
+	rostral (anterior) cerebral vein
+	rostral (anterior) cardinal vein
+	laminar branchial artery
+	afferent laminar branchial artery
+	efferent laminar branchial artery
+	rostral (anterior) mesenteric artery
+	rostral (anterior) mesencephalic central artery
+	basilar artery
+	basal communicating artery
+	bulbus arteriosus
+	caudal artery
+	caudal division of the internal carotid artery
+	cerebellar central artery
+	rostral division of the internal carotid artery
+	central artery
+	caudal vein
+	choroidal vascular plexus
+	dorsal aorta
+	dorsal ciliary vein
+	dorsal longitudinal anastomotic vessel
+	dorsal longitudinal vein
+	hepatic portal vein
+	internal carotid artery
+	inner optic circle
+	lateral dorsal aorta
+	middle cerebral vein
+	middle mesencephalic central artery
+	median palatocerebral vein
+	mesencephalic artery
+	mesencephalic vein
+	metencephalic artery
+	nasal artery
+	nasal ciliary artery
+	nasal vein
+	optic artery
+	ophthalmic vein
+	opercular artery
+	optic vein
+	pectoral artery
+	parachordal vessel
+	caudal (posterior) cerebral vein
+	caudal (posterior) communicating segment
+	caudal (posterior) cardinal vein
+	primary head sinus
+	primitive internal carotid artery
+	palatocerebral artery
+	palatocerebral vein
+	caudal (posterior) mesenteric artery
+	caudal (posterior) mesencephalic central artery
+	prosencephalic artery
+	pectoral vein
+	swim bladder artery
+	intersegmental vessel
+	intersegmental artery
+	intersegmental vein
+	supraintestinal artery
+	subintestinal vein
+	sinus venosus
+	ventral aorta
+	ventral intersegmental/intercostal
+	vertebral artery
+
+Respiratory System
+	Gill arch
+	Gill raker
+	Gill filament
+	Gill lamellae
+	Opercular flap (?)
+
+Gas Bladder
+
+Lymphatic
+	Head kidney (thymus?)
+Nervous system
+	Inner ear (vestibular end-organ)
+		Otolith organs
+			Utricle
+				macula
+				Lapillus (otolith)
+			Saccule
+			macula
+			Sagitta (otolith)
+			Lagena
+				macula
+				Asteriscus (otolith)
+			Macula Neglecta
+				Sensory hair cells
+		Semicircular Canals
+			Horizontal (lateral)
+				lateral crista
+			Rostral (anterior) Vertical
+				rostral (anterior) crista
+				Caudal (posterior) Vertical
+				caudal (posterior) crista
+	Statoacoustic (VIIIth) ganglion
+	Lateral line
+		supraorbital lateral line
+		infraorbital lateral line
+		mandibular lateral line
+		opercular lateral line
+		otic lateral line
+		middle lateral line
+		occipital lateral line
+	Eye
+		Cornea
+		Lens
+		Retina
+		Retinal Pigmented epithelium
+	Nares
+		Olfactory epithelium
+	Telencephalon
+		Olfactory bulb
+			external cellular layer
+			glomerular layer
+			primary olfactory fiber layer
+			internal cellular layer (with mitral cells)
+		ventral telencephalon
+			dorsal nucleus of V
+			ventral nucleus of V
+			supracommissural nucleus of V
+			postcommissural nucleus of V central entopeduncular nucleus
+			lateral entopeduncular nucleus
+			dorsal entopeduncular nucleus
+			ventral entopeduncular nucleus V
+			pars subcommissuralis of V
+		telencephalic ventricle
+			tela chorioidea
+		dorsal telencephalon
+			medial zone of D
+			sulcus ypsiloniformis
+			dorsal zone of D
+			lateral zone of D
+			caudal (posterior) zone of D
+			central zone of D
+			nucleus taeniae
+		telencephalic tracts
+			commissura rostral (anterior), pars dorsalis
+			commissura rostral (anterior), pars ventralis
+			lateral forebrain bundle
+			medial forebrain bundle
+			lateral olfactory tract
+			medial olfactory tract
+
+	Diencephalon
+		Diencephalic ventricle
+		Area praeoptica
+			rostral (anterior) parvocellular preoptic nucleus
+			caudal (posterior) parvocellular preoptic nucleus
+			magnocellular preoptic nucleus
+			gigantocellular part of magnocellular preoptic nucleus
+		Epithalamus
+			Habenula
+				Dorsal nucleus
+				Ventral nucleus
+			Epiphysis
+			Saccus dorsalis
+		Dorsal Thalamus
+			rostral (anterior) thalamic nucleus
+			dorsal caudal (posterior) thalamic nucleus
+			central caudal (posterior) thalamic nucleus
+		Ventral Thalamus
+			intermediate thalamic nucleus
+			ventrolateral thalamic nucleus
+			ventromedial thalamic nucleus
+			rostrolateral thalamic nucleus of Butler & Saidel
+		Caudal (posterior) Tuberculum
+			perventricular nucleus of caudal (posterior) tuberculum
+			caudal (posterior) tuberal nucleus
+			paraventricular organ
+			rostral (anterior) preglomerular nucleus
+			lateral preglomerular nucleus
+			medial preglomerular nucleus
+			caudal preglomerular nucleus
+			tertiary gustatory nucleus
+			corpus mamillare
+			caudal (posterior) thalamic nucleus
+			nucleus subglomerulosis
+			torus lateralis
+		Hypothalamus
+			Median tuberal portion
+				Ventral zone
+					periventricular nucleus
+					rostral (anterior) tuberal nucleus
+					lateral hypothalamic nucleus
+				Caudal zone
+					caudal periventricular hypothalamus
+			ventralsulcus
+			Dorsal zone
+				Inferior lobes
+					Central nucleus
+					diffuse nuclei
+				Dorsal periventricular hypothalamus
+		Pituitary
+		Synencephalon
+			Nucleus of the medial longitudinal fasciculus
+			pretectal periventricular nucleus
+			paracommissural nucleus
+			subcommissural organ
+			caudal (posterior) commissure
+		Pretectum
+			Superficial pretectum
+				parvocellular superficial pretectal nucleus
+				magnocellular superficial pretectal nucleus
+				caudal (posterior) pretectal nucleus
+			Central pretectum
+				central pretectal nucleus
+				accessory pretectal nucleus
+				dorsal accessory optic nucleus
+				ventral accessory optic nucleus
+				suprachiasmatic nucleus
+		Diencephalic tracts and commissures
+			lateral forebrain bundle
+			medial forebrain bundle
+			optic nerve
+			optic chiasm
+			optic tract
+				dorsomedial optic tract
+				ventrolateral optic tract
+			pretecto-mamillary tract
+			fasciculus retroflexus
+			habenular commmissure
+			supraoptic (postoptic) commissure
+			horizontal commissure
+			commissure of the caudal tuberculum
+	Mesencephalon
+		optic tectum
+			periventricular grey zone
+			deep white zone
+			central zone
+			superficial grey and white zones
+			torus longitudinalis
+			medial tectal ventricle
+				lateral recess
+			intertectal commissure
+		torus semicircularis
+			central nucleus
+			ventrolateral nucleus
+		tegmentum
+			oculomotor nucleus
+			occulomotor nerve
+			trochlear motor nucleus
+			trochlear nerve
+			nucleus Edinger-Westphal
+			nucleus ruber
+			superior reticular formation
+			rostral tegmental nucleus
+			dorsal tegmental nucleus
+			lateral lemniscus nucleus
+			interpeduncular nucleus
+	Rhombencephalon
+		cerebellum
+			granular eminence
+			vestibulolateralis lobe
+				medial caudal lobe
+				lateral granular eminence (paired)
+			corpus cerebelli
+				granular layer
+				molecular layer
+			valvula cerebelli
+				lateral division
+				medial division
+				granular layer
+				molecular layer
+			commissura cerebelli
+		Medulla oblongata
+			medial funicular nucleus
+			decussation of medial funicular nucleus
+			dorsal motor root of V
+			dorsal motor nucleus trigeminal nerve
+			ventral motor nucleus trigeminal nerve
+			sensory trigeminal nuclei
+				isthmic primary nucleus
+				secondary gustatory nucleus
+				nucleus of the descending root
+				medial funicular nucleus
+				mesencephalic nucleus of trigeminal nerve
+			descending trigeminal root
+			rostral root of abducens nerve
+			caudal root of abducens nerve
+			abducens motor nuclei
+				rostral motor nucleus
+				caudal motor nucleus
+			sensory root of facial nerve
+			facial lobe
+			facial nerve motor nucleus
+			glossopharyngeal lobe
+			nucleus motorius of nervi vagi
+			lateral longitundinal fasciculus
+			ventral rhombencephalic commissure
+			interpeduncular nucleus
+			octaval nerve sensory nuclei
+				rostral (anterior) octaval nucleus
+				magnocellular octavl nucleus
+				descending octaval nucleus
+				caudal octaval nucleus
+				tangential nucleus
+			Lateral line sensory nuclei
+				caudal octavolateralis nucleus
+				medial octavolateralis nucleus
+					Cerebellar crest
+				decussation of the medial octavolateralis nucleus
+			secondary gustatory tract
+			visceromotor column
+			vagal lobe
+			viscerosensory commissural nucleus of Cajal
+			nucleus of the medial longitudinal fasciculus
+			reticular formation
+				midline column
+					superior raphe nucleus
+					inferior raphe nucleus
+				medial column
+					superior reticular formation
+					intermediate reticular formation
+					inferior reticular formation
+				lateral column
+					lateral reticular nucleus
+			griseum centrale
+			locus Coeruleus
+			nucleus lateralis valvulae
+			nucleus isthmi
+			secondary gustatory nucleus
+			Mauthner cell
+			Mauthner axon
+			inferior olive
+	Brain stem/spinal tracts and commissures
+		tecto-bulbar tract
+		crossed tecto-bulbar tract
+		uncrossed tecto-bulbar tract
+		ansulate commissure
+		medial longitudinal fasciculus
+		ventral rhombencephalic commissure
+		lateral longitudinal fasciculus
+		rostral mesencephalo-cerebellar tract
+		caudal mesencephalo-cerebellar tract
+		rostral (anterior) cerebellar tract
+		caudal (posterior) cerebellar tract
+		brachium conjunctivium (?)
+		bulbo-spinal tract
+		vestibulo-spinal tract
+		commissure of the secondary gustatory nuclei
+		commissure infima of Haller
+	Spinal cord
+		Dorsal root
+			Dorsal root ganglion
+		Ventral root
+		Dorsal horn
+		Ventral horn
+		Dorsal funiculus
+		Ventral funiculus
+		Lateral funiculus
+
+	Cranial Nerves
+		Olfactory
+		Optic
+		Occulomotor
+		Trochlear
+		Trigeminal
+		Abducens nerve
+		Facial Nerve
+		Octaval nerve
+		Glossopharyngeal nerve
+		Vagus Nerve
+		Rostral lateral line nerve
+		Caudal lateral line nerve

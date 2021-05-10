@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Categories used for site search.
+-->
+<Categories xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                      xsi:noNamespaceSchemaLocation="site-search-categories.xsd">
+    <Category ID="ALL" order="0">
+        <DisplayName>All</DisplayName>
+        <UrlMapping>
+            <urlPattern type="ALL"/>
+        </UrlMapping>
+    </Category>
+    <Category ID="GENES" order="10">
+        <DisplayName>Genes/Marker/Clones</DisplayName>
+        <UrlMapping>
+            <urlPattern type="GeneView" boostValue="256">marker/view/ZDB-GENE-\p{ASCII}*</urlPattern>
+            <urlPattern type="GeneView" boostValue="256">^/ZDB-GENE-\p{ASCII}*</urlPattern>
+            <urlPattern type="MarkerView" boostValue="8">marker/view/ZDB-(BAC|BAC_END|CDNA|EFG|EST|ETCONSTRCT|FOSMID|GENEP|GTCONSTRCT|MRPHLNO|PAC|PAC_END|RAPD|REGION|SNP|SSLP|STS|TGCONSTRCT|TSCRIPT)-\p{ASCII}*</urlPattern>
+            <urlPattern type="MarkerView" boostValue="8">^/ZDB-(BAC|BAC_END|CDNA|EFG|EST|ETCONSTRCT|FOSMID|GENEP|GTCONSTRCT|MRPHLNO|PAC|PAC_END|RAPD|REGION|SNP|SSLP|STS|TGCONSTRCT|TSCRIPT)-\p{ASCII}*</urlPattern>
+            <!--<urlPattern type="MarkerView" boostValue="8">marker/view</urlPattern>-->
+        </UrlMapping>
+    </Category>
+    <Category ID="FEATURES" order="15">
+        <DisplayName>Features</DisplayName>
+        <UrlMapping>
+            <urlPattern type="FeatureView">feature/view</urlPattern>
+            <urlPattern type="FeatureView">^/ZDB-ALT-\p{ASCII}*</urlPattern>
+        </UrlMapping>
+    </Category>
+    <Category ID="MUTANTS" order="20">
+        <DisplayName>Mutants/Transgenics</DisplayName>
+        <UrlMapping>
+            <urlPattern type="MutantGenoView">genotype/view</urlPattern>
+            <urlPattern type="MutantGenoView">^/ZDB-GENO-\p{ASCII}*</urlPattern>
+        </UrlMapping>
+    </Category>
+    <Category ID="Expression" order="30">
+        <DisplayName>Expression/Phenotype</DisplayName>
+        <UrlMapping>
+            <urlPattern type="ExpressionFigureView">^/ZDB-FIG-\p{ASCII}*</urlPattern>
+        </UrlMapping>
+    </Category>
+    <Category ID="SEQUENCE"  order="40">
+        <DisplayName>Sequence Information</DisplayName>
+        <UrlMapping>
+            <urlPattern type="GeneSequence">marker/sequence/view/ZDB-\p{ASCII}*</urlPattern>
+        </UrlMapping>
+    </Category>
+    <Category ID="ANATOMY"  order="50">
+        <DisplayName>Anatomy / Other Ontology Terms</DisplayName>
+        <UrlMapping>
+            <urlPattern type="AnatomyView" boostValue="256">ontology/term-detail</urlPattern>
+            <urlPattern type="AnatomyView" boostValue="256">^/(GO:|ZFA:|ZFS:|BSPO:|PATO:|SO:|NBO:|MPATH:)\p{ASCII}*</urlPattern>
+            <urlPattern type="AnatomyImages" boostValue="8">zf_info/anatomy</urlPattern>
+        </UrlMapping>
+    </Category>
+    <Category ID="ANTIBODY"  order="60">
+        <DisplayName>Antibody</DisplayName>
+        <UrlMapping>
+            <urlPattern type="AntibodyView" boostValue="256">\p{ASCII}*marker/view\p{ASCII}*ZDB-ATB-\p{ASCII}*</urlPattern>
+            <urlPattern type="AntibodyView" boostValue="256">^/ZDB-ATB-\p{ASCII}*</urlPattern>
+        </UrlMapping>
+    </Category>
+    <Category ID="PRODUCT"  order="70">
+        <DisplayName>Gene Product</DisplayName>
+        <UrlMapping>
+            <urlPattern type="GeneProduct">geneprddescription</urlPattern>
+        </UrlMapping>
+    </Category>
+    <Category ID="ONTOLOGY"  order="80">
+        <DisplayName>Gene / GO Annotation</DisplayName>
+        <UrlMapping>
+            <urlPattern type="GeneOntology">???</urlPattern>
+        </UrlMapping>
+    </Category>
+    <Category ID="ZEBRAFISH_BOOK"  order="90">
+        <DisplayName>The Zebrafish Book</DisplayName>
+        <UrlMapping>
+            <urlPattern type="ZebrafishBook">zf_info/zfbook</urlPattern>
+        </UrlMapping>
+    </Category>
+    <Category ID="NOMENCLATURE"  order="100">
+        <DisplayName>Nomenclature</DisplayName>
+        <UrlMapping>
+            <urlPattern type="LineDesignation" boostValue="8">zf_info/zfbook/lab_desig.html</urlPattern>
+        </UrlMapping>
+    </Category>
+    <Category ID="WIKI_NEWS"  order="110">
+        <DisplayName>Meetings/Jobs/News</DisplayName>
+        <UrlMapping>
+            <urlPattern type="NewsMeetings" boostValue="256">${INDEXER_WIKI_HOSTNAME}/display/meetings</urlPattern>
+            <urlPattern type="NewsJobs" boostValue="8">${INDEXER_WIKI_HOSTNAME}/display/jobs</urlPattern>
+            <urlPattern type="NewsNews" >${INDEXER_WIKI_HOSTNAME}/display/news</urlPattern>
+        </UrlMapping>
+    </Category>
+    <Category ID="PEOPLE" order="120">
+        <DisplayName>People</DisplayName>
+        <UrlMapping>
+            <urlPattern type="PeopleView" boostValue="256">^/ZDB-PERS-*</urlPattern>
+            <urlPattern type="LabView" boostValue="8">^/ZDB-LAB-*</urlPattern>
+            <urlPattern type="LabView" boostValue="8">^/ZDB-COMPANY-*</urlPattern>
+        </UrlMapping>
+    </Category>
+    <Category ID="WIKI_PROTOCOLS" order="130">
+        <DisplayName>Community Wiki: Protocols</DisplayName>
+        <UrlMapping>
+            <!-- The name after the last slash indicated the wiki space -->
+            <urlPattern type="CommunityWikiProtocols" titlePrefix="Wiki - Protocols: ">${INDEXER_WIKI_HOSTNAME}/display/prot</urlPattern>
+        </UrlMapping>
+    </Category>
+    <Category ID="WIKI_ANTIBODIES" order="135">
+        <DisplayName>Community Wiki: Antibodies</DisplayName>
+        <UrlMapping>
+            <!-- The name after the last slash indicated the wiki space -->
+            <urlPattern type="CommunityWikiAntibody" titlePrefix="Wiki - Antibodies: ">${INDEXER_WIKI_HOSTNAME}/display/AB</urlPattern>
+        </UrlMapping>
+    </Category>
+    <Category ID="OTHER" order="140">
+        <DisplayName>Other</DisplayName>
+        <UrlMapping>
+            <urlPattern type="OthersMisc"/>
+        </UrlMapping>
+    </Category>
+</Categories>

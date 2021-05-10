@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.jboss.org/dtd/hibernate/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.zfin.mutant">
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="constructComponentType">
+        <param name="enumClassname">org.zfin.construct.ConstructComponent$Type</param>
+    </typedef>
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="constructComponentCategory">
+        <param name="enumClassname">org.zfin.construct.ConstructComponent$Category</param>
+    </typedef>
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="constructRelationshipType">
+        <param name="enumClassname">org.zfin.construct.ConstructRelationship$Type</param>
+    </typedef>
+
+    <class name="org.zfin.construct.ConstructCuration" table="construct" dynamic-update="true">
+
+        <id name="zdbID" type="string">
+            <column name="construct_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="isConstruct">true</param>
+                <param name="insertActiveData">true</param>
+            </generator>
+        </id>
+
+
+
+        <many-to-one name="constructType" column="construct_type"
+                     foreign-key="construct_type" not-null="true"
+                     class="org.zfin.marker.MarkerType"/>
+
+
+
+        <property name="publicComments">
+            <column name="construct_comments"/>
+        </property>
+        <property name="name">
+            <column name="construct_name" not-null="true"/>
+        </property>
+        <property name="modDate" column ="construct_date_modified" type="date" not-null="true"/>
+        <property name="createdDate" column ="construct_date_inserted" type="date" not-null="true"/>
+
+        <many-to-one name="owner" column="construct_owner_zdb_id"
+                     class="org.zfin.profile.Person"
+                     not-null="true"/>
+        <set name="constructRelations" lazy="true">
+            <key column="conmrkrrel_construct_zdb_id"/>
+            <one-to-many class="org.zfin.construct.ConstructRelationship"/>
+        </set>
+    </class>
+
+    <class name="org.zfin.construct.ConstructComponent" table="construct_component">
+        <id name="ID">
+            <column name="cc_pk_id" not-null="true"/>
+            <generator class="identity"/>
+        </id>
+        <property name="constructZdbID" column="cc_construct_zdb_id"/>
+        <property name="type" column="cc_component_type" type="constructComponentType"/>
+        <property name="componentZdbID" column="cc_component_zdb_id"/>
+        <property name="componentValue" column="cc_component"/>
+        <!--<property name="category" column="cc_component_category" type="constructComponentCategory"/>-->
+        <property name="componentCategory" column="cc_component_category" />
+        <property name="componentOrder" column="cc_order"/>
+        <property name="componentCassetteNum" column="cc_cassette_number"/>
+    </class>
+
+    <class name="org.zfin.construct.ConstructRelationship" table="construct_marker_relationship">
+        <id name="zdbID" type="string">
+            <column name="conmrkrrel_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">CMREL</param>
+                <param name="insertActiveData">true</param>
+            </generator>
+        </id>
+
+        <many-to-one name="construct" class="org.zfin.construct.ConstructCuration" column="conmrkrrel_construct_zdb_id" lazy="no-proxy"/>
+        <many-to-one name="marker" class="org.zfin.marker.Marker" column="conmrkrrel_mrkr_zdb_id" lazy="no-proxy"/>
+        <property name="type" column="conmrkrrel_relationship_type" type="constructRelationshipType"/>
+
+        <set name="publications" lazy="true" cascade="all">
+            <key column="recattrib_data_zdb_id"/>
+            <one-to-many class="org.zfin.infrastructure.PublicationAttribution"/>
+        </set>
+
+    </class>
+
+
+
+
+
+</hibernate-mapping>
+

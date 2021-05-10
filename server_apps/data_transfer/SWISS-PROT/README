@@ -1,0 +1,211 @@
+================== Readme =======================================
+
+This readme is intended to explain the process of loading SWISS-PROT 
+report into ZFIN.   
+=================================================================
+
+
+-> NOTE: Uniprot was to update DE line format post Feb 1st, 2008. Please check 
+http://www.uniprot.org/help/changes and make change to sp_parse.pl 
+accordingly.
+
+
+------------------------------------
+-- How to run a UniProt load
+------------------------------------
+
+First of all, check ftp://ftp.ebi.ac.uk/pub/contrib/dbarrell/zfin.dat to see when the file is last updated!
+Doesn't hurt to check http://www.geneontology.org/external2go/uniprotkb_kw2go, interpro2go, and ec2go too.
+
+
+Test on a testing site or almost
+---------------------------------------
+If there has been some code changes, please first run the SwissProt load in a developer test environment. To do so, get a fresh load with ACCESSION_BANK table.
+ 
+    % loaddb.pl -e defline dbname inputdir
+
+If there hasn't been any code changes, it is generally safe to run the pre-load at almost db which should always has last night's dump. The pre-load is required to take place at a database rather than production because during the pre-load, data from previous SwissProt load would all be wiped off and there would be time gaps when curators need to do some manual work before the real load could happen. 
+At source dir
+
+	%gmake runpre
+
+You would receive emails of the statistics, and allproblems.txt file. Forward those to Ken. Ken would send back some full records which are also ok records, and if he also send a list of ok SP accession. Run the following script to get the full original records, and make sure Ken doesn't need to make any modification to them. 
+
+	% sp_match.pl <acc file name>
+
+Create an ok2file to include these approved ok records. Save it in the target dir, back to source dir,
+
+	% gmake run
+
+
+
+Execute on production
+---------------------------
+To run SwissProt load on production, user "Informix" is required to write files to target directory.
+
+First, copy the ok2file from almost target dir to production target dir. Email curators that Swiss-Prot is running, related data would be wiped off and reloaded. 
+
+At source dir
+
+	% gmake run
+
+Then, go to GO directory to generate a gp2protain file which will be emailed to Doug.
+
+        % cd ../GO
+        % gmake run 
+
+
+
+-----------------------------------------------------
+-- Development Documentation and Notes
+-----------------------------------------------------
+===================================================
+by Peiran Song, Aug 2004
+
+A pre-process is added by pre_loadsp.pl. It is basically the quality check step of the loadsp.pl. A curator would review the check result and provide a list of Swiss-Prot accession numbers from the problem files to be added to okfile. Most of those records would be associated with more than one ZFIN gene. Run sp_match.pl with the accession file as the parameter. Send the output file "ok2file" to a curator to add in additional DR ZFIN lines if applicable.When the file is ready at the destination directory, run the whole load process, the ok2file would be appended to the okfile.   
+
+On production, to save the excution time, use the ok2file producted from almost run. 
+
+GN and DR EMBL lines are no longer loaded due to the fact that one SP record could validly associated with more than one ZFIN genes. 
+
+===================================================
+by Peiran Song, Jun 2004
+
+The SP/GO load process has changes a lot in the GO project. The GO
+terms loading is now separated out to be nightly efforts. The scripts are
+stored in LoadGO directory. EC accession to GO translation is added as
+the third translation table in the process. Prita has been working on the 
+GO project. I committed her files into CVS. 
+
+There is now again changes to the process. sp_check.pl is using GenPept
+accession to match ZFIN gene first, nucleotide accession matching is put 
+to secondary. There are table merging changes reflected in sp_delete.sql and 
+sp_load.sql. 
+ 
+Follow loadsp.pl, it will work you through the process. ;)
+
+
+====================================================
+To create file for export to SWISS-PROT
+               % gmake create
+   
+
+=====================================================
+by Peiran Song,  Sep 2002.
+
+To run the SWISS-PROT loading process:
+
+               % gmake run
+   
+-------------
+-- loadsp.pl
+  This is the script that calls all the subroutines to do the 
+SWISS-PROT loading.   
+  The SWISS-PROT file is currently got through email. It must be 
+a text file and has to be put to this directory manually with name 
+"SPDoc". The three ontology files and two translation tables needed are 
+download from web sites during the running of the script.
+  The script then invokes the following perl and SQL scripts to execute
+the loading process. If any subroutine gets error, an email contains the
+error message is sent out and the process terminates. If everything
+goes fine, one email of checking report(how many SWISS-PROT records are 
+loaded, how many have problems), one email attached a problem file (concatenate 
+7 subproblems files) are sent out indicating the success of loading.     
+
+-- sp_delete.sql
+  SWISS-PROT loading will be run periodically in the future. Each time, 
+it first deletes all the records that are from the last SWISS-PROT 
+loading and have SWISS-PROT loading as the only source. We get this 
+information from record_attribution, and delete with delete cascade from 
+zdb_active_data.
+  
+
+-- sp_check.pl
+  This checking script takes a SWISS-PROT formated text file as input. It 
+generates one "okfile" which consists of all the records that are 
+currently consistent with what is in ZFIN and is going to be parsed 
+and loaded to ZFIN. The script also generates a bunch of problem files 
+named as "prob" followed by a number. Each problem file gathers the 
+records with the same problem, and has a brief explanation of itself. 
+These files are for curators to do manual checking. 
+  In addition, a file 
+named "problemfile" with the whole record from the SWISS-PROT file
+for all the problem records is generated. This file *could* be rerun
+through sp_check.pl after the curators have identified and fixed any
+problems/discrepancies within ZFIN. However, the current plan is not
+to do this. Instead, we will just pick up any corrections during the next 
+regularly scheduled sp_check.pl run. 
+ 
+
+-- sp_parser.pl
+  This script parse the "okfile" for loading. Each record in "okfile" 
+has "AC" "GN" "DR" "CC" "KW" fields if there is information for them. 
+Among the generated unload files, "ac_alias.unl" has the 
+secondary accession numbers (for S-P records that have them) with the 
+primary accession number of the  
+S-P records. It will go to data_alias table. The gene names in the GN field 
+of each S-P record, if they are not in ZFIN yet, are sent to 
+"gn_dalias.unl" which will be added to data_alias table also. The EMBL 
+numbers that are not in ZFIN yet and all the other cross references in 
+the DR field except ZFIN, together with this SWISS-PROT record are going to 
+"dr_dblink.unl" which is to be loaded to the db_link table. Since the 
+comments (CC field) are going to be loaded as clob type. Each has to be 
+stored in a single file. A directory called "ccnote" is created and 
+each CC field of a record is condensed as one chunk of text and stored 
+in a file named with the primary accession number of the record. A file 
+called "cc_external.unl" has the absolute path for each file. This data 
+will be loaded to external_note table. Keywords in KW field are sent to 
+"kd_spkeywd.unl". The keywords will be translated into GO term and only 
+the GO terms will be stored in ZFIN. 
+
+
+-- sptogo.pl; iptogo.pl
+  These two scripts parse two GO term translation tables. "sptogo.pl" 
+takes the SWISS-PROT keyword to GO term translation table as input, and 
+generates the output file "sp_mrkrgoterm.unl". "iptogo.pl" takes the 
+InterPro to GO term translation table as input, and generates the file 
+"ip_mrkrgoterm.unl".
+  
+
+-- ontology.pl  
+  This script aims to parse the three GO ontology files, 
+function.ontology, process.ontology and component.ontology. GO terms 
+should be identical for each ontology. But, for historical reasons, 
+some GO term in some ontologies have more than one GO id. The primary GO 
+id and GO term together with the ontology it belongs to are sent to 
+"ontology.unl", while the secondary GO id with primary GO id, GO term, 
+GO ontology are stored in another file "ontsecgoid.unl". 
+   
+
+-- sp_load.sql
+  In the loading process, records in "dr_dblink.unl" are loaded into 
+the db_link table. The secondary SWISS-PROT accession numbers in 
+"ac_dalias.unl", and the additional gene name alias in "gn_dalias" are 
+loaded to the data_alias table. The CC field, each in a single file are 
+loaded to the external_note table. The relationship of a gene and the 
+comments are stored in data_external_note table.  
+  It then compares "sp_mrkrgoterm.unl" (which reflects the GO term
+translation table for SWISS-PROT keywords) with "kd_spkeywd.unl", and 
+"ip_mrkrgoterm.unl" (which reflects the GO term translation table
+for InterPro accession numbers) with records about InterPro in the 
+db_link table (which came from the SWISS-PROT file).  This process 
+results in the list of GO terms that came from this load.
+  We then compare that list of GO terms with the whole GO term set from 
+the three ontology files that are in "ontology.unl" or "ontsecgoid.unl". 
+If a GO id has an entry in "ontsecgoid.unl" which means that the id is 
+actually outdated, we will replace it by the primary GO id. Then the GO 
+information with ontology are placed in the go_term table. The relationship 
+between ZFIN genes and their associated GO terms goes in the marker_go_term_evidence
+table. The relationship and their sources (one of the two translation 
+tables) are recorded in the marker_go_term_evidence table. 
+  The marker and GO term relationships are attributed to an internal 
+publication record the explains SWISS-PROT to GO translation table file 
+("ZDB-PUB-020723-1") or InterPro to GO translation table file 
+("ZDB-PUB-020724-1"). All the other loaded records are attributed to an 
+internal publication record ("ZDB-PUB-020723-2") that explains the 
+SWISS-PROT loading process. These attribution facts are stored in the 
+record_attribution table.
+  The reloading also need to take care of the information that are in the 
+unloading file, but already recorded in zfin. The unique zdb id of those
+records will be put into a temp table. The conflict loading will be avoid, 
+while a new attribution to SWISS-PROT loading will be added. 

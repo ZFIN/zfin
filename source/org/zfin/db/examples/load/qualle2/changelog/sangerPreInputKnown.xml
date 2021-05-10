@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+<changeSet author="pm" id="loadSangerPreInputKnown-table">
+    <loadData
+	file="/opt/zfin/source_roots/swirl/ZFIN_WWW/source/org/zfin/db/1077/load/qualle2/changelog/finalSangerSubmissionZFIN.csv"
+            catalogName="swrdb" schemaName="staylor" tableName="sanger_pre_input_known" quotchar="A String" separator="|" encoding="UTF-8">
+    </loadData>
+</changeSet>
+</databaseChangeLog>

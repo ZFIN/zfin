@@ -1,0 +1,11 @@
+package org.zfin.profile.presentation;
+
+import org.zfin.framework.presentation.LookupEntry;
+
+import java.io.Serializable;
+
+/**
+ */
+public class PersonLookupEntry extends LookupEntry implements Serializable {
+    //todo: this class should go away
+}

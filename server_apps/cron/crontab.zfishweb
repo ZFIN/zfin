@@ -1,0 +1,51 @@
+# ===========================================================================
+# ZFISHWEB CRONTAB FILE
+# ===========================================================================
+# This is the crontab file for Zfishweb (only performs one function, 
+# file syncing).
+#
+# See the "crontab" file (or cron man page) for an explanation of this file's
+# format.
+# Crontab format, from left to right
+# * minute (0-59),
+# * hour (0-23),
+# * day of the month (1-31),
+# * month of the year (1-12),
+# * day of the week (0-6 with 0=Sunday)
+#
+# Each of these patterns may be either an  asterisk
+# (meaning all legal values)    OR
+#       a list of elements separated by commas.
+# An element is either a number OR
+#       two numbers separated by  a minus  sign
+#       (meaning  an  inclusive  range).
+# Note that the specification of days may be made by two fields
+# (day of  the month and day of the week).
+# Both are adhered to if specified as a list of elements.
+#
+# NO BLANK LINES
+#
+#
+#
+# cron.chart.fig
+# --------------
+# cron.chart.fig is a graphic depiction of cron at ZFIN.  Any time you
+# change this file, also change cron.chart.fig.
+#
+#
+#
+# ========================================================================
+# ====               DAILY / WEEKLY SCRIPTS                           ====
+# ========================================================================
+#
+#Blast cleanup scripts
+#  Every day at 1:30 am clean out fasta files older than one day.
+30 01 * * * /bin/find /research/zprodmore/blastdb/ -name "*.fa" -mtime +1 -exec rm -f {} \; >> /research/zprodmore/blastdb/fasta-clean-error.txt; /bin/find /opt/zfin/catalina_bases/zfin.org/temp/ -name "*.xml" -mtime +7 -exec rm -f {} \; >> /research/zprodmore/blastdb/fasta-clean-error.txt
+#  Every day at 1.55 am clean out accession files older than 3 days.
+55 01 * * * /bin/find /opt/zfin/catalina_bases/zfin.org/temp/ -name "accession*.txt" -mtime +3 -exec rm -f {} \; >> /opt/zfin/catalina_bases/zfin.org/temp/clean-accessions-error.txt
+#  Every Tuesday at 2.05 am clean out microarray reports older than 80 days.
+05 02 * * 4 /bin/find /opt/zfin/catalina_bases/zfin.org/temp/ -name "microarry*.txt" -mtime +80 -exec rm -f {} \; >> /opt/zfin/catalina_bases/zfin.org/temp/clean-microarray-error.txt
+#  Every Tuesday at 2.05 am clean out microarray reports older than 80 days.
+05 02 * * 4 /bin/find /opt/zfin/catalina_bases/zfin.org/temp/ -name "blast*.xml" -mtime +80 -exec rm -f {} \; >> /opt/zfin/catalina_bases/zfin.org/temp/clean-microarray-error.txt
+# Every day at 6:00 pm, rsync loadUp to zygotix
+0 18 * * * /research/zprod/www_homes/zfin.org/server_apps/DB_maintenance/loadUp/rsync.pl

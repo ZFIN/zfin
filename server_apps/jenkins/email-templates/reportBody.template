@@ -1,0 +1,81 @@
+<html>
+<head>
+<title>
+	Report
+</title>
+
+<style>
+#result {
+    font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+    border-collapse: collapse;
+}
+table, th, td, input, textarea {
+    font-size: 100%;
+    border: 1px solid green;
+    text-align: left:
+}
+
+#result th {
+    font-size: 1em;
+    text-align: left;
+    padding-top: 5px;
+    padding-bottom: 4px;
+    background-color: rgb(167, 201, 66);
+    color: rgb(255, 255, 255);	
+}
+#result tr.alt td 
+{
+color:#000;
+background-color:#EAF2D3;
+}
+</style>
+</head>
+<body>
+
+<%
+def description = System.getenv('TARGETROOT')+"/server_apps/DB_maintenance/description.txt"
+print new File(description).text
+%>
+
+
+<table id="result">
+<tr>
+<%
+// header info
+def header = System.getenv('TARGETROOT')+"/server_apps/DB_maintenance/column.header"
+head =  new File(header).text
+List elements = head.tokenize('\\|');
+        elements.each { record ->
+                print("<th>");
+                print(record);
+                print("</th>");
+        }
+%>
+</tr>
+
+<%
+def directory = System.getenv('TARGETROOT')+"/server_apps/DB_maintenance/reportRecords.txt"
+//print new File(directory).text
+File f = new File(directory);
+
+int index = 0;
+f.eachLine(){ line ->
+	if( index %2 == 0)
+		print("<tr>");
+	else
+		print("<tr class='alt'>");
+	List list = line.tokenize('\\|');
+	list.each { record ->
+		print("<td>");
+		print(record);
+		print("</td>");
+	}
+	print("</tr>");	
+	index++;
+}
+%>
+
+</table>
+
+</body>
+</html>

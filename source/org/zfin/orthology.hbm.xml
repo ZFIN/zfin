@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.jboss.org/dtd/hibernate/hibernate-mapping-3.0.dtd">
+
+<!-- Alwyas include the full package in each class.name attribute. This allows refactoring to identify
+     the class and include them. Otherwise a refactoring of a class reference here is not recognized and
+     could potentially break the code (e.g. moving a class into a different package. -->
+<hibernate-mapping package="org.zfin.orthology">
+
+    <class name="org.zfin.orthology.Ortholog" table="ortholog">
+        <id name="zdbID" type="string">
+            <column name="ortho_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">ORTHO</param>
+                <param name="insertActiveData">true</param>
+            </generator>
+        </id>
+
+        <property name="name" column="ortho_other_species_name"/>
+        <property name="symbol" column="ortho_other_species_symbol"/>
+        <property name="chromosome" column="ortho_other_species_chromosome"/>
+        <property name="obsolete" column="ortho_other_species_ncbi_gene_is_obsolete"/>
+
+        <many-to-one name="organism" column="ortho_Other_species_taxid" class="org.zfin.Species"/>
+        <many-to-one name="zebrafishGene" column="ortho_zebrafish_gene_zdb_id" class="org.zfin.marker.Marker"
+                     not-null="true" />
+        <many-to-one name="ncbiOtherSpeciesGene" column="ortho_other_species_ncbi_gene_id" not-null="true"/>
+
+        <set name="externalReferenceList" table="ortholog_external_reference" sort="natural" fetch="join">
+            <key column="oef_ortho_zdb_id"/>
+            <composite-element class="org.zfin.orthology.OrthologExternalReference">
+                <parent name="ortholog"/>
+                <many-to-one name="referenceDatabase" column="oef_fdbcont_zdb_id"/>
+                <property name="accessionNumber" column="oef_accession_number"/>
+            </composite-element>
+        </set>
+
+        <set name="evidenceSet" table="ortholog_evidence" fetch="join">
+            <key column="oev_ortho_zdb_id"/>
+            <composite-element class="org.zfin.orthology.OrthologEvidence">
+                <parent name="ortholog"/>
+                <many-to-one name="publication" column="oev_pub_zdb_id"/>
+                <many-to-one name="evidenceCode" column="oev_evidence_code"/>
+                <many-to-one name="evidenceTerm" column="oev_evidence_term_zdb_id"/>
+            </composite-element>
+        </set>
+
+    </class>
+
+    <class name="org.zfin.orthology.NcbiOtherSpeciesGene" table="ncbi_ortholog" mutable="false">
+        <id name="ID" type="string">
+            <column name="noi_ncbi_gene_id" not-null="true"/>
+        </id>
+        <property name="name" column="noi_name"/>
+        <property name="abbreviation" column="noi_symbol"/>
+        <property name="chromosome" column="noi_chromosome" type="string"/>
+
+        <many-to-one name="organism" column="noi_taxid" class="org.zfin.Species"/>
+
+        <set name="ncbiExternalReferenceList" table="ncbi_ortholog_external_reference" sort="natural" fetch="join">
+            <key column="noer_other_species_ncbi_gene_id"/>
+            <composite-element class="org.zfin.orthology.NcbiOrthoExternalReference">
+                <parent name="ncbiOtherSpeciesGene"/>
+                <many-to-one name="referenceDatabase" column="noer_fdbcont_zdb_id"/>
+                <property name="accessionNumber" column="noer_other_species_accession_number"/>
+            </composite-element>
+        </set>
+
+    </class>
+
+    <class name="org.zfin.orthology.EvidenceCode" table="ortholog_evidence_code">
+
+        <id name='code' type="string">
+            <column name="oevcode_code" not-null="true"/>
+            <generator class="native"/>
+        </id>
+        <property name="order" column="oevcode_order" type="java.lang.Integer" not-null="true"/>
+        <property name="name" column="oevcode_name" not-null="true"/>
+
+    </class>
+
+</hibernate-mapping>

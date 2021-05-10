@@ -1,0 +1,40 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+        xmlns:ui='urn:ui:com.google.gwt.uibinder'
+        xmlns:g='urn:import:com.google.gwt.user.client.ui'
+        >
+
+    <g:FlowPanel>
+        <g:HorizontalPanel spacing="0">
+            <g:Label text="FISH LIST" styleName="summaryTitle"/>
+            <g:Label ui:field="noneDefined" text="&nbsp;None defined" styleName="no-data-tag"/>
+        </g:HorizontalPanel>
+        <g:Grid ui:field='dataTable' cellSpacing='10' styleName="searchresults groupstripes">
+            <g:row styleName="table-header">
+                <g:customCell>
+                    <g:Label text="Fish Name" styleName="bold" horizontalAlignment="left"/>
+                </g:customCell>
+                <g:customCell>
+                    <g:Label text="Display Handle" styleName="bold" horizontalAlignment="left"/>
+                </g:customCell>
+                <g:customCell>
+                    <g:Label text="Clone" styleName="bold" horizontalAlignment="left"/>
+                </g:customCell>
+                <g:customCell>
+                    <g:Label text="Delete" styleName="bold" horizontalAlignment="left"/>
+                </g:customCell>
+            </g:row>
+            <g:row styleName="table-header">
+                <g:cell/>
+                <g:cell/>
+                <g:customCell>
+                    <g:HTML ui:field="cloneLink" visible="false">
+                        <i class="far fa-copy" aria-hidden="true"></i>
+                    </g:HTML>
+                </g:customCell>
+                <g:cell/>
+            </g:row>
+        </g:Grid>
+
+    </g:FlowPanel>
+</ui:UiBinder>

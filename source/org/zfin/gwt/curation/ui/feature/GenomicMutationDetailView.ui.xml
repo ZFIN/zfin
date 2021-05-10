@@ -1,0 +1,78 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+        xmlns:ui='urn:ui:com.google.gwt.uibinder'
+        xmlns:g='urn:import:com.google.gwt.user.client.ui'
+        xmlns:zfin='urn:import:org.zfin.gwt.root.ui'
+        >
+
+    <ui:style>
+        .grey-background {
+            background-color: lightgrey;
+        }
+
+        .blue {
+            color: #0000FF;
+        }
+
+        .valign-top {
+            vertical-align: top;
+        }
+
+        .align-left {
+            horiz-align: left;
+        }
+
+        .empty-column {
+            width: 80%;
+        }
+
+        .header-row {
+            background-color: #000088;
+        }
+
+        .green {
+            color: green;
+        }
+    </ui:style>
+
+    <g:FlowPanel ui:field="changePanel" visible="false">
+        <g:Grid ui:field='genomicDetailsTable' cellSpacing='2' styleName="searchresults groupstripes-hover">
+            <!--<g:row>
+                <g:cell>Change</g:cell>
+                <g:cell>Position</g:cell>
+                <g:cell>Accession #</g:cell>
+                <g:cell>Localization</g:cell>
+                <g:customCell>
+                    <g:Label text="Exon" ui:field="exonLabel"/>
+                </g:customCell>
+                <g:customCell>
+                    <g:Label text="Intron" ui:field="intronLabel"/>
+                </g:customCell>
+            </g:row>-->
+            <g:row visible="false">
+                <g:customCell>
+                    <g:HTMLPanel visible="true">
+                        <table>
+                            <tr ui:field="sequenceMessage">
+                                <td><i>Please enter data from the + strand</i>
+                                </td>
+                            </tr>
+                            <tr ui:field="sequenceOfReferenceRow">
+                                <td>Sequence of  Reference</td>
+                                <td><zfin:StringTextBox ui:field="seqReference" /></td>
+                                <td><g:Button ui:field="reverseComplRefButton" text="Reverse Complement" /></td>
+                            </tr>
+
+                            <tr ui:field="sequenceOfVariantRow">
+                                <td>Sequence of Variant</td>
+                                <td><zfin:StringTextBox ui:field="seqVariant" /></td>
+                                <td><g:Button ui:field="reverseComplVarButton" text="Reverse Complement" /></td>
+                            </tr>
+                        </table>
+                    </g:HTMLPanel>
+                </g:customCell>
+            </g:row>
+        </g:Grid>
+        <zfin:SimpleErrorElement ui:field="errorLabel" styleName="clickable-error"/>
+    </g:FlowPanel>
+</ui:UiBinder>

@@ -1,0 +1,82 @@
+.gwt-SuggestBox {
+    border: 1x solid #666;
+    text-align: left;
+}
+
+.gwt-SuggestBoxPopup {
+    border: 1px solid black;
+    background-color: white;
+    height: auto;
+    max-height: 50em;
+    min-width: 100px;
+    z-index: 1001;
+}
+
+.gwt-SuggestBoxPopup .item {
+    padding: 2px;
+    font-size: 8pt;
+    margin: 0;
+}
+
+.gwt-SuggestBoxPopup .item-selected {
+    background-color: #FFFFBB;
+    padding: 2px;
+}
+
+/*same as zfin one, maybe should go there instead*/
+.gwt-lookup-error {
+    color: red;
+    display: block;
+}
+
+.gwt-lookup-note {
+    color: blue;
+    display: block;
+}
+
+.gwt-PushButton-up {
+    background-color: #eee;
+}
+
+.gwt-PushButton-down {
+    background-color: white;
+}
+
+.gwt-table-full {
+    color: black;
+    font-style: normal;
+}
+
+.gwt-table-empty {
+    color: gray;
+    font-style: italic;
+}
+
+.gwt-Hyperlink {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.gwt-Frame {
+    background: white;
+    box-shadow: 0.2em 0.2em #CCC;
+    border: thin solid black;
+    position: relative;
+}
+
+.xpatselect-anatomy-popup {
+    background-color:#fff;
+    width:675px;
+    height: 500px;
+    overflow-y: auto;
+    border:3px solid #066;
+    padding: 10px;
+    -moz-border-radius:10px;
+    -webkit-border-radius:10px;
+    border-radius: 10px;
+    -moz-box-shadow:10px 10px 3px 0px rgba(0, 0, 0, 0.05);
+    -webkit-box-shadow: 10px 10px 3px rgba(0, 0, 0, 0.05);
+    box-shadow: 10px 10px 3px rgba(0, 0, 0, 0.05);
+}
+

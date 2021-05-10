@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+
+
+    <changeSet author="pm" id="DLOAD-639">
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1110/DLOAD-639.csv"
+                  tableName="tmp_ottens" encoding="UTF-8">
+            <column name="tscriptid" type="String"/>
+            <column name="tscriptname" type="String"/>
+            <column name="ottdartid" type="String"/>
+            <column name="ensdartid" type="String"/>
+            <column name="tname" type="String"/>
+            <column name="comments" type="String"/>
+
+        </loadData>
+
+    </changeSet>
+</databaseChangeLog>

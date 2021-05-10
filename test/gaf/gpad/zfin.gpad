@@ -1,0 +1,14 @@
+!gpa-version: 1.2
+!collation date: 2018-04-04
+!collated from production models in https://github.com/geneontology/noctua-models/ where col1 matches zfin
+ZFIN	ZDB-GENE-040426-2330	acts_upstream_of	GO:0002244	 ZFIN:ZDB-PUB-170214-264	ECO:0000315			20180402	ZFIN		contributor=http://orcid.org/0000-0002-4142-7153|noctua-model-id=gomodel:59dc728000000555|model-state=production
+ZFIN	ZDB-GENE-000125-4	involved_in	GO:0007219	ZFIN:ZDB-PUB-170214-264	ECO:0000304			20180105	ZFIN		contributor=http://orcid.org/0000-0002-4142-7153|noctua-model-id=gomodel:59dc728000000555|model-state=production
+ZFIN	ZDB-GENE-980526-488	enables	GO:0005007	ZFIN:ZDB-PUB-170214-264	ECO:0000304			20180105	ZFIN	part_of(GO:0008543)	contributor=http://orcid.org/0000-0002-4142-7153|noctua-model-id=gomodel:59dc728000000555|model-state=production
+ZFIN	ZDB-GENE-000125-4	enables	GO:0004871	ZFIN:ZDB-PUB-170214-264	ECO:0000304			20180105	ZFIN	part_of(GO:0007219)	contributor=http://orcid.org/0000-0002-4142-7153|noctua-model-id=gomodel:59dc728000000555|model-state=production
+ZFIN	ZDB-GENE-990415-47	enables	GO:0004871	ZFIN:ZDB-PUB-170214-264	ECO:0000304			20180105	ZFIN	part_of(GO:0007219),precedes(GO:0002244),occurs_in(UBERON:0002329)	contributor=http://orcid.org/0000-0002-4142-7153|noctua-model-id=gomodel:59dc728000000555|model-state=production
+ZFIN	ZDB-GENE-040426-2330	acts_upstream_of	GO:0002244	ZFIN:ZDB-PUB-170214-264	ECO:0000315			20180402	ZFIN	preceded_by(GO:0004871),occurs_in(ZFA:0005040)	contributor=http://orcid.org/0000-0002-4142-7153|noctua-model-id=gomodel:59dc728000000555|model-state=production
+ZFIN	ZDB-GENE-980526-488	involved_in	GO:0008543	ZFIN:ZDB-PUB-170214-264	ECO:0000304			20180105	ZFIN		contributor=http://orcid.org/0000-0002-4142-7153|noctua-model-id=gomodel:59dc728000000555|model-state=production
+ZFIN	ZDB-GENE-990415-47	involved_in	GO:0007219	ZFIN:ZDB-PUB-170214-264	ECO:0000304			20180105	ZFIN	occurs_in(UBERON:0002329)	contributor=http://orcid.org/0000-0002-4142-7153|noctua-model-id=gomodel:59dc728000000555|model-state=production
+ZFIN	ZDB-GENE-040426-2330	acts_upstream_of,_positive_effect	GO:0007219	 ZFIN:ZDB-PUB-170214-264	ECO:0000315			20180402	ZFIN		contributor=http://orcid.org/0000-0002-4142-7153|noctua-model-id=gomodel:59dc728000000555|model-state=production
+ZFIN	ZDB-GENE-040426-2330	acts_upstream_of	GO:0007219	 ZFIN:ZDB-PUB-170214-264	ECO:0000315			20180402	ZFIN	occurs_in(UBERON:0002329)	contributor=http://orcid.org/0000-0002-4142-7153|noctua-model-id=gomodel:59dc728000000555|model-state=production
+ZFIN	ZDB-GENE-040426-2330	acts_upstream_of,_positive_effect	GO:0008543	 ZFIN:ZDB-PUB-170214-264	ECO:0000315			20180402	ZFIN	occurs_in(UBERON:0002329),causally_upstream_of(GO:0002244)	contributor=http://orcid.org/0000-0002-4142-7153|noctua-model-id=gomodel:59dc728000000555|model-state=production

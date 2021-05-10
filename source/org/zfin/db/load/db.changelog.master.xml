@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+<!--
+    <include file="source/org/zfin/db/load/1078/regatta/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/load/1079/shipwreck/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/load/1079/titanic/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/load/1079/underwater/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/load/1080/vasa/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/load/1080/walrus/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/load/1083/beerMug/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/load/1084/cyclone/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/load/1084/dancer/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/load/1084/expressionless/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/load/1085/fire/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/load/1085/ghost/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/load/1086/hotPepper/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/load/1086/iceCream/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/load/1087/jackOlatern/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/load/1088/kissingFace/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/load/1089/lemon/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/load/1089/moneyBag/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/load/1090/NailPolish/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/load/1090/Ogor/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/load/1090/Pizza/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/load/1091/pizza/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/load/1092/QatariFlag/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/load/1092/Rocket/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/load/1093/Snowman/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/load/1093/TigerFace/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/load/1094/UnamusedFace/db.changelog.master.xml"/>
+   <include file="source/org/zfin/db/load/1095/VulcanSalute/db.changelog.master.xml"/>
+   <include file="source/org/zfin/db/load/1095/WearyCatFace/db.changelog.master.xml"/>
+   <include file="source/org/zfin/db/load/1096/CrossBones/db.changelog.master.xml"/>
+    <include file="source/org/zfin/db/load/1097/YinYang/db.changelog.master.xml"/>
+-->
+    <!-- starting fresh with migration to postgres -->
+
+    <include file="source/org/zfin/db/load/1098/allemande/db.changelog.master.xml" /> 
+    <include file="source/org/zfin/db/load/1098/ChickenDance/db.changelog.master.xml" />
+    <include file="source/org/zfin/db/load/1099/bhangra/db.changelog.master.xml" />
+    <include file="source/org/zfin/db/load/1100/db.changelog.master.xml" />
+    <include file="source/org/zfin/db/load/1101/db.changelog.master.xml" />
+    <include file="source/org/zfin/db/load/1102/db.changelog.master.xml" />
+    <include file="source/org/zfin/db/load/1103/db.changelog.master.xml" />
+    <include file="source/org/zfin/db/load/1104/db.changelog.master.xml" />
+    <include file="source/org/zfin/db/load/1105/db.changelog.master.xml" />
+    <include file="source/org/zfin/db/load/1106/db.changelog.master.xml" />
+    <include file="source/org/zfin/db/load/1107/db.changelog.master.xml" />
+    <include file="source/org/zfin/db/load/1108/db.changelog.master.xml" />
+    <include file="source/org/zfin/db/load/1109/db.changelog.master.xml" />
+    <include file="source/org/zfin/db/load/1110/db.changelog.master.xml" />
+    <include file="source/org/zfin/db/load/1111/db.changelog.master.xml" />
+    <include file="source/org/zfin/db/load/1112/db.changelog.master.xml" />
+    <include file="source/org/zfin/db/load/1113/db.changelog.master.xml" />
+    <include file="source/org/zfin/db/load/1114/db.changelog.master.xml" />
+    <include file="source/org/zfin/db/load/1115/db.changelog.master.xml" />
+    <include file="source/org/zfin/db/load/1116/db.changelog.master.xml" />
+    <include file="source/org/zfin/db/load/1117/db.changelog.master.xml" />
+    <include file="source/org/zfin/db/load/1119/db.changelog.master.xml" />
+    <include file="source/org/zfin/db/load/1120/db.changelog.master.xml" />
+
+    <include file="source/org/zfin/db/load/1121/db.changelog.master.xml" />
+
+
+</databaseChangeLog>

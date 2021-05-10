@@ -1,0 +1,1230 @@
+ZDB-ALT-010427-4|||||exon 5|||||||||||||exon|5|||
+ZDB-ALT-020426-92|||||intron 2|||||||||||||intron|2|||
+ZDB-ALT-040129-6|||||intron |||||||||||||intron||||
+ZDB-ALT-120130-471|||||exon 2|stop_gained|||||||||||REF|exon|2|||
+ZDB-ALT-120209-52||||||||||||||||||||||
+ZDB-ALT-120209-55|||||intron 6||||||||||polypeptide_fusion||REF|intron|6|||
+ZDB-ALT-120514-1|||||exon 1|stop_gained||||||||||||exon|1|||
+ZDB-ALT-131219-11|||||intron 1|||||||||||||intron|1|||
+ZDB-ALT-131219-14|||||intron 2|||||||||||||intron|2|||
+ZDB-ALT-131219-17|||||intron 1|||||||||||||intron|1|||
+ZDB-ALT-131219-2|||||5_prime_UTR_variant|||||||||||||5_prime_UTR_variant||||
+ZDB-ALT-131219-28|||||intron 4|||||||||||||intron|4|||
+ZDB-ALT-131219-5|||||intron 1|||||||||||||intron|1|||
+ZDB-ALT-131219-8|||||exon 1|||||||||||||exon|1|||
+ZDB-ALT-140212-6|||||intron 1||||||||||||REF|intron|1|||
+ZDB-ALT-140806-1|||||intron 1||||||||||||REF|intron|1|||
+ZDB-ALT-150416-2|||||intron 1||||||||||||REF|intron|1|||
+ZDB-ALT-150806-1||||||STOP|||X|6|6||||||REF|||||
+ZDB-ALT-151120-2|||||intron 1||||||||||||REF|intron|1|||
+ZDB-ALT-151216-29||||||||||||||||Chr 22||||||
+ZDB-ALT-151216-37||||||||||||||||Chr 1||||||
+ZDB-ALT-151216-44||||||||||||||||Chr 10||||||
+ZDB-ALT-151216-47||||||||||||||||Chr 1||||||
+ZDB-ALT-151216-62||||||||||||||||Chr 24||||||
+ZDB-ALT-040217-4|||||cryptic_splice_donor exon 1|||||||||||||cryptic_splice_donor|1|||
+ZDB-ALT-040715-12|||||intron 1|||||||||||||intron|1|||
+ZDB-ALT-040930-4|||||intron 1||||||||||||REF|intron|1|||
+ZDB-ALT-080828-2|||||exon 2||||||||||||REF|exon|2|||
+ZDB-ALT-100209-11|||||exon 1|||||||||||||exon|1|||
+ZDB-ALT-110203-7|||||intron 1|||||||||||||intron|1|||
+ZDB-ALT-111010-23|||||||||||||||polypeptide_fusion||REF|||||
+ZDB-ALT-111118-28|||||intron 1||||||||||||REF|intron|1|||
+ZDB-ALT-120328-1|||||intron 4|||||||||||||intron|4|||
+ZDB-ALT-120613-25|||||intron ||||||||||||REF|intron||||
+ZDB-ALT-130627-1|||||5_prime_UTR_variant||||||||||||REF|5_prime_UTR_variant||||
+ZDB-ALT-130925-5|||||intron 3||||||||||polypeptide_fusion|||intron|3|||
+).||||||||||||||||||||||
+ZDB-ALT-131007-1|||||exon 1|SPLICING|||||||||||REF|exon|1|||
+ZDB-ALT-131018-1|||||intron 3|||||||||||||intron|3|||
+ZDB-ALT-131204-2|||||5_prime_UTR_variant||||||||||||REF|5_prime_UTR_variant||||
+ZDB-ALT-131219-1|||||5_prime_UTR_variant|||||||||||||5_prime_UTR_variant||||
+ZDB-ALT-131219-20|||||intron 1|||||||||||||intron|1|||
+ZDB-ALT-131219-6|||||5_prime_UTR_variant||||||||||||REF|5_prime_UTR_variant||||
+ZDB-ALT-140212-13|||||intron 2||||||||||||REF|intron|2|||
+ZDB-ALT-151006-1|||||exon 1||||||||||||REF|exon|1|||
+ZDB-ALT-151216-1||||||||||||||||19||||||
+ZDB-ALT-151216-13||||||||||||||||1||||||
+ZDB-ALT-151216-14||||||||||||||||18||||||
+ZDB-ALT-151216-31||||||||||||||| |7||||||
+ZDB-ALT-151216-51||||||||||||||||7||||||
+ZDB-ALT-151216-52||||||||||||||||12||||||
+ZDB-ALT-151216-57||||||||||||||||9||||||
+ZDB-ALT-151216-69||||||||||||||||2||||||
+ZDB-ALT-151216-74||||||||||||||||4||||||
+ZDB-ALT-010427-2|||||intron 5|||||||||||||intron|5|||
+ZDB-ALT-040217-6|||||intron 5|||||||||||||intron|5|||
+ZDB-ALT-110413-6|||||intron 1|||||||||||||intron|1|||
+ZDB-ALT-111118-5|||||intron 24||||||||||||REF|intron|24|||
+ZDB-ALT-120209-46|||||intron 4||||||||||polypeptide_fusion||REF|intron|4|||
+ZDB-ALT-120328-2|||||intron 12|||||||||||||intron|12|||
+ZDB-ALT-120524-1|||||exon 1||||||||||||REF|exon|1|||
+ZDB-ALT-120806-10818|||||exon 2|stop_gained|||||||||polypeptide_truncation||REF|exon|2|||
+ZDB-ALT-131219-10|||||5_prime_UTR_variant||||||||||||REF|5_prime_UTR_variant||||
+ZDB-ALT-131219-16|||||intron 4|||||||||||||intron|4|||
+ZDB-ALT-131219-19|||||intron 1|||||||||||||intron|1|||
+ZDB-ALT-131219-24|||||3_primary_UTR_variant|||||||||||||3_prime_UTR_variant||||
+ZDB-ALT-131219-27|||||exon 4|||||||||||||exon|4|||
+ZDB-ALT-131219-7|||||intron 1|||||||||||||intron|1|||
+ZDB-ALT-151120-1|||||||||||||||polypeptide_truncation||REF|||||
+ZDB-ALT-151216-8||||||||||||||||8||||||
+ZDB-ALT-151216-28||||||||||||||||15||||||
+ZDB-ALT-151216-41||||||||||||||||14||||||
+ZDB-ALT-151216-46||||||||||||||||7||||||
+ZDB-ALT-151216-50||||||||||||||||19||||||
+ZDB-ALT-151216-58||||||||||||||||16||||||
+ZDB-ALT-030617-2||||||frameshift_variant|||||||||polypeptide_truncation||REF|||2||
+ZDB-ALT-051114-2||||||||||143-201|143|201|||amino_acid_deletion||REF|||||
+ZDB-ALT-070131-2||||||||||||||||||||3||
+ZDB-ALT-090520-5||||||||||||||||||||6||
+ZDB-ALT-091124-1||||||||||||||5|amino_acid_deletion|||||||
+ZDB-ALT-110513-1|||||exon 2|frameshift_variant||||||||||||exon|2|29||
+ZDB-ALT-110513-1|||||exon 2|stop_gained||||||||||||exon|2||4|
+ZDB-ALT-111007-2|||||||||||||||polypeptide_truncation|||||90||
+ZDB-ALT-111110-1|||||exon 2|||||||||||||exon|2|8||
+ZDB-ALT-111201-1||||||frameshift_variant||||||||||||||10||
+ZDB-ALT-111201-1||||||stop_gained||||||||||||||10||
+ZDB-ALT-120120-5||||||frameshift_variant||||||||||||||5||
+ZDB-ALT-120120-5||||||stop_gained|||||||||polypeptide_truncation|||||||
+ZDB-ALT-121106-2||||||frameshift_variant||||||||||||||7||
+ZDB-ALT-130528-1|||||exon 26|stop_gained||||||||||||exon|26|||
+ZDB-ALT-130528-4|||||exon 17|stop_gained||||||||||||exon|17|||
+ZDB-ALT-130724-2||||||frameshift_variant|||||||||||REF|||4||
+ZDB-ALT-130809-1|||||exon 3|frameshift_variant|||||||||||REF|exon|3|4||
+ZDB-ALT-130809-1|||||exon 3|stop_gained|||||||||||REF|exon|3|4||
+ZDB-ALT-131107-9|||||exon 5|frameshift_variant||||||||||||exon|5|5||
+ZDB-ALT-131107-9||||||stop_gained||||||||||||||||
+ZDB-ALT-131112-3|||||exon 3|||||||||||||exon|3|11||
+ZDB-ALT-131122-6||||||||||||||||||||19||
+ZDB-ALT-131122-9||||||||||||||||||||4||
+ZDB-ALT-131125-3||||||||||||||||||||110||
+ZDB-ALT-131220-2|||||exon 2|frameshift_variant||||||||||||exon|2|||
+ZDB-ALT-131220-2|||||exon 2|stop_gained|||||||||polypeptide_truncation|||exon|2|||
+ZDB-ALT-140116-6||||||||||||||7|amino_acid_deletion|||||21||
+ZDB-ALT-140411-4||362|371|||||||||||||||||||
+ZDB-ALT-140606-3||||||||||||||||||||7||
+ZDB-ALT-140611-6||||||frameshift_variant||||||||||||||4||
+ZDB-ALT-140623-5||31|41|||||||||||||||||11||
+ZDB-ALT-140917-6|||||exon 1||||||||||||REF|exon|1|8||
+ZDB-ALT-141015-1|||||exon 2|frameshift_variant|||||||||amino_acid_substitution||REF|exon|2|2||
+ZDB-ALT-980203-386||4024||||frameshift_variant||||||||||||||1||
+ZDB-ALT-980413-584|||||exon 10|frameshift_variant|||||||||amino_acid_substitution||REF|exon|10|8||
+ZDB-ALT-980413-584|||||exon 10|stop_gained|||||||||polypeptide_truncation|||exon|10|8||
+ZDB-ALT-980413-584|G>A||||intron 10|SPLICING||||||||||||intron|10|||
+||||||||||||||||||||||
+ZDB-ALT-980520-24||109||||frameshift_variant|||||||||polypeptide_truncation||REF|||2||
+ZDB-ALT-141121-4||176|192||||||||||||polypeptide_truncation|||||17||
+ZDB-ALT-150218-7||||||frameshift_variant||||||||||||||10||
+ZDB-ALT-150218-7||||||stop_gained|||X|146||||||||||10||
+ZDB-ALT-150219-4||||||frameshift_variant||||||||||||||10||
+ZDB-ALT-150219-4||||||stop_gained|||X|36||||||||||10||
+ZDB-ALT-150311-1|||||exon 6|||||141-142|141|142|||amino_acid_deletion|||exon|6|6||
+ZDB-ALT-150311-1|||||intron 6|||||||||||||intron|6|||
+ZDB-ALT-150311-2|||||exon 6|stop_gained||F|X|141||||||||exon|6||9|
+ZDB-ALT-150311-2|||||intron 6|||||||||||||intron|6|5||
+ZDB-ALT-150311-3|||||exon 6|splice_site||||131-144|131|144|||amino_acid_deletion|||exon|6||1|
+ZDB-ALT-150311-3|||||intron 6|||||||||||||intron|6|21||
+ZDB-ALT-150323-6||||||||||266-273|266|273|||||REF|||||
+ZDB-ALT-150325-6|||||exon 2||||||||||||REF|exon|2|8||
+ZDB-ALT-150416-1||||||||minus Gly||831|||||||REF|||6||
+ZDB-ALT-150416-1||||||||minus Ile||832||||||||||||
+ZDB-ALT-150416-3||||||||||||||||||||11||
+ZDB-ALT-150528-4|||||exon 1|frameshift_variant|||||||||||REF|exon|1|7||
+ZDB-ALT-150528-4||||||stop_gained|||||||||||REF|||||
+ZDB-ALT-150528-5|||||exon 1|frameshift_variant|||||||||||REF|exon|1|10||
+ZDB-ALT-150528-5||||||stop_gained|||||||||||REF|||||
+ZDB-ALT-150611-2||151|156|||frameshift_variant|||||||||polypeptide_truncation|||||6||
+ZDB-ALT-150717-3||142|166|||frameshift_variant||||48-69|48|69|||amino_acid_substitution|||||25||
+ZDB-ALT-150717-3||||||||||70-617|70|617|||polypeptide_truncation||||||3|
+ZDB-ALT-150717-4||616|625|||||||206-263|206|263|||amino_acid_substitution|||||10||
+ZDB-ALT-150717-4||616|625|||||||263-617|263|617|||polypeptide_truncation|||||10||
+ZDB-ALT-150805-2||291|||exon 2|||||||||||||exon|2|5||
+ZDB-ALT-150909-2|||||exon 5|||||||||||||exon|5|22||
+ZDB-ALT-150928-7||149|152||||||||||||polypeptide_truncation|||||2||
+ZDB-ALT-150928-8||150|155||||||||||||polypeptide_truncation|||||4||
+ZDB-ALT-151007-28|||||||||||||||amino_acid_substitution||REF|||13||
+ZDB-ALT-151023-1||240|258||||||||||||amino_acid_substitution|||||17||
+ZDB-ALT-151023-1||240|258||||||||||||polypeptide_truncation|||||17||
+ZDB-ALT-151023-6||496|||||||||||||amino_acid_substitution|||||13||
+ZDB-ALT-151023-6|||||||||||||||polypeptide_truncation|||||||
+ZDB-ALT-151105-6||||||frameshift_variant|||||||||polypeptide_truncation|||||2||
+ZDB-ALT-151106-1||510|528||exon 5|frameshift_variant|||||||||||REF|exon|5|20||
+ZDB-ALT-151106-1||510|528||exon 5|stop_gained|||||||||polypeptide_truncation||REF|exon|5|20||
+ZDB-ALT-151110-2|||||exon 3|stop_gained|||||||||polypeptide_truncation||REF|exon|3|||
+ZDB-ALT-151118-1||227|||exon 2|||||||||||||exon|2|5||
+ZDB-ALT-151229-2||10|||promoter||||||||||||REF|promoter||11||
+ZDB-ALT-151230-12|||||exon 2||||||||||||REF|exon|2|8||
+ZDB-ALT-160111-1||215|221||||||||||||polypeptide_truncation|||||5||
+ZDB-ALT-160111-3||1303|1306||||||||||||amino_acid_substitution|||||4||
+ZDB-ALT-160111-3|||||||||||||||polypeptide_truncation|||||4||
+ZDB-ALT-160111-6||631|632||||||||||||amino_acid_substitution|||||16||
+ZDB-ALT-160111-6|||||||||||||||polypeptide_truncation|||||||
+ZDB-ALT-160119-3||390|396||||||||||||amino_acid_substitution|||||7||
+ZDB-ALT-160119-3|||||||||||||||polypeptide_truncation|||||||
+ZDB-ALT-160120-3||||||||||||||2|amino_acid_deletion||REF|||6||
+ZDB-ALT-160122-6||156|160|||frameshift_variant|||||||||amino_acid_substitution|||||5||
+ZDB-ALT-160122-6||||||stop_gained|||||||||polypeptide_truncation|||||||
+ZDB-ALT-160128-4|||||||||||||||amino_acid_substitution||REF|||11||
+ZDB-ALT-160128-4||||||stop_gained|||||||||polypeptide_truncation|||||||
+ZDB-ALT-160202-2|||||||||||||||amino_acid_deletion|||||6||
+ZDB-ALT-160217-9|||||||||||||||amino_acid_substitution|||||14||
+ZDB-ALT-160217-11|||||||||||||||amino_acid_substitution|||||8||
+ZDB-ALT-160217-13|||||||||||||||amino_acid_substitution|||||11||
+ZDB-ALT-160314-1|||||exon 6|stop_gained||A|X|538|538|||||||exon|6|8||
+ZDB-ALT-160314-2|||||exon 6|stop_gained||I|X|536|536|||||||exon|6|8||
+ZDB-ALT-160314-3|||||exon 6|stop_gained||Q|X|531|531|||||||exon|6||1|
+ZDB-ALT-160314-3|||||exon 6|||||||||||||exon|6|8||
+ZDB-ALT-160317-8||||||frameshift_variant|||||||||amino_acid_substitution||REF|||11||
+ZDB-ALT-160323-5|||||cryptic_splice_donor exon 2||||||||||polypeptide_truncation|||cryptic_splice_donor|2|||
+ZDB-ALT-010410-4||||||frameshift_variant|||||||||||REF|||143||
+ZDB-ALT-041111-4||||||frameshift_variant|||||||||amino_acid_substitution||REF|||68||
+ZDB-ALT-041111-4||||||stop_gained|||||||||polypeptide_truncation||REF|||68||
+ZDB-ALT-150904-2||||||||||||||||||||10||
+ZDB-ALT-060803-2||||||frameshift_variant||||||||||||||31||
+ZDB-ALT-060803-2||||||stop_gained||||||||||||||31||
+ZDB-ALT-150909-1|||||exon 5|||||||||||||exon|5|90||
+ZDB-ALT-090520-3||||||||||||||||||||2||
+ZDB-ALT-090520-6||||||||||||||||||||4||
+ZDB-ALT-090610-5|||||exon 2|frameshift_variant|||||||||polypeptide_truncation|||exon|2|4||
+ZDB-ALT-100817-3|||||exon 10|||||||||||||exon|10|||
+ZDB-ALT-110513-2|||||exon 2|frameshift_variant||||||||||||exon|2|15||
+ZDB-ALT-110513-2|||||exon 2|stop_gained||||||||||||exon|2||2|
+ZDB-ALT-111110-2|||||exon 2|||||||||||||exon|2|17||
+ZDB-ALT-120120-6||||||||||||||||||||81||
+ZDB-ALT-130528-2|||||exon 26|stop_gained||||||||||||exon|26|||
+ZDB-ALT-130531-1||215|||exon 3|||||||||||||exon|3|4||
+ZDB-ALT-130709-2||||||frameshift_variant|||||||||polypeptide_truncation|||||5||
+ZDB-ALT-131122-12||||||||||||||||||||203||
+ZDB-ALT-131122-15||||||||||||||||||||26||
+ZDB-ALT-131122-4||||||||||||||||||||61||
+ZDB-ALT-140116-7||||||frameshift_variant||||||||||||||13||
+ZDB-ALT-140122-10|||||exon 13|stop_gained|||||||||||REF|exon|13|3||
+ZDB-ALT-140411-5||179|188||||||||||||amino_acid_substitution|||||||
+ZDB-ALT-140415-3||45|||exon 1|||||||||||||exon|1|2||
+ZDB-ALT-140506-7||||||||||||||||||||10||
+ZDB-ALT-140606-1||299|303||||||||||||amino_acid_substitution|||||5||
+ZDB-ALT-140611-7||||||frameshift_variant||||||||||||||12||
+ZDB-ALT-140611-7|||||||||||||||||||||5|
+ZDB-ALT-140623-6||277|283||||||||||||amino_acid_substitution|||||7||
+ZDB-ALT-141007-3||||||frameshift_variant|||||||||polypeptide_truncation||REF|||1||
+ZDB-ALT-141007-3||||||stop_gained||||||||||||||||
+ZDB-ALT-141015-2|||||exon 2|frameshift_variant|||||||||amino_acid_substitution||REF|exon|2|4||
+ZDB-ALT-980203-336|||||intron 6||||||||||||REF|intron|6|1000||
+ZDB-ALT-141218-8||||||stop_gained|||||||||polypeptide_truncation||REF|||11||
+ZDB-ALT-150115-3||255|261||||||||||||amino_acid_substitution|||||7||
+ZDB-ALT-150115-3||255|261||||||||||||polypeptide_truncation|||||7||
+ZDB-ALT-150122-1|||||exon 1|frameshift_variant|||||||||||REF|exon|1|7||
+ZDB-ALT-150122-1|||||exon 1|stop_gained|||X|97|97||||polypeptide_truncation||REF|exon|1|7||
+ZDB-ALT-150311-4||||||frameshift_variant|||||||||||REF|||8||
+ZDB-ALT-150311-4||||||stop_gained|||X|23|23||||polypeptide_truncation||REF|||8||
+ZDB-ALT-150311-5||||||frameshift_variant|||||||||||REF|||7||
+ZDB-ALT-150311-5||||||stop_gained|||X|21|21||||polypeptide_truncation||REF|||7||
+ZDB-ALT-150316-2|||||exon 6|stop_gained|||X|18|18||||polypeptide_truncation|||exon|6|3||
+ZDB-ALT-150316-2|||||||||||||||||||||1|
+ZDB-ALT-150323-5||266|272||||||||||||||REF|||||
+ZDB-ALT-150417-5||||||||||||||||||||14||
+ZDB-ALT-150429-2|||||exon 2|frameshift_variant|||||||||||REF|exon|2|10||
+ZDB-ALT-150504-8||||||frameshift_variant|||||||||||REF|||4||
+ZDB-ALT-150505-2|||||exon 3|stop_gained|||||||||||REF|exon|3|31||
+ZDB-ALT-150625-1||67|106|||frameshift_variant|||||||||amino_acid_substitution||REF|||40||
+ZDB-ALT-150625-1||67|106|||stop_gained|||X|78|78||||polypeptide_truncation||REF|||40||
+ZDB-ALT-150717-2||||||frameshift_variant|||||||||amino_acid_substitution|||||2||
+ZDB-ALT-150717-2||||||frameshift_variant|||||||||polypeptide_truncation|||||2||
+ZDB-ALT-150805-3||285|||exon 2|||||||||||||exon|2|7||
+ZDB-ALT-150826-3||962|||exon 5|||||||||||||exon|5|1||
+ZDB-ALT-150929-2||117|141||||||||||||amino_acid_substitution|||||26||
+ZDB-ALT-150929-2|||||||||||||||polypeptide_truncation|||||||
+ZDB-ALT-150930-2||313|331||||||||||||amino_acid_substitution|||||17||
+ZDB-ALT-150930-2|||||||||||||||polypeptide_truncation|||||||
+ZDB-ALT-151013-2|||||exon 3||||||||||||REF|exon|3|8||
+ZDB-ALT-151020-2|||||exon 16|stop_gained|||||||||amino_acid_substitution||REF|exon|16|2||
+ZDB-ALT-151020-2|||||||||||||||polypeptide_truncation||REF|||||
+ZDB-ALT-151023-2||247|252||||||||||||amino_acid_substitution|||||4||
+ZDB-ALT-151023-2|||||||||||||||polypeptide_truncation|||||||
+ZDB-ALT-151027-1||359|363||exon 2||||||||||||REF|exon|2|5||
+ZDB-ALT-151102-2|||||exon 7|stop_gained|||X|1168|1168||||||REF|exon|7|5||
+ZDB-ALT-151102-4|||||exon 1|||||||||||||exon|1|13||
+ZDB-ALT-151102-7|||||exon 1|||||||||||||exon|1|4||
+ZDB-ALT-151110-1|||||exon 3|frameshift_variant|||||||||||REF|exon|3||1|
+ZDB-ALT-151110-1|||||||||||||||||REF|||10||
+ZDB-ALT-151111-2|||||exon 3|frameshift_variant|||||||||||REF|exon|3|10||
+ZDB-ALT-151118-3||1173|||exon 7|||||||||||||exon|7|2||
+ZDB-ALT-151118-4||692|||exon 3|||||||||||||exon|3|7||
+ZDB-ALT-151215-8||877|888||||||||||||amino_acid_substitution|||||10||
+ZDB-ALT-151215-8||877|888||||||||||||polypeptide_truncation|||||10||
+ZDB-ALT-151218-10||643|651||||||||||||polypeptide_truncation|||||7||
+ZDB-ALT-151230-4|||||exon 1|frameshift_variant|||||||||||REF|exon|1|1||
+ZDB-ALT-151230-4|||||exon 1|stop_gained|||||||||||REF|exon|1|1||
+ZDB-ALT-151230-5|||||exon 1|frameshift_variant|||||||||||REF|exon|1|8||
+ZDB-ALT-151230-5|||||exon 1|stop_gained|||||||||||REF|exon|1|8||
+ZDB-ALT-151230-6||||||||||||||||||||17||
+ZDB-ALT-151230-11|||||exon 1||||||||||||REF|exon|1|17||
+ZDB-ALT-160111-7||632|633||||||||||||amino_acid_substitution|||||2||
+ZDB-ALT-160111-7|||||||||||||||polypeptide_truncation|||||||
+ZDB-ALT-160113-2|||||||||||||||polypeptide_truncation|||||5||
+ZDB-ALT-160122-5||159|161|||frameshift_variant|||||||||amino_acid_substitution||REF|||4||
+ZDB-ALT-160122-5||158|161|||stop_gained|||||||||polypeptide_truncation||REF|||4||
+ZDB-ALT-160126-3|||||||||||||||||REF|||14||
+ZDB-ALT-160128-3||||||stop_gained|||||||||amino_acid_substitution||REF|||||
+ZDB-ALT-160128-3|||||||||||||||polypeptide_truncation||REF|||||
+ZDB-ALT-160210-3|||||exon 8|frameshift_variant|||||||||||REF|exon|8|4||
+ZDB-ALT-160210-3|||||exon 8|stop_gained|||||||||||REF|exon|8|4||
+ZDB-ALT-160210-4||||||frameshift_variant|||||||||||REF|||4||
+ZDB-ALT-160210-4||||||stop_gained|||||||||polypeptide_truncation||REF|||4||
+ZDB-ALT-160210-5||||||frameshift_variant|||||||||||REF|||14||
+ZDB-ALT-160210-5||||||stop_gained|||||||||polypeptide_truncation||REF|||14||
+ZDB-ALT-160317-9||||||stop_gained|||||||||||REF|||7||
+ZDB-ALT-160323-4||||||frameshift_variant||||||||||||||70||
+ZDB-ALT-160323-4||||||stop_gained|||||||||polypeptide_truncation|||||70||
+ZDB-ALT-160325-2||||||||||||||||||||18||
+ZDB-ALT-040701-2|||||exon 3|frameshift_variant||||||||||||exon|3|22||
+ZDB-ALT-040701-2|||||exon 3|stop_gained||||||||||||exon|3|22||
+ZDB-ALT-041105-2|||||exon 17|splice_site||||||||||||exon|17|5||
+ZDB-ALT-041105-2|||||intron 17|||||||||||||intron|17|52||
+ZDB-ALT-060519-4||537||||frameshift_variant||||||||||||||1||
+ZDB-ALT-060519-4||537||||stop_gained||||||||||||||1||
+ZDB-ALT-060926-2|||||exon 2|||||||||||||exon|2|5||
+ZDB-ALT-090520-4||||||||||||||||||||2||
+ZDB-ALT-090520-7||||||||||||||||||||5||
+ZDB-ALT-110705-3||||||frameshift_variant||||||||||||||31||
+ZDB-ALT-110705-3||||||stop_gained|||X|5322|5322|||||||||31||
+ZDB-ALT-120120-1||||||frameshift_variant||||||||||||||||
+ZDB-ALT-120120-1||||||stop_gained|||||||||polypeptide_truncation|||||||
+ZDB-ALT-120120-7||||||||||||||||||||6||
+ZDB-ALT-120611-1||||||frameshift_variant||||||||||||||14||
+ZDB-ALT-120611-1||||||stop_gained||||||||||||||||
+ZDB-ALT-121211-2|||||exon 1|||||||||||||exon|1|||
+ZDB-ALT-130320-1|||||enhancer|||||||||||||enhancer||||
+ZDB-ALT-130506-1||||||frameshift_variant||||||||||||||10||
+ZDB-ALT-130506-1||||||stop_gained||||||||||||||||
+ZDB-ALT-130709-3||||||frameshift_variant||||||||||||||10||
+ZDB-ALT-130709-3||||||stop_gained|||||||||polypeptide_truncation||||||2|
+ZDB-ALT-131018-2|||||exon 6|||P|||||||amino_acid_deletion|||exon|6|6||
+ZDB-ALT-131018-2|||||exon 6|||Y|||||||amino_acid_deletion|||exon|6|6||
+ZDB-ALT-131101-2||1244|1451||exon 6|stop_gained|||X|414|414|||||||exon|6|||
+ZDB-ALT-131112-2|||||exon 3|||||||||||||exon|3|11||
+ZDB-ALT-131112-5|||||exon 5|||||||||||||exon|5|7||
+ZDB-ALT-131122-10||||||||||||||||||||17||
+ZDB-ALT-131122-13||||||||||||||||||||4||
+ZDB-ALT-131122-2||||||||||||||||||||10||
+ZDB-ALT-131122-8||||||||||||||||||||10||
+ZDB-ALT-131125-2||||||||||||||||||||4||
+ZDB-ALT-131220-1|||||exon 2|frameshift_variant||||||||||||exon|2|||
+ZDB-ALT-131220-1||||||stop_gained|||||||||polypeptide_truncation|||||||
+ZDB-ALT-140116-8||||||frameshift_variant||||||||||||||15||
+ZDB-ALT-140623-4||313|315||||||||||||amino_acid_substitution|||||1||
+ZDB-ALT-140623-4||313|315||||||||||||polypeptide_truncation|||||1||
+ZDB-ALT-140623-7||456|465||||||||||||amino_acid_substitution|||||10||
+ZDB-ALT-140623-7|||||||||||||||polypeptide_truncation|||||||
+ZDB-ALT-140717-3||||||||QLLS||283-286|283|286|||amino_acid_deletion||REF|||12||
+ZDB-ALT-140917-2||8722|||exon 1||||||||||||REF|exon|1|1||
+ZDB-ALT-140917-8||8722|||exon 1||||||||||||REF|exon|1|8||
+ZDB-ALT-141007-4||||||frameshift_variant|||||||||||REF|||10||
+ZDB-ALT-141007-4||||||stop_gained|||||||||polypeptide_truncation||REF|||||
+ZDB-ALT-980203-1058|||||||||||||||||REF|||110||
+ZDB-ALT-980203-470||||||||||||||||||||2||
+ZDB-ALT-980203-711|||||exon 7|frameshift_variant|||||||||||REF|exon|7|||
+ZDB-ALT-980203-711|||||exon 7|stop_gained|||X|333|333||||||REF|exon|7|||
+ZDB-ALT-991130-42|||||exon 4|||||||||||||exon|4|||
+ZDB-ALT-141121-3||193|199||||||||||||amino_acid_substitution|||||7||
+ZDB-ALT-141121-3|||||||||||||||polypeptide_truncation|||||||
+ZDB-ALT-150115-4|||||||||||||||amino_acid_substitution|||||1||
+ZDB-ALT-150115-4|||||||||||||||polypeptide_truncation|||||||
+ZDB-ALT-150218-4||||||frameshift_variant|||||||||amino_acid_substitution||REF|||2||
+ZDB-ALT-150218-4|||||||||||||||polypeptide_truncation||REF|||||
+ZDB-ALT-150219-3||||||frameshift_variant||||||||||||||11||
+ZDB-ALT-150219-3||||||stop_gained|||X|15|15|||||||||11||
+ZDB-ALT-150320-1||||||||||||||3|amino_acid_deletion||REF|||9||
+ZDB-ALT-150325-7|||||exon 2||||||||||||REF|exon|2|8||
+ZDB-ALT-150325-8|||||exon 2||||||||||||REF|exon|2|4||
+ZDB-ALT-150414-5||||||||||||||||||||8||
+ZDB-ALT-150414-6||||||||||||||||||||7||
+ZDB-ALT-150417-6||||||||||||||||||||6||
+ZDB-ALT-150429-3|||||exon 2||||||||||||REF|exon|2|5||
+ZDB-ALT-150504-7||||||frameshift_variant|||||||||||REF|||8||
+ZDB-ALT-150507-3|||||exon 4|frameshift_variant|||||||||||REF|exon|4|104||
+ZDB-ALT-150507-3||||||stop_gained|||||||||||REF|||||
+ZDB-ALT-150527-1||||||frameshift_variant||||||||||||||2||
+ZDB-ALT-150527-1||||||stop_gained||||||||||||||||
+ZDB-ALT-150611-1||141|153|||frameshift_variant|||||||||polypeptide_truncation|||||13||
+ZDB-ALT-150720-2|||||exon 1|frameshift_variant|||||||||||EWD|exon|1|7||
+ZDB-ALT-150720-2||||||stop_gained|||X|95|95||||||EWD|||||
+ZDB-ALT-150826-4||961|||exon 5|||||||||||||exon|5|4||
+ZDB-ALT-150923-1||||||frameshift_variant||||||||||||||384||
+ZDB-ALT-150923-1||||||stop_gained|||||||||polypeptide_truncation|||||||
+ZDB-ALT-150929-1||136|144||||||||||||amino_acid_substitution|||||7||
+ZDB-ALT-150929-1|||||||||||||||polypeptide_truncation|||||||
+ZDB-ALT-150930-3||328|348|||||||||||||ELONGATED||||19||
+ZDB-ALT-151014-3|||||||||||||||||REF|||10||
+ZDB-ALT-151016-3||||||exon_loss_variant||||||||||||||147||
+ZDB-ALT-151019-1||||||||||||||||||||||
+ZDB-ALT-151023-5||491|506||||||||||||amino_acid_substitution|||||14||
+ZDB-ALT-151023-5|||||||||||||||polypeptide_truncation|||||||
+ZDB-ALT-151023-8||108|113||||||||||||amino_acid_substitution|||||4||
+ZDB-ALT-151023-8|||||||||||||||polypeptide_truncation|||||||
+ZDB-ALT-151023-9||95|107||||||||||||amino_acid_substitution|||||11||
+ZDB-ALT-151023-9|||||||||||||||polypeptide_truncation|||||||
+ZDB-ALT-151102-1|||||exon 7|stop_gained|||X|1162|1162||||||REF|exon|7|4||
+ZDB-ALT-151102-3|||||exon 1|||||||||||||exon|1|8||
+ZDB-ALT-151102-5||||||||N|X|18|18||||amino_acid_substitution|||||6||
+ZDB-ALT-151102-6|||||exon 1|||||||||||||exon|1|11||
+ZDB-ALT-151105-5||||||frameshift_variant|||||||||polypeptide_truncation|||||11||
+ZDB-ALT-151110-5||||||exon_loss_variant|||||||||||REF|||2||
+ZDB-ALT-151111-1|||||intron 1|splice_site|||||||||||REF|intron|1|4||
+ZDB-ALT-151216-87||||||||||||||||||||8||
+ZDB-ALT-151218-2||216|244||||||||||||polypeptide_truncation|||||7||
+ZDB-ALT-151228-2||||||||||||||||||||5||
+||||||||||||||||||||||
+ZDB-ALT-151230-9||||||stop_gained|||||||||polypeptide_truncation||REF|||5||
+ZDB-ALT-151230-3|||||exon 1|frameshift_variant|||||||||||REF|exon|1|5||
+ZDB-ALT-151230-3|||||exon 1|stop_gained|||||||||||REF|exon|1|5||
+ZDB-ALT-151230-13|||||exon 1||||||||||||REF|exon|1|10||
+ZDB-ALT-160119-1|||||cryptic_splice_site_variant|intron gain||||||||||||cryptic_splice_site_variant_site||8||
+ZDB-ALT-160119-1|||||splice acceptor intron 4|intron gain||||||||||||splice acceptor|4|8||
+ZDB-ALT-160119-6|||||exon 2|frameshift_variant||||||||||||exon|2|8||
+ZDB-ALT-160119-6||||||stop_gained||||||||||||||||
+ZDB-ALT-160120-2||||||stop_gained|||||||||||REF|||5||
+ZDB-ALT-160122-7||158|178|||||||||||7|amino_acid_deletion||REF|||||
+ZDB-ALT-160126-2||||||frameshift_variant|||||||||||REF|||11||
+ZDB-ALT-160128-5||||||||||||||4|amino_acid_deletion||REF|||12||
+ZDB-ALT-160129-5||378|385|||frameshift_variant|||||||||polypeptide_truncation||REF|||8||
+ZDB-ALT-160217-10|||||||||||||||amino_acid_substitution|||||19||
+ZDB-ALT-160217-12|||||||||||||||amino_acid_substitution|||||5||
+ZDB-ALT-160223-7||1276|1298||exon 7|frameshift_variant||||||||||||exon|7|23||
+ZDB-ALT-160223-7||1276|1298||exon 7|stop_gained||||||||||||exon|7|23||
+ZDB-ALT-160325-3||||||||||||||||||||13||
+ZDB-ALT-160325-4||||||||||||||||||||1||
+ZDB-ALT-030617-3||||||frameshift_variant|||||||||polypeptide_truncation||REF|||6||
+ZDB-ALT-050713-5|||||||||||||||||REF|||8||
+ZDB-ALT-051114-3||||||||||143-202|143|202|||amino_acid_deletion||REF|||||
+ZDB-ALT-090520-6||||||||||||||||||||52||
+ZDB-ALT-091124-2||||||||||||||6|amino_acid_deletion|||||||
+ZDB-ALT-110513-1|||||exon 2|frameshift_variant||||||||||||exon|2|75||
+ZDB-ALT-110513-1|||||exon 2|stop_gained||||||||||||exon|2||5|
+ZDB-ALT-111007-3|||||||||||||||polypeptide_truncation|||||90||
+ZDB-ALT-111110-2|||||exon 2|||||||||||||exon|2|8||
+ZDB-ALT-111201-1||||||frameshift_variant||||||||||||||10||
+ZDB-ALT-111201-1||||||stop_gained||||||||||||||1||
+ZDB-ALT-120120-5||||||frameshift_variant||||||||||||||5||
+ZDB-ALT-120120-5||||||stop_gained|||||||||polypeptide_truncation|||||||
+ZDB-ALT-121106-3||||||frameshift_variant||||||||||||||7||
+ZDB-ALT-130528-7|||||exon 26|stop_gained||||||||||||exon|26|||
+ZDB-ALT-130528-10|||||exon 17|stop_gained||||||||||||exon|17|||
+ZDB-ALT-130724-3||||||frameshift_variant|||||||||||REF|||4||
+ZDB-ALT-130809-1|||||exon 3|frameshift_variant|||||||||||REF|exon|3|4||
+ZDB-ALT-130809-1|||||exon 3|stop_gained|||||||||||REF|exon|3|4||
+ZDB-ALT-131107-9|||||exon 5|frameshift_variant||||||||||||exon|5|5||
+ZDB-ALT-131107-9||||||stop_gained||||||||||||||||
+ZDB-ALT-131112-4|||||exon 3|||||||||||||exon|3|11||
+ZDB-ALT-131122-12||||||||||||||||||||19||
+ZDB-ALT-131122-15||||||||||||||||||||4||
+ZDB-ALT-131125-4||||||||||||||||||||110||
+ZDB-ALT-131220-2|||||exon 2|frameshift_variant||||||||||||exon|2|||
+ZDB-ALT-131220-2|||||exon 2|stop_gained|||||||||polypeptide_truncation|||exon|2|||
+ZDB-ALT-140116-7||||||||||||||7|amino_acid_deletion|||||21||
+ZDB-ALT-140411-5||362|372|||||||||||||||||||
+ZDB-ALT-140606-4||||||||||||||||||||7||
+ZDB-ALT-140611-7||||||frameshift_variant||||||||||||||4||
+ZDB-ALT-140623-6||31|42|||||||||||||||||11||
+ZDB-ALT-140917-7|||||exon 1||||||||||||REF|exon|1|8||
+ZDB-ALT-141015-1|||||exon 2|frameshift_variant|||||||||amino_acid_substitution||REF|exon|2|2||
+ZDB-ALT-980203-387||3806||||frameshift_variant||||||||||||||1||
+ZDB-ALT-980413-584|||||exon 10|frameshift_variant|||||||||amino_acid_substitution||REF|exon|10|8||
+ZDB-ALT-980413-584|||||exon 10|stop_gained|||||||||polypeptide_truncation|||exon|10|8||
+ZDB-ALT-980413-584|G>A||||intron 11|SPLICING||||||||||||intron|11|||
+||||||||||||||||||||||
+ZDB-ALT-980520-25||7721||||frameshift_variant|||||||||polypeptide_truncation||REF|||2||
+ZDB-ALT-141121-5||176|193||||||||||||polypeptide_truncation|||||17||
+ZDB-ALT-150218-7||||||frameshift_variant||||||||||||||10||
+ZDB-ALT-150218-7||||||stop_gained|||X|-74|74|||||||||10||
+ZDB-ALT-150219-4||||||frameshift_variant||||||||||||||10||
+ZDB-ALT-150219-4||||||stop_gained|||X|-184|184|||||||||10||
+ZDB-ALT-150311-1|||||exon 7|||||141-143|141|143|||amino_acid_deletion|||exon|7|6||
+ZDB-ALT-150311-1|||||intron 7|||||||||||||intron|7|||
+ZDB-ALT-150311-2|||||exon 7|stop_gained||F|X|142|142|||||||exon|7||10|
+ZDB-ALT-150311-2|||||intron 7|||||||||||||intron|7|6||
+ZDB-ALT-150311-3|||||exon 7|splice_site||||131-145|131|145|||amino_acid_deletion|||exon|7||2|
+ZDB-ALT-150311-3|||||intron 7|||||||||||||intron|7|21||
+ZDB-ALT-150323-7||||||||||266-274|266|274|||||REF|||||
+ZDB-ALT-150325-7|||||exon 2||||||||||||REF|exon|2|8||
+ZDB-ALT-150416-1||||||||minus Gly||833|833||||||REF|||6||
+ZDB-ALT-150416-1||||||||minus Ile||834|834|||||||||||
+ZDB-ALT-150416-3||||||||||||||||||||11||
+ZDB-ALT-150528-4|||||exon 1|frameshift_variant|||||||||||REF|exon|1|7||
+ZDB-ALT-150528-4||||||stop_gained|||||||||||REF|||||
+ZDB-ALT-150528-5|||||exon 1|frameshift_variant|||||||||||REF|exon|1|10||
+ZDB-ALT-150528-5||||||stop_gained|||||||||||REF|||||
+ZDB-ALT-150611-3||151|157|||frameshift_variant|||||||||polypeptide_truncation|||||6||
+ZDB-ALT-150717-3||142|167|||frameshift_variant||||48-70|48|70|||amino_acid_substitution|||||25||
+ZDB-ALT-150717-3||||||||||70-618|70|618|||polypeptide_truncation||||||4|
+ZDB-ALT-150717-4||616|625|||||||206-264|206|264|||amino_acid_substitution|||||10||
+ZDB-ALT-150717-4||616|625|||||||263-618|263|618|||polypeptide_truncation|||||10||
+ZDB-ALT-150805-3||292|||exon 2|||||||||||||exon|2|5||
+ZDB-ALT-150909-3|||||exon 5|||||||||||||exon|5|22||
+ZDB-ALT-150928-9||149|153||||||||||||polypeptide_truncation|||||2||
+ZDB-ALT-150928-10||150|156||||||||||||polypeptide_truncation|||||4||
+ZDB-ALT-151007-29|||||||||||||||amino_acid_substitution||REF|||13||
+ZDB-ALT-151023-1||240|258||||||||||||amino_acid_substitution|||||17||
+ZDB-ALT-151023-1||240|258||||||||||||polypeptide_truncation|||||17||
+ZDB-ALT-151023-6||496|511||||||||||||amino_acid_substitution|||||13||
+ZDB-ALT-151023-6|||||||||||||||polypeptide_truncation|||||||
+ZDB-ALT-151105-7||||||frameshift_variant|||||||||polypeptide_truncation|||||2||
+ZDB-ALT-151106-1||510|528||exon 5|frameshift_variant|||||||||||REF|exon|5|20||
+ZDB-ALT-151106-1||510|528||exon 5|stop_gained|||||||||polypeptide_truncation||REF|exon|5|20||
+ZDB-ALT-151110-3|||||exon 3|stop_gained|||||||||polypeptide_truncation||REF|exon|3|||
+ZDB-ALT-151118-2||228|||exon 2|||||||||||||exon|2|5||
+ZDB-ALT-151229-3||10|||promoter||||||||||||REF|promoter||11||
+ZDB-ALT-151230-13|||||exon 2||||||||||||REF|exon|2|8||
+ZDB-ALT-160111-1||215|222||||||||||||polypeptide_truncation|||||5||
+ZDB-ALT-160111-3||1303|1307||||||||||||amino_acid_substitution|||||4||
+ZDB-ALT-160111-3|||||||||||||||polypeptide_truncation|||||4||
+ZDB-ALT-160111-6||631|633||||||||||||amino_acid_substitution|||||16||
+ZDB-ALT-160111-6|||||||||||||||polypeptide_truncation|||||||
+ZDB-ALT-160119-3||390|397||||||||||||amino_acid_substitution|||||7||
+ZDB-ALT-160119-3|||||||||||||||polypeptide_truncation|||||||
+ZDB-ALT-160120-4||||||||||||||2|amino_acid_deletion||REF|||6||
+ZDB-ALT-160122-6||156|161|||frameshift_variant|||||||||amino_acid_substitution|||||5||
+ZDB-ALT-160122-6||||||stop_gained|||||||||polypeptide_truncation|||||||
+ZDB-ALT-160128-4|||||||||||||||amino_acid_substitution||REF|||11||
+ZDB-ALT-160128-4||||||stop_gained|||||||||polypeptide_truncation|||||||
+ZDB-ALT-160202-3|||||||||||||||amino_acid_deletion|||||6||
+ZDB-ALT-160217-15|||||||||||||||amino_acid_substitution|||||14||
+ZDB-ALT-160217-17|||||||||||||||amino_acid_substitution|||||8||
+ZDB-ALT-160217-19|||||||||||||||amino_acid_substitution|||||11||
+ZDB-ALT-160314-1|||||exon 6|stop_gained||A|X|2232.348885|2232.348885|||||||exon|6|8||
+ZDB-ALT-160314-2|||||exon 6|stop_gained||I|X|2248.647687|2248.647687|||||||exon|6|8||
+ZDB-ALT-160314-3|||||exon 6|stop_gained||Q|X|2264.946489|2264.946489|||||||exon|6||2|
+ZDB-ALT-160314-3|||||exon 6|||||2281.24529|2281.24529|||||||exon|6|8||
+ZDB-ALT-160317-9||||||frameshift_variant||||2297.544092|2297.544092||||amino_acid_substitution||REF|||11||
+||||||||||2313.842894|2313.842894|||||||||||
+ZDB-ALT-160323-6|||||cryptic_splice_donor exon 3|||||2330.141696|2330.141696||||polypeptide_truncation|||cryptic_splice_donor|3|||
+ZDB-ALT-010410-5||||||frameshift_variant||||2346.440498|2346.440498||||||REF|||143||
+ZDB-ALT-041111-4||||||frameshift_variant||||2362.739299|2362.739299||||amino_acid_substitution||REF|||68||
+ZDB-ALT-041111-4||||||stop_gained||||2379.038101|2379.038101||||polypeptide_truncation||REF|||68||
+ZDB-ALT-150904-3||||||||||2395.336903|2395.336903|||||||||10||
+ZDB-ALT-060803-2||||||frameshift_variant||||2411.635705|2411.635705|||||||||31||
+ZDB-ALT-060803-2||||||stop_gained||||2427.934507|2427.934507|||||||||31||
+ZDB-ALT-150909-2|||||exon 5|||||2444.233308|2444.233308|||||||exon|5|90||
+ZDB-ALT-090520-9||||||||||2460.53211|2460.53211|||||||||2||
+ZDB-ALT-090520-12||||||||||2476.830912|2476.830912|||||||||4||
+ZDB-ALT-090610-6|||||exon 2|frameshift_variant||||2493.129714|2493.129714||||polypeptide_truncation|||exon|2|4||
+ZDB-ALT-100817-4|||||exon 10|||||2509.428515|2509.428515|||||||exon|10|||
+ZDB-ALT-110513-2|||||exon 2|frameshift_variant||||2525.727317|2525.727317|||||||exon|2|15||
+ZDB-ALT-110513-2|||||exon 2|stop_gained||||2542.026119|2542.026119|||||||exon|2||3|
+ZDB-ALT-111110-3|||||exon 2|||||2558.324921|2558.324921|||||||exon|2|17||
+ZDB-ALT-120120-7||||||||||2574.623723|2574.623723|||||||||81||
+ZDB-ALT-130528-3|||||exon 26|stop_gained||||2590.922524|2590.922524|||||||exon|26|||
+ZDB-ALT-130531-2||216|||exon 3|||||2607.221326|2607.221326|||||||exon|3|4||
+ZDB-ALT-130709-3||||||frameshift_variant||||2623.520128|2623.520128||||polypeptide_truncation|||||5||
+ZDB-ALT-131122-12||||||||||2639.81893|2639.81893|||||||||203||
+ZDB-ALT-131122-15||||||||||2656.117732|2656.117732|||||||||26||
+ZDB-ALT-131122-4||||||||||2672.416533|2672.416533|||||||||61||
+ZDB-ALT-140116-8||||||frameshift_variant||||2688.715335|2688.715335|||||||||13||
+ZDB-ALT-140122-11|||||exon 13|stop_gained||||2705.014137|2705.014137||||||REF|exon|13|3||
+ZDB-ALT-140411-6||179|189|||||||2721.312939|2721.312939||||amino_acid_substitution|||||||
+ZDB-ALT-140415-4||46|||exon 1|||||2737.611741|2737.611741|||||||exon|1|2||
+ZDB-ALT-140506-8||||||||||2753.910542|2753.910542|||||||||10||
+ZDB-ALT-140606-2||299|304|||||||2770.209344|2770.209344||||amino_acid_substitution|||||5||
+ZDB-ALT-140611-7||||||frameshift_variant||||2786.508146|2786.508146|||||||||12||
+ZDB-ALT-140611-7||||||||||2802.806948|2802.806948||||||||||6|
+ZDB-ALT-140623-7||277|284|||||||2819.105749|2819.105749||||amino_acid_substitution|||||7||
+ZDB-ALT-141007-3||||||frameshift_variant||||2835.404551|2835.404551||||polypeptide_truncation||REF|||1||
+ZDB-ALT-141007-3||||||stop_gained||||2851.703353|2851.703353|||||||||||
+ZDB-ALT-141015-3|||||exon 2|frameshift_variant||||2868.002155|2868.002155||||amino_acid_substitution||REF|exon|2|4||
+||||||||||2884.300957|2884.300957|||||||||||
+ZDB-ALT-980203-337|||||intron 7|||||2900.599758|2900.599758||||||REF|intron|7|1000||
+ZDB-ALT-141218-9||||||stop_gained||||2916.89856|2916.89856||||polypeptide_truncation||REF|||11||
+ZDB-ALT-150115-3||255|261|||||||2933.197362|2933.197362||||amino_acid_substitution|||||7||
+ZDB-ALT-150115-3||255|261|||||||2949.496164|2949.496164||||polypeptide_truncation|||||7||
+ZDB-ALT-150122-1|||||exon 1|frameshift_variant||||2965.794966|2965.794966||||||REF|exon|1|7||
+ZDB-ALT-150122-1|||||exon 1|stop_gained|||X|2982.093767|2982.093767||||polypeptide_truncation||REF|exon|1|7||
+ZDB-ALT-150311-4||||||frameshift_variant||||2998.392569|2998.392569||||||REF|||8||
+ZDB-ALT-150311-4||||||stop_gained|||X|3014.691371|3014.691371||||polypeptide_truncation||REF|||8||
+ZDB-ALT-150311-5||||||frameshift_variant||||3030.990173|3030.990173||||||REF|||7||
+ZDB-ALT-150311-5||||||stop_gained|||X|3047.288975|3047.288975||||polypeptide_truncation||REF|||7||
+ZDB-ALT-150316-2|||||exon 6|stop_gained|||X|3063.587776|3063.587776||||polypeptide_truncation|||exon|6|3||
+ZDB-ALT-150316-2||||||||||3079.886578|3079.886578||||||||||2|
+ZDB-ALT-150323-6||266|273|||||||3096.18538|3096.18538||||||REF|||||
+ZDB-ALT-150417-6||||||||||3112.484182|3112.484182|||||||||14||
+ZDB-ALT-150429-3|||||exon 2|frameshift_variant||||3128.782983|3128.782983||||||REF|exon|2|10||
+ZDB-ALT-150504-9||||||frameshift_variant||||3145.081785|3145.081785||||||REF|||4||
+ZDB-ALT-150505-3|||||exon 3|stop_gained||||3161.380587|3161.380587||||||REF|exon|3|34||
+ZDB-ALT-150625-1||67|106|||frameshift_variant||||3177.679389|3177.679389||||amino_acid_substitution||REF|||40||
+ZDB-ALT-150625-1||67|106|||stop_gained|||X|3193.978191|3193.978191||||polypeptide_truncation||REF|||40||
+ZDB-ALT-150717-2||||||frameshift_variant||||3210.276992|3210.276992||||amino_acid_substitution|||||2||
+ZDB-ALT-061207-4||||||stop_gained||||||||||||||||
+ZDB-ALT-980203-399|T>A|425||||NON CONSERVED||Leu|Gln|142|142|||||||||||
+ZDB-ALT-070730-10|G>A||||exon 43|SPLICING||||||||||||exon|43|||
+ZDB-ALT-100603-1|T>A||||exon 2|SPLICING||||||||||||exon|2|||
+ZDB-ALT-980203-1310||||||missense_variant||L|P|23|23|||||||||||
+ZDB-ALT-101008-11|C>T|||||stop_gained||R|X|120|120||||||REF|||||
+ZDB-ALT-140430-1||||||stop_gained||Q|X|130|130|||||||||||
+ZDB-ALT-110728-2|G>T||||exon 11|frameshift_variant||||||||||||exon|11|||
+ZDB-ALT-110728-2|G>T||||exon 11|stop_gained||||||||||||exon|11|||
+ZDB-ALT-980203-1501|||||intron 28|SPLICING|||||||||||REF|intron|28|||
+ZDB-ALT-980203-1501|||||intron 28|exon_loss_variant|exon 28||||||||amino_acid_deletion|||intron|28|||
+ZDB-ALT-160129-6|T>A|||||stop_gained||Y|X|37|37||||||REF|||||
+ZDB-ALT-141009-1|T>G|||||missense_variant||F|C|138|138|||||||||||
+ZDB-ALT-980203-668|C>T|||||stop_gained||Q|X|811|811||||||REF|||||
+ZDB-ALT-980413-518|T>C||||exon 3|missense_variant||L|P|93|93|||||||exon|3|||
+ZDB-ALT-080325-6|A>T|376||||stop_gained||R|X|126|126|||||||||||
+ZDB-ALT-120328-3|A>T|||||stop_gained||Lys|X|335|335|||||||||||
+ZDB-ALT-980203-1332|A>T|||||missense_variant||Asp|Val|8|8||||||REF|||||
+ZDB-ALT-100429-1|T>C|||||||||163|163||Uniprot P79734||||REF|||||
+ZDB-ALT-980203-1453|A>T|1126||||stop_gained||K|X|376|376||||polypeptide_truncation|||||||
+ZDB-ALT-980203-652|T>A|||||stop_gained||Leu|X|1352|1352|||||||||||
+ZDB-ALT-050919-72|T>G|1194||||missense_variant||Phe|Val|383|383|||||||||||
+ZDB-ALT-091112-35||||||stop_gained||Tyr|X|203|203||||polypeptide_truncation|||||||
+ZDB-ALT-980203-1563|||||||||||||||||REF|||||
+ZDB-ALT-980203-517||||||stop_gained||Q|X|544|544|||||||||||
+ZDB-ALT-061129-10|C>T|1681||||stop_gained||||561|561|||||||||||
+ZDB-ALT-111018-10||651|||exon 1|stop_gained||||||||||||exon|1|||
+ZDB-ALT-130729-6|T>A|||||stop_gained|||||||||polypeptide_truncation||REF|||||
+ZDB-ALT-980413-473||||||stop_gained||K|X|533|533|||||||||||
+ZDB-ALT-080523-2||||||stop_gained||||86|86|||||||||||
+ZDB-ALT-090609-2|G>A||| |exon 4|SPLICING|||||||||polypeptide_truncation|||exon|4|||
+ZDB-ALT-020715-2||||||missense_variant||F|S|516|516|||||||||||
+ZDB-ALT-071015-3|||||intron 2|SPLICING||||||||||||intron|2|||
+ZDB-ALT-071015-3|||||exon 3|SPLICING||||||||||||exon|3|||
+ZDB-ALT-100813-4|G>A|||||stop_gained||Trp|X|411|411||||polypeptide_truncation||REF|||||
+ZDB-ALT-980203-1613||||||||Phe|Ser|579|579||||||REF|||||
+ZDB-ALT-110630-22|T>G|||||stop_gained||||||||||||||||
+ZDB-ALT-150723-15|C>T|987||||stop_gained||Q|X|336|336|||||||||||
+ZDB-ALT-120404-4|T>G|||||||Ser|Ile|942|942|||||||||||
+ZDB-ALT-150826-2|C>T|2185|||exon 12|missense_variant||R|C|729|729|||||||exon|12|||
+ZDB-ALT-980203-1097|A>T|1903||||stop_gained||Arg|X|635|635|||||||||||
+ZDB-ALT-100406-1|T>A||||exon 11|stop_gained||||||||||||exon|11|||
+ZDB-ALT-121113-1|T>C|||||missense_variant||Leu|Pro|||||||||||||
+ZDB-ALT-150312-12|G>T|||||missense_variant||W|L|47|47|||||||||||
+ZDB-ALT-111122-3|G>A|||||SPLICING||||||||||||||||
+ZDB-ALT-120301-1||1894||||||||||||||||||||
+ZDB-ALT-120301-1|G>A|||||||||||||||||||||
+ZDB-ALT-980203-1788|C>T|3148||||stop_gained||Arg|X|929|929||||||REF|||||
+ZDB-ALT-140114-1||||||stop_gained||Ala|X|207|207||||||REF|||||
+ZDB-ALT-151222-1|A>T||||intron 4|SPLICING||||||||||||intron|4|||
+ZDB-ALT-050428-8||||||missense_variant||N|K|168|168|||||||||||
+ZDB-ALT-080401-3|G>A|||||missense_variant||Glu|Lys|130|130|||||||||||
+ZDB-ALT-120411-225|G>A|||||stop_gained|||||||||||REF|||||
+ZDB-ALT-120411-225|G>A||||exon 4|SPLICING|||||||||||REF|exon|4|||
+ZDB-ALT-120820-1|G>A|||||missense_variant||G|E||||||amino_acid_substitution|||||||
+ZDB-ALT-980203-1248|C>T|||||stop_gained||Arg|X|139|139|||||||||||
+ZDB-ALT-051012-8|G>T|||||NON_CONSERVED missense_variant||G|V|178|178||||NON-CONSERVATIVE amino_acid_substitution|||||||
+ZDB-ALT-091230-1|T>A|||||stop_gained||Leu|X|278|278|||||||||||
+ZDB-ALT-130410-8|A>G|||||missense_variant||Thr|Ala|80|80|||||||||||
+ZDB-ALT-980413-508||||||missense_variant||Asn|Lys|172|172|||||||||||
+ZDB-ALT-090616-1|C>T||||exon 5|stop_gained||Q|X|201|201||||polypeptide_truncation|||exon|5|||
+ZDB-ALT-121019-1|A>T||||exon 6|SPLICING||||||||||||exon|6|||
+ZDB-ALT-121019-1|A>T|||||stop_gained||||||||||||||||
+ZDB-ALT-100504-7|G>T|25762707||NC_007116|intron 8|SPLICING|||||||||amino_acid_deletion|5|REF|intron|8|||
+ZDB-ALT-100504-7||||||||Ser|Lys|277|277||||amino_acid_substitution|||||||
+ZDB-ALT-121204-1|||||exon 4|frameshift_variant||||||||||||exon|4||1|
+ZDB-ALT-110620-1|T>A|||||SPLICING|||||||||||REF|||||
+ZDB-ALT-980203-1093||||||missense_variant||F|Y|241|241|||||||||||
+ZDB-ALT-030716-8||||||stop_gained||R|X|797|797|||||||||||
+ZDB-ALT-061207-2|G>A||||exon 13|SPLICING|||||||||||REF|exon|13|||
+ZDB-ALT-130809-2|||||||||X|107|107|||||||||||
+ZDB-ALT-150312-9||||||||Y|S|66|66|||||||||||
+ZDB-ALT-090611-17|G>T|||||stop_gained|||X|25|25|||||||||||
+ZDB-ALT-110829-1|G>A||||exon 5|SPLICING|||||||||||REF|exon|5|||
+ZDB-ALT-110829-1|G>A||||exon 5|stop_gained|||||||||||REF|exon|5|||
+ZDB-ALT-980203-510||||||stop_gained||G|X|412|412||||||REF|||||
+ZDB-ALT-030312-2||||||stop_gained||Lys|S|239|239|||||||||||
+ZDB-ALT-101008-16||||||stop_gained||Lys|X|174|174|||||||||||
+ZDB-ALT-120221-11|A>T|427||||stop_gained||||143|143|||||||||||
+ZDB-ALT-130411-3||||||SPLICING||||||||||||||||
+ZDB-ALT-130411-3||||||stop_gained|||X|23|23|||||||||||
+ZDB-ALT-041209-2|T>C|||||||||||||||||||||
+ZDB-ALT-140130-18|A>T|301||||stop_gained||K|X|101|101||||polypeptide_truncation||REF|||||
+ZDB-ALT-090714-1|T>A||||intron 14|SPLICING||||||||||||intron|14|||
+ZDB-ALT-090714-1||||||frameshift_variant||||||||||||||||
+ZDB-ALT-090714-1||||||stop_gained||||||||||||||||
+ZDB-ALT-110104-3|G>T||||exon 10|stop_gained|||X|331|331|||||||exon|10|||
+ZDB-ALT-140127-2|T>G|||||stop_gained|||||||||||REF|||||
+ZDB-ALT-111221-1|C>T|||||missense_variant||Ser|Leu|193|193||||non_conservative_amino_acid_substitution|||||||
+ZDB-ALT-130502-1|C>T||||exon 4|stop_gained|||X|195|195|||||||exon|4|||
+ZDB-ALT-130829-1|C>A|||||stop_gained||Tyr|X|110|110|||||||||||
+ZDB-ALT-110720-4|||||||||X|610|610|||||||||||
+ZDB-ALT-040224-4|||||exon 6|stop_gained||||||||37|polypeptide_truncation|||exon|6|||
+ZDB-ALT-121018-2||||||stop_gained||Y|X|2056|2056|||||||||||
+ZDB-ALT-061129-2|C>A|1002||||stop_gained|||X|334|334|||||||||||
+ZDB-ALT-090609-1||||||stop_gained|||X|64|64|||63|polypeptide_truncation|||||||
+ZDB-ALT-091112-10|C>T|11527||||stop_gained|||||||||polypeptide_truncation|||||||
+ZDB-ALT-100308-1|C>A|156||||stop_gained||||51|51|||||||||||
+ZDB-ALT-130925-7|G>T||||exon 8|stop_gained||E|X|396|396|||||||exon|8|||
+ZDB-ALT-980203-1396|G>A|2645||||missense_variant||Gly|Asp|882|882|||||||||||
+ZDB-ALT-040128-10|C>T|||||stop_gained|||||||||polypeptide_truncation||REF|||||
+ZDB-ALT-110802-4||||||stop_gained||K|X|329|329|||||||||||
+ZDB-ALT-120216-1|C>T|2623||||||Arg|X|875|875||||polypeptide_truncation||REF|||||
+ZDB-ALT-130220-3|G>T||||exon 5|stop_gained||Glu|X||||||polypeptide_truncation|||exon||||
+ZDB-ALT-980203-1749|T>A|||||SPLICING|||||||||||REF|||||
+ZDB-ALT-071015-2|C>A|597||||||||||||||||||||
+ZDB-ALT-980203-1219|C>T|2906||||missense_variant||Pro|Leu|969|969||||amino_acid_substitution||REF|||||
+ZDB-ALT-061101-360||||||stop_gained||R|X|227|227|||||||||||
+ZDB-ALT-060811-4|G>A|||||||D|N|123|123||||amino_acid_substitution|||||||
+ZDB-ALT-061129-6|C>T|187||||stop_gained|||||||||polypeptide_truncation|||||||
+ZDB-ALT-121112-5|T>A|||||stop_gained||C|X|94|94|||||||||||
+ZDB-ALT-150312-11|A>C|||||missense_variant||T|P|29|29||||amino_acid_substitution|||||||
+ZDB-ALT-070315-5|A>T|208|||exon 2|stop_gained||K|X||||||polypeptide_truncation|||exon|2|||
+ZDB-ALT-090610-8|T>A||||exon 7|missense_variant||Trp|Arg|193|193||||amino_acid_substitution|||exon|7|||
+ZDB-ALT-100526-1|T>C|1279||||missense_variant||S|P|427|427||||amino_acid_substitution||REF|||||
+ZDB-ALT-110825-2|C>A|||||stop_gained||||||||||||||||
+ZDB-ALT-120927-3|C>T||||exon 32|stop_gained||R|X|14970|14970|||||||exon|32|||
+ZDB-ALT-060628-4|C>T|3600||||stop_gained||||||||||||||||
+ZDB-ALT-090121-2|T>A|||||missense_variant||I|N|142|142||||amino_acid_substitution|||||||
+ZDB-ALT-130718-3|||||exon 4|stop_gained||Gln|X|202|202|||||||exon|4|||
+ZDB-ALT-110210-1|C>T|||||stop_gained||Q|X|982|982|||||||||||
+ZDB-ALT-150408-1|G>A||||intron 5|SPLICING||||||||||||intron|5|||
+ZDB-ALT-150408-1||||||frameshift_variant||||||||||||||||
+ZDB-ALT-150408-1||||||stop_gained||||||||||||||||
+ZDB-ALT-130410-7|T>A||||exon 3|stop_gained||Leu|X|155|155|||||||exon|3|||
+ZDB-ALT-130514-2|C>T|2340||||stop_gained||Glu|X||||||||REF|||||
+ZDB-ALT-130830-3|G>A|||||stop_gained|||X|5333|5333|||||||||||
+ZDB-ALT-980203-1594|C>T|||||stop_gained||Arg|X|139|139|||||||||||
+ZDB-ALT-100506-2||||||stop_gained||AC|X|40|40|||||||||||
+ZDB-ALT-120426-1|G>A|1018|||exon 10|stop_gained|||X|214|214|||||||exon|10|||
+ZDB-ALT-131210-1|T>A|||||missense_variant||Leu|Q||||||amino_acid_substitution|||||||
+ZDB-ALT-111013-1|T>G|||||SPLICING|||||||||polypeptide_truncation|||||||
+ZDB-ALT-121128-5|C>T||||exon 8|stop_gained||Arg|X|291|291|||||||exon|8|||
+ZDB-ALT-141009-2|T>A|||||||C|S|339|339|||||||||||
+ZDB-ALT-150325-5|G>T||||exon 2|stop_gained||||||||||17|REF|exon|2|||
+ZDB-ALT-150325-5|C>A|205||NM_001077431||stop_gained||Tyr|X|53|53||||polypeptide_truncation||REF|||||
+ZDB-ALT-110620-3|T>A||||exon 5|missense_variant||Val|Glu||||||amino_acid_substitution|||exon|5|||
+ZDB-ALT-030805-10|C>T|||||stop_gained||Gln|X|254|254|||||||||||
+ZDB-ALT-060824-4|T>C|454||||missense_variant||Ser|Pro||||||||REF|||||
+ZDB-ALT-061214-2|G>A|||||SPLICING||||||||||||||||
+ZDB-ALT-130814-1|T>A|309||||||||||||||||||||
+ZDB-ALT-130325-9|G>T||||exon 6|stop_gained||||461|461||||polypeptide_truncation|||exon|6|||
+ZDB-ALT-060608-480|G>A|||||stop_gained||||||||||||||||
+ZDB-ALT-110321-2||||||||Leu|Arg|221|221|||||||||||
+ZDB-ALT-150219-2|C>T|1066|||exon 9 |stop_gained|||X|356|356|||294|polypeptide_truncation||REF|exon|9|||
+ZDB-ALT-980203-1524||||||SPLICING|||||||||amino_acid_deletion|||||||
+ZDB-ALT-150923-2|G>T|||||missense_variant||W|L|169|169|||||||||||
+ZDB-ALT-980203-584|G>T|||||||Gly|X|11|11|||||||||||
+ZDB-ALT-980413-433||||||||D|V|166|166||||amino_acid_substitution|||||||
+ZDB-ALT-120411-459|C>T|||||stop_gained|||X|24946|24946|||||||||||
+ZDB-ALT-980203-462|C>T|3967||||stop_gained||||||||||||||||
+ZDB-ALT-150916-5|A>T|||||stop_gained||Q|X|486|486||||||REF|||||
+ZDB-ALT-110104-2|T>G||||exon 13|||Ile|Ser|531|531|||||||exon|13|||
+ZDB-ALT-140127-1|G>A||||exon 13|splice_site|||||||||||REF|exon|13|||
+ZDB-ALT-150723-16|C>T|||||stop_gained||R|X|26|26|||||||||||
+ZDB-ALT-980203-1236|G>A|||||||E|K|888|888|||||||||||
+ZDB-ALT-100726-2||||||||M|K|1461|1461|||||||||||
+ZDB-ALT-130830-1|C>T|||||stop_gained||||27471|27471|||||||||||
+ZDB-ALT-980203-1592|G>T|||||stop_gained||Glu|X|198|198||||polypeptide_truncation|||||||
+ZDB-ALT-101119-1|C>T|||||stop_gained||||96|96|||115|polypeptide_truncation|||||||
+ZDB-ALT-151013-1|A>T|120|||exon 2|stop_gained||Lys|X|113|113||||||REF|exon|2|||
+ZDB-ALT-040224-26|||||exon 35|SPLICING|25||||||||amino_acid_substitution||REF|exon|35|||
+ZDB-ALT-040224-26|||||exon 35|frameshift_variant|||||||||amino_acid_deletion||REF|exon|35|||
+ZDB-ALT-040224-26|||||exon 35|stop_gained|||||||||polypeptide_truncation||REF|exon|35|||
+ZDB-ALT-121018-1||||||stop_gained||Q|X|850|850|||||||||||
+ZDB-ALT-010411-12||||||missense_variant||||||||||||||||
+ZDB-ALT-080825-1|C>T|||||stop_gained||Q|X|136|136|||||||||||
+ZDB-ALT-150624-6|C>T||||exon 3|stop_gained|||X|322|322||||polypeptide_truncation||REF|exon|3|||
+ZDB-ALT-980203-1667|G>A||||exon 53|stop_gained||W|X|2506|2506|||||||exon|35|||
+ZDB-ALT-980203-1533|T>G|1111||||||||||||||||||||
+ZDB-ALT-151210-1|T>G|||exon 1||splice_site|||||||||polypeptide_truncation|||||||
+ZDB-ALT-151210-1||||intron 1||frameshift_variant|||||||||polypeptide_truncation|||||||
+ZDB-ALT-151210-1||||||stop_gained|||||||||polypeptide_truncation|||||||
+ZDB-ALT-980413-442||||||stop_gained||Y|X|846|846|||||||||||
+ZDB-ALT-120725-1|C>A|185|||exon 2|stop_gained|||||||||polypeptide_truncation|||exon|2|||
+ZDB-ALT-100106-4|G>A|||||||G|R|484|484|||||||||||
+ZDB-ALT-140411-2||||||stop_gained||Tyr|X|607|607||||polypeptide_truncation||REF|||||
+ZDB-ALT-150120-1|||||exon 7 |splice_site|||||||||polypeptide_truncation||REF|exon|7|||
+ZDB-ALT-150120-1||||||frameshift_variant|||||||||||REF|||||
+ZDB-ALT-160129-1|T>C|||||||Lys|Pro|46|46||||||REF|||||
+ZDB-ALT-980203-1599||||||||Gln|Leu|157|157|||||||||||
+ZDB-ALT-130204-1|T>A|||||splice_site||||||||||||||||
+ZDB-ALT-160317-7|T>A|||||splice_site||||||||||||||||
+ZDB-ALT-160317-7|T>A|||||intron_gain_variant||||||||||||||||
+ZDB-ALT-160317-7|T>A|||||stop_gained||||||||||||||||
+ZDB-ALT-080325-4|C>A|313||||stop_gained||Y|X|104|104|||||||||||
+ZDB-ALT-101015-2|G>A|||||splice_site|||||||||||REF|||||
+ZDB-ALT-101015-2||||||frameshift_variant||||||||||||||||
+ZDB-ALT-980203-638|T>C|||||||L|P|308|308|||||||||||
+ZDB-ALT-050919-40|C>T|494||||||Thr|Ile|165|165|||||||||||
+ZDB-ALT-090610-7|T>A||||exon 8|stop_gained||L|X|285|285||||polypeptide_truncation||REF|exon|8|||
+ZDB-ALT-100205-1||||||||Ile|Ser|1042|1042|||||||||||
+ZDB-ALT-120927-2|C>T||||exon 21|stop_gained||Q|X|951|951|||||||exon|21|||
+ZDB-ALT-980203-1302|G>A|||||||W|X|234|234||||polypeptide_truncation|||||||
+ZDB-ALT-070426-3|T>A|||||stop_gained||||||||||8||||||
+ZDB-ALT-090805-1||||||cryptic_splice_site_variant|plus 9 |||||||||||||||
+ZDB-ALT-150616-1|T>G|||||stop_gained|||||||||polypeptide_truncation|||||||
+ZDB-ALT-980203-1162|T>G|||||missense_variant||Leu|Val|356|356|||||||||||
+ZDB-ALT-150414-7||||||||D||250|250||||amino_acid_deletion|||||3||
+ZDB-ALT-980203-469|C>A|608||||stop_gained||Ser|X|168|168||||||REF|||||
+ZDB-ALT-081210-1|G>A|522||||stop_gained|||X|174|174||||polypeptide_truncation|||||||
+ZDB-ALT-090715-3|T>A|347||||stop_gained||Leu|X|116|116|||||||||||
+ZDB-ALT-100216-2|G>A|||||missense_variant||G|D|264|264|||||||||||
+ZDB-ALT-120411-135|C>T|||||stop_gained|||X|1487|1487|||||||||||
+ZDB-ALT-151209-4||||||stop_gained|||||||||||REF|||||
+ZDB-ALT-160215-1|G>A||||exon 7|stop_gained|||||||||||REF|exon|7|||
+ZDB-ALT-090506-1||||||||D|E|162|162||||||REF|||||
+ZDB-ALT-131205-6||||||missense_variant||L|P|489|489||AB739007|||||||||
+ZDB-ALT-980203-696|G>A|||||stop_gained||||13|13|||||||||||
+ZDB-ALT-140415-5|T>C|371|||exon 4|missense_variant||L|P|124|124|||||||exon|4|||
+ZDB-ALT-150127-2|||||exon 2|splice_site|||||||||||REF|exon|2|||
+ZDB-ALT-980203-1122|T>G|176|||exon 2|missense_variant||Ile|Ser|59|59||||||REF|exon|2|||
+ZDB-ALT-060911-4|G>A|||||||||||||||||||||
+ZDB-ALT-120718-3|T>A|839||||||Lys|Met|280|280|||||||||||
+ZDB-ALT-110620-2|A>T||||intron 9|splice_site||||||||||||intron|9|||
+ZDB-ALT-110620-2||||||cryptic_splice_site_variant||||||||||||||||
+ZDB-ALT-110620-2||||||frameshift_variant||||||||||||||||
+ZDB-ALT-110620-2||||||stop_gained|||X|421|421|||||||||||
+ZDB-ALT-061207-12||||||||Cys|Tyr|||||||||||||
+ZDB-ALT-150312-7||||||||I|F|152|152||||amino_acid_substitution|||||||
+ZDB-ALT-100526-5|C>T|10642||||stop_gained|||X|3548|3548||||||REF|||||
+ZDB-ALT-110825-6|G>T|||||stop_gained||||||||||||||||
+ZDB-ALT-090827-1|T>A|||||||L|H|||||||||||||
+ZDB-ALT-151215-2|C>T|||||stop_gained|||||||||||REF|||||
+ZDB-ALT-980203-1170||||||splice_site||||||||||||||||
+ZDB-ALT-980203-857|T>A||||exon 24|stop_gained|||X||||||||REF|exon|24|||
+ZDB-ALT-051229-2||||||stop_gained||Trp|X|153|153||||||REF|||||
+ZDB-ALT-110315-8|C>T|754||||stop_gained|||X|252|252|||||||||||
+ZDB-ALT-980413-693|||||exon 4|missense_variant||||||||||||exon|4|||
+ZDB-ALT-980413-693||||||stop_gained||||||||||||||||
+ZDB-ALT-110804-1||||||stop_gained||Arg|X|965|965|||||||||||
+ZDB-ALT-040601-2|||||exon 14|||||||||||||exon|14|1||
+ZDB-ALT-041104-2|T>G||||intron 7|splice_site||||||||3|amino_acid_insertion|||intron|7|||
+ZDB-ALT-100723-8|C>A|9306||||stop_gained||Y|X|3102|3102|||||||||||
+ZDB-ALT-130829-2|C>T|158||||stop_gained||Arg|X|||||||||||||
+ZDB-ALT-060824-8|T>A|282||||stop_gained||||||||303|polypeptide_truncation||REF|||||
+ZDB-ALT-980203-405||||||stop_gained||Y|X|131|131|||||||||||
+ZDB-ALT-060608-173|T>C|||||frameshift_variant|||X|475|475|||||||||||
+ZDB-ALT-060608-173||||||exon_loss_variant||||||||||||||||
+ZDB-ALT-080318-4|G>A|2103|||exon 9|splice_site||||||||||||exon|9|||
+ZDB-ALT-080318-4||||||frameshift_variant||||||||||||||||
+ZDB-ALT-100622-2|C>T|||||||Q|X|339|339|||||||||||
+ZDB-ALT-090129-4|G>A||||exon 5|splice_site||||||||||||exon|5|||
+ZDB-ALT-090129-4|G>A||||exon 5|exon_loss_variant||||||||||||exon|5|||
+ZDB-ALT-101008-17||||||stop_gained|||X|669|669||||polypeptide_truncation||REF|||||
+ZDB-ALT-150624-5|C>A|3489||||stop_gained||Y|X|1163|1163||||||REF|||||
+ZDB-ALT-100512-1|G>A|374||||||Cys|Tyr|125|125||||||REF|||||
+ZDB-ALT-050428-2||||||missense_variant||M|K|214|214|||||||||||
+ZDB-ALT-980203-1626|A>G||||intron 42|cryptic_splice_site_variant_site|||||||||||REF|intron|42|||
+ZDB-ALT-980203-1626|A>G|||||frameshift_variant|||||||||amino_acid_substitution||REF|||||
+ZDB-ALT-980203-1626|A>G|||||stop_gained|||X|1949|1949||||polypeptide_truncation||REF|||||
+ZDB-ALT-100112-1||||||missense_variant||G|D|1459|1459|||||||||||
+ZDB-ALT-111011-1||||||stop_gained||R|X|891|891|||||||||||
+ZDB-ALT-980203-1357|T>A||||exon 12|stop_gained|||||||||||REF|exon|12|||
+ZDB-ALT-050919-90|A>T|||||stop_gained||Q|X|316|316||||||REF|||||
+ZDB-ALT-060608-185|T>A|1869||||stop_gained||||||||||||||||
+ZDB-ALT-080325-3|C>T|736||||||Q|X|246|246|||||||||||
+ZDB-ALT-100629-2|T>G|||||||I|R|86|86|||||||||||
+ZDB-ALT-140801-1||||||stop_gained||R|X|3607|3607||||polypeptide_truncation|||||||
+ZDB-ALT-150506-1||||||||P|T|1850|1850||||amino_acid_substitution|||||||
+ZDB-ALT-061129-22|G>A|4072||||stop_gained|||X|1358|1358|||||||||||
+ZDB-ALT-071127-4|C>A|||||stop_gained||Cys|X|788|788|||||||||||
+ZDB-ALT-110330-1|A>T|||||||I|F|205|205|||||||||||
+ZDB-ALT-121112-3||||||stop_gained||R|X|125|125|||||||||||
+ZDB-ALT-980203-496|G>A|||||stop_gained|||||||||polypeptide_truncation||REF|||||
+ZDB-ALT-980203-985|T>G|||||cryptic_splice_site_variant|||||||||polypeptide_truncation|||||||
+ZDB-ALT-980203-985||||||frameshift_variant|||||||||polypeptide_truncation|||||||
+ZDB-ALT-130930-8|G>A|||||stop_gained||G|X|290|290|||||||||||
+ZDB-ALT-980203-507|C>T|||||stop_gained||Q|X|931|931||||||REF|||||
+ZDB-ALT-080818-4||||||SPLICING||||||||||||||||
+ZDB-ALT-080818-4||||||stop_gained|||||||||polypeptide_truncation|||||||
+ZDB-ALT-100311-9|A>T|302||||stop_gained||Lys|X|68|68||||||REF|||||
+ZDB-ALT-101008-13|T>G|241||||||Ile|Arg||||||amino_acid_substitution|||||||
+ZDB-ALT-980203-1662|C>A|||||||Cys|X||||||||REF|||||
+ZDB-ALT-131212-1|G>A|564||||stop_gained|||||||||polypeptide_truncation|||||||
+ZDB-ALT-130701-1|A>T||||exon 3|stop_gained||K|X|64|64|||||||exon|3|||
+ZDB-ALT-151209-6||||||stop_gained|||||||||||REF|||||
+ZDB-ALT-060608-121|G>T|||||||Cys|Phe|401|401||||amino_acid_substitution|||||||
+ZDB-ALT-110211-1|T>A|||||stop_gained||Cys|X|23|23|||||||||||
+ZDB-ALT-110802-1||37||||stop_gained||||||||||||||1||
+ZDB-ALT-110802-1||615||||||E|D|205|205|||||||||||
+ZDB-ALT-110802-1||2183||||||K|R|728|728|||||||||||
+ZDB-ALT-070928-2|T>A|||||splice_site|||||||||polypeptide_truncation|||||||
+ZDB-ALT-150127-1|||||exon 6|splice_site|||||||||||REF|exon|6|||
+ZDB-ALT-150601-6|T>G|||||||L|R|1429|1429||||amino_acid_substitution|||||||
+ZDB-ALT-110207-12|A>G|||||cryptic_splice_site_variant||||||||||||||||
+ZDB-ALT-110207-12||||||frameshift_variant||||||||||||||||
+ZDB-ALT-110207-12||||||stop_gained||T|X|182|182|||||||||||
+ZDB-ALT-080325-8|C>T|292||||||Q|X|98|98|||||||||||
+ZDB-ALT-080609-1|G>A|||||||Thr|Lys|189|189|||||||||||
+ZDB-ALT-100720-1|||||exon 9|splice_site||||||||||||exon|9|||
+ZDB-ALT-140317-1|T>A|||||stop_gained||Tyr|X|||||||||||||
+ZDB-ALT-140805-1|||||exon 3|stop_gained|||||||||||REF|exon|3|||
+ZDB-ALT-141222-2|T>A|201||||||F|L|70|70||||||REF|||||
+ZDB-ALT-141222-2|C>A|497||||||P|Q|166|166||||||REF|||||
+ZDB-ALT-131218-1|T>A|1388||||stop_gained||Leu||463|463||||polypeptide_truncation||REF|||||
+ZDB-ALT-980203-1562|C>T|||||stop_gained||Gln|X|778|778|||||||||||
+ZDB-ALT-061129-14|A>T|558||||stop_gained|||X|157|157|||||||||||
+ZDB-ALT-101008-24|||||exon 9|stop_gained||W|X|1752|1752|||||||exon|9|||
+ZDB-ALT-980203-1671|G>T|||||stop_gained||G|X|155|155||||polypeptide_truncation|||||||
+ZDB-ALT-980520-41|C>T|||||||Arg|Cys|122|122||||amino_acid_substitution||REF|||||
+ZDB-ALT-090603-7||||||||R|H|557|557|||||||||||
+ZDB-ALT-140210-7|T>A|||||||Val|Asp|375|375||||||REF|||||
+ZDB-ALT-980203-1374||||||||M|R|1013|1013||||amino_acid_substitution||REF|||||
+ZDB-ALT-110630-21|C>A|||||stop_gained||||||||||||||||
+ZDB-ALT-100723-4|C>A|||||stop_gained|||||||||polypeptide_truncation|||||||
+ZDB-ALT-130409-8|T>A|1053||||stop_gained|||X|351|351|||||||||||
+ZDB-ALT-980413-636|G>A|226||||||||||||||||||||
+ZDB-ALT-060824-6|C>T|538||||stop_gained|||||||||polypeptide_truncation||REF|||||
+ZDB-ALT-130814-2|T>G|||||||||221|221|||||||||||
+ZDB-ALT-980203-1300|A>T|2356||||stop_gained|||||||||polypeptide_truncation|||||||
+ZDB-ALT-050428-6||||||||V|V|200|200|||||||||||
+ZDB-ALT-980203-1384|C>T|3445||||stop_gained||Glu|X|1032|1032||||||REF|||||
+ZDB-ALT-100506-15||||||stop_gained||||96|96||||||REF|||1||
+ZDB-ALT-110429-5|G>A||||exon 62|splice_site||||||||||||exon|62|||
+ZDB-ALT-980203-1250|G>T|11446||||missense_variant||Gly|Trp|3816|3816||||||REF|||||
+ZDB-ALT-100730-2|C>T|1971|||exon 11|stop_gained||Q|X|658|658||||||REF|exon|11|||
+ZDB-ALT-140411-3||||||stop_gained||Gln|X|684|684||||polypeptide_truncation||REF|||||
+ZDB-ALT-070117-1|T>A|||||stop_gained|||||||||||REF|||||
+ZDB-ALT-131220-3|G>T||||exon 13|||||||||||||exon|13|||
+ZDB-ALT-061129-20|G>T|280||||stop_gained|||X|94|94|||||||||||
+ZDB-ALT-100720-3|||||exon 9|stop_gained||W|X|252|252|||||||exon|9|||
+ZDB-ALT-120330-1|T>G|||||stop_gained||Tyr|X||||||polypeptide_truncation|||||||
+ZDB-ALT-140320-1||||||missense_variant||G|D|242|242|||||||||||
+ZDB-ALT-150106-2|C>T|1456|||||||X|487|487||||polypeptide_truncation|||||||
+ZDB-ALT-150518-1|T>A|||||stop_gained||Y|X|3|3|||||||||||
+ZDB-ALT-150818-1|G>A|||||stop_gained||||53|53||||||REF|||||
+ZDB-ALT-030731-2|T>A|269||||||||||||||||||||
+ZDB-ALT-090611-13|||||exon 4|stop_gained||||||||277|polypeptide_truncation|||exon|4|||
+ZDB-ALT-110825-7|T>A|||||stop_gained||||||||||||||||
+ZDB-ALT-120308-1|T>C|||||||Cys|Arg||||||amino_acid_substitution|||||||
+ZDB-ALT-140721-2||||||stop_gained||||||||||||||||
+ZDB-ALT-980203-1552|C>T|2349||||stop_gained||||||||||||||||
+ZDB-ALT-080819-2|C>T|4381||||stop_gained|||||||||polypeptide_truncation|||||||
+ZDB-ALT-101008-15||||||stop_gained||L|X|150|150|||||||||||
+ZDB-ALT-111017-4|T>G||||exon 7|||Ser|Ala|534|534||||amino_acid_substitution|||exon|7|||
+ZDB-ALT-150224-3|T>A||||exon 5|stop_gained||L|X|132|132||||||REF|exon|5|||
+ZDB-ALT-111118-31|C>A|365||||||||||||||||||||
+ZDB-ALT-980203-728||||||missense_variant||G|E|309|309||||||REF|||||
+ZDB-ALT-080806-3|T>A||||exon 2|stop_gained||||||||||||exon|2|||
+ZDB-ALT-151209-5||||||stop_gained|||||||||||REF|||||
+ZDB-ALT-080630-1|T>C||||intron 2|SPLICING||||||||||||intron|2|||
+ZDB-ALT-150325-1|C>T|82||||stop_gained|||||||||polypeptide_truncation||REF|||||
+ZDB-ALT-040323-2|T>A||||exon 4|||V|E|246|246|||||||exon|4|||
+ZDB-ALT-110708-1|T>A||||exon 2|stop_gained||Tyr|X||||||||REF|exon|2|||
+ZDB-ALT-111220-1|G>A|||||stop_gained||W|X|256|256||||polypeptide_truncation|||||||
+ZDB-ALT-090309-3|G>T|||||||Gly|Val|598|598||||amino_acid_substitution||REF|||||
+ZDB-ALT-150720-1|C>T||||exon 21|stop_gained|||||||||polypeptide_truncation||REf|exon|21|||
+ZDB-ALT-980203-1454|A>T|1126||||stop_gained||K|X|376|376||||polypeptide_truncation|||||||
+ZDB-ALT-100623-1||||||stop_gained|||X|73|73|||||||||||
+ZDB-ALT-030502-2||||||splice_site||||||||||||||||
+ZDB-ALT-061129-18|T>A|664||||||C|S|222|222|||||||||||
+ZDB-ALT-090609-3|A>G||||exon 7|splice_site||||||||||||exon|7|||
+ZDB-ALT-100518-1|T>A|317||||stop_gained|||||||||polypeptide_truncation||REF|||||
+ZDB-ALT-110819-4|G>T|||||missense_variant||C|F|869|869||||amino_acid_substitution||REF|||||
+ZDB-ALT-980203-1295||||||||Lys|Asn|97|97||||amino_acid_substitution|||||||
+ZDB-ALT-051229-4||||||missense_variant||Phe|Val|113|113||||||REF|||||
+ZDB-ALT-150610-4|||||exon 1|stop_gained|||X|336|336||||polypeptide_truncation|||exon|1|||
+ZDB-ALT-980203-355|T>A|1491||||stop_gained||Tyr|X|497|497||||||REF|||||
+ZDB-ALT-020715-4||||||stop_gained||C|X|2144|2144|||||||||||
+ZDB-ALT-071015-4|C>T|505||||||||||||||||||||
+ZDB-ALT-110414-1|C>A|||||stop_gained||Tyr|X|1031|1031|||||||||||
+ZDB-ALT-050919-86|T>A|||||SO:0002012|||||||||||REF|||||
+ZDB-ALT-091112-42||||||stop_gained||L|X|74|74||||||REF|||||
+ZDB-ALT-100628-5|C>T|||||stop_gained||||||||||||||||
+ZDB-ALT-140728-1|T>A|||||||H|Q|189|189||||||REF|||||
+ZDB-ALT-980203-1571|C>G|4545||||stop_gained||||1514|1514||||||REF|||||
+ZDB-ALT-980203-769|G>T|||||splice_site|||||||||||REF|||||
+ZDB-ALT-980203-769||||||missense_variant||V|I|140|140||||amino_acid_substitution|||||||
+ZDB-ALT-980203-769|||||||||||||||amino_acid_deletion|||||||
+ZDB-ALT-071205-1||||||stop_gained|||||||||||REF|||||
+ZDB-ALT-090212-1|T>G|||||||I|S|1061|1061||||amino_acid_substitution|||||||
+ZDB-ALT-111020-3|G>A||||exon 11|splice_site||||||||||||exon|11|||
+ZDB-ALT-111020-3||||||cryptic_splice_site_variant||||||||||||||||
+ZDB-ALT-120126-1|T>A||||exon 6|stop_gained||||||||||||exon|6|||
+ZDB-ALT-990427-7|T>A|||||||K|X|||||||||||||
+ZDB-ALT-110523-4||1120||||frameshift_variant|||||||||||REF||||1|
+ZDB-ALT-090820-1|C>T|||||stop_gained|||X|493|493||||polypeptide_truncation|||||||
+ZDB-ALT-130718-2|C>T|946|||exon 3|stop_gained|||||||||polypeptide_truncation||REF|exon|3|||
+ZDB-ALT-150218-6|T>A|||||stop_gained||||||||||||||||
+ZDB-ALT-150617-6|||||exon 5|splice_site|||||||||||REF|exon|5|||
+ZDB-ALT-980203-1655|T>A||||intron 32|cryptic_splice_site_variant||||||||||||intron|32|||
+ZDB-ALT-980203-1655||||||elongated transcript?|||||||||amino_acid_insertion|||||||
+ZDB-ALT-980203-1655||||||frameshift_variant|||||||||polypeptide_truncation|||||||
+ZDB-ALT-980203-1655||||||stop_gained||||||||||||||||
+ZDB-ALT-110816-1|T>A|1700||||missense_variant||V|D|567|567||||||REF|||||
+ZDB-ALT-141113-7||||||missense_variant||L|P|332|332||||||REF|||||
+ZDB-ALT-980203-1521|C>A|||||stop_gained||Tyr|X|306|306|||||||||||
+ZDB-ALT-050428-4||||||||N|T|99|99|||||||||||
+ZDB-ALT-130528-5|T>A||||exon 29|stop_gained||||||||||||exon|29|||
+ZDB-ALT-031030-20|A>T|331|||exon 3|missense_variant||Ser|Cys|111|111|||||||exon|3|||
+ZDB-ALT-070117-7|T>A|||||||V|D|1046|1046|||||||||||
+ZDB-ALT-110120-1|T>C|962||||||Phe|Ser|||||||||||||
+ZDB-ALT-100728-1|T>A|||||stop_gained||L|X|133|133|||||||||||
+ZDB-ALT-980203-1596|G>T|||||||Gly|Val|75|75|||||||||||
+ZDB-ALT-080706-1| |||||inframe_deletion|||||||||amino_acid_deletion|||||12||
+ZDB-ALT-980203-561|C>G|||||||Lys|Asn|301|301||||amino_acid_substitution|||||||
+ZDB-ALT-120717-4|G>T|||||stop_gained||Gly|X|42|42|||||||||||
+ZDB-ALT-121204-2|C>T|||||stop_gained||Q|X|336|336||||polypeptide_truncation|||||||
+ZDB-ALT-131101-1|A>G|1545||||missense_variant||Q|R|516|516|||||||||||
+ZDB-ALT-980203-427|C>T|||||stop_gained||Arg|X|145|145|||||||||||
+ZDB-ALT-040827-2||||||||L|R|846|846|||||||||||
+ZDB-ALT-080325-9|G>T|931|||exon 1|splice_site|||||||||polypeptide_truncation|||exon|1|||
+ZDB-ALT-080325-9|||||intron 1|||||||||||||intron|1|||
+ZDB-ALT-100720-2|||||exon 2|missense_variant||C|R|38|38||||amino_acid_substitution|||exon|2|||
+ZDB-ALT-120328-6|C>T|||||stop_gained||||||||||||||||
+ZDB-ALT-140805-2|||||exon 3|stop_gained|||||||||||REF|exon|3|||
+ZDB-ALT-980203-1091|G>A|||||splice_site|||||||||||REF|||||
+ZDB-ALT-980203-1091||||||exon_loss_variant||||||||||||||||
+ZDB-ALT-980203-1091||||||stop_gained||||||||||||||||
+ZDB-ALT-980203-533|C>A|||||splice_site|||||||||||REF|||||
+ZDB-ALT-980203-533||||||frameshift_variant||||||||||||||||
+ZDB-ALT-980203-533||||||stop_gained|||X|216|216|||||||||||
+ZDB-ALT-061212-2||||||||Q|X|360|360|||||||||||
+ZDB-ALT-130813-2|T>A|||||missense_variant||V|E|147|147|||||||||||
+ZDB-ALT-131122-11||||||||||||||||||||1||
+ZDB-ALT-160314-4|C>T||||exon 17|stop_gained||Gln|X|609|609||||polypeptide_truncation||REF|exon|17|||
+ZDB-ALT-150731-2|T>A|||||missense_variant||H|Q|189|189|||||||||||
+ZDB-ALT-080819-1|C>A|1638||||stop_gained|||||||||polypeptide_truncation|||||||
+ZDB-ALT-100315-1||||||missense_variant||C|136|Y||||||||||||
+ZDB-ALT-111017-3|C>T|1162|||exon 7|stop_gained||Gln|X|388|388|||||||exon|7|||
+ZDB-ALT-980203-477|C>T||||||||||||||||REF|||||
+ZDB-ALT-071019-5|C>T||||exon 3|stop_gained|||||||||||REF|exon|3|||
+ZDB-ALT-110311-1|T>A|||||stop_gained||Tyr|X|||||||||||||
+ZDB-ALT-120411-351|G>A|975||||splice_site||||||||||||||||
+||||||||||||||||||||||
+ZDB-ALT-980203-1251||||||stop_gained|||X|63|63|||||||||||
+ZDB-ALT-071015-6|C>T|694||||||||||||||||||||
+ZDB-ALT-110107-1|T>A|220627||BX927365.7||||Ile|Asn|181|181|||||||||||
+ZDB-ALT-110107-1||652||NM_131266||||Ile|Asn|181|181|||||||||||
+ZDB-ALT-110722-30|G>A||||intron 3|shorten transcript||||||||||14|REF|intron|3|||
+ZDB-ALT-110722-30|||||exon 4|frameshift_variant||||||||||||exon|4|||
+ZDB-ALT-110722-30||||||stop_gained||||||||||||||||
+ZDB-ALT-140127-3|C>A||||exon 7|longer transcript|||||||||||REF|exon|7|||
+ZDB-ALT-150723-18|||||exon 11|SPLICING ||||||||||||exon|11|||
+ZDB-ALT-160323-7||||||||||191|191|||||||||||
+ZDB-ALT-130118-1|T>A|2087||||||Asn|Lys|695|695||||||REF|||||
+ZDB-ALT-140327-2|T>A|||||||Tyr|Arg|||||||||||||
+ZDB-ALT-980203-1344|A>G|1476||||||E|G|456|456|||||||||||
+ZDB-ALT-120416-2||||||||F|X|271-1|271|||||||||||
+ZDB-ALT-140514-1|T>G|1405||NM_001008628||||Y|X|431|431|||||||||||
+ZDB-ALT-040224-6||||||||Asn |Lys|414|414|||||||||||
+ZDB-ALT-110914-3|C>A|174||||||Tyr|X|58|58|||||||||||
+ZDB-ALT-121018-3||||||stop_gained||Y|X|2449|2449|||||||||||
+ZDB-ALT-150504-4|G>A|||||stop_gained||Trp|X|3561|3561||NP_001036210||polypeptide_truncation||REF|||||
+ZDB-ALT-061129-16|T>A|||||stop_gained|||X|262|262|||||||||||
+ZDB-ALT-091022-1|T>A|800||||||Leu|Gln|267|267|||||||||||
+ZDB-ALT-980520-45|C>A|||||||Gln|Lys|137|137||||||REF|||||
+ZDB-ALT-090603-5||||||||I|N|383|383|||||||||||
+ZDB-ALT-150210-6||||||intron_gain_variant|||||||||polypeptide_truncation||REF|||||
+ZDB-ALT-150210-6||||||stop_gained||||||||||||||||
+ZDB-ALT-150609-1||||||missense_variant||V|A|232|232|||||||||||
+ZDB-ALT-980203-351|T>A|2888||||missense_variant||Ile|Asn|963|963||||||REF|||||
+ZDB-ALT-980413-444||||||missense_variant||G|D|2073|2073|||||||||||
+ZDB-ALT-110211-2||||||stop_gained||Q|X|413|413|||||||||||
+ZDB-ALT-110802-2|T>G|1538||||missense_variant||L|R|337|337|||||||||||
+ZDB-ALT-040421-16|T>A|||||||Ile|Asn|430|430|||||||||||
+ZDB-ALT-140411-1||||||missense_variant||G|S|365|365||||||REF|||||
+ZDB-ALT-150115-5||||||stop_gained||Glu|X|3|3|||||14||||||
+ZDB-ALT-980203-1354|T>A|2099||||||||||||||||||||
+ZDB-ALT-980203-1354|C>A|2100||||||||||||||||||||
+ZDB-ALT-040720-42|T>G|||||||M|R|1208|1208|||||||||||
+ZDB-ALT-070117-13|C>T|1834||||stop_gained||Gln|X|612|612|||||||||||
+ZDB-ALT-131219-29|G>A|2411||||stop_gained||Trp|X|804|804||||polypeptide_truncation||REF|||||
+ZDB-ALT-151015-2|C>T||||exon 17|||T|M|804|804|||||||exon|17|||
+ZDB-ALT-980203-418|T>A|||||stop_gained LOSS||X|Gly||||||ELONGATED|||||||
+ZDB-ALT-110920-1|C>A|162||||stop_gained||Cys|X|54|54||||polypeptide_truncation||REF|||||
+ZDB-ALT-150807-1|||||exon 9|stop_gained||Arg|X|162|162|||||||exon|9|||
+ZDB-ALT-091112-21|C>T|290|||exon 1a|stop_gained||Gln|X|61|61||||polypeptide_truncation|||exon|1|||
+ZDB-ALT-100526-2|T>A|8541|||exon 55|stop_gained||Y|X|2847|2847||||||REF|exon|55|||
+ZDB-ALT-100526-2||||||splice_site|||||||||||REF|||||
+ZDB-ALT-100526-2||||||stop_gained|||||||||||REF|||||
+ZDB-ALT-100526-2||||||frameshift_variant|||||||||||REF|||||
+ZDB-ALT-100526-2||||||stop_gained|||||||||||REF|||||
+ZDB-ALT-110523-9|T>A|||||missense_variant||I|N|156|156||||amino_acid_substitution||REF|||||
+ZDB-ALT-110825-3|T>A|||||stop_gained||||||||||||||||
+ZDB-ALT-120928-1||||||||T|P|29|29||||amino_acid_substitution|||||||
+ZDB-ALT-140213-1|A>T|||||cryptic_splice_site_variant|4||||||||||REF|||||
+ZDB-ALT-140213-1|A>T|||||frameshift_variant||||1615|1615||||amino_acid_substitution||REF|||||
+ZDB-ALT-140213-1|A>T|||||stop_gained|||||||||polypeptide_truncation||REF|||||
+ZDB-ALT-151231-5|C>T|||||stop_gained||Q|X|155|155||||polypeptide_truncation||REF|||||
+ZDB-ALT-130718-1|G>T|3935||||missense_variant|||||||||||REF|||||
+ZDB-ALT-081111-1|C>A|||||stop_gained||Tyr|X|237|237|||||||||||
+ZDB-ALT-120523-10|T>A|||||missense_variant||Val|Asp|223|223|||||||||||
+ZDB-ALT-131112-1|||||exon 3|||||||||||||exon|3|1||
+ZDB-ALT-160208-6|C>A||||exon 4|stop_gained||Ser|X|118|118|||||||exon|4|||
+ZDB-ALT-070117-6|G>A|820||||stop_gained||Trp|X|273|273|||||||||||
+ZDB-ALT-110113-4|C>T||||exon 2|stop_gained||||||||||||exon|2|||
+ZDB-ALT-980203-440|T>A|2334||||stop_gained||||||||||||||||
+ZDB-ALT-071019-7|||||splicing acceptor intron 1|SPLICING||||||||||||splice acceptor|1|||
+ZDB-ALT-090715-2|C>T|3064||XM_677713||stop_gained||Q|X|1022|1022|||||||||||
+ZDB-ALT-100216-1|T>A|||||stop_gained|||X|265|265|||||||||||
+ZDB-ALT-151209-3||||||stop_gained|||||||||polypeptide_truncation||REF|||||
+ZDB-ALT-041220-6|T>C|946||||missense_variant||F|L|316|316|||||||||||
+ZDB-ALT-110127-1|A>C|||||stop_gained LOSS||X|Ser||||||ELONGATED|||||||
+ZDB-ALT-980203-1256|A>G|||||start_loss|||||||||polypeptide_truncation||REF|||||
+ZDB-ALT-060911-2|T>C|||||||||||||||||||||
+ZDB-ALT-090416-3|T>G|||||stop_gained||Tyr|X|152|152||||||REF|||||
+ZDB-ALT-980413-523|G>A|||||splice_site|minus 104||||||||||REF|||||
+ZDB-ALT-980413-523||||||exon_loss_variant||||||||||||||||
+ZDB-ALT-060608-195|A>T||||splice acceptor intron 4|exon_loss_variant||||||||||||splice acceptor|4|||
+ZDB-ALT-060608-195||||||frameshift_variant||||||||||||||||
+ZDB-ALT-060608-195||||||stop_gained||||||||||||||||
+ZDB-ALT-150826-1|||||intron 11|SPLICING||||||||||||intron|11|||
+ZDB-ALT-151130-1|A>G|27434434|||||||||||||||REF|||||
+ZDB-ALT-010621-6|C>A|||||stop_gained||Tyr|X|318|318|||||||||||
+ZDB-ALT-061207-8|G>A||||cryptic_splice_donor intron 5|splice_site|||||||||||REF|cryptic_splice_donor|5|||
+ZDB-ALT-980203-645|C>T|||||stop_gained||Q|X|1077|1077|||||||||||
+ZDB-ALT-100526-4|G>T|7231||||stop_gained|||X|2410|2410||||||REF|||||
+ZDB-ALT-110825-5|A>T|||||stop_gained||||||||||||||||
+ZDB-ALT-980203-1062|A>C||||splice acceptor site intron 2|||||||||||||splice acceptor|2|||
+ZDB-ALT-110816-2|G>A||||donor splice_site intron 33|||||||||||||intron|33|||
+ZDB-ALT-141113-8|T>C||||cryptic_splice_donor site intron 6|SPLICING||||||||||5|REF|intron|6|||
+ZDB-ALT-141113-8||||||frameshift_variant||||||||||||||||
+ZDB-ALT-141113-8||||||stop_gained||||||||||||||||
+ZDB-ALT-151222-3|T>G||||start|||||||||||||start||||
+ZDB-ALT-980203-1522|T>A|||||missense_variant||Ile|Asn|124|124|||||||||||
+ZDB-ALT-050617-10|C>A|||||||||||||54|polypeptide_truncation|||||||
+ZDB-ALT-020715-6|T>C|||||||||||||||||||||
+ZDB-ALT-071015-5||||||stop_gained||Y|X|143|143||||polypeptide_truncation||REF|||||
+ZDB-ALT-120411-117|T>A|||||stop_gained|||X|4597|4597|||||||||||
+ZDB-ALT-100505-6|C>T|115||||||Glu|X|39|39|||||||||||
+ZDB-ALT-970731-16||||||stop_gained||||||||||||||||
+ZDB-ALT-020514-4|T>A|||||stop_gained||Tyr|X|479|479|||||||||||
+ZDB-ALT-070921-1|T>A||||exon 3|stop_gained||||||||||||exon|3|||
+ZDB-ALT-080617-2||||||stop_gained|||X|259|259|||||||||||
+ZDB-ALT-100726-3||||||||L|Q|277|277|||||||||||
+ZDB-ALT-130830-2|G>A||||cryptic_splice_donor site intron 1|splice_site||||||||||||cryptic_splice_donor|1|||
+ZDB-ALT-120416-1||||||||||||||||||||||
+ZDB-ALT-080318-3|T>C|991|||exon 6|missense_variant||Cys|Arg|331|331|||||||exon|6|||
+ZDB-ALT-091112-31|C>T|660||||stop_gained||Y|X|220|220||||polypeptide_truncation|||||||
+ZDB-ALT-110906-3|||||exon 5|stop_gained||Glu|X|117|117||||||REF|exon|5|||
+ZDB-ALT-030327-2|C>T|136||cDNA||stop_gained|||X|46|46|||||||||||
+ZDB-ALT-080229-1|C>T|||||stop_gained|||||||||||REF|||||
+ZDB-ALT-090603-4||||||missense_variant||C|R|412|412|||||||||||
+ZDB-ALT-050428-10||||||missense_variant||S|F|26|26|||||||||||
+ZDB-ALT-980203-579|C>T|2395||||stop_gained|||X|799|799||||||REF|||||
+ZDB-ALT-031111-2|T>A|4577||||stop_gained||||||||||||||||
+ZDB-ALT-120710-2|T>G|||||||||||||||||||||
+ZDB-ALT-080325-5|C>T|274||||||Gln|X|92|92||||polypeptide_truncation||REF|||||
+ZDB-ALT-100709-1|G>A|1283||NM_173242|exon 9|||Arg|His|233|233|||||||exon|9|||
+ZDB-ALT-980203-1331|T>G|||||missense_variant||Met|Arg|38|38||||amino_acid_substitution|||||||
+ZDB-ALT-120126-2|||||exon 5|stop_gained||||||||||||exon||||
+ZDB-ALT-070315-1|C>T|1568||||stop_gained||R|X|398|398|||||||||||
+ZDB-ALT-151230-7|T>C||||cryptic_splice_donor site|cryptic_splice_site_variant ||||||||||||cryptic_splice_donor||||
+ZDB-ALT-151230-7||||||frameshift_variant|||||||||polypeptide_truncation|||||||
+ZDB-ALT-980203-739|G>A||||exon 2|||W|X|103|103||||polypeptide_truncation|||exon|2|||
+ZDB-ALT-070427-1|G>A||||cryptic_splice_donor site|frameshift_variant||||||||||13||cryptic_splice_donor||||
+ZDB-ALT-140903-2||||||stop_gained||C|R|365|365||||||REF|||||
+ZDB-ALT-140130-9|G>A||||splice acceptor site intron 4|SPLICING|||||||||amino_acid_deletion|||splice acceptor|4|||
+ZDB-ALT-080818-3||||||stop_gained||||||||||||||||
+ZDB-ALT-131003-3||||||stop_gained||||||||||||||||
+ZDB-ALT-111118-29||||||stop_gained||||||||||||||||
+ZDB-ALT-130411-4||||||||Arg|X|427|427|||||||||||
+ZDB-ALT-151228-4|T>A|6528||||stop_gained||Y|X|201|201||||polypeptide_truncation||REF|||||
+ZDB-ALT-151209-2||||||stop_gained||Y|X|1143|1143||||||REF|||||
+ZDB-ALT-051112-2|C>T|1904||||cryptic_splice_site_variant||||||||||||||||
+ZDB-ALT-071015-1|C>A|597||||||||||||||||||||
+ZDB-ALT-050802-2||||||stop_gained|||X|867|867||||||REF|||||
+ZDB-ALT-060909-2|C>T|2275||||missense_variant||Pro|Ser|759|759|||||||||||
+ZDB-ALT-121204-3|C>T|||||||R|X|580|580|||||||||||
+ZDB-ALT-080325-7|C>T|499||||stop_gained||Q|X|167|167|||||||||||
+ZDB-ALT-090630-1|G>T|||||stop_gained|||X|421|421|||||||||||
+ZDB-ALT-100716-1|G>A|226||||missense_variant||Ala|Thr|76|76||||amino_acid_substitution|||||||
+ZDB-ALT-141222-1||||||missense_variant||Asp|Tyr|632|632||||||REF|||||
+ZDB-ALT-980203-1333|T>C|||||||L|P|244|244|||||||||||
+ZDB-ALT-980203-531||||||missense_variant||R|H|94|94||||amino_acid_substitution|||||||
+ZDB-ALT-101021-1|C>T|1507||||stop_gained||||||||||||||||
+ZDB-ALT-150312-8||||||||V|M|85|85|||||||||||
+ZDB-ALT-091112-22|||||exon 2|stop_gained||||||||||||exon|2|||
+ZDB-ALT-100526-3|T>A|2487||||stop_gained|||X|829|829||||||REF|||||
+ZDB-ALT-110825-4|T>A|||||stop_gained||||||||||||||||
+ZDB-ALT-120928-2||||||||V|E|28|28|||||||||||
+ZDB-ALT-061129-12|T>A|302||||stop_gained|||X|101|101|||||||||||
+ZDB-ALT-130311-3|T>A|||||stop_gained||||||||||||||||
+ZDB-ALT-150210-7||||||splice_site|||||||||||REF|||||
+ZDB-ALT-150210-7||||||stop_gained|||||||||||REF|||||
+ZDB-ALT-131211-2|G>A|||||stop_gained|||X|580|580|||||||||||
+ZDB-ALT-980203-465||||||||C|X|785|785||||||REF|||||
+ZDB-ALT-040601-4|C>T||||exon 16|stop_gained||||||||||||exon|16|||
+ZDB-ALT-120202-4||||||missense_variant||E|K|103|103|||||||||||
+ZDB-ALT-140127-4||||||stop_gained|||||||||polypeptide_truncation||REF|||||
+ZDB-ALT-150723-19|C>T|733||||stop_gained||R|X|245|245|||||||||||
+ZDB-ALT-120515-1|G>T|||||stop_gained||E|X|1219|1219|||||||||||
+ZDB-ALT-110720-3||552||||stop_gained|||X|184|184||||polypeptide_truncation||REF|||||
+ZDB-ALT-131219-18|T>A||||exon 4|missense_variant||Cys|Ser||||||||REF|exon|4|||
+ZDB-ALT-110526-1|G>T||||cryptic_splice_donor site exon 24|SPLICING|||||||||||REF|cryptic_splice_donor|24|||
+ZDB-ALT-110526-1||||||frameshift_variant|||||||||polypeptide_truncation|||||||
+ZDB-ALT-110906-2|C>T||||exon 3|stop_gained||Arg|X|53|53||||||REF|exon|3|||
+ZDB-ALT-150429-4|C>T|||||missense_variant||Arg|Cys|146|146||||amino_acid_substitution|||||||
+ZDB-ALT-980203-1801||||||missense_variant||L|P|858|858|||||||||||
+ZDB-ALT-140114-2||||||stop_gained||A|X|2196|2196||||||REF|||||
+ZDB-ALT-131211-3|C>T|||||stop_gained||||||||||||||||
+ZDB-ALT-130621-1|S>T|274|||exon 1|stop_gained||R|X|92|92||||||REF|exon|1|||
+ZDB-ALT-140423-4|||||cryptic_splice_donor site|splice_site|||||||||||REF|cryptic_splice_donor||||
+ZDB-ALT-140423-4||||||intron gain|||||||||||REF|||||
+ZDB-ALT-140423-4||||||stop_gained|||||||||polypeptide_truncation|||||||
+ZDB-ALT-160208-7|C>T||||exon 12|stop_gained||||||||||||exon|12|||
+ZDB-ALT-111011-2|A>T||||exon 9|stop_gained||Arg|X|304|304|||||||exon|9|||
+ZDB-ALT-980203-1114|C>T|5209||||missense_variant||Arg|Trp|1737|1737||||amino_acid_substitution||REF|||||
+ZDB-ALT-980203-1358|T>A|714|||exon 5|stop_gained||Tyr|X|238|238||||||REF|exon|5|||
+ZDB-ALT-030627-2|C>T|1356||||stop_gained||Q|X|316|316|||||||||||
+ZDB-ALT-061129-4|C>T|300||||stop_gained||Tyr|X|100|100|||||||||||
+ZDB-ALT-071128-1|C>T|||||stop_gained||Gln|X|||||||||||||
+ZDB-ALT-110330-2|T>A||||cryptic_splice_donor site intron 6|intron_gain_variant|||||||||ELONGATED|||cryptic_splice_donor|6|||
+ZDB-ALT-150312-10||||||||V|M|79|79||||amino_acid_substitution|||||||
+ZDB-ALT-061101-112|T>A|123||||stop_gained|||X|41|41|||||||||||
+ZDB-ALT-140917-10|||||exon 1||||||||||||REF|exon|1||19|
+ZDB-ALT-111110-3|||||exon 2|||||||||||||exon|2||4|
+ZDB-ALT-141218-9||||||stop_gained|||||||||polypeptide_truncation||REF||||22|
+ZDB-ALT-131122-3|||||||||||||||||||||4|
+ZDB-ALT-150423-7||85|86||||||||||||polypeptide_truncation||||||4|
+ZDB-ALT-130709-1||||||frameshift_variant|||||||||polypeptide_truncation||||||7|
+ZDB-ALT-131112-7|||||exon 5|||||||||||||exon|5||5|
+ZDB-ALT-130903-1|||||||||X|291|291|||||||||||
+ZDB-ALT-150115-2|||||||||||||||polypeptide_truncation||||||1|
+ZDB-ALT-131125-1|||||||||||||||||||||23|
+ZDB-ALT-151014-2|||||||||||||||||REF||||5|
+ZDB-ALT-140522-3|||||||||||||||polypeptide_truncation||REF||||1|
+ZDB-ALT-121106-1||||||frameshift_variant|||||||||||||||4|
+ZDB-ALT-120120-3||||||frameshift_variant|||||||||||||||17|
+ZDB-ALT-120120-3||||||stop_gained|||||||||||||||17|
+ZDB-ALT-151201-4|||||exon 2|frameshift_variant|||||||||||REF|exon|2||4|
+ZDB-ALT-151201-4||||||stop_gained|||||||||polypeptide_truncation||REF|||||
+ZDB-ALT-090520-1|||||||||||||||||||||4|
+ZDB-ALT-140717-4||||||frameshift_variant|||||||||||REF||||4|
+ZDB-ALT-140717-4||||||stop_gained|||||||||polypeptide_truncation||REF||||4|
+ZDB-ALT-151118-2|||||exon 2|||||||||||||exon|2||7|
+ZDB-ALT-070928-1|||||intron 48|transcript elongation||||||||||||intron|48||4046|
+ZDB-ALT-070928-1||||||stop_gained||||||||||||||||
+ZDB-ALT-080710-1||46||||frameshift_variant|||||||||||||||1|
+ZDB-ALT-080710-1||46||||stop_gained|||X|41|41||||||||||1|
+ZDB-ALT-140522-2|||||exon 1|frameshift_variant|||||||||||REF||1||1|
+ZDB-ALT-140522-2|||||exon 1|stop_gained|||||||||||REF||1||1|
+ZDB-ALT-160111-4||1304|||||||||||||polypeptide_truncation||||||11|
+ZDB-ALT-151223-1|||||exon 2 ??||||||||||||REF|exon|2||13|
+ZDB-ALT-120120-2||||||frameshift_variant|||||||||||||||4|
+ZDB-ALT-120120-2||||||stop_gained|||||||||polypeptide_truncation||||||4|
+ZDB-ALT-131122-7|||||||||||||||||||||4|
+ZDB-ALT-000913-2|||||||||||||||||||||1848|
+ZDB-ALT-151023-4||503|||||||||||||polypeptide_truncation||||||1|
+ZDB-ALT-131122-14|||||||||||||||||||||4|
+ZDB-ALT-160111-2||1302|||||||||||||polypeptide_truncation||||||7|
+ZDB-ALT-151228-1|||||||||||||||||||||11|
+ZDB-ALT-140415-4|||||exon 1|||||||||||||exon|1||4|
+ZDB-ALT-130820-103|||||exon 2|||||||||||||exon|2||4|
+ZDB-ALT-130531-2|||||exon 3|||||||||||||exon|3||4|
+ZDB-ALT-150423-3||103|||||||||||||polypeptide_truncation||||||1|
+ZDB-ALT-150716-2|||||||||||||||polypeptide_truncation||REF||||10|
+ZDB-ALT-090520-2|||||||||||||||||||||9|
+ZDB-ALT-980413-542|T>G||||splice acceptor site exon 38|cryptic_splice_acceptor||||||||||||splice acceptor||||
+ZDB-ALT-980413-542||||||frameshift_variant||||||||||||||||
+ZDB-ALT-980413-542||||||stop_gained|||X|1628|1628|||||||||||
+ZDB-ALT-151215-9||877|||||||||||||polypeptide_truncation||||||1|
+ZDB-ALT-120222-3|||||exon 2||||||||||||REF|exon|2|||
+ZDB-ALT-120222-3|||||intron 2||||||||||||REF|intron|2|||
+ZDB-ALT-151214-9||568|||||||||||||polypeptide_truncation||||||2|
+ZDB-ALT-151105-2|||||exon 1|stop_gained|||||||||polypeptide_truncation||REF|exon|1||4|
+ZDB-ALT-120120-4||||||frameshift_variant|||||||||||||||1|
+ZDB-ALT-120120-4||||||stop_gained|||||||||polypeptide_truncation|||||||
+ZDB-ALT-150423-1||590|||||||||||||polypeptide_truncation||||||6|
+ZDB-ALT-151214-10||566|||||||||||||polypeptide_truncation||||||51|
+ZDB-ALT-150528-6|||||exon 1|frameshift_variant|||||||||||REF|exon|1||17|
+ZDB-ALT-150528-6||||||stop_gained|||||||||||REF|||||
+ZDB-ALT-131125-4|||||||||||||||||||||4|
+ZDB-ALT-111207-7||||||frameshift_variant|||||||||polypeptide_truncation||||||2|
+ZDB-ALT-980203-1827|||||||||||||||amino_acid_insertion||||||1397|
+ZDB-ALT-980203-1827|||||||||||||||polypeptide_truncation||||||1397|
+ZDB-ALT-090520-8|||||||||||||||||||||5|
+ZDB-ALT-151105-1|||||exon 1|stop_gained|||||||||polypeptide_truncation||REF||1||8|
+ZDB-ALT-131122-5|||||||||||||||||||||5|
+ZDB-ALT-130528-3|||||exon 17|stop_gained|||||||||||||17|||
+ZDB-ALT-150424-1||591|||||||||||||polypeptide_truncation||||||1|
+ZDB-ALT-151214-11||568|||||||||||||polypeptide_truncation||||||7|
+ZDB-ALT-120611-3||||||frameshift_variant|||||||||||||||4|
+ZDB-ALT-120611-3||||||stop_gained||||||||||||||||

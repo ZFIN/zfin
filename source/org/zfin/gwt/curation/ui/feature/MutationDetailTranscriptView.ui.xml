@@ -1,0 +1,67 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+        xmlns:ui='urn:ui:com.google.gwt.uibinder'
+        xmlns:g='urn:import:com.google.gwt.user.client.ui'
+        xmlns:zfin='urn:import:org.zfin.gwt.root.ui'
+        >
+
+    <ui:style>
+        .grey-background {
+            background-color: lightgrey;
+        }
+
+        .blue {
+            color: #0000FF;
+        }
+
+        .valign-top {
+            vertical-align: top;
+        }
+
+        .align-left {
+            horiz-align: left;
+        }
+
+        .empty-column {
+            width: 80%;
+        }
+
+        .header-row {
+            background-color: #000088;
+        }
+
+    </ui:style>
+
+    <g:FlowPanel ui:field="changePanel" visible="false">
+        <g:Grid ui:field='dataTable' cellSpacing='2' styleName="searchresults groupstripes-hover">
+            <g:row>
+                <g:cell>
+                    Consequence
+                </g:cell>
+                <g:cell>
+                    Exon
+                </g:cell>
+                <g:cell>
+                    Intron
+                </g:cell>
+                <g:cell styleName="{style.empty-column}">
+                </g:cell>
+            </g:row>
+            <g:row>
+                <g:customCell>
+                    <zfin:StringListBox ui:field="consequenceList" width="120px"/>
+                </g:customCell>
+                <g:customCell>
+                    <zfin:NumberTextBox ui:field="exonNumber" visibleLength="4"/>
+                </g:customCell>
+                <g:customCell>
+                    <zfin:NumberTextBox ui:field="intronNumber" visibleLength="4"/>
+                </g:customCell>
+                <g:customCell>
+                    <g:Button text="Add" ui:field="addConsequenceButton"/>
+                </g:customCell>
+            </g:row>
+        </g:Grid>
+        <zfin:SimpleErrorElement ui:field="errorLabel" styleName="clickable-error"/>
+    </g:FlowPanel>
+</ui:UiBinder>

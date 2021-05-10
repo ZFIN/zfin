@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <include file="source/org/zfin/db/postGmakePostloaddb/1092/Snowman/ZFIN-5818.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1092/Snowman/PUB-424.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1092/Snowman/PUB-438.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1092/Snowman/ZFIN-2944.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1092/Snowman/ZFIN-2944b.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1092/Snowman/PUB-444.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1092/Snowman/PUB-411.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1092/Snowman/PUB-431.sql" />
+
+</databaseChangeLog>

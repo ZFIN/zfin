@@ -1,0 +1,595 @@
+date,section,type,counter
+1998-01-01 00:00:00,Genes,Genes,220
+1998-01-01 00:00:00,Genes,Genes on Assembly,0
+1998-01-01 00:00:00,Genes,Transcripts,0
+1998-01-01 00:00:00,Genes,EST/cDNAs,0
+1998-01-01 00:00:00,Genes,Full length cDNA clones (ZGC),0
+1998-01-01 00:00:00,Genetics,Features,1896
+1998-01-01 00:00:00,Genetics,Transgenic Features,3
+1998-01-01 00:00:00,Genetics,Transgenic Constructs,0
+1998-01-01 00:00:00,Genetics,Transgenic Genotypes,0
+1998-01-01 00:00:00,Genetics,Genotypes,0
+1998-01-01 00:00:00,Genetics,Genes with GO annotations,0
+1998-01-01 00:00:00,Genetics,Genes with IEA GO annotations,0
+1998-01-01 00:00:00,Genetics,Genes with Non-IEA GO annotations,0
+1998-01-01 00:00:00,Genetics,Total GO annotations,0
+1998-01-01 00:00:00,Genetics,Genes with OMIM phenotypes,0
+1998-01-01 00:00:00,Reagents,Morpholinos,0
+1998-01-01 00:00:00,Reagents,TALEN,0
+1998-01-01 00:00:00,Reagents,CRISPR,0
+1998-01-01 00:00:00,Reagents,Antibodies,0
+1998-01-01 00:00:00,Expression & Phenotype,Gene expression patterns,0
+1998-01-01 00:00:00,Expression & Phenotype,Genes with expression data,0
+1998-01-01 00:00:00,Expression & Phenotype,Phenotype statements,0
+1998-01-01 00:00:00,Expression & Phenotype,Genes with a phenotype,0
+1998-01-01 00:00:00,Expression & Phenotype,Images (phenotype and expression patterns),1851
+1998-01-01 00:00:00,Expression & Phenotype,Anatomical structures,0
+1998-01-01 00:00:00,Genomics,Mapped markers,3138
+1998-01-01 00:00:00,Genomics,Links to other databases,0
+1998-01-01 00:00:00,Community information,Publications,1913
+1998-01-01 00:00:00,Community information,Researchers,1403
+1998-01-01 00:00:00,Community information,Laboratories,190
+1998-01-01 00:00:00,Community information,Companies,35
+1998-01-01 00:00:00,Orthology,Genes w/Human Orthology,0
+1998-01-01 00:00:00,Orthology,Genes w/Mouse Orthology,0
+1999-01-01 00:00:00,Genes,Genes,608
+1999-01-01 00:00:00,Genes,Genes on Assembly,0
+1999-01-01 00:00:00,Genes,Transcripts,0
+1999-01-01 00:00:00,Genes,EST/cDNAs,97
+1999-01-01 00:00:00,Genes,Full length cDNA clones (ZGC),0
+1999-01-01 00:00:00,Genetics,Features,1951
+1999-01-01 00:00:00,Genetics,Transgenic Features,3
+1999-01-01 00:00:00,Genetics,Transgenic Constructs,0
+1999-01-01 00:00:00,Genetics,Transgenic Genotypes,0
+1999-01-01 00:00:00,Genetics,Genotypes,0
+1999-01-01 00:00:00,Genetics,Genes with GO annotations,0
+1999-01-01 00:00:00,Genetics,Genes with IEA GO annotations,0
+1999-01-01 00:00:00,Genetics,Genes with Non-IEA GO annotations,0
+1999-01-01 00:00:00,Genetics,Total GO annotations,0
+1999-01-01 00:00:00,Genetics,Genes with OMIM phenotypes,0
+1999-01-01 00:00:00,Reagents,Morpholinos,0
+1999-01-01 00:00:00,Reagents,TALEN,0
+1999-01-01 00:00:00,Reagents,CRISPR,0
+1999-01-01 00:00:00,Reagents,Antibodies,0
+1999-01-01 00:00:00,Expression & Phenotype,Gene expression patterns,0
+1999-01-01 00:00:00,Expression & Phenotype,Genes with expression data,0
+1999-01-01 00:00:00,Expression & Phenotype,Phenotype statements,0
+1999-01-01 00:00:00,Expression & Phenotype,Genes with a phenotype,0
+1999-01-01 00:00:00,Expression & Phenotype,Images (phenotype and expression patterns),1858
+1999-01-01 00:00:00,Expression & Phenotype,Anatomical structures,0
+1999-01-01 00:00:00,Genomics,Mapped markers,2942
+1999-01-01 00:00:00,Genomics,Links to other databases,8261
+1999-01-01 00:00:00,Community information,Publications,2415
+1999-01-01 00:00:00,Community information,Researchers,1640
+1999-01-01 00:00:00,Community information,Laboratories,228
+1999-01-01 00:00:00,Community information,Companies,41
+1999-01-01 00:00:00,Orthology,Genes w/Human Orthology,0
+1999-01-01 00:00:00,Orthology,Genes w/Mouse Orthology,0
+2000-01-01 00:00:00,Genes,Genes,974
+2000-01-01 00:00:00,Genes,Genes on Assembly,0
+2000-01-01 00:00:00,Genes,Transcripts,0
+2000-01-01 00:00:00,Genes,EST/cDNAs,5845
+2000-01-01 00:00:00,Genes,Full length cDNA clones (ZGC),0
+2000-01-01 00:00:00,Genetics,Features,2018
+2000-01-01 00:00:00,Genetics,Transgenic Features,6
+2000-01-01 00:00:00,Genetics,Transgenic Constructs,0
+2000-01-01 00:00:00,Genetics,Transgenic Genotypes,0
+2000-01-01 00:00:00,Genetics,Genotypes,0
+2000-01-01 00:00:00,Genetics,Genes with GO annotations,0
+2000-01-01 00:00:00,Genetics,Genes with IEA GO annotations,0
+2000-01-01 00:00:00,Genetics,Genes with Non-IEA GO annotations,0
+2000-01-01 00:00:00,Genetics,Total GO annotations,0
+2000-01-01 00:00:00,Genetics,Genes with OMIM phenotypes,0
+2000-01-01 00:00:00,Reagents,Morpholinos,0
+2000-01-01 00:00:00,Reagents,TALEN,0
+2000-01-01 00:00:00,Reagents,CRISPR,0
+2000-01-01 00:00:00,Reagents,Antibodies,0
+2000-01-01 00:00:00,Expression & Phenotype,Gene expression patterns,0
+2000-01-01 00:00:00,Expression & Phenotype,Genes with expression data,0
+2000-01-01 00:00:00,Expression & Phenotype,Phenotype statements,0
+2000-01-01 00:00:00,Expression & Phenotype,Genes with a phenotype,0
+2000-01-01 00:00:00,Expression & Phenotype,Images (phenotype and expression patterns),1866
+2000-01-01 00:00:00,Expression & Phenotype,Anatomical structures,0
+2000-01-01 00:00:00,Genomics,Mapped markers,10509
+2000-01-01 00:00:00,Genomics,Links to other databases,31589
+2000-01-01 00:00:00,Community information,Publications,2856
+2000-01-01 00:00:00,Community information,Researchers,2092
+2000-01-01 00:00:00,Community information,Laboratories,280
+2000-01-01 00:00:00,Community information,Companies,49
+2000-01-01 00:00:00,Orthology,Genes w/Human Orthology,0
+2000-01-01 00:00:00,Orthology,Genes w/Mouse Orthology,0
+2001-01-01 00:00:00,Genes,Genes,1384
+2001-01-01 00:00:00,Genes,Genes on Assembly,0
+2001-01-01 00:00:00,Genes,Transcripts,0
+2001-01-01 00:00:00,Genes,EST/cDNAs,9169
+2001-01-01 00:00:00,Genes,Full length cDNA clones (ZGC),0
+2001-01-01 00:00:00,Genetics,Features,2088
+2001-01-01 00:00:00,Genetics,Transgenic Features,12
+2001-01-01 00:00:00,Genetics,Transgenic Constructs,0
+2001-01-01 00:00:00,Genetics,Transgenic Genotypes,0
+2001-01-01 00:00:00,Genetics,Genotypes,0
+2001-01-01 00:00:00,Genetics,Genes with GO annotations,0
+2001-01-01 00:00:00,Genetics,Genes with IEA GO annotations,0
+2001-01-01 00:00:00,Genetics,Genes with Non-IEA GO annotations,0
+2001-01-01 00:00:00,Genetics,Total GO annotations,0
+2001-01-01 00:00:00,Genetics,Genes with OMIM phenotypes,0
+2001-01-01 00:00:00,Reagents,Morpholinos,0
+2001-01-01 00:00:00,Reagents,TALEN,0
+2001-01-01 00:00:00,Reagents,CRISPR,0
+2001-01-01 00:00:00,Reagents,Antibodies,0
+2001-01-01 00:00:00,Expression & Phenotype,Gene expression patterns,83
+2001-01-01 00:00:00,Expression & Phenotype,Genes with expression data,0
+2001-01-01 00:00:00,Expression & Phenotype,Phenotype statements,0
+2001-01-01 00:00:00,Expression & Phenotype,Genes with a phenotype,0
+2001-01-01 00:00:00,Expression & Phenotype,Images (phenotype and expression patterns),2598
+2001-01-01 00:00:00,Expression & Phenotype,Anatomical structures,769
+2001-01-01 00:00:00,Genomics,Mapped markers,10509
+2001-01-01 00:00:00,Genomics,Links to other databases,46522
+2001-01-01 00:00:00,Community information,Publications,3517
+2001-01-01 00:00:00,Community information,Researchers,2431
+2001-01-01 00:00:00,Community information,Laboratories,324
+2001-01-01 00:00:00,Community information,Companies,61
+2001-01-01 00:00:00,Orthology,Genes w/Human Orthology,0
+2001-01-01 00:00:00,Orthology,Genes w/Mouse Orthology,0
+2002-01-01 00:00:00,Genes,Genes,1715
+2002-01-01 00:00:00,Genes,Genes on Assembly,0
+2002-01-01 00:00:00,Genes,Transcripts,0
+2002-01-01 00:00:00,Genes,EST/cDNAs,10493
+2002-01-01 00:00:00,Genes,Full length cDNA clones (ZGC),0
+2002-01-01 00:00:00,Genetics,Features,2278
+2002-01-01 00:00:00,Genetics,Transgenic Features,122
+2002-01-01 00:00:00,Genetics,Transgenic Constructs,0
+2002-01-01 00:00:00,Genetics,Transgenic Genotypes,0
+2002-01-01 00:00:00,Genetics,Genotypes,0
+2002-01-01 00:00:00,Genetics,Genes with GO annotations,0
+2002-01-01 00:00:00,Genetics,Genes with IEA GO annotations,0
+2002-01-01 00:00:00,Genetics,Genes with Non-IEA GO annotations,0
+2002-01-01 00:00:00,Genetics,Total GO annotations,0
+2002-01-01 00:00:00,Genetics,Genes with OMIM phenotypes,0
+2002-01-01 00:00:00,Reagents,Morpholinos,0
+2002-01-01 00:00:00,Reagents,TALEN,0
+2002-01-01 00:00:00,Reagents,CRISPR,0
+2002-01-01 00:00:00,Reagents,Antibodies,0
+2002-01-01 00:00:00,Expression & Phenotype,Gene expression patterns,739
+2002-01-01 00:00:00,Expression & Phenotype,Genes with expression data,0
+2002-01-01 00:00:00,Expression & Phenotype,Phenotype statements,0
+2002-01-01 00:00:00,Expression & Phenotype,Genes with a phenotype,0
+2002-01-01 00:00:00,Expression & Phenotype,Images (phenotype and expression patterns),8473
+2002-01-01 00:00:00,Expression & Phenotype,Anatomical structures,1134
+2002-01-01 00:00:00,Genomics,Mapped markers,25483
+2002-01-01 00:00:00,Genomics,Links to other databases,60417
+2002-01-01 00:00:00,Community information,Publications,4246
+2002-01-01 00:00:00,Community information,Researchers,2683
+2002-01-01 00:00:00,Community information,Laboratories,329
+2002-01-01 00:00:00,Community information,Companies,45
+2002-01-01 00:00:00,Orthology,Genes w/Human Orthology,0
+2002-01-01 00:00:00,Orthology,Genes w/Mouse Orthology,0
+2003-01-01 00:00:00,Genes,Genes,12205
+2003-01-01 00:00:00,Genes,Genes on Assembly,94
+2003-01-01 00:00:00,Genes,Transcripts,0
+2003-01-01 00:00:00,Genes,EST/cDNAs,11847
+2003-01-01 00:00:00,Genes,Full length cDNA clones (ZGC),0
+2003-01-01 00:00:00,Genetics,Features,2343
+2003-01-01 00:00:00,Genetics,Transgenic Features,137
+2003-01-01 00:00:00,Genetics,Transgenic Constructs,0
+2003-01-01 00:00:00,Genetics,Transgenic Genotypes,0
+2003-01-01 00:00:00,Genetics,Genotypes,0
+2003-01-01 00:00:00,Genetics,Genes with GO annotations,0
+2003-01-01 00:00:00,Genetics,Genes with IEA GO annotations,0
+2003-01-01 00:00:00,Genetics,Genes with Non-IEA GO annotations,0
+2003-01-01 00:00:00,Genetics,Total GO annotations,0
+2003-01-01 00:00:00,Genetics,Genes with OMIM phenotypes,0
+2003-01-01 00:00:00,Reagents,Morpholinos,0
+2003-01-01 00:00:00,Reagents,TALEN,0
+2003-01-01 00:00:00,Reagents,CRISPR,0
+2003-01-01 00:00:00,Reagents,Antibodies,0
+2003-01-01 00:00:00,Expression & Phenotype,Gene expression patterns,1295
+2003-01-01 00:00:00,Expression & Phenotype,Genes with expression data,0
+2003-01-01 00:00:00,Expression & Phenotype,Phenotype statements,0
+2003-01-01 00:00:00,Expression & Phenotype,Genes with a phenotype,0
+2003-01-01 00:00:00,Expression & Phenotype,Images (phenotype and expression patterns),16874
+2003-01-01 00:00:00,Expression & Phenotype,Anatomical structures,1163
+2003-01-01 00:00:00,Genomics,Mapped markers,26858
+2003-01-01 00:00:00,Genomics,Links to other databases,99118
+2003-01-01 00:00:00,Community information,Publications,4986
+2003-01-01 00:00:00,Community information,Researchers,2916
+2003-01-01 00:00:00,Community information,Laboratories,372
+2003-01-01 00:00:00,Community information,Companies,49
+2003-01-01 00:00:00,Orthology,Genes w/Human Orthology,1051
+2003-01-01 00:00:00,Orthology,Genes w/Mouse Orthology,819
+2004-01-01 00:00:00,Genes,Genes,16785
+2004-01-01 00:00:00,Genes,Genes on Assembly,2130
+2004-01-01 00:00:00,Genes,Transcripts,0
+2004-01-01 00:00:00,Genes,EST/cDNAs,19233
+2004-01-01 00:00:00,Genes,Full length cDNA clones (ZGC),6057
+2004-01-01 00:00:00,Genetics,Features,2828
+2004-01-01 00:00:00,Genetics,Transgenic Features,512
+2004-01-01 00:00:00,Genetics,Transgenic Constructs,0
+2004-01-01 00:00:00,Genetics,Transgenic Genotypes,0
+2004-01-01 00:00:00,Genetics,Genotypes,0
+2004-01-01 00:00:00,Genetics,Genes with GO annotations,4783
+2004-01-01 00:00:00,Genetics,Genes with IEA GO annotations,4530
+2004-01-01 00:00:00,Genetics,Genes with Non-IEA GO annotations,684
+2004-01-01 00:00:00,Genetics,Total GO annotations,20741
+2004-01-01 00:00:00,Genetics,Genes with OMIM phenotypes,0
+2004-01-01 00:00:00,Reagents,Morpholinos,73
+2004-01-01 00:00:00,Reagents,TALEN,0
+2004-01-01 00:00:00,Reagents,CRISPR,0
+2004-01-01 00:00:00,Reagents,Antibodies,0
+2004-01-01 00:00:00,Expression & Phenotype,Gene expression patterns,6821
+2004-01-01 00:00:00,Expression & Phenotype,Genes with expression data,0
+2004-01-01 00:00:00,Expression & Phenotype,Phenotype statements,0
+2004-01-01 00:00:00,Expression & Phenotype,Genes with a phenotype,0
+2004-01-01 00:00:00,Expression & Phenotype,Images (phenotype and expression patterns),21980
+2004-01-01 00:00:00,Expression & Phenotype,Anatomical structures,1131
+2004-01-01 00:00:00,Genomics,Mapped markers,35578
+2004-01-01 00:00:00,Genomics,Links to other databases,65886
+2004-01-01 00:00:00,Community information,Publications,5789
+2004-01-01 00:00:00,Community information,Researchers,3170
+2004-01-01 00:00:00,Community information,Laboratories,419
+2004-01-01 00:00:00,Community information,Companies,53
+2004-01-01 00:00:00,Orthology,Genes w/Human Orthology,1640
+2004-01-01 00:00:00,Orthology,Genes w/Mouse Orthology,1163
+2005-01-01 00:00:00,Genes,Genes,20332
+2005-01-01 00:00:00,Genes,Genes on Assembly,3277
+2005-01-01 00:00:00,Genes,Transcripts,0
+2005-01-01 00:00:00,Genes,EST/cDNAs,23847
+2005-01-01 00:00:00,Genes,Full length cDNA clones (ZGC),8348
+2005-01-01 00:00:00,Genetics,Features,3217
+2005-01-01 00:00:00,Genetics,Transgenic Features,613
+2005-01-01 00:00:00,Genetics,Transgenic Constructs,0
+2005-01-01 00:00:00,Genetics,Transgenic Genotypes,0
+2005-01-01 00:00:00,Genetics,Genotypes,0
+2005-01-01 00:00:00,Genetics,Genes with GO annotations,10421
+2005-01-01 00:00:00,Genetics,Genes with IEA GO annotations,6753
+2005-01-01 00:00:00,Genetics,Genes with Non-IEA GO annotations,6490
+2005-01-01 00:00:00,Genetics,Total GO annotations,46981
+2005-01-01 00:00:00,Genetics,Genes with OMIM phenotypes,0
+2005-01-01 00:00:00,Reagents,Morpholinos,552
+2005-01-01 00:00:00,Reagents,TALEN,0
+2005-01-01 00:00:00,Reagents,CRISPR,0
+2005-01-01 00:00:00,Reagents,Antibodies,0
+2005-01-01 00:00:00,Expression & Phenotype,Gene expression patterns,14282
+2005-01-01 00:00:00,Expression & Phenotype,Genes with expression data,0
+2005-01-01 00:00:00,Expression & Phenotype,Phenotype statements,0
+2005-01-01 00:00:00,Expression & Phenotype,Genes with a phenotype,0
+2005-01-01 00:00:00,Expression & Phenotype,Images (phenotype and expression patterns),38339
+2005-01-01 00:00:00,Expression & Phenotype,Anatomical structures,1394
+2005-01-01 00:00:00,Genomics,Mapped markers,36679
+2005-01-01 00:00:00,Genomics,Links to other databases,84701
+2005-01-01 00:00:00,Community information,Publications,6739
+2005-01-01 00:00:00,Community information,Researchers,3624
+2005-01-01 00:00:00,Community information,Laboratories,441
+2005-01-01 00:00:00,Community information,Companies,58
+2005-01-01 00:00:00,Orthology,Genes w/Human Orthology,2987
+2005-01-01 00:00:00,Orthology,Genes w/Mouse Orthology,1480
+2006-01-01 00:00:00,Genes,Genes,23049
+2006-01-01 00:00:00,Genes,Genes on Assembly,5664
+2006-01-01 00:00:00,Genes,Transcripts,8116
+2006-01-01 00:00:00,Genes,EST/cDNAs,26494
+2006-01-01 00:00:00,Genes,Full length cDNA clones (ZGC),9626
+2006-01-01 00:00:00,Genetics,Features,4485
+2006-01-01 00:00:00,Genetics,Transgenic Features,694
+2006-01-01 00:00:00,Genetics,Transgenic Constructs,0
+2006-01-01 00:00:00,Genetics,Transgenic Genotypes,0
+2006-01-01 00:00:00,Genetics,Genotypes,0
+2006-01-01 00:00:00,Genetics,Genes with GO annotations,12173
+2006-01-01 00:00:00,Genetics,Genes with IEA GO annotations,7565
+2006-01-01 00:00:00,Genetics,Genes with Non-IEA GO annotations,7688
+2006-01-01 00:00:00,Genetics,Total GO annotations,64576
+2006-01-01 00:00:00,Genetics,Genes with OMIM phenotypes,0
+2006-01-01 00:00:00,Reagents,Morpholinos,1018
+2006-01-01 00:00:00,Reagents,TALEN,0
+2006-01-01 00:00:00,Reagents,CRISPR,0
+2006-01-01 00:00:00,Reagents,Antibodies,0
+2006-01-01 00:00:00,Expression & Phenotype,Gene expression patterns,21667
+2006-01-01 00:00:00,Expression & Phenotype,Genes with expression data,0
+2006-01-01 00:00:00,Expression & Phenotype,Phenotype statements,0
+2006-01-01 00:00:00,Expression & Phenotype,Genes with a phenotype,0
+2006-01-01 00:00:00,Expression & Phenotype,Images (phenotype and expression patterns),53074
+2006-01-01 00:00:00,Expression & Phenotype,Anatomical structures,1665
+2006-01-01 00:00:00,Genomics,Mapped markers,36983
+2006-01-01 00:00:00,Genomics,Links to other databases,114943
+2006-01-01 00:00:00,Community information,Publications,7797
+2006-01-01 00:00:00,Community information,Researchers,4104
+2006-01-01 00:00:00,Community information,Laboratories,493
+2006-01-01 00:00:00,Community information,Companies,61
+2006-01-01 00:00:00,Orthology,Genes w/Human Orthology,3905
+2006-01-01 00:00:00,Orthology,Genes w/Mouse Orthology,1722
+2007-01-01 00:00:00,Genes,Genes,27490
+2007-01-01 00:00:00,Genes,Genes on Assembly,10454
+2007-01-01 00:00:00,Genes,Transcripts,16457
+2007-01-01 00:00:00,Genes,EST/cDNAs,28603
+2007-01-01 00:00:00,Genes,Full length cDNA clones (ZGC),11784
+2007-01-01 00:00:00,Genetics,Features,5007
+2007-01-01 00:00:00,Genetics,Transgenic Features,985
+2007-01-01 00:00:00,Genetics,Transgenic Constructs,320
+2007-01-01 00:00:00,Genetics,Transgenic Genotypes,1276
+2007-01-01 00:00:00,Genetics,Genotypes,5645
+2007-01-01 00:00:00,Genetics,Genes with GO annotations,13581
+2007-01-01 00:00:00,Genetics,Genes with IEA GO annotations,9600
+2007-01-01 00:00:00,Genetics,Genes with Non-IEA GO annotations,8060
+2007-01-01 00:00:00,Genetics,Total GO annotations,81470
+2007-01-01 00:00:00,Genetics,Genes with OMIM phenotypes,0
+2007-01-01 00:00:00,Reagents,Morpholinos,1614
+2007-01-01 00:00:00,Reagents,TALEN,0
+2007-01-01 00:00:00,Reagents,CRISPR,0
+2007-01-01 00:00:00,Reagents,Antibodies,0
+2007-01-01 00:00:00,Expression & Phenotype,Gene expression patterns,29339
+2007-01-01 00:00:00,Expression & Phenotype,Genes with expression data,0
+2007-01-01 00:00:00,Expression & Phenotype,Phenotype statements,0
+2007-01-01 00:00:00,Expression & Phenotype,Genes with a phenotype,0
+2007-01-01 00:00:00,Expression & Phenotype,Images (phenotype and expression patterns),60263
+2007-01-01 00:00:00,Expression & Phenotype,Anatomical structures,2125
+2007-01-01 00:00:00,Genomics,Mapped markers,35465
+2007-01-01 00:00:00,Genomics,Links to other databases,228689
+2007-01-01 00:00:00,Community information,Publications,8860
+2007-01-01 00:00:00,Community information,Researchers,4368
+2007-01-01 00:00:00,Community information,Laboratories,539
+2007-01-01 00:00:00,Community information,Companies,62
+2007-01-01 00:00:00,Orthology,Genes w/Human Orthology,5264
+2007-01-01 00:00:00,Orthology,Genes w/Mouse Orthology,2312
+2008-01-01 00:00:00,Genes,Genes,28948
+2008-01-01 00:00:00,Genes,Genes on Assembly,10422
+2008-01-01 00:00:00,Genes,Transcripts,22524
+2008-01-01 00:00:00,Genes,EST/cDNAs,34286
+2008-01-01 00:00:00,Genes,Full length cDNA clones (ZGC),16808
+2008-01-01 00:00:00,Genetics,Features,5674
+2008-01-01 00:00:00,Genetics,Transgenic Features,1460
+2008-01-01 00:00:00,Genetics,Transgenic Constructs,458
+2008-01-01 00:00:00,Genetics,Transgenic Genotypes,2355
+2008-01-01 00:00:00,Genetics,Genotypes,7512
+2008-01-01 00:00:00,Genetics,Genes with GO annotations,14925
+2008-01-01 00:00:00,Genetics,Genes with IEA GO annotations,11001
+2008-01-01 00:00:00,Genetics,Genes with Non-IEA GO annotations,8584
+2008-01-01 00:00:00,Genetics,Total GO annotations,91078
+2008-01-01 00:00:00,Genetics,Genes with OMIM phenotypes,0
+2008-01-01 00:00:00,Reagents,Morpholinos,2259
+2008-01-01 00:00:00,Reagents,TALEN,0
+2008-01-01 00:00:00,Reagents,CRISPR,0
+2008-01-01 00:00:00,Reagents,Antibodies,217
+2008-01-01 00:00:00,Expression & Phenotype,Gene expression patterns,38671
+2008-01-01 00:00:00,Expression & Phenotype,Genes with expression data,0
+2008-01-01 00:00:00,Expression & Phenotype,Phenotype statements,22216
+2008-01-01 00:00:00,Expression & Phenotype,Genes with a phenotype,0
+2008-01-01 00:00:00,Expression & Phenotype,Images (phenotype and expression patterns),69677
+2008-01-01 00:00:00,Expression & Phenotype,Anatomical structures,2203
+2008-01-01 00:00:00,Genomics,Mapped markers,37708
+2008-01-01 00:00:00,Genomics,Links to other databases,157123
+2008-01-01 00:00:00,Community information,Publications,10143
+2008-01-01 00:00:00,Community information,Researchers,4642
+2008-01-01 00:00:00,Community information,Laboratories,583
+2008-01-01 00:00:00,Community information,Companies,93
+2008-01-01 00:00:00,Orthology,Genes w/Human Orthology,6657
+2008-01-01 00:00:00,Orthology,Genes w/Mouse Orthology,3519
+2009-01-01 00:00:00,Genes,Genes,30796
+2009-01-01 00:00:00,Genes,Genes on Assembly,15344
+2009-01-01 00:00:00,Genes,Transcripts,25913
+2009-01-01 00:00:00,Genes,EST/cDNAs,34865
+2009-01-01 00:00:00,Genes,Full length cDNA clones (ZGC),17192
+2009-01-01 00:00:00,Genetics,Features,6111
+2009-01-01 00:00:00,Genetics,Transgenic Features,1662
+2009-01-01 00:00:00,Genetics,Transgenic Constructs,522
+2009-01-01 00:00:00,Genetics,Transgenic Genotypes,2821
+2009-01-01 00:00:00,Genetics,Genotypes,8416
+2009-01-01 00:00:00,Genetics,Genes with GO annotations,15076
+2009-01-01 00:00:00,Genetics,Genes with IEA GO annotations,11250
+2009-01-01 00:00:00,Genetics,Genes with Non-IEA GO annotations,8637
+2009-01-01 00:00:00,Genetics,Total GO annotations,105672
+2009-01-01 00:00:00,Genetics,Genes with OMIM phenotypes,0
+2009-01-01 00:00:00,Reagents,Morpholinos,2871
+2009-01-01 00:00:00,Reagents,TALEN,0
+2009-01-01 00:00:00,Reagents,CRISPR,0
+2009-01-01 00:00:00,Reagents,Antibodies,424
+2009-01-01 00:00:00,Expression & Phenotype,Gene expression patterns,46431
+2009-01-01 00:00:00,Expression & Phenotype,Genes with expression data,0
+2009-01-01 00:00:00,Expression & Phenotype,Phenotype statements,29029
+2009-01-01 00:00:00,Expression & Phenotype,Genes with a phenotype,0
+2009-01-01 00:00:00,Expression & Phenotype,Images (phenotype and expression patterns),75423
+2009-01-01 00:00:00,Expression & Phenotype,Anatomical structures,2384
+2009-01-01 00:00:00,Genomics,Mapped markers,38019
+2009-01-01 00:00:00,Genomics,Links to other databases,447176
+2009-01-01 00:00:00,Community information,Publications,12441
+2009-01-01 00:00:00,Community information,Researchers,4977
+2009-01-01 00:00:00,Community information,Laboratories,626
+2009-01-01 00:00:00,Community information,Companies,120
+2009-01-01 00:00:00,Orthology,Genes w/Human Orthology,8025
+2009-01-01 00:00:00,Orthology,Genes w/Mouse Orthology,4528
+2010-01-01 00:00:00,Genes,Genes,31135
+2010-01-01 00:00:00,Genes,Genes on Assembly,15935
+2010-01-01 00:00:00,Genes,Transcripts,26166
+2010-01-01 00:00:00,Genes,EST/cDNAs,34865
+2010-01-01 00:00:00,Genes,Full length cDNA clones (ZGC),17191
+2010-01-01 00:00:00,Genetics,Features,6730
+2010-01-01 00:00:00,Genetics,Transgenic Features,2046
+2010-01-01 00:00:00,Genetics,Transgenic Constructs,652
+2010-01-01 00:00:00,Genetics,Transgenic Genotypes,3630
+2010-01-01 00:00:00,Genetics,Genotypes,10048
+2010-01-01 00:00:00,Genetics,Genes with GO annotations,15450
+2010-01-01 00:00:00,Genetics,Genes with IEA GO annotations,11562
+2010-01-01 00:00:00,Genetics,Genes with Non-IEA GO annotations,8819
+2010-01-01 00:00:00,Genetics,Total GO annotations,107969
+2010-01-01 00:00:00,Genetics,Genes with OMIM phenotypes,0
+2010-01-01 00:00:00,Reagents,Morpholinos,3928
+2010-01-01 00:00:00,Reagents,TALEN,0
+2010-01-01 00:00:00,Reagents,CRISPR,0
+2010-01-01 00:00:00,Reagents,Antibodies,660
+2010-01-01 00:00:00,Expression & Phenotype,Gene expression patterns,52488
+2010-01-01 00:00:00,Expression & Phenotype,Genes with expression data,0
+2010-01-01 00:00:00,Expression & Phenotype,Phenotype statements,38746
+2010-01-01 00:00:00,Expression & Phenotype,Genes with a phenotype,0
+2010-01-01 00:00:00,Expression & Phenotype,Images (phenotype and expression patterns),78616
+2010-01-01 00:00:00,Expression & Phenotype,Anatomical structures,2671
+2010-01-01 00:00:00,Genomics,Mapped markers,38139
+2010-01-01 00:00:00,Genomics,Links to other databases,522249
+2010-01-01 00:00:00,Community information,Publications,13730
+2010-01-01 00:00:00,Community information,Researchers,5469
+2010-01-01 00:00:00,Community information,Laboratories,667
+2010-01-01 00:00:00,Community information,Companies,132
+2010-01-01 00:00:00,Orthology,Genes w/Human Orthology,9882
+2010-01-01 00:00:00,Orthology,Genes w/Mouse Orthology,6655
+2011-01-01 00:00:00,Genes,Genes,32277
+2011-01-01 00:00:00,Genes,Genes on Assembly,18657
+2011-01-01 00:00:00,Genes,Transcripts,30385
+2011-01-01 00:00:00,Genes,EST/cDNAs,34865
+2011-01-01 00:00:00,Genes,Full length cDNA clones (ZGC),17191
+2011-01-01 00:00:00,Genetics,Features,8024
+2011-01-01 00:00:00,Genetics,Transgenic Features,3184
+2011-01-01 00:00:00,Genetics,Transgenic Constructs,1217
+2011-01-01 00:00:00,Genetics,Transgenic Genotypes,5094
+2011-01-01 00:00:00,Genetics,Genotypes,11815
+2011-01-01 00:00:00,Genetics,Genes with GO annotations,15739
+2011-01-01 00:00:00,Genetics,Genes with IEA GO annotations,12019
+2011-01-01 00:00:00,Genetics,Genes with Non-IEA GO annotations,8882
+2011-01-01 00:00:00,Genetics,Total GO annotations,117187
+2011-01-01 00:00:00,Genetics,Genes with OMIM phenotypes,0
+2011-01-01 00:00:00,Reagents,Morpholinos,4538
+2011-01-01 00:00:00,Reagents,TALEN,0
+2011-01-01 00:00:00,Reagents,CRISPR,0
+2011-01-01 00:00:00,Reagents,Antibodies,783
+2011-01-01 00:00:00,Expression & Phenotype,Gene expression patterns,53407
+2011-01-01 00:00:00,Expression & Phenotype,Genes with expression data,0
+2011-01-01 00:00:00,Expression & Phenotype,Phenotype statements,50128
+2011-01-01 00:00:00,Expression & Phenotype,Genes with a phenotype,0
+2011-01-01 00:00:00,Expression & Phenotype,Images (phenotype and expression patterns),81528
+2011-01-01 00:00:00,Expression & Phenotype,Anatomical structures,2703
+2011-01-01 00:00:00,Genomics,Mapped markers,38322
+2011-01-01 00:00:00,Genomics,Links to other databases,522249
+2011-01-01 00:00:00,Community information,Publications,15473
+2011-01-01 00:00:00,Community information,Researchers,5881
+2011-01-01 00:00:00,Community information,Laboratories,141
+2011-01-01 00:00:00,Community information,Companies,132
+2011-01-01 00:00:00,Orthology,Genes w/Human Orthology,11404
+2011-01-01 00:00:00,Orthology,Genes w/Mouse Orthology,8345
+2012-01-01 00:00:00,Genes,Genes,33367
+2012-01-01 00:00:00,Genes,Genes on Assembly,19864
+2012-01-01 00:00:00,Genes,Transcripts,32841
+2012-01-01 00:00:00,Genes,EST/cDNAs,34865
+2012-01-01 00:00:00,Genes,Full length cDNA clones (ZGC),17191
+2012-01-01 00:00:00,Genetics,Features,21856
+2012-01-01 00:00:00,Genetics,Transgenic Features,15992
+2012-01-01 00:00:00,Genetics,Transgenic Constructs,1681
+2012-01-01 00:00:00,Genetics,Transgenic Genotypes,6865
+2012-01-01 00:00:00,Genetics,Genotypes,15465
+2012-01-01 00:00:00,Genetics,Genes with GO annotations,18100
+2012-01-01 00:00:00,Genetics,Genes with IEA GO annotations,14658
+2012-01-01 00:00:00,Genetics,Genes with Non-IEA GO annotations,9014
+2012-01-01 00:00:00,Genetics,Total GO annotations,135314
+2012-01-01 00:00:00,Genetics,Genes with OMIM phenotypes,0
+2012-01-01 00:00:00,Reagents,Morpholinos,5394
+2012-01-01 00:00:00,Reagents,TALEN,0
+2012-01-01 00:00:00,Reagents,CRISPR,0
+2012-01-01 00:00:00,Reagents,Antibodies,1051
+2012-01-01 00:00:00,Expression & Phenotype,Gene expression patterns,62752
+2012-01-01 00:00:00,Expression & Phenotype,Genes with expression data,0
+2012-01-01 00:00:00,Expression & Phenotype,Phenotype statements,67522
+2012-01-01 00:00:00,Expression & Phenotype,Genes with a phenotype,0
+2012-01-01 00:00:00,Expression & Phenotype,Images (phenotype and expression patterns),84579
+2012-01-01 00:00:00,Expression & Phenotype,Anatomical structures,2768
+2012-01-01 00:00:00,Genomics,Mapped markers,38443
+2012-01-01 00:00:00,Genomics,Links to other databases,670630
+2012-01-01 00:00:00,Community information,Publications,17396
+2012-01-01 00:00:00,Community information,Researchers,6308
+2012-01-01 00:00:00,Community information,Laboratories,808
+2012-01-01 00:00:00,Community information,Companies,156
+2012-01-01 00:00:00,Orthology,Genes w/Human Orthology,13595
+2012-01-01 00:00:00,Orthology,Genes w/Mouse Orthology,10821
+2013-01-01 00:00:00,Genes,Genes,35572
+2013-01-01 00:00:00,Genes,Genes on Assembly,23367
+2013-01-01 00:00:00,Genes,Transcripts,38390
+2013-01-01 00:00:00,Genes,EST/cDNAs,34865
+2013-01-01 00:00:00,Genes,Full length cDNA clones (ZGC),17191
+2013-01-01 00:00:00,Genetics,Features,38807
+2013-01-01 00:00:00,Genetics,Transgenic Features,20420
+2013-01-01 00:00:00,Genetics,Transgenic Constructs,2224
+2013-01-01 00:00:00,Genetics,Transgenic Genotypes,8491
+2013-01-01 00:00:00,Genetics,Genotypes,17411
+2013-01-01 00:00:00,Genetics,Genes with GO annotations,18548
+2013-01-01 00:00:00,Genetics,Genes with IEA GO annotations,15186
+2013-01-01 00:00:00,Genetics,Genes with Non-IEA GO annotations,9284
+2013-01-01 00:00:00,Genetics,Total GO annotations,140981
+2013-01-01 00:00:00,Genetics,Genes with OMIM phenotypes,3366
+2013-01-01 00:00:00,Reagents,Morpholinos,6161
+2013-01-01 00:00:00,Reagents,TALEN,113
+2013-01-01 00:00:00,Reagents,CRISPR,26
+2013-01-01 00:00:00,Reagents,Antibodies,1387
+2013-01-01 00:00:00,Expression & Phenotype,Gene expression patterns,71132
+2013-01-01 00:00:00,Expression & Phenotype,Genes with expression data,0
+2013-01-01 00:00:00,Expression & Phenotype,Phenotype statements,77449
+2013-01-01 00:00:00,Expression & Phenotype,Genes with a phenotype,0
+2013-01-01 00:00:00,Expression & Phenotype,Images (phenotype and expression patterns),88054
+2013-01-01 00:00:00,Expression & Phenotype,Anatomical structures,2922
+2013-01-01 00:00:00,Genomics,Mapped markers,38680
+2013-01-01 00:00:00,Genomics,Links to other databases,731906
+2013-01-01 00:00:00,Community information,Publications,19349
+2013-01-01 00:00:00,Community information,Researchers,6665
+2013-01-01 00:00:00,Community information,Laboratories,877
+2013-01-01 00:00:00,Community information,Companies,164
+2013-01-01 00:00:00,Orthology,Genes w/Human Orthology,14660
+2013-01-01 00:00:00,Orthology,Genes w/Mouse Orthology,11882
+2014-01-01 00:00:00,Genes,Genes,35844
+2014-01-01 00:00:00,Genes,Genes on Assembly,23356
+2014-01-01 00:00:00,Genes,Transcripts,38390
+2014-01-01 00:00:00,Genes,EST/cDNAs,34865
+2014-01-01 00:00:00,Genes,Full length cDNA clones (ZGC),17191
+2014-01-01 00:00:00,Genetics,Features,39780
+2014-01-01 00:00:00,Genetics,Transgenic Features,20904
+2014-01-01 00:00:00,Genetics,Transgenic Constructs,2647
+2014-01-01 00:00:00,Genetics,Transgenic Genotypes,9529
+2014-01-01 00:00:00,Genetics,Genotypes,18763
+2014-01-01 00:00:00,Genetics,Genes with GO annotations,19439
+2014-01-01 00:00:00,Genetics,Genes with IEA GO annotations,16069
+2014-01-01 00:00:00,Genetics,Genes with Non-IEA GO annotations,9882
+2014-01-01 00:00:00,Genetics,Total GO annotations,152076
+2014-01-01 00:00:00,Genetics,Genes with OMIM phenotypes,3651
+2014-01-01 00:00:00,Reagents,Morpholinos,6914
+2014-01-01 00:00:00,Reagents,TALEN,135
+2014-01-01 00:00:00,Reagents,CRISPR,60
+2014-01-01 00:00:00,Reagents,Antibodies,1672
+2014-01-01 00:00:00,Expression & Phenotype,Gene expression patterns,82524
+2014-01-01 00:00:00,Expression & Phenotype,Genes with expression data,12287
+2014-01-01 00:00:00,Expression & Phenotype,Phenotype statements,88570
+2014-01-01 00:00:00,Expression & Phenotype,Genes with a phenotype,5139
+2014-01-01 00:00:00,Expression & Phenotype,Images (phenotype and expression patterns),91866
+2014-01-01 00:00:00,Expression & Phenotype,Anatomical structures,2983
+2014-01-01 00:00:00,Genomics,Mapped markers,38698
+2014-01-01 00:00:00,Genomics,Links to other databases,774554
+2014-01-01 00:00:00,Community information,Publications,21621
+2014-01-01 00:00:00,Community information,Researchers,6984
+2014-01-01 00:00:00,Community information,Laboratories,926
+2014-01-01 00:00:00,Community information,Companies,175
+2014-01-01 00:00:00,Orthology,Genes w/Human Orthology,15401
+2014-01-01 00:00:00,Orthology,Genes w/Mouse Orthology,12718
+2016-09-15 00:00:00,Genes,Genes,36934
+2016-09-15 00:00:00,Genes,Genes on Assembly,26107
+2016-09-15 00:00:00,Genes,Transcripts,43668
+2016-09-15 00:00:00,Genes,EST/cDNAs,34865
+2016-09-15 00:00:00,Genes,Full length cDNA clones (ZGC),17191
+2016-09-15 00:00:00,Genetics,Features,51253
+2016-09-15 00:00:00,Genetics,Transgenic Features,22099
+2016-09-15 00:00:00,Genetics,Transgenic Constructs,3546
+2016-09-15 00:00:00,Genetics,Transgenic Genotypes,11348
+2016-09-15 00:00:00,Genetics,Genotypes,20842
+2016-09-15 00:00:00,Genetics,Genes with GO annotations,21676
+2016-09-15 00:00:00,Genetics,Genes with IEA GO annotations,18199
+2016-09-15 00:00:00,Genetics,Genes with Non-IEA GO annotations,14084
+2016-09-15 00:00:00,Genetics,Total GO annotations,193766
+2016-09-15 00:00:00,Genetics,Genes with OMIM phenotypes,7472
+2016-09-15 00:00:00,Reagents,Morpholinos,8700
+2016-09-15 00:00:00,Reagents,TALEN,327
+2016-09-15 00:00:00,Reagents,CRISPR,956
+2016-09-15 00:00:00,Reagents,Antibodies,2188
+2016-09-15 00:00:00,Expression & Phenotype,Gene expression patterns,100853
+2016-09-15 00:00:00,Expression & Phenotype,Genes with expression data,12780
+2016-09-15 00:00:00,Expression & Phenotype,Phenotype statements,108935
+2016-09-15 00:00:00,Expression & Phenotype,Genes with a phenotype,6263
+2016-09-15 00:00:00,Expression & Phenotype,Images (phenotype and expression patterns),99658
+2016-09-15 00:00:00,Expression & Phenotype,Anatomical structures,3047
+2016-09-15 00:00:00,Genomics,Mapped markers,38515
+2016-09-15 00:00:00,Genomics,Links to other databases,771941
+2016-09-15 00:00:00,Community information,Publications,28022
+2016-09-15 00:00:00,Community information,Researchers,7676
+2016-09-15 00:00:00,Community information,Laboratories,1050
+2016-09-15 00:00:00,Community information,Companies,192
+2016-09-15 00:00:00,Orthology,Genes w/Human Orthology,16090
+2016-09-15 00:00:00,Orthology,Genes w/Mouse Orthology,13589

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <include file="source/org/zfin/db/postGmakePostloaddb/1091/Pizza/PUB-439.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1091/Pizza/DLOAD-508a.sql"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1091/Pizza/DLOAD-508b.sql"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1091/Pizza/zkoCRISPRS_pre.sql"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1091/Pizza/zkoCRISPRS_load.xml"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1091/Pizza/zkoCRISPRS.sql"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1091/Pizza/ONT-626.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1091/Pizza/ZFIN-5752.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1091/Pizza/INF-3170.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1091/Pizza/INF-3169.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1091/Pizza/INF-3157.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1091/Pizza/CUR-721.sql" />
+
+
+</databaseChangeLog>

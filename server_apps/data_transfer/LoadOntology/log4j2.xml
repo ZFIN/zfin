@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Configuration>
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%level - %m%n"/>
+        </Console>
+        <File name="queryAppender" fileName="logs/query.log">
+            <PatternLayout pattern="%d %p %c{1.} [%t] %m%n"/>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Logger name="org.zfin" level="info"/>
+        <Logger name="org.zfin.ontology.datatransfer" level="info"/>
+        <Root level="info">
+            <AppenderRef ref="console"/>
+            <AppenderRef ref="queryAppender"/>
+        </Root>
+    </Loggers>
+</Configuration>

@@ -1,0 +1,270 @@
+
+Overview of the NCBI Gene Load
+-------------------------------
+
+This process loads the following db_link records based on mapped gene records between ZFIn and NCBI:
+1) NCBI Gene Ids
+2) UniGene Ids  ## as of January, 2020, no more UniGene Ids will be loaded or kept at ZFIN.
+3) RefSeq accessioons (including RefSeq RNA, RefPept, RefSeq DNA)
+4) GenBank accessions (including GenBank RNA, GenPept, GenBank DNA)
+
+NCBI_gene_load.pl is the control script. It executes the prepareNCBIgeneLoad.sql to generate the delete list and a set of ZFIN genes with RNA.
+Then, the script maps ZFIN gene records to NCBI gene records based on
+1) common GenBank RNA accessions
+2) common Vega Gene Id
+Then, the script execute the loadNCBIgeneAccs.sql to delete all the db_link records previously loaded 
+(accrding to the delete list), and load all the accessions for the gene records mapped.
+
+The values of dblink_length are also processed and loaded. And statistics and various reports are generated and emailed.
+
+Detailed process of the NCBI Gene Load
+----------------------------------------
+
+(   see FB wiki for a better look and feel: http://fogbugz.zfin.org/default.asp?W1625   )
+
+Step 1: Download and decompress NCBI data files
+-------------------------------------------------
+
+ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Non-mammalian_vertebrates/Danio_rerio.gene_info.gz
+
+                (6.3M decompressed, 33K+ rows)
+
+ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2accession.gz           (2.37G decompressed, 28,964,915 rows)
+
+ftp://ftp.ncbi.nlm.nih.gov/refseq/release/release-catalog/RefSeq-release59.catalog.gz
+
+                            (3.8G decompressed, 39M+ rows)
+
+7955    Danio rerio     NM_001001398.2  89191827        complete|vertebrate_other       PROVISIONAL     1613
+7955    Danio rerio     NP_001001398.2  89191828        complete|vertebrate_other       PROVISIONAL     205
+
+Step 2: Prepare the delete list (of db_link records) and the list of ZFIN genes for mapping
+--------------------------------------------------------------------------------------------
+
+Prepare a delete list of ZDB Ids for all the above accessions that are attributed to NCBI/EntrezGene load publications (ZDB-PUB-020723-3 and ZDB-PUB-130725-2)
+
+Retain those db_link records that are also in expression_experiment2 table
+
+Retain those db_link accessions which are not related to gene or pseudogene
+
+Retain those attributed to a publication other than NCBI/EntrezGene load publication.
+
+Run SQL to get all the gene ZDB Ids with GenBank RNA accessions in ZFIN that are associated directly to a ZFIN gene record or to a ZFIN gene record through an encodes relationship.
+
+select dblink_linked_recid as gene
+  from db_link
+ where dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-37"     -- GenBank RNA
+   and (dblink_linked_recid like "ZDB-GENE%" or dblink_linked_recid like "%RNAG%")
+union
+select mrel_mrkr_1_zdb_id as gene
+  from marker_relationship
+ where mrel_type = "gene encodes small segment"
+   and exists(select "x" from db_link
+               where dblink_linked_recid = mrel_mrkr_2_zdb_id
+                 and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-37");  -- GenBank RNA
+
+Store the 20K+ genes (including a handful of pseudogene) in hash to be used for mapping based upon RNA evidence.
+
+Step 3: Gather statistics for all the following NCBI accessions at ZFIN
+------------------------------------------------------------------------
+
+Run SQLs to get the numbers of all the following accessions got from NCBI/EntrezGene load before the next step of deletion.
+
+NCBI Gene Ids                         ZDB-FDBCONT-040412-1                 not curatable        no length
+
+RefSeq RNA accessions                 ZDB-FDBCONT-040412-38                not curatable       
+
+RefSeq polypeptide accessions         ZDB-FDBCONT-040412-39                not curatable    
+
+RefSeq DNA accessions                 ZDB-FDBCONT-040527-1                 not curatable    
+
+GenBank RNA accessions                ZDB-FDBCONT-040412-37                curatatble         
+
+GenPept accessions                    ZDB-FDBCONT-040412-42                curatatble    
+
+GenBank DNA accessions                ZDB-FDBCONT-040412-36                curatatble     
+
+And get number of ZFIN genes that are with all kinds of ResSeq accessions.
+
+Step 4: Parse NCBI's gene_info file
+-------------------------------------
+
+Parse the following file to get the NCBI records with gene Id, symbol, and Vega Id
+
+Danio_rerio.gene_info.gz     (6.3M decompressed, 33,834 rows)
+
+#Format: tax_id GeneID Symbol LocusTag Synonyms dbXrefs chromosome map_location description type_of_gene Symbol_from_nomenclature_authority Full_name_from_nomenclature_authority Nomenclature_status Other_designations Modification_date
+
+7955    30037   tnc     CH211-166O17.1  tenc|wu:fk04d02 ZFIN:ZDB-GENE-980526-104|Ensembl:ENSDARG00000021948|Vega:OTTDARG00000032698     5       -       tenascin C      protein-coding  tnc     tenascin C      O       etID309720.5|tenascin   20130529
+
+gene2accession.gz           (2.37G unzipped, 28,964,915 rows)
+
+Get NCBI-gene-Id/Symbols and store them in a hash.
+
+Get NCBI-gene-Id/Vega-gene-Id and store them in a hash.
+
+Step 5: Map ZFIN gene records to NCBI gene records
+--------------------------------------------------
+
+Step 5-1: initial set of ZFIN records
+---------------------------------------
+
+The very initial set of ZFIN records is generated by Step 3.
+
+Run SQL to get all the ZDB Gene Ids with symbols and store them in another hash.
+
+Loop thru the 20,702 ZFIN genes with supporting GenBank RNA evidence to create the following data structure:
+
+%supportedGeneZFIN: A hash with ZDB Gene Id as keys and references to arrays of supporting GenBank accessions as values.
+
+Example:  ZDB-GENE-091218-2 =>  [CU468750, CU468771, EB980341, JN653075]
+
+Have another hash, %accZFINsupportingOnly1, to store all the supporting GenBank RNA accessions at ZFIN.
+
+Example:  CU468750  => ZDB-GENE-091218-2
+
+Find out GenBank accessions that support more than 1 ZFIN genes and put them in a similar data structure 
+
+Example:  BC153646 => [ZDB-GENE-030707-2, ZDB-GENE-070627-1]
+
+Find out the ZFIN genes with at least 1 of its supporting RNA accessions that support other ZFIN gene(s), and store them in a similar data structure 
+
+Example:  ZDB-GENE-070627-1 => [BC115161, BC153646]
+
+These 36 ZFIN gene records will be excluded from the mapping.
+
+Step 5-2: Get length values:
+-----------------------------
+
+This section continues to deal with dblink_length field
+ There are 3 sources for length:
+ 1) the existing dblink_length for GenBank including GenPept records
+ 2) the length value of RefSeq sequences on NCBI's RefSeq-release#.catalog file
+ 3) calculated length (done after Step 5-3) for those not got from the above 2
+
+Step 5-3: initial set of NCBI records
+---------------------------------------
+
+Parse the following NCBI's gene2accession data files:
+
+#Format: tax_id GeneID status RNA_nucleotide_accession.version RNA_nucleotide_gi protein_accession.version protein_gi genomic_nucleotide_accession.version genomic_nucleotide_gi start_position_on_the_genomic_accession end_position_on_the_genomic_accession orientation assembly mature_peptide_accession.version mature_peptide_gi Symbol
+
+7955    30560   PROVISIONAL     NM_001001398.2   89191827    NP_001001398.2  89191828     NW_003336223.1  312122430       3478905 3485447 +       Reference Zv9 Primary Assembly  -       -       fgf6a
+
+7955    30037   -       BC163556.1      190339183       AAI63556.1      190339184       -       -       -       -       ?       -       -       -       tnc
+
+Store the parsed information (GenBank accessions and RefSeq accessions) in various data structures to be used for mapping and loading.
+
+NCBI gene Ids and their supporting GenBank RNA accessions are stored in similar data structures as those in Step 4-1.
+
+Example of %supportedGeneNCBI:            100000223  => [ BC097203, BC171342, BC171346]
+
+Example of %accNCBIsupportingOnly1                BC097203  => 100000223                   
+
+There is only one GenBank RNAs supporting more than 1 NCBI genes:   U10869  => [30122, 553976]
+
+Correspondingly, there are only 2 NCBI genes are with GenBank RNA(s) one of which supports other NCBI gene:
+
+30122 =>   [BC044143, BC055535, BC164176, U10869]
+553976  => [U10869]
+
+These 2 will be excluded from mapping.
+
+Step 5-4: get 1:1, 1:N and 1:0 from ZFIN to NCBI
+-------------------------------------------------
+
+Loop thru hash %supportedGeneZFIN to look up if the supporting RNAs are in hash %accNCBIsupportingOnly1.
+
+If there is, link the value of hash %accNCBIsupportingOnly1 (NCBI gene) to ZFIN gene. If not, it's belonging to 1:0 ZFIN set.
+
+It could be 2 cases:
+
+1:1 - 1 ZFIN gene with all its supporting RNAs that are supporting only 1 NCBI gene
+
+        The final 1:1 set is a subset of this one-way 1:1 set.
+
+1:N (1 ZFIN gene with its supporting RNAs that are supporting more than 1 NCBI gene)
+
+       The final 1:N (ZFIN to NCBI) set is a subset of this one-way 1:N set.
+
+Step 5-5: get 1:1, 1:N and 1:0 from NCBI to ZFIN
+-------------------------------------------------
+
+Loop thru hash %supportedGeneNCBI to look up if the supporting RNAs are in hash %accZFINsupportingOnly1.
+
+If there is, link the value of hash %accNCBIsupportingOnly1 (ZFIN gene) to NCBI gene. If not, it's belonging to 1:0 NCBI set.
+
+It could be 2 cases:
+
+1:1 (1 NCBI gene with all its supporting RNAs that are supporting only 1 ZFIN gene)
+
+     The final 1:1 set is a subset of this one-way 1:1 set.
+
+1:N (1 NCBI gene with its supporting RNAs that are supporting more than 1 ZFIN gene)
+
+     The final 1:N (NCBI to ZFIN) or N:1 (ZFIN to NCBI) set is a subset of this one-way 1:N set.
+
+Step 5-6: compare the 2-way mapping results and get the final 1:1, 1:N, N:1, and N:N sets
+--------------------------------------------------------------------------------------------
+
+Loop thru the 1:1 (ZFIN to NCBI) set got from Step 4-3
+
+    If found 1:N the other way (NCBI to ZFIN), that's not a final 1:1.
+
+Loop thru the 1:1 (NCBI to ZFIN) set got from Step 4-4
+
+    If found 1:N the other way (ZFIN to NCBI), that's not a final 1:1.
+
+Both of the above get the same final 1:1 set.   [18,768]
+
+Loop thru the 1:N (ZFIN to NCBI) set got from Step 4-3
+
+    If found 1:N the other way (NCBI to ZFIN), that's not a final 1:N (ZFIN to NCBI), and that's N:N.
+
+Loop thru the 1:N (NCBI to ZFIN) set got from Step 4-4
+
+    If found 1:N the other way (ZFIN to NCBI), that's not a final 1:N (NCBI to ZFIN), and that's N:N.
+
+Final 1:N (ZFIN to NCBI) - 99
+
+Final N:1 (ZFIN to NCBI) - 75
+
+N:N - 29 groups from ZFIN to NCBI; 33 groups from NCBI to ZFIN
+
+Print all the records to be loaded to the add list.
+
+Step 6: map ZFIN gene records to NCBI gene Ids based on common Vega Gene Id
+
+For those ZFIN genes not in final 1:1, 1:N, N:1, N:N and those excluded for RNA-based mapping sets.
+
+### Step 7: prepare the add list for db_link records of RefSeq accessions, GenBank accessions and UniGene Ids
+----------------------------------------------------------------------------------------------------------
+## as of January, 2020, no more UniGene Ids will be loaded or kept at ZFIN.
+
+----------------------------------------------------------------------------------------------------------
+Step 8: Execute loadNCBIgeneAccs.sql to:
+
+1) do the deletion based on the delete list, toDelete.unl file
+
+2) do the inserting based on the add list, toLoad.unl file
+
+3) also, add load attribution for manually curated GenBank accessions, according to the toAttribute.unl file
+
+4) check the number of accessions missing dblink_length value before and after
+--------------------------------------------------------------------------------------------------
+
+Step 9: Gather statistics and do reporting
+----------------------------------------------
+
+Report GenPept accessions associated with ZFIN genes still attributed to a non-load pub
+ 
+Run same SQLs as those at Step 3.
+
+Calculate percentage change and write to the report file.
+
+Email all reports.
+
+ 
+ 
+ 
+

@@ -1,0 +1,31 @@
+# Generated things
+.gradle
+build
+git-info.txt
+home/WEB-INF/classes/
+home/WEB-INF/log4j.xml
+home/WEB-INF/zfin.properties
+lib/DB_functions/**/*.so
+node_modules/
+reports/tests/
+reports/gradle
+server_apps/jenkins/jenkins.war
+server_apps/data_transfer/LoadOntology/reload-status/
+server_apps/data_transfer/LoadOntology/obo-files
+server_apps/data_transfer/LoadOntology/logs
+
+# Docker config
+docker/pg_pass
+
+# IntelliJ things
+.idea
+*.iml
+
+# Mac cruft
+.DS_Store
+._*
+.nfs*
+
+# Emacs cruft
+*~
+\#*\#

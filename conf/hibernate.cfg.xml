@@ -1,0 +1,188 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "classpath://org/hibernate/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <!--    in theory this should be using the database default (READ LAST COMMIT or LC)-->
+        <!--    or the JDBC default (2), either of which is better than read uncommited-->
+        <!--    it could be that since jndi was used anyway, that this was ignored -->
+        <!--        <property name="connection.isolation">1</property>-->
+
+        <property name="hibernate.query.substitutions">true 't', false 'f'</property>
+        <property name="dialect">org.hibernate.dialect.PostgreSQL9Dialect</property>
+        <property name="connection.datasource">java:comp/env/jdbc/zfin</property>
+        <property name="hibernate.show_sql">false</property>
+        <property name="hibernate.format_sql">true</property>
+        <property name="hibernate.cache.use_second_level_cache">false</property>
+        <property name="hibernate.cache.use_query_cache">false</property>
+        <property name="hibernate.jdbc.batch_size">20</property>
+        <property name="cache.provider_configuration_file_resource_path">ehcache.xml</property>
+        <property name="org.hibernate.envers.audit_table_suffix">_audit</property>
+        <property name="org.hibernate.envers.do_not_audit_optimistic_locking_field">true</property>
+
+        <!-- Connection Pooling parameters -->
+        <!--
+                <property name="c3p0.initialPoolSize">2</property>
+                <property name="c3p0.minPoolSize">2</property>
+                <property name="c3p0.maxPoolSize">20</property>
+                <property name="c3p0.acquire_increment">1</property>
+        -->
+        <!-- seconds -->
+        <!--
+                <property name="c3p0.idle_test_period">100</property>
+                <property name="c3p0.max_size">20</property>
+                <property name="c3p0.max_statements">0</property>
+                <property name="c3p0.min_size">10</property>
+        -->
+        <!-- seconds -->
+        <!--
+                <property name="c3p0.timeout">100</property>
+        -->
+
+        <!-- Mappings -->
+        <mapping resource="org/zfin/filters.hbm.xml"/>
+        <mapping resource="org/zfin/construct.hbm.xml"/>
+        <mapping resource="org/zfin/blast.hbm.xml"/>
+        <mapping resource="org/zfin/expression.hbm.xml"/>
+        <mapping resource="org/zfin/marker.hbm.xml"/>
+        <mapping resource="org/zfin/mapping.hbm.xml"/>
+        <mapping resource="org/zfin/mutant.hbm.xml"/>
+        <mapping resource="org/zfin/orthology.hbm.xml"/>
+        <mapping resource="org/zfin/profile.hbm.xml"/>
+        <mapping resource="org/zfin/publication.hbm.xml"/>
+        <mapping resource="org/zfin/sequence.hbm.xml"/>
+        <mapping class="org.zfin.anatomy.AnatomyStatistics"/>
+        <mapping class="org.zfin.anatomy.AnatomyTreeInfo"/>
+        <mapping class="org.zfin.anatomy.DevelopmentStage"/>
+        <mapping class="org.zfin.antibody.AntibodyExternalNote"/>
+        <mapping class="org.zfin.antibody.presentation.AntibodyAOStatistics"/>
+        <mapping class="org.zfin.audit.AuditLogItem"/>
+        <mapping class="org.zfin.curation.Curation"/>
+        <mapping class="org.zfin.curation.PublicationNote"/>
+        <mapping class="org.zfin.database.UnloadInfo"/>
+        <mapping class="org.zfin.expression.Experiment"/>
+        <mapping class="org.zfin.expression.ExperimentCondition"/>
+        <mapping class="org.zfin.expression.ExpressionExperiment2"/>
+        <mapping class="org.zfin.expression.ExpressionFigureStage"/>
+        <mapping class="org.zfin.expression.ExpressionPhenotypeTerm"/>
+        <mapping class="org.zfin.expression.ExpressionResult2"/>
+        <mapping class="org.zfin.ExternalNote"/>
+        <mapping class="org.zfin.feature.AminoAcidTerm"/>
+        <mapping class="org.zfin.feature.DnaMutationTerm"/>
+        <mapping class="org.zfin.feature.Feature"/>
+        <mapping class="org.zfin.feature.FeatureAlias"/>
+        <mapping class="org.zfin.feature.FeatureAssay"/>
+        <mapping class="org.zfin.feature.FeatureDnaMutationDetail"/>
+        <mapping class="org.zfin.feature.FeatureHistory"/>
+        <mapping class="org.zfin.feature.FeatureMarkerRelationship"/>
+        <mapping class="org.zfin.feature.FeatureMarkerRelationshipType"/>
+        <mapping class="org.zfin.feature.FeatureNote"/>
+        <mapping class="org.zfin.feature.VariantNote"/>
+        <mapping class="org.zfin.feature.FeaturePrefix"/>
+        <mapping class="org.zfin.feature.FeatureProteinMutationDetail"/>
+        <mapping class="org.zfin.feature.FeatureGenomicMutationDetail"/>
+        <mapping class="org.zfin.feature.FeatureTracking"/>
+        <mapping class="org.zfin.feature.FeatureTranscriptMutationDetail"/>
+        <mapping class="org.zfin.feature.FeatureTypeGroup"/>
+        <mapping class="org.zfin.feature.GeneLocalizationTerm"/>
+        <mapping class="org.zfin.feature.MutationDetailControlledVocabularyTerm"/>
+        <mapping class="org.zfin.feature.ProteinConsequence"/>
+        <mapping class="org.zfin.feature.SecondaryFeature"/>
+        <mapping class="org.zfin.feature.TranscriptConsequence"/>
+        <mapping class="org.zfin.fish.WarehouseSummary"/>
+        <mapping class="org.zfin.mutant.FishAlias"/>
+        <mapping class="org.zfin.mutant.SecondaryFish"/>
+        <mapping class="org.zfin.framework.presentation.AnatomyFact"/>
+        <mapping class="org.zfin.infrastructure.ActiveData"/>
+        <mapping class="org.zfin.infrastructure.ActiveSource"/>
+        <mapping class="org.zfin.infrastructure.ControlledVocab"/>
+        <mapping class="org.zfin.infrastructure.DataAliasGroup"/>
+        <mapping class="org.zfin.infrastructure.DataNote"/>
+        <mapping class="org.zfin.infrastructure.PersonAttribution"/>
+        <mapping class="org.zfin.database.PostgresSession"/>
+        <mapping class="org.zfin.infrastructure.PublicationAttribution"/>
+        <mapping class="org.zfin.infrastructure.RecordAttribution"/>
+        <mapping class="org.zfin.infrastructure.ReplacementZdbID"/>
+        <mapping class="org.zfin.infrastructure.SourceAlias"/>
+        <mapping class="org.zfin.infrastructure.TermAttribution"/>
+        <mapping class="org.zfin.infrastructure.Updates"/>
+        <mapping class="org.zfin.infrastructure.WithdrawnZdbID"/>
+        <mapping class="org.zfin.infrastructure.ZdbFlag"/>
+        <mapping class="org.zfin.infrastructure.AnnualStats"/>
+        <mapping class="org.zfin.marker.MarkerAlias"/>
+        <mapping class="org.zfin.marker.MarkerAlias"/>
+        <mapping class="org.zfin.marker.MarkerHistory"/>
+        <mapping class="org.zfin.marker.OrthologyNote"/>
+        <mapping class="org.zfin.marker.presentation.HighQualityProbeAOStatistics"/>
+        <mapping class="org.zfin.marker.ReplacedData"/>
+        <mapping class="org.zfin.marker.SecondaryMarker"/>
+        <mapping class="org.zfin.mutant.SecondaryGenotype"/>
+        <mapping class="org.zfin.mutant.FishStr"/>
+        <mapping class="org.zfin.mutant.Genotype"/>
+        <mapping class="org.zfin.mutant.GenotypeAlias"/>
+        <mapping class="org.zfin.mutant.GenotypeExternalNote"/>
+        <mapping class="org.zfin.mutant.GenotypeFigure"/>
+        <mapping class="org.zfin.mutant.NoctuaModel"/>
+        <mapping class="org.zfin.mutant.PhenotypeCurationSearch"/>
+        <mapping class="org.zfin.mutant.PhenotypeObservationStatement"/>
+        <mapping class="org.zfin.mutant.PhenotypeSourceGenerated"/>
+        <mapping class="org.zfin.mutant.PhenotypeStatementWarehouse"/>
+        <mapping class="org.zfin.mutant.PhenotypeTermFastSearch"/>
+        <mapping class="org.zfin.mutant.PhenotypeWarehouse"/>
+        <mapping class="org.zfin.ontology.ConsiderTerm"/>
+        <mapping class="org.zfin.ontology.HumanGeneDetail"/>
+        <mapping class="org.zfin.ontology.GenericTerm"/>
+        <mapping class="org.zfin.ontology.GenericTerm"/>
+        <mapping class="org.zfin.ontology.GenericTermRelationship"/>
+        <mapping class="org.zfin.ontology.GenericTermRelationship"/>
+        <mapping class="org.zfin.ontology.OntologyMetadata"/>
+        <mapping class="org.zfin.ontology.ReplacementTerm"/>
+        <mapping class="org.zfin.ontology.Subset"/>
+        <mapping class="org.zfin.ontology.TermAlias"/>
+        <mapping class="org.zfin.ontology.TermAlias"/>
+        <mapping class="org.zfin.ontology.TermDefinitionReference"/>
+        <mapping class="org.zfin.ontology.TermExternalReference"/>
+        <mapping class="org.zfin.ontology.TermStage"/>
+        <mapping class="org.zfin.ontology.TransitiveClosure"/>        
+        <mapping class="org.zfin.publication.CorrespondenceComposedMessage"/>
+        <mapping class="org.zfin.publication.CorrespondenceReceivedMessage"/>
+        <mapping class="org.zfin.publication.CorrespondenceRecipient"/>
+        <mapping class="org.zfin.publication.CorrespondenceSentMessage"/>
+        <mapping class="org.zfin.publication.ProcessingChecklistTask"/>
+        <mapping class="org.zfin.publication.PublicationDbXref"/>
+        <mapping class="org.zfin.publication.PublicationFile"/>
+        <mapping class="org.zfin.publication.PublicationFileType"/>
+        <mapping class="org.zfin.publication.PublicationProcessingChecklistEntry"/>
+        <mapping class="org.zfin.publication.PublicationTrackingHistory"/>
+        <mapping class="org.zfin.publication.PublicationTrackingLocation"/>
+        <mapping class="org.zfin.publication.PublicationTrackingStatus"/>
+        <mapping class="org.zfin.publication.PubmedPublicationAuthor"/>
+        <mapping class="org.zfin.sequence.ForeignDB"/>
+        <mapping class="org.zfin.sequence.ForeignDBDataType"/>
+        <mapping class="org.zfin.sequence.InterProProtein"/>
+        <mapping class="org.zfin.sequence.ProteinToInterPro"/>
+        <mapping class="org.zfin.sequence.ProteinToPDB"/>
+        <mapping class="org.zfin.sequence.MarkerToProtein"/>
+        <mapping class="org.zfin.sequence.reno.Candidate"/>
+        <mapping class="org.zfin.sequence.reno.NomenclatureRun"/>
+        <mapping class="org.zfin.sequence.reno.RedundancyRun"/>
+        <mapping class="org.zfin.sequence.reno.Run"/>
+        <mapping class="org.zfin.sequence.reno.RunCandidate"/>
+        <mapping class="org.zfin.Species"/>
+        <mapping class="org.zfin.zebrashare.FeatureCommunityContribution"/>
+        <mapping class="org.zfin.zebrashare.ZebrashareEditor"/>
+        <mapping class="org.zfin.zebrashare.ZebrashareSubmissionMetadata"/>
+        <mapping class="org.zfin.marker.ZfinSoTerm"/>
+ <!--<listener class="org.hibernate.envers.event.AuditEventListener" type="post-insert"/>
+
+<listener class="org.hibernate.envers.event.AuditEventListener" type="post-update"/>
+
+<listener class="org.hibernate.envers.event.AuditEventListener" type="post-delete"/>
+
+<listener class="org.hibernate.envers.event.AuditEventListener" type="pre-collection-update"/>
+
+<listener class="org.hibernate.envers.event.AuditEventListener" type="pre-collection-remove"/>
+
+<listener class="org.hibernate.envers.event.AuditEventListener" type="post-collection-recreate"/>-->
+    </session-factory>
+</hibernate-configuration>

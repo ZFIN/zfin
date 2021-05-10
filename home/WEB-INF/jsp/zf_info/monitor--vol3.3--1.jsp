@@ -1,0 +1,21 @@
+<%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+<z:page title="ZFIN ZF Monitor Vol 3(3)">
+<div><h2>NEUROANATOMY OF THE ZEBRAFISH BRAIN</h2><h3>by Steven Wilson</h3>
+<p>
+As was briefly mentioned at the CSH meeting, plans are afoot to produce an atlas of embryonic and adult neuroanatomy of the zebrafish brain.  The book will hopefully be published towards the end of 1995  by user Press.  The authors dealing with adult neuroanatomy are Heinrich Reichert, Barbara Rupp and Mario Wulliman and those concerned with the embryonic CNS are John Kuwada and myself.	</p><p>
+We would very much like to enlist the help of the zebrafish community in the production of the atlas.  The section on adult neuroanatomy will be based on new data, but the section on the development of the embryonic CNS will largely be a collation of previously published work. This inevitably and unfortunately means that it will not be complete.  Certain regions of the developing CNS have received little or no attention to date - for instance, I do not know of any descriptions of the development of the cerebellum or cranial nerves.  Despite these shortfalls, we feel that it will nevertheless be useful for the community if we review and summarize what is currently known about CNS development.  Therefore, I strongly urge anyone who has any new data on the zebrafish CNS to contact one of the authors. With information concerning adult neuroanatomy, please contact Heinrich Reichert (Fax 41-61-267-3457), information on the development of the rostral CNS please contact Steve Wilson (Fax 44-71-836-8851), and on the development of the caudal CNS, please contact John Kuwada (fax 1-313-747-0884).	</p><p>
+We would also like one section of the book to contain an atlas of gene expression patterns within the developing CNS.  We hope that this section of the book will be of particular use to people trying to relate expression domains of their genes to those of other genes and to sites of neurogenesis and axogenesis.  If this section is going to be accurate, then I will almost certainly need to examine expression domains in"real" embryos.  This is especially true of genes which are expressed in the morphologically complex forebrain.  Unfortunately, it is often notpossible to make accurate comparisons between published photographsas stages and focal planes may vary.	</p><p>
+Once again, if this chapter is to be successful, then we require the assistance of the community.  If you think that the atlas might benefitfrom inclusion of the expression patterns of your gene of interest, thenyou should send me staged, labelled embryos, together with anydescriptive details that would speed our comparative analysis.  The chapter will not be comprehensive so we cannot guarantee to include all genes, but we would like it to be representative with a reasonable selection of different genes.  When mailing embryos, the best way to preserve the in-situ hybridisation signal is to wash the embryos after the colour reaction, fix overnight in 4% paraformaldehyde, wash a few times in phosphate buffer, pass through 30% and 50% glycerol (in phosphate buffer) and store in 70% glycerol.  Obviously, the more stages you can send the better.  However, the molecular part of the atlas will focus on early stages, between neural plate and 24 hours, together with a few later stages.  Embryos at stages between 12-20 somites are particularly useful as this is when various brain regions first become recognizable.  I would stress that accuracy in staging embryos will make comparative analysis much more straightforward.  If you do send stained embryos, then I will pass on any information I find (you will not have to wait to see the published book!).	</p><p>
+If you do wish to contribute information towards the atlas, please bear in mind that you need to have published your data before late 1995, so that there are no problems with copyright. If you have any more questions on the atlas or contributing data for it, please do not hesitate to contact one of the authors.  Thanks in advance.</p><p>
+Steve Wilson, DBRC<br>
+Randall Institute<br>
+Kings College London<br>
+26-29 Drury Lane<br>
+London WC2B 5RL<br>
+tel. (44)-71-836-8851<br>
+fax (44)-71-497-9078<br>
+email: udbl042@bay.cc.kcl.ac.uk<br></p><hr>
+<a href="cont.html">Return to Contents</a><br>
+
+</div>
+</z:page>

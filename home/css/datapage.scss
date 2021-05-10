@@ -1,0 +1,335 @@
+@import "theme";
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+@import "~@geneontology/ribbon/lib/main";
+
+$single-line-height: $line-height-base * $font-size-base;
+
+body.data-page {
+    background: $grey-light !important;
+    position: relative;
+
+    main {
+        margin: -10px 0 0 0;
+    }
+}
+.subsection {
+    margin-bottom: 4rem;
+    clear: left;
+    position: relative;
+
+    h3 {
+        border-bottom: 1px solid $border-color;
+        padding-bottom: 8px;
+        margin-bottom: 1rem;
+    }
+
+    h3, h4, h5 {
+        position: relative;
+    }
+
+    .target {
+        display: block;
+        visibility: hidden;
+        position: absolute;
+        top: -1rem;
+        bottom: 0;
+        width: 100%;
+    }
+}
+.data-page-nav-container {
+    width: 200px;
+    flex-shrink: 0;
+    background: white;
+    z-index: 1;
+    box-shadow: $shadow;
+    overflow-anchor: none;
+
+    .nav {
+        position: -webkit-sticky;
+        position: sticky;
+        top: 0;
+        border-bottom: 1px solid white;
+        max-height: 100vh;
+        overflow-y: auto;
+        flex-wrap: nowrap;
+    }
+
+    .nav-pills > li > a {
+        border-radius: 0;
+        color: $primary;
+    }
+}
+
+.data-page-content-container {
+    flex-grow: 1;
+    padding: 1.5rem;
+    overflow-x: auto;
+}
+
+.name-label, .name-value {
+    font-size: large;
+    font-weight: bold;
+    text-align:left;
+}
+
+/* title bar over the top of sub-pages of a data page */
+.data-sub-page-title {
+    font-size: large;
+    font-weight: bold;
+    background: #ccc;
+}
+
+/* entity attribute table stuff here */
+table.primary-entity-attributes {
+    border-collapse: collapse;
+    clear:both;
+    margin-top: .3em;
+}
+
+table.primary-entity-attributes tr {
+    vertical-align: baseline;
+}
+
+table.primary-entity-attributes th {
+    text-align: left;
+    padding-right: 1em;
+    padding-top: .1em;
+    padding-bottom: .1em;
+    white-space: nowrap;
+}
+
+table.primary-entity-attributes th.genotype-name-label,
+table.primary-entity-attributes td.genotype-name-value {
+    vertical-align: baseline;
+}
+
+table.primary-entity-attributes td {
+    text-align: left;
+    /*vertical-align: top;*/
+    padding-top: .1em;
+    padding-bottom: .1em;
+}
+
+div.ontology-term-mini-summary {
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+}
+
+table.ontology-term-mini-summary {
+    border-collapse: collapse;
+}
+
+table.ontology-term-mini-summary th {
+    font-weight: normal;
+    text-align: left;
+    vertical-align: top;
+    padding-right: 1em;
+    white-space: nowrap;
+}
+
+table.ontology-term-mini-summary td {
+    text-align: left;
+    vertical-align: top;
+}
+
+table.ontology-term-mini-summary th.name,
+table.ontology-term-mini-summary td.name {
+    font-weight: bold
+}
+
+.related-ontology-term {
+    display: block;
+}
+
+.no-data-tag {
+    border-spacing: 0;
+    border: 0 none;
+    color: gray;
+    font-weight: lighter;
+}
+
+.data-note {
+    font-size: small;
+}
+
+.publication-info {
+    font-size: larger;
+}
+
+.caution-head {
+    color: red;
+    font-weight: 800;
+    font-size: 200%;
+}
+
+.caution-emphasis {
+    color: red;
+    font-weight: 700;
+    font-size: 130%;
+}
+
+.caution-text {
+    color: black;
+    font-weight: 500;
+    font-size: 110%;
+}
+
+tr.spaceUnder > td{
+    padding-bottom: 1em;
+}
+
+.citation-heading {
+    font-size: x-large;
+    font-weight: 700;
+    text-align: left;
+}
+
+.data-sub-page-title-italic {
+    font-size: large;
+    font-weight: bold;
+    font-style:italic;
+    background: #ccc;
+}
+
+.ontology-ribbon {
+    &, & * {
+        box-sizing: content-box;
+    }
+}
+
+.data-ribbon-container {
+    position: relative;
+    min-height: $single-line-height;
+}
+
+.ontology-ribbon-container {
+    white-space: nowrap;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.ontology-ribbon__category {
+    height: auto;
+}
+
+.gene-expression-ribbon .ontology-ribbon__category__block {
+    height: 130px;
+}
+
+.phenotype-ribbon .ontology-ribbon__category__block {
+    height: 150px;
+}
+
+.gene-ontology-ribbon .ontology-ribbon__category__block {
+    height: 190px;
+}
+
+.ontology-ribbon__block__title {
+    transform-origin: -8px -4px;
+}
+
+.ontology-ribbon__block__title:hover {
+    transform-origin: -8px -4px;
+    transform: rotate(-45deg);
+    cursor: default;
+    font-weight: bold;
+}
+
+.ontology-ribbon__block__tile {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ontology-ribbon__block__tile--selected {
+    transform: none;
+    text-shadow: none;
+    // choose between very dark gray and white to provide good contrast with the primary background
+    color: color-yiq($primary, $gray-900, white);
+}
+
+// always use dark gray on unfilled blocks because the background is white.
+// this is an extremely fragile selector but the ribbon doesn't provide a
+// better way to style filled and unfilled blocks differently
+[title="No annotations"] {
+    .ontology-ribbon__block__tile--selected {
+        color: $gray-900;
+    }
+}
+
+.ontology-ribbon__block__tile:hover {
+    transform: none;
+}
+
+.stage-timeline-container {
+    width: 100%;
+    height: 1rem;
+    position: relative;
+}
+
+.stage-timeline-line {
+    border-top: 1px solid $grey;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+}
+
+.stage-timeline-block {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    background-color: $primary;
+    border: 1px solid $grey;
+}
+
+.stage-timeline-tick-container {
+    position: relative;
+    font-weight: normal;
+    height: $single-line-height;
+}
+
+.stage-timeline-tick {
+    border-left: 1px solid $grey;
+    position: absolute;
+    height: 7px;
+    top: calc(50% - 3px);
+}
+
+.stage-timeline-tick-label {
+    white-space: nowrap;
+    position: absolute;
+    bottom: 0;
+    transform: translateX(-50%);
+
+    &:first-of-type {
+        transform: none;
+    }
+
+    @include media-breakpoint-down(lg) {
+        &:nth-of-type(even) {
+            display: none;
+        }
+    }
+}
+
+.stage-timeline-tooltip {
+    text-align: left;
+    white-space: nowrap;
+
+    .tipsy-inner {
+        max-width: 400px;
+    }
+}
+
+.back-to-top-link {
+    display: block;
+    color: inherit !important;
+
+    &:hover {
+        background: $grey-light;
+    }
+}

@@ -1,0 +1,63 @@
+@import "theme";
+
+.tt-menu {
+    box-shadow: $shadow-elevated;
+    background-color: white;
+    border: 0;
+    width: 100%;
+}
+
+.tt-item,
+.tt-suggestion,
+.tt-no-results,
+.tt-search-link {
+    font-size: 14px;
+    border-bottom: 1px solid $border-color;
+    padding: 10px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: inherit;
+
+    &:last-of-type {
+        border-width: 0;
+    }
+}
+
+.tt-suggestion .details {
+    color: $grey;
+}
+
+.tt-suggestion.tt-cursor,
+.tt-suggestion:hover {
+    background-color: $grey-light;
+    color: inherit;
+    text-decoration: none;
+}
+
+.tt-search-link {
+    background: $primary;
+    color: white;
+    font-weight: bold;
+    flex-direction: row;
+    justify-content: space-between;
+
+    &:hover {
+        background: $primary-dark;
+        color: white;
+        text-decoration: none;
+    }
+}
+
+.tt-no-results {
+    text-align: center;
+}
+
+.tt-suggestion p {
+    margin: 0;
+    text-align: left;
+}
+
+.tt-input {
+    vertical-align: middle !important;
+}

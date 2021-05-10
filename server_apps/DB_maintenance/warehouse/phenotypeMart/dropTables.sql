@@ -1,0 +1,3 @@
+
+truncate phenotype_source_generated_temp;
+truncate phenotype_observation_generated_temp;

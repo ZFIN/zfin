@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <include file="source/org/zfin/db/postGmakePostloaddb/1080/vasa/14430.sql"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1080/vasa/createPubJournalsTable.sql"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1080/vasa/loadPubJournals.xml"/>   
+    <include file="source/org/zfin/db/postGmakePostloaddb/1080/vasa/14381splitBBAjournals.sql"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1080/vasa/dropPubJournalsTable.sql"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1080/vasa/pushPubsToHistory.sql"/>
+</databaseChangeLog>

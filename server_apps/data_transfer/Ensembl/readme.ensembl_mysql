@@ -1,0 +1,387 @@
+Nov 2006
+
+
+see Tom's wall for Ensembl Schema details
+
+
+
+
+
+the below is left as historical
+
+###########################################################
+############################################################
+# would have to watch for new releases
+
+ftp://ftp.ensembl.org/pub/zebrafish-18.2/data/mysql/
+-----------------------------------------------------
+
+% mysql -P3306 -u anonymous -h ensembldb.ensembl.org
+
+mysql> show databases;
++---------------------------------------+
+| danio_rerio_core_18_2                 |
+| danio_rerio_est_18_2                  |
+| danio_rerio_estgene_18_2              |
+| danio_rerio_lite_18_2                 |
+| danio_rerio_snp_18_2                  |
++---------------------------------------+
+
+
+mysql> use danio_rerio_core_18_2;
+
+mysql> show tables;
++---------------------------------+
+| Tables_in_danio_rerio_core_18_2 |
++---------------------------------+
+| analysis                        |
+| assembly                        |
+| chromosome                      |
+| clone                           |
+| contig                          |
+| dna                             |
+| dna_align_feature               |
+| dnac                            |
+| dnafrag                         |
+| exon                            |
+| exon_stable_id                  |
+| exon_transcript                 |
+| external_db                     |
+| external_synonym                |
+| gene                            |
+| gene_archive                    |
+| gene_description                |
+| gene_stable_id                  |
+| go_xref                         |
+| identity_xref                   |
+| interpro                        |
+| karyotype                       |
+| map                             |
+| map_density                     |
+| mapannotation                   |
+| mapannotationtype               |
+| mapfrag                         |
+| mapfrag_mapset                  |
+| mapping_session                 |
+| mapset                          |
+| marker                          |
+| marker_feature                  |
+| marker_map_location             |
+| marker_synonym                  |
+| meta                            |
+| object_xref                     |
+| peptide_archive                 |
+| prediction_transcript           |
+| protein_align_feature           |
+| protein_feature                 |
+| qtl                             |
+| qtl_feature                     |
+| qtl_synonym                     |
+| repeat_consensus                |
+| repeat_feature                  |
+| simple_feature                  |
+| stable_id_event                 |
+| supporting_feature              |
+| transcript                      |
+| transcript_stable_id            |
+| translation                     |
+| translation_stable_id           |
+| xref                            |
++---------------------------------+
+
+mysql> describe <tablename>;
+
+   3717  	analysis.txt.table
+4512514  	assembly.txt.table
+1583458  	chromosome.txt.table
+5157863  	clone.txt.table
+2980366  	contig.txt.table
+  23592  	danio_rerio_core_18_2.sql
+1491022551  dna.0.txt.table
+50041034  	dna.1.txt.table
+29302330  	dna.2.txt.table
+242147485  	dna_align_feature.0.txt.table
+242390672  	dna_align_feature.1.txt.table
+247850215  	dna_align_feature.2.txt.table
+245793857  	dna_align_feature.3.txt.table
+245199478  	dna_align_feature.4.txt.table
+248751859  	dna_align_feature.5.txt.table
+134610108  	dna_align_feature.6.txt.table
+5111624  	exon.txt.table
+10634391  	exon_stable_id.txt.table
+2856469  	exon_transcript.txt.table
+   1907  	external_db.txt.table
+    365  	external_synonym.txt.table
+ 432632  	gene.txt.table
+ 118105  	gene_archive.txt.table
+  64103  	gene_description.txt.table
+1333048  	gene_stable_id.txt.table
+  42217  	identity_xref.txt.table
+ 220112  	interpro.txt.table
+     90  	mapping_session.txt.table
+ 400931  	marker.txt.table
+ 100893  	marker_feature.txt.table
+ 435682  	marker_synonym.txt.table
+    550  	meta.txt.table
+ 129686  	object_xref.txt.table
+ 581868  	peptide_archive.txt.table
+12409758  	prediction_transcript.txt.table
+1072433731  protein_align_feature.txt.table
+9449180  	protein_feature.txt.table
+12209200  	repeat_consensus.txt.table
+165203130  	repeat_feature.txt.table
+2762604  	simple_feature.txt.table
+6668872  	stable_id_event.txt.table
+319532549  	supporting_feature.txt.table
+ 557484  	transcript.txt.table
+ 706743  	transcript_stable_id.txt.table
+ 638266  	translation.txt.table
+ 706743  	translation_stable_id.txt.table
+ 663111  	xref.txt.table
+
+
+
+--------------
+describe external_db
+--------------
+
++----------------+---------------------------------------------------------+------+-----+-----------+-------+
+| Field          | Type                                                    | Null | Key | Default   | Extra |
++----------------+---------------------------------------------------------+------+-----+-----------+-------+
+| external_db_id | int(11)                                                 |      | PRI | 0         |       |
+| db_name        | varchar(100)                                            |      |     |           |       |
+| release        | varchar(40)                                             |      |     |           |       |
+| status         | enum('KNOWNXREF','KNOWN','XREF','PRED','ORTH','PSEUDO') |      |     | KNOWNXREF |       |
++----------------+---------------------------------------------------------+------+-----+-----------+-------+
+1000    GO              1       KNOWNXREF
+1300    LocusLink       1       KNOWNXREF
+1800    RefSeq          1       KNOWN
+2200    SWISSPROT       1       KNOWN
+2300    Vega_gene       1       XREF
+2500    ZFIN            1       KNOWNXREF
+2510    ZFIN_ID         1       KNOWNXREF
+2520    ZFIN_AC         1       KNOWNXREF
+
+
+--------------
+describe xref
+--------------
+
++----------------+------------------+------+-----+---------+----------------+
+| Field          | Type             | Null | Key | Default | Extra          |
++----------------+------------------+------+-----+---------+----------------+
+| xref_id        | int(10) unsigned |      | PRI | NULL    | auto_increment |
+| external_db_id | int(11)          |      |     | 0       |                |
+| dbprimary_acc  | varchar(40)      |      | MUL |         |                |
+| display_label  | varchar(40)      |      | MUL |         |                |
+| version        | varchar(10)      |      |     |         |                |
+| description    | varchar(255)     | YES  |     | NULL    |                |
++----------------+------------------+------+-----+---------+----------------+
+2       1300    114429                  114429  1       \N
+6       1300    114408                  114408  1       \N
+10      1300    65230                   65230   1       \N
+26      1300    64617                   64617   1       \N
+30      1300    64609                   64609   1       \N
+34      1300    114437                  114437  1       \N
+45      1300    195822                  195822  1       \N
+54      1300    192336                  192336  1       \N
+3       2510    ZDB-GENE-010717-1       noz1    1       \N
+7       2510    ZDB-GENE-010817-2       angpt2  1       \N
+11      2510    ZDB-GENE-010130-2       ctbp2   1       \N
+16      2510    ZDB-GENE-990415-258     cuzn    1       \N
+23      2510    ZDB-GENE-990415-67      efnb2a  1       \N
+27      2510    ZDB-GENE-001228-2       edg1    1       \N
+31      2510    ZDB-GENE-001212-6       atp1a2a 1       \N
+35      2510    ZDB-GENE-010803-2       spry4   1       \N
+42      2510    ZDB-GENE-001221-1       nrf1    1       \N
+46      2510    ZDB-GENE-020423-3       eef1g   1       \N
+
+
+--------------
+describe object_xref
+--------------
+
++---------------------+-----------------------------------------------------+------+-----+-----------+----------------+
+| Field               | Type                                                | Null | Key | Default   | Extra          |
++---------------------+-----------------------------------------------------+------+-----+-----------+----------------+
+| object_xref_id      | int(11)                                             |      | MUL | NULL      | auto_increment |
+| ensembl_id          | int(10) unsigned                                    |      | PRI | 0         |                |
+| ensembl_object_type | enum('RawContig','Transcript','Gene','Translation') |      | PRI | RawContig |                |
+| xref_id             | int(10) unsigned                                    |      | PRI | 0         |                |
++---------------------+-----------------------------------------------------+------+-----+-----------+----------------+
+1       9835    Translation     1
+2       9835    Translation     2
+3       9835    Translation     3
+4       9835    Translation     4
+5       23728   Translation     5
+6       23728   Translation     6
+7       23728   Translation     7
+8       23728   Translation     8
+9       19824   Translation     9
+10      19824   Translation     10
+
+
+--------------
+describe identity_xref
+--------------
+
++-------------------+------------------+------+-----+---------+-------+
+| Field             | Type             | Null | Key | Default | Extra |
++-------------------+------------------+------+-----+---------+-------+
+| object_xref_id    | int(10) unsigned |      | PRI | 0       |       |
+| query_identity    | int(5)           | YES  |     | NULL    |       |
+| target_identity   | int(5)           | YES  |     | NULL    |       |
+| query_start       | int(11)          | YES  |     | NULL    |       |
+| query_end         | int(11)          | YES  |     | NULL    |       |
+| translation_start | int(11)          | YES  |     | NULL    |       |
+| translation_end   | int(11)          | YES  |     | NULL    |       |
+| cigar_line        | text             | YES  |     | NULL    |       |
+| score             | double           | YES  |     | NULL    |       |
+| evalue            | double           | YES  |     | NULL    |       |
+| analysis_id       | int(11)          | YES  |     | NULL    |       |
++-------------------+------------------+------+-----+---------+-------+
+1       100     100     \N      \N      \N      \N      \N      \N      \N      \N
+5       99      99      \N      \N      \N      \N      \N      \N      \N      \N
+9       91      68      \N      \N      \N      \N      \N      \N      \N      \N
+13      100     100     \N      \N      \N      \N      \N      \N      \N      \N
+18      88      90      \N      \N      \N      \N      \N      \N      \N      \N
+25      95      95      \N      \N      \N      \N      \N      \N      \N      \N
+29      91      69      \N      \N      \N      \N      \N      \N      \N      \N
+33      92      69      \N      \N      \N      \N      \N      \N      \N      \N
+37      100     100     \N      \N      \N      \N      \N      \N      \N      \N
+41      96      100     \N      \N      \N      \N      \N      \N      \N      \N
+
+
+
+--------------
+describe gene_stable_id
+--------------
+
++-----------+------------------+------+-----+---------------------+-------+
+| Field     | Type             | Null | Key | Default             | Extra |
++-----------+------------------+------+-----+---------------------+-------+
+| gene_id   | int(10) unsigned |      | PRI | 0                   |       |
+| stable_id | varchar(40)      |      | MUL |                     |       |
+| version   | int(10)          | YES  |     | NULL                |       |
+| created   | datetime         |      |     | 0000-00-00 00:00:00 |       |
+| modified  | datetime         |      |     | 0000-00-00 00:00:00 |       |
++-----------+------------------+------+-----+---------------------+-------+
+1       ENSDARG00000013407      1       2003-05-08 00:00:00     2003-05-08 00:00:00
+2       ENSDARG00000016915      1       2003-05-08 00:00:00     2003-05-08 00:00:00
+3       ENSDARG00000002095      1       2003-05-08 00:00:00     2003-05-08 00:00:00
+4       ENSDARG00000012138      1       2003-05-08 00:00:00     2003-05-08 00:00:00
+5       ENSDARG00000014387      1       2003-05-08 00:00:00     2003-05-08 00:00:00
+6       ENSDARG00000002190      1       2003-05-08 00:00:00     2003-05-08 00:00:00
+7       ENSDARG00000020995      1       2003-05-08 00:00:00     2003-05-08 00:00:00
+8       ENSDARG00000002576      1       2003-05-08 00:00:00     2003-05-08 00:00:00
+9       ENSDARG00000007235      1       2003-05-08 00:00:00     2003-05-08 00:00:00
+10      ENSDARG00000006025      1       2003-05-08 00:00:00     2003-05-08 00:00:00
+
+
+--------------
+describe gene_archive
+--------------
+
++-----------------------+-------------+------+-----+---------+-------+
+| Field                 | Type        | Null | Key | Default | Extra |
++-----------------------+-------------+------+-----+---------+-------+
+| gene_stable_id        | varchar(40) |      | MUL |         |       |
+| gene_version          | smallint(6) |      |     | 0       |       |
+| transcript_stable_id  | varchar(40) |      | MUL |         |       |
+| transcript_version    | smallint(6) |      |     | 0       |       |
+| translation_stable_id | varchar(40) |      |     |         |       |
+| translation_version   | smallint(6) |      |     | 0       |       |
+| mapping_session_id    | int(11)     |      |     | 0       |       |
++-----------------------+-------------+------+-----+---------+-------+
+ENSDARG00000001680      1       ENSDART00000001959      1       ENSDARP00000001642      1       1
+ENSDARG00000001746      1       ENSDART00000002043      1       ENSDARP00000001134      1       1
+ENSDARG00000000272      1       ENSDART00000000281      1       ENSDARP00000000281      1       1
+ENSDARG00000001198      1       ENSDART00000001362      1       ENSDARP00000001857      1       1
+ENSDARG00000000931      1       ENSDART00000001048      1       ENSDARP00000000917      1       1
+ENSDARG00000000514      1       ENSDART00000000533      1       ENSDARP00000000753      1       1
+ENSDARG00000000514      1       ENSDART00000001498      1       ENSDARP00000001985      1       1
+ENSDARG00000000514      1       ENSDART00000001322      1       ENSDARP00000001322      1       1
+ENSDARG00000000514      1       ENSDART00000001203      1       ENSDARP00000001368      1       1
+ENSDARG00000000514      1       ENSDART00000001023      1       ENSDARP00000000615      1       1
+
+
+--------------
+describe gene
+--------------
+
++------------------+------------------+------+-----+---------+----------------+
+| Field            | Type             | Null | Key | Default | Extra          |
++------------------+------------------+------+-----+---------+----------------+
+| gene_id          | int(10) unsigned |      | PRI | NULL    | auto_increment |
+| type             | varchar(40)      |      |     |         |                |
+| analysis_id      | int(11)          | YES  |     | NULL    |                |
+| transcript_count | int(11)          |      |     | 0       |                |
+| display_xref_id  | int(10) unsigned |      | MUL | 0       |                |
++------------------+------------------+------+-----+---------+----------------+
+1       ensembl 104     1       1183
+2       ensembl 104     1       0
+55      ensembl 104     1       3409
+56      ensembl 104     1       3409
+70      ensembl 104     1       812
+77      ensembl 104     3       82
+102     ensembl 104     3       745
+178     ensembl 104     8       1757
+179     ensembl 104     3       1113
+180     ensembl 104     3       3508
+217     ensembl 104     1       3886
+236     ensembl 104     1       3413
+283     ensembl 104     1       3346
+306     ensembl 104     1       3011
+357     ensembl 104     1       3536
+
+
+--------------
+describe gene_stable_id
+--------------
+
++-----------+------------------+------+-----+---------------------+-------+
+| Field     | Type             | Null | Key | Default             | Extra |
++-----------+------------------+------+-----+---------------------+-------+
+| gene_id   | int(10) unsigned |      | PRI | 0                   |       |
+| stable_id | varchar(40)      |      | MUL |                     |       |
+| version   | int(10)          | YES  |     | NULL                |       |
+| created   | datetime         |      |     | 0000-00-00 00:00:00 |       |
+| modified  | datetime         |      |     | 0000-00-00 00:00:00 |       |
++-----------+------------------+------+-----+---------------------+-------+
+1       ENSDARG00000013407      1       2003-05-08 00:00:00     2003-05-08 00:00:00
+2       ENSDARG00000016915      1       2003-05-08 00:00:00     2003-05-08 00:00:00
+3       ENSDARG00000002095      1       2003-05-08 00:00:00     2003-05-08 00:00:00
+4       ENSDARG00000012138      1       2003-05-08 00:00:00     2003-05-08 00:00:00
+5       ENSDARG00000014387      1       2003-05-08 00:00:00     2003-05-08 00:00:00
+6       ENSDARG00000002190      1       2003-05-08 00:00:00     2003-05-08 00:00:00
+7       ENSDARG00000020995      1       2003-05-08 00:00:00     2003-05-08 00:00:00
+8       ENSDARG00000002576      1       2003-05-08 00:00:00     2003-05-08 00:00:00
+9       ENSDARG00000007235      1       2003-05-08 00:00:00     2003-05-08 00:00:00
+10      ENSDARG00000006025      1       2003-05-08 00:00:00     2003-05-08 00:00:00
+
+
+
+#################################################################################
+
+mysql -P3306 -u anonymous -h ensembldb.ensembl.org
+
+
+
+use danio_rerio_core_19_2;
+
+select distinct zdb.dbprimary_acc, gsi.stable_id
+from  object_xref zo, xref zdb, gene_stable_id gsi, gene
+where zdb.external_db_id = 2510
+and  zdb.xref_id = zo.xref_id
+and  gsi.gene_id = gene.gene_id
+and  gene.display_xref_id = zo.object_xref_id
+order by 1;
+
+
+---------------------------
+perl needs
+
+bioperl
+
+ensembl
+ensembl-external

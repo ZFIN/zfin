@@ -1,0 +1,26 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+        xmlns:ui='urn:ui:com.google.gwt.uibinder'
+        xmlns:g='urn:import:com.google.gwt.user.client.ui'
+        xmlns:zfin='urn:import:org.zfin.gwt.root.ui'
+        >
+
+    <g:PopupPanel>
+        <g:FlowPanel>
+            <g:Label text="History" horizontalAlignment="center"/>
+            <g:Grid ui:field='dataTable' cellSpacing='10' styleName="searchresults groupstripes">
+                <g:row styleName="table-header">
+                    <g:customCell>
+                        <g:Label text="Time" styleName="bold" horizontalAlignment="left"/>
+                    </g:customCell>
+                    <g:customCell>
+                        <g:Label text="Action" styleName="bold" horizontalAlignment="left"/>
+                    </g:customCell>
+                    <g:customCell>
+                        <g:Label text="Detail" styleName="bold" horizontalAlignment="left"/>
+                    </g:customCell>
+                </g:row>
+            </g:Grid>
+        </g:FlowPanel>
+    </g:PopupPanel>
+</ui:UiBinder>

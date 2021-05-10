@@ -1,0 +1,2755 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:downloadFileRegistry xmlns:ns2="org.zfin.util.download.jaxb">
+    <DownloadDefinitions>
+        <Download orderIndex="1">
+            <Name>
+                Genetic Marker
+            </Name>
+            <Category>
+                Genetic Markers
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>genetic_markers</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                select mrkr_zdb_id, mrkr_abbrev, mrkr_name, mrkr_type, szm_term_ont_id
+                from marker order by 1
+               ]]>
+            </Query>
+            <Column id="1" unique="true">Marker ID</Column>
+            <Column id="2">Marker Symbol</Column>
+            <Column id="3">Marker Name</Column>
+            <Column id="4">Marker Type</Column>
+            <Column id="5">SO ID</Column>
+        </Download>
+        <Download orderIndex="2">
+            <Name>
+                Previous ZFIN IDs
+            </Name>
+            <Category>
+                Genetic Markers
+            </Category>
+            <Description>(includes former and current ZFIN IDs for merged data)</Description>
+            <WikiLink></WikiLink>
+            <FileName>zdb_history</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                select zrepld_old_zdb_id, zrepld_new_zdb_id from zdb_replaced_data
+               ]]>
+            </Query>
+            <Column id="1" unique="true">Former ZFIN ID</Column>
+            <Column id="2">Current ZFIN ID</Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Antibodies
+            </Name>
+            <Category>
+                Antibody Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>antibodies</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
+                atb_immun_organism, atb_host_organism, szm_term_ont_id, '' as atb_reg_id
+  from marker, antibody, so_zfin_mapping
+ where mrkr_zdb_id = atb_zdb_id
+ and szm_object_type = mrkr_type
+ union
+select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
+	atb_immun_organism, atb_host_organism, szm_term_ont_id,dblink_acc_num as atb_reg_id
+  from marker, antibody, so_zfin_mapping, db_link
+ where mrkr_zdb_id = atb_zdb_id
+ and szm_object_type = mrkr_type
+ and dblink_linked_recid=atb_zdb_id
+ and dblink_acc_num  like '%AB%'
+
+                order by 1
+              ]]>
+            </Query>
+            <Column id="1" unique="true">Antibody ID</Column>
+            <Column id="2">Name</Column>
+            <Column id="3">Clonal Type</Column>
+            <Column id="4">Heavy Chain</Column>
+            <Column id="5">Light Chain</Column>
+            <Column id="6">Immunogen Organism</Column>
+            <Column id="7">Host Organism</Column>
+            <Column id="8">SO ID</Column>
+            <Column id="9">AB Registry ID</Column>
+            <Column id="10">Source</Column>
+        </Download>
+        <Download orderIndex="5">
+            <Name>
+                ZFIN Identifiers
+            </Name>
+            <Category>
+                ZFIN Identifiers
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>identifiersForIntermine</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                select feature_zdb_id as id1, feature_zdb_id as id2
+                from feature
+                union
+                select feature_zdb_id as id1, feature_abbrev as id2
+                from feature
+                union
+                select mrkr_zdb_id as id1,mrkr_zdb_id as id2
+                from marker
+                union
+                select mrkr_zdb_id as id1, mrkr_abbrev as id2
+                from marker
+                union
+                select dblink_linked_recid as id1, dblink_acc_num as id2
+                from db_link
+                union
+                select zrepld_new_zdb_id as id1, zrepld_old_zdb_id as id2
+                from zdb_replaced_data
+                where exists (Select 'x' from marker where mrkr_zdb_id = zrepld_new_zdb_id)
+                ]]>
+            </Query>
+            <Column id="1">ID</Column>
+            <Column id="2">Alternate Identifiers</Column>
+        </Download>
+
+ <!--       
+        <Download orderIndex="5">
+            <Name>
+                ZFIN RRIDs and names
+            </Name>
+            <Category>
+                ZFIN RRIDs and names
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>rrid</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1">ID</Column>
+            <Column id="2">Alternate Identifiers</Column>
+        </Download> -->
+
+        <Download orderIndex="2">
+            <Name>
+                Antibody Expressions in wild-type
+            </Name>
+            <Category>
+                Antibody Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>antibody_expressions_fish</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1" unique="true">Antibody ID</Column>
+            <Column id="2">AnatomyStructure ID</Column>
+            <Column id="3">AnatomyStructure Name</Column>
+            <Column id="4">Substructure ID</Column>
+            <Column id="5">Substructure Name</Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Previous Names
+            </Name>
+            <Category>
+                Previous Names
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>aliases</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1" unique="true">Current ZFIN ID</Column>
+            <Column id="2">Current Name</Column>
+            <Column id="3">Current Symbol</Column>
+            <Column id="4">Previous Name</Column>
+            <Column id="5">SO ID</Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Mapping Data from the 6 Zebrafish Mapping Panels
+            </Name>
+            <Category>
+                Mapping Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>mappings</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                select marker_id, mrkr_abbrev, p.abbrev,mm_chromosome, mm_chrom_location, p.metric
+                from mapped_marker, panels p, marker m
+                where refcross_id = p.zdb_id and marker_id = mrkr_zdb_id
+                order by 1
+                ]]>
+            </Query>
+            <Column id="1" unique="true">ZFIN ID</Column>
+            <Column id="2">Symbol</Column>
+            <Column id="3">SO ID</Column>
+            <Column id="4">Panel Symbol</Column>
+            <Column id="5">Chromosome</Column>
+            <Column id="6">Location</Column>
+            <Column id="7">Metric</Column>
+        </Download>
+
+        <Download orderIndex="1">
+            <Name>
+                ZFIN Gene Models
+            </Name>
+            <Category>
+                Sequence Coordinates
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>zfin_genes</FileName>
+            <FileExtension>gff3</FileExtension>
+            <FileFormat>gff3</FileFormat>
+            <Query>
+            </Query>
+            <Column id="1" unique="true">Chromosome</Column>
+            <Column id="2">Source</Column>
+            <Column id="3">Type</Column>
+            <Column id="4">Start</Column>
+            <Column id="5">End</Column>
+            <Column id="6">Score</Column>
+            <Column id="7">Strand</Column>
+            <Column id="8">Phase</Column>
+            <Column id="9">Attributes</Column>
+        </Download>
+        <Download orderIndex="2">
+            <Name>
+                Assembly: Ensembl
+            </Name>
+            <Category>
+                Sequence Coordinates
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>E_drerio_backbone</FileName>
+            <FileExtension>gff3</FileExtension>
+            <FileFormat>gff3</FileFormat>
+            <Query>
+            </Query>
+            <Column id="1" unique="true">Chromosome</Column>
+            <Column id="2">Source</Column>
+            <Column id="3">Type</Column>
+            <Column id="4">Start</Column>
+            <Column id="5">End</Column>
+            <Column id="6">Score</Column>
+            <Column id="7">Strand</Column>
+            <Column id="8">Phase</Column>
+            <Column id="9">Attributes</Column>
+        </Download>
+        <Download orderIndex="4">
+            <Name>
+                Complete Assembly Clones: Ensembl
+            </Name>
+            <Category>
+                Sequence Coordinates
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>E_full_zfin_clone</FileName>
+            <FileExtension>gff3</FileExtension>
+            <FileFormat>gff3</FileFormat>
+            <Query>
+            </Query>
+            <Column id="1" unique="true">Chromosome</Column>
+            <Column id="2">Source</Column>
+            <Column id="3">Type</Column>
+            <Column id="4">Start</Column>
+            <Column id="5">End</Column>
+            <Column id="6">Score</Column>
+            <Column id="7">Strand</Column>
+            <Column id="8">Phase</Column>
+            <Column id="9">Attributes</Column>
+        </Download>
+        <Download orderIndex="7">
+            <Name>
+                Transgenic Insertion: ENSEMBL
+            </Name>
+            <Category>
+                Sequence Coordinates
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>zfin_tginsertion</FileName>
+            <FileExtension>gff3</FileExtension>
+            <FileFormat>gff3</FileFormat>
+            <Query>
+            </Query>
+            <Column id="1" unique="true">Chromosome</Column>
+            <Column id="2">Source</Column>
+            <Column id="3">Type</Column>
+            <Column id="4">Start</Column>
+            <Column id="5">End</Column>
+            <Column id="6">Score</Column>
+            <Column id="7">Strand</Column>
+            <Column id="8">Phase</Column>
+            <Column id="9">Attributes</Column>
+        </Download>
+        <Download orderIndex="8">
+            <Name>
+                ZFIN Genes with Antibodies: Ensembl
+            </Name>
+            <Category>
+                Sequence Coordinates
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>E_antibody</FileName>
+            <FileExtension>gff3</FileExtension>
+            <FileFormat>gff3</FileFormat>
+            <Query>
+            </Query>
+            <Column id="1" unique="true">Chromosome</Column>
+            <Column id="2">Source</Column>
+            <Column id="3">Type</Column>
+            <Column id="4">Start</Column>
+            <Column id="5">End</Column>
+            <Column id="6">Score</Column>
+            <Column id="7">Strand</Column>
+            <Column id="8">Phase</Column>
+            <Column id="9">Attributes</Column>
+        </Download>
+        <Download orderIndex="10">
+            <Name>
+                ZFIN Genes with Expression: Ensembl
+            </Name>
+            <Category>
+                Sequence Coordinates
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>E_expression</FileName>
+            <FileExtension>gff3</FileExtension>
+            <FileFormat>gff3</FileFormat>
+            <Query>
+            </Query>
+            <Column id="1" unique="true">Chromosome</Column>
+            <Column id="2">Source</Column>
+            <Column id="3">Type</Column>
+            <Column id="4">Start</Column>
+            <Column id="5">End</Column>
+            <Column id="6">Score</Column>
+            <Column id="7">Strand</Column>
+            <Column id="8">Phase</Column>
+            <Column id="9">Attributes</Column>
+        </Download>
+        <Download orderIndex="12">
+            <Name>
+                ZFIN Genes with Phenotype: Ensembl
+            </Name>
+            <Category>
+                Sequence Coordinates
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>E_phenotype</FileName>
+            <FileExtension>gff3</FileExtension>
+            <FileFormat>gff3</FileFormat>
+            <Query>
+            </Query>
+            <Column id="1" unique="true">Chromosome</Column>
+            <Column id="2">Source</Column>
+            <Column id="3">Type</Column>
+            <Column id="4">Start</Column>
+            <Column id="5">End</Column>
+            <Column id="6">Score</Column>
+            <Column id="7">Strand</Column>
+            <Column id="8">Phase</Column>
+            <Column id="9">Attributes</Column>
+        </Download>
+        <Download orderIndex="16">
+            <Name>
+                ZFIN Knockdown Reagents: Ensembl
+            </Name>
+            <Category>
+                Sequence Coordinates
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>E_zfin_knockdown_reagents</FileName>
+            <FileExtension>gff3</FileExtension>
+            <FileFormat>gff3</FileFormat>
+            <Query>
+            </Query>
+            <Column id="1" unique="true">Chromosome</Column>
+            <Column id="2">Source</Column>
+            <Column id="3">Type</Column>
+            <Column id="4">Start</Column>
+            <Column id="5">End</Column>
+            <Column id="6">Score</Column>
+            <Column id="7">Strand</Column>
+            <Column id="8">Phase</Column>
+            <Column id="9">Attributes</Column>
+        </Download>
+        <Download orderIndex="80">
+            <Name>
+                Transcripts
+            </Name>
+            <Category>
+                Sequence Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>transcripts</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                select t.tscript_mrkr_zdb_id,szm_term_ont_id,m.mrkr_name,'no related gene','no related clone',tt.tscriptt_type,ts.tscripts_status
+                 from transcript t
+                 join marker m on m.mrkr_zdb_id=t.tscript_mrkr_zdb_id
+                 join so_zfin_mapping on szm_object_type = m.mrkr_type
+                 join transcript_type tt on tt.tscriptt_pk_id=t.tscript_type_id
+                 left outer join transcript_status ts on ts.tscripts_pk_id=t.tscript_status_id
+                 where not exists (
+                     select 'x'
+                     from marker gene , marker_relationship mr
+                     where gene.mrkr_zdb_id=mr.mrel_mrkr_1_zdb_id
+                       and mr.mrel_mrkr_2_zdb_id=m.mrkr_zdb_id
+                       and mr.mrel_type in ('gene produces transcript','clone contains transcript')
+                )
+                union
+                select t.tscript_mrkr_zdb_id,szm_term_ont_id,m.mrkr_name,gene.mrkr_zdb_id,c.mrkr_zdb_id,tt.tscriptt_type,ts.tscripts_status
+                 from transcript t
+                 join marker m on m.mrkr_zdb_id=t.tscript_mrkr_zdb_id
+                 join transcript_type tt on tt.tscriptt_pk_id=t.tscript_type_id
+                 left outer join transcript_status ts on ts.tscripts_pk_id=t.tscript_status_id
+                 join so_zfin_mapping on szm_object_type = m.mrkr_type
+                 join marker_relationship gener on gener.mrel_mrkr_2_zdb_id=m.mrkr_zdb_id
+                 join marker_relationship cloner on cloner.mrel_mrkr_2_zdb_id=m.mrkr_zdb_id
+                 join marker gene on gene.mrkr_zdb_id=gener.mrel_mrkr_1_zdb_id
+                 join marker c on c.mrkr_zdb_id=cloner.mrel_mrkr_1_zdb_id
+                 where gener.mrel_type='gene produces transcript'
+                   and cloner.mrel_type='clone contains transcript'
+                ]]>
+            </Query>
+            <Column id="1" unique="true">ZFIN ID</Column>
+            <Column id="2">SO ID</Column>
+            <Column id="3">Name</Column>
+            <Column id="4">Gene ID</Column>
+            <Column id="5">Clone ID</Column>
+            <Column id="6">Transcript Type</Column>
+            <Column id="7">Transcript Status</Column>
+        </Download>
+        <Download orderIndex="100">
+            <Name>
+                ZFIN Gene IDs indirectly and directly associated with Sequence Accessions via cDNA &amp; EST
+            </Name>
+            <Category>
+                Sequence Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>all_rna_accessions</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id, gene.mrkr_abbrev gene_sym,dblink_acc_num accession
+                 from db_link, marker gene, foreign_db_contains, foreign_db, foreign_db_data_type, so_zfin_mapping
+                 where dblink_linked_recid=gene.mrkr_zdb_id
+                   and gene.mrkr_type='GENE'
+                   and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                   and fdbcont_fdbdt_id = fdbdt_pk_id
+                   and fdbcont_fdb_db_id = fdb_db_pk_id
+                   and szm_object_type = mrkr_type
+                   and fdbdt_data_type='RNA'
+                   -- and fdb_db_name not like '%Vega%' and fdb_db_name not like '%VEGA%'
+                   -- note: the below would have the same effect as above
+                   --       but since neither catch anything go with the faster/cheaper
+                   and dblink_acc_num[1,6] != "OTTDAR"
+                union
+                select distinct gene.mrkr_zdb_id gene_zdb, szm_term_ont_id,
+                       gene.mrkr_abbrev gene_sym,
+                       dblink_acc_num accession
+                 from marker gene, marker est, db_link, marker_relationship, foreign_db_contains,
+                    foreign_db, foreign_db_data_type, so_zfin_mapping
+                 where gene.mrkr_zdb_id = mrel_mrkr_1_zdb_id
+                   and est.mrkr_zdb_id  = mrel_mrkr_2_zdb_id
+                   and mrel_type = 'gene encodes small segment'
+                   and est.mrkr_zdb_id = dblink_linked_recid
+                   and szm_object_type = gene.mrkr_type
+                   and est.mrkr_type  in ('EST','CDNA')
+                   and gene.mrkr_type = 'GENE'
+                   and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                   and fdbcont_fdbdt_id = fdbdt_pk_id
+                   and fdbcont_fdb_db_id = fdb_db_pk_id
+                   and fdbdt_data_type='RNA'
+                   -- and fdb_db_name not like '%Vega%' and fdb_db_name not like '%VEGA%'
+                   -- note: the below would have the same effect as above
+                   --       but since neither catch anything go with the faster/cheaper
+                   and dblink_acc_num[1,6] != "OTTDAR"
+                ]]>
+            </Query>
+            <Column id="1" unique="true">ZFIN ID</Column>
+            <Column id="2">SO ID</Column>
+            <Column id="3">Gene Symbol</Column>
+            <Column id="4">Sequence Accession</Column>
+        </Download>
+        <Download orderIndex="70">
+            <Name>
+                ZFIN Gene IDs indirectly associated with Sequence Accessions via cDNA &amp; EST
+            </Name>
+            <Category>
+                Sequence Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>gene_seq</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                   select * from tmp_veg order by 1,3
+                ]]>
+            </Query>
+            <Column id="1" unique="true">ZFIN ID</Column>
+            <Column id="2">Gene Symbol</Column>
+            <Column id="3">Sequence Accession</Column>
+        </Download>
+        <Download orderIndex="20">
+            <Name>
+                ZFIN Marker associations to GenPept protein data
+            </Name>
+            <Category>
+                Sequence Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>genpept</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num
+                from marker, db_link, foreign_db_contains, foreign_db
+                where mrkr_zdb_id = dblink_linked_recid
+                and fdbcont_fdb_db_id = fdb_db_pk_id
+                and fdbcont_zdb_id = dblink_fdbcont_zdb_id
+                and fdb_db_name = 'GenPept'
+                order by 1
+                ]]>
+            </Query>
+            <Column id="1" unique="true">ZFIN ID</Column>
+            <Column id="2">Symbol</Column>
+            <Column id="3">GenePept ID</Column>
+        </Download>
+        <Download orderIndex="50">
+            <Name>
+                ZFIN Marker associations to Ensembl IDs
+            </Name>
+            <Category>
+                Sequence Data
+            </Category>
+            <Description>(Only associations with 1:1 relationships between ZFIN marker IDs and Ensembl IDs are stored in
+                ZFIN.
+                All associations can be obtained using BioMart http://www.ensembl.org/biomart/martview)
+            </Description>
+            <WikiLink></WikiLink>
+            <FileName>ensembl_1_to_1</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num
+                from marker, db_link
+                where mrkr_zdb_id = dblink_linked_recid
+                and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-061018-1'
+                ]]>
+            </Query>
+            <Column id="1" unique="true">ZFIN ID</Column>
+            <Column id="2">Gene SO ID</Column>
+            <Column id="3">Symbol</Column>
+            <Column id="4">Ensembl ID</Column>
+        </Download>
+        <Download orderIndex="40">
+            <Name>
+                ZFIN Marker associations to GenBank sequence data
+            </Name>
+            <Category>
+                Sequence Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>genbank</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                  select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev, dblink_acc_num
+                  from marker, db_link, foreign_db_contains, foreign_db, so_zfin_mapping
+                  where mrkr_zdb_id = dblink_linked_recid
+                    and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                    and szm_object_type = mrkr_type
+                    and fdb_db_name = 'GenBank'
+                    and fdbcont_fdb_db_id = fdb_db_pk_id
+                    and dblink_acc_num[3] <> "_"  -- filter misplaced acc
+                    and not (
+                        dblink_linked_recid[1,12] = 'ZDB-TSCRIPT-'
+                        and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-37"
+                  ) order by 1;
+              ]]>
+            </Query>
+            <Column id="1" unique="true">ZFIN ID</Column>
+            <Column id="2">SO ID</Column>
+            <Column id="3">Name</Column>
+            <Column id="4">GenBank ID</Column>
+        </Download>
+        <Download orderIndex="120">
+            <Name>
+                ZFIN Marker associations to NCBI Gene data
+            </Name>
+            <Category>
+                Sequence Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>gene</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num
+                 from marker, db_link, foreign_db_contains, foreign_db
+                 where mrkr_zdb_id = dblink_linked_recid
+                   and fdbcont_fdb_db_id = fdb_db_pk_id
+                   and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                   and fdb_db_name = 'Gene'
+                 order by 1
+                ]]>
+            </Query>
+            <Column id="1" unique="true">ZFIN ID</Column>
+            <Column id="2">SO ID</Column>
+            <Column id="3">Symbol</Column>
+            <Column id="4">NCBI Gene ID</Column>
+        </Download>
+        <Download orderIndex="90">
+            <Name>
+                ZFIN Marker associations to InterPro protein data
+            </Name>
+            <Category>
+                Sequence Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>interpro</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num
+                 from marker, db_link, foreign_db_contains, foreign_db
+                 where mrkr_zdb_id = dblink_linked_recid
+                  and fdbcont_fdb_db_id = fdb_db_pk_id
+                  and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                  and fdb_db_name = 'InterPro'
+                order by 1
+                ]]>
+            </Query>
+            <Column id="1" unique="true">ZFIN ID</Column>
+            <Column id="2">SO ID</Column>
+            <Column id="3">Symbol</Column>
+            <Column id="4">InterPro ID</Column>
+        </Download>
+        <Download orderIndex="10">
+            <Name>
+                ZFIN Marker associations to RefSeq sequence data
+            </Name>
+            <Category>
+                Sequence Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>refseq</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num
+                 from marker, db_link, foreign_db_contains, foreign_db
+                 where mrkr_zdb_id = dblink_linked_recid
+                   and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                   and fdbcont_fdb_db_id = fdb_db_pk_id
+                   and fdb_db_name = 'RefSeq'
+                   and dblink_acc_num[3] = "_"
+                 order by 1
+                ]]>
+            </Query>
+            <Column id="1" unique="true">ZFIN ID</Column>
+            <Column id="2">SO ID</Column>
+            <Column id="3">Symbol</Column>
+            <Column id="4">RefSeq ID</Column>
+        </Download>
+        <Download orderIndex="110">
+            <Name>
+                ZFIN Marker associations to Sanger Vega data
+            </Name>
+            <Category>
+                Sequence Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>vega</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                    select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num
+                     from marker, db_link, foreign_db_contains, foreign_db
+                     where mrkr_zdb_id = dblink_linked_recid
+                       and fdbcont_fdb_db_id = fdb_db_pk_id
+                       and fdbcont_zdb_id = dblink_fdbcont_zdb_id
+                       and fdb_db_name in ('VEGA','unreleasedRNA')
+                     order by 1
+                ]]>
+            </Query>
+            <Column id="1" unique="true">ZFIN ID</Column>
+            <Column id="2">SO ID</Column>
+            <Column id="3">Symbol</Column>
+            <Column id="4">Vega ID</Column>
+        </Download>
+        <Download orderIndex="60">
+            <Name>
+                ZFIN Marker associations to UniProt protein data
+            </Name>
+            <Category>
+                Sequence Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>uniprot</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                    select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num
+                     from marker, db_link, foreign_db_contains, foreign_db
+                     where mrkr_zdb_id = dblink_linked_recid
+                      and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                      and fdbcont_fdb_db_id = fdb_db_pk_id
+                      and fdb_db_name = 'UniProtKB'
+                    order by 1
+                ]]>
+            </Query>
+            <Column id="1" unique="true">ZFIN ID</Column>
+            <Column id="2">SO ID</Column>
+            <Column id="3">Symbol</Column>
+            <Column id="4">UniProt ID</Column>
+        </Download>
+        <Download orderIndex="3">
+            <Name>
+                Drosophila and Zebrafish Orthology
+            </Name>
+            <Category>
+                Orthology Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>fly_orthos</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                    SELECT DISTINCT mrkr_zdb_id, mrkr_abbrev, mrkr_name, ortho_other_species_symbol, ortho_other_species_name,
+                                    tmp_flybase.accession, tmp_gene.accession, oev_evidence_code, oev_pub_zdb_id
+                        FROM ortholog
+                        INNER JOIN marker on ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
+                        INNER JOIN ortholog_evidence on ortho_zdb_id = oev_ortho_zdb_id
+                        INNER JOIN organism on ortho_other_species_taxid = organism_taxid
+                        LEFT OUTER JOIN tmp_flybase on ortho_zdb_id = tmp_flybase.ortho_id
+                        LEFT OUTER JOIN tmp_gene on ortho_zdb_id = tmp_gene.ortho_id
+                        WHERE organism_common_name = 'Fruit fly'
+                        ORDER BY mrkr_zdb_id;
+                ]]>
+            </Query>
+            <Column id="1" unique="true">ZFIN ID</Column>
+            <Column id="2">ZFIN Symbol</Column>
+            <Column id="3">ZFIN Name</Column>
+            <Column id="4">Fly Symbol</Column>
+            <Column id="5">Fly Name</Column>
+            <Column id="6">Flybase ID</Column>
+            <Column id="7">Gene ID</Column>
+            <Column id="8">Evidence</Column>
+            <Column id="9">Pub ID</Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Human and Zebrafish Orthology
+            </Name>
+            <Category>
+                Orthology Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>human_orthos</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                    SELECT DISTINCT mrkr_zdb_id, mrkr_abbrev, mrkr_name, ortho_other_species_symbol, ortho_other_species_name,
+                                    tmp_omim.accession, tmp_gene.accession, tmp_hgnc.accession, oev_evidence_code, oev_pub_zdb_id
+                        FROM ortholog
+                        INNER JOIN marker ON ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
+                        INNER JOIN ortholog_evidence ON ortho_zdb_id = oev_ortho_zdb_id
+                        INNER JOIN organism ON ortho_other_species_taxid = organism_taxid
+                        LEFT OUTER JOIN tmp_omim ON ortho_zdb_id = tmp_omim.ortho_id
+                        LEFT OUTER JOIN tmp_gene ON ortho_zdb_id = tmp_gene.ortho_id
+                        LEFT OUTER JOIN tmp_hgnc ON ortho_zdb_id = tmp_hgnc.ortho_id
+                        WHERE organism_common_name = 'Human'
+                        ORDER BY mrkr_zdb_id;
+                ]]>
+            </Query>
+            <Column id="1" unique="true">ZFIN ID</Column>
+            <Column id="2">ZFIN Symbol</Column>
+            <Column id="3">ZFIN Name</Column>
+            <Column id="4">Human Symbol</Column>
+            <Column id="5">Human Name</Column>
+            <Column id="6">OMIM ID</Column>
+            <Column id="7">Gene ID</Column>
+            <Column id="8">HGNC ID</Column>
+            <Column id="9">Evidence</Column>
+            <Column id="10">Pub ID</Column>
+        </Download>
+        <Download orderIndex="2">
+            <Name>
+                Mouse and Zebrafish Orthology
+            </Name>
+            <Category>
+                Orthology Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>mouse_orthos</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                    SELECT DISTINCT mrkr_zdb_id, mrkr_abbrev, mrkr_name, ortho_other_species_symbol, ortho_other_species_name,
+                                    'MGI:' || tmp_mgi.accession, tmp_gene.accession, oev_evidence_code, oev_pub_zdb_id
+                      FROM ortholog
+                      INNER JOIN marker on ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
+                      INNER JOIN ortholog_evidence on ortho_zdb_id = oev_ortho_zdb_id
+                      INNER JOIN organism on ortho_other_species_taxid = organism_taxid
+                      LEFT OUTER JOIN tmp_mgi on ortho_zdb_id = tmp_mgi.ortho_id
+                      LEFT OUTER JOIN tmp_gene on ortho_zdb_id = tmp_gene.ortho_id
+                      WHERE organism_common_name = 'Mouse'
+                      ORDER BY mrkr_zdb_id;
+                ]]>
+            </Query>
+            <Column id="1" unique="true">ZFIN ID</Column>
+            <Column id="2">ZFIN Symbol</Column>
+            <Column id="3">ZFIN Name</Column>
+            <Column id="4">Mouse Symbol</Column>
+            <Column id="5">Mouse Name</Column>
+            <Column id="6">MGI ID</Column>
+            <Column id="7">Gene ID</Column>
+            <Column id="8">Evidence</Column>
+            <Column id="9">Pub ID</Column>
+        </Download>
+        <Download orderIndex="4">
+            <Name>
+                Phenotypic Zebrafish genes with Human Orthology
+            </Name>
+            <Category>
+                Orthology Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ortho</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                    select distinct gene_id, mrkr_abbrev, entrezZebrafishId, ortho_abbrev, entrezHumanId
+                    from tmp_ortho_pheno
+                    order by gene_id, mrkr_abbrev, ortho_abbrev
+                ]]>
+            </Query>
+            <Column id="1" unique="true">ZFIN ID</Column>
+            <Column id="2">ZFIN Symbol</Column>
+            <Column id="3">Entrez Zebrafish Gene ID</Column>
+            <Column id="4">Human Gene Symbol</Column>
+            <Column id="5">Entrez Human Gene ID</Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Genetic Marker Relationships
+            </Name>
+            <Category>
+                Genetic Marker Relationships
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>gene_marker_relationship</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                    select gene.mrkr_zdb_id, gene.mrkr_abbrev, seq.mrkr_zdb_id, seq.mrkr_abbrev, mrel_type
+                     from marker_relationship, marker gene, marker seq
+                     where gene.mrkr_type[1,4] = 'GENE'
+                       and seq.mrkr_type[1,4] != 'GENE'
+                       and mrel_mrkr_1_zdb_id = gene.mrkr_zdb_id
+                       and mrel_mrkr_2_zdb_id = seq.mrkr_zdb_id
+                    union
+                    select gene.mrkr_zdb_id, gene.mrkr_abbrev, seq.mrkr_zdb_id, seq.mrkr_abbrev, mrel_type
+                     from marker_relationship, marker gene, marker seq
+                     where gene.mrkr_type[1,4] = 'GENE'
+                       and seq.mrkr_type[1,4] != 'GENE'
+                       and mrel_mrkr_2_zdb_id = gene.mrkr_zdb_id
+                       and mrel_mrkr_1_zdb_id = seq.mrkr_zdb_id
+                ]]>
+            </Query>
+            <Column id="1" unique="true">Gene ID</Column>
+            <Column id="2">Gene SO ID</Column>
+            <Column id="3">Gene Symbol</Column>
+            <Column id="4">Marker ID</Column>
+            <Column id="5">Marker SO ID</Column>
+            <Column id="6">Marker Symbol</Column>
+            <Column id="7">Relationship</Column>
+        </Download>
+        <Download orderIndex="3">
+            <Name>
+                Expression data for wildtype fish
+            </Name>
+            <Category>
+                Gene Expression
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>wildtype-expression_fish</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1" unique="true">Gene ID</Column>
+            <Column id="2">Gene Symbol</Column>
+            <Column id="3">Fish Name</Column>
+            <Column id="4">Super Structure ID</Column>
+            <Column id="5">Super Structure Name</Column>
+            <Column id="6">Sub Structure ID</Column>
+            <Column id="7">Sub Structure Name</Column>
+            <Column id="8">Start Stage</Column>
+            <Column id="9">End Stage</Column>
+            <Column id="10">Assay</Column>
+            <Column id="11">Assay MMO ID</Column>
+            <Column id="12">Publication ID</Column>
+            <Column id="13">Probe ID</Column>
+            <Column id="14">Antibody ID</Column>
+            <Column id="15">Fish ID</Column>
+        </Download>
+        <Download orderIndex="4">
+            <Name>
+                Expression Environment Description
+            </Name>
+            <Category>
+                Gene Expression
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>xpat_environment_fish</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[ ]]>
+            </Query>
+            <Column id="1" unique="true">Environment ID</Column>
+            <Column id="2">ZECO Term Name</Column>
+            <Column id="3">ZECO Term ID (ZECO:ID)</Column>
+            <Column id="4">Chebi Term Name</Column>
+            <Column id="5">Chebi Term ID (Chebi:ID)</Column>
+            <Column id="6">ZFA Term Name</Column>  
+            <Column id="7">ZFA Term ID (ZFA:ID)</Column>  
+            <Column id="8">Affected Structure Subterm Name</Column>
+            <Column id="9">Affected Structure Subterm ID (GO-CC:ID)</Column>
+            <Column id="10">NCBI Taxon Name</Column>
+            <Column id="11">NCBI Taxon ID (NCBI Taxon:ID)</Column>
+        </Download>
+        <Download orderIndex="5">
+            <Name>
+                Expression Experiment-Figure
+            </Name>
+            <Category>
+                Gene Expression
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>xpatfig_fish</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                    select distinct xpatex_zdb_id, xpatres_zdb_id, xpatfig_fig_zdb_id
+                     from expression_experiment, expression_result,expression_pattern_figure
+                     where xpatex_zdb_id=xpatres_xpatex_zdb_id
+                       and xpatres_zdb_id=xpatfig_xpatres_zdb_id
+                     order by xpatex_zdb_id
+                ]]>
+            </Query>
+            <Column id="1" unique="true">Expression ID</Column>
+            <Column id="2">Expression Result ID</Column>
+            <Column id="3">Figure ID</Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Zebrafish Gene Expression by Stage and Anatomy Term
+            </Name>
+            <Category>
+                Gene Expression
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>xpat_stage_anatomy</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                    SELECT
+                      xpatres_zdb_id,
+                      xpatres_xpatex_zdb_id,
+                      xpatres_start_stg_zdb_id,
+                      xpatres_end_stg_zdb_id,
+                      superterm.term_ont_id,
+                      subterm.term_ont_id AS id2,
+                      xpatres_expression_found
+                    FROM expression_result
+                      JOIN term superterm ON superterm.term_zdb_id = xpatres_superterm_zdb_id
+                      JOIN expression_Experiment ON xpatex_zdb_id = xpatres_xpatex_zdb_id
+                      LEFT OUTER JOIN term subterm ON subterm.term_zdb_id = xpatres_subterm_zdb_id
+                      LEFT OUTER JOIN clone ON clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
+                    WHERE NOT exists(SELECT 'x'
+                                     FROM expression_experiment, marker
+                                     WHERE xpatex_zdb_id = xpatres_xpatex_zdb_id
+                                           AND xpatex_gene_zdb_id IS NOT NULL
+                                           AND xpatex_gene_zdb_id = mrkr_zdb_id
+                                           AND mrkr_abbrev LIKE 'WITHDRAWN%')
+                    ORDER BY xpatres_xpatex_zdb_id;
+                ]]>
+            </Query>
+            <Column id="1" unique="true">Expression Result ID</Column>
+            <Column id="2">Expression ID</Column>
+            <Column id="3">Start Stage ID</Column>
+            <Column id="4">End Stage ID</Column>
+            <Column id="5">Anatomy Super Term ID</Column>
+            <Column id="6">Anatomy Sub Term ID</Column>
+            <Column id="7">Expression Found</Column>
+        </Download>
+        <Download orderIndex="6">
+            <Name>
+                ZFIN Antibody Expression Assay Records
+            </Name>
+            <Category>
+                Gene Expression
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>abxpat_fish</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1" unique="true">Antibody ID</Column>
+            <Column id="2">Antibody Name</Column>
+            <Column id="3">Gene ID (Optional)</Column>
+            <Column id="4">Gene Symbol (Option)</Column>
+            <Column id="5">Expression ID</Column>
+            <Column id="6">Expression Type</Column>
+            <Column id="7">Expression Type MMO ID</Column>
+            <Column id="8">Publication ID</Column>
+            <Column id="9">Fish ID</Column>
+            <Column id="10">Environment ID</Column>
+        </Download>
+        <Download orderIndex="2">
+            <Name>
+                ZFIN Genes with Expression Assay Records
+            </Name>
+            <Category>
+                Gene Expression
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>xpat_fish</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1" unique="true">Gene ID</Column>
+            <Column id="2">Gene Symbol</Column>
+            <Column id="3">EST ID (Optional)</Column>
+            <Column id="4">EST Symbol (Optional)</Column>
+            <Column id="5">Expression Type</Column>
+            <Column id="6">Expression Type MMO ID</Column>
+            <Column id="7">Expression ID</Column>
+            <Column id="8">Publication ID</Column>
+            <Column id="9">Fish ID</Column>
+            <Column id="10">Environment ID</Column>
+            <Column id="11">Probe Quality (optional 0 - 5 rating)</Column>
+        </Download>
+        <Download orderIndex="4">
+            <Name>
+                Fish-Figure relation
+            </Name>
+            <Category>
+                Phenotype Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>genofig_fish</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1" unique="true">Fish ID</Column>
+            <Column id="2" unique="true">Figure ID</Column>
+        </Download>
+        <Download orderIndex="7">
+            <Name>
+                Gene Expression Phenotypes
+            </Name>
+            <Category>
+                Phenotype Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>gene_expression_phenotype</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+select distinct (select mrkr_abbrev from marker where mrkr_zdb_id = psg_mrkr_zdb_id),
+                psg_mrkr_zdb_id, 
+                "expressed in",
+                "RO:0002206",
+                psg_e1a_name,
+                psg_e1a_zdb_id,
+                psg_e1b_name,
+                psg_e1b_zdb_id,
+                psg_quality_name,
+                psg_quality_zdb_id,
+                psg_tag,
+                (select stg_name from stage where stg_zdb_id = pg_start_stg_zdb_id),
+                pg_start_stg_zdb_id,
+                (select stg_name from stage where stg_zdb_id = pg_end_stg_zdb_id),
+                pg_end_stg_zdb_id,
+                xpatex_assay_name,
+                xpatassay_mmo_id
+                xpatex_probe_feature_zdb_id,
+                (select mrkr_abbrev from marker where mrkr_zdb_id = xpatex_atb_zdb_id),
+                xpatex_atb_zdb_id,
+                genox_fish_zdb_id,
+                genox_exp_zdb_id,
+                pg_fig_zdb_id,
+                fig_source_zdb_id,
+                pub.accession_no
+from phenotype_observation_generated, phenotype_source_generated, expression_experiment2, fish_experiment, figure, publication pub,expression_pattern_assay
+where psg_mrkr_zdb_id[1,8] = "ZDB-GENE"
+  and psg_pg_id = pg_id
+  and xpatex_genox_zdb_id = pg_genox_zdb_id
+  and xpatex_gene_zdb_id = psg_mrkr_zdb_id
+  and genox_zdb_id = pg_genox_zdb_id
+  and fig_zdb_id = pg_fig_zdb_id
+  and pub.zdb_id = fig_source_zdb_id
+  and xpatex_assay_name=xpatassay_name
+                ]]>
+            </Query>
+            <Column id="1">Gene Symbol</Column>
+            <Column id="2">Gene ID</Column>
+            <Column id="3">RO Term</Column>
+            <Column id="4">RO ID</Column>
+            <Column id="5">Superstructure Name</Column>
+            <Column id="6">Superstructure ID</Column>
+            <Column id="7">Substructure Name</Column>
+            <Column id="8">Substructure ID</Column>
+            <Column id="9">Phenotype Keyword Name</Column>
+            <Column id="10">Phenotype Keyword ID</Column>
+            <Column id="11">Phenotype Tag</Column>
+            <Column id="12">Start Stage Name</Column>
+            <Column id="13">Start Stage ID</Column>
+            <Column id="14">End Stage Name</Column>
+            <Column id="15">End Stage ID</Column>
+            <Column id="16">Assay</Column>
+            <Column id="17">Assay MMO ID</Column>
+            <Column id="18">Probe ID</Column>
+            <Column id="19">Antibody Name</Column>
+            <Column id="20">Antibody ID</Column>
+            <Column id="21">Fish ID</Column>
+            <Column id="22">Environment ID</Column>
+            <Column id="23">Figure ID</Column>
+            <Column id="24">Publication ID</Column>
+            <Column id="25">PubMed ID</Column>
+        </Download>
+        <Download orderIndex="8">
+            <Name>
+                Antibody Labeling Phenotypes
+            </Name>
+            <Category>
+                Phenotype Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>antibody_labeling_phenotype</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+select distinct (select mrkr_name from marker where mrkr_zdb_id = psg_mrkr_zdb_id),
+                psg_mrkr_zdb_id, 
+                "eptitope",
+                "SO:0001018",
+                "expressed in",
+                "RO:0002206",
+                psg_e1a_name,
+                psg_e1a_zdb_id,
+                psg_e1b_name,
+                psg_e1b_zdb_id,
+                psg_quality_name,
+                psg_quality_zdb_id,
+                psg_tag,
+                (select stg_name from stage where stg_zdb_id = pg_start_stg_zdb_id),
+                pg_start_stg_zdb_id,
+                (select stg_name from stage where stg_zdb_id = pg_end_stg_zdb_id),
+                pg_end_stg_zdb_id,
+                xpatex_assay_name,
+                xpatassay_mmo_id
+                genox_fish_zdb_id,
+                genox_exp_zdb_id,
+                pg_fig_zdb_id,
+                fig_source_zdb_id,
+                pub.accession_no
+from phenotype_observation_generated, phenotype_source_generated, expression_experiment2, fish_experiment, figure, publication pub,expression_pattern_assay
+where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
+  and psg_pg_id = pg_id
+  and xpatex_genox_zdb_id = pg_genox_zdb_id
+  and xpatex_atb_zdb_id = psg_mrkr_zdb_id
+  and genox_zdb_id = pg_genox_zdb_id
+  and fig_zdb_id = pg_fig_zdb_id
+  and pub.zdb_id = fig_source_zdb_id
+  and xpatex_assay_name=xpatassay_name
+                ]]>
+            </Query>
+            <Column id="1">Antibody Name</Column>
+            <Column id="2">Antibody ID</Column>
+            <Column id="3">SO Term</Column>
+            <Column id="4">SO ID</Column>
+            <Column id="5">RO Term</Column>
+            <Column id="6">RO ID</Column>
+            <Column id="7">Superstructure Name</Column>
+            <Column id="8">Superstructure ID</Column>
+            <Column id="9">Substructure Name</Column>
+            <Column id="10">Substructure ID</Column>
+            <Column id="11">Phenotype Keyword Name</Column>
+            <Column id="12">Phenotype Keyword ID</Column>
+            <Column id="13">Phenotype Tag</Column>
+            <Column id="14">Start Stage Name</Column>
+            <Column id="15">Start Stage ID</Column>
+            <Column id="16">End Stage Name</Column>
+            <Column id="17">End Stage ID</Column>
+            <Column id="18">Assay</Column>
+            <Column id="19">Assay MMO ID</Column>
+            <Column id="20">Fish ID</Column>
+            <Column id="21">Environment ID</Column>
+            <Column id="22">Figure ID</Column>
+            <Column id="23">Publication ID</Column>
+            <Column id="24">PubMed ID</Column>
+        </Download>        
+        <Download orderIndex="1">
+            <Name>
+                Fish with Phenotypes
+            </Name>
+            <Category>
+                Phenotype Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>phenotype_fish</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[ ]]>
+            </Query>
+            <Column id="1" unique="true">Fish ID</Column>
+            <Column id="2" unique="true">Fish Name</Column>
+            <Column id="3" unique="true">Start Stage ID</Column>
+            <Column id="4" unique="true">Start Stage Name</Column>
+            <Column id="5" unique="true">End Stage ID</Column>
+            <Column id="6" unique="true">End Stage Name</Column>
+            <Column id="7">Affected Structure or Process 1 subterm ID</Column>
+            <Column id="8">Affected Structure or Process 1 subterm Name</Column>
+            <Column id="9">Post-composed Relationship ID</Column>
+            <Column id="10">Post-composed Relationship Name</Column>
+            <Column id="11">Affected Structure or Process 1 superterm ID</Column>
+            <Column id="12">Affected Structure or Process 1 superterm Name</Column>
+            <Column id="13">Phenotype Keyword ID</Column>
+            <Column id="14">Phenotype Keyword Name</Column>
+            <Column id="15">Phenotype Tag</Column>
+            <Column id="16">Affected Structure or Process 2 subterm ID</Column>
+            <Column id="17">Affected Structure or Process 2 subterm name</Column>
+            <Column id="18">Post-composed Relationship (rel) ID</Column>
+            <Column id="19">Post-composed Relationship (rel) Name</Column>
+            <Column id="20">Affected Structure or Process 2 superterm ID</Column>
+            <Column id="21">Affected Structure or Process 2 superterm name</Column>
+            <Column id="22" unique="true">Publication ID</Column>
+            <Column id="23" unique="true">Environment ID</Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Ameliorated Phenotypes
+            </Name>
+            <Category>
+                Phenotype Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ameliorated_phenotype_fish</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[ ]]>
+            </Query>
+            <Column id="1" unique="true">Fish ID</Column>
+            <Column id="2" unique="true">Fish Name</Column>
+            <Column id="3" unique="true">Start Stage ID</Column>
+            <Column id="4" unique="true">Start Stage Name</Column>
+            <Column id="5" unique="true">End Stage ID</Column>
+            <Column id="6" unique="true">End Stage Name</Column>
+            <Column id="7">Affected Structure or Process 1 subterm ID</Column>
+            <Column id="8">Affected Structure or Process 1 subterm Name</Column>
+            <Column id="9">Post-composed Relationship ID</Column>
+            <Column id="10">Post-composed Relationship Name</Column>
+            <Column id="11">Affected Structure or Process 1 superterm ID</Column>
+            <Column id="12">Affected Structure or Process 1 superterm Name</Column>
+            <Column id="13">Phenotype Keyword ID</Column>
+            <Column id="14">Phenotype Keyword Name</Column>
+            <Column id="15">Phenotype Tag</Column>
+            <Column id="16">Affected Structure or Process 2 subterm ID</Column>
+            <Column id="17">Affected Structure or Process 2 subterm name</Column>
+            <Column id="18">Post-composed Relationship (rel) ID</Column>
+            <Column id="19">Post-composed Relationship (rel) Name</Column>
+            <Column id="20">Affected Structure or Process 2 superterm ID</Column>
+            <Column id="21">Affected Structure or Process 2 superterm name</Column>
+            <Column id="22" unique="true">Publication ID</Column>
+            <Column id="23" unique="true">Environment ID</Column>
+        </Download>      
+        <Download orderIndex="1">
+            <Name>
+                Exacerbated Phenotypes
+            </Name>
+            <Category>
+                Phenotype Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>exacerbated_phenotype_fish</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[ ]]>
+            </Query>
+            <Column id="1" unique="true">Fish ID</Column>
+            <Column id="2" unique="true">Fish Name</Column>
+            <Column id="3" unique="true">Start Stage ID</Column>
+            <Column id="4" unique="true">Start Stage Name</Column>
+            <Column id="5" unique="true">End Stage ID</Column>
+            <Column id="6" unique="true">End Stage Name</Column>
+            <Column id="7">Affected Structure or Process 1 subterm ID</Column>
+            <Column id="8">Affected Structure or Process 1 subterm Name</Column>
+            <Column id="9">Post-composed Relationship ID</Column>
+            <Column id="10">Post-composed Relationship Name</Column>
+            <Column id="11">Affected Structure or Process 1 superterm ID</Column>
+            <Column id="12">Affected Structure or Process 1 superterm Name</Column>
+            <Column id="13">Phenotype Keyword ID</Column>
+            <Column id="14">Phenotype Keyword Name</Column>
+            <Column id="15">Phenotype Tag</Column>
+            <Column id="16">Affected Structure or Process 2 subterm ID</Column>
+            <Column id="17">Affected Structure or Process 2 subterm name</Column>
+            <Column id="18">Post-composed Relationship (rel) ID</Column>
+            <Column id="19">Post-composed Relationship (rel) Name</Column>
+            <Column id="20">Affected Structure or Process 2 superterm ID</Column>
+            <Column id="21">Affected Structure or Process 2 superterm name</Column>
+            <Column id="22" unique="true">Publication ID</Column>
+            <Column id="23" unique="true">Environment ID</Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Phenotype of Zebrafish Genes
+            </Name>
+            <Category>
+                Phenotype Data
+            </Category>
+            <Description/>
+            <WikiLink/>
+            <FileName>phenoGeneCleanData_fish</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1">ID</Column>
+            <Column id="2">Gene Symbol</Column>
+            <Column id="3">Gene ID</Column>
+            <Column id="4">Affected Structure or Process 1 subterm ID</Column>
+            <Column id="5">Affected Structure or Process 1 subterm Name</Column>
+            <Column id="6">Post-composed Relationship ID</Column>
+            <Column id="7">Post-composed Relationship Name</Column>
+            <Column id="8">Affected Structure or Process 1 superterm ID</Column>
+            <Column id="9">Affected Structure or Process 1 superterm Name</Column>
+            <Column id="10">Phenotype Keyword ID</Column>
+            <Column id="11">Phenotype Keyword Name</Column>
+            <Column id="12">Phenotype Tag</Column>
+            <Column id="13">Affected Structure or Process 2 subterm ID</Column>
+            <Column id="14">Affected Structure or Process 2 subterm name</Column>
+            <Column id="15">Post-composed Relationship (rel) ID</Column>
+            <Column id="16">Post-composed Relationship (rel) Name</Column>
+            <Column id="17">Affected Structure or Process 2 superterm ID</Column>
+            <Column id="18">Affected Structure or Process 2 superterm name</Column>
+            <Column id="19">Fish ID</Column>
+            <Column id="20">Fish Display Name</Column>
+            <Column id="22">Start Stage ID</Column>
+            <Column id="23">End Stage ID</Column>
+            <Column id="24">Fish Environment ID</Column>
+            <Column id="25">Publication ID</Column>
+            <Column id="26">Figure ID</Column>
+        </Download>
+        <Download orderIndex="3">
+            <Name>
+                Phenotype Environment Description
+            </Name>
+            <Category>
+                Phenotype Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>pheno_environment_fish</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1" unique="true">Environment ID</Column>
+            <Column id="2">ZECO Term Name</Column>
+            <Column id="3">ZECO Term ID (ZECO:ID)</Column>
+            <Column id="4">Chebi Term Name</Column>
+            <Column id="5">Chebi Term ID (Chebi:ID)</Column>
+            <Column id="6">ZFA Term Name</Column>
+            <Column id="7">ZFA Term ID (ZFA:ID)</Column>
+            <Column id="8">Affected Structure Subterm Name</Column> 
+            <Column id="9">Affected Structure Subterm ID (GO-CC:ID)</Column>
+            <Column id="10">NCBI Taxon Name</Column>
+            <Column id="11">NCBI Taxon ID (NCBI Taxon:ID)</Column>
+        </Download>
+        <Download orderIndex="5">
+            <Name>
+                Phenotype for Zebrafish genes with Human Orthology
+            </Name>
+            <Category>
+                Phenotype Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>pheno_fish</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                    select gene_id, entrezZebrafishId,entrezHumanId, mrkr_abbrev,a_ont_id,e1superName, b_ont_id,e1subName,
+                         c_ont_id,e2superName,d_ont_id,e2subName,e_ont_id,qualityName, phenos_tag  from tmp_ortho_pheno
+                        order by gene_id, mrkr_abbrev, ortho_abbrev, type
+                ]]>
+            </Query>
+            <Column id="1" unique="true">Gene ID</Column>
+            <Column id="2" unique="false">Entrez Zebrafish Gene ID</Column>
+            <Column id="3" unique="true">Entrez Human Gene ID</Column>
+            <Column id="4" unique="true">ZFIN Gene Symbol</Column>
+            <Column id="7" unique="true">Affected Structure or Process 1 subterm OBO ID</Column>
+            <Column id="8" unique="true">Affected Structure or Process 1 subterm name</Column>
+            <Column id="5" unique="true">Post-Composed Relationship ID</Column>
+            <Column id="5" unique="true">Post-Composed Relationship Name</Column>
+            <Column id="5" unique="true">Affected Structure or Process 1 superterm OBO ID</Column>
+            <Column id="6" unique="true">Affected Structure or Process 1 superterm name</Column>
+            <Column id="13" unique="true">Phenotype Keyword OBO ID</Column>
+            <Column id="14" unique="true">Phenotype Quality</Column>
+            <Column id="15" unique="true">Phenotype Tag</Column>
+            <Column id="11" unique="true">Affected Structure or Process 2 subterm OBO ID</Column>
+            <Column id="12" unique="true">Affected Structure or Process 2 subterm name</Column>
+            <Column id="5" unique="true">Post-Composed Relationship ID</Column>
+            <Column id="5" unique="true">Post-Composed Relationship Name</Column>
+            <Column id="9" unique="true">Affected Structure or Process 2 superterm OBO ID</Column>
+            <Column id="10" unique="true">Affected Structure or Process 2 superterm name</Column>
+        </Download>
+        <Download orderIndex="5">
+            <Name>
+                Phenotype for Zebrafish genes with Human Orthology
+            </Name>
+            <Category>
+                Phenotype Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>pheno_fish</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                    select gene_id, entrezZebrafishId,entrezHumanId, mrkr_abbrev,a_ont_id,e1superName, b_ont_id,e1subName,
+                         c_ont_id,e2superName,d_ont_id,e2subName,e_ont_id,qualityName, phenos_tag  from tmp_ortho_pheno
+                        order by gene_id, mrkr_abbrev, ortho_abbrev, type
+                ]]>
+            </Query>
+            <Column id="1" unique="true">Gene ID</Column>
+            <Column id="2" unique="false">Entrez Zebrafish Gene ID</Column>
+            <Column id="3" unique="true">Entrez Human Gene ID</Column>
+            <Column id="4" unique="true">ZFIN Gene Symbol</Column>
+            <Column id="5" unique="true">Affected Structure or Process 1 superterm OBO ID</Column>
+            <Column id="6" unique="true">Affected Structure or Process 1 superterm name</Column>
+            <Column id="7" unique="true">Affected Structure or Process 1 subterm OBO ID</Column>
+            <Column id="8" unique="true">Affected Structure or Process 1 subterm name</Column>
+            <Column id="9" unique="true">Phenotype Keyword OBO ID</Column>
+            <Column id="10" unique="true">Phenotype Quality</Column>
+            <Column id="11" unique="true">Phenotype Tag</Column>
+            <Column id="12" unique="true">Affected Structure or Process 2 superterm OBO ID</Column>
+            <Column id="13" unique="true">Affected Structure or Process 2 superterm name</Column>
+            <Column id="14" unique="true">Affected Structure or Process 2 subterm OBO ID</Column>
+            <Column id="15" unique="true">Affected Structure or Process 2 subterm name</Column>
+        </Download>
+        <Download orderIndex="2">
+            <Name>
+                Genotype Backgrounds
+            </Name>
+            <Category>
+                Fish Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>genotype_backgrounds</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                   select distinct a.geno_zdb_id, a.geno_display_name, genoback_background_zdb_id,b.geno_display_name
+                   from genotype a, genotype_background, genotype b
+                   where a.geno_Zdb_id = genoback_geno_Zdb_id
+                   and b.geno_zdb_id=genoback_backgound_zdb_id
+                ]]>
+            </Query>
+            <Column id="1" unique="true">Genotype ID</Column>
+            <Column id="2">Genotype Name</Column>
+            <Column id="3">Background</Column>
+            <Column id="4">Background Name</Column>
+
+        </Download>
+        <Download orderIndex="2">
+            <Name>
+                Fish Components
+            </Name>
+            <Category>
+                Fish Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>fish_components_fish</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                    select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_zdb_id, b.mrkr_abbrev, fc_construct_zdb_id, c.mrkr_abbrev, genoback_background_zdb_id, geno_handle
+                       from fish_components,outer (genotype_background,genotype), outer marker a, outer marker b, outer marker c
+                       where fc_genotype_zdb_id = genoback_geno_zdb_id
+                       and a.mrkr_Zdb_id = fc_gene_zdb_id
+                       and genoback_background_zdb_id = geno_Zdb_id
+                       and b.mrkr_zdb_id = fc_affector_zdb_id
+                       and c.mrkr_Zdb_id = fc_construct_zdb_id
+                       and fc_affector_zdb_id not like 'ZDB-ALT%'
+                    union
+                    select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_zdb_id, b.feature_abbrev, fc_construct_zdb_id, c.mrkr_abbrev, genoback_background_zdb_id, geno_handle
+                       from fish_components,outer (genotype_background,genotype), outer marker a, outer feature b, outer marker c
+                       where fc_genotype_zdb_id = genoback_geno_zdb_id
+                       and a.mrkr_Zdb_id = fc_gene_zdb_id
+                       and genoback_background_zdb_id = geno_Zdb_id
+                       and b.feature_zdb_id = fc_affector_zdb_id
+                       and c.mrkr_Zdb_id = fc_construct_zdb_id
+                       and fc_affector_zdb_id like 'ZDB-ALT%'
+                ]]>
+            </Query>
+            <Column id="1">Fish ID</Column>
+            <Column id="2">Fish Name</Column>
+            <Column id="3">Gene ID</Column>
+            <Column id="4">Gene Symbol</Column>
+            <Column id="5">Affector ID</Column>
+            <Column id="6">Affector Symbol</Column>
+            <Column id="7">Construct ID</Column>
+            <Column id="8">Construct Symbol</Column>
+            <Column id="9">Background ID</Column>
+            <Column id="10">Background Name</Column>
+            <Column id="11">Genotype ID</Column>
+            <Column id="12">Genotype Name</Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Genotype Features
+            </Name>
+            <Category>
+                Fish Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>genotype_features</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                    select distinct
+                        genotype_id,
+                        geno_display_name,
+                        geno_handle,
+                        feature_zdb_id,
+                        feature_name,
+                        feature_abbrev,
+                        feature_type,
+                        feature_type_display,
+                        gene_abbrev,
+                        gene_id,
+                        feature_zygosity,
+                        construct_name,
+                        construct_zdb_id
+                     from tmp_geno_data
+                     order by genotype_id, geno_display_name
+                ]]>
+            </Query>
+            <Column id="1" unique="true">Genotype ID</Column>
+            <Column id="2">Genotype Name</Column>
+            <Column id="3">Genotye Unique Name</Column>
+            <Column id="4">Allele ID</Column>
+            <Column id="5">Allele Name</Column>
+            <Column id="6">Allele Abbreviation</Column>
+            <Column id="7">Allele Type</Column>
+            <Column id="8">Allele Display Type</Column>
+            <Column id="9">Gene or Construct Symbol</Column>
+            <Column id="10">Corresponding ZFIN Gene ID/Construct ID</Column>
+            <Column id="11">Allele Zygosity</Column>
+            <Column id="12">Construct Name</Column>
+            <Column id="13">Construct ZdbId</Column>
+        </Download>
+        <Download orderIndex="4">
+            <Name>
+                SNP Data
+            </Name>
+            <Category>
+                Genetic Markers
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>snpData</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                select mrkr_zdb_id, mrkr_abbrev, snpd_rs_acc_num, snpdattr_pub_zdb_id
+                from marker, snp_download, snp_download_attribution
+                where mrkr_zdb_id = snpd_mrkr_zdb_id
+                and snpdattr_snpd_pk_id = snpd_pk_id;
+                ]]>
+            </Query>
+            <Column id="1">Marker ID</Column>
+            <Column id="2">Marker Symbol</Column>
+            <Column id="3">SNP rs accession number</Column>
+            <Column id="4">Publication ZDB ID</Column>
+        </Download>
+        <Download orderIndex="4">
+            <Name>
+                Genotype Features (removed or displaced genes)
+            </Name>
+            <Category>
+                Fish Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>genotype_features_missing_markers</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                    select distinct  geno_zdb_id, geno_display_name, geno_handle, mrkr_abbrev, mrkr_zdb_id
+                     from feature_marker_relationship, feature, genotype, genotype_feature, marker
+                     where fmrel_ftr_zdb_id=feature_zdb_id
+                       and fmrel_mrkr_zdb_id=mrkr_zdb_id
+                       and fmrel_type in ('markers missing', 'markers moved')
+                       and mrkr_zdb_id[1,8] = 'ZDB-GENE'
+                       and feature_zdb_id = genofeat_feature_zdb_id
+                       and geno_zdb_id = genofeat_geno_zdb_id
+                ]]>
+            </Query>
+            <Column id="1" unique="true">Genotype ID</Column>
+            <Column id="2">Genotype Name</Column>
+            <Column id="3">Genotye Unique Name</Column>
+            <Column id="4">Affected Genomic Region Symbol</Column>
+            <Column id="5">Corresponding ZFIN Gene ID</Column>
+        </Download>
+        <Download orderIndex="5">
+            <Name>
+                Experiment Details 
+            </Name>
+            <Category>
+                Fish Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>experiment_details</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                    SELECT
+                      expcond_exp_zdb_id,
+                      z.term_ont_id,
+                      a.term_ont_id AS id2,
+                      g.term_ont_id AS id3,
+                      c.term_ont_id AS id4,
+                      t.term_ont_id AS id5
+                    FROM experiment_condition
+                      LEFT OUTER JOIN term z ON expcond_zeco_Term_Zdb_id = z.term_zdb_id
+                      LEFT OUTER JOIN term a ON expcond_ao_Term_zdb_id = a.term_Zdb_id
+                      LEFT OUTER JOIN term g ON expcond_go_cc_term_Zdb_id = g.term_Zdb_id
+                      LEFT OUTER JOIN term c ON expcond_chebi_term_zdb_id = c.term_Zdb_id
+                      LEFT OUTER JOIN term t ON expcond_taxon_Term_zdb_id = t.term_Zdb_id;
+                ]]>
+            </Query>
+            <Column id="1" >Experiment ID</Column>
+            <Column id="2">ZECO Term ID</Column>
+            <Column id="3">ZFA Term ID</Column>
+            <Column id="4">GO Cellular Component Term ID</Column>
+            <Column id="5">Chebi Term ID</Column>
+	    <Column id="6">NCBI Taxon Term ID</Column>
+        </Download>
+        <Download orderIndex="6">
+            <Name>
+                Innocuous/Phenotypic Construct Details 
+            </Name>
+            <Category>
+                Fish Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>innophenoconstructs</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                     select fmrel_mrkr_zdb_id, mrkr_name, fmrel_type, fmrel_feature_zdb_id, feautre_name
+  from feature, marker, feature_marker_relationship
+ where feature_zdb_id = fmrel_feature_zdb_id
+ and fmrel_mrkr_Zdb_id = mrkr_zdb_id 
+ and fmrel_type in ('contains innocuous sequence feature','contains phenotypic sequence feature');
+                ]]>
+            </Query>
+            <Column id="1">Construct ID</Column>
+            <Column id="2">Construct Name</Column>
+            <Column id="3">Innocuous/Phenotypic</Column>
+            <Column id="4">Feature ID</Column>
+            <Column id="5">Feature Name</Column>
+        </Download>
+        <Download orderIndex="3">
+            <Name>
+                Fish-Publication relation
+            </Name>
+            <Category>
+                Publications
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>fishPub</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1" unique="true">Fish ID</Column>
+            <Column id="2">Publication ID</Column>
+        </Download>
+        <Download orderIndex="3">
+            <Name>
+                Genotype-Publication relation
+            </Name>
+            <Category>
+                Publications
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>genoPub</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1" unique="true">Publication ID</Column>
+            <Column id="2">PubMed ID</Column>
+            <Column id="3">Genotype ID</Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                All Genomic Features
+            </Name>
+            <Category>
+                Genomic Feature Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>features</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                    select feature_zdb_id, feature_abbrev, feature_name, ftrtype_type_display, featassay_mutagen,featassay_mutagee
+                     from feature, feature_type, feature_assay
+                    where feature_type =ftrtype_name
+                    and feature_zdb_id = featassay_feature_zdb_id
+                    order by lower(feature_abbrev);
+                ]]>
+            </Query>
+            <Column id="1" unique="true">Genomic Feature ID</Column>
+            <Column id="2">Feature SO ID</Column>
+            <Column id="3">Genomic Feature Abbreviation</Column>
+            <Column id="4">Genomic Feature Name</Column>
+            <Column id="5">Genomic Feature Type</Column>
+            <Column id="6">Mutagen</Column>
+            <Column id="7">Mutagee</Column>
+            <Column id="8">Construct ID</Column>
+            <Column id="9">Construct name</Column>
+            <Column id="10">Construct SO ID</Column>
+            <Column id="11">TALEN/CRISPR ID</Column>
+            <Column id="12">TALEN/CRISPR Name</Column>
+        </Download>
+
+        <Download orderIndex="1">
+            <Name>
+                Genomic Feature Data for CZRC
+            </Name>
+            <Category>
+                Genomic Feature Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>CZRCfeature</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+            </Query>
+            <Column id="1" unique="true">Genomic Feature ID</Column>
+            <Column id="2">Genomic Feature Name</Column>
+            <Column id="3">Affected Gene</Column>
+            <Column id="4">Affected Gene ID</Column>
+            <Column id="5">Synonyms</Column>
+            <Column id="6">Genomic Feature Type</Column>
+            <Column id="7">Protocol</Column>
+            <Column id="8">Notes</Column>
+            <Column id="9">Lab of Origin</Column>
+            <Column id="10">Lab ID</Column>
+            <Column id="11">Location</Column>
+            <Column id="12">Construct Name</Column>
+            <Column id="13">Construct ID</Column>
+            <Column id="14">Downloaded Time</Column>
+        </Download>
+
+        <Download orderIndex="1">
+            <Name>
+                Transgenic Insertions
+            </Name>
+            <Category>
+                Genomic Feature Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>tgInsertions</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                select distinct feature_zdb_id, feature_abbrev, feature_name, a.szm_term_ont_id, fmrel_mrkr_zdb_id, mrkr_name, b.szm_term_ont_id
+                    from feature, feature_marker_Relationship, marker, so_zfin_mapping a, so_zfin_mapping b
+                    where fmrel_ftr_zdb_id = feature_zdb_id
+                    and feature_type in ('TRANSGENIC_INSERTION')
+                    and fmrel_mrkr_zdb_id = mrkr_zdb_id
+                    and get_obj_type(mrkr_zdb_id) = b.szm_object_type
+                    and feature_type = a.szm_object_type
+                ]]>
+            </Query>
+            <Column id="1" unique="true">Genomic Feature ID</Column>
+            <Column id="2">Genomic Feature Abbreviation</Column>
+            <Column id="3">Genomic Feature Name</Column>
+            <Column id="4">Feature SO ID</Column>
+            <Column id="5">Construct ID</Column>
+            <Column id="6">Construct Name</Column>
+            <Column id="7">Construct SO ID</Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Construct Components
+            </Name>
+            <Category>
+                Genomic Feature Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>constructComponents</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                    select distinct a.mrkr_zdb_id,
+                    a.mrkr_name,
+                    a.mrkr_type,
+                    b.mrkr_zdb_id,
+                    b.mrkr_name,
+                    b.mrkr_type,
+                    mrel_type,
+                    c.szm_term_ont_id,
+                    d.szm_term_ont_id
+                    from marker a, marker b, marker_Relationship, so_zfin_mapping c, so_zfin_mapping d
+                    where a.mrkr_zdb_id = mrel_mrkr_1_zdb_id
+                    and b.mrkr_zdb_id = mrel_mrkr_2_zdb_id
+                    and get_obj_type(a.mrkr_zdb_id) = c.szm_object_type
+                    and get_obj_type(b.mrkr_zdb_id) = d.szm_object_type
+                    and a.mrkr_type in ('TGCONSTRCT','GTCONSTRCT','ETCONSTRCT','PTCONSTRCT')
+                    order by a.mrkr_zdb_id
+                ]]>
+            </Query>
+            <Column id="1" unique="true">Construct ID</Column>
+            <Column id="2">Construct Name</Column>
+            <Column id="3">Construct Type</Column>
+            <Column id="4">Component ID</Column>
+            <Column id="5">Component Name</Column>
+            <Column id="6">Component Type</Column>
+            <Column id="7">Relationship</Column>
+            <Column id="8">Construct SO ID</Column>
+            <Column id="9">Component SO ID</Column>
+        </Download>
+        <Download orderIndex="2">
+            <Name>
+                Genomic Features and their affected genes
+            </Name>
+            <Category>
+                Genomic Feature Data
+            </Category>
+            <Description>(alleles, deficiencies, translocations)</Description>
+            <WikiLink></WikiLink>
+            <FileName>features-affected-genes</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                    SELECT
+                        feature_zdb_id,
+                        a.szm_term_ont_id,
+                        feature_name,
+                        mrkr_abbrev,
+                        mrkr_zdb_id,
+                        b.szm_term_ont_id,
+                        fmrel_type,
+                        feature_type,
+                        dna_change_so_id,
+                        dna_ref_nucleotide,
+                        dna_mut_nucleotide,
+                        dna_bp_added,
+                        dna_bp_removed,
+                        dna_position_start,
+                        dna_position_end,
+                        dna_reference_seq,
+                        dna_localization_name,
+                        dna_localization_so_id,
+                        dna_localization_exon,
+                        dna_localization_intron,
+                        transcript_consequence_name,
+                        transcript_consequence_so_id,
+                        transcript_consequence_exon,
+                        transcript_consequence_intron,
+                        protein_consequence_name,
+                        protein_consequence_so_id,
+                        protein_ref_aa,
+                        protein_mut_aa,
+                        protein_aa_added,
+                        protein_aa_removed,
+                        protein_position_start,
+                        protein_position_end,
+                        protein_reference_seq
+                      FROM feature, feature_marker_relationship,marker, so_zfin_mapping a, so_zfin_mapping b, tmp_mutation_details
+                      WHERE fmrel_ftr_zdb_id = feature_zdb_id
+                      AND mrkr_zdb_id = fmrel_mrkr_zdb_id
+                      AND a.szm_object_type = feature_type
+                      AND b.szm_objecT_type = mrkr_type
+                      AND mrkr_type LIKE 'GENE%' AND (
+                        (feature_type IN ('POINT_MUTATION', 'DELETION', 'INSERTION','COMPLEX_SUBSTITUTION','SEQUENCE_VARIANT',
+                                          'UNSPECIFIED','TRANSGENIC_INSERTION', 'INDEL') AND fmrel_type ='is allele of') OR
+                        (feature_type IN ('TRANSLOC', 'INVERSION') AND fmrel_type IN ('is allele of', 'markers moved')) OR
+                        (feature_type IN ('DEFICIENCY') AND fmrel_type IN ('is allele of','markers missing')))
+                      AND tmp_feat_zdb_id = feature_zdb_id
+                      ORDER BY LOWER(feature_name);
+                ]]>
+            </Query>
+            <Column id="1" unique="true">Genomic Feature ID</Column>
+            <Column id="2">Feature SO ID</Column>
+            <Column id="3">Genomic Feature Abbreviation</Column>
+            <Column id="4" unique="true">Gene Symbol</Column>
+            <Column id="5">Gene ID</Column>
+            <Column id="6">Gene SO ID</Column>
+            <Column id="7">Genomic Feature - Marker Relationship</Column>
+            <Column id="8">Feature Type</Column>
+            <Column id="9">DNA/cDNA Change SO ID</Column>
+            <Column id="10">Reference Nucleotide</Column>
+            <Column id="11">Mutant Nucleotide</Column>
+            <Column id="12">Base Pairs Added</Column>
+            <Column id="13">Base Pairs Removed</Column>
+            <Column id="14">DNA/cDNA Change Position Start</Column>
+            <Column id="15">DNA/cDNA Change Position End</Column>
+            <Column id="16">DNA/cDNA Reference Sequence</Column>
+            <Column id="17">DNA/cDNA Change Localization</Column>
+            <Column id="18">DNA/cDNA Change Localization SO ID</Column>
+            <Column id="19">DNA/cDNA Change Localization Exon</Column>
+            <Column id="20">DNA/cDNA Change Localization Intron</Column>
+            <Column id="21">Transcript Consequence</Column>
+            <Column id="22">Transcript Consequence SO ID</Column>
+            <Column id="23">Transcript Consequence Exon</Column>
+            <Column id="24">Transcript Consequence Intron</Column>
+            <Column id="25">Protein Consequence</Column>
+            <Column id="26">Protein Consequence SO ID</Column>
+            <Column id="27">Reference Amino Acid</Column>
+            <Column id="28">Mutant Amino Acid</Column>
+            <Column id="29">Amino Acids Added</Column>
+            <Column id="30">Amino Acids Removed</Column>
+            <Column id="31">Protein Consequence Position Start</Column>
+            <Column id="32">Protein Consequence Position End</Column>
+            <Column id="33">Protein Reference Sequence</Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Wildtype Lines
+            </Name>
+            <Category>
+                Wildtype Lines
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>wildtypes_fish</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                    select distinct fish_zdb_id, fish_name, fish_handle, genotype_zdb_id
+                     from genotype,fish
+                     where geno_is_wildtype = 't'
+                      and fish_genotype_zdb_id = geno_Zdb_id
+                ]]>
+            </Query>
+            <Column id="1" unique="true">Fish ID</Column>
+            <Column id="2">Fish Name</Column>
+            <Column id="3">Fish Abbreviation</Column>
+            <Column id="5">Genotype ID</Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                ZFIN Bibliography
+            </Name>
+            <Category>
+                Publications
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>zfinpubs</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                    select zdb_id, accession_no, authors,title,jrnl_name,year(pub_date),pub_volume,pub_pages
+                     from publication, journal
+                     where pub_jrnl_zdb_id = jrnl_zdb_id
+                       and jtype = 'Journal'
+                ]]>
+            </Query>
+            <Column id="1" unique="true">Publication ID</Column>
+            <Column id="2">pubMed ID (none or blank when not available)</Column>
+            <Column id="3">Authors</Column>
+            <Column id="4">Title</Column>
+            <Column id="5">Journal</Column>
+            <Column id="6">Year</Column>
+            <Column id="7">Volume</Column>
+            <Column id="8">Pages</Column>
+        </Download>
+        <Download orderIndex="3">
+            <Name>
+                ZFIN Marker IDs / UniProtKB IDs to ZFIN Pub IDs &amp; PubMed IDs
+            </Name>
+            <Category>
+                Publications
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>uniprot-zfinpub</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1" unique="true">ZFIN Marker ID</Column>
+            <Column id="2">SO ID</Column>
+            <Column id="3">UniProtKB ID</Column>
+            <Column id="4">PubMed ID</Column>
+            <Column id="5">ZFIN Annotation (GO/Phenotype/Expression)</Column>
+        </Download>
+        <Download orderIndex="2">
+            <Name>
+                ZFIN Publication IDs: ZFIN IDs to PubMed IDs
+            </Name>
+            <Category>
+                Publications
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>pub_to_pubmed_id_translation</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                    select zdb_id, accession_no, authors,title,jrnl_name,year(pub_date),pub_volume,pub_pages
+                     from publication, journal
+                     where pub_jrnl_zdb_id = jrnl_zdb_id
+                       and jtype = 'Journal'
+                ]]>
+            </Query>
+            <Column id="1" unique="true">Publication ZFIN ID</Column>
+            <Column id="2">PubMed ID (none or blank when not available)</Column>
+        </Download>
+        <Download orderIndex="4">
+            <Name>
+                Gene-Publication relation
+            </Name>
+            <Category>
+                Publications
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>gene_publication</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1">Gene Symbol</Column>
+            <Column id="2">Gene ID</Column>
+            <Column id="3">Publication ID</Column>
+            <Column id="4">Publication Type</Column>
+            <Column id="5">PubMed ID</Column>
+        </Download>
+        <Download orderIndex="5">
+            <Name>
+                Zebrafish Development Stage Terms
+            </Name>
+            <Category>
+                Anatomical Ontologies
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>staged_anatomy</FileName>
+            <FileExtension>other</FileExtension>
+            <FileFormat>other</FileFormat>
+            <Query>
+                <![CDATA[
+                     select stg_zdb_id, stg_name, term_name, anatdisp_indent
+                     from anatomy_display
+                          join stage on anatdisp_stg_zdb_id = stg_zdb_id
+                          join term on anatdisp_item_zdb_id = term_zdb_id
+                     where term_zdb_id not in ('ZDB-TERM-100331-91', 'ZDB-TERM-100331-1055')
+                     order by stg_hours_start, anatdisp_seq_num;
+                ]]>
+            </Query>
+            <Column id="1" unique="true">Entire Staged Anatomy (tab indented)</Column>
+        </Download>
+        <Download orderIndex="3">
+            <Name>
+                Zebrafish Anatomy Term Relationships
+            </Name>
+            <Category>
+                Anatomical Ontologies
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>anatomy_relationship</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                    select term1.term_ont_id, term2.term_ont_id, termrel_type
+                     from term_relationship, term as term1, term as term2
+                     where term1.term_ontology = 'zebrafish_anatomy'
+                       and term2.term_ontology = 'zebrafish_anatomy'
+                       and term1.term_zdb_id = termrel_term_1_zdb_id
+                       and term2.term_zdb_id = termrel_term_2_zdb_id
+                ]]>
+            </Query>
+            <Column id="1" unique="true">Parent Item ID</Column>
+            <Column id="2" unique="true">Child Item ID</Column>
+            <Column id="3">Relationship Type ID</Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Zebrafish Anatomy Term
+            </Name>
+            <Category>
+                Anatomical Ontologies
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>anatomy_item</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                select term_ont_id, term_name, ts_start_stg_zdb_id, ts_end_stg_zdb_id
+                from term, term_stage
+                where term_zdb_id = ts_term_zdb_id
+                order by term_name
+                ]]>
+            </Query>
+            <Column id="1" unique="true">Anatomy ID</Column>
+            <Column id="2">Anatomy Name</Column>
+            <Column id="3">Start Stage ID</Column>
+            <Column id="4">End Stage ID</Column>
+        </Download>
+        <Download orderIndex="2">
+            <Name>
+                Zebrafish Anatomy Term Synonyms
+            </Name>
+            <Category>
+                Anatomical Ontologies
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>anatomy_synonyms</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                    select term_ont_id, term_name, dalias_alias
+                     from data_alias, term, alias_group
+                     where dalias_data_zdb_id = term_zdb_id
+                       and dalias_data_zdb_id[1,8] = 'ZDB-TERM'
+                       and dalias_alias[1,4] != 'ZFA:'
+                       and dalias_group_id = aliasgrp_pk_id
+                       and term_ontology = 'zebrafish_anatomy'
+                       and aliasgrp_name not in ('plural','secondary id')
+                     order by term_name
+                ]]>
+            </Query>
+            <Column id="1" unique="true">Anatomy OBO ID</Column>
+            <Column id="2">Anatomy Name</Column>
+            <Column id="3">Anatomy Synonym</Column>
+        </Download>
+        <Download orderIndex="4">
+            <Name>
+                Zebrafish Stage Series
+            </Name>
+            <Category>
+                Anatomical Ontologies
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>stage_ontology</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                    select dalias_data_zdb_id, anatitem_name, dalias_alias
+                     from data_alias, anatomy_item, alias_group
+                     where dalias_data_zdb_id = anatitem_zdb_id
+                       and dalias_data_zdb_id[1,8] = 'ZDB-ANAT'
+                       and dalias_alias[1,4] != 'ZFA:'
+                       and dalias_group_id = aliasgrp_pk_id
+                       and aliasgrp_name not in ('plural','secondary id')
+                     order by anatitem_name
+                ]]>
+            </Query>
+            <Column id="1" unique="true">Stage ID</Column>
+            <Column id="2">Stage OBO ID</Column>
+            <Column id="3">Stage Name</Column>
+            <Column id="4">Begin Hours</Column>
+            <Column id="5">End Hours</Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Morpholino
+            </Name>
+            <Category>
+                Knockdown Reagent Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>Morpholinos</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                    select gn.mrkr_zdb_id, gn.mrkr_abbrev, mo.mrkr_zdb_id, mo.mrkr_abbrev,
+                        seq_sequence, mo.mrkr_comments
+                     from marker gn, marker mo, marker_sequence, marker_relationship
+                     where gn.mrkr_zdb_id = mrel_mrkr_2_zdb_id
+                       and mo.mrkr_zdb_id = mrel_mrkr_1_zdb_id
+                       and mrel_mrkr_2_zdb_id[1,9] = "ZDB-GENE-"
+                       and mrel_mrkr_1_zdb_id[1,12] = "ZDB-MRPHLNO-"
+                       and mrel_type = "knockdown reagent targets gene"
+                       and mo.mrkr_zdb_id = seq_mrkr_zdb_id
+                       order by gn.mrkr_abbrev
+                ]]>
+            </Query>
+            <Column id="1" unique="true">Gene ID</Column>
+            <Column id="2">Gene SO ID</Column>
+            <Column id="3">Gene Symbol</Column>
+            <Column id="4">Morpholino ID</Column>
+            <Column id="5">Morpholino SO ID</Column>
+            <Column id="6">Morpholino Symbol</Column>
+            <Column id="7">Morpholino Sequence</Column>
+            <Column id="8">Publication(s)</Column>
+            <Column id="9">Note</Column>
+        </Download>
+        <Download orderIndex="2">
+            <Name>
+                TALEN
+            </Name>
+            <Category>
+                Knockdown Reagent Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>TALEN</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                select gn.mrkr_zdb_id, a.szm_term_ont_id, gn.mrkr_abbrev, talen.mrkr_zdb_id, b.szm_term_ont_id, talen.mrkr_abbrev,
+                   seq_sequence, seq_sequence_2, talen.mrkr_comments
+                from marker gn, marker talen, marker_sequence, marker_relationship, so_zfin_mapping a, so_zfin_mapping b
+                where gn.mrkr_zdb_id = mrel_mrkr_2_zdb_id
+                   and talen.mrkr_zdb_id = mrel_mrkr_1_zdb_id
+                   and a.szm_object_type = gn.mrkr_type
+                   and b.szm_object_type = talen.mrkr_type
+                   and mrel_mrkr_2_zdb_id[1,9] = "ZDB-GENE-" -- note ommits pseudogenes, hope that was deliberate
+                   and mrel_mrkr_1_zdb_id[1,10] = "ZDB-TALEN-"
+                   and mrel_type = "knockdown reagent targets gene"
+                   and talen.mrkr_zdb_id = seq_mrkr_zdb_id
+                order by gn.mrkr_abbrev
+                ]]>
+            </Query>
+            <Column id="1" unique="true">Gene ID</Column>
+            <Column id="2">Gene SO ID</Column>
+            <Column id="3">Gene Symbol</Column>
+            <Column id="4">TALEN ID</Column>
+            <Column id="5">TALEN SO ID</Column>
+            <Column id="6">TALEN Symbol</Column>
+            <Column id="7">TALEN Target Sequence 1</Column>
+            <Column id="7">TALEN Target Sequence 2</Column>
+            <Column id="9">Publication(s)</Column>
+            <Column id="10">Note</Column>
+        </Download>
+        <Download orderIndex="3">
+            <Name>
+                CRISPR
+            </Name>
+            <Category>
+                Knockdown Reagent Data
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>CRISPR</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                select gn.mrkr_zdb_id, a.szm_term_ont_id, gn.mrkr_abbrev, crispr.mrkr_zdb_id, b.szm_term_ont_id, crispr.mrkr_abbrev,
+                   seq_sequence, crispr.mrkr_comments
+                from marker gn, marker crispr, marker_sequence, marker_relationship, so_zfin_mapping a, so_zfin_mapping b
+                where gn.mrkr_zdb_id = mrel_mrkr_2_zdb_id
+                   and crispr.mrkr_zdb_id = mrel_mrkr_1_zdb_id
+                   and a.szm_object_type = gn.mrkr_type
+                   and b.szm_object_type = crispr.mrkr_type
+                   and mrel_mrkr_2_zdb_id[1,9] = "ZDB-GENE-" -- note ommits pseudogenes, hope that was deliberate
+                   and mrel_mrkr_1_zdb_id[1,11] = "ZDB-CRISPR-"
+                   and mrel_type = "knockdown reagent targets gene"
+                   and crispr.mrkr_zdb_id = seq_mrkr_zdb_id
+                order by gn.mrkr_abbrev
+                ]]>
+            </Query>
+            <Column id="1" unique="true">Gene ID</Column>
+            <Column id="2">Gene SO ID</Column>
+            <Column id="3">Gene Symbol</Column>
+            <Column id="4">CRISPR ID</Column>
+            <Column id="5">CRISPR SO ID</Column>
+            <Column id="6">CRISPR Symbol</Column>
+            <Column id="7">CRISPR Target Sequence</Column>
+            <Column id="8">Publication(s)</Column>
+            <Column id="9">Note</Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Image-Figure translations
+            </Name>
+            <Category>
+                Image Data
+            </Category>
+            <Description>
+                <![CDATA[
+                    <b>Note</b>: <it>Images are not provided due to copyright restrictions</it>
+                ]]>
+            </Description>
+            <WikiLink></WikiLink>
+            <FileName>ImageFigures</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                    select img_zdb_id, img_fig_zdb_id, img_preparation
+                     from image
+                     where img_fig_zdb_id is not null
+                     order by img_zdb_id
+                ]]>
+            </Query>
+            <Column id="1" unique="true">Image ID</Column>
+            <Column id="2">Figure ID</Column>
+            <Column id="3">Image Preparation</Column>
+        </Download>
+        <Download private="true" orderIndex="1">
+            <Name>
+                Sanger Alleles used in non Sanger pubs
+            </Name>
+            <Category>
+                Unofficial Download Files
+            </Category>
+            <Description>FB Case 8490</Description>
+            <WikiLink></WikiLink>
+            <FileName>saAlleles</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                select distinct recattrib_source_zdb_id, accession_no, pub_mini_ref ||' '||jrnl_name ||' '|| ' ' || pub_volume ||' '|| pub_pages, feature_abbrev
+                from feature, record_attribution, publication, journal
+                where recattrib_data_zdb_id=feature_zdb_id
+                and feature_abbrev like 'sa%'
+                and zdb_id=recattrib_source_zdb_id
+                and jtype='Journal'
+                and pub_jrnl_zdb_id=jrnl_zdb_id
+                order by feature_abbrev
+                ]]>
+            </Query>
+            <Column id="1" unique="true">Publication ZDB ID</Column>
+            <Column id="2">PubMed ID</Column>
+            <Column id="3">Pub Mini Ref</Column>
+            <Column id="4">Genomic Feature Abbrev</Column>
+        </Download>
+
+        <Download private="true" orderIndex="3">
+            <Name>
+                fh Alleles used in publications
+            </Name>
+            <Category>
+                Unofficial Download Files
+            </Category>
+            <Description>FB Case 9235</Description>
+            <WikiLink></WikiLink>
+            <FileName>fhAlleles</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                select distinct recattrib_source_zdb_id, accession_no, pub_mini_ref ||' '||jrnl_name ||' '|| ' ' || pub_volume ||' '|| pub_pages, feature_abbrev
+                from feature, record_attribution, publication, journal
+                where recattrib_data_zdb_id=feature_zdb_id
+                and feature_abbrev like 'fh%'
+                and zdb_id=recattrib_source_zdb_id
+                and jtype='Journal'
+                and pub_jrnl_zdb_id=jrnl_zdb_id
+                order by feature_abbrev
+                ]]>
+            </Query>
+            <Column id="1" unique="true">Publication ZDB ID</Column>
+            <Column id="2">PubMed ID</Column>
+            <Column id="3">Pub Mini Ref</Column>
+            <Column id="4">Genomic Feature Abbrev</Column>
+        </Download>
+
+        <Download private="true" orderIndex="4">
+            <Name>
+                hu Alleles used in publications
+            </Name>
+            <Category>
+                Unofficial Download Files
+            </Category>
+            <Description>FB Case 13856</Description>
+            <WikiLink></WikiLink>
+            <FileName>huAlleles</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                select distinct recattrib_source_zdb_id, accession_no, pub_mini_ref ||' '||jrnl_name ||' '|| ' ' || pub_volume ||' '|| pub_pages, feature_abbrev
+                from feature, record_attribution, publication, journal
+                where recattrib_data_zdb_id=feature_zdb_id
+                and feature_abbrev like 'hu%'
+                and zdb_id=recattrib_source_zdb_id
+                and jtype='Journal'
+                and pub_jrnl_zdb_id=jrnl_zdb_id
+                order by feature_abbrev;
+                ]]>
+            </Query>
+            <Column id="1">Publication ZDB ID</Column>
+            <Column id="2">PubMed ID</Column>
+            <Column id="3">Pub Mini Ref</Column>
+            <Column id="4">Genomic Feature Abbrev</Column>
+        </Download>
+
+        <Download private="true" orderIndex="10">
+            <Name>
+                Vega Transcript
+            </Name>
+            <Category>
+                Unofficial Download Files
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>vega_transcript</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                    select distinct mrkr_zdb_id, mrkr_abbrev,dblink_acc_num
+                     from marker, db_link, marker_relationship
+                     where mrel_type = 'gene produces transcript'
+                       and dblink_acc_num[1,8] = 'OTTDART0'
+                       and mrel_mrkr_2_zdb_id ==dblink_linked_recid
+                       and mrel_mrkr_1_zdb_id = mrkr_zdb_id
+                       and not (
+                        dblink_linked_recid[1,12] = 'ZDB-TSCRIPT-'
+                        and dblink_fdbcont_zdb_id = "ZDB-FDBCONT-040412-37"
+                       ) order by 1
+                ]]>
+            </Query>
+            <Column id="1" unique="true">Transcript ID</Column>
+            <Column id="2">Transcript SO ID</Column>
+            <Column id="3">Transcript Symbol</Column>
+            <Column id="4">GenBank Accession Number</Column>
+        </Download>
+        <Download private="true" orderIndex="2">
+            <Name>
+                PFAM
+            </Name>
+            <Category>
+                Unofficial Download Files
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>pfam</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                    select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num
+                     from marker, db_link, foreign_db_contains, foreign_db
+                     where mrkr_zdb_id = dblink_linked_recid
+                      and fdbcont_fdb_db_id = fdb_db_pk_id
+                      and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                      and fdb_db_name = 'Pfam'
+                    order by 1
+                ]]>
+            </Query>
+            <Column id="1" unique="true">Gene ID</Column>
+            <Column id="2">Gene SO ID</Column>
+            <Column id="3">Gene Symbol</Column>
+            <Column id="4">Pfam Accession Number</Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Human Disease/Models
+            </Name>
+            <Category>
+                Human Disease
+            </Category>
+            <FileName>fish_model_disease</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+                  SELECT
+                    genox_fish_zdb_id,
+                    genox_exp_zdb_id,
+                    CASE
+                    WHEN genox_fish_zdb_id IS NOT NULL
+                      THEN 'is_a_model'
+                    ELSE ''
+                    END,
+                    term_ont_id,
+                    term_name,
+                    dat_source_zdb_id,
+                    accession_no,
+                    CASE dat_evidence_term_zdb_id
+                    WHEN 'ZDB-TERM-170419-151'
+                      THEN 'IC, ECO:ECO:0000305'
+                    WHEN 'ZDB-TERM-170419-33'
+                      THEN 'TAS, ECO:ECO:0000304'
+                    ELSE dat_evidence_term_zdb_id
+                    END
+                  FROM disease_annotation
+                    INNER JOIN term ON dat_term_zdb_id = term.term_zdb_id
+                    INNER JOIN publication ON dat_source_zdb_id = zdb_id
+                    LEFT OUTER JOIN disease_annotation_model ON damo_dat_zdb_id = dat_zdb_id
+                    LEFT OUTER JOIN fish_experiment ON genox_zdb_id = damo_genox_zdb_id;
+                ]]>
+            </Query>
+            <Column id="1">Fish ZDB ID</Column>
+            <Column id="2">Environment ZDB ID</Column>
+            <Column id="3">is_a_model</Column>
+            <Column id="4">DO Term ID</Column>
+            <Column id="5">DO Term Name</Column>
+            <Column id="6">Publication ZDB ID</Column>
+            <Column id="7">PubMed ID</Column>
+            <Column id="8">Evidence Code</Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Gene to Disease via Orthology
+            </Name>
+            <Category>
+                Human Disease
+            </Category>
+            <FileName>gene2DiseaseViaOrthology</FileName>
+            <FileExtension>txt</FileExtension>
+            <FileFormat>tsv</FileFormat>
+            <Query>
+                <![CDATA[
+select ortho_zebrafish_gene_zdb_id, mrkr_abbrev, ortho_other_species_ncbi_gene_id, ortho_other_species_symbol, term_name, term_ont_id, omimp_name, omimp_omim_id
+  from ortholog, marker, omim_phenotype, omimp_termxref_mapping, term_xref, term,'ECO:0000266','ZDB-PUB-170210-12'
+ where ortho_other_species_taxid = 9606
+   and ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
+   and omimp_ortho_zdb_id = ortho_zdb_id
+   and otm_omimp_id = omimp_pk_id
+   and tx_pk_id = otm_tx_id
+   and term_zdb_id = tx_term_zdb_id
+union
+select ortho_zebrafish_gene_zdb_id, mrkr_abbrev, ortho_other_species_ncbi_gene_id, ortho_other_species_symbol, '', '', omimp_name, omimp_omim_id,'ECO:0000266','ZDB-PUB-170210-12'
+  from ortholog, marker, omim_phenotype
+ where ortho_other_species_taxid = 9606
+   and ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
+   and omimp_ortho_zdb_id = ortho_zdb_id
+   and not exists(select 'x' from omimp_termxref_mapping, term_xref, term
+                   where otm_omimp_id = omimp_pk_id
+                     and tx_pk_id = otm_tx_id
+                     and term_zdb_id = tx_term_zdb_id)
+union
+select ortho_zebrafish_gene_zdb_id, mrkr_abbrev, ortho_other_species_ncbi_gene_id, ortho_other_species_symbol, '', '', omimp_name, '','ECO:0000266','ZDB-PUB-170210-12'
+  from ortholog, marker, omim_phenotype
+ where ortho_other_species_taxid = 9606
+   and ortho_zebrafish_gene_zdb_id = mrkr_zdb_id
+   and omimp_ortho_zdb_id = ortho_zdb_id
+   and omimp_omim_id is null
+order by 2, 4, 5, 7;
+                ]]>
+            </Query>
+            <Column id="1" unique="true">Zebrafish Gene ID</Column>
+            <Column id="2">Zebrafish Gene Symbol</Column>
+            <Column id="3">Human Ortholog Entrez Gene Id</Column>
+            <Column id="4">Human Ortholog Symbol</Column>
+            <Column id="5">DO Term Name</Column>
+            <Column id="6">DO Term ID</Column>
+            <Column id="7">OMIM Term Name</Column>
+            <Column id="8">OMIM ID</Column>
+            <Column id="9">Evidence Code</Column>
+            <Column id="10">Publication</Column>
+        </Download>    
+    </DownloadDefinitions>
+    <DownloadCategories>
+        <Category orderIndex="10">
+            <name>Orthology Data</name>
+        </Category>
+        <Category orderIndex="20">
+            <name>Publications</name>
+        </Category>
+        <Category orderIndex="30">
+            <name>Genetic Markers</name>
+        </Category>
+        <Category orderIndex="40">
+            <name>Previous Names</name>
+        </Category>
+        <Category orderIndex="50">
+            <name>Sequence Data</name>
+        </Category>
+        <Category orderIndex="60">
+            <name>Genomic Feature Data</name>
+        </Category>
+        <Category orderIndex="70">
+            <name>Fish Data</name>
+        </Category>
+        <Category orderIndex="80">
+            <name>Phenotype Data</name>
+        </Category>
+        <Category orderIndex="90">
+            <name>Knockdown Reagent Data</name>
+        </Category>
+        <Category orderIndex="100">
+            <name>Gene Expression</name>
+        </Category>
+        <Category orderIndex="110">
+            <name>Anatomical Ontologies</name>
+        </Category>
+        <Category orderIndex="120">
+            <name>Antibody Data</name>
+        </Category>
+        <Category orderIndex="130">
+            <name>Wildtype Lines</name>
+        </Category>
+        <Category orderIndex="140">
+            <name>Genetic Marker Relationships</name>
+        </Category>
+        <Category orderIndex="150">
+            <name>Sequence Coordinates</name>
+        </Category>
+        <Category orderIndex="160">
+            <name>Mapping Data</name>
+        </Category>
+        <Category orderIndex="170">
+            <name>Image Data</name>
+        </Category>
+        <Category orderIndex="180">
+            <name>Human Disease</name>
+        </Category>
+        <Category orderIndex="1000">
+            <name>Unofficial Download Files</name>
+        </Category>
+    </DownloadCategories>
+</ns2:downloadFileRegistry>
+
+

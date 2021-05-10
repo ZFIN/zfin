@@ -1,0 +1,248 @@
+@import "theme";
+
+body.home {
+    background: $grey-light !important;
+
+    header {
+        box-shadow: none;
+
+        & .search {
+            display: none;
+        }
+    }
+}
+
+.search-container {
+    box-shadow: $shadow-elevated;
+    margin-bottom: 60px;
+    margin-top: -10px;
+    background: url(/images/search-background.png) 50% 90%;
+    background-size: cover;
+    padding: 90px 0;
+    position: relative;
+
+    label {
+        font-size: 18px;
+        font-weight: 400;
+        color: white;
+    }
+
+    .citation {
+        position: absolute;
+        right: 3px;
+        bottom: 3px;
+        color: rgba(255, 255, 255, 0.6);
+
+        &:hover,
+        &:active {
+            color: rgba(255, 255, 255, 0.6);
+        }
+    }
+}
+
+.search-inner {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+.section,
+.jq-modal {
+    box-shadow: $shadow;
+    margin-bottom: 4rem;
+    background: white;
+    border-radius: $border-radius;
+    padding: 1rem;
+
+    &.no-border {
+        box-shadow: none;
+        padding: 0;
+        border-radius: 0;
+    }
+
+    &.primary-link {
+        padding: 10px 35px 15px 15px;
+        margin-bottom: 2rem;
+        position: relative;
+        color: $grey;
+        transition: transform 200ms, box-shadow 200ms;
+        text-decoration: none;
+        display: block;
+
+        &::after {
+            content: '\f054';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 30px;
+            color: $primary;
+        }
+
+        &:hover, &:active {
+            color: $grey;
+            text-decoration: none;
+        }
+
+        &:hover {
+            box-shadow: $shadow-elevated;
+            transform: translateY(-3px);
+        }
+
+        .title {
+            font-size: 18.5px;
+            color: $primary;
+            margin-bottom: 5px;
+        }
+
+        @media (min-width: $break-md) {
+            height: 105px;
+        }
+
+        @media (min-width: $break-lg) {
+            height: 125px;
+        }
+    }
+
+    // TODO: replace references to popup-header with heading??
+    .heading,
+    .popup-header {
+        font-size: 22px;
+        color: $primary;
+        border-bottom: 2px solid $primary;
+        margin-bottom: 10px;
+        padding-bottom: 2px;
+    }
+
+    // subsections
+    & .section {
+        box-shadow: none;
+        margin-bottom: 3rem;
+        border-radius: 0;
+        padding: 0;
+
+        &:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .heading {
+            font-size: 18.5px;
+            border: none;
+            color: $grey-dark;
+            padding: 0;
+            margin-bottom: 0.5rem;
+        }
+    }
+}
+
+.carousel-section {
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+
+    @media (min-width: $break-lg) {
+        height: 745px;
+    }
+}
+
+.wiki-list-controls {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+}
+
+.carousel-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
+    .carousel-inner {
+        flex-grow: 1;
+    }
+
+    .carousel-controls {
+        padding: 15px;
+        text-align: center;
+
+        a {
+            color: #7f7f7f;
+        }
+    }
+
+    .carousel-indicators {
+        position: static;
+        display: inline-block;
+        margin: 0 30px;
+        width: auto;
+        vertical-align: middle;
+
+        li {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            margin: 1px;
+            text-indent: -999px;
+            cursor: pointer;
+            background-color: rgba(0, 0, 0, 0);
+            border: 1px solid #7f7f7f;
+            border-radius: 10px;
+            box-sizing: border-box;
+            background-clip: border-box;
+
+            &.active {
+                width: 12px;
+                height: 12px;
+                margin: 0;
+                background-color: #7f7f7f;
+            }
+        }
+    }
+
+    .carousel-item {
+        position: absolute !important;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        background-size: contain;
+        background-position: center;
+        background-color: white;
+        background-repeat: no-repeat;
+    }
+
+    .carousel-caption {
+        left: 0;
+        right: 0;
+        border: 0;
+        bottom: 0;
+        padding: 5px;
+        text-align: left;
+        background: rgba(0, 0, 0, 0.5);
+    }
+
+    .carousel-figure-caption {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+
+        * {
+            display: inline;
+            margin: 0;
+            padding: 0;
+            font-size: inherit;
+        }
+    }
+}
+
+.input-overlay-button {
+    border: 0;
+    background: none;
+    color: #999999;
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    line-height: 1;
+}

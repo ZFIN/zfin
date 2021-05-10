@@ -1,0 +1,37 @@
+
+Run on request by hand in any instance (for testing) 
+but _from_ <production> as yourself. (hence production)
+
+gmake run
+
+does:
+
+./generate_UniProt_Nomenclature_run.sh
+	
+will fetch accessions for longest protein associated
+with genes without orthologs or informative nomenclature
+from the database in your current enviroment
+
+fetch sequences for those accessions from the blast databases
+
+blast the fasta file against Human, Mouse and zebrafish Uniprot
+
+parse the blast output into more convineiant objects and
+write the result out as a  UniProt_{timestamp}.ctx file
+
+which may be (manualy) coppied into the ReNo directory 
+on any instance as 
+
+	'run.ctx' 
+
+where you would issue a 'gmake run' command 
+to populate ReNo with this run in which ever instance 
+the .ctx file was coppied to.
+
+recomend loading into at least one test db before production
+
+there are listing and deleting sql scripts in common/bin 
+to help maintain the set of runs, since there can be alot of hits 
+to copy around uselessly after the run is finished it is good to  
+activly push the curators about deleting old runs.
+   

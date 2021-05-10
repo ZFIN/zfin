@@ -1,0 +1,131 @@
+
+#------------------------------------------------------------------------
+#
+# Include file to be included at the end of Makefiles that DO NOT have app
+# pages and that can use the default set of rules defined in this include file.
+#
+# See make.default.apg.rules for the include file to use with standard
+# makefiles that DO work with app pages.
+#
+# Note that not every makefile can include one of the defualt rule files.
+# If there is anything non-standard about any of the rules in a makefile
+# that cannot be dealt with using the ENDEMICTARGETS mechanism,
+# then that makefile should not include either of the rules.
+#
+# This include file expects to have the calling makefile define these
+# variables.
+#
+#  TOP        This must be defined.  This file also expects $(TOP)/make.include
+#             to already have been included.
+#  TARGETDIR  This MUST be defined.
+#  SUBDIRS    This can be defined, undefined, or defined and empty.
+#  GENERICS   This can be defined, undefined, or defined and empty.
+#  STATICS    This can be defined, undefined, or defined and empty.
+#  ENDEMICTARGETS_PRE
+#  ENDEMICTARGETS_POSTTARGETDIR
+#  ENDEMICTARGETS_POSTTARGETS
+#  ENDEMICTARGETS_POST
+#  ENDEMICTARGETS_CLEAN
+#             These 5 can be defined, undefined, or defined and empty.
+# For the last 8, undefined, and defined and empty produce the same results.
+#
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# !! See $(TOP)/Makfile and $(TOP)/make.include for a full explanation !!
+# !! of the makefile hierarchy this makefile is a part of, and of the  !!
+# !! format and conventions used in this makefile.                     !!
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#
+#
+
+
+# ---------------  Variable Definitions  --------------------------------
+
+
+SPECIFICTARGETS = $(foreach SPEC, $(GENERICS), $(TARGETDIR)/$(SPEC))
+STATICTARGETS = $(foreach STAT, $(STATICS), $(TARGETDIR)/$(STAT))
+
+TARGETS = $(SPECIFICTARGETS) $(STATICTARGETS)
+
+WARDEPLOYDIR = $(DEPLOY)
+
+# ---------------  Production Rules  ------------------------------------
+
+.PHONY : all sanitycheck clean clobber $(SUBDIRS)
+
+
+all : $(ENDEMICTARGETS_PRE) $(TARGETDIR) $(ENDEMICTARGETS_POSTTARGETDIR) \
+      $(TARGETS) $(ENDEMICTARGETS_POSTTARGETS) \
+      $(SUBDIRS) $(ENDEMICTARGETS_POST) \
+      $(WARDEPLOYDIR)
+
+$(TARGETDIR) :
+	$(TARGET_MKDIR) $(TARGETDIR);
+
+$(WARDEPLOYDIR) :
+	$(TARGET_MKDIR) $(WARDEPLOYDIR)
+
+$(SPECIFICTARGETS) : $(TARGETDIR)/% : % $(TRANSLATETABLE)
+	$(MAKESPECIFIC) $< $(TRANSLATETABLE) $@
+
+$(STATICTARGETS) : $(TARGETDIR)/% : %
+	$(TARGET_CP) $^ $@
+#	$(TOUCH) $@         #     checking if rsync avoids this
+
+$(SUBDIRS) :
+	$(MAKE) -C $@
+
+# ---------------  Maintenance Rules  -----------------------------------
+
+clean :				# Clean out local intermediate files
+  ifdef ENDEMICTARGETS_CLEAN
+	rm -rf $(ENDEMICTARGETS_CLEAN)
+  endif
+	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
+
+clobber :			# Remove targets, but not target dir.
+  ifneq ($(strip $(ENDEMICTARGETS_POST)),)
+	rm -rf $(ENDEMICTARGETS_POST)
+  endif
+	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
+  ifneq ($(strip $(ENDEMICTARGETS_POSTTARGETS) $(TARGETS) $(ENDEMICTARGETS_POSTTARGETDIR) $(ENDEMICTARGETS_PRE)),)
+	rm -rf $(ENDEMICTARGETS_POSTTARGETS) $(TARGETS) $(ENDEMICTARGETS_POSTTARGETDIR) $(ENDEMICTARGETS_PRE)
+  endif
+
+sanitycheck :
+	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
+
+
+# define one time only target for special uses
+
+onetimeonly :
+	$(ONETIMEONLY)
+	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
+
+
+#-----------------  Auto Documentation  --------------------------------
+# Tom Conlin
+DOT  = /local/apps/Graphics/graphviz-2.28.0/bin/dot
+
+# last in list
+#SELF = $(word $(words $(MAKEFILE_LIST)) ,$(MAKEFILE_LIST))
+# first in list -> makfile invoked
+SELF = $(word 1 ,$(MAKEFILE_LIST))
+
+$(SELF).partial_order: $(SELF)
+	@gawk '{while(sub(/\\$$/,"\t",$$0)){getline t;$$0=sprintf("%s\t%s",$$0,t)}print $$0}' $(SELF)| \
+	gawk '/^[^ \09#]*:[ \09]/{for(n=2;n<=NF;n++){print $$n,$$1}}' > $@
+
+$(SELF).dot:  $(TOP)/commons/bin/potodot.awk $(SELF).partial_order
+	$(TOP)/commons/bin/potodot.awk -v pwd=`pwd` $(SELF).partial_order > $@
+
+$(SELF).png: $(SELF).dot
+	@$(DOT) -Tpng $< -o $@	
+
+introspect:	$(SELF).png
+	@topo-sort.r $(SELF).partial_order
+	@echo "\tUtility targets  (PHONYs?)"
+	@echo "--------------------------------------------"
+	@grep '^[^ \09]*:[ \09]*$$' $(SELF)
+
+clean_introspect:
+	rm -f $(SELF).partial_order $(SELF).dot $(SELF).png

@@ -1,0 +1,253 @@
+RewriteEngine On
+
+RewriteMap viewmap txt:<!--|TARGETROOT|-->/server_apps/apache/view-page-url-map.txt
+
+#ZDB-[TYPE]-000000-0 ids, with optional ZFIN: prefix
+RewriteRule ^/(?:ZFIN\:)?ZDB-([A-Za-z_]+)-([0-9]+)-([0-9]+)$ ${viewmap:$1}-$2-$3
+
+#ZDB-[TYPE]-000000-0 ids, with optional ZFIN: prefix with additional /url fragment appended
+RewriteRule ^/(?:ZFIN\:)?ZDB-([A-Za-z_]+)-([0-9]+)-([0-9]+)/([-A-Za-z]+)$ ${viewmap:$1}-$2-$3/$4
+
+#ZDB-[TYPE]-000000-0 ids, with optional ZFIN: prefix with 2 additional /url fragments appended
+RewriteRule ^/(?:ZFIN\:)?ZDB-([A-Za-z_]+)-([0-9]+)-([0-9]+)/([-A-Za-z]+)/([-A-Za-z]+)$ ${viewmap:$1}-$2-$3/$4/$5
+
+#[TYPE]:000000 ids
+RewriteRule ^/([A-Za-z]+):([0-9]+)$ ${viewmap:$1}:$2
+
+RewriteRule ^/ZDB-([A-Za-z_]+)-([0-9]+)-([0-9]+),(.*)$ /action/fish/fish-detail/ZDB-$1-$2-$3,$4
+
+#zirc "order this" redirects, I'm not sure if there are CDNAs or just ESTs...
+RedirectMatch /zirc-order/ZDB-EST-(.*) http://zebrafish.org/zirc/est/estAll.php?OID=ZDB-EST-$1
+RedirectMatch /zirc-order/ZDB-CDNA-(.*) http://zebrafish.org/zirc/est/estAll.php?OID=ZDB-CDNA-$1
+RedirectMatch /zirc-order/ZDB-GENO-(.*) http://zebrafish.org/zirc/fish/lineAll.php?OID=ZDB-GENO-$1
+
+#rss feed redirects
+Redirect  /zf_info/news/jobs.rss https://wiki.zfin.org/spaces/createrssfeed.action?types=blogpost&spaces=jobs&title=Zebrafish+Jobs&publicFeed=true&maxResults=-1&sort=created&timeSpan=120
+Redirect /zf_info/news/mtgs.rss https://wiki.zfin.org/spaces/createrssfeed.action?types=blogpost&spaces=meetings&title=Zebrafish+Meetings&publicFeed=true&maxResults=-1&sort=created&timeSpan=-1
+Redirect /zf_info/news/siteNews.rss https://wiki.zfin.org/spaces/createrssfeed.action?types=blogpost&spaces=news&title=Zebrafish+News&publicFeed=true&maxResults=-1&sort=created&timeSpan=120
+
+#version independent gbrowse link
+RewriteRule ^/genome-browser    /<!--|GBROWSE_PATH_FROM_ROOT|-->  [NC,R=301]
+RewriteRule ^/cgi-perl/gbrowse  /<!--|GBROWSE_PATH_FROM_ROOT|-->  [NC,R=301]
+
+#Require https on some pages
+RewriteCond %{HTTPS} =off
+  # Enumerate all urls that require https here, [OR]
+  # goes at the end of all but the last one
+RewriteCond %{REQUEST_URI} ^/action/people/edit-user$ [OR]
+#RewriteCond %{REQUEST_URI} ^/build [OR]
+RewriteCond %{REQUEST_URI} ^/solr [OR]
+RewriteCond %{REQUEST_URI} ^/action/login-redirect$
+RewriteRule ^(.*)$ https://%{SERVER_NAME}/$1 [R=301,L]
+
+#Redirect ftp.zfin.org to zfin.org
+RewriteCond %{HTTP_HOST} ^ftp\.(.*) [NC]
+RewriteRule ^(.*) https://%1/$1 [R=301,L]
+
+#Remove extra stuff for home page url
+RewriteRule ^/$ /action/ [PT]
+
+#RewriteRule ^/$ /action/quicksearch/prototype [PT]
+
+
+#lab designation page
+RewriteRule ^/zf_info/zfbook/lab_desig.html /action/feature/line-designations [NC,R=301]
+
+#wild-type lines
+RewriteCond %{QUERY_STRING}     ^MIval=aa-wtlist.apg$    [NC]
+RewriteRule ^/cgi-bin/webdriver/action/feature/wildtype-list [NC,R=301]
+
+# retired apg urls
+RewriteCond %{QUERY_STRING}     ^Mival=aa-ZDB_home.apg$    [NC]
+RewriteRule ^.*$ /? [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^Mival=aa-markerview.apg&OID=([\w-]+)$    [NC]
+RewriteRule ^/cgi-bin/webdriver/%1? [NC,R=301]
+
+RewriteCond %{QUERY_STRING}    ^MIval=aa-newmrkrselect.apg
+RewriteRule ^/cgi-bin/webdriver/action/marker/search? [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^Mival=aa-genotypeview.apg&OID=([\w-]+)$    [NC]
+RewriteRule ^/cgi-bin/webdriver/action/genotype/genotype-detail?zdbID=%1 [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^Mival=aa-showpubs.apg&OID=([A-Z0-9-]+)    [NC]
+RewriteRule ^/cgi-bin/webdriver/action/marker/citation-list/%1? [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^genotype.zdbID=([\w-]+)$    [NC]
+RewriteRule ^/action/genotype/detail$ /%1? [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^anatomyItem.zdbID=([\w-:]+)$    [NC]
+RewriteRule ^/action/anatomy/term-detail /%1? [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^Mival=aa-anatomy_item.apg&OID=([\w-]+)$    [NC]
+RewriteRule ^/cgi-bin/webdriver/action/anatomy/anatomy-view/%1? [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^Mival=aa-mappingdetail.apg&OID=([\w-]+)$    [NC]
+RewriteRule ^/cgi-bin/webdriver/action/mapping/detail/%1? [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^Mival=aa-orthoviewdetailed.apg&OID=([\w-]+)&(.*)$    [NC]
+RewriteRule ^/cgi-bin/webdriver/%1#orthology? [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^Mival=aa-ortholist.apg&pubID=([\w-]+)$    [NC]
+RewriteRule ^/cgi-bin/webdriver/action/publication/%1/orthology-list? [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^Mival=aa-fxfigureview.apg&OID=([\w-]+)$    [NC]
+RewriteRule ^/cgi-bin/webdriver/%1? [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^Mival=aa-fxallfigures.apg&OID=([\w-]+)$    [NC]
+RewriteRule ^/cgi-bin/webdriver/action/figure/all-figure-view/%1? [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^Mival=aa-persview.apg&OID=([\w-]+)$    [NC]
+RewriteRule ^/cgi-bin/webdriver/%1? [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^Mival=aa-labview.apg&OID=([\w-]+)$    [NC]
+RewriteRule ^/cgi-bin/webdriver/%1? [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^Mival=aa-companyview.apg&OID=([\w-]+)$    [NC]
+RewriteRule ^/cgi-bin/webdriver/%1? [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^Mival=aa-sourceview.apg&OID=([\w-]+)$    [NC]
+RewriteRule ^/cgi-bin/webdriver/%1? [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^Mival=aa-pubview2.apg&OID=([\w-]+)$    [NC]
+RewriteRule ^/cgi-bin/webdriver/%1? [NC,R=301]
+
+# Should be removed or rewritten when xpatselect.apg is converted to java
+RewriteCond %{QUERY_STRING}     ^MIval=aa-xpatview.apg&OID=([\w-]+)$    [NC]
+RewriteRule ^/cgi-bin/webdriver/?MIval=aa-xpatselect.apg&xpatsel_geneZdbId=%1&query_results=true [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^MIval=aa-xpatselect.apg    [NC]
+RewriteRule ^/cgi-bin/webdriver/action/expression/xpatselect [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^Mival=aa-pheno_summary.apg&OID=([\w-]+)$    [NC]
+RewriteRule ^/cgi-bin/webdriver/action/marker/%1/phenotype-summary? [NC,R=301]
+
+RewriteCond %{QUERY_STRING} ^anatomyItem.zdbID=([\w-]+)&wildtype=([\w]+)$ [NC]
+RewriteRule ^/action/anatomy/show-all-morpholino-experiments /action/anatomy/show-all-sequence-targeting-reagents/%1/%2? [NC,R=301]
+
+RewriteCond %{QUERY_STRING} ^termID=([\w-:]+)$ [NC]
+RewriteRule ^/action/ontology/term-detail$ /action/ontology/term-detail/%1? [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^antibody.zdbID=([\w-]+)$    [NC]
+RewriteRule ^/action/antibody/detail /%1? [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^zdbID=([\w-]+)$    [NC]
+RewriteRule ^/action/marker/transcript-view /%1? [NC,R=301]
+
+RewriteCond %{QUERY_STRING}    ^anatomyItem.zdbID=([\w-]+)$    [NC]
+RewriteRule ^/action/anatomy/term-detail /action/anatomy/anatomy-view/%1? [NC,R=301]
+
+RewriteCond %{QUERY_STRING}    ^termID=([\w-:]+)$    [NC]
+RewriteRule ^/action/ontology/term-detail/ /%1? [NC,R=301]
+
+RewriteCond %{QUERY_STRING}    ^zdbID=([\w-:]+)$    [NC]
+RewriteRule ^/action/genotype/genotype-detail$ /%1? [NC,R=301]
+
+
+RewriteCond %{QUERY_STRING}    ^zdbID=([\w-:]+)$    [NC]
+RewriteRule ^/action/feature/feature-detail /%1? [NC,R=301]
+
+RewriteCond %{QUERY_STRING}    ^query=(.*)$ [NC]
+RewriteRule ^/action/quicksearch/query  /search?q=%1   [NC,R=301]
+
+RewriteRule /action/anatomy/anatomy-search    /action/ontology/ontology-search [NC,R=301]
+
+RewriteRule ^/action/anatomy/anatomy-view/(.+) /action/ontology/term-detail/$1 [NC]
+RewriteRule ^/action/marker/marker-go-view/(.+) /$1#gene-ontology [NE,R]
+
+RewriteCond %{QUERY_STRING}    ^MIval=aa-anatdict.apg
+RewriteRule ^/cgi-bin/webdriver/action/ontology/search? [NC,R=301]
+
+RewriteCond %{QUERY_STRING}    ^MIval=aa-refcrosslist.apg
+RewriteRule ^/cgi-bin/webdriver/action/mapping/all-panels? [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^Mival=aa-crossview.apg&OID=([\w-]+)$    [NC]
+RewriteRule ^/cgi-bin/webdriver/action/mapping/panel-detail/%1? [NC,R=301]
+
+RewriteCond %{QUERY_STRING}    MIval=aa-fishselect.apg
+RewriteRule ^.*$ /action/fish/search [NC,R=301]
+
+RewriteCond %{QUERY_STRING}    MIval=aa-quickfindpers.apg
+RewriteRule ^.*$ /action/profile/person/search? [NC,R=301]
+
+#RewriteRule /action/anatomy/search    /action/ontology/ontology-search [NC,R=301]
+
+#We have these strange ZFIN_jump search page links to support...
+
+RewriteCond %{QUERY_STRING}     ^record=JUMPTOGENE$    [NC]
+RewriteRule ^/cgi-bin/ZFIN_jump /action/marker/search [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^record=JUMPTOLAB$    [NC]
+RewriteRule ^/cgi-bin/ZFIN_jump /action/profile/lab/search [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^record=JUMPTOPERSON$    [NC]
+RewriteRule ^/cgi-bin/ZFIN_jump /cgi-bin/webdriver?MIval=aa-quickfindpers.apg [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^record=JUMPTOPUB$    [NC]
+RewriteRule ^/cgi-bin/ZFIN_jump /action/publication/search [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^record=JUMPTOREFCROSS$    [NC]
+RewriteRule ^/cgi-bin/ZFIN_jump /action/mapping/all-panels [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^record=JUMPTOEST$    [NC]
+RewriteRule ^/cgi-bin/ZFIN_jump /action/marker/search [NC,R=301]
+
+RewriteCond %{QUERY_STRING}     ^record=JUMPTOXPAT$    [NC]
+RewriteRule ^/cgi-bin/ZFIN_jump /cgi-bin/webdriver?MIval=aa-xpatselect.apg [NC,R=301]
+
+RewriteRule ^/action/ontology/ontology-search /action/ontology/search [NC,R=301]
+
+RewriteRule ^/action/antibody/antibody-search /action/antibody/search [NC,R=301]
+
+# normal ZFIN_jump requests
+RewriteCond %{QUERY_STRING}     ^record=([\w-0-9:]+)$    [NC]
+RewriteRule ^/cgi-bin/ZFIN_jump /%1? [NC,R=301]
+
+# catch the jump-to.apg as well!
+RewriteCond %{QUERY_STRING}     ^Mival=aa-jump_to.apg&record=([\w-]+)$    [NC]
+RewriteRule ^/cgi-bin/webdriver/%1? [NC,R=301]
+
+RewriteRule ^/search(.*)  /action/quicksearch/prototype$1
+RewriteRule ^/prototype(.*)  /action/quicksearch/prototype$1
+
+RewriteRule ^/action/marker/view/([\w-]+)$ /$1 [NC,R=301]
+
+#download page
+# redirect to fix trailing slash problem
+RewriteRule ^/downloads/$ /downloads [NC,R=301]
+# archive pages
+RewriteRule ^/downloads/archive/(.+)/file/(.+) /action/unload/downloads/archive/$1/file/$2 [NC]
+RewriteRule ^/downloads/archive/(.+)/(.+) /data-transfer/$1/$2 [NC,L]
+RewriteRule ^/downloads/archive/(.+) /action/unload/downloads/archive/$1 [NC,L,PT]
+RewriteRule ^/downloads/archive /action/unload/downloads/archive [NC,L,PT]
+# redirect old download pages
+RewriteRule ^/zf_info/downloads.html /downloads [NC,R=301]
+RewriteRule ^/data_transfer/Downloads/(.*) /downloads/$1 [NC,R=301]
+# current files
+RewriteRule ^/downloads/file/(.+) /action/unload/downloads/file/$1 [NC]
+## download files
+RewriteRule ^/downloads/([\S]+[.][\S]+) /data-transfer/current/$1 [NC,L]
+RewriteRule ^/downloads/([\S]*) /action/unload/downloads/$1 [NC,L,PT]
+RewriteRule ^/downloads /action/unload/downloads/ [NC,L,PT]
+
+RewriteRule ^/zf_info/(.*).html /action/zf_info/$1.html [NC,L,PT]
+
+#Allow use of same cgi-bin/webdriver path on all dev sites,
+#this rule should be below anything else webdriver related,
+#This passthrough is required so that any url altered in
+#this file actually is passed through to webdriver
+RewriteCond <!--|MUTANT_NAME|--> !=zfin.org
+RewriteRule ^/cgi-bin/webdriver(.*) /<!--|MUTANT_NAME|-->/webdriver$1 [PT]
+RewriteCond <!--|MUTANT_NAME|--> =zfin.org
+RewriteRule ^/cgi-bin/webdriver(.*) /cgi-bin/webdriver$1 [PT]
+
+#we also need to pass through any url that gets altered above and
+#needs to go to proxy.  Any url created in the url mapping needs to
+#be handled here.
+RewriteRule ^/action/(.*) /action/$1 [PT]
+
+
+#also need to 301 redirect anything that came in with mutant name as the webdriver
+#path so that they're still supported
+RewriteCond <!--|MUTANT_NAME|--> !=zfin.org
+RewriteRule ^/<!--|MUTANT_NAME|-->/webdriver(.*) /cgi-bin/webdriver$1 [R=301]

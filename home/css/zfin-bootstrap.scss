@@ -1,0 +1,108 @@
+// variable overrides
+@import "theme";
+
+// import bootstrap
+@import "~bootstrap/scss/bootstrap";
+@import "tables";
+
+// undo stuff from _reset.scss
+header {
+  display: flex;
+}
+
+main {
+  margin: 0 0 20px 0;
+}
+
+.table {
+  th {
+    border-top: 0;
+  }
+}
+
+// form-horizontal is no longer defined by bootstrap as of v4 but we still
+// use it to do label alignment
+.form-horizontal {
+  label {
+    text-align: right;
+  }
+}
+
+label {
+  font-weight: bold;
+
+  &.form-check-label {
+    font-weight: normal;
+  }
+}
+
+.has-error {
+  .form-control {
+    border-color: $danger;
+  }
+
+  .form-text {
+    color: $danger;
+  }
+
+  label {
+    color: $danger;
+  }
+}
+
+.page-header {
+  @extend .pb-3;
+  @extend .mt-3;
+  @extend .mb-3;
+  @extend .border-bottom;
+}
+
+.btn-dense {
+  @include button-size(1px, $btn-padding-x-sm, $btn-font-size, $btn-line-height, $btn-border-radius-sm);
+}
+
+// keep ye olde typeahead library lumbering along
+.input-group > .twitter-typeahead {
+  position: relative;
+  -ms-flex: 1 1 auto;
+  -webkit-box-flex: 1;
+  flex: 1 1 auto;
+  width: 1%;
+  margin-bottom: 0;
+}
+
+.input-group > .twitter-typeahead:not(:first-child) > .form-control {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.input-group > .twitter-typeahead:not(:last-child) > .form-control {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.input-group.input-group-lg .twitter-typeahead .tt-input,
+.input-group.input-group-lg .twitter-typeahead .tt-hint {
+  height: $input-height-lg;
+  padding: $input-padding-y-lg $input-padding-x-lg;
+  @include font-size($input-font-size-lg);
+  line-height: $input-line-height-lg;
+}
+
+.twitter-typeahead .tt-hint {
+  color: #999999;
+}
+
+.form-control.tt-input:focus {
+  z-index: 3
+}
+
+/* jQuery UI overrides */
+.ui-menu-item {
+  font-size: small;
+}
+
+.ui-corner-all  {
+  font-size: .9em !important;
+  background: #fff;
+}

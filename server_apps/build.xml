@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="load ontology" default="usage" basedir=".">
+
+    <property name="root.dir" value="${basedir}/../"/>
+    <property name="web.dir" value="${root.dir}/home"/>
+    <property name="web-inf.dir" value="${web.dir}/WEB-INF"/>
+    <property name="classbin.dir" value="${web-inf.dir}/classes"/>
+    <property name="lib" value="${root.dir}/lib/Java"/>
+    <property name="web.lib" value="${web-inf.dir}/lib"/>
+    <property name="log.dir" value="${basedir}/logs"/>
+
+    <property environment="env"/>
+
+    <!-- Classpath definitions -->
+    <path id="classpath">
+        <pathelement location="${classbin.dir}"/>
+        <fileset dir="${web.lib}">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${env.SOURCEROOT}/lib/Java">
+            <include name="*jdbc*.jar"/>
+        </fileset>
+    </path>
+
+    <taskdef name="loadProperties"
+             classname="org.zfin.properties.ant.LoadPropertiesTask"
+             classpathref="classpath"/>
+    <loadProperties file="${web-inf.dir}/zfin.properties" />
+
+    <target name="usage">
+        <echo>
+            TARGETS:
+        </echo>
+    </target>
+
+
+</project>

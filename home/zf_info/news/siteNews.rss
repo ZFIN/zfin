@@ -1,0 +1,4 @@
+<?xml version="1.0" ?>
+<redirect>
+<newlocation>feed:<!--|SECURE_HTTP|--><!--|WIKI_HOST|-->/spaces/createrssfeed.action?types=blogpost\&spaces=news\&title=Zebrafish+News\&publicFeed=true\&maxResults=-1\&sort=created\&timeSpan=120</newlocation>
+</redirect>

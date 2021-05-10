@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <include file="source/org/zfin/db/load/1108/student_checklist.sql"/>
+    <include file="source/org/zfin/db/load/1108/ZFIN-6265.sql"/>
+    <include file="source/org/zfin/db/load/1108/fcc_currently_available_nullable.sql"/>
+    <include file="source/org/zfin/db/load/1108/add_medium_image_column.sql"/>
+    <include file="source/org/zfin/db/load/1108/update_image_and_pdf_paths.sql"/>
+<include file="source/org/zfin/db/load/1108/add_medium_img_with_annotation.sql"/>
+<include file="source/org/zfin/db/load/1108/update_image_with_annotation_path.sql"/>
+<include file="source/org/zfin/db/load/1108/update_image_with_annotation_medium_path.sql"/>
+<include file="source/org/zfin/db/load/1108/update_pmc_id_to_null.sql"/>
+</databaseChangeLog>

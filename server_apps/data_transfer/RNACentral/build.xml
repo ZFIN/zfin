@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="create-transcript-info-file"  basedir=".">
+
+    <property name="root.dir" value="${basedir}/../../../"/>
+    <property name="web.dir" value="${root.dir}/home"/>
+    <property name="web-inf.dir" value="${web.dir}/WEB-INF"/>
+    <property name="classbin.dir" value="${web-inf.dir}/classes"/>
+    <property name="lib" value="${root.dir}/lib/Java"/>
+    <property name="web.lib" value="${web-inf.dir}/lib"/>
+    <property name="log.dir" value="${basedir}/logs"/>
+    <property name="jvm.mem" value="-Xmx4g"/>
+
+
+    <property environment="env"/>
+
+    <!-- Classpath definitions -->
+    <path id="classpath">
+        <pathelement location="${classbin.dir}"/>
+        <fileset dir="${web.lib}">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${env.SOURCEROOT}/lib/Java">
+            <include name="*jdbc*.jar"/>
+            <include name="postgres*.jar"/>
+        </fileset>
+    </path>
+    <taskdef name="loadProperties"
+             classname="org.zfin.properties.ant.LoadPropertiesTask"
+             classpathref="classpath"/>
+
+    <loadProperties file="${web-inf.dir}/zfin.properties" />
+    <path id="extended.classpath">
+        <path refid="classpath"/>
+        <!-- This class needs to come first to ensure that unit test methods are executed in the order they appear in the source file -->
+        <fileset dir="${lib}">
+            <include name="*.jar"/>
+            <include name="*.zip"/>
+        </fileset>
+
+    </path>
+    <target name="create-transcript-info-file"
+            description="Tests to make sure that the system is alive and working properly.">
+        <echo message="Check entity changes"/>
+        <echo message="${root.dir}"/>
+        <java classname="org.zfin.marker.agr.BasicTranscriptInfo" fork="yes" maxmemory="4g"
+              failonerror="true">
+            <classpath refid="classpath"/>
+            <arg value="${web.dir}"/>
+        </java>
+    </target>
+
+
+</project>

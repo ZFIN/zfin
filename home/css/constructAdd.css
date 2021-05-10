@@ -1,0 +1,78 @@
+.deleteMe {
+    display: none;
+}
+
+.remove {
+    float: left;
+    display: block;
+    margin: 5px;
+}
+
+.cloneMe {
+    display: inline;
+}
+
+.duplicate .deleteMe {
+    display: inline;
+}
+
+.duplicate .cloneMe {
+    display: none;
+}
+
+.cassette-inner {
+    background: #ffc;
+    border: 1px solid #999;
+    position: relative;
+    /*width: 500px;*/
+}
+
+.cassette-inner.duplicate,
+.cassette-inner.duplicate span.tab {
+    background: #eef;
+}
+
+span.tab {
+    background: #ffc;
+    width: 220px;
+    padding: 10px;
+    border: 5px solid gray;
+    margin: 0px;
+
+    /*border-color: #999;
+    border-style: solid;
+    border-width: 1px 1px 1px 0;*/
+    display: block;
+    /*padding: 5px 0 7px;*/
+    /*position: absolute;*/
+    top: -1px;
+    /*right: -10px;*/
+    text-align: center;
+    /*width: 9px;*/
+}
+
+span.tab a.cloneMe {
+    background: #fff;
+    border: 1px solid #3c3;
+    color: #090;
+    padding: 0 3px 2px;
+    text-decoration: none;
+}
+
+span.tab a.cloneMe:hover {
+    background: #cfc;
+    color: #000;
+}
+
+span.tab a.deleteMe {
+    background: #fff;
+    border: 1px solid #f66;
+    color: #f00;
+    padding: 0 4px 2px;
+    text-decoration: none;
+}
+
+span.tab a.deleteMe:hover {
+    background: #fdd;
+    color: #000;
+}

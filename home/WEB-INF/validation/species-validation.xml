@@ -1,0 +1,68 @@
+<SpeciesValidation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="species-validation.xsd">
+    <Species>
+        <CommonName>Zebrafish</CommonName>
+        <Classification>
+            <Kingdom>Animalia</Kingdom>
+            <Phylum>Chordata</Phylum>
+            <Class>Actinopterygii</Class>
+            <Order>Cypriniformes</Order>
+            <Family>Cyprinidae</Family>
+            <Genus>Danio</Genus>
+            <Species>D. rerio</Species>
+            <BinomialName>Danio Rerio</BinomialName>
+        </Classification>
+        <Chromosomes number="25" >
+            <Mapping/>
+        </Chromosomes>
+    </Species>
+    <Species>
+        <CommonName>Human</CommonName>
+        <Classification>
+            <Kingdom>Animalia</Kingdom>
+            <Phylum>Chordata</Phylum>
+            <Class>Mammalia</Class>
+            <Order>Primates</Order>
+            <Family>Hominidae</Family>
+            <Genus>Homo</Genus>
+            <Species>H. sapiens</Species>
+            <BinomialName>Homo Sapiens</BinomialName>
+        </Classification>
+        <Chromosomes number="23">
+            <Mapping name="X" number="23" />
+            <Mapping name="Y" number="23"/>
+        </Chromosomes>
+    </Species>
+    <Species>
+        <CommonName>Mouse</CommonName>
+        <Classification>
+            <Kingdom>Animalia</Kingdom>
+            <Phylum>Chordata</Phylum>
+            <Class>Mammalia</Class>
+            <Order>Rodentia</Order>
+            <Family>Muridae</Family>
+            <Genus>Murinae</Genus>
+            <Species>Mus</Species>
+            <BinomialName>Mus musculus</BinomialName>
+        </Classification>
+        <Chromosomes number="20">
+            <Mapping name="X" number="20" />
+            <Mapping name="Y" number="20" />
+        </Chromosomes>
+    </Species>
+    <Species>
+        <CommonName>Fly</CommonName>
+        <Classification>
+            <Kingdom>Animalia</Kingdom>
+            <Phylum>Arthropoda</Phylum>
+            <Class>Insecta</Class>
+            <Order>Diptera</Order>
+            <Family>Drosophilidae</Family>
+            <Genus>Drosopilinae</Genus>
+            <Species>Melanogaster</Species>
+            <BinomialName>Drosophila Melanogaster</BinomialName>
+        </Classification>
+        <Chromosomes number="4" >
+            <Mapping/>
+        </Chromosomes>
+    </Species>
+</SpeciesValidation>

@@ -1,0 +1,20 @@
+ok /not really/
+
+# match line starting with 'error ', case-insensitive
+error /(?i)error /
+
+# the '-1' for a function call error
+#error /(\s{8,10})(-1)/
+
+error /(\s{10})(-1)/
+
+# list of warnings here...
+warning /Validation Errors found/
+
+# create a quick access link to lines in the report containing 'INFO'
+info /INFO/
+
+# each line containing 'BUILD' represents the start of a section for grouping errors and warnings found after the line.
+# also creates a quick access link.
+start /BUILD/
+

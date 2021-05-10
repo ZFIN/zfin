@@ -1,0 +1,1 @@
+truncate phenotype_source_generated_temp;

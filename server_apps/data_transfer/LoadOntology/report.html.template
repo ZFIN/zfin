@@ -1,0 +1,78 @@
+<html><head>
+<title>Report</title>
+
+<style>
+#result {
+    font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+    border-collapse: collapse;
+}
+table, th, td, input, textarea {
+    font-size: 100%;
+    border: 1px solid green;
+    text-align: left;
+}
+
+#result th {
+    font-size: 1em;
+    text-align: left;
+    padding-top: 5px;
+    padding-bottom: 4px;
+    background-color: rgb(167, 201, 66);
+    color: rgb(255, 255, 255);
+}
+#result tr.alt td
+{
+color:#000;
+background-color:#EAF2D3;
+}
+        table.rowstripes tr.odd {
+            background-color: #eee;
+        }
+        table.rowstripes tr.even { background-color: #fff }
+</style>
+</head>
+<body>
+
+<b>Report Run:</b> ${dateRun?string("yyyy-MM-dd HH:mm:ss")}
+
+<p/>
+Number of Records: ${numberOfRecords} <br/>
+${errorMessage}
+<p/>
+<table id="result" class="rowstripes">
+<tbody><tr>
+<#list headerColumns as headerEntry>
+<th>${headerEntry}</th>
+</#list>
+</tr>
+<#list recordList as resultObject>
+       <#if resultObject_index%2==0>
+    <tr class="odd">
+        <#else>
+        <tr class="even">
+    </#if>
+<#list resultObject as record>
+<td>
+<#if record?? && record?starts_with("ZDB")>
+<a href="http://zfin.org/${record}">${record}</a>
+<#else>
+<#if record??>
+${record}
+</#if>
+</#if>
+</td>
+</#list>
+   </tr>
+</#list>
+
+</tbody></table>
+
+<hr>
+
+<#if sqlQuery??>
+SQL being executed:
+<pre>
+${sqlQuery}
+</pre>
+</#if>
+</body></html>

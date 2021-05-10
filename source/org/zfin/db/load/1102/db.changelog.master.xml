@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+   <include file="source/org/zfin/db/load/1102/ZFIN-5778.sql"/>
+   <include file="source/org/zfin/db/load/1102/zebrashare_data_edit_permission.sql"/>
+   <include file="source/org/zfin/db/load/1102/zebrashare_pub_table_edits.sql"/>
+   <include file="source/org/zfin/db/load/1102/update_fig_image_date.sql"/>
+   <include file="source/org/zfin/db/load/1102/remove_num_auths.sql"/>
+   <include file="source/org/zfin/db/load/1102/zebrashare_metadata.sql"/>
+   <include file="source/org/zfin/db/load/1102/add_zdb_id.sql"/>
+   <include file="source/org/zfin/db/load/1102/zebrashare_add_metadata_columns.sql"/>
+   <include file="source/org/zfin/db/load/1102/zebrashare_update_sequence_name.sql"/>
+   <include file="source/org/zfin/db/load/1102/update_fig_updated_date.sql"/>
+<include file="source/org/zfin/db/load/1102/CUR-854.sql"/>
+<include file="source/org/zfin/db/load/1102/expcond_alternate_key.sql"/>
+<include file="source/org/zfin/db/load/1102/add_default_date.sql"/>
+</databaseChangeLog>

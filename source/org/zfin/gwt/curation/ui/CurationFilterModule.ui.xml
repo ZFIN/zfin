@@ -1,0 +1,26 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+        xmlns:ui='urn:ui:com.google.gwt.uibinder'
+        xmlns:g='urn:import:com.google.gwt.user.client.ui'
+        xmlns:zfin='urn:import:org.zfin.gwt.root.ui'
+        >
+
+    <g:HorizontalPanel title="Curation Filter" addStyleNames="curation-filter" width="100%">
+        <g:Label text="Show:"/>
+        <g:HorizontalPanel title="Figure List">
+            <g:Label>Only Fig: &nbsp;</g:Label>
+            <zfin:ListBoxWrapper ui:field="figureList"/>
+        </g:HorizontalPanel>
+        <g:HorizontalPanel title="Gene List">
+            <g:Label text="Only Gene: &nbsp;"/>
+            <zfin:ListBoxWrapper ui:field="geneList"/>
+        </g:HorizontalPanel>
+        <g:HorizontalPanel title="Fish List">
+            <g:Label text="Only Fish: &nbsp;"/>
+            <zfin:ListBoxWrapper ui:field="fishList"/>
+        </g:HorizontalPanel>
+        <g:cell horizontalAlignment="ALIGN_RIGHT">
+            <g:Button ui:field="resetButton" text="Reset"/>
+        </g:cell>
+    </g:HorizontalPanel>
+</ui:UiBinder>

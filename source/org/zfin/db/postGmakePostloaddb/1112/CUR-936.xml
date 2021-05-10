@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+
+
+    <changeSet author="pm" id="CUR-936">
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1112/CUR-936.csv"
+                  tableName="seqvar" encoding="UTF-8">
+            <column name="featureid" type="String"/>
+            <column name="featureabb" type="String"/>
+            <column name="geneid" type="String"/>
+            <column name="geneabb" type="String"/>
+            <column name="muttype" type="String"/>
+            <column name="mutterm" type="String"/>
+            <column name="mutname" type="String"/>
+            <column name="location" type="String"/>
+            <column name="refseq" type="String"/>
+            <column name="varseq" type="String"/>
+
+        </loadData>
+
+    </changeSet>
+</databaseChangeLog>

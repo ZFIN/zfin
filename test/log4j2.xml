@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Configuration name="ZFIN-Test">
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%-4r %-5p %c - %m%n"/>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="org.hibernate" level="error"/>
+        <Logger name="org.hibernate.SQL" level="warn"/>
+        <Logger name="org.hibernate.type" level="warn"/>
+        <Logger name="org.hibernate.impl.SessionImpl" level="warn"/>
+        <Logger name="org.hibernate.engine.internal.StatefulPersistenceContext" level="error"/>
+        <Logger name=".impl.SessionImpl" level="warn"/>
+        <Logger name="org.zfin" level="warn"/>
+        <Logger name="org.zfin.properties" level="warn"/>
+        <Logger name="org.zfin.TestConfiguration" level="info"/>
+        <Logger name="com.gargoylesoftware.htmlunit.javascript.StrictErrorReporter" level="fatal"/>
+        <Logger name="com.gargoylesoftware.htmlunit" level="error"/>
+        <Logger name="org.zfin.ontology.OntologySerializationService" level="info"/>
+        <Root level="error">
+            <AppenderRef ref="console"/>
+        </Root>
+    </Loggers>
+</Configuration>

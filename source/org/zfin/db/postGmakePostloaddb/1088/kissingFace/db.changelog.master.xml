@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+
+        <changeSet author="christian" id="zfin-5690">
+                <update
+                        schemaName="informix"
+                        tableName="external_note">
+                        <column name="extnote_source_zdb_id" value='ZDB-PUB-130110-7' />
+                        <where>extnote_source_zdb_id = 'ZDB-ALT-111118-27'</where>
+                </update>
+        </changeSet>
+
+    <include file="source/org/zfin/db/postGmakePostloaddb/1088/kissingFace/PUB-331.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1088/kissingFace/PUB-391.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1088/kissingFace/PUB-392.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1088/kissingFace/ZFIN-5711.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1088/kissingFace/DLOAD-223.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1088/kissingFace/DLOAD-496.sql" />
+
+</databaseChangeLog>

@@ -1,0 +1,14 @@
+<module>
+    <add-linker name="xsiframe"/>
+    <inherits name='com.google.gwt.user.User'/>
+    <inherits name='org.fusesource.restygwt.RestyGWT'/>
+    <inherits name="com.github.nmorel.gwtjackson.GwtJackson" />
+
+    <source path='dto'/>
+    <source path='event'/>
+    <source path='ui'/>
+    <source path='util'/>
+
+    <servlet path="/ajax/anatomylookup" class="org.zfin.gwt.root.server.LookupRPCServiceImpl"/>
+    <servlet path="/ajax/session-save" class='org.zfin.gwt.root.server.SessionSaveServiceImpl'/>
+</module>

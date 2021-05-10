@@ -1,0 +1,10 @@
+# The root crontab should be used to perform accounting data collection.
+#
+30 1 * * * cd /tmp; find . ! -name . -atime +3 -xdev \( -type d -o -type f -o -type l \) -exec rm -f {} \;
+30 1 * * * cd /var/tmp; find . ! -name . -atime +3 -xdev \( -type d -o -type f -o -type l \) -exec rm -f {} \;
+15 3 * * * /usr/lib/fs/nfs/nfsfind
+18 1 * * * /local/apps/chklogs/bin/chklogs -m
+23 * * * * /usr/lib/sendmail -q
+# webrotate has to run as root
+00 0 1 * * /research/zprod/www_homes/zfin.org/server_apps/WebSiteTools/webrotate.pl
+0  1 * * * /opt/zfin/bin/daily

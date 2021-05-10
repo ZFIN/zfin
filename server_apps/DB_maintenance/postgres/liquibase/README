@@ -1,0 +1,5 @@
+./liquibase --driver=com.informix.jdbc.IfxDriver --url="jdbc:informix-sqli://${HOSTNAME}:${INFORMIX_PORT}/${DBNAME}:INFORMIXSERVER=${INFORMIXSERVER};DB_LOCALE=en_US.utf8" --defaultSchemaName="informix" --classpath="/opt/zfin/source_roots/swirl/ZFIN_WWW/lib/Java/ifxjdbc-3.70.JC1.jar" --changeLogFile="/tmp/file.xml" --changeLogFile="/tmp/file.xml" generateChangeLog
+
+
+Only works with 3.4.2.  This change seems to have been lost in version 3.5x
+https://liquibase.jira.com/browse/CORE-2381

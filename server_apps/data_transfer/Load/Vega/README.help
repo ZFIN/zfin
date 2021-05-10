@@ -1,0 +1,237 @@
+#  README.help
+
+the Vega laod process begins with someone at the Sanger institute 
+alerting ZFIN that a set of files are available and their location.
+the set of files has stabilized but location & person sending them hasn't.
+If they start sending new files or change the names in the existing file
+set those changes will need to be reflected in the Makefile.
+
+note: many of these targets can be prefixed with a "clean_" to remove 
+intermediate files that may interfere with rerunning the target,
+
+Manually create a directory based on the year and month under
+/research/zprod/data/VEGA
+
+Manually update the Makefile in 
+...ZFIN_WWW/server_apps/data_transfer/Load/Vega/
+
+to have the variable $(PREV) point at whatever $(DEST) is, then have the 
+variable $(DEST) point at the directory just created
+
+Also set $(FTP) to where ever the files at Sanger are this time.
+
+It is not necessary to continue, but I am starting a mini local history 
+by just commenting out old variable assignments when adding new ones.
+
+Much of the work need only be done on development for the results to be
+available for production.
+
+
+gmake fetch_vega 
+
+Will fetch a local copy of the files at Sanger only downloading if the 
+remote files are newer than the local files. it then write protects the 
+local copies so they remain pristine copies in case anything goes wrong.
+
+This also means that if the original file set really does need updating, 
+the permissions will need to be reset accordingly.
+
+
+gmake novel_check
+
+This is leftover from by gone days when we needed to quickly get a handle 
+on how much work dad just been dumped and still is useful information 
+although we always have much more than enough time now. (too much)
+
+It runs through basic sanity checks on the incoming files and figures 
+out what has changed w.r.t. the previous load giving numbers of new and
+changed transcripts. 
+
+
+gmake withdrawn_check
+
+This hints at the rest of the story for new transcripts. Although Vega
+calls the ottdarT a "stable_id" and gives them version numbers, there 
+is no discernible pattern as to when they increment a version number or 
+replace an ottdarT without any mapping to the previous version.
+this creates a problem for us as we end up with withdrawn transcripts
+to make matters worse, some transcripts are effectively replaced, 
+some are actually dropped and some just go on Holiday for a bit.
+An improvement would allow a curator looking at a new transcript that 
+aligns sufficiently well with a withdrawn transcript in the ReNo interface
+to merge the transcripts with a click. As it is they need to explicitly 
+ask a developer to merge them.
+This make target isolates potential merges in advance to get a sense of 
+what we are missing, but we have yet to do anything about it on the 
+frontend.
+
+
+gmake blast_transcripts
+
+Blasts all the transcripts that are new, or are updated, or are a 
+sibling of a new or updated transcript, against them ZFIN_cDNA.
+parses the (WU)Blast output into a json like structure (developed before 
+json existed) for downstream processing. The output file is named
+"Vega_[timestamp]_NEW_.ctx"  the "_NEW_" part is important because it is used
+as a flag for the Java implementation of reno so it can handle it's default 
+use case, which was neither copied from the working prototype nor 
+ever properly considered while building it, so it is stuck on here as an 
+afterthought, a perpetual reminder of where it all went so very wrong. 
+Have a nice day. 
+This target outputs instructions on how to push the blast file to our 
+blast database repositorywhich at this time, is in the clutches of our
+all controlling informix user... just because. 
+
+note: blasting and parsing can take some time
+
+
+gmake load_transcripts[_commit]
+
+creates new transcript records for all of the novel transcripts, even 
+those that it would be nice to just replace the ottdarT for.
+
+Occasionally one of the sub-steps here is updating a mapping from Vega's 
+transcript and gene types to to ZFIN's transcript type and status. 
+The mapping is not direct as neither group is using the terms equivalently. 
+There is a mapping table in ZFIN, created by the transcript group. It is 
+insufficient but wrong, and should be deleted before some poor sucker 
+comes along and tries to use it. 
+
+This target reports on potentially bad clone names.  Sanger has a 
+policy of not appending gibberish on the ends of clone names but no 
+constraints to enforce it, so we get clone names with gibberish.
+You can ask them to remove them but it is rarely productive and never in   
+time for the current load. So you trim them from your local working 
+(not archive) copy
+the names to edit are in the destination directory in the files: 
+	assembly_for_tom.txt 
+	clonelist_for_tom.txt
+	 
+(Think I have code to truncate clone names with underscore suffix later)
+
+***This target will create and augment a load file with Sanger's side of 
+the mapping in place and the nulls on zfin's side will get default values. 
+If the default are not appropriate you will need to figure out what is 
+and add it to the "vega_type_translation.unl"  
+see "load_novel_transcript.sql" for the defaults.
+
+The load will report a lot of details and counts so you can develop a 
+sense of what is going on and how things are changing.
+it updates the length of existing transcripts in the database so you 
+can marvel at how volatile transcript lengths are. 
+
+It checks for impending name collisions, although transcript names are
+fairly useless it may provide additional hints for merging and in any case 
+a name collision will force the incoming name to be the ottdarT so it 
+might be worthwhile to change the names of the existing if that is 
+preferable. In any case the name given now is subject to change when 
+they send back the official transcript names for this load which do not 
+exist yet  
+
+########################################################################
+
+withdrawn_dblink[_commit]
+
+changes the dblink of transcripts in zfin, moves (possibly still working) 
+links from Vega to the local withdrawn blastdb. This use to wait till the
+end when the links actually broke but I want the information in the 
+database before the curators do the reno run so that they can better 
+detect cases when a new transcript should be merged with a withdrawn 
+transcript, and hopefully just have a button to merge them on the spot.
+
+You will need to push the just generated local withdrawn blast database 
+as informix.
+
+########################################################################
+
+With the blast done, 
+prevega blast database in place (you did this as informix ,right?), 
+and transcript records loaded and withdrawn in zfin, you can populate a 
+reno run for the curators to work on. Creating the reno run entails 
+copying the "Vega_[timestamp]_NEW_.ctx" file to the 
+.../data_transfer/Load/Reno/ dir as "run.ctx"  and doing a run[_commit] 
+there.  And of course, letting the curators know. You should always load
+and test on a development instance yourself before moving to production.
+
+We do not get huge loads anymore but if we do, you may need to carefully
+split up the sets of accessions which are blasted making sure you keep 
+"families" of transcripts together.  this will create smaller .ctx files
+which will avoid the long transaction timeout. 
+(you can not just arbitrarily pick a number of accessions to blast 
+because it is the size and number of hits, which you do not know in 
+advance, that will matter).
+ 
+######################################################################## 
+
+sanity_check_post_reno
+
+The curators typically make short work of the run. at the end you should 
+do a sanity check for them by running this target. it will look for 
+things they should not do like associate one vega gene to more than one 
+zfin gene etc.
+
+After everyone is content with the state of the finished reno run you can
+either wait a day or rebuild the download files and alert Sanger that the 
+updated vega transcript /zfin gene file is available  in Downloads.
+
+They will pick the file up and regenerate transcript names based in 
+associated zfin gene names, which they will return after a while.   
+
+######################################################################## 
+
+load_assembly[_commit]
+
+After the curators are able to be working on the reno run, you can turn 
+your attention away from the transcript aspect of the load.
+
+Being tied to the Ensembl assembly has dramatically reduced churn on the 
+clones
+
+*this step needs to be taken strictly after novel transcripts are loaded
+as it now also creates the "clone contains transcript" relationships.
+
+
+########################################################################
+
+load_evidence[_commit]
+
+adds and deletes the "supporting sequence" which are not necessarily 
+even vaguely "similar" to the transcripts they are associated with and 
+should be avoided like the plague when pulling accessions forward as we 
+typically do. 
+Also should avoid including these accessions in any blast results.
+
+########################################################################
+########################################################################
+
+update_tscript_names[_commit]
+
+Some time after the results of reno run is picked by Sanger they return 
+a "vega_transcript_names.tsv.gz" file with new names for the transcripts
+which we fetch and load. 
+(can't guarantee the names or location of the file so edit as needed)
+
+
+########################################################################
+
+gff3_backbone[_commit]
+
+they sometimes provide the gff3 before they go public and sometimes not
+when they do you can fetch it (may need to edit ftp path or name)
+
+
+########################################################################
+
+vega_public[_commit]
+long after every thing else is done the last and most easily forgotten 
+step is to change prevega dblinks to Vega_trans links and add/delete vega 
+gene and protein links. (ottdar[GP]) 
+you will need to figure out when they go public by paying attention to 
+them.
+
+this also means pushing the same fasta file you created the prevega blast 
+database with as the vega_zfin blast database
+so copy or symlink the vega_transcript.nt file to vega_zfin.fa and push.
+
+Then cross your parts and hope the local blast database fairies do not 
+decide to correct it by clobbering with the previous version.

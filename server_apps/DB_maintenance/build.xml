@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Download" basedir="../../">
+
+    <property name="web.dir" value="${basedir}/home"/>
+    <property name="web-inf.dir" value="${web.dir}/WEB-INF"/>
+    <property name="classbin.dir" value="${web-inf.dir}/classes"/>
+    <property name="lib" value="${basedir}/lib/Java"/>
+    <property name="web.lib" value="${web-inf.dir}/lib"/>
+    <property name="validateData" value="${basedir}/server_apps/DB_maintenance"/>
+
+    <property environment="env"/>
+
+    <!-- Classpath definitions -->
+    <path id="classpath">
+        <pathelement location="${classbin.dir}"/>
+        <fileset dir="${web.lib}">
+            <include name="*.jar"/>
+        </fileset>
+        <pathelement location="${validateData}/lib"/>
+    </path>
+
+    <taskdef name="loadProperties"
+             classname="org.zfin.properties.ant.LoadPropertiesTask"
+             classpathref="classpath"/>
+
+    <loadProperties file="${web-inf.dir}/zfin.properties"/>
+
+
+
+    <echo message="SOURCEROOT: ${env.SOURCEROOT}"/>
+
+    <path id="extended.classpath">
+        <path refid="classpath"/>
+        <fileset dir="${env.CATALINA_HOME}/lib">
+            <include name="*.jar"/>
+            <include name="*.zip"/>
+        </fileset>
+        <fileset dir="${env.SOURCEROOT}/lib/Java">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="init">
+        <tstamp/>
+        <echo message="Set Timestamp on unload."/>
+    </target>
+
+    <target name="checkUrls">
+	<exec executable="${validateData}/validatedata/CheckUrls.groovy">
+            <arg value="-propertyFilePath"/>
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="-dataDirectory"/>
+            <arg value="${validateData}/validatedata"/>
+            <arg value="-jobName"/>
+            <arg value="Check-Urls_m"/>
+	</exec>
+    </target>
+
+    <target name="load-gaf-paint" description="">
+        <java classname="org.zfin.datatransfer.go.service.GafLoadJob"
+              fork="yes"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="${validateData}/gafLoad"/>
+            <arg value="${jobName}"/>
+            <arg value="PAINT"/>
+            <arg value="http://www.geneontology.org/gene-associations/submission/paint/pre-submission/gene_association.paint_zfin.gz"/>
+            <arg value="org.zfin.datatransfer.go.PaintGafParser"/>
+        </java>
+    </target>
+
+    <target name="load-gaf-goa" description="">
+        <java classname="org.zfin.datatransfer.go.service.GafLoadJob"
+              fork="yes"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="${validateData}/gafLoad"/>
+            <arg value="${jobName}"/>
+            <arg value="GOA"/>
+            <arg value="ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/goa_zebrafish.gaf.gz"/>
+            <arg value="org.zfin.datatransfer.go.GoaGafParser"/>
+            <arg value="ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/goa_zebrafish_isoform.gaf.gz"/>
+            <arg value="ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/goa_zebrafish_rna.gaf.gz"/>
+        </java>
+    </target>
+
+    <target name="load-noctua-gpad" description="">
+        <java classname="org.zfin.datatransfer.go.service.GafLoadJob"
+              fork="yes"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="${validateData}/gafLoad"/>
+            <arg value="${jobName}"/>
+            <arg value="Noctua"/>
+            <arg value="http://snapshot.geneontology.org/products/annotations/noctua_zfin.gpad.gz"/>
+            <arg value="org.zfin.datatransfer.go.GpadParser"/>
+        </java>
+    </target>
+
+    <target name="load-gaf-fpinference" description="">
+        <java classname="org.zfin.datatransfer.go.service.GafLoadJob"
+              fork="yes"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="${validateData}/gafLoad"/>
+            <arg value="${jobName}"/>
+            <arg value="FP Inferences"/>
+            <arg value="http://current.geneontology.org/products/annotations/zfin-prediction.gaf"/>
+            <arg value="org.zfin.datatransfer.go.FpInferenceGafParser"/>
+        </java>
+    </target>
+    <target name="load-flank-seq" description="">
+        <java classname="org.zfin.datatransfer.flankingsequence.FlankSeqLoadJob"
+              fork="yes"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="${validateData}/report_data"/>
+            <arg value="${jobName}"/>
+
+
+
+
+        </java>
+    </target>
+
+    <target name="check-eap-pato-terms" description="">
+        <echo message="Check EaP terms with the latest PATO ontology"/>
+        <java classname="org.zfin.ontology.jobs.CheckEapPatoTermsJob" fork="yes"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="${validateData}/report_data"/>
+            <arg value="Check-Eap-Pato-Terms_d"/>
+        </java>
+    </target>
+
+    <target name="update-dois" description="">
+        <java classname="org.zfin.datatransfer.doi.UpdateDOIJob" fork="yes"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="${validateData}/report_data"/>
+            <arg value="${jobName}"/>
+            <arg value="10"/>
+        </java>
+    </target>
+
+    <target name="remove-go-terms-from-withdrawn-markers" description="">
+        <java classname="org.zfin.ontology.jobs.RemoveGoTermsFromWithdrawnMarkersJob" fork="yes"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="${validateData}/report_data"/>
+            <arg value="${jobName}"/>
+        </java>
+    </target>
+
+    <target name="regenerate-webhost-curated-databases" description="">
+        <java classname="org.zfin.sequence.blast.RegenerateWebHostCuratedDatabasesJob" fork="yes"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="${validateData}/report_data"/>
+            <arg value="${jobName}"/>
+        </java>
+    </target>
+
+    <target name="validate-blast-databases" description="">
+        <java classname="org.zfin.sequence.blast.ValidateBlastDatabases" fork="yes"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="${validateData}/report_data"/>
+            <arg value="${jobName}"/>
+        </java>
+    </target>
+
+    <target name="microarray-update" description="">
+        <java classname="org.zfin.datatransfer.microarray.MicroarrayWebserviceJob" fork="yes"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="${validateData}/report_data"/>
+            <arg value="${jobName}"/>
+        </java>
+
+        <fail message="Error in microarray update">
+            <condition>
+                <resourcecontains resource="${validateData}/report_data/${jobName}/${jobName}.html" substring="Error"/>
+            </condition>
+        </fail>
+    </target>
+
+    <target name="validate-data-report-simple" description="">
+        <echo message="Create Validation Report"/>
+        <echo message="Use database: ${DBNAME}"/>
+        <java classname="org.zfin.infrastructure.ant.CreateValidateDataReportTask" fork="yes"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="${DBNAME}"/>
+            <arg value="${JobName}"/>
+            <arg value="${validateData}/validatedata"/>
+            <arg value="${web-inf.dir}/zfin.properties"/>
+        </java>
+    </target>
+
+    <target name="run-data-report-param" description="">
+        <data-report-param/>
+    </target>
+
+    <target name="run-curation-metrics-report" description="">
+        <data-report-param task-class-name="org.zfin.infrastructure.ant.CurationMetricsReportTask"/>
+    </target>
+
+    <target name="run-data-report" description="">
+        <echo message="Create Report"/>
+        <echo message="Use database: ${DBNAME}"/>
+        <delete dir="${validateData}/report_data/${JobName}"/>
+        <java classname="org.zfin.infrastructure.ant.DataReportTask" fork="yes"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="-jobName"/>
+            <arg value="${JobName}"/>
+            <arg value="-dataDir"/>
+            <arg value="${validateData}/report_data"/>
+            <arg value="-propertyDir"/>
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="-taskClassName"/>
+            <arg value="org.zfin.infrastructure.ant.DataReportTask"/>
+        </java>
+    </target>
+
+    <target name="validate-data-report-dynamic" description="">
+        <echo message="Create Validation Report"/>
+        <echo message="Use database: ${DBNAME}"/>
+        <java classname="org.zfin.infrastructure.ant.CreateValidateDataReportTask" fork="yes"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="${DBNAME}"/>
+            <arg value="${JobName}"/>
+            <arg value="${validateData}/validatedata"/>
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="true"/>
+        </java>
+    </target>
+
+    <target name="fetch-publications-from-ncbi" description="">
+        <echo message="Create get-publication-from-ncbi Report"/>
+        <echo message="Use database: ${DBNAME}"/>
+        <property name="JobName" value="get-publications-from-ncbi"/>
+        <java classname="org.zfin.publication.FetchPubsFromPubMed" fork="yes"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="-jobName"/>
+            <arg value="${JobName}"/>
+            <arg value="-baseDir"/>
+            <arg value="${validateData}/validatedata"/>
+            <arg value="-propertyFilePath"/>
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="-threads"/>
+            <arg value="40"/>
+            <arg value=""/>
+        </java>
+
+        <echo message="${validateData}/validatedata/${JobName}.txt"/>
+        <fail message="Failed: There are records in violation">
+            <condition>
+                <resourcecontains resource="${validateData}/validatedata/${JobName}.New-Publications-Error.txt"
+                                  substring=","/>
+            </condition>
+        </fail>
+    </target>
+
+    <property name="unloadDir" value="${basedir}/server_apps/DB_maintenance"/>
+
+
+    <macrodef name="run-db-query">
+        <attribute name="db-query-file"/>
+        <attribute name="instanceName"/>
+        <sequential>
+            <java classname="org.zfin.properties.RunSqlQueryTask" fork="yes" classpathref="extended.classpath"
+                  failonerror="true">
+                <arg value="@{instanceName}"/>
+                <arg value="@{db-query-file}"/>
+                <arg value="${unloadDir}"/>
+            </java>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="data-report-param">
+        <attribute name="task-class-name" default="org.zfin.infrastructure.ant.DataReportTask"/>
+        <sequential>
+            <echo message="Create Report"/>
+            <echo message="Use database: ${DBNAME}"/>
+            <echo message="Use ParameterValues: ${ParameterValues}"/>
+            <delete dir="${validateData}/report_data/${JobName}"/>
+            <java classname="org.zfin.infrastructure.ant.DataReportTask" fork="yes"
+                  classpathref="extended.classpath"
+                  failonerror="true">
+                <arg value="-jobName"/>
+                <arg value="${JobName}"/>
+                <arg value="-taskClassName"/>
+                <arg value="@{task-class-name}"/>
+                <arg value="-useParameters"/>
+                <arg value="true"/>
+                <arg value="-parameterVariables"/>
+                <arg value="${ParameterVariables}"/>
+                <arg value="-parameterValues"/>
+                <arg value="${ParameterValues}"/>
+                <arg value="-dataDir"/>
+                <arg value="${validateData}/report_data"/>
+                <arg value="-propertyDir"/>
+                <arg value="${web-inf.dir}/zfin.properties"/>
+            </java>
+        </sequential>
+    </macrodef>
+
+    <target name="usage">
+        <echo>
+            TARGETS
+        </echo>
+    </target>
+
+</project>
+
