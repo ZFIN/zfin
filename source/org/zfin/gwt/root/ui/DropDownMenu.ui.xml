@@ -1,0 +1,40 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+        xmlns:ui='urn:ui:com.google.gwt.uibinder'
+        xmlns:g='urn:import:com.google.gwt.user.client.ui'
+        >
+
+    <g:FlowPanel>
+        <g:HTMLPanel ui:field="menuDiv">
+            <div class="input-group-btn select" id="select1">
+                <g:Button ui:field="button" styleName="btn btn-outline-secondary dropdown-toggle">
+                    <span class="selected">One</span>
+                </g:Button>
+                <div class="dropdown-menu option" role="menu">
+                    <a class="dropdown-item" id="1" href="#">One</a>
+                    <a class="dropdown-item" id="2" href="#">Two</a>
+                </div>
+            </div>
+            <select class="form-control">
+                <option data-subtext="French's">Mustard</option>
+                <option data-subtext="Heinz">Ketchup</option>
+                <option data-subtext="Sweet">Relish</option>
+                <option data-subtext="Miracle Whip">Mayonnaise</option>
+                <option data-divider="true"></option>
+                <option data-subtext="Honey">Barbecue Sauce</option>
+                <option data-subtext="Ranch">Salad Dressing</option>
+                <option data-subtext="Sweet  Spicy">Tabasco</option>
+                <option data-subtext="Chunky">Salsa</option>
+            </select>        </g:HTMLPanel>
+    </g:FlowPanel>
+</ui:UiBinder>
+
+        <!--
+
+        <div class="input-group-btn select" id="select1">
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="selected">One</span></span></button>
+        <ul class="dropdown-menu option" role="menu">
+            <li id="1"><a href="#">One</a></li>
+            <li id="2"><a href="#">Two</a></li>
+        </ul>
+        </div>-->

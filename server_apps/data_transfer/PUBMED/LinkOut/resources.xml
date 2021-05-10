@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE LinkSet PUBLIC "-//NLM//DTD LinkOut 1.0//EN" "http://www.ncbi.nlm.nih.gov/projects/linkout/doc/LinkOut.dtd">
+<LinkSet>
+    <Link>
+        <LinkId>1</LinkId>
+        <ProviderId>3266</ProviderId>
+        <IconUrl>http://zfin.org/images/zfinlinkout.png</IconUrl>
+        <ObjectSelector>
+            <Database>PubMed</Database>
+            <ObjectList>
+                <FileName fieldname="uid">publications.uid</FileName>
+            </ObjectList>
+        </ObjectSelector>
+        <ObjectUrl>
+            <Base>http://zfin.org/action/publication/view?</Base>
+            <Rule>accession=&lo.id;</Rule>
+        </ObjectUrl>
+    </Link>
+</LinkSet>

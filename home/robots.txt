@@ -1,0 +1,51 @@
+User-Agent: *
+Allow: /
+Disallow: /action/login
+Disallow: /zf_info/2006_tutorial/tutorial.html
+Disallow: /cgi-bin/awstats/awstats.pl
+Disallow: /action/blast/blast?
+Disallow: /action/blast/blast-view
+Disallow: /action/blast/external-blast
+Disallow: /action/blast/blast-with-sequence
+Disallow: /cgi-bin/webdriver?MIval=aa-companyselect.apg
+Disallow: /action/fish/search
+Disallow: /search
+Disallow: /action/publication/list
+Disallow: /action/infrastructure/data-citation-list
+# this is okay if there is a pub, but without the pubid, it is open search
+# Need to set explicitly on the page
+Disallow: /cgi-bin/webdriver?MIval=aa-quickfindpers.apg
+# disallow search form, simply gives results
+Disallow: /action/marker/search
+# need to set explicitly on the page
+Disallow: /cgi-bin/webdriver?MIval=aa-labselect.apg
+Disallow: /cgi-bin/webdriver?MIval=aa-pubselect2.apg
+# has results as well as search form, so must disallow
+Disallow: /cgi-bin/webdriver?MIval=aa-xpatselect.apg
+Disallow: /action/expression/results
+# has results as well as search form, so must disallow
+Disallow: /cgi-bin/webdriver?MIval=aa-xpatview.apg
+# only allow stage search
+Disallow: /action/anatomy/search
+# allow stage searches from drop-down, in theory, need to set explicitly on page
+#Allow: /action/anatomy/search?action=term-by-stage-search&stage.zdbID=ZDB-STAGE-
+# Created via a crawl error
+# Don't want bots crawling gbrowse
+Disallow: /cgi-perl/gbrowse
+#bots are misusing these prefixes to run APG pages that otherwise are disallowed.
+Disallow: /action/webdriver
+Disallow: /action/pagination
+Disallow: /action/quicksearch
+#bots should not do updates or submit feedback
+Disallow: /cgi-bin/webdriver?MIval=aa-your_input_welcome.apg
+
+Disallow: /downloads/archive
+Disallow: /downloads/archive/*
+
+Crawl-delay: 1
+
+User-Agent: Yeti/1.0
+Disallow: /
+
+User-Agent: FAST Enterprise Crawler 6
+Disallow: /

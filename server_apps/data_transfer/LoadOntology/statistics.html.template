@@ -1,0 +1,141 @@
+<html>
+<head>
+    <title>Report</title>
+
+    <style>
+        #result {
+            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+            border-collapse: collapse;
+        }
+
+        table, th, td, input, textarea {
+            font-size: 100%;
+            border: 1px solid green;
+            text-align: left;
+            padding: 4px;
+        }
+
+        #result th {
+            font-size: 1em;
+            text-align: left;
+            padding-top: 5px;
+            padding-bottom: 4px;
+            background-color: rgb(167, 201, 66);
+            color: rgb(255, 255, 255);
+            padding: 4px;
+        }
+
+        #result tr.alt td {
+            color: #000;
+            background-color: #EAF2D3;
+        }
+
+        table.rowstripes tr.odd {
+            background-color: #eee;
+        }
+
+        table.rowstripes tr.even {
+            background-color: #fff
+        }
+    </style>
+</head>
+<body>
+
+<b>Report Run:</b> ${dateRun?string("yyyy-MM-dd HH:mm:ss")}
+<p/>
+
+Statistics:
+<table id="result" class="rowstripes">
+    <tbody>
+    <tr>
+        <th>New Terms</th>
+        <td>${new_terms?size}</td>
+    </tr>
+    <tr>
+        <th>Updated Term Names</th>
+        <td>${updated_term_names?size}</td>
+    </tr>
+    <tr>
+        <th>New Definitions</th>
+        <td>${new_term_definitions?size}</td>
+    </tr>
+    <tr>
+    <tr>
+        <th>Updated Term Definitions</th>
+        <td>
+        <#if updated_definitions??>
+        ${updated_definitions?size}
+        </#if>
+        </td>
+    </tr>
+    <#if updated_term_comments??>
+    <tr>
+        <th>Updated Term Comments</th>
+        <td>
+        ${updated_term_comments?size}
+        </td>
+    </tr>
+    </#if>
+    <tr>
+        <th>New Aliases</th>
+        <td>
+        <#if new_aliases??>
+        ${new_aliases?size}
+        </#if>
+        </td>
+    </tr>
+    <tr>
+        <th>Removed Aliases</th>
+        <td>
+        <#if removed_aliases??>
+        ${removed_aliases?size}
+        </#if>
+        </td>
+    </tr>
+    <tr>
+        <th>New Relationships</th>
+        <td>
+        <#if new_relationships??>
+        ${new_relationships?size}
+        </#if>
+        </td>
+    </tr>
+    <tr>
+        <th>Removed Relationships</th>
+        <td>
+        <#if removed_relationships??>
+        ${removed_relationships?size}
+        </#if>
+        </td>
+    </tr>
+    <tr>
+        <th>Updated Merged Terms</th>
+        <td>
+        <#if zeco_updates??>
+        ${zeco_updates?size}
+        </#if>
+        </td>
+    </tr>
+    <tr>
+    <th>New DB xrefs</th>
+    <td>
+     <#if new_xrefs??>
+     ${new_xrefs?size}
+     </#if>
+    </td>
+    </tr>
+    <tr>
+    <th>Removed DB xrefs</th>
+     <td>
+    <#if removed_xrefs??>
+     ${removed_xrefs?size}
+     </#if>
+    </td>
+        </tr>
+    </tbody>
+</table>
+
+<hr>
+
+</body>
+</html>

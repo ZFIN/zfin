@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<providers>
+    <provider>
+        <id>1980</id>
+        <resourceName>ZFIN</resourceName>
+        <description>The Zebrafish Information Network</description>
+        <email>zfinadmn@zfin.org</email>
+    </provider>
+</providers>

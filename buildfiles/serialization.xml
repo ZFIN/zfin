@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="serialization" basedir=".">
+
+    <target name="create-serial-version">
+        <serialver serializableclass="org.zfin.ontology.OntologyManager"
+                   property="SUID">
+            <classpath>
+                <fileset dir="${web-inf.dir}/lib">
+                    <include name="**/*jar"/>
+                </fileset>
+                <pathelement location="${classbin.dir}"/>
+            </classpath>
+        </serialver>
+        <echo message="Serializable classes: ${SUID}" />
+    </target>
+
+    <taskdef name="serialver" classname="net.sourceforge.serialver.SerialVer" classpathref="extended.classpath"/>
+</project>

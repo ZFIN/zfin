@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="sierra" id="restore-ept">
+        <loadData file="source/org/zfin/db/load/1100/ept_merge.csv"
+                  tableName="tmp_expression_phenotype_term" encoding="UTF-8">
+            <column name="ept_pk_id" type="Numeric"/>
+            <column name="ept_relational_term" type="String"/>
+            <column name="ept_qualifier_term_zdb_id" type="String"/>
+            <column name="ept_tag" type="String"/>
+            <column name="ept_xpatres_id" type="Numeric"/>
+        </loadData>
+
+    </changeSet>
+</databaseChangeLog>

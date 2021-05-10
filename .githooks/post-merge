@@ -1,0 +1,9 @@
+#!/bin/bash
+
+source $(dirname "$0")/helpers
+
+changed_files="$(git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD)"
+
+run_if_changes "$changed_files" package.json "npm install"
+
+exit 0

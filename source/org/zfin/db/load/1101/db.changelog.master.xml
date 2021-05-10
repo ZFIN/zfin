@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+   <include file="source/org/zfin/db/load/1101/feature_sequence.sql"/>
+   <include file="source/org/zfin/db/load/1101/fix_dalias.sql"/>
+   <include file="source/org/zfin/db/load/1101/CUR-846.sql"/>
+   <include file="source/org/zfin/db/load/1101/add_vfseq_seq.sql"/>
+   <include file="source/org/zfin/db/load/1101/add_key_for_variant_flanking_sequence.sql"/>
+   <include file="source/org/zfin/db/load/1101/add_zdb_object_type.sql"/>
+   <include file="source/org/zfin/db/load/1101/add_ensdart_ottdart_mapping.sql"/>
+   <include file="source/org/zfin/db/load/1101/add_ensdart_name_mapping.sql"/>
+</databaseChangeLog>
+
+   

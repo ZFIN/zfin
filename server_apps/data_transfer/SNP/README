@@ -1,0 +1,22 @@
+##################################################
+#
+#    README for SNP dir
+#
+##################################################
+
+------------------------
+OBJECTIVE
+-------------------------
+
+  Get NCBI dbSNP data into ZFIN.
+  Make attributions to these data.
+
+-------------------------
+EXECUTION
+--------------------------
+
+   Run:	dbSNP.pl
+
+   This will be automated run 4 times a year by cron job. 
+
+

@@ -1,0 +1,37 @@
+1367	37397	Genes	Genes	2020-01-31 00:00:00
+1368	26325	Genes	Genes on Assembly	2020-01-31 00:00:00
+1369	44122	Genes	Transcripts	2020-01-31 00:00:00
+1370	34865	Genes	EST/cDNAs	2020-01-31 00:00:00
+1371	69645	Genetics	Features	2020-01-31 00:00:00
+1372	24714	Genetics	Transgenic Features	2020-01-31 00:00:00
+1373	5333	Genetics	Transgenic Constructs	2020-01-31 00:00:00
+1374	15255	Genetics	Transgenic Genotypes	2020-01-31 00:00:00
+1375	26778	Genetics	Genotypes	2020-01-31 00:00:00
+1376	22810	Functional Annotation	Genes with GO annotations	2020-01-31 00:00:00
+1377	19130	Functional Annotation	Genes with IEA GO annotations	2020-01-31 00:00:00
+1378	18253	Functional Annotation	Genes with Non-IEA GO Annotation	2020-01-31 00:00:00
+1379	226052	Functional Annotation	Total GO Annotations	2020-01-31 00:00:00
+1380	4754	Functional Annotation	Genes with OMIM phenotypes	2020-01-31 00:00:00
+1381	10182	Reagents	Morpholinos	2020-01-31 00:00:00
+1382	703	Reagents	TALEN	2020-01-31 00:00:00
+1383	4644	Reagents	CRISPR	2020-01-31 00:00:00
+1384	3248	Reagents	Antibodies	2020-01-31 00:00:00
+1385	141810	Expression & Phenotype	Gene expression experiments	2020-01-31 00:00:00
+1386	396442	Expression & Phenotype	Gene expression patterns	2020-01-31 00:00:00
+1387	13598	Expression & Phenotype	Genes with expression data	2020-01-31 00:00:00
+1388	165525	Expression & Phenotype	Phenotype statements	2020-01-31 00:00:00
+1389	7103	Expression & Phenotype	Genes with a phenotype	2020-01-31 00:00:00
+1390	395	Expression & Phenotype	Diseases with Models	2020-01-31 00:00:00
+1391	1351	Expression & Phenotype	Disease Models	2020-01-31 00:00:00
+1392	19542	Expression & Phenotype	Expression Phenotype	2020-01-31 00:00:00
+1393	117953	Expression & Phenotype	Images	2020-01-31 00:00:00
+1394	3113	Expression & Phenotype	Anatomical structures	2020-01-31 00:00:00
+1395	38522	Genomics	Mapped markers	2020-01-31 00:00:00
+1396	906188	Genomics	Links to other databases	2020-01-31 00:00:00
+1397	39213	Community information	All Publications	2020-01-31 00:00:00
+1398	30974	Community information	Journal Publications	2020-01-31 00:00:00
+1399	8966	Community information	Researchers	2020-01-31 00:00:00
+1400	1352	Community information	Laboratories	2020-01-31 00:00:00
+1401	226	Community information	Companies	2020-01-31 00:00:00
+1402	16432	Orthology	Genes w/Human Orthology	2020-01-31 00:00:00
+1403	13986	Orthology	Genes w/Mouse Orthology	2020-01-31 00:00:00

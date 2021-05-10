@@ -1,0 +1,815 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ZFIN" default="usage" basedir=".">
+
+    <property name="build.sysclasspath" value="ignore"/>
+
+    <property name="buildfiles.dir" value="buildfiles"/>
+
+
+    <import file="${buildfiles.dir}/base-properties.xml"/>
+
+    <taskdef name="loadProperties"
+             classname="org.zfin.properties.ant.LoadPropertiesTask"
+             classpathref="classpath"/>
+
+    <taskdef name="createEnum"
+             classname="org.zfin.properties.ant.CreateEnumTask"
+             classpathref="classpath"/>
+
+    <taskdef name="exportProperties"
+             classname="org.zfin.properties.ant.ExportPropertiesTask"
+             classpathref="classpath"/>
+
+    <taskdef resource="net/sf/antcontrib/antlib.xml">
+        <classpath>
+            <pathelement location="lib/Java/ant-contrib-0.3.jar"/>
+        </classpath>
+    </taskdef>
+
+    <property name="commons.dir" value="${basedir}/commons/env"/>
+
+    <property environment="env"/>
+
+
+    <!--If INSTANCE system property is not defined,-->
+    <!--then define from the environment.-->
+    <condition property="instance.env.defined">
+        <not>
+            <equals arg1="${env.INSTANCE}" arg2=""/>
+        </not>
+    </condition>
+
+    <fail unless="instance.env.defined"
+          message="INSTANCE must be defined in the environment even if overriden by -DINSTANCE."/>
+
+    <!--If INSTANCE system property is not defined,-->
+    <!--then define from the environment.-->
+    <condition property="instance.overridden">
+        <and>
+            <not>
+                <equals arg1="${INSTANCE}" arg2="$${INSTANCE}"/>
+            </not>
+            <not>
+                <equals arg1="${env.INSTANCE}" arg2="${INSTANCE}"/>
+            </not>
+        </and>
+    </condition>
+
+    <property name="classes.dir.target" value="${env.TARGETROOT}/home/WEB-INF/classes"/>
+    <property name="lib.dir.target" value="${env.TARGETROOT}/home/WEB-INF/lib"/>
+    <!--If the INSTANCE variable is not already set (this code gets run for every target, I believe)-->
+    <!--the we check if it is defined in the system as OVERRIDE_INSTANCE-->
+    <if>
+        <equals arg1="${instance.overridden}" arg2="true"/>
+        <then>
+            <echo message="!!!!!!!"/>
+            <echo message="Instance IS system defined and set to '${INSTANCE}'."/>
+            <echo message="Instance IS defined in environment as '${env.INSTANCE}'."/>
+            <echo message="!!!!!!!"/>
+        </then>
+        <else>
+            <property name="INSTANCE" value="${env.INSTANCE}"/>
+            <echo message="INSTANCE = ${INSTANCE}"/>
+        </else>
+    </if>
+
+
+    <!--Define property file.-->
+    <property name="property.file" value="${commons.dir}/${INSTANCE}.properties"/>
+    <property name="log4j.file" value="${commons.dir}/${INSTANCE}.log4j.xml"/>
+
+    <!--If the property file is not defined then fail.-->
+    <!--
+        <echo message="property file=${property.file}"/>
+    -->
+    <available property="property.file.available" file="${property.file}"/>
+
+    <fail unless="property.file.available"
+          message="Unable to find property file[${property.file}] for instance[${INSTANCE}"/>
+
+
+    <exportProperties
+            file="${commons.dir}/${INSTANCE}.properties"
+            target="${basedir}/home/WEB-INF/zfin.properties"
+            header="#Properties for INSTANCE=${INSTANCE}"
+            keySuffix="="
+    />
+
+    <!--here, we are only loading property files into ant, not into the enum -->
+    <loadProperties file="home/WEB-INF/zfin.properties"/>
+
+    <!-- ensure git is looking in the source tree directory for hooks -->
+    <exec executable="git">
+        <arg value="config" />
+        <arg value="core.hooksPath" />
+        <arg value=".githooks" />
+    </exec>
+
+
+    <import file="${buildfiles.dir}/allfilter.xml"/>
+    <import file="${buildfiles.dir}/properties.xml"/>
+    <import file="${buildfiles.dir}/gwt.xml"/>
+    <import file="${buildfiles.dir}/test.xml"/>
+    <import file="${buildfiles.dir}/performance.xml"/>
+    <import file="${buildfiles.dir}/tomcat.xml"/>
+    <import file="${buildfiles.dir}/usage.xml"/>
+    <import file="${buildfiles.dir}/serialization.xml"/>
+    <import file="${buildfiles.dir}/warehouse.xml"/>
+    <import file="${buildfiles.dir}/utilities.xml"/>
+    <import file="${buildfiles.dir}/jenkins.xml"/>
+    <import file="${buildfiles.dir}/solr-ant.xml"/>
+    <import file="${buildfiles.dir}/shipper.xml"/>
+    <import file="${buildfiles.dir}/base-properties.xml"/>
+    <!--
+        <echo message="property file=${LOG4J_FILE}"/>
+    -->
+
+    <!-- ====================================================================== -->
+    <!-- COMPILE TASKS                                                          -->
+    <!-- ====================================================================== -->
+
+    <target name="prepare" depends="hibernate-available" description="Prepares directories for compilation">
+        <mkdir dir="${classbin.dir}"/>
+        <mkdir dir="${classbin.dir}/resources"/>
+        <copy file="${conf.dir}/hibernate.cfg.xml" todir="${classbin.dir}"/>
+        <copy file="${conf.dir}/hibernate-gbrowse.cfg.xml" todir="${classbin.dir}"/>
+        <copy file="${conf.dir}/mchange-log.properties" todir="${classbin.dir}"/>
+        <copy file="${commons.dir}/${LOG4J_FILE}" tofile="${web-inf.dir}/log4j2.xml" failonerror="false">
+            <filterset>
+                <filter token="DEFAULT_EMAIL" value="${DEFAULT_EMAIL}"/>
+            </filterset>
+        </copy>
+        <copy todir="${classbin.dir}/org/zfin">
+            <fileset dir="${hibernate.conf.dir}">
+                <include name="*.hbm.xml"/>
+            </fileset>
+        </copy>
+        <copy todir="${classbin.dir}">
+            <fileset dir="${source.dir}">
+                <include name="**/*.properties"/>
+            </fileset>
+        </copy>
+
+        <if>
+            <equals arg1="${hibernate.exists}" arg2="true"/>
+            <then>
+                <echo message="Hibernate configuration file hibernate.properties found"/>
+                <copy file="${conf.dir}/hibernate.properties" tofile="${classbin.dir}/hibernate.properties"
+                      failonerror="false"/>
+            </then>
+        </if>
+        <!--
+                <copy file="${conf.dir}/application.properties" todir="${classbin.dir}/resources"/>
+        -->
+        <copy file="${conf.dir}/views.properties" tofile="${classbin.dir}/views.properties"/>
+        <copy file="${conf.dir}/zfin-messages.properties" tofile="${classbin.dir}/zfin-messages.properties"/>
+    </target>
+
+
+    <target name="do"
+            depends="cleanClasses, compile, prepare-properties"
+            description="Everything to compile excluding jsp files. No copying into target directory"/>
+
+    <target name="all" depends="deploy" description="The same as deploy for Tom."/>
+    <target name="install" depends="deploy" description="Same as deploy."/>
+
+    <target name="loadPropertiesIntoEnum">
+        <loadProperties
+                file="${commons.dir}/${INSTANCE}.properties"
+                enumClass="${enum.class}"
+        />
+    </target>
+
+    <target name="createEnum">
+        <createEnum file="${commons.dir}/${INSTANCE}.properties"
+                    sourceDir="source"
+                    enumClass="${enum.class}"
+        />
+        <antcall target="compile"/>
+    </target>
+
+    <macrodef name="createEnv">
+        <sequential>
+            <exportProperties
+                    file="${commons.dir}/${INSTANCE}.properties"
+                    target="${commons.dir}/${INSTANCE}.env"
+                    header="#!/local/bin/tcsh${line.separator}"
+                    keyPrefix="setenv "
+                    keySuffix=" "
+                    valuePrefix="&quot;"
+                    valueSuffix="&quot;"
+                    footerFile="${commons.dir}/footer.env"
+                    exportPropertyFile="${commons.dir}/env-exports.properties"/>
+        </sequential>
+    </macrodef>
+
+    <target name="createEnvFile">
+        <echo message="creating ENV file for ${INSTANCE}"></echo>
+        <createEnv/>
+    </target>
+
+    <macrodef name="createEnv-bash">
+        <sequential>
+            <exportProperties
+                    file="${commons.dir}/${INSTANCE}.properties"
+                    target="${commons.dir}/${INSTANCE}.bash"
+                    header="#!/local/bin/bash${line.separator}"
+                    keyPrefix="export "
+                    keySuffix="="
+                    valuePrefix="&quot;"
+                    valueSuffix="&quot;"
+                    exportPropertyFile="${commons.dir}/env-exports.properties"/>
+        </sequential>
+    </macrodef>
+
+    <target name="createBashEnvFile">
+        <echo message="creating ENV file for ${INSTANCE}"></echo>
+        <createEnv-bash/>
+    </target>
+
+    <macrodef name="createTT">
+        <sequential>
+            <exportProperties
+                    file="${commons.dir}/${INSTANCE}.properties"
+                    target="${commons.dir}/${INSTANCE}.tt"
+                    header="# Autogenerated for instance '${INSTANCE}'.${line.separator}"
+                    keyPrefix="&lt;!--|"
+                    keySuffix="|--&gt;${tab}"
+                    exportPropertyFile="${commons.dir}/tt-exports.properties"
+                    footerFile="${commons.dir}/footer.tt"
+            />
+            <replaceregexp file="${commons.dir}/${INSTANCE}.tt"
+                           match="@"
+                           replace="\\\\@"
+                           flags="g"
+            />
+        </sequential>
+    </macrodef>
+
+    <target name="createTTFile">
+        <echo message="creating TT file for ${INSTANCE}"></echo>
+        <createTT/>
+    </target>
+
+    <target name="rebuildPropertiesForInstance" depends="createEnum,createPropertiesFilesForInstance"
+            description="Rebuilds properties for specified instance: ${INSTANCE} as set in the environemnt.">
+    </target>
+
+    <target name="rebuildProperties" depends="createEnum,createAllPropertiesFiles,exportAntTokenFilters"
+            description="Rebuilds properties for all instances.">
+    </target>
+
+    <target name="dumpFlattenedProperties" depends="createEnum,exportAntTokenFilters"
+            description="Dumps flattened properties.">
+        <taskdef name="exportAllInstances"
+                 classname="org.zfin.properties.ExportAllInstancesTask"
+                 classpathref="classpath"/>
+        <exportAllInstances instancesFile="${commons.dir}/instances.properties"
+                            target="dumpFlattenedPropertiesForInstance"/>
+    </target>
+
+    <target name="dumpFlattenedPropertiesForInstance">
+        <exportProperties
+                file="${commons.dir}/${INSTANCE}.properties"
+                target="commons/test/${INSTANCE}-flat.properties"
+                header="#Properties for INSTANCE=${INSTANCE}"
+                keySuffix="="
+        />
+    </target>
+
+    <target name="exportAntTokenFilters">
+        <exportProperties
+                file="${commons.dir}/${INSTANCE}.properties"
+                target="${buildfiles.dir}/allfilter.xml"
+                header="&lt;project&gt;${line.separator}&lt;filterset id='allfilters'&gt;"
+                keyPrefix="&lt;filter token=&quot;"
+                keySuffix="&quot; value=&quot;${@KEY@}&quot;/&gt;"
+                suppressValue="true"
+                footer="&lt;/filterset&gt;${line.separator}&lt;/project&gt;"
+        />
+    </target>
+
+    <!--is referenced in ExportAllInstancesTask, so if renamed, please change there-->
+    <target name="createPropertiesFilesForInstance" depends="compile"
+            description="Exports properties to env and tt files.">
+        <echo message="Creating properties file: ${INSTANCE}"></echo>
+        <createEnv/>
+        <createEnv-bash/>
+        <createTT/>
+        <echo message="Created properties file: ${INSTANCE}"></echo>
+    </target>
+
+
+    <target name="createAllPropertiesFiles" description="Exports all instances defined in instances.properties">
+        <taskdef name="exportAllInstances"
+                 classname="org.zfin.properties.ExportAllInstancesTask"
+                 classpathref="classpath"/>
+        <exportAllInstances instancesFile="${commons.dir}/instances.properties"
+                            target="createPropertiesFilesForInstance"/>
+    </target>
+
+    <path id="extended.classpath">
+        <path refid="classpath"/>
+        <!-- This class needs to come first to ensure that unit test methods are executed in the order they appear in the source file -->
+        <fileset dir="${lib}">
+            <include name="junit-orderOfExecution.jar"/>
+        </fileset>
+        <fileset dir="${lib}">
+            <include name="*.jar"/>
+            <include name="*.zip"/>
+        </fileset>
+        <fileset dir="${jwebunit.lib}">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${gwt.lib}">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="/opt/misc/groovy/lib">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <path id="unittest.classpath">
+        <!-- This class needs to come first to ensure that unit test methods are executed in the order they appear in the source file -->
+        <fileset dir="${lib}">
+            <include name="junit-orderOfExecution.jar"/>
+        </fileset>
+        <fileset dir="${lib}">
+            <include name="*.jar"/>
+            <include name="*.zip"/>
+        </fileset>
+        <fileset dir="${jwebunit.lib}">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${gwt.lib}">
+            <include name="*.jar"/>
+        </fileset>
+        <path refid="classpath"/>
+    </path>
+
+    <target name="instrument" depends="compile">
+        <taskdef name="instrument" classname="org.hibernate.tool.instrument.javassist.InstrumentTask">
+            <classpath refid="extended.classpath"/>
+            <classpath path="${classbin.dir}"/>
+        </taskdef>
+
+        <instrument verbose="true">
+            <fileset dir="${TARGETROOT}/home/WEB-INF/classes">
+                <include name="org/zfin/ontology/GenericTerm.class"/>
+                <include name="org/zfin/profile/Person.class"/>
+                <include name="org/zfin/expression/Figure.class"/>
+                <include name="org/zfin/expression/TextOnlyFigure.class"/>
+                <include name="org/zfin/expression/FigureFigure.class"/>
+                <include name="org/zfin/ontology/**Term.class"/>
+                <include name="org/zfin/publication/CorrespondenceComposedMessage.class"/>
+                <include name="org/zfin/publication/CorrespondenceSentMessage.class"/>
+                <include name="org/zfin/publication/Publication.class"/>
+            </fileset>
+            <fileset dir="${SOURCEROOT}/home/WEB-INF/classes">
+                <include name="org/zfin/ontology/GenericTerm.class"/>
+                <include name="org/zfin/profile/Person.class"/>
+                <include name="org/zfin/expression/Figure.class"/>
+                <include name="org/zfin/expression/TextOnlyFigure.class"/>
+                <include name="org/zfin/expression/FigureFigure.class"/>
+                <include name="org/zfin/ontology/**Term.class"/>
+                <include name="org/zfin/publication/CorrespondenceComposedMessage.class"/>
+                <include name="org/zfin/publication/CorrespondenceSentMessage.class"/>
+                <include name="org/zfin/publication/Publication.class"/>
+            </fileset>
+        </instrument>
+    </target>
+
+    <target name="compile" depends="prepare"
+            description="Target to compile all classes, excluding test files, and moving anything from the source
+            folder to the class folder.">
+        <copy todir="${classbin.dir}">
+            <fileset dir="${source.dir}">
+                <include name="**/*.xml"/>
+                <exclude name="**/.svn"/>
+            </fileset>
+        </copy>
+        <javac srcdir="source"
+               destdir="${classbin.dir}"
+               classpathref="extended.classpath"
+               fork="true"
+               encoding="${encoding}"
+               includeAntRuntime="no"
+               memoryMaximumSize="556m"
+               debug="true" />
+        <echo message=":JAVA COMPILE SUCCESSFUL:"/>
+    </target>
+
+    <target name="remove-pre-and-post-targets"
+            description="Remove the pre-WEB-INF folder if exists. It is used for the new build version">
+        <delete includeemptydirs="true" quiet="true">
+            <fileset dir="${pre-web-inf}" includes="**/*"/>
+        </delete>
+        <delete includeemptydirs="true" quiet="true">
+            <fileset dir="${post-web-inf}" includes="**/*"/>
+        </delete>
+        <delete includeemptydirs="true" quiet="true">
+            <fileset dir="${gwt.pre-target}" includes="**/*"/>
+        </delete>
+        <delete includeemptydirs="true" quiet="true">
+            <fileset dir="${gwt.post-target}" includes="**/*"/>
+        </delete>
+    </target>
+
+    <target name="cleanClasses" description="Remove java classes directory contents. ">
+        <delete includeemptydirs="true" quiet="true">
+            <fileset dir="${classbin.dir}" includes="**/*"/>
+            <fileset dir="${lib.dir}" includes="**/*"/>
+        </delete>
+        <!--<delete includeemptydirs="true" quiet="true">-->
+        <!--<fileset dir="${domain-work}" includes="**/*"/>-->
+        <!--</delete>-->
+    </target>
+
+    <target name="cleanTarget" description="Remove target values. ">
+        <removeWebAppLocation location="${home.target}"/>
+    </target>
+
+    <target name="clobber" depends="cleanTarget" description="Remove target values. "/>
+
+    <target name="clean-javadoc" description="Cleans javadoc">
+        <delete dir="${java-doc.dir}"/>
+    </target>
+
+    <target name="javadocs" depends="clean-javadoc" description="Generate Javadocs into ${java-doc.dir}">
+        <mkdir dir="${java-doc.dir}"/>
+        <javadoc packagenames="org.zfin.*"
+                 sourcepath="${source.dir}"
+                 excludepackagenames="org.zfin.properties.*"
+                 classpathref="extended.classpath"
+                 destdir="${java-doc.dir}/zfin"
+                 author="true"
+                 version="true"
+                 maxmemory="300m"
+                 use="true"
+                 private="yes"
+                 windowtitle="ZFIN API"
+                 doctitle="ZFIN"
+                 bottom="Copyright &#169; 2008 ZFIN"
+                 locale="en"
+        />
+    </target>
+
+
+    <target name="deploy-javadoc" depends="javadocs" description="Deploy the Javadoc into webroot/util/javadoc/zfin">
+        <mkdir dir="${TARGETROOT}/${zfin-javadoc}"/>
+        <copy verbose="true" todir="${TARGETROOT}/${zfin-javadoc}">
+            <fileset dir="${java-doc.dir}/zfin">
+                <include name="**/"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <!-- ====================================================================== -->
+    <!-- CONFIGURATION TASKS                                                    -->
+    <!-- ====================================================================== -->
+
+    <target name="hibernate-available" description="Verifies that hibernate is available">
+        <available file="${conf.dir}/hibernate.properties" property="${hibernate.exists}"/>
+    </target>
+
+
+    <!-- ====================================================================== -->
+    <!-- Generate WAR.                                                          -->
+    <!-- ====================================================================== -->
+
+    <target name="simple-war" description="Creates war file with no depends targets">
+        <war warfile="${zfin.war}" webxml="${web-inf.dir}/web.xml" duplicate="preserve" index="true">
+            <fileset dir="${web.dir}"/>
+            <lib dir="${web-inf.dir}/lib"/>
+        </war>
+    </target>
+
+
+    <target name="schemaVersion" description="Prints schema version">
+        <java fork="yes" classname="org.zfin.database.SchemaManager" taskname="junit" failonerror="true">
+            <arg value="-checkSchema"/>
+            <classpath refid="extended.classpath"/>
+        </java>
+    </target>
+
+    <target name="prepare-properties" description="Copy jaxb properties into class hierarchy">
+        <copy todir="${classbin.dir}/">
+            <fileset dir="${source.dir}">
+                <include name="**/jaxb.properties"/>
+                <include name="**/bgm.ser"/>
+            </fileset>
+        </copy>
+    </target>
+
+
+    <target name="remove-archives" description="Removes archived builds (older than post-builds)">
+        <delete verbose="true" includeemptydirs="true">
+            <fileset dir="${TARGETROOT}/home" includes="archive*/**"/>
+        </delete>
+    </target>
+
+    <target name="revert" depends="revert-build,restart" description="Reverts the build and restarts"/>
+
+    <target name="revert-build"
+            description="Moves the last successful build to the current build and this build to the previous build directly (which will get clobbered on a subsequent build).">
+        <fail message=":FAIL TO REVERT BUILD.  POST DIRECTORIES DO NOT EXIST TO MOVE:">
+            <condition>
+                <not>
+                    <and>
+                        <available file="${post-web-inf}"/>
+                        <available file="${gwt.post-target}"/>
+                    </and>
+                </not>
+            </condition>
+        </fail>
+
+        <moveWebApp to="${post-home.target" from="${home.target}"/>
+        <moveWebApp to="${home.target" from="${pre-home.target}" failonerror="true"/>
+
+        <echo message=":REVERTED BUILD SUCCESSFULY:"/>
+    </target>
+
+    <macrodef name="moveWebApp">
+        <attribute name="from"/>
+        <attribute name="to"/>
+        <attribute name="overwrite" default="true"/>
+        <attribute name="failonerror" default="false"/>
+        <sequential>
+            <echo message="@{from}"/>
+            <move todir="@{to}" overwrite="@{overwrite}" failonerror="@{failonerror}">
+                <fileset dir="@{from}">
+                    <include name="WEB-INF/**"/>
+                    <include name="dist/**/"/>
+                    <include name="gwt/**"/>
+                    <include name="images/**"/>
+                    <include name="fonts/**"/>
+                    <include name="templates/**"/>
+                </fileset>
+            </move>
+        </sequential>
+    </macrodef>
+
+    <!-- removed the has.pre-directories clause, as we shouldn't get here unless the pre-compile has been built -->
+    <target name="advance-build"
+            description="Moves build from post-home to archive-home, home to post-home, and pre-home to home">
+        <echo message="advancing build"/>
+        <fail message=":FAIL TO ADVANCE BUILD.  PRE DIRECTORIES DO NOT EXIST TO MOVE:">
+            <condition>
+                <not>
+                    <and>
+                        <available file="${pre-web-inf}"/>
+                        <available file="${gwt.pre-target}"/>
+                        <!-- <available file="${pre.version.file}"/> -->
+                    </and>
+                </not>
+            </condition>
+        </fail>
+
+        <delete failonerror="false">
+            <fileset dir="${classes.dir.target}" includes="**/*"/>
+            <fileset dir="${lib.dir.target}" includes="**/*"/>
+        </delete>
+
+        <moveWebApp to="${home.target}" from="${pre-home.target}" overwrite="true" failonerror="true"/>
+        <echo message=":BUILD ADVANCED SUCCESSFULY:"/>
+    </target>
+
+    <macrodef name="emailMessage">
+        <attribute name="message"/>
+        <attribute name="email"/>
+        <sequential>
+            <java classname="org.zfin.framework.mail.IntegratedJavaMailSender"
+                  fork="yes"
+                  classpathref="classpath">
+                <!-- subject -->
+                <arg value="@{message}"/>
+                <!-- message -->
+                <arg value="@{message}"/>
+                <!-- email -->
+                <arg value="@{email}"/>
+            </java>
+        </sequential>
+    </macrodef>
+
+
+    <target name="deploy" depends="deploy-without-tests,instrument,test,productionSmokeTests"
+            description="Performs the full build, test, move to production, and tomcat restart appropriate for the current environment"/>
+
+    <target name="deploy-without-tests"
+            depends="cleanClasses,pre-deploy,build-properties,advance-build,unittests-quiet,instrument,restart,deploy-solr"/>
+
+    <target name="deploy-without-tests-and-tomcat-restart"
+            depends="cleanClasses,pre-deploy,build-properties,advance-build,unittests-quiet,deploy-solr"/>
+
+    <target name="pre-deploy" depends="do,prepareDeploy,gwt,copy-to-pre-release,npmInstall,npmBuild"
+            description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment.">
+        <!--        <jsp-compile/> -->
+    </target>
+
+    <macrodef name="removeWebAppLocation">
+        <attribute name="location"/>
+        <sequential>
+            <delete dir="@{location}/dist"/>
+            <delete dir="@{location}/fonts"/>
+            <delete dir="@{location}/images"/>
+            <delete dir="@{location}/templates"/>
+            <delete dir="@{location}/WEB-INF"/>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="replaceProperties">
+        <attribute name="to"/>
+        <sequential>
+            <!--I don't think doing the full-scale delete is necessary.  -->
+            <!--<echo message="@{to}"/>-->
+            <!--<delete dir="@{to}" verbose="true"/>-->
+            <copy todir="@{to}" verbose="false">
+                <fileset dir="${commons.dir}">
+                    <include name="*.properties"/>
+                </fileset>
+            </copy>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="removeWebAppDir">
+        <attribute name="dir"/>
+        <sequential>
+            <echo message="removing webapp from @{dir}"/>
+            <delete dir="@{dir}"/>
+        </sequential>
+    </macrodef>
+
+
+    <macrodef name="copyWebApp">
+        <attribute name="from"/>
+        <attribute name="to"/>
+        <attribute name="overwrite" default="false"/>
+        <sequential>
+            <echo message="copying the webapp from @{from} to @{to}"/>
+            <copy todir="@{to}" overwrite="@{overwrite}">
+                <fileset dir="@{from}">
+                    <include name="WEB-INF/**"/>
+                    <exclude name="images/**"/>
+                    <exclude name="templates/**"/>
+                    <exclude name="**/*.jar"/>
+                    <exclude name="**/*.zip"/>
+                    <exclude name="**/*.class"/>
+                    <exclude name="**/*.ser"/>
+                    <exclude name="**/*.svn"/>
+                </fileset>
+                <filterset refid="allfilters"/>
+            </copy>
+
+            <copy todir="@{to}" overwrite="@{overwrite}">
+                <fileset dir="@{from}">
+                    <include name="images/**"/>
+                    <include name="templates/**"/>
+                    <include name="WEB-INF/**/*.jar"/>
+                    <include name="WEB-INF/**/*.zip"/>
+                    <include name="WEB-INF/**/*.class"/>
+                    <include name="WEB-INF/**/*.ser"/>
+                    <include name="slides/**"/>
+                    <exclude name="**/*.svn"/>
+                </fileset>
+            </copy>
+        </sequential>
+    </macrodef>
+
+    <target name="cleandeploy" depends="do"
+            description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment assuming that its already been built">
+        <removeWebAppDir dir="${home.target}"/>
+        <copyWebApp from="${web.dir}" to="${home.target}"/>
+    </target>
+
+    <target name="dirtydeploy" depends="compile,instrument"
+            description="Target to compile all classes (excluding jsp files) and then deploy the necessary files to user's web environment assuming that its already been built">
+        <copyWebApp from="${web.dir}" to="${home.target}"/>
+        <antcall target="npmBuild"/>
+        <antcall target="deploy-solr"/>
+    </target>
+
+
+    <target name="copy-to-pre-release" description="Copies built files to pre-release area">
+        <!-- move non-binary files in order to not replace any characters in Binary files -->
+        <copyWebApp from="${web.dir}" to="${pre-home.target}" overwrite="true"/>
+    </target>
+
+    <target name="prepareDeploy" description="Remove existing pre-release folder">
+        <delete dir="${pre-web-inf}"/>
+        <delete dir="${gwt.pre-target}"/>
+        <mkdir dir="${pre-web-inf}"/>
+        <mkdir dir="${gwt.pre-target}"/>
+    </target>
+
+
+    <target name="build-properties" description="Describes build properties for environment">
+        <echo>If properties are defined as true, they will show up that way, otherwise will just produce string
+            version.
+        </echo>
+        <echo message="Is informix: ${isinformix}"/>
+        <echo message="Is almost: ${isalmost}"/>
+        <echo message="Is mutant: ${ismutant}"/>
+        <echo message="Not production: ${notproduction}"/>
+        <echo message="Has pre-redirctories: ${has.pre-directories}"/>
+        <echo message="Has post-redirctories: ${has.post-directories}"/>
+    </target>
+
+    <taskdef resource="task.properties" classpath="lib/Java/grand-1.8.jar">
+        <classpath refid="extended.classpath"/>
+    </taskdef>
+
+    <target name="graph" description="Creates graph of build process">
+        <grand output="build.dot" buildfile="build.xml"/>
+        <exec executable="dot">
+            <arg line="-Tps -Gsize=11.69,8.27 -Grotate=90 -o build.ps build.dot"/>
+        </exec>
+    </target>
+
+    <macrodef name="regenerateSSHKey">
+        <attribute name="ssh-command"/>
+        <sequential>
+            <delete file="@{ssh-command}"/>
+            <delete file="@{ssh-command}.pub"/>
+            <exec command="ssh-keygen">
+                <arg value="-f"/>
+                <arg value="@{ssh-command}"/>
+                <arg value="-t"/>
+                <arg value="dsa"/>
+                <arg value="-N"/>
+                <arg value=""/>
+            </exec>
+
+            <exec command="./buildfiles/fixKey.sh">
+                <arg value="@{ssh-command}"/>
+            </exec>
+        </sequential>
+    </macrodef>
+
+
+    <target name="generateSSHKeys">
+        <regenerateSSHKey ssh-command="cp"/>
+        <regenerateSSHKey ssh-command="xdget"/>
+        <regenerateSSHKey ssh-command="xdformat"/>
+        <regenerateSSHKey ssh-command="blastn"/>
+        <regenerateSSHKey ssh-command="blastp"/>
+        <regenerateSSHKey ssh-command="blastx"/>
+        <regenerateSSHKey ssh-command="tblastn"/>
+        <regenerateSSHKey ssh-command="tblastx"/>
+    </target>
+
+
+    <target name="validateDatabases" depends="compile,build-tests">
+        <java classname="org.zfin.sequence.blast.ValidateBlastDatabases" fork="yes"
+              classpathref="extended.classpath"
+        >
+        </java>
+    </target>
+
+    <target name="generateWebServiceClasses">
+        <exec executable="xjc">
+            <arg value="home/WEB-INF/conf/zfin.xsd"/>
+            <arg value="-p"/>
+            <arg value="org.zfin.webservice.schema"/>
+            <arg value="-d"/>
+            <arg value="source"/>
+            <arg value="-mark-generated"/>
+        </exec>
+    </target>
+
+    <target name="generateWSClient">
+        <exec executable="wsimport">
+            <arg value="-p"/>
+            <arg value="org.zfin.webservice.client"/>
+            <arg value="http://${DOMAIN_NAME}/webservice/definitions/zfin.wsdl"/>
+        </exec>
+        <jar destfile="lib/Java/zfin-soap-client.jar" basedir="." includes="org/**"></jar>
+        <delete dir="org"/>
+    </target>
+
+    <target name="npmInstall">
+        <exec executable="npm" failonerror="true">
+            <arg value="install"/>
+        </exec>
+    </target>
+
+    <target name="npmBuild">
+        <exec executable="npm" failonerror="true">
+            <arg value="run"/>
+            <arg value="build"/>
+        </exec>
+    </target>
+
+    <target name="npmLint">
+        <exec executable="npm" failonerror="true">
+            <arg value="run"/>
+            <arg value="lint"/>
+        </exec>
+    </target>
+
+    <taskdef name="groovy"
+             classname="org.codehaus.groovy.ant.Groovy"
+             classpathref="extended.classpath"/>
+
+</project>
+
+

@@ -1,0 +1,1 @@
+truncate phenotype_generated_curated_mapping_temp;

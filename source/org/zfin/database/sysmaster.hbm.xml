@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.jboss.org/dtd/hibernate/hibernate-mapping-3.0.dtd">
+
+
+<hibernate-mapping package="org.zfin.database">
+
+    <!-- View -->
+    <class name="DatabaseLock" table="syslocks" mutable="false">
+        <composite-id>
+            <key-property name="dbsName" column="dbsname"/>
+            <key-property name="tableName" column="tabname"/>
+        </composite-id>
+
+        <property name="rowId" column="rowidlk"/>
+        <property name="type" column="type"/>
+        <property name="keyNum" column="keynum"/>
+
+        <many-to-one name="session" column="owner"/>
+
+    </class>
+
+    <!-- View -->
+    <class name="SysSession" table="syssessions" mutable="false">
+        <id name="sid"/>
+
+        <property name="userName" column="username"/>
+        <property name="uid" column="uid"/>
+        <property name="pid" column="pid"/>
+        <property name="hostname" column="hostname"/>
+        <property name="tty" column="tty"/>
+        <property name="connected" column="connected"/>
+        <property name="startDate" formula="(select distinct dbinfo('UTC_TO_DATETIME',connected) from syssessions)"/>
+        <property name="lock" column="is_wlock"/>
+        <property name="latch" column="is_wlatch"/>
+        <property name="buffer" column="is_wbuff"/>
+        <property name="logbuffer" column="is_wlogbuf"/>
+        <property name="checkpoint" column="is_wckpt"/>
+        <property name="transaction" column="is_wtrans"/>
+        <property name="monitor" column="is_monitor"/>
+        <property name="critical" column="is_incrit"/>
+        <property name="poolAddress" column="pooladdr"/>
+
+        <set name="syslocks">
+            <key column="owner"/>
+            <one-to-many class="DatabaseLock"/>
+        </set>
+
+        <set name="sysOpenDbList">
+            <key column="odb_sessionid"/>
+            <one-to-many class="SysOpenDb"/>
+        </set>
+
+<!--
+        <join table="sysopendb" optional="true">
+            <key column="odb_sessionid"/>
+            <many-to-one name="sysOpenDbList" ></many-to-one>
+            <component name="sysOpenDb">
+                <property name="name" column="odb_dbname"/>
+                <property name="isolation" column="odb_isolation"/>
+            </component>
+        </join>
+-->
+
+    </class>
+
+    <!-- View -->
+    <class name="SysDatabase" table="sysdatabases" mutable="false">
+        <id name="name"/>
+
+        <property name="owner" column="owner"/>
+        <property name="dateCreated" column="created"/>
+        <property name="logging" column="is_logging"/>
+    </class>
+
+    <class name="SysOpenDb" table="sysopendb" mutable="false">
+        <id name="sid" column="odb_sessionid"/>
+
+        <property name="name" column="odb_dbname"/>
+        <property name="isolation" column="odb_isolation"/>
+    </class>
+
+</hibernate-mapping>

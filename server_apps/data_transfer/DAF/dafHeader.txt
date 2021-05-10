@@ -1,0 +1,7 @@
+!daf-version: 0.1
+!Date: 02/14/2017
+!Project_name: Zebrafish Information Network (ZFIN)
+!URL: http://zfin.org/
+!Contact Email: zfinadmn@zfin.org
+
+Taxon DB Object Type DB Object ID DB Object Symbol Inferred gene association  Experimental conditions Association type DO ID  Evidence Code genetic sex DB:Reference Date Assigned by

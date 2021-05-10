@@ -1,0 +1,14 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+        xmlns:ui='urn:ui:com.google.gwt.uibinder'
+        xmlns:g='urn:import:com.google.gwt.user.client.ui'
+        xmlns:zfin-mod='urn:import:org.zfin.gwt.curation.ui.feature'
+        >
+
+    <g:FlowPanel>
+        <zfin-mod:FeatureAddView ui:field="featureAddView" styleName="mb-3"/>
+        <zfin-mod:FeatureEditView ui:field="featureEditView" styleName="mb-3"/>
+        <zfin-mod:FeatureRelationshipView ui:field="featureRelationshipView" styleName="mb-3"/>
+        <zfin-mod:FeatureZebrashareEditView ui:field="featureZebrashareEditView" styleName="mb-3"/>
+    </g:FlowPanel>
+</ui:UiBinder>

@@ -1,0 +1,8 @@
+@import "../../../../css/theme";
+
+// unholy black magic to allow the ribbon's maxColor to be controlled by sass
+:export {
+  primaryR: red($primary);
+  primaryG: green($primary);
+  primaryB: blue($primary)
+}

@@ -1,0 +1,183 @@
+#------------------------------------------------------------------------
+#
+# Include file for ZFIN_WWW makefiles.
+#
+# This file is included in every makefile in the ZFIN_WWW directory tree.
+# It contains definitions that are common across all makefiles.
+#
+#------------------------------------------------------------------------
+
+# ----------------  Sanity Checks  --------------------------------------
+# The following error checks will abort make and print a nice explanatory
+# message.
+
+# Must be running GNU make.  The following line appears to be testing that,
+# but in actuallity, if you are not running GNU make then the make will
+# choke on the ifneq statement.
+
+ifneq (,$(findstring gmake,$(MAKE)))
+ ifneq (,$(findstring gnumake,$(MAKE)))
+  MakeVersionCheck:
+	$(error Makefiles only compatible with GNU make.  Use gmake or gnumake.)
+ endif
+endif
+
+
+# check that environment variables are defined
+
+# Check one Informix variable.  Assumed if it is defined, the rest are too.
+
+ifndef INFORMIXDIR
+InformixDirCheck:
+	$(error Infomrix environment variables not all set.)
+endif
+
+
+# Check Environment variables required by Makefiles.
+
+# TARGETROOT must be defined and be an absolute path.
+
+ifndef TARGETROOT
+TargetRootCheck:
+	$(error TARGETROOT environment variable not set.)
+endif
+ifneq ($(filter /%,$(TARGETROOT)),$(TARGETROOT))
+TargetRootNotAbsolute:
+	$(error TARGETROOT must be an absolute path.)
+endif
+
+# if TARGETROOT ends in a slash, strip it, double slashes in filenames
+# cause trouble for REBOL.
+ifeq ($(filter %/,$(TARGETROOT)),$(TARGETROOT))
+TARGETROOT := $(patsubst %/,%,$(TARGETROOT))
+endif
+
+
+# TARGETFTPROOT must be defined and be an absolute path.
+
+ifndef TARGETROOT
+TargetFtpRootCheck:
+	$(error TARGETFTPROOT environment variable not set.)
+endif
+ifneq ($(filter /%,$(TARGETFTPROOT)),$(TARGETFTPROOT))
+TargetFtpRootNotAbsolute:
+	$(error TARGETFTPROOT must be an absolute path.)
+endif
+
+# if TARGETFTPROOT ends in a slash, strip it, double slashes in filenames
+# cause trouble for REBOL.
+ifeq ($(filter %/,$(TARGETFTPROOT)),$(TARGETFTPROOT))
+TARGETFTPROOT := $(patsubst %/,%,$(TARGETFTPROOT))
+endif
+
+
+
+
+# TARGETCGIBIN must be defined and be a relative path.
+
+ifndef TARGETCGIBIN
+TargetCgiDirNameCheck:
+	$(error TARGETCGIBIN environment variable not set.)
+endif
+ifeq ($(filter /%,$(TARGETCGIBIN)),$(TARGETCGIBIN))
+TargetCgiBinNotRelative:
+	$(error TARGETCGIBIN must be relative to TARGETROOT.)
+endif
+
+
+
+ifndef DBNAME
+DbNameCheck:
+	$(error DBNAME Environment variable not set.)
+endif
+
+TRANSLATETABLE = ${TOP}/commons/env/${INSTANCE}.tt
+
+# ---------------  Variable Definitions  --------------------------------
+
+
+# When app pages are loaded into the db, their ID becomes the name of the
+# file containing the app page, with a "aa-" appended to the front of it.
+
+APGPREFIX = aa-
+
+
+
+# --- Misc Executables
+
+# Preserve permissions on copies to target or staging directories.
+
+TARGET_CP  = /bin/cp -fp
+STAGING_CP = /bin/cp -fp
+WAR_UNZIP = /bin/unzip -o -d
+
+# Touch call needed after the _CP calls because _CP creates
+# files with exactly the same timestamp as the source file, and that
+# confuses gmake into thinking it needs to remake the file the next
+# time around.
+
+TOUCH = @/bin/touch
+
+# Any created dirs should be created with 775 perms.
+
+TARGET_MKDIR = @/bin/mkdir -pm 2775
+
+CHGRP_FISHADMIN = @/usr/bin/chgrp -R fishadmin
+
+CHMOD_775 = @/usr/bin/chmod -R ug+rwX,o+rX
+
+COMMONS_BIN = ${TOP}/commons/bin
+
+LOADAPPPAGE = ${COMMONS_BIN}/loadapppage.pl
+UNLOADAPPPAGE = ${COMMONS_BIN}/unloadapppage.pl
+
+#MAKESPECIFIC = ${COMMONS_BIN}/makespecific.pl
+MAKESPECIFIC = ${COMMONS_BIN}/make-specific.r
+#MAKESPECIFIC =  /research/zsharks/tomc/Projects/Commons/bin/make-specific.r
+
+SPECIFICCHECK = $(foreach GNRC,$(GENERICS),echo 'Informix weblint $(GNRC)'; $(WEBLINTIFMX) $(GNRC);)
+
+PSQL= $(PGBINDIR)/psql
+DBACCESS = $(INFORMIXDIR)/bin/dbaccess
+WEBLINTIFMXBASE := $(INFORMIXDIR)/extend/web.4.13.FC3/utils/weblint
+# to be used in 'loadapppage.pl'
+export WEBLINTIFMXBASE
+
+# weblint level 0  pass/error stop on first error
+# weblint level 1  pass/error stop on first error and describe
+# weblint level 2  pass/error don't stop and decsribe all
+# weblint level 3  pass/error like level 2 but more verbose
+# ':' is noop
+
+ifeq (0,${MAKELEVEL})
+WEBLINTIFMX = $(WEBLINTIFMXBASE) 2 <
+else
+WEBLINTIFMX = @:
+endif
+
+# --- Java
+
+JAVAHOME  = /usr/lib/jvm/java-openjdk
+JAVAC      = $(JAVAHOME)/bin/javac
+
+
+# --- Make JDBC 3.0 the default JDBC
+
+JDBCHOME     = /private/apps/jdbc3
+
+JAVACFLAGS = -source 1.4 -target 1.4 
+
+
+# --- Tomcat related
+
+CONTEXT_DIR = /opt/apache/apache-tomcat/conf/Catalina/$(DOMAIN_NAME)
+
+SET_CONTEXT_DESCRIPTOR = ${COMMONS_BIN}/setContextDescriptor.pl
+
+
+
+# ---- One time variables used in onetimeonlyl targets.  The onetimeonly
+# targets are set up so that if we ever need to do a sweeping change in
+# all directories, we might be able to use the onetimeonly targets to do it.
+
+ONETIMEONLY = echo "ontimeonly targets are currently undefined.

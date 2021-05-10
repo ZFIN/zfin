@@ -1,0 +1,1493 @@
+ZDB-ALT-010427-4||||exon 5|||||||||||
+ZDB-ALT-020426-92||||intron 2|||||||||||
+ZDB-ALT-021125-2|||||||||||||||
+ZDB-ALT-040129-6||||intron |||||||||||
+ZDB-ALT-070314-4|||||||||||||||
+ZDB-ALT-080828-4|||||||||||||||
+ZDB-ALT-091106-1|||||||||||||||
+ZDB-ALT-100113-1|||||||||||||||
+ZDB-ALT-100113-50|||||||||||||||
+ZDB-ALT-101006-6|||||||||||||||
+ZDB-ALT-110826-1|||||||||||||||
+ZDB-ALT-111118-27|||||||||||||||
+ZDB-ALT-111214-1|||||||||||||||
+ZDB-ALT-120130-471||||exon 2|STOP|||||||||REF|
+ZDB-ALT-120209-52|||||||||||||||
+ZDB-ALT-120209-55||||intron 6||||||||FUSION||REF|
+ZDB-ALT-120514-1||||exon 1|STOP||||||||||
+ZDB-ALT-120531-1|||||||||||||||
+ZDB-ALT-130314-2|||||||||||||||
+ZDB-ALT-131219-11||||intron 1|||||||||||
+ZDB-ALT-131219-14||||intron 2|||||||||||
+ZDB-ALT-131219-17||||intron 1|||||||||||
+ZDB-ALT-131219-2||||5' UTR|||||||||||
+ZDB-ALT-131219-28||||intron 4|||||||||||
+ZDB-ALT-131219-5||||intron 1|||||||||||
+ZDB-ALT-131219-8||||exon 1|||||||||||
+ZDB-ALT-140212-6||||intron 1||||||||||REF|
+ZDB-ALT-140212-9||||||||||||||REF|
+ZDB-ALT-140806-1||||intron 1||||||||||REF|
+ZDB-ALT-150416-2||||intron 1||||||||||REF|
+ZDB-ALT-150806-1|||||STOP|||X|6|||||REF|
+ZDB-ALT-151120-2||||intron 1||||||||||REF|
+ZDB-ALT-151216-29|||||||||||||Chr 22||
+ZDB-ALT-151216-37|||||||||||||Chr 1||
+ZDB-ALT-151216-44|||||||||||||Chr 10||
+ZDB-ALT-151216-47|||||||||||||Chr 1||
+ZDB-ALT-151216-62|||||||||||||Chr 24||
+ZDB-ALT-040217-4||||splice donor exon 1|||||||||||
+ZDB-ALT-040715-12||||intron 1|||||||||||
+ZDB-ALT-040716-2|||||||||||||||
+ZDB-ALT-040930-16|||||||||||||||
+ZDB-ALT-040930-4||||intron 1||||||||||REF|
+|||||||||||||||
+ZDB-ALT-080828-2||||exon 2||||||||||REF|
+ZDB-ALT-100113-6|||||||||||||||
+ZDB-ALT-100209-11||||exon 1|||||||||||
+ZDB-ALT-100504-4|||||||||||||||
+ZDB-ALT-110203-7||||intron 1|||||||||||
+ZDB-ALT-111010-23||||||||||||FUSION||REF|
+ZDB-ALT-111118-28||||intron 1||||||||||REF|
+ZDB-ALT-120328-1||||intron 4|||||||||||
+ZDB-ALT-120613-25||||intron ||||||||||REF|
+ZDB-ALT-130627-1||||5' UTR||||||||||REF|
+ZDB-ALT-130925-5||||intron 3||||||||FUSION|||
+).|||||||||||||||
+ZDB-ALT-131007-1||||exon 1|SPLICING|||||||||REF|
+ZDB-ALT-131018-1||||intron 3|||||||||||
+ZDB-ALT-131204-2||||5'UTR||||||||||REF|
+|||||||||||||||
+ZDB-ALT-131219-1||||5'UTR|||||||||||
+ZDB-ALT-131219-20||||intron 1|||||||||||
+ZDB-ALT-131219-6||||5'UTR||||||||||REF|
+|||||||||||||||
+ZDB-ALT-140212-13||||intron 2||||||||||REF|
+ZDB-ALT-140212-4||||||||||||||REF|
+|||||||||||||||
+ZDB-ALT-140212-7||||||||||||||REF|
+|||||||||||||||
+ZDB-ALT-141031-1|||||||||||||||
+ZDB-ALT-151006-1||||CODING exon 1||||||||||REF|
+ZDB-ALT-151216-1|||||||||||||Chr 19||
+ZDB-ALT-151216-13|||||||||||||Chr 1||
+ZDB-ALT-151216-14|||||||||||||Chr 18||
+ZDB-ALT-151216-31|||||||||||| |Chr 7||
+ZDB-ALT-151216-51|||||||||||||Chr 7||
+ZDB-ALT-151216-52|||||||||||||Chr 12||
+ZDB-ALT-151216-57|||||||||||||Chr 9 ||
+ZDB-ALT-151216-69|||||||||||||Chr 2||
+ZDB-ALT-151216-74|||||||||||||Chr 4||
+ZDB-ALT-010427-2||||intron 5|||||||||||
+ZDB-ALT-040217-6||||intron 5|||||||||||
+ZDB-ALT-040316-4|||||||||||||||
+ZDB-ALT-040713-8|||||||||||||||
+ZDB-ALT-040927-30|||||||||||||||
+ZDB-ALT-090423-4|||||||||||||||
+ZDB-ALT-110413-6||||intron 1|||||||||||
+ZDB-ALT-111010-24|||||||||||||||
+ZDB-ALT-111118-5||||intron 24||||||||||REF|
+ZDB-ALT-120209-13||||||||||||||REF|
+|||||||||||||||
+ZDB-ALT-120209-46||||intron 4||||||||FUSION||REF|
+ZDB-ALT-120328-2||||intron 12|||||||||||
+ZDB-ALT-120524-1||||exon 1||||||||||REF|
+ZDB-ALT-120806-10818||||exon 2|STOP|||||||TRUNCATION||REF|
+ZDB-ALT-131219-10||||5'UTR||||||||||REF|
+ZDB-ALT-131219-16||||intron 4|||||||||||
+ZDB-ALT-131219-19||||intron 1|||||||||||
+ZDB-ALT-131219-24||||3'UTR|||||||||||
+ZDB-ALT-131219-27||||exon 4|||||||||||
+ZDB-ALT-131219-7||||intron 1|||||||||||
+ZDB-ALT-140212-11||||||||||||||REF|
+|||||||||||||||
+ZDB-ALT-140212-2||||||||||||||REF|
+ZDB-ALT-990514-6|||||||||||||||
+ZDB-ALT-150211-1|||||||||||||||
+ZDB-ALT-150406-1|||||||||||||||
+ZDB-ALT-151120-1||||||||||||TRUNCATION||REF|
+ZDB-ALT-151216-8|||||||||||||Chr 8||
+ZDB-ALT-151216-28|||||||||||||Chr 15||
+ZDB-ALT-151216-41|||||||||||||Chr 14||
+ZDB-ALT-151216-46|||||||||||||Chr 7||
+ZDB-ALT-151216-50|||||||||||||Chr 19||
+ZDB-ALT-151216-58|||||||||||||Chr 16||
+ZDB-ALT-030617-2||minus 2|||FRAMESHIFT|||||||TRUNCATION||REF|
+ZDB-ALT-050713-4||minus 4||||||||||||REF|
+ZDB-ALT-051114-2|||||||||143-201|||AA deletion||REF|
+ZDB-ALT-070131-2||minus exon 3|||||||||||||
+ZDB-ALT-090520-5||minus 6|||||||||||||
+ZDB-ALT-091124-1|||||||||||5 aa|AA deletion|||
+ZDB-ALT-110513-1||minus 29||exon 2|FRAMESHIFT||||||||||
+ZDB-ALT-110513-1||plus 4||exon 2|STOP||||||||||
+ZDB-ALT-111007-2||minus 90||||||||||TRUNCATION|||
+ZDB-ALT-111110-1||minus 8||exon 2|||||||||||
+ZDB-ALT-111201-1||minus 10|||FRAMESHIFT||||||||||
+ZDB-ALT-111201-1||minus 10|||STOP||||||||||
+ZDB-ALT-120120-5||minus 5|||FRAMESHIFT||||||||||
+ZDB-ALT-120120-5|||||STOP|||||||TRUNCATION|||
+ZDB-ALT-121106-2||minus 7|||FRAMESHIFT||||||||||
+ZDB-ALT-130528-1||||exon 26|STOP||||||||||
+ZDB-ALT-130528-4||||exon 17|STOP||||||||||
+ZDB-ALT-130724-2||minus 4|||FRAMESHIFT|||||||||REF|
+|||||||||||||||
+ZDB-ALT-130809-1||minus 4||exon 3|FRAMESHIFT|||||||||REF|
+ZDB-ALT-130809-1||minus 4||exon 3|STOP|||||||||REF|
+ZDB-ALT-131107-9||minus 5||exon 5|FRAMESHIFT||||||||||
+ZDB-ALT-131107-9|||||STOP||||||||||
+ZDB-ALT-131112-3||minus 11||exon 3|||||||||||
+ZDB-ALT-131122-6||minus 19|||||||||||||
+ZDB-ALT-131122-9||minus 4|||||||||||||
+ZDB-ALT-131125-3||minus 110|||||||||||||
+ZDB-ALT-131220-2||||exon 2|FRAMESHIFT||||||||||
+ZDB-ALT-131220-2||||exon 2|STOP|||||||TRUNCATION|||
+ZDB-ALT-140116-6||minus 21|||||||||minus 7|AA deletion|||
+ZDB-ALT-140411-4|||362-371|||||||||???|||
+ZDB-ALT-140606-3||minus 7|||||||||||||
+ZDB-ALT-140611-6||minus 4|||FRAMESHIFT||||||||||
+ZDB-ALT-140623-5||minus 11|31-41||||||||||||
+ZDB-ALT-140917-6||minus 8||exon 1||||||||||REF|
+ZDB-ALT-141015-1||minus 2||exon 2|FRAMESHIFT|||||||AA substitution||REF|
+ZDB-ALT-141015-1||||||||||||||REF|
+ZDB-ALT-980203-386||minus 1|4024||FRAMESHIFT||||||||||
+ZDB-ALT-980413-584||minus 8||exon 10|FRAMESHIFT|||||||AA substitution||REF|
+ZDB-ALT-980413-584||minus 8||exon 10|STOP|||||||TRUNCATION|||
+ZDB-ALT-980413-584||G>A||intron 10|SPLICING||||||||||
+|||||||||||||||
+ZDB-ALT-980520-24||minus 2|109||FRAMESHIFT|||||||TRUNCATION||REF|
+|||||||||||||||
+ZDB-ALT-141121-4||minus 17|176-192|||||||||TRUNCATION|||
+ZDB-ALT-150218-7||minus 10|||FRAMESHIFT||||||||||
+ZDB-ALT-150218-7||minus 10|||STOP|||X|146||||||
+ZDB-ALT-150219-4||minus 10|||FRAMESHIFT||||||||||
+ZDB-ALT-150219-4||minus 10|||STOP|||X|36||||||
+ZDB-ALT-150311-1||minus 6||exon 6|||||141-142|||AA deletion|||
+ZDB-ALT-150311-1||||intron 6|||||||||||
+ZDB-ALT-150311-2||plus 9||exon 6|STOP||F|X|141||||||
+ZDB-ALT-150311-2||minus 5||intron 6|||||||||||
+ZDB-ALT-150311-3||plus 1||exon 6|SPLICE SITE||||131-144|||AA deletion|||
+ZDB-ALT-150311-3||minus 21||intron 6|||||||||||
+ZDB-ALT-150323-6|||||||||266-273|||||REF|
+ZDB-ALT-150325-6||minus 8||exon 2||||||||||REF|
+ZDB-ALT-150416-1||minus 6|||||minus Gly||831|||||REF|
+ZDB-ALT-150416-1|||||||minus Ile||832||||||
+ZDB-ALT-150416-3||minus 11|||||||||||||
+ZDB-ALT-150528-4||minus 7||exon 1|FRAMESHIFT|||||||||REF|
+ZDB-ALT-150528-4|||||STOP|||||||||REF|
+ZDB-ALT-150528-5||minus 10||exon 1|FRAMESHIFT|||||||||REF|
+ZDB-ALT-150528-5|||||STOP|||||||||REF|
+ZDB-ALT-150611-2||minus 6|151-156||FRAMESHIFT|||||||TRUNCATION|||
+ZDB-ALT-150717-3||minus 25|142-166||FRAMESHIFT||||48-69|||AA SUBSTiTUTION|||
+ZDB-ALT-150717-3||plus 3|||||||70-617|||TRUNCATION|||
+ZDB-ALT-150717-4||minus 10|616-625||||||206-263|||AA SUBSTiTUTION|||
+ZDB-ALT-150717-4||minus 10|616-625||||||263-617|||TRUNCATION|||
+ZDB-ALT-150805-2||minus 5|291|exon 2|||||||||||
+ZDB-ALT-150909-2||minus 22||exon 5|||||||||||
+ZDB-ALT-150928-7||minus 2|149-152|||||||||TRUNCATION|||
+ZDB-ALT-150928-8||minus 4|150-155|||||||||TRUNCATION|||
+ZDB-ALT-151007-28||minus 13||||||||||AA SUBSTITUTION||REF|
+ZDB-ALT-151023-1||minus 17|240-258|||||||||AA SUBSTITUTION|||
+ZDB-ALT-151023-1||minus 17|240-258|||||||||TRUNCATION|||
+ZDB-ALT-151023-6||minus 13|496-510|||||||||AA SUBSTITUTION|||
+ZDB-ALT-151023-6||||||||||||TRUNCATION|||
+ZDB-ALT-151105-6||minus 2|||FRAMESHIFT|||||||TRUNCATION|||
+ZDB-ALT-151106-1||minus 20|510-528|exon 5|FRAMESHIFT|||||||||REF|
+ZDB-ALT-151106-1||minus 20|510-528|exon 5|STOP|||||||TRUNCATION||REF|
+ZDB-ALT-151110-2||||exon 3|STOP|||||||TRUNCATION||REF|
+ZDB-ALT-151118-1||minus 5|227|exon 2|||||||||||
+ZDB-ALT-151216-88|||||||||||||||
+ZDB-ALT-151229-2||minus 11|10|promoter||||||||||REF|
+ZDB-ALT-151230-12||minus 8||exon 2||||||||||REF|
+ZDB-ALT-160111-1||minus 5|215-221|||||||||TRUNCATION|||
+ZDB-ALT-160111-3||minus 4|1303-1306|||||||||AA SUBSTITUTION|||
+ZDB-ALT-160111-3||minus 4||||||||||TRUNCATION|||
+ZDB-ALT-160111-6||minus 16|631-632|||||||||AA SUBSTITUTION|||
+ZDB-ALT-160111-6||||||||||||TRUNCATION|||
+ZDB-ALT-160119-3||minus 7|390-396|||||||||AA SUBSTITUTION|||
+ZDB-ALT-160119-3||||||||||||TRUNCATION|||
+ZDB-ALT-160120-3||minus 6|||||||||minus 2|AA DELETION||REF|
+ZDB-ALT-160122-6||minus 5|156-160||FRAMESHIFT|||||||AA SUBSTITUTION|||
+ZDB-ALT-160122-6|||||STOP|||||||TRUNCATION|||
+ZDB-ALT-160128-4||minus 11||||||||||AA SUBSTITUTION||REF|
+ZDB-ALT-160128-4|||||STOP|||||||TRUNCATION|||
+|||||||||||||||
+ZDB-ALT-160202-2||minus 6||||||||||AA DELETION|||
+|||||||||||||||
+ZDB-ALT-160217-9||minus 14||||||||||AA SUBSTITUTION|||
+ZDB-ALT-160217-11||minus 8||||||||||AA SUBSTITUTION|||
+ZDB-ALT-160217-13||minus 11||||||||||AA SUBSTITUTION|||
+ZDB-ALT-160310-1|||||||||||||||
+ZDB-ALT-160310-3|||||||||||||||
+ZDB-ALT-160314-1||minus 8||exon 6|STOP||A|X|538||||||
+ZDB-ALT-160314-2||minus 8||exon 6|STOP||I|X|536||||||
+ZDB-ALT-160314-3||plus 1||exon 6|STOP||Q|X|531||||||
+ZDB-ALT-160314-3||minus 8||exon 6|||||||||||
+ZDB-ALT-160317-8||minus 11|||FRAMESHIFT|||||||AA SUBSTITUTION||REF|
+|||||||||||||||
+ZDB-ALT-160323-5||||splice donor exon 2||||||||TRUNCATION|||
+ZDB-ALT-010410-4||minus 143|||FRAMESHIFT|||||||||REF|
+ZDB-ALT-041111-4||minus 68|||FRAMESHIFT|||||||AA SUBSTITUTION||REF|
+ZDB-ALT-041111-4||minus 68|||STOP|||||||TRUNCATION||REF|
+ZDB-ALT-150904-2||minus 10|||||||||||||
+ZDB-ALT-060803-2||minus 31|||FRAMESHIFT||||||||||
+ZDB-ALT-060803-2||minus 31|||STOP||||||||||
+ZDB-ALT-150909-1||minus 90||exon 5|||||||||||
+ZDB-ALT-090520-3||minus 2|||||||||||||
+ZDB-ALT-090520-6||minus 4|||||||||||||
+ZDB-ALT-090610-5||minus 4||exon 2|FRAMESHIFT|||||||TRUNCATION|||
+ZDB-ALT-100817-3||||exon 10|||||||||||
+ZDB-ALT-110513-2||minus 15||exon 2|FRAMESHIFT||||||||||
+ZDB-ALT-110513-2||plus 2||exon 2|STOP||||||||||
+ZDB-ALT-111110-2||minus 17||exon 2|||||||||||
+ZDB-ALT-120120-6||minus 81|||||||||||||
+ZDB-ALT-130528-2||||exon 26|STOP||||||||||
+ZDB-ALT-130531-1||minus 4|215|exon 3|||||||||||
+ZDB-ALT-130709-2||minus 5|||FRAMESHIFT|||||||TRUNCATION|||
+ZDB-ALT-131122-12||minus 203|||||||||||||
+ZDB-ALT-131122-15||minus 26|||||||||||||
+ZDB-ALT-131122-4||minus 61|||||||||||||
+ZDB-ALT-140116-7||minus 13|||FRAMESHIFT||||||||||
+ZDB-ALT-140122-10||minus 3||exon 13|STOP|||||||||REF|
+ZDB-ALT-140411-5|||179-188|||||||||AA SUBSTITUTION|||
+ZDB-ALT-140415-3||minus 2|45|exon 1|||||||||||
+ZDB-ALT-140506-7||minus 10|||||||||||||
+ZDB-ALT-140606-1||minus 5|299-303|||||||||AA SUBSTITUTION|||
+ZDB-ALT-140611-7||minus 12|||FRAMESHIFT||||||||||
+ZDB-ALT-140611-7||plus 5|||||||||||||
+ZDB-ALT-140623-6||minus 7|277-283|||||||||AA SUBSTITUTION|||
+ZDB-ALT-141007-3||minus 1|||FRAMESHIFT|||||||TRUNCATION||REF|
+ZDB-ALT-141007-3|||||STOP||||||||||
+ZDB-ALT-141015-2||minus 4||exon 2|FRAMESHIFT|||||||AA SUBSTITUTION||REF|
+|||||||||||||||
+ZDB-ALT-980203-336||minus 1000||intron 6||||||||||REF|
+ZDB-ALT-141218-8||minus 11|||STOP|||||||TRUNCATION||REF|
+ZDB-ALT-150115-3||minus 7|255-261|||||||||AA SUBSTITUTION|||
+ZDB-ALT-150115-3||minus 7|255-261|||||||||TRUNCATION|||
+ZDB-ALT-150122-1||minus 7||exon 1|FRAMESHIFT|||||||||REF|
+ZDB-ALT-150122-1||minus 7||exon 1|STOP|||X|97|||TRUNCATION||REF|
+ZDB-ALT-150311-4||minus 8|||FRAMESHIFT|||||||||REF|
+ZDB-ALT-150311-4||minus 8|||STOP|||X|23|||TRUNCATION||REF|
+ZDB-ALT-150311-5||minus 7|||FRAMESHIFT|||||||||REF|
+ZDB-ALT-150311-5||minus 7|||STOP|||X|21|||TRUNCATION||REF|
+ZDB-ALT-150316-2||minus 3||exon 6|STOP|||X|18|||TRUNCATION|||
+ZDB-ALT-150316-2||plus 1|||||||||||||
+ZDB-ALT-150323-5|||266-272|||||||||||REF|
+ZDB-ALT-150417-5||minus 14|||||||||||||
+ZDB-ALT-150429-2||minus 10||exon 2|FRAMESHIFT|||||||||REF|
+ZDB-ALT-150504-8||minus 4|||FRAMESHIFT|||||||||REF|
+ZDB-ALT-150505-2||minus 34||exon 3|STOP|||||||||REF|
+ZDB-ALT-150625-1||minus 40|67-106||FRAMESHIFT|||||||AA SUBSTITUTION||REF|
+ZDB-ALT-150625-1||minus 40|67-106||STOP|||X|78|||TRUNCATION||REF|
+ZDB-ALT-150717-2||minus 2|||FRAMESHIFT|||||||AA SUBSTITUTION|||
+ZDB-ALT-150717-2||minus 2|||FRAMESHIFT|||||||TRUNCATION|||
+ZDB-ALT-150721-9|||||||||||||||
+ZDB-ALT-150722-1|||||||||||||||
+ZDB-ALT-150805-3||minus 7|285|exon 2|||||||||||
+ZDB-ALT-150826-3||minus 1|962|exon 5|||||||||||
+ZDB-ALT-150929-2||minus 26|117-144|||||||||AA SUBSTITUTION|||
+ZDB-ALT-150929-2||||||||||||TRUNCATION|||
+ZDB-ALT-150930-2||minus 17|313-331|||||||||AA SUBSTITUTION|||
+ZDB-ALT-150930-2||||||||||||TRUNCATION|||
+ZDB-ALT-151013-2||minus 8||exon 3||||||||||REF|
+ZDB-ALT-151020-2||minus 2||exon 16|STOP|||||||AA SUBSTITUTION||REF|
+ZDB-ALT-151020-2||||||||||||TRUNCATION||REF|
+ZDB-ALT-151023-2||minus 4|247-252|||||||||AA SUBSTITUTION|||
+ZDB-ALT-151023-2||||||||||||TRUNCATION|||
+ZDB-ALT-151027-1||minus 5|359-363|exon 2||||||||||REF|
+ZDB-ALT-151102-2||minus 5||exon 7|STOP|||X|1168|||||REF|
+ZDB-ALT-151102-4||minus 13||exon 1|||||||||||
+ZDB-ALT-151102-7||minus 4||exon 1|||||||||||
+ZDB-ALT-151110-1||plus 1||exon 3|FRAMESHIFT|||||||||REF|
+ZDB-ALT-151110-1||minus 10||||||||||||REF|
+ZDB-ALT-151111-2||minus 10||exon 3|FRAMESHIFT|||||||||REF|
+ZDB-ALT-151118-3||minus 2|1173|exon 7|||||||||||
+ZDB-ALT-151118-4||minus 7|692|exon 3|||||||||||
+ZDB-ALT-151215-8||minus 10|877-888|||||||||AA SUBSTITUTION|||
+ZDB-ALT-151215-8||minus 10|877-888|||||||||TRUNCATION|||
+ZDB-ALT-151218-10||minus 7|643-651|||||||||TRUNCATION|||
+ZDB-ALT-151230-4||minus 1||exon 1|FRAMESHIFT|||||||||REF|
+ZDB-ALT-151230-4||minus 1||exon 1|STOP|||||||||REF|
+ZDB-ALT-151230-5||minus 8||exon 1|FRAMESHIFT|||||||||REF|
+ZDB-ALT-151230-5||minus 8||exon 1|STOP|||||||||REF|
+ZDB-ALT-151230-6||minus 17|||||||||||||
+ZDB-ALT-151230-11||minus 17||exon 1||||||||||REF|
+ZDB-ALT-160111-7||minus 2|632-633|||||||||AA SUBSTITUTION|||
+ZDB-ALT-160111-7||||||||||||TRUNCATION|||
+ZDB-ALT-160113-2||minus 5||||||||||TRUNCATION|||
+ZDB-ALT-160121-1|||||||||||||||
+ZDB-ALT-160122-5||minus 4|158-161||FRAMESHIFT|||||||AA SUBSTITUTION||REF|
+ZDB-ALT-160122-5||minus 4|158-161||STOP|||||||TRUNCATION||REF|
+ZDB-ALT-160126-3||minus 14||||||||||||REF|
+ZDB-ALT-160128-3|||||STOP|||||||AA SUBSTITUTION||REF|
+ZDB-ALT-160128-3||||||||||||TRUNCATION||REF|
+\|||||||||||||||
+|||||||||||||||
+ZDB-ALT-160210-3||minus 4||exon 8|FRAMESHIFT|||||||||REF|
+ZDB-ALT-160210-3||minus 4||exon 8|STOP|||||||||REF|
+ZDB-ALT-160210-4||minus 4|||FRAMESHIFT|||||||||REF|
+ZDB-ALT-160210-4||minus 4|||STOP|||||||TRUNCATION||REF|
+ZDB-ALT-160210-5||minus 14|||FRAMESHIFT|||||||||REF|
+ZDB-ALT-160210-5||minus 14|||STOP|||||||TRUNCATION||REF|
+ZDB-ALT-160310-2|||||||||||||||
+ZDB-ALT-160317-9||minus 7|||STOP|||||||||REF|
+ZDB-ALT-160323-4||minus 70|||FRAMESHIFT||||||||||
+ZDB-ALT-160323-4||minus 70|||STOP|||||||TRUNCATION|||
+ZDB-ALT-160325-2||minus 18|||||||||||||
+|||||||||||||||
+ZDB-ALT-000712-2|||||||||||||||
+ZDB-ALT-040701-2||minus 22||exon 3|FRAMESHIFT||||||||||
+ZDB-ALT-040701-2||minus 22||exon 3|STOP||||||||||
+ZDB-ALT-041105-2||minus 5||exon 17|SPLICE SITE||||||||||
+ZDB-ALT-041105-2||minus 52||intron 17|||||||||||
+ZDB-ALT-060519-4||minus 1|537||FRAMESHIFT||||||||||
+ZDB-ALT-060519-4||minus 1|537||STOP||||||||||
+ZDB-ALT-060926-2||minus 5||exon 2|||||||||||
+ZDB-ALT-090520-4||minus 2|||||||||||||
+ZDB-ALT-090520-7||minus 5|||||||||||||
+ZDB-ALT-101130-2|||||||||||||||
+ZDB-ALT-110705-3||minus 31|||FRAMESHIFT||||||||||
+ZDB-ALT-110705-3||minus 31|||STOP|||X|5322||||||
+ZDB-ALT-120120-1|||||FRAMESHIFT||||||||||
+ZDB-ALT-120120-1|||||STOP|||||||TRUNCATION|||
+ZDB-ALT-120120-7||minus 6|||||||||||||
+ZDB-ALT-120611-1||minus 14|||FRAMESHIFT||||||||||
+ZDB-ALT-120611-1|||||STOP||||||||||
+ZDB-ALT-121211-2||||exon 1|||||||||||
+ZDB-ALT-130320-1||||enhancer|||||||||||
+ZDB-ALT-130506-1||minus 10|||FRAMESHIFT||||||||||
+ZDB-ALT-130506-1|||||STOP||||||||||
+ZDB-ALT-130709-3||minus 10|||FRAMESHIFT||||||||||
+ZDB-ALT-130709-3||plus 2|||STOP|||||||TRUNCATION|||
+ZDB-ALT-131018-2||minus 6||exon 6|||P|||||AA DELETION|||
+ZDB-ALT-131018-2||minus 6||exon 6|||Y|||||AA DELETION|||
+ZDB-ALT-131101-2|||1244-1451|exon 6|STOP|||X|414||||||
+ZDB-ALT-131112-2||minus 11||exon 3|||||||||||
+ZDB-ALT-131112-5||minus 7||exon 5|||||||||||
+ZDB-ALT-131122-10||minus 17|||||||||||||
+ZDB-ALT-131122-13||minus 4|||||||||||||
+ZDB-ALT-131122-2||minus 10|||||||||||||
+ZDB-ALT-131122-8||minus 10|||||||||||||
+ZDB-ALT-131125-2||minus 4|||||||||||||
+ZDB-ALT-131220-1||||exon 2|FRAMESHIFT||||||||||
+ZDB-ALT-131220-1|||||STOP|||||||TRUNCATION|||
+ZDB-ALT-140116-8||minus 15|||FRAMESHIFT||||||||||
+ZDB-ALT-140623-4||minus 1|313-315|||||||||AA SUBSTITUTION|||
+ZDB-ALT-140623-4||minus 1|313-315|||||||||TRUNCATION|||
+ZDB-ALT-140623-7||minus10|456-465|||||||||AA SUBSTITUTION|||
+ZDB-ALT-140623-7||||||||||||TRUNCATION|||
+ZDB-ALT-140717-3||minus 12|||||QLLS||283-286|||AA DELETION||REF|
+ZDB-ALT-140917-2||minus 1|8722|exon 1||||||||||REF|
+ZDB-ALT-140917-8||minus 8|8722|exon 1||||||||||REF|
+ZDB-ALT-141007-4||minus 10|||FRAMESHIFT|||||||||REF|
+ZDB-ALT-141007-4|||||STOP|||||||TRUNCATION||REF|
+ZDB-ALT-980203-1058||minus 110||||||||||||REF|
+ZDB-ALT-980203-470||minus 2|||||||||||||
+ZDB-ALT-980203-711||||exon 7|FRAMESHIFT|||||||||REF|
+ZDB-ALT-980203-711||||exon 7|STOP|||X|333|||||REF|
+ZDB-ALT-991130-42||||exon 4|||||||||||
+ZDB-ALT-141121-3||minus 7|193-199|||||||||AA SUBSTITUTION|||
+ZDB-ALT-141121-3||||||||||||TRUNCATION|||
+ZDB-ALT-150115-4||minus 1||||||||||AA SUBSTITUTION|||
+ZDB-ALT-150115-4||||||||||||TRUNCATION|||
+ZDB-ALT-150218-4||minus 2|||FRAMESHIFT|||||||AA SUBSTITUTION||REF|
+ZDB-ALT-150218-4||||||||||||TRUNCATION||REF|
+ZDB-ALT-150219-3||minus 11|||FRAMESHIFT||||||||||
+ZDB-ALT-150219-3||minus 11|||STOP|||X|15||||||
+ZDB-ALT-150320-1||minus 9|||||||||minus 3|AA deletion||REF|
+ZDB-ALT-150325-7||minus 8||exon 2||||||||||REF|
+ZDB-ALT-150325-8||minus 4||exon 2||||||||||REF|
+ZDB-ALT-150414-5||minus 8|||||||||||||
+ZDB-ALT-150414-6||minus 7|||||||||||||
+ZDB-ALT-150417-6||minus 6|||||||||||||
+ZDB-ALT-150429-3||minus 5||exon 2||||||||||REF|
+ZDB-ALT-150504-7||minus 8|||FRAMESHIFT|||||||||REF|
+ZDB-ALT-150507-3||minus 104||exon 4|FRAMESHIFT|||||||||REF|
+ZDB-ALT-150507-3|||||STOP|||||||||REF|
+ZDB-ALT-150527-1||minus 2|||FRAMESHIFT||||||||||
+ZDB-ALT-150527-1|||||STOP||||||||||
+ZDB-ALT-150611-1||minus 13|141-153||FRAMESHIFT|||||||TRUNCATION|||
+ZDB-ALT-150720-2||minus 7||exon 1|FRAMESHIFT|||||||||EWD|
+ZDB-ALT-150720-2|||||STOP|||X|95|||||EWD|
+ZDB-ALT-150721-10|||||||||||||||
+ZDB-ALT-150826-4||minus 4|961|exon 5|||||||||||
+ZDB-ALT-150923-1||minus 384|||FRAMESHIFT||||||||||
+ZDB-ALT-150923-1|||||STOP|||||||TRUNCATION|||
+ZDB-ALT-150929-1||minus 7|136-144|||||||||AA SUBSTITUTION|||
+ZDB-ALT-150929-1||||||||||||TRUNCATION|||
+ZDB-ALT-150930-3||minus 19|328-348||||||||||ELONGATED||
+|||||||||||||||
+ZDB-ALT-151014-3||minus 10||||||||||||REF|
+ZDB-ALT-151016-3||minus 147|||exon loss||||||||||
+ZDB-ALT-151019-1|||||||||||||||
+ZDB-ALT-151023-5||minus 14|491-506|||||||||AA SUBSTITUTION|||
+ZDB-ALT-151023-5||||||||||||TRUNCATION|||
+ZDB-ALT-151023-8||minus 4|108-113|||||||||AA SUBSTITUTION|||
+ZDB-ALT-151023-8||||||||||||TRUNCATION|||
+ZDB-ALT-151023-9||minus 11|95-107|||||||||AA SUBSTITUTION|||
+ZDB-ALT-151023-9||||||||||||TRUNCATION|||
+ZDB-ALT-151102-1||minus 4||exon 7|STOP|||X|1162|||||REF|
+ZDB-ALT-151102-3||minus 8||exon 1|||||||||||
+ZDB-ALT-151102-5||minus 6|||||N|X|18|||AA SUBSTITUTION|||
+ZDB-ALT-151102-6||minus 11||exon 1|||||||||||
+ZDB-ALT-151105-5||minus 11|||FRAMESHIFT|||||||TRUNCATION|||
+ZDB-ALT-151110-5||minus 2|||EXON LOSS|||||||||REF|
+ZDB-ALT-151111-1||minus 4||intron 1|SPLICE SITE|||||||||REF|
+ZDB-ALT-151216-87||minus 8|||||||||||||
+ZDB-ALT-151218-2||minus 7|216-224|||||||||TRUNCATION|||
+ZDB-ALT-151218-2|||||||||||||||
+ZDB-ALT-151228-2||minus 5|||||||||||||
+|||||||||||||||
+ZDB-ALT-151230-9||minus 5|||STOP|||||||TRUNCATION||REF|
+ZDB-ALT-151230-3||minus 5||exon 1|FRAMESHIFT|||||||||REF|
+ZDB-ALT-151230-3||minus 5||exon 1|STOP|||||||||REF|
+ZDB-ALT-151230-13||minus 10||exon 1||||||||||REF|
+ZDB-ALT-160119-1||minus 8||CRYPTIC SPLICE|intron gain||||||||||
+ZDB-ALT-160119-1||minus 8||splice acceptor intron 4|intron gain||||||||||
+ZDB-ALT-160119-6||minus 8||exon 2|FRAMESHIFT||||||||||
+ZDB-ALT-160119-6|||||STOP||||||||||
+ZDB-ALT-160120-2||minus 5|||STOP|||||||||REF|
+ZDB-ALT-160122-7|||158-178||||||||minus 7|AA DELETION||REF|
+ZDB-ALT-160126-2||minus 11|||FRAMESHIFT|||||||||REF|
+ZDB-ALT-160128-1|||||||||||||||
+ZDB-ALT-160128-5||minus 12|||||||||minus 4|AA DELETION||REF|
+\|||||||||||||||
+|||||||||||||||
+|||||||||||||||
+ZDB-ALT-160129-5||minus 8|378-385||FRAMESHIFT|||||||TRUNCATION||REF|
+ZDB-ALT-160202-3|||||||||||||||
+stl14 has a 26 bp deletion.|||||||||||||||
+ZDB-ALT-160217-10||minus 19||||||||||AA SUBSTITUTION|||
+ZDB-ALT-160217-12||minus 5||||||||||AA SUBSTITUTION|||
+ZDB-ALT-160223-7||minus 23|1276-1298|exon 7|FRAMESHIFT||||||||||
+ZDB-ALT-160223-7||minus 23|1276-1298|exon 7|STOP||||||||||
+ZDB-ALT-160325-3||minus 13|||||||||||||
+|||||||||||||||
+ZDB-ALT-160325-4||minus 1|||||||||||||
+|||||||||||||||
+ZDB-ALT-030617-3||minus 6|||FRAMESHIFT|||||||TRUNCATION||REF|
+ZDB-ALT-050713-5||minus 8||||||||||||REF|
+ZDB-ALT-051114-3|||||||||143-202|||AA deletion||REF|
+ZDB-ALT-070131-3||minus exon 4|||||||||||||
+ZDB-ALT-090520-6||minus 52|||||||||||||
+ZDB-ALT-091124-2|||||||||||6 aa|AA deletion|||
+ZDB-ALT-110513-1||minus 75||exon 2|FRAMESHIFT||||||||||
+ZDB-ALT-110513-1||plus 5||exon 2|STOP||||||||||
+ZDB-ALT-111007-3||minus 90||||||||||TRUNCATION|||
+ZDB-ALT-111110-2||minus 8||exon 2|||||||||||
+ZDB-ALT-111201-1||minus 10|||FRAMESHIFT||||||||||
+ZDB-ALT-111201-1||minus 10|||STOP||||||||||
+ZDB-ALT-120120-5||minus 5|||FRAMESHIFT||||||||||
+ZDB-ALT-120120-5|||||STOP|||||||TRUNCATION|||
+ZDB-ALT-121106-3||minus 7|||FRAMESHIFT||||||||||
+ZDB-ALT-130528-7||||exon 26|STOP||||||||||
+ZDB-ALT-130528-10||||exon 17|STOP||||||||||
+ZDB-ALT-130724-3||minus 4|||FRAMESHIFT|||||||||REF|
+|||||||||||||||
+ZDB-ALT-130809-1||minus 4||exon 3|FRAMESHIFT|||||||||REF|
+ZDB-ALT-130809-1||minus 4||exon 3|STOP|||||||||REF|
+ZDB-ALT-131107-9||minus 5||exon 5|FRAMESHIFT||||||||||
+ZDB-ALT-131107-9|||||STOP||||||||||
+ZDB-ALT-131112-4||minus 11||exon 3|||||||||||
+ZDB-ALT-131122-12||minus 19|||||||||||||
+ZDB-ALT-131122-15||minus 4|||||||||||||
+ZDB-ALT-131125-4||minus 110|||||||||||||
+ZDB-ALT-131220-2||||exon 2|FRAMESHIFT||||||||||
+ZDB-ALT-131220-2||||exon 2|STOP|||||||TRUNCATION|||
+ZDB-ALT-140116-7||minus 21|||||||||minus 7|AA deletion|||
+ZDB-ALT-140411-5|||362-372|||||||||???|||
+ZDB-ALT-140606-4||minus 7|||||||||||||
+ZDB-ALT-140611-7||minus 4|||FRAMESHIFT||||||||||
+ZDB-ALT-140623-6||minus 11|31-42||||||||||||
+ZDB-ALT-140917-7||minus 8||exon 1||||||||||REF|
+ZDB-ALT-141015-1||minus 2||exon 2|FRAMESHIFT|||||||AA substitution||REF|
+ZDB-ALT-141015-1||||||||||||||REF|
+ZDB-ALT-980203-387||minus 1|-3806||FRAMESHIFT||||||||||
+ZDB-ALT-980413-584||minus 8||exon 10|FRAMESHIFT|||||||AA substitution||REF|
+ZDB-ALT-980413-584||minus 8||exon 10|STOP|||||||TRUNCATION|||
+ZDB-ALT-980413-584||G>A||intron 11|SPLICING||||||||||
+|||||||||||||||
+ZDB-ALT-980520-25||minus 2|-7721||FRAMESHIFT|||||||TRUNCATION||REF|
+|||||||||||||||
+ZDB-ALT-141121-5||minus 17|176-193|||||||||TRUNCATION|||
+ZDB-ALT-150218-7||minus 10|||FRAMESHIFT||||||||||
+ZDB-ALT-150218-7||minus 10|||STOP|||X|-74||||||
+ZDB-ALT-150219-4||minus 10|||FRAMESHIFT||||||||||
+ZDB-ALT-150219-4||minus 10|||STOP|||X|-184||||||
+ZDB-ALT-150311-1||minus 6||exon 7|||||141-143|||AA deletion|||
+ZDB-ALT-150311-1||||intron 7|||||||||||
+ZDB-ALT-150311-2||plus 10||exon 7|STOP||F|X|142||||||
+ZDB-ALT-150311-2||minus 6||intron 7|||||||||||
+ZDB-ALT-150311-3||plus 2||exon 7|SPLICE SITE||||131-145|||AA deletion|||
+ZDB-ALT-150311-3||minus 21||intron 7|||||||||||
+ZDB-ALT-150323-7|||||||||266-274|||||REF|
+ZDB-ALT-150325-7||minus 8||exon 2||||||||||REF|
+ZDB-ALT-150416-1||minus 6|||||minus Gly||833|||||REF|
+ZDB-ALT-150416-1|||||||minus Ile||834||||||
+ZDB-ALT-150416-3||minus 11|||||||||||||
+ZDB-ALT-150528-4||minus 7||exon 1|FRAMESHIFT|||||||||REF|
+ZDB-ALT-150528-4|||||STOP|||||||||REF|
+ZDB-ALT-150528-5||minus 10||exon 1|FRAMESHIFT|||||||||REF|
+ZDB-ALT-150528-5|||||STOP|||||||||REF|
+ZDB-ALT-150611-3||minus 6|151-157||FRAMESHIFT|||||||TRUNCATION|||
+ZDB-ALT-150717-3||minus 25|142-167||FRAMESHIFT||||48-70|||AA SUBSTiTUTION|||
+ZDB-ALT-150717-3||plus 4|||||||70-618|||TRUNCATION|||
+ZDB-ALT-150717-4||minus 10|616-625||||||206-264|||AA SUBSTiTUTION|||
+ZDB-ALT-150717-4||minus 10|616-625||||||263-618|||TRUNCATION|||
+ZDB-ALT-150805-3||minus 5|292|exon 2|||||||||||
+ZDB-ALT-150909-3||minus 22||exon 5|||||||||||
+ZDB-ALT-150928-9||minus 2|149-153|||||||||TRUNCATION|||
+ZDB-ALT-150928-10||minus 4|150-156|||||||||TRUNCATION|||
+ZDB-ALT-151007-29||minus 13||||||||||AA SUBSTITUTION||REF|
+ZDB-ALT-151023-1||minus 17|240-258|||||||||AA SUBSTITUTION|||
+ZDB-ALT-151023-1||minus 17|240-258|||||||||TRUNCATION|||
+ZDB-ALT-151023-6||minus 13|496-511|||||||||AA SUBSTITUTION|||
+ZDB-ALT-151023-6||||||||||||TRUNCATION|||
+ZDB-ALT-151105-7||minus 2|||FRAMESHIFT|||||||TRUNCATION|||
+ZDB-ALT-151106-1||minus 20|510-528|exon 5|FRAMESHIFT|||||||||REF|
+ZDB-ALT-151106-1||minus 20|510-528|exon 5|STOP|||||||TRUNCATION||REF|
+ZDB-ALT-151110-3||||exon 3|STOP|||||||TRUNCATION||REF|
+ZDB-ALT-151118-2||minus 5|228|exon 2|||||||||||
+ZDB-ALT-151216-89|||||||||||||||
+ZDB-ALT-151229-3||minus 11|10|promoter||||||||||REF|
+ZDB-ALT-151230-13||minus 8||exon 2||||||||||REF|
+ZDB-ALT-160111-1||minus 5|215-222|||||||||TRUNCATION|||
+ZDB-ALT-160111-3||minus 4|1303-1307|||||||||AA SUBSTITUTION|||
+ZDB-ALT-160111-3||minus 4||||||||||TRUNCATION|||
+ZDB-ALT-160111-6||minus 16|631-633|||||||||AA SUBSTITUTION|||
+ZDB-ALT-160111-6||||||||||||TRUNCATION|||
+ZDB-ALT-160119-3||minus 7|390-397|||||||||AA SUBSTITUTION|||
+ZDB-ALT-160119-3||||||||||||TRUNCATION|||
+ZDB-ALT-160120-4||minus 6|||||||||minus 2|AA DELETION||REF|
+ZDB-ALT-160122-6||minus 5|156-161||FRAMESHIFT|||||||AA SUBSTITUTION|||
+ZDB-ALT-160122-6|||||STOP|||||||TRUNCATION|||
+ZDB-ALT-160128-4||minus 11||||||||||AA SUBSTITUTION||REF|
+ZDB-ALT-160128-4|||||STOP|||||||TRUNCATION|||
+|||||||||||||||
+ZDB-ALT-160202-3||minus 6||||||||||AA DELETION|||
+|||||||||||||||
+ZDB-ALT-160217-15||minus 14||||||||||AA SUBSTITUTION|||
+ZDB-ALT-160217-17||minus 8||||||||||AA SUBSTITUTION|||
+ZDB-ALT-160217-19||minus 11||||||||||AA SUBSTITUTION|||
+ZDB-ALT-160310-5|||||||||||||||
+ZDB-ALT-160310-7|||||||||||||||
+ZDB-ALT-160314-1||minus 8||exon 6|STOP||A|X|2232.348885||||||
+ZDB-ALT-160314-2||minus 8||exon 6|STOP||I|X|2248.647687||||||
+ZDB-ALT-160314-3||plus 2||exon 6|STOP||Q|X|2264.946489||||||
+ZDB-ALT-160314-3||minus 8||exon 6|||||2281.24529||||||
+ZDB-ALT-160317-9||minus 11|||FRAMESHIFT||||2297.544092|||AA SUBSTITUTION||REF|
+|||||||||2313.842894||||||
+ZDB-ALT-160323-6||||splice donor exon 3|||||2330.141696|||TRUNCATION|||
+ZDB-ALT-010410-5||minus 143|||FRAMESHIFT||||2346.440498|||||REF|
+ZDB-ALT-041111-4||minus 68|||FRAMESHIFT||||2362.739299|||AA SUBSTITUTION||REF|
+ZDB-ALT-041111-4||minus 68|||STOP||||2379.038101|||TRUNCATION||REF|
+ZDB-ALT-150904-3||minus 10|||||||2395.336903||||||
+ZDB-ALT-060803-2||minus 31|||FRAMESHIFT||||2411.635705||||||
+ZDB-ALT-060803-2||minus 31|||STOP||||2427.934507||||||
+ZDB-ALT-150909-2||minus 90||exon 5|||||2444.233308||||||
+ZDB-ALT-090520-9||minus 2|||||||2460.53211||||||
+ZDB-ALT-090520-12||minus 4|||||||2476.830912||||||
+ZDB-ALT-090610-6||minus 4||exon 2|FRAMESHIFT||||2493.129714|||TRUNCATION|||
+ZDB-ALT-100817-4||||exon 10|||||2509.428515||||||
+ZDB-ALT-110513-2||minus 15||exon 2|FRAMESHIFT||||2525.727317||||||
+ZDB-ALT-110513-2||plus 3||exon 2|STOP||||2542.026119||||||
+ZDB-ALT-111110-3||minus 17||exon 2|||||2558.324921||||||
+ZDB-ALT-120120-7||minus 81|||||||2574.623723||||||
+ZDB-ALT-130528-3||||exon 26|STOP||||2590.922524||||||
+ZDB-ALT-130531-2||minus 4|216|exon 3|||||2607.221326||||||
+ZDB-ALT-130709-3||minus 5|||FRAMESHIFT||||2623.520128|||TRUNCATION|||
+ZDB-ALT-131122-12||minus 203|||||||2639.81893||||||
+ZDB-ALT-131122-15||minus 26|||||||2656.117732||||||
+ZDB-ALT-131122-4||minus 61|||||||2672.416533||||||
+ZDB-ALT-140116-8||minus 13|||FRAMESHIFT||||2688.715335||||||
+ZDB-ALT-140122-11||minus 3||exon 13|STOP||||2705.014137|||||REF|
+ZDB-ALT-140411-6|||179-189||||||2721.312939|||AA SUBSTITUTION|||
+ZDB-ALT-140415-4||minus 2|46|exon 1|||||2737.611741||||||
+ZDB-ALT-140506-8||minus 10|||||||2753.910542||||||
+ZDB-ALT-140606-2||minus 5|299-304||||||2770.209344|||AA SUBSTITUTION|||
+ZDB-ALT-140611-7||minus 12|||FRAMESHIFT||||2786.508146||||||
+ZDB-ALT-140611-7||plus 6|||||||2802.806948||||||
+ZDB-ALT-140623-7||minus 7|277-284||||||2819.105749|||AA SUBSTITUTION|||
+ZDB-ALT-141007-3||minus 1|||FRAMESHIFT||||2835.404551|||TRUNCATION||REF|
+ZDB-ALT-141007-3|||||STOP||||2851.703353||||||
+ZDB-ALT-141015-3||minus 4||exon 2|FRAMESHIFT||||2868.002155|||AA SUBSTITUTION||REF|
+|||||||||2884.300957||||||
+ZDB-ALT-980203-337||minus 1000||intron 7|||||2900.599758|||||REF|
+ZDB-ALT-141218-9||minus 11|||STOP||||2916.89856|||TRUNCATION||REF|
+ZDB-ALT-150115-3||minus 7|255-261||||||2933.197362|||AA SUBSTITUTION|||
+ZDB-ALT-150115-3||minus 7|255-261||||||2949.496164|||TRUNCATION|||
+ZDB-ALT-150122-1||minus 7||exon 1|FRAMESHIFT||||2965.794966|||||REF|
+ZDB-ALT-150122-1||minus 7||exon 1|STOP|||X|2982.093767|||TRUNCATION||REF|
+ZDB-ALT-150311-4||minus 8|||FRAMESHIFT||||2998.392569|||||REF|
+ZDB-ALT-150311-4||minus 8|||STOP|||X|3014.691371|||TRUNCATION||REF|
+ZDB-ALT-150311-5||minus 7|||FRAMESHIFT||||3030.990173|||||REF|
+ZDB-ALT-150311-5||minus 7|||STOP|||X|3047.288975|||TRUNCATION||REF|
+ZDB-ALT-150316-2||minus 3||exon 6|STOP|||X|3063.587776|||TRUNCATION|||
+ZDB-ALT-150316-2||plus 2|||||||3079.886578||||||
+ZDB-ALT-150323-6|||266-273||||||3096.18538|||||REF|
+ZDB-ALT-150417-6||minus 14|||||||3112.484182||||||
+ZDB-ALT-150429-3||minus 10||exon 2|FRAMESHIFT||||3128.782983|||||REF|
+ZDB-ALT-150504-9||minus 4|||FRAMESHIFT||||3145.081785|||||REF|
+ZDB-ALT-150505-3||minus 34||exon 3|STOP||||3161.380587|||||REF|
+ZDB-ALT-150625-1||minus 40|67-106||FRAMESHIFT||||3177.679389|||AA SUBSTITUTION||REF|
+ZDB-ALT-150625-1||minus 40|67-106||STOP|||X|3193.978191|||TRUNCATION||REF|
+ZDB-ALT-150717-2||minus 2|||FRAMESHIFT||||3210.276992|||AA SUBSTITUTION|||
+ZDB-ALT-061207-4|||||STOP||||||||||
+|||||||||||||||
+ZDB-ALT-980203-399|T>A|425|||NON CONSERVED||Leu|Gln|142||||||
+ZDB-ALT-070730-10|G>A|||exon 43|SPLICING||||||||||
+ZDB-ALT-090611-15|||||||||||||||
+ZDB-ALT-100603-1|T>A|||exon 2|SPLICING||||||||||
+ZDB-ALT-980203-1310|||||MISSENSE||L|P|23||||||
+|||||||||||||||
+ZDB-ALT-100311-7|||||||||||||||
+ZDB-ALT-101008-11|C>T||||STOP||R|X|120|||||REF|
+\|||||||||||||||
+|||||||||||||||
+ZDB-ALT-111118-30|||||||||||||||
+|||||||||||||||
+ZDB-ALT-140430-1|||||STOP||Q|X|130||||||
+ZDB-ALT-110728-2|G>T|||exon 11|FRAME SHIFT||||||||||
+ZDB-ALT-110728-2|G>T|||exon 11|STOP||||||||||
+ZDB-ALT-120427-2|||||||||||||||
+ZDB-ALT-980203-1501||||intron 28|SPLICING|||||||||REF|
+ZDB-ALT-980203-1501||||intron 28|EXON LOSS|exon 28||||||AA DELETION|||
+ZDB-ALT-160129-6|T>A||||STOP||Y|X|37|||||REF|
+ZDB-ALT-141009-1|T>G||||MISSENSE||F|C|138||||||
+ZDB-ALT-980203-668|C>T||||STOP||Q|X|811|||||REF|
+ZDB-ALT-980413-518|T>C|||exon 3|MISSENSE||L|P|93||||||
+ZDB-ALT-080325-6|A>T|376|||STOP||R|X|126||||||
+ZDB-ALT-111213-12|||||||||||||||
+ZDB-ALT-120328-3|A>T||||STOP||Lys|X|335||||||
+ZDB-ALT-980203-1332|A>T||||MISSENSE||Asp|Val|8|||||REF|
+ZDB-ALT-011017-12|T>A||||||||||||||
+ZDB-ALT-100429-1|T>C||||||||163|Uniprot P79734||||REF|
+ZDB-ALT-980203-1453|A>T|1126|||STOP||K|X|376|||TRUNCATION|||
+ZDB-ALT-980203-652|T>A||||STOP||Leu|X|1352||||||
+ZDB-ALT-050919-72|T>G|1194|||MISSENSE||Phe|Val|383||||||
+ZDB-ALT-091112-35|||||STOP||Tyr|X|203|||TRUNCATION|||
+ZDB-ALT-980203-1563||||||||||||||REF|
+ZDB-ALT-980203-517|||||STOP||Q|X|544||||||
+ZDB-ALT-061129-10|C>T|1681|||STOP||||561||||||
+ZDB-ALT-101008-22|||||||||||||||
+|||||||||||||||
+ZDB-ALT-111018-10||651||exon 1|STOP||||||||||
+ZDB-ALT-130729-6|T>A||||STOP|||||||TRUNCATION||REF|
+ |||||||||||||||
+|||||||||||||||
+ZDB-ALT-980413-473|||||STOP||K|X|533||||||
+ZDB-ALT-080523-2|||||STOP||||86||||||
+|||||||||||||||
+ZDB-ALT-090609-2|G>A|| |exon 4|SPLICING|||||||TRUNCATION|||
+ZDB-ALT-100311-13|||||||||||||||
+ZDB-ALT-020715-2|||||MISSENSE||F|S|516||||||
+ZDB-ALT-071015-3||||intron 2|SPLICING||||||||||
+ZDB-ALT-071015-3||||exon 3|SPLICING||||||||||
+ZDB-ALT-100813-4|G>A||||STOP||Trp|X|411|||TRUNCATION||REF|
+ZDB-ALT-980203-1613|||||||Phe|Ser|579|||||REF|
+ZDB-ALT-110630-22|T>G||||STOP||||||||||
+ZDB-ALT-150723-15|C>T|987|||STOP||Q|X|336||||||
+ZDB-ALT-111010-17|||||||||||||||
+ZDB-ALT-120404-4|T>G||||||Ser|Ile|942||||||
+ZDB-ALT-150826-2|C>T|2185||exon 12|MISSENSE||R|C|729||||||
+ZDB-ALT-980203-1097|A>T|1903|||STOP||Arg|X|635||||||
+ZDB-ALT-100406-1|T>A|||exon 11|STOP||||||||||
+ZDB-ALT-121113-1|T>C||||MISSENSE||Leu|Pro|||||||
+ZDB-ALT-150312-12|G>T||||MISSENSE||W|L|47||||||
+ZDB-ALT-111122-3|G>A||||SPLICING||||||||||
+ZDB-ALT-120301-1|plus 1|1894|||||||||||||
+ZDB-ALT-120301-1|G>A||||||||||||||
+ZDB-ALT-980203-1788|C>T|3148|||STOP||Arg|X|929|||||REF|
+|||||||||||||||
+ZDB-ALT-100311-17|||||||||||||||
+ZDB-ALT-140114-1|||||STOP||Ala|X|207|||||REF|
+ZDB-ALT-151222-1|A>T|||intron 4|SPLICING||||||||||
+ZDB-ALT-050428-8|||||MISSENSE||N|K|168||||||
+ZDB-ALT-080401-3|G>A||||MISSENSE||Glu|Lys|130||||||
+ZDB-ALT-120411-225|G>A||||STOP|||||||||REF|
+ZDB-ALT-120411-225|G>A|||exon 4|SPLICING|||||||||REF|
+ZDB-ALT-120820-1|G>A||||MISSENSE||G|E||||AA substitution|||
+ZDB-ALT-980203-1248|C>T||||STOP||Arg|X|139||||||
+ZDB-ALT-051012-8|G>T||||NON_CONSERVED MISSENSE||G|V|178|||NON-CONSERVATIVE AA substitution|||
+ZDB-ALT-080619-2|||||||||||||||
+ZDB-ALT-091230-1|T>A||||STOP||Leu|X|278||||||
+ZDB-ALT-111010-4|||||||||||||||
+ZDB-ALT-130410-8|A>G||||MISSENSE||Thr|Ala|80||||||
+ZDB-ALT-980413-508|||||MISSENSE||Asn|Lys|172||||||
+ZDB-ALT-090616-1|C>T|||exon 5|STOP||Q|X|201|||TRUNCATION|||
+ZDB-ALT-121019-1|A>T|||exon 6|SPLICING||||||||||
+ZDB-ALT-121019-1|A>T||||STOP||||||||||
+ZDB-ALT-100504-7|G>T|25762707|NC_007116|intron 8|SPLICING|||||||AA deletion|Chr 5|REF|
+ZDB-ALT-100504-7|||||||Ser|Lys|277|||AA substitution|||
+ZDB-ALT-121204-1|plus 1|||exon 4|FRAME SHIFT||||||||||
+ZDB-ALT-110620-1|T>A||||SPLICING|||||||||REF|
+ZDB-ALT-111010-13|||||||||||||||
+ZDB-ALT-111213-6|||||||||||||||
+ZDB-ALT-980203-1093|||||MISSENSE||F|Y|241||||||
+ZDB-ALT-030716-8|||||STOP||R|X|797||||||
+ZDB-ALT-061207-2|G>A|||exon 13|SPLICING|||||||||REF|
+ZDB-ALT-130809-2||||||||X|107||||||
+ZDB-ALT-150312-9|||||||Y|S|66||||||
+ZDB-ALT-090611-17|G>T||||STOP|||X|25||||||
+ZDB-ALT-110829-1|G>A|||exon 5|SPLICING|||||||||REF|
+ZDB-ALT-110829-1|G>A|||exon 5|STOP|||||||||REF|
+ZDB-ALT-980203-510|||||STOP||G|X|412|||||REF|
+ZDB-ALT-030312-2|||||STOP||Lys|S|239||||||
+ZDB-ALT-101008-16|||||STOP||Lys|X|174||||||
+\|||||||||||||||
+|||||||||||||||
+|||||||||||||||
+ZDB-ALT-120221-11|A>T|427|||STOP||||143||||||
+ZDB-ALT-080728-1|||||||||||||||
+ZDB-ALT-130411-3|||||SPLICING||||||||||
+ZDB-ALT-130411-3|||||STOP|||X|23||||||
+ZDB-ALT-140818-5|||||||||||||||
+ZDB-ALT-041209-2|T>C||||||||||||||
+ZDB-ALT-140130-18|A>T|301|||STOP||K|X|101|||TRUNCATION||REF|
+ZDB-ALT-090714-1|T>A|||intron 14|SPLICING||||||||||
+ZDB-ALT-090714-1|||||FRAMESHIFT||||||||||
+ZDB-ALT-090714-1|||||STOP||||||||||
+ZDB-ALT-110104-3|G>T|||exon 10|STOP|||X|331||||||
+ZDB-ALT-140127-2|T>G||||STOP|||||||||REF|
+ZDB-ALT-111010-21|||||||||||||||
+ZDB-ALT-111221-1|C>T||||MISSENSE||Ser|Leu|193|||NON CONSERVED AA substitution|||
+ZDB-ALT-130502-1|C>T|||exon 4|STOP|||X|195||||||
+ZDB-ALT-130829-1|C>A||||STOP||Tyr|X|110||||||
+ZDB-ALT-110720-4||||||||X|610||||||
+ZDB-ALT-040224-4||||exon 6|STOP||||||minus 37|TRUNCATION|||
+ZDB-ALT-121018-2|||||STOP||Y|X|2056||||||
+ZDB-ALT-061129-2|C>A|1002|||STOP|||X|334||||||
+ZDB-ALT-101008-5|||||||||||||||
+|||||||||||||||
+ZDB-ALT-090609-1|||||STOP|||X|64||minus 63 |TRUNCATION|||
+ZDB-ALT-091112-10|C>T|11527|||STOP|||||||TRUNCATION|||
+ZDB-ALT-100308-1|C>A|156|||STOP||||51||||||
+ZDB-ALT-130925-7|G>T|||exon 8|STOP||E|X|396||||||
+ZDB-ALT-980203-1396|G>A|2645|||MISSENSE||Gly|Asp|882||||||
+ZDB-ALT-040128-10|C>T||||STOP|||||||TRUNCATION||REF|
+ZDB-ALT-110802-4|||||STOP||K|X|329||||||
+ZDB-ALT-120216-1|C>T|2623|||||Arg|X|875|||TRUNCATION||REF|
+ZDB-ALT-130220-3|G>T|||exon 5|STOP||Glu|X||||TRUNCATION|||
+ZDB-ALT-980203-1749|T>A||||SPLICING|||||||||REF|
+ZDB-ALT-071015-2|C>A|597|||||||||||||
+ZDB-ALT-980203-1219|C>T|2906|||MISSENSE||Pro|Leu|969|||AA SUBSTITUTION||REF|
+ZDB-ALT-061101-360|||||STOP||R|X|227||||||
+ZDB-ALT-060811-4|G>A||||||D|N|123|||AA SUBSTITUTION|||
+ZDB-ALT-061129-6|C>T|187|||STOP|||||||TRUNCATION|||
+ZDB-ALT-121112-5|T>A||||STOP||C|X|94||||||
+ZDB-ALT-150312-11|A>C||||MISSENSE||T|P|29|||AA SUBSTITUTION|||
+ZDB-ALT-070315-5|A>T|208||exon 2|STOP||K|X||||TRUNCATION|||
+|||||||||||||||
+|||||||||||||||
+ZDB-ALT-090610-8|T>A|||exon 7|MISSENSE||Trp|Arg|193|||AA SUBSTITUTION|||
+ZDB-ALT-100526-1|T>C|1279|||MISSENSE||S|P|427|||AA SUBSTITUTION||REF|
+ZDB-ALT-110825-2|C>A||||STOP||||||||||
+ZDB-ALT-120927-3|C>T|||exon 32|STOP||R|X|14970||||||
+ZDB-ALT-060628-4|C>T|3600|||STOP||||||||||
+ZDB-ALT-090121-2|T>A||||MISSENSE||I|N|142|||AA SUBSTITUTION|||
+ZDB-ALT-100311-21|||||||||||||||
+ZDB-ALT-130718-3||||exon 4|STOP||Gln|X|202||||||
+ZDB-ALT-110120-2|||||||||||||||
+ZDB-ALT-110210-1|C>T||||STOP||Q|X|982||||||
+ZDB-ALT-150408-1|G>A|||intron 5|SPLICING||||||||||
+ZDB-ALT-150408-1|||||FRAME SHIFT||||||||||
+ZDB-ALT-150408-1|||||STOP||||||||||
+ZDB-ALT-111010-3|||||||||||||||
+ZDB-ALT-130410-7|T>A|||exon 3|STOP||Leu|X|155||||||
+ZDB-ALT-130514-2|C>T|2340|||STOP||Glu|X||||||REF|
+ZDB-ALT-130830-3|G>A||||STOP|||X|5333||||||
+ZDB-ALT-980203-1594|C>T||||STOP||Arg|X|139||||||
+ZDB-ALT-100506-2|||||STOP||AC|X|40||||||
+ZDB-ALT-120426-1|G>A|1018||exon 10|STOP|||X|214||||||
+ZDB-ALT-131210-1|T>A||||MISSENSE||Leu|Q||||AA SUBSTITUTION|||
+ZDB-ALT-111013-1|T>G||||SPLICING|||||||TRUNCATION|||
+ZDB-ALT-121128-5|C>T|||exon 8|STOP||Arg|X|291||||||
+ZDB-ALT-141009-2|T>A||||||C|S|339||||||
+ZDB-ALT-150325-5|G>T|||exon 2|STOP||||||||chr17:48958292 (Zv9)|REF|
+ZDB-ALT-150325-5|C>A|205|NM_001077431||STOP||Tyr|X|53|||TRUNCATION||REF|
+ZDB-ALT-110620-3|T>A|||exon 5|MISSENSE||Val|Glu||||AA SUBSTITUTION|||
+ZDB-ALT-111010-15|||||||||||||||
+ZDB-ALT-111213-8|||||||||||||||
+ZDB-ALT-030805-10|C>T||||STOP||Gln|X|254||||||
+ZDB-ALT-060824-4|T>C|454|||MISSENSE||Ser|Pro||||||REF|
+ZDB-ALT-061214-2|G>A||||SPLICING||||||||||
+ZDB-ALT-130814-1|T>A|309|||||||||||||
+ZDB-ALT-130325-9|G>T|||exon 6|STOP||||461|||TRUNCATION|||
+ZDB-ALT-060608-480|G>A||||STOP||||||||||
+ZDB-ALT-100311-5|||||||||||||||
+ZDB-ALT-101008-1|||||||||||||||
+>unrec_barx1</a>|||||||||||||||
+ZDB-ALT-110321-2|||||||Leu|Arg|221||||||
+ZDB-ALT-150219-2|C>T|1066||exon 9 |STOP|||X|356||minus 294 aa |TRUNCATION||REF|
+|||||||||||||||
+ZDB-ALT-980203-1524|||||SPLICING|||||||AA DELETION|||
+ZDB-ALT-140818-4|||||||||||||||
+ZDB-ALT-150923-2|G>T||||MISSENSE||W|L|169||||||
+ZDB-ALT-980203-584|G>T||||||Gly|X|11||||||
+ZDB-ALT-980413-433|||||||D|V|166|||AA SUBSTITUTION|||
+ZDB-ALT-120411-459|C>T||||STOP|||X|24946||||||
+ZDB-ALT-980203-462|C>T|3967|||STOP||||||||||
+ZDB-ALT-150916-5|A>T||||STOP||Q|X|486|||||REF|
+ZDB-ALT-110104-2|T>G|||exon 13|||Ile|Ser|531||||||
+ZDB-ALT-140127-1|G>A|||exon 13|SPLICE SITE|||||||||REF|
+ZDB-ALT-150723-16|C>T||||STOP||R|X|26||||||
+ZDB-ALT-980203-1236|G>A||||||E|K|888||||||
+ZDB-ALT-100726-2|||||||M|K|1461||||||
+ZDB-ALT-130830-1|C>T||||STOP||||27471||||||
+ZDB-ALT-980203-1592|G>T||||STOP||Glu|X|198|||TRUNCATION|||
+ZDB-ALT-101119-1|C>T||||STOP||||96||minus 115|TRUNCATION|||
+ZDB-ALT-151013-1|A>T|120||exon 2|STOP||Lys|X|113|||||REF|
+ZDB-ALT-040224-26||||exon 35|SPLICING|minus 25bp||||||AA SUBSTITUTION||REF|
+ZDB-ALT-040224-26||||exon 35|FRAMESHIFT|||||||AA DELETION||REF|
+ZDB-ALT-040224-26||||exon 35|STOP|||||||TRUNCATION||REF|
+ZDB-ALT-121018-1|||||STOP||Q|X|850||||||
+ZDB-ALT-010411-12|||||MISSENSE||||||||||
+ZDB-ALT-080825-1|C>T||||STOP||Q|X|136||||||
+ZDB-ALT-101008-19|||||||||||||||
+|||||||||||||||
+ZDB-ALT-150624-6|C>T|||exon 3|STOP|||X|322|||TRUNCATION||REF|
+ZDB-ALT-980203-1667|G>A|||exon 53|STOP||W|X|2506||||||
+ZDB-ALT-980203-1533|T>G|1111|||||||||||||
+ZDB-ALT-151210-1|T>G||exon 1||SPLICE SITE|||||||TRUNCATION|||
+ZDB-ALT-151210-1|||intron 1||FRAMESHIFT|||||||TRUNCATION|||
+ZDB-ALT-151210-1|||||STOP|||||||TRUNCATION|||
+ZDB-ALT-980413-442|||||STOP||Y|X|846||||||
+ZDB-ALT-120725-1|C>A|185||exon 2|STOP|||||||TRUNCATION|||
+ZDB-ALT-100106-4|G>A||||||G|R|484||||||
+ZDB-ALT-111010-8|||||||||||||||
+ZDB-ALT-140411-2|||||STOP||Tyr|X|607|||TRUNCATION||REF|
+ZDB-ALT-150120-1||||exon 7 |SPLICE SITE|||||||TRUNCATION||REF|
+ZDB-ALT-150120-1|||||FRAMESHIFT|||||||||REF|
+ZDB-ALT-160129-1|T>C||||||Lys|Pro|46|||||REF|
+ZDB-ALT-980203-1599|||||||Gln|Leu|157||||||
+ZDB-ALT-130204-1|T>A||||SPLICE SITE||||||||||
+ZDB-ALT-160317-7|T>A||||SPLICE SITE||||||||||
+ZDB-ALT-160317-7|T>A||||INTRON GAIN||||||||||
+ZDB-ALT-160317-7|T>A||||STOP||||||||||
+ZDB-ALT-080325-4|C>A|313|||STOP||Y|X|104||||||
+ZDB-ALT-111213-10|||||||||||||||
+ZDB-ALT-101015-2|G>A||||SPLICE SITE|||||||||REF|
+ZDB-ALT-101015-2|||||FRAMESHIFT||||||||||
+ZDB-ALT-980203-638|T>C||||||L|P|308||||||
+ZDB-ALT-050919-40|C>T|494|||||Thr|Ile|165||||||
+ZDB-ALT-090610-7|T>A|||exon 8|STOP||L|X|285|||TRUNCATION||REF|
+ZDB-ALT-100205-1|||||||Ile|Ser|1042||||||
+ZDB-ALT-120927-2|C>T|||exon 21|STOP||Q|X|951||||||
+ZDB-ALT-980203-1302|G>A||||||W|X|234|||TRUNCATION|||
+ZDB-ALT-070426-3|T>A||||STOP||||||||Chr 8||
+ZDB-ALT-090805-1|||||CRYPTIC SPLICE|plus 9 |||||||||
+ZDB-ALT-100311-15|||||||||||||||
+ZDB-ALT-150616-1|T>G||||STOP|||||||TRUNCATION|||
+ZDB-ALT-980203-1162|T>G||||MISSENSE||Leu|Val|356||||||
+ZDB-ALT-150414-7|minus 3||||||D||250|||AA DELETION|||
+ZDB-ALT-980203-469|C>A|608|||STOP||Ser|X|168|||||REF|
+ZDB-ALT-081210-1|G>A|522|||STOP|||X|174|||TRUNCATION|||
+ZDB-ALT-090715-3|T>A|347|||STOP||Leu|X|116||||||
+ZDB-ALT-100216-2|G>A||||MISSENSE||G|D|264||||||
+ZDB-ALT-120411-135|C>T||||STOP|||X|1487||||||
+ZDB-ALT-151209-4|||||STOP|||||||||REF|
+ZDB-ALT-160215-1|G>A|||exon 7|STOP|||||||||REF|
+ZDB-ALT-090506-1|||||||D|E|162|||||REF|
+ZDB-ALT-131205-6|||||MISSENSE||L|P|489|AB739007|||||
+ZDB-ALT-980203-696|G>A||||STOP||||13||||||
+ZDB-ALT-140415-5|T>C|371||exon 4|MISSENSE||L|P|124||||||
+|||||||||||||||
+ZDB-ALT-150127-2||||exon 2|SPLICE SITE|||||||||REF|
+ZDB-ALT-980203-1122|T>G|176||exon 2|MISSENSE||Ile|Ser|59|||||REF|
+ZDB-ALT-060911-4|G>A||||||||||||||
+ZDB-ALT-120718-3|T>A|839|||||Lys|Met|280||||||
+ZDB-ALT-080610-12|||||||||||||||
+ZDB-ALT-110620-2|A>T|||intron 9|SPLICE SITE||||||||||
+ZDB-ALT-110620-2|||||CRYPTIC SPLICE||||||||||
+ZDB-ALT-110620-2|||||FRAME SHIFT||||||||||
+ZDB-ALT-110620-2|||||STOP|||X|421||||||
+ZDB-ALT-111010-14|||||||||||||||
+ZDB-ALT-111213-7|||||||||||||||
+ZDB-ALT-061207-12|||||||Cys|Tyr|||||||
+ZDB-ALT-150312-7|||||||I|F|152|||AA SUBSTITUTION|||
+ZDB-ALT-100526-5|C>T|10642|||STOP|||X|3548|||||REF|
+ZDB-ALT-110825-6|G>T||||STOP||||||||||
+ZDB-ALT-090827-1|T>A||||||L|H|||||||
+ZDB-ALT-100311-3|||||||||||||||
+ZDB-ALT-151215-2|C>T||||STOP|||||||||REF|
+ZDB-ALT-980203-1170|||||SPLICE SITE||||||||||
+ZDB-ALT-980203-857|T>A|||exon 24|STOP|||X||||||REF|
+ZDB-ALT-051229-2|||||STOP||Trp|X|153|||||REF|
+ZDB-ALT-100311-1|||||||||||||||
+ZDB-ALT-110315-8|C>T|754|||STOP|||X|252||||||
+ZDB-ALT-980413-693||||exon 4|MISSENSE||||||||||
+ZDB-ALT-980413-693|||||STOP||||||||||
+ZDB-ALT-110804-1|||||STOP||Arg|X|965||||||
+ZDB-ALT-040601-2|minus 1|||exon 14|||||||||||
+ZDB-ALT-041104-2|T>G|||intron 7|SPLICE SITE||||||3|AA INSERTION|||
+ZDB-ALT-100723-8|C>A|9306|||STOP||Y|X|3102||||||
+ZDB-ALT-130829-2|C>T|158|||STOP||Arg|X|||||||
+ZDB-ALT-060824-8|T>A|282|||STOP||||||minus 303 |TRUNCATION||REF|
+ZDB-ALT-980203-405|||||STOP||Y|X|131||||||
+ZDB-ALT-060608-173|T>C||||FRAMESHIFT|||X|475||||||
+ZDB-ALT-060608-173|||||EXON LOSS||||||||||
+ZDB-ALT-080318-4|G>A|2103||exon 9|SPLICE SITE||||||||||
+ZDB-ALT-080318-4|||||FRAMESHIFT||||||||||
+|||||||||||||||
+ZDB-ALT-100622-2|C>T||||||Q|X|339||||||
+ZDB-ALT-090129-4|G>A|||exon 5|SPLICE SITE||||||||||
+ZDB-ALT-090129-4|G>A|||exon 5|EXON LOSS||||||||||
+ZDB-ALT-101008-17|||||STOP|||X|669|||TRUNCATED||REF|
+|||||||||||||||
+|||||||||||||||
+ZDB-ALT-150624-5|C>A|3489|||STOP||Y|X|1163|||||REF|
+ZDB-ALT-100512-1|G>A|374|||||Cys|Tyr|125|||||REF|
+ZDB-ALT-050428-2|||||MISSENSE||M|K|214||||||
+ZDB-ALT-980203-1626|A>G|||intron 42|CRYPTIC SPLICE SITE|||||||||REF|
+ZDB-ALT-980203-1626|A>G||||FRAMESHIFT|||||||AA substitution||REF|
+ZDB-ALT-980203-1626|A>G||||STOP|||X|1949|||TRUNCATION||REF|
+ZDB-ALT-100112-1|||||MISSENSE||G|D|1459||||||
+ZDB-ALT-100802-1|||||||||||||||
+ZDB-ALT-111011-1|||||STOP||R|X|891||||||
+ZDB-ALT-980203-1357|T>A|||exon 12|STOP|||||||||REF|
+ZDB-ALT-050919-90|A>T||||STOP||Q|X|316|||||REF|
+ZDB-ALT-060608-185|T>A|1869|||STOP||||||||||
+ZDB-ALT-080325-3|C>T|736|||||Q|X|246||||||
+ZDB-ALT-100629-2|T>G||||||I|R|86||||||
+ZDB-ALT-111213-1|||||||||||||||
+ZDB-ALT-140801-1|||||STOP||R|X|3607|||TRUNCATION|||
+ZDB-ALT-150506-1|||||||P|T|1850|||AA SUBSTITUTION|||
+ZDB-ALT-061129-22|G>A|4072|||STOP|||X|1358||||||
+ZDB-ALT-071127-4|C>A||||STOP||Cys|X|788||||||
+ZDB-ALT-101008-7|||||||||||||||
+ZDB-ALT-110330-1|A>T||||||I|F|205||||||
+ZDB-ALT-121112-3|||||STOP||R|X|125||||||
+ZDB-ALT-980203-496|G>A||||STOP|||||||TRUNCATION||REF|
+ZDB-ALT-980203-985|T>G||||CRYPTIC SPLICE|||||||TRUNCATION|||
+ZDB-ALT-980203-985|||||FRAMESHIFT|||||||TRUNCATION|||
+ZDB-ALT-100311-14|||||||||||||||
+ZDB-ALT-130930-8|G>A||||STOP||G|X|290||||||
+ZDB-ALT-980203-507|C>T||||STOP||Q|X|931|||||REF|
+ZDB-ALT-080818-4|||||SPLICING||||||||||
+ZDB-ALT-080818-4|||||STOP|||||||TRUNCATION|||
+ZDB-ALT-100311-9|A>T|302|||STOP||Lys|X|68|||||REF|
+\|||||||||||||||
+|||||||||||||||
+ZDB-ALT-101008-13|T>G|241|||||Ile|Arg||||AA SUBSTITUTION|||
+|||||||||||||||
+>fh328</a>|||||||||||||||
+ZDB-ALT-980203-1662|C>A||||||Cys|X||||||REF|
+ZDB-ALT-131212-1|G>A|564|||STOP|||||||TRUNCATION|||
+ZDB-ALT-130701-1|A>T|||exon 3|STOP||K|X|64||||||
+ZDB-ALT-151209-6|||||STOP|||||||||REF|
+ZDB-ALT-060608-121|G>T||||||Cys|Phe|401|||AA SUBSTITUTION|||
+ZDB-ALT-110211-1|T>A||||STOP||Cys|X|23||||||
+ZDB-ALT-110802-1|minus 1|37|||STOP||||||||||
+ZDB-ALT-110802-1||615|||||E|D|205||||||
+ZDB-ALT-110802-1||2183|||||K|R|728||||||
+|||||||||||||||
+ZDB-ALT-070928-2|T>A||||SPLICE SITE|||||||TRUNCATION|||
+ZDB-ALT-150127-1||||exon 6|SPLICE SITE|||||||||REF|
+ZDB-ALT-150601-6|T>G||||||L|R|1429|||AA substitution|||
+ZDB-ALT-110207-12|A>G||||CRYPTIC SPLICE||||||||||
+ZDB-ALT-110207-12|||||FRAMESHIFT||||||||||
+ZDB-ALT-110207-12|||||STOP||T|X|182||||||
+ZDB-ALT-080325-8|C>T|292|||||Q|X|98||||||
+ZDB-ALT-080609-1|G>A||||||Thr|Lys|189||||||
+ZDB-ALT-100720-1||||exon 9|SPLICE SITE||||||||||
+||||intron 9|||||||||||
+ZDB-ALT-111010-10|||||||||||||||
+ZDB-ALT-111213-3|||||||||||||||
+ZDB-ALT-140317-1|T>A||||STOP||Tyr|X|||||||
+ZDB-ALT-140805-1||||exon 3|STOP|||||||||REF|
+ZDB-ALT-141222-2|T>A|201|||||F|L|70|||||REF|
+ZDB-ALT-141222-2|C>A|497|||||P|Q|166|||||REF|
+ZDB-ALT-131218-1|T>A|1388|||STOP||Leu||463|||TRUNCATION||REF|
+ZDB-ALT-980203-1562|C>T||||STOP||Gln|X|778||||||
+ZDB-ALT-061129-14|A>T|558|||STOP|||X|157||||||
+ZDB-ALT-101008-24||||exon 9|STOP||W|X|1752||||||
+ZDB-ALT-980203-1671|G>T||||STOP||G|X|155|||TRUNCATION|||
+ZDB-ALT-980520-41|C>T||||||Arg|Cys|122|||AA SUBSTITUTION||REF|
+ZDB-ALT-090603-7|||||||R|H|557||||||
+ZDB-ALT-140210-7|T>A|KF700696|||||Val|Asp|375|||||REF|
+ZDB-ALT-100311-11|||||||||||||||
+ZDB-ALT-980203-1374|||||||M|R|1013|||AA SUBSTITUTION||REF|
+ZDB-ALT-110630-21|C>A||||STOP||||||||||
+ZDB-ALT-100723-4|C>A||||STOP|||||||TRUNCATION|||
+ZDB-ALT-111010-19|||||||||||||||
+ZDB-ALT-130409-8|T>A|1053|||STOP|||X|351||||||
+ZDB-ALT-980413-636|G>A|226|||||||||||||
+ZDB-ALT-060824-6|C>T|538|||STOP|||||||TRUNCATION||REF|
+ZDB-ALT-130814-2|T>G||||||||221||||||
+ZDB-ALT-980203-1300|A>T|2356|||STOP|||||||TRUNCATION|||
+ZDB-ALT-100311-19|||||||||||||||
+ZDB-ALT-050428-6|||||||V|V|200||||||
+ZDB-ALT-980203-1384|C>T|3445|||STOP||Glu|X|1032|||||REF|
+|||||||||||||||
+ZDB-ALT-100506-15|minus 1||||STOP||||96|||||REF|
+ZDB-ALT-110429-5|G>A|||exon 62|SPLICE SITE||||||||||
+ZDB-ALT-980203-1250|G>T|11446|||MISSENSE||Gly|Trp|3816|||||REF|
+ZDB-ALT-100108-1|||||||||||||||
+ZDB-ALT-100730-2|C>T|1971||exon 11|STOP||Q|X|658|||||REF|
+ZDB-ALT-111010-9|||||||||||||||
+ZDB-ALT-140411-3|||||STOP||Gln|X|684|||TRUNCATION||REF|
+|||||||||||||||
+ZDB-ALT-070117-1|T>A||||STOP|||||||||REF|
+ZDB-ALT-131220-3|G>T|||exon 13|||||||||||
+ZDB-ALT-061129-20|G>T|280|||STOP|||X|94||||||
+ZDB-ALT-101008-6|||||||||||||||
+>unrec_flt1</a>|||||||||||||||
+ZDB-ALT-100720-3||||exon 9|STOP||W|X|252||||||
+ZDB-ALT-111010-12|||||||||||||||
+ZDB-ALT-111213-5|||||||||||||||
+ZDB-ALT-120330-1|T>G||||STOP||Tyr|X||||TRUNCATION|||
+ZDB-ALT-140320-1|||||MISSENSE||G|D|242||||||
+ZDB-ALT-150106-2|C>T|1456||||||X|487|||TRUNCATION|||
+ZDB-ALT-150518-1|T>A||||STOP||Y|X|3||||||
+ZDB-ALT-150818-1|G>A||||STOP||||53|||||REF|
+ZDB-ALT-030731-2|T>A|269|||||||||||||
+ZDB-ALT-090611-13||||exon 4|STOP||||||minus 277|TRUNCATION|||
+ZDB-ALT-110825-7|T>A||||STOP||||||||||
+ZDB-ALT-120308-1|T>C||||||Cys|Arg||||AA SUBSTITUTION|||
+ZDB-ALT-140721-2|||||STOP||||||||||
+ZDB-ALT-980203-1552|C>T|2349|||STOP||||||||||
+ZDB-ALT-080819-2|C>T|4381|||STOP|||||||TRUNCATION|||
+ZDB-ALT-101008-15|||||STOP||L|X|150||||||
+|||||||||||||||
+|||||||||||||||
+ZDB-ALT-111017-4|T>G|||exon 7|||Ser|Ala|534|||AA SUBSTITUTION|||
+ZDB-ALT-150224-3|T>A|||exon 5|STOP||L|X|132|||||REF|
+ZDB-ALT-111118-31|C>A|365|||||||||||||
+ZDB-ALT-980203-728|||||MISSENSE||G|E|309|||||REF|
+ZDB-ALT-080806-3|T>A|||exon 2|STOP||||||||||
+|||||||||||||||
+ZDB-ALT-151209-5|||||STOP|||||||||REF|
+ZDB-ALT-080630-1|T>C|||intron 2|SPLICING||||||||||
+ZDB-ALT-150325-1|C>T|82|||STOP|||||||TRUNCATION||REF|
+ZDB-ALT-040323-2|T>A|||exon 4|||V|E|246||||||
+ZDB-ALT-110708-1|T>A|||exon 2|STOP||Tyr|X||||||REF|
+ZDB-ALT-111010-20|||||||||||||||
+ZDB-ALT-111220-1|G>A||||STOP||W|X|256|||TRUNCATION|||
+ZDB-ALT-090309-3|G>T||||||Gly|Val|598|||AA SUBSTITUTION||REF|
+ZDB-ALT-150720-1|C>T|||exon 21|STOP|||||||TRUNCATION||REf|
+ZDB-ALT-980203-1454|A>T|1126|||STOP||K|X|376|||TRUNCATION|||
+ZDB-ALT-100623-1|||||STOP|||X|73||||||
+ZDB-ALT-030502-2|||||SPLICE SITE||||||||||
+ZDB-ALT-061129-18|T>A|664|||||C|S|222||||||
+ZDB-ALT-101008-4|||||||||||||||
+>unrec_col4a3</a>|||||||||||||||
+ZDB-ALT-090609-3|A>G|||exon 7|SPLICE SITE||||||||||
+ZDB-ALT-100518-1|T>A|317|||STOP|||||||TRUNCATION||REF|
+ZDB-ALT-110819-4|G>T||||MISSENSE||C|F|869|||AA SUBSTITUTION||REF|
+|||||||||||||||
+ZDB-ALT-980203-1295|||||||Lys|Asn|97|||AA SUBSTITUTION|||
+ZDB-ALT-051229-4|||||MISSENSE||Phe|Val|113|||||REF|
+ZDB-ALT-100311-10|||||||||||||||
+ZDB-ALT-150610-4||||exon 1|STOP|||X|336|||TRUNCATION|||
+ZDB-ALT-980203-355|T>A|1491|||STOP||Tyr|X|497|||||REF|
+ZDB-ALT-020715-4|||||STOP||C|X|2144||||||
+ZDB-ALT-071015-4|C>T|505|||||||||||||
+ZDB-ALT-110414-1|C>A||||STOP||Tyr|X|1031||||||
+ZDB-ALT-050919-86|T>A||||SO:0002012|||||||||REF|
+ZDB-ALT-091112-42|||||STOP||L|X|74|||||REF|
+ZDB-ALT-100628-5|C>T||||STOP||||||||||
+ZDB-ALT-140728-1|T>A||||||H|Q|189|||||REF|
+ZDB-ALT-980203-1571|C>G|4545|||STOP||||1514|||||REF|
+ZDB-ALT-980203-769|G>T||||SPLICE SITE|||||||||REF|
+ZDB-ALT-980203-769|||||MISSENSE||V|I|140|||AA SUBSTITUTION|||
+ZDB-ALT-980203-769|||||||||||T138-K139|AA DELETION|||
+ZDB-ALT-071205-1|||||STOP|||||||||REF|
+ZDB-ALT-090212-1|T>G||||||I|S|1061|||AA SUBSTITUTION|||
+ZDB-ALT-111020-3|G>A|||exon 11|SPLICE SITE||||||||||
+ZDB-ALT-111020-3|||||CRYPTIC SITE||||||||||
+ZDB-ALT-120126-1|T>A|||exon 6|STOP||||||||||
+ZDB-ALT-990427-7|T>A||||||K|X|||||||
+|||||||||||||||
+|||||||||||||||
+|||||||||||||||
+|||||||||||||||
+|||||||||||||||
+|||||||||||||||
+ZDB-ALT-110523-4|plus 1|1120|||FRAMESHIFT|||||||||REF|
+ZDB-ALT-090820-1|C>T||||STOP|||X|493|||TRUNCATION|||
+ZDB-ALT-100311-20|||||||||||||||
+ZDB-ALT-130718-2|C>T|946||exon 3|STOP|||||||TRUNCATION||REF|
+\|||||||||||||||
+|||||||||||||||
+\|||||||||||||||
+|||||||||||||||
+ZDB-ALT-150218-6|T>A||||STOP||||||||||
+ZDB-ALT-150617-6||||exon 5|SPLICE SITE|||||||||REF|
+ZDB-ALT-980203-1655|T>A|||intron 32|CRYPTIC SITE||||||||||
+ZDB-ALT-980203-1655|||||elongated transcript?|||||||AA INSERTION|||
+ZDB-ALT-980203-1655|||||FRAMESHIFT|||||||TRUNCATION|||
+ZDB-ALT-980203-1655|||||STOP||||||||||
+ZDB-ALT-110816-1|T>A|1700|||MISSENSE||V|D|567|||||REF|
+|||||||||||||||
+ZDB-ALT-141113-7|||||MISSENSE||L|P|332|||||REF|
+ZDB-ALT-980203-1521|C>A||||STOP||Tyr|X|306||||||
+ZDB-ALT-050428-4|||||||N|T|99||||||
+ZDB-ALT-130528-5|T>A|||exon 29|STOP||||||||||
+ZDB-ALT-031030-20|A>T|331||exon 3|MISSENSE||Ser|Cys|111||||||
+|||||||||||||||
+ZDB-ALT-070117-7|T>A||||||V|D|1046||||||
+ZDB-ALT-110120-1|T>C|962|||||Phe|Ser|||||||
+ZDB-ALT-100728-1|T>A||||STOP||L|X|133||||||
+ZDB-ALT-111010-5|||||||||||||||
+ZDB-ALT-980203-1596|G>T||||||Gly|Val|75||||||
+ZDB-ALT-080706-1|minus 12||||inframe_deletion|||||||AA DELETION|||
+ZDB-ALT-980203-561|C>G||||||Lys|Asn|301|||AA SUBSTITUTION|||
+ZDB-ALT-120717-4|G>T||||STOP||Gly|X|42||||||
+ZDB-ALT-121204-2|C>T||||STOP||Q|X|336|||TRUNCATION|||
+ZDB-ALT-131101-1|A>G|1545|||MISSENSE||Q|R|516||||||
+ZDB-ALT-980203-427|C>T||||STOP||Arg|X|145||||||
+ZDB-ALT-040827-2|||||||L|R|846||||||
+ZDB-ALT-080325-9|G>T|931||exon 1|SPLICE SITE|||||||TRUNCATION|||
+ZDB-ALT-080325-9||||intron 1|||||||||||
+ZDB-ALT-100720-2||||exon 2|MISSENSE||C|R|38|||AA SUBSTITUTION|||
+ZDB-ALT-111010-11|||||||||||||||
+ZDB-ALT-111213-4|||||||||||||||
+ZDB-ALT-120328-6|C>T||||STOP||||||||||
+ZDB-ALT-140805-2||||exon 3|STOP|||||||||REF|
+ZDB-ALT-980203-1091|G>A||||SPLICE SITE|||||||||REF|
+ZDB-ALT-980203-1091|||||EXON LOSS||||||||||
+ZDB-ALT-980203-1091|||||STOP||||||||||
+ZDB-ALT-980203-1335|||||||||||||||
+ZDB-ALT-980203-533|C>A||||SPLICE SITE|||||||||REF|
+ZDB-ALT-980203-533|||||FRAMESHIFT||||||||||
+ZDB-ALT-980203-533|||||STOP|||X|216||||||
+ZDB-ALT-061212-2|||||||Q|X|360||||||
+ZDB-ALT-130813-2|T>A||||MISSENSE||V|E|147||||||
+ZDB-ALT-131122-11|minus 1||||||||||||||
+ZDB-ALT-160314-4|C>T|||exon 17|STOP||Gln|X|609|||TRUNCATION||REF|
+ZDB-ALT-150731-2|T>A||||MISSENSE||H|Q|189||||||
+ZDB-ALT-080819-1|C>A|1638|||STOP|||||||TRUNCATION|||
+ZDB-ALT-100315-1|||||MISSENSE||C|136|Y||||||
+ZDB-ALT-101008-14|||||||||||||||
+>fh329</a>|||||||||||||||
+ZDB-ALT-111017-3|C>T|1162||exon 7|STOP||Gln|X|388||||||
+ZDB-ALT-980203-477|C>T|||||||||||||REF|
+ZDB-ALT-071019-5|C>T|||exon 3|STOP|||||||||REF|
+ZDB-ALT-110311-1|T>A||||STOP||Tyr|X|||||||
+ZDB-ALT-120411-351|G>A|975|||SPLICE SITE||||||||||
+|||||||||||||||
+ZDB-ALT-980203-1251|||||STOP|||X|63||||||
+ZDB-ALT-071015-6|C>T|694|||||||||||||
+ZDB-ALT-110107-1|T>A|220627|BX927365.7||||Ile|Asn|181||||||
+ZDB-ALT-110107-1||652|NM_131266||||Ile|Asn|181||||||
+ZDB-ALT-110722-30|G>A|||intron 3|shorten transcript||||||||Chr 14|REF|
+ZDB-ALT-110722-30||||exon 4|FRAMESHIFT||||||||||
+ZDB-ALT-110722-30|||||STOP||||||||||
+ZDB-ALT-140127-3|C>A|||exon 7|longer transcript|||||||||REF|
+|||||||||||||||
+ZDB-ALT-150723-18||||exon 11|SPLICING ||||||||||
+ZDB-ALT-160323-7|||||||||191||||||
+ZDB-ALT-111010-2|||||||||||||||
+ZDB-ALT-130118-1|T>A|2087|||||Asn|Lys|695|||||REF|
+ZDB-ALT-140327-2|T>A||||||Tyr|Arg|||||||
+ZDB-ALT-980203-1344|A>G|1476|||||E|G|456||||||
+ZDB-ALT-120416-2|||||||F|X|271-1||||||
+ZDB-ALT-140514-1|T>G|1405|NM_001008628||||Y|X|431||||||
+ZDB-ALT-040224-6|||||||Asn |Lys|414||||||
+ZDB-ALT-110914-3|C>A|174|||||Tyr|X|58||||||
+ZDB-ALT-121018-3|||||STOP||Y|X|2449||||||
+ZDB-ALT-150504-4|G>A||||STOP||Trp|X|3561|NP_001036210||TRUNCATION||REF|
+ZDB-ALT-061129-16|T>A||||STOP|||X|262||||||
+ZDB-ALT-091022-1|T>A|800|||||Leu|Gln|267||||||
+ZDB-ALT-101008-3|||||||||||||||
+>unrec_col4a1</a>|||||||||||||||
+ZDB-ALT-980520-45|C>A||||||Gln|Lys|137|||||REF|
+ZDB-ALT-090603-5|||||||I|N|383||||||
+ZDB-ALT-150210-6|||||INTRON GAIN|||||||TRUNCATION||REF|
+ZDB-ALT-150210-6|||||STOP||||||||||
+ZDB-ALT-150609-1|||||MISSENSE||V|A|232||||||
+ZDB-ALT-980203-351|T>A|2888|||MISSENSE||Ile|Asn|963|||||REF|
+ZDB-ALT-980413-444|||||MISSENSE||G|D|2073||||||
+ZDB-ALT-110211-2|||||STOP||Q|X|413||||||
+ZDB-ALT-110802-2|T>G|1538|||MISSENSE||L|R|337||||||
+ZDB-ALT-040421-16|T>A||||||Ile|Asm|430||||||
+ZDB-ALT-111010-7|||||||||||||||
+ZDB-ALT-140411-1|||||MISSENSE||G|S|365|||||REF|
+ZDB-ALT-150115-5|||||STOP||Glu|X|3||||Chr 14||
+ZDB-ALT-980203-1354|T>A|2099|||||||||||||
+ZDB-ALT-980203-1354|C>A|2100|||||||||||||
+ZDB-ALT-040720-42|T>G||||||M|R|1208||||||
+ZDB-ALT-070117-13|C>T|1834|||STOP||Gln|X|612||||||
+ZDB-ALT-131219-29|G>A|2411|||STOP||Trp|X|804|||TRUNCATION||REF|
+|||||||||||||||
+ZDB-ALT-151015-2|C>T|||exon 17|||T|M|804||||||
+ZDB-ALT-980203-418|T>A||||STOP LOSS||X|Gly|||plus 44|ELONGATED|||
+ZDB-ALT-110920-1|C>A|162|||STOP||Cys|X|54|||TRUNCATION||REF|
+|||||||||||||||
+ZDB-ALT-150807-1||||exon 9|STOP||Arg|X|162||||||
+ZDB-ALT-091112-21|C>T|290||exon 1a|STOP||Gln|X|61|||TRUNCATION|||
+ZDB-ALT-100526-2|T>A|8541||exon 55|STOP||Y|X|2847|||||REF|
+ZDB-ALT-100526-2|||||SPLICE SITE|||||||||REF|
+ZDB-ALT-100526-2|||||INFRAME STOP|||||||||REF|
+ZDB-ALT-100526-2|||||FRAMESHIFT|||||||||REF|
+ZDB-ALT-100526-2|||||STOP|||||||||REF|
+ZDB-ALT-110523-9|T>A||||MISSENSE||I|N|156|||AA SUBSTITUTION||REF|
+ZDB-ALT-110825-3|T>A||||STOP||||||||||
+ZDB-ALT-120928-1|||||||T|P|29|||AA SUBSTITUTION|||
+ZDB-ALT-140213-1|A>T||||CRYPTIC SPLICE|minus 4 ||||||||REF|
+ZDB-ALT-140213-1|A>T||||FRAMESHIFT||||1615|||AA SUBSTITUTION||REF|
+ZDB-ALT-140213-1|A>T||||STOP|||||||TRUNCATION||REF|
+ZDB-ALT-151231-5|C>T||||STOP||Q|X|155|||TRUNCATION||REF|
+ZDB-ALT-100311-2|||||||||||||||
+ZDB-ALT-130718-1|G>T|3935|||MISSENSE|||||||||REF|
+|||||||||||||||
+ZDB-ALT-081111-1|C>A||||STOP||Tyr|X|237||||||
+ZDB-ALT-120523-10|T>A||||MISSENSE||Val|Asp|223||||||
+ZDB-ALT-131112-1|minus 1|||exon 3|||||||||||
+ZDB-ALT-160208-6|C>A|||exon 4|STOP||Ser|X|118||||||
+ZDB-ALT-070117-6|G>A|820|||STOP||Trp|X|273||||||
+ZDB-ALT-110113-4|C>T|||exon 2|STOP||||||||||
+ZDB-ALT-980203-440|T>A|2334|||STOP||||||||||
+ZDB-ALT-071019-7||||splicing acceptor intron 1|SPLICING||||||||||
+ZDB-ALT-090715-2|C>T|3064|XM_677713||STOP||Q|X|1022||||||
+ZDB-ALT-100216-1|T>A||||STOP|||X|265||||||
+ZDB-ALT-151209-3|||||STOP|||||||TRUNCATION||REF|
+ZDB-ALT-041220-6|T>C|946|||MISSENSE||F|L|316||||||
+ZDB-ALT-110127-1|A>C||||STOP LOSS||X|Ser|||plus 28|ELONGATED|||
+ZDB-ALT-120427-1|||||||||||||||
+ZDB-ALT-980203-1256|A>G||||START LOSS|||||||TRUNCATION||REF|
+ZDB-ALT-070927-4|||||||||||||||
+ZDB-ALT-060911-2|T>C||||||||||||||
+ZDB-ALT-090416-3|T>G||||STOP||Tyr|X|152|||||REF|
+ZDB-ALT-980413-523|G>A||||SPLICE SITE|minus 104||||||||REF|
+ZDB-ALT-980413-523|||||EXON LOSS||||||||||
+ZDB-ALT-060608-195|A>T|||splice acceptor intron 4|EXON LOSS||||||||||
+ZDB-ALT-060608-195|||||FRAMESHIFT||||||||||
+ZDB-ALT-060608-195|||||STOP||||||||||
+ZDB-ALT-111010-16|||||||||||||||
+ZDB-ALT-111213-9|||||||||||||||
+ZDB-ALT-150826-1||||intron 11|SPLICING||||||||||
+ZDB-ALT-151130-1|A>G|27434434||||||||||||REF|
+ZDB-ALT-010621-6|C>A||||STOP||Tyr|X|318||||||
+ZDB-ALT-061207-8|G>A|||splice donor intron 5|SPLICE SITE|||||||||REF|
+ZDB-ALT-980203-645|C>T||||STOP||Q|X|1077||||||
+ZDB-ALT-100526-4|G>T|7231|||STOP|||X|2410|||||REF|
+ZDB-ALT-110825-5|A>T||||STOP||||||||||
+ZDB-ALT-980203-1062|A>C|||splice acceptor site intron 2|||||||||||
+ZDB-ALT-100311-6|||||||||||||||
+ZDB-ALT-101008-10|||||||||||||||
+ZDB-ALT-110816-2|G>A|||donor splice site intron 33|||||||||||
+ZDB-ALT-141113-8|T>C|||splice donor site intron 6|SPLICING||||||||Chr 5|REF|
+ZDB-ALT-141113-8|||||FRAMESHIFT||||||||||
+ZDB-ALT-141113-8|||||STOP||||||||||
+ZDB-ALT-151222-3|T>G|||start|||||||||||
+ZDB-ALT-980203-1522|T>A||||MISSENSE||Ile|Asn|124||||||
+ZDB-ALT-050617-10|C>A||||||||||minus 54|TRUNCATION|||
+ZDB-ALT-020715-6|T>C||||||||||||||
+ZDB-ALT-071015-5|||||STOP||Y|X|143|||TRUNCATION||REF|
+|||||||||||||||
+ZDB-ALT-120411-117|T>A||||STOP|||X|4597||||||
+ZDB-ALT-100505-6|C>T|115|||||Glu|X|39||||||
+ZDB-ALT-970731-16|||||STOP||||||||||
+ZDB-ALT-020514-4|T>A||||STOP||Tyr|X|479||||||
+ZDB-ALT-070921-1|T>A|||exon 3|STOP||||||||||
+ZDB-ALT-080617-2|||||STOP|||X|259||||||
+ZDB-ALT-100726-3|||||||L|Q|277||||||
+ZDB-ALT-130830-2|G>A|||splice donor site intron 1|SPLICE SITE||||||||||
+|||||||||||||||
+ZDB-ALT-120416-1|||||||||||||||
+ZDB-ALT-080318-3|T>C|991||exon 6|MISSENSE||Cys|Arg|331||||||
+ZDB-ALT-091112-31|C>T|660|||STOP||Y|X|220|||TRUNCATION|||
+ZDB-ALT-110906-3||||exon 5|STOP||Glu|X|117|||||REF|
+ |||||||||||||||
+ZDB-ALT-030327-2|C>T|136|cDNA||STOP|||X|46||||||
+ZDB-ALT-101008-21|||||||||||||||
+>fh336</a>|||||||||||||||
+ZDB-ALT-080229-1|C>T||||STOP|||||||||REF|
+|||||||||||||||
+ZDB-ALT-090603-4|||||MISSENSE||C|R|412||||||
+ZDB-ALT-050428-10|||||MISSENSE||S|F|26||||||
+ZDB-ALT-980203-579|C>T|2395|||STOP|||X|799|||||REF|
+ZDB-ALT-031111-2|T>A|4577|||STOP||||||||||
+ZDB-ALT-111010-6|||||||||||||||
+ZDB-ALT-120710-2|T>G||||||||||||||
+ZDB-ALT-080325-5|C>T|274|||||Gln|X|92|||TRUNCATION||REF|
+|||||||||||||||
+ZDB-ALT-100709-1|G>A|1283|NM_173242|exon 9|||Arg|His|233||||||
+ZDB-ALT-111213-11|||||||||||||||
+ZDB-ALT-980203-1331|T>G||||MISSENSE||Met|Arg|38|||AA SUBSTITUTION|||
+ZDB-ALT-120126-2||||exon 5|STOP||||||||||
+ZDB-ALT-070315-1|C>T|1568|||STOP||R|X|398||||||
+ZDB-ALT-151230-7|T>C|||splice donor site|CRYPTIC SPLICE ||||||||||
+ZDB-ALT-151230-7|||||FRAMESHIFT|||||||TRUNCATION|||
+ZDB-ALT-980203-739|G>A|||exon 2|||W|X|103|||TRUNCATION|||
+ZDB-ALT-070427-1|G>A|||splice donor site|FRAMESHIFT||||||||Chr 13 : 35593144||
+ZDB-ALT-100311-16|||||||||||||||
+ZDB-ALT-140903-2|||||STOP||C|R|365|||||REF|
+ZDB-ALT-140130-9|G>A|||splice acceptor site intron 4|SPLICING|||||||AA DELETION|||
+ZDB-ALT-080818-3|||||STOP||||||||||
+ZDB-ALT-100311-8|||||||||||||||
+ZDB-ALT-101008-12|||||||||||||||
+ZDB-ALT-131003-3|||||STOP||||||||||
+ZDB-ALT-111118-29|||||STOP||||||||||
+ZDB-ALT-130411-4|||||||Arg|X|427||||||
+ZDB-ALT-151228-4|T>A|6528|||STOP||Y|X|201|||TRUNCATION||REF|
+ZDB-ALT-151209-2|||||STOP||Y|X|1143|||||REF|
+ZDB-ALT-120427-3|||||||||||||||
+ZDB-ALT-051112-2|C>T|1904|||CRYPTIC SPLICE||||||||||
+ZDB-ALT-071015-1|C>A|597|||||||||||||
+ZDB-ALT-050802-2|||||STOP|||X|867|||||REF|
+ZDB-ALT-060909-2|C>T|2275|||MISSENSE||Pro|Ser|759||||||
+ZDB-ALT-121204-3|C>T||||||R|X|580||||||
+ZDB-ALT-080325-7|C>T|499|||STOP||Q|X|167||||||
+ZDB-ALT-090630-1|G>T||||STOP|||X|421||||||
+ZDB-ALT-100716-1|G>A|226|||MISSENSE||Ala|Thr|76|||AA SUBSTITUTION|||
+ZDB-ALT-111010-1|||||||||||||||
+ZDB-ALT-111213-2|||||||||||||||
+ZDB-ALT-141222-1|||||MISSENSE||Asp|Tyr|632|||||REF|
+ZDB-ALT-980203-1333|T>C||||||L|P|244||||||
+ZDB-ALT-980203-531|||||MISSENSE||R|H|94|||AA SUBSTITUTION|||
+ZDB-ALT-101021-1|C>T|1507|||STOP||||||||||
+ZDB-ALT-150312-8|||||||V|M|85||||||
+ZDB-ALT-091112-22||||exon 2|STOP||||||||||
+ZDB-ALT-100526-3|T>A|2487|||STOP|||X|829|||||REF|
+ZDB-ALT-110825-4|T>A||||STOP||||||||||
+ZDB-ALT-120928-2|||||||V|E|28||||||
+ZDB-ALT-061129-12|T>A|302|||STOP|||X|101||||||
+ZDB-ALT-101008-23|||||||||||||||
+|||||||||||||||
+ZDB-ALT-130311-3|T>A||||STOP||||||||||
+ZDB-ALT-150210-7|||||SPLICE SITE|||||||||REF|
+ZDB-ALT-150210-7|||||STOP|||||||||REF|
+ZDB-ALT-131211-2|G>A||||STOP|||X|580||||||
+ZDB-ALT-980203-465|||||||C|X|785|||||REF|
+ZDB-ALT-040601-4|C>T|||exon 16|STOP||||||||||
+ZDB-ALT-120202-4|||||MISSENSE||E|K|103||||||
+ZDB-ALT-140127-4|||||STOP|||||||TRUNCATION||REF|
+ZDB-ALT-150723-19|C>T|733|||STOP||R|X|245||||||
+ZDB-ALT-111010-18|||||||||||||||
+ZDB-ALT-120515-1|G>T||||STOP||E|X|1219||||||
+ZDB-ALT-110720-3||552|||STOP|||X|184|||TRUNCATION||REF|
+ZDB-ALT-131219-18|T>A|||exon 4|MISSENSE||Cys|Ser||||||REF|
+ZDB-ALT-110526-1|G>T|||splice donor site exon 24|SPLICING|||||||||REF|
+ZDB-ALT-110526-1|||||FRAMESHIFT|||||||TRUNCATION|||
+ZDB-ALT-110906-2|C>T|||exon 3|STOP||Arg|X|53|||||REF|
+ZDB-ALT-150429-4|C>T||||MISSENSE||Arg|Cys|146|||AA SUBSTITUTION|||
+ZDB-ALT-980203-1801|||||MISSENSE||L|P|858||||||
+ZDB-ALT-071108-5|||||||||||||||
+ZDB-ALT-100311-18|||||||||||||||
+ZDB-ALT-140114-2|||||STOP||A|X|2196|||||REF|
+ZDB-ALT-131211-3|C>T||||STOP||||||||||
+ZDB-ALT-130621-1|S>T|274||exon 1|STOP||R|X|92|||||REF|
+ZDB-ALT-140423-4||||splice donor site|SPLICE SITE|||||||||REF|
+ZDB-ALT-140423-4|||||intron gain|||||||||REF|
+ZDB-ALT-140423-4|||||STOP|||||||TRUNCATION|||
+ZDB-ALT-160208-7|C>T|||exon 12|STOP||||||||||
+ZDB-ALT-100802-2|||||||||||||||
+ZDB-ALT-111011-2|A>T|||exon 9|STOP||Arg|X|304||||||
+ZDB-ALT-980203-1114|C>T|5209|||MISSENSE||Arg|Trp|1737|||AA SUBSTITUTION||REF|
+ZDB-ALT-980203-1358|T>A|714||exon 5|STOP||Tyr|X|238|||||REF|
+ZDB-ALT-030627-2|C>T|1356|||STOP||Q|X|316||||||
+ZDB-ALT-061129-4|C>T|300|||STOP||Tyr|X|100||||||
+ZDB-ALT-071128-1|C>T||||STOP||Gln|X|||||||
+ZDB-ALT-101008-8|||||||||||||||
+|||||||||||||||
+ZDB-ALT-110330-2|T>A|||splice donor site intron 6|INTRON GAIN||||||plus 39|ELONGATED|||
+|||||||||||||||
+ZDB-ALT-150312-10|||||||V|M|79|||AA SUBSTITUTION|||
+ZDB-ALT-061101-112|T>A|123|||STOP|||X|41||||||
+ZDB-ALT-140917-10|plus 19|||exon 1||||||||||REF|
+ZDB-ALT-111110-3|plus 4|||exon 2|||||||||||
+ZDB-ALT-141218-9|plus 22||||STOP|||||||TRUNCATION||REF|
+ZDB-ALT-131122-3|plus 4||||||||||||||
+ZDB-ALT-150423-7|plus 4|85-86||||||||||TRUNCATION|||
+ZDB-ALT-130709-1|plus 7||||FRAMESHIFT|||||||TRUNCATION|||
+ZDB-ALT-150520-3|||||||||||||||
+ZDB-ALT-131112-7|plus 5|||exon 5|||||||||||
+ZDB-ALT-130903-1||||||||X|291||||||
+ZDB-ALT-150115-2|plus 1|||||||||||TRUNCATION|||
+ZDB-ALT-131125-1|plus 23||||||||||||||
+ZDB-ALT-151014-2|plus 5|||||||||||||REF|
+ZDB-ALT-140522-3|plus 1|||||||||||TRUNCATION||REF|
+ZDB-ALT-141010-1|||||||||||||||
+ZDB-ALT-160111-5|||||||||||||||
+ZDB-ALT-121106-1|plus 4||||FRAMESHIFT||||||||||
+ZDB-ALT-120120-3|plus 17||||FRAMESHIFT||||||||||
+ZDB-ALT-120120-3|plus 17||||STOP||||||||||
+ZDB-ALT-151201-4|plus 4|||exon 2|FRAMESHIFT|||||||||REF|
+ZDB-ALT-151201-4|||||STOP|||||||TRUNCATION||REF|
+|||||||||||||||
+ZDB-ALT-090520-1|plus 4||||||||||||||
+ZDB-ALT-140717-4|plus 4||||FRAMESHIFT|||||||||REF|
+ZDB-ALT-140717-4|plus 4||||STOP|||||||TRUNCATION||REF|
+ZDB-ALT-151118-2|plus 7|||exon 2|||||||||||
+ZDB-ALT-070928-1|plus 4046|||intron 48|transcript elongation||||||||||
+ZDB-ALT-070928-1|||||STOP||||||||||
+ZDB-ALT-080710-1|plus 1|46|||FRAMESHIFT||||||||||
+ZDB-ALT-080710-1|plus 1|46|||STOP|||X|41||||||
+ZDB-ALT-140522-2|plus 1|exon 1|||FRAMESHIFT|||||||||REF|
+ZDB-ALT-140522-2|plus 1|exon 1|||STOP|||||||||REF|
+ZDB-ALT-160111-4|plus 11|1304||||||||||TRUNCATION|||
+ZDB-ALT-151223-1|plus 13|||exon 2 ??||||||||||REF|
+ZDB-ALT-120120-2|plus 4||||FRAMESHIFT||||||||||
+ZDB-ALT-120120-2|plus 4||||STOP|||||||TRUNCATION|||
+ZDB-ALT-131122-7|plus 4||||||||||||||
+ZDB-ALT-000913-2|plus 1848||||||||||||||
+ZDB-ALT-151023-4|plus 1|503||||||||||TRUNCATED|||
+ZDB-ALT-131122-14|plus 4bp||||||||||||||
+ZDB-ALT-160111-2|plus 7|1302||||||||||TRUNCATED|||
+ZDB-ALT-151228-1|plus 11||||||||||||||
+|||||||||||||||
+ZDB-ALT-140415-4|plus 4|||exon 1|||||||||||
+ZDB-ALT-130820-103|plus 4|||exon 2|||||||||||
+ZDB-ALT-130531-2|plus 4|||exon 3|||||||||||
+ZDB-ALT-150423-3|plus 1|103||||||||||truncated|||
+ZDB-ALT-150716-2|plus 10|||||||||||TRUNCATED||REF|
+ZDB-ALT-090520-2|plus 9||||||||||||||
+ZDB-ALT-980413-542|T>G|||splice acceptor site exon 38|CRYPTIC ACCEPTOR||||||||||
+ZDB-ALT-980413-542|||||FRAMESHIFT||||||||||
+ZDB-ALT-980413-542|||||STOP|||X|1628||||||
+ZDB-ALT-151215-9|plus 1|877||||||||||TRUNCATION|||
+ZDB-ALT-120222-3||||exon 2||||||||||REF|
+ZDB-ALT-120222-3||||intron 2||||||||||REF|
+ZDB-ALT-151214-9|plus 2|568||||||||||TRUNCATION|||
+ZDB-ALT-980203-365|||||||||||||||
+ZDB-ALT-151105-2|plus 4|||exon 1|STOP|||||||TRUNCATION||REF|
+ZDB-ALT-120120-4|plus 1||||FRAMESHIFT||||||||||
+ZDB-ALT-120120-4|||||STOP|||||||TRUNCATION|||
+ZDB-ALT-150423-1|plus 6|590||||||||||TRUNCATION|||
+ZDB-ALT-151214-10|plus 51|566||||||||||TRUNCATION|||
+ZDB-ALT-150528-6|plus 17|||exon 1|FRAMESHIFT|||||||||REF|
+ZDB-ALT-150528-6|||||STOP|||||||||REF|
+ZDB-ALT-131125-4|plus 4||||||||||||||
+ZDB-ALT-111207-7|plus 2||||FRAMESHIFT|||||||TRUNCATION|||
+|||||||||||||||
+ZDB-ALT-150218-5|||||||||||||||
+ZDB-ALT-970731-39|||||||||||||||
+ZDB-ALT-980203-1827|plus 1397|||||||||||AA INSERTION|||
+ZDB-ALT-980203-1827|plus 1397|||||||||||TRUNCATION|||
+ZDB-ALT-090520-8|plus 5||||||||||||||
+ZDB-ALT-151105-1|plus 8|||exon 1|STOP|||||||TRUNCATION||REF|
+ZDB-ALT-131122-5|plus 5||||||||||||||
+ZDB-ALT-130528-3||||exon 17|STOP||||||||||
+ZDB-ALT-150424-1|plus 1|591||||||||||TRUNCATION|||
+ZDB-ALT-151214-11|plus 7|568||||||||||TRUNCATION|||
+ZDB-ALT-131107-2|||||||||||||||
+ZDB-ALT-150520-4|||||||||||||||
+ZDB-ALT-120611-3|plus 4||||FRAMESHIFT||||||||||
+ZDB-ALT-120611-3|||||STOP||||||||||
+ZDB-ALT-991201-109||||||||||||||REF|
+ZDB-ALT-030409-2|||||||||||||||
+ZDB-ALT-021021-2|||||||||||||||
+ZDB-ALT-991201-146|||||||||||||||
+ZDB-ALT-991208-20|||||||||||||||
+ZDB-ALT-010426-14|||||||||||||||
+ZDB-ALT-030812-2|||||||||||||||
+ZDB-ALT-050216-6|||||||||||||||
+ZDB-ALT-991005-28|||||||||||||||
+ZDB-ALT-991005-43|||||||||||||||
+ZDB-ALT-050216-4|||||||||||||||
+ZDB-ALT-991201-5|||||||||||||||
+ZDB-ALT-991005-33|||||||||||||||
+ZDB-ALT-990423-12|||||||||||||||
+ZDB-ALT-010426-4||||||||||||||REF|
+ZDB-ALT-980203-391||||||||||||||REF|
+ZDB-ALT-970731-8|||||||||||||||
+ZDB-ALT-000405-2|||||||||||||||
+ZDB-ALT-991208-25|||||||||||||||
+ZDB-ALT-991201-26|||||||||||||||
+ZDB-ALT-991130-214|||||||||||||||
+ZDB-ALT-991201-121||||||||||||||REF|
+ZDB-ALT-991201-38|||||||||||||||
+ZDB-ALT-991208-30|||||||||||||||
+ZDB-ALT-991201-10|||||||||||||||
+ZDB-ALT-980203-472|||||||||||||||
+ZDB-ALT-030812-8|||||||||||||||

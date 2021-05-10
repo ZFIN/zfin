@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:zfin="http://localhost/webservice/definitions"
+           targetNamespace="http://localhost/webservice/definitions"
+           elementFormDefault="qualified" attributeFormDefault="qualified"
+        >
+
+    <!--        NOTE: Request / Response types must be anonymous to use with JAXB2.-->
+
+
+    <xs:element name="GeneRetrieveRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="geneName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="expressionAnatomyWildType" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="GeneRetrieveResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="gene" type="zfin:Gene" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+
+    <xs:element name="GeneSearchRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="geneName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="expressionAnatomyWildType" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="GeneSearchResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="genes" type="zfin:Gene" minOccurs="0" maxOccurs="100"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!--        NOTE: Request / Response types must be anonymous to use with JAXB2.-->
+    <xs:element name="GeneExpressionAnatomyWildTypeRequest">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+
+    <xs:element name="GeneExpressionAnatomyWildTypeResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="anatomy" type="zfin:Anatomy" minOccurs="0" maxOccurs="100"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+
+    <xs:complexType name="Gene">
+        <xs:sequence>
+            <xs:element name="abbreviation" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="link" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="zdbId" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="expressionAnatomyWildType" type="zfin:Anatomy" minOccurs="0" maxOccurs="100"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Anatomy">
+        <xs:sequence>
+            <xs:element name="definition" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="oboId" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="stageEnd" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="stageStart" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="zdbId" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="link" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
+

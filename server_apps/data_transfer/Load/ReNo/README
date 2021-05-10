@@ -1,0 +1,23 @@
+
+Loads/
+	ReNo/
+		rmake run    select most recent *.ctx in this dir
+		gmake zgc    trigger ../../../ZGC/fetch_ZGC.sh ?
+		gmake vega
+
+
+
+insert_reno.sh (blast_file "standardized namename")
+
+	parse-blast-reno.r  (blast_file "standardized namename")
+		[writes standardizedname.ctx]
+
+    load_ctx.sh (standardizedname.ctx)
+	write-run-report-hit.r (standardizedname.ctx)
+		[writes run.unl,report.unl,hit.unl)
+
+	load_run_report_hit.sql {reads run.unl,report.unl,hit.unl}
+
+	cleanup files
+
+

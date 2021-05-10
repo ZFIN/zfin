@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+
+<changeSet author="staylor" id="loadData-test">
+    <loadData
+            file="/opt/zfin/source_roots/swirl/ZFIN_WWW/source/org/zfin/db/1077/load/pearl/changelog/mutation_detail_controlled_vocabulary.csv"
+            catalogName="swrdb" schemaName="staylor" tableName="tmp_term" quotchar="A String" >
+        <column name="so_term_id" type="String"/>
+        <column name="term_id" type="String"/>
+        <column name="term_type" type="String"/>
+        <column name="term_abbrev" type="String"/>
+        <column name="term_letter" type="String"/>
+        <column name="term_order" type="Numeric"/>
+    </loadData>
+</changeSet>
+</databaseChangeLog>

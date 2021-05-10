@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="utf-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         version="3.0">
+
+    <display-name>ZFIN: Zebrafish Information Network</display-name>
+
+    <context-param>
+        <param-name>log4jConfigLocation</param-name>
+        <param-value>/WEB-INF/log4j2.xml</param-value>
+    </context-param>
+
+    <!-- all spring-related configuration files go in here. -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+            /WEB-INF/spring/applicationContext.xml
+            /WEB-INF/spring/security.xml
+        </param-value>
+    </context-param>
+
+    <!--this forces it to use the default security bean in security.xml springSecurityFilterChain-->
+    <filter>
+        <filter-name>springSecurity</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+        <init-param>
+            <param-name>targetBeanName</param-name>
+            <param-value>springSecurityFilterChain</param-value>
+        </init-param>
+    </filter>
+
+    <filter>
+        <description/>
+        <filter-name>Add Request Info to log4j json output</filter-name>
+        <filter-class>org.zfin.framework.filter.AddRequestInfoToLog4j</filter-class>
+    </filter>
+
+    <filter>
+        <filter-name>encodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>Add Request Info to log4j json output</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>encodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>springSecurity</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!--This loads webroot into ZfinPropertiesPlaceholderConfigurer to allow it to process property files.-->
+    <listener>
+        <listener-class>org.zfin.properties.ZfinPropertiesLoadListener</listener-class>
+    </listener>
+
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <listener>
+        <listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
+    </listener>
+
+    <listener>
+        <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+    </listener>
+
+    <!--
+        Generic class that proxies filters and thus allows to have spring manage the actual filter classes
+    -->
+
+    <servlet>
+        <servlet-name>zfinapp</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>zfin</servlet-name>
+        <servlet-class>org.zfin.framework.ZfinActionServlet</servlet-class>
+        <init-param>
+            <param-name>site-search-category-file</param-name>
+            <param-value>site-search-categories.xml</param-value>
+        </init-param>
+        <!-- relative to the web root directory -->
+        <init-param>
+            <param-name>property-file-directory</param-name>
+            <param-value>WEB-INF</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <!-- Standard Action Servlet Mapping -->
+
+    <servlet>
+        <servlet-name>ZFIN Ontology Manager</servlet-name>
+        <servlet-class>org.zfin.framework.OntologyManagerServlet</servlet-class>
+        <!--
+                <description>Load ontologies in memory (used to be Phenote) from a serialized file or the database..</description>
+        -->
+        <!-- Is being handled after the main servlet initialization and the Session handling servlet. -->
+        <load-on-startup>3</load-on-startup>
+    </servlet>
+
+
+    <servlet>
+        <servlet-name>AnatomyLookupService</servlet-name>
+        <servlet-class>org.zfin.gwt.root.server.LookupRPCServiceImpl</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AnatomyLookupService</servlet-name>
+        <url-pattern>/ajax/anatomylookup</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>SessionSaveService</servlet-name>
+        <servlet-class>org.zfin.gwt.root.server.SessionSaveServiceImpl</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>CurationService</servlet-name>
+        <servlet-class>org.zfin.gwt.curation.server.CurationExperimentRPCImpl</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>CurationDiseaseService</servlet-name>
+        <servlet-class>org.zfin.gwt.curation.server.CurationDiseaseRPCImpl</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>CurationFilterService</servlet-name>
+        <servlet-class>org.zfin.gwt.curation.server.CurationFilterRPCImpl</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>SessionSaveService</servlet-name>
+        <url-pattern>/ajax/session-save</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>TranscriptService</servlet-name>
+        <servlet-class>org.zfin.gwt.marker.server.TranscriptRPCServiceImpl</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>TranscriptService</servlet-name>
+        <url-pattern>/ajax/transcriptservice</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>TermService</servlet-name>
+        <servlet-class>org.zfin.gwt.root.server.MarkerGoEvidenceRPCServiceImpl</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>TermService</servlet-name>
+        <url-pattern>/ajax/termservice</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>MarkerService</servlet-name>
+        <servlet-class>org.zfin.gwt.root.server.MarkerRPCServiceImpl</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>CurationStructureService</servlet-name>
+        <servlet-class>org.zfin.gwt.curation.server.StructureRPCImpl</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>CurationPhenotypeService</servlet-name>
+        <servlet-class>org.zfin.gwt.curation.server.CurationPhenotypeRPCImpl</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>MarkerService</servlet-name>
+        <url-pattern>/ajax/markerservice</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>CloneService</servlet-name>
+        <servlet-class>org.zfin.gwt.marker.server.CloneRPCServiceImpl</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>CloneService</servlet-name>
+        <url-pattern>/ajax/cloneservice</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AntibodyService</servlet-name>
+        <servlet-class>org.zfin.gwt.marker.server.AntibodyRPCServiceImpl</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AntibodyService</servlet-name>
+        <url-pattern>/ajax/antibodyservice</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ImageService</servlet-name>
+        <servlet-class>org.zfin.gwt.marker.server.ImageRPCServiceImpl</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ImageService</servlet-name>
+        <url-pattern>/ajax/imageservice</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>FeatureService</servlet-name>
+        <servlet-class>org.zfin.gwt.curation.server.FeatureRPCServiceImpl</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>AccessionService</servlet-name>
+        <servlet-class>org.zfin.gwt.root.server.AccessionRPCServiceImpl</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AccessionService</servlet-name>
+        <url-pattern>/ajax/accessionservice</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>FeatureService</servlet-name>
+        <url-pattern>/ajax/featureservice</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>CurationService</servlet-name>
+        <url-pattern>/ajax/curation</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>CurationDiseaseService</servlet-name>
+        <url-pattern>/ajax/curation-disease</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>CurationStructureService</servlet-name>
+        <url-pattern>/ajax/curation-structures</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>CurationPhenotypeService</servlet-name>
+        <url-pattern>/ajax/curation-phenotype</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>CurationFilterService</servlet-name>
+        <url-pattern>/ajax/curation-filter</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>zfinapp</servlet-name>
+        <url-pattern>/action/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>zfin</servlet-name>
+        <url-pattern>/@TARGETCGIBIN@/*</url-pattern>
+    </servlet-mapping>
+
+    <!--<servlet-mapping>-->
+    <!--<servlet-name>zfinapp</servlet-name>-->
+    <!--<url-pattern>/webservice/*</url-pattern>-->
+    <!--</servlet-mapping>-->
+
+    <servlet>
+        <servlet-name>spring-ws</servlet-name>
+        <servlet-class>org.springframework.ws.transport.http.MessageDispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>transformWsdlLocations</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>spring-ws</servlet-name>
+        <url-pattern>/webservice/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- time in minutes after which an idle user session is invalidated -->
+    <!--this will invalidate guest sessions-->
+    <!--other sessions are validated via IP and the remember_me token and are valid for 4 days
+     or the time in ZFIN_LOGIN_SECONDS -->
+    <session-config>
+        <session-timeout>-1</session-timeout>
+    </session-config>
+
+    <!-- The Usual Welcome File List -->
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+
+    <resource-ref>
+        <description>
+            Resource reference to a factory for java.sql.Connection
+            instances that may be used for talking to a particular
+            database that is configured in the server.xml file.
+        </description>
+        <res-ref-name>
+            jdbc/zfin
+        </res-ref-name>
+        <res-type>                                      `
+            javax.sql.DataSource
+        </res-type>
+        <res-auth>
+            Container
+        </res-auth>
+    </resource-ref>
+
+
+    <resource-ref>
+        <description>
+            Resource reference to a factory for java.sql.Connection
+            instances that may be used for talking to a particular
+            database that is configured in the server.xml file.
+        </description>
+        <res-ref-name>
+            jdbc/gbrowse
+        </res-ref-name>
+        <res-type>
+            javax.sql.DataSource
+        </res-type>
+        <res-auth>
+            Container
+        </res-auth>
+    </resource-ref>
+
+    <error-page>
+        <error-code>404</error-code>
+        <location>/WEB-INF/jsp/page-not-found.jsp</location>
+    </error-page>
+
+
+</web-app>

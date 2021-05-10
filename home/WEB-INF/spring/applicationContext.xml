@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--This is the base context file required by everything we run that is spring.-->
+    <!--This will include beans and properties common to both test, deployment, and standalone operations.-->
+
+    <import resource="properties.xml"/>
+
+    <!--put hibernate, etc. in here-->
+        <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
+
+    <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+    </bean>
+
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basename" value="zfin-messages"/>
+    </bean>
+
+
+    <bean abstract="true" id="abstractMarshaller"  class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="classesToBeBound">
+            <list>
+                <value>org.zfin.webservice.schema.Anatomy</value>
+                <value>org.zfin.webservice.schema.Gene</value>
+                <value>org.zfin.webservice.schema.GeneSearchResponse</value>
+                <value>org.zfin.webservice.schema.ObjectFactory</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="unmarshaller" parent="abstractMarshaller">
+    </bean>
+
+    <bean id="marshaller" parent="abstractMarshaller">
+    </bean>
+
+</beans>

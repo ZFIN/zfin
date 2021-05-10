@@ -1,0 +1,557 @@
+ZDB-ALT-061207-4|||||||||||||||
+|||||||||||||||
+ZDB-ALT-980203-399|T>A|425|||NON CONSERVED||Leu|Gln|142||||||
+ZDB-ALT-070730-10|G>A|||exon 43|SPLICING||||||||||
+ZDB-ALT-090611-15|||||||||||||||
+ZDB-ALT-100603-1|T>A|||exon 2|SPLICING||||||||||
+ZDB-ALT-980203-1310|||||missense_variant||L|P|23||||||
+|||||||||||||||
+ZDB-ALT-100311-7|||||||||||||||
+ZDB-ALT-101008-11|C>T||||||R|X|120|||||REF|
+|||||||||||||||
+|||||||||||||||
+ZDB-ALT-111118-30|||||||||||||||
+|||||||||||||||
+ZDB-ALT-140430-1|||||||Q|X|130||||||
+ZDB-ALT-110728-2|G>T|||exon 11|FRAMESHIFT_VARIANT||||||||||
+ZDB-ALT-110728-2|G>T|||exon 11|||||||||||
+ZDB-ALT-120427-2|||||||||||||||
+ZDB-ALT-980203-1501||||intron 28|SPLICING|||||||||REF|
+ZDB-ALT-980203-1501||||intron 28|EXON_LOSS_VARIANT|exon 28||||||AMINO_ACID_DELETION|||
+ZDB-ALT-160129-6|T>A||||||Y|X|37|||||REF|
+ZDB-ALT-141009-1|T>G||||missense_variant||F|C|138||||||
+ZDB-ALT-980203-668|C>T||||||Q|X|811|||||REF|
+ZDB-ALT-980413-518|T>C|||exon 3|missense_variant||L|P|93||||||
+ZDB-ALT-080325-6|A>T|376|||||R|X|126||||||
+ZDB-ALT-111213-12|||||||||||||||
+ZDB-ALT-120328-3|A>T||||||Lys|X|335||||||
+ZDB-ALT-980203-1332|A>T||||missense_variant||Asp|Val|8|||||REF|
+ZDB-ALT-011017-12|T>A||||||||||||||
+ZDB-ALT-100429-1|T>C||||||||163|P79734||||REF|
+ZDB-ALT-980203-1453|A>T|1126|||||K|X|376|||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-980203-652|T>A||||||Leu|X|1352||||||
+ZDB-ALT-050919-72|T>G|1194|||missense_variant||Phe|Val|383||||||
+ZDB-ALT-091112-35|||||||Tyr|X|203|||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-980203-1563||||||||||||||REF|
+ZDB-ALT-980203-517|||||||Q|X|544||||||
+ZDB-ALT-061129-10|C>T|1681|||||||561||||||
+ZDB-ALT-101008-22|||||||||||||||
+|||||||||||||||
+ZDB-ALT-111018-10||651||exon 1|||||||||||
+ZDB-ALT-130729-6|T>A|||||||||||POLYPEPTIDE_TRUNCATION||REF|
+ |||||||||||||||
+|||||||||||||||
+ZDB-ALT-980413-473|||||||K|X|533||||||
+ZDB-ALT-080523-2|||||||||86||||||
+|||||||||||||||
+ZDB-ALT-090609-2|G>A|| |exon 4|SPLICING|||||||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-100311-13|||||||||||||||
+ZDB-ALT-020715-2|||||missense_variant||F|S|516||||||
+ZDB-ALT-071015-3||||intron 2|SPLICING||||||||||
+ZDB-ALT-071015-3||||intron 3|SPLICING||||||||||
+ZDB-ALT-100813-4|G>A||||||Trp|X|411|||POLYPEPTIDE_TRUNCATION||REF|
+ZDB-ALT-980203-1613|||||||Phe|Ser|579|||||REF|
+ZDB-ALT-110630-22|T>G||||||||||||||
+ZDB-ALT-150723-15|C>T|987|||||Q|X|336||||||
+ZDB-ALT-111010-17|||||||||||||||
+ZDB-ALT-120404-4|T>G||||||Ser|Ile|942||||||
+ZDB-ALT-150826-2|C>T|2185||exon 12|missense_variant||R|C|729||||||
+ZDB-ALT-980203-1097|A>T|1903|||||Arg|X|635||||||
+ZDB-ALT-100406-1|T>A|||exon 11|||||||||||
+ZDB-ALT-121113-1|T>C||||missense_variant||Leu|Pro|||||||
+ZDB-ALT-150312-12|G>T||||missense_variant||W|L|47||||||
+ZDB-ALT-111122-3|G>A||||SPLICING||||||||||
+ZDB-ALT-120301-1|plus 1|1894|||||||||||||
+ZDB-ALT-120301-1|G>A||||||||||||||
+ZDB-ALT-980203-1788|C>T|3148|||||Arg|X|929|||||REF|
+|||||||||||||||
+ZDB-ALT-100311-17|||||||||||||||
+ZDB-ALT-140114-1|||||||Ala|X|207|||||REF|
+ZDB-ALT-151222-1|A>T|||intron 4|SPLICING||||||||||
+ZDB-ALT-050428-8|||||missense_variant||N|K|168||||||
+ZDB-ALT-080401-3|G>A||||missense_variant||Glu|Lys|130||||||
+ZDB-ALT-120411-225|G>A|||||||||||||REF|
+ZDB-ALT-120411-225|G>A|||exon 4|SPLICING|||||||||REF|
+ZDB-ALT-120820-1|G>A||||missense_variant||G|E||||amino_acid_substitution|||
+ZDB-ALT-980203-1248|C>T||||||Arg|X|139||||||
+ZDB-ALT-051012-8|G>T||||NON_CONSERVED missense_variant||G|V|178|||NON-CONSERVATIVE amino_acid_substitution|||
+ZDB-ALT-080619-2|||||||||||||||
+ZDB-ALT-091230-1|T>A||||||Leu|X|278||||||
+ZDB-ALT-111010-4|||||||||||||||
+ZDB-ALT-130410-8|A>G||||missense_variant||Thr|Ala|80||||||
+ZDB-ALT-980413-508|||||missense_variant||Asn|Lys|172||||||
+ZDB-ALT-090616-1|C>T|||exon 5|||Q|X|201|||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-121019-1|A>T|||exon 6|SPLICING||||||||||
+ZDB-ALT-121019-1|A>T||||||||||||||
+ZDB-ALT-100504-7|G>T|25762707|NC_007116|intron 8|SPLICING|||||||amino_acid_deletion|5|REF|
+ZDB-ALT-100504-7|||||||Ser|Lys|277|||amino_acid_substitution|||
+ZDB-ALT-121204-1|plus 1|||exon 4|FRAMESHIFT_VARIANT||||||||||
+ZDB-ALT-110620-1|T>A||||SPLICING|||||||||REF|
+ZDB-ALT-111010-13|||||||||||||||
+ZDB-ALT-111213-6|||||||||||||||
+ZDB-ALT-980203-1093|||||missense_variant||F|Y|241||||||
+ZDB-ALT-030716-8|||||||R|X|797||||||
+ZDB-ALT-061207-2|G>A|||exon 13|SPLICING|||||||||REF|
+ZDB-ALT-130809-2||||||||X|107||||||
+ZDB-ALT-150312-9|||||||Y|S|66||||||
+ZDB-ALT-090611-17|G>T|||||||X|25||||||
+ZDB-ALT-110829-1|G>A|||exon 5|SPLICING|||||||||REF|
+ZDB-ALT-110829-1|G>A|||exon 5||||||||||REF|
+ZDB-ALT-980203-510|||||||G|X|412|||||REF|
+ZDB-ALT-030312-2|||||||Lys|S|239||||||
+ZDB-ALT-101008-16|||||||Lys|X|174||||||
+ZDB-ALT-120221-11|A>T|427|||||||143||||||
+ZDB-ALT-080728-1|||||||||||||||
+ZDB-ALT-130411-3|||||SPLICING||||||||||
+ZDB-ALT-130411-3||||||||X|23||||||
+ZDB-ALT-140818-5|||||||||||||||
+ZDB-ALT-041209-2|T>C||||||||||||||
+ZDB-ALT-140130-18|A>T|301|||||K|X|101|||POLYPEPTIDE_TRUNCATION||REF|
+ZDB-ALT-090714-1|T>A|||intron 14|SPLICING||||||||||
+ZDB-ALT-090714-1|||||FRAMESHIFT_VARIANT||||||||||
+ZDB-ALT-090714-1|||||||||||||||
+ZDB-ALT-110104-3|G>T|||exon 10||||X|331||||||
+ZDB-ALT-140127-2|T>G|||||||||||||REF|
+ZDB-ALT-111010-21|||||||||||||||
+ZDB-ALT-111221-1|C>T||||missense_variant||Ser|Leu|193|||non_conservative_amino_acid_substitution|||
+ZDB-ALT-130502-1|C>T|||exon 4||||X|195||||||
+ZDB-ALT-130829-1|C>A||||||Tyr|X|110||||||
+ZDB-ALT-110720-4||||||||X|610||||||
+ZDB-ALT-040224-4||||exon 6|||||||minus 37|POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-121018-2|||||||Y|X|2056||||||
+ZDB-ALT-061129-2|C>A|1002||||||X|334||||||
+ZDB-ALT-101008-5|||||||||||||||
+ZDB-ALT-090609-1||||||||X|64||minus 63 |POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-091112-10|C>T|11527||||||||||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-100308-1|C>A|156|||||||51||||||
+ZDB-ALT-130925-7|G>T|||exon 8|||E|X|396||||||
+ZDB-ALT-980203-1396|G>A|2645|||missense_variant||Gly|Asp|882||||||
+ZDB-ALT-040128-10|C>T|||||||||||POLYPEPTIDE_TRUNCATION||REF|
+ZDB-ALT-110802-4|||||||K|X|329||||||
+ZDB-ALT-120216-1|C>T|2623|||||Arg|X|875|||POLYPEPTIDE_TRUNCATION||REF|
+ZDB-ALT-130220-3|G>T|||exon 5|||Glu|X||||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-980203-1749|T>A||||SPLICING|||||||||REF|
+ZDB-ALT-071015-2|C>A|597|||||||||||||
+ZDB-ALT-980203-1219|C>T|2906|||missense_variant||Pro|Leu|969|||AMINO_ACID_SUBSTITUTION||REF|
+ZDB-ALT-061101-360|||||||R|X|227||||||
+ZDB-ALT-060811-4|G>A||||||D|N|123|||AMINO_ACID_SUBSTITUTION|||
+ZDB-ALT-061129-6|C>T|187||||||||||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-121112-5|T>A||||||C|X|94||||||
+ZDB-ALT-150312-11|A>C||||missense_variant||T|P|29|||AMINO_ACID_SUBSTITUTION|||
+ZDB-ALT-070315-5|A>T|208||exon 2|||K|X||||POLYPEPTIDE_TRUNCATION|||
+|||||||||||||||
+|||||||||||||||
+ZDB-ALT-090610-8|T>A|||exon 7|missense_variant||Trp|Arg|193|||AMINO_ACID_SUBSTITUTION|||
+ZDB-ALT-100526-1|T>C|1279|||missense_variant||S|P|427|||AMINO_ACID_SUBSTITUTION||REF|
+ZDB-ALT-110825-2|C>A||||||||||||||
+ZDB-ALT-120927-3|C>T|||exon 32|||R|X|14970||||||
+ZDB-ALT-060628-4|C>T|3600|||||||||||||
+ZDB-ALT-090121-2|T>A||||missense_variant||I|N|142|||AMINO_ACID_SUBSTITUTION|||
+ZDB-ALT-100311-21|||||||||||||||
+ZDB-ALT-130718-3||||exon 4|||Gln|X|202||||||
+ZDB-ALT-110120-2|||||||||||||||
+ZDB-ALT-110210-1|C>T||||||Q|X|982||||||
+ZDB-ALT-150408-1|G>A|||intron 5|SPLICING||||||||||
+ZDB-ALT-150408-1|||||FRAMESHIFT_VARIANT||||||||||
+ZDB-ALT-150408-1|||||||||||||||
+ZDB-ALT-111010-3|||||||||||||||
+ZDB-ALT-130410-7|T>A|||exon 3|||Leu|X|155||||||
+ZDB-ALT-130514-2|C>T|2340|||||Glu|X||||||REF|
+ZDB-ALT-130830-3|G>A|||||||X|5333||||||
+ZDB-ALT-980203-1594|C>T||||||Arg|X|139||||||
+ZDB-ALT-100506-2|||||||AC|X|40||||||
+ZDB-ALT-120426-1|G>A|1018||exon 10||||X|214||||||
+ZDB-ALT-131210-1|T>A||||missense_variant||Leu|Q||||AMINO_ACID_SUBSTITUTION|||
+ZDB-ALT-111013-1|T>G||||SPLICING|||||||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-121128-5|C>T|||exon 8|||Arg|X|291||||||
+ZDB-ALT-141009-2|T>A||||||C|S|339||||||
+ZDB-ALT-150325-5|G>T|||exon 2|||||||||17|REF|
+ZDB-ALT-150325-5|C>A|205|NM_001077431||||Tyr|X|53|||POLYPEPTIDE_TRUNCATION||REF|
+ZDB-ALT-110620-3|T>A|||exon 5|missense_variant||Val|Glu||||AMINO_ACID_SUBSTITUTION|||
+ZDB-ALT-111010-15|||||||||||||||
+ZDB-ALT-111213-8|||||||||||||||
+ZDB-ALT-030805-10|C>T||||||Gln|X|254||||||
+ZDB-ALT-060824-4|T>C|454|||missense_variant||Ser|Pro||||||REF|
+ZDB-ALT-061214-2|G>A||||SPLICING||||||||||
+ZDB-ALT-130814-1|T>A|309|||||||||||||
+ZDB-ALT-130325-9|G>T|||exon 6|||||461|||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-060608-480|G>A||||||||||||||
+ZDB-ALT-100311-5|||||||||||||||
+ZDB-ALT-101008-1|||||||||||||||
+>unrec_barx1</a>|||||||||||||||
+ZDB-ALT-110321-2|||||||Leu|Arg|221||||||
+ZDB-ALT-150219-2|C>T|1066||exon 9 ||||X|356||minus 294 aa |POLYPEPTIDE_TRUNCATION||REF|
+|||||||||||||||
+ZDB-ALT-980203-1524|||||SPLICING|||||||AMINO_ACID_DELETION|||
+ZDB-ALT-140818-4|||||||||||||||
+ZDB-ALT-150923-2|G>T||||missense_variant||W|L|169||||||
+ZDB-ALT-980203-584|G>T||||||Gly|X|11||||||
+ZDB-ALT-980413-433|||||||D|V|166|||AMINO_ACID_SUBSTITUTION|||
+ZDB-ALT-120411-459|C>T|||||||X|24946||||||
+ZDB-ALT-980203-462|C>T|3967|||||||||||||
+ZDB-ALT-150916-5|A>T||||||Q|X|486|||||REF|
+ZDB-ALT-110104-2|T>G|||exon 13|||Ile|Ser|531||||||
+ZDB-ALT-140127-1|G>A|||exon 13|SPLICE_SITE_VARIANT|||||||||REF|
+ZDB-ALT-150723-16|C>T||||||R|X|26||||||
+ZDB-ALT-980203-1236|G>A||||||E|K|888||||||
+ZDB-ALT-100726-2|||||||M|K|1461||||||
+ZDB-ALT-130830-1|C>T||||||||27471||||||
+ZDB-ALT-980203-1592|G>T||||||Glu|X|198|||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-101119-1|C>T||||||||96||minus 115|POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-151013-1|A>T|120||exon 2|||Lys|X|113|||||REF|
+ZDB-ALT-040224-26||||exon 35|SPLICING|minus 25bp||||||AMINO_ACID_SUBSTITUTION||REF|
+ZDB-ALT-040224-26||||exon 35|FRAMESHIFT_VARIANT|||||||AMINO_ACID_DELETION||REF|
+ZDB-ALT-040224-26||||exon 35||||||||POLYPEPTIDE_TRUNCATION||REF|
+ZDB-ALT-121018-1|||||||Q|X|850||||||
+ZDB-ALT-010411-12|||||missense_variant||||||||||
+ZDB-ALT-080825-1|C>T||||||Q|X|136||||||
+ZDB-ALT-101008-19|||||||||||||||
+|||||||||||||||
+ZDB-ALT-150624-6|C>T|||exon 3||||X|322|||POLYPEPTIDE_TRUNCATION||REF|
+ZDB-ALT-980203-1667|G>A|||exon 53|||W|X|2506||||||
+ZDB-ALT-980203-1533|T>G|1111|||||||||||||
+ZDB-ALT-151210-1|T>G||exon 1||SPLICE_SITE_VARIANT|||||||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-151210-1|||intron 1||FRAMESHIFT_VARIANT|||||||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-151210-1||||||||||||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-980413-442|||||||Y|X|846||||||
+ZDB-ALT-120725-1|C>A|185||exon 2||||||||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-100106-4|G>A||||||G|R|484||||||
+ZDB-ALT-111010-8|||||||||||||||
+ZDB-ALT-140411-2|||||||Tyr|X|607|||POLYPEPTIDE_TRUNCATION||REF|
+ZDB-ALT-150120-1||||exon 7 |SPLICE_SITE_VARIANT|||||||POLYPEPTIDE_TRUNCATION||REF|
+ZDB-ALT-150120-1|||||FRAMESHIFT_VARIANT|||||||||REF|
+ZDB-ALT-160129-1|T>C||||||Lys|Pro|46|||||REF|
+ZDB-ALT-980203-1599|||||||Gln|Leu|157||||||
+ZDB-ALT-130204-1|T>A||||SPLICE_SITE_VARIANT||||||||||
+ZDB-ALT-160317-7|T>A||||SPLICE_SITE_VARIANT||||||||||
+ZDB-ALT-160317-7|T>A||||INTRON_GAIN_VARIANT||||||||||
+ZDB-ALT-160317-7|T>A||||||||||||||
+ZDB-ALT-080325-4|C>A|313|||||Y|X|104||||||
+ZDB-ALT-111213-10|||||||||||||||
+ZDB-ALT-101015-2|G>A||||SPLICE_SITE_VARIANT|||||||||REF|
+ZDB-ALT-101015-2|||||FRAMESHIFT_VARIANT||||||||||
+ZDB-ALT-980203-638|T>C||||||L|P|308||||||
+ZDB-ALT-050919-40|C>T|494|||||Thr|Ile|165||||||
+ZDB-ALT-090610-7|T>A|||exon 8|||L|X|285|||POLYPEPTIDE_TRUNCATION||REF|
+ZDB-ALT-100205-1|||||||Ile|Ser|1042||||||
+ZDB-ALT-120927-2|C>T|||exon 21|||Q|X|951||||||
+ZDB-ALT-980203-1302|G>A||||||W|X|234|||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-070426-3|T>A||||||||||||8||
+ZDB-ALT-090805-1|||||CRYPTIC SPLICE|plus 9 |||||||||
+ZDB-ALT-100311-15|||||||||||||||
+ZDB-ALT-150616-1|T>G|||||||||||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-980203-1162|T>G||||missense_variant||Leu|Val|356||||||
+ZDB-ALT-150414-7|minus 3||||||D||250|||AMINO_ACID_DELETION|||
+ZDB-ALT-980203-469|C>A|608|||||Ser|X|168|||||REF|
+ZDB-ALT-081210-1|G>A|522||||||X|174|||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-090715-3|T>A|347|||||Leu|X|116||||||
+ZDB-ALT-100216-2|G>A||||missense_variant||G|D|264||||||
+ZDB-ALT-120411-135|C>T|||||||X|1487||||||
+ZDB-ALT-151209-4||||||||||||||REF|
+ZDB-ALT-160215-1|G>A|||exon 7||||||||||REF|
+ZDB-ALT-090506-1|||||||D|E|162|||||REF|
+ZDB-ALT-131205-6|||||missense_variant||L|P|489|AB739007|||||
+ZDB-ALT-980203-696|G>A||||||||13||||||
+ZDB-ALT-140415-5|T>C|371||exon 4|missense_variant||L|P|124||||||
+|||||||||||||||
+ZDB-ALT-150127-2||||exon 2|SPLICE_SITE_VARIANT|||||||||REF|
+ZDB-ALT-980203-1122|T>G|176||exon 2|missense_variant||Ile|Ser|59|||||REF|
+ZDB-ALT-060911-4|G>A||||||||||||||
+ZDB-ALT-120718-3|T>A|839|||||Lys|Met|280||||||
+ZDB-ALT-080610-12|||||||||||||||
+ZDB-ALT-110620-2|A>T|||intron 9|SPLICE_SITE_VARIANT||||||||||
+ZDB-ALT-110620-2|||||CRYPTIC SPLICE||||||||||
+ZDB-ALT-110620-2|||||FRAMESHIFT_VARIANT||||||||||
+ZDB-ALT-110620-2||||||||X|421||||||
+ZDB-ALT-111010-14|||||||||||||||
+ZDB-ALT-111213-7|||||||||||||||
+ZDB-ALT-061207-12|||||||Cys|Tyr|||||||
+ZDB-ALT-150312-7|||||||I|F|152|||AMINO_ACID_SUBSTITUTION|||
+ZDB-ALT-100526-5|C>T|10642||||||X|3548|||||REF|
+ZDB-ALT-110825-6|G>T||||||||||||||
+ZDB-ALT-090827-1|T>A||||||L|H|||||||
+ZDB-ALT-100311-3|||||||||||||||
+ZDB-ALT-151215-2|C>T|||||||||||||REF|
+ZDB-ALT-980203-1170|||||SPLICE_SITE_VARIANT||||||||||
+ZDB-ALT-980203-857|T>A|||exon 24||||X||||||REF|
+ZDB-ALT-051229-2|||||||Trp|X|153|||||REF|
+ZDB-ALT-100311-1|||||||||||||||
+ZDB-ALT-110315-8|C>T|754||||||X|252||||||
+ZDB-ALT-980413-693||||exon 4|missense_variant||||||||||
+ZDB-ALT-980413-693|||||||||||||||
+ZDB-ALT-110804-1|||||||Arg|X|965||||||
+ZDB-ALT-040601-2|minus 1|||exon 14|||||||||||
+ZDB-ALT-041104-2|T>G|||intron 7|SPLICE_SITE_VARIANT||||||3|AMINO_ACID_INSERTION|||
+ZDB-ALT-100723-8|C>A|9306|||||Y|X|3102||||||
+ZDB-ALT-130829-2|C>T|158|||||Arg|X|||||||
+ZDB-ALT-060824-8|T>A|282|||||||||minus 303 |POLYPEPTIDE_TRUNCATION||REF|
+ZDB-ALT-980203-405|||||||Y|X|131||||||
+ZDB-ALT-060608-173|T>C||||FRAMESHIFT_VARIANT|||X|475||||||
+ZDB-ALT-060608-173|||||EXON_LOSS_VARIANT||||||||||
+ZDB-ALT-080318-4|G>A|2103||exon 9|SPLICE_SITE_VARIANT||||||||||
+ZDB-ALT-080318-4|||||FRAMESHIFT_VARIANT||||||||||
+|||||||||||||||
+ZDB-ALT-100622-2|C>T||||||Q|X|339||||||
+ZDB-ALT-090129-4|G>A|||exon 5|SPLICE_SITE_VARIANT||||||||||
+ZDB-ALT-090129-4|G>A|||exon 5|EXON_LOSS_VARIANT||||||||||
+ZDB-ALT-101008-17||||||||X|669|||TRUNCATED||REF|
+|||||||||||||||
+|||||||||||||||
+ZDB-ALT-150624-5|C>A|3489|||||Y|X|1163|||||REF|
+ZDB-ALT-100512-1|G>A|374|||||Cys|Tyr|125|||||REF|
+ZDB-ALT-050428-2|||||missense_variant||M|K|214||||||
+ZDB-ALT-980203-1626|A>G|||intron 42|CRYPTIC SPLICE_SITE_VARIANT|||||||||REF|
+ZDB-ALT-980203-1626|A>G||||FRAMESHIFT_VARIANT||||||||amino_acid_substitution|REF|
+ZDB-ALT-980203-1626|A>G|||||||X|1949||||POLYPEPTIDE_TRUNCATION|REF|
+ZDB-ALT-100112-1|||||missense_variant||G|D|1459||||||
+ZDB-ALT-100802-1|||||||||||||||
+ZDB-ALT-111011-1|||||||R|X|891||||||
+ZDB-ALT-980203-1357|T>A|||exon 12||||||||||REF|
+ZDB-ALT-050919-90|A>T||||||Q|X|316|||||REF|
+ZDB-ALT-060608-185|T>A|1869|||||||||||||
+ZDB-ALT-080325-3|C>T|736|||||Q|X|246||||||
+ZDB-ALT-100629-2|T>G||||||I|R|86||||||
+ZDB-ALT-111213-1|||||||||||||||
+ZDB-ALT-140801-1|||||||R|X|3607|||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-150506-1|||||||P|T|1850|||AMINO_ACID_SUBSTITUTION|||
+ZDB-ALT-061129-22|G>A|4072||||||X|1358||||||
+ZDB-ALT-071127-4|C>A||||||Cys|X|788||||||
+ZDB-ALT-101008-7|||||||||||||||
+ZDB-ALT-110330-1|A>T||||||I|F|205||||||
+ZDB-ALT-121112-3|||||||R|X|125||||||
+ZDB-ALT-980203-496|G>A|||||||||||POLYPEPTIDE_TRUNCATION||REF|
+ZDB-ALT-980203-985|T>G||||CRYPTIC SPLICE|||||||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-980203-985|||||FRAMESHIFT_VARIANT|||||||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-100311-14|||||||||||||||
+ZDB-ALT-130930-8|G>A||||||G|X|290||||||
+ZDB-ALT-980203-507|C>T||||||Q|X|931|||||REF|
+ZDB-ALT-080818-4|||||SPLICING||||||||||
+ZDB-ALT-080818-4||||||||||||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-100311-9|A>T|302|||||Lys|X|68|||||REF|
+|||||||||||||||
+|||||||||||||||
+ZDB-ALT-101008-13|T>G|241|||||Ile|Arg||||AMINO_ACID_SUBSTITUTION|||
+|||||||||||||||
+>fh328</a>|||||||||||||||
+ZDB-ALT-980203-1662|C>A||||||Cys|X||||||REF|
+ZDB-ALT-131212-1|G>A|564||||||||||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-130701-1|A>T|||exon 3|||K|X|64||||||
+ZDB-ALT-151209-6||||||||||||||REF|
+ZDB-ALT-060608-121|G>T||||||Cys|Phe|401|||AMINO_ACID_SUBSTITUTION|||
+ZDB-ALT-110211-1|T>A||||||Cys|X|23||||||
+ZDB-ALT-110802-1|minus 1|37|||||||||||||
+ZDB-ALT-110802-1||615|||||E|D|205||||||
+ZDB-ALT-110802-1||2183|||||K|R|728||||||
+|||||||||||||||
+ZDB-ALT-070928-2|T>A||||SPLICE_SITE_VARIANT|||||||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-150127-1||||exon 6|SPLICE_SITE_VARIANT|||||||||REF|
+ZDB-ALT-150601-6|T>G||||||L|R|1429|||amino_acid_substitution|||
+ZDB-ALT-110207-12|A>G||||CRYPTIC SPLICE||||||||||
+ZDB-ALT-110207-12|||||FRAMESHIFT_VARIANT||||||||||
+ZDB-ALT-110207-12|||||||T|X|182||||||
+ZDB-ALT-080325-8|C>T|292|||||Q|X|98||||||
+ZDB-ALT-080609-1|G>A||||||Thr|Lys|189||||||
+ZDB-ALT-100720-1||||exon 9|SPLICE_SITE_VARIANT||||||||||
+||||intron 9|||||||||||
+ZDB-ALT-111010-10|||||||||||||||
+ZDB-ALT-111213-3|||||||||||||||
+ZDB-ALT-140317-1|T>A||||||Tyr|X|||||||
+ZDB-ALT-140805-1||||exon 3||||||||||REF|
+ZDB-ALT-141222-2|T>A|201|||||F|L|70|||||REF|
+ZDB-ALT-141222-2|C>A|497|||||P|Q|166|||||REF|
+ZDB-ALT-131218-1|T>A|1388|||||Leu||463|||POLYPEPTIDE_TRUNCATION||REF|
+ZDB-ALT-980203-1562|C>T||||||Gln|X|778||||||
+ZDB-ALT-061129-14|A>T|558||||||X|157||||||
+ZDB-ALT-101008-24||||exon 9|||W|X|1752||||||
+ZDB-ALT-980203-1671|G>T||||||G|X|155|||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-980520-41|C>T||||||Arg|Cys|122|||AMINO_ACID_SUBSTITUTION||REF|
+ZDB-ALT-090603-7|||||||R|H|557||||||
+ZDB-ALT-100311-11|||||||||||||||
+ZDB-ALT-980203-1374|||||||M|R|1013|||AMINO_ACID_SUBSTITUTION||REF|
+ZDB-ALT-110630-21|C>A||||||||||||||
+ZDB-ALT-100723-4|C>A|||||||||||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-111010-19|||||||||||||||
+ZDB-ALT-130409-8|T>A|1053||||||X|351||||||
+ZDB-ALT-980413-636|G>A|226|||||||||||||
+ZDB-ALT-060824-6|C>T|538||||||||||POLYPEPTIDE_TRUNCATION||REF|
+ZDB-ALT-130814-2|T>G||||||||221||||||
+ZDB-ALT-980203-1300|A>T|2356||||||||||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-100311-19|||||||||||||||
+ZDB-ALT-050428-6|||||||V|V|200||||||
+ZDB-ALT-980203-1384|C>T|3445|||||Glu|X|1032|||||REF|
+|||||||||||||||
+ZDB-ALT-100506-15|minus 1||||||||96|||||REF|
+ZDB-ALT-110429-5|G>A|||exon 62|SPLICE_SITE_VARIANT||||||||||
+ZDB-ALT-980203-1250|G>T|11446|||missense_variant||Gly|Trp|3816|||||REF|
+ZDB-ALT-100108-1|||||||||||||||
+ZDB-ALT-100730-2|C>T|1971||exon 11|||Q|X|658|||||REF|
+ZDB-ALT-111010-9|||||||||||||||
+ZDB-ALT-140411-3|||||||Gln|X|684|||POLYPEPTIDE_TRUNCATION||REF|
+|||||||||||||||
+ZDB-ALT-070117-1|T>A|||||||||||||REF|
+ZDB-ALT-131220-3|G>T|||exon 13|||||||||||
+ZDB-ALT-061129-20|G>T|280||||||X|94||||||
+ZDB-ALT-101008-6|||||||||||||||
+>unrec_flt1</a>|||||||||||||||
+ZDB-ALT-100720-3||||exon 9|||W|X|252||||||
+ZDB-ALT-111010-12|||||||||||||||
+ZDB-ALT-111213-5|||||||||||||||
+ZDB-ALT-120330-1|T>G||||||Tyr|X||||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-140320-1|||||missense_variant||G|D|242||||||
+ZDB-ALT-150106-2|C>T|1456||||||X|487|||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-150518-1|T>A||||||Y|X|3||||||
+ZDB-ALT-150818-1|G>A||||||||53|||||REF|
+ZDB-ALT-030731-2|T>A|269|||||||||||||
+ZDB-ALT-090611-13||||exon 4|||||||minus 277|POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-110825-7|T>A||||||||||||||
+ZDB-ALT-120308-1|T>C||||||Cys|Arg||||AMINO_ACID_SUBSTITUTION|||
+ZDB-ALT-140721-2|||||||||||||||
+ZDB-ALT-980203-1552|C>T|2349|||||||||||||
+ZDB-ALT-080819-2|C>T|4381||||||||||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-101008-15|||||||L|X|150||||||
+|||||||||||||||
+|||||||||||||||
+ZDB-ALT-111017-4|T>G|||exon 7|||Ser|Ala|534|||AMINO_ACID_SUBSTITUTION|||
+ZDB-ALT-150224-3|T>A|||exon 5|||L|X|132|||||REF|
+ZDB-ALT-111118-31|C>A|365|||||||||||||
+ZDB-ALT-980203-728|||||missense_variant||G|E|309|||||REF|
+ZDB-ALT-080806-3|T>A|||exon 2|||||||||||
+|||||||||||||||
+ZDB-ALT-151209-5||||||||||||||REF|
+ZDB-ALT-080630-1|T>C|||intron 2|SPLICING||||||||||
+ZDB-ALT-150325-1|C>T|82||||||||||POLYPEPTIDE_TRUNCATION||REF|
+ZDB-ALT-040323-2|T>A|||exon 4|||V|E|246||||||
+ZDB-ALT-110708-1|T>A|||exon 2|||Tyr|X||||||REF|
+ZDB-ALT-111010-20|||||||||||||||
+ZDB-ALT-111220-1|G>A||||||W|X|256|||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-090309-3|G>T||||||Gly|Val|598|||AMINO_ACID_SUBSTITUTION||REF|
+ZDB-ALT-150720-1|C>T|||exon 21||||||||POLYPEPTIDE_TRUNCATION||REf|
+ZDB-ALT-980203-1454|A>T|1126|||||K|X|376|||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-100623-1||||||||X|73||||||
+ZDB-ALT-030502-2|||||SPLICE_SITE_VARIANT||||||||||
+ZDB-ALT-061129-18|T>A|664|||||C|S|222||||||
+ZDB-ALT-101008-4|||||||||||||||
+>unrec_col4a3</a>|||||||||||||||
+ZDB-ALT-090609-3|A>G|||exon 7|SPLICE_SITE_VARIANT||||||||||
+ZDB-ALT-100518-1|T>A|317||||||||||POLYPEPTIDE_TRUNCATION||REF|
+ZDB-ALT-110819-4|G>T||||missense_variant||C|F|869|||AMINO_ACID_SUBSTITUTION||REF|
+|||||||||||||||
+ZDB-ALT-980203-1295|||||||Lys|Asn|97|||AMINO_ACID_SUBSTITUTION|||
+ZDB-ALT-051229-4|||||missense_variant||Phe|Val|113|||||REF|
+ZDB-ALT-100311-10|||||||||||||||
+ZDB-ALT-150610-4||||exon 1||||X|336|||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-980203-355|T>A|1491|||||Tyr|X|497|||||REF|
+ZDB-ALT-020715-4|||||||C|X|2144||||||
+ZDB-ALT-071015-4|C>T|505|||||||||||||
+ZDB-ALT-110414-1|C>A||||||Tyr|X|1031||||||
+ZDB-ALT-050919-86|T>A||||SO:0002012|||||||||REF|
+ZDB-ALT-091112-42|||||||L|X|74|||||REF|
+ZDB-ALT-100628-5|C>T||||||||||||||
+ZDB-ALT-140728-1|T>A||||||H|Q|189|||||REF|
+ZDB-ALT-980203-1571|C>G|4545|||||||1514|||||REF|
+ZDB-ALT-980203-769|G>T||||SPLICE_SITE_VARIANT|||||||||REF|
+ZDB-ALT-980203-769|||||missense_variant||V|I|140|||AMINO_ACID_SUBSTITUTION|||
+ZDB-ALT-980203-769|||||||||||T138-K139|AMINO_ACID_DELETION|||
+ZDB-ALT-071205-1||||||||||||||REF|
+ZDB-ALT-090212-1|T>G||||||I|S|1061|||AMINO_ACID_SUBSTITUTION|||
+ZDB-ALT-111020-3|G>A|||exon 11|SPLICE_SITE_VARIANT||||||||||
+ZDB-ALT-111020-3|||||CRYPTIC_SPLICE_SITE_VARIANT||||||||||
+ZDB-ALT-120126-1|T>A|||exon 6|||||||||||
+ZDB-ALT-990427-7|T>A||||||K|X|||||||
+ZDB-ALT-110523-4|plus 1|1120|||FRAMESHIFT_VARIANT|||||||||REF|
+ZDB-ALT-090820-1|C>T|||||||X|493|||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-100311-20|||||||||||||||
+ZDB-ALT-130718-2|C>T|946||exon 3||||||||POLYPEPTIDE_TRUNCATION||REF|
+ZDB-ALT-150218-6|T>A||||||||||||||
+ZDB-ALT-150617-6||||exon 5|SPLICE_SITE_VARIANT|||||||||REF|
+ZDB-ALT-980203-1655|T>A|||intron 32|CRYPTIC_SPLICE_SITE_VARIANT||||||||||
+ZDB-ALT-980203-1655|||||elongated transcript?|||||||AMINO_ACID_INSERTION|||
+ZDB-ALT-980203-1655|||||FRAMESHIFT_VARIANT|||||||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-980203-1655|||||||||||||||
+ZDB-ALT-110816-1|T>A|1700|||missense_variant||V|D|567|||||REF|
+ZDB-ALT-141113-7|||||missense_variant||L|P|332|||||REF|
+ZDB-ALT-980203-1521|C>A||||||Tyr|X|306||||||
+ZDB-ALT-050428-4|||||||N|T|99||||||
+ZDB-ALT-130528-5|T>A|||exon 29|||||||||||
+ZDB-ALT-031030-20|A>T|331||exon 3|missense_variant||Ser|Cys|111||||||
+ZDB-ALT-070117-7|T>A||||||V|D|1046||||||
+ZDB-ALT-110120-1|T>C|962|||||Phe|Ser|||||||
+ZDB-ALT-100728-1|T>A||||||L|X|133||||||
+ZDB-ALT-111010-5|||||||||||||||
+ZDB-ALT-980203-1596|G>T||||||Gly|Val|75||||||
+ZDB-ALT-080706-1|minus 12||||inframe_deletion|||||||AMINO_ACID_DELETION|||
+ZDB-ALT-980203-561|C>G||||||Lys|Asn|301|||AMINO_ACID_SUBSTITUTION|||
+ZDB-ALT-120717-4|G>T||||||Gly|X|42||||||
+ZDB-ALT-121204-2|C>T||||||Q|X|336|||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-131101-1|A>G|1545|||missense_variant||Q|R|516||||||
+ZDB-ALT-980203-427|C>T||||||Arg|X|145||||||
+ZDB-ALT-040827-2|||||||L|R|846||||||
+ZDB-ALT-080325-9|G>T|931||exon 1|SPLICE_SITE_VARIANT|||||||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-080325-9||||intron 1|||||||||||
+ZDB-ALT-100720-2||||exon 2|missense_variant||C|R|38|||AMINO_ACID_SUBSTITUTION|||
+ZDB-ALT-111010-11|||||||||||||||
+ZDB-ALT-111213-4|||||||||||||||
+ZDB-ALT-120328-6|C>T||||||||||||||
+ZDB-ALT-140805-2||||exon 3||||||||||REF|
+ZDB-ALT-980203-1091|G>A||||SPLICE_SITE_VARIANT|||||||||REF|
+ZDB-ALT-980203-1091|||||EXON_LOSS_VARIANT||||||||||
+ZDB-ALT-980203-1091|||||||||||||||
+ZDB-ALT-980203-1335|||||||||||||||
+ZDB-ALT-980203-533|C>A||||SPLICE_SITE_VARIANT|||||||||REF|
+ZDB-ALT-980203-533|||||FRAMESHIFT_VARIANT||||||||||
+ZDB-ALT-980203-533||||||||X|216||||||
+ZDB-ALT-061212-2|||||||Q|X|360||||||
+ZDB-ALT-130813-2|T>A||||missense_variant||V|E|147||||||
+ZDB-ALT-131122-11|minus 1||||||||||||||
+ZDB-ALT-160314-4|C>T|||exon 17|||Gln|X|609|||POLYPEPTIDE_TRUNCATION||REF|
+ZDB-ALT-150731-2|T>A||||missense_variant||H|Q|189||||||
+ZDB-ALT-080819-1|C>A|1638||||||||||POLYPEPTIDE_TRUNCATION|||
+ZDB-ALT-101008-14|||||||||||||||
+>fh329</a>|||||||||||||||
+ZDB-ALT-111017-3|C>T|1162||exon 7|||Gln|X|388||||||
+ZDB-ALT-980203-477|C>T|||||||||||||REF|
+ZDB-ALT-071019-5|C>T|||exon 3||||||||||REF|
+ZDB-ALT-110311-1|T>A||||||Tyr|X|||||||
+ZDB-ALT-120411-351|G>A|975|||SPLICE_SITE_VARIANT||||||||||
+|||||||||||||||
+ZDB-ALT-980203-1251||||||||X|63||||||
+ZDB-ALT-071015-6|C>T|694|||||||||||||
+ZDB-ALT-110107-1|T>A|220627|BX927365.7||||Ile|Asn|181||||||
+ZDB-ALT-110107-1||652|NM_131266||||Ile|Asn|181||||||
+ZDB-ALT-110722-30|G>A|||intron 3|shorten transcript||||||||14|REF|
+ZDB-ALT-110722-30||||exon 4|FRAMESHIFT_VARIANT||||||||||
+ZDB-ALT-110722-30|||||||||||||||
+ZDB-ALT-140127-3|C>A|||exon 7|longer transcript|||||||||REF|
+|||||||||||||||
+ZDB-ALT-150723-18||||exon 11|SPLICING ||||||||||
+ZDB-ALT-160323-7|||||||||191||||||
+ZDB-ALT-111010-2|||||||||||||||
+ZDB-ALT-130118-1|T>A|2087|||||Asn|Lys|695|||||REF|
+ZDB-ALT-140327-2|T>A||||||Tyr|Arg|||||||
+ZDB-ALT-980203-1344|A>G|1476|||||E|G|456||||||
+ZDB-ALT-140514-1|T>G|1405|NM_001008628||||Y|X|431||||||
+ZDB-ALT-040224-6|||||||Asn |Lys|414||||||
+ZDB-ALT-110914-3|C>A|174|||||Tyr|X|58||||||
+ZDB-ALT-121018-3|||||||Y|X|2449||||||
+ZDB-ALT-150504-4|G>A||||||Trp|X|3561|NP_001036210||POLYPEPTIDE_TRUNCATION||REF|
+ZDB-ALT-061129-16|T>A|||||||X|262||||||
+ZDB-ALT-091022-1|T>A|800|||||Leu|Gln|267||||||
+ZDB-ALT-101008-3|||||||||||||||
+>unrec_col4a1</a>|||||||||||||||
+ZDB-ALT-980520-45|C>A||||||Gln|Lys|137|||||REF|
+ZDB-ALT-090603-5|||||||I|N|383||||||
+ZDB-ALT-150210-6|||||INTRON_GAIN_VARIANT|||||||POLYPEPTIDE_TRUNCATION||REF|
+ZDB-ALT-150210-6|||||||||||||||
+ZDB-ALT-150609-1|||||missense_variant||V|A|232||||||
+ZDB-ALT-980203-351|T>A|2888|||missense_variant||Ile|Asn|963|||||REF|
+ZDB-ALT-980413-444|||||missense_variant||G|D|2073||||||
+ZDB-ALT-110211-2|||||||Q|X|413||||||
+ZDB-ALT-110802-2|T>G|1538|||missense_variant||L|R|337||||||
+ZDB-ALT-040421-16|T>A||||||Ile|Asm|430||||||
+ZDB-ALT-111010-7|||||||||||||||
+ZDB-ALT-140411-1|||||missense_variant||G|S|365|||||REF|
+ZDB-ALT-150115-5|||||||Glu|X|3||||14||
+ZDB-ALT-980203-1354|T>A|2099|||||||||||||
+ZDB-ALT-980203-1354|C>A|2100|||||||||||||
+ZDB-ALT-040720-42|T>G||||||M|R|1208||||||
+ZDB-ALT-070117-13|C>T|1834|||||Gln|X|612||||||

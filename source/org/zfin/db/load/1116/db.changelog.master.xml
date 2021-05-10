@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <include file="source/org/zfin/db/load/1116/add_data_set_tables.sql"/>
+    <include file="source/org/zfin/db/load/1116/add_data_sample_tables.sql"/>
+    <include file="source/org/zfin/db/load/1116/add_object_types_htp.sql"/>
+    <include file="source/org/zfin/db/load/1116/add_htpdset_sequence.sql"/>
+    <include file="source/org/zfin/db/load/1116/transcript_sequence.sql"/>
+    <include file="source/org/zfin/db/load/1116/add_construct_count_to_fish.sql"/>
+    <include file="source/org/zfin/db/load/1116/update_gxalink_prefix.sql"/>
+</databaseChangeLog>

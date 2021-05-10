@@ -1,0 +1,44 @@
+    <target name="clobber-all" depends="gmakeClobber,gmake,pre-deploy"/>
+    <target name="clean-all" depends="gmakeClean,clean"/>
+    <target name="compile-all" depends="gmake,compile" description="Runs gmake and java compile"/>
+
+
+
+    <target name="gmake">
+        <exec executable="gmake" output="gmake.log">
+            <arg value="-s"/>
+        </exec>
+    </target>
+
+
+    <target name="gmakeClean">
+        <exec executable="gmake" output="gmake.clean.log">
+            <arg value="-s"/>
+            <arg value="clean"/>
+        </exec>
+    </target>
+
+    <target name="gmakeClobber">
+        <exec executable="gmake" output="gmake.clobber.log">
+            <arg value="-s"/>
+            <arg value="clobber"/>
+        </exec>
+    </target>
+
+    <!-- TARGETS -->
+    <target name="_get-classpath">
+        <condition property="classpath.ok">
+            <not>
+                <or>
+                    <equals arg1="${servlet.jar}" arg2=""/>
+                </or>
+            </not>
+        </condition>
+    </target>
+
+    <target name="deploy-all" depends="clean-all, gmake, pre-deploy"
+            description="Target to compile all classes, excluding jsp files."/>
+
+    <target name="set-WEB-INF-target-root" if="isinformix">
+<!-- set the target roots for gwt and WEB-INF to pre-xxx if you are informix  -->
+    </target>

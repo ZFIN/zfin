@@ -1,0 +1,3 @@
+umask 002
+cd /opt/zfin/source_roots/zfin.org
+source commons/env/docker.env

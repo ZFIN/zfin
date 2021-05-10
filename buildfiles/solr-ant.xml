@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Solr" default="deploySolr" basedir="../">
+
+    <property name="solr" value="${SOURCEROOT}/server_apps/solr"/>
+    <property name="solr.backup.dir" value="/research/zunloads/solr"/>
+
+    <condition property="backup.solr">
+        <equals arg1="${BACKUP_SOLR_CORE}" arg2="true"/>
+    </condition>
+
+    <target name="deploy-solr">
+        <copySolr from="server_apps/solr/site_index" to="${env.SOLR_HOME}" overwrite="true"/>
+    </target>
+
+    <path id="classpath">
+        <pathelement location="${classbin.dir}"/>
+        <fileset dir="${web.lib}">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="lib/Java">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="/opt/misc/groovy/lib">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+
+    <macrodef name="copySolr">
+        <attribute name="from"/>
+        <attribute name="to"/>
+        <attribute name="overwrite" default="false"/>
+        <sequential>
+            <echo message="@{from}"/>
+            <copy todir="@{to}" overwrite="@{overwrite}">
+                <fileset dir="@{from}">
+                    <include name="**/*.properties"/>
+                    <include name="**/*.xml"/>
+                    <include name="**/*.conf"/>
+                    <include name="**/*.sql"/>
+                </fileset>
+                <filterset refid="allfilters"/>
+            </copy>
+            <copy todir="@{to}" overwrite="@{overwrite}">
+                <fileset dir="@{from}">
+                    <include name="**"/>
+                    <exclude name="**/*.properties"/>
+                    <exclude name="**/*.xml"/>
+                    <exclude name="**/*.conf"/>
+                    <exclude name="**/*.sql"/>
+                </fileset>
+            </copy>
+        </sequential>
+    </macrodef>
+
+    <target name="build-solr-index-jenkins">
+        <antcall target="build-solr-index"/>
+        <antcall target="check-indexer"/>
+        <antcall target="backup-solr-core-jenkins"/>
+    </target>
+
+
+    <target name="build-solr-index">
+        <groovy src="server_apps/solr/site_index/conf/index-solr.groovy" />
+        <echo message="Starting Solr index build via http..."/>
+        <exec executable="curl">
+            <arg value="-s"/>
+            <arg value="http://${SOLR_HOST}:${SOLR_PORT}/solr/${SOLR_CORE}/dataimport?command=full-import&amp;optimize=true&amp;clean=true&amp;wt=json&amp;indent=true"/>
+        </exec>
+        <echo message=" ---- "/>
+        <echo message="You can watch progress at http://${DOMAIN_NAME}/solr/${SOLR_CORE}/dataimport"/>
+    </target>
+
+    <target name="build-solr-publication-index">
+        <echo message="Starting Solr index build via http..."/>
+        <exec executable="curl">
+            <arg value="-s"/>
+            <arg value="http://${SOLR_HOST}:${SOLR_PORT}/solr/${SOLR_CORE}/dataimport?command=full-import&amp;clean=false&amp;entity=publication&amp;wt=json&amp;indent=true"/>
+        </exec>
+        <echo message=" ---- "/>
+        <echo message="You can watch progress at http://${DOMAIN_NAME}/solr/${SOLR_CORE}/dataimport"/>
+    </target>
+
+    <target name="build-solr-publication-index-jenkins">
+        <antcall target="build-solr-publication-index"/>
+        <antcall target="check-indexer"/>
+    </target>
+
+    <target name="delete-solr-fish-documents">
+        <exec executable="curl">
+            <arg value="http://${SOLR_HOST}:${SOLR_PORT}/solr/${SOLR_CORE}/update?commit=true"/>
+            <arg value="-sH"/>
+            <arg value="Content-Type: text/xml"/>
+            <arg value="--data-binary"/>
+            <arg value="&lt;delete&gt;&lt;query&gt;category:Fish&lt;/query&gt;&lt;/delete&gt;"/>
+        </exec>
+    </target>
+
+    <target name="build-solr-fish-index">
+        <echo message="Starting Solr index build via http..."/>
+        <exec executable="curl">
+            <arg value="-s"/>
+            <arg value="http://${SOLR_HOST}:${SOLR_PORT}/solr/${SOLR_CORE}/dataimport?command=full-import&amp;clean=false&amp;commit=true&amp;entity=fish&amp;wt=json&amp;indent=true"/>
+        </exec>
+        <echo message=" ---- "/>
+        <echo message="You can watch progress at http://${DOMAIN_NAME}/solr/${SOLR_CORE}/dataimport"/>
+    </target>
+
+    <target name="build-solr-fish-index-jenkins">
+        <antcall target="build-solr-publication-index"/>
+        <antcall target="check-indexer"/>
+    </target>
+
+
+    <target name="check-indexer">
+        <exec executable="${SOURCEROOT}/server_apps/solr/bin/check-indexer.groovy"/>
+    </target>
+
+    <target name="drs" depends="deploy-solr,reload-solr-core"/>
+
+    <target name="reload-solr">
+        <antcall target="reload-solr-core"/>
+    </target>
+
+    <target name="reload-solr-core">
+        <echo message="Reloading solr core via http..."/>
+        <exec executable="curl">
+            <arg value="-s"/>
+            <arg value="http://${SOLR_HOST}:${SOLR_PORT}/solr/admin/cores?action=RELOAD&amp;core=${SOLR_CORE}"/>
+        </exec>
+    </target>
+
+    <target name="backup-solr-core-jenkins">
+        <antcall target="backup-solr-core"/>
+    </target>
+
+    <target name="backup-solr-core">
+        <echo message="Backing up solr core..."/>
+        <tstamp>
+            <format property="backup.stamp" pattern="yyyy.MM.dd-hh:mm"/>
+        </tstamp>
+
+        <echo message="Backup time: ${backup.stamp}"/>
+        <property name="this.backup.dir" value="${solr.backup.dir}/${env.DBNAME}/${backup.stamp}"/>
+        <mkdir dir="${this.backup.dir}"/>
+
+        <copy todir="${this.backup.dir}" overwrite="false">
+            <fileset dir="${env.SOLR_HOME}">
+                <include name="**"/>
+            </fileset>
+        </copy>
+        <echo message="Moving db-data-config.xml aside, contains site-specific jdbc connect info"/>
+        <move file="${this.backup.dir}/conf/db-data-config.xml"
+              tofile="${this.backup.dir}/conf/archived-db-data-config.xml"/>
+        <echo message="Moving core.properties aside, contains site-specific info"/>
+        <move file="${this.backup.dir}/core.properties"
+              tofile="${this.backup.dir}/core.properties.archived"/>
+    </target>
+
+    <target name="restore-solr-core">
+        <antcall target="stop-solr"/>
+        <echo message="restoring from ${RESTORE_FROM}"/>
+        <delete>
+            <fileset dir="${env.SOLR_HOME}/">
+                <include name="**"/>
+            </fileset>
+        </delete>
+        <copy todir="${env.SOLR_HOME}">
+            <fileset dir="${RESTORE_FROM}">
+                <include name="**"/>
+            </fileset>
+        </copy>
+        <echo message="Copying correct db-data-config.xml into place, it may not match your data, but allows for indexing after doing a restore"/>
+        <copy todir="${env.SOLR_HOME}/conf/" overwrite="false">
+            <fileset dir="server_apps/solr/site_index/">
+                <include name="**/db-data-config.xml"/>
+                <include name="**/core.properties"/>
+            </fileset>
+            <filterset refid="allfilters"/>
+        </copy>
+
+        <antcall target="start-solr"/>
+    </target>
+
+    <!-- Useful cleaning up when upgrading solr, I think -->
+    <target name="remove-solr-client-lib">
+        <echo message="Removing existing solr libraries..."/>
+        <delete>
+            <fileset dir="${TARGETROOT}/home/WEB-INF/lib/" includes="*solr*jar"/>
+            <fileset dir="${TARGETROOT}/home/WEB-INF/lib/" includes="httpclient*jar"/>
+            <fileset dir="${TARGETROOT}/home/WEB-INF/lib/" includes="httpcore*jar"/>
+            <fileset dir="${TARGETROOT}/home/WEB-INF/lib/" includes="httpmine*jar"/>
+
+        </delete>
+
+    </target>
+
+    <target name="upgrade-solr" depends="remove-solr-client-lib, dirtydeploy, deploy-solr, restart-solr"/>
+
+    <target name="remove-solr-home">
+        <echo message="Removing existing solr home..."/>
+        <delete>
+            <fileset dir="${SOLR_HOME}"/>
+        </delete>
+    </target>
+
+    <target name="start-solr" description="Start up Solr ">
+        <echo message="Source: ${solr}"/>
+        <exec executable="/bin/sudo">
+            <arg value="systemctl"/>
+            <arg value="start"/>
+            <arg value="solr"/>
+        </exec>
+    </target>
+
+    <target name="stop-solr" description="Stop Solr ">
+        <exec executable="/bin/sudo">
+            <arg value="systemctl"/>
+            <arg value="stop"/>
+            <arg value="solr"/>
+        </exec>
+    </target>
+
+    <target name="restart-solr" description="Restart up Solr">
+        <exec executable="/bin/sudo">
+            <arg value="systemctl"/>
+            <arg value="restart"/>
+            <arg value="solr"/>
+        </exec>
+    </target>
+
+    <target name="pid-solr" description="Display the PID of Solr server">
+        <loadfile property="solr-pid" srcFile="${SOLR_HOME}/solr.pid"/>
+        <echo>
+            Solr server PID: ${solr-pid}
+        </echo>
+    </target>
+
+    <target name="tail-solr-log" description="tail -f on solr.log file">
+        <exec executable="tail">
+            <arg value="-f"/>
+            <arg value="${SOLR_HOME}/server/logs/solr.log"/>
+        </exec>
+    </target>
+
+    <target name="cleanup-solr-backup-files" description="Remove solr backup directories older than 2 weeks.">
+        <tstamp>
+            <format property="last.week" pattern="MM/dd/yyyy MM:hh aa" offset="-14" unit="day"/>
+        </tstamp>
+        <remove-old-files removal.date="${last.week}" cleanup.dir="${solr.backup.dir}/${DBNAME}/"/>
+    </target>
+
+
+</project>

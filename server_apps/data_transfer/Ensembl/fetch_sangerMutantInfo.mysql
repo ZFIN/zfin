@@ -1,0 +1,7 @@
+select t.stable_id, g.stable_id, tl.stable_id
+from gene g 
+join transcript t on g.gene_id = t.gene_id
+left join translation tl on tl.transcript_id = t.transcript_id 
+ order by t.stable_id;
+
+ 

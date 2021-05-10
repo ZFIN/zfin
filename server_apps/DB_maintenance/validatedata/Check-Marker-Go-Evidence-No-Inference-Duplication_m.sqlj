@@ -1,0 +1,45 @@
+SELECT a.mrkrgoev_zdb_id, 
+       a.mrkrgoev_mrkr_zdb_id, 
+       b.mrkrgoev_zdb_id, 
+       Count(*) 
+FROM   marker_go_term_evidence a, 
+       inference_group_member ia, 
+       marker_go_term_evidence b, 
+       inference_group_member ib 
+WHERE  a.mrkrgoev_mrkr_zdb_id = b.mrkrgoev_mrkr_zdb_id 
+       AND a.mrkrgoev_term_zdb_id = b.mrkrgoev_term_zdb_id 
+       AND a.mrkrgoev_source_zdb_id = b.mrkrgoev_source_zdb_id 
+       AND a.mrkrgoev_evidence_code = b.mrkrgoev_evidence_code 
+       AND a.mrkrgoev_zdb_id = ia.infgrmem_mrkrgoev_zdb_id 
+       AND b.mrkrgoev_zdb_id = ib.infgrmem_mrkrgoev_zdb_id 
+       AND a.mrkrgoev_zdb_id > b.mrkrgoev_zdb_id 
+       AND ia.infgrmem_inferred_from = ib.infgrmem_inferred_from 
+       AND ( ( a.mrkrgoev_gflag_name IS NULL 
+               AND b.mrkrgoev_gflag_name IS NULL ) 
+              OR ( ( a.mrkrgoev_gflag_name IS NOT NULL 
+                      OR b.mrkrgoev_gflag_name IS NOT NULL ) 
+                   AND a.mrkrgoev_gflag_name = b.mrkrgoev_gflag_name ) ) 
+GROUP  BY a.mrkrgoev_zdb_id, 
+          b.mrkrgoev_zdb_id, 
+          a.mrkrgoev_mrkr_zdb_id, 
+          b.mrkrgoev_mrkr_zdb_id
+subquery
+list query
+not exists
+SELECT *
+FROM   inference_group_member ia
+WHERE  ( NOT EXISTS (SELECT 'x'
+                     FROM   inference_group_member ib
+                     WHERE  ib.infgrmem_mrkrgoev_zdb_id =
+                            '$0'
+                            AND ia.infgrmem_inferred_from =
+                                ib.infgrmem_inferred_from)
+         AND ia.infgrmem_mrkrgoev_zdb_id = '$2' )
+        OR ( NOT EXISTS (SELECT 'x'
+                         FROM   inference_group_member ib
+                         WHERE  ib.infgrmem_mrkrgoev_zdb_id =
+                                '$2'
+                                AND ia.infgrmem_inferred_from =
+                                    ib.infgrmem_inferred_from)
+             AND ia.infgrmem_mrkrgoev_zdb_id = '$0' )
+          

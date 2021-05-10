@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Archive-Downloadfiles" default="archive-download-files" basedir="../../../">
+
+    <property name="web.dir" value="${basedir}/home"/>
+    <property name="web-inf.dir" value="${web.dir}/WEB-INF"/>
+    <property name="classbin.dir" value="${web-inf.dir}/classes"/>
+    <property name="lib" value="${basedir}/lib/Java"/>
+    <property name="web.lib" value="${web-inf.dir}/lib"/>
+    <property name="download.dir" value="${web.dir}/data_transfer/Downloads"/>
+    <property name="download-execute.dir" value="server_apps/data_transfer/Downloads"/>
+
+
+    <property environment="env"/>
+
+    <!-- Classpath definitions -->
+    <path id="classpath">
+        <pathelement location="${classbin.dir}"/>
+        <fileset dir="${web.lib}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <taskdef name="loadProperties"
+             classname="org.zfin.properties.ant.LoadPropertiesTask"
+             classpathref="classpath"/>
+
+    <loadProperties file="${web-inf.dir}/zfin.properties" />
+
+    <path id="extended.classpath">
+        <path refid="classpath"/>
+        <fileset dir="${CATALINA_HOME}/endorsed">
+            <include name="*.jar"/>
+            <include name="*.zip"/>
+        </fileset>
+    </path>
+
+    <target name="init">
+        <tstamp/>
+        <echo message="Copy download files into archive directory ..."/>
+    </target>
+
+    <property name="download-dir" value="${DOWNLOAD_DIRECTORY}" />
+
+    <target name="archive-download-files">
+        <tstamp>
+            <format property="time-stamp" pattern="yyyy.MM.dd"/>
+        </tstamp>
+        <echo message="Use database: ${DBNAME}"/>
+        <echo message="Copy download files into archive directory: '${download-dir}/${time-stamp}'"/>
+        <mkdir dir="${download-dir}/${time-stamp}"/>
+        <copy todir="${download-dir}/${time-stamp}">
+            <fileset dir="${download.dir}"/>
+        </copy>
+        <echo message="registry: ${web-inf.dir}/conf/download-registry.xml"/>
+        <echo message="registry to: ${download-dir}/${time-stamp}/download-registry.xml"/>
+        <copy file="${web-inf.dir}/conf/download-registry.xml" tofile="${download-dir}/${time-stamp}/download-registry.xml" />
+        <copy file="${web-inf.dir}/conf/download-registry.xml" tofile="${download-dir}/current/download-registry.xml" />
+        <antcall target="create-download-file-symlink" />
+    </target>
+
+    <target name="create-download-file-symlink">
+        <symlink link="${basedir}/home/data-transfer" action="single" overwrite="true" failonerror="fail" resource="${env.DOWNLOAD_DIRECTORY}"/>
+        <symlink link="${env.DOWNLOAD_DIRECTORY}/current" action="single" overwrite="true" failonerror="fail" resource="${TARGETROOT}/home/data_transfer/Downloads"/>
+    </target>
+
+    <macrodef name="run-db-query">
+        <attribute name="db-query-file"/>
+        <attribute name="instanceName"/>
+        <sequential>
+            <java classname="org.zfin.properties.RunSqlQueryTask" fork="yes" classpathref="extended.classpath"
+                  failonerror="true">
+                <arg value="@{instanceName}"/>
+                <arg value="@{db-query-file}"/>
+                <arg value="${download-execute.dir}"/>
+            </java>
+        </sequential>
+    </macrodef>
+
+
+    <target name="usage">
+        <echo>
+            TARGETS
+            archive-download-files
+        </echo>
+    </target>
+
+</project>

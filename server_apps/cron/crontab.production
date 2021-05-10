@@ -1,0 +1,59 @@
+# Crontab format, from left to right
+# * minute (0-59),
+# * hour (0-23),
+# * day of the month (1-31),
+# * month of the year (1-12),
+# * day of the week (0-6 with 0=Sunday)
+#
+# Each of these patterns may be either an  asterisk
+# (meaning all legal values)    OR
+#       a list of elements separated by commas.
+# An element is either a number OR
+#       two numbers separated by  a minus  sign
+#       (meaning  an  inclusive  range).
+# Note that the specification of days may be made by two fields
+# (day of  the month and day of the week).
+# Both are adhered to if specified as a list of elements.
+#
+# NO BLANK LINES
+#
+#
+# cron.chart.fig
+# --------------
+# cron.chart.fig is a graphic depiction of cron at ZFIN.  Any time you
+# change this file, also change cron.chart.fig.
+#
+#
+# Each entry has comment precedeing it stating:
+# 1. What "nights" it is run.  We include the following morning as part of
+#    the night.  That is, both Sunday night at 10 pm and Monday morning at
+#    1 am are both part of Sunday night.
+# 2. What time it is run.
+# 3. Description of the job.
+#
+# 
+# Entries are ordered by start time/night.  Ordering them by when they run
+# is the easiest way to tell what jobs might interfere with each other.  
+# Each portion of the night is reserved for a particular type of job.
+# CURATOR SUPPORT and MISC jobs can run at any time.
+# 
+#
+#
+# ========================================================================
+# ====                     FREQUENT SCRIPTS                           ====
+# ========================================================================
+#
+# Nights   When      Comments
+# SMTWTFS  constant  check if production is up 
+0,6,12,18,24,30,36,42,48,54 * * * * <!--|ROOT_PATH|-->/server_apps/WebSiteTools/signsoflife.sh
+#
+# ========================================================================
+# ====               DAILY / WEEKLY SCRIPTS                           ====
+# ========================================================================
+# Nights   When      Comments
+# MTWT    11:00pm   sync and checkin curated blastdbs to SVN and almost from production
+00 23 * * 1-4 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/backupBlastDbsAndRsyncAlmostBlastDbs.sh
+# Nights   When      Comments
+# MTWT    9:00pm   sync and checkin curated blastdbs to SVN and almost from production
+#00 21 * * 1-4 <!--|ROOT_PATH|-->/server_apps/DB_maintenance/rotateInformixLogs.sh
+

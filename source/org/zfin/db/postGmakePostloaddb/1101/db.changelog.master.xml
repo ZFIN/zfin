@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <include file="source/org/zfin/db/postGmakePostloaddb/1101/CUR-840.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1101/CUR-840-warehouse.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1101/zum_update_for_v2_0.sql"/>
+    <include file="source/org/zfin/db/postGmakePostloaddb/1101/ZFIN-6006a.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1101/ZFIN-6306.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1101/HBurgessChr_pre.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1101/HBurgessChr.xml" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1101/HBurgessChr.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1101/DLOAD-552_pre.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1101/DLOAD-552.xml" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1101/DLOAD-552.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1101/PUB-482.sql" />
+
+</databaseChangeLog>

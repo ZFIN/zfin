@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/ZFIN-6060.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/PLC-332.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/DLOAD-589b.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/DLOAD-589c.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/DLOAD-589d.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/ZFIN-6021.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/ZFIN-6070.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/DLOAD-595.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/DLOAD-596.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/DLOAD-597.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/DLOAD-598.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/PUB-486.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/ZFIN-6016.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/DLOAD-510_pre.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/DLOAD-510_load.xml" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/DLOAD-510.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/PUB-487.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/PUB-490.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/CUR-861_pre.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/CUR-861.xml" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/CUR-861.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/CUR-861b_pre.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/CUR-861b.xml" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/CUR-861b.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/ZFIN-6073.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/PUB-489.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/DLOAD-601_pre.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/DLOAD-601.xml" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/DLOAD-601.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/DLOAD-589a.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/DLOAD-601b.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/DLOAD-601c.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/DLOAD-601d.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/DLOAD-599_pre.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/DLOAD-599.xml" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/DLOAD-599.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/ZFIN-5863.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/CUR-863.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/CUR-864.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/CUR-865.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/CUR-866.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/ZFIN-6005.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/ZFIN-6092.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/ZFIN-6089_pre.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/ZFIN-6089_load.xml" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/ZFIN-6089.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/ZFIN-5795.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1103/ZFIN-6121.sql" />
+
+</databaseChangeLog>

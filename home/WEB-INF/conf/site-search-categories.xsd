@@ -1,0 +1,41 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:jxb="http://java.sun.com/xml/ns/jaxb">
+
+    <xs:element name="Categories">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Category" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Category">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="DisplayName" type="xs:string"/>
+                <xs:element ref="UrlMapping"/>
+            </xs:sequence>
+            <xs:attribute name="ID" type="xs:string"/>
+            <xs:attribute name="order" type="xs:int"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="UrlMapping">
+        <xs:complexType>
+            <xs:sequence maxOccurs="unbounded">
+                <xs:element name="urlPattern" type="urlPatternType" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="urlPatternType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="boostValue" type="xs:integer" use="optional"/>
+                <xs:attribute name="type" type="xs:string" use="required"/>
+                <xs:attribute name="titlePrefix" type="xs:string" use="optional"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+</xs:schema>

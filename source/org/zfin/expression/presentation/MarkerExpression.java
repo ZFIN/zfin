@@ -1,0 +1,138 @@
+package org.zfin.expression.presentation;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.zfin.marker.presentation.LinkDisplay;
+
+public class MarkerExpression {
+
+    private MarkerExpressionInstance allMarkerExpressionInstance;
+    private DirectlySubmittedExpression directlySubmittedExpression;
+    private DirectlySubmittedExpression onlyThisse;
+//    private List<MarkerDBLink> microarrayLinks = new ArrayList<MarkerDBLink>();
+    private WildTypeExpression wildTypeStageExpression;
+    private String geoLink;
+    private LinkDisplay expressionAtlasLink;
+    private int inSituFigCount;
+
+    public LinkDisplay getExpressionAtlasLink() {
+        return expressionAtlasLink;
+    }
+
+    public void setExpressionAtlasLink(LinkDisplay expressionAtlasLink) {
+        this.expressionAtlasLink = expressionAtlasLink;
+    }
+
+
+
+    private String geoGeneSymbol ;
+    private boolean geoLinkSearching = true ;
+
+    private Logger logger = LogManager.getLogger(MarkerExpression.class) ;
+
+    public int getTotalCountForStuff() {
+        return (directlySubmittedExpression == null ? 0 : directlySubmittedExpression.getMarkerExpressionInstances().size())
+                + (allMarkerExpressionInstance == null ? 0 : allMarkerExpressionInstance.getFigureCount())
+                + (wildTypeStageExpression == null ? 0 : wildTypeStageExpression.getExpressedStructures().size())
+                + (geoLink == null ? 0 : 1)
+                ;
+    }
+
+    public int getExpressionPubCount() {
+        return (directlySubmittedExpression == null ? 0 : directlySubmittedExpression.getPublicationCount())
+                + (allMarkerExpressionInstance == null ? 0 : allMarkerExpressionInstance.getPublicationCount())
+                ;
+    }
+
+    public int getExpressionFigureCount() {
+        return (directlySubmittedExpression == null ? 0 : directlySubmittedExpression.getFigureCount())
+                + (allMarkerExpressionInstance == null ? 0 : allMarkerExpressionInstance.getPublicationCount())
+                ;
+    }
+
+    public int getExpressionImageCount() {
+        return (directlySubmittedExpression == null ? 0 : directlySubmittedExpression.getImageCount())
+                + (allMarkerExpressionInstance == null ? 0 : allMarkerExpressionInstance.getPublicationCount())
+                ;
+    }
+
+    public DirectlySubmittedExpression getDirectlySubmittedExpression() {
+        return directlySubmittedExpression;
+    }
+
+    public void setDirectlySubmittedExpression(DirectlySubmittedExpression directlySubmittedExpression) {
+        this.directlySubmittedExpression = directlySubmittedExpression;
+    }
+
+    public MarkerExpressionInstance getAllExpressionData() {
+        return allMarkerExpressionInstance;
+    }
+
+    public void setAllExpressionData(MarkerExpressionInstance allMarkerExpressionInstance) {
+        this.allMarkerExpressionInstance = allMarkerExpressionInstance;
+    }
+
+//    public List<MarkerDBLink> getMicroarrayLinks() {
+//        return microarrayLinks;
+//    }
+//
+//    public void setMicroarrayLinks(List<MarkerDBLink> microarrayLinks) {
+//        this.microarrayLinks = microarrayLinks;
+//    }
+
+    public WildTypeExpression getWildTypeStageExpression() {
+        return wildTypeStageExpression;
+    }
+
+    public void setWildTypeStageExpression(WildTypeExpression wildTypeStageExpression) {
+        this.wildTypeStageExpression = wildTypeStageExpression;
+    }
+
+    public int getInSituFigCount() {
+        return inSituFigCount;
+    }
+
+    public void setInSituFigCount(int inSituFigCount) {
+        this.inSituFigCount = inSituFigCount;
+    }
+
+    public MarkerExpressionInstance getAllMarkerExpressionInstance() {
+        return allMarkerExpressionInstance;
+    }
+
+    public DirectlySubmittedExpression getOnlyThisse() {
+        return onlyThisse;
+    }
+
+    public void setOnlyThisse(DirectlySubmittedExpression onlyThisse) {
+        this.onlyThisse = onlyThisse;
+    }
+
+    public void setAllMarkerExpressionInstance(MarkerExpressionInstance allMarkerExpressionInstance) {
+        this.allMarkerExpressionInstance = allMarkerExpressionInstance;
+    }
+
+    public String getGeoLink() {
+        return geoLink;
+    }
+
+    public void setGeoLink(String geoLink) {
+        this.geoLink = geoLink;
+    }
+
+    public String getGeoGeneSymbol() {
+        return geoGeneSymbol;
+    }
+
+    public void setGeoGeneSymbol(String geoGeneSymbol) {
+        this.geoGeneSymbol = geoGeneSymbol;
+    }
+
+    public boolean isGeoLinkSearching() {
+        return geoLinkSearching;
+    }
+
+    public void setGeoLinkSearching(boolean geoLinkSearching) {
+        this.geoLinkSearching = geoLinkSearching;
+    }
+}

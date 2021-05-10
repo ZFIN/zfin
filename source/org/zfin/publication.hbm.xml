@@ -1,0 +1,213 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.jboss.org/dtd/hibernate/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.zfin.publication">
+
+
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="publicationType">
+        <param name="enumClassname">org.zfin.publication.PublicationType</param>
+    </typedef>
+
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="publicationStatus">
+        <param name="enumClassname">org.zfin.publication.Publication$Status</param>
+    </typedef>
+
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="meshTermType">
+        <param name="enumClassname">org.zfin.publication.MeshTerm$Type</param>
+    </typedef>
+
+    <class name="org.zfin.publication.Publication" table="publication">
+        <id name="zdbID" type="string">
+            <column name="zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">PUB</param>
+                <param name="insertActiveSource">true</param>
+            </generator>
+        </id>
+
+        <property name="title" lazy="false">
+            <column name="title" not-null="true"/>
+        </property>
+
+        <property name="authors">
+            <column name="authors" not-null="true"/>
+        </property>
+
+        <property name="shortAuthorList">
+            <column name="pub_mini_ref"/>
+        </property>
+
+        <property name="abstractText" lazy="true" column="pub_abstract"/>
+
+        <property name="publicationDate" column="pub_date"/>
+        <property name="closeDate" column="pub_completion_date"/>
+        <property name="entryDate" column="pub_arrival_date" insert="false"/>
+        <property name="volume" column="pub_volume" lazy="true"/>
+        <property name="pages" column="pub_pages" lazy="true"/>
+        <property name="type" column="jtype" type="publicationType"/>
+        <property name="accessionNumber" column="accession_no" lazy="true"/>
+        <property name="doi" column="pub_doi" lazy="true"/>
+        <property name="canShowImages" column="pub_can_show_images"/>
+        <property name="curatable" column="pub_is_curatable"/>
+        <property name="indexed" column="pub_is_indexed"/>
+        <property name="indexedDate" column="pub_indexed_date"/>
+        <property name="acknowledgment" column="pub_acknowledgment"/>
+        <property name="status" column="status" type="publicationStatus"/>
+        <property name="errataAndNotes" column="pub_errata_and_notes"/>
+        <property name="keywords" column="keywords"/>
+
+        <many-to-one name="journal" class="org.zfin.publication.Journal" column="pub_jrnl_zdb_id" />
+
+        <many-to-one name="indexedBy" class="org.zfin.profile.Person" column="pub_indexed_by" />
+
+        <set name="expressionExperiments" lazy="true">
+            <key column="xpatex_source_zdb_id"/>
+            <one-to-many class="org.zfin.expression.ExpressionExperiment"/>
+        </set>
+
+        <set name="figures" lazy="true">
+            <key column="fig_source_zdb_id" update="false"/>
+            <one-to-many class="org.zfin.expression.Figure" />
+        </set>
+
+        <set name="people" lazy="true" table="int_person_pub">
+            <key column="target_id"/>
+            <many-to-many class="org.zfin.profile.Person" column="source_id" order-by="full_name asc"/>
+        </set>
+
+        <set name="meshHeadings" sort="natural">
+            <key column="mh_pub_zdb_id"/>
+            <one-to-many class="org.zfin.publication.MeshHeading"/>
+        </set>
+
+        <set name="notes" lazy="true" table="publication_note" order-by="pnote_date desc">
+            <key column="pnote_pub_zdb_id"/>
+            <one-to-many class="org.zfin.curation.PublicationNote"/>
+        </set>
+
+        <set name="dbXrefs" lazy="true" table="pub_db_xref" order-by="pdx_accession_number">
+            <key column="pdx_pub_zdb_id"/>
+            <one-to-many class="org.zfin.publication.PublicationDbXref"/>
+        </set>
+
+        <set name="authorPubs" lazy="true" table="pubmed_publication_author">
+            <key column="ppa_publication_zdb_id"/>
+            <one-to-many class="org.zfin.publication.PubmedPublicationAuthor"/>
+        </set>
+
+        <set name="files" lazy="true" table="publication_file" sort="natural">
+            <key column="pf_pub_zdb_id"/>
+            <one-to-many class="org.zfin.publication.PublicationFile"/>
+        </set>
+
+        <set name="statusHistory" lazy="true" table="pub_tracking_history" order-by="pth_status_insert_date desc">
+            <key column="pth_pub_zdb_id" />
+            <one-to-many class="org.zfin.publication.PublicationTrackingHistory" />
+        </set>
+
+        <set name="sentMessages" lazy="true" table="pub_correspondence_sent_tracker" order-by="pubcst_date_sent desc">
+            <key column="pubcst_pub_zdb_id"/>
+            <one-to-many class="org.zfin.publication.CorrespondenceSentMessage"/>
+        </set>
+
+        <set name="receivedMessages" lazy="true" table="pub_correspondence_received_email" order-by="pubcre_received_date desc">
+            <key column="pubcre_pub_zdb_id"/>
+            <one-to-many class="org.zfin.publication.CorrespondenceReceivedMessage"/>
+        </set>
+
+        <property name="lastCorrespondenceDate" column="pub_last_correspondence_date"/>
+
+        <set name="zebrashareEditors" lazy="true" table="zebrashare_data_edit_permission">
+            <key column="zdep_pub_zdb_id" />
+            <one-to-many class="org.zfin.zebrashare.ZebrashareEditor" />
+        </set>
+
+        <set name="processingChecklistEntries" lazy="true" table="publication_processing_checklist">
+            <key column="ppc_pub_zdb_id" />
+            <one-to-many class="org.zfin.publication.PublicationProcessingChecklistEntry" />
+        </set>
+
+    </class>
+
+    <class name="org.zfin.publication.DOIAttempt" table="doi_attempts">
+        <id name="id" type="long">
+            <column name="doia_pk_id" not-null="true"/>
+            <generator class="identity"/>
+        </id>
+        <property name="numAttempts" column="doia_num_attempts" not-null="true"/>
+        <many-to-one name="publication" column="doia_pub_zdb_id" not-null="true"/>
+    </class>
+
+    <class name="org.zfin.publication.Journal" table="journal">
+        <id name="zdbID" type="string">
+            <column name="jrnl_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">JRNL</param>
+                <param name="insertActiveSource">true</param>
+            </generator>
+        </id>
+
+        <property name="name">
+            <column name="jrnl_name" not-null="true"/>
+        </property>
+
+        <property name="abbreviation">
+            <column name="jrnl_abbrev" not-null="true"/>
+        </property>
+
+        <property name="medAbbrev">
+            <column name="jrnl_medabbrev" not-null="false"/>
+        </property>
+
+        <property name="isoAbbrev">
+            <column name="jrnl_isoabbrev" not-null="false"/>
+        </property>
+
+        <property name="publisher">
+            <column name="jrnl_publisher" not-null="true"/>
+        </property>
+
+        <property name="isNice">
+            <column name="jrnl_is_nice"/>
+        </property>
+
+        <property name="printIssn" column="jrnl_print_issn"/>
+        <property name="onlineIssn" column="jrnl_online_issn"/>
+        <property name="nlmID" column="jrnl_nlmid"/>
+
+        <set name="aliases" table="source_alias" order-by="salias_alias_lower desc">
+            <key column="salias_source_zdb_id"/>
+            <one-to-many class="org.zfin.infrastructure.SourceAlias"/>
+        </set>
+
+    </class>
+
+    <class name="org.zfin.publication.MeshTerm" table="mesh_term">
+        <id name="id" type="string">
+            <column name="mesht_mesh_id" not-null="true"/>
+        </id>
+        <property name="name" column="mesht_term_name" not-null="true"/>
+        <property name="type" column="mesht_type" not-null="true" type="meshTermType"/>
+    </class>
+
+    <class name="org.zfin.publication.MeshHeading" table="mesh_heading">
+        <id name="id" type="long" column="mh_pk_id"/>
+
+        <component name="descriptor" class="org.zfin.publication.MeshHeadingTerm">
+            <many-to-one name="term" column="mh_mesht_mesh_descriptor_id"/>
+            <property name="majorTopic" column="mh_descriptor_is_major_topic"/>
+        </component>
+
+        <set name="qualifiers" table="mesh_heading_qualifier" sort="natural">
+            <key column="mhq_mesh_heading_id"/>
+            <composite-element class="org.zfin.publication.MeshHeadingTerm">
+                <many-to-one name="term" column="mhq_mesht_mesh_qualifier_id"/>
+                <property name="majorTopic" column="mhq_is_major_topic"/>
+            </composite-element>
+        </set>
+    </class>
+
+
+</hibernate-mapping>

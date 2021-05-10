@@ -1,0 +1,338 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.jboss.org/dtd/hibernate/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.zfin.mapping">
+
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="genomeLocationSource">
+        <param name="enumClassname">org.zfin.mapping.GenomeLocation$Source</param>
+    </typedef>
+
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="gbrowseTrackType">
+        <param name="enumClassname">org.zfin.gbrowse.GBrowseTrack</param>
+    </typedef>
+
+    <class name="Linkage" table="linkage">
+        <id name="zdbID">
+            <column name="lnkg_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">LINK</param>
+                <param name="insertActiveData">true</param>
+            </generator>
+        </id>
+
+        <discriminator type="string"
+                       formula="(CASE get_obj_type(lnkg_source_zdb_id)
+                                    WHEN 'PUB' THEN 'Pub'
+                                    ELSE 'Per'
+                                 END)"/>
+
+        <property name="chromosome" column="lnkg_chromosome" not-null="true"/>
+        <property name="comments" column="lnkg_comments" not-null="true"/>
+
+        <property name="referenceID" column="lnkg_source_zdb_id" insert="false" update="false"/>
+        <many-to-one name="publication" column="lnkg_source_zdb_id" insert="false" update="false"/>
+        <many-to-one name="personReference" column="lnkg_source_zdb_id" insert="false" update="false"/>
+        <many-to-one name="person" class="org.zfin.profile.Person" column="lnkg_submitter_zdb_id"/>
+
+        <set name="linkageMemberSet" cascade="all-delete-orphan">
+            <key column="lms_lnkg_zdb_id"/>
+            <one-to-many class="org.zfin.mapping.LinkageMember"/>
+        </set>
+
+    </class>
+
+    <class name="org.zfin.mapping.SingletonLinkage" table="linkage_single">
+        <id name="id">
+            <column name="lsingle_pk_id" not-null="true"/>
+            <generator class="native"/>
+        </id>
+
+        <discriminator type="string"
+                       formula="(CASE get_obj_type(lsingle_member_zdb_id)
+                                  WHEN 'ALT' THEN       'Feature'
+                                  ELSE                  'Marker '
+                                  END)"/>
+
+        <property name="zdbID" column="lsingle_member_zdb_id"  insert="false" update="false"/>
+        <many-to-one name="linkage" column="lsingle_lnkg_zdb_id"/>
+
+        <subclass name="FeatureSingletonLinkage" discriminator-value="Feature">
+            <many-to-one name="feature" column="lsingle_member_zdb_id"/>
+        </subclass>
+
+        <subclass name="MarkerSingletonLinkage" discriminator-value="Marker ">
+            <many-to-one name="marker" column="lsingle_member_zdb_id"/>
+        </subclass>
+
+    </class>
+
+    <class name="LinkageMember" table="linkage_membership_search">
+        <id name="id" type="java.lang.Long">
+            <column name="lms_pk_id" not-null="true"/>
+            <generator class="identity"/>
+        </id>
+
+        <discriminator type="string"
+                       formula="(CASE get_obj_type(lms_member_1_zdb_id)
+                                    WHEN 'ALT' THEN
+                                        (CASE get_obj_type(lms_member_2_zdb_id)
+                                        WHEN 'ALT' THEN       'FeatFeat'
+                                        ELSE                  'FeatMark'
+                                        END)
+                                    ELSE
+                                        (CASE get_obj_type(lms_member_2_zdb_id)
+                                        WHEN 'ALT' THEN       'MarkFeat'
+                                        ELSE                  'MarkMark'
+                                        END)
+                                 END)"/>
+
+
+        <property name="lod" column="lms_lod"/>
+        <property name="distance" column="lms_distance"/>
+        <property name="metric" column="lms_units"/>
+        <property name="markerOneZdbId" column="lms_member_1_zdb_id" insert="false" update="false"/>
+        <property name="markerTwoZdbId" column="lms_member_2_zdb_id" insert="false" update="false"/>
+
+        <many-to-one name="linkage" column="lms_lnkg_zdb_id"/>
+
+        <subclass name="FeatureMarkerLinkageMember" discriminator-value="FeatMark">
+            <many-to-one name="feature" column="lms_member_1_zdb_id"/>
+            <many-to-one name="marker" column="lms_member_2_zdb_id"/>
+        </subclass>
+
+        <subclass name="MarkerMarkerLinkageMember" discriminator-value="MarkMark">
+            <many-to-one name="marker" column="lms_member_1_zdb_id"/>
+            <many-to-one name="pairedMarker" column="lms_member_2_zdb_id"/>
+        </subclass>
+
+        <subclass name="MarkerFeatureLinkageMember" discriminator-value="MarkFeat">
+            <many-to-one name="marker" column="lms_member_1_zdb_id"/>
+            <many-to-one name="feature" column="lms_member_2_zdb_id"/>
+        </subclass>
+
+        <subclass name="FeatureFeatureLinkageMember" discriminator-value="FeatFeat">
+            <many-to-one name="feature" column="lms_member_1_zdb_id"/>
+            <many-to-one name="pairedFeature" column="lms_member_2_zdb_id"/>
+        </subclass>
+    </class>
+
+    <class name="org.zfin.mapping.GenomeLocation" table="sequence_feature_chromosome_location_generated">
+        <id name="ID">
+            <column name="sfclg_pk_id" not-null="true"/>
+            <generator class="identity"/>
+        </id>
+
+        <discriminator type="string"
+                       formula="(CASE get_obj_type(sfclg_data_zdb_id)
+                                    WHEN 'ALT' THEN  'Feat'
+                                    ELSE             'Mark'
+                                 END)"/>
+        <property name="chromosome" column="sfclg_chromosome" type="string"/>
+        <property name="entityID" column="sfclg_data_zdb_id" type="string"/>
+        <property name="source" column="sfclg_location_source" type="genomeLocationSource"/>
+        <property name="start" column="sfclg_start" type="java.lang.Integer"/>
+        <property name="end" column="sfclg_end" type="java.lang.Integer"/>
+        <property name="detailedSource" column="sfclg_location_subsource" type="string"/>
+        <property name="accessionNumber" column="sfclg_acc_num" type="string"/>
+        <many-to-one name="attribution" column="sfclg_pub_zdb_id" class="org.zfin.publication.Publication" insert="false" update="false"/>
+        <property name="gbrowseTrack" column="sfclg_gbrowse_track" type="gbrowseTrackType"/>
+        <property name="assembly" column="sfclg_assembly" type="string"/>
+        <many-to-one name="evidence" column="sfclg_evidence_code" />
+
+        <subclass name="MarkerGenomeLocation" discriminator-value="Mark">
+            <many-to-one name="marker" column="sfclg_data_zdb_id" insert="false" update="false"/>
+        </subclass>
+
+        <subclass name="FeatureGenomeLocation" discriminator-value="Feat">
+            <many-to-one name="feature" column="sfclg_data_zdb_id" insert="false" update="false"/>
+        </subclass>
+    </class>
+
+    <class name="org.zfin.mapping.VariantSequence" table="variant_flanking_sequence">
+        <id name="zdbID" type="string">
+            <column name="vfseq_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">VFSEQ</param>
+                <param name="insertActiveData">true</param>
+            </generator>
+        </id>
+
+            <property name="vseqDataZDB" column="vfseq_data_zdb_id"/>
+            <property name="vfsType" column="vfseq_type" />
+
+
+            <property name="vfsTargetSequence" not-null="true" column="vfseq_sequence"/>
+            <property name="vfsOffsetStart" column="vfseq_offset_start" />
+            <property name="vfsOffsetStop" column="vfseq_offset_stop"/>
+            <property name="vfsVariation" column="vfseq_variation"/>
+            <property name="vfsLeftEnd" column="vfseq_five_prime_flanking_sequence"/>
+        <property name="vfsRightEnd" column="vfseq_three_prime_flanking_sequence"/>
+        <property name="vfsFlankType" column="vfseq_flanking_sequence_type"/>
+        <property name="vfsFlankOrigin" column="vfseq_flanking_sequence_origin"/>
+
+    </class>
+
+    <class name="org.zfin.mapping.FeatureLocation" table="sequence_feature_chromosome_location">
+        <id name="zdbID" type="string">
+            <column name="sfcl_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">SFCL</param>
+                <param name="insertActiveData">true</param>
+            </generator>
+        </id>
+
+
+        <property name="ftrChromosome" column="sfcl_chromosome" type="string"/>
+        <many-to-one name="feature"  column="sfcl_feature_zdb_id"  />
+        <property name="ftrStartLocation" column="sfcl_start_position" type="java.lang.Integer"/>
+        <property name="ftrEndLocation" column="sfcl_end_position" type="java.lang.Integer"/>
+        <property name="ftrAssembly" column="sfcl_assembly" type="string"/>
+        <many-to-one name="ftrLocEvidence" column="sfcl_evidence_code"/>
+        <property name="referenceSequenceAccessionNumber" column="sfcl_chromosome_reference_accession_number" type="string"/>
+
+
+    </class>
+
+
+    <class name="MappedMarker" table="mapped_marker">
+        <id name="zdbID" type="string">
+            <column name="zdb_id" not-null="true"/>
+        </id>
+
+        <discriminator type="string"
+                       formula="(CASE get_obj_type(marker_id)
+                                    WHEN 'ALT' THEN  'Feat'
+                                    ELSE             'Mark'
+                                 END)"/>
+
+        <many-to-one name="panel" class="Panel" column="refcross_id" insert="false" update="false"/>
+
+        <many-to-one name="submitter" class="org.zfin.profile.Person" column="submitter" insert="false" update="false"/>
+
+        <many-to-one name="lab" class="org.zfin.profile.Lab" column="lab" insert="false" update="false"/>
+
+        <many-to-one name="owner" class="org.zfin.profile.Person" column="owner" insert="false" update="false"/>
+
+        <property name="metric">
+            <column name="metric"/>
+        </property>
+
+        <property name="scoringData">
+            <column name="scoring_data"/>
+        </property>
+
+        <property name="mappedName">
+            <column name="map_name"/>
+        </property>
+
+        <property name="comments">
+            <column name="comments"/>
+        </property>
+
+        <property name="lg" type="string">
+            <column name="mm_chromosome" not-null="true"/>
+        </property>
+
+        <property name="lgLocation">
+            <column name="mm_chrom_location"/>
+        </property>
+
+        <subclass name="MappedMarkerImpl" discriminator-value="Mark">
+            <many-to-one name="marker" column="marker_id" insert="false" update="false"/>
+        </subclass>
+
+        <subclass name="MappedFeature" discriminator-value="Feat">
+            <many-to-one name="feature" column="marker_id" insert="false" update="false"/>
+        </subclass>
+
+    </class>
+
+    <class name="Panel" table="panels">
+        <id name="zdbID" type="string">
+            <column name="zdb_id" not-null="true"/>
+        </id>
+
+        <discriminator type="string"
+                       formula="(CASE ptype
+                                    WHEN 'Radiation Hybrid' THEN 'Radiation'
+                                    ELSE             'Meiotic  '
+                                 END)"/>
+
+        <property name="name" column="name" not-null="true"/>
+        <property name="sourceID" column="source" not-null="true"/>
+
+        <property name="abbreviation">
+            <column name="abbrev" not-null="true"/>
+        </property>
+
+        <property name="date">
+            <column name="panel_date" not-null="true"/>
+        </property>
+
+        <many-to-one name="producer" class="org.zfin.profile.Person" column="producer" insert="false" update="false"/>
+        <many-to-one name="sourcePerson" class="org.zfin.profile.Person" column="source" insert="false" update="false"/>
+        <many-to-one name="sourceCompany" class="org.zfin.profile.Company" column="source" insert="false"
+                     update="false"/>
+
+        <property name="type">
+            <column name="ptype"/>
+        </property>
+
+        <property name="displayOrder">
+            <column name="disp_order" not-null="true"/>
+        </property>
+
+        <property name="comments">
+            <column name="mappanel_comments"/>
+        </property>
+
+        <subclass name="org.zfin.mapping.MeioticPanel" discriminator-value="Meiotic  ">
+            <property name="numberOfMeioses" column="mappanel_meiotic_num_meioses"/>
+            <property name="crossType" column="mappanel_meiotic_cross_type"/>
+        </subclass>
+
+        <subclass name="org.zfin.mapping.RadiationPanel" discriminator-value="Radiation">
+            <property name="radiationDose" column="mappanel_rh_rad_dose"/>
+            <property name="numberOfCellLines" column="mappanel_rh_num_cell_lines"/>
+        </subclass>
+
+    </class>
+
+    <class name="PanelCount" table="panel_count">
+        <composite-id>
+            <key-property name="lg" column="panelcnt_chromosome" type="string"/>
+            <key-property name="markerType" column="panelcnt_mrkr_type" type="string"/>
+            <key-many-to-one name="panel" class="org.zfin.mapping.Panel">
+                <column name="panelcnt_panel_zdb_id"/>
+            </key-many-to-one>
+        </composite-id>
+
+        <property name="count">
+            <column name="panelcnt_count" not-null="true"/>
+        </property>
+    </class>
+
+    <class name="PrimerSet" table="PRIMER_SET">
+        <id name="zdbID" type="string">
+            <column name="zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="insertActiveData">true</param>
+            </generator>
+        </id>
+
+        <property name="annealingTemperature" column="anneal_temp"/>
+        <property name="bandSize" column="band_size"/>
+        <property name="forwardPrimer" column="fwd_primer"/>
+        <property name="reversePrimer" column="rev_primer"/>
+        <property name="restrictionEnzyme" column="restr_enzyme"/>
+
+        <many-to-one name="genotype" column="strain_id" insert="false" update="false"/>
+        <many-to-one name="marker" column="marker_id" insert="false" update="false"/>
+    </class>
+
+
+</hibernate-mapping>
+

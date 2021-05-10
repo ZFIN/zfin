@@ -1,0 +1,31 @@
+<module>
+
+    <inherits name='com.google.gwt.user.User'/>
+    <inherits name='org.zfin.gwt.lookup.Lookup'/>
+    <inherits name='org.zfin.gwt.root.Root'/>
+    <inherits name="com.google.gwt.logging.Logging"/>
+
+    <add-linker name="xsiframe" />
+
+    <source path='dto'/>
+    <source path='event'/>
+    <source path='ui'/>
+
+    <entry-point class='org.zfin.gwt.curation.ui.CurationEntryPoint'/>
+
+    <servlet path="/ajax/curation" class="org.zfin.gwt.curation.server.CurationExperimentRPCImpl"/>
+    <servlet path="/ajax/curation-structures" class="org.zfin.gwt.curation.server.StructureRPCImpl"/>
+    <servlet path="/ajax/curation-phenotype" class='org.zfin.gwt.curation.server.CurationPhenotypeRPCImpl'/>
+    <servlet path="/ajax/curation-filter" class='org.zfin.gwt.curation.server.CurationFilterRPCImpl'/>
+    <servlet path="/ajax/termservice" class='org.zfin.gwt.root.server.MarkerGoEvidenceRPCServiceImpl'/>
+    <servlet path="/ajax/markerservice" class="org.zfin.gwt.root.server.MarkerRPCServiceImpl"/>
+    <servlet path="/ajax/featureservice" class="org.zfin.gwt.curation.server.FeatureRPCServiceImpl"/>
+<!--
+        <define-property name="user.agent" values="gecko" />
+    <define-property name="locale" values="en"/>
+-->
+
+    <set-property name="gwt.logging.logLevel" value="INFO"/>
+    <set-property name="gwt.logging.enabled" value="TRUE"/>
+    <set-property name="gwt.logging.consoleHandler" value="ENABLED"/>
+</module>

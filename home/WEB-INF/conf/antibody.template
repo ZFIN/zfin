@@ -1,0 +1,69 @@
+<table><tbody>
+<tr>
+<th><p> Antibody&nbsp;Name: </p></th>
+<td><p>
+{text-data:AntibodyName}{page-info:title}{text-data}
+ </p></td>
+</tr>
+<tr>
+<th><p> Other names, clone ids, catalog ids etc. </p></th>
+<td><p> {text-data:OtherInfo}{text-data}</p></td>
+</tr>
+<tr>
+<th><p> Antibody Registry ID. </p></th>
+<td><p> {text-data:ABRegID}{text-data}</p></td>
+</tr>
+<tr>
+<th><p> Does it work on zebrafish? </p></th>
+<td><p> {list-data:WorksOnZebrafish}{list-option}yes{list-option}{list-option}no{list-option}{list-data} </p></td>
+</tr>
+<tr>
+<th><p> Host organism </p></th>
+<td><p> {text-data:HostOrganism}{text-data} </p></td>
+</tr>
+<tr>
+<th><p> Immunogen organism</p></th>
+<td><p> {text-data:ImmunogenOrganism}{text-data} </p></td>
+</tr>
+<tr>
+<th><p> Antibody isotype </p></th>
+<td><p> {text-data:AntibodyIsotype}{text-data}</p></td>
+</tr>
+<tr>
+<th><p> Antibody type </p></th>
+<td><p> {text-data:AntibodyType}{text-data} </p></td>
+</tr>
+<tr>
+<th><p> Anatomical structures recognized <br class="atl-forced-newline" />
+(use terms from the <a href="http://zfin.org/action/ontology/search">ZFIN Anatomical Ontology</a>) </p></th>
+<td><p> {text-data:AnatomicalStructuresRecognized}{text-data} </p></td>
+</tr>
+<tr>
+<th><p> Recognized target molecules (gene names, domains, epitopes ...)  </p></th>
+<td><p /><p>
+{text-data:ZFINGenes}{text-data}
+</p></td>
+</tr>
+<tr>
+<th><p> Suppliers </p></th>
+<td><p>
+ {text-data:Suppliers}{text-data}
+ </p></td>
+</tr>
+</tbody></table>
+<p />
+
+<h3>Assays Tested</h3>
+
+<table><tbody>
+<tr>
+<th><p> Assay </p></th>
+<th><p> Prep </p></th>
+<th><p>Worked </p></th>
+<th><p> Notes </p></th>
+</tr>
+{table:Assays Tested}
+</tbody></table>
+
+<h3>Notes</h3>
+{text-data:Comments|type=area|width=400px|height=150px}{text-data}

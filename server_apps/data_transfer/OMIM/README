@@ -1,0 +1,23 @@
+
+-- loadOMIM.sql
+##################################################
+#
+#    README for OMIM dir
+#
+##################################################
+
+------------------------
+OBJECTIVE
+-------------------------
+
+  Load OMIM phenotype(disorder) data into ZFIN.
+  No attributions to any publication.
+  Table: OMIM_Phenotype
+
+-------------------------
+EXECUTION
+--------------------------
+
+   Run:	gmake run  (OMIM.pl)
+
+   This is run weekly by cron (may be too frequent?). 

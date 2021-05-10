@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <include file="source/org/zfin/db/load/1110/ZFIN-6301.sql"/>
+    <include file="source/org/zfin/db/load/1110/add_eco_go_mapping.sql"/>
+    <include file="source/org/zfin/db/load/1110/ZFIN-6190.sql"/>
+    <include file="source/org/zfin/db/load/1110/add_goref_id.sql"/>
+    <include file="source/org/zfin/db/load/1110/ZFIN-6301b.sql"/>
+    <include file="source/org/zfin/db/load/1110/PLC-165.sql"/>
+
+</databaseChangeLog>

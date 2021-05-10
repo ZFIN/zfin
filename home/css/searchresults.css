@@ -1,0 +1,121 @@
+/**** style declaration for zfin return results class *****/
+
+table.searchresults {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+}
+
+table.searchresults th {
+    text-align: left;
+    vertical-align: bottom;
+    padding-left: 5px;
+    padding-right: 5px;
+    background: #ccc;
+}
+
+table.searchresults td {
+    text-align: left;
+    vertical-align: top;
+    padding: 3px;
+}
+
+table.searchresults caption {
+    font-weight: bold;
+    text-align: center;
+    vertical-align: top;
+    padding-bottom: 15px;
+}
+
+table.searchresults td.anatomy {
+    font-size: small;
+    vertical-align: top;
+}
+
+table.searchresults td.thumbnail {
+    text-align: right;
+}
+
+table.searchresults td.small {
+    font-size: small;
+}
+
+table.searchresults tr.odd {
+    background-color: #EEEEEE;
+}
+
+table.searchresults tr.even {
+    background-color: #fff;
+}
+
+.column-sort-button {
+    position: relative;
+    top: 1px;
+    left: -1px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: small;
+    width: 14px;
+    height: 12px;
+    background: no-repeat center;
+}
+
+.selected-sort-column .column-sort-button {
+    border-color: #000;
+    background-color: #000;
+}
+
+.selected-sort-column.column-sort-asc .column-sort-button {
+    background-image: url(/images/sort-arrow-down-selected.png);
+}
+
+.selected-sort-column.column-sort-desc .column-sort-button {
+    background-image: url(/images/sort-arrow-up-selected.png);
+}
+
+.unselected-sort-column .column-sort-button {
+    border-color: #669;
+    background-color: #e8e8ff;
+}
+
+.unselected-sort-column:hover .column-sort-button {
+    border-color: #669;
+    background-color: #e8e8ff;
+}
+
+.unselected-sort-column.column-sort-asc:hover .column-sort-button {
+    background-image: url(/images/sort-arrow-down-unselected.png);
+}
+
+.unselected-sort-column.column-sort-desc:hover .column-sort-button {
+    background-image: url(/images/sort-arrow-up-unselected.png);
+}
+
+.selected-radio-label {
+    font-weight: bold;
+}
+
+.csv {
+    background-color: LightGreen;
+}
+
+.tsv {
+    background-color: PaleGreen;
+}
+
+.gff3 {
+    background-color: orange;
+}
+
+.other {
+    background-color: SpringGreen;
+}
+
+.form-inline-input-group {    
+    padding: 1em;
+}
+
+.form-inline-input-group label {
+    padding-left: 5px;
+}

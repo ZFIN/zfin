@@ -1,0 +1,13 @@
+ZFA:0000823|5-9 somites|5-9 somites|ZFA:0001211
+ZFA:0000823|10-13 somites|10-13 somites|ZFA:0000823
+
+
+
+ZFA:0000824|5-9 somites|5-9 somites|ZFA:0001211
+ZFA:0000823|10-13 somites|10-13 somites|ZFA:0000823
+
+ZFA:0000825|5-9 somites|5-9 somites|ZFA:0001211
+ZFA:0000823|10-13 somites|10-13 somites|ZFA:0000823
+
+
+

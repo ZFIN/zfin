@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="xshao" id="ZFIN-6089_load">
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1103/ZFIN-6089.csv"
+                  tableName="tmp_to_convert" encoding="UTF-8">
+            <column name="gene_id" type="String"/>
+        </loadData>
+
+    </changeSet>
+
+</databaseChangeLog>

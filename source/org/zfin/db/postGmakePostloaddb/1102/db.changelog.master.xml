@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+
+   <include file="source/org/zfin/db/postGmakePostloaddb/1102/ZFIN-5893_pre.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1102/ZFIN-5893.xml" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1102/ZFIN-5893.sql" />
+   <include file="source/org/zfin/db/postGmakePostloaddb/1102/DLOAD-572_pre.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1102/DLOAD-572.xml" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1102/DLOAD-572.sql" />
+ <include file="source/org/zfin/db/postGmakePostloaddb/1102/DLOAD-561a_pre.sql" />
+ <include file="source/org/zfin/db/postGmakePostloaddb/1102/DLOAD-561a.xml" />
+ <include file="source/org/zfin/db/postGmakePostloaddb/1102/DLOAD-561a.sql" />
+ <include file="source/org/zfin/db/postGmakePostloaddb/1102/DLOAD-561b_pre.sql" />
+ <include file="source/org/zfin/db/postGmakePostloaddb/1102/DLOAD-561b.xml" />
+ <include file="source/org/zfin/db/postGmakePostloaddb/1102/DLOAD-561b.sql" />
+ <include file="source/org/zfin/db/postGmakePostloaddb/1102/DLOAD-561c_pre.sql" />
+ <include file="source/org/zfin/db/postGmakePostloaddb/1102/DLOAD-561c.xml" />
+ <include file="source/org/zfin/db/postGmakePostloaddb/1102/DLOAD-561c.sql" />
+ <include file="source/org/zfin/db/postGmakePostloaddb/1102/DLOAD-561d_pre.sql" />
+ <include file="source/org/zfin/db/postGmakePostloaddb/1102/DLOAD-561d.xml" />
+ <include file="source/org/zfin/db/postGmakePostloaddb/1102/DLOAD-561d.sql" />
+ <include file="source/org/zfin/db/postGmakePostloaddb/1102/JENK-324.sql" />
+
+</databaseChangeLog>

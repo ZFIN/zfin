@@ -1,0 +1,34 @@
+<listView>
+    <owner class="hudson" reference="../../.."/>
+    <name>Scheduled Jobs on Mirror</name>
+    <filterExecutors>false</filterExecutors>
+    <filterQueue>false</filterQueue>
+    <properties class="hudson.model.View$PropertyList"/>
+    <jobNames>
+        <comparator class="hudson.util.CaseInsensitiveComparator"/>
+        <string>Check-Term-Stage-Range_d</string>
+	<string>Check-STR-Gene-Abbreviation_m</string>
+        <string>Check-Transcript-Gene-Abbreviation_m</string>
+        <string>Elsevier-Reports_w</string>
+        <string>Figure-Permission_m</string>
+        <string>Lab-Address-Change_w</string>
+	<string>New-Constructs_w</string>
+	<string>Check-Foreign-Species-In-Constructs_w</string>
+        <string>Phenotype-Statistics-Report_m</string>
+        <string>Query-Cost-Check_d</string>
+        <string>Scrub-Scan_m</string>
+        <string>Undefined-Environment_m</string>
+        <string>Uninformative-Gene-Nomenclature_m</string>
+        <string>Vega-Statistics-Report_m</string>
+        <string>Check-Pubs-With-Duplicate-PubmedIds_m</string>
+    </jobNames>
+    <jobFilters/>
+    <columns>
+        <hudson.views.StatusColumn/>
+        <hudson.views.JobColumn/>
+        <hudson.views.BuildButtonColumn/>
+        <hudson.views.LastDurationColumn/>
+        <hudson.plugins.nextexecutions.columns.NextExecutionColumn plugin="next-executions@1.0.5"/>
+    </columns>
+    <recurse>false</recurse>
+</listView>

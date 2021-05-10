@@ -1,0 +1,13 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+        xmlns:ui='urn:ui:com.google.gwt.uibinder'
+        xmlns:g='urn:import:com.google.gwt.user.client.ui'
+        xmlns:zfin-ui='urn:import:org.zfin.gwt.curation.ui'
+        xmlns:zfin-mod='urn:import:org.zfin.gwt.curation.ui.experiment'
+        >
+    <g:FlowPanel>
+        <zfin-mod:ExperimentAddView ui:field="experimentAddView" styleName="mb-3"/>
+        <zfin-mod:ConditionAddView ui:field="conditionAddView" styleName="mb-3"/>
+    </g:FlowPanel>
+
+</ui:UiBinder>

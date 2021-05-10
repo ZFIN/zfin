@@ -1,0 +1,94 @@
+#------------------------------------------------------------------------
+#
+# Include file to be included at the end of Makefiles that have app pages
+# and that can use the default set of rules defined in this include file.
+#
+# See make.default.rules for the include file to use with standard makefiles
+# that don't work with app pages.
+#
+# Note that not every makefile can include one of the default rule files.
+# If there is anything non-standard about any of the rules in a makefile
+# then that makefile should not include either of the rules.
+#
+# This include file expects to have the calling makefile define these
+# variables.
+#
+#  TOP        This must be defined.  This file also expects $(TOP)/make.include
+#             to already have been included.
+#  TARGETDIR  This MUST be defined.
+#  SUBDIRS    This can be defined, undefined, or defined and empty.
+#  GENERICS   This can be defined, undefined, or defined and empty.
+#  STATICS    This can be defined, undefined, or defined and empty.
+#
+# For the last 3, undefined, and defined and empty produce the same results.
+#
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# !! See $(TOP)/Makefile and $(TOP)/make.include for a full explanation !!
+# !! of the makefile hierarchy this makefile is a part of, and of the   !!
+# !! format and conventions used in this makefile.                      !!
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#
+#
+
+
+# ---------------  Variable Definitions  --------------------------------
+
+SPECIFICTARGETS = $(foreach SPEC, $(GENERICS), $(TARGETDIR)/$(SPEC))
+STATICTARGETS = $(foreach STAT, $(STATICS), $(TARGETDIR)/$(STAT))
+TARGETS = $(SPECIFICTARGETS) $(STATICTARGETS)
+
+# ---------------  Production Rules  ------------------------------------
+
+.PHONY : all sanitycheck clean clobber $(SUBDIRS)
+
+
+all : $(TARGETDIR) $(TARGETS) $(SUBDIRS)
+
+
+$(TARGETDIR) :
+	$(TARGET_MKDIR) $(TARGETDIR);
+
+$(SPECIFICTARGETS) : $(TARGETDIR)/% : % $(TRANSLATETABLE)
+	$(MAKESPECIFIC) $< $(TRANSLATETABLE) $@
+	-$(WEBLINTIFMX) $@
+	$(LOADAPPPAGE) $(DBNAME) $@
+
+$(STATICTARGETS) : $(TARGETDIR)/% : %
+	$(TARGET_CP) $^ $@
+	@$(TOUCH) $@
+	-$(WEBLINTIFMX) $@
+	$(LOADAPPPAGE) $(DBNAME) $@
+
+$(SUBDIRS) :
+	$(MAKE) -C $@
+
+
+
+# ---------------  Maintenance Rules  -----------------------------------
+
+clean :				# No local intermediate files
+	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
+
+
+# Clobber, in addition to its usual behavior, also deletes the app pages
+# from the web pages table.
+
+clobber :			# Remove targets, but not target dir.
+    ifdef TARGETS
+	rm -f $(TARGETS)
+    endif
+	echo '$(foreach GNRC,$(GENERICS), delete from webpages where id = "$(APGPREFIX)$(GNRC)";)' | $(DBACCESS) $(DBNAME)
+	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
+
+sanitycheck :
+    ifdef GENERICS
+	-$(SPECIFICCHECK)
+    endif
+	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )
+
+
+# define one time only target for special uses
+
+onetimeonly :
+	$(ONETIMEONLY)
+	$(foreach SUBDIR,$(SUBDIRS), $(MAKE) -C $(SUBDIR) $@; )

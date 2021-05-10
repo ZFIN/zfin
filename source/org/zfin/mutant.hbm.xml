@@ -1,0 +1,394 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.jboss.org/dtd/hibernate/hibernate-mapping-3.0.dtd">
+
+<!-- Alwyas include the full package in each class.name attribute. This allows refactoring to identify
+     the class and include them. Otherwise a refactoring of a class reference here is not recognized and
+     the class and include them. Otherwise a refactoring of a class reference here is not recognized and
+     could potentially break the code (e.g. moving a clas  into a different package. -->
+<hibernate-mapping package="org.zfin.mutant">
+
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="phenotypeTag">
+        <param name="enumClassname">org.zfin.mutant.PhenotypeStatement$Tag</param>
+    </typedef>
+
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="goEvidenceCode">
+        <param name="enumClassname">org.zfin.gwt.root.dto.GoEvidenceCodeEnum</param>
+    </typedef>
+
+    <typedef class="org.zfin.framework.StringEnumValueUserType" name="goFlag">
+        <param name="enumClassname">org.zfin.gwt.root.dto.GoEvidenceQualifier</param>
+    </typedef>
+    <typedef class="org.zfin.framework.StringEnumNameUserType" name="featureType">
+        <param name="enumClassname">org.zfin.gwt.root.dto.FeatureTypeEnum</param>
+    </typedef>
+
+    <class name="Fish" table="fish">
+        <id name="zdbID" type="string">
+            <column name="fish_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">FISH</param>
+                <param name="insertActiveData">true</param>
+            </generator>
+        </id>
+
+        <property name="name" column="fish_name"/>
+        <property name="nameOrder" column="fish_name_order"/>
+        <property name="displayName" column="fish_full_name"/>
+        <property name="handle" column="fish_handle"/>
+        <property name="order" column="fish_order"/>
+        <property name="wildtype" column="fish_is_wildtype"/>
+        <property name="fishFunctionalAffectedGeneCount" column="fish_functional_affected_gene_count"/>
+        <property name="fishPhenotypicConstructCount" column="fish_phenotypic_construct_count"/>
+        <many-to-one name="genotype" column="fish_genotype_zdb_id" not-null="true"/>
+
+        <set name="suppliers" lazy="true">
+            <key column="idsup_data_zdb_id" />
+            <one-to-many class="org.zfin.profile.FishSupplier" />
+        </set>
+
+        <set name="fishExperiments" lazy="true">
+            <key column="genox_fish_zdb_id"/>
+            <one-to-many class="org.zfin.mutant.FishExperiment"/>
+        </set>
+
+        <set name="aliases" lazy="true" table="data_alias" order-by="dalias_alias_lower" inverse="false">
+            <key column="dalias_data_zdb_id"/>
+            <one-to-many class="org.zfin.mutant.FishAlias"/>
+        </set>
+
+        <set name="secondaryFishSet" lazy="true">
+            <key column="zrepld_new_zdb_id"/>
+            <one-to-many class="SecondaryFish"/>
+        </set>
+
+        <bag name="strList" lazy="true" table="fish_str" access="field">
+            <key column="fishstr_fish_zdb_id"/>
+            <many-to-many class="SequenceTargetingReagent" column="fishstr_str_zdb_id"/>
+        </bag>
+    </class>
+
+    <class name="DiseaseAnnotation" table="disease_annotation">
+        <id name="zdbID" type="string">
+            <column name="dat_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">DAT</param>
+                <param name="insertActiveData">true</param>
+            </generator>
+        </id>
+        <property name="evidenceCode" column="dat_evidence_term_zdb_id"/>
+        <many-to-one name="publication" column="dat_source_zdb_id" class="org.zfin.publication.Publication"/>
+        <many-to-one name="disease" column="dat_term_zdb_id" class="org.zfin.ontology.GenericTerm"/>
+        <bag name="diseaseAnnotationModel" lazy="true" table="disease_annotation_model">
+            <key column="damo_dat_zdb_id"/>
+            <one-to-many class="org.zfin.mutant.DiseaseAnnotationModel"/>
+        </bag>
+
+    </class>
+    <class name="DiseaseAnnotationModel" table="disease_annotation_model">
+        <id name="ID" type="long">
+            <column name="damo_pk_id" not-null="true"/>
+            <generator class="identity"/>
+        </id>
+
+        <many-to-one name="diseaseAnnotation" column="damo_dat_zdb_id" class="org.zfin.mutant.DiseaseAnnotation"/>
+
+        <many-to-one name="fishExperiment" column="damo_genox_zdb_id" class="org.zfin.mutant.FishExperiment"/>
+
+    </class>
+
+    <class name="org.zfin.mutant.GoEvidenceCode" table="go_evidence_code" mutable="false">
+        <id name="code" column="goev_code" type="string"/>
+        <property name="name" column="goev_name"/>
+        <property name="order" column="goev_display_order"/>
+    </class>
+
+    <class name="org.zfin.mutant.GoFlag" table="go_flag" mutable="false">
+        <id column="gflag_name" name="name" type="string"/>
+        <property name="displayOrder" column="gflag_display_order" type="integer"/>
+    </class>
+
+    <class name="org.zfin.mutant.MarkerGoTermEvidenceCreatedBySource"
+           table="marker_go_term_evidence_annotation_created_by_source" mutable="false">
+        <id name="id" column="mrkrgoevcb_pk_id"/>
+        <property name="name" column="mrkrgoevcb_name" not-null="true"/>
+        <property name="url" column="mrkrgoevcb_url" not-null="false"/>
+    </class>
+
+    <class name="org.zfin.mutant.MarkerGoTermEvidence" table="marker_go_term_evidence">
+        <id name="zdbID" type="string">
+            <column name="mrkrgoev_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">MRKRGOEV</param>
+                <param name="insertActiveData">true</param>
+            </generator>
+        </id>
+        <many-to-one name="marker" column="mrkrgoev_mrkr_zdb_id" not-null="true"/>
+        <many-to-one name="source" column="mrkrgoev_source_zdb_id" not-null="true"/>
+        <many-to-one name="goTerm" column="mrkrgoev_term_zdb_id" not-null="true"/>
+        <property name="note" column="mrkrgoev_notes" not-null="false"/>
+        <many-to-one name="evidenceCode" column="mrkrgoev_evidence_code" class="org.zfin.mutant.GoEvidenceCode"
+                     not-null="true"/>
+
+        <many-to-one name="createdBy" column="mrkrgoev_contributed_by" not-null="false"
+                     class="org.zfin.profile.Person"/>
+        <property name="createdWhen" column="mrkrgoev_date_entered" not-null="true"/>
+        <many-to-one name="modifiedBy" column="mrkrgoev_modified_by" not-null="false" class="org.zfin.profile.Person"/>
+        <property name="modifiedWhen" column="mrkrgoev_date_modified" not-null="true"/>
+        <property name="externalLoadDate" column="mrkrgoev_external_load_date" not-null="false"/>
+        <property name="organizationCreatedBy" column="mrkrgoev_annotation_organization_created_by" not-null="true"/>
+        <many-to-one name="gafOrganization" column="mrkrgoev_annotation_organization" not-null="true"/>
+        <set name="noctuaModels" lazy="true" inverse="false" table="noctua_model_annotation" cascade="all">
+            <key column="nma_mrkrgoev_zdb_id"/>
+            <many-to-many class="NoctuaModel" column="nma_nm_id"/>
+        </set>
+
+        <property name="flag" column="mrkrgoev_gflag_name" not-null="false" type="goFlag"/>
+        <many-to-one name="qualifierRelation" column="mrkrgoev_relation_term_zdb_id" not-null="true"/>
+        <many-to-one name="geneProductFormID"  column="mrkrgoev_protein_dblink_zdb_id"/>
+
+        <set name="inferredFrom" lazy="false" inverse="true">
+            <key column="infgrmem_mrkrgoev_zdb_id"/>
+            <one-to-many class="InferenceGroupMember"/>
+        </set>
+
+        <set name="goTermAnnotationExtnGroup" lazy="false" inverse="true">
+            <key column="mgtaeg_mrkrgoev_zdb_id"/>
+            <one-to-many class="MarkerGoTermAnnotationExtnGroup"/>
+        </set>
+
+    </class>
+
+    <class name="org.zfin.datatransfer.go.GafOrganization" table="marker_go_term_evidence_annotation_organization">
+        <id name="id" column="mrkrgoevas_pk_id"/>
+        <property name="organization" column="mrkrgoevas_annotation_organization" not-null="true"/>
+        <property name="definition" column="mrkrgoevas_definition" not-null="true"/>
+        <property name="url" column="mrkrgoevas_organization_url"/>
+    </class>
+
+    <class name="InferenceGroupMember" table="inference_group_member">
+        <composite-id>
+            <key-property name="markerGoTermEvidenceZdbID" column="infgrmem_mrkrgoev_zdb_id"/>
+            <key-property name="inferredFrom" column="infgrmem_inferred_from"/>
+        </composite-id>
+    </class>
+
+    <class name="org.zfin.mutant.MarkerGoTermAnnotationExtn" table="marker_go_term_annotation_extension">
+        <id name="id" type="long">
+            <column name="mgtae_pk_id" not-null="true"/>
+            <generator class="identity"/>
+        </id>
+
+        <property name="relationshipTerm" column="mgtae_relationship_term_zdb_id"></property>
+        <property name="identifierTermText" column="mgtae_term_text"/>
+        <property name="identifierTerm" column="mgtae_identifier_term_zdb_id"></property>
+        <property name="annotExtnDBLink" column="mgtae_dblink_zdb_id"/>
+        <many-to-one name="annotExtnGroupID" class="MarkerGoTermAnnotationExtnGroup"
+                     column="mgtae_extension_group_id"></many-to-one>
+
+    </class>
+
+    <class name="MarkerGoTermAnnotationExtnGroup" table="marker_go_term_annotation_extension_group">
+        <id name="id" type="long">
+            <column name="mgtaeg_annotation_extension_group_id" not-null="true"/>
+            <generator class="identity"/>
+        </id>
+        <many-to-one name="mgtaegMarkerGoEvidence" class="org.zfin.mutant.MarkerGoTermEvidence"
+                     column="mgtaeg_mrkrgoev_zdb_id"/>
+        <set name="mgtAnnoExtns" lazy="true" inverse="true">
+            <key column="mgtae_extension_group_id"/>
+            <one-to-many class="org.zfin.mutant.MarkerGoTermAnnotationExtn"/>
+        </set>
+
+    </class>
+
+    <class name="org.zfin.mutant.GenotypeFeature" table="genotype_feature">
+        <id name="zdbID" type="string">
+            <column name="genofeat_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                                <param name="type">GENOFEAT</param>
+                <param name="insertActiveData">true</param>
+            </generator>
+        </id>
+
+        <many-to-one name="zygosity" class="org.zfin.mutant.Zygosity" column="genofeat_zygocity"/>
+        <many-to-one name="dadZygosity" class="org.zfin.mutant.Zygosity" column="genofeat_dad_zygocity"/>
+        <many-to-one name="momZygosity" class="org.zfin.mutant.Zygosity" column="genofeat_mom_zygocity"/>
+        <many-to-one name="genotype" class="org.zfin.mutant.Genotype" column="genofeat_geno_zdb_id"/>
+        <many-to-one name="feature" class="org.zfin.feature.Feature" column="genofeat_feature_zdb_id"/>
+    </class>
+
+    <class name="org.zfin.mutant.FishExperiment" table="fish_experiment">
+        <id name="zdbID">
+            <column name="genox_zdb_id"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">GENOX</param>
+                <param name="insertActiveData">true</param>
+            </generator>
+        </id>
+
+        <property name="standard" column="genox_is_standard" not-null="true" type="java.lang.Boolean"/>
+        <property name="standardOrGenericControl" column="genox_is_std_or_generic_control" not-null="true"
+                  type="java.lang.Boolean"/>
+
+        <many-to-one name="experiment" class="org.zfin.expression.Experiment">
+            <column name="genox_exp_zdb_id"/>
+        </many-to-one>
+
+        <many-to-one name="fish">
+            <column name="genox_fish_zdb_id"/>
+        </many-to-one>
+
+        <set name="phenotypeExperiments" lazy="true" inverse="true">
+            <key column="phenox_genox_zdb_id"/>
+            <one-to-many class="org.zfin.mutant.PhenotypeExperiment"/>
+        </set>
+
+        <set name="expressionExperiments" lazy="true">
+            <key column="xpatex_genox_zdb_id"/>
+            <one-to-many class="org.zfin.expression.ExpressionExperiment"/>
+        </set>
+
+        <set name="geneGenotypeExperiments" lazy="true">
+            <key column="mfs_genox_zdb_id"/>
+            <one-to-many class="GeneGenotypeExperiment"/>
+        </set>
+
+        <set name="diseaseAnnotationModels" lazy="true">
+            <key column="damo_genox_zdb_id"/>
+            <one-to-many class="DiseaseAnnotationModel"/>
+        </set>
+
+    </class>
+
+    <class name="org.zfin.mutant.PhenotypeExperiment" table="phenotype_experiment">
+        <id name="id" type="long">
+            <column name="phenox_pk_id" not-null="true"/>
+            <generator class="identity"/>
+        </id>
+        <many-to-one name="fishExperiment" column="phenox_genox_zdb_id" class="org.zfin.mutant.FishExperiment"/>
+        <many-to-one name="startStage" column="phenox_start_stg_zdb_id" class="org.zfin.anatomy.DevelopmentStage"/>
+        <many-to-one name="endStage" column="phenox_end_stg_zdb_id" class="org.zfin.anatomy.DevelopmentStage"/>
+        <many-to-one name="figure" column="phenox_fig_zdb_id" class="org.zfin.expression.Figure"/>
+        <property name="dateCreated" column="phenox_created_date"/>
+        <property name="dateLastModified" column="phenox_last_modified"/>
+
+        <set name="phenotypeStatements" lazy="true" inverse="true">
+            <key column="phenos_phenox_pk_id"/>
+            <one-to-many class="org.zfin.mutant.PhenotypeStatement"/>
+        </set>
+
+    </class>
+
+    <class name="org.zfin.mutant.PhenotypeStatement" table="phenotype_statement">
+        <id name="id" type="long">
+            <column name="phenos_pk_id" not-null="true"/>
+            <generator class="identity"/>
+        </id>
+        <property name="dateCreated" column="phenos_created_date" not-null="true"/>
+        <many-to-one name="phenotypeExperiment" column="phenos_phenox_pk_id" not-null="true"/>
+        <component name="entity" class="org.zfin.ontology.PostComposedEntity" lazy="false">
+            <many-to-one name="superterm"
+                         column="phenos_entity_1_superterm_zdb_id" lazy="false"/>
+            <many-to-one name="subterm"
+                         column="phenos_entity_1_subterm_zdb_id" lazy="false"/>
+        </component>
+        <many-to-one name="quality" column="phenos_quality_zdb_id"/>
+        <component name="relatedEntity" class="org.zfin.ontology.PostComposedEntity">
+            <many-to-one name="superterm"
+                         column="phenos_entity_2_superterm_zdb_id"/>
+            <many-to-one name="subterm"
+                         column="phenos_entity_2_subterm_zdb_id"/>
+        </component>
+        <property name="tag" column="phenos_tag"/>
+    </class>
+
+    <class name="org.zfin.mutant.OmimPhenotype" table="omim_phenotype">
+        <id name="id" type="long">
+            <column name="omimp_pk_id" not-null="true"/>
+            <generator class="identity"/>
+        </id>
+        <property name="name" column="omimp_name"/>
+        <property name="omimNum" column="omimp_omim_id"/>
+        <many-to-one name="ortholog" column="omimp_ortho_zdb_id"/>
+        <property name="humanGeneMimNumber" column="omimp_human_gene_id"/>
+
+        <set name="externalReferences" lazy="true" table="omimp_termxref_mapping" access="field">
+            <key column="otm_omimp_id"/>
+            <many-to-many class="org.zfin.ontology.TermExternalReference" column="otm_tx_id"/>
+        </set>
+
+    </class>
+
+
+    <class name="org.zfin.expression.ConditionDataType" table="condition_data_type">
+
+        <id name="zdbID" type="string">
+            <column name="cdt_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">CDT</param>
+            </generator>
+        </id>
+
+        <property name="name" column="cdt_name"/>
+
+        <property name="group" column="cdt_group"/>
+
+        <property name="significance" column="cdt_significance" type="int"/>
+
+    </class>
+
+    <class name="org.zfin.mutant.Zygosity" table="zygocity">
+        <id name="zdbID" type="string">
+            <column name="zyg_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">ZYG</param>
+            </generator>
+        </id>
+
+        <property name="name" column="zyg_name"/>
+        <property name="abbreviation" column="zyg_abbrev"/>
+        <property name="definition" column="zyg_definition"/>
+        <property name="alleleDisplay" column="zyg_allele_display"/>
+        <property name="genoOntologyID" column="zyg_geno_ont_id"/>
+
+    </class>
+
+    <class name="org.zfin.mutant.PhenotypeStructure" table="apato_infrastructure">
+        <id name="zdbID" type="string">
+            <column name="api_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">API</param>
+                <param name="insertActiveData">true</param>
+            </generator>
+        </id>
+        <many-to-one name="publication" column="api_pub_zdb_id"/>
+        <many-to-one name="person" column="api_curator_zdb_id"/>
+        <property name="date" column="api_date"/>
+        <property name="tag" column="api_tag" type="phenotypeTag"/>
+        <component name="entity" class="org.zfin.ontology.PostComposedEntity">
+            <many-to-one name="superterm"
+                         column="api_entity_1_superterm_zdb_id"/>
+            <many-to-one name="subterm"
+                         column="api_entity_1_subterm_zdb_id"/>
+        </component>
+        <component name="relatedEntity" class="org.zfin.ontology.PostComposedEntity">
+            <many-to-one name="superterm"
+                         column="api_entity_2_superterm_zdb_id"/>
+            <many-to-one name="subterm"
+                         column="api_entity_2_subterm_zdb_id"/>
+        </component>
+        <many-to-one name="qualityTerm" column="api_quality_zdb_id"/>
+
+    </class>
+
+    <class name="org.zfin.mutant.GeneGenotypeExperiment" table="mutant_fast_Search">
+        <composite-id>
+            <key-many-to-one name="gene" column="mfs_data_zdb_id"/>
+            <key-many-to-one name="fishExperiment" column="mfs_genox_zdb_id"/>
+        </composite-id>
+    </class>
+
+</hibernate-mapping>
+

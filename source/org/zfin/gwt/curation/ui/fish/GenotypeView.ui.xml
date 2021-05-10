@@ -1,0 +1,22 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+        xmlns:ui='urn:ui:com.google.gwt.uibinder'
+        xmlns:g='urn:import:com.google.gwt.user.client.ui'
+        xmlns:zfin='urn:import:org.zfin.gwt.root.ui'
+        >
+
+    <g:FlowPanel>
+        <g:HorizontalPanel spacing="0">
+            <g:Label text="GENOTYPE LIST: &nbsp;" styleName="summaryTitle"/>
+            <zfin:ShowHideToggle widget="{viewPanel}" ui:field="showHideToggle" show="false"/>
+            <g:Label ui:field="noneDefinedGenoLabel" text="&nbsp;None defined" styleName="no-data-tag"/>
+        </g:HorizontalPanel>
+        <g:FlowPanel ui:field="viewPanel">
+            <zfin:ZfinFlexTable ui:field="genotypeListTable" numberOfColumns="3" styleName="searchresults groupstripes"
+                                cellSpacing="5" cellPadding="5"/>
+            <g:Grid ui:field="dataTable"/>
+            <zfin:SimpleErrorElement ui:field="errorLabel"/>
+            <g:Image ui:field="loadingImage" url="/images/ajax-loader.gif" visible="false"/>
+        </g:FlowPanel>
+    </g:FlowPanel>
+</ui:UiBinder>

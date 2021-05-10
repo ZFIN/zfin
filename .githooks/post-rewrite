@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [ "$1" == "rebase" ]; then
+  $(dirname "$0")/post-merge
+fi
+
+exit 0

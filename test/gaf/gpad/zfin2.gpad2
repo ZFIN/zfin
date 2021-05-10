@@ -1,0 +1,4 @@
+!gpa-version: 1.2
+!collation date: 2018-04-04
+!collated from production models in https://github.com/geneontology/noctua-models/ where col1 matches zfin
+ZFIN:ZDB-GENE-040426-2330	NOT	RO:0002263	GO:0002244	 ZFIN:ZDB-PUB-170214-264	ECO:0000315			20180402	ZFIN    occurs_in(UBERON:0002329),causally_upstream_of(GO:0002244)		contributor=http://orcid.org/0000-0002-4142-7153|noctua-model-id=gomodel:59dc728000000555|model-state=production

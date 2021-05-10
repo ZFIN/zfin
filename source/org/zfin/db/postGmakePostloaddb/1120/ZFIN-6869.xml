@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+
+
+    <changeSet author="pm" id="ZFIN-6869">
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1120/ZFIN-6869.csv"
+                  tableName="tmp_ftrnote" encoding="UTF-8">
+            <column name="featureid" type="String"/>
+            <column name="ftrtype" type="String"/>
+            <column name="ftrnote" type="String"/>
+            <column name="alleletag" type="String"/>
+            <column name="varianttag" type="String"/>
+
+
+        </loadData>
+
+    </changeSet>
+</databaseChangeLog>

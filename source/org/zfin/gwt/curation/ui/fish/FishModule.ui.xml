@@ -1,0 +1,14 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+        xmlns:ui='urn:ui:com.google.gwt.uibinder'
+        xmlns:g='urn:import:com.google.gwt.user.client.ui'
+        xmlns:zfin-fish='urn:import:org.zfin.gwt.curation.ui.fish'
+        >
+
+    <g:FlowPanel>
+        <zfin-fish:FishGenotypeConstruction ui:field="genotypeConstructionView" styleName="mb-3"/>
+        <zfin-fish:FishView ui:field="fishView" styleName="mb-3"/>
+        <zfin-fish:GenotypeView ui:field="genotypeView" styleName="mb-3"/>
+    </g:FlowPanel>
+
+</ui:UiBinder>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+<changeSet author="sierra" id="to_activate_table_load.xml">
+<loadData file="source/org/zfin/db/load/1109/to_activate_table_load.csv"
+tableName="to_activate" encoding="UTF-8">
+  <column name="pmcid" type="String"/>
+  <column name="activationtype" type="String"/>
+</loadData>
+
+</changeSet>
+</databaseChangeLog>

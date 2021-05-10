@@ -1,0 +1,77 @@
+^DATABASE = GeoMiame
+!Database_name = Gene Expression Omnibus (GEO)
+!Database_institute = NCBI NLM NIH
+!Database_web_link = http://www.ncbi.nlm.nih.gov/projects/geo
+!Database_email = geo@ncbi.nlm.nih.gov
+^PLATFORM = GPL5675
+!Platform_title = Compugen 16K Zebrafish Spotted Oligo Array
+!Platform_geo_accession = GPL5675
+!Platform_status = Public on Jul 28 2007
+!Platform_submission_date = Jul 26 2007
+!Platform_last_update_date = Jul 27 2007
+!Platform_technology = spotted oligonucleotide
+!Platform_distribution = non-commercial
+!Platform_organism = Danio rerio
+!Platform_manufacturer = Adelaide Microarray Facility
+!Platform_manufacture_protocol = All relevant protocols are provided at the website:
+!Platform_manufacture_protocol = http://www.microarray.adelaide.edu.au/
+!Platform_web_link = http://www.microarray.adelaide.edu.au/
+!Platform_contact_name = Darrin,F,Taylor
+!Platform_contact_email = d.taylor@imb.uq.edu.au
+!Platform_contact_phone = +61 7 3346 2607
+!Platform_contact_fax = +61 7 3346 2101
+!Platform_contact_laboratory = Expression Genomics Lab
+!Platform_contact_department = Genomics and Bioinformatics
+!Platform_contact_institute = Institute for Molecular Bioscience, Uni of Qld
+!Platform_contact_address = Research Rd
+!Platform_contact_city = St Lucia
+!Platform_contact_state = Qld
+!Platform_contact_zip/postal_code = 4072
+!Platform_contact_country = Australia
+!Platform_contact_web_link = http://kidney.scgap.org
+!Platform_sample_id = GSM214707
+!Platform_sample_id = GSM214708
+!Platform_sample_id = GSM214709
+!Platform_sample_id = GSM214710
+!Platform_series_id = GSE8656
+!Platform_data_row_count = 16199
+#ID = 
+#CGEN_ID = Compugen Zebrafish Identifier
+#UG = Unigene Cluster Identifier
+#GENE_NAME = Common Gene Description
+#GB_ACC = GenBank Accession number LINK_PRE:"http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Search&db=Nucleotide&term="
+#SPOT_ID = 
+!platform_table_begin
+ID	CGEN_ID	UG	GENE_NAME	GB_ACC	SPOT_ID
+119226	Blank	0			CONTROL
+227750	ssDNA	0	Danio rerio	ABC123	CONTROL
+227825	CGENXEB_456016237_0	0	fj38d02.x1 zebrafish adult brain cDNA 3', mRNA sequence.	AW233581	
+227826	CGENXEB_456015469_0	0	fd14a04.x1 Sugano Kawakami zebrafish DRA Danio rerio cDNA clone 2351502 3' similar to TR:O75166 O75166 KIAA0679 PROTEIN ;, mRNA sequence.	AI667631	
+227827	CGENXEB_456014701_0	0	ft45c03.y1 Gong zebrafish ovary Danio rerio cDNA clone 5153644 5', mRNA sequence.	BI708256	
+227834	CGENXEB_456009325_0	0	fb04b09.y1 zebrafish fin day1 regeneration Danio rerio cDNA 5', mRNA sequence.	AI330992	
+227835	CGENXEB_456008557_0	14394	ft34g09.x1 Gong zebrafish testis Danio rerio cDNA clone 5152697 3' similar to TR:Q15369 Q15369 RNA POLYMERASE II ELONGATION FACTOR SIII, P15 SUBUNIT. ;, mRNA sequence.	BI672121	
+244007	455.851	446.746	0.029107563090317
+244008	512.257	567.503	-0.14776014792701
+244009	14547.4	14697.1	-0.014770107671561
+244010	584.975	615.836	-0.074171292682599
+244011	405.025	380.672	0.089462492245042
+244012	1646.05	1709.95	-0.054945897070354
+244013	611.862	622.521	-0.024916195041413
+244014	621.092	624.401	-0.007665911388688
+244015	684.145	629.028	0.12117789625023
+244016	143.245	227.009	-0.66426477973429
+244017	3060.1	3624.83	-0.24433452212777
+244018	428.351	413.376	0.051338845753048
+244019	547.66	563.915	-0.042197220694939
+244020	318.061	279.122	0.18840761538564
+244021	385.305	413.205	-0.10085678463952
+244127	678.428	650.823	0.059930435944955
+!sample_table_end
+^SAMPLE = GSM214710
+!Sample_title = 18S z000511 KLF4-4 CY5 vs STD-4 CY3
+!Sample_geo_accession = GSM214710
+!Sample_status = Public on Aug 01 2008
+!Sample_submission_date = Aug 02 2007
+!Sample_last_update_date = Aug 02 2007
+!Sample_type = RNA
+!Sample_channel_count = 2

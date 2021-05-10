@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+
+    <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-544.sql" />
+    <!--<include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-524.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-525.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-554.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-526.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-534.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-529.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-532.sql" />
+     <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-527.sql" />-->
+    <include file="source/org/zfin/db/postGmakePostloaddb/1108/ZFIN-6273.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-502.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-512.sql" />   
+    <include file="source/org/zfin/db/postGmakePostloaddb/1108/ZFIN-6281.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1108/ZFIN-6234a.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1108/ZFIN-6234_pre.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1108/ZFIN-6234.xml" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1108/ZFIN-6234.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-553.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1108/ZARC-2247.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1108/CUR-911.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1108/PUB-556.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1108/CUR-912.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1108/CUR-914.sql" />
+
+
+</databaseChangeLog>

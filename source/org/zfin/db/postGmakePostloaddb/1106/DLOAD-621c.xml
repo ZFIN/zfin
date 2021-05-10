@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+
+
+    <changeSet author="pm" id="DLOAD-621c">
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1106/DLOAD-621c.csv"
+                  tableName="featuredata" encoding="UTF-8">
+            <column name="alleleid" type="String"/>
+            <column name="ensdarg1" type="String"/>
+            <column name="ensdarg2" type="String"/>
+
+
+        </loadData>
+
+    </changeSet>
+</databaseChangeLog>

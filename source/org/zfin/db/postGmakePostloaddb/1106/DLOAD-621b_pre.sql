@@ -1,0 +1,10 @@
+--liquibase formatted sql
+--changeset pm:DLOAD-621b_pre
+
+drop table featuregenedata;
+create table featuregenedata (
+ allele text not null,
+ ensdargid text not null,
+        geneid text not null
+            ) ;
+

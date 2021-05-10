@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+  <include file="source/org/zfin/db/1077/postGmakePostloaddb/pearl/changelog/addDisplayNames.sql"/> 
+  <include file="source/org/zfin/db/1077/postGmakePostloaddb/pearl/changelog/createSangerLocationsTable.sql"/>
+  <include file="source/org/zfin/db/1077/postGmakePostloaddb/pearl/changelog/sangerLocations.xml"/>
+  <include file="source/org/zfin/db/1077/postGmakePostloaddb/pearl/changelog/loadChrforSanger.sql"/> 
+  <include file="source/org/zfin/db/1077/postGmakePostloaddb/pearl/changelog/dropSangerLocationsTable.sql"/>
+  <include file="source/org/zfin/db/1077/postGmakePostloaddb/pearl/changelog/14156.sql"/> 
+  <include file="source/org/zfin/db/1077/postGmakePostloaddb/pearl/changelog/dnaComments.sql"/> 
+  <include file="source/org/zfin/db/1077/postGmakePostloaddb/pearl/changelog/rnaComments.sql"/> 
+  <include file="source/org/zfin/db/1077/postGmakePostloaddb/pearl/changelog/proteinComments.sql"/> 
+  <include file="source/org/zfin/db/1077/postGmakePostloaddb/pearl/changelog/messedUpCommentLoad.sql"/> 
+  <include file="source/org/zfin/db/1077/postGmakePostloaddb/pearl/changelog/exceptions.sql"/> 
+  <include file="source/org/zfin/db/1077/postGmakePostloaddb/pearl/changelog/14146.sql"/>
+  <include file="source/org/zfin/db/1077/postGmakePostloaddb/pearl/changelog/loadChrForBurgess.sql"/>
+</databaseChangeLog>

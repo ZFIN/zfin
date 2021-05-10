@@ -1,0 +1,19 @@
+<module>
+
+    <inherits name='com.google.gwt.user.User'/>
+    <inherits name='org.zfin.gwt.root.Root'/>
+    <add-linker name="xsiframe" />
+
+    <source path='ui'/>
+    <source path='event'/>
+    <source path='dto'/>
+
+    <entry-point class='org.zfin.gwt.marker.ui.MarkerEditEntryPoint'/>
+
+    <servlet path="/ajax/transcriptservice" class="org.zfin.gwt.marker.server.TranscriptRPCServiceImpl"/>
+    <servlet path="/ajax/cloneservice" class="org.zfin.gwt.marker.server.CloneRPCServiceImpl"/>
+    <servlet path="/ajax/antibodyservice" class="org.zfin.gwt.marker.server.AntibodyRPCServiceImpl"/>
+    <servlet path="/ajax/featureservice" class="org.zfin.gwt.curation.server.FeatureRPCServiceImpl"/>
+    <servlet path="/ajax/imageservice" class="org.zfin.gwt.marker.server.ImageRPCServiceImpl"/>
+    <servlet path="/ajax/anatomylookup" class="org.zfin.gwt.root.server.LookupRPCServiceImpl"/>
+</module>

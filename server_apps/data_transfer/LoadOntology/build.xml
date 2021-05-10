@@ -1,0 +1,603 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="load ontology" default="load-ontology" basedir=".">
+
+    <property name="qualityOboURL"
+              value="http://purl.obolibrary.org/obo/pato.obo"/>
+    <property name="geneOboURL" value="http://purl.obolibrary.org/obo/go/snapshot/go.obo"/>
+    <property name="diseaseOboURL"
+              value="http://purl.obolibrary.org/obo/doid.obo"/>
+    <property name="mpathOboURL" value="https://raw.githubusercontent.com/PaulNSchofield/mpath/master/mpath.obo"/>
+    <property name="sequenceOboURL" value="http://purl.obolibrary.org/obo/so.obo"/>
+    <property name="ecoOboURL"
+              value="https://raw.githubusercontent.com/evidenceontology/evidenceontology/master/eco.obo"/>
+    <property name="spatialOboURL"
+              value="http://purl.obolibrary.org/obo/bspo.obo"/>
+    <property name="chebiOboURL" value="ftp://ftp.ebi.ac.uk/pub/databases/chebi/ontology/chebi.obo"/>
+    <property name="uberonSourceURL" value="http://ontologies.berkeleybop.org/uberon/basic.obo"/>
+    <property name="cellOboURL" value="http://purl.obolibrary.org/obo/cl.obo"/>
+    <property name="cellOboFile" value="file:///home/informix/Curation/cell.obo"/>
+    <property name="soOboURL"
+              value="https://raw.githubusercontent.com/The-Sequence-Ontology/SO-Ontologies/master/Ontology_Files/so.obo"/>
+    <property name="zecoTaxonomyOboURL" value="file:///home/informix/Curation/zeco-taxonomy.obo"/>
+    <property name="zecoTaxonomySourceURL" value="/home/informix/Curation/zeco-taxonomy-source.txt"/>
+<!-- For local development
+    <property name="goQualifierSourceURL" value="go-qualifier-source.txt"/>
+-->
+    <property name="zroSourceURL" value="file:///home/informix/Curation/zfin-ro.obo"/>
+    <property name="obiURL" value="file:///home/informix/Curation/obi.obo"/>
+    <property name="goQualifierSourceURL" value="file:///home/informix/Curation/go-qualifier.obo"/>
+    <property name="goQualifierOboURL" value="go-qualifier.obo"/>
+    <property name="zecoOboURL" value="/home/informix/Curation/zeco.obo"/>
+    <property name="anatomyOboURL" value="file:///home/informix/Curation/anatomy.obo"/>
+    <property name="stageOboURL" value="file:///home/informix/Curation/zfs.obo"/>
+    <property name="mmoURL" value="file:///home/informix/Curation/mmo.obo"/>
+
+    <property name="root.dir" value="${basedir}/../../../"/>
+    <property name="web.dir" value="${root.dir}/home"/>
+    <property name="web-inf.dir" value="${web.dir}/WEB-INF"/>
+    <property name="classbin.dir" value="${web-inf.dir}/classes"/>
+    <property name="lib" value="${root.dir}/lib/Java"/>
+    <property name="web.lib" value="${web-inf.dir}/lib"/>
+    <property name="log.dir" value="${basedir}/logs"/>
+    <property name="jvm.arg.log4j" value="-Dlog4j.configurationFile=log4j2.xml"/>
+    <property name="jvm.mem" value="-Xmx4g"/>
+    <property name="run-directory" value="./obo-files"/>
+
+    <property environment="env"/>
+
+    <!-- Classpath definitions -->
+    <path id="classpath">
+        <pathelement location="${classbin.dir}"/>
+        <fileset dir="${web.lib}">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${env.SOURCEROOT}/lib/Java">
+            <include name="*jdbc*.jar"/>
+            <include name="postgres*.jar"/>
+            <include name="slf4*.jar"/>
+        </fileset>
+    </path>
+
+    <path id="extended.classpath">
+        <path refid="classpath"/>
+        <!-- This class needs to come first to ensure that unit test methods are executed in the order they appear in the source file -->
+        <fileset dir="${lib}">
+            <include name="junit-orderOfExecution.jar"/>
+        </fileset>
+        <fileset dir="${lib}">
+            <include name="*.jar"/>
+            <include name="*.zip"/>
+        </fileset>
+    </path>
+
+    <target name="load-sm">
+        <antcall target="load-spatial-ontology"/>
+    </target>
+
+    <target name="load-spatial-ontology" depends="init">
+        <load-ontology oboDirectory="${run-directory}" oboFileName="spatial.obo"/>
+    </target>
+
+    <target name="download-spatial-ontology">
+        <property name="localOboFile" value="spatial.obo"/>
+        <property name="oboFileURL" value="${spatialOboURL}"/>
+        <antcall target="download-ontology"/>
+    </target>
+
+
+    <target name="load-m">
+        <antcall target="load-mmo-ontology"/>
+    </target>
+
+    <target name="load-mmo-ontology" depends="init">
+        <load-ontology oboDirectory="${run-directory}" oboFileName="mmo.obo"/>
+    </target>
+
+    <target name="load-obi-ontology" depends="init">
+        <load-ontology oboDirectory="${run-directory}" oboFileName="obi.obo"/>
+    </target>
+
+
+  <target name="download-mmo-ontology">
+        <property name="localOboFile" value="mmo.obo"/>
+        <property name="oboFileURL" value="${mmoURL}"/>
+        <antcall target="download-ontology"/>
+    </target>
+
+    <target name="load-anatomy-ontology" depends="init">
+        <property name="localOboFilePath" value="${run-directory}/zebrafish_anatomy.obo"/>
+        <echo message="${localOboFilePath}"/>
+        <antcall target="load-ontology-with-stages"/>
+    </target>
+
+    <target name="load-anatomy-stage-ontology" depends="init">
+        <load-ontology oboDirectory="${run-directory}" oboFileName="zfs.obo"/>
+    </target>
+
+    <target name="load-go-qualifier-ontology" depends="init">
+        <load-ontology oboDirectory="${run-directory}" oboFileName="go-qualifier.obo"/>
+    </target>
+
+    <target name="load-zro-ontology" depends="init">
+        <load-ontology oboDirectory="${run-directory}" oboFileName="zfin-ro.obo"/>
+    </target>
+
+    <target name="load-uberon-ontology" depends="init">
+        <load-ontology oboDirectory="${run-directory}" oboFileName="uberon-ontology.obo"/>
+    </target>
+
+    <target name="load-zeco-ontology">
+        <load-ontology oboDirectory="${run-directory}" oboFileName="zeco.obo" scripts="${scriptFilesNoAnnotation}"/>
+    </target>
+
+    <target name="load-cell-ontology">
+        <load-ontology oboDirectory="${run-directory}" oboFileName="cell.obo" scripts="${scriptFilesNoAnnotation}"/>
+    </target>
+
+    <target name="load-zeco-taxonomy-ontology" depends="init">
+        <load-ontology oboDirectory="${run-directory}" oboFileName="zeco-taxonomy.obo"
+                       scripts="${scriptFilesNoAnnotation}"/>
+    </target>
+
+
+    <target name="load-so-ontology" depends="init">
+        <load-ontology oboDirectory="${run-directory}" oboFileName="so-xp-simple.obo"/>
+    </target>
+
+    <target name="load-gene-ontology" depends="init">
+        <load-ontology oboDirectory="${run-directory}" oboFileName="gene-ontology.obo"/>
+    </target>
+
+    <target name="load-chebi-ontology" depends="init">
+        <load-ontology oboDirectory="${run-directory}" oboFileName="chebi-ontology.obo"
+                       scripts="${scriptFilesNoAnnotation}"/>
+    </target>
+
+    <target name="load-eco-ontology" depends="init">
+        <load-ontology oboDirectory="${run-directory}" oboFileName="eco-ontology.obo"
+                       scripts="${scriptFilesNoAnnotation}"/>
+    </target>
+
+
+    <taskdef name="groovyc"
+             classname="org.codehaus.groovy.ant.Groovyc">
+        <classpath>
+            <fileset  dir="/opt/misc/groovy/lib" includes="*.jar"/>
+        </classpath>
+    </taskdef>
+
+    <target name="get-ecogo-mapping">
+        <exec dir="../eco_go_mapping" executable="getECOGOMapping.groovy" />
+    </target>
+
+    <target name="load-disease-ontology" depends="init">
+        <load-ontology oboDirectory="${run-directory}" oboFileName="disease-ontology.obo"/>
+    </target>
+
+    <target name="load-mpath-ontology" depends="init">
+        <load-ontology oboDirectory="${run-directory}" oboFileName="mouse_pathology.obo"/>
+    </target>
+
+    <target name="download-gene-ontology">
+        <property name="localOboFile" value="gene-ontology.obo"/>
+        <property name="oboFileURL" value="${geneOboURL}"/>
+        <antcall target="download-ontology"/>
+    </target>
+
+    <target name="download-chebi-ontology">
+        <property name="localOboFile" value="chebi-ontology.obo"/>
+        <property name="oboFileURL" value="${chebiOboURL}"/>
+        <antcall target="download-ontology"/>
+    </target>
+
+    <target name="download-so-ontology">
+        <property name="localOboFile" value="so-xp-simple.obo"/>
+        <property name="oboFileURL" value="${soOboURL}"/>
+        <antcall target="download-ontology"/>
+    </target>
+
+    <target name="download-disease-ontology">
+        <property name="localOboFile" value="disease-ontology.obo"/>
+        <property name="oboFileURL" value="${diseaseOboURL}"/>
+        <antcall target="download-ontology"/>
+    </target>
+
+    <target name="download-mpath-ontology">
+        <property name="localOboFile" value="mouse_pathology.obo"/>
+        <property name="oboFileURL" value="${mpathOboURL}"/>
+        <antcall target="download-ontology"/>
+    </target>
+
+    <target name="download-sequence-ontology">
+        <property name="localOboFile" value="sequence-ontology.obo"/>
+        <property name="oboFileURL" value="${sequenceOboURL}"/>
+        <antcall target="download-ontology"/>
+    </target>
+
+    <target name="download-eco-ontology">
+        <property name="localOboFile" value="eco-ontology.obo"/>
+        <property name="oboFileURL" value="${ecoOboURL}"/>
+        <antcall target="download-ontology"/>
+    </target>
+
+    <target name="download-zro-ontology">
+        <property name="localOboFile" value="zfin-ro.obo"/>
+        <property name="oboFileURL" value="${zroSourceURL}"/>
+        <antcall target="download-ontology"/>
+    </target>
+
+    <target name="download-uberon-ontology">
+        <property name="localOboFile" value="uberon-ontology.obo"/>
+        <property name="oboFileURL" value="${uberonSourceURL}"/>
+        <antcall target="download-ontology"/>
+    </target>
+
+    <target name="download-zeco-ontology">
+        <property name="localOboFile" value="zeco.obo"/>
+        <property name="oboFileURL" value="${zecoOboURL}"/>
+        <copy file="${zecoOboURL}" tofile="${run-directory}/${localOboFile}"/>
+    </target>
+
+    <target name="download-go-qualifier-ontology">
+        <property name="localOboFile" value="go-qualifier.obo"/>
+        <property name="oboFileURL" value="${goQualifierSourceURL}"/>
+        <antcall target="download-ontology"/>
+    </target>
+
+    <target name="download-anatomy-ontology">
+        <property name="localOboFile" value="zebrafish_anatomy.obo"/>
+        <property name="oboFileURL" value="${anatomyOboURL}"/>
+        <antcall target="download-ontology"/>
+    </target>
+
+    <target name="download-anatomy-stage-ontology">
+        <property name="localOboFile" value="zfs.obo"/>
+        <property name="oboFileURL" value="${stageOboURL}"/>
+        <antcall target="download-ontology"/>
+    </target>
+
+    <target name="download-cell-ontology">
+        <property name="localOboFile" value="cell.obo"/>
+        <property name="oboFileURL" value="${cellOboFile}"/>
+        <antcall target="download-ontology"/>
+    </target>
+
+    <target name="load-quality-ontology" depends="init">
+        <load-ontology oboDirectory="${run-directory}" oboFileName="quality.obo"/>
+    </target>
+
+    <target name="load-zeco" depends="download-zeco-ontology,load-zeco-ontology"/>
+
+    <target name="load-so" depends="download-so-ontology,load-so-ontology"/>
+
+    <target name="load-quality" depends="download-quality-ontology,load-quality-ontology"/>
+
+    <target name="load-spatial" depends="download-spatial-ontology,load-spatial-ontology"/>
+
+    <target name="load-mmo" depends="download-mmo-ontology,load-mmo-ontology"/>
+
+    <target name="load-obi" depends="download-obi-ontology,load-obi-ontology"/>
+
+    <target name="load-gene" depends="download-gene-ontology,load-gene-ontology"/>
+
+    <target name="load-chebi" depends="download-chebi-ontology,load-chebi-ontology"/>
+
+    <target name="load-cell" depends="download-cell-ontology,load-cell-ontology"/>
+
+    <target name="load-eco" depends="download-eco-ontology,load-eco-ontology,get-ecogo-mapping"/>
+
+    <target name="load-zro" depends="download-zro-ontology,load-zro-ontology"/>
+
+    <target name="load-zeco-taxonomy" depends="load-zeco-taxonomy-ontology"/>
+
+    <target name="load-anatomy" depends="download-anatomy-ontology,load-anatomy-ontology"/>
+
+    <target name="load-stage" depends="download-anatomy-stage-ontology,load-anatomy-stage-ontology"/>
+
+    <target name="load-go-qualifier" depends="download-go-qualifier-ontology,load-go-qualifier-ontology"/>
+
+    <target name="load-disease" depends="download-disease-ontology,load-disease-ontology,run-omim-mapping-updates">
+    </target>
+
+    <target name="run-omim-mapping-updates">
+        <echo message="Updating the Omim Phenotype xref mapping table..."/>
+        <run-db-query db-query-file="../OMIM/update_omimp_termxref_mapping.sql" instanceName="${env.INSTANCE}"/>
+    </target>
+
+    <target name="load-mpath" depends="download-mpath-ontology,load-mpath-ontology"/>
+
+    <target name="load-sequence" depends="download-sequence-ontology,load-sequence-ontology"/>
+
+    <target name="load-sequence-ontology" depends="init">
+        <property name="localOboFile" value="${run-directory}/sequence-ontology.obo"/>
+        <load-ontology oboDirectory="${run-directory}" oboFileName="sequence-ontology.obo"/>
+    </target>
+
+    <target name="download-quality-ontology">
+        <property name="localOboFile" value="quality.obo"/>
+        <property name="oboFileURL" value="${qualityOboURL}"/>
+        <antcall target="download-ontology"/>
+    </target>
+
+    <target name="download-obi-ontology">
+        <property name="localOboFile" value="obi.obo"/>
+        <property name="oboFileURL" value="${obiURL}"/>
+        <antcall target="download-ontology"/>
+    </target>
+
+    <property name="scriptFiles"
+              value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationships.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,updateDefinitionReferences.sql,loadDBxrefs.sql,dropTempTables.sql"/>
+
+    <property name="scriptFilesNoAnnotation"
+              value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationships.sql,handleSynonyms.sql,loadSubsets.sql,updateDefinitionReferences.sql,loadDBxrefs.sql,dropTempTables.sql"/>
+
+    <macrodef name="load-ontology" description="Run the ontology loader">
+        <attribute name="oboFileName"/>
+        <attribute name="oboDirectory"/>
+        <attribute name="scripts" default="${scriptFiles}"/>
+
+        <sequential>
+            <echo>OBO dir : @{oboFileName}</echo>
+            <echo>OBO file: @{oboDirectory}</echo>
+            <echo>script Files: @{scripts}</echo>
+            <antcall target="clear-output-directory"/>
+            <java classname="org.zfin.ontology.datatransfer.service.LoadOntology" fork="yes" maxmemory="4g"
+                  failonerror="true">
+                <classpath refid="classpath"/>
+                <arg value="-localOboFileName"/>
+                <arg value="@{oboDirectory}/@{oboFileName}"/>
+                <arg value="-log4jFilename"/>
+                <arg value="log4j.xml"/>
+                <arg value="-dbScriptFileNames"/>
+                <arg value="@{scripts}"/>
+                <arg value="-webrootDirectory"/>
+                <arg value="${web.dir}"/>
+                <arg value="-loadDir"/>
+                <arg value="${basedir}"/>
+                <arg value="-jobName"/>
+                <arg value="${JobName}"/>
+                <arg value="-forceLoad"/>
+                <arg value="${forceLoad}"/>
+                <jvmarg value="${jvm.arg.log4j}"/>
+            </java>
+        </sequential>
+    </macrodef>
+
+    <target name="clear-output-directory">
+        <delete dir="${JobName}"/>
+        <mkdir dir="${JobName}"/>
+    </target>
+
+
+    <target name="load-ontology-with-stages" description="Run the ontology loader">
+        <antcall target="clear-output-directory"/>
+        <property name="dbScriptFiles"
+                  value="loadTerms.sql,handleSecondaryTerms.sql,handleRelationshipsAndStages.sql,handleSynonyms.sql,fixAnnotationsUponOntologyLoad.sql,loadSubsets.sql,updateDefinitionReferences.sql,loadDBxrefs.sql,dropTempTables.sql"/>
+        <java classname="org.zfin.ontology.datatransfer.service.LoadOntology" fork="yes" maxmemory="2024m"
+              failonerror="true">
+            <classpath refid="classpath"/>
+            <arg value="-localOboFileName"/>
+            <arg value="${localOboFilePath}"/>
+            <arg value="-log4jFilename"/>
+            <arg value="log4j.xml"/>
+            <arg value="-dbScriptFileNames"/>
+            <arg value="${dbScriptFiles}"/>
+            <arg value="-webrootDirectory"/>
+            <arg value="${web.dir}"/>
+            <arg value="-loadDir"/>
+            <arg value="${basedir}"/>
+            <arg value="-jobName"/>
+            <arg value="${JobName}"/>
+            <arg value="-forceLoad"/>
+            <arg value="${forceLoad}"/>
+            <jvmarg value="${jvm.arg.log4j}"/>
+        </java>
+
+    </target>
+
+    <target name="term-stage-split-update" description="Split term-stage annotations into multiple annotations.">
+        <java classname="org.zfin.ontology.datatransfer.service.OntologyTermFigureStageUpdate" fork="yes"
+              maxmemory="256m"
+              failonerror="true">
+            <classpath refid="extended.classpath"/>
+            <arg value="-log4jFilename"/>
+            <arg value="log4j.xml"/>
+            <arg value="-termStageUpdateFile"/>
+            <arg value="term-stage-updates.txt"/>
+            <arg value="-webrootDirectory"/>
+            <arg value="${web.dir}"/>
+            <jvmarg value="${jvm.arg.log4j}"/>
+        </java>
+    </target>
+
+    <target name="update-term-annotations" description="update / delete individual xpatres records with term info.">
+        <java classname="org.zfin.ontology.datatransfer.service.ExpressionResultUpdate" fork="yes"
+              maxmemory="256m"
+              failonerror="true">
+            <classpath refid="classpath"/>
+            <arg value="-termStageUpdateFile"/>
+            <arg value="expression-result-update.txt"/>
+            <arg value="-webrootDirectory"/>
+            <arg value="${web.dir}"/>
+            <jvmarg value="${jvm.arg.log4j}"/>
+        </java>
+    </target>
+
+    <target name="check-obo-7bit" description="Check if a term name or a term definition contain a non-7-bit character">
+        <java classname="org.zfin.ontology.datatransfer.service.OntologyValidation" fork="yes" maxmemory="256m"
+              failonerror="true">
+            <classpath refid="classpath"/>
+            <arg value="-localOboFileName"/>
+            <arg value="anatomy.obo"/>
+            <arg value="-webrootDirectory"/>
+            <arg value="${web.dir}"/>
+            <jvmarg value="${jvm.arg.log4j}"/>
+        </java>
+
+    </target>
+
+    <macrodef name="run-db-query">
+        <attribute name="db-query-file"/>
+        <attribute name="instanceName"/>
+        <sequential>
+            <java classname="org.zfin.properties.RunSqlQueryTask" fork="yes" classpathref="classpath"
+                  failonerror="true">
+                <arg value="@{instanceName}"/>
+                <arg value="@{db-query-file}"/>
+                <arg value="${basedir}"/>
+                <arg value="${basedir}/../../../home/"/>
+                <jvmarg value="${jvm.arg.log4j}"/>
+            </java>
+        </sequential>
+    </macrodef>
+
+
+    <target name="download-ontology" depends="init" description="Run the ontology loader">
+        <echo>Downloading OBO file: ${oboFileURL}</echo>
+
+        <java classname="org.zfin.ontology.datatransfer.DownloadOntology" fork="yes"
+              failonerror="true">
+            <classpath refid="classpath"/>
+            <arg value="-localOboFileName"/>
+            <arg value="${run-directory}/${localOboFile}"/>
+            <arg value="-oboFileURL"/>
+            <arg value="${oboFileURL}"/>
+        </java>
+
+    </target>
+
+    <target name="init">
+        <echo message="Launching Ontology Loader"/>
+        <tstamp/>
+        <!--
+                <property name="run-directory" value="./run-${DSTAMP}"/>
+        -->
+        <property name="run-directory" value="./obo-files"/>
+        <mkdir dir="${run-directory}"/>
+    </target>
+
+    <target name="archive-run-directory">
+        <echo message="Archive run directory"/>
+        <mkdir dir="${run-directory}"/>
+    </target>
+
+    <property name="zeco-taxon-file" value="ZecoTaxonomyTerms.txt"/>
+
+    <tstamp>
+        <format property="time.now" pattern="dd:MM:yyyy HH:mm"/>
+    </tstamp>
+
+    <target name="create-zeco-taxonomy-owl-file">
+        <create-obo-file file-name="zeco-taxonomy" source-file-name="${zecoTaxonomySourceURL}"/>
+        <setHeaderForObo obo-file-name="zeco-taxonomy" namespace="zeco_taxonomy"/>
+    </target>
+
+    <target name="create-go-qualifier-file">
+        <create-obo-file file-name="go-qualifier" source-file-name="${goQualifierSourceURL}"/>
+        <setHeaderForObo obo-file-name="go-qualifier" namespace="go-qualifier"/>
+    </target>
+
+
+    <macrodef name="create-obo-file">
+        <attribute name="file-name"/>
+        <attribute name="source-file-name"/>
+        <sequential>
+            <echo message="Create a new @{file-name} file from @{source-file-name}"/>
+            <echo message="Connecting to ontofox.hegroup.org..."/>
+
+            <!-- Generate owl file at ontofox.hegroup.org from source file-->
+            <exec executable="curl">
+                <arg line="-F file=@'@{source-file-name}' -o obo-files/@{file-name}.owl http://ontofox.hegroup.org/service.php"/>
+            </exec>
+
+            <!-- convert owl file into an obo file -->
+            <java fork="true" jar="${env.SOURCEROOT}/lib/Java/ontologies/robot.jar">
+                <arg value="convert"/>
+                <arg value="--input"/>
+                <arg value="obo-files/@{file-name}.owl"/>
+                <arg value="--output"/>
+                <arg value="obo-files/@{file-name}.obo"/>
+            </java>
+
+        </sequential>
+    </macrodef>
+
+    <macrodef name="setHeaderForObo">
+        <attribute name="namespace"/>
+        <attribute name="obo-file-name"/>
+        <sequential>
+            <replaceregexp replace="ontology: @{namespace} ${line.separator}default-namespace: @{namespace}
+         ${line.separator}date: ${time.now}" byline="true" file="obo-files/@{obo-file-name}.obo">
+                <regexp pattern="ontology: (.*)"/>
+            </replaceregexp>
+            <replaceregexp replace="namespace: @{namespace}" byline="true" file="obo-files/@{obo-file-name}.obo">
+                <regexp pattern="namespace: (.*)"/>
+            </replaceregexp>
+        </sequential>
+    </macrodef>
+
+
+    <target name="test">
+        <filedate file="zeco-taxonomy.owl" property="file.modified.date"/>
+        <echo>The file "${file}" was modified on ${file.modified.date}</echo>
+    </target>
+
+    <scriptdef name="filedate" language="javascript">
+        <attribute name="file"/>
+        <attribute name="property"/>
+        <![CDATA[
+            file_name = attributes.get("file");
+            property_to_set = attributes.get("property");
+
+            file = new java.io.File(file_name);
+            file_date = file.lastModified();
+
+            date_format = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            formated_date = date_format.format(new java.util.Date(file_date));
+            project.setProperty(property_to_set, formated_date);
+        ]]>
+    </scriptdef>
+
+    <target name="usage">
+        <echo>
+            TARGETS:
+            download-quality-ontology
+            download-anatomy-ontology
+            download-anatomy-stage-ontology
+            download-gene-ontology
+            download-spatial-ontology
+            download-mmo-ontology
+            download-mpath-ontology
+            download-sequence-ontology
+            download-chebi-ontology
+            download-zeco-ontology
+            download-so-ontology
+
+            load-zeco-ontology
+            load-chebi-ontology
+            load-quality-ontology
+            load-anatomy-ontology
+            load-anatomy-stage-ontology
+            load-gene-ontology
+            load-spatial-ontology
+            load-mmo-ontology
+            load-mpath-ontology
+            load-sequence-ontology
+            load-so-ontology
+
+            load-zeco
+            load-so
+            load-chebi
+            load-quality
+            load-gene
+            load-quality
+            load-anatomy
+            load-mpath
+            load-sequence
+            load-mmo
+        </echo>
+    </target>
+
+
+</project>

@@ -1,0 +1,318 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.jboss.org/dtd/hibernate/hibernate-mapping-3.0.dtd">
+
+<!-- Alwyas include the full package in each class.name attribute. This allows refactoring to identify
+     the class and include them. Otherwise a refactoring of a class reference here is not recognized and
+     could potentially break the code (e.g. moving a clas  into a different package. -->
+<hibernate-mapping package="org.zfin.profile">
+
+    <class name="org.zfin.profile.Person" table="person">
+        <id name="zdbID" type="string">
+            <column name="zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">PERS</param>
+                <param name="insertActiveSource">true</param>
+            </generator>
+        </id>
+
+        <!--<property name="ownerID" column="owner"/>-->
+        <property name="nonZfinPublications" column="nonzf_pubs" lazy="true"/>
+        <property name="personalBio" column="pers_bio" lazy="true"/>
+
+        <property name="image"/>
+        <property name="url"/>
+        <property name="email"/>
+        <property name="fax"/>
+        <property name="phone"/>
+        <property name="orcidID" column="orcid_id"/>
+        <property name="address" column="address"/>
+        <property name="country" column="person_country"/>
+        <property name="shortName" column="name"/>
+        <property name="fullName" column="full_name"/>
+
+
+        <property name="emailList" column="on_dist_list" type="java.lang.Boolean"/>
+        <property name="deceased" column="pers_is_deceased" type="java.lang.Boolean"/>
+        <property name="hidden" column="pers_is_hidden" type="boolean" />
+
+        <property name="firstName" column="first_name"/>
+        <property name="lastName" column="last_name"/>
+        <!--<property name="middleNameOrInitial" column="middle_name_or_initial"/>-->
+
+        <!--not really mapped this way mapped from the other other direction -->
+        <!--<many-to-one name="addressFields" column="zdb_id" class="org.zfin.profile.Address" insert="false" update="false" lazy="true"/>-->
+
+        <!--not lazy because it is used in the header on every page-->
+        <set name="labs" table="int_person_lab">
+            <key column="source_id"/>
+            <many-to-many class="org.zfin.profile.Lab" column="target_id"/>
+        </set>
+
+        <set name="companies" lazy="true" table="int_person_company">
+            <key column="source_id"/>
+            <many-to-many class="org.zfin.profile.Company" column="target_id"/>
+        </set>
+
+        <set name="publications" lazy="true" table="int_person_pub">
+            <key column="source_id"/>
+            <many-to-many class="org.zfin.publication.Publication" column="target_id" order-by="pub_date desc"/>
+        </set>
+
+
+        <join table="zdb_submitters" optional="false">
+            <key column="zdb_id"/>
+            <component name="accountInfo">
+                <property name="login" not-null="true"/>
+                <property name="password"/>
+                <property name="role" column="access" not-null="true"/>
+                <property name="name" not-null="true"/>
+                <property name="cookie"/>
+                <property name="loginDate" column="issue_time"/>
+                <property name="previousLoginDate" column="previous_login"/>
+                <property name="accountCreationDate" column="create_date" not-null="true"/>
+                <property name="curator" column="is_curator" not-null="true"/>
+                <property name="student" column="is_student"/>
+                <property name="passwordResetKey" column="password_reset_key"/>
+                <property name="passwordResetDate" column="password_reset_date"/>
+            </component>
+        </join>
+
+    </class>
+
+    <!--
+        <class name="org.zfin.profile.Address" table="address">
+            <id name="id" column="add_pk_id">
+                <generator class="native"/>
+            </id>
+            <property name="ownerZdbID" column="add_owner_zdb_id"/>
+            <property name="institution" column="add_institution"/>
+            <property name="street1" column="add_street1"/>
+            <property name="street2" column="add_street2"/>
+            <property name="city" column="add_city"/>
+            <property name="stateCode" column="add_state_code"/>
+            &lt;!&ndash;<property name="province" column="add_province"/>&ndash;&gt;
+            <property name="countryCode" column="add_country_code"/>
+            <property name="postalCode" column="add_postal_code"/>
+            <property name="composite" column="add_composite"/>
+        </class>
+    -->
+
+    <class name="org.zfin.profile.Organization" abstract="true">
+        <id name="zdbID" column="zdb_id">
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <!--this is ignored -->
+                <!--<param name="type">LAB-COMPANY</param>-->
+                <param name="insertActiveSource">true</param>
+            </generator>
+        </id>
+
+        <property name="name"/>
+        <property name="url"/>
+        <property name="email"/>
+        <property name="fax"/>
+        <property name="phone"/>
+        <property name="address" column="address"/>
+        <property name="country" />
+        <property name="status"/>
+        <property name="bio"/>
+        <property name="image"/>
+        <many-to-one name="contactPerson" column="contact_person" class="org.zfin.profile.Person"/>
+
+        <set name="organizationUrls">
+            <key column="srcurl_source_zdb_id"/>
+            <one-to-many class="org.zfin.profile.SourceUrl"/>
+        </set>
+
+        <set name="markerSourceList" lazy="true" table="int_data_source">
+            <key column="ids_source_zdb_Id"/>
+            <many-to-many class="org.zfin.marker.Marker" column="ids_data_zdb_id"/>
+        </set>
+
+        <set name="markerSupplierList" lazy="true" table="int_data_supplier">
+            <key column="idsup_supplier_zdb_Id"/>
+            <many-to-many class="org.zfin.marker.Marker" column="idsup_data_zdb_id"/>
+        </set>
+
+        <set name="featureSourceList" lazy="true" table="int_data_source">
+            <key column="ids_source_zdb_Id"/>
+            <many-to-many class="org.zfin.feature.Feature" column="ids_data_zdb_id"/>
+        </set>
+
+        <set name="featureSupplierList" lazy="true" table="int_data_supplier">
+            <key column="idsup_supplier_zdb_Id"/>
+            <many-to-many class="org.zfin.feature.Feature" column="idsup_data_zdb_id"/>
+        </set>
+
+        <set name="genotypeSourceList" lazy="true" table="int_data_source">
+            <key column="ids_source_zdb_Id"/>
+            <many-to-many class="org.zfin.mutant.Genotype" column="ids_data_zdb_id"/>
+        </set>
+
+        <set name="genotypeSupplierList" lazy="true" table="int_data_supplier">
+            <key column="idsup_supplier_zdb_Id"/>
+            <many-to-many class="org.zfin.mutant.Genotype" column="idsup_data_zdb_id"/>
+        </set>
+
+        <union-subclass name="org.zfin.profile.Lab" table="lab">
+            <set name="memberList" lazy="true" table="int_person_lab">
+                <key column="target_id"/>
+                <many-to-many class="Person" column="source_id"/>
+            </set>
+        </union-subclass>
+
+        <union-subclass name="org.zfin.profile.Company" table="company">
+            <set name="memberList" lazy="true" table="int_person_company">
+                <key column="target_id"/>
+                <many-to-many class="Person" column="source_id"/>
+            </set>
+        </union-subclass>
+
+    </class>
+
+
+    <class abstract="true" name="org.zfin.profile.ObjectSupplier" table="int_data_supplier">
+        <composite-id>
+            <key-property name="dataZdbID" column="idsup_data_zdb_id"/>
+            <key-many-to-one name="organization" column="idsup_supplier_zdb_id" class="org.zfin.profile.Organization"/>
+        </composite-id>
+
+        <discriminator type="string"
+                       formula="(CASE get_obj_type(idsup_data_zdb_id)
+                                    WHEN 'ATB' THEN 'Marker'
+                                    WHEN 'BAC' THEN 'Marker'
+                                    WHEN 'CDNA' THEN 'Marker'
+                                    WHEN 'EST' THEN 'Marker'
+                                    WHEN 'FISH' THEN 'Fish  '
+                                    WHEN 'FOSMID' THEN 'Marker'
+                                    WHEN 'PAC' THEN 'Marker'
+                                    WHEN 'GENO' THEN 'Genoty'
+                                    WHEN 'ALT' THEN 'Featur'
+                                    WHEN 'TALEN' THEN 'Marker'
+                                    WHEN 'CRISPR' THEN 'Marker'
+                                    ELSE             'other-'
+                                 END)"/>
+
+        <property name="accNum">
+            <column name="idsup_acc_num"/>
+        </property>
+
+        <property name="availState">
+            <column name="idsup_avail_state"/>
+        </property>
+
+        <subclass name="org.zfin.profile.MarkerSupplier" discriminator-value="Marker">
+            <many-to-one name="marker" column="idsup_data_zdb_id" insert="false" update="false"/>
+        </subclass>
+
+        <subclass name="org.zfin.profile.GenotypeSupplier" discriminator-value="Genoty">
+            <many-to-one name="genotype" column="idsup_data_zdb_id" insert="false" update="false"/>
+        </subclass>
+
+        <subclass name="org.zfin.profile.FeatureSupplier" discriminator-value="Featur">
+            <many-to-one name="feature" column="idsup_data_zdb_id" insert="false" update="false"/>
+        </subclass>
+
+        <subclass name="org.zfin.profile.FishSupplier" discriminator-value="Fish  ">
+            <many-to-one name="fish" column="idsup_data_zdb_id" insert="false" update="false"/>
+        </subclass>
+    </class>
+
+    <class abstract="true" name="org.zfin.profile.ObjectSource" table="int_data_source">
+        <id name="id" type="long">
+            <column name="ids_pk_id" not-null="true"/>
+            <generator class="identity"/>
+        </id>
+        <discriminator type="string"
+                       formula="(CASE get_obj_type(ids_data_zdb_id)
+                                    WHEN 'ALT' THEN 'Featur'
+                                    WHEN 'GENO' THEN 'Genoty'
+                                    WHEN 'ETCONSTRCT' THEN 'Marker'
+                                    WHEN 'EST' THEN 'Marker'
+                                    WHEN 'GTCONSTRCT' THEN 'Marker'
+                                    WHEN 'TGCONSTRCT' THEN 'Marker'
+                                    ELSE             'other-'
+                                 END)"/>
+
+        <property name="dataZdbID" column="ids_data_zdb_id"/>
+        <many-to-one name="organization" column="ids_source_zdb_id" class="org.zfin.profile.Organization"/>
+
+        <subclass name="org.zfin.profile.FeatureSource" discriminator-value="Featur">
+            <many-to-one name="feature" column="ids_data_zdb_id" insert="false" update="false"/>
+        </subclass>
+    </class>
+
+    <class name="org.zfin.profile.SourceUrl" table="source_url">
+        <composite-id>
+            <key-many-to-one name="organization" column="srcurl_source_zdb_id" class="org.zfin.profile.Organization"/>
+            <key-property name="urlPrefix" column="srcurl_url"/>
+            <key-property name="businessPurpose" column="srcurl_purpose"/>
+        </composite-id>
+
+        <property name="hyperlinkName" column="srcurl_display_text"/>
+    </class>
+
+    <class name="org.zfin.profile.AccountInfo" table="zdb_submitters">
+
+        <!-- Do not create a new record on its own but use
+             the Person class. Only used to delete an account info record -->
+        <id name="zdbID" column="zdb_id" access="field">
+            <generator class="foreign">
+                <param name="property">accountInfo</param>
+            </generator>
+        </id>
+
+        <property name="login" not-null="true"/>
+
+        <property name="password" column="password"/>
+        <property name="role" column="access" not-null="true"/>
+        <property name="name" column="name" not-null="true"/>
+        <property name="cookie" column="cookie"/>
+        <property name="loginDate" column="issue_time"/>
+        <property name="previousLoginDate" column="previous_login"/>
+        <property name="accountCreationDate" column="create_date" not-null="true"/>
+
+    </class>
+
+    <class name="org.zfin.profile.OrganizationFeaturePrefix" table="source_feature_prefix">
+        <!-- Do not create a new record on its own but use
+
+             the Person class. Only used to delete an account info record -->
+        <composite-id>
+            <key-property name="currentDesignation" column="sfp_current_designation"/>
+            <key-many-to-one name="featurePrefix" column="sfp_prefix_id"/>
+            <key-many-to-one name="organization" column="sfp_source_zdb_id" class="Organization"/>
+        </composite-id>
+    </class>
+
+    <class name="org.zfin.profile.CuratorSession" table="curator_session">
+        <id name="ID" type="long">
+            <column name="cs_pk_id" not-null="true"/>
+            <generator class="identity"/>
+        </id>
+
+        <many-to-one name="curator"
+                     column="cs_person_zdb_id"
+                     class="org.zfin.profile.Person"
+                     lazy="no-proxy"/>
+
+        <many-to-one name="publication"
+                     column="cs_data_zdb_id"
+                     class="org.zfin.publication.Publication"
+                     lazy="no-proxy"
+                     not-null="false"/>
+
+        <property name="field">
+            <column name="cs_field_name"/>
+        </property>
+        <property name="value">
+            <column name="cs_field_name_value"/>
+        </property>
+
+    </class>
+
+
+</hibernate-mapping>
+
+

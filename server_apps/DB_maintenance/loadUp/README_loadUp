@@ -1,0 +1,177 @@
+SUMMARY:
+
+These directories were created in December of 2004 to hold images (imageLoadUp)
+and PDFs (PDFLoadUp) that had been stored in the database as blobs.
+
+Currently, these directories are owned by zfishweb (the user that .cgi
+scripts run as) and belong to the apache www group.
+
+***IMPORTANT***
+When moving zfin.org to development machine:
+After creating a good copy of the filesystems under the development machine-specific
+loadUp/ tree, you *must* change the file
+permissions on the rsync'd directory to be owned zfishweb:www. You must also alter the apache config
+files to allow open access to the development machine-specific images on development
+***IMPORTANT***
+
+The /bkup/ directories in each of the PDF and image directories hold
+copies of images that have been replaced by users.
+
+
+APACHE CONFIGURATION:
+
+Apache is configured to recognize /imageLoadUp as an alias of
+/research/zcentral(or zprod if on production server)/loadUp/imageLoadup
+and /PDFLoadUp as an alias of 
+/research/zcentral(or zprod if on production server)/loadUp/PDFLoadup
+on development.  The production apache configuration is slightly different
+
+Apache on production is configured to recognize /imageLoadUp as an alias of
+/research/zprod/loadUp/imageLoadup
+and /PDFLoadUp as an alias of 
+/research/zprod/loadUp/PDFLoadup
+
+Apache on development is also configured to recognize /development machineImageLoadUp 
+as an alias of /research/zcentral/loadUp/development machineLoadUp/development machineImageLoadUp
+and /development machinePDFLoadUp as an alias of 
+/research/zcentral/loadUp/development machineLoadup/development machinePDFLoadUp
+
+see /private/httpd/conf on emrbyonix or helix for more details.
+
+TRANSLATE TABLE INFO:
+
+In addition, all translate table files (except helix.tt and development machine.tt)
+define the following generic tags to access these directories:
+
+<!--|IMAGE_LOAD|-->		/imageLoadUp
+<!--|LOADUP_FULL_PATH|-->	/research/zcentral/loadUp
+<!--|PDF_LOAD|-->		/PDFLoadUp
+
+for the development machine.tt (with zfin.org on development machine)
+
+<!--|IMAGE_LOAD|-->		/development machineImageLoadUp/imageLoadUp
+<!--|LOADUP_FULL_PATH|-->	/opt/zfin/loadUp/development machineLoadUp
+<!--|PDF_LOAD|-->		/development machinePDFLoadUp/PDFLoadUp
+
+for the helix.tt, these tags are:
+
+<!--|IMAGE_LOAD|-->		/imageLoadUp
+<!--|LOADUP_FULL_PATH|-->	/opt/zfin/loadUp
+<!--|PDF_LOAD|-->		/PDFLoadUp
+
+***IMPORTANT***
+Note, for helix.tt and development machine.tt, the full path is actually redirected
+through ZfinLinks.  This is to help us when we move zfin.org to
+development machine.  See documentation in ZfinLinks for more information.
+The symlinks for these directories in ZfinLinks will *have* to be updated
+when moving zfin.org to development machine!
+***IMPORTANT***
+
+
+The apache configuration, along with these generic tags, means that in 
+apg pages, to access a file in /research/zcentral/loadUp/imageLoadUp
+one only needs to code <!--|IMAGE_LOAD|-->/$filename; where $filename is like 
+'ZDB-IMAGE-040101-1'.  
+
+Note, the '/' required after the image tag and before 
+the filename. 
+
+While the above apache configuration makes it easy to find the files
+via an apg page, scripts that do not run through the apache server need
+a full path to know where to store an uploaded file).
+<!--|LOADUP_FULL_PATH|--> is used for this purpose.
+
+In these kinds of scripts it is not uncommon to see
+<!--|LOADUP_FULL_PATH|--><!--|IMAGE_LOAD|-->/$filename as a filepath. 
+
+It is important to note that all development databases and .tt files point to 
+the same directory on development machine.  This means that any images loaded from hoover
+can also be seen on albino.  It also means that files can be overwritten
+if they have the same filename as is already present in the shared 
+directory.
+
+This does not mean that records will be created
+in the database clemdb if they are created in the database hoovdb, however.  
+Filesystem additions are GLOBAL to developers, database records are LOCAL 
+to developers.  
+
+When zfin.org is on development machine, the apache configuration changes slightly, and
+the development machine.tt file always points to slightly different directories.
+This is to prevent changes on the development machine to affect the
+production repository of pdfs/images.  
+
+See /private/http/conf/http.conf.development machine, and development machine.tt for details.
+
+FILE NAMING CONVENTIONS:
+
+Image files in the filesystem are named with their image zdb id,
+and image suffix like:
+ZDB-IMAGE-010101-1.jpg
+
+Image thumbnails are named with their image zdb id and an '_thumb' and 
+their image suffix like:
+ZDB-IMAGE-010101-1_thumb.jpg
+
+Images with annotations (mostly Thisse images) are named with their
+image zdb id and an '_annot' and their image suffix like:
+ZDB-IMAGE-010101-1_annot.jpg
+
+PDF files are named with their publication zdb id and a pdf suffix like:
+ZDB-PUB-010101-1.pdf
+
+Files are named this way for easy comparison with database records, and
+so that files can be automatically moved in an orderly manner (ie: all
+image files associated with ZDB-IMAGE-010101-1 can be moved together
+using their zdb_id prefix).
+
+VIEWING IMAGES/PDFS SANS DATABLADE:
+
+To view images (without using a webdatablade apg), follow the example
+below, substituting hoover with your website name and the zdb_id with the
+image_zdb_id that you're looking for:
+
+http://hoover.zfin.org/imageLoadUp/ZDB-IMAGE-040401-1.jpg
+
+NIGHTLY RSYNC:
+
+Every night, via a cron job, the production image/pdf filesystem is 
+compared to the development filesystem.  If there are differences, the 
+production filesystem is automatically echoed in development.  This job is
+run by a crontab file owned by zfishweb.  The script "remove_orphan_files.groovy"
+controls the syncing.  
+
+remove_orphan_files.groovy checks filesystem files against records
+in the database and emails annomolies to the owner of the database--on production that is informix.
+remove_orphan_files also calls "rsync.pl" which does the
+actual syncing of production and development filesystems.
+
+***IMPORTANT***
+Syncing the development and production filesystems means deleting or copying 
+files from the production filesystemto the development filesystem. 
+See the rsync man pages for more details.
+***IMPORTANT***
+
+It is possible to make your own, personal filesystem for testing pdf,
+image loading.  Please speak to Dave C. or Sierra for help with this.
+
+To make a copy of the production file system on development machine (for use when
+zfin.org moves to development machine), run 'makeEmbryFiles.pl.'  This script will sync 
+the production filesystem in the development machine directories.  After running
+there will be two copies of the entire image/pdf filesystem on development machine.
+One copy will  be used by all developers (/research/zcentral/loadup/imageLoadUp
+and /research/zcentral/loadUp/PDFLoadUp).  The other copy will be used
+only by zfin.org on development machine:
+/research/zcentral/loadUp/development machineLoadUp/development machineImageLoadUp/imageLoadUp
+and
+/research/zcentral/loadUp/development machineLoadUp/development machinePDFLoadUp/PDFLoadUp
+
+***IMPORTANT***
+After running makeEmbryFiles.pl, a user with the ability to sudo must
+change the permissions on all the files to be owned by
+zfishweb:www
+
+Additionally, the conf file has to change to allow world-access (instead
+of just access from UO and development machines) for the image files.
+
+PDF files should never have world readable access.
+***IMPORTANT***

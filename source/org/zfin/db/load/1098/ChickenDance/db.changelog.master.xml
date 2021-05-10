@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <include file="source/org/zfin/db/load/1098/ChickenDance/ZFIN-5979.sql"/>
+    <include file="source/org/zfin/db/load/1098/ChickenDance/restore_genox_pre.sql"/>
+    <include file="source/org/zfin/db/load/1098/ChickenDance/restore-genox.xml"/>
+    <include file="source/org/zfin/db/load/1098/ChickenDance/restore_genox.sql"/>
+    <include file="source/org/zfin/db/load/1098/ChickenDance/restore_table_pre.sql"/>
+    <include file="source/org/zfin/db/load/1098/ChickenDance/restore-table.xml"/>
+    <include file="source/org/zfin/db/load/1098/ChickenDance/restore-expression.sql"/>
+    <include file="source/org/zfin/db/load/1098/ChickenDance/restore_efs_pre.sql"/>
+    <include file="source/org/zfin/db/load/1098/ChickenDance/restore-efs.xml"/>
+    <include file="source/org/zfin/db/load/1098/ChickenDance/restore-efs.sql"/>
+    <include file="source/org/zfin/db/load/1098/ChickenDance/restore_results_pre.sql"/>
+    <include file="source/org/zfin/db/load/1098/ChickenDance/restore-results.xml"/>
+    <include file="source/org/zfin/db/load/1098/ChickenDance/restore-results.sql"/>
+    <include file="source/org/zfin/db/load/1098/ChickenDance/drop_tables.sql"/>
+
+</databaseChangeLog>
+
+   

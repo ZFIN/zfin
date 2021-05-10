@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <include file="source/org/zfin/db/load/1104/ZFIN-6075.sql"/>
+    <include file="source/org/zfin/db/load/1104/ZFIN-6075b.sql"/>
+    <include file="source/org/zfin/db/load/1104/ZFIN-6074.sql"/>
+    <include file="source/org/zfin/db/load/1104/feature_aud.sql"/>
+    <include file="source/org/zfin/db/load/1104/ZFIN-6074-additions.sql"/>
+    <include file="source/org/zfin/db/load/1104/ZFIN-6074-datetime.sql"/>
+
+<!--    <include file="source/org/zfin/db/load/1104/ONT-673.sql"/> --> 
+    <include file="source/org/zfin/db/load/1104/DLOAD-578.sql"/> 
+    <include file="source/org/zfin/db/load/1104/ZFIN-6063.sql"/>
+    <include file="source/org/zfin/db/load/1104/ZFIN-6112.sql"/>
+    <include file="source/org/zfin/db/load/1104/fcc_audit.sql"/>
+</databaseChangeLog>

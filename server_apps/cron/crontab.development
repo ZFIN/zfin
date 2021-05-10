@@ -1,0 +1,80 @@
+# ===========================================================================
+# DEVELOPMENT CRONTAB FILE
+# ===========================================================================
+# This is the crontab file for Informix on the ZFIN development machine.  When
+# zfin.org is running on the usual production machine, this file is the crontab 
+# file for the development machine.  When production is running on the 
+# development machine, this file is appended to the end of the production 
+# crontab file.
+#
+# See the "crontab" file (or cron man page) for an explanation of this file's
+# format.
+#
+#
+#==========================================================================
+#       ====  Testing Jobs  before they are run on Production  ====
+#==========================================================================
+#  
+#25 12,13 * * * cd /research/zcentral/www_homes/almost/server_apps/data_transfer/ORTHO && update_orthology.sh
+#55 12,13 * * * cd /research/zcentral/www_homes/almost/server_apps/data_transfer/ORTHO && update_orthology.sh -f
+#
+#
+#
+#
+# ========================================================================
+#              ==== DAILY / WEEKLY SCRIPTS ==== 
+# ========================================================================
+#
+# -----------------------------------------------------------
+# ------- 10 PM - 10:30 PM  RELOAD / INDEX            -------
+# -----------------------------------------------------------
+# Nights   When      Comments
+# Nights   When      Comments
+# MTWT    11:00pm   sync and checkin curated blastdbs to SVN and almost from production
+# Moved to Jenkins, but staying here uncommented until we have good source control experience with Jenkins
+# M    11:40pm   check for varchars and lvarchar columns that need extending.
+#40 23 * * 1 /research/zcentral/www_homes/trunk/server_apps/DB_maintenance/checkVarcharOctetLength.pl
+
+#
+# 4 am, run the downloads on trunk.  This is for intermine pickup.
+#00 4 * * 1-4 /research/zcentral/www_homes/test/server_apps/data_transfer/Downloads/Downloads.pl
+# Nights   When      Comments
+# MTWT    10:50pm   Grep for errors in unit tests
+#
+50 22 * * 1-4 
+# Th    10:00pm   performance
+#
+#15,30,45,59 21,22,23 * * 4 /research/zcentral/www_homes/almost/server_apps/DB_maintenance/performance.pl
+#  Sat     1:00am   Reload almdb, remake web site, generate quick search
+#                    index, and copy it to production.          
+#
+00 02 * * 6 /research/zcentral/www_homes/almost/server_apps/DB_maintenance/backupBlastDbsAndRsyncAlmostBlastDbs.sh
+#
+#
+#====================================
+# handle blast files
+#====================================
+#
+#Blast cleanup scripts
+#  Every day at 1.30 am
+#  Clean out fasta files used for blast older than one day.
+#  Clean out blast files older than seven days.
+#  Clean out fasta files older than seven days.
+30 01 * * * /bin/find /research/zblastfiles/zmore/almdb/ -name "*.fa" -mtime +1 -exec rm -f {} \; >> /research/zblastfiles/zmore/almdb/fasta-blast-clean-error.txt ;/bin/find /research/zcentral/catalina_bases/almost/temp/ -name "blast*.xml" -mtime +7 -exec rm -f {} \; >> /research/zblastfiles/zmore/almdb/blast-clean-error.txt ;  /bin/find /research/zcentral/catalina_bases/almost/temp/ -name "*.fa" -mtime +7 -exec rm -f {} \; >> /research/zblastfiles/zmore/almdb/fasta-clean-error.txt
+50 01 * * * /bin/find /research/zblastfiles/zmore/dev_blastdb/ -name "*.fa" -mtime +1 -exec rm -f {} \; >> /research/zblastfiles/zmore/dev_blastdb/fasta-blast-clean-error.txt ;
+#  Every day at 1.55 am clean out accession files older than 3 days.
+55 01 * * * /bin/find /research/zcentral/catalina_bases/almost/temp/ -name "accession*.txt" -mtime +3 -exec rm -f {} \; >> /research/zcentral/catalina_bases/almost/temp/clean-accessions-error.txt
+#  Every Tuesday at 2.05 am clean out microarray reports older than 80 days.
+05 02 * * 4 /bin/find /research/zcentral/catalina_bases/almost/temp/ -name "microarry*.txt" -mtime +80 -exec rm -f {} \; >> /research/zcentral/catalina_bases/almost/temp/clean-microarray-error.txt
+#
+#
+# -------------------------------------------------------------------------------------------------------
+# ------  Reminders to staff
+# -------------------------------------------------------------------------------------------------------
+# 20th of each month reminder to restart ontape on production
+# 00 10 20 * * /research/zusers/almost/ZFIN_WWW/commons/bin/monthly_ontape.pl
+# 
+#
+# Daily 3:30am   Populate dblink microarrays.
+#35 12 * * * /research/zcentral/www_homes/almost/server_apps/data_transfer/Microarray/microarray.sh
+#

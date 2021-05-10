@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <include file="source/org/zfin/db/postGmakePostloaddb/1095/WearyCatFace/ZFIN-5868.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1095/WearyCatFace/CUR-745.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1095/WearyCatFace/JENK-338_pre.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1095/WearyCatFace/JENK-338_load.xml" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1095/WearyCatFace/JENK-338.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1095/WearyCatFace/ZFIN-5869.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1095/WearyCatFace/CUR-751.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1095/WearyCatFace/ZFIN-5903.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1095/WearyCatFace/INF-3333.sql" />
+
+</databaseChangeLog>

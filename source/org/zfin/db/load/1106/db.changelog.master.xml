@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <include file="source/org/zfin/db/load/1106/add_zyg_ont_id.sql"/>
+    <include file="source/org/zfin/db/load/1106/fix_zyg_ont_id.sql"/>
+    <include file="source/org/zfin/db/load/1106/pre-uberon-update.sql"/>
+    <include file="source/org/zfin/db/load/1106/remap_expression.xml"/>
+    <include file="source/org/zfin/db/load/1106/update_zfa_uberon_mapping.sql"/>
+    <include file="source/org/zfin/db/load/1106/drop-uberon-update.sql"/>
+    <include file="source/org/zfin/db/load/1106/update_assembly.sql"/>
+    <include file="source/org/zfin/db/load/1106/drop_weird_mrph.sql"/>
+    <include file="source/org/zfin/db/load/1106/add_sfcl_accession_number.sql"/>
+    <include file="source/org/zfin/db/load/1106/add_publication_author_table.sql"/>
+    <include file="source/org/zfin/db/load/1106/alter_pub_pmcid.sql"/>
+    <include file="source/org/zfin/db/load/1106/alter_pub_mid.sql"/>
+
+</databaseChangeLog>

@@ -1,0 +1,367 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.jboss.org/dtd/hibernate/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.zfin.expression">
+
+    <class name="org.zfin.expression.Figure" table="figure">
+        <!--<cache usage="read-only"/>-->
+        <id name="zdbID" type="string">
+            <column name="fig_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">FIG</param>
+                <param name="insertActiveData">true</param>
+            </generator>
+        </id>
+
+        <discriminator type="string"
+                       formula="(CASE fig_label
+                                    WHEN 'text only' THEN 'TOD'
+                                    ELSE                  'FIG'
+                                 END)"/>
+
+        <property name="caption" lazy="true">
+            <column name="fig_caption"/>
+        </property>
+
+        <property name="comments"  lazy="false">
+            <column name="fig_comments" />
+        </property>
+
+        <property name="label">
+            <column name="fig_label"/>
+        </property>
+
+        <property name="orderingLabel">
+            <column name="fig_full_label"/>
+        </property>
+
+        <property name="insertedDate" column="fig_inserted_date"/>
+        <property name="updatedDate" column="fig_updated_date"/>
+        <many-to-one name="insertedBy" column="fig_inserted_by" class="org.zfin.profile.Person"/>
+        <many-to-one name="updatedBy" column="fig_updated_by" class="org.zfin.profile.Person"/>
+
+        <set name="expressionResults" lazy="true" inverse="true" table="expression_pattern_figure">
+            <key column="xpatfig_fig_zdb_id"/>
+            <many-to-many class="org.zfin.expression.ExpressionResult" column="xpatfig_xpatres_zdb_id"/>
+        </set>
+
+        <set name="phenotypeExperiments" lazy="true" table="phenotype_experiment">
+            <key column="phenox_fig_zdb_id"/>
+            <one-to-many class="org.zfin.mutant.PhenotypeExperiment"/>
+        </set>
+
+        <set name="images" lazy="true" inverse="true">
+            <key column="img_fig_zdb_id"/>
+            <one-to-many class="org.zfin.expression.Image"/>
+        </set>
+
+        <set name="constructs" lazy="true" table="construct_figure">
+            <key column="consfig_fig_zdb_id"/>
+            <many-to-many column="consfig_construct_zdb_id" class="org.zfin.marker.Marker"/>
+        </set>
+
+        <many-to-one name="publication" class="org.zfin.publication.Publication" column="fig_source_zdb_id"/>
+
+        <subclass name="org.zfin.expression.FigureFigure" discriminator-value="FIG"/>
+
+        <subclass name="org.zfin.expression.TextOnlyFigure" discriminator-value="TOD"/>
+
+    </class>
+
+    <class name="org.zfin.expression.Image" table="image">
+        <id name="zdbID" type="string">
+            <column name="img_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">IMAGE</param>
+                <param name="insertActiveData">true</param>
+            </generator>
+        </id>
+
+        <property name="imageFilename">
+            <column name="img_image" not-null="true"/>
+        </property>
+
+        <property name="imageWithAnnotationsFilename">
+            <column name="img_image_with_annotation"/>
+        </property>
+
+        <property name="imageWithAnnotationMediumFilename">
+            <column name="img_image_with_annotation_medium"/>
+        </property>
+
+        <property name="height">
+            <column name="img_height" not-null="true"/>
+        </property>
+
+        <property name="width">
+            <column name="img_width" not-null="true"/>
+        </property>
+
+        <property name="view" column="img_view" not-null="true"/>
+        <property name="direction" column="img_direction" not-null="true"/>
+        <property name="form" column="img_form" not-null="true"/>
+        <property name="preparation" column="img_preparation" not-null="true"/>
+        <property name="externalName" column="img_external_name"/>
+        <property name="label" column="img_label"/>
+        <property name="comments" column="img_comments"/>
+        <property name="insertedDate" column="img_inserted_date"/>
+        <property name="updatedDate" column="img_updated_date"/>
+        <many-to-one name="insertedBy" column="img_inserted_by" class="org.zfin.profile.Person"/>
+        <many-to-one name="updatedBy" column="img_updated_by" class="org.zfin.profile.Person"/>
+
+        <many-to-one name="owner" column="img_owner_zdb_id" class="org.zfin.profile.Person" not-null="true"/>
+
+        <many-to-one name="figure" class="org.zfin.expression.Figure" column="img_fig_zdb_id" />
+
+        <property name="thumbnail">
+            <column name="img_thumbnail" not-null="true"/>
+        </property>
+
+        <property name="medium">
+            <column name="img_medium" not-null="true"/>
+        </property>
+
+        <property name="videoStill" column="img_is_video_still" type="java.lang.Boolean" not-null="true"/>
+
+        <set name="videos" lazy="true" inverse="true">
+            <key column="video_image_still_zdb_id"/>
+            <one-to-many class="org.zfin.expression.Video"/>
+        </set>
+
+        <set name="terms" lazy="true" table="int_image_term">
+            <key column="iit_img_zdb_id"/>
+            <many-to-many column="iit_term_zdb_id" class="org.zfin.ontology.GenericTerm"/>
+        </set>
+
+        <join table="image_stage" optional="true">
+            <key column="imgstg_img_zdb_id"/>
+            <component name="imageStage">
+                <many-to-one name="start" column="imgstg_start_stg_zdb_id"
+                             class="org.zfin.anatomy.DevelopmentStage"
+                             lazy="proxy"/>
+                <many-to-one name="end" column="imgstg_end_stg_zdb_id"
+                             class="org.zfin.anatomy.DevelopmentStage"
+                             lazy="proxy"/>
+            </component>
+        </join>
+    </class>
+
+    <class name="org.zfin.expression.Video" table="video">
+        <id name="id" type="long">
+            <column name="video_pk_id" not-null="true"/>
+            <generator class="identity"/>
+        </id>
+        <property name="videoFilename" not-null="true" column="video_path_to_file"/>
+        <many-to-one name="still" class="org.zfin.expression.Image" column="video_image_still_zdb_id"/>
+    </class>
+
+
+    <class name="ExpressionDetailsGenerated" table="xpat_exp_details_generated">
+        <id name="id" type="long">
+            <column name="xedg_pk_id" not-null="true"/>
+        </id>
+        <many-to-one name="assay" column="xedg_assay_name" class="org.zfin.expression.ExpressionAssay"/>
+        <many-to-one name="expressionExperiment" column="xedg_zdb_id" class="org.zfin.expression.ExpressionExperiment"/>
+        <many-to-one name="fishExperiment" column="xedg_genox_zdb_id" class="org.zfin.mutant.FishExperiment"/>
+
+        <many-to-one name="gene" class="org.zfin.marker.Marker" column="xedg_gene_zdb_id"/>
+        <many-to-one name="figure" class="org.zfin.expression.Figure" column="xedg_fig_zdb_id"/>
+        <many-to-one name="probe" class="org.zfin.marker.Clone" column="xedg_probe_feature_zdb_id"/>
+        <many-to-one name="antibody" column="xedg_atb_zdb_id" class="org.zfin.antibody.Antibody"/>
+        <many-to-one name="markerDBLink" column="xedg_dblink_zdb_id" class="org.zfin.sequence.MarkerDBLink"/>
+
+        <set name="expressionResults" lazy="true" inverse="true">
+            <key column="xrg_xedg_id"/>
+            <one-to-many class="ExpressionResultGenerated"/>
+        </set>
+    </class>
+
+
+    <class name="ExpressionResultGenerated" table="xpat_results_generated">
+        <id name="id" type="long" column="xrg_pk_id"/>
+        <property name="expressionFound" column="xrg_expression_found"/>
+        <property name="comment" column="xrg_comments"/>
+
+        <many-to-one name="expressionExperiment" class="ExpressionDetailsGenerated"
+                     column="xrg_xedg_id" not-null="true"/>
+
+        <component name="entity">
+            <many-to-one name="subterm" column="xrg_subterm_zdb_id"/>
+            <many-to-one name="superterm" column="xrg_superterm_zdb_id"/>
+        </component>
+
+        <many-to-one name="start" class="org.zfin.anatomy.DevelopmentStage" column="xrg_start_stg_zdb_id"/>
+        <many-to-one name="end" class="org.zfin.anatomy.DevelopmentStage" column="xrg_end_stg_zdb_id"/>
+
+    </class>
+
+
+    <!-- Make sure only attributes that have changed are updated in teh Query: if no probe is given
+         but probe = null is set then a trigger would fail.
+         -->
+    <class name="org.zfin.expression.ExpressionExperiment" table="expression_experiment" dynamic-update="true"
+           dynamic-insert="true">
+        <id name="zdbID" type="string">
+            <column name="xpatex_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">XPAT</param>
+                <param name="insertActiveData">true</param>
+            </generator>
+        </id>
+
+        <many-to-one name="publication" class="org.zfin.publication.Publication" column="xpatex_source_zdb_id"/>
+        <many-to-one name="assay" column="xpatex_assay_name" class="org.zfin.expression.ExpressionAssay"/>
+        <many-to-one name="fishExperiment" column="xpatex_genox_zdb_id" class="org.zfin.mutant.FishExperiment"/>
+
+        <many-to-one name="gene" class="org.zfin.marker.Marker" column="xpatex_gene_zdb_id"/>
+        <many-to-one name="probe" class="org.zfin.marker.Clone" column="xpatex_probe_feature_zdb_id"/>
+        <many-to-one name="antibody" column="xpatex_atb_zdb_id" class="org.zfin.antibody.Antibody"/>
+        <many-to-one name="markerDBLink" column="xpatex_dblink_zdb_id" class="org.zfin.sequence.MarkerDBLink"/>
+
+        <set name="expressionResults" lazy="true" inverse="true">
+            <key column="xpatres_xpatex_zdb_id"/>
+            <one-to-many class="org.zfin.expression.ExpressionResult"/>
+        </set>
+
+
+    </class>
+
+    <class name="org.zfin.expression.CleanExpFastSrch" table="clean_expression_fast_search">
+        <id name="id" type="long" column="cefs_pk_id"/>
+
+            <many-to-one name="gene" column="cefs_mrkr_Zdb_id" class="org.zfin.marker.Marker"/>
+            <many-to-one name="fishExperiment" column="cefs_genox_zdb_id" class="org.zfin.mutant.FishExperiment"/>
+
+
+
+    </class>
+
+
+    <class name="org.zfin.expression.ExpressionResult" table="expression_result">
+        <!--<id name="zdbID" type="string">
+            <column name="xpatres_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">XPATRES</param>
+                <param name="insertActiveData">true</param>
+            </generator>
+        </id>-->
+        <id name="xpatresID" type="long">
+            <column name="xpatres_zdb_id" not-null="true"/>
+            <generator class="identity"/>
+        </id>
+
+        <property name="expressionFound" column="xpatres_expression_found"/>
+        <property name="comment" column="xpatres_comments"/>
+
+        <many-to-one name="expressionExperiment" class="org.zfin.expression.ExpressionExperiment"
+                     column="xpatres_xpatex_zdb_id" not-null="true"/>
+
+        <component name="entity">
+            <many-to-one name="subterm" column="xpatres_subterm_zdb_id"/>
+            <many-to-one name="superterm" column="xpatres_superterm_zdb_id"/>
+        </component>
+
+        <many-to-one name="startStage" class="org.zfin.anatomy.DevelopmentStage" column="xpatres_start_stg_zdb_id"/>
+        <many-to-one name="endStage" class="org.zfin.anatomy.DevelopmentStage" column="xpatres_end_stg_zdb_id"/>
+
+        <set name="figures" table="expression_pattern_figure">
+            <key column="xpatfig_xpatres_zdb_id"/>
+            <many-to-many class="org.zfin.expression.Figure" column="xpatfig_fig_zdb_id"/>
+        </set>
+
+    </class>
+
+    <class name="org.zfin.expression.ExpressionResultFigure" table="expression_pattern_figure">
+        <composite-id>
+            <key-many-to-one name="figure" class="Figure" column="xpatfig_fig_zdb_id"/>
+            <key-many-to-one name="expressionResult" class="ExpressionResult" column="xpatfig_xpatres_zdb_id"/>
+        </composite-id>
+    </class>
+
+    <!-- This object should exist in the database -->
+    <!--
+        <class name="ExperimentFigureStage" >
+            <composite-id>
+                <key-property name="expressionExperiment" />
+            </composite-id>
+        </class>
+    -->
+
+    <class name="org.zfin.expression.ExpressionAssay" mutable="false" table="expression_pattern_assay">
+        <cache usage="read-only"/>
+        <id name="name" column="xpatassay_name">
+            <generator class="native"/>
+        </id>
+
+        <property name="abbreviation" column="xpatassay_abbrev"/>
+        <property name="comments" column="xpatassay_comments"/>
+        <property name="displayOrder" column="xpatassay_display_order"/>
+        <!--<property name="immunogen" column="xpatassay_is_immuno"/>-->
+    </class>
+
+    <class name="org.zfin.expression.ExpressionStructure" table="expression_pattern_infrastructure">
+        <id name="zdbID" type="string">
+            <column name="xpatinf_zdb_id" not-null="true"/>
+            <generator class="org.zfin.database.ZdbIdGenerator">
+                <param name="type">XPATINF</param>
+                <param name="insertActiveData">true</param>
+            </generator>
+        </id>
+
+        <property name="date" column="xpatinf_date"/>
+        <property name="tag" column="xpatinf_tag"/>
+        <property name="expressionFound" column="xpatinf_expression_found"/>
+
+        <many-to-one name="publication" column="xpatinf_pub_zdb_id"/>
+        <many-to-one name="person" column="xpatinf_curator_zdb_id"/>
+        <many-to-one name="superterm" column="xpatinf_superterm_zdb_id"/>
+        <many-to-one name="subterm" column="xpatinf_subterm_zdb_id"/>
+        <many-to-one name="eapQualityTerm" column="xpatinf_quality_term_zdb_id"/>
+    </class>
+
+    <class name="org.zfin.expression.presentation.ExpressionTermFastSearch" table="expression_term_fast_search">
+        <id name="id" type="long">
+            <column name="etfs_pk_id" not-null="true"/>
+            <generator class="identity"/>
+        </id>
+        <many-to-one name="expressionResult" column="etfs_xpatres_pk_id" not-null="true"/>
+        <many-to-one name="term" column="etfs_term_zdb_id" not-null="true"/>
+        <property name="dateCreated" column="etfs_created_date"/>
+        <property name="originalAnnotation" column="etfs_is_xpatres_term"/>
+    </class>
+
+
+    <!--<class name="org.zfin.expression.WildtypeExpressionExperiment" table="wildtype_expression_experiment" mutable="false">-->
+    <!--<id name="id" column="id" type="java.lang.Long"/>-->
+
+    <!--<many-to-one name="expressionExperiment" column="wee_ee_zdb_id" class="org.zfin.expression.ExpressionExperiment"/>-->
+    <!--<many-to-one name="gene" column="wee_marker_zdb_id" class="org.zfin.marker.Marker"/>-->
+    <!--<many-to-one name="superTerm" column="wee_super_term_zdb_id" class="org.zfin.ontology.GenericTerm"/>-->
+    <!--<many-to-one name="subTerm" column="wee_sub_term_zdb_id" class="org.zfin.ontology.GenericTerm"/>-->
+    <!--<many-to-one name="startStage" column="wee_start_stage_zdb_id" class="org.zfin.anatomy.DevelopmentStage"/>-->
+    <!--<many-to-one name="endStage" column="wee_end_stage_zdb_id" class="org.zfin.anatomy.DevelopmentStage"/>-->
+    <!--</class>-->
+
+    <query name="stageanatomyfigure"><![CDATA[
+        select stage, xpatres.entity.superterm, xpatres.figures
+        from org.zfin.anatomy.DevelopmentStage stage,
+             org.zfin.expression.ExpressionResult xpatres,
+             org.zfin.expression.ExpressionExperiment xpatex
+        where xpatex.gene.zdbID = :geneZdbID
+          and xpatres member of xpatex.expressionResults
+          and xpatex.fishExperiment.standardOrGenericControl = 't'
+          and xpatex.fishExperiment.fish.genotype.wildtype = true
+          and xpatres.entity.superterm.termName <> :unspecified
+          and xpatres.startStage.name <> :unknown
+          and stage.hoursStart >= xpatres.startStage.hoursStart
+          and stage.hoursEnd <= xpatres.endStage.hoursEnd
+        order by stage.hoursStart, xpatres.entity.superterm.termName
+       ]]>
+    </query>
+
+    <sql-query name="antibodyAOFastSearchUpdate" callable="true">
+        {call add_ab_ao_fast_search(:expressionZdbID)}
+    </sql-query>
+</hibernate-mapping>
