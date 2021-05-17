@@ -96,7 +96,7 @@
             <arg value="${validateData}/gafLoad"/>
             <arg value="${jobName}"/>
             <arg value="Noctua"/>
-            <arg value="http://snapshot.geneontology.org/products/annotations/noctua_zfin.gpad.gz"/>
+            <arg value="http://skyhook.berkeleybop.org/issue-noctua-models-170-zfin-import-test/products/annotations/noctua_zfin.gpad.gz"/>
             <arg value="org.zfin.datatransfer.go.GpadParser"/>
         </java>
     </target>
