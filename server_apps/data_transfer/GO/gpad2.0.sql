@@ -12,7 +12,7 @@ create temp table gpad_format_without_grouping (mrkrgoev_zdb_id text,
                                 with_from text, -- will be grouped eventually,
                                 interacting_taxon text, -- NCBITaxon
                                 date_entered timestamp without time zone, -- date entered
-                                assigned_by text default 'ZFIN',
+                                assigned_by text default 'GOC:zfin_curators',
                                 annotation_extention text,
                                 annotation_properties text);
 
