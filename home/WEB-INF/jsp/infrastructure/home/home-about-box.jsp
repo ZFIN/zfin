@@ -2,7 +2,7 @@
 
 <z:section title="About ZFIN">
     <p class="lead">
-        ZFIN is hiring! For more information click <a
+	ZFIN is hiring both a software developer and a curator! For more information click <a
             href="https://zfin.atlassian.net/wiki/spaces/jobs/pages/2996503058/ZFIN+Jobs">here </a>
     <p/>
     The Zebrafish Information Network (ZFIN) is the database of genetic and genomic data for the
