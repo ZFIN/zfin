@@ -6,7 +6,6 @@ import org.zfin.datatransfer.doi.DOITest;
 import org.zfin.datatransfer.microarray.MicroarrayServiceTest;
 import org.zfin.sequence.blast.BlastDBServiceTest;
 import org.zfin.sequence.blast.WebServiceSoapClientTest;
-import org.zfin.wiki.WikiConnectTest;
 
 /**
  * This is the master unit test class that runs all registered unit tests (suite).
@@ -14,13 +13,12 @@ import org.zfin.wiki.WikiConnectTest;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-        WikiConnectTest.class,
         MicroarrayServiceTest.class,
         WebServiceSoapClientTest.class,
         BlastDBServiceTest.class,
         DOITest.class
 //        PostForeignTest.class
-        })
+})
 
 public class ThirdPartyServiceTests {
 
