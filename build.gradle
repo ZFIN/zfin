@@ -25,6 +25,8 @@ def sourceroot = env['SOURCEROOT']
 def pgbindir = env['PGBINDIR']
 def pgdata = env['PGDATA']
 def pghost = env['PGHOST']
+def dbunloadspath = env['DB_UNLOADS_PATH']
+def solrunloadspath = env['SOLR_UNLOADS_PATH']
 String targetroot = env['TARGETROOT']
 
 /*
@@ -50,7 +52,7 @@ project.ext.set("pgbindir", pgbindir)
 
 task loadDatabase() {
     doLast {
-        File unloads = file('/research/zunloads/databases/zfindb/')
+        File unloads = file(dbunloadspath)
         String unloadPath
         if (unloads.exists()) {
             File latest = unloads.listFiles().last()
@@ -510,12 +512,20 @@ task make(type: GradleBuild) {
     ]
 }
 
-task getLatestSolrIndexFiles() {
+task getLatestSolrUnload() {
     doLast {
-        exec {
-            ignoreExitValue = true
-            commandLine "bash", "-c", "scp -r " + env['USER'] + "@thorax.zfin.org:/research/zunloads/solr/zfindb/current current.solr.dump"
+        if (solrunloadspath!='/research/zunloads/solr/zfindb') {
+            def command = "ssh " + env['SSH_USER'] + "@thorax.zfin.org " + 'ls -d /research/zunloads/solr/zfindb/20??.??.??-??:?? | sort -n |tail -n 1'
+            def filepath = command.execute().text
+            println "Getting " + filepath
+            exec {
+                ignoreExitValue = true
+                commandLine "scp", "-r", env['SSH_USER'] + "@thorax.zfin.org:" + filepath, solrunloadspath
+            }
         }
+        else {
+            println 'SOLR_UNLOADS_PATH is set to ' + solrunloadspath + '. Please change before attempting to copy.'
+        } 
     }
 }
 
@@ -528,12 +538,20 @@ task getLatestSolrIndexFilesTrunk() {
     }
 }
 
-task getLatestPostgresFiles() {
+task getLatestDatabaseUnload() {
     doLast {
-        exec {
-            ignoreExitValue = true
-            commandLine "bash", "-c", "scp " + env['USER'] + "@thorax.zfin.org:/research/zunloads/databases/zfindb/current current.postgres.dump"
+        if (dbunloadspath!='/research/zunloads/databases/zfindb') {
+            def command = "ssh " + env['SSH_USER'] + "@thorax.zfin.org " + 'ls -d /research/zunloads/databases/zfindb/20??.??.??.? | sort -n |tail -n 1'
+            def filepath = command.execute().text
+            println "Getting " + filepath
+            exec {
+                ignoreExitValue = true
+                commandLine "scp", "-r", env['SSH_USER'] + "@thorax.zfin.org:" + filepath, dbunloadspath
+            }
         }
+        else {
+            println 'DB_UNLOADS_PATH is set to ' + dbunloadspath + '. Please change before attempting to copy.'
+        } 
     }
 }
 
@@ -551,7 +569,7 @@ task getLatestSolrIndex() {
         println 'Upgrade Solr index to the latest production one...'
         println "latest index: " + "find ./* -type d -prune -exec ls -d ".execute().text
 
-        def folder = "/research/zunloads/solr/zfindb"
+        def folder = solrunloadspath
         def baseDir = new File(folder)
         def files = baseDir.listFiles()
         Arrays.sort(files, new Comparator<File>() {

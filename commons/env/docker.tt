@@ -18,7 +18,7 @@
 <!--|CURATORS_AT_ZFIN|-->	informix\@zfin.org
 <!--|DB_LOCALE|-->	en_US.utf8
 <!--|DB_NAME|-->	zfindb
-<!--|DB_OWNER|-->	docker
+<!--|DB_OWNER|-->	${USER}
 <!--|DEFAULT_EMAIL|-->	informix\@zfin.org
 <!--|DOMAIN_NAME|-->	zfin.org
 <!--|ENVIRONMENT|-->	development
