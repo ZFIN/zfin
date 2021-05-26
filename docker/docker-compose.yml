@@ -10,14 +10,19 @@ services:
       PGHOST: db
       PGUSER: postgres
       SOLR_HOME: /var/solr
+      SSH_AUTH_SOCK: /run/host-services/ssh-auth.sock
+      SSH_USER: ${DOCKER_SSH_USER}
     volumes: 
       #- /opt/zfin/docker/www_homes/zfin.org:/opt/zfin/www_homes/zfin.org
       - www_data:/opt/zfin/www_homes/zfin.org
       - catalina_base:/opt/zfin/catalina_bases/zfin.org
       - ../:/opt/zfin/source_roots/zfin.org
-      - nfs-zunloads:/research/zunloads
+      #- nfs-zunloads:/research/zunloads
+      - ${DOCKER_DB_UNLOADS_PATH}:/opt/zfin/unloads/db
+      - ${DOCKER_SOLR_UNLOADS_PATH}:/opt/zfin/unloads/solr
       - solr_data:/var/solr
-      #- ./pg_pass:/run/secrets/pg_pass
+      - ./pg_pass:/run/secrets/pg_pass
+      - ${DOCKER_SSH_AUTH_SOCK}:/run/host-services/ssh-auth.sock
   db:
     container_name: pg_container
     build: ./postgresql/
@@ -50,9 +55,12 @@ services:
     volumes:
       - www_data:/opt/zfin/www_homes/zfin.org
       - nfs-loadup:/opt/zfin/loadUp
-      - /etc/pki/tls/certs/incommon_intermediate_bundle.crt:/etc/pki/tls/certs/incommon_intermediate_bundle.crt
-      - /etc/pki/tls/certs/zfin_2021.crt:/etc/pki/tls/certs/zfin_2021.crt
-      - /etc/pki/tls/private/zfin_2021.key:/etc/pki/tls/private/zfin_2021.key
+      #- /etc/pki/tls/certs/incommon_intermediate_bundle.crt:/etc/pki/tls/certs/incommon_intermediate_bundle.crt,ro
+      #- /etc/pki/tls/certs/zfin_2021.crt:/etc/pki/tls/certs/zfin_2021.crt,ro
+      #- /etc/pki/tls/private/zfin_2021.key:/etc/pki/tls/private/zfin_2021.key,ro
+      - ./httpd/incommon_intermediate_bundle.crt:/etc/pki/tls/certs/incommon_intermediate_bundle.crt,ro
+      - ./httpd/zfin_2021.crt:/etc/pki/tls/certs/zfin_2021.crt,ro
+      - ./httpd/zfin_2021.key:/etc/pki/tls/private/zfin_2021.key,ro
   tomcat:
     container_name: tomcat_container
     build: ./tomcat/
@@ -63,7 +71,8 @@ services:
     volumes:
       - www_data:/opt/zfin/www_homes/zfin.org
       - catalina_base:/opt/zfin/catalina_bases/zfin.org
-      - /opt/zfin/catalina_bases/keystore:/opt/apache/apache-tomcat/conf/keystore
+      #- /opt/zfin/catalina_bases/keystore:/opt/apache/apache-tomcat/conf/keystore,ro
+      - ./tomcat/keystore:/opt/apache/apache-tomcat/conf/keystore,ro
 
 volumes:
   www_data:
