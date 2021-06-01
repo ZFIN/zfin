@@ -10,7 +10,7 @@ public class ZfinDTO {
 
     public static String taxonId = "NCBITaxon:7955";
     public static final String ZFIN = "ZFIN:";
-    protected List<String> synonyms;
+    protected Set<String> synonyms;
     protected Set<String> secondaryIds;
     protected String primaryId;
 
@@ -30,11 +30,11 @@ public class ZfinDTO {
         this.primaryId += primaryId;
     }
 
-    public List<String> getSynonyms() {
+    public Set<String> getSynonyms() {
         return synonyms;
     }
 
-    public void setSynonyms(List<String> synonyms) {
+    public void setSynonyms(Set<String> synonyms) {
         this.synonyms = synonyms;
     }
 

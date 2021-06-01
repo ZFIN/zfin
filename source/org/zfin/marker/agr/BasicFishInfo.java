@@ -75,7 +75,7 @@ public class BasicFishInfo extends AbstractScriptWrapper {
                                 }
                                 dto.setSequenceTargetingReagentIDs(strList);
                             }
-                            List<String> aliasList = new ArrayList<>();
+                            Set<String> aliasList = new HashSet<>();
                             if (CollectionUtils.isNotEmpty(fish.getAliases())) {
                                 for (FishAlias alias : fish.getAliases()) {
                                     aliasList.add(alias.getAlias());
@@ -83,7 +83,7 @@ public class BasicFishInfo extends AbstractScriptWrapper {
                             }
                             if (CollectionUtils.isNotEmpty(genotype.getAliases())) {
                                 for (GenotypeAlias alias : genotype.getAliases()) {
-                                    aliasList.add(alias.getAlias());
+                                    aliasList.add(alias.getAlias().trim());
                                 }
                             }
                             if (CollectionUtils.isNotEmpty(aliasList)) {

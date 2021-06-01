@@ -71,9 +71,9 @@ public class BasicSTRInfo extends AbstractScriptWrapper {
                                 dto.setTargetGeneIds(geneList);
                             }
                             if (CollectionUtils.isNotEmpty(str.getAliases())) {
-                                List<String> aliasList = new ArrayList<>(str.getAliases().size());
+                                Set<String> aliasList = new HashSet<>(str.getAliases().size());
                                 for (MarkerAlias alias : str.getAliases()) {
-                                    aliasList.add(alias.getAlias());
+                                    aliasList.add(alias.getAlias().trim());
                                 }
                                 dto.setSynonyms(aliasList);
                             }

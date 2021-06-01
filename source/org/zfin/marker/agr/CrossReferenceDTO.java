@@ -8,6 +8,7 @@ import lombok.Setter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CrossReferenceDTO {
@@ -20,7 +21,7 @@ public class CrossReferenceDTO {
 
     public CrossReferenceDTO(String dataProvider, String localID, List<String> pages) {
         this.dataProvider = dataProvider;
-        if (dataProvider == localID) {
+        if (dataProvider.equals(localID)) {
             this.id = dbNameMap.get(dataProvider);
         }
         else {
@@ -56,4 +57,18 @@ public class CrossReferenceDTO {
         dbNameMap.put("DOI", "DOI");
     }
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CrossReferenceDTO that = (CrossReferenceDTO) o;
+        return id.equals(that.id) &&
+                Objects.equals(pages, that.pages);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, pages);
+    }
 }
