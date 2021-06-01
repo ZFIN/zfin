@@ -3,6 +3,7 @@ package org.zfin.marker.agr;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections.CollectionUtils;
 import org.zfin.mapping.ChromosomeService;
 import org.zfin.mapping.MarkerGenomeLocation;
@@ -22,10 +23,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.zfin.repository.RepositoryFactory.getExpressionRepository;
-import static org.zfin.repository.RepositoryFactory.getLinkageRepository;
-import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
+@Log4j2
 public class BasicGeneInfo extends AbstractScriptWrapper {
 
     private int numfOfRecords = 0;
@@ -37,7 +37,7 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
     public static void main(String[] args) throws IOException {
         int number = 0;
         if (args.length > 0) {
-            number = Integer.valueOf(args[0]);
+            number = Integer.parseInt(args[0]);
         }
         BasicGeneInfo basicGeneInfo = new BasicGeneInfo(number);
         basicGeneInfo.init();
@@ -48,6 +48,12 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
         initAll();
         AllGeneDTO allGeneDTO = getAllGeneInfo();
         ObjectMapper mapper = new ObjectMapper();
+/*
+        allGeneDTO.getGenes().forEach(geneDTO -> {
+            geneDTO.getBasicGeneticEntity().secondaryIds.
+        });
+*/
+
         ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
         String jsonInString = writer.writeValueAsString(allGeneDTO);
         try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.1.4_basicGeneInformation.json"))) {
@@ -57,7 +63,8 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
 
     public AllGeneDTO getAllGeneInfo() {
         List<Marker> allGenes = getMarkerRepository().getMarkerByGroup(Marker.TypeGroup.GENEDOM, numfOfRecords);
-        System.out.println(allGenes.size());
+        log.info("Number of Genes: " + String.format("%,d", allGenes.size()));
+        System.out.printf("%,d%n", allGenes.size());
 
         List<GeneDTO> allGeneDTOList = allGenes.stream()
                 .map(
@@ -68,22 +75,21 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                             dto.setSymbol(gene.getAbbreviation());
                             bgeDto.setPrimaryId(gene.getZdbID());
                             //dto.setGeneLiteratureUrl("http://zfin.org/action/marker/citation-list/"+gene.getZdbID());
-                            if ( gene.getSoTerm().getOboID().toString() == "SO:0000704") {
+                            if (gene.getSoTerm().getOboID().toString() == "SO:0000704") {
                                 dto.setSoTermId("SO:0001217");
-                            }
-                            else{
+                            } else {
                                 dto.setSoTermId(gene.getSoTerm().getOboID());
                             }
                             if (CollectionUtils.isNotEmpty(gene.getAliases())) {
-                                List<String> aliasList = new ArrayList<>(gene.getAliases().size());
+                                Set<String> aliasList = new HashSet<>(gene.getAliases().size());
                                 for (MarkerAlias alias : gene.getAliases()) {
 
-                                    aliasList.add(alias.getAlias());
+                                    aliasList.add(alias.getAlias().trim());
                                 }
                                 bgeDto.setSynonyms(aliasList);
                             }
                             List<String> dblinkPages = new ArrayList<>();
-                            List<CrossReferenceDTO> dbLinkList = new ArrayList<>(gene.getDbLinks().size()+1);
+                            Set<CrossReferenceDTO> dbLinkList = new HashSet<>(gene.getDbLinks().size() + 1);
                             if (CollectionUtils.isNotEmpty(gene.getDbLinks())) {
 
                                 for (MarkerDBLink link : gene.getDbLinks()) {
@@ -101,19 +107,18 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                             //TODO: make enum out of the pages attribute, and generate it in a service/method.
 
                             int hasExpression = getExpressionRepository().getExpressionFigureCountForGene(gene);
-                            if (hasExpression>0) {
+                            if (hasExpression > 0) {
                                 int hasWTExpression = getExpressionRepository().getWtExpressionFigureCountForGene(gene);
-                                if (hasWTExpression> 0) {
+                                if (hasWTExpression > 0) {
                                     List<String> wtXpatPages = new ArrayList<>();
                                     wtXpatPages.add("gene");
                                     wtXpatPages.add("gene/expression");
                                     wtXpatPages.add("gene/wild_type_expression");
                                     wtXpatPages.add("gene/expression_images");
                                     wtXpatPages.add("gene/references");
-                                    CrossReferenceDTO wildTypeExpressionCrossReference = new CrossReferenceDTO("ZFIN", gene.getZdbID(),wtXpatPages );
+                                    CrossReferenceDTO wildTypeExpressionCrossReference = new CrossReferenceDTO("ZFIN", gene.getZdbID(), wtXpatPages);
                                     dbLinkList.add(wildTypeExpressionCrossReference);
-                                }
-                                else {
+                                } else {
                                     List<String> xpatPages = new ArrayList<>();
                                     xpatPages.add("gene");
                                     xpatPages.add("gene/expression");
@@ -122,8 +127,7 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                                     CrossReferenceDTO expressionCrossReference = new CrossReferenceDTO("ZFIN", gene.getZdbID(), xpatPages);
                                     dbLinkList.add(expressionCrossReference);
                                 }
-                            }
-                            else {
+                            } else {
                                 List<String> modPages = new ArrayList<>();
                                 modPages.add("gene");
                                 modPages.add("gene/references");
@@ -141,7 +145,7 @@ public class BasicGeneInfo extends AbstractScriptWrapper {
                                     // ignore records that do not equal the official chromosome number
                                     if (!loc.getChromosome().equals(chromosomeService.getChromosomeNumber()))
                                         continue;
-                                    if (loc.getAssembly().equals("GRCz11")){
+                                    if (loc.getAssembly().equals("GRCz11")) {
                                         if (loc.getSource().toString().equals("ZFIN")) {
                                             GenomeLocationDTO genomeDto = new GenomeLocationDTO(loc.getAssembly(), loc.getChromosome());
                                             if (loc.getStart() != null)

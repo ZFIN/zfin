@@ -9,14 +9,14 @@ import java.util.Set;
 public class BasicGeneticEntity extends ZfinDTO {
 
 
-    private List<CrossReferenceDTO> crossReferences;
+    private Set<CrossReferenceDTO> crossReferences;
     private Set<GenomeLocationDTO> genomeLocations;
 
-    public List<CrossReferenceDTO> getCrossReferences() {
+    public Set<CrossReferenceDTO> getCrossReferences() {
         return crossReferences;
     }
 
-    public void setCrossReferences(List<CrossReferenceDTO> crossReferences) {
+    public void setCrossReferences(Set<CrossReferenceDTO> crossReferences) {
         this.crossReferences = crossReferences;
     }
 

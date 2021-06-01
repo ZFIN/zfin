@@ -96,9 +96,9 @@ public class BasicAlleleInfo extends AbstractScriptWrapper {
                                 dto.setAlleleDescription(alleleDescription);
                             }
                             if (CollectionUtils.isNotEmpty(feature.getAliases())) {
-                                List<String> aliasList = new ArrayList<>(feature.getAliases().size());
+                                Set<String> aliasList = new HashSet<>(feature.getAliases().size());
                                 for (FeatureAlias alias : feature.getAliases()) {
-                                    aliasList.add(alias.getAlias());
+                                    aliasList.add(alias.getAlias().trim());
                                 }
                                 dto.setSynonyms(aliasList);
                             }
