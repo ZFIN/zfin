@@ -13,8 +13,9 @@ public class JsonDateSerializer extends JsonSerializer<GregorianCalendar> {
 
     @Override
     public void serialize(GregorianCalendar date, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-        String dateString = date.toZonedDateTime().toString();
-        dateString = dateString.substring(0,dateString.indexOf("["));
-        jsonGenerator.writeString(dateString);
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        fmt.setCalendar(date);
+        String dateFormatted = fmt.format(date.getTime());
+        jsonGenerator.writeString(dateFormatted);
     }
 }

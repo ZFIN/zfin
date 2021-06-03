@@ -226,7 +226,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                         expconda.setGeneOntologyId(conditionz.getGoCCTerm().getOboID());
                     }
                     if (conditionz.getTaxaonymTerm() != null) {
-                        expconda.setNCBITaxonId(conditionz.getTaxaonymTerm().getOboID());
+                        expconda.setNcbiTaxonId(conditionz.getTaxaonymTerm().getOboID());
                     }
                     expconda.setConditionClassId(conditionz.getZecoTerm().getOboID());
                     //expcond.setConditionStatement();
@@ -286,7 +286,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                     conditionStatement = conditionStatement + " " +condition.getGoCCTerm().getTermName();
                 }
                 if (condition.getTaxaonymTerm() != null) {
-                    expcond.setNCBITaxonId(condition.getTaxaonymTerm().getOboID());
+                    expcond.setNcbiTaxonId(condition.getTaxaonymTerm().getOboID());
                     conditionStatement = conditionStatement + " " + condition.getTaxaonymTerm().getTermName();
                 }
                 expcond.setConditionClassId(condition.getZecoTerm().getOboID());
