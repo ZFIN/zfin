@@ -764,7 +764,7 @@ public class HibernateMutantRepository implements MutantRepository {
                                     conditionStatement = conditionStatement + " " + condition.getGoCCTerm().getTermName();
                                 }
                                 if (condition.getTaxaonymTerm() != null) {
-                                    expcond.setNCBITaxonId(condition.getTaxaonymTerm().getOboID());
+                                    expcond.setNcbiTaxonId(condition.getTaxaonymTerm().getOboID());
                                     conditionStatement = conditionStatement + " " + condition.getTaxaonymTerm().getTermName();
                                 }
                                 expcond.setConditionClassId(condition.getZecoTerm().getOboID());

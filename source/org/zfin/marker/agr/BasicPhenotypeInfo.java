@@ -3,6 +3,8 @@ package org.zfin.marker.agr;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import lombok.extern.log4j.Log4j2;
+import org.apache.commons.collections.CollectionUtils;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 
 import java.io.FileOutputStream;
@@ -10,9 +12,11 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
+@Log4j2
 public class BasicPhenotypeInfo extends AbstractScriptWrapper {
 
     private int numOfRecords = 0;
@@ -47,6 +51,8 @@ public class BasicPhenotypeInfo extends AbstractScriptWrapper {
 
     public AllPhenotypeDTO getBasicPhenotypeInfo(int numOfRecords) {
         List<BasicPhenotypeDTO> basicPhenoDTOList = getMutantRepository().getBasicPhenotypeDTOObjects();
+        log.info("Number of Phenotype annotations: " + String.format("%,d", basicPhenoDTOList.size()));
+        System.out.printf("%,d%n", basicPhenoDTOList.size());
 
         AllPhenotypeDTO allPhenotypeDTO = new AllPhenotypeDTO();
         allPhenotypeDTO.setPhenotypeList(basicPhenoDTOList);
