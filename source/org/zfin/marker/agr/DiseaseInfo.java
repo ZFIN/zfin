@@ -229,7 +229,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                         expconda.setNcbiTaxonId(conditionz.getTaxaonymTerm().getOboID());
                     }
                     expconda.setConditionClassId(conditionz.getZecoTerm().getOboID());
-                    //expcond.setConditionStatement();
+                    expconda.setConditionStatement(conditionz.getDisplayName());
                     expconds2.add(expconda);
                 }
                 relation.setConditions(expconds2);
