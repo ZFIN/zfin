@@ -13,7 +13,7 @@ public class JsonDateSerializer extends JsonSerializer<GregorianCalendar> {
 
     @Override
     public void serialize(GregorianCalendar date, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
         fmt.setCalendar(date);
         String dateFormatted = fmt.format(date.getTime());
         jsonGenerator.writeString(dateFormatted);
