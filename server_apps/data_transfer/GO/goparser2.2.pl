@@ -3,7 +3,6 @@
 #  goparser2.2.pl
 #
 
-
 system("/bin/rm -f gene_association2.2.zfin");
 system("/bin/rm -f gene_association2.2_automated_only.zfin");
 $versionNumber += 0.001;
