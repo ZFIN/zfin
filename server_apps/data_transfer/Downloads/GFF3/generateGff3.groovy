@@ -345,7 +345,7 @@ def printHeader(String contigs, BufferedWriter out) {
     new File(contigs).eachLine { line ->
         out.println line
     }
-    out.println "#!date-produced " + new Date().format( 'yyyy-MM-dd' )
+    out.println "#!date-produced " + new Date().format( 'yyyy-MM-dd\'T\'HH:mm:ssXXX' )
     out.println "#!data-source ZFIN"
     out.println "#!assembly GRCz11"
 
