@@ -701,9 +701,7 @@ public class HibernateMutantRepository implements MutantRepository {
         final String fishQueryString = "select distinct fish.fish_zdb_id, psg_short_name, zdb_id, accession_no as accession_no," +
                 "                e1a.term_ont_id as psg_e1a_id, e1b.term_ont_id as psg_e1b_id, e2a.term_ont_id as psg_e2a_id, e2b.term_ont_id as psg_e2b_id, quality.term_ont_id as psg_quality_id, " +
                 "                genox_zdb_id" +
-                "                from feature_marker_relationship fmrel1" +
-                "                join genotype_feature on fmrel_ftr_zdb_id = genofeat_feature_zdb_id" +
-                "                join fish on genofeat_geno_zdb_id = fish_genotype_zdb_id" +
+                "                from fish fish " +
                 "                join fish_experiment on fish_zdb_id = genox_fish_zdb_id" +
                 "                join phenotype_source_generated on pg_genox_zdb_id = genox_zdb_id" +
                 "                join phenotype_observation_generated on psg_pg_id = pg_id" +
@@ -711,6 +709,8 @@ public class HibernateMutantRepository implements MutantRepository {
                 "                join publication on fig_source_zdb_id = zdb_id" +
                 "                join term as e1a on psg_e1a_zdb_id = e1a.term_zdb_id" +
                 "                join term as quality on psg_quality_zdb_id = quality.term_zdb_id" +
+                "                left outer join feature_marker_relationship on fmrel_ftr_zdb_id = genofeat_feature_zdb_id" +
+                "                left outer join genotype_feature on genofeat_geno_zdb_id = genox_fish_zdb_id" +
                 "                left outer join term as e1b on e1b.term_zdb_id = psg_e1b_zdb_id" +
                 "                left outer join term as e2a on e2a.term_zdb_id = psg_e2a_zdb_id" +
                 "                left outer join term as e2b on e2b.term_zdb_id = psg_e2b_zdb_id" ;
@@ -727,7 +727,7 @@ public class HibernateMutantRepository implements MutantRepository {
         phenos.addAll(fishes);
 
 
-        List<BasicPhenotypeDTO> basicPhenos = new ArrayList<BasicPhenotypeDTO>();
+        List<BasicPhenotypeDTO> basicPhenos = new ArrayList<>();
         for (Object[] basicPhenoObjects : phenos) {
             List<String> primaryGeneticEntityIDs = new ArrayList<>();
             BasicPhenotypeDTO basicPheno = new BasicPhenotypeDTO();
