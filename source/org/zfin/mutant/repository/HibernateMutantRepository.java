@@ -709,8 +709,8 @@ public class HibernateMutantRepository implements MutantRepository {
                 "                join publication on fig_source_zdb_id = zdb_id" +
                 "                join term as e1a on psg_e1a_zdb_id = e1a.term_zdb_id" +
                 "                join term as quality on psg_quality_zdb_id = quality.term_zdb_id" +
-                "                left outer join feature_marker_relationship on fmrel_ftr_zdb_id = genofeat_feature_zdb_id" +
                 "                left outer join genotype_feature on genofeat_geno_zdb_id = genox_fish_zdb_id" +
+                "                left outer join feature_marker_relationship on fmrel_ftr_zdb_id = genofeat_feature_zdb_id" +
                 "                left outer join term as e1b on e1b.term_zdb_id = psg_e1b_zdb_id" +
                 "                left outer join term as e2a on e2a.term_zdb_id = psg_e2a_zdb_id" +
                 "                left outer join term as e2b on e2b.term_zdb_id = psg_e2b_zdb_id" ;
