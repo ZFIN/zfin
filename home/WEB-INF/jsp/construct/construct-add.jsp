@@ -3,7 +3,7 @@
 
 <jsp:useBean id="formBean" class="org.zfin.construct.presentation.ConstructAddBean" scope="request"/>
 
-<form:form commandName="formBean" id="constructadd" style="background-color:#EEEEEE;">
+<form:form commandName="formBean" id="constructadd" style="background-color:#EEEEEE;" onSubmit="return create();">
 
 
     <table>
@@ -88,7 +88,7 @@
             <form:hidden name="constructStoredName" path="constructStoredName"/>
 
             <form:hidden name="constructName" path="constructName"/>
-        <input type="button" value="DONE" id="submitConstruct"/>
+        <input type="button" value="Create" id="submitConstruct" />
         &nbsp;&nbsp; <input type="button" value="CANCEL" id="resetConstruct"/>
 
     <div class="error" id="add-construct-error" style="display: none;"></div>
@@ -96,5 +96,17 @@
 
 </form:form>
 
+<script>
+    function create() {
+        alert("Wert: "+document.getElementById('constructDisplayName').value)
+
+        if (document.getElementById('constructDisplayName').value.includes('.-'))
+            if( confirm('Do you really want to create a .- construct?')){
+                return true;
+            }
+            alert('Hello')
+            return false;
+    }
+</script>
 
 
