@@ -30,7 +30,7 @@
       <command>cd $SOURCEROOT &amp;&amp; gradle createAllianceFiles</command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
-      <command>cd server_apps/DB_maintenance && ./validateAllianceFiles.sh</command>
+      <command>cd $SOURCEROOT/server_apps/DB_maintenance/Alliance && ./validateAllianceFiles.sh</command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
       <command>mv $SOURCEROOT/ZFIN*.json $DOWNLOAD_DIRECTORY/current</command>
