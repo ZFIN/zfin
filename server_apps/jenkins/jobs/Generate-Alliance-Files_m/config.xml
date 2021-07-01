@@ -41,7 +41,7 @@
     <hudson.tasks.Shell>
       <command>
         cd $SOURCEROOT/server_apps/DB_maintenance/Alliance  &amp;&amp; rm -f ZFIN*.json*   &amp;&amp; cp $SOURCEROOT/ZFIN*.json .  &amp;&amp; gzip ZFIN*.json
-        cd $SOURCEROOT/server_apps/DB_maintenance/Alliance  &amp;&amp; ./validateAllianceFiles.sh
+        cd $SOURCEROOT/server_apps/DB_maintenance/Alliance  &amp;&amp; ./validateAllianceFiles.sh $submit
       </command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
