@@ -30,6 +30,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
+ *
  */
 @Service
 public class ProfileService {
@@ -621,7 +622,9 @@ public class ProfileService {
 
             for (BeanFieldUpdate field : fields) {
                 if (field.getTo() instanceof String) {
-                    field.setTo(POLICY.sanitize(String.valueOf(field.getTo())));
+                    //exclude email addresses as they otherwise would escape the '2' sign.
+                    if (!field.getField().equals("email"))
+                        field.setTo(POLICY.sanitize(String.valueOf(field.getTo())));
                 }
             }
 
