@@ -36,3 +36,7 @@ and not exists (
     select 'c' from record_attribution as ra where ra.recattrib_source_zdb_id = 'ZDB-PUB-060906-3'
     and ra.recattrib_data_zdb_id = r.recattrib_data_zdb_id
         );
+
+delete from zdb_active_source where zactvs_zdb_id = 'ZDB-FIG-061009-5';
+
+--delete from figure where fig_zdb_id = 'ZDB-FIG-061009-5';
