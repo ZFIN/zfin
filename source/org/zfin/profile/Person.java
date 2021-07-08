@@ -453,7 +453,7 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
         String[] firstNames = getFirstName().split(" ");
 
         for (String name : firstNames) {
-            shortName += name.substring(0, 1) + ".";
+            shortName += name.charAt(0) + ".";
         }
         setShortName(shortName);
 

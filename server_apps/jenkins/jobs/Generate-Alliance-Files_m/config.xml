@@ -12,6 +12,15 @@
         <artifactNumToKeep>-1</artifactNumToKeep>
       </strategy>
     </jenkins.model.BuildDiscarderProperty>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.BooleanParameterDefinition>
+          <name>submit</name>
+          <description>if set to true the files will be submitted</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
   </properties>
   <scm class="hudson.scm.NullSCM"/>
   <canRoam>true</canRoam>
@@ -27,7 +36,13 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd $SOURCEROOT &amp;&amp; gradle createAllianceFiles</command>
+      <command>cd $SOURCEROOT  &amp;&amp; gradle createAllianceFiles</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>
+        cd $SOURCEROOT/server_apps/DB_maintenance/Alliance  &amp;&amp; rm -f ZFIN*.json*   &amp;&amp; cp $SOURCEROOT/ZFIN*.json .  &amp;&amp; gzip ZFIN*.json
+        cd $SOURCEROOT/server_apps/DB_maintenance/Alliance  &amp;&amp; ./validateAllianceFiles.sh $submit
+      </command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
       <command>mv $SOURCEROOT/ZFIN*.json $DOWNLOAD_DIRECTORY/current</command>
