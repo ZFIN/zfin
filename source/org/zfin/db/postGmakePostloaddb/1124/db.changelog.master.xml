@@ -5,7 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <include file="source/org/zfin/db/postGmakePostloaddb/1123/ZFIN-7568.sql" />
-    <include file="source/org/zfin/db/postGmakePostloaddb/1123/ZFIN-7578.sql" />
-    <include file="source/org/zfin/db/postGmakePostloaddb/1123/add_sfcl_accession_number.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1124/ZFIN-7568.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1124/ZFIN-7578.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1124/add_sfcl_accession_number.sql" />
 </databaseChangeLog>
