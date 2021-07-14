@@ -5,9 +5,10 @@ update curation
                                 set cur_pub_zdb_id = 'ZDB-PUB-060906-3'
                               where cur_pub_zdb_id = 'ZDB-PUB-090225-18';
 
-update int_person_pub 
-                                set target_id = 'ZDB-PUB-060906-3'
-                              where target_id = 'ZDB-PUB-090225-18';
+-- record already exists, so removing this but in general this needs to be done.
+--update int_person_pub
+--                                set target_id = 'ZDB-PUB-060906-3'
+--                              where target_id = 'ZDB-PUB-090225-18';
 
 update publication_file 
                                 set pf_pub_zdb_id = 'ZDB-PUB-060906-3'
