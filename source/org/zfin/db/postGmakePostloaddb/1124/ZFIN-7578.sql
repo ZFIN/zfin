@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset xshao:PUB-469
+--changeset christian:PUB-469
 
 update curation
                                 set cur_pub_zdb_id = 'ZDB-PUB-060906-3'
