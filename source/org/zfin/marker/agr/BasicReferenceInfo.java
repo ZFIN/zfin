@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
-import java.util.GregorianCalendar;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -132,7 +131,7 @@ public class BasicReferenceInfo extends AbstractScriptWrapper {
                             pubType.setSource("ZFIN");
                             pubType.setReferenceType(reference.getType().getDisplay());
                             MODReferenceTypes.add(pubType);
-                            dto.setSMODReferenceTypes(MODReferenceTypes);
+                            dto.setMODReferenceTypes(MODReferenceTypes);
                             String allianceCategory = "";
                             String type = reference.getType().getDisplay();
                             if (type.equals("Journal") || type.equals("Abstract")){

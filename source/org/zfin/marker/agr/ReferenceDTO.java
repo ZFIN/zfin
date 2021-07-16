@@ -29,13 +29,14 @@ public class ReferenceDTO {
     private List<String> keywords;
     private List<String> pubMedType;
     private String publisher;
-    @JsonProperty("sMODReferenceTypes")
-    private List<MODReferenceTypeDTO> sMODReferenceTypes;
+    @JsonProperty("MODReferenceTypes")
+    private List<MODReferenceTypeDTO> MODReferenceTypes;
     private List<ReferenceTagDTO> tags;
     private List<MESHDetailDTO> meshTerms;
     private List<CrossReferenceDTO> crossReferences;
     private String resourceAbbreviation;
     private List<AuthorReferenceDTO> authors;
+    @JsonProperty("abstract")
     private String abstractText;
 
 }
