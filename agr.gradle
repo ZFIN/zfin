@@ -108,4 +108,8 @@ task createAllianceFiles {
     dependsOn createHtpdatasetFile
     dependsOn createHtpdatasampleFile
     dependsOn createBasicVariantInfoFile
+    dependsOn createBasicResourceInfoFile
+    dependsOn createReferenceInfoFile
+    dependsOn createReferenceExchangeInfoFile
+
 }
