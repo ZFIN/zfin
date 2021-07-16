@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,6 +29,7 @@ public class ReferenceDTO {
     private List<String> keywords;
     private List<String> pubMedType;
     private String publisher;
+    @JsonProperty("sMODReferenceTypes")
     private List<MODReferenceTypeDTO> sMODReferenceTypes;
     private List<ReferenceTagDTO> tags;
     private List<MESHDetailDTO> meshTerms;
