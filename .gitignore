@@ -17,6 +17,9 @@ server_apps/data_transfer/LoadOntology/logs
 # Docker config
 docker/pg_pass
 docker/.env
+docker/httpd/*.crt
+docker/httpd/*.key
+docker/tomcat/keystore
 ansible/pg_pass
 
 # IntelliJ things

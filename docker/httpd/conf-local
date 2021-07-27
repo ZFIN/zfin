@@ -1,9 +1,9 @@
 # Global zfin.org setup
 # this applies to all virtual hosts
 #
-SSLCACertificateFile /etc/pki/tls/certs/incommon_intermediate_bundle.crt
-SSLCertificateFile   /etc/pki/tls/certs/zfin_2021.crt
-SSLCertificateKeyFile   /etc/pki/tls/private/zfin_2021.key
+#SSLCACertificateFile /opt/zfin/tls/certs/incommon_intermediate_bundle.crt
+SSLCertificateFile   /opt/zfin/tls/certs/zfin.org.crt
+SSLCertificateKeyFile   /opt/zfin/tls/private/zfin.org.key
 
 Timeout 1200
 
