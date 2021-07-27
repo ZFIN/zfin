@@ -2,7 +2,7 @@ FROM gradle:jdk15
 
 RUN apt update && apt install -y --no-install-recommends \
        ant groovy nodejs npm postgresql-client tcsh sudo \
-       vim
+       vim iputils-ping
 
 RUN mkdir /opt/misc 
 COPY ./apache-groovy-binary-3.0.7.zip.sha256 /opt/misc
@@ -11,6 +11,8 @@ RUN cd /opt/misc && wget https://groovy.jfrog.io/artifactory/dist-release-local/
 RUN ln -s /opt/misc/groovy-3.0.7 /opt/misc/groovy
 RUN chsh -s /usr/bin/tcsh gradle
 RUN mkdir -p /opt/zfin/www_homes/zfin.org
+RUN mkdir -p /opt/zfin/tls/certs
+RUN mkdir -p /opt/zfin/tls/private
 RUN mkdir -p /opt/zfin/catalina_bases/zfin.org
 RUN chown -R gradle:gradle /opt/zfin/
 

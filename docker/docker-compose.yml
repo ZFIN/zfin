@@ -15,6 +15,7 @@ services:
     volumes: 
       #- /opt/zfin/docker/www_homes/zfin.org:/opt/zfin/www_homes/zfin.org
       - www_data:/opt/zfin/www_homes/zfin.org
+      - tls_certs:/opt/zfin/tls
       - catalina_base:/opt/zfin/catalina_bases/zfin.org
       - ../:/opt/zfin/source_roots/zfin.org
       #- nfs-zunloads:/research/zunloads
@@ -52,15 +53,23 @@ services:
     restart: always
     ports:
       - "8080:80"
+      - "8443:443"
     volumes:
       - www_data:/opt/zfin/www_homes/zfin.org
-      - nfs-loadup:/opt/zfin/loadUp
+      - tls_certs:/opt/zfin/tls
+      #- nfs-loadup:/opt/zfin/loadUp
       #- /etc/pki/tls/certs/incommon_intermediate_bundle.crt:/etc/pki/tls/certs/incommon_intermediate_bundle.crt,ro
       #- /etc/pki/tls/certs/zfin_2021.crt:/etc/pki/tls/certs/zfin_2021.crt,ro
       #- /etc/pki/tls/private/zfin_2021.key:/etc/pki/tls/private/zfin_2021.key,ro
-      - ./httpd/incommon_intermediate_bundle.crt:/etc/pki/tls/certs/incommon_intermediate_bundle.crt,ro
-      - ./httpd/zfin_2021.crt:/etc/pki/tls/certs/zfin_2021.crt,ro
-      - ./httpd/zfin_2021.key:/etc/pki/tls/private/zfin_2021.key,ro
+      #- ./httpd/incommon_intermediate_bundle.crt:/etc/pki/tls/certs/incommon_intermediate_bundle.crt,ro
+      #- ./httpd/zfin_2021.crt:/etc/pki/tls/certs/zfin_2021.crt,ro
+      #- ./httpd/zfin_2021.key:/etc/pki/tls/private/zfin_2021.key,ro
+      - certbot_data:/etc/letsencrypt
+  certbot:
+    container_name: certbot_container
+    build: ./certbot/
+    volumes:
+      - certbot_data:/etc/letsencrypt
   tomcat:
     container_name: tomcat_container
     build: ./tomcat/
@@ -68,6 +77,7 @@ services:
     environment:
       CATALINA_BASE: /opt/zfin/catalina_bases/zfin.org
       INSTANCE: docker
+      JVM_OPTS: -Xms2048m -Xmx8192m -Xss2m
     volumes:
       - www_data:/opt/zfin/www_homes/zfin.org
       - catalina_base:/opt/zfin/catalina_bases/zfin.org
@@ -76,9 +86,11 @@ services:
 
 volumes:
   www_data:
+  tls_certs:
   catalina_base:
   pg_data:
   solr_data:
+  certbot_data:
   nfs-zunloads:
     driver_opts:
       type: nfs
