@@ -4,7 +4,7 @@
     <p class="lead">
 	<a
             href="https://zfin.atlassian.net/wiki/spaces/jobs/pages/2996503058/ZFIN+Jobs">
-	ZFIN is hiring both a software developer and a curator! </a>
+	ZFIN is hiring a scientific curator! </a>
     <p/>
     The Zebrafish Information Network (ZFIN) is the database of genetic and genomic data for the
     zebrafish (<i>Danio rerio</i>) as a model organism. ZFIN provides a wide array of expertly curated,
