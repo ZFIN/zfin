@@ -2,7 +2,7 @@ FROM gradle:jdk15
 
 RUN apt update && apt install -y --no-install-recommends \
        ant groovy nodejs npm postgresql-client tcsh sudo \
-       vim iputils-ping
+       vim nano emacs iputils-ping
 
 RUN mkdir /opt/misc 
 COPY ./apache-groovy-binary-3.0.7.zip.sha256 /opt/misc
