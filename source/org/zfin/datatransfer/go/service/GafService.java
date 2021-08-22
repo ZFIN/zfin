@@ -210,7 +210,7 @@ public class GafService {
 
     protected Collection<Marker> getGenes(String entryId) throws GafValidationError {
         Set<Marker> returnGenes = new HashSet<>();
-        if (entryId.startsWith("ZDB-GENE-") || entryId.contains("RNAG")) {
+        if (entryId.startsWith("ZDB-GENE") || entryId.contains("RNAG")) {
             Marker gene = markerRepository.getGeneByID(entryId);
             if (gene == null) {
                 throw new GafValidationError("No gene found for ID: " + entryId);
