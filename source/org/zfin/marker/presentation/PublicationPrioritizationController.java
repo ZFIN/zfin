@@ -1,6 +1,7 @@
 package org.zfin.marker.presentation;
 
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,7 @@ import org.zfin.mutant.DiseaseAnnotationModel;
 import org.zfin.wiki.presentation.Version;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -43,32 +45,35 @@ public class PublicationPrioritizationController {
                                                                        @Version Pagination pagination) {
 
         List<Marker> attributedMarker = getPublicationRepository().getGenesByPublication(publicationId, false);
-        Map<Marker, Boolean> isNewGeneMap = getPublicationRepository().areNewGenePubAttribution(attributedMarker, publicationId);
-        List<Prioritization> prioList = attributedMarker.stream()
-                .map(marker -> {
-                    Prioritization prioritization = new Prioritization();
-                    prioritization.setId(marker.getZdbID());
-                    //     prioritization.setMarker(marker);
-                    prioritization.setName(marker.getAbbreviation());
-                    prioritization.setNewWithThisPaper(isNewGeneMap.get(marker));
+        List<Prioritization> prioList = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(attributedMarker)) {
+            Map<Marker, Boolean> isNewGeneMap = getPublicationRepository().areNewGenePubAttribution(attributedMarker, publicationId);
+            prioList = attributedMarker.stream()
+                    .map(marker -> {
+                        Prioritization prioritization = new Prioritization();
+                        prioritization.setId(marker.getZdbID());
+                        //     prioritization.setMarker(marker);
+                        prioritization.setName(marker.getAbbreviation());
+                        prioritization.setNewWithThisPaper(isNewGeneMap.get(marker));
 
-                    prioritization.setHasOrthology(getPublicationRepository().hasCuratedOrthology(marker));
-                    PhenotypeOnMarkerBean phenotypeOnMarkerBean = MarkerService.getPhenotypeOnGene(marker);
-                    prioritization.setPhenotypeFigures(phenotypeOnMarkerBean.getNumFigures());
-                    prioritization.setPhenotypePublication(phenotypeOnMarkerBean.getNumPublications());
-                    MarkerExpression markerExpression = expressionService.getExpressionForGene(marker);
-                    if (marker.isGenedom()) {
-                        prioritization.setExpressionFigures(markerExpression.getAllExpressionData().getFigureCount());
-                        prioritization.setExpressionInSitu(markerExpression.getInSituFigCount());
-                        prioritization.setExpressionPublication(markerExpression.getAllExpressionData().getPublicationCount());
+                        prioritization.setHasOrthology(getPublicationRepository().hasCuratedOrthology(marker));
+                        PhenotypeOnMarkerBean phenotypeOnMarkerBean = MarkerService.getPhenotypeOnGene(marker);
+                        prioritization.setPhenotypeFigures(phenotypeOnMarkerBean.getNumFigures());
+                        prioritization.setPhenotypePublication(phenotypeOnMarkerBean.getNumPublications());
+                        MarkerExpression markerExpression = expressionService.getExpressionForGene(marker);
+                        if (marker.isGenedom()) {
+                            prioritization.setExpressionFigures(markerExpression.getAllExpressionData().getFigureCount());
+                            prioritization.setExpressionInSitu(markerExpression.getInSituFigCount());
+                            prioritization.setExpressionPublication(markerExpression.getAllExpressionData().getPublicationCount());
 
-                    }
-                    List<DiseaseAnnotationModel> diseaseAnnotationModels = getPhenotypeRepository().getDiseaseAnnotationModelsByGene(marker);
-                    if (diseaseAnnotationModels != null)
-                        prioritization.setAssociatedDiseases(diseaseAnnotationModels.size());
-                    return prioritization;
-                })
-                .collect(Collectors.toList());
+                        }
+                        List<DiseaseAnnotationModel> diseaseAnnotationModels = getPhenotypeRepository().getDiseaseAnnotationModelsByGene(marker);
+                        if (diseaseAnnotationModels != null)
+                            prioritization.setAssociatedDiseases(diseaseAnnotationModels.size());
+                        return prioritization;
+                    })
+                    .collect(Collectors.toList());
+        }
         JsonResultResponse<Prioritization> response = new JsonResultResponse<>();
         response.setTotal(prioList.size());
         response.setResults(prioList);

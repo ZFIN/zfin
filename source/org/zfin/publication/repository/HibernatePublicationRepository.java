@@ -2840,6 +2840,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     @Override
     public Map<Marker, Boolean> areNewGenePubAttribution(List<Marker> attributedMarker, String publicationId) {
+        if(CollectionUtils.isEmpty(attributedMarker))
+            return null;
         String hql = "select pa.dataZdbID, count(pa) as ct from PublicationAttribution as pa where " +
                 " pa.dataZdbID in (:markerIDs) AND pa.sourceType = :source " +
                 " group by pa.dataZdbID ";
