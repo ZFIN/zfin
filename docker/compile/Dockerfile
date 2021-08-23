@@ -1,4 +1,4 @@
-FROM gradle:jdk15
+FROM gradle:jdk14
 
 RUN apt update && apt install -y --no-install-recommends \
        ant groovy nodejs npm postgresql-client tcsh sudo \
