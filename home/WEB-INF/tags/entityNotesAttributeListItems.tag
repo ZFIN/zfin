@@ -23,8 +23,11 @@
 </authz:authorize>
 
 <z:attributeListItem label="Note">
-    <z:ifHasData test="${!empty entity.publicComments or !empty additionalNote}" noDataMessage="None">
+    <z:ifHasData test="${!empty entity.publicComments or !empty additionalNote or !empty entity.externalNotes}" noDataMessage="None">
         <div class="keep-breaks">${entity.publicComments}</div>
+        <c:forEach var="externalNote" items="${entity.externalNotes}" varStatus="loop">
+            <div class="keep-breaks">${externalNote.note}</div>
+        </c:forEach>
         ${additionalNote}
     </z:ifHasData>
 </z:attributeListItem>
