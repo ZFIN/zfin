@@ -91,6 +91,11 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         return publicComments;
     }
 
+    @Override
+    public String getExternalNotes() {
+        return null;
+    }
+
     public void setPublicComments(String comments) {
         this.publicComments = comments;
     }
