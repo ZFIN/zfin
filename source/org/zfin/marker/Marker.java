@@ -4,6 +4,7 @@ package org.zfin.marker;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.zfin.ExternalNote;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
 import org.zfin.feature.FeatureMarkerRelationship;
@@ -92,7 +93,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
     }
 
     @Override
-    public String getExternalNotes() {
+    public Set<? extends ExternalNote> getExternalNotes() {
         return null;
     }
 
