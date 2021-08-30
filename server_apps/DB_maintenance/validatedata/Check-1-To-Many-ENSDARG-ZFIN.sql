@@ -7,6 +7,8 @@ FROM   marker
           dblink_acc_num
         FROM   db_link
         WHERE  dblink_acc_num LIKE 'ENSDARG%'
+        -- use only GRCz11
+        AND dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-061018-1'
         GROUP  BY dblink_acc_num
         HAVING Count(*) > 1) dbl2
     ON dbl1.dblink_acc_num = dbl2.dblink_acc_num
