@@ -5,7 +5,8 @@ import java.util.Set;
 /**
  */
 public interface EntityNotes {
-    public Set<DataNote> getDataNotes() ;
-    public Set<DataNote> getSortedDataNotes() ;
-    public String getPublicComments() ;
+    Set<DataNote> getDataNotes() ;
+    Set<DataNote> getSortedDataNotes() ;
+    String getPublicComments() ;
+    String getExternalNotes() ;
 }

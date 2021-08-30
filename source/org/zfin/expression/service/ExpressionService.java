@@ -305,6 +305,7 @@ public class ExpressionService {
 
         markerExpression.setAllExpressionData(allMarkerExpressionInstance);
         markerExpression.setExpressionAtlasLink(getExpressionAtlasForMarker(marker.zdbID, ForeignDB.AvailableName.EXPRESSIONATLAS));
+        markerExpression.setGeoLink(getGeoLinkForMarkerIfExists(marker));
 
         // directly submitted
         logger.info("setting directly submitted expression");
