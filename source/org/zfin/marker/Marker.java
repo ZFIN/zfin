@@ -47,6 +47,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
     private HashMap<String, List<Publication>> pubsPerAnatomy;
     private Set<Figure> figures;
     private Set<MarkerFamilyName> familyName;
+    private Set<FluorescentProtein> fluorescentProteins;
     private Set<Ortholog> orthologs;
     protected Set<MarkerRelationship> firstMarkerRelationships;    //  where this marker = "mrel_mrkr_1_zdb_id" in mrel
     private Set<MarkerRelationship> secondMarkerRelationships;   //  where this marker = "mrel_mrkr_2_zdb_id" in mrel
@@ -686,6 +687,14 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
      */
     public void setFamilyName(Set<MarkerFamilyName> familyName) {
         this.familyName = familyName;
+    }
+
+    public Set<FluorescentProtein> getFluorescentProteins() {
+        return fluorescentProteins;
+    }
+
+    public void setFluorescentProteins(Set<FluorescentProtein> fluorescentProteins) {
+        this.fluorescentProteins = fluorescentProteins;
     }
 
     /**
