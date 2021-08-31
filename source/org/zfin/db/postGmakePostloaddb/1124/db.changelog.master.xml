@@ -12,4 +12,7 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1124/ZFIN-7058.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1124/ZFIN-7598.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1124/ZFIN-7645.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1124/add_colors_pre.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1124/add_colors.xml" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1124/add_colors.sql" />
 </databaseChangeLog>
