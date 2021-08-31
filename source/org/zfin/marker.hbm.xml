@@ -166,6 +166,11 @@
             <many-to-many column="gfammem_gfam_name" class="org.zfin.marker.MarkerFamilyName"/>
         </set>
 
+        <set name="fluorescentProteins" lazy="true" table="fluorescent_efg">
+            <key column="fe_mrkr_zdb_id"/>
+            <many-to-many column="fe_fl_protein_id" class="org.zfin.marker.FluorescentProtein"/>
+        </set>
+
         <set name="suppliers">
             <key column="idsup_data_zdb_id" update="false"/>
             <one-to-many class="org.zfin.profile.MarkerSupplier"/>
