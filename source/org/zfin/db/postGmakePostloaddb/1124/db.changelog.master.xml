@@ -10,4 +10,7 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1124/ZFIN-7503.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1124/add_sfcl_accession_number.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1124/ZFIN-7058.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1124/add_colors_pre.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1124/add_colors.xml" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1124/add_colors.sql" />
 </databaseChangeLog>

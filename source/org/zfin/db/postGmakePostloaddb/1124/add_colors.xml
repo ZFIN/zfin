@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+
+
+    <changeSet author="pm" id="ZFIN-6869">
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1124/fp_base_colors.csv"
+                  tableName="fluorescent_protein" encoding="UTF-8">
+            <column header="Name" name="fp_name" type="String"/>
+            <column header="Ex max (nm)" name="fp_excitation_length" type="String" />
+            <column header="Em max (nm)" name="fp_emission_length" type="String"/>
+            <column header="Stokes Shift (nm)" type="skip"/>
+            <column header="extinction Coefficient" type="skip"/>
+            <column header="Quantum yield" type="skip"/>
+            <column header="Brightness" type="skip"/>
+            <column header="pKa" type="skip"/>
+            <column header="Oligomerization" type="skip"/>
+            <column header="Maturation (min)" type="skip"/>
+            <column header="Lifetime (ns)" type="skip"/>
+            <column header="Molecular Weight (kDa)" type="skip"/>
+            <column header="Switch type" type="skip"/>
+            <column header="Aliases" name="fp_aliases" type="String"/>
+
+        </loadData>
+
+    </changeSet>
+</databaseChangeLog>
