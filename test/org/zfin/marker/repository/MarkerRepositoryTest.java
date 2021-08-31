@@ -113,6 +113,14 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void testEfgFluorescent() {
+        Marker efg = markerRepository.getMarkerByID("ZDB-EFG-190123-1");
+        assertNotNull(efg);
+        assertNotNull(efg.getFluorescentProteins());
+        assertEquals(efg.getFluorescentProteins().iterator().next().getName(),"mOrange2");
+    }
+
+    @Test
     public void testConstruct() {
         ConstructCuration cc = (ConstructCuration) HibernateUtil.currentSession().createCriteria(ConstructCuration.class)
                 .add(Restrictions.eq("zdbID", "ZDB-GTCONSTRCT-110310-1"))

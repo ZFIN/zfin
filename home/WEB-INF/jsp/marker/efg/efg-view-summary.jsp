@@ -14,7 +14,23 @@
     </z:attributeListItem>
 
     <zfin2:markerPreviousNamesAttributeListItem previousNames="${formBean.previousNames}" />
-    
+
+    <z:attributeListItem label="Emission Wavelength">
+        <c:if test="${formBean.marker.fluorescentProteins != null}">
+            <c:forEach var="fp" items="${formBean.marker.fluorescentProteins}">
+                ${fp.emissionLength} nm
+            </c:forEach>
+        </c:if>
+    </z:attributeListItem>
+
+    <z:attributeListItem label="Excitation Wavelength">
+        <c:if test="${formBean.marker.fluorescentProteins != null}">
+            <c:forEach var="fp" items="${formBean.marker.fluorescentProteins}">
+                ${fp.excitationLength} nm
+            </c:forEach>
+        </c:if>
+    </z:attributeListItem>
+
     <zfin2:markerSOTypeAttributeListItem soTerm="${formBean.zfinSoTerm}" />
 
     <z:attributeListItem label="Location">
