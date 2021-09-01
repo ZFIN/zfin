@@ -1,4 +1,4 @@
-SELECT mrkr_zdb_id,
+SELECT distinct(mrkr_zdb_id),
   dbl1.dblink_acc_num
 FROM   marker
   JOIN db_link dbl1
