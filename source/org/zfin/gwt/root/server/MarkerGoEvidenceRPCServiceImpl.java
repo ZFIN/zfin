@@ -355,7 +355,7 @@ public class MarkerGoEvidenceRPCServiceImpl extends ZfinRemoteServiceServlet imp
         markerGoTermEvidence.setCreatedWhen(rightNow);
 
         // implies that the ID is set here
-        markerGoTermEvidenceRepository.addEvidence(markerGoTermEvidence, isInternalLoad);
+        markerGoTermEvidenceRepository.addEvidence(markerGoTermEvidence, false);
 
         // have to do this after we add inferences
         Set<String> newInferenceStrings = new TreeSet<>(goEvidenceDTO.getInferredFrom());
