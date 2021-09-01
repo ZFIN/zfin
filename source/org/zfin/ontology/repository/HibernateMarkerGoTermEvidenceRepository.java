@@ -5,7 +5,6 @@ import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logg
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
-import org.zfin.datatransfer.go.FpInferenceGafParser;
 import org.zfin.datatransfer.go.GafOrganization;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
@@ -121,10 +120,10 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
     }
 
     @Override
-    public void addEvidence(MarkerGoTermEvidence markerGoTermEvidenceToAdd) {
+    public void addEvidence(MarkerGoTermEvidence markerGoTermEvidenceToAdd, boolean isInternalLoad) {
 
-        // has this marker already a non-root term annotation?
-        if (markerGoTermEvidenceToAdd.getGoTerm().isRoot()) {
+        // has this marker already a non-root term annotation for external loads
+        if (markerGoTermEvidenceToAdd.getGoTerm().isRoot() && !isInternalLoad) {
             String hql = "select count(*) from MarkerGoTermEvidence where " +
                     "marker = :marker AND goTerm != :goTerm AND goTerm.ontology = :ontology";
             Query query = HibernateUtil.currentSession().createQuery(hql);

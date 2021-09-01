@@ -5,7 +5,6 @@ import org.zfin.marker.Marker;
 import org.zfin.mutant.GoEvidenceCode;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.mutant.NoctuaModel;
-import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 
@@ -36,8 +35,9 @@ public interface MarkerGoTermEvidenceRepository {
      * This methods assumes that the inferences have not been added either.
      *
      * @param markerGoTermEvidenceToAdd
+     * @param isInternalLoad
      */
-    void addEvidence(MarkerGoTermEvidence markerGoTermEvidenceToAdd);
+    void addEvidence(MarkerGoTermEvidence markerGoTermEvidenceToAdd, boolean isInternalLoad);
 
     String isValidMarkerGoTerm(MarkerGoTermEvidence markerGoTermEvidenceToAdd);
 
