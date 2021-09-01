@@ -181,7 +181,7 @@ public class MarkerGoTermEvidenceRepositoryTest extends AbstractDatabaseTest {
         inferenceGroupMemberSet.add(inferenceGroupMember);
 
         evidence.setInferredFrom(inferenceGroupMemberSet);
-        markerGoTermEvidenceRepository.addEvidence(evidence);
+        markerGoTermEvidenceRepository.addEvidence(evidence, isInternalLoad);
 
         assertNotNull(HibernateUtil.currentSession().createCriteria(MarkerGoTermEvidence.class)
                 .add(Restrictions.eq("zdbID", evidence.getZdbID()))

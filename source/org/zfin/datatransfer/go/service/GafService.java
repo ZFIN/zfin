@@ -22,7 +22,6 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.Subset;
 import org.zfin.ontology.Term;
-import org.zfin.ontology.repository.HibernateOntologyRepository;
 import org.zfin.ontology.repository.MarkerGoTermEvidenceRepository;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.publication.Publication;
@@ -738,7 +737,7 @@ public class GafService {
                 ontologyRepository.isParentChildRelationshipExist(markerGoTermEvidenceToAdd.getGoTerm(), existingMarkerGoTermEvidence.getGoTerm());
     }
 
-    public void addAnnotation(MarkerGoTermEvidence markerGoTermEvidenceToAdd, GafJobData gafJobData)
+    public void addAnnotation(MarkerGoTermEvidence markerGoTermEvidenceToAdd, GafJobData gafJobData, boolean isInternalLoad)
             throws GafValidationError {
         // everything seems to be fine, lets try adding some things!
         MarkerGoTermEvidence markerGoTermEvidenceToRemove;
@@ -753,24 +752,25 @@ public class GafService {
 
             logger.debug("adding " + markerGoTermEvidenceToAdd);
 
-            markerGoTermEvidenceRepository.addEvidence(markerGoTermEvidenceToAdd);
+            markerGoTermEvidenceRepository.addEvidence(markerGoTermEvidenceToAdd, isInternalLoad);
             logger.debug("added " + markerGoTermEvidenceToAdd);
         } catch (Exception e) {
             throw new GafValidationError("Failed to commit gaf entry: " + e.toString(), e);
         }
     }
 
-    public void addAnnotationsBatch(List<MarkerGoTermEvidence> batchToAdd, GafJobData gafJobData) throws GafValidationError {
+    // isInternalLoad = Noctua Gpad load for now
+    public void addAnnotationsBatch(List<MarkerGoTermEvidence> batchToAdd, GafJobData gafJobData, boolean isInternalLoad) throws GafValidationError {
 
         for (MarkerGoTermEvidence markerGoTermEvidence : batchToAdd) {
-            addAnnotation(markerGoTermEvidence, gafJobData);
+            addAnnotation(markerGoTermEvidence, gafJobData, isInternalLoad);
         }
     }
 
     public void addAnnotations(GafJobData gafJobData) throws GafValidationError {
 
         for (MarkerGoTermEvidence markerGoTermEvidence : gafJobData.getNewEntries()) {
-            addAnnotation(markerGoTermEvidence, gafJobData);
+            addAnnotation(markerGoTermEvidence, gafJobData, false);
         }
     }
 

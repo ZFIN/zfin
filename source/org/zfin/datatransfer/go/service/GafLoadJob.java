@@ -223,7 +223,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             }
             try {
                 HibernateUtil.createTransaction();
-                gafService.addAnnotationsBatch(batchToAdd, gafJobData);
+                gafService.addAnnotationsBatch(batchToAdd, gafJobData, gafParser instanceof GpadParser);
                 HibernateUtil.flushAndCommitCurrentSession();
             } catch (Exception e) {
                 HibernateUtil.rollbackTransaction();
