@@ -1,5 +1,4 @@
-SELECT distinct (mrkr_zdb_id,
-  dblink_acc_num), mrkr_zdb_id, dblink_acc_num
+SELECT distinct (dblink_acc_num), mrkr_zdb_id
 FROM   marker
   JOIN (SELECT Count(*)            AS be_zero,
                dblink_linked_recid AS troublemaker_zdb_id
