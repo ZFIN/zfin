@@ -1,1 +1,1 @@
-gradle ALL=(root) NOPASSWD:/usr/bin/chown gradle /run/host-services/ssh-auth.sock
+gradle ALL=(root) NOPASSWD:/bin/chown gradle /run/host-services/ssh-auth.sock
