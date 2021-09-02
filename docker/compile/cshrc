@@ -13,6 +13,6 @@ else
 endif
 
 umask 002
-sudo /usr/bin/chown gradle /run/host-services/ssh-auth.sock
+sudo /bin/chown gradle /run/host-services/ssh-auth.sock
 cd /opt/zfin/source_roots/zfin.org
 source commons/env/docker.env
