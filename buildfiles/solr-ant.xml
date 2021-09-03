@@ -172,7 +172,7 @@
             </fileset>
         </copy>
         <echo message="Copying correct db-data-config.xml into place, it may not match your data, but allows for indexing after doing a restore"/>
-        <copy todir="${env.SOLR_HOME}/conf/" overwrite="false">
+        <copy todir="${env.SOLR_HOME}" overwrite="false">
             <fileset dir="server_apps/solr/site_index/">
                 <include name="**/db-data-config.xml"/>
                 <include name="**/core.properties"/>
