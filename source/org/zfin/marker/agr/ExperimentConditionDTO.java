@@ -16,7 +16,7 @@ public class ExperimentConditionDTO  {
     private String conditionId;
     private String anatomicalOntologyId;
     private String geneOntologyId;
-    @JsonProperty("NCBITaxonId")
+    @JsonProperty("ncbitaxonId")
     private String ncbiTaxonId;
 //    @JsonProperty("ChemicalOntologyId")
     @JsonIgnore
