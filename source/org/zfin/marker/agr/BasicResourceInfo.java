@@ -55,7 +55,7 @@ public class BasicResourceInfo extends AbstractScriptWrapper {
 
     public AllResourceDTO getAllResourceInfo() {
         List<Journal> allResources = getPublicationRepository().getAllJournals();
-        System.out.println(allResources.size());
+        System.out.printf("%,d%n",allResources.size());
 
         List<ResourceDTO> allResourceDTOList = allResources.stream()
                 .map(
@@ -67,7 +67,6 @@ public class BasicResourceInfo extends AbstractScriptWrapper {
                             else {
                                 dto.setPrimaryId("ZFIN:" + jrnl.getZdbID());
                             }
-                            System.out.println("ZFIN:"+jrnl.getZdbID());
                             dto.setTitle(jrnl.getName());
                             dto.setMedlineAbbreviation(jrnl.getMedAbbrev());
                             dto.setIsoAbbreviation(jrnl.getIsoAbbrev());
@@ -76,13 +75,6 @@ public class BasicResourceInfo extends AbstractScriptWrapper {
                             dto.setOnlineISSN(jrnl.getOnlineIssn());
                             dto.setPublisher(jrnl.getPublisher());
 
-//                            if (CollectionUtils.isNotEmpty(jrnl.getAliases())) {
-//                                List<String> aliasList = new ArrayList<>(jrnl.getAliases().size());
-//                                for (SourceAlias alias : jrnl.getAliases()) {
-//                                    aliasList.add(alias.getAlias());
-//                                }
-//                                dto.setAliases(aliasList);
-//                            }
                             List<String> pages = new ArrayList<>();
                             pages.add("journal");
                             pages.add("journal/references");
