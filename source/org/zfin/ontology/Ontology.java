@@ -54,7 +54,7 @@ public enum Ontology implements Serializable {
     ZECO("zebrafish_experimental_conditions_ontology", "Zebrafish Environment Condition Ontology", false, "ZECO:"),
     ZECO_TAXONONY("zeco_taxonomy", "Taxonomy for ZECO", false, "NCBITaxon:"),
     CELL("cl", "Cell Ontology", false, "CL:"),
-    ZFIN_RO("zfin-ro", "ZFIN Relation Ontology", false, "RO:"),
+    ZFIN_RO("zfin_ro", "ZFIN Relation Ontology", false, "RO:"),
     UBERON("uberon", "Uberon Ontology", false, "UBERON:"),
     GO_QUALIFIER("go_qualifier", "GO Qualifier for GO Annotations", false, "RO:"),
     MMO("Measurement Methods Ontology", "Measurement Methods Ontology", false, "MMO:", true, true),
