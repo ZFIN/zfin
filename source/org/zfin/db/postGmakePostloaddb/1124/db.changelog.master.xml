@@ -10,4 +10,5 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1124/ZFIN-7503.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1124/add_sfcl_accession_number.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1124/ZFIN-7058.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1124/ZFIN-7598.sql" />
 </databaseChangeLog>
