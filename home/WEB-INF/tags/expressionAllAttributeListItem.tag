@@ -4,9 +4,9 @@
 <%@ attribute name="markerExpression" required="true" type="org.zfin.expression.presentation.MarkerExpression" %>
 
 <c:set var="hasData" value="${
-    (!empty markerExpression.allExpressionData and empty markerExpression.directlySubmittedExpression)
+    (!empty markerExpression.allMarkerExpressionInstance and empty markerExpression.directlySubmittedExpression)
     or
-    (markerExpression.allExpressionData.figureCount > markerExpression.directlySubmittedExpression.figureCount)
+    (markerExpression.allMarkerExpressionInstance.figureCount > markerExpression.directlySubmittedExpression.figureCount)
     or
     (markerExpression.directlySubmittedExpression.figureCount > 0)
 }"/>

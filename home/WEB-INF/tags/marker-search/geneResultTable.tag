@@ -18,10 +18,10 @@
             </td>
             <td>
                 <c:if test="${
-                (!empty result.markerExpression.allExpressionData
+                (!empty result.markerExpression.allMarkerExpressionInstance
                   and empty result.markerExpression.directlySubmittedExpression)
                 or
-                (result.markerExpression.allExpressionData.figureCount > result.markerExpression.directlySubmittedExpression.figureCount)
+                (result.markerExpression.allMarkerExpressionInstance.figureCount > result.markerExpression.directlySubmittedExpression.figureCount)
                 }">
                 <zfin2:expressionLink marker="${result.marker}" markerExpression="${result.markerExpression}"/>
                 </c:if>

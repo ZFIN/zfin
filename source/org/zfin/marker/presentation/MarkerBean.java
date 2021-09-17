@@ -3,6 +3,7 @@ package org.zfin.marker.presentation;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.collections.CollectionUtils;
 import org.zfin.antibody.Antibody;
 import org.zfin.expression.presentation.MarkerExpression;
 import org.zfin.framework.api.View;
@@ -15,15 +16,15 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.presentation.DiseaseDisplay;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
-import org.zfin.publication.Publication;
-import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.InterProProtein;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
+ *
  */
 @Setter
 @Getter
@@ -75,6 +76,14 @@ public class MarkerBean extends PaginationBean {
         return ProfileService.getCurrentSecurityUser();
     }
 
-
+    public List<String> getEnsdargAccessions() {
+        if (CollectionUtils.isEmpty(otherMarkerPages))
+            return null;
+        return otherMarkerPages.stream()
+                // ensembl accession
+                .filter(linkDisplay -> linkDisplay.getReferenceDatabaseZdbID().equals("ZDB-FDBCONT-061018-1"))
+                .map(LinkDisplay::getAccession)
+                .collect(Collectors.toList());
+    }
 
 }

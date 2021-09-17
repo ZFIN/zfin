@@ -303,7 +303,7 @@ public class ExpressionService {
         allMarkerExpressionInstance.setFigureCount(
                 expressionRepository.getExpressionFigureCountForGene(marker));
 
-        markerExpression.setAllExpressionData(allMarkerExpressionInstance);
+        markerExpression.setAllMarkerExpressionInstance(allMarkerExpressionInstance);
         markerExpression.setExpressionAtlasLink(getExpressionAtlasForMarker(marker.zdbID, ForeignDB.AvailableName.EXPRESSIONATLAS));
         markerExpression.setGeoLink(getGeoLinkForMarkerIfExists(marker));
 
@@ -343,7 +343,7 @@ public class ExpressionService {
         }
         allMarkerExpressionInstance.setFigureCount(
                 expressionRepository.getExpressionFigureCountForEfg(marker));
-        markerExpression.setAllExpressionData(allMarkerExpressionInstance);
+        markerExpression.setAllMarkerExpressionInstance(allMarkerExpressionInstance);
         if (allMarkerExpressionInstance.getFigureCount() == 1) {
             allMarkerExpressionInstance.setSingleFigure(expressionRepository.getExpressionSingleFigure(marker));
         }
@@ -377,7 +377,7 @@ public class ExpressionService {
         allMarkerExpressionInstance.setFigureCount(
                 expressionRepository.getExpressionFigureCountForClone(clone));
 
-        markerExpression.setAllExpressionData(allMarkerExpressionInstance);
+        markerExpression.setAllMarkerExpressionInstance(allMarkerExpressionInstance);
 
         // directly submitted
         logger.info("setting directly submitted expression");

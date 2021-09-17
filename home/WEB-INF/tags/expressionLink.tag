@@ -5,23 +5,23 @@
 
 <c:choose>
 
-    <c:when test="${markerExpression.allExpressionData.figureCount == 1}">
+    <c:when test="${markerExpression.allMarkerExpressionInstance.figureCount == 1}">
 
-        <a href="/${marker.zdbID}/expression">${markerExpression.allExpressionData.figureCount} figure
+        <a href="/${marker.zdbID}/expression">${markerExpression.allMarkerExpressionInstance.figureCount} figure
         </a>
     </c:when>
     <c:otherwise>
         <a href="/${marker.zdbID}/expression">
-                ${markerExpression.allExpressionData.figureCount} figures
+                ${markerExpression.allMarkerExpressionInstance.figureCount} figures
         </a>
     </c:otherwise>
 </c:choose>
 from
 <c:choose>
-    <c:when test="${markerExpression.allExpressionData.publicationCount eq 1}">
-        <zfin:link entity="${markerExpression.allExpressionData.singlePublication}"/>
+    <c:when test="${markerExpression.allMarkerExpressionInstance.publicationCount eq 1}">
+        <zfin:link entity="${markerExpression.allMarkerExpressionInstance.singlePublication}"/>
     </c:when>
     <c:otherwise>
-        ${markerExpression.allExpressionData.publicationCount} publications
+        ${markerExpression.allMarkerExpressionInstance.publicationCount} publications
     </c:otherwise>
 </c:choose>
