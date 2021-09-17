@@ -1,9 +1,15 @@
 package org.zfin.expression.presentation;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zfin.marker.presentation.LinkDisplay;
 
+import java.util.List;
+
+@Setter
+@Getter
 public class MarkerExpression {
 
     private MarkerExpressionInstance allMarkerExpressionInstance;
@@ -13,18 +19,8 @@ public class MarkerExpression {
     private WildTypeExpression wildTypeStageExpression;
     private String geoLink;
     private LinkDisplay expressionAtlasLink;
+    private List<String> ensdargGenes;
     private int inSituFigCount;
-
-    public LinkDisplay getExpressionAtlasLink() {
-        return expressionAtlasLink;
-    }
-
-    public void setExpressionAtlasLink(LinkDisplay expressionAtlasLink) {
-        this.expressionAtlasLink = expressionAtlasLink;
-    }
-
-
-
     private String geoGeneSymbol ;
     private boolean geoLinkSearching = true ;
 
@@ -56,22 +52,6 @@ public class MarkerExpression {
                 ;
     }
 
-    public DirectlySubmittedExpression getDirectlySubmittedExpression() {
-        return directlySubmittedExpression;
-    }
-
-    public void setDirectlySubmittedExpression(DirectlySubmittedExpression directlySubmittedExpression) {
-        this.directlySubmittedExpression = directlySubmittedExpression;
-    }
-
-    public MarkerExpressionInstance getAllExpressionData() {
-        return allMarkerExpressionInstance;
-    }
-
-    public void setAllExpressionData(MarkerExpressionInstance allMarkerExpressionInstance) {
-        this.allMarkerExpressionInstance = allMarkerExpressionInstance;
-    }
-
 //    public List<MarkerDBLink> getMicroarrayLinks() {
 //        return microarrayLinks;
 //    }
@@ -79,54 +59,6 @@ public class MarkerExpression {
 //    public void setMicroarrayLinks(List<MarkerDBLink> microarrayLinks) {
 //        this.microarrayLinks = microarrayLinks;
 //    }
-
-    public WildTypeExpression getWildTypeStageExpression() {
-        return wildTypeStageExpression;
-    }
-
-    public void setWildTypeStageExpression(WildTypeExpression wildTypeStageExpression) {
-        this.wildTypeStageExpression = wildTypeStageExpression;
-    }
-
-    public int getInSituFigCount() {
-        return inSituFigCount;
-    }
-
-    public void setInSituFigCount(int inSituFigCount) {
-        this.inSituFigCount = inSituFigCount;
-    }
-
-    public MarkerExpressionInstance getAllMarkerExpressionInstance() {
-        return allMarkerExpressionInstance;
-    }
-
-    public DirectlySubmittedExpression getOnlyThisse() {
-        return onlyThisse;
-    }
-
-    public void setOnlyThisse(DirectlySubmittedExpression onlyThisse) {
-        this.onlyThisse = onlyThisse;
-    }
-
-    public void setAllMarkerExpressionInstance(MarkerExpressionInstance allMarkerExpressionInstance) {
-        this.allMarkerExpressionInstance = allMarkerExpressionInstance;
-    }
-
-    public String getGeoLink() {
-        return geoLink;
-    }
-
-    public void setGeoLink(String geoLink) {
-        this.geoLink = geoLink;
-    }
-
-    public String getGeoGeneSymbol() {
-        return geoGeneSymbol;
-    }
-
-    public void setGeoGeneSymbol(String geoGeneSymbol) {
-        this.geoGeneSymbol = geoGeneSymbol;
-    }
 
     public boolean isGeoLinkSearching() {
         return geoLinkSearching;
