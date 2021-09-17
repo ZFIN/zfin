@@ -62,9 +62,9 @@ public class PublicationPrioritizationController {
                         prioritization.setPhenotypePublication(phenotypeOnMarkerBean.getNumPublications());
                         MarkerExpression markerExpression = expressionService.getExpressionForGene(marker);
                         if (marker.isGenedom()) {
-                            prioritization.setExpressionFigures(markerExpression.getAllExpressionData().getFigureCount());
+                            prioritization.setExpressionFigures(markerExpression.getAllMarkerExpressionInstance().getFigureCount());
                             prioritization.setExpressionInSitu(markerExpression.getInSituFigCount());
-                            prioritization.setExpressionPublication(markerExpression.getAllExpressionData().getPublicationCount());
+                            prioritization.setExpressionPublication(markerExpression.getAllMarkerExpressionInstance().getPublicationCount());
 
                         }
                         List<DiseaseAnnotationModel> diseaseAnnotationModels = getPhenotypeRepository().getDiseaseAnnotationModelsByGene(marker);
