@@ -3,7 +3,8 @@ package org.zfin.datatransfer.go.service;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
@@ -90,7 +91,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             gafService = new GafService(organizationEnum);
             // File downloadedFile = downloadService.downloadFile(new File(localDownloadFile)
             // 1. download gzipped GAF file
-           File downloadedFile = downloadService.downloadFile(new File(localDownloadFile)
+            File downloadedFile = downloadService.downloadFile(new File(localDownloadFile)
                     , new URL(downloadUrl)
                     , false);
 
@@ -144,8 +145,10 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
 
             gafService.generateRemovedEntries(gafJobData, gafOrganization);
 
-         System.out.println("done generatind removed entries");
-          removeAnnotations(gafJobData);
+            System.out.println("done generating removed entries");
+            List<GafJobEntry> optional = Optional.ofNullable(gafJobData.getRemovedEntries()).orElse(new ArrayList<>());
+            System.out.println("Remove entries: " + optional.size());
+            removeAnnotations(gafJobData);
             FileWriter summary = new FileWriter(new File(new File(dataDirectory, jobName), jobName + "_summary.txt"));
             FileWriter details = new FileWriter(new File(new File(dataDirectory, jobName), jobName + "_details.txt"));
 
@@ -243,7 +246,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
 
     private void updateAnnotations(GafJobData gafJobData) {
         Set<MarkerGoTermEvidence> evidencesToUpdate = gafJobData.getUpdateEntries();
-        System.out.println("updateAnnotatons "+ gafJobData.getUpdateEntries().size());
+        System.out.println("updateAnnotatons " + gafJobData.getUpdateEntries().size());
         Iterator<MarkerGoTermEvidence> iteratorToUpdate = evidencesToUpdate.iterator();
 
         while (iteratorToUpdate.hasNext()) {
