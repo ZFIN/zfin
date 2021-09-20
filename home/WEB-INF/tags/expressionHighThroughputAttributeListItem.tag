@@ -21,6 +21,7 @@
                 <c:forEach var="ensdarg" items="${markerExpression.ensdargGenes}" varStatus="loop">
                     <zfin2:externalLink
                             href="https://cells.ucsc.edu/?ds=zebrafish-dev&gene=${ensdarg}">UCSC scRNA-seq</zfin2:externalLink>
+                    (<a href="/ZDB-PUB-210917-2">1</a>)
                 </c:forEach>
             </c:if>
         </ul>
