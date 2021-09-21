@@ -707,7 +707,6 @@
             version.
         </echo>
         <echo message="Is informix: ${isinformix}"/>
-        <echo message="Is almost: ${isalmost}"/>
         <echo message="Is mutant: ${ismutant}"/>
         <echo message="Not production: ${notproduction}"/>
         <echo message="Has pre-redirctories: ${has.pre-directories}"/>

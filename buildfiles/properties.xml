@@ -109,10 +109,6 @@
         <equals arg1="${INSTANCE}" arg2="docker"/>
     </condition>
 
-    <condition property="isalmost">
-        <equals arg1="${INSTANCE}" arg2="almost"/>
-    </condition>
-
     <condition property="is-happy-zfin-org">
         <equals arg1="${INSTANCE}" arg2="happy"/>
     </condition>
@@ -128,7 +124,6 @@
 
     <condition property="isalmosthappytrunktest">
         <or>
-            <equals arg1="${isalmost}" arg2="true"/>
             <equals arg1="${is-happy-zfin-org}" arg2="true"/>
             <equals arg1="${is-trunk-zfin-org}" arg2="true"/>
             <equals arg1="${is-test-zfin-org}" arg2="true"/>
@@ -166,7 +161,6 @@
         <echo message="INFORMIX_SERVER:      ${INFORMIX_SERVER}"/>
         <echo message="isinformix:           ${isinformix}"/>
         <echo message="isdocker:             ${isdocker}"/>
-        <echo message="isalmost:             ${isalmost}"/>
         <echo message="isproduction:         ${isproduction}"/>
         <echo message="notproduction:        ${notproduction}"/>
         <echo message="ismutant:             ${ismutant}"/>
