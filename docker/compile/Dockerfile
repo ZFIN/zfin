@@ -1,4 +1,4 @@
-FROM gradle:jdk14
+FROM gradle:jdk15
 
 RUN apt update && apt install -y --no-install-recommends \
        ant groovy nodejs npm postgresql-client tcsh sudo \
@@ -17,7 +17,7 @@ RUN mkdir -p /opt/zfin/catalina_bases/zfin.org
 RUN chown -R gradle:gradle /opt/zfin/
 
 #Compatibility links because /usr/bin and /bin are different in jdk14 based images
-RUN ln -s /usr/bin/sudo /bin/sudo
+#RUN ln -s /usr/bin/sudo /bin/sudo
 
 RUN groupmod -n zfin gradle
 RUN groupadd -g 8983 solr 
