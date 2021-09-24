@@ -56,11 +56,13 @@
             </c:choose>
         </script>
     </head>
+<%--
     <div class="uber-banner">
 <pre>
 Community Action Needed: Please respond to the <a href="https://zfin.atlassian.net/wiki/spaces/news/blog/2021/09/23/4776525828/NIH+request+for+information+on+Scientific+Data+Sources">NIH RFI</a>
 </pre>
         </div>
+--%>
     <body class="${bodyClass}">
         <z:pageHeader/>
         <main>
