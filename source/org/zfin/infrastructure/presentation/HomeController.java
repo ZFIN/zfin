@@ -38,7 +38,7 @@ public class HomeController {
         Collections.shuffle(recentlyCuratedImages, new Random(seed));
         List<Image> carouselImages;
         if (recentlyCuratedImages.size() > 5)
-            carouselImages = recentlyCuratedImages.subList(0, 10);
+            carouselImages = recentlyCuratedImages.subList(0, 5);
         else
             carouselImages = recentlyCuratedImages;
         List<String> sanitizedCaptions = carouselImages.stream()
