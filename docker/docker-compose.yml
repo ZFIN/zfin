@@ -17,6 +17,7 @@ services:
       - www_data:/opt/zfin/www_homes/zfin.org
       - tls_certs:/opt/zfin/tls
       - catalina_base:/opt/zfin/catalina_bases/zfin.org
+      - jenkins_data:/opt/zfin//www_homes/zfin.org/server_apps/jenkins/jenkins-home
       - ../:/opt/zfin/source_roots/zfin.org
       #- nfs-zunloads:/research/zunloads
       - ${DOCKER_DB_UNLOADS_PATH}:/opt/zfin/unloads/db
@@ -84,7 +85,13 @@ services:
       - www_data:/opt/zfin/www_homes/zfin.org
       - catalina_base:/opt/zfin/catalina_bases/zfin.org
       #- /opt/zfin/catalina_bases/keystore:/opt/apache/apache-tomcat/conf/keystore,ro
-      - ./tomcat/keystore:/opt/apache/apache-tomcat/conf/keystore,ro
+      - ./tomcat/keystore:/opt/apache/apache-tomcat/conf/keystore
+  jenkins:
+    container_name: jenkins_container
+    build: ./jenkins/
+    restart: always
+    ports:
+      - "8888:8080"
 
 volumes:
   www_data:
@@ -92,6 +99,7 @@ volumes:
   catalina_base:
   pg_data:
   solr_data:
+  jenkins_data:
   certbot_data:
   nfs-zunloads:
     driver_opts:
