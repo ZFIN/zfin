@@ -9,6 +9,10 @@
         <equals arg1="${BACKUP_SOLR_CORE}" arg2="true"/>
     </condition>
 
+    <condition property="isDocker">
+        <equals arg1="${INSTANCE}" arg2="docker"/>
+    </condition>
+
     <target name="deploy-solr">
         <copySolr from="server_apps/solr/site_index" to="${env.SOLR_HOME}" overwrite="true"/>
     </target>
@@ -205,7 +209,20 @@
         </delete>
     </target>
 
-    <target name="start-solr" description="Start up Solr ">
+    <target name="start-solr" description="Start up Solr"
+        depends="start-solr-docker,start-solr-systemctl">
+    </target>
+
+    <target name="start-solr-docker" description="Start up Solr " if="isDocker">
+        <echo message="Source: ${solr}"/>
+        <exec executable="/usr/bin/docker">
+            <arg value="container"/>
+            <arg value="start"/>
+            <arg value="solr_container"/>
+        </exec>
+    </target>
+
+    <target name="start-solr-systemctl" description="Start up Solr " unless="isDocker">
         <echo message="Source: ${solr}"/>
         <exec executable="/bin/sudo">
             <arg value="systemctl"/>
@@ -214,7 +231,19 @@
         </exec>
     </target>
 
-    <target name="stop-solr" description="Stop Solr ">
+    <target name="stop-solr" description="Stop Solr"
+        depends="stop-solr-docker,stop-solr-systemctl">
+    </target>
+
+    <target name="stop-solr-docker" description="Stop Solr " if="isDocker">
+        <exec executable="/usr/bin/docker">
+            <arg value="container"/>
+            <arg value="stop"/>
+            <arg value="solr_container"/>
+        </exec>
+    </target>
+
+    <target name="stop-solr-systemctl" description="Stop Solr " unless="isDocker">
         <exec executable="/bin/sudo">
             <arg value="systemctl"/>
             <arg value="stop"/>
@@ -222,7 +251,19 @@
         </exec>
     </target>
 
-    <target name="restart-solr" description="Restart up Solr">
+    <target name="restart-solr" description="Restart Solr"
+        depends="restart-solr-docker,restart-solr-systemctl">
+    </target>
+
+    <target name="restart-solr-docker" description="Restart Solr" if="isDocker">
+        <exec executable="/usr/bin/docker">
+            <arg value="container"/>
+            <arg value="restart"/>
+            <arg value="solr_container"/>
+        </exec>
+    </target>
+
+    <target name="restart-solr-systemctl" description="Restart Solr" unless="isDocker">
         <exec executable="/bin/sudo">
             <arg value="systemctl"/>
             <arg value="restart"/>
