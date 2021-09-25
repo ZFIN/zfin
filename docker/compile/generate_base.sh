@@ -1,5 +1,6 @@
 #!/bin/bash
 
+#--------Generate Self Signed SSL Cert for Apache HTTPD--------------
 CERTDIR=/opt/zfin/tls/certs
 KEYDIR=/opt/zfin/tls/private
 
@@ -26,4 +27,12 @@ then
     -subj "/C=US/ST=Oregon/L=Eugene/O=University of Oregon/OU=ZFIN/CN=zfin.org"
   openssl x509 -req -days 365 -in $CERTDIR/zfin.org.csr -signkey $KEYDIR/zfin.org.key -out $CERTDIR/zfin.org.crt
   rm $CERTDIR/zfin.org.csr
+fi
+
+#--------Generate Random Password for Postgresql Container--------------
+PG_PASS=/opt/zfin/source_roots/zfin.org/docker/pg_pass
+
+if [ ! -f $PG_PASS ]
+then
+     cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 > $PG_PASS
 fi

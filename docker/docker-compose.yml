@@ -35,6 +35,7 @@ services:
       POSTGRES_INITDB_ARGS: "-E SQL_ASCII"
       POSTGRES_DB: zfindb
       POSTGRES_HOST_AUTH_METHOD: trust
+    shm_size: 1g
     #ports:
     #  - "5432:5432"
     volumes:

@@ -14,5 +14,6 @@ endif
 
 umask 002
 sudo /bin/chown gradle /run/host-services/ssh-auth.sock
+/opt/zfin/source_roots/docker/compile/generate_base.sh
 cd /opt/zfin/source_roots/zfin.org
 source commons/env/docker.env
