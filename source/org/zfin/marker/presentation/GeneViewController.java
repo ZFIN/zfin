@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.zfin.expression.FigureService;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
+import org.zfin.expression.presentation.MarkerExpression;
 import org.zfin.expression.service.ExpressionSearchService;
 import org.zfin.expression.service.ExpressionService;
 import org.zfin.feature.repository.FeatureRepository;
@@ -112,7 +113,9 @@ public class GeneViewController {
         geneBean.setHasChimericClone(markerRepository.isFromChimericClone(gene.getZdbID()));
 
         // EXPRESSION SECTION
-        geneBean.setMarkerExpression(expressionService.getExpressionForGene(gene));
+        MarkerExpression markerExpression = expressionService.getExpressionForGene(gene);
+        markerExpression.setEnsdargGenes(geneBean.getEnsdargAccessions());
+        geneBean.setMarkerExpression(markerExpression);
 
         // MUTANTS AND TARGETED KNOCKDOWNS
         geneBean.setMutantOnMarkerBeans(MarkerService.getMutantsOnGene(gene));
@@ -229,7 +232,7 @@ public class GeneViewController {
                         AntibodyMarkerBean antibodyBean = new AntibodyMarkerBean();
                         antibodyBean.setAntibody(antibody);
                         antibodyBean.setNumPubs(RepositoryFactory.getPublicationRepository().getNumberDirectPublications(antibody.getZdbID()));
-                        antibodyBean.setAntigenGenes( markerRepository.getRelatedMarkerDisplayForTypes(
+                        antibodyBean.setAntigenGenes(markerRepository.getRelatedMarkerDisplayForTypes(
                                 antibody, false, MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY));
                         return antibodyBean;
                     })
@@ -286,7 +289,7 @@ public class GeneViewController {
         logger.info("zdbID: " + zdbID);
 
         Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbID);
-        if (!gene.isGenedom()&&!gene.isInTypeGroup(Marker.TypeGroup.EFG)) {
+        if (!gene.isGenedom() && !gene.isInTypeGroup(Marker.TypeGroup.EFG)) {
             return "redirect:/" + zdbID;
         }
         logger.info("gene: " + gene);

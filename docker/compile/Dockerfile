@@ -16,9 +16,6 @@ RUN mkdir -p /opt/zfin/tls/private
 RUN mkdir -p /opt/zfin/catalina_bases/zfin.org
 RUN chown -R gradle:gradle /opt/zfin/
 
-#Compatibility links because /usr/bin and /bin are different in jdk14 based images
-#RUN ln -s /usr/bin/sudo /bin/sudo
-
 RUN groupmod -n zfin gradle
 RUN groupadd -g 8983 solr 
 RUN adduser gradle root
