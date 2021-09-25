@@ -26,6 +26,7 @@ services:
       - ./pg_pass:/run/secrets/pg_pass
       - ${DOCKER_SSH_AUTH_SOCK}:/run/host-services/ssh-auth.sock
       - ~/.ssh/known_hosts:/home/gradle/.ssh/known_hosts
+      - /var/run/docker.sock:/var/run/docker.sock
   db:
     container_name: pg_container
     build: ./postgresql/
