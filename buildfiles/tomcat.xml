@@ -26,15 +26,19 @@
     </target>
 
     <target name="docker-tomcat-start" if="isdocker" description="Starts tomcat if docker">
-        <exec executable="/bin/true" failifexecutionfails="true">
+        <exec executable="/usr/bin/docker" failifexecutionfails="true">
+            <arg value="container"/>
             <arg value="start"/>
+            <arg value="tomcat_container"/>
         </exec>
         <echo message=":TOMCAT START SUCCESSFUL:"/>
     </target>
 
     <target name="docker-tomcat-stop" if="isdocker" description="Stops tomcat if docker">
-        <exec executable="/bin/true" failifexecutionfails="true">
+        <exec executable="/usr/bin/docker" failifexecutionfails="true">
+            <arg value="container"/>
             <arg value="stop"/>
+            <arg value="tomcat_container"/>
         </exec>
         <echo message=":TOMCAT STOP SUCCESSFUL:"/>
     </target>
