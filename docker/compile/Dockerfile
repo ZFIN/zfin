@@ -6,6 +6,8 @@ RUN apt update && apt install -y --no-install-recommends \
 
 RUN mkdir /opt/misc 
 COPY ./apache-groovy-binary-3.0.7.zip.sha256 /opt/misc
+COPY ./init.d-httpd /etc/init.d/httpd
+RUN chmod 755 /etc/init.d/httpd
 RUN cd /opt/misc && wget https://groovy.jfrog.io/artifactory/dist-release-local/groovy-zips/apache-groovy-binary-3.0.7.zip && \
         sha256sum -c apache-groovy-binary-3.0.7.zip.sha256 && unzip apache-groovy-binary-3.0.7.zip
 RUN ln -s /opt/misc/groovy-3.0.7 /opt/misc/groovy

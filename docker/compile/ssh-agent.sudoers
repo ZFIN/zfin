@@ -1,1 +1,1 @@
-gradle ALL=(root) NOPASSWD:/bin/chown gradle *
+gradle ALL=(root) NOPASSWD:/bin/chown gradle *,/etc/init.d/httpd
