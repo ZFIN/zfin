@@ -91,10 +91,13 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             gafService = new GafService(organizationEnum);
             // File downloadedFile = downloadService.downloadFile(new File(localDownloadFile)
             // 1. download gzipped GAF file
+/*
             File downloadedFile = downloadService.downloadFile(new File(localDownloadFile)
                     , new URL(downloadUrl)
                     , false);
+*/
 
+            File downloadedFile = new File(localDownloadFile);
             if (organization.equals("GOA")) {
                 localDownloadFile2 = ZfinPropertiesEnum.TARGETROOT + "/server_apps/DB_maintenance/gafLoad/" + jobName + "/" + "Load-GAF-" + organizationEnum.name() + "-gene_association2";
                 File downloadedFile2 = downloadService.downloadFile(new File(localDownloadFile2)
@@ -115,7 +118,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
 
             List<GafEntry> gafEntries = gafParser.parseGafFile(downloadedFile);
             gafParser.postProcessing(gafEntries);
-            System.out.println(gafEntries.size());
+            System.out.printf("%,d%n", gafEntries.size());
             int sizeentry = gafEntries.size();
             System.out.println(gafEntries.get(sizeentry - 1).getCol8pipes());
 
@@ -163,19 +166,19 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             }
             details.append("\n\n");
 
-            details.append("== ADDED ==").append("\n");
+            details.append("== ADDED == " + gafJobData.getNewEntries().size()).append("\n");
             for (MarkerGoTermEvidence entry : gafJobData.getNewEntries()) {
                 details.append(entry.toString()).append("\n").append("\n");
             }
             details.append("\n\n");
 
-            details.append("== UPDATED ==").append("\n");
+            details.append("== UPDATED == " + gafJobData.getUpdateEntries().size()).append("\n");
             for (MarkerGoTermEvidence entry : gafJobData.getUpdateEntries()) {
                 details.append(entry.toString()).append("\n").append("\n");
             }
             details.append("\n\n");
 
-            details.append("== ERRORS ==").append("\n");
+            details.append("== ERRORS == " + gafJobData.getErrors().size()).append("\n");
             for (GafValidationError error : gafJobData.getErrors()) {
                 details.append(error.getMessage()).append("\n");
             }
