@@ -15,6 +15,7 @@ RUN mkdir -p /opt/zfin/tls/certs
 RUN mkdir -p /opt/zfin/tls/private
 RUN mkdir -p /opt/zfin/catalina_bases/zfin.org
 RUN chown -R gradle:gradle /opt/zfin/
+RUN mkdir -p /opt/apache/apache-tomcat/conf && chown -R gradle /opt/apache/apache-tomcat 
 
 RUN groupmod -n zfin gradle
 RUN groupadd -g 8983 solr 
