@@ -3,6 +3,7 @@
 #--------Generate Self Signed SSL Cert for Apache HTTPD--------------
 CERTDIR=/opt/zfin/tls/certs
 KEYDIR=/opt/zfin/tls/private
+KEYSTOREDIR=/opt/apache/apache-tomcat/conf
 
 if [ ! -d $CERTDIR ]
 then
@@ -28,6 +29,13 @@ then
   openssl x509 -req -days 365 -in $CERTDIR/zfin.org.csr -signkey $KEYDIR/zfin.org.key -out $CERTDIR/zfin.org.crt
   rm $CERTDIR/zfin.org.csr
 fi
+
+if [ ! -f $KEYSTOREDIR/keystore ]
+then
+  openssl pkcs12 -export -name tomcat -in $CERTDIR/zfin.org.crt -inkey $KEYDIR/zfin.org.key -password pass:changeit -out $CERTDIR/zfin.org.p12 
+  keytool -importkeystore -destkeystore $KEYSTOREDIR/keystore -srckeystore $CERTDIR/zfin.org.p12 -srcstoretype pkcs12 -alias tomcat -srcstorepass changeit -deststorepass changeit
+fi
+
 
 #--------Generate Random Password for Postgresql Container--------------
 PG_PASS=/opt/zfin/source_roots/zfin.org/docker/pg_pass
