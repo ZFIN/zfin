@@ -4,6 +4,7 @@
 CERTDIR=/opt/zfin/tls/certs
 KEYDIR=/opt/zfin/tls/private
 KEYSTOREDIR=/opt/apache/apache-tomcat/conf
+CERT_HOSTNAME=zfin.org
 
 if [ ! -d $CERTDIR ]
 then
@@ -25,9 +26,20 @@ fi
 if [ ! -f $CERTDIR/zfin.org.crt ]
 then
   openssl req -new -key $KEYDIR/zfin.org.key -out $CERTDIR/zfin.org.csr \
-    -subj "/C=US/ST=Oregon/L=Eugene/O=University of Oregon/OU=ZFIN/CN=zfin.org"
-  openssl x509 -req -days 365 -in $CERTDIR/zfin.org.csr -signkey $KEYDIR/zfin.org.key -out $CERTDIR/zfin.org.crt
-  rm $CERTDIR/zfin.org.csr
+    -subj "/C=US/ST=Oregon/L=Eugene/O=University of Oregon/OU=ZFIN/CN=${CERT_HOSTNAME}"
+
+  #ssl extensions (https://eengstrom.github.io/musings/self-signed-tls-certs-v.-chrome-on-macos-catalina)
+  echo "[v3_ca]" > $CERTDIR/ssl-extensions.cnf
+  echo "subjectAltName = DNS:${CERT_HOSTNAME}" >>  $CERTDIR/ssl-extensions.cnf
+  echo "extendedKeyUsage = serverAuth" >>  $CERTDIR/ssl-extensions.cnf
+
+  openssl x509 -req -days 365 \
+    -extensions v3_ca -extfile $CERTDIR/ssl-extensions.cnf \
+    -in $CERTDIR/zfin.org.csr \
+    -signkey $KEYDIR/zfin.org.key \
+    -out $CERTDIR/zfin.org.crt
+
+  rm $CERTDIR/zfin.org.csr $CERTDIR/ssl-extensions.cnf
 fi
 
 if [ ! -f $KEYSTOREDIR/keystore ]
