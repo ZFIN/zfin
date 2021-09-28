@@ -454,6 +454,13 @@ function validateAndSubmit() {
 
     var pubID = $('#constructPublicationZdbID').val();
 
+    var constructDisplayName = $('#constructDisplayName').val();
+
+    if (constructDisplayName.includes('.-')) {
+        if (!confirm('Do you really want to create a .- construct?')) {
+            return false;
+        }
+    }
 
     $.ajax({
         url: '/action/construct/construct-add-component/',
