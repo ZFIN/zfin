@@ -115,9 +115,10 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
 
             List<GafEntry> gafEntries = gafParser.parseGafFile(downloadedFile);
             gafParser.postProcessing(gafEntries);
+            System.out.print("Gaf Entries: ");
             System.out.printf("%,d%n", gafEntries.size());
             int sizeentry = gafEntries.size();
-            System.out.println(gafEntries.get(sizeentry - 1).getCol8pipes());
+//            System.out.println(gafEntries.get(sizeentry - 1).getCol8pipes());
 
             if (CollectionUtils.isEmpty(gafEntries)) {
                 throw new GafValidationError("No gaf entries found in file: " + downloadedFile);
@@ -139,15 +140,14 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             gafJobData.setGafEntryCount(gafEntries.size());
 
             gafService.processEntries(gafEntries, gafJobData);
+            gafService.generateRemovedEntries(gafJobData, gafOrganization);
+            List<GafJobEntry> optional = Optional.ofNullable(gafJobData.getRemovedEntries()).orElse(new ArrayList<>());
+            System.out.println("Removed entries: " + optional.size());
 
             addAnnotations(gafJobData);
             updateAnnotations(gafJobData);
 
-            gafService.generateRemovedEntries(gafJobData, gafOrganization);
 
-            System.out.println("done generating removed entries");
-            List<GafJobEntry> optional = Optional.ofNullable(gafJobData.getRemovedEntries()).orElse(new ArrayList<>());
-            System.out.println("Remove entries: " + optional.size());
             removeAnnotations(gafJobData);
             FileWriter summary = new FileWriter(new File(new File(dataDirectory, jobName), jobName + "_summary.txt"));
             FileWriter details = new FileWriter(new File(new File(dataDirectory, jobName), jobName + "_details.txt"));
@@ -157,7 +157,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             summary.close();
 
             details.append("\n\n");
-            details.write("== REMOVED ==\n");
+            details.write("== REMOVED == "+optional.size());
             for (GafJobEntry removed : gafJobData.getRemovedEntries()) {
                 details.append(removed.getEntryString()).append("\n");
             }
@@ -181,7 +181,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             }
             details.append("\n\n");
 
-            details.append("== EXISTING ==").append("\n");
+            details.append("== EXISTING ==" + gafJobData.getExistingEntries().size()).append("\n");
             for (GafJobEntry entry : gafJobData.getExistingEntries()) {
                 details.append(entry.toString()).append("\n").append("\n");
             }
@@ -246,7 +246,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
 
     private void updateAnnotations(GafJobData gafJobData) {
         Set<MarkerGoTermEvidence> evidencesToUpdate = gafJobData.getUpdateEntries();
-        System.out.println("updateAnnotatons " + gafJobData.getUpdateEntries().size());
+        System.out.println("updated Annotations: " + gafJobData.getUpdateEntries().size());
         Iterator<MarkerGoTermEvidence> iteratorToUpdate = evidencesToUpdate.iterator();
 
         while (iteratorToUpdate.hasNext()) {
