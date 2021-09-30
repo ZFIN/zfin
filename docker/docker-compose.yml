@@ -12,6 +12,7 @@ services:
       SOLR_HOME: /var/solr
       SSH_AUTH_SOCK: /run/host-services/ssh-auth.sock
       SSH_USER: ${DOCKER_SSH_USER}
+      TZ: ${TZ}
     volumes: 
       - www_data:/opt/zfin/www_homes/zfin.org
       - tls_certs:/opt/zfin/tls
