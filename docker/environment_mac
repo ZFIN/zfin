@@ -3,3 +3,4 @@ DOCKER_SSH_USER=ryanm
 DOCKER_DB_UNLOADS_PATH=~/development/unloads/db
 DOCKER_SOLR_UNLOADS_PATH=~/development/unloads/solr
 COMPOSE_PROJECT_NAME=zfin.org
+TZ=PST8PDT
