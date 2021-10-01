@@ -91,13 +91,10 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             gafService = new GafService(organizationEnum);
             // File downloadedFile = downloadService.downloadFile(new File(localDownloadFile)
             // 1. download gzipped GAF file
-/*
             File downloadedFile = downloadService.downloadFile(new File(localDownloadFile)
                     , new URL(downloadUrl)
                     , false);
-*/
 
-            File downloadedFile = new File(localDownloadFile);
             if (organization.equals("GOA")) {
                 localDownloadFile2 = ZfinPropertiesEnum.TARGETROOT + "/server_apps/DB_maintenance/gafLoad/" + jobName + "/" + "Load-GAF-" + organizationEnum.name() + "-gene_association2";
                 File downloadedFile2 = downloadService.downloadFile(new File(localDownloadFile2)
