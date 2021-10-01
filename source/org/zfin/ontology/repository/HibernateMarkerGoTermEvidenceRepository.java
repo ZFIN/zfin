@@ -1,7 +1,8 @@
 package org.zfin.ontology.repository;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
@@ -18,6 +19,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 /**
+ *
  */
 public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvidenceRepository {
 
@@ -91,7 +93,13 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
         criteria.add(Restrictions.eq("marker.zdbID", markerGoTermEvidenceToAdd.getMarker().getZdbID()));
         criteria.add(Restrictions.eq("goTerm.zdbID", markerGoTermEvidenceToAdd.getGoTerm().getZdbID()));
         criteria.add(Restrictions.eq("evidenceCode.code", GoEvidenceCodeEnum.ND.name()));
-        return (MarkerGoTermEvidence) criteria.uniqueResult();
+        final MarkerGoTermEvidence markerGoTermEvidence = (MarkerGoTermEvidence) criteria.uniqueResult();
+        if (markerGoTermEvidence == null)
+            return null;
+        // check if extensions are the same
+        if (markerGoTermEvidenceToAdd.getAnnotationExtensions().equals(markerGoTermEvidence.getAnnotationExtensions()))
+            return markerGoTermEvidence;
+        return null;
     }
 
     @Override
