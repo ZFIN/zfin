@@ -8,7 +8,7 @@
 
         <z:attributeListItem label="Genotyping protocol">
             <z:ifHasData test="${!empty formBean.zircGenoLink}" noDataMessage="None">
-            <a href="zebrafish.org/fish/pdf/pcr/${formBean.zircGenoLink.accessionNumberDisplay}">${formBean.zircGenoLink.accessionNumberDisplay}</a>
+            <a href="https://zebrafish.org/fish/pdf/pcr/${formBean.zircGenoLink.accessionNumberDisplay}">${formBean.zircGenoLink.accessionNumberDisplay}</a>
             </z:ifHasData>
         </z:attributeListItem>
 
