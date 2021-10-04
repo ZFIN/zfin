@@ -64,7 +64,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
     @Autowired
     protected DownloadService downloadService;
 
-    private final int BATCH_SIZE = 20;
+    private final int BATCH_SIZE = 1;
 
     protected FpInferenceGafParser gafParser;
     protected GafService gafService;

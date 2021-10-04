@@ -305,14 +305,7 @@ public class GafService {
         markerGoTermEvidenceToAdd.setExternalLoadDate(new Date());
 
         if (gafEntry.getModelID() != null) {
-            NoctuaModel noctuaModel = markerGoTermEvidenceRepository.getNoctuaModel(gafEntry.getModelID());
-            if (noctuaModel == null) {
-                noctuaModel = new NoctuaModel(gafEntry.getModelID());
-                markerGoTermEvidenceRepository.saveNoctualModel(noctuaModel);
-            }
-            Set<NoctuaModel> set = new HashSet<>();
-            set.add(noctuaModel);
-            markerGoTermEvidenceToAdd.setNoctuaModels(set);
+            markerGoTermEvidenceToAdd.setNoctuaModels(Set.of(new NoctuaModel(gafEntry.getModelID())));
         }
 
         if (gafEntry.getGeneProductFormID() != null && !gafEntry.getGeneProductFormID().isEmpty()) {
