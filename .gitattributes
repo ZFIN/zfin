@@ -512,6 +512,7 @@
 /home/zf_info/monitor/vol7.1/moens_figure.jpg filter=lfs diff=lfs merge=lfs -text
 /home/zf_info/monitor/vol7.1/vol7.1.pdf filter=lfs diff=lfs merge=lfs -text
 /home/zf_info/movies/Zebrafish.mov filter=lfs diff=lfs merge=lfs -text
+/home/zf_info/movies/Zebrafish.mp4 filter=lfs diff=lfs merge=lfs -text
 /home/zf_info/news/ANZZFWksp2007RegForm.doc filter=lfs diff=lfs merge=lfs -text
 /home/zf_info/news/ISDB2005.pdf filter=lfs diff=lfs merge=lfs -text
 /home/zf_info/news/Madison_2004_poster.jpg filter=lfs diff=lfs merge=lfs -text
