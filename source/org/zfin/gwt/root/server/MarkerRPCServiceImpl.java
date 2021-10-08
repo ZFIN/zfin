@@ -30,11 +30,9 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.marker.service.MarkerAttributionService;
 import org.zfin.marker.service.MarkerService;
-import org.zfin.mutant.DiseaseAnnotation;
-import org.zfin.mutant.DiseaseAnnotationModel;
-import org.zfin.mutant.Fish;
-import org.zfin.mutant.Genotype;
+import org.zfin.mutant.*;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.profile.Organization;
 import org.zfin.publication.Publication;
@@ -1173,17 +1171,10 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
 
     @Override
     public void addAttributionForMarkerName(String markerAbbrev, String pubZdbID) throws TermNotFoundException, DuplicateEntryException {
-        Marker m = RepositoryFactory.getMarkerRepository().getMarkerByAbbreviation(markerAbbrev);
-        if (m == null) {
-            throw new TermNotFoundException(markerAbbrev, "Marker");
-        }
-        String markerZdbID = m.getZdbID();
-        if (infrastructureRepository.getRecordAttribution(markerZdbID, pubZdbID, RecordAttribution.SourceType.STANDARD) != null) {
-            throw new DuplicateEntryException(m.getAbbreviation() + " is already attributed.");
-        }
         HibernateUtil.createTransaction();
-        infrastructureRepository.insertRecordAttribution(markerZdbID, pubZdbID);
-        infrastructureRepository.insertUpdatesTable(markerZdbID, "record attribution", "", pubZdbID, "Added direct attribution");
+
+        MarkerAttributionService.addAttributionForMarkerName(markerAbbrev, pubZdbID);
+
         HibernateUtil.flushAndCommitCurrentSession();
         HibernateUtil.closeSession();
     }
