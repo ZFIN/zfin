@@ -32,6 +32,7 @@ import org.zfin.gwt.root.server.DTOConversionServiceTest;
 import org.zfin.infrastructure.InfrastructureRepositoryTest;
 import org.zfin.infrastructure.delete.DeleteRuleTest;
 import org.zfin.mapping.repository.LinkageRepositoryTest;
+import org.zfin.marker.MarkerAttributionServiceTest;
 import org.zfin.marker.MarkerServiceTest;
 import org.zfin.marker.MergeMarkerDBTest;
 import org.zfin.marker.presentation.GeneAddFormBeanValidatorSpec;
@@ -116,6 +117,7 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         MarkerGoTermEvidenceRepositoryTest.class,
         MarkerRepositoryTest.class,
         MarkerServiceTest.class,
+        MarkerAttributionServiceTest.class,
         MarkerSoapDbTest.class,
         MergeMarkerDBTest.class,
 //        MicroArrayTest.class,     // Takes 1.5 min to run, but works.
