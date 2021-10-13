@@ -2,6 +2,8 @@
 package org.zfin.marker;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.ExternalNote;
@@ -30,6 +32,8 @@ import java.util.stream.Collectors;
  * Domain model for the abstract marker object, which can be a gene, EST, CDNA, ...
  * ToDo: needs more modelling...
  */
+@Setter
+@Getter
 public class Marker extends SequenceFeature implements Serializable, Comparable, EntityAlias, EntityNotes, EntityID {
 
     public static final String WITHDRAWN = "WITHDRAWN:";
@@ -48,6 +52,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
     private Set<Figure> figures;
     private Set<MarkerFamilyName> familyName;
     private Set<FluorescentProtein> fluorescentProteins;
+    private Set<EfgFluorescence> efgFluorescences;
     private Set<Ortholog> orthologs;
     protected Set<MarkerRelationship> firstMarkerRelationships;    //  where this marker = "mrel_mrkr_1_zdb_id" in mrel
     private Set<MarkerRelationship> secondMarkerRelationships;   //  where this marker = "mrel_mrkr_2_zdb_id" in mrel
@@ -687,14 +692,6 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
      */
     public void setFamilyName(Set<MarkerFamilyName> familyName) {
         this.familyName = familyName;
-    }
-
-    public Set<FluorescentProtein> getFluorescentProteins() {
-        return fluorescentProteins;
-    }
-
-    public void setFluorescentProteins(Set<FluorescentProtein> fluorescentProteins) {
-        this.fluorescentProteins = fluorescentProteins;
     }
 
     /**
