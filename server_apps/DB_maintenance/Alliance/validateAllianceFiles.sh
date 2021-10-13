@@ -91,3 +91,4 @@ echo "Validating GFF3 file..."
 echo "curl --silent -H \"Authorization: Bearer AUTHORIZATION\" -X POST \"https://fms.alliancegenome.org/api/data/$endpoint\" -F \"4.1.0_REF-EXCHANGE_ZFIN=@ZFIN_1.0.1.4_ReferenceExchange.json.gz\""
 curl --silent -H "Authorization: Bearer $AUTHORIZATION" -X POST "https://fms.alliancegenome.org/api/data/$endpoint" -F "4.1.0_REF-EXCHANGE_ZFIN=@ZFIN_1.0.1.4_ReferenceExchange.json.gz"
 echo ""
+ 
