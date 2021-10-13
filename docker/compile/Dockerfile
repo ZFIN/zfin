@@ -12,7 +12,7 @@ RUN cd /opt/misc && wget https://groovy.jfrog.io/artifactory/dist-release-local/
         sha256sum -c apache-groovy-binary-3.0.7.zip.sha256 && unzip apache-groovy-binary-3.0.7.zip
 RUN ln -s /opt/misc/groovy-3.0.7 /opt/misc/groovy
 RUN chsh -s /usr/bin/tcsh gradle
-RUN mkdir -p /opt/zfin/www_homes/zfin.org
+RUN mkdir -p /opt/zfin/www_homes/zfin.org/server_apps/jenkins
 RUN mkdir -p /opt/zfin/tls/certs
 RUN mkdir -p /opt/zfin/tls/private
 RUN mkdir -p /opt/zfin/catalina_bases/zfin.org
