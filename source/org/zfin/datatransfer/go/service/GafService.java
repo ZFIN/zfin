@@ -784,7 +784,7 @@ public class GafService {
 
         // delete record attributions and then evidences directly
         //RepositoryFactory.getInfrastructureRepository().deleteRecordAttributionByDataZdbIDs(zdbIDs);;
-        SolrService.deleteByIds(zdbIDs, true);
+        //SolrService.deleteByIds(zdbIDs, true);
         //return markerGoTermEvidenceRepository.deleteMarkerGoTermEvidenceByZdbIDs(zdbIDs);
     }
 
