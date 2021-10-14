@@ -60,3 +60,13 @@ export VALIDATION_EMAIL_DBA="technical@zfin.org"
 export WEBHOST_BLASTDB_TO_COPY="/research/crick/blastdb"
 export WIKI_HOST="devwiki.zfin.org"
 export ZFIN_ADMIN="technical@zfin.org"
+
+export PATH=/opt/misc/groovy/bin:$PATH
+
+export PATH=/opt/postgres/postgresql/bin:/opt/postrgres/postgresql/include:$PATH
+
+export PATH=/opt/ab-blast:$PATH
+
+# Prompt
+export PROMPT_DIRTRIM=2
+export PS1="${MUTANT_NAME}:\w\$ "

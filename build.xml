@@ -218,6 +218,7 @@
                     keySuffix="="
                     valuePrefix="&quot;"
                     valueSuffix="&quot;"
+                    footerFile="${commons.dir}/footer.bash"
                     exportPropertyFile="${commons.dir}/env-exports.properties"/>
         </sequential>
     </macrodef>

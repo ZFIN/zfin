@@ -11,6 +11,7 @@ export CURATION_INSTANCE="false"
 export DBNAME="moondb"
 export DB_LOCALE="en_US.utf8"
 export DB_NAME="moondb"
+export DB_UNLOADS_PATH="/research/zunloads/databases/zfindb"
 export DEFAULT_EMAIL="pkalita@zfin.org"
 export DOMAIN_NAME="moonshine.zfin.org"
 export DOWNLOAD_DIRECTORY="/research/zunloads/download-files/moondb"
@@ -47,6 +48,7 @@ export SOLR_CORE="site_index_moonshine"
 export SOLR_HOME="/var/solr/data/site_index_moonshine"
 export SOLR_MEMORY="8g"
 export SOLR_PORT="8983"
+export SOLR_UNLOADS_PATH="/research/zunloads/solr/zfindb"
 export SOURCEROOT="/opt/zfin/source_roots/moonshine"
 export SQLHOSTS_FILE="sqlhosts"
 export SQLHOSTS_HOST="cuboid.zfin.org"
@@ -59,3 +61,13 @@ export VALIDATION_EMAIL_DBA="pkalita@zfin.org"
 export WEBHOST_BLASTDB_TO_COPY="/research/crick/blastdb"
 export WIKI_HOST="devwiki.zfin.org"
 export ZFIN_ADMIN="pkalita@zfin.org"
+
+export PATH=/opt/misc/groovy/bin:$PATH
+
+export PATH=/opt/postgres/postgresql/bin:/opt/postrgres/postgresql/include:$PATH
+
+export PATH=/opt/ab-blast:$PATH
+
+# Prompt
+export PROMPT_DIRTRIM=2
+export PS1="${MUTANT_NAME}:\w\$ "
