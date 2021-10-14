@@ -11,7 +11,7 @@ RUN chmod 755 /etc/init.d/httpd
 RUN cd /opt/misc && wget https://groovy.jfrog.io/artifactory/dist-release-local/groovy-zips/apache-groovy-binary-3.0.7.zip && \
         sha256sum -c apache-groovy-binary-3.0.7.zip.sha256 && unzip apache-groovy-binary-3.0.7.zip
 RUN ln -s /opt/misc/groovy-3.0.7 /opt/misc/groovy
-RUN chsh -s /usr/bin/tcsh gradle
+#RUN chsh -s /usr/bin/tcsh gradle
 RUN mkdir -p /opt/zfin/www_homes/zfin.org/server_apps/jenkins
 RUN mkdir -p /opt/zfin/tls/certs
 RUN mkdir -p /opt/zfin/tls/private
@@ -29,5 +29,8 @@ COPY ./ssh-agent.sudoers /etc/sudoers.d/01-ssh-agent
 RUN chmod 0440 /etc/sudoers.d/01-ssh-agent
 USER gradle
 COPY ./cshrc /home/gradle/.cshrc
+COPY ./bash_profile /tmp/bash_profile
+RUN cat /tmp/bash_profile >> /home/gradle/.profile
 
-CMD ["/usr/bin/tcsh"]
+#CMD ["/usr/bin/tcsh"]
+CMD ["/bin/bash","-l"]
