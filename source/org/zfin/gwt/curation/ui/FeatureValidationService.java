@@ -26,8 +26,10 @@ public class FeatureValidationService {
 
         if (StringUtils.isNotEmpty(featureDTO.getFeatureChromosome())) {
 
-            if (featureDTO.getFeatureStartLoc()>featureDTO.getFeatureEndLoc()){
-                return "Start location cannot be greater than end location";
+            if (featureDTO.getFeatureStartLoc() != null && featureDTO.getFeatureEndLoc() != null) {
+                if (featureDTO.getFeatureStartLoc() > featureDTO.getFeatureEndLoc()) {
+                    return "Start location cannot be greater than end location";
+                }
             }
         }
 
