@@ -113,8 +113,8 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         fl.setFtrLocEvidence(ontologyRepository.getTermByZdbID(FeatureService.getFeatureGenomeLocationEvidenceCodeTerm(dto.getEvidence())));
         HibernateUtil.currentSession().save(fl);
         infrastructureRepository.insertPublicAttribution(fl.getZdbID(), dto.getPublicationZdbID(), RecordAttribution.SourceType.STANDARD);
-
     }
+
     /**
      * Here, we edit everything but the notes (done in-line) and the alias (also done in-line).
      *
@@ -203,10 +203,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             }
         }
         else{
-            if (!featureDTO.getFeatureChromosome().equals(fgl.getFtrChromosome())||
-                    (!featureDTO.getFeatureAssembly().equals(fgl.getFtrAssembly())||
-                            (!featureDTO.getFeatureStartLoc().equals(fgl.getFtrStartLocation())||
-                                    (!featureDTO.getFeatureEndLoc().equals(fgl.getFtrEndLocation())))))
+            if (featureLocationNeedsUpdate(featureDTO, fgl))
             {
                 updateFeatureLocation(fgl, featureDTO);
             }
@@ -390,6 +387,21 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         HibernateUtil.flushAndCommitCurrentSession();
 
         return getFeature(featureDTO.getZdbID());
+    }
+
+    private boolean featureLocationNeedsUpdate(FeatureDTO featureDTO, FeatureLocation fgl) {
+        //null safeguards
+        if ( (featureDTO.getFeatureChromosome() == null && fgl.getFtrChromosome() != null) ||
+                (featureDTO.getFeatureAssembly() == null && fgl.getFtrAssembly() != null) ||
+                    (featureDTO.getFeatureStartLoc() == null && fgl.getFtrStartLocation() != null) ||
+                        (featureDTO.getFeatureEndLoc() == null && fgl.getFtrEndLocation() != null) ) {
+            return true;
+        }
+
+        return !featureDTO.getFeatureChromosome().equals(fgl.getFtrChromosome())||
+                (!featureDTO.getFeatureAssembly().equals(fgl.getFtrAssembly())||
+                        (!featureDTO.getFeatureStartLoc().equals(fgl.getFtrStartLocation())||
+                                (!featureDTO.getFeatureEndLoc().equals(fgl.getFtrEndLocation()))));
     }
 
 
