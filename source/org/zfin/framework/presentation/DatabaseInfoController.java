@@ -33,6 +33,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
+import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 /**
  * Controller that obtains the meta data for the database.
@@ -45,7 +46,7 @@ public class DatabaseInfoController {
     FigureRepository figureRepository;
 
     @RequestMapping("/database-info")
-    protected String showDatabaseInfo(Model model) throws Exception {
+    protected String showDatabaseInfo(Model model) {
         model.addAttribute("metadata", getMetaData());
         model.addAttribute("unloadDate", getInfrastructureRepository().getUnloadInfo());
         Connection conn = HibernateUtil.currentSession().doReturningWork(connection -> connection);
@@ -63,7 +64,7 @@ public class DatabaseInfoController {
     }
 
     @RequestMapping("/java-properties")
-    public String showJavaProperties(Model model) throws ServletException {
+    public String showJavaProperties(Model model) {
         Properties properties = System.getProperties();
         Enumeration propEnum = properties.propertyNames();
         Map<String, String> props = new TreeMap<>();

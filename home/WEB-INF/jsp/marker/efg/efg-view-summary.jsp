@@ -16,17 +16,25 @@
     <zfin2:markerPreviousNamesAttributeListItem previousNames="${formBean.previousNames}" />
 
     <z:attributeListItem label="Emission Wavelength">
-        <c:if test="${formBean.marker.fluorescentProteins != null}">
-            <c:forEach var="fp" items="${formBean.marker.fluorescentProteins}">
+        <c:if test="${formBean.marker.efgFluorescences != null}">
+            <c:forEach var="fp" items="${formBean.marker.efgFluorescences}">
                 ${fp.emissionLength} nm
             </c:forEach>
         </c:if>
     </z:attributeListItem>
 
     <z:attributeListItem label="Excitation Wavelength">
+        <c:if test="${formBean.marker.efgFluorescences != null}">
+            <c:forEach var="fp" items="${formBean.marker.efgFluorescences}">
+                ${fp.excitationLength} nm
+            </c:forEach>
+        </c:if>
+    </z:attributeListItem>
+
+    <z:attributeListItem label="FPbase Ref">
         <c:if test="${formBean.marker.fluorescentProteins != null}">
             <c:forEach var="fp" items="${formBean.marker.fluorescentProteins}">
-                ${fp.excitationLength} nm
+                <a href='https://www.fpbase.org/protein/${fn:replace((fn:toLowerCase(fp.name)),".", "")}'>FP Base</a>
             </c:forEach>
         </c:if>
     </z:attributeListItem>
