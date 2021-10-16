@@ -171,7 +171,7 @@
             <many-to-many column="fe_fl_protein_id" class="org.zfin.marker.FluorescentProtein"/>
         </set>
 
-        <set name="efgFluorescences" lazy="true">
+        <set name="efgFluorescences" >
             <key column="ef_mrkr_zdb_id"/>
             <one-to-many class="org.zfin.marker.EfgFluorescence"/>
         </set>
