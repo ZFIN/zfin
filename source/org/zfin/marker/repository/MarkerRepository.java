@@ -526,4 +526,6 @@ public interface MarkerRepository {
     TranscriptSequence getTranscriptSequence(Transcript transcript);
 
     MarkerRelationshipType getMarkerRelationshipType(String name);
+
+    List<FluorescentProtein> getAllFluorescentProteins();
 }

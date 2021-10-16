@@ -1348,6 +1348,34 @@ public class MarkerService {
         return response;
     }
 
+    public JsonResultResponse<FluorescentProtein> getFPBaseJsonResultResponse(Pagination pagination) {
+        JsonResultResponse<FluorescentProtein> response = new JsonResultResponse<>();
+        List<FluorescentProtein> proteins = getMarkerRepository().getAllFluorescentProteins();
+        if (proteins == null) {
+            return response;
+        }
+        response.setResults(proteins);
+        response.setTotal(proteins.size());
+
+        // filtering
+/*
+        FilterService<MarkerRelationshipPresentation> filterService = new FilterService<>(new MarkerRelationshipFiltering());
+        List<MarkerRelationshipPresentation> filteredMarkerRelationshipList = filterService.filterAnnotations(fullMarkerRelationships, pagination.getFieldFilterValueMap());
+*/
+
+        // sorting
+        if (pagination.getSortBy() != null) {
+            FeatureSorting sorting = new FeatureSorting();
+            //proteins.sort(sorting.getComparator(pagination.getSortBy()));
+        }
+
+        response.setResults(proteins.stream()
+                .skip(pagination.getStart())
+                .limit(pagination.getLimit())
+                .collect(Collectors.toList()));
+        return response;
+    }
+
     public List<MarkerRelationshipEditMetadata> getMarkerRelationshipEditMetadata(Marker marker,
                                                                                    MarkerRelationship.Type... types) {
         return Arrays.stream(types)

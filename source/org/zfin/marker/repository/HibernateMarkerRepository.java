@@ -3450,5 +3450,14 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return (MarkerRelationshipType) HibernateUtil.currentSession().get(MarkerRelationshipType.class, name);
     }
 
+    @Override
+    public List<FluorescentProtein> getAllFluorescentProteins() {
+        Session session = HibernateUtil.currentSession();
+        //String hql = "select protein from FluorescentProtein protein where size(protein.efgs) > 0";
+        String hql = "select protein from FluorescentProtein protein order by size(protein.efgs) desc ";
+        Query query = session.createQuery(hql);
+        return  (List<FluorescentProtein>) query.list();
+    }
+
 }
 

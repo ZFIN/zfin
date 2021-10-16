@@ -117,6 +117,7 @@
         <mapping class="org.zfin.marker.presentation.HighQualityProbeAOStatistics"/>
         <mapping class="org.zfin.marker.ReplacedData"/>
         <mapping class="org.zfin.marker.SecondaryMarker"/>
+        <mapping class="org.zfin.marker.EfgFluorescence"/>
         <mapping class="org.zfin.mutant.SecondaryGenotype"/>
         <mapping class="org.zfin.mutant.FishStr"/>
         <mapping class="org.zfin.mutant.Genotype"/>

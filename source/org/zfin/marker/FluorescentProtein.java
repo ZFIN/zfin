@@ -1,13 +1,14 @@
 
 package org.zfin.marker;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
+import org.zfin.framework.api.View;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 
 @Setter
 @Getter
@@ -17,14 +18,39 @@ public class FluorescentProtein {
 
     @Id
     @Column(name = "fp_pk_id")
+    @JsonView(View.API.class)
     private long id;
     @Column(name = "fp_name")
+    @JsonView(View.API.class)
     private String name;
     @Column(name = "fp_emission_length")
+    @JsonView(View.API.class)
     private String emissionLength;
     @Column(name = "fp_excitation_length")
+    @JsonView(View.API.class)
     private String excitationLength;
     @Column(name = "fp_aliases")
     private String aliases;
+
+    @ManyToMany
+    @JoinTable(name = "fpProtein_efg", joinColumns = {
+            @JoinColumn(name = "fe_fl_protein_id", nullable = false, updatable = false)},
+            inverseJoinColumns = {@JoinColumn(name = "fe_mrkr_zdb_id",
+                    nullable = false, updatable = false)})
+    @JsonView(View.API.class)
+    private List<Marker> efgs;
+
+    @JsonView(View.API.class)
+    @JsonProperty("fpId")
+    public String getID() {
+        int indexOfParen = name.indexOf("(");
+        String id = name.toLowerCase();
+        if (indexOfParen > 0)
+            id = id.substring(0, indexOfParen);
+        int indexOfDot = id.indexOf(".");
+        if (indexOfDot > 0)
+            id = id.replace(".", "");
+        return id;
+    }
 
 }
