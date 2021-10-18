@@ -528,4 +528,6 @@ public interface MarkerRepository {
     MarkerRelationshipType getMarkerRelationshipType(String name);
 
     List<FluorescentProtein> getAllFluorescentProteins();
+
+    List<EfgFluorescence> getAllFluorescentEfgs();
 }
