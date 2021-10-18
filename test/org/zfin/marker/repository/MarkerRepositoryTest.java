@@ -4,7 +4,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.functors.InvokerTransformer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.config.Configuration;
 import org.hibernate.*;
 import org.hibernate.criterion.Restrictions;
 import org.junit.After;
@@ -114,15 +113,22 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void testEfgFluorescent() {
-        FluorescentProtein list = (FluorescentProtein) HibernateUtil.currentSession().get(FluorescentProtein.class, 1L);
-        EfgFluorescence ef = (EfgFluorescence) HibernateUtil.currentSession().get(EfgFluorescence.class, 2L);
-        Marker efg = markerRepository.getMarkerByID("ZDB-EFG-190123-1");
+    public void testFluorescentProteins() {
+        Marker efg = markerRepository.getMarkerByID("ZDB-EFG-080131-1");
         assertNotNull(efg);
         assertNotNull(efg.getFluorescentProteins());
-        assertEquals(efg.getFluorescentProteins().iterator().next().getName(),"mOrange2");
+        assertEquals(efg.getFluorescentProteins().iterator().next().getName(), "mOrange2");
         assertNotNull(efg.getEfgFluorescences());
         assertEquals(efg.getEfgFluorescences().size(), 1);
+    }
+
+    @Test
+    public void testFluorescentEfg() {
+        List<EfgFluorescence> efgList = markerRepository.getAllFluorescentEfgs();
+        assertNotNull(efgList);
+        Set<FluorescentProtein> proteins = efgList.get(0).getEfg().getFluorescentProteins();
+        assertNotNull(proteins);
+
     }
 
     @Test

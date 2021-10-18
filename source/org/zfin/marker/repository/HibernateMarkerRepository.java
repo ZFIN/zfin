@@ -3459,5 +3459,13 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return  (List<FluorescentProtein>) query.list();
     }
 
+    @Override
+    public List<EfgFluorescence> getAllFluorescentEfgs() {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select efg from EfgFluorescence efg ";
+        Query query = session.createQuery(hql);
+        return  (List<EfgFluorescence>) query.list();
+    }
+
 }
 

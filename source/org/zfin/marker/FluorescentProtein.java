@@ -14,7 +14,7 @@ import java.util.List;
 @Getter
 @Entity
 @Table(name = "fluorescent_protein")
-public class FluorescentProtein {
+public class FluorescentProtein extends AbstractFluorescence {
 
     @Id
     @Column(name = "fp_pk_id")
@@ -25,10 +25,16 @@ public class FluorescentProtein {
     private String name;
     @Column(name = "fp_emission_length")
     @JsonView(View.API.class)
-    private String emissionLength;
+    private Integer emissionLength;
     @Column(name = "fp_excitation_length")
     @JsonView(View.API.class)
-    private String excitationLength;
+    private Integer excitationLength;
+    @Column(name = "fp_emission_color")
+    @JsonView(View.API.class)
+    private String emissionColor;
+    @Column(name = "fp_excitation_color")
+    @JsonView(View.API.class)
+    private String excitationColor;
     @Column(name = "fp_aliases")
     private String aliases;
 

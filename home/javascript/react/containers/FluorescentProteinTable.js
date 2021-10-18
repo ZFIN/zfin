@@ -5,28 +5,40 @@ import {EntityList} from '../components/entity';
 
 const sortOptions = [
     {
-        value: 'alleleUp',
-        label: 'Allele (Default), A to Z',
+        value: 'default',
+        label: '(Default)',
     },
     {
-        value: 'typeUp',
-        label: 'Type, A to Z',
+        value: 'proteinUp',
+        label: 'Protein, A to Z',
     },
     {
-        value: 'typeDown',
-        label: 'Type, Z to A',
+        value: 'proteinDown',
+        label: 'Protein, Z to A',
     },
     {
-        value: 'consequenceUp',
-        label: 'Consequence, A to Z',
+        value: 'efgUp',
+        label: 'EFG, A to Z',
     },
     {
-        value: 'consequenceDown',
-        label: 'Consequence, Z to A',
+        value: 'efgDown',
+        label: 'EFG, Z to A',
     },
     {
-        value: 'supplierUp',
-        label: 'Supplier, A to Z',
+        value: 'excitationUp',
+        label: 'Excitation wave length, 0 to 100',
+    },
+    {
+        value: 'excitationDown',
+        label: 'Excitation wave length, 100 to 0',
+    },
+    {
+        value: 'emissionUp',
+        label: 'Emission wave length, 0 to 100',
+    },
+    {
+        value: 'emissionDown',
+        label: 'Emission wave length, 100 to 0',
     },
 ];
 
@@ -43,8 +55,18 @@ const FluorescentProteinTable = () => {
             width: '50px',
         },
         {
+            label: 'Excitation Color',
+            content: ({excitationColor}) => excitationColor,
+            width: '50px',
+        },
+        {
             label: 'Emission Length',
             content: ({emissionLength}) => emissionLength,
+            width: '50px',
+        },
+        {
+            label: 'Emission Color',
+            content: ({emissionColor}) => emissionColor,
             width: '50px',
         },
         {
@@ -58,7 +80,7 @@ const FluorescentProteinTable = () => {
         <DataTable
             columns={columns}
             dataUrl={'/action/api/marker/fpbase-proteins'}
-            rowKey='zdbID'
+            rowKey='fpId'
             sortOptions={sortOptions}
         />
     );

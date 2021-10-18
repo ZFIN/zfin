@@ -1365,11 +1365,39 @@ public class MarkerService {
 
         // sorting
         if (pagination.getSortBy() != null) {
-            FeatureSorting sorting = new FeatureSorting();
-            //proteins.sort(sorting.getComparator(pagination.getSortBy()));
+            FluorescentProteinSorting sorting = new FluorescentProteinSorting();
+            proteins.sort(sorting.getComparator(pagination.getSortBy()));
         }
 
         response.setResults(proteins.stream()
+                .skip(pagination.getStart())
+                .limit(pagination.getLimit())
+                .collect(Collectors.toList()));
+        return response;
+    }
+
+    public JsonResultResponse<EfgFluorescence> getFfgFluorescenceJsonResultResponse(Pagination pagination) {
+        JsonResultResponse<EfgFluorescence> response = new JsonResultResponse<>();
+        List<EfgFluorescence> efgs = getMarkerRepository().getAllFluorescentEfgs();
+        if (efgs == null) {
+            return response;
+        }
+        response.setResults(efgs);
+        response.setTotal(efgs.size());
+
+        // filtering
+/*
+        FilterService<MarkerRelationshipPresentation> filterService = new FilterService<>(new MarkerRelationshipFiltering());
+        List<MarkerRelationshipPresentation> filteredMarkerRelationshipList = filterService.filterAnnotations(fullMarkerRelationships, pagination.getFieldFilterValueMap());
+*/
+
+        // sorting
+        if (pagination.getSortBy() != null) {
+            FluorescentProteinSorting sorting = new FluorescentProteinSorting();
+// toDo            efgs.sort(sorting.getComparator(pagination.getSortBy()));
+        }
+
+        response.setResults(efgs.stream()
                 .skip(pagination.getStart())
                 .limit(pagination.getLimit())
                 .collect(Collectors.toList()));
