@@ -390,18 +390,13 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     }
 
     private boolean featureLocationNeedsUpdate(FeatureDTO featureDTO, FeatureLocation fgl) {
-        //null safeguards
-        if ( (featureDTO.getFeatureChromosome() == null && fgl.getFtrChromosome() != null) ||
-                (featureDTO.getFeatureAssembly() == null && fgl.getFtrAssembly() != null) ||
-                    (featureDTO.getFeatureStartLoc() == null && fgl.getFtrStartLocation() != null) ||
-                        (featureDTO.getFeatureEndLoc() == null && fgl.getFtrEndLocation() != null) ) {
-            return true;
-        }
-
-        return !featureDTO.getFeatureChromosome().equals(fgl.getFtrChromosome())||
-                (!featureDTO.getFeatureAssembly().equals(fgl.getFtrAssembly())||
-                        (!featureDTO.getFeatureStartLoc().equals(fgl.getFtrStartLocation())||
-                                (!featureDTO.getFeatureEndLoc().equals(fgl.getFtrEndLocation()))));
+        //null safe
+        return !(
+                    StringUtils.equals(featureDTO.getFeatureChromosome(), fgl.getFtrChromosome()) &&
+                    StringUtils.equals(featureDTO.getFeatureAssembly(), fgl.getFtrAssembly()) &&
+                    Objects.equals(featureDTO.getFeatureStartLoc(), fgl.getFtrStartLocation()) &&
+                    Objects.equals(featureDTO.getFeatureEndLoc(), fgl.getFtrEndLocation())
+                );
     }
 
 
