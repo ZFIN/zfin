@@ -4,19 +4,17 @@ import com.fasterxml.jackson.annotation.JsonView;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.zfin.feature.Feature;
 import org.zfin.framework.api.*;
+import org.zfin.marker.EfgFluorescence;
 import org.zfin.marker.FluorescentProtein;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.wiki.presentation.Version;
 
 import javax.servlet.http.HttpServletRequest;
-
-import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 @RestController
 @RequestMapping("/api")
@@ -82,15 +80,31 @@ public class MutationController {
         try {
             response = markerService.getFPBaseJsonResultResponse(pagination);
         } catch (Exception e) {
-            log.error("Error while retrieving ribbon details", e);
+            log.error("Error while retrieving fpbase protein info", e);
             RestErrorMessage error = new RestErrorMessage(500);
             error.addErrorMessage(e.getMessage());
             throw new RestErrorException(error);
         }
-
         response.calculateRequestDuration(startTime);
         response.setHttpServletRequest(request);
+        return response;
+    }
 
+    @JsonView(View.API.class)
+    @RequestMapping("/marker/efg-proteins")
+    protected JsonResultResponse<EfgFluorescence> showEfgProteins(@Version Pagination pagination) {
+        long startTime = System.currentTimeMillis();
+        JsonResultResponse<EfgFluorescence> response;
+        try {
+            response = markerService.getFfgFluorescenceJsonResultResponse(pagination);
+        } catch (Exception e) {
+            log.error("Error while retrieving fpbase protein info", e);
+            RestErrorMessage error = new RestErrorMessage(500);
+            error.addErrorMessage(e.getMessage());
+            throw new RestErrorException(error);
+        }
+        response.calculateRequestDuration(startTime);
+        response.setHttpServletRequest(request);
         return response;
     }
 

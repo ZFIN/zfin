@@ -42,12 +42,13 @@ const sortOptions = [
     },
 ];
 
-const FluorescentProteinTable = () => {
+const EfgTable = () => {
     const columns = [
         {
-            label: 'FPbase Protein',
-            content: ({fpId, name}) => (<a href={`https://www.fpbase.org/protein/${fpId}`}>{name}</a>),
-            width: '100px',
+            label: 'EFG',
+            content: ({efgs}) => (efgs && <EntityList entities={efgs}/>
+            ),
+            width: '90px',
         },
         {
             label: 'Excitation Length',
@@ -70,24 +71,23 @@ const FluorescentProteinTable = () => {
             width: '50px',
         },
         {
-            label: 'EFG',
-            content: ({efgs}) => (efgs && <EntityList entities={efgs}/>
-            ),
-            width: '90px',
+            label: 'FPbase Protein',
+            content: ({fpId, name}) => (<a href={`https://www.fpbase.org/protein/${fpId}`}>{name}</a>),
+            width: '100px',
         },
     ];
     return (
         <DataTable
             columns={columns}
-            dataUrl={'/action/api/marker/fpbase-proteins'}
+            dataUrl={'/action/api/marker/efg-proteins'}
             rowKey='fpId'
             sortOptions={sortOptions}
         />
     );
 };
 
-FluorescentProteinTable.propTypes = {
+EfgTable.propTypes = {
     geneId: PropTypes.string,
 };
 
-export default FluorescentProteinTable;
+export default EfgTable;
