@@ -40,6 +40,8 @@ public enum Category {
             EXPRESSED_IN_TF,
             LAB_OF_ORIGIN,
             REPORTER_COLOR,
+            EMISSION_COLOR,
+            EXCITATION_COLOR,
             ENGINEERED_REGION
     ),
     ANTIBODY("Antibody",
