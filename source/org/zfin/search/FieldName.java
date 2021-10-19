@@ -58,6 +58,8 @@ public enum FieldName {
     DATE("date"),
     DISEASE("disease", "Human Disease"),
     DISEASE_MODEL("disease_model"),
+    EMISSION_COLOR("emission_color"),
+    EXCITATION_COLOR("excitation_color"),
     ENGINEERED_REGION("engineered_region"),
     EVIDENCE_CODE("evidence_code"),
     EXPRESSED_GENE_FULL_NAME("expressed_gene_full_name"),
