@@ -35,6 +35,31 @@
         </z:ifHasData>
     </z:attributeListItem>
 
+
+    <z:attributeListItem label="Emission Wavelength">
+        <c:if test="${formBean.marker.efgFluorescences != null}">
+            <c:forEach var="fp" items="${formBean.marker.efgFluorescences}">
+                ${fp.emissionLength} nm <div id="rectangle" style="background: ${fp.emissionColorHex}; width: 30px; height: 20px; display: inline-block;"></div>
+            </c:forEach>
+        </c:if>
+    </z:attributeListItem>
+
+    <z:attributeListItem label="Excitation Wavelength">
+        <c:if test="${formBean.marker.efgFluorescences != null}">
+            <c:forEach var="fp" items="${formBean.marker.efgFluorescences}">
+                ${fp.excitationLength} nm <div id="rectangle" style="background: ${fp.excitationColorHex}; width: 30px; height: 20px; display: inline-block;"></div>
+            </c:forEach>
+        </c:if>
+    </z:attributeListItem>
+
+    <z:attributeListItem label="FPbase Ref" link="/action/fluorescence/proteins">
+        <c:if test="${formBean.marker.fluorescentProteins != null}">
+            <c:forEach var="fp" items="${formBean.marker.fluorescentProteins}">
+                <a href='https://www.fpbase.org/protein/${fn:replace((fn:toLowerCase(fp.name)),".", "")}'>${fp.name}</a>
+            </c:forEach>
+        </c:if>
+    </z:attributeListItem>
+
     <z:attributeListItem label="Contains Sequences">
         <z:ifHasData test="${!empty formBean.containsSequencePresentations}" noDataMessage="None">
             <ul class="comma-separated">
