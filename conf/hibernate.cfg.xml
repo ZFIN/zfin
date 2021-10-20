@@ -109,7 +109,8 @@
         <mapping class="org.zfin.infrastructure.WithdrawnZdbID"/>
         <mapping class="org.zfin.infrastructure.ZdbFlag"/>
         <mapping class="org.zfin.infrastructure.AnnualStats"/>
-        <mapping class="org.zfin.marker.FluorescentProtein"/>
+        <mapping class="org.zfin.marker.fluorescence.FluorescentMarker"/>
+        <mapping class="org.zfin.marker.fluorescence.FluorescentProtein"/>
         <mapping class="org.zfin.marker.MarkerAlias"/>
         <mapping class="org.zfin.marker.MarkerAlias"/>
         <mapping class="org.zfin.marker.MarkerHistory"/>
@@ -117,7 +118,6 @@
         <mapping class="org.zfin.marker.presentation.HighQualityProbeAOStatistics"/>
         <mapping class="org.zfin.marker.ReplacedData"/>
         <mapping class="org.zfin.marker.SecondaryMarker"/>
-        <mapping class="org.zfin.marker.EfgFluorescence"/>
         <mapping class="org.zfin.mutant.SecondaryGenotype"/>
         <mapping class="org.zfin.mutant.FishStr"/>
         <mapping class="org.zfin.mutant.Genotype"/>

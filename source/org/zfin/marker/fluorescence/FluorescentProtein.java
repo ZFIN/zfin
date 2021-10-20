@@ -1,11 +1,12 @@
 
-package org.zfin.marker;
+package org.zfin.marker.fluorescence;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
 import org.zfin.framework.api.View;
+import org.zfin.marker.Marker;
 
 import javax.persistence.*;
 import java.util.List;
@@ -45,6 +46,14 @@ public class FluorescentProtein extends AbstractFluorescence {
                     nullable = false, updatable = false)})
     @JsonView(View.API.class)
     private List<Marker> efgs;
+
+    @ManyToMany
+    @JoinTable(name = "fpProtein_construct", joinColumns = {
+            @JoinColumn(name = "fc_fl_protein_id", nullable = false, updatable = false)},
+            inverseJoinColumns = {@JoinColumn(name = "fc_mrkr_zdb_id",
+                    nullable = false, updatable = false)})
+    @JsonView(View.API.class)
+    private List<Marker> constructs;
 
     @JsonView(View.API.class)
     @JsonProperty("fpId")

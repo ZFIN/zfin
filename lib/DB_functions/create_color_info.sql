@@ -13,13 +13,13 @@ begin
         select fc_color from fluorescent_color
         where fc_lower_bound < fp_emission_length AND fc_upper_bound > fp_emission_length);
 
-    update efg_fluorescence set ef_excitation_color = (
+    update fluorescence_marker set fm_excitation_color = (
         select fc_color from fluorescent_color
-        where fc_lower_bound < ef_excitation_length AND fc_upper_bound > ef_excitation_length);
+        where fc_lower_bound < fm_excitation_length AND fc_upper_bound > fm_excitation_length);
 
-    update efg_fluorescence set ef_emission_color = (
+    update fluorescence_marker set fm_emission_color = (
         select fc_color from fluorescent_color
-        where fc_lower_bound < ef_emission_length AND fc_upper_bound > ef_emission_length);
+        where fc_lower_bound < fm_emission_length AND fc_upper_bound > fm_emission_length);
 
 end
 
