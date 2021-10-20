@@ -2,8 +2,9 @@
 
 <c:set var="FPBASE_PROTEINS" value="FPbase Proteins"/>
 <c:set var="EFGs" value="EFGs"/>
+<c:set var="CONSTRUCTS" value="Constructs"/>
 
-<z:dataPage sections="${[FPBASE_PROTEINS, EFGs]}">
+<z:dataPage sections="${[FPBASE_PROTEINS, EFGs, CONSTRUCTS]}">
     <jsp:attribute name="entityName">
     </jsp:attribute>
 
@@ -16,7 +17,13 @@
 
         <z:section title="${EFGs}">
             <z:section infoPopup="/action/marker/note/mutants">
-                <div class="__react-root" id="EfgTable"></div>
+                <div class="__react-root" id="EfgTable" data-type="efg"></div>
+            </z:section>
+        </z:section>
+
+        <z:section title="${CONSTRUCTS}">
+            <z:section infoPopup="/action/marker/note/mutants">
+                <div class="__react-root" id="EfgTable" data-type="construct"></div>
             </z:section>
         </z:section>
 

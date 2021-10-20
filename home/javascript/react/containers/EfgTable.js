@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import DataTable from '../components/data-table';
-import {EntityList} from '../components/entity';
+import {EntityLink} from '../components/entity';
+import CommaSeparatedList from '../components/CommaSeparatedList';
 
 const sortOptions = [
     {
@@ -46,7 +47,7 @@ const EfgTable = () => {
     const columns = [
         {
             label: 'EFG',
-            content: ({efgs}) => (efgs && <EntityList entities={efgs}/>
+            content: ({efg}) => (<EntityLink entity={efg}/>
             ),
             width: '90px',
         },
@@ -72,7 +73,13 @@ const EfgTable = () => {
         },
         {
             label: 'FPbase Protein',
-            content: ({fpId, name}) => (<a href={`https://www.fpbase.org/protein/${fpId}`}>{name}</a>),
+            content: ({proteins}) => (
+                <CommaSeparatedList>
+                    {proteins.map(protein => {
+                        return (<a key={protein.fpId} href={`https://www.fpbase.org/protein/${protein.fpId}`}>
+                            {protein.name} </a>)
+                    })}
+                </CommaSeparatedList>),
             width: '100px',
         },
     ];
@@ -87,7 +94,7 @@ const EfgTable = () => {
 };
 
 EfgTable.propTypes = {
-    geneId: PropTypes.string,
+    type: PropTypes.string,
 };
 
 export default EfgTable;

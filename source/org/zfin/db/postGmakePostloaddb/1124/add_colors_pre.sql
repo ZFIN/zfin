@@ -14,15 +14,15 @@ create table fluorescent_protein
     fp_excitation_color  VARCHAR(12)
 );
 
-drop table if exists efg_fluorescence;
-create table efg_fluorescence
+drop table if exists fluorescence_marker;
+create table fluorescence_marker
 (
-    ef_pk_id             serial PRIMARY KEY,
-    ef_mrkr_zdb_id       TEXT NOT NULL REFERENCES marker (mrkr_zdb_id),
-    ef_excitation_length INTEGER,
-    ef_emission_length   INTEGER,
-    ef_emission_color    VARCHAR(12),
-    ef_excitation_color  VARCHAR(12)
+    fm_pk_id             serial PRIMARY KEY,
+    fm_mrkr_zdb_id       TEXT NOT NULL REFERENCES marker (mrkr_zdb_id),
+    fm_excitation_length INTEGER,
+    fm_emission_length   INTEGER,
+    fm_emission_color    VARCHAR(12),
+    fm_excitation_color  VARCHAR(12)
 );
 
 drop table if exists fluorescent_color;
