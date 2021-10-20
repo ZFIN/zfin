@@ -5,7 +5,8 @@ import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zfin.ExternalNote;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
@@ -13,6 +14,8 @@ import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.framework.api.View;
 import org.zfin.infrastructure.*;
 import org.zfin.mapping.MappedMarkerImpl;
+import org.zfin.marker.fluorescence.FluorescentMarker;
+import org.zfin.marker.fluorescence.FluorescentProtein;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.ontology.GenericTerm;
@@ -52,7 +55,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
     private Set<Figure> figures;
     private Set<MarkerFamilyName> familyName;
     private Set<FluorescentProtein> fluorescentProteins;
-    private Set<EfgFluorescence> efgFluorescences;
+    private Set<FluorescentMarker> fluorescentMarkers;
     private Set<Ortholog> orthologs;
     protected Set<MarkerRelationship> firstMarkerRelationships;    //  where this marker = "mrel_mrkr_1_zdb_id" in mrel
     private Set<MarkerRelationship> secondMarkerRelationships;   //  where this marker = "mrel_mrkr_2_zdb_id" in mrel

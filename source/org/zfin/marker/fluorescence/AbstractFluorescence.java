@@ -1,5 +1,5 @@
 
-package org.zfin.marker;
+package org.zfin.marker.fluorescence;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;

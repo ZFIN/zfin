@@ -233,7 +233,7 @@ where mrkr_type = 'EFG'
 
 
 
-insert into efg_fluorescence (ef_mrkr_zdb_id, ef_excitation_length, ef_emission_length) (
+insert into fluorescence_marker (fm_mrkr_zdb_id, fm_excitation_length, fm_emission_length) (
     select fe_mrkr_zdb_id, fp_excitation_length::INTEGER, fp_emission_length::INTEGER
     FROM fpprotein_efg,
          fluorescent_protein
@@ -242,7 +242,16 @@ insert into efg_fluorescence (ef_mrkr_zdb_id, ef_excitation_length, ef_emission_
 
 -- create construct - FP protein associations
 -- from EFG - FP protein associations
-insert into fpProtein_efg
+
+-- define marker - fluorescent-protein association table
+drop table if exists fpProtein_construct;
+create table fpProtein_construct
+(
+    fc_mrkr_zdb_id   VARCHAR(100) NOT NULL REFERENCES marker (mrkr_zdb_id),
+    fc_fl_protein_id bigint       NOT NULL REFERENCES fluorescent_protein (fp_pk_id)
+);
+
+insert into fpProtein_construct
 select distinct mrel_mrkr_1_zdb_id, fe_fl_protein_id
 from fpProtein_efg, marker_relationship
 where mrel_mrkr_2_zdb_id = fe_mrkr_zdb_id AND
@@ -250,8 +259,8 @@ where mrel_mrkr_2_zdb_id = fe_mrkr_zdb_id AND
 
 -- create construct - fluorescence associations
 -- from EFG - fluorescence associations
-insert into efg_fluorescence (ef_mrkr_zdb_id, ef_excitation_length, ef_emission_length, ef_emission_color, ef_excitation_color)
-select distinct mrel_mrkr_1_zdb_id,ef_excitation_length, ef_emission_length, ef_emission_color, ef_excitation_color
-from efg_fluorescence, marker_relationship
-where mrel_mrkr_2_zdb_id = ef_mrkr_zdb_id AND
+insert into fluorescence_marker (fm_mrkr_zdb_id, fm_excitation_length, fm_emission_length, fm_emission_color, fm_excitation_color)
+select distinct mrel_mrkr_1_zdb_id,fm_excitation_length, fm_emission_length, fm_emission_color, fm_excitation_color
+from fluorescence_marker, marker_relationship
+where mrel_mrkr_2_zdb_id = fm_mrkr_zdb_id AND
         mrel_type = 'coding sequence of';

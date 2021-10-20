@@ -1,7 +1,7 @@
 package org.zfin.framework.api;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.zfin.marker.FluorescentProtein;
+import org.zfin.marker.fluorescence.FluorescentProtein;
 
 import java.util.ArrayList;
 import java.util.Arrays;
