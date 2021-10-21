@@ -47,12 +47,10 @@ public class MarkerAttributionService {
         ArrayList<Marker> results = new ArrayList<Marker>();
         SequenceTargetingReagent str = getMarkerRepository().getSequenceTargetingReagent(m.zdbID);
 
-        //Guard Clause: check for null returned from DB for marker
         if (str == null) {
             return results;
         }
 
-        //Guard Clause: check the type of marker is one of (MRPHLNO, CRISPR, TALEN)
         ActiveData.Type activeDataType = ActiveData.validateID(str.getZdbID());
         if ( !(activeDataType == ActiveData.Type.MRPHLNO ||
                 activeDataType == ActiveData.Type.CRISPR ||
