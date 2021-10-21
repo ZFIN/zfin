@@ -172,7 +172,7 @@
         </set>
 
         <set name="fluorescentMarkers" >
-            <key column="ef_mrkr_zdb_id"/>
+            <key column="fm_mrkr_zdb_id"/>
             <one-to-many class="org.zfin.marker.fluorescence.FluorescentMarker"/>
         </set>
 
