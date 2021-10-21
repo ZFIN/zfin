@@ -14,7 +14,7 @@ import java.util.List;
 @Setter
 @Getter
 @Entity
-@Table(name = "fluorescence_marker")
+@Table(name = "fluorescent_marker")
 public class FluorescentMarker extends AbstractFluorescence {
 
     @Id
