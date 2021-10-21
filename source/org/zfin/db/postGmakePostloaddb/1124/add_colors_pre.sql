@@ -14,8 +14,8 @@ create table fluorescent_protein
     fp_excitation_color  VARCHAR(12)
 );
 
-drop table if exists fluorescence_marker;
-create table fluorescence_marker
+drop table if exists fluorescent_marker;
+create table fluorescent_marker
 (
     fm_pk_id             serial PRIMARY KEY,
     fm_mrkr_zdb_id       TEXT NOT NULL REFERENCES marker (mrkr_zdb_id),
