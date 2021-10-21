@@ -201,44 +201,43 @@ public class DiseaseInfo extends AbstractScriptWrapper {
             DiseaseDTO fishDiseaseDto2 = getBaseDiseaseDTO(fish.getZdbID(), fish.getName(), disease.getDisease());
             RelationshipDTO fishRelationship = new RelationshipDTO(RelationshipDTO.IS_MODEL_OF, RelationshipDTO.FISH);
             fishDiseaseDto2.setObjectRelation(fishRelationship);
-            List<String> evidenceSet = new ArrayList<>();
-            evidenceSet.add(damo.getDiseaseAnnotation().getEvidenceCode());
-            fishDiseaseDto2.setEvidence(getEvidenceDTO(damo.getDiseaseAnnotation().getPublication(), evidenceSet));
+            List<String> evidenceList = List.of(getEvidenceCodeString(damo.getDiseaseAnnotation()));
+            fishDiseaseDto2.setEvidence(getEvidenceDTO(damo.getDiseaseAnnotation().getPublication(), evidenceList));
 
 
             ConditionRelationDTO relation = new ConditionRelationDTO();
             if (damo.getFishExperiment().getExperiment() != null) {
-                }
-                List<ExperimentCondition> allConditions = getMutantRepository().getExperimentConditions(damo.getFishExperiment().getExperiment());
-                relation.setConditionRelationType("has_condition");
-                List<ExperimentConditionDTO> expconds2 = new ArrayList<>();
-                for (ExperimentCondition conditionz : allConditions) {
-
-
-                    ExperimentConditionDTO expconda = new ExperimentConditionDTO();
-                    if (conditionz.getAoTerm() != null) {
-                        expconda.setAnatomicalOntologyId(conditionz.getAoTerm().getOboID());
-                    }
-                    if (conditionz.getChebiTerm() != null) {
-                        expconda.setChemicalOntologyId(conditionz.getChebiTerm().getOboID());
-                    }
-                    if (conditionz.getGoCCTerm() != null) {
-                        expconda.setGeneOntologyId(conditionz.getGoCCTerm().getOboID());
-                    }
-                    if (conditionz.getTaxaonymTerm() != null) {
-                        expconda.setNcbiTaxonId(conditionz.getTaxaonymTerm().getOboID());
-                    }
-                    expconda.setConditionClassId(conditionz.getZecoTerm().getOboID());
-                    expconda.setConditionStatement(conditionz.getDisplayName());
-                    expconds2.add(expconda);
-                }
-                relation.setConditions(expconds2);
-
-                List<ConditionRelationDTO> conditions = new ArrayList<>();
-                conditions.add(relation);
-                fishDiseaseDto2.setConditionRelations(conditions);
-                diseaseDTOList.add(fishDiseaseDto2);
             }
+            List<ExperimentCondition> allConditions = getMutantRepository().getExperimentConditions(damo.getFishExperiment().getExperiment());
+            relation.setConditionRelationType("has_condition");
+            List<ExperimentConditionDTO> expconds2 = new ArrayList<>();
+            for (ExperimentCondition conditionz : allConditions) {
+
+
+                ExperimentConditionDTO expconda = new ExperimentConditionDTO();
+                if (conditionz.getAoTerm() != null) {
+                    expconda.setAnatomicalOntologyId(conditionz.getAoTerm().getOboID());
+                }
+                if (conditionz.getChebiTerm() != null) {
+                    expconda.setChemicalOntologyId(conditionz.getChebiTerm().getOboID());
+                }
+                if (conditionz.getGoCCTerm() != null) {
+                    expconda.setGeneOntologyId(conditionz.getGoCCTerm().getOboID());
+                }
+                if (conditionz.getTaxaonymTerm() != null) {
+                    expconda.setNcbiTaxonId(conditionz.getTaxaonymTerm().getOboID());
+                }
+                expconda.setConditionClassId(conditionz.getZecoTerm().getOboID());
+                expconda.setConditionStatement(conditionz.getDisplayName());
+                expconds2.add(expconda);
+            }
+            relation.setConditions(expconds2);
+
+            List<ConditionRelationDTO> conditions = new ArrayList<>();
+            conditions.add(relation);
+            fishDiseaseDto2.setConditionRelations(conditions);
+            diseaseDTOList.add(fishDiseaseDto2);
+        }
 
         AllDiseaseDTO allDiseaseDTO = new AllDiseaseDTO();
         String dataProvider = "ZFIN";
@@ -253,7 +252,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
 
     public DiseaseDTO getBaseDiseaseDTO(String zdbID, String abbreviation, GenericTerm disease) {
         DiseaseDTO strDiseaseDto = new DiseaseDTO();
-        strDiseaseDto.setObjectId("ZFIN:"+zdbID);
+        strDiseaseDto.setObjectId("ZFIN:" + zdbID);
         strDiseaseDto.setObjectName(abbreviation);
         List<String> pages = new ArrayList<>();
         pages.add("disease");
@@ -274,16 +273,16 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                 ExperimentConditionDTO expcond = new ExperimentConditionDTO();
                 String conditionStatement = condition.getZecoTerm().getTermName();
                 if (condition.getAoTerm() != null) {
-                    conditionStatement = conditionStatement + " " +condition.getAoTerm().getTermName();
+                    conditionStatement = conditionStatement + " " + condition.getAoTerm().getTermName();
                     expcond.setAnatomicalOntologyId(condition.getAoTerm().getOboID());
                 }
                 if (condition.getChebiTerm() != null) {
                     expcond.setChemicalOntologyId(condition.getChebiTerm().getOboID());
-                    conditionStatement = conditionStatement + " " +condition.getChebiTerm().getTermName();
+                    conditionStatement = conditionStatement + " " + condition.getChebiTerm().getTermName();
                 }
                 if (condition.getGoCCTerm() != null) {
                     expcond.setGeneOntologyId(condition.getGoCCTerm().getOboID());
-                    conditionStatement = conditionStatement + " " +condition.getGoCCTerm().getTermName();
+                    conditionStatement = conditionStatement + " " + condition.getGoCCTerm().getTermName();
                 }
                 if (condition.getTaxaonymTerm() != null) {
                     expcond.setNcbiTaxonId(condition.getTaxaonymTerm().getOboID());
@@ -305,11 +304,10 @@ public class DiseaseInfo extends AbstractScriptWrapper {
         pubPages.add("reference");
         CrossReferenceDTO pubXref = new CrossReferenceDTO("ZFIN", publication.getZdbID(), pubPages);
         if (publication.getAccessionNumber() != null) {
-            fixedPub.setPublicationId("PMID:"+publication.getAccessionNumber());
+            fixedPub.setPublicationId("PMID:" + publication.getAccessionNumber());
             fixedPub.setCrossReference(pubXref);
-        }
-        else {
-            fixedPub.setPublicationId("ZFIN:"+publication.getZdbID());
+        } else {
+            fixedPub.setPublicationId("ZFIN:" + publication.getZdbID());
         }
 
         EvidenceDTO evDto = new EvidenceDTO(fixedPub);
