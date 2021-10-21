@@ -16,16 +16,16 @@
     <zfin2:markerPreviousNamesAttributeListItem previousNames="${formBean.previousNames}"/>
 
     <z:attributeListItem label="Emission Wavelength">
-        <c:if test="${formBean.marker.efgFluorescences != null}">
-            <c:forEach var="fp" items="${formBean.marker.efgFluorescences}">
+        <c:if test="${formBean.marker.fluorescentMarkers != null}">
+            <c:forEach var="fp" items="${formBean.marker.fluorescentMarkers}">
                 ${fp.emissionLength} nm <div id="rectangle" style="background: ${fp.emissionColorHex}; width: 30px; height: 20px; display: inline-block;"></div>
             </c:forEach>
         </c:if>
     </z:attributeListItem>
 
     <z:attributeListItem label="Excitation Wavelength">
-        <c:if test="${formBean.marker.efgFluorescences != null}">
-            <c:forEach var="fp" items="${formBean.marker.efgFluorescences}">
+        <c:if test="${formBean.marker.fluorescentMarkers != null}">
+            <c:forEach var="fp" items="${formBean.marker.fluorescentMarkers}">
                 ${fp.excitationLength} nm <div id="rectangle" style="background: ${fp.excitationColorHex}; width: 30px; height: 20px; display: inline-block;"></div>
             </c:forEach>
         </c:if>
