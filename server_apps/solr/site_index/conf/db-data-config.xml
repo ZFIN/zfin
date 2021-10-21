@@ -1905,10 +1905,13 @@
                         mrkr_abbrev_order as name_sort,
                         construct_name as organism,
                         construct_name as reporter_color,
+                        fm_emission_color as emission_color,
+                        fm_excitation_color as excitation_color,
                         '/' || construct_zdb_id as url,
                         to_date(get_date_from_id(construct_zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date
-                    from construct, marker, marker_types
+                    from construct, marker, marker_types, fluorescence_marker
                     where construct_zdb_id = mrkr_zdb_id
+                    and construct_zdb_id = fm_mrkr_zdb_id
                     and mrkr_type = marker_type"
         >
 
