@@ -206,8 +206,6 @@ public class DiseaseInfo extends AbstractScriptWrapper {
 
 
             ConditionRelationDTO relation = new ConditionRelationDTO();
-            if (damo.getFishExperiment().getExperiment() != null) {
-            }
             List<ExperimentCondition> allConditions = getMutantRepository().getExperimentConditions(damo.getFishExperiment().getExperiment());
             relation.setConditionRelationType("has_condition");
             List<ExperimentConditionDTO> expconds2 = new ArrayList<>();
