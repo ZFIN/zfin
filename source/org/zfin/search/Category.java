@@ -181,6 +181,9 @@ public enum Category {
             EXPRESSION_ANATOMY_TF,
             REGULATORY_REGION,
             STAGE,
+            COLOR,
+            EMISSION_COLOR,
+            EXCITATION_COLOR,
             SOURCE
     ),
     JOURNAL("Journal",
