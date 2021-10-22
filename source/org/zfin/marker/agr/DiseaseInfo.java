@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.zfin.expression.ExperimentCondition;
 import org.zfin.feature.Feature;
+import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
@@ -15,10 +16,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
@@ -93,12 +93,29 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                                             Collectors.mapping(this::getEvidenceCodeString, Collectors.toList())
                                     )
                             );
+                    Map<Publication, List<String>> publicationDateMap = diseaseAnnotations
+                            .stream()
+                            .collect(
+                                    Collectors.groupingBy(DiseaseAnnotation::getPublication,
+                                            Collectors.mapping(DiseaseAnnotation::getZdbID, Collectors.toList())
+                                    )
+                            );
+
+                    // Hack: get the date stamp from the ZDB-DAT ID.
+                    // Use the earliest one we have per pub
+                    Map<Publication, GregorianCalendar> map = new HashMap<>();
+                    publicationDateMap.forEach((publication, ids) -> {
+                        ids.sort(Comparator.naturalOrder());
+                        GregorianCalendar date = ActiveData.getDateFromId(ids.get(0));
+                        map.put(publication, date);
+                    });
                     // loop over each publication: final loop as each publication should generate a individual record in the file.
                     evidenceMap.forEach((publication, evidenceSet) -> {
                         // Use wildtype fish with STR
                         // treat as purely implicated by a gene
                         if (genotype.isWildtype()) {
                             DiseaseDTO strDiseaseDto = getBaseDiseaseDTO(gene.getZdbID(), gene.getAbbreviation(), disease);
+                            strDiseaseDto.setDateAssigned(map.get(publication));
                             RelationshipDTO relationship = new RelationshipDTO(RelationshipDTO.IS_IMPLICATED_IN, RelationshipDTO.GENE);
                             strDiseaseDto.setObjectRelation(relationship);
                             List<String> geneticEntityIds = new ArrayList<>();
@@ -121,6 +138,8 @@ public class DiseaseInfo extends AbstractScriptWrapper {
 
                         } else {
                             DiseaseDTO GeneDiseaseDto = getBaseDiseaseDTO(gene.getZdbID(), gene.getAbbreviation(), disease);
+                            GeneDiseaseDto.setDateAssigned(map.get(publication));
+
                             RelationshipDTO geneRelationship = new RelationshipDTO(RelationshipDTO.IS_IMPLICATED_IN, RelationshipDTO.GENE);
 
                             GeneDiseaseDto.setObjectRelation(geneRelationship);
@@ -132,6 +151,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                                 if (fish.getFishFunctionalAffectedGeneCount() == 1) {
                                     if (feature.isSingleAlleleOfMarker(gene)) {
                                         DiseaseDTO FeatureDiseaseDto = getBaseDiseaseDTO(feature.getZdbID(), feature.getAbbreviation(), disease);
+                                        FeatureDiseaseDto.setDateAssigned(map.get(publication));
                                         RelationshipDTO alleleRelationship = new RelationshipDTO(RelationshipDTO.IS_IMPLICATED_IN, RelationshipDTO.ALELLE);
                                         List<String> geneticEntityIds = new ArrayList<>();
                                         geneticEntityIds.add("ZFIN:" + fish.getZdbID());
@@ -145,6 +165,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                                         diseaseDTOList.add(FeatureDiseaseDto);
 
                                         DiseaseDTO geneDiseaseDto = getBaseDiseaseDTO(gene.getZdbID(), gene.getAbbreviation(), disease);
+                                        geneDiseaseDto.setDateAssigned(map.get(publication));
                                         RelationshipDTO relationship = new RelationshipDTO(RelationshipDTO.IS_IMPLICATED_IN, RelationshipDTO.GENE);
                                         List<String> geneGeneticEntityIds = new ArrayList<>();
                                         geneGeneticEntityIds.add("ZFIN:" + fish.getZdbID());
@@ -159,6 +180,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
 
                                     } else {
                                         DiseaseDTO FeatureDiseaseDto = getBaseDiseaseDTO(gene.getZdbID(), gene.getAbbreviation(), disease);
+                                        FeatureDiseaseDto.setDateAssigned(map.get(publication));
                                         RelationshipDTO relationship = new RelationshipDTO(RelationshipDTO.IS_IMPLICATED_IN, RelationshipDTO.GENE);
                                         List<String> geneticEntityIds = new ArrayList<>();
                                         geneticEntityIds.add("ZFIN:" + fish.getZdbID());
@@ -176,6 +198,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                                 }
                             });
                             DiseaseDTO fishDiseaseDto = getBaseDiseaseDTO(fish.getZdbID(), fish.getName(), disease);
+                            fishDiseaseDto.setDateAssigned(map.get(publication));
                             RelationshipDTO fishRelationship = new RelationshipDTO(RelationshipDTO.IS_MODEL_OF, RelationshipDTO.FISH);
                             fishDiseaseDto.setObjectRelation(fishRelationship);
                             fishDiseaseDto.setEvidence(getEvidenceDTO(publication, evidenceSet));

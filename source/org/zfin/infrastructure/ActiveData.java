@@ -15,6 +15,10 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 
@@ -81,6 +85,21 @@ public class ActiveData implements ZdbID {
             throw new InvalidZdbID(id, Type.getValues());
         }
         return type;
+    }
+
+    public static GregorianCalendar getDateFromId(String id) {
+        validateID(id);
+        String[] token = id.split("-");
+        SimpleDateFormat fmt = new SimpleDateFormat("yyMMdd");
+        Date date;
+        try {
+            date = fmt.parse(token[2]);
+        } catch (ParseException e) {
+            return null;
+        }
+        GregorianCalendar cal = new GregorianCalendar();
+        cal.setTime(date);
+        return cal;
     }
 
     public static Type getType(String id) {
