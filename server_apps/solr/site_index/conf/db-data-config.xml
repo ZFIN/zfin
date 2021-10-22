@@ -1909,10 +1909,11 @@
                         fm_excitation_color as excitation_color,
                         '/' || construct_zdb_id as url,
                         to_date(get_date_from_id(construct_zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date
-                    from construct, marker, marker_types, fluorescence_marker
-                    where construct_zdb_id = mrkr_zdb_id
-                    and construct_zdb_id = fm_mrkr_zdb_id
-                    and mrkr_type = marker_type"
+                    from construct as c
+                     inner join marker as m on m.mrkr_zdb_id = c.construct_zdb_id
+                     inner join marker_types mt on mt.marker_type = mrkr_type
+                     full outer join fluorescent_marker as fm on fm.fm_mrkr_zdb_id = construct_zdb_id
+                    "
         >
 
             <entity name="construct_typegroup"
@@ -3787,9 +3788,14 @@
                         end as screen from feature_prefix where feature_lab_prefix_id = fp_pk_id) as screen,
                            to_date(get_date_from_id(feature_zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date,
                            (select featassay_mutagen from feature_assay where featassay_feature_zdb_id=feature_zdb_id) as mutagen
-                    from feature, feature_type, feature_type_ordering
-                    where feature_type = ftrtype_name
-                      and ftrtype_type_display = fto_name"
+                       	fm_emission_color as emission_color,
+                       	fm_excitation_color as excitation_color
+                    from feature as feat
+                     inner join feature_type as type on type.ftrtype_name = feature_type
+                     inner join feature_type_ordering as ordering on ordering.fto_name = ftrtype_type_display
+                     full outer join feature_marker_relationship as fmr on fmrel_ftr_zdb_id = feat.feature_zdb_id
+                     full outer join fluorescent_marker on fm_mrkr_zdb_id = fmr.fmrel_mrkr_zdb_id
+                     "
         >
 
             <entity name="feature_aliases"
