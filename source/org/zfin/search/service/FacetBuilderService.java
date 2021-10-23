@@ -236,6 +236,9 @@ public class FacetBuilderService {
         facetGroups.add(buildSingleFacetGroup("Is ZebraShare", "is_zebrashare", false));
         facetGroups.add(buildSingleFacetGroup("Construct Regulatory Region", REGULATORY_REGION.getName(), false));
         facetGroups.add(buildSingleFacetGroup("Construct Coding Sequence", CODING_SEQUENCE.getName(), false));
+        facetGroups.add(buildSingleFacetGroup("Color", ANY_COLOR.getName(), false));
+        facetGroups.add(buildSingleFacetGroup("Emission Range", EMISSION_COLOR.getName(), false));
+        facetGroups.add(buildSingleFacetGroup("Excitation Range", EXCITATION_COLOR.getName(), false));
         //screen used to be here, removed as a result of case 11323
         //facetGroups.add(buildSingleFacetGroup("Screen", "screen", false,  fqMap));
 
@@ -254,7 +257,7 @@ public class FacetBuilderService {
         facetGroups.add(buildSingleFacetGroup("Regulatory Region", REGULATORY_REGION.getName(), true));
         facetGroups.add(buildSingleFacetGroup("Stage", STAGE.getName(), true));
         facetGroups.add(buildSingleFacetGroup("Source", SOURCE.getName(), false));
-        facetGroups.add(buildSingleFacetGroup("Color", COLOR.getName(), false));
+        facetGroups.add(buildSingleFacetGroup("Color", ANY_COLOR.getName(), false));
 
         FacetGroup emissionRange = new FacetGroup("Emission Range", true);
         emissionRange.addFacet(buildFacet(EMISSION_COLOR.getName(), true));
