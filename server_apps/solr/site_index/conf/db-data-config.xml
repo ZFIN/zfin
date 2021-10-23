@@ -3787,7 +3787,10 @@
                            when fp_prefix = 'mn' then 'Zfishbook'
                         end as screen from feature_prefix where feature_lab_prefix_id = fp_pk_id) as screen,
                            to_date(get_date_from_id(feature_zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date,
-                           (select featassay_mutagen from feature_assay where featassay_feature_zdb_id=feature_zdb_id) as mutagen
+                           (select featassay_mutagen from feature_assay where featassay_feature_zdb_id=feature_zdb_id) as mutagen,
+                        case when fm_emission is null then 'No color'
+                             when fm_emission not null then 'Any color'
+                        end as any_color
                        	fm_emission_color as emission_color,
                        	fm_excitation_color as excitation_color
                     from feature as feat
