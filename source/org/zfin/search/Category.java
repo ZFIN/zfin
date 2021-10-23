@@ -77,6 +77,9 @@ public enum Category {
             MUTAGEN,
             REGULATORY_REGION,
             CODING_SEQUENCE,
+            ANY_COLOR,
+            EMISSION_COLOR,
+            EXCITATION_COLOR,
             IS_ZEBRASHARE
 
 //            SCREEN   <!--screen used to be here, removed as a result of case 11323-->
@@ -181,7 +184,7 @@ public enum Category {
             EXPRESSION_ANATOMY_TF,
             REGULATORY_REGION,
             STAGE,
-            COLOR,
+            ANY_COLOR,
             EMISSION_COLOR,
             EXCITATION_COLOR,
             SOURCE
