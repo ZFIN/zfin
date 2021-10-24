@@ -3475,6 +3475,28 @@
                     where="efs_pk_id=expression.id"
             />
 
+            <entity name="expression_fluorescent"
+                    query="select
+                        'xpatex-' || efs_pk_id as efs_pk_id,
+                            fm_emission_color as emission_color,
+                            fm_excitation_color as excitation_color,
+                            case when fm_emission_color is null then 'No color'
+                                 when fm_emission_color is not null then 'Any color'
+                            end as any_color,
+                            fish_zdb_id
+                            FROM   expression_experiment2
+                            JOIN expression_figure_stage ON efs_xpatex_zdb_id = xpatex_zdb_id
+                            JOIN fish_experiment ON xpatex_genox_zdb_id = genox_zdb_id
+                            JOIN fish ON fish_zdb_id = genox_fish_zdb_id
+                            JOIN genotype ON geno_zdb_id = fish_genotype_zdb_id
+                            join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id
+                            join feature on genofeat_feature_zdb_id = feature_zdb_id
+                            join feature_marker_relationship on fmrel_ftr_zdb_id = feature_zdb_id
+                            join fluorescent_marker on fmrel_mrkr_zdb_id = fm_mrkr_zdb_id;"
+                    cacheImpl="SortedMapBackedCache"
+                    where="efs_pk_id=expression.id"
+            />
+
             <entity name="expression_standard_conditions"
                     query="select 'standard or control' as conditions,
                                    'xpatex-' || efs_pk_id as efs_pk_id
