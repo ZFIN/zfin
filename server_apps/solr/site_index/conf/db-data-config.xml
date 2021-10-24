@@ -45,8 +45,8 @@
                     where="gene_zdb_id=gene.id"
                     cacheImpl="SortedMapBackedCache"
             >
-                <column name="type_0" column="type_0" />
-                <column name="type_1" column="type_1" />
+                <column name="type_0" column="type_0"/>
+                <column name="type_1" column="type_1"/>
             </entity>
 
             <entity name="gene_type_hierarchy_ncRNA_children"
@@ -68,9 +68,9 @@
                     where="gene_zdb_id=gene.id"
                     cacheImpl="SortedMapBackedCache"
             >
-                <column name="type_0" column="type_0" />
-                <column name="type_1" column="type_1" />
-                <column name="type_2" column="type_2" />
+                <column name="type_0" column="type_0"/>
+                <column name="type_1" column="type_1"/>
+                <column name="type_2" column="type_2"/>
             </entity>
 
             <entity name="gene_typegroup"
@@ -402,7 +402,7 @@
                                                       and ps.psg_tag in ('abnormal', 'exacerbated', 'ameliorated')
                            and term_ontology='zebrafish_anatomy'"
                     cacheImpl="SortedMapBackedCache"
-                    where="gene_zdb_id=gene.id" />
+                    where="gene_zdb_id=gene.id"/>
 
             <entity name="gene_affected_biological_process_direct"
                     query="select term_ont_id as xref, term_name as affected_biological_process_direct, mfs_data_zdb_id as gene_zdb_id
@@ -648,7 +648,7 @@
                     cacheImpl="SortedMapBackedCache"
                     where="gene_zdb_id=gene.id"
             >
-                <field column="phenotype_statement" stripHTML="true" />
+                <field column="phenotype_statement" stripHTML="true"/>
             </entity>
 
             <entity name="gene_misexpressed_gene"
@@ -665,7 +665,7 @@
                     cacheImpl="SortedMapBackedCache"
                     where="gene_zdb_id=gene.id"
             >
-                <field name="misexpressed_gene" column="misexpressed_gene" splitBy="," />
+                <field name="misexpressed_gene" column="misexpressed_gene" splitBy=","/>
             </entity>
 
             <entity name="gene_molecular_function_direct"
@@ -897,9 +897,9 @@
                     where="mrkr_zdb_id=marker.id"
                     cacheImpl="SortedMapBackedCache"
             >
-                <column name="type_0" column="type_0" />
-                <column name="type_1" column="type_1" />
-                <column name="type_2" column="type_2" />
+                <column name="type_0" column="type_0"/>
+                <column name="type_1" column="type_1"/>
+                <column name="type_2" column="type_2"/>
             </entity>
 
             <entity name="marker_type_hierarchy_ncRNA"
@@ -916,9 +916,9 @@
                     where="mrkr_zdb_id=marker.id"
                     cacheImpl="SortedMapBackedCache"
             >
-                <column name="type_0" column="type_0" />
-                <column name="type_1" column="type_1" />
-                <column name="type_2" column="type_2" />
+                <column name="type_0" column="type_0"/>
+                <column name="type_1" column="type_1"/>
+                <column name="type_2" column="type_2"/>
             </entity>
 
             <entity name="marker_aliases"
@@ -1166,7 +1166,9 @@
                                                 join feature_marker_relationship
                                       on fmrel_ftr_zdb_id = genofeat_feature_zdb_id
                                        where fmrel_type != 'contains innocuous sequence feature')
-                                   and fish_zdb_id not in (select fishstr_fish_zdb_id from fish_str)"
+                                   and fish_zdb_id not in (select fishstr_fish_zdb_id from fish_str)
+
+"
                     where="fish_zdb_id=fish.id"
                     cacheImpl="SortedMapBackedCache"
             />
@@ -1308,6 +1310,23 @@
                     cacheImpl="SortedMapBackedCache"
             />
 
+            <entity name="fish_color"
+                    query="select
+                            fm_emission_color as emission_color,
+                            fm_excitation_color as excitation_color,
+                            case when fm_emission_color is null then 'No color'
+                                 when fm_emission_color is not null then 'Any color'
+                            end as any_color,
+                            fish_zdb_id
+                            from fish
+                                 join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id
+                                 join feature on genofeat_feature_zdb_id = feature_zdb_id
+                                 join feature_marker_relationship on fmrel_ftr_zdb_id = feature_zdb_id
+                                 join fluorescent_marker on fmrel_mrkr_zdb_id = fm_mrkr_zdb_id"
+                    where="fish_zdb_id=fish.id"
+                    cacheImpl="SortedMapBackedCache"
+            />
+
             <entity name="fish_development_stage"
                     query="select
                             this_stage.stg_name as stage,
@@ -1443,7 +1462,7 @@
                     cacheImpl="SortedMapBackedCache"
                     where="genox_fish_zdb_id=fish.id"
             >
-                <field name="disease" column="disease" splitBy="\|" />
+                <field name="disease" column="disease" splitBy="\|"/>
             </entity>
 
             <entity name="fish_phenotype_observation_generated"
@@ -1461,7 +1480,7 @@
                     where="fish_zdb_id=fish.id"
                     cacheImpl="SortedMapBackedCache"
             >
-                <field column="phenotype_statement" stripHTML="true" />
+                <field column="phenotype_statement" stripHTML="true"/>
             </entity>
 
             <entity name="fish_misexpressed_gene"
@@ -1478,7 +1497,7 @@
                     where="fish_zdb_id=fish.id"
                     cacheImpl="SortedMapBackedCache"
             >
-                <field name="misexpressed_gene" column="misexpressed_gene" splitBy="," />
+                <field name="misexpressed_gene" column="misexpressed_gene" splitBy=","/>
             </entity>
 
             <entity name="fish_affected_anatomy_direct"
@@ -2037,7 +2056,7 @@
                     where="construct_id=construct.id"
                     cacheImpl="SortedMapBackedCache"
             />
-            
+
 
             <!--           <entity name="construct_authors"
                               datasource="db" query="
@@ -2176,9 +2195,9 @@
                     where="construct_zdb_id=construct.id"
             />
 
-<!--        the union which adds danio rerio for every construct is technically wrong-->
-<!--        but it matches the behavior of marker pages which add it to every row of -->
-<!--        the construct table-->
+            <!--        the union which adds danio rerio for every construct is technically wrong-->
+            <!--        but it matches the behavior of marker pages which add it to every row of -->
+            <!--        the construct table-->
             <entity name="construct_related_species"
                     query="select
                             cv_name_definition as related_species_name_ac,
@@ -2482,7 +2501,7 @@
                     where="pg_id=phenotype.id"
                     cacheImpl="SortedMapBackedCache"
             >
-                <field column="phenotype_statement" stripHTML="true" />
+                <field column="phenotype_statement" stripHTML="true"/>
             </entity>
 
             <entity name="phenotype_misexpressed_gene"
@@ -2496,7 +2515,7 @@
                     cacheImpl="SortedMapBackedCache"
                     where="pg_id=phenotype.id"
             >
-                <field name="misexpressed_gene" column="misexpressed_gene" splitBy="!" />
+                <field name="misexpressed_gene" column="misexpressed_gene" splitBy="!"/>
             </entity>
 
             <entity name="phenotype_image"
@@ -3788,9 +3807,9 @@
                         end as screen from feature_prefix where feature_lab_prefix_id = fp_pk_id) as screen,
                            to_date(get_date_from_id(feature_zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date,
                            (select featassay_mutagen from feature_assay where featassay_feature_zdb_id=feature_zdb_id) as mutagen,
-                        case when fm_emission is null then 'No color'
-                             when fm_emission not null then 'Any color'
-                        end as any_color
+                        case when fm_emission_color is null then 'No color'
+                             when fm_emission_color is not null then 'Any color'
+                        end as any_color,
                        	fm_emission_color as emission_color,
                        	fm_excitation_color as excitation_color
                     from feature as feat
@@ -3822,7 +3841,7 @@
                     where="data_id=feature.id"
                     cacheImpl="SortedMapBackedCache"
             >
-                <field name="alias" column="dalias_alias" />
+                <field name="alias" column="dalias_alias"/>
             </entity>
 
             <entity name="feature_accession"
@@ -3852,7 +3871,7 @@
                            where  ft_feature_zdb_id=zrepld_old_zdb_id"
                     where="feature_zdb_id=feature.id"
                     cacheImpl="SortedMapBackedCache">
-                <field name="alias" column="alias" />
+                <field name="alias" column="alias"/>
             </entity>
 
             <entity name="feature_construct_xref"
@@ -4049,7 +4068,7 @@
                     cacheImpl="SortedMapBackedCache"
                     where="feature_zdb_id=feature.id"
             >
-                <field column="phenotype_statement" stripHTML="true" />
+                <field column="phenotype_statement" stripHTML="true"/>
             </entity>
 
             <entity name="feature_misexpressed_gene"
@@ -4070,7 +4089,7 @@
                     cacheImpl="SortedMapBackedCache"
                     where="feature_zdb_id=feature.id"
             >
-                <field name="misexpressed_gene" column="misexpressed_gene" splitBy="," />
+                <field name="misexpressed_gene" column="misexpressed_gene" splitBy=","/>
             </entity>
 
             <entity name="feature_affected_anatomy_direct"
@@ -4574,7 +4593,7 @@
                          where substring(dalias_data_zdb_id from 1 for 8) = 'ZDB-TERM'"
                     where="dalias_data_zdb_id=term.internal_id"
                     cacheImpl="SortedMapBackedCache">
-                <field name="alias" column="dalias_alias" />
+                <field name="alias" column="dalias_alias"/>
             </entity>
 
             <entity name="term_replacements"
@@ -4607,7 +4626,7 @@
                               join fish on genox_fish_zdb_id = fish_zdb_id;"
                     where="term_zdb_id=term.internal_id"
                     cacheImpl="SortedMapBackedCache">
-                <field name="fish" column="fish" splitBy="\|" />
+                <field name="fish" column="fish" splitBy="\|"/>
             </entity>
 
             <entity name="disease_publication_xref"
@@ -4789,8 +4808,8 @@ and child.term_ontology = 'disease_ontology';
                              pub_is_curatable as is_curatable
                              from publication"
         >
-            <field column="pubmedid" name="related_accession" />
-            <field column="pubpmcid" name="related_accession" />
+            <field column="pubmedid" name="related_accession"/>
+            <field column="pubpmcid" name="related_accession"/>
 
             <entity name="pub_images"
                     query="select
@@ -5231,7 +5250,7 @@ and child.term_ontology = 'disease_ontology';
                       from figure, publication
                       where fig_source_zdb_id = zdb_id"
         >
-            <field column="caption" stripHTML="true" />
+            <field column="caption" stripHTML="true"/>
 
             <entity name="figure_authors"
                     query="select person.full_name as registered_author, fig_zdb_id
@@ -5412,7 +5431,7 @@ and child.term_ontology = 'disease_ontology';
                     cacheImpl="SortedMapBackedCache"
                     where="fig_zdb_id=figure.id"
             >
-                <field column="phenotype_statement" stripHTML="true" />
+                <field column="phenotype_statement" stripHTML="true"/>
             </entity>
 
             <entity name="figure_misexpressed_gene"
@@ -5428,7 +5447,7 @@ and child.term_ontology = 'disease_ontology';
                     cacheImpl="SortedMapBackedCache"
                     where="fig_zdb_id=figure.id"
             >
-                <field name="misexpressed_gene" column="misexpressed_gene" splitBy="," />
+                <field name="misexpressed_gene" column="misexpressed_gene" splitBy=","/>
             </entity>
 
             <entity name="figure_affected_anatomy_direct"
@@ -5828,7 +5847,7 @@ and child.term_ontology = 'disease_ontology';
                        from person
                        where pers_is_hidden = 'f'"
         >
-            <field column="biography" stripHTML="true" />
+            <field column="biography" stripHTML="true"/>
 
             <entity name="person_sequence_alteration"
                     query="select distinct feature_abbrev as sequence_alteration, person.zdb_id as person_zdb_id
@@ -5860,7 +5879,7 @@ and child.term_ontology = 'disease_ontology';
                              email as email_address
                       from lab;"
         >
-            <field column="biography" stripHTML="true" />
+            <field column="biography" stripHTML="true"/>
 
             <entity name="lab_PI"
                     query="select first_name || ' ' || last_name as lab_member_name,
@@ -5901,7 +5920,7 @@ and child.term_ontology = 'disease_ontology';
                                 email as email_address
                          from company;"
         >
-            <field column="biography" stripHTML="true" />
+            <field column="biography" stripHTML="true"/>
         </entity>
 
 
@@ -5919,9 +5938,9 @@ and child.term_ontology = 'disease_ontology';
                       jrnl_nlmid
                       from journal"
         >
-            <field column="jrnl_online_issn" name="related_accession" />
-            <field column="jrnl_print_issn" name="related_accession" />
-            <field column="jrnl_nlmid" name="related_accession" />
+            <field column="jrnl_online_issn" name="related_accession"/>
+            <field column="jrnl_print_issn" name="related_accession"/>
+            <field column="jrnl_nlmid" name="related_accession"/>
 
             <entity name="journal_no_accession"
                     query="select 'None' as related_accession,
@@ -6163,9 +6182,6 @@ and child.term_ontology = 'disease_ontology';
                     where="id=expression_result.id"/>
             />
         </entity>
-
-
-
 
 
         <entity name="phenotype_observation"
