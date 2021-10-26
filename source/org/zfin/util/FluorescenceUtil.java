@@ -1,5 +1,8 @@
 package org.zfin.util;
 
+//
+// Copied from https://stackoverflow.com/questions/1472514/convert-light-frequency-to-rgb
+//
 public class FluorescenceUtil {
 
     public static String waveLengthToHex(double wavelength) {
