@@ -27,7 +27,7 @@ public class FluorescentMarker extends AbstractFluorescence {
 
     @JsonView(View.API.class)
     public List<FluorescentProtein> getProteins() {
-        return new ArrayList<>(efg.getFluorescentProteins());
+        return new ArrayList<>(efg.getFluorescentProteinEfgs());
     }
 
     @Column(name = "fm_excitation_length")

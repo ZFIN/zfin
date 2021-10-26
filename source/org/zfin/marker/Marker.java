@@ -54,7 +54,8 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
     private HashMap<String, List<Publication>> pubsPerAnatomy;
     private Set<Figure> figures;
     private Set<MarkerFamilyName> familyName;
-    private Set<FluorescentProtein> fluorescentProteins;
+    private Set<FluorescentProtein> fluorescentProteinEfgs;
+    private Set<FluorescentProtein> fluorescentProteinConstructs;
     private Set<FluorescentMarker> fluorescentMarkers;
     private Set<Ortholog> orthologs;
     protected Set<MarkerRelationship> firstMarkerRelationships;    //  where this marker = "mrel_mrkr_1_zdb_id" in mrel

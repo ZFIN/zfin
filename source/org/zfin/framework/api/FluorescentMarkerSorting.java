@@ -67,9 +67,9 @@ public class FluorescentMarkerSorting implements Sorting<FluorescentMarker> {
 
     private static Comparator<FluorescentMarker> proteinOrder =
             Comparator.comparing(efg -> {
-                if (CollectionUtils.isEmpty(efg.getEfg().getFluorescentProteins()))
+                if (CollectionUtils.isEmpty(efg.getEfg().getFluorescentProteinEfgs()))
                     return null;
-                return efg.getEfg().getFluorescentProteins().stream()
+                return efg.getEfg().getFluorescentProteinEfgs().stream()
                         .map(protein -> protein.getName().toLowerCase())
                         .sorted(Comparator.naturalOrder())
                         .collect(joining());
