@@ -1312,8 +1312,8 @@
 
             <entity name="fish_color"
                     query="select
-                            fm_emission_color as emission_color,
-                            fm_excitation_color as excitation_color,
+                            fm_emission_color ||' ' || fcm.fc_wave_length_display as emission_color,
+                            fm_excitation_color ||' ' || fcx.fc_wave_length_display as excitation_color,
                             case when fm_emission_color is null then 'No color'
                                  when fm_emission_color is not null then 'Any color'
                             end as any_color,
@@ -1322,7 +1322,10 @@
                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id
                                  join feature on genofeat_feature_zdb_id = feature_zdb_id
                                  join feature_marker_relationship on fmrel_ftr_zdb_id = feature_zdb_id
-                                 join fluorescent_marker on fmrel_mrkr_zdb_id = fm_mrkr_zdb_id"
+                                 join fluorescent_marker as fm on fmrel_mrkr_zdb_id = fm.fm_mrkr_zdb_id
+                                 join fluorescent_color as fcm on fcm.fc_color = fm.fm_emission_color
+                                 join fluorescent_color as fcx on fcx.fc_color = fm.fm_excitation_color
+"
                     where="fish_zdb_id=fish.id"
                     cacheImpl="SortedMapBackedCache"
             />
@@ -1924,14 +1927,16 @@
                         mrkr_abbrev_order as name_sort,
                         construct_name as organism,
                         construct_name as reporter_color,
-                        fm_emission_color as emission_color,
-                        fm_excitation_color as excitation_color,
+                        fm_emission_color ||' ' || fcm.fc_wave_length_display as emission_color,
+                        fm_excitation_color ||' ' || fcx.fc_wave_length_display as excitation_color,
                         '/' || construct_zdb_id as url,
                         to_date(get_date_from_id(construct_zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date
                     from construct as c
                      inner join marker as m on m.mrkr_zdb_id = c.construct_zdb_id
                      inner join marker_types mt on mt.marker_type = mrkr_type
                      full outer join fluorescent_marker as fm on fm.fm_mrkr_zdb_id = construct_zdb_id
+                     full outer join fluorescent_color as fcm on fcm.fc_color = fm.fm_emission_color
+                     full outer join fluorescent_color as fcx on fcx.fc_color = fm.fm_excitation_color
                     "
         >
 
@@ -3832,13 +3837,15 @@
                         case when fm_emission_color is null then 'No color'
                              when fm_emission_color is not null then 'Any color'
                         end as any_color,
-                       	fm_emission_color as emission_color,
-                       	fm_excitation_color as excitation_color
+                        fm_emission_color ||' ' || fcm.fc_wave_length_display as emission_color,
+                        fm_excitation_color ||' ' || fcx.fc_wave_length_display as excitation_color
                     from feature as feat
                      inner join feature_type as type on type.ftrtype_name = feature_type
                      inner join feature_type_ordering as ordering on ordering.fto_name = ftrtype_type_display
                      full outer join feature_marker_relationship as fmr on fmrel_ftr_zdb_id = feat.feature_zdb_id
-                     full outer join fluorescent_marker on fm_mrkr_zdb_id = fmr.fmrel_mrkr_zdb_id
+                     full outer join fluorescent_marker as fm on fm_mrkr_zdb_id = fmr.fmrel_mrkr_zdb_id
+                     full outer join fluorescent_color as fcm on fcm.fc_color = fm.fm_emission_color
+                     full outer join fluorescent_color as fcx on fcx.fc_color = fm.fm_excitation_color
                      "
         >
 
