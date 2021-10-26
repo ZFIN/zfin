@@ -31,22 +31,23 @@ create table fluorescent_color
     fc_pk_id            serial PRIMARY KEY,
     fc_color            VARCHAR(12),
     fc_lower_bound      FLOAT,
-    fc_upper_bound      FLOAT
+    fc_upper_bound      FLOAT,
+    fc_wave_length_display      VARCHAR(40)
 );
 
-insert into fluorescent_color (fc_color, fc_lower_bound, fc_upper_bound)
-values ('violet', 380, 439.5);
-insert into fluorescent_color (fc_color, fc_lower_bound, fc_upper_bound)
-values ('blue', 439.5, 474.5);
-insert into fluorescent_color (fc_color, fc_lower_bound, fc_upper_bound)
-values ('cyan', 474.5, 499.5);
-insert into fluorescent_color (fc_color, fc_lower_bound, fc_upper_bound)
-values ('green', 499.5, 534.5);
-insert into fluorescent_color (fc_color, fc_lower_bound, fc_upper_bound)
-values ('yellow', 534.5, 554.5);
-insert into fluorescent_color (fc_color, fc_lower_bound, fc_upper_bound)
-values ('orange', 554.5, 579.5);
-insert into fluorescent_color (fc_color, fc_lower_bound, fc_upper_bound)
-values ('red', 579.5, 629.5);
-insert into fluorescent_color (fc_color, fc_lower_bound, fc_upper_bound)
-values ('far red', 629.5, 770);
+insert into fluorescent_color (fc_color, fc_lower_bound, fc_upper_bound, fc_wave_length_display)
+values ('violet', 380, 439.5, '380-440 nm');
+insert into fluorescent_color (fc_color, fc_lower_bound, fc_upper_bound, fc_wave_length_display)
+values ('blue', 439.5, 474.5, '440-475 nm');
+insert into fluorescent_color (fc_color, fc_lower_bound, fc_upper_bound, fc_wave_length_display)
+values ('cyan', 474.5, 499.5, '475-500 nm');
+insert into fluorescent_color (fc_color, fc_lower_bound, fc_upper_bound, fc_wave_length_display)
+values ('green', 499.5, 534.5, '500-525 nm');
+insert into fluorescent_color (fc_color, fc_lower_bound, fc_upper_bound, fc_wave_length_display)
+values ('yellow', 534.5, 554.5, '525-555 nm');
+insert into fluorescent_color (fc_color, fc_lower_bound, fc_upper_bound, fc_wave_length_display)
+values ('orange', 554.5, 579.5, '555-580 nm');
+insert into fluorescent_color (fc_color, fc_lower_bound, fc_upper_bound, fc_wave_length_display)
+values ('red', 579.5, 629.5, '580-630 nm');
+insert into fluorescent_color (fc_color, fc_lower_bound, fc_upper_bound, fc_wave_length_display)
+values ('far red', 629.5, 770, '630-700 nm');
