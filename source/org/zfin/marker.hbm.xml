@@ -166,9 +166,14 @@
             <many-to-many column="gfammem_gfam_name" class="org.zfin.marker.MarkerFamilyName"/>
         </set>
 
-        <set name="fluorescentProteins" lazy="true" table="fpProtein_efg">
+        <set name="fluorescentProteinEfgs" lazy="true" table="fpProtein_efg">
             <key column="fe_mrkr_zdb_id"/>
             <many-to-many column="fe_fl_protein_id" class="org.zfin.marker.fluorescence.FluorescentProtein"/>
+        </set>
+
+        <set name="fluorescentProteinConstructs" lazy="true" table="fpProtein_construct">
+            <key column="fc_mrkr_zdb_id"/>
+            <many-to-many column="fc_fl_protein_id" class="org.zfin.marker.fluorescence.FluorescentProtein"/>
         </set>
 
         <set name="fluorescentMarkers" >
