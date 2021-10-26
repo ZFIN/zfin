@@ -116,10 +116,10 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void testFluorescentProteins() {
-        Marker efg = markerRepository.getMarkerByID("ZDB-EFG-080131-1");
+        Marker efg = markerRepository.getMarkerByID("ZDB-EFG-190123-1");
         assertNotNull(efg);
-        assertNotNull(efg.getFluorescentProteins());
-        assertEquals(efg.getFluorescentProteins().iterator().next().getName(), "mOrange2");
+        assertNotNull(efg.getFluorescentProteinEfgs());
+        assertEquals(efg.getFluorescentProteinEfgs().iterator().next().getName(), "mOrange2");
         assertNotNull(efg.getFluorescentMarkers());
         assertEquals(efg.getFluorescentMarkers().size(), 1);
     }
