@@ -1,0 +1,4 @@
+task genotypeNamingIssues(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.console.naming.GenotypeNamingIssues'
+}
