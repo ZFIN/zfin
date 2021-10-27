@@ -25,6 +25,11 @@ public class FluorescentMarker extends AbstractFluorescence {
     @JsonView(View.API.class)
     private Marker efg;
 
+    @ManyToOne
+    @JoinColumn(name = "fm_protein_pk_id")
+    @JsonView(View.API.class)
+    private FluorescentProtein protein;
+
     @JsonView(View.API.class)
     public List<FluorescentProtein> getProteins() {
         return new ArrayList<>(efg.getFluorescentProteinEfgs());

@@ -19,6 +19,7 @@ create table fluorescent_marker
 (
     fm_pk_id             serial PRIMARY KEY,
     fm_mrkr_zdb_id       TEXT NOT NULL REFERENCES marker (mrkr_zdb_id),
+    fm_protein_pk_id     integer null references fluorescent_protein (fp_pk_id),
     fm_excitation_length INTEGER,
     fm_emission_length   INTEGER,
     fm_emission_color    VARCHAR(12),

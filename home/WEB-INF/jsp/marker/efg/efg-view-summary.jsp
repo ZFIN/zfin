@@ -15,26 +15,13 @@
 
     <zfin2:markerPreviousNamesAttributeListItem previousNames="${formBean.previousNames}"/>
 
-    <z:attributeListItem label="Emission Wavelength">
+    <z:attributeListItem label="[Em &lambda;][Ex &lambda;], Other Resources">
         <c:if test="${formBean.marker.fluorescentMarkers != null}">
             <c:forEach var="fp" items="${formBean.marker.fluorescentMarkers}" varStatus="loop">
-                ${fp.emissionLength} nm <div id="rectangle" style="background: ${fp.emissionColorHex}; width: 30px; height: 20px; display: inline-block;"></div> (${fp.emissionColor})<c:if test="${!loop.last}">,</c:if>
-            </c:forEach>
-        </c:if>
-    </z:attributeListItem>
-
-    <z:attributeListItem label="Excitation Wavelength">
-        <c:if test="${formBean.marker.fluorescentMarkers != null}">
-            <c:forEach var="fp" items="${formBean.marker.fluorescentMarkers}" varStatus="loop">
-                ${fp.excitationLength} nm <div id="rectangle" style="background: ${fp.excitationColorHex}; width: 30px; height: 20px; display: inline-block;"></div> (${fp.excitationColor})<c:if test="${!loop.last}">,</c:if>
-            </c:forEach>
-        </c:if>
-    </z:attributeListItem>
-
-    <z:attributeListItem label="FPbase Protein" link="/action/fluorescence/proteins">
-        <c:if test="${formBean.marker.fluorescentProteinEfgs != null}">
-            <c:forEach var="fp" items="${formBean.marker.fluorescentProteinEfgs}" varStatus="loop">
-                <a href='https://www.fpbase.org/protein/${fn:replace((fn:toLowerCase(fp.name)),".", "")}'>${fp.name}</a><c:if test="${!loop.last}">,</c:if>
+                <button type="button" class="btn btn-primary" style="background: ${fp.emissionColorHex}; width: 110px !important;" >${fp.emissionLength} (${fp.emissionColor})</button>
+                <button type="button" class="btn btn-primary" style="background: ${fp.excitationColorHex};width: 110px !important;" >${fp.excitationLength} (${fp.excitationColor})</button>
+                <a href='https://www.fpbase.org/protein/${fn:replace((fn:toLowerCase(fp.protein.name)),".", "")}'>Fpbase:${fp.protein.name}</a>
+                <c:if test="${!loop.last}"></p></c:if>
             </c:forEach>
         </c:if>
     </z:attributeListItem>
