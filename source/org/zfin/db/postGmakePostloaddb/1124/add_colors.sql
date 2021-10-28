@@ -333,7 +333,7 @@ from marker,
      fluorescent_protein
 where mrkr_type = 'EFG'
   and mrkr_abbrev = 'spHGFP'
-  and fp_name = 'pHluorin, ecliptic';
+  and fp_name = 'pHluorin,ecliptic';
 
 insert into fpProtein_efg
 select distinct mrkr_zdb_id, fp_pk_id
@@ -373,7 +373,7 @@ from marker,
      fluorescent_protein
 where mrkr_type = 'EFG'
   and mrkr_abbrev = 'pHGFP'
-  and fp_name = 'pHluorin, ecliptic';
+  and fp_name = 'pHluorin,ecliptic';
 
 insert into fpProtein_efg
 select distinct mrkr_zdb_id, fp_pk_id
