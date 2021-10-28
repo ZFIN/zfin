@@ -231,6 +231,166 @@ where mrkr_type = 'EFG'
   and mrkr_abbrev = 'Tomato'
   and fp_name = 'tdTomato';
 
+insert into fpProtein_efg
+select distinct mrkr_zdb_id, fp_pk_id
+from marker,
+     fluorescent_protein
+where mrkr_type = 'EFG'
+  and mrkr_abbrev = 'TFP'
+  and fp_name = 'mTFP1';
+
+insert into fpProtein_efg
+select distinct mrkr_zdb_id, fp_pk_id
+from marker,
+     fluorescent_protein
+where mrkr_type = 'EFG'
+  and mrkr_abbrev = 'HyPer'
+  and fp_name = 'EYFP';
+
+insert into fpProtein_efg
+select distinct mrkr_zdb_id, fp_pk_id
+from marker,
+     fluorescent_protein
+where mrkr_type = 'EFG'
+  and mrkr_abbrev = 'DsRedx'
+  and fp_name = 'DsRed-Express';
+
+insert into fpProtein_efg
+select distinct mrkr_zdb_id, fp_pk_id
+from marker,
+     fluorescent_protein
+where mrkr_type = 'EFG'
+  and mrkr_abbrev = 'mitoCFP'
+  and fp_name = 'CFP';
+
+insert into fpProtein_efg
+select distinct mrkr_zdb_id, fp_pk_id
+from marker,
+     fluorescent_protein
+where mrkr_type = 'EFG'
+  and mrkr_abbrev = 'Tangerine'
+  and fp_name = 'mTangerine';
+
+insert into fpProtein_efg
+select distinct mrkr_zdb_id, fp_pk_id
+from marker,
+     fluorescent_protein
+where mrkr_type = 'EFG'
+  and mrkr_abbrev = 'Eod'
+  and fp_name = 'EosFP';
+
+insert into fpProtein_efg
+select distinct mrkr_zdb_id, fp_pk_id
+from marker,
+     fluorescent_protein
+where mrkr_type = 'EFG'
+  and mrkr_abbrev = 'mClavGR2'
+  and fp_name = 'mClavGR2';
+
+insert into fpProtein_efg
+select distinct mrkr_zdb_id, fp_pk_id
+from marker,
+     fluorescent_protein
+where mrkr_type = 'EFG'
+  and mrkr_abbrev = 'TagRFPT'
+  and fp_name = 'TagRFP-T';
+
+insert into fpProtein_efg
+select distinct mrkr_zdb_id, fp_pk_id
+from marker,
+     fluorescent_protein
+where mrkr_type = 'EFG'
+  and mrkr_abbrev = 'd2EGFP'
+  and fp_name = 'EGFP';
+
+insert into fpProtein_efg
+select distinct mrkr_zdb_id, fp_pk_id
+from marker,
+     fluorescent_protein
+where mrkr_type = 'EFG'
+  and mrkr_abbrev = 'EKARev'
+  and fp_name = 'ECFP';
+
+insert into fpProtein_efg
+select distinct mrkr_zdb_id, fp_pk_id
+from marker,
+     fluorescent_protein
+where mrkr_type = 'EFG'
+  and mrkr_abbrev = 'EKARev'
+  and fp_name = 'EYFP';
+
+insert into fpProtein_efg
+select distinct mrkr_zdb_id, fp_pk_id
+from marker,
+     fluorescent_protein
+where mrkr_type = 'EFG'
+  and mrkr_abbrev = 'Dendra'
+  and fp_name = 'Dendra';
+
+insert into fpProtein_efg
+select distinct mrkr_zdb_id, fp_pk_id
+from marker,
+     fluorescent_protein
+where mrkr_type = 'EFG'
+  and mrkr_abbrev = 'spHGFP'
+  and fp_name = 'pHluorin, ecliptic';
+
+insert into fpProtein_efg
+select distinct mrkr_zdb_id, fp_pk_id
+from marker,
+     fluorescent_protein
+where mrkr_type = 'EFG'
+  and mrkr_abbrev = 'emGFP'
+  and fp_name = 'Emerald';
+
+insert into fpProtein_efg
+select distinct mrkr_zdb_id, fp_pk_id
+from marker,
+     fluorescent_protein
+where mrkr_type = 'EFG'
+  and mrkr_abbrev = 'FRed'
+  and fp_name = 'FusionRed';
+
+insert into fpProtein_efg
+select distinct mrkr_zdb_id, fp_pk_id
+from marker,
+     fluorescent_protein
+where mrkr_type = 'EFG'
+  and mrkr_abbrev = 'GCaMP'
+  and fp_name = 'EGFP';
+
+insert into fpProtein_efg
+select distinct mrkr_zdb_id, fp_pk_id
+from marker,
+     fluorescent_protein
+where mrkr_type = 'EFG'
+  and mrkr_abbrev = 'c3paGFP'
+  and fp_name = 'αGFP';
+
+insert into fpProtein_efg
+select distinct mrkr_zdb_id, fp_pk_id
+from marker,
+     fluorescent_protein
+where mrkr_type = 'EFG'
+  and mrkr_abbrev = 'pHGFP'
+  and fp_name = 'pHluorin, ecliptic';
+
+insert into fpProtein_efg
+select distinct mrkr_zdb_id, fp_pk_id
+from marker,
+     fluorescent_protein
+where mrkr_type = 'EFG'
+  and mrkr_abbrev = 'mAGFP'
+  and fp_name = 'mAzamiGreen';
+
+insert into fpProtein_efg
+select distinct mrkr_zdb_id, fp_pk_id
+from marker,
+     fluorescent_protein
+where mrkr_type = 'EFG'
+  and mrkr_abbrev = 'KikGR'
+  and fp_name = 'KikGR1';
+
 
 
 insert into fluorescent_marker (fm_mrkr_zdb_id, fm_excitation_length, fm_emission_length, fm_protein_pk_id) (

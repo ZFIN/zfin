@@ -19,8 +19,10 @@ public abstract class AbstractFluorescence {
 
     public abstract Integer getExcitationLength();
 
-    @JsonView(View.API.class)
-    @JsonProperty("emissionColorHex")
+    public abstract String getEmissionColor();
+
+    public abstract String getExcitationColor();
+
     public String getEmissionColorHex() {
         if (getEmissionLength() != null) {
             return FluorescenceUtil.waveLengthToHex(getEmissionLength());
@@ -29,10 +31,26 @@ public abstract class AbstractFluorescence {
     }
 
     @JsonView(View.API.class)
-    @JsonProperty("excitationColorHex")
+    @JsonProperty("emissionColorHex")
+    public String getEmissionColorHexFixed() {
+        if (getEmissionLength() != null) {
+            return FluorescenceUtil.waveLengthToHexFixed(getEmissionColor());
+        }
+        return null;
+    }
+
     public String getExcitationColorHex() {
         if (getExcitationLength() != null) {
             return FluorescenceUtil.waveLengthToHex(getExcitationLength());
+        }
+        return null;
+    }
+
+    @JsonView(View.API.class)
+    @JsonProperty("excitationColorHex")
+    public String getExcitationColorHexFixed() {
+        if (getExcitationLength() != null) {
+            return FluorescenceUtil.waveLengthToHexFixed(getExcitationColor());
         }
         return null;
     }

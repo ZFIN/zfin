@@ -736,4 +736,12 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
     public void setSecondaryMarkerSet(Set<SecondaryMarker> secondaryMarkerSet) {
         this.secondaryMarkerSet = secondaryMarkerSet;
     }
+
+    public List<FluorescentMarker> getFluorescentMarkers() {
+        if (fluorescentMarkers == null)
+            return null;
+        final ArrayList<FluorescentMarker> fluorescentMarkers = new ArrayList<>(this.fluorescentMarkers);
+        fluorescentMarkers.sort(Comparator.comparing(fMarker -> fMarker.getProtein().getName()));
+        return fluorescentMarkers;
+    }
 }
