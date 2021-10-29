@@ -52,7 +52,7 @@
                 </c:forEach>
             </c:if>
         </z:attributeListItem>
-    </if>
+    </c:if>
 
     <z:attributeListItem label="Contains Sequences">
         <z:ifHasData test="${!empty formBean.containsSequencePresentations}" noDataMessage="None">
