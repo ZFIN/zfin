@@ -8,9 +8,6 @@ import lombok.Setter;
 import org.zfin.framework.api.View;
 import org.zfin.util.FluorescenceUtil;
 
-import javax.persistence.*;
-import java.util.List;
-
 @Setter
 @Getter
 public abstract class AbstractFluorescence {
@@ -18,10 +15,6 @@ public abstract class AbstractFluorescence {
     public abstract Integer getEmissionLength();
 
     public abstract Integer getExcitationLength();
-
-    public abstract String getEmissionColor();
-
-    public abstract String getExcitationColor();
 
     public String getEmissionColorHex() {
         if (getEmissionLength() != null) {
@@ -34,7 +27,7 @@ public abstract class AbstractFluorescence {
     @JsonProperty("emissionColorHex")
     public String getEmissionColorHexFixed() {
         if (getEmissionLength() != null) {
-            return FluorescenceUtil.waveLengthToHexFixed(getEmissionColor());
+            return FluorescenceUtil.waveLengthToHexFixed(getEmissionLength());
         }
         return null;
     }
@@ -50,7 +43,7 @@ public abstract class AbstractFluorescence {
     @JsonProperty("excitationColorHex")
     public String getExcitationColorHexFixed() {
         if (getExcitationLength() != null) {
-            return FluorescenceUtil.waveLengthToHexFixed(getExcitationColor());
+            return FluorescenceUtil.waveLengthToHexFixed(getExcitationLength());
         }
         return null;
     }
