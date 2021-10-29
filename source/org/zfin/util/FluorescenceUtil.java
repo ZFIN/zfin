@@ -1,6 +1,7 @@
 package org.zfin.util;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 //
@@ -8,7 +9,7 @@ import java.util.Map;
 //
 public class FluorescenceUtil {
 
-    // corl name, hex code
+    // color name, hex code
     public static Map<String, String> colorMap = new HashMap<>();
 
     static {
@@ -22,8 +23,54 @@ public class FluorescenceUtil {
         colorMap.put("far red", "#a10000");
     }
 
-    public static String waveLengthToHexFixed(String color) {
-        return colorMap.get(color);
+    // wave length in general mode
+    public static Map<Color, List<Integer>> wavelengthGeneralMap = new HashMap<>();
+
+    static {
+        wavelengthGeneralMap.put(Color.VIOLET, List.of(400, 450));
+        wavelengthGeneralMap.put(Color.BLUE, List.of(450, 490));
+        wavelengthGeneralMap.put(Color.CYAN, List.of(490, 520));
+        wavelengthGeneralMap.put(Color.GREEN, List.of(520, 560));
+        wavelengthGeneralMap.put(Color.YELLOW, List.of(560, 590));
+        wavelengthGeneralMap.put(Color.ORANGE, List.of(590, 635));
+        wavelengthGeneralMap.put(Color.RED, List.of(635, 700));
+        wavelengthGeneralMap.put(Color.FAR_RED, List.of(700, 100));
+    }
+
+    // wave length in general mode
+    public static Map<Color, List<Integer>> wavelengthFluorescentMap = new HashMap<>();
+
+    static {
+        wavelengthFluorescentMap.put(Color.VIOLET, List.of(380, 440));
+        wavelengthFluorescentMap.put(Color.BLUE, List.of(440, 475));
+        wavelengthFluorescentMap.put(Color.CYAN, List.of(475, 500));
+        wavelengthFluorescentMap.put(Color.GREEN, List.of(500, 525));
+        wavelengthFluorescentMap.put(Color.YELLOW, List.of(525, 555));
+        wavelengthFluorescentMap.put(Color.ORANGE, List.of(555, 580));
+        wavelengthFluorescentMap.put(Color.RED, List.of(580, 630));
+        wavelengthFluorescentMap.put(Color.FAR_RED, List.of(630, 700));
+    }
+
+    public static String waveLengthToHexFixed(double wavelength) {
+        // get color from fluorescent spectrum
+        Color color = getColorFromFluorescentSpectrum(wavelength);
+        // convert fluorescent wave length into general wave length
+        // (d-c)/(b-a) * (lambda-a) +c
+        // [a,b] is the range for the fluorescent color and [c,d] the one for the general spectrum
+        List<Integer> fluorescentColorWaveLengths = wavelengthFluorescentMap.get(color);
+        double generalWaveLength = (double)(wavelengthGeneralMap.get(color).get(1) - (wavelengthGeneralMap.get(color).get(0))) /
+                (wavelengthFluorescentMap.get(color).get(1) - (wavelengthFluorescentMap.get(color).get(0))) *
+                        (wavelength - (double) (wavelengthFluorescentMap.get(color).get(0))) + wavelengthGeneralMap.get(color).get(0);
+        return waveLengthToHex(generalWaveLength);
+    }
+
+    private static Color getColorFromFluorescentSpectrum(double wavelength) {
+        final Color colorReturn = null;
+        return wavelengthFluorescentMap.entrySet().stream().filter(colorListEntry -> {
+            List<Integer> limits = colorListEntry.getValue();
+            Color color = colorListEntry.getKey();
+            return wavelength >= limits.get(0) && wavelength <= limits.get(1);
+        }).findFirst().get().getKey();
     }
 
     public static String waveLengthToHex(double wavelength) {
