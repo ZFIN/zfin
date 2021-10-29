@@ -35,16 +35,24 @@
         </z:ifHasData>
     </z:attributeListItem>
 
-    <z:attributeListItem label="[Em &lambda;][Ex &lambda;], Other Resources">
-        <c:if test="${formBean.marker.fluorescentMarkers != null}">
-            <c:forEach var="fp" items="${formBean.marker.fluorescentMarkers}" varStatus="loop">
-                <button type="button" class="btn btn-primary" style="background: ${fp.emissionColorHexFixed}; width: 110px !important;" >${fp.emissionLength} (${fp.emissionColor})</button>
-                <button type="button" class="btn btn-primary" style="background: ${fp.excitationColorHexFixed};width: 110px !important;" >${fp.excitationLength} (${fp.excitationColor})</button>
-                <a href='https://www.fpbase.org/protein/${fn:replace((fn:toLowerCase(fp.protein.name)),".", "")}'>Fpbase:${fp.protein.name}</a>
-                <c:if test="${!loop.last}"></p></c:if>
-            </c:forEach>
-        </c:if>
-    </z:attributeListItem>
+    <c:if test="${not empty formBean.marker.fluorescentMarkers}">
+        <z:attributeListItem label="[Em &lambda;][Ex &lambda;]">
+            <c:if test="${formBean.marker.fluorescentMarkers != null}">
+                <c:forEach var="fp" items="${formBean.marker.fluorescentMarkers}" varStatus="loop">
+                    <button type="button" class="btn btn-primary"
+                            style="background: ${fp.emissionColorHexFixed}; width: 110px !important;">${fp.emissionLength}
+                        (${fp.emissionColor})
+                    </button>
+                    <button type="button" class="btn btn-primary"
+                            style="background: ${fp.excitationColorHexFixed};width: 110px !important;">${fp.excitationLength}
+                        (${fp.excitationColor})
+                    </button>
+                    <a href='https://www.fpbase.org/protein/${fn:replace((fn:toLowerCase(fp.protein.name)),".", "")}'>Fpbase:${fp.protein.name}</a>
+                    <c:if test="${!loop.last}"></p></c:if>
+                </c:forEach>
+            </c:if>
+        </z:attributeListItem>
+    </if>
 
     <z:attributeListItem label="Contains Sequences">
         <z:ifHasData test="${!empty formBean.containsSequencePresentations}" noDataMessage="None">

@@ -57,20 +57,17 @@ public class FluorescenceUtil {
         // convert fluorescent wave length into general wave length
         // (d-c)/(b-a) * (lambda-a) +c
         // [a,b] is the range for the fluorescent color and [c,d] the one for the general spectrum
-        List<Integer> fluorescentColorWaveLengths = wavelengthFluorescentMap.get(color);
-        double generalWaveLength = (double)(wavelengthGeneralMap.get(color).get(1) - (wavelengthGeneralMap.get(color).get(0))) /
+        double generalWaveLength = (double) (wavelengthGeneralMap.get(color).get(1) - (wavelengthGeneralMap.get(color).get(0))) /
                 (wavelengthFluorescentMap.get(color).get(1) - (wavelengthFluorescentMap.get(color).get(0))) *
-                        (wavelength - (double) (wavelengthFluorescentMap.get(color).get(0))) + wavelengthGeneralMap.get(color).get(0);
+                (wavelength - (double) (wavelengthFluorescentMap.get(color).get(0))) + wavelengthGeneralMap.get(color).get(0);
         return waveLengthToHex(generalWaveLength);
     }
 
     private static Color getColorFromFluorescentSpectrum(double wavelength) {
-        final Color colorReturn = null;
-        return wavelengthFluorescentMap.entrySet().stream().filter(colorListEntry -> {
-            List<Integer> limits = colorListEntry.getValue();
-            Color color = colorListEntry.getKey();
+        return wavelengthFluorescentMap.entrySet().stream().filter(colorEntry -> {
+            List<Integer> limits = colorEntry.getValue();
             return wavelength >= limits.get(0) && wavelength <= limits.get(1);
-        }).findFirst().get().getKey();
+        }).findFirst().map(Map.Entry::getKey).orElse(null);
     }
 
     public static String waveLengthToHex(double wavelength) {
