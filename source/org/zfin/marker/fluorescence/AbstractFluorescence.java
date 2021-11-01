@@ -32,6 +32,13 @@ public abstract class AbstractFluorescence {
         return null;
     }
 
+    public String getTextEmissionColorHexFixed() {
+        if (getEmissionLength() != null) {
+            return FluorescenceUtil.getReadableTextColor(getEmissionLength());
+        }
+        return null;
+    }
+
     public String getExcitationColorHex() {
         if (getExcitationLength() != null) {
             return FluorescenceUtil.waveLengthToHex(getExcitationLength());
@@ -44,6 +51,13 @@ public abstract class AbstractFluorescence {
     public String getExcitationColorHexFixed() {
         if (getExcitationLength() != null) {
             return FluorescenceUtil.waveLengthToHexFixed(getExcitationLength());
+        }
+        return null;
+    }
+
+    public String getTextExcitationColorHexFixed() {
+        if (getExcitationLength() != null) {
+            return FluorescenceUtil.getReadableTextColor(getExcitationLength());
         }
         return null;
     }
