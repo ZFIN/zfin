@@ -464,6 +464,8 @@ public interface InfrastructureRepository {
     List<ControlledVocab> getControlledVocabsForSpeciesByConstruct(Marker construct);
 
     void deletePubProcessingInfo(String zdbID);
+
+    void deleteActiveDataList(List<String> zdbIDs);
 }
 
 

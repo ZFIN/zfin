@@ -1929,6 +1929,16 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         query.executeUpdate();
 
     }
+
+    @Override
+    public void deleteActiveDataList(List<String> zdbIDs) {
+        String sql = "delete from ZDB_active_data where zactvd_zdb_id  in" +
+                " (:IDs) ";
+        final Query query = HibernateUtil.currentSession().createSQLQuery(sql);
+        query.setParameterList("IDs", zdbIDs);
+        int ret = query.executeUpdate();
+        System.out.print("Delete list: "+ret);
+    }
 }
 
 

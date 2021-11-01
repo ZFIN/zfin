@@ -25,6 +25,7 @@ import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 /**
  * This is autowired for spring 3, but is not in the correct context yet.
@@ -64,7 +65,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
     @Autowired
     protected DownloadService downloadService;
 
-    private final int BATCH_SIZE = 1;
+    private final int BATCH_SIZE = 50;
 
     protected FpInferenceGafParser gafParser;
     protected GafService gafService;
@@ -115,6 +116,9 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
 
             List<GafEntry> gafEntries = gafParser.parseGafFile(downloadedFile);
             gafParser.postProcessing(gafEntries);
+            System.out.print("Original Gaf Entries: ");
+            System.out.printf("%,d%n", gafEntries.size());
+            gafEntries = gafEntries.stream().limit(1000).collect(Collectors.toList());
             System.out.print("Gaf Entries: ");
             System.out.printf("%,d%n", gafEntries.size());
             int sizeentry = gafEntries.size();
@@ -282,6 +286,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
         Iterator<GafJobEntry> iteratorToRemove = evidencesToRemove.iterator();
 
         // create batch
+        int index = 0;
         while (iteratorToRemove.hasNext()) {
             // build batch
             List<GafJobEntry> batchToRemove = new ArrayList<>();
@@ -289,6 +294,8 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
                 GafJobEntry removeEntry = iteratorToRemove.next();
                 batchToRemove.add(removeEntry);
             }
+            System.out.print(index);
+            index++;
             try {
                 HibernateUtil.createTransaction();
                 gafService.removeEntriesBatch(batchToRemove, gafJobData);

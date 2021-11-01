@@ -771,9 +771,8 @@ public class GafService {
         List<String> zdbIDs = new ArrayList<>();
         for (GafJobEntry gafJobEntry : batchToRemove) {
             zdbIDs.add(gafJobEntry.getZdbID());
-
-            RepositoryFactory.getInfrastructureRepository().deleteActiveDataByZdbID(gafJobEntry.getZdbID());
         }
+        RepositoryFactory.getInfrastructureRepository().deleteActiveDataList(zdbIDs);
 
         // delete record attributions and then evidences directly
         //RepositoryFactory.getInfrastructureRepository().deleteRecordAttributionByDataZdbIDs(zdbIDs);;
