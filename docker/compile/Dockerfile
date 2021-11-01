@@ -27,6 +27,11 @@ RUN mkdir -p /var/solr/data/site_index && chgrp -R solr /var/solr && chmod -R g+
 
 COPY ./ssh-agent.sudoers /etc/sudoers.d/01-ssh-agent
 RUN chmod 0440 /etc/sudoers.d/01-ssh-agent
+
+## Install imagemagick -- also, probably better way of doing this, but adding symlink to /usr/local/bin to maintain consistency with host Mac OS environment
+RUN apt install -y --no-install-recommends imagemagick && \
+        ln -s /usr/bin/convert /usr/local/bin
+
 USER gradle
 COPY ./cshrc /home/gradle/.cshrc
 COPY ./bash_profile /tmp/bash_profile

@@ -28,6 +28,7 @@
 <filter token="CGI_BIN_DIR_NAME" value="${CGI_BIN_DIR_NAME}"/>
 <filter token="CLIENT_LOCALE" value="${CLIENT_LOCALE}"/>
 <filter token="CONFIGURATION_DIRECTORY" value="${CONFIGURATION_DIRECTORY}"/>
+<filter token="CONVERT_BINARY_PATH" value="${CONVERT_BINARY_PATH}"/>
 <filter token="COOKIE_PATH" value="${COOKIE_PATH}"/>
 <filter token="COUNT_PATO_ERR" value="${COUNT_PATO_ERR}"/>
 <filter token="COUNT_PATO_OUT" value="${COUNT_PATO_OUT}"/>
@@ -115,6 +116,7 @@
 <filter token="PARTNER_DBNAME" value="${PARTNER_DBNAME}"/>
 <filter token="PARTNER_INTERNAL_INSTANCE" value="${PARTNER_INTERNAL_INSTANCE}"/>
 <filter token="PARTNER_SOURCEROOT" value="${PARTNER_SOURCEROOT}"/>
+<filter token="PATO_EMAIL_CURATOR" value="${PATO_EMAIL_CURATOR}"/>
 <filter token="PDF_LOAD" value="${PDF_LOAD}"/>
 <filter token="PDF_PATH" value="${PDF_PATH}"/>
 <filter token="PGBINDIR" value="${PGBINDIR}"/>

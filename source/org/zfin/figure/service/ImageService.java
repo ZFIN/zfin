@@ -18,6 +18,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.GregorianCalendar;
 import java.util.regex.Matcher;
@@ -67,9 +68,7 @@ public class ImageService {
         return image;
     }
 
-    private static Image processImage(Figure figure, Person owner, Boolean isVideoStill, String fileName, InputStream imageStream, String publicationZdbId) throws IOException {
-        Image image = createPlaceholderImage(figure, owner, isVideoStill);
-
+    public static File getDestinationParentDirectory(String publicationZdbId, boolean absolutePath) {
         String pubYear = "";
         String pattern = "^(ZDB-PUB-)(\\d{2})(\\d{2})(\\d{2})(-\\d+)$";
         Pattern pubYearPattern = Pattern.compile(pattern);
@@ -84,8 +83,23 @@ public class ImageService {
             }
         }
 
+        String destinationFolderPath = pubYear+"/"+publicationZdbId;
+
+        File containingFolder;
+        if (absolutePath) {
+            containingFolder = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString(), destinationFolderPath);
+        } else {
+            containingFolder = new File(destinationFolderPath);
+        }
+        return containingFolder;
+    }
+
+    private static Image processImage(Figure figure, Person owner, Boolean isVideoStill, String fileName, InputStream imageStream, String publicationZdbId) throws IOException {
+        Image image = createPlaceholderImage(figure, owner, isVideoStill);
+
         String extension = FilenameUtils.getExtension(fileName);
-        String destinationBasename = pubYear+"/"+publicationZdbId+"/"+ image.getZdbID();
+        File destinationDirectory = getDestinationParentDirectory(publicationZdbId, false);
+        String destinationBasename = destinationDirectory + "/" + image.getZdbID();
         String destinationFilename = destinationBasename + FilenameUtils.EXTENSION_SEPARATOR + extension;
         String thumbnailFilename = destinationBasename + THUMB + FilenameUtils.EXTENSION_SEPARATOR + extension;
         String mediumFilename = destinationBasename + MEDIUM + FilenameUtils.EXTENSION_SEPARATOR + extension;
@@ -107,9 +121,9 @@ public class ImageService {
         Files.copy(imageStream, destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
         try {
-            String makeMedium = "/bin/convert -thumbnail 1000x64 " + destinationFile + " " + thumbnailFile;
+            String makeMedium = ZfinPropertiesEnum.CONVERT_BINARY_PATH + " -thumbnail 1000x64 " + destinationFile + " " + thumbnailFile;
             Runtime.getRuntime().exec(makeMedium);
-            String makeThumbnail = "/bin/convert -thumbnail 500x550 " + destinationFile + " " + mediumFile;
+            String makeThumbnail = ZfinPropertiesEnum.CONVERT_BINARY_PATH + " -thumbnail 500x550 " + destinationFile + " " + mediumFile;
             Runtime.getRuntime().exec(makeThumbnail);
 
         } catch (IOException e) {

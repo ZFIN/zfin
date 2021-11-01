@@ -24,7 +24,14 @@ class ImageServiceSpec extends AbstractZfinIntegrationSpec {
 
     //these runs once for the whole class
     def setupSpec() {
-        tempDir.newFolder(ZfinPropertiesEnum.IMAGE_LOAD.toString(), "medium")
+        def imageLoadPath = ZfinPropertiesEnum.IMAGE_LOAD.toString()
+
+        // use relative path, otherwise tempDir throws IOException
+        if (imageLoadPath.startsWith("/")) {
+            imageLoadPath = "." + imageLoadPath
+        }
+
+        tempDir.newFolder(imageLoadPath, "medium")
         originalLoadup = ZfinPropertiesEnum.LOADUP_FULL_PATH.toString()
         //ZfinPropertiesEnum.LOADUP_FULL_PATH.setValue(tempDir.getRoot().absolutePath)
         imageLoadUp = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString())
@@ -47,6 +54,16 @@ class ImageServiceSpec extends AbstractZfinIntegrationSpec {
     }
 
 
+    def "parent folder exists in loadUp"() {
+        when: "a new image is attempted to be created"
+        def zdbId = "ZDB-PUB-110609-15"
+        def parentPathFile = ImageService.getDestinationParentDirectory(zdbId, true)
+        def parentPath = parentPathFile.toString()
+
+        then: "the parent path of ${parentPath} should exist"
+        parentPathFile.exists()
+    }
+
     def "Regular sized, thumbnail & medium sized files should exist in loadUp"() {
         when: "a new image is created"
         def zdbId = "ZDB-PUB-110609-15"
@@ -55,8 +72,8 @@ class ImageServiceSpec extends AbstractZfinIntegrationSpec {
         File thumbnailFile = new File(imageLoadUp, image.thumbnail)
         File mediumFile = new File(imageLoadUp, image.medium)
 
-        then: "${imageFile}"
-        imageFile.exists()
+        then: "${imageFile} and associated files should exist"
+        imageFile.exists() && thumbnailFile.exists() && mediumFile.exists()
     }
 
 
