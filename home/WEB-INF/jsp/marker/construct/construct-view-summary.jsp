@@ -40,11 +40,11 @@
             <c:if test="${formBean.marker.fluorescentMarkers != null}">
                 <c:forEach var="fp" items="${formBean.marker.fluorescentMarkers}" varStatus="loop">
                     <button type="button" class="btn btn-primary"
-                            style="background: ${fp.emissionColorHexFixed}; width: 110px !important;">${fp.emissionLength}
+                            style="background: ${fp.emissionColorHexFixed}; color: ${fp.textEmissionColorHexFixed}; width: 110px !important;">${fp.emissionLength}
                         (${fp.emissionColor})
                     </button>
                     <button type="button" class="btn btn-primary"
-                            style="background: ${fp.excitationColorHexFixed};width: 110px !important;">${fp.excitationLength}
+                            style="background: ${fp.excitationColorHexFixed}; color: ${fp.textExcitationColorHexFixed}; width: 110px !important;">${fp.excitationLength}
                         (${fp.excitationColor})
                     </button>
                     <a href='https://www.fpbase.org/protein/${fn:replace((fn:toLowerCase(fp.protein.name)),".", "")}'>Fpbase:${fp.protein.name}</a>

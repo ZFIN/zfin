@@ -52,6 +52,10 @@ public class FluorescenceUtil {
     }
 
     public static String waveLengthToHexFixed(double wavelength) {
+        return waveLengthToHex(convertFluorescentWaveLengthToGeneral(wavelength));
+    }
+
+    public static double convertFluorescentWaveLengthToGeneral(double wavelength) {
         // get color from fluorescent spectrum
         Color color = getColorFromFluorescentSpectrum(wavelength);
         // convert fluorescent wave length into general wave length
@@ -60,7 +64,7 @@ public class FluorescenceUtil {
         double generalWaveLength = (double) (wavelengthGeneralMap.get(color).get(1) - (wavelengthGeneralMap.get(color).get(0))) /
                 (wavelengthFluorescentMap.get(color).get(1) - (wavelengthFluorescentMap.get(color).get(0))) *
                 (wavelength - (double) (wavelengthFluorescentMap.get(color).get(0))) + wavelengthGeneralMap.get(color).get(0);
-        return waveLengthToHex(generalWaveLength);
+        return generalWaveLength;
     }
 
     private static Color getColorFromFluorescentSpectrum(double wavelength) {
@@ -72,6 +76,24 @@ public class FluorescenceUtil {
 
     public static String waveLengthToHex(double wavelength) {
         return String.format("#%02X%02X%02X", waveLengthToRGB(wavelength)[0], waveLengthToRGB(wavelength)[1], waveLengthToRGB(wavelength)[2]);
+    }
+
+    public static int[] waveLengthToRGBVals(double wavelength) {
+        return waveLengthToRGB(wavelength);
+    }
+
+    public static String getReadableTextColor(int[] rgb) {
+        // white
+        // int[] white = {255, 255, 255};
+        // int[] black = {0, 0, 0};
+        double brightness = (rgb[0] * 299.0 + rgb[1] * 587.0 + rgb[2] * 114.0) / 1000;
+        double brightnessWhite = 255;
+        // https://web.mst.edu/~rhall/web_design/color_readability.html
+        // difference in brightness should be more than 125 to be readable
+        // if brightness alone does not work fully we need to include difference in hue (see above site)
+        if (Math.abs(brightnessWhite - brightness) > 125)
+            return "#FFF";
+        return "#000";
     }
 
     public static int[] waveLengthToRGB(double Wavelength) {
@@ -136,5 +158,10 @@ public class FluorescenceUtil {
 
     public static int[] getRGBValues(Integer wavelengthLength) {
         return waveLengthToRGB(wavelengthLength.doubleValue());
+    }
+
+    public static String getReadableTextColor(Integer emissionLength) {
+        int[] rgb = waveLengthToRGBVals(convertFluorescentWaveLengthToGeneral((double) emissionLength));
+        return getReadableTextColor(rgb);
     }
 }
