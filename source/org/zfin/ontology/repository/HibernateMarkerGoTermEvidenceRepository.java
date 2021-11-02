@@ -15,8 +15,11 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 
 import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import static org.zfin.repository.RepositoryFactory.getMarkerGoTermEvidenceRepository;
 
 /**
  *
@@ -146,6 +149,14 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
             return;
         }
 
+        if (markerGoTermEvidenceToAdd.getNoctuaModelId() != null) {
+            NoctuaModel noctuaModel = getMarkerGoTermEvidenceRepository().getNoctuaModel(markerGoTermEvidenceToAdd.getNoctuaModelId());
+            if (noctuaModel == null) {
+                noctuaModel = markerGoTermEvidenceToAdd.getNoctuaModels().iterator().next();
+                getMarkerGoTermEvidenceRepository().saveNoctualModel(noctuaModel);
+            }
+            markerGoTermEvidenceToAdd.setNoctuaModels(Set.of(noctuaModel));
+        }
         HibernateUtil.currentSession().save(markerGoTermEvidenceToAdd);
         // have to do this after we add inferences
         if (CollectionUtils.isNotEmpty(markerGoTermEvidenceToAdd.getInferredFrom())) {

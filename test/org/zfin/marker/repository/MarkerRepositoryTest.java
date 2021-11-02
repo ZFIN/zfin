@@ -21,6 +21,8 @@ import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.*;
+import org.zfin.marker.fluorescence.FluorescentMarker;
+import org.zfin.marker.fluorescence.FluorescentProtein;
 import org.zfin.marker.presentation.*;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.Genotype;
@@ -110,6 +112,36 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     public void testGeneById() {
         assertNull(markerRepository.getGeneByID("ZDB-TSCRIPT-090929-6229"));
         assertNotNull(markerRepository.getGeneByID("ZDB-GENE-990415-200"));
+    }
+
+    @Test
+    public void testFluorescentProteins() {
+        Marker efg = markerRepository.getMarkerByID("ZDB-EFG-190123-1");
+        assertNotNull(efg);
+        assertNotNull(efg.getFluorescentProteinEfgs());
+        assertEquals(efg.getFluorescentProteinEfgs().iterator().next().getName(), "mOrange2");
+        assertNotNull(efg.getFluorescentMarkers());
+        assertEquals(efg.getFluorescentMarkers().size(), 1);
+        assertNotNull(efg.getFluorescentMarkers().iterator().next().getProtein());
+        assertEquals(efg.getFluorescentMarkers().iterator().next().getProtein().getName(), "mOrange2");
+    }
+
+    @Test
+    public void testFluorescentEfg() {
+        List<FluorescentMarker> efgList = markerRepository.getAllFluorescentEfgs();
+        assertNotNull(efgList);
+    }
+
+    @Test
+    public void testFluorescentConstruct() {
+        List<FluorescentMarker> constructs = markerRepository.getAllFluorescentConstructs();
+        assertNotNull(constructs);
+    }
+
+    @Test
+    public void getAllFluorescentProteins() {
+        List<FluorescentProtein> efg = markerRepository.getAllFluorescentProteins();
+        assertNotNull(efg);
     }
 
     @Test

@@ -235,13 +235,13 @@ class CategoriesAndFacetsSpec extends ZfinIntegrationSpec {
         where:
         category                            | expectedLabels
         Category.GENE                       | ["Type", "Expression", "Phenotype", "Human Disease", "Gene Ontology", "Location"]
-        Category.EXPRESSIONS                | ["Expressed Gene", "Expressed In Anatomy", "Stage", "Has Image", "Is Wildtype and Clean", "Assay", "Genotype", "Sequence Targeting Reagent (STR)", "Conditions"]
+        Category.EXPRESSIONS                | ["Expressed Gene", "Expressed In Anatomy", "Stage", "Has Image", "Emission Range", "Excitation Range", "Is Wildtype and Clean", "Assay", "Genotype", "Sequence Targeting Reagent (STR)", "Conditions"]
         Category.PHENOTYPE                  | ["Phenotypic Gene", "Phenotype Statement", "Stage", "Manifests In", "Genotype", "Sequence Targeting Reagent (STR)", "Is Monogenic", "Conditions", "Has Image"]
         Category.DISEASE                    | ["Gene", "Disease Model"]
         Category.FISH                       | ["Affected Genomic Region", "Is Model Of", "Expression Anatomy", "Phenotype", "Sequence Targeting Reagent (STR)", "Construct", "Mutation / Tg", "Background", "Source"]
-        Category.REPORTER_LINE              | ["Reporter Gene", "Expression Anatomy", "Regulatory Region", "Stage", "Source"]
-        Category.MUTANT                     | ["Type", "Affected Genomic Region", "Phenotype", "Consequence", "Mutagen", "Source", "Lab of Origin", "Institution", "Is ZebraShare", "Construct Regulatory Region", "Construct Coding Sequence"]
-        Category.CONSTRUCT                  | ["Type", "Regulatory Region", "Regulatory Region Species", "Coding Sequence", "Coding Sequence Species", "Inserted In Gene", "Expressed In", "Lab Of Origin", "Reporter Color", "Engineered Region"]
+        Category.REPORTER_LINE              | ["Reporter Gene", "Expression Anatomy", "Regulatory Region", "Stage", "Source", "Color", "Emission Range", "Excitation Range"]
+        Category.MUTANT                     | ["Type", "Affected Genomic Region", "Phenotype", "Consequence", "Mutagen", "Source", "Lab of Origin", "Institution", "Is ZebraShare", "Construct Regulatory Region", "Construct Coding Sequence", "Emission Range", "Excitation Range"]
+        Category.CONSTRUCT                  | ["Type", "Regulatory Region", "Regulatory Region Species", "Coding Sequence", "Coding Sequence Species", "Inserted In Gene", "Expressed In", "Lab Of Origin", "Reporter Color", "Emission Range", "Excitation Range", "Engineered Region"]
         Category.SEQUENCE_TARGETING_REAGENT | ["Type", "Target"]
         Category.ANTIBODY                   | ["Type", "Antigen Gene", "Labeled Structure", "Assay", "Source", "Host Organism"]
         Category.MARKER                     | ["Type", "Location", "Source"]

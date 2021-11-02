@@ -12,6 +12,8 @@ import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.DataAlias;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.marker.*;
+import org.zfin.marker.fluorescence.FluorescentMarker;
+import org.zfin.marker.fluorescence.FluorescentProtein;
 import org.zfin.marker.presentation.*;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.OmimPhenotype;
@@ -526,4 +528,10 @@ public interface MarkerRepository {
     TranscriptSequence getTranscriptSequence(Transcript transcript);
 
     MarkerRelationshipType getMarkerRelationshipType(String name);
+
+    List<FluorescentProtein> getAllFluorescentProteins();
+
+    List<FluorescentMarker> getAllFluorescentEfgs();
+
+    List<FluorescentMarker> getAllFluorescentConstructs();
 }

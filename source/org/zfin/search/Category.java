@@ -40,6 +40,8 @@ public enum Category {
             EXPRESSED_IN_TF,
             LAB_OF_ORIGIN,
             REPORTER_COLOR,
+            EMISSION_COLOR,
+            EXCITATION_COLOR,
             ENGINEERED_REGION
     ),
     ANTIBODY("Antibody",
@@ -75,6 +77,9 @@ public enum Category {
             MUTAGEN,
             REGULATORY_REGION,
             CODING_SEQUENCE,
+            ANY_COLOR,
+            EMISSION_COLOR,
+            EXCITATION_COLOR,
             IS_ZEBRASHARE
 
 //            SCREEN   <!--screen used to be here, removed as a result of case 11323-->
@@ -179,6 +184,9 @@ public enum Category {
             EXPRESSION_ANATOMY_TF,
             REGULATORY_REGION,
             STAGE,
+            ANY_COLOR,
+            EMISSION_COLOR,
+            EXCITATION_COLOR,
             SOURCE
     ),
     JOURNAL("Journal",

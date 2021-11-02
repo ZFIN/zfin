@@ -66,6 +66,7 @@
                     </tr>
                     <tr>
                         <td>
+                            <a href="/action/fluorescence/proteins">Fluorescent Proteins</a>
                         </td>
                         <td>
                             <a href="/action/blast/blast-files">Downloadable Blast Files</a>

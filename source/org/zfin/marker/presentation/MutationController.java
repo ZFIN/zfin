@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.zfin.feature.Feature;
 import org.zfin.framework.api.*;
+import org.zfin.marker.fluorescence.FluorescentMarker;
+import org.zfin.marker.fluorescence.FluorescentProtein;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.wiki.presentation.Version;
 
@@ -67,9 +69,61 @@ public class MutationController {
 
         response.calculateRequestDuration(startTime);
         response.setHttpServletRequest(request);
-
         return response;
     }
 
+    @JsonView(View.API.class)
+    @RequestMapping("/marker/fpbase-proteins")
+    protected JsonResultResponse<FluorescentProtein> showFluorescentProteins(@Version Pagination pagination) {
+        long startTime = System.currentTimeMillis();
+        JsonResultResponse<FluorescentProtein> response;
+        try {
+            response = markerService.getFPBaseJsonResultResponse(pagination);
+        } catch (Exception e) {
+            log.error("Error while retrieving fpbase protein info", e);
+            RestErrorMessage error = new RestErrorMessage(500);
+            error.addErrorMessage(e.getMessage());
+            throw new RestErrorException(error);
+        }
+        response.calculateRequestDuration(startTime);
+        response.setHttpServletRequest(request);
+        return response;
+    }
+
+    @JsonView(View.API.class)
+    @RequestMapping("/marker/efg-proteins")
+    protected JsonResultResponse<FluorescentMarker> showEfgProteins(@Version Pagination pagination) {
+        long startTime = System.currentTimeMillis();
+        JsonResultResponse<FluorescentMarker> response;
+        try {
+            response = markerService.getFfgFluorescenceJsonResultResponse(pagination);
+        } catch (Exception e) {
+            log.error("Error while retrieving fpbase protein info", e);
+            RestErrorMessage error = new RestErrorMessage(500);
+            error.addErrorMessage(e.getMessage());
+            throw new RestErrorException(error);
+        }
+        response.calculateRequestDuration(startTime);
+        response.setHttpServletRequest(request);
+        return response;
+    }
+
+    @JsonView(View.API.class)
+    @RequestMapping("/marker/construct-proteins")
+    protected JsonResultResponse<FluorescentMarker> showConstructProteins(@Version Pagination pagination) {
+        long startTime = System.currentTimeMillis();
+        JsonResultResponse<FluorescentMarker> response;
+        try {
+            response = markerService.getConstructFluorescenceJsonResultResponse(pagination);
+        } catch (Exception e) {
+            log.error("Error while retrieving fpbase protein info", e);
+            RestErrorMessage error = new RestErrorMessage(500);
+            error.addErrorMessage(e.getMessage());
+            throw new RestErrorException(error);
+        }
+        response.calculateRequestDuration(startTime);
+        response.setHttpServletRequest(request);
+        return response;
+    }
 
 }
