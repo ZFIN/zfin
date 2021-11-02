@@ -16,7 +16,6 @@ import org.zfin.infrastructure.*;
 import org.zfin.mapping.MappedMarkerImpl;
 import org.zfin.marker.fluorescence.FluorescentMarker;
 import org.zfin.marker.fluorescence.FluorescentProtein;
-import org.zfin.marker.fluorescence.FluorescentProteinMarker;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.ontology.GenericTerm;
@@ -57,7 +56,6 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
     private Set<MarkerFamilyName> familyName;
     private Set<FluorescentProtein> fluorescentProteinEfgs;
     private Set<FluorescentProtein> fluorescentProteinConstructs;
-    private Set<FluorescentProteinMarker> fluorescentProtein;
     private Set<FluorescentMarker> fluorescentMarkers;
     private Set<Ortholog> orthologs;
     protected Set<MarkerRelationship> firstMarkerRelationships;    //  where this marker = "mrel_mrkr_1_zdb_id" in mrel
@@ -737,11 +735,9 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         this.secondaryMarkerSet = secondaryMarkerSet;
     }
 
-    public List<FluorescentMarker> getFluorescentMarkers() {
+    public Set<FluorescentMarker> getFluorescentMarkers() {
         if (fluorescentMarkers == null)
             return null;
-        final ArrayList<FluorescentMarker> fluorescentMarkers = new ArrayList<>(this.fluorescentMarkers);
-        fluorescentMarkers.sort(Comparator.comparing(fMarker -> fMarker.getProtein().getName()));
         return fluorescentMarkers;
     }
 }
