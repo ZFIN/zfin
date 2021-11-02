@@ -71,6 +71,7 @@ class ImageServiceSpec extends AbstractZfinIntegrationSpec {
         File imageFile = new File(imageLoadUp, image.imageFilename)
         File thumbnailFile = new File(imageLoadUp, image.thumbnail)
         File mediumFile = new File(imageLoadUp, image.medium)
+        sleep(50) //test was failing due the the assertion happening before files fully written to disk (i think)
 
         then: "${imageFile} and associated files should exist"
         imageFile.exists() && thumbnailFile.exists() && mediumFile.exists()
