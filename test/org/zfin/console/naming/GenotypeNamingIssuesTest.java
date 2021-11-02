@@ -1,4 +1,4 @@
-package org.zfin.console.naming;
+package org.zfin.console;
 
 import org.junit.Test;
 
