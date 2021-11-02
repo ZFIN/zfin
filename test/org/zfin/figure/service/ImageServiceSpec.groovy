@@ -71,7 +71,7 @@ class ImageServiceSpec extends AbstractZfinIntegrationSpec {
         File imageFile = new File(imageLoadUp, image.imageFilename)
         File thumbnailFile = new File(imageLoadUp, image.thumbnail)
         File mediumFile = new File(imageLoadUp, image.medium)
-        sleep(50) //test was failing due the the assertion happening before files fully written to disk (i think)
+        waitFor(thumbnailFile::exists, 5000) && waitFor(mediumFile::exists, 5000) //wait maximum of 5 seconds for files to exist
 
         then: "${imageFile} and associated files should exist"
         imageFile.exists() && thumbnailFile.exists() && mediumFile.exists()
@@ -103,4 +103,20 @@ class ImageServiceSpec extends AbstractZfinIntegrationSpec {
         height << [1130, 750]
     }
 
+
+    /* Usage: waitFor(time) { condition }
+    Loops over the condition, waiting for it to be true. If the condition becomes true before the timeout (in milliseconds)
+    expires, the function quits immediately and returns true. If the condition is still false as the timeout expires, the
+    function returns false.
+    */
+    def waitFor(closure, time) {
+        def start = System.currentTimeMillis()
+        while(System.currentTimeMillis() - start < time)
+        {
+            if(closure())
+                return true
+            sleep(10)
+        }
+        return false
+    }
 }
