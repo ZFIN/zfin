@@ -31,8 +31,23 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
         System.out.println("------------------------------");
 
         for(NamingIssuesReportRow row: namesWithTranspositionErrors) {
-            System.out.println("UPDATE genotype SET geno_display_name = '" + row.getComputedDisplayName() + "' WHERE geno_zdb_id = '" + row.getId() + "' AND geno_display_name = '" + row.getDisplayName() + "';");
+            // System.out.println("UPDATE genotype SET geno_display_name = '" + row.getComputedDisplayName() + "' WHERE geno_zdb_id = '" + row.getId() + "' AND geno_display_name = '" + row.getDisplayName() + "';");
+            System.out.println("\"" + row.getId() + "\",\"" + row.getDisplayName() + "\",\"" + row.getComputedDisplayName() + "\"");
         }
+    }
+
+
+    public List<NamingIssuesReportRow> getSuspiciousGenotypes() {
+        String sql = "select geno_zdb_id, geno_display_name, get_genotype_display(geno_zdb_id) as computed_display_name \n" +
+                " from genotype \n" +
+                " where trim(get_genotype_display(geno_zdb_id)) != trim(geno_display_name) \n";
+
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
+        return (List<NamingIssuesReportRow>) query
+                .list()
+                .stream()
+                .map(row -> NamingIssuesReportRow.fromQueryResult(row))
+                .collect(Collectors.toList());
     }
 
     public List<NamingIssuesReportRow> getGenotypesWithTransposedNames(List<NamingIssuesReportRow> rows) {
@@ -60,20 +75,6 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
             return false;
         }
     }
-
-    public List<NamingIssuesReportRow> getSuspiciousGenotypes() {
-        String sql = "select geno_zdb_id, geno_display_name, get_genotype_display(geno_zdb_id) as computed_display_name \n" +
-                " from genotype \n" +
-                " where trim(get_genotype_display(geno_zdb_id)) != trim(geno_display_name) \n";
-
-        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
-        return (List<NamingIssuesReportRow>) query
-                .list()
-                .stream()
-                .map(row -> NamingIssuesReportRow.fromQueryResult(row))
-                .collect(Collectors.toList());
-    }
-
 
 }
 
