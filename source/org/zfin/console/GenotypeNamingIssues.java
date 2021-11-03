@@ -30,9 +30,11 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
         System.out.println("Run these sql updates:");
         System.out.println("------------------------------");
 
+        List<NamingIssuesReportRow> furtherFiltered = filterListToOnlyThoseThatHaveBeenAlphabetized(namesWithTranspositionErrors);
+
         for(NamingIssuesReportRow row: namesWithTranspositionErrors) {
             // System.out.println("UPDATE genotype SET geno_display_name = '" + row.getComputedDisplayName() + "' WHERE geno_zdb_id = '" + row.getId() + "' AND geno_display_name = '" + row.getDisplayName() + "';");
-            System.out.println("\"" + row.getId() + "\",\"" + row.getDisplayName() + "\",\"" + row.getComputedDisplayName() + "\"");
+            System.out.println("\"http://zfin.org/" + row.getId() + "\",\"" + row.getDisplayName() + "\",\"" + row.getComputedDisplayName() + "\"");
         }
     }
 
@@ -65,6 +67,12 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
         return returnList;
     }
 
+    public List<NamingIssuesReportRow> filterListToOnlyThoseThatHaveBeenAlphabetized(List<NamingIssuesReportRow> rows) {
+        List<NamingIssuesReportRow> returnList = new ArrayList<NamingIssuesReportRow>();
+        throw new RuntimeException("Not Implemented");
+//        return returnList;
+    }
+
     public boolean canBeTransposedIntoEqualNames(String displayName, String computedDisplayName) {
         try {
             Set<String> displayNameParts = Set.of(displayName.split(" ?; ?"));
@@ -75,6 +83,7 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
             return false;
         }
     }
+
 
 }
 
