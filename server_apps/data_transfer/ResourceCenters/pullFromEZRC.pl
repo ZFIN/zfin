@@ -102,7 +102,7 @@ sub downloadFiles($$) {
     my $resourceCenter = $_[1];
 
     if  ($resourceCenter eq "EZRC"){
-	if (system("/local/bin/wget https://www.ezrc.kit.edu/downloads/$filename")) {
+	if (system("/local/bin/wget https://www.ezrc.kit.edu/downloads/$filename --no-check-certificate")) {
 	    &errorExit("Failed to download $filename file from EZRC.","  See $wgetStatusFile for details.");
 	}
 	$labZdbId = "ZDB-LAB-130607-1";
