@@ -18,8 +18,9 @@ public class GenotypeFeatureNamePattern {
     public String firstAlleleTransGene;
     public String secondAlleleTransGene;
     public boolean alleleHeterozygous;
+    public String originalRepresentation;
 
-    public GenotypeFeatureNamePattern(String geneName, String transGene, boolean geneHeterozygous, String secondGene, String secondTransGene, String firstAllele, String secondAllele, String firstAlleleTransGene, String secondAlleleTransGene, boolean alleleHeterozygous) {
+    public GenotypeFeatureNamePattern(String geneName, String transGene, boolean geneHeterozygous, String secondGene, String secondTransGene, String firstAllele, String secondAllele, String firstAlleleTransGene, String secondAlleleTransGene, boolean alleleHeterozygous, String originalRepresentation) {
         this.geneName = geneName;
         this.transGene = transGene;
         this.geneHeterozygous = geneHeterozygous;
@@ -30,6 +31,7 @@ public class GenotypeFeatureNamePattern {
         this.firstAlleleTransGene = firstAlleleTransGene;
         this.secondAlleleTransGene = secondAlleleTransGene;
         this.alleleHeterozygous = alleleHeterozygous;
+        this.originalRepresentation = originalRepresentation;
     }
 
     public String toString() {
@@ -45,6 +47,18 @@ public class GenotypeFeatureNamePattern {
                 (alleleHeterozygous ? "/+" : "") +
                 (firstAllele != null ? "</sup>" : "")
                 ;
+    }
+
+    /*
+    * Returns true if any of the transGene fields are not null.
+    * Might be true that the secondary ones are never filled if the first one isn't.
+    *
+    * */
+    public boolean containsTransgenics() {
+        return transGene != null ||
+                secondTransGene != null ||
+                firstAlleleTransGene != null ||
+                secondAlleleTransGene != null;
     }
 
     public static void main(String[] args) {
@@ -112,9 +126,14 @@ public class GenotypeFeatureNamePattern {
                     geneSecondAllele,
                     geneFirstAlleleTransGene,
                     geneSecondAlleleTransGene,
-                    geneSecondAlleleHeterozygous != null);
+                    geneSecondAlleleHeterozygous != null,
+                    subject);
         }
         return output;
+    }
+
+    public boolean equals(GenotypeFeatureNamePattern o) {
+        return this.originalRepresentation.equals(o.originalRepresentation);
     }
 
     private static String[] testNames() {
