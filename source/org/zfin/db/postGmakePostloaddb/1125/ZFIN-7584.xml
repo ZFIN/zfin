@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+
+
+    <changeSet author="christian" id="ZFIN-7584">
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1125/ZFIN-7584.csv"
+                  tableName="ensdarg_temp" encoding="UTF-8">
+            <column header="ZDB ID" name="et_id" type="String"/>
+            <column header="updated reference sequence" name="et_reference" type="String" />
+            <column header="updated variant sequence" name="et_variant" type="String"/>
+        </loadData>
+
+    </changeSet>
+</databaseChangeLog>
