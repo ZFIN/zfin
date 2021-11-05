@@ -1,12 +1,8 @@
 package org.zfin.console;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.hibernate.Query;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
-import org.zfin.util.LoggingUtil;
-
 
 import java.io.*;
 import java.util.*;
@@ -26,63 +22,65 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
         List<NamingIssuesReportRow> allSuspiciousGenotypes = getSuspiciousGenotypes();
         System.out.println("Found " + allSuspiciousGenotypes.size() + " potential name errors.");
 
-        List<NamingIssuesReportRow> namesWithTranspositionErrors = getGenotypesWithTransposedNames(allSuspiciousGenotypes);
-        System.out.println("Found " + namesWithTranspositionErrors.size() + " transposed name errors");
-        System.out.println("------------------------------");
+        categorizeNamingIssues(allSuspiciousGenotypes);
 
-        List<NamingIssuesReportRow> furtherFiltered = filterListToOnlyThoseThatHaveBeenAlphabetized(namesWithTranspositionErrors);
-        System.out.println("After filtering, found " + furtherFiltered.size() + " errors remaining that are a simple ordering issue");
-        System.out.println("------------------------------");
-
-        for(NamingIssuesReportRow row: furtherFiltered) {
-            // System.out.println("UPDATE genotype SET geno_display_name = '" + row.getComputedDisplayName() + "' WHERE geno_zdb_id = '" + row.getId() + "' AND geno_display_name = '" + row.getDisplayName() + "';");
-            System.out.println("\"https://zfin.org/" + row.getId() + "\",\"" + row.getDisplayName() + "\",\"" + row.getComputedDisplayName() + "\"");
-        }
+        outputReport(allSuspiciousGenotypes);
     }
 
-
     public List<NamingIssuesReportRow> getSuspiciousGenotypes() {
-        String sql = "select geno_zdb_id, geno_display_name, get_genotype_display(geno_zdb_id) as computed_display_name \n" +
-                " from genotype \n" +
-                " where trim(get_genotype_display(geno_zdb_id)) != trim(geno_display_name) \n";
-
+        String sql = NamingIssuesReportRow.reportSql();
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
         return (List<NamingIssuesReportRow>) query
                 .list()
                 .stream()
-                .map(row -> NamingIssuesReportRow.fromQueryResult(row))
+                .map(NamingIssuesReportRow::fromQueryResult)
                 .collect(Collectors.toList());
     }
 
-    public List<NamingIssuesReportRow> getGenotypesWithTransposedNames(List<NamingIssuesReportRow> rows) {
-        List<NamingIssuesReportRow> returnList = new ArrayList<NamingIssuesReportRow>();
+    private void categorizeNamingIssues(List<NamingIssuesReportRow> allSuspiciousGenotypes) {
+        categorizeGenotypesWithTransposedNames(allSuspiciousGenotypes);
+        categorizeAlphabeticalTranspositions(allSuspiciousGenotypes);
+    }
 
+    public void categorizeGenotypesWithTransposedNames(List<NamingIssuesReportRow> rows) {
         Iterator<NamingIssuesReportRow> iter = rows.iterator();
         while (iter.hasNext()) {
             NamingIssuesReportRow row = iter.next();
 
             if (canBeTransposedIntoEqualNames(row.getDisplayName(), row.getComputedDisplayName()) ) {
-                returnList.add(row);
-                iter.remove();
+                row.setIssueCategory("Transposed Names");
             }
         }
-        return returnList;
     }
 
-    public List<NamingIssuesReportRow> filterListToOnlyThoseThatHaveBeenAlphabetized(List<NamingIssuesReportRow> rows) {
-        List<NamingIssuesReportRow> returnList = new ArrayList<NamingIssuesReportRow>();
-
+    public void categorizeAlphabeticalTranspositions(List<NamingIssuesReportRow> rows) {
         Iterator<NamingIssuesReportRow> iter = rows.iterator();
         while (iter.hasNext()) {
             NamingIssuesReportRow row = iter.next();
 
             if (namesDifferOnlyByAlphabetization(row.getDisplayName(), row.getComputedDisplayName()) ) {
-                returnList.add(row);
-                iter.remove();
+                row.setIssueCategory("Ordered Alphabetically");
             }
         }
-        return returnList;
+    }
 
+    private void outputReport(List<NamingIssuesReportRow> allSuspiciousGenotypes) {
+        for(NamingIssuesReportRow row: allSuspiciousGenotypes) {
+            // System.out.println("UPDATE genotype SET geno_display_name = '" + row.getComputedDisplayName() + "' WHERE geno_zdb_id = '" + row.getId() + "' AND geno_display_name = '" + row.getDisplayName() + "';");
+            System.out.println("\"https://zfin.org/" + row.getId() + "\",\"" + row.getDisplayName() + "\",\"" + row.getComputedDisplayName() + "\"," + "\"" + row.getIssueCategory() + "\"");
+        }
+    }
+
+    public boolean canBeTransposedIntoEqualNames(String displayName, String computedDisplayName) {
+        try {
+            Set<String> displayNameParts = Set.of(displayName.split(" ?; ?"));
+            Set<String> computedNameParts = Set.of(computedDisplayName.split(" ?; ?"));
+            return displayNameParts.equals(computedNameParts);
+        } catch (java.lang.IllegalArgumentException iae) {
+            //likely a name with duplicate parts
+            System.out.println("WARNING: " + displayName + " has issues -- duplicate parts?");
+            return false;
+        }
     }
 
     /**
@@ -98,46 +96,21 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
         List<String> displayNameParts = List.of(displayName.split(" ?; ?"));
         List<String> computedNameParts = List.of(computedDisplayName.split(" ?; ?"));
 
-        List<GenotypeFeatureNamePattern> sortedDisplayNameFeatures = displayNameParts
+        List<GenotypeFeatureName> sortedDisplayNameFeatures = displayNameParts
                 .stream()
                 .map(GenotypeFeatureNamePattern::parseFeatureName)
                 .filter(elem -> elem != null)
                 .sorted(new GenotypeFeatureNameComparator()) //only sort the original display name
                 .collect(Collectors.toList());
 
-        List<GenotypeFeatureNamePattern> computedDisplayNameFeatures = computedNameParts
+        List<GenotypeFeatureName> computedDisplayNameFeatures = computedNameParts
                 .stream()
                 .map(GenotypeFeatureNamePattern::parseFeatureName)
                 .filter(elem -> elem != null)
                 .collect(Collectors.toList());
 
-        return listsEqual(sortedDisplayNameFeatures, computedDisplayNameFeatures);
+        return GenotypeFeatureNameComparator.listsEqual(sortedDisplayNameFeatures, computedDisplayNameFeatures);
     }
-
-    private boolean listsEqual(List<GenotypeFeatureNamePattern>list1, List<GenotypeFeatureNamePattern>list2) {
-        if (list1.size() != list2.size()) {
-            return false;
-        }
-        for(int i = 0; i < list1.size(); i++) {
-            if (!list1.get(i).equals(list2.get(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public boolean canBeTransposedIntoEqualNames(String displayName, String computedDisplayName) {
-        try {
-            Set<String> displayNameParts = Set.of(displayName.split(" ?; ?"));
-            Set<String> computedNameParts = Set.of(computedDisplayName.split(" ?; ?"));
-            return displayNameParts.equals(computedNameParts);
-        } catch (java.lang.IllegalArgumentException iae) {
-            //likely a name with duplicate parts
-
-            return false;
-        }
-    }
-
 
 }
 

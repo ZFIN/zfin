@@ -10,6 +10,8 @@ public class NamingIssuesReportRow {
     public String id;
     public String displayName;
     public String computedDisplayName;
+    public String issueCategory;
+
 
     public NamingIssuesReportRow() {
     }
@@ -26,7 +28,14 @@ public class NamingIssuesReportRow {
         row.setId(typeCastResult[0].toString());
         row.setDisplayName(typeCastResult[1].toString());
         row.setComputedDisplayName(typeCastResult[2].toString());
+        row.setIssueCategory("UNKNOWN");
         return row;
+    }
+
+    public static String reportSql() {
+        return "select geno_zdb_id, geno_display_name, get_genotype_display(geno_zdb_id) as computed_display_name \n" +
+                " from genotype \n" +
+                " where trim(get_genotype_display(geno_zdb_id)) != trim(geno_display_name) \n";
     }
 
 }
