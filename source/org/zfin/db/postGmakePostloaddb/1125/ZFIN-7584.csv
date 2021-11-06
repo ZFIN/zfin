@@ -1,94 +1,94 @@
-﻿genomic feature,ZDB ID,reference sequence currently at ZFIN,reference sequence (based on coordinates) should be,publication,issue,action,,updated reference sequence,updated variant sequence
-sa1608,ZDB-ALT-120411-216,T,A,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,A,T
-sa919,ZDB-ALT-120411-492,A,T,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,T,A
-sa11582,ZDB-ALT-130411-1400,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,A
-sa12271,ZDB-ALT-130411-2022,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa13373,ZDB-ALT-130411-3004,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa1608,ZDB-ALT-120411-768,T,A,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,A,T
-sa919,ZDB-ALT-120411-1044,A,T,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,T,A
-sa11582,ZDB-ALT-130411-1400,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,A
-sa12271,ZDB-ALT-130411-2022,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa13373,ZDB-ALT-130411-3004,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa1608,ZDB-ALT-120411-1320,T,A,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,A,T
-sa919,ZDB-ALT-120411-1596,A,T,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,T,A
-sa11582,ZDB-ALT-130411-1400,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,A
-sa12271,ZDB-ALT-130411-2022,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa13373,ZDB-ALT-130411-3004,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa1608,ZDB-ALT-120411-1872,T,A,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,A,T
-sa919,ZDB-ALT-120411-2148,A,T,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,T,A
-sa11582,ZDB-ALT-130411-1400,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,A
-sa12271,ZDB-ALT-130411-2022,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa13373,ZDB-ALT-130411-3004,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa1608,ZDB-ALT-120411-2424,T,A,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,A,T
-sa919,ZDB-ALT-120411-2700,A,T,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,T,A
-sa11582,ZDB-ALT-130411-1400,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,A
-sa12271,ZDB-ALT-130411-2022,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa13373,ZDB-ALT-130411-3004,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa1608,ZDB-ALT-120411-2976,T,A,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,A,T
-sa919,ZDB-ALT-120411-3252,A,T,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,T,A
-sa11582,ZDB-ALT-130411-1400,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,A
-sa12271,ZDB-ALT-130411-2022,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa13373,ZDB-ALT-130411-3004,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa1608,ZDB-ALT-120411-3528,T,A,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,A,T
-sa919,ZDB-ALT-120411-3804,A,T,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,T,A
-sa11582,ZDB-ALT-130411-1400,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,A
-sa12271,ZDB-ALT-130411-2022,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa13373,ZDB-ALT-130411-3004,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa1608,ZDB-ALT-120411-4080,T,A,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,A,T
-sa919,ZDB-ALT-120411-4356,A,T,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,T,A
-sa11582,ZDB-ALT-130411-1400,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,A
-sa12271,ZDB-ALT-130411-2022,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa13373,ZDB-ALT-130411-3004,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa1608,ZDB-ALT-120411-4632,T,A,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,A,T
-sa919,ZDB-ALT-120411-4908,A,T,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,T,A
-sa11582,ZDB-ALT-130411-1400,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,A
-sa12271,ZDB-ALT-130411-2022,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa13373,ZDB-ALT-130411-3004,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa1608,ZDB-ALT-120411-5184,T,A,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,A,T
-sa919,ZDB-ALT-120411-5460,A,T,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,T,A
-sa11582,ZDB-ALT-130411-1400,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,A
-sa12271,ZDB-ALT-130411-2022,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa13373,ZDB-ALT-130411-3004,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa1608,ZDB-ALT-120411-5736,T,A,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,A,T
-sa919,ZDB-ALT-120411-6012,A,T,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,T,A
-sa11582,ZDB-ALT-130411-1400,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,A
-sa12271,ZDB-ALT-130411-2022,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa13373,ZDB-ALT-130411-3004,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa1608,ZDB-ALT-120411-6288,T,A,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,A,T
-sa919,ZDB-ALT-120411-6564,A,T,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,T,A
-sa11582,ZDB-ALT-130411-1400,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,A
-sa12271,ZDB-ALT-130411-2022,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa13373,ZDB-ALT-130411-3004,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa1608,ZDB-ALT-120411-6840,T,A,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,A,T
-sa919,ZDB-ALT-120411-7116,A,T,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,T,A
-sa11582,ZDB-ALT-130411-1400,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,A
-sa12271,ZDB-ALT-130411-2022,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa13373,ZDB-ALT-130411-3004,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa1608,ZDB-ALT-120411-7392,T,A,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,A,T
-sa919,ZDB-ALT-120411-7668,A,T,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,T,A
-sa11582,ZDB-ALT-130411-1400,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,A
-sa12271,ZDB-ALT-130411-2022,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa13373,ZDB-ALT-130411-3004,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa1608,ZDB-ALT-120411-7944,T,A,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,A,T
-sa919,ZDB-ALT-120411-8220,A,T,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,T,A
-sa11582,ZDB-ALT-130411-1400,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,A
-sa12271,ZDB-ALT-130411-2022,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa13373,ZDB-ALT-130411-3004,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa1608,ZDB-ALT-120411-8496,T,A,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,A,T
-sa919,ZDB-ALT-120411-8772,A,T,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,T,A
-sa11582,ZDB-ALT-130411-1400,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,A
-sa12271,ZDB-ALT-130411-2022,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa13373,ZDB-ALT-130411-3004,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa1608,ZDB-ALT-120411-9048,T,A,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,A,T
-sa919,ZDB-ALT-120411-9324,A,T,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,T,A
-sa11582,ZDB-ALT-130411-1400,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,A
-sa12271,ZDB-ALT-130411-2022,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa13373,ZDB-ALT-130411-3004,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa1608,ZDB-ALT-120411-9600,T,A,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,A,T
-sa919,ZDB-ALT-120411-9876,A,T,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,T,A
-sa11582,ZDB-ALT-130411-1400,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,A
-sa12271,ZDB-ALT-130411-2022,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa13373,ZDB-ALT-130411-3004,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,T
-sa1608,ZDB-ALT-120411-10152,T,A,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,A,T
-sa919,ZDB-ALT-120411-10428,A,T,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,T,A
-sa11582,ZDB-ALT-130411-1400,G,C,ZDB-PUB-130425-4,sequence need to be reversed/complemented,load: need technical update,,C,A
+﻿ZDB ID,reference sequence,variant sequence
+ZDB-ALT-120411-216,A,T
+ZDB-ALT-120411-492,T,A
+ZDB-ALT-130411-1400,C,A
+ZDB-ALT-130411-2022,C,T
+ZDB-ALT-130411-3004,C,T
+ZDB-ALT-120411-768,A,T
+ZDB-ALT-120411-1044,T,A
+ZDB-ALT-130411-1400,C,A
+ZDB-ALT-130411-2022,C,T
+ZDB-ALT-130411-3004,C,T
+ZDB-ALT-120411-1320,A,T
+ZDB-ALT-120411-1596,T,A
+ZDB-ALT-130411-1400,C,A
+ZDB-ALT-130411-2022,C,T
+ZDB-ALT-130411-3004,C,T
+ZDB-ALT-120411-1872,A,T
+ZDB-ALT-120411-2148,T,A
+ZDB-ALT-130411-1400,C,A
+ZDB-ALT-130411-2022,C,T
+ZDB-ALT-130411-3004,C,T
+ZDB-ALT-120411-2424,A,T
+ZDB-ALT-120411-2700,T,A
+ZDB-ALT-130411-1400,C,A
+ZDB-ALT-130411-2022,C,T
+ZDB-ALT-130411-3004,C,T
+ZDB-ALT-120411-2976,A,T
+ZDB-ALT-120411-3252,T,A
+ZDB-ALT-130411-1400,C,A
+ZDB-ALT-130411-2022,C,T
+ZDB-ALT-130411-3004,C,T
+ZDB-ALT-120411-3528,A,T
+ZDB-ALT-120411-3804,T,A
+ZDB-ALT-130411-1400,C,A
+ZDB-ALT-130411-2022,C,T
+ZDB-ALT-130411-3004,C,T
+ZDB-ALT-120411-4080,A,T
+ZDB-ALT-120411-4356,T,A
+ZDB-ALT-130411-1400,C,A
+ZDB-ALT-130411-2022,C,T
+ZDB-ALT-130411-3004,C,T
+ZDB-ALT-120411-4632,A,T
+ZDB-ALT-120411-4908,T,A
+ZDB-ALT-130411-1400,C,A
+ZDB-ALT-130411-2022,C,T
+ZDB-ALT-130411-3004,C,T
+ZDB-ALT-120411-5184,A,T
+ZDB-ALT-120411-5460,T,A
+ZDB-ALT-130411-1400,C,A
+ZDB-ALT-130411-2022,C,T
+ZDB-ALT-130411-3004,C,T
+ZDB-ALT-120411-5736,A,T
+ZDB-ALT-120411-6012,T,A
+ZDB-ALT-130411-1400,C,A
+ZDB-ALT-130411-2022,C,T
+ZDB-ALT-130411-3004,C,T
+ZDB-ALT-120411-6288,A,T
+ZDB-ALT-120411-6564,T,A
+ZDB-ALT-130411-1400,C,A
+ZDB-ALT-130411-2022,C,T
+ZDB-ALT-130411-3004,C,T
+ZDB-ALT-120411-6840,A,T
+ZDB-ALT-120411-7116,T,A
+ZDB-ALT-130411-1400,C,A
+ZDB-ALT-130411-2022,C,T
+ZDB-ALT-130411-3004,C,T
+ZDB-ALT-120411-7392,A,T
+ZDB-ALT-120411-7668,T,A
+ZDB-ALT-130411-1400,C,A
+ZDB-ALT-130411-2022,C,T
+ZDB-ALT-130411-3004,C,T
+ZDB-ALT-120411-7944,A,T
+ZDB-ALT-120411-8220,T,A
+ZDB-ALT-130411-1400,C,A
+ZDB-ALT-130411-2022,C,T
+ZDB-ALT-130411-3004,C,T
+ZDB-ALT-120411-8496,A,T
+ZDB-ALT-120411-8772,T,A
+ZDB-ALT-130411-1400,C,A
+ZDB-ALT-130411-2022,C,T
+ZDB-ALT-130411-3004,C,T
+ZDB-ALT-120411-9048,A,T
+ZDB-ALT-120411-9324,T,A
+ZDB-ALT-130411-1400,C,A
+ZDB-ALT-130411-2022,C,T
+ZDB-ALT-130411-3004,C,T
+ZDB-ALT-120411-9600,A,T
+ZDB-ALT-120411-9876,T,A
+ZDB-ALT-130411-1400,C,A
+ZDB-ALT-130411-2022,C,T
+ZDB-ALT-130411-3004,C,T
+ZDB-ALT-120411-10152,A,T
+ZDB-ALT-120411-10428,T,A
+ZDB-ALT-130411-1400,C,A
