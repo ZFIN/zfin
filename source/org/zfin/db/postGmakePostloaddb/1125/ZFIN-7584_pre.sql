@@ -2,7 +2,7 @@
 --changeset cmpich:ZFIN-7584
 
 
-create temp table ensdarg_temp
+create table ensdarg_temp
 (
     et_id        VARCHAR(100),
     et_reference VARCHAR(100),
