@@ -74,7 +74,7 @@
             <td>
                 <a HREF="http://www.geneontology.org/">geneontology.org</a>
             </td>
-            <td><a HREF="ftp://ftp.geneontology.org/pub/go/gene-associations/gene_association.zfin.gz">gene_association.zfin.gz</a>
+            <td><a HREF="http://current.geneontology.org/annotations/zfin.gaf.gz">gene_association.zfin.gz</a>
             </td>
             <td>weekly</td>
             <td>
