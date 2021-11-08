@@ -19,7 +19,7 @@
 <c:set var="ORTHOLOGY" value="Orthology"/>
 
 <z:dataPage
-        sections="${[SUMMARY, GENOTYPE, MUTANTS,  MARKERRELATIONSHIPS, TRANSCRIPTS, SEQUENCES, ORTHOLOGY, CITATIONS]}"
+        sections="${[SUMMARY, GENOTYPE, MUTANTS, GO, MARKERRELATIONSHIPS, TRANSCRIPTS, SEQUENCES, ORTHOLOGY, CITATIONS]}"
 >
     <jsp:attribute name="entityName">
         <zfin:abbrev entity="${formBean.marker}"/>
@@ -55,7 +55,10 @@
             </z:section>
         </z:section>
 
-       
+        <z:section title="${GO}" infoPopup="/action/marker/note/go">
+            <div class="__react-root" id="GeneOntologyRibbon" data-gene-id="${formBean.marker.zdbID}"></div>
+        </z:section>
+
         <z:section title="${MARKERRELATIONSHIPS}">
             <div class="__react-root" id="GeneMarkerRelationshipsTable" data-gene-id="${formBean.marker.zdbID}"></div>
         </z:section>
