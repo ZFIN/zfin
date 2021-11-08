@@ -8,6 +8,10 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Script to generate a report of genotype names that have issues and potentially some fixes to run
+ * against the database.
+ */
 public class GenotypeNamingIssues extends AbstractScriptWrapper {
 
     public static void main(String[] args) throws IOException {
@@ -23,6 +27,7 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
         System.out.println("Found " + allSuspiciousGenotypes.size() + " potential name errors.");
 
         categorizeNamingIssues(allSuspiciousGenotypes);
+        applyFixes(allSuspiciousGenotypes);
 
         outputReport(allSuspiciousGenotypes);
     }
@@ -48,7 +53,7 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
             NamingIssuesReportRow row = iter.next();
 
             if (canBeTransposedIntoEqualNames(row.getDisplayName(), row.getComputedDisplayName()) ) {
-                row.setIssueCategory("Transposed Names");
+                row.setIssueCategory(NamingIssuesReportRow.IssueCategory.TRANSPOSED);
             }
         }
     }
@@ -59,15 +64,30 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
             NamingIssuesReportRow row = iter.next();
 
             if (namesDifferOnlyByAlphabetization(row.getDisplayName(), row.getComputedDisplayName()) ) {
-                row.setIssueCategory("Ordered Alphabetically");
+                row.setIssueCategory(NamingIssuesReportRow.IssueCategory.ALPHABETICAL);
+            }
+        }
+    }
+
+    private void applyFixes(List<NamingIssuesReportRow> rows) {
+        Iterator<NamingIssuesReportRow> iter = rows.iterator();
+        while (iter.hasNext()) {
+            NamingIssuesReportRow row = iter.next();
+
+            if (row.getIssueCategory() != NamingIssuesReportRow.IssueCategory.UNKNOWN) {
+                String sql = String.format("UPDATE genotype SET geno_display_name = '%s' where geno_display_name = '%s' and geno_zdb_id = '%s';",
+                                            row.getComputedDisplayName(), row.getDisplayName(), row.getId());
+                row.setSqlFix(sql);
+            } else {
+                row.setSqlFix("");
             }
         }
     }
 
     private void outputReport(List<NamingIssuesReportRow> allSuspiciousGenotypes) {
+        System.out.println("\"ID\",\"Display Name\",\"Computed Display Name\",\"Issue Category\",\"SQL Fix\"");
         for(NamingIssuesReportRow row: allSuspiciousGenotypes) {
-            // System.out.println("UPDATE genotype SET geno_display_name = '" + row.getComputedDisplayName() + "' WHERE geno_zdb_id = '" + row.getId() + "' AND geno_display_name = '" + row.getDisplayName() + "';");
-            System.out.println("\"https://zfin.org/" + row.getId() + "\",\"" + row.getDisplayName() + "\",\"" + row.getComputedDisplayName() + "\"," + "\"" + row.getIssueCategory() + "\"");
+            System.out.println("\"https://zfin.org/" + row.getId() + "\",\"" + row.getDisplayName() + "\",\"" + row.getComputedDisplayName() + "\"," + "\"" + row.getIssueCategory().value + "\",\"" + row.getSqlFix() + "\"");
         }
     }
 

@@ -10,8 +10,18 @@ public class NamingIssuesReportRow {
     public String id;
     public String displayName;
     public String computedDisplayName;
-    public String issueCategory;
+    public IssueCategory issueCategory;
+    public String sqlFix;
 
+    public enum IssueCategory {
+        UNKNOWN("Unknown"),
+        ALPHABETICAL("Ordered Alphabetically"), //Computed names is same as display name if display name is ordered alphabetically (with Tg at the end)
+        TRANSPOSED("Transposed Names"); //Computed names is same as display name, but the ordering is different
+        public String value;
+        private IssueCategory(String value) {
+            this.value = value;
+        }
+    }
 
     public NamingIssuesReportRow() {
     }
@@ -28,7 +38,7 @@ public class NamingIssuesReportRow {
         row.setId(typeCastResult[0].toString());
         row.setDisplayName(typeCastResult[1].toString());
         row.setComputedDisplayName(typeCastResult[2].toString());
-        row.setIssueCategory("UNKNOWN");
+        row.setIssueCategory(IssueCategory.UNKNOWN);
         return row;
     }
 
