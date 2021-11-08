@@ -52,16 +52,6 @@ cloneHead.tag ... that's why there's no table tag here, just rows --%>
     <z:attributeListItem label="PCR Amplification">${clone.pcrAmplification}</z:attributeListItem>
 </c:if>
 
-<c:if test="${!empty formBean.suppliers}">
-    <z:attributeListItem label="Suppliers">
-        <ul class="comma-separated">
-            <c:forEach var="supplier" items="${formBean.suppliers}">
-                <li>${supplier.linkWithAttributionAndOrderThis}</li>
-            </c:forEach>
-        </ul>
-    </z:attributeListItem>
-</c:if>
-
 <c:if test="${clone.rnaClone && !empty clone.rating}">
     <z:attributeListItem label="Quality">
         <zfin2:starRating rating="${clone.rating}" />
