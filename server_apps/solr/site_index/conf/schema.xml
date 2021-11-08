@@ -576,6 +576,9 @@
 
         <field name="lab" type="keyword" indexed="true" stored="true" multiValued="true"   />
         <field name="reporter_color" type="reporter_color" indexed="true" stored="true" multiValued="true"   />
+        <field name="emission_color" type="keyword" indexed="true" stored="true" multiValued="false"   />
+        <field name="excitation_color" type="keyword" indexed="true" stored="true" multiValued="false"   />
+        <field name="any_color" type="keyword" indexed="true" stored="true" multiValued="true"   />
 
         <field name="promoter_full_name" type="text" indexed="true" stored="true" multiValued="true"  />
         <field name="coding_sequence_full_name" type="text" indexed="true" stored="true" multiValued="true"  />

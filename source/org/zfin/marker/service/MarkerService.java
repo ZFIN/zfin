@@ -18,6 +18,8 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.presentation.MappedMarkerBean;
 import org.zfin.mapping.repository.LinkageRepository;
 import org.zfin.marker.*;
+import org.zfin.marker.fluorescence.FluorescentMarker;
+import org.zfin.marker.fluorescence.FluorescentProtein;
 import org.zfin.marker.presentation.*;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.DiseaseAnnotationModel;
@@ -1348,8 +1350,92 @@ public class MarkerService {
         return response;
     }
 
+    public JsonResultResponse<FluorescentProtein> getFPBaseJsonResultResponse(Pagination pagination) {
+        JsonResultResponse<FluorescentProtein> response = new JsonResultResponse<>();
+        List<FluorescentProtein> proteins = getMarkerRepository().getAllFluorescentProteins();
+        if (proteins == null) {
+            return response;
+        }
+        response.setResults(proteins);
+        response.setTotal(proteins.size());
+
+        // filtering
+/*
+        FilterService<MarkerRelationshipPresentation> filterService = new FilterService<>(new MarkerRelationshipFiltering());
+        List<MarkerRelationshipPresentation> filteredMarkerRelationshipList = filterService.filterAnnotations(fullMarkerRelationships, pagination.getFieldFilterValueMap());
+*/
+
+        // sorting
+        if (pagination.getSortBy() != null) {
+            FluorescentProteinSorting sorting = new FluorescentProteinSorting();
+            proteins.sort(sorting.getComparator(pagination.getSortBy()));
+        }
+
+        response.setResults(proteins.stream()
+                .skip(pagination.getStart())
+                .limit(pagination.getLimit())
+                .collect(Collectors.toList()));
+        return response;
+    }
+
+    public JsonResultResponse<FluorescentMarker> getFfgFluorescenceJsonResultResponse(Pagination pagination) {
+        JsonResultResponse<FluorescentMarker> response = new JsonResultResponse<>();
+        List<FluorescentMarker> efgs = getMarkerRepository().getAllFluorescentEfgs();
+        if (efgs == null) {
+            return response;
+        }
+        response.setResults(efgs);
+        response.setTotal(efgs.size());
+
+        // filtering
+/*
+        FilterService<MarkerRelationshipPresentation> filterService = new FilterService<>(new MarkerRelationshipFiltering());
+        List<MarkerRelationshipPresentation> filteredMarkerRelationshipList = filterService.filterAnnotations(fullMarkerRelationships, pagination.getFieldFilterValueMap());
+*/
+
+        // sorting
+        if (pagination.getSortBy() != null) {
+            FluorescentMarkerSorting sorting = new FluorescentMarkerSorting();
+            efgs.sort(sorting.getComparator(pagination.getSortBy()));
+        }
+
+        response.setResults(efgs.stream()
+                .skip(pagination.getStart())
+                .limit(pagination.getLimit())
+                .collect(Collectors.toList()));
+        return response;
+    }
+
+    public JsonResultResponse<FluorescentMarker> getConstructFluorescenceJsonResultResponse(Pagination pagination) {
+        JsonResultResponse<FluorescentMarker> response = new JsonResultResponse<>();
+        List<FluorescentMarker> efgs = getMarkerRepository().getAllFluorescentConstructs();
+        if (efgs == null) {
+            return response;
+        }
+        response.setResults(efgs);
+        response.setTotal(efgs.size());
+
+        // filtering
+/*
+        FilterService<MarkerRelationshipPresentation> filterService = new FilterService<>(new MarkerRelationshipFiltering());
+        List<MarkerRelationshipPresentation> filteredMarkerRelationshipList = filterService.filterAnnotations(fullMarkerRelationships, pagination.getFieldFilterValueMap());
+*/
+
+        // sorting
+        if (pagination.getSortBy() != null) {
+            FluorescentMarkerSorting sorting = new FluorescentMarkerSorting();
+            efgs.sort(sorting.getComparator(pagination.getSortBy()));
+        }
+
+        response.setResults(efgs.stream()
+                .skip(pagination.getStart())
+                .limit(pagination.getLimit())
+                .collect(Collectors.toList()));
+        return response;
+    }
+
     public List<MarkerRelationshipEditMetadata> getMarkerRelationshipEditMetadata(Marker marker,
-                                                                                   MarkerRelationship.Type... types) {
+                                                                                  MarkerRelationship.Type... types) {
         return Arrays.stream(types)
                 .map(typeEnum -> {
                     MarkerRelationshipType type = markerRepository.getMarkerRelationshipType(typeEnum.toString());

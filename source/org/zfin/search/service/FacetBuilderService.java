@@ -202,6 +202,10 @@ public class FacetBuilderService {
 
         wildtypeGroup.setRootOnly(true);
         facetGroups.add(wildtypeGroup);
+        facetGroups.add(buildSingleFacetGroup("Color", ANY_COLOR.getName(), false));
+        facetGroups.add(buildSingleFacetGroup("Emission Range", EMISSION_COLOR.getName(), false));
+        facetGroups.add(buildSingleFacetGroup("Excitation Range", EXCITATION_COLOR.getName(), false));
+
         facetGroups.add(buildSingleFacetGroup("Assay", FieldName.ASSAY.getName(), false));
 
 
@@ -236,6 +240,9 @@ public class FacetBuilderService {
         facetGroups.add(buildSingleFacetGroup("Is ZebraShare", "is_zebrashare", false));
         facetGroups.add(buildSingleFacetGroup("Construct Regulatory Region", REGULATORY_REGION.getName(), false));
         facetGroups.add(buildSingleFacetGroup("Construct Coding Sequence", CODING_SEQUENCE.getName(), false));
+        facetGroups.add(buildSingleFacetGroup("Color", ANY_COLOR.getName(), false));
+        facetGroups.add(buildSingleFacetGroup("Emission Range", EMISSION_COLOR.getName(), false));
+        facetGroups.add(buildSingleFacetGroup("Excitation Range", EXCITATION_COLOR.getName(), false));
         //screen used to be here, removed as a result of case 11323
         //facetGroups.add(buildSingleFacetGroup("Screen", "screen", false,  fqMap));
 
@@ -251,10 +258,18 @@ public class FacetBuilderService {
         expressionAnatomy.addFacet(buildFacet(EXPRESSION_ANATOMY_TF.getName(), true));
         facetGroups.add(expressionAnatomy);
 
-
         facetGroups.add(buildSingleFacetGroup("Regulatory Region", REGULATORY_REGION.getName(), true));
         facetGroups.add(buildSingleFacetGroup("Stage", STAGE.getName(), true));
         facetGroups.add(buildSingleFacetGroup("Source", SOURCE.getName(), false));
+        facetGroups.add(buildSingleFacetGroup("Color", ANY_COLOR.getName(), false));
+
+        FacetGroup emissionRange = new FacetGroup("Emission Range", true);
+        emissionRange.addFacet(buildFacet(EMISSION_COLOR.getName(), true));
+        facetGroups.add(emissionRange);
+
+        FacetGroup excitationRange = new FacetGroup("Excitation Range", true);
+        excitationRange.addFacet(buildFacet(EMISSION_COLOR.getName(), true));
+        facetGroups.add(excitationRange);
 
         return facetGroups;
     }
@@ -504,7 +519,7 @@ public class FacetBuilderService {
 
     private FacetGroup buildSingleFacetGroup(String label, String fieldName,
                                             boolean openByDefault) {
-        return buildSingleFacetGroup(label, fieldName, new ArrayList<FacetQueryEnum>(), openByDefault);
+        return buildSingleFacetGroup(label, fieldName, new ArrayList<>(), openByDefault);
     }
 
     private FacetGroup buildSingleFacetGroup(String label, String fieldName, List<FacetQueryEnum> facetQueryEnumList,
@@ -529,14 +544,14 @@ public class FacetBuilderService {
 
     private Facet buildFacet(FieldName fieldName,
                              boolean openByDefault) {
-        return buildFacet(fieldName, new ArrayList<FacetQueryEnum>(), openByDefault);
+        return buildFacet(fieldName, new ArrayList<>(), openByDefault);
     }
 
 
     private Facet buildFacet(String fieldName,
                             boolean openByDefault) {
         FieldName fieldNameInstance = FieldName.getFieldName(fieldName);
-        return buildFacet(fieldName, new ArrayList<FacetQueryEnum>(), openByDefault);
+        return buildFacet(fieldName, new ArrayList<>(), openByDefault);
     }
 
     private Facet buildFacet(String fieldName,

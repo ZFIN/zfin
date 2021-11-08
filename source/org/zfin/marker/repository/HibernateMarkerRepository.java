@@ -32,6 +32,8 @@ import org.zfin.gwt.root.server.DTOMarkerService;
 import org.zfin.infrastructure.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.*;
+import org.zfin.marker.fluorescence.FluorescentMarker;
+import org.zfin.marker.fluorescence.FluorescentProtein;
 import org.zfin.marker.presentation.*;
 import org.zfin.marker.service.MarkerRelationshipPresentationTransformer;
 import org.zfin.marker.service.MarkerRelationshipSupplierPresentationTransformer;
@@ -3283,7 +3285,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
 
-
     @Override
     public List<Marker> getMarkerByGroup(Marker.TypeGroup group, int number) {
         MarkerTypeGroup type = getMarkerTypeGroupByName(group.name());
@@ -3448,6 +3449,37 @@ public class HibernateMarkerRepository implements MarkerRepository {
     @Override
     public MarkerRelationshipType getMarkerRelationshipType(String name) {
         return (MarkerRelationshipType) HibernateUtil.currentSession().get(MarkerRelationshipType.class, name);
+    }
+
+    @Override
+    public List<FluorescentProtein> getAllFluorescentProteins() {
+        Session session = HibernateUtil.currentSession();
+        //String hql = "select protein from FluorescentProtein protein where size(protein.efgs) > 0";
+        String hql = "select protein from FluorescentProtein protein order by size(protein.efgs) desc ";
+        Query query = session.createQuery(hql);
+        return (List<FluorescentProtein>) query.list();
+    }
+
+    @Override
+    public List<FluorescentMarker> getAllFluorescentEfgs() {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select efl from FluorescentMarker efl " +
+                " where efl.efg.markerType.name = :type " +
+                " order by efl.efg.abbreviation";
+        Query query = session.createQuery(hql);
+        query.setParameter("type", Marker.Type.EFG.toString());
+        return (List<FluorescentMarker>) query.list();
+    }
+
+    @Override
+    public List<FluorescentMarker> getAllFluorescentConstructs() {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select efl from FluorescentMarker efl " +
+                " where efl.efg.markerType.name in (:type)";
+        Query query = session.createQuery(hql);
+        List types = List.of(Marker.Type.ETCONSTRCT.toString(), Marker.Type.GTCONSTRCT.toString(), Marker.Type.TGCONSTRCT.toString());
+        query.setParameterList("type", types);
+        return (List<FluorescentMarker>) query.list();
     }
 
 }

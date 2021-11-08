@@ -33,7 +33,7 @@
                     <ul>
                         <li><a href="/downloads">Downloads</a></li>
                         <li><a href="/schemaSpy/index.html">Data Model</a></li>
-                        <li><zfin2:externalLink href="http://www.zebrafishmine.org">ZebrafishMine</zfin2:externalLink></li>
+                        <li><zfin2:externalLink href="https://www.alliancegenome.org/alliancemine">AllianceMine</zfin2:externalLink></li>
                         <li><zfin2:externalLink href="https://ensembl.org/biomart/martview">BioMart</zfin2:externalLink></li>
                     </ul>
                 </div>

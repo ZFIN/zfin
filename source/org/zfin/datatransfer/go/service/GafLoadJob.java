@@ -64,7 +64,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
     @Autowired
     protected DownloadService downloadService;
 
-    private final int BATCH_SIZE = 20;
+    private final int BATCH_SIZE = 100;
 
     protected FpInferenceGafParser gafParser;
     protected GafService gafService;
@@ -159,7 +159,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             summary.close();
 
             details.append("\n\n");
-            details.write("== REMOVED == "+optional.size());
+            details.write("== REMOVED == " + optional.size());
             for (GafJobEntry removed : gafJobData.getRemovedEntries()) {
                 details.append(removed.getEntryString()).append("\n");
             }
@@ -282,6 +282,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
         Iterator<GafJobEntry> iteratorToRemove = evidencesToRemove.iterator();
 
         // create batch
+        int index = 0;
         while (iteratorToRemove.hasNext()) {
             // build batch
             List<GafJobEntry> batchToRemove = new ArrayList<>();
@@ -289,6 +290,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
                 GafJobEntry removeEntry = iteratorToRemove.next();
                 batchToRemove.add(removeEntry);
             }
+            System.out.print(index++ + ":");
             try {
                 HibernateUtil.createTransaction();
                 gafService.removeEntriesBatch(batchToRemove, gafJobData);

@@ -1,14 +1,17 @@
 package org.zfin.datatransfer.go;
 
 import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.stereotype.Component;
-import org.zfin.repository.RepositoryFactory;
 import org.zfin.ontology.GenericTerm;
-import java.io.*;
+import org.zfin.repository.RepositoryFactory;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -55,27 +58,10 @@ public class GpadParser extends FpInferenceGafParser {
     }
 
     private String parseAnnotationProperties(String properties) throws IOException {
-        Reader in = new StringReader(properties);
-
-        CSVParser records = CSVFormat.RFC4180
-                .withHeader(AnnotationPropertiesHeader.class)
-                .withDelimiter('|')
-                .parse(in);
-        // awkward
-        Iterator<CSVRecord> iterator = records.iterator();
-        if (!iterator.hasNext())
-            throw new RuntimeException("Should have only one line");
-        CSVRecord record = iterator.next();
-        String noctuaModel = record.get(AnnotationPropertiesHeader.NOCTUA_MODEL_ID);
-        if (iterator.hasNext())
-            throw new RuntimeException("Should have only one line");
-        return getValueByKey(noctuaModel);
-    }
-
-    private String getValueByKey(String noctuaModel) {
-        if (!noctuaModel.contains("="))
-            return noctuaModel;
-        return noctuaModel.substring(noctuaModel.indexOf("=") + 1);
+        return Arrays.stream(properties.split("\\|"))
+                .filter(s -> s.startsWith(AnnotationPropertiesHeader.NOCTUA_MODEL_ID.key))
+                .map(s -> (s.split("="))[1])
+                .findFirst().orElseGet(String::new);
     }
 
     // turn evidence EDO code into three-digit character
@@ -90,14 +76,13 @@ public class GpadParser extends FpInferenceGafParser {
             if (ecoCodeMap == null) {
                 logger.error("invalid eco code" + gafEntry.getEvidenceCode());
                 System.out.println(term.getOboID());
+            } else {
+
+                String evCode = ecoCodeMap.getEvidenceCode();
+
+
+                gafEntry.setEvidenceCode(evCode);
             }
-            else {
-
-            String evCode = ecoCodeMap.getEvidenceCode();
-
-
-              gafEntry.setEvidenceCode(evCode);
-          }
 
             // fixed set of qualifiers
             // if thw incoming one is not one of them discard the value
@@ -155,8 +140,8 @@ public class GpadParser extends FpInferenceGafParser {
 
     enum AnnotationPropertiesHeader {
         CONTRIBUTOR("contributor"),
-        NOCTUA_MODEL_ID("noctua-model-id"),
-        NOCTUA_MODEL_STATE("noctua-model-state");
+        NOCTUA_MODEL_STATE("model-state"),
+        NOCTUA_MODEL_ID("noctua-model-id");
 
         private String key;
 

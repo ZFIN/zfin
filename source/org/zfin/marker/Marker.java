@@ -2,8 +2,11 @@
 package org.zfin.marker;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zfin.ExternalNote;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
@@ -11,6 +14,8 @@ import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.framework.api.View;
 import org.zfin.infrastructure.*;
 import org.zfin.mapping.MappedMarkerImpl;
+import org.zfin.marker.fluorescence.FluorescentMarker;
+import org.zfin.marker.fluorescence.FluorescentProtein;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.ontology.GenericTerm;
@@ -30,6 +35,8 @@ import java.util.stream.Collectors;
  * Domain model for the abstract marker object, which can be a gene, EST, CDNA, ...
  * ToDo: needs more modelling...
  */
+@Setter
+@Getter
 public class Marker extends SequenceFeature implements Serializable, Comparable, EntityAlias, EntityNotes, EntityID {
 
     public static final String WITHDRAWN = "WITHDRAWN:";
@@ -47,6 +54,9 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
     private HashMap<String, List<Publication>> pubsPerAnatomy;
     private Set<Figure> figures;
     private Set<MarkerFamilyName> familyName;
+    private Set<FluorescentProtein> fluorescentProteinEfgs;
+    private Set<FluorescentProtein> fluorescentProteinConstructs;
+    private Set<FluorescentMarker> fluorescentMarkers;
     private Set<Ortholog> orthologs;
     protected Set<MarkerRelationship> firstMarkerRelationships;    //  where this marker = "mrel_mrkr_1_zdb_id" in mrel
     private Set<MarkerRelationship> secondMarkerRelationships;   //  where this marker = "mrel_mrkr_2_zdb_id" in mrel
@@ -723,5 +733,11 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
 
     public void setSecondaryMarkerSet(Set<SecondaryMarker> secondaryMarkerSet) {
         this.secondaryMarkerSet = secondaryMarkerSet;
+    }
+
+    public Set<FluorescentMarker> getFluorescentMarkers() {
+        if (fluorescentMarkers == null)
+            return null;
+        return fluorescentMarkers;
     }
 }
