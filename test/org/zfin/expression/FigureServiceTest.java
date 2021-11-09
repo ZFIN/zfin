@@ -159,22 +159,6 @@ public class FigureServiceTest extends AbstractDatabaseTest {
         }
     }
 
-    @Test
-    public void createPhenotypeFigureSummaryShouldShowAnatomyTermsSortedAlphabetically() {
-        Marker gene = markerRepository.getMarkerByID("ZDB-GENE-980526-112");
-        List<FigureSummaryDisplay> figureSummaryRows = FigureService.createPhenotypeFigureSummary(gene);
-        for (FigureSummaryDisplay row : figureSummaryRows) {
-            PhenotypeStatementWarehouse last = null;
-            for (PhenotypeStatementWarehouse pheno : row.getPhenotypeStatementList()) {
-                if (last != null) {
-                    assertThat("anatomy terms should be in order and not duplicated",
-                            pheno.getDisplayNameWithoutTag().toLowerCase(), greaterThan(last.getDisplayNameWithoutTag().toLowerCase()));
-                }
-                last = pheno;
-            }
-        }
-    }
-
     /**
      *
      */

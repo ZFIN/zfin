@@ -144,7 +144,7 @@ public class TranscriptService {
      * @return Supporting sequences.
      */
     public static List<DBLink> getSupportingDBLinks(Transcript transcript) {
-        List<DBLink> dbLinks = new ArrayList<DBLink>();
+        List<DBLink> dbLinks = new ArrayList<>();
 
         for (TranscriptDBLink dblink : transcript.getTranscriptDBLinks()) {
             if (dblink.isInDisplayGroup(DisplayGroup.GroupName.TRANSCRIPT_LINKED_SEQUENCE))
