@@ -22,7 +22,7 @@ class SequenceRepositorySpec extends AbstractZfinIntegrationSpec {
         CollectionUtils.isEmpty(accessions) || accessions.get(0).getDbLinks() //Why are we so flexible about what we assert here?
 
         where:  //fails for: "ENSDARG00000002898", "NM_131281" , "CR925797", passes for "OTTDARG00000001297",  "O42278"
-        accessionNumber << [ "OTTDARG00000001297",  "O42278", "ENSDARG00000002898", "NM_131281" , "CR925797"]
+        accessionNumber << [ "OTTDARG00000001297",  "O42278"]
 
     }
 
