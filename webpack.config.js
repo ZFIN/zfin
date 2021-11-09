@@ -2,7 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const OptimizeCssAssetsPlugin = require('css-minimizer-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const WebpackAssetsManifest = require('webpack-assets-manifest');
 
@@ -44,7 +44,7 @@ const config = {
                     {
                         loader: 'sass-loader',
                         options: {
-                            data: '$primary: ' + (process.env.PRIMARY_COLOR || 'null') + ';',
+                            additionalData: '$primary: ' + (process.env.PRIMARY_COLOR || 'null') + ';',
                         }
                     },
                 ],
