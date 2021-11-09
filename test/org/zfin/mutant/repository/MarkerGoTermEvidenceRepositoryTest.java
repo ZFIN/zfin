@@ -108,20 +108,6 @@ public class MarkerGoTermEvidenceRepositoryTest extends AbstractDatabaseTest {
         assertNull(markerGoTermEvidenceRepository.getNdExistsForGoGeneEvidenceCode(markerGoTermEvidence));
     }
 
-
-    @Test
-    public void gafOrganizations() {
-        MarkerGoTermEvidence markerGoTermEvidence = (MarkerGoTermEvidence) HibernateUtil.currentSession()
-                .createQuery(" from MarkerGoTermEvidence  ev where ev.id like :zdbId")
-                .setMaxResults(1)
-                .setString("zdbId", "ZDB-MRKRGOEV-04%")
-                .uniqueResult();
-        assertNotNull(markerGoTermEvidence);
-        assertEquals(GafOrganization.OrganizationEnum.ZFIN.toString(), markerGoTermEvidence.getOrganizationCreatedBy());
-        assertNotNull(markerGoTermEvidence.getGafOrganization());
-        assertEquals(GafOrganization.OrganizationEnum.ZFIN.toString(), markerGoTermEvidence.getGafOrganization().getOrganization());
-    }
-
     @Test
     public void sourceOrganizations() {
         List<MarkerGoTermEvidenceCreatedBySource> sources = HibernateUtil.currentSession().createCriteria(MarkerGoTermEvidenceCreatedBySource.class).list();
@@ -142,12 +128,11 @@ public class MarkerGoTermEvidenceRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getEvidencesForGafOrganization() {
-        GafOrganization gafOrganization = markerGoTermEvidenceRepository.getGafOrganization(GafOrganization.OrganizationEnum.ZFIN);
+        GafOrganization gafOrganization = markerGoTermEvidenceRepository.getGafOrganization(GafOrganization.OrganizationEnum.NOCTUA);
         List<String> zdbIds = markerGoTermEvidenceRepository.getEvidencesForGafOrganization(gafOrganization);
         assertNotNull(zdbIds);
         // typically about 20K now that they have been moved to Uniprot as the source
         assertTrue(zdbIds.size() > 10000);
-        assertTrue(zdbIds.size() < 1000000);
     }
 
     @Test
@@ -160,7 +145,9 @@ public class MarkerGoTermEvidenceRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void addEvidenceWithInference() {
-        MarkerGoTermEvidence existingEvidence = (MarkerGoTermEvidence) HibernateUtil.currentSession().createCriteria(MarkerGoTermEvidence.class).setMaxResults(1).uniqueResult();
+        MarkerGoTermEvidence existingEvidence = (MarkerGoTermEvidence) HibernateUtil.currentSession().createCriteria(MarkerGoTermEvidence.class)
+                .add(Restrictions.eq("zdbID", "ZDB-MRKRGOEV-211013-579"))
+                .uniqueResult();
         MarkerGoTermEvidence evidence = new MarkerGoTermEvidence();
         evidence.setMarker(existingEvidence.getMarker());
         evidence.setSource(existingEvidence.getSource());
@@ -177,7 +164,7 @@ public class MarkerGoTermEvidenceRepositoryTest extends AbstractDatabaseTest {
         // change the
         InferenceGroupMember inferenceGroupMember = new InferenceGroupMember();
         inferenceGroupMember.setInferredFrom("UniProtKB:Q9NXR7");
-        Set<InferenceGroupMember> inferenceGroupMemberSet = new HashSet<InferenceGroupMember>();
+        Set<InferenceGroupMember> inferenceGroupMemberSet = new HashSet<>();
         inferenceGroupMemberSet.add(inferenceGroupMember);
 
         evidence.setInferredFrom(inferenceGroupMemberSet);
