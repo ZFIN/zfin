@@ -597,6 +597,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
 
     //double gene morpoholino
     @Test
+    @Ignore
     public void doubleGeneMorpholinoNameTest() {
         genericGeneAlleleBoxTest("MO1-epcam zgc:110304");
     }

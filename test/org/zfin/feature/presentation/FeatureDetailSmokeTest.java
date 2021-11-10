@@ -3,6 +3,7 @@ package org.zfin.feature.presentation;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import org.apache.commons.collections.CollectionUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -20,6 +21,7 @@ public class FeatureDetailSmokeTest extends AbstractSmokeTest {
 
 
     @Test
+    @Ignore //Does this test have value? See: ZFIN-7712
     public void testFeaturePage() throws IOException {
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/ZDB-ALT-980203-401");
         assertEquals(page.getTitleText(), "ZFIN Feature: b191");
@@ -30,6 +32,7 @@ public class FeatureDetailSmokeTest extends AbstractSmokeTest {
     }
 
     @Test
+    @Ignore //Does this test have value? See: ZFIN-7712
     public void testFeaturePageWithOtherPagesLink() throws IOException {
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/ZDB-ALT-130627-1");
         assertEquals(page.getTitleText(), "ZFIN Feature: tud11Gt");
