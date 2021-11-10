@@ -16,6 +16,19 @@
 
 use DBI;
 
+# ====================================
+#
+# "Whirleygig" progress indicator
+#
+#------ Global variables for "whirleygig" to indicate busy working (https://www.perlmonks.org/?node_id=4943)
+my $WHIRLEY_COUNT=-1;
+my @WHIRLEY=('-', '\\', '|', '/');
+sub whirley {
+  $WHIRLEY_COUNT = ($WHIRLEY_COUNT + 1) % @WHIRLEY;
+  return @WHIRLEY[$WHIRLEY_COUNT];
+}
+# END OF Whirleygig
+
 # Take a SP file as input (content format restricted). 
 
 # Create the output files and give them titles. 
@@ -37,10 +50,9 @@ open PUB, ">pubmed_not_in_zfin" or die "Cannot open the pubmed_not_in_zfin:$!";
 
 $/ = "//\n";
 open (UNPT, "zfin.dat") ||  die "Cannot open zfin.dat : $!\n";
-@records = <UNPT>;
-close UNPT;
-foreach (@records) {
-   
+while (<UNPT>) {
+    print STDERR "Processing zfin.dat " . whirley() . "\r";
+
     init_var ();     # Initialize the variables and arrays 
 
     # records in probfile contains AC, RX, DR EMBL lines
@@ -222,6 +234,8 @@ foreach (@records) {
     unlink $probrecd;	
 
 }   # for loop for SP file
+close UNPT;
+
 close PUB;
 
 open CHECKREP, ">checkreport.txt" or die "Cannot open checkreport.txt:$!";
