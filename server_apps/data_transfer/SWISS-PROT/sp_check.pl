@@ -17,6 +17,7 @@
 use DBI;
 use lib "<!--|ROOT_PATH|-->/server_apps/";
 use ZFINPerlModules;
+use POSIX;
 
 # Take a SP file as input (content format restricted).
 
@@ -37,12 +38,32 @@ my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $pass
 # if PubMed number not in zfin, output to a single file
 open PUB, ">pubmed_not_in_zfin" or die "Cannot open the pubmed_not_in_zfin:$!";
 
+my $zfin_dat_hash = md5_file('zfin.dat');
+print "Processing zfin.dat (md5:$zfin_dat_hash) at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n";
+
 $/ = "//\n";
 open (UNPT, "zfin.dat") ||  die "Cannot open zfin.dat : $!\n";
+my $record_count = 0;
 while (<UNPT>) {
-    print STDERR "Processing zfin.dat " . ZFINPerlModules->whirley() . "\r";
+    $record_count++;
+}
+close(UNPT);
+my $one_percent_of_records = floor($record_count / 100);
+$one_percent_of_records = 1 if $one_percent_of_records == 0;
 
-    init_var ();     # Initialize the variables and arrays 
+print "zfin.dat has $record_count records\n";
+
+open (UNPT, "zfin.dat") ||  die "Cannot open zfin.dat : $!\n";
+my $progress_count = 0;
+while (<UNPT>) {
+    $progress_count++;
+
+    #give some indication of progress (once per 1% of records)
+    if ($progress_count % $one_percent_of_records == 0) {
+        print ceil($progress_count * 100 / $record_count) . "% - " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n";
+    }
+
+    init_var ();     # Initialize the variables and arrays
 
     # records in probfile contains AC, RX, DR EMBL lines
     # they go to one of the prob# files for curator review. 
@@ -60,7 +81,7 @@ while (<UNPT>) {
     }
 
     if (/DR\s*ZFIN;.*\nDR\s*ZFIN;/) {     # if >1 ZFIN lines
-	open F, ">>prob8" or die "Cannot open prob7 file";
+	open F, ">>prob8" or die "Cannot open prob8 file";
 	print F;   close F;
 	print PROB; close PROB;
 	system ("cat '$probrecd' >> problemfile");
@@ -226,6 +247,7 @@ while (<UNPT>) {
 close UNPT;
 
 close PUB;
+print "Finished processing zfin.dat at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n";
 
 open CHECKREP, ">checkreport.txt" or die "Cannot open checkreport.txt:$!";
 print CHECKREP  "\nFinal report: \n";
@@ -348,7 +370,7 @@ sub Embl_Check () {
 
 # Check whether at least one PubMed number is in ZFIN db.
 # Return 0/1 that denote this result.
-sub PubMed_Check( ) {
+sub PubMed_Check () {
   
   my $match = 0; 
   my ($sth, $pubmed, $qpubmed, $pub_match);
@@ -512,3 +534,9 @@ ENDDOC
   close FILE;
 }
 
+sub md5_file () {
+   my $file = $_[0];
+   my $hash = `md5sum '$file' | cut -d ' ' -f 1`;
+   $hash =~ s/\s+$//;
+   return $hash;
+}
