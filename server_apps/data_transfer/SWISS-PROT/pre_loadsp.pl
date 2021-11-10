@@ -12,6 +12,9 @@ use lib "<!--|ROOT_PATH|-->/server_apps/";
 use ZFINPerlModules;
 use Try::Tiny;
 
+#------------------- Flush Output Buffer --------------
+$|=1;
+
 #------------------- Download -----------
 
 sub downloadGOtermFiles () {
@@ -89,6 +92,7 @@ sub sendRunningResult {
 #
 sub select_zebrafish {
     try {
+      print("Downloading https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_trembl_vertebrates.dat.gz -O uniprot_trembl_vertebrates.dat.gz\n");
       system("/local/bin/wget -q  https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_trembl_vertebrates.dat.gz -O uniprot_trembl_vertebrates.dat.gz");
     } catch {
       chomp $_;
@@ -97,6 +101,7 @@ sub select_zebrafish {
     };
 
     try {
+      print("Extracting\n")
       system("gunzip uniprot_trembl_vertebrates.dat.gz");
     } catch {
       chomp $_;
@@ -112,6 +117,7 @@ sub select_zebrafish {
     }
 
     try {
+      print("Downloading https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_sprot_vertebrates.dat.gz -O uniprot_sprot_vertebrates.dat.gz\n");
       system("/local/bin/wget -q https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_sprot_vertebrates.dat.gz -O uniprot_sprot_vertebrates.dat.gz");
     } catch {
       chomp $_;
@@ -120,6 +126,7 @@ sub select_zebrafish {
     };
 
     try {
+      print("Extracting\n")
       system("gunzip uniprot_sprot_vertebrates.dat.gz");
     } catch {
       chomp $_;
@@ -135,21 +142,22 @@ sub select_zebrafish {
         print "\nDownloaded uniprot_sprot_vertebrates.dat\n\n";
     }
 
-    $/ = "\/\/\n";
+    $/ = "\/\/\n"; #custom record separator
     open(DAT1, "uniprot_trembl_vertebrates.dat") || die("Could not open uniprot_trembl_vertebrates.dat!");
-
     open OUTPUT, ">pre_zfin.dat" or die "Cannot open pre_zfin.dat";
 
-    my @records = <DAT1>;
+    print("Processing uniprot_trembl_vertebrates.dat\n");
     my $record;
-    foreach $record (@records){
+    while ($record = <DAT1>){
+       print STDERR "Processing " . whirley() . "\r";
        print OUTPUT "$record" if $record =~ m/OS   Danio rerio/;
     }
     close(DAT1) ;
 
+    print("Processing uniprot_sprot_vertebrates.dat\n");
     open(DAT2, "uniprot_sprot_vertebrates.dat") || die("Could not open uniprot_sprot_vertebrates.dat!");
-    @records = <DAT2>;
-    foreach $record (@records){
+    while ($record = <DAT2>){
+       print STDERR "Processing " . whirley() . "\r";
        print OUTPUT "$record" if $record =~ m/OS   Danio rerio/;
     }
 
@@ -157,6 +165,17 @@ sub select_zebrafish {
 
     close(DAT2) ;
     close(OUTPUT) ;
+}
+
+# ====================================
+#
+# "Whirleygig" progress indicator
+#
+sub whirley {
+  our $WHIRLEY_COUNT;
+  our @WHIRLEY;
+  $WHIRLEY_COUNT = ($WHIRLEY_COUNT + 1) % @WHIRLEY;
+  return @WHIRLEY[$WHIRLEY_COUNT];
 }
 
 #=======================================================
@@ -187,6 +206,10 @@ system("mkdir ./ccnote");
 my $dbname = "<!--|DB_NAME|-->";
 my $username = "";
 my $password = "";
+
+#------ Global variables for "whirleygig" to indicate busy working (https://www.perlmonks.org/?node_id=4943)
+our $WHIRLEY_COUNT=-1;
+our @WHIRLEY=('-', '\\', '|', '/');
 
 ########################################################################################################
 #
@@ -251,21 +274,22 @@ print "\nNumber of manually curated UniProt IDs: $ctManuallyEnteredUniProtIDs\n\
 
 my $uniprotId;
 my $url;
-my $uniProtURL = "http://www.uniprot.org/uniprot/";
+my $uniProtURL = "https://www.uniprot.org/uniprot/";
 open INVALID, ">invalidManuallyCuratedUniProtIDs.txt" || die ("Cannot open invalidManuallyCuratedUniProtIDs.txt !");
 my $numInvalidUniProtIDs = 0;
 if ($ctManuallyEnteredUniProtIDs > 0) {
+  print("Checking for invalid manually entered uniprot IDs\n");
   foreach $uniprotId (@manuallyEnteredUniProtIDs) {
+     print STDERR "Processing " . whirley() . "\r";
      $url = $uniProtURL . $uniprotId;
-     my $content = get $url;
-     if (defined $content) {
-       if ($content =~ m/this page was not found/) {
+     my $status_code = getstore($url, "/dev/null");
+     if ($status_code != 200) {
           print INVALID "$uniprotId\n";
           $numInvalidUniProtIDs++;
-        }
       }
-      undef $content;
+      undef $status_code;
   }
+  print("\n");
 }
 
 close(INVALID);
