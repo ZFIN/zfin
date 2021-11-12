@@ -72,7 +72,7 @@ public class CreateAlternateTRTag extends TagSupport {
         long groupIndex = 0;
         if (object != null) {
             if (object instanceof String)
-                groupIndex = new Long((String) object);
+                groupIndex = Long.parseLong((String) object);
             else
                 groupIndex = (Long) object;
         }

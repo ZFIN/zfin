@@ -37,7 +37,7 @@ public class IpTokenRememberMeServices extends TokenBasedRememberMeServices{
         long tokenExpiryTime;
 
         try {
-            tokenExpiryTime = new Long(cookieTokens[1]);
+            tokenExpiryTime = Long.parseLong(cookieTokens[1]);
         }
         catch (NumberFormatException nfe) {
             throw new InvalidCookieException("Cookie token[1] did not contain a valid number (contained '" +
