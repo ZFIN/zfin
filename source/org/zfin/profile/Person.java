@@ -84,7 +84,7 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
     private String personalBio;
 
     private Boolean emailList;
-    private Boolean deceased = new Boolean(false);
+    private Boolean deceased = Boolean.FALSE;
     //    private String ownerID;
     private Set<Lab> labs;
     private Set<Company> companies;
