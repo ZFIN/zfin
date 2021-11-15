@@ -1,4 +1,4 @@
-package org.zfin.console;
+package org.zfin.nomenclature.repair;
 
 import lombok.Getter;
 import lombok.Setter;

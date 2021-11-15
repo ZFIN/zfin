@@ -1,4 +1,4 @@
-package org.zfin.console;
+package org.zfin.nomenclature.repair;
 
 import java.util.Comparator;
 import java.util.List;

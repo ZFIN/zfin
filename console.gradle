@@ -1,4 +1,4 @@
 task genotypeNamingIssues(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = 'org.zfin.console.GenotypeNamingIssues'
+    main = 'org.zfin.nomenclature.repair.GenotypeNamingIssues'
 }

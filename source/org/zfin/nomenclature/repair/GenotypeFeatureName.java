@@ -1,4 +1,4 @@
-package org.zfin.console;
+package org.zfin.nomenclature.repair;
 
 //basically a struct for the "feature name" that is a component of genotype names
 public class GenotypeFeatureName {

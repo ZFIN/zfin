@@ -1,4 +1,4 @@
-package org.zfin.console;
+package org.zfin.nomenclature.repair;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
