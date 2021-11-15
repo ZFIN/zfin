@@ -10,7 +10,7 @@ const isProd = process.env.NODE_ENV === 'production';
 
 const config = {
     context: path.resolve(__dirname, 'home/javascript'),
-    devtool: isProd ? false : 'cheap-module-eval-source-map',
+    devtool: isProd ? false : 'eval-cheap-module-source-map',
     mode: 'development',
     entry: {
         angular: './angular/index.js',
