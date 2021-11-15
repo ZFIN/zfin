@@ -1,5 +1,9 @@
 package org.zfin.nomenclature.repair;
 
+import lombok.SneakyThrows;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
 import org.hibernate.Query;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
@@ -11,12 +15,34 @@ import java.util.stream.Collectors;
 /**
  * Script to generate a report of genotype names that have issues and potentially some fixes to run
  * against the database.
+ *
+ * Run with: gradle genotypeNamingIssues --args='-o out.csv'
+ *
  */
 public class GenotypeNamingIssues extends AbstractScriptWrapper {
 
+    public static final Option outputFileName = OptionBuilder.withArgName("output").hasArg().isRequired().withDescription("the file to write csv report").create("o");
+
+    private BufferedWriter outputFileWriter;
+
+    static {
+        options.addOption(outputFileName);
+    }
+
+    public GenotypeNamingIssues(BufferedWriter outputFileWriter) throws IOException {
+        super();
+        this.outputFileWriter = outputFileWriter;
+    }
+
     public static void main(String[] args) throws IOException {
-        GenotypeNamingIssues gni = new GenotypeNamingIssues();
+        CommandLine commandLine = parseArguments(args, "");
+        String outputPath = commandLine.getOptionValue(outputFileName.getOpt());
+
+        BufferedWriter outputWriter = new BufferedWriter(new FileWriter(outputPath));
+        GenotypeNamingIssues gni = new GenotypeNamingIssues(outputWriter);
         gni.findNamingIssues();
+        outputWriter.close();
+
         System.exit(0);
     }
 
@@ -24,7 +50,7 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
         initAll();
 
         List<NamingIssuesReportRow> allSuspiciousGenotypes = getSuspiciousGenotypes();
-        System.out.println("Found " + allSuspiciousGenotypes.size() + " potential name errors.");
+        System.err.println("Found " + allSuspiciousGenotypes.size() + " potential name errors.");
 
         categorizeNamingIssues(allSuspiciousGenotypes);
         applyFixes(allSuspiciousGenotypes);
@@ -85,9 +111,9 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
     }
 
     private void outputReport(List<NamingIssuesReportRow> allSuspiciousGenotypes) {
-        System.out.println("\"ID\",\"Display Name\",\"Computed Display Name\",\"Issue Category\",\"SQL Fix\"");
+        write("\"ID\",\"Display Name\",\"Computed Display Name\",\"Issue Category\",\"SQL Fix\"");
         for(NamingIssuesReportRow row: allSuspiciousGenotypes) {
-            System.out.println("\"https://zfin.org/" + row.getId() + "\",\"" + row.getDisplayName() + "\",\"" + row.getComputedDisplayName() + "\"," + "\"" + row.getIssueCategory().value + "\",\"" + row.getSqlFix() + "\"");
+            write("\"https://zfin.org/" + row.getId() + "\",\"" + row.getDisplayName() + "\",\"" + row.getComputedDisplayName() + "\"," + "\"" + row.getIssueCategory().value + "\",\"" + row.getSqlFix() + "\"");
         }
     }
 
@@ -98,7 +124,7 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
             return displayNameParts.equals(computedNameParts);
         } catch (java.lang.IllegalArgumentException iae) {
             //likely a name with duplicate parts
-            System.out.println("WARNING: " + displayName + " has issues -- duplicate parts?");
+            System.err.println("WARNING: " + displayName + " has issues -- duplicate parts?");
             return false;
         }
     }
@@ -130,6 +156,11 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
                 .collect(Collectors.toList());
 
         return GenotypeFeatureNameComparator.listsEqual(sortedDisplayNameFeatures, computedDisplayNameFeatures);
+    }
+
+    @SneakyThrows
+    private void write(String line) {
+        this.outputFileWriter.write(line + "\n");
     }
 
 }
