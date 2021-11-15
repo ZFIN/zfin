@@ -1,6 +1,7 @@
 package org.zfin.figure.service;
 
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,6 +13,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.profile.Person;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.util.FileUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -98,6 +100,8 @@ public class ImageService {
         Image image = createPlaceholderImage(figure, owner, isVideoStill);
 
         String extension = FilenameUtils.getExtension(fileName);
+
+        createDestinationParentDirectoryIfNotExists(publicationZdbId);
         File destinationDirectory = getDestinationParentDirectory(publicationZdbId, false);
         String destinationBasename = destinationDirectory + "/" + image.getZdbID();
         String destinationFilename = destinationBasename + FilenameUtils.EXTENSION_SEPARATOR + extension;
@@ -121,9 +125,16 @@ public class ImageService {
         Files.copy(imageStream, destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
         try {
-            String makeMedium = ZfinPropertiesEnum.CONVERT_BINARY_PATH + " -thumbnail 1000x64 " + destinationFile + " " + thumbnailFile;
+            String convertBinary = ZfinPropertiesEnum.CONVERT_BINARY_PATH.value();
+            if (convertBinary == null) {
+                throw new RuntimeException("Environment variable CONVERT_BINARY_PATH must be set");
+            }
+            if (!FileUtil.checkFileExists(convertBinary)) {
+                throw new RuntimeException("Cannot find imagemagick's \"convert\" binary at: " + convertBinary);
+            }
+            String makeMedium = convertBinary + " -thumbnail 1000x64 " + destinationFile + " " + thumbnailFile;
             Runtime.getRuntime().exec(makeMedium);
-            String makeThumbnail = ZfinPropertiesEnum.CONVERT_BINARY_PATH + " -thumbnail 500x550 " + destinationFile + " " + mediumFile;
+            String makeThumbnail = convertBinary + " -thumbnail 500x550 " + destinationFile + " " + mediumFile;
             Runtime.getRuntime().exec(makeThumbnail);
 
         } catch (IOException e) {
@@ -131,5 +142,10 @@ public class ImageService {
         }
 
         return image;
+    }
+
+    private static void createDestinationParentDirectoryIfNotExists(String publicationZdbId) throws IOException {
+        File destinationDirectory = getDestinationParentDirectory(publicationZdbId, true);
+        FileUtils.forceMkdir(destinationDirectory);
     }
 }
