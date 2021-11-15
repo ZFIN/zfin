@@ -101,7 +101,7 @@ sub select_zebrafish {
     };
 
     try {
-      print("Extracting\n")
+      print("Extracting\n");
       system("gunzip uniprot_trembl_vertebrates.dat.gz");
     } catch {
       chomp $_;
@@ -126,7 +126,7 @@ sub select_zebrafish {
     };
 
     try {
-      print("Extracting\n")
+      print("Extracting\n");
       system("gunzip uniprot_sprot_vertebrates.dat.gz");
     } catch {
       chomp $_;
@@ -149,7 +149,7 @@ sub select_zebrafish {
     print("Processing uniprot_trembl_vertebrates.dat\n");
     my $record;
     while ($record = <DAT1>){
-       print STDERR "Processing " . whirley() . "\r";
+       print STDERR "Processing " . ZFINPerlModules->whirley() . "\r";
        print OUTPUT "$record" if $record =~ m/OS   Danio rerio/;
     }
     close(DAT1) ;
@@ -157,7 +157,7 @@ sub select_zebrafish {
     print("Processing uniprot_sprot_vertebrates.dat\n");
     open(DAT2, "uniprot_sprot_vertebrates.dat") || die("Could not open uniprot_sprot_vertebrates.dat!");
     while ($record = <DAT2>){
-       print STDERR "Processing " . whirley() . "\r";
+       print STDERR "Processing " . ZFINPerlModules->whirley() . "\r";
        print OUTPUT "$record" if $record =~ m/OS   Danio rerio/;
     }
 
@@ -167,16 +167,6 @@ sub select_zebrafish {
     close(OUTPUT) ;
 }
 
-# ====================================
-#
-# "Whirleygig" progress indicator
-#
-sub whirley {
-  our $WHIRLEY_COUNT;
-  our @WHIRLEY;
-  $WHIRLEY_COUNT = ($WHIRLEY_COUNT + 1) % @WHIRLEY;
-  return @WHIRLEY[$WHIRLEY_COUNT];
-}
 
 #=======================================================
 #
@@ -206,10 +196,6 @@ system("mkdir ./ccnote");
 my $dbname = "<!--|DB_NAME|-->";
 my $username = "";
 my $password = "";
-
-#------ Global variables for "whirleygig" to indicate busy working (https://www.perlmonks.org/?node_id=4943)
-our $WHIRLEY_COUNT=-1;
-our @WHIRLEY=('-', '\\', '|', '/');
 
 ########################################################################################################
 #
@@ -280,7 +266,7 @@ my $numInvalidUniProtIDs = 0;
 if ($ctManuallyEnteredUniProtIDs > 0) {
   print("Checking for invalid manually entered uniprot IDs\n");
   foreach $uniprotId (@manuallyEnteredUniProtIDs) {
-     print STDERR "Processing " . whirley() . "\r";
+     print STDERR "Processing " . ZFINPerlModules->whirley() . "\r";
      $url = $uniProtURL . $uniprotId;
      my $status_code = getstore($url, "/dev/null");
      if ($status_code != 200) {

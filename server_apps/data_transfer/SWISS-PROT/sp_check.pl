@@ -15,21 +15,10 @@
 # look into.
 
 use DBI;
+use lib "<!--|ROOT_PATH|-->/server_apps/";
+use ZFINPerlModules;
 
-# ====================================
-#
-# "Whirleygig" progress indicator
-#
-#------ Global variables for "whirleygig" to indicate busy working (https://www.perlmonks.org/?node_id=4943)
-my $WHIRLEY_COUNT=-1;
-my @WHIRLEY=('-', '\\', '|', '/');
-sub whirley {
-  $WHIRLEY_COUNT = ($WHIRLEY_COUNT + 1) % @WHIRLEY;
-  return @WHIRLEY[$WHIRLEY_COUNT];
-}
-# END OF Whirleygig
-
-# Take a SP file as input (content format restricted). 
+# Take a SP file as input (content format restricted).
 
 # Create the output files and give them titles. 
 init_files();
@@ -51,7 +40,7 @@ open PUB, ">pubmed_not_in_zfin" or die "Cannot open the pubmed_not_in_zfin:$!";
 $/ = "//\n";
 open (UNPT, "zfin.dat") ||  die "Cannot open zfin.dat : $!\n";
 while (<UNPT>) {
-    print STDERR "Processing zfin.dat " . whirley() . "\r";
+    print STDERR "Processing zfin.dat " . ZFINPerlModules->whirley() . "\r";
 
     init_var ();     # Initialize the variables and arrays 
 
