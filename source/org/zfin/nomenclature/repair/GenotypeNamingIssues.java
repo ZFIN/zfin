@@ -1,9 +1,5 @@
 package org.zfin.nomenclature.repair;
 
-import lombok.SneakyThrows;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
 import org.hibernate.Query;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
@@ -21,41 +17,25 @@ import java.util.stream.Collectors;
  */
 public class GenotypeNamingIssues extends AbstractScriptWrapper {
 
-    public static final Option outputFileName = OptionBuilder.withArgName("output").hasArg().isRequired().withDescription("the file to write csv report").create("o");
-
     private BufferedWriter outputFileWriter;
-
-    static {
-        options.addOption(outputFileName);
-    }
-
-    public GenotypeNamingIssues(BufferedWriter outputFileWriter) throws IOException {
-        super();
-        this.outputFileWriter = outputFileWriter;
-    }
+    private static final String OUTPUT_PATH = "GenotypeNamingIssuesReport.csv";
 
     public static void main(String[] args) throws IOException {
-        CommandLine commandLine = parseArguments(args, "");
-        String outputPath = commandLine.getOptionValue(outputFileName.getOpt());
-
-        BufferedWriter outputWriter = new BufferedWriter(new FileWriter(outputPath));
-        GenotypeNamingIssues gni = new GenotypeNamingIssues(outputWriter);
-        gni.findNamingIssues();
-        outputWriter.close();
-
+        GenotypeNamingIssues gni = new GenotypeNamingIssues();
+        gni.generateErrorReportOfNamingIssues();
         System.exit(0);
     }
 
-    public void findNamingIssues() throws IOException {
+    public void generateErrorReportOfNamingIssues() throws IOException {
         initAll();
 
         List<NamingIssuesReportRow> allSuspiciousGenotypes = getSuspiciousGenotypes();
-        System.err.println("Found " + allSuspiciousGenotypes.size() + " potential name errors.");
+        LOG.info("Found " + allSuspiciousGenotypes.size() + " potential name errors.");
 
         categorizeNamingIssues(allSuspiciousGenotypes);
         applyFixes(allSuspiciousGenotypes);
-
         outputReport(allSuspiciousGenotypes);
+
     }
 
     public List<NamingIssuesReportRow> getSuspiciousGenotypes() {
@@ -111,9 +91,21 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
     }
 
     private void outputReport(List<NamingIssuesReportRow> allSuspiciousGenotypes) {
-        write("\"ID\",\"Display Name\",\"Computed Display Name\",\"Issue Category\",\"SQL Fix\"");
-        for(NamingIssuesReportRow row: allSuspiciousGenotypes) {
-            write("\"https://zfin.org/" + row.getId() + "\",\"" + row.getDisplayName() + "\",\"" + row.getComputedDisplayName() + "\"," + "\"" + row.getIssueCategory().value + "\",\"" + row.getSqlFix() + "\"");
+        BufferedWriter outputWriter = null;
+        try {
+            outputWriter = new BufferedWriter(new FileWriter(OUTPUT_PATH));
+            outputWriter.write("\"ID\",\"Display Name\",\"Computed Display Name\",\"Issue Category\",\"SQL Fix\"\n");
+            for (NamingIssuesReportRow row : allSuspiciousGenotypes) {
+                outputWriter.write("\"https://zfin.org/" + row.getId() + "\",\"" + row.getDisplayName() + "\",\"" + row.getComputedDisplayName() + "\"," + "\"" + row.getIssueCategory().value + "\",\"" + row.getSqlFix() + "\"\n");
+            }
+        } catch (IOException ioe) {
+            LOG.error("Error writing to file: " + OUTPUT_PATH);
+        } finally {
+            try {
+                outputWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -124,7 +116,7 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
             return displayNameParts.equals(computedNameParts);
         } catch (java.lang.IllegalArgumentException iae) {
             //likely a name with duplicate parts
-            System.err.println("WARNING: " + displayName + " has issues -- duplicate parts?");
+            LOG.warn("WARNING: " + displayName + " has issues -- duplicate parts?");
             return false;
         }
     }
@@ -156,11 +148,6 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
                 .collect(Collectors.toList());
 
         return GenotypeFeatureNameComparator.listsEqual(sortedDisplayNameFeatures, computedDisplayNameFeatures);
-    }
-
-    @SneakyThrows
-    private void write(String line) {
-        this.outputFileWriter.write(line + "\n");
     }
 
 }
