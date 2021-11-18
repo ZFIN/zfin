@@ -130,7 +130,7 @@ class FigureViewServiceSpec extends ZfinIntegrationSpec {
     }
 
     @Unroll
-    def "#figZdbID should have expression entities: #entities"() {
+    def "#figZdbID should have expression entities: #expectedEntities"() {
         when: "we get the term list"
         Figure figure = RepositoryFactory.figureRepository.getFigure(figZdbID)
         def entities = figureViewService.getExpressionEntities(figure)*.toString()
@@ -150,7 +150,7 @@ class FigureViewServiceSpec extends ZfinIntegrationSpec {
 
 
     @Unroll
-    def "#figZdbID expression stages should be #start.abbreviation to #end.abbreviation"() {
+    def "#figZdbID expression stages should be #startStageAbbrev to #endStageAbbrev"() {
         when: "we get the figure"
         Figure figure = RepositoryFactory.figureRepository.getFigure(figZdbID)
         DevelopmentStage start = figureViewService.getExpressionStartStage(figure)
@@ -189,7 +189,7 @@ class FigureViewServiceSpec extends ZfinIntegrationSpec {
     }
 
     @Unroll
-    def "#figZdbID phenotype stages should be #startStageZdbID to #endStageZdbID"() {
+    def "#figZdbID phenotype stages should be #startStageAbbrev to #endStageAbbrev"() {
         when: "we get the figure, along with start and end stages for all of it's phenotype data"
         Figure figure = RepositoryFactory.figureRepository.getFigure(figZdbID)
         DevelopmentStage start = figureViewService.getPhenotypeStartStage(figure)
