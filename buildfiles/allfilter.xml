@@ -28,6 +28,7 @@
 <filter token="CGI_BIN_DIR_NAME" value="${CGI_BIN_DIR_NAME}"/>
 <filter token="CLIENT_LOCALE" value="${CLIENT_LOCALE}"/>
 <filter token="CONFIGURATION_DIRECTORY" value="${CONFIGURATION_DIRECTORY}"/>
+<filter token="CONVERT_BINARY_PATH" value="${CONVERT_BINARY_PATH}"/>
 <filter token="COOKIE_PATH" value="${COOKIE_PATH}"/>
 <filter token="COUNT_PATO_ERR" value="${COUNT_PATO_ERR}"/>
 <filter token="COUNT_PATO_OUT" value="${COUNT_PATO_OUT}"/>

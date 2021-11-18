@@ -2,7 +2,7 @@ FROM gradle:jdk17
 
 RUN apt update && apt install -y --no-install-recommends \
        ant groovy nodejs npm postgresql-client tcsh sudo \
-       vim nano emacs iputils-ping docker.io
+       vim nano emacs iputils-ping docker.io imagemagick
 
 RUN mkdir /opt/misc 
 COPY ./apache-groovy-binary-3.0.7.zip.sha256 /opt/misc
@@ -27,6 +27,7 @@ RUN mkdir -p /var/solr/data/site_index && chgrp -R solr /var/solr && chmod -R g+
 
 COPY ./ssh-agent.sudoers /etc/sudoers.d/01-ssh-agent
 RUN chmod 0440 /etc/sudoers.d/01-ssh-agent
+
 USER gradle
 COPY ./cshrc /home/gradle/.cshrc
 COPY ./bash_profile /tmp/bash_profile

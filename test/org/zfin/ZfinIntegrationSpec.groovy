@@ -11,7 +11,6 @@ import spock.lang.Specification
 
 @WebAppConfiguration
 @ContextConfiguration(locations = "file:home/WEB-INF/spring/mvc-webapp.xml")
-@RunWith(SpringJUnit4ClassRunner.class)
 abstract class ZfinIntegrationSpec extends Specification {
 
     public def setupSpec() {

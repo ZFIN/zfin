@@ -27,7 +27,7 @@ class ExpressionSearchSpec extends ZfinIntegrationSpec{
     }
 
     @Unroll
-    def "A Gene/EST query for #query should find some gene results"() {
+    def "A Gene/EST query for #geneField should find some gene results"() {
         when: "we get expression gene results"
         criteria.setGeneField(geneField)
         expressionSearchService.getGeneResults(criteria)
