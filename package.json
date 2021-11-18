@@ -23,7 +23,7 @@
     "@babel/preset-react": "^7.14.5",
     "@fortawesome/fontawesome-free": "^5.15.4",
     "@geneontology/ribbon": "1.11.2",
-    "angular": "^1.8.2",
+    "angular": "1.5.8",
     "babel-loader": "^8.2.2",
     "bootstrap": "^4.6.0",
     "bootstrap-datepicker": "^1.8.0",
