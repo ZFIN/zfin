@@ -1,5 +1,8 @@
 package org.zfin.nomenclature.repair;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ListUtils;
+
 import java.util.Comparator;
 import java.util.List;
 
@@ -15,15 +18,4 @@ public class GenotypeFeatureNameComparator implements Comparator<GenotypeFeature
         return String.CASE_INSENSITIVE_ORDER.compare(pattern1.toString(), pattern2.toString());
     }
 
-    public static boolean listsEqual(List<GenotypeFeatureName> list1, List<GenotypeFeatureName> list2) {
-        if (list1.size() != list2.size()) {
-            return false;
-        }
-        for(int i = 0; i < list1.size(); i++) {
-            if (!list1.get(i).equals(list2.get(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
 }

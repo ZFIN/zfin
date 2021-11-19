@@ -1,5 +1,6 @@
 package org.zfin.nomenclature.repair;
 
+import org.apache.commons.collections.ListUtils;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ public class GenotypeFeatureNameSortTest {
         String s2 = "vhl<sup>hu2117/hu2117</sup>";
         GenotypeFeatureName pattern1 = GenotypeFeatureNamePattern.parseFeatureName(s1);
         GenotypeFeatureName pattern2 = GenotypeFeatureNamePattern.parseFeatureName(s2);
-        List<GenotypeFeatureName> input = new ArrayList<GenotypeFeatureName>();
+        List<GenotypeFeatureName> input = new ArrayList<>();
         input.add(pattern1);
         input.add(pattern2);
         input.sort(new GenotypeFeatureNameComparator());
@@ -80,10 +81,10 @@ public class GenotypeFeatureNameSortTest {
                 .collect(toList());
 
         //sanity check that we're not already ordered
-        assertFalse( GenotypeFeatureNameComparator.listsEqual(inputFeatureNames, outputFeatureNames));
+        assertFalse(ListUtils.isEqualList(inputFeatureNames, outputFeatureNames));
 
         inputFeatureNames.sort(comparator);
-        assertTrue(GenotypeFeatureNameComparator.listsEqual(inputFeatureNames, outputFeatureNames));
+        assertTrue(ListUtils.isEqualList(inputFeatureNames, outputFeatureNames));
     }
 
 }

@@ -1,5 +1,6 @@
 package org.zfin.nomenclature.repair;
 
+import org.apache.commons.collections.ListUtils;
 import org.hibernate.Query;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
@@ -26,7 +27,7 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
         System.exit(0);
     }
 
-    public void generateErrorReportOfNamingIssues() throws IOException {
+    public void generateErrorReportOfNamingIssues() {
         initAll();
 
         List<NamingIssuesReportRow> allSuspiciousGenotypes = getSuspiciousGenotypes();
@@ -102,7 +103,9 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
             LOG.error("Error writing to file: " + OUTPUT_PATH);
         } finally {
             try {
-                outputWriter.close();
+                if (outputWriter != null) {
+                    outputWriter.close();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -147,7 +150,7 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
                 .filter(elem -> elem != null)
                 .collect(Collectors.toList());
 
-        return GenotypeFeatureNameComparator.listsEqual(sortedDisplayNameFeatures, computedDisplayNameFeatures);
+        return ListUtils.isEqualList(sortedDisplayNameFeatures, computedDisplayNameFeatures);
     }
 
 }

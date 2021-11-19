@@ -1,5 +1,7 @@
 package org.zfin.nomenclature.repair;
 
+import java.util.Objects;
+
 //basically a struct for the "feature name" that is a component of genotype names
 public class GenotypeFeatureName {
 
@@ -51,8 +53,19 @@ public class GenotypeFeatureName {
                 secondAlleleTransGene != null;
     }
 
-    public boolean equals(GenotypeFeatureName o) {
-        return this.originalRepresentation.equals(o.originalRepresentation);
+    @Override
+    public boolean equals(Object other) {
+        if (other == null) return false;
+        if (other == this) return true;
+        if (!(other instanceof GenotypeFeatureName)) return false;
+        GenotypeFeatureName otherMyClass = (GenotypeFeatureName)other;
+        return this.originalRepresentation.equals(otherMyClass.originalRepresentation);
+    }
+
+    @Override
+    public int hashCode() {
+        int prime = 31;
+        return prime + Objects.hashCode(this.originalRepresentation);
     }
 
 }
