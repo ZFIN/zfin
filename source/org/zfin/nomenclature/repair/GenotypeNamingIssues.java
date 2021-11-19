@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class GenotypeNamingIssues extends AbstractScriptWrapper {
 
     private BufferedWriter outputFileWriter;
-    private static final String OUTPUT_PATH = "GenotypeNamingIssuesReport.csv";
+    private static final String DEFAULT_OUTPUT_PATH = "GenotypeNamingIssuesReport.csv";
 
     public static void main(String[] args) throws IOException {
         GenotypeNamingIssues gni = new GenotypeNamingIssues();
@@ -93,14 +93,20 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
 
     private void outputReport(List<NamingIssuesReportRow> allSuspiciousGenotypes) {
         BufferedWriter outputWriter = null;
+        String outputPath = System.getProperty("reportFile", DEFAULT_OUTPUT_PATH);
+        if (outputPath.equals("")) {
+            //Seems we get empty string if property isn't specified. Maybe due to gradle configuration in console.gradle?
+            outputPath = DEFAULT_OUTPUT_PATH;
+        }
+        
         try {
-            outputWriter = new BufferedWriter(new FileWriter(OUTPUT_PATH));
+            outputWriter = new BufferedWriter(new FileWriter(outputPath));
             outputWriter.write("\"ID\",\"Display Name\",\"Computed Display Name\",\"Issue Category\",\"SQL Fix\"\n");
             for (NamingIssuesReportRow row : allSuspiciousGenotypes) {
                 outputWriter.write("\"https://zfin.org/" + row.getId() + "\",\"" + row.getDisplayName() + "\",\"" + row.getComputedDisplayName() + "\"," + "\"" + row.getIssueCategory().value + "\",\"" + row.getSqlFix() + "\"\n");
             }
         } catch (IOException ioe) {
-            LOG.error("Error writing to file: " + OUTPUT_PATH);
+            LOG.error("Error writing to file: " + outputPath);
         } finally {
             try {
                 if (outputWriter != null) {
