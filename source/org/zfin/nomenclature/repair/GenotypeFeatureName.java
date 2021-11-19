@@ -58,8 +58,8 @@ public class GenotypeFeatureName {
         if (other == null) return false;
         if (other == this) return true;
         if (!(other instanceof GenotypeFeatureName)) return false;
-        GenotypeFeatureName otherMyClass = (GenotypeFeatureName)other;
-        return this.originalRepresentation.equals(otherMyClass.originalRepresentation);
+        GenotypeFeatureName genotypeFeatureName = (GenotypeFeatureName)other;
+        return this.originalRepresentation.equals(genotypeFeatureName.originalRepresentation);
     }
 
     @Override
