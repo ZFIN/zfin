@@ -11,6 +11,7 @@ plugins {
 apply plugin: 'java'
 apply plugin: 'groovy'
 apply from: 'agr.gradle'
+apply from: 'console.gradle'
 
 //apply from: file('setupTestsReports.gradle')
 
