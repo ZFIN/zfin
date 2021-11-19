@@ -15,8 +15,10 @@
 # look into.
 
 use DBI;
+use lib "<!--|ROOT_PATH|-->/server_apps/";
+use ZFINPerlModules;
 
-# Take a SP file as input (content format restricted). 
+# Take a SP file as input (content format restricted).
 
 # Create the output files and give them titles. 
 init_files();
@@ -37,10 +39,9 @@ open PUB, ">pubmed_not_in_zfin" or die "Cannot open the pubmed_not_in_zfin:$!";
 
 $/ = "//\n";
 open (UNPT, "zfin.dat") ||  die "Cannot open zfin.dat : $!\n";
-@records = <UNPT>;
-close UNPT;
-foreach (@records) {
-   
+while (<UNPT>) {
+    print STDERR "Processing zfin.dat " . ZFINPerlModules->whirley() . "\r";
+
     init_var ();     # Initialize the variables and arrays 
 
     # records in probfile contains AC, RX, DR EMBL lines
@@ -222,6 +223,8 @@ foreach (@records) {
     unlink $probrecd;	
 
 }   # for loop for SP file
+close UNPT;
+
 close PUB;
 
 open CHECKREP, ">checkreport.txt" or die "Cannot open checkreport.txt:$!";

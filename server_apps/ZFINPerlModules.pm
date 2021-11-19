@@ -20,6 +20,9 @@ my %monthDisplays = (
     "Dec" => "12"
 );
 
+#------ Global variables for "whirleygig" to indicate busy working (https://www.perlmonks.org/?node_id=4943)
+my $WHIRLEY_COUNT=-1;
+my @WHIRLEY=('-', '\\', '|', '/');
 
 sub doSystemCommand {                  
 
@@ -146,5 +149,13 @@ sub month3LettersToNumber() {
   }
 }
 
+# ====================================
+#
+# "Whirleygig" progress indicator
+#
+sub whirley {
+  $WHIRLEY_COUNT = ($WHIRLEY_COUNT + 1) % @WHIRLEY;
+  return @WHIRLEY[$WHIRLEY_COUNT];
+}
 
 1;
