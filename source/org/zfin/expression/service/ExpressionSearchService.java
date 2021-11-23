@@ -665,7 +665,7 @@ public class ExpressionSearchService {
             addIfNotNull(url, "assayName", assay);
             addIfNotNull(url, "fish", fish);
             addIfNotNull(url, "authorField", author);
-            url.addNameValuePair("journalType", journalType.toString());
+            addIfNotNull(url, "journalType", journalType);
             url.addNameValuePair("includeSubstructures", Boolean.toString(includeSubstructures));
             addIfTrue(url, "onlyWildtype", wildtypeOnly);
             addIfTrue(url, "onlyReporter", onlyReporter);
@@ -676,6 +676,12 @@ public class ExpressionSearchService {
         private void addIfNotNull(URLCreator url, String name, String value) {
             if (value != null) {
                 url.addNameValuePair(name, value);
+            }
+        }
+
+        private void addIfNotNull(URLCreator url, String name, ExpressionSearchCriteria.JournalTypeOption value) {
+            if (value != null) {
+                url.addNameValuePair(name, value.toString());
             }
         }
 

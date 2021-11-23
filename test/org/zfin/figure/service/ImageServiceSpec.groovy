@@ -24,7 +24,14 @@ class ImageServiceSpec extends AbstractZfinIntegrationSpec {
 
     //these runs once for the whole class
     def setupSpec() {
-        tempDir.newFolder(ZfinPropertiesEnum.IMAGE_LOAD.toString(), "medium")
+        def imageLoadPath = ZfinPropertiesEnum.IMAGE_LOAD.toString()
+
+        // use relative path, otherwise tempDir throws IOException
+        if (imageLoadPath.startsWith("/")) {
+            imageLoadPath = "." + imageLoadPath
+        }
+
+        tempDir.newFolder(imageLoadPath, "medium")
         originalLoadup = ZfinPropertiesEnum.LOADUP_FULL_PATH.toString()
         //ZfinPropertiesEnum.LOADUP_FULL_PATH.setValue(tempDir.getRoot().absolutePath)
         imageLoadUp = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString())
@@ -47,6 +54,16 @@ class ImageServiceSpec extends AbstractZfinIntegrationSpec {
     }
 
 
+    def "parent folder exists in loadUp"() {
+        when: "a new image is attempted to be created"
+        def zdbId = "ZDB-PUB-110609-15"
+        def parentPathFile = ImageService.getDestinationParentDirectory(zdbId, true)
+        def parentPath = parentPathFile.toString()
+
+        then: "the parent path of ${parentPath} should exist"
+        parentPathFile.exists()
+    }
+
     def "Regular sized, thumbnail & medium sized files should exist in loadUp"() {
         when: "a new image is created"
         def zdbId = "ZDB-PUB-110609-15"
@@ -54,9 +71,10 @@ class ImageServiceSpec extends AbstractZfinIntegrationSpec {
         File imageFile = new File(imageLoadUp, image.imageFilename)
         File thumbnailFile = new File(imageLoadUp, image.thumbnail)
         File mediumFile = new File(imageLoadUp, image.medium)
+        waitFor(thumbnailFile::exists, 5000) && waitFor(mediumFile::exists, 5000) //wait maximum of 5 seconds for files to exist
 
-        then: "${imageFile}"
-        imageFile.exists()
+        then: "${imageFile} and associated files should exist"
+        imageFile.exists() && thumbnailFile.exists() && mediumFile.exists() //example thumbnailFile path: /opt/zfin/loadUp/pubs/2011/ZDB-PUB-110609-15/ZDB-IMAGE-211115-1_thumb.jpg
     }
 
 
@@ -85,4 +103,21 @@ class ImageServiceSpec extends AbstractZfinIntegrationSpec {
         height << [1130, 750]
     }
 
+
+    /* Usage: waitFor(time) { condition }
+    Loops over the condition, waiting for it to be true. If the condition becomes true before the timeout (in milliseconds)
+    expires, the function quits immediately and returns true. If the condition is still false as the timeout expires, the
+    function returns false.
+    */
+    def waitFor(closure, time) {
+        def start = System.currentTimeMillis()
+        while(System.currentTimeMillis() - start < time)
+        {
+            if(closure())
+                return true
+            sleep(10)
+        }
+        return false
+    }
+    
 }
