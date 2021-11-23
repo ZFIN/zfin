@@ -3,3 +3,11 @@ task genotypeNamingIssues(type: JavaExec) {
     main = 'org.zfin.nomenclature.repair.GenotypeNamingIssues'
     systemProperty "reportFile", System.getProperty("reportFile", null)
 }
+
+task featureAttributionRepair(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.feature.repair.FeatureAttributionRepair'
+    systemProperty "reportFile", System.getProperty("reportFile", null)
+}
+
+
