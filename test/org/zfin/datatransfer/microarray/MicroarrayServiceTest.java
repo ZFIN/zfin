@@ -1,5 +1,6 @@
 package org.zfin.datatransfer.microarray;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.expression.service.ExpressionService;
@@ -52,6 +53,7 @@ public class MicroarrayServiceTest extends AbstractDatabaseTest {
     }
 
     @Test
+    @Ignore //Ignoring on 11/30 -- we are getting sporadic failures in our NCBI api access (maybe rate limiting?). Additionally, the feature we are testing might need to be removed (ZFIN-7738).
     public void getGeoLinkForMarker() {
         Marker m;
 
