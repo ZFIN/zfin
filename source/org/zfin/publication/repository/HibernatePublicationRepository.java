@@ -2385,6 +2385,28 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 .uniqueResult();
     }
 
+    @Override
+    public List<Publication> getAllOpenPublications() {
+        List<PublicationTrackingStatus> statuses = getAllPublicationStatuses()
+                .stream()
+                .filter(status -> status.getType() != PublicationTrackingStatus.Type.CLOSED)
+                .collect(Collectors.toList());
+
+        List<PublicationTrackingHistory> trackingHistoryList = currentSession()
+                .createCriteria(PublicationTrackingHistory.class)
+                .add(Restrictions.eq("isCurrent", true))
+                .add(Restrictions.in("status", statuses))
+                .addOrder(Order.desc("publication"))
+                .list();
+
+        List<Publication> publications = trackingHistoryList
+                .stream()
+                .map(elem -> elem.getPublication())
+                .collect(Collectors.toList());
+
+        return publications;
+    }
+
     public DashboardPublicationList getPublicationsByStatus(Long status, Long location, String owner, int count,
                                                             int offset, String sort) {
 

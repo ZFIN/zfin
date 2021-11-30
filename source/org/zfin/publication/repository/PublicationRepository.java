@@ -581,7 +581,10 @@ public interface PublicationRepository extends PaginationParameter {
     List<PublicationTrackingLocation> getAllPublicationLocations();
 
     List<Publication> getAllPublications();
+
     List<Publication> getAllPubMedPublications();
+
+    List<Publication> getAllOpenPublications();
 
     PublicationTrackingLocation getPublicationTrackingLocation(long id);
 

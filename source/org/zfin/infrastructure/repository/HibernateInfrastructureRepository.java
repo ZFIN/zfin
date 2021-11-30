@@ -527,7 +527,6 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         insertUpdatesTable(recID, person, fieldName, null, newValue, comments);
     }
 
-
     @Override
     public void insertUpdatesTable(String recID, BeanFieldUpdate beanFieldUpdate) {
         insertUpdatesTable(recID, beanFieldUpdate, null);

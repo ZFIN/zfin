@@ -36,14 +36,20 @@ public class MarkerAttributionService {
         infrastructureRepository.insertUpdatesTable(markerZdbID, "record attribution", "", pubZdbID, "Added direct attribution");
 
         List<Marker> targetedGenes = getTargetedGenes(m);
-        for(Marker gene : targetedGenes) {
-            infrastructureRepository.insertRecordAttribution(gene.getZdbID(), pubZdbID);
-            infrastructureRepository.insertUpdatesTable(gene.getZdbID(), "record attribution", "", pubZdbID, "Added inferred gene attribution");
-        }
+        attributeGenesToPublication(pubZdbID, targetedGenes);
 
     }
 
-    private static List<Marker> getTargetedGenes(Marker m) {
+    public static void attributeGenesToPublication(String pubZdbID, List<Marker> targetedGenes) {
+        for(Marker gene : targetedGenes) {
+            if (infrastructureRepository.getRecordAttribution(gene.zdbID, pubZdbID, RecordAttribution.SourceType.STANDARD) == null) {
+                infrastructureRepository.insertRecordAttribution(gene.getZdbID(), pubZdbID);
+                infrastructureRepository.insertUpdatesTable(gene.getZdbID(), "record attribution", "", pubZdbID, "Added inferred gene attribution");
+            }
+        }
+    }
+
+    public static List<Marker> getTargetedGenes(Marker m) {
         ArrayList<Marker> results = new ArrayList<Marker>();
         SequenceTargetingReagent str = getMarkerRepository().getSequenceTargetingReagent(m.zdbID);
 
