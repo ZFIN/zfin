@@ -8,6 +8,8 @@ task featureAttributionRepair(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.feature.repair.FeatureAttributionRepair'
     systemProperty "reportFile", System.getProperty("reportFile", null)
+    systemProperty "publicationsBefore", System.getProperty("publicationsBefore", null)
+    systemProperty "publicationsAfter", System.getProperty("publicationsAfter", null)
 }
 
 

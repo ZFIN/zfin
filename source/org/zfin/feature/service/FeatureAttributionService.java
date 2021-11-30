@@ -49,11 +49,15 @@ public class FeatureAttributionService {
             }
         } else {
             Set<Marker> genes = f.getAffectedGenes();
-            for(Marker gene : genes) {
-                if (infrastructureRepository.getRecordAttribution(gene.zdbID, pubZdbID, RecordAttribution.SourceType.STANDARD) == null) {
-                    infrastructureRepository.insertRecordAttribution(gene.zdbID, pubZdbID);
-                    infrastructureRepository.insertUpdatesTable(gene.zdbID, "record attribution", pubZdbID, "Added direct attribution to gene related to feature");
-                }
+            attributeGenesToPublication(pubZdbID, genes);
+        }
+    }
+
+    public static void attributeGenesToPublication(String pubZdbID, Set<Marker> genes) {
+        for(Marker gene : genes) {
+            if (infrastructureRepository.getRecordAttribution(gene.zdbID, pubZdbID, RecordAttribution.SourceType.STANDARD) == null) {
+                infrastructureRepository.insertRecordAttribution(gene.zdbID, pubZdbID);
+                infrastructureRepository.insertUpdatesTable(gene.zdbID, "record attribution", pubZdbID, "Added direct attribution to gene related to feature");
             }
         }
     }
