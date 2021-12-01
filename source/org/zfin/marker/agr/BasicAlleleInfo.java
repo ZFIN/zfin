@@ -124,11 +124,9 @@ public class BasicAlleleInfo extends AbstractScriptWrapper {
         List<AlleleDTO> allAlleleDTOListRemoveNulls = new ArrayList<>();
 
         allAlleleDTOList.forEach(alleleDTO -> {
+                    // only adding alleles with object relations
                     if (!(alleleDTO.getAlleleObjectRelations().isEmpty())) {
                         allAlleleDTOListRemoveNulls.add(alleleDTO);
-                    } else {
-                        System.out.println("alleles with more than one construct");
-                        System.out.println(alleleDTO.getPrimaryId());
                     }
                 }
 
