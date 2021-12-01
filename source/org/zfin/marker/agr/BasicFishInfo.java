@@ -53,68 +53,7 @@ public class BasicFishInfo extends AbstractScriptWrapper {
         System.out.println(allFishes.size());
 
         List<FishDTO> allFishDTOList = allFishes.stream()
-                .map(
-                        fish -> {
-                            FishDTO dto = new FishDTO();
-                            dto.setName(fish.getDisplayName());
-                            dto.setPrimaryID("ZFIN:" + fish.getZdbID());
-                            Genotype genotype = fish.getGenotype();
-                            if (CollectionUtils.isNotEmpty(genotype.getAssociatedGenotypes())) {
-                                List<String> backgroundList = new ArrayList<>(genotype.getAssociatedGenotypes().size());
-                                for (Genotype geno : genotype.getAssociatedGenotypes()) {
-                                    String backgroundFish = getMutantRepository().getFishByWTGenotype(geno);
-                                    backgroundList.add("ZFIN:" + backgroundFish);
-                                }
-                                dto.setParentalPopulationIDs(backgroundList);
-                            }
-                            dto.setTaxonId(dto.getTaxonId());
-                            if (CollectionUtils.isNotEmpty(fish.getStrList())) {
-                                List<String> strList = new ArrayList<>(fish.getStrList().size());
-                                for (SequenceTargetingReagent str : fish.getStrList()) {
-                                    strList.add("ZFIN:" + str.getZdbID());
-                                }
-                                dto.setSequenceTargetingReagentIDs(strList);
-                            }
-                            Set<String> aliasList = new HashSet<>();
-                            if (CollectionUtils.isNotEmpty(fish.getAliases())) {
-                                for (FishAlias alias : fish.getAliases()) {
-                                    aliasList.add(alias.getAlias());
-                                }
-                            }
-                            if (CollectionUtils.isNotEmpty(genotype.getAliases())) {
-                                for (GenotypeAlias alias : genotype.getAliases()) {
-                                    aliasList.add(alias.getAlias().trim());
-                                }
-                            }
-                            if (CollectionUtils.isNotEmpty(aliasList)) {
-                                dto.setSynonyms(aliasList);
-                            }
-                            if (CollectionUtils.isNotEmpty(fish.getGenotype().getGenotypeFeatures())) {
-                                List<AffectedGenomicModelComponentDTO> genoComponents = new ArrayList<>(fish.getGenotype().getGenotypeFeatures().size());
-                                for (GenotypeFeature genofeat : fish.getGenotype().getGenotypeFeatures()) {
-                                    AffectedGenomicModelComponentDTO genofeatDTO = new AffectedGenomicModelComponentDTO();
-                                    genofeatDTO.setAlleleID("ZFIN:"+genofeat.getFeature().getZdbID());
-                                    genofeatDTO.setZygosity(genofeat.getZygosity().getGenoOntologyID());
-                                    genoComponents.add(genofeatDTO);
-                                }
-                                dto.setAffectedGenomicModelComponents(genoComponents);
-                            }
-                            Set<String> secondaryDTOs = new HashSet<>();
-                            if (CollectionUtils.isNotEmpty(fish.getSecondaryFishSet())) {
-                                for (SecondaryFish secFish : fish.getSecondaryFishSet()) {
-                                    secondaryDTOs.add(secFish.getOldID());
-                                }
-                            }
-                            if (CollectionUtils.isNotEmpty(secondaryDTOs)){
-                                dto.setSecondaryIds(secondaryDTOs);
-                            }
-                            List<String> pages = new ArrayList<>();
-                            pages.add("Fish");
-                            CrossReferenceDTO xref = new CrossReferenceDTO("ZFIN", fish.getZdbID(), pages);
-                            dto.setCrossReference(xref);
-
-                            return dto;
-                        })
+                .map(this::getFishDTO)
                 .collect(Collectors.toList());
 
         AllFishDTO allFishDTO = new AllFishDTO();
@@ -125,5 +64,67 @@ public class BasicFishInfo extends AbstractScriptWrapper {
         MetaDataDTO meta = new MetaDataDTO(new DataProviderDTO("curated", new CrossReferenceDTO(dataProvider, dataProvider, pages)));
         allFishDTO.setMetaData(meta);
         return allFishDTO;
+    }
+
+    private FishDTO getFishDTO(Fish fish) {
+        FishDTO dto = new FishDTO();
+        dto.setName(fish.getDisplayName());
+        dto.setPrimaryID("ZFIN:" + fish.getZdbID());
+        Genotype genotype = fish.getGenotype();
+        if (CollectionUtils.isNotEmpty(genotype.getAssociatedGenotypes())) {
+            List<String> backgroundList = new ArrayList<>(genotype.getAssociatedGenotypes().size());
+            for (Genotype geno : genotype.getAssociatedGenotypes()) {
+                String backgroundFish = getMutantRepository().getFishByWTGenotype(geno);
+                backgroundList.add("ZFIN:" + backgroundFish);
+            }
+            dto.setParentalPopulationIDs(backgroundList);
+        }
+        dto.setTaxonId(dto.getTaxonId());
+        if (CollectionUtils.isNotEmpty(fish.getStrList())) {
+            List<String> strList = new ArrayList<>(fish.getStrList().size());
+            for (SequenceTargetingReagent str : fish.getStrList()) {
+                strList.add("ZFIN:" + str.getZdbID());
+            }
+            dto.setSequenceTargetingReagentIDs(strList);
+        }
+        Set<String> aliasList = new HashSet<>();
+        if (CollectionUtils.isNotEmpty(fish.getAliases())) {
+            for (FishAlias alias : fish.getAliases()) {
+                aliasList.add(alias.getAlias());
+            }
+        }
+        if (CollectionUtils.isNotEmpty(genotype.getAliases())) {
+            for (GenotypeAlias alias : genotype.getAliases()) {
+                aliasList.add(alias.getAlias().trim());
+            }
+        }
+        if (CollectionUtils.isNotEmpty(aliasList)) {
+            dto.setSynonyms(aliasList);
+        }
+        if (CollectionUtils.isNotEmpty(fish.getGenotype().getGenotypeFeatures())) {
+            List<AffectedGenomicModelComponentDTO> genoComponents = new ArrayList<>(fish.getGenotype().getGenotypeFeatures().size());
+            for (GenotypeFeature genofeat : fish.getGenotype().getGenotypeFeatures()) {
+                AffectedGenomicModelComponentDTO genofeatDTO = new AffectedGenomicModelComponentDTO();
+                genofeatDTO.setAlleleID("ZFIN:" + genofeat.getFeature().getZdbID());
+                genofeatDTO.setZygosity(genofeat.getZygosity().getGenoOntologyID());
+                genoComponents.add(genofeatDTO);
+            }
+            dto.setAffectedGenomicModelComponents(genoComponents);
+        }
+        Set<String> secondaryDTOs = new HashSet<>();
+        if (CollectionUtils.isNotEmpty(fish.getSecondaryFishSet())) {
+            for (SecondaryFish secFish : fish.getSecondaryFishSet()) {
+                secondaryDTOs.add(secFish.getOldID());
+            }
+        }
+        if (CollectionUtils.isNotEmpty(secondaryDTOs)) {
+            dto.setSecondaryIds(secondaryDTOs);
+        }
+        List<String> pages = new ArrayList<>();
+        pages.add("Fish");
+        CrossReferenceDTO xref = new CrossReferenceDTO("ZFIN", fish.getZdbID(), pages);
+        dto.setCrossReference(xref);
+
+        return dto;
     }
 }
