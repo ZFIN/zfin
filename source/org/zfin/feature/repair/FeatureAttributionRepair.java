@@ -71,12 +71,8 @@ public class FeatureAttributionRepair extends AbstractScriptWrapper {
         publications = filterToPublicationsBefore(publications);
         publications = filterToPublicationsAfter(publications);
 
-//        List<Publication> publications = Collections.singletonList(getPublicationRepository().getPublication("ZDB-PUB-170621-8"));
-//        List<Publication> publications = Collections.singletonList(getPublicationRepository().getPublication("ZDB-PUB-970327-24"));
         logger.info("Processing " + publications.size() + " publications");
-        System.out.println("Processing " + publications.size() + " publications");
-
-        logger.info("CSV Report Header:Publication ZDB ID,Gene ZDB ID,Intermediary ZDB ID,Reason");
+        System.err.println("Processing " + publications.size() + " publications");
 
         int count = 0;
         for(Publication publication : publications) {
