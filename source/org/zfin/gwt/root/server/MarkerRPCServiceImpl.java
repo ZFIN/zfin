@@ -17,6 +17,7 @@ import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.ConstructRelationship;
 import org.zfin.construct.repository.ConstructRepository;
 import org.zfin.feature.Feature;
+import org.zfin.feature.service.FeatureAttributionService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
@@ -1181,37 +1182,14 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
 
     @Override
     public void addAttributionForFeatureName(String featureAbbrev, String pubZdbID) throws TermNotFoundException, DuplicateEntryException {
-        Feature f = RepositoryFactory.getFeatureRepository().getFeatureByAbbreviation(featureAbbrev);
-        if (f == null) {
-            throw new TermNotFoundException(featureAbbrev, "Feature");
-        }
 
-        String featureZdbID = f.getZdbID();
-        if (infrastructureRepository.getRecordAttribution(featureZdbID, pubZdbID, RecordAttribution.SourceType.STANDARD) != null) {
-            throw new DuplicateEntryException(f.getAbbreviation() + " is already attributed as " + f.getName());
-        }
         HibernateUtil.createTransaction();
-        infrastructureRepository.insertRecordAttribution(featureZdbID, pubZdbID);
-        infrastructureRepository.insertUpdatesTable(featureZdbID, "record attribution", pubZdbID, "Added direct attribution");
-        if (f.getType().equals(FeatureTypeEnum.TRANSGENIC_INSERTION)) {
-            List<Marker> m = RepositoryFactory.getFeatureRepository().getConstructsByFeature(f);
-            for (Marker mrkr : m) {
-                if (infrastructureRepository.getRecordAttribution(mrkr.zdbID, pubZdbID, RecordAttribution.SourceType.STANDARD) == null) {
-                    infrastructureRepository.insertRecordAttribution(mrkr.zdbID, pubZdbID);
-                    infrastructureRepository.insertUpdatesTable(mrkr.zdbID, "record attribution", pubZdbID, "Added direct attribution to related construct");
-                }
-                List<Marker> codingSeq = RepositoryFactory.getMarkerRepository().getCodingSequence(mrkr);
-                for (Marker codingGene : codingSeq) {
-                    if (infrastructureRepository.getRecordAttribution(codingGene.zdbID, pubZdbID, RecordAttribution.SourceType.STANDARD) == null) {
-                        infrastructureRepository.insertRecordAttribution(codingGene.zdbID, pubZdbID);
-                        infrastructureRepository.insertUpdatesTable(codingGene.zdbID, "record attribution", pubZdbID, "Added direct attribution to related construct");
-                    }
-                }
-            }
-        }
+        FeatureAttributionService.addFeatureAttribution(featureAbbrev, pubZdbID);
         HibernateUtil.flushAndCommitCurrentSession();
         HibernateUtil.closeSession();
     }
+
+
 
     public void addConstructMarkerRelationShip(ConstructRelationshipDTO constructRelationshipDTO) {
         ConstructRelationship constructRelationship = new ConstructRelationship();

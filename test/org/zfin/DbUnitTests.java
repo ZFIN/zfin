@@ -18,6 +18,7 @@ import org.zfin.expression.repository.ExpressionRepositoryTest;
 import org.zfin.expression.service.ExpressionServiceTest;
 import org.zfin.feature.FeatureServiceTest;
 import org.zfin.feature.repository.FeatureRepositoryTest;
+import org.zfin.feature.service.FeatureAttributionServiceTest;
 import org.zfin.figure.repository.FigureRepositorySpec;
 import org.zfin.figure.service.FigureViewServiceSpec;
 import org.zfin.figure.service.ImageServiceSpec;
@@ -93,6 +94,7 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         DTOConversionServiceTest.class,
         ExpressionRepositoryTest.class,
         ExpressionServiceTest.class,
+        FeatureAttributionServiceTest.class,
         FeatureRepositoryTest.class,
         FeatureServiceTest.class,
         FigureRepositorySpec.class,
