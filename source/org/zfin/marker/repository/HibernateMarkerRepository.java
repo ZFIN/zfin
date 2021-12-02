@@ -2148,35 +2148,32 @@ public class HibernateMarkerRepository implements MarkerRepository {
                 .setResultTransformer(markerDBLinkTransformer);
 
         List<LinkDisplay> linkDisplay = markerDBLinkTransformer.transformList(query.list());
-        Collections.sort(linkDisplay, new Comparator<LinkDisplay>() {
-            @Override
-            public int compare(LinkDisplay linkA, LinkDisplay linkB) {
-                int compare;
-                if (linkA.getTypeOrder() != null & linkB.getTypeOrder() != null) {
-                    compare = linkA.getTypeOrder().compareTo(linkB.getTypeOrder());
-                    if (compare != 0) return compare;
-                }
-
-                if (linkA.getSignificance() != null & linkB.getSignificance() != null) {
-                    compare = linkA.getSignificance().compareTo(linkB.getSignificance());
-                    if (compare != 0) return compare;
-                }
-
-                if (linkA.getLength() != null & linkB.getLength() != null) {
-                    compare = linkA.getLength().compareTo(linkB.getLength());
-                    if (compare != 0) return compare;
-                } else if (linkA.getLength() != null & (linkB.getLength() == null)) {
-                    return 1;
-                } else if (linkA.getLength() == null & (linkB.getLength() != null)) {
-                    return -1;
-                }
-
-                compare = linkA.getReferenceDatabaseName().compareTo(linkB.getReferenceDatabaseName());
+        Collections.sort(linkDisplay, (linkA, linkB) -> {
+            int compare;
+            if (linkA.getTypeOrder() != null & linkB.getTypeOrder() != null) {
+                compare = linkA.getTypeOrder().compareTo(linkB.getTypeOrder());
                 if (compare != 0) return compare;
-
-                NumberAwareStringComparator numberAwareStringComparator = new NumberAwareStringComparator();
-                return numberAwareStringComparator.compare(linkA.getDisplayName(), linkB.getDisplayName());
             }
+
+            if (linkA.getSignificance() != null & linkB.getSignificance() != null) {
+                compare = linkA.getSignificance().compareTo(linkB.getSignificance());
+                if (compare != 0) return compare;
+            }
+
+            if (linkA.getLength() != null & linkB.getLength() != null) {
+                compare = linkA.getLength().compareTo(linkB.getLength());
+                if (compare != 0) return compare;
+            } else if (linkA.getLength() != null & (linkB.getLength() == null)) {
+                return 1;
+            } else if (linkA.getLength() == null & (linkB.getLength() != null)) {
+                return -1;
+            }
+
+            compare = linkA.getReferenceDatabaseName().compareTo(linkB.getReferenceDatabaseName());
+            if (compare != 0) return compare;
+
+            NumberAwareStringComparator numberAwareStringComparator = new NumberAwareStringComparator();
+            return numberAwareStringComparator.compare(linkA.getDisplayName(), linkB.getDisplayName());
         });
 
 
