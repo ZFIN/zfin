@@ -180,8 +180,6 @@ public interface FeatureRepository {
      */
     List<String> getAllFeatures(int firstNIds);
 
-    List<Feature> getAllFeatures();
-
     FeaturePrefix getFeaturePrefixByPrefix(String prefix);
 
     int insertOrganizationPrefix(Organization organization, FeaturePrefix featurePrefix);
