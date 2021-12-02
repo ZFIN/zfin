@@ -35,6 +35,7 @@ const MarkerSequencesTable = ({markerId, showSummary}) => {
                     publicationCount={row.publicationCount}
                     publication={row.singlePublication}
                     multiPubs={row.publicationIds}
+                    multiPubAccessionID={markerId}
                 />
             ),
             width: '150px',
