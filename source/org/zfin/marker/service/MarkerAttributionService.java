@@ -37,10 +37,8 @@ public class MarkerAttributionService {
 
         List<Marker> targetedGenes = getTargetedGenes(m);
         for(Marker gene : targetedGenes) {
-            if (infrastructureRepository.getRecordAttribution(gene.zdbID, pubZdbID, RecordAttribution.SourceType.STANDARD) == null) {
-                infrastructureRepository.insertRecordAttribution(gene.getZdbID(), pubZdbID);
-                infrastructureRepository.insertUpdatesTable(gene.getZdbID(), "record attribution", "", pubZdbID, "Added inferred gene attribution");
-            }
+            infrastructureRepository.insertRecordAttribution(gene.getZdbID(), pubZdbID);
+            infrastructureRepository.insertUpdatesTable(gene.getZdbID(), "record attribution", "", pubZdbID, "Added inferred gene attribution");
         }
     }
 
