@@ -40,6 +40,7 @@ public class MarkerAttributionService {
             infrastructureRepository.insertRecordAttribution(gene.getZdbID(), pubZdbID);
             infrastructureRepository.insertUpdatesTable(gene.getZdbID(), "record attribution", "", pubZdbID, "Added inferred gene attribution");
         }
+
     }
 
     public static List<Marker> getTargetedGenes(Marker m) {
