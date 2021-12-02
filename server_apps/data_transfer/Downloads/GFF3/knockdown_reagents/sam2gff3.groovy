@@ -10,8 +10,8 @@ def options = cli.parse(args)
 
 soTerms = [
         'MRPHLNO': 'morpholino_oligo',
-        'CRISPR': 'DNA_binding_site',
-        'TALEN': 'nuclease_binding_site'
+        'CRISPR' : 'DNA_binding_site',
+        'TALEN'  : 'nuclease_binding_site'
 ]
 
 System.out.println("##gff-version 3")
@@ -26,7 +26,7 @@ ids = [:]
             return
         }
         def (name, flag, chromosome, start, quality, cigar, rnext, pnext, tlen, sequence, qual) = line.split();
-        if (chromosome != '*') {
+        if (chromosome != '*' && !chromosome.startsWith('CHR_ALT') && start.isNumber() && cigar.substring(0, 2).isNumber()) {
             strand = (flag == '16') ? '-' : '+'
             zdbMatch = name =~ /ZDB-([A-Z]+)-\d+-\d+/
             if (!zdbMatch) {
