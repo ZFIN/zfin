@@ -36,11 +36,6 @@ public class MarkerAttributionService {
         infrastructureRepository.insertUpdatesTable(markerZdbID, "record attribution", "", pubZdbID, "Added direct attribution");
 
         List<Marker> targetedGenes = getTargetedGenes(m);
-        attributeGenesToPublication(pubZdbID, targetedGenes);
-
-    }
-
-    public static void attributeGenesToPublication(String pubZdbID, List<Marker> targetedGenes) {
         for(Marker gene : targetedGenes) {
             if (infrastructureRepository.getRecordAttribution(gene.zdbID, pubZdbID, RecordAttribution.SourceType.STANDARD) == null) {
                 infrastructureRepository.insertRecordAttribution(gene.getZdbID(), pubZdbID);
