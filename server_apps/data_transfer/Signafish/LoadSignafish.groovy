@@ -45,7 +45,7 @@ signafishDb = RepositoryFactory.sequenceRepository.getReferenceDatabase(
         ForeignDBDataType.SuperType.SUMMARY_PAGE,
         Species.Type.ZEBRAFISH)
 
-DOWNLOAD_URL = "http://signafish.org/zfin_ids.lst"
+DOWNLOAD_URL = "http://signalink.org/zfin_ids.lst"
 
 def file = new FileOutputStream(DOWNLOAD_URL.tokenize("/")[-1])
 def out = new BufferedOutputStream(file)
@@ -86,7 +86,7 @@ linksToDelete.each { link ->
     println "  $link.zdbID"
     session.delete(link)
 }
-println "Determine if  db links alreday exist "
+println "Determine if  db links already exist "
 hql = """from MarkerDBLink dbl
          where dbl.referenceDatabase = :refDb
          and dbl.accessionNumber  in (:accNums)"""
