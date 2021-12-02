@@ -1072,16 +1072,6 @@ public class HibernateFeatureRepository implements FeatureRepository {
     }
 
     @Override
-    public List<Feature> getAllFeatures() {
-        Session session = HibernateUtil.currentSession();
-
-        String hql = "SELECT f FROM Feature f";
-        Query query = session.createQuery(hql);
-
-        return (List<Feature>) query.list();
-    }
-
-    @Override
     public FeaturePrefix getFeaturePrefixByPrefix(String prefix) {
         Session session = HibernateUtil.currentSession();
         String hqlLab1 = " select fp from  FeaturePrefix fp where fp.prefixString =:prefix";
