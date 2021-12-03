@@ -227,6 +227,22 @@ tr.spaceUnder > td{
     height: 190px;
 }
 
+/**
+ZFIN-7642 fix column overlap issues (only seems to affect the "Annotation Extension" column
+ */
+.gene-ontology-ribbon td:nth-child(4) {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+
+    word-break: break-word;
+
+    /* check support matrix */
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+}
+
 .ontology-ribbon__block__title {
     transform-origin: -8px -4px;
 }
