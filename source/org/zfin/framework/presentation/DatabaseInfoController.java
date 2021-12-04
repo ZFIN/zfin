@@ -75,7 +75,6 @@ public class DatabaseInfoController {
         }
         model.addAttribute("properties", props);
         model.addAttribute("runtime", Runtime.getRuntime());
-        model.addAttribute("defaultTimeZone", TimeZone.getDefault());
         return "dev-tools/java-properties";
     }
 
