@@ -6,10 +6,7 @@ import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.zfin.AbstractDatabaseTest;
-import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
-import org.zfin.sequence.repository.SequenceRepository;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -101,9 +98,9 @@ public class DbLinkDisplayComparatorTest {
 
     @Test
     public void testIntegerComparison() {
-        assertEquals(-1, new Integer(1).compareTo(2));
-        assertEquals(1, new Integer(1).compareTo(0));
-        assertEquals(0, new Integer(1).compareTo(1));
+        assertEquals(-1, Integer.compare(1, 2));
+        assertEquals(1, Integer.valueOf(1).compareTo(0));
+        assertEquals(0, Integer.valueOf(1).compareTo(1));
         assertEquals(1, ObjectUtils.compare(1, null));
         assertEquals(-1, ObjectUtils.compare(null, 1));
         assertEquals(0, ObjectUtils.compare(null, null));

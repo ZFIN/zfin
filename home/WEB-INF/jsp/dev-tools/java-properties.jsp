@@ -30,14 +30,6 @@
             </td>
         </tr>
         <tr>
-            <td class="listContent">
-                Time Zone Info
-            </td>
-            <td class="listContent">
-                ${defaultTimeZone.toString()}
-            </td>
-        </tr>
-        <tr>
             <td class="sectionTitle">Property Key</td>
             <td class="sectionTitle">Property value</td>
         </tr>

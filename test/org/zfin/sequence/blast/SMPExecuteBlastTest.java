@@ -76,7 +76,7 @@ public class SMPExecuteBlastTest {
             xmlBlastBean.setQuerySequence(sb.toString());
             xmlBlastBean.setNumChunks(4);
 
-            List<Database> actualDatabases = new ArrayList<Database>() ;
+            List<Database> actualDatabases = new ArrayList<>() ;
             Database blastDatabase = RepositoryFactory.getBlastRepository().getDatabase(Database.AvailableAbbrev.ZFINGENESWITHEXPRESSION) ;
             actualDatabases.add(blastDatabase) ;
             xmlBlastBean.setActualDatabaseTargets(actualDatabases);
@@ -134,7 +134,7 @@ public class SMPExecuteBlastTest {
             xmlBlastBean.setQuerySequence(sb.toString());
             xmlBlastBean.setNumChunks(4);
 
-            List<Database> actualDatabases = new ArrayList<Database>() ;
+            List<Database> actualDatabases = new ArrayList<>() ;
             Database blastDatabase1 = RepositoryFactory.getBlastRepository().getDatabase(Database.AvailableAbbrev.ZFINGENESWITHEXPRESSION) ;
             actualDatabases.add(blastDatabase1) ;
             Database blastDatabase2 = RepositoryFactory.getBlastRepository().getDatabase(Database.AvailableAbbrev.GENOMICDNA) ;
@@ -194,7 +194,7 @@ public class SMPExecuteBlastTest {
             xmlBlastBean.setQuerySequence(sb.toString());
             xmlBlastBean.setNumChunks(4);
 
-            List<Database> actualDatabases = new ArrayList<Database>() ;
+            List<Database> actualDatabases = new ArrayList<>() ;
             Database blastDatabase1 = RepositoryFactory.getBlastRepository().getDatabase(Database.AvailableAbbrev.ZFINGENESWITHEXPRESSION) ;
             actualDatabases.add(blastDatabase1) ;
             Database blastDatabase2 = RepositoryFactory.getBlastRepository().getDatabase(Database.AvailableAbbrev.GENOMICDNA) ;
@@ -267,7 +267,7 @@ public class SMPExecuteBlastTest {
     @Test
     public void scheduleBlast(){
         try {
-            List<ScheduleBlastOneDBToString> scheduledBlastOneDBToStringList = new ArrayList<ScheduleBlastOneDBToString>() ;
+            List<ScheduleBlastOneDBToString> scheduledBlastOneDBToStringList = new ArrayList<>() ;
             int numThreads = 10 ;
 
             // need to number each one one differently
@@ -283,7 +283,7 @@ public class SMPExecuteBlastTest {
             xmlBlastBean.setQuerySequence(sb.toString());
             xmlBlastBean.setNumChunks(4);
 
-            List<Database> actualDatabases = new ArrayList<Database>() ;
+            List<Database> actualDatabases = new ArrayList<>() ;
             Database blastDatabase = RepositoryFactory.getBlastRepository().getDatabase(Database.AvailableAbbrev.ZFINGENESWITHEXPRESSION) ;
             actualDatabases.add(blastDatabase) ;
             xmlBlastBean.setActualDatabaseTargets(actualDatabases);
@@ -300,7 +300,7 @@ public class SMPExecuteBlastTest {
 
             for(int i = 0 ; i < numThreads ; i++){
                 XMLBlastBean blastBean = xmlBlastBean.clone();
-                blastBean.setTicketNumber((new Integer(i)).toString());
+                blastBean.setTicketNumber((Integer.valueOf(i)).toString());
                 scheduledBlastOneDBToStringList.add(new ScheduleBlastOneDBToString(blastBean)) ;
             }
 
@@ -324,7 +324,7 @@ public class SMPExecuteBlastTest {
             Thread.sleep(1000);
 
             for(int i = 0 ; i < numThreads ; i++){
-                String ticketNumber = (new Integer(i)).toString();
+                String ticketNumber = (Integer.valueOf(i)).toString();
                 xmlBlastBean.setTicketNumber(ticketNumber);
                 File resultFile = xmlBlastBean.getResultFile();
                 JAXBContext jc = JAXBContext.newInstance("org.zfin.sequence.blast.results");
