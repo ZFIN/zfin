@@ -38,7 +38,7 @@ public class OntologyServiceTest {
         Map<OntologyDTO, Integer> map = OntologyService.getHistogramOfTerms(list);
         assertNotNull(map);
         assertEquals(3, map.size());
-        assertEquals(new Integer(2), map.get(OntologyDTO.ANATOMY));
-        assertEquals(new Integer(1), map.get(OntologyDTO.GO_BP));
+        assertEquals(Integer.valueOf(2), map.get(OntologyDTO.ANATOMY));
+        assertEquals(Integer.valueOf(1), map.get(OntologyDTO.GO_BP));
     }
 }

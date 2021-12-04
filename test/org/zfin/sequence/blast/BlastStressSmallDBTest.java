@@ -43,8 +43,8 @@ public class BlastStressSmallDBTest extends BlastStressTest{
     // this test should fail
     @Test
     public void rawBlastOneDBToStream(){
-        Vector<String> xmlResults = new Vector<String>() ;
-        List<RawBlastOneDBToString> rawBlastOneDBToStringList = new ArrayList<RawBlastOneDBToString>() ;
+        Vector<String> xmlResults = new Vector<>() ;
+        List<RawBlastOneDBToString> rawBlastOneDBToStringList = new ArrayList<>() ;
         int numThreads = 40 ;
         for(int i = 0 ; i < numThreads ; i++){
             rawBlastOneDBToStringList.add(new RawBlastOneDBToString(xmlBlastBean,blastDatabase,xmlResults)) ;
@@ -71,7 +71,7 @@ public class BlastStressSmallDBTest extends BlastStressTest{
 
     @Test
     public void scheduleBlast(){
-        List<ScheduleBlastOneDBToString> scheduledBlastOneDBToStringList = new ArrayList<ScheduleBlastOneDBToString>() ;
+        List<ScheduleBlastOneDBToString> scheduledBlastOneDBToStringList = new ArrayList<>() ;
         int numThreads = 40 ;
 
         // need to number each one one differently
@@ -79,7 +79,7 @@ public class BlastStressSmallDBTest extends BlastStressTest{
 
         for(int i = 0 ; i < numThreads ; i++){
             XMLBlastBean blastBean = xmlBlastBean.clone();
-            blastBean.setTicketNumber((new Integer(i)).toString());
+            blastBean.setTicketNumber((Integer.valueOf(i)).toString());
             scheduledBlastOneDBToStringList.add(new ScheduleBlastOneDBToString(blastBean)) ;
         }
 
@@ -104,7 +104,7 @@ public class BlastStressSmallDBTest extends BlastStressTest{
             Thread.sleep(1000);
 
             for(int i = 0 ; i < numThreads ; i++){
-                String ticketNumber = (new Integer(i)).toString();
+                String ticketNumber = (Integer.valueOf(i)).toString();
                 xmlBlastBean.setTicketNumber(ticketNumber);
                 File resultFile = xmlBlastBean.getResultFile();
                 JAXBContext jc = JAXBContext.newInstance("org.zfin.sequence.blast.results");

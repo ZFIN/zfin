@@ -43,8 +43,6 @@ public class ApplicationContextController {
 
         RuntimeMXBean runtime = ManagementFactory.getRuntimeMXBean();
         model.addAttribute("runtimeMXBean", runtime);
-        Field jvm = runtime.getClass().getDeclaredField("jvm");
-        jvm.setAccessible(true);
         return "dev-tools/application-context";
     }
 
