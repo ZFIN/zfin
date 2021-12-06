@@ -227,9 +227,6 @@ tr.spaceUnder > td{
     height: 190px;
 }
 
-/**
-ZFIN-7642 fix column overlap issues (only seems to affect the "Annotation Extension" column
- */
 .gene-ontology-ribbon td:nth-child(4) {
     overflow-wrap: break-word;
     word-wrap: break-word;
