@@ -31,10 +31,10 @@
 
     <z:attributeListItem label="Variant Notes">
 
-        <z:ifHasData test="${!empty formBean.externalNotes and fn:length(formBean.externalNotes) > 0}"
+        <z:ifHasData test="${!empty formBean.variantNotes and fn:length(formBean.variantNotes) > 0}"
                      noDataMessage="None">
 
-                <c:forEach var="note" items="${formBean.externalNotes}" varStatus="loop">
+                <c:forEach var="note" items="${formBean.variantNotes}" varStatus="loop">
 
                     <c:if test="${note.tag.contains('variant')}">
                         <div class="${loop.last ? '' : 'mb-2'}">

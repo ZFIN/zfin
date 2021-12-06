@@ -1,5 +1,6 @@
 package org.zfin.feature.presentation;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.feature.Feature;
+import org.zfin.feature.FeatureNote;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.feature.repository.FeatureService;
 import org.zfin.feature.service.MutationDetailsConversionService;
@@ -27,6 +29,7 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.zebrashare.repository.ZebrashareRepository;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -82,7 +85,11 @@ public class FeatureDetailController {
         form.setFeatureTypeAttributions(FeatureService.getFeatureTypeAttributions(feature));
         form.setFeatureMap(FeatureService.getFeatureMap(feature));
         form.setSummaryPageDbLinks(FeatureService.getSummaryDbLinks(feature));
-        form.setExternalNotes(FeatureService.getSortedExternalNotes(feature));
+        List<FeatureNote> sortedExternalNotes = FeatureService.getSortedExternalNotes(feature);
+        if (CollectionUtils.isNotEmpty(sortedExternalNotes)) {
+            form.setExternalNotes(sortedExternalNotes.stream().filter(featureNote -> !featureNote.isVariantNote()).collect(Collectors.toList()));
+            form.setVariantNotes(sortedExternalNotes.stream().filter(FeatureNote::isVariantNote).collect(Collectors.toList()));
+        }
         form.setMutationDetails(mutationDetailsConversionService.convert(feature, true));
         form.setFeatureLocations(FeatureService.getPhysicalLocations(feature));
         form.setGenbankDbLinks(FeatureService.getGenbankDbLinks(feature));
