@@ -15,10 +15,13 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
+import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 @Controller
 @RequestMapping("/antibody")
@@ -55,6 +58,10 @@ public class AntibodyViewController {
         // set external notes (same as orthology)
         List<ExternalNote> listOfNotes = new ArrayList<>();
         listOfNotes.addAll(antibody.getExternalNotes());
+        ExternalNote note = new ExternalNote();
+        note.setNote(antibody.getPublicComments());
+        note.setPublication(getPublicationRepository().getPublication("ZDB-PUB-020723-5"));
+        listOfNotes.add(note);
         antibodyBean.setExternalNotes(listOfNotes);
 
         // set labeling
@@ -68,7 +75,7 @@ public class AntibodyViewController {
         antibodyBean.setAbRegistryID(markerRepository.getABRegID(antibody.getZdbID()));
 
 //      CITATIONS
-        antibodyBean.setNumPubs(RepositoryFactory.getPublicationRepository().getNumberDirectPublications(antibody.getZdbID()));
+        antibodyBean.setNumPubs(getPublicationRepository().getNumberDirectPublications(antibody.getZdbID()));
 
         model.addAttribute(LookupStrings.FORM_BEAN, antibodyBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.ANTIBODY.getTitleString() + antibody.getName());

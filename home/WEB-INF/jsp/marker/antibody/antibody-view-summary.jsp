@@ -57,5 +57,5 @@
         <zfin2:orderThis markerSuppliers="${formBean.suppliers}" accessionNumber="${formBean.marker.zdbID}"/>
     </z:attributeListItem>
     
-    <zfin2:entityNotesAttributeListItems entity="${formBean.marker}" />
+    <zfin2:entityNotesAttributeListItems entity="${formBean.marker}" showNotes="false"/>
 </z:attributeList>
