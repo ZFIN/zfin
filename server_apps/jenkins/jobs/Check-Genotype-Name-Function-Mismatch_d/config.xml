@@ -18,13 +18,13 @@
     <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
         <hudson.tasks.Ant plugin="ant@1.2">
-            <targets>validate-data-report-simple -DJobName=Genotype-Name-Function-Mismatch_w</targets>
+            <targets>validate-data-report-simple -DJobName=Check-Genotype-Name-Function-Mismatch_d</targets>
             <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
         </hudson.tasks.Ant>
     </builders>
     <publishers>
         <hudson.tasks.ArtifactArchiver>
-            <artifacts>server_apps/DB_maintenance/validatedata/Genotype-Name-Function-Mismatch_w/*</artifacts>
+            <artifacts>server_apps/DB_maintenance/validatedata/Check-Genotype-Name-Function-Mismatch_d/*</artifacts>
             <latestOnly>false</latestOnly>
             <allowEmptyArchive>true</allowEmptyArchive>
         </hudson.tasks.ArtifactArchiver>
@@ -37,8 +37,8 @@
             <reportTargets>
                 <htmlpublisher.HtmlPublisherTarget>
                     <reportName>Error Report</reportName>
-                    <reportDir>server_apps/DB_maintenance/validatedata/Genotype-Name-Function-Mismatch_w</reportDir>
-                    <reportFiles>Genotype-Name-Function-Mismatch_w.html</reportFiles>
+                    <reportDir>server_apps/DB_maintenance/validatedata/Check-Genotype-Name-Function-Mismatch_d</reportDir>
+                    <reportFiles>Check-Genotype-Name-Function-Mismatch_d.html</reportFiles>
                     <keepAll>false</keepAll>
                     <allowMissing>false</allowMissing>
                 </htmlpublisher.HtmlPublisherTarget>
@@ -52,7 +52,7 @@
                         <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
-                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Genotype-Name-Function-Mismatch_w/Genotype-Name-Function-Mismatch_w.html&quot;}
+                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Genotype-Name-Function-Mismatch_d/Check-Genotype-Name-Function-Mismatch_d.html&quot;}
 
                             See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
                         </body>
@@ -72,7 +72,7 @@
                         <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
-                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Genotype-Name-Function-Mismatch_w/Genotype-Name-Function-Mismatch_w.html&quot;}
+                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Genotype-Name-Function-Mismatch_d/Check-Genotype-Name-Function-Mismatch_d.html&quot;}
 
                             See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
                         </body>
