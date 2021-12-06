@@ -2,6 +2,8 @@
 
 <%@ attribute name="entity" type="org.zfin.infrastructure.EntityNotes" rtexprvalue="true" required="true" %>
 <%@ attribute name="additionalNote" required="false" %>
+<%@ attribute name="showNotes" required="false" type="java.lang.Boolean" %>
+<c:set var="show" value="${(empty showNotes) ? true : showNotes}"/>
 
 <authz:authorize access="hasRole('root')">
     <z:attributeListItem label="Curator Notes">
@@ -22,12 +24,15 @@
     </z:attributeListItem>
 </authz:authorize>
 
-<z:attributeListItem label="Note">
-    <z:ifHasData test="${!empty entity.publicComments or !empty additionalNote or !empty entity.externalNotes}" noDataMessage="None">
-        <div class="keep-breaks">${entity.publicComments}</div>
-        <c:forEach var="externalNote" items="${entity.externalNotes}" varStatus="loop">
-            <div class="keep-breaks">${externalNote.note}</div>
-        </c:forEach>
-        ${additionalNote}
-    </z:ifHasData>
-</z:attributeListItem>
+<c:if test="${show}">
+    <z:attributeListItem label="Note">
+        <z:ifHasData test="${!empty entity.publicComments or !empty additionalNote or !empty entity.externalNotes}"
+                     noDataMessage="None">
+            <div class="keep-breaks">${entity.publicComments}</div>
+            <c:forEach var="externalNote" items="${entity.externalNotes}" varStatus="loop">
+                <div class="keep-breaks">${externalNote.note}</div>
+            </c:forEach>
+            ${additionalNote}
+        </z:ifHasData>
+    </z:attributeListItem>
+</c:if>
