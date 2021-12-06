@@ -189,6 +189,6 @@
     </z:attributeListItem>
 
 
-    <zfin2:entityNotesAttributeListItems entity="${formBean.feature}"/>
+    <zfin2:entityNotesAttributeListItems entity="${formBean.feature}" showNotes="false"/>
 
 </z:attributeList>

@@ -50,6 +50,7 @@ public class FeatureBean {
     private List<PublicationAttribution> proteinConsequenceAttributions;
     private List<PublicationAttribution> varSeqAttributions;
     private List<FeatureNote> externalNotes;
+    private List<FeatureNote> variantNotes;
     private List<ExternalNote> allNotes;
     private FeatureCommunityContribution ftrCommContr;
     private Publication ZShareOrigPub;

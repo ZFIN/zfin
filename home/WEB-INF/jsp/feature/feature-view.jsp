@@ -3,6 +3,7 @@
 <jsp:useBean id="formBean" class="org.zfin.feature.presentation.FeatureBean" scope="request"/>
 
 <c:set var="SUMMARY" value="Summary"/>
+<c:set var="NOTES" value="Notes"/>
 <c:set var="GENOTYPE" value="Genotypes"/>
 <c:set var="VARIANTS" value="Variants"/>
 <c:set var="MUTATION_DETAILS" value="Mutation Details"/>
@@ -13,7 +14,7 @@
 <c:set var="CITATIONS" value="Citations"/>
 
 <z:dataPage
-        sections="${[SUMMARY, GBROWSE, VARIANTS, SEQUENCES, FISH, SUPPLEMENTAL, CITATIONS]}"
+        sections="${[SUMMARY, NOTES, GBROWSE, VARIANTS, SEQUENCES, FISH, SUPPLEMENTAL, CITATIONS]}"
 >
     <jsp:attribute name="entityName">
         <zfin:abbrev entity="${formBean.feature}"/>
@@ -25,6 +26,10 @@
             <h1><zfin:abbrev entity="${formBean.feature}"/></h1>
             <jsp:include page="feature-view-summary.jsp"/>
         </div>
+
+        <z:section title="${NOTES}">
+            <jsp:include page="../marker/antibody/antibody-view-notes.jsp"/>
+        </z:section>
 
         <z:section title="${GBROWSE}" infoPopup="/action/feature/note/genomebrowser">>
             <div class="__react-root"
