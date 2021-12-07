@@ -42,6 +42,65 @@ public class FishDetailController {
 
     private static final Logger LOG = LogManager.getLogger(FishDetailController.class);
 
+    @RequestMapping(value = "/{zdbID}")
+    protected String showFish(@PathVariable String zdbID, Model model) {
+
+        Fish fish = RepositoryFactory.getMutantRepository().getFish(zdbID);
+        if (fish == null) {
+            String replacedZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(zdbID);
+            if (replacedZdbID != null) {
+                LOG.debug("found a replaced zdbID for: " + zdbID + "->" + replacedZdbID);
+                Fish replacedFish = RepositoryFactory.getMutantRepository().getFish(zdbID);
+                if (replacedFish != null) {
+                    fish = replacedFish;
+                } else {
+                    return "redirect:/" + replacedZdbID;
+                }
+            }
+        }
+
+        if (fish == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, zdbID);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
+        if (fish.isWildtypeWithoutReagents()) {
+            return "redirect:/" + fish.getGenotype().getZdbID();
+        }
+
+        model.addAttribute("fish", fish);
+
+
+        // phenotype
+        List<PhenotypeStatementWarehouse> phenotypeStatements = getMutantRepository().getPhenotypeStatementWarehousesByFish(fish);
+        model.addAttribute("phenotypeStatements", phenotypeStatements);
+        model.addAttribute("phenotypeDisplays", PhenotypeService.getPhenotypeDisplays(phenotypeStatements, "condition", "phenotypeStatement"));
+
+        // disease model
+        List<DiseaseAnnotationModel> diseaseAnnotations = getPhenotypeRepository().getHumanDiseaseModelsByFish(zdbID);
+        model.addAttribute("diseases", OntologyService.getDiseaseModelDisplay(diseaseAnnotations));
+
+        // Expression data
+        ExpressionRepository expressionRepository = RepositoryFactory.getExpressionRepository();
+        List<ExpressionResult> fishNonEfgExpressionResults = expressionRepository.getNonEfgExpressionResultsByFish(fish);
+        List<ExpressionResult> fishEfgExpressionResults = expressionRepository.getEfgExpressionResultsByFish(fish);
+        List<ExpressionResult> fishProteinExpressionResults = expressionRepository.getProteinExpressionResultsByFish(fish);
+        List<String> fishExpressionFigureIDs = expressionRepository.getExpressionFigureIDsByFish(fish);
+        List<String> fishExpressionPublicationIDs = expressionRepository.getExpressionPublicationIDsByFish(fish);
+        List<ExpressionDisplay> fishNonEfgExpressionDisplays = ExpressionService.createExpressionDisplays(fish.getZdbID(), fishNonEfgExpressionResults, fishExpressionFigureIDs, fishExpressionPublicationIDs, true);
+        model.addAttribute("geneCentricNonEfgExpressionDataList", fishNonEfgExpressionDisplays);
+        List<ExpressionDisplay> fishEfgExpressionDisplays = ExpressionService.createExpressionDisplays(fish.getZdbID(), fishEfgExpressionResults, fishExpressionFigureIDs, fishExpressionPublicationIDs, true);
+        model.addAttribute("geneCentricEfgExpressionDataList", fishEfgExpressionDisplays);
+        List<ProteinExpressionDisplay> fishProteinExpressionDisplays = ExpressionService.createProteinExpressionDisplays(fish.getZdbID(), fishProteinExpressionResults, fishExpressionFigureIDs, fishExpressionPublicationIDs, true);
+        model.addAttribute("proteinExpressionDataList", fishProteinExpressionDisplays);
+
+        model.addAttribute("totalNumberOfPublications", FishService.getCitationCount(fish));
+        model.addAttribute("fishIsWildtypeWithoutReagents", fish.isWildtypeWithoutReagents());
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Fish: " + getTitle(fish.getName()));
+
+        return "fish/fish-view";
+    }
+
     @RequestMapping(value = "/fish-detail/{zdbID}")
     protected String showCuratedFish(@PathVariable String zdbID, Model model) {
 
