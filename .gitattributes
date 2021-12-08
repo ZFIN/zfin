@@ -827,6 +827,7 @@
 /server_apps/data_transfer/SangerMutants/InputFiles/Danio_rerio.Zv9.70.cdna.all.fa filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/jenkins-2.249.2.war filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/ant.jpi filter=lfs diff=lfs merge=lfs -text
+/server_apps/jenkins/plugins/build-timeout.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/cron_column.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/email-ext.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/envinject.jpi filter=lfs diff=lfs merge=lfs -text
