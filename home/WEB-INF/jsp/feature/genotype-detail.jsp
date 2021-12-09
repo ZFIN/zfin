@@ -17,6 +17,10 @@
 
     <zfin2:dataManager zdbID="${formBean.genotype.zdbID}"/>
 
+    <authz:authorize access="hasRole('root')">
+        <a class="dropdown-item" href="/action/genotype/prototype/view/${formBean.genotype.zdbID}">Prototype View</a>
+    </authz:authorize>
+
     <table class="primary-entity-attributes">
         <tr>
             <th class="genotype-name-label">
@@ -55,7 +59,8 @@
                 <td>
                     <c:choose>
                         <c:when test="${fn:length(formBean.genotype.associatedGenotypes) ne null && fn:length(formBean.genotype.associatedGenotypes) > 0}">
-                            <c:forEach var="background" items="${formBean.genotype.associatedGenotypes}" varStatus="loop">
+                            <c:forEach var="background" items="${formBean.genotype.associatedGenotypes}"
+                                       varStatus="loop">
                                 <zfin:link entity="${background}"/>
                                 <c:if test="${background.handle != background.name}">(${background.handle})</c:if>
                                 <c:if test="${!loop.last}">,&nbsp;</c:if>
@@ -122,54 +127,54 @@
                 <c:when test="${formBean.genotypeFeatures ne null && fn:length(formBean.genotypeFeatures) > 0}">
                     <table class="summary rowstripes">
                         <tbody>
-                        <tr>
-                            <th width="20%">
-                                Genomic Feature
-                            </th>
-                            <th width="20%">
-                                Construct
-                            </th>
-                            <th width="20%">
-                                Lab of Origin
-                            </th>
-                            <th width="20%">
-                                Zygosity
-                            </th>
-                            <th width="20%">
-                                Parental Zygosity
-                            </th>
-                        </tr>
-                        <c:forEach var="genoFeat" items="${formBean.genotypeFeatures}" varStatus="loop">
-                            <zfin:alternating-tr loopName="loop">
-                                <td>
-                                    <zfin:link entity="${genoFeat.feature}"/>
-                                </td>
-                                <td>
-                                    <c:forEach var="construct" items="${genoFeat.feature.constructs}"
-                                               varStatus="constructsloop">
+                            <tr>
+                                <th width="20%">
+                                    Genomic Feature
+                                </th>
+                                <th width="20%">
+                                    Construct
+                                </th>
+                                <th width="20%">
+                                    Lab of Origin
+                                </th>
+                                <th width="20%">
+                                    Zygosity
+                                </th>
+                                <th width="20%">
+                                    Parental Zygosity
+                                </th>
+                            </tr>
+                            <c:forEach var="genoFeat" items="${formBean.genotypeFeatures}" varStatus="loop">
+                                <zfin:alternating-tr loopName="loop">
+                                    <td>
+                                        <zfin:link entity="${genoFeat.feature}"/>
+                                    </td>
+                                    <td>
+                                        <c:forEach var="construct" items="${genoFeat.feature.constructs}"
+                                                   varStatus="constructsloop">
 
-                                        <a href="/${construct.marker.zdbID}"><i>${construct.marker.name}</i></a><c:if
-                                            test="${!constructsloop.last}">,&nbsp;</c:if>
-                                    </c:forEach>
-                                </td>
-                                <td>
-                                    <c:forEach var="source" items="${genoFeat.feature.sources}" varStatus="status">
-                                        <c:if test="${source.organization.zdbID != 'ZDB-LAB-000914-1'}">
-                                            <a href="/${source.organization.zdbID}">
-                                                    ${source.organization.name}
-                                            </a>
-                                        </c:if>
-                                        <c:if test="${!status.last}">,&nbsp;</c:if>
-                                    </c:forEach>
-                                </td>
-                                <td>
-                                        ${genoFeat.zygosity.name}
-                                </td>
-                                <td>
-                                        ${genoFeat.parentalZygosityDisplay}
-                                </td>
-                            </zfin:alternating-tr>
-                        </c:forEach>
+                                            <a href="/${construct.marker.zdbID}"><i>${construct.marker.name}</i></a><c:if
+                                                test="${!constructsloop.last}">,&nbsp;</c:if>
+                                        </c:forEach>
+                                    </td>
+                                    <td>
+                                        <c:forEach var="source" items="${genoFeat.feature.sources}" varStatus="status">
+                                            <c:if test="${source.organization.zdbID != 'ZDB-LAB-000914-1'}">
+                                                <a href="/${source.organization.zdbID}">
+                                                        ${source.organization.name}
+                                                </a>
+                                            </c:if>
+                                            <c:if test="${!status.last}">,&nbsp;</c:if>
+                                        </c:forEach>
+                                    </td>
+                                    <td>
+                                            ${genoFeat.zygosity.name}
+                                    </td>
+                                    <td>
+                                            ${genoFeat.parentalZygosityDisplay}
+                                    </td>
+                                </zfin:alternating-tr>
+                            </c:forEach>
 
                         </tbody>
                     </table>

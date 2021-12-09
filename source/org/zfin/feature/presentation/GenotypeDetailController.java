@@ -85,6 +85,57 @@ public class GenotypeDetailController {
         }
     }
 
+    @RequestMapping(value = "/prototype/view/{zdbID}")
+    public String getGenotypePrototypeDetail(@PathVariable String zdbID, Model model) {
+
+        LOG.debug("Start Genotype Detail Controller");
+        Genotype genotype = mutantRepository.getGenotypeByID(zdbID);
+        if (genotype == null) {
+            String replacedZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(zdbID);
+            if (replacedZdbID != null) {
+                LOG.debug("found a replaced zdbID for: " + zdbID + "->" + replacedZdbID);
+                genotype = mutantRepository.getGenotypeByID(replacedZdbID);
+            } else {
+                String newZdbID = RepositoryFactory.getInfrastructureRepository().getNewZdbID(zdbID);
+                if (newZdbID != null) {
+                    LOG.debug("found a replaced zdbID for: " + zdbID + "->" + newZdbID);
+                    return "redirect:/ZDB-PUB-121121-2";
+                }
+            }
+        }
+        if (genotype == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, zdbID);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+        GenotypeBean form = new GenotypeBean();
+        form.setGenotype(genotype);
+        retrievePublicationData(form, genotype);
+        if (!genotype.isWildtype()) {
+            retrieveGenotypeFeatureData(form, genotype);
+
+            List<GenotypeFishResult> allFish = new ArrayList<>();
+
+            List<GenotypeFishResult> fishSummaryList = FishService.getFishExperimentSummaryForGenotype(genotype);
+            for (GenotypeFishResult fishSummary : fishSummaryList) {
+                fishSummary.setAffectedMarkers(GenotypeService.getAffectedMarker(genotype));
+                allFish.add(fishSummary);
+            }
+
+
+            model.addAttribute("fishList", allFish);
+            model.addAttribute("affectedMarkerList", GenotypeService.getAffectedMarker(genotype));
+        }
+
+        model.addAttribute(LookupStrings.FORM_BEAN, form);
+        String genotypeName = genotype.getName();
+        genotypeName = genotypeName.replaceAll("<sup>", "^");
+        genotypeName = genotypeName.replaceAll("</sup>", "");
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Genotype: " + genotypeName);
+        if (genotype.isWildtype())
+            return "fish/wildtype-genotype-view";
+        return "fish/genotype-view";
+    }
+
     @RequestMapping(value = "/view/{zdbID}")
     public String getGenotypeDetail(@PathVariable String zdbID, Model model) {
 
