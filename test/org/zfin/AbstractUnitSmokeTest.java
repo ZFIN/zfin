@@ -18,18 +18,17 @@ public class AbstractUnitSmokeTest extends WebTestCase {
     protected String nonSecureUrlDomain;
     protected String secureUrlDomain;
 
+    //TODO: use google analytics to determine representative browsers
     protected final WebClient[] curationWebClients = {
-            new WebClient(BrowserVersion.FIREFOX_17),  // 30-50%
-            new WebClient(BrowserVersion.INTERNET_EXPLORER_8),  // 20-30%
-//            new WebClient(BrowserVersion.SAFARI),  // 20%
+            new WebClient(BrowserVersion.FIREFOX_38),
+            new WebClient(BrowserVersion.INTERNET_EXPLORER),
+//            new WebClient(BrowserVersion.SAFARI),
     };
 
     protected final WebClient[] publicWebClients = {
-            new WebClient(BrowserVersion.FIREFOX_17),  // 30-50%
-            new WebClient(BrowserVersion.INTERNET_EXPLORER_6),  // 10%
-            new WebClient(BrowserVersion.INTERNET_EXPLORER_7),  // 10%
-            new WebClient(BrowserVersion.INTERNET_EXPLORER_8),  // 20-30%
-//            new WebClient(BrowserVersion.SAFARI),  // 20%
+            new WebClient(BrowserVersion.FIREFOX_38),
+            new WebClient(BrowserVersion.INTERNET_EXPLORER),
+//            new WebClient(BrowserVersion.SAFARI),
     };
 
 
