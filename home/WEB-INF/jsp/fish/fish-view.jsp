@@ -8,9 +8,8 @@
 <c:set var="PHENOTYPE" value="Phenotype"/>
 <c:set var="CITATIONS" value="Citations"/>
 
-<z:dataPage
-        sections="${[SUMMARY, HUMAN_DISEASE, EXPRESSION, PHENOTYPE, CITATIONS]}"
->
+<z:dataPage sections="${[SUMMARY, HUMAN_DISEASE, EXPRESSION, PHENOTYPE, CITATIONS]}">
+
     <jsp:attribute name="entityName">
         ${fish.name}
     </jsp:attribute>
@@ -27,8 +26,11 @@
             <jsp:include page="fish-view-summary.jsp"/>
         </div>
 
-        <z:section title="${HUMAN_DISEASE}" infoPopup="/ZFIN/help_files/expression_help.html" appendedText="modelled by ${fish.name}">
-            <jsp:include page="fish-view-human-disease.jsp"/>
+        <z:section title="${HUMAN_DISEASE}" infoPopup="/ZFIN/help_files/expression_help.html"
+                   appendedText="modelled by ${fish.name}">
+            <z:section title="">
+                <jsp:include page="fish-view-human-disease.jsp"/>
+            </z:section>
         </z:section>
 
         <z:section title="${EXPRESSION}" infoPopup="/ZFIN/help_files/expression_help.html">
@@ -48,18 +50,14 @@
         </z:section>
 
         <z:section title="${PHENOTYPE}" infoPopup="/action/marker/note/phenotype">
-            <zfin2:fish-genotype-phenotype phenotypeDisplays="${phenotypeDisplays}" fishAndCondition="true"
-                                           suppressMoDetails="true" secondColumn="condition"/>
-            <%--
-                        <jsp:include page="gene-view-phenotype-header.jsp"/>
-                        <z:section title="Phenotype Summary">
-                            <div class="__react-root" id="PhenotypeRibbon" data-gene-id="${formBean.marker.zdbID}"></div>
-                        </z:section>
-            --%>
+            <z:section title=" ">
+                <zfin2:fish-genotype-phenotype phenotypeDisplays="${phenotypeDisplays}" fishAndCondition="true"
+                                               suppressMoDetails="true" secondColumn="condition"/>
+            </z:section>
         </z:section>
 
         <z:section title="${CITATIONS}" infoPopup="/action/marker/note/citations">
-            <div class="__react-root" id="CitationTable" data-fish-id="${fish.zdbID}"></div>
+            <div class="__react-root" id="CitationTable" data-marker-id="${fish.zdbID}"></div>
         </z:section>
     </jsp:body>
 

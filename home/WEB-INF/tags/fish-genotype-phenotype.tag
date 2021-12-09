@@ -1,4 +1,3 @@
-<%@ tag import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ attribute name="phenotypeDisplays" type="java.util.Collection" required="false" %>
@@ -9,22 +8,22 @@
 <z:dataTable collapse="true"
              hasData="${geneCentricNonEfgExpressionDataList != null && fn:length(geneCentricNonEfgExpressionDataList) > 0 }">
     <thead>
-    <tr>
-    <th>Phenotype</th>
-        <c:if test="${fishAndCondition && secondColumn ne 'condition'}">
+        <tr>
+            <th>Phenotype</th>
+            <c:if test="${fishAndCondition && secondColumn ne 'condition'}">
+                <th>
+                    Fish
+                </th>
+            </c:if>
+            <c:if test="${fishAndCondition}">
+                <th>
+                    Conditions
+                </th>
+            </c:if>
             <th>
-                Fish
+                Figures
             </th>
-        </c:if>
-        <c:if test="${fishAndCondition}">
-            <th>
-                Conditions
-            </th>
-        </c:if>
-        <th>
-            Figures
-        </th>
-    </tr>
+        </tr>
     </thead>
     <c:forEach var="phenotypeDisplay" items="${phenotypeDisplays}" varStatus="loop">
         <zfin:alternating-tr loopName="loop">
@@ -44,7 +43,9 @@
             <td>
                 <c:forEach var="figsPub" items="${phenotypeDisplay.figuresPerPub}">
                     <c:forEach var="fig" items="${figsPub.value}" varStatus="figloop">
-                        <a href='/${fig.zdbID}'>${fig.label}</a><c:if test="${!fig.imgless}">&nbsp;<img src="/images/camera_icon.gif" alt="with image" image="" border="0"></c:if><c:if test="${!figloop.last}">,&nbsp;</c:if>
+                        <a href='/${fig.zdbID}'>${fig.label}</a><c:if
+                            test="${!fig.imgless}">&nbsp;<img src="/images/camera_icon.gif" alt="with image" image="" border="0"></c:if><c:if
+                            test="${!figloop.last}">,&nbsp;</c:if>
                     </c:forEach>
                     from <zfin:link entity="${figsPub.key}"/><br/>
                 </c:forEach>
