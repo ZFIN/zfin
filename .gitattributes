@@ -765,8 +765,8 @@
 /lib/Java/jwebunit/commons-lang3-3.1.jar filter=lfs diff=lfs merge=lfs -text
 /lib/Java/jwebunit/commons-logging-1.1.1.jar filter=lfs diff=lfs merge=lfs -text
 /lib/Java/jwebunit/cssparser-0.9.9.jar filter=lfs diff=lfs merge=lfs -text
-/lib/Java/jwebunit/htmlunit-2.12.jar filter=lfs diff=lfs merge=lfs -text
-/lib/Java/jwebunit/htmlunit-core-js-2.12.jar filter=lfs diff=lfs merge=lfs -text
+/lib/Java/jwebunit/htmlunit-2.20.jar filter=lfs diff=lfs merge=lfs -text
+/lib/Java/jwebunit/htmlunit-core-js-2.17.jar filter=lfs diff=lfs merge=lfs -text
 /lib/Java/jwebunit/httpclient-4.2.3.jar filter=lfs diff=lfs merge=lfs -text
 /lib/Java/jwebunit/httpcore-4.2.2.jar filter=lfs diff=lfs merge=lfs -text
 /lib/Java/jwebunit/httpmime-4.2.3.jar filter=lfs diff=lfs merge=lfs -text
