@@ -3,19 +3,15 @@ package org.zfin.alliancegenome;
 import org.alliancegenome.curation_api.model.entities.DiseaseAnnotation;
 import org.alliancegenome.curation_api.model.entities.ontology.DOTerm;
 import org.alliancegenome.curation_api.response.ObjectResponse;
-import si.mazi.rescu.ClientConfig;
-import si.mazi.rescu.RestProxyFactory;
+import org.zfin.properties.ZfinProperties;
 
-public class CallRestEndpoint {
+public class AllianceRestEndpointTest {
 
     public static void main(String[] args) {
-        final String path = "https://alpha-curation.alliancegenome.org/api";
-        //final String path1 = "https://alpha-curation.alliancegenome.org";
-        final String path1 = "http://localhost:8080";
-        ClientConfig config = new ClientConfig();
-        config.setJacksonObjectMapperFactory(new JacksonObjectMapperFactoryZFIN());
-        //DiseaseAnnotationRESTInterface api1 = RestProxyFactory.createProxy(DiseaseAnnotationRESTInterface.class, path, config);
-        DiseaseAnnotationRESTInterfaceAlliance api = RestProxyFactory.createProxy(DiseaseAnnotationRESTInterfaceAlliance.class, path1, config);
+        ZfinProperties.init("home/WEB-INF/zfin.properties");
+        // COnfigue to connect to different URL
+        //AllianceRestManager.path = "https://alpha-curation.alliancegenome.org";
+        DiseaseAnnotationRESTInterfaceAlliance api = AllianceRestManager.getDiseaseAnnotationEndpoints();
         //ObjectResponse<DiseaseAnnotation> annotation = api.getDiseaseAnnotation("4491701");
         ObjectResponse<DiseaseAnnotation> annotation = api.getDiseaseAnnotation("1516234");
 
