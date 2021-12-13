@@ -13,7 +13,7 @@ import java.io.Serializable;
 /**
  * Class that maps to a statistics table for antibodies
  */
-@javax.persistence.Entity
+@Entity
 @Table(name = "FEATURE_STATS")
 @DiscriminatorColumn(
         name = "fstat_type",
