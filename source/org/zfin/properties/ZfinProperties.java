@@ -1,7 +1,8 @@
 package org.zfin.properties;
 
 import freemarker.template.Configuration;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zfin.gwt.root.ui.HandlesErrorCallBack;
 import org.zfin.gwt.root.util.LookupRPCService;
 import org.zfin.properties.ant.LoadPropertiesTask;

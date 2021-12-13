@@ -6,9 +6,9 @@ import si.mazi.rescu.RestProxyFactory;
 
 public class AllianceRestManager {
 
-    private static ClientConfig config = new ClientConfig();
-    static final String path = ZfinPropertiesEnum.ALLIANCE_CURATION_URL.value();
+    static String path = ZfinPropertiesEnum.ALLIANCE_CURATION_URL.value();
 
+    private static ClientConfig config = new ClientConfig();
     static {
         config.setJacksonObjectMapperFactory(new JacksonObjectMapperFactoryZFIN());
     }
