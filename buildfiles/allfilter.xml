@@ -1,6 +1,7 @@
 <project>
 <filterset id='allfilters'>
 <filter token="ADAM_AMSTERDAM" value="${ADAM_AMSTERDAM}"/>
+<filter token="ALLIANCE_CURATION_URL" value="${ALLIANCE_CURATION_URL}"/>
 <filter token="ALL_FAILURE_REPORTS_EMAIL" value="${ALL_FAILURE_REPORTS_EMAIL}"/>
 <filter token="ANT_HOME" value="${ANT_HOME}"/>
 <filter token="ANT_OPTS" value="${ANT_OPTS}"/>

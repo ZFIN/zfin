@@ -6,7 +6,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
 import org.zfin.ExternalNote;
-import org.zfin.alliancegenome.DiseaseAnnotationService;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.dto.DiseaseAnnotationDTO;
@@ -18,6 +17,7 @@ import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.mutant.*;
+import org.zfin.mutant.service.DiseaseAnnotationService;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 
@@ -340,7 +340,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             }
             HibernateUtil.flushAndCommitCurrentSession();
             // Create DA at Alliancegenome
-            DiseaseAnnotationService.submitAnnotation(dam);
+            DiseaseAnnotationService.submitAnnotationToAlliance(dam);
         } catch (ConstraintViolationException e) {
             HibernateUtil.rollbackTransaction();
 

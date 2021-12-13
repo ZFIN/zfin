@@ -1,6 +1,7 @@
 /docker/tomcat/postgresql-42.2.18.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/XmlSchema-1.4.2.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/activation-1.1.1.jar filter=lfs diff=lfs merge=lfs -text
+/home/WEB-INF/lib/agr_curation_api.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/ant-1.8.1.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/ant-antlr-1.6.5.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/antlr-2.7.7.jar filter=lfs diff=lfs merge=lfs -text
