@@ -374,7 +374,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
 
         if (getMutantRepository().createFish(fish, publication)) {
             report.addMessage("created new fish " + fish.getHandle());
-            // send to Alliance
+            // ToDO: send to Alliance
 
         } else {
             report.addMessage("imported fish " + fish.getHandle());
