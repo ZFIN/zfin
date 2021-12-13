@@ -20,4 +20,9 @@ public interface DiseaseAnnotationRESTInterfaceAlliance {
     @Consumes({MediaType.APPLICATION_JSON})
     ObjectResponse<DiseaseAnnotation> addDiseaseAnnotation(DiseaseAnnotation annotation);
 
+    @PUT
+    @Path("/disease-annotation")
+    @Consumes({MediaType.APPLICATION_JSON})
+    ObjectResponse<DiseaseAnnotation> updateDiseaseAnnotation(DiseaseAnnotation annotation);
+
 }
