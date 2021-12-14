@@ -1,19 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import DataTable from '../components/data-table';
-import EntityLink from '../components/entity';
+import {EntityLink} from '../components/entity';
 
 const PublicationMarkerTable = ({url}) => {
     const columns = [
         {
+            label: 'Marker',
+            content: row => <EntityLink key={row.zdbID} entity={row}/>,
+            width: '250px',
+        },
+        {
             label: 'Marker Type',
             content: row => row.type,
             width: '200px',
-        },
-        {
-            label: 'Marker',
-            content: row => <EntityLink key={row.zdbID} entity={row} />,
-            width: '250px',
         },
         {
             label: 'Name',

@@ -9,6 +9,9 @@ public class View {
         public static class API extends Default {
         }
 
+        public static class FishAPI extends API {
+        }
+
         public static class Disease extends API {
         }
 

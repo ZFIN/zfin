@@ -1,6 +1,7 @@
 package org.zfin.publication.presentation;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.antibody.Antibody;
@@ -14,21 +15,22 @@ import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
+import org.zfin.marker.MarkerType;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.mutant.Fish;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.wiki.presentation.Version;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/publication")
 public class PublicationAPIController {
 
     @Autowired
@@ -44,7 +46,7 @@ public class PublicationAPIController {
     private HttpServletRequest request;
 
     @ResponseBody
-    @RequestMapping(value = "/publication/{zdbID}/genes", method = RequestMethod.GET)
+    @RequestMapping(value = "/{zdbID}/genes", method = RequestMethod.GET)
     public List<MarkerDTO> getPublicationGenes(@PathVariable String zdbID) {
         List<Marker> genes = publicationRepository.getGenesByPublication(zdbID, false);
         List<MarkerDTO> dtos = new ArrayList<>();
@@ -55,7 +57,7 @@ public class PublicationAPIController {
     }
 
     @JsonView(View.FeatureAPI.class)
-    @RequestMapping(value = "/publication/{pubID}/features", method = RequestMethod.GET)
+    @RequestMapping(value = "/{pubID}/features", method = RequestMethod.GET)
     public JsonResultResponse<Feature> getPublicationMutation(@PathVariable String pubID,
                                                               @Version Pagination pagination) {
 
@@ -74,7 +76,7 @@ public class PublicationAPIController {
 
 
     @JsonView(View.API.class)
-    @RequestMapping(value = "/publication/{zdbID}/marker", method = RequestMethod.GET)
+    @RequestMapping(value = "/{zdbID}/marker", method = RequestMethod.GET)
     public JsonResultResponse<Marker> getPublicationMarker(@PathVariable String zdbID,
                                                            @Version Pagination pagination) {
         List<Marker> marker = publicationRepository.getGenesByPublication(zdbID, false);
@@ -91,7 +93,7 @@ public class PublicationAPIController {
     }
 
     @JsonView(View.AntibodyDetailsAPI.class)
-    @RequestMapping(value = "/publication/{publicationID}/antibodies")
+    @RequestMapping(value = "/{publicationID}/antibodies")
     public JsonResultResponse<Antibody> getSequenceView(@PathVariable("publicationID") String publicationID,
                                                         @Version Pagination pagination) {
         PublicationRepository pr = RepositoryFactory.getPublicationRepository();
@@ -118,4 +120,64 @@ public class PublicationAPIController {
         return response;
     }
 
+    @JsonView(View.FishAPI.class)
+    @RequestMapping(value = "/{publicationID}/fish")
+    public JsonResultResponse<Fish> getPublicationFeatures(@PathVariable("publicationID") String publicationID,
+                                                           @Version Pagination pagination) {
+        List<Fish> fishList = publicationRepository.getFishByPublication(publicationID);
+        JsonResultResponse<Fish> response = new JsonResultResponse<>();
+        response.setTotal(fishList.size());
+        List<Fish> paginatedFishList = fishList.stream()
+                .skip(pagination.getStart())
+                .limit(pagination.getLimit())
+                .collect(Collectors.toList());
+
+        response.setResults(paginatedFishList);
+        response.setHttpServletRequest(request);
+        return response;
+    }
+
+    @RequestMapping(value = "/{publicationID}/direct-attribution")
+    public JsonResultResponse<String> getPublicationAttribution(@PathVariable("publicationID") String publicationID,
+                                                                @Version Pagination pagination) {
+/*
+        if (StringUtils.equals(pubID, "ZDB-PUB-030905-1")) {
+            return "redirect:/" + pubID;
+        }
+*/
+
+        List<String> directedAttributionIDs = RepositoryFactory.getPublicationRepository().getDirectlyAttributedZdbids(publicationID);
+        JsonResultResponse<String> response = new JsonResultResponse<>();
+        response.setTotal(directedAttributionIDs.size());
+        List<String> paginatedDirectedAttributionIDs = directedAttributionIDs.stream()
+                .skip(pagination.getStart())
+                .limit(pagination.getLimit())
+                .collect(Collectors.toList());
+
+        response.setResults(paginatedDirectedAttributionIDs);
+        response.setHttpServletRequest(request);
+        return response;
+    }
+
+    @JsonView(View.API.class)
+    @RequestMapping(value = "/{publicationID}/efgs")
+    public JsonResultResponse<Marker> getPublicationEFGs(@PathVariable("publicationID") String publicationID,
+                                                         @Version Pagination pagination) {
+        MarkerType efgType = markerRepository.getMarkerTypeByName(Marker.Type.EFG.name());
+        List<Marker> markers = publicationRepository.getMarkersByTypeForPublication(publicationID, efgType);
+        JsonResultResponse<Marker> response = new JsonResultResponse<>();
+        response.setHttpServletRequest(request);
+        if (CollectionUtils.isEmpty(markers))
+            return response;
+        response.setTotal(markers.size());
+        List<Marker> markerList = markers.stream()
+                .skip(pagination.getStart())
+                .limit(pagination.getLimit())
+                .collect(Collectors.toList());
+
+        response.setResults(markerList);
+        return response;
+    }
+
 }
+
