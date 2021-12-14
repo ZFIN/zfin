@@ -7,7 +7,7 @@ from int_data_supplier
 where idsup_data_zdb_id in (
     select mrkr_zdb_id
     from marker
-    where mrkr_type in ('BAC')
+    where mrkr_type in ('BAC', 'EST')
 )
   AND idsup_supplier_zdb_id in (
     select zdb_id from company where name = 'Source BioScience (formerly Imagenes)'
