@@ -79,7 +79,7 @@
 
             <z:section title="${CITATIONS}" infoPopup="/action/marker/note/citations">
                 <z:section title=" ">
-                    <div class="__react-root" id="CitationTable" data-marker-id="${fish.zdbID}"></div>
+                    <div class="__react-root" id="CitationTable" data-marker-id="${genotype.zdbID}"></div>
                 </z:section>
             </z:section>
 
