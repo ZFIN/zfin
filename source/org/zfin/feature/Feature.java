@@ -51,11 +51,11 @@ public class Feature implements EntityNotes, EntityZdbID {
                     @org.hibernate.annotations.Parameter(name = "insertActiveData", value = "true")
             })
     @Column(name = "feature_zdb_id")
-    @JsonView(View.API.class)
+    @JsonView(View.FeatureAPI.class)
     private String zdbID;
     @Column(name = "feature_name", nullable = false)
     //@Audited
-    @JsonView(View.API.class)
+    @JsonView(View.FeatureAPI.class)
     private String name;
     @OneToMany(mappedBy = "feature", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<FeatureNote> externalNotes;
@@ -69,7 +69,7 @@ public class Feature implements EntityNotes, EntityZdbID {
     @JoinColumn(name = "feature_lab_prefix_id")
     private FeaturePrefix featurePrefix;
     @Column(name = "feature_abbrev", nullable = false)
-    @JsonView(View.API.class)
+    @JsonView(View.FeatureAPI.class)
     private String abbreviation;
     @Column(name = "feature_tg_suffix")
     private String transgenicSuffix;
@@ -101,7 +101,7 @@ public class Feature implements EntityNotes, EntityZdbID {
     @Column(name = "feature_type")
     @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
             parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.gwt.root.dto.FeatureTypeEnum")})
-    @JsonView(View.API.class)
+    @JsonView(View.FeatureAPI.class)
     private FeatureTypeEnum type;
     @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY)
     private Set<FeatureSupplier> suppliers;
@@ -111,7 +111,7 @@ public class Feature implements EntityNotes, EntityZdbID {
     @org.hibernate.annotations.OrderBy(clause = "dalias_alias_lower")
     private Set<FeatureAlias> aliases;
     @OneToOne(mappedBy = "feature", fetch = FetchType.EAGER)
-    @JsonView(View.API.class)
+    @JsonView(View.FeatureAPI.class)
     private FeatureAssay featureAssay;
 
     @OneToMany(mappedBy = "feature", fetch = FetchType.EAGER)
@@ -238,7 +238,7 @@ public class Feature implements EntityNotes, EntityZdbID {
         this.type = type;
     }
 
-    @JsonView(View.API.class)
+    @JsonView(View.FeatureAPI.class)
     public Set<FeatureSupplier> getSuppliers() {
         return suppliers;
     }
@@ -497,6 +497,7 @@ public class Feature implements EntityNotes, EntityZdbID {
         return sb.toString();
     }
 
+    @JsonView(View.FeatureAPI.class)
     public SortedSet<Marker> getAffectedGenes() {
         SortedSet<Marker> affectedGenes = new TreeSet<>();
         for (FeatureMarkerRelationship featureMarkerRelationship : featureMarkerRelations) {
@@ -518,6 +519,7 @@ public class Feature implements EntityNotes, EntityZdbID {
         return affectedGenesReln;
     }
 
+    @JsonView(View.FeatureAPI.class)
     public SortedSet<Marker> getTgConstructs() {
         SortedSet<Marker> tgConstructs = new TreeSet<>();
         for (FeatureMarkerRelationship ftrmarkrel : featureMarkerRelations) {
@@ -653,12 +655,12 @@ public class Feature implements EntityNotes, EntityZdbID {
         return allelicMarker.size() > 1;
     }
 
-    @JsonView(View.API.class)
+    @JsonView(View.FeatureAPI.class)
     public String getGeneLocalizationStatement() {
         return mutationDetailsConversionService.geneLocalizationStatement(getFeatureDnaMutationDetail());
     }
 
-    @JsonView(View.API.class)
+    @JsonView(View.FeatureAPI.class)
     public String getTranscriptConsequenceStatement() {
         return mutationDetailsConversionService.getTranscriptMutationStatement(this);
     }

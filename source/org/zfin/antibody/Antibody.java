@@ -1,9 +1,12 @@
 package org.zfin.antibody;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.framework.api.View;
+import org.zfin.marker.Gene;
 import org.zfin.marker.Marker;
 
 import java.util.ArrayList;
@@ -15,6 +18,8 @@ import java.util.stream.Collectors;
 /**
  * Main domain object for antibodies.
  */
+@Setter
+@Getter
 public class Antibody extends Marker {
 
     @JsonView(View.AntibodyDetailsAPI.class)
@@ -29,62 +34,8 @@ public class Antibody extends Marker {
     private String clonalType;
     private Set<ExpressionExperiment> antibodyLabelings;
     private Set<AntibodyExternalNote> externalNotes;
-
-    public String getHostSpecies() {
-        return hostSpecies;
-    }
-
-    public void setHostSpecies(String hostSpecies) {
-        this.hostSpecies = hostSpecies;
-    }
-
-    public String getImmunogenSpecies() {
-        return immunogenSpecies;
-    }
-
-    public void setImmunogenSpecies(String immunogenSpecies) {
-        this.immunogenSpecies = immunogenSpecies;
-    }
-
-    public Set<ExpressionExperiment> getAntibodyLabelings() {
-        return antibodyLabelings;
-    }
-
-    public void setAntibodyLabelings(Set<ExpressionExperiment> antibodyLabelings) {
-        this.antibodyLabelings = antibodyLabelings;
-    }
-
-    public Set<AntibodyExternalNote> getExternalNotes() {
-        return externalNotes;
-    }
-
-    public void setExternalNotes(Set<AntibodyExternalNote> externalNotes) {
-        this.externalNotes = externalNotes;
-    }
-
-    public String getClonalType() {
-        return clonalType;
-    }
-
-    public void setClonalType(String clonalType) {
-        this.clonalType = clonalType;
-    }
-
-    public String getHeavyChainIsotype() {
-        return heavyChainIsotype;
-    }
-
-    public void setHeavyChainIsotype(String heavyChainIsotype) {
-        this.heavyChainIsotype = heavyChainIsotype;
-    }
-
-    public String getLightChainIsotype() {
-        return lightChainIsotype;
-    }
-
-    public void setLightChainIsotype(String lightChainIsotype) {
-        this.lightChainIsotype = lightChainIsotype;
-    }
+    @JsonView(View.AntibodyDetailsAPI.class)
+    private List<Marker> antigenGenes;
 
     /**
      * @param expressionExperiment Antibody label to compare.
@@ -140,6 +91,7 @@ public class Antibody extends Marker {
         return getName();
     }
 
+    @JsonView(View.AntibodyDetailsAPI.class)
     public List<String> getDistinctAssayNames() {
         if (antibodyLabelings == null) {
             return new ArrayList<>();
