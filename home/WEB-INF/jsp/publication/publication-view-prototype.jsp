@@ -6,14 +6,16 @@
 <c:set var="ABSTRACT" value="Abstract"/>
 <c:set var="FIGURES" value="Figures"/>
 <c:set var="GENES" value="Genes / Markers"/>
+<c:set var="MORPHOLINOS" value="Morpholinos"/>
 <c:set var="ANTIBODIES" value="Antibodies"/>
+<c:set var="EFGs" value="Engineered Foreign Genes"/>
 <c:set var="EXPRESSION" value="Expression Data"/>
 <c:set var="MUTATION" value="Mutation and Transgenics"/>
 <c:set var="FISH" value="Fish"/>
-<c:set var="DIRECTLY_ATTRIBUTED_DATA" value="Driectly Attributed Data"/>
+<c:set var="DIRECTLY_ATTRIBUTED_DATA" value="Directly Attributed Data"/>
 
 <z:dataPage
-        sections="${[SUMMARY, ABSTRACT, FIGURES, GENES, ANTIBODIES, EXPRESSION, MUTATION, FISH, DIRECTLY_ATTRIBUTED_DATA]}">
+        sections="${[SUMMARY, ABSTRACT, FIGURES, GENES, MORPHOLINOS, ANTIBODIES, EFGs, EXPRESSION, MUTATION, FISH, DIRECTLY_ATTRIBUTED_DATA]}">
 
     <jsp:attribute name="entityName">
         ${publication.title}
@@ -48,15 +50,38 @@
         </z:section>
 
         <z:section title="${GENES}">
-            <div class="__react-root" id="PublicationMarkerTable" data-url="/action/api/publication/${publication.zdbID}/marker"></div>
+            <div class="__react-root" id="PublicationMarkerTable"
+                 data-url="/action/api/publication/${publication.zdbID}/marker"></div>
+        </z:section>
+
+        <z:section title="${MORPHOLINOS}">
+            <div class="__react-root" id="AntibodyTable"
+                 data-url="/action/api/publication/${publication.zdbID}/antibodies"></div>
         </z:section>
 
         <z:section title="${ANTIBODIES}" infoPopup="/action/marker/note/antibodies">
-            <div class="__react-root" id="AntibodyTable" data-url="/action/api/publication/${publication.zdbID}/antibodies"></div>
+            <div class="__react-root" id="AntibodyTable"
+                 data-url="/action/api/publication/${publication.zdbID}/antibodies"></div>
+        </z:section>
+
+        <z:section title="${EFGs}">
+            <div class="__react-root" id="PublicationMarkerTable"
+                 data-url="/action/api/publication/${publication.zdbID}/efgs"></div>
         </z:section>
 
         <z:section title="${MUTATION}">
-            <div class="__react-root" id="PublicationMutationTable" data-url="/action/api/publication/${publication.zdbID}/features"></div>
+            <div class="__react-root" id="PublicationMutationTable"
+                 data-url="/action/api/publication/${publication.zdbID}/features"></div>
+        </z:section>
+
+        <z:section title="${FISH}">
+            <div class="__react-root" id="PublicationFishTable"
+                 data-url="/action/api/publication/${publication.zdbID}/fish"></div>
+        </z:section>
+
+        <z:section title="${DIRECTLY_ATTRIBUTED_DATA}">
+            <div class="__react-root" id="PublicationAttributionTable"
+                 data-url="/action/api/publication/${publication.zdbID}/direct-attribution"></div>
         </z:section>
 
 

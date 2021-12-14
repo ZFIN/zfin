@@ -20,6 +20,7 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
     @JsonView(View.API.class)
     private String zdbID;
     private Genotype genotype;
+    @JsonView(View.FishAPI.class)
     private String name;
     private String nameOrder;
     @JsonView(View.API.class)
@@ -129,6 +130,7 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
         this.zdbID = zdbID;
     }
 
+    @JsonView(View.FishAPI.class)
     @Override
     public String getAbbreviation() {
         return name;
