@@ -11,6 +11,8 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
 import org.zfin.mutant.SequenceTargetingReagent;
+import org.zfin.publication.Publication;
+import org.zfin.publication.PublicationType;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;
@@ -35,8 +37,13 @@ public class MarkerAttributionService {
         infrastructureRepository.insertRecordAttribution(markerZdbID, pubZdbID);
         infrastructureRepository.insertUpdatesTable(markerZdbID, "record attribution", "", pubZdbID, "Added direct attribution");
 
+        Publication publication = RepositoryFactory.getPublicationRepository().getPublication(pubZdbID);
+        if (publication.getType() != PublicationType.JOURNAL) {
+            return;
+        }
+
         List<Marker> targetedGenes = getTargetedGenes(m);
-        for(Marker gene : targetedGenes) {
+        for (Marker gene : targetedGenes) {
             infrastructureRepository.insertRecordAttribution(gene.getZdbID(), pubZdbID);
             infrastructureRepository.insertUpdatesTable(gene.getZdbID(), "record attribution", "", pubZdbID, "Added inferred gene attribution");
         }

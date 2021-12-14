@@ -8,6 +8,7 @@ import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.publication.Publication;
+import org.zfin.publication.PublicationType;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -33,7 +34,7 @@ public class FeatureAttributionRepair extends AbstractScriptWrapper {
     public static void main(String[] args) {
         FeatureAttributionRepair repair = new FeatureAttributionRepair();
         try {
-            repair.scanThroughPublicationsAndFix();
+            repair.scanThroughPublicationsAndOutputFixes();
         } catch (IOException e) {
             throw new RuntimeException("Error writing to file.");
         }
@@ -66,13 +67,12 @@ public class FeatureAttributionRepair extends AbstractScriptWrapper {
         }
     }
 
-    public void scanThroughPublicationsAndFix() throws IOException {
+    public void scanThroughPublicationsAndOutputFixes() throws IOException {
         List<Publication> publications = getPublications();
         publications = filterToPublicationsBefore(publications);
         publications = filterToPublicationsAfter(publications);
 
         logger.info("Processing " + publications.size() + " publications");
-        System.err.println("Processing " + publications.size() + " publications");
 
         int count = 0;
         for(Publication publication : publications) {
@@ -80,7 +80,7 @@ public class FeatureAttributionRepair extends AbstractScriptWrapper {
             //one update per percent
             if (count % (publications.size() / 100) == 0) {
                 String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-                System.err.println("" + ((count * 100) / publications.size()) + "% (" + publication.getZdbID() + ") at " + timestamp );
+                logger.info("" + ((count * 100) / publications.size()) + "% (" + publication.getZdbID() + ") at " + timestamp );
             }
 
             // get all alleles for the publication
@@ -115,7 +115,7 @@ public class FeatureAttributionRepair extends AbstractScriptWrapper {
     }
 
     private List<Publication> getPublications() {
-        return getPublicationRepository().getAllOpenPublications();
+        return getPublicationRepository().getAllOpenPublicationsOfJournalType(PublicationType.JOURNAL);
     }
 
     private List<Publication> filterToPublicationsBefore(List<Publication> publications) {
@@ -185,7 +185,6 @@ public class FeatureAttributionRepair extends AbstractScriptWrapper {
             cachedEntries.put(hashKey, true);
             if (getInfrastructureRepository().getRecordAttribution(gene.zdbID, publication.getZdbID(), RecordAttribution.SourceType.STANDARD) == null) {
                 logger.info("Add to publication " + publication.getZdbID() + " direct attribution of " + gene.getZdbID() + " through intermediary " + intermediaryAbbreviation + "(" + intermediaryID + "): " + reason );
-                logger.info("CSV Report:" + publication.getZdbID() + "," + gene.getZdbID() + "," + intermediaryID + "," + reason);
                 outputWriter.write("INSERT INTO updates (submitter_id,rec_id,field_name,new_value,comments,submitter_name) " +
                                 "SELECT 'ZDB-PERS-210917-1','" + gene.getZdbID() + "','record attribution','" + publication.getZdbID() + "'," + "'Added direct attribution by intermediary " + intermediaryID + " " + reason + "','Ryan Taylor (ZFIN-7704)' WHERE NOT EXISTS ( select 'x' from updates where " +
                                 "submitter_id='ZDB-PERS-210917-1' and rec_id='" + gene.getZdbID() + "' and field_name='record attribution' and new_value = '" + publication.getZdbID() + "' );\n"

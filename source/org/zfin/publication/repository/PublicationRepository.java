@@ -586,6 +586,8 @@ public interface PublicationRepository extends PaginationParameter {
 
     List<Publication> getAllOpenPublications();
 
+    List<Publication> getAllOpenPublicationsOfJournalType(PublicationType type);
+
     PublicationTrackingLocation getPublicationTrackingLocation(long id);
 
     DashboardPublicationList getPublicationsByStatus(Long status, Long location, String owner, int count, int offset, String sort);

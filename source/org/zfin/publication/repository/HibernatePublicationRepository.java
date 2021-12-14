@@ -2407,6 +2407,16 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return publications;
     }
 
+    @Override
+    public List<Publication> getAllOpenPublicationsOfJournalType(PublicationType type) {
+        List<Publication> openPublications = getAllOpenPublications();
+        List<Publication> filteredPublications = openPublications
+                .stream()
+                .filter(elem -> type.equals(elem.getType()))
+                .collect(Collectors.toList());
+        return filteredPublications;
+    }
+
     public DashboardPublicationList getPublicationsByStatus(Long status, Long location, String owner, int count,
                                                             int offset, String sort) {
 

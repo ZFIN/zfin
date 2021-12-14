@@ -10,6 +10,8 @@ import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.service.MarkerAttributionService;
+import org.zfin.publication.Publication;
+import org.zfin.publication.PublicationType;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.List;
@@ -32,6 +34,12 @@ public class FeatureAttributionService {
         }
         infrastructureRepository.insertRecordAttribution(featureZdbID, pubZdbID);
         infrastructureRepository.insertUpdatesTable(featureZdbID, "record attribution", pubZdbID, "Added direct attribution");
+
+        Publication publication = RepositoryFactory.getPublicationRepository().getPublication(pubZdbID);
+        if (publication.getType() != PublicationType.JOURNAL) {
+            return;
+        }
+
         if (f.getType().equals(FeatureTypeEnum.TRANSGENIC_INSERTION)) {
             List<Marker> m = RepositoryFactory.getFeatureRepository().getConstructsByFeature(f);
             for (Marker mrkr : m) {
