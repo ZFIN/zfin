@@ -14,6 +14,7 @@ import org.zfin.expression.Figure;
 import org.zfin.framework.api.FieldFilter;
 import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
+import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mutant.repository.PhenotypeRepository;
 import org.zfin.profile.Person;
 import org.zfin.profile.repository.ProfileRepository;
@@ -51,6 +52,9 @@ public class PublicationService {
 
     @Autowired
     private PublicationRepository publicationRepository;
+
+    @Autowired
+    private InfrastructureRepository infrastructureRepository;
 
     @Autowired
     private PhenotypeRepository phenotypeRepository;
@@ -546,4 +550,14 @@ public class PublicationService {
         });
     }
 
+    public Publication getPublication(String zdbID) {
+        Publication publication = publicationRepository.getPublication(zdbID);
+        if (publication == null) {
+            String replacedZdbID = infrastructureRepository.getReplacedZdbID(zdbID);
+            if (replacedZdbID != null) {
+                publication = publicationRepository.getPublication(replacedZdbID);
+            }
+        }
+        return publication;
+    }
 }
