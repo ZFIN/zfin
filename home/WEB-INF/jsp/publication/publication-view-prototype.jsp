@@ -4,6 +4,7 @@
 
 <c:set var="SUMMARY" value="Summary"/>
 <c:set var="ABSTRACT" value="Abstract"/>
+<c:set var="ZEBRASHARE" value="Zebrashare Submission Details"/>
 <c:set var="FIGURES" value="Figures"/>
 <c:set var="GENES" value="Genes / Markers"/>
 <c:set var="MORPHOLINOS" value="Morpholinos"/>
@@ -13,25 +14,27 @@
 <c:set var="MUTATION" value="Mutation and Transgenics"/>
 <c:set var="FISH" value="Fish"/>
 <c:set var="DIRECTLY_ATTRIBUTED_DATA" value="Directly Attributed Data"/>
+<c:set var="ERRATA" value="Errata and Notes"/>
 
 <z:dataPage
-        sections="${[SUMMARY, ABSTRACT, FIGURES, GENES, MORPHOLINOS, ANTIBODIES, EFGs, EXPRESSION, MUTATION, FISH, DIRECTLY_ATTRIBUTED_DATA]}">
+        sections="${[SUMMARY, ABSTRACT, ZEBRASHARE, FIGURES, GENES, MORPHOLINOS, ANTIBODIES, EFGs, EXPRESSION, MUTATION, FISH, DIRECTLY_ATTRIBUTED_DATA, ERRATA]}">
 
     <jsp:attribute name="entityName">
         ${publication.title}
     </jsp:attribute>
 
     <jsp:body>
-        <z:dataManagerDropdown>
+        <z:dataManagerList>
             <a class="dropdown-item" href="/action/publication/view/${publication.zdbID}">Old View</a>
-        </z:dataManagerDropdown>
+            <a class="dropdown-item" href="/action/curation/${publication.zdbID}">Curate</a>
+            <a class="dropdown-item" href="/action/publication/${publication.zdbID}/link">Link</a>
+            <a class="dropdown-item" href="/action/publication/${publication.zdbID}/edit">Edit</a>
+            <a class="dropdown-item" href="/action/publication/${publication.zdbID}/track">Track</a>
+        </z:dataManagerList>
 
         <div id="${zfn:makeDomIdentifier(SUMMARY)}">
             <div class="small text-uppercase text-muted">PUBLICATION</div>
             <h1>${publication.title}</h1>
-            <div style="text-align: center; font-weight: bold">
-                    ${publication.authors}
-            </div>
             <jsp:include page="publication-view-summary.jsp"/>
         </div>
 
@@ -41,12 +44,17 @@
             </zfin2:subsection>
         </z:section>
 
+        <z:section title="${ZEBRASHARE}">
+            <zfin2:subsection title="" test="${not empty abstractText}" showNoData="true">
+                <jsp:include page="publication-zebrashare.jsp"/>
+            </zfin2:subsection>
+        </z:section>
+
         <z:section title="${FIGURES}" infoPopup="/ZFIN/help_files/expression_help.html">
-            <%--
-                        <z:section title="">
-                            <jsp:include page="fish-view-human-disease.jsp"/>
-                        </z:section>
-            --%>
+            <z:section title="">
+                <a href="/action/figure/all-figure-view/${publication.zdbID}" style="font-weight: bold">Show all
+                    Expression and Phenotype Data </a>
+            </z:section>
         </z:section>
 
         <z:section title="${GENES}">
@@ -82,6 +90,10 @@
         <z:section title="${DIRECTLY_ATTRIBUTED_DATA}">
             <div class="__react-root" id="PublicationAttributionTable"
                  data-url="/action/api/publication/${publication.zdbID}/direct-attribution"></div>
+        </z:section>
+
+        <z:section title="${ERRATA}">
+            ${publication.errataAndNotes}
         </z:section>
 
 
