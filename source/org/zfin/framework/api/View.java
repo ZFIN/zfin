@@ -30,6 +30,9 @@ public class View {
         public static class GeneExpressionAPI extends API {
         }
 
+        public static class FeatureAPI extends API {
+        }
+
         public static class CitationsAPI extends API {
         }
 

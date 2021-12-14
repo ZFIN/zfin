@@ -17,6 +17,10 @@
         });
     </script>
 
+    <authz:authorize access="hasRole('root')">
+        <a class="dropdown-item" href="/action/publication/${publication.zdbID}">Prototype View</a>
+    </authz:authorize>
+
     <c:set var="editURL">/action/publication/${publication.zdbID}/edit</c:set>
 
     <c:if test="${allowDelete}">
@@ -43,11 +47,11 @@
                        curateURL="${curateURL}"/>
 
     <div style="text-align: center; font-size: x-large; margin-top: 1em; ">
-        ${publication.title}
+            ${publication.title}
     </div>
 
     <div style="text-align: center; font-weight: bold">
-        ${publication.authors}
+            ${publication.authors}
     </div>
 
     <table class="primary-entity-attributes">
@@ -58,10 +62,10 @@
         <tr>
             <th>Source:</th>
             <td>
-                ${publication.journal.name}
+                    ${publication.journal.name}
                 <c:if test="${!empty publication.volume}">&nbsp;</c:if>
-            ${publication.volume}:
-                ${publication.pages} (${publication.type.display})
+                    ${publication.volume}:
+                    ${publication.pages} (${publication.type.display})
 
                 <span style="padding-left: 1em;">
                     <a href="#" id="generate-reference-button" rel="#generate-reference-overlay"><button>Generate reference</button></a>
@@ -172,7 +176,7 @@
                 Citation
             </div>
             <div class="popup-body" id="generate-reference-body">
-                ${publication.printable}
+                    ${publication.printable}
             </div>
         </div>
     </div>
