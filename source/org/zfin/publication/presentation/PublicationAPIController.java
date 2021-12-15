@@ -8,16 +8,20 @@ import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyService;
 import org.zfin.antibody.repository.AntibodyRepository;
 import org.zfin.feature.Feature;
+import org.zfin.framework.api.FieldFilter;
 import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.api.View;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
+import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.MarkerType;
+import org.zfin.marker.presentation.STRTargetRow;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Fish;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -25,6 +29,7 @@ import org.zfin.wiki.presentation.Version;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -171,6 +176,41 @@ public class PublicationAPIController {
             return response;
         response.setTotal(markers.size());
         List<Marker> markerList = markers.stream()
+                .skip(pagination.getStart())
+                .limit(pagination.getLimit())
+                .collect(Collectors.toList());
+
+        response.setResults(markerList);
+        return response;
+    }
+
+    @JsonView(View.API.class)
+    @RequestMapping("/{publicationID}/strs")
+    public JsonResultResponse<STRTargetRow> showSTRList(@PathVariable String publicationID,
+                                                        @RequestParam(value = "filter.targetName", required = false) String targetName,
+                                                        @RequestParam(value = "filter.strName", required = false) String strName,
+                                                        @Version Pagination pagination) {
+
+        pagination.addFieldFilter(FieldFilter.TARGET_NAME, targetName);
+        pagination.addFieldFilter(FieldFilter.STR_NAME, strName);
+        List<SequenceTargetingReagent> strs = publicationRepository.getSTRsByPublication(publicationID, pagination);
+
+        List<STRTargetRow> rows = new ArrayList<>(strs.size());
+        for (SequenceTargetingReagent str : strs) {
+            for (Marker target : str.getTargetGenes()) {
+                if(StringUtils.isEmpty(targetName) || target.getAbbreviation().contains(targetName)){
+                    rows.add(new STRTargetRow(str, target));
+
+                }
+            }
+        }
+        rows.sort(Comparator.comparing(STRTargetRow::getTarget));
+        JsonResultResponse<STRTargetRow> response = new JsonResultResponse<>();
+        response.setHttpServletRequest(request);
+        if (CollectionUtils.isEmpty(rows))
+            return response;
+        response.setTotal(rows.size());
+        List<STRTargetRow> markerList = rows.stream()
                 .skip(pagination.getStart())
                 .limit(pagination.getLimit())
                 .collect(Collectors.toList());
