@@ -52,19 +52,19 @@ cloneHead.tag ... that's why there's no table tag here, just rows --%>
     <z:attributeListItem label="PCR Amplification">${clone.pcrAmplification}</z:attributeListItem>
 </c:if>
 
-<c:if test="${!empty formBean.suppliers}">
-    <z:attributeListItem label="Suppliers">
+<z:attributeListItem label="Suppliers">
+    <z:ifHasData test="${!empty formBean.suppliers}" noDataMessage="None">
         <ul class="comma-separated">
             <c:forEach var="supplier" items="${formBean.suppliers}">
                 <li>${supplier.linkWithAttributionAndOrderThis}</li>
             </c:forEach>
         </ul>
-    </z:attributeListItem>
-</c:if>
+    </z:ifHasData>
+</z:attributeListItem>
 
 <c:if test="${clone.rnaClone && !empty clone.rating}">
     <z:attributeListItem label="Quality">
-        <zfin2:starRating rating="${clone.rating}" />
+        <zfin2:starRating rating="${clone.rating}"/>
         (
         <c:choose>
             <c:when test="${clone.rating eq 0}">Probe is difficult to use. Generally basal level of expression with more intense labeling in particular structure. </c:when>
