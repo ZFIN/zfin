@@ -9,6 +9,7 @@ public enum FieldFilter {
     RELATIONSHIP_TYPE("relationship.type"),
     NAME("name"),
     TARGET_NAME("targetName"),
+    ENTITY_ID("entityId"),
     STR_NAME("strName"),
     REGULATORY_REGION("regulatoryRegion"),
     CODING_SEQUENCE("codingSequence"),

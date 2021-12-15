@@ -14,6 +14,12 @@ const StrTable = ({url}) => {
         {
             label: 'Reagent',
             content: row => <EntityLink key={row.str.zdbID} entity={row.str}/>,
+            width: '300px',
+            filterName: 'strName',
+        },
+        {
+            label: 'Reagent Type',
+            content: row => row.str.type,
             filterName: 'strName',
         },
     ];

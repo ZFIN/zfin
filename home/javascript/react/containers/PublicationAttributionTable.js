@@ -6,9 +6,9 @@ const PublicationAttributionTable = ({url}) => {
     const columns = [
         {
             label: 'Entity ID',
-            content: (row) => row
-            ,
+            content: (row) => row,
             width: '200px',
+            filterName: 'entityID',
         },
     ];
     return (

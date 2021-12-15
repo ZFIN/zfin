@@ -144,14 +144,11 @@ public class PublicationAPIController {
 
     @RequestMapping(value = "/{publicationID}/direct-attribution")
     public JsonResultResponse<String> getPublicationAttribution(@PathVariable("publicationID") String publicationID,
+                                                                @RequestParam(value = "filter.entityID", required = false) String entityID,
                                                                 @Version Pagination pagination) {
-/*
-        if (StringUtils.equals(pubID, "ZDB-PUB-030905-1")) {
-            return "redirect:/" + pubID;
-        }
-*/
 
-        List<String> directedAttributionIDs = RepositoryFactory.getPublicationRepository().getDirectlyAttributedZdbids(publicationID);
+        pagination.addFieldFilter(FieldFilter.ENTITY_ID, entityID);
+        List<String> directedAttributionIDs = RepositoryFactory.getPublicationRepository().getDirectlyAttributedZdbids(publicationID, pagination);
         JsonResultResponse<String> response = new JsonResultResponse<>();
         response.setTotal(directedAttributionIDs.size());
         List<String> paginatedDirectedAttributionIDs = directedAttributionIDs.stream()
