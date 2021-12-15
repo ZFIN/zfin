@@ -13,6 +13,7 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.feature.Feature;
 import org.zfin.figure.service.FigureViewService;
+import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
@@ -543,7 +544,7 @@ public class PublicationViewController {
 
         Long numberOfDirectlyAttributed = publicationRepository.getDirectlyAttributed(publication);
         model.addAttribute("totalRecords", numberOfDirectlyAttributed);
-        List<String> directedAttributedIds = RepositoryFactory.getPublicationRepository().getDirectlyAttributedZdbids(pubID);
+        List<String> directedAttributedIds = RepositoryFactory.getPublicationRepository().getDirectlyAttributedZdbids(pubID, new Pagination());
         model.addAttribute("directedAttributedData", directedAttributedIds);
         model.addAttribute("publication", publication);
         return "publication/publication-directly-attributed";
