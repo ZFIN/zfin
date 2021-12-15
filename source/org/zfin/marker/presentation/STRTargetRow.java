@@ -1,11 +1,17 @@
 package org.zfin.marker.presentation;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import org.zfin.framework.api.View;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.SequenceTargetingReagent;
 
+@Getter
 public class STRTargetRow {
 
+    @JsonView(View.API.class)
     private Marker target;
+    @JsonView(View.API.class)
     private SequenceTargetingReagent str;
 
     public STRTargetRow(SequenceTargetingReagent str, Marker target) {
@@ -13,19 +19,4 @@ public class STRTargetRow {
         this.str = str;
     }
 
-    public Marker getTarget() {
-        return target;
-    }
-
-    public void setTarget(Marker target) {
-        this.target = target;
-    }
-
-    public SequenceTargetingReagent getStr() {
-        return str;
-    }
-
-    public void setStr(SequenceTargetingReagent str) {
-        this.str = str;
-    }
 }
