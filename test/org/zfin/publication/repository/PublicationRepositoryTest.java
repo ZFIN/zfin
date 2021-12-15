@@ -20,12 +20,15 @@ import org.zfin.expression.ImageStage;
 import org.zfin.feature.Feature;
 import org.zfin.figure.service.FigureViewService;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.api.FieldFilter;
+import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerStatistic;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
@@ -860,6 +863,17 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         assertThat(secondPage.getPublications(), is(not(empty())));
         assertThat(secondPage.getPublications().get(0), not(equalTo(firstPage.getPublications().get(0))));
         assertThat(secondPage.getPublications().get(0), not(equalTo(firstPage.getPublications().get(firstPage.getPublications().size() - 1))));
+    }
+
+    @Test
+    public void getSTRsByPublication() {
+        List<SequenceTargetingReagent> strList = publicationRepository.getSTRsByPublication("ZDB-PUB-090807-11", new Pagination());
+        assertThat(strList, is(not(empty())));
+
+        Pagination pagination = new Pagination();
+        pagination.addFieldFilter(FieldFilter.TARGET_NAME, "x1");
+        strList = publicationRepository.getSTRsByPublication("ZDB-PUB-090807-11", pagination);
+        assertThat(strList, is(not(empty())));
     }
 }
 

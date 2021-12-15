@@ -30,6 +30,8 @@ import org.zfin.expression.Image;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.api.FieldFilter;
+import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
@@ -1812,6 +1814,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         List<Ortholog> orthologList = (List<Ortholog>) query.list();
         return orthologList;
     }
+
     @Override
     public PaginationResult<Ortholog> getOrthologPaginationByPub(String pubID, GeneBean searchBean) {
         Session session = HibernateUtil.currentSession();
@@ -2362,17 +2365,21 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 .list();
     }
 
-    public List<Publication> getAllPubMedPublications(){
+    public List<Publication> getAllPubMedPublications() {
         return HibernateUtil.currentSession()
                 .createCriteria(Publication.class)
                 .list();
-    };
+    }
 
-    public List<Publication> getAllPublications(){
+    ;
+
+    public List<Publication> getAllPublications() {
         return HibernateUtil.currentSession()
                 .createCriteria(Publication.class)
                 .list();
-    };
+    }
+
+    ;
 
     public PublicationTrackingLocation getPublicationTrackingLocation(long id) {
         return (PublicationTrackingLocation) HibernateUtil.currentSession().get(PublicationTrackingLocation.class, id);
@@ -2872,7 +2879,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     @Override
     public Map<Marker, Boolean> areNewGenePubAttribution(List<Marker> attributedMarker, String publicationId) {
-        if(CollectionUtils.isEmpty(attributedMarker))
+        if (CollectionUtils.isEmpty(attributedMarker))
             return null;
         String hql = "select pa.dataZdbID, count(pa) as ct from PublicationAttribution as pa where " +
                 " pa.dataZdbID in (:markerIDs) AND pa.sourceType = :source " +
@@ -2889,6 +2896,22 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                             && ((Long) pubAttribution[1]) == 1));
         });
         return map;
+    }
+
+    @Override
+    public List<SequenceTargetingReagent> getSTRsByPublication(String publicationID, Pagination pagination) {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select distinct marker from SequenceTargetingReagent marker, RecordAttribution attr" +
+                "     where attr.dataZdbID = marker.zdbID" +
+                "           and attr.sourceZdbID = :pubID " +
+                "           and marker.markerType.name in (:markerTypes)";
+        if (pagination.getFieldFilter(FieldFilter.STR_NAME) != null) {
+            hql += " AND marker.abbreviation like '%" + pagination.getFieldFilter(FieldFilter.STR_NAME) + "%'";
+        }
+        Query query = session.createQuery(hql);
+        query.setString("pubID", publicationID);
+        query.setParameterList("markerTypes", List.of(Marker.Type.MRPHLNO.name(), Marker.Type.CRISPR.name(), Marker.Type.TALEN.name()));
+        return query.list();
     }
 
     @Override

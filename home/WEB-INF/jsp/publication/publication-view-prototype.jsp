@@ -7,7 +7,7 @@
 <c:set var="ZEBRASHARE" value="Zebrashare Submission Details"/>
 <c:set var="FIGURES" value="Figures"/>
 <c:set var="GENES" value="Genes / Markers"/>
-<c:set var="MORPHOLINOS" value="Morpholinos"/>
+<c:set var="STRS" value="Sequence Targeting Reagents"/>
 <c:set var="ANTIBODIES" value="Antibodies"/>
 <c:set var="EFGs" value="Engineered Foreign Genes"/>
 <c:set var="EXPRESSION" value="Expression Data"/>
@@ -17,7 +17,7 @@
 <c:set var="ERRATA" value="Errata and Notes"/>
 
 <z:dataPage
-        sections="${[SUMMARY, ABSTRACT, ZEBRASHARE, FIGURES, GENES, MORPHOLINOS, ANTIBODIES, EFGs, EXPRESSION, MUTATION, FISH, DIRECTLY_ATTRIBUTED_DATA, ERRATA]}">
+        sections="${[SUMMARY, ABSTRACT, ZEBRASHARE, FIGURES, GENES, STRS, ANTIBODIES, EFGs, EXPRESSION, MUTATION, FISH, DIRECTLY_ATTRIBUTED_DATA, ERRATA]}">
 
     <jsp:attribute name="entityName">
         ${publication.title}
@@ -62,9 +62,9 @@
                  data-url="/action/api/publication/${publication.zdbID}/marker"></div>
         </z:section>
 
-        <z:section title="${MORPHOLINOS}">
-            <div class="__react-root" id="AntibodyTable"
-                 data-url="/action/api/publication/${publication.zdbID}/antibodies"></div>
+        <z:section title="${STRS}">
+            <div class="__react-root" id="StrTable"
+                 data-url="/action/api/publication/${publication.zdbID}/strs"></div>
         </z:section>
 
         <z:section title="${ANTIBODIES}" infoPopup="/action/marker/note/antibodies">

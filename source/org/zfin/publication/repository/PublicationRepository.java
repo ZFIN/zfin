@@ -8,6 +8,7 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
+import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.PublicationAttribution;
@@ -647,4 +648,6 @@ public interface PublicationRepository extends PaginationParameter {
     boolean hasCuratedOrthology(Marker marker);
 
     Map<Marker, Boolean> areNewGenePubAttribution(List<Marker> attributedMarker, String publicationId);
+
+    List<SequenceTargetingReagent> getSTRsByPublication(String publicationID, Pagination pagination);
 }
