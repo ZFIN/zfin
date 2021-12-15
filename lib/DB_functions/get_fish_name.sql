@@ -44,7 +44,7 @@ raise notice 'fishName2 %', fishName;
 
 IF (backgroundList IS NOT NULL AND backgroundList != '')
   THEN
-    fishName := fishName || '(' || backgroundList || ')';
+    fishName := fishName || ' (' || backgroundList || ')';
 ELSE
     fishName := fishName;
 END IF;
