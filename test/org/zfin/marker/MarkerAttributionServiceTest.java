@@ -63,6 +63,39 @@ public class MarkerAttributionServiceTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void onlyMakeStrAttributionsOnJournalTypePublicationsTest() {
+        InfrastructureRepository infrastructureRepository = getInfrastructureRepository();
+
+        // morpholino MO1-a2ml
+        Marker m = getMarkerRepository().getMarkerByID("ZDB-MRPHLNO-090212-1");
+
+        // Transgenic Line Submissions (curation type of publication)
+        Publication publication = getPublicationRepository().getPublication("ZDB-PUB-100216-1");
+
+        try {
+            MarkerAttributionService.addAttributionForMarkerName(m.getAbbreviation(), publication.getZdbID());
+        } catch (TermNotFoundException e) {
+            fail("Caught TermNotFoundException");
+        } catch (DuplicateEntryException e) {
+            fail("Caught DuplicateEntryException");
+        }
+
+        //assert the record attribution now exists for the morpholino and publication:
+        RecordAttribution morpholinoRecordAttribution = infrastructureRepository.getRecordAttribution(m.getZdbID(), publication.getZdbID(), RecordAttribution.SourceType.STANDARD);
+        assertNotNull("morpholino record should be found", morpholinoRecordAttribution);
+        assertEquals("morpholino ID should match", m.getZdbID(), morpholinoRecordAttribution.getDataZdbID());
+
+        //assert MO's related gene(s) are now associated with the publication
+        SequenceTargetingReagent str = getMarkerRepository().getSequenceTargetingReagent(m.zdbID);
+        List<Marker> genes = str.getTargetGenes();
+        assertEquals("Should get 2 genes for this morpholino", 2, genes.size());
+        for(Marker gene : genes) {
+            RecordAttribution geneRecordAttribution = infrastructureRepository.getRecordAttribution(gene.getZdbID(), publication.getZdbID(), RecordAttribution.SourceType.STANDARD);
+            assertNull("gene retrieved from attribution SHOULD BE null since the publication is not journal type", geneRecordAttribution);
+        }
+    }
+
+    @Test
     public void nonStrAttributionDoesNotTriggerGeneTargetAttributionTest() {
         InfrastructureRepository infrastructureRepository = getInfrastructureRepository();
 

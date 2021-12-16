@@ -1189,8 +1189,6 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
         HibernateUtil.closeSession();
     }
 
-
-
     public void addConstructMarkerRelationShip(ConstructRelationshipDTO constructRelationshipDTO) {
         ConstructRelationship constructRelationship = new ConstructRelationship();
         MarkerRelationship markerRelationship = new MarkerRelationship();

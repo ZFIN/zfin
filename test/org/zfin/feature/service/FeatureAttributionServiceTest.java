@@ -52,7 +52,7 @@ public class FeatureAttributionServiceTest extends AbstractDatabaseTest {
             fail("Caught DuplicateEntryException");
         }
 
-        //assert the record attribution now exists for the morpholino and publication:
+        //assert the record attribution now exists for the allele and publication:
         RecordAttribution alleleRecordAttribution = infrastructureRepository.getRecordAttribution(hu715Feature.getZdbID(), publication.getZdbID(), RecordAttribution.SourceType.STANDARD);
         assertNotNull("allele record should be found", alleleRecordAttribution);
         assertEquals("allele ID should match", hu715Feature.getZdbID(), alleleRecordAttribution.getDataZdbID());
@@ -65,6 +65,38 @@ public class FeatureAttributionServiceTest extends AbstractDatabaseTest {
             assertNotNull("gene retrieved from attribution should not be null", geneRecordAttribution);
             assertNotNull("gene ID should not be null", geneRecordAttribution.getDataZdbID());
             assertEquals("gene ID should match", gene.getZdbID(), geneRecordAttribution.getDataZdbID());
+        }
+    }
+
+    @Ignore
+    public void onlyMakeAttributionsOnJournalTypePublicationsTest() {
+        InfrastructureRepository infrastructureRepository = getInfrastructureRepository();
+
+        // allele hu715
+        Feature hu715Feature = getFeatureRepository().getFeatureByID("ZDB-ALT-030922-6");
+
+        // Transgenic Line Submissions (curation type of publication)
+        Publication publication = getPublicationRepository().getPublication("ZDB-PUB-100216-1");
+
+        try {
+            FeatureAttributionService.addFeatureAttribution(hu715Feature.getAbbreviation(), publication.getZdbID());
+        } catch (TermNotFoundException e) {
+            fail("Caught TermNotFoundException");
+        } catch (DuplicateEntryException e) {
+            fail("Caught DuplicateEntryException");
+        }
+
+        //assert the record attribution now exists for the allele and publication:
+        RecordAttribution alleleRecordAttribution = infrastructureRepository.getRecordAttribution(hu715Feature.getZdbID(), publication.getZdbID(), RecordAttribution.SourceType.STANDARD);
+        assertNotNull("allele record should be found", alleleRecordAttribution);
+        assertEquals("allele ID should match", hu715Feature.getZdbID(), alleleRecordAttribution.getDataZdbID());
+
+        //assert MO's related gene(s) are now associated with the publication
+        Set<Marker> genes = hu715Feature.getAffectedGenes();
+        assertEquals("Should get 1 genes for this allele", 1, genes.size());
+        for (Marker gene : genes) {
+            RecordAttribution geneRecordAttribution = infrastructureRepository.getRecordAttribution(gene.getZdbID(), publication.getZdbID(), RecordAttribution.SourceType.STANDARD);
+            assertNull("gene retrieved from attribution SHOULD BE null since the publication is not journal type", geneRecordAttribution);
         }
     }
 
