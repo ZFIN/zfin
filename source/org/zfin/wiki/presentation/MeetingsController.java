@@ -16,6 +16,7 @@ import org.zfin.wiki.WikiLoginException;
 import org.zfin.wiki.service.WikiWebService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -36,6 +37,9 @@ public class MeetingsController {
 
     @Autowired
     HttpServletRequest request;
+
+    @Autowired
+    HttpServletResponse httpResponse;
 
     @RequestMapping(value = "/wiki/{wikiSpaceName}")
     public JsonResultResponse<WikiPage> getMeetingsWikiPages(@PathVariable String wikiSpaceName,
@@ -67,6 +71,7 @@ public class MeetingsController {
         response.setHttpServletRequest(request);
         response.calculateRequestDuration(start);
         response.setNote(note);
+        httpResponse.setHeader("Access-Control-Allow-Origin", "*");
         return response;
     }
 
