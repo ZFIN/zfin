@@ -109,6 +109,7 @@
 /home/WEB-INF/lib/restygwt-2.2.0.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/saaj-impl-1.5.0.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/serializer-2.7.1.jar filter=lfs diff=lfs merge=lfs -text
+/home/WEB-INF/lib/signpost-core-1.2.1.2.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/site-search-serialization-1.0.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/slf4j-api-1.7.26.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/solr-solrj-8.6.3.jar filter=lfs diff=lfs merge=lfs -text
