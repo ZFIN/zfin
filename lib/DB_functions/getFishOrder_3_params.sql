@@ -1,7 +1,7 @@
 
 -- this function definition was restored from DB dump from production
 
-CREATE OR REPLACE FUNCTION "public"."getfishorder"(IN "vfishid" text, IN "vgenoid" text, OUT "fishorderout" int8, OUT "numaffectedgeneout" int4)
+CREATE OR REPLACE FUNCTION "public"."getfishorder"(IN "vfishid" text, OUT "fishorder" int8, OUT "numaffectedgene" int4)
   RETURNS "pg_catalog"."record" AS $BODY$
 
 
@@ -13,22 +13,13 @@ declare workingZyg  zygocity.zyg_name%TYPE;
  affectiveZygosity  zygocity.zyg_name%TYPE;
  strExists int8;
  genoIsWT boolean := 'f';
- numAffectedGene int8 := 0;
- fishOrder bigint := 9999999999;
 begin
 
 --find the functional number of affected genes.
---raise notice 'fishid: %', vFishId;
---raise notice 'geno: %', vGenoId;
+numAffectedGene = 0;
+fishOrder = 9999999999;
 for workingMrkr in
 	--get the allele-ish genes
-	select  fmrel_mrkr_zdb_id
-	   from fish, genotype_Feature, feature_marker_Relationship
-	   where fish_genotype_zdb_id =vGenoId
-   	   and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
-	   and fish_genotype_zdb_id =genofeat_geno_zdb_id
-	   and fmrel_type in ('is allele of','markers missing','markers present','markers moved')
-	 union
 	select  fmrel_mrkr_zdb_id  
 	   from fish, genotype_Feature, feature_marker_Relationship
 	   where fish_genotype_zdb_id =genofeat_geno_zdb_id
@@ -77,29 +68,27 @@ for workingMrkr in
 		 and b.fishstr_fish_zdb_id = b2.fishstr_fish_zdb_id
 
     loop 
-
+	
 	   if (existingMrkr = 'none')
 	   then
 		 existingMrkr := workingMrkr;
-
 		 numAffectedGene := numAffectedGene + 1;
 		 fishOrder := 10000000100;
-
+		 raise notice 'existingMarkerNone: %', fishOrder;
            else
 	     if (existingMrkr != workingMrkr)
 	     then
 		 numAffectedGene := numAffectedGene + 1;
 		 fishOrder := fishOrder + 100100;
-		-- raise notice 'existingMarkerNotEqualWorkingMarker: %', fishOrder;
+		 raise notice 'existingMarkerNotEqualWorkingMarker: %', fishOrder;
 	     end if;
 	   
 	   end if; 
 
 	   
 end loop ;
---raise notice 'endLoop: %', fishOrder;
---raise notice 'existingMrkr: %', existingMrkr;
---raise notice 'workingMrkr: %', workingMrkr;
+raise notice 'endLoop: %', fishOrder;
+raise notice 'existingMrkr: %', existingMrkr;
 
  genoIsWT = (select geno_is_wildtype from genotype, fish
     	       	       where fish_genotype_zdb_id = geno_Zdb_id
@@ -119,7 +108,7 @@ if (genoIsWT = 't')
      fishOrder := fishOrder::bigint + 25;
 end if;
 
---raise notice 'genoWT: %', fishOrder;
+raise notice 'genoWT: %', fishOrder;
 
 --more than 1 affected gene means fish is complex.
 if (numAffectedGene > 1)
@@ -159,19 +148,18 @@ else
 	         fishOrder := fishOrder::bigint + 10000500000;
               else
 		 fishOrder = fishOrder::bigint;
---		 raise notice 'fishOrder: %', fishOrder;
+		 raise notice 'fishOrder: %', fishOrder;
 	      end if;
 	 
         end if;
---	 raise notice 'features=1: %', fishOrder;
+	 raise notice 'features=1: %', fishOrder;
 end if;
 
---raise notice 'end: %', fishOrder;
---raise notice 'end: %', numAffectedGene;
+raise notice 'end: %', fishOrder;
+raise notice 'end: %', numAffectedGene;
 
 --return fishOrder, numAffectedGene;
-numAffectedGeneOut=numAffectedGene;
-fishOrderOut=fishOrder;
+
 end;
 
 

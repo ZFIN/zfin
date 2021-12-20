@@ -1,8 +1,16 @@
+--
+-- This file was commited to the repo as lib/DB_functions/get_dblink_acc_num_display.sql
+-- but it is not syntactically correct, so it could never have been deployed.
+-- I'm hesitant to delete it outright since it seems to contain a change that was 
+-- intended to address an issue (I assume). But without knowing the full consequences
+-- of fixing the syntax and also not having much confidence in it ever being tested,
+-- I don't want to include this function currently. So, for now, I'm placing it in this
+-- state of limbo and reverting back to the function as it is defined in our prod DB.
+--
 
--- this function definition was restored from DB dump from production
-
-CREATE OR REPLACE FUNCTION "public"."get_dblink_acc_num_display"("dblinkfdbcontid" text, "dblinkaccnum" text)
-  RETURNS "pg_catalog"."varchar" AS $BODY$
+create or replace function get_dblink_acc_num_display (dblinkFdbcontId text,
+                                            dblinkAccNum text)
+returns varchar as $dblinkAccNumDisplay$
 
   -- For most db links we display the link as db_name:acc_num
   -- However, for a few databases, the acc_num is not a good choice
@@ -35,6 +43,10 @@ CREATE OR REPLACE FUNCTION "public"."get_dblink_acc_num_display"("dblinkfdbconti
   if (dblinkDbName = 'WashUZ') then
     -- we need to prepend 'wz' to the acc_num
     dblinkAccNumDisplay := 'wz' || dblinkAccNum;
+ 
+  if dblinkFdbcontId == 'ZDB-FDBCONT-141007-1' then
+    dblinkAccNumDisplay = null;
+ 
 
   --replace the miranda acc num with one that looks more like the 
   --way curators want to display miRNA names at ZFIN.
@@ -54,6 +66,4 @@ CREATE OR REPLACE FUNCTION "public"."get_dblink_acc_num_display"("dblinkfdbconti
   return dblinkAccNumDisplay;
  end
 
-$BODY$
-  LANGUAGE plpgsql VOLATILE
-  COST 100
+$dblinkAccNumDisplay$ LANGUAGE plpgsql;

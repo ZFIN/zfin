@@ -50,7 +50,9 @@ begin
 
     perform update_construct_name_component(NEW.mrkr_zdb_id,
                                             NEW.mrkr_abbrev);
+
      perform p_update_related_fish_names(NEW.mrkr_zdb_id);
+
    RETURN NEW;
 end;
 
