@@ -1,27 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import DataTable from '../components/data-table';
-import {EntityLink} from '../components/entity';
 import StageRange from '../components/StageRange';
-import PostComposedEntity from '../components/PostComposedEntity';
+import PhenotypeStatement from '../components/PhenotypeStatement';
 
 
-const FigureExpressionTable = ({figureId}) => {
-
+const FigurePhenotypeTable = ({figureId}) => {
     const columns = [
-        {
-            label: 'Gene',
-            content: row => <EntityLink entity={row.gene}/>,
-            width: '150px',
-            filterName: 'geneAbbreviation',
-        },
-        {
-            label: 'Antibody',
-            content: row => {
-                row.antibody && <EntityLink entity={row.antibody}/>
-            },
-            width: '150px',
-        },
         {
             label: 'Fish',
             content: (row) => <span className='text-break'>
@@ -35,10 +20,9 @@ const FigureExpressionTable = ({figureId}) => {
                     href={`/action/fish/fish-detail-popup/${row.fish.zdbID}`}
                 />
             </span>,
-            width: '150px',
         },
         {
-            label: 'Experiment',
+            label: 'Conditions',
             content: (row) => <span className='text-break'>
                 <a
                     className='text-break'
@@ -50,7 +34,6 @@ const FigureExpressionTable = ({figureId}) => {
                     href={`/action/expression/experiment-popup?id=${row.experiment.zdbID}`}
                 />
             </span>,
-            width: '150px',
         },
         {
             label: 'Stage',
@@ -58,36 +41,23 @@ const FigureExpressionTable = ({figureId}) => {
             width: '150px',
         },
         {
-            label: 'Qualifier',
-            content: row =>
-                row.qualifier
-            ,
-            width: '150px',
-        },
-        {
-            label: 'Anatomy',
-            content: row => <PostComposedEntity postComposedEntity={row.entity}/>,
-            width: '150px',
-        },
-        {
-            label: 'Assay',
-            content: row => row.assay.abbreviation,
-            width: '150px',
+            label: 'Phenotype',
+            content: (row) => <PhenotypeStatement statement={row.phenotypeStatement}/>
         },
 
     ];
     return (
         <DataTable
             columns={columns}
-            dataUrl={`/action/api/figure/${figureId}/expression-detail`}
-            rowKey={row => row.id}
-            pagination={true}
+            dataUrl={`/action/api/figure/${figureId}/phenotype-detail`}
+            rowKey={row => row.fish.zdbID}
+            //sortOptions={sortOptions}
         />
     );
 };
 
-FigureExpressionTable.propTypes = {
+FigurePhenotypeTable.propTypes = {
     figureId: PropTypes.string,
 };
 
-export default FigureExpressionTable;
+export default FigurePhenotypeTable;
