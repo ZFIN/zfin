@@ -1,11 +1,13 @@
 package org.zfin.figure.presentation;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.Antibody;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.ExpressionAssay;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.ExpressionResult;
+import org.zfin.framework.api.View;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.FishExperiment;
@@ -17,15 +19,23 @@ Antibody, Assay, Genotype, Experiment, Start Stage, End Stage, SuperTerm, SubTer
 */
 public class AntibodyTableRow {
 
+    @JsonView(View.FigureAPI.class)
     private Antibody antibody;
+    @JsonView(View.FigureAPI.class)
     private ExpressionAssay assay;
     private FishExperiment fishExperiment;
+    @JsonView(View.FigureAPI.class)
     private Fish fish;
+    @JsonView(View.FigureAPI.class)
     private Experiment experiment;
+    @JsonView(View.FigureAPI.class)
     private DevelopmentStage start;
+    @JsonView(View.FigureAPI.class)
     private DevelopmentStage end;
+    @JsonView(View.FigureAPI.class)
     private String qualifier;
     private Boolean isExpressionFound;
+    @JsonView(View.FigureAPI.class)
     private PostComposedEntity entity;
     private String fishNameOrder;
 

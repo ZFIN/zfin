@@ -13,6 +13,10 @@
 
     <zfin2:dataManager zdbID="${figure.zdbID}"/>
 
+    <authz:authorize access="hasRole('root')">
+        <a class="dropdown-item" href="/action/figure/view-prototype/${figure.zdbID}">Prototype View</a>
+    </authz:authorize>
+
     <zfin-figure:publicationInfo publication="${figure.publication}"
                                  submitters="${submitters}"
                                  showThisseInSituLink="${showThisseInSituLink}"
