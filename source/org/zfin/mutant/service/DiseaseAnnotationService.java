@@ -31,7 +31,7 @@ public class DiseaseAnnotationService {
         try {
             api.addDiseaseAnnotation(da);
         } catch (Exception e) {
-            log.error("Could not create Disease Annotation at Alliance: ", e);
+            log.error("Could not create Disease Annotation at Alliance: " + e.getMessage());
         }
     }
 

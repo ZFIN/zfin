@@ -1,13 +1,14 @@
 <%@ tag import="org.zfin.publication.PublicationType" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ attribute name="figure" type="org.zfin.expression.Figure" rtexprvalue="true" required="true" %>
+<%@ attribute name="hideLabel" type="java.lang.Boolean" rtexprvalue="true" required="false" %>
 
 <c:set var="UNPUBLISHED" value="${PublicationType.UNPUBLISHED}"/>
 
 <p class="fig">
     <strong>
         <c:choose>
-            <c:when test="${figure.type == 'TOD'}">
+            <c:when test="${figure.type == 'TOD' || hideLabel}">
                 <%-- don't show anything as a label for Text Only --%>
             </c:when>
             <c:otherwise>
