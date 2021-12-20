@@ -1,8 +1,10 @@
 package org.zfin.figure.presentation;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.Antibody;
 import org.zfin.expression.*;
+import org.zfin.framework.api.View;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
@@ -13,16 +15,25 @@ import org.zfin.ontology.PostComposedEntity;
  * Stores a collection of entities used to display one row of the figureview expression table
  */
 public class ExpressionTableRow{
+    @JsonView(View.FigureAPI.class)
     private Marker gene;
+    @JsonView(View.FigureAPI.class)
     private Antibody antibody;
     private FishExperiment fishExperiment;
+    @JsonView(View.FigureAPI.class)
     private Fish fish;
+    @JsonView(View.FigureAPI.class)
     private Experiment experiment;
+    @JsonView(View.FigureAPI.class)
     private String qualifier;
     private Boolean isExpressionFound;
+    @JsonView(View.FigureAPI.class)
     private DevelopmentStage start;
+    @JsonView(View.FigureAPI.class)
     private DevelopmentStage end;
+    @JsonView(View.FigureAPI.class)
     private PostComposedEntity entity;
+    @JsonView(View.FigureAPI.class)
     private ExpressionAssay assay;
     private String fishNameOrder;
 
