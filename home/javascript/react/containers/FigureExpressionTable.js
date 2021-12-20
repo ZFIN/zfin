@@ -7,11 +7,13 @@ import PostComposedEntity from '../components/PostComposedEntity';
 
 
 const FigureExpressionTable = ({figureId}) => {
+
     const columns = [
         {
             label: 'Gene',
             content: row => <EntityLink entity={row.gene}/>,
             width: '150px',
+            filterName: 'geneAbbreviation',
         },
         {
             label: 'Antibody',
@@ -78,8 +80,8 @@ const FigureExpressionTable = ({figureId}) => {
         <DataTable
             columns={columns}
             dataUrl={`/action/api/figure/${figureId}/expression-detail`}
-            rowKey={row => row.gene.zdbID}
-            //sortOptions={sortOptions}
+            rowKey={row => row.id}
+            pagination={true}
         />
     );
 };

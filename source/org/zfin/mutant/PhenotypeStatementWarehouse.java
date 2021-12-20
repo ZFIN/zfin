@@ -1,5 +1,7 @@
 package org.zfin.mutant;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import org.zfin.framework.api.View;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.PostComposedEntity;
@@ -14,11 +16,13 @@ import javax.persistence.*;
 public class PhenotypeStatementWarehouse implements Comparable<PhenotypeStatementWarehouse> {
 
     @Id
+    @JsonView(View.FigureAPI.class)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "psg_id")
     private long id;
     @Column(name = "psg_mrkr_relation")
     private String markerRelationship;
+    @JsonView(View.FigureAPI.class)
     @Column(name = "psg_short_name")
     private String shortName;
     @ManyToOne()

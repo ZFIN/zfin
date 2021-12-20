@@ -2,21 +2,19 @@ package org.zfin.figure.presentation;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.zfin.expression.Figure;
 import org.zfin.figure.repository.FigureRepository;
 import org.zfin.figure.service.FigureViewService;
-import org.zfin.framework.api.JsonResultResponse;
-import org.zfin.framework.api.Pagination;
-import org.zfin.framework.api.View;
+import org.zfin.framework.api.*;
+import org.zfin.mutant.PhenotypeWarehouse;
 import org.zfin.wiki.presentation.Version;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
 
 @RestController
 @RequestMapping("/api/figure")
@@ -46,18 +44,25 @@ public class FigureAPIController {
     @JsonView(View.FigureAPI.class)
     @RequestMapping(value = "/{zdbID}/expression-detail", method = RequestMethod.GET)
     public JsonResultResponse<ExpressionTableRow> getFigureExpressionDetail(@PathVariable String zdbID,
+                                                                            @RequestParam(value = "filter.geneAbbreviation", required = false) String geneAbbreviation,
                                                                             @Version Pagination pagination) {
+        pagination.addFieldFilter(FieldFilter.GENE_ABBREVIATION, geneAbbreviation);
         Figure figure = figureRepository.getFigure(zdbID);
 
         List<ExpressionTableRow> expressionTableRows = figureViewService.getExpressionTableRows(figure);
         JsonResultResponse<ExpressionTableRow> response = new JsonResultResponse<>();
-        response.setTotal(expressionTableRows.size());
-        List<ExpressionTableRow> paginatedFeatureList = expressionTableRows.stream()
+
+        // filtering
+        FilterService<ExpressionTableRow> filterService = new FilterService<>(new ExpressionTableRowFiltering());
+        List<ExpressionTableRow> filteredExpressionList = filterService.filterAnnotations(expressionTableRows, pagination.getFieldFilterValueMap());
+
+        response.setTotal(filteredExpressionList.size());
+        List<ExpressionTableRow> paginatedExpressionList = filteredExpressionList.stream()
                 .skip(pagination.getStart())
                 .limit(pagination.getLimit())
                 .collect(Collectors.toList());
 
-        response.setResults(paginatedFeatureList);
+        response.setResults(paginatedExpressionList);
         response.setHttpServletRequest(request);
         return response;
     }
@@ -72,6 +77,26 @@ public class FigureAPIController {
         JsonResultResponse<AntibodyTableRow> response = new JsonResultResponse<>();
         response.setTotal(antibodyTableRows.size());
         List<AntibodyTableRow> paginatedFeatureList = antibodyTableRows.stream()
+                .skip(pagination.getStart())
+                .limit(pagination.getLimit())
+                .collect(Collectors.toList());
+
+        response.setResults(paginatedFeatureList);
+        response.setHttpServletRequest(request);
+        return response;
+    }
+
+    @JsonView(View.FigureAPI.class)
+    @RequestMapping(value = "/{zdbID}/phenotype-detail", method = RequestMethod.GET)
+    public JsonResultResponse<PhenotypeTableRow> getFigurePhenotypeDetail(@PathVariable String zdbID,
+                                                                          @Version Pagination pagination) {
+        Figure figure = figureRepository.getFigure(zdbID);
+
+        List<PhenotypeWarehouse> warehouseList = getPhenotypeRepository().getPhenotypeWarehouse(figure.getZdbID());
+        List<PhenotypeTableRow> phenotypeTableRows = figureViewService.getPhenotypeTableRows(warehouseList);
+        JsonResultResponse<PhenotypeTableRow> response = new JsonResultResponse<>();
+        response.setTotal(phenotypeTableRows.size());
+        List<PhenotypeTableRow> paginatedFeatureList = phenotypeTableRows.stream()
                 .skip(pagination.getStart())
                 .limit(pagination.getLimit())
                 .collect(Collectors.toList());

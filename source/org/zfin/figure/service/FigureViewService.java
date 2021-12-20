@@ -48,10 +48,8 @@ public class FigureViewService {
             }
         }
 
-
         //taking advantage of domain objects having their own comparators
         Collections.sort(rows, ComparatorCreator.orderBy("gene", "fishNameOrder", "experiment", "start", "end", "entity"));
-
         return rows;
     }
 
@@ -86,7 +84,7 @@ public class FigureViewService {
 
     public boolean showExpressionQualifierColumn(List<ExpressionTableRow> rows) {
         for (ExpressionTableRow row : rows) {
-            if (!row.getExpressionFound()) {
+            if (!row.getIsExpressionFound()) {
                 return true;
             }
         }

@@ -17,7 +17,7 @@
 
     <jsp:body>
         <z:dataManagerList>
-            <a class="dropdown-item" href="/action/publication/view/${figure.zdbID}">Old View</a>
+            <a class="dropdown-item" href="/action/figure/view/${figure.zdbID}">Old View</a>
         </z:dataManagerList>
 
         <div id="${zfn:makeDomIdentifier(SUMMARY)}">
@@ -38,6 +38,14 @@
             </z:section>
             <z:section title="Antibody Labeling">
                 <div class="__react-root" id="FigureExpressionAntibodyTable" data-figure-id="${figure.zdbID}"></div>
+            </z:section>
+        </z:section>
+
+        <z:section title="${PHENOTYPE}">
+            <zfin-figure:phenotypeSummary summary="${phenotypeSummary}"/>
+            <p/>
+            <z:section title="Phenotype Detail">
+                <div class="__react-root" id="FigurePhenotypeTable" data-figure-id="${figure.zdbID}"></div>
             </z:section>
         </z:section>
 

@@ -1,8 +1,10 @@
 package org.zfin.figure.presentation;
 
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Experiment;
+import org.zfin.framework.api.View;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.PhenotypeStatementWarehouse;
@@ -13,11 +15,16 @@ import org.zfin.mutant.PhenotypeWarehouse;
 public class PhenotypeTableRow {
 
     private FishExperiment fishExperiment;
+    @JsonView(View.FigureAPI.class)
     private Fish fish;
+    @JsonView(View.FigureAPI.class)
     private Experiment experiment;
+    @JsonView(View.FigureAPI.class)
     private DevelopmentStage start;
+    @JsonView(View.FigureAPI.class)
     private DevelopmentStage end;
     private String fishNameOrder;
+    @JsonView(View.FigureAPI.class)
     private PhenotypeStatementWarehouse phenotypeStatement;
 
     public PhenotypeTableRow(PhenotypeStatementWarehouse phenotypeStatement) {
