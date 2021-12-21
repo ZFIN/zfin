@@ -42,7 +42,7 @@
         </z:section>
 
         <z:section title="${PHENOTYPE}">
-            <zfin-figure:phenotypeSummary summary="${phenotypeSummary}"/>
+            <zfin-figure:phenotypeSummaryPrototype summary="${phenotypeSummary}"/>
             <p/>
             <z:section title="Phenotype Detail">
                 <div class="__react-root" id="FigurePhenotypeTable" data-figure-id="${figure.zdbID}"></div>
