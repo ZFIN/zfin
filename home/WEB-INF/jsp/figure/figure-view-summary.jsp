@@ -5,7 +5,8 @@
 <z:attributeList>
 
     <z:attributeListItem label="Publication">
-        ${figure.publication.shortAuthorList} ${figure.publication.title}
+        <zfin:link entity="${figure.publication}" longVersion="true"/> -
+        ${figure.publication.title}
     </z:attributeListItem>
 
     <z:attributeListItem label="Figures">
