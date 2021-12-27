@@ -787,16 +787,32 @@
     </target>
 
     <target name="npmInstall">
-        <exec executable="npm" failonerror="true">
-            <arg value="install"/>
-        </exec>
+        <if>
+            <isset property="skipNpmInstall"/>
+            <then>
+                <echo>Skipping npmInstall</echo>
+            </then>
+            <else>
+                <exec executable="npm" failonerror="true">
+                    <arg value="install"/>
+                </exec>
+            </else>
+        </if>
     </target>
 
     <target name="npmBuild">
-        <exec executable="npm" failonerror="true">
-            <arg value="run"/>
-            <arg value="build"/>
-        </exec>
+        <if>
+            <isset property="skipNpmBuild"/>
+            <then>
+                <echo>Skipping npmBuild</echo>
+            </then>
+            <else>
+                <exec executable="npm" failonerror="true">
+                    <arg value="run"/>
+                    <arg value="build"/>
+                </exec>
+            </else>
+        </if>
     </target>
 
     <target name="npmLint">
