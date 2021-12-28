@@ -1,0 +1,133 @@
+--liquibase formatted sql
+--changeset ryan:ZFIN-7756-2
+--fixes names that are the result of upstream changes to morpholinos and crisprs
+
+
+select p_update_related_fish_names('ZDB-MRPHLNO-121207-1');
+select p_update_related_fish_names('ZDB-MRPHLNO-160415-3');
+select p_update_related_fish_names('ZDB-MRPHLNO-170817-1');
+select p_update_related_fish_names('ZDB-MRPHLNO-131125-7');
+select p_update_related_fish_names('ZDB-MRPHLNO-180510-3');
+select p_update_related_fish_names('ZDB-MRPHLNO-130911-7');
+select p_update_related_fish_names('ZDB-MRPHLNO-150126-7');
+select p_update_related_fish_names('ZDB-MRPHLNO-081013-1');
+select p_update_related_fish_names('ZDB-MRPHLNO-071228-4');
+select p_update_related_fish_names('ZDB-MRPHLNO-090122-1');
+select p_update_related_fish_names('ZDB-MRPHLNO-150910-14');
+select p_update_related_fish_names('ZDB-MRPHLNO-141013-39');
+select p_update_related_fish_names('ZDB-MRPHLNO-151210-1');
+select p_update_related_fish_names('ZDB-MRPHLNO-120629-1');
+select p_update_related_fish_names('ZDB-MRPHLNO-140922-4');
+select p_update_related_fish_names('ZDB-MRPHLNO-080110-4');
+select p_update_related_fish_names('ZDB-MRPHLNO-191017-2');
+select p_update_related_fish_names('ZDB-MRPHLNO-121211-4');
+select p_update_related_fish_names('ZDB-MRPHLNO-180601-1');
+select p_update_related_fish_names('ZDB-MRPHLNO-100217-25');
+select p_update_related_fish_names('ZDB-MRPHLNO-151030-4');
+select p_update_related_fish_names('ZDB-MRPHLNO-090424-4');
+-- select p_update_related_fish_names('ZDB-MRPHLNO-060407-2');
+select p_update_related_fish_names('ZDB-MRPHLNO-160115-6');
+select p_update_related_fish_names('ZDB-MRPHLNO-070605-6');
+select p_update_related_fish_names('ZDB-MRPHLNO-070605-5');
+select p_update_related_fish_names('ZDB-MRPHLNO-061111-1');
+select p_update_related_fish_names('ZDB-MRPHLNO-070304-3');
+select p_update_related_fish_names('ZDB-MRPHLNO-180511-1');
+select p_update_related_fish_names('ZDB-MRPHLNO-160817-3');
+select p_update_related_fish_names('ZDB-MRPHLNO-180507-2');
+select p_update_related_fish_names('ZDB-MRPHLNO-160629-2');
+select p_update_related_fish_names('ZDB-MRPHLNO-080128-1');
+select p_update_related_fish_names('ZDB-MRPHLNO-110928-16');
+select p_update_related_fish_names('ZDB-MRPHLNO-080326-4');
+select p_update_related_fish_names('ZDB-MRPHLNO-091207-2');
+select p_update_related_fish_names('ZDB-MRPHLNO-140505-4');
+select p_update_related_fish_names('ZDB-MRPHLNO-180130-9');
+select p_update_related_fish_names('ZDB-MRPHLNO-120614-1');
+select p_update_related_fish_names('ZDB-MRPHLNO-180118-2');
+select p_update_related_fish_names('ZDB-MRPHLNO-141125-1');
+select p_update_related_fish_names('ZDB-MRPHLNO-051221-6');
+select p_update_related_fish_names('ZDB-MRPHLNO-111018-1');
+select p_update_related_fish_names('ZDB-MRPHLNO-090312-2');
+select p_update_related_fish_names('ZDB-MRPHLNO-101104-3');
+select p_update_related_fish_names('ZDB-MRPHLNO-120614-3');
+select p_update_related_fish_names('ZDB-MRPHLNO-150609-2');
+select p_update_related_fish_names('ZDB-MRPHLNO-101105-7');
+select p_update_related_fish_names('ZDB-MRPHLNO-180323-1');
+select p_update_related_fish_names('ZDB-MRPHLNO-100614-1');
+select p_update_related_fish_names('ZDB-MRPHLNO-100714-3');
+select p_update_related_fish_names('ZDB-MRPHLNO-110511-1');
+select p_update_related_fish_names('ZDB-MRPHLNO-120720-2');
+select p_update_related_fish_names('ZDB-MRPHLNO-141229-1');
+select p_update_related_fish_names('ZDB-MRPHLNO-090709-1');
+select p_update_related_fish_names('ZDB-MRPHLNO-140826-4');
+select p_update_related_fish_names('ZDB-MRPHLNO-100914-2');
+select p_update_related_fish_names('ZDB-MRPHLNO-140113-3');
+select p_update_related_fish_names('ZDB-MRPHLNO-151215-1');
+select p_update_related_fish_names('ZDB-MRPHLNO-051107-1');
+select p_update_related_fish_names('ZDB-MRPHLNO-121207-6');
+select p_update_related_fish_names('ZDB-MRPHLNO-150126-2');
+select p_update_related_fish_names('ZDB-MRPHLNO-150126-4');
+select p_update_related_fish_names('ZDB-MRPHLNO-131204-1');
+select p_update_related_fish_names('ZDB-MRPHLNO-180504-1');
+select p_update_related_fish_names('ZDB-MRPHLNO-131202-1');
+-- select p_update_related_fish_names('ZDB-MRPHLNO-050318-4');
+select p_update_related_fish_names('ZDB-MRPHLNO-041217-10');
+select p_update_related_fish_names('ZDB-MRPHLNO-050318-1');
+select p_update_related_fish_names('ZDB-MRPHLNO-150212-3');
+select p_update_related_fish_names('ZDB-MRPHLNO-160415-4');
+select p_update_related_fish_names('ZDB-MRPHLNO-081013-2');
+select p_update_related_fish_names('ZDB-MRPHLNO-071228-5');
+select p_update_related_fish_names('ZDB-MRPHLNO-090122-2');
+select p_update_related_fish_names('ZDB-MRPHLNO-120629-2');
+select p_update_related_fish_names('ZDB-MRPHLNO-160721-3');
+select p_update_related_fish_names('ZDB-MRPHLNO-191017-3');
+select p_update_related_fish_names('ZDB-MRPHLNO-180601-2');
+select p_update_related_fish_names('ZDB-MRPHLNO-170124-3');
+select p_update_related_fish_names('ZDB-MRPHLNO-081231-1');
+select p_update_related_fish_names('ZDB-MRPHLNO-061111-2');
+select p_update_related_fish_names('ZDB-MRPHLNO-160817-4');
+select p_update_related_fish_names('ZDB-MRPHLNO-170213-1');
+select p_update_related_fish_names('ZDB-MRPHLNO-120614-2');
+select p_update_related_fish_names('ZDB-MRPHLNO-141125-2');
+select p_update_related_fish_names('ZDB-MRPHLNO-150609-3');
+select p_update_related_fish_names('ZDB-MRPHLNO-120203-4');
+select p_update_related_fish_names('ZDB-MRPHLNO-150625-4');
+select p_update_related_fish_names('ZDB-MRPHLNO-171025-2');
+select p_update_related_fish_names('ZDB-MRPHLNO-160629-1');
+-- select p_update_related_fish_names('ZDB-MRPHLNO-050318-5');
+select p_update_related_fish_names('ZDB-MRPHLNO-050318-2');
+select p_update_related_fish_names('ZDB-MRPHLNO-090828-3');
+select p_update_related_fish_names('ZDB-MRPHLNO-070605-1');
+select p_update_related_fish_names('ZDB-MRPHLNO-170213-2');
+select p_update_related_fish_names('ZDB-MRPHLNO-160621-44');
+select p_update_related_fish_names('ZDB-MRPHLNO-111018-3');
+select p_update_related_fish_names('ZDB-MRPHLNO-120203-5');
+select p_update_related_fish_names('ZDB-MRPHLNO-171006-3');
+select p_update_related_fish_names('ZDB-MRPHLNO-171109-1');
+-- select p_update_related_fish_names('ZDB-MRPHLNO-091207-1');
+select p_update_related_fish_names('ZDB-MRPHLNO-070412-3');
+select p_update_related_fish_names('ZDB-MRPHLNO-080515-3');
+select p_update_related_fish_names('ZDB-MRPHLNO-181218-1');
+select p_update_related_fish_names('ZDB-MRPHLNO-130426-2');
+
+select p_update_related_fish_names('ZDB-CRISPR-131024-1');
+select p_update_related_fish_names('ZDB-CRISPR-170405-1');
+select p_update_related_fish_names('ZDB-CRISPR-160729-27');
+select p_update_related_fish_names('ZDB-CRISPR-150605-1');
+select p_update_related_fish_names('ZDB-CRISPR-170523-4');
+select p_update_related_fish_names('ZDB-CRISPR-170915-1');
+select p_update_related_fish_names('ZDB-CRISPR-190711-4');
+
+
+update fish set fish_name = 'AB + MO1-wnt11' where fish_zdb_id = 'ZDB-FISH-150901-1522' and fish_name = 'AB + MO1-wnt11r';
+update fish set fish_name = 'AB + MO2-wnt11' where fish_zdb_id = 'ZDB-FISH-150901-4274' and fish_name = 'AB + MO2-wnt11r';
+update fish set fish_name = 'ml2Tg + MO3-wnt11' where fish_zdb_id = 'ZDB-FISH-150901-12964' and fish_name = 'ml2Tg + MO3-wnt11r';
+update fish set fish_name = 'WT + MO3-wnt11' where fish_zdb_id = 'ZDB-FISH-150901-18273' and fish_name = 'WT + MO3-wnt11r';
+
+update fish set fish_name = 'hs6st3b<sup>Df(Chr9:epb41l5,ptpn4a,tmem177,pth2ra)b476/+</sup> (TL)' where fish_zdb_id = 'ZDB-FISH-210318-11' and fish_name = 'hs6st3b<sup>Df(Chr9:epb41l5,ptpn4a,tmem177,pth2ra)b476/+</sup>';
+update fish set fish_name = 'hs6st3b<sup>Df(Chr9:epb41l5,ptpn4a,tmem177,pth2ra)b476/+</sup> (AB)' where fish_zdb_id = 'ZDB-FISH-150901-4464' and fish_name = 'hs6st3b<sup>Df(Chr9:epb41l5,ptpn4a,tmem177,pth2ra)b476/+</sup>';
+update fish set fish_name = 'hs6st3b<sup>Df(Chr9:epb41l5,ptpn4a,tmem177,pth2ra)b476/b476</sup> (AB)' where fish_zdb_id = 'ZDB-FISH-150901-23631' and fish_name = 'hs6st3b<sup>Df(Chr9:epb41l5,ptpn4a,tmem177,pth2ra)b476/b476</sup>';
+
+update fish set fish_name = 'sqKR15Et' where fish_zdb_id = 'ZDB-FISH-150901-13589' and fish_name = 'sqKR15bEt';
+
+-- don't need to change Cooch Behar
+-- update fish set fish_name = 'CB' where fish_zdb_id = 'ZDB-FISH-180717-1' and fish_name = 'Cooch Behar';
