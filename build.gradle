@@ -28,6 +28,7 @@ def pgdata = env['PGDATA']
 def pghost = env['PGHOST']
 def dbunloadspath = env['DB_UNLOADS_PATH']
 def solrunloadspath = env['SOLR_UNLOADS_PATH']
+def downloaddirectory = env['DOWNLOAD_DIRECTORY']
 String targetroot = env['TARGETROOT']
 
 /*
@@ -479,6 +480,24 @@ project(':server_apps:data_transfer:eco_go_mapping') {
 }
 
 
+project(':server_apps:data_transfer:Downloads') {
+    task "createSymlink" () {
+        doLast {
+            if (!file(downloaddirectory).exists()) {
+                exec {
+                    commandLine "mkdir", "-p", downloaddirectory
+                }
+            }
+            String datatransferpath = targetroot + "/home/data-transfer"
+            if (!file(datatransferpath).exists()) {
+                exec {
+                    commandLine "ln", "-s", downloaddirectory, datatransferpath
+                }
+            }
+        }
+    }
+}
+
 project(':server_apps:data_transfer:Downloads:GFF3') {
     task "deployFiles"(type: ZfinTargetCopy) {
         from(project.projectDir) {
@@ -501,6 +520,7 @@ task make(type: GradleBuild) {
              ':server_apps:sysexecs:deployFiles',
              ':server_apps:DB_maintenance:deployFiles',
              ':server_apps:data_transfer:deployFiles',
+             ':server_apps:data_transfer:Downloads:createSymlink',
              ':server_apps:data_transfer:Ensembl:deployFiles',
              ':server_apps:data_transfer:PUBMED:deployFiles',
              ':server_apps:data_transfer:ResourceCenters:deployFiles',
