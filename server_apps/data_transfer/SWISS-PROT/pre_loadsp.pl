@@ -4,6 +4,19 @@ use strict ;
 #
 # pre_loadsp.pl
 #
+# Use environment variable "SKIP_DOWNLOADS" to tell script not to download anything and instead assume files exist locally (will exit if no file exists)
+# Use environment variable "SKIP_MANUAL_CHECK" to tell script not to scan uniprot for IDs gone bad
+# Use environment variable "SKIP_CLEANUP" to tell script not to remove old files
+# Use environment variable "SKIP_SLEEP" to tell script not to sleep for 500 seconds at various parts
+# Use environment variable "SKIP_PRE_ZFIN_GEN" to tell script not to generate pre_zfin.dat
+# Use environment variable "ARCHIVE_ARTIFACTS" to tell script to save a copy of all generated artifacts
+# Flags are useful for being a good citizen and not putting too much strain on servers.
+#
+# Can run with those env vars in tcsh like so: (https://stackoverflow.com/questions/5946736/)
+#    env SKIP_DOWNLOADS=1 env SKIP_MANUAL_CHECK=1 ./runUniprotPreload.sh
+# or
+#     ( setenv SKIP_DOWNLOADS 1 ; setenv SKIP_MANUAL_CHECK 1; setenv SKIP_CLEANUP 1 ; setenv SKIP_SLEEP 1 ;  setenv SKIP_PRE_ZFIN_GEN 1 ; ./runUniprotPreload.sh )
+#
 
 use MIME::Lite;
 use LWP::Simple;
@@ -11,16 +24,38 @@ use DBI;
 use lib "<!--|ROOT_PATH|-->/server_apps/";
 use ZFINPerlModules;
 use Try::Tiny;
+use POSIX;
 
 #------------------- Flush Output Buffer --------------
 $|=1;
 
+
+
 #------------------- Download -----------
 
+sub downloadOrUseLocalFile {
+        my ($url, $outfile) = @_;
+        if ($ENV{"SKIP_DOWNLOADS"}) {
+            print("Skipping download '$url' to '$outfile'\n");
+            my $outfileWithoutGz = $outfile  =~ s/\.gz$//r;
+            if (!-e $outfile && !-e $outfileWithoutGz) {
+                print "*************************************************\n";
+                print "* ERROR: The $outfile file does not exist, but we are running with SKIP_DOWNLOADS flag\n";
+                print "*************************************************\n";
+                exit -1;
+            } elsif (!-e $outfile && -e $outfileWithoutGz) {
+                print "$outfile file missing, continuing with $outfileWithoutGz\n";
+            }
+        } else {
+            print("Downloading '$url' to '$outfile'\n");
+            system("/local/bin/wget '$url' -O '$outfile'");
+        }
+}
+
 sub downloadGOtermFiles () {
-   system("/local/bin/wget http://www.geneontology.org/external2go/uniprotkb_kw2go -O spkw2go");
-   system("/local/bin/wget http://www.geneontology.org/external2go/interpro2go -O interpro2go");
-   system("/local/bin/wget http://www.geneontology.org/external2go/ec2go -O ec2go");
+   downloadOrUseLocalFile("http://www.geneontology.org/external2go/uniprotkb_kw2go", "spkw2go");
+   downloadOrUseLocalFile("http://www.geneontology.org/external2go/interpro2go", "interpro2go");
+   downloadOrUseLocalFile("http://www.geneontology.org/external2go/ec2go", "ec2go");
 
    if (!-e "spkw2go" || !-e "interpro2go" || !-e "ec2go") {
       print "One or more of the go translation files not exisiting. Exit.\n";
@@ -35,19 +70,27 @@ sub downloadGOtermFiles () {
       print "\nSomething is wrong with pre_zfin.dat. Exit.\n\n";
       exit -1;
    } else {
-      print "\nDone with generating pre_zfin.dat\n\n\n";
+      print "\nDone with generating pre_zfin.dat at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n\n";
    }
 
-   my $sleepNumDownload1 = 500;
-   while($sleepNumDownload1--){
-      sleep(1);
+    if ($ENV{'SKIP_SLEEP'}) {
+        print "Skipping sleep clause 1\n";
+    } else {
+       my $sleepNumDownload1 = 500;
+       while($sleepNumDownload1--){
+          sleep(1);
+       }
    }
 
    system("touch pre_zfin.dat");
 
-   my $sleepNumDownload2 = 500;
-   while($sleepNumDownload2--){
-      sleep(1);
+    if ($ENV{'SKIP_SLEEP'}) {
+        print "Skipping sleep clause 2 (what is the purpose of these sleeps?)\n";
+    } else {
+       my $sleepNumDownload2 = 500;
+       while($sleepNumDownload2--){
+          sleep(1);
+       }
    }
 
    system("touch *2go");
@@ -61,6 +104,7 @@ sub downloadGOtermFiles () {
 sub sendErrorReport ($) {
     my $subject = "Auto from SWISS-PROT:".$_[0];
     ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","report.txt");
+#    system("cp report.txt log");
 }
 
 #------------------ Send Running Result ----------------
@@ -71,18 +115,22 @@ sub sendRunningResult {
   #----- One mail send out the checking report----
   my $subject = "Auto from $dbname: SWISS-PROT check report";
   ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","checkreport.txt");
+#  system("cp checkreport.txt log");
 
   #----- Another mail send out problem files ----
   $subject = "Auto from $dbname: SWISS-PROT problem file";
   ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","allproblems.txt");
+#  system("cp allproblems.txt log");
 
   #----- Another mail send out problem files ----
   $subject = "Auto from $dbname: PubMed not in ZFIN";
   ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","pubmed_not_in_zfin");
+#  system("cp pubmed_not_in_zfin log");
 
   #----- Another mail send out problem files ----
   $subject = "Auto from $dbname: report of processing pre_zfin.org";
   ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","redGeneReport.txt");
+#  system("cp redGeneReport.txt log");
 }
 
 
@@ -93,78 +141,65 @@ sub sendRunningResult {
 sub select_zebrafish {
     try {
       print("Downloading https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_trembl_vertebrates.dat.gz -O uniprot_trembl_vertebrates.dat.gz\n");
-      system("/local/bin/wget -q  https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_trembl_vertebrates.dat.gz -O uniprot_trembl_vertebrates.dat.gz");
+      downloadOrUseLocalFile("https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_trembl_vertebrates.dat.gz", "uniprot_trembl_vertebrates.dat.gz");
     } catch {
       chomp $_;
       &sendErrorReport("Failed to download https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_trembl_vertebrates.dat.gz - $_");
       exit -1;
     };
 
-    try {
-      print("Extracting\n");
-      system("gunzip uniprot_trembl_vertebrates.dat.gz");
-    } catch {
-      chomp $_;
-      &sendErrorReport("Failed to gunzip uniprot_trembl_vertebrates.dat.gz - $_");
-      exit -1;
-    };
-
-    if (!-e "uniprot_trembl_vertebrates.dat") {
-        print "Failed to download uniprot_trembl_vertebrates.dat. Exit.\n";
+    if (!-e "uniprot_trembl_vertebrates.dat.gz") {
+        print "Failed to download uniprot_trembl_vertebrates.dat.gz. Exit.\n";
         exit -1;
     } else {
-        print "\nDownloaded uniprot_trembl_vertebrates.dat\n\n";
+        print "\nDownloaded uniprot_trembl_vertebrates.dat.gz\n\n";
     }
 
     try {
       print("Downloading https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_sprot_vertebrates.dat.gz -O uniprot_sprot_vertebrates.dat.gz\n");
-      system("/local/bin/wget -q https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_sprot_vertebrates.dat.gz -O uniprot_sprot_vertebrates.dat.gz");
+      downloadOrUseLocalFile("https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_sprot_vertebrates.dat.gz", "uniprot_sprot_vertebrates.dat.gz");
     } catch {
       chomp $_;
       &sendErrorReport("Failed to download https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_sprot_vertebrates.dat.gz - $_");
       exit -1;
     };
 
-    try {
-      print("Extracting\n");
-      system("gunzip uniprot_sprot_vertebrates.dat.gz");
-    } catch {
-      chomp $_;
-      &sendErrorReport("Failed to gunzip  uniprot_sprot_vertebrates.dat.gz - $_");
-      exit -1;
-    };
-
-
-    if (!-e "uniprot_sprot_vertebrates.dat") {
-        print "Failed to download uniprot_sprot_vertebrates.dat. Exit.\n";
+    if (!-e "uniprot_sprot_vertebrates.dat.gz") {
+        print "Failed to download uniprot_sprot_vertebrates.dat.gz. Exit.\n";
         exit -1;
     } else {
-        print "\nDownloaded uniprot_sprot_vertebrates.dat\n\n";
+        print "\nDownloaded uniprot_sprot_vertebrates.dat.gz\n\n";
     }
 
-    $/ = "\/\/\n"; #custom record separator
-    open(DAT1, "uniprot_trembl_vertebrates.dat") || die("Could not open uniprot_trembl_vertebrates.dat!");
-    open OUTPUT, ">pre_zfin.dat" or die "Cannot open pre_zfin.dat";
+    if ($ENV{'SKIP_PRE_ZFIN_GEN'}) {
+        print "Skipping generation of pre_zfin.dat file for troubleshooting purposes.  Assuming an accurate pre_zfin.dat file already exists.\n";
+    } else {
+        $/ = "\/\/\n"; #custom record separator
+        open(DAT1, "gunzip -c uniprot_trembl_vertebrates.dat.gz |") || die("Could not open uniprot_trembl_vertebrates.dat.gz $!");
+        open OUTPUT, ">pre_zfin.dat" or die "Cannot open pre_zfin.dat";
 
-    print("Processing uniprot_trembl_vertebrates.dat\n");
-    my $record;
-    while ($record = <DAT1>){
-       print STDERR "Processing " . ZFINPerlModules->whirley() . "\r";
-       print OUTPUT "$record" if $record =~ m/OS   Danio rerio/;
+        print("Processing uniprot_trembl_vertebrates.dat.gz at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n");
+        my $record;
+        while ($record = <DAT1>){
+           print STDERR "Processing " . ZFINPerlModules->whirley() . "\r";
+           print OUTPUT "$record" if $record =~ m/OS   Danio rerio/;
+        }
+        close(DAT1) ;
+        print("Done processing uniprot_trembl_vertebrates.dat.gz at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n");
+
+        print("Processing uniprot_sprot_vertebrates.dat.gz at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . "\n");
+        open(DAT2, "gunzip -c uniprot_sprot_vertebrates.dat.gz |") || die("Could not open uniprot_sprot_vertebrates.dat.gz $!");
+        while ($record = <DAT2>){
+           print STDERR "Processing " . ZFINPerlModules->whirley() . "\r";
+           print OUTPUT "$record" if $record =~ m/OS   Danio rerio/;
+        }
+        print("Done processing uniprot_sprot_vertebrates.dat.gz at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n");
+
+        $/ = "\n";
+        close(DAT2) ;
+        close(OUTPUT) ;
     }
-    close(DAT1) ;
 
-    print("Processing uniprot_sprot_vertebrates.dat\n");
-    open(DAT2, "uniprot_sprot_vertebrates.dat") || die("Could not open uniprot_sprot_vertebrates.dat!");
-    while ($record = <DAT2>){
-       print STDERR "Processing " . ZFINPerlModules->whirley() . "\r";
-       print OUTPUT "$record" if $record =~ m/OS   Danio rerio/;
-    }
-
-    $/ = "\n";
-
-    close(DAT2) ;
-    close(OUTPUT) ;
 }
 
 
@@ -179,19 +214,22 @@ chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/";
 
 
 #remove old files
-
-system("rm -f ./ccnote/*");
-system("rmdir ./ccnote");
-system("rm -f *.ontology");
-system("rm -f *2go");
-system("rm -f prob*");
-system("rm -f okfile");
-system("rm -f pubmed_not_in_zfin");
-system("rm -f *.unl");
-system("rm -f *.txt");
-system("rm -f *.dat");
-system("mkdir ./ccnote");
-
+if ($ENV{'SKIP_CLEANUP'}) {
+    print "Skipping file cleanup\n";
+} else {
+    print "Cleaning up old files\n";
+    system("rm -f ./ccnote/*");
+    system("rmdir ./ccnote");
+    system("rm -f *.ontology");
+    system("rm -f *2go");
+    system("rm -f prob*");
+    system("rm -f okfile");
+    system("rm -f pubmed_not_in_zfin");
+    system("rm -f *.unl");
+    system("rm -f *.txt");
+    system("rm -f *.dat.gz");
+    system("mkdir ./ccnote");
+}
 
 my $dbname = "<!--|DB_NAME|-->";
 my $username = "";
@@ -234,6 +272,7 @@ print "\nNumber of manually curated UniProt IDs with multiple genes: $ctManually
 if ($ctManuallyEnteredUniProtIDsWithMultGenes > 0) {
   my $subject = "Auto from SWISS-PROT: manually curated UniProt IDs with multiple genes";
   ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","manuallyCuratedUniProtIDsWithMultipleGenes.txt");
+#  system("cp manuallyCuratedUniProtIDsWithMultipleGenes.txt log/");
 }
 
 my $sqlGetManuallyEnteredUniProtIDs = "select dblink_acc_num from db_link
@@ -261,39 +300,51 @@ print "\nNumber of manually curated UniProt IDs: $ctManuallyEnteredUniProtIDs\n\
 my $uniprotId;
 my $url;
 my $uniProtURL = "https://www.uniprot.org/uniprot/";
-open INVALID, ">invalidManuallyCuratedUniProtIDs.txt" || die ("Cannot open invalidManuallyCuratedUniProtIDs.txt !");
-my $numInvalidUniProtIDs = 0;
-if ($ctManuallyEnteredUniProtIDs > 0) {
-  print("Checking for invalid manually entered uniprot IDs\n");
-  foreach $uniprotId (@manuallyEnteredUniProtIDs) {
-     print STDERR "Processing " . ZFINPerlModules->whirley() . "\r";
-     $url = $uniProtURL . $uniprotId;
-     my $status_code = getstore($url, "/dev/null");
-     if ($status_code != 200) {
-          print INVALID "$uniprotId\n";
-          $numInvalidUniProtIDs++;
+
+if ($ENV{"SKIP_MANUAL_CHECK"}) {
+    print("Skipping check for invalid manually entered uniprot IDs\n");
+} else {
+    open INVALID, ">invalidManuallyCuratedUniProtIDs.txt" || die ("Cannot open invalidManuallyCuratedUniProtIDs.txt !");
+    my $numInvalidUniProtIDs = 0;
+
+
+    if ($ctManuallyEnteredUniProtIDs > 0) {
+      print("Checking for invalid manually entered uniprot IDs\n");
+      foreach $uniprotId (@manuallyEnteredUniProtIDs) {
+         print STDERR "Processing " . ZFINPerlModules->whirley() . "\r";
+         $url = $uniProtURL . $uniprotId;
+         my $status_code = getstore($url, "/dev/null");
+         if ($status_code != 200) {
+              print INVALID "$uniprotId\n";
+              $numInvalidUniProtIDs++;
+          }
+          undef $status_code;
       }
-      undef $status_code;
-  }
-  print("\n");
-}
+      print("\n");
+    }
 
-close(INVALID);
+    close(INVALID);
 
-print "\nNumber of Invalid Manually curated UniProt IDs: $numInvalidUniProtIDs\n\n";
+    print "\nNumber of Invalid Manually curated UniProt IDs: $numInvalidUniProtIDs\n\n";
 
-if ($numInvalidUniProtIDs > 0) {
-  my $subject = "Auto from SWISS-PROT: invalid manually curated UniProt IDs";
-  ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","invalidManuallyCuratedUniProtIDs.txt");
+    if ($numInvalidUniProtIDs > 0) {
+      my $subject = "Auto from SWISS-PROT: invalid manually curated UniProt IDs";
+      ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","invalidManuallyCuratedUniProtIDs.txt");
+#      system("cp invalidManuallyCuratedUniProtIDs.txt log");
+    }
 }
 
 &downloadGOtermFiles();
+
+print "Finished downloading GO term files at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n";
 
 ########################################################################################################
 #
 #  for FB case 8042 UniProt load: DR lines redundancy in the input file
 #
 ########################################################################################################
+
+print "Reading pre_zfin.dat and generating zfin.dat, zfinGeneDeleted.dat, zfinGenes.dat, debugfile.dat  " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n";
 
 my $cur;
 
@@ -360,7 +411,7 @@ foreach $block (@blocks) {
                              }
 
                              if (!exists($ZDBgeneIDgeneAbbrevs{$ZFINgeneId})) {
-                                                                 print DBG "Not exists  ZDBgeneIDgeneAbbrevs{ZFINgeneId} \n";
+                                                                 print DBG "Not exists  \$ZDBgeneIDgeneAbbrevs{$ZFINgeneId} \n";
                              }
 
 
@@ -383,7 +434,7 @@ foreach $block (@blocks) {
                    } else {
                        $deletes{$lineKey} = 1;
                    }
-
+                   print STDERR "Processing pre_zfin.dat " . ZFINPerlModules->whirley() . "\r";
                }
 
                $ct++;
@@ -414,6 +465,7 @@ close(ZFINGENES);
 close(DBG);
 
 $dbh->disconnect();
+print "Finished generating output .dat files at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n";
 
 
 open(PRE, "pre_zfin.dat") || die("Could not open pre_zfin.dat !");
@@ -501,6 +553,20 @@ print REDGENERPT "zfinLines = $zfinLines\n";
 close REDGENERPT;
 
 exit;
+
+# Comments on 11/22/2021 by Ryan T.
+#
+# Some small TODO items that aren't worth creating a ticket, but might be nice to clean up this file a bit:
+#
+# Emails going out from this seem to expect the files "report.txt", "checkreport.txt", "allproblems.txt",
+# "pubmed_not_in_zfin" to exist, but are not generated directly by this script. They are generated by later scripts,
+# but not sure why this script would email those artifacts.  Might be a bug?
+#
+# Structurally, it's a bit confusing. Might be nice to wrap some of the steps up into subroutines. And maybe adopt a
+# pattern like the one described here: https://stackoverflow.com/questions/6763987
+#
+# Why do we sleep for 500 seconds in various places?
+# Why do we touch various files?
 
 
 

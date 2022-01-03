@@ -8,6 +8,7 @@
 
 use lib "<!--|ROOT_PATH|-->/server_apps/";
 use ZFINPerlModules;
+use POSIX;
 
 if (@ARGV < 1) {
     die "Please enter the accession file name. \n";
@@ -45,3 +46,24 @@ close OK;
   #----- Another mail send out problem files ----
   $subject = "Auto from $dbname: report of processing pre_zfin.org";
   ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","redGeneReport.txt");
+
+
+print("Checksums and file info of important files:\n");
+system("md5sum  *.ontology *2go prob* okfile pubmed_not_in_zfin *.unl *.txt *.dat *.dat.gz");
+system("ls -al  *.ontology *2go prob* okfile pubmed_not_in_zfin *.unl *.txt *.dat *.dat.gz");
+
+if ($ENV{'ARCHIVE_ARTIFACTS'}) {
+    print("Archiving artifacts\n");
+    my $directory = "archives/" . strftime("%Y-%m-%d-%H-%M-%S", localtime(time()));
+    system("mkdir -p $directory");
+    system("cp -rp ./ccnote $directory");
+    system("cp -p *.ontology $directory");
+    system("cp -p *2go $directory");
+    system("cp -p prob* $directory");
+    system("cp -p okfile $directory");
+    system("cp -p pubmed_not_in_zfin $directory");
+    system("cp -p *.unl $directory");
+    system("cp -p *.txt $directory");
+    system("cp -p *.dat $directory");
+    print(" Not archiving *.dat.gz to $directory due to likely large size\n");
+}

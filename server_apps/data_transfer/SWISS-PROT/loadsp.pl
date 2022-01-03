@@ -19,6 +19,7 @@ use DBI;
 use lib "<!--|ROOT_PATH|-->/server_apps/";
 use ZFINPerlModules;
 use Try::Tiny;
+use POSIX;
 
 # ----------------- Send Error Report -------------
 # Parameter
@@ -93,6 +94,8 @@ if (!-e "okfile" || !-e "ok2file" || !-e "spkw2go" || !-e "interpro2go" || !-e "
    print "One or more required file(s) not exisiting. Exit.\n";
    exit;
 }
+
+print("Preparing metrics at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . "\n");
 
 #--------------------------- record counts before loading starts ----------------------------
 $sql = "select * from db_link where dblink_info like '%Swiss-Prot%';";
@@ -216,6 +219,7 @@ $sql = "select distinct mrkr_zdb_id from marker, marker_go_term_evidence, term
 $numMrkrProcessBefore = countData($sql);
 
 #--------------- Delete records from last SWISS-PROT loading-----
+print("Running sp_addbackattr.sql at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . "\n");
 try {
   system("psql -d <!--|DB_NAME|--> -a -f sp_addbackattr.sql >addBackAttributionReport.txt");
 } catch {
@@ -354,7 +358,7 @@ while( !( -e "ec_mrkrgoterm.unl")) {
 
 
 # ------------ Loading ---------------------
-print "\nloading...\n";
+print "\nloading... at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . "\n";
 try {
   system("psql -d <!--|DB_NAME|--> -a -f sp_load.sql > report.txt");
 } catch {
@@ -365,6 +369,7 @@ try {
 
 #--------------------------- record counts after loading finishes ----------------------------
 
+print "\nPreparing post-load metrics at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . "\n";
 $sql = "select * from db_link where dblink_info like '%Swiss-Prot%';";
 
 $numDblinkAfter = countData($sql);
@@ -588,7 +593,7 @@ print POSTLOADREPORT "$numMrkrProcessBefore         \t";
 print POSTLOADREPORT "$numMrkrProcessAfter         \t";
 printf POSTLOADREPORT "%.2f\n", ($numMrkrProcessAfter - $numMrkrProcessBefore) / $numMrkrProcessBefore * 100 if ($numMrkrProcessBefore > 0);
 
-print "All done \n";
+print "All done at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . "\n";
 close (POSTLOADREPORT);
 
 #------------------ Send statistics of changes of record counts with the load ----------------
@@ -600,9 +605,7 @@ ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$sub
 $subject = "Auto from $dbname: " . "UniProt load log";
 ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","report.txt");
 
-print "\n create_file_for_swiss_prot.pl\n";
+print "\n create_file_for_swiss_prot.pl at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . "\n";
 system ("<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/create_file_for_swiss_prot.pl");
 
 exit;
-
-
