@@ -79,7 +79,7 @@ returns text as $genoDisplayHtml$
 	      feature_type as feature_type,
 	     zyg_abbrev as zyg_abbrev, 
 	     mrkr_abbrev as mrkr_abbrev, 
-	     gcs_significance,
+	     gcs_significance
          from feature, genotype_feature, zygocity, feature_type, feature_marker_relationship, marker, genotype_component_significance
         where genofeat_geno_zdb_id = genoZdbId
           and genofeat_feature_zdb_id = feature_zdb_id

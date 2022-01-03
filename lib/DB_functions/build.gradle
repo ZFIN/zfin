@@ -21,24 +21,26 @@ int runSqlFiles(String directory) {
     def dbname = env['DBNAME']
     def pgbindir = env['PGBINDIR']
 
-
-    int numberOfProc = 0;
+    int numberOfProc = 0
 
     fileList(directory).each {
         File file ->
             if (file.getName().endsWith(".sql")) {
-                String command = pgbindir + "/psql -d " + dbname + " -a -f " + file.getAbsoluteFile();
-                // will execute command, return the text output from the executed command, and print to screen.
-                //println command.execute().text
-                command.execute().text
-                numberOfProc++;
+                exec { commandLine pgbindir + "/psql",
+                        "-d", dbname,
+                        "-q",
+                        "-v", "ON_ERROR_STOP=1",
+                        "-v", "client_min_messages=warning",
+                        "-f", file.getAbsoluteFile()
+                }
+                numberOfProc++
             }
             if (file.isDirectory()) {
                 int number = runSqlFiles(file.getAbsolutePath())
                 println "deployed " + number + " files in subdirectory: " + file.getName()
             }
     }
-    return numberOfProc;
+    return numberOfProc
 }
 
 task dropFunctions() {

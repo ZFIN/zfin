@@ -1,4 +1,8 @@
-create or replace function getFishOrder (vFishId text, vGenoId text, out fishOrderOut bigint,  out numAffectedGeneOut  int) as $func$
+
+-- this function definition was restored from DB dump from production
+
+CREATE OR REPLACE FUNCTION "public"."getfishorder"(IN "vfishid" text, IN "vgenoid" text, OUT "fishorderout" int8, OUT "numaffectedgeneout" int4)
+  RETURNS "pg_catalog"."record" AS $BODY$
 
 
 declare workingZyg  zygocity.zyg_name%TYPE;
@@ -10,7 +14,6 @@ declare workingZyg  zygocity.zyg_name%TYPE;
  strExists int8;
  genoIsWT boolean := 'f';
  numAffectedGene int8 := 0;
- numMisfortunes int8 :=0;
  fishOrder bigint := 9999999999;
 begin
 
@@ -89,23 +92,11 @@ for workingMrkr in
 		 fishOrder := fishOrder + 100100;
 		-- raise notice 'existingMarkerNotEqualWorkingMarker: %', fishOrder;
 	     end if;
-
-
 	   
 	   end if; 
 
 	   
 end loop ;
-
-for workingMrkr in
-   select fish, genotype_Feature, feature_marker_Relationship
-	   where fish_genotype_zdb_id =vGenoId
-   	   and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
-	   and fish_genotype_zdb_id =genofeat_geno_zdb_id
-	   and fmrel_type in ('contains phenotypic sequence feature')
-
-	   numMisfortunes
-
 --raise notice 'endLoop: %', fishOrder;
 --raise notice 'existingMrkr: %', existingMrkr;
 --raise notice 'workingMrkr: %', workingMrkr;
@@ -181,9 +172,9 @@ end if;
 --return fishOrder, numAffectedGene;
 numAffectedGeneOut=numAffectedGene;
 fishOrderOut=fishOrder;
-numMisforturnesOut=numMisfortunes
 end;
 
 
-$func$ LANGUAGE plpgsql ;
-
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100

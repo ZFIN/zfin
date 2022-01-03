@@ -1,6 +1,8 @@
-create or replace function get_dblink_acc_num_display (dblinkFdbcontId text,
-                                            dblinkAccNum text)
-returns varchar as $dblinkAccNumDisplay$
+
+-- this function definition was restored from DB dump from production
+
+CREATE OR REPLACE FUNCTION "public"."get_dblink_acc_num_display"("dblinkfdbcontid" text, "dblinkaccnum" text)
+  RETURNS "pg_catalog"."varchar" AS $BODY$
 
   -- For most db links we display the link as db_name:acc_num
   -- However, for a few databases, the acc_num is not a good choice
@@ -33,10 +35,6 @@ returns varchar as $dblinkAccNumDisplay$
   if (dblinkDbName = 'WashUZ') then
     -- we need to prepend 'wz' to the acc_num
     dblinkAccNumDisplay := 'wz' || dblinkAccNum;
- 
-  if dblinkFdbcontId == 'ZDB-FDBCONT-141007-1' then
-    dblinkAccNumDisplay = null;
- 
 
   --replace the miranda acc num with one that looks more like the 
   --way curators want to display miRNA names at ZFIN.
@@ -56,4 +54,6 @@ returns varchar as $dblinkAccNumDisplay$
   return dblinkAccNumDisplay;
  end
 
-$dblinkAccNumDisplay$ LANGUAGE plpgsql;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100
