@@ -1,6 +1,12 @@
 task genotypeNamingIssues(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.nomenclature.repair.GenotypeNamingIssues'
+
+    //so we can pass the log4j config file
+    // (eg. "gradle -Dlog4j2.configurationFile=./home/WEB-INF/log4j2.xml genotypeNamingIssues")
+    systemProperty "log4j2.configurationFile", System.getProperty("log4j2.configurationFile", null)
+
+    //so we can pass along a specific path to which to write the CSV report
     systemProperty "reportFile", System.getProperty("reportFile", null)
 }
 
