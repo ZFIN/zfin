@@ -22,7 +22,7 @@ begin
 end;
 $BODY$ LANGUAGE plpgsql;
 
-create trigger feature_marker_relationship_trigger before insert on feature_marker_relationship
+create trigger feature_marker_relationship_trigger after insert on feature_marker_relationship
  for each row
  execute procedure feature_marker_relationship();
 
