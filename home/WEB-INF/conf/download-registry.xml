@@ -166,6 +166,577 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
             <Column id="4">Substructure ID</Column>
             <Column id="5">Substructure Name</Column>
         </Download>
+
+        <!-- Alliance Data Files v1.0.1.4 -->
+        <Download orderIndex="1">
+            <Name>
+                AGM
+            </Name>
+            <Category>
+                ZFIN Alliance Data (1.0.1.4)
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ZFIN_1.0.1.4_AGM</FileName>
+            <FileExtension>json</FileExtension>
+            <FileFormat>json</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column></Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Construct
+            </Name>
+            <Category>
+                ZFIN Alliance Data (1.0.1.4)
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ZFIN_1.0.1.4_Construct</FileName>
+            <FileExtension>json</FileExtension>
+            <FileFormat>json</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1"></Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                HTP Dataset
+			</Name>
+            <Category>
+                ZFIN Alliance Data (1.0.1.4)
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ZFIN_1.0.1.4_HTP_Dataset</FileName>
+            <FileExtension>json</FileExtension>
+            <FileFormat>json</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1"></Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                HTP Dataset Sample
+			</Name>
+            <Category>
+                ZFIN Alliance Data (1.0.1.4)
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ZFIN_1.0.1.4_HTP_DatasetSample</FileName>
+            <FileExtension>json</FileExtension>
+            <FileFormat>json</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1"></Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Reference
+			</Name>
+            <Category>
+                ZFIN Alliance Data (1.0.1.4)
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ZFIN_1.0.1.4_Reference</FileName>
+            <FileExtension>json</FileExtension>
+            <FileFormat>json</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1"></Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Reference Exchange
+            </Name>
+            <Category>
+                ZFIN Alliance Data (1.0.1.4)
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ZFIN_1.0.1.4_ReferenceExchange</FileName>
+            <FileExtension>json</FileExtension>
+            <FileFormat>json</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1"></Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Resource
+            </Name>
+            <Category>
+                ZFIN Alliance Data (1.0.1.4)
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ZFIN_1.0.1.4_Resource</FileName>
+            <FileExtension>json</FileExtension>
+            <FileFormat>json</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1"></Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                STR
+			</Name>
+            <Category>
+                ZFIN Alliance Data (1.0.1.4)
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ZFIN_1.0.1.4_STR</FileName>
+            <FileExtension>json</FileExtension>
+            <FileFormat>json</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1"></Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Allele
+            </Name>
+            <Category>
+                ZFIN Alliance Data (1.0.1.4)
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ZFIN_1.0.1.4_allele</FileName>
+            <FileExtension>json</FileExtension>
+            <FileFormat>json</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1"></Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Basic Gene Information
+            </Name>
+            <Category>
+                ZFIN Alliance Data (1.0.1.4)
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ZFIN_1.0.1.4_basicGeneInformation</FileName>
+            <FileExtension>json</FileExtension>
+            <FileFormat>json</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1"></Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Disease
+            </Name>
+            <Category>
+                ZFIN Alliance Data (1.0.1.4)
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ZFIN_1.0.1.4_disease.daf</FileName>
+            <FileExtension>json</FileExtension>
+            <FileFormat>json</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1"></Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Expression
+            </Name>
+            <Category>
+                ZFIN Alliance Data (1.0.1.4)
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ZFIN_1.0.1.4_expression</FileName>
+            <FileExtension>json</FileExtension>
+            <FileFormat>json</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1"></Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Phenotype
+            </Name>
+            <Category>
+                ZFIN Alliance Data (1.0.1.4)
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ZFIN_1.0.1.4_phenotype</FileName>
+            <FileExtension>json</FileExtension>
+            <FileFormat>json</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1"></Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Variant
+            </Name>
+            <Category>
+                ZFIN Alliance Data (1.0.1.4)
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ZFIN_1.0.1.4_variant</FileName>
+            <FileExtension>json</FileExtension>
+            <FileFormat>json</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1"></Column>
+        </Download>
+        <!-- End of Alliance Data Files v1.0.1.4 -->
+
+        <!-- Alliance Data Files v1.0.1.1 -->
+        <Download orderIndex="1">
+            <Name>
+                AGM
+			</Name>
+            <Category>
+                ZFIN Alliance Data (1.0.1.1)
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ZFIN_1.0.1.1_AGM</FileName>
+            <FileExtension>json</FileExtension>
+            <FileFormat>json</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1"></Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Construct
+			</Name>
+            <Category>
+                ZFIN Alliance Data (1.0.1.1)
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ZFIN_1.0.1.1_Construct</FileName>
+            <FileExtension>json</FileExtension>
+            <FileFormat>json</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1"></Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                HTP Dataset
+			</Name>
+            <Category>
+                ZFIN Alliance Data (1.0.1.1)
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ZFIN_1.0.1.1_HTP_Dataset</FileName>
+            <FileExtension>json</FileExtension>
+            <FileFormat>json</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1"></Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                HTP Dataset Sample
+			</Name>
+            <Category>
+                ZFIN Alliance Data (1.0.1.1)
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ZFIN_1.0.1.1_HTP_DatasetSample</FileName>
+            <FileExtension>json</FileExtension>
+            <FileFormat>json</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1"></Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                STR
+			</Name>
+            <Category>
+                ZFIN Alliance Data (1.0.1.1)
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ZFIN_1.0.1.1_STR</FileName>
+            <FileExtension>json</FileExtension>
+            <FileFormat>json</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1"></Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Allele
+			</Name>
+            <Category>
+                ZFIN Alliance Data (1.0.1.1)
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ZFIN_1.0.1.1_allele</FileName>
+            <FileExtension>json</FileExtension>
+            <FileFormat>json</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1"></Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Basic Gene Information
+			</Name>
+            <Category>
+                ZFIN Alliance Data (1.0.1.1)
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ZFIN_1.0.1.1_basicGeneInformation</FileName>
+            <FileExtension>json</FileExtension>
+            <FileFormat>json</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1"></Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Disease
+			</Name>
+            <Category>
+                ZFIN Alliance Data (1.0.1.1)
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ZFIN_1.0.1.1_disease.daf</FileName>
+            <FileExtension>json</FileExtension>
+            <FileFormat>json</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1"></Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Expression
+			</Name>
+            <Category>
+                ZFIN Alliance Data (1.0.1.1)
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ZFIN_1.0.1.1_expression</FileName>
+            <FileExtension>json</FileExtension>
+            <FileFormat>json</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1"></Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Phenotype
+			</Name>
+            <Category>
+                ZFIN Alliance Data (1.0.1.1)
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ZFIN_1.0.1.1_phenotype</FileName>
+            <FileExtension>json</FileExtension>
+            <FileFormat>json</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1"></Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Variant
+			</Name>
+            <Category>
+                ZFIN Alliance Data (1.0.1.1)
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ZFIN_1.0.1.1_variant</FileName>
+            <FileExtension>json</FileExtension>
+            <FileFormat>json</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1"></Column>
+        </Download>
+        <!-- End of Alliance Data Files v1.0.1.1 -->
+
+        <!-- Alliance Data Files v1.0.1.0 -->
+        <Download orderIndex="1">
+            <Name>
+                AGM
+			</Name>
+            <Category>
+                ZFIN Alliance Data (1.0.1.0)
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ZFIN_1.0.1.0_AGM</FileName>
+            <FileExtension>json</FileExtension>
+            <FileFormat>json</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1"></Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                STR
+			</Name>
+            <Category>
+                ZFIN Alliance Data (1.0.1.0)
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ZFIN_1.0.1.0_STR</FileName>
+            <FileExtension>json</FileExtension>
+            <FileFormat>json</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1"></Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Allele
+			</Name>
+            <Category>
+                ZFIN Alliance Data (1.0.1.0)
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ZFIN_1.0.1.0_allele</FileName>
+            <FileExtension>json</FileExtension>
+            <FileFormat>json</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1"></Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Basic Gene Information
+			</Name>
+            <Category>
+                ZFIN Alliance Data (1.0.1.0)
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ZFIN_1.0.1.0_basicGeneInformation</FileName>
+            <FileExtension>json</FileExtension>
+            <FileFormat>json</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1"></Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Disease
+			</Name>
+            <Category>
+                ZFIN Alliance Data (1.0.1.0)
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ZFIN_1.0.1.0_disease.daf</FileName>
+            <FileExtension>json</FileExtension>
+            <FileFormat>json</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1"></Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Expression
+			</Name>
+            <Category>
+                ZFIN Alliance Data (1.0.1.0)
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ZFIN_1.0.1.0_expression</FileName>
+            <FileExtension>json</FileExtension>
+            <FileFormat>json</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1"></Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Phenotype
+			</Name>
+            <Category>
+                ZFIN Alliance Data (1.0.1.0)
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ZFIN_1.0.1.0_phenotype</FileName>
+            <FileExtension>json</FileExtension>
+            <FileFormat>json</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1"></Column>
+        </Download>
+        <Download orderIndex="1">
+            <Name>
+                Variant
+			</Name>
+            <Category>
+                ZFIN Alliance Data (1.0.1.0)
+            </Category>
+            <Description></Description>
+            <WikiLink></WikiLink>
+            <FileName>ZFIN_1.0.1.0_variant</FileName>
+            <FileExtension>json</FileExtension>
+            <FileFormat>json</FileFormat>
+            <Query>
+                <![CDATA[]]>
+            </Query>
+            <Column id="1"></Column>
+        </Download>
+        <!-- End of Alliance Data Files v1.0.1.0 -->
+
         <Download orderIndex="1">
             <Name>
                 Previous Names
@@ -2730,6 +3301,15 @@ order by 2, 4, 5, 7;
         </Category>
         <Category orderIndex="130">
             <name>Wildtype Lines</name>
+        </Category>
+        <Category orderIndex="135">
+            <name>ZFIN Alliance Data (1.0.1.4)</name>
+        </Category>
+        <Category orderIndex="136">
+            <name>ZFIN Alliance Data (1.0.1.1)</name>
+        </Category>
+        <Category orderIndex="137">
+            <name>ZFIN Alliance Data (1.0.1.0)</name>
         </Category>
         <Category orderIndex="140">
             <name>Genetic Marker Relationships</name>
