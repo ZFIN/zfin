@@ -1,8 +1,14 @@
+--
+-- This file was commited to the repo as lib/DB_functions/getFishOrder.sql
+-- but it is not syntactically correct, so it could never have been deployed.
+-- I'm hesitant to delete it outright since it seems to contain a change that was 
+-- intended to address an issue (I assume). But without knowing the full consequences
+-- of fixing the syntax and also not having much confidence in it ever being tested,
+-- I don't want to include this function currently. So, for now, I'm placing it in this
+-- state of limbo and reverting back to the function as it is defined in our prod DB.
+--
 
--- this function definition was restored from DB dump from production
-
-CREATE OR REPLACE FUNCTION "public"."getfishorder"(IN "vfishid" text, IN "vgenoid" text, OUT "fishorderout" int8, OUT "numaffectedgeneout" int4)
-  RETURNS "pg_catalog"."record" AS $BODY$
+create or replace function getFishOrder (vFishId text, vGenoId text, out fishOrderOut bigint,  out numAffectedGeneOut  int) as $func$
 
 
 declare workingZyg  zygocity.zyg_name%TYPE;
@@ -14,6 +20,7 @@ declare workingZyg  zygocity.zyg_name%TYPE;
  strExists int8;
  genoIsWT boolean := 'f';
  numAffectedGene int8 := 0;
+ numMisfortunes int8 :=0;
  fishOrder bigint := 9999999999;
 begin
 
@@ -92,11 +99,23 @@ for workingMrkr in
 		 fishOrder := fishOrder + 100100;
 		-- raise notice 'existingMarkerNotEqualWorkingMarker: %', fishOrder;
 	     end if;
+
+
 	   
 	   end if; 
 
 	   
 end loop ;
+
+for workingMrkr in
+   select fish, genotype_Feature, feature_marker_Relationship
+	   where fish_genotype_zdb_id =vGenoId
+   	   and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
+	   and fish_genotype_zdb_id =genofeat_geno_zdb_id
+	   and fmrel_type in ('contains phenotypic sequence feature')
+
+	   numMisfortunes
+
 --raise notice 'endLoop: %', fishOrder;
 --raise notice 'existingMrkr: %', existingMrkr;
 --raise notice 'workingMrkr: %', workingMrkr;
@@ -172,9 +191,9 @@ end if;
 --return fishOrder, numAffectedGene;
 numAffectedGeneOut=numAffectedGene;
 fishOrderOut=fishOrder;
+numMisforturnesOut=numMisfortunes
 end;
 
 
-$BODY$
-  LANGUAGE plpgsql VOLATILE
-  COST 100
+$func$ LANGUAGE plpgsql ;
+

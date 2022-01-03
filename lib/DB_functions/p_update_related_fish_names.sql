@@ -43,7 +43,7 @@ elseif (get_obj_type(vZdbId) = 'GENO')
 		loop		    
 	         select get_fish_handle(vFish) into vFishHandle;
 		 select get_fish_name(vFish) into vFishName;
-       		
+
 		 update fish
             	   set fish_name = vFishName
 	      	   where fish_zdb_id = vFish;
