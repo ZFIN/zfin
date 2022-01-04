@@ -1,7 +1,7 @@
 -- get_genotype_display uses a large sql query to gather together the relationships between genotypes and marker/features.
 -- This is the result of extracting that query into a view to make the function easier to read.
 -- This query could potentially be broken down further.
-CREATE OR REPLACE VIEW genotype_display_relationship AS
+CREATE OR REPLACE VIEW genotype_name_components_from_relationships AS
         -- start of result set 1
         SELECT DISTINCT
             get_feature_abbrev_display (feature_zdb_id) AS fad,
@@ -288,14 +288,14 @@ BEGIN
             SELECT DISTINCT
                 fad,
                 zyg_allele_display,
-                gdr.fad2,
+                gncfr.fad2,
                 feature_abbrev,
                 feature_type,
                 zyg_abbrev,
                 mrkr_abbrev,
                 gcs_significance
             from
-                genotype_display_relationship as gdr -- VIEW defined above
+                genotype_name_components_from_relationships as gncfr -- VIEW defined above
             where 
                 genofeat_geno_zdb_id = genoZdbId
             ORDER BY
