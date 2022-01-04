@@ -3,6 +3,7 @@ package org.zfin.nomenclature.repair;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -49,6 +50,7 @@ import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 public class GenotypeNameChangeTest extends AbstractDatabaseTest {
 
     @Test
+    @Ignore
     public void testCauseEmptyGenotypeName() throws ValidationException {
         MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
         PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
