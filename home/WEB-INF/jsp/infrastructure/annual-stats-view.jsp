@@ -12,7 +12,7 @@
 
         <c:forEach var="stat" items="${statsMap}">
             <tr style="background-color: #b4b4b4; border: 1px solid black;">
-                <td colspan="24"><strong>${stat.key}</strong>
+                <td colspan="${fn:length(years)+1}"><strong>${stat.key}</strong>
                 </td>
             </tr>
             <c:forEach var="statCategory" items="${stat.value}">
