@@ -14,6 +14,7 @@ import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Main repository.
@@ -138,6 +139,7 @@ public interface AntibodyRepository {
      */
     List<Antibody> getAntibodiesByPublication(Publication publication);
 
+    Map<Publication, List<Antibody>> getAntibodiesFromAllPublications();
 
     /**
      * Retrieve antibody by abbrev
@@ -195,10 +197,10 @@ public interface AntibodyRepository {
      * caller means: give me all figures with antibodies at any stage with the super term
      * either super term or sub term.
      *
-     * @param antibody antibody
-     * @param term term
+     * @param antibody    antibody
+     * @param term        term
      * @param withImgOnly only figures with images or not
-     * @return  list of figures
+     * @return list of figures
      */
     List<Figure> getFiguresForAntibodyWithTerms(Antibody antibody, GenericTerm term, boolean withImgOnly);
 

@@ -45,9 +45,6 @@ public class PublicationAPIController {
     private MarkerRepository markerRepository;
 
     @Autowired
-    private PublicationService publicationService;
-
-    @Autowired
     private HttpServletRequest request;
 
     @ResponseBody
@@ -195,7 +192,7 @@ public class PublicationAPIController {
         List<STRTargetRow> rows = new ArrayList<>(strs.size());
         for (SequenceTargetingReagent str : strs) {
             for (Marker target : str.getTargetGenes()) {
-                if(StringUtils.isEmpty(targetName) || target.getAbbreviation().contains(targetName)){
+                if (StringUtils.isEmpty(targetName) || target.getAbbreviation().contains(targetName)) {
                     rows.add(new STRTargetRow(str, target));
 
                 }

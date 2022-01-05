@@ -41,6 +41,7 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.FilterType;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.hamcrest.Matchers.greaterThan;
@@ -989,5 +990,11 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         assertTrue(numberOfAntibodiesPerAOTerm > 0);
         int numberOfAntibodiesIncludingSubstructures = getAntibodyRepository().getAntibodyCount(term, true);
         assertTrue(numberOfAntibodiesIncludingSubstructures >= numberOfAntibodiesPerAOTerm);
+    }
+
+    @Test
+    public void getAntibodiesFromAllPublications() {
+        Map<Publication, List<Antibody>> antibodies = getAntibodyRepository().getAntibodiesFromAllPublications();
+        assertNotNull(antibodies);
     }
 }

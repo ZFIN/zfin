@@ -650,4 +650,10 @@ public interface PublicationRepository extends PaginationParameter {
     Map<Marker, Boolean> areNewGenePubAttribution(List<Marker> attributedMarker, String publicationId);
 
     List<SequenceTargetingReagent> getSTRsByPublication(String publicationID, Pagination pagination);
+
+    Map<Publication, Integer> getPublicationMarkerHistogram(List<String> markerTypes, Pagination pagination);
+
+    Integer getPublicationAttributionPubCount(List<String> markerTypes);
+
+    Integer getPublicationAttributionMarkerCount(List<String> markerTypes);
 }

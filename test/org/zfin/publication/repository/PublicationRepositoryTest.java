@@ -45,6 +45,7 @@ import org.zfin.sequence.MarkerDBLink;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -874,6 +875,22 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         pagination.addFieldFilter(FieldFilter.TARGET_NAME, "x1");
         strList = publicationRepository.getSTRsByPublication("ZDB-PUB-090807-11", pagination);
         assertThat(strList, is(not(empty())));
+    }
+
+    @Test
+    public void getAttributionPubCount() {
+        Integer count = publicationRepository.getPublicationAttributionPubCount(null);
+        assertThat(count, greaterThan(10));
+
+        Integer countMarker = publicationRepository.getPublicationAttributionMarkerCount(null);
+        assertThat(count, greaterThan(10));
+    }
+
+    @Test
+    public void getPublicationMarkerHistogram() {
+        Map<Publication, Integer> map = publicationRepository.getPublicationMarkerHistogram(null, new Pagination());
+        assertNotNull(map);
+
     }
 }
 

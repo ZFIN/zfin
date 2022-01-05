@@ -60,6 +60,7 @@ import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.MarkerDBLink;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -2915,6 +2916,59 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         query.setString("pubID", publicationID);
         query.setParameterList("markerTypes", List.of(Marker.Type.MRPHLNO.name(), Marker.Type.CRISPR.name(), Marker.Type.TALEN.name()));
         return query.list();
+    }
+
+    @Override
+    public Map<Publication, Integer> getPublicationMarkerHistogram(List<String> markerTypes, Pagination pagination) {
+        String sql = "select recattrib_source_zdb_id as data_zdb_id, pub.pub_mini_ref, pub.title," +
+                "         count(recattrib_data_zdb_id) as attribution_count " +
+                "         from marker " +
+                "         join record_attribution on recattrib_data_zdb_id = mrkr_zdb_id " +
+                "         join marker_type_group_member on mtgrpmem_mrkr_type = mrkr_type " +
+                "         join publication as pub on recattrib_source_zdb_id = zdb_id " +
+                "         and (mtgrpmem_mrkr_type_group in (:types)) " +
+                "         group by 1, 2, 3 order by attribution_count desc";
+        Query query = HibernateUtil.currentSession().createSQLQuery(sql);
+        query.setParameterList("types", markerTypes);
+        //query.setMaxResults(pagination.getLimit());
+        List<Object[]> pubAttrList = query.list();
+        Map<Publication, Integer> map = new LinkedHashMap<>();
+        pubAttrList.forEach(object -> {
+            Publication pub = new Publication();
+            pub.setZdbID((String) object[0]);
+            pub.setShortAuthorList((String) object[1]);
+            pub.setTitle((String) object[2]);
+            map.put(pub, ((BigInteger) object[3]).intValue());
+        });
+        return map;
+    }
+
+    @Override
+    public Integer getPublicationAttributionPubCount(List<String> markerTypes) {
+        String hql =
+                "  select count(distinct recattrib_source_zdb_id) " +
+                        "     from marker " +
+                        "     join record_attribution on recattrib_data_zdb_id = mrkr_zdb_id " +
+                        "     join marker_type_group_member on mtgrpmem_mrkr_type = mrkr_type " +
+                        "     and (mtgrpmem_mrkr_type_group in (:types)) " +
+                        "     and recattrib_source_type = 'standard' ";
+        Query query = HibernateUtil.currentSession().createSQLQuery(hql);
+        query.setParameterList("types", markerTypes);
+        return ((BigInteger) query.list().get(0)).intValue();
+    }
+
+    @Override
+    public Integer getPublicationAttributionMarkerCount(List<String> markerTypes) {
+        String hql =
+                "  select count(distinct recattrib_data_zdb_id) " +
+                        "     from marker " +
+                        "     join record_attribution on recattrib_data_zdb_id = mrkr_zdb_id " +
+                        "     join marker_type_group_member on mtgrpmem_mrkr_type = mrkr_type " +
+                        "     and (mtgrpmem_mrkr_type_group in (:types)) " +
+                        "     and recattrib_source_type = 'standard' ";
+        Query query = HibernateUtil.currentSession().createSQLQuery(hql);
+        query.setParameterList("types", markerTypes);
+        return ((BigInteger) query.list().get(0)).intValue();
     }
 
     @Override

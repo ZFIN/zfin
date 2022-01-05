@@ -21,7 +21,9 @@ import org.zfin.expression.TextOnlyFigure;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerRelationship;
 import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
@@ -30,8 +32,8 @@ import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.FilterType;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.hibernate.criterion.Restrictions.eq;
 import static org.hibernate.criterion.Restrictions.isNotEmpty;
@@ -338,6 +340,42 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
 
         return (List<Antibody>) query.list();
 
+    }
+
+    private Map<Publication, List<Antibody>> pubAntibodyMapCached;
+
+    public Map<Publication, List<Antibody>> getAntibodiesFromAllPublications() {
+        if(pubAntibodyMapCached != null)
+            return pubAntibodyMapCached;
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select pubAttribute, antibody from Antibody as antibody, PublicationAttribution pubAttribute " +
+                "     where pubAttribute.dataZdbID = antibody.zdbID ";
+        Query query = session.createQuery(hql);
+        //query.setString("antibodytype", "ZDB-" + Marker.Type.ATB.name() + "%");
+        List<Object[]> list = query.list();
+        Map<Publication, List<Antibody>> antibodyMap = new HashMap<>();
+
+        list.forEach(objects -> {
+            Publication pub = ((PublicationAttribution) objects[0]).getPublication();
+            Antibody antibody = (Antibody) objects[1];
+            antibodyMap.computeIfAbsent(pub, k -> new ArrayList<>());
+            antibodyMap.get(pub).add(antibody);
+        });
+
+        hql = " select rel from MarkerRelationship rel where " +
+                "rel.markerRelationshipType.name = :type ";
+        query = session.createQuery(hql);
+        query.setParameter("type", MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY.toString());
+        List<MarkerRelationship> rels = query.list();
+        antibodyMap.values().stream().flatMap(Collection::stream).forEach(antibody -> {
+            List<Marker> marker= rels.stream().filter(relationship -> relationship.getSecondMarker().getZdbID().equals(antibody.getZdbID()))
+                    .map(MarkerRelationship::getFirstMarker)
+                    .collect(Collectors.toList());
+            antibody.setAntigenGenes(marker);
+        });
+        pubAntibodyMapCached = antibodyMap;
+        return pubAntibodyMapCached;
     }
 
     public Antibody getAntibodyByAbbrev(String antibodyAbbrev) {

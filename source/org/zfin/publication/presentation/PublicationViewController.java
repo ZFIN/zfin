@@ -13,6 +13,7 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.feature.Feature;
 import org.zfin.figure.service.FigureViewService;
+import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationBean;
@@ -35,6 +36,8 @@ import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.stats.StatisticPublicationService;
+import org.zfin.stats.StatisticRow;
 import org.zfin.util.ZfinStringUtils;
 import org.zfin.zebrashare.ZebrashareSubmissionMetadata;
 import org.zfin.zebrashare.repository.ZebrashareRepository;
@@ -111,6 +114,7 @@ public class PublicationViewController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication));
         return "publication/publication-view-prototype";
     }
+
     @RequestMapping("/publication/view/{zdbID}")
     public String view(@PathVariable String zdbID, Model model, HttpServletResponse response) {
         Publication publication = getPublication(zdbID);
@@ -247,9 +251,9 @@ public class PublicationViewController {
 
     @RequestMapping("/publication/{pubID}/genotype-list")
     public String showGenotypeList(@PathVariable String pubID,
-                                  @ModelAttribute("formBean") GeneBean geneBean,
-                                  Model model,
-                                  HttpServletResponse response) {
+                                   @ModelAttribute("formBean") GeneBean geneBean,
+                                   Model model,
+                                   HttpServletResponse response) {
         logger.info("zdbID: " + pubID);
 
         Publication publication = getPublication(pubID);
@@ -548,6 +552,36 @@ public class PublicationViewController {
         model.addAttribute("directedAttributedData", directedAttributedIds);
         model.addAttribute("publication", publication);
         return "publication/publication-directly-attributed";
+    }
+
+    @RequestMapping("/publication/stats")
+    public String viewPublicationUberTable(Model model) {
+        List<String> genedom = List.of(Marker.TypeGroup.GENEDOM.name());
+        int histogramPubMarkerCount = publicationRepository.getPublicationAttributionPubCount(genedom);
+        int histogramMarkerCount = publicationRepository.getPublicationAttributionMarkerCount(genedom);
+        model.addAttribute("pubMarkerCount", histogramPubMarkerCount);
+        model.addAttribute("markerCount", histogramMarkerCount);
+
+        List<String> strDom = List.of(Marker.TypeGroup.MRPHLNO.name(),
+                Marker.TypeGroup.TALEN.name(),
+                Marker.TypeGroup.CRISPR.name());
+        int histogramPubStrCount = publicationRepository.getPublicationAttributionPubCount(strDom);
+        int histogramStrCount = publicationRepository.getPublicationAttributionMarkerCount(strDom);
+        model.addAttribute("pubStrCount", histogramPubStrCount);
+        model.addAttribute("strCount", histogramStrCount);
+
+
+        List<String> antibodyDom = List.of(Marker.TypeGroup.ATB.name());
+        int histogramPubAntibodyCount = publicationRepository.getPublicationAttributionPubCount(antibodyDom);
+        int histogramAntibodyCount = publicationRepository.getPublicationAttributionMarkerCount(antibodyDom);
+        model.addAttribute("pubAntibodyCount", histogramPubAntibodyCount);
+        model.addAttribute("antibodyCount", histogramAntibodyCount);
+
+        StatisticPublicationService service = new StatisticPublicationService();
+        JsonResultResponse<StatisticRow> response = service.getAllPublicationAntibodies(new Pagination());
+        model.addAttribute("statistic", response.getSupplementalData().get("statistic"));
+
+        return "publication/publication-view-stats";
     }
 }
 
