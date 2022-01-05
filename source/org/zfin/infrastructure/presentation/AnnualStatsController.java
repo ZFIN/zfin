@@ -23,22 +23,6 @@ public class AnnualStatsController {
     @RequestMapping(value = "/annual-stats-view")
     public String getAnnualStats(Model model) throws Exception {
         List<Date> dates = RepositoryFactory.getInfrastructureRepository().getDistinctDatesFromAnnualStats();
-        List<String> yearStrings = new ArrayList<>();
-        for (Date date : dates) {
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(date);
-            int yearNum = cal.get(Calendar.YEAR);
-            String year = null;
-            if (yearNum > 2015) {
-                year = yearNum - 1 + "";
-            } else {
-                year = yearNum + "";
-            }
-            if (!yearStrings.contains(year)) {
-                yearStrings.add(year);
-            }
-        }
-
         List<AnnualStats> annualStatsList = RepositoryFactory.getInfrastructureRepository().getAnnualStats();
 
         Calendar cal = Calendar.getInstance();
@@ -65,8 +49,11 @@ public class AnnualStatsController {
 
         model.addAttribute("statsMap", categoryTypeStats);
         int numberOfYears = categoryTypeStats.entrySet().iterator().next().getValue().entrySet().iterator().next().getValue().size();
-        if(numberOfYears != yearStrings.size()) {
-            yearStrings.remove(yearStrings.size() - 1);
+
+        List<String> yearStrings = new ArrayList<>();
+        int startYear = 1998;
+        for (int index = 0; index < numberOfYears; index++) {
+            yearStrings.add(String.valueOf(startYear + index));
         }
         model.addAttribute("years", yearStrings);
 
