@@ -52,7 +52,7 @@ public class MutationController {
         return response;
     }
 
-    @JsonView(View.API.class)
+    @JsonView(View.FeatureAPI.class)
     @RequestMapping(value = "/marker/{zdbID}/mutations")
     public JsonResultResponse<Feature> getMutations(@PathVariable("zdbID") String zdbID,
                                                     @Version Pagination pagination) {
