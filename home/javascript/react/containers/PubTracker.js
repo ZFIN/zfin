@@ -19,7 +19,9 @@ import {
     validate
 } from '../api/publication';
 import intertab from '../utils/intertab';
-import produce from 'immer';
+import produce, {setAutoFreeze} from 'immer';
+setAutoFreeze(false);
+
 import DataPage from '../components/layout/DataPage';
 import Section from '../components/layout/Section';
 import {

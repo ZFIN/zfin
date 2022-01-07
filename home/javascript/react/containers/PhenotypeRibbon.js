@@ -10,7 +10,8 @@ import {
     PhenotypeFigureGallery,
 } from '../components/phenotype';
 import Checkbox from '../components/Checkbox';
-import produce from 'immer';
+import produce, {setAutoFreeze} from 'immer';
+setAutoFreeze(false);
 
 const PhenotypeRibbon = ({geneId}) => {
     const [summaryTableState, setSummaryTableState] = useTableState();

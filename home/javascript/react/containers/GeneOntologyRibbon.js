@@ -9,7 +9,9 @@ import DataTable from '../components/data-table';
 import NoData from '../components/NoData';
 import {Ribbon, getSelectedTermQueryParams} from '../components/ribbon';
 import GenericErrorMessage from '../components/GenericErrorMessage';
-import {produce} from 'immer';
+import produce, {setAutoFreeze} from 'immer';
+setAutoFreeze(false);
+
 import PublicationCitationLink from '../components/PublicationCitationLink';
 
 const GeneOntologyRibbon = ({geneId}) => {
