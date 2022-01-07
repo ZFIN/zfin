@@ -2,6 +2,7 @@ package org.zfin.nomenclature.repair;
 
 import org.apache.commons.collections.ListUtils;
 import org.hibernate.Query;
+import org.hibernate.Transaction;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 
@@ -30,12 +31,15 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
     public void generateErrorReportOfNamingIssues() {
         initAll();
 
-        List<NamingIssuesReportRow> allSuspiciousGenotypes = getSuspiciousGenotypes();
-        LOG.info("Found " + allSuspiciousGenotypes.size() + " potential name errors.");
+        List<NamingIssuesReportRow> allReportRows = getSuspiciousGenotypes();
+        LOG.info("Found " + allReportRows.size() + " potential name errors.");
 
-        categorizeNamingIssues(allSuspiciousGenotypes);
-        applyFixes(allSuspiciousGenotypes);
-        outputReport(allSuspiciousGenotypes);
+        categorizeNamingIssues(allReportRows);
+        generateFixes(allReportRows);
+        applyFixes(allReportRows);
+        outputReport(allReportRows);
+
+        HibernateUtil.closeSession();
 
     }
 
@@ -55,35 +59,26 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
     }
 
     public void categorizeGenotypesWithTransposedNames(List<NamingIssuesReportRow> rows) {
-        Iterator<NamingIssuesReportRow> iter = rows.iterator();
-        while (iter.hasNext()) {
-            NamingIssuesReportRow row = iter.next();
-
-            if (canBeTransposedIntoEqualNames(row.getDisplayName(), row.getComputedDisplayName()) ) {
+        for (NamingIssuesReportRow row : rows) {
+            if (canBeTransposedIntoEqualNames(row.getDisplayName(), row.getComputedDisplayName())) {
                 row.setIssueCategory(NamingIssuesReportRow.IssueCategory.TRANSPOSED);
             }
         }
     }
 
     public void categorizeAlphabeticalTranspositions(List<NamingIssuesReportRow> rows) {
-        Iterator<NamingIssuesReportRow> iter = rows.iterator();
-        while (iter.hasNext()) {
-            NamingIssuesReportRow row = iter.next();
-
-            if (namesDifferOnlyByAlphabetization(row.getDisplayName(), row.getComputedDisplayName()) ) {
+        for (NamingIssuesReportRow row : rows) {
+            if (namesDifferOnlyByAlphabetization(row.getDisplayName(), row.getComputedDisplayName())) {
                 row.setIssueCategory(NamingIssuesReportRow.IssueCategory.ALPHABETICAL);
             }
         }
     }
 
-    private void applyFixes(List<NamingIssuesReportRow> rows) {
-        Iterator<NamingIssuesReportRow> iter = rows.iterator();
-        while (iter.hasNext()) {
-            NamingIssuesReportRow row = iter.next();
-
+    private void generateFixes(List<NamingIssuesReportRow> rows) {
+        for (NamingIssuesReportRow row : rows) {
             if (row.getIssueCategory() != NamingIssuesReportRow.IssueCategory.UNKNOWN) {
                 String sql = String.format("UPDATE genotype SET geno_display_name = '%s' where geno_display_name = '%s' and geno_zdb_id = '%s';",
-                                            row.getComputedDisplayName(), row.getDisplayName(), row.getId());
+                        row.getComputedDisplayName(), row.getDisplayName(), row.getId());
                 row.setSqlFix(sql);
             } else {
                 row.setSqlFix("");
@@ -91,7 +86,30 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
         }
     }
 
-    private void outputReport(List<NamingIssuesReportRow> allSuspiciousGenotypes) {
+    private void applyFixes(List<NamingIssuesReportRow> reportRows) {
+        Transaction tx;
+        Query query;
+        String forceApplyFixes = System.getenv("FORCE_APPLY_FIXES");
+
+        if ("true".equals(forceApplyFixes)) {
+            LOG.info("APPLYING FIXES");
+
+            for (NamingIssuesReportRow row : reportRows) {
+                tx = HibernateUtil.createTransaction();
+                if (row.getIssueCategory() != NamingIssuesReportRow.IssueCategory.UNKNOWN) {
+                    LOG.info("Executing SQL: " + row.getSqlFix());
+                    query = HibernateUtil.currentSession().createSQLQuery(row.getSqlFix());
+                    query.executeUpdate();
+                }
+                tx.commit();
+            }
+
+        } else {
+            LOG.info("NOT APPLYING FIXES");
+        }
+    }
+
+    private void outputReport(List<NamingIssuesReportRow> reportRows) {
         BufferedWriter outputWriter = null;
         String outputPath = System.getProperty("reportFile", DEFAULT_OUTPUT_PATH);
         if (outputPath.equals("")) {
@@ -102,7 +120,7 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
         try {
             outputWriter = new BufferedWriter(new FileWriter(outputPath));
             outputWriter.write("\"ID\",\"Display Name\",\"Computed Display Name\",\"Issue Category\",\"SQL Fix\"\n");
-            for (NamingIssuesReportRow row : allSuspiciousGenotypes) {
+            for (NamingIssuesReportRow row : reportRows) {
                 outputWriter.write("\"https://zfin.org/" + row.getId() + "\",\"" + row.getDisplayName() + "\",\"" + row.getComputedDisplayName() + "\"," + "\"" + row.getIssueCategory().value + "\",\"" + row.getSqlFix() + "\"\n");
             }
         } catch (IOException ioe) {
@@ -135,9 +153,6 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
      * check if the only difference is that when you resort the original display name, it matches the computed
      * name.
      *
-     * @param displayName
-     * @param computedDisplayName
-     * @return
      */
     private boolean namesDifferOnlyByAlphabetization(String displayName, String computedDisplayName) {
         List<String> displayNameParts = List.of(displayName.split(" ?; ?"));
@@ -146,14 +161,14 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
         List<GenotypeFeatureName> sortedDisplayNameFeatures = displayNameParts
                 .stream()
                 .map(GenotypeFeatureNamePattern::parseFeatureName)
-                .filter(elem -> elem != null)
+                .filter(Objects::nonNull)
                 .sorted(new GenotypeFeatureNameComparator()) //only sort the original display name
                 .collect(Collectors.toList());
 
         List<GenotypeFeatureName> computedDisplayNameFeatures = computedNameParts
                 .stream()
                 .map(GenotypeFeatureNamePattern::parseFeatureName)
-                .filter(elem -> elem != null)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
         return ListUtils.isEqualList(sortedDisplayNameFeatures, computedDisplayNameFeatures);
