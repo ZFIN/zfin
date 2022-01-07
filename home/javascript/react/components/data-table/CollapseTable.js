@@ -6,7 +6,9 @@ import useTableDataFetch from '../../hooks/useTableDataFetch';
 import LoadingSpinner from '../LoadingSpinner';
 import Table from './Table';
 import SortByDropdown from './SortByDropdown';
-import produce from 'immer';
+import produce, {setAutoFreeze} from 'immer';
+setAutoFreeze(false);
+
 import NoData from '../NoData';
 
 const CollapseTable = ({

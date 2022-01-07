@@ -4,7 +4,9 @@ import useTableState from '../../hooks/useTableState';
 import GenericErrorMessage from '../GenericErrorMessage';
 import LoadingSpinner from '../LoadingSpinner';
 import NoData from '../NoData';
-import produce from 'immer';
+import produce, {setAutoFreeze} from 'immer';
+setAutoFreeze(false);
+
 import PropTypes from 'prop-types';
 import {downloadOptionType, sortOptionType, tableStateType} from '../../utils/types';
 import {isEmptyObject} from '../../utils';

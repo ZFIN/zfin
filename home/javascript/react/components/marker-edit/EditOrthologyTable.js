@@ -5,7 +5,9 @@ import LoadingSpinner from '../../components/LoadingSpinner';
 import Table from '../../components/data-table/Table';
 import EditOrthologyEvidenceCell from '../../components/marker-edit/EditOrthologyEvidenceCell';
 import http from '../../utils/http';
-import produce from 'immer';
+import produce, {setAutoFreeze} from 'immer';
+setAutoFreeze(false);
+
 import Modal from '../../components/Modal';
 import LoadingButton from '../../components/LoadingButton';
 import useCurationTabLoadEvent from '../../hooks/useCurationTabLoadEvent';

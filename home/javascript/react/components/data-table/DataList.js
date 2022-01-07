@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 import DataProvider from './DataProvider';
 import List from './List';
 import {downloadOptionType} from '../../utils/types';
-import produce from 'immer';
+import produce, {setAutoFreeze} from 'immer';
+setAutoFreeze(false);
+
 import useTableState from '../../hooks/useTableState';
 import TextBoxFilter from './TextBoxFilter';
 
