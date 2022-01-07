@@ -4,7 +4,9 @@ import {columnDefinitionType, downloadOptionType, sortOptionType, tableStateType
 import DataProvider from './DataProvider';
 import Table from './Table';
 import HeaderCell from './HeaderCell';
-import produce from 'immer';
+import produce, {setAutoFreeze} from 'immer';
+setAutoFreeze(false);
+
 import useTableState from '../../hooks/useTableState';
 
 const DataTable = ({

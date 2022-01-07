@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import qs from 'qs';
-import produce from 'immer';
+import produce, {setAutoFreeze} from 'immer';
+setAutoFreeze(false);
+
 import http from '../utils/http';
 import { DEFAULT_FETCH_STATE } from './constants';
 
