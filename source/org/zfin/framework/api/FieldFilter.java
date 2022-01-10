@@ -3,7 +3,13 @@ package org.zfin.framework.api;
 import java.util.StringJoiner;
 
 public enum FieldFilter {
+    ANTIBODY_NAME("filter.antibodyName"),
     SEQUENCE_ACCESSION("sequence.accession"),
+    CLONAL_TYPE("filter.clonalType"),
+    ISOTYPE("filter.asisotypeay"),
+    HOST("filter.host"),
+    ASSAY("filter.assay"),
+    ANTIGEN_GENE("filter.antigenGenes"),
     SEQUENCE_TYPE("sequence.type"),
     FILTER_TERM_NAME("termName"),
     RELATIONSHIP_TYPE("relationship.type"),

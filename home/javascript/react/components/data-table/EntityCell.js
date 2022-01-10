@@ -1,0 +1,40 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+
+const EntityCell = ({value}) => {
+
+    return (
+        <>
+            {value.columnDefinition.superEntity && (
+                <a href={`/${value.columnStat.value}`}>{value.columnStat.value}</a>
+            )}
+            {!value.columnDefinition.superEntity && value.columnDefinition.rowEntity && (
+                <table className='table borderless'>
+                    <tbody>
+                        <tr>
+                            <td>T</td>
+                            <td>{value.columnStat.totalNumber.toLocaleString()}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            )}
+            {!value.columnDefinition.superEntity && !value.columnDefinition.rowEntity && (
+                <table className='table borderless'>
+                    <tbody>
+                        <tr>
+                            <td>T [D]</td>
+                            <td>{value.columnStat.totalNumber.toLocaleString()} [{value.columnStat.totalDistinctNumber.toLocaleString()}]</td>
+                        </tr>
+                    </tbody>
+                </table>
+            )}
+        </>
+    );
+};
+
+EntityCell.propTypes = {
+    key: PropTypes.string,
+    value: PropTypes.object,
+};
+
+export default EntityCell;

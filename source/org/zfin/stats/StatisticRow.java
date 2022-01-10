@@ -7,7 +7,6 @@ import org.apache.commons.collections.MapUtils;
 import org.zfin.framework.api.View;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 @Setter
@@ -15,7 +14,7 @@ import java.util.LinkedHashMap;
 public class StatisticRow implements Serializable {
 
     @JsonView(View.API.class)
-    private HashMap<String, Column> columns;
+    private LinkedHashMap<String, Column> columns;
 
     public void put(ColumnStats geneStat, ColumnValues columnValues) {
         Column col = new Column();

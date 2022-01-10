@@ -8,6 +8,7 @@ const PublicationMarkerStatTable = () => {
         <>
             <StatisticDataTable
                 dataUrl='/action/api/publication/stats/antibody/histogram'
+                rowKey='efg'
             />
         </>
     );

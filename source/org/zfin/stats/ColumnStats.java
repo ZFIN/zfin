@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
 import org.zfin.framework.api.View;
+import org.zfin.util.ZfinStringUtils;
 
 import java.io.Serializable;
 import java.util.List;
@@ -52,4 +53,8 @@ public class ColumnStats<Entity, SubEntity> implements Serializable {
         return singleValueFunction.apply(a);
     }
 
+    @JsonView(View.API.class)
+    public String getFilterName() {
+        return ZfinStringUtils.getCamelCase(name);
+    }
 }

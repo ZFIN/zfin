@@ -8,6 +8,7 @@ import HeaderCell from './HeaderCell';
 import produce from 'immer';
 */
 import useTableState from '../../hooks/useTableState';
+import produce from 'immer';
 
 const StatisticDataTable = ({
     dataUrl,
@@ -15,21 +16,34 @@ const StatisticDataTable = ({
     onDataLoaded,
     pagination = true,
     setTableState,
+    rowKey,
     sortOptions,
     tableState,
 }) => {
     [tableState, setTableState] = useTableState(tableState, setTableState);
 
+    const handleFilterChange = (field, value) => {
+        setTableState(produce(state => {
+            if (!state.filter) {
+                state.filter = {};
+            }
+            state.page = 1;
+            state.filter[field] = value;
+        }));
+    };
 
     const renderData = response => (
         <StatisticTable
             supplementalData={response.supplementalData}
-
+            tableState={tableState}
+            handleFilterChange={handleFilterChange}
+            data={response.results}
+            rowKey={rowKey}
         />
     );
 
     return (
-        <div className='data-table-container'> hello
+        <div className='data-table-container'>
             {
                 <DataProvider
                     dataUrl={dataUrl}

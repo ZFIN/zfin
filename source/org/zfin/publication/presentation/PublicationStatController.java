@@ -2,10 +2,8 @@ package org.zfin.publication.presentation;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.zfin.framework.api.FieldFilter;
 import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.api.View;
@@ -73,8 +71,20 @@ public class PublicationStatController {
 
     @JsonView(View.API.class)
     @RequestMapping(value = "/antibody/histogram", method = RequestMethod.GET)
-    public JsonResultResponse<StatisticRow> getPublicationStats(@Version Pagination pagination) {
+    public JsonResultResponse<StatisticRow> getPublicationStats(@RequestParam(value = "filter.antibodyName", required = false) String antibodyName,
+                                                                @RequestParam(value = "filter.clonalType", required = false) String clonalType,
+                                                                @RequestParam(value = "filter.isotype", required = false) String isotype,
+                                                                @RequestParam(value = "filter.hostOrganism", required = false) String host,
+                                                                @RequestParam(value = "filter.assay", required = false) String assay,
+                                                                @RequestParam(value = "filter.antigenGenes", required = false) String antigenGenes,
+                                                                @Version Pagination pagination) {
 
+        pagination.addFieldFilter(FieldFilter.ANTIBODY_NAME, antibodyName);
+        pagination.addFieldFilter(FieldFilter.CLONAL_TYPE, clonalType);
+        pagination.addFieldFilter(FieldFilter.ISOTYPE, isotype);
+        pagination.addFieldFilter(FieldFilter.HOST, host);
+        pagination.addFieldFilter(FieldFilter.ASSAY, assay);
+        pagination.addFieldFilter(FieldFilter.ANTIGEN_GENE, antigenGenes);
         StatisticPublicationService service = new StatisticPublicationService();
         JsonResultResponse<StatisticRow> response = service.getAllPublicationAntibodies(pagination);
 

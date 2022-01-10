@@ -2,15 +2,14 @@ package org.zfin.stats;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.Range;
+import org.springframework.util.CollectionUtils;
 import org.zfin.antibody.Antibody;
-import org.zfin.framework.api.FieldFilter;
-import org.zfin.framework.api.JsonResultResponse;
-import org.zfin.framework.api.Pagination;
-import org.zfin.marker.Marker;
+import org.zfin.framework.api.*;
 import org.zfin.publication.Publication;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.*;
@@ -68,9 +67,30 @@ public class StatisticPublicationService {
         }
 */
 
-        Map<Publication, List<Antibody>> publicationMap = getAntibodyRepository().getAntibodiesFromAllPublications();
+        Map<Publication, List<Antibody>> publicationMap = new HashMap<>(getAntibodyRepository().getAntibodiesFromAllPublications());
 
-        List<StatisticRow> rows = new ArrayList<>();
+        // filter records
+
+        publicationMap.keySet().forEach(key -> {
+            List<Antibody> list = publicationMap.get(key);
+            if (list != null) {
+                FilterService<Antibody> filterService = new FilterService<>(new AntibodyFiltering());
+                List<Antibody> antibodies = filterService.filterAnnotations(list, pagination.getFieldFilterValueMap());
+                publicationMap.put(key, antibodies);
+            }
+        });
+        // remove empty publications
+        publicationMap.entrySet().removeIf(entry -> CollectionUtils.isEmpty(entry.getValue()));
+
+        // default sorting: number of entities
+        HashMap<Publication, Integer> integerMap = publicationMap.entrySet().stream()
+                .collect(HashMap::new, (map, entry) -> map.put(entry.getKey(), entry.getValue().size()), HashMap::putAll);
+        Map<Publication, Integer> sortedMap = integerMap.entrySet().
+                stream().
+                sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).
+                collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+
+
         StatisticRow row = new StatisticRow();
         ColumnStats publicationStat = new ColumnStats("Publication", true, false, false, false);
         ColumnValues columnValues = new ColumnValues();
@@ -92,20 +112,20 @@ public class StatisticPublicationService {
                 multipleSet.put(allele1.getZdbID(), genes);
             });
         }
-        antibodyValues.setCardinality(getCardinalityPerUniqueRow(publicationMap));
+        antibodyValues.setMultiplicity(getCardinalityPerUniqueRow(publicationMap));
         row.put(antibodyStat, antibodyValues);
 
         //ColumnStats<Antibody, ?> alleleColStat = getRowEntityColumn();
 
-        ColumnStats antibodyClonalTypeStat = new ColumnStats("Clonal Type", false, true, false, false);
+        ColumnStats antibodyClonalTypeStat = new ColumnStats("Clonal Type", false, false, false, false);
         ColumnValues cloneValues = getColumnValues(publicationMap, Antibody::getClonalType, Antibody::getClonalType);
         row.put(antibodyClonalTypeStat, cloneValues);
 
-        ColumnStats antibodyIsotypeStat = new ColumnStats("Isotype", false, true, false, false);
+        ColumnStats antibodyIsotypeStat = new ColumnStats("Isotype", false, false, false, false);
         ColumnValues isotypeValues = getColumnValues(publicationMap, Antibody::getHeavyChainIsotype, Antibody::getHeavyChainIsotype);
         row.put(antibodyIsotypeStat, isotypeValues);
 
-        ColumnStats antibodyHostStat = new ColumnStats("Host Organism", false, true, false, false);
+        ColumnStats antibodyHostStat = new ColumnStats("Host Organism", false, false, false, false);
         ColumnValues hostValues = getColumnValues(publicationMap, Antibody::getHostSpecies, Antibody::getHostSpecies);
         row.put(antibodyHostStat, hostValues);
 
@@ -115,6 +135,7 @@ public class StatisticPublicationService {
         assayValues.setTotalDistinctNumber(getTotalDistinctNumber(publicationMap.values(), Antibody::getDistinctAssayNames));
         assayValues.setHistogram(getHistogramMultiValuedOnUniqueRow(publicationMap.values(), Antibody::getDistinctAssayNames));
         assayValues.setCardinality(getCardinalityPerUniqueRow(publicationMap.values(), Antibody::getDistinctAssayNames));
+        assayValues.setMultiplicity(getCardinalityPerUniqueRow(publicationMap.values(), Antibody::getDistinctAssayNames));
         cloneValues.setUberHistogram(getHistogramMultiValued(publicationMap, Antibody::getDistinctAssayNames));
         row.put(assay, assayValues);
 
@@ -157,9 +178,50 @@ public class StatisticPublicationService {
             });
 */
 
-        rows.add(row);
+        // create return result set
+        List<StatisticRow> rows = new ArrayList<>();
+        sortedMap.entrySet().forEach(pubEntry -> {
+            StatisticRow statRow = new StatisticRow();
+
+            ColumnValues colValues = new ColumnValues();
+            colValues.setValue(pubEntry.getKey().getZdbID());
+            statRow.put(publicationStat, colValues);
+
+            ColumnValues colValueAnti = new ColumnValues();
+            colValueAnti.setTotalNumber(pubEntry.getValue());
+            statRow.put(antibodyStat, colValueAnti);
+
+            ColumnValues colValueClonaltype = new ColumnValues();
+            colValueClonaltype.setTotalNumber(getTotalNumberBase(publicationMap.get(pubEntry.getKey()), Antibody::getClonalType));
+            colValueClonaltype.setTotalDistinctNumber(getTotalDistinctNumberOnObjectBase(publicationMap.get(pubEntry.getKey()), Antibody::getClonalType));
+            statRow.put(antibodyClonalTypeStat, colValueClonaltype);
+
+            ColumnValues isotypeStat = new ColumnValues();
+            isotypeStat.setTotalNumber(getTotalNumberBase(publicationMap.get(pubEntry.getKey()), Antibody::getHeavyChainIsotype));
+            isotypeStat.setTotalDistinctNumber(getTotalDistinctNumberOnObjectBase(publicationMap.get(pubEntry.getKey()), Antibody::getHeavyChainIsotype));
+            statRow.put(antibodyIsotypeStat, isotypeStat);
+
+            ColumnValues hostStat = new ColumnValues();
+            hostStat.setTotalNumber(getTotalNumberBase(publicationMap.get(pubEntry.getKey()), Antibody::getHostSpecies));
+            hostStat.setTotalDistinctNumber(getTotalDistinctNumberOnObjectBase(publicationMap.get(pubEntry.getKey()), Antibody::getHostSpecies));
+            statRow.put(antibodyHostStat, hostStat);
+
+            ColumnValues assayStat = new ColumnValues();
+            assayStat.setTotalNumber(getTotalNumberMultiValuedBase(publicationMap.get(pubEntry.getKey()), Antibody::getDistinctAssayNames));
+            assayStat.setTotalDistinctNumber(getTotalDistinctNumberPerUberEntity(publicationMap.get(pubEntry.getKey()), Antibody::getDistinctAssayNames));
+            statRow.put(assay, assayStat);
+
+            ColumnValues labelingStat = new ColumnValues();
+            labelingStat.setTotalNumber(getTotalNumberMultiValuedBase(publicationMap.get(pubEntry.getKey()), Antibody::getAntigenGenes));
+            labelingStat.setTotalDistinctNumber(getTotalDistinctNumberPerUberEntity(publicationMap.get(pubEntry.getKey()), Antibody::getAntigenGenes));
+            statRow.put(geneStat, labelingStat);
+
+            rows.add(statRow);
+        });
+
 
         JsonResultResponse<StatisticRow> response = new JsonResultResponse<>();
+        response.setResults(rows);
         response.setTotal(rows.size());
         response.setResults(rows.stream()
                 .skip(pagination.getStart())
@@ -169,11 +231,12 @@ public class StatisticPublicationService {
         return response;
     }
 
+
     private ColumnValues getColumnValues(Map<Publication, List<Antibody>> publicationMap, Function<Antibody, Object> objectFunction, Function<Antibody, String> stringFunction) {
         ColumnValues cloneValues = new ColumnValues();
-        cloneValues.setTotalNumber(getTotalNumber(publicationMap.values()));
-        cloneValues.setCardinality(getCardinalityPerUniqueRow(publicationMap));
-        cloneValues.setTotalDistinctNumber(getTotalDistinctNumberOnObject(publicationMap.values(), objectFunction));
+        cloneValues.setTotalNumber(getTotalNumberBase(publicationMap.values().stream().flatMap(Collection::stream).collect(toList()), objectFunction));
+        cloneValues.setTotalDistinctNumber(getTotalDistinctNumberOnObjectBase(publicationMap.values().stream().flatMap(Collection::stream).collect(toList()), objectFunction));
+        cloneValues.setMultiplicity(getCardinalityPerUniqueRow(publicationMap));
         cloneValues.setHistogram(getHistogram(publicationMap, stringFunction));
         return cloneValues;
     }
@@ -316,9 +379,21 @@ public class StatisticPublicationService {
                 .mapToInt(List::size).sum();
     }
 
+    private static int getTotalNumberBase(List<Antibody> list, Function<Antibody, Object> function) {
+        return (int) list.stream()
+                .filter(o -> function.apply(o) != null)
+                .count();
+    }
+
     private static int getTotalNumberMultiValued(Collection<List<Antibody>> map, Function<Antibody, List<String>> function) {
         return map.stream()
                 .flatMap(Collection::stream)
+                .map(function)
+                .mapToInt(List::size).sum();
+    }
+
+    private static int getTotalNumberMultiValuedBase(List<Antibody> map, Function<Antibody, List<? extends Object>> function) {
+        return map.stream()
                 .map(function)
                 .mapToInt(List::size).sum();
     }
@@ -354,6 +429,20 @@ public class StatisticPublicationService {
                 .count();
     }
 
+    private static <ID> long getTotalDistinctNumberBase(List<Antibody> map, Function<Antibody, List<ID>> function) {
+        return map.stream()
+                .map(function)
+                .distinct()
+                .count();
+    }
+
+    private static long getTotalDistinctNumberOnObjectBase(List<Antibody> map, Function<Antibody, Object> function) {
+        return map.stream()
+                .map(function)
+                .distinct()
+                .count();
+    }
+
     private static long getTotalDistinctNumberOnObject(Collection<List<Antibody>> map, Function<Antibody, Object> function) {
         return map.stream()
                 .flatMap(Collection::stream)
@@ -362,15 +451,14 @@ public class StatisticPublicationService {
                 .count();
     }
 
-    /*
-    private static <ID> int getTotalDistinctNumberPerUberEntity(List<Allele> alleles, Function<Allele, List<ID>> function) {
+    private static <ID> int getTotalDistinctNumberPerUberEntity(List<Antibody> alleles, Function<Antibody, List<ID>> function) {
         return alleles.stream()
                 .map(function)
                 .flatMap(Collection::stream)
                 .collect(toSet())
                 .size();
     }
-*/
+
     private static Map<String, Integer> getHistogram(Map<Publication, List<Antibody>> alleleMap, Function<Antibody, String> function) {
         Map<String, List<String>> histogramRaw = alleleMap.values().stream()
                 .flatMap(Collection::stream)
