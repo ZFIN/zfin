@@ -82,14 +82,24 @@ public class StatisticPublicationService {
         // remove empty publications
         publicationMap.entrySet().removeIf(entry -> CollectionUtils.isEmpty(entry.getValue()));
 
+
+        HashMap<Publication, Integer> integerMap = null;
         // default sorting: number of entities
-        HashMap<Publication, Integer> integerMap = publicationMap.entrySet().stream()
-                .collect(HashMap::new, (map, entry) -> map.put(entry.getKey(), entry.getValue().size()), HashMap::putAll);
+        if (pagination.getSortBy() != null) {
+            integerMap = publicationMap.entrySet().stream()
+                    .collect(HashMap::new, (map, entry) -> {
+                        Long totalDistinctNumber = getTotalDistinctNumber(List.of(entry.getValue()), Antibody::getDistinctAssayNames);
+                        map.put(entry.getKey(), totalDistinctNumber.intValue());
+                    }, HashMap::putAll);
+
+        } else {
+            integerMap = publicationMap.entrySet().stream()
+                    .collect(HashMap::new, (map, entry) -> map.put(entry.getKey(), entry.getValue().size()), HashMap::putAll);
+        }
         Map<Publication, Integer> sortedMap = integerMap.entrySet().
                 stream().
                 sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).
                 collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-
 
         StatisticRow row = new StatisticRow();
         ColumnStats publicationStat = new ColumnStats("Publication", true, false, false, false);
@@ -209,11 +219,13 @@ public class StatisticPublicationService {
             ColumnValues assayStat = new ColumnValues();
             assayStat.setTotalNumber(getTotalNumberMultiValuedBase(publicationMap.get(pubEntry.getKey()), Antibody::getDistinctAssayNames));
             assayStat.setTotalDistinctNumber(getTotalDistinctNumberPerUberEntity(publicationMap.get(pubEntry.getKey()), Antibody::getDistinctAssayNames));
+            assayStat.setCardinality(getCardinalityPerUniqueRow(List.of(publicationMap.get(pubEntry.getKey())), Antibody::getDistinctAssayNames));
             statRow.put(assay, assayStat);
 
             ColumnValues labelingStat = new ColumnValues();
             labelingStat.setTotalNumber(getTotalNumberMultiValuedBase(publicationMap.get(pubEntry.getKey()), Antibody::getAntigenGenes));
             labelingStat.setTotalDistinctNumber(getTotalDistinctNumberPerUberEntity(publicationMap.get(pubEntry.getKey()), Antibody::getAntigenGenes));
+            labelingStat.setCardinality(getCardinalityPerUniqueRow(List.of(publicationMap.get(pubEntry.getKey())), Antibody::getAntigenGenes));
             statRow.put(geneStat, labelingStat);
 
             rows.add(statRow);
@@ -421,7 +433,7 @@ public class StatisticPublicationService {
                 .count();
     }
 
-    private static <ID> long getTotalDistinctNumber(Collection<List<Antibody>> map, Function<Antibody, List<ID>> function) {
+    private static <ID> Long getTotalDistinctNumber(Collection<List<Antibody>> map, Function<Antibody, List<ID>> function) {
         return map.stream()
                 .flatMap(Collection::stream)
                 .map(function)

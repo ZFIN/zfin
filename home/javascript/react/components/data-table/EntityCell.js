@@ -25,6 +25,12 @@ const EntityCell = ({value}) => {
                             <td>T [D]</td>
                             <td>{value.columnStat.totalNumber.toLocaleString()} [{value.columnStat.totalDistinctNumber.toLocaleString()}]</td>
                         </tr>
+                        {value.columnDefinition.multiValued && (
+                            <tr>
+                                <td>C</td>
+                                <td>{value.columnStat.cardinality}</td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
             )}

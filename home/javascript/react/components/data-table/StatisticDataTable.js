@@ -32,11 +32,22 @@ const StatisticDataTable = ({
         }));
     };
 
+    const handleCardinalitySortChange = (field, value) => {
+        setTableState(produce(state => {
+            if (!state.cardinalitySort) {
+                state.cardinalitySort = {};
+            }
+            state.page = 1;
+            state.cardinalitySort[field] = value;
+        }));
+    };
+
     const renderData = response => (
         <StatisticTable
             supplementalData={response.supplementalData}
             tableState={tableState}
             handleFilterChange={handleFilterChange}
+            handleCardinalitySortChange={handleCardinalitySortChange}
             data={response.results}
             rowKey={rowKey}
         />

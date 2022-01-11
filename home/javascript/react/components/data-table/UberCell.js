@@ -1,7 +1,18 @@
-import React from 'react';
+import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 
-const UberCell = ({value}) => {
+const UberCell = ({value, onCardinalitySortChange}) => {
+
+    const [sortField, setSortField] = useState(1);
+
+    const handleCardSortChange = (newValue) => {
+        onCardinalitySortChange(value.columnDefinition.filterName, newValue);
+    }
+
+    const toggleSortingFilter = () => {
+        setSortField(prev => ((prev + 1) % 3));
+        handleCardSortChange(sortField);
+    }
 
     return (
         <>
@@ -20,14 +31,34 @@ const UberCell = ({value}) => {
                         {value.columnDefinition.multiValued && (
                             <tr>
                                 <td>C</td>
-                                <td>{value.columnStat.cardinality.toLocaleString()}</td>
+                                <td>{value.columnStat.cardinality.toLocaleString()} {' '}
+                                    <button
+                                        className='btn text-muted bg-transparent border-0 p-0'
+                                        onClick={toggleSortingFilter}
+                                        role='button'
+                                    >
+
+                                        {sortField === 0 && (
+                                            <i className='fas fa-sort'/>
+                                        )
+                                        }
+                                        {sortField === 1 && (
+                                            <i className='fas fa-sort-down'/>
+                                        )
+                                        }
+                                        {sortField === 2 && (
+                                            <i className='fas fa-sort-up'/>
+                                        )
+                                        }
+                                    </button>
+                                </td>
                             </tr>
                         )
                         }
                         {value.columnDefinition.rowEntity && (
                             <tr>
                                 <td>M</td>
-                                <td>{value.columnStat.multiplicity}</td>
+                                <td>{value.columnStat.multiplicity} <i className='fas fa-sort-down' /></td>
                             </tr>
                         )}
                     </tbody>
@@ -40,6 +71,7 @@ const UberCell = ({value}) => {
 UberCell.propTypes = {
     key: PropTypes.string,
     value: PropTypes.object,
+    onCardinalitySortChange: PropTypes.func,
 };
 
 export default UberCell;

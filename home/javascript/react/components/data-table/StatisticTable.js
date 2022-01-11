@@ -12,6 +12,7 @@ const StatisticTable = ({
     rowKey,
     tableState,
     handleFilterChange,
+    handleCardinalitySortChange,
 }) => {
 
     const columnGenerate = (label1, content1, filterName1) => (
@@ -25,10 +26,14 @@ const StatisticTable = ({
     return (
         <div className='horizontal-scroll-container'>
             <table className='data-table table-fixed'>
+                <colgroup>
+                    <col className='bg-success'/>
+                    <col className='bg-info'/>
+                </colgroup>
                 <thead>
                     <tr>
                         {Object.entries(supplementalData['statistic']['columns']).map(([key, value]) => key && (
-                            <th>
+                            <th className='uberCell'>
                                 <HeaderCell
                                     column={columnGenerate(key, key, value.columnDefinition.filterName)}
                                     filterValue={tableState.filter && tableState.filter[key]}
@@ -39,7 +44,11 @@ const StatisticTable = ({
                     </tr>
                     <tr>
                         {Object.entries(supplementalData['statistic']['columns']).map(([key, value]) => key && (
-                            <td><UberCell key={key} value={value}/></td>
+                            <td><UberCell
+                                value={value}
+                                onCardinalitySortChange={handleCardinalitySortChange}
+                            />
+                            </td>
                         ))
                         }
                     </tr>
@@ -70,6 +79,7 @@ StatisticTable.propTypes = {
     total: PropTypes.number,
     tableState: tableStateType,
     handleFilterChange: PropTypes.func,
+    handleCardinalitySortChange: PropTypes.func,
 };
 
 export default StatisticTable;
