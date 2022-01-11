@@ -19,7 +19,7 @@ public class ZfinAllianceConverter {
     public static DiseaseAnnotation convertDiseaseAnnotation(DiseaseAnnotationModel model) {
         AGMDiseaseAnnotation annotation = new AGMDiseaseAnnotation();
         annotation.setObject(convertDisease(model.getDiseaseAnnotation().getDisease(), model.getDiseaseAnnotation().getPublication()));
-        annotation.setSubject(convertFish(model.getFishExperiment().getFish()));
+        //TODO annotation.setSubject(convertFish(model.getFishExperiment().getFish()));
         annotation.setEvidenceCodes(convertEvidenceCodes(model.getDiseaseAnnotation().getEvidenceCode()));
         //annotation.setReferenceList(convertReferences(model.getDiseaseAnnotation().getPublication()));
         annotation.setDiseaseRelation(DiseaseAnnotation.DiseaseRelation.is_model_of);
@@ -27,13 +27,19 @@ public class ZfinAllianceConverter {
         return annotation;
     }
 
-    private static List<Reference> convertReferences(Publication publication) {
+    public static List<Reference> convertReferences(Publication publication) {
         Reference reference = new Reference();
-        reference.setCurie("PMID:16530747");
+        reference.setCurie("PMID:" + publication.getAccessionNumber());
         return List.of(reference);
     }
 
-    private static List<EcoTerm> convertEvidenceCodes(String evidenceCode) {
+    public static Reference convertReference(Publication publication) {
+        Reference reference = new Reference();
+        reference.setCurie("PMID:" + publication.getAccessionNumber());
+        return reference;
+    }
+
+    public static List<EcoTerm> convertEvidenceCodes(String evidenceCode) {
         EcoTerm eco = new EcoTerm();
         eco.setCurie("ECO:0001547");
         eco.setName(evidenceCode);

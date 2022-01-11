@@ -22,7 +22,7 @@ public class DiseaseAnnotationService extends AllianceService{
     public static void submitAnnotationToAlliance(DiseaseAnnotationModel dam) {
         AGMDiseaseAnnotation da = new AGMDiseaseAnnotation();
         da.setObject(getDoTerm(dam.getDiseaseAnnotation().getDisease()));
-        da.setSubject(getBiologicalEntity(dam.getFishExperiment().getFish()));
+//        da.setSubject(getBiologicalEntity(dam.getFishExperiment().getFish()));
         da.setDiseaseRelation(DiseaseAnnotation.DiseaseRelation.is_model_of);
         da.setNegated(Boolean.FALSE);
         da.setEvidenceCodes(List.of(getEvidenceCodes(dam.getDiseaseAnnotation())));
