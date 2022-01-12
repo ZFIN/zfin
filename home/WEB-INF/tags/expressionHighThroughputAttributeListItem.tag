@@ -4,6 +4,7 @@
 
 <c:set var="hasGeo" value="${!empty markerExpression.geoLink}"/>
 <c:set var="hasAtlas" value="${!empty markerExpression.expressionAtlasLink.link}"/>
+<c:set var="hasSingleCellAtlas" value="${!empty markerExpression.singleCellExpressionAtlasLink}"/>
 <c:set var="hasData" value="${hasGeo or hasAtlas}"/>
 
 <z:attributeListItem label="High Throughput Data">
@@ -23,6 +24,11 @@
                             href="https://cells.ucsc.edu/?ds=zebrafish-dev&gene=${ensdarg}">UCSC scRNA-seq</zfin2:externalLink>
                     (<a href="/ZDB-PUB-210917-2">1</a>)
                 </c:forEach>
+            </c:if>
+            <c:if test="${hasSingleCellAtlas}">
+                <zfin2:externalLink
+                        href="${markerExpression.singleCellExpressionAtlasLink}">Single Cell Expression Atlas</zfin2:externalLink>
+                (<a href="/ZDB-PUB-220103-3">1</a>)
             </c:if>
         </ul>
     </z:ifHasData>
