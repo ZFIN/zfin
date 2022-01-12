@@ -10,7 +10,8 @@ import {
     GeneExpressionFigureGallery,
 } from '../components/gene-expression';
 import Checkbox from '../components/Checkbox';
-import produce from 'immer';
+import produce, {setAutoFreeze} from 'immer';
+setAutoFreeze(false);
 
 const GeneExpressionRibbon = ({geneId}) => {
     const [summaryTableState, setSummaryTableState] = useTableState();
