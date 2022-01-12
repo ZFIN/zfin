@@ -1,6 +1,8 @@
 def env = System.getenv()
-def sourceroot = env['SOURCEROOT']
-def log4jConfig = sourceroot + "/home/WEB-INF/conf/agr/log4j2.xml"
+def log4jConfig = env['SOURCEROOT'] + "/home/WEB-INF/conf/agr/log4j2.xml"
+tasks.withType(JavaExec) {
+    systemProperty "log4j2.configurationFile", log4jConfig
+}
 
 task createBasicGeneInfoFile(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
@@ -50,7 +52,6 @@ task createZfinExpressionInfoFile(type: JavaExec) {
 task createBasicAlleleInfoFile(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.marker.agr.BasicAlleleInfo'
-    systemProperty "log4j2.configurationFile", log4jConfig
 }
 task createBasicResourceInfoFile(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
