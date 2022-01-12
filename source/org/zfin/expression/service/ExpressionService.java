@@ -270,6 +270,10 @@ public class ExpressionService {
         return gxaLinkDisplay;
     }
 
+    public String getSingleCellExpressionAtlasForMarker(Marker marker) {
+        return "https://www.ebi.ac.uk/gxa/sc/search?q=" + marker.getAbbreviation() + "&species=Danio%20rerio";
+    }
+
     public String getGeoLinkForMarkerIfExists(Marker marker) {
         if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
             if (!infrastructureRepository.hasStandardPublicationAttributionForRelatedMarkers(marker.getZdbID(), MicroarrayWebserviceJob.MICROARRAY_PUB)) {
@@ -305,6 +309,7 @@ public class ExpressionService {
 
         markerExpression.setAllMarkerExpressionInstance(allMarkerExpressionInstance);
         markerExpression.setExpressionAtlasLink(getExpressionAtlasForMarker(marker.zdbID, ForeignDB.AvailableName.EXPRESSIONATLAS));
+        markerExpression.setSingleCellExpressionAtlasLink(getSingleCellExpressionAtlasForMarker(marker));
         markerExpression.setGeoLink(getGeoLinkForMarkerIfExists(marker));
 
         // directly submitted
