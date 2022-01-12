@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import produce from 'immer';
+import produce, {setAutoFreeze} from 'immer';
+setAutoFreeze(false);
 
 import {searchPubStatus, updateStatus} from '../api/publication';
 import Pagination from '../components/Pagination';
