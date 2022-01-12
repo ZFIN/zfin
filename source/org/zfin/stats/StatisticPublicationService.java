@@ -85,13 +85,26 @@ public class StatisticPublicationService {
 
         HashMap<Publication, Integer> integerMap = null;
         // default sorting: number of entities
-        if (pagination.getSortBy() != null) {
-            integerMap = publicationMap.entrySet().stream()
-                    .collect(HashMap::new, (map, entry) -> {
-                        Long totalDistinctNumber = getTotalDistinctNumber(List.of(entry.getValue()), Antibody::getDistinctAssayNames);
-                        map.put(entry.getKey(), totalDistinctNumber.intValue());
-                    }, HashMap::putAll);
-
+        if (pagination.hasSortingValue()) {
+            switch (pagination.getSortFilter()) {
+                case ASSAY:
+                    integerMap = publicationMap.entrySet().stream()
+                            .collect(HashMap::new, (map, entry) -> {
+                                Range range = getCardinalityPerUniqueRow(List.of(entry.getValue()), Antibody::getDistinctAssayNames);
+                                map.put(entry.getKey(), (Integer) range.getMaximum());
+                            }, HashMap::putAll);
+                    break;
+                case ANTIGEN_GENE:
+                    integerMap = publicationMap.entrySet().stream()
+                            .collect(HashMap::new, (map, entry) -> {
+                                Range range = getCardinalityPerUniqueRow(List.of(entry.getValue()), Antibody::getAntigenGenes);
+                                map.put(entry.getKey(), (Integer) range.getMaximum());
+                            }, HashMap::putAll);
+                    break;
+                case ANTIBODY_NAME:
+                    integerMap = publicationMap.entrySet().stream()
+                            .collect(HashMap::new, (map, entry) -> map.put(entry.getKey(), entry.getValue().size()), HashMap::putAll);
+            }
         } else {
             integerMap = publicationMap.entrySet().stream()
                     .collect(HashMap::new, (map, entry) -> map.put(entry.getKey(), entry.getValue().size()), HashMap::putAll);

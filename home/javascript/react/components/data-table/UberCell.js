@@ -38,15 +38,15 @@ const UberCell = ({value, onCardinalitySortChange}) => {
                                         role='button'
                                     >
 
-                                        {sortField === 0 && (
+                                        {sortField === 1 && (
                                             <i className='fas fa-sort'/>
                                         )
                                         }
-                                        {sortField === 1 && (
+                                        {sortField === 2 && (
                                             <i className='fas fa-sort-down'/>
                                         )
                                         }
-                                        {sortField === 2 && (
+                                        {sortField === 0 && (
                                             <i className='fas fa-sort-up'/>
                                         )
                                         }
@@ -58,7 +58,27 @@ const UberCell = ({value, onCardinalitySortChange}) => {
                         {value.columnDefinition.rowEntity && (
                             <tr>
                                 <td>M</td>
-                                <td>{value.columnStat.multiplicity} <i className='fas fa-sort-down' /></td>
+                                <td>{value.columnStat.multiplicity}
+                                    <button
+                                        className='btn text-muted bg-transparent border-0 p-0'
+                                        onClick={toggleSortingFilter}
+                                        role='button'
+                                    >
+
+                                        {sortField === 1 && (
+                                            <i className='fas fa-sort'/>
+                                        )
+                                        }
+                                        {sortField === 2 && (
+                                            <i className='fas fa-sort-down'/>
+                                        )
+                                        }
+                                        {sortField === 0 && (
+                                            <i className='fas fa-sort-up'/>
+                                        )
+                                        }
+                                    </button>
+                                </td>
                             </tr>
                         )}
                     </tbody>

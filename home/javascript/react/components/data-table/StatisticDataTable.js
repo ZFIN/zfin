@@ -29,6 +29,7 @@ const StatisticDataTable = ({
             }
             state.page = 1;
             state.filter[field] = value;
+            state
         }));
     };
 
@@ -38,6 +39,8 @@ const StatisticDataTable = ({
                 state.cardinalitySort = {};
             }
             state.page = 1;
+            // reset all other sorting: single sort only, no nested sort
+            state.cardinalitySort = {};
             state.cardinalitySort[field] = value;
         }));
     };

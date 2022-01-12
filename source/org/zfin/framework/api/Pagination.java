@@ -19,6 +19,7 @@ public class Pagination {
     //    private FieldFilter sortByField;
     private Boolean asc;
     private BaseFilter fieldFilterValueMap = new BaseFilter();
+    private BaseFilter fieldSortValueMap = new BaseFilter();
     private List<String> errorList = new ArrayList<>();
     private List<String> invalidFilterList = new ArrayList<>();
 
@@ -63,8 +64,21 @@ public class Pagination {
         fieldFilterValueMap.put(fieldFilter, value);
     }
 
+    public void addFieldSorting(FieldFilter fieldFilter, String value) {
+        if (StringUtils.isNotEmpty(value))
+            fieldSortValueMap.put(fieldFilter, value);
+    }
+
+    public boolean hasSortingValue() {
+        return !fieldSortValueMap.isEmpty();
+    }
+
     public String getFieldFilter(FieldFilter fieldFilter) {
         return fieldFilterValueMap.get(fieldFilter);
+    }
+
+    public boolean getSortFilter(FieldFilter fieldFilter) {
+        return fieldSortValueMap.get(fieldFilter) != null;
     }
 
     public void makeSingleFieldFilter(FieldFilter fieldFilter, String value) {
@@ -116,6 +130,11 @@ public class Pagination {
 
     public Integer getNextPage() {
         return page + 1;
+    }
+
+    public FieldFilter getSortFilter() {
+        return fieldSortValueMap.keySet().iterator().next();
+
     }
 
     enum AscendingValues {

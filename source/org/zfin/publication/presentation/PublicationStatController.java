@@ -80,6 +80,7 @@ public class PublicationStatController {
                                                                 @RequestParam(value = "filter.antigenGenes", required = false) String antigenGenes,
                                                                 @RequestParam(value = "cardinalitySort.assay", required = false) String cardinalitySortAssay,
                                                                 @RequestParam(value = "cardinalitySort.antigenGenes", required = false) String cardinalitySortAntigenGenes,
+                                                                @RequestParam(value = "multiplicitySort.antibody", required = false) String multiplicitySortAntibody,
                                                                 @Version Pagination pagination) {
 
         pagination.addFieldFilter(FieldFilter.ANTIBODY_NAME, antibodyName);
@@ -88,7 +89,9 @@ public class PublicationStatController {
         pagination.addFieldFilter(FieldFilter.HOST, host);
         pagination.addFieldFilter(FieldFilter.ASSAY, assay);
         pagination.addFieldFilter(FieldFilter.ANTIGEN_GENE, antigenGenes);
-        pagination.setSortBy(cardinalitySortAssay);
+        pagination.addFieldSorting(FieldFilter.ASSAY, cardinalitySortAssay);
+        pagination.addFieldSorting(FieldFilter.ANTIGEN_GENE, cardinalitySortAntigenGenes);
+        pagination.addFieldSorting(FieldFilter.ANTIBODY_NAME, multiplicitySortAntibody);
         StatisticPublicationService service = new StatisticPublicationService();
         JsonResultResponse<StatisticRow> response = service.getAllPublicationAntibodies(pagination);
         response.setHttpServletRequest(request);
