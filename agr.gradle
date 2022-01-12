@@ -46,6 +46,8 @@ task createZfinExpressionInfoFile(type: JavaExec) {
 task createBasicAlleleInfoFile(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.marker.agr.BasicAlleleInfo'
+
+    systemProperty "log4j2.configurationFile", System.getProperty("log4j2.configurationFile", null)
 }
 task createBasicResourceInfoFile(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
