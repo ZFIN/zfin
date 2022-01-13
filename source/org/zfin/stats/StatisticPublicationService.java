@@ -492,7 +492,7 @@ public class StatisticPublicationService {
                 .stream()
                 .collect(groupingBy(o -> {
                     if (o == null)
-                        return "";
+                        return "<empty>";
                     return o;
                 }));
         return getValueSortedMap(histogramRaw);
@@ -522,7 +522,7 @@ public class StatisticPublicationService {
                 .stream()
                 .collect(groupingBy(o -> {
                     if (o == null)
-                        return "";
+                        return "<empty>";
                     return o;
                 }));
         return getValueSortedMap(histogramRaw);

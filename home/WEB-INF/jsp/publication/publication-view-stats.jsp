@@ -43,7 +43,6 @@
 --%>
 
         <z:section title="${ANTIBODIES}">
-            <jsp:include page="publication-view-stats-antibody.jsp"/>
             <z:section title="Stat">
                 <div class="__react-root" id="PublicationMarkerStatTable" data-marker-type="antibody"></div>
             </z:section>

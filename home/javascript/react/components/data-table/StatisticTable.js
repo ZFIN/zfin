@@ -23,6 +23,15 @@ const StatisticTable = ({
         }
     );
 
+    const columnGenerateOptions = (label1, content1, filterName1, options) => (
+        {
+            label: label1,
+            content: content1,
+            filterName: filterName1,
+            filterOptions: options,
+        }
+    )
+
     return (
         <div className='horizontal-scroll-container'>
             <table className='data-table table-fixed'>
@@ -34,11 +43,20 @@ const StatisticTable = ({
                     <tr>
                         {Object.entries(supplementalData['statistic']['columns']).map(([key, value]) => key && (
                             <th className='uberCell'>
-                                <HeaderCell
-                                    column={columnGenerate(key, key, value.columnDefinition.filterName)}
-                                    filterValue={tableState.filter && tableState.filter[key]}
-                                    onFilterChange={handleFilterChange}
-                                />
+                                {( value.columnStat.histogram) && (
+                                    <HeaderCell
+                                        column={columnGenerateOptions(key, key, value.columnDefinition.filterName, Object.keys(value.columnStat.histogram))}
+                                        filterValue={tableState.filter && tableState.filter[key]}
+                                        onFilterChange={handleFilterChange}
+                                    />
+                                )}
+                                {!( value.columnStat.histogram) && (
+                                    <HeaderCell
+                                        column={columnGenerate(key, key, value.columnDefinition.filterName)}
+                                        filterValue={tableState.filter && tableState.filter[key]}
+                                        onFilterChange={handleFilterChange}
+                                    />
+                                )}
                             </th>))
                         }
                     </tr>
