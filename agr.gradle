@@ -1,5 +1,5 @@
 def env = System.getenv()
-def log4jConfig = env['SOURCEROOT'] + "/home/WEB-INF/conf/agr/log4j2.xml"
+def log4jConfig = env['SOURCEROOT'] + "/home/WEB-INF/conf/log4j2.xml"
 tasks.withType(JavaExec) {
     systemProperty "log4j2.configurationFile", log4jConfig
 }
