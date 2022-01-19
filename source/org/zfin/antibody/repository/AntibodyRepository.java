@@ -8,6 +8,7 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.FigureType;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
@@ -140,6 +141,8 @@ public interface AntibodyRepository {
     List<Antibody> getAntibodiesByPublication(Publication publication);
 
     Map<Publication, List<Antibody>> getAntibodiesFromAllPublications();
+
+    Map<Publication, List<SequenceTargetingReagent>> getSTRFromAllPublications();
 
     /**
      * Retrieve antibody by abbrev

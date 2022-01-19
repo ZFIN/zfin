@@ -42,9 +42,15 @@
         </z:section>
 --%>
 
+        <z:section title="${STRS}">
+            <z:section title="">
+                <div class="__react-root" id="PublicationMarkerStatTable" data-type="str"></div>
+            </z:section>
+        </z:section>
+
         <z:section title="${ANTIBODIES}">
-            <z:section title="Stat">
-                <div class="__react-root" id="PublicationMarkerStatTable" data-marker-type="antibody"></div>
+            <z:section title="">
+                <div class="__react-root" id="PublicationMarkerStatTable" data-type="antibody"></div>
             </z:section>
         </z:section>
 

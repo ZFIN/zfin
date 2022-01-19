@@ -10,6 +10,7 @@ public enum FieldFilter {
     HOST("filter.host"),
     ASSAY("filter.assay"),
     ANTIGEN_GENE("filter.antigenGenes"),
+    TARGET_GENE("filter.targetGene"),
     SEQUENCE_TYPE("sequence.type"),
     FILTER_TERM_NAME("termName"),
     RELATIONSHIP_TYPE("relationship.type"),

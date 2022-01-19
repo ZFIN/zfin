@@ -1,6 +1,8 @@
 package org.zfin.mutant;
 
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.zfin.infrastructure.ZdbID;
+import org.zfin.infrastructure.ZfinID;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.sequence.STRMarkerSequence;
@@ -12,7 +14,7 @@ import java.util.List;
 /**
  * Business entity for Morpholinos, TALEN and CRISPR.
  */
-public class SequenceTargetingReagent extends Marker {
+public class SequenceTargetingReagent extends Marker implements ZdbID {
 
     private List<Marker> targetGenes;
     private STRMarkerSequence sequence;

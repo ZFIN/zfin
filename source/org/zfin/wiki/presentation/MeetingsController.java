@@ -47,7 +47,7 @@ public class MeetingsController {
         final String note = "Retrieving wiki pages from space: " + wikiSpaceName;
         log.info(note);
         long start = System.currentTimeMillis();
-        String url1 = "https://zfin.atlassian.net/wiki/rest/api/content/search?cql=space%3D";
+        String url1 = "https://zfin.atlassian.net/wiki/rest/api/content/search?cql=space%3Dmeetings%20AND%20type%3Dpage%20AND%20created%20%3E%3D%20now%28%22-120d%22%29%20ORDER%20BY%20created%20desc&limit=5&expand=history";
         url1 += wikiSpaceName;
         if (wikiSpaceName.equals("jobs") || wikiSpaceName.equals("news"))
             url1 += "%20AND%20type%3Dblogpost%20AND%20created%20%3E%3D%20now%28%22-120d%22%29%20ORDER%20BY%20created%20desc&limit=5&expand=history";

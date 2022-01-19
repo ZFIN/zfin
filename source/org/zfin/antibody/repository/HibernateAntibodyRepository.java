@@ -24,6 +24,7 @@ import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
@@ -343,6 +344,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     }
 
     private Map<Publication, List<Antibody>> pubAntibodyMapCached;
+    private Map<Publication, List<SequenceTargetingReagent>> pubStrMapCached;
 
     public Map<Publication, List<Antibody>> getAntibodiesFromAllPublications() {
         if(pubAntibodyMapCached != null)
@@ -376,6 +378,28 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         });
         pubAntibodyMapCached = antibodyMap;
         return pubAntibodyMapCached;
+    }
+
+    public Map<Publication, List<SequenceTargetingReagent>> getSTRFromAllPublications() {
+        if(pubStrMapCached != null)
+            return pubStrMapCached;
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select pubAttribute, str from SequenceTargetingReagent as str, PublicationAttribution pubAttribute " +
+                "     where pubAttribute.dataZdbID = str.zdbID ";
+        Query query = session.createQuery(hql);
+        //query.setString("antibodytype", "ZDB-" + Marker.Type.ATB.name() + "%");
+        List<Object[]> list = query.list();
+        Map<Publication, List<SequenceTargetingReagent>> strMap = new HashMap<>();
+
+        list.forEach(objects -> {
+            Publication pub = ((PublicationAttribution) objects[0]).getPublication();
+            SequenceTargetingReagent str = (SequenceTargetingReagent) objects[1];
+            strMap.computeIfAbsent(pub, k -> new ArrayList<>());
+            strMap.get(pub).add(str);
+        });
+
+        return strMap;
     }
 
     public Antibody getAntibodyByAbbrev(String antibodyAbbrev) {

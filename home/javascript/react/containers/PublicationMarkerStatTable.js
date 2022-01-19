@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import StatisticDataTable from '../components/data-table/StatisticDataTable';
 
 
-const PublicationMarkerStatTable = () => {
+const PublicationMarkerStatTable = ({type}) => {
     return (
         <>
             <StatisticDataTable
-                dataUrl='/action/api/publication/stats/antibody/histogram'
+                dataUrl={`/action/api/publication/stats/${type}/histogram`}
                 rowKey='efg'
             />
         </>
@@ -15,7 +15,7 @@ const PublicationMarkerStatTable = () => {
 };
 
 PublicationMarkerStatTable.propTypes = {
-    markerType: PropTypes.string,
+    type: PropTypes.string,
 };
 
 export default PublicationMarkerStatTable;
