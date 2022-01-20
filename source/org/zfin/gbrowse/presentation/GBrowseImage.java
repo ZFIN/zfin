@@ -45,24 +45,33 @@ public class GBrowseImage {
 
     public String getImageUrl() {
         if (imageUrl == null) {
-            URLCreator url = new URLCreator(imageUrlBase);
+            URLCreator url = new URLCreator("jbrowse");
+
+            //Remove UI elements from JBrowse view
+            url.addNameValuePair("nav", "0");
+            url.addNameValuePair("overview","0");
+            url.addNameValuePair("tracklist","0");
 
             if (StringUtils.isNotBlank(landmark)) {
-                url.addNameValuePair("name", landmark);
+                url.addNameValuePair("loc", landmark);
             }
 
             if (CollectionUtils.isNotEmpty(tracks)) {
-                url.addNameValuePair("type", StringUtils.join(tracks, " "));
+                url.addNameValuePair("tracks", StringUtils.join(tracks, ","));
             }
 
-            String highlight = getHighlightString();
-            if (StringUtils.isNotBlank(highlight)) {
-                url.addNameValuePair("h_feat", highlight);
-            }
+            //String highlight = getHighlightString();
+            //if (StringUtils.isNotBlank(highlight)) {
+            //    url.addNameValuePair("highlight", highlight);
+            //}
 
-            url.addNameValuePair("grid", grid ? "1" : "0");
+            //url.addNameValuePair("grid", grid ? "1" : "0");
 
-            imageUrl = "/" + url.getURL();
+            //TODO: Move the domain and url base into environment variables
+            imageUrl = "http://jbrowse_zfin_prod.alliancegenome.org/" + url.getURL();
+
+            //getURL converts the spaces in the track names to plus signs - this changes them back
+            imageUrl = imageUrl.replaceAll("\\+","%20");
         }
         return imageUrl;
     }
