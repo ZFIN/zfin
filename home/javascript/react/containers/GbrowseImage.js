@@ -46,14 +46,18 @@ const GbrowseImage = ({imageUrl, linkUrl, build}) => {
         return <NoData />;
     }
 
+            //<div ref={containerRef} style={imageLoaded ? undefined : hiddenStyle}>
     return (
         <div className='position-relative'>
-            <div ref={containerRef} style={imageLoaded ? undefined : hiddenStyle}>
+            <div ref={containerRef}>
                 {build && <span className='gbrowse-source-label'>Genome Build: {build}</span>}
                 <a href={linkUrl}>
-                    <img
-                        className='d-block mx-auto mb-3'
-                        src={imgSrc}
+                    <object
+                        type="text/html"
+                        width='1000'
+                        height='400'
+                        className='d-block mx-auto mb-3 pe-none'
+                        data={imgSrc}
                         onLoad={() => setImageLoaded(true)}
                     />
                 </a>
