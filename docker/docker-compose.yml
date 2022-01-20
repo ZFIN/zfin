@@ -48,8 +48,8 @@ services:
     container_name: solr_container
     build: ./solr/
     restart: always
-    #ports:
-    #  - "8988:8983"
+    ports:
+      - "8983:8983"
     volumes:
       - solr_data:/var/solr
   httpd:
