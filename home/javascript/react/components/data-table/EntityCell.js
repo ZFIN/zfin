@@ -6,7 +6,11 @@ const EntityCell = ({value}) => {
     return (
         <>
             {value.columnDefinition.superEntity && (
-                <a href={`/${value.columnStat.value}`}>{value.columnStat.value}</a>
+                <a
+                    className='text-break'
+                    href={`/${value.columnStat.value}`}
+                    dangerouslySetInnerHTML={{__html: value.columnStat.value}}
+                />
             )}
             {!value.columnDefinition.superEntity && value.columnDefinition.rowEntity && (
                 <table className='table borderless'>

@@ -374,6 +374,8 @@ public interface PublicationRepository extends PaginationParameter {
 
     List<Feature> getFeaturesByPublication(String pubID);
 
+    Map<Publication, List<Feature>> getAllFeatureFromPublication();
+
     List<Fish> getFishByPublication(String pubID);
 
     /**

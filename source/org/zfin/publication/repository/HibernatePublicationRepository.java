@@ -1312,6 +1312,30 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return (List<Feature>) query.list();
     }
 
+    private Map<Publication, List<Feature>> pubFeatureMapCache;
+
+    public Map<Publication, List<Feature>> getAllFeatureFromPublication(){
+        if(pubFeatureMapCache != null)
+            return pubFeatureMapCache;
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select pubAttribute, feature from Feature as feature, PublicationAttribution pubAttribute " +
+                "     where pubAttribute.dataZdbID = feature.zdbID ";
+        Query query = session.createQuery(hql);
+        List<Object[]> list = query.list();
+        Map<Publication, List<Feature>> featureMap = new HashMap<>();
+
+        list.forEach(objects -> {
+            Publication pub = ((PublicationAttribution) objects[0]).getPublication();
+            Feature antibody = (Feature) objects[1];
+            featureMap.computeIfAbsent(pub, k -> new ArrayList<>());
+            featureMap.get(pub).add(antibody);
+        });
+
+        pubFeatureMapCache = featureMap;
+        return pubFeatureMapCache;
+    }
+
     public List<Fish> getFishByPublication(String pubID) {
         Session session = HibernateUtil.currentSession();
 

@@ -127,6 +127,35 @@ public class PublicationStatController {
         return response;
     }
 
+    @JsonView(View.API.class)
+    @RequestMapping(value = "/mutation/histogram", method = RequestMethod.GET)
+    public JsonResultResponse<StatisticRow> getPublicationMutationStats(@RequestParam(value = "filter.publicationID", required = false) String publicationID,
+                                                                @RequestParam(value = "filter.antibodyName", required = false) String antibodyName,
+                                                                @RequestParam(value = "filter.clonalType", required = false) String clonalType,
+                                                                @RequestParam(value = "filter.isotype", required = false) String isotype,
+                                                                @RequestParam(value = "filter.hostOrganism", required = false) String host,
+                                                                @RequestParam(value = "filter.assay", required = false) String assay,
+                                                                @RequestParam(value = "filter.antigenGenes", required = false) String antigenGenes,
+                                                                @RequestParam(value = "cardinalitySort.assay", required = false) String cardinalitySortAssay,
+                                                                @RequestParam(value = "cardinalitySort.antigenGenes", required = false) String cardinalitySortAntigenGenes,
+                                                                @RequestParam(value = "multiplicitySort.antibody", required = false) String multiplicitySortAntibody,
+                                                                @Version Pagination pagination) {
+
+        pagination.addFieldFilter(FieldFilter.ANTIBODY_NAME, antibodyName);
+        pagination.addFieldFilter(FieldFilter.CLONAL_TYPE, clonalType);
+        pagination.addFieldFilter(FieldFilter.ISOTYPE, isotype);
+        pagination.addFieldFilter(FieldFilter.HOST, host);
+        pagination.addFieldFilter(FieldFilter.ASSAY, assay);
+        pagination.addFieldFilter(FieldFilter.ANTIGEN_GENE, antigenGenes);
+        pagination.addFieldSorting(FieldFilter.ASSAY, cardinalitySortAssay);
+        pagination.addFieldSorting(FieldFilter.ANTIGEN_GENE, cardinalitySortAntigenGenes);
+        pagination.addFieldSorting(FieldFilter.ANTIBODY_NAME, multiplicitySortAntibody);
+        StatisticPublicationService service = new StatisticPublicationService();
+        JsonResultResponse<StatisticRow> response = service.getAllPublicationMutation(pagination);
+        response.setHttpServletRequest(request);
+        return response;
+    }
+
 
 }
 

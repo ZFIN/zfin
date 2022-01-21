@@ -109,7 +109,7 @@ const DataProvider = ({
 
             <div className='data-pagination-container'>
                 {pagination && total > 0 && <>
-                    {data.pending ? <LoadingSpinner/> : <span>{start} - {end} of {total}</span>}
+                    {data.pending ? <LoadingSpinner/> : <span>{start.toLocaleString()} - {end.toLocaleString()} of {total.toLocaleString()}</span>}
                     <div>
                         <span className='mr-1'>Show</span>
                         <select className='form-control-sm mr-2' onChange={handleLimitChange} value={tableState.limit}>
