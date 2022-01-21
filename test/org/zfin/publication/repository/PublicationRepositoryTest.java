@@ -887,6 +887,12 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void markerHistogram() {
+        Map<Publication, List<Marker>> count = publicationRepository.getAllAttributtedGenesAndMarkers();
+        assertNotNull(count);
+    }
+
+    @Test
     public void getPublicationMarkerHistogram() {
         Map<Publication, Integer> map = publicationRepository.getPublicationMarkerHistogram(null, new Pagination());
         assertNotNull(map);

@@ -27,9 +27,9 @@ import org.zfin.ontology.Term;
 import org.zfin.orthology.Ortholog;
 import org.zfin.profile.Person;
 import org.zfin.publication.*;
-import org.zfin.publication.presentation.MetricsOnDateBean;
 import org.zfin.publication.presentation.DashboardPublicationList;
 import org.zfin.publication.presentation.MetricsByDateBean;
+import org.zfin.publication.presentation.MetricsOnDateBean;
 import org.zfin.publication.presentation.PublicationMetricsFormBean;
 import org.zfin.repository.PaginationParameter;
 import org.zfin.sequence.MarkerDBLink;
@@ -307,7 +307,9 @@ public interface PublicationRepository extends PaginationParameter {
     List<Figure> getFiguresByGeneAndAnatomy(Marker gene, GenericTerm anatomyTerm);
 
     List<Publication> getPubsForDisplay(String zdbID);
+
     List<Journal> getAllJournals();
+
     Journal getJournalByTitle(String journalTitle);
 
     Journal findJournalByAbbreviation(String abbrevation);
@@ -362,7 +364,10 @@ public interface PublicationRepository extends PaginationParameter {
     List<Marker> getGenesByPublication(String pubID);
 
     List<Marker> getGenesByPublication(String pubID, boolean includeEFGs);
+
     List<Marker> getSTRByPublication(String pubID);
+
+    Map<Publication, List<Marker>> getAllAttributtedGenesAndMarkers();
 
     List<Marker> getGenesAndMarkersByPublication(String pubID);
 

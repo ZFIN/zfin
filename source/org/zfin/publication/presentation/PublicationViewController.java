@@ -562,25 +562,6 @@ public class PublicationViewController {
         model.addAttribute("pubMarkerCount", histogramPubMarkerCount);
         model.addAttribute("markerCount", histogramMarkerCount);
 
-        List<String> strDom = List.of(Marker.TypeGroup.MRPHLNO.name(),
-                Marker.TypeGroup.TALEN.name(),
-                Marker.TypeGroup.CRISPR.name());
-        int histogramPubStrCount = publicationRepository.getPublicationAttributionPubCount(strDom);
-        int histogramStrCount = publicationRepository.getPublicationAttributionMarkerCount(strDom);
-        model.addAttribute("pubStrCount", histogramPubStrCount);
-        model.addAttribute("strCount", histogramStrCount);
-
-
-        List<String> antibodyDom = List.of(Marker.TypeGroup.ATB.name());
-        int histogramPubAntibodyCount = publicationRepository.getPublicationAttributionPubCount(antibodyDom);
-        int histogramAntibodyCount = publicationRepository.getPublicationAttributionMarkerCount(antibodyDom);
-        model.addAttribute("pubAntibodyCount", histogramPubAntibodyCount);
-        model.addAttribute("antibodyCount", histogramAntibodyCount);
-
-        StatisticPublicationService service = new StatisticPublicationService();
-        JsonResultResponse<StatisticRow> response = service.getAllPublicationAntibodies(new Pagination());
-        model.addAttribute("statistic", response.getSupplementalData().get("statistic"));
-
         return "publication/publication-view-stats";
     }
 }

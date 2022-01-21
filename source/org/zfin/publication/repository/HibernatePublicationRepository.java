@@ -1233,6 +1233,67 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return (List<Marker>) getMarkersByPublication(pubID, markerTypes);
     }
 
+    private Map<Publication, List<Marker>> markerMap;
+
+    public Map<Publication, List<Marker>> getAllAttributtedGenesAndMarkers() {
+        if (markerMap != null)
+            return markerMap;
+        // directly annotated markers
+        List<MarkerType> markerTypes = markerRepository.getMarkerTypesByGroup(Marker.TypeGroup.GENEDOM_AND_NTR);
+        markerTypes.addAll(markerRepository.getMarkerTypesByGroup(Marker.TypeGroup.SEARCH_MK));
+        //Map<Publication, List<Marker>> markerMap =new HashMap<>();
+        Map<Publication, List<Marker>> markerMap = getAllMarkersByPublication(markerTypes);
+
+        // markers pulled through features
+/*
+        Session session = HibernateUtil.currentSession();
+        String hql = "select distinct marker, attr.publication from Marker marker, PublicationAttribution attr, Feature feature, FeatureMarkerRelationship fmrel " +
+                "where attr.dataZdbID = feature.zdbID " +
+                "and fmrel.type = :isAllele " +
+                "and fmrel.feature = feature " +
+                "and fmrel.marker = marker ";
+        Query query = session.createQuery(hql);
+        query.setParameter("isAllele", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF);
+        List<Object[]> resultList = query.list();
+        Map<Publication, List<Marker>> map = new HashMap<>();
+
+        resultList.forEach(objects -> {
+            Publication pub = (Publication) objects[1];
+            Marker marker = (Marker) objects[0];
+            map.computeIfAbsent(pub, k -> new ArrayList<>());
+            map.get(pub).add(marker);
+        });
+*/
+
+/*
+        Map<Publication, List<Marker>> map = new HashMap<>();
+        map.forEach((key, value) -> markerMap.merge(key, value, (oldValue, newValue) -> oldValue));
+
+        // markers pulled through STRs
+        String hql = "select distinct marker, attr.publication from Marker marker, PublicationAttribution attr, MarkerRelationship mrel where " +
+                "attr.dataZdbID = mrel.firstMarker " +
+                "and mrel.secondMarker = marker " +
+                "and mrel.type = :type ";
+        Session session = HibernateUtil.currentSession();
+        Query query = session.createQuery(hql);
+        query.setParameter("type", MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
+
+        List<Object[]> resultListStr = query.list();
+        Map<Publication, List<Marker>> mapStr = new HashMap<>();
+
+        resultListStr.forEach(objects -> {
+            Publication pub = (Publication) objects[1];
+            Marker marker = (Marker) objects[0];
+            mapStr.computeIfAbsent(pub, k -> new ArrayList<>());
+            mapStr.get(pub).add(marker);
+        });
+
+        mapStr.forEach((key, value) -> markerMap.merge(key, value, (oldValue, newValue) -> oldValue));
+*/
+
+        return markerMap;
+    }
+
     public List<Marker> getGenesAndMarkersByPublication(String pubID) {
         // directly annotated markers
         List<MarkerType> markerTypes = markerRepository.getMarkerTypesByGroup(Marker.TypeGroup.GENEDOM_AND_NTR);
@@ -1297,6 +1358,27 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return query;
     }
 
+    private Map<Publication, List<Marker>> getAllMarkersByPublication(List<MarkerType> markerTypes) {
+        Session session = HibernateUtil.currentSession();
+        String hql = "select attr, marker from Marker marker, PublicationAttribution attr " +
+                "     where attr.dataZdbID = marker.zdbID ";
+        hql += "           and marker.markerType in (:markerType)  " +
+                "    order by marker.abbreviationOrder ";
+        Query query = session.createQuery(hql);
+        query.setParameterList("markerType", markerTypes);
+        List<Object[]> resultList = query.list();
+        Map<Publication, List<Marker>> map = new HashMap<>();
+
+        resultList.forEach(objects -> {
+            Publication pub = ((PublicationAttribution) objects[0]).getPublication();
+            Marker marker = (Marker) objects[1];
+            map.computeIfAbsent(pub, k -> new ArrayList<>());
+            map.get(pub).add(marker);
+        });
+
+        return map;
+    }
+
     public List<Feature> getFeaturesByPublication(String pubID) {
         Session session = HibernateUtil.currentSession();
 
@@ -1314,8 +1396,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     private Map<Publication, List<Feature>> pubFeatureMapCache;
 
-    public Map<Publication, List<Feature>> getAllFeatureFromPublication(){
-        if(pubFeatureMapCache != null)
+    public Map<Publication, List<Feature>> getAllFeatureFromPublication() {
+        if (pubFeatureMapCache != null)
             return pubFeatureMapCache;
         Session session = HibernateUtil.currentSession();
 
