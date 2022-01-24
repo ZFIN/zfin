@@ -1,6 +1,8 @@
 package org.zfin.expression;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.GenericGenerator;
@@ -17,6 +19,8 @@ import java.util.List;
  */
 @Entity
 @Table(name = "experiment_condition")
+@Setter
+@Getter
 public class ExperimentCondition implements Comparable<ExperimentCondition>, EntityZdbID {
 
     @Id
@@ -48,17 +52,11 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
     @ManyToOne
     @JoinColumn(name = "expcond_chebi_term_zdb_id")
     private GenericTerm chebiTerm;
+    @ManyToOne
+    @JoinColumn(name = "expcond_spatial_term_zdb_id")
+    private GenericTerm spatialTerm;
 
     private static Logger logger = LogManager.getLogger(ExperimentCondition.class);
-
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
-
 
     public Experiment getExperiment() {
         return experiment;
@@ -85,46 +83,6 @@ public class ExperimentCondition implements Comparable<ExperimentCondition>, Ent
             return zecoTerm.getTermName().compareToIgnoreCase(o.getZecoTerm().getTermName());
         }
         return 0;
-    }
-
-    public GenericTerm getZecoTerm() {
-        return zecoTerm;
-    }
-
-    public void setZecoTerm(GenericTerm zecoTerm) {
-        this.zecoTerm = zecoTerm;
-    }
-
-    public GenericTerm getAoTerm() {
-        return aoTerm;
-    }
-
-    public void setAoTerm(GenericTerm aoTerm) {
-        this.aoTerm = aoTerm;
-    }
-
-    public GenericTerm getChebiTerm() {
-        return chebiTerm;
-    }
-
-    public void setChebiTerm(GenericTerm chebiTerm) {
-        this.chebiTerm = chebiTerm;
-    }
-
-    public GenericTerm getGoCCTerm() {
-        return goCCTerm;
-    }
-
-    public void setGoCCTerm(GenericTerm goCCTerm) {
-        this.goCCTerm = goCCTerm;
-    }
-
-    public GenericTerm getTaxaonymTerm() {
-        return taxaonymTerm;
-    }
-
-    public void setTaxaonymTerm(GenericTerm taxaonymTerm) {
-        this.taxaonymTerm = taxaonymTerm;
     }
 
     @Override
