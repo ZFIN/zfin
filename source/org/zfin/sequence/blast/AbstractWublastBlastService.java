@@ -600,7 +600,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
         }
 
         try {
-            backupDatabase(database);
+            //backupDatabase(database);
             File accessionFile = createAccessionDump(validAccessions, database);
             logger.info("dumped accessions into: " + accessionFile.getAbsoluteFile());
             File fastaFile = dumpDatabaseAsFastaForAccessions(database, accessionFile);

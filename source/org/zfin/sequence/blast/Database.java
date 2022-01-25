@@ -226,6 +226,7 @@ public class Database {
         BLAT("BLAT"),
         CURATEDMICRORNAMATURE("CuratedMicroRNAMature"),
         CURATEDMICRORNASTEMLOOP("CuratedMicroRNAStemLoop"),
+        CURATEDNTRREGIONS("CuratedNtrRegions"),
         ENSEMBL("ENSEMBL"),
         ZFINENSEMBLTSCRIPT("zfinEnsemblTscript"),
         ENSEMBL_P("Ensembl_P"),
