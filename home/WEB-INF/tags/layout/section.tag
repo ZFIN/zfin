@@ -6,11 +6,13 @@
 <%@ attribute name="infoPopup" required="false" rtexprvalue="true" type="java.lang.String" %>
 <%@ attribute name="appendedText" required="false" rtexprvalue="true" type="java.lang.String" %>
 
+<c:set var="anchorTitle" value="${title}"/>
+
 <c:if test="${!empty appendedText}">
     <c:set var="title" value="${title} ${appendedText}"/>
 </c:if>
 
-<section class="section ${cssClass}" id="${zfn:makeDomIdentifier(title)}">
+<section class="section ${cssClass}" id="${zfn:makeDomIdentifier(anchorTitle)}">
     <c:if test="${!empty title}">
         <div class="heading">${title} <c:if test="${not empty infoPopup}"><a class="popup-link info-popup-link" href="${infoPopup}"></a></c:if></div>
     </c:if>
