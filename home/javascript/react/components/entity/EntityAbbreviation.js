@@ -31,6 +31,7 @@ const EntityAbbreviation = ({entity}) => {
         }
     } else {
         console.warn('zdbID match failed on ' + zdbID);
+        className = 'entity-abbreviation-error';
     }
 
     let linktext;
