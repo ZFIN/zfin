@@ -4,9 +4,7 @@
 
 FROM_DIRECTORY=<!--|WEBHOST_BLASTDB_TO_COPY|-->/Current/
 
-# make three identical copies to the development filesyste. 
-#one for almost:
-TO_ALMOST_DIRECTORY=/research/zblastfiles/zmore/almdb/Current/
+# make two identical copies to the development filesystem:
 
 # one copy for default developers that don't want their own
 TO_DEFAULT_DIRECTORY=/research/zblastfiles/zmore/dev_blastdb/Current/
@@ -25,9 +23,6 @@ TO_PRISTINE_DIRECTORY=/research/zblastfiles/zmore/nightly/Current/
 # -K follow symlinks 
 # -v verbose
 
-echo rsync the almost directory
-/usr/bin/rsync -rcvK $FROM_DIRECTORY/*.x* $TO_ALMOST_DIRECTORY
-
 echo rsync the default directory
 /usr/bin/rsync -rcvK $FROM_DIRECTORY/*.x* $TO_DEFAULT_DIRECTORY
 
@@ -41,9 +36,6 @@ echo rsync the pristine directory
 /usr/bin/rsync -rcvK $FROM_DIRECTORY/*.x* $TO_TRUNK_DIRECTORY
 
 # establish the write permissions and group.
-/bin/chgrp -R zfishweb $TO_ALMOST_DIRECTORY
-/bin/chmod -R g+w $TO_ALMOST_DIRECTORY
-
 /bin/chgrp -R fishadmin $TO_DEFAULT_DIRECTORY
 /bin/chmod -R g+w $TO_DEFAULT_DIRECTORY
 
