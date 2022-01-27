@@ -1,13 +1,9 @@
 package org.zfin.marker.presentation;
 
-import org.zfin.audit.AuditLogItem;
-import org.zfin.audit.repository.AuditLogRepository;
 import org.zfin.marker.Transcript;
 import org.zfin.marker.TranscriptType;
 import org.zfin.marker.TranscriptTypeStatusDefinition;
 import org.zfin.mutant.Genotype;
-import org.zfin.properties.ZfinProperties;
-import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DBLink;
 import org.zfin.sequence.Sequence;
 
@@ -16,6 +12,7 @@ import java.util.Set;
 import java.util.SortedSet;
 
 /**
+ *
  */
 public class TranscriptBean extends MarkerBean {
 
@@ -35,8 +32,6 @@ public class TranscriptBean extends MarkerBean {
     private List<DBLink> unableToFindDBLinks;
     private Genotype strain; // genotype strain pulled from the clone library
     private List<LinkDisplay> rnaCentralLink;
-
-
 
 
     public Set<RelatedMarker> getRelatedGenes() {
