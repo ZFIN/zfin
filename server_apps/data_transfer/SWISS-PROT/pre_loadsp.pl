@@ -76,6 +76,7 @@ sub downloadGOtermFiles () {
     if ($ENV{'SKIP_SLEEP'}) {
         print "Skipping sleep clause 1\n";
     } else {
+        print "\nSleeping for 8 minutes at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n\n";
        my $sleepNumDownload1 = 500;
        while($sleepNumDownload1--){
           sleep(1);
@@ -87,6 +88,7 @@ sub downloadGOtermFiles () {
     if ($ENV{'SKIP_SLEEP'}) {
         print "Skipping sleep clause 2 (what is the purpose of these sleeps?)\n";
     } else {
+        print "\nSleeping for another 8 minutes at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n\n";
        my $sleepNumDownload2 = 500;
        while($sleepNumDownload2--){
           sleep(1);
@@ -267,7 +269,7 @@ $curGetManuallyEnteredUniProtIDsWithMultGenes->finish();
 
 close(MULTIPLE);
 
-print "\nNumber of manually curated UniProt IDs with multiple genes: $ctManuallyEnteredUniProtIDsWithMultGenes\n\n";
+print "\nNumber of manually curated UniProt IDs with multiple genes: $ctManuallyEnteredUniProtIDsWithMultGenes at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n\n";
 
 if ($ctManuallyEnteredUniProtIDsWithMultGenes > 0) {
   my $subject = "Auto from SWISS-PROT: manually curated UniProt IDs with multiple genes";
@@ -295,7 +297,7 @@ while ($curGetManuallyEnteredUniProtIDs->fetch()) {
 $curGetManuallyEnteredUniProtIDs->finish();
 close(MCIDS);
 
-print "\nNumber of manually curated UniProt IDs: $ctManuallyEnteredUniProtIDs\n\n";
+print "\nNumber of manually curated UniProt IDs: $ctManuallyEnteredUniProtIDs at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . "\n\n";
 
 my $uniprotId;
 my $url;
@@ -309,7 +311,7 @@ if ($ENV{"SKIP_MANUAL_CHECK"}) {
 
 
     if ($ctManuallyEnteredUniProtIDs > 0) {
-      print("Checking for invalid manually entered uniprot IDs\n");
+      print "Checking for invalid manually entered uniprot IDs at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n";
       foreach $uniprotId (@manuallyEnteredUniProtIDs) {
           ZFINPerlModules->printWhirleyToStderr();
          $url = $uniProtURL . $uniprotId;
