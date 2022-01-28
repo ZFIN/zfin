@@ -48,7 +48,9 @@ sub downloadOrUseLocalFile {
             }
         } else {
             print("Downloading '$url' to '$outfile'\n");
-            system("/local/bin/wget '$url' -O '$outfile'");
+
+            #set the number of bytes that a dot represents in wget progress bar to 10M
+            system("/local/bin/wget --progress=dot -e dotbytes=10M '$url' -O '$outfile'");
         }
 }
 
@@ -180,19 +182,24 @@ sub select_zebrafish {
 
         print("Processing uniprot_trembl_vertebrates.dat.gz at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n");
         my $record;
+        print STDERR "Processing ";
         while ($record = <DAT1>){
-           print STDERR "Processing " . ZFINPerlModules->whirley() . "\r";
+           print STDERR ZFINPerlModules->whirley() . "\b";
            print OUTPUT "$record" if $record =~ m/OS   Danio rerio/;
         }
+        print STDERR "\n";
         close(DAT1) ;
         print("Done processing uniprot_trembl_vertebrates.dat.gz at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n");
 
         print("Processing uniprot_sprot_vertebrates.dat.gz at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . "\n");
         open(DAT2, "gunzip -c uniprot_sprot_vertebrates.dat.gz |") || die("Could not open uniprot_sprot_vertebrates.dat.gz $!");
+        print STDERR "Processing ";
         while ($record = <DAT2>){
-           print STDERR "Processing " . ZFINPerlModules->whirley() . "\r";
+           print STDERR ZFINPerlModules->whirley() . "\b";
            print OUTPUT "$record" if $record =~ m/OS   Danio rerio/;
         }
+        print STDERR "\n";
+
         print("Done processing uniprot_sprot_vertebrates.dat.gz at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n");
 
         $/ = "\n";
@@ -310,8 +317,9 @@ if ($ENV{"SKIP_MANUAL_CHECK"}) {
 
     if ($ctManuallyEnteredUniProtIDs > 0) {
       print("Checking for invalid manually entered uniprot IDs\n");
+      print STDERR "Processing ";
       foreach $uniprotId (@manuallyEnteredUniProtIDs) {
-         print STDERR "Processing " . ZFINPerlModules->whirley() . "\r";
+         print STDERR ZFINPerlModules->whirley() . "\b";
          $url = $uniProtURL . $uniprotId;
          my $status_code = getstore($url, "/dev/null");
          if ($status_code != 200) {
@@ -320,6 +328,7 @@ if ($ENV{"SKIP_MANUAL_CHECK"}) {
           }
           undef $status_code;
       }
+      print STDERR "\n";
       print("\n");
     }
 
@@ -434,7 +443,7 @@ foreach $block (@blocks) {
                    } else {
                        $deletes{$lineKey} = 1;
                    }
-                   print STDERR "Processing pre_zfin.dat " . ZFINPerlModules->whirley() . "\r";
+                   print STDERR "Processing pre_zfin.dat " . ZFINPerlModules->whirley() . ("\b" x length("Processing pre_zfin.dat ."));
                }
 
                $ct++;
