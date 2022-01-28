@@ -18,6 +18,7 @@ import java.io.Serializable;
                 "                                    WHEN 'PERS' THEN      'Person '\n" +
                 "                                    WHEN 'COMPANY' THEN   'Company'\n" +
                 "                                    WHEN 'JRNL' THEN      'Journal'\n" +
+                "                                    WHEN 'LAB'  THEN      'Lab    '\n" +
                 "                                    ELSE                  'other  '\n" +
                 "                                 END")
 @Table(name = "record_attribution")
