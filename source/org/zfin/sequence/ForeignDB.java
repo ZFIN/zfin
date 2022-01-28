@@ -106,6 +106,7 @@ public class ForeignDB implements Comparable<ForeignDB> {
         ENSEMBL_SNP("Ensembl_SNP"),
         EXPRESSIONATLAS("ExpressionAtlas"),
         FLYBASE("FLYBASE"),
+        FISHMIRNA("FISHMIRNA"),
         FLYBASE_ANATOMY("FLYBASE-Anatomy"),
         GENBANK("GenBank"),
         GENE("Gene"),
