@@ -29,8 +29,6 @@ use POSIX;
 #------------------- Flush Output Buffer --------------
 $|=1;
 
-
-
 #------------------- Download -----------
 
 sub downloadOrUseLocalFile {
@@ -182,24 +180,19 @@ sub select_zebrafish {
 
         print("Processing uniprot_trembl_vertebrates.dat.gz at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n");
         my $record;
-        print STDERR "Processing ";
         while ($record = <DAT1>){
-           print STDERR ZFINPerlModules->whirley() . "\b";
+           printWhirleyToStderr();
            print OUTPUT "$record" if $record =~ m/OS   Danio rerio/;
         }
-        print STDERR "\n";
         close(DAT1) ;
         print("Done processing uniprot_trembl_vertebrates.dat.gz at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n");
 
         print("Processing uniprot_sprot_vertebrates.dat.gz at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . "\n");
         open(DAT2, "gunzip -c uniprot_sprot_vertebrates.dat.gz |") || die("Could not open uniprot_sprot_vertebrates.dat.gz $!");
-        print STDERR "Processing ";
         while ($record = <DAT2>){
-           print STDERR ZFINPerlModules->whirley() . "\b";
+            printWhirleyToStderr();
            print OUTPUT "$record" if $record =~ m/OS   Danio rerio/;
         }
-        print STDERR "\n";
-
         print("Done processing uniprot_sprot_vertebrates.dat.gz at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n");
 
         $/ = "\n";
@@ -317,9 +310,8 @@ if ($ENV{"SKIP_MANUAL_CHECK"}) {
 
     if ($ctManuallyEnteredUniProtIDs > 0) {
       print("Checking for invalid manually entered uniprot IDs\n");
-      print STDERR "Processing ";
       foreach $uniprotId (@manuallyEnteredUniProtIDs) {
-         print STDERR ZFINPerlModules->whirley() . "\b";
+         printWhirleyToStderr();
          $url = $uniProtURL . $uniprotId;
          my $status_code = getstore($url, "/dev/null");
          if ($status_code != 200) {
@@ -328,7 +320,6 @@ if ($ENV{"SKIP_MANUAL_CHECK"}) {
           }
           undef $status_code;
       }
-      print STDERR "\n";
       print("\n");
     }
 
@@ -361,6 +352,7 @@ $/ = "//\n";
 open(PREDAT, "pre_zfin.dat") || die("Could not open pre_zfin.dat !");
 my @blocks = <PREDAT>;
 close(PREDAT);
+print STDERR "Processing pre_zfin.dat\n";
 
 open ZFINDAT, ">zfin.dat" || die ("Cannot open zfin.dat !");
 open ZFINDATDELETED, ">zfinGeneDeleted.dat" || die ("Cannot open zfinGeneDeleted.dat !");
@@ -402,6 +394,7 @@ foreach $block (@blocks) {
                $deletes{$lineKey} = 0;
 
                if ($line =~ m/DR   ZFIN; ZDB-GENE-/) {
+
                    @fields = split(/;/, $line);
                    $ZFINgeneId = $fields[1];
                    $ZFINgeneId =~ s/^\s+//;
@@ -443,7 +436,7 @@ foreach $block (@blocks) {
                    } else {
                        $deletes{$lineKey} = 1;
                    }
-                   print STDERR "Processing pre_zfin.dat " . ZFINPerlModules->whirley() . ("\b" x length("Processing pre_zfin.dat ."));
+                   printWhirleyToStderr();
                }
 
                $ct++;

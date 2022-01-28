@@ -22,7 +22,12 @@ my %monthDisplays = (
 
 #------ Global variables for "whirleygig" to indicate busy working (https://www.perlmonks.org/?node_id=4943)
 my $WHIRLEY_COUNT=-1;
-my @WHIRLEY=('-', '\\', '|', '/');
+# my @WHIRLEY=('-', '\\', '|', '/');
+my @WHIRLEY=('-', '¯', '-', '_');
+my $WHIRLEY_LAST_OUTPUT_TIME=0;
+
+#rate limit whirley outputs in number of seconds
+my $WHIRLEY_TIME_LIMIT = 10;
 
 sub doSystemCommand {                  
 
@@ -156,6 +161,14 @@ sub month3LettersToNumber() {
 sub whirley {
   $WHIRLEY_COUNT = ($WHIRLEY_COUNT + 1) % @WHIRLEY;
   return @WHIRLEY[$WHIRLEY_COUNT];
+}
+
+sub printWhirleyToStderr {
+    my $currentTime = time();
+    if ($currentTime - $WHIRLEY_LAST_OUTPUT_TIME < $WHIRLEY_TIME_LIMIT) {
+        return;
+    }
+    print(STDERR, whirley());
 }
 
 1;
