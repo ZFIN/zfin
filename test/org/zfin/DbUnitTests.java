@@ -31,6 +31,7 @@ import org.zfin.gwt.curation.CurationRPCTest;
 import org.zfin.gwt.marker.GoEvidenceTest;
 import org.zfin.gwt.root.server.DTOConversionServiceTest;
 import org.zfin.infrastructure.InfrastructureRepositoryTest;
+import org.zfin.infrastructure.RecordAttributionTest;
 import org.zfin.infrastructure.delete.DeleteRuleTest;
 import org.zfin.mapping.repository.LinkageRepositoryTest;
 import org.zfin.marker.MarkerAttributionServiceTest;
@@ -138,6 +139,7 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         PublicationRepositoryTest.class,
         PublicationServiceSpec.class,
         PublicationValidatorSpec.class,
+        RecordAttributionTest.class,
         RenoMultiRunTest.class,
         RenoRedundancyCandidateControllerTest.class,
         RenoRepositoryTest.class,

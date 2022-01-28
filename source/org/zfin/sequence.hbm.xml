@@ -268,6 +268,7 @@
                                     WHEN 'PERS' THEN      'Person '
                                     WHEN 'COMPANY' THEN   'Company'
                                     WHEN 'JRNL' THEN      'Journal'
+                                    WHEN 'LAB'  THEN      'Lab    '
                                     ELSE                  'other  '
                                  END)"/>
         <property name="dataZdbID" column="recattrib_data_zdb_id" type="string"/>
@@ -279,6 +280,10 @@
 
         <subclass name="org.zfin.infrastructure.PersonAttribution" discriminator-value="Person ">
             <many-to-one name="person" column="recattrib_source_zdb_id" insert="false" update="false"/>
+        </subclass>
+
+        <subclass name="org.zfin.infrastructure.LabAttribution" discriminator-value="Lab    ">
+            <many-to-one name="lab" column="recattrib_source_zdb_id" insert="false" update="false"/>
         </subclass>
 
         <subclass name="org.zfin.infrastructure.TermAttribution" discriminator-value="Term   ">
