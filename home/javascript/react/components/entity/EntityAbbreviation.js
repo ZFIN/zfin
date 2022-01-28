@@ -15,24 +15,30 @@ const TYPE_CLASSES = [
 ];
 
 const EntityAbbreviation = ({entity}) => {
-    let className;
-    const match = entity.zdbID.match(/^ZDB-([A-Za-z_]+)-/)
+    let className = '';
+    let type = '';
+
+    const zdbID = entity.zdbID || '';
+    const match = zdbID.match(/^ZDB-([A-Za-z_]+)-/);
 
     if (match) {
-        const type = match[1];
+        type = match[1];
         for (const typeClass of TYPE_CLASSES) {
             if (typeClass.types.indexOf(type) >= 0) {
                 className = typeClass.className;
                 break;
             }
         }
+    } else {
+        console.warn('zdbID match failed on ' + zdbID);
+        className = 'entity-abbreviation-error';
     }
 
     let linktext;
-    if (['ETCONSTRCT', 'GTCONSTRCT', 'PTCONSTRCT', 'TGCONSTRCT','ATB'].includes(match[1])) {
+    if (['ETCONSTRCT', 'GTCONSTRCT', 'PTCONSTRCT', 'TGCONSTRCT','ATB'].includes(type)) {
         linktext = entity.name;
     } else {
-        linktext = entity.abbreviation;
+        linktext = entity.abbreviation || '';
     }
 
     return <span className={className}>{linktext}</span>;
