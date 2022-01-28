@@ -51,7 +51,7 @@ public class GenotypeDetailSmokeTest extends AbstractSmokeTest {
     }
 
     @Test
-    public void testAllWildtypePAge() throws IOException {
+    public void testAllWildtypePage() throws IOException {
         String pageUrl = "/action/feature/wildtype-list";
         webClient.waitForBackgroundJavaScript(2000);
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + pageUrl);

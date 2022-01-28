@@ -2,10 +2,11 @@
 
 <%@ attribute name="sections" required="true" rtexprvalue="true" type="java.util.Collection" %>
 <%@ attribute name="entityName" required="false" fragment="true" %>
+<%@ attribute name="title" required="false" %>
 
 <jsp:invoke fragment="entityName" var="entityNameValue" />
 
-<z:page bodyClass="data-page" bootstrap="true">
+<z:page bodyClass="data-page" bootstrap="true" title="${title}">
     <div class="d-flex h-100">
         <div class="data-page-nav-container">
             <ul class="nav nav-pills flex-column">

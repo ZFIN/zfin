@@ -1,7 +1,8 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <c:set var="SECTION" value=""/>
+<c:set var="TITLE" value="ZFIN: Wild-Type Lines: Summary Listing"/>
 
-<z:dataPage sections="${[SECTION]}" >
+<z:dataPage sections="${[SECTION]}" title="${TITLE}">
 
     <jsp:body>
         <z:section title=" Wild-Type Lines">
