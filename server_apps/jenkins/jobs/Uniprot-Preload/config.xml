@@ -21,8 +21,7 @@
         <parameterDefinitions>
           <hudson.model.StringParameterDefinition>
             <name>SKIP_DOWNLOADS</name>
-            <description>
-              Do not download anything and instead assume files exist locally (will exit if no file exists).
+            <description>Do not download anything and instead assume files exist locally (will exit if no file exists).
               Pseudo boolean parameter. Pass empty value for false, pass a &quot;1&quot; for true.</description>
             <defaultValue></defaultValue>
             <trim>false</trim>
@@ -30,8 +29,7 @@
 
           <hudson.model.StringParameterDefinition>
             <name>SKIP_MANUAL_CHECK</name>
-            <description>
-              Do not scan uniprot for IDs gone bad.
+            <description>Do not scan uniprot for IDs gone bad.
               Pseudo boolean parameter. Pass empty value for false, pass a &quot;1&quot; for true.</description>
             <defaultValue></defaultValue>
             <trim>false</trim>
@@ -39,8 +37,7 @@
 
           <hudson.model.StringParameterDefinition>
             <name>SKIP_CLEANUP</name>
-            <description>
-              Do not remove old files. (Useful for troubleshooting after a run.)
+            <description>Do not remove old files. (Useful for troubleshooting after a run.)
               Pseudo boolean parameter. Pass empty value for false, pass a &quot;1&quot; for true.</description>
             <defaultValue></defaultValue>
             <trim>false</trim>
@@ -48,8 +45,7 @@
 
           <hudson.model.StringParameterDefinition>
             <name>SKIP_SLEEP</name>
-            <description>
-              Skip step for sleeping for 500 seconds at various parts.
+            <description>Skip step for sleeping for 500 seconds at various parts.
               Pseudo boolean parameter. Pass empty value for false, pass a &quot;1&quot; for true.</description>
             <defaultValue></defaultValue>
             <trim>false</trim>
@@ -57,8 +53,7 @@
 
           <hudson.model.StringParameterDefinition>
             <name>ARCHIVE_ARTIFACTS</name>
-            <description>
-              Save a copy of all generated artifacts in subdirectory called archives/$TIMESTAMP
+            <description>Save a copy of all generated artifacts in subdirectory called archives/$TIMESTAMP
               Pseudo boolean parameter. Pass empty value for false, pass a &quot;1&quot; for true.</description>
             <defaultValue></defaultValue>
             <trim>false</trim>
@@ -66,8 +61,7 @@
 
           <hudson.model.StringParameterDefinition>
             <name>SKIP_PRE_ZFIN_GEN</name>
-            <description>
-              skip the step of building pre_zfin.dat. Useful for troubleshooting if a pre_zfin.dat file is already in place.
+            <description>skip the step of building pre_zfin.dat. Useful for troubleshooting if a pre_zfin.dat file is already in place.
               Pseudo boolean parameter. Pass empty value for false, pass a &quot;1&quot; for true.</description>
             <defaultValue></defaultValue>
             <trim>false</trim>
