@@ -39,8 +39,8 @@ services:
       POSTGRES_DB: zfindb
       POSTGRES_HOST_AUTH_METHOD: trust
     shm_size: 1g
-    ports:
-      - "127.0.0.1:5432:5432"
+#    ports:
+#      - "127.0.0.1:5432:5432"
     volumes:
       - pg_data:/var/lib/postgresql/data/
       - ./pg_pass:/run/secrets/pg_pass:ro
@@ -80,12 +80,12 @@ services:
       CATALINA_BASE: /opt/zfin/catalina_bases/zfin.org
       INSTANCE: docker
       JVM_OPTS: -Xms2048m -Xmx8192m -Xss2m
-      #UNCOMMENT BELOW TO ENABLE DEBUGGING#
-      JPDA_ADDRESS: "*:5000"
-      JPDA_TRANSPORT: dt_socket
-    entrypoint: ["catalina.sh", "jpda", "run"]
-    ports:
-      - "127.0.0.1:5000:5000"
+#      #UNCOMMENT BELOW TO ENABLE DEBUGGING#
+#      JPDA_ADDRESS: "*:5000"
+#      JPDA_TRANSPORT: dt_socket
+#    entrypoint: ["catalina.sh", "jpda", "run"]
+#    ports:
+#      - "127.0.0.1:5000:5000"
     volumes:
       - www_data:/opt/zfin/www_homes/zfin.org
       - catalina_base:/opt/zfin/catalina_bases/zfin.org
