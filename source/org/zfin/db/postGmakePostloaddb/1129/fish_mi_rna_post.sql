@@ -32,7 +32,11 @@ where fdb_db_pk_id = fdbcont_fdb_db_id
   AND fdb_db_name = 'FishMiRNA'
 AND predblink_data_zdb_id = mir_gene_id;
 
+insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id, recattrib_source_type)
+select predblink_db_zdb_id, 'ZDB-PUB-220126-55', 'standard' from pre_db_link;
 
 drop table fishmir_temp;
+
+drop table pre_db_link;
 
 

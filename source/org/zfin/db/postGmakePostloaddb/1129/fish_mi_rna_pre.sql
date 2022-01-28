@@ -7,7 +7,7 @@
 --                                   'f','nucleotide',null,'Curated NTR/Regions',null,'f',2,null,null,null,null);
 
 -- create Fish miRNA FDB
-/*insert into foreign_db (fdb_db_name, fdb_db_query, fdb_db_display_name, fdb_db_significance)
+insert into foreign_db (fdb_db_name, fdb_db_query, fdb_db_display_name, fdb_db_significance)
 values ('FishMiRNA', 'http://fishmirna.org/index.html?fishmirna_gene_id=', 'Fish miRNA', 3);
 
 -- create Fish miRNA foreign_db_contains
@@ -21,16 +21,12 @@ where fdbdt_data_type = 'other'
 order by fdb_db_pk_id desc
 limit 1;
 
-  insert into foreign_db_contains_display_group_member
-*/
-
 insert into foreign_db_contains_display_group_member (fdbcdgm_fdbcont_zdb_id, fdbcdgm_group_id)
 select fdbcont_zdb_id, 9
 from foreign_db,
      foreign_db_contains
 where fdb_db_pk_id = fdbcont_fdb_db_id
   AND fdb_db_name = 'FishMiRNA';
-
 
 
 create table fishmir_temp
