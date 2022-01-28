@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+
+
+    <changeSet author="christian" id="ZFIN-6869">
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1129/fishmirna-zfin.csv"
+                  tableName="fishmir_temp" encoding="UTF-8">
+            <column header="FishmiR Gene ID" name="mir_gene_id" type="String"/>
+            <column header="Other Databases" name="gene_zdb_id" type="String" />
+            <column header="Hairpin sequence" name="sequence" type="String" />
+        </loadData>
+
+    </changeSet>
+</databaseChangeLog>
