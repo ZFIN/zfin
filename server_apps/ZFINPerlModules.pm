@@ -168,7 +168,8 @@ sub printWhirleyToStderr {
     if ($currentTime - $WHIRLEY_LAST_OUTPUT_TIME < $WHIRLEY_TIME_LIMIT) {
         return;
     }
-    print(STDERR, whirley());
+    print STDERR whirley();
+    $WHIRLEY_LAST_OUTPUT_TIME = time();
 }
 
 1;

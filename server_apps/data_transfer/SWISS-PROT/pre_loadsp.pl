@@ -181,7 +181,7 @@ sub select_zebrafish {
         print("Processing uniprot_trembl_vertebrates.dat.gz at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n");
         my $record;
         while ($record = <DAT1>){
-           printWhirleyToStderr();
+           ZFINPerlModules->printWhirleyToStderr();
            print OUTPUT "$record" if $record =~ m/OS   Danio rerio/;
         }
         close(DAT1) ;
@@ -190,7 +190,7 @@ sub select_zebrafish {
         print("Processing uniprot_sprot_vertebrates.dat.gz at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . "\n");
         open(DAT2, "gunzip -c uniprot_sprot_vertebrates.dat.gz |") || die("Could not open uniprot_sprot_vertebrates.dat.gz $!");
         while ($record = <DAT2>){
-            printWhirleyToStderr();
+            ZFINPerlModules->printWhirleyToStderr();
            print OUTPUT "$record" if $record =~ m/OS   Danio rerio/;
         }
         print("Done processing uniprot_sprot_vertebrates.dat.gz at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n");
@@ -311,7 +311,7 @@ if ($ENV{"SKIP_MANUAL_CHECK"}) {
     if ($ctManuallyEnteredUniProtIDs > 0) {
       print("Checking for invalid manually entered uniprot IDs\n");
       foreach $uniprotId (@manuallyEnteredUniProtIDs) {
-         printWhirleyToStderr();
+          ZFINPerlModules->printWhirleyToStderr();
          $url = $uniProtURL . $uniprotId;
          my $status_code = getstore($url, "/dev/null");
          if ($status_code != 200) {
@@ -436,7 +436,7 @@ foreach $block (@blocks) {
                    } else {
                        $deletes{$lineKey} = 1;
                    }
-                   printWhirleyToStderr();
+                   ZFINPerlModules->printWhirleyToStderr();
                }
 
                $ct++;
