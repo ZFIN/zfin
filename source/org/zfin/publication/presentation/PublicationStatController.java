@@ -146,6 +146,19 @@ public class PublicationStatController {
     }
 
     @JsonView(View.API.class)
+    @RequestMapping(value = "/zebrashare/histogram", method = RequestMethod.GET)
+    public JsonResultResponse<StatisticRow> getPublicationZebrashareStats(@RequestParam(value = "filter.publicationID", required = false) String publicationID,
+                                                                @RequestParam(value = "multiplicitySort.antibody", required = false) String multiplicitySortAntibody,
+                                                                @Version Pagination pagination) {
+
+        pagination.addFieldSorting(FieldFilter.ANTIBODY_NAME, multiplicitySortAntibody);
+        StatisticPublicationService service = new StatisticPublicationService();
+        JsonResultResponse<StatisticRow> response = service.getAllZebrashareStats(pagination);
+        response.setHttpServletRequest(request);
+        return response;
+    }
+
+    @JsonView(View.API.class)
     @RequestMapping(value = "/mutation/histogram", method = RequestMethod.GET)
     public JsonResultResponse<StatisticRow> getPublicationMutationStats(@RequestParam(value = "filter.publicationID", required = false) String publicationID,
                                                                 @RequestParam(value = "filter.antibodyName", required = false) String antibodyName,

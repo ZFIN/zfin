@@ -83,7 +83,7 @@ public class HibernateZebrashareRepository implements ZebrashareRepository {
                 "and zebraShareJournal.zdbID = 'ZDB-JRNL-181119-2' ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("pubID", pubID);
-        return  query.list();
+        return query.list();
     }
 
     @Override
@@ -121,6 +121,13 @@ public class HibernateZebrashareRepository implements ZebrashareRepository {
         return (List<Publication>) HibernateUtil.currentSession()
                 .createQuery(hql)
                 .setParameter("person", person)
+                .list();
+    }
+
+    @Override
+    public List<ZebrashareSubmissionMetadata> getAllZebrashareFromPublication() {
+        return (List<ZebrashareSubmissionMetadata>) HibernateUtil.currentSession()
+                .createCriteria(ZebrashareSubmissionMetadata.class)
                 .list();
     }
 

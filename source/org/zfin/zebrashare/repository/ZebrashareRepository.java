@@ -34,4 +34,6 @@ public interface ZebrashareRepository {
 
     List<Publication> getZebraSharePublicationsForPerson(Person person);
 
+    List<ZebrashareSubmissionMetadata> getAllZebrashareFromPublication();
+
 }

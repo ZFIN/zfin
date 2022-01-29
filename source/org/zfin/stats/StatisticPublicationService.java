@@ -13,6 +13,7 @@ import org.zfin.infrastructure.ZdbID;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.publication.Publication;
+import org.zfin.zebrashare.ZebrashareSubmissionMetadata;
 
 import java.util.*;
 import java.util.function.Function;
@@ -20,8 +21,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.*;
-import static org.zfin.repository.RepositoryFactory.getAntibodyRepository;
-import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 public class StatisticPublicationService {
 
@@ -236,6 +236,91 @@ public class StatisticPublicationService {
             rows.add(statRow);
         });
 
+
+        JsonResultResponse<StatisticRow> response = new JsonResultResponse<>();
+        response.setResults(rows);
+        response.setTotal(rows.size());
+        response.setResults(rows.stream()
+                .skip(pagination.getStart())
+                .limit(pagination.getLimit())
+                .collect(toList()));
+        response.addSupplementalData("statistic", row);
+        return response;
+    }
+
+    public JsonResultResponse<StatisticRow> getAllZebrashareStats(Pagination pagination) {
+
+        Map<Publication, List<ZebrashareSubmissionMetadata>> publicationMap = getZebrashareRepository().getAllZebrashareFromPublication().stream()
+                .collect(groupingBy(ZebrashareSubmissionMetadata::getPublication));
+
+        // filter records
+
+/*
+        publicationMap.keySet().forEach(key -> {
+            List<Feature> list = publicationMap.get(key);
+            if (list != null) {
+                FilterService<Feature> filterService = new FilterService<>(new AntibodyFiltering());
+                List<Feature> antibodies = filterService.filterAnnotations(list, pagination.getFieldFilterValueMap());
+                publicationMap.put(key, antibodies);
+            }
+        });
+*/
+        // remove empty publications
+        publicationMap.entrySet().removeIf(entry -> CollectionUtils.isEmpty(entry.getValue()));
+
+
+        HashMap<Publication, Integer> integerMap = null;
+        // default sorting: number of entities
+        if (pagination.hasSortingValue()) {
+/*
+            switch (pagination.getSortFilter()) {
+                case ASSAY:
+                    integerMap = publicationMap.entrySet().stream()
+                            .collect(HashMap::new, (map, entry) -> {
+                                Range range = getCardinalityPerUniqueRow(List.of(entry.getValue()), Antibody::getDistinctAssayNames);
+                                map.put(entry.getKey(), (Integer) range.getMaximum());
+                            }, HashMap::putAll);
+                    break;
+            }
+*/
+        } else {
+            integerMap = publicationMap.entrySet().stream()
+                    .collect(HashMap::new, (map, entry) -> map.put(entry.getKey(), entry.getValue().size()), HashMap::putAll);
+        }
+        Map<Publication, Integer> sortedMap = integerMap.entrySet().
+                stream().
+                sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).
+                collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+
+        StatisticRow row = new StatisticRow();
+        ColumnStats publicationStat = new ColumnStats("Publication", true, false, false, false);
+        ColumnValues columnValues = new ColumnValues();
+        columnValues.setTotalNumber(publicationMap.size());
+        row.put(publicationStat, columnValues);
+
+        ColumnStats publicationNameStat = new ColumnStats("Pub Short Author", true, false, true, false);
+        ColumnValues columnValValues = new ColumnValues();
+        columnValValues.setTotalNumber(publicationMap.size());
+        List<Publication> arrayList = new ArrayList<>();
+        arrayList.addAll(publicationMap.keySet());
+        columnValValues.setTotalDistinctNumber(getTotalDistinctNumberOnObject(List.of(arrayList), Publication::getShortAuthorList));
+        row.put(publicationNameStat, columnValValues);
+
+        // create return result set
+        List<StatisticRow> rows = new ArrayList<>();
+        sortedMap.entrySet().forEach(pubEntry -> {
+            StatisticRow statRow = new StatisticRow();
+
+            ColumnValues colValues = new ColumnValues();
+            colValues.setValue(pubEntry.getKey().getZdbID());
+            statRow.put(publicationStat, colValues);
+
+            ColumnValues colPubNameValues = new ColumnValues();
+            colPubNameValues.setValue(pubEntry.getKey().getShortAuthorList());
+            statRow.put(publicationNameStat, colPubNameValues);
+
+            rows.add(statRow);
+        });
 
         JsonResultResponse<StatisticRow> response = new JsonResultResponse<>();
         response.setResults(rows);
