@@ -21,6 +21,11 @@ const PublicationFishTable = ({url}) => {
             ,
             width: '200px',
         },
+        {
+            label: 'Wildtype',
+            content: row => row.wildtype.toString(),
+            width: '200px',
+        },
     ];
     return (
         <DataTable

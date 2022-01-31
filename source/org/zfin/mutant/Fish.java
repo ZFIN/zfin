@@ -27,6 +27,7 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
     private String displayName;
     private String handle;
     private long order;
+    @JsonView(View.FishAPI.class)
     private boolean wildtype;
     private Set<FishAlias> aliases;
     private Set<SecondaryFish> secondaryFishSet;

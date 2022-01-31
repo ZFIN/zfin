@@ -4,6 +4,11 @@ import java.util.StringJoiner;
 
 public enum FieldFilter {
     ANTIBODY_NAME("filter.antibodyName"),
+    PUBLICATION_TYPE("publication.type"),
+    PUBLICATION_ID("publication.id"),
+    PUBLICATION_AUTHOR("publication.shortAuthor"),
+    FISH_NAME("fish.name"),
+    FISH_TYPE("fish.type"),
     SEQUENCE_ACCESSION("sequence.accession"),
     CLONAL_TYPE("filter.clonalType"),
     ISOTYPE("filter.asisotypeay"),

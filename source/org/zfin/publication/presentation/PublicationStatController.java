@@ -131,21 +131,6 @@ public class PublicationStatController {
     }
 
     @JsonView(View.API.class)
-    @RequestMapping(value = "/fish/histogram", method = RequestMethod.GET)
-    public JsonResultResponse<StatisticRow> getPublicationFishStats(@RequestParam(value = "filter.publicationID", required = false) String publicationID,
-                                                                @RequestParam(value = "filter.antibodyName", required = false) String antibodyName,
-                                                                @RequestParam(value = "multiplicitySort.antibody", required = false) String multiplicitySortAntibody,
-                                                                @Version Pagination pagination) {
-
-        pagination.addFieldFilter(FieldFilter.ANTIBODY_NAME, antibodyName);
-        pagination.addFieldSorting(FieldFilter.ANTIBODY_NAME, multiplicitySortAntibody);
-        StatisticPublicationService service = new StatisticPublicationService();
-        JsonResultResponse<StatisticRow> response = service.getAllPublicationGenes(pagination);
-        response.setHttpServletRequest(request);
-        return response;
-    }
-
-    @JsonView(View.API.class)
     @RequestMapping(value = "/zebrashare/histogram", method = RequestMethod.GET)
     public JsonResultResponse<StatisticRow> getPublicationZebrashareStats(@RequestParam(value = "filter.publicationID", required = false) String publicationID,
                                                                 @RequestParam(value = "multiplicitySort.antibody", required = false) String multiplicitySortAntibody,
@@ -154,6 +139,26 @@ public class PublicationStatController {
         pagination.addFieldSorting(FieldFilter.ANTIBODY_NAME, multiplicitySortAntibody);
         StatisticPublicationService service = new StatisticPublicationService();
         JsonResultResponse<StatisticRow> response = service.getAllZebrashareStats(pagination);
+        response.setHttpServletRequest(request);
+        return response;
+    }
+
+    @JsonView(View.API.class)
+    @RequestMapping(value = "/fish/histogram", method = RequestMethod.GET)
+    public JsonResultResponse<StatisticRow> getPublicationFishStats(@RequestParam(value = "filter.publicationID", required = false) String publicationID,
+                                                                @RequestParam(value = "filter.pubType", required = false) String publicationType,
+                                                                @RequestParam(value = "filter.author", required = false) String publicationAuthor,
+                                                                @RequestParam(value = "filter.wildType", required = false) String wildType,
+                                                                @RequestParam(value = "filter.fishName", required = false) String fishName,
+                                                                @Version Pagination pagination) {
+
+        pagination.addFieldFilter(FieldFilter.PUBLICATION_ID, publicationID);
+        pagination.addFieldFilter(FieldFilter.PUBLICATION_TYPE, publicationType);
+        pagination.addFieldFilter(FieldFilter.PUBLICATION_AUTHOR, publicationAuthor);
+        pagination.addFieldFilter(FieldFilter.FISH_NAME, fishName);
+        pagination.addFieldFilter(FieldFilter.FISH_TYPE, wildType);
+        StatisticPublicationService service = new StatisticPublicationService();
+        JsonResultResponse<StatisticRow> response = service.getAllFishStats(pagination);
         response.setHttpServletRequest(request);
         return response;
     }

@@ -663,4 +663,6 @@ public interface PublicationRepository extends PaginationParameter {
     Integer getPublicationAttributionPubCount(List<String> markerTypes);
 
     Integer getPublicationAttributionMarkerCount(List<String> markerTypes);
+
+    Map<Publication, List<Fish>> getAllFishWithPublication();
 }
