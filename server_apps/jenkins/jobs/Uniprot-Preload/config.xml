@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version='1.1' encoding='UTF-8'?>
 <project>
     <actions/>
     <description>Runs the preload script for the uniprot load. &#xd;
@@ -6,9 +6,25 @@
     </description>
     <keepDependencies>false</keepDependencies>
     <properties>
+        <jenkins.model.BuildDiscarderProperty>
+            <strategy class="hudson.tasks.LogRotator">
+                <daysToKeep>-1</daysToKeep>
+                <numToKeep>-1</numToKeep>
+                <artifactDaysToKeep>-1</artifactDaysToKeep>
+                <artifactNumToKeep>-1</artifactNumToKeep>
+            </strategy>
+        </jenkins.model.BuildDiscarderProperty>
         <EnvInjectJobProperty plugin="envinject@1.89">
             <info>
                 <propertiesFilePath>$SOURCEROOT/commons/env/$INSTANCE.env</propertiesFilePath>
+                <propertiesContent>#You can use these flags for debugging script. See the comments in header of runUniprotPreload.sh (https://github.com/ZFIN/zfin/blob/ee2baff7a44fd263a9c6117ca2cf0b00562908ae/server_apps/data_transfer/SWISS-PROT/runUniprotPreload.sh#L3-L7)
+SKIP_DOWNLOADS=
+SKIP_MANUAL_CHECK=
+SKIP_CLEANUP=
+SKIP_SLEEP=
+ARCHIVE_ARTIFACTS=
+SKIP_PRE_ZFIN_GEN=
+                </propertiesContent>
                 <loadFilesFromMaster>false</loadFilesFromMaster>
             </info>
             <on>true</on>
@@ -16,67 +32,6 @@
             <keepBuildVariables>true</keepBuildVariables>
             <contributors/>
         </EnvInjectJobProperty>
-        <hudson.model.ParametersDefinitionProperty>
-            <parameterDefinitions>
-                <hudson.model.StringParameterDefinition>
-                    <name>SKIP_DOWNLOADS</name>
-                    <description>Do not download anything and instead assume files exist locally (will exit if no file
-                        exists).
-                        Pseudo boolean parameter. Pass empty value for false, pass a &quot;1&quot; for true.
-                    </description>
-                    <defaultValue/>
-                    <trim>false</trim>
-                </hudson.model.StringParameterDefinition>
-
-                <hudson.model.StringParameterDefinition>
-                    <name>SKIP_MANUAL_CHECK</name>
-                    <description>Do not scan uniprot for IDs gone bad.
-                        Pseudo boolean parameter. Pass empty value for false, pass a &quot;1&quot; for true.
-                    </description>
-                    <defaultValue/>
-                    <trim>false</trim>
-                </hudson.model.StringParameterDefinition>
-
-                <hudson.model.StringParameterDefinition>
-                    <name>SKIP_CLEANUP</name>
-                    <description>Do not remove old files. (Useful for troubleshooting after a run.)
-                        Pseudo boolean parameter. Pass empty value for false, pass a &quot;1&quot; for true.
-                    </description>
-                    <defaultValue/>
-                    <trim>false</trim>
-                </hudson.model.StringParameterDefinition>
-
-                <hudson.model.StringParameterDefinition>
-                    <name>SKIP_SLEEP</name>
-                    <description>Skip step for sleeping for 500 seconds at various parts.
-                        Pseudo boolean parameter. Pass empty value for false, pass a &quot;1&quot; for true.
-                    </description>
-                    <defaultValue/>
-                    <trim>false</trim>
-                </hudson.model.StringParameterDefinition>
-
-                <hudson.model.StringParameterDefinition>
-                    <name>ARCHIVE_ARTIFACTS</name>
-                    <description>Save a copy of all generated artifacts in subdirectory called archives/$TIMESTAMP
-                        Pseudo boolean parameter. Pass empty value for false, pass a &quot;1&quot; for true.
-                    </description>
-                    <defaultValue/>
-                    <trim>false</trim>
-                </hudson.model.StringParameterDefinition>
-
-                <hudson.model.StringParameterDefinition>
-                    <name>SKIP_PRE_ZFIN_GEN</name>
-                    <description>skip the step of building pre_zfin.dat. Useful for troubleshooting if a pre_zfin.dat
-                        file is already in place.
-                        Pseudo boolean parameter. Pass empty value for false, pass a &quot;1&quot; for true.
-                    </description>
-                    <defaultValue/>
-                    <trim>false</trim>
-                </hudson.model.StringParameterDefinition>
-
-            </parameterDefinitions>
-        </hudson.model.ParametersDefinitionProperty>
-
     </properties>
     <scm class="hudson.scm.NullSCM"/>
     <canRoam>true</canRoam>
@@ -90,60 +45,19 @@
         <hudson.tasks.Shell>
             <command>cd $TARGETROOT/server_apps/data_transfer/SWISS-PROT/ &amp;&amp; runUniprotPreload.sh
             </command>
+            <configuredLocalRules/>
         </hudson.tasks.Shell>
     </builders>
     <publishers>
         <hudson.tasks.ArtifactArchiver>
-          <artifacts>server_apps/data_transfer/SWISS-PROT/ccnote,server_apps/data_transfer/SWISS-PROT/*.ontology,server_apps/data_transfer/SWISS-PROT/*2go,server_apps/data_transfer/SWISS-PROT/prob*,server_apps/data_transfer/SWISS-PROT/okfile,server_apps/data_transfer/SWISS-PROT/ok2file,server_apps/data_transfer/SWISS-PROT/pubmed_not_in_zfin,server_apps/data_transfer/SWISS-PROT/*.unl,server_apps/data_transfer/SWISS-PROT/*.txt,server_apps/data_transfer/SWISS-PROT/*.dat</artifacts>
-          <latestOnly>false</latestOnly>
-          <allowEmptyArchive>false</allowEmptyArchive>
+            <artifacts>server_apps/data_transfer/SWISS-PROT/ccnote,server_apps/data_transfer/SWISS-PROT/*.ontology,server_apps/data_transfer/SWISS-PROT/*2go,server_apps/data_transfer/SWISS-PROT/prob*,server_apps/data_transfer/SWISS-PROT/okfile,server_apps/data_transfer/SWISS-PROT/ok2file,server_apps/data_transfer/SWISS-PROT/pubmed_not_in_zfin,server_apps/data_transfer/SWISS-PROT/*.unl,server_apps/data_transfer/SWISS-PROT/*.txt,server_apps/data_transfer/SWISS-PROT/*.dat</artifacts>
+            <allowEmptyArchive>false</allowEmptyArchive>
+            <onlyIfSuccessful>false</onlyIfSuccessful>
+            <fingerprint>false</fingerprint>
+            <defaultExcludes>true</defaultExcludes>
+            <caseSensitive>true</caseSensitive>
+            <followSymlinks>true</followSymlinks>
         </hudson.tasks.ArtifactArchiver>
-        <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
-            <recipientList>${DB_OWNER}@zfin.org</recipientList>
-            <configuredTriggers>
-                <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
-                    <email>
-                        <recipientList>${DB_OWNER}@zfin.org</recipientList>
-                        <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-                        <body>$PROJECT_DEFAULT_CONTENT</body>
-                        <sendToDevelopers>false</sendToDevelopers>
-                        <sendToRequester>false</sendToRequester>
-                        <includeCulprits>false</includeCulprits>
-                        <sendToRecipientList>true</sendToRecipientList>
-                        <attachmentsPattern/>
-                        <attachBuildLog>false</attachBuildLog>
-                        <compressBuildLog>false</compressBuildLog>
-                        <replyTo/>
-                        <contentType>project</contentType>
-                    </email>
-                </hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
-                <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
-                    <email>
-                        <recipientList>${DB_OWNER}@zfin.org ${ALL_FAILURE_REPORTS_EMAIL}</recipientList>
-                        <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-                        <body>$PROJECT_DEFAULT_CONTENT</body>
-                        <sendToDevelopers>false</sendToDevelopers>
-                        <sendToRequester>false</sendToRequester>
-                        <includeCulprits>false</includeCulprits>
-                        <sendToRecipientList>true</sendToRecipientList>
-                        <attachmentsPattern/>
-                        <attachBuildLog>false</attachBuildLog>
-                        <compressBuildLog>false</compressBuildLog>
-                        <replyTo/>
-                        <contentType>project</contentType>
-                    </email>
-                </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
-            </configuredTriggers>
-            <contentType>default</contentType>
-            <defaultSubject>[Jenkins][${DOMAIN_NAME}]: ${PROJECT_NAME}: ${BUILD_STATUS}</defaultSubject>
-            <defaultContent>$DEFAULT_CONTENT</defaultContent>
-            <attachmentsPattern/>
-            <presendScript/>
-            <attachBuildLog>true</attachBuildLog>
-            <compressBuildLog>false</compressBuildLog>
-            <replyTo>${DB_OWNER}@zfin.org</replyTo>
-            <saveOutput>false</saveOutput>
-        </hudson.plugins.emailext.ExtendedEmailPublisher>
     </publishers>
     <buildWrappers>
         <EnvInjectBuildWrapper plugin="envinject@1.89">
