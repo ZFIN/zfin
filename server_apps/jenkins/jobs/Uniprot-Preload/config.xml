@@ -28,7 +28,6 @@
                     <trim>false</trim>
                 </hudson.model.StringParameterDefinition>
 
-
                 <hudson.model.StringParameterDefinition>
                     <name>SKIP_MANUAL_CHECK</name>
                     <description>Do not scan uniprot for IDs gone bad.

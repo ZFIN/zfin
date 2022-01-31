@@ -37,4 +37,4 @@ echo "## FINISHED runUniprotPreload.sh "      $(date "+%Y-%m-%d %H:%M:%S")
 echo "#########################################################################"
 }
 
-main 2>&1 | tee preload_log_$(date "+%Y-%m-%d_%H-%M-%S").txt
+main 2>&1 | tee preload_log.txt
