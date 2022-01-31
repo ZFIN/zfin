@@ -75,7 +75,7 @@ const StatisticDataTable = ({
 };
 
 StatisticDataTable.propTypes = {
-    columns: PropTypes.arrayOf(columnDefinitionType).isRequired,
+    columns: PropTypes.arrayOf(columnDefinitionType),
     dataUrl: PropTypes.string.isRequired,
     downloadOptions: PropTypes.arrayOf(downloadOptionType),
     onDataLoaded: PropTypes.func,

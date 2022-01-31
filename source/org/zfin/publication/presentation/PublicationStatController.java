@@ -147,7 +147,7 @@ public class PublicationStatController {
     @RequestMapping(value = "/fish/histogram", method = RequestMethod.GET)
     public JsonResultResponse<StatisticRow> getPublicationFishStats(@RequestParam(value = "filter.publicationID", required = false) String publicationID,
                                                                 @RequestParam(value = "filter.pubType", required = false) String publicationType,
-                                                                @RequestParam(value = "filter.author", required = false) String publicationAuthor,
+                                                                @RequestParam(value = "filter.pubShortAuthor", required = false) String publicationAuthor,
                                                                 @RequestParam(value = "filter.wildType", required = false) String wildType,
                                                                 @RequestParam(value = "filter.fishName", required = false) String fishName,
                                                                 @Version Pagination pagination) {
