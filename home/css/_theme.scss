@@ -23,15 +23,6 @@ $footer-z-index: 1;
 $shadow: 0 2px 1px -1px rgba(0,0,0,0.2), 0 1px 1px 0 rgba(0,0,0,0.14), 0 1px 3px 0 rgba(0,0,0,0.12);
 $shadow-elevated: 0 5px 5px -3px rgba(0,0,0,0.2), 0 8px 10px 1px rgba(0,0,0,0.14), 0 3px 14px 2px rgba(0,0,0,0.12);
 
-// ribbon overrides
-$ribbon-species-icon: '';
-$ribbon-primary-color: $primary;
-$ribbon-strip-font-default: inherit;
-$ribbon-strip-tile-border-radius: 0;
-$ribbon-strip-tile-border-color: $border-color;
-$ribbon-strip-tile-border-color-hover: $border-color;
-$ribbon-strip-tile-tile-width: 20px;
-
 // bootstrap overrides
 $font-size-base: 0.875rem;
 $table-cell-padding: 0.5rem;
@@ -39,3 +30,5 @@ $label-margin-bottom: 0.3125rem;
 $font-family-sans-serif: Arial, sans-serif;
 $link-color: blue;
 $modal-md: 600px;
+
+@import "./ribbon";
