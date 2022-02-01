@@ -232,6 +232,7 @@ if ($ENV{'SKIP_CLEANUP'}) {
 }
 
 my $dbname = "<!--|DB_NAME|-->";
+my $dbhost = "<!--|PGHOST|-->";
 my $username = "";
 my $password = "";
 
@@ -242,7 +243,7 @@ my $password = "";
 ########################################################################################################
 
 ### open a handle on the db
-my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
     or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
 my $sqlGetManuallyEnteredUniProtIDsWithMultGenes = "select distinct db1.dblink_acc_num from db_link db1
