@@ -27,6 +27,7 @@ public enum FieldFilter {
     REGULATORY_REGION("regulatoryRegion"),
     CODING_SEQUENCE("codingSequence"),
     SPECIES("species"),
+    ZDB_ENTITY_TYPE("zdb.entity.type"),
     CITATION("citation"),
     ;
     private String name;

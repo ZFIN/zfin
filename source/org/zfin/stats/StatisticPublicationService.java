@@ -25,10 +25,22 @@ import static org.zfin.repository.RepositoryFactory.*;
 public class StatisticPublicationService {
 
     public JsonResultResponse<StatisticRow> getAllAttributionStats(Pagination pagination) {
-        Map<Publication, List<ZdbEntity>> publicationMap = getPublicationRepository().getAllAttributions();
-        List<Publication> unfilteredPubList = new ArrayList<>(publicationMap.keySet());
+        Map<Publication, List<ZdbEntity>> unfilteredPublicationMap = getPublicationRepository().getAllAttributions();
+        List<Publication> unfilteredPubList = new ArrayList<>(unfilteredPublicationMap.keySet());
         // filter on Publication
-        filterOnPublication(pagination, publicationMap);
+        //filterOnPublication(pagination, publicationMap);
+
+        Map<Publication, List<ZdbEntity>> publicationMap = new HashMap<>(); ;
+
+        // filter
+        unfilteredPublicationMap.keySet().forEach(key -> {
+            List<ZdbEntity> list = unfilteredPublicationMap.get(key);
+            if (list != null) {
+                FilterService<ZdbEntity> filterService = new FilterService<>(new ZdbEntityFiltering());
+                List<ZdbEntity> antibodies = filterService.filterAnnotations(list, pagination.getFieldFilterValueMap());
+                publicationMap.put(key, antibodies);
+            }
+        });
 
         HashMap<Publication, Integer> integerMap = null;
         // default sorting: number of entities
@@ -57,8 +69,9 @@ public class StatisticPublicationService {
         ColumnStats publicationNameStat = getColumnStatsPubAuthor(publicationMap, row);
         ColumnStats publicationTypeStat = getColumnStatsPubType(publicationMap, row, unfilteredPubList);
 
-        ColumnStats typeStat = new ColumnStats("Type", false, false, false, true);
-        ColumnValues typeValues = getColumnValues(publicationMap, (ZdbEntity::getZdbType));
+        ColumnStats typeStat = new ColumnStats("Zdb Entity Type", false, false, false, true);
+        ColumnValues typeValues = getColumnValues(publicationMap, ZdbEntity::getZdbType);
+        typeValues.setHistogram(getHistogram(unfilteredPublicationMap, ZdbEntity::getZdbType));
         row.put(typeStat, typeValues);
 
         // create return result set

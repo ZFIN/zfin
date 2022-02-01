@@ -20,7 +20,7 @@ public class ZdbEntity implements ZdbID {
         Pattern r = Pattern.compile(pattern);
         Matcher m = r.matcher(zdbID);
         if (m.find()) {
-            return m.group(1);
+            return m.group(2);
         }
         return zdbID;
     }

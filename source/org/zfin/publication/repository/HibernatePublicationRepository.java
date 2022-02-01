@@ -1,6 +1,7 @@
 package org.zfin.publication.repository;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -59,8 +60,6 @@ import org.zfin.sequence.MarkerDBLink;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
@@ -3105,7 +3104,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     @Override
     public Map<Publication, List<ZdbEntity>> getAllAttributions() {
-        if (pubAttributionMapCache != null)
+        if (MapUtils.isNotEmpty(pubAttributionMapCache))
             return pubAttributionMapCache;
         pubAttributionMapCache = new HashMap<>();
         Session session = HibernateUtil.currentSession();

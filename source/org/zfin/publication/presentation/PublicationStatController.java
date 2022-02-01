@@ -168,13 +168,13 @@ public class PublicationStatController {
     public JsonResultResponse<StatisticRow> getPublicationAttributionStats(@RequestParam(value = "filter.publicationID", required = false) String publicationID,
                                                                            @RequestParam(value = "filter.pubType", required = false) String publicationType,
                                                                            @RequestParam(value = "filter.pubShortAuthor", required = false) String publicationAuthor,
-                                                                           @RequestParam(value = "filter.wildType", required = false) String wildType,
+                                                                           @RequestParam(value = "filter.zdbEntityType", required = false) String zdbEntityId,
                                                                            @Version Pagination pagination) {
 
         pagination.addFieldFilter(FieldFilter.PUBLICATION_ID, publicationID);
         pagination.addFieldFilter(FieldFilter.PUBLICATION_TYPE, publicationType);
         pagination.addFieldFilter(FieldFilter.PUBLICATION_AUTHOR, publicationAuthor);
-        pagination.addFieldFilter(FieldFilter.FISH_TYPE, wildType);
+        pagination.addFieldFilter(FieldFilter.ZDB_ENTITY_TYPE, zdbEntityId);
         StatisticPublicationService service = new StatisticPublicationService();
         JsonResultResponse<StatisticRow> response = service.getAllAttributionStats(pagination);
         response.setHttpServletRequest(request);
