@@ -139,58 +139,39 @@ sub sendRunningResult {
 # Extracts only zfin data from vertebrates.
 #
 sub select_zebrafish {
-    try {
-      print("Downloading https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_trembl_vertebrates.dat.gz -O uniprot_trembl_vertebrates.dat.gz\n");
-      downloadOrUseLocalFile("https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_trembl_vertebrates.dat.gz", "uniprot_trembl_vertebrates.dat.gz");
-    } catch {
-      chomp $_;
-      &sendErrorReport("Failed to download https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_trembl_vertebrates.dat.gz - $_");
-      exit -1;
-    };
-
-    if (!-e "uniprot_trembl_vertebrates.dat.gz") {
-        print "Failed to download uniprot_trembl_vertebrates.dat.gz. Exit.\n";
-        exit -1;
-    } else {
-        print "\nDownloaded uniprot_trembl_vertebrates.dat.gz\n\n";
+    #where to find the uniprot files (can override with env var, for example with a file:/// URL)
+    my $TREMBL_FILE_URL = "https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_trembl_vertebrates.dat.gz";
+    if ($ENV{'TREMBL_FILE_URL'}) {
+        $TREMBL_FILE_URL = $ENV{'TREMBL_FILE_URL'};
     }
 
-    try {
-      print("Downloading https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_sprot_vertebrates.dat.gz -O uniprot_sprot_vertebrates.dat.gz\n");
-      downloadOrUseLocalFile("https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_sprot_vertebrates.dat.gz", "uniprot_sprot_vertebrates.dat.gz");
-    } catch {
-      chomp $_;
-      &sendErrorReport("Failed to download https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_sprot_vertebrates.dat.gz - $_");
-      exit -1;
-    };
-
-    if (!-e "uniprot_sprot_vertebrates.dat.gz") {
-        print "Failed to download uniprot_sprot_vertebrates.dat.gz. Exit.\n";
-        exit -1;
-    } else {
-        print "\nDownloaded uniprot_sprot_vertebrates.dat.gz\n\n";
+    my $SPROT_FILE_URL = "https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_sprot_vertebrates.dat.gz";
+    if ($ENV{'SPROT_FILE_URL'}) {
+        $SPROT_FILE_URL = $ENV{'SPROT_FILE_URL'};
     }
 
     if ($ENV{'SKIP_PRE_ZFIN_GEN'}) {
         print "Skipping generation of pre_zfin.dat file for troubleshooting purposes.  Assuming an accurate pre_zfin.dat file already exists.\n";
     } else {
+        print("Processing uniprot_trembl_vertebrates.dat.gz at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n");
+        print("Using URL of $TREMBL_FILE_URL");
         $/ = "\/\/\n"; #custom record separator
-        open(DAT1, "gunzip -c uniprot_trembl_vertebrates.dat.gz |") || die("Could not open uniprot_trembl_vertebrates.dat.gz $!");
+        open(DAT1, "curl -s '$TREMBL_FILE_URL' | gunzip -c |") || die("Could not open uniprot_trembl_vertebrates.dat.gz $!");
         open OUTPUT, ">pre_zfin.dat" or die "Cannot open pre_zfin.dat";
 
-        print("Processing uniprot_trembl_vertebrates.dat.gz at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n");
         my $record;
         while ($record = <DAT1>){
-           print STDERR "Processing " . ZFINPerlModules->whirley() . "\r";
+           print STDERR ".";
            print OUTPUT "$record" if $record =~ m/OS   Danio rerio/;
         }
         close(DAT1) ;
         print("Done processing uniprot_trembl_vertebrates.dat.gz at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n");
 
         print("Processing uniprot_sprot_vertebrates.dat.gz at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . "\n");
-        open(DAT2, "gunzip -c uniprot_sprot_vertebrates.dat.gz |") || die("Could not open uniprot_sprot_vertebrates.dat.gz $!");
+        print("Using URL of $SPROT_FILE_URL");
+        open(DAT2, "curl -s '$SPROT_FILE_URL' | gunzip -c |") || die("Could not open uniprot_sprot_vertebrates.dat.gz $!");
         while ($record = <DAT2>){
-           print STDERR "Processing " . ZFINPerlModules->whirley() . "\r";
+           print STDERR ".";
            print OUTPUT "$record" if $record =~ m/OS   Danio rerio/;
         }
         print("Done processing uniprot_sprot_vertebrates.dat.gz at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n");
