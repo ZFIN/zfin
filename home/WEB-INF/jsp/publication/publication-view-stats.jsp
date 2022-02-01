@@ -56,6 +56,12 @@
             </z:section>
         </z:section>
 
+        <z:section title="${DIRECTLY_ATTRIBUTED_DATA}">
+            <z:section title="">
+                <div class="__react-root" id="PublicationMarkerStatTable" data-type="attribution"></div>
+            </z:section>
+        </z:section>
+
         <z:section title="${ZEBRASHARE}">
             <z:section title="">
                 <div class="__react-root" id="PublicationMarkerStatTable" data-type="zebrashare"></div>

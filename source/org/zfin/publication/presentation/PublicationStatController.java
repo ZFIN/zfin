@@ -101,10 +101,10 @@ public class PublicationStatController {
     @JsonView(View.API.class)
     @RequestMapping(value = "/str/histogram", method = RequestMethod.GET)
     public JsonResultResponse<StatisticRow> getPublicationSTRStats(@RequestParam(value = "filter.publicationID", required = false) String publicationID,
-                                                                @RequestParam(value = "filter.antibodyName", required = false) String antibodyName,
-                                                                @RequestParam(value = "filter.clonalType", required = false) String clonalType,
-                                                                @RequestParam(value = "multiplicitySort.antibody", required = false) String multiplicitySortAntibody,
-                                                                @Version Pagination pagination) {
+                                                                   @RequestParam(value = "filter.antibodyName", required = false) String antibodyName,
+                                                                   @RequestParam(value = "filter.clonalType", required = false) String clonalType,
+                                                                   @RequestParam(value = "multiplicitySort.antibody", required = false) String multiplicitySortAntibody,
+                                                                   @Version Pagination pagination) {
 
         pagination.addFieldFilter(FieldFilter.ANTIBODY_NAME, antibodyName);
         pagination.addFieldFilter(FieldFilter.CLONAL_TYPE, clonalType);
@@ -118,9 +118,9 @@ public class PublicationStatController {
     @JsonView(View.API.class)
     @RequestMapping(value = "/gene/histogram", method = RequestMethod.GET)
     public JsonResultResponse<StatisticRow> getPublicationGeneStats(@RequestParam(value = "filter.publicationID", required = false) String publicationID,
-                                                                @RequestParam(value = "filter.antibodyName", required = false) String antibodyName,
-                                                                @RequestParam(value = "multiplicitySort.antibody", required = false) String multiplicitySortAntibody,
-                                                                @Version Pagination pagination) {
+                                                                    @RequestParam(value = "filter.antibodyName", required = false) String antibodyName,
+                                                                    @RequestParam(value = "multiplicitySort.antibody", required = false) String multiplicitySortAntibody,
+                                                                    @Version Pagination pagination) {
 
         pagination.addFieldFilter(FieldFilter.ANTIBODY_NAME, antibodyName);
         pagination.addFieldSorting(FieldFilter.ANTIBODY_NAME, multiplicitySortAntibody);
@@ -133,8 +133,8 @@ public class PublicationStatController {
     @JsonView(View.API.class)
     @RequestMapping(value = "/zebrashare/histogram", method = RequestMethod.GET)
     public JsonResultResponse<StatisticRow> getPublicationZebrashareStats(@RequestParam(value = "filter.publicationID", required = false) String publicationID,
-                                                                @RequestParam(value = "multiplicitySort.antibody", required = false) String multiplicitySortAntibody,
-                                                                @Version Pagination pagination) {
+                                                                          @RequestParam(value = "multiplicitySort.antibody", required = false) String multiplicitySortAntibody,
+                                                                          @Version Pagination pagination) {
 
         pagination.addFieldSorting(FieldFilter.ANTIBODY_NAME, multiplicitySortAntibody);
         StatisticPublicationService service = new StatisticPublicationService();
@@ -146,11 +146,11 @@ public class PublicationStatController {
     @JsonView(View.API.class)
     @RequestMapping(value = "/fish/histogram", method = RequestMethod.GET)
     public JsonResultResponse<StatisticRow> getPublicationFishStats(@RequestParam(value = "filter.publicationID", required = false) String publicationID,
-                                                                @RequestParam(value = "filter.pubType", required = false) String publicationType,
-                                                                @RequestParam(value = "filter.pubShortAuthor", required = false) String publicationAuthor,
-                                                                @RequestParam(value = "filter.wildType", required = false) String wildType,
-                                                                @RequestParam(value = "filter.fishName", required = false) String fishName,
-                                                                @Version Pagination pagination) {
+                                                                    @RequestParam(value = "filter.pubType", required = false) String publicationType,
+                                                                    @RequestParam(value = "filter.pubShortAuthor", required = false) String publicationAuthor,
+                                                                    @RequestParam(value = "filter.wildType", required = false) String wildType,
+                                                                    @RequestParam(value = "filter.fishName", required = false) String fishName,
+                                                                    @Version Pagination pagination) {
 
         pagination.addFieldFilter(FieldFilter.PUBLICATION_ID, publicationID);
         pagination.addFieldFilter(FieldFilter.PUBLICATION_TYPE, publicationType);
@@ -164,18 +164,36 @@ public class PublicationStatController {
     }
 
     @JsonView(View.API.class)
+    @RequestMapping(value = "/attribution/histogram", method = RequestMethod.GET)
+    public JsonResultResponse<StatisticRow> getPublicationAttributionStats(@RequestParam(value = "filter.publicationID", required = false) String publicationID,
+                                                                           @RequestParam(value = "filter.pubType", required = false) String publicationType,
+                                                                           @RequestParam(value = "filter.pubShortAuthor", required = false) String publicationAuthor,
+                                                                           @RequestParam(value = "filter.wildType", required = false) String wildType,
+                                                                           @Version Pagination pagination) {
+
+        pagination.addFieldFilter(FieldFilter.PUBLICATION_ID, publicationID);
+        pagination.addFieldFilter(FieldFilter.PUBLICATION_TYPE, publicationType);
+        pagination.addFieldFilter(FieldFilter.PUBLICATION_AUTHOR, publicationAuthor);
+        pagination.addFieldFilter(FieldFilter.FISH_TYPE, wildType);
+        StatisticPublicationService service = new StatisticPublicationService();
+        JsonResultResponse<StatisticRow> response = service.getAllAttributionStats(pagination);
+        response.setHttpServletRequest(request);
+        return response;
+    }
+
+    @JsonView(View.API.class)
     @RequestMapping(value = "/mutation/histogram", method = RequestMethod.GET)
     public JsonResultResponse<StatisticRow> getPublicationMutationStats(@RequestParam(value = "filter.publicationID", required = false) String publicationID,
-                                                                @RequestParam(value = "filter.antibodyName", required = false) String antibodyName,
-                                                                @RequestParam(value = "filter.clonalType", required = false) String clonalType,
-                                                                @RequestParam(value = "filter.isotype", required = false) String isotype,
-                                                                @RequestParam(value = "filter.hostOrganism", required = false) String host,
-                                                                @RequestParam(value = "filter.assay", required = false) String assay,
-                                                                @RequestParam(value = "filter.antigenGenes", required = false) String antigenGenes,
-                                                                @RequestParam(value = "cardinalitySort.assay", required = false) String cardinalitySortAssay,
-                                                                @RequestParam(value = "cardinalitySort.antigenGenes", required = false) String cardinalitySortAntigenGenes,
-                                                                @RequestParam(value = "multiplicitySort.antibody", required = false) String multiplicitySortAntibody,
-                                                                @Version Pagination pagination) {
+                                                                        @RequestParam(value = "filter.antibodyName", required = false) String antibodyName,
+                                                                        @RequestParam(value = "filter.clonalType", required = false) String clonalType,
+                                                                        @RequestParam(value = "filter.isotype", required = false) String isotype,
+                                                                        @RequestParam(value = "filter.hostOrganism", required = false) String host,
+                                                                        @RequestParam(value = "filter.assay", required = false) String assay,
+                                                                        @RequestParam(value = "filter.antigenGenes", required = false) String antigenGenes,
+                                                                        @RequestParam(value = "cardinalitySort.assay", required = false) String cardinalitySortAssay,
+                                                                        @RequestParam(value = "cardinalitySort.antigenGenes", required = false) String cardinalitySortAntigenGenes,
+                                                                        @RequestParam(value = "multiplicitySort.antibody", required = false) String multiplicitySortAntibody,
+                                                                        @Version Pagination pagination) {
 
         pagination.addFieldFilter(FieldFilter.ANTIBODY_NAME, antibodyName);
         pagination.addFieldFilter(FieldFilter.CLONAL_TYPE, clonalType);

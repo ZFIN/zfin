@@ -6,6 +6,7 @@ import org.springframework.util.CollectionUtils;
 import org.zfin.antibody.Antibody;
 import org.zfin.feature.Feature;
 import org.zfin.framework.api.*;
+import org.zfin.infrastructure.ZdbEntity;
 import org.zfin.infrastructure.ZdbID;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Fish;
@@ -22,6 +23,79 @@ import static java.util.stream.Collectors.*;
 import static org.zfin.repository.RepositoryFactory.*;
 
 public class StatisticPublicationService {
+
+    public JsonResultResponse<StatisticRow> getAllAttributionStats(Pagination pagination) {
+        Map<Publication, List<ZdbEntity>> publicationMap = getPublicationRepository().getAllAttributions();
+        List<Publication> unfilteredPubList = new ArrayList<>(publicationMap.keySet());
+        // filter on Publication
+        filterOnPublication(pagination, publicationMap);
+
+        HashMap<Publication, Integer> integerMap = null;
+        // default sorting: number of entities
+        if (pagination.hasSortingValue()) {
+            switch (pagination.getSortFilter()) {
+                case TARGET_GENE:
+                    integerMap = publicationMap.entrySet().stream()
+                            .collect(HashMap::new, (map, entry) -> {
+                                Range range = getCardinalityPerUniqueRow(null);
+                                map.put(entry.getKey(), (Integer) range.getMaximum());
+                            }, HashMap::putAll);
+                    break;
+            }
+        } else {
+            integerMap = publicationMap.entrySet().stream()
+                    .collect(HashMap::new, (map, entry) -> map.put(entry.getKey(), entry.getValue().size()), HashMap::putAll);
+        }
+        Map<Publication, Integer> sortedMap = integerMap.entrySet().
+                stream().
+                sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).
+                collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+
+        StatisticRow row = new StatisticRow();
+
+        ColumnStats publicationStat = getColumnStatsPublication(publicationMap, row);
+        ColumnStats publicationNameStat = getColumnStatsPubAuthor(publicationMap, row);
+        ColumnStats publicationTypeStat = getColumnStatsPubType(publicationMap, row, unfilteredPubList);
+
+        ColumnStats typeStat = new ColumnStats("Type", false, false, false, true);
+        ColumnValues typeValues = getColumnValues(publicationMap, (ZdbEntity::getZdbType));
+        row.put(typeStat, typeValues);
+
+        // create return result set
+        List<StatisticRow> rows = new ArrayList<>();
+        sortedMap.entrySet().forEach(pubEntry -> {
+            StatisticRow statRow = new StatisticRow();
+            Publication publication = pubEntry.getKey();
+            ColumnValues colValues = new ColumnValues();
+            colValues.setValue(publication.getZdbID());
+            statRow.put(publicationStat, colValues);
+
+            ColumnValues colPubNameValues = new ColumnValues();
+            colPubNameValues.setValue(publication.getShortAuthorList());
+            statRow.put(publicationNameStat, colPubNameValues);
+
+            ColumnValues colPubTypeValues = new ColumnValues();
+            colPubTypeValues.setValue(pubEntry.getKey().getType().getDisplay());
+            statRow.put(publicationTypeStat, colPubTypeValues);
+
+            ColumnValues colTarget = new ColumnValues();
+            colTarget.setTotalNumber(getTotalNumberBase(publicationMap.get(publication), ZdbEntity::getZdbType));
+            colTarget.setTotalDistinctNumber(getTotalDistinctNumber(publicationMap.get(publication), ZdbEntity::getZdbType));
+            statRow.put(typeStat, colTarget);
+
+            rows.add(statRow);
+        });
+
+        JsonResultResponse<StatisticRow> response = new JsonResultResponse<>();
+        response.setResults(rows);
+        response.setTotal(rows.size());
+        response.setResults(rows.stream()
+                .skip(pagination.getStart())
+                .limit(pagination.getLimit())
+                .collect(toList()));
+        response.addSupplementalData("statistic", row);
+        return response;
+    }
 
     public JsonResultResponse<StatisticRow> getAllPublicationGenes(Pagination pagination) {
         Map<Publication, List<Marker>> publicationMap = getPublicationRepository().getAllAttributtedGenesAndMarkers();

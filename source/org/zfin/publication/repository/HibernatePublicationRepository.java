@@ -35,10 +35,7 @@ import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
-import org.zfin.infrastructure.ActiveData;
-import org.zfin.infrastructure.PublicationAttribution;
-import org.zfin.infrastructure.RecordAttribution;
-import org.zfin.infrastructure.SourceAlias;
+import org.zfin.infrastructure.*;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.GeneBean;
 import org.zfin.marker.presentation.HighQualityProbe;
@@ -62,6 +59,8 @@ import org.zfin.sequence.MarkerDBLink;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
@@ -1214,7 +1213,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
      * attributed to a given publication.
      *
      * @param pubID       publication id
-     * @param includeEfgs boolean
+     * @param includeEFGs boolean
      * @return list of markers
      */
     public List<Marker> getGenesByPublication(String pubID, boolean includeEFGs) {
@@ -3100,6 +3099,29 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         pubFishMapCache = fishMap;
         return pubFishMapCache;
+    }
+
+    Map<Publication, List<ZdbEntity>> pubAttributionMapCache = null;
+
+    @Override
+    public Map<Publication, List<ZdbEntity>> getAllAttributions() {
+        if (pubAttributionMapCache != null)
+            return pubAttributionMapCache;
+        pubAttributionMapCache = new HashMap<>();
+        Session session = HibernateUtil.currentSession();
+        String hql = "from PublicationAttribution ";
+        Query query = session.createQuery(hql);
+        //query.setMaxResults(10);
+        List<PublicationAttribution> resultList = query.list();
+
+        resultList.forEach(attribution -> {
+            Publication pub = attribution.getPublication();
+            pubAttributionMapCache.computeIfAbsent(pub, k -> new ArrayList<>());
+            ZdbEntity entity = new ZdbEntity(attribution.getDataZdbID());
+            pubAttributionMapCache.get(pub).add(entity);
+        });
+
+        return pubAttributionMapCache;
     }
 
     @Override

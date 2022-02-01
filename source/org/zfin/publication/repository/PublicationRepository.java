@@ -13,6 +13,7 @@ import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.SourceAlias;
+import org.zfin.infrastructure.ZdbEntity;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerStatistic;
@@ -665,4 +666,7 @@ public interface PublicationRepository extends PaginationParameter {
     Integer getPublicationAttributionMarkerCount(List<String> markerTypes);
 
     Map<Publication, List<Fish>> getAllFishWithPublication();
+
+    Map<Publication, List<ZdbEntity>> getAllAttributions();
+
 }
