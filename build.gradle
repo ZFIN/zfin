@@ -159,6 +159,7 @@ def translateVariableSet = [
         'CATALINA_HOME',
         'CGI_BIN_DIR_NAME',
         'DB_NAME',
+        'PGHOST',
         'DEFAULT_EMAIL',
         'ENVIRONMENT',
         'FTP_ROOT',
@@ -317,15 +318,19 @@ project(':cgi-bin') {
 task deployPerlFiles(type: Copy) {
     description 'Deploy perl files into TARGETROOT'
     group 'ZFIN Deployment'
-    doLast {
-        String file = projectDir + '/server_apps/ZFINPerlModules.pm'
-        from(file) {
-            ttNameMap.each { name, value ->
-                if (value != null)
-                    filter { it.replaceAll('<!--\\|' + name + '\\|-->', value) }
-            }
+
+//    uncomment below to manually cause a rebuild
+//    outputs.upToDateWhen { false }
+
+    into targetroot + '/server_apps'
+    from projectDir.path + '/server_apps'
+    include 'ZFINPerlModules.pm'
+    filter { line ->
+        ttNameMap.each { name, value ->
+            if (value != null)
+                line = line.replaceAll('<!--\\|' + name + '\\|-->', value)
         }
-        into(targetroot + '/server_apps/')
+        return line
     }
 }
 
