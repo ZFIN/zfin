@@ -1,10 +1,11 @@
 #!/bin/bash -e
 #
-# Use environment variable "SKIP_DOWNLOADS" to tell script not to download anything and instead assume files exist locally (will exit if no file exists)
-# Use environment variable "SKIP_MANUAL_CHECK" to tell script not to scan uniprot for IDs gone bad
-# Use environment variable "SKIP_CLEANUP" to tell script not to remove old files
-# Use environment variable "SKIP_SLEEP" to tell script not to sleep for 500 seconds at various parts
-# Use environment variable "ARCHIVE_ARTIFACTS" to tell script to save a copy of all generated artifacts
+# Use environment variable "SKIP_DOWNLOADS" to not to download anything and instead assume files exist locally (will exit if no file exists)
+# Use environment variable "SKIP_MANUAL_CHECK" to not to scan uniprot for IDs gone bad
+# Use environment variable "SKIP_CLEANUP" to not to remove old files
+# Use environment variable "SKIP_SLEEP" to not to sleep for 500 seconds at various parts
+# Use environment variable "ARCHIVE_ARTIFACTS" to to save a copy of all generated artifacts in subdirectory called archives/$TIMESTAMP
+# Use environment variable "SKIP_PRE_ZFIN_GEN" to skip the step of building pre_zfin.dat. Useful for troubleshooting if a pre_zfin.dat file is already in place.
 # Flags are useful for being a good citizen and not putting too much strain on servers.
 #
 # Can run with those env vars in tcsh like so: (https://stackoverflow.com/questions/5946736/)
@@ -38,4 +39,4 @@ echo "## FINISHED runUniprotPreload.sh "      $(date "+%Y-%m-%d %H:%M:%S")
 echo "#########################################################################"
 }
 
-main 2>&1 | tee preload_log_$(date "+%Y-%m-%d_%H-%M-%S").txt
+main 2>&1 | tee preload_log.txt

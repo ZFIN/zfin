@@ -1373,6 +1373,7 @@ public class DTOConversionService {
                 dto.setGoCCTerm(DTOConversionService.convertToTermDTO(condition.getGoCCTerm()));
                 dto.setTaxonTerm(DTOConversionService.convertToTermDTO(condition.getTaxaonymTerm()));
                 dto.setChebiTerm(DTOConversionService.convertToTermDTO(condition.getChebiTerm()));
+                dto.setSpatialTerm(DTOConversionService.convertToTermDTO(condition.getSpatialTerm()));
                 list.add(dto);
             }
             environment.setConditionDTOList(list);
