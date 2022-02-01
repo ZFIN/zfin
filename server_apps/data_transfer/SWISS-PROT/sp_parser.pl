@@ -24,10 +24,11 @@ open COMMT, ">cc_external.unl" or die "Cannot open cc_external.unl:$!";
 open KEYWD, ">kd_spkeywd.unl" or die "Cannot open kd_spkeywd.unl:$!";
 
 my $zfindbname = "<!--|DB_NAME|-->";
+my $dbhost = "<!--|PGHOST|-->";
 my $username = "";
 my $password = "";
 
-my $dbh = DBI->connect ("DBI:Pg:dbname=$zfindbname;host=localhost", $username, $password)
+my $dbh = DBI->connect ("DBI:Pg:dbname=$zfindbname;host=$dbhost", $username, $password)
     or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
 $kwMultLinesConcatenated = " ";

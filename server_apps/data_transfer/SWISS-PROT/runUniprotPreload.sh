@@ -13,6 +13,8 @@
 # or
 #     ( setenv SKIP_DOWNLOADS 1 ; setenv SKIP_MANUAL_CHECK 1; setenv SKIP_CLEANUP 1 ; ./runUniprotPreload.sh )
 #     ( setenv SKIP_MANUAL_CHECK 1 ; setenv SKIP_CLEANUP 1 ; setenv SKIP_SLEEP 1 ; setenv SKIP_PRE_ZFIN_GEN 1 ; setenv SKIP_DOWNLOADS 1 ; setenv ARCHIVE_ARTIFACTS 1; ./runUniprotPreload.sh )
+# or for bash:
+#     SKIP_MANUAL_CHECK=1 SKIP_CLEANUP=1 SKIP_SLEEP=1 SKIP_PRE_ZFIN_GEN=1 SKIP_DOWNLOADS=1 ARCHIVE_ARTIFACTS=1 ./runUniprotPreload.sh
 
 main() {
 echo "#########################################################################"
