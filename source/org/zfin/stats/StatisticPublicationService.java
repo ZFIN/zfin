@@ -26,6 +26,10 @@ public class StatisticPublicationService {
     public JsonResultResponse<StatisticRow> getAllPublicationGenes(Pagination pagination) {
         Map<Publication, List<Marker>> publicationMap = getPublicationRepository().getAllAttributtedGenesAndMarkers();
 
+        List<Publication> unfilteredPubList = new ArrayList<>(publicationMap.keySet());
+        // filter on Publication
+        filterOnPublication(pagination, publicationMap);
+
         HashMap<Publication, Integer> integerMap = null;
         // default sorting: number of entities
         if (pagination.hasSortingValue()) {
@@ -49,17 +53,11 @@ public class StatisticPublicationService {
 
         StatisticRow row = new StatisticRow();
 
-        ColumnStats publicationStat = new ColumnStats("Publication", true, false, false, false);
-        ColumnValues columnValues = getColumnValuesUberEntity(publicationMap);
-        row.put(publicationStat, columnValues);
+        ColumnStats publicationStat = getColumnStatsPublication(publicationMap, row);
 
-        ColumnStats publicationNameStat = new ColumnStats("Pub Short Author", true, false, true, false);
-        ColumnValues columnValValues = new ColumnValues();
-        columnValValues.setTotalNumber(publicationMap.size());
-        List<Publication> arrayList = new ArrayList<>();
-        arrayList.addAll(publicationMap.keySet());
-        columnValValues.setTotalDistinctNumber(getTotalDistinctNumberOnObject(List.of(arrayList), Publication::getShortAuthorList));
-        row.put(publicationNameStat, columnValValues);
+        ColumnStats publicationNameStat = getColumnStatsPubAuthor(publicationMap, row);
+
+        ColumnStats publicationTypeStat = getColumnStatsPubType(publicationMap, row, unfilteredPubList);
 
         ColumnStats targetStat = new ColumnStats("Marker", false, true, false, false);
         ColumnValues targetValues = new ColumnValues();
@@ -553,7 +551,7 @@ public class StatisticPublicationService {
         return response;
     }
 
-    private ColumnStats getColumnStatsPubType(Map<Publication, List<Fish>> publicationMap, StatisticRow row, List<Publication> unfilteredPubListForHistogramValues) {
+    private <Entity extends ZdbID> ColumnStats getColumnStatsPubType(Map<Publication, List<Entity>> publicationMap, StatisticRow row, List<Publication> unfilteredPubListForHistogramValues) {
         ColumnStats publicationTypeStat = new ColumnStats("Pub Type", true, false, true, true);
         ColumnValues columnValTypeValues = new ColumnValues();
         columnValTypeValues.setTotalNumber(publicationMap.size());
@@ -568,7 +566,7 @@ public class StatisticPublicationService {
         return publicationTypeStat;
     }
 
-    private ColumnStats getColumnStatsPubAuthor(Map<Publication, List<Fish>> publicationMap, StatisticRow row) {
+    private <T extends ZdbID> ColumnStats getColumnStatsPubAuthor(Map<Publication, List<T>> publicationMap, StatisticRow row) {
         ColumnStats publicationNameStat = new ColumnStats("Pub Short Author", true, false, true, false);
         ColumnValues columnValValues = new ColumnValues();
         columnValValues.setTotalNumber(publicationMap.size());
@@ -652,8 +650,12 @@ public class StatisticPublicationService {
 
         Map<Publication, List<Antibody>> publicationMap = new HashMap<>(getAntibodyRepository().getAntibodiesFromAllPublications());
 
-        // filter records
 
+        List<Publication> unfilteredPubList = new ArrayList<>(publicationMap.keySet());
+        // filter on Publication
+        filterOnPublication(pagination, publicationMap);
+
+        // filter records
         publicationMap.keySet().forEach(key -> {
             List<Antibody> list = publicationMap.get(key);
             if (list != null) {
@@ -698,9 +700,11 @@ public class StatisticPublicationService {
                 collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 
         StatisticRow row = new StatisticRow();
-        ColumnStats publicationStat = new ColumnStats("Publication", true, false, false, false);
-        ColumnValues columnValues = getColumnValuesUberEntity(publicationMap);
-        row.put(publicationStat, columnValues);
+        ColumnStats publicationStat = getColumnStatsPublication(publicationMap, row);
+
+        ColumnStats publicationNameStat = getColumnStatsPubAuthor(publicationMap, row);
+
+        ColumnStats publicationTypeStat = getColumnStatsPubType(publicationMap, row, unfilteredPubList);
 
 /*
         ColumnStats publicationNameStat = new ColumnStats("Pub Short Author", true, false, true, false);
@@ -780,12 +784,14 @@ public class StatisticPublicationService {
             colValues.setValue(pubEntry.getKey().getZdbID());
             statRow.put(publicationStat, colValues);
 
-/*
             ColumnValues colPubNameValues = new ColumnValues();
             colPubNameValues.setValue(pubEntry.getKey().getShortAuthorList());
             statRow.put(publicationNameStat, colPubNameValues);
 
-*/
+            ColumnValues colPubTypeValues = new ColumnValues();
+            colPubTypeValues.setValue(pubEntry.getKey().getType().getDisplay());
+            statRow.put(publicationTypeStat, colPubTypeValues);
+
             ColumnValues colValueAnti = new ColumnValues();
             colValueAnti.setTotalNumber(pubEntry.getValue());
             statRow.put(antibodyStat, colValueAnti);
