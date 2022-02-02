@@ -209,7 +209,8 @@ $username = "";
 $password = "";
 
 ### open a handle on the db
-$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+my $dbhost = "<!--|PGHOST|-->";
+$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
     or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
 $cur_orth_ncbi = $dbh->prepare("select ortho_zdb_id, ortho_other_species_ncbi_gene_id from ortholog where ortho_other_species_taxid = 9606;");

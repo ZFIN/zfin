@@ -151,7 +151,8 @@ system("/bin/chmod ug+w <!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCen
 #  Open Database.
 my $dbname = "<!--|DB_NAME|-->";
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/ZIRC/";
-$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+my $dbhost = "<!--|PGHOST|-->";
+$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
     or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
 # Now do the work.
@@ -164,7 +165,8 @@ $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $passwor
 $dbh->commit();
 $dbh->disconnect();
 
-$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+my $dbhost = "<!--|PGHOST|-->";
+$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
     or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
 try {

@@ -80,7 +80,8 @@ $username = "";
 $password = "";
 
 ### open a handle on the db
-$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+my $dbhost = "<!--|PGHOST|-->";
+$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
     or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
   
 $cur = $dbh->prepare("select distinct dblink_acc_num, dblink_linked_recid
