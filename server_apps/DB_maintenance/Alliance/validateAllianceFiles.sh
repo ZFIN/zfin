@@ -1,97 +1,76 @@
 #!/bin/bash
 
-if [ -f "authorization.txt" ]
-then
-  # load the authorization token from external file
-  source authorization.txt
-else
-  echo "No authorization.txt file found"
-fi
+main() {
+  loadConfig $1 $2
 
-endpoint=validate
+  validateFile ZFIN_1.0.1.4_basicGeneInformation.json.gz BGI
+  validateFile ZFIN_1.0.1.4_allele.json.gz ALLELE
+  validateFile ZFIN_1.0.1.4_STR.json.gz SQTR
+  validateFile ZFIN_1.0.1.4_disease.daf.json.gz DAF
+  validateFile ZFIN_1.0.1.4_Construct.json.gz CONSTRUCT
+  validateFile ZFIN_1.0.1.4_HTP_Dataset.json.gz HTPDATASET
+  validateFile ZFIN_1.0.1.4_HTP_DatasetSample.json.gz HTPDATASAMPLE
+  validateFile ZFIN_1.0.1.4_phenotype.json.gz PHENOTYPE
+  validateFile ZFIN_1.0.1.4_AGM.json.gz AGM
+  validateFile ZFIN_1.0.1.4_expression.json.gz EXPRESSION
+  validateFile ZFIN_1.0.1.4_variant.json.gz VARIATION
+  validateFile zfin_genes.gff3 GFF
+  validateFile ZFIN_1.0.1.4_Reference.json.gz REFERENCE
+  validateFile ZFIN_1.0.1.4_Resource.json.gz RESOURCE
+  validateFile ZFIN_1.0.1.4_ReferenceExchange.json.gz REF-EXCHANGE
 
-echo "release version: "$2
+  exit $BUILD_STATUS_CODE
+}
 
-if [ "$1" == "true" ]; then
-      endpoint=submit
-      echo "submit files"
-fi
-echo $endpoint
+loadConfig() {
+  if [ -f "authorization.txt" ]
+  then
+    # load the AUTHORIZATION token from external file
+    source authorization.txt
+  else
+    echo "No authorization.txt file found"
+  fi
 
-echo "Validating BGI file..."
-echo "curl --silent -H \"Authorization: Bearer AUTHORIZATION \" -X POST \"https://fms.alliancegenome.org/api/data/$endpoint\" -F \"$2_BGI_ZFIN=@ZFIN_1.0.1.4_basicGeneInformation
-.json.gz\""
-curl --silent -H "Authorization: Bearer $AUTHORIZATION" -X POST "https://fms.alliancegenome.org/api/data/$endpoint" -F "$2_BGI_ZFIN=@ZFIN_1.0.1.4_basicGeneInformation.json.gz"
-echo ""
+  ENDPOINT=validate
+  RELEASE_VERSION=$2
+  BUILD_STATUS_CODE=0
+  BASE_URL="https://fms.alliancegenome.org"
+#  FOR LOCAL TESTING:
+#  BASE_URL="http://localhost:3000"
 
-echo ""
-echo "Validating Allele file..."
-echo "curl --silent -H \"Authorization: Bearer AUTHORIZATION\" -X POST \"https://fms.alliancegenome.org/api/data/$endpoint\" -F \"$2_ALLELE_ZFIN=@ZFIN_1.0.1.4_allele.json.gz\""
-curl --silent -H "Authorization: Bearer $AUTHORIZATION" -X POST "https://fms.alliancegenome.org/api/data/$endpoint" -F "$2_ALLELE_ZFIN=@ZFIN_1.0.1.4_allele.json.gz"
-echo ""
-echo ""
-echo "Validating STR file..."
-echo "curl --silent -H \"Authorization: Bearer AUTHORIZATION\" -X POST \"https://fms.alliancegenome.org/api/data/$endpoint\" -F \"$2_SQTR_ZFIN=@ZFIN_1.0.1.4_STR.json.gz\""
-curl --silent -H "Authorization: Bearer $AUTHORIZATION" -X POST "https://fms.alliancegenome.org/api/data/$endpoint" -F "$2_SQTR_ZFIN=@ZFIN_1.0.1.4_STR.json.gz"
-echo ""
-echo ""
-echo "Validating Disease file..."
-echo "curl --silent -H \"Authorization: Bearer AUTHORIZATION\" -X POST \"https://fms.alliancegenome.org/api/data/$endpoint\" -F \"$2_DAF_ZFIN=@ZFIN_1.0.1.4_disease.daf.json.gz\""
-curl --silent -H "Authorization: Bearer $AUTHORIZATION" -X POST "https://fms.alliancegenome.org/api/data/$endpoint" -F "$2_DAF_ZFIN=@ZFIN_1.0.1.4_disease.daf.json.gz"
-echo ""
-echo ""
-echo "Validating Construct file..."
-echo "curl --silent -H \"Authorization: Bearer AUTHORIZATION\" -X POST \"https://fms.alliancegenome.org/api/data/$endpoint\" -F \"$2_CONSTRUCT_ZFIN=@ZFIN_1.0.1.4_Construct.json.gz\""
-curl --silent -H "Authorization: Bearer $AUTHORIZATION" -X POST "https://fms.alliancegenome.org/api/data/$endpoint" -F "$2_CONSTRUCT_ZFIN=@ZFIN_1.0.1.4_Construct.json.gz"
-echo ""
-echo ""
-echo "Validating HTP Data Set file..."
-echo "curl --silent -H \"Authorization: Bearer AUTHORIZATION\" -X POST \"https://fms.alliancegenome.org/api/data/$endpoint\" -F \"$2_HTPDATASET_ZFIN=@ZFIN_1.0.1.4_HTP_Dataset.json.gz\""
-curl --silent -H "Authorization: Bearer $AUTHORIZATION" -X POST "https://fms.alliancegenome.org/api/data/$endpoint" -F "$2_HTPDATASET_ZFIN=@ZFIN_1.0.1.4_HTP_Dataset.json.gz"
-echo ""
-echo ""
-echo "Validating HTP Data Sample file..."
-echo "curl --silent -H \"Authorization: Bearer AUTHORIZATION\" -X POST \"https://fms.alliancegenome.org/api/data/$endpoint\" -F \"$2_HTPDATASAMPLE_ZFIN=@ZFIN_1.0.1.4_HTP_DatasetSample.json.gz\""
-curl --silent -H "Authorization: Bearer $AUTHORIZATION" -X POST "https://fms.alliancegenome.org/api/data/$endpoint" -F "$2_HTPDATASAMPLE_ZFIN=@ZFIN_1.0.1.4_HTP_DatasetSample.json.gz"
-echo ""
-echo ""
-echo "Validating Phenotype file..."
-echo "curl --silent -H \"Authorization: Bearer AUTHORIZATION\" -X POST \"https://fms.alliancegenome.org/api/data/$endpoint\" -F \"$2_PHENOTYPE_ZFIN=@ZFIN_1.0.1.4_phenotype.json.gz\""
-curl --silent -H "Authorization: Bearer $AUTHORIZATION" -X POST "https://fms.alliancegenome.org/api/data/$endpoint" -F "$2_PHENOTYPE_ZFIN=@ZFIN_1.0.1.4_phenotype.json.gz"
-echo ""
-echo ""
-echo "Validating AGM / FISH file..."
-echo "curl --silent -H \"Authorization: Bearer AUTHORIZATION\" -X POST \"https://fms.alliancegenome.org/api/data/$endpoint\" -F \"$2_AGM_ZFIN=@ZFIN_1.0.1.4_AGM.json.gz\""
-curl --silent -H "Authorization: Bearer $AUTHORIZATION" -X POST "https://fms.alliancegenome.org/api/data/$endpoint" -F "$2_AGM_ZFIN=@ZFIN_1.0.1.4_AGM.json.gz"
-echo ""
-echo ""
-echo "Validating Expression file..."
-echo "curl --silent -H \"Authorization: Bearer AUTHORIZATION\" -X POST \"https://fms.alliancegenome.org/api/data/$endpoint\" -F \"$2_EXPRESSION_ZFIN=@ZFIN_1.0.1.4_expression.json.gz\""
-curl --silent -H "Authorization: Bearer $AUTHORIZATION" -X POST "https://fms.alliancegenome.org/api/data/$endpoint" -F "$2_EXPRESSION_ZFIN=@ZFIN_1.0.1.4_expression.json.gz"
-echo ""
-echo ""
-echo "Validating Variant file..."
-echo "curl --silent -H \"Authorization: Bearer AUTHORIZATION\" -X POST \"https://fms.alliancegenome.org/api/data/$endpoint\" -F \"$2_VARIATION_ZFIN=@ZFIN_1.0.1.4_variant.json.gz\""
-curl --silent -H "Authorization: Bearer $AUTHORIZATION" -X POST "https://fms.alliancegenome.org/api/data/$endpoint" -F "$2_VARIATION_ZFIN=@ZFIN_1.0.1.4_variant.json.gz"
-echo ""
-echo ""
-echo "Validating GFF3 file..."
-echo "curl --silent -H \"Authorization: Bearer AUTHORIZATION\" -X POST \"https://fms.alliancegenome.org/api/data/$endpoint\" -F \"$2_GFF_ZFIN=@zfin_genes.gff3\""
-curl --silent -H "Authorization: Bearer $AUTHORIZATION" -X POST "https://fms.alliancegenome.org/api/data/$endpoint" -F "$2_GFF_ZFIN=@zfin_genes.gff3"
-echo ""
-echo ""
-echo "Validating Reference file..."
-echo "curl --silent -H \"Authorization: Bearer AUTHORIZATION\" -X POST \"https://fms.alliancegenome.org/api/data/$endpoint\" -F \"$2_REFERENCE_ZFIN=@ZFIN_1.0.1.4_Reference.json.gz\""
-curl --silent -H "Authorization: Bearer $AUTHORIZATION" -X POST "https://fms.alliancegenome.org/api/data/$endpoint" -F "$2_REFERENCE_ZFIN=@ZFIN_1.0.1.4_Reference.json.gz"
-echo ""
-echo ""
-echo "Validating Resource file..."
-echo "curl --silent -H \"Authorization: Bearer AUTHORIZATION\" -X POST \"https://fms.alliancegenome.org/api/data/$endpoint\" -F \"$2_RESOURCE_ZFIN=@ZFIN_1.0.1.4_Resource.json.gz\""
-curl --silent -H "Authorization: Bearer $AUTHORIZATION" -X POST "https://fms.alliancegenome.org/api/data/$endpoint" -F "$2_RESOURCE_ZFIN=@ZFIN_1.0.1.4_Resource.json.gz"
-echo ""
-echo ""
-echo "Validating Reference-Exchange file..."
-echo "curl --silent -H \"Authorization: Bearer AUTHORIZATION\" -X POST \"https://fms.alliancegenome.org/api/data/$endpoint\" -F \"$2_REF-EXCHANGE_ZFIN=@ZFIN_1.0.1.4_ReferenceExchange.json.gz\""
-curl --silent -H "Authorization: Bearer $AUTHORIZATION" -X POST "https://fms.alliancegenome.org/api/data/$endpoint" -F "$2_REF-EXCHANGE_ZFIN=@ZFIN_1.0.1.4_ReferenceExchange.json.gz"
-echo ""
- 
+  if [ "$1" == "true" ]; then
+        ENDPOINT=submit
+        echo "submit files"
+  fi
+
+  echo "endpoint: $ENDPOINT"
+  echo "release version: $RELEASE_VERSION"
+}
+
+validateFile() {
+  JSON_FILENAME=$1
+  FIELD_NAME=$2
+  FRIENDLY_FILENAME=$JSON_FILENAME
+  TEMP_RESPONSE_FILE=/tmp/agr_upload_response.txt
+
+  #Validate file (or submit)
+  echo ""
+  echo "Validating $FRIENDLY_FILENAME file..."
+  echo "curl --silent -H \"Authorization: Bearer AUTHORIZATION\" -X POST \"$BASE_URL/api/data/$ENDPOINT\" -F \"${RELEASE_VERSION}_${FIELD_NAME}_ZFIN=@${JSON_FILENAME}\""
+  curl --silent -H "Authorization: Bearer $AUTHORIZATION" -X POST "$BASE_URL/api/data/$ENDPOINT" -F "${RELEASE_VERSION}_${FIELD_NAME}_ZFIN=@${JSON_FILENAME}" | tee $TEMP_RESPONSE_FILE
+
+  #Check server response for failure
+  #If server set response code to an error status code in the event of status:failed, we could get curl exit code, but it currently sends back a 200
+  grep -qv '"status":"failed"' $TEMP_RESPONSE_FILE
+  EXIT_CODE=$?
+  rm $TEMP_RESPONSE_FILE
+
+  #Handle error if found
+  if [ $EXIT_CODE -ne 0 ]; then
+      echo "ERROR: Failure response from server on $FRIENDLY_FILENAME file"
+      BUILD_STATUS_CODE=$EXIT_CODE
+  fi
+
+}
+
+main $1 $2
