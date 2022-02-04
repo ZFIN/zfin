@@ -6,6 +6,7 @@
 <c:set var="MARKER_RELATIONSHIPS" value="Marker Relationships"/>
 <c:set var="SEQUENCES" value="Sequences"/>
 <c:set var="ORTHOLOGY" value="Orthology"/>
+<c:set var="CHROMOSOME_INFORMATION" value="Chromosome Information"/>
 
 <z:dataPage sections="${[NOMENCLATURE, RESOURCES, NOTES, MARKER_RELATIONSHIPS, SEQUENCES, ORTHOLOGY]}">
     <z:dataManagerDropdown>
@@ -41,6 +42,13 @@
              data-marker-id="${gene.zdbID}"
              data-relationship-type-data='${markerRelationshipTypes}'>
         </div>
+    </z:section>
+
+    <z:section title="${CHROMOSOME_INFORMATION}">
+        <div class="__react-root"
+             id="MarkerEditChromosomeInformation"
+             data-marker-id="${gene.zdbID}"
+             ></div>
     </z:section>
 
     <z:section title="${SEQUENCES}">
