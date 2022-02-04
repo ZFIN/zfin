@@ -4,6 +4,7 @@ import org.apache.commons.collections.ListUtils;
 import org.hibernate.Query;
 import org.hibernate.Transaction;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 
 import java.io.*;
@@ -76,7 +77,8 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
 
     private void generateFixes(List<NamingIssuesReportRow> rows) {
         for (NamingIssuesReportRow row : rows) {
-            if (row.getIssueCategory() != NamingIssuesReportRow.IssueCategory.UNKNOWN) {
+            if (row.getIssueCategory() != NamingIssuesReportRow.IssueCategory.UNKNOWN &&
+                    StringUtils.isNotEmpty(row.getComputedDisplayName().strip())) {
                 String sql = String.format("UPDATE genotype SET geno_display_name = '%s' where geno_display_name = '%s' and geno_zdb_id = '%s';",
                         row.getComputedDisplayName(), row.getDisplayName(), row.getId());
                 row.setSqlFix(sql);
