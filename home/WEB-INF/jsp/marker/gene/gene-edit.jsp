@@ -47,6 +47,7 @@
     <z:section title="${CHROMOSOME_INFORMATION}">
         <div class="__react-root"
              id="MarkerEditChromosomeInformation"
+             data-type="Chromosome Information"
              data-marker-id="${gene.zdbID}"
              ></div>
     </z:section>
