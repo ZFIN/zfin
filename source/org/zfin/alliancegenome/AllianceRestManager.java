@@ -16,4 +16,8 @@ public class AllianceRestManager {
     public static DiseaseAnnotationRESTInterfaceAlliance getDiseaseAnnotationEndpoints() {
         return RestProxyFactory.createProxy(DiseaseAnnotationRESTInterfaceAlliance.class, path, config);
     }
+
+    public static AgmRESTInterfaceAlliance getAgmEndpoints() {
+        return RestProxyFactory.createProxy(AgmRESTInterfaceAlliance.class, path, config);
+    }
 }
