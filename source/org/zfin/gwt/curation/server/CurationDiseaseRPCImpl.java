@@ -18,6 +18,7 @@ import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.mutant.*;
 import org.zfin.mutant.service.DiseaseAnnotationService;
+import org.zfin.mutant.service.FishService;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 
@@ -374,8 +375,8 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
 
         if (getMutantRepository().createFish(fish, publication)) {
             report.addMessage("created new fish " + fish.getHandle());
-            // ToDO: send to Alliance
-
+            // send to Alliance
+            FishService.submitFishToAlliance(fish);
         } else {
             report.addMessage("imported fish " + fish.getHandle());
         }
