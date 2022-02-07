@@ -20,7 +20,7 @@ public class AbstractScriptWrapper {
     //protected static ApplicationContext context = new FileSystemXmlApplicationContext("C:\\projects\\zfin\\mainline\\server_apps\\data_transfer\\LoadOntology\\spring-configuration.xml");
     protected CronJobUtil cronJobUtil;
 
-    protected void initAll() {
+    public void initAll() {
         initProperties();
         initDatabase();
     }
