@@ -307,7 +307,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                     expcond.setNcbiTaxonId(condition.getTaxaonymTerm().getOboID());
                     conditionStatement = conditionStatement + " " + condition.getTaxaonymTerm().getTermName();
                 }
-                expcond.setConditionClassId(condition.getZecoTerm().getOboID());
+                populateConditionClassId(expcond, condition);
                 expcond.setConditionStatement(conditionStatement);
                 expconds.add(expcond);
             }
@@ -315,6 +315,39 @@ public class DiseaseInfo extends AbstractScriptWrapper {
 
         }
         return relation;
+    }
+
+    // ToDo: This list should be a slim in ZECO to identify those high-level terms.
+    private static final List<String> highLevelConditionTerms = new ArrayList<>(18);
+
+    static {
+        highLevelConditionTerms.add("ZECO:0000101");
+        highLevelConditionTerms.add("ZECO:0000103");
+        highLevelConditionTerms.add("ZECO:0000104");
+        highLevelConditionTerms.add("ZECO:0000105");
+        highLevelConditionTerms.add("ZECO:0000111");
+        highLevelConditionTerms.add("ZECO:0000112");
+        highLevelConditionTerms.add("ZECO:0000113");
+        highLevelConditionTerms.add("ZECO:0000131");
+        highLevelConditionTerms.add("ZECO:0000140");
+        highLevelConditionTerms.add("ZECO:0000143");
+        highLevelConditionTerms.add("ZECO:0000146");
+        highLevelConditionTerms.add("ZECO:0000154");
+        highLevelConditionTerms.add("ZECO:0000160");
+        highLevelConditionTerms.add("ZECO:0000182");
+        highLevelConditionTerms.add("ZECO:0000208");
+        highLevelConditionTerms.add("ZECO:0000222");
+        highLevelConditionTerms.add("ZECO:0000229");
+        highLevelConditionTerms.add("ZECO:0000252");
+    }
+
+    private void populateConditionClassId(ExperimentConditionDTO expcond, ExperimentCondition condition) {
+        String oboID = condition.getZecoTerm().getOboID();
+        if (highLevelConditionTerms.contains(oboID)) {
+            expcond.setConditionClassId(oboID);
+        } else {
+            expcond.setConditionId(oboID);
+        }
     }
 
     public EvidenceDTO getEvidenceDTO(Publication publication, List<String> evidences) {
