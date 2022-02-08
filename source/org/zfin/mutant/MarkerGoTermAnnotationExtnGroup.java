@@ -1,12 +1,14 @@
 package org.zfin.mutant;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
+ *
  */
 public class MarkerGoTermAnnotationExtnGroup implements Serializable {
-private  Long id;
+    private Long id;
     private MarkerGoTermEvidence mgtaegMarkerGoEvidence;
 
     private Set<MarkerGoTermAnnotationExtn> mgtAnnoExtns;
@@ -35,6 +37,12 @@ private  Long id;
         this.mgtAnnoExtns = mgtAnnoExtns;
     }
 
+    public void addMgtAnnoExtns(MarkerGoTermAnnotationExtn mgtAnnoExtn) {
+        if (this.mgtAnnoExtns == null)
+            this.mgtAnnoExtns = new HashSet<>();
+        this.mgtAnnoExtns.add(mgtAnnoExtn);
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -42,7 +50,6 @@ private  Long id;
         if (o == null || getClass() != o.getClass()) return false;
 
         MarkerGoTermAnnotationExtnGroup that = (MarkerGoTermAnnotationExtnGroup) o;
-
 
 
         return true;
