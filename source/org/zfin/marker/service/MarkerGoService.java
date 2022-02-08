@@ -183,18 +183,18 @@ public class MarkerGoService {
                     GeneOntologyAnnotationTableRow row = new GeneOntologyAnnotationTableRow();
                     SolrDocument firstInGroup = group.getResult().get(0);
                     String id = (String) firstInGroup.getFieldValue(FieldName.ID.getName());
-                    MarkerGoTermEvidence groupEntry = repository.getMarkerGoTermEvidenceByZdbID(id);
-                    if (groupEntry != null) {
+                    MarkerGoTermEvidence markerGoTermEvidence = repository.getMarkerGoTermEvidenceByZdbID(id);
+                    if (markerGoTermEvidence != null) {
                         row.setRowKey(group.getGroupValue());
-                        row.setOntology(groupEntry.getGoTerm().getOntology().getCommonName().replace("GO: ", ""));
-                        row.setQualifier(Objects.toString(groupEntry.getFlag(), ""));
-                        row.setTerm(groupEntry.getGoTerm());
-                        row.setEvidenceCode(groupEntry.getEvidenceCode());
-                        row.setInferenceLinks(groupEntry.getInferredFrom().stream()
+                        row.setOntology(markerGoTermEvidence.getGoTerm().getOntology().getCommonName().replace("GO: ", ""));
+                        row.setQualifier(Objects.toString(markerGoTermEvidence.getFlag(), ""));
+                        row.setTerm(markerGoTermEvidence.getGoTerm());
+                        row.setEvidenceCode(markerGoTermEvidence.getEvidenceCode());
+                        row.setInferenceLinks(markerGoTermEvidence.getInferredFrom().stream()
                                 .map(InferenceGroupMember::getInferredFrom)
                                 .map(MarkerGoEvidencePresentation::generateInferenceLink)
                                 .collect(Collectors.toSet()));
-                        row.setAnnotationExtensions(groupEntry.getAnnotationExtensions().stream()
+                        row.setAnnotationExtensions(markerGoTermEvidence.getAnnotationExtensions().stream()
                                 .map(MarkerGoEvidencePresentation::generateAnnotationExtensionLink)
                                 .collect(Collectors.toSet()));
                         Set<Publication> publications = group.getResult().stream()
