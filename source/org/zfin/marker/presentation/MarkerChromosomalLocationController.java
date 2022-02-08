@@ -45,7 +45,10 @@ public class MarkerChromosomalLocationController {
     @RequestMapping(value = "/{zdbID}/chromosomal-location", method = RequestMethod.GET)
     public ChromosomalLocationBean getChromosomalLocationForMarker(@PathVariable String zdbID) {
         ChromosomalLocationBean chromosomalLocation = new ChromosomalLocationBean();
+        chromosomalLocation.setAssembly("GRCz10");
         chromosomalLocation.setChromosome("1");
+        chromosomalLocation.setStartLocation("23123123");
+        chromosomalLocation.setEndLocation("23123456");
         return chromosomalLocation;
     }
 
@@ -60,9 +63,10 @@ public class MarkerChromosomalLocationController {
 
         System.out.println("TODO: implement adding chromosomal location information");
 
-        ChromosomalLocationBean chromosomalLocationBean = new ChromosomalLocationBean();
-        chromosomalLocationBean.setChromosome("2");
-        return chromosomalLocationBean;
+//        ChromosomalLocationBean chromosomalLocationBean = new ChromosomalLocationBean();
+//        chromosomalLocationBean.setChromosome("2");
+        chromosomalLocation.setZdbID("ZDB-TEST-9999999999");
+        return chromosomalLocation;
     }
 
     @ResponseBody
@@ -74,7 +78,9 @@ public class MarkerChromosomalLocationController {
         System.out.println("TODO: implement editing chromosomal location information");
 
         ChromosomalLocationBean chromosomalLocationBean = new ChromosomalLocationBean();
+
         chromosomalLocationBean.setChromosome("3");
+        chromosomalLocationBean.setZdbID("ZDB-TEST-12341234");
         return chromosomalLocationBean;
     }
 

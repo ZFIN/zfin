@@ -13,37 +13,60 @@ import NoData from '../components/NoData';
 import MarkerEditSequences from './MarkerEditSequences';
 
 
-const MarkerEditChromosomeInformation = ({markerId, type, group = 'gene edit addable chromosome information', groupDB = 'gene edit addable chromosome information'}) => {
+const MarkerEditChromosomalLocation = ({markerId, type, group = 'gene edit addable chromosome information', groupDB = 'gene edit addable chromosome information'}) => {
     const [error, setError] = useState('');
     const [deleting, setDeleting] = useState('');
     const [modalData, setModalData] = useState(null);
+    // const isEdit = modalData && modalData.zdbID;
+    const isEdit = false;
+    const [liveData, setLiveData] = useState([]); //instead of useFetch (liveData=suppliers in markerEditSuppliers.js)
     const hdr = type;
     const assemblies = ['GRCz11', 'GRCz10', 'Zv9'];
-    const [liveData, setLiveData] = useState([]); //instead of useFetch (liveData=suppliers in markerEditSuppliers.js)
+
+    const setLiveDataProxy = (val) => {
+        console.log('liveDataProxy');
+        console.log(val);
+        setLiveData(val);
+    };
+
+    const handleOnSuccess = (val) => {
+        console.log("onSuccess: val");
+        console.log(val);
+        setModalData(null);
+    }
 
     const {
+        pushFieldValue,
+        removeFieldValue,
         values,
         modalProps
     } = useAddEditDeleteForm({
-        addUrl: `/action/marker/${markerId}/chromosomeInformation`,
-        onSuccess: () => setModalData(null),
+        addUrl: `/action/marker/${markerId}/chromosomal-location`,
+        editUrl: isEdit && `/action/marker/${markerId}/chromosomal-location/todoEdit`,
+        deleteUrl: `/action/marker/${markerId}/chromosomal-location/todoDelete`,
+        onSuccess: handleOnSuccess,
         items: liveData,
-        setItems: setLiveData,
+        setItems: setLiveDataProxy,
         defaultValues: modalData,
+        isEdit
+        // validate: values => true //TODO: validate
     });
+
+    console.log("modalProps", modalProps);
+    console.log("values", values);
 
     const handleDeleteClick = async (event, item) => {
         console.log('not impl');
     }
 
-    const handleAddClick = () => {
-        setModalData({
-            name: '',
-        });
-    }
+    const handleAddClick = (a,b) => {
+        console.log('add click');
 
-    if (!liveData) {
-        return null;
+        console.log(a);
+        // console.log(b);
+        console.log(values);
+        console.log(liveData);
+        setModalData({});
     }
 
     return (
@@ -54,7 +77,7 @@ const MarkerEditChromosomeInformation = ({markerId, type, group = 'gene edit add
                 {liveData.map(item => {
                     return (
                         <li key={item.zdbID}>
-                            <a href={`/${item.zdbID}`}>{item.name}</a>
+                            <a href={`/${item.zdbID}`}>{item.chromosome}</a>
                             {deleting === item.zdbID ?
                                 <LoadingSpinner /> :
                                 <a className='show-on-hover px-2' href='#' onClick={e => handleDeleteClick(e, item)}>
@@ -69,7 +92,7 @@ const MarkerEditChromosomeInformation = ({markerId, type, group = 'gene edit add
             {error && <div className='text-danger'>{error}</div>}
 
             <button type='button' className='btn btn-link px-0' onClick={handleAddClick}>Add</button>
-
+            <div><span>isEdit:</span>{modalProps.isEdit}</div>
             <AddEditDeleteModal {...modalProps} header={hdr}>
                 {values &&
                     <>
@@ -77,8 +100,8 @@ const MarkerEditChromosomeInformation = ({markerId, type, group = 'gene edit add
                             labelClassName='col-md-3'
                             inputClassName='col-md-9'
                             label='Assembly'
-                            id='assembly-id'
-                            field='assemblyId'
+                            id='assembly'
+                            field='assembly'
                             tag='select'
                         >
                             <option value=''/>
@@ -120,10 +143,10 @@ const MarkerEditChromosomeInformation = ({markerId, type, group = 'gene edit add
     );
 };
 
-MarkerEditChromosomeInformation.propTypes = {
+MarkerEditChromosomalLocation.propTypes = {
     markerId: PropTypes.string,
     group: PropTypes.string,
     groupDB: PropTypes.string,
 };
 
-export default MarkerEditChromosomeInformation;
+export default MarkerEditChromosomalLocation;

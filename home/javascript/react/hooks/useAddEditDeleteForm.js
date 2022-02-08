@@ -20,20 +20,30 @@ export default function useAddEditDeleteForm({
         defaultValues,
         onSubmit: async (values) => {
             try {
+                console.log('try-error');
                 if (isEdit) {
                     const updated = await http.post(editUrl, values);
                     const updatedIdx = items.findIndex(item => item[itemKeyProp] === defaultValues[itemKeyProp]);
+                    console.log('try:A:');
                     setItems([
                         ...items.slice(0, updatedIdx),
                         updated,
                         ...items.slice(updatedIdx + 1)
                     ]);
                 } else {
+                    console.log('try:B:');
+                    console.log('try:B:values',values);
                     const added = await http.post(addUrl, values);
+                    console.log('try:C:');
+                    console.log('try:C:setItems', setItems);
                     setItems([...items, added]);
+                    console.log('try:C:items,added', items, added);
                 }
+                console.log('try:D:onSuccess', onSuccess);
                 onSuccess();
             } catch (error) {
+                console.log('catch-error');
+                console.log('error', error);
                 if (error.responseJSON && error.responseJSON.fieldErrors && error.responseJSON.fieldErrors.length > 0) {
                     error.responseJSON.fieldErrors.forEach(fieldError => {
                         // react-form gets a little confused when we set a fieldMeta with the field 'references'. We
