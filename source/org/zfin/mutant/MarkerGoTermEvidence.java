@@ -216,6 +216,12 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
         this.goTermAnnotationExtnGroup = goTermAnnotationExtnGroup;
     }
 
+    public void addGoTermAnnotationExtnGroup(MarkerGoTermAnnotationExtnGroup goTermAnnotationExtnGroup) {
+        if (this.goTermAnnotationExtnGroup == null)
+            this.goTermAnnotationExtnGroup = new HashSet<>();
+        this.goTermAnnotationExtnGroup.add(goTermAnnotationExtnGroup);
+    }
+
     public Set<NoctuaModel> getNoctuaModels() {
         return noctuaModels;
     }
@@ -383,9 +389,7 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
                 }
             }
         }
-
         return theseAnnotExtns;
-
     }
 
 
@@ -429,7 +433,7 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
         sb.append(", marker='").append(marker.getAbbreviation()).append('\'');
         sb.append(", evidenceCode='").append(evidenceCode.getName()).append('\'');
         sb.append(", flag='").append((flag != null ? flag.name() : "null ")).append('\'');
-        sb.append(", qualifierRelation='").append((qualifierRelation != null ? qualifierRelation.getTermName(): "null ")).append('\'');
+        sb.append(", qualifierRelation='").append((qualifierRelation != null ? qualifierRelation.getTermName() : "null ")).append('\'');
         sb.append(", source='").append(source.getZdbID()).append('\'');
         sb.append(", goTerm='").append(goTerm.getTermName()).append('\'');
         sb.append(", note='").append(note).append('\'');

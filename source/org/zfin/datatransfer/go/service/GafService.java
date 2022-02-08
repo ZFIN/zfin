@@ -27,7 +27,6 @@ import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.search.service.SolrService;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.sequence.MarkerDBLink;
@@ -134,7 +133,7 @@ public class GafService {
                 // for each gene, create an entry
                 for (Marker gene : genes) {
                     MarkerGoTermEvidence annotationToAdd = generateAnnotation(gafEntry, gene, gafOrganization);
-                   // System.out.println(annotationToAdd.getZdbID());
+                    // System.out.println(annotationToAdd.getZdbID());
                     if (annotationToAdd == null) {
                         throw new GafValidationError("Annotation to add is null for some reason for gene " + gafEntry, gafEntry);
                     }
@@ -290,7 +289,7 @@ public class GafService {
     public MarkerGoTermEvidence generateAnnotation(GafEntry gafEntry, Marker gene, GafOrganization gafOrganization)
             throws GafValidationError {
         // lookup GO annotation
-       // System.out.println(gafEntry.getInferences());
+        // System.out.println(gafEntry.getInferences());
         GenericTerm goTerm = getGoTerm(gafEntry);
 
         // find pubmed ID
@@ -407,15 +406,14 @@ public class GafService {
                     logger.debug("Invalid inference code[" + inference + "] " +
                             " for code " + goEvidenceCodeEnum.name() +
                             " and pub " + publicationZdbId + " "
-                            );
+                    );
 
-                }
-                else {
+                } else {
 
                     InferenceGroupMember inferenceGroupMember = new InferenceGroupMember();
                     inferenceGroupMember.setInferredFrom(inference);
                     inferredFrom.add(inferenceGroupMember);
-                 }
+                }
             }
             markerGoTermEvidence.setInferredFrom(inferredFrom);
 
@@ -446,22 +444,19 @@ public class GafService {
             }
 
 
-            Set<String> annotationExtnSet = new HashSet<>();
-            annotationExtnSet.addAll(Arrays.asList(annotationExtns.split("\\|")));
+            Set<String> annotationExtnSet = new HashSet<>(Arrays.asList(annotationExtns.split("\\|")));
 
             for (String annoExtn : annotationExtnSet) {
                 MarkerGoTermAnnotationExtnGroup mgtAnnoExtnGroup = new MarkerGoTermAnnotationExtnGroup();
                 if (annoExtn.contains(",")) {
-                    Set<String> eachAnnotExtn = new HashSet<>();
-                    eachAnnotExtn.addAll(Arrays.asList(annoExtn.split("\\,")));
-
+                    Set<String> eachAnnotExtn = new HashSet<>(Arrays.asList(annoExtn.split(",")));
                     for (String annotExtn : eachAnnotExtn) {
                         saveAnnoExtns(annotExtn, mgtAnnoExtnGroup, gafEntry, markerGoTermEvidence);
                     }
-
                 } else {
                     saveAnnoExtns(annoExtn, mgtAnnoExtnGroup, gafEntry, markerGoTermEvidence);
                 }
+                markerGoTermEvidence.addGoTermAnnotationExtnGroup(mgtAnnoExtnGroup);
             }
         }
     }
@@ -469,8 +464,6 @@ public class GafService {
     protected void saveAnnoExtns(String annotationExtensionString, MarkerGoTermAnnotationExtnGroup mgtAnnoExtnGroup, GafEntry gafEntry, MarkerGoTermEvidence markerGoTermEvidence)
             throws GafValidationError {
 
-        Set<MarkerGoTermAnnotationExtnGroup> goTermAnnotExtnGroup = new HashSet<>();
-        Set<MarkerGoTermAnnotationExtn> goTermAnnotExtn = new HashSet<>();
         List<Ontology> ontologies = new ArrayList<>(2);
         ontologies.add(Ontology.ZFIN_RO);
         ontologies.add(Ontology.GO_QUALIFIER);
@@ -494,7 +487,7 @@ public class GafService {
             int colonIndex = identifierText.indexOf(":");
             mgtAnnoExtn.setIdentifierTerm(identifierText.substring(colonIndex + 1, identifierText.length()));
         }
-        if ((identifierText.startsWith("CL") || (identifierText.startsWith("UBERON")|| (identifierText.startsWith("ZFA"))))) {
+        if ((identifierText.startsWith("CL") || (identifierText.startsWith("UBERON") || (identifierText.startsWith("ZFA"))))) {
             int colonIndex = identifierText.indexOf(":");
             String annotExtnPrefix = identifierText.substring(0, colonIndex);
             GenericTerm annotExtnTerm = ontologyRepository.getTermByOboID(identifierText);
@@ -503,10 +496,7 @@ public class GafService {
                 mgtAnnoExtn.setIdentifierTerm(annotExtnTerm.getZdbID());
             }
         }
-        goTermAnnotExtn.add(mgtAnnoExtn);
-        mgtAnnoExtnGroup.setMgtAnnoExtns(goTermAnnotExtn);
-        goTermAnnotExtnGroup.add(mgtAnnoExtnGroup);
-        markerGoTermEvidence.setGoTermAnnotationExtnGroup(goTermAnnotExtnGroup);
+        mgtAnnoExtnGroup.addMgtAnnoExtns(mgtAnnoExtn);
     }
 
 
@@ -551,23 +541,22 @@ public class GafService {
                 relationName = gafEntry.getQualifier();
             }
 
-            if (relationName.equals("contributes_to")){
-                relationName=GoEvidenceQualifier.CONTRIBUTES_TO.toString();
+            if (relationName.equals("contributes_to")) {
+                relationName = GoEvidenceQualifier.CONTRIBUTES_TO.toString();
             }
-            if (relationName.equals("colocalizes_with")){
-                relationName=GoEvidenceQualifier.COLOCALIZES_WITH.toString();
+            if (relationName.equals("colocalizes_with")) {
+                relationName = GoEvidenceQualifier.COLOCALIZES_WITH.toString();
             }
-            if (relationName.contains("positive")){
-                relationName=relationName.replace("_positive",",_positive");
+            if (relationName.contains("positive")) {
+                relationName = relationName.replace("_positive", ",_positive");
             }
-            if (relationName.contains("negative")){
-                relationName=relationName.replace("_negative",",_negative");
+            if (relationName.contains("negative")) {
+                relationName = relationName.replace("_negative", ",_negative");
             }
-            if (relationName.contains("RO:")||relationName.contains("BFO:")){
-                 relationTerm = RepositoryFactory.getOntologyRepository().getTermByOboID(relationName);
-            }
-            else {
-                 relationTerm = RepositoryFactory.getOntologyRepository().getTermByName(relationName, ontologies);
+            if (relationName.contains("RO:") || relationName.contains("BFO:")) {
+                relationTerm = RepositoryFactory.getOntologyRepository().getTermByOboID(relationName);
+            } else {
+                relationTerm = RepositoryFactory.getOntologyRepository().getTermByName(relationName, ontologies);
             }
 
             if (relationTerm == null) {
@@ -576,8 +565,7 @@ public class GafService {
 
                 return relationTerm;
             }
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -701,22 +689,19 @@ public class GafService {
     }
 
     protected Integer getPubMedId(String pubMedId) {
-        if (pubMedId.startsWith(PUBMED_PREFIX)&&pubMedId.contains("ZFIN")){
+        if (pubMedId.startsWith(PUBMED_PREFIX) && pubMedId.contains("ZFIN")) {
 
             int startZFIN = pubMedId.indexOf("|");
-            String pubMedStr= pubMedId.substring(0, startZFIN);
-            String pubMedIdStr=pubMedStr.substring(PUBMED_PREFIX.length());
+            String pubMedStr = pubMedId.substring(0, startZFIN);
+            String pubMedIdStr = pubMedStr.substring(PUBMED_PREFIX.length());
             return Integer.parseInt(pubMedIdStr.trim());
         }
         if (pubMedId.startsWith(PUBMED_PREFIX)) {
-            String pubMedIdStr=pubMedId.substring(PUBMED_PREFIX.length());
-           // return Integer.parseInt(pubMedId.trim().substring(PUBMED_PREFIX.length()));
-            if (pubMedIdStr.matches("\\d+"))
-            {
+            String pubMedIdStr = pubMedId.substring(PUBMED_PREFIX.length());
+            // return Integer.parseInt(pubMedId.trim().substring(PUBMED_PREFIX.length()));
+            if (pubMedIdStr.matches("\\d+")) {
                 return Integer.parseInt(pubMedIdStr.trim());
-            }
-            else
-            {
+            } else {
                 return null;
             }
         }
@@ -813,12 +798,11 @@ public class GafService {
             // InterPro:IPR000536|InterPro:IPR001628|InterPro:IPR008946
             if (gafEntry.getInferences() == null)
                 continue;
-          if (gafEntry.getInferences().contains("|")) {
-               withFieldPieces = gafEntry.getInferences().split("\\|");
-          }
-          else{
-              withFieldPieces = gafEntry.getInferences().split("\\,");
-          }
+            if (gafEntry.getInferences().contains("|")) {
+                withFieldPieces = gafEntry.getInferences().split("\\|");
+            } else {
+                withFieldPieces = gafEntry.getInferences().split("\\,");
+            }
 
             StringBuilder sb = new StringBuilder();
 
