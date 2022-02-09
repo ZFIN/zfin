@@ -11,6 +11,7 @@ import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.DataAlias;
 import org.zfin.infrastructure.DataNote;
+import org.zfin.mapping.GenomeLocation;
 import org.zfin.marker.*;
 import org.zfin.marker.fluorescence.FluorescentMarker;
 import org.zfin.marker.fluorescence.FluorescentProtein;
@@ -67,7 +68,7 @@ public interface MarkerRepository {
 
     Marker getMarkerByName(String name);
 
-    public List<Marker> getMarkersByZdbIdPrefix(String prefix);
+    List<Marker> getMarkersByZdbIdPrefix(String prefix);
 
     //Todo: should this move to another class?
 
@@ -503,6 +504,10 @@ public interface MarkerRepository {
     int getCrisprCount(String geneAbbrev);
 
     MarkerHistory getMarkerHistory(String zdbID);
+
+    GenomeLocation addGenomeLocation(GenomeLocation genomeLocation);
+    List<GenomeLocation> getGenomeLocation(String zdbID);
+    void deleteGenomeLocation(String zdbId);
 
     DBLink addDBLinkWithLenth(Marker marker, String accessionNumber, ReferenceDatabase refdb, String attributionZdbID, int length);
 

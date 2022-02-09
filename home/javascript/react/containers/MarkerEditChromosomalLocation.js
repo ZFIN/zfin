@@ -8,20 +8,31 @@ import PublicationInput from '../components/form/PublicationInput';
 import AddEditDeleteModal from '../components/AddEditDeleteModal';
 import AddEditList from '../components/AddEditList';
 import LoadingSpinner from '../components/LoadingSpinner';
-import { useForm } from 'react-form';
+import {useForm} from 'react-form';
 import NoData from '../components/NoData';
 import MarkerEditSequences from './MarkerEditSequences';
 
 
-const MarkerEditChromosomalLocation = ({markerId, type, group = 'gene edit addable chromosome information', groupDB = 'gene edit addable chromosome information'}) => {
+const MarkerEditChromosomalLocation = ({
+    markerId,
+    type,
+    group = 'gene edit addable chromosome information',
+    groupDB = 'gene edit addable chromosome information'
+}) => {
     const [error, setError] = useState('');
     const [deleting, setDeleting] = useState('');
     const [modalData, setModalData] = useState(null);
     // const isEdit = modalData && modalData.zdbID;
     const isEdit = false;
-    const [liveData, setLiveData] = useState([]); //instead of useFetch (liveData=suppliers in markerEditSuppliers.js)
     const hdr = type;
     const assemblies = ['GRCz11', 'GRCz10', 'Zv9'];
+
+    // const [liveData, setLiveData] = useState([]); //instead of useFetch (liveData=suppliers in markerEditSuppliers.js)
+    const {
+        value: liveData,
+        setValue: setLiveData,
+        pending,
+    } = useFetch(`/action/marker/${markerId}/chromosomal-location`);
 
     const setLiveDataProxy = (val) => {
         console.log('liveDataProxy');
@@ -30,7 +41,7 @@ const MarkerEditChromosomalLocation = ({markerId, type, group = 'gene edit addab
     };
 
     const handleOnSuccess = (val) => {
-        console.log("onSuccess: val");
+        console.log('onSuccess: val');
         console.log(val);
         setModalData(null);
     }
@@ -52,14 +63,14 @@ const MarkerEditChromosomalLocation = ({markerId, type, group = 'gene edit addab
         // validate: values => true //TODO: validate
     });
 
-    console.log("modalProps", modalProps);
-    console.log("values", values);
+    console.log('modalProps', modalProps);
+    console.log('values', values);
 
     const handleDeleteClick = async (event, item) => {
         console.log('not impl');
     }
 
-    const handleAddClick = (a,b) => {
+    const handleAddClick = (a, b) => {
         console.log('add click');
 
         console.log(a);
@@ -69,75 +80,81 @@ const MarkerEditChromosomalLocation = ({markerId, type, group = 'gene edit addab
         setModalData({});
     }
 
+    const formatLink = (item) => {
+        return <a href={`/${item.zdbID}`}>{item.chromosome}</a>;
+    };
+
+    if (pending) {
+        return <LoadingSpinner/>;
+    }
+
+    if (!liveData) {
+        return null;
+    }
+
     return (
         <>
-            {liveData.length === 0 && <NoData placeholder='None' />}
+            {error && <div className="text-danger">{error}</div>}
 
-            <ul className='list-unstyled'>
-                {liveData.map(item => {
-                    return (
-                        <li key={item.zdbID}>
-                            <a href={`/${item.zdbID}`}>{item.chromosome}</a>
-                            {deleting === item.zdbID ?
-                                <LoadingSpinner /> :
-                                <a className='show-on-hover px-2' href='#' onClick={e => handleDeleteClick(e, item)}>
-                                    Delete
-                                </a>
-                            }
-                        </li>
-                    );
-                })}
-            </ul>
+            <AddEditList
+                formatItem={formatLink}
+                itemKeyProp="zdbID"
+                items={liveData}
+                newItem={{
+                    assembly: '',
+                    chromosome: '',
+                    startLocation: '',
+                    endLocation: '',
+                }}
+                setModalItem={setModalData}
+            />
 
-            {error && <div className='text-danger'>{error}</div>}
-
-            <button type='button' className='btn btn-link px-0' onClick={handleAddClick}>Add</button>
-            <div><span>isEdit:</span>{modalProps.isEdit}</div>
+            {/*<div><span>isEdit:</span>{modalProps.isEdit ? 'true' : 'false'}</div>*/}
+            {/*<div><span>values:</span>{JSON.stringify(values)}</div>*/}
+            {/*<div><span>modalProps:</span>{JSON.stringify(modalProps)}</div>*/}
             <AddEditDeleteModal {...modalProps} header={hdr}>
-                {values &&
-                    <>
-                        <FormGroup
-                            labelClassName='col-md-3'
-                            inputClassName='col-md-9'
-                            label='Assembly'
-                            id='assembly'
-                            field='assembly'
-                            tag='select'
-                        >
-                            <option value=''/>
-                            {assemblies.map(assembly => (
-                                <option
-                                    value={assembly}
-                                    key={assembly}
-                                >{assembly}</option>
-                            ))}
-                        </FormGroup>
-                        <FormGroup
-                            labelClassName='col-md-3'
-                            inputClassName='col-md-9'
-                            label='Chromosome'
-                            id='chromosome'
-                            field='chromosome'
-                            // validate={value => value ? false : 'An accession is required'}
-                        />
-                        <FormGroup
-                            labelClassName='col-md-3'
-                            inputClassName='col-md-9'
-                            label='Start Location'
-                            id='start-location'
-                            field='startLocation'
-                            // validate={value => value ? false : 'An accession is required'}
-                        />
-                        <FormGroup
-                            labelClassName='col-md-3'
-                            inputClassName='col-md-9'
-                            label='End Location'
-                            id='end-location'
-                            field='endLocation'
-                            // validate={value => value ? false : 'An accession is required'}
-                        />
-                    </>
-                }
+                {values && <>
+                <FormGroup
+                    labelClassName="col-md-3"
+                    inputClassName="col-md-9"
+                    label="Assembly"
+                    id="assembly"
+                    field="assembly"
+                    tag="select"
+                >
+                    <option value=""/>
+                    {assemblies.map(assembly => (
+                        <option
+                            value={assembly}
+                            key={assembly}
+                        >{assembly}</option>
+                    ))}
+                </FormGroup>
+                <FormGroup
+                    labelClassName="col-md-3"
+                    inputClassName="col-md-9"
+                    label="Chromosome"
+                    id="chromosome"
+                    field="chromosome"
+                    // validate={value => value ? false : 'An accession is required'}
+                />
+                <FormGroup
+                    labelClassName="col-md-3"
+                    inputClassName="col-md-9"
+                    label="Start Location"
+                    id="start-location"
+                    field="startLocation"
+                    // validate={value => value ? false : 'An accession is required'}
+                />
+                <FormGroup
+                    labelClassName="col-md-3"
+                    inputClassName="col-md-9"
+                    label="End Location"
+                    id="end-location"
+                    field="endLocation"
+                    // validate={value => value ? false : 'An accession is required'}
+                />
+            </>}
             </AddEditDeleteModal>
         </>
     );

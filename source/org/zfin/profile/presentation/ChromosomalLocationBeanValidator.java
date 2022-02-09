@@ -2,8 +2,6 @@ package org.zfin.profile.presentation;
 
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.zfin.profile.Organization;
-import org.zfin.repository.RepositoryFactory;
 
 public class ChromosomalLocationBeanValidator implements Validator {
     @Override
@@ -17,7 +15,7 @@ public class ChromosomalLocationBeanValidator implements Validator {
 
         //TODO: add some validation
 
-        if (bean.getZdbID() != null) {
+        if (bean.getEntityID() != null) {
             //errors.rejectValue("zdbID", "marker.supplier.notfound");
         }
 

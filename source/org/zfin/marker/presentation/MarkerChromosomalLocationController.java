@@ -5,26 +5,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.InvalidWebRequestException;
-import org.zfin.gwt.root.dto.CuratorNoteDTO;
-import org.zfin.gwt.root.dto.NoteDTO;
-import org.zfin.gwt.root.server.DTOMarkerService;
-import org.zfin.infrastructure.DataNote;
-import org.zfin.marker.Marker;
+import org.zfin.mapping.GenomeLocation;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.marker.service.MarkerService;
-import org.zfin.profile.MarkerSupplier;
-import org.zfin.profile.Organization;
 import org.zfin.profile.presentation.ChromosomalLocationBean;
 import org.zfin.profile.presentation.ChromosomalLocationBeanValidator;
-import org.zfin.profile.presentation.SupplierBean;
-import org.zfin.profile.presentation.SupplierBeanValidator;
 import org.zfin.profile.repository.ProfileRepository;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/marker")
@@ -43,13 +33,13 @@ public class MarkerChromosomalLocationController {
 
     @ResponseBody
     @RequestMapping(value = "/{zdbID}/chromosomal-location", method = RequestMethod.GET)
-    public ChromosomalLocationBean getChromosomalLocationForMarker(@PathVariable String zdbID) {
-        ChromosomalLocationBean chromosomalLocation = new ChromosomalLocationBean();
-        chromosomalLocation.setAssembly("GRCz10");
-        chromosomalLocation.setChromosome("1");
-        chromosomalLocation.setStartLocation("23123123");
-        chromosomalLocation.setEndLocation("23123456");
-        return chromosomalLocation;
+    public List<ChromosomalLocationBean> getChromosomalLocationForMarker(@PathVariable String zdbID) {
+        List<GenomeLocation> genomeLocations = markerRepository.getGenomeLocation(zdbID);
+        List<ChromosomalLocationBean> resultList = genomeLocations
+                .stream()
+                .map(ChromosomalLocationBean::fromGenomeLocation)
+                .collect(Collectors.toList());
+        return resultList;
     }
 
     @ResponseBody
@@ -61,17 +51,16 @@ public class MarkerChromosomalLocationController {
             throw new InvalidWebRequestException("Invalid Chromosomal Location", errors);
         }
 
-        System.out.println("TODO: implement adding chromosomal location information");
+        GenomeLocation genomeLocation = chromosomalLocation.toGenomeLocation();
+        genomeLocation.setEntityID(zdbID);
+        GenomeLocation persistedLocation = markerRepository.addGenomeLocation(genomeLocation);
 
-//        ChromosomalLocationBean chromosomalLocationBean = new ChromosomalLocationBean();
-//        chromosomalLocationBean.setChromosome("2");
-        chromosomalLocation.setZdbID("ZDB-TEST-9999999999");
-        return chromosomalLocation;
+        return ChromosomalLocationBean.fromGenomeLocation(persistedLocation);
     }
 
     @ResponseBody
-    @RequestMapping(value = "/{zdbID}/chromosomal-location/{chromosomalLocationID}", method = RequestMethod.POST)
-    public ChromosomalLocationBean updateCuratorNote(@PathVariable String markerId,
+    @RequestMapping(value = "/{markerId}/chromosomal-location/{chromosomalLocationID}", method = RequestMethod.POST)
+    public ChromosomalLocationBean updateChromosomalLocationForMarker(@PathVariable String markerId,
                                             @PathVariable String chromosomalLocationID,
                                             @Valid @RequestBody ChromosomalLocationBean chromosomalLocation) {
 
@@ -80,7 +69,7 @@ public class MarkerChromosomalLocationController {
         ChromosomalLocationBean chromosomalLocationBean = new ChromosomalLocationBean();
 
         chromosomalLocationBean.setChromosome("3");
-        chromosomalLocationBean.setZdbID("ZDB-TEST-12341234");
+        chromosomalLocationBean.setEntityID("ZDB-TEST-12341234");
         return chromosomalLocationBean;
     }
 
@@ -88,7 +77,8 @@ public class MarkerChromosomalLocationController {
     @RequestMapping(value = "/{markerID}/chromosomal-location/{zdbId}", method = RequestMethod.DELETE, produces = "text/plain")
     public String removeChromosomalLocation(@PathVariable String markerID,
                                  @PathVariable String zdbId) {
-        //TODO: implement this
+//        markerRepository.deleteMarkerAlias();
+        markerRepository.deleteGenomeLocation(zdbId);
         return "OK";
     }
 

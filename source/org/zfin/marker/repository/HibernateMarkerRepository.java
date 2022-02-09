@@ -31,6 +31,7 @@ import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.server.DTOMarkerService;
 import org.zfin.infrastructure.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.mapping.GenomeLocation;
 import org.zfin.marker.*;
 import org.zfin.marker.fluorescence.FluorescentMarker;
 import org.zfin.marker.fluorescence.FluorescentProtein;
@@ -812,6 +813,34 @@ public class HibernateMarkerRepository implements MarkerRepository {
         }
         infrastructureRepository.insertUpdatesTable(mrel.getFirstMarker(), "", "new attribution, marker relationship: " + mrel.getZdbID() + " with pub: " + attributionZdbID, attributionZdbID, "");
         infrastructureRepository.insertUpdatesTable(mrel.getSecondMarker(), "", "new attribution, marker relationship: " + mrel.getZdbID() + " with pub: " + attributionZdbID, attributionZdbID, "");
+    }
+
+
+    public GenomeLocation addGenomeLocation(GenomeLocation genomeLocation) {
+        Session session = HibernateUtil.currentSession();
+        Long savedValue = (Long) session.save(genomeLocation);
+        log.debug("Saved Genome Location: " + savedValue);
+        session.get(GenomeLocation.class, savedValue);
+        return genomeLocation;
+    }
+
+    public List<GenomeLocation> getGenomeLocation(String zdbID) {
+        Session session = HibernateUtil.currentSession();
+
+        Criteria criteria = session.createCriteria(GenomeLocation.class);
+        criteria.add(Restrictions.eq("entityID", zdbID));
+
+        return (List<GenomeLocation>) criteria.list();
+    }
+
+    @Override
+    public void deleteGenomeLocation(String ID) {
+        String hql = "delete from GenomeLocation gl " +
+                " where gl.ID = :ID ";
+        Query query = currentSession().createQuery(hql);
+        query.setString("ID", ID);
+        int removed = query.executeUpdate();
+        currentSession().flush();
     }
 
     public void addDBLinkAttribution(DBLink dbLink, Publication attribution, String dataZdbId) {

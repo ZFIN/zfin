@@ -1,19 +1,31 @@
 package org.zfin.profile.presentation;
 
+import org.zfin.mapping.GenomeLocation;
+
 public class ChromosomalLocationBean {
 
-    String zdbID;
+    String entityID;
     String assembly;
     String chromosome;
     String startLocation;
     String endLocation;
 
-    public String getZdbID() {
-        return zdbID;
+    public static ChromosomalLocationBean fromGenomeLocation(GenomeLocation persistedLocation) {
+        ChromosomalLocationBean clBean = new ChromosomalLocationBean();
+        clBean.setEntityID(persistedLocation.getEntityID());
+        clBean.setAssembly(persistedLocation.getAssembly());
+        clBean.setChromosome(persistedLocation.getChromosome());
+        clBean.setStartLocation(persistedLocation.getStart().toString());
+        clBean.setEndLocation(persistedLocation.getEnd().toString());
+        return clBean;
     }
 
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
+    public String getEntityID() {
+        return entityID;
+    }
+
+    public void setEntityID(String entityID) {
+        this.entityID = entityID;
     }
 
     public String getAssembly() {
@@ -46,5 +58,26 @@ public class ChromosomalLocationBean {
 
     public void setEndLocation(String endLocation) {
         this.endLocation = endLocation;
+    }
+
+    public GenomeLocation toGenomeLocation() {
+        GenomeLocation genomeLocation = new GenomeLocation();
+        genomeLocation.setAssembly(this.getAssembly());
+        genomeLocation.setChromosome(this.getChromosome());
+
+        try {
+            int startLocation = Integer.parseInt(this.getStartLocation());
+            genomeLocation.setStart(startLocation);
+        } catch (NumberFormatException nfe) {
+            //don't set start location
+        }
+
+        try {
+            int endLocation = Integer.parseInt(this.getEndLocation());
+            genomeLocation.setEnd(endLocation);
+        } catch (NumberFormatException nfe) {
+            //don't set end location
+        }
+        return genomeLocation;
     }
 }
