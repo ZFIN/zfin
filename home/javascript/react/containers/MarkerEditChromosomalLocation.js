@@ -14,7 +14,6 @@ const MarkerEditChromosomalLocation = ({
     const [error, setError] = useState('');
     const [modalData, setModalData] = useState(null);
     const isEdit = modalData && modalData.id;
-    const debugMode = true;
     const hdr = type;
     const assemblies = ['GRCz11', 'GRCz10', 'Zv9'];
 
@@ -23,12 +22,6 @@ const MarkerEditChromosomalLocation = ({
         setValue: setLiveData,
         pending,
     } = useFetch(`/action/marker/${markerId}/chromosomal-location`);
-
-    const setLiveDataProxy = (val) => {
-        console.log('proxy');
-        console.log(arguments);
-        return setLiveData(val);
-    };
 
     const handleOnSuccess = () => {
         setModalData(null);
@@ -123,15 +116,6 @@ const MarkerEditChromosomalLocation = ({
                 maxLength={1}
             />
 
-            {debugMode &&
-                <>
-                    <div><span>isEdit:</span>{modalProps.isEdit ? 'true' : 'false'}</div>
-                    <div><span>liveData:</span>{JSON.stringify(liveData)}</div>
-                    <div><span>values:</span>{JSON.stringify(values)}</div>
-                    <div><span>modalProps:</span>{JSON.stringify(modalProps)}</div>
-                    <div><span>modalData:</span>{JSON.stringify(modalData)}</div>
-                </>
-            }
             <AddEditDeleteModal {...modalProps} header={hdr}>
                 {values && <>
                 <FormGroup
@@ -183,8 +167,7 @@ const MarkerEditChromosomalLocation = ({
 
 MarkerEditChromosomalLocation.propTypes = {
     markerId: PropTypes.string,
-    group: PropTypes.string,
-    groupDB: PropTypes.string,
+    type: PropTypes.string,
 };
 
 export default MarkerEditChromosomalLocation;
