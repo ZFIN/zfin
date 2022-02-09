@@ -119,6 +119,7 @@
 <filter token="PARTNER_DBNAME" value="${PARTNER_DBNAME}"/>
 <filter token="PARTNER_INTERNAL_INSTANCE" value="${PARTNER_INTERNAL_INSTANCE}"/>
 <filter token="PARTNER_SOURCEROOT" value="${PARTNER_SOURCEROOT}"/>
+<filter token="PATO_EMAIL_CURATOR" value="${PATO_EMAIL_CURATOR}"/>
 <filter token="PDF_LOAD" value="${PDF_LOAD}"/>
 <filter token="PDF_PATH" value="${PDF_PATH}"/>
 <filter token="PGBINDIR" value="${PGBINDIR}"/>
