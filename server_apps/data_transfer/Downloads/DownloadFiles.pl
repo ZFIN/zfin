@@ -90,7 +90,8 @@ $username = "";
 $password = "";
 
 ### open a handle on the db
-$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password) 
+my $dbhost = "<!--|PGHOST|-->";
+$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password) 
     or die "Cannot connect to database: $DBI::errstr\n";
 
 ## create downloadsStaging/identifiersForIntermine.txt

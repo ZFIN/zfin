@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>Runs the production and almost steps of the uniprot load.  &#xd;
+  <description>Runs the production steps of the uniprot load.  &#xd;
 &#xd;
-!! Script assumes data files have been copied to almost already, and in&#xd;
+!! Script assumes data files have been copied to network drive already, and in&#xd;
 turn uses those files to copy to production !!</description>
   <keepDependencies>false</keepDependencies>
   <properties>

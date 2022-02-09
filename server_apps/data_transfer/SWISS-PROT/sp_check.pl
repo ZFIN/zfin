@@ -28,11 +28,12 @@ my $num_ok = 0;    # number of good records that are going to be loaded
 my $num_prob = 0;  # number of problem records
 
 my $dbname = "<!--|DB_NAME|-->";
+my $dbhost = "<!--|PGHOST|-->";
 my $username = "";
 my $password = "";
 
 ### open a handle on the db
-my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
     or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
 # if PubMed number not in zfin, output to a single file

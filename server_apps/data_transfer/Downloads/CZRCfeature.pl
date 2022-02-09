@@ -12,7 +12,8 @@ $username = "";
 $password = "";
 
 ### open a handle on the db
-$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+my $dbhost = "<!--|PGHOST|-->";
+$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
     or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
 $cur_feature = $dbh->prepare("select feature_zdb_id, feature_name, ftrtype_type_display, date(now()) from feature, feature_type where feature_type = ftrtype_name;");

@@ -63,7 +63,8 @@ foreach $line (@lines) {
 print "\nNumber of Genes On NCBI file = $ctGenes\n";
 
 ### open a handle on the db
-$handle = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+my $dbhost = "<!--|PGHOST|-->";
+$handle = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
     or die "Cannot connect to database: $DBI::errstr\n";
 
 $sql = "select dblink_linked_recid, dblink_acc_num, sfclg_chromosome, sfclg_start, sfclg_end 

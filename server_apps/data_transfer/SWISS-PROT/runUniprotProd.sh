@@ -11,11 +11,11 @@
 #     (  setenv SKIP_CLEANUP 1; ./runUniprotProd.sh )
 
 main() {
+
+
 if [ -z "$SKIP_CLEANUP" ]
 then
-
 	echo "#########################################################################"
-
 	echo "Remove old files: okfile, *2go " $(date "+%Y-%m-%d %H:%M:%S")
 	/bin/rm -f <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/okfile
 	/bin/rm -f <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/ok2file
@@ -23,23 +23,19 @@ then
 	/bin/rm -f <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/interpro2go
 	/bin/rm -f <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/spkw2go
 	/bin/rm -f <!--|TARGETROOT|-->/server_apps/data_transfer/SWISS-PROT/*.txt
-
 	echo "#########################################################################"
 
 	echo "Copy new files from /research/zarchive/load_files/UniProt/" 
 	/usr/bin/scp /research/zarchive/load_files/UniProt/* <!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/
 else
-	echo "Skipping copying files from server"
+	echo "Skipping copying files from server " $(date "+%Y-%m-%d %H:%M:%S")
 fi
 
 echo "#########################################################################"
-
-echo "MD5 sums of data input files"
-
+echo "MD5 sums of data input files " $(date "+%Y-%m-%d %H:%M:%S")
 md5sum /research/zarchive/load_files/UniProt/*
-
 echo "#########################################################################"
-echo "MD5 sums of data files after copy (should match)"
+echo "MD5 sums of data files after copy (should match) " $(date "+%Y-%m-%d %H:%M:%S")
 ls /research/zarchive/load_files/UniProt/ | xargs md5sum 
 echo "#########################################################################"
 

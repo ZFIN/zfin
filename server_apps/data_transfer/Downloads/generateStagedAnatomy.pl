@@ -23,7 +23,8 @@ open (OUT,">$output") or &emailError ("Can not open $output to write");
 
 my $dbname = "<!--|DB_NAME|-->";
 
-my $dbh = DBI->connect("DBI:Pg:dbname=$dbname;host=localhost",
+my $dbhost = "<!--|PGHOST|-->";
+my $dbh = DBI->connect("DBI:Pg:dbname=$dbname;host=$dbhost",
                        "", "", 
                       )
     or die "Cannot connect to database: $DBI::errstr\n"; 

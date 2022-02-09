@@ -10,11 +10,12 @@ use ZFINPerlModules;
 use Try::Tiny;
 
 $dbname = "<!--|DB_NAME|-->";
+my $dbhost = "<!--|PGHOST|-->";
 $username = "";
 $password = "";
 
 ### open a handle on the db
-$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
     or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
 ## get the existing data so as to be able to compare with those in the load
@@ -484,11 +485,12 @@ sub countData {
   my $nRecords = 0;
 
   my $dbname = "<!--|DB_NAME|-->";
+  my $dbhost = "<!--|PGHOST|-->";
   my $username = "";
   my $password = "";
 
   ### open a handle on the db
-  my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+  my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
     or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
   my $sth = $dbh->prepare($ctsql) or die "Prepare fails";

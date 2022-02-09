@@ -29,8 +29,6 @@ use POSIX;
 #------------------- Flush Output Buffer --------------
 $|=1;
 
-
-
 #------------------- Download -----------
 
 sub downloadOrUseLocalFile {
@@ -48,7 +46,9 @@ sub downloadOrUseLocalFile {
             }
         } else {
             print("Downloading '$url' to '$outfile'\n");
-            system("/local/bin/wget '$url' -O '$outfile'");
+
+            #set the number of bytes that a dot represents in wget progress bar to 10M
+            system("/local/bin/wget --progress=dot -e dotbytes=10M '$url' -O '$outfile'");
         }
 }
 
@@ -76,6 +76,7 @@ sub downloadGOtermFiles () {
     if ($ENV{'SKIP_SLEEP'}) {
         print "Skipping sleep clause 1\n";
     } else {
+        print "\nSleeping for 8 minutes at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n\n";
        my $sleepNumDownload1 = 500;
        while($sleepNumDownload1--){
           sleep(1);
@@ -87,6 +88,7 @@ sub downloadGOtermFiles () {
     if ($ENV{'SKIP_SLEEP'}) {
         print "Skipping sleep clause 2 (what is the purpose of these sleeps?)\n";
     } else {
+        print "\nSleeping for another 8 minutes at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n\n";
        my $sleepNumDownload2 = 500;
        while($sleepNumDownload2--){
           sleep(1);
@@ -139,58 +141,39 @@ sub sendRunningResult {
 # Extracts only zfin data from vertebrates.
 #
 sub select_zebrafish {
-    try {
-      print("Downloading https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_trembl_vertebrates.dat.gz -O uniprot_trembl_vertebrates.dat.gz\n");
-      downloadOrUseLocalFile("https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_trembl_vertebrates.dat.gz", "uniprot_trembl_vertebrates.dat.gz");
-    } catch {
-      chomp $_;
-      &sendErrorReport("Failed to download https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_trembl_vertebrates.dat.gz - $_");
-      exit -1;
-    };
-
-    if (!-e "uniprot_trembl_vertebrates.dat.gz") {
-        print "Failed to download uniprot_trembl_vertebrates.dat.gz. Exit.\n";
-        exit -1;
-    } else {
-        print "\nDownloaded uniprot_trembl_vertebrates.dat.gz\n\n";
+    #where to find the uniprot files (can override with env var, for example with a file:/// URL)
+    my $TREMBL_FILE_URL = "https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_trembl_vertebrates.dat.gz";
+    if ($ENV{'TREMBL_FILE_URL'}) {
+        $TREMBL_FILE_URL = $ENV{'TREMBL_FILE_URL'};
     }
 
-    try {
-      print("Downloading https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_sprot_vertebrates.dat.gz -O uniprot_sprot_vertebrates.dat.gz\n");
-      downloadOrUseLocalFile("https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_sprot_vertebrates.dat.gz", "uniprot_sprot_vertebrates.dat.gz");
-    } catch {
-      chomp $_;
-      &sendErrorReport("Failed to download https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_sprot_vertebrates.dat.gz - $_");
-      exit -1;
-    };
-
-    if (!-e "uniprot_sprot_vertebrates.dat.gz") {
-        print "Failed to download uniprot_sprot_vertebrates.dat.gz. Exit.\n";
-        exit -1;
-    } else {
-        print "\nDownloaded uniprot_sprot_vertebrates.dat.gz\n\n";
+    my $SPROT_FILE_URL = "https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_sprot_vertebrates.dat.gz";
+    if ($ENV{'SPROT_FILE_URL'}) {
+        $SPROT_FILE_URL = $ENV{'SPROT_FILE_URL'};
     }
 
     if ($ENV{'SKIP_PRE_ZFIN_GEN'}) {
         print "Skipping generation of pre_zfin.dat file for troubleshooting purposes.  Assuming an accurate pre_zfin.dat file already exists.\n";
     } else {
+        print("Processing uniprot_trembl_vertebrates.dat.gz at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n");
+        print("Using URL of $TREMBL_FILE_URL");
         $/ = "\/\/\n"; #custom record separator
-        open(DAT1, "gunzip -c uniprot_trembl_vertebrates.dat.gz |") || die("Could not open uniprot_trembl_vertebrates.dat.gz $!");
+        open(DAT1, "curl -s '$TREMBL_FILE_URL' | gunzip -c |") || die("Could not open uniprot_trembl_vertebrates.dat.gz $!");
         open OUTPUT, ">pre_zfin.dat" or die "Cannot open pre_zfin.dat";
 
-        print("Processing uniprot_trembl_vertebrates.dat.gz at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n");
         my $record;
         while ($record = <DAT1>){
-           print STDERR "Processing " . ZFINPerlModules->whirley() . "\r";
+           ZFINPerlModules->printWhirleyToStderr();
            print OUTPUT "$record" if $record =~ m/OS   Danio rerio/;
         }
         close(DAT1) ;
         print("Done processing uniprot_trembl_vertebrates.dat.gz at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n");
 
         print("Processing uniprot_sprot_vertebrates.dat.gz at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . "\n");
-        open(DAT2, "gunzip -c uniprot_sprot_vertebrates.dat.gz |") || die("Could not open uniprot_sprot_vertebrates.dat.gz $!");
+        print("Using URL of $SPROT_FILE_URL");
+        open(DAT2, "curl -s '$SPROT_FILE_URL' | gunzip -c |") || die("Could not open uniprot_sprot_vertebrates.dat.gz $!");
         while ($record = <DAT2>){
-           print STDERR "Processing " . ZFINPerlModules->whirley() . "\r";
+           ZFINPerlModules->printWhirleyToStderr();
            print OUTPUT "$record" if $record =~ m/OS   Danio rerio/;
         }
         print("Done processing uniprot_sprot_vertebrates.dat.gz at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n");
@@ -232,6 +215,7 @@ if ($ENV{'SKIP_CLEANUP'}) {
 }
 
 my $dbname = "<!--|DB_NAME|-->";
+my $dbhost = "<!--|PGHOST|-->";
 my $username = "";
 my $password = "";
 
@@ -242,7 +226,7 @@ my $password = "";
 ########################################################################################################
 
 ### open a handle on the db
-my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
     or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
 my $sqlGetManuallyEnteredUniProtIDsWithMultGenes = "select distinct db1.dblink_acc_num from db_link db1
@@ -267,7 +251,7 @@ $curGetManuallyEnteredUniProtIDsWithMultGenes->finish();
 
 close(MULTIPLE);
 
-print "\nNumber of manually curated UniProt IDs with multiple genes: $ctManuallyEnteredUniProtIDsWithMultGenes\n\n";
+print "\nNumber of manually curated UniProt IDs with multiple genes: $ctManuallyEnteredUniProtIDsWithMultGenes at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n\n";
 
 if ($ctManuallyEnteredUniProtIDsWithMultGenes > 0) {
   my $subject = "Auto from SWISS-PROT: manually curated UniProt IDs with multiple genes";
@@ -295,7 +279,7 @@ while ($curGetManuallyEnteredUniProtIDs->fetch()) {
 $curGetManuallyEnteredUniProtIDs->finish();
 close(MCIDS);
 
-print "\nNumber of manually curated UniProt IDs: $ctManuallyEnteredUniProtIDs\n\n";
+print "\nNumber of manually curated UniProt IDs: $ctManuallyEnteredUniProtIDs at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . "\n\n";
 
 my $uniprotId;
 my $url;
@@ -309,9 +293,9 @@ if ($ENV{"SKIP_MANUAL_CHECK"}) {
 
 
     if ($ctManuallyEnteredUniProtIDs > 0) {
-      print("Checking for invalid manually entered uniprot IDs\n");
+      print "Checking for invalid manually entered uniprot IDs at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n";
       foreach $uniprotId (@manuallyEnteredUniProtIDs) {
-         print STDERR "Processing " . ZFINPerlModules->whirley() . "\r";
+          ZFINPerlModules->printWhirleyToStderr();
          $url = $uniProtURL . $uniprotId;
          my $status_code = getstore($url, "/dev/null");
          if ($status_code != 200) {
@@ -352,6 +336,7 @@ $/ = "//\n";
 open(PREDAT, "pre_zfin.dat") || die("Could not open pre_zfin.dat !");
 my @blocks = <PREDAT>;
 close(PREDAT);
+print STDERR "Processing pre_zfin.dat\n";
 
 open ZFINDAT, ">zfin.dat" || die ("Cannot open zfin.dat !");
 open ZFINDATDELETED, ">zfinGeneDeleted.dat" || die ("Cannot open zfinGeneDeleted.dat !");
@@ -393,6 +378,7 @@ foreach $block (@blocks) {
                $deletes{$lineKey} = 0;
 
                if ($line =~ m/DR   ZFIN; ZDB-GENE-/) {
+
                    @fields = split(/;/, $line);
                    $ZFINgeneId = $fields[1];
                    $ZFINgeneId =~ s/^\s+//;
@@ -434,7 +420,7 @@ foreach $block (@blocks) {
                    } else {
                        $deletes{$lineKey} = 1;
                    }
-                   print STDERR "Processing pre_zfin.dat " . ZFINPerlModules->whirley() . "\r";
+                   ZFINPerlModules->printWhirleyToStderr();
                }
 
                $ct++;

@@ -27,11 +27,13 @@ system("/bin/rm -f *.tab");
 system("/bin/rm -f UP000000437_7955.fasta");
 
 $dbname = "<!--|DB_NAME|-->";
+my $dbhost = "<!--|PGHOST|-->";
+
 $username = "";
 $password = "";
 
 ### open a handle on the db
-$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
     or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
 $sqlGetGenesNoProteinButHavingXpatOrPheno = "select distinct mrkr_abbrev, mrkr_zdb_id 
