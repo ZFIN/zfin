@@ -845,6 +845,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     public GenomeLocation saveGenomeLocation(GenomeLocation genomeLocation) {
         Session session = HibernateUtil.currentSession();
         session.update(genomeLocation);
+        session.flush();
         return genomeLocation;
     }
 

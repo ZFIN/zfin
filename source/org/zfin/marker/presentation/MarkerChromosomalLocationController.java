@@ -69,6 +69,7 @@ public class MarkerChromosomalLocationController {
         genomeLocation.setChromosome(chromosomalLocationBean.getChromosome());
         genomeLocation.setStart(chromosomalLocationBean.getStartLocation());
         genomeLocation.setEnd(chromosomalLocationBean.getEndLocation());
+        markerRepository.saveGenomeLocation(genomeLocation);
 
         return chromosomalLocationBean;
     }
