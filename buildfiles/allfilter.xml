@@ -79,6 +79,8 @@
 <filter token="HIBERNATE_CONFIGURATION_DIRECTORY" value="${HIBERNATE_CONFIGURATION_DIRECTORY}"/>
 <filter token="HOSTNAME" value="${HOSTNAME}"/>
 <filter token="IMAGE_LOAD" value="${IMAGE_LOAD}"/>
+<filter token="INFORMIX_PORT" value="${INFORMIX_PORT}"/>
+<filter token="INFORMIX_SERVER" value="${INFORMIX_SERVER}"/>
 <filter token="INDEXER_REPORT_EMAIL" value="${INDEXER_REPORT_EMAIL}"/>
 <filter token="INDEXER_UNLOAD_DIRECTORY" value="${INDEXER_UNLOAD_DIRECTORY}"/>
 <filter token="INDEXER_WIKI_HOSTNAME" value="${INDEXER_WIKI_HOSTNAME}"/>
