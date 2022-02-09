@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-
+<c:set var="typeName">${gene.markerType.name}</c:set>
 <c:set var="NOMENCLATURE" value="Nomenclature"/>
 <c:set var="RESOURCES" value="Genome Resources"/>
 <c:set var="NOTES" value="Notes"/>
@@ -8,7 +8,17 @@
 <c:set var="ORTHOLOGY" value="Orthology"/>
 <c:set var="CHROMOSOMAL_LOCATION" value="Chromosomal Location"/>
 
-<z:dataPage sections="${[NOMENCLATURE, RESOURCES, NOTES, MARKER_RELATIONSHIPS, SEQUENCES, ORTHOLOGY]}">
+<!-- Set sections based on marker type -->
+<c:choose>
+    <c:when test="${typeName eq 'ENHANCER'}">
+        <c:set var="SECTIONS" value="${[NOMENCLATURE, RESOURCES, NOTES, MARKER_RELATIONSHIPS, CHROMOSOMAL_LOCATION, SEQUENCES, ORTHOLOGY]}"/>
+    </c:when>
+    <c:otherwise>
+        <c:set var="SECTIONS" value="${[NOMENCLATURE, RESOURCES, NOTES, MARKER_RELATIONSHIPS, SEQUENCES, ORTHOLOGY]}"/>
+    </c:otherwise>
+</c:choose>
+
+<z:dataPage sections="${SECTIONS}">
     <z:dataManagerDropdown>
         <a class="dropdown-item" href="/${gene.zdbID}">View</a>
         <a class="dropdown-item active" href="/action/marker/gene/edit/${gene.zdbID}">Edit</a>
@@ -44,13 +54,15 @@
         </div>
     </z:section>
 
-    <z:section title="${CHROMOSOMAL_LOCATION}">
-        <div class="__react-root"
-             id="MarkerEditChromosomalLocation"
-             data-type="Chromosomal Location"
-             data-marker-id="${gene.zdbID}"
-             ></div>
-    </z:section>
+    <c:if test="${typeName eq 'ENHANCER'}">
+        <z:section title="${CHROMOSOMAL_LOCATION}">
+            <div class="__react-root"
+                 id="MarkerEditChromosomalLocation"
+                 data-type="${CHROMOSOMAL_LOCATION}"
+                 data-marker-id="${gene.zdbID}"
+                 ></div>
+        </z:section>
+    </c:if>
 
     <z:section title="${SEQUENCES}">
         <z:section title="Sequences">
