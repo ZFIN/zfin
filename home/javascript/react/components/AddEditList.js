@@ -2,7 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import NoData from './NoData';
 
-const AddEditList = ({items, setModalItem, itemKeyProp = 'zdbID', newItem, formatItem,title}) => {
+const AddEditList = ({items, setModalItem, itemKeyProp = 'zdbID', newItem, formatItem,title,maxLength=-1}) => {
+    const isMaxLengthReached = () => {
+        const hasMaxLength = (!!maxLength) && maxLength > 0;
+        if (!hasMaxLength) {
+            return false;
+        }
+        return items.length >= maxLength;
+    };
     const handleEditClick = (e, item) => {
         e.preventDefault();
         setModalItem(item, true);
@@ -31,7 +38,11 @@ const AddEditList = ({items, setModalItem, itemKeyProp = 'zdbID', newItem, forma
                 })}
             </ul>
 
-            <button type='button' className='btn btn-link px-0' onClick={handleAddClick}>Add {title}</button>
+            {isMaxLengthReached()
+                ? null
+                : <button type='button' className='btn btn-link px-0' onClick={handleAddClick}>Add {title}</button>
+            }
+
         </>
     );
 };
@@ -43,6 +54,7 @@ AddEditList.propTypes = {
     setModalItem: PropTypes.func,
     formatItem: PropTypes.func,
     title:PropTypes.string,
+    maxLength:PropTypes.number,
 };
 
 export default AddEditList;
