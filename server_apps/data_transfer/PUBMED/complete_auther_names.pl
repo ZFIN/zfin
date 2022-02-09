@@ -15,7 +15,8 @@ system("/bin/date");
 system("/bin/rm -f authors");
 
 ### open a handle on the db
-$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password) or die "Cannot connect to database: $DBI::errstr\n";
+my $dbhost = "<!--|PGHOST|-->";
+$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password) or die "Cannot connect to database: $DBI::errstr\n";
 
 $sql = "select distinct zdb_id, accession_no, title
           from publication 

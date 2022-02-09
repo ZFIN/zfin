@@ -194,7 +194,8 @@ if ($ctToDelete == 0) {
 #--------------------------------------------------------------------------------------
 
 ### open a handle on the db
-$handle = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+my $dbhost = "<!--|PGHOST|-->";
+$handle = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
     or die "Cannot connect to database: $DBI::errstr\n";
 
 $sql = "select mrkr_zdb_id, mrkr_abbrev from marker

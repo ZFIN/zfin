@@ -61,6 +61,7 @@ if ($ENV{'ARCHIVE_ARTIFACTS'}) {
     system("cp -p *2go $directory");
     system("cp -p prob* $directory");
     system("cp -p okfile $directory");
+    system("cp -p ok2file $directory");
     system("cp -p pubmed_not_in_zfin $directory");
     system("cp -p *.unl $directory");
     system("cp -p *.txt $directory");
