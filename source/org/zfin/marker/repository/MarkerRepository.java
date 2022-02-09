@@ -507,7 +507,9 @@ public interface MarkerRepository {
 
     GenomeLocation addGenomeLocation(GenomeLocation genomeLocation);
     List<GenomeLocation> getGenomeLocation(String zdbID);
-    void deleteGenomeLocation(String zdbId);
+    GenomeLocation getGenomeLocationByID(Long ID);
+    GenomeLocation saveGenomeLocation(GenomeLocation genomeLocation);
+    void deleteGenomeLocation(Long zdbId);
 
     DBLink addDBLinkWithLenth(Marker marker, String accessionNumber, ReferenceDatabase refdb, String attributionZdbID, int length);
 

@@ -3,31 +3,21 @@ import PropTypes from 'prop-types';
 import useFetch from '../hooks/useFetch';
 import useAddEditDeleteForm from '../hooks/useAddEditDeleteForm';
 import FormGroup from '../components/form/FormGroup';
-import InputField from '../components/form/InputField';
-import PublicationInput from '../components/form/PublicationInput';
 import AddEditDeleteModal from '../components/AddEditDeleteModal';
 import AddEditList from '../components/AddEditList';
 import LoadingSpinner from '../components/LoadingSpinner';
-import {useForm} from 'react-form';
-import NoData from '../components/NoData';
-import MarkerEditSequences from './MarkerEditSequences';
-
 
 const MarkerEditChromosomalLocation = ({
     markerId,
     type,
-    group = 'gene edit addable chromosome information',
-    groupDB = 'gene edit addable chromosome information'
 }) => {
     const [error, setError] = useState('');
-    const [deleting, setDeleting] = useState('');
     const [modalData, setModalData] = useState(null);
-    // const isEdit = modalData && modalData.zdbID;
-    const isEdit = false;
+    const isEdit = modalData && modalData.id;
+    const debugMode = true;
     const hdr = type;
     const assemblies = ['GRCz11', 'GRCz10', 'Zv9'];
 
-    // const [liveData, setLiveData] = useState([]); //instead of useFetch (liveData=suppliers in markerEditSuppliers.js)
     const {
         value: liveData,
         setValue: setLiveData,
@@ -35,53 +25,76 @@ const MarkerEditChromosomalLocation = ({
     } = useFetch(`/action/marker/${markerId}/chromosomal-location`);
 
     const setLiveDataProxy = (val) => {
-        console.log('liveDataProxy');
-        console.log(val);
-        setLiveData(val);
+        console.log('proxy');
+        console.log(arguments);
+        return setLiveData(val);
     };
 
-    const handleOnSuccess = (val) => {
-        console.log('onSuccess: val');
-        console.log(val);
+    const handleOnSuccess = () => {
         setModalData(null);
-    }
+    };
+
+    const handleValidateChromosome = (val) => {
+        if (!values) {
+            return false;
+        }
+        const startLocation = parseInt(values.startLocation);
+        const endLocation = parseInt(values.endLocation);
+
+        if ( (startLocation || endLocation)
+            && (values.chromosome === ""))
+        {
+            return "Must provide chromosome.";
+        }
+
+        return false;
+    };
+
+    const handleValidateLocations = () => {
+        if (!values) {
+            return false;
+        }
+        const startLocation = parseInt(values.startLocation);
+        const endLocation = parseInt(values.endLocation);
+        if (startLocation && endLocation
+            && (startLocation > endLocation))
+        {
+            return "Start location must be before end location.";
+        }
+
+        return false;
+    };
 
     const {
-        pushFieldValue,
-        removeFieldValue,
         values,
         modalProps
     } = useAddEditDeleteForm({
         addUrl: `/action/marker/${markerId}/chromosomal-location`,
-        editUrl: isEdit && `/action/marker/${markerId}/chromosomal-location/todoEdit`,
-        deleteUrl: `/action/marker/${markerId}/chromosomal-location/todoDelete`,
+        editUrl: isEdit ? `/action/marker/${markerId}/chromosomal-location/${modalData.id}` : '',
+        deleteUrl: isEdit ? `/action/marker/${markerId}/chromosomal-location/${modalData.id}` : '',
         onSuccess: handleOnSuccess,
         items: liveData,
-        setItems: setLiveDataProxy,
+        setItems: setLiveData,
+        itemKeyProp: 'id',
         defaultValues: modalData,
         isEdit
-        // validate: values => true //TODO: validate
     });
 
-    console.log('modalProps', modalProps);
-    console.log('values', values);
-
-    const handleDeleteClick = async (event, item) => {
-        console.log('not impl');
-    }
-
-    const handleAddClick = (a, b) => {
-        console.log('add click');
-
-        console.log(a);
-        // console.log(b);
-        console.log(values);
-        console.log(liveData);
-        setModalData({});
-    }
-
-    const formatLink = (item) => {
-        return <a href={`/${item.zdbID}`}>{item.chromosome}</a>;
+    const formatLink = (item, editLink) => {
+        const leftColumnClass="col-sm-4 col-md-3 col-lg-2";
+        const rightColumnClass="col-sm-8 col-md-9 col-lg-10";
+        return <><dl className="row">
+            <dt className={leftColumnClass}>Assembly</dt>
+            <dd className={rightColumnClass}>{item.assembly}</dd>
+            <dt className={leftColumnClass}>Chromosome</dt>
+            <dd className={rightColumnClass}>{item.chromosome}</dd>
+            <dt className={leftColumnClass}>Start</dt>
+            <dd className={rightColumnClass}>{item.startLocation}</dd>
+            <dt className={leftColumnClass}>End</dt>
+            <dd className={rightColumnClass}>{item.endLocation}</dd>
+            <dt className={leftColumnClass}><span className="invisible placeholder">Edit</span></dt>
+            <dd className={rightColumnClass}>{editLink} <span className="invisible placeholder">Edit</span></dd>
+        </dl></>;
     };
 
     if (pending) {
@@ -107,11 +120,18 @@ const MarkerEditChromosomalLocation = ({
                     endLocation: '',
                 }}
                 setModalItem={setModalData}
+                maxLength={1}
             />
 
-            {/*<div><span>isEdit:</span>{modalProps.isEdit ? 'true' : 'false'}</div>*/}
-            {/*<div><span>values:</span>{JSON.stringify(values)}</div>*/}
-            {/*<div><span>modalProps:</span>{JSON.stringify(modalProps)}</div>*/}
+            {debugMode &&
+                <>
+                    <div><span>isEdit:</span>{modalProps.isEdit ? 'true' : 'false'}</div>
+                    <div><span>liveData:</span>{JSON.stringify(liveData)}</div>
+                    <div><span>values:</span>{JSON.stringify(values)}</div>
+                    <div><span>modalProps:</span>{JSON.stringify(modalProps)}</div>
+                    <div><span>modalData:</span>{JSON.stringify(modalData)}</div>
+                </>
+            }
             <AddEditDeleteModal {...modalProps} header={hdr}>
                 {values && <>
                 <FormGroup
@@ -121,6 +141,7 @@ const MarkerEditChromosomalLocation = ({
                     id="assembly"
                     field="assembly"
                     tag="select"
+                    validate={value => value ? false : 'An assembly is required'}
                 >
                     <option value=""/>
                     {assemblies.map(assembly => (
@@ -136,7 +157,7 @@ const MarkerEditChromosomalLocation = ({
                     label="Chromosome"
                     id="chromosome"
                     field="chromosome"
-                    // validate={value => value ? false : 'An accession is required'}
+                    validate={handleValidateChromosome}
                 />
                 <FormGroup
                     labelClassName="col-md-3"
@@ -144,7 +165,7 @@ const MarkerEditChromosomalLocation = ({
                     label="Start Location"
                     id="start-location"
                     field="startLocation"
-                    // validate={value => value ? false : 'An accession is required'}
+                    validate={handleValidateLocations}
                 />
                 <FormGroup
                     labelClassName="col-md-3"
@@ -152,7 +173,7 @@ const MarkerEditChromosomalLocation = ({
                     label="End Location"
                     id="end-location"
                     field="endLocation"
-                    // validate={value => value ? false : 'An accession is required'}
+                    validate={handleValidateLocations}
                 />
             </>}
             </AddEditDeleteModal>

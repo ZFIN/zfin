@@ -833,12 +833,27 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return (List<GenomeLocation>) criteria.list();
     }
 
+    public GenomeLocation getGenomeLocationByID(Long ID) {
+        Session session = HibernateUtil.currentSession();
+
+        Criteria criteria = session.createCriteria(GenomeLocation.class);
+        criteria.add(Restrictions.eq("ID", ID));
+
+        return (GenomeLocation) criteria.uniqueResult();
+    }
+
+    public GenomeLocation saveGenomeLocation(GenomeLocation genomeLocation) {
+        Session session = HibernateUtil.currentSession();
+        session.update(genomeLocation);
+        return genomeLocation;
+    }
+
     @Override
-    public void deleteGenomeLocation(String ID) {
+    public void deleteGenomeLocation(Long ID) {
         String hql = "delete from GenomeLocation gl " +
                 " where gl.ID = :ID ";
         Query query = currentSession().createQuery(hql);
-        query.setString("ID", ID);
+        query.setLong("ID", ID);
         int removed = query.executeUpdate();
         currentSession().flush();
     }

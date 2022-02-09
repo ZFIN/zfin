@@ -59,27 +59,35 @@ public class MarkerChromosomalLocationController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/{markerId}/chromosomal-location/{chromosomalLocationID}", method = RequestMethod.POST)
+    @RequestMapping(value = "/{markerId}/chromosomal-location/{ID}", method = RequestMethod.POST)
     public ChromosomalLocationBean updateChromosomalLocationForMarker(@PathVariable String markerId,
-                                            @PathVariable String chromosomalLocationID,
-                                            @Valid @RequestBody ChromosomalLocationBean chromosomalLocation) {
+                                            @PathVariable Long ID,
+                                            @Valid @RequestBody ChromosomalLocationBean chromosomalLocationBean) {
 
-        System.out.println("TODO: implement editing chromosomal location information");
+        GenomeLocation genomeLocation = markerRepository.getGenomeLocationByID(ID);
+        genomeLocation.setAssembly(chromosomalLocationBean.getAssembly());
+        genomeLocation.setChromosome(chromosomalLocationBean.getChromosome());
+        genomeLocation.setStart(chromosomalLocationBean.getStartLocation());
+        genomeLocation.setEnd(chromosomalLocationBean.getEndLocation());
 
-        ChromosomalLocationBean chromosomalLocationBean = new ChromosomalLocationBean();
-
-        chromosomalLocationBean.setChromosome("3");
-        chromosomalLocationBean.setEntityID("ZDB-TEST-12341234");
         return chromosomalLocationBean;
     }
 
     @ResponseBody
-    @RequestMapping(value = "/{markerID}/chromosomal-location/{zdbId}", method = RequestMethod.DELETE, produces = "text/plain")
+    @RequestMapping(value = "/{markerID}/chromosomal-location/{ID}", method = RequestMethod.DELETE, produces = "text/plain")
     public String removeChromosomalLocation(@PathVariable String markerID,
-                                 @PathVariable String zdbId) {
-//        markerRepository.deleteMarkerAlias();
-        markerRepository.deleteGenomeLocation(zdbId);
+                                 @PathVariable Long ID) {
+        markerRepository.deleteGenomeLocation(ID);
         return "OK";
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/{markerID}/chromosomal-location/{ID}", method = RequestMethod.GET)
+    public ChromosomalLocationBean getChromosomalLocationForMarker(@PathVariable String markerID,
+                                                                         @PathVariable Long ID) {
+        GenomeLocation genomeLocation = markerRepository.getGenomeLocationByID(ID);
+        return ChromosomalLocationBean.fromGenomeLocation(genomeLocation);
     }
 
 }

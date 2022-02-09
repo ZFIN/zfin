@@ -3,21 +3,30 @@ package org.zfin.profile.presentation;
 import org.zfin.mapping.GenomeLocation;
 
 public class ChromosomalLocationBean {
-
+    Long ID;
     String entityID;
     String assembly;
     String chromosome;
-    String startLocation;
-    String endLocation;
+    Integer startLocation;
+    Integer endLocation;
 
     public static ChromosomalLocationBean fromGenomeLocation(GenomeLocation persistedLocation) {
         ChromosomalLocationBean clBean = new ChromosomalLocationBean();
+        clBean.setID(persistedLocation.getID());
         clBean.setEntityID(persistedLocation.getEntityID());
         clBean.setAssembly(persistedLocation.getAssembly());
         clBean.setChromosome(persistedLocation.getChromosome());
-        clBean.setStartLocation(persistedLocation.getStart().toString());
-        clBean.setEndLocation(persistedLocation.getEnd().toString());
+        clBean.setStartLocation(persistedLocation.getStart());
+        clBean.setEndLocation(persistedLocation.getEnd());
         return clBean;
+    }
+
+    public Long getID() {
+        return ID;
+    }
+
+    public void setID(Long ID) {
+        this.ID = ID;
     }
 
     public String getEntityID() {
@@ -44,19 +53,19 @@ public class ChromosomalLocationBean {
         this.chromosome = chromosome;
     }
 
-    public String getStartLocation() {
+    public Integer getStartLocation() {
         return startLocation;
     }
 
-    public void setStartLocation(String startLocation) {
+    public void setStartLocation(Integer startLocation) {
         this.startLocation = startLocation;
     }
 
-    public String getEndLocation() {
+    public Integer getEndLocation() {
         return endLocation;
     }
 
-    public void setEndLocation(String endLocation) {
+    public void setEndLocation(Integer endLocation) {
         this.endLocation = endLocation;
     }
 
@@ -66,14 +75,14 @@ public class ChromosomalLocationBean {
         genomeLocation.setChromosome(this.getChromosome());
 
         try {
-            int startLocation = Integer.parseInt(this.getStartLocation());
+            int startLocation = this.getStartLocation();
             genomeLocation.setStart(startLocation);
         } catch (NumberFormatException nfe) {
             //don't set start location
         }
 
         try {
-            int endLocation = Integer.parseInt(this.getEndLocation());
+            int endLocation = this.getEndLocation();
             genomeLocation.setEnd(endLocation);
         } catch (NumberFormatException nfe) {
             //don't set end location
