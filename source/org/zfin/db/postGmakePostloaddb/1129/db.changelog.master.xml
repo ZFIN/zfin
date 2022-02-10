@@ -5,6 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
+    <include file="source/org/zfin/db/postGmakePostloaddb/1129/ZFIN-7858.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1129/fish_mi_rna_pre.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1129/add_fish_mi_rna.xml" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1129/fish_mi_rna_post.sql" />
