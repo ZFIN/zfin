@@ -35,9 +35,6 @@ const MarkerEditSuppliers = ({ markerId }) => {
         defaultValues: modalSupplier,
     });
 
-    console.log("supplier values", values);
-    console.log("supplier modalProps", modalProps);
-
     const handleDeleteClick = async (event, supplier) => {
         event.preventDefault();
         setDeleting(supplier.zdbID);
