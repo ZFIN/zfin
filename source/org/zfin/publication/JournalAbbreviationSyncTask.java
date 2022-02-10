@@ -28,6 +28,7 @@ public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
     public static void main(String[] args) throws IOException {
         JournalAbbreviationSyncTask task = new JournalAbbreviationSyncTask();
         task.runTask();
+        System.exit(0);
     }
 
     public void runTask() {
