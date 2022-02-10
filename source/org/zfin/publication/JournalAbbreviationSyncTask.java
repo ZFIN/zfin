@@ -7,9 +7,11 @@ import org.apache.commons.csv.CSVRecord;
 import org.hibernate.Query;
 import org.hibernate.Transaction;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.nomenclature.repair.NamingIssuesReportRow;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.util.FileUtil;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -25,8 +27,8 @@ public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
 
     public static void main(String[] args) throws IOException {
         String sourceFileName = System.getenv("NCBI_JOURNAL_FILE");
-        File sourceFile = new File(sourceFileName);
-        if (!sourceFile.exists()) {
+
+        if (StringUtils.isEmpty(sourceFileName) || !FileUtil.checkFileExists(sourceFileName) ) {
             System.err.println("Provide source file through environment variable NCBI_JOURNAL_FILE\n (can be downloaded from ftp://ftp.ncbi.nih.gov/pubmed/J_Medline.txt, for example)");
             System.err.println("Other environment variable can be used for configuration:\n" +
                                 "  CONVERT_INPUT_TO_CSV (set to 'true' and the input source will be converted to csv in /tmp)\n" +
