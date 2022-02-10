@@ -57,6 +57,7 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
     private void categorizeNamingIssues(List<NamingIssuesReportRow> allSuspiciousGenotypes) {
         categorizeGenotypesWithTransposedNames(allSuspiciousGenotypes);
         categorizeAlphabeticalTranspositions(allSuspiciousGenotypes);
+        categorizeManuallyApprovedChanges(allSuspiciousGenotypes);
     }
 
     public void categorizeGenotypesWithTransposedNames(List<NamingIssuesReportRow> rows) {
@@ -71,6 +72,27 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
         for (NamingIssuesReportRow row : rows) {
             if (namesDifferOnlyByAlphabetization(row.getDisplayName(), row.getComputedDisplayName())) {
                 row.setIssueCategory(NamingIssuesReportRow.IssueCategory.ALPHABETICAL);
+            }
+        }
+    }
+
+    public void categorizeManuallyApprovedChanges(List<NamingIssuesReportRow> rows) {
+        //see:https://docs.google.com/spreadsheets/d/1DW28aF66zDr6g9oqtFfV_Xwwseeb0DMP_uDz61BHsbI/edit
+        Map<String, String> fixes = new HashMap<>();
+        fixes.put("cct5<sup>tf212</sup>", "cct5<sup>tf212b</sup>");
+        fixes.put("tud70/tud70", "Df(Chr12:dlx3b, dlx4b)tud70/tud70");
+        fixes.put("tud70/tud70 ; s356tTg", "Df(Chr12:dlx3b, dlx4b)tud70/tud70; s356tTg");
+        fixes.put("oz27/oz27", "Df(Chr13:six1a,six4a)oz27/oz27");
+        fixes.put("oz5Tg/oz5Tg ; oz27/oz27 ; cz3327Tg/cz3327Tg", "Df(Chr13:six1a,six4a)oz27/oz27; cz3327Tg/cz3327Tg; oz5Tg/oz5Tg");
+        fixes.put("oz16/oz16", "Df(Chr20:six1b,six4b)oz16/oz16");
+        fixes.put("oz16/oz16 ; oz27/oz27", "Df(Chr20:six1b,six4b)oz16/oz16; Df(Chr13:six1a,six4a)oz27/oz27");
+        fixes.put("oz5Tg/oz5Tg ; oz27/oz27 ; oz16/oz16 ; cz3327Tg/cz3327Tg", "Df(Chr20:six1b,six4b)oz16/oz16; Df(Chr13:six1a,six4a)oz27/oz27; cz3327Tg/cz3327Tg; oz5Tg/oz5Tg");
+        fixes.put("oz16/oz16 ; oz5Tg", "Df(Chr20:six1b,six4b)oz16/oz16; oz5Tg");
+        fixes.put("kcnk5a<sup>nk6aEt</sup>; nkuasgfp1aTg", "nk6aEt; nkuasgfp1aTg");
+        fixes.put("plcg1<sup>t26480/</sup>; ptch1<sup>tj222/</sup>; ptch2<sup>hu1602/+</sup>", "plcg1<sup>t26480/+</sup>; ptch1<sup>tj222/+</sup>; ptch2<sup>hu1602/+</sup>");
+        for (NamingIssuesReportRow row : rows) {
+            if (fixes.containsKey(row.getDisplayName()) && fixes.get(row.getDisplayName()).equals(row.getComputedDisplayName())) {
+                row.setIssueCategory(NamingIssuesReportRow.IssueCategory.MANUAL_FIX);
             }
         }
     }
