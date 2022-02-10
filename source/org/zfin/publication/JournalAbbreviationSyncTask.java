@@ -56,6 +56,7 @@ public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
         //get local db records
 //        List<CSVRecord> dbRecords = parseDbCsvExport(csvFileName);
         List<Journal> journals = RepositoryFactory.getPublicationRepository().getAllJournals();
+        LOG.info("Found " + journals.size() + " journals.");
 
         List<String> fixes = getSqlFixesForJournalsMissingAbbreviations(pubmedRecords, journals);
 
@@ -168,8 +169,9 @@ public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
         for (Journal dbRecord : dbRecords) {
             String id = dbRecord.getZdbID();
             String name = dbRecord.getName();
-            String med = dbRecord.getMedAbbrev();
-            String iso = dbRecord.getIsoAbbrev();
+            String med = dbRecord.getRawMedAbbrev();
+            String iso = dbRecord.getRawIsoAbbrev();
+
             boolean fixNeeded = false;
             if (med == null || med.equals("")) {
                 //System.err.print(".");
