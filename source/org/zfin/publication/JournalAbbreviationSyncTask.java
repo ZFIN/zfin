@@ -26,6 +26,13 @@ import java.util.*;
 public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
 
     public static void main(String[] args) throws IOException {
+        JournalAbbreviationSyncTask task = new JournalAbbreviationSyncTask();
+        task.runTask();
+    }
+
+    public void runTask() {
+        initAll();
+
         String sourceFileName = System.getenv("NCBI_JOURNAL_FILE");
 
         if (StringUtils.isEmpty(sourceFileName) || !FileUtil.checkFileExists(sourceFileName) ) {
@@ -54,7 +61,7 @@ public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
         applyFixes(fixes);
     }
 
-    private static List<Map<String, String>> parseFileRecords(String sourceFileName) {
+    private List<Map<String, String>> parseFileRecords(String sourceFileName) {
         BufferedReader bufferedReader = null;
         List<Map<String, String>> records = new ArrayList<>();
         Set<String> headers = new HashSet<>();
@@ -116,7 +123,7 @@ public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
         return records;
     }
 
-    private static void writePubMedCsvExport(List<Map<String, String>> pubmedRecords) {
+    private void writePubMedCsvExport(List<Map<String, String>> pubmedRecords) {
         String convertPubmedToCSV = System.getenv("CONVERT_INPUT_TO_CSV");
 
         if (!"true".equals(convertPubmedToCSV)) {
@@ -145,7 +152,7 @@ public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
         }
     }
 
-    private static List<CSVRecord> parseDbCsvExport(String csvFileName) throws IOException {
+    private List<CSVRecord> parseDbCsvExport(String csvFileName) throws IOException {
         List<CSVRecord> dbRecords = new ArrayList<>();
         Reader in = new FileReader(csvFileName);
         Iterable<CSVRecord> records = CSVFormat.RFC4180.withFirstRecordAsHeader().parse(in);
@@ -155,7 +162,7 @@ public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
         return dbRecords;
     }
 
-    private static List<String> getSqlFixesForJournalsMissingAbbreviations(List<Map<String, String>> pubmedRecords, List<Journal> dbRecords) {
+    private List<String> getSqlFixesForJournalsMissingAbbreviations(List<Map<String, String>> pubmedRecords, List<Journal> dbRecords) {
         List<String> sqlFixes = new ArrayList<>();
         for (Journal dbRecord : dbRecords) {
             String id = dbRecord.getZdbID();
@@ -204,7 +211,7 @@ public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
         return sqlFixes;
     }
 
-    private static void applyFixes(List<String> reportRows) {
+    private void applyFixes(List<String> reportRows) {
         Transaction tx;
         Query query;
         String forceApplyFixes = System.getenv("FORCE_APPLY_FIXES");
@@ -225,7 +232,7 @@ public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
         }
     }
 
-    private static Map<String, String> getMatch(List<Map<String, String>> pubmedRecords, String name) {
+    private Map<String, String> getMatch(List<Map<String, String>> pubmedRecords, String name) {
         for(Map<String, String> record : pubmedRecords) {
             String title = record.get("JournalTitle");
             if (title.equals(name) ) {
