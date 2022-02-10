@@ -5,6 +5,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.util.StringUtils;
@@ -58,9 +59,7 @@ public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
         List<Journal> journals = RepositoryFactory.getPublicationRepository().getAllJournals();
         LOG.info("Found " + journals.size() + " journals.");
 
-        List<String> fixes = getSqlFixesForJournalsMissingAbbreviations(pubmedRecords, journals);
-
-        applyFixes(fixes);
+        applyFixesForJournalsMissingAbbreviations(pubmedRecords, journals);
     }
 
     private List<Map<String, String>> parseFileRecords(String sourceFileName) {
@@ -164,8 +163,16 @@ public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
         return dbRecords;
     }
 
-    private List<String> getSqlFixesForJournalsMissingAbbreviations(List<Map<String, String>> pubmedRecords, List<Journal> dbRecords) {
-        List<String> sqlFixes = new ArrayList<>();
+    private void applyFixesForJournalsMissingAbbreviations(List<Map<String, String>> pubmedRecords, List<Journal> dbRecords) {
+        String forceApplyFixesEnvironmentVariable = System.getenv("FORCE_APPLY_FIXES");
+        boolean forceApplyFixes = "true".equals(forceApplyFixesEnvironmentVariable);
+        if (forceApplyFixes) {
+            LOG.info("Applying fixes");
+        } else {
+            LOG.info("Not applying fixes");
+        }
+
+        Session session = HibernateUtil.currentSession();
         for (Journal dbRecord : dbRecords) {
             String id = dbRecord.getZdbID();
             String name = dbRecord.getName();
@@ -196,42 +203,16 @@ public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
                 }
 
                 LOG.info("Set '" + name + "' journal name with iso: '" + newIso + "', med: '" + newMed + "'");
-                assert newMed != null;
-                assert newIso != null;
 
-                newIso = newIso.replaceAll("'", "''");
-                newMed = newMed.replaceAll("'", "''");
-                name = name.replaceAll("'", "''");
-                String fix = "update journal set jrnl_isoabbrev = '" + newIso + "', " +
-                         " jrnl_medabbrev = '" + newMed + "' where jrnl_zdb_id='" + id + "' " +
-                         " and jrnl_name = '" + name + "'" +
-                        "; ";
-                sqlFixes.add(fix);
+                if (forceApplyFixes) {
+                    dbRecord.setIsoAbbrev(newIso);
+                    dbRecord.setMedAbbrev(newMed);
+                    session.update(dbRecord);
+                    session.flush();
+                }
             } else {
                 LOG.info("No match found in NCBI export for journal: " + name);
             }
-        }
-        return sqlFixes;
-    }
-
-    private void applyFixes(List<String> reportRows) {
-        Transaction tx;
-        Query query;
-        String forceApplyFixes = System.getenv("FORCE_APPLY_FIXES");
-
-        if ("true".equals(forceApplyFixes)) {
-            LOG.info("APPLYING FIXES");
-
-            for (String row : reportRows) {
-                tx = HibernateUtil.createTransaction();
-                LOG.info("Executing SQL: " + row);
-                query = HibernateUtil.currentSession().createSQLQuery(row);
-                query.executeUpdate();
-                tx.commit();
-            }
-
-        } else {
-            LOG.info("NOT APPLYING FIXES");
         }
     }
 
