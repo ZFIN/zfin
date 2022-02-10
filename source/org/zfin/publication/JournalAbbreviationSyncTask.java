@@ -24,12 +24,18 @@ import java.util.*;
 public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
 
     public static void main(String[] args) throws IOException {
-        if (args.length != 1) {
-            System.err.println("Provide source file for first argument (download from ftp://ftp.ncbi.nih.gov/pubmed/J_Medline.txt)");
+        String sourceFileName = System.getenv("NCBI_JOURNAL_FILE");
+        File sourceFile = new File(sourceFileName);
+        if (!sourceFile.exists()) {
+            System.err.println("Provide source file through environment variable NCBI_JOURNAL_FILE\n (can be downloaded from ftp://ftp.ncbi.nih.gov/pubmed/J_Medline.txt, for example)");
+            System.err.println("Other environment variable can be used for configuration:\n" +
+                                "  CONVERT_INPUT_TO_CSV (set to 'true' and the input source will be converted to csv in /tmp)\n" +
+                                "  FORCE_APPLY_FIXES (set to 'true' and the database will be automatically updated)\n");
+            System.err.println("Example bash run:\n" +
+                    " NCBI_JOURNAL_FILE=/tmp/pubs/J_Entrez FORCE_APPLY_FIXES=true gradle journalAbbreviationSyncTask\n");
+
             System.exit(1);
         }
-        String sourceFileName = args[0];
-//        String csvFileName = args[1];
 
         //get pubmed records
         List<Map<String, String>> pubmedRecords = parseFileRecords(sourceFileName);
