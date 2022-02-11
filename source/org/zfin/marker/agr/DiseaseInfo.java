@@ -19,7 +19,9 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
+import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
 public class DiseaseInfo extends AbstractScriptWrapper {
 
@@ -33,7 +35,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
     public static void main(String[] args) throws IOException {
         int number = 0;
         if (args.length > 0) {
-            number = Integer.valueOf(args[0]);
+            number = Integer.parseInt(args[0]);
         }
         DiseaseInfo diseaseInfo = new DiseaseInfo(number);
         diseaseInfo.init();
@@ -88,14 +90,14 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                             .stream()
                             .collect(
                                     Collectors.groupingBy(DiseaseAnnotation::getPublication,
-                                            Collectors.mapping(this::getEvidenceCodeString, Collectors.toList())
+                                            Collectors.mapping(this::getEvidenceCodeString, toList())
                                     )
                             );
                     Map<Publication, List<String>> publicationDateMap = diseaseAnnotations
                             .stream()
                             .collect(
                                     Collectors.groupingBy(DiseaseAnnotation::getPublication,
-                                            Collectors.mapping(DiseaseAnnotation::getZdbID, Collectors.toList())
+                                            Collectors.mapping(DiseaseAnnotation::getZdbID, toList())
                                     )
                             );
 
@@ -230,8 +232,8 @@ public class DiseaseInfo extends AbstractScriptWrapper {
             List<ExperimentCondition> allConditions = getMutantRepository().getExperimentConditions(damo.getFishExperiment().getExperiment());
             relation.setConditionRelationType("has_condition");
             List<ExperimentConditionDTO> expconds2 = new ArrayList<>();
+            allConditions = allConditions.stream().distinct().collect(toList());
             for (ExperimentCondition conditionz : allConditions) {
-
 
                 ExperimentConditionDTO expconda = new ExperimentConditionDTO();
                 if (conditionz.getAoTerm() != null) {
@@ -246,7 +248,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                 if (conditionz.getTaxaonymTerm() != null) {
                     expconda.setNcbiTaxonId(conditionz.getTaxaonymTerm().getOboID());
                 }
-                expconda.setConditionClassId(conditionz.getZecoTerm().getOboID());
+                populateConditionClassId(expconda, conditionz);
                 expconda.setConditionStatement(conditionz.getDisplayName());
                 expconds2.add(expconda);
             }
@@ -318,35 +320,41 @@ public class DiseaseInfo extends AbstractScriptWrapper {
     }
 
     // ToDo: This list should be a slim in ZECO to identify those high-level terms.
-    private static final List<String> highLevelConditionTerms = new ArrayList<>(18);
+    private static final List<GenericTerm> highLevelConditionTerms = new ArrayList<>(18);
 
     static {
-        highLevelConditionTerms.add("ZECO:0000101");
-        highLevelConditionTerms.add("ZECO:0000103");
-        highLevelConditionTerms.add("ZECO:0000104");
-        highLevelConditionTerms.add("ZECO:0000105");
-        highLevelConditionTerms.add("ZECO:0000111");
-        highLevelConditionTerms.add("ZECO:0000112");
-        highLevelConditionTerms.add("ZECO:0000113");
-        highLevelConditionTerms.add("ZECO:0000131");
-        highLevelConditionTerms.add("ZECO:0000140");
-        highLevelConditionTerms.add("ZECO:0000143");
-        highLevelConditionTerms.add("ZECO:0000146");
-        highLevelConditionTerms.add("ZECO:0000154");
-        highLevelConditionTerms.add("ZECO:0000160");
-        highLevelConditionTerms.add("ZECO:0000182");
-        highLevelConditionTerms.add("ZECO:0000208");
-        highLevelConditionTerms.add("ZECO:0000222");
-        highLevelConditionTerms.add("ZECO:0000229");
-        highLevelConditionTerms.add("ZECO:0000252");
+        highLevelConditionTerms.add(new GenericTerm("ZDB-TERM-160831-7", "ZECO:0000105"));
+        highLevelConditionTerms.add(new GenericTerm("ZDB-TERM-160831-13", "ZECO:0000111"));
+        highLevelConditionTerms.add(new GenericTerm("ZDB-TERM-160831-14", "ZECO:0000112"));
+        highLevelConditionTerms.add(new GenericTerm("ZDB-TERM-160831-15", "ZECO:0000113"));
+        highLevelConditionTerms.add(new GenericTerm("ZDB-TERM-160831-33", "ZECO:0000131"));
+        highLevelConditionTerms.add(new GenericTerm("ZDB-TERM-160831-42", "ZECO:0000140"));
+        highLevelConditionTerms.add(new GenericTerm("ZDB-TERM-160831-45", "ZECO:0000143"));
+        highLevelConditionTerms.add(new GenericTerm("ZDB-TERM-160831-48", "ZECO:0000146"));
+        highLevelConditionTerms.add(new GenericTerm("ZDB-TERM-160831-56", "ZECO:0000154"));
+        highLevelConditionTerms.add(new GenericTerm("ZDB-TERM-160831-62", "ZECO:0000160"));
+        highLevelConditionTerms.add(new GenericTerm("ZDB-TERM-160831-82", "ZECO:0000182"));
+        highLevelConditionTerms.add(new GenericTerm("ZDB-TERM-160831-108", "ZECO:0000208"));
+        highLevelConditionTerms.add(new GenericTerm("ZDB-TERM-160831-122", "ZECO:0000222"));
+        highLevelConditionTerms.add(new GenericTerm("ZDB-TERM-160831-129", "ZECO:0000229"));
+        highLevelConditionTerms.add(new GenericTerm("ZDB-TERM-171108-6", "ZECO:0000252"));
+        highLevelConditionTerms.add(new GenericTerm("ZDB-TERM-160831-3", "ZECO:0000101"));
+        highLevelConditionTerms.add(new GenericTerm("ZDB-TERM-160831-5", "ZECO:0000103"));
+        // make sure it's the last entry as it is a root term.
+        highLevelConditionTerms.add(new GenericTerm("ZDB-TERM-160831-6", "ZECO:0000104"));
     }
 
     private void populateConditionClassId(ExperimentConditionDTO expcond, ExperimentCondition condition) {
         String oboID = condition.getZecoTerm().getOboID();
-        if (highLevelConditionTerms.contains(oboID)) {
+        if (highLevelConditionTerms.stream().map(GenericTerm::getOboID).collect(toList()).contains(oboID)) {
             expcond.setConditionClassId(oboID);
         } else {
-            expcond.setConditionId(oboID);
+            Optional<GenericTerm> highLevelterm = highLevelConditionTerms.stream().filter(parentTerm -> getOntologyRepository().isParentChildRelationshipExist(parentTerm, condition.getZecoTerm()))
+                    .findFirst();
+            if (highLevelterm.isPresent()) {
+                expcond.setConditionClassId(highLevelterm.get().getOboID());
+                expcond.setConditionId(oboID);
+            }
         }
     }
 

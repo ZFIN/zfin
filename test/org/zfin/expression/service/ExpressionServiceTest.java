@@ -1,13 +1,16 @@
 package org.zfin.expression.service;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.expression.presentation.MarkerExpression;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
+import org.zfin.marker.presentation.LinkDisplay;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.ForeignDB;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -17,6 +20,7 @@ import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.*;
 
 /**
+ *
  */
 public class ExpressionServiceTest extends AbstractDatabaseTest {
 
@@ -38,6 +42,13 @@ public class ExpressionServiceTest extends AbstractDatabaseTest {
         assertThat(markerExpression.getAllMarkerExpressionInstance().getFigureCount(), greaterThan(35));
         assertNotNull(markerExpression.getDirectlySubmittedExpression());
         assertNull(markerExpression.getWildTypeStageExpression());
+    }
+
+    @Test
+    public void getFishMiRnaExpressionLink() {
+        Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-MIRNAG-091023-14");
+        LinkDisplay markerExpression = expressionService.getFishMiTRna(marker, ForeignDB.AvailableName.FISHMIRNA);
+        assertNotNull(markerExpression);
     }
 
     @Test
@@ -78,7 +89,7 @@ public class ExpressionServiceTest extends AbstractDatabaseTest {
 
 
     @Test
-    public void isThisseProbe(){
+    public void isThisseProbe() {
         Clone c = RepositoryFactory.getMarkerRepository().getCloneById("ZDB-CDNA-080114-24");
         assertTrue(expressionService.isThisseProbe(c));
     }

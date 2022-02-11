@@ -686,12 +686,12 @@ public class HibernateSequenceRepository implements SequenceRepository {
     }
 
     @Override
-    public List<DBLink> getAtlasDBLink(String featureZDbID, String referenceDBName) {
+    public List<DBLink> getAtlasDBLink(String markerZdbID, String referenceDBName) {
         String hql = "select mdbl from DBLink mdbl where mdbl.dataZdbID = :markerZdbID " +
                      "and mdbl.referenceDatabase.foreignDB.dbName = :referenceDBName";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setString("referenceDBName", referenceDBName);
-        query.setString("markerZdbID", featureZDbID);
+        query.setString("markerZdbID", markerZdbID);
         return query.list();
 
     }

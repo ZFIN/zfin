@@ -9,5 +9,8 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1129/add_fish_mi_rna.xml" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1129/fish_mi_rna_post.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1129/ZFIN-7770.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1129/fish_mi_rna_expression_pre.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1129/add_fish_mi_rna_expression.xml" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1129/fish_mi_rna_expression_post.sql" />
 
 </databaseChangeLog>
