@@ -1,0 +1,113 @@
+// ribbon overrides
+$ribbon-species-icon: '';
+$ribbon-primary-color: $primary;
+$ribbon-strip-font-default: inherit;
+$ribbon-strip-tile-border-radius: 0;
+$ribbon-strip-tile-border-color: $border-color;
+$ribbon-strip-tile-border-color-hover: $border-color;
+$ribbon-strip-tile-tile-width: 22px;
+//$ribbon-accent: #ff9900;
+$ribbon-accent: $primary; //no accent
+$ribbon-base-size: 0.8rem;
+$ribbon-block-size: $ribbon-strip-tile-tile-width;
+$ribbon-category-spacing: 2px;
+$ribbon-category-other-spacing: 2px;
+$ribbon-separator-width: 8px;
+
+.ribbon__subject {
+  line-height: 1;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  margin-bottom: -1px;
+}
+
+.ribbon__category {
+  margin-top: 9.5rem; //this should be automatic?
+}
+
+.ribbon__category--cell {
+  font-size: $ribbon-base-size;
+  width: calc(#{$ribbon-block-size} - 1px);
+  transform: translateX(2px) rotate(-45deg);
+
+  &:hover {
+    font-weight: 800;
+  }
+}
+
+.ribbon__subject--cell,
+.ribbon__subject--cell--no-annotation {
+  text-align: unset;
+  box-shadow: none;
+}
+
+td.ribbon__subject--cell {
+  width: calc(#{$ribbon-block-size} - 2px);
+  height: calc(#{$ribbon-block-size} - 2px);
+  border: none;
+
+  &.clicked {
+    border: 2px solid $ribbon-accent;
+  }
+}
+
+wc-ribbon-cell.ribbon__subject--cell,
+wc-ribbon-cell.ribbon__subject--cell--no-annotation {
+  width: $ribbon-block-size;
+  height: $ribbon-block-size;
+  margin-right: -1px;
+  border: 1px solid $border-color;
+}
+
+.ribbon__category--separator + th.ribbon__category--cell {
+  margin-right: $ribbon-category-spacing;
+}
+
+.ribbon__subject--separator + wc-ribbon-cell.ribbon__subject--cell {
+  margin-right: $ribbon-category-spacing;
+}
+
+wc-ribbon-cell[id$="Other"] {
+  margin-left: $ribbon-category-other-spacing;
+}
+
+th.ribbon__category--cell[id$="Other"] {
+  margin-left: $ribbon-category-other-spacing;
+}
+
+th.ribbon__category--separator, td.ribbon__subject--separator {
+  padding-right: $ribbon-separator-width;
+  padding-left: $ribbon-separator-width;
+}
+
+.ribbon__subject__label--link {
+  color: $link-color;
+
+  &:hover {
+    font-weight: normal;
+  }
+}
+
+.table__row__supercell__cell__link {
+  color: $link-color
+}
+
+.ribbon-loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+th#category-all-GlobalAll::first-letter {
+  text-transform: capitalize;
+}
+
+//add an "x" to selected cell
+td.ribbon__subject--cell.clicked::after {
+  content: "\2715";
+  color: white;
+  position: relative;
+  left: 2px;
+  top: 0;
+}

@@ -83,8 +83,10 @@ query.setParameter("refDb", signafishDb)
 query.setParameterList("accNums", array)
 linksToDelete = query.list()
 linksToDelete.each { link ->
-    println "  $link.zdbID"
-    session.delete(link)
+    println " Deleting: $link.zdbID"
+    query = session.createSQLQuery("delete from DB_LINK where dblink_zdb_id = :id ")
+    query.setParameter("id", link.zdbID)
+    query.executeUpdate()
 }
 println "Determine if  db links already exist "
 hql = """from MarkerDBLink dbl

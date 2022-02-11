@@ -15,7 +15,8 @@ $password = "";
 print "$dbname\n\n";
 
 ### open a handle on the db
-$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+my $dbhost = "<!--|PGHOST|-->";
+$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
     or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
 #remove old report and log files

@@ -24,6 +24,7 @@ import org.zfin.framework.api.*;
 import org.zfin.marker.presentation.ExpressionDetail;
 import org.zfin.marker.presentation.ExpressionRibbonDetail;
 import org.zfin.marker.presentation.PhenotypeRibbonSummary;
+import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.PhenotypeObservationStatement;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.PostComposedEntity;
@@ -41,6 +42,7 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.*;
 import static org.zfin.framework.api.RibbonType.EXPRESSION;
 import static org.zfin.framework.api.RibbonType.PHENOTYPE;
+import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
 @Service
@@ -197,6 +199,13 @@ public class RibbonService {
         Map<String, RibbonSubjectGroupCounts> globalAllCounts = getRibbonCounts(partialQuery, Collections.emptyList());
         subject.setNumberOfAnnotations(globalAllCounts.get(GLOBAL_ALL).getNumberOfAnnotations());
         subject.setNumberOfClasses(globalAllCounts.get(GLOBAL_ALL).getNumberOfClasses());
+
+        try {
+            String subjectLabel = getMarkerRepository().getMarker(zdbID).getAbbreviation();
+            subject.setLabel(subjectLabel);
+        } catch (Exception e) {
+            subject.setLabel("");
+        }
 
         // build the final result object
         RibbonSummary summary = new RibbonSummary();

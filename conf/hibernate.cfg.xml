@@ -101,6 +101,7 @@
         <mapping class="org.zfin.infrastructure.PersonAttribution"/>
         <mapping class="org.zfin.database.PostgresSession"/>
         <mapping class="org.zfin.infrastructure.PublicationAttribution"/>
+        <mapping class="org.zfin.infrastructure.LabAttribution"/>
         <mapping class="org.zfin.infrastructure.RecordAttribution"/>
         <mapping class="org.zfin.infrastructure.ReplacementZdbID"/>
         <mapping class="org.zfin.infrastructure.SourceAlias"/>

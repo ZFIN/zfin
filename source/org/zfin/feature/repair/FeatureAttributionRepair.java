@@ -62,9 +62,25 @@ public class FeatureAttributionRepair extends AbstractScriptWrapper {
         outputWriter = null;
         try {
             outputWriter = new BufferedWriter(new FileWriter(outputPath));
+            writeSqlHeader();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void writeSqlHeader() throws IOException {
+        outputWriter.write("" +
+                "-- create a temporary function that returns the replaced id of a gene (or the given id if no replacement found)\n" +
+                "drop function if exists pg_temp.id_or_replaced_id;                                                             \n" +
+                "create function pg_temp.id_or_replaced_id(varchar) returns text as                                             \n" +
+                "$$                                                                                                             \n" +
+                "                                                                                                               \n" +
+                "SELECT                                                                                                         \n" +
+                "    coalesce(max(zrd.zrepld_new_zdb_id),$1)                                                                    \n" +
+                "FROM                                                                                                           \n" +
+                "    zdb_replaced_data zrd where zrd.zrepld_old_zdb_id = $1;                                                    \n" +
+                "                                                                                                               \n" +
+                "$$ language sql;                                                                                               \n\n");
     }
 
     public void scanThroughPublicationsAndOutputFixes() throws IOException {
@@ -186,10 +202,10 @@ public class FeatureAttributionRepair extends AbstractScriptWrapper {
             if (getInfrastructureRepository().getRecordAttribution(gene.zdbID, publication.getZdbID(), RecordAttribution.SourceType.STANDARD) == null) {
                 logger.info("Add to publication " + publication.getZdbID() + " direct attribution of " + gene.getZdbID() + " through intermediary " + intermediaryAbbreviation + "(" + intermediaryID + "): " + reason );
                 outputWriter.write("INSERT INTO updates (submitter_id,rec_id,field_name,new_value,comments,submitter_name) " +
-                                "SELECT 'ZDB-PERS-210917-1','" + gene.getZdbID() + "','record attribution','" + publication.getZdbID() + "'," + "'Added direct attribution by intermediary " + intermediaryID + " " + reason + "','Ryan Taylor (ZFIN-7704)' WHERE NOT EXISTS ( select 'x' from updates where " +
-                                "submitter_id='ZDB-PERS-210917-1' and rec_id='" + gene.getZdbID() + "' and field_name='record attribution' and new_value = '" + publication.getZdbID() + "' );\n"
+                                "SELECT 'ZDB-PERS-210917-1',pg_temp.id_or_replaced_id('" + gene.getZdbID() + "'),'record attribution','" + publication.getZdbID() + "'," + "'Added direct attribution by intermediary " + intermediaryID + " " + reason + "','Ryan Taylor (ZFIN-7704)' WHERE NOT EXISTS ( select 'x' from updates where " +
+                                "submitter_id='ZDB-PERS-210917-1' and ( rec_id='" + gene.getZdbID() + "' or rec_id=pg_temp.id_or_replaced_id('" + gene.getZdbID() + "') ) and field_name='record attribution' and new_value = '" + publication.getZdbID() + "' );\n"
                 );
-                outputWriter.write("INSERT INTO record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id, recattrib_source_type) VALUES ('" + gene.getZdbID() + "', '" + publication.getZdbID() + "', 'standard') ON CONFLICT DO NOTHING;\n");
+                outputWriter.write("INSERT INTO record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id, recattrib_source_type) (SELECT pg_temp.id_or_replaced_id('" + gene.getZdbID() + "'), '" + publication.getZdbID() + "', 'standard') ON CONFLICT DO NOTHING;\n");
                 outputWriter.flush();
             }
         }

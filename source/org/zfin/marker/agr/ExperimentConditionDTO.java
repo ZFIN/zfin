@@ -18,8 +18,6 @@ public class ExperimentConditionDTO  {
     private String geneOntologyId;
     @JsonProperty("NCBITaxonId")
     private String ncbiTaxonId;
-//    @JsonProperty("ChemicalOntologyId")
-    @JsonIgnore
     private String chemicalOntologyId;
 
 }

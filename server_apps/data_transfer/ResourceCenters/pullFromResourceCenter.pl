@@ -169,7 +169,8 @@ system("/bin/chmod ug+w <!--|ROOT_PATH|-->/server_apps/data_transfer/ResourceCen
 #  Open Database.
 
 chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/ZIRC/";
-my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+my $dbhost = "<!--|PGHOST|-->";
+my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
               or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
 # Now do the work.
@@ -188,7 +189,8 @@ my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $pass
 $dbh->commit();
 $dbh->disconnect();
 
-$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+my $dbhost = "<!--|PGHOST|-->";
+$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $password)
            or die "Cannot connect to PostgreSQL database: $DBI::errstr\n";
 
 &geno_main($dbh, $zircZdbId, "ZIRC");           # Genotype availability ZIRC
