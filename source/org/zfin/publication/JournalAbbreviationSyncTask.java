@@ -61,9 +61,7 @@ public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
         List<Journal> journals = RepositoryFactory.getPublicationRepository().getAllJournals();
         LOG.info("Found " + journals.size() + " journals.");
 
-        List<String> fixes = getSqlFixesForJournalsMissingAbbreviations(pubmedRecords, journals);
-
-        applyFixes(fixes);
+        applyFixesForJournalsMissingAbbreviations(pubmedRecords, journals);
     }
 
     private List<Map<String, String>> parseFileRecords(String sourceFileName) {
@@ -167,8 +165,16 @@ public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
         return dbRecords;
     }
 
-    private List<String> getSqlFixesForJournalsMissingAbbreviations(List<Map<String, String>> pubmedRecords, List<Journal> dbRecords) {
-        List<String> sqlFixes = new ArrayList<>();
+    private void applyFixesForJournalsMissingAbbreviations(List<Map<String, String>> pubmedRecords, List<Journal> dbRecords) {
+        String forceApplyFixesEnvironmentVariable = System.getenv("FORCE_APPLY_FIXES");
+        boolean forceApplyFixes = "true".equals(forceApplyFixesEnvironmentVariable);
+        if (forceApplyFixes) {
+            LOG.info("Applying fixes");
+        } else {
+            LOG.info("Not applying fixes");
+        }
+
+        Session session = HibernateUtil.currentSession();
         for (Journal dbRecord : dbRecords) {
             String id = dbRecord.getZdbID();
             String name = dbRecord.getName();
