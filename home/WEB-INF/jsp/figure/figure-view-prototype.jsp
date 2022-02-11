@@ -6,7 +6,7 @@
 <c:set var="ABSTRACT" value="Figure Caption"/>
 <c:set var="EXPRESSION" value="Expression Data"/>
 <c:set var="PHENOTYPE" value="Phenotype Data"/>
-<c:set var="ACKNOWLEGMENTS" value="Acknowlegments"/>
+<c:set var="ACKNOWLEDGMENTS" value="Acknowledgments"/>
 
 <z:dataPage
         sections="${[SUMMARY, ABSTRACT, EXPRESSION, PHENOTYPE, ACKNOWLEGMENTS]}">
