@@ -1,13 +1,33 @@
 package org.zfin.profile.presentation;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
+import org.zfin.framework.api.View;
 import org.zfin.mapping.GenomeLocation;
 
+@Setter
+@Getter
 public class ChromosomalLocationBean {
+
+    @JsonView(View.API.class)
+    @JsonProperty("id")
     Long ID;
+
+    @JsonView(View.API.class)
     String entityID;
+
+    @JsonView(View.API.class)
     String assembly;
+
+    @JsonView(View.API.class)
     String chromosome;
+
+    @JsonView(View.API.class)
     Integer startLocation;
+
+    @JsonView(View.API.class)
     Integer endLocation;
 
     public static ChromosomalLocationBean fromGenomeLocation(GenomeLocation persistedLocation) {
@@ -19,54 +39,6 @@ public class ChromosomalLocationBean {
         clBean.setStartLocation(persistedLocation.getStart());
         clBean.setEndLocation(persistedLocation.getEnd());
         return clBean;
-    }
-
-    public Long getID() {
-        return ID;
-    }
-
-    public void setID(Long ID) {
-        this.ID = ID;
-    }
-
-    public String getEntityID() {
-        return entityID;
-    }
-
-    public void setEntityID(String entityID) {
-        this.entityID = entityID;
-    }
-
-    public String getAssembly() {
-        return assembly;
-    }
-
-    public void setAssembly(String assembly) {
-        this.assembly = assembly;
-    }
-
-    public String getChromosome() {
-        return chromosome;
-    }
-
-    public void setChromosome(String chromosome) {
-        this.chromosome = chromosome;
-    }
-
-    public Integer getStartLocation() {
-        return startLocation;
-    }
-
-    public void setStartLocation(Integer startLocation) {
-        this.startLocation = startLocation;
-    }
-
-    public Integer getEndLocation() {
-        return endLocation;
-    }
-
-    public void setEndLocation(Integer endLocation) {
-        this.endLocation = endLocation;
     }
 
     public GenomeLocation toGenomeLocation() {

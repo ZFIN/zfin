@@ -1,10 +1,12 @@
 package org.zfin.marker.presentation;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.zfin.framework.api.View;
 import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.mapping.GenomeLocation;
 import org.zfin.marker.repository.MarkerRepository;
@@ -16,33 +18,29 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Controller
+@RestController
 @RequestMapping("/marker")
 public class MarkerChromosomalLocationController {
 
     @Autowired
     private MarkerRepository markerRepository;
 
-    @Autowired
-    private ProfileRepository profileRepository;
-
     @InitBinder("chromosomalLocationBean")
     public void initBinder(WebDataBinder binder) {
         binder.setValidator(new ChromosomalLocationBeanValidator());
     }
 
-    @ResponseBody
+    @JsonView(View.API.class)
     @RequestMapping(value = "/{zdbID}/chromosomal-location", method = RequestMethod.GET)
     public List<ChromosomalLocationBean> getChromosomalLocationForMarker(@PathVariable String zdbID) {
         List<GenomeLocation> genomeLocations = markerRepository.getGenomeLocation(zdbID);
-        List<ChromosomalLocationBean> resultList = genomeLocations
+        return genomeLocations
                 .stream()
                 .map(ChromosomalLocationBean::fromGenomeLocation)
                 .collect(Collectors.toList());
-        return resultList;
     }
 
-    @ResponseBody
+    @JsonView(View.API.class)
     @RequestMapping(value = "/{zdbID}/chromosomal-location", method = RequestMethod.POST)
     public ChromosomalLocationBean addChromosomalLocationForMarker(@PathVariable String zdbID,
                                              @Valid @RequestBody ChromosomalLocationBean chromosomalLocation,
@@ -58,7 +56,7 @@ public class MarkerChromosomalLocationController {
         return ChromosomalLocationBean.fromGenomeLocation(persistedLocation);
     }
 
-    @ResponseBody
+    @JsonView(View.API.class)
     @RequestMapping(value = "/{markerId}/chromosomal-location/{ID}", method = RequestMethod.POST)
     public ChromosomalLocationBean updateChromosomalLocationForMarker(@PathVariable String markerId,
                                             @PathVariable Long ID,
@@ -74,16 +72,18 @@ public class MarkerChromosomalLocationController {
         return chromosomalLocationBean;
     }
 
-    @ResponseBody
-    @RequestMapping(value = "/{markerID}/chromosomal-location/{ID}", method = RequestMethod.DELETE, produces = "text/plain")
-    public String removeChromosomalLocation(@PathVariable String markerID,
+    @JsonView(View.API.class)
+    @RequestMapping(value = "/{markerID}/chromosomal-location/{ID}", method = RequestMethod.DELETE)
+    public ChromosomalLocationBean removeChromosomalLocation(@PathVariable String markerID,
                                  @PathVariable Long ID) {
+        GenomeLocation genomeLocation = markerRepository.getGenomeLocationByID(ID);
+        ChromosomalLocationBean deletedChromosomalLocation = ChromosomalLocationBean.fromGenomeLocation(genomeLocation);
         markerRepository.deleteGenomeLocation(ID);
-        return "OK";
+        return deletedChromosomalLocation;
     }
 
 
-    @ResponseBody
+    @JsonView(View.API.class)
     @RequestMapping(value = "/{markerID}/chromosomal-location/{ID}", method = RequestMethod.GET)
     public ChromosomalLocationBean getChromosomalLocationForMarker(@PathVariable String markerID,
                                                                          @PathVariable Long ID) {
