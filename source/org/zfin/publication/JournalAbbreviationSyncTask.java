@@ -15,6 +15,7 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.FileUtil;
 
 import java.io.*;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -36,19 +37,7 @@ public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
 
     public void runTask() {
         initAll();
-
-        String sourceFileName = System.getenv("NCBI_JOURNAL_FILE");
-
-        if (StringUtils.isEmpty(sourceFileName) || !FileUtil.checkFileExists(sourceFileName) ) {
-            System.err.println("Provide source file through environment variable NCBI_JOURNAL_FILE\n (can be downloaded from ftp://ftp.ncbi.nih.gov/pubmed/J_Medline.txt, for example)");
-            System.err.println("Other environment variable can be used for configuration:\n" +
-                                "  CONVERT_INPUT_TO_CSV (set to 'true' and the input source will be converted to csv in /tmp)\n" +
-                                "  FORCE_APPLY_FIXES (set to 'true' and the database will be automatically updated)\n");
-            System.err.println("Example bash run:\n" +
-                    " NCBI_JOURNAL_FILE=/tmp/pubs/J_Entrez FORCE_APPLY_FIXES=true gradle journalAbbreviationSyncTask\n");
-
-            System.exit(1);
-        }
+        String sourceFileName = determineInputFile();
 
         //get pubmed records
         List<Map<String, String>> pubmedRecords = parseFileRecords(sourceFileName);
@@ -57,12 +46,30 @@ public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
         writePubMedCsvExport(pubmedRecords);
 
         //get local db records
-//        List<CSVRecord> dbRecords = parseDbCsvExport(csvFileName);
         List<Journal> journals = RepositoryFactory.getPublicationRepository().getAllJournals();
         LOG.info("Found " + journals.size() + " journals.");
 
         List<String> fixes = getFixesForJournalsMissingAbbreviations(pubmedRecords, journals);
-        applyFixes(fixes);
+        outputSqlFile(fixes);
+    }
+
+    private String determineInputFile() {
+        String sourceFileName = System.getenv("NCBI_JOURNAL_FILE");
+        String uploadedJenkinsFile = System.getenv("NCBI_FILE_UPLOAD");
+        String jenkinsWorkspace =  System.getenv("WORKSPACE");
+        if (StringUtils.isNotEmpty(uploadedJenkinsFile)
+                && StringUtils.isNotEmpty(jenkinsWorkspace)) {
+            sourceFileName = Paths.get(jenkinsWorkspace, "NCBI_FILE_UPLOAD").toString();
+        }
+
+        if (StringUtils.isEmpty(sourceFileName) || !FileUtil.checkFileExists(sourceFileName) ) {
+            System.err.println("Provide source file through environment variable NCBI_JOURNAL_FILE\n (can be downloaded from ftp://ftp.ncbi.nih.gov/pubmed/J_Medline.txt, for example)");
+            System.err.println("Example bash run:\n" +
+                    " NCBI_JOURNAL_FILE=/tmp/pubs/J_Entrez FORCE_APPLY_FIXES=true gradle journalAbbreviationSyncTask\n");
+            System.exit(1);
+        }
+
+        return sourceFileName;
     }
 
     private List<Map<String, String>> parseFileRecords(String sourceFileName) {
@@ -156,16 +163,6 @@ public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
         }
     }
 
-    private List<CSVRecord> parseDbCsvExport(String csvFileName) throws IOException {
-        List<CSVRecord> dbRecords = new ArrayList<>();
-        Reader in = new FileReader(csvFileName);
-        Iterable<CSVRecord> records = CSVFormat.RFC4180.withFirstRecordAsHeader().parse(in);
-        for (CSVRecord record : records) {
-            dbRecords.add(record);
-        }
-        return dbRecords;
-    }
-
     private List<String> getFixesForJournalsMissingAbbreviations(List<Map<String, String>> pubmedRecords, List<Journal> dbRecords) {
         String forceApplyFixesEnvironmentVariable = System.getenv("FORCE_APPLY_FIXES");
         boolean forceApplyFixes = "true".equals(forceApplyFixesEnvironmentVariable);
@@ -228,25 +225,15 @@ public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
         return sqlFixes;
     }
 
-    private void applyFixes(List<String> sqlUpdateStatements) {
-        Transaction tx;
-        Query query;
-        String forceApplyFixes = System.getenv("FORCE_APPLY_FIXES");
-
-        outputSqlFile(sqlUpdateStatements);
-
-        if ("true".equals(forceApplyFixes)) {
-            LOG.info("IGNORING APPLYING FIXES FLAG");
-        } else {
-            LOG.info("NOT APPLYING FIXES");
-        }
-    }
-
     private void outputSqlFile(List<String> sqlUpdateStatements) {
         BufferedWriter outputWriter = null;
-        String outputPath = DEFAULT_OUTPUT_FILE;
+        String outputPath = System.getenv("OUTPUT_SQL_FILE");
+        if (StringUtils.isEmpty(outputPath)) {
+            outputPath = DEFAULT_OUTPUT_FILE;
+        }
 
         try {
+            LOG.info("Writing SQL fixes to " + outputPath);
             outputWriter = new BufferedWriter(new FileWriter(outputPath));
             for (String sql : sqlUpdateStatements) {
                 outputWriter.write(sql + "\n");
@@ -262,8 +249,9 @@ public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
                 e.printStackTrace();
             }
         }
-    }
 
+        LOG.info("Wrote " + sqlUpdateStatements.size() + " update statements to sql file");
+    }
 
     private Map<String, String> getMatch(List<Map<String, String>> pubmedRecords, String name) {
         for(Map<String, String> record : pubmedRecords) {
