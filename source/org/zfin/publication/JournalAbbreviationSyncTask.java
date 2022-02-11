@@ -59,7 +59,7 @@ public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
         String jenkinsWorkspace =  System.getenv("WORKSPACE");
         if (StringUtils.isNotEmpty(uploadedJenkinsFile)
                 && StringUtils.isNotEmpty(jenkinsWorkspace)) {
-            sourceFileName = Paths.get(jenkinsWorkspace, uploadedJenkinsFile).toString();
+            sourceFileName = Paths.get(jenkinsWorkspace, "NCBI_FILE_UPLOAD").toString();
         }
 
         if (StringUtils.isEmpty(sourceFileName) || !FileUtil.checkFileExists(sourceFileName) ) {
