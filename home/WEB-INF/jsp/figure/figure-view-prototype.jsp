@@ -6,10 +6,10 @@
 <c:set var="ABSTRACT" value="Figure Caption"/>
 <c:set var="EXPRESSION" value="Expression Data"/>
 <c:set var="PHENOTYPE" value="Phenotype Data"/>
-<c:set var="ACKNOWLEGMENTS" value="Acknowlegments"/>
+<c:set var="ACKNOWLEDGMENTS" value="Acknowledgments"/>
 
 <z:dataPage
-        sections="${[SUMMARY, ABSTRACT, EXPRESSION, PHENOTYPE, ACKNOWLEGMENTS]}">
+        sections="${[SUMMARY, ABSTRACT, EXPRESSION, PHENOTYPE, ACKNOWLEDGMENTS]}">
 
     <jsp:attribute name="entityName">
         ${figure.label}
@@ -49,7 +49,7 @@
             </z:section>
         </z:section>
 
-        <z:section title="${ACKNOWLEGMENTS}">
+        <z:section title="${ACKNOWLEDGMENTS}">
             <c:choose>
                 <c:when test="${figure.publication.canShowImages && figure.publication.type != UNPUBLISHED}">
                     <zfin2:acknowledgment publication="${figure.publication}"
