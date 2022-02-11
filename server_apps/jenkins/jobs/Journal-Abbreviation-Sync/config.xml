@@ -6,22 +6,10 @@
     <properties>
         <hudson.model.ParametersDefinitionProperty>
             <parameterDefinitions>
-
-                <hudson.model.BooleanParameterDefinition>
-                    <name>FORCE_APPLY_FIXES</name>
-                    <description>If set to true then issue SQL statements to set journal abbreviations.</description>
-                    <defaultValue>false</defaultValue>
-                </hudson.model.BooleanParameterDefinition>
-                <hudson.model.BooleanParameterDefinition>
-                    <name>CONVERT_INPUT_TO_CSV</name>
-                    <description>If set to true then convert input to csv file.</description>
-                    <defaultValue>false</defaultValue>
-                </hudson.model.BooleanParameterDefinition>
-                <hudson.model.StringParameterDefinition>
-                    <name>NCBI_JOURNAL_FILE</name>
-                    <description>Location of NCBI Journal Export File (can be downloaded from ftp://ftp.ncbi.nih.gov/pubmed/J_Medline.txt, for example)</description>
-                    <defaultValue></defaultValue>
-                </hudson.model.StringParameterDefinition>
+                <hudson.model.FileParameterDefinition>
+                    <name>NCBI_FILE_UPLOAD</name>
+                    <description>Upload the uncompressed NCBI Journal Export File (can be downloaded from ftp://ftp.ncbi.nih.gov/pubmed/J_Medline.txt, for example)</description>
+                </hudson.model.FileParameterDefinition>
             </parameterDefinitions>
         </hudson.model.ParametersDefinitionProperty>
     </properties>
@@ -39,7 +27,7 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd $SOURCEROOT &amp;&amp; gradle journalAbbreviationSync</command>
+      <command>cd $SOURCEROOT &amp;&amp; gradle journalAbbreviationSync &amp;&amp; cp JournalAbbreviationSync.sql $WORKSPACE</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
