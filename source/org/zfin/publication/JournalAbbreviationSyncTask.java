@@ -213,6 +213,7 @@ public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
                     session.flush();
 
                     tx.commit();
+                    LOG.info("updated journal: " + dbRecord.getZdbID() + ":" + dbRecord.getName() );
                 }
             } else {
                 LOG.info("No match found in NCBI export for journal: " + name);
