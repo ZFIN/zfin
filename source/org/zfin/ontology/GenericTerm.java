@@ -70,6 +70,14 @@ public class GenericTerm implements Term<GenericTermRelationship> {
                     nullable = false, updatable = false)})
     private Set<Subset> subsets;
 
+    public GenericTerm() {
+    }
+
+    public GenericTerm(String zdbID, String oboID) {
+        this.zdbID = zdbID;
+        this.oboID = oboID;
+    }
+
     public Set<TermAlias> getSynonyms() {
         return synonyms;
     }

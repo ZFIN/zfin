@@ -311,6 +311,8 @@ public class ExpressionService {
         markerExpression.setExpressionAtlasLink(getExpressionAtlasForMarker(marker.zdbID, ForeignDB.AvailableName.EXPRESSIONATLAS));
         markerExpression.setSingleCellExpressionAtlasLink(getSingleCellExpressionAtlasForMarker(marker));
         markerExpression.setGeoLink(getGeoLinkForMarkerIfExists(marker));
+        markerExpression.setFishMiRnaLink(getFishMiTRna(marker, ForeignDB.AvailableName.FISHMIRNA));
+
 
         // directly submitted
         logger.info("setting directly submitted expression");
@@ -328,6 +330,15 @@ public class ExpressionService {
         logger.info("got in situ expression for pub tracking");
 
         return markerExpression;
+    }
+
+    public LinkDisplay getFishMiTRna(Marker marker, ForeignDB.AvailableName foreignDBName) {
+        List<DBLink> dbLinks = sequenceRepository.getAtlasDBLink(marker.getZdbID(), foreignDBName.toString());
+        if (CollectionUtils.isEmpty(dbLinks))
+            return null;
+        LinkDisplay display = new LinkDisplay();
+        display.setAccNumDisplay(dbLinks.get(0).getAccessionNumber());
+        return display;
     }
 
     public MarkerExpression getExpressionForEfg(Marker marker) {

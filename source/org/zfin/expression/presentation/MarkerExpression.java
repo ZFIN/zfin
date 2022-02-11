@@ -19,6 +19,7 @@ public class MarkerExpression {
     private WildTypeExpression wildTypeStageExpression;
     private String geoLink;
     private LinkDisplay expressionAtlasLink;
+    private LinkDisplay fishMiRnaLink;
     private String singleCellExpressionAtlasLink;
     private List<String> ensdargGenes;
     private int inSituFigCount;
