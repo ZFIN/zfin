@@ -15,6 +15,7 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.FileUtil;
 
 import java.io.*;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -58,7 +59,7 @@ public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
         String jenkinsWorkspace =  System.getenv("WORKSPACE");
         if (StringUtils.isNotEmpty(uploadedJenkinsFile)
                 && StringUtils.isNotEmpty(jenkinsWorkspace)) {
-            sourceFileName = jenkinsWorkspace + File.pathSeparator + uploadedJenkinsFile;
+            sourceFileName = Paths.get(jenkinsWorkspace, uploadedJenkinsFile).toString();
         }
 
         if (StringUtils.isEmpty(sourceFileName) || !FileUtil.checkFileExists(sourceFileName) ) {
