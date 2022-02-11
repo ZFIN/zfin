@@ -34,7 +34,7 @@ public class FluorescenceUtil {
         wavelengthGeneralMap.put(Color.YELLOW, List.of(560, 590));
         wavelengthGeneralMap.put(Color.ORANGE, List.of(590, 635));
         wavelengthGeneralMap.put(Color.RED, List.of(635, 700));
-        wavelengthGeneralMap.put(Color.FAR_RED, List.of(700, 100));
+        wavelengthGeneralMap.put(Color.FAR_RED, List.of(700, 1000));
     }
 
     // wave length in general mode
@@ -64,7 +64,8 @@ public class FluorescenceUtil {
         double generalWaveLength = (double) (wavelengthGeneralMap.get(color).get(1) - (wavelengthGeneralMap.get(color).get(0))) /
                 (wavelengthFluorescentMap.get(color).get(1) - (wavelengthFluorescentMap.get(color).get(0))) *
                 (wavelength - (double) (wavelengthFluorescentMap.get(color).get(0))) + wavelengthGeneralMap.get(color).get(0);
-        return generalWaveLength;
+        // beyond 750 the hex code gets into black and we don't want that to show for far-red
+        return generalWaveLength < 750 ? generalWaveLength : 750;
     }
 
     private static Color getColorFromFluorescentSpectrum(double wavelength) {
