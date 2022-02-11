@@ -5,6 +5,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.util.StringUtils;
@@ -24,6 +25,8 @@ import java.util.*;
  *      java -cp /tmp/wd:./home/WEB-INF/lib/commons-csv-1.4.jar org.zfin.publication.JournalAbbreviationSyncTask J_Entrez journal.csv #journal.csv is export of journal table
  */
 public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
+
+    public static final String DEFAULT_OUTPUT_FILE = "JournalAbbreviationSync.sql";
 
     public static void main(String[] args) throws IOException {
         JournalAbbreviationSyncTask task = new JournalAbbreviationSyncTask();
@@ -195,16 +198,19 @@ public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
                     continue;
                 }
 
-                LOG.info("Set '" + name + "' journal name with iso: '" + newIso + "', med: '" + newMed + "'");
+                LOG.info("Set " + id + ": '" + name + "' journal name with iso: '" + newIso + "', med: '" + newMed + "'");
                 assert newMed != null;
                 assert newIso != null;
 
                 newIso = newIso.replaceAll("'", "''");
+                newIso = newIso.replaceAll(":", "\\:");
                 newMed = newMed.replaceAll("'", "''");
-                name = name.replaceAll("'", "''");
+                newMed = newMed.replaceAll(":", "\\:");
+//                name = name.replaceAll("'", "''");
+//                name = name.replaceAll(":", "\\:");
                 String fix = "update journal set jrnl_isoabbrev = '" + newIso + "', " +
                          " jrnl_medabbrev = '" + newMed + "' where jrnl_zdb_id='" + id + "' " +
-                         " and jrnl_name = '" + name + "'" +
+//                         " and jrnl_name = '" + name + "'" +
                         "; ";
                 sqlFixes.add(fix);
             } else {
@@ -214,26 +220,42 @@ public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
         return sqlFixes;
     }
 
-    private void applyFixes(List<String> reportRows) {
+    private void applyFixes(List<String> sqlUpdateStatements) {
         Transaction tx;
         Query query;
         String forceApplyFixes = System.getenv("FORCE_APPLY_FIXES");
 
+        outputSqlFile(sqlUpdateStatements);
+
         if ("true".equals(forceApplyFixes)) {
-            LOG.info("APPLYING FIXES");
-
-            for (String row : reportRows) {
-                tx = HibernateUtil.createTransaction();
-                LOG.info("Executing SQL: " + row);
-                query = HibernateUtil.currentSession().createSQLQuery(row);
-                query.executeUpdate();
-                tx.commit();
-            }
-
+            LOG.info("IGNORING APPLYING FIXES FLAG");
         } else {
             LOG.info("NOT APPLYING FIXES");
         }
     }
+
+    private void outputSqlFile(List<String> sqlUpdateStatements) {
+        BufferedWriter outputWriter = null;
+        String outputPath = DEFAULT_OUTPUT_FILE;
+
+        try {
+            outputWriter = new BufferedWriter(new FileWriter(outputPath));
+            for (String sql : sqlUpdateStatements) {
+                outputWriter.write(sql + "\n");
+            }
+        } catch (IOException ioe) {
+            LOG.error("Error writing to file: " + outputPath);
+        } finally {
+            try {
+                if (outputWriter != null) {
+                    outputWriter.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     private Map<String, String> getMatch(List<Map<String, String>> pubmedRecords, String name) {
         for(Map<String, String> record : pubmedRecords) {
