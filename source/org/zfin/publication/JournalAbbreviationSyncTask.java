@@ -205,10 +205,14 @@ public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
                 LOG.info("Set '" + name + "' journal name with iso: '" + newIso + "', med: '" + newMed + "'");
 
                 if (forceApplyFixes) {
+                    Transaction tx = HibernateUtil.createTransaction();
+
                     dbRecord.setIsoAbbrev(newIso);
                     dbRecord.setMedAbbrev(newMed);
                     session.update(dbRecord);
                     session.flush();
+
+                    tx.commit();
                 }
             } else {
                 LOG.info("No match found in NCBI export for journal: " + name);
