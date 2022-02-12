@@ -27,7 +27,7 @@ const MarkerEditChromosomalLocation = ({
         setModalData(null);
     };
 
-    const handleValidateChromosome = (val) => {
+    const handleValidateChromosome = () => {
         if (!values) {
             return false;
         }
@@ -115,6 +115,9 @@ const MarkerEditChromosomalLocation = ({
                 setModalItem={setModalData}
                 maxLength={1}
             />
+
+            {/* Hack: for some reason, without this span, the delete action throws a JS exception. Maybe the formatLink function? */}
+            <span className="invisible"></span>
 
             <AddEditDeleteModal {...modalProps} header={hdr}>
                 {values && <>
