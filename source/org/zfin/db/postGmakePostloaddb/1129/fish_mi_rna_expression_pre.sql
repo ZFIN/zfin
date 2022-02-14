@@ -29,7 +29,7 @@ where fdb_db_pk_id = fdbcont_fdb_db_id
   AND fdb_db_name = 'FishMiRNA-Expression';
 
 
-create table fishmir_temp
+create temp table fishmir_temp
 (
     mir_gene_id VARCHAR(100)  NOT NULL,
     gene_zdb_id VARCHAR(100)  NOT NULL,

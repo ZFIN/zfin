@@ -3,7 +3,7 @@
 
 
 -- insert into DB-link
-create table pre_db_link_temp
+create temp table pre_db_link_temp
 (
     predblink_db_zdb_id varchar(50) not null,
     predblink_data_zdb_id varchar(50) not null
@@ -32,13 +32,8 @@ where fdb_db_pk_id = fdbcont_fdb_db_id
 
 insert into zdb_active_data select predblink_db_zdb_id from pre_db_link_temp;
 
-
-
 insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id, recattrib_source_type)
 select predblink_db_zdb_id, 'ZDB-PUB-220126-55', 'standard' from pre_db_link_temp;
 
-drop table fishmir_temp;
-
-drop table pre_db_link_temp;
 
 
