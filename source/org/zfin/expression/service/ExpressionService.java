@@ -311,7 +311,7 @@ public class ExpressionService {
         markerExpression.setExpressionAtlasLink(getExpressionAtlasForMarker(marker.zdbID, ForeignDB.AvailableName.EXPRESSIONATLAS));
         markerExpression.setSingleCellExpressionAtlasLink(getSingleCellExpressionAtlasForMarker(marker));
         markerExpression.setGeoLink(getGeoLinkForMarkerIfExists(marker));
-        markerExpression.setFishMiRnaLink(getFishMiTRna(marker, ForeignDB.AvailableName.FISHMIRNA_EXPRESSION));
+        markerExpression.setFishMiRnaLink(getFishMiRna(marker, ForeignDB.AvailableName.FISHMIRNA_EXPRESSION));
 
 
         // directly submitted
@@ -332,7 +332,7 @@ public class ExpressionService {
         return markerExpression;
     }
 
-    public LinkDisplay getFishMiTRna(Marker marker, ForeignDB.AvailableName foreignDBName) {
+    public LinkDisplay getFishMiRna(Marker marker, ForeignDB.AvailableName foreignDBName) {
         List<DBLink> dbLinks = sequenceRepository.getAtlasDBLink(marker.getZdbID(), foreignDBName.toString());
         if (CollectionUtils.isEmpty(dbLinks))
             return null;
