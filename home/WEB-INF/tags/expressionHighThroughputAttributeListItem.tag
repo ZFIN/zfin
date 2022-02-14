@@ -32,7 +32,8 @@
             </c:if>
             <c:if test="${!empty markerExpression.fishMiRnaLink}">
                 <zfin2:externalLink
-                        href="http://fishmirna.org/index.html?fishmirna_mature_id=${markerExpression.fishMiRnaLink.accNumDisplay}">FishMiRNA</zfin2:externalLink>
+                        href="http://fishmirna.org/index.html?fishmirna_mature_id=${markerExpression.fishMiRnaLink.accNumDisplay}">
+                    FishMiRNA:${markerExpression.fishMiRnaLink.accNumDisplay}</zfin2:externalLink>
                 (<a href="/ZDB-PUB-220103-3">1</a>)
             </c:if>
         </ul>
