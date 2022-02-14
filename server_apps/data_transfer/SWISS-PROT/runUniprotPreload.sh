@@ -34,6 +34,10 @@ echo "run sp_match.pl manuallyCuratedUniProtIDs.txt " $(date "+%Y-%m-%d %H:%M:%S
 
 ./sp_match.pl manuallyCuratedUniProtIDs.txt ;
 
+echo "copying generated preload files to network drive"
+
+/usr/bin/scp <!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/{okfile,ok2file,ec2go,interpro2go,spkw2go} /research/zarchive/load_files/UniProt/
+
 echo "#########################################################################"
 echo "## FINISHED runUniprotPreload.sh "      $(date "+%Y-%m-%d %H:%M:%S")
 echo "#########################################################################"
