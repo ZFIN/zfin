@@ -47,7 +47,7 @@ public class ExpressionServiceTest extends AbstractDatabaseTest {
     @Test
     public void getFishMiRnaExpressionLink() {
         Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID("ZDB-MIRNAG-091023-14");
-        LinkDisplay markerExpression = expressionService.getFishMiTRna(marker, ForeignDB.AvailableName.FISHMIRNA);
+        LinkDisplay markerExpression = expressionService.getFishMiRna(marker, ForeignDB.AvailableName.FISHMIRNA);
         assertNotNull(markerExpression);
     }
 
