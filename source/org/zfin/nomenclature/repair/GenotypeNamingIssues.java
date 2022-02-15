@@ -1,13 +1,17 @@
 package org.zfin.nomenclature.repair;
 
 import org.apache.commons.collections.ListUtils;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVRecord;
 import org.hibernate.Query;
 import org.hibernate.Transaction;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
+import org.zfin.util.FileUtil;
 
 import java.io.*;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -57,7 +61,7 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
     private void categorizeNamingIssues(List<NamingIssuesReportRow> allSuspiciousGenotypes) {
         categorizeGenotypesWithTransposedNames(allSuspiciousGenotypes);
         categorizeAlphabeticalTranspositions(allSuspiciousGenotypes);
-        categorizeManuallyApprovedChanges(allSuspiciousGenotypes);
+        categorizeManuallyApprovedChangesFromJenkinsUpload(allSuspiciousGenotypes);
     }
 
     public void categorizeGenotypesWithTransposedNames(List<NamingIssuesReportRow> rows) {
@@ -76,25 +80,47 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
         }
     }
 
-    public void categorizeManuallyApprovedChanges(List<NamingIssuesReportRow> rows) {
-        //see:https://docs.google.com/spreadsheets/d/1DW28aF66zDr6g9oqtFfV_Xwwseeb0DMP_uDz61BHsbI/edit
+    public void categorizeManuallyApprovedChangesFromJenkinsUpload(List<NamingIssuesReportRow> rows) {
         Map<String, String> fixes = new HashMap<>();
-        fixes.put("cct5<sup>tf212</sup>", "cct5<sup>tf212b</sup>");
-        fixes.put("tud70/tud70", "Df(Chr12:dlx3b, dlx4b)tud70/tud70");
-        fixes.put("tud70/tud70 ; s356tTg", "Df(Chr12:dlx3b, dlx4b)tud70/tud70; s356tTg");
-        fixes.put("oz27/oz27", "Df(Chr13:six1a,six4a)oz27/oz27");
-        fixes.put("oz5Tg/oz5Tg ; oz27/oz27 ; cz3327Tg/cz3327Tg", "Df(Chr13:six1a,six4a)oz27/oz27; cz3327Tg/cz3327Tg; oz5Tg/oz5Tg");
-        fixes.put("oz16/oz16", "Df(Chr20:six1b,six4b)oz16/oz16");
-        fixes.put("oz16/oz16 ; oz27/oz27", "Df(Chr20:six1b,six4b)oz16/oz16; Df(Chr13:six1a,six4a)oz27/oz27");
-        fixes.put("oz5Tg/oz5Tg ; oz27/oz27 ; oz16/oz16 ; cz3327Tg/cz3327Tg", "Df(Chr20:six1b,six4b)oz16/oz16; Df(Chr13:six1a,six4a)oz27/oz27; cz3327Tg/cz3327Tg; oz5Tg/oz5Tg");
-        fixes.put("oz16/oz16 ; oz5Tg", "Df(Chr20:six1b,six4b)oz16/oz16; oz5Tg");
-        fixes.put("kcnk5a<sup>nk6aEt</sup>; nkuasgfp1aTg", "nk6aEt; nkuasgfp1aTg");
-        fixes.put("plcg1<sup>t26480/</sup>; ptch1<sup>tj222/</sup>; ptch2<sup>hu1602/+</sup>", "plcg1<sup>t26480/+</sup>; ptch1<sup>tj222/+</sup>; ptch2<sup>hu1602/+</sup>");
+        String manuallyApprovedFixes = System.getenv("MANUALLY_APPROVED_FIXES");
+        String jenkinsWorkspace =  System.getenv("WORKSPACE");
+        if (StringUtils.isEmpty(manuallyApprovedFixes)
+                || StringUtils.isEmpty(jenkinsWorkspace)) {
+            LOG.debug("Not in a jenkins task, or no file of manual fixes uploaded. Skipping manually approved fixes.");
+            return;
+        }
+
+        String sourceFileName = Paths.get(jenkinsWorkspace, "MANUALLY_APPROVED_FIXES").toString();
+        if (!FileUtil.checkFileExists(sourceFileName)) {
+            LOG.debug("Could not open file: " + sourceFileName + ". Skipping manually approved fixes.");
+            return;
+        }
+
+        try {
+            Reader in = new FileReader(sourceFileName);
+            Iterable<CSVRecord> records = CSVFormat.RFC4180.withHeader("Old Name", "New Name").parse(in);
+            for (CSVRecord record : records) {
+                String oldName = record.get("Old Name");
+                String newName = record.get("New Name");
+                fixes.put(oldName, newName);
+                LOG.debug("Found manually approved change from '" + oldName + "' to '" + newName + "'");
+            }
+        } catch (IOException ignored) {
+            LOG.error("Error while reading from file: " + sourceFileName + ".");
+        }
+
+        LOG.debug("Found " + fixes.size() + " manually approved fixes.");
+
+        int matches = 0;
         for (NamingIssuesReportRow row : rows) {
-            if (fixes.containsKey(row.getDisplayName()) && fixes.get(row.getDisplayName()).equals(row.getComputedDisplayName())) {
+            String fix = fixes.get(row.getDisplayName());
+            if (fix != null && fix.equals(row.getComputedDisplayName())) {
+                matches++;
                 row.setIssueCategory(NamingIssuesReportRow.IssueCategory.MANUAL_FIX);
             }
         }
+        LOG.debug("Found " + matches + " with matching row.");
+
     }
 
     private void generateFixes(List<NamingIssuesReportRow> rows) {
