@@ -10,15 +10,13 @@ import org.zfin.mutant.Fish;
 import java.util.List;
 
 @Log4j2
-public class FishService {
-
-    protected static final String ZEBRAFISH_TAXID = "taxon:7955";
+public class FishService extends AllianceService {
 
     public static void submitFishToAlliance(Fish fish) {
         AffectedGenomicModel model = new AffectedGenomicModel();
         model.setCurie(fish.getZdbID());
         model.setName(fish.getDisplayName());
-        model.setTaxon(ZEBRAFISH_TAXID);
+        model.setTaxon(getNcbiTaxonTerm());
         CrossReference reference = new CrossReference();
         reference.setCurie(fish.getZdbID());
         reference.setPageAreas(List.of("pages"));
@@ -32,7 +30,7 @@ public class FishService {
         }
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         Fish fish = new Fish();
         fish.setZdbID("ZFIN:ZDB-FISH-220207-1");
         fish.setDisplayName("Fish Name");
