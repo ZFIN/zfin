@@ -102,6 +102,10 @@ task loadDb(type: GradleBuild) {
     tasks = ['loadDatabase']
 }
 
+task downloadDB(type: GradleBuild) {
+    tasks = ['getLatestDatabaseUnload']
+}
+
 task loaddb(dependsOn: loadDb) //just an alias, since we're used to loaddb.pl
 
 
