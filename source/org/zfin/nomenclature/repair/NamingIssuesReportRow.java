@@ -16,9 +16,10 @@ public class NamingIssuesReportRow {
     public enum IssueCategory {
         UNKNOWN("Unknown"),
         ALPHABETICAL("Ordered Alphabetically"), //Computed names is same as display name if display name is ordered alphabetically (with Tg at the end)
-        TRANSPOSED("Transposed Names"); //Computed names is same as display name, but the ordering is different
+        TRANSPOSED("Transposed Names"), //Computed names is same as display name, but the ordering is different
+        MANUAL_FIX("Manual Fix"); //Manually approved for fixing to computed display name
         public String value;
-        private IssueCategory(String value) {
+        IssueCategory(String value) {
             this.value = value;
         }
     }

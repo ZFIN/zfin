@@ -11,6 +11,10 @@
                     <description>If set to true then issue SQL statements to fix naming issues that are discovered and fixable.</description>
                     <defaultValue>false</defaultValue>
                 </hudson.model.BooleanParameterDefinition>
+                <hudson.model.FileParameterDefinition>
+                    <name>MANUALLY_APPROVED_FIXES</name>
+                    <description>Upload CSV of manually approved changes. (example: https://docs.google.com/spreadsheets/d/1EfeqN_5rLPUTkYnYkcXw0MivDq2yxOCihHuK8NzA9J0)</description>
+                </hudson.model.FileParameterDefinition>
             </parameterDefinitions>
         </hudson.model.ParametersDefinitionProperty>
     </properties>

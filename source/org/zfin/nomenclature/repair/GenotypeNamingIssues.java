@@ -1,12 +1,17 @@
 package org.zfin.nomenclature.repair;
 
 import org.apache.commons.collections.ListUtils;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVRecord;
 import org.hibernate.Query;
 import org.hibernate.Transaction;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
+import org.zfin.util.FileUtil;
 
 import java.io.*;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -56,6 +61,7 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
     private void categorizeNamingIssues(List<NamingIssuesReportRow> allSuspiciousGenotypes) {
         categorizeGenotypesWithTransposedNames(allSuspiciousGenotypes);
         categorizeAlphabeticalTranspositions(allSuspiciousGenotypes);
+        categorizeManuallyApprovedChangesFromJenkinsUpload(allSuspiciousGenotypes);
     }
 
     public void categorizeGenotypesWithTransposedNames(List<NamingIssuesReportRow> rows) {
@@ -74,9 +80,53 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
         }
     }
 
+    public void categorizeManuallyApprovedChangesFromJenkinsUpload(List<NamingIssuesReportRow> rows) {
+        Map<String, String> fixes = new HashMap<>();
+        String manuallyApprovedFixes = System.getenv("MANUALLY_APPROVED_FIXES");
+        String jenkinsWorkspace =  System.getenv("WORKSPACE");
+        if (StringUtils.isEmpty(manuallyApprovedFixes)
+                || StringUtils.isEmpty(jenkinsWorkspace)) {
+            LOG.debug("Not in a jenkins task, or no file of manual fixes uploaded. Skipping manually approved fixes.");
+            return;
+        }
+
+        String sourceFileName = Paths.get(jenkinsWorkspace, "MANUALLY_APPROVED_FIXES").toString();
+        if (!FileUtil.checkFileExists(sourceFileName)) {
+            LOG.debug("Could not open file: " + sourceFileName + ". Skipping manually approved fixes.");
+            return;
+        }
+
+        try {
+            Reader in = new FileReader(sourceFileName);
+            Iterable<CSVRecord> records = CSVFormat.RFC4180.withHeader("Old Name", "New Name").parse(in);
+            for (CSVRecord record : records) {
+                String oldName = record.get("Old Name");
+                String newName = record.get("New Name");
+                fixes.put(oldName, newName);
+                LOG.debug("Found manually approved change from '" + oldName + "' to '" + newName + "'");
+            }
+        } catch (IOException ignored) {
+            LOG.error("Error while reading from file: " + sourceFileName + ".");
+        }
+
+        LOG.debug("Found " + fixes.size() + " manually approved fixes.");
+
+        int matches = 0;
+        for (NamingIssuesReportRow row : rows) {
+            String fix = fixes.get(row.getDisplayName());
+            if (fix != null && fix.equals(row.getComputedDisplayName())) {
+                matches++;
+                row.setIssueCategory(NamingIssuesReportRow.IssueCategory.MANUAL_FIX);
+            }
+        }
+        LOG.debug("Found " + matches + " with matching row.");
+
+    }
+
     private void generateFixes(List<NamingIssuesReportRow> rows) {
         for (NamingIssuesReportRow row : rows) {
-            if (row.getIssueCategory() != NamingIssuesReportRow.IssueCategory.UNKNOWN) {
+            if (row.getIssueCategory() != NamingIssuesReportRow.IssueCategory.UNKNOWN &&
+                    StringUtils.isNotEmpty(row.getComputedDisplayName().strip())) {
                 String sql = String.format("UPDATE genotype SET geno_display_name = '%s' where geno_display_name = '%s' and geno_zdb_id = '%s';",
                         row.getComputedDisplayName(), row.getDisplayName(), row.getId());
                 row.setSqlFix(sql);
