@@ -22,7 +22,7 @@ order by fdb_db_pk_id desc
 limit 1;
 
 insert into foreign_db_contains_display_group_member (fdbcdgm_fdbcont_zdb_id, fdbcdgm_group_id)
-select fdbcont_zdb_id, 9
+select fdbcont_zdb_id, 18
 from foreign_db,
      foreign_db_contains
 where fdb_db_pk_id = fdbcont_fdb_db_id
