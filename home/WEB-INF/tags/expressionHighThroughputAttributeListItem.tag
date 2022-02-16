@@ -9,7 +9,7 @@
 
 <z:attributeListItem label="High Throughput Data">
     <z:ifHasData test="${hasData}">
-        <ul class="list-inline m-0">
+        <ul class="comma-separated list-inline m-0">
             <c:if test="${hasGeo}">
                 <li class="list-inline-item">${markerExpression.geoLink}</li>
             </c:if>
