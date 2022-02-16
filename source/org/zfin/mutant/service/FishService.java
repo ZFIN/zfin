@@ -3,9 +3,11 @@ package org.zfin.mutant.service;
 import lombok.extern.log4j.Log4j2;
 import org.alliancegenome.curation_api.model.entities.AffectedGenomicModel;
 import org.alliancegenome.curation_api.model.entities.CrossReference;
+import org.alliancegenome.curation_api.response.ObjectResponse;
 import org.zfin.alliancegenome.AgmRESTInterfaceAlliance;
 import org.zfin.alliancegenome.AllianceRestManager;
 import org.zfin.mutant.Fish;
+import org.zfin.properties.ZfinPropertiesEnum;
 
 import java.util.List;
 
@@ -23,14 +25,17 @@ public class FishService extends AllianceService {
         model.setCrossReferences(List.of(reference));
 
         AgmRESTInterfaceAlliance api = AllianceRestManager.getAgmEndpoints();
+        ObjectResponse<AffectedGenomicModel> agmFish =null;
         try {
-            api.addAffectedGenomicModel(model);
+            agmFish =api.addAffectedGenomicModel(model);
         } catch (Exception e) {
             log.error("Could not create Affected Genomic Model (Fish) at Alliance: " + e.getMessage());
         }
+        log.info("Done loading");
     }
 
     public static void main(String[] args) {
+        ZfinPropertiesEnum.ALLIANCE_CURATION_URL.setValue("http://localhost:8080");
         Fish fish = new Fish();
         fish.setZdbID("ZFIN:ZDB-FISH-220207-1");
         fish.setDisplayName("Fish Name");
