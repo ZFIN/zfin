@@ -13,6 +13,8 @@ insert into pre_db_link_temp (predblink_db_zdb_id, predblink_data_zdb_id)
 select get_id('DBLINK'), gene_zdb_id
 from fishmir_temp ;
 
+insert into zdb_active_data select predblink_db_zdb_id from pre_db_link_temp;
+
 insert into db_link (dblink_acc_num, dblink_linked_recid, dblink_info, dblink_zdb_id, dblink_acc_num_display,
                      dblink_fdbcont_zdb_id)
 select mir_gene_id,
@@ -29,10 +31,6 @@ where fdb_db_pk_id = fdbcont_fdb_db_id
   AND fdb_db_name = 'FishMiRNA-Expression'
   AND predblink_data_zdb_id = gene_zdb_id
 ;
-
-insert into zdb_active_data select predblink_db_zdb_id from pre_db_link_temp;
-
-
 
 insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id, recattrib_source_type)
 select predblink_db_zdb_id, 'ZDB-PUB-220126-55', 'standard' from pre_db_link_temp;
