@@ -2,6 +2,8 @@ package org.zfin.publication;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
 import org.zfin.curation.PublicationNote;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
@@ -14,9 +16,8 @@ import org.zfin.zebrashare.ZebrashareEditor;
 import java.io.Serializable;
 import java.util.*;
 
-/**
- * ToDo:
- */
+@Setter
+@Getter
 public class Publication implements Comparable<Publication>, Serializable, EntityZdbID {
 
     @JsonView(View.Default.class)
@@ -74,52 +75,12 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     }
     private Set<ZebrashareEditor> zebrashareEditors;
 
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getAbstractText() {
-        return abstractText;
-    }
-
-    public void setAbstractText(String abstractText) {
-        this.abstractText = abstractText;
-    }
-
     public Set<ExpressionExperiment> getExpressionExperiments() {
         return expressionExperiments;
     }
 
     public void setExpressionExperiments(Set<ExpressionExperiment> expressionExperiments) {
         this.expressionExperiments = expressionExperiments;
-    }
-
-    public String getAuthors() {
-        return authors;
-    }
-
-    public void setAuthors(String authors) {
-        this.authors = authors;
-    }
-
-    public String getShortAuthorList() {
-        return shortAuthorList;
-    }
-
-    public void setShortAuthorList(String shortAuthorList) {
-        this.shortAuthorList = shortAuthorList;
     }
 
     public GregorianCalendar getPublicationDate() {
@@ -170,24 +131,12 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
         this.journal = journal;
     }
 
-    public String getVolume() {
-        return volume;
-    }
-
-    public void setVolume(String volume) {
-        this.volume = volume;
-    }
-
     public PublicationType getType() {
         return type;
     }
 
     public void setType(PublicationType type) {
         this.type = type;
-    }
-
-    public Integer getAccessionNumber() {
-        return accessionNumber;
     }
 
     @JsonView(View.PubTrackerAPI.class)
@@ -201,136 +150,12 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
         return null;
     }
 
-    public String getDoi() {
-        return doi;
-    }
-
-    public void setDoi(String doi) {
-        this.doi = doi;
-    }
-
-    public void setAccessionNumber(Integer accessionNumber) {
-        this.accessionNumber = accessionNumber;
-    }
-
-    public String getPages() {
-        return pages;
-    }
-
-    public void setPages(String pages) {
-        this.pages = pages;
-    }
-
     public Set<Figure> getFigures() {
         return figures;
     }
 
     public void setFigures(Set<Figure> figures) {
         this.figures = figures;
-    }
-
-    public String getAcknowledgment() {
-        return acknowledgment;
-    }
-
-    public void setAcknowledgment(String acknowledgment) {
-        this.acknowledgment = acknowledgment;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
-    public Set<Person> getPeople() {
-        return people;
-    }
-
-    public void setPeople(Set<Person> people) {
-        this.people = people;
-    }
-
-    public String getErrataAndNotes() {
-        return errataAndNotes;
-    }
-
-    public void setErrataAndNotes(String errataAndNotes) {
-        this.errataAndNotes = errataAndNotes;
-    }
-
-    public String getKeywords() {
-        return keywords;
-    }
-
-    public void setKeywords(String keywords) {
-        this.keywords = keywords;
-    }
-
-    public SortedSet<MeshHeading> getMeshHeadings() {
-        return meshHeadings;
-    }
-
-    public void setMeshHeadings(SortedSet<MeshHeading> meshHeadings) {
-        this.meshHeadings = meshHeadings;
-    }
-
-    public Set<PublicationNote> getNotes() {
-        return notes;
-    }
-
-    public void setNotes(Set<PublicationNote> notes) {
-        this.notes = notes;
-    }
-
-    public Set<PublicationDbXref> getDbXrefs() {
-        return dbXrefs;
-    }
-
-    public void setDbXrefs(Set<PublicationDbXref> dbXrefs) {
-        this.dbXrefs = dbXrefs;
-    }
-
-    public SortedSet<PublicationFile> getFiles() {
-        return files;
-    }
-
-    public void setFiles(SortedSet<PublicationFile> files) {
-        this.files = files;
-    }
-
-    public Set<PublicationTrackingHistory> getStatusHistory() {
-        return statusHistory;
-    }
-
-    public void setStatusHistory(Set<PublicationTrackingHistory> statusHistory) {
-        this.statusHistory = statusHistory;
-    }
-
-    public Set<CorrespondenceSentMessage> getSentMessages() {
-        return sentMessages;
-    }
-
-    public void setSentMessages(Set<CorrespondenceSentMessage> sentMessages) {
-        this.sentMessages = sentMessages;
-    }
-
-    public Set<CorrespondenceReceivedMessage> getReceivedMessages() {
-        return receivedMessages;
-    }
-
-    public void setReceivedMessages(Set<CorrespondenceReceivedMessage> receivedMessages) {
-        this.receivedMessages = receivedMessages;
-    }
-
-    public Date getLastCorrespondenceDate() {
-        return lastCorrespondenceDate;
-    }
-
-    public void setLastCorrespondenceDate(Date lastCorrespondenceDate) {
-        this.lastCorrespondenceDate = lastCorrespondenceDate;
     }
 
     public Set<ZebrashareEditor> getZebrashareEditors() {

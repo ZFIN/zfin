@@ -20,7 +20,7 @@
         sections="${[SUMMARY, ABSTRACT, ZEBRASHARE, FIGURES, GENES, STRS, ANTIBODIES, EFGs, EXPRESSION, MUTATION, FISH, DIRECTLY_ATTRIBUTED_DATA, ERRATA]}">
 
     <jsp:attribute name="entityName">
-        <div>
+        <div data-toggle="tooltip" data-placement="bottom" title="${publication.citation}">
                 ${publication.shortAuthorList}
         </div>
         <div style="font-size: 12px">
