@@ -15,7 +15,6 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
-import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;
@@ -58,10 +57,12 @@ public class AntibodyViewController {
         // set external notes (same as orthology)
         List<ExternalNote> listOfNotes = new ArrayList<>();
         listOfNotes.addAll(antibody.getExternalNotes());
-        ExternalNote note = new ExternalNote();
-        note.setNote(antibody.getPublicComments());
-        note.setPublication(getPublicationRepository().getPublication("ZDB-PUB-020723-5"));
-        listOfNotes.add(note);
+        if (antibody.getPublicComments() != null) {
+            ExternalNote note = new ExternalNote();
+            note.setNote(antibody.getPublicComments());
+            note.setPublication(getPublicationRepository().getPublication("ZDB-PUB-020723-5"));
+            listOfNotes.add(note);
+        }
         antibodyBean.setExternalNotes(listOfNotes);
 
         // set labeling
