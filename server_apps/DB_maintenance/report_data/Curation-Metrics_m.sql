@@ -25,7 +25,9 @@ INSERT INTO tmp_cur_pub
                                          'ZDB-PERS-110317-1',
                                          'ZDB-PERS-051031-1',
                                          'ZDB-PERS-050706-1',
-                                         'ZDB-PERS-040127-1' )
+                                         'ZDB-PERS-040127-1',
+                                         'ZDB-PERS-140612-1',
+                                         'ZDB-PERS-050429-23')
   ORDER  BY cur_curator_zdb_id;
 
 INSERT INTO tmp_cur_pub
@@ -50,7 +52,10 @@ INSERT INTO tmp_cur_pub
                                          'ZDB-PERS-000418-1',
                                          'ZDB-PERS-010716-1',
                                          'ZDB-PERS-960805-665',
-                                         'ZDB-PERS-991202-1' );
+                                         'ZDB-PERS-991202-1',
+                                         'ZDB-PERS-140612-1',
+                                         'ZDB-PERS-030520-1',
+                                         'ZDB-PERS-050429-23');
 
 
 CREATE temp TABLE tmp_cur_counts
