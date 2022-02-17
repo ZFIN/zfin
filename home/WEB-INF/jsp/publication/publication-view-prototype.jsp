@@ -20,7 +20,12 @@
         sections="${[SUMMARY, ABSTRACT, ZEBRASHARE, FIGURES, GENES, STRS, ANTIBODIES, EFGs, EXPRESSION, MUTATION, FISH, DIRECTLY_ATTRIBUTED_DATA, ERRATA]}">
 
     <jsp:attribute name="entityName">
-        ${publication.title}
+        <div>
+                ${publication.shortAuthorList}
+        </div>
+        <div style="font-size: 12px">
+                ${publication.zdbID}<c:if test="${!empty publication.accessionNumber}"><p/>PMID:${publication.accessionNumber}</c:if>
+        </div>
     </jsp:attribute>
 
     <jsp:body>
