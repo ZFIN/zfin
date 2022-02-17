@@ -84,6 +84,7 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
         Map<String, String> fixes = new HashMap<>();
         String manuallyApprovedFixes = System.getenv("MANUALLY_APPROVED_FIXES");
         String jenkinsWorkspace =  System.getenv("WORKSPACE");
+        String rootPath =  System.getenv("ROOT_PATH");
         if (StringUtils.isEmpty(manuallyApprovedFixes)
                 || StringUtils.isEmpty(jenkinsWorkspace)) {
             LOG.debug("Not in a jenkins task, or no file of manual fixes uploaded. Skipping manually approved fixes.");
@@ -91,8 +92,14 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
         }
 
         String sourceFileName = Paths.get(jenkinsWorkspace, "MANUALLY_APPROVED_FIXES").toString();
-        if (!FileUtil.checkFileExists(sourceFileName)) {
-            LOG.debug("Could not open file: " + sourceFileName + ". Skipping manually approved fixes.");
+        String alternateSourceFileName = Paths.get(rootPath, "MANUALLY_APPROVED_FIXES").toString();
+        if (FileUtil.checkFileExists(sourceFileName)) {
+            LOG.debug("Found MANUALLY_APPROVED_FIXES file: " + sourceFileName );
+        } else if (FileUtil.checkFileExists(alternateSourceFileName)) {
+            LOG.debug("Could not open file: " + sourceFileName + ". Using alternate " + alternateSourceFileName);
+            sourceFileName = alternateSourceFileName;
+        } else {
+            LOG.debug("Could not open file: '" + sourceFileName + "' or alternate: '" + alternateSourceFileName + "'");
             return;
         }
 
