@@ -7,7 +7,6 @@ import org.alliancegenome.curation_api.model.entities.DiseaseAnnotation;
 import org.alliancegenome.curation_api.model.entities.Reference;
 import org.alliancegenome.curation_api.model.entities.ontology.DOTerm;
 import org.alliancegenome.curation_api.model.entities.ontology.EcoTerm;
-import org.alliancegenome.curation_api.model.entities.ontology.NCBITaxonTerm;
 import org.zfin.alliancegenome.AllianceRestManager;
 import org.zfin.alliancegenome.DiseaseAnnotationRESTInterfaceAlliance;
 import org.zfin.mutant.DiseaseAnnotationModel;
@@ -17,7 +16,7 @@ import org.zfin.ontology.GenericTerm;
 import java.util.List;
 
 @Log4j2
-public class DiseaseAnnotationService extends AllianceService{
+public class DiseaseAnnotationService extends AllianceService {
 
     public static void submitAnnotationToAlliance(DiseaseAnnotationModel dam) {
         AGMDiseaseAnnotation da = new AGMDiseaseAnnotation();

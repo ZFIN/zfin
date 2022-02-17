@@ -3,11 +3,9 @@ package org.zfin.marker.agr;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import org.alliancegenome.curation_api.model.entities.AGMDiseaseAnnotation;
 import org.alliancegenome.curation_api.model.entities.AffectedGenomicModel;
-import org.alliancegenome.curation_api.model.entities.Gene;
-import org.alliancegenome.curation_api.model.entities.ontology.DOTerm;
 import org.alliancegenome.curation_api.model.entities.ontology.EcoTerm;
+import org.alliancegenome.curation_api.model.ingest.dto.AGMDiseaseAnnotationDTO;
 import org.zfin.alliancegenome.ZfinAllianceConverter;
 import org.zfin.expression.ExperimentCondition;
 import org.zfin.infrastructure.ActiveData;
@@ -21,17 +19,18 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
-public class DiseaseAnnotationMlInfo extends AbstractScriptWrapper {
+public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
 
     private int numfOfRecords = 0;
 
-    public DiseaseAnnotationMlInfo(int number) {
+    public DiseaseAnnotationLinkMLInfo(int number) {
         numfOfRecords = number;
     }
 
@@ -41,14 +40,14 @@ public class DiseaseAnnotationMlInfo extends AbstractScriptWrapper {
         if (args.length > 0) {
             number = Integer.valueOf(args[0]);
         }
-        DiseaseAnnotationMlInfo diseaseInfo = new DiseaseAnnotationMlInfo(number);
+        DiseaseAnnotationLinkMLInfo diseaseInfo = new DiseaseAnnotationLinkMLInfo(number);
         diseaseInfo.init();
         System.exit(0);
     }
 
     private void init() throws IOException {
         initAll();
-        List<AGMDiseaseAnnotation> allDiseaseDTO = getDiseaseInfo(numfOfRecords);
+        List<AGMDiseaseAnnotationDTO> allDiseaseDTO = getDiseaseInfo(numfOfRecords);
         ObjectMapper mapper = new ObjectMapper();
         ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
         String jsonInString = writer.writeValueAsString(allDiseaseDTO);
@@ -57,8 +56,8 @@ public class DiseaseAnnotationMlInfo extends AbstractScriptWrapper {
         }
     }
 
-    public List<AGMDiseaseAnnotation> getDiseaseInfo(int numberOrRecords) {
-        List<AGMDiseaseAnnotation> diseaseDTOList = new ArrayList<>();
+    public List<AGMDiseaseAnnotationDTO> getDiseaseInfo(int numberOrRecords) {
+        List<AGMDiseaseAnnotationDTO> diseaseDTOList = new ArrayList<>();
 
 
         // get all genes from mutant_fast_search table and list their disease info
@@ -117,30 +116,29 @@ public class DiseaseAnnotationMlInfo extends AbstractScriptWrapper {
                     evidenceMap.forEach((publication, evidenceSet) -> {
                         // Use wildtype fish with STR
                         // treat as purely implicated by a gene
-                        AGMDiseaseAnnotation annotation = new AGMDiseaseAnnotation();
-                        annotation.setPredicate(RelationshipDTO.IS_MODEL_OF);
+                        AGMDiseaseAnnotationDTO annotation = new AGMDiseaseAnnotationDTO();
+
+                        annotation.setDiseaseRelation(RelationshipDTO.IS_MODEL_OF);
                         AffectedGenomicModel model = getAffectedGenomicModel(fish);
-                        Random random = new Random();
-                        long r = 1000 + (long) (new Random().nextFloat() * (10000 - 1000));
-                        annotation.setId(r);
-                        annotation.setSubject(model);
+                        annotation.setSubject(model.getCurie());
+                        annotation.setObject(disease.getOboID());
+                        annotation.setCreatedBy(format(map.get(publication)));
 
-                        DOTerm diseaseTerm = new DOTerm();
-                        diseaseTerm.setCurie(disease.getOboID());
-                        annotation.setObject(diseaseTerm);
-
-                        List<EcoTerm> evidenceCodes = evidenceSet.stream()
+                        List<String> evidenceCodes = evidenceSet.stream()
                                 .map(ZfinAllianceConverter::convertEvidenceCodes)
                                 .flatMap(Collection::stream)
+                                .map(EcoTerm::getCurie)
                                 .collect(toList());
                         annotation.setEvidenceCodes(evidenceCodes);
-                        annotation.setReference(ZfinAllianceConverter.convertReference(publication));
+                        annotation.setSingleReference(getSingleReference(publication));
 
                         if (genotype.isWildtype()) {
                             // inferred Genes
+/*
                             Gene inferredGene = new Gene();
                             inferredGene.setCurie("ZFIN:" + gene.getZdbID());
-                            annotation.setInferredGene(inferredGene);
+                            annotation.set(inferredGene);
+*/
                             diseaseDTOList.add(annotation);
                         } else {
 /*
@@ -162,17 +160,16 @@ public class DiseaseAnnotationMlInfo extends AbstractScriptWrapper {
         for (DiseaseAnnotationModel damo : damos) {
 
             Fish fish = damo.getFishExperiment().getFish();
-            AGMDiseaseAnnotation annotation = new AGMDiseaseAnnotation();
-            annotation.setPredicate(RelationshipDTO.IS_MODEL_OF);
-            AffectedGenomicModel model = getAffectedGenomicModel(fish);
-            annotation.setSubject(model);
+            AGMDiseaseAnnotationDTO annotation = new AGMDiseaseAnnotationDTO();
+            annotation.setDiseaseRelation(RelationshipDTO.IS_MODEL_OF);
+            annotation.setSubject(fish.getZdbID());
 
-            DOTerm diseaseTerm = new DOTerm();
-            diseaseTerm.setCurie(damo.getDiseaseAnnotation().getDisease().getOboID());
-            annotation.setObject(diseaseTerm);
+            annotation.setObject(damo.getDiseaseAnnotation().getDisease().getOboID());
 
-            annotation.setEvidenceCodes(ZfinAllianceConverter.convertEvidenceCodes(damo.getDiseaseAnnotation().getEvidenceCode()));
-            annotation.setReference(ZfinAllianceConverter.convertReference(damo.getDiseaseAnnotation().getPublication()));
+            List<String> ecoTerms = ZfinAllianceConverter.convertEvidenceCodes(damo.getDiseaseAnnotation().getEvidenceCode()).stream()
+                    .map(EcoTerm::getCurie).collect(toList());
+            annotation.setEvidenceCodes(ecoTerms);
+            annotation.setSingleReference(getSingleReference(damo.getDiseaseAnnotation().getPublication()));
 
 /*
             ConditionRelationDTO relation = new ConditionRelationDTO();
@@ -208,6 +205,17 @@ public class DiseaseAnnotationMlInfo extends AbstractScriptWrapper {
         }
 
         return diseaseDTOList;
+    }
+
+    private String getSingleReference(Publication publication) {
+        return "PMID:" + publication.getAccessionNumber();
+    }
+
+    public static String format(GregorianCalendar calendar) {
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        fmt.setCalendar(calendar);
+        String dateFormatted = fmt.format(calendar.getTime());
+        return dateFormatted;
     }
 
     private AffectedGenomicModel getAffectedGenomicModel(Fish fish) {

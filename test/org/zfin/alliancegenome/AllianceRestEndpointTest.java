@@ -19,9 +19,9 @@ public class AllianceRestEndpointTest {
         term.setCurie("DOID:4");
         DiseaseAnnotation entity = annotation.getEntity();
         entity.setObject(term);
-        entity.setCurie("hjkjh");
+        entity.setUniqueId("hjkjh");
         entity.setId(null);
-        entity.setCurie("Wonnit");
+        entity.setUniqueId("Wonnit");
         entity.setNegated(Boolean.TRUE);
         entity.setDiseaseRelation(DiseaseAnnotation.DiseaseRelation.is_marker_for);
         //ObjectResponse<DiseaseAnnotation> ann = api.updateDiseaseAnnotation(annotation.getEntity());
