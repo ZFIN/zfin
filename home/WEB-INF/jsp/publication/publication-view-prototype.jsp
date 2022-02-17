@@ -16,15 +16,26 @@
 <c:set var="DIRECTLY_ATTRIBUTED_DATA" value="Directly Attributed Data"/>
 <c:set var="ERRATA" value="Errata and Notes"/>
 
-<z:dataPage
-        sections="${[SUMMARY, ABSTRACT, ZEBRASHARE, FIGURES, GENES, STRS, ANTIBODIES, EFGs, EXPRESSION, MUTATION, FISH, DIRECTLY_ATTRIBUTED_DATA, ERRATA]}">
+<c:set var="secs"/>
+
+<c:choose>
+    <c:when test="${not empty publication.zebrashareEditors}">&nbsp;
+        <c:set var="secs" value="${[SUMMARY, ABSTRACT, FIGURES, GENES, STRS, ANTIBODIES, EFGs, EXPRESSION, MUTATION, FISH, DIRECTLY_ATTRIBUTED_DATA, ERRATA, ZEBRASHARE]}" />
+    </c:when>
+    <c:otherwise>
+        <c:set var="secs" value="${[SUMMARY, ABSTRACT, FIGURES, GENES, STRS, ANTIBODIES, EFGs, EXPRESSION, MUTATION, FISH, DIRECTLY_ATTRIBUTED_DATA, ERRATA]}"/>
+    </c:otherwise>
+</c:choose>
+
+<z:dataPage sections="${secs}">
 
     <jsp:attribute name="entityName">
         <div data-toggle="tooltip" data-placement="bottom" title="${publication.citation}">
                 ${publication.shortAuthorList}
         </div>
         <div style="font-size: 12px">
-                ${publication.zdbID}<c:if test="${!empty publication.accessionNumber}"><p/>PMID:${publication.accessionNumber}</c:if>
+                ${publication.zdbID}
+            <c:if test="${!empty publication.accessionNumber}"><p/>PMID:${publication.accessionNumber}</c:if>
         </div>
     </jsp:attribute>
 
@@ -46,12 +57,6 @@
         <z:section title="${ABSTRACT}">
             <zfin2:subsection title="" test="${not empty abstractText}" showNoData="true">
                 ${abstractText}
-            </zfin2:subsection>
-        </z:section>
-
-        <z:section title="${ZEBRASHARE}">
-            <zfin2:subsection title="" test="${not empty abstractText}" showNoData="true">
-                <jsp:include page="publication-zebrashare.jsp"/>
             </zfin2:subsection>
         </z:section>
 
@@ -99,6 +104,12 @@
 
         <z:section title="${ERRATA}">
             ${publication.errataAndNotes}
+        </z:section>
+
+        <z:section title="${ZEBRASHARE}">
+            <zfin2:subsection title="" test="${not empty abstractText}" showNoData="true">
+                <jsp:include page="publication-zebrashare.jsp"/>
+            </zfin2:subsection>
         </z:section>
 
 

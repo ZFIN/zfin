@@ -158,14 +158,6 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
         this.figures = figures;
     }
 
-    public Set<ZebrashareEditor> getZebrashareEditors() {
-        return zebrashareEditors;
-    }
-
-    public void setZebrashareEditors(Set<ZebrashareEditor> zebrashareEditors) {
-        this.zebrashareEditors = zebrashareEditors;
-    }
-
     public Set<PublicationProcessingChecklistEntry> getProcessingChecklistEntries() {
         return processingChecklistEntries;
     }
