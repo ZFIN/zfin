@@ -130,7 +130,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                             RelationshipDTO fishRelationship = new RelationshipDTO(RelationshipDTO.IS_MODEL_OF, RelationshipDTO.FISH);
                             fishDiseaseDto.setObjectRelation(fishRelationship);
                             fishDiseaseDto.setEvidence(getEvidenceDTO(publication, evidenceSet));
-                            ConditionRelationDTO condition = populateExperimentConditions(fishExperiment, fishDiseaseDto);
+                            ConditionRelationDTO condition = populateExperimentConditions(fishExperiment);
                             List<ConditionRelationDTO> conditions = new ArrayList<>();
                             conditions.add(condition);
                             fishDiseaseDto.setConditionRelations(conditions);
@@ -202,7 +202,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                             RelationshipDTO fishRelationship = new RelationshipDTO(RelationshipDTO.IS_MODEL_OF, RelationshipDTO.FISH);
                             fishDiseaseDto.setObjectRelation(fishRelationship);
                             fishDiseaseDto.setEvidence(getEvidenceDTO(publication, evidenceSet));
-                            ConditionRelationDTO condition = populateExperimentConditions(fishExperiment, fishDiseaseDto);
+                            ConditionRelationDTO condition = populateExperimentConditions(fishExperiment);
                             List<ConditionRelationDTO> conditions = new ArrayList<>();
                             conditions.add(condition);
                             fishDiseaseDto.setConditionRelations(conditions);
@@ -284,7 +284,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
         return strDiseaseDto;
     }
 
-    public ConditionRelationDTO populateExperimentConditions(FishExperiment fishExperiment, DiseaseDTO alleleDto) {
+    public ConditionRelationDTO populateExperimentConditions(FishExperiment fishExperiment) {
         ConditionRelationDTO relation = new ConditionRelationDTO();
         if (fishExperiment.getExperiment() != null) {
             List<ExperimentCondition> allConditions = getMutantRepository().getExperimentConditions(fishExperiment.getExperiment());
