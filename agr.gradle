@@ -71,10 +71,16 @@ task createGPI2File(type: JavaExec) {
     main = 'org.zfin.marker.GPIFileVer2'
 }
 
+task createDiseaseInfoLinkMLFile(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.marker.agr.DiseaseAnnotationLinkMLInfo'
+}
+
 task createDiseaseInfoFile(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.marker.agr.DiseaseInfo'
 }
+
 task createDiseaseInfoFileTest(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.marker.agr.DiseaseInfo'
