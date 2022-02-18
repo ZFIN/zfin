@@ -112,11 +112,19 @@ public class Journal implements Serializable, EntityZdbID {
         this.aliases = aliases;
     }
 
+    public String getRawMedAbbrev() {
+        return medAbbrev;
+    }
+
     public String getMedAbbrev() {
         if (medAbbrev == null)
             return abbreviation;
 
         return medAbbrev;
+    }
+
+    public String getRawIsoAbbrev() {
+        return isoAbbrev;
     }
 
     public String getIsoAbbrev() {
