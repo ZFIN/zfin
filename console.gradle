@@ -18,4 +18,10 @@ task featureAttributionRepair(type: JavaExec) {
     systemProperty "publicationsAfter", System.getProperty("publicationsAfter", null)
 }
 
+task journalAbbreviationSync(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.publication.JournalAbbreviationSyncTask'
+}
+
+
 
