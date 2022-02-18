@@ -12,6 +12,7 @@ import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.DataAlias;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.mapping.GenomeLocation;
+import org.zfin.mapping.MarkerLocation;
 import org.zfin.marker.*;
 import org.zfin.marker.fluorescence.FluorescentMarker;
 import org.zfin.marker.fluorescence.FluorescentProtein;
@@ -505,11 +506,13 @@ public interface MarkerRepository {
 
     MarkerHistory getMarkerHistory(String zdbID);
 
-    GenomeLocation addGenomeLocation(GenomeLocation genomeLocation);
-    List<GenomeLocation> getGenomeLocation(String zdbID);
-    GenomeLocation getGenomeLocationByID(Long ID);
-    GenomeLocation saveGenomeLocation(GenomeLocation genomeLocation);
-    void deleteGenomeLocation(Long zdbId);
+//    List<GenomeLocation> getGenomeLocation(String zdbID);
+//    GenomeLocation addGenomeLocation(GenomeLocation genomeLocation);
+//    GenomeLocation getGenomeLocationByID(Long ID);
+//    GenomeLocation saveGenomeLocation(GenomeLocation genomeLocation);
+//    void deleteGenomeLocation(Long zdbId);
+
+    List<MarkerLocation> getMarkerLocation(String zdbID);
 
     DBLink addDBLinkWithLenth(Marker marker, String accessionNumber, ReferenceDatabase refdb, String attributionZdbID, int length);
 
