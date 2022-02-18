@@ -175,7 +175,7 @@
 
     </class>
 
-    <class name="org.zfin.mapping.FeatureLocation" table="sequence_feature_chromosome_location">
+    <class name="org.zfin.mapping.GenericChromosomalLocation" table="sequence_feature_chromosome_location">
         <id name="zdbID" type="string">
             <column name="sfcl_zdb_id" not-null="true"/>
             <generator class="org.zfin.database.ZdbIdGenerator">
@@ -184,15 +184,26 @@
             </generator>
         </id>
 
+        <discriminator type="string"
+                       formula="(CASE get_obj_type(sfcl_feature_zdb_id)
+                                    WHEN 'ALT' THEN  'Feat'
+                                    ELSE             'Mark'
+                                 END)"/>
 
         <property name="ftrChromosome" column="sfcl_chromosome" type="string"/>
-        <many-to-one name="feature"  column="sfcl_feature_zdb_id"  />
         <property name="ftrStartLocation" column="sfcl_start_position" type="java.lang.Integer"/>
         <property name="ftrEndLocation" column="sfcl_end_position" type="java.lang.Integer"/>
         <property name="ftrAssembly" column="sfcl_assembly" type="string"/>
         <many-to-one name="ftrLocEvidence" column="sfcl_evidence_code"/>
         <property name="referenceSequenceAccessionNumber" column="sfcl_chromosome_reference_accession_number" type="string"/>
 
+        <!--        <many-to-one name="feature"  column="sfcl_feature_zdb_id"  />-->
+        <subclass name="MarkerLocation" discriminator-value="Mark">
+            <many-to-one name="marker" column="sfcl_feature_zdb_id" insert="false" update="false"/>
+        </subclass>
+        <subclass name="FeatureLocation" discriminator-value="Feat">
+            <many-to-one name="feature" column="sfcl_feature_zdb_id" insert="false" update="false"/>
+        </subclass>
 
     </class>
 
