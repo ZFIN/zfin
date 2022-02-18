@@ -32,6 +32,7 @@ import org.zfin.gwt.root.server.DTOMarkerService;
 import org.zfin.infrastructure.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.GenomeLocation;
+import org.zfin.mapping.MarkerLocation;
 import org.zfin.marker.*;
 import org.zfin.marker.fluorescence.FluorescentMarker;
 import org.zfin.marker.fluorescence.FluorescentProtein;
@@ -815,49 +816,57 @@ public class HibernateMarkerRepository implements MarkerRepository {
         infrastructureRepository.insertUpdatesTable(mrel.getSecondMarker(), "", "new attribution, marker relationship: " + mrel.getZdbID() + " with pub: " + attributionZdbID, attributionZdbID, "");
     }
 
-
-    public GenomeLocation addGenomeLocation(GenomeLocation genomeLocation) {
-        Session session = HibernateUtil.currentSession();
-        Long savedValue = (Long) session.save(genomeLocation);
-        log.debug("Saved Genome Location: " + savedValue);
-        session.get(GenomeLocation.class, savedValue);
-        return genomeLocation;
-    }
-
-    public List<GenomeLocation> getGenomeLocation(String zdbID) {
-        Session session = HibernateUtil.currentSession();
-
-        Criteria criteria = session.createCriteria(GenomeLocation.class);
-        criteria.add(Restrictions.eq("entityID", zdbID));
-
-        return (List<GenomeLocation>) criteria.list();
-    }
-
-    public GenomeLocation getGenomeLocationByID(Long ID) {
+//
+//    public List<GenomeLocation> getGenomeLocation(String zdbID) {
+//        Session session = HibernateUtil.currentSession();
+//
+//        Criteria criteria = session.createCriteria(GenomeLocation.class);
+//        criteria.add(Restrictions.eq("entityID", zdbID));
+//
+//        return (List<GenomeLocation>) criteria.list();
+//    }
+    public List<MarkerLocation> getMarkerLocation(String zdbID) {
         Session session = HibernateUtil.currentSession();
 
-        Criteria criteria = session.createCriteria(GenomeLocation.class);
-        criteria.add(Restrictions.eq("ID", ID));
+        Criteria criteria = session.createCriteria(MarkerLocation.class);
+        criteria.add(Restrictions.eq("marker", zdbID));
 
-        return (GenomeLocation) criteria.uniqueResult();
+        return (List<MarkerLocation>) criteria.list();
     }
 
-    public GenomeLocation saveGenomeLocation(GenomeLocation genomeLocation) {
-        Session session = HibernateUtil.currentSession();
-        session.update(genomeLocation);
-        session.flush();
-        return genomeLocation;
-    }
-
-    @Override
-    public void deleteGenomeLocation(Long ID) {
-        String hql = "delete from GenomeLocation gl " +
-                " where gl.ID = :ID ";
-        Query query = currentSession().createQuery(hql);
-        query.setLong("ID", ID);
-        int removed = query.executeUpdate();
-        currentSession().flush();
-    }
+//    public GenomeLocation addGenomeLocation(GenomeLocation genomeLocation) {
+//        Session session = HibernateUtil.currentSession();
+//        Long savedValue = (Long) session.save(genomeLocation);
+//        log.debug("Saved Genome Location: " + savedValue);
+//        session.get(GenomeLocation.class, savedValue);
+//        return genomeLocation;
+//    }
+//
+//    public GenomeLocation getGenomeLocationByID(Long ID) {
+//        Session session = HibernateUtil.currentSession();
+//
+//        Criteria criteria = session.createCriteria(GenomeLocation.class);
+//        criteria.add(Restrictions.eq("ID", ID));
+//
+//        return (GenomeLocation) criteria.uniqueResult();
+//    }
+//
+//    public GenomeLocation saveGenomeLocation(GenomeLocation genomeLocation) {
+//        Session session = HibernateUtil.currentSession();
+//        session.update(genomeLocation);
+//        session.flush();
+//        return genomeLocation;
+//    }
+//
+//    @Override
+//    public void deleteGenomeLocation(Long ID) {
+//        String hql = "delete from GenomeLocation gl " +
+//                " where gl.ID = :ID ";
+//        Query query = currentSession().createQuery(hql);
+//        query.setLong("ID", ID);
+//        int removed = query.executeUpdate();
+//        currentSession().flush();
+//    }
 
     public void addDBLinkAttribution(DBLink dbLink, Publication attribution, String dataZdbId) {
         String linkId = dbLink.getZdbID();
