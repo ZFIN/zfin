@@ -829,7 +829,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
         Session session = HibernateUtil.currentSession();
 
         Criteria criteria = session.createCriteria(MarkerLocation.class);
-        criteria.add(Restrictions.eq("marker", zdbID));
+        criteria.add(Restrictions.eq("marker.zdbID", zdbID));
 
         return (List<MarkerLocation>) criteria.list();
     }
