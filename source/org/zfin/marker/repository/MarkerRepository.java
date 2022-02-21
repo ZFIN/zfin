@@ -506,13 +506,11 @@ public interface MarkerRepository {
 
     MarkerHistory getMarkerHistory(String zdbID);
 
-//    List<GenomeLocation> getGenomeLocation(String zdbID);
-//    GenomeLocation addGenomeLocation(GenomeLocation genomeLocation);
-//    GenomeLocation getGenomeLocationByID(Long ID);
-//    GenomeLocation saveGenomeLocation(GenomeLocation genomeLocation);
-//    void deleteGenomeLocation(Long zdbId);
-
     List<MarkerLocation> getMarkerLocation(String zdbID);
+    MarkerLocation addMarkerLocation(MarkerLocation markerLocation);
+    MarkerLocation getMarkerLocationByID(String zdbID);
+    MarkerLocation saveMarkerLocation(MarkerLocation markerLocation);
+    int deleteMarkerLocation(String zdbId);
 
     DBLink addDBLinkWithLenth(Marker marker, String accessionNumber, ReferenceDatabase refdb, String attributionZdbID, int length);
 

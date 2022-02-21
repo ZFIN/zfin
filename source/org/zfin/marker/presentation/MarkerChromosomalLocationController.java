@@ -1,20 +1,20 @@
 package org.zfin.marker.presentation;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import org.zfin.feature.repository.FeatureRepository;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.View;
 import org.zfin.framework.presentation.InvalidWebRequestException;
-import org.zfin.mapping.GenomeLocation;
+import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.MarkerLocation;
+import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.profile.presentation.ChromosomalLocationBean;
 import org.zfin.profile.presentation.ChromosomalLocationBeanValidator;
-import org.zfin.profile.repository.ProfileRepository;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -24,11 +24,14 @@ import java.util.stream.Collectors;
 @RequestMapping("/marker")
 public class MarkerChromosomalLocationController {
 
+    //todo: determine this based on user input
+    private static final String MANUALLY_CURATED_TERM_ID = "ZDB-TERM-170419-251"; //(curator inference used in manual assertion)
+
     @Autowired
     private MarkerRepository markerRepository;
 
     @Autowired
-    private FeatureRepository featureRepository;
+    private InfrastructureRepository infrastructureRepository;
 
     @InitBinder("chromosomalLocationBean")
     public void initBinder(WebDataBinder binder) {
@@ -45,55 +48,62 @@ public class MarkerChromosomalLocationController {
                 .collect(Collectors.toList());
     }
 
-//    @JsonView(View.API.class)
-//    @RequestMapping(value = "/{zdbID}/chromosomal-location", method = RequestMethod.POST)
-//    public ChromosomalLocationBean addChromosomalLocationForMarker(@PathVariable String zdbID,
-//                                             @Valid @RequestBody ChromosomalLocationBean chromosomalLocation,
-//                                             BindingResult errors) {
-//        if (errors.hasErrors()) {
-//            throw new InvalidWebRequestException("Invalid Chromosomal Location", errors);
-//        }
-//
-//        GenomeLocation genomeLocation = chromosomalLocation.toGenomeLocation();
-//        genomeLocation.setEntityID(zdbID);
-//        GenomeLocation persistedLocation = markerRepository.addGenomeLocation(genomeLocation);
-//
-//        return ChromosomalLocationBean.fromGenomeLocation(persistedLocation);
-//    }
-//
-//    @JsonView(View.API.class)
-//    @RequestMapping(value = "/{markerId}/chromosomal-location/{ID}", method = RequestMethod.POST)
-//    public ChromosomalLocationBean updateChromosomalLocationForMarker(@PathVariable String markerId,
-//                                            @PathVariable Long ID,
-//                                            @Valid @RequestBody ChromosomalLocationBean chromosomalLocationBean) {
-//
-//        GenomeLocation genomeLocation = markerRepository.getGenomeLocationByID(ID);
-//        genomeLocation.setAssembly(chromosomalLocationBean.getAssembly());
-//        genomeLocation.setChromosome(chromosomalLocationBean.getChromosome());
-//        genomeLocation.setStart(chromosomalLocationBean.getStartLocation());
-//        genomeLocation.setEnd(chromosomalLocationBean.getEndLocation());
-//        markerRepository.saveGenomeLocation(genomeLocation);
-//
-//        return chromosomalLocationBean;
-//    }
-//
-//    @JsonView(View.API.class)
-//    @RequestMapping(value = "/{markerID}/chromosomal-location/{ID}", method = RequestMethod.DELETE)
-//    public ChromosomalLocationBean removeChromosomalLocation(@PathVariable String markerID,
-//                                 @PathVariable Long ID) {
-//        GenomeLocation genomeLocation = markerRepository.getGenomeLocationByID(ID);
-//        ChromosomalLocationBean deletedChromosomalLocation = ChromosomalLocationBean.fromGenomeLocation(genomeLocation);
-//        markerRepository.deleteGenomeLocation(ID);
-//        return deletedChromosomalLocation;
-//    }
-//
-//
-//    @JsonView(View.API.class)
-//    @RequestMapping(value = "/{markerID}/chromosomal-location/{ID}", method = RequestMethod.GET)
-//    public ChromosomalLocationBean getChromosomalLocationForMarker(@PathVariable String markerID,
-//                                                                         @PathVariable Long ID) {
-//        GenomeLocation genomeLocation = markerRepository.getGenomeLocationByID(ID);
-//        return ChromosomalLocationBean.fromGenomeLocation(genomeLocation);
-//    }
+    @JsonView(View.API.class)
+    @RequestMapping(value = "/{markerId}/chromosomal-location", method = RequestMethod.POST)
+    public ChromosomalLocationBean addChromosomalLocationForMarker(@PathVariable String markerId,
+                                             @Valid @RequestBody ChromosomalLocationBean chromosomalLocation,
+                                             BindingResult errors) {
+        if (errors.hasErrors()) {
+            throw new InvalidWebRequestException("Invalid Chromosomal Location", errors);
+        }
+
+        Transaction transaction = HibernateUtil.currentSession().beginTransaction();
+
+        MarkerLocation markerLocation = chromosomalLocation.toMarkerLocation();
+        Marker marker = markerRepository.getMarkerByID(markerId);
+        markerLocation.setMarker(marker);
+        markerLocation.setFtrLocEvidence(infrastructureRepository.getTermByID(MANUALLY_CURATED_TERM_ID));
+        MarkerLocation persistedLocation = markerRepository.addMarkerLocation(markerLocation);
+        transaction.commit();
+
+        return ChromosomalLocationBean.fromMarkerLocation(persistedLocation);
+    }
+
+    @JsonView(View.API.class)
+    @RequestMapping(value = "/{markerId}/chromosomal-location/{zdbID}", method = RequestMethod.POST)
+    public ChromosomalLocationBean updateChromosomalLocationForMarker(@PathVariable String markerId,
+                                            @PathVariable String zdbID,
+                                            @Valid @RequestBody ChromosomalLocationBean chromosomalLocationBean) {
+
+        MarkerLocation markerLocation = markerRepository.getMarkerLocationByID(zdbID);
+        chromosomalLocationBean.updateMarkerLocation(markerLocation);
+        Transaction transaction = HibernateUtil.currentSession().beginTransaction();
+        markerRepository.saveMarkerLocation(markerLocation);
+        transaction.commit();
+        return chromosomalLocationBean;
+    }
+
+    @JsonView(View.API.class)
+    @RequestMapping(value = "/{markerID}/chromosomal-location/{zdbID}", method = RequestMethod.DELETE)
+    public ChromosomalLocationBean removeChromosomalLocation(@PathVariable String markerID,
+                                 @PathVariable String zdbID) {
+        MarkerLocation markerLocation = markerRepository.getMarkerLocationByID(zdbID);
+        ChromosomalLocationBean deletedChromosomalLocation = ChromosomalLocationBean.fromMarkerLocation(markerLocation);
+
+        Transaction transaction = HibernateUtil.currentSession().beginTransaction();
+        markerRepository.deleteMarkerLocation(zdbID);
+        transaction.commit();
+
+        return deletedChromosomalLocation;
+    }
+
+
+    @JsonView(View.API.class)
+    @RequestMapping(value = "/{markerID}/chromosomal-location/{zdbID}", method = RequestMethod.GET)
+    public ChromosomalLocationBean getChromosomalLocationForMarker(@PathVariable String markerID,
+                                                                         @PathVariable String zdbID) {
+        MarkerLocation markerLocation = markerRepository.getMarkerLocationByID(zdbID);
+        return ChromosomalLocationBean.fromMarkerLocation(markerLocation);
+    }
 
 }

@@ -199,10 +199,10 @@
 
         <!--        <many-to-one name="feature"  column="sfcl_feature_zdb_id"  />-->
         <subclass name="MarkerLocation" discriminator-value="Mark">
-            <many-to-one name="marker" column="sfcl_feature_zdb_id" insert="false" update="false"/>
+            <many-to-one name="marker" column="sfcl_feature_zdb_id" insert="true" update="true"/>
         </subclass>
         <subclass name="FeatureLocation" discriminator-value="Feat">
-            <many-to-one name="feature" column="sfcl_feature_zdb_id" insert="false" update="false"/>
+            <many-to-one name="feature" column="sfcl_feature_zdb_id" insert="true" update="true"/>
         </subclass>
 
     </class>

@@ -816,15 +816,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
         infrastructureRepository.insertUpdatesTable(mrel.getSecondMarker(), "", "new attribution, marker relationship: " + mrel.getZdbID() + " with pub: " + attributionZdbID, attributionZdbID, "");
     }
 
-//
-//    public List<GenomeLocation> getGenomeLocation(String zdbID) {
-//        Session session = HibernateUtil.currentSession();
-//
-//        Criteria criteria = session.createCriteria(GenomeLocation.class);
-//        criteria.add(Restrictions.eq("entityID", zdbID));
-//
-//        return (List<GenomeLocation>) criteria.list();
-//    }
     public List<MarkerLocation> getMarkerLocation(String zdbID) {
         Session session = HibernateUtil.currentSession();
 
@@ -834,39 +825,38 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return (List<MarkerLocation>) criteria.list();
     }
 
-//    public GenomeLocation addGenomeLocation(GenomeLocation genomeLocation) {
-//        Session session = HibernateUtil.currentSession();
-//        Long savedValue = (Long) session.save(genomeLocation);
-//        log.debug("Saved Genome Location: " + savedValue);
-//        session.get(GenomeLocation.class, savedValue);
-//        return genomeLocation;
-//    }
-//
-//    public GenomeLocation getGenomeLocationByID(Long ID) {
-//        Session session = HibernateUtil.currentSession();
-//
-//        Criteria criteria = session.createCriteria(GenomeLocation.class);
-//        criteria.add(Restrictions.eq("ID", ID));
-//
-//        return (GenomeLocation) criteria.uniqueResult();
-//    }
-//
-//    public GenomeLocation saveGenomeLocation(GenomeLocation genomeLocation) {
-//        Session session = HibernateUtil.currentSession();
-//        session.update(genomeLocation);
-//        session.flush();
-//        return genomeLocation;
-//    }
-//
-//    @Override
-//    public void deleteGenomeLocation(Long ID) {
-//        String hql = "delete from GenomeLocation gl " +
-//                " where gl.ID = :ID ";
-//        Query query = currentSession().createQuery(hql);
-//        query.setLong("ID", ID);
-//        int removed = query.executeUpdate();
-//        currentSession().flush();
-//    }
+    public MarkerLocation addMarkerLocation(MarkerLocation markerLocation) {
+        Session session = HibernateUtil.currentSession();
+        String savedValue = (String) session.save(markerLocation);
+        MarkerLocation savedEntity = (MarkerLocation) session.get(MarkerLocation.class, savedValue);
+        return savedEntity;
+    }
+
+    public MarkerLocation getMarkerLocationByID(String ZdbID) {
+        Session session = HibernateUtil.currentSession();
+
+        Criteria criteria = session.createCriteria(MarkerLocation.class);
+        criteria.add(Restrictions.eq("zdbID", ZdbID));
+
+        return (MarkerLocation) criteria.uniqueResult();
+    }
+
+    public MarkerLocation saveMarkerLocation(MarkerLocation markerLocation) {
+        Session session = HibernateUtil.currentSession();
+        session.update(markerLocation);
+        session.flush();
+        return markerLocation;
+    }
+
+    public int deleteMarkerLocation(String zdbID) {
+        String hql = "delete from MarkerLocation ml " +
+                " where ml.zdbID = :ID ";
+        Query query = currentSession().createQuery(hql);
+        query.setString("ID", zdbID);
+        int removed = query.executeUpdate();
+        currentSession().flush();
+        return removed;
+    }
 
     public void addDBLinkAttribution(DBLink dbLink, Publication attribution, String dataZdbId) {
         String linkId = dbLink.getZdbID();

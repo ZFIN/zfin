@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
 import org.zfin.framework.api.View;
-import org.zfin.mapping.GenomeLocation;
 import org.zfin.mapping.MarkerLocation;
 
 @Setter
@@ -31,17 +30,6 @@ public class ChromosomalLocationBean {
     @JsonView(View.API.class)
     Integer endLocation;
 
-//    public static ChromosomalLocationBean fromGenomeLocation(GenomeLocation persistedLocation) {
-//        ChromosomalLocationBean clBean = new ChromosomalLocationBean();
-//        clBean.setID(persistedLocation.getID());
-//        clBean.setEntityID(persistedLocation.getEntityID());
-//        clBean.setAssembly(persistedLocation.getAssembly());
-//        clBean.setChromosome(persistedLocation.getChromosome());
-//        clBean.setStartLocation(persistedLocation.getStart());
-//        clBean.setEndLocation(persistedLocation.getEnd());
-//        return clBean;
-//    }
-
     public static ChromosomalLocationBean fromMarkerLocation(MarkerLocation persistedLocation) {
         ChromosomalLocationBean clBean = new ChromosomalLocationBean();
         clBean.setZdbID(persistedLocation.getZdbID());
@@ -53,24 +41,28 @@ public class ChromosomalLocationBean {
         return clBean;
     }
 
-    public GenomeLocation toGenomeLocation() {
-        GenomeLocation genomeLocation = new GenomeLocation();
-        genomeLocation.setAssembly(this.getAssembly());
-        genomeLocation.setChromosome(this.getChromosome());
+    public MarkerLocation toMarkerLocation() {
+        MarkerLocation markerLocation = new MarkerLocation();
+        updateMarkerLocation(markerLocation);
+        return markerLocation;
+    }
+
+    public void updateMarkerLocation(MarkerLocation markerLocation) {
+        markerLocation.setFtrAssembly(this.getAssembly());
+        markerLocation.setFtrChromosome(this.getChromosome());
 
         try {
             int startLocation = this.getStartLocation();
-            genomeLocation.setStart(startLocation);
+            markerLocation.setFtrStartLocation(startLocation);
         } catch (NumberFormatException nfe) {
             //don't set start location
         }
 
         try {
             int endLocation = this.getEndLocation();
-            genomeLocation.setEnd(endLocation);
+            markerLocation.setFtrEndLocation(endLocation);
         } catch (NumberFormatException nfe) {
             //don't set end location
         }
-        return genomeLocation;
     }
 }
