@@ -39,14 +39,17 @@
         </div>
     </jsp:attribute>
 
+    <jsp:attribute name="pageBar">
+            <nav class="navbar navbar-light" style="background-color: #efefef;">
+                <a style="padding-left:100px;" class="error" href="/action/publication/view/${publication.zdbID}">Old View</a>
+                <a style="padding-left:100px" class="error" href="/action/curation/${publication.zdbID}">Curate</a>
+                <a style="padding-left:100px" class="error" href="/action/publication/${publication.zdbID}/link">Link</a>
+                <a style="padding-left:100px" class="error" href="/action/publication/${publication.zdbID}/edit">Edit</a>
+                <a style="padding-left:100px" class="error" href="/action/publication/${publication.zdbID}/track">Track</a>
+            </nav>
+    </jsp:attribute>
+
     <jsp:body>
-        <z:dataManagerList>
-            <a class="dropdown-item" href="/action/publication/view/${publication.zdbID}">Old View</a>
-            <a class="dropdown-item" href="/action/curation/${publication.zdbID}">Curate</a>
-            <a class="dropdown-item" href="/action/publication/${publication.zdbID}/link">Link</a>
-            <a class="dropdown-item" href="/action/publication/${publication.zdbID}/edit">Edit</a>
-            <a class="dropdown-item" href="/action/publication/${publication.zdbID}/track">Track</a>
-        </z:dataManagerList>
 
         <div id="${zfn:makeDomIdentifier(SUMMARY)}">
             <div class="small text-uppercase text-muted">PUBLICATION</div>
