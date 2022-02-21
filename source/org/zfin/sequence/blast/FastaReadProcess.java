@@ -80,7 +80,7 @@ public class FastaReadProcess extends ExecProcess {
         SymbolTokenization symbolTokenization = RichSequence.IOTools.getNucleotideParser();
         iterator = RichSequence.IOTools.readFasta(br, symbolTokenization, new SimpleNamespace(""));
         List<RichSequence> sequences = new ArrayList<>();
-        List<String> ids = Files.readAllLines(Paths.get("ottdarts-no-strain-no-sequence.csv"));
+        List<String> ids = Files.readAllLines(Paths.get("ottdarts-tu-strain-no-sequence-no-status.csv"));
         List<String> foundIds = new ArrayList<>();
         SimpleNamespace ns = new SimpleNamespace("tpe");
         while (iterator.hasNext()) {
@@ -110,7 +110,7 @@ public class FastaReadProcess extends ExecProcess {
         header.setShowNamespace(true);
         header.setShowVersion(false);
         header.setShowIdentifier(false);
-        OutputStream os = new FileOutputStream("output.fasta");
+        OutputStream os = new FileOutputStream("output-no-strain-no-status.fasta");
         sequences.forEach(richSequence -> {
             try {
                 RichSequence.IOTools.writeFasta(os, richSequence, new SimpleNamespace("tpe"), header);

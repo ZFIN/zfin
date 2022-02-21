@@ -3,8 +3,9 @@
 <%@ attribute name="sections" required="true" rtexprvalue="true" type="java.util.Collection" %>
 <%@ attribute name="entityName" required="false" fragment="true" %>
 <%@ attribute name="title" required="false" %>
+<%@ attribute name="pageBar" required="false" %>
 
-<jsp:invoke fragment="entityName" var="entityNameValue" />
+<jsp:invoke fragment="entityName" var="entityNameValue"/>
 
 <z:page bodyClass="data-page" bootstrap="true" title="${title}">
     <div class="d-flex h-100">
@@ -14,7 +15,7 @@
                     <li class="nav-item w-100">
                         <a href="#" class="back-to-top-link" title="Back to top">
                             <h5 class="p-3 m-0 border-bottom text-truncate">
-                                ${entityNameValue}
+                                    ${entityNameValue}
                             </h5>
                         </a>
                     </li>
@@ -28,7 +29,10 @@
         </div>
 
         <div class="data-page-content-container">
-            <jsp:doBody />
+            <c:if test="${not empty pageBar}">
+                <span>${pageBar}</span>
+            </c:if>
+            <jsp:doBody/>
         </div>
     </div>
 
