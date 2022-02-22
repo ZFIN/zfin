@@ -9,7 +9,7 @@ import org.zfin.feature.Feature;
  */
 @Setter
 @Getter
-public class FeatureLocation extends GenericChromosomalLocation {
+public class FeatureLocation extends Location {
 
     private Feature feature;
 

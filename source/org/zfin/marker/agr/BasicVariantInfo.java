@@ -3,7 +3,6 @@ package org.zfin.marker.agr;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureGenomicMutationDetail;
 import org.zfin.mapping.FeatureLocation;
@@ -16,10 +15,9 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.apache.commons.lang.StringUtils;
+
 import org.zfin.publication.Publication;
 
-import static org.zfin.repository.RepositoryFactory.getExpressionRepository;
 import static org.zfin.repository.RepositoryFactory.getFeatureRepository;
 import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
@@ -66,9 +64,9 @@ public class BasicVariantInfo extends AbstractScriptWrapper {
                             FeatureLocation ftrLoc = getFeatureRepository().getAllFeatureLocationsOnGRCz11(feature);
 
                             if (ftrLoc != null
-                                    && ftrLoc.getFtrStartLocation() != null && ftrLoc.getFtrStartLocation().toString() != ""
-                                    && ftrLoc.getFtrEndLocation() != null && ftrLoc.getFtrEndLocation().toString() != ""
-                                    && ftrLoc.getFtrAssembly() != null && ftrLoc.getFtrAssembly() != ""
+                                    && ftrLoc.getStartLocation() != null && ftrLoc.getStartLocation().toString() != ""
+                                    && ftrLoc.getEndLocation() != null && ftrLoc.getEndLocation().toString() != ""
+                                    && ftrLoc.getAssembly() != null && ftrLoc.getAssembly() != ""
                                     && ftrLoc.getReferenceSequenceAccessionNumber() != null && ftrLoc.getReferenceSequenceAccessionNumber() != ""
                                     ) {
                                 String featureType = variant.getFeature().getType().toString();
@@ -107,16 +105,16 @@ public class BasicVariantInfo extends AbstractScriptWrapper {
 
                                     dto.setSequenceOfReferenceAccessionNumber("RefSeq:" + ftrLoc.getReferenceSequenceAccessionNumber());
                                     if (ftrLoc.getReferenceSequenceAccessionNumber() == "" || ftrLoc.getReferenceSequenceAccessionNumber() == null
-                                            || ftrLoc.getFtrStartLocation() == null && ftrLoc.getFtrStartLocation().toString() == ""
-                                            || ftrLoc.getFtrEndLocation() == null && ftrLoc.getFtrEndLocation().toString() == ""
-                                            || ftrLoc.getFtrAssembly() == null && ftrLoc.getFtrAssembly().toString() == "") {
+                                            || ftrLoc.getStartLocation() == null && ftrLoc.getStartLocation().toString() == ""
+                                            || ftrLoc.getEndLocation() == null && ftrLoc.getEndLocation().toString() == ""
+                                            || ftrLoc.getAssembly() == null && ftrLoc.getAssembly().toString() == "") {
                                         System.out.println(feature.getZdbID());
                                     }
                                     dto.setAlleleId("ZFIN:" + feature.getZdbID());
-                                    dto.setAssembly(ftrLoc.getFtrAssembly());
-                                    dto.setStart(ftrLoc.getFtrStartLocation());
-                                    dto.setEnd(ftrLoc.getFtrEndLocation());
-                                    dto.setChromosome(ftrLoc.getFtrChromosome());
+                                    dto.setAssembly(ftrLoc.getAssembly());
+                                    dto.setStart(ftrLoc.getStartLocation());
+                                    dto.setEnd(ftrLoc.getEndLocation());
+                                    dto.setChromosome(ftrLoc.getChromosome());
                                     if (CollectionUtils.isNotEmpty(getPublicationRepository().getAllPublicationsForFeature(feature))) {
                                         ArrayList<PublicationAgrDTO> datasetPubs = new ArrayList<>();
                                         for (Publication pub : getPublicationRepository().getAllPublicationsForFeature(feature)) {

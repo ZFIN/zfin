@@ -10,7 +10,7 @@ import org.zfin.marker.Marker;
  */
 @Setter
 @Getter
-public class MarkerLocation extends GenericChromosomalLocation {
+public class MarkerLocation extends Location {
 
     private Marker marker;
 

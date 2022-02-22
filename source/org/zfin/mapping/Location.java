@@ -9,14 +9,14 @@ import org.zfin.ontology.GenericTerm;
  */
 @Setter
 @Getter
-public class GenericChromosomalLocation {
+public class Location {
 
     protected String zdbID;
-    protected Integer ftrStartLocation;
-    protected Integer ftrEndLocation;
-    protected String ftrChromosome;
-    protected String ftrAssembly;
-    protected GenericTerm ftrLocEvidence;
+    protected Integer startLocation;
+    protected Integer endLocation;
+    protected String chromosome;
+    protected String assembly;
+    protected GenericTerm locationEvidence;
     protected String referenceSequenceAccessionNumber;
 
 }

@@ -175,7 +175,7 @@
 
     </class>
 
-    <class name="org.zfin.mapping.GenericChromosomalLocation" table="sequence_feature_chromosome_location">
+    <class name="org.zfin.mapping.Location" table="sequence_feature_chromosome_location">
         <id name="zdbID" type="string">
             <column name="sfcl_zdb_id" not-null="true"/>
             <generator class="org.zfin.database.ZdbIdGenerator">
@@ -190,19 +190,19 @@
                                     ELSE             'Mark'
                                  END)"/>
 
-        <property name="ftrChromosome" column="sfcl_chromosome" type="string"/>
-        <property name="ftrStartLocation" column="sfcl_start_position" type="java.lang.Integer"/>
-        <property name="ftrEndLocation" column="sfcl_end_position" type="java.lang.Integer"/>
-        <property name="ftrAssembly" column="sfcl_assembly" type="string"/>
-        <many-to-one name="ftrLocEvidence" column="sfcl_evidence_code"/>
+        <property name="chromosome" column="sfcl_chromosome" type="string"/>
+        <property name="startLocation" column="sfcl_start_position" type="java.lang.Integer"/>
+        <property name="endLocation" column="sfcl_end_position" type="java.lang.Integer"/>
+        <property name="assembly" column="sfcl_assembly" type="string"/>
+        <many-to-one name="locationEvidence" column="sfcl_evidence_code"/>
         <property name="referenceSequenceAccessionNumber" column="sfcl_chromosome_reference_accession_number" type="string"/>
 
         <!--        <many-to-one name="feature"  column="sfcl_feature_zdb_id"  />-->
         <subclass name="MarkerLocation" discriminator-value="Mark">
-            <many-to-one name="marker" column="sfcl_feature_zdb_id" insert="true" update="true"/>
+            <many-to-one name="marker" column="sfcl_feature_zdb_id"/>
         </subclass>
         <subclass name="FeatureLocation" discriminator-value="Feat">
-            <many-to-one name="feature" column="sfcl_feature_zdb_id" insert="true" update="true"/>
+            <many-to-one name="feature" column="sfcl_feature_zdb_id"/>
         </subclass>
 
     </class>

@@ -827,9 +827,8 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     public MarkerLocation addMarkerLocation(MarkerLocation markerLocation) {
         Session session = HibernateUtil.currentSession();
-        String savedValue = (String) session.save(markerLocation);
-        MarkerLocation savedEntity = (MarkerLocation) session.get(MarkerLocation.class, savedValue);
-        return savedEntity;
+        session.save(markerLocation);
+        return markerLocation;
     }
 
     public MarkerLocation getMarkerLocationByID(String ZdbID) {

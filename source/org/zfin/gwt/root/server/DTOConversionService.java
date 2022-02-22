@@ -836,12 +836,12 @@ public class DTOConversionService {
             //FeatureLocation ftrLocation = RepositoryFactory.getFeatureRepository().getFeatureLocation(feature);
             FeatureLocation ftrLocation = RepositoryFactory.getFeatureRepository().getLocationByFeature(feature);
             if (ftrLocation != null) {
-                featureDTO.setFeatureChromosome(ftrLocation.getFtrChromosome());
-                featureDTO.setFeatureAssembly(ftrLocation.getFtrAssembly());
-                featureDTO.setAssembly(ftrLocation.getFtrAssembly());
-                featureDTO.setFeatureStartLoc(ftrLocation.getFtrStartLocation());
-                featureDTO.setFeatureEndLoc(ftrLocation.getFtrEndLocation());
-                featureDTO.setEvidence(FeatureService.getFeatureGenomeLocationEvidenceCode(ftrLocation.getFtrLocEvidence().getZdbID()));
+                featureDTO.setFeatureChromosome(ftrLocation.getChromosome());
+                featureDTO.setFeatureAssembly(ftrLocation.getAssembly());
+                featureDTO.setAssembly(ftrLocation.getAssembly());
+                featureDTO.setFeatureStartLoc(ftrLocation.getStartLocation());
+                featureDTO.setFeatureEndLoc(ftrLocation.getEndLocation());
+                featureDTO.setEvidence(FeatureService.getFeatureGenomeLocationEvidenceCode(ftrLocation.getLocationEvidence().getZdbID()));
             }
 
 

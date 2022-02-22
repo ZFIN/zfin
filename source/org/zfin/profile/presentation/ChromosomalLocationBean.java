@@ -34,10 +34,10 @@ public class ChromosomalLocationBean {
         ChromosomalLocationBean clBean = new ChromosomalLocationBean();
         clBean.setZdbID(persistedLocation.getZdbID());
         clBean.setEntityID(persistedLocation.getMarker().getZdbID());
-        clBean.setAssembly(persistedLocation.getFtrAssembly());
-        clBean.setChromosome(persistedLocation.getFtrChromosome());
-        clBean.setStartLocation(persistedLocation.getFtrStartLocation());
-        clBean.setEndLocation(persistedLocation.getFtrEndLocation());
+        clBean.setAssembly(persistedLocation.getAssembly());
+        clBean.setChromosome(persistedLocation.getChromosome());
+        clBean.setStartLocation(persistedLocation.getStartLocation());
+        clBean.setEndLocation(persistedLocation.getEndLocation());
         return clBean;
     }
 
@@ -48,19 +48,19 @@ public class ChromosomalLocationBean {
     }
 
     public void updateMarkerLocation(MarkerLocation markerLocation) {
-        markerLocation.setFtrAssembly(this.getAssembly());
-        markerLocation.setFtrChromosome(this.getChromosome());
+        markerLocation.setAssembly(this.getAssembly());
+        markerLocation.setChromosome(this.getChromosome());
 
         try {
             int startLocation = this.getStartLocation();
-            markerLocation.setFtrStartLocation(startLocation);
+            markerLocation.setStartLocation(startLocation);
         } catch (NumberFormatException nfe) {
             //don't set start location
         }
 
         try {
             int endLocation = this.getEndLocation();
-            markerLocation.setFtrEndLocation(endLocation);
+            markerLocation.setEndLocation(endLocation);
         } catch (NumberFormatException nfe) {
             //don't set end location
         }

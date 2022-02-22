@@ -62,7 +62,7 @@ public class MarkerChromosomalLocationController {
         MarkerLocation markerLocation = chromosomalLocation.toMarkerLocation();
         Marker marker = markerRepository.getMarkerByID(markerId);
         markerLocation.setMarker(marker);
-        markerLocation.setFtrLocEvidence(infrastructureRepository.getTermByID(MANUALLY_CURATED_TERM_ID));
+        markerLocation.setLocationEvidence(infrastructureRepository.getTermByID(MANUALLY_CURATED_TERM_ID));
         MarkerLocation persistedLocation = markerRepository.addMarkerLocation(markerLocation);
         transaction.commit();
 
