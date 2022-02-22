@@ -40,13 +40,18 @@
     </jsp:attribute>
 
     <jsp:attribute name="pageBar">
-            <nav class="navbar navbar-light" style="background-color: #efefef;">
-                <a style="padding-left:100px;" class="error" href="/action/publication/view/${publication.zdbID}">Old View</a>
-                <a style="padding-left:100px" class="error" href="/action/curation/${publication.zdbID}">Curate</a>
-                <a style="padding-left:100px" class="error" href="/action/publication/${publication.zdbID}/link">Link</a>
-                <a style="padding-left:100px" class="error" href="/action/publication/${publication.zdbID}/edit">Edit</a>
-                <a style="padding-left:100px" class="error" href="/action/publication/${publication.zdbID}/track">Track</a>
-            </nav>
+        <nav class="navbar navbar-light text-center no-gutters border-bottom"
+             style="background-color: #efefef;
+                            margin: -1.5rem -1.5rem 1rem -1.5rem;
+                            padding-top: 1.1em;
+                            padding-bottom: 1.2em;"
+        >
+            <a class="col-sm" href="/action/publication/view/${publication.zdbID}">Old View</a>
+            <a class="col-sm" href="/action/curation/${publication.zdbID}">Curate</a>
+            <a class="col-sm" href="/action/publication/${publication.zdbID}/link">Link</a>
+            <a class="col-sm" href="/action/publication/${publication.zdbID}/edit">Edit</a>
+            <a class="col-sm" href="/action/publication/${publication.zdbID}/track">Track</a>
+        </nav>
     </jsp:attribute>
 
     <jsp:body>
