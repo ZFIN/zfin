@@ -11,10 +11,7 @@ import org.zfin.framework.api.View;
 import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.MarkerLocation;
-import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.profile.presentation.ChromosomalLocationBean;
-import org.zfin.profile.presentation.ChromosomalLocationBeanValidator;
 
 import javax.validation.Valid;
 import java.util.List;

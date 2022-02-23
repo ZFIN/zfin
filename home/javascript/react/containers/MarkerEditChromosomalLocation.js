@@ -28,12 +28,19 @@ const MarkerEditChromosomalLocation = ({
         setModalData(null);
     };
 
+    const parseIntIgnoreCommas = (value) => {
+        if (typeof value != "string") {
+            return "";
+        }
+        return parseInt(value.replace(/,/g,""));
+    };
+
     const handleValidateChromosome = () => {
         if (!values) {
             return false;
         }
-        const startLocation = parseInt(values.startLocation);
-        const endLocation = parseInt(values.endLocation);
+        const startLocation = parseIntIgnoreCommas(values.startLocation);
+        const endLocation = parseIntIgnoreCommas(values.endLocation);
 
         if ( (startLocation || endLocation)
             && (values.chromosome === ""))
@@ -48,8 +55,8 @@ const MarkerEditChromosomalLocation = ({
         if (!values) {
             return false;
         }
-        const startLocation = parseInt(values.startLocation);
-        const endLocation = parseInt(values.endLocation);
+        const startLocation = parseIntIgnoreCommas(values.startLocation);
+        const endLocation = parseIntIgnoreCommas(values.endLocation);
         if (startLocation && endLocation
             && (startLocation > endLocation))
         {
@@ -77,19 +84,10 @@ const MarkerEditChromosomalLocation = ({
     const formatLink = (item, editLink) => {
         const leftColumnClass="col-sm-4 col-md-3 col-lg-2";
         const rightColumnClass="col-sm-8 col-md-9 col-lg-10";
+
         return <><dl className="row">
-            <dt className={leftColumnClass}>Assembly</dt>
-            <dd className={rightColumnClass}>{item.assembly}</dd>
-            <dt className={leftColumnClass}>Chromosome</dt>
-            <dd className={rightColumnClass}>{item.chromosome}</dd>
-            <dt className={leftColumnClass}>Start</dt>
-            <dd className={rightColumnClass}>{item.startLocation}</dd>
-            <dt className={leftColumnClass}>End</dt>
-            <dd className={rightColumnClass}>{item.endLocation}</dd>
-            <dt className={leftColumnClass}>Evidence Code</dt>
-            <dd className={rightColumnClass}>{item.locationEvidence}</dd>
-            <dt className={leftColumnClass}><span className="invisible placeholder">Edit</span></dt>
-            <dd className={rightColumnClass}>{editLink} <span className="invisible placeholder">Edit</span></dd>
+            <dt className={leftColumnClass}>Location</dt>
+            <dd className={rightColumnClass}>Chr {item.chromosome}: {item.startLocation.toLocaleString()} - {item.endLocation.toLocaleString()} ({item.assembly}) {editLink}</dd>
         </dl></>;
     };
 

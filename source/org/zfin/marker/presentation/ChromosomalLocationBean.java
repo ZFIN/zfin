@@ -1,9 +1,11 @@
-package org.zfin.profile.presentation;
+package org.zfin.marker.presentation;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Getter;
 import lombok.Setter;
+import org.zfin.framework.api.FlexibleIntegerDeserializer;
 import org.zfin.framework.api.View;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.mapping.MarkerLocation;
@@ -27,9 +29,11 @@ public class ChromosomalLocationBean {
     @JsonView(View.API.class)
     String chromosome;
 
+    @JsonDeserialize(using = FlexibleIntegerDeserializer.class)
     @JsonView(View.API.class)
     Integer startLocation;
 
+    @JsonDeserialize(using = FlexibleIntegerDeserializer.class)
     @JsonView(View.API.class)
     Integer endLocation;
 

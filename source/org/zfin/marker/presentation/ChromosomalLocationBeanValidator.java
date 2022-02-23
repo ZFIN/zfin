@@ -1,8 +1,9 @@
-package org.zfin.profile.presentation;
+package org.zfin.marker.presentation;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
+import org.zfin.marker.presentation.ChromosomalLocationBean;
 
 public class ChromosomalLocationBeanValidator implements Validator {
     @Override
