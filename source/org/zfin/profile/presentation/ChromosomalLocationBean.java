@@ -5,7 +5,10 @@ import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
 import org.zfin.framework.api.View;
+import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.mapping.MarkerLocation;
+import org.zfin.marker.Marker;
+import org.zfin.repository.RepositoryFactory;
 
 @Setter
 @Getter
@@ -30,6 +33,9 @@ public class ChromosomalLocationBean {
     @JsonView(View.API.class)
     Integer endLocation;
 
+    @JsonView(View.API.class)
+    String locationEvidence;
+
     public static ChromosomalLocationBean fromMarkerLocation(MarkerLocation persistedLocation) {
         ChromosomalLocationBean clBean = new ChromosomalLocationBean();
         clBean.setZdbID(persistedLocation.getZdbID());
@@ -38,16 +44,23 @@ public class ChromosomalLocationBean {
         clBean.setChromosome(persistedLocation.getChromosome());
         clBean.setStartLocation(persistedLocation.getStartLocation());
         clBean.setEndLocation(persistedLocation.getEndLocation());
+        clBean.setLocationEvidenceByMarkerLocation(persistedLocation);
         return clBean;
+    }
+
+    private void setLocationEvidenceByMarkerLocation(MarkerLocation persistedLocation) {
+        String abbreviation = DTOConversionService.evidenceCodeIdToAbbreviation(
+                persistedLocation.getLocationEvidence().getZdbID());
+        this.setLocationEvidence(abbreviation);
     }
 
     public MarkerLocation toMarkerLocation() {
         MarkerLocation markerLocation = new MarkerLocation();
-        updateMarkerLocation(markerLocation);
+        setMarkerLocation(markerLocation);
         return markerLocation;
     }
 
-    public void updateMarkerLocation(MarkerLocation markerLocation) {
+    public void setMarkerLocation(MarkerLocation markerLocation) {
         markerLocation.setAssembly(this.getAssembly());
         markerLocation.setChromosome(this.getChromosome());
 
@@ -64,5 +77,22 @@ public class ChromosomalLocationBean {
         } catch (NumberFormatException nfe) {
             //don't set end location
         }
+
+        this.setMarkerLocationEvidenceCode(markerLocation);
+        this.setMarkerLocationMarker(markerLocation);
     }
+
+    private void setMarkerLocationMarker(MarkerLocation markerLocation) {
+        Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID(this.getEntityID());
+        markerLocation.setMarker(marker);
+    }
+
+    private void setMarkerLocationEvidenceCode(MarkerLocation markerLocation) {
+        String abbreviation = this.getLocationEvidence();
+        String evidenceCodeZdbID = DTOConversionService.abbreviationToEvidenceCodeId(abbreviation);
+        if (evidenceCodeZdbID != null) {
+            markerLocation.setLocationEvidence(RepositoryFactory.getOntologyRepository().getTermByZdbID(evidenceCodeZdbID));
+        }
+    }
+
 }

@@ -16,6 +16,7 @@ const MarkerEditChromosomalLocation = ({
     const isEdit = modalData && modalData.id;
     const hdr = type;
     const assemblies = ['GRCz11', 'GRCz10', 'Zv9'];
+    const evidenceCodes = ['IC','TAS'];
 
     const {
         value: liveData,
@@ -85,6 +86,8 @@ const MarkerEditChromosomalLocation = ({
             <dd className={rightColumnClass}>{item.startLocation}</dd>
             <dt className={leftColumnClass}>End</dt>
             <dd className={rightColumnClass}>{item.endLocation}</dd>
+            <dt className={leftColumnClass}>Evidence Code</dt>
+            <dd className={rightColumnClass}>{item.locationEvidence}</dd>
             <dt className={leftColumnClass}><span className="invisible placeholder">Edit</span></dt>
             <dd className={rightColumnClass}>{editLink} <span className="invisible placeholder">Edit</span></dd>
         </dl></>;
@@ -107,6 +110,7 @@ const MarkerEditChromosomalLocation = ({
                 itemKeyProp="zdbID"
                 items={liveData}
                 newItem={{
+                    entityID: markerId,
                     assembly: '',
                     chromosome: '',
                     startLocation: '',
@@ -162,6 +166,23 @@ const MarkerEditChromosomalLocation = ({
                     field="endLocation"
                     validate={handleValidateLocations}
                 />
+                    <FormGroup
+                        labelClassName="col-md-3"
+                        inputClassName="col-md-9"
+                        label="Evidence Code"
+                        id="evidence-code"
+                        field="locationEvidence"
+                        tag="select"
+                        validate={value => value ? false : 'An evidence code is required'}
+                    >
+                        <option value=""/>
+                        {evidenceCodes.map(code => (
+                            <option
+                                value={code}
+                                key={code}
+                            >{code}</option>
+                        ))}
+                    </FormGroup>                    
             </>}
             </AddEditDeleteModal>
         </>

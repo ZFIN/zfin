@@ -14,10 +14,6 @@ public class ChromosomalLocationBeanValidator implements Validator {
     public void validate(Object o, Errors errors) {
         ChromosomalLocationBean bean = (ChromosomalLocationBean) o;
 
-        if (bean.getEntityID() == null) {
-            errors.rejectValue("marker.zdbID", "marker.chromosomalLocation.notfound");
-        }
-
         if (StringUtils.isEmpty(bean.getAssembly())) {
             errors.rejectValue("assembly", "marker.chromosomalLocation.assembly.empty");
         }
