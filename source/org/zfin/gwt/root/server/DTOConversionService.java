@@ -1929,12 +1929,7 @@ public class DTOConversionService {
         dto.setPublication(convertToPublicationDTO(model.getPublication()));
 
         dto.setDisease(convertToTermDTO(model.getDisease()));
-        if (model.getEvidenceCode().equals("ZDB-TERM-170419-250")) {
-            dto.setEvidenceCode("TAS");
-        }
-        if (model.getEvidenceCode().equals("ZDB-TERM-170419-251")) {
-            dto.setEvidenceCode("IC");
-        }
+        setEvidenceCodeAbbreviation(model, dto);
         //dto.setEvidenceCode(model.getEvidenceCode());
         dto.setZdbID(model.getZdbID());
         List<DiseaseAnnotationModel> dam = getMutantRepository().getDiseaseAnnotationModelByZdb(model.getZdbID());
@@ -1951,6 +1946,31 @@ public class DTOConversionService {
         }
 
         return dto;
+    }
+
+    public static void setEvidenceCodeAbbreviation(DiseaseAnnotation model, DiseaseAnnotationDTO dto) {
+        String abbreviation = evidenceCodeIdToAbbreviation(model.getEvidenceCode());
+        if (abbreviation != null) {
+            dto.setEvidenceCode(abbreviation);
+        }
+    }
+
+    public static String evidenceCodeIdToAbbreviation(String ID) {
+        if ("ZDB-TERM-170419-250".equals(ID)) {
+            return "TAS";
+        } else if ("ZDB-TERM-170419-251".equals(ID)) {
+            return "IC";
+        }
+        return null;
+    }
+
+    public static String abbreviationToEvidenceCodeId(String abbreviation) {
+        if ("TAS".equals(abbreviation)) {
+            return "ZDB-TERM-170419-250";
+        } else if ("IC".equals(abbreviation)) {
+            return "ZDB-TERM-170419-251";
+        }
+        return null;
     }
 
     public static ZygosityDTO convertToZygosityDTO(Zygosity zygosity) {
