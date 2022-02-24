@@ -16,7 +16,7 @@ insert into foreign_db_contains (fdbcont_organism_common_name, fdbcont_zdb_id, f
 SELECT 'Zebrafish', get_id('FDBCONT'), fdbdt_pk_id, null, fdb_db_pk_id
 from foreign_db,
      foreign_db_data_type
-where fdbdt_data_type = 'other'
+where fdbdt_data_type = 'RNA'
   AND fdbdt_super_type = 'sequence'
 order by fdb_db_pk_id desc
 limit 1;
