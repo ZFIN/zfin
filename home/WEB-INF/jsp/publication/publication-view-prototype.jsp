@@ -20,10 +20,12 @@
 
 <c:choose>
     <c:when test="${not empty publication.zebrashareEditors}">&nbsp;
-        <c:set var="secs" value="${[SUMMARY, ABSTRACT, FIGURES, GENES, STRS, ANTIBODIES, EFGs, EXPRESSION, MUTATION, FISH, DIRECTLY_ATTRIBUTED_DATA, ERRATA, ZEBRASHARE]}" />
+        <c:set var="secs"
+               value="${[SUMMARY, ABSTRACT, FIGURES, GENES, STRS, ANTIBODIES, EFGs, EXPRESSION, MUTATION, FISH, DIRECTLY_ATTRIBUTED_DATA, ERRATA, ZEBRASHARE]}"/>
     </c:when>
     <c:otherwise>
-        <c:set var="secs" value="${[SUMMARY, ABSTRACT, FIGURES, GENES, STRS, ANTIBODIES, EFGs, EXPRESSION, MUTATION, FISH, DIRECTLY_ATTRIBUTED_DATA, ERRATA]}"/>
+        <c:set var="secs"
+               value="${[SUMMARY, ABSTRACT, FIGURES, GENES, STRS, ANTIBODIES, EFGs, EXPRESSION, MUTATION, FISH, DIRECTLY_ATTRIBUTED_DATA, ERRATA]}"/>
     </c:otherwise>
 </c:choose>
 
@@ -40,12 +42,7 @@
     </jsp:attribute>
 
     <jsp:attribute name="pageBar">
-        <nav class="navbar navbar-light text-center no-gutters border-bottom"
-             style="background-color: #efefef;
-                            margin: -1.5rem -1.5rem 1rem -1.5rem;
-                            padding-top: 1.1em;
-                            padding-bottom: 1.2em;"
-        >
+        <nav class="navbar navbar-light admin text-center border-bottom">
             <a class="col-sm" href="/action/publication/view/${publication.zdbID}">Old View</a>
             <a class="col-sm" href="/action/curation/${publication.zdbID}">Curate</a>
             <a class="col-sm" href="/action/publication/${publication.zdbID}/link">Link</a>

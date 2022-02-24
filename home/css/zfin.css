@@ -1289,3 +1289,10 @@ input + label {
     color: gold;
     background: radial-gradient(circle at 50% 60%, black 40%, transparent 40%)
 }
+
+nav.admin {
+    background-color: #efefef;
+    margin: -1.5rem -1.5rem 1rem -1.5rem;
+    padding-top: 1.1em;
+    padding-bottom: 1.2em;
+}
