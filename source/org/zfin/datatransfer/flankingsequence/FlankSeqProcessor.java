@@ -63,14 +63,14 @@ public class FlankSeqProcessor {
 
                     FeatureLocation ftrLoc = featureRepository.getAllFeatureLocationsOnGRCz11(feature);
                     if (ftrLoc != null
-                            && ftrLoc.getFtrStartLocation() != null && ftrLoc.getFtrStartLocation().toString() != ""
-                            && ftrLoc.getFtrEndLocation() != null && ftrLoc.getFtrEndLocation().toString() != ""
-                            && ftrLoc.getFtrAssembly() != null
+                            && ftrLoc.getStartLocation() != null && ftrLoc.getStartLocation().toString() != ""
+                            && ftrLoc.getEndLocation() != null && ftrLoc.getEndLocation().toString() != ""
+                            && ftrLoc.getAssembly() != null
 
                             ) {
-                        String ftrChrom = ftrLoc.getFtrChromosome();
-                        locStart = ftrLoc.getFtrStartLocation();
-                        locEnd = ftrLoc.getFtrEndLocation();
+                        String ftrChrom = ftrLoc.getChromosome();
+                        locStart = ftrLoc.getStartLocation();
+                        locEnd = ftrLoc.getEndLocation();
                         if (feature.getFeatureGenomicMutationDetail() == null) {
 
                             String refSeq = new String(ref.getSubsequenceAt(ftrChrom, locStart, locEnd).getBases());
@@ -87,14 +87,14 @@ public class FlankSeqProcessor {
                         System.out.println(feature.getAbbreviation()+feature.getType().getName());
                         FeatureLocation ftrLoc = featureRepository.getAllFeatureLocationsOnGRCz11(feature);
                         if (ftrLoc != null
-                                && ftrLoc.getFtrStartLocation() != null && ftrLoc.getFtrStartLocation().toString() != ""
-                                && ftrLoc.getFtrEndLocation() != null && ftrLoc.getFtrEndLocation().toString() != ""
-                                && ftrLoc.getFtrAssembly() != null
+                                && ftrLoc.getStartLocation() != null && ftrLoc.getStartLocation().toString() != ""
+                                && ftrLoc.getEndLocation() != null && ftrLoc.getEndLocation().toString() != ""
+                                && ftrLoc.getAssembly() != null
 
                                 ) {
-                            String ftrChrom = ftrLoc.getFtrChromosome();
-                            locStart = ftrLoc.getFtrStartLocation();
-                            locEnd = ftrLoc.getFtrEndLocation();
+                            String ftrChrom = ftrLoc.getChromosome();
+                            locStart = ftrLoc.getStartLocation();
+                            locEnd = ftrLoc.getEndLocation();
                             switch (feature.getType()) {
                                 case POINT_MUTATION:
                                     if (StringUtils.isEmpty(feature.getFeatureGenomicMutationDetail().getFgmdSeqRef())) {

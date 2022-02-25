@@ -31,6 +31,8 @@ import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.server.DTOMarkerService;
 import org.zfin.infrastructure.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.mapping.GenomeLocation;
+import org.zfin.mapping.MarkerLocation;
 import org.zfin.marker.*;
 import org.zfin.marker.fluorescence.FluorescentMarker;
 import org.zfin.marker.fluorescence.FluorescentProtein;
@@ -812,6 +814,47 @@ public class HibernateMarkerRepository implements MarkerRepository {
         }
         infrastructureRepository.insertUpdatesTable(mrel.getFirstMarker(), "", "new attribution, marker relationship: " + mrel.getZdbID() + " with pub: " + attributionZdbID, attributionZdbID, "");
         infrastructureRepository.insertUpdatesTable(mrel.getSecondMarker(), "", "new attribution, marker relationship: " + mrel.getZdbID() + " with pub: " + attributionZdbID, attributionZdbID, "");
+    }
+
+    public List<MarkerLocation> getMarkerLocation(String zdbID) {
+        Session session = HibernateUtil.currentSession();
+
+        Criteria criteria = session.createCriteria(MarkerLocation.class);
+        criteria.add(Restrictions.eq("marker.zdbID", zdbID));
+
+        return (List<MarkerLocation>) criteria.list();
+    }
+
+    public MarkerLocation addMarkerLocation(MarkerLocation markerLocation) {
+        Session session = HibernateUtil.currentSession();
+        session.save(markerLocation);
+        return markerLocation;
+    }
+
+    public MarkerLocation getMarkerLocationByID(String ZdbID) {
+        Session session = HibernateUtil.currentSession();
+
+        Criteria criteria = session.createCriteria(MarkerLocation.class);
+        criteria.add(Restrictions.eq("zdbID", ZdbID));
+
+        return (MarkerLocation) criteria.uniqueResult();
+    }
+
+    public MarkerLocation saveMarkerLocation(MarkerLocation markerLocation) {
+        Session session = HibernateUtil.currentSession();
+        session.update(markerLocation);
+        session.flush();
+        return markerLocation;
+    }
+
+    public int deleteMarkerLocation(String zdbID) {
+        String hql = "delete from MarkerLocation ml " +
+                " where ml.zdbID = :ID ";
+        Query query = currentSession().createQuery(hql);
+        query.setString("ID", zdbID);
+        int removed = query.executeUpdate();
+        currentSession().flush();
+        return removed;
     }
 
     public void addDBLinkAttribution(DBLink dbLink, Publication attribution, String dataZdbId) {
