@@ -21,10 +21,10 @@ import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 public class BasicReferenceInfo extends AbstractScriptWrapper {
 
-    private int numfOfRecords = 0;
+    private int numberOfRecords = 0;
 
     public BasicReferenceInfo(int number) {
-        numfOfRecords = number;
+        numberOfRecords = number;
     }
 
     public static void main(String[] args) throws IOException {
@@ -134,29 +134,14 @@ public class BasicReferenceInfo extends AbstractScriptWrapper {
                             dto.setMODReferenceTypes(MODReferenceTypes);
                             String allianceCategory = "";
                             String type = reference.getType().getDisplay();
-                            if (type.equals("Journal") || type.equals("Abstract")){
-                                allianceCategory = "Research Article";
-                            }
-                            else if (type.equals("Unpublished") ||
-                                     type.equals("Curation") ||
-                                     type.equals("Active Curation") ){
-                                allianceCategory = "Internal Process Reference";
-                            }
-                            else if (type.equals("Unknown")){
-                                allianceCategory = type;
-                            }
-                            else if (type.equals("Review")){
-                                allianceCategory = "Review Article";
-                            }
-                            else if (type.equals("Book") || type.equals("Chapter")){
-                                allianceCategory = "Book";
-                            }
-                            else if (type.equals("Thesis")){
-                                allianceCategory = type;
-                            }
-                            else {
-                                allianceCategory = "Other";
-                            }
+                            allianceCategory = switch (type) {
+                                case "Journal", "Abstract" -> "Research Article";
+                                case "Unpublished", "Curation", "Active Curation" -> "Internal Process Reference";
+                                case "Review" -> "Review Article";
+                                case "Book", "Chapter" -> "Book";
+                                case "Thesis", "Unknown"  -> type;
+                                default -> "Other";
+                            };
                             dto.setAllianceCategory(allianceCategory);
                             List<String> pages = new ArrayList<>();
                             pages.add("reference");
