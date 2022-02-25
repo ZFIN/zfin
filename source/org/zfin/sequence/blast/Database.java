@@ -17,8 +17,10 @@ public class Database {
 
     @JsonView(View.SequenceAPI.class)
     private String zdbID;
+    @JsonView(View.SequenceAPI.class)
     private String name;
     private AvailableAbbrev abbrev;
+    @JsonView(View.SequenceAPI.class)
     private String description;
     @JsonView(View.SequenceAPI.class)
     private Type type;
