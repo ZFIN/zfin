@@ -36,7 +36,7 @@ const Ribbon = ({subjects, categories, itemClick, selected}) => {
                 //in case event.detail.subjects[0] chaining fails.
             }
         });
-    },[]);
+    },[subjects, itemClick]);
 
     return (
         <div className='ontology-ribbon-container horizontal-scroll-container' ref={ribbonRef}>
