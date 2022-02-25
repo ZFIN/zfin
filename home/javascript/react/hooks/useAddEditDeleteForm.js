@@ -68,7 +68,7 @@ export default function useAddEditDeleteForm({
             setItems(items.filter(item => item[itemKeyProp] !== defaultValues[itemKeyProp]));
             onSuccess();
         } catch (error) {
-            formInstance.setMeta({ error: 'Could not delete alias. Try again later.' });
+            formInstance.setMeta({ error: 'Could not delete. Try again later.' });
             throw error;
         }
         setDeleting(false);

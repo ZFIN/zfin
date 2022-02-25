@@ -105,12 +105,12 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     }
 
     private void updateFeatureLocation(FeatureLocation fl, FeatureDTO dto){
-        fl.setFtrChromosome(dto.getFeatureChromosome());
-        fl.setFtrAssembly(dto.getFeatureAssembly());
-        fl.setFtrStartLocation(dto.getFeatureStartLoc());
-        fl.setFtrEndLocation(dto.getFeatureEndLoc());
+        fl.setChromosome(dto.getFeatureChromosome());
+        fl.setAssembly(dto.getFeatureAssembly());
+        fl.setStartLocation(dto.getFeatureStartLoc());
+        fl.setEndLocation(dto.getFeatureEndLoc());
         // convert code into TermID and then get GenericTerm
-        fl.setFtrLocEvidence(ontologyRepository.getTermByZdbID(FeatureService.getFeatureGenomeLocationEvidenceCodeTerm(dto.getEvidence())));
+        fl.setLocationEvidence(ontologyRepository.getTermByZdbID(FeatureService.getFeatureGenomeLocationEvidenceCodeTerm(dto.getEvidence())));
         HibernateUtil.currentSession().save(fl);
         infrastructureRepository.insertPublicAttribution(fl.getZdbID(), dto.getPublicationZdbID(), RecordAttribution.SourceType.STANDARD);
     }
@@ -392,10 +392,10 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     private boolean featureLocationNeedsUpdate(FeatureDTO featureDTO, FeatureLocation fgl) {
         //null safe
         return !(
-                    StringUtils.equals(featureDTO.getFeatureChromosome(), fgl.getFtrChromosome()) &&
-                    StringUtils.equals(featureDTO.getFeatureAssembly(), fgl.getFtrAssembly()) &&
-                    Objects.equals(featureDTO.getFeatureStartLoc(), fgl.getFtrStartLocation()) &&
-                    Objects.equals(featureDTO.getFeatureEndLoc(), fgl.getFtrEndLocation())
+                    StringUtils.equals(featureDTO.getFeatureChromosome(), fgl.getChromosome()) &&
+                    StringUtils.equals(featureDTO.getFeatureAssembly(), fgl.getAssembly()) &&
+                    Objects.equals(featureDTO.getFeatureStartLoc(), fgl.getStartLocation()) &&
+                    Objects.equals(featureDTO.getFeatureEndLoc(), fgl.getEndLocation())
                 );
     }
 
@@ -617,13 +617,13 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             if (StringUtils.isNotEmpty((featureDTO.getFeatureChromosome()))) {
                 FeatureLocation fgl = new FeatureLocation();
                 fgl.setFeature(feature);
-                fgl.setFtrChromosome(featureDTO.getFeatureChromosome());
+                fgl.setChromosome(featureDTO.getFeatureChromosome());
 
-                fgl.setFtrAssembly(featureDTO.getFeatureAssembly());
-                fgl.setFtrStartLocation(featureDTO.getFeatureStartLoc());
-                fgl.setFtrEndLocation(featureDTO.getFeatureEndLoc());
+                fgl.setAssembly(featureDTO.getFeatureAssembly());
+                fgl.setStartLocation(featureDTO.getFeatureStartLoc());
+                fgl.setEndLocation(featureDTO.getFeatureEndLoc());
                 // convert code into TermID and then get GenericTerm
-                fgl.setFtrLocEvidence(ontologyRepository.getTermByZdbID(FeatureService.getFeatureGenomeLocationEvidenceCodeTerm(featureDTO.getEvidence())));
+                fgl.setLocationEvidence(ontologyRepository.getTermByZdbID(FeatureService.getFeatureGenomeLocationEvidenceCodeTerm(featureDTO.getEvidence())));
                 HibernateUtil.currentSession().save(fgl);
 
                 PublicationAttribution pa = new PublicationAttribution();
