@@ -1,11 +1,13 @@
 package org.zfin.sequence.blast.presentation;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.api.RestErrorException;
 import org.zfin.framework.api.RestErrorMessage;
+import org.zfin.framework.api.View;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.blast.BlastDatabaseException;
 import org.zfin.sequence.blast.Database;
@@ -22,7 +24,7 @@ public class BlastInfoController {
 
     private static Logger logger = LogManager.getLogger(BlastInfoController.class);
 
-    @ResponseBody
+    @JsonView(View.SequenceAPI.class)
     @RequestMapping(value = "/info/{database}", method = RequestMethod.GET)
     public DatabaseStatistics getBlastDatabaseInfo(@PathVariable String database) throws BlastDatabaseException {
         DatabaseStatistics statistics;
@@ -30,6 +32,8 @@ public class BlastInfoController {
             Database.AvailableAbbrev type = Database.AvailableAbbrev.getType(database);
             Database blastDatabase = blastRepository.getDatabase(type);
             statistics = MountedWublastBlastService.getInstance().getDatabaseStatistics(blastDatabase);
+            //statistics = new DatabaseStatistics();
+            statistics.setDatabase(blastDatabase);
         } catch (RuntimeException e) {
             RestErrorMessage error = new RestErrorMessage(500);
             error.addErrorMessage(e.getMessage());
