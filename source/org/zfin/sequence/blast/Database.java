@@ -1,6 +1,8 @@
 package org.zfin.sequence.blast;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
 import org.zfin.framework.api.View;
 import org.zfin.properties.ZfinPropertiesEnum;
 
@@ -11,8 +13,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
 
-/**
- */
+@Setter
+@Getter
 public class Database {
 
     @JsonView(View.SequenceAPI.class)
@@ -31,55 +33,12 @@ public class Database {
     private Origination origination;
     @JsonView(View.SequenceAPI.class)
     private String displayName;
-
-
     private Integer toolDisplayOrder;
-
-    public Integer getToolDisplayOrder() {
-        return toolDisplayOrder;
-    }
-
-    public void setToolDisplayOrder(Integer toolDisplayOrder) {
-        this.toolDisplayOrder = toolDisplayOrder;
-    }
 
     // these will be ordered coming out of the database by order
     private Set<DatabaseRelationship> childrenRelationships;
     // these will be ordered coming out of the database by order
     private Set<DatabaseRelationship> parentRelationships;
-
-    public Set<DatabaseRelationship> getChildrenRelationships() {
-        return childrenRelationships;
-    }
-
-    public void setChildrenRelationships(Set<DatabaseRelationship> childrenRelationships) {
-        this.childrenRelationships = childrenRelationships;
-    }
-
-    public Set<DatabaseRelationship> getParentRelationships() {
-        return parentRelationships;
-    }
-
-    public void setParentRelationships(Set<DatabaseRelationship> parentRelationships) {
-        this.parentRelationships = parentRelationships;
-    }
-
-    public Origination getOrigination() {
-        return origination;
-    }
-
-    public void setOrigination(Origination origination) {
-        this.origination = origination;
-    }
-
-
-    public boolean isLocked() {
-        return isLocked;
-    }
-
-    public void setLocked(boolean locked) {
-        isLocked = locked;
-    }
 
     public String getShortType() {
         return type.toString().substring(0, 1);
@@ -89,72 +48,8 @@ public class Database {
         this.publicDatabase = isPublic;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public AvailableAbbrev getAbbrev() {
-        return abbrev;
-    }
-
-    public void setAbbrev(AvailableAbbrev abbrev) {
-        this.abbrev = abbrev;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Type getType() {
-        return type;
-    }
-
     public char getTypeCharacter() {
         return getType() == Database.Type.NUCLEOTIDE ? 'n' : 'p';
-    }
-
-    public void setType(Type type) {
-        this.type = type;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
-
-    public boolean isPublicDatabase() {
-        return publicDatabase;
-    }
-
-    public void setPublicDatabase(boolean publicDatabase) {
-        this.publicDatabase = publicDatabase;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
     }
 
     public File getTempFile(String prefix, String suffix) throws IOException {
