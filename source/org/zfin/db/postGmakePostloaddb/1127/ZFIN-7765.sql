@@ -1,3 +1,7 @@
+--liquibase formatted sql
+--changeset ryan:ZFIN-7765
+--fixes names that are the result of upstream changes to is_allele_of relationship
+
 update genotype set geno_display_name = 'dnaaf6<sup>hi1392Tg</sup>' where geno_zdb_id = 'ZDB-GENO-040722-8' and geno_display_name = 'pih1d3<sup>hi1392Tg</sup>';
 update genotype set geno_display_name = 'utp11<sup>hi2937Tg</sup>' where geno_zdb_id = 'ZDB-GENO-040929-3' and geno_display_name = 'utp11l<sup>hi2937Tg</sup>';
 update genotype set geno_display_name = 'polr2g<sup>hi3685Tg</sup>' where geno_zdb_id = 'ZDB-GENO-041001-13' and geno_display_name = 'polr2gl<sup>hi3685Tg</sup>';
