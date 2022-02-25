@@ -14,6 +14,7 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.blast.BlastDatabaseException;
 import org.zfin.sequence.blast.Database;
 import org.zfin.sequence.blast.DatabaseStatistics;
+import org.zfin.sequence.blast.MountedWublastBlastService;
 import org.zfin.sequence.blast.repository.BlastRepository;
 
 import java.util.Date;
@@ -33,10 +34,12 @@ public class BlastInfoController {
         try {
             Database.AvailableAbbrev type = Database.AvailableAbbrev.getType(database);
             Database blastDatabase = blastRepository.getDatabase(type);
-            //statistics = MountedWublastBlastService.getInstance().getDatabaseStatistics(blastDatabase);
+            statistics = MountedWublastBlastService.getInstance().getDatabaseStatistics(blastDatabase);
+/*
             statistics = new DatabaseStatistics();
             statistics.setCreationDate(new Date());
             statistics.setModifiedDate(new Date());
+*/
             statistics.setDatabase(blastDatabase);
         } catch (RuntimeException e) {
             RestErrorMessage error = new RestErrorMessage(500);
