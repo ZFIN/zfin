@@ -1,58 +1,30 @@
 package org.zfin.sequence.blast;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Date;
 
 /**
  * Holds blast database statistics.
  */
+@Setter
+@Getter
 public class DatabaseStatistics {
 
-    public static final int BAD_DATABASE  = -1;
+    public static final int BAD_DATABASE = -1;
 
     private int numSequences = BAD_DATABASE;
-    private int numAccessions = BAD_DATABASE ;
-    private Date creationDate ;
-    private Date modifiedDate ;
+    private int numAccessions = BAD_DATABASE;
+    private Date creationDate;
+    private Date modifiedDate;
 
-
-    public int getNumSequences() {
-        return numSequences;
-    }
-
-    public void setNumSequences(int numSequences) {
-        this.numSequences = numSequences;
-    }
-
-    public int getNumAccessions() {
-        return numAccessions;
-    }
-
-    public void setNumAccessions(int numAccessions) {
-        this.numAccessions = numAccessions;
-    }
-
-    public Date getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public Date getModifiedDate() {
-        return modifiedDate;
-    }
-
-    public void setModifiedDate(Date modifiedDate) {
-        this.modifiedDate = modifiedDate;
-    }
-
-    public boolean isSet() {
+   public boolean isSet() {
         return
-                creationDate!=null
+                creationDate != null
                         &&
-                        modifiedDate!=null
+                        modifiedDate != null
                         &&
-                        numAccessions!=BAD_DATABASE;
+                        numAccessions != BAD_DATABASE;
     }
 }
