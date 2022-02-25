@@ -30,7 +30,9 @@ public class HibernateBlastRepository implements BlastRepository {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(Database.class);
         criteria.add(Restrictions.eq("abbrev", blastDatabaseAvailableAbbrev));
-        return (Database) criteria.uniqueResult();
+        Database database = (Database) criteria.uniqueResult();
+        session.refresh(database);
+        return database;
     }
 
     public Origination getOrigination(Origination.Type type) {
