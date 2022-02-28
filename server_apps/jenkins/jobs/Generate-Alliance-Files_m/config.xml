@@ -19,6 +19,11 @@
           <description>if set to true the files will be submitted</description>
           <defaultValue>false</defaultValue>
         </hudson.model.BooleanParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>ALLIANCE_RELEASE_VERSION</name>
+          <description>Release Version</description>
+          <defaultValue>4.1.1</defaultValue>
+        </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
@@ -41,7 +46,7 @@
     <hudson.tasks.Shell>
       <command>
         cd $SOURCEROOT/server_apps/DB_maintenance/Alliance  &amp;&amp; rm -f ZFIN*.json*   &amp;&amp; cp $SOURCEROOT/ZFIN*.json .  &amp;&amp; gzip ZFIN*.json
-        cd $SOURCEROOT/server_apps/DB_maintenance/Alliance  &amp;&amp; ./validateAllianceFiles.sh $submit
+        cd $SOURCEROOT/server_apps/DB_maintenance/Alliance  &amp;&amp; ./validateAllianceFiles.sh $submit $ALLIANCE_RELEASE_VERSION
       </command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
