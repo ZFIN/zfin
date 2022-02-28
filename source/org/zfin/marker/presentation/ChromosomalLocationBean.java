@@ -17,8 +17,7 @@ import org.zfin.repository.RepositoryFactory;
 public class ChromosomalLocationBean {
 
     @JsonView(View.API.class)
-    @JsonProperty("id")
-    String ZdbID;
+    String zdbID;
 
     @JsonView(View.API.class)
     String entityID;
