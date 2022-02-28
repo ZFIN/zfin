@@ -4,11 +4,15 @@
 package org.zfin.sequence;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
 import org.zfin.framework.api.View;
 import org.zfin.sequence.blast.Database;
 
 import java.util.*;
 
+@Setter
+@Getter
 public class ReferenceDatabase implements Comparable<ReferenceDatabase> {
 
     private String zdbID;
@@ -20,68 +24,12 @@ public class ReferenceDatabase implements Comparable<ReferenceDatabase> {
     private Set<DisplayGroup> displayGroups;
     private List<Database> relatedBlastDbs;
 
-    public List<Database> getRelatedBlastDbs() {
-        return relatedBlastDbs;
-    }
-
-    public void setRelatedBlastDbs(List<Database> relatedBlastDbs) {
-        this.relatedBlastDbs = relatedBlastDbs;
-    }
-
-    public ForeignDBDataType getForeignDBDataType() {
-        return foreignDBDataType;
-    }
-
-    public void setForeignDBDataType(ForeignDBDataType foreignDBDataType) {
-        this.foreignDBDataType = foreignDBDataType;
-    }
-
-    public ForeignDB getForeignDB() {
-        return foreignDB;
-    }
-
-    public void setForeignDB(ForeignDB foreignDB) {
-        this.foreignDB = foreignDB;
-    }
-
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
-
     public String getBaseURL() {
         return foreignDB.getDbUrlPrefix();
     }
 
     public void setBaseURL(String baseURL) {
         foreignDB.setDbUrlPrefix(baseURL);
-    }
-
-    public String getOrganism() {
-        return organism;
-    }
-
-    public void setOrganism(String organism) {
-        this.organism = organism;
-    }
-
-    public Database getPrimaryBlastDatabase() {
-        return primaryBlastDatabase;
-    }
-
-    public void setPrimaryBlastDatabase(Database primaryBlastDatabase) {
-        this.primaryBlastDatabase = primaryBlastDatabase;
-    }
-
-    public Set<DisplayGroup> getDisplayGroups() {
-        return displayGroups;
-    }
-
-    public void setDisplayGroups(Set<DisplayGroup> displayGroups) {
-        this.displayGroups = displayGroups;
     }
 
     public String toString() {
@@ -120,19 +68,17 @@ public class ReferenceDatabase implements Comparable<ReferenceDatabase> {
     }
 
     public List<Database> getOrderedRelatedBlastDB() {
-        List<Database> sortedDatabases = new ArrayList<Database>();
+        List<Database> sortedDatabases = new ArrayList<>();
         sortedDatabases.addAll(relatedBlastDbs);
-        Collections.sort(sortedDatabases, new Comparator<Database>() {
-            public int compare(Database o1, Database o2) {
-                if (o1.getToolDisplayOrder() != null && o2.getToolDisplayOrder() != null) {
-                    return o1.getToolDisplayOrder().compareTo(o2.getToolDisplayOrder());
-                } else if (o1.getToolDisplayOrder() == null && o2.getToolDisplayOrder() == null) {
-                    return o1.getName().compareTo(o2.getName());
-                } else if (o1.getToolDisplayOrder() == null && o2.getToolDisplayOrder() != null) {
-                    return 1;
-                } else {
-                    return -1;
-                }
+        Collections.sort(sortedDatabases, (o1, o2) -> {
+            if (o1.getToolDisplayOrder() != null && o2.getToolDisplayOrder() != null) {
+                return o1.getToolDisplayOrder().compareTo(o2.getToolDisplayOrder());
+            } else if (o1.getToolDisplayOrder() == null && o2.getToolDisplayOrder() == null) {
+                return o1.getName().compareTo(o2.getName());
+            } else if (o1.getToolDisplayOrder() == null && o2.getToolDisplayOrder() != null) {
+                return 1;
+            } else {
+                return -1;
             }
         });
         return sortedDatabases;
