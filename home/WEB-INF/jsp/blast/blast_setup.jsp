@@ -10,14 +10,14 @@
         <i>ZFIN BLAST uses AB-BLAST 3.0 (<a href="http://blast.advbiocomp.com">Gish, W. (1996-2009)</a>)</i>
 
     <p>
-    <div style="max-width: 750px;">
+    <div style="max-width: 950px;">
 
     <form:form action="/action/blast/blast" commandName="formBean" enctype="multipart/form-data">
 
 
         <div style="float: right">
 
-            <div style="float: right; width:280px; padding: 3px; border:1px solid #ccc; background: #eee">
+            <div style="float: right; width:480px; padding: 3px; border:1px solid #ccc; background: #eee">
                 <fieldset style="border: none; margin: 0 0 0 3px; padding: 0;">
                     <legend style="font-size: small;">Retrieve Previous Result</legend>
                     <span style="background:none;padding-top: 5px;padding-bottom: 10px;">
@@ -31,10 +31,9 @@
                 </fieldset>
             </div>
 
-            <div style="margin-top: 1em; float:right; clear: right; width:280px; border: none;">
+            <div style="margin-top: 1em; float:right; clear: right; width:480px; border: none;">
                 <fieldset style="border: none; margin: 0 0 0 0px; padding: 0;">
-                    <legend style="font-size: small;">Selected Database Details:</legend>
-                    <div id="databaseInfoDiv"> <%-- height: 30px;--%>
+                    <div id="databaseInfoDiv" style="font-size: small;"> <%-- height: 30px;--%>
                     </div>
                 </fieldset>
 
