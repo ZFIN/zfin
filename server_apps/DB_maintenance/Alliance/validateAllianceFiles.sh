@@ -31,20 +31,25 @@ loadConfig() {
     echo "No authorization.txt file found"
   fi
 
-  ENDPOINT=validate
-  RELEASE_VERSION=$2
-  BUILD_STATUS_CODE=0
   BASE_URL="https://fms.alliancegenome.org"
 #  FOR LOCAL TESTING:
 #  BASE_URL="http://localhost:3000"
 
+  RELEASE_VERSION=$2
+  BUILD_STATUS_CODE=0
+  ENDPOINT=validate
   if [ "$1" == "true" ]; then
         ENDPOINT=submit
         echo "submit files"
   fi
 
-  echo "endpoint: $ENDPOINT"
-  echo "release version: $RELEASE_VERSION"
+  echo "endpoint: '$ENDPOINT'"
+  echo "release version: '$RELEASE_VERSION'"
+  if [ -z "$RELEASE_VERSION" ]; then
+    echo "ERROR: No release version provided!"
+    exit 1
+  fi
+
 }
 
 validateFile() {
