@@ -714,7 +714,7 @@ dependencies {
     implementation group: 'org.apache.lucene', name: 'lucene-core', version: '2.3.1'
     implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.4.0-b180830.0359'
     implementation('org.glassfish.jaxb:jaxb-runtime:2.3.0')
-    implementation group: 'com.mchange', name: 'c3p0', version: '0.9.5.2'
+    implementation group: 'com.mchange', name: 'c3p0', version: '0.9.5.5'
     implementation group: 'javax.mail', name: 'mail', version: '1.4'
     implementation group: 'org.apache.commons', name: 'commons-exec', version: '1.0'
     implementation group: 'javax.servlet.jsp', name: 'jsp-api', version: '2.0'
@@ -732,7 +732,10 @@ dependencies {
     implementation files('home/WEB-INF/lib/text-table-formatter-1.0.jar')
     // maven reference does not have version 1.0, so using the plain jar file
     //implementation group: 'org.nocrala.tools.texttablefmt', name: 'text-table-formatter', version: '1.2.4'
-    implementation files('lib/Java/serlvet-api-2.4.jar')
+    implementation files('lib/Java/hibernate-c3p0-4.3.5.Final.jar')
+    implementation files('home/WEB-INF/lib/slf4j-api-1.7.26.jar')
+    implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.9.0'
+
     implementation group: 'net.sourceforge.htmlunit', name: 'htmlunit', version: '2.20'
     implementation group: 'commons-configuration', name: 'commons-configuration', version: '1.6'
     implementation group: 'commons-net', name: 'commons-net', version: '1.4.1'
