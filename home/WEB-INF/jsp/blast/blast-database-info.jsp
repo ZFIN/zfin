@@ -9,7 +9,7 @@
         </tr>
         <tr>
             <td>Date Created</td>
-            <td><fmt:formatDate value="${statistics.creationDate}" pattern="yyyy/MM/dd hh:mm"/></td>
+            <td><fmt:formatDate value="${statistics.creationDate}" pattern="yyyy/MM/dd"/></td>
         </tr>
         <tr>
             <td>Description</td>
