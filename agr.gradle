@@ -2,6 +2,7 @@ def env = System.getenv()
 def log4jConfig = env['SOURCEROOT'] + "/home/WEB-INF/conf/log4j2.xml"
 tasks.withType(JavaExec) {
     systemProperty "log4j2.configurationFile", log4jConfig
+    systemProperty "com.mchange.v2.log.MLog", "log4j2"
 }
 
 task createBasicGeneInfoFile(type: JavaExec) {
