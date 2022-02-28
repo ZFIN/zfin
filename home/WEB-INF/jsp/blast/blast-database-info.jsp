@@ -1,17 +1,18 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-${statistics.database.name}
-<table class="data-table table-fixed">
+
+<table class="table table-bordered" style="vertical-align: top">
+    <caption>${statistics.database.name}</caption>
         <tr>
-            <th>Number of Sequences</th>
-            <td>${numSequences}</td>
+            <td>Sequences</td>
+            <td><fmt:formatNumber value="${statistics.numSequences}" type="number"/></td>
         </tr>
         <tr>
-            <th>Date Created</th>
+            <td>Date Created</td>
             <td><fmt:formatDate value="${statistics.creationDate}" pattern="yyyy/MM/dd hh:mm"/></td>
         </tr>
         <tr>
-            <th>Description</th>
+            <td>Description</td>
             <td>${statistics.database.description}</td>
         </tr>
 </table>
