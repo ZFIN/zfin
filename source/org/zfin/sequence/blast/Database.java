@@ -144,6 +144,7 @@ public class Database {
         GENOMICDNA("GenomicDNA"),
         LOADEDMICRORNAMATURE("LoadedMicroRNAMature"),
         LOADEDMICRORNASTEMLOOP("LoadedMicroRNAStemLoop"),
+        LOADEDFISHMICRORNASTEMLOOP("LoadedFishMicroRNAStemLoop"),
         MEGA_BLAST("MEGA BLAST"),
         PBLAST("PBLAST"),
         PUBLISHEDPROTEIN("publishedProtein"),
