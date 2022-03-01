@@ -69,7 +69,7 @@ public class ForeignDB implements Comparable<ForeignDB> {
         this.dbName = dbName;
     }
 
-    public String getDisplayName () {
+    public String getDisplayName() {
         return displayName;
     }
 
@@ -173,7 +173,7 @@ public class ForeignDB implements Comparable<ForeignDB> {
         AGR_GENE("Alliance"),
         AGR_DISEASE("Alliance"),
         CZRC("CZRC"),
-        PDB("PDB"),RNA_CENTRAL("RNACentral"), ZIRC_PROTOCOL("ZIRCProtocol");
+        PDB("PDB"), RNA_CENTRAL("RNACentral"), ZIRC_PROTOCOL("ZIRCProtocol");
 
 
         private final String value;
@@ -196,22 +196,28 @@ public class ForeignDB implements Comparable<ForeignDB> {
         }
     }
 
-    public boolean isZfishbook () {
+    public boolean isZfishbook() {
         if (displayName != null && displayName.equals("zfishbook"))
-			   return true;
+            return true;
 
-	    return false;
+        return false;
     }
-    public boolean isCrezoo () {
+
+    public boolean isFishMiRNA() {
+        return dbName != null && dbName == AvailableName.FISHMIRNA;
+    }
+
+    public boolean isCrezoo() {
         if (displayName != null && displayName.equals("CreZoo"))
             return true;
 
         return false;
     }
-    public boolean isZmp () {
-        if (displayName != null && displayName.equals("ZMP"))
-			   return true;
 
-	    return false;
+    public boolean isZmp() {
+        if (displayName != null && displayName.equals("ZMP"))
+            return true;
+
+        return false;
     }
 }

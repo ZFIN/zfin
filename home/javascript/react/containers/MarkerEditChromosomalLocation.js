@@ -11,12 +11,12 @@ const MarkerEditChromosomalLocation = ({
     markerId,
     type,
 }) => {
-    const [error, setError] = useState('');
+    const [error] = useState('');
     const [modalData, setModalData] = useState(null);
     const isEdit = modalData && modalData.zdbID;
     const hdr = type;
     const assemblies = ['GRCz11', 'GRCz10', 'Zv9'];
-    const evidenceCodes = ['IC','TAS'];
+    const evidenceCodes = ['IC', 'TAS'];
 
     const {
         value: liveData,
@@ -29,10 +29,10 @@ const MarkerEditChromosomalLocation = ({
     };
 
     const parseIntIgnoreCommas = (value) => {
-        if (typeof value != "string") {
-            return "";
+        if (typeof value !== 'string') {
+            return '';
         }
-        return parseInt(value.replace(/,/g,""));
+        return parseInt(value.replace(/,/g, ''));
     };
 
     const handleValidateChromosome = () => {
@@ -42,10 +42,9 @@ const MarkerEditChromosomalLocation = ({
         const startLocation = parseIntIgnoreCommas(values.startLocation);
         const endLocation = parseIntIgnoreCommas(values.endLocation);
 
-        if ( (startLocation || endLocation)
-            && (values.chromosome === ""))
-        {
-            return "Must provide chromosome.";
+        if ((startLocation || endLocation)
+            && (values.chromosome === '')) {
+            return 'Must provide chromosome.';
         }
 
         return false;
@@ -58,9 +57,8 @@ const MarkerEditChromosomalLocation = ({
         const startLocation = parseIntIgnoreCommas(values.startLocation);
         const endLocation = parseIntIgnoreCommas(values.endLocation);
         if (startLocation && endLocation
-            && (startLocation > endLocation))
-        {
-            return "Start location must be before end location.";
+            && (startLocation > endLocation)) {
+            return 'Start location must be before end location.';
         }
 
         return false;
@@ -82,13 +80,15 @@ const MarkerEditChromosomalLocation = ({
     });
 
     const formatLink = (item, editLink) => {
-        const leftColumnClass="col-sm-4 col-md-3 col-lg-2";
-        const rightColumnClass="col-sm-8 col-md-9 col-lg-10";
+        const leftColumnClass = 'col-sm-4 col-md-3 col-lg-2';
+        const rightColumnClass = 'col-sm-8 col-md-9 col-lg-10';
 
-        return <><dl className="row">
-            <dt className={leftColumnClass}>Location</dt>
-            <dd className={rightColumnClass}>Chr {item.chromosome}: {item.startLocation.toLocaleString()} - {item.endLocation.toLocaleString()} ({item.assembly}) <em>{item.locationEvidence}</em> {editLink}</dd>
-        </dl></>;
+        return <>
+            <dl className='row'>
+                <dt className={leftColumnClass}>Location</dt>
+                <dd className={rightColumnClass}>Chr {item.chromosome}: {item.startLocation.toLocaleString()} - {item.endLocation.toLocaleString()} ({item.assembly}) <em>{item.locationEvidence}</em> {editLink}</dd>
+            </dl>
+        </>;
     };
 
     if (pending) {
@@ -101,11 +101,11 @@ const MarkerEditChromosomalLocation = ({
 
     return (
         <>
-            {error && <div className="text-danger">{error}</div>}
+            {error && <div className='text-danger'>{error}</div>}
 
             <AddEditList
                 formatItem={formatLink}
-                itemKeyProp="zdbID"
+                itemKeyProp='zdbID'
                 items={liveData}
                 newItem={{
                     entityID: markerId,
@@ -120,69 +120,69 @@ const MarkerEditChromosomalLocation = ({
             />
 
             {/* Hack: for some reason, without this span, the delete action throws a JS exception. Maybe the formatLink function? */}
-            <span className="invisible"></span>
+            <span className='invisible'/>
 
             <AddEditDeleteModal {...modalProps} header={hdr}>
                 {values && <>
-                <FormGroup
-                    labelClassName="col-md-3"
-                    inputClassName="col-md-9"
-                    label="Assembly"
-                    id="assembly"
-                    field="assembly"
-                    tag="select"
-                    validate={value => value ? false : 'An assembly is required'}
-                >
-                    <option value=""/>
-                    {assemblies.map(assembly => (
-                        <option
-                            value={assembly}
-                            key={assembly}
-                        >{assembly}</option>
-                    ))}
-                </FormGroup>
-                <FormGroup
-                    labelClassName="col-md-3"
-                    inputClassName="col-md-9"
-                    label="Chromosome"
-                    id="chromosome"
-                    field="chromosome"
-                    validate={handleValidateChromosome}
-                />
-                <FormGroup
-                    labelClassName="col-md-3"
-                    inputClassName="col-md-9"
-                    label="Start Location"
-                    id="start-location"
-                    field="startLocation"
-                    validate={handleValidateLocations}
-                />
-                <FormGroup
-                    labelClassName="col-md-3"
-                    inputClassName="col-md-9"
-                    label="End Location"
-                    id="end-location"
-                    field="endLocation"
-                    validate={handleValidateLocations}
-                />
                     <FormGroup
-                        labelClassName="col-md-3"
-                        inputClassName="col-md-9"
-                        label="Evidence Code"
-                        id="evidence-code"
-                        field="locationEvidence"
-                        tag="select"
+                        labelClassName='col-md-3'
+                        inputClassName='col-md-9'
+                        label='Assembly'
+                        id='assembly'
+                        field='assembly'
+                        tag='select'
+                        validate={value => value ? false : 'An assembly is required'}
+                    >
+                        <option value=''/>
+                        {assemblies.map(assembly => (
+                            <option
+                                value={assembly}
+                                key={assembly}
+                            >{assembly}</option>
+                        ))}
+                    </FormGroup>
+                    <FormGroup
+                        labelClassName='col-md-3'
+                        inputClassName='col-md-9'
+                        label='Chromosome'
+                        id='chromosome'
+                        field='chromosome'
+                        validate={handleValidateChromosome}
+                    />
+                    <FormGroup
+                        labelClassName='col-md-3'
+                        inputClassName='col-md-9'
+                        label='Start Location'
+                        id='start-location'
+                        field='startLocation'
+                        validate={handleValidateLocations}
+                    />
+                    <FormGroup
+                        labelClassName='col-md-3'
+                        inputClassName='col-md-9'
+                        label='End Location'
+                        id='end-location'
+                        field='endLocation'
+                        validate={handleValidateLocations}
+                    />
+                    <FormGroup
+                        labelClassName='col-md-3'
+                        inputClassName='col-md-9'
+                        label='Evidence Code'
+                        id='evidence-code'
+                        field='locationEvidence'
+                        tag='select'
                         validate={value => value ? false : 'An evidence code is required'}
                     >
-                        <option value=""/>
+                        <option value=''/>
                         {evidenceCodes.map(code => (
                             <option
                                 value={code}
                                 key={code}
                             >{code}</option>
                         ))}
-                    </FormGroup>                    
-            </>}
+                    </FormGroup>
+                </>}
             </AddEditDeleteModal>
         </>
     );
