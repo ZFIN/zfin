@@ -135,6 +135,7 @@ public class SequenceService {
             allDBLinks.addAll(sequenceRepository
                     .getDBLinksForMarker(marker.getZdbID(), ForeignDBDataType.SuperType.SEQUENCE)
                     .stream()
+                    .filter(dbLink -> !dbLink.getReferenceDatabase().getForeignDB().getDbName().equals(ForeignDB.AvailableName.FISHMIRNA_EXPRESSION))
                     .map(dbLink -> MarkerService.getMarkerDBLink(marker, dbLink))
                     .collect(Collectors.toList())
             );
