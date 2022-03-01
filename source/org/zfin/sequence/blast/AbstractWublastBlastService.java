@@ -863,7 +863,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
      * @param dbLink
      * @return A list of sequences
      */
-    protected List<Sequence> getSequencesFromSource(DBLink dbLink) {
+    public List<Sequence> getSequencesFromSource(DBLink dbLink) {
         Database blastDatabase = dbLink.getReferenceDatabase().getPrimaryBlastDatabase();
         String accession = dbLink.getAccessionNumber();
         if (blastDatabase == null) {

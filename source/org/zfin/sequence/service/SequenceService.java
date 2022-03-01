@@ -17,6 +17,7 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
+import org.zfin.sequence.blast.MountedWublastBlastService;
 import org.zfin.sequence.repository.SequenceRepository;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
+ *
  */
 @Service
 @Log4j2
@@ -132,13 +134,20 @@ public class SequenceService {
                 );
             }
         } else {
-            allDBLinks.addAll(sequenceRepository
+            List<MarkerDBLink> dbLinks = sequenceRepository
                     .getDBLinksForMarker(marker.getZdbID(), ForeignDBDataType.SuperType.SEQUENCE)
                     .stream()
-                    .filter(dbLink -> !dbLink.getReferenceDatabase().getForeignDB().getDbName().equals(ForeignDB.AvailableName.FISHMIRNA_EXPRESSION))
+                    .filter(dbLink -> !dbLink.getReferenceDatabase().getForeignDB().isFishMiRNA())
                     .map(dbLink -> MarkerService.getMarkerDBLink(marker, dbLink))
-                    .collect(Collectors.toList())
-            );
+                    .collect(Collectors.toList());
+            allDBLinks.addAll(dbLinks);
+            // populate FishMiRNA sequence info
+            dbLinks.stream().filter(markerDBLink -> markerDBLink.getReferenceDatabase().getForeignDB().isFishMiRNA())
+                    .forEach(fishMiRnaDBLink -> {
+                        List<Sequence> sequences = MountedWublastBlastService.getInstance().
+                                getSequencesFromSource(fishMiRnaDBLink);
+                        fishMiRnaDBLink.setSequence(sequences.get(0));
+                    });
         }
 
         if (marker.isGenedom()) {

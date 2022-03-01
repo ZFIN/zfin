@@ -1,13 +1,21 @@
 package org.zfin.sequence;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
+import org.zfin.framework.api.View;
 import org.zfin.sequence.blast.Database;
 
 /**
  * This class refers to sequences in the blast database, which is references through xdget and xdformat.
- * 
  */
+@Setter
+@Getter
 public class Sequence implements Comparable {
+
+    @JsonView(View.SequenceAPI.class)
     private Defline defLine ;
+    @JsonView(View.SequenceAPI.class)
     private String data ;
     private DBLink dbLink;
 
@@ -34,30 +42,6 @@ public class Sequence implements Comparable {
         }
 
         return returnString ;
-    }
-
-    public Defline getDefLine() {
-        return defLine;
-    }
-
-    public void setDefLine(Defline defLine) {
-        this.defLine = defLine;
-    }
-
-    public String getData() {
-        return data;
-    }
-
-    public void setData(String data) {
-        this.data = data;
-    }
-
-    public DBLink getDbLink() {
-        return dbLink;
-    }
-
-    public void setDbLink(DBLink dbLink) {
-        this.dbLink = dbLink;
     }
 
     public String toString(){

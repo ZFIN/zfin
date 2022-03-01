@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 import qs from 'qs';
 import DataTable from '../components/data-table';
@@ -10,6 +10,15 @@ import SequenceType from '../components/SequenceType';
 const MarkerSequencesTable = ({markerId, showSummary}) => {
     const [summary, setSummary] = useState(showSummary === 'true');
     const [hasData, setHasData] = useState(false);
+    const [showSequence, setShowSequence] = useState(false);
+
+    const showSeq = () => {
+        setShowSequence(true)
+    };
+
+    const hideSeq = () => {
+        setShowSequence(false)
+    };
 
     const columns = [
         {
@@ -42,6 +51,23 @@ const MarkerSequencesTable = ({markerId, showSummary}) => {
             filterName: 'accession',
         },
         {
+            label: 'Sequence',
+            content: row => (
+                <>
+                    {row.sequence && !showSequence && (
+                        <a onClick={showSeq}>[Show]</a>
+                    )
+                    }
+                    {row.sequence && showSequence && (
+                        <span>{row.sequence.data} <a onClick={hideSeq}>[Hide]</a></span>
+                    )}
+                </>
+            )
+            ,
+            width: '100px',
+            align: 'right',
+        },
+        {
             label: 'Length (nt/aa)',
             content: row => row.length && `${row.length} ${row.units}`,
             width: '100px',
@@ -62,7 +88,7 @@ const MarkerSequencesTable = ({markerId, showSummary}) => {
     return (
         <>
             {showSummary && hasData && (
-                <DataTableSummaryToggle detailLabel='All Sequences' showPopup={summary} onChange={setSummary} />
+                <DataTableSummaryToggle detailLabel='All Sequences' showPopup={summary} onChange={setSummary}/>
             )}
             <DataTable
                 columns={columns}

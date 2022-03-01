@@ -2,6 +2,8 @@ package org.zfin.sequence;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zfin.framework.api.View;
@@ -19,7 +21,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-
+@Setter
+@Getter
 public abstract class DBLink implements EntityAttribution, EntityZdbID {
 
     private final static Logger logger = LogManager.getLogger(DBLink.class);
@@ -38,6 +41,9 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
     @JsonView(View.MarkerRelationshipAPI.class)
     private String accessionNumberDisplay;
     private String linkInfo;
+
+    @JsonView(View.SequenceAPI.class)
+    private Sequence sequence;
 
     public String getLinkInfo() {
         return linkInfo;
