@@ -13,7 +13,7 @@ const MarkerEditChromosomalLocation = ({
 }) => {
     const [error, setError] = useState('');
     const [modalData, setModalData] = useState(null);
-    const isEdit = modalData && modalData.id;
+    const isEdit = modalData && modalData.zdbID;
     const hdr = type;
     const assemblies = ['GRCz11', 'GRCz10', 'Zv9'];
     const evidenceCodes = ['IC','TAS'];
@@ -71,12 +71,12 @@ const MarkerEditChromosomalLocation = ({
         modalProps
     } = useAddEditDeleteForm({
         addUrl: `/action/marker/${markerId}/chromosomal-location`,
-        editUrl: isEdit ? `/action/marker/${markerId}/chromosomal-location/${modalData.id}` : '',
-        deleteUrl: isEdit ? `/action/marker/${markerId}/chromosomal-location/${modalData.id}` : '',
+        editUrl: isEdit ? `/action/marker/${markerId}/chromosomal-location/${modalData.zdbID}` : '',
+        deleteUrl: isEdit ? `/action/marker/${markerId}/chromosomal-location/${modalData.zdbID}` : '',
         onSuccess: handleOnSuccess,
         items: liveData,
         setItems: setLiveData,
-        itemKeyProp: 'id',
+        itemKeyProp: 'zdbID',
         defaultValues: modalData,
         isEdit
     });
@@ -87,7 +87,7 @@ const MarkerEditChromosomalLocation = ({
 
         return <><dl className="row">
             <dt className={leftColumnClass}>Location</dt>
-            <dd className={rightColumnClass}>Chr {item.chromosome}: {item.startLocation.toLocaleString()} - {item.endLocation.toLocaleString()} ({item.assembly}) {editLink}</dd>
+            <dd className={rightColumnClass}>Chr {item.chromosome}: {item.startLocation.toLocaleString()} - {item.endLocation.toLocaleString()} ({item.assembly}) <em>{item.locationEvidence}</em> {editLink}</dd>
         </dl></>;
     };
 
@@ -113,6 +113,7 @@ const MarkerEditChromosomalLocation = ({
                     chromosome: '',
                     startLocation: '',
                     endLocation: '',
+                    locationEvidence: '',
                 }}
                 setModalItem={setModalData}
                 maxLength={1}
