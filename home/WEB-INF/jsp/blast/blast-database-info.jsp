@@ -1,8 +1,8 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-
-<table class="table table-bordered" style="vertical-align: top">
-    <caption>${statistics.database.name}</caption>
+<c:if test="${ statistics != null}">
+    <table class="table table-bordered" style="vertical-align: top">
+        <caption>${statistics.database.name}</caption>
         <tr>
             <td>Sequences</td>
             <td><fmt:formatNumber value="${statistics.numSequences}" type="number"/></td>
@@ -15,4 +15,5 @@
             <td>Description</td>
             <td>${statistics.database.description}</td>
         </tr>
-</table>
+    </table>
+</c:if>
