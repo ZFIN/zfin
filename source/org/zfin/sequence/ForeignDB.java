@@ -197,10 +197,7 @@ public class ForeignDB implements Comparable<ForeignDB> {
     }
 
     public boolean isZfishbook() {
-        if (displayName != null && displayName.equals("zfishbook"))
-            return true;
-
-        return false;
+        return displayName != null && displayName.equals(AvailableName.ZFISHBOOK.name());
     }
 
     public boolean isFishMiRNA() {
@@ -212,16 +209,10 @@ public class ForeignDB implements Comparable<ForeignDB> {
     }
 
     public boolean isCrezoo() {
-        if (displayName != null && displayName.equals("CreZoo"))
-            return true;
-
-        return false;
+        return displayName != null && displayName.equals(AvailableName.CREZOO.name());
     }
 
     public boolean isZmp() {
-        if (displayName != null && displayName.equals("ZMP"))
-            return true;
-
-        return false;
+        return displayName != null && displayName.equals(AvailableName.ZMP.name());
     }
 }
