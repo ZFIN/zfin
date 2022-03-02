@@ -207,6 +207,10 @@ public class ForeignDB implements Comparable<ForeignDB> {
         return dbName != null && dbName == AvailableName.FISHMIRNA;
     }
 
+    public boolean isFishMiRNAExpression() {
+        return dbName != null && dbName == AvailableName.FISHMIRNA_EXPRESSION;
+    }
+
     public boolean isCrezoo() {
         if (displayName != null && displayName.equals("CreZoo"))
             return true;
