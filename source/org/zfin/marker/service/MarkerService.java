@@ -2,6 +2,7 @@ package org.zfin.marker.service;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
@@ -56,6 +57,7 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static org.zfin.repository.RepositoryFactory.*;
+import static org.zfin.sequence.ForeignDB.AvailableName.UNIPROTKB;
 
 /**
  * Service Class that deals with Marker related logic.
@@ -157,8 +159,9 @@ public class MarkerService {
     }
 
     public static List<MarkerDBLink> aggregateDBLinksByPub(Collection<MarkerDBLink> links) {
-        Map<String, List<MarkerDBLink>> map = links.stream()
-                .collect(groupingBy(DBLink::getAccessionNumber, toList()));
+        //TODO: In JDK17, replace ImmutablePair with Java Record
+        Map<ImmutablePair<String, String>, List<MarkerDBLink>> map = links.stream()
+                .collect(groupingBy(MarkerService::getDBLinkAggregationKey, toList()));
 
         return map.values().stream()
                 .map(markerDBLinks -> {
@@ -168,6 +171,26 @@ public class MarkerService {
                     return link;
                 })
                 .collect(toList());
+    }
+
+    /**
+     * Group DBLinks by db name and accession number
+     * @param link
+     * @return
+     */
+    private static ImmutablePair<String, String> getDBLinkAggregationKey(DBLink link) {
+        String foreignDBName = null;
+        String accession = null;
+
+        //probably the try catch is unnecessary, but many chained gets makes me nervous
+        try {
+            foreignDBName = link.getReferenceDatabase().getForeignDB().getDbName().name();
+        } catch (Exception e) {
+            foreignDBName = "";
+        }
+
+        accession = link.getAccessionNumber();
+        return new ImmutablePair<>(foreignDBName, accession);
     }
 
     public static MarkerDBLink getMarkerDBLink(Marker marker, DBLink dbLink) {
@@ -909,51 +932,38 @@ public class MarkerService {
 
 
     public static ProteinDetailDomainBean getProteinDomainDetailBean(Marker gene) {
-
-        List<DBLink> protID = sequenceRepository.getDBLinksForMarker(gene.getZdbID(), ForeignDBDataType.SuperType.PROTEIN);
-        protID.addAll(sequenceRepository.getDBLinksForMarker(gene.getZdbID(), ForeignDBDataType.SuperType.SEQUENCE));
-        ProteinDetailDomainBean proteinDomainDetailBean = new ProteinDetailDomainBean();
-        if (CollectionUtils.isNotEmpty(protID)) {
+        List<DBLink> protIDs = sequenceRepository.getDBLinksForMarker(gene.getZdbID(), ForeignDBDataType.SuperType.PROTEIN);
+        protIDs.addAll(sequenceRepository.getDBLinksForMarker(gene.getZdbID(), ForeignDBDataType.SuperType.SEQUENCE));
+        ProteinDetailDomainBean proteinDetailDomainBean = new ProteinDetailDomainBean();
+        if (CollectionUtils.isNotEmpty(protIDs)) {
             List<ProteinDomainRow> rows = new ArrayList<>();
 
-            for (DBLink prot : protID) {
+            for (DBLink prot : protIDs) {
                 ProteinDomainRow row = new ProteinDomainRow();
 
-                if (prot.getReferenceDatabase().getForeignDB().getDbName() == ForeignDB.AvailableName.UNIPROTKB) {
+                if (prot.getReferenceDatabase().getForeignDB().getDbName() == UNIPROTKB) {
                     row.setProDBLink(prot);
 
                     List<ProteinToPDB> ptp = markerRepository.getPDB(prot.getAccessionNumberDisplay());
                     if (CollectionUtils.isNotEmpty(ptp)) {
-
                         row.setPDB(true);
-
                     }
                     Map<String, String> detailMap = new TreeMap<>();
                     for (String uniqIpName : markerRepository.getProteinType(gene)) {
-
-
                         detailMap.put(uniqIpName, "");
-
-
                     }
 
-                    //detailMap.entrySet().forEach(System.out::println);
                     for (String ipName : markerRepository.getIPNames(prot.getAccessionNumberDisplay())) {
                         detailMap.put(ipName, "X");
                     }
 
-                    //detailMap.entrySet().forEach(System.out::println);
                     row.setInterProDomain(detailMap);
                     rows.add(row);
-
                 }
             }
-
-
-            proteinDomainDetailBean.setInterProDomains(rows);
-
+            proteinDetailDomainBean.setInterProDomains(rows);
         }
-        return proteinDomainDetailBean;
+        return proteinDetailDomainBean;
     }
 
 
