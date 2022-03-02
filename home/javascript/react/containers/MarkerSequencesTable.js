@@ -20,6 +20,10 @@ const MarkerSequencesTable = ({markerId, showSummary}) => {
         setShowSequence(false)
     };
 
+    const spanStyle = {
+        overflowWrap: 'break-word'
+    };
+
     const columns = [
         {
             label: 'Type',
@@ -55,11 +59,20 @@ const MarkerSequencesTable = ({markerId, showSummary}) => {
             content: row => (
                 <>
                     {row.sequence && !showSequence && (
-                        <a onClick={showSeq}>[Show]</a>
+                        <>
+                            [
+                            <button type='button' className='btn btn-link px-0' onClick={showSeq}>Show</button>
+                            ]
+                        </>
                     )
                     }
                     {row.sequence && showSequence && (
-                        <span>{row.sequence.data} <a onClick={hideSeq}>[Hide]</a></span>
+                        <>
+                            <span style={spanStyle}>{row.sequence.data} </span>
+                            [
+                            <button type='button' className='btn btn-link px-0' onClick={hideSeq}>Hide</button>
+                            ]
+                        </>
                     )}
                 </>
             )
