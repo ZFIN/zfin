@@ -137,7 +137,7 @@ public class SequenceService {
             List<MarkerDBLink> dbLinks = sequenceRepository
                     .getDBLinksForMarker(marker.getZdbID(), ForeignDBDataType.SuperType.SEQUENCE)
                     .stream()
-                    .filter(dbLink -> !dbLink.getReferenceDatabase().getForeignDB().isFishMiRNA())
+                    .filter(dbLink -> !dbLink.getReferenceDatabase().getForeignDB().isFishMiRNAExpression())
                     .map(dbLink -> MarkerService.getMarkerDBLink(marker, dbLink))
                     .collect(Collectors.toList());
             allDBLinks.addAll(dbLinks);
@@ -146,7 +146,9 @@ public class SequenceService {
                     .forEach(fishMiRnaDBLink -> {
                         List<Sequence> sequences = MountedWublastBlastService.getInstance().
                                 getSequencesFromSource(fishMiRnaDBLink);
-                        fishMiRnaDBLink.setSequence(sequences.get(0));
+                        if (CollectionUtils.isNotEmpty(sequences)) {
+                            fishMiRnaDBLink.setSequence(sequences.get(0));
+                        }
                     });
         }
 
