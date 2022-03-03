@@ -30,11 +30,6 @@ public class BlastInfoController {
             Database blastDatabase = blastRepository.getDatabase(type);
             if (CollectionUtils.isEmpty(blastDatabase.getParentRelationships())) {
                 statistics = MountedWublastBlastService.getInstance().getDatabaseStatistics(blastDatabase);
-/*
-            statistics = new DatabaseStatistics();
-            statistics.setCreationDate(new Date());
-            statistics.setModifiedDate(new Date());
-*/
                 statistics.setDatabase(blastDatabase);
             } else {
                 statistics = null;
