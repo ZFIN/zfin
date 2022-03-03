@@ -28,7 +28,7 @@ public class BlastInfoController {
         try {
             Database.AvailableAbbrev type = Database.AvailableAbbrev.getType(database);
             Database blastDatabase = blastRepository.getDatabase(type);
-            if (CollectionUtils.isEmpty(blastDatabase.getChildrenRelationships())) {
+            if (CollectionUtils.isEmpty(blastDatabase.getParentRelationships())) {
                 statistics = MountedWublastBlastService.getInstance().getDatabaseStatistics(blastDatabase);
 /*
             statistics = new DatabaseStatistics();
