@@ -87,7 +87,13 @@ public class Database {
             prefix += type.equals(Type.NUCLEOTIDE) ? "blastn" : "blastp";
             prefix += "&sequenceType=";
             prefix += type.equals(Type.NUCLEOTIDE) ? "nt" : "pt";
-            prefix += "&queryType=SEQUENCE_ID&dataLibraryString=RNASequences&sequenceID=";
+            prefix += "&queryType=SEQUENCE_ID&dataLibraryString=";
+            if (name.equals("ZFIN MicroRNA Sequences")) {
+                prefix += abbrev.value;
+            } else {
+                prefix += "RNASequences";
+            }
+            prefix += "&sequenceID=";
             return prefix;
         } else {
             return location;
