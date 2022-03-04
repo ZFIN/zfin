@@ -47,6 +47,14 @@
             <a class="col-sm" href="/action/curation/${publication.zdbID}">Curate</a>
             <a class="col-sm" href="/action/publication/${publication.zdbID}/link">Link</a>
             <a class="col-sm" href="/action/publication/${publication.zdbID}/edit">Edit</a>
+            <c:choose>
+            <c:when test="${allowDelete}">
+                <a class="col-sm" href="/action/infrastructure/deleteRecord/${publication.zdbID}">Delete</a>
+            </c:when>
+                <c:otherwise>
+                    <span class="col-sm">Delete</span>
+                </c:otherwise>
+            </c:choose>
             <a class="col-sm" href="/action/publication/${publication.zdbID}/track">Track</a>
         </nav>
     </jsp:attribute>
