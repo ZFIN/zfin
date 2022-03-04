@@ -122,7 +122,7 @@ public class TranscriptViewController {
 
         // typically there won't be more than one sequence in either set
         if (transcriptDBLinks.size() > 0 && transcriptDBLinks.size() > sequences.size()) {
-            List<DBLink> unableToFindDbLinks = new ArrayList<DBLink>();
+            List<DBLink> unableToFindDbLinks = new ArrayList<>();
             for (TranscriptDBLink transcriptDBLink : transcriptDBLinks) {
 
                 boolean hasSequence = false;
