@@ -3,8 +3,9 @@ package org.zfin.sequence.blast.results.view;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
-import org.zfin.gbrowse.GBrowseTrack;
-import org.zfin.gbrowse.presentation.GBrowseImage;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.zfin.genomebrowser.GenomeBrowserTrack;
+import org.zfin.genomebrowser.presentation.GenomeBrowserFactory;
 import org.zfin.mapping.GenomeLocation;
 import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.marker.Marker;
@@ -51,6 +52,9 @@ public class BlastResultMapper {
 
     private static final Logger logger = LogManager.getLogger(BlastResultMapper.class);
     private static DatabaseNameComparator databaseNameComparator = new DatabaseNameComparator();
+
+    @Autowired
+    private static GenomeBrowserFactory genomeBrowserFactory;
 
     public static BlastResultBean createBlastResultBean(BlastOutput blastOutput) {
 
@@ -382,10 +386,10 @@ public class BlastResultMapper {
                         List<MarkerGenomeLocation> locations = RepositoryFactory
                                 .getLinkageRepository()
                                 .getGenomeLocation(gene, GenomeLocation.Source.ZFIN);
-                        hitViewBean.setGbrowseImage(GBrowseImage.builder()
+                        hitViewBean.setGbrowseImage(genomeBrowserFactory.getImageBuilder()
                                 .landmark(locations.get(0))
                                 .highlight(transcript.getAbbreviation())
-                                .tracks(GBrowseTrack.TRANSCRIPTS)
+                                .tracks(new GenomeBrowserTrack[]{GenomeBrowserTrack.TRANSCRIPTS})
                                 .build());
                     } catch (Exception e) {
                         logger.error("Couldn't get GBrowse Feature " + e.getMessage());

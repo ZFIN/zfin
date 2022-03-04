@@ -16,7 +16,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gbrowse.GBrowseService;
-import org.zfin.gbrowse.presentation.GBrowseImage;
+import org.zfin.genomebrowser.presentation.GenomeBrowserFactory;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.mapping.GenomeLocation;
 import org.zfin.mapping.MarkerGenomeLocation;
@@ -52,6 +52,9 @@ public class SequenceTargetingReagentViewController {
 
     @Autowired
     private LinkageRepository linkageRepository;
+
+    @Autowired(required = false)
+    private GenomeBrowserFactory genomeBrowserFactory;
 
     //    private String ncbiBlastUrl ;
     private List<Database> databases;
@@ -273,7 +276,7 @@ public class SequenceTargetingReagentViewController {
             mergedLocation.setStart(Math.min(mergedLocation.getStart(), strLocations.get(0).getStart()));
             mergedLocation.setEnd(Math.max(mergedLocation.getEnd(), strLocations.get(0).getEnd()));
 
-            sequenceTargetingReagentBean.addGBrowseImage(GBrowseImage.builder()
+            sequenceTargetingReagentBean.addGBrowseImage(genomeBrowserFactory.getImageBuilder()
                     .landmark(mergedLocation)
                     .withPadding(0.1)
                     .tracks(GBrowseService.getGBrowseTracks(sequenceTargetingReagent))
@@ -283,7 +286,7 @@ public class SequenceTargetingReagentViewController {
         } else {
             // otherwise: just show each STR location with 10kbp padding
             for (MarkerGenomeLocation location : strLocations) {
-                sequenceTargetingReagentBean.addGBrowseImage(GBrowseImage.builder()
+                sequenceTargetingReagentBean.addGBrowseImage(genomeBrowserFactory.getImageBuilder()
                         .landmark(location)
                         .withPadding(10000)
                         .tracks(GBrowseService.getGBrowseTracks(sequenceTargetingReagent))

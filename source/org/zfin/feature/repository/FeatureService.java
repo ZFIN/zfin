@@ -15,15 +15,17 @@ import org.zfin.fish.repository.FishService;
 import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.gbrowse.GBrowseTrack;
-import org.zfin.gbrowse.presentation.GBrowseImage;
+import org.zfin.genomebrowser.GenomeBrowserBuild;
+import org.zfin.genomebrowser.GenomeBrowserTrack;
+import org.zfin.genomebrowser.presentation.GenomeBrowserFactory;
+import org.zfin.genomebrowser.presentation.GenomeBrowserImageBuilder;
+import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.mapping.*;
 import org.zfin.marker.Marker;
-import org.zfin.marker.presentation.LinkDisplay;
 import org.zfin.marker.presentation.PhenotypeOnMarkerBean;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Fish;
@@ -304,7 +306,7 @@ public class FeatureService {
     }
 
 
-    public static GBrowseImage getGbrowseImage(Feature feature) {
+    public static GenomeBrowserImage getGbrowseImage(Feature feature) {
         Set<FeatureMarkerRelationship> featureMarkerRelationships = feature.getFeatureMarkerRelations();
         List<FeatureGenomeLocation> locations = getFeatureGenomeLocationsInGbrowse(feature);
         Collections.sort(locations, new GenomeVersionComparator<>());
@@ -320,18 +322,18 @@ public class FeatureService {
         // gbrowse has a location for this feature. if there is a feature marker relationship AND we know where
         // that marker is, show the feature in the context of the marker. Otherwise just show the feature with
         // some appropriate amount of padding.
-        GBrowseImage.GBrowseImageBuilder imageBuilder = GBrowseImage.builder()
+        GenomeBrowserImageBuilder imageBuilder = GenomeBrowserFactory.getStaticImageBuilder()
                 .highlight(feature);
 
         GenomeLocation.Source source;
         if (featureLocation.getAssembly().equals("Zv9")) {
-            imageBuilder.genomeBuild(GBrowseImage.GenomeBuild.ZV9);
+            imageBuilder.genomeBuild(GenomeBrowserBuild.ZV9);
             source = GenomeLocation.Source.ZFIN_Zv9;
         } else if (featureLocation.getAssembly().equals("GRCz10")) {
-            imageBuilder.genomeBuild(GBrowseImage.GenomeBuild.GRCZ10);
+            imageBuilder.genomeBuild(GenomeBrowserBuild.GRCZ10);
             source = GenomeLocation.Source.ZFIN_Zv9;
         } else {
-            imageBuilder.genomeBuild(GBrowseImage.GenomeBuild.CURRENT);
+            imageBuilder.genomeBuild(GenomeBrowserBuild.CURRENT);
             source = GenomeLocation.Source.ZFIN;
         }
 
@@ -347,8 +349,9 @@ public class FeatureService {
             imageBuilder.landmark(featureLocation).withPadding(10000);
         }
         //currently only ZMP features on previous builds need anything other than the ZFIN_FEATURES track
-        GBrowseTrack featureTrack = featureLocation.getGbrowseTrack() == null ? GBrowseTrack.ZFIN_FEATURES : featureLocation.getGbrowseTrack();
-        imageBuilder.tracks(GBrowseTrack.GENES, featureTrack, GBrowseTrack.TRANSCRIPTS);
+        GenomeBrowserTrack featureTrack = featureLocation.getGbrowseTrack() == null ? GenomeBrowserTrack.ZFIN_FEATURES : featureLocation.getGbrowseTrack();
+
+        imageBuilder.tracks(new GenomeBrowserTrack[]{GenomeBrowserTrack.GENES, featureTrack, GenomeBrowserTrack.TRANSCRIPTS});
 
         return imageBuilder.build();
     }
