@@ -6,7 +6,6 @@ import org.zfin.anatomy.repository.AnatomyRepositoryTest;
 import org.zfin.antibody.AntibodyServiceTest;
 import org.zfin.antibody.repository.AntibodyRepositoryTest;
 import org.zfin.curation.repository.CurationRepositoryTest;
-import org.zfin.curation.service.CurationDTOConversionServiceSpec;
 import org.zfin.database.InformixUtilTest;
 import org.zfin.database.presentation.DatabaseServiceDbTest;
 import org.zfin.datatransfer.go.GafParserUnitTest;
@@ -19,14 +18,9 @@ import org.zfin.expression.service.ExpressionServiceTest;
 import org.zfin.feature.FeatureServiceTest;
 import org.zfin.feature.repository.FeatureRepositoryTest;
 import org.zfin.feature.service.FeatureAttributionServiceTest;
-import org.zfin.figure.repository.FigureRepositorySpec;
-import org.zfin.figure.service.FigureViewServiceSpec;
-import org.zfin.figure.service.ImageServiceSpec;
-import org.zfin.figure.service.VideoServiceSpec;
 import org.zfin.fish.repository.FishRepositoryTest;
 import org.zfin.fish.repository.FishServiceTest;
 import org.zfin.gbrowse.GBrowseServiceTest;
-import org.zfin.gbrowse.presentation.GBrowseImageSpec;
 import org.zfin.gwt.curation.CurationRPCTest;
 import org.zfin.gwt.marker.GoEvidenceTest;
 import org.zfin.gwt.root.server.DTOConversionServiceTest;
@@ -37,9 +31,6 @@ import org.zfin.mapping.repository.LinkageRepositoryTest;
 import org.zfin.marker.MarkerAttributionServiceTest;
 import org.zfin.marker.MarkerServiceTest;
 import org.zfin.marker.MergeMarkerDBTest;
-import org.zfin.marker.presentation.GeneAddFormBeanValidatorSpec;
-import org.zfin.marker.presentation.MarkerGoServiceIntegrationSpec;
-import org.zfin.marker.presentation.SequenceTargetingReagentAddBeanValidatorSpec;
 import org.zfin.marker.repository.MarkerRepositoryTest;
 import org.zfin.marker.repository.TranscriptRepositoryTest;
 import org.zfin.mutant.PhenotypeServiceDBTest;
@@ -52,8 +43,6 @@ import org.zfin.ontology.repository.OntologyRepositoryTest;
 import org.zfin.orthology.OrthologyRepositoryTest;
 import org.zfin.profile.repository.ProfileRepositoryTest;
 import org.zfin.profile.service.ProfileServiceTest;
-import org.zfin.publication.PublicationServiceSpec;
-import org.zfin.publication.presentation.PublicationValidatorSpec;
 import org.zfin.publication.repository.PublicationRepositoryTest;
 import org.zfin.sequence.DisplayGroupRepositoryTest;
 import org.zfin.sequence.MapAccessionDbLinkTest;
@@ -86,7 +75,6 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         AntibodyServiceTest.class,
         AntibodyWikiWebServiceTest.class,
         BlastRepositoryTest.class,
-        CurationDTOConversionServiceSpec.class,
         CurationRepositoryTest.class,
         CurationRPCTest.class,
         DatabaseServiceDbTest.class,
@@ -98,25 +86,19 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         FeatureAttributionServiceTest.class,
         FeatureRepositoryTest.class,
         FeatureServiceTest.class,
-        FigureRepositorySpec.class,
         FigureServiceTest.class,
-        FigureViewServiceSpec.class,
         FishRepositoryTest.class,
         FishServiceTest.class,
         FpInferenceGafServiceTest.class,
         GafParserUnitTest.class,
         GafServiceTest.class,
-        GBrowseImageSpec.class,
         GBrowseServiceTest.class,
-        GeneAddFormBeanValidatorSpec.class,
         GoaGafServiceTest.class,
         GoEvidenceTest.class,
-        ImageServiceSpec.class,
         InformixUtilTest.class,
         InfrastructureRepositoryTest.class,
         LinkageRepositoryTest.class,
         MapAccessionDbLinkTest.class,
-        MarkerGoServiceIntegrationSpec.class,
         MarkerGoTermEvidenceRepositoryTest.class,
         MarkerRepositoryTest.class,
         MarkerServiceTest.class,
@@ -137,20 +119,15 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         ProfileRepositoryTest.class,
         ProfileServiceTest.class,
         PublicationRepositoryTest.class,
-        PublicationServiceSpec.class,
-        PublicationValidatorSpec.class,
         RecordAttributionTest.class,
         RenoMultiRunTest.class,
         RenoRedundancyCandidateControllerTest.class,
         RenoRepositoryTest.class,
-        //SequenceRepositorySpec.class,
         SequenceRepositoryTest.class,
-        SequenceTargetingReagentAddBeanValidatorSpec.class,
         SingleAssociatedGenesFromQueryTest.class,
         SingleCandidateRepositoryTest.class,
         TranscriptRepositoryTest.class,
         TranscriptServiceTest.class,
-        VideoServiceSpec.class,
 })
 
 public class DbUnitTests {
