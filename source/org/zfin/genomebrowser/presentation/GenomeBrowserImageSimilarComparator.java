@@ -1,23 +1,23 @@
-package org.zfin.gbrowse.presentation;
+package org.zfin.genomebrowser.presentation;
 
 import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class GBrowseImageSimilarComparator implements Comparator<GBrowseImage> {
+public class GenomeBrowserImageSimilarComparator implements Comparator<GenomeBrowserImage> {
 
     private double threshold;
 
-    public GBrowseImageSimilarComparator(double threshold) {
+    public GenomeBrowserImageSimilarComparator(double threshold) {
         this.threshold = threshold;
     }
 
-    public GBrowseImageSimilarComparator() {
+    public GenomeBrowserImageSimilarComparator() {
         this(0.10);
     }
 
     @Override
-    public int compare(GBrowseImage image1, GBrowseImage image2) {
+    public int compare(GenomeBrowserImage image1, GenomeBrowserImage image2) {
         String landmark1 = image1.getLandmark();
         String landmark2 = image2.getLandmark();
 

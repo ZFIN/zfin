@@ -1,4 +1,4 @@
-import React, {useLayoutEffect, useRef, useState} from 'react';
+import React, { useState, useRef, useLayoutEffect } from 'react';
 import PropTypes from 'prop-types';
 import NoData from '../components/NoData';
 
@@ -12,14 +12,12 @@ const GbrowseImage = ({imageUrl, linkUrl, build}) => {
     const [imgSrc, setImageSrc] = useState(null);
     const containerRef = useRef(null);
     const sep = imageUrl.indexOf('?') < 0 ? '?' : '&';
-    /*
-        const hiddenStyle = {
-            position: 'absolute',
-            height: 0,
-            width: '100%',
-            overflow: 'hidden',
-        };
-    */
+    const hiddenStyle = {
+        position: 'absolute',
+        height: 0,
+        width: '100%',
+        overflow: 'hidden',
+    };
 
     // useLayoutEffect instead of useEffect since we're going to measure elements inside
     useLayoutEffect(() => {
@@ -45,21 +43,17 @@ const GbrowseImage = ({imageUrl, linkUrl, build}) => {
     }, []);
 
     if (!imageUrl) {
-        return <NoData/>;
+        return <NoData />;
     }
 
-    //<div ref={containerRef} style={imageLoaded ? undefined : hiddenStyle}>
     return (
         <div className='position-relative'>
-            <div ref={containerRef}>
+            <div ref={containerRef} style={imageLoaded ? undefined : hiddenStyle}>
                 {build && <span className='gbrowse-source-label'>Genome Build: {build}</span>}
                 <a href={linkUrl}>
-                    <object
-                        type='text/html'
-                        width='1000'
-                        height='400'
-                        className='d-block mx-auto mb-3 pe-none'
-                        data={imgSrc}
+                    <img
+                        className='d-block mx-auto mb-3'
+                        src={imgSrc}
                         onLoad={() => setImageLoaded(true)}
                     />
                 </a>

@@ -2,10 +2,12 @@ package org.zfin.sequence.service;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zfin.Species;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.gbrowse.GBrowseTrack;
-import org.zfin.gbrowse.presentation.GBrowseImage;
+import org.zfin.genomebrowser.GenomeBrowserTrack;
+import org.zfin.genomebrowser.presentation.GenomeBrowserFactory;
+import org.zfin.genomebrowser.presentation.GenomeBrowserImageBuilder;
 import org.zfin.mapping.GenomeLocation;
 import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.marker.*;
@@ -28,7 +30,6 @@ public class TranscriptService {
     public static Transcript convertMarkerToTranscript(Marker marker) {
         return RepositoryFactory.getMarkerRepository().getTranscriptByZdbID(marker.getZdbID());
     }
-
 
     public static Set<RelatedMarker> getRelatedGenes(Transcript transcript) {
         Set<RelatedMarker> relatedMarkers;
@@ -97,9 +98,9 @@ public class TranscriptService {
         if (displayGBrowseImage
                 && getLinkageRepository().hasGenomeLocation(gene, MarkerGenomeLocation.Source.ENSEMBL)
                 && getLinkageRepository().hasGenomeLocation(gene, MarkerGenomeLocation.Source.ZFIN)) {
-            GBrowseImage.GBrowseImageBuilder imageBuilder = GBrowseImage.builder()
+            GenomeBrowserImageBuilder imageBuilder = GenomeBrowserFactory.getStaticImageBuilder()
                     .landmark(getLinkageRepository().getGenomeLocation(gene, GenomeLocation.Source.ZFIN).get(0))
-                    .tracks(GBrowseTrack.TRANSCRIPTS);
+                    .tracks(new GenomeBrowserTrack[]{GenomeBrowserTrack.TRANSCRIPTS});
             if (highlightedTranscript != null) {
                 imageBuilder.highlight(highlightedTranscript.getAbbreviation());
             }

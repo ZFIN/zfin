@@ -5,8 +5,8 @@
 <c:if test="${!empty formBean.gbrowseImages}">
 
     <c:forEach items="${formBean.gbrowseImages}" var="image" end="1" varStatus="loop">
-        <div class="__react-root"
-             id="GbrowseImage__${loop.index}"
+        <div class="__react-root genome-browser-image"
+             id="${image.type.reactComponentId}__${loop.index}"
              data-image-url="${image.imageUrl}"
              data-link-url="${image.linkUrl}"
              data-build="${image.build}">

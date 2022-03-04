@@ -13,8 +13,8 @@ import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.gbrowse.GBrowseTrack;
-import org.zfin.gbrowse.presentation.GBrowseImage;
+import org.zfin.genomebrowser.GenomeBrowserTrack;
+import org.zfin.genomebrowser.presentation.GenomeBrowserFactory;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerNotFoundException;
@@ -46,6 +46,9 @@ public class CloneViewController {
 
     @Autowired
     private MarkerService markerService;
+
+    @Autowired
+    private GenomeBrowserFactory genomeBrowserFactory;
 
     public CloneViewController() {
         ensemblDatabase = RepositoryFactory.getSequenceRepository().getReferenceDatabase(
@@ -96,10 +99,10 @@ public class CloneViewController {
         cloneBean.setThisseProbe(expressionService.isThisseProbe(clone));
 
         // gbrowse image
-        cloneBean.setImage(GBrowseImage.builder()
+        cloneBean.setImage(genomeBrowserFactory.getImageBuilder()
                 .landmark("genomic_clone:" + clone.getZdbID())
                 .highlight(clone.getAbbreviation())
-                .tracks(GBrowseTrack.COMPLETE_CLONES, GBrowseTrack.GENES, GBrowseTrack.TRANSCRIPTS)
+                .tracks(new GenomeBrowserTrack[]{GenomeBrowserTrack.COMPLETE_CLONES, GenomeBrowserTrack.GENES, GenomeBrowserTrack.TRANSCRIPTS})
                 .build()
         );
 

@@ -90,6 +90,9 @@
 <filter token="INSTANCE" value="${INSTANCE}"/>
 <filter token="INTERNAL_BLAST_PATH" value="${INTERNAL_BLAST_PATH}"/>
 <filter token="JAVA_HOME" value="${JAVA_HOME}"/>
+<filter token="JBROWSE_BASE_URL" value="${JBROWSE_BASE_URL}"/>
+<filter token="JBROWSE_PROXY_BASE_URL" value="${JBROWSE_PROXY_BASE_URL}"/>
+<filter token="JBROWSE_USE_LOCAL_PROXY" value="${JBROWSE_USE_LOCAL_PROXY}"/>
 <filter token="JDBC_DRIVER" value="${JDBC_DRIVER}"/>
 <filter token="JDBC_URL" value="${JDBC_URL}"/>
 <filter token="JENKINS_HOME" value="${JENKINS_HOME}"/>

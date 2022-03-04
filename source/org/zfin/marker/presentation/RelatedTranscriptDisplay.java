@@ -1,8 +1,7 @@
 package org.zfin.marker.presentation;
 
-import org.zfin.gbrowse.presentation.GBrowseImage;
+import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
 import org.zfin.marker.Marker;
-import org.zfin.marker.Transcript;
 import org.zfin.sequence.service.TranscriptService;
 
 import java.util.*;
@@ -13,7 +12,7 @@ public class RelatedTranscriptDisplay  {
     private List<RelatedMarker> nonWithdrawnTranscripts;
     private List<RelatedMarker> withdrawnTranscripts;
     private Marker gene;
-    private GBrowseImage gbrowseImage;
+    private GenomeBrowserImage gbrowseImage;
 
     public RelatedTranscriptDisplay() {
         transcripts = new ArrayList<>();
@@ -40,11 +39,11 @@ public class RelatedTranscriptDisplay  {
         transcripts.add(rm);
     }
 
-    public GBrowseImage getGbrowseImage() {
+    public GenomeBrowserImage getGbrowseImage() {
         return gbrowseImage;
     }
 
-    public void setGbrowseImage(GBrowseImage gbrowseImage) {
+    public void setGbrowseImage(GenomeBrowserImage gbrowseImage) {
         this.gbrowseImage = gbrowseImage;
     }
 
