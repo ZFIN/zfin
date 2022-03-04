@@ -1,5 +1,6 @@
 package org.zfin.mapping;
 
+import javax.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.zfin.feature.Feature;
@@ -9,8 +10,12 @@ import org.zfin.feature.Feature;
  */
 @Setter
 @Getter
+@Entity
+@DiscriminatorValue("Feat")
 public class FeatureLocation extends Location {
 
+    @ManyToOne
+    @JoinColumn(name = "sfcl_feature_zdb_id")
     private Feature feature;
 
 }

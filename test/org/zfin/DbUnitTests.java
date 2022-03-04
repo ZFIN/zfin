@@ -33,6 +33,7 @@ import org.zfin.gwt.root.server.DTOConversionServiceTest;
 import org.zfin.infrastructure.InfrastructureRepositoryTest;
 import org.zfin.infrastructure.RecordAttributionTest;
 import org.zfin.infrastructure.delete.DeleteRuleTest;
+import org.zfin.mapping.MappingServiceTest;
 import org.zfin.mapping.repository.LinkageRepositoryTest;
 import org.zfin.marker.MarkerAttributionServiceTest;
 import org.zfin.marker.MarkerServiceTest;
@@ -116,6 +117,7 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         InfrastructureRepositoryTest.class,
         LinkageRepositoryTest.class,
         MapAccessionDbLinkTest.class,
+        MappingServiceTest.class,
         MarkerGoServiceIntegrationSpec.class,
         MarkerGoTermEvidenceRepositoryTest.class,
         MarkerRepositoryTest.class,
