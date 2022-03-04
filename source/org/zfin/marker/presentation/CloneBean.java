@@ -1,6 +1,6 @@
 package org.zfin.marker.presentation;
 
-import org.zfin.gbrowse.presentation.GBrowseImage;
+import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
 import org.zfin.marker.Clone;
 import org.zfin.sequence.MarkerDBLinkList;
 import org.zfin.sequence.ReferenceDatabase;
@@ -20,7 +20,7 @@ public class CloneBean extends MarkerBean {
     private boolean isThisseProbe;
     private SummaryDBLinkDisplay summaryDBLinkDisplay;
     private List<OrganizationLink> suppliers;
-    private GBrowseImage image;
+    private GenomeBrowserImage image;
 
     public String getDbSnps() {
         return dbSnps;
@@ -125,11 +125,11 @@ public class CloneBean extends MarkerBean {
         this.suppliers = suppliers;
     }
 
-    public GBrowseImage getImage() {
+    public GenomeBrowserImage getImage() {
         return image;
     }
 
-    public void setImage(GBrowseImage image) {
+    public void setImage(GenomeBrowserImage image) {
         this.image = image;
     }
 }

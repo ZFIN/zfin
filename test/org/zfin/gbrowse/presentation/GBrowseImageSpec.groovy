@@ -1,7 +1,7 @@
 package org.zfin.gbrowse.presentation
 
 import org.zfin.AbstractZfinIntegrationSpec
-import org.zfin.gbrowse.GBrowseTrack
+import org.zfin.genomebrowser.GenomeBrowserBuild
 import org.zfin.mapping.GenomeLocation
 import org.zfin.mapping.repository.LinkageRepository
 import org.zfin.properties.ZfinPropertiesEnum
@@ -58,7 +58,7 @@ class GBrowseImageSpec extends AbstractZfinIntegrationSpec {
         def location = linkageRepository.getGenomeLocation(f, GenomeLocation.Source.ZFIN_Zv9)?.getAt(0)
         def image = GBrowseImage.builder()
                 .landmark(location)
-                .genomeBuild(GBrowseImage.GenomeBuild.ZV9)
+                .genomeBuild(GenomeBrowserBuild.ZV9)
                 .build()
 
         then:

@@ -11,7 +11,7 @@
     </typedef>
 
     <typedef class="org.zfin.framework.StringEnumValueUserType" name="gbrowseTrackType">
-        <param name="enumClassname">org.zfin.gbrowse.GBrowseTrack</param>
+        <param name="enumClassname">org.zfin.genomebrowser.GenomeBrowserTrack</param>
     </typedef>
 
     <class name="Linkage" table="linkage">

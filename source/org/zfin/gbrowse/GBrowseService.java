@@ -3,6 +3,7 @@ package org.zfin.gbrowse;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.feature.Feature;
+import org.zfin.genomebrowser.GenomeBrowserTrack;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.presentation.RelatedMarker;
@@ -18,7 +19,7 @@ public class GBrowseService {
 
     private final static Logger logger = LogManager.getLogger(GBrowseService.class);
 
-    public static GBrowseTrack[] getGBrowseTracks(Marker marker) {
+    public static GenomeBrowserTrack[] getGBrowseTracks(Marker marker) {
         GeneTrackDisplayMarker displayMarker = GeneTrackDisplayMarker.getInstance(marker.getType());
         if (displayMarker == null) {
             return null;
