@@ -55,10 +55,7 @@ import org.zfin.profile.service.ProfileServiceTest;
 import org.zfin.publication.PublicationServiceSpec;
 import org.zfin.publication.presentation.PublicationValidatorSpec;
 import org.zfin.publication.repository.PublicationRepositoryTest;
-import org.zfin.sequence.DisplayGroupRepositoryTest;
-import org.zfin.sequence.MapAccessionDbLinkTest;
-import org.zfin.sequence.SequenceRepositoryTest;
-import org.zfin.sequence.TranscriptServiceTest;
+import org.zfin.sequence.*;
 import org.zfin.sequence.blast.BlastRepositoryTest;
 import org.zfin.sequence.reno.AlignmentsControllerTest;
 import org.zfin.sequence.reno.OrthologyTest;
@@ -145,6 +142,7 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         RenoRepositoryTest.class,
         //SequenceRepositorySpec.class,
         SequenceRepositoryTest.class,
+        SequenceServiceTest.class,
         SequenceTargetingReagentAddBeanValidatorSpec.class,
         SingleAssociatedGenesFromQueryTest.class,
         SingleCandidateRepositoryTest.class,
