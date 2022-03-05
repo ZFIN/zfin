@@ -160,7 +160,7 @@ public class MarkerService {
 
     public static List<MarkerDBLink> aggregateDBLinksByPub(Collection<MarkerDBLink> links) {
         //TODO: In JDK17, replace ImmutablePair with Java Record
-        Map<ImmutablePair<String, String>, List<MarkerDBLink>> map = links.stream()
+        Map<ImmutablePair<ForeignDB, String /*Accession*/>, List<MarkerDBLink>> map = links.stream()
                 .collect(groupingBy(MarkerService::getDBLinkAggregationKey, toList()));
 
         return map.values().stream()
@@ -178,19 +178,11 @@ public class MarkerService {
      * @param link
      * @return
      */
-    private static ImmutablePair<String, String> getDBLinkAggregationKey(DBLink link) {
-        String foreignDBName = null;
-        String accession = null;
+    private static ImmutablePair<ForeignDB, String> getDBLinkAggregationKey(DBLink link) {
+        ForeignDB foreignDB = link.getReferenceDatabase().getForeignDB();
+        String accession = link.getAccessionNumber();
 
-        //probably the try catch is unnecessary, but many chained gets makes me nervous
-        try {
-            foreignDBName = link.getReferenceDatabase().getForeignDB().getDbName().name();
-        } catch (Exception e) {
-            foreignDBName = "";
-        }
-
-        accession = link.getAccessionNumber();
-        return new ImmutablePair<>(foreignDBName, accession);
+        return new ImmutablePair<>(foreignDB, accession);
     }
 
     public static MarkerDBLink getMarkerDBLink(Marker marker, DBLink dbLink) {
