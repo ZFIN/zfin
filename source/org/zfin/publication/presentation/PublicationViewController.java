@@ -91,14 +91,12 @@ public class PublicationViewController {
 
         model.addAttribute("publication", publication);
         model.addAttribute("abstractText", publication.getAbstractText());
-        model.addAttribute("showFiguresLink", publicationService.showFiguresLink(publication));
         model.addAttribute("curationStatusDisplay", publicationService.getCurationStatusDisplay(publication));
         model.addAttribute("correspondenceDisplay", publicationService.getLastAuthorCorrespondenceDisplay(publication));
         model.addAttribute("meshTermDisplayList", publicationService.getMeshTermDisplayList(publication));
         model.addAttribute("hasCorrespondence", publicationService.hasCorrespondence(publication));
         model.addAttribute("allowCuration", publicationService.allowCuration(publication));
         model.addAttribute("dataLinks", publicationService.getPublicationDataLinks(publication));
-        model.addAttribute("numDirectlyAttributed", publicationRepository.getDirectlyAttributed(publication));
         model.addAttribute("allowDelete", publicationRepository.canDeletePublication(publication));
 
         ZebrashareSubmissionMetadata zebraShareMetadata = zebrashareRepository.getZebraShareSubmissionMetadataForPublication(publication);
