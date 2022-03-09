@@ -202,9 +202,6 @@ public class FacetBuilderService {
 
         wildtypeGroup.setRootOnly(true);
         facetGroups.add(wildtypeGroup);
-        facetGroups.add(buildSingleFacetGroup("Color", ANY_COLOR.getName(), false));
-        facetGroups.add(buildSingleFacetGroup("Emission Range", EMISSION_COLOR.getName(), false));
-        facetGroups.add(buildSingleFacetGroup("Excitation Range", EXCITATION_COLOR.getName(), false));
 
         facetGroups.add(buildSingleFacetGroup("Assay", FieldName.ASSAY.getName(), false));
 
