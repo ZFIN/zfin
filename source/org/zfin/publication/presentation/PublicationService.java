@@ -572,7 +572,7 @@ public class PublicationService {
     }
 
 
-    public JsonResultResponse<GeneOntologyAnnotationTableRow> getHistorgram(String pubID) {
+    public Map<String, Long> getHistogram(String pubID) {
         SolrQuery query = new SolrQuery();
         SolrService.setCategory(Category.PUBLICATION.getName(), query);
         query.setQuery(pubID);
@@ -588,6 +588,6 @@ public class PublicationService {
         SearchResult result = results.get(0);
         Map<String, Long> map = relatedDataService.getRelatedDataMap(result);
 
-        return null;
+        return map;
     }
 }

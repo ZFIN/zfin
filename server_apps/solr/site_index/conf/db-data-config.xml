@@ -1151,6 +1151,17 @@
                            AND genoback_background_zdb_id = bg.geno_zdb_id;"
         >
 
+            <entity name="fish_publication_xref"
+                    query="select distinct fish_zdb_id,
+                                          pub_mini_ref as attributed_publication,
+                                          recattrib_source_zdb_id as xref
+                            from record_attribution, fish, publication
+                            where recattrib_data_zdb_id = fish_zdb_id
+                              and recattrib_source_zdb_id = publication.zdb_id;"
+                    where="fish_zdb_id=fish.id"
+                    cacheImpl="SortedMapBackedCache"
+            />
+
             <entity name="fish_reporter_line_category"
                     query="select 'Reporter Line' as category, fish_zdb_id
                                  from fish

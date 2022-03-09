@@ -6,12 +6,12 @@
 <c:set var="ABSTRACT" value="Abstract"/>
 <c:set var="ZEBRASHARE" value="Zebrashare Submission Details"/>
 <c:set var="FIGURES" value="Figures"/>
-<c:set var="GENES" value="Genes / Markers"/>
+<c:set var="GENES" value="${sectionCounts['Genes / Markers']}"/>
 <c:set var="STRS" value="Sequence Targeting Reagents"/>
-<c:set var="ANTIBODIES" value="Antibodies"/>
+<c:set var="ANTIBODIES" value="${sectionCounts['Antibodies']}"/>
 <c:set var="EFGs" value="Engineered Foreign Genes"/>
-<c:set var="EXPRESSION" value="Expression Data"/>
-<c:set var="MUTATION" value="Mutation and Transgenics"/>
+<c:set var="EXPRESSION" value="${sectionCounts['Expression Data']}"/>
+<c:set var="MUTATION" value="${sectionCounts['Mutation and Transgenics']}"/>
 <c:set var="FISH" value="Fish"/>
 <c:set var="DIRECTLY_ATTRIBUTED_DATA" value="Directly Attributed Data"/>
 <c:set var="ERRATA" value="Errata and Notes"/>

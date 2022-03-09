@@ -13,7 +13,6 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.feature.Feature;
 import org.zfin.figure.service.FigureViewService;
-import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationBean;
@@ -23,7 +22,6 @@ import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
 import org.zfin.marker.presentation.GeneBean;
-import org.zfin.marker.presentation.GeneOntologyAnnotationTableRow;
 import org.zfin.marker.presentation.MarkerReferenceBean;
 import org.zfin.marker.presentation.STRTargetRow;
 import org.zfin.marker.repository.MarkerRepository;
@@ -37,6 +35,7 @@ import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.search.Category;
 import org.zfin.util.ZfinStringUtils;
 import org.zfin.zebrashare.ZebrashareSubmissionMetadata;
 import org.zfin.zebrashare.repository.ZebrashareRepository;
@@ -44,10 +43,9 @@ import org.zfin.zebrashare.repository.ZebrashareRepository;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+
+import static java.util.stream.Collectors.toMap;
 
 @Controller
 public class PublicationViewController {
@@ -108,11 +106,15 @@ public class PublicationViewController {
             model.addAttribute("zebraShareFigures", publicationRepository.getFiguresByPublication(publication.getZdbID()));
         }
 
-        JsonResultResponse<GeneOntologyAnnotationTableRow> rows  = publicationService.getHistorgram(zdbID);
+        // map solr categories to publication section titles
+        Map<String, String> map = publicationService.getHistogram(zdbID).entrySet().stream()
+                .collect(toMap(entry -> solrPublicMap.get(entry.getKey()), entry -> solrPublicMap.get(entry.getKey()) + " (" + entry.getValue() + ")"));
 
+        model.addAttribute("sectionCounts", map);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication));
         return "publication/publication-view-prototype";
     }
+
     @RequestMapping("/publication/view/{zdbID}")
     public String view(@PathVariable String zdbID, Model model, HttpServletResponse response) {
         Publication publication = getPublication(zdbID);
@@ -249,9 +251,9 @@ public class PublicationViewController {
 
     @RequestMapping("/publication/{pubID}/genotype-list")
     public String showGenotypeList(@PathVariable String pubID,
-                                  @ModelAttribute("formBean") GeneBean geneBean,
-                                  Model model,
-                                  HttpServletResponse response) {
+                                   @ModelAttribute("formBean") GeneBean geneBean,
+                                   Model model,
+                                   HttpServletResponse response) {
         logger.info("zdbID: " + pubID);
 
         Publication publication = getPublication(pubID);
@@ -550,6 +552,15 @@ public class PublicationViewController {
         model.addAttribute("directedAttributedData", directedAttributedIds);
         model.addAttribute("publication", publication);
         return "publication/publication-directly-attributed";
+    }
+
+    static Map<String, String> solrPublicMap = new HashMap<>();
+
+    static {
+        solrPublicMap.put(Category.ANTIBODY.getName(), "Antibodies");
+        solrPublicMap.put(Category.EXPRESSIONS.getName(), "Expression Data");
+        solrPublicMap.put(Category.MUTANT.getName(), "Mutation and Transgenics");
+        solrPublicMap.put(Category.GENE.getName(), "Genes / Markers");
     }
 }
 
