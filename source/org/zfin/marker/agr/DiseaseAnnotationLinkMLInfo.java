@@ -1,5 +1,6 @@
 package org.zfin.marker.agr;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -50,10 +51,13 @@ public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
     private void init() throws IOException {
         initAll();
         List<AGMDiseaseAnnotationDTO> allDiseaseDTO = getDiseaseInfo(numfOfRecords);
+         BasicDiseaseAnnotationLinkML basicInfo = new BasicDiseaseAnnotationLinkML();
+         basicInfo.setDiseaseAgmIngest(allDiseaseDTO);
         ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
-        String jsonInString = writer.writeValueAsString(allDiseaseDTO);
-        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.1.4_disease_annotation_ml.json"))) {
+        String jsonInString = writer.writeValueAsString(basicInfo);
+        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_5.1.1_disease_annotation_ml.json"))) {
             out.print(jsonInString);
         }
     }
@@ -119,12 +123,13 @@ public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
                         // Use wildtype fish with STR
                         // treat as purely implicated by a gene
                         AGMDiseaseAnnotationDTO annotation = new AGMDiseaseAnnotationDTO();
+                        annotation.setDataProvider("ZFIN");
 
                         annotation.setDiseaseRelation(RelationshipDTO.IS_MODEL_OF);
                         AffectedGenomicModel model = getAffectedGenomicModel(fish);
                         annotation.setSubject(model.getCurie());
                         annotation.setObject(disease.getOboID());
-                        annotation.setCreatedBy(format(map.get(publication)));
+                        annotation.setLastUpdated(format(map.get(publication)));
 
                         List<String> evidenceCodes = evidenceSet.stream()
                                 .map(ZfinAllianceConverter::convertEvidenceCodes)
@@ -161,6 +166,9 @@ public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
 
             Fish fish = damo.getFishExperiment().getFish();
             AGMDiseaseAnnotationDTO annotation = new AGMDiseaseAnnotationDTO();
+            annotation.setDataProvider("ZFIN");
+            annotation.setCreatedBy("ZFIN:curator");
+            annotation.setModEntityId(damo.getDiseaseAnnotation().getZdbID());
             annotation.setDiseaseRelation(RelationshipDTO.IS_MODEL_OF);
             annotation.setSubject(fish.getZdbID());
 
