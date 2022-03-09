@@ -359,7 +359,6 @@ public class RelatedDataService {
         return returnList;
     }
 
-
     public List<String> getXrefLinks(SearchResult result) {
         List<String> links = new ArrayList<>();
 
@@ -376,6 +375,19 @@ public class RelatedDataService {
             }
         }
         return links;
+    }
+
+    public Map<String, Long> getRelatedDataMap(SearchResult result) {
+        QueryResponse response = solrService.getRelatedDataResponse(result.getId());
+        FacetField facetField = response.getFacetField("category");
+        Map<String, Long> map = new HashMap<>();
+        if (facetField != null && facetField.getValues() != null) {
+            for (FacetField.Count related : facetField.getValues()) {
+                String linkText = LinkDisplay.lookup(result.getCategory(), result.getType(), related.getName());
+                map.put(linkText, related.getCount());
+            }
+        }
+        return map;
     }
 
     protected StringBuilder createHyperLink(String id, String facetFieldName, String categoryName,

@@ -15,6 +15,7 @@ import org.zfin.framework.api.FieldFilter;
 import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.marker.presentation.GeneOntologyAnnotationTableRow;
 import org.zfin.mutant.repository.PhenotypeRepository;
 import org.zfin.profile.Person;
 import org.zfin.profile.repository.ProfileRepository;
@@ -27,6 +28,9 @@ import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.search.Category;
 import org.zfin.search.FieldName;
+import org.zfin.search.presentation.SearchResult;
+import org.zfin.search.service.RelatedDataService;
+import org.zfin.search.service.ResultService;
 import org.zfin.search.service.SolrService;
 
 import javax.servlet.ServletContext;
@@ -58,6 +62,12 @@ public class PublicationService {
 
     @Autowired
     private PhenotypeRepository phenotypeRepository;
+
+    @Autowired
+    private ResultService resultService;
+
+    @Autowired
+    private RelatedDataService relatedDataService;
 
     public static final String SESSION_PUBLICATIONS = "SessionPublications";
 
@@ -559,5 +569,25 @@ public class PublicationService {
             }
         }
         return publication;
+    }
+
+
+    public JsonResultResponse<GeneOntologyAnnotationTableRow> getHistorgram(String pubID) {
+        SolrQuery query = new SolrQuery();
+        SolrService.setCategory(Category.PUBLICATION.getName(), query);
+        query.setQuery(pubID);
+
+        QueryResponse queryResponse = null;
+        try {
+            queryResponse = SolrService.getSolrClient().query(query);
+        } catch (SolrServerException | IOException e) {
+            e.printStackTrace();
+        }
+        final List<SearchResult> results = queryResponse.getBeans(SearchResult.class);
+        resultService.injectAttributes(results);
+        SearchResult result = results.get(0);
+        Map<String, Long> map = relatedDataService.getRelatedDataMap(result);
+
+        return null;
     }
 }

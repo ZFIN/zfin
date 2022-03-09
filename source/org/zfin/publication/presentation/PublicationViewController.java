@@ -13,6 +13,7 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.feature.Feature;
 import org.zfin.figure.service.FigureViewService;
+import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationBean;
@@ -22,6 +23,7 @@ import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
 import org.zfin.marker.presentation.GeneBean;
+import org.zfin.marker.presentation.GeneOntologyAnnotationTableRow;
 import org.zfin.marker.presentation.MarkerReferenceBean;
 import org.zfin.marker.presentation.STRTargetRow;
 import org.zfin.marker.repository.MarkerRepository;
@@ -105,6 +107,8 @@ public class PublicationViewController {
             model.addAttribute("zebraShareEditors", zebrashareRepository.getZebraShareEditorsForPublication(publication));
             model.addAttribute("zebraShareFigures", publicationRepository.getFiguresByPublication(publication.getZdbID()));
         }
+
+        JsonResultResponse<GeneOntologyAnnotationTableRow> rows  = publicationService.getHistorgram(zdbID);
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication));
         return "publication/publication-view-prototype";

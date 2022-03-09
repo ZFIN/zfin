@@ -14,7 +14,7 @@ import static org.zfin.search.FieldName.*;
 public enum Category {
 
     GENE("Gene / Transcript",
-            new ArrayList<FacetQueryEnum>(),
+            new ArrayList<>(),
             TYPE_TREE,
             ANATOMY_TF,
             STAGE,
