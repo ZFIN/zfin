@@ -107,9 +107,15 @@ public class PublicationViewController {
         }
 
         // map solr categories to publication section titles
-        Map<String, String> map = publicationService.getHistogram(zdbID).entrySet().stream()
+        Map<String, Long> histogram = publicationService.getHistogram(zdbID);
+        Map<String, String> map = histogram.entrySet().stream()
+                .filter(entry -> solrPublicMap.containsKey(entry.getKey()))
                 .collect(toMap(entry -> solrPublicMap.get(entry.getKey()), entry -> solrPublicMap.get(entry.getKey()) + " (" + entry.getValue() + ")"));
 
+        // add empty sections
+        solrPublicMap.values().stream()
+                .filter(value -> !map.containsKey(value))
+                .forEach(entry -> map.put(entry, entry));
         model.addAttribute("sectionCounts", map);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication));
         return "publication/publication-view-prototype";
@@ -561,6 +567,8 @@ public class PublicationViewController {
         solrPublicMap.put(Category.EXPRESSIONS.getName(), "Expression Data");
         solrPublicMap.put(Category.MUTANT.getName(), "Mutation and Transgenics");
         solrPublicMap.put(Category.GENE.getName(), "Genes / Markers");
+        solrPublicMap.put(Category.SEQUENCE_TARGETING_REAGENT.getName(), "Sequence Targeting Reagents");
+        solrPublicMap.put(Category.FISH.getName(), "Fish");
     }
 }
 
