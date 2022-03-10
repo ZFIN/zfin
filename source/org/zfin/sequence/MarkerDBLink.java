@@ -85,6 +85,10 @@ public class MarkerDBLink extends DBLink implements Comparable<MarkerDBLink>, Se
         return 0;
     }
 
+    public ForeignDB getReferenceDatabaseForeignDB() {
+        return getReferenceDatabase().getForeignDB();
+    }
+
     @JsonView(View.SequenceAPI.class)
     public boolean isFishMiRNA() {
         return getReferenceDatabase().getForeignDB().isFishMiRNA();
