@@ -159,18 +159,28 @@ public class MarkerService {
     }
 
     public static List<MarkerDBLink> aggregateDBLinksByPub(Collection<MarkerDBLink> links) {
-        //TODO: In JDK17, replace ImmutablePair with Java Record
-        Map<ImmutablePair<ForeignDB, String /*Accession*/>, List<MarkerDBLink>> map = links.stream()
-                .collect(groupingBy(MarkerService::getDBLinkAggregationKey, toList()));
+        List<MarkerDBLink> markerDBLinks = new ArrayList<>();
 
-        return map.values().stream()
-                .map(markerDBLinks -> {
-                    MarkerDBLink link = markerDBLinks.get(0);
-                    markerDBLinks.remove(0);
-                    markerDBLinks.forEach(markerDBLink -> link.addPublicationAttributions(markerDBLink.getPublications()));
-                    return link;
-                })
-                .collect(toList());
+        Map<ForeignDB, Map<String, List<MarkerDBLink>>> map = links.stream()
+                .collect(
+                        groupingBy(MarkerDBLink::getReferenceDatabaseForeignDB,
+                                groupingBy(MarkerDBLink::getAccessionNumber))
+                );
+
+        map.values().stream()
+                .forEach(markerDBLinksMap -> {
+                    for(List<MarkerDBLink> value : markerDBLinksMap.values()) {
+                        markerDBLinks.add(consolidateMarkerDBLinks(value));
+                    }
+                });
+        return markerDBLinks;
+    }
+
+    private static MarkerDBLink consolidateMarkerDBLinks(List<MarkerDBLink> markerDBLinks) {
+        MarkerDBLink link = markerDBLinks.get(0);
+        markerDBLinks.remove(0);
+        markerDBLinks.forEach(markerDBLink -> link.addPublicationAttributions(markerDBLink.getPublications()));
+        return link;
     }
 
     /**
