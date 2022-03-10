@@ -4,7 +4,9 @@ import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.feature.Feature;
 import org.zfin.marker.Marker;
+import org.zfin.marker.presentation.ChromosomalLocationBean;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.is;
@@ -50,7 +52,7 @@ public class MappingServiceTest extends AbstractDatabaseTest {
         Marker marker = getMarkerRepository().getMarkerByAbbreviation("pax2a");
         String location = MappingService.getChromosomeLocationDisplay(marker);
         assertNotNull(location);
-        assertThat(location, is("13"));
+        assertEquals(location,"13");
 
         marker = getMarkerRepository().getMarkerByID("ZDB-SSLP-980528-1241");
         location = MappingService.getChromosomeLocationDisplay(marker);
@@ -63,7 +65,37 @@ public class MappingServiceTest extends AbstractDatabaseTest {
         Feature feature=getFeatureRepository().getFeatureByID("ZDB-ALT-100505-3");
         FeatureLocation fl=getFeatureRepository().getLocationByFeature(feature);
         assertNotNull(fl);
+    }
+
+    @Test
+    public void getMarkerLocation() {
+        Marker marker = getMarkerRepository().getMarker("ZDB-ENHANCER-190916-7");
+        List<MarkerLocation> initialMarkerLocations = getMarkerRepository().getMarkerLocation(marker.getZdbID());
+        int initialSize = initialMarkerLocations.size();
+
+        ChromosomalLocationBean clb = new ChromosomalLocationBean();
+        clb.setAssembly("GRCz11");
+        clb.setChromosome("1");
+        clb.setStartLocation(2);
+        clb.setEndLocation(3);
+        clb.setLocationEvidence("IC");
+        clb.setEntityID(marker.getZdbID());
+
+        MarkerLocation markerLocation = new MarkerLocation();
+        clb.setMarkerLocation(markerLocation);
+
+        getMarkerRepository().addMarkerLocation(markerLocation);
+
+        List<MarkerLocation> retrievedMarkerLocations = getMarkerRepository().getMarkerLocation("ZDB-ENHANCER-190916-7");
+        assertEquals(retrievedMarkerLocations.size(), initialSize + 1);
+
+        MarkerLocation retrievedMarkerLocation = retrievedMarkerLocations.get(initialSize);
+
+        assertEquals(retrievedMarkerLocation.getAssembly(), clb.getAssembly());
+        assertEquals(retrievedMarkerLocation.getStartLocation(), clb.getStartLocation());
+        assertEquals(retrievedMarkerLocation.getEndLocation(), clb.getEndLocation());
 
     }
+
 
 }

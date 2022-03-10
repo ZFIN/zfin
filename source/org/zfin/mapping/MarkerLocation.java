@@ -1,17 +1,21 @@
 package org.zfin.mapping;
 
+import javax.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
 import org.zfin.marker.Marker;
 
 /**
- * Feature Location .
+ * Marker Location .
  */
 @Setter
 @Getter
+@Entity
+@DiscriminatorValue("Mark")
 public class MarkerLocation extends Location {
 
-    private Marker marker;
+    @ManyToOne
+    @JoinColumn(name = "sfcl_feature_zdb_id")
+    protected Marker marker;
 
 }
