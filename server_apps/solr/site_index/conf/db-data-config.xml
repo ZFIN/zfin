@@ -1128,8 +1128,7 @@
                                            WHERE  genoback_geno_zdb_id = geno_zdb_id)
                     UNION
                     SELECT fish_zdb_id     AS id,
-                           '/'
-                           || fish_zdb_id  AS url,
+                           fish_zdb_id  AS url,
                            fish_name      AS name,
                            fish_name       AS full_name,
                            fish_name_order AS name_sort,

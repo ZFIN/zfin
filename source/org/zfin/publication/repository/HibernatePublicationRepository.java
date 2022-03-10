@@ -1213,7 +1213,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
      * attributed to a given publication.
      *
      * @param pubID       publication id
-     * @param includeEfgs boolean
+     * @param includeEFGs boolean
      * @return list of markers
      */
     public List<Marker> getGenesByPublication(String pubID, boolean includeEFGs) {

@@ -12,7 +12,7 @@
 <c:set var="EFGs" value="Engineered Foreign Genes"/>
 <c:set var="EXPRESSION" value="${sectionCounts['Expression Data']}"/>
 <c:set var="MUTATION" value="${sectionCounts['Mutation and Transgenics']}"/>
-<c:set var="FISH" value="Fish"/>
+<c:set var="FISH" value="${sectionCounts['Fish']}"/>
 <c:set var="DIRECTLY_ATTRIBUTED_DATA" value="Directly Attributed Data"/>
 <c:set var="ERRATA" value="Errata and Notes"/>
 
