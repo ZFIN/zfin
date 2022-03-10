@@ -159,21 +159,19 @@ public class MarkerService {
     }
 
     public static List<MarkerDBLink> aggregateDBLinksByPub(Collection<MarkerDBLink> links) {
-        List<MarkerDBLink> markerDBLinks = new ArrayList<>();
-
         Map<ForeignDB, Map<String, List<MarkerDBLink>>> map = links.stream()
                 .collect(
                         groupingBy(MarkerDBLink::getReferenceDatabaseForeignDB,
                                 groupingBy(MarkerDBLink::getAccessionNumber))
                 );
 
-        map.values().stream()
-                .forEach(markerDBLinksMap -> {
-                    for(List<MarkerDBLink> value : markerDBLinksMap.values()) {
-                        markerDBLinks.add(consolidateMarkerDBLinks(value));
-                    }
-                });
-        return markerDBLinks;
+        return map
+                .values()
+                .stream()
+                .flatMap(markerDBLinksMap ->
+                    markerDBLinksMap.values().stream().map(MarkerService::consolidateMarkerDBLinks)
+                )
+                .collect(toList());
     }
 
     private static MarkerDBLink consolidateMarkerDBLinks(List<MarkerDBLink> markerDBLinks) {
