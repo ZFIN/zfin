@@ -159,13 +159,11 @@ public class MarkerService {
     }
 
     public static List<MarkerDBLink> aggregateDBLinksByPub(Collection<MarkerDBLink> links) {
-        Map<ForeignDB, Map<String, List<MarkerDBLink>>> map = links.stream()
+        return links.stream()
                 .collect(
                         groupingBy(MarkerDBLink::getReferenceDatabaseForeignDB,
-                                groupingBy(MarkerDBLink::getAccessionNumber))
-                );
-
-        return map
+                        groupingBy(MarkerDBLink::getAccessionNumber))
+                )
                 .values()
                 .stream()
                 .flatMap(markerDBLinksMap ->
@@ -179,18 +177,6 @@ public class MarkerService {
         markerDBLinks.remove(0);
         markerDBLinks.forEach(markerDBLink -> link.addPublicationAttributions(markerDBLink.getPublications()));
         return link;
-    }
-
-    /**
-     * Group DBLinks by db name and accession number
-     * @param link
-     * @return
-     */
-    private static ImmutablePair<ForeignDB, String> getDBLinkAggregationKey(DBLink link) {
-        ForeignDB foreignDB = link.getReferenceDatabase().getForeignDB();
-        String accession = link.getAccessionNumber();
-
-        return new ImmutablePair<>(foreignDB, accession);
     }
 
     public static MarkerDBLink getMarkerDBLink(Marker marker, DBLink dbLink) {
