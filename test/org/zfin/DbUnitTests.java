@@ -45,10 +45,7 @@ import org.zfin.orthology.OrthologyRepositoryTest;
 import org.zfin.profile.repository.ProfileRepositoryTest;
 import org.zfin.profile.service.ProfileServiceTest;
 import org.zfin.publication.repository.PublicationRepositoryTest;
-import org.zfin.sequence.DisplayGroupRepositoryTest;
-import org.zfin.sequence.MapAccessionDbLinkTest;
-import org.zfin.sequence.SequenceRepositoryTest;
-import org.zfin.sequence.TranscriptServiceTest;
+import org.zfin.sequence.*;
 import org.zfin.sequence.blast.BlastRepositoryTest;
 import org.zfin.sequence.reno.AlignmentsControllerTest;
 import org.zfin.sequence.reno.OrthologyTest;
@@ -126,6 +123,7 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         RenoRedundancyCandidateControllerTest.class,
         RenoRepositoryTest.class,
         SequenceRepositoryTest.class,
+        SequenceServiceTest.class,
         SingleAssociatedGenesFromQueryTest.class,
         SingleCandidateRepositoryTest.class,
         TranscriptRepositoryTest.class,
