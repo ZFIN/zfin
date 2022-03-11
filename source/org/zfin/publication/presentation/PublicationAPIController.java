@@ -8,6 +8,7 @@ import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyService;
 import org.zfin.antibody.repository.AntibodyRepository;
 import org.zfin.feature.Feature;
+import org.zfin.figure.presentation.ExpressionTableRow;
 import org.zfin.figure.presentation.PhenotypeTableRow;
 import org.zfin.figure.service.FigureViewService;
 import org.zfin.framework.api.FieldFilter;
@@ -95,6 +96,28 @@ public class PublicationAPIController {
         JsonResultResponse<PhenotypeTableRow> response = new JsonResultResponse<>();
         response.setTotal(phenotypeTableRows.size());
         List<PhenotypeTableRow> paginatedFeatureList = phenotypeTableRows.stream()
+                .skip(pagination.getStart())
+                .limit(pagination.getLimit())
+                .collect(Collectors.toList());
+
+        response.setResults(paginatedFeatureList);
+        response.setHttpServletRequest(request);
+        return response;
+    }
+
+    @JsonView(View.FigureAPI.class)
+    @RequestMapping(value = "/{pubID}/expression", method = RequestMethod.GET)
+    public JsonResultResponse<ExpressionTableRow> getPublicationExpression(@PathVariable String pubID,
+                                                                           @Version Pagination pagination) {
+
+        Publication publication = publicationRepository.getPublication(pubID);
+        List<ExpressionTableRow> expressionTableRows = publication.getFigures().stream()
+                .map(figure -> figureViewService.getExpressionTableRows(figure))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+        JsonResultResponse<ExpressionTableRow> response = new JsonResultResponse<>();
+        response.setTotal(expressionTableRows.size());
+        List<ExpressionTableRow> paginatedFeatureList = expressionTableRows.stream()
                 .skip(pagination.getStart())
                 .limit(pagination.getLimit())
                 .collect(Collectors.toList());
