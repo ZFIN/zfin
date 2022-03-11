@@ -86,10 +86,14 @@
                  data-url="/action/api/publication/${publication.zdbID}/marker"></div>
         </z:section>
 
+        <z:section title="${EXPRESSION}">
+            <div class="__react-root" id="FigureExpressionTable"
+                 data-url="/action/api/publication/${publication.zdbID}/expression"></div>
+        </z:section>
+
         <z:section title="${PHENOTYPE}">
             <div class="__react-root" id="FigurePhenotypeTable"
                  data-url="/action/api/publication/${publication.zdbID}/phenotype"></div>
-
         </z:section>
 
         <z:section title="${STRS}">

@@ -44,7 +44,9 @@ public class FigureViewService {
 
         for (ExpressionResult expressionResult : figure.getExpressionResults()) {
             if (expressionResult.getExpressionExperiment().getGene() != null) {
-                rows.add(new ExpressionTableRow(expressionResult));
+                ExpressionTableRow expressionTableRow = new ExpressionTableRow(expressionResult);
+                expressionTableRow.setFigure(figure);
+                rows.add(expressionTableRow);
             }
         }
 

@@ -34,7 +34,8 @@
             <zfin-figure:expressionSummaryPrototype summary="${expressionSummary}"/>
             <p/>
             <z:section title="Expression Detail">
-                <div class="__react-root" id="FigureExpressionTable" data-figure-id="${figure.zdbID}"></div>
+                <div class="__react-root" id="FigureExpressionTable" data-hide-figure-column="true"
+                     data-url="/action/api/figure/${figure.zdbID}/expression-detail"></div>
             </z:section>
             <z:section title="Antibody Labeling">
                 <div class="__react-root" id="FigureExpressionAntibodyTable" data-figure-id="${figure.zdbID}"></div>
@@ -45,7 +46,7 @@
             <zfin-figure:phenotypeSummaryPrototype summary="${phenotypeSummary}"/>
             <p/>
             <z:section title="Phenotype Detail">
-                <div class="__react-root" id="FigurePhenotypeTable" data-hide-figure-column="${true}"
+                <div class="__react-root" id="FigurePhenotypeTable" data-hide-figure-column="true"
                      data-url="/action/api/figure/${figure.zdbID}/phenotype-detail"></div>
             </z:section>
         </z:section>

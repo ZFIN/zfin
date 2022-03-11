@@ -4,9 +4,10 @@ import DataTable from '../components/data-table';
 import {EntityLink} from '../components/entity';
 import StageRange from '../components/StageRange';
 import PostComposedEntity from '../components/PostComposedEntity';
+import Figure from '../components/Figure';
 
 
-const FigureExpressionTable = ({figureId}) => {
+const FigureExpressionTable = ({url, hideFigureColumn = false}) => {
 
     const columns = [
         {
@@ -74,12 +75,16 @@ const FigureExpressionTable = ({figureId}) => {
             content: row => row.assay.abbreviation,
             width: '150px',
         },
-
+        {
+            label: 'Figure',
+            content: (row) => <Figure figure={row.figure}/>,
+            hidden: hideFigureColumn
+        },
     ];
     return (
         <DataTable
             columns={columns}
-            dataUrl={`/action/api/figure/${figureId}/expression-detail`}
+            dataUrl={url}
             rowKey={row => row.id}
             pagination={true}
         />
@@ -87,7 +92,8 @@ const FigureExpressionTable = ({figureId}) => {
 };
 
 FigureExpressionTable.propTypes = {
-    figureId: PropTypes.string,
+    url: PropTypes.string,
+    hideFigureColumn: PropTypes.bool,
 };
 
 export default FigureExpressionTable;
