@@ -2,8 +2,11 @@ package org.zfin.figure.presentation;
 
 
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Experiment;
+import org.zfin.expression.Figure;
 import org.zfin.framework.api.View;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.FishExperiment;
@@ -12,6 +15,8 @@ import org.zfin.mutant.PhenotypeWarehouse;
 
 
 /* Should be: Genotype, Experiment, Start Stage, End Stage, PhenotypeStatement  */
+@Setter
+@Getter
 public class PhenotypeTableRow {
 
     private FishExperiment fishExperiment;
@@ -26,6 +31,8 @@ public class PhenotypeTableRow {
     private String fishNameOrder;
     @JsonView(View.FigureAPI.class)
     private PhenotypeStatementWarehouse phenotypeStatement;
+    @JsonView(View.FigureAPI.class)
+    private Figure figure;
 
     public PhenotypeTableRow(PhenotypeStatementWarehouse phenotypeStatement) {
         this.phenotypeStatement = phenotypeStatement;
@@ -36,40 +43,6 @@ public class PhenotypeTableRow {
         start = phenotypeWarehouse.getStart();
         end = phenotypeWarehouse.getEnd();
         fishNameOrder = fish.getAbbreviationOrder();
-    }
-
-    public FishExperiment getFishExperiment() {
-        return fishExperiment;
-    }
-
-    public void setFishExperiment(FishExperiment fishExperiment) {
-        this.fishExperiment = fishExperiment;
-    }
-
-    public Fish getFish() {
-        return fish;
-    }
-
-    public Experiment getExperiment() {
-        return experiment;
-    }
-
-
-    public DevelopmentStage getStart() {
-        return start;
-    }
-
-
-    public DevelopmentStage getEnd() {
-        return end;
-    }
-
-    public PhenotypeStatementWarehouse getPhenotypeStatement() {
-        return phenotypeStatement;
-    }
-
-    public String getFishNameOrder() {
-        return fishNameOrder;
     }
 
 }

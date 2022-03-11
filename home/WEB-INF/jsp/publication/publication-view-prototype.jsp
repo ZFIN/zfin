@@ -10,7 +10,8 @@
 <c:set var="STRS" value="Sequence Targeting Reagents"/>
 <c:set var="ANTIBODIES" value="Antibodies"/>
 <c:set var="EFGs" value="Engineered Foreign Genes"/>
-<c:set var="EXPRESSION" value="Expression Data"/>
+<c:set var="EXPRESSION" value="Expression"/>
+<c:set var="PHENOTYPE" value="Phenotype"/>
 <c:set var="MUTATION" value="Mutation and Transgenics"/>
 <c:set var="FISH" value="Fish"/>
 <c:set var="DIRECTLY_ATTRIBUTED_DATA" value="Directly Attributed Data"/>
@@ -21,11 +22,11 @@
 <c:choose>
     <c:when test="${not empty publication.zebrashareEditors}">&nbsp;
         <c:set var="secs"
-               value="${[SUMMARY, ABSTRACT, FIGURES, GENES, STRS, ANTIBODIES, EFGs, EXPRESSION, MUTATION, FISH, DIRECTLY_ATTRIBUTED_DATA, ERRATA, ZEBRASHARE]}"/>
+               value="${[SUMMARY, ABSTRACT, FIGURES, GENES, EXPRESSION, PHENOTYPE, STRS, ANTIBODIES, EFGs, EXPRESSION, MUTATION, FISH, DIRECTLY_ATTRIBUTED_DATA, ERRATA, ZEBRASHARE]}"/>
     </c:when>
     <c:otherwise>
         <c:set var="secs"
-               value="${[SUMMARY, ABSTRACT, FIGURES, GENES, STRS, ANTIBODIES, EFGs, EXPRESSION, MUTATION, FISH, DIRECTLY_ATTRIBUTED_DATA, ERRATA]}"/>
+               value="${[SUMMARY, ABSTRACT, FIGURES, GENES, EXPRESSION, PHENOTYPE, STRS, ANTIBODIES, EFGs, EXPRESSION, MUTATION, FISH, DIRECTLY_ATTRIBUTED_DATA, ERRATA]}"/>
     </c:otherwise>
 </c:choose>
 
@@ -83,6 +84,12 @@
         <z:section title="${GENES}">
             <div class="__react-root" id="PublicationMarkerTable"
                  data-url="/action/api/publication/${publication.zdbID}/marker"></div>
+        </z:section>
+
+        <z:section title="${PHENOTYPE}">
+            <div class="__react-root" id="FigurePhenotypeTable"
+                 data-url="/action/api/publication/${publication.zdbID}/phenotype"></div>
+
         </z:section>
 
         <z:section title="${STRS}">
