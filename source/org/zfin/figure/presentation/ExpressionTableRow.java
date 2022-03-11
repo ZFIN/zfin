@@ -6,10 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.Antibody;
-import org.zfin.expression.Experiment;
-import org.zfin.expression.ExpressionAssay;
-import org.zfin.expression.ExpressionExperiment;
-import org.zfin.expression.ExpressionResult;
+import org.zfin.expression.*;
 import org.zfin.framework.api.View;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Fish;
@@ -44,6 +41,8 @@ public class ExpressionTableRow {
     @JsonView(View.FigureAPI.class)
     private ExpressionAssay assay;
     private String fishNameOrder;
+    @JsonView(View.FigureAPI.class)
+    private Figure figure;
 
 
     //this is a key used for deciding whether to repeat the genotype in the display tag
