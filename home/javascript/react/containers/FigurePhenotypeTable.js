@@ -2,10 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import DataTable from '../components/data-table';
 import StageRange from '../components/StageRange';
+import Figure from '../components/Figure';
 import PhenotypeStatement from '../components/PhenotypeStatement';
 
 
-const FigurePhenotypeTable = ({figureId}) => {
+const FigurePhenotypeTable = ({url, hideFigureColumn = false}) => {
     const columns = [
         {
             label: 'Fish',
@@ -44,12 +45,17 @@ const FigurePhenotypeTable = ({figureId}) => {
             label: 'Phenotype',
             content: (row) => <PhenotypeStatement statement={row.phenotypeStatement}/>
         },
+        {
+            label: 'Figure',
+            content: (row) => <Figure figure={row.figure}/>,
+            hidden: hideFigureColumn
+        },
 
     ];
     return (
         <DataTable
             columns={columns}
-            dataUrl={`/action/api/figure/${figureId}/phenotype-detail`}
+            dataUrl={url}
             rowKey={row => row.fish.zdbID}
             //sortOptions={sortOptions}
         />
@@ -57,7 +63,8 @@ const FigurePhenotypeTable = ({figureId}) => {
 };
 
 FigurePhenotypeTable.propTypes = {
-    figureId: PropTypes.string,
+    url: PropTypes.string,
+    hideFigureColumn: PropTypes.bool,
 };
 
 export default FigurePhenotypeTable;

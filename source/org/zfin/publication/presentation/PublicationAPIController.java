@@ -8,6 +8,8 @@ import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyService;
 import org.zfin.antibody.repository.AntibodyRepository;
 import org.zfin.feature.Feature;
+import org.zfin.figure.presentation.PhenotypeTableRow;
+import org.zfin.figure.service.FigureViewService;
 import org.zfin.framework.api.FieldFilter;
 import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
@@ -21,6 +23,7 @@ import org.zfin.marker.MarkerType;
 import org.zfin.marker.presentation.STRTargetRow;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Fish;
+import org.zfin.mutant.PhenotypeWarehouse;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
@@ -28,11 +31,10 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.wiki.presentation.Version;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
 
 @RestController
 @RequestMapping("/api/publication")
@@ -45,7 +47,7 @@ public class PublicationAPIController {
     private MarkerRepository markerRepository;
 
     @Autowired
-    private PublicationService publicationService;
+    private FigureViewService figureViewService;
 
     @Autowired
     private HttpServletRequest request;
@@ -70,6 +72,29 @@ public class PublicationAPIController {
         JsonResultResponse<Feature> response = new JsonResultResponse<>();
         response.setTotal(featureList.size());
         List<Feature> paginatedFeatureList = featureList.stream()
+                .skip(pagination.getStart())
+                .limit(pagination.getLimit())
+                .collect(Collectors.toList());
+
+        response.setResults(paginatedFeatureList);
+        response.setHttpServletRequest(request);
+        return response;
+    }
+
+    @JsonView(View.FigureAPI.class)
+    @RequestMapping(value = "/{pubID}/phenotype", method = RequestMethod.GET)
+    public JsonResultResponse<PhenotypeTableRow> getPublicationPhenotype(@PathVariable String pubID,
+                                                                         @Version Pagination pagination) {
+
+        Publication publication = publicationRepository.getPublication(pubID);
+        List<PhenotypeWarehouse> warehouseList = publication.getFigures().stream()
+                .map(figure -> getPhenotypeRepository().getPhenotypeWarehouse(figure.getZdbID()))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+        List<PhenotypeTableRow> phenotypeTableRows = figureViewService.getPhenotypeTableRows(warehouseList);
+        JsonResultResponse<PhenotypeTableRow> response = new JsonResultResponse<>();
+        response.setTotal(phenotypeTableRows.size());
+        List<PhenotypeTableRow> paginatedFeatureList = phenotypeTableRows.stream()
                 .skip(pagination.getStart())
                 .limit(pagination.getLimit())
                 .collect(Collectors.toList());
@@ -195,7 +220,7 @@ public class PublicationAPIController {
         List<STRTargetRow> rows = new ArrayList<>(strs.size());
         for (SequenceTargetingReagent str : strs) {
             for (Marker target : str.getTargetGenes()) {
-                if(StringUtils.isEmpty(targetName) || target.getAbbreviation().contains(targetName)){
+                if (StringUtils.isEmpty(targetName) || target.getAbbreviation().contains(targetName)) {
                     rows.add(new STRTargetRow(str, target));
 
                 }
