@@ -130,7 +130,9 @@ public class FigureViewService {
 
         for (PhenotypeWarehouse warehouse : warehouseList) {
             for (PhenotypeStatementWarehouse phenotypeStatement : warehouse.getStatementWarehouseSet()) {
-                rows.add(new PhenotypeTableRow(phenotypeStatement));
+                PhenotypeTableRow e = new PhenotypeTableRow(phenotypeStatement);
+                e.setFigure(warehouse.getFigure());
+                rows.add(e);
             }
         }
 

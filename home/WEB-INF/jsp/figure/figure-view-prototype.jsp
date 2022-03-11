@@ -45,7 +45,8 @@
             <zfin-figure:phenotypeSummaryPrototype summary="${phenotypeSummary}"/>
             <p/>
             <z:section title="Phenotype Detail">
-                <div class="__react-root" id="FigurePhenotypeTable" data-figure-id="${figure.zdbID}"></div>
+                <div class="__react-root" id="FigurePhenotypeTable" data-hide-figure-column="${true}"
+                     data-url="/action/api/figure/${figure.zdbID}/phenotype-detail"></div>
             </z:section>
         </z:section>
 
