@@ -2,8 +2,8 @@
 --changeset cmpich:ZFIN-7899
 
 -- connect new EFG with FP protein
-insert into fpprotein_efg (fe_mrkr_zdb_id, fe_fl_protein_id) VALUES
-('ZDB-EFG-220307-1',85);
+insert into fpprotein_efg (fe_mrkr_zdb_id, fe_fl_protein_id)
+VALUES ('ZDB-EFG-220307-1', 85);
 
 -- copy FP protein info into fluorescent_marker table
 insert into fluorescent_marker (fm_mrkr_zdb_id, fm_excitation_length, fm_emission_length, fm_protein_pk_id) (
@@ -11,7 +11,7 @@ insert into fluorescent_marker (fm_mrkr_zdb_id, fm_excitation_length, fm_emissio
     FROM fpprotein_efg,
          fluorescent_protein
     where fe_fl_protein_id = fp_pk_id
-    AND fe_mrkr_zdb_id = 'ZDB-EFG-220307-1'
+      AND fe_mrkr_zdb_id = 'ZDB-EFG-220307-1'
 );
 
 -- generate the color info
