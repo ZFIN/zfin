@@ -8,6 +8,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DBLink;
 import org.zfin.sequence.ForeignDB;
+import org.zfin.sequence.MarkerDBLink;
 import org.zfin.sequence.blast.presentation.BlastPresentationService;
 import org.zfin.sequence.blast.presentation.DatabasePresentationBean;
 import org.zfin.sequence.blast.repository.BlastRepository;
@@ -20,6 +21,7 @@ import java.util.Set;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.*;
+import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 
 /**
  * Tests blast repository methods.
@@ -206,9 +208,9 @@ public class BlastRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void blastDatabases() {
 
-        List<DBLink> dbLinkGenBank = RepositoryFactory.getSequenceRepository().getDBLinks(ForeignDB.AvailableName.UNIPROTKB, 5);
+        List<DBLink> dbLinkGenBank = getSequenceRepository().getDBLinks(ForeignDB.AvailableName.UNIPROTKB, 5);
         assertNotNull(dbLinkGenBank);
-        List<DBLink> dbLinkList = RepositoryFactory.getSequenceRepository().getDBLinksForAccession(dbLinkGenBank.get(0).getAccessionNumber());
+        List<DBLink> dbLinkList = getSequenceRepository().getDBLinksForAccession(dbLinkGenBank.get(0).getAccessionNumber());
         assertThat(dbLinkList.size(), greaterThan(0));
         assertThat(dbLinkList.size(), lessThan(10));
         for (DBLink dbLink : dbLinkList) {
@@ -232,7 +234,7 @@ public class BlastRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void blastDatabasesProteins() {
-        List<DBLink> dbLinkList = RepositoryFactory.getSequenceRepository().getDBLinksForAccession("NP_001071049");
+        List<DBLink> dbLinkList = getSequenceRepository().getDBLinksForAccession("NP_001071049");
         for (DBLink dbLink : dbLinkList) {
             if (dbLink.getReferenceDatabase().getForeignDB().getDbName().equals(ForeignDB.AvailableName.REFSEQ)) {
                 dbLink.getBlastableDatabases();
@@ -255,6 +257,13 @@ public class BlastRepositoryTest extends AbstractDatabaseTest {
         for (Database database : databases) {
             assertNotNull(database.getAbbrev().toString() + " should be in the accession count map", map.get(database.getAbbrev().toString()));
         }
+
+    }
+
+    @Test
+    public void testEnsemblGenes() {
+        List<MarkerDBLink> map = getSequenceRepository().getAllEnsemblGenes();
+        assertNotNull("accession count map is not null", map);
 
     }
 
