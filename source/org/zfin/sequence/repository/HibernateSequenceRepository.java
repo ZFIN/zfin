@@ -2,7 +2,8 @@ package org.zfin.sequence.repository;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.MultiValueMap;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -414,7 +415,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
         return returnList;
     }
 
-    public MarkerDBLink getSingleDBLinkForMarker (Marker marker, ReferenceDatabase referenceDatabase) {
+    public MarkerDBLink getSingleDBLinkForMarker(Marker marker, ReferenceDatabase referenceDatabase) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(MarkerDBLink.class);
         criteria.add(Restrictions.eq("marker", marker));
@@ -688,7 +689,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
     @Override
     public List<DBLink> getAtlasDBLink(String markerZdbID, String referenceDBName) {
         String hql = "select mdbl from DBLink mdbl where mdbl.dataZdbID = :markerZdbID " +
-                     "and mdbl.referenceDatabase.foreignDB.dbName = :referenceDBName";
+                "and mdbl.referenceDatabase.foreignDB.dbName = :referenceDBName";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setString("referenceDBName", referenceDBName);
         query.setString("markerZdbID", markerZdbID);
@@ -806,7 +807,6 @@ public class HibernateSequenceRepository implements SequenceRepository {
         query.setString("markerZdbId", zdbID);
         return query.list();
     }
-
 
 
     @Override
@@ -1196,8 +1196,8 @@ public class HibernateSequenceRepository implements SequenceRepository {
                         .add(Restrictions.eq("referenceDatabase", accession.getReferenceDatabase()))
                         .add(Restrictions.eq("fdbType.superType", ForeignDBDataType.SuperType.SEQUENCE.toString()))
                         .add(Restrictions.or(
-                                        Restrictions.eq("fdbType.dataType", ForeignDBDataType.DataType.RNA.toString()),
-                                        Restrictions.eq("fdbType.dataType", ForeignDBDataType.DataType.POLYPEPTIDE.toString()))
+                                Restrictions.eq("fdbType.dataType", ForeignDBDataType.DataType.RNA.toString()),
+                                Restrictions.eq("fdbType.dataType", ForeignDBDataType.DataType.POLYPEPTIDE.toString()))
                         )
                         .list()
         );
@@ -1231,6 +1231,24 @@ public class HibernateSequenceRepository implements SequenceRepository {
         query.setParameterList("types", dataTypes);
         query.setString("superType", superType.toString());
         query.setString("organism", species.toString());
+        return query.list();
+    }
+
+    @Override
+    public List<MarkerDBLink> getAllEnsemblGenes() {
+        String hql = " from MarkerDBLink  " +
+                " where referenceDatabase.foreignDB.dbName = (:dbName) ";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("dbName", ForeignDB.AvailableName.ENSEMBL_GRCZ11_);
+        return query.list();
+    }
+
+    @Override
+    public List<DBLink> getAllEnsemblTranscripts() {
+        String hql = " from DBLink  " +
+                " where referenceDatabase.foreignDB.dbName = (:dbName) ";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("dbName", ForeignDB.AvailableName.ENSEMBL_TRANS);
         return query.list();
     }
 }
