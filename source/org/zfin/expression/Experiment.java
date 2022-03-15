@@ -2,6 +2,8 @@ package org.zfin.expression;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.zfin.framework.api.View;
@@ -14,6 +16,8 @@ import java.util.*;
 @SuppressWarnings({"JpaAttributeMemberSignatureInspection", "JpaAttributeTypeInspection"})
 @Entity
 @Table(name = "experiment")
+@Setter
+@Getter
 public class Experiment implements Comparable<Experiment>, EntityZdbID {
 
     public static final String STANDARD = "_Standard";
@@ -40,29 +44,14 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
     @JsonView(View.API.class)
     private Set<ExperimentCondition> experimentConditions;
 
-
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
-
-    public String getName() {
+    // ToDo: when the experiment names _Standard and _Generic-control in the DB are stripped off their underscore
+    // this convenience method can be dropped and the 'name' attribute be used directly.
+    @JsonView(View.API.class)
+    @JsonProperty("displayName")
+    public String getDisplayName() {
+        if (name.startsWith("_"))
+            return name.substring(1);
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Publication getPublication() {
-        return publication;
-    }
-
-    public void setPublication(Publication publication) {
-        this.publication = publication;
     }
 
     public boolean isStandard() {
