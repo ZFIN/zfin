@@ -44,16 +44,6 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
     @JsonView(View.API.class)
     private Set<ExperimentCondition> experimentConditions;
 
-    // ToDo: when the experiment names _Standard and _Generic-control in the DB are stripped off their underscore
-    // this convenience method can be dropped and the 'name' attribute be used directly.
-    @JsonView(View.API.class)
-    @JsonProperty("displayName")
-    public String getDisplayName() {
-        if (name.startsWith("_"))
-            return name.substring(1);
-        return name;
-    }
-
     public boolean isStandard() {
         return (name.equalsIgnoreCase(Experiment.STANDARD) || name.equalsIgnoreCase(Experiment.GENERIC_CONTROL));
     }

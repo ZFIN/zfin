@@ -44,7 +44,7 @@ const FigureExpressionTable = ({url, hideFigureColumn = false}) => {
                 <a
                     className='text-break'
                     href={`/${row.experiment.zdbID}`}
-                    dangerouslySetInnerHTML={{__html: row.experiment.displayName}}
+                    dangerouslySetInnerHTML={{__html: row.experiment.conditions}}
                 />
                 <a
                     className='popup-link data-popup-link'
