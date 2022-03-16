@@ -1,5 +1,6 @@
 package org.zfin;
 
+import org.apache.logging.log4j.LogManager;
 import org.hibernate.SessionFactory;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -40,8 +41,9 @@ public abstract class AbstractDatabaseTest {
     }
 
     @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
+    public static void setUpBeforeClass() {
         TestConfiguration.setAuthenticatedUser();
+        System.setProperty("log4j.configurationFile","./test/log4j2.xml");
     }
 
 
