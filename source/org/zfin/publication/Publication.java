@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 import org.zfin.curation.PublicationNote;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
@@ -13,59 +14,136 @@ import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.zebrashare.ZebrashareEditor;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
 
 @Setter
 @Getter
+@Entity
+@Table(name = "Publication")
 public class Publication implements Comparable<Publication>, Serializable, EntityZdbID {
 
     @JsonView(View.Default.class)
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
+    @GenericGenerator(name = "zfinGenerator",
+            strategy = "org.zfin.database.ZdbIdGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = "type", value = "PUB"),
+                    @org.hibernate.annotations.Parameter(name = "insertActiveSource", value = "true")
+            })
+    @Column(name = "zdb_id")
     private String zdbID;
     @JsonView(View.Default.class)
+    @Column(name = "title")
     private String title;
+    @Column(name = "authors")
     private String authors;
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ppa_publication_zdb_id")
     private Set<PubmedPublicationAuthor> authorPubs;
     @JsonView(View.Default.class)
+    @Column(name = "pub_mini_ref")
     private String shortAuthorList;
+//    @Basic( fetch = FetchType.LAZY )
+    @Column(name = "pub_abstract")
     private String abstractText;
+    @Column(name = "pub_volume")
     private String volume;
+    @Column(name = "pub_pages")
     private String pages;
+    @Column(name = "jtype")
+    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+            parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.publication.PublicationType")})
     private PublicationType type;
+    @Column(name = "accession_no")
+//    @Basic( fetch = FetchType.LAZY )
     private Integer accessionNumber;
+    @Column(name = "pub_doi")
     private String doi;
+    @Column(name = "pub_acknowledgment")
     private String acknowledgment;
+    @Column(name = "status")
+    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+            parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.publication.Publication$Status")})
     private Status status;
+    @Column(name = "keywords")
     private String keywords;
+    @Column(name = "pub_errata_and_notes")
     private String errataAndNotes;
+    @Column(name = "pub_date")
     private GregorianCalendar publicationDate;
+    @Column(name = "pub_completion_date")
     private GregorianCalendar closeDate;
+    @Column(name = "pub_arrival_date")
     private GregorianCalendar entryDate;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pub_jrnl_zdb_id")
     private Journal journal;
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "xpatex_source_zdb_id")
     private Set<ExpressionExperiment> expressionExperiments;
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fig_source_zdb_id")
     private Set<Figure> figures;
     //yes, should be authors, but that conflicts with the string field
     @JsonView(View.PubTrackerAPI.class)
     @JsonProperty("registeredAuthors")
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "int_person_pub", joinColumns = {
+            @JoinColumn(name = "target_id", nullable = false, updatable = false)},
+            inverseJoinColumns = {@JoinColumn(name = "source_id",
+                    nullable = false, updatable = false)})
     private Set<Person> people;
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mh_pub_zdb_id")
+    @OrderBy()
     private SortedSet<MeshHeading> meshHeadings;
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pnote_pub_zdb_id")
     private Set<PublicationNote> notes;
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pdx_pub_zdb_id")
     private Set<PublicationDbXref> dbXrefs;
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pf_pub_zdb_id")
+    @OrderBy("originalFileName")
     private SortedSet<PublicationFile> files;
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pth_pub_zdb_id")
     private Set<PublicationTrackingHistory> statusHistory;
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pubcst_pub_zdb_id")
     private Set<CorrespondenceSentMessage> sentMessages;
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pubcre_pub_zdb_id")
     private Set<CorrespondenceReceivedMessage> receivedMessages;
+    @Column(name = "pub_last_correspondence_date")
     private Date lastCorrespondenceDate;
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ppc_pub_zdb_id")
     private Set<PublicationProcessingChecklistEntry> processingChecklistEntries;
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "zdep_pub_zdb_id")
+    private Set<ZebrashareEditor> zebrashareEditors;
 
+    @Transient
     private boolean deletable;
+    @Column(name = "pub_can_show_images")
     private boolean canShowImages;
 
+    @Column(name = "pub_is_curatable")
     private boolean curatable;
 
+    @Column(name = "pub_is_indexed")
     private boolean indexed;
+    @Column(name = "pub_indexed_date")
     private GregorianCalendar indexedDate;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pub_indexed_by")
     private Person indexedBy;
+
     public Set<PubmedPublicationAuthor> getAuthorPubs() {
         return authorPubs;
     }
@@ -73,7 +151,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     public void setAuthorPubs(Set<PubmedPublicationAuthor> authorPubs) {
         this.authorPubs = authorPubs;
     }
-    private Set<ZebrashareEditor> zebrashareEditors;
+
 
     public Set<ExpressionExperiment> getExpressionExperiments() {
         return expressionExperiments;

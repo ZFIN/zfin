@@ -69,6 +69,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void retrieveSinglePublication() {
+
         String pubZdbId = "ZDB-PUB-050607-10";
         Publication testPublication = publicationRepository.getPublication(pubZdbId);
 
