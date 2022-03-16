@@ -103,7 +103,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
         Criteria criteria = session.createCriteria(Accession.class);
         criteria.add(Restrictions.eq("number", number));
         if (referenceDatabases != null && referenceDatabases.length > 0 && referenceDatabases[0] != null) {
-            criteria.add(Restrictions.in("referenceDatabase", referenceDatabases));
+            criteria.add(Restrictions.in("referenceDatabase", (Object[])referenceDatabases));
         }
         return (Accession) criteria.uniqueResult();
     }
@@ -126,7 +126,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
         Session session = HibernateUtil.currentSession();
 
         Criteria criteria = session.createCriteria(MarkerDBLink.class);
-        criteria.add(Restrictions.in("referenceDatabase", referenceDatabases));
+        criteria.add(Restrictions.in("referenceDatabase", (Object[])referenceDatabases));
         criteria.addOrder(Order.asc("accessionNumber"));
         List<MarkerDBLink> dbLinks = criteria.list();
 
@@ -172,7 +172,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
         Session session = HibernateUtil.currentSession();
 
         Criteria criteria = session.createCriteria(MarkerDBLink.class);
-        criteria.add(Restrictions.in("referenceDatabase", referenceDatabases));
+        criteria.add(Restrictions.in("referenceDatabase", (Object[]) referenceDatabases));
         criteria.addOrder(Order.asc("accessionNumber"));
         List<MarkerDBLink> dbLinks = criteria.list();
 
@@ -223,7 +223,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
         Criteria criteria = session.createCriteria(MarkerDBLink.class);
         criteria.add(Restrictions.eq("accessionNumber", accessionString));
         if (referenceDatabases != null && referenceDatabases.length > 0 && referenceDatabases[0] != null) {
-            criteria.add(Restrictions.in("referenceDatabase", referenceDatabases));
+            criteria.add(Restrictions.in("referenceDatabase", (Object[]) referenceDatabases));
         }
         criteria.addOrder(Order.asc("referenceDatabase"));
         criteria.addOrder(Order.asc("accessionNumber"));
@@ -328,7 +328,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
         Criterion c2 = Restrictions.eq("accessionNumber", truncatedAccession);
         criteria.add(Restrictions.or(c1, c2));
         if (referenceDatabases != null && referenceDatabases.length > 0 && referenceDatabases[0] != null) {
-            criteria.add(Restrictions.in("referenceDatabase", referenceDatabases));
+            criteria.add(Restrictions.in("referenceDatabase", (Object[]) referenceDatabases));
         }
         criteria.addOrder(Order.asc("referenceDatabase"));
         criteria.addOrder(Order.asc("accessionNumber"));
@@ -340,7 +340,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
         Criteria criteria = session.createCriteria(TranscriptDBLink.class);
         criteria.add(Restrictions.eq("accessionNumber", accessionString));
         if (referenceDatabases != null && referenceDatabases.length > 0 && referenceDatabases[0] != null) {
-            criteria.add(Restrictions.in("referenceDatabase", referenceDatabases));
+            criteria.add(Restrictions.in("referenceDatabase", (Object[]) referenceDatabases));
         }
         criteria.addOrder(Order.asc("referenceDatabase"));
         criteria.addOrder(Order.asc("accessionNumber"));
@@ -361,7 +361,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(TranscriptDBLink.class);
         criteria.add(Restrictions.eq("transcript", transcript));
-        criteria.add(Restrictions.in("referenceDatabase", referenceDatabases));
+        criteria.add(Restrictions.in("referenceDatabase", (Object[]) referenceDatabases));
         criteria.addOrder(Order.asc("accessionNumber"));
         return criteria.list();
     }
@@ -402,7 +402,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(MarkerDBLink.class);
         criteria.add(Restrictions.eq("marker", marker));
-        criteria.add(Restrictions.not(Restrictions.in("referenceDatabase", referenceDatabases)));
+        criteria.add(Restrictions.not(Restrictions.in("referenceDatabase", (Object[]) referenceDatabases)));
         criteria.addOrder(Order.asc("referenceDatabase"));
         criteria.addOrder(Order.asc("marker"));
         List<MarkerDBLink> markerDBLinkList = criteria.list();
@@ -431,7 +431,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
         Criteria criteria = session.createCriteria(MarkerDBLink.class);
         criteria.add(Restrictions.eq("marker", marker));
         if (referenceDatabases.length > 0) {
-            criteria.add(Restrictions.in("referenceDatabase", referenceDatabases));
+            criteria.add(Restrictions.in("referenceDatabase", (Object[]) referenceDatabases));
         }
         criteria.addOrder(Order.asc("referenceDatabase"));
         criteria.addOrder(Order.asc("marker"));
@@ -943,7 +943,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
                 " and mr.firstMarker.zdbID = :markerZdbId " +
                 " ";
 
-        Set<String> types = new HashSet<String>();
+        Set<String> types = new HashSet<>();
         if (markerRelationshipTypes.length != 0) {
             for (MarkerRelationship.Type type : markerRelationshipTypes) {
                 types.add(type.toString());
