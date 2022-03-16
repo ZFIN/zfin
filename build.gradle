@@ -1,6 +1,7 @@
 buildscript {
     dependencies {
         classpath 'org.postgresql:postgresql:42.2.18'
+        classpath 'org.hibernate:hibernate-gradle-plugin:5.6.5.Final'
     }
 }
 
@@ -10,9 +11,17 @@ plugins {
 
 apply plugin: 'java'
 apply plugin: 'groovy'
+apply plugin: 'org.hibernate.orm'
 apply from: 'agr.gradle'
 apply from: 'console.gradle'
 
+hibernate {
+    enhance {
+        enableLazyInitialization= true
+        enableDirtyTracking = true
+        enableAssociationManagement = true
+    }
+}
 //apply from: file('setupTestsReports.gradle')
 
 sourceCompatibility = 14
@@ -810,6 +819,7 @@ dependencies {
     //implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.4")
     implementation 'junit:junit:4.11'
+    implementation group: 'org.hibernate', name: 'hibernate-gradle-plugin', version: '5.6.5.Final'
     testImplementation group: 'xerces', name: 'xercesImpl', version: '2.12.1'
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.4.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.4.2")

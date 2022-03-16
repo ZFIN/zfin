@@ -468,15 +468,14 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
 
-    @SuppressWarnings("unchecked")
     public Figure getFigureById(String zdbID) {
         Session session = HibernateUtil.currentSession();
-        return (Figure) session.get(Figure.class, zdbID);
+        return session.get(Figure.class, zdbID);
     }
 
     public Image getImageById(String zdbID) {
         Session session = HibernateUtil.currentSession();
-        return (Image) session.get(Image.class, zdbID);
+        return session.get(Image.class, zdbID);
 
     }
 
