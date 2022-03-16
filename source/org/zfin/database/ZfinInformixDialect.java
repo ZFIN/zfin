@@ -28,7 +28,6 @@ public class ZfinInformixDialect extends InformixDialect {
         registerHibernateType(Types.JAVA_OBJECT, "string");
     }
 
-    @Override
     public String getIdentitySelectString(String table, String column, int type) throws MappingException {
 //  return type==Types.BIGINT ?
 //             "select dbinfo('serial8') from systables where tabid=1" :

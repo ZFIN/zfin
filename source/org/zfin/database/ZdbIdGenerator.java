@@ -4,12 +4,16 @@ import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logg
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
 import org.hibernate.Session;
+import org.hibernate.boot.model.relational.Database;
+import org.hibernate.boot.model.relational.SqlStringGenerationContext;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.id.Configurable;
 import org.hibernate.id.IdentifierGenerationException;
 import org.hibernate.id.IdentifierGenerator;
 import org.hibernate.jdbc.ReturningWork;
+import org.hibernate.service.ServiceRegistry;
 import org.hibernate.type.Type;
 import org.zfin.construct.ConstructCuration;
 import org.zfin.framework.HibernateUtil;
@@ -107,7 +111,8 @@ public class ZdbIdGenerator implements IdentifierGenerator, Configurable {
      *
      * @return Serializable String that is the ZDBId.
      */
-    public Serializable generate(SessionImplementor session, Object object) throws HibernateException {
+    @Override
+    public Serializable generate(SharedSessionContractImplementor session, Object object) throws HibernateException {
 
         if (isMarker) {
             Marker marker = (Marker) object;
@@ -164,7 +169,8 @@ public class ZdbIdGenerator implements IdentifierGenerator, Configurable {
     }
 
 
-    public void configure(Type type, Properties params, Dialect d) throws MappingException {
+    @Override
+    public void configure(Type type, Properties params, ServiceRegistry serviceRegistry) throws MappingException {
         objectType = params.getProperty("type");
         insertActiveData = Boolean.valueOf(params.getProperty("insertActiveData"));
         insertActiveSource = Boolean.valueOf(params.getProperty("insertActiveSource"));
@@ -198,5 +204,21 @@ public class ZdbIdGenerator implements IdentifierGenerator, Configurable {
                     return result;
                 }
         );
+    }
+
+
+    @Override
+    public void registerExportables(Database database) {
+
+    }
+
+    @Override
+    public void initialize(SqlStringGenerationContext context) {
+
+    }
+
+    @Override
+    public boolean supportsJdbcBatchInserts() {
+        return false;
     }
 }

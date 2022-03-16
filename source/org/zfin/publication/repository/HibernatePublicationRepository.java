@@ -1421,7 +1421,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Session session = HibernateUtil.currentSession();
 
         Criteria crit = session.createCriteria(Experiment.class);
-        crit.add(Restrictions.in("name", new String[]{Experiment.STANDARD, Experiment.GENERIC_CONTROL}));
+        crit.add(Restrictions.in("name", List.of(Experiment.STANDARD, Experiment.GENERIC_CONTROL)));
         List<Experiment> experimentList = (List<Experiment>) crit.list();
 
 
@@ -1890,7 +1890,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     public SortedSet<Publication> getAllPublicationsForFeature(Feature feature) {
-        SortedSet<Publication> pubList = new TreeSet<Publication>();
+        SortedSet<Publication> pubList = new TreeSet<>();
         Query query;
         String hql;
         List<Publication> resultList;

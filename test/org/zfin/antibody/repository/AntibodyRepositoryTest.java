@@ -2,6 +2,7 @@ package org.zfin.antibody.repository;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.Species;
@@ -836,6 +837,8 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    @Ignore
+    // this is changing the name / abbrev of the antibody
     public void updateAntibodyViaRenameMarkerMethod() {
 
         // anti-DLX3b
@@ -844,7 +847,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         AntibodyRepository antibodyRepository = RepositoryFactory.getAntibodyRepository();
         Antibody antibody = antibodyRepository.getAntibodyByName(abName);
         antibody.setAbbreviation("new name");
-
+        antibody.setName("new name");
 
         PublicationRepository pr = RepositoryFactory.getPublicationRepository();
         Publication pub = pr.getPublication("ZDB-PUB-000104-1");
