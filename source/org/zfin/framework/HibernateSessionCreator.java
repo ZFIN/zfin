@@ -4,7 +4,6 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 
 import org.hibernate.InvalidMappingException;
-import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
@@ -154,7 +153,7 @@ public class HibernateSessionCreator {
     }
 
     private Configuration createConfiguration(String db) {
-        Configuration config = new AnnotationConfiguration();
+        Configuration config = new Configuration();
         config.setInterceptor(new StringCleanInterceptor());
         config.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQL9Dialect");
         config.setProperty("hibernate.connection.driver_class", "org.postgresql.Driver");

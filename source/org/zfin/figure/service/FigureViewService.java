@@ -1,7 +1,8 @@
 package org.zfin.figure.service;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.anatomy.DevelopmentStage;
@@ -51,7 +52,7 @@ public class FigureViewService {
         }
 
         //taking advantage of domain objects having their own comparators
-        Collections.sort(rows, ComparatorCreator.orderBy("gene", "fishNameOrder", "experiment", "start", "end", "entity"));
+        rows.sort(ComparatorCreator.orderBy("gene", "fishNameOrder", "experiment", "start", "end", "entity"));
         return rows;
     }
 
@@ -108,7 +109,7 @@ public class FigureViewService {
             }
         }
 
-        Collections.sort(rows, ComparatorCreator.orderBy("antibody", "assay", "fishNameOrder", "experiment", "start", "end", "entity"));
+        rows.sort(ComparatorCreator.orderBy("antibody", "assay", "fishNameOrder", "experiment", "start", "end", "entity"));
 
         return rows;
     }
@@ -139,7 +140,7 @@ public class FigureViewService {
         }
 
         //taking advantage of domain objects having their own comparators, though, in the case of genotype, we don't want it!
-        Collections.sort(rows, ComparatorCreator.orderBy("fishNameOrder", "experiment", "start", "end", "phenotypeStatement"));
+        rows.sort(ComparatorCreator.orderBy("fishNameOrder", "experiment", "start", "end", "phenotypeStatement"));
         return rows;
     }
 
@@ -154,7 +155,7 @@ public class FigureViewService {
             Marker marker = ee.getGene();
 
             if ((marker != null)
-                    && (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM_AND_EFG)||(marker.isInTypeGroup(Marker.TypeGroup.GENEDOM_AND_NTR)))
+                    && (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM_AND_EFG) || (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM_AND_NTR)))
                     && !genes.contains(marker)) {
                 genes.add(ee.getGene());
             }
@@ -236,9 +237,9 @@ public class FigureViewService {
     }
 
     /*
-    * Sorted & unique list of superTerm & subTerm wrapped as PostComposedEntities from figure expression,
-    * excluding if expressionFound is false
-    * */
+     * Sorted & unique list of superTerm & subTerm wrapped as PostComposedEntities from figure expression,
+     * excluding if expressionFound is false
+     * */
     public List<PostComposedEntity> getExpressionEntities(Figure figure) {
         List<PostComposedEntity> entities = new ArrayList<>();
 
@@ -302,12 +303,12 @@ public class FigureViewService {
                 fishList.add(fish);
             }
         }
-        
+
         HashSet hs = new HashSet();
         hs.addAll(fishList);
         fishList.clear();
         fishList.addAll(hs);
-fishList.stream().distinct().collect(Collectors.toList());;
+        fishList.stream().distinct().collect(Collectors.toList());
         Collections.sort(fishList);
         return fishList;
     }
@@ -444,10 +445,12 @@ fishList.stream().distinct().collect(Collectors.toList());;
         }
         return !publication.getAcknowledgment().equals("");
     }
+
     public boolean isZebrasharePub(Publication publication) {
 
         return publication.getJournal().getZdbID().equals("ZDB-JRNL-181119-2");
     }
+
     /**
      * This logic was taken from the app page. For these 3 pubs, we show an extra link.
      */
