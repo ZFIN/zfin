@@ -3,18 +3,22 @@
  */
 package org.zfin.sequence.blast ;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.zfin.sequence.Accession;
 import org.zfin.sequence.reno.RunCandidate;
 
 import java.util.HashSet;
 import java.util.Set;
 
+@Setter
+@Getter
 public class Query implements Comparable {
 
     private String zdbID ; 
     private Accession accession  ; 
     private RunCandidate runCandidate; 
-    private Set<Hit> blastHits = new HashSet<Hit>() ; 
+    private Set<Hit> blastHits = new HashSet<>() ;
 
     public String getName() {
         return accession.getNumber();
@@ -34,46 +38,6 @@ public class Query implements Comparable {
         return accession.getURL();
     }
     
-    /**
-     * Get accession.
-     *
-     * @return accession as String.
-     */
-    public Accession getAccession()
-    {
-        return accession;
-    }
-    
-    /**
-     * Set accession.
-     *
-     * @param accession the value to set.
-     */
-    public void setAccession(Accession accession)
-    {
-        this.accession = accession;
-    }
-    
-    /**
-     * Get zdbID.
-     *
-     * @return zdbID as String.
-     */
-    public String getZdbID()
-    {
-        return zdbID;
-    }
-    
-    /**
-     * Set zdbID.
-     *
-     * @param zdbID the value to set.
-     */
-    public void setZdbID(String zdbID)
-    {
-        this.zdbID = zdbID;
-    }
-
     public Set<Hit> getBlastHits() {
         return blastHits ; 
     }
@@ -83,26 +47,6 @@ public class Query implements Comparable {
     }
     
     
-    /**
-     * Get runCandidate.
-     *
-     * @return runCandidate as RunCandidate.
-     */
-    public RunCandidate getRunCandidate()
-    {
-        return runCandidate;
-    }
-    
-    /**
-     * Set runCandidate.
-     *
-     * @param runCandidate the value to set.
-     */
-    public void setRunCandidate(RunCandidate runCandidate)
-    {
-        this.runCandidate = runCandidate;
-    }
-
     /**
      *
      * Note: compareTo method is using Accession.getNumber(), so there's no zeropad happening

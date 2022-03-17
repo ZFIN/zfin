@@ -67,7 +67,7 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-        AlignmentsControllerTest.class,
+        //AlignmentsControllerTest.class,
         AnatomyRepositoryTest.class,
         AntibodyRepositoryTest.class,
         AntibodyServiceTest.class,
@@ -119,9 +119,9 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         ProfileServiceTest.class,
         PublicationRepositoryTest.class,
         RecordAttributionTest.class,
-        RenoMultiRunTest.class,
-        RenoRedundancyCandidateControllerTest.class,
-        RenoRepositoryTest.class,
+        //RenoMultiRunTest.class,
+        //RenoRedundancyCandidateControllerTest.class,
+        //RenoRepositoryTest.class,
         SequenceRepositoryTest.class,
         SequenceServiceTest.class,
         SingleAssociatedGenesFromQueryTest.class,
