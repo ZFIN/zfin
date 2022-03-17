@@ -1,5 +1,7 @@
 package org.zfin.sequence.reno;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.GenericGenerator;
@@ -15,6 +17,8 @@ import org.zfin.sequence.blast.Query;
 import javax.persistence.*;
 import java.util.*;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "run_candidate")
 public class RunCandidate {
@@ -230,14 +234,6 @@ public class RunCandidate {
 
     public void setOccurrenceOrder(int occurrenceOrder) {
         this.occurrenceOrder = occurrenceOrder;
-    }
-
-    public Set<Query> getCandidateQueries() {
-        return candidateQueries;
-    }
-
-    public void setCandidateQueries(Set<Query> candidateQueries) {
-        this.candidateQueries = candidateQueries;
     }
 
     public boolean isOwner() {
