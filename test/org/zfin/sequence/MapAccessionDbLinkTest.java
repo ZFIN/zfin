@@ -2,6 +2,7 @@ package org.zfin.sequence;
 
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.Species;
@@ -298,6 +299,7 @@ public class MapAccessionDbLinkTest extends AbstractDatabaseTest {
 
 
     @Test
+    @Ignore
     public void testAccessionsToMarkerDBLink() {
 
         Session session = HibernateUtil.currentSession();
