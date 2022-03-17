@@ -33,19 +33,9 @@ public class Query implements Comparable {
         return true ; 
     }
 
-
     public String getURL() {
         return accession.getURL();
     }
-    
-    public Set<Hit> getBlastHits() {
-        return blastHits ; 
-    }
-
-    public void setBlastHits(Set<Hit> blastHits) {
-        this.blastHits = blastHits ; 
-    }
-    
     
     /**
      *

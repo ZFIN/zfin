@@ -31,7 +31,7 @@ public class RunCandidatePresentationTest extends EntityPresentation {
         marker.setName("fibroblast growth factor 8 a");
         MarkerType type = new MarkerType();
         type.setType(Marker.Type.GENE);
-        Set<Marker.TypeGroup> groups = new HashSet<Marker.TypeGroup>();
+        Set<Marker.TypeGroup> groups = new HashSet<>();
         groups.add(Marker.TypeGroup.GENEDOM);
         type.setTypeGroups(groups);
         marker.setMarkerType(type);
@@ -44,7 +44,7 @@ public class RunCandidatePresentationTest extends EntityPresentation {
         MarkerDBLink dblink = new MarkerDBLink();
         dblink.setMarker(marker);
         
-        Set<MarkerDBLink> dblinks = new HashSet<MarkerDBLink>();
+        Set<MarkerDBLink> dblinks = new HashSet<>();
         dblinks.add(dblink);
 
         Accession acc = new Accession();
@@ -53,7 +53,7 @@ public class RunCandidatePresentationTest extends EntityPresentation {
         Query query = new Query();
         query.setAccession(acc);
 
-        Set<Query> queries = new HashSet<Query>();
+        Set<Query> queries = new HashSet<>();
         queries.add(query);
         
         runCandidate.setCandidateQueries(queries);

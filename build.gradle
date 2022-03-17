@@ -1,7 +1,6 @@
 buildscript {
     dependencies {
         classpath 'org.postgresql:postgresql:42.2.18'
-        classpath 'org.hibernate:hibernate-gradle-plugin:5.6.5.Final'
     }
 }
 
@@ -11,17 +10,9 @@ plugins {
 
 apply plugin: 'java'
 apply plugin: 'groovy'
-apply plugin: 'org.hibernate.orm'
 apply from: 'agr.gradle'
 apply from: 'console.gradle'
 
-hibernate {
-    enhance {
-        enableLazyInitialization= true
-        enableDirtyTracking = true
-        enableAssociationManagement = true
-    }
-}
 //apply from: file('setupTestsReports.gradle')
 
 sourceCompatibility = 14
