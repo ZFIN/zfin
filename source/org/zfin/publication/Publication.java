@@ -46,7 +46,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     @JsonView(View.Default.class)
     @Column(name = "pub_mini_ref")
     private String shortAuthorList;
-//    @Basic( fetch = FetchType.LAZY )
+    @Basic( fetch = FetchType.LAZY )
     @Column(name = "pub_abstract")
     private String abstractText;
     @Column(name = "pub_volume")
@@ -58,7 +58,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
             parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.publication.PublicationType")})
     private PublicationType type;
     @Column(name = "accession_no")
-//    @Basic( fetch = FetchType.LAZY )
+    @Basic( fetch = FetchType.LAZY )
     private Integer accessionNumber;
     @Column(name = "pub_doi")
     private String doi;
