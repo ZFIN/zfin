@@ -13,8 +13,8 @@ import javax.persistence.*;
 public class GenericTermRelationship implements TermRelationship {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
-    @GenericGenerator(name = "zfinGenerator",
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "GenericTermRelationship")
+    @GenericGenerator(name = "GenericTermRelationship",
             strategy = "org.zfin.database.ZdbIdGenerator",
             parameters = {
                     @org.hibernate.annotations.Parameter(name = "type", value = "TERMREL")

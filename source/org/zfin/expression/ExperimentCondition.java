@@ -24,8 +24,8 @@ import java.util.List;
 public class ExperimentCondition implements Comparable<ExperimentCondition>, EntityZdbID {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
-    @GenericGenerator(name = "zfinGenerator",
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ExperimentCondition")
+    @GenericGenerator(name = "ExperimentCondition",
             strategy = "org.zfin.database.ZdbIdGenerator",
             parameters = {
                     @org.hibernate.annotations.Parameter(name = "type", value = "EXPCOND"),
