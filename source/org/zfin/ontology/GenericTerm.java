@@ -19,8 +19,8 @@ import java.util.*;
 public class GenericTerm implements Term<GenericTermRelationship> {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
-    @GenericGenerator(name = "zfinGenerator",
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "GenericTerm")
+    @GenericGenerator(name = "GenericTerm",
             strategy = "org.zfin.database.ZdbIdGenerator",
             parameters = {
                     @org.hibernate.annotations.Parameter(name = "type", value = "TERM")
