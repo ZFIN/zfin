@@ -33,8 +33,8 @@ public class Genotype implements Comparable, EntityZdbID {
     public static final String WT = "WT";
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
-    @GenericGenerator(name = "zfinGenerator",
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "Genotype")
+    @GenericGenerator(name = "Genotype",
             strategy = "org.zfin.database.ZdbIdGenerator",
             parameters = {
                     @org.hibernate.annotations.Parameter(name = "type", value = "GENO"),

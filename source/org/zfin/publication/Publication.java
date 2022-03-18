@@ -26,8 +26,8 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
 
     @JsonView(View.Default.class)
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
-    @GenericGenerator(name = "zfinGenerator",
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "Publication")
+    @GenericGenerator(name = "Publication",
             strategy = "org.zfin.database.ZdbIdGenerator",
             parameters = {
                     @org.hibernate.annotations.Parameter(name = "type", value = "PUB"),

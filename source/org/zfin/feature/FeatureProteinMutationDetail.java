@@ -10,8 +10,8 @@ import javax.persistence.*;
 public class FeatureProteinMutationDetail implements Cloneable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
-    @GenericGenerator(name = "zfinGenerator",
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "FeatureProteinMutationDetail")
+    @GenericGenerator(name = "FeatureProteinMutationDetail",
             strategy = "org.zfin.database.ZdbIdGenerator",
             parameters = {
                     @org.hibernate.annotations.Parameter(name = "type", value = "FPMD"),

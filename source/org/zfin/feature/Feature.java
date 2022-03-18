@@ -43,8 +43,8 @@ public class Feature implements EntityNotes, EntityZdbID {
     public static final String UNSPECIFIED = "unspecified";
     public static final String UNKNOWN = "Unknown";
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfinGenerator")
-    @GenericGenerator(name = "zfinGenerator",
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "Feature")
+    @GenericGenerator(name = "Feature",
             strategy = "org.zfin.database.ZdbIdGenerator",
             parameters = {
                     @org.hibernate.annotations.Parameter(name = "type", value = "ALT"),
