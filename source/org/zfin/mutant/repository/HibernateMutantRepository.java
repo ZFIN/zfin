@@ -10,10 +10,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.springframework.stereotype.Repository;
-import org.zfin.expression.ExperimentCondition;
-import org.zfin.expression.ExpressionFigureStage;
-import org.zfin.expression.ExpressionResult;
-import org.zfin.expression.ExpressionStatement;
+import org.zfin.expression.*;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureAlias;
 import org.zfin.framework.HibernateUtil;
@@ -26,7 +23,6 @@ import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.marker.Marker;
-import org.zfin.expression.Experiment;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.agr.*;
 import org.zfin.mutant.*;
@@ -47,7 +43,7 @@ import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
 
 /**
-
+ *
  */
 @Repository
 public class HibernateMutantRepository implements MutantRepository {
@@ -713,7 +709,7 @@ public class HibernateMutantRepository implements MutantRepository {
                 "                left outer join feature_marker_relationship on fmrel_ftr_zdb_id = genofeat_feature_zdb_id" +
                 "                left outer join term as e1b on e1b.term_zdb_id = psg_e1b_zdb_id" +
                 "                left outer join term as e2a on e2a.term_zdb_id = psg_e2a_zdb_id" +
-                "                left outer join term as e2b on e2b.term_zdb_id = psg_e2b_zdb_id" ;
+                "                left outer join term as e2b on e2b.term_zdb_id = psg_e2b_zdb_id";
 
         final Query alleleQuery = HibernateUtil.currentSession().createSQLQuery(alleleQueryString);
         final Query geneQuery = HibernateUtil.currentSession().createSQLQuery(geneQueryString);
@@ -734,7 +730,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
             if (basicPhenoObjects[0].toString().startsWith("ZDB-ALT") || basicPhenoObjects[0].toString().startsWith("ZDB-GENE")) {
                 if (basicPhenoObjects[9] != null) {
-                    primaryGeneticEntityIDs.add("ZFIN:"+basicPhenoObjects[9].toString());
+                    primaryGeneticEntityIDs.add("ZFIN:" + basicPhenoObjects[9].toString());
                     basicPheno.setPrimaryGeneticEntityIDs(primaryGeneticEntityIDs);
                 }
             } else {
@@ -1456,14 +1452,14 @@ public class HibernateMutantRepository implements MutantRepository {
         return query.list();
     }
 
-    public List<ExperimentCondition> getExperimentConditions (Experiment experiment){
+    public List<ExperimentCondition> getExperimentConditions(Experiment experiment) {
         return HibernateUtil.currentSession()
                 .createCriteria(ExperimentCondition.class)
                 .add(Restrictions.eq("experiment", experiment))
                 .list();
     }
 
-    public List<ExperimentCondition> getExperimentConditionsByExp (Experiment experiment){
+    public List<ExperimentCondition> getExperimentConditionsByExp(Experiment experiment) {
 
 
         String hql = " select distinct expressionResult from ExpressionResult expressionResult where " +
@@ -1475,7 +1471,9 @@ public class HibernateMutantRepository implements MutantRepository {
 
         return query.list();
 
-    };
+    }
+
+    ;
 
 
     public List<ExpressionResult> getConstructExpressionSummary(List<String> genoxIds) {
@@ -1817,7 +1815,7 @@ public class HibernateMutantRepository implements MutantRepository {
         boolean strsAvailable = CollectionUtils.isNotEmpty(fish.getStrList());
         if (strsAvailable) {
             int index = 0;
-            for (SequenceTargetingReagent str : fish.getStrList())
+            for (SequenceTargetingReagent ignored : fish.getStrList())
                 hql += " AND :str_" + index++ + " member of fish.strList ";
         }
         hql += " AND (select count(str.id) from Fish zfish" +
@@ -1834,7 +1832,7 @@ public class HibernateMutantRepository implements MutantRepository {
         if (strsAvailable) {
             int index = 0;
             for (SequenceTargetingReagent str : fish.getStrList())
-                query.setParameter("str_" + index++, str.getZdbID());
+                query.setParameter("str_" + index++, str);
         }
         List<Fish> fishList = query.list();
         session.flush();
