@@ -354,6 +354,7 @@ public class MutantRepositoryTest {
         String genotypeID = "ZDB-GENO-960809-7";
         String strID = "ZDB-TALEN-150413-1";
         Fish fish = new Fish();
+        HibernateUtil.createTransaction();
         fish.setGenotype(mutantRepository.getGenotypeByID(genotypeID));
         List<SequenceTargetingReagent> strList = new ArrayList<>(2);
         strList.add((SequenceTargetingReagent) getMarkerRepository().getMarkerByID(strID));
