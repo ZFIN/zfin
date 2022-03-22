@@ -1,10 +1,7 @@
 package org.zfin.mutant.service;
 
 import lombok.extern.log4j.Log4j2;
-import org.alliancegenome.curation_api.model.entities.AGMDiseaseAnnotation;
-import org.alliancegenome.curation_api.model.entities.AffectedGenomicModel;
-import org.alliancegenome.curation_api.model.entities.DiseaseAnnotation;
-import org.alliancegenome.curation_api.model.entities.Reference;
+import org.alliancegenome.curation_api.model.entities.*;
 import org.alliancegenome.curation_api.model.entities.ontology.DOTerm;
 import org.alliancegenome.curation_api.model.entities.ontology.EcoTerm;
 import org.zfin.alliancegenome.AllianceRestManager;
@@ -22,7 +19,9 @@ public class DiseaseAnnotationService extends AllianceService {
         AGMDiseaseAnnotation da = new AGMDiseaseAnnotation();
         da.setObject(getDoTerm(dam.getDiseaseAnnotation().getDisease()));
 //        da.setSubject(getBiologicalEntity(dam.getFishExperiment().getFish()));
-        da.setDiseaseRelation(DiseaseAnnotation.DiseaseRelation.is_model_of);
+        VocabularyTerm isModelOf = new VocabularyTerm();
+        isModelOf.setName("is model of");
+        da.setDiseaseRelation(isModelOf);
         da.setNegated(Boolean.FALSE);
         da.setEvidenceCodes(List.of(getEvidenceCodes(dam.getDiseaseAnnotation())));
         da.setSingleReference(getCrossReference(dam.getDiseaseAnnotation()));
