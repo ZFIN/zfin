@@ -22,7 +22,9 @@ public class ZfinAllianceConverter {
         //TODO annotation.setSubject(convertFish(model.getFishExperiment().getFish()));
         annotation.setEvidenceCodes(convertEvidenceCodes(model.getDiseaseAnnotation().getEvidenceCode()));
         //annotation.setReferenceList(convertReferences(model.getDiseaseAnnotation().getPublication()));
-        annotation.setDiseaseRelation(DiseaseAnnotation.DiseaseRelation.is_model_of);
+        VocabularyTerm isModelOf = new VocabularyTerm();
+        isModelOf.setName("is model of");
+        annotation.setDiseaseRelation(isModelOf);
         annotation.setModEntityId(model.getDiseaseAnnotation().getZdbID());
         return annotation;
     }

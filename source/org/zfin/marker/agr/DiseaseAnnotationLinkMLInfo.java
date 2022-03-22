@@ -129,7 +129,9 @@ public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
                         AffectedGenomicModel model = getAffectedGenomicModel(fish);
                         annotation.setSubject(model.getCurie());
                         annotation.setObject(disease.getOboID());
-                        annotation.setLastUpdated(format(map.get(publication)));
+                        annotation.setDateLastModified(format(map.get(publication)));
+                        annotation.setCreatedBy("ZFIN:CURATOR");
+                        annotation.setModifiedBy("ZFIN:CURATOR");
 
                         List<String> evidenceCodes = evidenceSet.stream()
                                 .map(ZfinAllianceConverter::convertEvidenceCodes)
@@ -149,8 +151,8 @@ public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
                             diseaseDTOList.add(annotation);
                         }
                         org.alliancegenome.curation_api.model.ingest.dto.ConditionRelationDTO condition = populateExperimentConditions(fishExperiment);
-                        List<org.alliancegenome.curation_api.model.ingest.dto.ConditionRelationDTO> conditions = new ArrayList<>();
-                        conditions.add(condition);
+                        condition.setHandle(fishExperiment.getExperiment().getName());
+                        condition.setSingleReference(getSingleReference(publication));
                         annotation.setConditionRelations(List.of(condition));
                         diseaseDTOList.add(annotation);
 
@@ -181,6 +183,8 @@ public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
 
             org.alliancegenome.curation_api.model.ingest.dto.ConditionRelationDTO condition = populateExperimentConditions(damo.getFishExperiment());
             List<org.alliancegenome.curation_api.model.ingest.dto.ConditionRelationDTO> conditions = new ArrayList<>();
+            condition.setHandle(damo.getFishExperiment().getExperiment().getName());
+            condition.setSingleReference(getSingleReference(damo.getDiseaseAnnotation().getPublication()));
             conditions.add(condition);
             annotation.setConditionRelations(List.of(condition));
             diseaseDTOList.add(annotation);
@@ -194,7 +198,7 @@ public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
     }
 
     public static String format(GregorianCalendar calendar) {
-        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
         fmt.setCalendar(calendar);
         String dateFormatted = fmt.format(calendar.getTime());
         return dateFormatted;
