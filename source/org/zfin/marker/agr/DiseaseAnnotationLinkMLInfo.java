@@ -51,8 +51,8 @@ public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
     private void init() throws IOException {
         initAll();
         List<AGMDiseaseAnnotationDTO> allDiseaseDTO = getDiseaseInfo(numfOfRecords);
-         BasicDiseaseAnnotationLinkML basicInfo = new BasicDiseaseAnnotationLinkML();
-         basicInfo.setDiseaseAgmIngest(allDiseaseDTO);
+        BasicDiseaseAnnotationLinkML basicInfo = new BasicDiseaseAnnotationLinkML();
+        basicInfo.setDiseaseAgmIngest(allDiseaseDTO);
         ObjectMapper mapper = new ObjectMapper();
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
@@ -112,11 +112,10 @@ public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
 
                     // Hack: get the date stamp from the ZDB-DAT ID.
                     // Use the earliest one we have per pub
-                    Map<Publication, GregorianCalendar> map = new HashMap<>();
+                    Map<Publication, String> map = new HashMap<>();
                     publicationDateMap.forEach((publication, ids) -> {
                         ids.sort(Comparator.naturalOrder());
-                        GregorianCalendar date = ActiveData.getDateFromId(ids.get(0));
-                        map.put(publication, date);
+                        map.put(publication, ids.get(0));
                     });
                     // loop over each publication: final loop as each publication should generate a individual record in the file.
                     evidenceMap.forEach((publication, evidenceSet) -> {
@@ -170,9 +169,11 @@ public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
             AGMDiseaseAnnotationDTO annotation = new AGMDiseaseAnnotationDTO();
             annotation.setDataProvider("ZFIN");
             annotation.setCreatedBy("ZFIN:curator");
+            annotation.setModifiedBy("ZFIN:curator");
             annotation.setModEntityId(damo.getDiseaseAnnotation().getZdbID());
             annotation.setDiseaseRelation(RelationshipDTO.IS_MODEL_OF);
-            annotation.setSubject(fish.getZdbID());
+            annotation.setSubject("ZFIN:" + fish.getZdbID());
+            annotation.setDateLastModified(format(damo.getDiseaseAnnotation().getZdbID()));
 
             annotation.setObject(damo.getDiseaseAnnotation().getDisease().getOboID());
 
@@ -197,11 +198,15 @@ public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
         return "PMID:" + publication.getAccessionNumber();
     }
 
+    public static String format(String zdbID) {
+        GregorianCalendar date = ActiveData.getDateFromId(zdbID);
+        return format(date);
+    }
+
     public static String format(GregorianCalendar calendar) {
         SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
         fmt.setCalendar(calendar);
-        String dateFormatted = fmt.format(calendar.getTime());
-        return dateFormatted;
+        return fmt.format(calendar.getTime());
     }
 
     private void populateConditionClass(ExperimentalConditionDTO expcond, ExperimentCondition condition) {
