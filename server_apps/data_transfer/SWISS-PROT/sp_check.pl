@@ -15,9 +15,12 @@
 # look into.
 
 use DBI;
-use lib "<!--|ROOT_PATH|-->/server_apps/";
-use ZFINPerlModules;
 use POSIX;
+
+assert_environment();
+
+use lib $ENV{'ROOT_PATH'} . "/server_apps/";
+use ZFINPerlModules;
 
 # Take a SP file as input (content format restricted).
 
@@ -27,8 +30,8 @@ init_files();
 my $num_ok = 0;    # number of good records that are going to be loaded 
 my $num_prob = 0;  # number of problem records
 
-my $dbname = "<!--|DB_NAME|-->";
-my $dbhost = "<!--|PGHOST|-->";
+my $dbname = $ENV{'DB_NAME'};
+my $dbhost = $ENV{'PGHOST'};
 my $username = "";
 my $password = "";
 
@@ -540,4 +543,24 @@ sub md5_file () {
    my $hash = `md5sum '$file' | cut -d ' ' -f 1`;
    $hash =~ s/\s+$//;
    return $hash;
+}
+
+sub assert_environment() {
+	my $required_var = $ENV{'ROOT_PATH'};
+	if (!$required_var) {
+		print("No ROOT_PATH defined\n");
+		exit(2);
+	}
+
+	$required_var = $ENV{'DB_NAME'};
+	if (!$required_var) {
+		print("No DB_NAME defined\n");
+		exit(2);
+	}
+
+	$required_var = $ENV{'PGHOST'};
+	if (!$required_var) {
+		print("No PGHOST defined\n");
+		exit(2);
+	}
 }
