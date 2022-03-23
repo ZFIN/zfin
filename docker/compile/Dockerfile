@@ -3,8 +3,10 @@ FROM gradle:jdk17
 RUN apt update && apt install -y --no-install-recommends \
        ant groovy nodejs npm postgresql-client tcsh sudo \
        vim nano emacs iputils-ping docker.io imagemagick \
-       libwww-perl libdbi-perl libdbd-pg-perl
+       libwww-perl libdbi-perl libdbd-pg-perl libmime-lite-perl \
+       cpanminus build-essential
 
+RUN cpanm Devel::Camelcadedb
 
 RUN mkdir /opt/misc 
 COPY ./apache-groovy-binary-3.0.9.zip.sha256 /opt/misc
