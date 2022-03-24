@@ -2,6 +2,21 @@
 
 <jsp:useBean id="publication" class="org.zfin.publication.Publication" scope="request"/>
 
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        var $overlay = jQuery("#generate-reference-overlay"), $triggerButton = jQuery("#generate-reference-button");
+        $overlay.appendTo(jQuery("body"));
+        $overlay.on(jQuery.modal.CLOSE, function () {
+        });
+        $triggerButton.click(function (evt) {
+            evt.preventDefault();
+            $overlay.modal({
+                fadeDuration: 100
+            });
+        });
+    });
+</script>
+
 <z:attributeList>
     <z:attributeListItem label="Authors">
         ${publication.authors}
