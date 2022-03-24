@@ -16,18 +16,18 @@ public class FishService extends AllianceService {
 
     public static void submitFishToAlliance(Fish fish) {
         AffectedGenomicModel model = new AffectedGenomicModel();
-        model.setCurie(fish.getZdbID());
+        model.setCurie("ZFIN:" + fish.getZdbID());
         model.setName(fish.getDisplayName());
         model.setTaxon(getNcbiTaxonTerm());
         CrossReference reference = new CrossReference();
-        reference.setCurie(fish.getZdbID());
+        reference.setCurie(model.getCurie());
         reference.setPageAreas(List.of("pages"));
-        model.setCrossReferences(List.of(reference));
+//        model.setCrossReferences(List.of(reference));
 
         AgmRESTInterfaceAlliance api = AllianceRestManager.getAgmEndpoints();
-        ObjectResponse<AffectedGenomicModel> agmFish =null;
+        ObjectResponse<AffectedGenomicModel> agmFish = null;
         try {
-            agmFish =api.addAffectedGenomicModel(model);
+            agmFish = api.addAffectedGenomicModel(model);
         } catch (Exception e) {
             log.error("Could not create Affected Genomic Model (Fish) at Alliance: " + e.getMessage());
         }
