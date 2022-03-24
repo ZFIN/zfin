@@ -31,7 +31,6 @@ import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.server.DTOMarkerService;
 import org.zfin.infrastructure.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
-import org.zfin.mapping.GenomeLocation;
 import org.zfin.mapping.MarkerLocation;
 import org.zfin.marker.*;
 import org.zfin.marker.fluorescence.FluorescentMarker;
@@ -55,6 +54,9 @@ import org.zfin.sequence.*;
 import org.zfin.sequence.blast.Database;
 import org.zfin.util.NumberAwareStringComparator;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
@@ -150,23 +152,25 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     public Transcript getTranscriptByZdbID(String zdbID) {
-        return (Transcript) currentSession().get(Transcript.class, zdbID);
+        return currentSession().get(Transcript.class, zdbID);
     }
 
     public Transcript getTranscriptByName(String name) {
         Session session = currentSession();
-        Criteria criteria = session.createCriteria(Transcript.class);
-        criteria.add(Restrictions.eq("name", name));
-        return (Transcript) criteria.uniqueResult();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<Transcript> cr = cb.createQuery(Transcript.class);
+        Root<Transcript> root = cr.from(Transcript.class);
+        cr.select(root).where(cb.equal(root.get("name"), name));
+        return session.createQuery(cr).uniqueResult();
     }
 
     public Transcript getTranscriptByVegaID(String vegaID) {
         Session session = currentSession();
-        Criteria criteria = session.createCriteria(TranscriptDBLink.class);
-        criteria.add(Restrictions.eq("accessionNumber", vegaID));
-        criteria.setMaxResults(1);
-        TranscriptDBLink dblink = (TranscriptDBLink) criteria.uniqueResult();
-        return getTranscriptByZdbID(dblink.getTranscript().getZdbID());
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<TranscriptDBLink> cr = cb.createQuery(TranscriptDBLink.class);
+        Root<TranscriptDBLink> root = cr.from(TranscriptDBLink.class);
+        cr.select(root).where(cb.equal(root.get("accessionNumber"), vegaID));
+        return getTranscriptByZdbID(session.createQuery(cr).setMaxResults(1).uniqueResult().getTranscript().getZdbID());
     }
 
     public List<ConstructComponent> getConstructComponent(String constructID) {

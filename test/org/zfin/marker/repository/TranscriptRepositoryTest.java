@@ -80,7 +80,12 @@ public class TranscriptRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(t);
         List<TranscriptDBLink> dblinks = RepositoryFactory.getSequenceRepository().getTranscriptDBLinksForMarkerAndDisplayGroup(t, DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE);
         assertEquals(1, dblinks.size());
+    }
 
+    @Test
+    public void getVegaTranscript() {
+        Transcript t = RepositoryFactory.getMarkerRepository().getTranscriptByVegaID("ENSDART00000076998");
+        assertNotNull(t);
     }
 
 }
