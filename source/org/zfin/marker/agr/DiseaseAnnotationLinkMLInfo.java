@@ -50,6 +50,7 @@ public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
 
     private void init() throws IOException {
         initAll();
+        populateHighLevelConditionTerms();
         List<AGMDiseaseAnnotationDTO> allDiseaseDTO = getDiseaseInfo(numfOfRecords);
         BasicDiseaseAnnotationLinkML basicInfo = new BasicDiseaseAnnotationLinkML();
         basicInfo.setDiseaseAgmIngest(allDiseaseDTO);
@@ -150,7 +151,7 @@ public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
                             diseaseDTOList.add(annotation);
                         }
                         org.alliancegenome.curation_api.model.ingest.dto.ConditionRelationDTO condition = populateExperimentConditions(fishExperiment);
-                        condition.setHandle(fishExperiment.getExperiment().getName());
+                        condition.setHandle(fishExperiment.getExperiment().getName().replace("_", ""));
                         condition.setSingleReference(getSingleReference(publication));
                         annotation.setConditionRelations(List.of(condition));
                         diseaseDTOList.add(annotation);
@@ -184,7 +185,7 @@ public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
 
             org.alliancegenome.curation_api.model.ingest.dto.ConditionRelationDTO condition = populateExperimentConditions(damo.getFishExperiment());
             List<org.alliancegenome.curation_api.model.ingest.dto.ConditionRelationDTO> conditions = new ArrayList<>();
-            condition.setHandle(damo.getFishExperiment().getExperiment().getName());
+            condition.setHandle(damo.getFishExperiment().getExperiment().getName().replace("_", ""));
             condition.setSingleReference(getSingleReference(damo.getDiseaseAnnotation().getPublication()));
             conditions.add(condition);
             annotation.setConditionRelations(List.of(condition));
@@ -219,6 +220,7 @@ public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
             if (highLevelterm.isPresent()) {
                 expcond.setConditionClass(highLevelterm.get().getOboID());
                 expcond.setConditionId(oboID);
+                expcond.setConditionStatement(highLevelterm.get().getTermName() + ": " + expcond.getConditionStatement());
             }
         }
     }
@@ -255,8 +257,12 @@ public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
                     expcond.setConditionTaxon(condition.getTaxaonymTerm().getOboID());
                     conditionStatement = conditionStatement + " " + condition.getTaxaonymTerm().getTermName();
                 }
-                populateConditionClass(expcond, condition);
                 expcond.setConditionStatement(conditionStatement);
+                populateConditionClass(expcond, condition);
+/*
+                String highLevelTermName =
+                expcond.setConditionStatement(expcond.getConditionClass()+": "+conditionStatement);
+*/
                 expconds.add(expcond);
             }
             relation.setConditions(expconds);
@@ -360,6 +366,12 @@ public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
         highLevelConditionTerms.add(new GenericTerm("ZDB-TERM-160831-5", "ZECO:0000103"));
         // make sure it's the last entry as it is a root term.
         highLevelConditionTerms.add(new GenericTerm("ZDB-TERM-160831-6", "ZECO:0000104"));
+    }
+
+    private static void populateHighLevelConditionTerms() {
+        highLevelConditionTerms.forEach(genericTerm -> {
+            genericTerm.setTermName(getOntologyRepository().getTermByOboID(genericTerm.getOboID()).getTermName());
+        });
     }
 
 }
