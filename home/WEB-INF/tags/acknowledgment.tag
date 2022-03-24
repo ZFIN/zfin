@@ -48,8 +48,9 @@ EFFECTS
         </tr>
         <td>
 
-            ZFIN wishes to thank the journal ${publication.journal.name} for permission to reproduce figures from this article.
-            Please note that this material may be protected by copyright.
+            This image is the copyrighted work of the attributed author or publisher, and
+            ZFIN has permission only to display this image to its users.
+            Additional permissions should be obtained from the applicable author or publisher of the image.
 
             <zfin-figure:additionalAcknowledgment publication="${publication}" hasAcknowledgment="${hasAcknowledgment}" />
 
