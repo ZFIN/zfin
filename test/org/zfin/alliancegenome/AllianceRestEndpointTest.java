@@ -1,6 +1,7 @@
 package org.zfin.alliancegenome;
 
 import org.alliancegenome.curation_api.model.entities.DiseaseAnnotation;
+import org.alliancegenome.curation_api.model.entities.VocabularyTerm;
 import org.alliancegenome.curation_api.model.entities.ontology.DOTerm;
 import org.alliancegenome.curation_api.response.ObjectResponse;
 import org.zfin.properties.ZfinProperties;
@@ -23,7 +24,9 @@ public class AllianceRestEndpointTest {
         entity.setId(null);
         entity.setUniqueId("Wonnit");
         entity.setNegated(Boolean.TRUE);
-        entity.setDiseaseRelation(DiseaseAnnotation.DiseaseRelation.is_marker_for);
+        VocabularyTerm vocabularyTerm = new VocabularyTerm();
+        vocabularyTerm.setName("is_marker_of");
+        entity.setDiseaseRelation(vocabularyTerm);
         //ObjectResponse<DiseaseAnnotation> ann = api.updateDiseaseAnnotation(annotation.getEntity());
         ObjectResponse<DiseaseAnnotation> ann = api.addDiseaseAnnotation(entity);
         //ObjectResponse<DiseaseAnnotation> annotation1 = api1.get(4491701L);
