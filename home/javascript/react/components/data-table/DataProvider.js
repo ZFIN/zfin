@@ -5,12 +5,12 @@ import GenericErrorMessage from '../GenericErrorMessage';
 import LoadingSpinner from '../LoadingSpinner';
 import NoData from '../NoData';
 import produce, {setAutoFreeze} from 'immer';
-setAutoFreeze(false);
-
 import PropTypes from 'prop-types';
 import {downloadOptionType, sortOptionType, tableStateType} from '../../utils/types';
 import {isEmptyObject} from '../../utils';
 import SortByDropdown from './SortByDropdown';
+
+setAutoFreeze(false);
 
 const DataProvider = ({
     additionalControls,
@@ -102,52 +102,58 @@ const DataProvider = ({
                 </div>
                 }
 
-                <SortByDropdown options={sortOptions} value={tableState.sortBy} onChange={handleSortChange} />
+                <SortByDropdown options={sortOptions} value={tableState.sortBy} onChange={handleSortChange}/>
             </div>
 
             {renderData(data.value)}
 
-            <div className='data-pagination-container'>
-                {pagination && total > 0 && <>
-                    {data.pending ? <LoadingSpinner/> : <span>{start} - {end} of {total}</span>}
-                    <div>
-                        <span className='mr-1'>Show</span>
-                        <select className='form-control-sm mr-2' onChange={handleLimitChange} value={tableState.limit}>
-                            <option value={10}>10</option>
-                            <option value={25}>25</option>
-                            <option value={100}>100</option>
-                        </select>
-                        <button
-                            disabled={tableState.page === 1}
-                            className='btn btn-sm btn-outline-secondary border-0'
-                            onClick={() => handlePageChange(1)}
-                        >
-                            <i className='fas fa-angle-double-left'/>
-                        </button>
-                        <button
-                            disabled={tableState.page === 1}
-                            className='btn btn-sm btn-outline-secondary border-0'
-                            onClick={() => handlePageChange(tableState.page - 1)}
-                        >
-                            <i className='fas fa-angle-left'/>
-                        </button>
-                        <button
-                            disabled={tableState.page === totalPages}
-                            className='btn btn-sm btn-outline-secondary border-0'
-                            onClick={() => handlePageChange(tableState.page + 1)}
-                        >
-                            <i className='fas fa-angle-right'/>
-                        </button>
-                        <button
-                            disabled={tableState.page === totalPages}
-                            className='btn btn-sm btn-outline-secondary border-0'
-                            onClick={() => handlePageChange(totalPages)}
-                        >
-                            <i className='fas fa-angle-double-right'/>
-                        </button>
-                    </div>
-                </>}
-            </div>
+            {pagination && <>
+                {<div className='data-pagination-container'>
+                    {total > 0 && <>
+                        {data.pending ? <LoadingSpinner/> : <span>{start} - {end} of {total}</span>}
+                        <div>
+                            <span className='mr-1'>Show</span>
+                            <select
+                                className='form-control-sm mr-2'
+                                onChange={handleLimitChange}
+                                value={tableState.limit}
+                            >
+                                <option value={10}>10</option>
+                                <option value={25}>25</option>
+                                <option value={100}>100</option>
+                            </select>
+                            <button
+                                disabled={tableState.page === 1}
+                                className='btn btn-sm btn-outline-secondary border-0'
+                                onClick={() => handlePageChange(1)}
+                            >
+                                <i className='fas fa-angle-double-left'/>
+                            </button>
+                            <button
+                                disabled={tableState.page === 1}
+                                className='btn btn-sm btn-outline-secondary border-0'
+                                onClick={() => handlePageChange(tableState.page - 1)}
+                            >
+                                <i className='fas fa-angle-left'/>
+                            </button>
+                            <button
+                                disabled={tableState.page === totalPages}
+                                className='btn btn-sm btn-outline-secondary border-0'
+                                onClick={() => handlePageChange(tableState.page + 1)}
+                            >
+                                <i className='fas fa-angle-right'/>
+                            </button>
+                            <button
+                                disabled={tableState.page === totalPages}
+                                className='btn btn-sm btn-outline-secondary border-0'
+                                onClick={() => handlePageChange(totalPages)}
+                            >
+                                <i className='fas fa-angle-double-right'/>
+                            </button>
+                        </div>
+                    </>}
+                </div>}
+            </>}
         </>
     );
 }

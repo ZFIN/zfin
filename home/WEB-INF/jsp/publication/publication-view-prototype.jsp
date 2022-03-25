@@ -119,6 +119,11 @@
                  data-url="/action/api/publication/${publication.zdbID}/antibodies"></div>
         </z:section>
 
+        <z:section title="${ORTHOLOGY}" >
+            <div class="__react-root" id="PublicationOrthologyTable"
+                 data-url="/action/api/publication/${publication.zdbID}/orthology"></div>
+        </z:section>
+
         <z:section title="${EFGs}">
             <div class="__react-root" id="PublicationMarkerTable"
                  data-url="/action/api/publication/${publication.zdbID}/efgs"></div>

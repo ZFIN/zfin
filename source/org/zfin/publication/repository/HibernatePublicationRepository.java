@@ -1816,6 +1816,31 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     @Override
+    public List<Ortholog> getOrthologPaginationByPub(String pubID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = "select distinct ortho, ortho.zebrafishGene.abbreviationOrder, ortho.ncbiOtherSpeciesGene.organism.displayOrder " +
+                "from Ortholog as ortho " +
+                "join ortho.evidenceSet as evidence " +
+                "where evidence.publication.zdbID = :pubID " +
+                "order by ortho.zebrafishGene.abbreviationOrder, ortho.ncbiOtherSpeciesGene.organism.displayOrder";
+        Query query = session.createQuery(hql);
+        query.setString("pubID", pubID);
+        query.setResultTransformer(new ResultTransformer() {
+            @Override
+            public Object transformTuple(Object[] objects, String[] strings) {
+                return objects[0];
+            }
+
+            @Override
+            public List transformList(List collection) {
+                return collection;
+            }
+        });
+        return (List<Ortholog>) query.list();
+    }
+
+    @Override
     public PaginationResult<Ortholog> getOrthologPaginationByPub(String pubID, GeneBean searchBean) {
         Session session = HibernateUtil.currentSession();
 

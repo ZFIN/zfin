@@ -1,6 +1,8 @@
 package org.zfin.orthology;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.zfin.Species;
+import org.zfin.framework.api.View;
 import org.zfin.marker.Marker;
 
 import java.io.Serializable;
@@ -9,15 +11,21 @@ import java.util.SortedSet;
 
 public class Ortholog implements Comparable, Serializable {
 
+    @JsonView(View.OrthologyAPI.class)
     private String zdbID;
+    @JsonView(View.OrthologyAPI.class)
     private Marker zebrafishGene;
     private Set<OrthologEvidence> evidenceSet;
     private NcbiOtherSpeciesGene ncbiOtherSpeciesGene;
     private SortedSet<OrthologExternalReference> externalReferenceList;
 
+    @JsonView(View.OrthologyAPI.class)
     private String name;
+    @JsonView(View.OrthologyAPI.class)
     private String symbol;
+    @JsonView(View.OrthologyAPI.class)
     private String chromosome;
+    @JsonView(View.OrthologyAPI.class)
     private org.zfin.Species organism;
     private boolean obsolete;
 
