@@ -272,6 +272,9 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             Fish newFish = createFish(publication, fishDTO, report);
             HibernateUtil.flushAndCommitCurrentSession();
             getMutantRepository().updateFishAffectedGeneCount(newFish);
+            // send to Alliance
+            HibernateUtil.currentSession().refresh(newFish);
+            FishService.submitFishToAlliance(newFish);
         } catch (ConstraintViolationException e) {
             HibernateUtil.rollbackTransaction();
             String message = e.getMessage();
@@ -375,8 +378,6 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
 
         if (getMutantRepository().createFish(fish, publication)) {
             report.addMessage("created new fish " + fish.getHandle());
-            // send to Alliance
-            FishService.submitFishToAlliance(fish);
         } else {
             report.addMessage("imported fish " + fish.getHandle());
         }
