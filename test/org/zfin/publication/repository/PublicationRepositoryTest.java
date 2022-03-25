@@ -26,6 +26,7 @@ import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerStatistic;
+import org.zfin.marker.presentation.GeneBean;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
@@ -874,6 +875,20 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         pagination.addFieldFilter(FieldFilter.TARGET_NAME, "x1");
         strList = publicationRepository.getSTRsByPublication("ZDB-PUB-090807-11", pagination);
         assertThat(strList, is(not(empty())));
+    }
+
+    @Test
+    public void getOrthologyByPublication() {
+        GeneBean pagination = new GeneBean();
+        pagination.setFirstPageRecord(0);
+        PaginationResult<Ortholog> strList = publicationRepository.getOrthologPaginationByPub("ZDB-PUB-050823-6", pagination);
+        assertNotNull(strList);
+    }
+
+    @Test
+    public void getOrthologyByPublicationAPI() {
+        List<Ortholog> strList = publicationRepository.getOrthologPaginationByPub("ZDB-PUB-050823-6");
+        assertNotNull(strList);
     }
 }
 

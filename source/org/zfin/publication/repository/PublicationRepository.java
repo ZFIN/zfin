@@ -504,6 +504,7 @@ public interface PublicationRepository extends PaginationParameter {
     List<Ortholog> getOrthologListByMrkr(String mrkrID);
 
     PaginationResult<Ortholog> getOrthologPaginationByPub(String pubID, GeneBean searchBean);
+    List<Ortholog> getOrthologPaginationByPub(String pubID);
 
     List<Publication> getPublicationWithPubMedId(Integer maxResult);
 
