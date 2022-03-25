@@ -8,5 +8,7 @@ WHERE
     trim(get_genotype_display (geno_zdb_id)) != trim(geno_display_name)
     OR trim(geno_display_name) = ''
     OR trim(get_genotype_display (geno_zdb_id)) = ''
+    OR trim(geno_display_name) = '_'
 ORDER BY
     geno_zdb_id
+
