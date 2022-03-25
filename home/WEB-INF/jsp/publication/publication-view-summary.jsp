@@ -124,3 +124,14 @@
 
 
 </z:attributeList>
+
+<div class="jq-modal" id="generate-reference-overlay" style="width: auto; height: auto; padding: 15px 15px;">
+    <div class="popup-content">
+        <div class="popup-header">
+            Citation
+        </div>
+        <div class="popup-body" id="generate-reference-body">
+            ${publication.printable}
+        </div>
+    </div>
+</div>
