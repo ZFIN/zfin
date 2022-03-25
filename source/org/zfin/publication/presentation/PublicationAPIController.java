@@ -26,6 +26,7 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.PhenotypeWarehouse;
 import org.zfin.mutant.SequenceTargetingReagent;
+import org.zfin.orthology.Ortholog;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -123,6 +124,24 @@ public class PublicationAPIController {
                 .collect(Collectors.toList());
 
         response.setResults(paginatedFeatureList);
+        response.setHttpServletRequest(request);
+        return response;
+    }
+
+    @JsonView(View.OrthologyAPI.class)
+    @RequestMapping(value = "/{pubID}/orthology", method = RequestMethod.GET)
+    public JsonResultResponse<Ortholog> getOrthology(@PathVariable String pubID,
+                                                     @Version Pagination pagination) {
+
+        Publication publication = publicationRepository.getPublication(pubID);
+        List<Ortholog> orthologList = publicationRepository.getOrthologPaginationByPub(pubID);
+        JsonResultResponse<Ortholog> response = new JsonResultResponse<>();
+        response.setTotal(orthologList.size());
+
+        response.setResults(orthologList.stream()
+                .skip(pagination.getStart())
+                .limit(pagination.getLimit())
+                .collect(Collectors.toList()));
         response.setHttpServletRequest(request);
         return response;
     }

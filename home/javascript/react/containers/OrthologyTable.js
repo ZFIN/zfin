@@ -49,17 +49,9 @@ const OrthologyTable = ({geneId}) => {
         },
     ];
 
-    const downloadOptions = [
-        {
-            format: 'CSV',
-            url: `/action/marker/${geneId}/download/orthology`,
-        },
-    ];
-
     return (
         <DataTable
             columns={columns}
-            downloadOptions={downloadOptions}
             dataUrl={`/action/api/marker/${geneId}/orthologs`}
             pagination={false}
             rowKey={row => row.zdbID}

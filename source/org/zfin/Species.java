@@ -1,5 +1,8 @@
 package org.zfin;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import org.zfin.framework.api.View;
+
 import javax.persistence.*;
 
 @Entity
@@ -9,10 +12,13 @@ public class Species {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "organism_taxid")
+    @JsonView(View.API.class)
     private int taxonomyID;
     @Column(name = "organism_species")
+    @JsonView(View.API.class)
     private String speciesName;
     @Column(name = "organism_common_name")
+    @JsonView(View.API.class)
     private String commonName;
     @Column(name = "organism_display_order")
     int displayOrder;
