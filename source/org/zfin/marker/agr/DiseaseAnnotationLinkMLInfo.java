@@ -171,7 +171,7 @@ public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
             annotation.setDataProvider("ZFIN");
             annotation.setCreatedBy("ZFIN:curator");
             annotation.setModifiedBy("ZFIN:curator");
-            annotation.setModEntityId(damo.getDiseaseAnnotation().getZdbID());
+//            annotation.setModEntityId(damo.getDiseaseAnnotation().getZdbID());
             annotation.setDiseaseRelation(RelationshipDTO.IS_MODEL_OF);
             annotation.setSubject("ZFIN:" + fish.getZdbID());
             annotation.setDateLastModified(format(damo.getDiseaseAnnotation().getZdbID()));
