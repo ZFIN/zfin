@@ -12,6 +12,7 @@ import org.zfin.publication.Publication;
 import java.util.List;
 
 import static org.zfin.mutant.service.FishService.ZEBRAFISH_TAXID;
+import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
 public class ZfinAllianceConverter {
 
@@ -43,8 +44,9 @@ public class ZfinAllianceConverter {
 
     public static List<EcoTerm> convertEvidenceCodes(String evidenceCode) {
         EcoTerm eco = new EcoTerm();
-        eco.setCurie("ECO:0001547");
-        eco.setName(evidenceCode);
+        if (evidenceCode.contains("ZDB-TERM"))
+            evidenceCode = getOntologyRepository().getTermByZdbID(evidenceCode).getOboID();
+        eco.setCurie(evidenceCode);
         return List.of(eco);
     }
 
