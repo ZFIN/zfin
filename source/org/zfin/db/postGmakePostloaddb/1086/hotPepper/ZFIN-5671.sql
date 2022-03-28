@@ -2,8 +2,8 @@
 --changeset prita:ZFIN-5671
 
 update construct set construct_name='Tg(rnu6-32:CRISPR1-tyr,rnu6-32:CRISPR1-insra,rnu6-14:CRISPR2-insra,rnu6-7:CRISPR1-insrb,rnu6-279:CRISPR2-insrb,cryaa:Cerulean)' where construct_zdb_id='ZDB-TGCONSTRCT-170419-4';
-update marker set mrkr_name='Tg(rnu6-32:CRISPR1-tyr,rnu6-32:CRISPR1-insra,rnu6-14:CRISPR2-insra,rnu6-7:CRISPR1-insrb,rnu6-279:CRISPR2-insrb,cryaa:Cerulean)' where mrkr_zdb_id='ZDB-TGCONSTRCT-170419-4';
-update marker set mrkr_abbrev='Tg(rnu6-32:CRISPR1-tyr,rnu6-32:CRISPR1-insra,rnu6-14:CRISPR2-insra,rnu6-7:CRISPR1-insrb,rnu6-279:CRISPR2-insrb,cryaa:Cerulean)' where mrkr_zdb_id='ZDB-TGCONSTRCT-170419-4';
+        update marker set mrkr_name='Tg(rnu6-32:CRISPR1-tyr,rnu6-32:CRISPR1-insra,rnu6-14:CRISPR2-insra,rnu6-7:CRISPR1-insrb,rnu6-279:CRISPR2-insrb,cryaa:Cerulean)' where mrkr_zdb_id='ZDB-TGCONSTRCT-170419-4';
+update m      arker set mrkr_abbrev='Tg(rnu6-32:CRISPR1-tyr,rnu6-32:CRISPR1-insra,rnu6-14:CRISPR2-insra,rnu6-7:CRISPR1-insrb,rnu6-279:CRISPR2-insrb,cryaa:Cerulean)' where mrkr_zdb_id='ZDB-TGCONSTRCT-170419-4';
 
 delete from construct_component where cc_construct_Zdb_id='ZDB-TGCONSTRCT-170419-4' and cc_order=14;
 
