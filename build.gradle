@@ -106,6 +106,14 @@ task downloadDB(type: GradleBuild) {
     tasks = ['getLatestDatabaseUnload']
 }
 
+task downloadSolrIndex(type: GradleBuild) {
+    tasks = ['getLatestSolrUnload']
+}
+
+task loadSolrIndex(type: GradleBuild) {
+    tasks = ['getLatestSolrIndex']
+}
+
 task loaddb(dependsOn: loadDb) //just an alias, since we're used to loaddb.pl
 
 
