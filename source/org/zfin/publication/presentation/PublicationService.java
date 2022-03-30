@@ -11,6 +11,8 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.expression.Figure;
+import org.zfin.expression.Image;
+import org.zfin.expression.presentation.ImageResult;
 import org.zfin.framework.api.FieldFilter;
 import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
@@ -559,5 +561,15 @@ public class PublicationService {
             }
         }
         return publication;
+    }
+
+    public List<ImageResult> getImageResults(Publication publication) {
+        List<Image> images = publicationRepository.getImages(publication);
+        return images.stream().map(image -> {
+            ImageResult imRes = new ImageResult();
+            imRes.setImageThumbnail(image.getThumbnail());
+            imRes.setImageZdbId(image.getZdbID());
+            return imRes;
+        }).collect(Collectors.toList());
     }
 }

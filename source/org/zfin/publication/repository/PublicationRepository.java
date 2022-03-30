@@ -651,4 +651,6 @@ public interface PublicationRepository extends PaginationParameter {
     Map<Marker, Boolean> areNewGenePubAttribution(List<Marker> attributedMarker, String publicationId);
 
     List<SequenceTargetingReagent> getSTRsByPublication(String publicationID, Pagination pagination);
+
+    List<Image> getImages(Publication publication);
 }
