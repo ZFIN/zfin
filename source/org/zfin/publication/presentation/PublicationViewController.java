@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
+import org.zfin.expression.presentation.ImageResult;
 import org.zfin.feature.Feature;
 import org.zfin.figure.service.FigureViewService;
 import org.zfin.framework.api.Pagination;
@@ -105,10 +106,13 @@ public class PublicationViewController {
             model.addAttribute("zebraShareEditors", zebrashareRepository.getZebraShareEditorsForPublication(publication));
             model.addAttribute("zebraShareFigures", publicationRepository.getFiguresByPublication(publication.getZdbID()));
         }
+        List<ImageResult> images = publicationService.getImageResults(publication);
+        model.addAttribute("imageResults", images);
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication));
         return "publication/publication-view-prototype";
     }
+
     @RequestMapping("/publication/view/{zdbID}")
     public String view(@PathVariable String zdbID, Model model, HttpServletResponse response) {
         Publication publication = getPublication(zdbID);
@@ -245,9 +249,9 @@ public class PublicationViewController {
 
     @RequestMapping("/publication/{pubID}/genotype-list")
     public String showGenotypeList(@PathVariable String pubID,
-                                  @ModelAttribute("formBean") GeneBean geneBean,
-                                  Model model,
-                                  HttpServletResponse response) {
+                                   @ModelAttribute("formBean") GeneBean geneBean,
+                                   Model model,
+                                   HttpServletResponse response) {
         logger.info("zdbID: " + pubID);
 
         Publication publication = getPublication(pubID);

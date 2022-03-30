@@ -890,5 +890,11 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         List<Ortholog> strList = publicationRepository.getOrthologPaginationByPub("ZDB-PUB-050823-6");
         assertNotNull(strList);
     }
+
+    @Test
+    public void getImageForPub() {
+        List<Image> images = publicationRepository.getImages(publicationRepository.getPublication("ZDB-PUB-170608-5"));
+        assertNotNull(images);
+    }
 }
 

@@ -2943,6 +2943,16 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     @Override
+    public List<Image> getImages(Publication publication) {
+        String hql = "from Image where " +
+                " figure.publication = :publication ";
+
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("publication", publication);
+        return query.list();
+    }
+
+    @Override
     public boolean isNewFeaturePubAttribution(Feature marker, String publicationId) {
         String hql = "select pa from PublicationAttribution as pa where " +
                 " pa.dataZdbID = :featureID AND pa.sourceType = :source ";

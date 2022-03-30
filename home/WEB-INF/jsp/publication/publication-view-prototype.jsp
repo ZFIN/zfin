@@ -83,10 +83,7 @@
         </z:section>
 
         <z:section title="${FIGURES}" infoPopup="/ZFIN/help_files/expression_help.html">
-            <z:section title="">
-                <a href="/action/figure/all-figure-view/${publication.zdbID}" style="font-weight: bold">Show all
-                    Expression and Phenotype Data </a>
-            </z:section>
+            <jsp:include page="publication-image-gallery.jsp"/>
         </z:section>
 
         <z:section title="${EXPRESSION}">
