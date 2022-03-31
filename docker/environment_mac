@@ -2,5 +2,7 @@ DOCKER_SSH_AUTH_SOCK=/run/host-services/ssh-auth.sock
 DOCKER_SSH_USER=ryanm
 DOCKER_DB_UNLOADS_PATH=~/development/unloads/db
 DOCKER_SOLR_UNLOADS_PATH=~/development/unloads/solr
+DOCKER_BLASTSERVER_BLAST_DATABASE_PATH=~/development/blast
+DOCKER_ABBLAST_PATH=~/development/blast/ab-blast
 COMPOSE_PROJECT_NAME=zfin.org
 TZ=PST8PDT

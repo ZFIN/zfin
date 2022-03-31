@@ -26,6 +26,8 @@ services:
       #- nfs-zunloads:/research/zunloads
       - ${DOCKER_DB_UNLOADS_PATH}:/opt/zfin/unloads/db
       - ${DOCKER_SOLR_UNLOADS_PATH}:/opt/zfin/unloads/solr
+      - ${DOCKER_BLASTSERVER_BLAST_DATABASE_PATH}:/opt/zfin/blastdb
+      - ${DOCKER_ABBLAST_PATH}:/opt/ab-blast
       - solr_data:/var/solr
       - ./pg_pass:/run/secrets/pg_pass
       - ${DOCKER_SSH_AUTH_SOCK}:/run/host-services/ssh-auth.sock
@@ -93,6 +95,8 @@ services:
       - www_data:/opt/zfin/www_homes/zfin.org
       - catalina_base:/opt/zfin/catalina_bases/zfin.org
       - keystore:/opt/apache/apache-tomcat/conf
+      - ${DOCKER_BLASTSERVER_BLAST_DATABASE_PATH}:/opt/zfin/blastdb
+      - ${DOCKER_ABBLAST_PATH}:/opt/ab-blast
   jenkins:
     container_name: jenkins_container
     build: ./jenkins/
