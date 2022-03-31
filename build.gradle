@@ -627,6 +627,39 @@ task getLatestSolrIndex() {
     }
 }
 
+task getBlastAllDatabases() {
+    doLast {
+        exec {
+            ignoreExitValue = true
+            commandLine "rsync", "-av", env['SSH_USER'] + "@thorax.zfin.org:/research/zfin.org/blastdb/Current", "/opt/zfin/blastdb/"
+        }
+    }
+}
+
+task getBlastSmallDatabases() {
+    doLast {
+        exec {
+            ignoreExitValue = true
+            commandLine "rsync", "-av", "--max-size=100m", env['SSH_USER'] + "@thorax.zfin.org:/research/zfin.org/blastdb/Current", "/opt/zfin/blastdb/"
+        }
+    }
+}
+
+task getBlastBinaries() {
+    doLast {
+        exec {
+            ignoreExitValue = true
+            commandLine "rsync", "-av", env['SSH_USER'] + "@thorax.zfin.org:/opt/ab-blast", "/opt/zfin/blastdb/"
+        }
+    }
+}
+
+task getBlast(type: GradleBuild) {
+    tasks = ['getBlastSmallDatabases',
+             'getBlastBinaries'
+    ]
+}
+
 task createSchemaSpy() {
     doLast {
         println 'Creating ER diagram for ' + ttNameMap.get('DB_NAME') + ' ...'

@@ -2,7 +2,7 @@
 
 <!--|AO_EMAIL_CURATOR|-->	informix\@zfin.org
 <!--|AO_EMAIL_ERR|-->	informix\@zfin.org
-<!--|BLASTSERVER_BLAST_DATABASE_PATH|-->	/research/docker/blastdb
+<!--|BLASTSERVER_BLAST_DATABASE_PATH|-->	/opt/zfin/blastdb
 <!--|CGI_BIN_DIR_NAME|-->	cgi-bin
 <!--|CLIENT_LOCALE|-->	en_US.utf8
 <!--|COUNT_PATO_ERR|-->	informix\@zfin.org
@@ -36,12 +36,12 @@
 <!--|IMAGE_LOAD|-->	/imageLoadUp
 <!--|INSPECTLET_ID|-->	0000000000
 <!--|INSTANCE|-->	docker
-<!--|INTERNAL_BLAST_PATH|-->	/research/docker/blastdb/Current
+<!--|INTERNAL_BLAST_PATH|-->	/opt/zfin/blastdb/Current
 <!--|LN54_CONTACT_EMAIL|-->	informix\@zfin.org
 <!--|LOADUP_FULL_PATH|-->	/opt/zfin/loadUp/pubs
 <!--|LOCUS_REGISTRATION_EMAIL|-->	informix\@zfin.org
 <!--|MACHINE_NAME|-->	docker
-<!--|MOVE_BLAST_FILES_TO_DEVELOPMENT|-->	true
+<!--|MOVE_BLAST_FILES_TO_DEVELOPMENT|-->	false
 <!--|MUTANT_NAME|-->	zfin.org
 <!--|NOMEN_COORDINATOR|-->	informix\@zfin.org
 <!--|NON_SECURE_HTTP|-->	http://
@@ -79,8 +79,8 @@
 <!--|WAREHOUSE_DUMP_DIR|-->	/research/zunloads/databases/production
 <!--|WAREHOUSE_REGN_EMAIL|-->	informix\@zfin.org
 <!--|WEBHOST_BLASTDB_TO_COPY|-->	/research/crick/blastdb
-<!--|WEBHOST_BLAST_DATABASE_PATH|-->	/research/docker/blastdb
-<!--|WEBHOST_FASTA_FILE_PATH|-->	/research/docker/zblastfiles/files
+<!--|WEBHOST_BLAST_DATABASE_PATH|-->	/opt/zfin/blastdb
+<!--|WEBHOST_FASTA_FILE_PATH|-->	/opt/zfin/blastdb/files
 <!--|WEB_ADMIN_EMAIL|-->	informix\@zfin.org
 <!--|WIKI_HOST|-->	wiki.zfin.org
 <!--|ZFIN_ADMIN|-->	informix\@zfin.org
