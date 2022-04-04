@@ -4,6 +4,8 @@ package ZFINPerlModules;
 use strict;
 use MIME::Lite;
 use DBI;
+use Exporter 'import';
+our @EXPORT_OK = qw(md5_file assert_environment trim);
 
 my %monthDisplays = (
     "Jan" => "01",
@@ -77,12 +79,12 @@ sub countData() {
   my $nRecords = 0;
 
   ### open a handle on the db
-    my $dbh = DBI->connect('DBI:Pg:dbname=<!--|DB_NAME|-->;host=localhost',
+    my $dbh = DBI->connect('DBI:Pg:dbname=' . $ENV{'DB_NAME'} . ';host=localhost',
                        '',
                        '',
 		       {AutoCommit => 1,RaiseError => 1}
 		      )
-    or die ("Failed while connecting to <!--|DB_NAME|-->");
+    or die ("Failed while connecting to " . $ENV{'DB_NAME'});
 
 
   my $sth = $dbh->prepare($ctsql) or die "Prepare fails";
@@ -170,6 +172,37 @@ sub printWhirleyToStderr {
     }
     print STDERR whirley();
     $WHIRLEY_LAST_OUTPUT_TIME = time();
+}
+
+
+sub md5_file {
+    my $file = $_[0];
+    my $hash = `md5sum '$file' | cut -d ' ' -f 1`;
+    $hash =~ s/\s+$//;
+    return $hash;
+}
+
+sub assert_environment {
+    my @required_vars = @_;
+    foreach my $var (@required_vars) {
+        if (!$var) {
+            print("No $var environment variable defined\n");
+            exit(2);
+        }
+    }
+}
+
+sub trim {
+    my $s = shift();
+
+    if (!defined($s)) {
+        return undef;
+    }
+
+    $s =~ s/^\s*//u;
+    $s =~ s/\s*$//u;
+
+    return $s;
 }
 
 1;

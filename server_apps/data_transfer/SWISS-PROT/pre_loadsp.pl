@@ -21,10 +21,13 @@ use strict ;
 use MIME::Lite;
 use LWP::Simple;
 use DBI;
-use lib "<!--|ROOT_PATH|-->/server_apps/";
-use ZFINPerlModules;
 use Try::Tiny;
 use POSIX;
+
+
+use lib $ENV{'ROOT_PATH'} . "/server_apps/";
+use ZFINPerlModules qw(assert_environment trim);
+assert_environment('ROOT_PATH', 'PGHOST', 'DB_NAME', 'SWISSPROT_EMAIL_ERR');
 
 #------------------- Flush Output Buffer --------------
 $|=1;
@@ -105,7 +108,7 @@ sub downloadGOtermFiles () {
 
 sub sendErrorReport ($) {
     my $subject = "Auto from SWISS-PROT:".$_[0];
-    ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","report.txt");
+    ZFINPerlModules->sendMailWithAttachedReport($ENV{'SWISSPROT_EMAIL_ERR'},"$subject","report.txt");
 #    system("cp report.txt log");
 }
 
@@ -116,22 +119,22 @@ sub sendRunningResult {
   my $dbname = $_[0];
   #----- One mail send out the checking report----
   my $subject = "Auto from $dbname: SWISS-PROT check report";
-  ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","checkreport.txt");
+  ZFINPerlModules->sendMailWithAttachedReport($ENV{'SWISSPROT_EMAIL_REPORT'},"$subject","checkreport.txt");
 #  system("cp checkreport.txt log");
 
   #----- Another mail send out problem files ----
   $subject = "Auto from $dbname: SWISS-PROT problem file";
-  ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","allproblems.txt");
+  ZFINPerlModules->sendMailWithAttachedReport($ENV{'SWISSPROT_EMAIL_REPORT'},"$subject","allproblems.txt");
 #  system("cp allproblems.txt log");
 
   #----- Another mail send out problem files ----
   $subject = "Auto from $dbname: PubMed not in ZFIN";
-  ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","pubmed_not_in_zfin");
+  ZFINPerlModules->sendMailWithAttachedReport($ENV{'SWISSPROT_EMAIL_REPORT'},"$subject","pubmed_not_in_zfin");
 #  system("cp pubmed_not_in_zfin log");
 
   #----- Another mail send out problem files ----
   $subject = "Auto from $dbname: report of processing pre_zfin.org";
-  ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","redGeneReport.txt");
+  ZFINPerlModules->sendMailWithAttachedReport($ENV{'SWISSPROT_EMAIL_REPORT'},"$subject","redGeneReport.txt");
 #  system("cp redGeneReport.txt log");
 }
 
@@ -192,8 +195,7 @@ sub select_zebrafish {
 #
 
 
-#set environment variables
-chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/";
+chdir $ENV{'ROOT_PATH'} . "/server_apps/data_transfer/SWISS-PROT/";
 
 
 #remove old files
@@ -214,8 +216,8 @@ if ($ENV{'SKIP_CLEANUP'}) {
     system("mkdir ./ccnote");
 }
 
-my $dbname = "<!--|DB_NAME|-->";
-my $dbhost = "<!--|PGHOST|-->";
+my $dbname = $ENV{'DB_NAME'};
+my $dbhost = $ENV{'PGHOST'};
 my $username = "";
 my $password = "";
 
@@ -255,7 +257,7 @@ print "\nNumber of manually curated UniProt IDs with multiple genes: $ctManually
 
 if ($ctManuallyEnteredUniProtIDsWithMultGenes > 0) {
   my $subject = "Auto from SWISS-PROT: manually curated UniProt IDs with multiple genes";
-  ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","manuallyCuratedUniProtIDsWithMultipleGenes.txt");
+  ZFINPerlModules->sendMailWithAttachedReport($ENV{'SWISSPROT_EMAIL_REPORT'},"$subject","manuallyCuratedUniProtIDsWithMultipleGenes.txt");
 #  system("cp manuallyCuratedUniProtIDsWithMultipleGenes.txt log/");
 }
 
@@ -313,7 +315,7 @@ if ($ENV{"SKIP_MANUAL_CHECK"}) {
 
     if ($numInvalidUniProtIDs > 0) {
       my $subject = "Auto from SWISS-PROT: invalid manually curated UniProt IDs";
-      ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","invalidManuallyCuratedUniProtIDs.txt");
+      ZFINPerlModules->sendMailWithAttachedReport($ENV{'SWISSPROT_EMAIL_REPORT'},"$subject","invalidManuallyCuratedUniProtIDs.txt");
 #      system("cp invalidManuallyCuratedUniProtIDs.txt log");
     }
 }
@@ -361,87 +363,87 @@ my $newLineNumber;
 my $key;
 foreach $block (@blocks) {
    $ttt++;
-   if($block =~ m/OS   Danio rerio/) {
-        @lines = split(/\n/, $block);
-        %toNewInput = ();
-        %deletes = ();
-        $ct = 0;
-        %ZDBgeneIDgeneAbbrevs = ();
-        foreach $line (@lines) {
-           if($line !~ m/CC   -------/ &&
-             $line !~ m/CC   Copyrighted/ &&
-             $line !~ m/CC   Distributed/)  {
-
-               ## add 10000 to pad so that the sorting would be right
-               $lineKey = 10000 + $ct;
-               $toNewInput{$lineKey} = $line;
-               $deletes{$lineKey} = 0;
-
-               if ($line =~ m/DR   ZFIN; ZDB-GENE-/) {
-
-                   @fields = split(/;/, $line);
-                   $ZFINgeneId = $fields[1];
-                   $ZFINgeneId =~ s/^\s+//;
-                   $ZFINgeneId =~ s/\s+$//;
-
-                   $geneAbbrev = $fields[2];
-                   $geneAbbrev =~ s/^\s+//;
-                   $geneAbbrev =~ s/\s+$//;
-                   $geneAbbrev =~ s/\.$//;
-
-                   if ($ttt < 1000)  {
-                             print DBG "ZFINgeneId : $ZFINgeneId \t geneAbbrev : $geneAbbrev  \n";
-
-                             if (exists($ZDBgeneIDgeneAbbrevs{$ZFINgeneId})) {
-                                                              print DBG "exists  $ZDBgeneIDgeneAbbrevs{$ZFINgeneId} \n";
-                             }
-
-                             if (!exists($ZDBgeneIDgeneAbbrevs{$ZFINgeneId})) {
-                                                                 print DBG "Not exists  \$ZDBgeneIDgeneAbbrevs{$ZFINgeneId} \n";
-                             }
-
-
-                   }
-
-
-                   if (!exists($ZDBgeneIDgeneAbbrevs{$ZFINgeneId})) {
-                       $cur = $dbh->prepare('select mrkr_abbrev from marker where mrkr_zdb_id = ?;');
-
-                       $cur->execute($ZFINgeneId);
-                       my ($ZFINgeneAbbrev);
-                       $cur->bind_columns(\$ZFINgeneAbbrev);
-                       while ($cur->fetch()) {
-                           $ZDBgeneIDgeneAbbrevs{$ZFINgeneId} = $ZFINgeneAbbrev;
-                       }
-                       $cur->finish();
-                    ###       $line = $fields[0] . " " . ";" . $fields[1] . " " . ";" . $ZFINgeneAbbrev . ".";
-                       $line =~ s/$geneAbbrev/$ZFINgeneAbbrev/g;
-                       $toNewInput{$lineKey} = $line;
-                   } else {
-                       $deletes{$lineKey} = 1;
-                   }
-                   ZFINPerlModules->printWhirleyToStderr();
-               }
-
-               $ct++;
-           }
-        }
-
-        foreach $newLineNumber (sort keys %toNewInput) {
-           if ($deletes{$newLineNumber} == 0) {
-               print ZFINDAT "$toNewInput{$newLineNumber}\n";
-               $totalOnZfinDat = $totalOnZfinDat + 1;
-           } else {
-               print ZFINDATDELETED "$toNewInput{$newLineNumber}\n";
-               $totalOnDeleted++;
-           }
-        }
-
-        foreach $key (sort keys %ZDBgeneIDgeneAbbrevs) {
-               print ZFINGENES "$ZDBgeneIDgeneAbbrevs{$key}\n";
-        }
-
+   if($block !~ m/OS   Danio rerio/) {
+       print "ERROR: Found non-zebrafish record! Ignoring.\n";
+       next;
    }
+    @lines = split(/\n/, $block);
+    %toNewInput = ();
+    %deletes = ();
+    $ct = 0;
+    %ZDBgeneIDgeneAbbrevs = ();
+    foreach $line (@lines) {
+       if($line =~ m/CC   (-------)|(Copyrighted)|(Distributed)/ ) {
+           #Skip copyright lines
+           next;
+       }
+
+       ## add 10000 to pad so that the sorting would be right
+       $lineKey = 10000 + $ct;
+       $toNewInput{$lineKey} = $line;
+       $deletes{$lineKey} = 0;
+
+       if ($line !~ m/DR   ZFIN; ZDB-GENE-/) {
+           #Skip lines that are not DR ZFIN lines
+           next;
+       }
+
+       @fields = split(/;/, $line);
+       $ZFINgeneId = trim($fields[1]);
+       $geneAbbrev = trim($fields[2]);
+       $geneAbbrev =~ s/\.$//;
+
+       ### Some Debug Statements For First 1000 Records ###
+       if ($ttt < 1000) {
+           print DBG "ZFINgeneId : $ZFINgeneId \t geneAbbrev : $geneAbbrev  \n";
+           if (exists($ZDBgeneIDgeneAbbrevs{$ZFINgeneId})) {
+               print DBG "exists  $ZDBgeneIDgeneAbbrevs{$ZFINgeneId} \n";
+           } else {
+               print DBG "Not exists  \$ZDBgeneIDgeneAbbrevs{$ZFINgeneId} \n";
+           }
+       }
+
+       if (!exists($ZDBgeneIDgeneAbbrevs{$ZFINgeneId})) {
+           $cur = $dbh->prepare('select mrkr_abbrev from marker where mrkr_zdb_id = ?;');
+
+           $cur->execute($ZFINgeneId);
+           my ($ZFINgeneAbbrev);
+           $cur->bind_columns(\$ZFINgeneAbbrev);
+           while ($cur->fetch()) {
+               $ZDBgeneIDgeneAbbrevs{$ZFINgeneId} = $ZFINgeneAbbrev;
+           }
+           $cur->finish();
+
+           if ($geneAbbrev ne $ZFINgeneAbbrev) {
+               print DBG "Gene Abbreviation is not the same as ZFIN Gene Abbreviation! Updating. \n";
+               $line =~ s/$geneAbbrev/$ZFINgeneAbbrev/g;
+           }
+           $toNewInput{$lineKey} = $line;
+       } else {
+           # Is this ever true? It seems we would only ever get here if one record had multiple lines
+           # with the same "DR   ZFIN; ZDB-GENE-..." information
+           print DBG "Possible ERROR? Multiple lines in the same record with the same gene info: ";
+           print DBG "geneAbbrev $geneAbbrev; ZDB $ZFINgeneId; recordNum $ttt \n";
+           $deletes{$lineKey} = 1;
+       }
+       ZFINPerlModules->printWhirleyToStderr();
+    } continue {
+        $ct++;
+    }
+
+    foreach $newLineNumber (sort keys %toNewInput) {
+       if ($deletes{$newLineNumber} == 0) {
+           print ZFINDAT "$toNewInput{$newLineNumber}\n";
+           $totalOnZfinDat = $totalOnZfinDat + 1;
+       } else {
+           print ZFINDATDELETED "$toNewInput{$newLineNumber}\n";
+           $totalOnDeleted++;
+       }
+    }
+
+    foreach $key (sort keys %ZDBgeneIDgeneAbbrevs) {
+           print ZFINGENES "$ZDBgeneIDgeneAbbrevs{$key}\n";
+    }
 
 }
 
@@ -467,8 +469,6 @@ foreach $block (@blocksPRE){
    }
 }
 
-
-
 open(ZF, "zfin.dat") || die("Could not open zfin.dat !");
 my @blocksZF = <ZF>;
 close(ZF);
@@ -480,7 +480,6 @@ foreach $block (@blocksZF){
       $zfin++;
    }
 }
-
 
 $/ = "\n";
 
@@ -496,8 +495,6 @@ foreach $block (@blocksPRE){
    }
 }
 
-
-
 open(ZF, "zfin.dat") || die("Could not open zfin.dat !");
 my @blocksZF = <ZF>;
 close(ZF);
@@ -509,7 +506,6 @@ foreach $block (@blocksZF){
       $zfinGene++;
    }
 }
-
 
 print "totalOnZfinDat = $totalOnZfinDat\t totalOnDeleted = $totalOnDeleted\n\n\n";
 print "prezfin = $prezfin\t";
@@ -553,6 +549,5 @@ exit;
 #
 # Why do we sleep for 500 seconds in various places?
 # Why do we touch various files?
-
 
 
