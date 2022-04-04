@@ -17,10 +17,10 @@
 use DBI;
 use POSIX;
 
-assert_environment();
 
 use lib $ENV{'ROOT_PATH'} . "/server_apps/";
-use ZFINPerlModules;
+use ZFINPerlModules qw(assert_environment md5_file);
+assert_environment('PGHOST','ROOT_PATH', 'DB_NAME');
 
 # Take a SP file as input (content format restricted).
 
@@ -550,31 +550,4 @@ ENDDOC
 
     print FILE "$title";
     close FILE;
-}
-
-sub md5_file() {
-    my $file = $_[0];
-    my $hash = `md5sum '$file' | cut -d ' ' -f 1`;
-    $hash =~ s/\s+$//;
-    return $hash;
-}
-
-sub assert_environment() {
-    my $required_var = $ENV{'ROOT_PATH'};
-    if (!$required_var) {
-        print("No ROOT_PATH defined\n");
-        exit(2);
-    }
-
-    $required_var = $ENV{'DB_NAME'};
-    if (!$required_var) {
-        print("No DB_NAME defined\n");
-        exit(2);
-    }
-
-    $required_var = $ENV{'PGHOST'};
-    if (!$required_var) {
-        print("No PGHOST defined\n");
-        exit(2);
-    }
 }
