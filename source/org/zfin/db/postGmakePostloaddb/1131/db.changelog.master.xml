@@ -8,5 +8,7 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1131/ZFIN-7899.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1131/ZFIN-7392.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1131/ZFIN-7866.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1131/ZFIN-7891-fish-blank-names-constraint.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1131/ZFIN-7891-genotype-blank-names-constraint.sql" />
 
 </databaseChangeLog>

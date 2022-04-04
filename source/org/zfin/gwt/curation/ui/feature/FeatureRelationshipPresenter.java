@@ -2,6 +2,7 @@ package org.zfin.gwt.curation.ui.feature;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import org.zfin.gwt.curation.event.CurationEvent;
 import org.zfin.gwt.curation.event.EventType;
@@ -367,6 +368,9 @@ public class FeatureRelationshipPresenter implements HandlesError {
             addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
+                    if (!Window.confirm("Are you sure you want to delete this relationship?")) {
+                        return;
+                    }
                     setEnabled(false);
                     FeatureRPCService.App.getInstance().deleteFeatureMarkerRelationship(featureMarkerRelationshipDTO,
                             new FeatureEditCallBack<Void>("Unable to remove feature marker relationship: " + featureMarkerRelationshipDTO, handlesError) {
