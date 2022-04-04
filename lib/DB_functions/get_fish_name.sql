@@ -1,5 +1,4 @@
-CREATE OR REPLACE FUNCTION "public"."get_fish_name"("vfishzdbid" varchar, "vfishgenozdbid" varchar)
-  RETURNS "pg_catalog"."varchar" AS $fishName$
+create or replace function get_fish_name (vFishZdbId varchar, vFishGenoZdbId varchar) returns varchar as $fishName$
 
 declare
 
