@@ -44,7 +44,7 @@
             <configuredTriggers>
                 <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
                     <email>
-                        <recipientList>@SUCCESS-RECIPersonENT-LIST@</recipientList>
+                        <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>${FILE,path=&quot;server_apps/DB_maintenance/report_data/Report-Person-Locations/Report-Person-Locations.html&quot;}</body>
                         <sendToDevelopers>false</sendToDevelopers>
@@ -60,7 +60,7 @@
                 </hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
                 <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
                     <email>
-                        <recipientList>@FAILURE-RECIPersonENT-LIST@</recipientList>
+                        <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
                             ${FILE,path=&quot;server_apps/DB_maintenance/report_data/Report-Person-Locations/Report-Person-Locations.html&quot;}

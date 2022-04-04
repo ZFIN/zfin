@@ -3,6 +3,8 @@ package org.zfin.nomenclature.repair;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.hibernate.Query;
 import org.hibernate.Transaction;
 import org.zfin.framework.HibernateUtil;
@@ -81,7 +83,7 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
     }
 
     public void categorizeManuallyApprovedChangesFromJenkinsUpload(List<NamingIssuesReportRow> rows) {
-        Map<String, String> fixes = new HashMap<>();
+        Set<Pair<String, String>> fixes = new HashSet<>();
         String manuallyApprovedFixes = System.getenv("MANUALLY_APPROVED_FIXES");
         String jenkinsWorkspace =  System.getenv("WORKSPACE");
         String rootPath =  System.getenv("ROOT_PATH");
@@ -109,7 +111,7 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
             for (CSVRecord record : records) {
                 String oldName = record.get("Old Name");
                 String newName = record.get("New Name");
-                fixes.put(oldName, newName);
+                fixes.add(new ImmutablePair<>(oldName, newName));
                 LOG.debug("Found manually approved change from '" + oldName + "' to '" + newName + "'");
             }
         } catch (IOException ignored) {
@@ -120,8 +122,8 @@ public class GenotypeNamingIssues extends AbstractScriptWrapper {
 
         int matches = 0;
         for (NamingIssuesReportRow row : rows) {
-            String fix = fixes.get(row.getDisplayName());
-            if (fix != null && fix.equals(row.getComputedDisplayName())) {
+            Pair<String, String> fix = new ImmutablePair<>(row.getDisplayName(), row.getComputedDisplayName());
+            if (fixes.contains(fix)) {
                 matches++;
                 row.setIssueCategory(NamingIssuesReportRow.IssueCategory.MANUAL_FIX);
             }
