@@ -187,7 +187,6 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    @Ignore("postgres")
     public void getNumOfPublicationsPerAOAndGli1Mutant() {
         // lateral floor plate
         String aoZdbID = "ZDB-TERM-100331-1214";
