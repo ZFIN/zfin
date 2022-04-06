@@ -21,6 +21,7 @@ import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.MarkerType;
+import org.zfin.marker.presentation.GeneBean;
 import org.zfin.marker.presentation.STRTargetRow;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Fish;
@@ -130,20 +131,49 @@ public class PublicationAPIController {
 
     @JsonView(View.OrthologyAPI.class)
     @RequestMapping(value = "/{pubID}/orthology", method = RequestMethod.GET)
-    public JsonResultResponse<Ortholog> getOrthology(@PathVariable String pubID,
+    public JsonResultResponse<GeneBean> getOrthology(@PathVariable String pubID,
                                                      @Version Pagination pagination) {
 
-        Publication publication = publicationRepository.getPublication(pubID);
         List<Ortholog> orthologList = publicationRepository.getOrthologPaginationByPub(pubID);
-        JsonResultResponse<Ortholog> response = new JsonResultResponse<>();
-        response.setTotal(orthologList.size());
 
-        response.setResults(orthologList.stream()
+        List<GeneBean> list = getOrthologyBeanList(orthologList);
+        JsonResultResponse<GeneBean> response = new JsonResultResponse<>();
+        response.setTotal(list.size());
+
+        response.setResults(list.stream()
                 .skip(pagination.getStart())
                 .limit(pagination.getLimit())
                 .collect(Collectors.toList()));
         response.setHttpServletRequest(request);
         return response;
+    }
+
+    public List<GeneBean> getOrthologyBeanList(List<Ortholog> orthologList) {
+        List<GeneBean> beanList = new ArrayList<>(orthologList.size() * 4);
+        List<Ortholog> orthologsPerGene = new ArrayList<>(5);
+        for (int index = 0; index < orthologList.size(); index++) {
+            Ortholog ortholog = orthologList.get(index);
+            Marker zebrafishGene = ortholog.getZebrafishGene();
+            Marker nextZebrafishGene = null;
+            // if not last element set next gene
+            if (index != orthologList.size() - 1) {
+                nextZebrafishGene = orthologList.get(index + 1).getZebrafishGene();
+            }
+            orthologsPerGene.add(ortholog);
+
+            // if the last element or the next element is a different gene
+            if (nextZebrafishGene == null || !nextZebrafishGene.equals(zebrafishGene)) {
+                GeneBean orthologyBean = new GeneBean();
+                orthologyBean.setMarker(zebrafishGene);
+                //orthologyBean.setOrthologyPresentationBean(MarkerService.getOrthologyPresentationBean(orthologsPerGene, zebrafishGene, publication));
+                beanList.add(orthologyBean);
+            }
+            if (nextZebrafishGene != null && !nextZebrafishGene.equals(zebrafishGene)) {
+                orthologsPerGene = new ArrayList<>(5);
+            }
+
+        }
+        return beanList;
     }
 
 

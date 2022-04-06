@@ -8,12 +8,12 @@ const PublicationOrthologyTable = ({url}) => {
     const columns = [
         {
             label: 'Gene',
-            content: row => <EntityLink key={row.zebrafishGene.zdbID} entity={row.zebrafishGene}/>,
+            content: row => <EntityLink key={row.marker.zdbID} entity={row.marker}/>,
             width: '80px',
         },
         {
             label: 'Orthology',
-            content: row => <OrthologyTable geneId={row.zebrafishGene.zdbID} showDownload={false}/>,
+            content: row => <OrthologyTable geneId={row.marker.zdbID} showDownload={false}/>,
         },
     ];
     return (
