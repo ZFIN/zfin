@@ -60,6 +60,7 @@ import static org.zfin.repository.RepositoryFactory.*;
 //import org.apache.commons.lang.StringEscapeUtils;
 
 /**
+ *
  */
 public class DTOConversionService {
     public static DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
@@ -603,7 +604,7 @@ public class DTOConversionService {
         return returnDTO;
     }
 
-    public static Feature convertToFeature(FeatureDTO featureDTO) throws  ValidationException {
+    public static Feature convertToFeature(FeatureDTO featureDTO) throws ValidationException {
         DateFormat dateFormat = new SimpleDateFormat("MM/dd/yy");
         dateFormat.setLenient(false);
         Date entryDate;
@@ -613,7 +614,6 @@ public class DTOConversionService {
 
         // these two need to be added, but a trigger fixes them
         feature.setAbbreviationOrder(featureDTO.getAbbreviation());
-
 
 
         if (org.zfin.gwt.root.util.StringUtils.isNotEmpty(featureDTO.getAssemblyInfoDate())) {
@@ -652,7 +652,6 @@ public class DTOConversionService {
         feature.setTransgenicSuffix(featureDTO.getTransgenicSuffix());
 
 
-
         MutationDetailDnaChangeDTO dnaChangeDTO = featureDTO.getDnaChangeDTO();
         if (dnaChangeDTO != null) {
             FeatureDnaMutationDetail detail = convertToDnaMutationDetail(null, dnaChangeDTO);
@@ -684,7 +683,7 @@ public class DTOConversionService {
             feature.setFeatureGenomicMutationDetail(detail);
 
             if (feature.getType().equals(FeatureTypeEnum.INDEL)) {
-                if (feature.getFeatureGenomicMutationDetail().getFgmdSeqRef()!=null) {
+                if (feature.getFeatureGenomicMutationDetail().getFgmdSeqRef() != null) {
                     if (feature.getFeatureGenomicMutationDetail().getFgmdSeqVar().length() == feature.getFeatureGenomicMutationDetail().getFgmdSeqRef().length()) {
                         if (feature.getFeatureGenomicMutationDetail().getFgmdSeqVar().length() > 1) {
 
@@ -750,6 +749,7 @@ public class DTOConversionService {
 
         return detail;
     }
+
     public static FeatureGenomicMutationDetail convertToFeatureGenomicMutationDetail(FeatureGenomicMutationDetail detail, FeatureGenomeMutationDetailChangeDTO dto) {
         if (detail == null) {
             detail = new FeatureGenomicMutationDetail();
@@ -825,12 +825,11 @@ public class DTOConversionService {
                     featureDTO.setMutagen(feature.getFeatureAssay().getMutagen().toString());
                 }
             }
-            if (feature.getFtrAssemblyInfoDate()!=null){
+            if (feature.getFtrAssemblyInfoDate() != null) {
                 SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/YY");
                 String s = formatter.format(feature.getFtrAssemblyInfoDate());
                 featureDTO.setAssemblyInfoDate(s);
             }
-
 
 
             //FeatureLocation ftrLocation = RepositoryFactory.getFeatureRepository().getFeatureLocation(feature);
@@ -845,28 +844,24 @@ public class DTOConversionService {
             }
 
 
-
-
             Set<FeatureNote> featureNotes = feature.getExternalNotes();
 
             if (CollectionUtils.isNotEmpty(featureNotes)) {
 
                 List<NoteDTO> curatorNoteDTOs = new ArrayList<>();
                 for (FeatureNote dataNote : featureNotes) {
-                 if (dataNote.getTag()!=null) {
-                     NoteDTO noteDTO = new NoteDTO(dataNote.getZdbID(), feature.getZdbID(), NoteEditMode.PUBLIC, DTOConversionService.unescapeString(dataNote.getNote()), dataNote.getType(), dataNote.getTag());
-                     noteDTO.setPublicationDTO(convertToPublicationDTO(dataNote.getPublication()));
-                     curatorNoteDTOs.add(noteDTO);
-                 }
-                 else{
-                     NoteDTO noteDTO = new NoteDTO(dataNote.getZdbID(), feature.getZdbID(), NoteEditMode.PUBLIC, DTOConversionService.unescapeString(dataNote.getNote()), dataNote.getType(),"");
-                     noteDTO.setPublicationDTO(convertToPublicationDTO(dataNote.getPublication()));
-                     curatorNoteDTOs.add(noteDTO);
-                 }
+                    if (dataNote.getTag() != null) {
+                        NoteDTO noteDTO = new NoteDTO(dataNote.getZdbID(), feature.getZdbID(), NoteEditMode.PUBLIC, DTOConversionService.unescapeString(dataNote.getNote()), dataNote.getType(), dataNote.getTag());
+                        noteDTO.setPublicationDTO(convertToPublicationDTO(dataNote.getPublication()));
+                        curatorNoteDTOs.add(noteDTO);
+                    } else {
+                        NoteDTO noteDTO = new NoteDTO(dataNote.getZdbID(), feature.getZdbID(), NoteEditMode.PUBLIC, DTOConversionService.unescapeString(dataNote.getNote()), dataNote.getType(), "");
+                        noteDTO.setPublicationDTO(convertToPublicationDTO(dataNote.getPublication()));
+                        curatorNoteDTOs.add(noteDTO);
+                    }
                 }
                 featureDTO.setPublicNoteList(curatorNoteDTOs);
             }
-
 
 
             Set<DataNote> curatorNotes = feature.getDataNotes();
@@ -913,6 +908,12 @@ public class DTOConversionService {
                 featureDTO.setTranscriptChangeDTOSet(set);
             }
         }
+        int length = 0;
+        if (feature.getLineNumber() != null)
+            length = length + feature.getLineNumber().length();
+        if (feature.getFeaturePrefix() != null)
+            length = length + feature.getFeaturePrefix().getAbbreviation().length();
+        featureDTO.setOptionalName(featureDTO.getName().substring(0, featureDTO.getName().length() - length));
         return featureDTO;
     }
 
@@ -2225,10 +2226,10 @@ public class DTOConversionService {
         FeatureGenomicMutationDetail changes = convertToFeatureGenomicMutationDetail(detail, fgmdChangeDTO);
 
 
-            detail.setFgmdSeqVar(changes.getFgmdSeqVar());
+        detail.setFgmdSeqVar(changes.getFgmdSeqVar());
 
 
-            detail.setFgmdSeqRef(changes.getFgmdSeqRef());
+        detail.setFgmdSeqRef(changes.getFgmdSeqRef());
 
         detail.setFgmdVarStrand("+");
 
