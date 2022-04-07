@@ -207,6 +207,7 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
                 featureDTO.setLabOfOrigin(view.labOfOriginBox.getSelected());
             }
         }
+        featureDTO.setOptionalName(view.featureNameBox.getText());
         featureDTO.setMutagen(view.mutagenBox.getSelected());
         featureDTO.setMutagee(view.mutageeBox.getSelected());
         featureDTO.setDominant(view.dominantCheckBox.getValue());
