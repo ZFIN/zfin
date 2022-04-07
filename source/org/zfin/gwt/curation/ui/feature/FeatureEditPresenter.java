@@ -154,6 +154,7 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         col.addBoolean(view.featureSuffixBox.isDirty(dto.getTransgenicSuffix()));
         col.addBoolean(view.lineNumberBox.isDirty(dto.getLineNumber()));
         col.addBoolean(view.labOfOriginBox.isDirty(dto.getLabOfOrigin()));
+        col.addBoolean(view.featureNameBox.isDirty(dto.getOptionalName()));
         col.addBoolean(view.assemblyInfoDate.isDirty(dto.getAssemblyInfoDate()));
         col.addBoolean(mutationDetailPresenter.isDirty());
         return col.arrivedValue();
@@ -196,6 +197,7 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         view.featureAliasList.setDTO(dto);
         view.featureSequenceList.setDTO(dto);
         view.lineNumberBox.setValue(dto.getLineNumber());
+        view.featureNameBox.setValue(dto.getOptionalName());
         view.mutageeBox.setIndexForText(dto.getMutagee());
         view.featureChromosome.setValue(dto.getFeatureChromosome());
         view.featureStartLoc.setNumber(dto.getFeatureStartLoc());
