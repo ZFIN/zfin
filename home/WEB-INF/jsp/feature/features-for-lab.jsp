@@ -17,10 +17,10 @@
                     ${feature.type.display}
             </td>
             <td>
-                <c:forEach var="gene" items="${feature.featureMarkerRelations}">
+                <c:forEach var="relationship" items="${feature.featureMarkerRelations}">
                     <li style="list-style-type: none;">
-                        <c:if test="${gene.featureMarkerRelationshipType.affectedMarkerFlag eq 'true' && fn:contains(gene.marker.zdbID,'GENE')}">
-                            <a href="/${gene.marker.zdbID}"> <i>${gene.marker.abbreviation}</i></a>
+                        <c:if test="${relationship.featureMarkerRelationshipType.affectedMarkerFlag eq 'true' && (fn:contains(relationship.marker.zdbID,'GENE') ||fn:contains(relationship.marker.zdbID,'RNAG')) }">
+                            <a href="/${relationship.marker.zdbID}"> <i>${relationship.marker.abbreviation}</i></a>
                         </c:if>
                     </li>
                 </c:forEach>

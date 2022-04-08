@@ -24,7 +24,7 @@ public class LineDesignationController {
 
 
     @RequestMapping(value = "/line-designations")
-    public String getFeaturePrefixes(Model model) throws Exception {
+    public String getFeaturePrefixes(Model model) {
         LineDesignationBean lineDesignationBean = new LineDesignationBean();
         lineDesignationBean.setFeaturePrefixLightList(RepositoryFactory.getFeatureRepository().getFeaturePrefixWithLabs());
         model.addAttribute(LookupStrings.FORM_BEAN, lineDesignationBean);
@@ -34,14 +34,14 @@ public class LineDesignationController {
     }
 
     @RequestMapping(value = "/features-for-lab/{zdbID}")
-    public String getFeatureForLab(@PathVariable String zdbID, Model model) throws Exception {
+    public String getFeatureForLab(@PathVariable String zdbID, Model model) {
         model.addAttribute("features", RepositoryFactory.getFeatureRepository().getFeaturesForLab(zdbID, 50));
         model.addAttribute("labID", zdbID);
         return "feature/features-for-lab";
     }
 
     @RequestMapping(value = "/alleles/{prefix}")
-    public String getAllelesForPrefix(@PathVariable String prefix, Model model) throws Exception {
+    public String getAllelesForPrefix(@PathVariable String prefix, Model model) {
         AllelesForPrefixBean allelesForPrefixBean = new AllelesForPrefixBean();
 
         List<OrganizationFeaturePrefix> organizationFeaturePrefixes = RepositoryFactory.getFeatureRepository().getOrganizationFeaturePrefixForPrefix(prefix);
