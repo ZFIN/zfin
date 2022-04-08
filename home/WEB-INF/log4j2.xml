@@ -6,7 +6,7 @@
                      filePattern="${env:CATALINA_BASE}/logs/catalina.out.%i.log" filePermissions="rw-r--r--">
             <PatternLayout pattern="%d [%t] %-5p %c{2} - %m%n"/>
             <Policies>
-                <SizeBasedTriggeringPolicy size="10MB"/>
+                <SizeBasedTriggeringPolicy size="50MB"/>
             </Policies>
             <DefaultRolloverStrategy max="10"/>
         </RollingFile>
@@ -27,7 +27,7 @@
                 <KeyValuePair key="cookie" value="$${ctx:cookie:-}" />
             </JsonLayout>
             <Policies>
-                <SizeBasedTriggeringPolicy size="10MB"/>
+                <SizeBasedTriggeringPolicy size="50MB"/>
             </Policies>
             <DefaultRolloverStrategy max="10"/>
         </RollingFile>
