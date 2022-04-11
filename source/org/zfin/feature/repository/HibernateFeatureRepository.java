@@ -3,10 +3,7 @@ package org.zfin.feature.repository;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.FetchMode;
-import org.hibernate.Query;
-import org.hibernate.Session;
+import org.hibernate.*;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
@@ -19,6 +16,8 @@ import org.zfin.feature.presentation.FeatureLabEntry;
 import org.zfin.feature.presentation.FeaturePrefixLight;
 import org.zfin.feature.presentation.LabLight;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.api.Pagination;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.gwt.root.dto.Mutagee;
@@ -31,6 +30,8 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.FeatureLocation;
 import org.zfin.mapping.VariantSequence;
 import org.zfin.marker.Marker;
+import org.zfin.marker.presentation.HighQualityProbe;
+import org.zfin.marker.presentation.HighQualityProbeAOStatistics;
 import org.zfin.marker.presentation.PreviousNameLight;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
@@ -42,12 +43,9 @@ import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DBLink;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.Period;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -161,12 +159,10 @@ public class HibernateFeatureRepository implements FeatureRepository {
     public boolean isSingleAffectedGeneAlleles(Feature feature) {
 
 
-
         List<Feature> list = getSingleAffectedGeneAlleles(feature);
         if (list == null) {
             return false;
-        }
-        else {
+        } else {
             SimpleDateFormat formatter = new SimpleDateFormat("MMM dd yyyy");
             if (feature.getFtrEntryDate() != null) {
                 String s = formatter.format(feature.getFtrEntryDate());
@@ -181,8 +177,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
                 } else {
                     return false;
                 }
-            }
-            else{
+            } else {
                 return false;
             }
         }
@@ -1000,6 +995,51 @@ public class HibernateFeatureRepository implements FeatureRepository {
         criteria.addOrder(Order.asc("abbreviationOrder"));
         if (numberOfRecords > 0)
             criteria.setMaxResults(numberOfRecords);
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        List<Feature> list = criteria.list();
+        return list;
+    }
+
+    @Override
+    public PaginationResult<Feature> getFeaturesForLab(String zdbID, Pagination pagination) {
+        Session session = currentSession();
+        Criteria criteria = session.createCriteria(Feature.class);
+        criteria.setFetchMode("featureAssay", FetchMode.JOIN);
+        criteria.setFetchMode("featureDnaMutationDetail", FetchMode.JOIN);
+        criteria.setFetchMode("featureProteinMutationDetail", FetchMode.JOIN);
+        criteria.createAlias("sources", "source");
+        criteria.add(Restrictions.eq("source.organization.zdbID", zdbID));
+        criteria.addOrder(Order.asc("abbreviationOrder"));
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        ScrollableResults scrollableResults = criteria.scroll();
+        List<Feature> list = new ArrayList<>();
+
+        if (pagination.getStart() == 0) {
+            scrollableResults.beforeFirst();
+        } else {
+            scrollableResults.setRowNumber(pagination.getStart());
+        }
+
+        while (scrollableResults.next() && list.size() < pagination.getLimit() + 1) {
+            list.add((Feature) scrollableResults.get()[0]);
+        }
+
+        if (!scrollableResults.isLast()) {
+            scrollableResults.last();
+        }
+        int total = scrollableResults.getRowNumber() + 1;
+        PaginationResult<Feature> paginationResult = new PaginationResult<>(total, list);
+        scrollableResults.close();
+        return paginationResult;
+    }
+
+    public List<Feature> getFeaturesForLabCount(String zdbID, Pagination pagination) {
+        Session session = currentSession();
+        Criteria criteria = session.createCriteria(Feature.class);
+        criteria.createAlias("sources", "source");
+        criteria.add(Restrictions.eq("source.organization.zdbID", zdbID));
+        criteria.setMaxResults(pagination.getLimit());
+        criteria.setFirstResult(pagination.getStart());
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         List<Feature> list = criteria.list();
         return list;

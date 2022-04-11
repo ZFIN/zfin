@@ -7,11 +7,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.zfin.feature.Feature;
 import org.zfin.feature.repository.FeatureService;
 import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.api.View;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.mutant.presentation.GenotypeFishResult;
+import org.zfin.repository.RepositoryFactory;
 import org.zfin.wiki.presentation.Version;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +24,8 @@ import javax.servlet.http.HttpServletRequest;
 @Log4j2
 public class FeatureAPIController {
 
-    @Autowired private FeatureService featureService;
+    @Autowired
+    private FeatureService featureService;
 
     @JsonView(View.API.class)
     @RequestMapping("/feature/{featureZdbID}/fish")
@@ -35,5 +39,21 @@ public class FeatureAPIController {
         response.calculateRequestDuration(startTime);
         return response;
     }
+
+    @JsonView(View.FeatureAPI.class)
+    @RequestMapping(value = "/lab/{zdbID}/features")
+    public JsonResultResponse<Feature> getFeatureForLab(@PathVariable String zdbID,
+                                                        @Version Pagination pagination,
+                                                        HttpServletRequest request) {
+        long startTime = System.currentTimeMillis();
+        PaginationResult<Feature> paginationResult = RepositoryFactory.getFeatureRepository().getFeaturesForLab(zdbID, pagination);
+        JsonResultResponse<Feature> response = new JsonResultResponse<>();
+        response.setResults(paginationResult.getPopulatedResults());
+        response.setTotal(paginationResult.getTotalCount());
+        response.setHttpServletRequest(request);
+        response.calculateRequestDuration(startTime);
+        return response;
+    }
+
 
 }

@@ -24,6 +24,10 @@
 <zfin2:listAllFromOrganization/>
 
 
+<authz:authorize access="hasRole('root')">
+    <a class="dropdown-item" href="/action/profile/lab/${lab.zdbID}">Prototype View</a>
+</authz:authorize>
+
 <table>
     <tr>
         <td width="60%" style="vertical-align: top;">

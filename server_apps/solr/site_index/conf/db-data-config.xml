@@ -4888,6 +4888,17 @@ and child.term_ontology = 'disease_ontology';
                     cacheImpl="SortedMapBackedCache"
             />
 
+            <entity name="publication_lab_xref"
+                    query="select
+                            ipp.target_id as pub_zdb_id,
+                            ipl.target_id as xref
+                           from int_person_lab ipl, int_person_pub ipp
+                           where
+                           ipl.source_id = ipp.source_id"
+                    cacheImpl="SortedMapBackedCache"
+                    where="pub_zdb_id=publication.id"
+            />
+
             <entity name="pub_gene_slow"
                     query="
                         select distinct recattrib_source_zdb_id as pub_zdb_id,

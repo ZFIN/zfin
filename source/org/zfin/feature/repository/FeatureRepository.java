@@ -3,6 +3,8 @@ package org.zfin.feature.repository;
 import org.zfin.feature.*;
 import org.zfin.feature.presentation.FeatureLabEntry;
 import org.zfin.feature.presentation.FeaturePrefixLight;
+import org.zfin.framework.api.Pagination;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.gwt.root.dto.Mutagee;
 import org.zfin.gwt.root.dto.Mutagen;
@@ -224,6 +226,8 @@ public interface FeatureRepository {
     Long getFeaturesForLabCount(String zdbID);
 
     List<Feature> getFeaturesForLab(String zdbID, int i);
+
+    PaginationResult<Feature> getFeaturesForLab(String zdbID, Pagination pagination);
 
     int getNumberOfFeaturesForConstruct(Marker construct);
 }
