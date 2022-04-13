@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import qs from 'qs';
 import DataTable from '../components/data-table';
-import EntityList from '../components/entity';
+import EntityList from '../components/entity/EntityList';
 
 const FeatureLabTable = ({orgId}) => {
 
@@ -26,12 +26,16 @@ const FeatureLabTable = ({orgId}) => {
         },
         {
             label: 'Affected Genomic Region',
-            content: row => <EntityList entities={row.affectedGenes}/>,
+            content: row => <>
+                {row.affectedGenes && <EntityList entities={row.affectedGenes}/>}
+            </>    ,
             width: '200px',
         },
         {
             label: 'Affected Genomic Region',
-            content: row => <EntityList entities={row.tgConstructs}/>,
+            content: row => <>
+                {row.tgConstructs && <EntityList entities={row.tgConstructs}/>}
+            </>,
             width: '200px',
         },
     ];
