@@ -14,13 +14,6 @@ public enum GenomeBrowserType {
         return type;
     }
 
-    public String getReactComponentId() {
-        return switch (this) {
-            case JBROWSE -> "JbrowseImage";
-            case GBROWSE -> "GbrowseImage";
-            default -> "GbrowseImage";
-        };
-    }
 
     public static GenomeBrowserType fromString(String type) {
         for (GenomeBrowserType genomeBrowserType : values()) {

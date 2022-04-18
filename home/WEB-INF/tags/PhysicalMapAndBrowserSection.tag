@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@ attribute name="locations" required="true" type="java.util.Collection" %>
-<%@ attribute name="gbrowseImage" required="false" type="org.zfin.gbrowse.presentation.GBrowseImage" %>
+<%@ attribute name="gbrowseImage" required="false" type="org.zfin.genomebrowser.presentation.GenomeBrowserImage" %>
 
 <style>
     .gbrowse-image {
