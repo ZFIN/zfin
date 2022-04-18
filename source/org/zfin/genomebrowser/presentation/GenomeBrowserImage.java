@@ -4,6 +4,8 @@ import org.zfin.genomebrowser.GenomeBrowserType;
 
 public interface GenomeBrowserImage {
 
+    String getReactComponentId();
+
     String getImageUrl();
 
     String getLinkUrl();

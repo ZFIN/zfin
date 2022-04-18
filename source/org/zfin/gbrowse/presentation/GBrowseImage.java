@@ -41,6 +41,11 @@ public class GBrowseImage implements GenomeBrowserImage {
     }
 
     @Override
+    public String getReactComponentId() {
+            return "GbrowseImage";
+    }
+
+    @Override
     public String getImageUrl() {
         if (imageUrl == null) {
             URLCreator url = new URLCreator(imageUrlBase);

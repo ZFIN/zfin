@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.zfin.framework.featureflag.FeatureFlagEnum;
+import org.zfin.framework.featureflag.FeatureFlags;
 import org.zfin.gbrowse.presentation.GBrowseImageBuilder;
 import org.zfin.jbrowse.presentation.JBrowseImageBuilder;
 
@@ -27,7 +29,7 @@ public class GenomeBrowserFactory {
     }
 
     public GenomeBrowserImageBuilder getImageBuilder() {
-        if ("true".equals(request.getParameter("jbrowse"))) {
+        if (FeatureFlags.isFlagEnabled(FeatureFlagEnum.JBROWSE)) {
             return new JBrowseImageBuilder();
         } else {
             return new GBrowseImageBuilder();

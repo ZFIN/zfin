@@ -53,9 +53,6 @@ public class BlastResultMapper {
     private static final Logger logger = LogManager.getLogger(BlastResultMapper.class);
     private static DatabaseNameComparator databaseNameComparator = new DatabaseNameComparator();
 
-    @Autowired
-    private static GenomeBrowserFactory genomeBrowserFactory;
-
     public static BlastResultBean createBlastResultBean(BlastOutput blastOutput) {
 
         if (blastOutput == null) {
@@ -386,7 +383,7 @@ public class BlastResultMapper {
                         List<MarkerGenomeLocation> locations = RepositoryFactory
                                 .getLinkageRepository()
                                 .getGenomeLocation(gene, GenomeLocation.Source.ZFIN);
-                        hitViewBean.setGbrowseImage(genomeBrowserFactory.getImageBuilder()
+                        hitViewBean.setGbrowseImage(GenomeBrowserFactory.getStaticImageBuilder()
                                 .landmark(locations.get(0))
                                 .highlight(transcript.getAbbreviation())
                                 .tracks(new GenomeBrowserTrack[]{GenomeBrowserTrack.TRANSCRIPTS})

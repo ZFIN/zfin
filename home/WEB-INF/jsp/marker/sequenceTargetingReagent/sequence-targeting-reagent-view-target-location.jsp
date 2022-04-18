@@ -6,7 +6,7 @@
 
     <c:forEach items="${formBean.gbrowseImages}" var="image" end="1" varStatus="loop">
         <div class="__react-root genome-browser-image"
-             id="${image.type.reactComponentId}__${loop.index}"
+             id="${image.reactComponentId}__${loop.index}"
              data-image-url="${image.imageUrl}"
              data-link-url="${image.linkUrl}"
              data-build="${image.build}">

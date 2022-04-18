@@ -2,8 +2,8 @@
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.TranscriptBean" scope="request"/>
 
 <c:forEach var="relatedTranscriptDisplay" items="${formBean.relatedTranscriptDisplayList}" varStatus="loop">
-    <div class="__react-root"
-         id="GbrowseImage__${loop.index}"
+    <div class="__react-root genome-browser-image"
+         id="${relatedTranscriptDisplay.gbrowseImage.reactComponentId}__${loop.index}"
          data-image-url="${relatedTranscriptDisplay.gbrowseImage.imageUrl}"
          data-link-url="${relatedTranscriptDisplay.gbrowseImage.linkUrl}"
          data-build="${relatedTranscriptDisplay.gbrowseImage.build}">

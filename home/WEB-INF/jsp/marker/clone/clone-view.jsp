@@ -40,8 +40,8 @@
         <c:if test="${typeName ne 'EST'}">
            <c:if test="${typeName ne 'CDNA'}">
             <z:section title="${GBROWSE}">
-               <div class="__react-root"
-                 id="GbrowseImage"
+               <div class="__react-root genome-browser-image"
+                 id="${formBean.image.reactComponentId}"
                  data-image-url="${formBean.image.imageUrl}"
                  data-link-url="${formBean.image.linkUrl}">
               </div>

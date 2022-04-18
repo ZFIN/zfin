@@ -2,7 +2,7 @@
 
 <%@ tag pageEncoding="UTF-8" %>
 
-<%@ attribute name="gbrowseImage" type="org.zfin.gbrowse.presentation.GBrowseImage" required="true"
+<%@ attribute name="gbrowseImage" type="org.zfin.genomebrowser.presentation.GenomeBrowserImage" required="true"
               description="GBrowseImage object"%>
 <%@ attribute name="width" required="false"%>
 

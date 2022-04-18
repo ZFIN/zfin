@@ -7,8 +7,8 @@
 </z:attributeList>
 
 <c:if test="${!empty formBean.relatedTranscriptDisplay.gbrowseImage}">
-    <div class="__react-root"
-         id="GbrowseImage"
+    <div class="__react-root genome-browser-image"
+         id="${formBean.relatedTranscriptDisplay.gbrowseImage.reactComponentId}"
          data-image-url="${formBean.relatedTranscriptDisplay.gbrowseImage.imageUrl}"
          data-link-url="${formBean.relatedTranscriptDisplay.gbrowseImage.linkUrl}"
          data-build="${formBean.relatedTranscriptDisplay.gbrowseImage.build}">
