@@ -43,7 +43,7 @@
     <jsp:attribute name="entityNameAddendum">
         <div style="font-size: 12px">
                 ${publication.zdbID}
-            <c:if test="${!empty publication.accessionNumber}"><p/>PMID:${publication.accessionNumber}</c:if>
+            <c:if test="${!empty publication.accessionNumber}"><br/>PMID:${publication.accessionNumber}</c:if>
         </div>
     </jsp:attribute>
 
