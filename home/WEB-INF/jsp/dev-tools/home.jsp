@@ -175,6 +175,13 @@
                         </td>
                     </tr>
                     <tr>
+                        <td>
+                        </td>
+                        <td>
+                            <a href="/action/devtool/feature-flags/home">Feature Flags</a>
+                        </td>
+                    </tr>
+                    <tr>
                         <th>
                             <b>Database Configuration</b>
                         </td>
