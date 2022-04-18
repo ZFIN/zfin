@@ -39,6 +39,8 @@
         <div data-toggle="tooltip" data-placement="bottom" title="${publication.citation}">
                 ${publication.shortAuthorList}
         </div>
+    </jsp:attribute>
+    <jsp:attribute name="entityNameAddendum">
         <div style="font-size: 12px">
                 ${publication.zdbID}
             <c:if test="${!empty publication.accessionNumber}"><p/>PMID:${publication.accessionNumber}</c:if>
