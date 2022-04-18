@@ -19,7 +19,7 @@ WORKING_DIR.eachFileMatch(~/fig.*\.txt/) { it.delete() }
 WORKING_DIR.eachFileMatch(~/loadSQL.*\.txt/) { it.delete() }
 
 DBNAME = System.getenv("DBNAME")
-PUB_IDS_TO_CHECK = "pdfsNeeded.txt"
+PUB_IDS = "pubIds.txt"
 PUBS_WITH_PDFS_TO_UPDATE = new File("pdfsAvailable.txt")
 FIGS_TO_LOAD = new File("figsToLoad.txt")
 PUB_FILES_TO_LOAD = new File("pdfsToLoad.txt")
@@ -28,17 +28,19 @@ PUBS_TO_GIVE_PERMISSIONS = new File("pubsToGivePermission.txt")
 
 def idsToGrab = [:]
 
+if (args.size() == 0) {
+  println("Please add a ZDB ID to fix to the command line.")
+  System.exit(0)
+}
+
+ZDBID_TO_FIX=args[0]
+
 PubmedUtils.psql DBNAME, """
   \\copy (
   SELECT pub_pmc_id, zdb_id
   FROM publication
-  WHERE pub_pmc_id IS NOT NULL and pub_pmc_id != ''
-     AND NOT EXISTS (SELECT 'x' 
-                    FROM publication_file 
-                    WHERE pf_pub_zdb_id = zdb_id 
-                    AND pf_file_type_id =1)
-     AND NOT EXISTS (select 'x' from figure where fig_source_zdb_id = zdb_id) 
-     ) to '$PUB_IDS_TO_CHECK' delimiter ',';
+  WHERE zdb_id='$ZDBID_TO_FIX'
+     ) to '$PUB_IDS' delimiter ',';
 """
 
 def addSummaryPDF(String zdbId, String pmcId, pubYear) {
@@ -64,14 +66,16 @@ def downloadPMCFileBundle(String url, String zdbId, String pubYear) {
         directory.mkdir()
     }
 
-    def file = new FileOutputStream("${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/$zdbId" + ".tar.gz")
-    def out = new BufferedOutputStream(file)
+    println("${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/$zdbId" + ".tar.gz")
 
     def isDownloaded = false
     def numLoops = 0
     while (!isDownloaded) {
         numLoops = numLoops + 1
         println("Download attempt " + numLoops)
+        println(url)
+        def file = new FileOutputStream("${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/$zdbId" + ".tar.gz")
+        def out = new BufferedOutputStream(file)
         out << new URL(url).openStream()
         out.close()
         def timeStop = new Date()
@@ -86,9 +90,14 @@ def downloadPMCFileBundle(String url, String zdbId, String pubYear) {
         // }
 
         def timeStart2 = new Date()
-        def cmd = "cd " + "${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/ " + "&& /bin/tar -xzf *.tar.gz --strip 1 && chgrp -R zfloadup . && chmod -R a+rX,g+sw ."
+        def cmd = "cd " + "${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/ " + "&& /bin/tar -xzk --no-overwrite-dir -f *.tar.gz --strip 1" 
+        def sout = new StringBuilder()
+        def serr = new StringBuilder()
         def process = ["/bin/bash", "-c", cmd].execute()
+        process.consumeProcessOutput(sout,serr)
         process.waitFor()
+        println(sout)
+        println(serr)
         def result = process.exitValue()
         if (!result) {
             isDownloaded = true
@@ -100,6 +109,8 @@ def downloadPMCFileBundle(String url, String zdbId, String pubYear) {
         def timeStop2 = new Date()
         TimeDuration duration2 = TimeCategory.minus(timeStop2, timeStart2)
         println("extract file duration:" + duration2)
+        def fixPerms = "cd " + "${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/ " + "&& chgrp -R zfloadup . && chmod -R a+rX,g+sw ."
+        fixPerms.execute().waitFor()
     }
 }
 
@@ -296,7 +307,7 @@ def fetchBundlesForExistingPubs(Map idsToGrab, File PUBS_WITH_PDFS_TO_UPDATE) {
     }
 }
 
-new File(PUB_IDS_TO_CHECK).withReader { reader ->
+new File(PUB_IDS).withReader { reader ->
     def lines = reader.iterator()
     lines.each { String line ->
         row = line.split(',')
@@ -306,23 +317,3 @@ new File(PUB_IDS_TO_CHECK).withReader { reader ->
 }
 
 fetchBundlesForExistingPubs(idsToGrab, PUBS_WITH_PDFS_TO_UPDATE)
-
-givePubsPermissions = ['/bin/bash', '-c', "${ZfinPropertiesEnum.PGBINDIR}/psql " +
-        "${ZfinPropertiesEnum.DB_NAME} -f ${WORKING_DIR.absolutePath}/give_pubs_permissions.sql " +
-        ">${WORKING_DIR.absolutePath}/loadSQLOutput.log 2> ${WORKING_DIR.absolutePath}/loadSQLError.log"].execute()
-givePubsPermissions.waitFor()
-
-loadBasicPDFFiles = ['/bin/bash', '-c', "${ZfinPropertiesEnum.PGBINDIR}/psql " +
-        "${ZfinPropertiesEnum.DB_NAME} -f ${WORKING_DIR.absolutePath}/add_basic_pdfs.sql " +
-        ">${WORKING_DIR.absolutePath}/loadSQLOutput.log 2> ${WORKING_DIR.absolutePath}/loadSQLError.log"].execute()
-loadBasicPDFFiles.waitFor()
-
-loadFigsAndImages = ['/bin/bash', '-c', "${ZfinPropertiesEnum.PGBINDIR}/psql " +
-        "${ZfinPropertiesEnum.DB_NAME} -f ${WORKING_DIR.absolutePath}/load_figs_and_images.sql " +
-        ">${WORKING_DIR.absolutePath}/loadSQLOutput.log 2> ${WORKING_DIR.absolutePath}/loadSQLError.log"].execute()
-loadFigsAndImages.waitFor()
-
-loadPubFiles = ['/bin/bash', '-c', "${ZfinPropertiesEnum.PGBINDIR}/psql " +
-        "${ZfinPropertiesEnum.DB_NAME} -f ${WORKING_DIR.absolutePath}/load_pub_files.sql " +
-        ">${WORKING_DIR.absolutePath}/loadSQLOutput.log 2> ${WORKING_DIR.absolutePath}/loadSQLError.log"].execute()
-loadPubFiles.waitFor()
