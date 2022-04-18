@@ -144,7 +144,7 @@ public class BlastResultMapper {
         }
 
 
-        List<String> otherTickets = new ArrayList<String>();
+        List<String> otherTickets = new ArrayList<>();
         if (blastOutput.getZFINParameters().getOtherTickets() != null) {
             List<Ticket> tickets = blastOutput.getZFINParameters().getOtherTickets().getTicket();
             if (CollectionUtils.isNotEmpty(tickets)) {
@@ -157,7 +157,7 @@ public class BlastResultMapper {
 
         // because we no longer have the original request, we need to see what the common public database request is
         // if not root
-        Set<Database> databases = new HashSet<Database>();
+        Set<Database> databases = new HashSet<>();
 //        StringTokenizer databaseStringTokens  = new StringTokenizer(blastOutput.getBlastOutputDb()," ") ;
         boolean isRoot = Person.isCurrentSecurityUserRoot();
 
@@ -228,7 +228,7 @@ public class BlastResultMapper {
 //          get DBLinks for that accession ID, REMOVING SUPPORTING SEQUENCES
 //            List<DBLink> dbLinks = RepositoryFactory.getSequenceRepository().getDBLinksForAccession(hitAccessionID ) ;
             List<DBLink> dbLinks = dbLinkMap.get(hitAccessionID);
-            Set<Marker> genes = new HashSet<Marker>();
+            Set<Marker> genes = new HashSet<>();
             if (CollectionUtils.isNotEmpty(dbLinks)) {
 //            if we have a clone ID, set that as the hitMarker and get the gene from that
 //            else if we have the transcript ID, set that as the hitMarker and get the gene from that
@@ -261,7 +261,7 @@ public class BlastResultMapper {
                 // if there are no hits in sequences, then assume we have a genomic clone
                 if (geneDBLink == null && cloneDBLink == null && transcriptDBLink == null) {
                     for (DBLink dbLink : dbLinks) {
-                        if (false == dbLink.getDataZdbID().startsWith("ZDB-ORTHO-")) {
+                        if (!dbLink.getDataZdbID().startsWith("ZDB-ORTHO-")) {
                             logger.debug("geneDBLink is null so setting cloneDBLink for a genomic: " + dbLink);
                             Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID(dbLink.getDataZdbID());
                             // if a genomic clone then we handle appropriately
@@ -293,12 +293,12 @@ public class BlastResultMapper {
                     hitMarker = RepositoryFactory.getMarkerRepository().getMarkerByID(cloneDBLink.getDataZdbID());
                     genes = MarkerService.getRelatedMarker(hitMarker, MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
                     hitViewBean.setHitDBLink(cloneDBLink);
-                } else if (transcriptDBLink != null && false == TranscriptService.isSupportingSequence((TranscriptDBLink) transcriptDBLink)) {
+                } else if (transcriptDBLink != null && !TranscriptService.isSupportingSequence((TranscriptDBLink) transcriptDBLink)) {
                     hitMarker = RepositoryFactory.getMarkerRepository().getTranscriptByZdbID(transcriptDBLink.getDataZdbID());
                     genes = MarkerService.getRelatedMarker(hitMarker, MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT);
                     hitViewBean.setHitDBLink(transcriptDBLink);
                     TranscriptStatus transcriptStatus = ((Transcript) hitMarker).getStatus();
-                    hitViewBean.setWithdrawn(transcriptStatus == null ? false : transcriptStatus.getStatus() == TranscriptStatus.Status.WITHDRAWN_BY_SANGER);
+                    hitViewBean.setWithdrawn(transcriptStatus != null && transcriptStatus.getStatus() == TranscriptStatus.Status.WITHDRAWN_BY_SANGER);
                 } else if (geneDBLink != null) {
                     genes.add(RepositoryFactory.getMarkerRepository().getMarkerByID(geneDBLink.getDataZdbID()));
                     hitViewBean.setHitDBLink(geneDBLink);
@@ -408,7 +408,7 @@ public class BlastResultMapper {
 
 
     public static Map<String, HitViewBean> getBeanMapForHits(List<Hit> hits) {
-        Map<String, HitViewBean> hitViewBeans = new HashMap<String, HitViewBean>();
+        Map<String, HitViewBean> hitViewBeans = new HashMap<>();
 
         // first, we process all of the hits to get accessions
         Iterator<Hit> iter = hits.iterator();
@@ -457,7 +457,7 @@ public class BlastResultMapper {
             }
 
             // now that we have the accessionID set, we can write the contains method
-            if (false == hitViewBeans.containsKey(hitAccession)) {
+            if (!hitViewBeans.containsKey(hitAccession)) {
 
                 if (hitAccession.contains(".")) {
                     StringTokenizer tokenizer = new StringTokenizer(hitAccession, ".");
@@ -475,7 +475,7 @@ public class BlastResultMapper {
 
                 // handle the detailed alignments here
                 List<Hsp> hsps = hit.getHitHsps().getHsp();
-                List<HighScoringPair> highScoringPairs = new ArrayList<HighScoringPair>();
+                List<HighScoringPair> highScoringPairs = new ArrayList<>();
                 double lowEValue = Double.MAX_VALUE;
                 int highScore = Integer.MIN_VALUE;
                 for (Hsp hsp : hsps) {
