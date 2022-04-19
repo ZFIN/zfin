@@ -2,10 +2,12 @@
 
 <%@ attribute name="sections" required="true" rtexprvalue="true" type="java.util.Collection" %>
 <%@ attribute name="entityName" required="false" fragment="true" %>
+<%@ attribute name="entityNameAddendum" required="false" fragment="true" %>
 <%@ attribute name="title" required="false" %>
 <%@ attribute name="pageBar" required="false" %>
 
 <jsp:invoke fragment="entityName" var="entityNameValue"/>
+<jsp:invoke fragment="entityNameAddendum" var="entityNameAddendumValue"/>
 
 <z:page bodyClass="data-page" bootstrap="true" title="${title}">
     <div class="d-flex h-100">
@@ -13,11 +15,14 @@
             <ul class="nav nav-pills flex-column">
                 <c:if test="${!empty entityNameValue}">
                     <li class="nav-item w-100">
-                        <a href="#" class="back-to-top-link" title="Back to top">
-                            <h5 class="p-3 m-0 border-bottom text-truncate">
-                                    ${entityNameValue}
-                            </h5>
-                        </a>
+                        <h5 class="p-3 m-0 border-bottom text-truncate back-to-top-link">
+                            <a href="#" class="back-to-top-link" title="Back to top">
+                                ${entityNameValue}
+                            </a>
+                            <c:if test="${!empty entityNameAddendumValue}">
+                                ${entityNameAddendumValue}
+                            </c:if>
+                        </h5>
                     </li>
                 </c:if>
                 <c:forEach var="section" items="${sections}">
