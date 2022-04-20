@@ -732,7 +732,7 @@
             />
 
             <entity name="gene_accession"
-                    query="select fdb_db_name || ':' || dblink_acc_num as related_accession,
+                    query="select distinct fdb_db_name || ':' || dblink_acc_num as related_accession,
                                      dblink_linked_recid as gene_zdb_id
                              from db_link, foreign_db_contains, foreign_db,
                                   marker, marker_type_group_member
@@ -761,7 +761,26 @@
                                and mtgrpmem_mrkr_type_group in ('TRANSCRIPT')
                                and mrel_mrkr_2_zdb_id=dblink_linked_recid
                                and dblink_acc_num like 'OTTDARG%'
-                               and mrel_type='gene produces transcript'"
+                               and mrel_type='gene produces transcript'
+                           union
+                            SELECT DISTINCT fdb_db_name || ':' || dblink_acc_num AS related_accession,
+                                marker_rel_1.mrel_mrkr_1_zdb_id as gene_zdb_id
+                            FROM db_link
+                                CROSS JOIN foreign_db_contains_display_group fdb_contains_dg
+                                CROSS JOIN foreign_db_contains fdb_contains
+                                CROSS JOIN foreign_db fdb
+                                CROSS JOIN marker_relationship marker_rel_1
+                                CROSS JOIN marker_relationship marker_rel_2
+                            WHERE TRUE
+                              AND marker_rel_1.mrel_mrkr_2_zdb_id = marker_rel_2.mrel_mrkr_2_zdb_id
+                              AND marker_rel_1.mrel_type = 'gene produces transcript'
+                              AND marker_rel_2.mrel_mrkr_1_zdb_id = dblink_linked_recid
+                              AND marker_rel_2.mrel_type = 'clone contains transcript'
+                              AND fdb_contains_dg.fdbcdg_name = 'marker linked sequence'
+                              AND fdb_contains.fdbcont_zdb_id = dblink_fdbcont_zdb_id
+                              AND fdb.fdb_db_pk_id = fdb_contains.fdbcont_fdb_db_id
+                              AND (fdb_contains_dg.fdbcdg_pk_id IN (SELECT fdb_contains_dgm.fdbcdgm_group_id FROM foreign_db_contains_display_group_member fdb_contains_dgm WHERE fdb_contains.fdbcont_zdb_id = fdb_contains_dgm.fdbcdgm_fdbcont_zdb_id))
+                            "
                     cacheImpl="SortedMapBackedCache"
                     where="gene_zdb_id=gene.id"
             />
