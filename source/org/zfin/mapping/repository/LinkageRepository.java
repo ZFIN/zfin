@@ -112,6 +112,8 @@ public interface LinkageRepository {
     List<LinkageMember> getLinkageMemberForMarker(Marker marker);
     List<FeatureGenomeLocation> getFeatureLocations(Marker marker);
 
+    List<GenomeLocation> getGenericGenomeLocation(ZdbID markerOrFeature);
+
     /**
      * Retrieves genome location information.
      *

@@ -62,10 +62,10 @@ public class JBrowseImage implements GenomeBrowserImage {
                 url.addNameValuePair("tracks", StringUtils.join(tracks, ","));
             }
 
-            //String highlight = getHighlightString();
-            //if (StringUtils.isNotBlank(highlight)) {
-            //    url.addNameValuePair("highlight", highlight);
-            //}
+            String highlight = getHighlightString();
+            if (StringUtils.isNotBlank(highlight)) {
+                url.addNameValuePair("highlight", highlight);
+            }
 
             //url.addNameValuePair("grid", grid ? "1" : "0");
 
