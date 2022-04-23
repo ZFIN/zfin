@@ -230,6 +230,22 @@ public class HibernateLinkageRepository implements LinkageRepository {
         return list1;
     }
 
+    /**
+     * Return the GenomeLocation for the marker if provided, or the feature if that's provided.
+     * @param markerOrFeature (should be an instance of either Marker class or Feature class)
+     * @return
+     */
+    @Override
+    public List<GenomeLocation> getGenericGenomeLocation(ZdbID markerOrFeature) {
+        List<GenomeLocation> results = new ArrayList<>();
+        if (markerOrFeature instanceof Marker) {
+            getGenomeLocation((Marker)markerOrFeature).stream().forEach(location -> results.add(location));
+        } else if (markerOrFeature instanceof Feature) {
+            getGenomeLocation((Feature)markerOrFeature).stream().forEach(location -> results.add(location));
+        }
+        return results;
+    }
+
     @Override
     public List<LinkageMember> getLinkageMemberForMarker(Marker marker) {
         Query query = HibernateUtil.currentSession().createQuery(
