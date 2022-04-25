@@ -14,11 +14,26 @@
         ${fish.name}
     </jsp:attribute>
 
+    <jsp:attribute name="pageBar">
+        <nav class="navbar navbar-light admin text-center border-bottom">
+            <a class="col-sm" href="/action/fish/fish-detail/${fish.zdbID}">Old View</a>
+            <a class="col-sm" href="/action/updates/${fish.zdbID}">
+                Last Update:
+                <c:set var="latestUpdate" value="${zfn:getLastUpdate(fish.zdbID)}"/>
+                <c:choose>
+                <c:when test="${!empty latestUpdate}">
+                    <fmt:formatDate value="${latestUpdate.dateUpdated}" type="date"/>
+                </c:when>
+                <c:otherwise>
+                    Never modified
+                </c:otherwise>
+            </c:choose>
+            </a>
+
+        </nav>
+    </jsp:attribute>
+
     <jsp:body>
-        <z:dataManagerDropdown>
-            <a class="dropdown-item" href="/action/curation">Edit</a>
-            <a class="dropdown-item" href="/action/fish/fish-detail/${fish.zdbID}">Old View</a>
-        </z:dataManagerDropdown>
 
         <div id="${zfn:makeDomIdentifier(SUMMARY)}">
             <div class="small text-uppercase text-muted">FISH</div>

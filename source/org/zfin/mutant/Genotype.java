@@ -1,5 +1,7 @@
 package org.zfin.mutant;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.util.CollectionUtils;
 import org.zfin.fish.FishAnnotation;
@@ -22,6 +24,8 @@ import java.util.*;
  * The name of the genotype is a semicolon-delimited list of allele names.
  * Each allele is called a Feature
  */
+@Setter
+@Getter
 @Entity
 @Table(name = "genotype")
 public class Genotype implements Comparable, EntityZdbID {
@@ -86,53 +90,6 @@ public class Genotype implements Comparable, EntityZdbID {
     public void setSecondaryGenotypeSet(Set<SecondaryGenotype> secondaryGenotypeSet) {
         this.secondaryGenotypeSet = secondaryGenotypeSet;
     }
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getNameOrder() {
-        return nameOrder;
-    }
-
-    public void setNameOrder(String nameOrder) {
-        this.nameOrder = nameOrder;
-    }
-
-    public String getHandle() {
-        return handle;
-    }
-
-    public void setHandle(String handle) {
-        this.handle = handle;
-    }
-
-    public boolean isWildtype() {
-        return wildtype;
-    }
-
-    public void setWildtype(boolean wildtype) {
-        this.wildtype = wildtype;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
 
     /**
      * There is only one background per genotype, so ensure unquiness
@@ -189,14 +146,6 @@ public class Genotype implements Comparable, EntityZdbID {
         return getName().compareTo(otherGenotype.getName());
     }
 
-    public Set<GenotypeExternalNote> getExternalNotes() {
-        return externalNotes;
-    }
-
-    public void setExternalNotes(Set<GenotypeExternalNote> externalNotes) {
-        this.externalNotes = externalNotes;
-    }
-
     public Set<DataNote> getDataNotes() {
         if (dataNotes == null) {
             return new HashSet<>();
@@ -204,36 +153,8 @@ public class Genotype implements Comparable, EntityZdbID {
         return dataNotes;
     }
 
-    public void setDataNotes(Set<DataNote> dataNotes) {
-        this.dataNotes = dataNotes;
-    }
-
     public SortedSet<DataNote> getSortedDataNotes() {
         return new TreeSet(this.getDataNotes());
-    }
-
-    public Set<GenotypeSupplier> getSuppliers() {
-        return suppliers;
-    }
-
-    public void setSuppliers(Set<GenotypeSupplier> suppliers) {
-        this.suppliers = suppliers;
-    }
-
-    public Set<GenotypeAlias> getAliases() {
-        return aliases;
-    }
-
-    public void setAliases(Set<GenotypeAlias> aliases) {
-        this.aliases = aliases;
-    }
-
-    public Integer getComplexity() {
-        return complexity;
-    }
-
-    public void setComplexity(Integer complexity) {
-        this.complexity = complexity;
     }
 
     @Override
