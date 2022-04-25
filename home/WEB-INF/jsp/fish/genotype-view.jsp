@@ -15,12 +15,26 @@
         ${genotype.name}
     </jsp:attribute>
 
-    <jsp:body>
-        <z:dataManagerDropdown>
-            <a class="dropdown-item" href="/action/curation">Edit</a>
-            <a class="dropdown-item" href="/action/genotype/view/${genotype.zdbID}">Old View</a>
-        </z:dataManagerDropdown>
+    <jsp:attribute name="pageBar">
+        <nav class="navbar navbar-light admin text-center border-bottom">
+            <a class="col-sm" href="/action/genotype/view/${genotype.zdbID}">Old View</a>
+            <a class="col-sm" href="/action/updates/${genotype.zdbID}">
+                Last Update:
+                <c:set var="latestUpdate" value="${zfn:getLastUpdate(genotype.zdbID)}"/>
+                <c:choose>
+                <c:when test="${!empty latestUpdate}">
+                    <fmt:formatDate value="${latestUpdate.dateUpdated}" type="date"/>
+                </c:when>
+                <c:otherwise>
+                    Never modified
+                </c:otherwise>
+            </c:choose>
+            </a>
 
+        </nav>
+    </jsp:attribute>
+
+    <jsp:body>
         <div id="${zfn:makeDomIdentifier(SUMMARY)}">
             <div class="small text-uppercase text-muted">GENOTYPE</div>
             <h1>${genotype.name}</h1>
