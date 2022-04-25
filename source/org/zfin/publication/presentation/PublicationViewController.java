@@ -36,6 +36,7 @@ import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.search.service.RelatedDataService;
 import org.zfin.util.ZfinStringUtils;
 import org.zfin.zebrashare.ZebrashareSubmissionMetadata;
 import org.zfin.zebrashare.repository.ZebrashareRepository;
@@ -74,6 +75,9 @@ public class PublicationViewController {
     @Autowired
     private ZebrashareRepository zebrashareRepository;
 
+    @Autowired
+    private RelatedDataService relatedDataService;
+
     @RequestMapping("/publication/{zdbID}")
     public String viewPublication(@PathVariable String zdbID, Model model, HttpServletResponse response) {
         Publication publication = getPublication(zdbID);
@@ -110,6 +114,8 @@ public class PublicationViewController {
         model.addAttribute("imageResults", images);
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication));
+        model.addAttribute("relatedData", relatedDataService.getXrefsLinks(publication.getZdbID(), "Publication", null));
+
         return "publication/publication-view-prototype";
     }
 
