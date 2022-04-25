@@ -1800,7 +1800,7 @@ public class HibernateMutantRepository implements MutantRepository {
         Fish existingFish = getFishByGenoStr(fish);
         boolean newFishCreated = false;
         if (existingFish != null) {
-            fish = existingFish;
+            fish.setFishProperties(existingFish);
         } else {
             HibernateUtil.currentSession().save(fish);
             getInfrastructureRepository().insertUpdatesTable(fish, "fish_zdb_id", "create new record", publication.getZdbID(), null);

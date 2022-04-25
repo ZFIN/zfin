@@ -224,4 +224,21 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
         return zdbID != null ? zdbID.hashCode() : 0;
     }
 
+    public void setFishProperties(Fish existingFish) {
+        setFishPhenotypicConstructCount(existingFish.getFishPhenotypicConstructCount());
+        setSecondaryFishSet(existingFish.getSecondaryFishSet());
+        setAliases(existingFish.getAliases());
+        setFishFunctionalAffectedGeneCount(existingFish.getFishFunctionalAffectedGeneCount());
+        setGenotype(existingFish.getGenotype());
+        setWildtype(existingFish.isWildtype());
+        setHandle(existingFish.getHandle());
+        setName(existingFish.getName());
+        setNameOrder(existingFish.getNameOrder());
+        setStrList(existingFish.getStrList());
+        setZdbID(existingFish.getZdbID());
+        setFishExperiments(existingFish.getFishExperiments());
+        setOrder(existingFish.getOrder());
+        setDisplayName(existingFish.getDisplayName());
+        setSuppliers(existingFish.getSuppliers());
+    }
 }
