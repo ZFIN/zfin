@@ -361,16 +361,24 @@ public class RelatedDataService {
 
 
     public List<String> getXrefLinks(SearchResult result) {
-        List<String> links = new ArrayList<>();
 
-        QueryResponse response = solrService.getRelatedDataResponse(result.getId());
+        String id = result.getId();
+        String category = result.getCategory();
+        String type = result.getType();
+
+        return getXrefsLinks(id, category, type);
+    }
+
+    public List<String> getXrefsLinks(String id, String category, String type) {
+        List<String> links = new ArrayList<>();
+        QueryResponse response = solrService.getRelatedDataResponse(id);
 
         FacetField facetField = response.getFacetField("category");
 
         if (facetField != null && facetField.getValues() != null) {
             for (FacetField.Count related : facetField.getValues()) {
-                String linkText = LinkDisplay.lookup(result.getCategory(), result.getType(), related.getName());
-                StringBuilder link = createHyperLink(result.getId(), facetField.getName(), related.getName(),
+                String linkText = LinkDisplay.lookup(category, type, related.getName());
+                StringBuilder link = createHyperLink(id, facetField.getName(), related.getName(),
                         related.getCount(), linkText, true, null);
                 links.add(link.toString());
             }

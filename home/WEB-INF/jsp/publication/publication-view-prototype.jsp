@@ -14,7 +14,7 @@
 <c:set var="PHENOTYPE" value="Phenotype"/>
 <c:set var="MUTATION" value="Mutation and Transgenics"/>
 <c:set var="FISH" value="Fish"/>
-<c:set var="DISEASE" value="Disease"/>
+<c:set var="DISEASE" value="Human Disease / Model Data"/>
 <c:set var="ORTHOLOGY" value="Orthology"/>
 <c:set var="MAPPING" value="Mapping"/>
 <c:set var="DIRECTLY_ATTRIBUTED_DATA" value="Directly Attributed Data"/>
@@ -101,6 +101,11 @@
         <z:section title="${MUTATION}">
             <div class="__react-root" id="PublicationMutationTable"
                  data-url="/action/api/publication/${publication.zdbID}/features"></div>
+        </z:section>
+
+        <z:section title="${DISEASE}">
+            <div class="__react-root" id="PublicationDiseaseTable"
+                 data-url="/action/api/publication/${publication.zdbID}/diseases"></div>
         </z:section>
 
         <z:section title="${STRS}">
