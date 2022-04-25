@@ -120,6 +120,10 @@
             <a href="/action/publication/${publication.zdbID}/edit#files">Add/Update Files</a>
         </z:attributeListItem>
 
+        <z:attributeListItem label="Related Data">
+            ${relatedData}
+        </z:attributeListItem>
+
     </authz:authorize>
 
 

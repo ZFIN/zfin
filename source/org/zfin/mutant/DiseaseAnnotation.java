@@ -1,68 +1,46 @@
 package org.zfin.mutant;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
+import org.zfin.expression.Experiment;
+import org.zfin.framework.api.View;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Disease model entity:
  */
+@Setter
+@Getter
 public class DiseaseAnnotation implements EntityZdbID {
 
+    @JsonView(View.API.class)
     private String zdbID;
+    @JsonView(View.API.class)
     private GenericTerm disease;
     private Publication publication;
     private String evidenceCode;
-
-    public List<DiseaseAnnotationModel> getDiseaseAnnotationModel() {
-        return diseaseAnnotationModel;
-    }
-
-    public void setDiseaseAnnotationModel(List<DiseaseAnnotationModel> diseaseAnnotationModel) {
-        this.diseaseAnnotationModel = diseaseAnnotationModel;
-    }
-
     private List<DiseaseAnnotationModel> diseaseAnnotationModel;
 
-
-
-    public String getEvidenceCode() {
-        return evidenceCode;
+    @JsonView(View.API.class)
+    public List<Fish> getFishList(){
+        return diseaseAnnotationModel.stream().map(model -> model.getFishExperiment().getFish()).collect(Collectors.toList());
     }
 
-    public void setEvidenceCode(String evidenceCode) {
-        this.evidenceCode = evidenceCode;
+    @JsonView(View.API.class)
+    public List<Experiment> getEnvironmentList(){
+        return diseaseAnnotationModel.stream().map(model -> model.getFishExperiment().getExperiment()).collect(Collectors.toList());
     }
 
-
-
-    public Publication getPublication() {
-        return publication;
-    }
-
-    public void setPublication(Publication publication) {
-        this.publication = publication;
-    }
-
-    public GenericTerm getDisease() {
-        return disease;
-    }
-
-    public void setDisease(GenericTerm term) {
-        this.disease = term;
-    }
-
-    @Override
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    @Override
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
+    @JsonView(View.API.class)
+    public List<String> getEvidenceCodeList(){
+        return diseaseAnnotationModel.stream().map(model -> model.getDiseaseAnnotation().getCodeName()).collect(Collectors.toList());
     }
 
     @Override
@@ -86,5 +64,8 @@ public class DiseaseAnnotation implements EntityZdbID {
         return disease.getTermName();
     }
 
+    public String getCodeName(){
+        return evidenceCode.equals("ZDB-TERM-170419-250") ? "TAS" : "";
+    }
 
 }

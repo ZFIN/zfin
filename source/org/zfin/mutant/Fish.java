@@ -24,7 +24,7 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
     @JsonView(View.API.class)
     private String zdbID;
     private Genotype genotype;
-    @JsonView(View.FishAPI.class)
+    @JsonView(View.API.class)
     private String name;
     private String nameOrder;
     @JsonView(View.API.class)
