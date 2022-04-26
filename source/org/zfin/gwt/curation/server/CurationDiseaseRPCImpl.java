@@ -380,6 +380,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             report.addMessage("created new fish " + fish.getHandle());
         } else {
             report.addMessage("imported fish " + fish.getHandle());
+            return getMutantRepository().getFishByGenoStr(fish);
         }
         return fish;
     }
