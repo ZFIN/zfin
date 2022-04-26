@@ -1,7 +1,5 @@
 package org.zfin.nomenclature.repair;
 
-import org.apache.commons.collections.ListUtils;
-import org.apache.commons.lang.StringUtils;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -13,33 +11,24 @@ import org.zfin.AbstractDatabaseTest;
 import org.zfin.AppConfig;
 import org.zfin.TestConfiguration;
 import org.zfin.feature.Feature;
-import org.zfin.feature.FeatureAlias;
 import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.ui.ValidationException;
-import org.zfin.infrastructure.DataAliasGroup;
-import org.zfin.infrastructure.PublicationAttribution;
-import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
-import org.zfin.mutant.GenotypeFeature;
 import org.zfin.mutant.GenotypeService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.search.Category;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.*;
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
@@ -135,7 +124,7 @@ public class GenotypeNameChangeTest extends AbstractDatabaseTest {
         fishDTO.setGenotypeDTO(genoDTO);
 
         Fish fish = DTOConversionService.convertToFishFromFishDTO(fishDTO);
-        getMutantRepository().createFish(fish, publication);
+        getMutantRepository().createFishIfNotExists(fish, publication);
 
         //confirm fish name is correct
         assertEquals("zf5555/+", fish.getName());

@@ -1796,12 +1796,10 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     @Override
-    public boolean createFish(Fish fish, Publication publication) {
+    public boolean createFishIfNotExists(Fish fish, Publication publication) {
         Fish existingFish = getFishByGenoStr(fish);
         boolean newFishCreated = false;
-        if (existingFish != null) {
-            fish = existingFish;
-        } else {
+        if (existingFish == null) {
             HibernateUtil.currentSession().save(fish);
             getInfrastructureRepository().insertUpdatesTable(fish, "fish_zdb_id", "create new record", publication.getZdbID(), null);
             newFishCreated = true;
