@@ -376,7 +376,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
     protected Fish createFish(Publication publication, FishDTO newFish, GenotypeCreationReportDTO report) throws TermNotFoundException {
         Fish fish = DTOConversionService.convertToFishFromFishDTO(newFish);
 
-        if (getMutantRepository().createFish(fish, publication)) {
+        if (getMutantRepository().createFishIfNotExists(fish, publication)) {
             report.addMessage("created new fish " + fish.getHandle());
         } else {
             report.addMessage("imported fish " + fish.getHandle());

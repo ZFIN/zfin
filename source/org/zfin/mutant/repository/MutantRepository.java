@@ -359,7 +359,13 @@ public interface MutantRepository {
      */
     List<SequenceTargetingReagent> getStrList(String publicationID);
 
-    boolean createFish(Fish fish, Publication publication);
+    /**
+     * Create and persist new instance of fish if it doesn't already exist
+     * @param fish
+     * @param publication
+     * @return return true if new fish is created, false if already exists
+     */
+    boolean createFishIfNotExists(Fish fish, Publication publication);
 
     /**
      * Retrieve all fish attributed to a given pub
