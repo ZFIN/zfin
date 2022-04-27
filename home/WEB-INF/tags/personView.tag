@@ -16,6 +16,11 @@
                    isOwner="${isOwner}"
         />
 
+<authz:authorize access="hasRole('root')">
+    <a class="dropdown-item" href="/action/profile/person/${person.zdbID}">Prototype View</a>
+</authz:authorize>
+
+
 <zfin2:listAllFromOrganization/>
 
 <table>
