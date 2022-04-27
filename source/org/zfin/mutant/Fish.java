@@ -1,6 +1,8 @@
 package org.zfin.mutant;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
 import org.zfin.fish.repository.FishService;
 import org.zfin.framework.api.View;
 import org.zfin.infrastructure.EntityZdbID;
@@ -13,6 +15,8 @@ import java.util.Set;
 /**
  * Fish entity
  */
+@Setter
+@Getter
 public class Fish implements EntityZdbID, Comparable<Fish> {
 
     public static final String WT = "WT";
@@ -20,7 +24,7 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
     @JsonView(View.API.class)
     private String zdbID;
     private Genotype genotype;
-    @JsonView(View.FishAPI.class)
+    @JsonView(View.API.class)
     private String name;
     private String nameOrder;
     @JsonView(View.API.class)
@@ -34,14 +38,6 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
     private Set<FishExperiment> fishExperiments;
     private long fishPhenotypicConstructCount;
 
-    public long getFishPhenotypicConstructCount() {
-        return fishPhenotypicConstructCount;
-    }
-
-    public void setFishPhenotypicConstructCount(long fishPhenotypicConstructCount) {
-        this.fishPhenotypicConstructCount = fishPhenotypicConstructCount;
-    }
-
     private List<SequenceTargetingReagent> strList;
     private long fishFunctionalAffectedGeneCount;
 
@@ -49,85 +45,6 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
         if (aliases == null || aliases.size() == 0)
             return null;
         return aliases;
-    }
-
-    public Set<SecondaryFish> getSecondaryFishSet() {
-        return secondaryFishSet;
-    }
-
-    public void setSecondaryFishSet(Set<SecondaryFish> secondaryFishSet) {
-        this.secondaryFishSet = secondaryFishSet;
-    }
-
-    public void setAliases(Set<FishAlias> aliases) {
-        this.aliases = aliases;
-    }
-
-
-    public long getFishFunctionalAffectedGeneCount() {
-        return fishFunctionalAffectedGeneCount;
-    }
-
-    public void setFishFunctionalAffectedGeneCount(long fishFunctionalAffectedGeneCount) {
-        this.fishFunctionalAffectedGeneCount = fishFunctionalAffectedGeneCount;
-    }
-
-    public Genotype getGenotype() {
-        return genotype;
-    }
-
-    public void setGenotype(Genotype genotype) {
-        this.genotype = genotype;
-    }
-
-    public boolean isWildtype() {
-        return wildtype;
-    }
-
-    public void setWildtype(boolean wildtype) {
-        this.wildtype = wildtype;
-    }
-
-    public String getHandle() {
-        return handle;
-    }
-
-    public void setHandle(String handle) {
-        this.handle = handle;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getNameOrder() {
-        return nameOrder;
-    }
-
-    public void setNameOrder(String nameOrder) {
-        this.nameOrder = nameOrder;
-    }
-
-    public List<SequenceTargetingReagent> getStrList() {
-        return strList;
-    }
-
-    public void setStrList(List<SequenceTargetingReagent> strList) {
-        this.strList = strList;
-    }
-
-    @Override
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    @Override
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
     }
 
     @JsonView(View.FishAPI.class)
@@ -155,22 +72,6 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
         return zdbID;
     }
 
-    public Set<FishExperiment> getFishExperiments() {
-        return fishExperiments;
-    }
-
-    public void setFishExperiments(Set<FishExperiment> fishExperiments) {
-        this.fishExperiments = fishExperiments;
-    }
-
-    public long getOrder() {
-        return order;
-    }
-
-    public void setOrder(long order) {
-        this.order = order;
-    }
-
     public int compareTo(Fish otherFish) {
         if (order != otherFish.getOrder())
             return order < otherFish.getOrder() ? -1 : 1;
@@ -189,24 +90,8 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
         return FishService.getAffectedGenes(this);
     }
 
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
     public boolean isClean() {
         return fishFunctionalAffectedGeneCount == 0;
-    }
-
-    public Set<FishSupplier> getSuppliers() {
-        return suppliers;
-    }
-
-    public void setSuppliers(Set<FishSupplier> suppliers) {
-        this.suppliers = suppliers;
     }
 
     @Override

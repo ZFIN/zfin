@@ -20,12 +20,20 @@ System.out.println()
 // track number of times a constructed ID has been used
 ids = [:]
 
+Map<String, String> errorMap = new HashMap<>()
+List<String> successList = new ArrayList<>()
 (options.input ? new File(options.input) : System.in).withReader { input ->
     input.eachLine { line ->
         if (!line.startsWith('ID=;')) {
             return
         }
         def (name, flag, chromosome, start, quality, cigar, rnext, pnext, tlen, sequence, qual) = line.split();
+        int startIndex = line.indexOf('zdb_id=')
+        if(startIndex == -1)
+            return
+        truncatedLine = line.substring(startIndex)
+        int endIndex = truncatedLine.indexOf(";")
+        truncatedLine = truncatedLine.substring(0, endIndex)
         if (chromosome != '*' && !chromosome.startsWith('CHR_ALT') && start.isNumber() && cigar.substring(0, 2).isNumber()) {
             strand = (flag == '16') ? '-' : '+'
             zdbMatch = name =~ /ZDB-([A-Z]+)-\d+-\d+/
@@ -46,9 +54,18 @@ ids = [:]
             newName = "ID=" + id + name.substring(3)
             newName = newName.replace(",", "%2C")
             System.out.println("$chromosome\tZFIN_knockdown_reagent\t$type\t$start\t$end\t.\t$strand\t.\t$newName")
+            errorMap.remove(truncatedLine)
+            successList.add(truncatedLine)
         } else {
+            if (!successList.contains(truncatedLine))
+                errorMap.put(truncatedLine, ">$name" + System.lineSeparator() + sequence)
+/*
             System.err.println(">$name")
             System.err.println(sequence)
+*/
         }
     }
 }
+
+// print out all records that do not have a success record
+errorMap.values().forEach(element -> System.err.println(element))

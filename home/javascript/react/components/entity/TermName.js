@@ -3,10 +3,6 @@ import {entityType} from '../../utils/types';
 
 const TYPE_CLASSES = [
     {
-        className: '',
-        types: ['EXP'],
-    },
-    {
         className: 'construct',
         types: ['ETCONSTRCT', 'GTCONSTRCT', 'PTCONSTRCT', 'TGCONSTRCT'],
     },
@@ -39,10 +35,8 @@ const EntityAbbreviation = ({entity}) => {
     }
 
     let linktext;
-    if (['ETCONSTRCT', 'GTCONSTRCT', 'PTCONSTRCT', 'TGCONSTRCT', 'ATB'].includes(type)) {
+    if (['ETCONSTRCT', 'GTCONSTRCT', 'PTCONSTRCT', 'TGCONSTRCT','ATB'].includes(type)) {
         linktext = entity.name;
-    } else if (['EXP'].includes(type)) {
-        linktext = entity.conditions || '';
     } else {
         linktext = entity.abbreviation || '';
     }
