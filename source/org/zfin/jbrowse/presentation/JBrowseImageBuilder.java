@@ -97,15 +97,11 @@ public class JBrowseImageBuilder implements GenomeBrowserImageBuilder {
     private GenomeLocation getGenomeLocation(ZdbID markerOrFeature) {
         List<GenomeLocation> genomeLocations = getLinkageRepository().getGenericGenomeLocation(markerOrFeature);
 
-        Optional<GenomeLocation> first = genomeLocations.stream().filter(
-                genomeLocation -> getGenomeBuild().getValue().equals(genomeLocation.getAssembly())
-        ).findFirst();
-
-        GenomeLocation result = null;
-        if (first.isPresent()) {
-            result = first.get();
-        }
-        return result;
+        return genomeLocations.stream().filter(
+            genomeLocation -> getGenomeBuild().getValue().equals(genomeLocation.getAssembly())
+        )
+        .findFirst()
+        .orElse(null);
     }
 
     public GenomeBrowserImageBuilder genomeBuild(GenomeBrowserBuild genomeBuild) {
