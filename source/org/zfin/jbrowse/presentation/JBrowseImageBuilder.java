@@ -5,11 +5,16 @@ import org.zfin.genomebrowser.GenomeBrowserBuild;
 import org.zfin.genomebrowser.GenomeBrowserTrack;
 import org.zfin.genomebrowser.presentation.GenomeBrowserImageBuilder;
 import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
+import org.zfin.infrastructure.ZdbID;
 import org.zfin.mapping.GenomeLocation;
 import org.zfin.marker.Marker;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
+import static org.zfin.repository.RepositoryFactory.getLinkageRepository;
 
 public class JBrowseImageBuilder implements GenomeBrowserImageBuilder {
 
@@ -35,9 +40,9 @@ public class JBrowseImageBuilder implements GenomeBrowserImageBuilder {
     public GenomeBrowserImage build() {
 
         if (highlightMarker != null) {
-            highlightLandmark = highlightMarker.getAbbreviation();
+            highlightLandmark = getHighlightLandmarkByMarkerOrFeature(highlightMarker);
         } else if (highlightFeature != null) {
-            highlightLandmark = highlightFeature.getAbbreviation();
+            highlightLandmark = getHighlightLandmarkByMarkerOrFeature(highlightFeature);
         } else if (highlightString != null) {
             highlightLandmark = highlightString;
         }
@@ -68,6 +73,35 @@ public class JBrowseImageBuilder implements GenomeBrowserImageBuilder {
         }
 
         return new JBrowseImage(this);
+    }
+
+    private String getHighlightLandmarkByMarkerOrFeature(ZdbID entity) {
+        String defaultValue = "";
+        if (entity instanceof Marker) {
+            defaultValue = ((Marker) entity).getAbbreviation();
+        } else if (entity instanceof Feature) {
+            defaultValue = ((Feature) entity).getAbbreviation();
+        }
+        String landmark = defaultValue;
+
+        GenomeLocation location = getGenomeLocation(entity);
+
+        if (location != null) {
+            landmark = location.getChromosome() + ":" +
+                    location.getStart() + ".." +
+                    location.getEnd();
+        }
+        return landmark;
+    }
+
+    private GenomeLocation getGenomeLocation(ZdbID markerOrFeature) {
+        List<GenomeLocation> genomeLocations = getLinkageRepository().getGenericGenomeLocation(markerOrFeature);
+
+        return genomeLocations.stream().filter(
+            genomeLocation -> getGenomeBuild().getValue().equals(genomeLocation.getAssembly())
+        )
+        .findFirst()
+        .orElse(null);
     }
 
     public GenomeBrowserImageBuilder genomeBuild(GenomeBrowserBuild genomeBuild) {
