@@ -319,7 +319,7 @@ public class PersonController {
             model.addAttribute(LookupStrings.ZDB_ID, zdbID);
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
-        model.addAttribute(LookupStrings.FORM_BEAN, person);
+        model.addAttribute("person", person);
 
         boolean isOwner = profileService.isCurrentSecurityUserRoot();
         if (!isOwner && profileService.getCurrentSecurityUser() != null) {
