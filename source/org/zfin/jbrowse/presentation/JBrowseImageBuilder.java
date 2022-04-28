@@ -98,7 +98,8 @@ public class JBrowseImageBuilder implements GenomeBrowserImageBuilder {
         List<GenomeLocation> genomeLocations = getLinkageRepository().getGenericGenomeLocation(markerOrFeature);
 
         return genomeLocations.stream().filter(
-            genomeLocation -> getGenomeBuild().getValue().equals(genomeLocation.getAssembly())
+            genomeLocation -> (getGenomeBuild() == null ? GenomeBrowserBuild.CURRENT : getGenomeBuild())
+                               .getValue().equals(genomeLocation.getAssembly())
         )
         .findFirst()
         .orElse(null);
