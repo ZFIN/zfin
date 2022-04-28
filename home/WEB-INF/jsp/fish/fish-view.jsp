@@ -29,7 +29,6 @@
                 </c:otherwise>
             </c:choose>
             </a>
-
         </nav>
     </jsp:attribute>
 

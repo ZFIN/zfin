@@ -21,10 +21,22 @@
             <nav class="navbar navbar-light admin text-center border-bottom">
                 <a class="col-sm" href="/action/profile/person/view/${person.zdbID}">Old View</a>
                 <a class="col-sm" href="/action/profile/person/edit/${person.zdbID}">Edit</a>
-                <a class="col-sm" href="${deleteURL}">Delete</a>
+                <a href="javascript:" class="root" onclick="location.replace('/action/infrastructure/deleteRecord/${person.zdbID}');">Delete</a>
                 <a class="col-sm" href='/action/profile/lab/all-labs'>All labs</a>
                 <a class="col-sm" href='/action/profile/company/all-companies'>All companies</a>
                 <a class="col-sm" href='/action/profile/person/all-people/A'>All people</a>
+                <a class="col-sm" href="/action/updates/${person.zdbID}">
+                    Last Update:
+                    <c:set var="latestUpdate" value="${zfn:getLastUpdate(person.zdbID)}"/>
+                    <c:choose>
+                <c:when test="${!empty latestUpdate}">
+                    <fmt:formatDate value="${latestUpdate.dateUpdated}" type="date"/>
+                </c:when>
+                <c:otherwise>
+                    Never modified
+                </c:otherwise>
+            </c:choose>
+                </a>
             </nav>
         </authz:authorize>
         <authz:authorize access="hasRole('submit')">
