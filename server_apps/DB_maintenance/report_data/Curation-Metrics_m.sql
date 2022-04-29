@@ -27,6 +27,12 @@ INSERT INTO tmp_cur_pub
                                          'ZDB-PERS-050706-1',
                                          'ZDB-PERS-040127-1',
                                          'ZDB-PERS-140612-1',
+                                         'ZDB-PERS-150130-2',
+                                         'ZDB-PERS-190501-1',
+                                         'ZDB-PERS-160113-5',
+                                         'ZDB-PERS-190501-2',
+                                         'ZDB-PERS-180302-2',
+                                         'ZDB-PERS-080324-3',
                                          'ZDB-PERS-050429-23')
   ORDER  BY cur_curator_zdb_id;
 
@@ -55,6 +61,12 @@ INSERT INTO tmp_cur_pub
                                          'ZDB-PERS-991202-1',
                                          'ZDB-PERS-140612-1',
                                          'ZDB-PERS-030520-1',
+                                         'ZDB-PERS-150130-2',
+                                         'ZDB-PERS-190501-1',
+                                         'ZDB-PERS-160113-5',
+                                         'ZDB-PERS-190501-2',
+                                         'ZDB-PERS-180302-2',
+                                         'ZDB-PERS-080324-3',
                                          'ZDB-PERS-050429-23');
 
 
