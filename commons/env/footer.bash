@@ -1,7 +1,7 @@
 
 export PATH=/opt/misc/groovy/bin:$PATH
 
-export PATH=/opt/postgres/postgresql/bin:/opt/postrgres/postgresql/include:$PATH
+export PATH=/opt/postgres/postgresql/bin:$PATH
 
 export PATH=/opt/ab-blast:$PATH
 
