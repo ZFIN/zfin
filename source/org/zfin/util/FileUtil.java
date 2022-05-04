@@ -1,7 +1,8 @@
 package org.zfin.util;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zfin.properties.ZfinPropertiesEnum;
 
 import java.io.*;
@@ -9,6 +10,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.zip.GZIPInputStream;
 
 /**
  * Utility class for creating file path names and other things.
@@ -387,5 +389,26 @@ public final class FileUtil {
         return file.substring(indexOfLastSlash + 1);
     }
 
+    public static void gunzipFile(String compressedFile, String decompressedFile) {
+
+        byte[] buffer = new byte[1024];
+
+        try {
+
+            FileInputStream fileIn = new FileInputStream(compressedFile);
+            GZIPInputStream gZIPInputStream = new GZIPInputStream(fileIn);
+            FileOutputStream fileOutputStream = new FileOutputStream(decompressedFile);
+            int bytes_read;
+            while ((bytes_read = gZIPInputStream.read(buffer)) > 0) {
+                fileOutputStream.write(buffer, 0, bytes_read);
+            }
+
+            gZIPInputStream.close();
+            fileOutputStream.close();
+            LOG.info("The file was decompressed successfully!");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
 
 }
