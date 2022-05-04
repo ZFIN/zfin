@@ -1251,6 +1251,11 @@ public class HibernateSequenceRepository implements SequenceRepository {
         query.setParameter("dbName", ForeignDB.AvailableName.ENSEMBL_TRANS);
         return query.list();
     }
+
+    @Override
+    public Integer deleteUnitProtProteome() {
+        return HibernateUtil.currentSession().createQuery("delete ReferenceProtein").executeUpdate();
+    }
 }
 
 
