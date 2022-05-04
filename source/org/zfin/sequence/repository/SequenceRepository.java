@@ -151,6 +151,8 @@ public interface SequenceRepository {
     List<MarkerDBLink> getAllEnsemblGenes();
 
     List<DBLink> getAllEnsemblTranscripts();
+
+    Integer deleteUnitProtProteome();
 }
 
 
