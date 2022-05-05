@@ -35,7 +35,7 @@ public enum GBrowseTrack {
     public String toString() {
         return trackName;
     }
-
+    
     public static GenomeBrowserTrack convertGBrowseTrackToGenomeBrowserTrack(GBrowseTrack genomeBrowserTrack) {
         return switch (genomeBrowserTrack) {
             case GENES -> GenomeBrowserTrack.GENES;
@@ -54,6 +54,5 @@ public enum GBrowseTrack {
             case ZFIN_FEATURES -> GenomeBrowserTrack.ZFIN_FEATURES;
             case ZMP -> GenomeBrowserTrack.ZMP;
         };
-    }    
-    
+    }
 }
