@@ -195,6 +195,20 @@ sub select_zebrafish {
 }
 
 
+sub getMergedGeneIdIfExists {
+    my $dbh = $_[0];
+    my $geneId = $_[1];
+    my $cur = $dbh->prepare('SELECT zrepld_new_zdb_id, mrkr_abbrev FROM zdb_replaced_data LEFT JOIN marker on zrepld_new_zdb_id = mrkr_zdb_id WHERE zrepld_old_zdb_id = ?;');
+    $cur->execute($geneId);
+    my $mergedGeneId;
+    my $mergedGeneAbbrev;
+    $cur->bind_columns(\$mergedGeneId, \$mergedGeneAbbrev);
+    $cur->fetch();
+    $cur->finish();
+    return ($mergedGeneId, $mergedGeneAbbrev);
+}
+
+
 #=======================================================
 #
 #   Main
@@ -420,8 +434,29 @@ foreach $block (@blocks) {
            }
            $cur->finish();
 
+           if (!defined($ZFINgeneAbbrev)) {
+               my ($mergedGeneId, $mergedGeneAbbrev) = getMergedGeneIdIfExists($dbh, $ZFINgeneId);
+               if ($mergedGeneId) {
+                   print DBG "Merged '$ZFINgeneId' ($geneAbbrev) to '$mergedGeneId' ($mergedGeneAbbrev) \n";
+                   print DBG "   Old Line: $line\n";
+                   $line =~ s/$geneAbbrev/$mergedGeneAbbrev/g;
+                   $line =~ s/$ZFINgeneId/$mergedGeneId/g;
+                   print DBG "   New Line: $line\n";
+                   $ZFINgeneAbbrev = $geneAbbrev;
+
+                   if (exists($ZDBgeneIDgeneAbbrevs{$mergedGeneId})) {
+                       $deletes{$lineKey} = 1;
+                       next;
+                   }
+               } else {
+                   print DBG "ERROR: Search for gene abbreviation failed for zdb id '$ZFINgeneId'";
+                   die("ERROR: Search for gene abbreviation failed for zdb id '$ZFINgeneId'");
+               }
+           }
+
            if ($geneAbbrev ne $ZFINgeneAbbrev) {
-               print DBG "Gene Abbreviation is not the same as ZFIN Gene Abbreviation! Updating. \n";
+               my $ZFINgeneAbbrevDebug = defined($ZFINgeneAbbrev) ? $ZFINgeneAbbrev : "UNDEFINED";
+               print DBG "Gene Abbreviation '$geneAbbrev' is not the same as ZFIN Gene Abbreviation ($ZFINgeneAbbrevDebug)! Updating. \n";
                $line =~ s/$geneAbbrev/$ZFINgeneAbbrev/g;
            }
            $toNewInput{$lineKey} = $line;
