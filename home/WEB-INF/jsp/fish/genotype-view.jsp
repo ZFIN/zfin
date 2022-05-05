@@ -16,22 +16,23 @@
     </jsp:attribute>
 
     <jsp:attribute name="pageBar">
-        <nav class="navbar navbar-light admin text-center border-bottom">
-            <a class="col-sm" href="/action/genotype/view/${genotype.zdbID}">Old View</a>
-            <a class="col-sm" href="/action/updates/${genotype.zdbID}">
-                Last Update:
-                <c:set var="latestUpdate" value="${zfn:getLastUpdate(genotype.zdbID)}"/>
-                <c:choose>
-                <c:when test="${!empty latestUpdate}">
-                    <fmt:formatDate value="${latestUpdate.dateUpdated}" type="date"/>
-                </c:when>
-                <c:otherwise>
-                    Never modified
-                </c:otherwise>
-            </c:choose>
-            </a>
-
-        </nav>
+        <authz:authorize access="hasRole('root')">
+            <nav class="navbar navbar-light admin text-center border-bottom">
+                <a class="col-sm" href="/action/genotype/view/${genotype.zdbID}">Old View</a>
+                <a class="col-sm" href="/action/updates/${genotype.zdbID}">
+                    Last Update:
+                    <c:set var="latestUpdate" value="${zfn:getLastUpdate(genotype.zdbID)}"/>
+                    <c:choose>
+                    <c:when test="${!empty latestUpdate}">
+                        <fmt:formatDate value="${latestUpdate.dateUpdated}" type="date"/>
+                    </c:when>
+                    <c:otherwise>
+                        Never modified
+                    </c:otherwise>
+                </c:choose>
+                </a>
+            </nav>
+        </authz:authorize>
     </jsp:attribute>
 
     <jsp:body>
