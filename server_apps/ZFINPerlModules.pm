@@ -192,6 +192,15 @@ sub assert_environment {
     }
 }
 
+sub assert_file_exists {
+    my $filename = shift();
+    my $error_message = shift();
+
+    unless (-e $filename) {
+        die($error_message);
+    }
+}
+
 sub trim {
     my $s = shift();
 
