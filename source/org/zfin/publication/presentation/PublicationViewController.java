@@ -116,45 +116,6 @@ public class PublicationViewController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication));
         model.addAttribute("relatedData", relatedDataService.getXrefsLinks(publication.getZdbID(), "Publication", null));
 
-        return "publication/publication-view-prototype";
-    }
-
-    @RequestMapping("/publication/view/{zdbID}")
-    public String view(@PathVariable String zdbID, Model model, HttpServletResponse response) {
-        Publication publication = getPublication(zdbID);
-
-        if (publication == null) {
-            String replacedZdbID = infrastructureRepository.getWithdrawnZdbID(zdbID);
-            if (replacedZdbID != null) {
-                publication = publicationRepository.getPublication(replacedZdbID);
-            }
-        }
-
-        if (publication == null) {
-            response.setStatus(HttpStatus.SC_NOT_FOUND);
-            return LookupStrings.RECORD_NOT_FOUND_PAGE;
-        }
-
-        model.addAttribute("publication", publication);
-        model.addAttribute("abstractText", publication.getAbstractText());
-        model.addAttribute("showFiguresLink", publicationService.showFiguresLink(publication));
-        model.addAttribute("curationStatusDisplay", publicationService.getCurationStatusDisplay(publication));
-        model.addAttribute("correspondenceDisplay", publicationService.getLastAuthorCorrespondenceDisplay(publication));
-        model.addAttribute("meshTermDisplayList", publicationService.getMeshTermDisplayList(publication));
-        model.addAttribute("hasCorrespondence", publicationService.hasCorrespondence(publication));
-        model.addAttribute("allowCuration", publicationService.allowCuration(publication));
-        model.addAttribute("dataLinks", publicationService.getPublicationDataLinks(publication));
-        model.addAttribute("numDirectlyAttributed", publicationRepository.getDirectlyAttributed(publication));
-        model.addAttribute("allowDelete", publicationRepository.canDeletePublication(publication));
-
-        ZebrashareSubmissionMetadata zebraShareMetadata = zebrashareRepository.getZebraShareSubmissionMetadataForPublication(publication);
-        if (zebraShareMetadata != null) {
-            model.addAttribute("zebraShareMetadata", zebraShareMetadata);
-            model.addAttribute("zebraShareEditors", zebrashareRepository.getZebraShareEditorsForPublication(publication));
-            model.addAttribute("zebraShareFigures", publicationRepository.getFiguresByPublication(publication.getZdbID()));
-        }
-
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication));
         return "publication/publication-view";
     }
 
