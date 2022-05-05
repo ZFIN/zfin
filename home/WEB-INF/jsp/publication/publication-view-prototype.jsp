@@ -48,21 +48,23 @@
     </jsp:attribute>
 
     <jsp:attribute name="pageBar">
-        <nav class="navbar navbar-light admin text-center border-bottom">
-            <a class="col-sm" href="/action/publication/view/${publication.zdbID}">Old View</a>
-            <a class="col-sm" href="/action/curation/${publication.zdbID}">Curate</a>
-            <a class="col-sm" href="/action/publication/${publication.zdbID}/link">Link</a>
-            <a class="col-sm" href="/action/publication/${publication.zdbID}/edit">Edit</a>
-            <c:choose>
-            <c:when test="${allowDelete}">
-                <a class="col-sm" href="/action/infrastructure/deleteRecord/${publication.zdbID}">Delete</a>
-            </c:when>
-                <c:otherwise>
-                    <span class="col-sm">Delete</span>
-                </c:otherwise>
-            </c:choose>
-            <a class="col-sm" href="/action/publication/${publication.zdbID}/track">Track</a>
-        </nav>
+        <authz:authorize access="hasRole('root')">
+            <nav class="navbar navbar-light admin text-center border-bottom">
+                <a class="col-sm" href="/action/publication/view/${publication.zdbID}">Old View</a>
+                <a class="col-sm" href="/action/curation/${publication.zdbID}">Curate</a>
+                <a class="col-sm" href="/action/publication/${publication.zdbID}/link">Link</a>
+                <a class="col-sm" href="/action/publication/${publication.zdbID}/edit">Edit</a>
+                <c:choose>
+                <c:when test="${allowDelete}">
+                    <a class="col-sm" href="/action/infrastructure/deleteRecord/${publication.zdbID}">Delete</a>
+                </c:when>
+                    <c:otherwise>
+                        <span class="col-sm">Delete</span>
+                    </c:otherwise>
+                </c:choose>
+                <a class="col-sm" href="/action/publication/${publication.zdbID}/track">Track</a>
+            </nav>
+        </authz:authorize>
     </jsp:attribute>
 
     <jsp:body>
