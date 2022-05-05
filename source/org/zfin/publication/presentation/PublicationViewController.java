@@ -416,13 +416,9 @@ public class PublicationViewController {
         }
 
         journal.setPublications(publicationRepository.getPublicationForJournal(journal));
-
         model.addAttribute("journal", journal);
-
         String title = "Journal: " + journal.getAbbreviation();
-
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, title);
-
         return "publication/journal-view";
     }
 
