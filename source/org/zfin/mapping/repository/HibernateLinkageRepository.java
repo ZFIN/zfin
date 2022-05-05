@@ -15,6 +15,7 @@ import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.Updates;
 import org.zfin.infrastructure.ZdbID;
 import org.zfin.mapping.*;
+import org.zfin.mapping.importer.AGPEntry;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.profile.Person;
@@ -392,6 +393,11 @@ public class HibernateLinkageRepository implements LinkageRepository {
         linkage.setComments(newComment);
         HibernateUtil.currentSession().save(linkage);
         HibernateUtil.currentSession().save(updates);
+    }
+
+    @Override
+    public void saveAGPEntry(AGPEntry entry) {
+        HibernateUtil.currentSession().save(entry);
     }
 
     @Override

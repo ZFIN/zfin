@@ -23,5 +23,14 @@ task journalAbbreviationSync(type: JavaExec) {
     main = 'org.zfin.publication.JournalAbbreviationSyncTask'
 }
 
+task importCloneAssembly(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.mapping.importer.CloneGenomeLocationImporter'
+//    jvmArgs = ["-Xdebug", "-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=12345"]
+//    jvmArgs = ["-Xdebug", "-Xrunjdwp:transport=dt_socket,server=n,suspend=y,address=10.0.0.216:5002"]
+
+    //so we can pass the log4j config file
+    systemProperty "log4j2.configurationFile", System.getProperty("log4j2.configurationFile", "./conf/gradle-log4j2.xml")
+}
 
 

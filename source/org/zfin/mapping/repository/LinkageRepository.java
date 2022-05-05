@@ -4,6 +4,7 @@ import org.zfin.feature.Feature;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.ZdbID;
 import org.zfin.mapping.*;
+import org.zfin.mapping.importer.AGPEntry;
 import org.zfin.marker.Marker;
 import org.zfin.publication.Publication;
 
@@ -202,6 +203,8 @@ public interface LinkageRepository {
     Linkage getLinkage(String linkageID);
 
     void saveLinkageComment(Linkage linkage, String newComment);
+
+    void saveAGPEntry(AGPEntry entry) ;
 
     boolean hasGenomeLocation(Marker gene, GenomeLocation.Source source);
 
