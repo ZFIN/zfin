@@ -5211,6 +5211,14 @@ and child.term_ontology = 'disease_ontology';
                     where="pub_zdb_id=publication.id"
             />
 
+            <entity name="pub_company"
+                    query="select ipc.target_id as xref, ipp.target_id as pub_zdb_id
+                    from int_person_company as ipc, int_person_pub as ipp
+                    where ipp.source_id = ipc.source_id"
+                    cacheImpl="SortedMapBackedCache"
+                    where="pub_zdb_id=publication.id"
+            />
+
             <entity name="pub_topic"
                     query="select cur_pub_zdb_id as pub_zdb_id, cur_topic as topic
                            from curation
