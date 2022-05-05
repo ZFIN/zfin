@@ -37,6 +37,9 @@ public enum GBrowseTrack {
     }
 
     public static Collection<GBrowseTrack> fromGenomeBrowserTracks(Collection<GenomeBrowserTrack> tracks) {
+        if (tracks == null) {
+            return new ArrayList<>();
+        }
         return tracks.stream().map(genomeBrowserTrack -> switch (genomeBrowserTrack) {
             case GENES -> GBrowseTrack.GENES;
             case TRANSCRIPTS -> GBrowseTrack.TRANSCRIPTS;

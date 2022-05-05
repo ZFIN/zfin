@@ -18,13 +18,8 @@ import javax.servlet.http.HttpServletRequest;
 @Component("genomeBrowserFactory")
 public class GenomeBrowserFactory {
 
-    @Autowired
-    private HttpServletRequest request;
-
     public static GenomeBrowserImageBuilder getStaticImageBuilder() {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         GenomeBrowserFactory factory = new GenomeBrowserFactory();
-        factory.setRequest(request);
         return factory.getImageBuilder();
     }
 
