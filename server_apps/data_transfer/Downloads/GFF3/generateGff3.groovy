@@ -313,6 +313,8 @@ def generateGenesAndTranscripts() {
     zfinGenesWriter.flush()
     zfinGenesWriter.close()
 
+    println("Wrote file: $gff3Dir/zfin_genes.gff3")
+
     genesWithoutTranscriptsWriter.flush()
     genesWithoutTranscriptsWriter.close()
 

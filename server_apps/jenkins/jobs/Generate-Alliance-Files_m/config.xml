@@ -46,6 +46,7 @@
     <hudson.tasks.Shell>
       <command>
         cd $SOURCEROOT/server_apps/DB_maintenance/Alliance  &amp;&amp; rm -f ZFIN*.json*   &amp;&amp; cp $SOURCEROOT/ZFIN*.json .  &amp;&amp; gzip ZFIN*.json
+        cp $TARGETROOT/home/data_transfer/Downloads/zfin_genes.gff3 .
         cd $SOURCEROOT/server_apps/DB_maintenance/Alliance  &amp;&amp; ./validateAllianceFiles.sh $submit $ALLIANCE_RELEASE_VERSION
       </command>
     </hudson.tasks.Shell>
