@@ -12,27 +12,27 @@ const FeatureToggles = ({
     const featureFlags = useFetch(url);
 
     if (featureFlags.pending) {
-        return <LoadingSpinner />;
+        return <LoadingSpinner/>;
     }
 
     if (featureFlags.failed || !featureFlags.value) {
         return <GenericErrorMessage/>;
     }
 
-    return <table className="table col-sm-6">
+    return <table className='table col-sm-6'>
         <thead>
-        <tr>
-            <th>Flag</th>
-            <th>Current State</th>
-        </tr>
+            <tr>
+                <th>Flag</th>
+                <th>Current State</th>
+            </tr>
         </thead>
         <tbody>
-        {featureFlags.value.map((flag) =>
-            <tr key={flag.name}>
-                <td>Use {flag.name}</td>
-                <td><FeatureToggle name={flag.name} enabled={flag.enabled} url={url}/></td>
-            </tr>
-        )}
+            {featureFlags.value.map((flag) =>
+                <tr key={flag.name}>
+                    <td>Use {flag.name}</td>
+                    <td><FeatureToggle name={flag.name} enabled={flag.enabled} url={url}/></td>
+                </tr>
+            )}
         </tbody>
     </table>
 
