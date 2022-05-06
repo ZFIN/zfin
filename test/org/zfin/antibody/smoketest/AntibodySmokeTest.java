@@ -177,35 +177,4 @@ public class AntibodySmokeTest extends AbstractSmokeTest {
         assertNotNull(page.getElementById("ZDB-PUB-091005-5"));
     }
 
-    /**
-     * Check that the link from the publication page to the list of antibodies is not broken.0
-     */
-    @Test
-    public void testListOfAntibodiesLinkOnPublication() throws IOException {
-        // Depletion of Zebrafish Essential and Regulator publication with at last 3 antibodies
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/ZDB-PUB-080326-24");
-        assertTrue(page.getTitleText().contains("Chen et al"));
-
-        List<HtmlAnchor> antibodiesLink = page.getAnchors();
-
-        HtmlAnchor antibodyLinkAnchor = null;
-        for (HtmlAnchor anchor : antibodiesLink)
-            if (anchor.getHrefAttribute().contains("antibodies-per-publication"))
-                antibodyLinkAnchor = anchor;
-        HtmlPage antibodyListPage = webClient.getPage(nonSecureUrlDomain + antibodyLinkAnchor.getHrefAttribute());
-
-        assertNotNull(antibodyListPage);
-        assertTrue(antibodyListPage.getTitleText().contains("Chen"));
-
-        // AB-F59 is one of a few antibodies that are used in this publication.
-        HtmlAnchor antibodyLink = (HtmlAnchor) antibodyListPage.getElementById("ab-f59");
-        assertNotNull(antibodyLink);
-
-        // check that the link to the antibody view page is working as well.
-        HtmlPage antibodyPage = webClient.getPage(nonSecureUrlDomain + antibodyLink.getHrefAttribute());
-
-        assertNotNull(antibodyPage);
-        assertTrue(antibodyPage.getTitleText().contains("ZFIN Antibody: Ab-F59"));
-    }
-
 }
