@@ -382,7 +382,7 @@ test(s) need to be run before committing changes or pushing files to production 
                fork="no"
                encoding="${encoding}"
                memoryMaximumSize="256m"
-                verbose="'false"
+                verbose="false"
         >
             <javac encoding="${encoding}" deprecation="${javac.deprecation}" debug="off" />
         </groovyc>
