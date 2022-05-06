@@ -64,7 +64,7 @@ PATO	/action/ontology/term-detail/PATO
 PERS	/action/profile/view/ZDB-PERS
 PGCONSTRCT	/action/marker/construct/view/ZDB-PGCONSTRCT
 PTCONSTRCT	/action/marker/construct/view/ZDB-PTCONSTRCT
-PUB	/action/publication/view/ZDB-PUB
+PUB	/action/publication/ZDB-PUB
 RAPD	/action/marker/generic/view/ZDB-RAPD
 REFCROSS	/action/mapping/panel-detail/ZDB-REFCROSS
 EREGION	/action/marker/eregion/view/ZDB-EREGION
