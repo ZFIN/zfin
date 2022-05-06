@@ -4,7 +4,7 @@ import qs from 'qs';
 import {DataList} from '../components/data-table';
 import Checkbox from '../components/Checkbox';
 
-const CitationTable = ({markerId}) => {
+const CitationTable = ({markerId, showUnpublished = true}) => {
     const [includeUnpublished, setIncludeUnpublished] = useState(false);
 
     const rowFormat = ({citation, zdbID, indexedOpenStatus}) => <>
@@ -43,7 +43,7 @@ const CitationTable = ({markerId}) => {
 
     return (
         <>
-            <div className='mb-2'>
+            <div className='mb-2' style={{display: showUnpublished ? '' : 'none'}}>
                 <Checkbox
                     checked={includeUnpublished}
                     id='includeUnpublishedCheckbox'
@@ -66,6 +66,7 @@ const CitationTable = ({markerId}) => {
 
 CitationTable.propTypes = {
     markerId: PropTypes.string,
+    showUnpublished: PropTypes.bool,
 };
 
 export default CitationTable;

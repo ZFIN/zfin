@@ -8,7 +8,7 @@ const IMAGE_SIZE_STEP = 200;
 const DEBOUNCE_INTERVAL = 250;
 
 const JbrowseImage = ({imageUrl, linkUrl, build}) => {
-    const [imageLoaded, setImageLoaded] = useState(false);
+//    const [imageLoaded, setImageLoaded] = useState(false);
     const [imgSrc, setImageSrc] = useState(null);
     const containerRef = useRef(null);
     const sep = imageUrl.indexOf('?') < 0 ? '?' : '&';
@@ -60,7 +60,7 @@ const JbrowseImage = ({imageUrl, linkUrl, build}) => {
                         height='400'
                         className='d-block mx-auto mb-3 pe-none'
                         data={imgSrc}
-                        onLoad={() => setImageLoaded(true)}
+                        //onLoad={() => setImageLoaded(true)}
                     />
                 </a>
             </div>
