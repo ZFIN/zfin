@@ -1,74 +1,53 @@
-<%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
-<%@ page import="org.zfin.properties.ZfinProperties" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<z:page>
-    <c:set var="authorized" value="no"/>
+<jsp:useBean id="journal" class="org.zfin.publication.Journal" scope="request"/>
 
-    <authz:authorize access="hasRole('root')">
+<c:set var="SUMMARY" value="Summary"/>
+<c:set var="PUBLICATION" value="Publications"/>
 
-    <c:set var="authorized" value="yes"/>
+<c:set var="secs" value="${[SUMMARY, PUBLICATION]}"/>
 
-    <zfin2:dataManager zdbID="${journal.zdbID}"/>
+<z:dataPage sections="${secs}">
 
-    <div style="text-align: center; font-size: x-large; margin-top: 1em; ">
-        ${journal.name}
-    </div>
+    <jsp:attribute name="pageBar">
+        <authz:authorize access="hasRole('root')">
+                <nav class="navbar navbar-light admin text-center border-bottom">
+                    <a class="col-sm" href="/action/updates/${journal.zdbID}">
+                        Last Update:
+                        <c:set var="latestUpdate" value="${zfn:getLastUpdate(journal.zdbID)}"/>
+                        <c:choose>
+                        <c:when test="${!empty latestUpdate}">
+                            <fmt:formatDate value="${latestUpdate.dateUpdated}" type="date"/>
+                        </c:when>
+                        <c:otherwise>
+                            Never modified
+                        </c:otherwise>
+                    </c:choose>
+                    </a>
+                </nav>
+        </authz:authorize>
+    </jsp:attribute>
+
+    <jsp:attribute name="entityName">
+            <div data-toggle="tooltip" data-placement="bottom" title="${journal.name}">
+                    ${journal.name}
+            </div>
+        </jsp:attribute>
 
 
-    <table class="primary-entity-attributes">
-        <tr>
-            <th>Abbreviation:</th>
-            <td>${journal.abbreviation}</td>
-        </tr>
-        <tr>
-            <th>Synonyms:</th>
-            <td>
-                <c:forEach var="alias" items="${journal.aliases}" varStatus="loop">
-                ${alias}<c:if test="${!loop.last}">, </c:if>
-                </c:forEach>
-            </td>
-        </tr>
-        <tr>
-            <th>Publisher:</th>
-            <td>
-                <c:if test="${!empty journal.publisher}">${journal.publisher}</c:if>
-            </td>
-        </tr>
-        <tr>
-            <th>Print Issn:</th>
-            <td>
-                <c:if test="${!empty journal.printIssn}">${journal.printIssn}</c:if>
-            </td>
-        </tr>
-        <tr>
-            <th>Online Issn:</th>
-            <td>
-                <c:if test="${!empty journal.onlineIssn}">${journal.onlineIssn}</c:if>
-            </td>
-        </tr>
-        <tr>
-            <th>NLM ID:</th>
-            <td>
-                <c:if test="${!empty journal.nlmID}">${journal.nlmID}</c:if>
-            </td>
-        </tr>
-        <tr>
-            <th>Can Reproduce Images?</th>
-            <td>
-               ${journal.nice ? "yes" : "no"}
-            </td>
-        <tr>
-           <th>Publications:</th>
-           <td>
-              <c:forEach var="publication" items="${journal.publications}">
-                  <zfin:link entity="${publication}" /><br/>
-              </c:forEach>
-           </td>
-        </tr>
-    </table>
+    <jsp:body>
 
-    </authz:authorize>
+        <div id="${zfn:makeDomIdentifier(SUMMARY)}">
+            <div class="small text-uppercase text-muted">JOURNAL</div>
+            <h1>${journal.name}</h1>
+            <jsp:include page="journal-view-summary.jsp"/>
+        </div>
 
-    <c:if test="${authorized eq 'no'}"><h3 class="red">You need to log in to see the journal</h3></c:if>
-</z:page>
+        <z:section title="${PUBLICATION}" infoPopup="/action/marker/note/citations">
+            <div class="__react-root" id="CitationTable" data-marker-id="${journal.zdbID}"
+                 showUnpublished="{false}"></div>
+        </z:section>
+
+    </jsp:body>
+
+</z:dataPage>
