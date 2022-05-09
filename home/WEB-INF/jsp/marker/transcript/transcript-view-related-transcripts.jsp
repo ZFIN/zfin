@@ -2,12 +2,22 @@
 <jsp:useBean id="formBean" class="org.zfin.marker.presentation.TranscriptBean" scope="request"/>
 
 <c:forEach var="relatedTranscriptDisplay" items="${formBean.relatedTranscriptDisplayList}" varStatus="loop">
-    <div class="__react-root genome-browser-image"
-         id="${relatedTranscriptDisplay.gbrowseImage.reactComponentId}__${loop.index}"
-         data-image-url="${relatedTranscriptDisplay.gbrowseImage.imageUrl}"
-         data-link-url="${relatedTranscriptDisplay.gbrowseImage.linkUrl}"
-         data-build="${relatedTranscriptDisplay.gbrowseImage.build}">
-    </div>
+
+    <c:if test="${not empty relatedTranscriptDisplay.gbrowseImage}">
+        <div class="__react-root genome-browser-image"
+             id="${relatedTranscriptDisplay.gbrowseImage.reactComponentId}"
+             data-image-url="${relatedTranscriptDisplay.gbrowseImage.imageUrl}"
+             data-link-url="${relatedTranscriptDisplay.gbrowseImage.linkUrl}"
+             data-build="${relatedTranscriptDisplay.gbrowseImage.build}"
+        ></div>
+    </c:if>
+    <c:if test="${empty relatedTranscriptDisplay.gbrowseImage}">
+        <div class="__react-root genome-browser-image" id="GbrowseImage"
+             data-image-url="${relatedTranscriptDisplay.gbrowseImage.imageUrl}"
+             data-link-url="${relatedTranscriptDisplay.gbrowseImage.linkUrl}"
+             data-build="${relatedTranscriptDisplay.gbrowseImage.build}"
+        ></div>
+    </c:if>
 
     <z:section>
         <jsp:attribute name="title">

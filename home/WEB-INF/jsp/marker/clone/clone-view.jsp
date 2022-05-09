@@ -40,11 +40,21 @@
         <c:if test="${typeName ne 'EST'}">
            <c:if test="${typeName ne 'CDNA'}">
             <z:section title="${GBROWSE}">
-               <div class="__react-root genome-browser-image"
-                 id="${formBean.image.reactComponentId}"
-                 data-image-url="${formBean.image.imageUrl}"
-                 data-link-url="${formBean.image.linkUrl}">
-              </div>
+                <c:if test="${not empty formBean.image}">
+                    <div class="__react-root genome-browser-image"
+                         id="${formBean.image.reactComponentId}"
+                         data-image-url="${formBean.image.imageUrl}"
+                         data-link-url="${formBean.image.linkUrl}"
+                         data-build="${formBean.image.build}"
+                    ></div>
+                </c:if>
+                <c:if test="${empty formBean.image}">
+                    <div class="__react-root genome-browser-image" id="GbrowseImage"
+                         data-image-url="${formBean.image.imageUrl}"
+                         data-link-url="${formBean.image.linkUrl}"
+                         data-build="${formBean.image.build}"
+                    ></div>
+                </c:if>                
             </z:section>
            </c:if>
         </c:if>

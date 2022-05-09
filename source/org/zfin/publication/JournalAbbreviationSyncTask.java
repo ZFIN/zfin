@@ -62,7 +62,7 @@ public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
             System.err.println("Provide source file through environment variable NCBI_JOURNAL_FILE\n (can be downloaded from ftp://ftp.ncbi.nih.gov/pubmed/J_Medline.txt, for example)");
             System.err.println("The file can also be provided through the Jenkins upload parameter (NCBI_FILE_UPLOAD) if run as jenkins job.");
             System.err.println("Example bash run:\n" +
-                    " NCBI_JOURNAL_FILE=/tmp/pubs/J_Entrez gradle journalAbbreviationSyncTask\n");
+                    " NCBI_JOURNAL_FILE=/tmp/pubs/J_Entrez gradle journalAbbreviationSync\n");
             System.exit(1);
         }
 
