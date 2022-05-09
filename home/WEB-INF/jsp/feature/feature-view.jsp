@@ -31,22 +31,8 @@
             <jsp:include page="../marker/antibody/antibody-view-notes.jsp"/>
         </z:section>
 
-        <z:section title="${GBROWSE}" infoPopup="/action/feature/note/genomebrowser">>
-            <c:if test="${not empty formBean.GBrowseImage}">
-                <div class="__react-root genome-browser-image"
-                     id="${formBean.GBrowseImage.reactComponentId}"
-                     data-image-url="${formBean.GBrowseImage.imageUrl}"
-                     data-link-url="${formBean.GBrowseImage.linkUrl}"
-                     data-build="${formBean.GBrowseImage.build}"
-                ></div>
-            </c:if>
-            <c:if test="${empty formBean.GBrowseImage}">
-                <div class="__react-root genome-browser-image" id="GbrowseImage"
-                     data-image-url="${formBean.GBrowseImage.imageUrl}"
-                     data-link-url="${formBean.GBrowseImage.linkUrl}"
-                     data-build="${formBean.GBrowseImage.build}"
-                ></div>
-            </c:if>
+        <z:section title="${GBROWSE}" infoPopup="/action/feature/note/genomebrowser">
+            <zfin-gbrowse:genomeBrowserImageComponent image="${formBean.GBrowseImage}" />
         </z:section>
 
         <z:section title="${VARIANTS}" >
