@@ -344,6 +344,12 @@ BEGIN
     ELSE
         genoDisplayHTML = startName;
     END IF;
+
+    -- Special Case as Leyla indicated in ZFIN-7922
+    IF ('ZDB-GENO-200107-21' = genoZdbId and 'en.boxc3.sgca<sup>upo351/upo351</sup>' = genoDisplayHTML) THEN
+        genoDisplayHTML = 'en.boxb2.sgca<sup>upo351/upo351</sup>';
+    END IF;
+
     RETURN genoDisplayHtml;
 END
 $genoDisplayHtml$
