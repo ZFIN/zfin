@@ -3,6 +3,11 @@
 <jsp:useBean id="journal" class="org.zfin.publication.Journal" scope="request"/>
 
 <z:attributeList>
+
+    <z:attributeListItem label="ID">
+        ${journal.zdbID}
+    </z:attributeListItem>
+
     <z:attributeListItem label="Abbreviation">
         ${journal.abbreviation}
     </z:attributeListItem>
