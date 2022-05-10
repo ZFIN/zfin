@@ -3,21 +3,7 @@
 
 <c:forEach var="relatedTranscriptDisplay" items="${formBean.relatedTranscriptDisplayList}" varStatus="loop">
 
-    <c:if test="${not empty relatedTranscriptDisplay.gbrowseImage}">
-        <div class="__react-root genome-browser-image"
-             id="${relatedTranscriptDisplay.gbrowseImage.reactComponentId}"
-             data-image-url="${relatedTranscriptDisplay.gbrowseImage.imageUrl}"
-             data-link-url="${relatedTranscriptDisplay.gbrowseImage.linkUrl}"
-             data-build="${relatedTranscriptDisplay.gbrowseImage.build}"
-        ></div>
-    </c:if>
-    <c:if test="${empty relatedTranscriptDisplay.gbrowseImage}">
-        <div class="__react-root genome-browser-image" id="GbrowseImage"
-             data-image-url="${relatedTranscriptDisplay.gbrowseImage.imageUrl}"
-             data-link-url="${relatedTranscriptDisplay.gbrowseImage.linkUrl}"
-             data-build="${relatedTranscriptDisplay.gbrowseImage.build}"
-        ></div>
-    </c:if>
+    <zfin-gbrowse:genomeBrowserImageComponent image="${relatedTranscriptDisplay.gbrowseImage}" loopIndex="${loop.index}" />
 
     <z:section>
         <jsp:attribute name="title">
