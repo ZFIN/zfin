@@ -5,12 +5,7 @@
 <c:if test="${!empty formBean.gbrowseImages}">
 
     <c:forEach items="${formBean.gbrowseImages}" var="image" end="1" varStatus="loop">
-        <div class="__react-root genome-browser-image"
-             id="${image.reactComponentId}__${loop.index}"
-             data-image-url="${image.imageUrl}"
-             data-link-url="${image.linkUrl}"
-             data-build="${image.build}">
-        </div>
+        <zfin-gbrowse:genomeBrowserImageComponent image="${image}" loopIndex="${loop.index}" />
     </c:forEach>
 
     <c:if test="${fn:length(formBean.gbrowseImages) > 2}">

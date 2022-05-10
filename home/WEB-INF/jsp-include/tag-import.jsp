@@ -10,6 +10,7 @@
 <%@ taglib prefix="zfin-figure" tagdir="/WEB-INF/tags/figure" %>
 <%@ taglib prefix="zfin-dev" tagdir="/WEB-INF/tags/dev" %>
 <%@ taglib prefix="zfin-search" tagdir="/WEB-INF/tags/search" %>
+<%@ taglib prefix="zfin-gbrowse" tagdir="/WEB-INF/tags/gbrowse" %>
 <%@ taglib prefix="z" tagdir="/WEB-INF/tags/layout" %>
 <%@ taglib prefix="zfn" uri="/WEB-INF/tld/zfin-fn.tld" %>
 <%@ taglib prefix='c' uri='http://java.sun.com/jsp/jstl/core' %>
