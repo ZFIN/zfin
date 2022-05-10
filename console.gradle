@@ -23,5 +23,7 @@ task journalAbbreviationSync(type: JavaExec) {
     main = 'org.zfin.publication.JournalAbbreviationSyncTask'
 }
 
-
-
+task importCloneAssembly(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.mapping.importer.ImportCloneAssemblyTask'
+}

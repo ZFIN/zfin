@@ -1,5 +1,6 @@
 package org.zfin.marker.presentation;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.genomebrowser.GenomeBrowserTrack;
 import org.zfin.genomebrowser.presentation.GenomeBrowserFactory;
+import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerNotFoundException;
@@ -98,13 +100,20 @@ public class CloneViewController {
         // check whether we are a thisse probe
         cloneBean.setThisseProbe(expressionService.isThisseProbe(clone));
 
-        // gbrowse image
-        cloneBean.setImage(genomeBrowserFactory.getImageBuilder()
-                .landmark("genomic_clone:" + clone.getZdbID())
-                .highlight(clone.getAbbreviation())
-                .tracks(new GenomeBrowserTrack[]{GenomeBrowserTrack.COMPLETE_CLONES, GenomeBrowserTrack.GENES, GenomeBrowserTrack.TRANSCRIPTS})
-                .build()
-        );
+        List<MarkerGenomeLocation> cloneLocations = RepositoryFactory.getLinkageRepository().getGenomeLocationWithCoordinates(clone);
+        if (CollectionUtils.isNotEmpty(cloneLocations)) {
+            // gbrowse image
+            cloneBean.setImage(genomeBrowserFactory.getImageBuilder()
+                    .landmark(cloneLocations.get(0))
+                    .highlight(clone)
+                    .tracks(new GenomeBrowserTrack[]{GenomeBrowserTrack.COMPLETE_CLONES, GenomeBrowserTrack.GENES, GenomeBrowserTrack.TRANSCRIPTS})
+                    .withPadding(0.2)
+                    .build()
+            );
+        } else {
+            cloneBean.setImage(null);
+        }
+
 
         model.addAttribute(LookupStrings.FORM_BEAN, cloneBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.CLONE.getTitleString() + clone.getAbbreviation());

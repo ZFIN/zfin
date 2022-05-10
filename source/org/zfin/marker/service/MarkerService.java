@@ -1174,6 +1174,12 @@ public class MarkerService {
         return true;
     }
 
+    public static boolean isOfTypeClone(String zdbID) {
+        MarkerTypeGroup group = markerRepository.getMarkerTypeGroupByName(Marker.TypeGroup.CLONEDOM.toString());
+        Marker marker = markerRepository.getMarkerByID(zdbID);
+        return group.hasType(marker.getType());
+    }
+
     public JsonResultResponse<MarkerRelationshipPresentation> getMarkerRelationshipJsonResultResponse(String zdbID,
                                                                                                       Pagination pagination) {
         long startTime = System.currentTimeMillis();
