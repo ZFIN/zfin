@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset rtaylor:ZFIN-7812
+--changeset rtaylor:ZFIN-7812-create-clone-agp-table
 
 
 DROP TABLE IF EXISTS "public"."clone_agp_grcz11";

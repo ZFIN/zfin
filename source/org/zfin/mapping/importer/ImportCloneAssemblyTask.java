@@ -56,7 +56,7 @@ public class ImportCloneAssemblyTask extends AbstractScriptWrapper {
         try {
             System.out.println("Loading " + inputFilename);
 
-            MessageDigest messageDigest = MessageDigest.getInstance("SHA");
+            MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
             File file = new File(inputFilename);
             FileInputStream fis = new FileInputStream(file);
             DigestInputStream dis = new DigestInputStream(fis, messageDigest);
