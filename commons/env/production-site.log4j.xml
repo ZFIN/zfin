@@ -18,6 +18,7 @@
     <Loggers>
         <Logger name="org.hibernate.SQL" level="warn"/>
         <Logger name="org.hibernate.type" level="warn"/>
+        <Logger name="org.hibernate.orm.deprecation" level="error"/>
         <Logger name="org.hibernate.engine.internal.StatefulPersistenceContext" level="error"/>
         <Logger name="org.zfin" level="warn"/>
         <Logger name="org.zfin.ontology.OntologySerializationService" level="info"/>
