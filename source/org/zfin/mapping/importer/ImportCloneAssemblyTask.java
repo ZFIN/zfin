@@ -16,6 +16,7 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -67,7 +68,7 @@ public class ImportCloneAssemblyTask extends AbstractScriptWrapper {
                         .collect(Collectors.toList());
             input.close();
             byte[] digest = dis.getMessageDigest().digest();
-            String digestString = new String(digest, StandardCharsets.UTF_8);
+            String digestString = Base64.getEncoder().encodeToString(digest);
             LOG.debug("Finished reading " + inputFilename + " with SHA: " + digestString);
             this.inputFileChecksum = digestString;
         } catch (NoSuchAlgorithmException | IOException e) {
