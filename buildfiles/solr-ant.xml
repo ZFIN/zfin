@@ -66,16 +66,6 @@
 
 
     <target name="build-solr-index">
-        <exec executable="psql">
-            <arg value="-d"/>
-            <arg value="${DBNAME}"/>
-            <arg value="-f"/>
-            <arg value="${TARGETROOT}/server_apps/solr/site_index/conf/generate-all-term-contains-synonyms-file.sql"/>
-            <arg value="-f"/>
-            <arg value="${TARGETROOT}/server_apps/solr/site_index/conf/generate-orgnanism-name-file.sql"/>
-            <arg value="-f"/>
-            <arg value="${TARGETROOT}/server_apps/solr/site_index/conf/generate-reporter-name-file.sql"/>
-        </exec>
         <echo message="Starting Solr index build via http..."/>
         <exec executable="curl">
             <arg value="-s"/>
