@@ -47,6 +47,10 @@ public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
 
         List<String> fixes = getFixesForJournalsMissingAbbreviations(pubmedRecords, journals);
         outputSqlFile(fixes);
+
+        if ("true".equals(System.getProperty("executeSql"))) {
+            executeSqlUpdates(fixes);
+        }
     }
 
     private String determineInputFile() {
@@ -199,6 +203,17 @@ public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
         }
 
         LOG.info("Wrote " + sqlUpdateStatements.size() + " update statements to sql file");
+    }
+
+    private void executeSqlUpdates(List<String> fixes) {
+        Session session = HibernateUtil.currentSession();
+        Transaction transaction = session.getTransaction();
+        transaction.begin();
+        for(String fix : fixes) {
+            LOG.info("Executing: " + fix);
+            session.createSQLQuery(fix).executeUpdate();
+        }
+        transaction.commit();
     }
 
     private Map<String, String> getMatch(List<Map<String, String>> pubmedRecords, String name) {
