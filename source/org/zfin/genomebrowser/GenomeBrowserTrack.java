@@ -1,5 +1,11 @@
 package org.zfin.genomebrowser;
 
+import org.zfin.gbrowse.GBrowseTrack;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.stream.Collectors;
+
 /**
  * Names of the gBrowse tracks.
  */
@@ -39,4 +45,33 @@ public enum GenomeBrowserTrack {
         return null;
     }
 
+    public static Collection<GBrowseTrack> convertGenomeBrowserTracksToGBrowse(Collection<GenomeBrowserTrack> tracks) {
+        if (tracks == null) {
+            return new ArrayList<>();
+        }
+        return tracks
+                .stream()
+                .map(GenomeBrowserTrack::convertGenomeBrowserTrackToGBrowse)
+                .collect(Collectors.toList());
+    }
+
+    public static GBrowseTrack convertGenomeBrowserTrackToGBrowse(GenomeBrowserTrack genomeBrowserTrack) {
+        return switch (genomeBrowserTrack) {
+            case GENES -> GBrowseTrack.GENES;
+            case TRANSCRIPTS -> GBrowseTrack.TRANSCRIPTS;
+            case CLONE -> GBrowseTrack.CLONE;
+            case GENES_VEGA -> GBrowseTrack.GENES_VEGA;
+            case ENSEMBL_MRNA -> GBrowseTrack.ENSEMBL_MRNA;
+            case PHENOTYPE -> GBrowseTrack.PHENOTYPE;
+            case EXPRESSIONS -> GBrowseTrack.EXPRESSIONS;
+            case ANTIBODY -> GBrowseTrack.ANTIBODY;
+            case KNOCKDOWN_REAGENT -> GBrowseTrack.KNOCKDOWN_REAGENT;
+            case INSERTION -> GBrowseTrack.INSERTION;
+            case CNE -> GBrowseTrack.CNE;
+            case COMPLETE_CLONES -> GBrowseTrack.COMPLETE_CLONES;
+            case ALLZMP -> GBrowseTrack.ALLZMP;
+            case ZFIN_FEATURES -> GBrowseTrack.ZFIN_FEATURES;
+            case ZMP -> GBrowseTrack.ZMP;
+        };
+    }
 }

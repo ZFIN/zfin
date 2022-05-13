@@ -4,6 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.zfin.gbrowse.GBrowseTrack;
 import org.zfin.genomebrowser.GenomeBrowserBuild;
+import org.zfin.genomebrowser.GenomeBrowserTrack;
 import org.zfin.genomebrowser.GenomeBrowserType;
 import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
 import org.zfin.util.URLCreator;
@@ -29,7 +30,7 @@ public class GBrowseImage implements GenomeBrowserImage {
     public GBrowseImage(GBrowseImageBuilder builder) {
         this.landmark = builder.getLandmark();
 
-        this.tracks = GBrowseTrack.fromGenomeBrowserTracks(builder.getTracks());
+        this.tracks = GenomeBrowserTrack.convertGenomeBrowserTracksToGBrowse(builder.getTracks());
 
         this.highlightFeature = builder.getHighlightLandmark();
         this.highlightColor = builder.getHighlightColor();

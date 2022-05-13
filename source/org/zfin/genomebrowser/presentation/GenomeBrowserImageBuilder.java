@@ -19,7 +19,7 @@ public interface GenomeBrowserImageBuilder {
 
     GenomeBrowserImageBuilder highlightColor(String pink);
 
-    GenomeBrowserImageBuilder landmark(GenomeLocation landmark);
+    GenomeBrowserImageBuilder setLandmarkByGenomeLocation(GenomeLocation landmark);
 
     GenomeBrowserImageBuilder landmark(String s);
 
