@@ -285,7 +285,7 @@ public class HibernateLinkageRepository implements LinkageRepository {
     public List<FeatureGenomeLocation> getGenomeLocation(Feature feature, GenomeLocation.Source... sources) {
         Criteria query = HibernateUtil.currentSession().createCriteria(FeatureGenomeLocation.class);
         query.add(Restrictions.eq("feature", feature));
-        query.add(Restrictions.in("source", (Object) sources));
+        query.add(Restrictions.in("source", (Object[]) sources));
         return query.list();
     }
 
