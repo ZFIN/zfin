@@ -80,7 +80,7 @@ public class GBrowseImageBuilder implements GenomeBrowserImageBuilder {
         return this;
     }
 
-    public GenomeBrowserImageBuilder landmark(GenomeLocation landmark) {
+    public GenomeBrowserImageBuilder setLandmarkByGenomeLocation(GenomeLocation landmark) {
         this.landmarkLocation = landmark;
         return this;
     }

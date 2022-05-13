@@ -40,8 +40,8 @@ class GBrowseImageSpec extends AbstractZfinIntegrationSpec {
         when:
         def m = RepositoryFactory.markerRepository.getMarkerByID(zdbId)
         def location = linkageRepository.getGenomeLocation(m, GenomeLocation.Source.ZFIN)?.getAt(0)
-        def image = GBrowseImage.builder()
-                .landmark(location)
+        def image = GenomeBrowserFactory.getStaticImageBuilder()
+                .setLandmarkByGenomeLocation(location)
                 .build()
 
         then:
@@ -56,8 +56,8 @@ class GBrowseImageSpec extends AbstractZfinIntegrationSpec {
         when:
         def f = RepositoryFactory.featureRepository.getFeatureByID(zdbId)
         def location = linkageRepository.getGenomeLocation(f, GenomeLocation.Source.ZFIN_Zv9)?.getAt(0)
-        def image = GBrowseImage.builder()
-                .landmark(location)
+        def image = GenomeBrowserFactory.getStaticImageBuilder()
+                .setLandmarkByGenomeLocation(location)
                 .genomeBuild(GenomeBrowserBuild.ZV9)
                 .build()
 
@@ -139,8 +139,8 @@ class GBrowseImageSpec extends AbstractZfinIntegrationSpec {
         def m = RepositoryFactory.markerRepository.getMarkerByID("ZDB-GENE-011207-1")
         def location = linkageRepository.getGenomeLocation(m, GenomeLocation.Source.ZFIN)[0]
         def padding = 1000
-        def image = GBrowseImage.builder()
-                .landmark(location)
+        def image = GenomeBrowserFactory.getStaticImageBuilder()
+                .setLandmarkByGenomeLocation(location)
                 .withPadding(padding)
                 .build()
 
@@ -154,8 +154,8 @@ class GBrowseImageSpec extends AbstractZfinIntegrationSpec {
         def location = linkageRepository.getGenomeLocation(m, GenomeLocation.Source.ZFIN)[0]
         def padding = 0.1
         def absolutePadding = (int) (padding * (location.end - location.start))
-        def image = GBrowseImage.builder()
-                .landmark(location)
+        def image = GenomeBrowserFactory.getStaticImageBuilder()
+                .setLandmarkByGenomeLocation(location)
                 .withPadding(padding)
                 .build()
 
