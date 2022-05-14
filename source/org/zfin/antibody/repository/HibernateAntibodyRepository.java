@@ -531,10 +531,18 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         // loop over all antibodyAOStatistic records until the given number of distinct antibodies from the pagination
         // bean is reached.
         if (includeSubstructures) {
-            hql = "  from AntibodyAOStatistics stat fetch all properties" +
+            hql = "  from AntibodyAOStatistics stat " +
+                    " LEFT JOIN FETCH stat.figure " +
+                    " LEFT JOIN FETCH stat.gene " +
+                    " LEFT JOIN FETCH stat.publication " +
+                    " LEFT JOIN FETCH stat.antibody " +
                     "     where stat.superterm = :aoterm";
         } else {
-            hql = " select distinct stat, stat.antibody.name from AntibodyAOStatistics stat fetch all properties" +
+            hql = " select distinct stat, stat.antibody.name from AntibodyAOStatistics stat " +
+                    " LEFT JOIN FETCH stat.figure " +
+                    " LEFT JOIN FETCH stat.gene " +
+                    " LEFT JOIN FETCH stat.publication " +
+                    " LEFT JOIN FETCH stat.antibody " +
                     "     where stat.superterm = :aoterm and " +
                     "           stat.subterm = :aoterm " +
                     "           order by stat.antibody.name";
