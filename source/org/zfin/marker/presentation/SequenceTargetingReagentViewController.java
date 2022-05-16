@@ -278,7 +278,7 @@ public class SequenceTargetingReagentViewController {
 
             sequenceTargetingReagentBean.addGBrowseImage(genomeBrowserFactory.getImageBuilder()
                     .setLandmarkByGenomeLocation(mergedLocation)
-                    .withPadding(0.1)
+                    .withRelativePadding(0.1)
                     .tracks(GBrowseService.getGBrowseTracks(sequenceTargetingReagent))
                     .highlight(sequenceTargetingReagent)
                     .build()

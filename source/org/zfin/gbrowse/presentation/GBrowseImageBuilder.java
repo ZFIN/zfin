@@ -96,7 +96,7 @@ public class GBrowseImageBuilder implements GenomeBrowserImageBuilder {
         return this;
     }
 
-    public GenomeBrowserImageBuilder withPadding(double padding) {
+    public GenomeBrowserImageBuilder withRelativePadding(double padding) {
         relativePadding = padding;
         return this;
     }

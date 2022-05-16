@@ -157,7 +157,7 @@ class GBrowseImageSpec extends AbstractZfinIntegrationSpec {
         def absolutePadding = (int) (padding * (location.end - location.start))
         def image = GenomeBrowserFactory.getStaticImageBuilder()
                 .setLandmarkByGenomeLocation(location)
-                .withPadding(padding)
+                .withRelativePadding(padding)
                 .build()
 
         then:

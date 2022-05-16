@@ -27,6 +27,8 @@ public interface GenomeBrowserImageBuilder {
 
     GenomeBrowserImageBuilder withCenteredRange(int i);
 
-    GenomeBrowserImageBuilder withPadding(double v);
+    GenomeBrowserImageBuilder withRelativePadding(double v);
+
+    GenomeBrowserImageBuilder withPadding(int v);
 
 }
