@@ -3,6 +3,7 @@ package org.zfin.marker.presentation;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -210,7 +211,7 @@ public class GeneViewController {
                 List<ControlledVocab> species = infrastructureRepository.getControlledVocabsForSpeciesByConstruct(mrkr);
                 species.add(zebrafish);
                 List sortedSpecies = species.stream().sorted(Comparator.comparing(ControlledVocab::getCvNameDefinition)).collect(Collectors.toList());
-                ;
+
                 constructBean.setSpecies(sortedSpecies);
                 constructBeans.add(constructBean);
             }
@@ -271,11 +272,14 @@ public class GeneViewController {
 
     @RequestMapping(value = "/gene/view/{zdbID}")
     public String getGeneView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
-        zdbID = markerService.getActiveMarkerID(zdbID);
-        if (!markerService.isOfTypeGene(zdbID)) {
-            return "redirect:/" + zdbID;
+        String activeMarkerID = markerService.getActiveMarkerID(zdbID);
+        if (!markerService.isOfTypeGene(activeMarkerID)) {
+            return "redirect:/" + activeMarkerID;
         }
-        prepareGeneView(model, zdbID);
+        if (!activeMarkerID.equals(zdbID)) {
+            return "redirect:/" + activeMarkerID;
+        }
+        prepareGeneView(model, activeMarkerID);
 
         return "marker/gene/gene-view";
     }
