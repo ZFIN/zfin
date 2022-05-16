@@ -1803,7 +1803,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "        and fishox = xpExp.fishExperiment " +
                 "        and xpRslt.expressionExperiment = xpExp " +
                 "        and xpExp.gene != null" +
-                "        and xpExp.gene.zdbID not like :markerId)";
+                "        and xpExp.gene.zdbID not like :markerId";
         Query query = session.createQuery(hql);
         query.setParameter("fish", fish);
         query.setParameter("markerId", "%" + "ZDB-EFG" + "%");
@@ -1819,7 +1819,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                 "        and fishox = xpExp.fishExperiment " +
                 "        and xpRslt.expressionExperiment = xpExp " +
                 "        and xpExp.gene != null" +
-                "        and xpExp.gene.zdbID like :markerId)";
+                "        and xpExp.gene.zdbID like :markerId";
         Query query = session.createQuery(hql);
         query.setParameter("fish", fish);
         query.setParameter("markerId", "%" + "ZDB-EFG" + "%");
