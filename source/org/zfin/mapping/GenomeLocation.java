@@ -1,5 +1,6 @@
 package org.zfin.mapping;
 
+import org.zfin.gbrowse.GBrowseTrack;
 import org.zfin.genomebrowser.GenomeBrowserTrack;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.ontology.GenericTerm;
@@ -30,7 +31,7 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
 
 
     protected Publication attribution;
-    protected GenomeBrowserTrack gbrowseTrack;
+    protected GBrowseTrack gbrowseTrack;
     protected String assembly;
     private GenericTerm evidence;
 
@@ -132,12 +133,19 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
         this.attribution = attribution;
     }
 
-    public GenomeBrowserTrack getGbrowseTrack() {
+    public GBrowseTrack getGbrowseTrack() {
         return gbrowseTrack;
     }
 
-    public void setGbrowseTrack(GenomeBrowserTrack gbrowseTrack) {
+    public void setGbrowseTrack(GBrowseTrack gbrowseTrack) {
         this.gbrowseTrack = gbrowseTrack;
+    }
+
+    public GenomeBrowserTrack getGenomeBrowserTrack() {
+        if (gbrowseTrack == null) {
+            return null;
+        }
+        return GBrowseTrack.convertGBrowseTrackToGenomeBrowserTrack(gbrowseTrack);
     }
 
     public String getAssembly() {

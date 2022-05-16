@@ -35,25 +35,24 @@ public enum GBrowseTrack {
     public String toString() {
         return trackName;
     }
-
-    public static Collection<GBrowseTrack> fromGenomeBrowserTracks(Collection<GenomeBrowserTrack> tracks) {
-        return tracks.stream().map(genomeBrowserTrack -> switch (genomeBrowserTrack) {
-            case GENES -> GBrowseTrack.GENES;
-            case TRANSCRIPTS -> GBrowseTrack.TRANSCRIPTS;
-            case CLONE -> GBrowseTrack.CLONE;
-            case GENES_VEGA -> GBrowseTrack.GENES_VEGA;
-            case ENSEMBL_MRNA -> GBrowseTrack.ENSEMBL_MRNA;
-            case PHENOTYPE -> GBrowseTrack.PHENOTYPE;
-            case EXPRESSIONS -> GBrowseTrack.EXPRESSIONS;
-            case ANTIBODY -> GBrowseTrack.ANTIBODY;
-            case KNOCKDOWN_REAGENT -> GBrowseTrack.KNOCKDOWN_REAGENT;
-            case INSERTION -> GBrowseTrack.INSERTION;
-            case CNE -> GBrowseTrack.CNE;
-            case COMPLETE_CLONES -> GBrowseTrack.COMPLETE_CLONES;
-            case ALLZMP -> GBrowseTrack.ALLZMP;
-            case ZFIN_FEATURES -> GBrowseTrack.ZFIN_FEATURES;
-            case ZMP -> GBrowseTrack.ZMP;
-        }).collect(Collectors.toList());
+    
+    public static GenomeBrowserTrack convertGBrowseTrackToGenomeBrowserTrack(GBrowseTrack genomeBrowserTrack) {
+        return switch (genomeBrowserTrack) {
+            case GENES -> GenomeBrowserTrack.GENES;
+            case TRANSCRIPTS -> GenomeBrowserTrack.TRANSCRIPTS;
+            case CLONE -> GenomeBrowserTrack.CLONE;
+            case GENES_VEGA -> GenomeBrowserTrack.GENES_VEGA;
+            case ENSEMBL_MRNA -> GenomeBrowserTrack.ENSEMBL_MRNA;
+            case PHENOTYPE -> GenomeBrowserTrack.PHENOTYPE;
+            case EXPRESSIONS -> GenomeBrowserTrack.EXPRESSIONS;
+            case ANTIBODY -> GenomeBrowserTrack.ANTIBODY;
+            case KNOCKDOWN_REAGENT -> GenomeBrowserTrack.KNOCKDOWN_REAGENT;
+            case INSERTION -> GenomeBrowserTrack.INSERTION;
+            case CNE -> GenomeBrowserTrack.CNE;
+            case COMPLETE_CLONES -> GenomeBrowserTrack.COMPLETE_CLONES;
+            case ALLZMP -> GenomeBrowserTrack.ALLZMP;
+            case ZFIN_FEATURES -> GenomeBrowserTrack.ZFIN_FEATURES;
+            case ZMP -> GenomeBrowserTrack.ZMP;
+        };
     }
-
 }

@@ -2,6 +2,7 @@ package org.zfin.gbrowse.presentation
 
 import org.zfin.AbstractZfinIntegrationSpec
 import org.zfin.genomebrowser.GenomeBrowserBuild
+import org.zfin.genomebrowser.presentation.GenomeBrowserFactory
 import org.zfin.mapping.GenomeLocation
 import org.zfin.mapping.repository.LinkageRepository
 import org.zfin.properties.ZfinPropertiesEnum
@@ -13,11 +14,11 @@ import spock.lang.Unroll
 class GBrowseImageSpec extends AbstractZfinIntegrationSpec {
 
     @Shared
-    LinkageRepository linkageRepository = RepositoryFactory.linkageRepository;
+    LinkageRepository linkageRepository = RepositoryFactory.linkageRepository
 
     def "urls contain correct base url"() {
         when:
-        def image = GBrowseImage.builder().build();
+        def image = GenomeBrowserFactory.getStaticImageBuilder().build()
 
         then:
         image.imageUrl.contains(ZfinPropertiesEnum.GBROWSE_IMG_PATH_FROM_ROOT.toString())
@@ -26,9 +27,9 @@ class GBrowseImageSpec extends AbstractZfinIntegrationSpec {
 
     def "landmark as string"() {
         when:
-        def image = GBrowseImage.builder()
+        def image = GenomeBrowserFactory.getStaticImageBuilder()
                 .landmark("sox10")
-                .build();
+                .build()
 
         then:
         image.imageUrl.contains("name=sox10")
@@ -40,8 +41,8 @@ class GBrowseImageSpec extends AbstractZfinIntegrationSpec {
         when:
         def m = RepositoryFactory.markerRepository.getMarkerByID(zdbId)
         def location = linkageRepository.getGenomeLocation(m, GenomeLocation.Source.ZFIN)?.getAt(0)
-        def image = GBrowseImage.builder()
-                .landmark(location)
+        def image = GenomeBrowserFactory.getStaticImageBuilder()
+                .setLandmarkByGenomeLocation(location)
                 .build()
 
         then:
@@ -56,8 +57,8 @@ class GBrowseImageSpec extends AbstractZfinIntegrationSpec {
         when:
         def f = RepositoryFactory.featureRepository.getFeatureByID(zdbId)
         def location = linkageRepository.getGenomeLocation(f, GenomeLocation.Source.ZFIN_Zv9)?.getAt(0)
-        def image = GBrowseImage.builder()
-                .landmark(location)
+        def image = GenomeBrowserFactory.getStaticImageBuilder()
+                .setLandmarkByGenomeLocation(location)
                 .genomeBuild(GenomeBrowserBuild.ZV9)
                 .build()
 
@@ -72,7 +73,7 @@ class GBrowseImageSpec extends AbstractZfinIntegrationSpec {
 /*
     def "add tracks"() {
         when:
-        def image = GBrowseImage.builder()
+        def image = GenomeBrowserFactory.getStaticImageBuilder()
                 .landmark("runx1")
                 .tracks(GBrowseTrack.GENES, GBrowseTrack.TRANSCRIPTS)
                 .build()
@@ -84,7 +85,7 @@ class GBrowseImageSpec extends AbstractZfinIntegrationSpec {
 
     def "default grid off"() {
         when:
-        def image = GBrowseImage.builder().build();
+        def image = GenomeBrowserFactory.getStaticImageBuilder().build()
 
         then:
         image.imageUrl.contains("grid=0")
@@ -92,7 +93,7 @@ class GBrowseImageSpec extends AbstractZfinIntegrationSpec {
 
     def "enable grid"() {
         when:
-        def image = GBrowseImage.builder().grid(true).build()
+        def image = GenomeBrowserFactory.getStaticImageBuilder().grid(true).build()
 
         then:
         image.imageUrl.contains("grid=1")
@@ -101,7 +102,7 @@ class GBrowseImageSpec extends AbstractZfinIntegrationSpec {
     def "highlight parameter should be lowercased"() {
         when:
         def feature = "la010630Tg"
-        def image = GBrowseImage.builder()
+        def image = GenomeBrowserFactory.getStaticImageBuilder()
                 .landmark(feature)
                 .highlight(feature)
                 .build()
@@ -113,7 +114,7 @@ class GBrowseImageSpec extends AbstractZfinIntegrationSpec {
     def "highlight feature"() {
         when:
         def f = RepositoryFactory.featureRepository.getFeatureByID("ZDB-ALT-120130-650")
-        def image = GBrowseImage.builder()
+        def image = GenomeBrowserFactory.getStaticImageBuilder()
                 .landmark("zfand5a")
                 .highlight(f)
                 .build()
@@ -124,7 +125,7 @@ class GBrowseImageSpec extends AbstractZfinIntegrationSpec {
 
     def "highlight color"() {
         when:
-        def image = GBrowseImage.builder()
+        def image = GenomeBrowserFactory.getStaticImageBuilder()
                 .landmark("sox19a")
                 .highlight("sox19a")
                 .highlightColor("pink")
@@ -139,8 +140,8 @@ class GBrowseImageSpec extends AbstractZfinIntegrationSpec {
         def m = RepositoryFactory.markerRepository.getMarkerByID("ZDB-GENE-011207-1")
         def location = linkageRepository.getGenomeLocation(m, GenomeLocation.Source.ZFIN)[0]
         def padding = 1000
-        def image = GBrowseImage.builder()
-                .landmark(location)
+        def image = GenomeBrowserFactory.getStaticImageBuilder()
+                .setLandmarkByGenomeLocation(location)
                 .withPadding(padding)
                 .build()
 
@@ -154,8 +155,8 @@ class GBrowseImageSpec extends AbstractZfinIntegrationSpec {
         def location = linkageRepository.getGenomeLocation(m, GenomeLocation.Source.ZFIN)[0]
         def padding = 0.1
         def absolutePadding = (int) (padding * (location.end - location.start))
-        def image = GBrowseImage.builder()
-                .landmark(location)
+        def image = GenomeBrowserFactory.getStaticImageBuilder()
+                .setLandmarkByGenomeLocation(location)
                 .withPadding(padding)
                 .build()
 
