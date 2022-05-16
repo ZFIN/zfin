@@ -331,7 +331,7 @@ public class FeatureService {
             source = GenomeLocation.Source.ZFIN_Zv9;
         } else if (featureLocation.getAssembly().equals("GRCz10")) {
             imageBuilder.genomeBuild(GenomeBrowserBuild.GRCZ10);
-            source = GenomeLocation.Source.ZFIN_Zv9;
+            source = GenomeLocation.Source.ZFIN_Zv9; //TODO: Should this be Zv10?
         } else {
             imageBuilder.genomeBuild(GenomeBrowserBuild.CURRENT);
             source = GenomeLocation.Source.ZFIN;
@@ -341,7 +341,7 @@ public class FeatureService {
             Marker related = featureMarkerRelationships.iterator().next().getMarker();
             List<MarkerGenomeLocation> markerLocations = RepositoryFactory.getLinkageRepository().getGenomeLocation(related, source);
             if (CollectionUtils.isNotEmpty(markerLocations)) {
-                imageBuilder.setLandmarkByGenomeLocation(markerLocations.get(0)).withPadding(0.1);
+                imageBuilder.setLandmarkByGenomeLocation(markerLocations.get(0)).withRelativePadding(0.1);
             } else {
                 imageBuilder.setLandmarkByGenomeLocation(featureLocation).withPadding(10000);
             }
