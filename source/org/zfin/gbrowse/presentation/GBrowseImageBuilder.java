@@ -32,6 +32,7 @@ public class GBrowseImageBuilder implements GenomeBrowserImageBuilder {
     private Feature highlightFeature;
     private String highlightString;
 
+    @Override
     public GenomeBrowserImage build() {
 
         if (highlightMarker != null) {
@@ -70,100 +71,121 @@ public class GBrowseImageBuilder implements GenomeBrowserImageBuilder {
         return new GBrowseImage(this);
     }
 
+    @Override
     public GenomeBrowserImageBuilder genomeBuild(GenomeBrowserBuild genomeBuild) {
         this.genomeBuild = genomeBuild;
         return this;
     }
 
+    @Override
     public GenomeBrowserImageBuilder landmark(String landmark) {
         this.landmark = landmark;
         return this;
     }
 
+    @Override
     public GenomeBrowserImageBuilder setLandmarkByGenomeLocation(GenomeLocation landmark) {
         this.landmarkLocation = landmark;
         return this;
     }
 
+    @Override
     public GenomeBrowserImageBuilder withCenteredRange(int range) {
         this.centeredRange = range;
         return this;
     }
 
+    @Override
     public GenomeBrowserImageBuilder withPadding(int startPadding, int endPadding) {
         this.startPadding = startPadding;
         this.endPadding = endPadding;
         return this;
     }
 
-    public GenomeBrowserImageBuilder withPadding(double padding) {
+    @Override
+    public GenomeBrowserImageBuilder withRelativePadding(double padding) {
         relativePadding = padding;
         return this;
     }
 
+    @Override
     public GenomeBrowserImageBuilder withPadding(int padding) {
         return withPadding(padding, padding);
     }
 
+    @Override
     public GenomeBrowserImageBuilder tracks(GenomeBrowserTrack... tracks) {
         return tracks(Arrays.asList(tracks));
     }
 
-    public GenomeBrowserImageBuilder tracks(Collection<GenomeBrowserTrack> tracks) {
+    private GenomeBrowserImageBuilder tracks(Collection<GenomeBrowserTrack> tracks) {
         this.tracks = tracks;
         return this;
     }
 
+    @Override
     public GenomeBrowserImageBuilder highlight(String highlight) {
         highlightString = highlight;
         return this;
     }
 
+    @Override
     public GenomeBrowserImageBuilder highlight(Marker highlight) {
         highlightMarker = highlight;
         return this;
     }
 
-    public GenomeBrowserBuild getGenomeBuild() {
-        return genomeBuild;
-    }
-
-    public Collection<GenomeBrowserTrack> getTracks() {
-        return tracks;
-    }
-
-    public String getHighlightLandmark() {
-        return highlightLandmark;
-    }
-
-    public String getHighlightColor() {
-        return highlightColor;
-    }
-
-    public boolean isGrid() {
-        return grid;
-    }
-
-    public Feature getHighlightFeature() {
-        return highlightFeature;
-    }
-
+    @Override
     public GenomeBrowserImageBuilder highlight(Feature highlight) {
         highlightFeature = highlight;
         return this;
     }
 
+    @Override
     public GenomeBrowserImageBuilder highlightColor(String highlightColor) {
         this.highlightColor = highlightColor;
         return this;
     }
 
+    @Override
     public GenomeBrowserImageBuilder grid(boolean grid) {
         this.grid = grid;
         return this;
     }
 
+    @Override
     public String getLandmark() {
         return landmark;
     }
+
+    @Override
+    public GenomeBrowserBuild getGenomeBuild() {
+        return genomeBuild;
+    }
+
+    @Override
+    public Collection<GenomeBrowserTrack> getTracks() {
+        return tracks;
+    }
+
+    @Override
+    public String getHighlightLandmark() {
+        return highlightLandmark;
+    }
+
+    @Override
+    public String getHighlightColor() {
+        return highlightColor;
+    }
+
+    @Override
+    public boolean isGrid() {
+        return grid;
+    }
+
+    @Override
+    public Feature getHighlightFeature() {
+        return highlightFeature;
+    }
+
 }
