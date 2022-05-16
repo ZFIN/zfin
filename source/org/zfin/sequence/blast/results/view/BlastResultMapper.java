@@ -3,7 +3,6 @@ package org.zfin.sequence.blast.results.view;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.zfin.genomebrowser.GenomeBrowserTrack;
 import org.zfin.genomebrowser.presentation.GenomeBrowserFactory;
 import org.zfin.mapping.GenomeLocation;
@@ -384,7 +383,7 @@ public class BlastResultMapper {
                                 .getLinkageRepository()
                                 .getGenomeLocation(gene, GenomeLocation.Source.ZFIN);
                         hitViewBean.setGbrowseImage(GenomeBrowserFactory.getStaticImageBuilder()
-                                .landmark(locations.get(0))
+                                .setLandmarkByGenomeLocation(locations.get(0))
                                 .highlight(transcript.getAbbreviation())
                                 .tracks(new GenomeBrowserTrack[]{GenomeBrowserTrack.TRANSCRIPTS})
                                 .build());

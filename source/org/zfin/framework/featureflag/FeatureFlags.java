@@ -33,7 +33,11 @@ public class FeatureFlags {
     }
 
     private static boolean isFlagEnabled(String flagName) {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (requestAttributes == null) {
+            return false;
+        }
+        HttpServletRequest request = requestAttributes.getRequest();
         Boolean value = (Boolean) request.getSession().getAttribute(SESSION_PREFIX + flagName);
         return BooleanUtils.isTrue(value);
     }

@@ -277,7 +277,7 @@ public class SequenceTargetingReagentViewController {
             mergedLocation.setEnd(Math.max(mergedLocation.getEnd(), strLocations.get(0).getEnd()));
 
             sequenceTargetingReagentBean.addGBrowseImage(genomeBrowserFactory.getImageBuilder()
-                    .landmark(mergedLocation)
+                    .setLandmarkByGenomeLocation(mergedLocation)
                     .withPadding(0.1)
                     .tracks(GBrowseService.getGBrowseTracks(sequenceTargetingReagent))
                     .highlight(sequenceTargetingReagent)
@@ -287,7 +287,7 @@ public class SequenceTargetingReagentViewController {
             // otherwise: just show each STR location with 10kbp padding
             for (MarkerGenomeLocation location : strLocations) {
                 sequenceTargetingReagentBean.addGBrowseImage(genomeBrowserFactory.getImageBuilder()
-                        .landmark(location)
+                        .setLandmarkByGenomeLocation(location)
                         .withPadding(10000)
                         .tracks(GBrowseService.getGBrowseTracks(sequenceTargetingReagent))
                         .highlight(sequenceTargetingReagent)
