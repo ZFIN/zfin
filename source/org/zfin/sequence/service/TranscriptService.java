@@ -2,7 +2,6 @@ package org.zfin.sequence.service;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.zfin.Species;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.genomebrowser.GenomeBrowserTrack;
@@ -99,7 +98,7 @@ public class TranscriptService {
                 && getLinkageRepository().hasGenomeLocation(gene, MarkerGenomeLocation.Source.ENSEMBL)
                 && getLinkageRepository().hasGenomeLocation(gene, MarkerGenomeLocation.Source.ZFIN)) {
             GenomeBrowserImageBuilder imageBuilder = GenomeBrowserFactory.getStaticImageBuilder()
-                    .landmark(getLinkageRepository().getGenomeLocation(gene, GenomeLocation.Source.ZFIN).get(0))
+                    .setLandmarkByGenomeLocation(getLinkageRepository().getGenomeLocation(gene, GenomeLocation.Source.ZFIN).get(0))
                     .tracks(new GenomeBrowserTrack[]{GenomeBrowserTrack.TRANSCRIPTS});
             if (highlightedTranscript != null) {
                 imageBuilder.highlight(highlightedTranscript.getAbbreviation());

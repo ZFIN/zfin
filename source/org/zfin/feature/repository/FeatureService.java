@@ -341,15 +341,15 @@ public class FeatureService {
             Marker related = featureMarkerRelationships.iterator().next().getMarker();
             List<MarkerGenomeLocation> markerLocations = RepositoryFactory.getLinkageRepository().getGenomeLocation(related, source);
             if (CollectionUtils.isNotEmpty(markerLocations)) {
-                imageBuilder.landmark(markerLocations.get(0)).withPadding(0.1);
+                imageBuilder.setLandmarkByGenomeLocation(markerLocations.get(0)).withPadding(0.1);
             } else {
-                imageBuilder.landmark(featureLocation).withPadding(10000);
+                imageBuilder.setLandmarkByGenomeLocation(featureLocation).withPadding(10000);
             }
         } else {
-            imageBuilder.landmark(featureLocation).withPadding(10000);
+            imageBuilder.setLandmarkByGenomeLocation(featureLocation).withPadding(10000);
         }
         //currently only ZMP features on previous builds need anything other than the ZFIN_FEATURES track
-        GenomeBrowserTrack featureTrack = featureLocation.getGbrowseTrack() == null ? GenomeBrowserTrack.ZFIN_FEATURES : featureLocation.getGbrowseTrack();
+        GenomeBrowserTrack featureTrack = featureLocation.getGenomeBrowserTrack() == null ? GenomeBrowserTrack.ZFIN_FEATURES : featureLocation.getGenomeBrowserTrack();
 
         imageBuilder.tracks(new GenomeBrowserTrack[]{GenomeBrowserTrack.GENES, featureTrack, GenomeBrowserTrack.TRANSCRIPTS});
 

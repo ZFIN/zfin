@@ -251,7 +251,7 @@ public class MappingDetailController {
         for (MarkerGenomeLocation genomeLocation : genomeLocations) {
             if (genomeLocation.getSource() == GenomeLocation.Source.ZFIN) {
                 model.addAttribute("gbrowseImage", genomeBrowserFactory.getImageBuilder()
-                                .landmark(genomeLocation)
+                                .setLandmarkByGenomeLocation(genomeLocation)
                                 .withCenteredRange(500000)
                                 .highlight(trackingGene)
                                 .highlightColor("pink")

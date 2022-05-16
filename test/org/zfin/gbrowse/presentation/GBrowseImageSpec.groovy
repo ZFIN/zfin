@@ -42,7 +42,7 @@ class GBrowseImageSpec extends AbstractZfinIntegrationSpec {
         def m = RepositoryFactory.markerRepository.getMarkerByID(zdbId)
         def location = linkageRepository.getGenomeLocation(m, GenomeLocation.Source.ZFIN)?.getAt(0)
         def image = GenomeBrowserFactory.getStaticImageBuilder()
-                .landmark(location)
+                .setLandmarkByGenomeLocation(location)
                 .build()
 
         then:
@@ -58,7 +58,7 @@ class GBrowseImageSpec extends AbstractZfinIntegrationSpec {
         def f = RepositoryFactory.featureRepository.getFeatureByID(zdbId)
         def location = linkageRepository.getGenomeLocation(f, GenomeLocation.Source.ZFIN_Zv9)?.getAt(0)
         def image = GenomeBrowserFactory.getStaticImageBuilder()
-                .landmark(location)
+                .setLandmarkByGenomeLocation(location)
                 .genomeBuild(GenomeBrowserBuild.ZV9)
                 .build()
 
@@ -141,7 +141,7 @@ class GBrowseImageSpec extends AbstractZfinIntegrationSpec {
         def location = linkageRepository.getGenomeLocation(m, GenomeLocation.Source.ZFIN)[0]
         def padding = 1000
         def image = GenomeBrowserFactory.getStaticImageBuilder()
-                .landmark(location)
+                .setLandmarkByGenomeLocation(location)
                 .withPadding(padding)
                 .build()
 
@@ -156,7 +156,7 @@ class GBrowseImageSpec extends AbstractZfinIntegrationSpec {
         def padding = 0.1
         def absolutePadding = (int) (padding * (location.end - location.start))
         def image = GenomeBrowserFactory.getStaticImageBuilder()
-                .landmark(location)
+                .setLandmarkByGenomeLocation(location)
                 .withPadding(padding)
                 .build()
 
