@@ -95,8 +95,9 @@ public class AnatomyAjaxController {
     @RequestMapping(value = "/show-labeled-antibodies/{zdbID}")
     public String showExpressedAntibodies(Model model
             , @PathVariable("zdbID") String termID
-    ) throws Exception {
+    ) {
 
+        HibernateUtil.createTransaction();
         GenericTerm term = ontologyRepository.getTermByZdbID(termID);
         if (term == null)
             return "";
@@ -105,6 +106,7 @@ public class AnatomyAjaxController {
         form.setAoTerm(term);
         retrieveAntibodyData(term, form);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
+        HibernateUtil.flushAndCommitCurrentSession();
         return "anatomy/show-labeled-antibodies";
     }
 
