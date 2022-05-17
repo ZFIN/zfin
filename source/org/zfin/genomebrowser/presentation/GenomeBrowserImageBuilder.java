@@ -6,6 +6,8 @@ import org.zfin.genomebrowser.GenomeBrowserTrack;
 import org.zfin.mapping.GenomeLocation;
 import org.zfin.marker.Marker;
 
+import java.util.Collection;
+
 public interface GenomeBrowserImageBuilder {
     GenomeBrowserImage build();
 
@@ -27,6 +29,25 @@ public interface GenomeBrowserImageBuilder {
 
     GenomeBrowserImageBuilder withCenteredRange(int i);
 
-    GenomeBrowserImageBuilder withPadding(double v);
+    GenomeBrowserImageBuilder withPadding(int startPadding, int endPadding);
 
+    GenomeBrowserImageBuilder withRelativePadding(double v);
+
+    GenomeBrowserImageBuilder withPadding(int v);
+
+    GenomeBrowserImageBuilder grid(boolean grid);
+
+    String getLandmark();
+
+    GenomeBrowserBuild getGenomeBuild();
+
+    Collection<GenomeBrowserTrack> getTracks();
+
+    String getHighlightLandmark();
+
+    String getHighlightColor();
+
+    boolean isGrid();
+
+    Feature getHighlightFeature();
 }
