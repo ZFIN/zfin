@@ -150,7 +150,7 @@ public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
                 continue;
             }
             LOG.info("Journal found with null or empty abbreviations: " + name);
-            Map<String, String> match = getMatch(pubmedRecords, name);
+            Map<String, String> match = getMatch(pubmedRecords, dbRecord);
             if (match == null) {
                 LOG.info("No match found in NCBI export for journal: " + name);
             } else {
@@ -216,10 +216,22 @@ public class JournalAbbreviationSyncTask extends AbstractScriptWrapper {
         transaction.commit();
     }
 
-    private Map<String, String> getMatch(List<Map<String, String>> pubmedRecords, String name) {
+    private Map<String, String> getMatch(List<Map<String, String>> pubmedRecords, Journal journal) {
+        String name = journal.getName();
         for(Map<String, String> record : pubmedRecords) {
             String title = record.get("JournalTitle");
+            String printIssn = record.get("ISSN (Print)");
+            String onlineIssn = record.get("ISSN (Online)");
+            if (StringUtils.isNotEmpty(printIssn) && StringUtils.equals(printIssn, journal.getPrintIssn())) {
+                LOG.info("Print ISSN match for : '" + title + "' and '" + printIssn + "'");
+                return record;
+            }
+            if (StringUtils.isNotEmpty(onlineIssn) && StringUtils.equals(onlineIssn, journal.getOnlineIssn())) {
+                LOG.info("Online ISSN match for : '" + title + "' and '" + onlineIssn + "'");
+                return record;
+            }
             if (title.equals(name) ) {
+                LOG.info("Title match for : '" + title + "' and '" + name + "'");
                 return record;
             }
             if (title.equalsIgnoreCase(name)) {
