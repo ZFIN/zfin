@@ -1,10 +1,9 @@
 package org.zfin.mutant.repository;
 
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
-import org.hibernate.Session;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.junit.Test;
 import org.zfin.TestConfiguration;
 import org.zfin.expression.ExpressionFigureStage;
@@ -14,7 +13,6 @@ import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.marker.Marker;
-import org.zfin.marker.agr.*;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
@@ -115,14 +113,7 @@ public class MutantRepositoryTest {
     @Test
     public void createDefaultPhenotype() {
         String genoxID = "ZDB-GENOX-100111-1";
-
-        Session session = HibernateUtil.currentSession();
-        Transaction tx = session.beginTransaction();
-        try {
-            getMutantRepository().getGenotypeExperiment(genoxID);
-        } finally {
-            tx.rollback();
-        }
+        getMutantRepository().getGenotypeExperiment(genoxID);
     }
 
     @Test
@@ -511,7 +502,7 @@ public class MutantRepositoryTest {
 
     @Test
     public void getPhenotypeStatementsRibbon() {
-        List<PhenotypeObservationStatement> models = getMutantRepository().getPhenotypeStatements("ZDB-GENE-990415-30","261210722,261213179");
+        List<PhenotypeObservationStatement> models = getMutantRepository().getPhenotypeStatements("ZDB-GENE-990415-30", "261210722,261213179");
         assertNotNull(models);
     }
 
