@@ -164,31 +164,43 @@ sub select_zebrafish {
     if ($ENV{'SKIP_PRE_ZFIN_GEN'}) {
         print "Skipping generation of pre_zfin.dat file for troubleshooting purposes.  Assuming an accurate pre_zfin.dat file already exists.\n";
     } else {
+        $/ = "\/\/\n"; #custom record separator
+        open OUTPUT, ">pre_zfin.dat" or die "Cannot open pre_zfin.dat";
+        my $record;
+
+        ######## BEGIN PROCESSING: uniprot_trembl_vertebrates ##########
         print("Processing uniprot_trembl_vertebrates.dat.gz at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n");
         print("Using URL of $TREMBL_FILE_URL");
-        $/ = "\/\/\n"; #custom record separator
-        open(DAT1, "curl -s '$TREMBL_FILE_URL' | gunzip -c |") || die("Could not open uniprot_trembl_vertebrates.dat.gz $!");
-        open OUTPUT, ">pre_zfin.dat" or die "Cannot open pre_zfin.dat";
-
-        my $record;
+        $cache_tee = "";
+        if ($ENV{'CACHE_DOWNLOADS'}) {
+            $cache_tee = " | tee uniprot_trembl_vertebrates.dat.gz ";
+        }
+        open(DAT1, "curl -s '$TREMBL_FILE_URL' $cache_tee | gunzip -c |") || die("Could not open uniprot_trembl_vertebrates.dat.gz $!");
         while ($record = <DAT1>){
            ZFINPerlModules->printWhirleyToStderr();
            print OUTPUT "$record" if $record =~ m/OS   Danio rerio/;
         }
         close(DAT1) ;
         print("Done processing uniprot_trembl_vertebrates.dat.gz at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n");
+        ######## END PROCESSING: uniprot_trembl_vertebrates ###########
 
+        ######## BEGIN PROCESSING: uniprot_sprot_vertebrates ##########
         print("Processing uniprot_sprot_vertebrates.dat.gz at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . "\n");
         print("Using URL of $SPROT_FILE_URL");
-        open(DAT2, "curl -s '$SPROT_FILE_URL' | gunzip -c |") || die("Could not open uniprot_sprot_vertebrates.dat.gz $!");
+        $cache_tee = "";
+        if ($ENV{'CACHE_DOWNLOADS'}) {
+            $cache_tee = " | tee uniprot_sprot_vertebrates.dat.gz ";
+        }
+        open(DAT2, "curl -s '$SPROT_FILE_URL' $cache_tee | gunzip -c |") || die("Could not open uniprot_sprot_vertebrates.dat.gz $!");
         while ($record = <DAT2>){
            ZFINPerlModules->printWhirleyToStderr();
            print OUTPUT "$record" if $record =~ m/OS   Danio rerio/;
         }
+        close(DAT2) ;
         print("Done processing uniprot_sprot_vertebrates.dat.gz at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n");
+        ######## END PROCESSING: uniprot_sprot_vertebrates ###########
 
         $/ = "\n";
-        close(DAT2) ;
         close(OUTPUT) ;
     }
 
