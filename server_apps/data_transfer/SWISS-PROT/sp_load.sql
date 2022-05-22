@@ -329,6 +329,19 @@ delete from pre_marker_go_Term_evidence
 		      
 --update statistics high for table pre_marker_go_term_evidence;
 
+-- Set IDs of marker_go_term_evidence to be the same as the last time they were imported
+-- if they previously existed
+UPDATE pre_marker_go_term_evidence p
+SET    pre_mrkrgoev_zdb_id = u.mrkrgoev_zdb_id
+FROM   tmp_uniprot_last_run_marker_go_term_evidence u
+WHERE
+    p.mrkr_zdb_id = u.mrkrgoev_mrkr_zdb_id
+  AND p.go_zdb_id = u.mrkrgoev_term_zdb_id
+  AND p.mrkrgoev_source = u.mrkrgoev_source_zdb_id
+  AND p.mrkrgoev_note = u.mrkrgoev_notes
+  AND p.mrkrgoev_inference = u.infgrmem_inferred_from;
+-- END of Set IDs
+
 --!echo 'Insert MRKRGOEV into zdb_active_data'
 	insert into zdb_active_data
 		select pre_mrkrgoev_zdb_id from pre_marker_go_term_evidence;

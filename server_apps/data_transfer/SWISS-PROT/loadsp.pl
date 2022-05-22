@@ -228,6 +228,18 @@ try {
   exit -1;
 };
 
+#--------------- Capture some history from last SWISS-PROT loading-----
+print "\n Capturing data from last SWISS-PROT loading.\n";
+
+try {
+  system("psql -d <!--|DB_NAME|--> -a -f sp_capture.sql >capturereport.txt");
+} catch {
+  chomp $_;
+  &sendErrorReport("Failed to execute sp_capture.sql - $_");
+  exit -1;
+};
+
+#--------------- Delete records from last SWISS-PROT loading-----
 print "\n delete records source from last SWISS-PROT loading.\n";
 
 try {
