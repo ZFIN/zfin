@@ -23,6 +23,8 @@ public class DeleteFeatureRule extends AbstractDeleteEntityRule implements Delet
     @Override
     public List<DeleteValidationReport> validate() {
         Feature feature = RepositoryFactory.getFeatureRepository().getFeatureByID(zdbID);
+        SortedSet<Publication> featurePublications = RepositoryFactory.getPublicationRepository().getAllPublicationsForFeature(feature);
+
         addToValidationReport(feature.getAbbreviation() + " is used in the following list of genotypes: ", getMutantRepository().getGenotypesByFeature(feature));
 
         // Can't delete the feature if it has a source
@@ -40,7 +42,6 @@ public class DeleteFeatureRule extends AbstractDeleteEntityRule implements Delet
         }
 
         // Can't delete the feature if it has more than 1 publications
-        SortedSet<Publication> featurePublications = RepositoryFactory.getPublicationRepository().getAllPublicationsForFeature(feature);
         if (CollectionUtils.isNotEmpty(featurePublications) && featurePublications.size() > 1) {
             addToValidationReport(feature.getAbbreviation() + " associated with more than one publication: ", featurePublications);
         }
