@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
@@ -41,6 +42,7 @@ public class TranscriptViewController {
 
     @RequestMapping(value = "/transcript/view/{zdbID}")
     public String getNewTranscriptView(Model model, @PathVariable("zdbID") String zdbID) throws Exception {
+        HibernateUtil.createTransaction();
         zdbID = markerService.getActiveMarkerID(zdbID);
         // set base bean
         TranscriptBean transcriptBean = new TranscriptBean();
