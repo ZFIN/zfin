@@ -606,7 +606,4 @@ ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$sub
 $subject = "Auto from $dbname: " . "UniProt load log";
 ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subject","report.txt");
 
-print "\n create_file_for_swiss_prot.pl at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . "\n";
-system ("<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/create_file_for_swiss_prot.pl");
-
 exit;
