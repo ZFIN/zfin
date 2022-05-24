@@ -51,7 +51,7 @@ public class Feature implements EntityNotes, EntityZdbID {
                     @org.hibernate.annotations.Parameter(name = "insertActiveData", value = "true")
             })
     @Column(name = "feature_zdb_id")
-    @JsonView(View.FeatureAPI.class)
+    @JsonView(View.API.class)
     private String zdbID;
     @Column(name = "feature_name", nullable = false)
     //@Audited
@@ -69,7 +69,7 @@ public class Feature implements EntityNotes, EntityZdbID {
     @JoinColumn(name = "feature_lab_prefix_id")
     private FeaturePrefix featurePrefix;
     @Column(name = "feature_abbrev", nullable = false)
-    @JsonView(View.FeatureAPI.class)
+    @JsonView(View.API.class)
     private String abbreviation;
     @Column(name = "feature_tg_suffix")
     private String transgenicSuffix;
