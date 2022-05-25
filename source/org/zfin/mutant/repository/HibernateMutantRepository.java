@@ -1803,8 +1803,10 @@ public class HibernateMutantRepository implements MutantRepository {
             HibernateUtil.currentSession().save(fish);
             getInfrastructureRepository().insertUpdatesTable(fish, "fish_zdb_id", "create new record", publication.getZdbID(), null);
             newFishCreated = true;
+            getInfrastructureRepository().insertRecordAttribution(fish, publication);
+        } else {
+            getInfrastructureRepository().insertRecordAttribution(existingFish, publication);
         }
-        getInfrastructureRepository().insertRecordAttribution(existingFish, publication);
         return newFishCreated;
     }
 
