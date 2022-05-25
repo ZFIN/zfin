@@ -8,6 +8,7 @@
     <property name="lib" value="${basedir}/lib/Java"/>
     <property name="web.lib" value="${web-inf.dir}/lib"/>
     <property name="validateData" value="${basedir}/server_apps/DB_maintenance"/>
+    <property name="jvm.arg.log4j" value="-Dlog4j.configurationFile=log4j2.xml"/>
 
     <property environment="env"/>
 
@@ -84,6 +85,7 @@
             <arg value="org.zfin.datatransfer.go.GoaGafParser"/>
             <arg value="ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/goa_zebrafish_isoform.gaf.gz"/>
             <arg value="ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/goa_zebrafish_rna.gaf.gz"/>
+            <jvmarg value="${jvm.arg.log4j}"/>
         </java>
     </target>
 
