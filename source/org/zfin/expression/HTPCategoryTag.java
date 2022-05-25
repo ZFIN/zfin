@@ -17,8 +17,8 @@ import javax.persistence.*;
 public class HTPCategoryTag {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfin")
-    @GenericGenerator(name = "zfin",
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "HTPCategoryTag")
+    @GenericGenerator(name = "HTPCategoryTag",
             strategy = "org.zfin.database.ZdbIdGenerator",
             parameters = {
                     @org.hibernate.annotations.Parameter(name = "type", value = "HTPTAG"),

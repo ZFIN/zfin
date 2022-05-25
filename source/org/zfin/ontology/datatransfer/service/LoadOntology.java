@@ -183,9 +183,9 @@ public class LoadOntology extends AbstractValidateDataReportTask {
 
     public void runOntologyUpdateProcess() {
         openTraceFile();
+        HibernateUtil.createTransaction();
         if (processOboFile()) {
             try {
-                HibernateUtil.createTransaction();
                 LOG.info("Duration of Loader: " + DateUtil.getTimeDuration(sectionTime));
                 report.addMessageToSection("Finished Processing Obo file", "Parse Obo File");
                 sectionTime = System.currentTimeMillis();
