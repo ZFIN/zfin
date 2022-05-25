@@ -51,10 +51,10 @@ for featAbbrev, featMrkrAbbrev, featName, featType in
 
     if (featMrkrAbbrev is null OR featMrkrAbbrev = '') then
         featAbbrevHtml :=  featName ;
-        RAISE notice 'featMrkrAbbrev is null: %', featName;
+       
     else
         featAbbrevHtml := featMrkrAbbrev || '<sup>' || featName || '</sup>';
-        RAISE notice 'featMrkrAbbrev is %, featName is %', featMrkrAbbrev, featName;
+
     end if;
     
   end if ; -- feat exists
