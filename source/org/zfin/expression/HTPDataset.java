@@ -19,8 +19,8 @@ import java.util.GregorianCalendar;
 public class HTPDataset {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfin")
-    @GenericGenerator(name = "zfin",
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "HTPDataset")
+    @GenericGenerator(name = "HTPDataset",
             strategy = "org.zfin.database.ZdbIdGenerator",
             parameters = {
                     @org.hibernate.annotations.Parameter(name = "type", value = "HTPDSET"),

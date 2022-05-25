@@ -21,8 +21,8 @@ import java.util.Set;
 public class ExpressionExperiment2 {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "zfin")
-    @GenericGenerator(name = "zfin",
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ExpressionExperiment2")
+    @GenericGenerator(name = "ExpressionExperiment2",
             strategy = "org.zfin.database.ZdbIdGenerator",
             parameters = {
                     @org.hibernate.annotations.Parameter(name = "type", value = "XPAT"),
