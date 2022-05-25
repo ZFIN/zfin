@@ -2137,7 +2137,7 @@ public class HibernateMutantRepository implements MutantRepository {
         HibernateUtil.currentSession().createSQLQuery(
                 "UPDATE fish " +
                         "SET fish_name = fish_name " +
-                        "WHERE fish.fish_Zdb_id=:fishID ;")
+                        "WHERE fish_Zdb_id=:fishID ;")
 
                 .setString("fishID", fish.getZdbID())
                 .executeUpdate();
