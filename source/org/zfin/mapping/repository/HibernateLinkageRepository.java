@@ -15,6 +15,7 @@ import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.Updates;
 import org.zfin.infrastructure.ZdbID;
 import org.zfin.mapping.*;
+import org.zfin.mapping.importer.AGPEntry;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.profile.Person;
@@ -265,6 +266,15 @@ public class HibernateLinkageRepository implements LinkageRepository {
     }
 
     @Override
+    public List<MarkerGenomeLocation> getGenomeLocationWithCoordinates(Marker marker) {
+        Query query = HibernateUtil.currentSession().createQuery(
+                "from MarkerGenomeLocation mgl where marker = :marker " +
+                        " and mgl.start is not null and mgl.end is not null");
+        query.setParameter("marker", marker);
+        return (List<MarkerGenomeLocation>) query.list();
+    }
+
+    @Override
     public List<MarkerGenomeLocation> getGenomeLocation(Marker marker, GenomeLocation.Source... sources) {
         Criteria query = HibernateUtil.currentSession().createCriteria(MarkerGenomeLocation.class);
         query.add(Restrictions.eq("marker", marker));
@@ -392,6 +402,32 @@ public class HibernateLinkageRepository implements LinkageRepository {
         linkage.setComments(newComment);
         HibernateUtil.currentSession().save(linkage);
         HibernateUtil.currentSession().save(updates);
+    }
+
+    @Override
+    public void saveAGPEntry(AGPEntry entry) {
+        HibernateUtil.currentSession().save(entry);
+    }
+
+    @Override
+    public void deleteAllAGPEntries() {
+        String hql = "delete from AGPEntry";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.executeUpdate();
+    }
+
+    @Override
+    public void deleteAllGenomeLocationsBySource(GenomeLocation.Source source) {
+        Query query = HibernateUtil.currentSession().createQuery(
+                "delete from MarkerGenomeLocation where  " +
+                        " source = :source ");
+        query.setParameter("source", source);
+        query.executeUpdate();
+    }
+
+    @Override
+    public void saveMarkerGenomeLocation(MarkerGenomeLocation markerGenomeLocation) {
+        HibernateUtil.currentSession().save(markerGenomeLocation);
     }
 
     @Override

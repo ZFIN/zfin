@@ -1,5 +1,6 @@
 package org.zfin.jbrowse.presentation;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.zfin.feature.Feature;
 import org.zfin.genomebrowser.GenomeBrowserBuild;
 import org.zfin.genomebrowser.GenomeBrowserTrack;
@@ -7,7 +8,10 @@ import org.zfin.genomebrowser.presentation.GenomeBrowserImageBuilder;
 import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
 import org.zfin.infrastructure.ZdbID;
 import org.zfin.mapping.GenomeLocation;
+import org.zfin.mapping.MarkerGenomeLocation;
+import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
+import org.zfin.repository.RepositoryFactory;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -74,6 +78,20 @@ public class JBrowseImageBuilder implements GenomeBrowserImageBuilder {
         }
 
         return new JBrowseImage(this);
+    }
+
+    public GenomeBrowserImage buildForClone(Clone clone) {
+        List<MarkerGenomeLocation> cloneLocations = RepositoryFactory.getLinkageRepository().getGenomeLocationWithCoordinates(clone);
+        if (CollectionUtils.isEmpty(cloneLocations)) {
+            return null;
+        }
+
+        // jbrowse image
+        return this.setLandmarkByGenomeLocation(cloneLocations.get(0))
+                .highlight(clone)
+                .tracks(new GenomeBrowserTrack[]{GenomeBrowserTrack.COMPLETE_CLONES, GenomeBrowserTrack.GENES, GenomeBrowserTrack.TRANSCRIPTS})
+                .withRelativePadding(0.2)
+                .build();
     }
 
     private String getHighlightLandmarkByMarkerOrFeature(ZdbID entity) {

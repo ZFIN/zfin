@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <include file="source/org/zfin/db/postGmakePostloaddb/1133/ZFIN-7812-00-create-clone-agp-table.sql" />
+
+    <changeSet author="rtaylor" id="ZFIN-7812-populate-clone-agp-table">
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1133/ZFIN-7812-01-clone-agp-grcz11.csv"
+                  tableName="clone_agp_grcz11" encoding="UTF-8" quotchar='"'>
+            <column header="cag_pk_id" name="cag_pk_id" type="skip" />
+            <column header="chromosome" name="chromosome" type="String" />
+            <column header="object_start" name="object_start" type="numeric" />
+            <column header="object_end" name="object_end" type="numeric" />
+            <column header="ix" name="ix" type="String" />
+            <column header="component_type" name="component_type" type="String" />
+            <column header="component_id" name="component_id" type="String" />
+            <column header="component_start" name="component_start" type="numeric" />
+            <column header="component_end" name="component_end" type="numeric" />
+            <column header="strand" name="strand" type="String" />
+            <column header="gap_length" name="gap_length" type="numeric" />
+            <column header="gap_type" name="gap_type" type="String" />
+            <column header="linkage" name="linkage" type="boolean" />
+            <column header="linkage_evidence" name="linkage_evidence" type="String" />
+        </loadData>
+    </changeSet>
+
+    <include file="source/org/zfin/db/postGmakePostloaddb/1133/ZFIN-7812-02-prepare-sfclg-table.sql" />
+
+    <changeSet author="rtaylor" id="ZFIN-7812-populate-sfclg-table">
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1133/ZFIN-7812-03-sfclg-agp-rows.csv"
+                  tableName="sequence_feature_chromosome_location_generated" encoding="UTF-8" quotchar='"'>
+            <column header="sfclg_chromosome" name="sfclg_chromosome" type="text"/>
+            <column header="sfclg_data_zdb_id" name="sfclg_data_zdb_id" type="text"/>
+            <column header="sfclg_pk_id" name="sfclg_pk_id" type="skip"/>
+            <column header="sfclg_acc_num" name="sfclg_acc_num" type="text"/>
+            <column header="sfclg_start" name="sfclg_start" type="numeric"/>
+            <column header="sfclg_end" name="sfclg_end" type="numeric"/>
+            <column header="sfclg_location_source" name="sfclg_location_source" type="text"/>
+            <column header="sfclg_location_subsource" name="sfclg_location_subsource" type="text"/>
+            <column header="sfclg_fdb_db_id" name="sfclg_fdb_db_id" type="numeric"/>
+            <column header="sfclg_pub_zdb_id" name="sfclg_pub_zdb_id" type="text"/>
+            <column header="sfclg_assembly" name="sfclg_assembly" type="text"/>
+            <column header="sfclg_gbrowse_track" name="sfclg_gbrowse_track" type="text"/>
+            <column header="sfclg_evidence_code" name="sfclg_evidence_code" type="text"/>
+        </loadData>
+    </changeSet>
+
+</databaseChangeLog>
