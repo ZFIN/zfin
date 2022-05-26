@@ -28,6 +28,9 @@ Output a data file used as input file for journal merge
     <hudson.tasks.Shell>
       <command>cd $TARGETROOT/server_apps/data_transfer/PUBMED/Journal &amp;&amp; checkAndUpdateJournals.pl</command>
     </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>cd $SOURCEROOT &amp;&amp; NCBI_JOURNAL_FILE=$TARGETROOT/server_apps/data_transfer/PUBMED/Journal/J_Medline.txt gradle journalAbbreviationSyncAndUpdate</command>
+    </hudson.tasks.Shell>
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
