@@ -84,7 +84,6 @@ public class FlankSeqProcessor {
                 for (Feature feature : featureRepository.getNonSaFeaturesWithGenomicMutDets()) {
                     if (feature.getType()==FeatureTypeEnum.INDEL ||feature.getType()==FeatureTypeEnum.DELETION ||feature.getType()==FeatureTypeEnum.INSERTION||feature.getType()==FeatureTypeEnum.MNV||feature.getType()==FeatureTypeEnum.POINT_MUTATION) {
 
-                        System.out.println(feature.getAbbreviation()+feature.getType().getName());
                         FeatureLocation ftrLoc = featureRepository.getAllFeatureLocationsOnGRCz11(feature);
                         if (ftrLoc != null
                                 && ftrLoc.getStartLocation() != null && ftrLoc.getStartLocation().toString() != ""
@@ -106,7 +105,6 @@ public class FlankSeqProcessor {
 
                                     break;
                                 case DELETION:
-                                    System.out.println(feature.getFeatureGenomicMutationDetail().getFgmdSeqRef());
                                     seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart - 1).getBases());
                                     seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd + 1, locEnd + offset).getBases());
                                     break;
@@ -205,7 +203,6 @@ private void UpdateFeatureGenomeRecord(FeatureGenomicMutationDetail fgmd, String
         vrSeq.setVfsFlankOrigin("directly sequenced");
         vrSeq.setVfsType("Genomic");
         if (ftr.getType() == FeatureTypeEnum.DELETION) {
-            System.out.println(ftr.getFeatureGenomicMutationDetail().getFgmdSeqRef());
             vrSeq.setVfsTargetSequence(seq1 + "[" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqRef() + "/" + "-" + "]" + seq2);
             vrSeq.setVfsVariation(ftr.getFeatureGenomicMutationDetail().getFgmdSeqRef() + "/" + "-");
         }
