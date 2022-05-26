@@ -273,7 +273,9 @@ update journal
         or exists(select 'x' from tmp_ncbi_journals
                    where issnOnline is not null
                      and jrnl_online_issn is not null
-                     and issnOnline != jrnl_online_issn)
+                     and issnOnline != jrnl_online_issn
+                     and issnPrint = jrnl_print_issn
+                  )
         );
 
 -- update values of nlm id column based on same issn print
@@ -287,7 +289,9 @@ update journal
         or exists(select 'x' from tmp_ncbi_journals 
                    where nlmID is not null 
                      and jrnl_nlmid is not null           
-                     and nlmID != jrnl_nlmid) 
+                     and nlmID != jrnl_nlmid
+                     and issnPrint = jrnl_print_issn
+                  )
         ); 
 
 
@@ -302,7 +306,9 @@ update journal
         or exists(select 'x' from tmp_ncbi_journals
                    where medAbbr is not null     
                      and jrnl_medabbrev is not null      
-                     and medAbbr != jrnl_medabbrev)           
+                     and medAbbr != jrnl_medabbrev
+                     and issnPrint = jrnl_print_issn
+                  )
         ); 
 
 -- update values of isoAbbr column based on same issn print
@@ -316,7 +322,9 @@ update journal
         or exists(select 'x' from tmp_ncbi_journals
                    where isoAbbr is not null
                      and jrnl_isoabbrev is not null
-                     and isoAbbr != jrnl_isoabbrev)
+                     and isoAbbr != jrnl_isoabbrev
+                     and issnPrint = jrnl_print_issn
+                 )
         ); 
 
 

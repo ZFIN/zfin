@@ -27,7 +27,7 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd $SOURCEROOT &amp;&amp; gradle journalAbbreviationSync &amp;&amp; cp JournalAbbreviationSync.sql $WORKSPACE</command>
+      <command>cd $SOURCEROOT &amp;&amp; gradle journalAbbreviationSyncReport &amp;&amp; cp JournalAbbreviationSync.sql $WORKSPACE</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
