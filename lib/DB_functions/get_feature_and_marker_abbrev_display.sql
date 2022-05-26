@@ -9,7 +9,7 @@ create or replace function get_feature_and_marker_abbrev_display( featZdbId varc
   --
   --  INPUT VARS: 
   --     featZdbId
-  --     markerZdbId
+  --     markerZdbId (can be null)
   --  
   --  OUTPUT VARS: 
   --     none
