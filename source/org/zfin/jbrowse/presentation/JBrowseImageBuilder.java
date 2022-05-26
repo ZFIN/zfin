@@ -87,10 +87,10 @@ public class JBrowseImageBuilder implements GenomeBrowserImageBuilder {
         }
 
         // jbrowse image
-        return this.landmark(cloneLocations.get(0))
+        return this.setLandmarkByGenomeLocation(cloneLocations.get(0))
                 .highlight(clone)
                 .tracks(new GenomeBrowserTrack[]{GenomeBrowserTrack.COMPLETE_CLONES, GenomeBrowserTrack.GENES, GenomeBrowserTrack.TRANSCRIPTS})
-                .withPadding(0.2)
+                .withRelativePadding(0.2)
                 .build();
     }
 
