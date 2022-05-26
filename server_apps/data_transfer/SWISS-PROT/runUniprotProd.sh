@@ -36,6 +36,8 @@ echo "MD5 sums of data input files " $(date "+%Y-%m-%d %H:%M:%S")
 md5sum /research/zarchive/load_files/UniProt/*
 echo "#########################################################################"
 echo "MD5 sums of data files after copy (should match) " $(date "+%Y-%m-%d %H:%M:%S")
+
+#This looks like it's doing an md5sum of the files in /research/zar..., but xargs just receives the file names, not path. So it's doing an md5sum of the same named files in CWD
 ls /research/zarchive/load_files/UniProt/ | xargs md5sum 
 echo "#########################################################################"
 

@@ -18,7 +18,7 @@ mkdir -p $DIRECTORY/csv
 mkdir -p $DIRECTORY/sql
 TABLES_WITH_1_COLUMN="zdb_active_data"
 TABLES_WITH_2_COLUMN="noctua_model_annotation marker_go_term_annotation_extension_group"
-TABLES="db_link external_note inference_group_member interpro_protein marker_go_term_annotation_extension marker_go_term_evidence marker_to_protein pg_stat_statements protein protein_to_interpro protein_to_pdb pub_tracking_history record_attribution tables_in_trouble updates "
+TABLES="db_link external_note inference_group_member interpro_protein marker_go_term_annotation_extension marker_go_term_evidence marker_to_protein protein protein_to_interpro protein_to_pdb record_attribution tables_in_trouble"
 
 echo "Making csv backups "  $(date "+%Y-%m-%d %H:%M:%S")
 for t in $TABLES
@@ -49,5 +49,12 @@ done
 echo "Finished "  $(date "+%Y-%m-%d %H:%M:%S")
 
 touch "$DIRECTORY/README.txt"
+
+#line counts
+cd $DIRECTORY/csv
+wc -l *.csv > wc.txt
+cd -
+
+echo $* > "$DIRECTORY/README.txt"
 
 echo "Consider adding context information to $DIRECTORY/README.txt about this snapshot."
