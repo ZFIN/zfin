@@ -4,6 +4,7 @@ import org.zfin.feature.Feature;
 import org.zfin.genomebrowser.GenomeBrowserBuild;
 import org.zfin.genomebrowser.GenomeBrowserTrack;
 import org.zfin.mapping.GenomeLocation;
+import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 
 import java.util.Collection;
@@ -50,4 +51,6 @@ public interface GenomeBrowserImageBuilder {
     boolean isGrid();
 
     Feature getHighlightFeature();
+
+    GenomeBrowserImage buildForClone(Clone clone);
 }

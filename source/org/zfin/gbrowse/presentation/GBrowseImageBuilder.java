@@ -6,6 +6,7 @@ import org.zfin.genomebrowser.GenomeBrowserTrack;
 import org.zfin.genomebrowser.presentation.GenomeBrowserImageBuilder;
 import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
 import org.zfin.mapping.GenomeLocation;
+import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 
 import java.util.Arrays;
@@ -72,6 +73,13 @@ public class GBrowseImageBuilder implements GenomeBrowserImageBuilder {
     }
 
     @Override
+    public GenomeBrowserImage buildForClone(Clone clone) {
+        return this.landmark("genomic_clone:" + clone.getZdbID())
+                .highlight(clone.getAbbreviation())
+                .tracks(new GenomeBrowserTrack[]{GenomeBrowserTrack.COMPLETE_CLONES, GenomeBrowserTrack.GENES, GenomeBrowserTrack.TRANSCRIPTS})
+                .build();
+    }
+
     public GenomeBrowserImageBuilder genomeBuild(GenomeBrowserBuild genomeBuild) {
         this.genomeBuild = genomeBuild;
         return this;
