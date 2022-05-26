@@ -1,13 +1,15 @@
-create or replace function get_feature_abbrev_display( featZdbId varchar )
+create or replace function get_feature_and_marker_abbrev_display( featZdbId varchar, markerZdbId varchar )
 
   returns varchar as $featAbbrevHtml$
 
   -- --------------------------------------------------------------------- 
-  -- Given the ZDB ID of a feature, returns the feature abbrev as a
-  -- supper script of the gene.
+  -- Given the ZDB ID of a feature and the ZDB ID of the related marker,
+  -- returns the feature abbrev as a super script of the gene.
+  -- based on get_feature_abbrev_display, but handles features of multiple markers
   --
   --  INPUT VARS: 
-  --     featZdbId   
+  --     featZdbId
+  --     markerZdbId (can be null)
   --  
   --  OUTPUT VARS: 
   --     none
@@ -34,11 +36,11 @@ for featAbbrev, featMrkrAbbrev, featName, featType in
     	 	 and fmrel_type = 'is allele of'
     	 	 left outer join marker on fmrel_mrkr_zdb_id = mrkr_zdb_id
         where feature_zdb_id = featZdbId
+        and (fmrel_mrkr_zdb_id = markerZdbId or fmrel_mrkr_zdb_id is null)
  loop 
 
   if (featName is null) then
     featAbbrevHtml := null;
-
   else
   
     if (featName like '%\_unspecified') then
@@ -51,10 +53,8 @@ for featAbbrev, featMrkrAbbrev, featName, featType in
 
     if (featMrkrAbbrev is null OR featMrkrAbbrev = '') then
         featAbbrevHtml :=  featName ;
-       
     else
         featAbbrevHtml := featMrkrAbbrev || '<sup>' || featName || '</sup>';
-
     end if;
     
   end if ; -- feat exists

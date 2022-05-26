@@ -4,12 +4,12 @@
 CREATE OR REPLACE VIEW genotype_name_components_from_relationships AS
         -- start of result set 1
         SELECT DISTINCT
-            get_feature_abbrev_display (feature_zdb_id) AS fad,
+            get_feature_and_marker_abbrev_display(feature_zdb_id, mrkr_zdb_id) AS fad,
             zyg_allele_display,
             CASE WHEN mrkr_abbrev IS NULL THEN
-                lower(get_feature_abbrev_display (feature_zdb_id))
+                lower(get_feature_and_marker_abbrev_display(feature_zdb_id, mrkr_zdb_id))
             ELSE
-                lower(mrkr_abbrev) || get_feature_abbrev_display (feature_zdb_id)
+                lower(mrkr_abbrev) || get_feature_and_marker_abbrev_display(feature_zdb_id, mrkr_zdb_id)
             END AS fad2,
             feature_Abbrev AS feature_abbrev,
             feature_type AS feature_type,
@@ -39,14 +39,14 @@ CREATE OR REPLACE VIEW genotype_name_components_from_relationships AS
         UNION
         -- start of result set 2
         SELECT DISTINCT
-            get_feature_abbrev_display (feature_zdb_id) AS fad,
+            get_feature_and_marker_abbrev_display(feature_zdb_id, mrkr_zdb_id) AS fad,
             zyg_allele_display,
             CASE WHEN fmrel_type IN ('contains innocuous sequence feature',
                 'created by',
                 'contains phenotypic sequence feature') THEN
                 mrkr_abbrev
             ELSE
-                lower(get_feature_abbrev_display (feature_zdb_id))
+                lower(get_feature_and_marker_abbrev_display(feature_zdb_id, mrkr_zdb_id))
             END AS fad2,
             feature_Abbrev AS feature_abbrev,
             feature_type AS feature_type,
@@ -97,14 +97,14 @@ CREATE OR REPLACE VIEW genotype_name_components_from_relationships AS
         UNION
         -- start of result set 3
         SELECT DISTINCT
-            get_feature_abbrev_display (feature_zdb_id) AS fad,
+            get_feature_and_marker_abbrev_display(feature_zdb_id, mrkr_zdb_id) AS fad,
             zyg_allele_display,
             CASE WHEN fmrel_type IN ('contains innocuous sequence feature',
                 'created by',
                 'contains phenotypic sequence feature') THEN
                 mrkr_abbrev
             ELSE
-                lower(get_feature_abbrev_display (feature_zdb_id))
+                lower(get_feature_and_marker_abbrev_display(feature_zdb_id, mrkr_zdb_id))
             END AS fad2,
             feature_Abbrev AS feature_abbrev,
             feature_type AS feature_type,
@@ -156,14 +156,14 @@ CREATE OR REPLACE VIEW genotype_name_components_from_relationships AS
         UNION
         -- start of result set 4
         SELECT DISTINCT
-            get_feature_abbrev_display (feature_zdb_id) AS fad,
+            get_feature_and_marker_abbrev_display(feature_zdb_id, mrkr_zdb_id) AS fad,
             zyg_allele_display,
             CASE WHEN fmrel_type IN ('contains innocuous sequence feature',
                 'created by',
                 'contains phenotypic sequence feature') THEN
                 mrkr_abbrev
             ELSE
-                lower(get_feature_abbrev_display (feature_zdb_id))
+                lower(get_feature_and_marker_abbrev_display(feature_zdb_id, mrkr_zdb_id))
             END AS fad2,
             feature_Abbrev AS feature_abbrev,
             feature_type AS feature_type,
