@@ -219,7 +219,6 @@ $sql = "select distinct mrkr_zdb_id from marker, marker_go_term_evidence, term
 
 $numMrkrProcessBefore = countData($sql);
 
-#--------------- Delete records from last SWISS-PROT loading-----
 print("Running sp_addbackattr.sql at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . "\n");
 try {
   system("psql -d <!--|DB_NAME|--> -a -f sp_addbackattr.sql >addBackAttributionReport.txt");
@@ -229,6 +228,18 @@ try {
   exit -1;
 };
 
+#--------------- Capture some history from last SWISS-PROT loading-----
+print "\n Capturing data from last SWISS-PROT loading.\n";
+
+try {
+  system("psql -d <!--|DB_NAME|--> -a -f sp_capture.sql >capturereport.txt");
+} catch {
+  chomp $_;
+  &sendErrorReport("Failed to execute sp_capture.sql - $_");
+  exit -1;
+};
+
+#--------------- Delete records from last SWISS-PROT loading-----
 print "\n delete records source from last SWISS-PROT loading.\n";
 
 try {
@@ -506,96 +517,96 @@ $numMrkrProcessAfter = countData($sql);
 
 open (POSTLOADREPORT, '>postUniProtLoadStatistics.txt') or die "Cannot open postUniProtLoadStatistics.txt: $!";
 
-print POSTLOADREPORT "count of records associated with UniProt\t";
-print POSTLOADREPORT "before load\t";
-print POSTLOADREPORT "after load\t";
-print POSTLOADREPORT "percentage change\n";
-print POSTLOADREPORT "----------------------------------------\t-----------\t-----------\t-------------------------\n";
+printf POSTLOADREPORT "%-45s\t", "count of records associated with UniProt";
+printf POSTLOADREPORT "%-11s\t", "before load";
+printf POSTLOADREPORT "%-11s\t", "after load";
+printf POSTLOADREPORT "%-17s\n", "percentage change";
+print POSTLOADREPORT "---------------------------------------------\t-----------\t-----------\t-----------------\n";
 
-print POSTLOADREPORT "db_link records                         \t";
-print POSTLOADREPORT "$numDblinkBefore   \t";
-print POSTLOADREPORT "$numDblinkAfter   \t";
-printf POSTLOADREPORT "%.2f\n", ($numDblinkAfter - $numDblinkBefore) / $numDblinkBefore * 100 if ($numDblinkBefore > 0);
+printf POSTLOADREPORT "%-45s\t", "db_link records";
+printf POSTLOADREPORT "%11s\t", "$numDblinkBefore";
+printf POSTLOADREPORT "%11s\t", "$numDblinkAfter";
+printf POSTLOADREPORT "%17.2f\n", ($numDblinkAfter - $numDblinkBefore) / $numDblinkBefore * 100 if ($numDblinkBefore > 0);
 
-print POSTLOADREPORT "external_note with db_link              \t";
-print POSTLOADREPORT "$numExternalNoteBefore        \t";
-print POSTLOADREPORT "$numExternalNoteAfter       \t";
-printf POSTLOADREPORT "%.2f\n", ($numExternalNoteAfter - $numExternalNoteBefore) / $numExternalNoteBefore * 100 if ($numExternalNoteBefore > 0);
+printf POSTLOADREPORT "%-45s\t", "external_note with db_link";
+printf POSTLOADREPORT "%11s\t", "$numExternalNoteBefore";
+printf POSTLOADREPORT "%11s\t", "$numExternalNoteAfter";
+printf POSTLOADREPORT "%17.2f\n", ($numExternalNoteAfter - $numExternalNoteBefore) / $numExternalNoteBefore * 100 if ($numExternalNoteBefore > 0);
 
 
-print POSTLOADREPORT "genes with duplicated db_link notes      \t";
-print POSTLOADREPORT "$numMarkersWithRedundantDblkNoteBefore        \t";
-print POSTLOADREPORT "$numMarkersWithRedundantDblkNoteAfter       \t";
-printf POSTLOADREPORT "not calculated\n";
+printf POSTLOADREPORT "%-45s\t", "genes with duplicated db_link notes";
+printf POSTLOADREPORT "%11s\t", "$numMarkersWithRedundantDblkNoteBefore";
+printf POSTLOADREPORT "%11s\t", "$numMarkersWithRedundantDblkNoteAfter";
+printf POSTLOADREPORT "   not calculated\n";
 
-print POSTLOADREPORT "----------------------------------------\t-----------\t-----------\t-------------------------\n";
+print POSTLOADREPORT "---------------------------------------------\t-----------\t-----------\t-----------------\n";
 
-print POSTLOADREPORT "marker_go_term_evidence IEA records     \t";
-print POSTLOADREPORT "$numIEABefore      \t";
-print POSTLOADREPORT "$numIEAAfter      \t";
-printf POSTLOADREPORT "%.2f\n", ($numIEAAfter - $numIEABefore) / $numIEABefore * 100 if ($numIEABefore > 0);
+printf POSTLOADREPORT "%-45s\t", "marker_go_term_evidence IEA records";
+printf POSTLOADREPORT "%11s\t", "$numIEABefore";
+printf POSTLOADREPORT "%11s\t", "$numIEAAfter";
+printf POSTLOADREPORT "%17.2f\n", ($numIEAAfter - $numIEABefore) / $numIEABefore * 100 if ($numIEABefore > 0);
 
-print POSTLOADREPORT "marker_go_term_evidence records from SP \t";
-print POSTLOADREPORT "$numIEASP2GOBefore   \t";
-print POSTLOADREPORT "$numIEASP2GOAfter   \t";
-printf POSTLOADREPORT "%.2f\n", ($numIEASP2GOAfter - $numIEASP2GOBefore) / $numIEASP2GOBefore * 100 if ($numIEASP2GOBefore > 0);
+printf POSTLOADREPORT "%-45s\t", "marker_go_term_evidence records from SP";
+printf POSTLOADREPORT "%11s\t", "$numIEASP2GOBefore";
+printf POSTLOADREPORT "%11s\t", "$numIEASP2GOAfter";
+printf POSTLOADREPORT "%17.2f\n", ($numIEASP2GOAfter - $numIEASP2GOBefore) / $numIEASP2GOBefore * 100 if ($numIEASP2GOBefore > 0);
 
-print POSTLOADREPORT "marker_go_term_evidence records from IP \t";
-print POSTLOADREPORT "$numIEAInterPro2GOBefore   \t";
-print POSTLOADREPORT "$numIEAInterPro2GOAfter   \t";
-printf POSTLOADREPORT "%.2f\n", ($numIEAInterPro2GOAfter - $numIEAInterPro2GOBefore) / $numIEAInterPro2GOBefore * 100 if ($numIEAInterPro2GOBefore > 0);
+printf POSTLOADREPORT "%-45s\t", "marker_go_term_evidence records from IP";
+printf POSTLOADREPORT "%11s\t", "$numIEAInterPro2GOBefore";
+printf POSTLOADREPORT "%11s\t", "$numIEAInterPro2GOAfter";
+printf POSTLOADREPORT "%17.2f\n", ($numIEAInterPro2GOAfter - $numIEAInterPro2GOBefore) / $numIEAInterPro2GOBefore * 100 if ($numIEAInterPro2GOBefore > 0);
 
-print POSTLOADREPORT "marker_go_term_evidence records from EC \t";
-print POSTLOADREPORT "$numIEAEC2GOBefore        \t";
-print POSTLOADREPORT "$numIEAEC2GOAfter        \t";
-printf POSTLOADREPORT "%.2f\n", ($numIEAEC2GOAfter - $numIEAEC2GOBefore) / $numIEAEC2GOBefore * 100 if ($numIEAEC2GOBefore > 0);
+printf POSTLOADREPORT "%-45s\t", "marker_go_term_evidence records from EC";
+printf POSTLOADREPORT "%11s\t", "$numIEAEC2GOBefore";
+printf POSTLOADREPORT "%11s\t", "$numIEAEC2GOAfter";
+printf POSTLOADREPORT "%17.2f\n", ($numIEAEC2GOAfter - $numIEAEC2GOBefore) / $numIEAEC2GOBefore * 100 if ($numIEAEC2GOBefore > 0);
 
-print POSTLOADREPORT "----------------------------------------\t-----------\t-----------\t-------------------------\n";
+print POSTLOADREPORT "---------------------------------------------\t-----------\t-----------\t-----------------\n";
 
-print POSTLOADREPORT "go terms with IEA annotation            \t";
-print POSTLOADREPORT "$numIEAtermsBefore        \t";
-print POSTLOADREPORT "$numIEAtermsAfter        \t";
-printf POSTLOADREPORT "%.2f\n", ($numIEAtermsAfter - $numIEAtermsBefore) / $numIEAtermsBefore * 100 if ($numIEAtermsBefore > 0);
+printf POSTLOADREPORT "%-45s\t", "go terms with IEA annotation";
+printf POSTLOADREPORT "%11s\t", "$numIEAtermsBefore";
+printf POSTLOADREPORT "%11s\t", "$numIEAtermsAfter";
+printf POSTLOADREPORT "%17.2f\n", ($numIEAtermsAfter - $numIEAtermsBefore) / $numIEAtermsBefore * 100 if ($numIEAtermsBefore > 0);
 
-print POSTLOADREPORT "component go terms with IEA             \t";
-print POSTLOADREPORT "$numIEAtermComponentBefore           \t";
-print POSTLOADREPORT "$numIEAtermComponentAfter           \t";
-printf POSTLOADREPORT "%.2f\n", ($numIEAtermComponentAfter - $numIEAtermComponentBefore) / $numIEAtermComponentBefore * 100 if ($numIEAtermComponentBefore > 0);
+printf POSTLOADREPORT "%-45s\t", "component go terms with IEA";
+printf POSTLOADREPORT "%11s\t", "$numIEAtermComponentBefore";
+printf POSTLOADREPORT "%11s\t", "$numIEAtermComponentAfter";
+printf POSTLOADREPORT "%17.2f\n", ($numIEAtermComponentAfter - $numIEAtermComponentBefore) / $numIEAtermComponentBefore * 100 if ($numIEAtermComponentBefore > 0);
 
-print POSTLOADREPORT "function go terms with IEA              \t";
-print POSTLOADREPORT "$numIEAtermFunctionBefore        \t";
-print POSTLOADREPORT "$numIEAtermFunctionAfter        \t";
-printf POSTLOADREPORT "%.2f\n", ($numIEAtermFunctionAfter - $numIEAtermFunctionBefore) / $numIEAtermFunctionBefore * 100 if ($numIEAtermFunctionBefore > 0);
+printf POSTLOADREPORT "%-45s\t", "function go terms with IEA";
+printf POSTLOADREPORT "%11s\t", "$numIEAtermFunctionBefore";
+printf POSTLOADREPORT "%11s\t", "$numIEAtermFunctionAfter";
+printf POSTLOADREPORT "%17.2f\n", ($numIEAtermFunctionAfter - $numIEAtermFunctionBefore) / $numIEAtermFunctionBefore * 100 if ($numIEAtermFunctionBefore > 0);
 
-print POSTLOADREPORT "process go terms with IEA               \t";
-print POSTLOADREPORT "$numIEAtermProcessBefore         \t";
-print POSTLOADREPORT "$numIEAtermProcessAfter         \t";
-printf POSTLOADREPORT "%.2f\n", ($numIEAtermProcessAfter - $numIEAtermProcessBefore) / $numIEAtermProcessBefore * 100 if ($numIEAtermProcessBefore > 0);
+printf POSTLOADREPORT "%-45s\t", "process go terms with IEA";
+printf POSTLOADREPORT "%11s\t", "$numIEAtermProcessBefore";
+printf POSTLOADREPORT "%11s\t", "$numIEAtermProcessAfter";
+printf POSTLOADREPORT "%17.2f\n", ($numIEAtermProcessAfter - $numIEAtermProcessBefore) / $numIEAtermProcessBefore * 100 if ($numIEAtermProcessBefore > 0);
 
-print POSTLOADREPORT "----------------------------------------\t-----------\t-----------\t-------------------------\n";
+print POSTLOADREPORT "---------------------------------------------\t-----------\t-----------\t-----------------\n";
 
-print POSTLOADREPORT "markers with IEA annotation                \t";
-print POSTLOADREPORT "$numMrkrBefore        \t";
-print POSTLOADREPORT "$numMrkrAfter        \t";
-printf POSTLOADREPORT "%.2f\n", ($numMrkrAfter - $numMrkrBefore) / $numMrkrBefore * 100 if ($numMrkrBefore > 0);
+printf POSTLOADREPORT "%-45s\t", "markers with IEA annotation";
+printf POSTLOADREPORT "%11s\t", "$numMrkrBefore";
+printf POSTLOADREPORT "%11s\t", "$numMrkrAfter";
+printf POSTLOADREPORT "%17.2f\n", ($numMrkrAfter - $numMrkrBefore) / $numMrkrBefore * 100 if ($numMrkrBefore > 0);
 
-print POSTLOADREPORT "markers with IEA annotation component     \t";
-print POSTLOADREPORT "$numIEAtermComponentBefore           \t";
-print POSTLOADREPORT "$numIEAtermComponentAfter           \t";
-printf POSTLOADREPORT "%.2f\n", ($numIEAtermComponentAfter - $numIEAtermComponentBefore) / $numIEAtermComponentBefore * 100 if ($numIEAtermComponentBefore > 0);
+printf POSTLOADREPORT "%-45s\t", "markers with IEA annotation component";
+printf POSTLOADREPORT "%11s\t", "$numIEAtermComponentBefore";
+printf POSTLOADREPORT "%11s\t", "$numIEAtermComponentAfter";
+printf POSTLOADREPORT "%17.2f\n", ($numIEAtermComponentAfter - $numIEAtermComponentBefore) / $numIEAtermComponentBefore * 100 if ($numIEAtermComponentBefore > 0);
 
-print POSTLOADREPORT "markers with IEA annotation function      \t";
-print POSTLOADREPORT "$numMrkrFunctionBefore        \t";
-print POSTLOADREPORT "$numMrkrFunctionAfter        \t";
-printf POSTLOADREPORT "%.2f\n", ($numMrkrFunctionAfter - $numMrkrFunctionBefore) / $numMrkrFunctionBefore * 100 if ($numMrkrFunctionBefore > 0);
+printf POSTLOADREPORT "%-45s\t", "markers with IEA annotation function";
+printf POSTLOADREPORT "%11s\t", "$numMrkrFunctionBefore";
+printf POSTLOADREPORT "%11s\t", "$numMrkrFunctionAfter";
+printf POSTLOADREPORT "%17.2f\n", ($numMrkrFunctionAfter - $numMrkrFunctionBefore) / $numMrkrFunctionBefore * 100 if ($numMrkrFunctionBefore > 0);
 
-print POSTLOADREPORT "markers with IEA annotation process      \t";
-print POSTLOADREPORT "$numMrkrProcessBefore         \t";
-print POSTLOADREPORT "$numMrkrProcessAfter         \t";
-printf POSTLOADREPORT "%.2f\n", ($numMrkrProcessAfter - $numMrkrProcessBefore) / $numMrkrProcessBefore * 100 if ($numMrkrProcessBefore > 0);
+printf POSTLOADREPORT "%-45s\t", "markers with IEA annotation process";
+printf POSTLOADREPORT "%11s\t", "$numMrkrProcessBefore";
+printf POSTLOADREPORT "%11s\t", "$numMrkrProcessAfter";
+printf POSTLOADREPORT "%17.2f\n", ($numMrkrProcessAfter - $numMrkrProcessBefore) / $numMrkrProcessBefore * 100 if ($numMrkrProcessBefore > 0);
 
-print "All done at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . "\n";
 close (POSTLOADREPORT);
+print "All done at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . "\n";
 
 #------------------ Send statistics of changes of record counts with the load ----------------
 $subject = "Auto from $dbname: " . "post UniProt load statistics";
