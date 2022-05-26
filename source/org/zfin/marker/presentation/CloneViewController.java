@@ -100,20 +100,7 @@ public class CloneViewController {
         // check whether we are a thisse probe
         cloneBean.setThisseProbe(expressionService.isThisseProbe(clone));
 
-        List<MarkerGenomeLocation> cloneLocations = RepositoryFactory.getLinkageRepository().getGenomeLocationWithCoordinates(clone);
-        if (CollectionUtils.isNotEmpty(cloneLocations)) {
-            // gbrowse image
-            cloneBean.setImage(genomeBrowserFactory.getImageBuilder()
-                    .landmark(cloneLocations.get(0))
-                    .highlight(clone)
-                    .tracks(new GenomeBrowserTrack[]{GenomeBrowserTrack.COMPLETE_CLONES, GenomeBrowserTrack.GENES, GenomeBrowserTrack.TRANSCRIPTS})
-                    .withPadding(0.2)
-                    .build()
-            );
-        } else {
-            cloneBean.setImage(null);
-        }
-
+        cloneBean.setImage(genomeBrowserFactory.getImageBuilder().buildForClone(clone));
 
         model.addAttribute(LookupStrings.FORM_BEAN, cloneBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.CLONE.getTitleString() + clone.getAbbreviation());
