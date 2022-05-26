@@ -27,7 +27,7 @@ use POSIX;
 
 use lib $ENV{'ROOT_PATH'} . "/server_apps/";
 use ZFINPerlModules qw(assert_environment trim);
-assert_environment('ROOT_PATH', 'PGHOST', 'DB_NAME', 'SWISSPROT_EMAIL_ERR');
+assert_environment('ROOT_PATH', 'PGHOST', 'DB_NAME', 'SWISSPROT_EMAIL_ERR', 'SWISSPROT_EMAIL_REPORT');
 
 #------------------- Flush Output Buffer --------------
 $|=1;
@@ -148,11 +148,17 @@ sub select_zebrafish {
     my $TREMBL_FILE_URL = "https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_trembl_vertebrates.dat.gz";
     if ($ENV{'TREMBL_FILE_URL'}) {
         $TREMBL_FILE_URL = $ENV{'TREMBL_FILE_URL'};
+    } elsif ($ENV{'SKIP_DOWNLOADS'}) {
+        assert_file_exists('./uniprot_trembl_vertebrates.dat.gz', 'Missing uniprot tremble file and SKIP_DOWNLOADS set to 1');
+        $TREMBL_FILE_URL = 'file://' . `pwd` . '/uniprot_trembl_vertebrates.dat.gz';
     }
 
     my $SPROT_FILE_URL = "https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_sprot_vertebrates.dat.gz";
     if ($ENV{'SPROT_FILE_URL'}) {
         $SPROT_FILE_URL = $ENV{'SPROT_FILE_URL'};
+    } elsif ($ENV{'SKIP_DOWNLOADS'}) {
+        assert_file_exists('./uniprot_sprot_vertebrates.dat.gz', 'Missing uniprot tremble file and SKIP_DOWNLOADS set to 1');
+        $SPROT_FILE_URL = 'file://' . `pwd` . '/uniprot_sprot_vertebrates.dat.gz';
     }
 
     if ($ENV{'SKIP_PRE_ZFIN_GEN'}) {
@@ -186,6 +192,20 @@ sub select_zebrafish {
         close(OUTPUT) ;
     }
 
+}
+
+
+sub getMergedGeneIdIfExists {
+    my $dbh = $_[0];
+    my $geneId = $_[1];
+    my $cur = $dbh->prepare('SELECT zrepld_new_zdb_id, mrkr_abbrev FROM zdb_replaced_data LEFT JOIN marker on zrepld_new_zdb_id = mrkr_zdb_id WHERE zrepld_old_zdb_id = ?;');
+    $cur->execute($geneId);
+    my $mergedGeneId;
+    my $mergedGeneAbbrev;
+    $cur->bind_columns(\$mergedGeneId, \$mergedGeneAbbrev);
+    $cur->fetch();
+    $cur->finish();
+    return ($mergedGeneId, $mergedGeneAbbrev);
 }
 
 
@@ -414,8 +434,29 @@ foreach $block (@blocks) {
            }
            $cur->finish();
 
+           if (!defined($ZFINgeneAbbrev)) {
+               my ($mergedGeneId, $mergedGeneAbbrev) = getMergedGeneIdIfExists($dbh, $ZFINgeneId);
+               if ($mergedGeneId) {
+                   print DBG "Merged '$ZFINgeneId' ($geneAbbrev) to '$mergedGeneId' ($mergedGeneAbbrev) \n";
+                   print DBG "   Old Line: $line\n";
+                   $line =~ s/$geneAbbrev/$mergedGeneAbbrev/g;
+                   $line =~ s/$ZFINgeneId/$mergedGeneId/g;
+                   print DBG "   New Line: $line\n";
+                   $ZFINgeneAbbrev = $geneAbbrev;
+
+                   if (exists($ZDBgeneIDgeneAbbrevs{$mergedGeneId})) {
+                       $deletes{$lineKey} = 1;
+                       next;
+                   }
+               } else {
+                   print DBG "ERROR: Search for gene abbreviation failed for zdb id '$ZFINgeneId'";
+                   die("ERROR: Search for gene abbreviation failed for zdb id '$ZFINgeneId'");
+               }
+           }
+
            if ($geneAbbrev ne $ZFINgeneAbbrev) {
-               print DBG "Gene Abbreviation is not the same as ZFIN Gene Abbreviation! Updating. \n";
+               my $ZFINgeneAbbrevDebug = defined($ZFINgeneAbbrev) ? $ZFINgeneAbbrev : "UNDEFINED";
+               print DBG "Gene Abbreviation '$geneAbbrev' is not the same as ZFIN Gene Abbreviation ($ZFINgeneAbbrevDebug)! Updating. \n";
                $line =~ s/$geneAbbrev/$ZFINgeneAbbrev/g;
            }
            $toNewInput{$lineKey} = $line;

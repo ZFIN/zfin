@@ -6,9 +6,10 @@
 # in loadsp.pl process. 
 #
 
-use lib "<!--|ROOT_PATH|-->/server_apps/";
-use ZFINPerlModules;
 use POSIX;
+use lib $ENV{'ROOT_PATH'} . "/server_apps/";
+use ZFINPerlModules qw(assert_environment);
+assert_environment('ROOT_PATH', 'DB_NAME', 'SWISSPROT_EMAIL_REPORT');
 
 if (@ARGV < 1) {
     die "Please enter the accession file name. \n";
@@ -30,22 +31,22 @@ while (<FILE>) {
 close FILE;
 close OK;
 
-  $dbname = "<!--|DB_NAME|-->";
+  $dbname = $ENV{'DB_NAME'};
 
   $subject = "Auto from $dbname: SWISS-PROT check report";
-  ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","checkreport.txt");
+  ZFINPerlModules->sendMailWithAttachedReport($ENV{'SWISSPROT_EMAIL_REPORT'},"$subject","checkreport.txt");
   		
   #----- Another mail send out problem files ----
   $subject = "Auto from $dbname: SWISS-PROT problem file";
-  ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","allproblems.txt");
+  ZFINPerlModules->sendMailWithAttachedReport($ENV{'SWISSPROT_EMAIL_REPORT'},"$subject","allproblems.txt");
 
   #----- Another mail send out problem files ----
   $subject = "Auto from $dbname: PubMed not in ZFIN";
-  ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","pubmed_not_in_zfin");  
+  ZFINPerlModules->sendMailWithAttachedReport($ENV{'SWISSPROT_EMAIL_REPORT'},"$subject","pubmed_not_in_zfin");
 
   #----- Another mail send out problem files ----
   $subject = "Auto from $dbname: report of processing pre_zfin.org";
-  ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_REPORT|-->',"$subject","redGeneReport.txt");
+  ZFINPerlModules->sendMailWithAttachedReport($ENV{'SWISSPROT_EMAIL_REPORT'},"$subject","redGeneReport.txt");
 
 
 print("Checksums and file info of important files:\n");
