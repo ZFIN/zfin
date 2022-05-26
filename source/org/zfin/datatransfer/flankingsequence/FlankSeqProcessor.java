@@ -75,8 +75,6 @@ public class FlankSeqProcessor {
 
                             String refSeq = new String(ref.getSubsequenceAt(ftrChrom, locStart, locEnd).getBases());
                             InsertFeatureGenomeRecord(feature, refSeq);
-                            
-                            HibernateUtil.createTransaction();
                         }
 
                     }
