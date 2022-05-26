@@ -8,7 +8,7 @@
     <property name="lib" value="${basedir}/lib/Java"/>
     <property name="web.lib" value="${web-inf.dir}/lib"/>
     <property name="validateData" value="${basedir}/server_apps/DB_maintenance"/>
-    <property name="jvm.arg.log4j" value="-Dlog4j.configurationFile=./log4j2.xml"/>
+    <property name="jvm.arg.log4j" value="-Dlog4j.configurationFile=./home/WEB-INF/conf/log4j2.xml"/>
 
     <property environment="env"/>
 
@@ -100,6 +100,7 @@
             <arg value="Noctua"/>
             <arg value="http://snapshot.geneontology.org/products/annotations/noctua_zfin.gpad.gz"/>
             <arg value="org.zfin.datatransfer.go.GpadParser"/>
+            <jvmarg value="${jvm.arg.log4j}"/>
         </java>
     </target>
 
