@@ -148,6 +148,7 @@
             <arg value="${validateData}/report_data"/>
             <arg value="${jobName}"/>
             <arg value="10"/>
+            <jvmarg value="${jvm.arg.log4j}"/>
         </java>
     </target>
 

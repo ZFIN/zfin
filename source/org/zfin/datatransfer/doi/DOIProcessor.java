@@ -72,7 +72,8 @@ public class DOIProcessor {
      * If no DOI ID available do nothing.
      */
     public void findAndUpdateDOIs() {
-        try {
+        HibernateUtil.createTransaction();
+    try {
             List<Publication> publicationList = getPubmedIdsWithNoDOIs();
             int totalPublications = publicationList.size();
             logger.info(totalPublications + " publications without a DOI...");
@@ -89,6 +90,7 @@ public class DOIProcessor {
             if (CollectionUtils.isNotEmpty(publicationList)) {
                 messages.add("There are " + (totalPublications - publicationList.size()) + " publications for which no DOI was found");
             }
+        HibernateUtil.flushAndCommitCurrentSession();
             updateDOIs(publicationList);
             HibernateUtil.closeSession();
         } catch (Exception e) {
