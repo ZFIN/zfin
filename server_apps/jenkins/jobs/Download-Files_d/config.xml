@@ -29,7 +29,7 @@
       <command>cd $TARGETROOT/server_apps/data_transfer/Downloads &amp;&amp; DownloadFiles.pl</command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/data_transfer/Downloads/GFF3 &amp;&amp; generateGff3.groovy</command>
+      <command>cd $TARGETROOT/server_apps/data_transfer/Downloads/GFF3 &amp;&amp; generateGff3.sh</command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
       <command>cd $TARGETROOT/server_apps/data_transfer/GO  &amp;&amp; go.pl  &amp;&amp; cp gene_association.zfin.gz $DOWNLOAD_DIRECTORY/current/</command>

@@ -21,18 +21,6 @@ def downloadDir = "$targetRoot/home/data_transfer/Downloads/"
 println 'Start generating GFF3 download files...'
 
 def propertiesFile = "$targetRoot/home/WEB-INF/zfin.properties"
-RunSQLFiles runScriptFiles = new RunSQLFiles("Generate-GFF3", propertiesFile, ".")
-runScriptFiles.initializeLogger("./log4j.xml")
-runScriptFiles.initDatabase()
-runScriptFiles.setQueryFiles(
-        "E_zfin_ensembl_gene.sql",
-        "E_expression_gff3.sql",
-        "E_phenotype_gff3.sql",
-        "E_antibody_gff3.sql",
-        "unload_mutants.sql"
-)
-runScriptFiles.execute()
-
 
 def contigFile = new File('/research/zprodmore/gff3/zfin_genes_header.gff3')
 def destination = new File(downloadDir + "zfin_genes_header.gff3")
