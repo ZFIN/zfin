@@ -112,6 +112,7 @@
 <!--
                 <formatter classname="org.zfin.util.JunitFormatter" usefile="false" />
 -->
+
                 <test name="@{testClass}" todir="${test.reports.dir}" outfile="@{outFile}">
                     <formatter type="brief"/>
                     <formatter type="xml"/>
@@ -505,7 +506,7 @@ test(s) need to be run before committing changes or pushing files to production 
     <!--This is used to determine if output should be mailed.  Could be handed in, as well.-->
     <target name="productionSmokeTests" if="isproduction" depends="compile,build-tests" description="Tests to make sure that the system is alive and working properly."  >
         <sleep minutes="1"/>
-        <junit fork="false"
+        <junit fork="true"
                printsummary="yes"
                haltonfailure="false"
                haltonerror="false"
@@ -517,6 +518,8 @@ test(s) need to be run before committing changes or pushing files to production 
             <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
             <!--<jvmarg value="-DWEBINF=${web-inf.target}"/>-->
             <jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
+            <jvmarg value="--add-opens=java.xml/com.sun.org.apache.xml.internal.serialize=ALL-UNNAMED"/>
+
             <test name="org.zfin.ProductionSmokeTests" outfile="${smokeTestFile}"
                   todir="${test.reports.dir}"
                   haltonerror="false" haltonfailure="true"
