@@ -230,4 +230,6 @@ public interface FeatureRepository {
     PaginationResult<Feature> getFeaturesForLab(String zdbID, Pagination pagination);
 
     int getNumberOfFeaturesForConstruct(Marker construct);
+
+    List<Feature> getAllFeatureList(int i);
 }

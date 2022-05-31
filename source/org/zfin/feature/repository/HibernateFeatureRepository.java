@@ -1406,5 +1406,15 @@ public class HibernateFeatureRepository implements FeatureRepository {
         query.setString("relation2", FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString());
         return (Integer) query.uniqueResult();
     }
+
+    @Override
+    public List<Feature> getAllFeatureList(int firstNIds) {
+        Session session = HibernateUtil.currentSession();
+        String hql = "from Feature order by zdbID";
+        Query query = session.createQuery(hql);
+        if (firstNIds > 0)
+            query.setMaxResults(firstNIds);
+        return query.list();
+    }
 }
 
