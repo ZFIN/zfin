@@ -1,13 +1,13 @@
 package org.zfin.mutant;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.zfin.datatransfer.go.GafOrganization;
 import org.zfin.gwt.root.dto.GoEvidenceQualifier;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
-import org.zfin.sequence.MarkerDBLink;
 
 import java.util.Collection;
 import java.util.Date;
@@ -39,7 +39,7 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
     private String note;
     private Set<InferenceGroupMember> inferredFrom;
     private Set<MarkerGoTermAnnotationExtnGroup> goTermAnnotationExtnGroup;
-    private MarkerDBLink geneProductFormID;
+    private String geneProductAccession;
     private Set<NoctuaModel> noctuaModels;
 
     // editing data
@@ -49,8 +49,8 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
      */
     private Person createdBy;
 
-    public void setGeneProductFormID(MarkerDBLink geneProductFormID) {
-        this.geneProductFormID = geneProductFormID;
+    public void setGeneProductAccession(String geneProductAccession) {
+        this.geneProductAccession = geneProductAccession;
     }
 
     /**
@@ -58,8 +58,8 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
      */
     private Date createdWhen;
 
-    public MarkerDBLink getGeneProductFormID() {
-        return geneProductFormID;
+    public String getGeneProductAccession() {
+        return geneProductAccession;
     }
 
     /**
@@ -248,7 +248,6 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
         if (!source.equals(that.source)) return false;
         if (flag != that.flag) return false;
         if (qualifierRelation != that.qualifierRelation) return false;
-        if (geneProductFormID != that.geneProductFormID) return false;
         if (inferredFrom != null ? !this.containsAllInferences(that) : that.inferredFrom != null) return false;
         if ((CollectionUtils.isNotEmpty(goTermAnnotationExtnGroup) && CollectionUtils.isEmpty(that.getAnnotationExtensions())) ||
                 (CollectionUtils.isEmpty(goTermAnnotationExtnGroup) && CollectionUtils.isNotEmpty(that.getAnnotationExtensions())))
@@ -256,7 +255,7 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
         if (CollectionUtils.isNotEmpty(goTermAnnotationExtnGroup) && !this.containsAllAnnotationExtensions(that))
             return false;
 
-        if (geneProductFormID != null && geneProductFormID != that.geneProductFormID) return false;
+        if (!StringUtils.equals(geneProductAccession, that.geneProductAccession)) return false;
 
 
         return true;
@@ -282,7 +281,7 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
         if (goTerm != null ? !goTerm.equals(that.goTerm) : that.goTerm != null) return false;
         if (marker != null ? !marker.equals(that.marker) : that.marker != null) return false;
         if (source != null ? !source.equals(that.source) : that.source != null) return false;
-        if (geneProductFormID != null ? !geneProductFormID.equals(that.geneProductFormID) : that.geneProductFormID != null)
+        if (geneProductAccession != null ? !geneProductAccession.equals(that.geneProductAccession) : that.geneProductAccession != null)
             return false;
         if (inferredFrom != null ? !sameInferences(that.inferredFrom) : that.inferredFrom != null) return false;
 //return true;
@@ -298,7 +297,7 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
         result = 31 * result + (flag != null ? flag.hashCode() : 0);
         result = 31 * result + (qualifierRelation != null ? qualifierRelation.hashCode() : 0);
         result = 31 * result + (source != null ? source.hashCode() : 0);
-        result = 31 * result + (geneProductFormID != null ? geneProductFormID.hashCode() : 0);
+        result = 31 * result + (geneProductAccession != null ? geneProductAccession.hashCode() : 0);
         result = 31 * result + (goTerm != null ? goTerm.hashCode() : 0);
 
         // have to compare the strings, since the inferences are generated for this and the key generates
@@ -462,8 +461,8 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
             sb.append("none");
         }
         sb.append(", geneProductFormID=");
-        if (geneProductFormID != null) {
-            sb.append(geneProductFormID.getAccessionNumberDisplay());
+        if (geneProductAccession != null) {
+            sb.append(geneProductAccession);
         } else {
             sb.append("none");
         }
