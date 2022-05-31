@@ -129,7 +129,7 @@ public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
                         AffectedGenomicModel model = getAffectedGenomicModel(fish);
                         annotation.setSubject(model.getCurie());
                         annotation.setObject(disease.getOboID());
-                        annotation.setDateLastModified(format(map.get(publication)));
+                        annotation.setDateUpdated(format(map.get(publication)));
                         annotation.setCreatedBy("ZFIN:CURATOR");
                         annotation.setModifiedBy("ZFIN:CURATOR");
 
@@ -174,7 +174,7 @@ public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
 //            annotation.setModEntityId(damo.getDiseaseAnnotation().getZdbID());
             annotation.setDiseaseRelation(RelationshipDTO.IS_MODEL_OF);
             annotation.setSubject("ZFIN:" + fish.getZdbID());
-            annotation.setDateLastModified(format(damo.getDiseaseAnnotation().getZdbID()));
+            annotation.setDateUpdated(format(damo.getDiseaseAnnotation().getZdbID()));
 
             annotation.setObject(damo.getDiseaseAnnotation().getDisease().getOboID());
 
