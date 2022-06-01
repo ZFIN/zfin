@@ -31,6 +31,6 @@ new File(args[0]).eachLine { line ->
                 "${columns[6]}|" +
                 "${columns[7]}|" +
                 "$gff_id|" +
-                "$zdb_id|||"
+                "$zdb_id||"
     }
 }
