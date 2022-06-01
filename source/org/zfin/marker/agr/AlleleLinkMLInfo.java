@@ -50,7 +50,7 @@ public class AlleleLinkMLInfo extends AbstractScriptWrapper {
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
         String jsonInString = writer.writeValueAsString(ingestDTO);
-        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_5.1.1_allele_ml.json"))) {
+        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.1.4_Allele_ml.json"))) {
             out.print(jsonInString);
         }
     }
