@@ -1,4 +1,5 @@
-#!/usr/bin/env groovy
+#!/bin/bash
+//usr/bin/env groovy -cp "$GROOVY_CLASSPATH" "$0" $@; exit $?
 
 class IdGenerator {
 
