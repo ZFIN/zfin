@@ -1,4 +1,6 @@
-#!/usr/bin/env groovy
+#!/bin/bash
+//usr/bin/env groovy -cp "$GROOVY_CLASSPATH" "$0" $@; exit $?
+
 
 def cli = new CliBuilder(usage: 'sam2gff3.groovy')
 cli.with {
