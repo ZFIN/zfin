@@ -38,7 +38,7 @@
       <command>touch $DOWNLOAD_DIRECTORY/reload-status/reload</command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
-      <command>curl -s -D - https://$DOMAIN_NAME/action/unload/downloads/update-cache</command>
+      <command>curl --silent --output /dev/null --show-error -s -D - https://$DOMAIN_NAME/action/unload/downloads/update-cache</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
