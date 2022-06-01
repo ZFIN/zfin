@@ -50,7 +50,6 @@
     <jsp:attribute name="pageBar">
         <authz:authorize access="hasRole('root')">
             <nav class="navbar navbar-light admin text-center border-bottom">
-                <a class="col-sm" href="/action/publication/view/${publication.zdbID}">Old View</a>
                 <a class="col-sm" href="/action/curation/${publication.zdbID}">Curate</a>
                 <a class="col-sm" href="/action/publication/${publication.zdbID}/link">Link</a>
                 <a class="col-sm" href="/action/publication/${publication.zdbID}/edit">Edit</a>
