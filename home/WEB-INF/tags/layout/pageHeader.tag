@@ -257,6 +257,9 @@
     </ul>
 
     <div class="right">
+        <ul class="menu list-unstyled" >
+            <li class="no-border">Version: ${zfn:getSoftwareBranch()}</li>
+        </ul>
         <div class="search">
             <form class="fs-autocomplete" method="GET" action="/search">
                 <input placeholder="Search" name="q" autocomplete="off" type="text">

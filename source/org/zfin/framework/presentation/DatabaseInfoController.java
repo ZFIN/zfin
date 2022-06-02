@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.zfin.figure.repository.FigureRepository;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.infrastructure.service.VersionService;
 import org.zfin.mutant.PhenotypeExperiment;
 import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.properties.ZfinPropertiesEnum;
@@ -94,11 +95,8 @@ public class DatabaseInfoController {
 
     @RequestMapping("/deployed-version")
     public String viewDeployedVersion(Model model) throws IOException {
-        Class clazz = DatabaseInfoController.class;
-        InputStream inputStream = clazz.getResourceAsStream("/git-info.txt");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        model.addAttribute("commit", reader.readLine());
-        model.addAttribute("branch", reader.readLine());
+        model.addAttribute("commit", VersionService.getSoftwareCommit());
+        model.addAttribute("branch", VersionService.getSoftwareVersion());
         model.addAttribute("domain", ZfinPropertiesEnum.DOMAIN_NAME.value());
         return "dev-tools/deployed-version";
     }
