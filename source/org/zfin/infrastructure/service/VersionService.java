@@ -14,7 +14,7 @@ public class VersionService {
         Class clazz = VersionService.class;
         InputStream inputStream = clazz.getResourceAsStream("/git-info.txt");
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        String branch = null;
+        String branch = "unknown";
         try {
             reader.readLine();
             branch = reader.readLine();
@@ -28,7 +28,7 @@ public class VersionService {
         Class clazz = VersionService.class;
         InputStream inputStream = clazz.getResourceAsStream("/git-info.txt");
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        String commit = null;
+        String commit = "unknown";
         try {
             commit = reader.readLine();
         } catch (IOException e) {
