@@ -271,7 +271,9 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             fishDTO.setGenotypeDTO(genoDTO);
             Fish newFish = createFish(publication, fishDTO, report);
             HibernateUtil.flushAndCommitCurrentSession();
+            HibernateUtil.createTransaction();
             getMutantRepository().updateFishAffectedGeneCount(newFish);
+            HibernateUtil.flushAndCommitCurrentSession();
             // send to Alliance
             HibernateUtil.currentSession().refresh(newFish);
             FishService.submitFishToAlliance(newFish);
