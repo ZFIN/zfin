@@ -16,6 +16,7 @@ import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.ActiveSource;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.ZdbID;
+import org.zfin.infrastructure.service.VersionService;
 import org.zfin.mapping.MappingService;
 import org.zfin.mutant.PhenotypeService;
 import org.zfin.mutant.PhenotypeStatement;
@@ -409,4 +410,11 @@ public class ZfinJSPFunctions {
 
     }
 
+    public static String getSoftwareBranch() {
+        String softwareVersion = VersionService.getSoftwareVersion();
+        if (softwareVersion.startsWith("release-")) {
+            return softwareVersion.substring(softwareVersion.indexOf("-") + 1);
+        }
+        return softwareVersion;
+    }
 }
