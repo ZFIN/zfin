@@ -461,7 +461,6 @@ insert into zfin_ensembl_gene (
 		 Alias
 ;
 
-select * from zfin_ensembl_gene;
 -------------------------------------------------------------------------
 
 drop table tmp_vega_zeg;
