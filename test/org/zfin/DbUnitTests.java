@@ -30,6 +30,7 @@ import org.zfin.infrastructure.delete.DeleteRuleTest;
 import org.zfin.mapping.MappingServiceTest;
 import org.zfin.mapping.repository.LinkageRepositoryTest;
 import org.zfin.marker.MarkerAttributionServiceTest;
+import org.zfin.marker.MarkerChromosomalLocationTest;
 import org.zfin.marker.MarkerServiceTest;
 import org.zfin.marker.MergeMarkerDBTest;
 import org.zfin.marker.repository.MarkerRepositoryTest;
@@ -98,6 +99,7 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         LinkageRepositoryTest.class,
         MapAccessionDbLinkTest.class,
         MappingServiceTest.class,
+        MarkerChromosomalLocationTest.class,
         MarkerGoTermEvidenceRepositoryTest.class,
         MarkerRepositoryTest.class,
         MarkerServiceTest.class,

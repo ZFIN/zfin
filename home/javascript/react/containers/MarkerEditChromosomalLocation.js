@@ -6,6 +6,7 @@ import FormGroup from '../components/form/FormGroup';
 import AddEditDeleteModal from '../components/AddEditDeleteModal';
 import AddEditList from '../components/AddEditList';
 import LoadingSpinner from '../components/LoadingSpinner';
+import PublicationInput from '../components/form/PublicationInput';
 
 const MarkerEditChromosomalLocation = ({
     markerId,
@@ -182,6 +183,15 @@ const MarkerEditChromosomalLocation = ({
                             >{code}</option>
                         ))}
                     </FormGroup>
+                    <FormGroup
+                        labelClassName='col-md-3'
+                        inputClassName='col-md-9'
+                        tag={PublicationInput}
+                        label='Citation'
+                        id='chromosomalLocationPubZdbID'
+                        field='publicationZdbID'
+                        validate={value => value ? false : 'A publication ZDB ID is required'}
+                    />
                 </>}
             </AddEditDeleteModal>
         </>

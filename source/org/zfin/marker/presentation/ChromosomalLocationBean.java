@@ -39,6 +39,9 @@ public class ChromosomalLocationBean {
     @JsonView(View.API.class)
     String locationEvidence;
 
+    @JsonView(View.API.class)
+    String publicationZdbID;
+
     public static ChromosomalLocationBean fromMarkerLocation(MarkerLocation persistedLocation) {
         ChromosomalLocationBean clBean = new ChromosomalLocationBean();
         clBean.setZdbID(persistedLocation.getZdbID());

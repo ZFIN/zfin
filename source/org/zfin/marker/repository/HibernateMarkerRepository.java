@@ -31,6 +31,7 @@ import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.server.DTOMarkerService;
 import org.zfin.infrastructure.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.mapping.Location;
 import org.zfin.mapping.MarkerLocation;
 import org.zfin.marker.*;
 import org.zfin.marker.fluorescence.FluorescentMarker;
@@ -791,6 +792,31 @@ public class HibernateMarkerRepository implements MarkerRepository {
             addMarkerPub(marker, attribution);
         }
         infrastructureRepository.insertUpdatesTable(marker, "", "new attribution, data alias: " + alias.getAlias() + " with pub: " + attributionZdbID, attributionZdbID, "");
+    }
+
+    public void addGenomeLocationAttribution(Location genomeLocation, Publication attribution) {
+
+        String attributionZdbID = attribution.getZdbID();
+        String relZdbID = genomeLocation.getZdbID();
+
+        if (attributionZdbID.equals("")) {
+            throw new RuntimeException("Cannot attribute this location with a blank pub.");
+        }
+
+        RecordAttribution recordAttribution = infrastructureRepository.getRecordAttribution(relZdbID, attributionZdbID, RecordAttribution.SourceType.STANDARD);
+
+        // only add the publication when it is not there
+        if (recordAttribution == null) {
+            PublicationAttribution pa = new PublicationAttribution();
+            pa.setSourceZdbID(attributionZdbID);
+            pa.setDataZdbID(relZdbID);
+            pa.setSourceType(RecordAttribution.SourceType.STANDARD);
+            pa.setPublication(attribution);
+            currentSession().save(pa);
+            currentSession().refresh(genomeLocation);
+        }
+
+        infrastructureRepository.insertUpdatesTable(genomeLocation.getZdbID(), "", "new attribution publication to genome location " + attributionZdbID + " to " + relZdbID);
     }
 
     public void addMarkerRelationshipAttribution(MarkerRelationship mrel, Publication attribution) {
