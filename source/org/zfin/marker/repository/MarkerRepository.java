@@ -149,7 +149,11 @@ public interface MarkerRepository {
 
     void addDataAliasAttribution(DataAlias alias, Publication attribution, Marker marker);
 
+    void addGenomeLocationAttribution(Location genomeLocation, String publicationID);
+
     void addGenomeLocationAttribution(Location genomeLocation, Publication attribution);
+
+    void synchronizeGenomeLocationAttributions(MarkerLocation genomeLocation, Set<String> publicationIDsToSync);
 
     void addMarkerRelationshipAttribution(MarkerRelationship mrel, Publication attribution);
 
@@ -545,4 +549,5 @@ public interface MarkerRepository {
     List<FluorescentMarker> getAllFluorescentEfgs();
 
     List<FluorescentMarker> getAllFluorescentConstructs();
+
 }

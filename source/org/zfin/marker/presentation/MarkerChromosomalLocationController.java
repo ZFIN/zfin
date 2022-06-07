@@ -57,8 +57,9 @@ public class MarkerChromosomalLocationController {
         Transaction transaction = HibernateUtil.currentSession().beginTransaction();
 
         MarkerLocation markerLocation = chromosomalLocation.toMarkerLocation();
-
         MarkerLocation persistedLocation = markerRepository.addMarkerLocation(markerLocation);
+        markerLocation.setLocationReferences(chromosomalLocation);
+
         transaction.commit();
 
         return ChromosomalLocationBean.fromMarkerLocation(persistedLocation);
@@ -70,9 +71,10 @@ public class MarkerChromosomalLocationController {
                                             @PathVariable String zdbID,
                                             @Valid @RequestBody ChromosomalLocationBean chromosomalLocationBean) {
 
-        MarkerLocation markerLocation = markerRepository.getMarkerLocationByID(zdbID);
-        chromosomalLocationBean.setMarkerLocation(markerLocation);
         Transaction transaction = HibernateUtil.currentSession().beginTransaction();
+        MarkerLocation markerLocation = markerRepository.getMarkerLocationByID(zdbID);
+        markerLocation.setFieldsByChromosomalLocationBean(chromosomalLocationBean);
+        markerLocation.setLocationReferences(chromosomalLocationBean);
         markerRepository.saveMarkerLocation(markerLocation);
         transaction.commit();
         return chromosomalLocationBean;

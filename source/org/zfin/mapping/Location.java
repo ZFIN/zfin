@@ -7,7 +7,6 @@ import org.hibernate.annotations.DiscriminatorFormula;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
-import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.ontology.GenericTerm;
 
@@ -55,9 +54,12 @@ public class Location {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "recattrib_data_zdb_id")
-    protected Set<RecordAttribution> publications;
+    protected Set<RecordAttribution> references;
 
     @Column(name = "sfcl_chromosome_reference_accession_number")
     protected String referenceSequenceAccessionNumber;
 
+    public void removeReference(RecordAttribution reference) {
+        this.references.remove(reference);
+    }
 }

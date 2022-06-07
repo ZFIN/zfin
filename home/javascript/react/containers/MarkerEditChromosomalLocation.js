@@ -7,6 +7,7 @@ import AddEditDeleteModal from '../components/AddEditDeleteModal';
 import AddEditList from '../components/AddEditList';
 import LoadingSpinner from '../components/LoadingSpinner';
 import PublicationInput from '../components/form/PublicationInput';
+import InputField from '../components/form/InputField';
 
 const MarkerEditChromosomalLocation = ({
     markerId,
@@ -66,6 +67,8 @@ const MarkerEditChromosomalLocation = ({
     };
 
     const {
+        pushFieldValue,
+        removeFieldValue,
         values,
         modalProps
     } = useAddEditDeleteForm({
@@ -183,15 +186,57 @@ const MarkerEditChromosomalLocation = ({
                             >{code}</option>
                         ))}
                     </FormGroup>
-                    <FormGroup
-                        labelClassName='col-md-3'
-                        inputClassName='col-md-9'
-                        tag={PublicationInput}
-                        label='Citation'
-                        id='chromosomalLocationPubZdbID'
-                        field='publicationZdbID'
-                        validate={value => value ? false : 'A publication ZDB ID is required'}
-                    />
+                    {/*<FormGroup*/}
+                    {/*    labelClassName='col-md-3'*/}
+                    {/*    inputClassName='col-md-9'*/}
+                    {/*    tag={PublicationInput}*/}
+                    {/*    label='Citation'*/}
+                    {/*    id='chromosomalLocationPubZdbID'*/}
+                    {/*    field='publicationZdbID'*/}
+                    {/*    validate={value => value ? false : 'A publication ZDB ID is required'}*/}
+                    {/*/>*/}
+
+
+
+
+                    <div className='form-group row'>
+                        <label className='col-md-3'>Citations</label>
+                        <div className='col-md-9'>
+                            {
+                                values && values.references && values.references.map((reference, idx) => (
+                                    <div key={idx} className={`d-flex align-items-baseline ${idx > 0 ? 'mt-2' : ''}`}>
+                                        <div className='flex-grow-1'>
+                                            <InputField
+                                                tag={PublicationInput}
+                                                field={`references.${idx}.zdbID`}
+                                                validate={value => {
+                                                    if (!value) {
+                                                        return 'A publication ZDB ID is required';
+                                                    }
+                                                    return false
+                                                }}
+                                            />
+                                        </div>
+                                        <button
+                                            type='button'
+                                            onClick={() => removeFieldValue('references', idx)}
+                                            className='btn btn-link'
+                                        >
+                                            <i className='fas fa-times' />
+                                        </button>
+                                    </div>
+                                ))
+                            }
+                            <button
+                                type='button'
+                                className='btn btn-link px-0'
+                                onClick={() => pushFieldValue('references', { zdbID: '' })}
+                            >
+                                Add Citation
+                            </button>
+                        </div>
+                    </div>
+
                 </>}
             </AddEditDeleteModal>
         </>

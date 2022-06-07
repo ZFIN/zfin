@@ -59,10 +59,10 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
-import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
-import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 
 @Log4j2
@@ -794,6 +794,11 @@ public class HibernateMarkerRepository implements MarkerRepository {
         infrastructureRepository.insertUpdatesTable(marker, "", "new attribution, data alias: " + alias.getAlias() + " with pub: " + attributionZdbID, attributionZdbID, "");
     }
 
+    public void addGenomeLocationAttribution(Location genomeLocation, String publicationID) {
+        Publication publication = getPublicationRepository().getPublication(publicationID);
+        this.addGenomeLocationAttribution(genomeLocation, publication);
+    }
+
     public void addGenomeLocationAttribution(Location genomeLocation, Publication attribution) {
 
         String attributionZdbID = attribution.getZdbID();
@@ -814,9 +819,30 @@ public class HibernateMarkerRepository implements MarkerRepository {
             pa.setPublication(attribution);
             currentSession().save(pa);
             currentSession().refresh(genomeLocation);
+
+            infrastructureRepository.insertUpdatesTable(genomeLocation.getZdbID(), "", "new attribution publication to genome location " + attributionZdbID + " to " + relZdbID);
         }
 
-        infrastructureRepository.insertUpdatesTable(genomeLocation.getZdbID(), "", "new attribution publication to genome location " + attributionZdbID + " to " + relZdbID);
+    }
+
+    public void synchronizeGenomeLocationAttributions(MarkerLocation genomeLocation, Set<String> publicationIDsToSync) {
+        //ADD
+        for (String publicationID : publicationIDsToSync) {
+            this.addGenomeLocationAttribution(genomeLocation, publicationID);
+        }
+
+        //DELETE
+        List<RecordAttribution> existingRecordAttributions =
+                infrastructureRepository.getRecordAttributionsForType(genomeLocation.getZdbID(), RecordAttribution.SourceType.STANDARD);
+        Set<RecordAttribution> toDeleteRecordAttributions = new HashSet<>(existingRecordAttributions)
+                .stream()
+                .filter( recordAttribution -> !publicationIDsToSync.contains(recordAttribution.getSourceZdbID()) )
+                .collect(Collectors.toSet());
+
+        for (RecordAttribution reference : toDeleteRecordAttributions) {
+            RepositoryFactory.getInfrastructureRepository().deleteRecordAttribution(reference.getDataZdbID(), reference.getSourceZdbID());
+            genomeLocation.removeReference(reference);
+        }
     }
 
     public void addMarkerRelationshipAttribution(MarkerRelationship mrel, Publication attribution) {
