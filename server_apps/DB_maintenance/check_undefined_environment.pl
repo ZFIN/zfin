@@ -147,6 +147,6 @@ close (REPORT);
 
 print "\n$ctTotal undefined environments found and sent to curator(s)\n\n\n";
 
-&sendResult("Monthly undefined environment check report: $ctTotal found on $dbname", "xshao\@zfin.org","./undefinedEnvReport.txt");
+&sendResult("Monthly undefined environment check report: $ctTotal found on $dbname", "rtaylor\@zfin.org","./undefinedEnvReport.txt");
   
 exit;

@@ -15,7 +15,7 @@ use Try::Tiny;
 sub sendLoadOutput($) {
 
   my $SUBJECT="Auto from ".$_[0]." : zfishbook data - new genotypes";
-  my $MAILTO="xshao\@zfin.org";
+  my $MAILTO="rtaylor\@zfin.org";
   #my $TXTFILE="./pre_geno.unl";
  
   # Create a new multipart message:
@@ -35,7 +35,7 @@ sub sendLoadOutput($) {
   $msg3->print(\*SENDMAIL);
 
   my $SUBJECT="Auto from ".$_[0]." : zfishbook data - new features";
-  my $MAILTO="xshao\@zfin.org";
+  my $MAILTO="rtaylor\@zfin.org";
   my $TXTFILE="./pre_feature.unl";
  
   # Create a new multipart message:
@@ -64,7 +64,7 @@ sub sendLoadOutput($) {
 sub sendLoadLogs($) {
 
   my $SUBJECT="Auto from ".$_[0]." : zfishbook data load - log1";
-  my $MAILTO="xshao\@zfin.org";
+  my $MAILTO="rtaylor\@zfin.org";
   my $TXTFILE="./log1";
 
   # Create a new multipart message:
@@ -84,7 +84,7 @@ sub sendLoadLogs($) {
   $msg1->print(\*SENDMAIL);
 
   my $SUBJECT="Auto from ".$_[0]." : zfishbook data load - log2";
-  my $MAILTO="xshao\@zfin.org";
+  my $MAILTO="rtaylor\@zfin.org";
   my $TXTFILE="./log2";
 
   # Create a new multipart message:

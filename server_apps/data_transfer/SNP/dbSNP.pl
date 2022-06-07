@@ -494,14 +494,14 @@ exit;
 # OUTPUT:
 #    none
 # EFFECT:
-#    error message is sent to xshao@zfin.org.
+#    error message is sent to rtaylor@zfin.org.
 #
 
 sub emailError($)
   {
     
     open(MAIL, "| /usr/lib/sendmail -t -oi" || die "Cannot open mailprog");
-    print MAIL "To: xshao\@zfin.org\n";
+    print MAIL "To: rtaylor\@zfin.org\n";
     print MAIL "Subject: dbSNP.pl $_[0]\n";
     print MAIL "Error:\n";                  
     print MAIL "$_[0]";
