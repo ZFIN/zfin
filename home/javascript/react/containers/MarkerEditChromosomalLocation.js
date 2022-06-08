@@ -90,7 +90,16 @@ const MarkerEditChromosomalLocation = ({
         return <>
             <dl className='row'>
                 <dt className={leftColumnClass}>Location</dt>
-                <dd className={rightColumnClass}>Chr {item.chromosome}: {item.startLocation.toLocaleString()} - {item.endLocation.toLocaleString()} ({item.assembly}) <em>{item.locationEvidence}</em> {editLink}</dd>
+                <dd className={rightColumnClass}><>Chr {item.chromosome}: </>
+                    {' ' + item.startLocation.toLocaleString()} - {item.endLocation.toLocaleString() + ' '}
+                    ({item.assembly})
+                    <em> {item.locationEvidence} </em>
+                    {item.references && item.references.length && <span> ({
+                        item.references.map( (reference, index) =>
+                            <>{(index ? ', ' : '')}<a href={'/' + reference.zdbID}>{index + 1}</a></>
+                        )
+                    })</span> }
+                {editLink} </dd>
             </dl>
         </>;
     };
@@ -186,18 +195,6 @@ const MarkerEditChromosomalLocation = ({
                             >{code}</option>
                         ))}
                     </FormGroup>
-                    {/*<FormGroup*/}
-                    {/*    labelClassName='col-md-3'*/}
-                    {/*    inputClassName='col-md-9'*/}
-                    {/*    tag={PublicationInput}*/}
-                    {/*    label='Citation'*/}
-                    {/*    id='chromosomalLocationPubZdbID'*/}
-                    {/*    field='publicationZdbID'*/}
-                    {/*    validate={value => value ? false : 'A publication ZDB ID is required'}*/}
-                    {/*/>*/}
-
-
-
 
                     <div className='form-group row'>
                         <label className='col-md-3'>Citations</label>
