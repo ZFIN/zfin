@@ -11,27 +11,27 @@ import java.io.InputStreamReader;
 public class VersionService {
 
     public static String getSoftwareVersion() {
-        Class clazz = VersionService.class;
-        InputStream inputStream = clazz.getResourceAsStream("/git-info.txt");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         String branch = "unknown";
         try {
+            Class clazz = VersionService.class;
+            InputStream inputStream = clazz.getResourceAsStream("/git-info.txt");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
             reader.readLine();
             branch = reader.readLine();
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error("could not read git-info.txt file");
         }
         return branch;
     }
 
     public static String getSoftwareCommit() {
-        Class clazz = VersionService.class;
-        InputStream inputStream = clazz.getResourceAsStream("/git-info.txt");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         String commit = "unknown";
         try {
+            Class clazz = VersionService.class;
+            InputStream inputStream = clazz.getResourceAsStream("/git-info.txt");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
             commit = reader.readLine();
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error("could not read git-info.txt file");
         }
         return commit;
