@@ -48,10 +48,9 @@ select * from tmp_go_identifiers_pipes where goid3tmp like '%occurs_in(GO:004300
 
 create temporary table tmp_go_proteinid (mgev_zdb_id text,proteinid text);
 
-insert into tmp_go_proteinid (mgev_zdb_id,proteinid) select distinct mrkrgoev_zdb_id, nvl(fdb_db_name||':'||dblink_acc_num,'')
-from marker_go_term_evidence, foreign_db, db_link,foreign_db_contains
-where mrkrgoev_protein_dblink_zdb_id= dblink_Zdb_id and dblink_fdbcont_zdb_id=fdbcont_zdb_id and fdbcont_fdb_db_id=fdb_db_pk_id ;
-
+-- COLUMN 17
+insert into tmp_go_proteinid (mgev_zdb_id,proteinid) select distinct mrkrgoev_zdb_id, nvl(mrkrgoev_protein_accession,'')
+from marker_go_term_evidence;
 
 create temporary table tmp_go (mv_zdb_id text,
        	    	  	 m_zdb_id text,

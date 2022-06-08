@@ -63,12 +63,12 @@
               fork="yes"
               classpathref="extended.classpath"
               failonerror="true">
-            <arg value="${web-inf.dir}/zfin.properties"/>
-            <arg value="${validateData}/gafLoad"/>
-            <arg value="${jobName}"/>
-            <arg value="PAINT"/>
-            <arg value="http://www.geneontology.org/gene-associations/submission/paint/pre-submission/gene_association.paint_zfin.gz"/>
-            <arg value="org.zfin.datatransfer.go.PaintGafParser"/>
+            <arg value="${web-inf.dir}/zfin.properties"/><!-- propertyFilePath -->
+            <arg value="${validateData}/gafLoad"/><!-- baseDir -->
+            <arg value="${jobName}"/><!-- jobName -->
+            <arg value="PAINT"/><!-- organization -->
+            <arg value="http://www.geneontology.org/gene-associations/submission/paint/pre-submission/gene_association.paint_zfin.gz"/><!-- downloadUrl -->
+            <arg value="org.zfin.datatransfer.go.PaintGafParser"/><!-- parserClassName -->
         </java>
     </target>
 
@@ -77,14 +77,14 @@
               fork="yes"
               classpathref="extended.classpath"
               failonerror="true">
-            <arg value="${web-inf.dir}/zfin.properties"/>
-            <arg value="${validateData}/gafLoad"/>
-            <arg value="${jobName}"/>
-            <arg value="GOA"/>
-            <arg value="ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/goa_zebrafish.gaf.gz"/>
-            <arg value="org.zfin.datatransfer.go.GoaGafParser"/>
-            <arg value="ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/goa_zebrafish_isoform.gaf.gz"/>
-            <arg value="ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/goa_zebrafish_rna.gaf.gz"/>
+            <arg value="${web-inf.dir}/zfin.properties"/><!-- propertyFilePath -->
+            <arg value="${validateData}/gafLoad"/><!-- baseDir -->
+            <arg value="${jobName}"/><!-- jobName -->
+            <arg value="GOA"/><!-- organization -->
+            <arg value="ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/goa_zebrafish.gaf.gz"/><!-- downloadUrl -->
+            <arg value="org.zfin.datatransfer.go.GoaGafParser"/><!-- parserClassName -->
+            <arg value="ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/goa_zebrafish_isoform.gaf.gz"/><!-- downloadUrl2 -->
+            <arg value="ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/goa_zebrafish_rna.gaf.gz"/><!-- downloadUrl3 -->
             <jvmarg value="${jvm.arg.log4j}"/>
         </java>
     </target>
@@ -94,12 +94,12 @@
               fork="yes"
               classpathref="extended.classpath"
               failonerror="true">
-            <arg value="${web-inf.dir}/zfin.properties"/>
-            <arg value="${validateData}/gafLoad"/>
-            <arg value="${jobName}"/>
-            <arg value="Noctua"/>
-            <arg value="http://snapshot.geneontology.org/products/annotations/noctua_zfin.gpad.gz"/>
-            <arg value="org.zfin.datatransfer.go.GpadParser"/>
+            <arg value="${web-inf.dir}/zfin.properties"/><!-- propertyFilePath -->
+            <arg value="${validateData}/gafLoad"/><!-- baseDir -->
+            <arg value="${jobName}"/><!-- jobName -->
+            <arg value="Noctua"/><!-- organization -->
+            <arg value="http://snapshot.geneontology.org/products/annotations/noctua_zfin.gpad.gz"/><!-- downloadUrl -->
+            <arg value="org.zfin.datatransfer.go.GpadParser"/><!-- parserClassName -->
             <jvmarg value="${jvm.arg.log4j}"/>
         </java>
     </target>
@@ -109,12 +109,12 @@
               fork="yes"
               classpathref="extended.classpath"
               failonerror="true">
-            <arg value="${web-inf.dir}/zfin.properties"/>
-            <arg value="${validateData}/gafLoad"/>
-            <arg value="${jobName}"/>
-            <arg value="FP Inferences"/>
-            <arg value="http://current.geneontology.org/products/annotations/zfin-prediction.gaf"/>
-            <arg value="org.zfin.datatransfer.go.FpInferenceGafParser"/>
+            <arg value="${web-inf.dir}/zfin.properties"/><!-- propertyFilePath -->
+            <arg value="${validateData}/gafLoad"/><!-- baseDir -->
+            <arg value="${jobName}"/><!-- jobName -->
+            <arg value="FP Inferences"/><!-- organization -->
+            <arg value="http://current.geneontology.org/products/annotations/zfin-prediction.gaf"/><!-- downloadUrl -->
+            <arg value="org.zfin.datatransfer.go.FpInferenceGafParser"/><!-- parserClassName -->
         </java>
     </target>
     <target name="load-flank-seq" description="">

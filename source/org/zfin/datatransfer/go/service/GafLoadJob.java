@@ -331,6 +331,19 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
                 .forEach(System.out::println);
     }
 
+    /**
+     *
+     * @param args
+     * Expecting the following positional arguments:
+     *             propertyFilePath
+     *             baseDir
+     *             jobName
+     *             organization
+     *             downloadUrl
+     *             parserClassName
+     *             downloadUrl2
+     *             downloadUrl3
+     */
     public static void main(String[] args) {
         initLog4J();
         setLoggerToInfoLevel(logger);

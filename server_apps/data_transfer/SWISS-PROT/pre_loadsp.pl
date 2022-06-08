@@ -171,7 +171,7 @@ sub select_zebrafish {
         ######## BEGIN PROCESSING: uniprot_trembl_vertebrates ##########
         print("Processing uniprot_trembl_vertebrates.dat.gz at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n");
         print("Using URL of $TREMBL_FILE_URL");
-        $cache_tee = "";
+        my $cache_tee = "";
         if ($ENV{'CACHE_DOWNLOADS'}) {
             $cache_tee = " | tee uniprot_trembl_vertebrates.dat.gz ";
         }
