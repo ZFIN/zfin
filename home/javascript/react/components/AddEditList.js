@@ -2,7 +2,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import NoData from './NoData';
 
-const AddEditList = ({items, setModalItem, itemKeyProp = 'zdbID', newItem, formatItem,title,maxLength=-1,readOnly=false,blankOnEmpty=false}) => {
+const AddEditList = ({
+    items,
+    setModalItem,
+    itemKeyProp = 'zdbID',
+    newItem,
+    formatItem,
+    title,
+    maxLength = -1,
+    readOnly = false,
+    blankOnEmpty = false
+}) => {
     const isMaxLengthReached = () => {
         const hasMaxLength = (!!maxLength) && maxLength > 0;
         if (!hasMaxLength) {
