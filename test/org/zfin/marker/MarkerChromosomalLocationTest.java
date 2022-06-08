@@ -82,15 +82,4 @@ public class MarkerChromosomalLocationTest extends AbstractDatabaseTest {
         assertEquals(2, publications.size());
     }
 
-    @Test
-    public void trivialTest() {
-        assertTrue("trivial assert", 1 == 2-1);
-    }
-
-    @Test
-    public void trivialFailingTest() {
-        assertTrue("trivial failing assert", 1 == 2);
-    }
-
-
 }
