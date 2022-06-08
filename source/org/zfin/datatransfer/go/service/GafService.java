@@ -308,9 +308,9 @@ public class GafService {
         }
 
         if (gafEntry.getGeneProductFormID() != null && !gafEntry.getGeneProductFormID().isEmpty()) {
-            MarkerDBLink proteinID = getDBLink(gafEntry);
+            String proteinID = gafEntry.getGeneProductFormID();
             if (proteinID != null) {
-                markerGoTermEvidenceToAdd.setGeneProductFormID(proteinID);
+                markerGoTermEvidenceToAdd.setGeneProductAccession(proteinID);
             }
         }
 
