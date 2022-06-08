@@ -20,15 +20,16 @@ const MarkerShowChromosomalLocation = ({
 
         return <>
             <dl className='row'>
-                <dt className={leftColumnClass}>Chromosomal Location</dt>
+                <dt className={leftColumnClass}>Location</dt>
                 <dd className={rightColumnClass}><>Chr {item.chromosome}: </>
                     {' ' + item.startLocation.toLocaleString()} - {item.endLocation.toLocaleString() + ' '}
                     ({item.assembly})
-                    {item.references && item.references.length && <span> ({
-                        item.references.map( (reference, index) =>
-                            <>{(index ? ', ' : '')}<a href={'/' + reference.zdbID}>{index + 1}</a></>
-                        )
-                    })</span> }
+                    {item.references && item.references.length && <span> {' '}
+                         (<a href={'/action/infrastructure/data-citation-list/' + markerId + '/'
+                                    + item.references.map( reference => reference.zdbID).join(',') }
+                        >
+                        {item.references.length}</a>)
+                    </span> }
                 </dd>
             </dl>
         </>;

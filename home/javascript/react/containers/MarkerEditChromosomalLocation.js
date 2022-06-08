@@ -94,11 +94,12 @@ const MarkerEditChromosomalLocation = ({
                     {' ' + item.startLocation.toLocaleString()} - {item.endLocation.toLocaleString() + ' '}
                     ({item.assembly})
                     <em> {item.locationEvidence} </em>
-                    {item.references && item.references.length && <span> ({
-                        item.references.map( (reference, index) =>
-                            <>{(index ? ', ' : '')}<a href={'/' + reference.zdbID}>{index + 1}</a></>
-                        )
-                    })</span> }
+                    {item.references && item.references.length && <span> {' '}
+                        (<a href={'/action/infrastructure/data-citation-list/' + markerId + '/'
+                                + item.references.map( reference => reference.zdbID).join(',') }
+                        >
+                        {item.references.length}</a>)
+                    </span> }
                 {editLink} </dd>
             </dl>
         </>;
