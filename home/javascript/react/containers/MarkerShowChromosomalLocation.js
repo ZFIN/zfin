@@ -24,7 +24,6 @@ const MarkerShowChromosomalLocation = ({
                 <dd className={rightColumnClass}><>Chr {item.chromosome}: </>
                     {' ' + item.startLocation.toLocaleString()} - {item.endLocation.toLocaleString() + ' '}
                     ({item.assembly})
-                    <em> {item.locationEvidence} </em>
                     {item.references && item.references.length && <span> ({
                         item.references.map( (reference, index) =>
                             <>{(index ? ', ' : '')}<a href={'/' + reference.zdbID}>{index + 1}</a></>
