@@ -796,7 +796,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     public void addGenomeLocationAttribution(Location genomeLocation, String publicationID) {
         Publication publication = getPublicationRepository().getPublication(publicationID);
-        this.addGenomeLocationAttribution(genomeLocation, publication);
+        addGenomeLocationAttribution(genomeLocation, publication);
     }
 
     public void addGenomeLocationAttribution(Location genomeLocation, Publication attribution) {
@@ -828,7 +828,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     public void synchronizeGenomeLocationAttributions(MarkerLocation genomeLocation, Set<String> publicationIDsToSync) {
         //ADD
         for (String publicationID : publicationIDsToSync) {
-            this.addGenomeLocationAttribution(genomeLocation, publicationID);
+            addGenomeLocationAttribution(genomeLocation, publicationID);
         }
 
         //DELETE
