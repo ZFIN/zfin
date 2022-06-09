@@ -72,6 +72,21 @@
         </java>
     </target>
 
+    <target name="load-reference-proteome" description="">
+        <java classname="org.zfin.datatransfer.LoadReferenceProteome"
+              fork="yes"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="-webrootDirectory"/>
+            <arg value="${web.dir}"/>
+            <arg value="-loadDir"/>
+            <arg value="server_Apps/DB_maintenance/validateData"/>
+            <arg value="-jobName"/>
+            <arg value="Load-Reference-Proteome"/>
+            <jvmarg value="${jvm.arg.log4j}"/>
+        </java>
+    </target>
+
     <target name="load-gaf-goa" description="">
         <java classname="org.zfin.datatransfer.go.service.GafLoadJob"
               fork="yes"
