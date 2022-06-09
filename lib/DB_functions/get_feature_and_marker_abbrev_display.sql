@@ -36,7 +36,13 @@ for featAbbrev, featMrkrAbbrev, featName, featType in
     	 	 and fmrel_type = 'is allele of'
     	 	 left outer join marker on fmrel_mrkr_zdb_id = mrkr_zdb_id
         where feature_zdb_id = featZdbId
-        and (fmrel_mrkr_zdb_id = markerZdbId or fmrel_mrkr_zdb_id is null)
+
+--
+--        TODO: Uncomment this "and" clause to handle features with multiple markers once approved.
+--              See ticket ZFIN-7922
+--        and (fmrel_mrkr_zdb_id = markerZdbId or fmrel_mrkr_zdb_id is null)
+--
+
  loop 
 
   if (featName is null) then
