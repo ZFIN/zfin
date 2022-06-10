@@ -102,7 +102,7 @@ public class DbScriptFileParserTest {
         DbScriptFileParser parser = new DbScriptFileParser(file);
         List<DatabaseJdbcStatement> queries = parser.parseFile();
         assertNotNull(queries);
-        assertEquals(56, queries.size());
+        assertEquals(55, queries.size());
 
         fileName = "server_apps/data_transfer/LoadOntology/handleRelationships.sql";
         file = new File(fileName);
