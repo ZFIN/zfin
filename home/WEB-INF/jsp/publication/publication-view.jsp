@@ -62,9 +62,14 @@
     <jsp:attribute name="pageBar">
         <authz:authorize access="hasRole('root')">
             <nav class="navbar navbar-light admin text-center border-bottom">
-                <a class="col-sm" href="/action/curation/${publication.zdbID}">Curate</a>
-                <a class="col-sm" href="/action/publication/${publication.zdbID}/link">Link</a>
                 <a class="col-sm" href="/action/publication/${publication.zdbID}/edit">Edit</a>
+                <a class="col-sm" href="/action/publication/${publication.zdbID}/track">Track</a>
+                <a class="col-sm" href="/action/publication/${publication.zdbID}/link">Link</a>
+                <a class="col-sm" href="/action/curation/${publication.zdbID}">Curate</a>
+                <c:if test="${hasCorrespondence}">
+                <a class="col-sm" href="/action/publication/${publication.zdbID}/track#correspondence">
+                    <i class="far fa-envelope"></i></a>
+                </c:if>
                 <c:choose>
                 <c:when test="${allowDelete}">
                     <a class="col-sm" href="/action/infrastructure/deleteRecord/${publication.zdbID}">Delete</a>
@@ -73,7 +78,6 @@
                         <span class="col-sm">Delete</span>
                     </c:otherwise>
                 </c:choose>
-                <a class="col-sm" href="/action/publication/${publication.zdbID}/track">Track</a>
             </nav>
         </authz:authorize>
     </jsp:attribute>
