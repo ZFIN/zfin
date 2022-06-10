@@ -2,13 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import DataTable from '../components/data-table';
 import CommaSeparatedList from '../components/CommaSeparatedList';
-import {EntityList} from '../components/entity';
+import {EntityLink, EntityList} from '../components/entity';
 
 const AntibodyTable = ({url}) => {
     const columns = [
         {
             label: 'Name',
-            content: row => row.name,
+            content: row => <EntityLink entity={row}/>,
             width: '200px',
         },
         {
