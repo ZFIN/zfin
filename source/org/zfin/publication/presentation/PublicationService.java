@@ -203,6 +203,8 @@ public class PublicationService {
         CollectionUtils.addIgnoreNull(updates, beanCompareService.compareBeanField("accessionNumber", existingPub, formPub, true));
         CollectionUtils.addIgnoreNull(updates, beanCompareService.compareBeanField("doi", existingPub, formPub, true));
         CollectionUtils.addIgnoreNull(updates, beanCompareService.compareBeanField("authors", existingPub, formPub, true));
+        if(existingPub.getEntryDate() == null)
+            existingPub.setEntryDate(new GregorianCalendar());
 
         // handle date separately because 1) we don't want to compare hours, minutes, seconds and 2) need to get the
         // display right
