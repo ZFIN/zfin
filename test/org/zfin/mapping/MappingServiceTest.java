@@ -82,7 +82,7 @@ public class MappingServiceTest extends AbstractDatabaseTest {
         clb.setEntityID(marker.getZdbID());
 
         MarkerLocation markerLocation = new MarkerLocation();
-        clb.setMarkerLocation(markerLocation);
+        markerLocation.setFieldsByChromosomalLocationBean(clb);
 
         getMarkerRepository().addMarkerLocation(markerLocation);
 

@@ -10,8 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
+import org.zfin.marker.MarkerType;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
+
+import java.util.Set;
 
 @Controller
 @RequestMapping("/marker")
@@ -28,6 +31,10 @@ public class GeneEditController {
         Marker gene = markerRepository.getMarkerByID(zdbID);
         model.addAttribute("gene", gene);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Edit Gene: " + gene.getAbbreviation());
+
+        boolean markerIsNtr = gene.getMarkerType().getTypeGroups().contains(Marker.TypeGroup.SEARCHABLE_NON_TRANSCRIBED_REGION);
+        model.addAttribute("markerIsNtr", markerIsNtr);
+
         ObjectMapper objectMapper = new ObjectMapper();
         model.addAttribute("markerRelationshipTypes", objectMapper.writeValueAsString(
                 markerService.getMarkerRelationshipEditMetadata(gene,
