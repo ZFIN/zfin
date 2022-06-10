@@ -3,7 +3,7 @@
 <z:devtoolsPage title="Feature Flags">
     <div class="container">
             <div class="__react-root row"
-                 id="FeatureToggles"
+                 id="FeatureFlags"
                  data-url="/action/devtool/feature-flags"
             ></div>
     </div>

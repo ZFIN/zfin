@@ -19,13 +19,13 @@ public class FeatureFlag {
     private String name;
 
     @Column(name = "zfeatflag_enabled")
-    private boolean enabledByDefault;
+    private boolean enabledForGlobalScope;
 
     @Column(name = "zfeatflag_last_modified")
     private Date lastModified;
 
     @Transient
-    private boolean enabledForUserSession;
+    private boolean enabledForSessionScope;
 
     @Transient
     private boolean enabled;
@@ -34,8 +34,8 @@ public class FeatureFlag {
         return FeatureFlags.isFlagEnabled(this);
     }
 
-    public boolean isEnabledForUserSession() {
-        return FeatureFlags.isFlagEnabledForUserSession(this).equals(FeatureFlags.SessionState.ENABLED);
+    public boolean isEnabledForSessionScope() {
+        return FeatureFlags.isFlagEnabledForSessionScope(this).equals(FeatureFlags.SessionState.ENABLED);
     }
 
 }

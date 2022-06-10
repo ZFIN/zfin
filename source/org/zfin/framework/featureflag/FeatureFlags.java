@@ -23,7 +23,7 @@ public class FeatureFlags {
             FeatureFlag flag = new FeatureFlag();
             flag.setName(value.getName());
             flag.setEnabled(isFlagEnabled(flag));
-            flag.setEnabledByDefault(isFlagEnabledByDefault(flag));
+            flag.setEnabledForGlobalScope(isFlagEnabledForGlobalScope(flag));
             flags.add(flag);
         }
         return flags;
@@ -38,9 +38,9 @@ public class FeatureFlags {
     }
 
     private static boolean isFlagEnabled(String flagName) {
-        SessionState flagEnabledForSession = isFlagEnabledForUserSession(flagName);
+        SessionState flagEnabledForSession = isFlagEnabledForSessionScope(flagName);
         if (flagEnabledForSession == SessionState.UNSET) {
-            return isFlagEnabledByDefault(flagName);
+            return isFlagEnabledForGlobalScope(flagName);
         } else if (flagEnabledForSession == SessionState.ENABLED) {
             return true;
         } else {
@@ -48,26 +48,26 @@ public class FeatureFlags {
         }
     }
 
-    private static boolean isFlagEnabledByDefault(FeatureFlagEnum flag) {
-        return isFlagEnabledByDefault(flag.getName());
+    private static boolean isFlagEnabledForGlobalScope(FeatureFlagEnum flag) {
+        return isFlagEnabledForGlobalScope(flag.getName());
     }
 
-    private static boolean isFlagEnabledByDefault(FeatureFlag flag) {
-        return isFlagEnabledByDefault(flag.getName());
+    private static boolean isFlagEnabledForGlobalScope(FeatureFlag flag) {
+        return isFlagEnabledForGlobalScope(flag.getName());
     }
 
-    private static boolean isFlagEnabledByDefault(String flagName) {
+    private static boolean isFlagEnabledForGlobalScope(String flagName) {
         ZdbFlag updatesFlag = RepositoryFactory.getInfrastructureRepository().getUpdatesFlag();
         log.debug(updatesFlag);
         FeatureFlag flag = RepositoryFactory.getInfrastructureRepository().getFeatureFlag(flagName);
-        return flag.isEnabledByDefault();
+        return flag.isEnabledForGlobalScope();
     }
 
-    public static SessionState isFlagEnabledForUserSession(FeatureFlag flag) {
-        return isFlagEnabledForUserSession(flag.getName());
+    public static SessionState isFlagEnabledForSessionScope(FeatureFlag flag) {
+        return isFlagEnabledForSessionScope(flag.getName());
     }
 
-    private static SessionState isFlagEnabledForUserSession(String flagName) {
+    private static SessionState isFlagEnabledForSessionScope(String flagName) {
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (requestAttributes == null) {
             return SessionState.UNSET;
@@ -75,7 +75,7 @@ public class FeatureFlags {
         HttpServletRequest request = requestAttributes.getRequest();
 
         Boolean value = (Boolean) request.getSession().getAttribute(SESSION_PREFIX + flagName);
-        log.debug("isFlagEnabledForUserSession: Current feature session value for flag named " + flagName);
+        log.debug("isFlagEnabledForSessionScope: Current feature session value for flag named " + flagName);
         log.debug(value);
 
         if (value == null) {
@@ -87,7 +87,7 @@ public class FeatureFlags {
         }
     }
 
-    public static void setSessionFeatureFlag(String name, boolean value) {
+    public static void setFeatureFlagForSessionScope(String name, boolean value) {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 
         String featureKey = SESSION_PREFIX + name;
@@ -99,7 +99,7 @@ public class FeatureFlags {
         request.getSession().setAttribute(featureKey, value);
     }
 
-    public static void setDefaultFeatureFlag(String name, boolean enabled) {
+    public static void setFeatureFlagForGlobalScope(String name, boolean enabled) {
         RepositoryFactory.getInfrastructureRepository().setFeatureFlag(name, enabled);
     }
 

@@ -697,7 +697,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     public void setFeatureFlag(String name, boolean enabled) {
         Session session = HibernateUtil.currentSession();
         FeatureFlag flag = getFeatureFlag(name);
-        flag.setEnabledByDefault(enabled);
+        flag.setEnabledForGlobalScope(enabled);
         flag.setLastModified(new Date());
         session.save(flag);
     }

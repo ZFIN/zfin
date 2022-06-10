@@ -44,10 +44,10 @@ public class FeatureFlagsController {
         String scope = request.getParameter("scope");
         if ("global".equals(scope)) {
             HibernateUtil.createTransaction();
-            FeatureFlags.setDefaultFeatureFlag(name, "true".equals(value));
+            FeatureFlags.setFeatureFlagForGlobalScope(name, "true".equals(value));
             HibernateUtil.flushAndCommitCurrentSession();
-        } else if ("local".equals(scope)) {
-            FeatureFlags.setSessionFeatureFlag(name, "true".equals(value));
+        } else if ("session".equals(scope)) {
+            FeatureFlags.setFeatureFlagForSessionScope(name, "true".equals(value));
         }
 
         return nameValuePair;
