@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.zfin.feature.Feature;
 import org.zfin.feature.repository.FeatureService;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.api.View;
@@ -34,6 +35,7 @@ public class FeatureAPIController {
                                                                            @Version Pagination pagination,
                                                                            HttpServletRequest request) {
         long startTime = System.currentTimeMillis();
+        HibernateUtil.createTransaction();
         JsonResultResponse<GenotypeFishResult> response = featureService.getFishContainingFeature(featureZdbID, excludeFishWithSTR, pagination);
         response.setHttpServletRequest(request);
         response.calculateRequestDuration(startTime);
