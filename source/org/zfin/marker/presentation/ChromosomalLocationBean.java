@@ -1,6 +1,5 @@
 package org.zfin.marker.presentation;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Getter;
@@ -8,9 +7,10 @@ import lombok.Setter;
 import org.zfin.framework.api.FlexibleIntegerDeserializer;
 import org.zfin.framework.api.View;
 import org.zfin.gwt.root.server.DTOConversionService;
+import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.mapping.MarkerLocation;
-import org.zfin.marker.Marker;
-import org.zfin.repository.RepositoryFactory;
+
+import java.util.*;
 
 @Setter
 @Getter
@@ -39,6 +39,9 @@ public class ChromosomalLocationBean {
     @JsonView(View.API.class)
     String locationEvidence;
 
+    @JsonView(View.API.class)
+    Set<Map<String, String>> references;
+
     public static ChromosomalLocationBean fromMarkerLocation(MarkerLocation persistedLocation) {
         ChromosomalLocationBean clBean = new ChromosomalLocationBean();
         clBean.setZdbID(persistedLocation.getZdbID());
@@ -48,7 +51,20 @@ public class ChromosomalLocationBean {
         clBean.setStartLocation(persistedLocation.getStartLocation());
         clBean.setEndLocation(persistedLocation.getEndLocation());
         clBean.setLocationEvidenceByMarkerLocation(persistedLocation);
+        clBean.setReferencesByMarkerLocation(persistedLocation);
         return clBean;
+    }
+
+    private void setReferencesByMarkerLocation(MarkerLocation location) {
+        this.references = new HashSet<>();
+        if (location == null || location.getReferences() == null) {
+            return;
+        }
+        for (RecordAttribution reference : location.getReferences()) {
+            Map<String, String> jsonRepresentation = new HashMap<>();
+            jsonRepresentation.put("zdbID", reference.getSourceZdbID());
+            this.references.add(jsonRepresentation);
+        }
     }
 
     private void setLocationEvidenceByMarkerLocation(MarkerLocation persistedLocation) {
@@ -59,43 +75,9 @@ public class ChromosomalLocationBean {
 
     public MarkerLocation toMarkerLocation() {
         MarkerLocation markerLocation = new MarkerLocation();
-        setMarkerLocation(markerLocation);
+        markerLocation.setFieldsByChromosomalLocationBean(this);
         return markerLocation;
     }
 
-    public void setMarkerLocation(MarkerLocation markerLocation) {
-        markerLocation.setAssembly(this.getAssembly());
-        markerLocation.setChromosome(this.getChromosome());
-
-        try {
-            int startLocation = this.getStartLocation();
-            markerLocation.setStartLocation(startLocation);
-        } catch (NumberFormatException nfe) {
-            //don't set start location
-        }
-
-        try {
-            int endLocation = this.getEndLocation();
-            markerLocation.setEndLocation(endLocation);
-        } catch (NumberFormatException nfe) {
-            //don't set end location
-        }
-
-        this.setMarkerLocationEvidenceCode(markerLocation);
-        this.setMarkerLocationMarker(markerLocation);
-    }
-
-    private void setMarkerLocationMarker(MarkerLocation markerLocation) {
-        Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID(this.getEntityID());
-        markerLocation.setMarker(marker);
-    }
-
-    private void setMarkerLocationEvidenceCode(MarkerLocation markerLocation) {
-        String abbreviation = this.getLocationEvidence();
-        String evidenceCodeZdbID = DTOConversionService.abbreviationToEvidenceCodeId(abbreviation);
-        if (evidenceCodeZdbID != null) {
-            markerLocation.setLocationEvidence(RepositoryFactory.getOntologyRepository().getTermByZdbID(evidenceCodeZdbID));
-        }
-    }
 
 }

@@ -11,6 +11,7 @@
 <c:set var="SEQUENCE" value="Sequence Information"/>
 <c:set var="ORTHOLOGY" value="Orthology"/>
 <c:set var="CITATIONS" value="Citations"/>
+<c:set var="CHROMOSOMAL_LOCATION" value="Chromosomal Location"/>
 
 <z:dataPage sections="${[SUMMARY, MUTATIONS, GO, CONSTRUCTS, PATHWAYS, SEQUENCE, ORTHOLOGY, CITATIONS]}">
     <jsp:attribute name="entityName">
@@ -56,12 +57,17 @@
         </z:section>
 
         <z:section title="${SEQUENCE}">
+            <div class="__react-root"
+                 id="MarkerShowChromosomalLocation"
+                 data-type="${CHROMOSOMAL_LOCATION}"
+                 data-marker-id="${formBean.marker.zdbID}"
+            ></div>
+
             <div
                 class="__react-root"
                 id="MarkerSequencesTable"
                 data-marker-id="${formBean.marker.zdbID}"
-            >
-            </div>
+            ></div>
         </z:section>
 
         <z:section title="${ORTHOLOGY}">

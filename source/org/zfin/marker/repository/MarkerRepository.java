@@ -12,6 +12,7 @@ import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.DataAlias;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.mapping.GenomeLocation;
+import org.zfin.mapping.Location;
 import org.zfin.mapping.MarkerLocation;
 import org.zfin.marker.*;
 import org.zfin.marker.fluorescence.FluorescentMarker;
@@ -147,6 +148,12 @@ public interface MarkerRepository {
     void deleteConstructComponentByID(String constructID);
 
     void addDataAliasAttribution(DataAlias alias, Publication attribution, Marker marker);
+
+    void addGenomeLocationAttribution(Location genomeLocation, String publicationID);
+
+    void addGenomeLocationAttribution(Location genomeLocation, Publication attribution);
+
+    void synchronizeGenomeLocationAttributions(MarkerLocation genomeLocation, Set<String> publicationIDsToSync);
 
     void addMarkerRelationshipAttribution(MarkerRelationship mrel, Publication attribution);
 
@@ -542,4 +549,5 @@ public interface MarkerRepository {
     List<FluorescentMarker> getAllFluorescentEfgs();
 
     List<FluorescentMarker> getAllFluorescentConstructs();
+
 }

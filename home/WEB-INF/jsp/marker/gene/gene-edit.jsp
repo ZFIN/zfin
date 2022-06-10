@@ -10,7 +10,7 @@
 
 <!-- Set sections based on marker type -->
 <c:choose>
-    <c:when test="${typeName eq 'ENHANCER'}">
+    <c:when test="${markerIsNtr}">
         <c:set var="SECTIONS" value="${[NOMENCLATURE, RESOURCES, NOTES, MARKER_RELATIONSHIPS, CHROMOSOMAL_LOCATION, SEQUENCES, ORTHOLOGY]}"/>
     </c:when>
     <c:otherwise>
@@ -54,7 +54,7 @@
         </div>
     </z:section>
 
-    <c:if test="${typeName eq 'ENHANCER'}">
+    <c:if test="${markerIsNtr}">
         <z:section title="${CHROMOSOMAL_LOCATION}">
             <div class="__react-root"
                  id="MarkerEditChromosomalLocation"

@@ -7,7 +7,10 @@ import org.hibernate.annotations.DiscriminatorFormula;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
+import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.ontology.GenericTerm;
+
+import java.util.Set;
 
 /**
  * Feature Location .
@@ -49,7 +52,14 @@ public class Location {
     @JoinColumn(name = "sfcl_evidence_code")
     protected GenericTerm locationEvidence;
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "recattrib_data_zdb_id")
+    protected Set<RecordAttribution> references;
+
     @Column(name = "sfcl_chromosome_reference_accession_number")
     protected String referenceSequenceAccessionNumber;
 
+    public void removeReference(RecordAttribution reference) {
+        this.references.remove(reference);
+    }
 }

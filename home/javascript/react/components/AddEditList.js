@@ -2,7 +2,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import NoData from './NoData';
 
-const AddEditList = ({items, setModalItem, itemKeyProp = 'zdbID', newItem, formatItem,title,maxLength=-1}) => {
+const AddEditList = ({
+    items,
+    setModalItem,
+    itemKeyProp = 'zdbID',
+    newItem,
+    formatItem,
+    title,
+    maxLength = -1,
+    readOnly = false,
+    blankOnEmpty = false
+}) => {
     const isMaxLengthReached = () => {
         const hasMaxLength = (!!maxLength) && maxLength > 0;
         if (!hasMaxLength) {
@@ -21,7 +31,7 @@ const AddEditList = ({items, setModalItem, itemKeyProp = 'zdbID', newItem, forma
 
     return (
         <>
-            {items.length === 0 && <NoData placeholder='None' />}
+            {items.length === 0 && (blankOnEmpty ? '' : <NoData placeholder='None' />)}
 
             <ul className='list-unstyled'>
                 {items.map(item => {
@@ -38,7 +48,7 @@ const AddEditList = ({items, setModalItem, itemKeyProp = 'zdbID', newItem, forma
                 })}
             </ul>
 
-            {isMaxLengthReached()
+            {isMaxLengthReached() || readOnly
                 ? null
                 : <button type='button' className='btn btn-link px-0' onClick={handleAddClick}>Add {title}</button>
             }

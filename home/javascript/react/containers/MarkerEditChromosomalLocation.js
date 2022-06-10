@@ -6,6 +6,8 @@ import FormGroup from '../components/form/FormGroup';
 import AddEditDeleteModal from '../components/AddEditDeleteModal';
 import AddEditList from '../components/AddEditList';
 import LoadingSpinner from '../components/LoadingSpinner';
+import PublicationInput from '../components/form/PublicationInput';
+import InputField from '../components/form/InputField';
 
 const MarkerEditChromosomalLocation = ({
     markerId,
@@ -65,6 +67,8 @@ const MarkerEditChromosomalLocation = ({
     };
 
     const {
+        pushFieldValue,
+        removeFieldValue,
         values,
         modalProps
     } = useAddEditDeleteForm({
@@ -86,7 +90,17 @@ const MarkerEditChromosomalLocation = ({
         return <>
             <dl className='row'>
                 <dt className={leftColumnClass}>Location</dt>
-                <dd className={rightColumnClass}>Chr {item.chromosome}: {item.startLocation.toLocaleString()} - {item.endLocation.toLocaleString()} ({item.assembly}) <em>{item.locationEvidence}</em> {editLink}</dd>
+                <dd className={rightColumnClass}><>Chr {item.chromosome}: </>
+                    {' ' + item.startLocation.toLocaleString()} - {item.endLocation.toLocaleString() + ' '}
+                    ({item.assembly})
+                    <em> {item.locationEvidence} </em>
+                    {item.references && item.references.length && <span> {' '}
+                        (<a href={'/action/infrastructure/data-citation-list/' + markerId + '/'
+                                + item.references.map( reference => reference.zdbID).join(',') }
+                        >
+                        {item.references.length}</a>)
+                    </span> }
+                {editLink} </dd>
             </dl>
         </>;
     };
@@ -182,6 +196,45 @@ const MarkerEditChromosomalLocation = ({
                             >{code}</option>
                         ))}
                     </FormGroup>
+
+                    <div className='form-group row'>
+                        <label className='col-md-3'>Citations</label>
+                        <div className='col-md-9'>
+                            {
+                                values && values.references && values.references.map((reference, idx) => (
+                                    <div key={idx} className={`d-flex align-items-baseline ${idx > 0 ? 'mt-2' : ''}`}>
+                                        <div className='flex-grow-1'>
+                                            <InputField
+                                                tag={PublicationInput}
+                                                field={`references.${idx}.zdbID`}
+                                                validate={value => {
+                                                    if (!value) {
+                                                        return 'A publication ZDB ID is required';
+                                                    }
+                                                    return false
+                                                }}
+                                            />
+                                        </div>
+                                        <button
+                                            type='button'
+                                            onClick={() => removeFieldValue('references', idx)}
+                                            className='btn btn-link'
+                                        >
+                                            <i className='fas fa-times' />
+                                        </button>
+                                    </div>
+                                ))
+                            }
+                            <button
+                                type='button'
+                                className='btn btn-link px-0'
+                                onClick={() => pushFieldValue('references', { zdbID: '' })}
+                            >
+                                Add Citation
+                            </button>
+                        </div>
+                    </div>
+
                 </>}
             </AddEditDeleteModal>
         </>
