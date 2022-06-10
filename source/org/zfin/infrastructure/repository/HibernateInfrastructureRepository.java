@@ -26,6 +26,7 @@ import org.zfin.database.presentation.Table;
 import org.zfin.expression.ExpressionAssay;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.featureflag.FeatureFlag;
 import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
@@ -684,6 +685,21 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         Criteria criteria = session.createCriteria(ZdbFlag.class);
         criteria.add(Restrictions.eq("type", ZdbFlag.Type.DISABLE_UPDATES));
         return (ZdbFlag) criteria.uniqueResult();
+    }
+
+    public FeatureFlag getFeatureFlag(String name) {
+        Session session = HibernateUtil.currentSession();
+        org.hibernate.query.Query query = session.createQuery("from FeatureFlag ff WHERE ff.name = :name");
+        query.setParameter("name", name);
+        return (FeatureFlag) query.getSingleResult();
+    }
+
+    public void setFeatureFlag(String name, boolean enabled) {
+        Session session = HibernateUtil.currentSession();
+        FeatureFlag flag = getFeatureFlag(name);
+        flag.setEnabledByDefault(enabled);
+        flag.setLastModified(new Date());
+        session.save(flag);
     }
 
     public ExternalNote getExternalNoteByID(String zdbID) {

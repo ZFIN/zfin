@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.NameValuePairDTO;
 import org.zfin.framework.api.View;
 import org.zfin.framework.featureflag.FeatureFlag;
@@ -40,7 +41,14 @@ public class FeatureFlagsController {
         String name = nameValuePair.getName();
         String value = nameValuePair.getValue();
 
-        FeatureFlags.setSessionFeatureFlag(name, "true".equals(value));
+        String scope = request.getParameter("scope");
+        if ("global".equals(scope)) {
+            HibernateUtil.createTransaction();
+            FeatureFlags.setDefaultFeatureFlag(name, "true".equals(value));
+            HibernateUtil.flushAndCommitCurrentSession();
+        } else if ("local".equals(scope)) {
+            FeatureFlags.setSessionFeatureFlag(name, "true".equals(value));
+        }
 
         return nameValuePair;
     }

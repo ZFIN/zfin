@@ -23,14 +23,16 @@ const FeatureToggles = ({
         <thead>
             <tr>
                 <th>Flag</th>
-                <th>Current State</th>
+                <th>Enabled for Me</th>
+                <th>Enabled for Everyone</th>
             </tr>
         </thead>
         <tbody>
             {featureFlags.value.map((flag) =>
                 <tr key={flag.name}>
-                    <td>Use {flag.name}</td>
-                    <td><FeatureToggle name={flag.name} enabled={flag.enabled} url={url}/></td>
+                    <td>{flag.name}</td>
+                    <td><FeatureToggle name={flag.name} enabled={flag.enabledForUserSession} url={url + '?scope=local'}/></td>
+                    <td><FeatureToggle name={flag.name} enabled={flag.enabledByDefault} url={url + '?scope=global'}/></td>
                 </tr>
             )}
         </tbody>

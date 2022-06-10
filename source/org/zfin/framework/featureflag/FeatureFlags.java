@@ -7,11 +7,15 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang.BooleanUtils;
+
+import org.zfin.infrastructure.ZdbFlag;
+import org.zfin.repository.RepositoryFactory;
 
 @Log4j2
 public class FeatureFlags {
     public static final String SESSION_PREFIX = "FEATURE:";
+
+    enum SessionState {ENABLED, DISABLED, UNSET};
 
     public static List<FeatureFlag> getFlags() {
         List<FeatureFlag> flags = new ArrayList<>();
@@ -19,6 +23,7 @@ public class FeatureFlags {
             FeatureFlag flag = new FeatureFlag();
             flag.setName(value.getName());
             flag.setEnabled(isFlagEnabled(flag));
+            flag.setEnabledByDefault(isFlagEnabledByDefault(flag));
             flags.add(flag);
         }
         return flags;
@@ -28,18 +33,58 @@ public class FeatureFlags {
         return isFlagEnabled(flag.getName());
     }
 
-    private static boolean isFlagEnabled(FeatureFlag flag) {
+    public static boolean isFlagEnabled(FeatureFlag flag) {
         return isFlagEnabled(flag.getName());
     }
 
     private static boolean isFlagEnabled(String flagName) {
-        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if (requestAttributes == null) {
+        SessionState flagEnabledForSession = isFlagEnabledForUserSession(flagName);
+        if (flagEnabledForSession == SessionState.UNSET) {
+            return isFlagEnabledByDefault(flagName);
+        } else if (flagEnabledForSession == SessionState.ENABLED) {
+            return true;
+        } else {
             return false;
         }
+    }
+
+    private static boolean isFlagEnabledByDefault(FeatureFlagEnum flag) {
+        return isFlagEnabledByDefault(flag.getName());
+    }
+
+    private static boolean isFlagEnabledByDefault(FeatureFlag flag) {
+        return isFlagEnabledByDefault(flag.getName());
+    }
+
+    private static boolean isFlagEnabledByDefault(String flagName) {
+        ZdbFlag updatesFlag = RepositoryFactory.getInfrastructureRepository().getUpdatesFlag();
+        log.debug(updatesFlag);
+        FeatureFlag flag = RepositoryFactory.getInfrastructureRepository().getFeatureFlag(flagName);
+        return flag.isEnabledByDefault();
+    }
+
+    public static SessionState isFlagEnabledForUserSession(FeatureFlag flag) {
+        return isFlagEnabledForUserSession(flag.getName());
+    }
+
+    private static SessionState isFlagEnabledForUserSession(String flagName) {
+        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (requestAttributes == null) {
+            return SessionState.UNSET;
+        }
         HttpServletRequest request = requestAttributes.getRequest();
+
         Boolean value = (Boolean) request.getSession().getAttribute(SESSION_PREFIX + flagName);
-        return BooleanUtils.isTrue(value);
+        log.debug("isFlagEnabledForUserSession: Current feature session value for flag named " + flagName);
+        log.debug(value);
+
+        if (value == null) {
+            return SessionState.UNSET;
+        } else if (value == true) {
+            return SessionState.ENABLED;
+        } else {
+            return SessionState.DISABLED;
+        }
     }
 
     public static void setSessionFeatureFlag(String name, boolean value) {
@@ -52,6 +97,10 @@ public class FeatureFlags {
         log.debug("Setting to: " + value);
 
         request.getSession().setAttribute(featureKey, value);
+    }
+
+    public static void setDefaultFeatureFlag(String name, boolean enabled) {
+        RepositoryFactory.getInfrastructureRepository().setFeatureFlag(name, enabled);
     }
 
 }
