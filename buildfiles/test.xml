@@ -549,10 +549,11 @@ test(s) need to be run before committing changes or pushing files to production 
                >
 <!--            <jvmarg line="${junrt.jvmargs}"/>-->
             <classpath refid="unittest.classpath"/>
-            <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
+            <sysproperty key="log4j.configurationFile" value="${web-inf.dir}/log4j2.xml"/>
             <!--<jvmarg value="-DWEBINF=${web-inf.target}"/>-->
             <jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
             <jvmarg value="--add-opens=java.base/java.lang=ALL-UNNAMED"/>
+            <jvmarg value="--add-opens=java.xml/com.sun.org.apache.xml.internal.serialize=ALL-UNNAMED"/>
             <test name="org.zfin.SmokeTests" outfile="${smokeTestFile}"
                   todir="${test.reports.dir}"
                   haltonerror="false" haltonfailure="true"

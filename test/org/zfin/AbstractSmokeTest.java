@@ -3,6 +3,7 @@ package org.zfin;
 import com.gargoylesoftware.htmlunit.*;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSpan;
+import com.gargoylesoftware.htmlunit.javascript.SilentJavaScriptErrorListener;
 import net.sourceforge.jwebunit.junit.WebTestCase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -158,6 +159,8 @@ public class AbstractSmokeTest extends WebTestCase {
         webClient.setCookieManager(cm);
         webClient.setJavaScriptTimeout(30000);
         webClient.getOptions().setTimeout(30000);
+        webClient.setJavaScriptErrorListener(new SilentJavaScriptErrorListener());
+        webClient.setCssErrorHandler(new SilentCssErrorHandler());
     }
 
 }
