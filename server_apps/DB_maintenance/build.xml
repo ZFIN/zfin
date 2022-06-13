@@ -167,6 +167,17 @@
         </java>
     </target>
 
+    <target name="load-signafish" description="">
+        <java classname="org.zfin.datatransfer.LoadSignafishJob" fork="yes"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="${validateData}/report_data"/>
+            <arg value="${jobName}"/>
+            <jvmarg value="${jvm.arg.log4j}"/>
+        </java>
+    </target>
+
     <target name="remove-go-terms-from-withdrawn-markers" description="">
         <java classname="org.zfin.ontology.jobs.RemoveGoTermsFromWithdrawnMarkersJob" fork="yes"
               classpathref="extended.classpath"
