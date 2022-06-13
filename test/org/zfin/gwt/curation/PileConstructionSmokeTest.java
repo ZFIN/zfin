@@ -46,7 +46,7 @@ public class PileConstructionSmokeTest extends AbstractSecureSmokeTest {
         List<?> options = entitySuperTerm.getSelectedOptions();
         assertEquals(1, options.size());
         HtmlOption option = (HtmlOption) options.get(0);
-        assertEquals(selectedOntology, option.asText());
+        assertEquals(selectedOntology, option.getText());
         return entitySuperTerm;
     }
 
@@ -58,7 +58,7 @@ public class PileConstructionSmokeTest extends AbstractSecureSmokeTest {
         assertNotNull(errorMessageNode);
         assertEquals(errorMessageNode.size(), 1);
         HtmlDivision errorMessage = (HtmlDivision) errorMessageNode.get(0);
-        assertTrue(errorMessage.getFirstChild().asText().length() > 5);
+        assertTrue(errorMessage.getFirstChild().getTextContent().length() > 5);
     }
 
     private void setStructureCombination(String entitySuperOnto, String entitySuperName,
