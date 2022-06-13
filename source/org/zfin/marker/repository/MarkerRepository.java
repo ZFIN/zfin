@@ -491,6 +491,7 @@ public interface MarkerRepository {
      * @return
      */
     String getAccessionNumber(Marker marker, Database.AvailableAbbrev database);
+    int deleteMarkerDBLinks(ReferenceDatabase referenceDatabase, List<String> ids);
 
     List<LookupEntry> getMarkerSuggestionList(String lookupString, Marker.TypeGroup ...groups);
 
@@ -550,4 +551,7 @@ public interface MarkerRepository {
 
     List<FluorescentMarker> getAllFluorescentConstructs();
 
+    int addMarkerDBLinks(ReferenceDatabase referenceDatabase, List<String> geneIdList);
+
+    Long getSignafishLinkCount(ReferenceDatabase referenceDatabase);
 }

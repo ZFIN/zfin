@@ -2994,6 +2994,67 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return dbLinks.get(0).getAccessionNumber();
     }
 
+    @Override
+    public int deleteMarkerDBLinks(ReferenceDatabase referenceDatabase, List<String> ids) {
+        String hql = "from MarkerDBLink " +
+                "where referenceDatabase = :database " +
+                "and accessionNumber not in (:list) ";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("database", referenceDatabase);
+        query.setParameter("list", ids);
+        List<MarkerDBLink> dbLinks = (List<MarkerDBLink>) query.list();
+        if (CollectionUtils.isEmpty(dbLinks)) {
+            return 0;
+        }
+        String deleteSQL = "delete from ActiveData where zdbID = :id ";
+        dbLinks.forEach(markerDBLink -> {
+            Query querySt = HibernateUtil.currentSession().createQuery(deleteSQL);
+            querySt.setParameter("id", markerDBLink.getZdbID());
+            querySt.executeUpdate();
+        });
+        return dbLinks.size();
+    }
+
+    @Override
+    public int addMarkerDBLinks(final ReferenceDatabase referenceDatabase, List<String> geneIdList) {
+        String hql = "from MarkerDBLink " +
+                "where referenceDatabase = :database " +
+                "and accessionNumber in (:list) ";
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("database", referenceDatabase);
+        query.setParameter("list", geneIdList);
+        List<MarkerDBLink> dbLinks = (List<MarkerDBLink>) query.list();
+        if (CollectionUtils.isEmpty(dbLinks)) {
+            org.hibernate.query.Query query1 = currentSession().createQuery("from Marker where zdbID in (:idList)");
+            query1.setParameter("idList", geneIdList);
+            List<Marker> markerList = query1.list();
+            markerList.forEach(gene ->{
+                    MarkerDBLink signafishLink = new MarkerDBLink();
+                    signafishLink.setMarker(gene);
+                    signafishLink.setLinkInfo(String.format("Uncurated: signafish load for %tF", new Date()));
+                    signafishLink.setAccessionNumber(gene.getZdbID());
+                    signafishLink.setAccessionNumberDisplay(gene.getZdbID());
+                    signafishLink.setReferenceDatabase(referenceDatabase);
+                HibernateUtil.currentSession().save(signafishLink);
+                RecordAttribution recAttr = new RecordAttribution();
+                recAttr.setDataZdbID(signafishLink.getZdbID());
+                recAttr.setSourceZdbID("ZDB-PUB-160316-7");
+                recAttr.setSourceType(RecordAttribution.SourceType.STANDARD);
+                HibernateUtil.currentSession().save(recAttr);
+            });
+        }
+        return 0;
+    }
+
+    public Long getSignafishLinkCount(ReferenceDatabase referenceDatabase) {
+        String hql = "select count(*) from MarkerDBLink " +
+                "where referenceDatabase = :database " ;
+        Query query = HibernateUtil.currentSession().createQuery(hql);
+        query.setParameter("database", referenceDatabase);
+        return (Long) query.uniqueResult();
+    }
+
+
     //then determine the aliases for the construct and set the alias on the ConstructComponentPresentation object.
     //delimit aliases by a ","
     public ConstructComponentPresentation getConstructComponentsForDisplay(String zdbID) {
