@@ -80,7 +80,7 @@
             <arg value="-webrootDirectory"/>
             <arg value="${web.dir}"/>
             <arg value="-loadDir"/>
-            <arg value="server_Apps/DB_maintenance/validateData"/>
+            <arg value="server_apps/DB_maintenance/validatedata"/>
             <arg value="-jobName"/>
             <arg value="Load-Reference-Proteome"/>
             <jvmarg value="${jvm.arg.log4j}"/>

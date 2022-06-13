@@ -1,7 +1,8 @@
 package org.zfin.framework;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.type.Type;
 
@@ -51,7 +52,7 @@ public class StringCleanInterceptor extends EmptyInterceptor {
             if (fields != null) {
                 for (Field field : fields) {
                     // modifier = 9 means static field
-                    if (field.getType() == String.class && field.getModifiers() != 9) {
+                    if (field.getType() == String.class && !Modifier.isFinal(field.getModifiers()) && !Modifier.isStatic(field.getModifiers())) {
                         runSetter(field, state, processState(runGetter(field, state)));
                     }
                 }
@@ -86,7 +87,7 @@ public class StringCleanInterceptor extends EmptyInterceptor {
         if (o.getClass().isEnum())
             return;
         // exclude 'public static final' fields....
-        if(field.getModifiers() == 25)
+        if (field.getModifiers() == 25)
             return;
         try {
             // do not update existing nulls
