@@ -689,7 +689,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     public FeatureFlag getFeatureFlag(String name) {
         Session session = HibernateUtil.currentSession();
-        org.hibernate.query.Query query = session.createQuery("from FeatureFlag ff WHERE ff.name = :name");
+        org.hibernate.query.Query query = session.createQuery("from FeatureFlag WHERE name = :name");
         query.setParameter("name", name);
         return (FeatureFlag) query.getSingleResult();
     }
