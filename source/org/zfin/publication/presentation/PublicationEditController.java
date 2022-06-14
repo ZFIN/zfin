@@ -164,13 +164,16 @@ public class PublicationEditController {
             return "publication/edit-publication";
         }
 
+        HibernateUtil.createTransaction();
         try {
             Collection<BeanFieldUpdate> updates = publicationService.mergePublicationFromForm(publication, existingPublication);
             publicationRepository.updatePublications(Arrays.asList(existingPublication));
             for (BeanFieldUpdate update : updates) {
                 infrastructureRepository.insertUpdatesTable(existingPublication, update, "Edit pub");
             }
+            HibernateUtil.flushAndCommitCurrentSession();
         } catch (Exception e) {
+            HibernateUtil.rollbackTransaction();
             model.addAttribute("error", "Error saving publication.");
             return "publication/edit-publication";
         }

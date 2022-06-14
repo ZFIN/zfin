@@ -95,6 +95,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
             @JoinColumn(name = "target_id", nullable = false, updatable = false)},
             inverseJoinColumns = {@JoinColumn(name = "source_id",
                     nullable = false, updatable = false)})
+    @OrderBy(value="full_name asc")
     private Set<Person> people;
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "mh_pub_zdb_id")

@@ -72,6 +72,21 @@
         </java>
     </target>
 
+    <target name="load-reference-proteome" description="">
+        <java classname="org.zfin.datatransfer.LoadReferenceProteome"
+              fork="yes"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="-webrootDirectory"/>
+            <arg value="${web.dir}"/>
+            <arg value="-loadDir"/>
+            <arg value="server_apps/DB_maintenance/validatedata"/>
+            <arg value="-jobName"/>
+            <arg value="Load-Reference-Proteome"/>
+            <jvmarg value="${jvm.arg.log4j}"/>
+        </java>
+    </target>
+
     <target name="load-gaf-goa" description="">
         <java classname="org.zfin.datatransfer.go.service.GafLoadJob"
               fork="yes"
@@ -148,6 +163,17 @@
             <arg value="${validateData}/report_data"/>
             <arg value="${jobName}"/>
             <arg value="10"/>
+            <jvmarg value="${jvm.arg.log4j}"/>
+        </java>
+    </target>
+
+    <target name="load-signafish" description="">
+        <java classname="org.zfin.datatransfer.LoadSignafishJob" fork="yes"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="${validateData}/report_data"/>
+            <arg value="${jobName}"/>
             <jvmarg value="${jvm.arg.log4j}"/>
         </java>
     </target>
