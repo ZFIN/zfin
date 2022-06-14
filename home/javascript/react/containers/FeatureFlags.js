@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import useFetch from '../hooks/useFetch';
 import LoadingSpinner from '../components/LoadingSpinner';
 import GenericErrorMessage from '../components/GenericErrorMessage';
-import FeatureToggle from './FeatureToggle';
+import FeatureFlag from './FeatureFlag';
 
-const FeatureToggles = ({
+const FeatureFlags = ({
     url,
 }) => {
 
@@ -23,14 +23,16 @@ const FeatureToggles = ({
         <thead>
             <tr>
                 <th>Flag</th>
-                <th>Current State</th>
+                <th>Enabled for Everyone</th>
+                <th>Enabled for Me</th>
             </tr>
         </thead>
         <tbody>
             {featureFlags.value.map((flag) =>
                 <tr key={flag.name}>
-                    <td>Use {flag.name}</td>
-                    <td><FeatureToggle name={flag.name} enabled={flag.enabled} url={url}/></td>
+                    <td>{flag.name}</td>
+                    <td><FeatureFlag name={flag.name} enabled={flag.enabledForGlobalScope} url={url + '?scope=global'}/></td>
+                    <td><FeatureFlag name={flag.name} enabled={flag.enabledForSessionScope} url={url + '?scope=session'}/></td>
                 </tr>
             )}
         </tbody>
@@ -38,8 +40,8 @@ const FeatureToggles = ({
 
 };
 
-FeatureToggles.propTypes = {
+FeatureFlags.propTypes = {
     url: PropTypes.string.isRequired
 };
 
-export default FeatureToggles;
+export default FeatureFlags;

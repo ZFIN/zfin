@@ -90,6 +90,7 @@
         <mapping class="org.zfin.feature.SecondaryFeature"/>
         <mapping class="org.zfin.feature.TranscriptConsequence"/>
         <mapping class="org.zfin.fish.WarehouseSummary"/>
+        <mapping class="org.zfin.framework.featureflag.FeatureFlag"/>
         <mapping class="org.zfin.mutant.FishAlias"/>
         <mapping class="org.zfin.mutant.SecondaryFish"/>
         <mapping class="org.zfin.framework.presentation.AnatomyFact"/>
