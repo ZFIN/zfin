@@ -9,6 +9,7 @@ import org.zfin.database.UnloadInfo;
 import org.zfin.database.presentation.Column;
 import org.zfin.database.presentation.Table;
 import org.zfin.expression.ExpressionAssay;
+import org.zfin.framework.featureflag.FeatureFlag;
 import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
@@ -145,6 +146,10 @@ public interface InfrastructureRepository {
      * @return zdbFlag
      */
     ZdbFlag getUpdatesFlag();
+
+    FeatureFlag getFeatureFlag(String name);
+
+    void setFeatureFlag(String name, boolean enabled);
 
     /**
      * retrieve an external note by zdb ID (PK)

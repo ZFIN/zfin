@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 
-const FeatureToggle = ({
+const FeatureFlag = ({
     enabled,
     name,
     url,
@@ -54,10 +54,10 @@ const FeatureToggle = ({
     }
 };
 
-FeatureToggle.propTypes = {
+FeatureFlag.propTypes = {
     enabled: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired
 };
 
-export default FeatureToggle;
+export default FeatureFlag;
