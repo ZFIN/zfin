@@ -65,7 +65,7 @@ public class AlleleLinkMLInfo extends AbstractScriptWrapper {
                     dto.setInternal(true);
                     dto.setCreatedBy("ZFIN:CURATOR");
                     dto.setTaxon(ZfinDTO.taxonId);
-                    dto.setCurie(feature.getZdbID());
+                    dto.setCurie("ZFIN:" + feature.getZdbID());
                     if (feature.getFtrEntryDate() != null) {
                         dto.setDateCreated(format(feature.getFtrEntryDate()));
                     } else {
