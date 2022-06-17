@@ -26,7 +26,7 @@ public class MarkerStrSmokeTest extends AbstractSmokeTest {
      * Check if the foxa3 page is accessible
      */
     @Test
-    public void strsAreLoadingForFoxa3() {
+    public void testStrsAreLoadingForFoxa3() {
         WebClient webClient = new WebClient(BrowserVersion.FIREFOX);
 
         try {
