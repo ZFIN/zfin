@@ -26,8 +26,6 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.MountedWublastBlastService;
-import org.zfin.sequence.blast.NucleotideInternalAccessionGenerator;
-import org.zfin.sequence.blast.ProteinInternalAccessionGenerator;
 import org.zfin.sequence.repository.DisplayGroupRepository;
 import org.zfin.sequence.repository.SequenceRepository;
 
@@ -81,7 +79,7 @@ public class MarkerLinkController {
 
     @ResponseBody
     @RequestMapping("/{markerId}/link/{type}")
-    public Collection<ReferenceDatabaseDTO> getNuclDatabases(@PathVariable String markerId, @PathVariable String type,@RequestParam(name = "group", required = true) String groupName) {
+    public Collection<ReferenceDatabaseDTO> getNuclDatabases(@PathVariable String markerId, @PathVariable String type, @RequestParam(name = "group", required = true) String groupName) {
         DisplayGroup.GroupName group = null;
         if (type.contains("Nucleotide")) {
             if (markerId.contains("GENE")) {
@@ -125,8 +123,8 @@ public class MarkerLinkController {
 
     @ResponseBody
     @RequestMapping(value = "/{markerId}/{type}/links", method = RequestMethod.GET)
-    public List<LinkDisplay> getMarkerSeqLinks(@PathVariable String markerId,@PathVariable String type,
-                                            @RequestParam(name = "group", required = true) String groupName) {
+    public List<LinkDisplay> getMarkerSeqLinks(@PathVariable String markerId, @PathVariable String type,
+                                               @RequestParam(name = "group", required = true) String groupName) {
         Marker marker = markerRepository.getMarkerByID(markerId);
         DisplayGroup.GroupName group = null;
         if (type.contains("Nucleotide")) {
@@ -154,7 +152,6 @@ public class MarkerLinkController {
         }
         return links;
     }
-
 
 
     @ResponseBody
@@ -355,8 +352,10 @@ public class MarkerLinkController {
     @ResponseBody
     @RequestMapping(value = "/link/{linkId}", method = RequestMethod.DELETE, produces = "text/plain")
     public String deleteMarkerLink(@PathVariable String linkId) {
+        HibernateUtil.createTransaction();
         DBLink link = sequenceRepository.getDBLinkByID(linkId);
         sequenceRepository.removeDBLinks(Collections.singletonList(link));
+        HibernateUtil.flushAndCommitCurrentSession();
         return "OK";
     }
 
