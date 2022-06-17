@@ -286,7 +286,7 @@ public class AnatomyAjaxController {
         form.setFishCount(fishResult.getTotalCount());
         form.setTotalRecords(fishResult.getTotalCount());
         form.setQueryString(request.getQueryString());
-        form.setRequestUrl(request.getRequestURL());
+        form.setRequestUrl(new StringBuffer(request.getRequestURI()));
 
         List<Fish> fishList = fishResult.getPopulatedResults();
         form.setFish(fishList);
