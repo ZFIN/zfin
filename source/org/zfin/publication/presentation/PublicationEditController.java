@@ -157,7 +157,7 @@ public class PublicationEditController {
         Publication publication = publicationBean.getPublication();
         boolean hasFigureWithImages = existingPublication.getFigures().stream().anyMatch(f -> !f.isImgless());
         if (!publication.isCanShowImages() && existingPublication.isCanShowImages() && hasFigureWithImages) {
-            result.rejectValue("canShowImages", "canShowImages.existingFigures");
+            result.rejectValue("publication.canShowImages", "canShowImages.existingFigures");
         }
 
         if (result.hasErrors()) {
