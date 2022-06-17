@@ -1,7 +1,10 @@
 package org.zfin.mutant.service;
 
 import lombok.extern.log4j.Log4j2;
-import org.alliancegenome.curation_api.model.entities.*;
+import org.alliancegenome.curation_api.model.entities.AGMDiseaseAnnotation;
+import org.alliancegenome.curation_api.model.entities.AffectedGenomicModel;
+import org.alliancegenome.curation_api.model.entities.Reference;
+import org.alliancegenome.curation_api.model.entities.VocabularyTerm;
 import org.alliancegenome.curation_api.model.entities.ontology.DOTerm;
 import org.alliancegenome.curation_api.model.entities.ontology.EcoTerm;
 import org.zfin.alliancegenome.AllianceRestManager;
@@ -18,7 +21,7 @@ public class DiseaseAnnotationService extends AllianceService {
     public static void submitAnnotationToAlliance(DiseaseAnnotationModel dam) {
         AGMDiseaseAnnotation da = new AGMDiseaseAnnotation();
         da.setObject(getDoTerm(dam.getDiseaseAnnotation().getDisease()));
-//        da.setSubject(getBiologicalEntity(dam.getFishExperiment().getFish()));
+        da.setSubject(getBiologicalEntity(dam.getFishExperiment().getFish()));
         VocabularyTerm isModelOf = new VocabularyTerm();
         isModelOf.setName("is model of");
         da.setDiseaseRelation(isModelOf);
@@ -29,7 +32,8 @@ public class DiseaseAnnotationService extends AllianceService {
         try {
             api.addDiseaseAnnotation(da);
         } catch (Exception e) {
-            log.error("Could not create Disease Annotation at Alliance: " + e.getMessage());
+            String message = e.getMessage() != null ? e.getMessage() : e.getCause().getLocalizedMessage();
+            log.error("Could not create Disease Annotation at Alliance: " + message);
         }
     }
 

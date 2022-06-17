@@ -11,17 +11,17 @@ import javax.ws.rs.core.Response;
 public interface DiseaseAnnotationRESTInterfaceAlliance {
 
     @GET
-    @Path("/disease-annotation/{curie}")
+    @Path("/agm-disease-annotation/{curie}")
     @Produces({MediaType.APPLICATION_JSON})
     ObjectResponse<DiseaseAnnotation> getDiseaseAnnotation(@PathParam("curie") String curie);
 
     @POST
-    @Path("/disease-annotation")
+    @Path("/agm-disease-annotation")
     @Consumes({MediaType.APPLICATION_JSON})
     ObjectResponse<DiseaseAnnotation> addDiseaseAnnotation(DiseaseAnnotation annotation);
 
     @PUT
-    @Path("/disease-annotation")
+    @Path("/agm-disease-annotation")
     @Consumes({MediaType.APPLICATION_JSON})
     ObjectResponse<DiseaseAnnotation> updateDiseaseAnnotation(DiseaseAnnotation annotation);
 
