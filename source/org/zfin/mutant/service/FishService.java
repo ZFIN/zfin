@@ -29,7 +29,8 @@ public class FishService extends AllianceService {
         try {
             agmFish = api.addAffectedGenomicModel(model);
         } catch (Exception e) {
-            log.error("Could not create Affected Genomic Model (Fish) at Alliance: " + e.getMessage());
+            String message = e.getMessage() != null ? e.getMessage() : e.getCause().getLocalizedMessage();
+            log.error("Could not create Affected Genomic Model (Fish) at Alliance: " + message);
             log.debug("Could not create Affected Genomic Model (Fish) at Alliance: ",e);
         }
         log.info("Done loading");
