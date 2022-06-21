@@ -18,7 +18,8 @@ public interface AgmRESTInterfaceAlliance {
     @POST
     @Path("/agm")
     @Consumes({MediaType.APPLICATION_JSON})
-    ObjectResponse<AffectedGenomicModel> addAffectedGenomicModel(AffectedGenomicModel model);
+    ObjectResponse<AffectedGenomicModel> addAffectedGenomicModel(@HeaderParam("Authorization") String auth,
+                                                                 AffectedGenomicModel model);
 
     @PUT
     @Path("/agm")

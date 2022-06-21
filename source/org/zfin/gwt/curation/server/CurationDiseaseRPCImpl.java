@@ -34,6 +34,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
 
     private static Logger LOG = LogManager.getLogger(CurationDiseaseRPCImpl.class);
 
+    private FishService fishService = new FishService();
     @Override
     public List<GenotypeDTO> getGenotypeList(String publicationID) {
         List<Genotype> genotypeList = getMutantRepository().getGenotypesForAttribution(publicationID);
@@ -276,7 +277,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             HibernateUtil.flushAndCommitCurrentSession();
             // send to Alliance
             HibernateUtil.currentSession().refresh(newFish);
-            FishService.submitFishToAlliance(newFish);
+            fishService.submitFishToAlliance(newFish);
         } catch (ConstraintViolationException e) {
             HibernateUtil.rollbackTransaction();
             String message = e.getMessage();
