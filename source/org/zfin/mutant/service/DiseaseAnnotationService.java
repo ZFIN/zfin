@@ -7,7 +7,11 @@ import org.alliancegenome.curation_api.model.entities.Reference;
 import org.alliancegenome.curation_api.model.entities.VocabularyTerm;
 import org.alliancegenome.curation_api.model.entities.ontology.DOTerm;
 import org.alliancegenome.curation_api.model.entities.ontology.EcoTerm;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.zfin.alliancegenome.AgmRESTAllianceService;
 import org.zfin.alliancegenome.AllianceRestManager;
+import org.zfin.alliancegenome.DiseaseAnnotationRESTAllianceService;
 import org.zfin.alliancegenome.DiseaseAnnotationRESTInterfaceAlliance;
 import org.zfin.mutant.DiseaseAnnotationModel;
 import org.zfin.mutant.Fish;
@@ -16,9 +20,13 @@ import org.zfin.ontology.GenericTerm;
 import java.util.List;
 
 @Log4j2
+@Service
 public class DiseaseAnnotationService extends AllianceService {
 
-    public static void submitAnnotationToAlliance(DiseaseAnnotationModel dam) {
+    @Autowired
+    DiseaseAnnotationRESTAllianceService restInterfaceAlliance;
+
+    public void submitAnnotationToAlliance(DiseaseAnnotationModel dam) {
         AGMDiseaseAnnotation da = new AGMDiseaseAnnotation();
         da.setObject(getDoTerm(dam.getDiseaseAnnotation().getDisease()));
         da.setSubject(getBiologicalEntity(dam.getFishExperiment().getFish()));
@@ -28,9 +36,8 @@ public class DiseaseAnnotationService extends AllianceService {
         da.setNegated(Boolean.FALSE);
         da.setEvidenceCodes(List.of(getEvidenceCodes(dam.getDiseaseAnnotation())));
         da.setSingleReference(getCrossReference(dam.getDiseaseAnnotation()));
-        DiseaseAnnotationRESTInterfaceAlliance api = AllianceRestManager.getDiseaseAnnotationEndpoints();
         try {
-            api.addDiseaseAnnotation(da);
+            restInterfaceAlliance.addDiseaseAnnotation(da);
         } catch (Exception e) {
             String message = e.getMessage() != null ? e.getMessage() : e.getCause().getLocalizedMessage();
             log.error("Could not create Disease Annotation at Alliance: " + message);
