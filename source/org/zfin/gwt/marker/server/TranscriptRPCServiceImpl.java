@@ -135,6 +135,7 @@ public class TranscriptRPCServiceImpl extends ZfinRemoteServiceServlet implement
     }
 
     public TranscriptDTO getTranscriptForZdbID(String zdbID) throws BlastDatabaseAccessException {
+        HibernateUtil.createTransaction();
 
         Transcript transcript = markerRepository.getTranscriptByZdbID(zdbID);
         TranscriptDTO transcriptDTO = new TranscriptDTO();
@@ -251,6 +252,7 @@ public class TranscriptRPCServiceImpl extends ZfinRemoteServiceServlet implement
         dbLinkDTOList.addAll(DTOConversionService.convertToDBLinkDTOs(dbLinks, transcript.getZdbID(), transcript.getAbbreviation()));
 
         transcriptDTO.setSupportingSequenceLinks(dbLinkDTOList);
+        HibernateUtil.flushAndCommitCurrentSession();
 
         return transcriptDTO;
     }
