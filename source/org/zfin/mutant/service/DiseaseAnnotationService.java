@@ -23,8 +23,7 @@ import java.util.List;
 @Service
 public class DiseaseAnnotationService extends AllianceService {
 
-    @Autowired
-    DiseaseAnnotationRESTAllianceService restInterfaceAlliance;
+    DiseaseAnnotationRESTAllianceService restInterfaceAlliance = new DiseaseAnnotationRESTAllianceService();
 
     public void submitAnnotationToAlliance(DiseaseAnnotationModel dam) {
         AGMDiseaseAnnotation da = new AGMDiseaseAnnotation();
