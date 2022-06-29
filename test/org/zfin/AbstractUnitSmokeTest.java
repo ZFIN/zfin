@@ -20,13 +20,13 @@ public class AbstractUnitSmokeTest extends WebTestCase {
 
     //TODO: use google analytics to determine representative browsers
     protected final WebClient[] curationWebClients = {
-            new WebClient(BrowserVersion.FIREFOX_38),
+            new WebClient(BrowserVersion.FIREFOX),
             new WebClient(BrowserVersion.INTERNET_EXPLORER),
 //            new WebClient(BrowserVersion.SAFARI),
     };
 
     protected final WebClient[] publicWebClients = {
-            new WebClient(BrowserVersion.FIREFOX_38),
+            new WebClient(BrowserVersion.FIREFOX),
             new WebClient(BrowserVersion.INTERNET_EXPLORER),
 //            new WebClient(BrowserVersion.SAFARI),
     };
@@ -48,7 +48,7 @@ public class AbstractUnitSmokeTest extends WebTestCase {
     protected void tearDown() throws Exception {
         for (WebClient client : curationWebClients) {
             try {
-                client.closeAllWindows();
+                client.close();
             } catch (Exception e) {
                 // nothing else we can do
                 LOG.error(e);
@@ -56,7 +56,7 @@ public class AbstractUnitSmokeTest extends WebTestCase {
         }
         for (WebClient client : publicWebClients) {
             try {
-                client.closeAllWindows();
+                client.close();
             } catch (Exception e) {
                 // nothing else we can do
                 LOG.error(e);

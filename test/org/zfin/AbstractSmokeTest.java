@@ -3,6 +3,7 @@ package org.zfin;
 import com.gargoylesoftware.htmlunit.*;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSpan;
+import com.gargoylesoftware.htmlunit.javascript.SilentJavaScriptErrorListener;
 import net.sourceforge.jwebunit.junit.WebTestCase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,13 +42,13 @@ public class AbstractSmokeTest extends WebTestCase {
 
     //TODO: use google analytics to determine representative browsers
     protected final WebClient[] curationWebClients = {
-            new WebClient(BrowserVersion.FIREFOX_38),
+            new WebClient(BrowserVersion.FIREFOX),
             new WebClient(BrowserVersion.INTERNET_EXPLORER),
 //            new WebClient(BrowserVersion.SAFARI),
     };
 
     protected static final WebClient[] publicWebClients = {
-            new WebClient(BrowserVersion.FIREFOX_38),
+            new WebClient(BrowserVersion.FIREFOX),
             new WebClient(BrowserVersion.INTERNET_EXPLORER),
 //            new WebClient(BrowserVersion.SAFARI),
     };
@@ -90,7 +91,7 @@ public class AbstractSmokeTest extends WebTestCase {
     protected void tearDown() throws Exception {
         for (WebClient client : curationWebClients) {
             try {
-                client.closeAllWindows();
+                client.close();
             } catch (Exception e) {
                 // nothing else we can do
                 LOG.error(e);
@@ -98,7 +99,7 @@ public class AbstractSmokeTest extends WebTestCase {
         }
         for (WebClient client : publicWebClients) {
             try {
-                client.closeAllWindows();
+                client.close();
             } catch (Exception e) {
                 // nothing else we can do
                 LOG.error(e);
@@ -119,13 +120,13 @@ public class AbstractSmokeTest extends WebTestCase {
      * @return true or false
      */
     public static boolean checkForSpanTitle(HtmlPage page, String title, String url, String spanBody, String errorMessage) {
-        List<HtmlSpan> element = (List<HtmlSpan>) page.getByXPath("//span[@title='" + title + "']");
+        List element =  page.getByXPath("//span[@title='" + title + "']");
         if (element == null || element.size() == 0) {
             String finalErrorMessage = errorMessage.replace("${title}", title);
             fail(finalErrorMessage + " on page " + url);
             return false;
         }
-        HtmlSpan htmlSpan = element.get(0);
+        HtmlSpan htmlSpan = (HtmlSpan)element.get(0);
         assertNotNull(htmlSpan);
         if (spanBody != null)
             assertEquals(spanBody, htmlSpan.getTextContent());
@@ -158,6 +159,8 @@ public class AbstractSmokeTest extends WebTestCase {
         webClient.setCookieManager(cm);
         webClient.setJavaScriptTimeout(30000);
         webClient.getOptions().setTimeout(30000);
+        webClient.setJavaScriptErrorListener(new SilentJavaScriptErrorListener());
+        webClient.setCssErrorHandler(new SilentCssErrorHandler());
     }
 
 }

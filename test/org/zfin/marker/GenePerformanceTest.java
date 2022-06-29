@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class GenePerformanceTest extends AbstractUnitSmokeTest {
 
-    private WebClient webClient = new WebClient(BrowserVersion.FIREFOX_38);
+    private WebClient webClient = new WebClient(BrowserVersion.FIREFOX);
     private Logger logger = LogManager.getLogger(GenePerformanceTest.class) ;
     private List<String> avgGenes;
     private List<String> worstGenesOld;
