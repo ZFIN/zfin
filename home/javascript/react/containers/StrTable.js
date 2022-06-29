@@ -27,7 +27,7 @@ const StrTable = ({url}) => {
         <DataTable
             columns={columns}
             dataUrl={url}
-            rowKey={row => row.zdbID}
+            rowKey={row => row.target.zdbID + row.str.zdbID}
             pagination={true}
         />
     );
