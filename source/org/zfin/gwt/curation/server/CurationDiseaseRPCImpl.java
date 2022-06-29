@@ -321,6 +321,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
 
         DiseaseAnnotation diseaseAnnotation = null;
         DiseaseAnnotationModel dam = null;
+        boolean successfulSave = false;
         try {
             HibernateUtil.createTransaction();
             diseaseAnnotation = DTOConversionService.convertToDiseaseFromDiseaseDTO(diseaseAnnotationDTO);
@@ -345,8 +346,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
                 getMutantRepository().createDiseaseModel(diseaseAnnotation);
             }
             HibernateUtil.flushAndCommitCurrentSession();
-            // Create DA at Alliancegenome
-            DiseaseAnnotationService.submitAnnotationToAlliance(dam);
+            successfulSave = true;
         } catch (ConstraintViolationException e) {
             HibernateUtil.rollbackTransaction();
 
@@ -359,6 +359,12 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             HibernateUtil.rollbackTransaction();
             throw new TermNotFoundException(e.getMessage());
         }
+
+        // Create DA at Alliancegenome
+        if (successfulSave && dam != null) {
+            DiseaseAnnotationService.submitAnnotationToAlliance(dam);
+        }
+
         return getHumanDiseaseModelList(diseaseAnnotationDTO.getPublication().getZdbID());
 
     }
