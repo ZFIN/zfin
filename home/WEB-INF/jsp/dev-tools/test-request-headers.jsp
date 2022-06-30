@@ -25,7 +25,7 @@
 
 <style>
     table tr.devRow:nth-child(odd) {
-        background-color: aliceblue;
+        background-color: #f8f9fa;
     }
 </style>
 
