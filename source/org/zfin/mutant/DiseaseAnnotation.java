@@ -10,8 +10,11 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static org.zfin.feature.repository.FeatureService.getFeatureGenomeLocationEvidenceCode;
 
 /**
  * Disease model entity:
@@ -65,7 +68,8 @@ public class DiseaseAnnotation implements EntityZdbID {
     }
 
     public String getCodeName(){
-        return evidenceCode.equals("ZDB-TERM-170419-250") ? "TAS" : "";
+        String codeName = getFeatureGenomeLocationEvidenceCode(evidenceCode);
+        return Objects.requireNonNullElse(codeName, "");
     }
 
 }
