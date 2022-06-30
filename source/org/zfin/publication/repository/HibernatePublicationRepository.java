@@ -2944,7 +2944,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     @Override
     public List<Image> getImages(Publication publication) {
         String hql = "from Image where " +
-                " figure.publication = :publication ";
+                " figure.publication = :publication " +
+                " order by figure.orderingLabel ";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("publication", publication);

@@ -56,7 +56,7 @@ const FigurePhenotypeTable = ({url, hideFigureColumn = false}) => {
         <DataTable
             columns={columns}
             dataUrl={url}
-            rowKey={row => row.fish.zdbID}
+            rowKey={row => row.rowKey}
             //sortOptions={sortOptions}
         />
     );

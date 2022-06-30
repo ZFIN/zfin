@@ -15,7 +15,7 @@ const PublicationAttributionTable = ({url}) => {
         <DataTable
             columns={columns}
             dataUrl={url}
-            rowKey={row => row.zdbID}
+            rowKey={row => row}
             pagination={true}
         />
     );

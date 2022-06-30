@@ -4,6 +4,7 @@ package org.zfin.figure.presentation;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.Figure;
@@ -43,6 +44,22 @@ public class PhenotypeTableRow {
         start = phenotypeWarehouse.getStart();
         end = phenotypeWarehouse.getEnd();
         fishNameOrder = fish.getAbbreviationOrder();
+    }
+
+    /**
+     * Generate a unique and deterministic key for this row. Useful for react client rendering.
+     * @return a unique md5 hash for this row.
+     */
+    @JsonView(View.FigureAPI.class)
+    public String getRowKey() {
+        return (new Md5PasswordEncoder()).encodePassword(
+            fish.getZdbID() +
+                    experiment.getZdbID() +
+                    start.getZdbID() +
+                    end.getZdbID() +
+                    figure.getZdbID() +
+                    phenotypeStatement.getId()
+                , "");
     }
 
 }
