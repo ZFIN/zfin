@@ -142,7 +142,7 @@
                     </tr>
                     <tr>
                         <td>
-                            &nbsp;
+                            <a href="/action/devtool/test-request-headers">Request Headers</a>&nbsp;
                         </td>
                         <td>
                             <a href="/action/devtool/application-context">Application Context Info</a>

@@ -21,10 +21,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
@@ -34,7 +31,6 @@ import java.sql.SQLException;
 import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
-import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 /**
  * Controller that obtains the meta data for the database.
@@ -82,6 +78,21 @@ public class DatabaseInfoController {
     @RequestMapping("/test-browser")
     protected String showBrowserInfo() throws Exception {
         return "dev-tools/test-browser";
+    }
+
+    @RequestMapping("/test-request-headers")
+    protected String showRequestHeaders(HttpServletRequest request, Model model) {
+        Map<String, String> results = new TreeMap<>();
+        results.put("Request URL", request.getRequestURL().toString());
+
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String headerName = (String) headerNames.nextElement();
+            results.put(headerName, request.getHeader(headerName));
+        }
+
+        model.addAttribute("results", results);
+        return "dev-tools/test-request-headers";
     }
 
     @RequestMapping("/view-session-info")
