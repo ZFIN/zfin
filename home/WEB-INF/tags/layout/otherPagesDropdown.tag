@@ -6,7 +6,6 @@
         type="button"
         data-toggle="dropdown"
         data-boundary="window"                      <%-- these settings prevent the popup from being cut off --%>
-        data-popper-config="{positionFixed: true}"  <%-- by the table horizontal scrolling container --%>
     >
         <i class="fas fa-link"></i>
     </button>
