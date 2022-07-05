@@ -88,6 +88,17 @@
     </target>
 
     <target name="load-gaf-goa" description="">
+        <echo message="Running GafLoadJob with arguments:"/>
+        <echo message="  propertyFilePath: ${web-inf.dir}/zfin.properties"/>
+        <echo message="  baseDir: ${validateData}/gafLoad"/>
+        <echo message="  jobName: ${jobName}"/>
+        <echo message="  organization: GOA"/>
+        <echo message="  downloadUrl: ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/goa_zebrafish.gaf.gz"/>
+        <echo message="  parserClassName: org.zfin.datatransfer.go.GoaGafParser"/>
+        <echo message="  downloadUrl2: ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/goa_zebrafish_isoform.gaf.gz"/>
+        <echo message="  downloadUrl3: ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/goa_zebrafish_rna.gaf.gz"/>
+        <echo message="  log4j jvm arg: ${jvm.arg.log4j}"/>
+
         <java classname="org.zfin.datatransfer.go.service.GafLoadJob"
               fork="yes"
               classpathref="extended.classpath"
