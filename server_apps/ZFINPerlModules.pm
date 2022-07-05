@@ -5,7 +5,7 @@ use strict;
 use MIME::Lite;
 use DBI;
 use Exporter 'import';
-our @EXPORT_OK = qw(md5_file assert_environment trim);
+our @EXPORT_OK = qw(md5_file assert_environment trim assert_file_exists);
 
 my %monthDisplays = (
     "Jan" => "01",

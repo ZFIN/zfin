@@ -26,6 +26,7 @@
 # perl -s NCBI_gene_load.pl -debug
 
 use DBI;
+use Cwd;
 
 use lib "<!--|ROOT_PATH|-->/server_apps/";
 use ZFINPerlModules;
@@ -77,7 +78,7 @@ print LOG "Start ... \n";
 ## only the following RefSeq catalog file may remain unchanged over a period of time
 ## the rest 3 are changing every day
 
-&doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/refseq/release/RELEASE_NUMBER");
+&doSystemCommand("/local/bin/wget --progress=dot -e dotbytes=10M  ftp://ftp.ncbi.nlm.nih.gov/refseq/release/RELEASE_NUMBER");
 
 open (REFSEQRELEASENUM, "RELEASE_NUMBER") ||  die "Cannot open RELEASE_NUMBER : $!\n";
 
@@ -99,9 +100,9 @@ $catalogFile = "RefSeq-release" . $releaseNum . ".catalog.gz";
 $ftpNCBIrefSeqCatalog = $catlogFolder . $catalogFile;
 
 try {
-  &doSystemCommand("/local/bin/wget -N $ftpNCBIrefSeqCatalog");
+  &doSystemCommand("/local/bin/wget --progress=dot -e dotbytes=10M -N $ftpNCBIrefSeqCatalog");
   &doSystemCommand("/local/bin/gunzip -c $catalogFile >RefSeqCatalog");
-  &doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2accession.gz");
+  &doSystemCommand("/local/bin/wget --progress=dot -e dotbytes=10M  ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2accession.gz");
   &doSystemCommand("/local/bin/gunzip gene2accession.gz");
   &doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nih.gov/gene/DATA/ARCHIVE/gene2vega.gz");
   &doSystemCommand("/local/bin/gunzip gene2vega.gz");
@@ -1970,12 +1971,26 @@ if (!-e "noLength.unl") {
 }
 
 print LOG "\nStart efetching ... \n\n";
+print "\nStart efetching ... \n\n";
 
 # Using the above noLength.unl as input, call efetch.r to get the fasta sequences
 # and output to seq.fasta file. This step is time-consuming.
 
-$cmdEfetch = "/opt/zfin/bin/efetch.r -t fasta -i noLength.unl -o seq.fasta";
+my $currentDir = cwd;
+$ENV{'JAVA_HOME'} = "<!--|JAVA_HOME|-->" ;
+
+$cmdEfetch = "cd " . $ENV{'SOURCEROOT'} . " ; " .
+             "gradle '-DncbiLoadInput=$currentDir/noLength.unl' " .
+             "       '-DncbiLoadOutput=$currentDir/seq.fasta' " .
+             "         NCBILoadTask ; " .
+             "cd -";
+print "Executing $cmdEfetch\n";
+print LOG "Executing $cmdEfetch\n";
+
 &doSystemCommand($cmdEfetch);
+
+print LOG "\nAfter efetching\n\n";
+print "\nAfter efetching\n\n";
 
 system("/bin/date");
 

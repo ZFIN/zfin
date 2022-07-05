@@ -182,6 +182,7 @@ def translateVariableSet = [
         'GO_EMAIL_CURATOR',
         'GROOVY_CLASSPATH',
         'INSTANCE',
+        'JAVA_HOME',
         'LOADUP_FULL_PATH',
         'MOVE_BLAST_FILES_TO_DEVELOPMENT',
         'MUTANT_NAME',
