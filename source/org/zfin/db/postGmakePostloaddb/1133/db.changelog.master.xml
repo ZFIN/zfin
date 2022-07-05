@@ -6,6 +6,7 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
     <include file="source/org/zfin/db/postGmakePostloaddb/1133/ZFIN-7977.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1133/ZFIN-7977-2.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1133/ZFIN-7979.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1133/ZFIN-7922.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1133/ZFIN-7812.xml" />

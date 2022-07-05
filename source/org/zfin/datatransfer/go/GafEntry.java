@@ -1,5 +1,8 @@
 package org.zfin.datatransfer.go;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 
 /**
@@ -7,14 +10,20 @@ import java.util.List;
  * <p/>
  * should have 17 columns
  */
+@Getter
+@Setter
 public class GafEntry {
 
+    ////////////////////////// // 1-based indexes
     private String entryId; // 2
+    private String markerAbbrev; // 3 //Added for ZFIN-8035
     private String qualifier; // 4
     private String goTermId;  // 5
     private String pubmedId;  // 6
     private String evidenceCode;  // 7
     private String inferences; // 8
+    private String dbObjectName; // 10 //Added for ZFIN-8035 debugging
+    private String dbObjectSynonym; // 11 //Added for ZFIN-8035 debugging
     private String taxonId; //13
     private String createdDate; //14
     private String createdBy; //15
@@ -29,165 +38,21 @@ public class GafEntry {
     private int col8both;
 
 
-    public int getCol8pipes() {
-        return col8pipes;
-    }
-
-    public void setCol8pipes(int col8pipes) {
-        this.col8pipes = col8pipes;
-    }
-
-
-    public int getCol8both() {
-        return col8both;
-    }
-
-    public void setCol8both(int col8both) {
-        this.col8both = col8both;
-    }
-
-
-
-    public int getCol8commas() {
-        return col8commas;
-    }
-
-    public void setCol8commas(int col8commas) {
-        this.col8commas = col8commas;
-    }
-
-    public String getEntryId() {
-        return entryId;
-    }
-
-    public void setEntryId(String uniprotId) {
-        this.entryId = uniprotId;
-    }
-
-    public String getQualifier() {
-        return qualifier;
-    }
-
-    public void setQualifier(String qualifier) {
-        this.qualifier = qualifier;
-    }
-
-    public String getGoTermId() {
-        return goTermId;
-    }
-
-    public void setGoTermId(String goTermId) {
-        this.goTermId = goTermId;
-    }
-
-    public String getPubmedId() {
-        return pubmedId;
-    }
-
-    public void setPubmedId(String pubmedId) {
-        this.pubmedId = pubmedId;
-    }
-
-    public String getEvidenceCode() {
-        return evidenceCode;
-    }
-
-    public void setEvidenceCode(String evidenceCode) {
-        this.evidenceCode = evidenceCode;
-    }
-
-    public String getInferences() {
-        return inferences;
-    }
-
-    public void setInferences(String inferences) {
-        this.inferences = inferences;
-    }
-
-    public String getTaxonId() {
-        return taxonId;
-    }
-
-    public void setTaxonId(String taxonId) {
-        this.taxonId = taxonId;
-    }
-
-    public String getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(String createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public String getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public String getAnnotExtn() {
-        return annotExtn;
-    }
-
-    public void setAnnotExtn(String annotExtn) {
-        this.annotExtn = annotExtn;
-    }
-
-   public String getGeneProductFormID() {
-        return geneProductFormID;
-    }
-
-    public void setGeneProductFormID(String geneProductFormID) {
-        this.geneProductFormID = geneProductFormID;
-    }
-
-
-
-    public String getModelID() {
-        return modelID;
-    }
-
-    public void setModelID(String modelID) {
-        this.modelID = modelID;
-    }
-
-    public List<GafAnnotationGroup> getAnnotationGroups() {
-        return annotationGroups;
-    }
-
-    public void setAnnotationGroups(List<GafAnnotationGroup> annotationGroups) {
-        this.annotationGroups = annotationGroups;
-    }
-
-    public String getAnnotationProperties() {
-        return annotationProperties;
-    }
-
-    public void setAnnotationProperties(String annotationProperties) {
-        this.annotationProperties = annotationProperties;
-    }
-
-
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append("GafEntry");
-        sb.append("{entryId='").append(entryId).append('\'');
-        sb.append(", qualifier='").append(qualifier).append('\'');
-        sb.append(", goid='").append(goTermId).append('\'');
-        sb.append(", pmid='").append(pubmedId).append('\'');
-        sb.append(", evidenceCode='").append(evidenceCode).append('\'');
-        sb.append(", inferences='").append(inferences).append('\'');
-        sb.append(", taxonID='").append(taxonId).append('\'');
-        sb.append(", createdDate='").append(createdDate).append('\'');
-        sb.append(", createdBy='").append(createdBy).append('\'');
-        sb.append(", annotExtn='").append(annotExtn).append('\'');
-        sb.append(", geneProducFormID='").append(geneProductFormID).append('\'');
-        sb.append('}').append("\n");
-        return sb.toString();
+        return "GafEntry" +
+                "{entryId='" + entryId + '\'' +
+                ", qualifier='" + qualifier + '\'' +
+                ", goid='" + goTermId + '\'' +
+                ", pmid='" + pubmedId + '\'' +
+                ", evidenceCode='" + evidenceCode + '\'' +
+                ", inferences='" + inferences + '\'' +
+                ", taxonID='" + taxonId + '\'' +
+                ", createdDate='" + createdDate + '\'' +
+                ", createdBy='" + createdBy + '\'' +
+                ", annotExtn='" + annotExtn + '\'' +
+                ", geneProducFormID='" + geneProductFormID + '\'' +
+                '}' + "\n";
     }
 
     //FB case 8432 prevent GO annotation to GO:0005623 from FP-Inf. GAF load
@@ -195,5 +60,25 @@ public class GafEntry {
         return goTermId.equalsIgnoreCase("GO:0005623");
     }
 
+    /**
+     * Creates a key for a gafEntry for indexing in a hash. We use this to determine if a gaf entry
+     * that we are adding is essentially a duplicate of an existing gaf entry.  We then retain the gaf
+     * entry that has the most information (geneProductFormID).
+     *
+     * @return Key for gafEntry
+     */
+    public String getSimilarityHash() {
+        return (getQualifier() == null ? "NULL" : getQualifier()) +
+                (getMarkerAbbrev() == null ? "NULL" : getMarkerAbbrev()) +
+                (getGoTermId() == null ? "NULL" : getGoTermId()) +
+                (getEvidenceCode() == null ? "NULL" : getEvidenceCode()) +
+                (getPubmedId() == null ? "NULL" : getPubmedId()) +
+                (getInferences() == null ? "NULL" : getInferences()) +
+                (getDbObjectName() == null ? "NULL" : getDbObjectName()) +
+                (getDbObjectSynonym() == null ? "NULL" : getDbObjectSynonym()) +
+                (getTaxonId() == null ? "NULL" : getTaxonId()) +
+                (getCreatedBy() == null ? "NULL" : getCreatedBy()) +
+                (getCreatedDate() == null ? "NULL" : getCreatedDate());
+    }    
 
 }

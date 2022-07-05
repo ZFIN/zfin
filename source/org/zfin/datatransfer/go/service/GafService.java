@@ -92,7 +92,6 @@ public class GafService {
     }
 
     public void processEntries(List<GafEntry> gafEntries, GafJobData gafJobData) {
-
         GafOrganization gafOrganization =
                 markerGoTermEvidenceRepository.getGafOrganization(organizationEnum);
 

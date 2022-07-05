@@ -40,7 +40,10 @@ public class FpInferenceGafParser {
     }
 
     public List<GafEntry> parseGafFile(File downloadedFile) throws Exception {
+        logger.debug("Beginning parseGafFile at " + (new Date()) );
+
         List<GafEntry> gafEntries = new ArrayList<>();
+        Map<String, GafEntry> gafEntriesHash = new HashMap<>();
         LineIterator it = FileUtils.lineIterator(downloadedFile);
         try {
             while (it.hasNext()) {
@@ -51,10 +54,7 @@ public class FpInferenceGafParser {
                 }
                 GafEntry gafEntry = parseGafEntry(line);
                 if (isValidGafEntry(gafEntry)) {
-                    gafEntries.add(gafEntry);
-
-
-
+                    addGafEntryOrUpdateExisting(gafEntriesHash, gafEntries, gafEntry);
                 } else {
                     logger.debug("not a valid gaf entry, ignoring: " + gafEntry);
                 }
@@ -62,8 +62,48 @@ public class FpInferenceGafParser {
         } finally {
             it.close();
         }
+        logger.debug("Finishing parseGafFile at " + (new Date()) );
 
         return gafEntries;
+    }
+
+    /**
+     * Adds the gaf entry that's being parsed. If the gaf entry is sufficiently similar to an existing gaf entry,
+     * it may replace the existing gaf entry if it contains more information (geneProductFormID).
+     * See: ZFIN-8035
+     *
+     * @param gafEntriesHash Store state of currently parsed GAF entries to avoid duplicates
+     * @param gafEntries List of GAF entries
+     * @param gafEntry GAF entry to add to list
+     */
+    private void addGafEntryOrUpdateExisting(Map<String, GafEntry> gafEntriesHash, List<GafEntry> gafEntries, GafEntry gafEntry) {
+        GafEntry existingSimilarRecord = gafEntriesContainSimilarRecord(gafEntriesHash, gafEntry);
+        if (existingSimilarRecord == null) {
+            gafEntriesHash.put(gafEntry.getSimilarityHash(), gafEntry);
+            gafEntries.add(gafEntry);
+        } else {
+            updateSimilarRecord(existingSimilarRecord, gafEntry);
+        }
+
+    }
+
+
+
+    /**
+     * Given two records that are similar, update the existing record with the geneProductFormID information if missing.
+     * @param existingSimilarRecord Existing record to update
+     * @param gafEntry Source record
+     */
+    private void updateSimilarRecord(GafEntry existingSimilarRecord, GafEntry gafEntry) {
+        if (StringUtils.isEmpty(existingSimilarRecord.getGeneProductFormID()) && StringUtils.isNotEmpty(gafEntry.getGeneProductFormID())) {
+            logger.debug("Found match to update instead of adding potential duplicate: " + existingSimilarRecord.getEntryId() + " : " + gafEntry.getEntryId());
+            existingSimilarRecord.setGeneProductFormID(gafEntry.getGeneProductFormID());
+            existingSimilarRecord.setEntryId(gafEntry.getEntryId());
+        }
+    }
+    
+    private GafEntry gafEntriesContainSimilarRecord(Map<String, GafEntry> gafEntriesHash, GafEntry gafEntry) {
+        return gafEntriesHash.get(gafEntry.getSimilarityHash());
     }
 
     public void postProcessing(List<GafEntry> gafEntries) {
@@ -108,6 +148,7 @@ public class FpInferenceGafParser {
         String[] entries = line.split("\\t", -1);
 
         gafEntry.setEntryId(entries[1]); // uniprot ID for GOA, ZDB-GENE for ZFIN
+        gafEntry.setMarkerAbbrev(entries[2]);
         gafEntry.setQualifier(entries[3]);
         gafEntry.setGoTermId(entries[4]);
         gafEntry.setPubmedId(entries[5]);
@@ -129,6 +170,9 @@ public class FpInferenceGafParser {
                 .replaceAll("protein_id:", "GenPept:")
         );
 
+        gafEntry.setDbObjectName(entries[9]);
+        gafEntry.setDbObjectSynonym(entries[10]);
+
         gafEntry.setTaxonId(entries[12]);
         gafEntry.setCreatedDate(entries[13]);
 
@@ -138,9 +182,10 @@ public class FpInferenceGafParser {
                 .replaceAll("\\bUniProt:\\b", "UniProt:")
 
         );
-        if (entries.length > 14) {
-            gafEntry.setAnnotExtn(entries[15]);
-        }
+
+
+        gafEntry.setAnnotExtn(entries[15]);
+
         gafEntry.setGeneProductFormID(entries[16]);
         gafEntry.setCol8pipes(countPipes);
         gafEntry.setCol8commas(countCommas);
@@ -156,7 +201,7 @@ public class FpInferenceGafParser {
         List<GafAnnotationGroup> annotationGroups = new ArrayList<>(groups.size());
         groups.forEach(group -> {
             GafAnnotationGroup annotationGroup = new GafAnnotationGroup();
-            List<String> components = new ArrayList<>(Arrays.asList(group.split("\\,")));
+            List<String> components = new ArrayList<>(Arrays.asList(group.split(",")));
             components.forEach(component -> {
                 String pattern = "(?<" + GafAnnotationExtension.RELATIONSHIP_TERM +
                         ">.*)\\((?<" + GafAnnotationExtension.ENTITY_TERM + ">.*)\\)";

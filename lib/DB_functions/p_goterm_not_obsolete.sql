@@ -13,7 +13,7 @@ declare ok boolean := (select term_is_obsolete
 begin
 if ok then
 
-  raise exception 'FAIL!: GO Term is OBSOLETE!';
+  raise exception 'FAIL!: GO Term is OBSOLETE! (%)', vGoTerm;
 
 elsif not ok then 
 
