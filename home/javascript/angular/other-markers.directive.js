@@ -40,9 +40,7 @@
         om.deleteOtherMarkerLink = deleteOtherMarkerLink;
         om.close = close;
 
-        init();
-
-        function init() {
+        this.$onInit = function () {
             MarkerService.getLinks(om.markerId,"other marker pages")
                 .then(function (links) {
                     om.links = links;

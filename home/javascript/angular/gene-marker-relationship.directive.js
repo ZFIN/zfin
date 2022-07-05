@@ -37,10 +37,7 @@
         mkrreln.errorMessage = '';
         mkrreln.otherLink = null;
         mkrreln.ind = 0;
-        init();
-
-        function init() {
-
+        this.$onInit = function () {
             MarkerService.getRelationshipTypes(mkrreln.markerId, mkrreln.interacts)
 
                 .then(function (relationshipTypes) {
