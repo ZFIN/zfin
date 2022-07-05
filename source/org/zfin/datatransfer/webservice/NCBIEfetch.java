@@ -283,7 +283,7 @@ public class NCBIEfetch {
             this.val = val;
         }
 
-        String getVal() {
+        public String getVal() {
             return val;
         }
     }
