@@ -132,7 +132,9 @@ public class LinkDisplay implements ProvidesLink {
         if (this.references == null) {
             this.references = new HashSet<>();
         }
-        this.references.addAll(references);
+        if (references != null) {
+            this.references.addAll(references);
+        }
     }
 
     public String getMarkerZdbID() {

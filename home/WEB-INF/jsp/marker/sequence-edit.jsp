@@ -34,7 +34,7 @@
 
         <div id="newStemLoopSequence"></div>
 
-        <div ng-app="app" ng-controller="sequenceInfoCtrl as si" ng-init="initiate('${formBean.marker.zdbID}')" ng-cloak id="sequenceInformation">
+        <div ng-app="app" ng-controller="sequenceInfoCtrl as si" data-marker-zdb-id="${formBean.marker.zdbID}" ng-cloak id="sequenceInformation">
 
             <div class="summaryTitle">SEQUENCE INFORMATION
                <span style="cursor: pointer;">

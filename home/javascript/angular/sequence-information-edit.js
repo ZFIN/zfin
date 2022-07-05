@@ -1,6 +1,6 @@
 ;(function () {
     angular.module('app')
-        .controller('sequenceInfoCtrl', ['$scope', '$http', '$sce', function ($scope, $http, $sce) {
+        .controller('sequenceInfoCtrl', ['$scope', '$http', '$sce', '$attrs', function ($scope, $http, $sce, $attrs) {
             var seqInfoCtrl = this;
 
             seqInfoCtrl.linkDisplays = [];
@@ -17,15 +17,16 @@
             seqInfoCtrl.lengthEdit = '';
             seqInfoCtrl.referenceEdit = '';
             seqInfoCtrl.seqenceInfo = null;
+            seqInfoCtrl.markerZdbId = $attrs.markerZdbId;
 
-            $scope.initiate = initiate;
+
             $scope.getSequences = getSequences;
             $scope.getDatabases = getDatabases;
 
             seqInfoCtrl.close = close;
 
-            function initiate(markerZdbId) {
-                $scope.markerId = markerZdbId;
+            seqInfoCtrl.$onInit = function () {
+                $scope.markerId = seqInfoCtrl.markerZdbId;
                 getSequences();
                 getDatabases();
             }

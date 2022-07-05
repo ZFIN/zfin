@@ -10,15 +10,14 @@ angular.module('app')
 
 
         authorLinkCtrl.loadSuggestedPeople = function(author) {
-
             $http.get('/action/publication/link-author-suggestions?authorString=' + author.label)
-                .success(function(data) {
+                .then(function(response) {
+                    const data = response.data;
                     author.suggestions = data;
                     author.loadedSuggestions = true;
-                })
-                .error(function() {
+                }, function(err) {
                     authorLinkCtrl.errorString = "There was an error on the server when fetching author suggestions";
-                })
+                });
 
         };
 
@@ -37,50 +36,51 @@ angular.module('app')
 
         authorLinkCtrl.addAuthor = function(person) {
             $http.post('/action/publication/' + authorLinkCtrl.pubZdbId + "/addAuthor/" + person.zdbID,[])
-                .success(function() {
+                .then(function() {
                     authorLinkCtrl.loadRegisteredAuthors();
                     authorLinkCtrl.errorString = "";
                     authorLinkCtrl.authorZdbID = "";
                     //authorLinkCtrl.registeredAuthors.push(person);
-                })
-                .error(function() {
+                },
+                function() {
                     authorLinkCtrl.errorString = "There was an error on the server when attempting to add the author";
                 })
         };
 
         authorLinkCtrl.removeAuthor = function(person) {
             $http.post('/action/publication/' + authorLinkCtrl.pubZdbId + "/removeAuthor/" + person.zdbID,[])
-                .success(function() {
+                .then(function() {
                     authorLinkCtrl.loadRegisteredAuthors();
                     authorLinkCtrl.errorString = "";
-                })
-                .error(function() {
+                },
+                function() {
                     authorLinkCtrl.errorString = "There was an error on the server when attempting to add the author";
                 })
         };
 
         authorLinkCtrl.loadAuthors = function() {
             $http.get('/action/publication/' + authorLinkCtrl.pubZdbId + "/author-strings")
-                .success(function(data) {
+                .then(function(response) {
+                    const data = response.data;
                     authorLinkCtrl.authorStrings = [];
                     angular.forEach(data, function(authorString) {
                         var author = { label: authorString, suggestions: []};
                         authorLinkCtrl.authors.push(author)
                     });
-                })
-                .error(function() {
+                }, function() {
                     authorLinkCtrl.errorString = "There was an error on the server and the registered authors could not be loaded.";
-                })
+                });
 
         };
 
         authorLinkCtrl.loadRegisteredAuthors = function() {
             $http.get('/action/publication/' + authorLinkCtrl.pubZdbId + "/registered-authors")
-                .success(function(data) {
+                .then(function(response) {
+                    const data = response.data;
                     authorLinkCtrl.registeredAuthors = data;
                     authorLinkCtrl.errorString = "";
-                })
-                .error(function() {
+                },
+                function() {
                     authorLinkCtrl.errorString = "There was an error on the server and the registered authors could not be loaded.";
                 })
         };

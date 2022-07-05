@@ -44,9 +44,7 @@
 
         cn.errorMessage;
 
-        init();
-
-        function init() {
+        this.$onInit = function () {
             cn.errorMessage = '';
 
             MarkerService.getNotes(cn.markerId)

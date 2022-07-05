@@ -32,9 +32,7 @@
         pn.deleteNote = deleteNote;
         pn.close = close;
 
-        init();
-
-        function init() {
+        this.$onInit = function () {
             pn.noteText = '';
 
             MarkerService.getNotes(pn.markerId)
