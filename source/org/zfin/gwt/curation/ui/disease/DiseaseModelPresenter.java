@@ -60,6 +60,10 @@ public class DiseaseModelPresenter implements Presenter {
             return;
         }
 
+        if(disease.getFish() == null || disease.getFish().getZdbID() == null || disease.getFish().getZdbID().isEmpty()) {
+            setError("No fish selected, saving annotation but not submitting to alliance.");
+        }
+
         AppUtils.fireAjaxCall(HumanDiseaseModule.getModuleInfo(), AjaxCallEventType.ADD_HUMAN_DISEASE_ANNOTATIONS_START);
         diseaseRpcService.addHumanDiseaseAnnotation(disease,
                 new RetrieveDiseaseModelListCallBack(disease, "Could not add a new disease model", view.getErrorLabel(),
