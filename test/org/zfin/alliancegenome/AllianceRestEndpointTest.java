@@ -14,7 +14,7 @@ public class AllianceRestEndpointTest {
         //AllianceRestManager.path = "https://alpha-curation.alliancegenome.org";
         DiseaseAnnotationRESTInterfaceAlliance api = AllianceRestManager.getDiseaseAnnotationEndpoints();
         //ObjectResponse<DiseaseAnnotation> annotation = api.getDiseaseAnnotation("4491701");
-        ObjectResponse<DiseaseAnnotation> annotation = api.getDiseaseAnnotation("1516234");
+        ObjectResponse<DiseaseAnnotation> annotation = api.getDiseaseAnnotation("AUTH-TOKEN-GOES-HERE", "1516234");
 
         DOTerm term = new DOTerm();
         term.setCurie("DOID:4");
@@ -28,7 +28,7 @@ public class AllianceRestEndpointTest {
         vocabularyTerm.setName("is_marker_of");
         entity.setDiseaseRelation(vocabularyTerm);
         //ObjectResponse<DiseaseAnnotation> ann = api.updateDiseaseAnnotation(annotation.getEntity());
-        ObjectResponse<DiseaseAnnotation> ann = api.addDiseaseAnnotation(entity);
+        ObjectResponse<DiseaseAnnotation> ann = api.addDiseaseAnnotation("AUTH-TOKEN-GOES-HERE", entity);
         //ObjectResponse<DiseaseAnnotation> annotation1 = api1.get(4491701L);
         //ObjectResponse<DiseaseAnnotation> annotation2 = api1.get("4491701");
 
