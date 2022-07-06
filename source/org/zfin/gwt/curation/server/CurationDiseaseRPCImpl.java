@@ -6,6 +6,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
 import org.zfin.ExternalNote;
+import org.zfin.alliancegenome.DiseaseAnnotationRESTAllianceService;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.dto.DiseaseAnnotationDTO;
@@ -34,6 +35,8 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
 
     private static Logger LOG = LogManager.getLogger(CurationDiseaseRPCImpl.class);
 
+    private FishService fishService = new FishService();
+    private DiseaseAnnotationService diseaseAnnotationService = new DiseaseAnnotationService();
     @Override
     public List<GenotypeDTO> getGenotypeList(String publicationID) {
         List<Genotype> genotypeList = getMutantRepository().getGenotypesForAttribution(publicationID);
@@ -276,7 +279,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
             HibernateUtil.flushAndCommitCurrentSession();
             // send to Alliance
             HibernateUtil.currentSession().refresh(newFish);
-            FishService.submitFishToAlliance(newFish);
+            fishService.submitFishToAlliance(newFish);
         } catch (ConstraintViolationException e) {
             HibernateUtil.rollbackTransaction();
             String message = e.getMessage();
@@ -362,7 +365,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
 
         // Create DA at Alliancegenome
         if (successfulSave && dam != null) {
-            DiseaseAnnotationService.submitAnnotationToAlliance(dam);
+            diseaseAnnotationService.submitAnnotationToAlliance(dam);
         }
 
         return getHumanDiseaseModelList(diseaseAnnotationDTO.getPublication().getZdbID());

@@ -101,7 +101,7 @@
             })
             .filter('paging', function() {
                 return function(input, pageSize, page) {
-                    if (input === undefined) {
+                    if (input === undefined || input === null) {
                         return;
                     }
 
@@ -135,7 +135,8 @@
         //            $scope.url = '/action/quicksearch/facet-autocomplete?fq=category%3A%22' + category + '%22&category=' + category + '&field=' + field + '&term=&limit=-1&sort=index';
                     $scope.url = '/action/quicksearch/facet-autocomplete?' + jQuery('#query-string').val() + '&field=' + field + '&term=&limit=-1&sort=index';
 
-                    $http.get($scope.url).success(function(data) {
+                    $http.get($scope.url).then(function(response) {
+                        const data = response.data;
                         $scope.facetValues = data;
 
                     });
