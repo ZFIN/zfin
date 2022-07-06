@@ -17,6 +17,7 @@ WITH mgte_joined_to_db_link AS (
       AND fdbc.fdbcont_fdb_db_id = fdb.fdb_db_pk_id
       AND mrkrgoev_term_zdb_id = term.term_zdb_id
       AND NOT term_is_obsolete
+      AND NOT term_is_secondary
 )
 UPDATE marker_go_term_evidence mgte
     SET mrkrgoev_protein_accession = mgte_joined_to_db_link.accession
