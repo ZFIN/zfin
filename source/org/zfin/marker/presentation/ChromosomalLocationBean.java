@@ -30,11 +30,11 @@ public class ChromosomalLocationBean {
 
     @JsonDeserialize(using = FlexibleIntegerDeserializer.class)
     @JsonView(View.API.class)
-    Integer startLocation;
+    Long startLocation;
 
     @JsonDeserialize(using = FlexibleIntegerDeserializer.class)
     @JsonView(View.API.class)
-    Integer endLocation;
+    Long endLocation;
 
     @JsonView(View.API.class)
     String locationEvidence;
@@ -48,8 +48,8 @@ public class ChromosomalLocationBean {
         clBean.setEntityID(persistedLocation.getMarker().getZdbID());
         clBean.setAssembly(persistedLocation.getAssembly());
         clBean.setChromosome(persistedLocation.getChromosome());
-        clBean.setStartLocation(persistedLocation.getStartLocation());
-        clBean.setEndLocation(persistedLocation.getEndLocation());
+        clBean.setStartLocation( persistedLocation.getStartLocation().longValue() );
+        clBean.setEndLocation(persistedLocation.getEndLocation().longValue() );
         clBean.setLocationEvidenceByMarkerLocation(persistedLocation);
         clBean.setReferencesByMarkerLocation(persistedLocation);
         return clBean;
