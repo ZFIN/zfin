@@ -76,8 +76,8 @@ public class MappingServiceTest extends AbstractDatabaseTest {
         ChromosomalLocationBean clb = new ChromosomalLocationBean();
         clb.setAssembly("GRCz11");
         clb.setChromosome("1");
-        clb.setStartLocation(2);
-        clb.setEndLocation(3);
+        clb.setStartLocation(2L);
+        clb.setEndLocation(3L);
         clb.setLocationEvidence("IC");
         clb.setEntityID(marker.getZdbID());
 
