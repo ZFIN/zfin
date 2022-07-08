@@ -35,14 +35,14 @@ public class MarkerLocation extends Location {
         this.setChromosome(chromosomalLocationBean.getChromosome());
 
         try {
-            int startLocation = chromosomalLocationBean.getStartLocation();
+            int startLocation = chromosomalLocationBean.getStartLocation().intValue();
             this.setStartLocation(startLocation);
         } catch (NumberFormatException nfe) {
             //don't set start location
         }
 
         try {
-            int endLocation = chromosomalLocationBean.getEndLocation();
+            int endLocation = chromosomalLocationBean.getEndLocation().intValue();
             this.setEndLocation(endLocation);
         } catch (NumberFormatException nfe) {
             //don't set end location

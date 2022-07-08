@@ -52,17 +52,45 @@ const MarkerEditChromosomalLocation = ({
         return false;
     };
 
-    const handleValidateLocations = () => {
+    //if no values exist, validation should pass
+    const locationValuesExist = () => {
         if (!values) {
             return false;
         }
+        if (!values.startLocation && !values.startLocation) {
+            return false;
+        }
+        return true;
+    };
+
+    const handleValidateStartLocation = () => {
+        return locationValuesExist() &&
+            handleValidateMaxValue('Start location', 'startLocation') ||
+            handleValidateLocations();
+    };
+
+    const handleValidateEndLocation = () => {
+        return locationValuesExist() &&
+            handleValidateMaxValue('End location', 'endLocation') ||
+            handleValidateLocations();
+    };
+
+    const handleValidateMaxValue = (name, index) => {
+        const value = parseIntIgnoreCommas(values[index]);
+
+        const maxInt = 2147483646;
+        if (value >= maxInt ) {
+            return name + ' must be less than 2,147,483,646.';
+        }
+        return false;
+    };
+
+    const handleValidateLocations = () => {
         const startLocation = parseIntIgnoreCommas(values.startLocation);
         const endLocation = parseIntIgnoreCommas(values.endLocation);
-        if (startLocation && endLocation
-            && (startLocation > endLocation)) {
+        if (startLocation > endLocation) {
             return 'Start location must be before end location.';
         }
-
         return false;
     };
 
@@ -169,7 +197,7 @@ const MarkerEditChromosomalLocation = ({
                         label='Start Location'
                         id='start-location'
                         field='startLocation'
-                        validate={handleValidateLocations}
+                        validate={handleValidateStartLocation}
                     />
                     <FormGroup
                         labelClassName='col-md-3'
@@ -177,7 +205,7 @@ const MarkerEditChromosomalLocation = ({
                         label='End Location'
                         id='end-location'
                         field='endLocation'
-                        validate={handleValidateLocations}
+                        validate={handleValidateEndLocation}
                     />
                     <FormGroup
                         labelClassName='col-md-3'
