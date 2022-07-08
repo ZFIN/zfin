@@ -1,6 +1,7 @@
 package org.zfin.alliancegenome;
 
 import lombok.extern.log4j.Log4j2;
+import org.zfin.properties.ZfinPropertiesEnum;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -17,14 +18,14 @@ public class RestAllianceService {
 
     static {
         try {
-            token = new String(Objects.requireNonNull(getToken()).getBytes("ISO8859-1"), StandardCharsets.UTF_8);
+            token = new String(Objects.requireNonNull(getToken(), "Please Provide API Token for Alliance").getBytes("ISO8859-1"), StandardCharsets.UTF_8);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
 
     private static String getToken() {
-        Path file = Path.of("server_apps/DB_maintenance/Alliance/apiToken.txt");
+        Path file = Path.of(ZfinPropertiesEnum.TARGETROOT.value() + "/server_apps/DB_maintenance/Alliance/apiToken.txt");
         try {
             return Files.readString(file);
         } catch (IOException e) {
