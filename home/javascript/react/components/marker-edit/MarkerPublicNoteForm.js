@@ -7,6 +7,10 @@ import InputField from '../form/InputField';
 import LoadingButton from '../LoadingButton';
 
 const MarkerPublicNoteForm = ({markerId, note, onSave}) => {
+    if (note && note.noteData === null) {
+        note.noteData = '';
+    }
+
     const defaultValues = note || { noteData: '' };
     const {
         Form,
