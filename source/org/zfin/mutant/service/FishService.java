@@ -17,7 +17,7 @@ import java.util.List;
 public class FishService extends AllianceService {
 
     @Autowired
-    AgmRESTAllianceService agmRESTAllianceService;
+    AgmRESTAllianceService agmRESTAllianceService = new AgmRESTAllianceService();
 
     public void submitFishToAlliance(Fish fish) {
         AffectedGenomicModel model = new AffectedGenomicModel();
@@ -42,8 +42,9 @@ public class FishService extends AllianceService {
 
     public static void main(String[] args) {
         ZfinPropertiesEnum.ALLIANCE_CURATION_URL.setValue("http://localhost:8080");
+        //ZfinPropertiesEnum.ALLIANCE_CURATION_URL.setValue("https://alpha-curation.alliancegenome.org");
         Fish fish = new Fish();
-        fish.setZdbID("ZFIN:ZDB-FISH-220207-33");
+        fish.setZdbID("ZDB-FISH-220707-340");
         fish.setDisplayName("Fish Name");
         FishService service = new FishService();
         service.agmRESTAllianceService = new AgmRESTAllianceService();
