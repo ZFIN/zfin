@@ -6,16 +6,16 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 
 import java.io.IOException;
 
-public class FlexibleIntegerDeserializer extends JsonDeserializer<Integer> {
+public class FlexibleLongDeserializer extends JsonDeserializer<Long> {
 
     @Override
-    public Integer deserialize(JsonParser parser, DeserializationContext context)
+    public Long deserialize(JsonParser parser, DeserializationContext context)
             throws IOException {
         String numberString = parser.getText();
         if (numberString.contains(",")) {
             numberString = numberString.replaceAll(",", "");
         }
-        return Integer.valueOf(numberString);
+        return Long.valueOf(numberString);
     }
 
 }
