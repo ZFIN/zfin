@@ -131,7 +131,7 @@ public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
                         annotation.setObject(disease.getOboID());
                         annotation.setDateUpdated(format(map.get(publication)));
                         annotation.setCreatedBy("ZFIN:CURATOR");
-                        annotation.setModifiedBy("ZFIN:CURATOR");
+                        //annotation.setModifiedBy("ZFIN:CURATOR");
 
                         List<String> evidenceCodes = evidenceSet.stream()
                                 .map(ZfinAllianceConverter::convertEvidenceCodes)
@@ -165,34 +165,38 @@ public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
 //        // get all genes from mutant_fast_search table and list their disease info
         List<DiseaseAnnotationModel> damos = getMutantRepository().getDiseaseAnnotationModelsNoStd(numfOfRecords);
         for (DiseaseAnnotationModel damo : damos) {
-
-            Fish fish = damo.getFishExperiment().getFish();
-            AGMDiseaseAnnotationDTO annotation = new AGMDiseaseAnnotationDTO();
-            annotation.setDataProvider("ZFIN");
-            annotation.setCreatedBy("ZFIN:curator");
-            annotation.setModifiedBy("ZFIN:curator");
-//            annotation.setModEntityId(damo.getDiseaseAnnotation().getZdbID());
-            annotation.setDiseaseRelation(RelationshipDTO.IS_MODEL_OF);
-            annotation.setSubject("ZFIN:" + fish.getZdbID());
-            annotation.setDateUpdated(format(damo.getDiseaseAnnotation().getZdbID()));
-
-            annotation.setObject(damo.getDiseaseAnnotation().getDisease().getOboID());
-
-            List<String> ecoTerms = ZfinAllianceConverter.convertEvidenceCodes(damo.getDiseaseAnnotation().getEvidenceCode()).stream()
-                    .map(EcoTerm::getCurie).collect(toList());
-            annotation.setEvidenceCodes(ecoTerms);
-            annotation.setSingleReference(getSingleReference(damo.getDiseaseAnnotation().getPublication()));
-
-            org.alliancegenome.curation_api.model.ingest.dto.ConditionRelationDTO condition = populateExperimentConditions(damo.getFishExperiment());
-            List<org.alliancegenome.curation_api.model.ingest.dto.ConditionRelationDTO> conditions = new ArrayList<>();
-            condition.setHandle(damo.getFishExperiment().getExperiment().getName().replace("_", ""));
-            condition.setSingleReference(getSingleReference(damo.getDiseaseAnnotation().getPublication()));
-            conditions.add(condition);
-            annotation.setConditionRelations(List.of(condition));
+            AGMDiseaseAnnotationDTO annotation = getAgmDiseaseAnnotationDTO(damo);
             diseaseDTOList.add(annotation);
         }
 
         return diseaseDTOList;
+    }
+
+    private AGMDiseaseAnnotationDTO getAgmDiseaseAnnotationDTO(DiseaseAnnotationModel damo) {
+        Fish fish = damo.getFishExperiment().getFish();
+        AGMDiseaseAnnotationDTO annotation = new AGMDiseaseAnnotationDTO();
+        annotation.setDataProvider("ZFIN");
+        annotation.setCreatedBy("ZFIN:curator");
+        //annotation.setModifiedBy("ZFIN:curator");
+//            annotation.setModEntityId(damo.getDiseaseAnnotation().getZdbID());
+        annotation.setDiseaseRelation(RelationshipDTO.IS_MODEL_OF);
+        annotation.setSubject("ZFIN:" + fish.getZdbID());
+        annotation.setDateUpdated(format(damo.getDiseaseAnnotation().getZdbID()));
+
+        annotation.setObject(damo.getDiseaseAnnotation().getDisease().getOboID());
+
+        List<String> ecoTerms = ZfinAllianceConverter.convertEvidenceCodes(damo.getDiseaseAnnotation().getEvidenceCode()).stream()
+                .map(EcoTerm::getCurie).collect(toList());
+        annotation.setEvidenceCodes(ecoTerms);
+        annotation.setSingleReference(getSingleReference(damo.getDiseaseAnnotation().getPublication()));
+
+        org.alliancegenome.curation_api.model.ingest.dto.ConditionRelationDTO condition = populateExperimentConditions(damo.getFishExperiment());
+        List<org.alliancegenome.curation_api.model.ingest.dto.ConditionRelationDTO> conditions = new ArrayList<>();
+        condition.setHandle(damo.getFishExperiment().getExperiment().getName().replace("_", ""));
+        condition.setSingleReference(getSingleReference(damo.getDiseaseAnnotation().getPublication()));
+        conditions.add(condition);
+        annotation.setConditionRelations(List.of(condition));
+        return annotation;
     }
 
     private String getSingleReference(Publication publication) {
@@ -344,7 +348,7 @@ public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
     }
 
     // ToDo: This list should be a slim in ZECO to identify those high-level terms.
-    private static final List<GenericTerm> highLevelConditionTerms = new ArrayList<>(18);
+    public static final List<GenericTerm> highLevelConditionTerms = new ArrayList<>(18);
 
     static {
         highLevelConditionTerms.add(new GenericTerm("ZDB-TERM-160831-7", "ZECO:0000105"));
