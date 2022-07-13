@@ -36,7 +36,6 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
     private static Logger LOG = LogManager.getLogger(CurationDiseaseRPCImpl.class);
 
     private FishService fishService = new FishService();
-    private DiseaseAnnotationService diseaseAnnotationService = new DiseaseAnnotationService();
     @Override
     public List<GenotypeDTO> getGenotypeList(String publicationID) {
         List<Genotype> genotypeList = getMutantRepository().getGenotypesForAttribution(publicationID);
@@ -365,6 +364,7 @@ public class CurationDiseaseRPCImpl extends ZfinRemoteServiceServlet implements 
 
         // Create DA at Alliancegenome
         if (successfulSave && dam != null) {
+            DiseaseAnnotationService diseaseAnnotationService = new DiseaseAnnotationService();
             diseaseAnnotationService.submitAnnotationToAlliance(dam);
         }
 
