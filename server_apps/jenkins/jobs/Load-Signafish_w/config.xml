@@ -17,11 +17,10 @@
   <concurrentBuild>false</concurrentBuild>
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
-    <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/data_transfer/Signafish
-./LoadSignafish.groovy -jobName Load-Signafish_w -commit -report</command>
-    </hudson.tasks.Shell>
-  </builders>
+    <hudson.tasks.Ant plugin="ant@1.11">
+      <targets>load-signafish</targets>
+      <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
+    </hudson.tasks.Ant>  </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
       <artifacts>server_apps/data_transfer/Signafish/*.html</artifacts>
