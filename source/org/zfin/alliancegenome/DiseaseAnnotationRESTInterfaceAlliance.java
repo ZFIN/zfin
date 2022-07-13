@@ -1,5 +1,6 @@
 package org.zfin.alliancegenome;
 
+import org.alliancegenome.curation_api.exceptions.ApiErrorException;
 import org.alliancegenome.curation_api.exceptions.ObjectUpdateException;
 import org.alliancegenome.curation_api.model.entities.AGMDiseaseAnnotation;
 import org.alliancegenome.curation_api.model.entities.DiseaseAnnotation;
@@ -30,7 +31,7 @@ public interface DiseaseAnnotationRESTInterfaceAlliance {
     @Path("/agm-disease-annotation/create")
     @Consumes({MediaType.APPLICATION_JSON})
     ObjectResponse<AGMDiseaseAnnotation> createZfinAgmDiseaseAnnotations(@HeaderParam("Authorization") String auth,
-                                                                         AGMDiseaseAnnotationDTO annotationData) throws IOException;
+                                                                         AGMDiseaseAnnotationDTO annotationData) throws IOException, ApiException;
 
     @PUT
     @Path("/agm-disease-annotation")

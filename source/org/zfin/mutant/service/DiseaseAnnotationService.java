@@ -1,6 +1,8 @@
 package org.zfin.mutant.service;
 
 import lombok.extern.log4j.Log4j2;
+import org.alliancegenome.curation_api.exceptions.ApiErrorException;
+import org.alliancegenome.curation_api.exceptions.ObjectUpdateException;
 import org.alliancegenome.curation_api.model.entities.AGMDiseaseAnnotation;
 import org.alliancegenome.curation_api.model.entities.AffectedGenomicModel;
 import org.alliancegenome.curation_api.model.entities.Reference;
@@ -10,6 +12,7 @@ import org.alliancegenome.curation_api.model.ingest.dto.AGMDiseaseAnnotationDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.ExperimentalConditionDTO;
 import org.alliancegenome.curation_api.response.ObjectResponse;
 import org.springframework.stereotype.Service;
+import org.zfin.alliancegenome.ApiException;
 import org.zfin.alliancegenome.DiseaseAnnotationRESTAllianceService;
 import org.zfin.alliancegenome.ZfinAllianceConverter;
 import org.zfin.expression.ExperimentCondition;
@@ -22,6 +25,7 @@ import org.zfin.mutant.FishExperiment;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -43,9 +47,11 @@ public class DiseaseAnnotationService extends AllianceService {
         ObjectResponse<AGMDiseaseAnnotation> response = null;
         try {
             response = restInterfaceAlliance.updateZfinAgmDiseaseAnnotations(dto);
-        } catch (Exception e) {
+        } catch (ApiException e) {
+            log.warn("Could not create disease annotation at Alliance " + e.getMessage());
+        } catch (IOException e) {
             String message = e.getMessage() != null ? e.getMessage() : e.getCause().getLocalizedMessage();
-            log.error("Could not create Disease Annotation at Alliance: " + message);
+            log.warn("Could not create Disease Annotation at Alliance: " + message);
         }
         return response != null ? response.getEntity() : null;
     }
