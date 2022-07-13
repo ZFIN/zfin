@@ -1,6 +1,8 @@
 package org.zfin.alliancegenome;
 
 import lombok.extern.log4j.Log4j2;
+import org.alliancegenome.curation_api.exceptions.ApiErrorException;
+import org.alliancegenome.curation_api.exceptions.ObjectUpdateException;
 import org.alliancegenome.curation_api.model.entities.AGMDiseaseAnnotation;
 import org.alliancegenome.curation_api.model.ingest.dto.AGMDiseaseAnnotationDTO;
 import org.alliancegenome.curation_api.response.ObjectResponse;
@@ -19,20 +21,16 @@ import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 
+import java.io.IOException;
+
 @Log4j2
 @Service
 public class DiseaseAnnotationRESTAllianceService extends RestAllianceService {
 
     private final DiseaseAnnotationRESTInterfaceAlliance api = AllianceRestManager.getDiseaseAnnotationEndpoints();
 
-    public ObjectResponse<AGMDiseaseAnnotation> updateZfinAgmDiseaseAnnotations(AGMDiseaseAnnotationDTO dto) {
-        try {
-            return api.createZfinAgmDiseaseAnnotations(token, dto);
-        } catch (Exception e) {
-            String message = e.getMessage() != null ? e.getMessage() : e.getCause().getLocalizedMessage();
-            log.error("Could not create Disease Annotation at Alliance: " + message);
-        }
-        return null;
+    public ObjectResponse<AGMDiseaseAnnotation> updateZfinAgmDiseaseAnnotations(AGMDiseaseAnnotationDTO dto) throws IOException, ApiException {
+        return api.createZfinAgmDiseaseAnnotations(token, dto);
     }
 
     public ObjectResponse<AGMDiseaseAnnotation> addDiseaseAnnotation(AGMDiseaseAnnotation annotation) {
