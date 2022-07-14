@@ -65,6 +65,8 @@ AddEditList.propTypes = {
     formatItem: PropTypes.func,
     title:PropTypes.string,
     maxLength:PropTypes.number,
+    readOnly:PropTypes.bool,
+    blankOnEmpty:PropTypes.bool,
 };
 
 export default AddEditList;

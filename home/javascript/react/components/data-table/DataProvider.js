@@ -154,6 +154,8 @@ const DataProvider = ({
                     </>}
                 </div>}
             </>}
+            { !pagination &&  <div className='data-pagination-container'/>
+            }
         </>
     );
 }

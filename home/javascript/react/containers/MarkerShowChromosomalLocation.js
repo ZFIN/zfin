@@ -25,18 +25,18 @@ const MarkerShowChromosomalLocation = ({
         const rightColumnClass = 'col-sm-6 col-md-7 col-lg-8';
 
         return <dl className='row'>
-                    <dt className={leftColumnClass}>Location</dt>
-                    <dd className={rightColumnClass}><>Chr {item.chromosome}: </>
-                        {' ' + item.startLocation.toLocaleString()} - {item.endLocation.toLocaleString() + ' '}
-                        ({item.assembly})
-                        {item.references && item.references.length && <span> {' '}
-                            (<a href={'/action/infrastructure/data-citation-list/' + markerId + '/'
+            <dt className={leftColumnClass}>Location</dt>
+            <dd className={rightColumnClass}><>Chr {item.chromosome}: </>
+                {' ' + item.startLocation.toLocaleString()} - {item.endLocation.toLocaleString() + ' '}
+                ({item.assembly})
+                {item.references && item.references.length && <span> {' '}
+                    (<a href={'/action/infrastructure/data-citation-list/' + markerId + '/'
                                 + item.references.map( reference => reference.zdbID).join(',') }
-                            >
-                            {item.references.length}</a>)
-                        </span> }
-                    </dd>
-                </dl>;
+                    >
+                        {item.references.length}</a>)
+                </span> }
+            </dd>
+        </dl>;
     };
 
     return (
