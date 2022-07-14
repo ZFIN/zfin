@@ -117,7 +117,13 @@
 
 
     <target name="check-indexer">
-        <exec executable="${SOURCEROOT}/server_apps/solr/bin/check-indexer.groovy"/>
+        <java classname="org.zfin.datatransfer.CheckIndexerJob"
+              fork="yes"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="server_apps/DB_maintenance/validatedata"/>
+        </java>
     </target>
 
     <target name="drs" depends="deploy-solr,reload-solr-core"/>
