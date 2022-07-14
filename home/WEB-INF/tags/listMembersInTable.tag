@@ -15,7 +15,7 @@
 
 <c:set var="count" value="0"/>
 <c:set var="open" value="true"/>
-<table cellspacing="10px;" style="margin-left: -10px;">
+<table cellspacing="10px;">
     <c:forEach var="member" items="${members}" varStatus="status">
         <%--if not the PI or director--%>
         <c:choose>
