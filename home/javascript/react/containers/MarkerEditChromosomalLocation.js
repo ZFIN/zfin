@@ -126,9 +126,9 @@ const MarkerEditChromosomalLocation = ({
                         (<a href={'/action/infrastructure/data-citation-list/' + markerId + '/'
                                 + item.references.map( reference => reference.zdbID).join(',') }
                         >
-                        {item.references.length}</a>)
+                            {item.references.length}</a>)
                     </span> }
-                {editLink} </dd>
+                    {editLink} </dd>
             </dl>
         </>;
     };
