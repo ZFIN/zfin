@@ -91,5 +91,5 @@ select * from noctua_model_annotation where nma_mrkrgoev_zdb_id in (select mrkrg
 select * from marker_go_term_annotation_extension_group where mgtaeg_mrkrgoev_zdb_id in (select mrkrgoev_zdb_id from tmp_to_delete_marker_go_term_evidence);
 
 -- ===== do the delete =======
-DELETE FROM marker_go_term_evidence where mrkrgoev_zdb_id in
-      (select mrkrgoev_zdb_id from tmp_to_delete_marker_go_term_evidence);
+-- DELETE FROM marker_go_term_evidence where mrkrgoev_zdb_id in
+--       (select mrkrgoev_zdb_id from tmp_to_delete_marker_go_term_evidence);
