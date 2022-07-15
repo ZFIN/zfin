@@ -19,6 +19,9 @@ public class IndexerStatus {
         @JsonProperty("Time Elapsed")
         private String timeElapsed;
 
+        @JsonProperty("Time taken")
+        private String timeTaken;
+
     }
 
     public enum Status {
