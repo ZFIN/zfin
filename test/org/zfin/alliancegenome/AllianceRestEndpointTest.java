@@ -28,7 +28,7 @@ public class AllianceRestEndpointTest {
         vocabularyTerm.setName("is_marker_of");
         entity.setDiseaseRelation(vocabularyTerm);
         //ObjectResponse<DiseaseAnnotation> ann = api.updateDiseaseAnnotation(annotation.getEntity());
-        ObjectResponse<DiseaseAnnotation> ann = api.addDiseaseAnnotation("AUTH-TOKEN-GOES-HERE", entity);
+        ObjectResponse<DiseaseAnnotation> ann = api.updateDiseaseAnnotation(entity);
         //ObjectResponse<DiseaseAnnotation> annotation1 = api1.get(4491701L);
         //ObjectResponse<DiseaseAnnotation> annotation2 = api1.get("4491701");
 
