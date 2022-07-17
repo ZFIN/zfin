@@ -61,7 +61,7 @@ public class CheckIndexerJob extends AbstractValidateDataReportTask {
         setLoggerToInfoLevel(log);
         System.out.println(args[0]);
         System.out.println(args[1]);
-        CheckIndexerJob job = new CheckIndexerJob("CheckInder", args[0], args[1]);
+        CheckIndexerJob job = new CheckIndexerJob("CheckIndexer", args[0], args[1]);
         System.exit(job.execute());
     }
 }
