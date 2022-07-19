@@ -293,7 +293,6 @@ create index pmge_mrkr_id_index
 		where db.acc_num = ec.ec_acc
 		  and term_ont_id = 'GO:'||ec.goterm_id;
                
-	update pre_marker_go_term_evidence set pre_mrkrgoev_zdb_id = get_id ('MRKRGOEV');
 
 --!echo 'do not include 'unknown' terms and root terms if any'
         delete from pre_marker_go_term_evidence where go_zdb_id in 
@@ -349,9 +348,31 @@ WHERE
   AND p.mrkrgoev_inference = u.infgrmem_inferred_from;
 -- END of Set IDs
 
+-- HERE IS WHERE WE FLATTEN ANY IDS IN pre_marker_go_term_evidence:
+-- For example, in previous versions of this script, pre_marker_go_term_evidence had rows of the form:
+--
+-- ZDB-MRKRGOEV-220118-60715,ZDB-GENE-980526-399,ZDB-TERM-091209-2435,ZDB-PUB-020724-1,InterPro:IPR001523,ZFIN InterPro 2 GO
+-- ZDB-MRKRGOEV-220118-65280,ZDB-GENE-980526-399,ZDB-TERM-091209-2435,ZDB-PUB-020724-1,InterPro:IPR043565,ZFIN InterPro 2 GO
+-- ZDB-MRKRGOEV-220118-77844,ZDB-GENE-980526-399,ZDB-TERM-091209-2435,ZDB-PUB-020724-1,InterPro:IPR043182,ZFIN InterPro 2 GO
+--
+-- But since each row is only unique due to the inference_group_member column (InterPro:... in this case), we only need
+-- one row in the marker_go_term_evidence table (and therefore only one mrkrgoev ID).  So it makes more sense to have
+-- pre_marker_go_term_evidence rows that look like this:
+--
+-- ZDB-MRKRGOEV-220118-60715,ZDB-GENE-980526-399,ZDB-TERM-091209-2435,ZDB-PUB-020724-1,InterPro:IPR001523,ZFIN InterPro 2 GO
+-- ZDB-MRKRGOEV-220118-60715,ZDB-GENE-980526-399,ZDB-TERM-091209-2435,ZDB-PUB-020724-1,InterPro:IPR043565,ZFIN InterPro 2 GO
+-- ZDB-MRKRGOEV-220118-60715,ZDB-GENE-980526-399,ZDB-TERM-091209-2435,ZDB-PUB-020724-1,InterPro:IPR043182,ZFIN InterPro 2 GO
+--
+-- and when we use 'distinct' to populate marker_go_term_evidence they will become a single row, but when we populate
+-- inference_group_member, it will be 3 rows
+
+update pre_marker_go_term_evidence
+set pre_mrkrgoev_zdb_id = get_pre_marker_go_term_evidence_id (mrkr_zdb_id, go_zdb_id, mrkrgoev_source, mrkrgoev_note )
+where pre_mrkrgoev_zdb_id is null;
+
 --!echo 'Insert MRKRGOEV into zdb_active_data'
 	insert into zdb_active_data
-		select pre_mrkrgoev_zdb_id from pre_marker_go_term_evidence;
+		select DISTINCT pre_mrkrgoev_zdb_id from pre_marker_go_term_evidence;
 --!echo '		into zdb_active_data'
 
 --!echo 'delete root go terms in bulk' ;
@@ -377,7 +398,7 @@ and exists (Select 'x' from pre_marker_go_term_evidence
 	insert into marker_go_term_evidence(mrkrgoev_zdb_id,mrkrgoev_mrkr_zdb_id, mrkrgoev_term_zdb_id,
 				mrkrgoev_source_zdb_id, mrkrgoev_evidence_code,mrkrgoev_date_entered,mrkrgoev_date_modified,
 				mrkrgoev_annotation_organization,mrkrgoev_external_load_date,mrkrgoev_notes)
-		select p.pre_mrkrgoev_zdb_id, p.mrkr_zdb_id, p.go_zdb_id, p.mrkrgoev_source, 'IEA' as iea, 
+		select DISTINCT p.pre_mrkrgoev_zdb_id, p.mrkr_zdb_id, p.go_zdb_id, p.mrkrgoev_source, 'IEA' as iea,
 		       now() as time1, now() as time2, '5' as org, now() as time3, p.mrkrgoev_note
 		  from pre_marker_go_term_evidence p;
 --!echo '		into marker_go_term_evidence'
