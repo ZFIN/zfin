@@ -110,6 +110,6 @@ update tmp_go
 update tmp_go
 set mv_created_by='UniProt' where mv_created_by='UniProtKB';
 
-\copy (select * from tmp_go) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/GO/go.zfin' with delimiter as '	' null as '';
+\copy (select * from tmp_go order by mv_zdb_id) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/GO/go.zfin' with delimiter as '	' null as '';
 
 commit work;
