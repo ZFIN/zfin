@@ -2222,6 +2222,11 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     public List<LinkDisplay> getMarkerDBLinksFast(Marker marker, DisplayGroup.GroupName groupName) {
+        if (groupName == null) {
+            //short circuit null pointer exception by returning empty array
+            return new ArrayList<LinkDisplay>();
+        }
+
         String sql = "select fdbdt.fdbdt_data_type,dbl.dblink_length,dbl.dblink_linked_recid,dbl.dblink_acc_num,fdb.fdb_db_display_name,fdb.fdb_db_query,fdb.fdb_url_suffix, " +
                 "ra.recattrib_source_zdb_id, fdb.fdb_db_significance, dbl.dblink_zdb_id, fdbc.fdbcont_zdb_id, pub.title, fdbdt.fdbdt_display_order, dbl.dblink_acc_num_display " +
                 "from db_link dbl  " +
