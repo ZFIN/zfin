@@ -24,6 +24,7 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
+import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.MountedWublastBlastService;
 import org.zfin.sequence.repository.DisplayGroupRepository;
@@ -32,6 +33,19 @@ import org.zfin.sequence.repository.SequenceRepository;
 import javax.validation.Valid;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.zfin.marker.Marker.Type.RRNAG;
+import static org.zfin.marker.Marker.Type.GENE;
+import static org.zfin.marker.Marker.Type.TSCRIPT;
+import static org.zfin.marker.Marker.Type.LINCRNAG;
+import static org.zfin.marker.Marker.Type.LNCRNAG;
+import static org.zfin.marker.Marker.Type.MIRNAG;
+import static org.zfin.marker.Marker.Type.PIRNAG;
+import static org.zfin.marker.Marker.Type.SCRNAG;
+import static org.zfin.marker.Marker.Type.SNORNAG;
+import static org.zfin.marker.Marker.Type.TRNAG;
+import static org.zfin.marker.Marker.Type.NCRNAG;
+import static org.zfin.marker.Marker.Type.SRPRNAG;
 
 @Controller
 @RequestMapping("/marker")
@@ -70,41 +84,47 @@ public class MarkerLinkController {
     public Collection<ReferenceDatabaseDTO> getLinkDatabases(@RequestParam(name = "group", required = true) String groupName) {
         DisplayGroup.GroupName group = DisplayGroup.GroupName.getGroup(groupName);
         List<ReferenceDatabase> databases = displayGroupRepository.getReferenceDatabasesForDisplayGroup(group);
-        List<ReferenceDatabaseDTO> databaseNames = new ArrayList<>(databases.size());
-        for (ReferenceDatabase database : databases) {
-            databaseNames.add(DTOConversionService.convertToReferenceDatabaseDTO(database));
-        }
-        return databaseNames;
+        return DTOConversionService.convertToReferenceDatabaseDTOs(databases);
     }
 
     @ResponseBody
-    @RequestMapping("/{markerId}/link/{type}")
-    public Collection<ReferenceDatabaseDTO> getNuclDatabases(@PathVariable String markerId, @PathVariable String type, @RequestParam(name = "group", required = true) String groupName) {
-        DisplayGroup.GroupName group = null;
-        if (type.contains("Nucleotide")) {
-            if (markerId.contains("GENE")) {
-                group = DisplayGroup.GroupName.TRANSCRIPT_EDIT_ADDABLE_NUCLEOTIDE_SEQUENCE;
+    @RequestMapping("/{markerId}/link/{sequenceType}")
+    public Collection<ReferenceDatabaseDTO> getNuclDatabases(@PathVariable String markerId, @PathVariable String sequenceType, @RequestParam(name = "group", required = true) String groupName) {
+        Marker marker = markerRepository.getMarkerByID(markerId);
+        List<DisplayGroup.GroupName> groups = getGroupNamesForMarkerAndSequenceType(marker, sequenceType);
 
+        return DTOConversionService.convertToReferenceDatabaseDTOs(
+                displayGroupRepository.getReferenceDatabasesForDisplayGroup(
+                        groups.toArray(new DisplayGroup.GroupName[0])));
+    }
+
+    private List<DisplayGroup.GroupName> getGroupNamesForMarkerAndSequenceType(Marker marker, String sequenceType) {
+        List<DisplayGroup.GroupName> groups = new ArrayList<>();
+        Marker.Type markerType = marker.getMarkerType().getType();
+        boolean markerIsNtr = marker.getMarkerType().getTypeGroups().contains(Marker.TypeGroup.SEARCHABLE_NON_TRANSCRIBED_REGION);
+
+        if (sequenceType.contains("Nucleotide")) {
+            switch (markerType) {
+                case GENE:
+                    groups.add(DisplayGroup.GroupName.TRANSCRIPT_EDIT_ADDABLE_NUCLEOTIDE_SEQUENCE);
+                    break;
+                case TSCRIPT:
+                    groups.add(DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE);
+                    break;
+                case RRNAG, LINCRNAG, LNCRNAG, MIRNAG, PIRNAG,
+                        SCRNAG, SNORNAG, TRNAG, NCRNAG, SRPRNAG:
+                    groups.add(DisplayGroup.GroupName.GENE_EDIT_ADDABLE_NUCLEOTIDE_SEQUENCE);
+                    break;
+                default:
+                    if (markerIsNtr) {
+                        groups.add(DisplayGroup.GroupName.TRANSCRIPT_EDIT_ADDABLE_NUCLEOTIDE_SEQUENCE);
+                        groups.add(DisplayGroup.GroupName.GENE_EDIT_ADDABLE_NUCLEOTIDE_SEQUENCE);
+                    }
             }
-            if (markerId.contains("TSCRIPT")) {
-                group = DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE;
-
-            }
-            if (markerId.contains("RNAG")) {
-                group = DisplayGroup.GroupName.GENE_EDIT_ADDABLE_NUCLEOTIDE_SEQUENCE;
-            }
+        } else if (sequenceType.contains("Protein")) {
+            groups.add(DisplayGroup.GroupName.GENE_EDIT_ADDABLE_PROTEIN_SEQUENCE);
         }
-        if (type.contains("Protein")) {
-
-            group = DisplayGroup.GroupName.GENE_EDIT_ADDABLE_PROTEIN_SEQUENCE;
-        }
-
-        List<ReferenceDatabase> databases = displayGroupRepository.getReferenceDatabasesForDisplayGroup(group);
-        List<ReferenceDatabaseDTO> databaseNames = new ArrayList<>(databases.size());
-        for (ReferenceDatabase database : databases) {
-            databaseNames.add(DTOConversionService.convertToReferenceDatabaseDTO(database));
-        }
-        return databaseNames;
+        return groups;
     }
 
     @ResponseBody
@@ -126,27 +146,12 @@ public class MarkerLinkController {
     public List<LinkDisplay> getMarkerSeqLinks(@PathVariable String markerId, @PathVariable String type,
                                                @RequestParam(name = "group", required = true) String groupName) {
         Marker marker = markerRepository.getMarkerByID(markerId);
-        DisplayGroup.GroupName group = null;
-        if (type.contains("Nucleotide")) {
-            if (markerId.contains("GENE")) {
-                group = DisplayGroup.GroupName.TRANSCRIPT_EDIT_ADDABLE_NUCLEOTIDE_SEQUENCE;
+        List<DisplayGroup.GroupName> groupNames = getGroupNamesForMarkerAndSequenceType(marker, type);
 
-            }
-            if (markerId.contains("RNAG")) {
-                group = DisplayGroup.GroupName.GENE_EDIT_ADDABLE_NUCLEOTIDE_SEQUENCE;
-            }
-            if (markerId.contains("TSCRIPT")) {
-                group = DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE;
-
-            }
+        List<LinkDisplay> links = new ArrayList<>();
+        for (DisplayGroup.GroupName group : groupNames) {
+            links.addAll(markerRepository.getMarkerDBLinksFast(marker, group));
         }
-        if (type.contains("Protein")) {
-
-            group = DisplayGroup.GroupName.GENE_EDIT_ADDABLE_PROTEIN_SEQUENCE;
-        }
-
-
-        List<LinkDisplay> links = markerRepository.getMarkerDBLinksFast(marker, group);
         if (groupName.equals(DisplayGroup.GroupName.OTHER_MARKER_PAGES.toString())) {
             links.addAll(markerRepository.getVegaGeneDBLinksTranscript(marker, DisplayGroup.GroupName.SUMMARY_PAGE));
         }

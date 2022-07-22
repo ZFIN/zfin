@@ -268,7 +268,7 @@ public abstract class AbstractWublastBlastService implements BlastService {
 
         session.flush();
 
-        // write attribution out (just one!)
+        // write attribution out (just one?)
         if (pubZdbID != null && pubZdbID.length() > 0) {
             RepositoryFactory.getInfrastructureRepository().insertRecordAttribution(markerDBLink.getZdbID(), pubZdbID);
         }

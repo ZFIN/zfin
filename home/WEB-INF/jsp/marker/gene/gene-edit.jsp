@@ -65,16 +65,16 @@
     </c:if>
 
     <z:section title="${SEQUENCES}">
-        <z:section title="Sequences">
+        <z:section title="Sequences" cssClass="mb-2">
             <div class="__react-root" id="MarkerEditSequences" data-marker-id="${gene.zdbID}"></div>
         </z:section>
-        <z:section title="Nucleotide Sequences">
-            <div class="__react-root" id="MarkerAddSequences" data-marker-id="${gene.zdbID}"
+        <z:section title="Nucleotide Sequences" cssClass="mb-2">
+            <div class="__react-root" id="MarkerAddSequences__1" data-marker-id="${gene.zdbID}"
                  data-type="Nucleotide"></div>
         </z:section>
-        <c:if test="${typeName ne 'MIRNAG'}">
-            <z:section title="Protein Sequences">
-                <div class="__react-root" id="MarkerAddSequences" data-marker-id="${gene.zdbID}"
+        <c:if test="${typeName ne 'MIRNAG' && !markerIsNtr}">
+            <z:section title="Protein Sequences" cssClass="mb-2">
+                <div class="__react-root" id="MarkerAddSequences__2" data-marker-id="${gene.zdbID}"
                      data-type="Protein"></div>
             </z:section>
         </c:if>
