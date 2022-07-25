@@ -317,7 +317,7 @@ print "\nNumber of manually curated UniProt IDs: $ctManuallyEnteredUniProtIDs at
 
 my $uniprotId;
 my $url;
-my $uniProtURL = "https://www.uniprot.org/uniprot/";
+my $uniProtURL = "https://rest.uniprot.org/uniprotkb/";
 
 if ($ENV{"SKIP_MANUAL_CHECK"}) {
     print("Skipping check for invalid manually entered uniprot IDs\n");
