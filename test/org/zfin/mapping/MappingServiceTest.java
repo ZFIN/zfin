@@ -90,10 +90,13 @@ public class MappingServiceTest extends AbstractDatabaseTest {
         assertEquals(retrievedMarkerLocations.size(), initialSize + 1);
 
         MarkerLocation retrievedMarkerLocation = retrievedMarkerLocations.get(initialSize);
-
+//        MarkerLocation retrievedMarkerLocation = retrievedMarkerLocations
+//                .stream()
+//                .filter(ml -> ml.getZdbID().equals(markerLocation.getZdbID())).findFirst().get();
+        assertEquals(retrievedMarkerLocation.getZdbID(), markerLocation.getZdbID());
         assertEquals(retrievedMarkerLocation.getAssembly(), clb.getAssembly());
-        assertEquals(retrievedMarkerLocation.getStartLocation(), clb.getStartLocation());
-        assertEquals(retrievedMarkerLocation.getEndLocation(), clb.getEndLocation());
+        assertEquals(retrievedMarkerLocation.getStartLocation().longValue(), clb.getStartLocation().longValue());
+        assertEquals(retrievedMarkerLocation.getEndLocation().longValue(), clb.getEndLocation().longValue());
 
     }
 
