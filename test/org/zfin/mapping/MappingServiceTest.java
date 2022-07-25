@@ -9,11 +9,8 @@ import org.zfin.marker.presentation.ChromosomalLocationBean;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
-import static org.zfin.repository.RepositoryFactory.getFeatureRepository;
-import static org.zfin.repository.RepositoryFactory.getLinkageRepository;
-import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 public class MappingServiceTest extends AbstractDatabaseTest {
 
@@ -52,7 +49,7 @@ public class MappingServiceTest extends AbstractDatabaseTest {
         Marker marker = getMarkerRepository().getMarkerByAbbreviation("pax2a");
         String location = MappingService.getChromosomeLocationDisplay(marker);
         assertNotNull(location);
-        assertEquals(location,"13");
+        assertEquals(location, "13");
 
         marker = getMarkerRepository().getMarkerByID("ZDB-SSLP-980528-1241");
         location = MappingService.getChromosomeLocationDisplay(marker);
@@ -62,8 +59,8 @@ public class MappingServiceTest extends AbstractDatabaseTest {
         location = MappingService.getChromosomeLocationDisplay(marker);
         assertNotNull(location);
 
-        Feature feature=getFeatureRepository().getFeatureByID("ZDB-ALT-100505-3");
-        FeatureLocation fl=getFeatureRepository().getLocationByFeature(feature);
+        Feature feature = getFeatureRepository().getFeatureByID("ZDB-ALT-100505-3");
+        FeatureLocation fl = getFeatureRepository().getLocationByFeature(feature);
         assertNotNull(fl);
     }
 
@@ -92,8 +89,8 @@ public class MappingServiceTest extends AbstractDatabaseTest {
         MarkerLocation retrievedMarkerLocation = retrievedMarkerLocations.get(initialSize);
 
         assertEquals(retrievedMarkerLocation.getAssembly(), clb.getAssembly());
-        assertEquals(retrievedMarkerLocation.getStartLocation(), clb.getStartLocation());
-        assertEquals(retrievedMarkerLocation.getEndLocation(), clb.getEndLocation());
+        assertEquals(Long.valueOf(retrievedMarkerLocation.getStartLocation()), clb.getStartLocation());
+        assertEquals(Long.valueOf(retrievedMarkerLocation.getEndLocation()), clb.getEndLocation());
 
     }
 
