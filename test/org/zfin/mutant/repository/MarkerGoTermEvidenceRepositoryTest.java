@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.junit.Assert.*;
 
 /**
@@ -69,7 +70,7 @@ public class MarkerGoTermEvidenceRepositoryTest extends AbstractDatabaseTest {
         String pubId = "ZDB-PUB-160828-8";
         List<MarkerGoTermEvidence> evidences = markerGoTermEvidenceRepository.getMarkerGoTermEvidencesForPubZdbID(pubId);
         assertNotNull(evidences);
-        assertThat(evidences.size(), greaterThan(2));
+        assertThat(evidences.size(), greaterThanOrEqualTo(2));
     }
 
     @Test
