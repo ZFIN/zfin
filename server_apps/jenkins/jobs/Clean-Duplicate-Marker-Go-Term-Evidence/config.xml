@@ -26,7 +26,7 @@
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>to_delete_marker_go_term_evidence*.csv,clean_marker_go_term_evidence*.csv,tmp_inference_group_member_updates</artifacts>
+      <artifacts>to_delete_marker_go_term_evidence*.csv,clean_marker_go_term_evidence*.csv,tmp_inference_group_member_updates.csv</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
