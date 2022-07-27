@@ -128,6 +128,7 @@ const MarkerAddSequences = ({markerId, type, group = 'gene edit addable nucleoti
                         label='Sequence'
                         id='data'
                         field='data'
+                        tag='textarea'
                         validate={value => value ? false : 'A sequence is required'}
                     />
                     }
