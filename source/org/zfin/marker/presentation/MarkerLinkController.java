@@ -107,6 +107,7 @@ public class MarkerLinkController {
             switch (markerType) {
                 case GENE:
                     groups.add(DisplayGroup.GroupName.TRANSCRIPT_EDIT_ADDABLE_NUCLEOTIDE_SEQUENCE);
+                    groups.add(DisplayGroup.GroupName.GENE_EDIT_ADDABLE_NUCLEOTIDE_SEQUENCE);
                     break;
                 case TSCRIPT:
                     groups.add(DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE);
@@ -234,10 +235,30 @@ public class MarkerLinkController {
         return buffer.toString().toUpperCase();
     }
 
-
+    /**
+     * Add new nucleotide sequence to markerId by posting sequence data of the form:
+     *
+     * {
+     *   "data": "TTACAATTAAAGGATATTTCTTGCGGCTGAATACGAGAACAGAAATGTCCCTTAATTGTTTGGTT",
+     *   "referenceDatabaseZdbID": "ZDB-FDBCONT-090929-4",
+     *   "references": [
+     *     {
+     *       "zdbID": "ZDB-PUB-140520-12"
+     *     }
+     *   ]
+     * }
+     *
+     * eg. curl -X POST --header 'Content-Type: application/json' --data '{"data": "TTACAATTAAAGGATATTTCTTGCGGCTGAATACGAGAACAGAAATGTCCCTTAATTGTTTGGTT", "referenceDatabaseZdbID": "ZDB-FDBCONT-090929-4", "references": [{"zdbID": "ZDB-PUB-140520-12"}]}' https://{site}.zfin.org/action/marker/ZDB-GENE-980526-166/Nucleotide/seqLinks
+     *
+     * @param markerId The marker ID to add the sequence to.
+     * @param sequenceType (String) The type of sequence to add--either "Protein" or "Nucleotide".
+     * @param newLink The sequence data to add (deserialized from json as described above).
+     * @param errors The binding result to check for errors.
+     * @return The DBLink for the created sequence. Serialized to json like: {"name":"ZFINNUCL0000006195"}
+     */
     @ResponseBody
-    @RequestMapping(value = "/{markerId}/{type}/seqLinks", method = RequestMethod.POST)
-    public LinkDisplay addGeneSeqLink(@PathVariable String markerId, @PathVariable String type,
+    @RequestMapping(value = "/{markerId}/{sequenceType}/seqLinks", method = RequestMethod.POST)
+    public LinkDisplay addGeneSeqLink(@PathVariable String markerId, @PathVariable String sequenceType,
                                       @Valid @RequestBody SequenceFormBean newLink,
                                       BindingResult errors) throws Exception {
         Marker marker = null;
@@ -262,7 +283,7 @@ public class MarkerLinkController {
             try {
 
                 sequenceStr = getSequenceAsString(newLink.getData()).toUpperCase();
-                if (type.equals("Protein")) {
+                if (sequenceType.equals("Protein")) {
                     int invalidSequenceCharacter = SequenceValidator.validatePolypeptideSequence(sequenceStr);
                     if (invalidSequenceCharacter != SequenceValidator.NOT_FOUND) {
                         errors.reject("Letter " + "[" + sequenceStr.substring(invalidSequenceCharacter, invalidSequenceCharacter + 1) + "]" + " at position " + (invalidSequenceCharacter + 1) + " is not a valid protein symbol.");
