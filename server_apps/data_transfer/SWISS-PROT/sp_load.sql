@@ -367,7 +367,7 @@ WHERE
 -- inference_group_member, it will be 3 rows
 
 update pre_marker_go_term_evidence
-set pre_mrkrgoev_zdb_id = get_pre_marker_go_term_evidence_id (mrkr_zdb_id, go_zdb_id, mrkrgoev_source, mrkrgoev_note )
+set pre_mrkrgoev_zdb_id = get_id ('MRKRGOEV')
 where pre_mrkrgoev_zdb_id is null;
 
 --!echo 'Insert MRKRGOEV into zdb_active_data'
