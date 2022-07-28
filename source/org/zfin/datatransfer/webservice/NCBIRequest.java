@@ -20,10 +20,7 @@ import org.zfin.datatransfer.ServiceConnectionException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -61,9 +58,8 @@ public class NCBIRequest {
     
     public String getFasta() throws IOException {
         this.withFasta();
-        HttpResponse response = getHttpResponse();
+        InputStream content = getHttpResponseContent();
 
-        InputStream content = response.getEntity().getContent();
         return new BufferedReader(new InputStreamReader(content))
                 .lines()
                 .collect(Collectors.joining("\n"));
@@ -75,11 +71,10 @@ public class NCBIRequest {
             throw new ServiceConnectionException("Could not get successful response from NCBI after " + MAX_ATTEMPTS + " attempts");
         }
         try {
-            HttpResponse response = getHttpResponse();
-
+            InputStream response = getHttpResponseContent();
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = factory.newDocumentBuilder();
-            Document result = docBuilder.parse(response.getEntity().getContent());
+            Document result = docBuilder.parse(response);
             boolean unavailable = result.getDocumentElement().getTextContent().contains(UNAVAILABLE);
             if (unavailable) {
                 // make another attempt
@@ -92,7 +87,7 @@ public class NCBIRequest {
         }
     }
 
-    private HttpResponse getHttpResponse() throws IOException {
+    private InputStream getHttpResponseContent() throws IOException {
         CloseableHttpClient client = HttpClientBuilder.create().build();
 
         HttpPost post = new HttpPost(BASE_URL + eutil.getPath());
@@ -107,8 +102,13 @@ public class NCBIRequest {
         }
         post.setEntity(new UrlEncodedFormEntity(nvps));
         HttpResponse response = client.execute(post);
+        InputStream responseContent = response.getEntity().getContent();
+
+        //responseContent is a lazy decompressing stream, so we need to eager load the contents before closing connection
+        InputStream eagerLoadedInputStream = new ByteArrayInputStream(responseContent.readAllBytes());
+
         client.close();
-        return response;
+        return eagerLoadedInputStream;
     }
 
     public enum Eutil {
