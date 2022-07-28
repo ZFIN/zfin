@@ -25,7 +25,11 @@ public class LineNameSubmission extends NameSubmission {
 
     public String toString() {
         StringBuilder sb = new StringBuilder(super.toString());
-        sb.append("Add data: ").append(keepPrivate).append("\n\n");
+        if (keepPrivate != null) {
+            sb.append("Add data: ").append(keepPrivate);
+        }
+        sb.append("\n\n");
+
         for (int i = 0; i < lineDetails.size(); i++) {
             LineInfo info = lineDetails.get(i);
             sb.append(i + 1).append(". Genetic Background: ").append(info.getBackground()).append("\n")

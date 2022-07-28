@@ -237,13 +237,42 @@ public class NomenclatureSubmissionController {
             return false;
         }
 
-        return AbstractZfinMailSender.getInstance().sendMail(
+        String submitterEmail = submission.getEmail2();
+        String[] nomenclatureCoordinatorEmails = ZfinPropertiesEnum.NOMEN_COORDINATOR.value().split(" ");
+        String nomenclatureCoordinatorEmail = nomenclatureCoordinatorEmails[0];
+
+        boolean success = false;
+        success = AbstractZfinMailSender.getInstance().sendMail(
                 submission.getSubjectLine(),
                 submission.toString(),
                 false,
-                submission.getEmail2(),
-                ZfinPropertiesEnum.NOMEN_COORDINATOR.value().split(" ")
+                submitterEmail,
+                nomenclatureCoordinatorEmails
         );
+
+        success = success && AbstractZfinMailSender.getInstance().sendMail(
+                this.getConfirmationSubjectLine(submission),
+                this.getConfirmationBody(submission),
+                false,
+                nomenclatureCoordinatorEmail,
+                new String[]{submitterEmail}
+        );
+
+        return success;
     }
+
+    private String getConfirmationBody(NameSubmission submission) {
+        return "The following submission has been received:\n\n" +
+                submission.toString() +
+                "\n\n" +
+                "Your contribution will be reviewed by the nomenclature coordinator and will be added to the database " +
+                "once it has been approved.\n\n" +
+                "Thank you for your contribution to the Zebrafish Information Network.";
+    }
+
+    private String getConfirmationSubjectLine(NameSubmission submission) {
+        return "ZFIN Confirmation for " + submission.getSubjectLine();
+    }
+
 
 }

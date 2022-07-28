@@ -97,6 +97,15 @@ services:
       - keystore:/opt/apache/apache-tomcat/conf
       - ${DOCKER_BLASTSERVER_BLAST_DATABASE_PATH}:/opt/zfin/blastdb
       - ${DOCKER_ABBLAST_PATH}:/opt/ab-blast
+  mailhog:
+    container_name: mailhog
+    build: ./mailhog/
+    restart: always
+    environment:
+      MH_SMTP_BIND_ADDR: "0.0.0.0:25"
+    ports:
+      - "25:1025"
+      - "8025:8025"
   jenkins:
     container_name: jenkins_container
     build: ./jenkins/
