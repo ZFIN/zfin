@@ -25,6 +25,7 @@ public class RestAllianceService {
     }
 
     private static String getToken() {
+        ZfinPropertiesEnum.TARGETROOT.setValue(".");
         Path file = Path.of(ZfinPropertiesEnum.TARGETROOT.value() + "/server_apps/DB_maintenance/Alliance/apiToken.txt");
         try {
             return Files.readString(file);

@@ -29,7 +29,7 @@ public class DiseaseAnnotationRESTAllianceService extends RestAllianceService {
 
     private final DiseaseAnnotationRESTInterfaceAlliance api = AllianceRestManager.getDiseaseAnnotationEndpoints();
 
-    public ObjectResponse<AGMDiseaseAnnotation> updateZfinAgmDiseaseAnnotations(AGMDiseaseAnnotationDTO dto) throws IOException, ApiException {
+    public AGMDiseaseAnnotation updateZfinAgmDiseaseAnnotations(AGMDiseaseAnnotationDTO dto) throws IOException, ApiException {
         return api.createZfinAgmDiseaseAnnotations(token, dto);
     }
 
@@ -45,20 +45,22 @@ public class DiseaseAnnotationRESTAllianceService extends RestAllianceService {
     }
 
     public static void main(String[] args) {
+        ZfinPropertiesEnum.TARGETROOT.setValue(".");
         ZfinProperties.init();
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         if (sessionFactory == null) {
             new HibernateSessionCreator();
         }
 
-        ZfinPropertiesEnum.ALLIANCE_CURATION_URL.setValue("http://localhost:8080");
-        //ZfinPropertiesEnum.ALLIANCE_CURATION_URL.setValue("https://alpha-curation.alliancegenome.org");
+        //ZfinPropertiesEnum.ALLIANCE_CURATION_URL.setValue("http://localhost:8080");
+        ZfinPropertiesEnum.ALLIANCE_CURATION_URL.setValue("https://alpha-curation.alliancegenome.org");
         DiseaseAnnotationService service = new DiseaseAnnotationService();
         //service.agmRESTAllianceService = new AgmRESTAllianceService();
         DiseaseAnnotationModel dam = new DiseaseAnnotationModel();
         FishExperiment experiment = new FishExperiment();
         Fish fish = new Fish();
-        fish.setZdbID("ZDB-FISH-220707-339");
+        //fish.setZdbID("ZDB-FISH-220707-340");
+        fish.setZdbID("ZDB-FISH-151211-15");
         experiment.setFish(fish);
         Experiment experimentCond = new Experiment();
         experimentCond.setZdbID("ZDB-EXP-041102-1");
@@ -66,10 +68,10 @@ public class DiseaseAnnotationRESTAllianceService extends RestAllianceService {
         experiment.setExperiment(experimentCond);
         dam.setFishExperiment(experiment);
         DiseaseAnnotation diseaseAnnotation = new DiseaseAnnotation();
-        diseaseAnnotation.setZdbID("ZDB-DAT-220710-1");
+        diseaseAnnotation.setZdbID("ZDB-DAT-220710-12");
         diseaseAnnotation.setEvidenceCode("ECO:0000304");
         GenericTerm disease = new GenericTerm();
-        disease.setOboID("DOID:4a");
+        disease.setOboID("DOID:4");
         diseaseAnnotation.setDisease(disease);
         Publication publication = new Publication();
         publication.setAccessionNumber(26186000);

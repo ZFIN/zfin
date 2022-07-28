@@ -44,7 +44,7 @@ public class DiseaseAnnotationService extends AllianceService {
 
     public AGMDiseaseAnnotation submitAnnotationToAlliance(DiseaseAnnotationModel dam) {
         AGMDiseaseAnnotationDTO dto = getAgmDiseaseAnnotationDTO(dam);
-        ObjectResponse<AGMDiseaseAnnotation> response = null;
+        AGMDiseaseAnnotation response = null;
         try {
             response = restInterfaceAlliance.updateZfinAgmDiseaseAnnotations(dto);
         } catch (ApiException e) {
@@ -53,7 +53,7 @@ public class DiseaseAnnotationService extends AllianceService {
             String message = e.getMessage() != null ? e.getMessage() : e.getCause().getLocalizedMessage();
             log.warn("Could not create Disease Annotation at Alliance: " + message);
         }
-        return response != null ? response.getEntity() : null;
+        return response;
     }
 
     private static Reference getCrossReference(org.zfin.mutant.DiseaseAnnotation diseaseAnnotation) {
