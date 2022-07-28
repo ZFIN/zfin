@@ -28,9 +28,9 @@ public interface DiseaseAnnotationRESTInterfaceAlliance {
                                                               AGMDiseaseAnnotation annotation);
 
     @POST
-    @Path("/agm-disease-annotation/create")
+    @Path("/agm-disease-annotation/upsert")
     @Consumes({MediaType.APPLICATION_JSON})
-    ObjectResponse<AGMDiseaseAnnotation> createZfinAgmDiseaseAnnotations(@HeaderParam("Authorization") String auth,
+    AGMDiseaseAnnotation createZfinAgmDiseaseAnnotations(@HeaderParam("Authorization") String auth,
                                                                          AGMDiseaseAnnotationDTO annotationData) throws IOException, ApiException;
 
     @PUT
