@@ -1,9 +1,11 @@
 package org.zfin.fish.repository;
 
+import org.zfin.feature.Feature;
 import org.zfin.fish.WarehouseSummary;
 import org.zfin.infrastructure.ZfinFigureEntity;
 import org.zfin.mutant.Fish;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -37,4 +39,5 @@ public interface FishRepository {
      */
     WarehouseSummary getWarehouseSummary(WarehouseSummary.Mart mart);
 
+    List<Fish> getAllFish(int numberOrRecords);
 }

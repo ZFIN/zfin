@@ -118,6 +118,11 @@ task createGenesLinkMLFile(type: JavaExec) {
     main = 'org.zfin.marker.agr.GeneLinkMLInfo'
 }
 
+task createFishLinkMLFile(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.marker.agr.FishLinkMLInfo'
+}
+
 task createAllianceFiles {
     dependsOn createDiseaseInfoFile
     dependsOn createBasicPhenotypeInfoFile

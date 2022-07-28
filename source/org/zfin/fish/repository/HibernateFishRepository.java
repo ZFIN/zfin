@@ -1,11 +1,13 @@
 package org.zfin.fish.repository;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
+import org.zfin.feature.Feature;
 import org.zfin.fish.WarehouseSummary;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.ZfinFigureEntity;
@@ -32,7 +34,7 @@ public class HibernateFishRepository implements FishRepository {
                 "from phenotype_experiment\n" +
                 "     join fish_experiment on phenox_genox_zdb_id = genox_zdb_id\n" +
                 "     left outer join image on img_fig_zdb_id = phenox_fig_zdb_id\n" +
-                "where genox_fish_zdb_id = :fishZdbID " ;
+                "where genox_fish_zdb_id = :fishZdbID ";
                /* "UNION\n" +
                 "select xedg_fig_zdb_id,\n" +
                 "        CASE\n" +
@@ -42,7 +44,8 @@ public class HibernateFishRepository implements FishRepository {
                 "from xpat_exp_details_generated\n" +
                 "     join fish_experiment on xedg_genox_zdb_id = genox_zdb_id\n" +
                 "     left outer join image on img_fig_zdb_id = xedg_fig_zdb_id\n" +
-                "where genox_fish_zdb_id = :fishZdbID ;"*/;
+                "where genox_fish_zdb_id = :fishZdbID ;"*/
+        ;
         Session session = HibernateUtil.currentSession();
         Query query = session.createSQLQuery(sql);
         query.setParameter("fishZdbID", fishZdbID);
@@ -64,10 +67,9 @@ public class HibernateFishRepository implements FishRepository {
     @Override
     public Fish getFishByName(String name) {
         Criteria criteria = HibernateUtil.currentSession().createCriteria(Fish.class);
-        criteria.add(Restrictions.eq("name",name));
-        return (Fish)criteria.uniqueResult();
+        criteria.add(Restrictions.eq("name", name));
+        return (Fish) criteria.uniqueResult();
     }
-
 
 
     /**
@@ -119,6 +121,16 @@ public class HibernateFishRepository implements FishRepository {
         Criteria criteria = session.createCriteria(WarehouseSummary.class);
         criteria.add(Restrictions.eq("martName", mart.getName()));
         return (WarehouseSummary) criteria.uniqueResult();
+    }
+
+    @Override
+    public List<Fish> getAllFish(int firstNIds) {
+        Session session = HibernateUtil.currentSession();
+        String hql = "from Fish order by zdbID";
+        Query query = session.createQuery(hql);
+        if (firstNIds > 0)
+            query.setMaxResults(firstNIds);
+        return query.list();
     }
 
 }
