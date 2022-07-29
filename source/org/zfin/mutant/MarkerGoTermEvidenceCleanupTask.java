@@ -48,6 +48,7 @@ public class MarkerGoTermEvidenceCleanupTask extends AbstractScriptWrapper {
             System.out.println("exit code: " + exitValue);
         }
 
+        System.out.println("Check the csv files for more information: clean_marker_go_term_evidence.csv, to_delete_marker_go_term_evidence.csv, tmp_inference_group_member_updates.csv" );
     }
 
     public MarkerGoTermEvidenceCleanupTask() {
