@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import org.alliancegenome.curation_api.model.ingest.dto.AlleleDTO;
+import org.alliancegenome.curation_api.model.ingest.dto.AffectedGenomicModelDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.IngestDTO;
-import org.zfin.feature.Feature;
 import org.zfin.infrastructure.ActiveData;
+import org.zfin.mutant.Fish;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 
 import java.io.FileOutputStream;
@@ -20,13 +20,13 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
-import static org.zfin.repository.RepositoryFactory.getFeatureRepository;
+import static org.zfin.repository.RepositoryFactory.getFishRepository;
 
-public class AlleleLinkMLInfo extends AbstractScriptWrapper {
+public class FishLinkMLInfo extends AbstractScriptWrapper {
 
     private int numfOfRecords = 0;
 
-    public AlleleLinkMLInfo(int number) {
+    public FishLinkMLInfo(int number) {
         numfOfRecords = number;
     }
 
@@ -36,7 +36,7 @@ public class AlleleLinkMLInfo extends AbstractScriptWrapper {
         if (args.length > 0) {
             number = Integer.valueOf(args[0]);
         }
-        AlleleLinkMLInfo diseaseInfo = new AlleleLinkMLInfo(number);
+        FishLinkMLInfo diseaseInfo = new FishLinkMLInfo(number);
         diseaseInfo.init();
         System.exit(0);
     }
@@ -44,34 +44,28 @@ public class AlleleLinkMLInfo extends AbstractScriptWrapper {
     private void init() throws IOException {
         initAll();
         IngestDTO ingestDTO = new IngestDTO();
-        List<AlleleDTO> allDiseaseDTO = getAllAlleles(numfOfRecords);
-        ingestDTO.setAlleleIngestSet(allDiseaseDTO);
+        List<AffectedGenomicModelDTO> allDiseaseDTO = getAllFish(numfOfRecords);
+        ingestDTO.setAgmIngestSet(allDiseaseDTO);
         ObjectMapper mapper = new ObjectMapper();
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
         String jsonInString = writer.writeValueAsString(ingestDTO);
-        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.1.4_Allele_ml.json"))) {
+        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_1.0.1.4_AGM_ml.json"))) {
             out.print(jsonInString);
         }
     }
 
-    public List<AlleleDTO> getAllAlleles(int numberOrRecords) {
-        List<Feature> features = getFeatureRepository().getAllFeatureList(numberOrRecords);
-        return features.stream()
-                .map(feature -> {
-                    AlleleDTO dto = new AlleleDTO();
-                    dto.setSymbol(feature.getAbbreviation());
-                    dto.setName(feature.getName());
-                    dto.setInternal(true);
+    public List<AffectedGenomicModelDTO> getAllFish(int numberOrRecords) {
+        List<Fish> allFish = getFishRepository().getAllFish(numberOrRecords);
+        return allFish.stream()
+                .map(fish -> {
+                    AffectedGenomicModelDTO dto = new AffectedGenomicModelDTO();
+                    dto.setName(fish.getName());
                     dto.setCreatedBy("ZFIN:CURATOR");
                     dto.setTaxon(ZfinDTO.taxonId);
-                    dto.setCurie("ZFIN:" + feature.getZdbID());
-                    if (feature.getFtrEntryDate() != null) {
-                        dto.setDateCreated(format(feature.getFtrEntryDate()));
-                    } else {
-                        GregorianCalendar date = ActiveData.getDateFromId(feature.getZdbID());
-                        dto.setDateCreated(format(date));
-                    }
+                    dto.setCurie("ZFIN:" + fish.getZdbID());
+                    GregorianCalendar date = ActiveData.getDateFromId(fish.getZdbID());
+                    dto.setDateCreated(format(date));
                     return dto;
                 })
                 .collect(toList());
