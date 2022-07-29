@@ -46,6 +46,7 @@ while ($line = <INDEXFILE>) {
       @fields = split /\t/, $line;
       $mrkrgoev=$fields[0];
 
+      #this logic assumes the input file is sorted by mrkrgoev_zdb_id
       if ($lastmrkrgoev ne '' && $mrkrgoev ne $lastmrkrgoev) {
 
 

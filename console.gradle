@@ -41,3 +41,8 @@ task NCBILoadTask(type: JavaExec) {
     systemProperty "ncbiLoadInput", System.getProperty("ncbiLoadInput", null)
     systemProperty "ncbiLoadOutput", System.getProperty("ncbiLoadOutput", null)
 }
+
+task cleanMarkerGoTermEvidenceDuplicatesTask(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.mutant.MarkerGoTermEvidenceCleanupTask'
+}
