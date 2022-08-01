@@ -1,8 +1,6 @@
 package org.zfin.mutant.service;
 
 import lombok.extern.log4j.Log4j2;
-import org.alliancegenome.curation_api.exceptions.ApiErrorException;
-import org.alliancegenome.curation_api.exceptions.ObjectUpdateException;
 import org.alliancegenome.curation_api.model.entities.AGMDiseaseAnnotation;
 import org.alliancegenome.curation_api.model.entities.AffectedGenomicModel;
 import org.alliancegenome.curation_api.model.entities.Reference;
@@ -10,7 +8,6 @@ import org.alliancegenome.curation_api.model.entities.ontology.DOTerm;
 import org.alliancegenome.curation_api.model.entities.ontology.EcoTerm;
 import org.alliancegenome.curation_api.model.ingest.dto.AGMDiseaseAnnotationDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.ExperimentalConditionDTO;
-import org.alliancegenome.curation_api.response.ObjectResponse;
 import org.springframework.stereotype.Service;
 import org.zfin.alliancegenome.ApiException;
 import org.zfin.alliancegenome.DiseaseAnnotationRESTAllianceService;
