@@ -16,6 +16,7 @@ import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.marker.service.GeneAllianceService;
 import org.zfin.marker.service.MarkerSolrService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
@@ -110,6 +111,8 @@ public class GeneAddController {
             HibernateUtil.flushAndCommitCurrentSession();
 
             markerSolrService.addMarkerStub(newGene, Category.GENE);
+            GeneAllianceService service = new GeneAllianceService();
+            service.submitGeneToAlliance(newGene);
 
         } catch (Exception e) {
             try {
