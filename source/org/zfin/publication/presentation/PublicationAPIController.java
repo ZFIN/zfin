@@ -1,6 +1,8 @@
 package org.zfin.publication.presentation;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,8 @@ import org.zfin.framework.api.View;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.util.StringUtils;
+import org.zfin.infrastructure.EntityZdbID;
+import org.zfin.mapping.MappingService;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.MarkerType;
@@ -38,7 +42,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 @RestController
 @RequestMapping("/api/publication")
@@ -280,6 +284,39 @@ public class PublicationAPIController {
     }
 
     @JsonView(View.API.class)
+    @RequestMapping(value = "/{publicationID}/mapping")
+    public JsonResultResponse<ChromosomeLinkage> getPublicationMapping(@PathVariable("publicationID") String publicationID,
+                                                                       @Version Pagination pagination) {
+
+
+        Publication publication = getPublicationRepository().getPublication(publicationID);
+        List<EntityZdbID> mappedEntities = getLinkageRepository().getMappedEntitiesByPub(publication);
+
+        // add chromosome info
+        List<ChromosomeLinkage> list = mappedEntities.stream()
+                .map(entityZdbID -> {
+                    ChromosomeLinkage linkage = new ChromosomeLinkage();
+                    linkage.setEntity(entityZdbID);
+                    linkage.setChromosome(MappingService.getChromosomeLocationDisplay(entityZdbID));
+                    return linkage;
+                })
+                .collect(Collectors.toList());
+
+        JsonResultResponse<ChromosomeLinkage> response = new JsonResultResponse<>();
+        response.setHttpServletRequest(request);
+        if (CollectionUtils.isEmpty(mappedEntities))
+            return response;
+        response.setTotal(list.size());
+        List<ChromosomeLinkage> markerList = list.stream()
+                .skip(pagination.getStart())
+                .limit(pagination.getLimit())
+                .collect(Collectors.toList());
+
+        response.setResults(markerList);
+        return response;
+    }
+
+    @JsonView(View.API.class)
     @RequestMapping(value = "/{publicationID}/diseases")
     public JsonResultResponse<DiseaseAnnotation> getPublicationDisease(@PathVariable("publicationID") String publicationID,
                                                                        @Version Pagination pagination) {
@@ -333,5 +370,13 @@ public class PublicationAPIController {
         return response;
     }
 
+    @Getter
+    @Setter
+    class ChromosomeLinkage {
+        @JsonView(View.API.class)
+        private EntityZdbID entity;
+        @JsonView(View.API.class)
+        private String chromosome;
+    }
 }
 
