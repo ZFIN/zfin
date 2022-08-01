@@ -11,6 +11,8 @@ import java.nio.file.Path;
 import java.util.Base64;
 import java.util.Objects;
 
+import org.apache.commons.lang3.StringUtils;
+
 @Log4j2
 public class RestAllianceService {
 
@@ -27,7 +29,7 @@ public class RestAllianceService {
     private static String getToken() {
         Path file = Path.of(ZfinPropertiesEnum.TARGETROOT.value() + "/server_apps/DB_maintenance/Alliance/apiToken.txt");
         try {
-            return Files.readString(file);
+            return StringUtils.chomp(Files.readString(file));
         } catch (IOException e) {
             log.error("Could not find token file: " + file);
         }
