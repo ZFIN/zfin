@@ -24,4 +24,8 @@ public class AllianceRestManager {
     public static AlleleRESTInterfaceAlliance getAlleleEndpoints() {
         return RestProxyFactory.createProxy(AlleleRESTInterfaceAlliance.class, path, config);
     }
+    
+    public static GeneRESTInterfaceAlliance getGeneEndpoints() {
+        return RestProxyFactory.createProxy(GeneRESTInterfaceAlliance.class, path, config);
+    }
 }
