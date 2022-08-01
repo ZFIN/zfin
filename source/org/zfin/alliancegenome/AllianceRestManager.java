@@ -20,4 +20,8 @@ public class AllianceRestManager {
     public static AgmRESTInterfaceAlliance getAgmEndpoints() {
         return RestProxyFactory.createProxy(AgmRESTInterfaceAlliance.class, path, config);
     }
+
+    public static GeneRESTInterfaceAlliance getGeneEndpoints() {
+        return RestProxyFactory.createProxy(GeneRESTInterfaceAlliance.class, path, config);
+    }
 }
