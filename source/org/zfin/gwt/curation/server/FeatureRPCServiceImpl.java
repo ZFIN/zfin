@@ -26,6 +26,7 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.FeatureLocation;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.repository.MutantRepository;
+import org.zfin.mutant.service.AlleleService;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.profile.FeatureSource;
 import org.zfin.profile.Organization;
@@ -742,6 +743,8 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             solrDoc.put(FieldName.MUTAGEN, feature.getFeatureAssay().getMutagen().toString());
             SolrService.addDocument(solrDoc);
 
+            AlleleService service = new AlleleService();
+            service.submitAlleleToAlliance(feature);
         } catch (ValidationException e) {
             HibernateUtil.rollbackTransaction();
             logger.info("Error during Creation ", e);
@@ -751,7 +754,6 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             logger.error("Error during Creation ", e);
             throw new ValidationException("Error during Creation: " + e.getMessage());
         }
-
         return newFeatureDTO;
     }
 

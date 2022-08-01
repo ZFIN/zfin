@@ -1,6 +1,7 @@
 package org.zfin.alliancegenome;
 
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 import org.zfin.properties.ZfinPropertiesEnum;
 
 import java.io.IOException;
@@ -8,10 +9,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Base64;
 import java.util.Objects;
-
-import org.apache.commons.lang3.StringUtils;
 
 @Log4j2
 public class RestAllianceService {
