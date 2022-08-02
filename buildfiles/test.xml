@@ -504,7 +504,7 @@ test(s) need to be run before committing changes or pushing files to production 
 
     <!--Not using runDBtest macrodef here because we are setting smoke.failure as a property-->
     <!--This is used to determine if output should be mailed.  Could be handed in, as well.-->
-    <target name="productionSmokeTests" if="isproduction" depends="compile,build-tests" description="Tests to make sure that the system is alive and working properly."  >
+    <target name="productionSmokeTests" depends="compile,build-tests" description="Tests to make sure that the system is alive and working properly."  >
         <sleep minutes="1"/>
         <junit fork="true"
                printsummary="yes"
@@ -515,8 +515,7 @@ test(s) need to be run before committing changes or pushing files to production 
                 >
             <!--            <jvmarg line="${junrt.jvmargs}"/>-->
             <classpath refid="extended.classpath"/>
-            <sysproperty key="log4j.configuration" value="${web-inf.dir}/log4j.xml"/>
-            <!--<jvmarg value="-DWEBINF=${web-inf.target}"/>-->
+            <jvmarg value="-Dlog4j2.configurationFile=test/log4j2.xml"/>
             <jvmarg value="-Djava.io.tmpdir=${tomcat-temp}"/>
             <jvmarg value="--add-opens=java.xml/com.sun.org.apache.xml.internal.serialize=ALL-UNNAMED"/>
 
