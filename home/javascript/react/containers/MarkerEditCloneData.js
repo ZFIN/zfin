@@ -14,8 +14,7 @@ const CloneData = ({
     vectorList,
     digestList,
     polymeraseList,
-    insertSize,
-    pcrAmplification,
+    clone,
 }) => {
     const {
         value: cloneData,
@@ -24,6 +23,8 @@ const CloneData = ({
         defaultValue: {
             cloningSite: '',
             library: '',
+            polymerase: '',
+            pcrAmplification: '',
         }
     });
     const cloningSiteOptions = JSON.parse(cloningSiteList);
@@ -113,11 +114,11 @@ const CloneData = ({
                 label='Insert Size'
                 field='insertSize'
                 id='insertSize'
-                validate={(value, { debounce }) => debounce(async () => {
-                    if (value === insertSize) {
+                validate={(value, {debounce}) => debounce(async () => {
+                    if (value === clone.insertSize) {
                         return false;
                     }
-                    return value === parseInt(value, 10)
+                    return Number.isNaN(value * 1) ? 'This must be an integer' : ''
                 }, 300)}
             />
 
@@ -127,7 +128,7 @@ const CloneData = ({
                 id='pcrAmplification'
                 tag='textarea'
             >
-                {pcrAmplification}
+                {clone.pcrAmplification}
             </FormGroup>
 
 
@@ -168,8 +169,7 @@ CloneData.propTypes = {
     vectorList: PropTypes.string,
     digestList: PropTypes.string,
     polymeraseList: PropTypes.string,
-    insertSize: PropTypes.string,
-    pcrAmplification: PropTypes.string,
+    clone: PropTypes.object,
 };
 
 export default CloneData;
