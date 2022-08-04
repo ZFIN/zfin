@@ -3,10 +3,11 @@
 <c:set var="NOMENCLATURE" value="Nomenclature" />
 <c:set var="NOTES" value="Notes" />
 <c:set var="MARKER_RELATIONSHIPS" value="Marker Relationships" />
+<c:set var="DATA" value="Clone Data" />
 <c:set var="SEQUENCES" value="Sequences" />
 <c:set var="SUPPLIERS" value="Suppliers" />
 
-<z:dataPage sections="${[NOMENCLATURE, NOTES, MARKER_RELATIONSHIPS, SEQUENCES, SUPPLIERS]}">
+<z:dataPage sections="${[NOMENCLATURE, NOTES, MARKER_RELATIONSHIPS, DATA, SEQUENCES, SUPPLIERS]}">
     <z:dataManagerDropdown>
         <a class="dropdown-item" href="/${clone.zdbID}">View</a>
         <a class="dropdown-item" href="/action/marker/marker-edit?zdbID=${clone.zdbID}">Edit</a>
@@ -40,6 +41,24 @@
              data-marker-abbreviation="${clone.abbreviation}"
              data-marker-id="${clone.zdbID}"
              data-relationship-type-data='${markerRelationshipTypes}'>
+        </div>
+    </z:section>
+
+    <z:section title="${DATA}">
+        <div class="__react-root"
+             id="MarkerEditCloneData"
+             data-clone-id='${clone.zdbID}'
+<%--
+             data-clone='${clone}'
+--%>
+             data-cloning-site-list='${cloningSiteList}'-
+             data-library-list='${libraryList}'
+             data-vector-list='${vectorList}'
+             data-digest-list='${digestList}'
+             data-polymerase-list='${polymeraseListList}'
+             data-insert-size='${clone.insertSize}'
+             data-pcr-Amplification='${clone.pcrAmplification}'
+             >
         </div>
     </z:section>
 
