@@ -379,27 +379,6 @@ public class MappingDetailController {
         return null;
     }
 
-    @RequestMapping("/publication/{pubID}")
-    protected String showMappedMarker(@PathVariable String pubID,
-                                      Model model) throws Exception {
-
-        if (pubID == null) {
-            model.addAttribute(LookupStrings.ZDB_ID, "No pubID found");
-            return LookupStrings.RECORD_NOT_FOUND_PAGE;
-        }
-        Publication publication = getPublicationRepository().getPublication(pubID);
-        if (publication == null) {
-            model.addAttribute(LookupStrings.ZDB_ID, "No publication found for pubID: " + pubID);
-            return LookupStrings.RECORD_NOT_FOUND_PAGE;
-        }
-
-        List<EntityZdbID> mappedEntities = getLinkageRepository().getMappedEntitiesByPub(publication);
-        model.addAttribute("mappedEntities", mappedEntities);
-        model.addAttribute("publication", publication);
-        return "mapping/mapped-data-per-publication";
-    }
-
-
     @Autowired
     private MarkerRepository markerRepository;
 

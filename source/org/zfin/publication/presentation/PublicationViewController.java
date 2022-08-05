@@ -101,7 +101,6 @@ public class PublicationViewController {
         model.addAttribute("meshTermDisplayList", publicationService.getMeshTermDisplayList(publication));
         model.addAttribute("hasCorrespondence", publicationService.hasCorrespondence(publication));
         model.addAttribute("allowCuration", publicationService.allowCuration(publication));
-        model.addAttribute("dataLinks", publicationService.getPublicationDataLinks(publication));
         model.addAttribute("allowDelete", publicationRepository.canDeletePublication(publication));
 
         ZebrashareSubmissionMetadata zebraShareMetadata = zebrashareRepository.getZebraShareSubmissionMetadataForPublication(publication);

@@ -441,7 +441,7 @@ public class PublicationService {
         long mappingCount = publicationRepository.getMappingDetailsCount(publication);
         if (mappingCount > 0) {
             links.add(new DataLinkBean(
-                    "/action/mapping/publication/" + publication.getZdbID(),
+                    "/action/publication/" + publication.getZdbID()+"#mapping",
                     "Mapping Details",
                     mappingCount
             ));
