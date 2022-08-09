@@ -166,13 +166,15 @@
             ${publication.errataAndNotes}
         </z:section>
 
-        <c:if test="${not empty publication.zebrashareEditors}">
-            <z:section title="${ZEBRASHARE}">
-                <zfin2:subsection title="" showNoData="true">
-                    <jsp:include page="publication-zebrashare.jsp"/>
-                </zfin2:subsection>
-            </z:section>
-        </c:if>
+        <authz:authorize access="hasRole('root')">
+            <c:if test="${not empty publication.zebrashareEditors}">
+                <z:section title="${ZEBRASHARE}">
+                    <zfin2:subsection title="" showNoData="true">
+                        <jsp:include page="publication-zebrashare.jsp"/>
+                    </zfin2:subsection>
+                </z:section>
+            </c:if>
+        </authz:authorize>
 
     </jsp:body>
 
