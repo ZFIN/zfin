@@ -459,21 +459,18 @@ public class HibernateLinkageRepository implements LinkageRepository {
             list.add(linkage.getEntity());
         }
         List<EntityZdbID> uniqueList = new ArrayList<>(list);
-        Collections.sort(uniqueList, new Comparator<EntityZdbID>() {
-            @Override
-            public int compare(EntityZdbID o1, EntityZdbID o2) {
-                if (!o1.getEntityType().equals(o2.getEntityType())) {
-                    return o1.getEntityType().compareTo(o2.getEntityType());
-                }
-                return o1.getAbbreviationOrder().compareTo(o2.getAbbreviationOrder());
+        uniqueList.sort((o1, o2) -> {
+            if (!o1.getEntityType().equals(o2.getEntityType())) {
+                return o1.getEntityType().compareTo(o2.getEntityType());
             }
+            return o1.getAbbreviationOrder().compareTo(o2.getAbbreviationOrder());
         });
         return uniqueList;
     }
 
     @Override
     public Panel getPanel(String panelID) {
-        return (Panel) HibernateUtil.currentSession().get(Panel.class, panelID);
+        return HibernateUtil.currentSession().get(Panel.class, panelID);
     }
 
     @Override

@@ -13,6 +13,7 @@
 <c:set var="EXPRESSION" value="Expression"/>
 <c:set var="PHENOTYPE" value="Phenotype"/>
 <c:set var="MUTATION" value="Mutation and Transgenics"/>
+<c:set var="MAPPING" value="Mapping"/>
 <c:set var="FISH" value="Fish"/>
 <c:set var="DISEASE" value="Human Disease / Model Data"/>
 <c:set var="ORTHOLOGY" value="Orthology"/>
@@ -25,21 +26,21 @@
     <c:when test="${not empty publication.zebrashareEditors}">&nbsp;
         <authz:authorize access="isAuthenticated()">
             <c:set var="secs"
-                   value="${[SUMMARY, ABSTRACT, GENES, FIGURES, EXPRESSION, PHENOTYPE, MUTATION, DISEASE, STRS, FISH, ANTIBODIES, ORTHOLOGY, EFGs, DIRECTLY_ATTRIBUTED_DATA, ERRATA, ZEBRASHARE]}"/>
+                   value="${[SUMMARY, ABSTRACT, GENES, FIGURES, EXPRESSION, PHENOTYPE, MUTATION, DISEASE, STRS, FISH, ANTIBODIES, ORTHOLOGY, EFGs, MAPPING, DIRECTLY_ATTRIBUTED_DATA, ERRATA, ZEBRASHARE]}"/>
         </authz:authorize>
         <authz:authorize access="!isAuthenticated()">
             <c:set var="secs"
-                   value="${[SUMMARY, ABSTRACT, GENES, FIGURES, EXPRESSION, PHENOTYPE, MUTATION, DISEASE, STRS, FISH, ANTIBODIES, ORTHOLOGY, EFGs, ERRATA, ZEBRASHARE]}"/>
+                   value="${[SUMMARY, ABSTRACT, GENES, FIGURES, EXPRESSION, PHENOTYPE, MUTATION, DISEASE, STRS, FISH, ANTIBODIES, ORTHOLOGY, EFGs, MAPPING, ERRATA, ZEBRASHARE]}"/>
         </authz:authorize>
     </c:when>
     <c:otherwise>
         <authz:authorize access="isAuthenticated()">
             <c:set var="secs"
-                   value="${[SUMMARY, ABSTRACT, GENES, FIGURES, EXPRESSION, PHENOTYPE, MUTATION, DISEASE, STRS, FISH, ANTIBODIES, ORTHOLOGY, EFGs, DIRECTLY_ATTRIBUTED_DATA, ERRATA]}"/>
+                   value="${[SUMMARY, ABSTRACT, GENES, FIGURES, EXPRESSION, PHENOTYPE, MUTATION, DISEASE, STRS, FISH, ANTIBODIES, ORTHOLOGY, EFGs, MAPPING, DIRECTLY_ATTRIBUTED_DATA, ERRATA]}"/>
         </authz:authorize>
         <authz:authorize access="!isAuthenticated()">
             <c:set var="secs"
-                   value="${[SUMMARY, ABSTRACT, GENES, FIGURES, EXPRESSION, PHENOTYPE, MUTATION, DISEASE, STRS, FISH, ANTIBODIES, ORTHOLOGY, EFGs, ERRATA]}"/>
+                   value="${[SUMMARY, ABSTRACT, GENES, FIGURES, EXPRESSION, PHENOTYPE, MUTATION, DISEASE, STRS, FISH, ANTIBODIES, ORTHOLOGY, EFGs, MAPPING, ERRATA]}"/>
         </authz:authorize>
     </c:otherwise>
 </c:choose>
@@ -149,6 +150,11 @@
                  data-url="/action/api/publication/${publication.zdbID}/efgs"></div>
         </z:section>
 
+        <z:section title="${MAPPING}">
+            <div class="__react-root" id="PublicationMappingTable"
+                 data-url="/action/api/publication/${publication.zdbID}/mapping"></div>
+        </z:section>
+
         <authz:authorize access="hasRole('root')">
             <z:section title="${DIRECTLY_ATTRIBUTED_DATA}">
                 <div class="__react-root" id="PublicationAttributionTable"
@@ -160,13 +166,15 @@
             ${publication.errataAndNotes}
         </z:section>
 
-        <c:if test="${not empty publication.zebrashareEditors}">
-            <z:section title="${ZEBRASHARE}">
-                <zfin2:subsection title="" showNoData="true">
-                    <jsp:include page="publication-zebrashare.jsp"/>
-                </zfin2:subsection>
-            </z:section>
-        </c:if>
+        <authz:authorize access="hasRole('root')">
+            <c:if test="${not empty publication.zebrashareEditors}">
+                <z:section title="${ZEBRASHARE}">
+                    <zfin2:subsection title="" showNoData="true">
+                        <jsp:include page="publication-zebrashare.jsp"/>
+                    </zfin2:subsection>
+                </z:section>
+            </c:if>
+        </authz:authorize>
 
     </jsp:body>
 

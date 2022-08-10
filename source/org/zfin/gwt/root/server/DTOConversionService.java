@@ -25,10 +25,10 @@ import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.mapping.FeatureLocation;
-import org.zfin.marker.Marker;
-import org.zfin.marker.MarkerRelationship;
-import org.zfin.marker.Transcript;
+import org.zfin.marker.*;
+import org.zfin.marker.Vector;
 import org.zfin.marker.presentation.MarkerPresentation;
+import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.*;
 import org.zfin.mutant.presentation.Construct;
 import org.zfin.mutant.presentation.MarkerGoEvidencePresentation;
@@ -1425,6 +1425,67 @@ public class DTOConversionService {
         phenotypeTerm.setRelatedEntity(convertToEntityDTO(structure.getRelatedEntity(), shallow, shallow));
         phenotypeTerm.setTag(structure.getTag().toString());
         return phenotypeTerm;
+    }
+
+    public static CloneDTO convertToCloneDTO(Clone clone) {
+        CloneDTO cloneDTO = new CloneDTO();
+
+        // get simple attributes
+        cloneDTO.setZdbID(clone.getZdbID());
+        cloneDTO.setName(clone.getName());
+        cloneDTO.setMarkerType(clone.getMarkerType().getType().name());
+
+        // get clone table data
+        cloneDTO.setRating(clone.getRating());
+        if (clone.getProblem() != null) {
+            cloneDTO.setProblemType(clone.getProblem().toString());
+        }
+        cloneDTO.setCloneComments(clone.getCloneComments());
+        cloneDTO.setCloningSite(clone.getCloningSite());
+        cloneDTO.setDigest(clone.getDigest());
+        cloneDTO.setPolymerase(clone.getPolymeraseName());
+        cloneDTO.setInsertSize(clone.getInsertSize());
+        cloneDTO.setPcrAmplification(clone.getPcrAmplification());
+
+        // set clone vector properties
+        Vector cloneVector = clone.getVector();
+        if (cloneVector != null) {
+            cloneDTO.setVectorName(cloneVector.getName());
+        }
+
+        // set probe library types
+        ProbeLibrary probeLibrary = clone.getProbeLibrary();
+        if (probeLibrary != null) {
+            cloneDTO.setProbeLibraryName(probeLibrary.getName());
+        }
+
+        cloneDTO.setSuppliers(MarkerService.getSuppliers(clone));
+
+        // get direct attributions
+        cloneDTO.setRecordAttributions(MarkerService.getDirectAttributions(clone));
+
+        // get notes
+        cloneDTO.setCuratorNotes(DTOMarkerService.getCuratorNoteDTOs(clone));
+
+        cloneDTO.setPublicNote(DTOMarkerService.getPublicNoteDTO(clone));
+
+        // get alias's
+        cloneDTO.setAliasAttributes(DTOMarkerService.getMarkerAliasDTOs(clone));
+
+        // get related genes
+        cloneDTO.setRelatedGeneAttributes(DTOMarkerService.getRelatedGenesMarkerDTOs(clone));
+        // cloneDTO.setRelatedGeneAttributes(DTOMarkerService.getGenesMarkerDTOs(clone));
+
+        // get sequences
+        cloneDTO.setSupportingSequenceLinks(DTOMarkerService.getSupportingSequenceDTOs(clone));
+
+        Clone.ProblemType[] problemTypeEnums = Clone.ProblemType.values();
+        List<String> problemTypes = new ArrayList<String>();
+        for (Clone.ProblemType problemTypeEnum : problemTypeEnums) {
+            problemTypes.add(problemTypeEnum.toString());
+        }
+        cloneDTO.setProblemTypes(problemTypes);
+        return cloneDTO;
     }
 
     public static ExpressionExperimentDTO convertToExperimentDTO(ExpressionExperiment experiment) {
