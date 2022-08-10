@@ -103,9 +103,8 @@
         vm.deleteFigure = deleteFigure;
         vm.updateFigure = updateFigure;
 
-        activate();
+        this.$onInit = function () {
 
-        function activate() {
             vm.loading = true;
             FigureService.getFigures(vm.pubId)
                 .then(function (response) {
