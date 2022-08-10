@@ -597,7 +597,7 @@
             description="Performs the full build, test, move to production, and tomcat restart appropriate for the current environment"/>
 
     <target name="deploy-without-tests"
-            depends="cleanClasses,pre-deploy,build-properties,advance-build,unittests-quiet,restart,deploy-solr"/>
+            depends="cleanClasses,pre-deploy,build-properties,advance-build,unittests-quiet,restart,deploy-solr,deployGitInfoFile"/>
 
     <target name="deploy-without-tests-and-tomcat-restart"
             depends="cleanClasses,pre-deploy,build-properties,advance-build,unittests-quiet,deploy-solr"/>
@@ -810,6 +810,18 @@
              classname="org.codehaus.groovy.ant.Groovy"
              classpathref="extended.classpath"/>
 
+    <target name="deployGitInfoFile">
+        <gradle task="deployGitInfoFile" />
+    </target>
+
+    <macrodef name="gradle">
+        <attribute name="task" />
+        <sequential>
+            <exec executable="gradle" dir="." failonerror="true">
+                <arg value="@{task}" />
+            </exec>
+        </sequential>
+    </macrodef>
 </project>
 
 
