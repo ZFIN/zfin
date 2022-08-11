@@ -33,9 +33,7 @@
         vm.save = save;
         vm.reset = reset;
 
-        activate();
-
-        function activate() {
+        this.$onInit = function () {
             if (vm.type === 'CRISPR') {
                 vm.sequenceLabel = 'Target Sequence';
             } else if (vm.type === 'TALEN') {
