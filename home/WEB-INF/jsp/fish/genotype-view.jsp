@@ -38,7 +38,7 @@
     <jsp:body>
         <div id="${zfn:makeDomIdentifier(SUMMARY)}">
             <div class="small text-uppercase text-muted">GENOTYPE</div>
-            <h1>${genotype.name}</h1>
+            <h1><zfin:name entity="${genotype}"/></h1>
             <jsp:include page="genotype-view-summary.jsp"/>
         </div>
 
