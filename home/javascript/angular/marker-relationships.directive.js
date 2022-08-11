@@ -39,9 +39,7 @@
         vm.removeReference = removeReference;
         vm.closeEditModal = closeEditModal;
 
-        activate();
-
-        function activate() {
+        this.$onInit = function () {
             MarkerService.getRelationships(vm.markerId)
                 .then(function (relationships) {
 
