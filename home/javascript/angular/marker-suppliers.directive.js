@@ -31,9 +31,7 @@
         vm.submit = submit;
         vm.remove = remove;
 
-        activate();
-
-        function activate() {
+        this.$onInit = function () {
             MarkerService.getSuppliers(vm.markerId)
                 .then(function (suppliers) {
                     vm.suppliers = suppliers;
