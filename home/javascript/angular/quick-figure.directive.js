@@ -70,9 +70,7 @@
         vm.submit = submit;
         vm.readyToSubmit = readyToSubmit;
 
-        activate();
-
-        function activate() {
+        this.$onInit = function () {
             reset();
         }
 
