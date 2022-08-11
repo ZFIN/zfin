@@ -11,7 +11,7 @@
 <z:dataPage sections="${[SUMMARY, HUMAN_DISEASE, EXPRESSION, PHENOTYPE, CITATIONS]}">
 
     <jsp:attribute name="entityName">
-        ${fish.name}
+        ${zfn:getTruncatedName(fish.name, 30)}
     </jsp:attribute>
 
     <jsp:attribute name="pageBar">
