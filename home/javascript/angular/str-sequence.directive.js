@@ -38,9 +38,7 @@
 
         var vm = this;
 
-        activate();
-
-        function activate() {
+        this.$onInit = function () {
             $scope.$watchGroup(['vm.reportedSequence', 'vm.isReversed', 'vm.isComplemented'], function (newValue) {
                 if (!vm.reportedSequence) {
                     vm.sequence = '';
