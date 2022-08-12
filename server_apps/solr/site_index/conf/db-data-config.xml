@@ -3866,6 +3866,7 @@
                      full outer join fluorescent_marker as fm on fm_mrkr_zdb_id = fmr.fmrel_mrkr_zdb_id
                      full outer join fluorescent_color as fcm on fcm.fc_color = fm.fm_emission_color
                      full outer join fluorescent_color as fcx on fcx.fc_color = fm.fm_excitation_color
+                     where fm.fm_mrkr_zdb_id ~ 'CONSTRCT'
                      "
         >
 
