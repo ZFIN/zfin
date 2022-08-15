@@ -13,7 +13,10 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.expression.presentation.ImageResult;
 import org.zfin.feature.Feature;
+import org.zfin.figure.presentation.FigureExpressionSummary;
+import org.zfin.figure.presentation.FigurePhenotypeSummary;
 import org.zfin.figure.service.FigureViewService;
+import org.zfin.framework.ComparatorCreator;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationBean;
@@ -24,6 +27,7 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerType;
 import org.zfin.marker.presentation.GeneBean;
 import org.zfin.marker.presentation.MarkerReferenceBean;
+import org.zfin.marker.presentation.OrganizationLink;
 import org.zfin.marker.presentation.STRTargetRow;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
@@ -44,12 +48,13 @@ import org.zfin.zebrashare.repository.ZebrashareRepository;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+
+import static java.util.stream.Collectors.toList;
+import static org.zfin.repository.RepositoryFactory.getFigureRepository;
 
 @Controller
+@RequestMapping("/publication")
 public class PublicationViewController {
 
     private Logger logger = LogManager.getLogger(PublicationViewController.class);
@@ -78,7 +83,7 @@ public class PublicationViewController {
     @Autowired
     private RelatedDataService relatedDataService;
 
-    @RequestMapping("/publication/{zdbID}")
+    @RequestMapping("/{zdbID}")
     public String viewPublication(@PathVariable String zdbID, Model model, HttpServletResponse response) {
         Publication publication = getPublication(zdbID);
 
@@ -118,7 +123,7 @@ public class PublicationViewController {
         return "publication/publication-view";
     }
 
-    @RequestMapping("/publication/view")
+    @RequestMapping("/view")
     public String viewByAccession(@RequestParam(value = "accession", required = false) String accession,
                                   HttpServletResponse response) {
         Publication publication = null;
@@ -138,7 +143,7 @@ public class PublicationViewController {
         return "redirect:/" + publication.getZdbID();
     }
 
-    @RequestMapping("/publication/{pubID}/orthology-list")
+    @RequestMapping("/{pubID}/orthology-list")
     public String showOrthologyList(@PathVariable String pubID,
                                     @ModelAttribute("formBean") GeneBean geneBean,
                                     Model model,
@@ -191,7 +196,7 @@ public class PublicationViewController {
         return "publication/publication-orthology-list";
     }
 
-    @RequestMapping("/publication/{pubID}/feature-list")
+    @RequestMapping("/{pubID}/feature-list")
     public String showFeatureList(@PathVariable String pubID,
                                   @ModelAttribute("formBean") GeneBean geneBean,
                                   Model model,
@@ -213,7 +218,7 @@ public class PublicationViewController {
         return "feature/feature-per-publication";
     }
 
-    @RequestMapping("/publication/{pubID}/genotype-list")
+    @RequestMapping("/{pubID}/genotype-list")
     public String showGenotypeList(@PathVariable String pubID,
                                    @ModelAttribute("formBean") GeneBean geneBean,
                                    Model model,
@@ -236,7 +241,7 @@ public class PublicationViewController {
         return "feature/genotype-per-publication";
     }
 
-    @RequestMapping("/publication/{pubID}/fish-list")
+    @RequestMapping("/{pubID}/fish-list")
     public String showFishList(@PathVariable String pubID,
                                @ModelAttribute("formBean") GeneBean geneBean,
                                Model model,
@@ -259,7 +264,7 @@ public class PublicationViewController {
     }
 
 
-    @RequestMapping("/publication/{zdbID}/disease")
+    @RequestMapping("/{zdbID}/disease")
     public String disease(@PathVariable String zdbID, Model model, HttpServletResponse response) {
         Publication publication = getPublication(zdbID);
 
@@ -274,7 +279,7 @@ public class PublicationViewController {
         return "publication/publication-disease";
     }
 
-    @RequestMapping("/publication/{zdbID}/genes")
+    @RequestMapping("/{zdbID}/genes")
     public String showGenesMarkersList(@PathVariable String zdbID,
                                        Model model,
                                        HttpServletResponse response) {
@@ -297,7 +302,7 @@ public class PublicationViewController {
         return "publication/publication-marker-list";
     }
 
-    @RequestMapping("/publication/{zdbID}/efgs")
+    @RequestMapping("/{zdbID}/efgs")
     public String showEFGsList(@PathVariable String zdbID,
                                Model model,
                                HttpServletResponse response) {
@@ -322,7 +327,7 @@ public class PublicationViewController {
         return "publication/publication-egf-list";
     }
 
-    @RequestMapping("/publication/{zdbID}/clones")
+    @RequestMapping("/{zdbID}/clones")
     public String showClonesList(@PathVariable String zdbID,
                                  @ModelAttribute("pagination") PaginationBean pagination,
                                  Model model,
@@ -352,7 +357,7 @@ public class PublicationViewController {
         return "publication/publication-clone-list";
     }
 
-    @RequestMapping("/publication/{zdbID}/strs")
+    @RequestMapping("/{zdbID}/strs")
     public String showSTRList(@PathVariable String zdbID,
                               @RequestParam("type") String type,
                               Model model,
@@ -388,7 +393,7 @@ public class PublicationViewController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/publication/lookup", method = RequestMethod.GET)
+    @RequestMapping(value = "/lookup", method = RequestMethod.GET)
     public List<MarkerReferenceBean> publicationLookup(@RequestParam("q") String query) {
         List<MarkerReferenceBean> results = new ArrayList<>();
         Publication publication = publicationRepository.getPublication(query);
@@ -398,7 +403,7 @@ public class PublicationViewController {
         return results;
     }
 
-    @RequestMapping("/publication/journal/{zdbID}")
+    @RequestMapping("/journal/{zdbID}")
     public String viewJournal(@PathVariable String zdbID, Model model, HttpServletResponse response) {
         Journal journal = publicationRepository.getJournalByID(zdbID);
         //try zdb_replaced data if necessary
@@ -422,7 +427,7 @@ public class PublicationViewController {
     }
 
 
-    @RequestMapping("/publication/image-edit")
+    @RequestMapping("/image-edit")
     public String getImageEdit(Model model, @RequestParam("zdbID") String zdbID) {
 
         Image image = publicationRepository.getImageById(zdbID);
@@ -443,7 +448,7 @@ public class PublicationViewController {
     }
 
 
-    @RequestMapping("/publication/printable/{zdbID}")
+    @RequestMapping("/printable/{zdbID}")
     public String printable(@PathVariable String zdbID, Model model, HttpServletResponse response) {
         Publication publication = getPublication(zdbID);
         if (publication == null) {
@@ -488,7 +493,7 @@ public class PublicationViewController {
         return title;
     }
 
-    @RequestMapping("/publication/{pubID}/directly-attributed")
+    @RequestMapping("/{pubID}/directly-attributed")
     public String showDirectlyAttributed(@PathVariable String pubID,
                                          @ModelAttribute("formBean") GeneBean geneBean,
                                          Model model,
@@ -512,6 +517,73 @@ public class PublicationViewController {
         model.addAttribute("directedAttributedData", directedAttributedIds);
         model.addAttribute("publication", publication);
         return "publication/publication-directly-attributed";
+    }
+
+    @RequestMapping("/{pubID}/all-figures")
+    public String showAllFigures(@PathVariable String pubID,
+                                 @RequestParam(value = "probeZdbID", required = false) String probeZdbID,
+                                 Model model) {
+        Publication publication = publicationRepository.getPublication(pubID);
+
+        if (publication == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, pubID);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
+        model.addAttribute("publication", publication);
+        model.addAttribute("showElsevierMessage", figureViewService.showElsevierMessage(publication));
+        model.addAttribute("hasAcknowledgment", figureViewService.hasAcknowledgment(publication));
+        model.addAttribute("showMultipleMediumSizedImages", figureViewService.showMultipleMediumSizedImages(publication));
+        // model.addAttribute("isZebrasharePub", figureViewService.isZebrasharePub(publication));
+        //for direct submission pubs, publication.getFigures() won't be correct and we'll need to do a query...
+        List<Figure> figures = new ArrayList<>();
+
+        //also for direct submission pubs, we should see if we got a probe
+        Clone probe = null;
+        if (!StringUtils.isEmpty(probeZdbID)) {
+            probe = RepositoryFactory.getMarkerRepository().getCloneById(probeZdbID);
+        }
+        model.addAttribute("probe", probe);
+        if (probe != null) {
+            List<OrganizationLink> suppliers = RepositoryFactory.getProfileRepository().getSupplierLinksForZdbId(probe.getZdbID());
+            model.addAttribute("probeSuppliers", suppliers);
+        }
+        if (figureViewService.isZebrasharePub(publication)) {
+            figures.addAll(publication.getFigures());
+        } else {
+            if (publication.isUnpublished()) {
+                if (!StringUtils.isEmpty(probeZdbID)) {
+                    figures.addAll(getFigureRepository().getFiguresForDirectSubmissionPublication(publication, probe));
+                } else {
+                    figures.addAll(publication.getFigures());
+                }
+            } else {
+                figures.addAll(publication.getFigures());
+            }
+
+        }
+
+
+        Collections.sort(figures, ComparatorCreator.orderBy("orderingLabel", "zdbID"));
+
+        model.addAttribute("figures", figures);
+        model.addAttribute("figureCaptions", figures.stream().map(Figure::getLabel).collect(toList()));
+        model.addAttribute("submitters", getFigureRepository().getSubmitters(publication, probe));
+        model.addAttribute("showThisseInSituLink", figureViewService.showThisseInSituLink(publication));
+        model.addAttribute("showErrataAndNotes", figureViewService.showErrataAndNotes(publication));
+
+        Map<Figure, FigureExpressionSummary> expressionSummaryMap = new HashMap<>();
+        Map<Figure, FigurePhenotypeSummary> phenotypeSummaryMap = new HashMap<>();
+        for (Figure figure : figures) {
+            expressionSummaryMap.put(figure, figureViewService.getFigureExpressionSummary(figure));
+            phenotypeSummaryMap.put(figure, figureViewService.getFigurePhenotypeSummary(figure));
+        }
+        model.addAttribute("expressionSummaryMap", expressionSummaryMap);
+        model.addAttribute("phenotypeSummaryMap", phenotypeSummaryMap);
+
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "All Figures, " + publication.getShortAuthorList());
+
+        return "publication/publication-figures";
     }
 }
 
