@@ -8,6 +8,11 @@
     <c:set var="CURATION" value="${PublicationType.CURATION}"/>
 
 
+    <authz:authorize access="hasRole('root')">
+        <a class="dropdown-item" href="/action/publication/${publication.zdbID}/all-figures">Prototype View</a>
+    </authz:authorize>
+
+
     <zfin-figure:publicationInfo publication="${publication}"
                                  submitters="${submitters}"
                                  showThisseInSituLink="${showThisseInSituLink}"
