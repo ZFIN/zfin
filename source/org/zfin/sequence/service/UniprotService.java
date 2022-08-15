@@ -17,7 +17,7 @@ import java.io.IOException;
  */
 //@Service
 public class UniprotService {
-
+    private static final String UNIPROT_BASE_URL = "https://rest.uniprot.org/uniprotkb/";
     private Logger logger = LogManager.getLogger(UniprotService.class) ;
 
     //    @Autowired
@@ -35,20 +35,11 @@ public class UniprotService {
 
     }
 
-    public String getUniprotBaseUrl() {
-        if(uniprotUrl==null){
-            HibernateUtil.currentSession().refresh(uniprotReferenceDatabase);
-            uniprotUrl = uniprotReferenceDatabase.getBaseURL();
-        }
-        return uniprotUrl;
-    }
-
     public Boolean validateAgainstUniprotWebsite(String accession) {
-
 
         DefaultHttpClient client = new DefaultHttpClient();
         try {
-            HttpResponse response = client.execute(new HttpGet(getUniprotBaseUrl() + accession));
+            HttpResponse response = client.execute(new HttpGet(UNIPROT_BASE_URL + accession));
             int statusCode = response.getStatusLine().getStatusCode();
             boolean isOk = (statusCode == HttpStatus.SC_OK);
             if (!isOk) {
