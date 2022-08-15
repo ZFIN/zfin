@@ -186,10 +186,10 @@ public class PublicationAPIController {
     @RequestMapping(value = "/{zdbID}/marker", method = RequestMethod.GET)
     public JsonResultResponse<Marker> getPublicationMarker(@PathVariable String zdbID,
                                                            @Version Pagination pagination) {
-        List<Marker> marker = publicationRepository.getGenesByPublication(zdbID, false);
+        List<Marker> markers = publicationRepository.getGenesAndMarkersByPublication(zdbID);
         JsonResultResponse<Marker> response = new JsonResultResponse<>();
-        response.setTotal(marker.size());
-        List<Marker> markerList = marker.stream()
+        response.setTotal(markers.size());
+        List<Marker> markerList = markers.stream()
                 .skip(pagination.getStart())
                 .limit(pagination.getLimit())
                 .collect(Collectors.toList());
