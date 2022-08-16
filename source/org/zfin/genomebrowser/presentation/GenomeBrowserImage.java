@@ -12,6 +12,8 @@ public interface GenomeBrowserImage {
 
     String getLandmark();
 
+    String getChromosome();
+
     String getBuild();
 
     GenomeBrowserType getType();

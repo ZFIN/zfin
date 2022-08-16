@@ -7,7 +7,7 @@ const GBROWSE_PADDING = 90;
 const IMAGE_SIZE_STEP = 200;
 const DEBOUNCE_INTERVAL = 250;
 
-const GbrowseImage = ({imageUrl, linkUrl, build}) => {
+const GbrowseImage = ({imageUrl, linkUrl, build, chromosome}) => {
     const [imageLoaded, setImageLoaded] = useState(false);
     const [imgSrc, setImageSrc] = useState(null);
     const containerRef = useRef(null);
@@ -49,7 +49,7 @@ const GbrowseImage = ({imageUrl, linkUrl, build}) => {
     return (
         <div className='position-relative'>
             <div ref={containerRef} style={imageLoaded ? undefined : hiddenStyle}>
-                {build && <span className='gbrowse-source-label'>Genome Build: {build}</span>}
+                {build && <div><span className='gbrowse-source-label'>Genome Build: {build}</span><span className='gbrowse-source-label'>Chromosome: {chromosome}</span></div>}
                 <a href={linkUrl}>
                     <img
                         className='d-block mx-auto mb-3'
@@ -66,6 +66,7 @@ GbrowseImage.propTypes = {
     imageUrl: PropTypes.string.isRequired,
     linkUrl: PropTypes.string.isRequired,
     build: PropTypes.string,
+    chromosome: PropTypes.string,
 };
 
 export default GbrowseImage;

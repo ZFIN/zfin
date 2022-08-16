@@ -136,4 +136,12 @@ public class GBrowseImage implements GenomeBrowserImage {
         result = 31 * result + (getLinkUrl() != null ? getLinkUrl().hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String getChromosome(){
+        if(landmark == null)
+            return "";
+        return landmark.substring(0, landmark.indexOf(":"));
+    }
+
 }

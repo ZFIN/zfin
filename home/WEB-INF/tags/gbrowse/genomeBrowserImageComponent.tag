@@ -13,6 +13,7 @@
          data-image-url="${image.imageUrl}"
          data-link-url="${image.linkUrl}"
          data-build="${image.build}"
+         data-chromosome="${image.chromosome}"
     ></div>
 </c:if>
 <c:if test="${empty image}">
@@ -20,5 +21,6 @@
          data-image-url="${image.imageUrl}"
          data-link-url="${image.linkUrl}"
          data-build="${image.build}"
+         data-chromosome="${image.chromosome}"
     ></div>
 </c:if>

@@ -7,7 +7,7 @@ const GBROWSE_PADDING = 90;
 const IMAGE_SIZE_STEP = 200;
 const DEBOUNCE_INTERVAL = 250;
 
-const JbrowseImage = ({imageUrl, linkUrl, build}) => {
+const JbrowseImage = ({imageUrl, linkUrl, build, chromosome}) => {
 //    const [imageLoaded, setImageLoaded] = useState(false);
     const [imgSrc, setImageSrc] = useState(null);
     const containerRef = useRef(null);
@@ -52,7 +52,7 @@ const JbrowseImage = ({imageUrl, linkUrl, build}) => {
     return (
         <div className='position-relative'>
             <div ref={containerRef}>
-                {build && <span className='gbrowse-source-label'>Genome Build: {build}</span>}
+                {build && <div><span className='gbrowse-source-label'>Genome Build: {build}</span><span className='gbrowse-source-label'>Chromosome: {chromosome}</span></div>}
                 <a href={linkUrl}>
                     <object
                         type='text/html'
@@ -72,6 +72,7 @@ JbrowseImage.propTypes = {
     imageUrl: PropTypes.string.isRequired,
     linkUrl: PropTypes.string.isRequired,
     build: PropTypes.string,
+    chromosome: PropTypes.string,
 };
 
 export default JbrowseImage;
