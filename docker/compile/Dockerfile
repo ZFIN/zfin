@@ -2,9 +2,18 @@ FROM gradle:jdk17
 
 RUN apt update && apt install -y --no-install-recommends \
        ant groovy nodejs npm postgresql-client tcsh sudo \
-       vim nano emacs iputils-ping docker.io imagemagick \
+       vim nano emacs iputils-ping imagemagick \
        libwww-perl libdbi-perl libdbd-pg-perl libmime-lite-perl \
-       cpanminus build-essential rsync
+       cpanminus build-essential rsync \
+       gnupg lsb-release #needed for docker install below
+
+RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+RUN echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+RUN apt update && apt install -y --no-install-recommends \
+       docker-ce docker-ce-cli containerd.io docker-compose-plugin
 
 RUN cpanm Devel::Camelcadedb
 
@@ -22,6 +31,7 @@ RUN mkdir -p /opt/zfin/tls/private
 RUN mkdir -p /opt/zfin/catalina_bases/zfin.org
 RUN chown -R gradle:gradle /opt/zfin/
 RUN mkdir -p /opt/apache/apache-tomcat/conf && chown -R gradle /opt/apache/apache-tomcat 
+RUN mkdir -p /opt/zfin/log/httpd && cd /opt/zfin/log/httpd && touch zfin_access zfin_access.json zfin_errors && chmod 664 *
 
 RUN groupmod -n zfin gradle
 RUN groupadd -g 8983 solr 
