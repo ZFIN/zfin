@@ -4,7 +4,6 @@ FROM centos:7
 RUN yum -y update
 RUN yum -y install httpd httpd-tools mod_ssl mod_ldap
 
-
 RUN groupadd -g 1000 zfin && \
     usermod -a -G zfin apache
 

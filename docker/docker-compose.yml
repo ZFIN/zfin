@@ -13,11 +13,15 @@ services:
       SSH_AUTH_SOCK: /run/host-services/ssh-auth.sock
       SSH_USER: ${DOCKER_SSH_USER}
       TZ: ${TZ}
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD}
+      LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD}
 #      #UNCOMMENT BELOW FOR PERL DEBUGGING
 #    ports:
 #      - "127.0.0.1:12345:12345"
     volumes:
       - www_data:/opt/zfin/www_homes/zfin.org
+      - httpd_log:/opt/zfin/log/httpd
       - tls_certs:/opt/zfin/tls
       - keystore:/opt/apache/apache-tomcat/conf
       - catalina_base:/opt/zfin/catalina_bases/zfin.org
@@ -66,6 +70,7 @@ services:
       - "443:443"
     volumes:
       - www_data:/opt/zfin/www_homes/zfin.org
+      - httpd_log:/var/log/httpd
       - tls_certs:/opt/zfin/tls
       #- nfs-loadup:/opt/zfin/loadUp
       #- /etc/pki/tls/certs/incommon_intermediate_bundle.crt:/etc/pki/tls/certs/incommon_intermediate_bundle.crt,ro
@@ -112,15 +117,71 @@ services:
     restart: always
     ports:
       - "8888:8080"
+  elasticsearch:
+    container_name: elasticsearch_container
+    build: 
+      context: ./elasticsearch/
+      args:
+        ELK_VERSION: ${ELK_VERSION}
+    profiles:
+      - logging
+    environment:
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+    ports:
+      - "127.0.0.1:9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+  logstash:
+    container_name: logstash_container
+    build: 
+      context: ./logstash/
+      args:
+        ELK_VERSION: ${ELK_VERSION}
+    profiles:
+      - logging
+    environment:
+      LS_JAVA_OPTS: -Xms256m -Xmx256m
+      LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD}
+  filebeat:
+    container_name: filebeat_container
+    build: 
+      context: ./filebeat/
+      args:
+        ELK_VERSION: ${ELK_VERSION}
+    profiles:
+      - logging
+    environment:
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+    volumes:
+      - httpd_log:/var/log/httpd
+      - catalina_base:/opt/zfin/catalina_bases/zfin.org
+  kibana:
+    container_name: kibana_container
+    build: 
+      context: ./kibana/
+      args:
+        ELK_VERSION: ${ELK_VERSION}
+    profiles:
+      - logging
+    environment:
+      KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD}
+    ports:
+      - "127.0.0.1:5601:5601"
+    volumes:
+      - kibana_data:/usr/share/kibana/data
 
 volumes:
   www_data:
+  httpd_log:
   tls_certs:
   keystore:
   catalina_base:
   pg_data:
   solr_data:
   jenkins_data:
+  elasticsearch_data:
+  kibana_data:
   certbot_data:
   nfs-zunloads:
     driver_opts:

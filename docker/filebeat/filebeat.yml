@@ -1,0 +1,34 @@
+filebeat.inputs:
+- type: log
+  id: tomcat-log
+  paths:
+    - /opt/zfin/catalina_bases/zfin.org/logs/catalina.json
+  multiline.pattern: '^{'
+  multiline.negate: true
+  multiline.match:  after
+  processors:
+  - decode_json_fields:
+      fields: ['message']
+      target: tomcat
+- type: log
+  id: httpd-log
+  paths:
+    - /var/log/httpd/zfin_access.json
+  processors:
+  - decode_json_fields:
+      fields: ['message']
+      target: httpd
+
+filebeat.config.modules:
+  path: "${path.config}/modules.d/*.yml"
+  reload.enabled: false
+
+output.elasticsearch:
+  hosts: ["elasticsearch:9200"]
+  username: "elastic"
+  password: "${ELASTIC_PASSWORD}" 
+
+kibana.setup:
+  host: ["kibana:5601"]
+  username: "elastic"
+  password: "${ELASTIC_PASSWORD}" 
