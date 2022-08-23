@@ -141,7 +141,7 @@ system("/bin/rm -f entry.list");
 system("/bin/rm -f domain.txt");
 
 ## download the Interpro file for protein domain summary
-system("/local/bin/wget ftp://ftp.ebi.ac.uk/pub/databases/interpro/current/entry.list");
+system("/local/bin/wget ftp://ftp.ebi.ac.uk/pub/databases/interpro/current_release/entry.list");
 
 open (DOMAINS, "entry.list") || die "Cannot open entry.list : $!\n";
 open (DOMAINOUT, ">domain.txt") || die "Cannot open domain.txt : $!\n";
