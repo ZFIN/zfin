@@ -43,7 +43,7 @@ public class MarkerChromosomalLocationTest extends AbstractDatabaseTest {
         getMarkerRepository().addGenomeLocationAttribution(genomeLocation, publication);
 
         Set<RecordAttribution> publications = genomeLocation.getReferences();
-        assertEquals(1, publications.size());
+        assertEquals(2, publications.size());
     }
 
     @Test
@@ -58,7 +58,7 @@ public class MarkerChromosomalLocationTest extends AbstractDatabaseTest {
         getMarkerRepository().addGenomeLocationAttribution(genomeLocation, publication2);
 
         Set<RecordAttribution> publications = genomeLocation.getReferences();
-        assertEquals(2, publications.size());
+        assertEquals(3, publications.size());
     }
 
 

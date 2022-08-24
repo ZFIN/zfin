@@ -341,9 +341,9 @@
     </function>
 
     <function>
-        <name>getWebdriverLink</name>
+        <name>getTruncatedName</name>
         <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
-        <function-signature>java.lang.String getWebdriverRoot()</function-signature>
+        <function-signature>java.lang.String getTruncatedName(java.lang.String, java.lang.Integer)</function-signature>
     </function>
 
     <function>

@@ -22,16 +22,6 @@ public class ImagePresentation extends EntityPresentation {
 
 
     public static String getLink(Image image) {
-        /*if (image == null)
-            return null;
-        StringBuilder thumb = new StringBuilder();
-        thumb.append("<img src=\"");
-        thumb.append(getThumbnailUri(image));
-        thumb.append("\">");
-
-        return getWebdriverLink(uri, image.getZdbID(), thumb.toString());
-        String link = getViewLink(image.getZdbID(), "", "", null);
-        return link;*/
         if (image == null)
             return null;
         StringBuilder thumb = new StringBuilder();
@@ -39,7 +29,6 @@ public class ImagePresentation extends EntityPresentation {
         thumb.append(getThumbnailUri(image));
         thumb.append("\">");
 
-       // return getWebdriverLink(uri, image.getZdbID(), thumb.toString());
         return getTomcatLink(IMAGE_URI, image.getZdbID(), thumb.toString());
     }
 

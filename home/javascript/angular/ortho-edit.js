@@ -162,9 +162,7 @@
         vm.showDownloadLink = (typeof vm.showDownloadLink === 'undefined') ? true : vm.showDownloadLink;
         vm.loading = []
 
-        activate();
-
-        function activate() {
+        this.$onInit = function () {
             if (!vm.gene) {
                 fetchGenes();
             } else {
