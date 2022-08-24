@@ -7,6 +7,10 @@
  
 use MIME::Lite;
 use Try::Tiny;
+use FindBin;
+use lib "$FindBin::Bin/../../";
+use ZFINPerlModules qw(assertEnvironment trim);
+assertEnvironment('ROOT_PATH', 'INFORMIXDIR', 'DB_NAME', 'SWISSPROT_EMAIL_ERR', 'LOGNAME');
 
 # ----------------- Send Error Report -------------
 # Parameter
@@ -15,12 +19,12 @@ use Try::Tiny;
 sub sendErrorReport ($) {
   
   my $SUBJECT="Auto SWISS-PROT:".$_[0];
-  my $MAILTO="<!--|SWISSPROT_EMAIL_ERR|-->";
+  my $MAILTO=$ENV{'SWISSPROT_EMAIL_ERR'};
   my $TXTFILE="./report.txt";
  
   # Create a new multipart message:
   $msg1 = new MIME::Lite 
-    From    => "$ENV{LOGNAME}",
+    From    => "$ENV{'LOGNAME'}",
     To      => "$MAILTO",
     Subject => "$SUBJECT",
     Type    => 'multipart/mixed';
@@ -56,7 +60,7 @@ sub downloadGOtermFiles () {
 #
 
 #set environment variables
-chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/";
+chdir "$ENV{'ROOT_PATH'}/server_apps/data_transfer/SWISS-PROT/";
 
 #remove old files
 
@@ -65,9 +69,9 @@ system("rm -f *2go");
 &downloadGOtermFiles();
 
 print "\n delete records source from last ec2go loading.\n";
-###system ("$ENV{'INFORMIXDIR'}/bin/dbaccess <!--|DB_NAME|--> sp_delete_ec2gopart.sql >out 2>report.txt");
+###system ("$ENV{'INFORMIXDIR'}/bin/dbaccess $ENV{'DB_NAME'} sp_delete_ec2gopart.sql >out 2>report.txt");
 try {
-  system("psql -d <!--|DB_NAME|--> -a -f sp_delete_ec2gopart.sql > report.txt");
+  system("psql -v ON_ERROR_STOP=1 -d $ENV{'DB_NAME'} -a -f sp_delete_ec2gopart.sql > report.txt");
 } catch {
   chomp $_;
   &sendErrorReport("Failed to execute sp_delete_ec2gopart.sql - $_");
@@ -117,7 +121,7 @@ while( !( -e "ec_mrkrgoterm.unl")) {
 # ------------ Loading ---------------------
 print "\nloading...\n";
 try {
-  system("psql -d <!--|DB_NAME|--> -a -f sp_load_ec2gopart.sql >out 2> report2.txt");
+  system("psql -v ON_ERROR_STOP=1 -d $ENV{'DB_NAME'} -a -f sp_load_ec2gopart.sql >out 2> report2.txt");
 } catch {
   chomp $_;
   &sendErrorReport("Failed to execute sp_load_ec2gopart.sql - $_");

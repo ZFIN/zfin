@@ -12,22 +12,24 @@
 ## genes that have a protein ID of any kind and have xpat or phenotype and not associated with reference proteome
 
 use DBI;
-use lib "<!--|ROOT_PATH|-->/server_apps/";
-use ZFINPerlModules;
 use Try::Tiny;
+use FindBin;
+use lib "$FindBin::Bin/../../";
+use ZFINPerlModules qw(assertEnvironment);
+assertEnvironment('ROOT_PATH', 'PGHOST', 'DB_NAME');
 
 # set environment variables
 $ENV{"DBDATE"}="Y4MD-";
 $ENV{"CLIENT_LOCALE"}="en_US.utf8";
 $ENV{"DB_LOCALE"}="en_US.utf8";
 
-chdir "<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/";
+chdir "$ENV{'ROOT_PATH'}/server_apps/data_transfer/SWISS-PROT/";
 
 system("/bin/rm -f *.tab");
 system("/bin/rm -f UP000000437_7955.fasta");
 
-$dbname = "<!--|DB_NAME|-->";
-my $dbhost = "<!--|PGHOST|-->";
+$dbname = "$ENV{'DB_NAME'}";
+my $dbhost = "$ENV{'PGHOST'}";
 
 $username = "";
 $password = "";
@@ -151,7 +153,7 @@ while(<FASTA>) {
 close(REFPR);
 
 try {
-  ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f referenceProteome.sql");
+  ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d $ENV{'DB_NAME'} -a -f referenceProteome.sql");
 } catch {
   warn "Failed to execute referenceProteome.sql - $_";
   exit -1;

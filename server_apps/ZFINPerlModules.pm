@@ -5,7 +5,7 @@ use strict;
 use MIME::Lite;
 use DBI;
 use Exporter 'import';
-our @EXPORT_OK = qw(md5_file assert_environment trim assert_file_exists);
+our @EXPORT_OK = qw(md5File assertEnvironment trim assertFileExists getPropertyValue downloadOrUseLocalFile doSystemCommand doSystemCommandOrFailWithEmail);
 
 my %monthDisplays = (
     "Jan" => "01",
@@ -33,7 +33,7 @@ my $WHIRLEY_TIME_LIMIT = 10;
 
 sub doSystemCommand {                  
 
-  my $systemCommand = $_[1];               
+  my $systemCommand = $_[1];
 
   print "Executing [$systemCommand] \n";
 
@@ -42,8 +42,22 @@ sub doSystemCommand {
   if ( $returnCode != 0 ) {
     exit -1;
   }
-} 
+}
 
+sub doSystemCommandOrFailWithEmail {
+    my $systemCommand = shift();
+    my $email = shift();
+    my $subject = shift();
+    my $textFile = shift();
+
+    print "Executing [$systemCommand] \n";
+    my $returnCode = system( $systemCommand );
+
+    if ( $returnCode != 0 ) {
+        ZFINPerlModules->sendMailWithAttachedReport($email, $subject, $textFile);
+        exit -1;
+    }
+}
 
 sub sendMailWithAttachedReport {
     my $MAILTO = $_[1];
@@ -175,24 +189,24 @@ sub printWhirleyToStderr {
 }
 
 
-sub md5_file {
+sub md5File {
     my $file = $_[0];
     my $hash = `md5sum '$file' | cut -d ' ' -f 1`;
     $hash =~ s/\s+$//;
     return $hash;
 }
 
-sub assert_environment {
+sub assertEnvironment {
     my @required_vars = @_;
     foreach my $var (@required_vars) {
-        if (!$var) {
+        if (!$ENV{$var}) {
             print("No $var environment variable defined\n");
             exit(2);
         }
     }
 }
 
-sub assert_file_exists {
+sub assertFileExists {
     my $filename = shift();
     my $error_message = shift();
 
@@ -212,6 +226,42 @@ sub trim {
     $s =~ s/\s*$//u;
 
     return $s;
+}
+
+sub getPropertyValue {
+    my $property_name = shift();
+    my $property_file = $ENV{'TARGETROOT'} . "/home/WEB-INF/zfin.properties";
+
+    open(PROPERTIES, $property_file) or die("Could not open $property_file");
+    while (<PROPERTIES>) {
+        chomp;
+        if ($_ =~ m/^$property_name=(.*)$/) {
+            close(PROPERTIES);
+            return $1;
+        }
+    }
+    close(PROPERTIES);
+}
+
+sub downloadOrUseLocalFile {
+    my ($url, $outfile) = @_;
+    if ($ENV{"SKIP_DOWNLOADS"}) {
+        print("Skipping download '$url' to '$outfile'\n");
+        my $outfileWithoutGz = $outfile  =~ s/\.gz$//r;
+        if (!-e $outfile && !-e $outfileWithoutGz) {
+            print "*************************************************\n";
+            print "* ERROR: The $outfile file does not exist, but we are running with SKIP_DOWNLOADS flag\n";
+            print "*************************************************\n";
+            exit -1;
+        } elsif (!-e $outfile && -e $outfileWithoutGz) {
+            print "$outfile file missing, continuing with $outfileWithoutGz\n";
+        }
+    } else {
+        print("Downloading '$url' to '$outfile'\n");
+
+        #set the number of bytes that a dot represents in wget progress bar to 10M
+        system("/local/bin/wget --progress=dot -e dotbytes=10M '$url' -O '$outfile'");
+    }
 }
 
 1;
