@@ -19,8 +19,8 @@ use POSIX;
 
 
 use lib $ENV{'ROOT_PATH'} . "/server_apps/";
-use ZFINPerlModules qw(assert_environment md5_file);
-assert_environment('PGHOST','ROOT_PATH', 'DB_NAME');
+use ZFINPerlModules qw(assertEnvironment md5File);
+assertEnvironment('PGHOST','ROOT_PATH', 'DB_NAME');
 
 # Take a SP file as input (content format restricted).
 
@@ -42,7 +42,7 @@ my $dbh = DBI->connect("DBI:Pg:dbname=$dbname;host=$dbhost", $username, $passwor
 # if PubMed number not in zfin, output to a single file
 open PUB, ">pubmed_not_in_zfin" or die "Cannot open the pubmed_not_in_zfin:$!";
 
-my $zfin_dat_hash = md5_file('zfin.dat');
+my $zfin_dat_hash = md5File('zfin.dat');
 print "Processing zfin.dat (md5:$zfin_dat_hash) at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n";
 
 $/ = "//\n";
