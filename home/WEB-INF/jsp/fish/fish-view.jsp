@@ -11,7 +11,7 @@
 <z:dataPage sections="${[SUMMARY, HUMAN_DISEASE, EXPRESSION, PHENOTYPE, CITATIONS]}">
 
     <jsp:attribute name="entityName">
-        ${fish.name}
+        ${zfn:getTruncatedName(fish.name, 30)}
     </jsp:attribute>
 
     <jsp:attribute name="pageBar">
@@ -66,8 +66,8 @@
 
         <z:section title="${PHENOTYPE}" infoPopup="/action/marker/note/phenotype">
             <z:section title=" ">
-                <zfin2:fish-genotype-phenotype phenotypeDisplays="${phenotypeDisplays}" fishAndCondition="true"
-                                               suppressMoDetails="true" secondColumn="condition"/>
+                <zfin2:all-phenotype phenotypeDisplays="${phenotypeDisplays}" fishAndCondition="true"
+                                     suppressMoDetails="true" secondColumn="condition"/>
             </z:section>
         </z:section>
 

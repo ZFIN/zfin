@@ -75,7 +75,7 @@ begin work;
 				mrkrgoev_source_zdb_id, mrkrgoev_evidence_code,
 				mrkrgoev_date_entered,mrkrgoev_date_modified,mrkrgoev_annotation_organization,mrkrgoev_external_load_date)
 		select p.mrkrgoev_zdb_id,p.mrkr_zdb_id, p.go_zdb_id,
-		       p.mrkrgoev_source, 'IEA' as iea, now() as time1, now() as time2, '5' as org, now() as time3
+		       p.mrkrgoev_source, 'IEA' as iea, now() as time1, now() as time2, 5 as org, now() as time3
 		  from pre_marker_go_evidence p
 		  where not exists (Select 'x' from marker a
 		  	    	   	   where a.mrkr_zdb_id = p.mrkr_zdb_id

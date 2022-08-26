@@ -41,9 +41,7 @@
         vm.saveCuratorNote = saveCuratorNote;
         vm.deleteCuratorNote = deleteCuratorNote;
 
-        activate();
-
-        function activate() {
+        this.$onInit = function () {
             MarkerService.getNotes(vm.markerId)
                 .then(function (notes) {
                     notes.forEach(function (note) {

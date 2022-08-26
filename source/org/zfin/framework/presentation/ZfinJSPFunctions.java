@@ -410,6 +410,14 @@ public class ZfinJSPFunctions {
 
     }
 
+    public static String getTruncatedName(String name, Integer length) {
+        if(StringUtils.isEmpty(name))
+            return "";
+        if(name.length() < length)
+            return name;
+        return name.substring(0,length) + "...";
+    }
+
     public static String getSoftwareBranch() {
         String softwareVersion = VersionService.getSoftwareVersion();
         if (softwareVersion.startsWith("release-")) {

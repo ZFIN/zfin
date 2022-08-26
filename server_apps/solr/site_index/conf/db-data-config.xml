@@ -1956,6 +1956,7 @@
                      full outer join fluorescent_marker as fm on fm.fm_mrkr_zdb_id = construct_zdb_id
                      full outer join fluorescent_color as fcm on fcm.fc_color = fm.fm_emission_color
                      full outer join fluorescent_color as fcx on fcx.fc_color = fm.fm_excitation_color
+                     where fm.fm_mrkr_zdb_id ~ 'CONSTRCT'
                     "
         >
 
@@ -3865,6 +3866,7 @@
                      full outer join fluorescent_marker as fm on fm_mrkr_zdb_id = fmr.fmrel_mrkr_zdb_id
                      full outer join fluorescent_color as fcm on fcm.fc_color = fm.fm_emission_color
                      full outer join fluorescent_color as fcx on fcx.fc_color = fm.fm_excitation_color
+                     where fm.fm_mrkr_zdb_id ~ 'CONSTRCT'
                      "
         >
 
@@ -6111,7 +6113,9 @@ and child.term_ontology = 'disease_ontology';
                              join fish_experiment on xpatex_genox_zdb_id = genox_zdb_id
                              join fish on genox_fish_zdb_id = fish_zdb_id
                              join figure on efs_fig_zdb_id = fig_zdb_id
-                             join publication on fig_source_zdb_id = publication.zdb_id where xpatres_expression_found = 't'">
+                             join publication on fig_source_zdb_id = publication.zdb_id where xpatres_expression_found = 't'
+                             and not exists( select 'x' from clone where clone_mrkr_zdb_id=xpatex_probe_feature_zdb_id
+                             and clone_problem_type = 'Chimeric')">
 
             <entity name="expression_result_antibody_xref"
                     query="select xpatex_atb_zdb_id as xref, 'xpatres-' || xpatres_pk_id as id

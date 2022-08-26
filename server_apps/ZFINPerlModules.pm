@@ -5,7 +5,8 @@ use strict;
 use MIME::Lite;
 use DBI;
 use Exporter 'import';
-our @EXPORT_OK = qw(md5File assertEnvironment trim assertFileExists getPropertyValue downloadOrUseLocalFile);
+
+our @EXPORT_OK = qw(md5File assertEnvironment trim assertFileExists getPropertyValue downloadOrUseLocalFile doSystemCommand doSystemCommandOrFailWithEmail);
 
 my %monthDisplays = (
     "Jan" => "01",
@@ -33,7 +34,7 @@ my $WHIRLEY_TIME_LIMIT = 10;
 
 sub doSystemCommand {                  
 
-  my $systemCommand = $_[1];               
+  my $systemCommand = $_[1];
 
   print "Executing [$systemCommand] \n";
 
@@ -42,8 +43,22 @@ sub doSystemCommand {
   if ( $returnCode != 0 ) {
     exit -1;
   }
-} 
+}
 
+sub doSystemCommandOrFailWithEmail {
+    my $systemCommand = shift();
+    my $email = shift();
+    my $subject = shift();
+    my $textFile = shift();
+
+    print "Executing [$systemCommand] \n";
+    my $returnCode = system( $systemCommand );
+
+    if ( $returnCode != 0 ) {
+        ZFINPerlModules->sendMailWithAttachedReport($email, $subject, $textFile);
+        exit -1;
+    }
+}
 
 sub sendMailWithAttachedReport {
     my $MAILTO = $_[1];

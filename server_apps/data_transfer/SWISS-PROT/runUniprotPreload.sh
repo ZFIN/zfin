@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash
 #
 # Use environment variable "SKIP_DOWNLOADS" to not to download anything and instead assume files exist locally (will exit if no file exists)
 # Use environment variable "SKIP_MANUAL_CHECK" to not to scan uniprot for IDs gone bad
@@ -15,6 +15,8 @@
 #     ( setenv SKIP_MANUAL_CHECK 1 ; setenv SKIP_CLEANUP 1 ; setenv SKIP_SLEEP 1 ; setenv SKIP_PRE_ZFIN_GEN 1 ; setenv SKIP_DOWNLOADS 1 ; setenv ARCHIVE_ARTIFACTS 1; ./runUniprotPreload.sh )
 # or for bash:
 #     SKIP_MANUAL_CHECK=1 SKIP_CLEANUP=1 SKIP_SLEEP=1 SKIP_PRE_ZFIN_GEN=1 SKIP_DOWNLOADS=1 ARCHIVE_ARTIFACTS=1 ./runUniprotPreload.sh
+
+set -eo pipefail
 
 main() {
 echo "#########################################################################"
@@ -36,7 +38,7 @@ echo "run sp_match.pl manuallyCuratedUniProtIDs.txt " $(date "+%Y-%m-%d %H:%M:%S
 
 echo "copying generated preload files to network drive"
 
-/usr/bin/scp <!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/{okfile,ok2file,ec2go,interpro2go,spkw2go} /research/zarchive/load_files/UniProt/
+/usr/bin/scp "$ROOT_PATH"/server_apps/data_transfer/SWISS-PROT/{okfile,ok2file,ec2go,interpro2go,spkw2go} /research/zarchive/load_files/UniProt/
 
 echo "#########################################################################"
 echo "## FINISHED runUniprotPreload.sh "      $(date "+%Y-%m-%d %H:%M:%S")

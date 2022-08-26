@@ -117,6 +117,13 @@ public class JBrowseImage implements GenomeBrowserImage {
     }
 
     @Override
+    public String getChromosome(){
+        if(landmark == null)
+            return "";
+        return landmark.substring(0, landmark.indexOf(":"));
+    }
+
+    @Override
     public GenomeBrowserType getType() {
         return type;
     }

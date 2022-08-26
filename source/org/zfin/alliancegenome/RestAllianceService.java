@@ -1,6 +1,7 @@
 package org.zfin.alliancegenome;
 
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 import org.zfin.properties.ZfinPropertiesEnum;
 
 import java.io.IOException;
@@ -8,7 +9,6 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Base64;
 import java.util.Objects;
 
 @Log4j2
@@ -27,7 +27,7 @@ public class RestAllianceService {
     private static String getToken() {
         Path file = Path.of(ZfinPropertiesEnum.TARGETROOT.value() + "/server_apps/DB_maintenance/Alliance/apiToken.txt");
         try {
-            return Files.readString(file);
+            return StringUtils.chomp(Files.readString(file));
         } catch (IOException e) {
             log.error("Could not find token file: " + file);
         }
