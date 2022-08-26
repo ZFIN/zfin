@@ -12,7 +12,10 @@
 # bigger, might better use loop.) 
 #
 use MIME::Lite;
-
+use FindBin;
+use lib "$FindBin::Bin/../../";
+use ZFINPerlModules qw(assertEnvironment);
+assertEnvironment('GO_EMAIL_CURATOR');
 
 #------------------ Send GO Result ----------------
 # No parameter
@@ -20,7 +23,7 @@ use MIME::Lite;
 sub sendGOResult {
 
   my $SUBJECT="Auto: Obsolete/secondary GO term in translation files";
-  my $MAILTO="<!--|GO_EMAIL_CURATOR|-->";     
+  my $MAILTO="$ENV{'GO_EMAIL_CURATOR'}";     
 
   # Create another new multipart message:
   $msg4 = new MIME::Lite 
