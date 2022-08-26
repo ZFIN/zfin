@@ -26,8 +26,8 @@ use POSIX;
 
 
 use lib $ENV{'ROOT_PATH'} . "/server_apps/";
-use ZFINPerlModules qw(assert_environment trim);
-assert_environment('ROOT_PATH', 'PGHOST', 'DB_NAME', 'SWISSPROT_EMAIL_ERR', 'SWISSPROT_EMAIL_REPORT');
+use ZFINPerlModules qw(assertEnvironment trim);
+assertEnvironment('ROOT_PATH', 'PGHOST', 'DB_NAME', 'SWISSPROT_EMAIL_ERR', 'SWISSPROT_EMAIL_REPORT');
 
 #------------------- Flush Output Buffer --------------
 $|=1;
@@ -144,21 +144,24 @@ sub sendRunningResult {
 # Extracts only zfin data from vertebrates.
 #
 sub select_zebrafish {
+    my $cwd = `pwd`;
+    chomp $cwd;
+
     #where to find the uniprot files (can override with env var, for example with a file:/// URL)
     my $TREMBL_FILE_URL = "https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_trembl_vertebrates.dat.gz";
     if ($ENV{'TREMBL_FILE_URL'}) {
         $TREMBL_FILE_URL = $ENV{'TREMBL_FILE_URL'};
     } elsif ($ENV{'SKIP_DOWNLOADS'}) {
-        assert_file_exists('./uniprot_trembl_vertebrates.dat.gz', 'Missing uniprot tremble file and SKIP_DOWNLOADS set to 1');
-        $TREMBL_FILE_URL = 'file://' . `pwd` . '/uniprot_trembl_vertebrates.dat.gz';
+        assertFileExists('./uniprot_trembl_vertebrates.dat.gz', 'Missing uniprot tremble file and SKIP_DOWNLOADS set to 1');
+        $TREMBL_FILE_URL = 'file://' . $cwd . '/uniprot_trembl_vertebrates.dat.gz';
     }
 
     my $SPROT_FILE_URL = "https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_sprot_vertebrates.dat.gz";
     if ($ENV{'SPROT_FILE_URL'}) {
         $SPROT_FILE_URL = $ENV{'SPROT_FILE_URL'};
     } elsif ($ENV{'SKIP_DOWNLOADS'}) {
-        assert_file_exists('./uniprot_sprot_vertebrates.dat.gz', 'Missing uniprot tremble file and SKIP_DOWNLOADS set to 1');
-        $SPROT_FILE_URL = 'file://' . `pwd` . '/uniprot_sprot_vertebrates.dat.gz';
+        assertFileExists('./uniprot_sprot_vertebrates.dat.gz', 'Missing uniprot tremble file and SKIP_DOWNLOADS set to 1');
+        $SPROT_FILE_URL = 'file://' . $cwd . '/uniprot_sprot_vertebrates.dat.gz';
     }
 
     if ($ENV{'SKIP_PRE_ZFIN_GEN'}) {
