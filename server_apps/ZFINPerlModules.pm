@@ -5,6 +5,7 @@ use strict;
 use MIME::Lite;
 use DBI;
 use Exporter 'import';
+
 our @EXPORT_OK = qw(md5File assertEnvironment trim assertFileExists getPropertyValue downloadOrUseLocalFile doSystemCommand doSystemCommandOrFailWithEmail);
 
 my %monthDisplays = (
@@ -93,7 +94,7 @@ sub countData() {
   my $nRecords = 0;
 
   ### open a handle on the db
-    my $dbh = DBI->connect('DBI:Pg:dbname=' . $ENV{'DB_NAME'} . ';host=localhost',
+    my $dbh = DBI->connect('DBI:Pg:dbname=' . $ENV{'DB_NAME'} . ';host=' . $ENV{"PGHOST"},
                        '',
                        '',
 		       {AutoCommit => 1,RaiseError => 1}
@@ -258,6 +259,12 @@ sub downloadOrUseLocalFile {
         }
     } else {
         print("Downloading '$url' to '$outfile'\n");
+
+        #check if file exists
+        if (-e $outfile) {
+            print("File '$outfile' already exists, skipping download\n");
+            exit(1);
+        }
 
         #set the number of bytes that a dot represents in wget progress bar to 10M
         system("/local/bin/wget --progress=dot -e dotbytes=10M '$url' -O '$outfile'");
