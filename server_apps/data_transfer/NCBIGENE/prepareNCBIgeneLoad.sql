@@ -83,12 +83,7 @@ delete from pre_delete
 -- where dblink_loaded_zdb_id = dblink_zdb_id
 -- group by dblink_linked_recid[1,8]; 
  
---!echo 'Retain those db_link accessions which are not related to gene or pseudogene or lincRNA or miRNA.'
-delete from pre_delete
- where exists (select 1 from db_link 
-                where dblink_loaded_zdb_id = dblink_zdb_id
-                  and dblink_linked_recid not like 'ZDB-GENE%' 
-                  and dblink_linked_recid not like '%RNAG%');
+
 
 create temp table backup_accession_length (	
         temp_acc_num	       varchar(30) not null,

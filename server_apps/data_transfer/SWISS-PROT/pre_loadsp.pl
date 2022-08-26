@@ -26,7 +26,9 @@ use POSIX;
 
 
 use lib $ENV{'ROOT_PATH'} . "/server_apps/";
-use ZFINPerlModules qw(assertEnvironment trim);
+
+use ZFINPerlModules qw(assertEnvironment assertFileExists trim);
+
 assertEnvironment('ROOT_PATH', 'PGHOST', 'DB_NAME', 'SWISSPROT_EMAIL_ERR', 'SWISSPROT_EMAIL_REPORT');
 
 #------------------- Flush Output Buffer --------------
