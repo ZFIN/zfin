@@ -144,13 +144,16 @@ sub sendRunningResult {
 # Extracts only zfin data from vertebrates.
 #
 sub select_zebrafish {
+    my $cwd = `pwd`;
+    chomp $cwd;
+
     #where to find the uniprot files (can override with env var, for example with a file:/// URL)
     my $TREMBL_FILE_URL = "https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_trembl_vertebrates.dat.gz";
     if ($ENV{'TREMBL_FILE_URL'}) {
         $TREMBL_FILE_URL = $ENV{'TREMBL_FILE_URL'};
     } elsif ($ENV{'SKIP_DOWNLOADS'}) {
         assertFileExists('./uniprot_trembl_vertebrates.dat.gz', 'Missing uniprot tremble file and SKIP_DOWNLOADS set to 1');
-        $TREMBL_FILE_URL = 'file://' . `pwd` . '/uniprot_trembl_vertebrates.dat.gz';
+        $TREMBL_FILE_URL = 'file://' . $cwd . '/uniprot_trembl_vertebrates.dat.gz';
     }
 
     my $SPROT_FILE_URL = "https://ftp.expasy.org/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_sprot_vertebrates.dat.gz";
@@ -158,7 +161,7 @@ sub select_zebrafish {
         $SPROT_FILE_URL = $ENV{'SPROT_FILE_URL'};
     } elsif ($ENV{'SKIP_DOWNLOADS'}) {
         assertFileExists('./uniprot_sprot_vertebrates.dat.gz', 'Missing uniprot tremble file and SKIP_DOWNLOADS set to 1');
-        $SPROT_FILE_URL = 'file://' . `pwd` . '/uniprot_sprot_vertebrates.dat.gz';
+        $SPROT_FILE_URL = 'file://' . $cwd . '/uniprot_sprot_vertebrates.dat.gz';
     }
 
     if ($ENV{'SKIP_PRE_ZFIN_GEN'}) {
