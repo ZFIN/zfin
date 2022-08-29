@@ -9,7 +9,11 @@
 use DBI;
 use Cwd;
 
-my $cwd = getcwd();
+use FindBin;
+use lib "$FindBin::Bin/../../";
+use ZFINPerlModules qw(assertEnvironment);
+assertEnvironment('DB_NAME', 'PGHOST');
+
 my $first = 1;       #indicate the beginning of DR(the end of CC)
 
 my (@ext_dr, @cc, $cc, @sp_ac, $sp_ac, $sp_ac_list, $embl, $gene, $single_gene, @gene_array, $kw);
@@ -23,8 +27,8 @@ open ACC, ">ac_dalias.unl" or die "Cannot open ac_dalias.unl:$!";
 open COMMT, ">cc_external.unl" or die "Cannot open cc_external.unl:$!";
 open KEYWD, ">kd_spkeywd.unl" or die "Cannot open kd_spkeywd.unl:$!";
 
-my $zfindbname = "<!--|DB_NAME|-->";
-my $dbhost = "<!--|PGHOST|-->";
+my $zfindbname = "$ENV{'DB_NAME'}";
+my $dbhost = "$ENV{'PGHOST'}";
 my $username = "";
 my $password = "";
 

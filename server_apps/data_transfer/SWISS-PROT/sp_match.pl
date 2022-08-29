@@ -8,8 +8,8 @@
 
 use POSIX;
 use lib $ENV{'ROOT_PATH'} . "/server_apps/";
-use ZFINPerlModules qw(assert_environment);
-assert_environment('ROOT_PATH', 'DB_NAME', 'SWISSPROT_EMAIL_REPORT');
+use ZFINPerlModules qw(assertEnvironment);
+assertEnvironment('ROOT_PATH', 'DB_NAME', 'SWISSPROT_EMAIL_REPORT');
 
 if (@ARGV < 1) {
     die "Please enter the accession file name. \n";

@@ -9,7 +9,10 @@
 # categories.
 #
 use MIME::Lite;
-
+use FindBin;
+use lib "$FindBin::Bin/../../";
+use ZFINPerlModules qw(assertEnvironment);
+assertEnvironment('GO_EMAIL_CURATOR');
 
 #------------------ Send GO Result ----------------
 # No parameter
@@ -17,7 +20,7 @@ use MIME::Lite;
 sub sendGOResult {
 
   my $SUBJECT="Auto: Obsolete/secondary GO term in ec2to translation file";
-  my $MAILTO="<!--|GO_EMAIL_CURATOR|-->";     
+  my $MAILTO="$ENV{'GO_EMAIL_CURATOR'}";     
 
 print "\n\nemail to : $MAILTO \n\n";
 

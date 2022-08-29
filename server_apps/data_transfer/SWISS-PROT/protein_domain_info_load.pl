@@ -5,12 +5,15 @@
 # in order to load and update protein domain info stored in ZFIN database tables
 
 use DBI;
-use lib "<!--|ROOT_PATH|-->/server_apps/";
-use ZFINPerlModules;
 use Try::Tiny;
+use FindBin;
+use lib "$FindBin::Bin/../../";
+use ZFINPerlModules qw(assertEnvironment);
+assertEnvironment('ROOT_PATH', 'PGHOST', 'DB_NAME');
 
-$dbname = "<!--|DB_NAME|-->";
-my $dbhost = "<!--|PGHOST|-->";
+
+$dbname = "$ENV{'DB_NAME'}";
+my $dbhost = "$ENV{'PGHOST'}";
 $username = "";
 $password = "";
 
@@ -141,7 +144,7 @@ system("/bin/rm -f entry.list");
 system("/bin/rm -f domain.txt");
 
 ## download the Interpro file for protein domain summary
-system("/local/bin/wget ftp://ftp.ebi.ac.uk/pub/databases/interpro/current/entry.list");
+system("/local/bin/wget ftp://ftp.ebi.ac.uk/pub/databases/interpro/current_release/entry.list");
 
 open (DOMAINS, "entry.list") || die "Cannot open entry.list : $!\n";
 open (DOMAINOUT, ">domain.txt") || die "Cannot open domain.txt : $!\n";
@@ -415,7 +418,7 @@ $dbh->disconnect();
 
 # execute the sql file to do the loading
 try {
-  system("psql -d <!--|DB_NAME|--> -a -f load_protein_domain_info.sql");
+  system("psql -v ON_ERROR_STOP=1 -d $ENV{'DB_NAME'} -a -f load_protein_domain_info.sql");
 } catch {
   warn "Failed to execute load_protein_domain.sql - $_";
   exit -1;
@@ -484,8 +487,8 @@ sub countData {
   my $ctsql = @_[0];
   my $nRecords = 0;
 
-  my $dbname = "<!--|DB_NAME|-->";
-  my $dbhost = "<!--|PGHOST|-->";
+  my $dbname = "$ENV{'DB_NAME'}";
+  my $dbhost = "$ENV{'PGHOST'}";
   my $username = "";
   my $password = "";
 
