@@ -377,8 +377,8 @@ and exists (Select 'x' from pre_marker_go_term_evidence
 	insert into marker_go_term_evidence(mrkrgoev_zdb_id,mrkrgoev_mrkr_zdb_id, mrkrgoev_term_zdb_id,
 				mrkrgoev_source_zdb_id, mrkrgoev_evidence_code,mrkrgoev_date_entered,mrkrgoev_date_modified,
 				mrkrgoev_annotation_organization,mrkrgoev_external_load_date,mrkrgoev_notes)
-		select p.pre_mrkrgoev_zdb_id, p.mrkr_zdb_id, p.go_zdb_id, p.mrkrgoev_source, 'IEA' as iea, 
-		       now() as time1, now() as time2, '5' as org, now() as time3, p.mrkrgoev_note
+		select DISTINCT p.pre_mrkrgoev_zdb_id, p.mrkr_zdb_id, p.go_zdb_id, p.mrkrgoev_source, 'IEA' as iea,
+		       now() as time1, now() as time2, 5 as org, now() as time3, p.mrkrgoev_note
 		  from pre_marker_go_term_evidence p;
 --!echo '		into marker_go_term_evidence'
 	
