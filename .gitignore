@@ -21,6 +21,7 @@ docker/httpd/*.crt
 docker/httpd/*.key
 docker/tomcat/keystore
 ansible/pg_pass
+docker/elasticsearch/state/
 
 # IntelliJ things
 .idea
