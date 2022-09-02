@@ -2,11 +2,12 @@ package org.zfin.marker.repository;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.functors.InvokerTransformer;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.hibernate.*;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.ScrollableResults;
+import org.hibernate.Session;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.query.Query;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.ui.ExtendedModelMap;
@@ -15,11 +16,13 @@ import org.zfin.AbstractDatabaseTest;
 import org.zfin.Species;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.presentation.AntibodyAOStatistics;
+import org.zfin.construct.ConstructComponent;
 import org.zfin.construct.ConstructCuration;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.mapping.MarkerLocation;
 import org.zfin.marker.*;
 import org.zfin.marker.fluorescence.FluorescentMarker;
 import org.zfin.marker.fluorescence.FluorescentProtein;
@@ -42,20 +45,18 @@ import org.zfin.sequence.repository.SequenceRepository;
 
 import java.util.*;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
-
-@SuppressWarnings({"FeatureEnvy"})
 public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
-    private Logger logger = LogManager.getLogger(MarkerRepositoryTest.class);
-    private static MarkerRepository markerRepository = getMarkerRepository();
-    private static ProfileRepository personRepository = RepositoryFactory.getProfileRepository();
-    private static PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
-    private static InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
+    private static final MarkerRepository markerRepository = getMarkerRepository();
+    private static final ProfileRepository personRepository = RepositoryFactory.getProfileRepository();
+    private static final PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
+    private static final InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
 
     @After
     public void closeSession() {
@@ -66,20 +67,17 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
 
     @Test
-    public void testMarkerLoad() {
-        Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(Marker.class);
-        criteria.setMaxResults(1);
-        Marker marker = (Marker) criteria.uniqueResult();
-        assertNotNull("Contains at least one marker", marker);
+    public void testMarkerTypes() {
+        List<MarkerType> list = markerRepository.getAllMarkerTypes();
+        assertNotNull("Contains at least one marker", list);
     }
 
     @Test
     public void testMarkerTypeAndGroup() {
 //        Marker pax2a = markerRepository.getMarkerByAbbreviation("pax2a");
         Marker pax2a = markerRepository.getGeneByID("ZDB-GENE-990415-8");
-        assertTrue("pax2a has type GENE", pax2a.getMarkerType().getType() == Marker.Type.GENE);
-        assertFalse("pax2a doesn't have type BAC", pax2a.getMarkerType().getType() == Marker.Type.BAC);
+        assertSame("pax2a has type GENE", pax2a.getMarkerType().getType(), Marker.Type.GENE);
+        assertNotSame("pax2a doesn't have type BAC", pax2a.getMarkerType().getType(), Marker.Type.BAC);
         assertTrue("pax2a is in the type group GENEDOM", pax2a.isInTypeGroup(Marker.TypeGroup.GENEDOM));
         assertFalse("pax2a is not in the type group BAC", pax2a.isInTypeGroup(Marker.TypeGroup.BAC));
     }
@@ -95,7 +93,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     public void testMarkersByAbbreviation() {
         List<Marker> paxs = markerRepository.getMarkersByAbbreviation("pax");
         assertNotNull("pax should not be null", paxs);
-        assertTrue("pax should have multiple markers", paxs.size() > 1);
+        assertTrue("pax should have multiple markers", paxs.size() > 200);
     }
 
     @Test
@@ -110,8 +108,22 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void testGeneById() {
-        assertNull(markerRepository.getGeneByID("ZDB-TSCRIPT-090929-6229"));
+        Assert.assertNull(markerRepository.getGeneByID("ZDB-TSCRIPT-090929-6229"));
         assertNotNull(markerRepository.getGeneByID("ZDB-GENE-990415-200"));
+    }
+
+    @Test
+    public void getMarkerByName() {
+        Marker markerByName = markerRepository.getMarkerByName("clewless");
+        assertNotNull(markerByName);
+        assertThat("ZDB-GENE-070117-772", equalTo(markerByName.getZdbID()));
+    }
+
+    @Test
+    public void getSpecificDataAlias() {
+        Marker gene = markerRepository.getGeneByID("ZDB-GENE-990415-200");
+        MarkerAlias alias = markerRepository.getSpecificDataAlias(gene, "paxzfa");
+        assertNotNull(alias);
     }
 
     @Test
@@ -145,16 +157,46 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void getAllTranscriptTypes() {
+        List<TranscriptType> transcriptTypes = markerRepository.getAllTranscriptTypes();
+        assertNotNull(transcriptTypes);
+        assertTrue(transcriptTypes.size() > 15);
+    }
+
+    @Test
+    public void getVectorNames() {
+        List<String> vectorNames = markerRepository.getVectorNames();
+        assertNotNull(vectorNames);
+        assertTrue(vectorNames.size() > 15);
+    }
+
+    @Test
+    public void getProbeLibraries() {
+        List<ProbeLibrary> probeLibraries = markerRepository.getProbeLibraries();
+        assertNotNull(probeLibraries);
+        assertTrue(probeLibraries.size() > 15);
+    }
+
+    @Test
+    public void getProbeLibrary() {
+        ProbeLibrary probeLibrary = markerRepository.getProbeLibrary("ZDB-PROBELIB-080715-11");
+        assertNotNull(probeLibrary);
+    }
+
+    @Test
     public void testConstruct() {
-        ConstructCuration cc = (ConstructCuration) HibernateUtil.currentSession().createCriteria(ConstructCuration.class)
-                .add(Restrictions.eq("zdbID", "ZDB-GTCONSTRCT-110310-1"))
-                .uniqueResult();
+        ConstructCuration cc = HibernateUtil.currentSession().get(ConstructCuration.class, "ZDB-GTCONSTRCT-110310-1");
         assertNotNull(cc);
     }
 
     @Test
+    public void getMarkerLocationByID() {
+        MarkerLocation location = markerRepository.getMarkerLocationByID("ZDB-SFCL-220325-2");
+        assertNotNull(location);
+    }
+
+    @Test
     public void geneByAbbreviation() {
-        //MarkerHistory hist = markerRepository.getMarkerHistory("ZDB-NOMEN-040426-2959");
         Marker adh8a = markerRepository.getGeneByAbbreviation("adh8a");
         assertNotNull(adh8a);
         assertNotNull(markerRepository.getGeneByAbbreviation("pax3a"));
@@ -170,8 +212,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void testZdbSequenceGenerator() {
         Session session = HibernateUtil.currentSession();
-        MarkerRepository mr = markerRepository;
-        MarkerType type = mr.getMarkerTypeByName(Marker.Type.BAC.toString());
+        MarkerType type = markerRepository.getMarkerTypeByName(Marker.Type.BAC.toString());
         Marker marker = new Marker();
         marker.setMarkerType(type);
         marker.setName("test marker");
@@ -181,8 +222,8 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         session.save(marker);
 
         String zdbID = marker.getZdbID();
-        assertTrue("non-null ZDB ID", zdbID != null);
-        assertTrue("ID contains BAC", zdbID.indexOf(Marker.Type.BAC.toString()) > -1);
+        assertNotNull("non-null ZDB ID", zdbID);
+        assertTrue("ID contains BAC", zdbID.contains(Marker.Type.BAC.toString()));
     }
 
     @Test
@@ -190,27 +231,26 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         // when the gene has method of creating/adding linkage group information and
         // adding relationship, it would be better to create the test cases rather
         // than using the existing genes which might be merged
-        MarkerRepository mr = markerRepository;
-        Marker marker1 = mr.getMarkerByID("ZDB-EST-000426-1181");
-        assertTrue("marker lg list contains all self panel mappings", mr.getLG(marker1).contains("13") && mr.getLG(marker1).contains("23"));
-        Marker marker2 = mr.getMarkerByID("ZDB-GENE-990415-72");
-        assertTrue("gene lg list contains its est's panel mapping", mr.getLG(marker2).contains("23"));
-        assertFalse("gene lg list contains no bogus mapping", mr.getLG(marker2).contains("1"));
-        Marker marker3 = mr.getMarkerByID("ZDB-GENE-060526-178");
-        assertTrue("gene lg list contains clone's panel mapping", mr.getLG(marker3).contains("13"));
+        Marker marker1 = markerRepository.getMarkerByID("ZDB-EST-000426-1181");
+        assertTrue("marker lg list contains all self panel mappings", markerRepository.getLG(marker1).contains("13") && markerRepository.getLG(marker1).contains("23"));
+        Marker marker2 = markerRepository.getMarkerByID("ZDB-GENE-990415-72");
+        assertTrue("gene lg list contains its est's panel mapping", markerRepository.getLG(marker2).contains("23"));
+        assertFalse("gene lg list contains no bogus mapping", markerRepository.getLG(marker2).contains("1"));
+        Marker marker3 = markerRepository.getMarkerByID("ZDB-GENE-060526-178");
+        assertTrue("gene lg list contains clone's panel mapping", markerRepository.getLG(marker3).contains("13"));
 
-        Marker marker4 = mr.getMarkerByID("ZDB-RAPD-980526-288");
-        assertTrue("marker lg list contains self linkage group mapping", mr.getLG(marker4).contains("12"));
-        Marker marker5 = mr.getMarkerByID("ZDB-BAC-030616-45");
-        assertTrue("marker lg list contains linkage mapping of contained marker/segment", mr.getLG(marker5).contains("9"));
-        Marker marker6 = mr.getMarkerByID("ZDB-GENE-061013-119");
-        assertTrue("gene lg list contains clone's linkage mapping", mr.getLG(marker6).contains("19"));
+        Marker marker4 = markerRepository.getMarkerByID("ZDB-RAPD-980526-288");
+        assertTrue("marker lg list contains self linkage group mapping", markerRepository.getLG(marker4).contains("12"));
+        Marker marker5 = markerRepository.getMarkerByID("ZDB-BAC-030616-45");
+        assertTrue("marker lg list contains linkage mapping of contained marker/segment", markerRepository.getLG(marker5).contains("9"));
+        Marker marker6 = markerRepository.getMarkerByID("ZDB-GENE-061013-119");
+        assertTrue("gene lg list contains clone's linkage mapping", markerRepository.getLG(marker6).contains("19"));
 
-        Marker marker7 = mr.getMarkerByID("ZDB-GENE-070117-36");
-        assertTrue("gene lg list contains allele's linkage group mapping", mr.getLG(marker7).contains("23"));
+        Marker marker7 = markerRepository.getMarkerByID("ZDB-GENE-070117-36");
+        assertTrue("gene lg list contains allele's linkage group mapping", markerRepository.getLG(marker7).contains("23"));
 
-        Marker marker8 = mr.getMarkerByID("ZDB-GENE-070117-2287");
-        assertTrue("marker lg list contains allele's panel mapping", mr.getLG(marker8).contains("7"));
+        Marker marker8 = markerRepository.getMarkerByID("ZDB-GENE-070117-2287");
+        assertTrue("marker lg list contains allele's panel mapping", markerRepository.getLG(marker8).contains("7"));
     }
 
     @Test
@@ -263,8 +303,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         // when the gene has method of creating/adding linkage group information and
         // adding relationship, it would be better to create the test cases rather
         // than using the exisitng genes which might be merged
-        MarkerRepository mr = markerRepository;
-        Clone clone = mr.getCloneById("ZDB-CDNA-040425-3060");
+        Clone clone = markerRepository.getCloneById("ZDB-CDNA-040425-3060");
         Set<Marker> genes = MarkerService.getRelatedSmallSegmentGenesFromClone(clone);
         assertEquals("Only one gene found", 1, genes.size());
         assertEquals("Found gene", "ZDB-GENE-040426-2113", genes.iterator().next().getZdbID());
@@ -272,11 +311,10 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void testGetSpecificMarkerRelationship() {
-        MarkerRepository mr = markerRepository;
-        Clone clone = mr.getCloneById("ZDB-CDNA-040425-3060");
+        Clone clone = markerRepository.getCloneById("ZDB-CDNA-040425-3060");
         Set<Marker> genes = MarkerService.getRelatedSmallSegmentGenesFromClone(clone);
         assertEquals("Only one gene found", 1, genes.size());
-        MarkerRelationship mrel = mr.getMarkerRelationship(genes.iterator().next(), clone, MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
+        MarkerRelationship mrel = markerRepository.getMarkerRelationship(genes.iterator().next(), clone, MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT);
         assertEquals("Found marker relationship", "ZDB-MREL-040426-3790", mrel.getZdbID());
     }
 
@@ -355,7 +393,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         session.flush();
 
         //try the cleanup function
-        Set<Accession> accessions = new HashSet<Accession>();
+        Set<Accession> accessions = new HashSet<>();
         accessions.add(acc1);
         MarkerService.removeRedundantDBLinks(gene, accessions);
 
@@ -367,24 +405,20 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         session.refresh(acc1);
         session.refresh(acc2);
 
-
         assertEquals("test accession acc1 should have one marker", acc1.getMarkers().size(), 1);
         assertEquals("test accession acc2 should have two markers", acc2.getMarkers().size(), 2);
-
     }
 
 
     //ZDB-MREL-021003-11
-
     @Test
     public void retrieveLinkageGroupFromClone() {
         // when the gene has method of creating/adding linkage group information and
         // adding relationship, it would be better to create the test cases rather
         // than using the exisitng genes which might be merged
-        MarkerRepository mr = markerRepository;
-        Marker clone = mr.getMarkerByID("ZDB-CDNA-040425-118");
+        Marker clone = markerRepository.getMarkerByID("ZDB-CDNA-040425-118");
         Set<LinkageGroup> groups = MarkerService.getLinkageGroups(clone);
-        assertTrue(groups != null);
+        assertNotNull(groups);
         assertEquals("2 linkage groups found", 1, groups.size());
         LinkageGroup group = groups.iterator().next();
         assertEquals("First LG", "1", group.getName());
@@ -392,19 +426,17 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void retrieveLinkageGroupFromGene() {
-        MarkerRepository mr = markerRepository;
-        Marker gene = mr.getMarkerByID("ZDB-GENE-990415-72");
+        Marker gene = markerRepository.getMarkerByID("ZDB-GENE-990415-72");
         Set<LinkageGroup> groups = MarkerService.getLinkageGroups(gene);
-        assertTrue(groups != null);
+        assertNotNull(groups);
         assertTrue(groups.size() > 1);
     }
 
     @Test
     public void retrieveLinkageGroupFromGeneFgf14() {
-        MarkerRepository mr = markerRepository;
-        Marker gene = mr.getMarkerByID("ZDB-GENE-060506-1");
+        Marker gene = markerRepository.getMarkerByID("ZDB-GENE-060506-1");
         Set<LinkageGroup> groups = MarkerService.getLinkageGroups(gene);
-        assertTrue(groups != null);
+        assertNotNull(groups);
         assertEquals("1 linkage groups found", 1, groups.size());
         LinkageGroup group = groups.iterator().next();
         assertEquals("First LG", "9", group.getName());
@@ -426,9 +458,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         List<Marker> markers = markerRepository.getMarkersByAbbreviation("fgf");
         long startTime = System.currentTimeMillis();
         for (Marker marker : markers) {
-            List<Marker> groupMarkerList = markerRepository.getMarkersByAbbreviationAndGroup(marker.getAbbreviation(), Marker.TypeGroup.GENEDOM_AND_EFG);
-//            assertNotNull(groupMarkerList);
-//            assertTrue(groupMarkerList.size()>0);
+            markerRepository.getMarkersByAbbreviationAndGroup(marker.getAbbreviation(), Marker.TypeGroup.GENEDOM_AND_EFG);
         }
         long totalTime = System.currentTimeMillis() - startTime;
         System.out.println(totalTime / 1000f);
@@ -441,14 +471,13 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         Marker marker1 = markerRepository.getMarkerByID("ZDB-CDNA-080114-111");
         assertTrue("Marker is a clone", marker1 instanceof Clone);
         Clone clone = (Clone) marker1;
-//            logger.info(clone.toString());
         Integer rating = 3;
         clone.setRating(rating);
         // NOTE: must be CDNA or EST to set as a non-null problem type
         clone.setProblem(Clone.ProblemType.CHIMERIC);
         session.update(clone);
         session.flush();
-        Clone clone2 = (Clone) session.createQuery("from Clone c where c.zdbID = 'ZDB-CDNA-080114-111'").uniqueResult();
+        Clone clone2 = session.createQuery("from Clone c where c.zdbID = 'ZDB-CDNA-080114-111'", Clone.class).uniqueResult();
         assertEquals(clone2.getRating(), rating);
         assertEquals(clone2.getProblem(), Clone.ProblemType.CHIMERIC);
     }
@@ -467,11 +496,6 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         String name = "eu815";
         Marker clone = markerRepository.getMarkerByAbbreviation(name);
         assertNotNull(clone);
-/*
-        assertTrue(clone instanceof Clone);
-        Clone cl = (Clone) clone;
-*/
-
     }
 
     @Test
@@ -480,6 +504,18 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         String zdbID = "ZDB-DALIAS-070117-777";
         MarkerAlias alias = markerRepository.getMarkerAlias(zdbID);
         assertNotNull(alias);
+    }
+
+    @Test
+    public void getPolymeraseNames() {
+        List<String> polymeraseNames = markerRepository.getPolymeraseNames();
+        assertNotNull(polymeraseNames);
+    }
+
+    @Test
+    public void getCloneSites() {
+        List<String> polymeraseNames = markerRepository.getCloneSites();
+        assertNotNull(polymeraseNames);
     }
 
     @Test
@@ -494,21 +530,21 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
                 "     from HighQualityProbeAOStatistics stat " +
                 "     where stat.superterm = :aoterm " +
                 "           and stat.subterm = :aoterm";
-        Query query = session.createQuery(hql);
+        Query<Marker> query = session.createQuery(hql, Marker.class);
         query.setParameter("aoterm", term);
 
-        List<AntibodyAOStatistics> list = query.list();
-        assertTrue(list != null);
+        List<Marker> list = query.list();
+        assertNotNull(list);
         assertTrue(list.size() > 0);
 
         hql = " " +
                 "     from AntibodyAOStatistics stat " +
                 "     where stat.superterm = :aoterm " +
                 "           and stat.subterm = :aoterm";
-        query = session.createQuery(hql);
-        query.setParameter("aoterm", term);
-        List<AntibodyAOStatistics> listStat = query.list();
-        assertTrue(listStat != null);
+        Query<AntibodyAOStatistics> query1 = session.createQuery(hql, AntibodyAOStatistics.class);
+        query1.setParameter("aoterm", term);
+        List<AntibodyAOStatistics> listStat = query1.list();
+        assertNotNull(listStat);
         assertTrue(listStat.size() > 0);
 
     }
@@ -525,12 +561,12 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         pagination.setFirstPageRecord(0);
         // without substructures
         PaginationResult<HighQualityProbe> result = markerRepository.getHighQualityProbeStatistics(term, pagination, false);
-        assertTrue(result != null);
+        assertNotNull(result);
         assertTrue(result.getTotalCount() > 0);
 
         // including substructures
         result = markerRepository.getHighQualityProbeStatistics(term, pagination, true);
-        assertTrue(result != null);
+        assertNotNull(result);
         assertTrue(result.getTotalCount() > 0);
 
     }
@@ -549,10 +585,10 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
                 "           and fstat_feat_zdb_id = probe.mrkr_zdb_id " +
                 "           and fstat_type = :type" +
                 "     order by gene.mrkr_abbrev_order ";
-        SQLQuery query = session.createSQLQuery(hql);
+        NativeQuery query = session.createNativeQuery(hql);
         // organism subdivision
-        query.setString("aoterm", "ZDB-TERM-100331-1266");
-        query.setString("type", "High-Quality-Probe");
+        query.setParameter("aoterm", "ZDB-TERM-100331-1266");
+        query.setParameter("type", "High-Quality-Probe");
         query.setFirstResult(0);
         query.setMaxResults(5);
         ScrollableResults results = query.scroll();
@@ -579,9 +615,8 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
                 "     order by mrkr_abbrev_order ";
 
         query = session.createSQLQuery(hql);
-        query.setString("aoterm", "ZDB-ANAT-010921-587");
-        query.setString("type", "High-Quality-Probe");
-        //query.addScalar("aoterm", Hibernate.STRING);
+        query.setParameter("aoterm", "ZDB-ANAT-010921-587");
+        query.setParameter("type", "High-Quality-Probe");
         results = query.scroll();
 
         results.last();
@@ -602,10 +637,10 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     public void orthologyNote() {
         String geneName = "fgf8a";
         Marker gene = markerRepository.getMarkerByAbbreviation(geneName);
-        assertTrue(gene != null);
+        assertNotNull(gene);
 
         Set<OrthologyNote> notes = gene.getOrthologyNotes();
-        assertTrue(notes != null);
+        assertNotNull(notes);
     }
 
     /**
@@ -637,8 +672,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void retrieveSingleTargetGeneFromMorpholino() {
         // MO1-adam8a has one target gene
-        MarkerRepository markerRep = markerRepository;
-        SequenceTargetingReagent sequenceTargetingReagent = markerRep.getSequenceTargetingReagentByAbbreviation("MO1-adam8a");
+        SequenceTargetingReagent sequenceTargetingReagent = markerRepository.getSequenceTargetingReagentByAbbreviation("MO1-adam8a");
         List<Marker> targetGenes = markerRepository.getTargetGenesAsMarkerForSequenceTargetingReagent(sequenceTargetingReagent);
         assertNotNull(targetGenes);
         assertEquals(1, targetGenes.size());
@@ -650,8 +684,7 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void retrieveMultipleTargetGenesFromMorpholino() {
         // MO4-rbpja+rbpjb has two target genes
-        MarkerRepository markerRep = markerRepository;
-        SequenceTargetingReagent sequenceTargetingReagent = markerRep.getSequenceTargetingReagentByAbbreviation("MO4-rbpja,rbpjb");
+        SequenceTargetingReagent sequenceTargetingReagent = markerRepository.getSequenceTargetingReagentByAbbreviation("MO4-rbpja,rbpjb");
         List<Marker> targetGenes = markerRepository.getTargetGenesAsMarkerForSequenceTargetingReagent(sequenceTargetingReagent);
         assertNotNull(targetGenes);
         assertEquals(2, targetGenes.size());
@@ -762,7 +795,6 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
 
         List<GeneProductsBean> geneProductsBean3 = markerRepository.getGeneProducts("ZDB-GENE-030131-2333");
         assertNotNull(geneProductsBean3);
-        assertTrue(geneProductsBean3.size() >= 0);
     }
 
     @Test
@@ -774,7 +806,6 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         assertEquals(5, relationshipPresentations.size());
     }
 
-
     @Test
     public void getKnockdownReagents() {
         Marker m = markerRepository.getGeneByID("ZDB-GENE-980526-403");
@@ -782,6 +813,13 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
                 .getRelatedMarkerDisplayForTypes(m, false, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
         assertTrue(knockdowns.size() > 5);
         assertTrue(knockdowns.size() < 20);
+    }
+
+    @Test
+    public void getABRegID() {
+        String id = markerRepository.getABRegID("ZDB-ATB-190924-2");
+        assertNotNull(id);
+        assertEquals("AB_11157684", id);
     }
 
 
@@ -801,8 +839,6 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         assertThat(mrp.getNumAttributions(), lessThan(4));
 
         String linkWithAttribution = mrp.getLinkWithAttribution();
-        logger.debug(linkWithAttribution);
-
         assertTrue(linkWithAttribution.contains("/action/infrastructure/data-citation-list/ZDB-MREL-060317-4\">2</a>)"));
     }
 
@@ -811,6 +847,13 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         assertFalse(markerRepository.isFromChimericClone("ZDB-GENE-980526-403"));
         assertFalse(markerRepository.isFromChimericClone("ZDB-GENE-030131-350"));
         assertTrue(markerRepository.isFromChimericClone("ZDB-GENE-040625-82"));
+    }
+
+    @Test
+    public void getProteinType() {
+        Marker marker = markerRepository.getMarker("ZDB-GENE-980526-403");
+        List<String> list = markerRepository.getProteinType(marker);
+        assertNotNull(list);
     }
 
     @Test
@@ -838,6 +881,26 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(candidates);
         assertThat(candidates.keySet().size(), greaterThan(30000));
         assertThat(candidates.keySet().size(), lessThan(300000));
+    }
+
+    @Test
+    public void getAllTranscriptTypeStatusDefinitions() {
+        List<TranscriptTypeStatusDefinition> defninitions = markerRepository.getAllTranscriptTypeStatusDefinitions();
+        assertNotNull(defninitions);
+    }
+
+    @Test
+    public void getMarkerFamilyName() {
+        MarkerFamilyName familyName = markerRepository.getMarkerFamilyName("Zinc fingers");
+        assertNotNull(familyName);
+        assertEquals("Zinc fingers", familyName.getMarkerFamilyName());
+    }
+
+    @Test
+    public void getMarkerFamilyNamesBySubstring() {
+        List<MarkerFamilyName> familyNames = markerRepository.getMarkerFamilyNamesBySubstring("zinc fingers");
+        assertNotNull(familyNames);
+        assertEquals(18, familyNames.size());
     }
 
     @Test
@@ -982,6 +1045,8 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    @Ignore
+    // takes about half a minute to execute, so put to ignore
     public void getAllGenedom() {
         List<Marker> allGeneList = markerRepository.getMarkerByGroup(Marker.TypeGroup.GENEDOM, 0);
         assertNotNull(allGeneList);
@@ -1001,18 +1066,78 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void getConstructComponent() {
+        List<ConstructComponent> list = markerRepository.getConstructComponent("ZDB-ETCONSTRCT-070409-1");
+        assertNotNull(list);
+    }
+
+    @Test
+    public void getMarkerTypeByDisplayName() {
+        MarkerType type = markerRepository.getMarkerTypeByDisplayName("TF Binding Site");
+        assertNotNull(type);
+        assertThat("", type.getName(), equalTo("TFBS"));
+    }
+
+    @Test
+    public void getGeneDescByMkr() {
+        Marker pax2a = markerRepository.getGeneByID("ZDB-GENE-990415-8");
+        AllianceGeneDesc description = markerRepository.getGeneDescByMkr(pax2a);
+        assertNotNull(description);
+    }
+
+    @Test
+    public void getDbsnps() {
+        String snps = markerRepository.getDbsnps("ZDB-EST-010427-276");
+        assertNotNull(snps);
+        assertTrue(snps.contains("rs3727477"));
+        assertTrue(snps.contains("rs3727478"));
+    }
+
+    @Test
+    public void getMarkerTypesforRelationship() {
+        List<String> snps = markerRepository.getMarkerTypesforRelationship("gene encodes small segment");
+        assertNotNull(snps);
+        assertThat("", snps.size() == 7);
+    }
+
+    @Test
+    public void getGenesforTranscript() {
+        Marker pax2a = markerRepository.getMarkerByID("ZDB-TSCRIPT-090929-23374");
+        List<Marker> transcripts = markerRepository.getGenesforTranscript(pax2a);
+        assertNotNull(transcripts);
+        assertThat("", transcripts.size() > 18);
+    }
+
+    @Test
+    public void getSupplierNamesForString() {
+        List<SupplierLookupEntry> lookupEntries = markerRepository.getSupplierNamesForString("Ac");
+        assertNotNull(lookupEntries);
+        assertThat("", lookupEntries.size() > 50);
+    }
+
+    @Test
+    public void getSignafishLinkCount() {
+        ReferenceDatabase signafishDb = RepositoryFactory.getSequenceRepository().getReferenceDatabase(
+                ForeignDB.AvailableName.SIGNAFISH,
+                ForeignDBDataType.DataType.OTHER,
+                ForeignDBDataType.SuperType.SUMMARY_PAGE,
+                Species.Type.ZEBRAFISH);
+
+        Long number = markerRepository.getSignafishLinkCount(signafishDb);
+        assertNotNull(number);
+        assertTrue(number > 150);
+    }
+
+    @Test
     public void getWeakReferenceMarker() {
         List<MarkerRelationshipPresentation> markerRelationshipPresentationList = markerRepository.getWeakReferenceMarker("ZDB-GENE-010606-1"
                 , MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT
                 , MarkerRelationship.Type.GENE_PRODUCES_TRANSCRIPT
         );
-        Collections.sort(markerRelationshipPresentationList, new MarkerRelationshipSupplierComparator());
+        markerRelationshipPresentationList.sort(new MarkerRelationshipSupplierComparator());
         assertEquals(3, markerRelationshipPresentationList.size());
         assertEquals("BAC", markerRelationshipPresentationList.get(0).getMarkerType());
         assertEquals("BAC", markerRelationshipPresentationList.get(1).getMarkerType());
         assertEquals("Fosmid", markerRelationshipPresentationList.get(2).getMarkerType());
-//        for(MarkerRelationshipPresentation mrp : markerRelationshipPresentationList){
-//            System.out.println(mrp.getLinkWithAttributionAndOrderThis());
-//        }
     }
 }
