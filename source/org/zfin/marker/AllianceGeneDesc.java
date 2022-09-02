@@ -1,103 +1,42 @@
 package org.zfin.marker;
 
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+
+@Entity
+@Table(name = "gene_description")
+@Setter
+@Getter
 public class AllianceGeneDesc {
+
+    @Id
+    @Column(name = "gd_pk_id")
     private Long id;
-     private String gene ;
-        private String gdFuncDesc;
-        private String gdProcDesc ;
-        private String gdGoCompDesc;
-        private String gdDoDesc ;
-        private String gdDoExpDesc;
-        private String gdDoBioMkrDesc ;
-        private String gdDoOrthoDesc;
-        private String gdOrthoDesc;
-        private String gdDesc;
+    @Column(name = "gd_gene_zdb_id")
+    private String gene;
+    @Column(name = "gd_go_function_description")
+    private String gdFuncDesc;
+    @Column(name = "gd_go_process_description")
+    private String gdProcDesc;
+    @Column(name = "gd_go_component_description")
+    private String gdGoCompDesc;
+    @Column(name = "gd_do_description")
+    private String gdDoDesc;
+    @Column(name = "gd_do_experimental_description")
+    private String gdDoExpDesc;
+    @Column(name = "gd_do_biomarker_description")
+    private String gdDoBioMkrDesc;
+    @Column(name = "gd_do_orthology_description")
+    private String gdDoOrthoDesc;
+    @Column(name = "gd_orthology_description")
+    private String gdOrthoDesc;
+    @Column(name = "gd_description")
+    private String gdDesc;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getGene() {
-        return gene;
-    }
-
-    public void setGene(String gene) {
-        this.gene = gene;
-    }
-
-    public String getGdFuncDesc() {
-        return gdFuncDesc;
-    }
-
-    public void setGdFuncDesc(String gdFuncDesc) {
-        this.gdFuncDesc = gdFuncDesc;
-    }
-
-    public String getGdProcDesc() {
-        return gdProcDesc;
-    }
-
-    public void setGdProcDesc(String gdProcDesc) {
-        this.gdProcDesc = gdProcDesc;
-    }
-
-    public String getGdGoCompDesc() {
-        return gdGoCompDesc;
-    }
-
-    public void setGdGoCompDesc(String gdGoCompDesc) {
-        this.gdGoCompDesc = gdGoCompDesc;
-    }
-
-    public String getGdDoDesc() {
-        return gdDoDesc;
-    }
-
-    public void setGdDoDesc(String gdDoDesc) {
-        this.gdDoDesc = gdDoDesc;
-    }
-
-    public String getGdDoExpDesc() {
-        return gdDoExpDesc;
-    }
-
-    public void setGdDoExpDesc(String gdDoExpDesc) {
-        this.gdDoExpDesc = gdDoExpDesc;
-    }
-
-    public String getGdDoBioMkrDesc() {
-        return gdDoBioMkrDesc;
-    }
-
-    public void setGdDoBioMkrDesc(String gdDoBioMkrDesc) {
-        this.gdDoBioMkrDesc = gdDoBioMkrDesc;
-    }
-
-    public String getGdDoOrthoDesc() {
-        return gdDoOrthoDesc;
-    }
-
-    public void setGdDoOrthoDesc(String gdDoOrthoDesc) {
-        this.gdDoOrthoDesc = gdDoOrthoDesc;
-    }
-
-    public String getGdOrthoDesc() {
-        return gdOrthoDesc;
-    }
-
-    public void setGdOrthoDesc(String gdOrthoDesc) {
-        this.gdOrthoDesc = gdOrthoDesc;
-    }
-
-    public String getGdDesc() {
-        return gdDesc;
-    }
-
-    public void setGdDesc(String gdDesc) {
-        this.gdDesc = gdDesc;
-    }
 }

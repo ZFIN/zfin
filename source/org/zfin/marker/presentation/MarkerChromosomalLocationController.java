@@ -10,6 +10,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.View;
 import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.mapping.MappingService;
 import org.zfin.mapping.MarkerLocation;
 import org.zfin.marker.repository.MarkerRepository;
 
@@ -38,7 +39,7 @@ public class MarkerChromosomalLocationController {
     @JsonView(View.API.class)
     @RequestMapping(value = "/{zdbID}/chromosomal-location", method = RequestMethod.GET)
     public List<ChromosomalLocationBean> getChromosomalLocationForMarker(@PathVariable String zdbID) {
-        List<MarkerLocation> genomeLocations = markerRepository.getMarkerLocation(zdbID);
+        List<MarkerLocation> genomeLocations = MappingService.getMarkerLocation(zdbID);
         return genomeLocations
                 .stream()
                 .map(ChromosomalLocationBean::fromMarkerLocation)

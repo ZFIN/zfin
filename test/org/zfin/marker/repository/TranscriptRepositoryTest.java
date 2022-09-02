@@ -66,7 +66,8 @@ public class TranscriptRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(transcript);
 //            logger.info(clone.toString());
         assertNotSame("These need to be different for the next test to work", TranscriptType.Type.TRANSPOSABLE_ELEMENT.toString(), transcript.getTranscriptType());
-        transcript.setTranscriptType(RepositoryFactory.getMarkerRepository().getTranscriptTypeForName(TranscriptType.Type.TRANSPOSABLE_ELEMENT.toString()));
+        TranscriptType transcriptTypeForName = RepositoryFactory.getMarkerRepository().getTranscriptTypeForName(TranscriptType.Type.TRANSPOSABLE_ELEMENT.toString());
+        transcript.setTranscriptType(transcriptTypeForName);
         // NOTE: must be CDNA or EST to set as a non-null problem type
         session.update(transcript);
         session.flush();
