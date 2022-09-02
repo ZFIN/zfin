@@ -1,7 +1,5 @@
 package org.zfin.marker;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -9,16 +7,17 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.AppConfig;
-import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.RecordAttribution;
+import org.zfin.mapping.MappingService;
 import org.zfin.mapping.MarkerLocation;
 import org.zfin.publication.Publication;
 
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 
-import static org.junit.Assert.*;
-import static org.zfin.repository.RepositoryFactory.*;
+import static org.junit.Assert.assertEquals;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
+import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 /**
  * Tests for org.zfin.marker.service.MarkerService
@@ -28,17 +27,15 @@ import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 @WebAppConfiguration
 public class MarkerChromosomalLocationTest extends AbstractDatabaseTest {
 
-    private Logger logger = LogManager.getLogger(MarkerChromosomalLocationTest.class);
-
     @Test
     public void citationTest() {
         Publication publication = getPublicationRepository().getPublication("ZDB-PUB-210814-8");
         Marker marker = getMarkerRepository().getMarker("ZDB-ENHANCER-180108-1");
-        List<MarkerLocation> genomeLocations = getMarkerRepository().getMarkerLocation(marker.getZdbID());
+        List<MarkerLocation> genomeLocations = MappingService.getMarkerLocation(marker.getZdbID());
 
-        assertEquals(genomeLocations.size(),1);
+        assertEquals(genomeLocations.size(), 1);
         MarkerLocation genomeLocation = genomeLocations.get(0);
-        assertEquals(15_243_487, (long)genomeLocation.getStartLocation());
+        assertEquals(15_243_487, (long) genomeLocation.getStartLocation());
 
         getMarkerRepository().addGenomeLocationAttribution(genomeLocation, publication);
 
@@ -51,7 +48,7 @@ public class MarkerChromosomalLocationTest extends AbstractDatabaseTest {
         Publication publication = getPublicationRepository().getPublication("ZDB-PUB-210814-8");
         Publication publication2 = getPublicationRepository().getPublication("ZDB-PUB-200719-14");
         Marker marker = getMarkerRepository().getMarker("ZDB-ENHANCER-180108-1");
-        List<MarkerLocation> genomeLocations = getMarkerRepository().getMarkerLocation(marker.getZdbID());
+        List<MarkerLocation> genomeLocations = MappingService.getMarkerLocation(marker.getZdbID());
         MarkerLocation genomeLocation = genomeLocations.get(0);
 
         getMarkerRepository().addGenomeLocationAttribution(genomeLocation, publication);
@@ -68,7 +65,7 @@ public class MarkerChromosomalLocationTest extends AbstractDatabaseTest {
         Publication publication2 = getPublicationRepository().getPublication("ZDB-PUB-200719-14");
         Publication publication3 = getPublicationRepository().getPublication("ZDB-PUB-200719-15");
         Marker marker = getMarkerRepository().getMarker("ZDB-ENHANCER-180108-1");
-        List<MarkerLocation> genomeLocations = getMarkerRepository().getMarkerLocation(marker.getZdbID());
+        List<MarkerLocation> genomeLocations = MappingService.getMarkerLocation(marker.getZdbID());
         MarkerLocation genomeLocation = genomeLocations.get(0);
 
         getMarkerRepository().addGenomeLocationAttribution(genomeLocation, publication);

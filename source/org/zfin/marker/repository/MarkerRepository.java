@@ -514,7 +514,6 @@ public interface MarkerRepository {
 
     MarkerHistory getMarkerHistory(String zdbID);
 
-    List<MarkerLocation> getMarkerLocation(String zdbID);
     MarkerLocation addMarkerLocation(MarkerLocation markerLocation);
     MarkerLocation getMarkerLocationByID(String zdbID);
     MarkerLocation saveMarkerLocation(MarkerLocation markerLocation);

@@ -67,7 +67,7 @@ public class MappingServiceTest extends AbstractDatabaseTest {
     @Test
     public void getMarkerLocation() {
         Marker marker = getMarkerRepository().getMarker("ZDB-ENHANCER-190916-7");
-        List<MarkerLocation> initialMarkerLocations = getMarkerRepository().getMarkerLocation(marker.getZdbID());
+        List<MarkerLocation> initialMarkerLocations = MappingService.getMarkerLocation(marker.getZdbID());
         int initialSize = initialMarkerLocations.size();
 
         ChromosomalLocationBean clb = new ChromosomalLocationBean();
@@ -83,7 +83,7 @@ public class MappingServiceTest extends AbstractDatabaseTest {
 
         getMarkerRepository().addMarkerLocation(markerLocation);
 
-        List<MarkerLocation> retrievedMarkerLocations = getMarkerRepository().getMarkerLocation("ZDB-ENHANCER-190916-7");
+        List<MarkerLocation> retrievedMarkerLocations = MappingService.getMarkerLocation("ZDB-ENHANCER-190916-7");
         assertEquals(retrievedMarkerLocations.size(), initialSize + 1);
 
         MarkerLocation retrievedMarkerLocation = retrievedMarkerLocations.get(initialSize);
