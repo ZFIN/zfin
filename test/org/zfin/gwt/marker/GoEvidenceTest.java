@@ -44,14 +44,6 @@ public class GoEvidenceTest extends AbstractDatabaseTest {
         assertNotNull(goEvidenceDTO.getInferredFrom());
         assertEquals(1,goEvidenceDTO.getInferredFrom().size());
 
-        String zdbID1 = "ZDB-MRKRGOEV-220118-132028" ;
-        goEvidenceDTO = markerRPCService.getMarkerGoTermEvidenceDTO(zdbID1) ;
-        assertNotNull(goEvidenceDTO);
-        assertEquals(zdbID1,goEvidenceDTO.getZdbID());
-        assertEquals("ZDB-GENE-010606-1",goEvidenceDTO.getMarkerDTO().getZdbID());
-        assertEquals(4,goEvidenceDTO.getInferredFrom().size());
-        assertNull(goEvidenceDTO.getFlag());
-
     }
 
     @Test
