@@ -14,10 +14,6 @@
         <param name="enumClassname">org.zfin.sequence.blast.Database$AvailableAbbrev</param>
     </typedef>
 
-    <typedef class="org.zfin.framework.StringEnumValueUserType" name="originationType">
-        <param name="enumClassname">org.zfin.sequence.blast.Origination$Type</param>
-    </typedef>
-
     <class name="org.zfin.sequence.blast.Hit" table="blast_hit">
         <id name="zdbID" type="string">
             <column name="bhit_zdb_id" not-null="true"/>
@@ -93,15 +89,6 @@
         <many-to-one name="child" column="bdborder_child_blastdb_zdb_id" class="org.zfin.sequence.blast.Database" not-null="true"/>
     </class>
 
-
-    <class name="org.zfin.sequence.blast.Origination" table="blast_database_origination_type">
-        <id name="id" type="long">
-            <column name="bdot_pk_id" not-null="true"/>
-            <generator class="identity"/>
-        </id>
-        <property name="type" column="bdot_type" type="originationType" />
-        <property name="definition" column="bdot_definition"/>
-    </class>
 
     <class name="org.zfin.sequence.blast.BlastRegenerationCache" table="blastdb_regen_content">
         <id name="id" type="long">

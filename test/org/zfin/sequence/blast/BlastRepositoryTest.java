@@ -1,11 +1,11 @@
 package org.zfin.sequence.blast;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DBLink;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.MarkerDBLink;
@@ -18,9 +18,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.*;
+import static org.zfin.repository.RepositoryFactory.getBlastRepository;
 import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 
 /**
@@ -29,7 +31,7 @@ import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 public class BlastRepositoryTest extends AbstractDatabaseTest {
 
     private final static Logger logger = LogManager.getLogger(BlastRepositoryTest.class);
-    private final BlastRepository blastRepository = RepositoryFactory.getBlastRepository();
+    private final BlastRepository blastRepository = getBlastRepository();
 
 
     @Test
@@ -54,7 +56,7 @@ public class BlastRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void processingOnRealRootDatabases() {
-        List<Database> proteinDatabases = RepositoryFactory.getBlastRepository().getDatabases(Database.Type.PROTEIN, true, true);
+        List<Database> proteinDatabases = getBlastRepository().getDatabases(Database.Type.PROTEIN, true, true);
         assertNotNull(proteinDatabases);
         assertTrue(proteinDatabases.size() > 0);
         List<DatabasePresentationBean> presentationBeans = BlastPresentationService.orderDatabasesFromRoot(proteinDatabases);
@@ -71,15 +73,15 @@ public class BlastRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void databaseByOriginationType() {
-        List<Database> curatedDatabases = RepositoryFactory.getBlastRepository().getDatabaseByOrigination(Origination.Type.CURATED);
+        List<Database> curatedDatabases = getBlastRepository().getDatabaseByOrigination(Origination.Type.CURATED);
         assertNotNull(curatedDatabases);
         assertTrue(curatedDatabases.size() > 0);
 
-        List<Database> loadedDatabases = RepositoryFactory.getBlastRepository().getDatabaseByOrigination(Origination.Type.LOADED);
+        List<Database> loadedDatabases = getBlastRepository().getDatabaseByOrigination(Origination.Type.LOADED);
         assertNotNull(loadedDatabases);
         assertTrue(loadedDatabases.size() > 0);
 
-        List<Database> bothDatabases = RepositoryFactory.getBlastRepository().getDatabaseByOrigination(Origination.Type.CURATED, Origination.Type.LOADED);
+        List<Database> bothDatabases = getBlastRepository().getDatabaseByOrigination(Origination.Type.CURATED, Origination.Type.LOADED);
         assertNotNull(bothDatabases);
         assertTrue(bothDatabases.size() > 0);
 
@@ -93,7 +95,7 @@ public class BlastRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void findAllLeavesForLeaf() throws BlastDatabaseException {
         Database database = blastRepository.getDatabase(Database.AvailableAbbrev.VEGA_ZFIN);
-        List<Database> databases = null;
+        List<Database> databases;
         databases = BlastPresentationService.getLeaves(database);
         assertNotNull("should be not null", databases);
         assertEquals("should be one", databases.size(), 1);
@@ -174,7 +176,7 @@ public class BlastRepositoryTest extends AbstractDatabaseTest {
     public void getValidAccessionNumberCount() {
         // should go up once in the tree
         Database database = blastRepository.getDatabase(Database.AvailableAbbrev.LOADEDMICRORNAMATURE);
-        Integer count = RepositoryFactory.getBlastRepository().getNumberValidAccessionNumbers(database);
+        Integer count = getBlastRepository().getNumberValidAccessionNumbers(database);
         logger.info("count: " + count);
         assertTrue(count > 0);
     }
@@ -187,7 +189,7 @@ public class BlastRepositoryTest extends AbstractDatabaseTest {
         List<String> previousAccessions = blastRepository.getPreviousAccessionsForDatabase(database);
         assertTrue(previousAccessions.size() > 0);
         int previousAccessionSize = previousAccessions.size();
-        List<String> accessionsToAdd = new ArrayList<String>();
+        List<String> accessionsToAdd = new ArrayList<>();
         accessionsToAdd.add("A");
         accessionsToAdd.add("B");
         accessionsToAdd.add("C");
@@ -195,7 +197,7 @@ public class BlastRepositoryTest extends AbstractDatabaseTest {
         blastRepository.addPreviousAccessions(database, accessionsToAdd);
         assertEquals(previousAccessionSize + accessionsToAdd.size(), blastRepository.getPreviousAccessionsForDatabase(database).size());
 
-        List<String> accessionsToRemove = new ArrayList<String>();
+        List<String> accessionsToRemove = new ArrayList<>();
         accessionsToRemove.add("A");
         accessionsToRemove.add("B");
         blastRepository.removePreviousAccessions(database, accessionsToRemove);
