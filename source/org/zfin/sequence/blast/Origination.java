@@ -1,37 +1,30 @@
 package org.zfin.sequence.blast;
 
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Setter
+@Getter
+@Entity
+@Table(name = "blast_database_origination_type")
 public class Origination {
 
-    private Long id ;
-    private Type type ;
+    @Id
+    @Column(name = "bdot_pk_id")
+    private Long id;
+    @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
+            parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.sequence.blast.Origination$Type")})
+    @Column(name = "bdot_type")
+    private Type type;
+    @Column(name = "bdot_definition")
     private String definition;
 
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-    public void setType(Type type) {
-        this.type = type;
-    }
-
-    public String getDefinition() {
-        return definition;
-    }
-
-    public void setDefinition(String definition) {
-        this.definition = definition;
-    }
-
-    public static enum Type{
+    public enum Type {
         CURATED,
         CURATED_IGNORE,
         GENERATED,
