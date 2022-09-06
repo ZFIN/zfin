@@ -103,8 +103,6 @@ sub main {
 
     countNCBIGenesWithSupportingGenBankRNA();
 
-    logGenBankDNAncbiGeneIds();
-
     logSupportingAccNCBI();
 
     initializeHashOfNCBIAccessionsSupportingMultipleGenes();
@@ -115,10 +113,15 @@ sub main {
 
     oneWayMappingNCBItoZfinGenes();
 
+    logGenBankDNAncbiGeneIds();
+
     compare2WayMappingResults();
 
     #---------------- open a .unl file as the add list -----------------
     open(TOLOAD, ">toLoad.unl") || die "Cannot open toLoad.unl : $!\n";
+
+    #---------------- open a .unl file as record_attributions to preserve -----------------
+    open(TO_PRESERVE, ">toPreserve.unl") || die "Cannot open toPreserve.unl : $!\n";
 
     # -------- write the NCBI gene Ids mapped based on GenBank RNA accessions on toLoad.unl ------------
     writeNCBIgeneIdsMappedBasedOnGenBankRNA();
@@ -202,7 +205,7 @@ sub main {
     #---------------------------------------------------------------------------
     writeRefSeqDNAaccessionsWithMappedGenesToLoad();
 
-    close TOLOAD;
+    closeUnloadFiles();
 
     printStatsBeforeDelete();
 
@@ -1529,14 +1532,26 @@ sub countNCBIGenesWithSupportingGenBankRNA {
 sub logGenBankDNAncbiGeneIds {
     # Global: %GenBankDNAncbiGeneIds
     # Global: $debug
-    open(DBG5A, ">debug5a") || die "Cannot open debug5a : $!\n" if $debug;
+    if ($debug) {
+        open(DBG5A, ">debug5a") || die "Cannot open debug5a : $!\n";
 
-    foreach my $gikey (sort keys %GenBankDNAncbiGeneIds) {
-        my $giref_arrayAccs = $GenBankDNAncbiGeneIds{$gikey} if $debug;
-        print DBG5A "$gikey\t@$giref_arrayAccs\n" if $debug;
+        foreach my $genBankAccession (sort keys %GenBankDNAncbiGeneIds) {
+            my $refArrayNcbiGeneIds = $GenBankDNAncbiGeneIds{$genBankAccession};
+            print DBG5A "$genBankAccession\t";
+            my $buffer = "";
+            foreach my $ncbiGeneId (@$refArrayNcbiGeneIds) {
+                my $zfinGeneId = $oneToOneNCBItoZFIN{$ncbiGeneId};
+
+                $buffer .= "$ncbiGeneId";
+                $buffer .= "/$zfinGeneId" if $zfinGeneId;
+                $buffer .= " ";
+            }
+            chomp($buffer);
+            print DBG5A "$buffer\n";
+        }
+
+        close DBG5A;
     }
-
-    close DBG5A if $debug;
 }
 
 sub logSupportingAccNCBI {
@@ -2898,28 +2913,54 @@ sub writeGenBankDNAaccessionsWithMappedGenesToLoad {
     #   %geneAccFdbcont
     #   %oneToOneViaVega
     my $zdbGeneId;
+    my $NCBIgeneId;
+
     foreach my $GenBankDNA (sort keys %GenBankDNAncbiGeneIds) {
         my @multipleNCBIgeneIds = @{$GenBankDNAncbiGeneIds{$GenBankDNA}};
-        foreach my $NCBIgeneId (@multipleNCBIgeneIds) {
+
+        if ($ENV{'DEBUG_BROKEN_LOGIC_7925'}) {
+            #For recreating the broken logic from before zfin-7925 was fixed (for debugging purposes)
+            print LOG "DEBUG_BROKEN_LOGIC_7925\n";
+            my $tmpNcbiGeneId = pop(@multipleNCBIgeneIds);
+            @multipleNCBIgeneIds = ($tmpNcbiGeneId);
+        }
+        print LOG "DEBUG: " . scalar(@multipleNCBIgeneIds) . " NCBI Gene IDs for " . $GenBankDNA . ":";
+        foreach $NCBIgeneId (@multipleNCBIgeneIds) {
+            print LOG " $NCBIgeneId";
             if (exists($mappedReversed{$NCBIgeneId})) {
                 $zdbGeneId = $mappedReversed{$NCBIgeneId};
+                print LOG "/$zdbGeneId(reverse)";
                 if (!exists($geneAccFdbcont{$zdbGeneId . $GenBankDNA . $fdcontGenBankDNA})) {
                     my $length = exists($sequenceLength{$GenBankDNA}) ? $sequenceLength{$GenBankDNA} : '';
                     print TOLOAD "$zdbGeneId|$GenBankDNA||$length|$fdcontGenBankDNA|$pubMappedbasedOnRNA\n";
                     $geneAccFdbcont{$zdbGeneId . $GenBankDNA . $fdcontGenBankDNA} = 1;
                     $ctToLoad++;
+                } else {
+                    my $dbLinkToPreserve = $geneAccFdbcont{$zdbGeneId . $GenBankDNA . $fdcontGenBankDNA};
+                    print TO_PRESERVE "$dbLinkToPreserve\n";
+
+                    # mark db_link ID as one to preserve from the record_attribution table
+                    print LOG "_DUPE<$dbLinkToPreserve>";
                 }
             }
             elsif (exists($oneToOneViaVega{$NCBIgeneId})) {
                 $zdbGeneId = $oneToOneViaVega{$NCBIgeneId};
+                print LOG "/$zdbGeneId(vega)";
                 if (!exists($geneAccFdbcont{$zdbGeneId . $GenBankDNA . $fdcontGenBankDNA})) {
                     my $length = exists($sequenceLength{$GenBankDNA}) ? $sequenceLength{$GenBankDNA} : '';
                     print TOLOAD "$zdbGeneId|$GenBankDNA||$length|$fdcontGenBankDNA|$pubMappedbasedOnVega\n";
                     $geneAccFdbcont{$zdbGeneId . $GenBankDNA . $fdcontGenBankDNA} = 1;
                     $ctToLoad++;
+                } else {
+                    my $dbLinkToPreserve = $geneAccFdbcont{$zdbGeneId . $GenBankDNA . $fdcontGenBankDNA};
+                    print TO_PRESERVE "$dbLinkToPreserve\n";
+
+                    # mark db_link ID as one to preserve from the record_attribution table
+                    print LOG "_DUPE<$dbLinkToPreserve>";
                 }
             }
         }
+        print LOG "\n";
     }
 }
 
@@ -3031,6 +3072,12 @@ sub writeRefSeqDNAaccessionsWithMappedGenesToLoad {
             }
         }
     }
+}
+
+sub closeUnloadFiles {
+    close TOLOAD;
+    close TO_PRESERVE;
+    doSystemCommand("sort --unique -o toPreserve.unl toPreserve.unl");
 }
 
 sub printStatsBeforeDelete {
