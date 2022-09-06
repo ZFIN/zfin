@@ -37,7 +37,10 @@ RUN groupmod -n zfin gradle
 RUN groupadd -g 8983 solr 
 RUN adduser gradle root
 RUN adduser gradle solr
-RUN mkdir -p /var/solr/data/site_index && chgrp -R solr /var/solr && chmod -R g+ws /var/solr
+RUN mkdir -p /var/solr/data/site_index/data/snapshot_metadata && \
+    mkdir -p /var/solr/data/site_index/data/index && \
+    mkdir -p /var/solr/data/site_index/data/tlog && \
+    chgrp -R solr /var/solr && chmod -R g+ws /var/solr
 
 COPY ./ssh-agent.sudoers /etc/sudoers.d/01-ssh-agent
 RUN chmod 0440 /etc/sudoers.d/01-ssh-agent
