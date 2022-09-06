@@ -178,6 +178,7 @@
         <copy todir="${env.SOLR_HOME}">
             <fileset dir="${RESTORE_FROM}">
                 <include name="**"/>
+		<exclude name="**/*write.lock*"/>
             </fileset>
         </copy>
         <echo message="Copying correct db-data-config.xml into place, it may not match your data, but allows for indexing after doing a restore"/>
