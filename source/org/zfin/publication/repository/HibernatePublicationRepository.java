@@ -2372,7 +2372,18 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     public PublicationTrackingStatus getPublicationTrackingStatus(long id) {
-        return (PublicationTrackingStatus) HibernateUtil.currentSession().get(PublicationTrackingStatus.class, id);
+        return HibernateUtil.currentSession().get(PublicationTrackingStatus.class, id);
+    }
+
+    @Override
+    public Long getPublicationTrackingStatus(Person person, int days, PublicationTrackingStatus... status) {
+        String hql = "select count(m) from PublicationTrackingHistory as m where " +
+                "m.updater = :person AND m.status in (:status) and m.date > current_date - :days";
+        return HibernateUtil.currentSession().createQuery(hql, Long.class)
+                .setParameter("person", person)
+                .setParameterList("status", status)
+                .setParameter("days", days)
+                .uniqueResult();
     }
 
     public PublicationTrackingStatus getPublicationStatusByName(PublicationTrackingStatus.Name name) {

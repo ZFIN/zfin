@@ -1,7 +1,6 @@
 package org.zfin.publication.repository;
 
 import org.hibernate.Session;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +34,7 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.orthology.Ortholog;
+import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 import org.zfin.publication.PublicationTrackingHistory;
 import org.zfin.publication.PublicationTrackingLocation;
@@ -50,8 +50,7 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
-import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
-import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {AppConfig.class})
@@ -897,6 +896,15 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     public void getImageForPub() {
         List<Image> images = publicationRepository.getImages(publicationRepository.getPublication("ZDB-PUB-170608-5"));
         assertNotNull(images);
+    }
+
+    @Test
+    public void getNumberOfStatusChanges() {
+        Person person = getProfileRepository().getPerson("ZDB-PERS-220425-1");
+        PublicationTrackingStatus status = getPublicationRepository().getPublicationTrackingStatus(2);
+        long numberOfStatusChanges = getPublicationRepository().getPublicationTrackingStatus(person, 48, status);
+
+        assertEquals(1, numberOfStatusChanges);
     }
 }
 
