@@ -71,19 +71,19 @@ public class StudentMetricsJob extends AbstractValidateDataReportTask {
         Map<String, Object> summary = new LinkedHashMap<>();
         summary.put("Stats for Jaime","");
         summary.put("Number of Pubs moved to Ready-For-Indexing",
-                getPublicationRepository().getPublicationTrackingStatus(jaime, 48, readyForIndexing));
+                getPublicationRepository().getPublicationTrackingStatus(jaime, 7, readyForIndexing));
         summary.put("number of pubs transitioned to ‘manual pdf acquisition",
-                getPublicationRepository().getPublicationTrackingStatus(jaime, 48, manualPdfAcquisition));
+                getPublicationRepository().getPublicationTrackingStatus(jaime, 7, manualPdfAcquisition));
         summary.put("number of pubs closed",
-                getPublicationRepository().getPublicationTrackingStatus(jaime, 48, closed.toArray(PublicationTrackingStatus[]::new)));
+                getPublicationRepository().getPublicationTrackingStatus(jaime, 7, closed.toArray(PublicationTrackingStatus[]::new)));
         summary.put("","");
         summary.put("Stats for Kaia","");
         summary.put("Kaia: Number of Pubs moved to Ready-For-Indexing",
-                getPublicationRepository().getPublicationTrackingStatus(kaia, 48, readyForIndexing));
+                getPublicationRepository().getPublicationTrackingStatus(kaia, 7, readyForIndexing));
         summary.put("Kaia: number of pubs transitioned to ‘manual pdf acquisition",
-                getPublicationRepository().getPublicationTrackingStatus(kaia, 48, manualPdfAcquisition));
+                getPublicationRepository().getPublicationTrackingStatus(kaia, 7, manualPdfAcquisition));
         summary.put("Kaia: number of pubs closed",
-                getPublicationRepository().getPublicationTrackingStatus(kaia, 48, closed.toArray(PublicationTrackingStatus[]::new)));
+                getPublicationRepository().getPublicationTrackingStatus(kaia, 7, closed.toArray(PublicationTrackingStatus[]::new)));
         stats.addSummaryTable("Statistics", summary);
         stats.writeFiles(new File(dataDirectory, jobName), "statistics");
     }
