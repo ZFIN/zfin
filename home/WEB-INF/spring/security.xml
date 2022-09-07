@@ -115,6 +115,7 @@
         <security:intercept-url pattern="/action/marker/clone-add" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/marker/gene-add" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/marker/gene/edit/**" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/marker/gene/prototype-edit/*" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/marker/gene/prototype-view/*" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/marker/clone/prototype-view/*" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/marker/transcribedRegion-add" access="hasRole('root') or ${DISABLE_SECURITY}"/>
