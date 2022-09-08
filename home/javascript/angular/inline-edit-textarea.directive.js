@@ -63,9 +63,7 @@
         vm.cancelEdit = cancelEdit;
         vm.saveEdit = saveEdit;
 
-        activate();
-
-        function activate() {
+        this.$onInit = function () {
             vm.defaultText = vm.defaultText || 'Click to add';
             vm.errorClass = vm.errorClass || 'error';
             vm.textAreaClass = vm.textAreaClass || ['form-control', 'form-group'];

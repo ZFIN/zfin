@@ -42,9 +42,7 @@
         vm.removeReference = removeReference;
         vm.closeEditModal = closeEditModal;
 
-        activate();
-
-        function activate() {
+        this.$onInit = function () {
             MarkerService.getLinks(vm.markerId, vm.group)
                 .then(function (links) {
                     vm.links = links;

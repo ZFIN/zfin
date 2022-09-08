@@ -39,9 +39,7 @@
         vm.removeReference = removeReference;
         vm.closeEditModal = closeEditModal;
 
-        activate();
-
-        function activate() {
+        this.$onInit = function () {
             MarkerService.getAliases(vm.markerId)
                 .then(function (aliases) {
                     vm.aliases = aliases;
