@@ -23,7 +23,7 @@
     </hudson.tasks.Ant>  </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/DB_Maintenance/report_data/Student-Metrics_w/*</artifacts>
+      <artifacts>server_apps/DB_maintenance/report_data/Student-Metrics_w/*</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>false</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
@@ -34,7 +34,7 @@
           <email>
             <recipientList>pm@zfin.org</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&quot;$TARGETROOT/server_apps/DB_Maintenance/report_data/Student-Metrics_w/statistics.html&quot;}
+            <body>${FILE,path=&quot;$TARGETROOT/server_apps/DB_maintenance/report_data/Student-Metrics_w/statistics.html&quot;}
 
               See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
             </body>
@@ -53,7 +53,7 @@
           <email>
             <recipientList>pm@zfin.org</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&quot;$TARGETROOT/server_apps/DB_Maintenance/report_data/Student-Metrics_w/statistics.html&quot;}
+            <body>${FILE,path=&quot;$TARGETROOT/server_apps/DB_maintenance/report_data/Student-Metrics_w/statistics.html&quot;}
 
               See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
             </body>
