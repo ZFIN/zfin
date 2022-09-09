@@ -17,6 +17,12 @@ create index t_id_index on ncbi_gene_delete (delete_dblink_zdb_id);
 
 \copy ncbi_gene_delete from '<!--|ROOT_PATH|-->/server_apps/data_transfer/NCBIGENE/toDelete.unl';
 
+create temporary table ncbi_dblink_to_preserve (
+  prsv_dblink_zdb_id    text not null
+);
+create index prsv_id_index on ncbi_dblink_to_preserve (prsv_dblink_zdb_id);
+\copy ncbi_dblink_to_preserve from '<!--|ROOT_PATH|-->/server_apps/data_transfer/NCBIGENE/toPreserve.unl';
+
 create temporary table ncbi_gene_load (
   mapped_zdb_gene_id    text not null,
   ncbi_accession        varchar(50),
@@ -60,7 +66,8 @@ delete from record_attribution
                 where recattrib_data_zdb_id = dblink_zdb_id 
                   and (dblink_linked_recid like 'ZDB-GENE%' or dblink_linked_recid like '%RNAG%')
                   and dblink_fdbcont_zdb_id in ('ZDB-FDBCONT-040412-37','ZDB-FDBCONT-040412-42','ZDB-FDBCONT-040412-36')
-              );
+              )
+   and not exists (select 'x' from ncbi_dblink_to_preserve where prsv_dblink_zdb_id = recattrib_data_zdb_id);
 
 --!echo 'Insert into zdb_active_data the new zdb ids of db_link records'
 

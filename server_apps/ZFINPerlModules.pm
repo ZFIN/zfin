@@ -177,7 +177,7 @@ sub month3LettersToNumber() {
 #
 sub whirley {
   $WHIRLEY_COUNT = ($WHIRLEY_COUNT + 1) % @WHIRLEY;
-  return @WHIRLEY[$WHIRLEY_COUNT];
+  return $WHIRLEY[$WHIRLEY_COUNT];
 }
 
 sub printWhirleyToStderr {
