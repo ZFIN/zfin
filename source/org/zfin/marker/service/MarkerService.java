@@ -173,8 +173,15 @@ public class MarkerService {
     }
 
     private static MarkerDBLink consolidateMarkerDBLinks(List<MarkerDBLink> markerDBLinks) {
-        MarkerDBLink link = markerDBLinks.get(0);
-        markerDBLinks.remove(0);
+        MarkerDBLink dbLink = markerDBLinks.get(0);
+        MarkerDBLink link = new MarkerDBLink();
+        link.setZdbID(dbLink.getZdbID());
+        link.setAccessionNumber(dbLink.getAccessionNumber());
+        link.setAccessionNumberDisplay(dbLink.getAccessionNumberDisplay());
+        link.setLength(dbLink.getLength());
+        link.setReferenceDatabase(dbLink.getReferenceDatabase());
+        link.setPublications(dbLink.getPublications());
+        link.setSequence(dbLink.getSequence());
         markerDBLinks.forEach(markerDBLink -> link.addPublicationAttributions(markerDBLink.getPublications()));
         return link;
     }
