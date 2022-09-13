@@ -508,7 +508,7 @@
 
             <!-- Generate owl file at ontofox.hegroup.org from source file-->
             <exec executable="curl">
-                <arg line="-F file=@'@{source-file-name}' -o obo-files/@{file-name}.owl http://ontofox.hegroup.org/service.php"/>
+                <arg line="-F file=@'@{source-file-name}' -o obo-files/@{file-name}.owl https://ontofox.hegroup.org/service.php"/>
             </exec>
 
             <!-- convert owl file into an obo file -->
