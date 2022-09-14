@@ -1,10 +1,10 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<table>
+<table class="company-view-summary-table">
     <tr>
         <td>
             <z:attributeList>
-                <z:attributeListItem label="Contact Person">
+                <z:attributeListItem dtColSize="3" label="Contact Person">
                     <c:choose>
                         <c:when test="${empty company.contactPerson}">
                             <div class="error-inline">No Contact Person Assigned</div>
@@ -15,31 +15,31 @@
                     </c:choose>
                 </z:attributeListItem>
 
-                <z:attributeListItem label="Email">
+                <z:attributeListItem dtColSize="3" label="Email">
                     <a href="mailto:${company.email}">${company.email}</a>
                 </z:attributeListItem>
 
-                <z:attributeListItem label="URL">
+                <z:attributeListItem dtColSize="3" label="URL">
                     <zfin2:uriDisplay uri="${company.url}"/>
                 </z:attributeListItem>
 
-                <z:attributeListItem label="Address">
+                <z:attributeListItem dtColSize="3" label="Address">
                     <span class="postal-address">${company.address}</span>
                 </z:attributeListItem>
 
-                <z:attributeListItem label="Country">
+                <z:attributeListItem dtColSize="3" label="Country">
                     ${country}
                 </z:attributeListItem>
 
-                <z:attributeListItem label="Phone">
+                <z:attributeListItem dtColSize="3" label="Phone">
                     ${company.phone}
                 </z:attributeListItem>
 
-                <z:attributeListItem label="Fax">
+                <z:attributeListItem dtColSize="3" label="Fax">
                     ${company.fax}
                 </z:attributeListItem>
 
-                <z:attributeListItem label="Line Designation">
+                <z:attributeListItem dtColSize="3" label="Line Designation">
                     <c:choose>
                         <c:when test="${empty prefixes}">
                             <span class="no-data-tag">None assigned</span>

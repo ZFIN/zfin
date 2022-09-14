@@ -11,7 +11,7 @@
 <c:set var="secs"
        value="${[SUMMARY, GENOMIC_FEATURES, STATEMENT, MEMBERS, CITATIONS]}"/>
 
-<z:dataPage sections="${secs}">
+<z:dataPage sections="${secs}" additionalBodyClass="lab-view">
 
     <jsp:attribute name="entityName">
                 ${formBean.name}
