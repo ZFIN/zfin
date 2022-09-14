@@ -1,5 +1,7 @@
 package org.zfin.infrastructure;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.zfin.profile.Person;
 
@@ -9,6 +11,8 @@ import java.util.Date;
 
 @Entity
 @Table(name = "data_note")
+@Setter
+@Getter
 public class DataNote implements Comparable<DataNote> {
 
     @Id
@@ -30,46 +34,6 @@ public class DataNote implements Comparable<DataNote> {
     private String note;
     @Column(name = "dnote_date")
     private Date date;
-
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
-
-    public String getDataZdbID() {
-        return dataZdbID;
-    }
-
-    public void setDataZdbID(String dataZdbID) {
-        this.dataZdbID = dataZdbID;
-    }
-
-    public Person getCurator() {
-        return curator;
-    }
-
-    public void setCurator(Person curator) {
-        this.curator = curator;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
 
     public String getDateString() {
 	        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
