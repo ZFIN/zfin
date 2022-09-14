@@ -4,6 +4,8 @@
 ##$ENV{"DBDATE"}="Y4MD-";
 
 use Try::Tiny;
+use lib "<!--|ROOT_PATH|-->/server_apps/";
+use ZFINPerlModules;
 
 if (! -e "<!--|FTP_ROOT|-->/pub/transfer/MEOW") {
     system("/bin/mkdir -m 755 -p <!--|FTP_ROOT|-->/pub/transfer/MEOW");
@@ -13,7 +15,7 @@ print "beginning in ". `pwd` ."\n";
 system("rm -f ./*.txt");
 print "running MEOW_dump.sql on <!--|DB_NAME|-->\n";
 try {
-  system("$ENV{'PGBINDIR'}/psql <!--|DB_NAME|--> < MEOW_dump.sql");
+  ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 <!--|DB_NAME|--> < MEOW_dump.sql");
 } catch {
   warn "Failed at MEOW_dump.sql - $_";
   exit -1;
