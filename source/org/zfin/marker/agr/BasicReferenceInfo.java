@@ -71,7 +71,7 @@ public class BasicReferenceInfo extends AbstractScriptWrapper {
                                            meshDetail.setReferenceId("ZFIN:"+reference.getZdbID());
                                        }
                                        meshDetail.setMeshHeadingTerm(meshHeading.getDescriptor().getTerm().getId());
-                                       meshDetail.setMeshQualfierTerm(mtqualifer.getTerm().getId());
+                                       meshDetail.setMeshQualifierTerm(mtqualifer.getTerm().getId());
                                        meshDetails.add(meshDetail);
                                    }
                                 }
