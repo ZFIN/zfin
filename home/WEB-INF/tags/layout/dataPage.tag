@@ -6,10 +6,13 @@
 <%@ attribute name="title" required="false" %>
 <%@ attribute name="pageBar" required="false" %>
 
+<%@ attribute name="additionalBodyClass" required="false" type="java.lang.String" %>
+<c:set var="additionalBodyClass" value="${(empty additionalBodyClass) ? '' : additionalBodyClass}" />
+
 <jsp:invoke fragment="entityName" var="entityNameValue"/>
 <jsp:invoke fragment="entityNameAddendum" var="entityNameAddendumValue"/>
 
-<z:page bodyClass="data-page" bootstrap="true" title="${title}">
+<z:page bodyClass="data-page" additionalBodyClass="${additionalBodyClass}" bootstrap="true" title="${title}">
     <div class="d-flex h-100">
         <div class="data-page-nav-container">
             <ul class="nav nav-pills flex-column">

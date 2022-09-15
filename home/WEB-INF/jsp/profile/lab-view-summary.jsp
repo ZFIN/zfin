@@ -1,52 +1,52 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<table>
+<table class="lab-view-summary-table">
     <tr>
         <td>
             <z:attributeList>
-                <z:attributeListItem label="Lab ID">
+                <z:attributeListItem dtColSize="3" label="Lab ID">
                     <span id="marker-id">${formBean.zdbID}</span>
                 </z:attributeListItem>
 
-                <z:attributeListItem label="PI / Directory">
+                <z:attributeListItem dtColSize="3" label="PI / Directory">
                     <zfin2:listMembers members="${members}" only="1" suppressTitle="true" suffix="<br>"/>
                 </z:attributeListItem>
 
                 <c:if test="${hasCoPi}">
-                    <z:attributeListItem label="Co-PI / Senior<br/> Researcher">
+                    <z:attributeListItem dtColSize="3" label="Co-PI / Senior<br/> Researcher">
                         <zfin2:listMembers members="${members}" only="2" suppressTitle="true" suffix="<br>"/>
                     </z:attributeListItem>
                 </c:if>
 
-                <z:attributeListItem label="Contact Person">
+                <z:attributeListItem dtColSize="3" label="Contact Person">
                     <zfin:link entity="${formBean.contactPerson}"/>
                 </z:attributeListItem>
 
-                <z:attributeListItem label="Email">
+                <z:attributeListItem dtColSize="3" label="Email">
                     <a href="mailto:${formBean.email}">${formBean.email}</a>
                 </z:attributeListItem>
 
-                <z:attributeListItem label="URL">
+                <z:attributeListItem dtColSize="3" label="URL">
                     <zfin2:uriDisplay uri="${formBean.url}"/>
                 </z:attributeListItem>
 
-                <z:attributeListItem label="Address">
+                <z:attributeListItem dtColSize="3" label="Address">
                     <span class="postal-address">${formBean.address}</span>
                 </z:attributeListItem>
 
-                <z:attributeListItem label="Country">
+                <z:attributeListItem dtColSize="3" label="Country">
                     <zfin2:uriDisplay uri="${country}"/>
                 </z:attributeListItem>
 
-                <z:attributeListItem label="Phone">
+                <z:attributeListItem dtColSize="3" label="Phone">
                     ${formBean.phone}
                 </z:attributeListItem>
 
-                <z:attributeListItem label="Fax">
+                <z:attributeListItem dtColSize="3" label="Fax">
                     ${formBean.fax}
                 </z:attributeListItem>
 
-                <z:attributeListItem label="Line Designation">
+                <z:attributeListItem dtColSize="3" label="Line Designation">
                     <c:choose>
                         <c:when test="${noPrefixes}">
                             <span class="no-data-tag">None assigned</span>

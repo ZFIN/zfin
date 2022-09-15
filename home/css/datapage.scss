@@ -345,3 +345,25 @@ tr.spaceUnder > td{
         background: $grey-light;
     }
 }
+
+/* Lab and company page formatting */
+table.lab-view-summary-table td:first-child, table.company-view-summary-table td:first-child {
+    min-width: 440px;
+}
+table.lab-view-summary-table dt, table.company-view-summary-table dt,  {
+     white-space: nowrap;
+}
+table.lab-view-summary-table dd a, table.company-view-summary-table dd a {
+    white-space: nowrap;
+    width: 100%;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.lab-view a.back-to-top-link, .company-view a.back-to-top-link {
+    display: inline;
+    white-space: normal;
+}
+/* End of lab page formatting */
+
+

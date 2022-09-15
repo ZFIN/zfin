@@ -8,6 +8,10 @@
 <%@ attribute name="bodyClass" rtexprvalue="true" required="false" type="java.lang.String" %>
 <%@ attribute name="bootstrap" required="false" type="java.lang.Boolean" %>
 
+<%@ attribute name="additionalBodyClass" required="false" type="java.lang.String" %>
+<c:set var="additionalBodyClass" value="${(empty additionalBodyClass) ? '' : additionalBodyClass}" />
+
+
 <c:if test="${empty title}">
     <c:set var="title">
         ZFIN ${dynamicTitle}
@@ -63,7 +67,7 @@ Community Action Needed: Please respond to the <a href="https://zfin.atlassian.n
 </pre>
         </div>
 --%>
-    <body class="${bodyClass}">
+    <body class="${bodyClass} ${additionalBodyClass}">
         <z:pageHeader/>
         <main>
             <jsp:doBody/>
