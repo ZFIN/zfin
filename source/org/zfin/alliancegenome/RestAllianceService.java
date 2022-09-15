@@ -31,7 +31,7 @@ public class RestAllianceService {
         } catch (IOException e) {
             log.error("Could not find token file: " + file);
         }
-        return null;
+        return "Could not find token in file "+file.toString();
     }
 
 
