@@ -10,7 +10,7 @@
 <c:set var="secs"
        value="${[SUMMARY, PRODUCTS, REPRESENTATIVE, CITATIONS]}"/>
 
-<z:dataPage sections="${secs}">
+<z:dataPage sections="${secs}" additionalBodyClass="company-view">
 
     <jsp:attribute name="entityName">
                 ${company.name}
