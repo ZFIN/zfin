@@ -4,7 +4,7 @@ import {entityType} from '../../utils/types';
 const TYPE_CLASSES = [
     {
         className: '',
-        types: ['EXP'],
+        types: ['EXP', 'TERM'],
     },
     {
         className: 'construct',
@@ -43,6 +43,8 @@ const EntityAbbreviation = ({entity}) => {
         linktext = entity.name;
     } else if (['EXP'].includes(type)) {
         linktext = entity.conditions || '';
+    } else if (['TERM'].includes(type)) {
+        linktext = entity.termName || '';
     } else {
         linktext = entity.abbreviation || '';
     }

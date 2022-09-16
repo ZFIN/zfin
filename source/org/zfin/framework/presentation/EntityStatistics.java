@@ -11,17 +11,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- *
- */
 public abstract class EntityStatistics {
 
     protected List<Publication> publications;
     protected int numberOfPublications = -1;
-    private Set<Marker> genes = new HashSet<Marker>();
-    private Set<Figure> figs = new HashSet<Figure>();
-    private Set<Publication> pubs = new HashSet<Publication>();
-    private Set<Image> images = new HashSet<Image>();
+    @JsonView(View.API.class)
+    private Set<Marker> genes = new HashSet<>();
+    private Set<Figure> figs = new HashSet<>();
+    private Set<Publication> pubs = new HashSet<>();
+    private Set<Image> images = new HashSet<>();
 
     @JsonView(View.API.class)
     public int getNumberOfPublications() {
