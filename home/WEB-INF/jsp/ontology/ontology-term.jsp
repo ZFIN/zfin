@@ -7,7 +7,12 @@
 <z:page>
     <div class="data-page">
 
-        <zfin2:dataManager oboID="${formBean.term.oboID}" termID="${formBean.term.zdbID}"/>
+        <authz:authorize access="hasRole('root')">
+        <a class="dropdown-item" href="/action/ontology/prototype/${formBean.term.zdbID}">Prototype View</a>
+        </authz:authorize>
+
+
+    <zfin2:dataManager oboID="${formBean.term.oboID}" termID="${formBean.term.zdbID}"/>
 
         <table class="primary-entity-attributes">
 
