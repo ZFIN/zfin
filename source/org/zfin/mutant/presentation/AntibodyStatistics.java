@@ -1,6 +1,7 @@
 package org.zfin.mutant.presentation;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.repository.AntibodyRepository;

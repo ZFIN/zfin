@@ -67,6 +67,7 @@ public class AnatomySearchBean extends PaginationBean {
 
     private Map<String, String> stageListDisplay;
     private List<TermDTO> terms;
+    private boolean hasData;
 
     public Map<String, String> getDisplayStages() {
         if (stageListDisplay != null) {
@@ -330,6 +331,14 @@ public class AnatomySearchBean extends PaginationBean {
 
     public void setQualityProbePublications(List<Publication> qualityProbePublications) {
         this.qualityProbePublications = qualityProbePublications;
+    }
+
+    public boolean isHasData() {
+        return hasData;
+    }
+
+    public void setHasData(boolean hasData) {
+        this.hasData = hasData;
     }
 
     /**

@@ -20,6 +20,8 @@ public abstract class EntityStatistics {
     private Set<Figure> figs = new HashSet<>();
     private Set<Publication> pubs = new HashSet<>();
     private Set<Image> images = new HashSet<>();
+    @JsonView(View.API.class)
+    private boolean hasData;
 
     @JsonView(View.API.class)
     public int getNumberOfPublications() {
@@ -143,6 +145,14 @@ public abstract class EntityStatistics {
 
     public Set<Marker> getGenes() {
         return genes;
+    }
+
+    public boolean getHasData() {
+        return hasData;
+    }
+
+    public void setHasData(boolean hasData) {
+        this.hasData = hasData;
     }
 
     @JsonView(View.API.class)

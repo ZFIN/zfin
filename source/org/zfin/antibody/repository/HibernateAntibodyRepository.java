@@ -22,6 +22,8 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
+import org.zfin.marker.presentation.HighQualityProbe;
+import org.zfin.marker.presentation.HighQualityProbeAOStatistics;
 import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
@@ -327,6 +329,27 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
 		return new PaginationResult<>((List<Publication>) pubs.list());
 	}
 
+	public PaginationResult<Publication> getPublicationsProbeWithFigures(Marker probe, GenericTerm aoTerm) {
+		Session session = HibernateUtil.currentSession();
+		Criteria pubs = session.createCriteria(Publication.class);
+		Criteria labeling = pubs.createCriteria("expressionExperiments");
+		labeling.add(eq("probe", probe));
+		Criteria results = labeling.createCriteria("expressionResults");
+		// check AO1 and AO2
+		results.add(Restrictions.or(
+			Restrictions.eq("entity.superterm", aoTerm),
+			Restrictions.eq("entity.subterm", aoTerm)));
+		results.add(isNotEmpty("figures"));
+		results.add(eq("expressionFound", true));
+		Criteria fishExperiment = labeling.createCriteria("fishExperiment");
+		fishExperiment.add(Restrictions.eq("standardOrGenericControl", true));
+		Criteria fish = fishExperiment.createCriteria("fish");
+		Criteria genotype = fish.createCriteria("genotype");
+		genotype.add(Restrictions.eq("wildtype", true));
+		pubs.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		return new PaginationResult<>((List<Publication>) pubs.list());
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<Antibody> getAntibodiesByPublication(Publication publication) {
 		Session session = HibernateUtil.currentSession();
@@ -582,8 +605,8 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
 				" LEFT JOIN FETCH stat.gene " +
 				" LEFT JOIN FETCH stat.publication " +
 				" LEFT JOIN FETCH stat.antibody " +
-				"     where stat.superterm = :term"+
-			    "           AND stat.antibody.zdbID in (:abIds) " +
+				"     where stat.superterm = :term" +
+				"           AND stat.antibody.zdbID in (:abIds) " +
 				"           order by lower(stat.antibody.name) ";
 		} else {
 			hql = " select distinct stat, lower(stat.antibody.name) from AntibodyAOStatistics stat " +
@@ -603,8 +626,45 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
 		List<Object[]> resultList = query.list();
 
 		List<AntibodyStatistics> list = new ArrayList<>();
-		resultList.stream().map(objects -> (AntibodyAOStatistics)objects[0]).collect(toList())
+		resultList.stream().map(objects -> (AntibodyAOStatistics) objects[0]).collect(toList())
 			.forEach(antibodyStat -> populateAntibodyStatisticsRecord(antibodyStat, list, aoTerm));
+		return list;
+	}
+
+	public List<HighQualityProbe> getProbeStatisticsPaginated(GenericTerm aoTerm, PaginationBean pagination, List<String> termIDs, boolean includeSubstructures) {
+
+		String hql;
+		// loop over all highQualityProbeAOStatistic records until the given number of distinct genes from the pagination
+		// bean is reached.
+		if (includeSubstructures) {
+			hql = " select distinct stat, lower(stat.gene.name) from HighQualityProbeAOStatistics stat " +
+				" LEFT JOIN FETCH stat.figure " +
+				" LEFT JOIN FETCH stat.gene " +
+				" LEFT JOIN FETCH stat.publication " +
+				" LEFT JOIN FETCH stat.probe " +
+				"     where stat.superterm = :term" +
+				"           AND stat.gene.zdbID in (:geneIds) " +
+				"           order by lower(stat.gene.name) ";
+		} else {
+			hql = " select distinct stat, lower(stat.gene.name) from HighQualityProbeAOStatistics stat " +
+				" LEFT JOIN FETCH stat.figure " +
+				" LEFT JOIN FETCH stat.gene " +
+				" LEFT JOIN FETCH stat.publication " +
+				" LEFT JOIN FETCH stat.probe " +
+				"     where (stat.superterm = :term AND " +
+				"           stat.subterm = :term)  " +
+				"           AND stat.gene.zdbID in (:geneIds) " +
+				"           order by lower(stat.gene.name) ";
+		}
+
+		org.hibernate.query.Query<Object[]> query = HibernateUtil.currentSession().createQuery(hql, Object[].class);
+		query.setParameter("term", aoTerm);
+		query.setParameterList("geneIds", termIDs);
+		List<Object[]> resultList = query.list();
+
+		List<HighQualityProbe> list = new ArrayList<>();
+		resultList.stream().map(objects -> (HighQualityProbeAOStatistics) objects[0]).collect(toList())
+			.forEach(highQualityProbe -> populateHighQualityProbeStatisticsRecord(highQualityProbe, list, aoTerm));
 		return list;
 	}
 
@@ -618,6 +678,24 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
 		} else {
 			hql = "select count(distinct stat.antibody) " +
 				"     from AntibodyAOStatistics stat " +
+				"     where (stat.superterm = :aoterm AND " +
+				"           stat.subterm = :aoterm) ";
+		}
+		Query query = HibernateUtil.currentSession().createQuery(hql);
+		query.setParameter("aoterm", aoTerm);
+		return ((Number) query.uniqueResult()).intValue();
+	}
+
+	@Override
+	public int getProbeCount(Term aoTerm, boolean includeSubstructures) {
+		String hql;
+		if (includeSubstructures) {
+			hql = "select count(distinct stat.probe) " +
+				"     from HighQualityProbeAOStatistics stat " +
+				"     where stat.superterm = :aoterm ";
+		} else {
+			hql = "select count(distinct stat.probe) " +
+				"     from HighQualityProbeAOStatistics stat " +
 				"     where (stat.superterm = :aoterm AND " +
 				"           stat.subterm = :aoterm) ";
 		}
@@ -641,6 +719,28 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
 				"     where stat.superterm = :aoterm and " +
 				"           stat.subterm = :aoterm  " +
 				"           group by stat.antibody.zdbID, stat.antibody.abbreviationOrder " +
+				"           order by 2 ";
+		}
+		org.hibernate.query.Query<Object[]> query = HibernateUtil.currentSession().createQuery(hql, Object[].class);
+		query.setParameter("aoterm", aoTerm);
+		return query.list().stream().map(objects -> (String) objects[0]).collect(toList());
+	}
+
+	@Override
+	public List<String> getPaginatedHighQualityProbeIds(Term aoTerm, boolean includeSubstructures) {
+		String hql;
+		if (includeSubstructures) {
+			hql = "select stat.gene.zdbID, stat.gene.abbreviationOrder " +
+				"     from HighQualityProbeAOStatistics stat " +
+				"     where stat.superterm = :aoterm " +
+				"           group by stat.gene.zdbID, stat.gene.abbreviationOrder " +
+				"           order by 2 ";
+		} else {
+			hql = "select stat.gene.zdbID, stat.gene.abbreviationOrder " +
+				"     from HighQualityProbeAOStatistics stat " +
+				"     where stat.superterm = :aoterm and " +
+				"           stat.subterm = :aoterm  " +
+				"           group by stat.gene.zdbID, stat.gene.abbreviationOrder " +
 				"           order by 2 ";
 		}
 		org.hibernate.query.Query<Object[]> query = HibernateUtil.currentSession().createQuery(hql, Object[].class);
@@ -702,6 +802,49 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
 			newAntibodyStat = abStat;
 		} else {
 			newAntibodyStat = new AntibodyStatistics(record.getAntibody(), record.getSubterm());
+			isNew = true;
+		}
+
+		Marker gene = record.getGene();
+		if (gene != null) {
+			newAntibodyStat.addGene(gene);
+		}
+		Figure figure = record.getFigure();
+		if (figure != null) {
+			newAntibodyStat.addFigure(figure);
+		}
+		Publication publication = record.getPublication();
+		if (publication != null) {
+			newAntibodyStat.addPublication(publication);
+		}
+
+		if (isNew) {
+			list.add(newAntibodyStat);
+		}
+	}
+
+	private void populateHighQualityProbeStatisticsRecord(HighQualityProbeAOStatistics record, List<HighQualityProbe> list, GenericTerm aoTerm) {
+
+		if (record == null || record.getGene() == null) {
+			return;
+		}
+
+		HighQualityProbe probeStat;
+		if (list.size() == 0) {
+			probeStat = new HighQualityProbe(record.getProbe(), record.getGene(), aoTerm);
+			list.add(probeStat);
+		} else {
+			probeStat = list.get(list.size() - 1);
+		}
+
+		// if antibody from records is the same as the one on the statistics object
+		// add new info to that object.
+		HighQualityProbe newAntibodyStat;
+		boolean isNew = false;
+		if (probeStat.getGenes().contains(record.getGene())) {
+			newAntibodyStat = probeStat;
+		} else {
+			newAntibodyStat = new HighQualityProbe(record.getProbe(), record.getGene(), record.getSubterm());
 			isNew = true;
 		}
 

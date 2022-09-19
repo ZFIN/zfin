@@ -23,7 +23,7 @@ const TermAntibodyTable = ({termId, directAnnotationOnly}) => {
         },
         {
             label: 'Term',
-            content: ({anatomyItem}) => <EntityLink entity={anatomyItem}/>,
+            content: ({term}) => <EntityLink entity={term}/>,
             width: '120px',
         },
         {
@@ -47,7 +47,12 @@ const TermAntibodyTable = ({termId, directAnnotationOnly}) => {
     return (
         <>
             {directAnnotationOnly && hasData && (
-                <DataTableSummaryToggle detailLabel='Including children' showPopup={directAnnotation} onChange={setDirectAnnotation}/>
+                <DataTableSummaryToggle
+                    detailLabel='Including children'
+                    showPopup={directAnnotation}
+                    onChange={setDirectAnnotation}
+                    overviewLabel='Direct'
+                />
             )}
             <DataTable
                 columns={columns}
