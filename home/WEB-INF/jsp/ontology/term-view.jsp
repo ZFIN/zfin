@@ -34,6 +34,12 @@
                 <div class="__react-root" id="GeneFigureTerm" data-gene-id="${term.zdbID}"></div>
 --%>
             </z:section>
+            <z:section title="In Situ Probes">
+                <div class="__react-root" id="TermInSituProbeTable"
+                     data-term-id="${term.zdbID}"
+                     data-direct-annotation-only="true"
+                ></div>
+            </z:section>
             <z:section title="Antibody Labeling">
                 <div class="__react-root" id="TermAntibodyTable"
                      data-term-id="${term.zdbID}"

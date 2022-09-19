@@ -37,6 +37,9 @@ const DataProvider = ({
     useEffect(() => {
         if (typeof onDataLoaded === 'function' && !data.loading && !data.rejected && data.value && data.value.total > 0) {
             onDataLoaded();
+        } else if (typeof onDataLoaded === 'function' && !data.loading && !data.rejected && data.value && data.value.total === 0 &&
+            data.value.supplementalData && data.value.supplementalData.hasData) {
+            onDataLoaded();
         }
     }, [data]);
 

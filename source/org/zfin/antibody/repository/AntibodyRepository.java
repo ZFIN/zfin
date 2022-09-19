@@ -8,6 +8,8 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.FigureType;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.marker.Marker;
+import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
@@ -130,6 +132,8 @@ public interface AntibodyRepository {
 	 */
 	PaginationResult<Publication> getPublicationsWithFigures(Antibody antibody, GenericTerm aoTerm);
 
+	PaginationResult<Publication> getPublicationsProbeWithFigures(Marker probe, GenericTerm aoTerm);
+
 	/**
 	 * Lookup all distinct antibodies that are referenced in a given publication.
 	 *
@@ -169,9 +173,15 @@ public interface AntibodyRepository {
 
 	List<AntibodyStatistics> getAntibodyStatisticsPaginated(GenericTerm aoTerm, PaginationBean pagination, List<String> termIDs, boolean includeSubstructures);
 
+	List<HighQualityProbe> getProbeStatisticsPaginated(GenericTerm aoTerm, PaginationBean pagination, List<String> termIDs, boolean includeSubstructures);
+
 	int getAntibodyCount(Term anatomyItem, boolean includeSubstructure);
 
+	int getProbeCount(Term aoTerm, boolean includeSubstructures);
+
 	List<String> getPaginatedAntibodyIds(Term aoTerm, boolean includeSubstructures);
+
+	List<String> getPaginatedHighQualityProbeIds(Term aoTerm, boolean includeSubstructures);
 
 	/**
 	 * Retrieve all antibodies sorted by name.
