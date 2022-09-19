@@ -6,6 +6,7 @@ import org.zfin.anatomy.presentation.StagePresentation;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.repository.RepositoryFactory;
@@ -35,12 +36,31 @@ public class AnatomyService {
 
 		//set paginated antibodyIDs
 		List<String> paginatedAntibodyIDs = totalIds.stream()
-			.skip(pagination.getFirstRecord())
+			.skip(pagination.getFirstRecord() - 1)
 			.limit(pagination.getMaxDisplayRecordsInteger())
 			.collect(Collectors.toList());
 
 		List<AntibodyStatistics> list = RepositoryFactory.getAntibodyRepository().getAntibodyStatisticsPaginated(aoTerm, pagination, paginatedAntibodyIDs, includeSubstructures);
 
+		return new PaginationResult<>(totalCount, list);
+	}
+
+	public static PaginationResult<HighQualityProbe> getHighQualityProbeStatistics(GenericTerm aoTerm,
+																				   PaginationBean pagination,
+																				   boolean includeSubstructures) {
+		int totalCount = RepositoryFactory.getAntibodyRepository().getProbeCount(aoTerm, includeSubstructures);
+		List<String> totalIds = RepositoryFactory.getAntibodyRepository().getPaginatedHighQualityProbeIds(aoTerm, includeSubstructures);
+		// if no antibodies found return here
+		if (totalCount == 0)
+			return new PaginationResult<>(0, null);
+
+		//set paginated antibodyIDs
+		List<String> paginatedAntibodyIDs = totalIds.stream()
+			.skip(pagination.getFirstRecord() - 1)
+			.limit(pagination.getMaxDisplayRecordsInteger())
+			.collect(Collectors.toList());
+
+		List<HighQualityProbe> list = RepositoryFactory.getAntibodyRepository().getProbeStatisticsPaginated(aoTerm, pagination, paginatedAntibodyIDs, includeSubstructures);
 		return new PaginationResult<>(totalCount, list);
 	}
 

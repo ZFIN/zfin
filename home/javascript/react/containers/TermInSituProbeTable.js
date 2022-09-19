@@ -7,18 +7,19 @@ import FigureSummary from '../components/FigureSummary';
 import DataTableSummaryToggle from '../components/DataTableSummaryToggle';
 
 const TermAntibodyTable = ({termId, directAnnotationOnly}) => {
+
     const [directAnnotation, setDirectAnnotation] = useState(directAnnotationOnly === 'true');
     const [hasData, setHasData] = useState(false);
 
     const columns = [
         {
-            label: 'Antibody',
-            content: ({antibody}) => <EntityLink entity={antibody}/>,
-            width: '150px',
-        },
-        {
             label: 'Gene',
             content: ({genes}) => <EntityList entities={genes}/>,
+            width: '120px',
+        },
+        {
+            label: 'Probe',
+            content: ({probe}) => <EntityLink entity={probe}/>,
             width: '120px',
         },
         {
@@ -31,7 +32,7 @@ const TermAntibodyTable = ({termId, directAnnotationOnly}) => {
             content: row => (
                 <FigureSummary
                     statistics={row}
-                    allFiguresUrl={`/action/expression/fish-expression-figure-summary?fishID=${row.antibody.zdbID}&imagesOnly=false`}
+                    allFiguresUrl={`/action/expression/fish-expression-figure-summary?fishID=${row.probe.zdbID}&imagesOnly=false`}
                 />
             ),
             width: '100px',
@@ -56,9 +57,9 @@ const TermAntibodyTable = ({termId, directAnnotationOnly}) => {
             )}
             <DataTable
                 columns={columns}
-                dataUrl={`/action/api/ontology/${termId}/antibodies?${qs.stringify(params)}`}
+                dataUrl={`/action/api/ontology/${termId}/inSituProbes?${qs.stringify(params)}`}
                 onDataLoaded={() => setHasData(true)}
-                rowKey={row => row.antibody.zdbID}
+                rowKey={row => row.probe.zdbID}
             />
         </>
     );
