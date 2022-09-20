@@ -9,6 +9,8 @@ END;
 $BODY$ LANGUAGE plpgsql;
 
 -- last modified trigger
+DROP TRIGGER IF EXISTS record_attribution_sync_modified_at_trigger on record_attribution;
+
 CREATE TRIGGER
     record_attribution_sync_modified_at_trigger
     BEFORE UPDATE ON
