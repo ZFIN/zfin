@@ -14,6 +14,7 @@ const DataTable = ({
     dataUrl,
     downloadOptions,
     onDataLoaded,
+    onDataLoadedCount,
     pagination = true,
     rowKey,
     setTableState,
@@ -57,6 +58,7 @@ const DataTable = ({
                 dataUrl={dataUrl}
                 downloadOptions={downloadOptions}
                 onDataLoaded={onDataLoaded}
+                onDataLoadedCount={onDataLoadedCount}
                 pagination={pagination}
                 renderData={renderData}
                 setTableState={setTableState}
@@ -72,6 +74,7 @@ DataTable.propTypes = {
     dataUrl: PropTypes.string.isRequired,
     downloadOptions: PropTypes.arrayOf(downloadOptionType),
     onDataLoaded: PropTypes.func,
+    onDataLoadedCount: PropTypes.func,
     pagination: PropTypes.bool,
     rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
     setTableState: PropTypes.func,
