@@ -7,8 +7,9 @@ import FigureSummary from '../components/FigureSummary';
 import DataTableSummaryToggle from '../components/DataTableSummaryToggle';
 
 const TermAntibodyTable = ({termId, directAnnotationOnly}) => {
+
     const [directAnnotation, setDirectAnnotation] = useState(directAnnotationOnly === 'true');
-    const [hasData, setHasData] = useState(false);
+    const [count, setCount] = useState({'countDirect':0,'countIncludingChildren':0});
 
     const columns = [
         {
@@ -46,18 +47,18 @@ const TermAntibodyTable = ({termId, directAnnotationOnly}) => {
 
     return (
         <>
-            {directAnnotationOnly && hasData && (
+            {directAnnotationOnly && count.countIncludingChildren > 0 && (
                 <DataTableSummaryToggle
-                    detailLabel='Including children'
+                    detailLabel={`Including children (${count.countIncludingChildren})`}
                     showPopup={directAnnotation}
                     onChange={setDirectAnnotation}
-                    overviewLabel='Direct'
+                    overviewLabel={`Direct (${count.countDirect})`}
                 />
             )}
             <DataTable
                 columns={columns}
                 dataUrl={`/action/api/ontology/${termId}/antibodies?${qs.stringify(params)}`}
-                onDataLoaded={() => setHasData(true)}
+                onDataLoadedCount={(count) => setCount(count)}
                 rowKey={row => row.antibody.zdbID}
             />
         </>

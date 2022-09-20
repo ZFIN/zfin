@@ -12,7 +12,6 @@ import org.zfin.framework.api.View;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.presentation.HighQualityProbe;
-import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.repository.OntologyRepository;
@@ -49,6 +48,8 @@ public class TermAPIController {
 		retrieveAntibodyData(term, form, pagination, directAnnotation);
 		response.setResults(form.getAntibodyStatistics());
 		response.setTotal(form.getAntibodyCount());
+		response.addSupplementalData("countDirect", form.getCountDirect());
+		response.addSupplementalData("countIncludingChildren", form.getCountIncludingChildren());
 		HibernateUtil.flushAndCommitCurrentSession();
 		return response;
 	}
@@ -71,7 +72,8 @@ public class TermAPIController {
 		retrieveHighQualityProbeData(term, form, pagination, directAnnotation);
 		response.setResults(form.getHighQualityProbeGenes());
 		response.setTotal(form.getNumberOfHighQualityProbes());
-		response.addSupplementalData("hasData", form.isHasData());
+		response.addSupplementalData("countDirect", form.getCountDirect());
+		response.addSupplementalData("countIncludingChildren", form.getCountIncludingChildren());
 		HibernateUtil.flushAndCommitCurrentSession();
 		return response;
 	}
@@ -85,6 +87,16 @@ public class TermAPIController {
 		PaginationResult<org.zfin.mutant.presentation.AntibodyStatistics> antibodies = AnatomyService.getAntibodyStatistics(aoTerm, pagination, !directAnnotation);
 		form.setAntibodyStatistics(antibodies.getPopulatedResults());
 		form.setAntibodyCount(antibodies.getTotalCount());
+		// if direct annotations are empty check for included ones
+		if (directAnnotation) {
+			int totalCount = RepositoryFactory.getAntibodyRepository().getAntibodyCount(aoTerm, true);
+			form.setCountDirect(antibodies.getTotalCount());
+			form.setCountIncludingChildren(totalCount);
+		} else {
+			int totalCount = RepositoryFactory.getAntibodyRepository().getAntibodyCount(aoTerm, false);
+			form.setCountIncludingChildren(antibodies.getTotalCount());
+			form.setCountDirect(totalCount);
+		}
 	}
 
 	private void retrieveHighQualityProbeData(GenericTerm aoTerm, AnatomySearchBean form, Pagination pagi, boolean directAnnotation) {
@@ -94,19 +106,17 @@ public class TermAPIController {
 		PaginationResult<HighQualityProbe> antibodies = AnatomyService.getHighQualityProbeStatistics(aoTerm, pagination, !directAnnotation);
 		form.setHighQualityProbeGenes(antibodies.getPopulatedResults());
 		form.setNumberOfHighQualityProbes(antibodies.getTotalCount());
-		if (antibodies.getTotalCount() > 0) {
-			form.setHasData(true);
+		// if direct annotations are empty check for included ones
+		if (directAnnotation) {
+			int totalCount = RepositoryFactory.getAntibodyRepository().getProbeCount(aoTerm, true);
+			form.setCountDirect(antibodies.getTotalCount());
+			form.setCountIncludingChildren(totalCount);
 		} else {
-			// if direct annotations are empty check for included ones
-			if (directAnnotation) {
-				int totalCount = RepositoryFactory.getAntibodyRepository().getProbeCount(aoTerm, true);
-				if (totalCount > 0) {
-					form.setHasData(true);
-				}
-			}
+			int totalCount = RepositoryFactory.getAntibodyRepository().getProbeCount(aoTerm, false);
+			form.setCountIncludingChildren(antibodies.getTotalCount());
+			form.setCountDirect(totalCount);
 		}
 	}
-
 
 }
 
