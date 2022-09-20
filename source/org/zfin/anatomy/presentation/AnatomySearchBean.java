@@ -1,5 +1,7 @@
 package org.zfin.anatomy.presentation;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
 import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.anatomy.DevelopmentStage;
@@ -25,6 +27,8 @@ import java.util.*;
  * This Bean is used for most of the anatomy pages and contains all objects that
  * need to be displayed on any of the pages.
  */
+@Setter
+@Getter
 public class AnatomySearchBean extends PaginationBean {
 
     public static final int MAX_NUMBER_GENOTYPES = 5;
@@ -67,7 +71,9 @@ public class AnatomySearchBean extends PaginationBean {
 
     private Map<String, String> stageListDisplay;
     private List<TermDTO> terms;
-    private boolean hasData;
+    private int countDirect;
+    private int countIncludingChildren;
+
 
     public Map<String, String> getDisplayStages() {
         if (stageListDisplay != null) {
@@ -331,14 +337,6 @@ public class AnatomySearchBean extends PaginationBean {
 
     public void setQualityProbePublications(List<Publication> qualityProbePublications) {
         this.qualityProbePublications = qualityProbePublications;
-    }
-
-    public boolean isHasData() {
-        return hasData;
-    }
-
-    public void setHasData(boolean hasData) {
-        this.hasData = hasData;
     }
 
     /**
