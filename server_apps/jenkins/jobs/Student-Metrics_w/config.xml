@@ -18,7 +18,7 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Ant plugin="ant@1.11">
-      <targets>load-signafish</targets>
+      <targets>student-metrics</targets>
       <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
     </hudson.tasks.Ant>  </builders>
   <publishers>
