@@ -1,6 +1,8 @@
 package org.zfin.marker;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.zfin.expression.Figure;
+import org.zfin.framework.api.View;
 import org.zfin.framework.presentation.EntityStatistics;
 import org.zfin.framework.presentation.FigureStatistics;
 import org.zfin.framework.presentation.PaginationResult;
@@ -20,9 +22,12 @@ import java.util.Set;
 public class MarkerStatistic extends EntityStatistics {
 
     private long zdbID;
+    @JsonView(View.ExpressedGeneAPI.class)
     private int numberOfFigures;
     private FigureStatistics figureStatistics;
+    @JsonView(View.ExpressedGeneAPI.class)
     private Marker gene;
+    @JsonView(View.ExpressedGeneAPI.class)
     private GenericTerm anatomyTerm;
     private Set<Figure> figures;
 
@@ -54,6 +59,7 @@ public class MarkerStatistic extends EntityStatistics {
         return gene;
     }
 
+    @JsonView(View.ExpressedGeneAPI.class)
     public int getNumberOfFigures() {
         return numberOfFigures;
     }
@@ -79,11 +85,12 @@ public class MarkerStatistic extends EntityStatistics {
         this.gene = gene;
     }
 
+    @JsonView(View.ExpressedGeneAPI.class)
     public Figure getFigure() {
         PublicationRepository publicationRep = RepositoryFactory.getPublicationRepository();
         List<Figure> figs = publicationRep.getFiguresByGeneAndAnatomy(gene, anatomyTerm);
         if (figs == null || figs.size() != 1)
-            throw new RuntimeException("Can call this method only when there is exactly one figure: " + gene);
+            return null;
         return figs.get(0);
     }
 
