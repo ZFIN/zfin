@@ -3,14 +3,18 @@ package org.zfin.ontology.presentation;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.anatomy.presentation.AnatomySearchBean;
 import org.zfin.anatomy.service.AnatomyService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.api.View;
+import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.marker.MarkerStatistic;
+import org.zfin.marker.presentation.ExpressedGeneDisplay;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.ontology.GenericTerm;
@@ -19,6 +23,11 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.wiki.presentation.Version;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.zfin.repository.RepositoryFactory.getAnatomyRepository;
+import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 @RestController
 @RequestMapping("/api/ontology")
@@ -78,6 +87,30 @@ public class TermAPIController {
 		return response;
 	}
 
+	@JsonView(View.ExpressedGeneAPI.class)
+	@RequestMapping(value = "/{termID}/expressed-genes", method = RequestMethod.GET)
+	public JsonResultResponse<ExpressedGeneDisplay> getExpressedGenes(@PathVariable String termID,
+																  @RequestParam(value = "directAnnotation", required = false, defaultValue = "false") boolean directAnnotation,
+																  @Version Pagination pagination) {
+
+		HibernateUtil.createTransaction();
+		JsonResultResponse<ExpressedGeneDisplay> response = new JsonResultResponse<>();
+		response.setHttpServletRequest(request);
+		GenericTerm term = ontologyRepository.getTermByZdbID(termID);
+		if (term == null)
+			return response;
+
+		AnatomySearchBean form = new AnatomySearchBean();
+		form.setAoTerm(term);
+		retrieveExpressedGenesData(term, form);
+		response.setResults(form.getAllExpressedMarkers());
+		response.setTotal(form.getTotalNumberOfExpressedGenes());
+		response.addSupplementalData("countDirect", form.getTotalNumberOfExpressedGenes());
+		response.addSupplementalData("countIncludingChildren", form.getTotalNumberOfExpressedGenes());
+		HibernateUtil.flushAndCommitCurrentSession();
+		return response;
+	}
+
 
 	private void retrieveAntibodyData(GenericTerm aoTerm, AnatomySearchBean form, Pagination pagi, boolean directAnnotation) {
 
@@ -117,6 +150,32 @@ public class TermAPIController {
 			form.setCountDirect(totalCount);
 		}
 	}
+
+	private void retrieveExpressedGenesData(GenericTerm anatomyTerm, AnatomySearchBean form) {
+
+		PaginationResult<MarkerStatistic> expressionMarkersResult =
+			getPublicationRepository().getAllExpressedMarkers(anatomyTerm, 0, AnatomySearchBean.MAX_NUMBER_EPRESSED_GENES);
+
+		List<MarkerStatistic> markers = expressionMarkersResult.getPopulatedResults();
+		form.setExpressedGeneCount(expressionMarkersResult.getTotalCount());
+		List<ExpressedGeneDisplay> expressedGenes = new ArrayList<>();
+		if (markers != null) {
+			for (MarkerStatistic marker : markers) {
+				ExpressedGeneDisplay expressedGene = new ExpressedGeneDisplay(marker);
+				expressedGenes.add(expressedGene);
+			}
+		}
+
+		form.setAllExpressedMarkers(expressedGenes);
+		// todo: could we get this as part of our statistic?
+		form.setTotalNumberOfFiguresPerAnatomyItem(getPublicationRepository().getTotalNumberOfFiguresPerAnatomyItem(anatomyTerm));
+		// maybe used later?
+		form.setTotalNumberOfExpressedGenes(expressionMarkersResult.getTotalCount());
+
+		AnatomyStatistics statistics = getAnatomyRepository().getAnatomyStatistics(anatomyTerm.getZdbID());
+		form.setAnatomyStatistics(statistics);
+	}
+
 
 }
 

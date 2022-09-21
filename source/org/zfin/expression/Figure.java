@@ -23,7 +23,7 @@ public abstract class Figure implements Serializable, Comparable<Figure> {
     private String zdbID;
     private String caption;
     private String comments;
-    @JsonView(View.API.class)
+    @JsonView({View.API.class, View.ExpressedGeneAPI.class})
     private String label;
     private String orderingLabel;
     private Set<ExpressionResult> expressionResults;

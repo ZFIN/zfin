@@ -1,5 +1,7 @@
 package org.zfin.marker.presentation;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import org.zfin.framework.api.View;
 import org.zfin.marker.MarkerStatistic;
 
 import java.text.ChoiceFormat;
@@ -9,6 +11,7 @@ import java.text.ChoiceFormat;
  */
 public class ExpressedGeneDisplay {
 
+    @JsonView(View.ExpressedGeneAPI.class)
     private MarkerStatistic markerStat;
 
     private ChoiceFormat figureChoice = new ChoiceFormat("0#figures|1#figure|2#figures");

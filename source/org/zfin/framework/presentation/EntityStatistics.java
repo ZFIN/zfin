@@ -23,7 +23,7 @@ public abstract class EntityStatistics {
     @JsonView(View.API.class)
     private boolean hasData;
 
-    @JsonView(View.API.class)
+    @JsonView({View.API.class, View.ExpressedGeneAPI.class})
     public int getNumberOfPublications() {
         if (numberOfPublications == -1) {
             PaginationResult<Publication> pubs = getPublicationPaginationResult();
