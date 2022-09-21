@@ -335,17 +335,20 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         query.setString("withdrawn", Marker.WITHDRAWN);
         query.setString("chimeric", Clone.ProblemType.CHIMERIC.toString()); // todo: use enum here
         ScrollableResults results = query.scroll();
-        results.last();
-        int totalResults = results.getRowNumber() + 1;
 
         List<Object[]> list = new ArrayList<>();
-
         results.beforeFirst();
-        while (results.next() && results.getRowNumber() < numberOfRecords) {
+        if(firstRow > 0){
+            results.setRowNumber(firstRow -1);
+        }
+        while (results.next() && results.getRowNumber() < firstRow+ numberOfRecords) {
             if (results.getRowNumber() >= firstRow) {
                 list.add(results.get());
             }
         }
+
+        results.last();
+        int totalResults = results.getRowNumber() + 1;
 
         results.close();
         List<MarkerStatistic> markerStatistics = createMarkerStatistics(list, anatomyTerm);
