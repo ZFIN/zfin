@@ -32,7 +32,7 @@ const TermAntibodyTable = ({termId, directAnnotationOnly}) => {
             content: row => (
                 <FigureSummary
                     statistics={row}
-                    allFiguresUrl={`/action/expression/fish-expression-figure-summary?fishID=${row.probe.zdbID}&imagesOnly=false`}
+                    allFiguresUrl={`https://zfin.org/action/expression/results?geneField=${row.probe.abbreviation}&geneZdbID=${row.probe.zdbID}&anatomyTermNames=${row.term.termName}&journalType=ALL&includeSubstructures=false&onlyWildtype=true`}
                 />
             ),
             width: '100px',
