@@ -102,7 +102,7 @@ public class TermAPIController {
 
 		AnatomySearchBean form = new AnatomySearchBean();
 		form.setAoTerm(term);
-		retrieveExpressedGenesData(term, form);
+		retrieveExpressedGenesData(term, form, pagination);
 		response.setResults(form.getAllExpressedMarkers());
 		response.setTotal(form.getTotalNumberOfExpressedGenes());
 		response.addSupplementalData("countDirect", form.getTotalNumberOfExpressedGenes());
@@ -151,10 +151,10 @@ public class TermAPIController {
 		}
 	}
 
-	private void retrieveExpressedGenesData(GenericTerm anatomyTerm, AnatomySearchBean form) {
+	private void retrieveExpressedGenesData(GenericTerm anatomyTerm, AnatomySearchBean form, Pagination pagination) {
 
 		PaginationResult<MarkerStatistic> expressionMarkersResult =
-			getPublicationRepository().getAllExpressedMarkers(anatomyTerm, 0, AnatomySearchBean.MAX_NUMBER_EPRESSED_GENES);
+			getPublicationRepository().getAllExpressedMarkers(anatomyTerm, pagination.getStart(), pagination.getLimit());
 
 		List<MarkerStatistic> markers = expressionMarkersResult.getPopulatedResults();
 		form.setExpressedGeneCount(expressionMarkersResult.getTotalCount());
