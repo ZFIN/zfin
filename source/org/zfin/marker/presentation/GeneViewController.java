@@ -101,12 +101,10 @@ public class GeneViewController {
 
 
         // OTHER GENE / MARKER PAGES:
-        // pull vega genes from transcript onto gene page
-        // case 7586
-//        geneBean.setOtherMarkerPages(RepositoryFactory.getMarkerRepository().getMarkerDBLinksFast(gene, DisplayGroup.GroupName.SUMMARY_PAGE));
+        // pull vega genes from transcript onto gene page (case 7586)
         List<LinkDisplay> otherMarkerDBLinksLinks = geneBean.getOtherMarkerPages();
-        otherMarkerDBLinksLinks.addAll(markerRepository.getVegaGeneDBLinksTranscript(
-                gene, DisplayGroup.GroupName.SUMMARY_PAGE));
+        List<LinkDisplay> moreLinks = markerRepository.getVegaGeneDBLinksTranscript(gene, DisplayGroup.GroupName.SUMMARY_PAGE);
+        otherMarkerDBLinksLinks.addAll(moreLinks);
         otherMarkerDBLinksLinks.sort(linkDisplayOtherComparator);
         geneBean.setOtherMarkerPages(otherMarkerDBLinksLinks);
 

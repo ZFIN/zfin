@@ -2,7 +2,6 @@ package org.zfin.marker.service;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
@@ -267,6 +266,37 @@ public class MarkerService {
             }
         }
         return sp;
+    }
+
+    /**
+     * Get links for a marker given a display group for context.
+     * For example, ZDB-GENEP-161017-16 has related links to alliance, vega(OTTDARG00000044192), and ensembl (ENSDARG00000105749).
+     *
+     * @param marker
+     * @param group
+     * @return
+     */
+    public static List<LinkDisplay> getMarkerLinksForDisplayGroup(Marker marker, DisplayGroup.GroupName group) {
+
+        List<LinkDisplay> links = markerRepository.getMarkerDBLinksFast(marker, group);
+        if ( group.equals(DisplayGroup.GroupName.OTHER_MARKER_PAGES) ) {
+            //pull vega genes from transcript onto gene page (case 7586)
+            links.addAll(markerRepository.getVegaGeneDBLinksTranscript(marker, DisplayGroup.GroupName.SUMMARY_PAGE));
+        }
+        return links;
+    }
+
+    /**
+     * Alias for the above method, but accepting strings instead of objects.
+     * @param markerId
+     * @param groupName
+     * @return
+     */
+    public static List<LinkDisplay> getMarkerLinksForDisplayGroup(String markerId, String groupName) {
+        Marker marker = markerRepository.getMarkerByID(markerId);
+        DisplayGroup.GroupName group = DisplayGroup.GroupName.getGroup(groupName);
+
+        return getMarkerLinksForDisplayGroup(marker, group);
     }
 
 
@@ -1007,7 +1037,7 @@ public class MarkerService {
         markerBean.setHasMarkerHistory(markerRepository.getHasMarkerHistory(zdbID));
 
         // OTHER GENE / MARKER PAGES:
-        markerBean.setOtherMarkerPages(markerRepository.getMarkerDBLinksFast(marker, DisplayGroup.GroupName.SUMMARY_PAGE));
+        markerBean.setOtherMarkerPages(getMarkerLinksForDisplayGroup(marker, DisplayGroup.GroupName.SUMMARY_PAGE));
 
 
         // sequence info page
