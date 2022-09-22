@@ -5,6 +5,7 @@ import lombok.extern.log4j.Log4j2;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.FieldFilter;
@@ -46,6 +47,7 @@ public class SequenceController {
     @Autowired
     private HttpServletRequest request;
 
+    @Transactional(readOnly = true)
     @JsonView(View.SequenceAPI.class)
     @RequestMapping(value = "/marker/{zdbID}/sequences")
     public JsonResultResponse<MarkerDBLink> getSequenceView(@PathVariable("zdbID") String zdbID,
@@ -53,12 +55,13 @@ public class SequenceController {
                                                             @RequestParam(value = "filter.type", required = false) String type,
                                                             @RequestParam(value = "filter.accession", required = false) String accessionNumber,
                                                             @Version Pagination pagination) {
-        HibernateUtil.createTransaction();
+//////////// Remove transactions for now until we get @Transactional working since this should be readOnly
+//        HibernateUtil.createTransaction();
         pagination.addFieldFilter(FieldFilter.SEQUENCE_ACCESSION, accessionNumber);
         pagination.addFieldFilter(FieldFilter.SEQUENCE_TYPE, type);
         JsonResultResponse<MarkerDBLink> response = sequenceService.getMarkerDBLinkJsonResultResponse(zdbID, pagination, summary);
         response.setHttpServletRequest(request);
-        HibernateUtil.flushAndCommitCurrentSession();
+//        HibernateUtil.flushAndCommitCurrentSession();
         return response;
     }
 

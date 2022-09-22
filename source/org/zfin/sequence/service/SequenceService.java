@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.Species;
 import org.zfin.framework.api.*;
+import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.Transcript;
@@ -15,6 +16,7 @@ import org.zfin.marker.presentation.SequenceInfo;
 import org.zfin.marker.presentation.SummaryDBLinkDisplay;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
+import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.MountedWublastBlastService;
@@ -169,6 +171,9 @@ public class SequenceService {
                     )
             );
             relatedLinks.addAll(MarkerService.getTranscriptReferences(marker));
+
+            addPublicationsForLinksWithSameAccession(relatedLinks);
+
             allDBLinks.addAll(relatedLinks.stream()
                     .map(RelatedMarkerDBLinkDisplay::getLink)
                     .collect(Collectors.toList())
@@ -208,6 +213,41 @@ public class SequenceService {
                 .collect(Collectors.toList()));
 
         return response;
+    }
+
+    /**
+     * Given a list of linkDisplays, go through all of the links and
+     * retrieve any other links from the DB that have the same accession
+     * and add those publications to the set of publications for that link.
+     *
+     * Example: ndufs1 has an association to a DBLink for ZDB-BAC-070726-392 with accession of CR847926.
+     *          There are other DBLinks with CR847926 as the accession with additional publications that we want.
+     *
+     * @param linkDisplays list of linkDisplays
+     */
+    private static void addPublicationsForLinksWithSameAccession(List<RelatedMarkerDBLinkDisplay> linkDisplays) {
+        for( RelatedMarkerDBLinkDisplay linkDisplay : linkDisplays ) {
+            MarkerDBLink link = linkDisplay.getLink();
+            String accession = link.getAccessionNumber();
+            Set<PublicationAttribution> aggregatedLinkPublications = link.getPublications();
+            Set<String> publicationIDs = aggregatedLinkPublications.stream()
+                    .map(PublicationAttribution::getPublication)
+                    .map(Publication::getZdbID)
+                    .collect(Collectors.toSet());
+
+            List<DBLink> linksWithSameAccession = sequenceRepository.getDBLinksForAccession(accession);
+            for (DBLink dbLink : linksWithSameAccession) {
+                for (PublicationAttribution publicationAttribution : dbLink.getPublications()) {
+                    if (!publicationIDs.contains(publicationAttribution.getPublication().getZdbID())) {
+                        aggregatedLinkPublications.add(publicationAttribution);
+                        publicationIDs.add(publicationAttribution.getPublication().getZdbID());
+                    }
+                }
+            }
+
+            link.setPublications(aggregatedLinkPublications);
+            linkDisplay.setLink(link);
+        }
     }
 
 }
