@@ -37,7 +37,8 @@
         mkrreln.errorMessage = '';
         mkrreln.otherLink = null;
         mkrreln.ind = 0;
-        this.$onInit = function () {
+
+        function init() {
             MarkerService.getRelationshipTypes(mkrreln.markerId, mkrreln.interacts)
 
                 .then(function (relationshipTypes) {
@@ -59,7 +60,10 @@
                 .catch(function (error) {
                     console.error(error);
                 });
+        }
 
+        this.$onInit = function () {
+            init();
         }
 
         function openAddNewRelationship() {
