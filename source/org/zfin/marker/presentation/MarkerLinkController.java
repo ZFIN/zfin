@@ -153,6 +153,7 @@ public class MarkerLinkController {
     public LinkDisplay addMarkerLink(@PathVariable String markerId,
                                      @Valid @RequestBody LinkDisplay newLink,
                                      BindingResult errors) {
+        HibernateUtil.createTransaction();
 
         if (errors.hasErrors()) {
             throw new InvalidWebRequestException("Invalid link", errors);
@@ -177,8 +178,6 @@ public class MarkerLinkController {
         List<String> referenceIDs = newLink.getReferences().stream()
                 .map(MarkerReferenceBean::getZdbID)
                 .collect(Collectors.toList());
-
-        HibernateUtil.createTransaction();
 
         try {
             DBLink link = addMarkerLinkByAccession(marker, accessionNo, refDB, referenceIDs, length);
