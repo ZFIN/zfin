@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MESHDetailDTO {
-    private String meshQualfierTerm;
+    private String meshQualifierTerm;
     private String meshHeadingTerm;
     private String referenceId;
 

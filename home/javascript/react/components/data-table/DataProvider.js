@@ -17,6 +17,7 @@ const DataProvider = ({
     dataUrl,
     downloadOptions,
     onDataLoaded,
+    onDataLoadedCount,
     pagination = true,
     renderData,
     setTableState,
@@ -37,6 +38,10 @@ const DataProvider = ({
     useEffect(() => {
         if (typeof onDataLoaded === 'function' && !data.loading && !data.rejected && data.value && data.value.total > 0) {
             onDataLoaded();
+        }
+        if (typeof onDataLoadedCount === 'function' && !data.loading && !data.rejected && data.value &&
+            data.value.supplementalData && data.value.supplementalData.countIncludingChildren) {
+            onDataLoadedCount(data.value.supplementalData);
         }
     }, [data]);
 
@@ -165,6 +170,7 @@ DataProvider.propTypes = {
     dataUrl: PropTypes.string.isRequired,
     downloadOptions: PropTypes.arrayOf(downloadOptionType),
     onDataLoaded: PropTypes.func,
+    onDataLoadedCount: PropTypes.func,
     pagination: PropTypes.bool,
     renderData: PropTypes.func,
     setTableState: PropTypes.func,

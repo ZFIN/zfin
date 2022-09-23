@@ -25,11 +25,11 @@ public class GenericTerm implements Term<GenericTermRelationship> {
             parameters = {
                     @org.hibernate.annotations.Parameter(name = "type", value = "TERM")
             })
-    @JsonView(View.API.class)
+    @JsonView({View.API.class, View.ExpressedGeneAPI.class})
     @Column(name = "term_zdb_id")
     protected String zdbID;
 
-    @JsonView(View.API.class)
+    @JsonView({View.API.class, View.ExpressedGeneAPI.class})
     @Column(name = "term_name")
     protected String termName;
 

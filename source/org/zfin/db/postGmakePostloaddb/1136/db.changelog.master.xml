@@ -8,8 +8,9 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1135/ZFIN-8137.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1135/ZFIN-8138.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1135/ZFIN-8152.sql" />
-    <include file="source/org/zfin/db/postGmakePostloaddb/1135/ZFIN-8188-remove-unmatched-closing-div-tag.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1136/ZFIN-8169.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1135/ZFIN-8167-add-timestamp-columns-to-record-attribution.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1136/ZFIN-8187.sql" />
 
 
 </databaseChangeLog>

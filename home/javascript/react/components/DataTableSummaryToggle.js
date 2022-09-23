@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const DataTableSummaryToggle = ({detailLabel, showPopup, onChange}) => {
+const DataTableSummaryToggle = ({detailLabel, showPopup, onChange, overviewLabel = ('Overview')}) => {
     return (
         <div className='mb-2'>
             <div className='btn-group btn-group-sm' role='group'>
@@ -10,7 +10,7 @@ const DataTableSummaryToggle = ({detailLabel, showPopup, onChange}) => {
                     className={'btn btn-outline-secondary' + (showPopup ? ' active' : '')}
                     onClick={() => onChange(true)}
                 >
-                    Overview
+                    {overviewLabel}
                 </button>
                 <button
                     type='button'
@@ -26,6 +26,7 @@ const DataTableSummaryToggle = ({detailLabel, showPopup, onChange}) => {
 
 DataTableSummaryToggle.propTypes = {
     detailLabel: PropTypes.node,
+    overviewLabel: PropTypes.node,
     onChange: PropTypes.func,
     showPopup: PropTypes.bool,
 };
