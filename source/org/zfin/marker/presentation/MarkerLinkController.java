@@ -22,9 +22,9 @@ import org.zfin.infrastructure.presentation.JSONMessageList;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
+import org.zfin.marker.service.MarkerService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.MountedWublastBlastService;
 import org.zfin.sequence.repository.DisplayGroupRepository;
@@ -33,19 +33,6 @@ import org.zfin.sequence.repository.SequenceRepository;
 import javax.validation.Valid;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static org.zfin.marker.Marker.Type.RRNAG;
-import static org.zfin.marker.Marker.Type.GENE;
-import static org.zfin.marker.Marker.Type.TSCRIPT;
-import static org.zfin.marker.Marker.Type.LINCRNAG;
-import static org.zfin.marker.Marker.Type.LNCRNAG;
-import static org.zfin.marker.Marker.Type.MIRNAG;
-import static org.zfin.marker.Marker.Type.PIRNAG;
-import static org.zfin.marker.Marker.Type.SCRNAG;
-import static org.zfin.marker.Marker.Type.SNORNAG;
-import static org.zfin.marker.Marker.Type.TRNAG;
-import static org.zfin.marker.Marker.Type.NCRNAG;
-import static org.zfin.marker.Marker.Type.SRPRNAG;
 
 @Controller
 @RequestMapping("/marker")
@@ -132,14 +119,7 @@ public class MarkerLinkController {
     @RequestMapping(value = "/{markerId}/links", method = RequestMethod.GET)
     public List<LinkDisplay> getMarkerLinks(@PathVariable String markerId,
                                             @RequestParam(name = "group", required = true) String groupName) {
-        Marker marker = markerRepository.getMarkerByID(markerId);
-        DisplayGroup.GroupName group = DisplayGroup.GroupName.getGroup(groupName);
-
-        List<LinkDisplay> links = markerRepository.getMarkerDBLinksFast(marker, group);
-        if (groupName.equals(DisplayGroup.GroupName.OTHER_MARKER_PAGES.toString())) {
-            links.addAll(markerRepository.getVegaGeneDBLinksTranscript(marker, DisplayGroup.GroupName.SUMMARY_PAGE));
-        }
-        return links;
+        return MarkerService.getMarkerLinksForDisplayGroup(markerId, groupName);
     }
 
     @ResponseBody
