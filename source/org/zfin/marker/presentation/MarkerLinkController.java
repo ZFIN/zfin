@@ -34,6 +34,10 @@ import javax.validation.Valid;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
+import static org.zfin.marker.service.MarkerService.addMarkerLinkByAccession;
+
+
 @Controller
 @RequestMapping("/marker")
 public class MarkerLinkController {
@@ -145,58 +149,43 @@ public class MarkerLinkController {
     public LinkDisplay addMarkerLink(@PathVariable String markerId,
                                      @Valid @RequestBody LinkDisplay newLink,
                                      BindingResult errors) {
-        Marker marker = null;
-        String accessionNo = null;
-        ReferenceDatabase refDB = null;
-
-        DBLink link = null;
-
         HibernateUtil.createTransaction();
 
-        if (!errors.hasErrors()) {
-            marker = markerRepository.getMarkerByID(markerId);
-            accessionNo = newLink.getAccession();
-            refDB = sequenceRepository.getReferenceDatabaseByID(newLink.getReferenceDatabaseZdbID());
-
-            Collection<? extends DBLink> links = marker.getDbLinks();
-            if (CollectionUtils.isNotEmpty(links)) {
-                for (DBLink dbLink : marker.getDbLinks()) {
-                    if (dbLink.getReferenceDatabase().equals(refDB) && dbLink.getAccessionNumber().equals(accessionNo)) {
-                        errors.reject("marker.link.duplicate");
-                    }
-                }
-            }
-        }
-
         if (errors.hasErrors()) {
-            throw new InvalidWebRequestException("Invalid marker DBLink", errors);
+            throw new InvalidWebRequestException("Invalid link", errors);
         }
 
-        Iterator<MarkerReferenceBean> references = newLink.getReferences().iterator();
-
-        if (link == null) {
-            final String length = newLink.getLength();
-            String pubId = references.next().getZdbID();
-            if (StringUtils.isNotEmpty(length)) {
-                int len = 0;
-                try {
-                    len = Integer.parseInt(length);
-                } catch (NumberFormatException e) {
-                    errors.addError(new FieldError("length", length, "Invalid Length number"));
-                    throw new InvalidWebRequestException("Invalid length number", errors);
-                }
-                link = markerRepository.addDBLinkWithLenth(marker, accessionNo, refDB, pubId, len);
-            } else {
-                link = markerRepository.addDBLink(marker, accessionNo, refDB, pubId);
+        Integer length = null;
+        String accessionLengthInput = newLink.getLength();
+        if (StringUtils.isNotEmpty(accessionLengthInput)) {
+            int len = 0;
+            try {
+                len = Integer.parseInt(accessionLengthInput);
+                length = len;
+            } catch (NumberFormatException e) {
+                errors.addError(new FieldError("length", accessionLengthInput, "Invalid Length number"));
+                throw new InvalidWebRequestException("Invalid length number", errors);
             }
         }
-        while (references.hasNext()) {
-            Publication publication = publicationRepository.getPublication(references.next().getZdbID());
-            markerRepository.addDBLinkAttribution(link, publication, marker);
-        }
-        HibernateUtil.flushAndCommitCurrentSession();
 
-        return getLinkDisplayById(link.getZdbID());
+        Marker marker = markerRepository.getMarkerByID(markerId);
+        String accessionNo = newLink.getAccession();
+        ReferenceDatabase refDB = sequenceRepository.getReferenceDatabaseByID(newLink.getReferenceDatabaseZdbID());
+        List<String> referenceIDs = newLink.getReferences().stream()
+                .map(MarkerReferenceBean::getZdbID)
+                .collect(Collectors.toList());
+
+        try {
+            DBLink link = addMarkerLinkByAccession(marker, accessionNo, refDB, referenceIDs, length);
+            HibernateUtil.flushAndCommitCurrentSession();
+            return getLinkDisplayById(link.getZdbID());
+        } catch (InvalidWebRequestException e) {
+            HibernateUtil.rollbackTransaction();
+            throw e;
+        } catch (Exception e) {
+            HibernateUtil.rollbackTransaction();
+            throw new InvalidWebRequestException("Error adding link");
+        }
     }
 
 

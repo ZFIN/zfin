@@ -40,7 +40,7 @@
         om.deleteOtherMarkerLink = deleteOtherMarkerLink;
         om.close = close;
 
-        this.$onInit = function () {
+        function init() {
             MarkerService.getLinks(om.markerId,"other marker pages")
                 .then(function (links) {
                     om.links = links;
@@ -59,8 +59,11 @@
                 .catch(function (error) {
                     console.error(error);
                 });
+        };
 
-        }
+        this.$onInit = function () {
+            init();
+        };
 
         function openAddOtherMarkerLink() {
              MarkerService.openModalPopup('new-other-marker-link-modal');
@@ -78,7 +81,7 @@
                         close();
                     })
                     .catch(function (error) {
-                       om.errorMessage = error.data.message;
+                        setErrorMessageFromResponse(error);
                     });
             }
         }
@@ -98,7 +101,7 @@
                         om.errorMessage = '';
                         init();
                     }).catch(function (error) {
-                        om.errorMessage = error.data.message;
+                        setErrorMessageFromResponse(error);
                     });
             }
         }
@@ -110,7 +113,7 @@
                     om.errorMessage = '';
                     init();
                  }).catch(function (error) {
-                     om.errorMessage = error.data.message;
+                    setErrorMessageFromResponse(error);
                  });;
         }
 
@@ -127,7 +130,7 @@
                     close();
                 })
                 .catch(function (error) {
-                    om.errorMessage = error.data.message;
+                    setErrorMessageFromResponse(error);
                     init();
                     close();
                 })
@@ -157,13 +160,28 @@
             } 
             MarkerService.validateReference(om.newReference)
                 .then(function (response) {
-                    if (response.data.errors.length > 0) {
+                    if ( response.data &&  response.data.errors && response.data.errors.length > 0) {
                         om.errorRef = response.data.errors[0];
                     }
                 }).catch(function (error) {
-                    om.errorMessage = error.data.message;
+                    setErrorMessageFromResponse(error);
                 });
             return (om.errorRef === "");
+        }
+
+        /**
+         * Sets the error message from the response.
+         * This function should only be called if there is an error.
+         * It will set the om.errorMessage to the error message from the response.
+         * @param error
+         */
+        function setErrorMessageFromResponse(error) {
+            let msg = error && error.data && error.data.message;
+            if (msg) {
+                om.errorMessage = msg;
+            } else {
+                om.errorMessage = 'An error occurred.';
+            }
         }
     }
 }());

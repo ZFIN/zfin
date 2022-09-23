@@ -2,12 +2,14 @@ package org.zfin.marker.service;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.*;
+import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.ActiveData;
@@ -642,6 +644,36 @@ public class MarkerService {
                                                            MarkerRelationshipType markerRelationshipType) {
         MarkerRelationship.Type type = MarkerRelationship.Type.getType(markerRelationshipType.getName());
         return addMarkerRelationship(firstMarker, secondMarker, publication.getZdbID(), type);
+    }
+
+    public static DBLink addMarkerLinkByAccession(Marker marker, String accessionNo, ReferenceDatabase refDB,
+                                                  List<String> referenceIDs, Integer length) throws InvalidWebRequestException {
+        DBLink link = null;
+
+        Collection<? extends DBLink> links = marker.getDbLinks();
+        if (CollectionUtils.isNotEmpty(links)) {
+            for (DBLink dbLink : marker.getDbLinks()) {
+                if (dbLink.getReferenceDatabase().equals(refDB) && dbLink.getAccessionNumber().equals(accessionNo)) {
+                    throw new InvalidWebRequestException("marker.link.duplicate");
+                }
+            }
+        }
+
+        Iterator<String> referenceIDsIterator = referenceIDs.iterator();
+        String pubId = referenceIDsIterator.next();
+
+        if (length == null) {
+            link = markerRepository.addDBLink(marker, accessionNo, refDB, pubId);
+        } else {
+            link = markerRepository.addDBLinkWithLenth(marker, accessionNo, refDB, pubId, length);
+        }
+
+        while (referenceIDsIterator.hasNext()) {
+            Publication publication = publicationRepository.getPublication(referenceIDsIterator.next());
+            markerRepository.addDBLinkAttribution(link, publication, marker);
+        }
+        
+        return link;
     }
 
 
