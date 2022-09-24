@@ -18,6 +18,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.MarkerStatistic;
 import org.zfin.marker.presentation.ExpressedGeneDisplay;
 import org.zfin.marker.presentation.HighQualityProbe;
@@ -180,7 +181,12 @@ public class AnatomyAjaxController {
             , @PathVariable("oboID") String oboID
             , @PathVariable("fishID") String fishID
     ) throws Exception {
-        GenericTerm term = ontologyRepository.getTermByOboID(oboID);
+        GenericTerm term = null;
+        if(ActiveData.validateActiveData(oboID)){
+            term = ontologyRepository.getTermByZdbID(oboID);
+        } else {
+            term = ontologyRepository.getTermByOboID(oboID);
+        }
         if (term == null) {
             model.addAttribute(LookupStrings.ZDB_ID, oboID);
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
@@ -191,10 +197,7 @@ public class AnatomyAjaxController {
             model.addAttribute(LookupStrings.ZDB_ID, fishID);
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
-
-
         AnatomySearchBean form = new AnatomySearchBean();
-
         form.setAoTerm(term);
 
         List<FigureSummaryDisplay> figureSummaryDisplayList = FigureService.createPhenotypeFigureSummary(term, fish, true);
