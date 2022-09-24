@@ -67,7 +67,7 @@ public abstract class EntityStatistics {
         return pubs.iterator().next();
     }
 
-    @JsonView(View.API.class)
+    @JsonView({View.API.class, View.ExpressedGeneAPI.class})
     public Publication getFirstPublication() {
         if (getNumberOfPublications() == 0) {
             return null;

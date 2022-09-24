@@ -19,7 +19,7 @@ public abstract class Figure implements Serializable, Comparable<Figure> {
 
     public static String GELI = "GELI";
 
-    @JsonView(View.API.class)
+    @JsonView({View.API.class, View.ExpressedGeneAPI.class})
     private String zdbID;
     private String caption;
     private String comments;

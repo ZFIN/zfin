@@ -16,7 +16,7 @@ import javax.persistence.*;
 public class PhenotypeStatementWarehouse implements Comparable<PhenotypeStatementWarehouse> {
 
     @Id
-    @JsonView(View.FigureAPI.class)
+    @JsonView({View.FigureAPI.class, View.ExpressedGeneAPI.class})
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "psg_id")
     private long id;
@@ -182,6 +182,21 @@ public class PhenotypeStatementWarehouse implements Comparable<PhenotypeStatemen
             builder.append(" - ");
             builder.append(getRelatedEntity());
         }
+        return builder.toString();
+
+    }
+
+    @JsonView(View.ExpressedGeneAPI.class)
+    public String getDisplayName() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(getEntity());
+        builder.append(" - ");
+        builder.append(quality.getTermName());
+        if (getRelatedEntity() != null) {
+            builder.append(" - ");
+            builder.append(getRelatedEntity());
+        }
+        builder.append(", " + tag);
         return builder.toString();
 
     }
