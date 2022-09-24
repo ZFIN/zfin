@@ -12,7 +12,7 @@
 <z:dataPage sections="${[SUMMARY, NOTE, COMPOSITION, FISH, CITATIONS]}">
 
 <jsp:attribute name="entityName">
-        ${genotype.name}
+        <zfin:name entity="${genotype}"/>
     </jsp:attribute>
 
     <jsp:attribute name="pageBar">
