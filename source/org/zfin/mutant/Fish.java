@@ -21,13 +21,13 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
 
     public static final String WT = "WT";
 
-    @JsonView(View.API.class)
+    @JsonView({View.API.class, View.ExpressedGeneAPI.class})
     private String zdbID;
     private Genotype genotype;
-    @JsonView(View.API.class)
+    @JsonView({View.API.class, View.ExpressedGeneAPI.class})
     private String name;
     private String nameOrder;
-    @JsonView(View.API.class)
+    @JsonView({View.API.class, View.ExpressedGeneAPI.class})
     private String displayName;
     private String handle;
     private long order;
@@ -47,7 +47,7 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
         return aliases;
     }
 
-    @JsonView(View.FishAPI.class)
+    @JsonView({View.FishAPI.class, View.ExpressedGeneAPI.class})
     @Override
     public String getAbbreviation() {
         return name;
@@ -86,6 +86,7 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
         return name;
     }
 
+    @JsonView(View.ExpressedGeneAPI.class)
     public List<Marker> getAffectedGenes() {
         return FishService.getAffectedGenes(this);
     }

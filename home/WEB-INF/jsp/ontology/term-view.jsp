@@ -49,6 +49,15 @@
             </z:section>
         </z:section>
 
+        <z:section title="${PHENOTYPE}">
+            <z:section title="Phenotype in caused by Genes">
+                <div class="__react-root" id="TermPhenotypeTable"
+                     data-term-id="${term.zdbID}"
+                     data-direct-annotation-only="true"
+                ></div>
+            </z:section>
+        </z:section>
+
     </jsp:body>
 
 </z:dataPage>

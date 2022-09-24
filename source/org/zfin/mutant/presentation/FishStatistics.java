@@ -1,6 +1,9 @@
 package org.zfin.mutant.presentation;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.zfin.expression.Figure;
+import org.zfin.framework.api.View;
 import org.zfin.framework.presentation.EntityStatistics;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.mutant.Fish;
@@ -16,9 +19,12 @@ import java.util.TreeSet;
 /**
  * Convenient class to show statistics about phenotypes related to a given AO term..
  */
+@JsonPropertyOrder({"fish", "anatomyItem", "numberOfFigures", "imgInFigure", "firstFigure", "phenotypeObserved"})
 public class FishStatistics extends EntityStatistics {
 
+    @JsonView(View.ExpressedGeneAPI.class)
     private Fish fish;
+    @JsonView(View.ExpressedGeneAPI.class)
     private GenericTerm anatomyItem;
     private PaginationResult<Figure> figureResults = null; // null indicates that this has not been populated yet
     private Set<Publication> publicationSet = null; // null indicates that this has not been populated yet
@@ -45,10 +51,17 @@ public class FishStatistics extends EntityStatistics {
 
     @Override
     protected PaginationResult<Publication> getPublicationPaginationResult() {
-        return null;
+        if(publicationSet == null)
+            return null;
+        return new PaginationResult<>(publicationSet.stream().toList());
     }
 
+    private int numberOfFigures = -1;
+
+    @JsonView(View.ExpressedGeneAPI.class)
     public int getNumberOfFigures() {
+        if (numberOfFigures >= 0)
+            return numberOfFigures;
         if (figureResults == null) {
             figureResults = RepositoryFactory.getPublicationRepository().getFiguresByFishAndAnatomy(fish, anatomyItem, includeSubstructures);
             if (publicationSet == null) {
@@ -58,9 +71,11 @@ public class FishStatistics extends EntityStatistics {
                 }
             }
         }
-        return figureResults.getTotalCount();
+        numberOfFigures = figureResults.getTotalCount();
+        return numberOfFigures;
     }
 
+    @JsonView(View.ExpressedGeneAPI.class)
     public boolean isImgInFigure() {
         if (figureResults == null || figureResults.getTotalCount() == 0) {
             return false;
@@ -78,20 +93,23 @@ public class FishStatistics extends EntityStatistics {
     /**
      * @return There should be a single figure per GenotypeStatistics
      */
-    public Figure getFigure() {
+    @JsonView(View.ExpressedGeneAPI.class)
+    public Figure getFirstFigure() {
         if (figureResults == null || figureResults.getTotalCount() != 1) {
             figureResults = RepositoryFactory.getPublicationRepository().getFiguresByFishAndAnatomy(fish, anatomyItem);
         }
         if (figureResults == null || figureResults.getTotalCount() != 1) {
-            throw new RuntimeException("Can call this method only when there is exactly one figure");
+            return null;
         }
         return figureResults.getPopulatedResults().get(0);
     }
 
     public Set<Publication> getPublicationSet() {
+        getNumberOfFigures();
         return publicationSet;
     }
 
+    @JsonView(View.ExpressedGeneAPI.class)
     public Set<PhenotypeStatementWarehouse> getPhenotypeObserved() {
         Set<PhenotypeStatementWarehouse> phenotypeObserved = new TreeSet<>();
         phenotypeObserved.addAll(PhenotypeService.getPhenotypeObserved(fish, anatomyItem, includeSubstructures));

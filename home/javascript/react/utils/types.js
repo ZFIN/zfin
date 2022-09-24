@@ -51,6 +51,10 @@ export const entityType = shape({
     zdbID: string.isRequired,
 })
 
+export const entityIDType = shape({
+    id: number.isRequired,
+})
+
 export const termType = shape({
     termName: string.isRequired,
     zdbID: string.isRequired,
