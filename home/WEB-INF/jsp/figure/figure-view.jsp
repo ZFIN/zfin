@@ -44,7 +44,7 @@
 
     <zfin-figure:phenotypeSummary summary="${phenotypeSummary}"/>
 
-    <zfin-figure:imagesAndCaption figure="${figure}" showMultipleMediumSizedImages="${showMultipleMediumSizedImages}"/>
+    <zfin-figure:imagesAndCaption figure="${figure}" showMultipleMediumSizedImages="${showMultipleMediumSizedImages}" showCaption="true"/>
 
     <zfin-figure:expressionTable expressionTableRows="${expressionTableRows}" showQualifierColumn="${showExpressionQualifierColumn}"/>
 
