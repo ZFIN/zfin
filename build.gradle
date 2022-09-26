@@ -778,6 +778,7 @@ dependencies {
     //implementation group: 'org.nocrala.tools.texttablefmt', name: 'text-table-formatter', version: '1.2.4'
     implementation files('lib/Java/hibernate-c3p0-5.6.5.Final.jar')
     implementation files('home/WEB-INF/lib/slf4j-api-1.7.26.jar')
+    implementation files('home/WEB-INF/lib/jstl-1.1.jar')
     implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.9.0'
 
     implementation group: 'net.sourceforge.htmlunit', name: 'htmlunit', version: '2.62.0'

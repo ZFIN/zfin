@@ -1,8 +1,12 @@
 package org.zfin.ontology;
 
+import org.zfin.framework.api.View;
 import org.zfin.marker.Marker;
 import org.zfin.orthology.Ortholog;
 import org.zfin.sequence.DBLink;
+import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,89 +14,32 @@ import java.util.List;
 /**
  * OMIM Phenotype
  */
+@Setter
+@Getter
 public class OmimPhenotypeDisplay {
 
+    @JsonView(View.API.class)
     private String name;
+    @JsonView(View.API.class)
     private String omimNum;
+    @JsonView(View.API.class)
     private ArrayList<String> humanGene;
+    @JsonView(View.API.class)
     private String symbol;
 
+    @JsonView(View.API.class)
     private HumanGeneDetail humanGeneDetail;
 
     public DBLink getHumanAccession() {
         return humanAccession;
     }
+    @JsonView(View.API.class)
     public String omimAccession;
 
-    public String getOmimAccession() {
-        return omimAccession;
-    }
-
-    public void setOmimAccession(String omimAccession) {
-        this.omimAccession = omimAccession;
-    }
-
-    public void setHumanAccession(DBLink humanAccession) {
-        this.humanAccession = humanAccession;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public ArrayList<String> getHumanGene() {
-        return humanGene;
-    }
-
-    public void setHumanGene(ArrayList<String> humanGene) {
-        this.humanGene = humanGene;
-    }
-
-    public String getOmimNum() {
-        return omimNum;
-    }
-
-    public void setOmimNum(String omimNum) {
-        this.omimNum = omimNum;
-    }
-
-    public Ortholog getOrthology() {
-        return orthology;
-    }
-
-    public void setOrthology(Ortholog orthology) {
-        this.orthology = orthology;
-    }
-
+    @JsonView(View.API.class)
     private Ortholog orthology;
     private DBLink humanAccession;
+    @JsonView(View.API.class)
     private List<Marker> zfinGene;
 
-    public List<Marker> getZfinGene() {
-        return zfinGene;
-    }
-
-    public void setZfinGene(List<Marker> zfinGene) {
-        this.zfinGene = zfinGene;
-    }
-
-    public HumanGeneDetail getHumanGeneDetail() {
-        return humanGeneDetail;
-    }
-
-    public void setHumanGeneDetail(HumanGeneDetail humanGeneDetail) {
-        this.humanGeneDetail = humanGeneDetail;
-    }
-
-    public String getSymbol() {
-        return symbol;
-    }
-
-    public void setSymbol(String symbol) {
-        this.symbol = symbol;
-    }
 }
