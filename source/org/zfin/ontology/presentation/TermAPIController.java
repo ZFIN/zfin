@@ -3,6 +3,8 @@ package org.zfin.ontology.presentation;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.apache.commons.collections.CollectionUtils;
+
 import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.anatomy.presentation.AnatomySearchBean;
 import org.zfin.anatomy.service.AnatomyService;
@@ -20,6 +22,7 @@ import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.mutant.presentation.FishModelDisplay;
 import org.zfin.mutant.presentation.FishStatistics;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.OmimPhenotypeDisplay;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.ontology.service.OntologyService;
 import org.zfin.repository.RepositoryFactory;
@@ -146,6 +149,37 @@ public class TermAPIController {
     }
 
     @JsonView(View.API.class)
+    @RequestMapping(value = "/{termID}/genes", method = RequestMethod.GET)
+    public JsonResultResponse<OmimPhenotypeDisplay> getGenesInvolved(@PathVariable String termID,
+                                                            @RequestParam(value = "directAnnotation", required = false, defaultValue = "false") boolean directAnnotation,
+                                                            @Version Pagination pagination) {
+
+        HibernateUtil.createTransaction();
+        JsonResultResponse<OmimPhenotypeDisplay> response = new JsonResultResponse<>();
+        response.setHttpServletRequest(request);
+        GenericTerm term = ontologyRepository.getTermByZdbIDOrOboId(termID);
+        if (term == null)
+            return response;
+
+        List<OmimPhenotypeDisplay> displayList = OntologyService.getOmimPhenotypeForTerm(term);
+
+        response.setResults(displayList);
+        response.setTotal(displayList.size());
+/*
+        if (directAnnotation) {
+            response.addSupplementalData("countDirect", form.getTotalRecords());
+            response.addSupplementalData("countIncludingChildren", form.getTotalNumberOfExpressedGenes());
+        } else {
+            response.addSupplementalData("countIncludingChildren", form.getTotalRecords());
+            response.addSupplementalData("countDirect", form.getTotalNumberOfExpressedGenes());
+        }
+*/
+        HibernateUtil.flushAndCommitCurrentSession();
+
+        return response;
+    }
+
+    @JsonView(View.API.class)
     @RequestMapping(value = "/{termID}/zebrafish-models", method = RequestMethod.GET)
     public JsonResultResponse<FishModelDisplay> getZebrafishModels(@PathVariable String termID,
                                                             @RequestParam(value = "directAnnotation", required = false, defaultValue = "false") boolean directAnnotation,
@@ -161,7 +195,9 @@ public class TermAPIController {
         List<FishModelDisplay> diseaseModelsWithFishModel = OntologyService.getDiseaseModelsWithFishModel(term);
 
         response.setResults(diseaseModelsWithFishModel);
-        response.setTotal(diseaseModelsWithFishModel.size());
+        if(CollectionUtils.isNotEmpty(diseaseModelsWithFishModel)) {
+            response.setTotal(diseaseModelsWithFishModel.size());
+        }
 /*
         if (directAnnotation) {
             response.addSupplementalData("countDirect", form.getTotalRecords());
