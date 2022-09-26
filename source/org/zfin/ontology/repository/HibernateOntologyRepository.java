@@ -1230,6 +1230,17 @@ public class HibernateOntologyRepository implements OntologyRepository {
         return getTermByOboID(oboID) != null;
     }
 
+    @Override
+    public GenericTerm getTermByZdbIDOrOboId(String termID) {
+        GenericTerm term = getTermByZdbID(termID);
+        if(term != null)
+            return term;
+        term = getTermByOboID(termID);
+        if(term != null)
+            return term;
+        return null;
+    }
+
     private List<GenericTerm> filterTermsByOntology(List<GenericTerm> terms, Ontology ontology) {
         return terms.stream().filter(term -> term.getOntology() == ontology).collect(toList());
     }
