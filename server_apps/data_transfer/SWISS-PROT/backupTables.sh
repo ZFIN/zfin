@@ -24,19 +24,19 @@ echo "Making csv backups "  $(date "+%Y-%m-%d %H:%M:%S")
 for t in $TABLES
 do
   echo " $t to $DIRECTORY/csv/$t.csv"
-  echo "copy (select * from $t order by 1,2,3) to stdout with csv header" | psql $DBNAME > $DIRECTORY/csv/$t.csv
+  echo "copy (select * from $t order by 1,2,3) to stdout with csv header" | psql -v ON_ERROR_STOP=1 $DBNAME > $DIRECTORY/csv/$t.csv
 done
 
 for t in $TABLES_WITH_1_COLUMN
 do
   echo " $t to $DIRECTORY/csv/$t.csv"
-  echo "copy (select * from $t order by 1) to stdout with csv header" | psql $DBNAME > $DIRECTORY/csv/$t.csv
+  echo "copy (select * from $t order by 1) to stdout with csv header" | psql -v ON_ERROR_STOP=1 $DBNAME > $DIRECTORY/csv/$t.csv
 done
 
 for t in $TABLES_WITH_2_COLUMN
 do
   echo " $t to $DIRECTORY/csv/$t.csv"
-  echo "copy (select * from $t order by 1,2) to stdout with csv header" | psql $DBNAME > $DIRECTORY/csv/$t.csv
+  echo "copy (select * from $t order by 1,2) to stdout with csv header" | psql -v ON_ERROR_STOP=1 $DBNAME > $DIRECTORY/csv/$t.csv
 done
 
 echo "Making sql backups "  $(date "+%Y-%m-%d %H:%M:%S")

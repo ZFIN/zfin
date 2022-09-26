@@ -14,4 +14,4 @@
 /bin/sed '/^7955|Un/d' process_seq_gene.md > processing.tmp && mv -f processing.tmp process_seq_gene.md
 /bin/sed 's/GeneID://g' process_seq_gene.md > processing.tmp && mv -f processing.tmp process_seq_gene.md
 
-${PGBINDIR}/psql $DBNAME < loadNCBIStartEnd.sql
+${PGBINDIR}/psql -v ON_ERROR_STOP=1 $DBNAME < loadNCBIStartEnd.sql
