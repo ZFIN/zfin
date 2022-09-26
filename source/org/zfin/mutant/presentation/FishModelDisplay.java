@@ -1,6 +1,11 @@
 package org.zfin.mutant.presentation;
 
 import org.apache.commons.collections.CollectionUtils;
+import lombok.Getter;
+import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonView;
+
+import org.zfin.framework.api.View;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.publication.Publication;
 
@@ -10,30 +15,18 @@ import java.util.Set;
 /**
  * Disease model which groups by Publications
  */
+@Setter
+@Getter
 public class FishModelDisplay implements Comparable<FishModelDisplay> {
 
+    @JsonView(View.API.class)
     private Set<Publication> publications;
+    @JsonView(View.API.class)
     private FishExperiment fishModel;
 
 
     public FishModelDisplay(FishExperiment fishModel) {
         this.fishModel = fishModel;
-    }
-
-    public FishExperiment getFishModel() {
-        return fishModel;
-    }
-
-    public void setFishModel(FishExperiment fishModel) {
-        this.fishModel = fishModel;
-    }
-
-    public Set<Publication> getPublications() {
-        return publications;
-    }
-
-    public void setPublications(Set<Publication> publications) {
-        this.publications = publications;
     }
 
     public Publication getPublication() {
