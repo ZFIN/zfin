@@ -17,9 +17,11 @@ import org.zfin.marker.presentation.ExpressedGeneDisplay;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.presentation.AntibodyStatistics;
+import org.zfin.mutant.presentation.FishModelDisplay;
 import org.zfin.mutant.presentation.FishStatistics;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.repository.OntologyRepository;
+import org.zfin.ontology.service.OntologyService;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.wiki.presentation.Version;
 
@@ -138,6 +140,37 @@ public class TermAPIController {
             response.addSupplementalData("countIncludingChildren", form.getTotalRecords());
             response.addSupplementalData("countDirect", form.getTotalNumberOfExpressedGenes());
         }
+        HibernateUtil.flushAndCommitCurrentSession();
+
+        return response;
+    }
+
+    @JsonView(View.API.class)
+    @RequestMapping(value = "/{termID}/zebrafish-models", method = RequestMethod.GET)
+    public JsonResultResponse<FishModelDisplay> getZebrafishModels(@PathVariable String termID,
+                                                            @RequestParam(value = "directAnnotation", required = false, defaultValue = "false") boolean directAnnotation,
+                                                            @Version Pagination pagination) {
+
+        HibernateUtil.createTransaction();
+        JsonResultResponse<FishModelDisplay> response = new JsonResultResponse<>();
+        response.setHttpServletRequest(request);
+        GenericTerm term = ontologyRepository.getTermByZdbIDOrOboId(termID);
+        if (term == null)
+            return response;
+
+        List<FishModelDisplay> diseaseModelsWithFishModel = OntologyService.getDiseaseModelsWithFishModel(term);
+
+        response.setResults(diseaseModelsWithFishModel);
+        response.setTotal(diseaseModelsWithFishModel.size());
+/*
+        if (directAnnotation) {
+            response.addSupplementalData("countDirect", form.getTotalRecords());
+            response.addSupplementalData("countIncludingChildren", form.getTotalNumberOfExpressedGenes());
+        } else {
+            response.addSupplementalData("countIncludingChildren", form.getTotalRecords());
+            response.addSupplementalData("countDirect", form.getTotalNumberOfExpressedGenes());
+        }
+*/
         HibernateUtil.flushAndCommitCurrentSession();
 
         return response;
