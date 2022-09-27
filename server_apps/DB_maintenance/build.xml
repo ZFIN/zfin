@@ -88,15 +88,27 @@
     </target>
 
     <target name="load-gaf-goa" description="">
+        <!-- set some default values that can be overridden with environment variables like GOA_GAF_URL1 -->
+        <property environment="env"/>
+        <condition property="downloadUrl" value="${env.GOA_GAF_URL1}" else="ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/goa_zebrafish.gaf.gz">
+            <isset property="env.GOA_GAF_URL1" />
+        </condition>
+        <condition property="downloadUrl2" value="${env.GOA_GAF_URL2}" else="ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/goa_zebrafish_isoform.gaf.gz">
+            <isset property="env.GOA_GAF_URL2" />
+        </condition>
+        <condition property="downloadUrl3" value="${env.GOA_GAF_URL3}" else="ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/goa_zebrafish_rna.gaf.gz">
+            <isset property="env.GOA_GAF_URL3" />
+        </condition>
+
         <echo message="Running GafLoadJob with arguments:"/>
         <echo message="  propertyFilePath: ${web-inf.dir}/zfin.properties"/>
         <echo message="  baseDir: ${validateData}/gafLoad"/>
         <echo message="  jobName: ${jobName}"/>
         <echo message="  organization: GOA"/>
-        <echo message="  downloadUrl: ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/goa_zebrafish.gaf.gz"/>
+        <echo message="  downloadUrl: ${downloadUrl}"/>
         <echo message="  parserClassName: org.zfin.datatransfer.go.GoaGafParser"/>
-        <echo message="  downloadUrl2: ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/goa_zebrafish_isoform.gaf.gz"/>
-        <echo message="  downloadUrl3: ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/goa_zebrafish_rna.gaf.gz"/>
+        <echo message="  downloadUrl2: ${downloadUrl2}"/>
+        <echo message="  downloadUrl3: ${downloadUrl3}"/>
         <echo message="  log4j jvm arg: ${jvm.arg.log4j}"/>
 
         <java classname="org.zfin.datatransfer.go.service.GafLoadJob"
@@ -107,10 +119,10 @@
             <arg value="${validateData}/gafLoad"/><!-- baseDir -->
             <arg value="${jobName}"/><!-- jobName -->
             <arg value="GOA"/><!-- organization -->
-            <arg value="ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/goa_zebrafish.gaf.gz"/><!-- downloadUrl -->
+            <arg value="${downloadUrl}"/><!-- downloadUrl -->
             <arg value="org.zfin.datatransfer.go.GoaGafParser"/><!-- parserClassName -->
-            <arg value="ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/goa_zebrafish_isoform.gaf.gz"/><!-- downloadUrl2 -->
-            <arg value="ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/goa_zebrafish_rna.gaf.gz"/><!-- downloadUrl3 -->
+            <arg value="${downloadUrl2}"/><!-- downloadUrl2 -->
+            <arg value="${downloadUrl3}"/><!-- downloadUrl3 -->
             <jvmarg value="${jvm.arg.log4j}"/>
         </java>
     </target>
