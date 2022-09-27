@@ -779,6 +779,9 @@ dependencies {
     implementation files('lib/Java/hibernate-c3p0-5.6.5.Final.jar')
     implementation files('home/WEB-INF/lib/slf4j-api-1.7.26.jar')
     implementation files('home/WEB-INF/lib/jstl-1.1.jar')
+    implementation files('home/WEB-INF/lib/jackson-core-2.13.0.rc1.jar')
+    implementation files('home/WEB-INF/lib/javax.persistence-api-2.2.jar')
+
     implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.9.0'
 
     implementation group: 'net.sourceforge.htmlunit', name: 'htmlunit', version: '2.62.0'
