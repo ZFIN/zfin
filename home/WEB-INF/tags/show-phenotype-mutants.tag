@@ -53,15 +53,15 @@
                         <c:if test="${genoStat.numberOfFigures == 0}">
                             --
                         </c:if>
-                        <zfin2:showCameraIcon hasImage="${genoStat.imgInFigure}"/> from ${genoStat.publicationSet.size()}a
+                        <zfin2:showCameraIcon hasImage="${genoStat.imgInFigure}"/> from ${genoStat.publicationSet.size()}
                         <c:if test="${genoStat.publicationSet.size() ==1 }">
                             <zfin:link entity="${genoStat.publicationSet.iterator().next()}"/>
-                        </c:if>h
+                        </c:if>
                         <c:if test="${genoStat.publicationSet.size() > 1}">
                             <zfin:choice choicePattern="0#publications| 1#publication| 2#publications"
                                          collectionEntity="${genoStat.publicationSet}"
                                          includeNumber="true"/>
-                        </c:if>h
+                        </c:if>
                         <c:if test="${genoStat.numberOfFigures == 0}">
                             --
                         </c:if>
