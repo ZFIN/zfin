@@ -171,7 +171,7 @@ close(UPDATELIST);
 
 if ($ctProblem == 0) {
     try {
-      ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f updateZebrafishGeneNames.sql >updateZebrafishGeneNameSQLlog1");
+      ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> -a -f updateZebrafishGeneNames.sql >updateZebrafishGeneNameSQLlog1");
     } catch {
       warn "Failed to execute updateZebrafishGeneNames.sql - $_";
       exit -1;

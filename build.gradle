@@ -76,7 +76,7 @@ task loadDatabase() {
         println "Loading $unloadPath into $dbname"
         exec {
             ignoreExitValue = true
-            commandLine "bash", "-c", "echo 'select pg_terminate_backend(pg_stat_activity.pid) from pg_stat_activity where pid <> pg_backend_pid();' | psql $dbname"
+            commandLine "bash", "-c", "echo 'select pg_terminate_backend(pg_stat_activity.pid) from pg_stat_activity where pid <> pg_backend_pid();' | psql -v ON_ERROR_STOP=1 $dbname"
         }
         exec {
             ignoreExitValue = true
@@ -92,7 +92,7 @@ task loadDatabase() {
         }
         exec {
             ignoreExitValue = true
-            commandLine "bash", "-c", "echo 'vacuum (analyze)' | psql $dbname"
+            commandLine "bash", "-c", "echo 'vacuum (analyze)' | psql -v ON_ERROR_STOP=1 $dbname"
         }
 
     }

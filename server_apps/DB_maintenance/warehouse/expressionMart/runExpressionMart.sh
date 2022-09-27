@@ -39,10 +39,10 @@ end
 
 if ("X$1" == "X") then
 echo "ready to start dropTables.sql DBNAME from environment." ;
-${PGBINDIR}/psql $DBNAME < $FULL_SCRIPT_FILE
+${PGBINDIR}/psql -v ON_ERROR_STOP=1 $DBNAME < $FULL_SCRIPT_FILE
 else
 echo "ready to start dropTables.sql DBNAME provided from script call." ;
-${PGBINDIR}/psql $1 < $FULL_SCRIPT_FILE
+${PGBINDIR}/psql -v ON_ERROR_STOP=1 $1 < $FULL_SCRIPT_FILE
 
 
 

@@ -1,3 +1,3 @@
 #!/bin/bash -e
 
-${PGBINDIR}/psql $DBNAME < getEnsemblTscripts.sql
+${PGBINDIR}/psql -v ON_ERROR_STOP=1 $DBNAME < getEnsemblTscripts.sql

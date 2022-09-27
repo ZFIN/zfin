@@ -51,14 +51,14 @@ foreach $id (keys %identifiers) {
 close IDS;
 
 try {
-  ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f gofile.sql");
+  ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> -a -f gofile.sql");
 } catch {
   warn "Failed at gofile.sql - $_";
   exit -1;
 };
 
 try {
-  ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f gpad2.0.sql");
+  ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> -a -f gpad2.0.sql");
 } catch {
   warn "Failed at gpad2.0.sql - $_";
   exit -1;
@@ -91,14 +91,14 @@ try {
   exit -1;
 };
 try {
-  ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f gofile2.sql");
+  ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> -a -f gofile2.sql");
 } catch {
   warn "Failed at gofile2.sql - $_";
   exit -1;
 };
 
 try {
-  ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f gofile2_all.sql");
+  ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> -a -f gofile2_all.sql");
 } catch {
   warn "Failed at gofile2_all.sql - $_";
   exit -1;

@@ -12,7 +12,7 @@ $dbname = "<!--|DB_NAME|-->";
 
 print "load transcripts that need sequences.\n";
 try {
-  ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f preLoadTranscriptSequence.sql");
+  ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> -a -f preLoadTranscriptSequence.sql");
 } catch {
   warn "Failed to execute preLoadTranscriptSequence.sql - $_";
   exit -1;
@@ -24,7 +24,7 @@ try {
   exit -1;
 };
 try {
-  ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f loadTranscriptSequences.sql");
+  ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> -a -f loadTranscriptSequences.sql");
 } catch {
   warn "Failed at loadTranscriptSequences - $_";
   exit -1;

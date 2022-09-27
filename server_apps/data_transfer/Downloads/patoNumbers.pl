@@ -12,7 +12,7 @@ use DBI;
 # set environment variables
 
 # call patoNumbers.sql to prepare some download files and some pre-processed files
-system("psql -d <!--|DB_NAME|--> -a -f patoNumbers.sql");
+system("psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> -a -f patoNumbers.sql");
 
 $dbname = "<!--|DB_NAME|-->";
 $username = "";

@@ -151,6 +151,6 @@ print SQLFILE "\nselect count (distinct id) from tmp_contains;\n\n\n";
 
 close(SQLFILE);
 
-system("psql -d <!--|DB_NAME|--> -f FinPhenoCount.sql > FinPhenotypeStatistics.txt 2> errFin.txt");
+system("psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> -f FinPhenoCount.sql > FinPhenotypeStatistics.txt 2> errFin.txt");
 
 exit;
