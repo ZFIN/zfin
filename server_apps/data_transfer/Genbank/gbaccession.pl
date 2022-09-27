@@ -8,6 +8,8 @@
 #
 use strict;
 use Try::Tiny;
+use lib "<!--|ROOT_PATH|-->/server_apps/";
+use ZFINPerlModules;
 
 my ($mailprog, $md_date, $prefix, $unzipfile, $newfile, $dir_on_development_machine, $accfile, $report);
 
@@ -98,7 +100,7 @@ if (! system ("/bin/mv $accfile nc_zf_acc.unl")) {
     
     # load the updates into accesson_bank and db_link
     try {
-      system("$ENV{'PGBINDIR'}/psql <!--|DB_NAME|--> < GenBank-Accession-Update_d.sql >> $report 2>&1");
+      ZFINPerlModules->doSystemCommand("$ENV{'PGBINDIR'}/psql -v ON_ERROR_STOP=1 <!--|DB_NAME|--> < GenBank-Accession-Update_d.sql >> $report 2>&1");
     } catch {
       warn "Failed at GenBank-Accession-Update_d.sql - $_";
       exit -1;

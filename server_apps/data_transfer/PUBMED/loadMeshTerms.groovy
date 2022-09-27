@@ -37,7 +37,7 @@ def parse (InputStream inputStream) {
 }
 
 def psql (String dbname, String sql) {
-  proc = "psql $dbname ".execute()
+  proc = "psql -v ON_ERROR_STOP=1 $dbname ".execute()
   proc.getOutputStream().with {
     write(sql.bytes)
     close()

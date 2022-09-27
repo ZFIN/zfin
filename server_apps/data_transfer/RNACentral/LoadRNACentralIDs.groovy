@@ -18,7 +18,7 @@ static Process dbaccess(String dbname, String sql) {
     println sql
 
     def proc
-    proc = "psql -d $dbname -a".execute()
+    proc = "psql -v ON_ERROR_STOP=1 -d $dbname -a".execute()
     proc.getOutputStream().with {
         write(sql.bytes)
         close()

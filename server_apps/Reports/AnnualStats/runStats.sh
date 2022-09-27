@@ -1,4 +1,4 @@
 #!/bin/bash -e
 
-psql -d <!--|DB_NAME|--> -a -f stats.sql
+psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> -a -f stats.sql
 

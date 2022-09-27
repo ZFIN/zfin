@@ -151,7 +151,7 @@ foreach $zdbID (keys %zdbIDsMissingCor) {
 close ADDLIST;
 
 try {
-  &doSystemCommand("psql -d <!--|DB_NAME|--> -a -f NCBIStartEnd.sql");
+  &doSystemCommand("psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> -a -f NCBIStartEnd.sql");
 } catch {
   warn "Failed to execute NCBIStartEnd.sql - $_";
   exit -1;

@@ -418,7 +418,7 @@ $dbh->disconnect();
 
 # execute the sql file to do the loading
 try {
-  system("psql -v ON_ERROR_STOP=1 -d $ENV{'DB_NAME'} -a -f load_protein_domain_info.sql");
+  ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d $ENV{'DB_NAME'} -a -f load_protein_domain_info.sql");
 } catch {
   warn "Failed to execute load_protein_domain.sql - $_";
   exit -1;

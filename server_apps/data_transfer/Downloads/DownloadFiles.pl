@@ -43,6 +43,8 @@
 
 use DBI;
 use Try::Tiny;
+use lib "<!--|ROOT_PATH|-->/server_apps/";
+use ZFINPerlModules;
 
 # define GLOBALS
 
@@ -65,7 +67,7 @@ else {
 }
 
 try {
-  system("psql -d <!--|DB_NAME|--> -a -f DownloadFiles.sql");
+  ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> -a -f DownloadFiles.sql");
 } catch {
   warn "Failed at DownloadFiles.sql - $_";
   exit -1;

@@ -39,6 +39,6 @@ int runSqlFiles(String directory){
 task dropTriggers() {
      doLast {
      	    description = "drop all triggers from the database"
-   	    exec { commandLine "bash", "-c", "echo 'select strip_all_triggers()' | psql $dbname" }
+   	    exec { commandLine "bash", "-c", "echo 'select strip_all_triggers()' | psql -v ON_ERROR_STOP=1 $dbname" }
      }
 }

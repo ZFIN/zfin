@@ -136,7 +136,7 @@ print "\nct = $ct\n\n";
 system("/bin/rm -f <!--|ROOT_PATH|-->/server_apps/data_transfer/PUBMED/Journal/mergeJournalInput");
 
 try {
-  system("psql -d $dbname -a -f insertJournalAlias.sql");
+  ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d $dbname -a -f insertJournalAlias.sql");
 } catch {
   warn "Failed to execute insertJournalAlias.sql - $_";
   exit -1;

@@ -51,7 +51,7 @@ close INPUT;
 
 close OUTPUT;
 
-system("psql -d <!--|DB_NAME|--> -a -f loadExternalNotes.sql");
+system("psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> -a -f loadExternalNotes.sql");
 
 exit;
 

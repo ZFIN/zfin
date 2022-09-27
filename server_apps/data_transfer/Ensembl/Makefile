@@ -21,10 +21,10 @@ fetch_ensdarg:
 	cd $(TARGETDIR) && fetch_ensdarg.sh
 
 load_ensdarG_rollback: fetch_ensdarg
-	cd $(TARGETDIR) && cat load_ensdarG.sql rollback.sql | ${PGBINDIR}/psql -e ${DBNAME}
+	cd $(TARGETDIR) && cat load_ensdarG.sql rollback.sql | ${PGBINDIR}/psql -v ON_ERROR_STOP=1 -e ${DBNAME}
 
 load_ensdarG: fetch_ensdarg
-	cd $(TARGETDIR)/ && cat load_ensdarG.sql commit.sql | ${PGBINDIR}/psql -e ${DBNAME}
+	cd $(TARGETDIR)/ && cat load_ensdarG.sql commit.sql | ${PGBINDIR}/psql -v ON_ERROR_STOP=1 -e ${DBNAME}
 
 # 		fetch  Ensembl GTF and convert to gff3
 run_gff: 

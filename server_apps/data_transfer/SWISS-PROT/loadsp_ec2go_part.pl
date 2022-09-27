@@ -46,7 +46,7 @@ sub sendErrorReport ($) {
 
 sub downloadGOtermFiles () {
    try {
-      system("wget -q http://www.geneontology.org/external2go/ec2go -O ec2go");
+      ZFINPerlModules->doSystemCommand("wget -q http://www.geneontology.org/external2go/ec2go -O ec2go");
    } catch {
       chomp $_;
       &sendErrorReport("Failed to download http://www.geneontology.org/external2go/ec2go - $_");
@@ -71,7 +71,7 @@ system("rm -f *2go");
 print "\n delete records source from last ec2go loading.\n";
 ###system ("$ENV{'INFORMIXDIR'}/bin/dbaccess $ENV{'DB_NAME'} sp_delete_ec2gopart.sql >out 2>report.txt");
 try {
-  system("psql -v ON_ERROR_STOP=1 -d $ENV{'DB_NAME'} -a -f sp_delete_ec2gopart.sql > report.txt");
+  ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d $ENV{'DB_NAME'} -a -f sp_delete_ec2gopart.sql > report.txt");
 } catch {
   chomp $_;
   &sendErrorReport("Failed to execute sp_delete_ec2gopart.sql - $_");
@@ -82,7 +82,7 @@ try {
 
 print "\nectogo.pl ec2go\n";
 try {
-  system ("ectogo.pl ec2go");
+  ZFINPerlModules->doSystemCommand("ectogo.pl ec2go");
 } catch {
   chomp $_;
   &sendErrorReport("Failed at ectogo.pl ec2go - $_");
@@ -102,7 +102,7 @@ while( !( -e "ec_mrkrgoterm.unl")) {
       $retry = 0;
       print "retry ectogo.pl\n";
       try {
-        system("ectogo.pl ec2go");
+        ZFINPerlModules->doSystemCommand("ectogo.pl ec2go");
       } catch 
       {
         chomp $_;
@@ -121,7 +121,7 @@ while( !( -e "ec_mrkrgoterm.unl")) {
 # ------------ Loading ---------------------
 print "\nloading...\n";
 try {
-  system("psql -v ON_ERROR_STOP=1 -d $ENV{'DB_NAME'} -a -f sp_load_ec2gopart.sql >out 2> report2.txt");
+  ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d $ENV{'DB_NAME'} -a -f sp_load_ec2gopart.sql >out 2> report2.txt");
 } catch {
   chomp $_;
   &sendErrorReport("Failed to execute sp_load_ec2gopart.sql - $_");
@@ -141,7 +141,7 @@ close F;
 #----------- Match the obsolete/secondary go terms in the translation file -----
 print "\n deal with obsolete / secondary go terms \n";
 try {
-  system ("sp_badgo_report_ec2gopart.pl");
+  ZFINPerlModules->doSystemCommand ("sp_badgo_report_ec2gopart.pl");
 } catch {
   chomp $_;
   &sendErrorReport("Failed at sp_badgo_report_ec2gopart.pl ec2go - $_");

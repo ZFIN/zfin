@@ -8,6 +8,8 @@
 
 use MIME::Lite;
 use Try::Tiny;
+use lib "<!--|ROOT_PATH|-->/server_apps/";
+use ZFINPerlModules;
 
 #------------------ Send load output ----------------
 # 
@@ -154,7 +156,7 @@ print "\n\nStarting to load ...\n\n\n" if $doTheLoad > 0;
 
 if ($doTheLoad > 0)[
   try {
-    system("$ENV{'PGBINDIR'}/psql <!--|DB_NAME|--> < loadZfishbookData.sql >log1 2> log2") ;
+    ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> < loadZfishbookData.sql >log1 2> log2") ;
   } catch {
     warn "Failed to execute loadZfishbookData.sql - $_";
     exit -1;

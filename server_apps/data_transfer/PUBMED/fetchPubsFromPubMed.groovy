@@ -141,7 +141,7 @@ PARSE_PUBS.withWriter { pubLog ->
     articles.eachWithIndex{ GPathResult article, int i -> processArticle(printer, article, i) }
 }
 
-dbaccessProc = ['/bin/bash', '-c', "${ZfinPropertiesEnum.PGBINDIR}/psql " +
+dbaccessProc = ['/bin/bash', '-c', "${ZfinPropertiesEnum.PGBINDIR}/psql -v ON_ERROR_STOP=1 " +
         "${ZfinPropertiesEnum.DB_NAME} -f ${WORKING_DIR.absolutePath}/loadNewPubs.sql " +
         ">${WORKING_DIR.absolutePath}/loadSQLOutput.log 2> ${WORKING_DIR.absolutePath}/loadSQLError.log"].execute()
 dbaccessProc.waitFor()

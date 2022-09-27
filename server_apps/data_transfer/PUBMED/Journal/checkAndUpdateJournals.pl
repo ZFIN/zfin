@@ -5,6 +5,8 @@
 
 use DBI;
 use Try::Tiny;
+use lib "<!--|ROOT_PATH|-->/server_apps/";
+use ZFINPerlModules;
 
 #set environment variables
 
@@ -71,7 +73,7 @@ close ALLJOURNALS;
 close NCBIJOURNALS;
 
 try {
-  system("psql -d <!--|DB_NAME|--> -a -f  checkAndUpdateJournals.sql");
+  ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> -a -f  checkAndUpdateJournals.sql");
 } catch {
   warn "Failed to execute checkAndUpdateJournals.sql - $_";
   exit -1;

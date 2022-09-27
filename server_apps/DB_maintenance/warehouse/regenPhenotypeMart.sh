@@ -52,7 +52,7 @@ echo "done with phenotype mart building public" ;
 
 # move the current table data to backup, move the new data to current.
 
-${PGBINDIR}/psql <!--|DB_NAME|--> < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/phenotypeMartRegen.sql >&! <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/regenPhenotypeMartReportPostgres.txt
+${PGBINDIR}/psql -v ON_ERROR_STOP=1 <!--|DB_NAME|--> < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/phenotypeMartRegen.sql >&! <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/regenPhenotypeMartReportPostgres.txt
 
 if ($? != 0) then
    echo "refresh phenotype mart (the public tables) failed and was rolled back";
@@ -63,7 +63,7 @@ echo "done regen public phenotype tables" ;
 date;
 
 echo "start regen_genox()";
-echo "select regen_genox();" | ${PGBINDIR}/psql $DBNAME;
+echo "select regen_genox();" | ${PGBINDIR}/psql -v ON_ERROR_STOP=1 $DBNAME;
 if ($? != 0) then
    echo "regen phenotype mart failed";
 exit 1;
@@ -74,7 +74,7 @@ echo "done with regen_genox()";
 
 
 echo "start regen_anatomy_counts()";
-echo "select regen_anatomy_counts()" | ${PGBINDIR}/psql $DBNAME
+echo "select regen_anatomy_counts()" | ${PGBINDIR}/psql -v ON_ERROR_STOP=1 $DBNAME
 if ($? != 0) then
    echo "regen phenotype mart failed";
 exit 1;
@@ -86,7 +86,7 @@ echo "done with regen_anatomy_counts()";
 
 
 echo "start regen_pheno_term_regen()";
-${PGBINDIR}/psql $DBNAME < $TARGETROOT/server_apps/DB_maintenance/pheno/pheno_term_regen.sql
+${PGBINDIR}/psql -v ON_ERROR_STOP=1 $DBNAME < $TARGETROOT/server_apps/DB_maintenance/pheno/pheno_term_regen.sql
 if ($? != 0) then
    echo "regen phenotype mart failed";
 exit 1;

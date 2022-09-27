@@ -46,6 +46,6 @@ int runSqlFiles(String directory) {
 task dropFunctions() {
     doLast {
         description = "drop all functions from the database"
-        exec { commandLine "bash", "-c", "psql $dbname < ./dropFunctions" }
+        exec { commandLine "bash", "-c", "psql -v ON_ERROR_STOP=1 $dbname < ./dropFunctions" }
     }
 }

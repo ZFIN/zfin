@@ -1,6 +1,6 @@
 #!/bin/bash
 
-(${PGBINDIR}/psql ${DBNAME} -q << END
+(${PGBINDIR}/psql -v ON_ERROR_STOP=1 ${DBNAME} -q << END
 
 CREATE TEMP TABLE tmp_counts (
     tmp_label     text,
