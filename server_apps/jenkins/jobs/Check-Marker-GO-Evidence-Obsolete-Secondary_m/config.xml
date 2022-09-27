@@ -21,13 +21,13 @@
     <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
         <hudson.tasks.Ant plugin="ant@1.2">
-            <targets>validate-data-report-simple -DJobName=Check-Marker-GO-Evidence-Obsolete-Secondary_w</targets>
+            <targets>validate-data-report-simple -DJobName=Check-Marker-GO-Evidence-Obsolete-Secondary_m</targets>
             <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
         </hudson.tasks.Ant>
     </builders>
     <publishers>
         <hudson.tasks.ArtifactArchiver>
-            <artifacts>server_apps/DB_maintenance/validatedata/Check-Marker-GO-Evidence-Obsolete-Secondary_w/*
+            <artifacts>server_apps/DB_maintenance/validatedata/Check-Marker-GO-Evidence-Obsolete-Secondary_m/*
             </artifacts>
             <latestOnly>false</latestOnly>
             <allowEmptyArchive>true</allowEmptyArchive>
@@ -41,8 +41,8 @@
             <reportTargets>
                 <htmlpublisher.HtmlPublisherTarget>
                     <reportName>Error Report</reportName>
-                    <reportDir>server_apps/DB_maintenance/validatedata/Check-Marker-GO-Evidence-Obsolete-Secondary_w</reportDir>
-                    <reportFiles>Check-Marker-GO-Evidence-Obsolete-Secondary_w.html</reportFiles>
+                    <reportDir>server_apps/DB_maintenance/validatedata/Check-Marker-GO-Evidence-Obsolete-Secondary_m</reportDir>
+                    <reportFiles>Check-Marker-GO-Evidence-Obsolete-Secondary_m.html</reportFiles>
                     <keepAll>false</keepAll>
                     <allowMissing>false</allowMissing>
                 </htmlpublisher.HtmlPublisherTarget>
