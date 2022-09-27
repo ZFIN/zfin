@@ -47,7 +47,10 @@
     </c:if>
 
     <c:forEach var="figure" items="${figures}">
-        <zfin-figure:imagesAndCaption figure="${figure}" autoplayVideo="false" showMultipleMediumSizedImages="${showMultipleMediumSizedImages}">
+        <zfin-figure:imagesAndCaption figure="${figure}"
+                                      autoplayVideo="false"
+                                      showMultipleMediumSizedImages="${showMultipleMediumSizedImages}"
+                                      showCaption="${true}">
 
             <zfin-figure:expressionSummary summary="${expressionSummaryMap[figure]}" suppressProbe="true"/>
 
