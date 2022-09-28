@@ -1,6 +1,6 @@
 package org.zfin.framework.api;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.zfin.feature.Feature;
 
 import java.util.ArrayList;

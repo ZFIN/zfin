@@ -1,7 +1,7 @@
 package org.zfin.ontology.datatransfer.service;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.WordUtils;
 import org.apache.commons.lang3.StringUtils;

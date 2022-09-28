@@ -2,8 +2,8 @@ package org.zfin.framework;
 
 
 import org.apache.commons.beanutils.BeanComparator;
-import org.apache.commons.collections.comparators.ComparatorChain;
-import org.apache.commons.collections.comparators.NullComparator;
+import org.apache.commons.collections4.comparators.ComparatorChain;
+import org.apache.commons.collections4.comparators.NullComparator;
 
 import java.util.Comparator;
 

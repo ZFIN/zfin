@@ -1,7 +1,7 @@
 package org.zfin.feature;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SortNatural;

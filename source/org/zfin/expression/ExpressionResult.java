@@ -1,6 +1,6 @@
 package org.zfin.expression;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.GenericTerm;
