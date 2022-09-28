@@ -1,6 +1,6 @@
 package org.zfin.marker;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.sequence.DBLink;

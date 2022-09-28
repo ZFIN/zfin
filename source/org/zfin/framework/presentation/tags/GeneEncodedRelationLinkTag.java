@@ -1,6 +1,6 @@
 package org.zfin.framework.presentation.tags;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.MarkerPresentation;

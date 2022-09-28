@@ -1,7 +1,7 @@
 package org.zfin.infrastructure;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MultiMap;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MultiMap;
 
 import java.io.Serializable;
 import java.util.*;

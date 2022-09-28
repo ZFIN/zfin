@@ -1,11 +1,12 @@
 package org.zfin.mutant.presentation;
 
-import org.apache.commons.collections.CollectionUtils;
 import lombok.Getter;
 import lombok.Setter;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import org.zfin.framework.api.View;
+import org.apache.commons.collections4.CollectionUtils;
+
 import org.zfin.mutant.FishExperiment;
 import org.zfin.publication.Publication;
 

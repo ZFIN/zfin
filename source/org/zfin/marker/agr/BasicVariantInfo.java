@@ -8,7 +8,7 @@ import org.zfin.feature.FeatureGenomicMutationDetail;
 import org.zfin.mapping.FeatureLocation;
 import org.zfin.feature.FeatureNote;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
