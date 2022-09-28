@@ -774,6 +774,7 @@ dependencies {
     implementation files('home/WEB-INF/lib/bbop.jar')
     implementation files('home/WEB-INF/lib/blast-serialization-1.0.jar')
     implementation files('home/WEB-INF/lib/text-table-formatter-1.0.jar')
+    implementation files('home/WEB-INF/lib/commons-collections4-4.4.jar')
     // maven reference does not have version 1.0, so using the plain jar file
     //implementation group: 'org.nocrala.tools.texttablefmt', name: 'text-table-formatter', version: '1.2.4'
     implementation files('lib/Java/hibernate-c3p0-5.6.5.Final.jar')
@@ -781,6 +782,15 @@ dependencies {
     implementation files('home/WEB-INF/lib/jstl-1.1.jar')
     implementation files('home/WEB-INF/lib/jackson-core-2.13.0.rc1.jar')
     implementation files('home/WEB-INF/lib/javax.persistence-api-2.2.jar')
+
+    implementation files('home/WEB-INF/lib/spring-context-4.2.2.RELEASE.jar')
+    implementation files('home/WEB-INF/lib/spring-context-support-4.2.2.RELEASE.jar')
+    implementation files('home/WEB-INF/lib/spring-core-4.2.2.RELEASE.jar')
+    implementation files('home/WEB-INF/lib/jackson-annotations-2.13.0-rc1.jar')
+    implementation files('home/WEB-INF/lib/jackson-databind-2.13.0-rc1.jar')
+    implementation files('home/WEB-INF/lib/jackson-datatype-jsr310-2.13.0.jar')
+    implementation files('home/WEB-INF/lib/jackson-datatype-jsr310-2.13.0.jar')
+
 
     implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.9.0'
 
