@@ -2,7 +2,7 @@ package org.zfin.marker.presentation;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.SneakyThrows;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.antibody.Antibody;

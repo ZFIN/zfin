@@ -1,6 +1,6 @@
 package org.zfin.datatransfer.go;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.junit.Test;
 
 import java.io.File;

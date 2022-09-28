@@ -1,6 +1,6 @@
 package org.zfin.sequence.blast;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.biojava.bio.BioException;
 import org.biojava.bio.seq.NewSimpleAssembly;
 import org.biojava.bio.seq.io.SymbolTokenization;

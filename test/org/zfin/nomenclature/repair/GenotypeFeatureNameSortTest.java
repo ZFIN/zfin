@@ -1,6 +1,6 @@
 package org.zfin.nomenclature.repair;
 
-import org.apache.commons.collections.ListUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.junit.Test;
 
 import java.util.ArrayList;

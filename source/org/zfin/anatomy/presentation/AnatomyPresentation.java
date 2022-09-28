@@ -1,6 +1,6 @@
 package org.zfin.anatomy.presentation;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.zfin.infrastructure.DataAlias;
 import org.zfin.infrastructure.DataAliasGroup;
 import org.zfin.ontology.*;

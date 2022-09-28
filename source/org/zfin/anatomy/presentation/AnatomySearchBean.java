@@ -2,7 +2,7 @@ package org.zfin.anatomy.presentation;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.service.AnatomyService;

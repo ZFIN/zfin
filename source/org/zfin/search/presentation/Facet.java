@@ -1,6 +1,6 @@
 package org.zfin.search.presentation;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.zfin.search.service.SolrService;
 

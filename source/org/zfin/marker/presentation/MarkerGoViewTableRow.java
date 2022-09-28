@@ -1,7 +1,7 @@
  package org.zfin.marker.presentation;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.zfin.framework.api.View;
