@@ -1,8 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
     <actions/>
-    <description>Marker Go Evidence Annotations (MARKER_GO_TERM_EVIDENCE) should not use obsolete GO terms.
-        A list of annotations that use obsoleted GO terms is reported.
+    <description>Marker Go Evidence Annotations (MARKER_GO_TERM_EVIDENCE) should not use obsolete or secondary GO terms.
+        A list of annotations that use obsoleted or secondary GO terms is reported.
+        Also, only
     </description>
     <keepDependencies>false</keepDependencies>
     <properties/>
@@ -20,13 +21,13 @@
     <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
         <hudson.tasks.Ant plugin="ant@1.2">
-            <targets>validate-data-report-simple -DJobName=Check-Marker-GO-Evidence-Obsolete-Annotation_d</targets>
+            <targets>validate-data-report-simple -DJobName=Check-Marker-GO-Evidence-Obsolete-Secondary_m</targets>
             <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
         </hudson.tasks.Ant>
     </builders>
     <publishers>
         <hudson.tasks.ArtifactArchiver>
-            <artifacts>server_apps/DB_maintenance/validatedata/Check-Marker-GO-Evidence-Obsolete-Annotation_d/*
+            <artifacts>server_apps/DB_maintenance/validatedata/Check-Marker-GO-Evidence-Obsolete-Secondary_m/*
             </artifacts>
             <latestOnly>false</latestOnly>
             <allowEmptyArchive>true</allowEmptyArchive>
@@ -40,8 +41,8 @@
             <reportTargets>
                 <htmlpublisher.HtmlPublisherTarget>
                     <reportName>Error Report</reportName>
-                    <reportDir>server_apps/DB_maintenance/validatedata/Check-Marker-GO-Evidence-Obsolete-Annotation_d</reportDir>
-                    <reportFiles>Check-Marker-GO-Evidence-Obsolete-Annotation_d.html</reportFiles>
+                    <reportDir>server_apps/DB_maintenance/validatedata/Check-Marker-GO-Evidence-Obsolete-Secondary_m</reportDir>
+                    <reportFiles>Check-Marker-GO-Evidence-Obsolete-Secondary_m.html</reportFiles>
                     <keepAll>false</keepAll>
                     <allowMissing>false</allowMissing>
                 </htmlpublisher.HtmlPublisherTarget>
