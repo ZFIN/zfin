@@ -17,7 +17,6 @@
         <div id="xpresimg_box"></div>
         <div id="imagebox_maxnote" style="display: none;"></div>
         <div id="xpresimg_imagePreload"></div>
-        <div><a href="/action/figure/all-figure-view/${publication.zdbID}">Show all Figures</a></div>
     </div>
 
     <script type="text/javascript">
@@ -49,3 +48,4 @@
         loadImages();
     </script>
 </c:if>
+<div><a href="/action/figure/all-figure-view/${publication.zdbID}">Show all Figures</a></div>
