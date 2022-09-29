@@ -564,7 +564,7 @@ public class PublicationViewController {
         }
 
 
-        Collections.sort(figures, ComparatorCreator.orderBy("orderingLabel", "zdbID"));
+        figures.sort(ComparatorCreator.orderBy("orderingLabel", "zdbID"));
 
         model.addAttribute("figures", figures);
         model.addAttribute("figureCaptions", figures.stream().map(Figure::getLabel).collect(toList()));
