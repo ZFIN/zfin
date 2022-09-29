@@ -46,7 +46,7 @@ EFFECTS
             <th>Acknowledgments:</th>
         </tr>
         <td>
-            <zfin2:acknowledgement-text hasAcknowledgment="${hasAcknowledgment}" showElsevierMessage="${showElsevierMessage}" publication="${publication}"/>
+            <zfin2:acknowledgment-text hasAcknowledgment="${hasAcknowledgment}" showElsevierMessage="${showElsevierMessage}" publication="${publication}"/>
         </td>
 
     </table>
