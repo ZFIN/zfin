@@ -16,6 +16,8 @@ import org.zfin.repository.RepositoryFactory;
 import java.util.Set;
 import java.util.TreeSet;
 
+import static java.util.stream.Collectors.toList;
+
 /**
  * Convenient class to show statistics about phenotypes related to a given AO term..
  */
@@ -53,7 +55,7 @@ public class FishStatistics extends EntityStatistics {
     protected PaginationResult<Publication> getPublicationPaginationResult() {
         if(publicationSet == null)
             return null;
-        return new PaginationResult<>(publicationSet.stream().toList());
+        return new PaginationResult<>(publicationSet.stream().collect(toList()));
     }
 
     private int numberOfFigures = -1;
