@@ -1969,7 +1969,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
                 if (tuple.length > 11 && tuple[11] != null) {
                     reference.setTitle(tuple[11].toString());
-
+                }
+                if (tuple.length > 9 && tuple[9] != null) {
+                    reference.setDataZdbID(tuple[9].toString());
                 }
                 linkDisplay.addReference(reference);
             }
@@ -2000,12 +2002,13 @@ public class HibernateMarkerRepository implements MarkerRepository {
             Map<String, LinkDisplay> linkMap = new HashMap<>();
             for (Object o : list) {
                 LinkDisplay display = (LinkDisplay) o;
-                LinkDisplay displayStored = linkMap.get(display.getAccession());
+                String linkKey = display.getAccession() + ":" + display.getReferenceDatabaseZdbID();
+                LinkDisplay displayStored = linkMap.get(linkKey);
                 if (displayStored != null) {
                     displayStored.addReferences(display.getReferences());
-                    linkMap.put(displayStored.getAccession(), displayStored);
+                    linkMap.put(linkKey, displayStored);
                 } else {
-                    linkMap.put(display.getAccession(), display);
+                    linkMap.put(linkKey, display);
                 }
 
             }

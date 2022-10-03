@@ -349,6 +349,7 @@ public class MarkerLinkController {
     public String deleteMarkerLink(@PathVariable String linkId) {
         HibernateUtil.createTransaction();
         DBLink link = sequenceRepository.getDBLinkByID(linkId);
+        sequenceRepository.deleteReferenceProteinByDBLinkID(linkId);
         sequenceRepository.removeDBLinks(Collections.singletonList(link));
         HibernateUtil.flushAndCommitCurrentSession();
         return "OK";

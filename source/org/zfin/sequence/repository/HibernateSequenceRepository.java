@@ -1256,6 +1256,15 @@ public class HibernateSequenceRepository implements SequenceRepository {
     public Integer deleteUnitProtProteome() {
         return HibernateUtil.currentSession().createQuery("delete ReferenceProtein").executeUpdate();
     }
+
+    @Override
+    public Integer deleteReferenceProteinByDBLinkID(String dbLinkID) {
+        Session session = HibernateUtil.currentSession();
+        String hql = "delete from ReferenceProtein rp where rp.uniprotAccession.zdbID = :dbLinkID";
+        Query query = session.createQuery(hql);
+        query.setParameter("dbLinkID", dbLinkID);
+        return query.executeUpdate();
+    }
 }
 
 
