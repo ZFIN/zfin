@@ -5,7 +5,6 @@ import lombok.extern.log4j.Log4j2;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.FieldFilter;
@@ -47,7 +46,6 @@ public class SequenceController {
     @Autowired
     private HttpServletRequest request;
 
-    @Transactional(readOnly = true)
     @JsonView(View.SequenceAPI.class)
     @RequestMapping(value = "/marker/{zdbID}/sequences")
     public JsonResultResponse<MarkerDBLink> getSequenceView(@PathVariable("zdbID") String zdbID,
