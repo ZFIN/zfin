@@ -1,7 +1,21 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description></description>
+  <description
+  >Run the Jenkins job to load the GOA GAF files into the database.
+Downloads from the following urls by default:
+
+- ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/goa_zebrafish.gaf.gz
+- ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/goa_zebrafish_isoform.gaf.gz
+- ftp://ftp.ebi.ac.uk/pub/databases/GO/goa/ZEBRAFISH/goa_zebrafish_rna.gaf.gz
+
+Those can be overridden by setting the environment variables:
+
+- GOA_GAF_URL1
+- GOA_GAF_URL2
+- GOA_GAF_URL3
+
+  </description>
   <keepDependencies>false</keepDependencies>
   <properties/>
   <scm class="hudson.scm.NullSCM"/>
