@@ -367,3 +367,9 @@ table.lab-view-summary-table dd a, table.company-view-summary-table dd a {
 /* End of lab page formatting */
 
 
+/* Genotype page formatting */
+.genotype-view a.back-to-top-link {
+    display: inline;
+    white-space: normal; /* <-- remove for ellipses truncation */
+}
+/* End of genotype page formatting */
