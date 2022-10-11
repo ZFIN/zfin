@@ -373,3 +373,10 @@ table.lab-view-summary-table dd a, table.company-view-summary-table dd a {
     white-space: normal; /* <-- remove for ellipses truncation */
 }
 /* End of genotype page formatting */
+
+/* Construct page formatting */
+.construct-view a.back-to-top-link {
+    display: inline;
+    white-space: normal; /* <-- remove for ellipses truncation */
+}
+/* End of Construct page formatting */
