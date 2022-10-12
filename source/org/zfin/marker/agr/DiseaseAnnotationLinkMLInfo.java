@@ -10,6 +10,7 @@ import org.alliancegenome.curation_api.model.ingest.dto.AGMDiseaseAnnotationDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.ExperimentalConditionDTO;
 import org.zfin.alliancegenome.ZfinAllianceConverter;
 import org.zfin.expression.ExperimentCondition;
+import org.zfin.feature.Feature;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
@@ -72,9 +73,9 @@ public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
 
         // group by gene records
         Map<Marker, Set<FishExperiment>> diseaseModelMap =
-                geneGenotypeExperiments.stream().collect(
-                        Collectors.groupingBy(GeneGenotypeExperiment::getGene,
-                                Collectors.mapping(GeneGenotypeExperiment::getFishExperiment, Collectors.toSet())));
+            geneGenotypeExperiments.stream().collect(
+                Collectors.groupingBy(GeneGenotypeExperiment::getGene,
+                    Collectors.mapping(GeneGenotypeExperiment::getFishExperiment, Collectors.toSet())));
 
         // loop over each gene
         diseaseModelMap.forEach((gene, fishExperimentSet) -> {
@@ -87,29 +88,29 @@ public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
                 // group the diseaseAnnotation by disease
                 // so publications and evidence codes are grouped together
                 Map<GenericTerm, Set<DiseaseAnnotation>> termMap = fishExperiment.getDiseaseAnnotationModels()
-                        .stream()
-                        .collect(
-                                Collectors.groupingBy(diseaseAnnotationModel -> diseaseAnnotationModel.getDiseaseAnnotation().getDisease(),
-                                        Collectors.mapping(DiseaseAnnotationModel::getDiseaseAnnotation, Collectors.toSet())
-                                )
-                        );
+                    .stream()
+                    .collect(
+                        Collectors.groupingBy(diseaseAnnotationModel -> diseaseAnnotationModel.getDiseaseAnnotation().getDisease(),
+                            Collectors.mapping(DiseaseAnnotationModel::getDiseaseAnnotation, Collectors.toSet())
+                        )
+                    );
                 // loop over each disease
                 termMap.forEach((disease, diseaseAnnotations) -> {
                     // group disease annotations into pubs and their corresponding list of evidence codes
                     Map<Publication, List<String>> evidenceMap = diseaseAnnotations
-                            .stream()
-                            .collect(
-                                    Collectors.groupingBy(DiseaseAnnotation::getPublication,
-                                            Collectors.mapping(this::getEvidenceCodeString, toList())
-                                    )
-                            );
+                        .stream()
+                        .collect(
+                            Collectors.groupingBy(DiseaseAnnotation::getPublication,
+                                Collectors.mapping(this::getEvidenceCodeString, toList())
+                            )
+                        );
                     Map<Publication, List<String>> publicationDateMap = diseaseAnnotations
-                            .stream()
-                            .collect(
-                                    Collectors.groupingBy(DiseaseAnnotation::getPublication,
-                                            Collectors.mapping(DiseaseAnnotation::getZdbID, toList())
-                                    )
-                            );
+                        .stream()
+                        .collect(
+                            Collectors.groupingBy(DiseaseAnnotation::getPublication,
+                                Collectors.mapping(DiseaseAnnotation::getZdbID, toList())
+                            )
+                        );
 
                     // Hack: get the date stamp from the ZDB-DAT ID.
                     // Use the earliest one we have per pub
@@ -132,12 +133,24 @@ public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
                         annotation.setDateUpdated(format(map.get(publication)));
                         annotation.setCreatedBy("ZFIN:CURATOR");
                         //annotation.setModifiedBy("ZFIN:CURATOR");
+                        if (genotype.isWildtype()) {
+                            annotation.setInferredGene("ZFIN:" + gene.getZdbID());
+                        } else {
+                            if (fish.getFishFunctionalAffectedGeneCount() == 1) {
+                                genotype.getGenotypeFeatures().forEach(genotypeFeature -> {
+                                    Feature feature = genotypeFeature.getFeature();
+                                    if (feature.isSingleAlleleOfMarker(gene)) {
+                                        annotation.setInferredAllele("ZFIN:" + feature.getZdbID());
+                                    }
+                                });
+                            }
 
+                        }
                         List<String> evidenceCodes = evidenceSet.stream()
-                                .map(ZfinAllianceConverter::convertEvidenceCodes)
-                                .flatMap(Collection::stream)
-                                .map(EcoTerm::getCurie)
-                                .collect(toList());
+                            .map(ZfinAllianceConverter::convertEvidenceCodes)
+                            .flatMap(Collection::stream)
+                            .map(EcoTerm::getCurie)
+                            .collect(toList());
                         annotation.setEvidenceCodes(evidenceCodes);
                         annotation.setSingleReference(getSingleReference(publication));
 
@@ -186,7 +199,7 @@ public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
         annotation.setObject(damo.getDiseaseAnnotation().getDisease().getOboID());
 
         List<String> ecoTerms = ZfinAllianceConverter.convertEvidenceCodes(damo.getDiseaseAnnotation().getEvidenceCode()).stream()
-                .map(EcoTerm::getCurie).collect(toList());
+            .map(EcoTerm::getCurie).collect(toList());
         annotation.setEvidenceCodes(ecoTerms);
         annotation.setSingleReference(getSingleReference(damo.getDiseaseAnnotation().getPublication()));
 
@@ -220,7 +233,7 @@ public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
             expcond.setConditionClass(oboID);
         } else {
             Optional<GenericTerm> highLevelterm = highLevelConditionTerms.stream().filter(parentTerm -> getOntologyRepository().isParentChildRelationshipExist(parentTerm, condition.getZecoTerm()))
-                    .findFirst();
+                .findFirst();
             if (highLevelterm.isPresent()) {
                 expcond.setConditionClass(highLevelterm.get().getOboID());
                 expcond.setConditionId(oboID);
