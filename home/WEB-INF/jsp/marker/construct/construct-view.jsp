@@ -11,7 +11,7 @@
 <c:set var="CITATIONS" value="Citations"/>
 
 <z:dataPage sections="${[SUMMARY, PLASMIDMAP, GENOMICFEATURES, TRANSGENICS, SEQUENCEINFORMATION, OTHERPAGES, CITATIONS]}"
-            additionalBodyClass="construct-view">
+            additionalBodyClass="construct-view nav-title-wrap">
     <jsp:attribute name="entityName">
         <zfin:abbrev entity="${formBean.marker}"/>
     </jsp:attribute>

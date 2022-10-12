@@ -360,23 +360,10 @@ table.lab-view-summary-table dd a, table.company-view-summary-table dd a {
     overflow: hidden;
     text-overflow: ellipsis;
 }
-.lab-view a.back-to-top-link, .company-view a.back-to-top-link {
-    display: inline;
-    white-space: normal;
-}
 /* End of lab page formatting */
 
-
-/* Genotype page formatting */
-.genotype-view a.back-to-top-link {
+/* Wrap the page title as it appears in the left navigation menu */
+.nav-title-wrap a.back-to-top-link {
     display: inline;
     white-space: normal; /* <-- remove for ellipses truncation */
 }
-/* End of genotype page formatting */
-
-/* Construct page formatting */
-.construct-view a.back-to-top-link {
-    display: inline;
-    white-space: normal; /* <-- remove for ellipses truncation */
-}
-/* End of Construct page formatting */
