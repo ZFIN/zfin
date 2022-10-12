@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <include file="source/org/zfin/db/postGmakePostloaddb/1136/ZFIN-8191-00-pre.sql" />
+
+    <changeSet author="rtaylor" id="ZFIN-8191-temp-csv">
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1136/ZFIN-8191-01-record-attribution-fixes.csv"
+                  tableName="temp_8191" encoding="UTF-8" quotchar='"'>
+            <column header="recattrib_pk_id" name="recattrib_pk_id" type="Numeric"/>
+            <column header="old_data_zdb_id" name="old_data_zdb_id" type="String"/>
+            <column header="new_data_zdb_id" name="new_data_zdb_id" type="String"/>
+        </loadData>
+    </changeSet>
+
+    <include file="source/org/zfin/db/postGmakePostloaddb/1136/ZFIN-8191-02-attribution-updates.sql" />
+
+</databaseChangeLog>
