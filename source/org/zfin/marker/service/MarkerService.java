@@ -278,10 +278,10 @@ public class MarkerService {
      * @param group
      * @return
      */
-    public static List<LinkDisplay> getMarkerLinksForDisplayGroup(Marker marker, DisplayGroup.GroupName group) {
+    public static List<LinkDisplay> getMarkerLinksForDisplayGroup(Marker marker, DisplayGroup.GroupName group, boolean addTranscriptDbLinks) {
 
         List<LinkDisplay> links = markerRepository.getMarkerDBLinksFast(marker, group);
-        if ( group.equals(DisplayGroup.GroupName.OTHER_MARKER_PAGES) ) {
+        if ( group.equals(DisplayGroup.GroupName.OTHER_MARKER_PAGES) && addTranscriptDbLinks ) {
             //pull vega genes from transcript onto gene page (case 7586)
             links.addAll(markerRepository.getVegaGeneDBLinksTranscript(marker, DisplayGroup.GroupName.SUMMARY_PAGE));
         }
@@ -294,11 +294,11 @@ public class MarkerService {
      * @param groupName
      * @return
      */
-    public static List<LinkDisplay> getMarkerLinksForDisplayGroup(String markerId, String groupName) {
+    public static List<LinkDisplay> getMarkerLinksForDisplayGroup(String markerId, String groupName, boolean addTranscriptDbLinks) {
         Marker marker = markerRepository.getMarkerByID(markerId);
         DisplayGroup.GroupName group = DisplayGroup.GroupName.getGroup(groupName);
 
-        return getMarkerLinksForDisplayGroup(marker, group);
+        return getMarkerLinksForDisplayGroup(marker, group, addTranscriptDbLinks);
     }
 
 
@@ -1069,7 +1069,7 @@ public class MarkerService {
         markerBean.setHasMarkerHistory(markerRepository.getHasMarkerHistory(zdbID));
 
         // OTHER GENE / MARKER PAGES:
-        markerBean.setOtherMarkerPages(getMarkerLinksForDisplayGroup(marker, DisplayGroup.GroupName.SUMMARY_PAGE));
+        markerBean.setOtherMarkerPages(getMarkerLinksForDisplayGroup(marker, DisplayGroup.GroupName.SUMMARY_PAGE, true));
 
 
         // sequence info page

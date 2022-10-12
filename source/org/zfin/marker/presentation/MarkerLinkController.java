@@ -10,6 +10,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.zfin.alliancegenome.ApiException;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.gwt.marker.ui.SequenceValidator;
@@ -123,7 +124,7 @@ public class MarkerLinkController {
     @RequestMapping(value = "/{markerId}/links", method = RequestMethod.GET)
     public List<LinkDisplay> getMarkerLinks(@PathVariable String markerId,
                                             @RequestParam(name = "group", required = true) String groupName) {
-        return MarkerService.getMarkerLinksForDisplayGroup(markerId, groupName);
+        return MarkerService.getMarkerLinksForDisplayGroup(markerId, groupName, false);
     }
 
     @ResponseBody
@@ -351,8 +352,9 @@ public class MarkerLinkController {
         DBLink link = sequenceRepository.getDBLinkByID(linkId);
         sequenceRepository.deleteReferenceProteinByDBLinkID(linkId);
         sequenceRepository.removeDBLinks(Collections.singletonList(link));
-        HibernateUtil.flushAndCommitCurrentSession();
-        return "OK";
+//        HibernateUtil.flushAndCommitCurrentSession();
+        throw new RuntimeException("cannot delete dblink as it does not belong to a gene");
+        //return "OK";
     }
 
     @ResponseBody
