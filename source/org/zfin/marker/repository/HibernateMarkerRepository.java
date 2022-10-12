@@ -2459,7 +2459,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     public List<LinkDisplay> getVegaGeneDBLinksTranscript(Marker gene, DisplayGroup.GroupName summaryPage) {
 
         if (!gene.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
-            log.error("method only to be used with GENEDOM: " + gene.toString());
+            log.error("method only to be used with GENEDOM: " + gene);
             return new ArrayList<>();
         }
 
