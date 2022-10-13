@@ -27,13 +27,36 @@
 
         <div id="${zfn:makeDomIdentifier(SUMMARY)}">
             <div class="small text-uppercase text-muted">FIGURE SUMMARY</div>
-            <h1>${publication.title}</h1>
             <z:attributeList>
-                <z:attributeListItem label="Authors">
-                    <zfin:link entity="${publication}"/>
+                <z:attributeListItem label="Title">
+                    <h4> ${publication.title}</h4>
                 </z:attributeListItem>
-
+                <z:attributeListItem label="Authors">
+                    ${publication.authors}
+                </z:attributeListItem>
+                <z:attributeListItem label="Source">
+                    <zfin-figure:journalAbbrev publication="${publication}"/>
+                </z:attributeListItem>
             </z:attributeList>
+        </div>
+
+        <div class='mb-2'>
+            <div class='btn-group btn-group-sm' role='group'>
+                <button
+                        type='button'
+                        class='btn btn-outline-secondary ${allFiguresCssClass}'
+                        onclick="location.href='/action/publication/${publication.zdbID}/all-figures?showDataOnly=false';"
+                >
+                    All Figures
+                </button>
+                <button
+                        type='button'
+                        class='btn btn-outline-secondary ${dataFiguresCssClass}'
+                        onclick="location.href='/action/publication/${publication.zdbID}/all-figures?showDataOnly=true';"
+                >
+                    Figures with Data
+                </button>
+            </div>
         </div>
 
         <c:forEach var="figure" items="${figures}">
@@ -52,7 +75,7 @@
                         </div>
                     </c:if>
 
-                    <zfin-figure:phenotypeSummary summary="${phenotypeSummaryMap[figure]}" />
+                    <zfin-figure:phenotypeSummary summary="${phenotypeSummaryMap[figure]}"/>
 
                     <c:if test="${!empty phenotypeSummaryMap[figure].fish}">
                         <div style="margin-top: 1em;">

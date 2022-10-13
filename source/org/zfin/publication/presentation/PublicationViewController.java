@@ -49,6 +49,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 import static org.zfin.repository.RepositoryFactory.getFigureRepository;
@@ -522,6 +523,7 @@ public class PublicationViewController {
     @RequestMapping("/{pubID}/all-figures")
     public String showAllFigures(@PathVariable String pubID,
                                  @RequestParam(value = "probeZdbID", required = false) String probeZdbID,
+                                 @RequestParam(value = "showDataOnly", required = false) boolean showDataOnly,
                                  Model model) {
         Publication publication = publicationRepository.getPublication(pubID);
 
@@ -566,18 +568,34 @@ public class PublicationViewController {
 
         figures.sort(ComparatorCreator.orderBy("orderingLabel", "zdbID"));
 
-        model.addAttribute("figures", figures);
-        model.addAttribute("figureCaptions", figures.stream().map(Figure::getLabel).collect(toList()));
         model.addAttribute("submitters", getFigureRepository().getSubmitters(publication, probe));
         model.addAttribute("showThisseInSituLink", figureViewService.showThisseInSituLink(publication));
         model.addAttribute("showErrataAndNotes", figureViewService.showErrataAndNotes(publication));
 
         Map<Figure, FigureExpressionSummary> expressionSummaryMap = new HashMap<>();
         Map<Figure, FigurePhenotypeSummary> phenotypeSummaryMap = new HashMap<>();
-        for (Figure figure : figures) {
-            expressionSummaryMap.put(figure, figureViewService.getFigureExpressionSummary(figure));
-            phenotypeSummaryMap.put(figure, figureViewService.getFigurePhenotypeSummary(figure));
+        figures.forEach(figure -> {
+            FigureExpressionSummary figureExpressionSummary = figureViewService.getFigureExpressionSummary(figure);
+            FigurePhenotypeSummary figurePhenotypeSummary = figureViewService.getFigurePhenotypeSummary(figure);
+            if (figureExpressionSummary.isNotEmpty())
+                expressionSummaryMap.put(figure, figureExpressionSummary);
+            if (figurePhenotypeSummary.isNotEmpty())
+                phenotypeSummaryMap.put(figure, figurePhenotypeSummary);
+        });
+
+        List<Figure> figuresWithDataOnly = figures.stream()
+            .filter(figure -> (expressionSummaryMap.get(figure) != null && phenotypeSummaryMap.get(figure) != null))
+            .collect(Collectors.toList());
+        if (!showDataOnly) {
+            model.addAttribute("figures", figures);
+            model.addAttribute("figureCaptions", figures.stream().map(Figure::getLabel).collect(toList()));
+        }else {
+            model.addAttribute("figures", figuresWithDataOnly);
+            model.addAttribute("figureCaptions", figuresWithDataOnly.stream().map(Figure::getLabel).collect(toList()));
         }
+        model.addAttribute("showDataOnly", showDataOnly);
+        model.addAttribute("allFiguresCssClass", !showDataOnly ? "active" : "");
+        model.addAttribute("dataFiguresCssClass", showDataOnly ? "active" : "");
         model.addAttribute("expressionSummaryMap", expressionSummaryMap);
         model.addAttribute("phenotypeSummaryMap", phenotypeSummaryMap);
 
