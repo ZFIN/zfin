@@ -28,7 +28,7 @@ const PostComposedEntity = ({postComposedEntity}) => {
                 />
                 <a
                     className='popup-link data-popup-link'
-                    href={`/action/ontology/post-composed-term-detail-popup?superTermID=${postComposedEntity.superterm.oboID}+'&subTermID='+${postComposedEntity.subterm.oboID}`}
+                    href={`/action/ontology/post-composed-term-detail-popup?superTermID=${postComposedEntity.superterm.oboID}&subTermID=${postComposedEntity.subterm.oboID}`}
                 />
             </div>
         )
