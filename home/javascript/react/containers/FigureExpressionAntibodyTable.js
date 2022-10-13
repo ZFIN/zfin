@@ -33,7 +33,7 @@ const FigureExpressionAntibodyTable = ({figureId}) => {
                 <a
                     className='text-break'
                     href={`/${row.experiment.zdbID}`}
-                    dangerouslySetInnerHTML={{__html: row.experiment.name}}
+                    dangerouslySetInnerHTML={{__html: row.experiment.conditions}}
                 />
                 <a
                     className='popup-link data-popup-link'
