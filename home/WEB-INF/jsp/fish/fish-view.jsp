@@ -65,10 +65,10 @@
         </z:section>
 
         <z:section title="${PHENOTYPE}" infoPopup="/action/marker/note/phenotype">
-            <z:section title=" ">
-                <zfin2:all-phenotype phenotypeDisplays="${phenotypeDisplays}" fishAndCondition="true"
-                                     suppressMoDetails="true" secondColumn="condition"/>
-            </z:section>
+                <z:section title=" " hasData="${!empty phenotypeDisplays}">
+                    <zfin2:all-phenotype phenotypeDisplays="${phenotypeDisplays}" fishAndCondition="true"
+                                         suppressMoDetails="true" secondColumn="condition"/>
+                </z:section>
         </z:section>
 
         <z:section title="${CITATIONS}" infoPopup="/action/marker/note/citations">
