@@ -9,7 +9,7 @@
 <c:set var="COMPOSITION" value="Genotype Composition"/>
 <c:set var="CITATIONS" value="Citations"/>
 
-<z:dataPage sections="${[SUMMARY, NOTE, COMPOSITION, FISH, CITATIONS]}" additionalBodyClass="genotype-view">
+<z:dataPage sections="${[SUMMARY, NOTE, COMPOSITION, FISH, CITATIONS]}" additionalBodyClass="genotype-view nav-title-wrap">
 
 <jsp:attribute name="entityName">
         <zfin:name entity="${genotype}"/>
