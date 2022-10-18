@@ -584,7 +584,7 @@ public class PublicationViewController {
         });
 
         List<Figure> figuresWithDataOnly = figures.stream()
-            .filter(figure -> (expressionSummaryMap.get(figure) != null && phenotypeSummaryMap.get(figure) != null))
+            .filter(figure -> (expressionSummaryMap.get(figure) != null || phenotypeSummaryMap.get(figure) != null))
             .collect(Collectors.toList());
         if (!showDataOnly) {
             model.addAttribute("figures", figures);
