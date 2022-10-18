@@ -1,14 +1,15 @@
 package org.zfin.marker.service;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.*;
+import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.ActiveData;
@@ -267,6 +268,37 @@ public class MarkerService {
             }
         }
         return sp;
+    }
+
+    /**
+     * Get links for a marker given a display group for context.
+     * For example, ZDB-GENEP-161017-16 has related links to alliance, vega(OTTDARG00000044192), and ensembl (ENSDARG00000105749).
+     *
+     * @param marker
+     * @param group
+     * @return
+     */
+    public static List<LinkDisplay> getMarkerLinksForDisplayGroup(Marker marker, DisplayGroup.GroupName group, boolean addTranscriptDbLinks) {
+
+        List<LinkDisplay> links = markerRepository.getMarkerDBLinksFast(marker, group);
+        if ( group.equals(DisplayGroup.GroupName.OTHER_MARKER_PAGES) && addTranscriptDbLinks ) {
+            //pull vega genes from transcript onto gene page (case 7586)
+            links.addAll(markerRepository.getVegaGeneDBLinksTranscript(marker, DisplayGroup.GroupName.SUMMARY_PAGE));
+        }
+        return links;
+    }
+
+    /**
+     * Alias for the above method, but accepting strings instead of objects.
+     * @param markerId
+     * @param groupName
+     * @return
+     */
+    public static List<LinkDisplay> getMarkerLinksForDisplayGroup(String markerId, String groupName, boolean addTranscriptDbLinks) {
+        Marker marker = markerRepository.getMarkerByID(markerId);
+        DisplayGroup.GroupName group = DisplayGroup.GroupName.getGroup(groupName);
+
+        return getMarkerLinksForDisplayGroup(marker, group, addTranscriptDbLinks);
     }
 
 
@@ -612,6 +644,36 @@ public class MarkerService {
                                                            MarkerRelationshipType markerRelationshipType) {
         MarkerRelationship.Type type = MarkerRelationship.Type.getType(markerRelationshipType.getName());
         return addMarkerRelationship(firstMarker, secondMarker, publication.getZdbID(), type);
+    }
+
+    public static DBLink addMarkerLinkByAccession(Marker marker, String accessionNo, ReferenceDatabase refDB,
+                                                  List<String> referenceIDs, Integer length) throws InvalidWebRequestException {
+        DBLink link = null;
+
+        Collection<? extends DBLink> links = marker.getDbLinks();
+        if (CollectionUtils.isNotEmpty(links)) {
+            for (DBLink dbLink : marker.getDbLinks()) {
+                if (dbLink.getReferenceDatabase().equals(refDB) && dbLink.getAccessionNumber().equals(accessionNo)) {
+                    throw new InvalidWebRequestException("marker.link.duplicate");
+                }
+            }
+        }
+
+        Iterator<String> referenceIDsIterator = referenceIDs.iterator();
+        String pubId = referenceIDsIterator.next();
+
+        if (length == null) {
+            link = markerRepository.addDBLink(marker, accessionNo, refDB, pubId);
+        } else {
+            link = markerRepository.addDBLinkWithLenth(marker, accessionNo, refDB, pubId, length);
+        }
+
+        while (referenceIDsIterator.hasNext()) {
+            Publication publication = publicationRepository.getPublication(referenceIDsIterator.next());
+            markerRepository.addDBLinkAttribution(link, publication, marker);
+        }
+        
+        return link;
     }
 
 
@@ -1007,7 +1069,7 @@ public class MarkerService {
         markerBean.setHasMarkerHistory(markerRepository.getHasMarkerHistory(zdbID));
 
         // OTHER GENE / MARKER PAGES:
-        markerBean.setOtherMarkerPages(markerRepository.getMarkerDBLinksFast(marker, DisplayGroup.GroupName.SUMMARY_PAGE));
+        markerBean.setOtherMarkerPages(getMarkerLinksForDisplayGroup(marker, DisplayGroup.GroupName.SUMMARY_PAGE, true));
 
 
         // sequence info page

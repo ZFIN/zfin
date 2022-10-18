@@ -3,27 +3,16 @@ package org.zfin.marker.presentation;
 import org.zfin.publication.Publication;
 
 import java.util.Objects;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class MarkerReferenceBean {
 
     private String zdbID;
     private String title;
-
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
+    private String dataZdbID;
 
     public static MarkerReferenceBean convert(Publication publication) {
         MarkerReferenceBean bean = new MarkerReferenceBean();

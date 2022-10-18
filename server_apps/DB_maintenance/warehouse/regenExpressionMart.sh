@@ -50,16 +50,16 @@ endif
 
 # move the current table data to backup, move the new data to current.
 
-${PGBINDIR}/psql <!--|DB_NAME|--> < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/expressionMart/expressionMartRegen.sql
+${PGBINDIR}/psql -v ON_ERROR_STOP=1 <!--|DB_NAME|--> < <!--|ROOT_PATH|-->/server_apps/DB_maintenance/warehouse/expressionMart/expressionMartRegen.sql
 
 if ($? != 0) then
    echo "refresh expression mart (the public tables) failed and was rolled back";
 exit 1;
 endif
 
-echo "select regen_expression_term_fast_search()" | ${PGBINDIR}/psql $DBNAME;
+echo "select regen_expression_term_fast_search()" | ${PGBINDIR}/psql -v ON_ERROR_STOP=1 $DBNAME;
 
-echo "select regen_feature_term_fast_search()" | ${PGBINDIR}/psql $DBNAME;
+echo "select regen_feature_term_fast_search()" | ${PGBINDIR}/psql -v ON_ERROR_STOP=1 $DBNAME;
 
 echo "success" ;
 

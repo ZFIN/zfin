@@ -21,14 +21,14 @@ require ("<!--|ROOT_PATH|-->/server_apps/data_transfer/ORTHO/parseHumanData.pl")
 
 print "finished parsing and reporting, do updates.\n";
 try {
-  ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f loadAndUpdateNCBIOrthologs.sql");
+  ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> -a -f loadAndUpdateNCBIOrthologs.sql");
 } catch {
   warn "Failed to execute loadAndUpdateNCBIOrthologs.sql - $_";
   exit -1;
 };
 
 
-$cmd = "psql -d <!--|DB_NAME|--> -a -f loadHumanSynonyms.sql";
+$cmd = "psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> -a -f loadHumanSynonyms.sql";
 ;
  
 &doSystemCommand($cmd);

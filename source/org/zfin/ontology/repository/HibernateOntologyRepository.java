@@ -1,6 +1,6 @@
 package org.zfin.ontology.repository;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
@@ -1228,6 +1228,17 @@ public class HibernateOntologyRepository implements OntologyRepository {
     @Override
     public boolean termExists(String oboID) {
         return getTermByOboID(oboID) != null;
+    }
+
+    @Override
+    public GenericTerm getTermByZdbIDOrOboId(String termID) {
+        GenericTerm term = getTermByZdbID(termID);
+        if(term != null)
+            return term;
+        term = getTermByOboID(termID);
+        if(term != null)
+            return term;
+        return null;
     }
 
     private List<GenericTerm> filterTermsByOntology(List<GenericTerm> terms, Ontology ontology) {

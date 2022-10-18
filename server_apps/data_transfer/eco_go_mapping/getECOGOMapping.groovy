@@ -32,7 +32,7 @@ new File(OUTFILE).withWriter { outFile ->
     }
 }
 
-givePubsPermissions = ['/bin/bash', '-c', "${ZfinPropertiesEnum.PGBINDIR}/psql " +
+givePubsPermissions = ['/bin/bash', '-c', "${ZfinPropertiesEnum.PGBINDIR}/psql -v ON_ERROR_STOP=1 " +
         "${ZfinPropertiesEnum.DB_NAME} -f ${WORKING_DIR.absolutePath}/insert_eco_go_map.sql " +
         ">${WORKING_DIR.absolutePath}/loadSQLOutput.log 2> ${WORKING_DIR.absolutePath}/loadSQLError.log"].execute()
 givePubsPermissions.waitFor()

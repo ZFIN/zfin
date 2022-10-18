@@ -1,7 +1,7 @@
 package org.zfin.marker.repository;
 
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
@@ -1969,7 +1969,9 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
                 if (tuple.length > 11 && tuple[11] != null) {
                     reference.setTitle(tuple[11].toString());
-
+                }
+                if (tuple.length > 9 && tuple[9] != null) {
+                    reference.setDataZdbID(tuple[9].toString());
                 }
                 linkDisplay.addReference(reference);
             }
@@ -2000,12 +2002,13 @@ public class HibernateMarkerRepository implements MarkerRepository {
             Map<String, LinkDisplay> linkMap = new HashMap<>();
             for (Object o : list) {
                 LinkDisplay display = (LinkDisplay) o;
-                LinkDisplay displayStored = linkMap.get(display.getAccession());
+                String linkKey = display.getAccession() + ":" + display.getReferenceDatabaseZdbID();
+                LinkDisplay displayStored = linkMap.get(linkKey);
                 if (displayStored != null) {
                     displayStored.addReferences(display.getReferences());
-                    linkMap.put(displayStored.getAccession(), displayStored);
+                    linkMap.put(linkKey, displayStored);
                 } else {
-                    linkMap.put(display.getAccession(), display);
+                    linkMap.put(linkKey, display);
                 }
 
             }
@@ -2456,7 +2459,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     public List<LinkDisplay> getVegaGeneDBLinksTranscript(Marker gene, DisplayGroup.GroupName summaryPage) {
 
         if (!gene.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
-            log.error("method only to be used with GENEDOM: " + gene.toString());
+            log.error("method only to be used with GENEDOM: " + gene);
             return new ArrayList<>();
         }
 

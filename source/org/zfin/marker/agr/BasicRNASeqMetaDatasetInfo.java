@@ -3,7 +3,7 @@ package org.zfin.marker.agr;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.zfin.expression.HTPDataset;
 import org.zfin.publication.Publication;
 

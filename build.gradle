@@ -76,7 +76,7 @@ task loadDatabase() {
         println "Loading $unloadPath into $dbname"
         exec {
             ignoreExitValue = true
-            commandLine "bash", "-c", "echo 'select pg_terminate_backend(pg_stat_activity.pid) from pg_stat_activity where pid <> pg_backend_pid();' | psql $dbname"
+            commandLine "bash", "-c", "echo 'select pg_terminate_backend(pg_stat_activity.pid) from pg_stat_activity where pid <> pg_backend_pid();' | psql -v ON_ERROR_STOP=1 $dbname"
         }
         exec {
             ignoreExitValue = true
@@ -92,7 +92,7 @@ task loadDatabase() {
         }
         exec {
             ignoreExitValue = true
-            commandLine "bash", "-c", "echo 'vacuum (analyze)' | psql $dbname"
+            commandLine "bash", "-c", "echo 'vacuum (analyze)' | psql -v ON_ERROR_STOP=1 $dbname"
         }
 
     }
@@ -774,10 +774,29 @@ dependencies {
     implementation files('home/WEB-INF/lib/bbop.jar')
     implementation files('home/WEB-INF/lib/blast-serialization-1.0.jar')
     implementation files('home/WEB-INF/lib/text-table-formatter-1.0.jar')
+    implementation files('home/WEB-INF/lib/commons-collections4-4.4.jar')
+    implementation files('home/WEB-INF/lib/commons-lang3-3.1.jar')
     // maven reference does not have version 1.0, so using the plain jar file
     //implementation group: 'org.nocrala.tools.texttablefmt', name: 'text-table-formatter', version: '1.2.4'
     implementation files('lib/Java/hibernate-c3p0-5.6.5.Final.jar')
     implementation files('home/WEB-INF/lib/slf4j-api-1.7.26.jar')
+    implementation files('home/WEB-INF/lib/jstl-1.1.jar')
+    implementation files('home/WEB-INF/lib/jackson-core-2.13.0.rc1.jar')
+    implementation files('home/WEB-INF/lib/javax.persistence-api-2.2.jar')
+
+    implementation files('home/WEB-INF/lib/spring-context-4.2.2.RELEASE.jar')
+    implementation files('home/WEB-INF/lib/spring-context-support-4.2.2.RELEASE.jar')
+    implementation files('home/WEB-INF/lib/spring-core-4.2.2.RELEASE.jar')
+    implementation files('home/WEB-INF/lib/jackson-annotations-2.13.0-rc1.jar')
+    implementation files('home/WEB-INF/lib/jackson-databind-2.13.0-rc1.jar')
+    implementation files('home/WEB-INF/lib/jackson-datatype-jsr310-2.13.0.jar')
+    implementation files('home/WEB-INF/lib/jackson-datatype-jsr310-2.13.0.jar')
+    implementation files('home/WEB-INF/lib/log4j-api-2.17.1.jar')
+    implementation files('home/WEB-INF/lib/log4j-core-2.17.1.jar')
+    implementation files('home/WEB-INF/lib/log4j-web-2.17.1.jar')
+    implementation files('home/WEB-INF/lib/log4j-slf4j-impl-2.13.3.jar')
+
+
     implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.9.0'
 
     implementation group: 'net.sourceforge.htmlunit', name: 'htmlunit', version: '2.62.0'

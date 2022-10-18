@@ -1,6 +1,6 @@
 package org.zfin.sequence.repository;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -1255,6 +1255,15 @@ public class HibernateSequenceRepository implements SequenceRepository {
     @Override
     public Integer deleteUnitProtProteome() {
         return HibernateUtil.currentSession().createQuery("delete ReferenceProtein").executeUpdate();
+    }
+
+    @Override
+    public Integer deleteReferenceProteinByDBLinkID(String dbLinkID) {
+        Session session = HibernateUtil.currentSession();
+        String hql = "delete from ReferenceProtein rp where rp.uniprotAccession.zdbID = :dbLinkID";
+        Query query = session.createQuery(hql);
+        query.setParameter("dbLinkID", dbLinkID);
+        return query.executeUpdate();
     }
 }
 

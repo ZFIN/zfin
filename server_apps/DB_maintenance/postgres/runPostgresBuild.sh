@@ -15,7 +15,7 @@ sed 's/|/;/g' ${SOURCEROOT}/server_apps/DB_maintenance/postgres/nonKeyIndexes.sq
 
 echo "drop and recreate database in $DBNAME value" 
 
-if ${PGBINDIR}/psql -lqt | cut -d \| -f 1 | grep -qw ${DBNAME}; then
+if ${PGBINDIR}/psql -v ON_ERROR_STOP=1 -lqt | cut -d \| -f 1 | grep -qw ${DBNAME}; then
     ${PGBINDIR}/dropdb ${DBNAME}
 fi
 
@@ -67,7 +67,7 @@ cat /tmp/tables.xml ${SOURCEROOT}/server_apps/DB_maintenance/postgres/xmlFooter.
 cd ${SOURCEROOT}
 ant buildPostgresDatabase
 
-${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/add_monthly_average_curated_metric.sql
+${PGBINDIR}/psql -v ON_ERROR_STOP=1 -v ON_ERROR_STOP=1 ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/add_monthly_average_curated_metric.sql
 
 dumpLocation=/research/zunloads/databases/postgres_dumps/${DBNAME}
 echo "dumpLocation"
@@ -85,9 +85,9 @@ cd ${SOURCEROOT}
 ant addPostgresConstraints
 
 # generate serial id replacement sql file : reset.sql
-${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/resetSerialIds.sql > ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql
+${PGBINDIR}/psql -v ON_ERROR_STOP=1 ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/resetSerialIds.sql > ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql
 
-echo " SELECT SETVAL('accnum_sequence', COALESCE(MAX(za_sequence_number), 1) ) FROM zfin_accession_number;" | psql ${DBNAME}
+echo " SELECT SETVAL('accnum_sequence', COALESCE(MAX(za_sequence_number), 1) ) FROM zfin_accession_number;" | psql -v ON_ERROR_STOP=1 ${DBNAME}
 
 #remove header and summary from reset.sql so that we can run it directly and reset the sequences.
 
@@ -98,10 +98,10 @@ sed 's/-//g' ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql > ${SOU
 head -n -2 ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql > ${SOURCEROOT}/server_apps/DB_maintenance/postgres/temp.txt ; mv ${SOURCEROOT}/server_apps/DB_maintenance/postgres/temp.txt ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql
 
 # reset the sequence start values for all serial ids
-${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql
-${PGBINDIR}/psql ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/nonKeyIndexes.sql
+${PGBINDIR}/psql -v ON_ERROR_STOP=1 ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/reset.sql
+${PGBINDIR}/psql -v ON_ERROR_STOP=1 ${DBNAME} < ${SOURCEROOT}/server_apps/DB_maintenance/postgres/nonKeyIndexes.sql
 
-echo 'alter table fish_components alter column fc_fish_name type text' | psql ${DBNAME}
+echo 'alter table fish_components alter column fc_fish_name type text' | psql -v ON_ERROR_STOP=1 ${DBNAME}
 
 
 endTime=$(date)

@@ -6,6 +6,8 @@ use DBI;
 use XML::Twig;
 use utf8;
 use Try::Tiny;
+use lib "<!--|ROOT_PATH|-->/server_apps/";
+use ZFINPerlModules;
 
 $dbname = "<!--|DB_NAME|-->";
 $username = "";
@@ -92,7 +94,7 @@ $dbh->disconnect();
 close $AUTHOR;
 
 try {
-  system("psql -d <!--|DB_NAME|--> -a -f load_complete_author_names.sql");
+  ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> -a -f load_complete_author_names.sql");
 } catch {
   warn "Failed to execute load_complete_author_names.sql - $_";
   exit -1;

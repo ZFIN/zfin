@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+
+    <changeSet author="christian" id="ZFIN-7129">
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1136/supplement-data.csv"
+                  tableName="ensdarg_tt" encoding="UTF-8" quotchar='"'>
+            <column header="ENSDARG ID" name="ensdarg" type="String"/>
+            <column header="Gene Abbreviation" name="zfinid" type="String"/>
+        </loadData>
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1136/supplement-data1.csv"
+                  tableName="ensdarg_tt" encoding="UTF-8" quotchar='"'>
+            <column header="ENSDARG ID" name="ensdarg" type="String"/>
+            <column header="Gene Abbreviation" name="zfinid" type="String"/>
+        </loadData>
+    </changeSet>
+
+</databaseChangeLog>

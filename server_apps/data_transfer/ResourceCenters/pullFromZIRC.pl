@@ -180,7 +180,7 @@ $dbh->commit();
 $dbh->disconnect();
 
 try {
-  ZFINPerlModules->doSystemCommand("psql -d <!--|DB_NAME|--> -a -f syncFishOrderThisLinks.sql");
+  ZFINPerlModules->doSystemCommand("psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> -a -f syncFishOrderThisLinks.sql");
 } catch {
   warn "Failed to execute syncFishOrderThisLinks.sql - $_";
   exit -1;

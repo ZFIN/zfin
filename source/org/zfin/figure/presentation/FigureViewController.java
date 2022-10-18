@@ -20,6 +20,7 @@ import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
 
@@ -162,7 +163,7 @@ public class FigureViewController {
         model.addAttribute("showElsevierMessage", figureViewService.showElsevierMessage(publication));
         model.addAttribute("hasAcknowledgment", figureViewService.hasAcknowledgment(publication));
         model.addAttribute("showMultipleMediumSizedImages", figureViewService.showMultipleMediumSizedImages(publication));
-       // model.addAttribute("isZebrasharePub", figureViewService.isZebrasharePub(publication));
+        // model.addAttribute("isZebrasharePub", figureViewService.isZebrasharePub(publication));
         //for direct submission pubs, publication.getFigures() won't be correct and we'll need to do a query...
         List<Figure> figures = new ArrayList<>();
 
@@ -178,8 +179,7 @@ public class FigureViewController {
         }
         if (figureViewService.isZebrasharePub(publication)) {
             figures.addAll(publication.getFigures());
-        }
-        else {
+        } else {
             if (publication.isUnpublished()) {
                 if (!StringUtils.isEmpty(probeZdbID)) {
                     figures.addAll(figureRepository.getFiguresForDirectSubmissionPublication(publication, probe));
@@ -195,18 +195,25 @@ public class FigureViewController {
 
         Collections.sort(figures, ComparatorCreator.orderBy("orderingLabel", "zdbID"));
 
-        model.addAttribute("figures", figures);
-
         model.addAttribute("submitters", figureRepository.getSubmitters(publication, probe));
         model.addAttribute("showThisseInSituLink", figureViewService.showThisseInSituLink(publication));
         model.addAttribute("showErrataAndNotes", figureViewService.showErrataAndNotes(publication));
 
         Map<Figure, FigureExpressionSummary> expressionSummaryMap = new HashMap<>();
         Map<Figure, FigurePhenotypeSummary> phenotypeSummaryMap = new HashMap<>();
-        for (Figure figure : figures) {
-            expressionSummaryMap.put(figure, figureViewService.getFigureExpressionSummary(figure));
-            phenotypeSummaryMap.put(figure, figureViewService.getFigurePhenotypeSummary(figure));
-        }
+        figures.forEach(figure -> {
+            FigureExpressionSummary figureExpressionSummary = figureViewService.getFigureExpressionSummary(figure);
+            FigurePhenotypeSummary figurePhenotypeSummary = figureViewService.getFigurePhenotypeSummary(figure);
+            if (figureExpressionSummary.isNotEmpty())
+                expressionSummaryMap.put(figure, figureExpressionSummary);
+            if (figurePhenotypeSummary.isNotEmpty())
+                phenotypeSummaryMap.put(figure, figurePhenotypeSummary);
+        });
+
+        List<Figure> figuresWithDataOnly = figures.stream()
+            .filter(figure -> (expressionSummaryMap.get(figure) != null && phenotypeSummaryMap.get(figure) != null))
+            .collect(Collectors.toList());
+        model.addAttribute("figures", figures);
         model.addAttribute("expressionSummaryMap", expressionSummaryMap);
         model.addAttribute("phenotypeSummaryMap", phenotypeSummaryMap);
 

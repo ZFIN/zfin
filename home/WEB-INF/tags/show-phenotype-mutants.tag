@@ -44,8 +44,8 @@
                                                  integerEntity="${genoStat.numberOfFigures}" includeNumber="true"/></a>
                             </c:if>
                             <c:if test="${genoStat.numberOfFigures == 1 }">
-                                <a href="/${genoStat.figure.zdbID}">
-                                    <zfin2:figureOrTextOnlyLink figure="${genoStat.figure}"
+                                <a href="/${genoStat.firstFigure.zdbID}">
+                                    <zfin2:figureOrTextOnlyLink figure="${genoStat.firstFigure}"
                                                                 integerEntity="${genoStat.numberOfFigures}"/>
                                 </a>
                             </c:if>
@@ -53,7 +53,7 @@
                         <c:if test="${genoStat.numberOfFigures == 0}">
                             --
                         </c:if>
-                        <zfin2:showCameraIcon hasImage="${genoStat.imgInFigure}"/> from
+                        <zfin2:showCameraIcon hasImage="${genoStat.imgInFigure}"/> from ${genoStat.publicationSet.size()}
                         <c:if test="${genoStat.publicationSet.size() ==1 }">
                             <zfin:link entity="${genoStat.publicationSet.iterator().next()}"/>
                         </c:if>

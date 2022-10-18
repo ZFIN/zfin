@@ -360,4 +360,6 @@ public interface OntologyRepository {
     List<GenericTerm> getGORibbonCellularComponentTerms();
 
     boolean termExists(String id);
+
+    GenericTerm getTermByZdbIDOrOboId(String termID);
 }

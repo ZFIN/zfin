@@ -8,7 +8,8 @@
 
 use MIME::Lite;
 use DBI;
-
+use lib "<!--|ROOT_PATH|-->/server_apps/";
+use ZFINPerlModules;
 
 ### set environment variables
 $ENV{"INFORMIXSQLHOSTS"}="<!--|INFORMIX_DIR|-->/etc/<!--|SQLHOSTS_FILE|-->";
@@ -332,7 +333,7 @@ print "\n ctOutSmith: $ctOutSmith \t ctOutJohson: $ctOutJohson\t ctOutTalbot: $c
 
 if ($ctNew > 0) {
   try {
-    system( "psql -d <!--|DB_NAME|--> -a -f loadNewSNPs.sql > newSNPs.report.txt 2> loadDbSNPlog.txt" );
+    ZFINPerlModules->doSystemCommand( "psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> -a -f loadNewSNPs.sql > newSNPs.report.txt 2> loadDbSNPlog.txt" );
   } catch {
     &emailError("failed to load snp_download table");
     warn "Failed to execute loadNewSNPs.sql - $_";
@@ -458,7 +459,7 @@ print "\n ctJohson = $ctJohson \t ctSmith = $ctSmith \t ctTalbot: $ctTalbot \n\n
 
 if ($ctNew2 > 0) {
   try {
-    system( "psql -d <!--|DB_NAME|--> -a -f loadNewSNPAttrs.sql > newSNPattribution.report.txt 2> loadDbSNPlog2.txt" );
+    ZFINPerlModules->doSystemCommand( "psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> -a -f loadNewSNPAttrs.sql > newSNPattribution.report.txt 2> loadDbSNPlog2.txt" );
   } catch {
     &emailError("failed to load snp_download_attribution table");
     warn "Failed to execute loadNewSNPAttrs.sql - $_";
@@ -469,7 +470,7 @@ if ($ctNew2 > 0) {
 
 if ($ctNew3 > 0) {
   try {
-    system( "psql -d <!--|DB_NAME|--> -a -f addTalbotSNPAttr.sql > talbotAttribution.report.txt 2> loadDbSNPlog3.txt" );
+    ZFINPerlModules->doSystemCommand( "psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> -a -f addTalbotSNPAttr.sql > talbotAttribution.report.txt 2> loadDbSNPlog3.txt" );
   } catch {
     &emailError("failed to insert record_attribution table");
     warn "Failed to execute addTalbotSNPAttr.sql - $_";

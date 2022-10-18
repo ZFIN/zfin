@@ -1,7 +1,7 @@
 package org.zfin.ontology;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Image;
