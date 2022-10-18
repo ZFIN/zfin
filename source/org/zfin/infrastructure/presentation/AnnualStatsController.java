@@ -28,8 +28,6 @@ public class AnnualStatsController {
 
         // go through all years and determine the key dates that are used to calculate a year's stats
         for (int indexYear = 1997; indexYear < currentYear + 1; indexYear++) {
-            if (indexYear == 2015)
-                continue;
             for (Date date : dates) {
                 if (isEndOfThisYear(indexYear, date)) {
                     keyDates.add(date);
