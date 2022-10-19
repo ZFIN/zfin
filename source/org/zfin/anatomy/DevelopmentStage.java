@@ -1,6 +1,8 @@
 package org.zfin.anatomy;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Parameter;
@@ -13,6 +15,8 @@ import java.util.Objects;
 @Entity
 @Table(name = "STAGE")
 @Immutable
+@Setter
+@Getter
 public class DevelopmentStage implements Serializable, Comparable<DevelopmentStage> {
 
     public static final String ZYGOTE_STAGE = "Zygote:1-cell";
@@ -67,78 +71,6 @@ public class DevelopmentStage implements Serializable, Comparable<DevelopmentSta
     public static final String NEWLINE_PLUS_INDENT = System.getProperty("line.separator") + "    ";
 
 
-    public long getStageID() {
-        return stageID;
-    }
-
-    public void setStageID(long stageID) {
-        this.stageID = stageID;
-    }
-
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getNameLong() {
-        return nameLong;
-    }
-
-    public void setNameLong(String nameLong) {
-        this.nameLong = nameLong;
-    }
-
-    public float getHoursStart() {
-        return hoursStart;
-    }
-
-    public void setHoursStart(float hoursStart) {
-        this.hoursStart = hoursStart;
-    }
-
-    public float getHoursEnd() {
-        return hoursEnd;
-    }
-
-    public void setHoursEnd(float hoursEnd) {
-        this.hoursEnd = hoursEnd;
-    }
-
-    public String getOtherFeature() {
-        return otherFeature;
-    }
-
-    public void setOtherFeature(String otherFeature) {
-        this.otherFeature = otherFeature;
-    }
-
-    public String getAbbreviation() {
-        return abbreviation;
-    }
-
-    public void setAbbreviation(String abbreviation) {
-        this.abbreviation = abbreviation;
-    }
-
-    public String getOboID() {
-        return oboID;
-    }
-
-    public void setOboID(String oboID) {
-        this.oboID = oboID;
-    }
-
     /**
      * The name of a stage is a concatenation of a short name and an additional description.
      *
@@ -155,14 +87,6 @@ public class DevelopmentStage implements Serializable, Comparable<DevelopmentSta
         }
 
         return name.substring(0, colonIndex);
-    }
-
-    public String getTimeString() {
-        return timeString;
-    }
-
-    public void setTimeString(String timeString) {
-        this.timeString = timeString;
     }
 
     /**
