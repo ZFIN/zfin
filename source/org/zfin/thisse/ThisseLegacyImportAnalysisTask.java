@@ -39,6 +39,8 @@ public class ThisseLegacyImportAnalysisTask extends AbstractScriptWrapper {
         setReportMatchesForCloneByCloneAlias();
         setReportMatchesForGeneByName();
         setReportMatchesForGeneByAlias();
+        setReportMatchesForGeneBySequence();
+        setReportMatchesForCloneBySequence();
         exportReport();
         transaction.commit();
     }
@@ -88,7 +90,8 @@ public class ThisseLegacyImportAnalysisTask extends AbstractScriptWrapper {
             WHERE
                 thisse.temp_thisse_report.count = subquery.count
             """;
-        HibernateUtil.currentSession().createNativeQuery(sql).executeUpdate();
+        int numberOfUpdates = HibernateUtil.currentSession().createNativeQuery(sql).executeUpdate();
+        System.out.println("Number Matched Gene on ZFIN ID: " + numberOfUpdates);
     }
 
     private void setReportMatchesForGeneByReplacedZdbID() {
@@ -116,7 +119,8 @@ public class ThisseLegacyImportAnalysisTask extends AbstractScriptWrapper {
             WHERE
                 thisse.temp_thisse_report.count = subquery.count
             """;
-        HibernateUtil.currentSession().createNativeQuery(sql).executeUpdate();
+        int numberOfUpdates = HibernateUtil.currentSession().createNativeQuery(sql).executeUpdate();
+        System.out.println("Number Matched Gene on Merged ZFIN ID: " + numberOfUpdates);
     }
 
     private void markRowsWithZdbIDWithoutMatch() {
@@ -129,7 +133,8 @@ public class ThisseLegacyImportAnalysisTask extends AbstractScriptWrapper {
                     zfin_page <> ''
                     AND zgene_zdb_id = ''
                 """;
-        HibernateUtil.currentSession().createNativeQuery(sql).executeUpdate();
+        int numberOfUpdates = HibernateUtil.currentSession().createNativeQuery(sql).executeUpdate();
+        System.out.println("Number of rows in Thisse data with ZFIN ID that has no match: " + numberOfUpdates);
     }
 
     private void setReportMatchesForCloneByZdbIDAndCloneName() {
@@ -153,7 +158,8 @@ public class ThisseLegacyImportAnalysisTask extends AbstractScriptWrapper {
             WHERE
                 thisse.temp_thisse_report.count = subquery.count
             """;
-        HibernateUtil.currentSession().createNativeQuery(sql).executeUpdate();
+        int numberOfUpdates = HibernateUtil.currentSession().createNativeQuery(sql).executeUpdate();
+        System.out.println("Number Matched on feature/marker relationship using GENE ID and Clone Name: " + numberOfUpdates);
     }
 
     private void setReportMatchesForCloneByZdbIDAndAlias() {
@@ -178,7 +184,8 @@ public class ThisseLegacyImportAnalysisTask extends AbstractScriptWrapper {
             WHERE
                 thisse.temp_thisse_report.count = subquery.count
             """;
-        HibernateUtil.currentSession().createNativeQuery(sql).executeUpdate();
+        int numberOfUpdates = HibernateUtil.currentSession().createNativeQuery(sql).executeUpdate();
+        System.out.println("Number Matched on feature/marker relationship using GENE ID and Clone Alias: " + numberOfUpdates);
     }
 
     private void setReportMatchesForCloneByCloneName() {
@@ -208,7 +215,8 @@ public class ThisseLegacyImportAnalysisTask extends AbstractScriptWrapper {
                 WHERE
                     thisse.temp_thisse_report.count = subquery.count
                 """;
-        HibernateUtil.currentSession().createSQLQuery(sql).executeUpdate();
+        int numberOfUpdates = HibernateUtil.currentSession().createNativeQuery(sql).executeUpdate();
+        System.out.println("Number Matched on Clone Name: " + numberOfUpdates);
     }
 
     private void setReportMatchesForCloneByCloneAlias() {
@@ -238,7 +246,8 @@ public class ThisseLegacyImportAnalysisTask extends AbstractScriptWrapper {
                 WHERE
                     thisse.temp_thisse_report.count = subquery.count
             """;
-        HibernateUtil.currentSession().createSQLQuery(sql).executeUpdate();
+        int numberOfUpdates = HibernateUtil.currentSession().createNativeQuery(sql).executeUpdate();
+        System.out.println("Number Matched on Clone Alias: " + numberOfUpdates);
     }
 
     private void setReportMatchesForGeneByName() {
@@ -267,7 +276,8 @@ public class ThisseLegacyImportAnalysisTask extends AbstractScriptWrapper {
                 WHERE
                     thisse.temp_thisse_report.count = subquery.count
                 """;
-        HibernateUtil.currentSession().createSQLQuery(sql).executeUpdate();
+        int numberOfUpdates = HibernateUtil.currentSession().createNativeQuery(sql).executeUpdate();
+        System.out.println("Number Matched on Gene Name: " + numberOfUpdates);
     }
 
     private void setReportMatchesForGeneByAlias() {
@@ -297,7 +307,68 @@ public class ThisseLegacyImportAnalysisTask extends AbstractScriptWrapper {
                 WHERE
                 		thisse.temp_thisse_report.count = subquery.count
                 """;
-        HibernateUtil.currentSession().createSQLQuery(sql).executeUpdate();
+        int numberOfUpdates = HibernateUtil.currentSession().createNativeQuery(sql).executeUpdate();
+        System.out.println("Number Matched on Gene Alias: " + numberOfUpdates);
+    }
+
+    private void setReportMatchesForGeneBySequence() {
+        String sql = """
+                WITH subquery AS (
+                    SELECT
+                        tr.count,
+                        m.mrkr_abbrev,
+                        m.mrkr_zdb_id
+                    FROM
+                        thisse.temp_thisse_report tr
+                        LEFT JOIN db_link d ON tr.sequence = d.dblink_acc_num
+                        LEFT JOIN marker m ON d.dblink_linked_recid = m.mrkr_zdb_id
+                        LEFT JOIN marker_type_group_member mtgm ON m.mrkr_type = mtgm.mtgrpmem_mrkr_type
+                    WHERE
+                        mtgrpmem_mrkr_type_group = 'GENE'
+                        AND zgene_name = '')
+                UPDATE
+                		thisse.temp_thisse_report
+                SET
+                		zgene_zdb_id = subquery.mrkr_zdb_id,
+                		zgene_name = subquery.mrkr_abbrev,
+                		zgene_match_method = 'GENE_SEQUENCE'
+                FROM
+                		subquery
+                WHERE
+                		thisse.temp_thisse_report.count = subquery.count
+                """;
+        int numberOfUpdates = HibernateUtil.currentSession().createNativeQuery(sql).executeUpdate();
+        System.out.println("Number Matched on Gene by Sequence: " + numberOfUpdates);
+    }
+
+    private void setReportMatchesForCloneBySequence() {
+        String sql = """
+                WITH subquery AS (
+                    SELECT
+                        tr.count,
+                        m.mrkr_abbrev,
+                        m.mrkr_zdb_id
+                    FROM
+                        thisse.temp_thisse_report tr
+                        LEFT JOIN db_link d ON tr.sequence = d.dblink_acc_num
+                        LEFT JOIN marker m ON d.dblink_linked_recid = m.mrkr_zdb_id
+                        LEFT JOIN marker_type_group_member mtgm ON m.mrkr_type = mtgm.mtgrpmem_mrkr_type
+                    WHERE
+                        mtgrpmem_mrkr_type_group = 'CLONEDOM'
+                        AND zclone_name = '')
+                UPDATE
+                		thisse.temp_thisse_report
+                SET
+                		zclone_zdb_id = subquery.mrkr_zdb_id,
+                		zclone_name = subquery.mrkr_abbrev,
+                		zclone_match_method = 'CLONE_SEQUENCE'
+                FROM
+                		subquery
+                WHERE
+                		thisse.temp_thisse_report.count = subquery.count
+                """;
+        int numberOfUpdates = HibernateUtil.currentSession().createNativeQuery(sql).executeUpdate();
+        System.out.println("Number Matched on Clone by Sequence: " + numberOfUpdates);
     }
 
     private void exportReport() throws IOException {
