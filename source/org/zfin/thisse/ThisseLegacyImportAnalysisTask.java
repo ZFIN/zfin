@@ -41,6 +41,7 @@ public class ThisseLegacyImportAnalysisTask extends AbstractScriptWrapper {
         setReportMatchesForGeneByAlias();
         setReportMatchesForGeneBySequence();
         setReportMatchesForCloneBySequence();
+        setGeneMismatchFlag();
         exportReport();
         transaction.commit();
     }
@@ -369,6 +370,32 @@ public class ThisseLegacyImportAnalysisTask extends AbstractScriptWrapper {
                 """;
         int numberOfUpdates = HibernateUtil.currentSession().createNativeQuery(sql).executeUpdate();
         System.out.println("Number Matched on Clone by Sequence: " + numberOfUpdates);
+    }
+
+    private void setGeneMismatchFlag() {
+        String sql = """
+                WITH subquery AS (
+                    SELECT
+                        tr.count,
+                        m.mrkr_abbrev,
+                        m.mrkr_zdb_id
+                    FROM
+                        thisse.temp_thisse_report tr
+                        LEFT JOIN marker_relationship mr ON tr.zclone_zdb_id = mr.mrel_mrkr_2_zdb_id
+                        LEFT JOIN marker m ON mr.mrel_mrkr_1_zdb_id = m.mrkr_zdb_id
+                    WHERE
+                        m.mrkr_zdb_id <> tr.zgene_zdb_id)
+                UPDATE
+                		thisse.temp_thisse_report
+                SET
+                        zflags = trim(zflags || ' POSSIBLE_GENE_ZDB_MISMATCH:(' || zgene_name || '/' || zgene_zdb_id || ') vs (' || subquery.mrkr_abbrev || '/' || subquery.mrkr_zdb_id || ')')                       \s
+                FROM
+                		subquery
+                WHERE
+                		thisse.temp_thisse_report.count = subquery.count
+                """;
+        int numberOfUpdates = HibernateUtil.currentSession().createNativeQuery(sql).executeUpdate();
+        System.out.println("Number Flagged as Possible Gene Mismatch: " + numberOfUpdates);
     }
 
     private void exportReport() throws IOException {
