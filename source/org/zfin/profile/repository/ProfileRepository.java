@@ -217,10 +217,6 @@ public interface ProfileRepository {
 
     PaginationResult<Person> searchPeople(PersonSearchBean searchBean);
 
-    List<String> getSuppliedDataIds(Organization organization);
-
-    List<String> getSourcedDataIds(Organization organization);
-
     List<String> getDistributionList();
 
     List<String> getPiDistributionList();
