@@ -2,6 +2,7 @@
 <%@ page import="org.zfin.framework.featureflag.FeatureFlagEnum" %>
 
 <z:section title="About ZFIN">
+    <!-- Example Feature Flag Use -->
     <c:if test="${zfn:isFlagEnabled(FeatureFlagEnum.CURATOR_JOB_POSTING)}">
         <p class="lead">
             <a href="https://zfin.atlassian.net/wiki/spaces/jobs/pages/2996503058/ZFIN+Jobs">
