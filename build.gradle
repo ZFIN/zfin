@@ -784,13 +784,6 @@ dependencies {
     implementation files('home/WEB-INF/lib/jackson-core-2.13.0.rc1.jar')
     implementation files('home/WEB-INF/lib/javax.persistence-api-2.2.jar')
 
-    implementation files('home/WEB-INF/lib/spring-context-4.2.2.RELEASE.jar')
-    implementation files('home/WEB-INF/lib/spring-context-support-4.2.2.RELEASE.jar')
-    implementation files('home/WEB-INF/lib/spring-core-4.2.2.RELEASE.jar')
-    implementation files('home/WEB-INF/lib/jackson-annotations-2.13.0-rc1.jar')
-    implementation files('home/WEB-INF/lib/jackson-databind-2.13.0-rc1.jar')
-    implementation files('home/WEB-INF/lib/jackson-datatype-jsr310-2.13.0.jar')
-    implementation files('home/WEB-INF/lib/jackson-datatype-jsr310-2.13.0.jar')
     implementation files('home/WEB-INF/lib/log4j-api-2.17.1.jar')
     implementation files('home/WEB-INF/lib/log4j-core-2.17.1.jar')
     implementation files('home/WEB-INF/lib/log4j-web-2.17.1.jar')
