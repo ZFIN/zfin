@@ -57,13 +57,12 @@ public class StudentMetricsJob extends AbstractValidateDataReportTask {
 
     private void runReport() {
         Person jaime = getProfileRepository().getPerson("ZDB-PERS-220425-1");
-        Person kaia = getProfileRepository().getPerson("ZDB-PERS-201217-1");
+        Person emilia = getProfileRepository().getPerson("ZDB-PERS-221004-4");
         PublicationTrackingStatus readyForIndexing = getPublicationRepository().getPublicationTrackingStatus(2);
         PublicationTrackingStatus manualPdfAcquisition = getPublicationRepository().getPublicationTrackingStatus(22);
         List<PublicationTrackingStatus> allStatused = getPublicationRepository().getAllPublicationStatuses();
         List<PublicationTrackingStatus> closed = allStatused.stream()
-                .filter(stat -> stat.getType().equals(PublicationTrackingStatus.Type.CLOSED))
-                .collect(Collectors.toList());
+            .filter(stat -> stat.getType().equals(PublicationTrackingStatus.Type.CLOSED)).toList();
 
         ReportGenerator stats = new ReportGenerator();
         stats.setReportTitle("Report for " + jobName);
@@ -77,13 +76,13 @@ public class StudentMetricsJob extends AbstractValidateDataReportTask {
         summary.put("number of pubs closed",
                 getPublicationRepository().getPublicationTrackingStatus(jaime, 7, closed.toArray(PublicationTrackingStatus[]::new)));
         summary.put("","");
-        summary.put("Stats for Kaia","");
-        summary.put("Kaia: Number of Pubs moved to Ready-For-Indexing",
-                getPublicationRepository().getPublicationTrackingStatus(kaia, 7, readyForIndexing));
-        summary.put("Kaia: number of pubs transitioned to ‘manual pdf acquisition",
-                getPublicationRepository().getPublicationTrackingStatus(kaia, 7, manualPdfAcquisition));
-        summary.put("Kaia: number of pubs closed",
-                getPublicationRepository().getPublicationTrackingStatus(kaia, 7, closed.toArray(PublicationTrackingStatus[]::new)));
+        summary.put("Stats for Emilia","");
+        summary.put("Emilia: Number of Pubs moved to Ready-For-Indexing",
+                getPublicationRepository().getPublicationTrackingStatus(emilia, 7, readyForIndexing));
+        summary.put("Emilia: number of pubs transitioned to ‘manual pdf acquisition",
+                getPublicationRepository().getPublicationTrackingStatus(emilia, 7, manualPdfAcquisition));
+        summary.put("Emilia: number of pubs closed",
+                getPublicationRepository().getPublicationTrackingStatus(emilia, 7, closed.toArray(PublicationTrackingStatus[]::new)));
         stats.addSummaryTable("Statistics", summary);
         stats.writeFiles(new File(dataDirectory, jobName), "statistics");
     }
