@@ -15,8 +15,8 @@ apply from: 'console.gradle'
 
 //apply from: file('setupTestsReports.gradle')
 
-sourceCompatibility = 14
-targetCompatibility = 14
+sourceCompatibility = 15
+targetCompatibility = 15
 
 //apply from : '../zfinGradle/build.gradle'
 
