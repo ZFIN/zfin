@@ -46,3 +46,8 @@ task cleanMarkerGoTermEvidenceDuplicatesTask(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.mutant.MarkerGoTermEvidenceCleanupTask'
 }
+
+task thisseLegacyImportAnalysisTask(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.thisse.ThisseLegacyImportAnalysisTask'
+}

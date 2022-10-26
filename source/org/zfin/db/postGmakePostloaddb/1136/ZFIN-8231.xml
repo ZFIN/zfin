@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+
+    <changeSet author="rtaylor" id="ZFIN-8231">
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1136/ZFIN-8231-filemaker-export-database-plates-march2017.csv"
+                  schemaName="thisse"
+                  tableName="thisse_plates_march17" encoding="UTF-8" quotchar='"'>
+            <column header="count" name="count" type="String"/>
+            <column header="Clone name" name="clone_name" type="String"/>
+            <column header="Original name" name="original_name" type="String"/>
+            <column header="Stars" name="stars" type="String"/>
+            <column header="Gene name" name="gene_name" type="String"/>
+            <column header="Gene code" name="gene_code" type="String"/>
+            <column header="sequence #" name="sequence" type="String"/>
+            <column header="size" name="size" type="String"/>
+            <column header="sending" name="sending" type="String"/>
+            <column header="pattern" name="pattern" type="String"/>
+            <column header="plate1" name="plate1" type="String"/>
+            <column header="plate2" name="plate2" type="String"/>
+            <column header="plates" name="plates" type="String"/>
+            <column header="marker" name="marker" type="String"/>
+            <column header="ZFIN full name" name="zfin_name" type="String"/>
+            <column header="zfin page #" name="zfin_page" type="String"/>
+            <column header="Morpholino" name="morpholino" type="String"/>
+            <column header="Top BLAST" name="top_blast" type="String"/>
+            <column header="test" name="test" type="String"/>
+            <column header="GO component" name="go_component" type="String"/>
+            <column header="GO function" name="go_function" type="String"/>
+            <column header="GO process" name="go_process" type="String"/>
+            <column header="plate1data" name="plate1data" type="String"/>
+            <column header="plate2data" name="plate2data" type="String"/>
+            <column header="plate1filename" name="plate1filename" type="String"/>
+            <column header="plate2filename" name="plate2filename" type="String"/>
+        </loadData>
+
+    </changeSet>
+
+</databaseChangeLog>

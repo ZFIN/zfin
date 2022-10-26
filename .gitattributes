@@ -970,6 +970,7 @@
 /source/org/zfin/db/postGmakePostloaddb/1133/ZFIN-7812-01-clone-agp-grcz11.csv filter=lfs diff=lfs merge=lfs -text
 /source/org/zfin/db/postGmakePostloaddb/1133/ZFIN-7812-03-sfclg-agp-rows.csv filter=lfs diff=lfs merge=lfs -text
 /source/org/zfin/db/postGmakePostloaddb/1136/ZFIN-8191-01-record-attribution-fixes.csv filter=lfs diff=lfs merge=lfs -text
+/source/org/zfin/db/postGmakePostloaddb/1136/ZFIN-8231-filemaker-export-database-plates-march2017.csv filter=lfs diff=lfs merge=lfs -text
 /test/ontologies/data-transfer/ANATOMY-lookup.ser filter=lfs diff=lfs merge=lfs -text
 /test/ontologies/data-transfer/GO_BP-lookup.ser filter=lfs diff=lfs merge=lfs -text
 /test/ontologies/data-transfer/GO_CC-lookup.ser filter=lfs diff=lfs merge=lfs -text
