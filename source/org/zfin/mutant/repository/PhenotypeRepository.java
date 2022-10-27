@@ -9,7 +9,6 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.presentation.FigureLink;
 import org.zfin.publication.presentation.PublicationLink;
 
-import java.math.BigInteger;
 import java.util.List;
 
 /**
@@ -24,8 +23,8 @@ public interface PhenotypeRepository {
      * @return list of annotations term dtos
      */
     public List<PhenotypeStructure> retrievePhenotypeStructures(String publicationID);
-    public PhenotypeWarehouse getPhenotypeWarehouseBySourceID(String psgID);
 
+    public PhenotypeWarehouse getPhenotypeWarehouseBySourceID(String psgID);
 
 
     /**
@@ -81,18 +80,19 @@ public interface PhenotypeRepository {
 
     /**
      * Chek if there are any mutant expression records available.
+     *
      * @param publicationID
      * @return
      */
     boolean hasMutantExpressions(String publicationID);
 
-        /**
-         * Retrieve phenotype experiment record from the unique key
-         *
-         * @param phenotypeExperimentFilter phenotype experiment:
-         *                                  unique figure, stage, genotype, environment
-         * @return full mutant figure stage record
-         */
+    /**
+     * Retrieve phenotype experiment record from the unique key
+     *
+     * @param phenotypeExperimentFilter phenotype experiment:
+     *                                  unique figure, stage, genotype, environment
+     * @return full mutant figure stage record
+     */
     PhenotypeExperiment getPhenotypeExperiment(PhenotypeExperiment phenotypeExperimentFilter);
 
     /**
@@ -117,7 +117,8 @@ public interface PhenotypeRepository {
      * @return set of phenotypes
      */
     List<PhenotypeExperiment> getAllPhenotypes(String publicationID);
-     List<PhenotypeExperiment> getPhenoByExperimentID(String experimentID);
+
+    List<PhenotypeExperiment> getPhenoByExperimentID(String experimentID);
 
     /**
      * Create the Phenotype pile structure pile if it does not already exist.
@@ -217,6 +218,7 @@ public interface PhenotypeRepository {
 
     /**
      * Retrieve phenotype statement for a given figure and fish.
+     *
      * @param figure figure
      * @param fishID fish ID
      * @return list of phenotype statements
@@ -225,6 +227,7 @@ public interface PhenotypeRepository {
 
     /**
      * Retrieve phenotype figures for a given genotype.
+     *
      * @param genotype genotype
      * @return list of figures
      */
@@ -232,6 +235,7 @@ public interface PhenotypeRepository {
 
     /**
      * Retrieve phenotype figures for a given fish.
+     *
      * @param fish fish
      * @return list of figures
      */
@@ -239,7 +243,8 @@ public interface PhenotypeRepository {
 
     /**
      * Retrieve phenotype statement for a given figure and genotype.
-     * @param figure figure
+     *
+     * @param figure   figure
      * @param genotype genotype
      * @return list of phenotype statements
      */
@@ -251,6 +256,7 @@ public interface PhenotypeRepository {
 
     /**
      * Retrieve Disease models by publication
+     *
      * @param publicationID
      * @return
      */
@@ -258,27 +264,31 @@ public interface PhenotypeRepository {
 
     /**
      * Retrieve disease model list by fish id.
+     *
      * @param zdbID
      * @return
      */
     List<DiseaseAnnotationModel> getHumanDiseaseModelsByFish(String zdbID);
+
     List<DiseaseAnnotationModel> getHumanDiseaseModelsByExperiment(String exptID);
 
 
     /**
      * Retrieve disease models by disease
+     *
      * @param disease
      * @return
      */
     //List<DiseaseAnnotation> getHumanDiseaseModels(GenericTerm disease);
-    List<DiseaseAnnotationModel> getHumanDiseaseModels(GenericTerm disease);
+    List<DiseaseAnnotationModel> getHumanDiseaseModels(GenericTerm disease, boolean includeChildren);
 
     /**
      * Retrieve phenotype statements (clean and dirty) for a given sequence targeting reagent.
+     *
      * @param sequenceTargetingReagent
      * @return list of phenotype statements
      */
-    List<PhenotypeStatementWarehouse> getAllPhenotypeStatementsForSTR (SequenceTargetingReagent sequenceTargetingReagent);
+    List<PhenotypeStatementWarehouse> getAllPhenotypeStatementsForSTR(SequenceTargetingReagent sequenceTargetingReagent);
 
     List<PhenotypeWarehouse> getPhenotypeWarehouse(String figureID);
 
@@ -287,7 +297,7 @@ public interface PhenotypeRepository {
      *
      * @return status
      */
-     ZdbFlag getPhenoMartStatus();
+    ZdbFlag getPhenoMartStatus();
 
     List<DiseaseAnnotationModel> getHumanDiseaseModelsByFish(String entityID, String publicationID);
 
@@ -295,6 +305,7 @@ public interface PhenotypeRepository {
 
     /**
      * Retrieve disease models by gene
+     *
      * @param gene
      * @return
      */
