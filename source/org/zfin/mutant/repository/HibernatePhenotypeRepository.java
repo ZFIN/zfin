@@ -907,19 +907,35 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
 
     @Override
 
-    public List<DiseaseAnnotationModel> getHumanDiseaseModels(GenericTerm disease) {
-        String hql = "select damo  from DiseaseAnnotationModel damo  " +
-                "left join fetch damo.fishExperiment fx " +
-                "left join fetch fx.experiment exp " +
-                "left join fetch fx.fish " +
-                "left join fetch exp.experimentConditions " +
-                "left join fetch damo.diseaseAnnotation da " +
-                "left join fetch da.publication " +
-                "where " +
-                "damo.diseaseAnnotation.disease = :disease";
-        Query query = HibernateUtil.currentSession().createQuery(hql);
+    public List<DiseaseAnnotationModel> getHumanDiseaseModels(GenericTerm disease, boolean includeChildren) {
+        String hql = """
+                select damo  from DiseaseAnnotationModel damo
+                left join fetch damo.fishExperiment fx
+                left join fetch fx.experiment exp
+                left join fetch fx.fish
+                left join fetch exp.experimentConditions
+                left join fetch damo.diseaseAnnotation da
+                left join fetch da.publication
+                where
+                damo.diseaseAnnotation.disease = :disease
+                """;
+        if(includeChildren){
+            hql = """
+                select damo  from DiseaseAnnotationModel damo, TransitiveClosure tc
+                left join fetch damo.fishExperiment fx
+                left join fetch fx.experiment exp
+                left join fetch fx.fish
+                left join fetch exp.experimentConditions
+                left join fetch damo.diseaseAnnotation da
+                left join fetch da.publication
+                where
+                damo.diseaseAnnotation.disease = tc.child AND
+                tc.root = :disease
+                """;
+        }
+        Query<DiseaseAnnotationModel> query = HibernateUtil.currentSession().createQuery(hql, DiseaseAnnotationModel.class);
         query.setParameter("disease", disease);
-        return (List<DiseaseAnnotationModel>) query.list();
+        return query.list();
     }
 
     @Override
