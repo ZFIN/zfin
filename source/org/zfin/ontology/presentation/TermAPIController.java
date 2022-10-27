@@ -1,10 +1,9 @@
 package org.zfin.ontology.presentation;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.apache.commons.collections.CollectionUtils;
-
 import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.anatomy.presentation.AnatomySearchBean;
 import org.zfin.anatomy.service.AnatomyService;
@@ -31,6 +30,7 @@ import org.zfin.wiki.presentation.Version;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.*;
 
@@ -151,8 +151,8 @@ public class TermAPIController {
     @JsonView(View.API.class)
     @RequestMapping(value = "/{termID}/genes", method = RequestMethod.GET)
     public JsonResultResponse<OmimPhenotypeDisplay> getGenesInvolved(@PathVariable String termID,
-                                                            @RequestParam(value = "directAnnotation", required = false, defaultValue = "false") boolean directAnnotation,
-                                                            @Version Pagination pagination) {
+                                                                     @RequestParam(value = "directAnnotation", required = false, defaultValue = "false") boolean directAnnotation,
+                                                                     @Version Pagination pagination) {
 
         HibernateUtil.createTransaction();
         JsonResultResponse<OmimPhenotypeDisplay> response = new JsonResultResponse<>();
@@ -182,8 +182,8 @@ public class TermAPIController {
     @JsonView(View.API.class)
     @RequestMapping(value = "/{termID}/zebrafish-models", method = RequestMethod.GET)
     public JsonResultResponse<FishModelDisplay> getZebrafishModels(@PathVariable String termID,
-                                                            @RequestParam(value = "directAnnotation", required = false, defaultValue = "false") boolean directAnnotation,
-                                                            @Version Pagination pagination) {
+                                                                   @RequestParam(value = "directAnnotation", required = false, defaultValue = "false") boolean directAnnotation,
+                                                                   @Version Pagination pagination) {
 
         HibernateUtil.createTransaction();
         JsonResultResponse<FishModelDisplay> response = new JsonResultResponse<>();
@@ -192,21 +192,7 @@ public class TermAPIController {
         if (term == null)
             return response;
 
-        List<FishModelDisplay> diseaseModelsWithFishModel = OntologyService.getDiseaseModelsWithFishModel(term);
-
-        response.setResults(diseaseModelsWithFishModel);
-        if(CollectionUtils.isNotEmpty(diseaseModelsWithFishModel)) {
-            response.setTotal(diseaseModelsWithFishModel.size());
-        }
-/*
-        if (directAnnotation) {
-            response.addSupplementalData("countDirect", form.getTotalRecords());
-            response.addSupplementalData("countIncludingChildren", form.getTotalNumberOfExpressedGenes());
-        } else {
-            response.addSupplementalData("countIncludingChildren", form.getTotalRecords());
-            response.addSupplementalData("countDirect", form.getTotalNumberOfExpressedGenes());
-        }
-*/
+        retrieveModeltData(term, response, directAnnotation, pagination);
         HibernateUtil.flushAndCommitCurrentSession();
 
         return response;
@@ -228,6 +214,33 @@ public class TermAPIController {
             form.setTotalNumberOfExpressedGenes(genotypeResultIncludedChildren.getTotalCount());
         }
         populateFormBeanForMutantList(ai, form, genotypeResult, includeSubstructures);
+    }
+
+    private void retrieveModeltData(GenericTerm term, JsonResultResponse<FishModelDisplay> response, boolean directAnnotation, Pagination pagination) {
+        List<FishModelDisplay> diseaseModelsWithFishModel = OntologyService.getDiseaseModelsWithFishModelsGrouped(term, false);
+        List<FishModelDisplay> diseaseModelsWithFishModelIncluded = OntologyService.getDiseaseModelsWithFishModelsGrouped(term, true);
+        response.addSupplementalData("countIncludingChildren", diseaseModelsWithFishModelIncluded.size());
+        if (diseaseModelsWithFishModel != null) {
+            response.addSupplementalData("countDirect", diseaseModelsWithFishModel.size());
+        }
+        if (directAnnotation) {
+            if (CollectionUtils.isNotEmpty(diseaseModelsWithFishModel)) {
+                response.setResults(diseaseModelsWithFishModel.stream()
+                    .skip(pagination.getStart())
+                    .limit(pagination.getLimit())
+                    .collect(Collectors.toList()));
+                response.setTotal(diseaseModelsWithFishModel.size());
+            }
+        } else {
+            if (CollectionUtils.isNotEmpty(diseaseModelsWithFishModelIncluded)) {
+                response.setResults(diseaseModelsWithFishModelIncluded.stream()
+                    .skip(pagination.getStart())
+                    .limit(pagination.getLimit())
+                    .collect(Collectors.toList()));
+                response.setTotal(diseaseModelsWithFishModelIncluded.size());
+            }
+        }
+
     }
 
     private void populateFormBeanForMutantList(GenericTerm ai, AnatomySearchBean form, PaginationResult<Fish> fishResult, boolean includeSubstructures) {

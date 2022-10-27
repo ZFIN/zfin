@@ -5,14 +5,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.util.CollectionUtils;
 import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.expression.Experiment;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.RelationshipType;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.mutant.DiseaseAnnotation;
-import org.zfin.mutant.DiseaseAnnotationModel;
-import org.zfin.mutant.FishExperiment;
-import org.zfin.mutant.OmimPhenotype;
+import org.zfin.mutant.*;
 import org.zfin.mutant.presentation.DiseaseModelDisplay;
 import org.zfin.mutant.presentation.FishModelDisplay;
 import org.zfin.ontology.*;
@@ -25,12 +23,10 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.ForeignDB;
 
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.*;
 import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
 
@@ -42,9 +38,8 @@ public class OntologyService {
 
     private final static Logger logger = LogManager.getLogger(OntologyService.class);
 
-    private static OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
-    private static MarkerRepository mR = RepositoryFactory.getMarkerRepository();
-    private static OrthologyRepository oR = RepositoryFactory.getOrthologyRepository();
+    private static final OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
+    private static final MarkerRepository mR = RepositoryFactory.getMarkerRepository();
 
     /**
      * Get the parent term that has the start stage and return
@@ -238,26 +233,65 @@ public class OntologyService {
     }
 
     public static List<FishModelDisplay> getDiseaseModelsWithFishModel(GenericTerm disease) {
-        List<DiseaseAnnotationModel> modelList = getPhenotypeRepository().getHumanDiseaseModels(disease);
+        List<DiseaseAnnotationModel> modelList = getPhenotypeRepository().getHumanDiseaseModels(disease, false);
         if (CollectionUtils.isEmpty(modelList)) {
             return null;
         }
 
         Map<FishExperiment, List<DiseaseAnnotationModel>> fishExperimentMap = modelList.stream()
-                .filter(Objects::nonNull)
-                .collect(groupingBy(DiseaseAnnotationModel::getFishExperiment));
+            .filter(Objects::nonNull)
+            .collect(groupingBy(DiseaseAnnotationModel::getFishExperiment));
 
         return fishExperimentMap.entrySet().stream()
-                .map(entry -> {
-                    FishModelDisplay display = new FishModelDisplay(entry.getKey());
-                    display.setPublications(entry.getValue().stream()
-                            .map(DiseaseAnnotationModel::getDiseaseAnnotation)
-                            .map(DiseaseAnnotation::getPublication)
-                            .collect(Collectors.toSet()));
-                    return display;
-                })
-                .sorted()
-                .collect(Collectors.toList());
+            .map(entry -> {
+                FishModelDisplay display = new FishModelDisplay(entry.getKey());
+                display.setPublications(entry.getValue().stream()
+                    .map(DiseaseAnnotationModel::getDiseaseAnnotation)
+                    .map(DiseaseAnnotation::getPublication)
+                    .collect(Collectors.toSet()));
+                return display;
+            })
+            .sorted()
+            .collect(Collectors.toList());
+    }
+
+    public static List<FishModelDisplay> getDiseaseModelsWithFishModelsGrouped(GenericTerm disease, boolean includeChildren) {
+        List<DiseaseAnnotationModel> modelList = getPhenotypeRepository().getHumanDiseaseModels(disease, includeChildren);
+        if (CollectionUtils.isEmpty(modelList)) {
+            return null;
+        }
+
+        Map<Fish, Map<String, Set<DiseaseAnnotationModel>>> fishExperimentConditionMap = modelList.stream()
+            .filter(Objects::nonNull)
+            .collect(groupingBy(diseaseAnnotationModel -> diseaseAnnotationModel.getFishExperiment().getFish(), LinkedHashMap::new,
+                groupingBy(annotation -> annotation.getFishExperiment().getExperiment().getDisplayAllConditions(), toSet())
+            ));
+        Map<Fish, Map<String, Map<GenericTerm, Set<DiseaseAnnotationModel>>>> fishExperimentConditionMap1 = modelList.stream()
+            .filter(Objects::nonNull)
+            .collect(groupingBy(diseaseAnnotationModel -> diseaseAnnotationModel.getFishExperiment().getFish(), LinkedHashMap::new,
+                groupingBy(annotation -> annotation.getFishExperiment().getExperiment().getDisplayAllConditions(), LinkedHashMap::new,
+                    groupingBy(annotation -> annotation.getDiseaseAnnotation().getDisease(), toSet()))
+            ));
+        return fishExperimentConditionMap1.entrySet().stream()
+            .map(fishMapEntry -> {
+                Fish fish = fishMapEntry.getKey();
+
+                return fishMapEntry.getValue().entrySet().stream()
+                    .map(value -> value.getValue().entrySet().stream()
+                        .map(diseaseEntrySet -> {
+                            FishModelDisplay display = new FishModelDisplay(fish);
+                            display.setDisease(diseaseEntrySet.getKey());
+                            display.setFishModel(diseaseEntrySet.getValue().iterator().next().getFishExperiment());
+                            Set<Publication> publications = diseaseEntrySet.getValue().stream().map(diseaseAnnotationModel -> diseaseAnnotationModel.getDiseaseAnnotation().getPublication()).collect(toSet());
+                            if (publications.size() == 1) {
+                                display.setSinglePublication(publications.iterator().next());
+                            }
+                            display.setNumberOfPublications(publications.size());
+                            display.setExperiment(diseaseEntrySet.getValue().iterator().next().getFishExperiment().getExperiment());
+                            return display;
+                        }).collect(toList())).flatMap(Collection::stream)
+                    .collect(toList());
+            }).flatMap(Collection::stream).sorted().collect(toList());
     }
 
 
@@ -275,25 +309,25 @@ public class OntologyService {
 
     public static Collection<DiseaseModelDisplay> getDiseaseModelDisplay(Collection<DiseaseAnnotationModel> models) {
         Map<GenericTerm, Map<FishExperiment, List<Publication>>> doubleMap = models.stream()
-                .collect(Collectors.groupingBy(o -> o.getDiseaseAnnotation().getDisease(),
-                        Collectors.groupingBy(DiseaseAnnotationModel::getFishExperiment,
-                                Collectors.mapping(model -> model.getDiseaseAnnotation().getPublication(), toList()))));
+            .collect(Collectors.groupingBy(o -> o.getDiseaseAnnotation().getDisease(),
+                Collectors.groupingBy(DiseaseAnnotationModel::getFishExperiment,
+                    Collectors.mapping(model -> model.getDiseaseAnnotation().getPublication(), toList()))));
 
         List modelDisplays = doubleMap.entrySet().stream()
-                .map(genericTermMapEntry -> {
-                    GenericTerm term = genericTermMapEntry.getKey();
-                    return genericTermMapEntry.getValue().entrySet().stream()
-                            .map(fishExperimentListEntry -> {
-                                DiseaseModelDisplay display = new DiseaseModelDisplay();
-                                display.setDisease(term);
-                                display.setExperiment(fishExperimentListEntry.getKey());
-                                display.setPublications(fishExperimentListEntry.getValue());
-                                return display;
-                            })
-                            .collect(toList());
-                })
-                .flatMap(Collection::stream)
-                .collect(toList());
+            .map(genericTermMapEntry -> {
+                GenericTerm term = genericTermMapEntry.getKey();
+                return genericTermMapEntry.getValue().entrySet().stream()
+                    .map(fishExperimentListEntry -> {
+                        DiseaseModelDisplay display = new DiseaseModelDisplay();
+                        display.setDisease(term);
+                        display.setExperiment(fishExperimentListEntry.getKey());
+                        display.setPublications(fishExperimentListEntry.getValue());
+                        return display;
+                    })
+                    .collect(toList());
+            })
+            .flatMap(Collection::stream)
+            .collect(toList());
         return modelDisplays;
     }
 
@@ -328,7 +362,6 @@ public class OntologyService {
         return stageSlim;
     }
 
-    @Nullable
     public DevelopmentStage getFirstDevelopmentStageForTerm(GenericTerm superStageTerm) {
         List<DevelopmentStage> stages = RepositoryFactory.getAnatomyRepository().getAllStagesWithoutUnknown();
         for (DevelopmentStage stage : stages) {
