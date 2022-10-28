@@ -3,9 +3,10 @@
 import 'regenerator-runtime/runtime';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import publicationStore from './state/PublicationStore';
+import {getCounts, subscribe, setCounts} from './state/NavigationCountState';
 
-window.globalHandleToPubStore = publicationStore;
+const navigationCountState = {getCounts, subscribe, setCounts};
+window.globalHandleToCounts = navigationCountState;
 
 document
     .querySelectorAll('.__react-root')
@@ -14,10 +15,9 @@ document
         // ID duplication. for example:
         //     <div class="__react-root" id="MyContainer__one"></div>
         //     <div class="__react-root" id="MyContainer__two"></div>
-        console.log('element', element);
         const usesRedux = element.classList.contains('__redux');
         const container = element.id.split('__', 1)[0];
-        const dataset = usesRedux ? {...element.dataset, store: publicationStore} : {...element.dataset};
+        const dataset = usesRedux ? {...element.dataset, navigationCountState} : {...element.dataset};
 
         import(`./containers/${container}`)
             .then(Module => ReactDOM.render(<Module.default {...dataset} />, element))

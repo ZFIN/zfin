@@ -1,16 +1,10 @@
-import React  from 'react';
+import React, {useState}  from 'react';
 import PropTypes from 'prop-types';
-// import publicationStore from '../state/PublicationStore';
-import { useSelector } from 'react-redux';
 
-const selectNavigationCounts = state => state.navigationCounts;
+const NavigationItem = ({ title, navigationCountState }) => {
+    const [count, setCount] = useState(null);
+    navigationCountState.subscribe(title, newCount => setCount(newCount));
 
-const NavigationItem = ({ title, store }) => {
-    // store.subscribe( () => { console.log("store state update from NI:", store.getState()); } );
-
-    // const navigationCounts = useSelector(selectNavigationCounts);
-    const navigationCounts = useSelector(selectNavigationCounts);
-    const count = navigationCounts[title];
     if (count) {
         return (
             <>{title} <span className="badge badge-pill badge-secondary">{count}</span></>
@@ -22,7 +16,7 @@ const NavigationItem = ({ title, store }) => {
 
 NavigationItem.propTypes = {
     title: PropTypes.string,
-    store: PropTypes.object,
+    navigationCountState: PropTypes.object,
 }
 
 export default NavigationItem;
