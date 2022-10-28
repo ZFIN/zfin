@@ -2,7 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import DataTable from '../components/data-table';
 import {EntityLink} from '../components/entity';
-import publicationStore, {incremented, decremented} from '../state/PublicationStore';
+import publicationStore from '../state/PublicationStore';
+
+console.log("store state from PMT:", publicationStore.getState());
+publicationStore.subscribe(
+    () => {
+        console.log("store state update from PMT:", publicationStore.getState());
+    }
+);
 
 const PublicationMarkerTable = ({store, url}) => {
     const columns = [
@@ -21,12 +28,7 @@ const PublicationMarkerTable = ({store, url}) => {
             content: row => row.name,
         },
     ];
-    publicationStore.dispatch(incremented());
-    publicationStore.dispatch(incremented());
-    publicationStore.dispatch(incremented());
-    publicationStore.dispatch(incremented());
-    publicationStore.dispatch(incremented());
-    publicationStore.dispatch(incremented());
+
     return (
         <DataTable
             columns={columns}

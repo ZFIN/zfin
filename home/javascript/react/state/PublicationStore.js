@@ -1,49 +1,49 @@
-import { createSlice, configureStore } from '@reduxjs/toolkit'
+import { configureStore } from '@reduxjs/toolkit'
 
-const createStore = () => {
+const createReducer = () => {
 
-    const counterSlice = createSlice({
-        name: 'counter',
-        initialState: {
-            value: 0
-        },
-        reducers: {
-            incremented: state => {
-                // Redux Toolkit allows us to write "mutating" logic in reducers. It
-                // doesn't actually mutate the state because it uses the Immer library,
-                // which detects changes to a "draft state" and produces a brand new
-                // immutable state based off those changes
-                state.value += 1
-            },
-            decremented: state => {
-                state.value -= 1
-            }
+    const initialState = {
+        navigationCounts: {},
+    };
+
+    const navigationCountsReducer = (state = initialState, action) => {
+        // Check to see if the reducer cares about this action
+        if (action.type === 'count/set') {
+            const {title, count} = action.payload;
+            const updatedCounts = {...state.navigationCounts, [title]: count};
+            const updatedState = {...state, "navigationCounts": updatedCounts};
+            return updatedState;
         }
-    })
+        // otherwise return the existing state unchanged
+        return state
+    };
 
-    const {incremented, decremented} = counterSlice.actions
-
-    const store = configureStore({
-        reducer: counterSlice.reducer
-    })
-
-    // Can still subscribe to the store
-    store.subscribe(() => console.log(store.getState()))
-
-    return {store, incremented, decremented};
+    return navigationCountsReducer;
 }
 
-let storeWithActions = null;
-
-//store singleton method
-const getStore = () => {
-    if (storeWithActions) {
-        return storeWithActions;
+let reducerSingleton;
+const getReducer = () => {
+    if (reducerSingleton) {
+        return reducerSingleton;
     }
-    return createStore();
+    return createReducer();
 }
+reducerSingleton = getReducer();
 
-storeWithActions = getStore();
+let storeSingleton;
+const getStore = () => {
+    if (storeSingleton) {
+        console.log("store already exists");
+        return storeSingleton;
+    }
+    console.log("create store");
+    return configureStore({
+        reducer: getReducer(),
+    });
+}
+storeSingleton = getStore();
+
+export default storeSingleton;
 
 
 // // Still pass action objects to `dispatch`, but they're created for us
@@ -53,7 +53,3 @@ storeWithActions = getStore();
 // // {value: 2}
 // store.dispatch(decremented())
 // // {value: 1}
-
-
-export const { incremented, decremented } = storeWithActions;
-export default store;

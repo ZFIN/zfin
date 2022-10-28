@@ -14,8 +14,12 @@ document
         // ID duplication. for example:
         //     <div class="__react-root" id="MyContainer__one"></div>
         //     <div class="__react-root" id="MyContainer__two"></div>
+        console.log('element', element);
+        const usesRedux = element.classList.contains('__redux');
         const container = element.id.split('__', 1)[0];
+        const dataset = usesRedux ? {...element.dataset, store: publicationStore} : {...element.dataset};
+
         import(`./containers/${container}`)
-            .then(Module => ReactDOM.render(<Module.default {...element.dataset} />, element))
+            .then(Module => ReactDOM.render(<Module.default {...dataset} />, element))
             .catch((error) => console.error('Unable to load container named: ' + container, error));
     });
