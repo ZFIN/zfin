@@ -4,7 +4,7 @@ package org.zfin.framework.featureflag;
 public enum FeatureFlagEnum {
     JBROWSE("jBrowse"),
     CURATOR_JOB_POSTING("Curator Job Posting"),
-    FUTURE_FLAG_PLACEHOLDER("Placeholder For Future Feature");
+    USE_NAVIGATION_COUNTER("Show Navigation Counter");
 
     private String name;
 

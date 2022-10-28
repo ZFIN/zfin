@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import DataTable from '../components/data-table';
 
-const PublicationFishTable = ({url}) => {
+const PublicationFishTable = ({url, title, navigationCounter}) => {
     const columns = [
         {
             label: 'Fish',
@@ -22,12 +22,20 @@ const PublicationFishTable = ({url}) => {
             width: '200px',
         },
     ];
+
+    const handleDataLoadedCount = (data) => {
+        if (navigationCounter && navigationCounter.setCounts && data.total) {
+            navigationCounter.setCounts(title, data.total);
+        }
+    };
+
     return (
         <DataTable
             columns={columns}
             dataUrl={url}
             rowKey={row => row.zdbID}
             pagination={true}
+            onDataLoaded={handleDataLoadedCount}
         />
     );
 };
