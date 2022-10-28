@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import DataTable from '../components/data-table';
 import {EntityLink} from '../components/entity';
 
-const PublicationMarkerTable = ({store, url}) => {
+const PublicationMarkerTable = ({url, navigationCountState, title}) => {
     const columns = [
         {
             label: 'Marker',
@@ -21,12 +21,19 @@ const PublicationMarkerTable = ({store, url}) => {
         },
     ];
 
+    const handleDataLoadedCount = (data) => {
+        if (navigationCountState && navigationCountState.setCounts) {
+            navigationCountState.setCounts(title, data.total);
+        }
+    };
+
     return (
         <DataTable
             columns={columns}
             dataUrl={url}
             rowKey={row => row.zdbID}
             pagination={true}
+            onDataLoaded={handleDataLoadedCount}
         />
     );
 };

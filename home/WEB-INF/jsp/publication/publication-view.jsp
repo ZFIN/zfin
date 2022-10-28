@@ -97,8 +97,10 @@
         </z:section>
 
         <z:section title="${GENES}">
-            <div class="__react-root" id="PublicationMarkerTable"
-                 data-url="/action/api/publication/${publication.zdbID}/marker"></div>
+            <div class="__react-root __redux" id="PublicationMarkerTable"
+                 data-url="/action/api/publication/${publication.zdbID}/marker"
+                 data-title="${GENES}"
+            ></div>
         </z:section>
 
         <z:section title="${FIGURES}" infoPopup="/ZFIN/help_files/expression_help.html">
