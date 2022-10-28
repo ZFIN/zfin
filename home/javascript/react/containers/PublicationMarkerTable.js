@@ -2,8 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import DataTable from '../components/data-table';
 import {EntityLink} from '../components/entity';
+import publicationStore, {incremented, decremented} from '../state/PublicationStore';
 
-const PublicationMarkerTable = ({url}) => {
+const PublicationMarkerTable = ({store, url}) => {
     const columns = [
         {
             label: 'Marker',
@@ -20,6 +21,12 @@ const PublicationMarkerTable = ({url}) => {
             content: row => row.name,
         },
     ];
+    publicationStore.dispatch(incremented());
+    publicationStore.dispatch(incremented());
+    publicationStore.dispatch(incremented());
+    publicationStore.dispatch(incremented());
+    publicationStore.dispatch(incremented());
+    publicationStore.dispatch(incremented());
     return (
         <DataTable
             columns={columns}

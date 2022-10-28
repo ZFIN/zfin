@@ -24,6 +24,7 @@
     "@fortawesome/fontawesome-free": "^5.15.4",
     "@geneontology/wc-ribbon-strips": "0.0.37",
     "@geneontology/wc-ribbon-table": "0.0.57",
+    "@reduxjs/toolkit": "^1.8.6",
     "acorn": "^8.5.0",
     "angular": "1.8.3",
     "babel-loader": "^8.2.2",

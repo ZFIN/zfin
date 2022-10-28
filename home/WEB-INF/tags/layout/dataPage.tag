@@ -30,7 +30,9 @@
                 </c:if>
                 <c:forEach var="section" items="${sections}">
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link" href="#${zfn:makeDomIdentifier(section)}">${section}</a>
+                        <a class="nav-link" href="#${zfn:makeDomIdentifier(section)}">
+                                ${section}
+                        </a>
                     </li>
                 </c:forEach>
             </ul>

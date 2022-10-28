@@ -58,6 +58,12 @@ const config = {
                     }
                 }
             },
+            {
+                test: /\.m?js/, //fix error described here: https://github.com/reduxjs/redux/issues/4174
+                resolve: {
+                    fullySpecified: false,
+                },
+            },
         ],
     },
     plugins: [

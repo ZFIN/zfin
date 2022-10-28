@@ -3,6 +3,9 @@
 import 'regenerator-runtime/runtime';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import publicationStore from './state/PublicationStore';
+
+window.globalHandleToPubStore = publicationStore;
 
 document
     .querySelectorAll('.__react-root')
