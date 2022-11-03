@@ -192,7 +192,7 @@ public class TermAPIController {
         if (term == null)
             return response;
 
-        retrieveModeltData(term, response, directAnnotation, pagination);
+        retrieveModelData(term, response, directAnnotation, pagination);
         HibernateUtil.flushAndCommitCurrentSession();
 
         return response;
@@ -216,7 +216,7 @@ public class TermAPIController {
         populateFormBeanForMutantList(ai, form, genotypeResult, includeSubstructures);
     }
 
-    private void retrieveModeltData(GenericTerm term, JsonResultResponse<FishModelDisplay> response, boolean directAnnotation, Pagination pagination) {
+    private void retrieveModelData(GenericTerm term, JsonResultResponse<FishModelDisplay> response, boolean directAnnotation, Pagination pagination) {
         List<FishModelDisplay> diseaseModelsWithFishModel = OntologyService.getDiseaseModelsWithFishModelsGrouped(term, false);
         List<FishModelDisplay> diseaseModelsWithFishModelIncluded = OntologyService.getDiseaseModelsWithFishModelsGrouped(term, true);
         response.addSupplementalData("countIncludingChildren", diseaseModelsWithFishModelIncluded.size());
