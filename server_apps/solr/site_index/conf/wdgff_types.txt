@@ -1,0 +1,15 @@
+# A customized type mapping for WordDelimiterFilterFactory
+# the allowable types are: LOWER, UPPER, ALPHA, DIGIT, ALPHANUM, SUBWORD_DELIM
+#
+# the default for any character without a mapping is always computed from
+# Unicode character properties
+
+# Map the $, %, '.', and ',' characters to DIGIT
+# This might be useful for financial data.
+
+# Example for indexing text like twitter's hash and at symbol usage from https://stackoverflow.com/questions/9299614
+# @ => ALPHA
+# \u0023 => ALPHA
+
+# Including underscore as an ALPHA character for such terms as XM_694032
+_ => ALPHA

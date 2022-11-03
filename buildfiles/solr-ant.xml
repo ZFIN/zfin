@@ -67,6 +67,7 @@
 
     <target name="build-solr-index">
         <echo message="Starting Solr index build via http..."/>
+        <echo message="URL: http://${SOLR_HOST}:${SOLR_PORT}/solr/${SOLR_CORE}/dataimport?command=full-import&amp;optimize=true&amp;clean=true&amp;wt=json&amp;indent=true"/>
         <exec executable="curl">
             <arg value="-s"/>
             <arg value="http://${SOLR_HOST}:${SOLR_PORT}/solr/${SOLR_CORE}/dataimport?command=full-import&amp;optimize=true&amp;clean=true&amp;wt=json&amp;indent=true"/>
