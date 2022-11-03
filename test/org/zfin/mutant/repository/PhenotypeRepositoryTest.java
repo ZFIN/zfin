@@ -448,7 +448,7 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
     public void getHumanDiseaseModelsByDisease() {
         //cancer
         GenericTerm disease = getOntologyRepository().getTermByOboID("DOID:162");
-        List<DiseaseAnnotationModel> diseaseAnnotations = getPhenotypeRepository().getHumanDiseaseModels(disease);
+        List<DiseaseAnnotationModel> diseaseAnnotations = getPhenotypeRepository().getHumanDiseaseModels(disease, false);
         Map<FishExperiment, List<DiseaseAnnotationModel>> fishExperimentMap = diseaseAnnotations.stream()
                 .filter(Objects::nonNull)
                 .collect(groupingBy(DiseaseAnnotationModel::getFishExperiment));
