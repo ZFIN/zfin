@@ -127,8 +127,10 @@
         </z:section>
 
         <z:section title="${MUTATION}">
-            <div class="__react-root" id="PublicationMutationTable"
-                 data-url="/action/api/publication/${publication.zdbID}/features"></div>
+            <div class="__react-root __use-navigation-counter" id="PublicationMutationTable"
+                 data-url="/action/api/publication/${publication.zdbID}/features"
+                 data-title="${MUTATION}"
+            ></div>
         </z:section>
 
         <z:section title="${DISEASE}">
