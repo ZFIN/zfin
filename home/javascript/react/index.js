@@ -3,10 +3,9 @@
 import 'regenerator-runtime/runtime';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {getCounts, subscribe, setCounts} from './state/NavigationCountState';
+import {subscribe, setCounts} from './state/NavigationCounter';
 
-const navigationCountState = {getCounts, subscribe, setCounts};
-window.globalHandleToCounts = navigationCountState;
+const navigationCounter = {subscribe, setCounts};
 
 document
     .querySelectorAll('.__react-root')
@@ -15,9 +14,11 @@ document
         // ID duplication. for example:
         //     <div class="__react-root" id="MyContainer__one"></div>
         //     <div class="__react-root" id="MyContainer__two"></div>
-        const usesRedux = element.classList.contains('__redux');
         const container = element.id.split('__', 1)[0];
-        const dataset = usesRedux ? {...element.dataset, navigationCountState} : {...element.dataset};
+
+        // this flag indicates that the component needs access to the navigation count state
+        const useNavigationCount = element.classList.contains('__use-navigation-count');
+        const dataset = useNavigationCount ? {...element.dataset, navigationCounter} : {...element.dataset};
 
         import(`./containers/${container}`)
             .then(Module => ReactDOM.render(<Module.default {...dataset} />, element))

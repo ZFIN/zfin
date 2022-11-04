@@ -32,7 +32,7 @@
                     <!-- TODO: wrap this in a tag or something that can handle optional logic of using react or not -->
                     <li class="nav-item" role="presentation">
                         <a class="nav-link" href="#${zfn:makeDomIdentifier(section)}">
-                            <span class="__react-root __redux" id="NavigationItem"
+                            <span class="__react-root __use-navigation-count" id="NavigationItem"
                                  data-title="${section}"></span>
                         </a>
                     </li>

@@ -97,7 +97,7 @@
         </z:section>
 
         <z:section title="${GENES}">
-            <div class="__react-root __redux" id="PublicationMarkerTable"
+            <div class="__react-root __use-navigation-count" id="PublicationMarkerTable"
                  data-url="/action/api/publication/${publication.zdbID}/marker"
                  data-title="${GENES}"
             ></div>

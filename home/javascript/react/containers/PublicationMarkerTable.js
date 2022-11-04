@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import DataTable from '../components/data-table';
 import {EntityLink} from '../components/entity';
 
-const PublicationMarkerTable = ({url, navigationCountState, title}) => {
+const PublicationMarkerTable = ({url, navigationCounter, title}) => {
     const columns = [
         {
             label: 'Marker',
@@ -22,8 +22,8 @@ const PublicationMarkerTable = ({url, navigationCountState, title}) => {
     ];
 
     const handleDataLoadedCount = (data) => {
-        if (navigationCountState && navigationCountState.setCounts) {
-            navigationCountState.setCounts(title, data.total);
+        if (navigationCounter && navigationCounter.setCounts) {
+            navigationCounter.setCounts(title, data.total);
         }
     };
 

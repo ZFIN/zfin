@@ -1,9 +1,9 @@
 import React, {useState}  from 'react';
 import PropTypes from 'prop-types';
 
-const NavigationItem = ({ title, navigationCountState }) => {
+const NavigationItem = ({ title, navigationCounter }) => {
     const [count, setCount] = useState(null);
-    navigationCountState.subscribe(title, newCount => setCount(newCount));
+    navigationCounter.subscribe(title, newCount => setCount(newCount));
 
     if (count) {
         return (
@@ -16,7 +16,7 @@ const NavigationItem = ({ title, navigationCountState }) => {
 
 NavigationItem.propTypes = {
     title: PropTypes.string,
-    navigationCountState: PropTypes.object,
+    navigationCounter: PropTypes.object,
 }
 
 export default NavigationItem;
