@@ -4,7 +4,7 @@ import DataTable from '../components/data-table';
 import {EntityLink} from '../components/entity';
 import DisplayLocation from '../components/DisplayLocation';
 
-const PublicationMappingTable = ({url}) => {
+const PublicationMappingTable = ({url, title, navigationCounter}) => {
     const columns = [
         {
             label: 'Entity Type',
@@ -21,12 +21,20 @@ const PublicationMappingTable = ({url}) => {
             content: row => <DisplayLocation entity={row}/>,
         },
     ];
+
+    const handleDataLoadedCount = (data) => {
+        if (navigationCounter && navigationCounter.setCounts && data.total) {
+            navigationCounter.setCounts(title, data.total);
+        }
+    };
+
     return (
         <DataTable
             columns={columns}
             dataUrl={url}
             rowKey={row => row.zdbID}
             pagination={true}
+            onLoadedCount={handleDataLoadedCount}
         />
     );
 };

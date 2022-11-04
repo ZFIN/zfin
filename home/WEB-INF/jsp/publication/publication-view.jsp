@@ -98,7 +98,7 @@
         </z:section>
 
         <z:section title="${GENES}">
-            <div class="__react-root __use-navigation-counter" id="PublicationMarkerTable"
+            <div class="__react-root __use-navigation-counter" id="PublicationMarkerTable__0"
                  data-url="/action/api/publication/${publication.zdbID}/marker"
                  data-title="${GENES}"
             ></div>
@@ -162,24 +162,32 @@
         </z:section>
 
         <z:section title="${ORTHOLOGY}">
-            <div class="__react-root" id="PublicationOrthologyTable"
-                 data-url="/action/api/publication/${publication.zdbID}/orthology"></div>
+            <div class="__react-root __use-navigation-counter" id="PublicationOrthologyTable"
+                 data-url="/action/api/publication/${publication.zdbID}/orthology"
+                 data-title="${ORTHOLOGY}"
+            ></div>
         </z:section>
 
         <z:section title="${EFGs}">
-            <div class="__react-root" id="PublicationMarkerTable"
-                 data-url="/action/api/publication/${publication.zdbID}/efgs"></div>
+            <div class="__react-root __use-navigation-counter" id="PublicationMarkerTable__1"
+                 data-url="/action/api/publication/${publication.zdbID}/efgs"
+                 data-title="${EFGs}"
+            ></div>
         </z:section>
 
         <z:section title="${MAPPING}">
-            <div class="__react-root" id="PublicationMappingTable"
-                 data-url="/action/api/publication/${publication.zdbID}/mapping"></div>
+            <div class="__react-root __use-navigation-counter" id="PublicationMappingTable"
+                 data-url="/action/api/publication/${publication.zdbID}/mapping"
+                 data-title="${MAPPING}"
+            ></div>
         </z:section>
 
         <authz:authorize access="hasRole('root')">
             <z:section title="${DIRECTLY_ATTRIBUTED_DATA}">
-                <div class="__react-root" id="PublicationAttributionTable"
-                     data-url="/action/api/publication/${publication.zdbID}/direct-attribution"></div>
+                <div class="__react-root __use-navigation-counter" id="PublicationAttributionTable"
+                     data-url="/action/api/publication/${publication.zdbID}/direct-attribution"
+                     data-title="${DIRECTLY_ATTRIBUTED_DATA}"
+                ></div>
             </z:section>
         </authz:authorize>
 
