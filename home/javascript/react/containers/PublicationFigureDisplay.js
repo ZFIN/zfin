@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import PropTypes from 'prop-types';
 
-const PublicationFigureDisplay = ({title, imagesJson, publicationID, navigationCounter}) => {
+const PublicationFigureDisplay = ({title, imagesJson, publicationId, navigationCounter}) => {
     const images = JSON.parse(imagesJson);
     let storedpage = null;
 
@@ -40,7 +40,7 @@ const PublicationFigureDisplay = ({title, imagesJson, publicationID, navigationC
                 <div id="imagebox_maxnote" style={{display: 'none'}}></div>
                 <div id="xpresimg_imagePreload"></div>
             </div>
-            <div><a href={`/action/figure/all-figure-view/${publicationID}`}>Show all Figures</a></div>
+            <div><a href={`/action/figure/all-figure-view/${publicationId}`}>Show all Figures</a></div>
         </>
     );
 };
