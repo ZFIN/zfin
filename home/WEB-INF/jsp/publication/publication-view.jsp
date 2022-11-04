@@ -134,8 +134,10 @@
         </z:section>
 
         <z:section title="${DISEASE}">
-            <div class="__react-root" id="PublicationDiseaseTable"
-                 data-url="/action/api/publication/${publication.zdbID}/diseases"></div>
+            <div class="__react-root __use-navigation-counter" id="PublicationDiseaseTable"
+                 data-url="/action/api/publication/${publication.zdbID}/diseases"
+                 data-title="${DISEASE}"
+            ></div>
         </z:section>
 
         <z:section title="${STRS}">
