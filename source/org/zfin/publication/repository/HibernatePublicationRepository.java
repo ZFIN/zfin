@@ -2714,9 +2714,11 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     @Override
     public List<String> getDirectlyAttributedZdbids(String publicationId, Pagination pagination) {
         Session session = HibernateUtil.currentSession();
-        String sql = " select ra.recattrib_data_zdb_id  " +
-                " from record_attribution ra " +
-                " where :publicationZdbID = ra.recattrib_source_zdb_id ";
+        String sql = """
+                 select DISTINCT ra.recattrib_data_zdb_id  
+                 from record_attribution ra 
+                 where :publicationZdbID = ra.recattrib_source_zdb_id
+                 """;
         if (pagination.getFieldFilter(FieldFilter.ENTITY_ID) != null) {
             sql += " AND lower(ra.recattrib_data_zdb_id) like '%" + pagination.getFieldFilter(FieldFilter.ENTITY_ID).toLowerCase() + "%'";
         }
