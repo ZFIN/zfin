@@ -24,7 +24,7 @@ const PublicationAttributionTable = ({url, title, navigationCounter}) => {
             dataUrl={url}
             rowKey={row => row}
             pagination={true}
-            onLoadedCount={handleDataLoadedCount}
+            onDataLoaded={handleDataLoadedCount}
         />
     );
 };

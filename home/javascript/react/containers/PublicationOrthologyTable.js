@@ -29,7 +29,7 @@ const PublicationOrthologyTable = ({url, title, navigationCounter}) => {
             dataUrl={url}
             rowKey={row => row.zdbID}
             pagination={true}
-            onLoadedCount={handleDataLoadedCount}
+            onDataLoaded={handleDataLoadedCount}
         />
     );
 };
