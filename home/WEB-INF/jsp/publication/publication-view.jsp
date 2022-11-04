@@ -141,18 +141,24 @@
         </z:section>
 
         <z:section title="${STRS}">
-            <div class="__react-root" id="StrTable"
-                 data-url="/action/api/publication/${publication.zdbID}/strs"></div>
+            <div class="__react-root __use-navigation-counter" id="StrTable"
+                 data-url="/action/api/publication/${publication.zdbID}/strs"
+                 data-title="${STRS}"
+            ></div>
         </z:section>
 
         <z:section title="${FISH}">
-            <div class="__react-root" id="PublicationFishTable"
-                 data-url="/action/api/publication/${publication.zdbID}/fish"></div>
+            <div class="__react-root __use-navigation-counter" id="PublicationFishTable"
+                 data-url="/action/api/publication/${publication.zdbID}/fish"
+                 data-title="${FISH}"
+            ></div>
         </z:section>
 
         <z:section title="${ANTIBODIES}" infoPopup="/action/marker/note/antibodies">
-            <div class="__react-root" id="AntibodyTable"
-                 data-url="/action/api/publication/${publication.zdbID}/antibodies"></div>
+            <div class="__react-root __use-navigation-counter" id="AntibodyTable"
+                 data-url="/action/api/publication/${publication.zdbID}/antibodies"
+                 data-title="${ANTIBODIES}"
+            ></div>
         </z:section>
 
         <z:section title="${ORTHOLOGY}">
