@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.alliancegenome.curation_api.model.entities.AffectedGenomicModel;
-import org.alliancegenome.curation_api.model.entities.ontology.EcoTerm;
+import org.alliancegenome.curation_api.model.entities.ontology.ECOTerm;
 import org.alliancegenome.curation_api.model.ingest.dto.AGMDiseaseAnnotationDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.ExperimentalConditionDTO;
 import org.zfin.alliancegenome.ZfinAllianceConverter;
@@ -30,14 +30,11 @@ import static java.util.stream.Collectors.toList;
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
-public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
-
-    private int numfOfRecords = 0;
+public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
 
     public DiseaseAnnotationLinkMLInfo(int number) {
-        numfOfRecords = number;
+        super(number);
     }
-
 
     public static void main(String[] args) throws IOException {
         int number = 0;
@@ -149,7 +146,7 @@ public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
                         List<String> evidenceCodes = evidenceSet.stream()
                             .map(ZfinAllianceConverter::convertEvidenceCodes)
                             .flatMap(Collection::stream)
-                            .map(EcoTerm::getCurie)
+                            .map(ECOTerm::getCurie)
                             .collect(toList());
                         annotation.setEvidenceCodes(evidenceCodes);
                         annotation.setSingleReference(getSingleReference(publication));
@@ -199,7 +196,7 @@ public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
         annotation.setObject(damo.getDiseaseAnnotation().getDisease().getOboID());
 
         List<String> ecoTerms = ZfinAllianceConverter.convertEvidenceCodes(damo.getDiseaseAnnotation().getEvidenceCode()).stream()
-            .map(EcoTerm::getCurie).collect(toList());
+            .map(ECOTerm::getCurie).collect(toList());
         annotation.setEvidenceCodes(ecoTerms);
         annotation.setSingleReference(getSingleReference(damo.getDiseaseAnnotation().getPublication()));
 
@@ -210,10 +207,6 @@ public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
         conditions.add(condition);
         annotation.setConditionRelations(List.of(condition));
         return annotation;
-    }
-
-    private String getSingleReference(Publication publication) {
-        return "PMID:" + publication.getAccessionNumber();
     }
 
     public static String format(String zdbID) {
@@ -229,7 +222,7 @@ public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
 
     private void populateConditionClass(ExperimentalConditionDTO expcond, ExperimentCondition condition) {
         String oboID = condition.getZecoTerm().getOboID();
-        if (highLevelConditionTerms.stream().map(GenericTerm::getOboID).collect(toList()).contains(oboID)) {
+        if (highLevelConditionTerms.stream().map(GenericTerm::getOboID).toList().contains(oboID)) {
             expcond.setConditionClass(oboID);
         } else {
             Optional<GenericTerm> highLevelterm = highLevelConditionTerms.stream().filter(parentTerm -> getOntologyRepository().isParentChildRelationshipExist(parentTerm, condition.getZecoTerm()))
@@ -237,7 +230,7 @@ public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
             if (highLevelterm.isPresent()) {
                 expcond.setConditionClass(highLevelterm.get().getOboID());
                 expcond.setConditionId(oboID);
-                expcond.setConditionStatement(highLevelterm.get().getTermName() + ": " + expcond.getConditionStatement());
+                expcond.setC(highLevelterm.get().getTermName() + ": " + expcond.getConditionStatement());
             }
         }
     }
@@ -274,7 +267,6 @@ public class DiseaseAnnotationLinkMLInfo extends AbstractScriptWrapper {
                     expcond.setConditionTaxon(condition.getTaxaonymTerm().getOboID());
                     conditionStatement = conditionStatement + " " + condition.getTaxaonymTerm().getTermName();
                 }
-                expcond.setConditionStatement(conditionStatement);
                 populateConditionClass(expcond, condition);
 /*
                 String highLevelTermName =
