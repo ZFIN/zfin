@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import PropTypes from 'prop-types';
 
-const PublicationFigureDisplay = ({title, imagesJson, publicationID}) => {
+const PublicationFigureDisplay = ({title, imagesJson, publicationID, navigationCounter}) => {
     const images = JSON.parse(imagesJson);
     let storedpage = null;
 
@@ -25,6 +25,7 @@ const PublicationFigureDisplay = ({title, imagesJson, publicationID}) => {
 
         document.hasImages = true;
         loadImages();
+        navigationCounter.setCounts(title, images.length);
     });
 
     return (
