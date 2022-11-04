@@ -1,6 +1,7 @@
 package org.zfin.publication.presentation;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.logging.log4j.LogManager;
@@ -52,7 +53,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang.StringEscapeUtils.escapeXml;
 import static org.zfin.repository.RepositoryFactory.getFigureRepository;
+import static org.zfin.util.ZfinStringUtils.objectToJson;
 
 @Controller
 @RequestMapping("/publication")
@@ -117,6 +120,8 @@ public class PublicationViewController {
         }
         List<ImageResult> images = publicationService.getImageResults(publication);
         model.addAttribute("imageResults", images);
+
+        model.addAttribute("imagesJson", escapeXml(objectToJson(images)));
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication));
         model.addAttribute("relatedData", relatedDataService.getXrefsLinks(publication.getZdbID(), "Publication", null));

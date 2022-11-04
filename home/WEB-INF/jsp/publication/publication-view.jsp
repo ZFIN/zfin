@@ -45,7 +45,7 @@
     </c:otherwise>
 </c:choose>
 
-<z:dataPage sections="${secs}" useNavigationCounter="true">
+<z:dataPage sections="${secs}" useNavigationCounter="true" additionalBodyClass="publication-view">
 
     <jsp:attribute name="entityName">
         <div data-toggle="tooltip" data-placement="bottom" title="${publication.citation}">
@@ -105,7 +105,11 @@
         </z:section>
 
         <z:section title="${FIGURES}" infoPopup="/ZFIN/help_files/expression_help.html">
-            <jsp:include page="publication-image-gallery.jsp"/>
+            <div class="__react-root __use-navigation-counter" id="PublicationFigureDisplay"
+                 data-title="${FIGURES}"
+                 data-images-json="${imagesJson}"
+                 data-publication-id="${publication.zdbID}"
+            ></div>
         </z:section>
 
         <z:section title="${EXPRESSION}">
