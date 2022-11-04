@@ -22,7 +22,7 @@ const PublicationMarkerTable = ({url, navigationCounter, title}) => {
     ];
 
     const handleDataLoadedCount = (data) => {
-        if (navigationCounter && navigationCounter.setCounts) {
+        if (navigationCounter && navigationCounter.setCounts && data.total) {
             navigationCounter.setCounts(title, data.total);
         }
     };

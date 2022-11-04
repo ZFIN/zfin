@@ -52,6 +52,7 @@
                 ${publication.shortAuthorList}
         </div>
     </jsp:attribute>
+
     <jsp:attribute name="entityNameAddendum">
         <div style="font-size: 12px">
                 ${publication.zdbID}
@@ -108,8 +109,10 @@
         </z:section>
 
         <z:section title="${EXPRESSION}">
-            <div class="__react-root" id="FigureExpressionTable"
-                 data-url="/action/api/publication/${publication.zdbID}/expression"></div>
+            <div class="__react-root __use-navigation-counter" id="FigureExpressionTable"
+                 data-url="/action/api/publication/${publication.zdbID}/expression"
+                 data-title="${EXPRESSION}"
+            ></div>
         </z:section>
 
         <z:section title="${PHENOTYPE}">
