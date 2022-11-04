@@ -120,8 +120,10 @@
         </z:section>
 
         <z:section title="${PHENOTYPE}">
-            <div class="__react-root" id="FigurePhenotypeTable"
-                 data-url="/action/api/publication/${publication.zdbID}/phenotype"></div>
+            <div class="__react-root __use-navigation-counter" id="FigurePhenotypeTable"
+                 data-url="/action/api/publication/${publication.zdbID}/phenotype"
+                 data-title="${PHENOTYPE}"
+            ></div>
         </z:section>
 
         <z:section title="${MUTATION}">

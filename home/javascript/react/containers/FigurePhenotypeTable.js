@@ -6,7 +6,7 @@ import Figure from '../components/Figure';
 import PhenotypeStatement from '../components/PhenotypeStatement';
 
 
-const FigurePhenotypeTable = ({url, hideFigureColumn = false}) => {
+const FigurePhenotypeTable = ({url, hideFigureColumn = false, navigationCounter, title}) => {
     const columns = [
         {
             label: 'Fish',
@@ -52,11 +52,19 @@ const FigurePhenotypeTable = ({url, hideFigureColumn = false}) => {
         },
 
     ];
+
+    const handleDataLoadedCount = (data) => {
+        if (navigationCounter && navigationCounter.setCounts && data.total) {
+            navigationCounter.setCounts(title, data.total);
+        }
+    };
+
     return (
         <DataTable
             columns={columns}
             dataUrl={url}
             rowKey={row => row.rowKey}
+            onDataLoaded={handleDataLoadedCount}
             //sortOptions={sortOptions}
         />
     );
