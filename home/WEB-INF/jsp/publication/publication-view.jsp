@@ -45,7 +45,7 @@
     </c:otherwise>
 </c:choose>
 
-<z:dataPage sections="${secs}">
+<z:dataPage sections="${secs}" useNavigationCounter="true">
 
     <jsp:attribute name="entityName">
         <div data-toggle="tooltip" data-placement="bottom" title="${publication.citation}">
@@ -97,7 +97,7 @@
         </z:section>
 
         <z:section title="${GENES}">
-            <div class="__react-root __use-navigation-count" id="PublicationMarkerTable"
+            <div class="__react-root __use-navigation-counter" id="PublicationMarkerTable"
                  data-url="/action/api/publication/${publication.zdbID}/marker"
                  data-title="${GENES}"
             ></div>

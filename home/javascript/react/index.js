@@ -17,7 +17,7 @@ document
         const container = element.id.split('__', 1)[0];
 
         // this flag indicates that the component needs access to the navigation count state
-        const useNavigationCount = element.classList.contains('__use-navigation-count');
+        const useNavigationCount = element.classList.contains('__use-navigation-counter');
         const dataset = useNavigationCount ? {...element.dataset, navigationCounter} : {...element.dataset};
 
         import(`./containers/${container}`)

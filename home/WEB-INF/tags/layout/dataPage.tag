@@ -5,8 +5,9 @@
 <%@ attribute name="entityNameAddendum" required="false" fragment="true" %>
 <%@ attribute name="title" required="false" %>
 <%@ attribute name="pageBar" required="false" %>
-
 <%@ attribute name="additionalBodyClass" required="false" type="java.lang.String" %>
+<%@ attribute name="useNavigationCounter" required="false" type="java.lang.Boolean" %>
+
 <c:set var="additionalBodyClass" value="${(empty additionalBodyClass) ? '' : additionalBodyClass}" />
 
 <jsp:invoke fragment="entityName" var="entityNameValue"/>
@@ -29,13 +30,7 @@
                     </li>
                 </c:if>
                 <c:forEach var="section" items="${sections}">
-                    <!-- TODO: wrap this in a tag or something that can handle optional logic of using react or not -->
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link" href="#${zfn:makeDomIdentifier(section)}">
-                            <span class="__react-root __use-navigation-count" id="NavigationItem"
-                                 data-title="${section}"></span>
-                        </a>
-                    </li>
+                    <z:navigationItem title="${section}" useNavigationCounter="${useNavigationCounter}" />
                 </c:forEach>
             </ul>
         </div>
