@@ -5,7 +5,7 @@ import org.alliancegenome.curation_api.model.entities.AGMDiseaseAnnotation;
 import org.alliancegenome.curation_api.model.entities.AffectedGenomicModel;
 import org.alliancegenome.curation_api.model.entities.Reference;
 import org.alliancegenome.curation_api.model.entities.ontology.DOTerm;
-import org.alliancegenome.curation_api.model.entities.ontology.EcoTerm;
+import org.alliancegenome.curation_api.model.entities.ontology.ECOTerm;
 import org.alliancegenome.curation_api.model.ingest.dto.AGMDiseaseAnnotationDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.ExperimentalConditionDTO;
 import org.springframework.stereotype.Service;
@@ -59,8 +59,8 @@ public class DiseaseAnnotationService extends AllianceService {
         return reference;
     }
 
-    private static EcoTerm getEvidenceCodes(org.zfin.mutant.DiseaseAnnotation dam) {
-        EcoTerm evidence = new EcoTerm();
+    private static ECOTerm getEvidenceCodes(org.zfin.mutant.DiseaseAnnotation dam) {
+        ECOTerm evidence = new ECOTerm();
         if (dam.getEvidenceCode().equals("ZDB-TERM-170419-250"))
             evidence.setCurie("ECO:0000304");
         if (dam.getEvidenceCode().equals("ZDB-TERM-170419-251"))
@@ -96,7 +96,7 @@ public class DiseaseAnnotationService extends AllianceService {
         annotation.setObject(damo.getDiseaseAnnotation().getDisease().getOboID());
 
         List<String> ecoTerms = ZfinAllianceConverter.convertEvidenceCodes(damo.getDiseaseAnnotation().getEvidenceCode()).stream()
-                .map(EcoTerm::getCurie).collect(toList());
+                .map(ECOTerm::getCurie).collect(toList());
         annotation.setEvidenceCodes(ecoTerms);
         annotation.setSingleReference(getSingleReference(damo.getDiseaseAnnotation().getPublication()));
 
@@ -148,7 +148,6 @@ public class DiseaseAnnotationService extends AllianceService {
                     expcond.setConditionTaxon(condition.getTaxaonymTerm().getOboID());
                     conditionStatement = conditionStatement + " " + condition.getTaxaonymTerm().getTermName();
                 }
-                expcond.setConditionStatement(conditionStatement);
                 populateConditionClass(expcond, condition);
 /*
                 String highLevelTermName =
@@ -172,7 +171,6 @@ public class DiseaseAnnotationService extends AllianceService {
             if (highLevelterm.isPresent()) {
                 expcond.setConditionClass(highLevelterm.get().getOboID());
                 expcond.setConditionId(oboID);
-                expcond.setConditionStatement(highLevelterm.get().getTermName() + ": " + expcond.getConditionStatement());
             }
         }
     }
