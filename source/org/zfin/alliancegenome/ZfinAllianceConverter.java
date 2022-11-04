@@ -2,7 +2,7 @@ package org.zfin.alliancegenome;
 
 import org.alliancegenome.curation_api.model.entities.*;
 import org.alliancegenome.curation_api.model.entities.ontology.DOTerm;
-import org.alliancegenome.curation_api.model.entities.ontology.EcoTerm;
+import org.alliancegenome.curation_api.model.entities.ontology.ECOTerm;
 import org.alliancegenome.curation_api.model.entities.ontology.NCBITaxonTerm;
 import org.zfin.mutant.DiseaseAnnotationModel;
 import org.zfin.mutant.Fish;
@@ -42,8 +42,8 @@ public class ZfinAllianceConverter {
         return reference;
     }
 
-    public static List<EcoTerm> convertEvidenceCodes(String evidenceCode) {
-        EcoTerm eco = new EcoTerm();
+    public static List<ECOTerm> convertEvidenceCodes(String evidenceCode) {
+        ECOTerm eco = new ECOTerm();
         if (evidenceCode.contains("ZDB-TERM"))
             evidenceCode = getOntologyRepository().getTermByZdbID(evidenceCode).getOboID();
         eco.setCurie(evidenceCode);
