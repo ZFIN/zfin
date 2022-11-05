@@ -45,7 +45,7 @@
     </c:otherwise>
 </c:choose>
 
-<z:dataPage sections="${secs}" useNavigationCounter="true" additionalBodyClass="publication-view">
+<z:dataPage sections="${secs}" useNavigationCounter="${useNavigationCounter}" additionalBodyClass="publication-view">
 
     <jsp:attribute name="entityName">
         <div data-toggle="tooltip" data-placement="bottom" title="${publication.citation}">

@@ -1,7 +1,6 @@
 package org.zfin.publication.presentation;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.logging.log4j.LogManager;
@@ -19,6 +18,8 @@ import org.zfin.figure.presentation.FigurePhenotypeSummary;
 import org.zfin.figure.service.FigureViewService;
 import org.zfin.framework.ComparatorCreator;
 import org.zfin.framework.api.Pagination;
+import org.zfin.framework.featureflag.FeatureFlagEnum;
+import org.zfin.framework.featureflag.FeatureFlags;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
@@ -125,6 +126,10 @@ public class PublicationViewController {
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication));
         model.addAttribute("relatedData", relatedDataService.getXrefsLinks(publication.getZdbID(), "Publication", null));
+
+        //TODO: instead of FUTURE_FLAG_PLACEHOLDER, use the correct flag after PR#391 (USE_NAVIGATION_COUNTER)
+        model.addAttribute("useNavigationCounter",
+                FeatureFlags.isFlagEnabled(FeatureFlagEnum.FUTURE_FLAG_PLACEHOLDER));
 
         return "publication/publication-view";
     }

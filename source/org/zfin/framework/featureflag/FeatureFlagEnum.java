@@ -3,6 +3,7 @@ package org.zfin.framework.featureflag;
 
 public enum FeatureFlagEnum {
     JBROWSE("jBrowse"),
+//    USE_NAVIGATION_COUNTER("Show Navigation Counter"),
     FUTURE_FLAG_PLACEHOLDER("Placeholder For Future Feature");
 
     private String name;
