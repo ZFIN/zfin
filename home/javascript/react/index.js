@@ -3,9 +3,7 @@
 import 'regenerator-runtime/runtime';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {subscribe, setCounts} from './state/NavigationCounter';
-
-const navigationCounter = {subscribe, setCounts};
+import * as navigationCounter from './state/NavigationCounter';
 
 document
     .querySelectorAll('.__react-root')
