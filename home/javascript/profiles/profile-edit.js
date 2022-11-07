@@ -109,21 +109,14 @@ var addMember = function(personZdbID, organizationZdbID, position, name) {
 };
 
 var generatePassword = function(destinationClass) {
-    jQuery.ajax(
-        {
-            url:'https://www.random.org/passwords/?num=1&len=8&format=plain&rnd=new',
-            dataType:'text',
-            type:"GET",
-            success: function(password) {
-              jQuery('input.' + destinationClass).val(password);
-              jQuery('span.' + destinationClass).text(password);
-            },
-            error: function(response) {
-                alert("The password generating website didn't respond properly: " + response);
-            }
-        }
-    );
+    const passwordLength = 11;
+    const password = [...crypto.getRandomValues(new Uint8Array(999))]
+        .map((c) => String.fromCharCode(c).replace(/[^a-z0-9]/i, ''))
+        .join('')
+        .substr(0, 11);
 
+    jQuery('input.' + destinationClass).val(password);
+    jQuery('span.' + destinationClass).text(password);
 };
 
 var personToAddZdbID;

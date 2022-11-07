@@ -1,5 +1,6 @@
 package org.zfin.profile.presentation;
 
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,26 +35,38 @@ public class PasswordResetController {
 
     @RequestMapping(value = "/forgot-password", method = RequestMethod.POST)
     public String forgotPasswordSubmit(@RequestParam String emailOrLogin, Model model) {
-
+        boolean errorsEncountered = false;
         Person person = profileRepository.getPersonByEmail(emailOrLogin);
         if (person == null) {
             person = profileRepository.getPersonByName(emailOrLogin);
         }
 
-        if (person != null) {
-            UserService.setPasswordResetKey(person);
+        if (person == null) {
+            model.addAttribute("error", "No user found for email or login: " + emailOrLogin);
+            errorsEncountered = true;
+        }
 
+        if (!errorsEncountered) {
+            try {
+                Transaction tx = HibernateUtil.createTransaction();
+                UserService.setPasswordResetKey(person);
+                tx.commit();
+            } catch (Exception e) {
+                errorsEncountered = true;
+                model.addAttribute("error", "Error while resetting password");
+                return "profile/forgot-password-form";
+            }
+        }
+
+        if (!errorsEncountered) {
             MailSender mailer = AbstractZfinMailSender.getInstance();
-
             String url = "https://"
                     + ZfinPropertiesEnum.DOMAIN_NAME.value()
                     + "/action/profile/password-reset/"
                     + person.getZdbID()
                     + "?resetKey="
                     + person.getAccountInfo().getPasswordResetKey();
-
             String body = "<a href=\"" + url + "\">Follow this link</a> to reset your ZFIN password";
-
             boolean sent = mailer.sendHtmlMail(
                     "Reset ZFIN Password",
                     body,
@@ -62,12 +75,10 @@ public class PasswordResetController {
                     new String[] { person.getFirstName() + " "
                             + person.getLastName()
                             + " <" + person.getEmail() + "> "});
-
             if (!sent) {
                 model.addAttribute("errorMessage", "Unable to send email, please contact zfinadmn@zfin.org");
             }
         }
-
 
         return "profile/forgot-password-response";
     }
@@ -100,9 +111,9 @@ public class PasswordResetController {
                                       @RequestParam String pass2,
                                       @RequestParam String resetKey,
                                       Model model) {
-        
-        String page = "profile/reset-password";
 
+        Transaction tx = HibernateUtil.createTransaction();
+        String page = "profile/reset-password";
         Person person = profileRepository.getPerson(zdbId);
 
         if (!UserService.passwordResetKeyIsValid(person.getAccountInfo(), resetKey)) {
@@ -135,7 +146,7 @@ public class PasswordResetController {
         person.getAccountInfo().setPasswordResetDate(null);
         person.getAccountInfo().setPasswordResetKey(null);
         model.addAttribute("resetSuccessful",true);
-        HibernateUtil.currentSession().flush();
+        tx.commit();
 
         return page;
     }
