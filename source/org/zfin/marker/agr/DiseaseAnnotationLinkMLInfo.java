@@ -230,7 +230,6 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
             if (highLevelterm.isPresent()) {
                 expcond.setConditionClass(highLevelterm.get().getOboID());
                 expcond.setConditionId(oboID);
-                expcond.setC(highLevelterm.get().getTermName() + ": " + expcond.getConditionStatement());
             }
         }
     }
