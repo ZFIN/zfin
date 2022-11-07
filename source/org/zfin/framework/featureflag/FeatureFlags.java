@@ -4,6 +4,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +38,7 @@ public class FeatureFlags {
         return isFlagEnabled(flag.getName());
     }
 
-    private static boolean isFlagEnabled(String flagName) {
+    public static boolean isFlagEnabled(String flagName) {
         SessionState flagEnabledForSession = isFlagEnabledForSessionScope(flagName);
         if (flagEnabledForSession == SessionState.UNSET) {
             return isFlagEnabledForGlobalScope(flagName);
@@ -57,10 +58,12 @@ public class FeatureFlags {
     }
 
     private static boolean isFlagEnabledForGlobalScope(String flagName) {
-        ZdbFlag updatesFlag = RepositoryFactory.getInfrastructureRepository().getUpdatesFlag();
-        log.debug(updatesFlag);
-        FeatureFlag flag = RepositoryFactory.getInfrastructureRepository().getFeatureFlag(flagName);
-        return flag.isEnabledForGlobalScope();
+        try {
+            FeatureFlag flag = RepositoryFactory.getInfrastructureRepository().getFeatureFlag(flagName);
+            return flag.isEnabledForGlobalScope();
+        } catch (NoResultException e) {
+            return false;
+        }
     }
 
     public static SessionState isFlagEnabledForSessionScope(FeatureFlag flag) {
@@ -75,8 +78,6 @@ public class FeatureFlags {
         HttpServletRequest request = requestAttributes.getRequest();
 
         Boolean value = (Boolean) request.getSession().getAttribute(SESSION_PREFIX + flagName);
-        log.debug("isFlagEnabledForSessionScope: Current feature session value for flag named " + flagName);
-        log.debug(value);
 
         if (value == null) {
             return SessionState.UNSET;
@@ -92,9 +93,6 @@ public class FeatureFlags {
 
         String featureKey = SESSION_PREFIX + name;
         Object sessionVariable = request.getSession().getAttribute(featureKey);
-        log.debug("Current feature session value for " + featureKey);
-        log.debug(sessionVariable);
-        log.debug("Setting to: " + value);
 
         request.getSession().setAttribute(featureKey, value);
     }

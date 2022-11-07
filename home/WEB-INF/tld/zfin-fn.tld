@@ -352,4 +352,10 @@
         <function-signature>java.lang.String getAssetPath(java.lang.String)</function-signature>
     </function>
 
+    <function>
+        <name>isFlagEnabled</name>
+        <function-class>org.zfin.framework.featureflag.FeatureFlags</function-class>
+        <function-signature>boolean isFlagEnabled(org.zfin.framework.featureflag.FeatureFlagEnum)</function-signature>
+    </function>
+
 </taglib>
