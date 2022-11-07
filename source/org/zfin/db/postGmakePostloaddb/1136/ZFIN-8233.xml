@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+
+    <changeSet author="rtaylor" id="ZFIN-8233">
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1136/ZFIN-8233-filemaker-export-clon-class-2014.csv"
+                  schemaName="thisse"
+                  tableName="clon_class14" encoding="UTF-8" quotchar='"'>
+
+            <column header="count" name="count" type="String" />
+            <column header="vector" name="vector" type="String" />
+            <column header="box #" name="box" type="String" />
+            <column header="Clone Name" name="clone_name" type="String" />
+            <column header="Alternative name" name="alternative_name" type="String" />
+            <column header="size" name="size" type="String" />
+            <column header="comments" name="comments" type="String" />
+            <column header="cloning site" name="cloning_site" type="String" />
+            <column header="Antisense" name="antisense" type="String" />
+            <column header="Sense" name="sense" type="String" />
+            <column header="clone class #" name="clone_class" type="String" />
+            <column header="sample type" name="sample_type" type="String" />
+
+        </loadData>
+
+    </changeSet>
+
+</databaseChangeLog>

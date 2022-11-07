@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+
+    <changeSet author="rtaylor" id="ZFIN-8201a">
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1136/ZFIN-8201-excel-import-table-nuclearreceptors-copie.csv"
+                  schemaName="thisse"
+                  tableName="excel_import_nuclear_receptors" encoding="UTF-8" quotchar='"'>
+            <column header="NOMENCLATURE" name="nomenclature" type="String" />
+            <column header="NAME" name="name" type="String" />
+            <column header="size bp" name="size_bp" type="String" />
+            <column header="genbank #" name="genbank" type="String" />
+            <column header="old name" name="old_name" type="String" />
+            <column header="vector" name="vector" type="String" />
+            <column header="PCR" name="pcr" type="String" />
+            <column header="VL #" name="vl" type="String" />
+        </loadData>
+    </changeSet>
+    <changeSet author="rtaylor" id="ZFIN-8201b">
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1136/ZFIN-8201-excel-import-zfish-ish-dbase-avril-2017-copy.csv"
+                  schemaName="thisse"
+                  tableName="excel_import_zfish_ish_dbase_avril_2017" encoding="UTF-8" quotchar='"'>
+            <column header="Clone name" name="clone_name" type="String"/>
+            <column header="Box1" name="box1" type="String" />
+            <column header="Box2" name="box2" type="String" />
+            <column header="cDNA Name" name="cdna_name" type="String" />
+            <column header="Gene symbol" name="gene_symbol" type="String" />
+            <column header="Biblio data" name="biblio_data" type="String" />
+            <column header="comments" name="comments" type="String" />
+            <column header="Complexes" name="complexes" type="String" />
+            <column header="ENSDARG" name="ensdarg" type="String" />
+            <column header="Epigenetic" name="epigenetic" type="String" />
+            <column header="Function" name="function" type="String" />
+            <column header="Gene Name" name="gene_name" type="String" />
+            <column header="GO component" name="go_component" type="String" />
+            <column header="GO function" name="go_function" type="String" />
+            <column header="GO process" name="go_process" type="String" />
+            <column header="Modification" name="modification" type="String" />
+            <column header="NR-NS" name="nr_ns" type="String" />
+            <column header="Original Name" name="original_name" type="String" />
+            <column header="ovaries" name="ovaries" type="String" />
+            <column header="pattern" name="pattern" type="String" />
+            <column header="PMID" name="pmid" type="String" />
+            <column header="polymerase" name="polymerase" type="String" />
+            <column header="primers" name="primers" type="String" />
+            <column header="Sequence" name="sequence" type="String" />
+            <column header="size" name="size" type="String" />
+            <column header="star" name="star" type="String" />
+            <column header="submission ZFIN" name="submission_zfin" type="String" />
+            <column header="target entity" name="target_entity" type="String" />
+            <column header="Target moleculres" name="target_molecules" type="String" />
+            <column header="Vector" name="vector" type="String" />
+            <column header="ZDB_gene" name="zdb_gene" type="String" />
+            <column header="ZFIN probe ID" name="zfin_probe_id" type="String" />
+        </loadData>
+    </changeSet>
+
+
+</databaseChangeLog>

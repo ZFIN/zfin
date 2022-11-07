@@ -1,0 +1,40 @@
+--liquibase formatted sql
+--changeset rtaylor:ZFIN-8230-pre
+
+CREATE TABLE thisse.zebrafish_ish17 (
+	"count" text,
+	"cdna_name" text,
+	"original_name" text,
+	"gene_symbol" text,
+	"gene_name" text,
+	"sequence" text,
+	"star" text,
+	"nr_ns" text,
+	"pattern" text,
+	"ovaries" text,
+	"submission_zfin" text,
+	"size" text,
+	"ligne_number" text,
+	"zdb_gene" text,
+	"zdb_est" text,
+	"vector" text,
+	"polymerase" text,
+	"box1" text,
+	"box2" text,
+	"go_component" text,
+	"go_function" text,
+	"go_process" text,
+	"comments" text,
+	"primers" text,
+	"epigenetic" text,
+	"function" text,
+	"target_molecules" text,
+	"target_entity" text,
+	"complexes" text,
+	"pmid" text,
+	"biblio_data" text,
+	"modification" text,
+	"ensdarg" text,
+	"zfin_probe_id" text
+);
+
