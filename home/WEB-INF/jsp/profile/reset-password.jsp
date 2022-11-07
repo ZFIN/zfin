@@ -20,16 +20,12 @@
         <c:when test="${allowReset}">
 
 
-            <c:set var='secure' value="${ZfinPropertiesEnum.SECURE_HTTP.toString()}"/>
-            <c:set var='domain' value="${ZfinPropertiesEnum.DOMAIN_NAME.toString()}"/>
-            <c:set var='secureServer' value="${secure}${domain}"/>
-
             <div class="login-container">
 
                 <h1>Reset Password</h1>
 
                 <form method="post"
-                      action="${secureServer}/action/profile/password-reset/${zdbId}">
+                      action="/action/profile/password-reset/${zdbId}">
                     <input type="hidden" name="resetKey" value="${resetKey}"/>
                     <input type="hidden" name="zdbId" value="${zdbId}"/>
 
