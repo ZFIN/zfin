@@ -44,6 +44,7 @@ import org.zfin.publication.Publication;
 import org.zfin.util.DatabaseJdbcStatement;
 import org.zfin.util.DateUtil;
 
+import javax.persistence.NoResultException;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.*;
@@ -695,8 +696,14 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
     public void setFeatureFlag(String name, boolean enabled) {
+        FeatureFlag flag = null;
         Session session = HibernateUtil.currentSession();
-        FeatureFlag flag = getFeatureFlag(name);
+        try {
+            flag = getFeatureFlag(name);
+        } catch (NoResultException e) {
+            flag = new FeatureFlag();
+            flag.setName(name);
+        }
         flag.setEnabledForGlobalScope(enabled);
         flag.setLastModified(new Date());
         session.save(flag);
