@@ -12,6 +12,16 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1136/ZFIN-7129-pre.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1136/ZFIN-7129.xml" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1136/ZFIN-7129.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1136/ZFIN-8231-pre.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1136/ZFIN-8231.xml" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1136/ZFIN-8230-pre.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1136/ZFIN-8230.xml" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1136/ZFIN-8232-pre.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1136/ZFIN-8232.xml" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1136/ZFIN-8233-pre.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1136/ZFIN-8233.xml" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1136/ZFIN-8201-pre.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1136/ZFIN-8201.xml" />
 
 
 </databaseChangeLog>

@@ -15,8 +15,8 @@ apply from: 'console.gradle'
 
 //apply from: file('setupTestsReports.gradle')
 
-sourceCompatibility = 14
-targetCompatibility = 14
+sourceCompatibility = 15
+targetCompatibility = 15
 
 //apply from : '../zfinGradle/build.gradle'
 
@@ -751,7 +751,7 @@ dependencies {
     implementation group: 'org.fusesource.restygwt', name: 'restygwt', version: '2.2.0'
     implementation group: 'org.jboss.spec.javax.ws.rs', name: 'jboss-jaxrs-api_2.1_spec', version: '2.0.1.Final'
 //    implementation group: 'javax.ws.rs', name: 'jsr311-api', version: '1.1.1'
-    implementation group: 'org.apache.solr', name: 'solr-solrj', version: '6.4.2'
+    implementation group: 'org.apache.solr', name: 'solr-solrj', version: '8.6.3'
     implementation group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.1'
     implementation group: 'commons-cli', name: 'commons-cli', version: '1.2'
     implementation group: 'org.freemarker', name: 'freemarker', version: '2.3.20'
@@ -784,13 +784,6 @@ dependencies {
     implementation files('home/WEB-INF/lib/jackson-core-2.13.0.rc1.jar')
     implementation files('home/WEB-INF/lib/javax.persistence-api-2.2.jar')
 
-    implementation files('home/WEB-INF/lib/spring-context-4.2.2.RELEASE.jar')
-    implementation files('home/WEB-INF/lib/spring-context-support-4.2.2.RELEASE.jar')
-    implementation files('home/WEB-INF/lib/spring-core-4.2.2.RELEASE.jar')
-    implementation files('home/WEB-INF/lib/jackson-annotations-2.13.0-rc1.jar')
-    implementation files('home/WEB-INF/lib/jackson-databind-2.13.0-rc1.jar')
-    implementation files('home/WEB-INF/lib/jackson-datatype-jsr310-2.13.0.jar')
-    implementation files('home/WEB-INF/lib/jackson-datatype-jsr310-2.13.0.jar')
     implementation files('home/WEB-INF/lib/log4j-api-2.17.1.jar')
     implementation files('home/WEB-INF/lib/log4j-core-2.17.1.jar')
     implementation files('home/WEB-INF/lib/log4j-web-2.17.1.jar')
@@ -912,6 +905,15 @@ test {
         includeTestsMatching "org.zfin.search.service.SolrQueryFacadeSpec"
         includeTestsMatching "org.zfin.search.service.MarkerSearchServiceSpec"
         includeTestsMatching "org.zfin.search.service.SearchSuggestionServiceSpec"
+
+        includeTestsMatching "org.zfin.ontology.service.RibbonServiceIntegrationSpec"
+        includeTestsMatching "org.zfin.uniquery.RelatedLinksSpec"
+
+//      Failing tests that we may want to bring back: (ZFIN-8271)
+//        includeTestsMatching "org.zfin.uniquery.CategoriesAndFacetsSpec"
+//        includeTestsMatching "org.zfin.uniquery.QuerySpec"
+//        includeTestsMatching "org.zfin.uniquery.ResultAttributesSpec"
+        
         includeTestsMatching "org.zfin.sequence.repository.SequenceRepositorySpec"
         includeTestsMatching "org.zfin.feature.FeatureServiceSpec"
         includeTestsMatching "org.zfin.curation.service.CurationDTOConversionServiceSpec"

@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import qs from 'qs';
 import DataTable from '../components/data-table';
 import DataTableSummaryToggle from '../components/DataTableSummaryToggle';
+import PublicationSummary from '../components/PublicationSummary';
+import {EntityLink} from '../components/entity';
 
 const TermZebrafishModelTable = ({termId, directAnnotationOnly}) => {
 
@@ -13,41 +15,41 @@ const TermZebrafishModelTable = ({termId, directAnnotationOnly}) => {
         {
             label: 'Fish',
             content: (row) => <a
-                href={'/' + row.fishModel.fish.zdbID}
-                dangerouslySetInnerHTML={{__html: row.fishModel.fish.name}}
+                href={'/' + row.fish.zdbID}
+                dangerouslySetInnerHTML={{__html: row.fish.name}}
             />,
+            width: '330px',
+        },
+        {
+            label: 'Conditions',
+            content: (row) => <span className='text-break'>
+                <a
+                    className='text-break'
+                    href={`/${row.experiment.zdbID}`}
+                    dangerouslySetInnerHTML={{__html: row.experiment.conditions}}
+                />
+                <a
+                    className='popup-link data-popup-link'
+                    href={`/action/expression/experiment-popup?id=${row.experiment.zdbID}`}
+                />
+            </span>,
+        },
+        {
+            label: 'Disease',
+            content: ({disease}) => <EntityLink entity={disease}/>,
             width: '120px',
         },
-        /*
-                {
-                    label: 'Phenotype',
-                    content: ({phenotypeObserved}) => <CommaSeparatedList>
-                        {phenotypeObserved.map(entity => {
-                            return <PhenotypeStatementLink key={entity.id} entity={entity}/>
-                        })}
-                    </CommaSeparatedList>,
-                    width: '220px',
-                },
-        */
-        /*
-                {
-                    label: 'Term',
-                    content: ({anatomyItem}) => <EntityLink entity={anatomyItem}/>,
-                    width: '120px',
-                },
-        */
-        /*
-                {
-                    label: 'Citation',
-                    content: row => (
-                        <FigureSummary
-                            statistics={row}
-                            allFiguresUrl={`/action/ontology/${row.anatomyItem.zdbID}/phenotype-summary/${row.fish.zdbID}`}
-                        />
-                    ),
-                    width: '100px',
-                },
-        */
+        {
+            label: 'Citation',
+            content: row => (
+                <PublicationSummary
+                    numberOfPublications={row.numberOfPublications}
+                    firstPublication={row.singlePublication}
+                    allPublicationUrl={`/action/ontology//phenotype-summary/${row.fish.zdbID}`}
+                />
+            ),
+            width: '230px',
+        },
 
     ];
 
@@ -70,7 +72,7 @@ const TermZebrafishModelTable = ({termId, directAnnotationOnly}) => {
                 columns={columns}
                 dataUrl={`/action/api/ontology/${termId}/zebrafish-models?${qs.stringify(params)}`}
                 onDataLoadedCount={(count) => setCount(count)}
-                rowKey={row => row.fishModel.zdbID}
+                rowKey={row => row.zdbID}
             />
         </>
     );

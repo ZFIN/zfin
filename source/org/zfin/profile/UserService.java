@@ -86,13 +86,12 @@ public class UserService {
         Date passwordResetDate = Calendar.getInstance().getTime();
 
         AccountInfo accountInfo = person.getAccountInfo();
+        accountInfo.setZdbID(person.getZdbID());
 
         accountInfo.setPasswordResetKey(passwordResetKey);
         accountInfo.setPasswordResetDate(passwordResetDate);
 
-//        HibernateUtil.currentSession().save(accountInfo);
-        HibernateUtil.currentSession().flush();
-
+        HibernateUtil.currentSession().update(accountInfo);
     }
 
     public static boolean passwordResetKeyIsValid(AccountInfo accountInfo, String key) {
