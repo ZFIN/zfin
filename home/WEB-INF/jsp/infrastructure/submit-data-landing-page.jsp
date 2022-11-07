@@ -49,26 +49,6 @@
         <hr />
 
         <div>
-            <h4>Share antibody information in the ZFIN Community Antibody Wiki</h4>
-            <p>
-                The <a href="https://@WIKI_HOST@/display/AB">Community Antibody Wiki</a> is where zebrafish researchers can
-                help each other by sharing antibody information&mdash;new antibodies, protocols and tips.
-            </p>
-        </div>
-
-        <hr />
-
-        <div>
-            <h4>Share an experimental protocol in the ZFIN Protocol Wiki</h4>
-            <p>
-                The <a href="https://@WIKI_HOST@/display/prot">Protocol Wiki</a> is where zebrafish researchers can share
-                experimental protocols and tips with the rest of the research community.
-            </p>
-        </div>
-
-        <hr />
-
-        <div>
             <h4>Submit a fish line to ZIRC</h4>
             <p>
                 <a href="http://zebrafish.org/submissions/submitTerms.php">Submit fish strains</a> to the Zebrafish
