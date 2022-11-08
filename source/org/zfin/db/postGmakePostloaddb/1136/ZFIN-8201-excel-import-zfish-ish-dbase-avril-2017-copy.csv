@@ -1,0 +1,987 @@
+﻿Box1,Box2,cDNA Name,Gene symbol,Biblio data,comments,Complexes,ENSDARG,Epigenetic,Function,Gene Name,GO component,GO function,GO process,Modification,NR-NS,Original Name,ovaries,pattern,PMID,polymerase,primers,Sequence,size,star,submission ZFIN,target entity,Target moleculres,Vector,ZDB_gene,ZFIN probe ID
+,,CB1045,xirp2a,,,,,,,xin actin binding repeat containing 2a,cell junction,metal ion binding ; actin binding ; zinc ion binding,actin cytoskeleton organization ; heart development,,,GA1084,,"G  : Ø
+ES : Ø
+MS : pronephric duct, myotomes borders +++
+24 hrs : somites borders +++
+36 hrs : same
+48 hrs - late : tip of muscles fibers in trunk and head",,,ABJ249-ABJ250,,2.8,4,sending CB,,,pBK CMV,ZDB-GENE-040108-7,
+V1,V404,CB1,kif11,,,,,,,kinesin family member 11,microtubule ; kinesin complex,"nucleotide binding ; ATP binding ; ATP-dependent microtubule motor activity, plus-end-directed ; microtubule motor activity ; microtubule binding",neurogenesis ; mitotic spindle assembly ; microtubule-based movement ; regulation of cell cycle ; chromosome segregation ; angiogenesis,,,AS 7,,Cell cycle,,T7,PU-RP,BI325069BI325070,1.6,2,sending CB,,,pBSIISK+,ZDB-GENE-020426-1,
+V10,V428,CB116,prkdc,"Acetylation largely enhances the phosphorylation of H2AX by DNA-PK=PRKDC, and this acetylation effect is observed when H2AX exists in the context of nucleosomes but not in a free form.",,#,,epi,Histone modification write,"protein kinase, DNA-activated, catalytic polypeptide",nucleus,"DNA-dependent protein kinase activity ; transferase activity ; nucleotide binding ; ATP binding ; phosphotransferase activity, alcohol group as acceptor ; kinase activity ; DNA binding",phosphorylation ; DNA repair ; double-strand break repair via nonhomologous end joining,Histone phosphorylation,,CG110,,"G : Ø
+ES : Ø
+MS : lateral mesoderm
+24 hrs : pronephric duct
+36 hrs : pronephric duct
+48 hrs : pronephric duct
+late : + liver",14627815,T7,PU-RP,CB333791CB333792,1.7,1,sending CB,"H2AXS139ph, H2AFXS139ph","H2AXS139, H2AFXS139",pBSIISK+,ZDB-GENE-030131-9008,
+V101,,FR_6036,pygl,,,,,,,"phosphorylase, glycogen, liver",cytoplasm,"phosphorylase activity ; transferase activity ; transferase activity, transferring glycosyl groups ; glycogen phosphorylase activity ; pyridoxal phosphate binding",carbohydrate metabolic process ; glycogen catabolic process,,,GS5755,,"G - ES: Ø
+MS - 48 h : myotomes
+48 h : + pectoral fin muscles",,T3,ADX299-M13F or PU,CK692288,13,3,18 th sending,,,pDNR-LIB,ZDB-GENE-041205-1,
+V102,,FR_6063,ankef1b,,,,ENSDARG00000060211,,,ankyrin repeat and EF-hand domain containing 1b,cellular_component,calcium ion binding,biological_process,,NR,GS5801 ,,NR weak,,T3,ADX299-M13F or PU,CK692667,2,,14 th sending,,,pDNR-LIB,ZDB-GENE-060810-68, ZDB-EST-060810-252
+V103,,FR_6105,tdp2b,,,,ENSDARG00000035954,,,tyrosyl-DNA phosphodiesterase 2b,PML body ; nucleus,"mannosyl-diinositol phosphorylceramide phospholipase activity ; inositol phosphosphingolipid phospholipase activity ; cGMP-stimulated cyclic-nucleotide phosphodiesterase activity ; cyclic-nucleotide phosphodiesterase activity ; mannosyl-inositol phosphorylceramide phospholipase activity ; photoreceptor cyclic-nucleotide phosphodiesterase activity ; calmodulin-dependent cyclic-nucleotide phosphodiesterase activity ; 7,8-dihydro-D-neopterin 2',3'-cyclic phosphate phosphodiesterase activity ; inositol phosphorylceramide phospholipase activity ; cGMP-inhibited cyclic-nucleotide phosphodiesterase activity ; 3',5'-cyclic-AMP phosphodiesterase activity ; 5'-tyrosyl-DNA phosphodiesterase activity ; manganese ion binding ; nuclease activity ; metal ion binding ; hydrolase activity ; magnesium ion binding ; single-stranded DNA binding ; DNA binding",convergent extension involved in gastrulation ; gastrulation ; multicellular organism development ; cellular response to DNA damage stimulus ; DNA repair ; double-strand break repair ; negative regulation of transforming growth factor beta receptor signaling pathway ; determination of left/right symmetry,,NR,GS5851 ,,NR,,T3,ADX299-M13F or PU,CK693033,2,,14 th sending,,,pDNR-LIB,ZDB-GENE-050816-1, ZDB-EST-060810-280
+V104,,FR_6137,hectd3,,,,,,,HECT domain containing 3,NA,ligase activity ; ubiquitin protein ligase activity ; ubiquitin-protein transferase activity,protein ubiquitination involved in ubiquitin-dependent protein catabolic process,,,GS5901,,"G : Ø
+ES : polster, notochord
+MS : notochord, hatching gland
+> Ø",,T3,ADX299-M13F or PU,CK693551,21,1,18 th sending,,,pDNR-LIB,ZDB-GENE-031118-179,
+V105,,FR_6188,med13a,,,,,,,mediator complex subunit 13a,mediator complex,RNA polymerase II transcription cofactor activity,regulation of transcription from RNA polymerase II promoter,,NR,GS5952 ,,NR,,T3,ADX299-M13F or PU,CK693909,2,,14 th sending,,,pDNR-LIB,ZDB-GENE-070627-13,
+V106,,FR_6222,fmn2b,,,,,,,formin 2b,actin filament,microtubule binding,actin nucleation,,,GS6001,,"G - MS : Ø
+ 24 - 48 h : CNS margina
+48 h : ganglion cell layer of retina",,T3,ADX299-M13F or PU,CK694293,2,1,18 th sending,,,pDNR-LIB,ZDB-GENE-080225-35,
+V107,,FR_6257,xrcc1,,,,ENSDARG00000009494,,,X-ray repair complementing defective repair in Chinese hamster cells 1,nucleus,damaged DNA binding,single strand break repair ; base-excision repair,,NR,GS6051 ,,NR more in eye and tectum,,T3,ADX299-M13F or PU,CK694657,18,,14 th sending,,,pDNR-LIB,ZDB-GENE-040822-30, ZDB-EST-060810-349
+V108,,FR_6292,gpr182,,,,,,,G protein-coupled receptor 182,membrane ; integral component of membrane,signal transducer activity ; G-protein coupled receptor activity,signal transduction ; G-protein coupled receptor signaling pathway ; intracellular signal transduction,,,GS6101,,"G - ES : Ø
+MS - late : vasculature +++",,T3,ADX299-M13F or PU,CK695028,21,4,20 th sending ,,,pDNR-LIB,ZDB-GENE-030131-2361,
+V109,,FR_6337,gk5,,,,,,,glycerol kinase 5 (putative),cytoplasm,"transferase activity ; nucleotide binding ; glycerol kinase activity ; ATP binding ; phosphotransferase activity, alcohol group as acceptor ; kinase activity",glycerol catabolic process ; carbohydrate metabolic process ; glycerol metabolic process ; phosphorylation,,NR,GS6152 ,,NR,,T3,ADX299-M13F or PU,CK695666,22,,14 th sending,,,pDNR-LIB,ZDB-GENE-061110-49,
+V11,V430,CB291,frzb,,,,,,,frizzled-related protein,extracellular region ; integral component of membrane,Wnt-protein binding ; Wnt-activated receptor activity ; G-protein coupled receptor activity,non-canonical Wnt signaling pathway ; multicellular organism development ; Wnt signaling pathway ; canonical Wnt signaling pathway,,,CG336,,"G : prechordal plate
+ES : polster
+MS : Ø, transient in caudal floor plate and hypochord
+24 h : beginning of expression in corpuscle of Stannius
+36 h : corpuscle of Stannius
+48 h : corpuscle of Stannius, thymus
+5 d : thymus, ventral part of retina
+",,T7,PU-RP,CB417263,1.7,4,sending CB,,,pBSIISK+,ZDB-GENE-990715-1,
+V110,,FR_6372,bola3,,,,,,,bolA family member 3,cellular_component,NA,biological_process,,NR,GS6202 ,,NR,,T3,ADX299-M13F or PU,CK696278,2,,20 th sending ,,,pDNR-LIB,ZDB-GENE-040801-32,
+V111,,FR_5961,polr2eb,,,,ENSDARG00000026183,,,"polymerase (RNA) II (DNA directed) polypeptide E, b","DNA-directed RNA polymerase I complex ; DNA-directed RNA polymerase III complex ; DNA-directed RNA polymerase II, core complex ; nucleus",DNA-directed RNA polymerase activity ; RNA polymerase III activity ; RNA polymerase II activity ; RNA polymerase I activity ; DNA binding,"transcription, DNA-templated",,NR,GS5653 ,,"NR more in eye, tectum, branchial arches",,T3,ADX299-M13F or PU,CK691396,13,,14 th sending,,,pDNR-LIB,ZDB-GENE-040801-83, ZDB-EST-060810-217
+V112,,FR_5994,sptlc1,,,,,,,"serine palmitoyltransferase, long chain base subunit 1",membrane ; integral component of membrane,catalytic activity ; pyridoxal phosphate binding,biosynthetic process,,,GS5701,,"G : ECL
+ES : ± Ø (EVL)
+MS : pronephric ducts
+24 h : ± NR, more in pronephric ducts
+36 - 48 h : gut",,T3,ADX299-M13F or PU,CK691867,3,1,18 th sending,,,pDNR-LIB,ZDB-GENE-050522-61,
+V113,,FR_6489,sh3d19,,,,,,,SH3 domain containing 19,cellular_component,molecular_function,biological_process,,,GS6354,,"G - ES : NR
+MS - 24 h : NR, myotomes
+36 - 48 h : NR",,T3,ADX299-M13F or PU,CK697612,18,1,,,,pDNR-LIB,ZDB-GENE-050522-481,
+V114,,FR_6522,mdc1,,,,ENSDARG00000086764,,,mediator of DNA damage checkpoint 1,,,,,NR,GS6402 ,,NR,,T3,ADX299-M13F or PU,CK698050,18,,14 th sending,,,pDNR-LIB,ZDB-GENE-060810-185, ZDB-EST-060810-475
+V115,,FR_6573,barx1,,,,,,,BARX homeobox 1,nucleus,"transcriptional activator activity, RNA polymerase II transcription regulatory region sequence-specific binding ; RNA polymerase II regulatory region sequence-specific DNA binding ; sequence-specific DNA binding ; DNA binding","positive regulation of mesenchymal cell proliferation ; pharyngeal system development ; transcription, DNA-templated ; digestive system development ; regulation of transcription, DNA-templated ; cartilage development",,NR,GS6469 ,,NR,,T3,ADX299-M13F or PU,CK699038,3,,20 th sending ,,,pDNR-LIB,ZDB-GENE-050522-28,
+V116,,FR_6603,hddc3,,,,,,,HD domain containing 3,cellular_component,"GTP diphosphokinase activity ; metal ion binding ; hydrolase activity ; guanosine-3',5'-bis(diphosphate) 3'-diphosphatase activity",response to starvation ; guanosine tetraphosphate metabolic process,,,GS6505,,"G - 5 d: periderm
+24 h - 5 d: same + nose, mucous cells
+48 h- 5 d: lateral line neuromasts
+5 d: + branchial arches, swim bladder",,T3,ADX299-M13F or PU,CK699343,26,1,,,,pDNR-LIB,ZDB-GENE-050417-377,
+V117,,FR_6655,abcb11b,,,,,,,"ATP-binding cassette, sub-family B (MDR/TAP), member 11b",membrane ; integral component of membrane,"nucleotide binding ; canalicular bile acid transmembrane transporter activity ; ATP binding ; ATPase activity ; ATPase activity, coupled to transmembrane movement of substances",bile acid and bile salt transport ; transport ; canalicular bile acid transport ; transmembrane transport,,,GS6581,,"G : Ø
+ES : pronephric ducts
+MS : pronephric ducts, mucous cells, cranial ganglia
+24 - 36 h : pronephric ducts, mucous cells, cranial ganglia, neurons in telencephalon, diencephalon, tegmentum, hindbrain, spinal chord, epiphysis, nose
+48 h : brain, cranial ganglia, epiphysis, nose, habenula (symetrical or stronger on R)
+
+same as GS6580",,T3,ADX299-M13F or PU,CK699995,23,3,,,,pDNR-LIB,ZDB-GENE-050517-14,
+V118,,FR_6788,atp6ap2,,,,,,,"ATPase, H+ transporting, lysosomal accessory protein 2",membrane ; integral component of membrane,receptor activity,intrahepatic bile duct development,,NR,GS6601 ,,NR,,T3,ADX299-M13F or PU,CK700114,2.8,,20 th sending ,,,pDNR-LIB,ZDB-GENE-040426-1960,
+V12,V433,CB368,txnipa,,,,,,,thioredoxin interacting protein a,,,,,,CG822,,ventral mesoderm/blood,,T7,PU-RP,CD808433CD808434,2.3,1,sending CB,,,pBSIISK+,ZDB-GENE-030804-10,
+V120,,FR_3482,zbtb21,,,,ENSDARG00000043285,,,zinc finger and BTB domain containing 21,,,,,NS,GS459 ,,no staining,,T3,ADX299-M13F or PU,CB351845,4,,9 th sending,,,pDNR-LIB,ZDB-GENE-050411-7, ZDB-EST-050411-150
+V121,,FR_3544,zgc:86609,,,,ENSDARG00000029479,,,zgc:86609,ER membrane protein complex ; membrane ; integral component of membrane,molecular_function,protein folding in endoplasmic reticulum,,NR,GS571 ,,NR weak,,T3,ADX299-M13F or PU,CB352265,2.2,,9 th sending,,,pDNR-LIB,ZDB-GENE-050102-7, ZDB-EST-050411-173
+V122,,FR_3611,cpsf1,,,,,,,cleavage and polyadenylation specific factor 1,mRNA cleavage and polyadenylation specificity factor complex ; nucleus,nucleic acid binding ; mRNA binding,definitive hemopoiesis ; mRNA cleavage ; mRNA polyadenylation,,NR,GS694 ,,NR,,T3,ADX299-M13F or PU,"CB353490	",1.9,,10 th sending,,,pDNR-LIB,ZDB-GENE-040709-2,
+V123,,FR_3710,h2afx,,,,,,,"H2A histone family, member X",nucleosome ; chromosome ; nuclear chromatin ; nucleus,protein heterodimerization activity ; DNA binding,meiotic cell cycle ; cell cycle ; DNA recombination ; chromatin silencing ; cellular response to DNA damage stimulus ; DNA repair,,NR,GS826 ,,NR strong,,T3,ADX299-M13F or PU,"CB355340	",1.3,,10 th sending,,,pDNR-LIB,ZDB-GENE-040426-987,
+V124,,FR_3817,tmed4,,,,,,,transmembrane p24 trafficking protein 4,membrane ; integral component of membrane,NA,transport,,NR,GS1006 ,,NR,,T3,ADX299-M13F or PU,"CB357561	",2,,10 th sending,,,pDNR-LIB,ZDB-GENE-040625-140,
+V125,,FR_3916,glyr1,"N-PAC=GLYR1, MSH-6, and NSD1 as well as NSD2 were identified as H3K36me3 interactors (Figure 1C; Table S2). Interestingly, these four proteins share a PWWP domain which is part of the Tudor domain “Royal Family” and includes the Tudor, chromo and MBT domains that can interact with methylated lysine residues.",,#,,epi,Histone modification read,glyoxylate reductase 1 homolog (Arabidopsis),nucleus,epoxyqueuosine reductase activity ; malolactic enzyme activity ; reduced coenzyme F420 dehydrogenase activity ; N-ethylmaleimide reductase activity ; sulfur oxygenase reductase activity ; phosphogluconate dehydrogenase (decarboxylating) activity ; NADPH:sulfur oxidoreductase activity ; methylated histone binding ; oxidoreductase activity ; NAD binding,oxidation-reduction process,#,NR,GS1096 ,,"NR, > 24 h more in retina, tectum and mytomes ++",20850016,T3,ADX299-M13F or PU,"CB359425	",3,,10 th sending,#,H3K4me3,pDNR-LIB,ZDB-GENE-041121-5,
+V126,,FR_4008,ndufa9a,,,,,,,"NADH dehydrogenase (ubiquinone) 1 alpha subcomplex, 9a",NA,coenzyme binding ; catalytic activity ; NADH dehydrogenase activity,response to hypoxia ; ubiquinone-6 biosynthetic process,,NR,GS1209 ,,NR,,T3,ADX299-M13F or PU,"CB360696	",1.55,,10 th sending,,,pDNR-LIB,ZDB-GENE-050320-20,
+V127,,FR_4111,c1galt1c1,,,,,,,C1GALT1-specific chaperone 1,NA,glycoprotein-N-acetylgalactosamine 3-beta-galactosyltransferase activity,"O-glycan processing, core 1",,NS,GS1333 ,,no staining,,T3,ADX299-M13F or PU,"CB361839	",1.6,,10 th sending,,,pDNR-LIB,ZDB-GENE-030131-2772,
+V128,,FR_4210,rbm19,,,,,,,RNA binding motif protein 19,NA,nucleotide binding ; nucleic acid binding ; RNA binding,digestive tract morphogenesis,,NR,GS1461 ,,NR,,T3,ADX299-M13F or PU,"CB363021	",3,,10 th sending,,,pDNR-LIB,ZDB-GENE-031125-3,
+V129,,FR_4292,zgc:112964,,,,,,,zgc:112964,cellular_component,molecular_function,cell-matrix adhesion,,NR,GS1566 ,,NR,,T3,ADX299-M13F or PU,"CB363826	",2.3,,11 th sending,,,pDNR-LIB,ZDB-GENE-050306-47,
+V13,V434,CB675,ved,,,,,,,ventrally expressed dharma/bozozok antagonist,nucleus,"DNA binding ; transcription factor activity, sequence-specific DNA binding",regulation of mesodermal cell fate specification ; regulation of endodermal cell fate specification ; post-anal tail morphogenesis ; Spemann organizer formation ; endocrine pancreas development ; spinal cord motor neuron cell fate specification ; neuron projection morphogenesis ; regulation of transcription from RNA polymerase II promoter ; dorsal/ventral pattern formation,,,CG982,,"G : ventral half, marginal evl, Es : ventral epidermis, tail bud, MS : posterior retina, lateral most part of the heart primordium, small dorsal region of somites, 24h : tail bud, aer dorsa and caudal somites, 36-48 h : same",,T7,PU-RP,CF269265 ,1.1,4,sending CB,,,pBSIISK+,ZDB-GENE-030813-1,
+V130,,FR_4392,armc8,,,,,,,armadillo repeat containing 8,cellular_component,NA,biological_process,,NS,GS1690 ,,no staining,,T3,ADX299-M13F or PU,"CB364652	",2.1,,11 th sending,,,pDNR-LIB,ZDB-GENE-061027-88,
+V131,,FR_1101,eif2b3,,,,ENSDARG00000018106,,,"eukaryotic translation initiation factor 2B, subunit 3 gamma",NA,nucleotidyltransferase activity ; translation initiation factor activity,biosynthetic process ; translational initiation ; translation,,NR,GS1845 ,,NR,,T3,ADX299-M13F or PU,CB365731,2.1,,2 nd sending,,,pDNR-LIB,ZDB-GENE-040426-1039, ZDB-EST-040914-53
+V132,,FR_1178,rap1aa,,,,ENSDARG00000012553,,,"RAP1A, member of RAS oncogene family a",membrane,MAP kinase kinase activity ; nucleotide binding ; GTP binding,chondrocyte intercalation involved in growth plate cartilage morphogenesis ; convergent extension ; small GTPase mediated signal transduction ; signal transduction ; cartilage morphogenesis ; heart development,,NR,GS1930 ,,NR,,T3,ADX299-M13F or PU,CK674244,1.5,,2 nd sending,,,pDNR-LIB,ZDB-GENE-040625-167, ZDB-EST-040914-101
+V133,,FR_1275,dexi,,,,,,,Dexi homolog (mouse),cellular_component,molecular_function,biological_process,,NS,GS2057 ,,no staining,,T3,ADX299-M13F or PU,CK675464,1.5,,2 nd sending,,,pDNR-LIB,ZDB-GENE-040808-20,
+V134,,FR_1359,prpf8,,,,ENSDARG00000026180,,,pre-mRNA processing factor 8,U5 snRNP ; spliceosomal complex ; catalytic step 2 spliceosome,U5 snRNA binding ; U2 snRNA binding ; nucleic acid binding ; U1 snRNA binding ; second spliceosomal transesterification activity ; U6 snRNA binding ; pre-mRNA intronic binding ; RNA binding,"spliceosomal tri-snRNP complex assembly ; mRNA splicing, via spliceosome",,NR,GS2174 ,,NR,,T3,ADX299-M13F or PU,CK676397,3,,3 rd sending,,,pDNR-LIB,ZDB-GENE-030131-577, ZDB-EST-041008-78
+V135,,FR_1399,txndc11,,,,ENSDARG00000101291,,,thioredoxin domain containing 11,membrane ; integral component of membrane,protein disulfide isomerase activity,cell redox homeostasis ; response to endoplasmic reticulum stress,,NR,GS2222,,NR,,T3,ADX299-M13F or PU,CK676747,1.9,,3 rd sending,,,pDNR-LIB,ZDB-GENE-041008-112, ZDB-EST-041008-104
+V136,,FR_1479,gtf3c4,hTFIIIC90=GTF3C4 has an intrinsic histone acetyltransferase activity with a substrate specificity for histone H3.,,#,ENSDARG00000069538,epi,Histone modification write,"general transcription factor IIIC, polypeptide 4",cellular_component,molecular_function,biological_process,Histone acetylation,NR,GS2322 ,,NR strong,10523658,T3,ADX299-M13F or PU,CK677362,2,,3 rd sending,#,H3,pDNR-LIB,ZDB-GENE-041008-147, ZDB-EST-041008-160
+V137,,FR_1576,sf3a3,,,,ENSDARG00000100114,,,"splicing factor 3a, subunit 1",U2 snRNP ; U2-type prespliceosome ; catalytic step 2 spliceosome,RNA binding,mRNA 3'-splice site recognition ; RNA processing,,NR,GS2447 ,,NR,,T3,ADX299-M13F or PU,CK678242,2.8,,3 rd sending,,,pDNR-LIB,ZDB-GENE-030616-156, ZDB-EST-041008-224
+V138,,FR_1682,ube3a,,,,,,,ubiquitin protein ligase E3A,NA,ligase activity ; ubiquitin protein ligase activity ; ubiquitin-protein transferase activity,androgen receptor signaling pathway ; protein ubiquitination involved in ubiquitin-dependent protein catabolic process,,NR,GS2589  ,,NR,,T3,ADX299-M13F or PU,CK679369,2.1,,3 rd sending,,,pDNR-LIB,ZDB-GENE-041114-190,
+V139,,FR_1770,timm44,,,,,,,translocase of inner mitochondrial membrane 44 homolog (yeast),mitochondrial inner membrane ; membrane ; mitochondrion,chaperone binding,protein transport ; transport ; protein import into mitochondrial matrix,,NS,GS2727 ,,no staining,,T3,ADX299-M13F or PU,CK680583,2,,3 rd sending,,,pDNR-LIB,ZDB-GENE-030131-145,
+V14,V435,CB747,vgll4l,,,,,,,vestigial like 4 like,cellular_component,molecular_function,"embryonic cranial skeleton morphogenesis ; regulation of transcription, DNA-templated",,,CG1279,,"G : forerunner cells, ES, MS : Ø, 24 hrs : pharyngeal endoderm, ear",,T7,PU-RP,CF269289 ,1.7,2,sending CB,,,pBSIISK+,ZDB-GENE-070112-1682,
+V140,,FR_1821,im:6911658,,,,,,,im:6911658,,,,,NR,GS2823 ,,weak NR,,T3,ADX299-M13F or PU,CK674530,0.95,,3 rd sending,,,pDNR-LIB,ZDB-GENE-041008-33,
+V141,,FR_1889,im:7136452,,,,,,,im:7136452,,,,,NR,GS2922 ,,"NR, + liver",,T3,ADX299-M13F or PU,CK675816,2.2,,3 rd sending,,,pDNR-LIB,ZDB-GENE-041008-85,
+V142,,FR_1972,im:7138388,,,,,,,im:7138388,,,,,NR,GS3040 ,,NR more in pancreas,,T3,ADX299-M13F or PU,CK677465,2.5,,4 th sending,,,pDNR-LIB,ZDB-GENE-041111-44,
+V143,,FR_2021,ckap5,,,,,,,cytoskeleton associated protein 5,cellular_component,NA,biological_process,,NR,GS3134 ,,NR linked to cell proliferation,,T3,ADX299-M13F or PU,CK681527,2.2,,4 th sending,,,pDNR-LIB,ZDB-GENE-051120-174,
+V144,,FR_2106,zfr,,,,ENSDARG00000027109,,,zinc finger RNA binding protein,cytoplasm ; nucleus,metal ion binding ; nucleic acid binding ; RNA binding ; zinc ion binding ; DNA binding,multicellular organism development,,NR,GS3246 ,,± NR,,T3,ADX299-M13F or PU,CK682341,2.3,,4 th sending,,,pDNR-LIB,ZDB-GENE-030131-378, ZDB-EST-041111-123
+V145,,FR_2125,pcsk6,,,,,,,proprotein convertase subtilisin/kexin type 6,cellular_component,molecular_function,biological_process,,NR,GS3345 ,,NR,,T3,ADX299-M13F or PU,CK679194,1.6,,4 th sending,,,pDNR-LIB,ZDB-GENE-100908-1,
+V146,,FR_2135,im:7140695,,,,,,,im:7140695,,,,,NR,GS3530 ,,NR,,T3,ADX299-M13F or PU,CK679336,1.5,,4 th sending,,,pDNR-LIB,ZDB-GENE-041111-118,
+V147,,FR_2154,nr1h3,,,,,,,"nuclear receptor subfamily 1, group H, member 3",nucleus,"metal ion binding ; RNA polymerase II transcription factor activity, ligand-activated sequence-specific DNA binding ; steroid hormone receptor activity ; zinc ion binding ; sequence-specific DNA binding ; DNA binding ; transcription factor activity, sequence-specific DNA binding","steroid hormone mediated signaling pathway ; embryonic viscerocranium morphogenesis ; transcription, DNA-templated ; lipid homeostasis ; regulation of transcription, DNA-templated ; regulation of transcription from RNA polymerase II promoter",,NR,GS3559 ,,NR,,T3,ADX299-M13F or PU,CK679793,4,,4 th sending,,,pDNR-LIB,ZDB-GENE-050410-7,
+V148,,FR_2409,si:dkeyp-93d12.1,,,,ENSDARG00000014039,,,si:dkeyp-93d12.1,,,,,NS,GS3673 ,,no staining,,T3,ADX299-M13F or PU,CK681706,2.2,,"7 th sending
+",,,pDNR-LIB,ZDB-GENE-041014-303, ZDB-EST-050208-232
+V149,,FR_2442,im:7144531,,,,,,,im:7144531,,,,,NR,GS3806 ,,NR,,T3,ADX299-M13F or PU,CK682497,2,,"7 th sending
+",,,pDNR-LIB,ZDB-GENE-050208-166,
+V15,V404,CB17,znfl1,,,,,,,zinc finger-like gene 1,NA,metal ion binding ; nucleic acid binding ; zinc ion binding,NA,,,AS 56,,"G : margin excepted in the axis in both epiblast and hypoblast. 
+ES : paraxial mesoderm of the segmental plate, posterior neural plate.
+MS : same disappearing anteriorly from ventral and axial to dorsal and lateral
+24 hrs : same observation at the tip of the tail
+36 hrs : Ø
+48 hrs : Ø",,T7,PU-RP,BI325089BI325090,22,4,sending CB,,,pBSIISK+,ZDB-GENE-030828-6,
+V150,,FR_2544,im:7145328,,,,,,,im:7145328,,,,,NR,GS3862 ,,NR,,T3,ADX299-M13F or PU,CK683121,1.4,,"7 th sending
+",,,pDNR-LIB,ZDB-GENE-050208-198,
+V151,,FR_2639,im:7146137,,,,,,,im:7146137,,,,,NS,GS3996 ,,NS,,T3,ADX299-M13F or PU,CK683789,1.9,,7 th sending,,,pDNR-LIB,ZDB-GENE-050208-223,
+V152,,FR_2679,im:7147555,,,,,,,im:7147555,,,,,NR,GS4064 ,,NR,,T3,ADX299-M13F or PU,CK685022,0.95,,7 th sending,,,pDNR-LIB,ZDB-GENE-050208-289,
+V153,,FR_2697,mib1,,,,,,,mindbomb E3 ubiquitin protein ligase 1,protein complex ; microtubule organizing center ; endocytic vesicle ; cytoskeleton ; cytoplasmic vesicle ; membrane ; perinuclear region of cytoplasm ; plasma membrane ; ubiquitin ligase complex ; cytoplasm,"protein-glycine ligase activity, elongating ; coenzyme F420-2 alpha-glutamyl ligase activity ; protein-glutamic acid ligase activity ; coenzyme F420-0 gamma-glutamyl ligase activity ; UDP-N-acetylmuramoylalanyl-D-glutamyl-2,6-diaminopimelate-D-alanyl-D-alanine ligase activity ; protein-glycine ligase activity ; ribosomal S6-glutamic acid ligase activity ; protein-glycine ligase activity, initiating ; tubulin-glutamic acid ligase activity ; tubulin-glycine ligase activity ; ligase activity ; metal ion binding ; protein homodimerization activity ; zinc ion binding ; ubiquitin-protein transferase activity ; protein binding",taste bud formation ; inner ear receptor cell differentiation ; optic cup formation involved in camera-type eye development ; trigeminal ganglion development ; lateral line nerve development ; rhombomere development ; formation of anatomical boundary ; regulation of glial cell differentiation ; positive regulation of protein ubiquitination ; spinal cord development ; embryonic camera-type eye development ; anterior lateral line development ; regulation of receptor-mediated endocytosis ; ventral spinal cord interneuron differentiation ; spinal cord association neuron specification ; ventral spinal cord interneuron specification ; neuron fate commitment ; epithelial cell development ; regulation of receptor internalization ; glial cell differentiation ; floor plate formation ; neuron fate specification ; endothelial cell development ; habenula development ; notochord cell development ; otic vesicle development ; diencephalon development ; pronephric duct development ; hair cell differentiation ; posterior lateral line development ; notochord development ; Notch signaling pathway ; ubiquitin-dependent endocytosis ; digestive tract morphogenesis ; blood vessel development ; neural retina development ; melanocyte differentiation ; rhombomere boundary formation ; hindbrain development ; regulation of Notch signaling pathway ; protein autoubiquitination ; embryonic pattern specification ; positive regulation of Notch signaling pathway ; hemopoiesis ; regulation of neuron differentiation ; central nervous system development ; brain development ; spinal cord motor neuron cell fate specification ; neuron development ; multicellular organism development ; protein ubiquitination ; blood vessel morphogenesis ; neuron differentiation ; positive regulation of cell proliferation ; generation of neurons ; determination of left/right symmetry ; vasculogenesis ; hematopoietic stem cell differentiation ; somitogenesis ; pronephros development ; heart development,,NS,GS4178 ,,NS,,T3,ADX299-M13F or PU,CK685510,1.9,,7 th sending,,,pDNR-LIB,ZDB-GENE-030404-2,
+V154,,FR_2880,im:7149561,,,,,,,im:7149561,,,,,NR,GS4356 ,,"NR, more in somites at MS",,T3,ADX299-M13F or PU,CK686801,2.5,,8 th sending,,,pDNR-LIB,ZDB-GENE-050309-119,
+V155,,FR_2924,im:7150699,,,,,,,im:7150699,,,,,NR,GS4420 ,,NR,,T3,ADX299-M13F or PU,CK687718,1.3,,8 th sending,,,pDNR-LIB,ZDB-GENE-050309-154,
+V156,,FR_3006,prob1,,,,ENSDARG00000086705,,,proline-rich basic protein 1,cellular_component,molecular_function,biological_process,,NR,GS4528 ,,NR,,T3,ADX299-M13F or PU,CK688149,1.9,,8 th sending,,,pDNR-LIB,ZDB-GENE-050309-179, ZDB-EST-050309-182
+V157,,FR_3139,ppp1r3ab,,,,ENSDARG00000088813,,,"protein phosphatase 1, regulatory subunit 13Bb",NA,transcription factor binding,negative regulation of cell cycle ; apoptotic process,,NS,GS4724 ,,NS,,T3,ADX299-M13F or PU,CK689862,3.1,,8 th sending,,,pDNR-LIB,ZDB-GENE-030131-4327, ZDB-EST-050309-257
+V158,,FR_3158,im:7153709,,,,,,,im:7153709,,,,,NR,GS4763 ,,NR,,T3,ADX299-M13F or PU,CK690371,2.5,,8 th sending,,,pDNR-LIB,ZDB-GENE-050309-259,
+V159,,FR_3291,uspl1,,,,ENSDARG00000034825,,,ubiquitin specific peptidase like 1,Cajal body ; nucleus,SUMO-specific isopeptidase activity ; SUMO binding ; cysteine-type peptidase activity ; peptidase activity ; hydrolase activity ; protein binding,Cajal body organization ; protein desumoylation ; cell proliferation ; proteolysis,,NR,GS4874 ,,NR,,T3,ADX299-M13F or PU,CK688956,4,,9 th sending,,,pDNR-LIB,ZDB-GENE-040930-7, ZDB-EST-050411-60
+V16,V438,CB785,c1qbp,,,,,,,"complement component 1, q subcomponent binding protein",mitochondrial matrix,molecular_function,biological_process,,,CG1838,,"G : NR, ES : anterior neural plate, paraxial mesoderm, MS : retina, tectum, somies, 24 hrs : retina, tectum, muscles (including hypaxial musculature), later : same, liver, fin bud muscles",,T7,PU-RP,CF416989 ,1.4,2,sending CB,,,pBSIISK+,ZDB-GENE-050417-408,
+V160,,FR_3345,lrig2,,,,,,,leucine-rich repeats and immunoglobulin-like domains 2,membrane ; integral component of membrane,molecular_function,biological_process,,NR,GS4975 ,,NR,,T3,ADX299-M13F or PU,CK691814,2.5,,9 th sending,,,pDNR-LIB,ZDB-GENE-041111-75,
+V161,,FR_3379,acin1a,,,,ENSDARG00000054290,,,apoptotic chromatin condensation inducer 1a,NA,nucleotide binding,NA,,NR,GS5054 ,,NR strong,,T3,ADX299-M13F or PU,CK687759,1.8,,9 th sending,,,pDNR-LIB,ZDB-GENE-030616-583, ZDB-EST-050411-109
+V162,,FR_3406,nup107,,,,ENSDARG00000016010,,,nucleoporin 107,nuclear pore outer ring ; nuclear pore,nucleocytoplasmic transporter activity ; structural constituent of nuclear pore,"nuclear pore complex assembly ; protein import into nucleus ; transport ; posttranscriptional tethering of RNA polymerase II gene DNA at nuclear periphery ; mRNA export from nucleus ; regulation of transcription, DNA-templated",,NR,GS5168 ,,NR,,T3,ADX299-M13F or PU,CK689055,3.5,,9 th sending,,,pDNR-LIB,ZDB-GENE-041210-245, ZDB-EST-050411-124
+V163,,FR_4582,fam199x,,,,ENSDARG00000009982,,,"family with sequence similarity 199, X-linked",cellular_component,molecular_function,biological_process,,NR,GS5214 ,,NR,,T3,ADX299-M13F or PU,CK689334,1.9,,11 th sending,,,pDNR-LIB,ZDB-GENE-040808-24, ZDB-EST-050809-74
+V164,,FR_5606,ctcf,A CTCF-CHD8 complex is involved in both enhancer blocking and epigenetic remodeling at chromatin boundary in vivo.,,#,,epi TF,"Chromatin remodelling, TF",CCCTC-binding factor (zinc finger protein),NA,metal ion binding ; nucleic acid binding ; chromatin binding ; DNA binding,regulation of gene expression ; regulation of transcription from RNA polymerase II promoter,"#, TF activator",NR,GS5352 ,,NR,16949368,T3,ADX299-M13F or PU,CK689524,1.8,,11 th sending,#,DNA motif,pDNR-LIB,ZDB-GENE-040624-5,
+V165,,FR_5625,im:7152883,,,,,,,im:7152883,,,,,NR,GS5373 ,, NR,,T3,ADX299-M13F or PU,CK689708,1.8,,11 th sending,,,pDNR-LIB,ZDB-GENE-050809-25,
+V166,,FR_5690,im:7159318,,,,,,,im:7159318,,,,,NS,GS5455 ,,no labelling,,T3,ADX299-M13F or PU,CK694607,2.5,,11 th sending,,,pDNR-LIB,ZDB-GENE-050809-77,
+V167,,FR_1,id2b,,,,ENSDARG00000029544,,,"inhibitor of DNA binding 2, dominant negative helix-loop-helix protein, a",cytoplasm ; nucleus,protein dimerization activity,"regulation of neuron differentiation ; intra-S DNA damage checkpoint ; negative regulation of transcription, DNA-templated",,,N1,,"G : Ø
+ES : (late) border of neural plate at the level of the MHB
+MS :  notochord, posterior lateral line primordia, pronephric ducts
+24 h : notochord, pronephric ducts, heart
+36 h : heart
+48 h : ventral tectum, neurons in retina (amacrine cells ?), cell at the MHB
+5 d : individual cells (neurons) in brain and retina
+",,T7,PU-RP,BC059690,1463,2,1 st sending,,,pBluescriptSK-,ZDB-GENE-020910-1, ZDB-CDNA-040425-370
+V168,,FR_27,fgf1a,,,,ENSDARG00000017542,,,fibroblast growth factor 1a,extracellular region ; cytosol ; cell cortex ; extracellular space ; cytoplasm ; nucleus,S100 protein binding ; fibroblast growth factor receptor binding ; receptor binding ; heparin binding ; growth factor activity,branch elongation involved in ureteric bud branching ; positive regulation of cholesterol biosynthetic process ; positive regulation of intracellular signal transduction ; positive regulation of angiogenesis ; positive regulation of cell division ; fibroblast growth factor receptor signaling pathway ; hemopoiesis ; multicellular organism development ; cell differentiation ; positive regulation of cell proliferation ; positive regulation of transcription from RNA polymerase II promoter ; positive regulation of cell migration ; angiogenesis,,,N31,,"G : 	Ø
+ES :	Ø
+MS : 	Ø
+24 h :	Ø
+36 h :	Ø
+48 h : 	strong in ventral photoreceptor cell layer of retina
+5 d :	photoreceptor cell layer of retina
+",,T7,PU-RP,BC059588,1729,4,1 st sending,,,pBluescriptSK-,ZDB-GENE-040426-1729, ZDB-CDNA-040425-2669
+V169,,FR_55,ahcyl2,,,,ENSDARG00000039343,,,adenosylhomocysteinase-like 2,NA,adenosylhomocysteinase activity ; hydrolase activity,one-carbon metabolic process,,,N61,,"G : 	NR weak
+ES :	NR weak, adaxial cells anteriorly in segmental plate, posterior notochord
+MS : 	NR, otic vesicle, somites, pronephric ducts
+24 h :	NR, otic vesicle, somites, pronephric ducts
+36 h :	NR, otic vesicle, somites, pronephric ducts
+48 h : 	brain non ventricular, otic vesicle, pronephric ducts
+",,T7,PU-RP,BC059517,2152,1,1 st sending,,,pBluescriptSK-,ZDB-GENE-040115-5, ZDB-CDNA-040425-17
+V17,V440,CB806,ptpn2a,,,,,,,"protein tyrosine phosphatase, non-receptor type 2, a",membrane ; integral component of membrane,protein tyrosine phosphatase activity ; phosphoprotein phosphatase activity ; hydrolase activity ; phosphatase activity,dephosphorylation ; protein dephosphorylation,,,CG2124,,"MS : weak in ventral diencephalon, >36hrs : liver",,T7,PU-RP,CF417010 ,1.3,0,sending CB,,,pBSIISK+,ZDB-GENE-040426-1196,
+V170,,FR_100,nme2a,,,,ENSDARG00000043820,,,NME/NM23 nucleoside diphosphate kinase 2a,NA,transferase activity ; nucleotide binding ; ATP binding ; kinase activity ; nucleoside diphosphate kinase activity,UTP biosynthetic process ; CTP biosynthetic process ; nucleoside diphosphate phosphorylation ; GTP biosynthetic process ; nucleoside triphosphate biosynthetic process ; pyrimidine nucleotide metabolic process ; purine nucleotide metabolic process ; phosphorylation ; regulation of apoptotic process,,,N110,,"G-24h : Ø
+36h : epiphysis
+48h : dorsal cerebellum, ventral part of retina
+5d : retina",,T7,PU-RP,BC059486,671,3,1 st sending,,,pBluescriptSK-,ZDB-GENE-030131-7656, ZDB-CDNA-040425-1577
+V171,,FR_111,slc25a3a,,,,ENSDARG00000027424,,,"solute carrier family 25 (mitochondrial carrier phosphate carrier), member 3",membrane ; integral component of membrane,structural constituent of ribosome,transport ; translation,,,N121,,"G-MS : Ø
+24h : retina, tectum, myotomes, pronephric ducts
+36h : same, epiphysis
+48h : pectoral fin muslces, epiphysis, ventral part of retina, gut
+5d : epiphysis, photoreceptor cell layer retina",,T7,PU-RP,BC059476,1392,1,1 st sending,,,pBluescriptSK-,ZDB-GENE-040426-1916, ZDB-CDNA-040425-2613
+V172,,FR_139,dynll1,,,,ENSDARG00000058454,,,"dynein, axonemal, intermediate chain 1, paralog 2",cellular_component,molecular_function,biological_process,,NR,N151 ,,NR,,T7,PU-RP,"BC059707
+",805,,1 st sending,,,pBluescriptSK-,ZDB-GENE-070112-1302, ZDB-CDNA-040425-2908
+V173,,FR_167,stx8,,,,ENSDARG00000103173,,,syntaxin 8,endomembrane system ; membrane ; SNARE complex ; integral component of membrane,SNAP receptor activity ; SNARE binding,vesicle docking ; vesicle fusion ; intracellular protein transport,,NR,N181 ,,NR,,T7,T7-SP6,BC053241,1394,,1 st sending,,,pCMV-SPORT6.1,ZDB-GENE-040426-1360, ZDB-CDNA-040425-2294
+V174,,FR_192,slc48a1b,,,,ENSDARG00000026109,,,"solute carrier family 48 (heme transporter), member 1a",endosome membrane ; lysosomal membrane ; membrane ; lysosome ; endosome ; integral component of membrane,heme transporter activity,heme transport ; transport,,NR,N211 ,,NR,,T7,T7-SP6,BC053186,1420,,1 st sending,,,pCMV-SPORT6.1,ZDB-GENE-040718-121, ZDB-CDNA-040425-1535
+V175,,FR_219,tcea1,,,,ENSDARG00000003531,,,"transcription elongation factor A (SII), 3",nucleus,nucleic acid binding ; translation elongation factor activity ; zinc ion binding ; DNA binding,"regulation of DNA-templated transcription, elongation ; transcription, DNA-templated ; translational elongation ; translation ; regulation of transcription, DNA-templated ; regulation of transcription from RNA polymerase II promoter",,NR,N241 ,,NR,,T7,T7-SP6,BC053177,1597,,1 st sending,,,pCMV-SPORT6.1,ZDB-GENE-040426-1860, ZDB-CDNA-040425-1521
+V176,,FR_245,ggt1a,,,,ENSDARG00000023526,,,gamma-glutamyltransferase 1a,membrane ; integral component of membrane,gamma-glutamyltransferase activity ; transferase activity,glutathione metabolic process,,,N272,,"G : 	Ø
+ES :	Ø
+MS : 	Ø
+24 h :	lens
+36 h :	lens
+48 h : 	lens
+",,T7,T7-SP6,BC054631,2296,1,2 nd sending,,,pCMV-SPORT6.1,ZDB-GENE-040426-1388, ZDB-CDNA-040425-2322
+V177,,FR_270,pfkfb4b,,,,ENSDARG00000029075,,,"6-phosphofructo-2-kinase/fructose-2,6-biphosphatase 4b",NA,6-phosphofructo-2-kinase activity ; transferase activity ; ATP binding ; catalytic activity ; kinase activity,"fructose metabolic process ; fructose 2,6-bisphosphate metabolic process ; metabolic process ; phosphorylation",,,N301,,"G : 	anterior neural plate, forerunner cells
+ES :	neural plate (2 rhombomeres) ,v entral mesenchyme
+MS : 	CNS, nose
+24 h :	CNS marginal (weak)
+36 h :	CNS marginal (weak)
+48 h : 	CNS marginal (weak)
+",,T7,T7-SP6,BC053282,2680,1,2 nd sending,,,pCMV-SPORT6.1,ZDB-GENE-031031-4, ZDB-CDNA-040425-648
+V178,,FR_297,itm2bb,,,,ENSDARG00000041505,,,integral membrane protein 2Bb,membrane ; integral component of membrane,NA,NA,,,N331,,"G : 	Ø
+ES :	Ø
+MS : 	pronephric ducts, macrophages
+24 h :	pronephric ducts, YSL
+36 h :	pronephric ducts,
+48 h : 	pronephric ducts,
+
+",,T7,T7-SP6,BC053278,1487,1,2 nd sending,,,pCMV-SPORT6.1,ZDB-GENE-040426-2139, ZDB-CDNA-040425-3086
+V18,V442,CB665,itga6a,,,,,,,"integrin, alpha 6a",integrin complex ; membrane ; integral component of membrane,NA,skeletal muscle tissue development ; integrin-mediated signaling pathway ; cell adhesion,,,CG2798,,"G : NR
+ES : neural plate border, segmental plate, adaxial cells ++
+MS : Ysl, neural crest migrating in branchial arches, adaxial cells, ventral mesoderm, unsegmented paraxial mesoderm
+24 h : choroid fissure, YSL on yolk tube, branchial arches posteriorly, ventral mesoderm
+36 h : branchial arches, axial vasculature, pectoral fin
+48 h : branchial arches, pectoral fin, otic vesicle, liver
+
+",,T7,PU-RP,,3.3,3,sending CB,,,pBSIISK+,ZDB-GENE-050309-23,
+V180,,FR_343,stx3a,,,,ENSDARG00000001880,,,syntaxin 3A,synaptic vesicle ; endomembrane system ; membrane ; SNARE complex ; plasma membrane ; integral component of membrane,SNAP receptor activity ; SNARE binding,synaptic vesicle docking ; vesicle docking ; synaptic vesicle fusion to presynaptic active zone membrane ; exocytosis ; vesicle-mediated transport ; intracellular protein transport,,,N396 ,,"G : 	prechordal plate
+ES :	polster
+MS : 	hatching gland
+24 h :	hatching gland, lens
+36 h :	hatching gland, lens
+48 h : 	hatching gland, lens
+",,T7,T7-SP6,BC056333,1794,0,2 nd sending,,,pCMV-SPORT6.1,ZDB-GENE-040426-1489, ZDB-CDNA-040425-2423
+V181,,FR_360,ncl1,,,,ENSDARG00000058861,,,nicalin,membrane ; endoplasmic reticulum membrane ; plasma membrane ; integral component of membrane,NA,negative regulation of nodal signaling pathway involved in determination of lateral mesoderm left/right asymmetry ; regulation of signal transduction ; multicellular organism development,,NR,N422 ,,NR,,T7,T7-SP6,BC056523,2558,,1 st sending,,,pCMV-SPORT6.1,ZDB-GENE-030131-8788, ZDB-CDNA-040425-3131
+V182,,FR_371,zgc:66024,,,,ENSDARG00000068840,,,zgc:66024,NA,palmitoyl hydrolase activity ; thiolester hydrolase activity ; palmitoyl-(protein) hydrolase activity,NA,,NS,N451 ,,no staining,,T7,T7-SP6,BC058849,1170,,1 st sending,,,pCMV-SPORT6.1,ZDB-GENE-040426-1511, ZDB-CDNA-040425-2445
+V183,,FR_387,pdcd10a,,,,ENSDARG00000035054,,,programmed cell death 10a,Golgi apparatus ; Golgi membrane ; membrane ; plasma membrane ; cytoplasm,NA,heart morphogenesis ; vasculature development ; blood vessel development ; apoptotic process ; blood vessel morphogenesis ; angiogenesis ; chordate embryonic development ; heart development,,NR,N482 ,,NR,,T7,T7-SP6,BC056552,1268,,1 st sending,,,pCMV-SPORT6.1,ZDB-GENE-040426-1432, ZDB-CDNA-040425-2366
+V184,,FR_399,gpd1b,,,,ENSDARG00000043180,,,glycerol-3-phosphate dehydrogenase 1b,glycerol-3-phosphate dehydrogenase complex,"glycerol-3-phosphate dehydrogenase [NAD+] activity ; oxidoreductase activity, acting on the CH-OH group of donors, NAD or NADP as acceptor ; oxidoreductase activity ; NAD binding ; protein homodimerization activity",glycerol-3-phosphate metabolic process ; glycerol-3-phosphate catabolic process ; oxidation-reduction process ; carbohydrate metabolic process,,,N511,,"G : 	neural plate, Ø in axis
+ES :	neural plate at the level of anterior presumptive neural plate
+MS : 	YSL, ventral hematopoietic mesoderm
+24 h :	YSL, ICM, migrating neural crest cells in lateral pathway
+36 h :	YSL, ICM, migrating neural crest cells in lateral pathway
+48 h : 	liver ++, dorsal hindbrain
+5d : 	liver ++
+",,T7,T7-SP6,BC055382,1355,3,2 nd sending,,,pCMV-SPORT6.1,ZDB-GENE-030131-3906, ZDB-CDNA-040425-1263
+V185,,FR_426,gpr19,,,,ENSDARG00000102226,,,G protein-coupled receptor 19,membrane ; integral component of plasma membrane ; integral component of membrane,G-protein coupled receptor activity,cell surface receptor signaling pathway ; G-protein coupled receptor signaling pathway,,NR,N541 ,,NR,,T7,T7-SP6,BC053145,1852,,1 st sending,,,pCMV-SPORT6.1,ZDB-GENE-040426-1295, ZDB-CDNA-040425-2229
+V186,,FR_451,ap4b1,,,,ENSDARG00000013726,,,"adaptor-related protein complex 4, mu 1 subunit",clathrin adaptor complex ; membrane,NA,protein transport ; transport ; vesicle-mediated transport ; intracellular protein transport,,NR,N572 ,,NR,,T7,T7-SP6,BC053128,2351,,1 st sending,,,pCMV-SPORT6.1,ZDB-GENE-040718-421, ZDB-CDNA-040425-2218
+V187,,FR_476,snx27b,,,,ENSDARG00000016977,,,sorting nexin family member 27b,early endosome,phosphatidylinositol binding ; phosphatidylinositol-3-phosphate binding,"retrograde transport, endosome to plasma membrane ; signal transduction ; endosomal transport ; intracellular protein transport",,NR,N605 ,,NR,,T7,T7-SP6,BC056315,2120,,1 st sending,,,pCMV-SPORT6.1,ZDB-GENE-040426-1529, ZDB-CDNA-040425-2463
+V188,,FR_489,hoxd9a,,,,ENSDARG00000059274,,,homeobox D9a,nucleus,sequence-specific DNA binding ; DNA binding,"transcription, DNA-templated ; multicellular organism development ; regulation of transcription, DNA-templated",,,N633,,"NR, more in retina ≥ 36h, epiphysis ≥ 24h
+",,T7,T7-SP6,BC056695,1410,0,2 nd sending,,,pCMV-SPORT6.1,ZDB-GENE-990415-121, ZDB-CDNA-040425-379
+V19,V442,CB722,aclya,,,,,,,ATP citrate lyase a,cytoplasm,"transferase activity, transferring acyl groups, acyl groups converted into alkyl on transfer ; ATP citrate synthase activity ; cofactor binding ; lyase activity ; transferase activity ; nucleotide binding ; ATP binding ; metal ion binding ; catalytic activity",acetyl-CoA biosynthetic process ; citrate metabolic process ; metabolic process ; lipid metabolic process,,,CG2808,,"G : Ø
+ES : weak in axis
+MS : weak NR, ventral spinal chord neurons (motor neurons)
+24 h : epidermis, spinal chord neurons (stronger in motor neurons)
+36 h : same + epiphysis
+48 h : same + epiphysis and pectoral fin
+",,T7,PU-RP,CF673243,2,2,sending CB,,,pBSIISK+,ZDB-GENE-031113-1,
+V190,,FR_520,dnaja3b,,,,ENSDARG00000102295,,,"DnaJ (Hsp40) homolog, subfamily B, member 13",cellular_component,unfolded protein binding,protein folding,,NR,N691 ,,NR,,T3,ACY9-ACY10,BC055555,2099,,1 st sending,,,pME18S-FL3,ZDB-GENE-040910-4, ZDB-CDNA-040425-244
+V191,,FR_550,eif3c,,,,ENSDARG00000016443,,,"eukaryotic translation initiation factor 3, subunit Jb",eukaryotic 43S preinitiation complex ; eukaryotic 48S preinitiation complex ; eukaryotic translation initiation factor 3 complex ; cytoplasm,translation initiation factor activity,formation of translation preinitiation complex ; cytoplasmic translation ; translational initiation ; translation ; regulation of translational initiation,,NR,N721,,NR,,T3,ACY9-ACY10,BC057465,3222,,1 st sending,,,pME18S-FL3,ZDB-GENE-040426-2900, ZDB-CDNA-040425-3768
+V192,,FR_579,smpd4,,,,ENSDARG00000020730,,,sphingomyelin phosphodiesterase 4,Golgi apparatus ; Golgi membrane ; membrane ; endoplasmic reticulum membrane ; endoplasmic reticulum ; integral component of membrane,sphingomyelin phosphodiesterase D activity ; sphingomyelin phosphodiesterase activity ; metal ion binding ; hydrolase activity,NA,,NR,N752,,NR,,T3,ACY9-ACY10,BC057525,3408,,1 st sending,,,pME18S-FL3,ZDB-GENE-040426-2672, ZDB-CDNA-040425-3619
+V193,,FR_609,timm50,,,,ENSDARG00000031098,,,translocase of inner mitochondrial membrane 50 homolog (S. cerevisiae),mitochondrial inner membrane presequence translocase complex ; mitochondrial inner membrane ; membrane ; mitochondrion ; integral component of membrane,protein serine/threonine phosphatase activity ; protein tyrosine phosphatase activity ; phosphoprotein phosphatase activity ; phosphatase activity,mitochondrial membrane organization ; protein transport ; transport ; protein import into mitochondrial matrix ; apoptotic process,,,N782,,"G : margin
+ES : tail bud, segmental plate
+MS : eye, midbrain, somites
+24 h : retina, midbrain
+36 h : retina, posterior tectum, pectoral fin, branchial arche
+48 h : retina, posterior tectum, pectoral fin, branchial arche",,T3,ACY9-ACY10,BC057522,1888,1,5 th sending,,,pME18S-FL3,ZDB-GENE-040426-1618, ZDB-CDNA-040425-2552
+V194,,FR_637,psma6a,,,,ENSDARG00000019398,,,proteasome subunit alpha 6a,"proteasome core complex, alpha-subunit complex ; proteasome core complex ; proteasome complex ; cytoplasm ; nucleus",threonine-type endopeptidase activity ; peptidase activity ; hydrolase activity ; endopeptidase activity,ubiquitin-dependent protein catabolic process ; proteolysis involved in cellular protein catabolic process ; proteolysis,,NR,N813,,NR,,T3,ACY9-ACY10,BC055520,998,,2 nd sending,,,pME18S-FL3,ZDB-GENE-020326-1, ZDB-CDNA-040425-696
+V195,,FR_662,ankrd10a,,,,ENSDARG00000037100,,,ankyrin repeat domain 10a,NA,NA,regulation of canonical Wnt signaling pathway,,NR,N841 ,,NR,,T3,ACY9-ACY10,BC044376,1739,,2 nd sending,,,pME18S-FL3,ZDB-GENE-040426-700, ZDB-CDNA-040425-1626
+V196,,FR_688,sap30bp,,,,ENSDARG00000031261,,,SAP30 binding protein,nucleus,molecular_function,"regulation of transcription, DNA-templated",,NR,N871 ,,NR,,T3,ACY9-ACY10,BC048030,1555,,2 nd sending,,,pME18S-FL3,ZDB-GENE-030131-457, ZDB-CDNA-040425-1091
+V197,,FR_715,smc2,,,,ENSDARG00000017744,,,structural maintenance of chromosomes 2,condensin complex ; chromosome ; nucleus,ATP binding,chromosome organization ; mitotic chromosome condensation,,,N902,,linked to cell cycle / proliferation,,T3,ACY9-ACY10,BC044141,2467,1,5 th sending,,,pME18S-FL3,ZDB-GENE-030131-105, ZDB-CDNA-040425-371
+V198,,FR_737,abhd17c,,,,ENSDARG00000058452,,,abhydrolase domain containing 17C,cellular_component,coenzyme F390-A hydrolase activity ; coenzyme F390-G hydrolase activity ; GPI-anchor transamidase activity ; hydrolase activity,NA,,NR,N931 ,,NR,,T3,ACY9-ACY10,BC045350,2807,,2 nd sending,,,pME18S-FL3,ZDB-GENE-040426-714, ZDB-CDNA-040425-1640
+V199,,FR_767,spns1,,,,ENSDARG00000011925,,,spinster homolog 1 (Drosophila),lysosomal membrane ; mitochondrial inner membrane ; membrane ; mitochondrion ; vesicle ; integral component of membrane,sphingolipid transporter activity,cellular senescence ; locomotion ; sphingosine-1-phosphate signaling pathway ; autophagy ; lipid transport ; transport ; autophagosome maturation ; transmembrane transport,,,N962,,"G - ES : Ø
+ES : notochord
+MS - 48 h : YSL
+5 d : YSL",,T3,ACY9-ACY10,BC048024,2614,1,5 th sending,,,pME18S-FL3,ZDB-GENE-020228-1, ZDB-CDNA-040425-877
+V2,V407,CB100,sb:cb100,,,,,,,sb:cb100,,,,,,BS35,,"G : NR
+ES : weak in  anterior neural plate and paraxial mesoderm
+MS : retina, tectum
+24 hrs : retina, tectum, ear, branchial arches
+> Ø",,T7,PU-RP,BI850036,1.1,1,sending CB,,,pBSIISK+,ZDB-GENE-030131-9647,
+V20,V443,CB922,sb:cb922,,,,,,,sb:cb922,,,,,,CG3127,,24hrs - late : epidermis (or evl) on top of the head,,T7,PU-RP,CF673262,0.8,2,sending CB,,,pBSIISK+,ZDB-GENE-031116-30,
+V200,,FR_793,wdr82,A mammalian Set1A complex analogous to the yeast Set1/COMPASS histone H3-Lys4 methyltransferase complex has previously been identified. WDR82 is a regulatory component of the SET1 complex implicated in the tethering of this complex to transcriptional start sites of active genes.,,COMPASS,ENSDARG00000014083,epi,Histone modification write cofactor,WD repeat domain 82,intracellular ; nucleus,actin binding,NA,Histone methylation,NR,N991 ,,NR,17355966,T3,ACY9-ACY10,BC044174,1811,,5 th sending,#,#,pME18S-FL3,ZDB-GENE-030131-333, ZDB-CDNA-040425-1073
+V201,,FR_822,homer3b,,,,ENSDARG00000010789,,,homer scaffolding protein 3,NA,G-protein coupled glutamate receptor binding,NA,,NR,N1021 ,,± NR,,T3,ACY9-ACY10,BC045383,3755,,5 th sending,,,pME18S-FL3,ZDB-GENE-040426-739, ZDB-CDNA-040425-1665
+V202,,FR_848,tmem117,,,,ENSDARG00000088356,,,transmembrane protein 117,membrane ; integral component of membrane,molecular_function,biological_process,,NR,N1051 ,,NR,,T3,ACY9-ACY10,BC045388,1824,,5 th sending,,,pME18S-FL3,ZDB-GENE-040426-2809, ZDB-CDNA-040425-3756
+V203,,FR_875,agk,,,,ENSDARG00000009837,,,acylglycerol kinase,mitochondrial membrane ; membrane ; mitochondrion,acylglycerol kinase activity ; transferase activity ; nucleotide binding ; ATP binding ; kinase activity,glycerolipid metabolic process ; phosphorylation,,NR,N1081 ,,"± NR weak, more in pectoral fin, liver (at 48 h)",,T3,ACY9-ACY10,BC045347,2496,,5 th sending,,,pME18S-FL3,ZDB-GENE-030131-6202, ZDB-CDNA-040425-1450
+V204,,FR_902,sulf2a,,,,ENSDARG00000018423,,,sulfatase 2a,Golgi apparatus ; cell surface ; endoplasmic reticulum,sulfuric ester hydrolase activity ; catalytic activity ; calcium ion binding,metabolic process,,,N1111,,"G : Ø
+Es : anterior neural plate (eye field), ventral neural plate
+MS : telencephalon, ventral CNS +++, ventral posterior epidermis
+24 : telencephalon ventricular zone, part of diencephalon, dorsal diencephalon, dorsal midbrain, tegmentum, ventral hindbrain, spinal chord, ventral epidermis
+36 h : sam + one branchial arche
+48 h : same, more in ventricular zone",,T3,ACY9-ACY10,BC045403,3668,4,6 th sending,,,pME18S-FL3,ZDB-GENE-040426-759, ZDB-CDNA-040425-1685
+V205,,FR_928,znf503,,,,ENSDARG00000018492,,,zinc finger protein 503,nucleus,"transcription factor activity, RNA polymerase II transcription factor binding ; metal ion binding ; nucleic acid binding ; protein binding","embryonic camera-type eye morphogenesis ; hindbrain development ; transcription, DNA-templated ; multicellular organism development ; regulation of transcription, DNA-templated",,,N1141,,"G : margin +++
+ES : segmental plate, ventral mesoderm, anterior spinal chord, part of midbrain and diencephalon
+MS : retina, diencephalon, midbrain, rhombomere 4, 5, 6, spinal chord, somites, branchial arches
+24 h : hindbrain from rhombomere 4 to spinal chord, telencephalon and diencephalon ventricular zone, branchial arches, midbrain, retina, myotomes
+36 h : hindbrain from rhombomere 4 to spinal chord, telencephalon and diencephalon ventricular zone, branchial arches, midbrain, retina, myotomes, tectum
+48 h : forebrain, tectum, hindbrain, AER pectoral fin, branchial arches +++, spinal chord, retina ganglion cell layer.",,T3,ACY9-ACY10,BC044193,2209,4,6 th sending,,,pME18S-FL3,ZDB-GENE-031113-5, ZDB-CDNA-040425-586
+V206,,FR_956,garem,,,,ENSDARG00000017242,,,"GRB2 associated, regulator of MAPK1",NA,proline-rich region binding,cellular response to epidermal growth factor stimulus ; positive regulation of cell division ; epidermal growth factor receptor signaling pathway ; positive regulation of cell proliferation ; positive regulation of ERK1 and ERK2 cascade,,NR,N1171 ,,NER more in ventral mesoderm at ES,,T3,ACY9-ACY10,BC045411,3054,,5 th sending,,,pME18S-FL3,ZDB-GENE-040426-767, ZDB-CDNA-040425-1693
+V207,,FR_4432,b4galt6,,,,ENSDARG00000010301,,,"UDP-Gal:betaGlcNAc beta 1,3-galactosyltransferase, polypeptide 2",Golgi apparatus ; membrane ; integral component of membrane,"galactosyltransferase activity ; transferase activity ; transferase activity, transferring glycosyl groups",protein glycosylation,,NR,N1202 ,,NR more in pancreas ≥ 24h ,,T3,ACY9-ACY10,BC046890,2.4,,6 th sending,,,pME18S-FL3,ZDB-GENE-040426-2078, ZDB-CDNA-040425-1715
+V208,,FR_4461,mark3a,,,,ENSDARG00000019345,,,MAP/microtubule affinity-regulating kinase 3a,cellular_component,transferase activity ; nucleotide binding ; protein kinase activity ; ATP binding ; kinase activity,protein phosphorylation ; phosphorylation,,NR,N1231 ,,NR more in polster at ES,,T3,ACY9-ACY10,BC047179,3.5,,5 th sending,,,pME18S-FL3,ZDB-GENE-030131-6232, ZDB-CDNA-040425-1456
+V209,,FR_4490,cyp2k22,,,,ENSDARG00000040433,,,"cytochrome P450, family 4, subfamily V, polypeptide 8",membrane ; integral component of membrane,"oxidoreductase activity, acting on paired donors, with incorporation or reduction of molecular oxygen ; iron ion binding ; metal ion binding ; monooxygenase activity ; heme binding ; oxidoreductase activity",oxidation-reduction process,,NR,N1261 ,,no staining,,T3,ACY9-ACY10,BC046898,2.1,,5 th sending,,,pME18S-FL3,ZDB-GENE-061103-601, ZDB-CDNA-040425-1750
+V210,,FR_4517,hug,,,,ENSDARG00000101744,,,HuG,viral nucleocapsid ; virion ; intracellular ribonucleoprotein complex,nucleotide binding ; nucleic acid binding ; RNA binding,NA,,NR,N1291 ,,NR,,T3,ACY9-ACY10,BC045277,2.4,,5 th sending,,,pME18S-FL3,ZDB-GENE-000210-17, ZDB-CDNA-040425-393
+V211,,FR_4543,cdc14b,,,,ENSDARG00000021483,,,cell division cycle 14B,condensed chromosome ; spindle ; nucleolus ; cytoplasm,protein tyrosine/serine/threonine phosphatase activity ; protein serine/threonine phosphatase activity ; protein tyrosine phosphatase activity ; hydrolase activity ; phosphatase activity,dephosphorylation ; protein dephosphorylation ; cell division ; cell cycle ; cilium assembly,,,N1321,,linked to cell proliferation / cell cycle,,T3,ACY9-ACY10,BC045476,2,2,6 th sending,,,pME18S-FL3,ZDB-GENE-040426-820, ZDB-CDNA-040425-1748
+V212,,FR_4568,nrf1,,,,ENSDARG00000000018,,,nuclear respiratory factor 1,nucleus,core promoter sequence-specific DNA binding ; protein homodimerization activity ; DNA binding,"cellular response to cold ; photoreceptor cell maintenance ; response to activity ; retina homeostasis ; neural retina development ; transcription, DNA-templated ; retina development in camera-type eye ; multicellular organism development ; regulation of transcription, DNA-templated",,,N1353 N,,NR,,T3,ACY9-ACY10,BC044537,3,,6 th sending,,,pME18S-FL3,ZDB-GENE-001221-1, ZDB-CDNA-040425-591
+V213,,FR_4614,ciao1,,,,ENSDARG00000059212,,,cytosolic iron-sulfur assembly component 1,CIA complex,molecular_function,iron-sulfur cluster assembly,,,N1381 ,,"Nr more in ventral hematopoietic mesoderm at MS, ICM at 24 h",,T3,ACY9-ACY10,BC044534,1676,0,6 th sending,,,pME18S-FL3,ZDB-GENE-040426-839, ZDB-CDNA-040425-1767
+V214,,FR_4633,kpna7,,,,ENSDARG00000027169,,,karyopherin alpha 7 (importin alpha 8),nucleoplasm ; nuclear pore ; cytosol ; cytoplasm ; nucleus,nuclear localization sequence binding ; protein transporter activity,protein transport ; protein import into nucleus ; transport ; NLS-bearing protein import into nucleus,,NS,N1412 ,,no staining,,T3,ACY9-ACY10,BC044523,1777,,6 th sending,,,pME18S-FL3,ZDB-GENE-040426-2023, ZDB-CDNA-040425-2970
+V215,,FR_4661,g3bp1,,,,ENSDARG00000017741,,,GTPase activating protein (SH3 domain) binding protein 1,intracellular,nucleotide binding ; nucleic acid binding,transport,,NR,N1442 ,,NR,,T3,ACY9-ACY10,BC045874,2064,,6 th sending,,,pME18S-FL3,ZDB-GENE-030131-7452, ZDB-CDNA-040425-1493
+V216,,FR_4689,actb1,,,,ENSDARG00000037746,,,"actin, alpha 1a, skeletal muscle",cell body ; filopodium ; lamellipodium ; cytoplasm,nucleotide binding ; ATP binding,mesenchyme migration ; positive regulation of gene expression,,NR,N1471 ,,NR,,T3,ACY9-ACY10,BC045846,1726,,6 th sending,,,pME18S-FL3,ZDB-GENE-050417-267, ZDB-CDNA-040425-83
+V217,,FR_4713,itih2,,,,ENSDARG00000045516,,,inter-alpha-trypsin inhibitor heavy chain 2,NA,serine-type endopeptidase inhibitor activity,hyaluronan metabolic process,,,N1501,,"G - 36 h : YSL
+48 h - 5d : YSL, liver
+
+",,T3,ACY9-ACY10,BC045924,2701,1,6 th sending,,,pME18S-FL3,ZDB-GENE-040426-1942, ZDB-CDNA-040425-2889
+V218,,FR_4749,adrm1,,,,ENSDARG00000058560,,,adhesion regulating molecule 1,proteasome complex ; cytoplasm ; nucleus,endopeptidase activator activity,proteasome assembly,,NR,N1531 ,,NR,,T3,ACY9-ACY10,BC045915,1345,,6 th sending,,,pME18S-FL3,ZDB-GENE-040426-905, ZDB-CDNA-040425-1833
+V219,,FR_4775,chaf1b,"p150 and p60==CHAF1B directly interact and are both required for DNA replication-dependent assembly of nucleosomes. Deletion of the p60-binding domain from the p150 protein prevents chromatin assembly. p150 and p60 form complexes with newly synthesized histones H3 and acetylated H4 in human cell extracts, suggesting that such complexes are intermediates between histone synthesis and assembly onto replicating DNA.",,"WINAC, CAF-1",ENSDARG00000056473,epi,Chromatin remodelling,"chromatin assembly factor 1, subunit B",CAF-1 complex ; nucleus,histone binding,embryonic organ development ; mitotic cell cycle ; retina development in camera-type eye ; nucleosome assembly,#,,N1561,,linked to cell cycle / cell proliferation,7600578,T3,ACY9-ACY10,BC045906,1566,0,6 th sending,#,"H3, H4",pME18S-FL3,ZDB-GENE-040426-1947, ZDB-CDNA-040425-2894
+V220,,FR_4803,rrp15,,,,ENSDARG00000013478,,,ribosomal RNA processing 15 homolog,NA,molecular_function,biological_process,,NR,N1593 ,,"NR more in eye, tectum, myotomes, branchial arches ",,T3,ACY9-ACY10,BC046037,1097,,5 th sending,,,pME18S-FL3,ZDB-GENE-030131-5261, ZDB-CDNA-040425-1002
+V221,,FR_4828,vrk1,"Phosphorylates histones H3-S10, H3-T3.",,#,ENSDARG00000018006,epi,Histone modification write,vaccinia related kinase 1,Golgi stack ; nucleus,transferase activity ; nucleotide binding ; protein kinase activity ; ATP binding ; kinase activity ; protein serine/threonine kinase activity,Golgi disassembly ; cell division ; cell cycle ; mitotic nuclear division ; peptidyl-serine phosphorylation ; protein phosphorylation ; phosphorylation,Histone phosphorylation,NR,N1621 ,,"NR weak, more in eye, tectum",22194607,T3,ACY9-ACY10,BC047853,1562,,5 th sending,"H3S10ph, H3T3ph","H3S10, H3T3",pME18S-FL3,ZDB-GENE-040426-2709, ZDB-CDNA-040425-3656
+V222,,FR_4852,kbtbd4,,,,ENSDARG00000069271,,,kelch repeat and BTB (POZ) domain containing 4,cellular_component,NA,biological_process,,NR,N1652 ,,NR,,T3,ACY9-ACY10,BC045989,1776,,5 th sending,,,pME18S-FL3,ZDB-GENE-040426-937, ZDB-CDNA-040425-1866
+V223,,FR_4877,mospd1,,,,ENSDARG00000028614,,,motile sperm domain containing 1,membrane ; integral component of membrane,NA,biological_process,,NR,N1681 ,,NR,,T3,ACY9-ACY10,BC046085,1261,,5 th sending,,,pME18S-FL3,ZDB-GENE-040426-2691, ZDB-CDNA-040425-3638
+V224,,FR_4906,wdr45,,,,ENSDARG00000090219,,,WD repeat domain 45,extrinsic component of membrane ; pre-autophagosomal structure membrane ; cytosol,"phosphatidylinositol-3,5-bisphosphate binding ; phosphatidylinositol-3-phosphate binding",protein localization to pre-autophagosomal structure ; nucleophagy ; protein lipidation ; mitophagy ; autophagosome assembly,,NR,N1711 ,,NR,,T3,ACY9-ACY10,BC046090,1415,,5 th sending,,,pME18S-FL3,ZDB-GENE-040426-990, ZDB-CDNA-040425-1921
+V225,,FR_4934,slc46a1,,,,ENSDARG00000026149,,,"solute carrier family 46 (folate transporter), member 1",membrane ; integral component of membrane,folic acid binding,transport ; transmembrane transport,,NR,N1741 ,,NR,,T3,ACY9-ACY10,BC049421,1935,,5 th sending,,,pME18S-FL3,ZDB-GENE-040426-1012, ZDB-CDNA-040425-1943
+V226,,FR_4963,rraga,,,,ENSDARG00000104149,,,Ras-related GTP binding A,Gtr1-Gtr2 GTPase complex,GTP binding ; GTPase activity,cellular response to starvation ; cellular response to amino acid stimulus,,NR,N1771 ,,"NR more in eye, tectum, myotomes, pronephric ducts ≥ 24h",,T3,ACY9-ACY10,BC049033,1351,,5 th sending,,,pME18S-FL3,ZDB-GENE-030131-4083, ZDB-CDNA-040425-1273
+V227,,FR_4986,fbxo32,,,,ENSDARG00000040277,,,F-box protein 32,cellular_component,NA,NA,,,N1801,,"G : marginal YSL
+ES : YSL
+> Ø",,T3,ACY9-ACY10,BC052112,1804,2,5 th sending,,,pME18S-FL3,ZDB-GENE-040426-1040, ZDB-CDNA-040425-1972
+V228,,FR_5019,psmd6,,,,ENSDARG00000070674,,,"proteasome 26S subunit, ATPase 1a","proteasome complex ; nuclear proteasome complex ; proteasome regulatory particle, base subcomplex ; cytosolic proteasome complex ; cytoplasm",nucleotide binding ; ATP binding ; hydrolase activity ; TBP-class protein binding ; proteasome-activating ATPase activity,ER-associated ubiquitin-dependent protein catabolic process ; protein catabolic process ; positive regulation of RNA polymerase II transcriptional preinitiation complex assembly,,NR,N1831 ,,NR,,T3,ACY9-ACY10,BC049452,1401,,6 th sending,,,pME18S-FL3,ZDB-GENE-030131-8730, ZDB-CDNA-040425-1970
+V229,,FR_5045,sh3gl1a,,,,ENSDARG00000067958,,,SH3-domain GRB2-like 1a,cytoplasm,NA,NA,,,N1862 ,,"G - 36 h : EVL
+4! h - 5 d: pharynx",,T3,ACY9-ACY10,BC049513,1460,1,5 th sending,,,pME18S-FL3,ZDB-GENE-030131-4524, ZDB-CDNA-040425-1295
+V23,V444,CB998,bambia,,,,,,,BMP and activin membrane-bound inhibitor (Xenopus laevis) homolog a,membrane ; integral component of plasma membrane ; integral component of membrane,NA,positive regulation of canonical Wnt signaling pathway ; platelet activation ; negative regulation of BMP signaling pathway ; negative regulation of transforming growth factor beta receptor signaling pathway ; dorsal/ventral pattern formation,,,DG427,,BMP4 ?,,T7,PU-RP,CF673241,1.7,4,sending CB,,,pBSIISK+,ZDB-GENE-010416-1,
+V230,,FR_5073,cdc27,,,,ENSDARG00000056258,,,cell division cycle 27,cellular_component,protein binding,cell division ; cell cycle,,NR,N1891 ,,NR,,T3,ACY9-ACY10,BC049466,2995,,6 th sending,,,pME18S-FL3,ZDB-GENE-990706-2, ZDB-CDNA-040425-135
+V231,,FR_5099,rom1b,,,,ENSDARG00000026926,,,retinal outer segment membrane protein 1b,membrane ; integral component of plasma membrane ; integral component of membrane,NA,visual perception ; cell surface receptor signaling pathway,,,N1921,,"G - 36 h : Ø
+48 h : ventral part of photoreceptor cell layer of retina
+5 d: photoreceptor cell layer",,T3,ACY9-ACY10,BC049482,1584,4,11 th sending,,,pME18S-FL3,ZDB-GENE-040426-1073, ZDB-CDNA-040425-2005
+V232,,FR_5124,nuf2,,,,ENSDARG00000034624,,,"NUF2, NDC80 kinetochore complex component, homolog","condensed chromosome kinetochore ; chromosome ; chromosome, centromeric region ; Ndc80 complex ; kinetochore ; nucleus",NA,cell division ; cell cycle ; mitotic nuclear division ; heart development,,,N1952,,linked to cell cycle / cell proliferation,,T3,ACY9-ACY10,BC050181,1640,1,11 th sending,,,pME18S-FL3,ZDB-GENE-040426-1121, ZDB-CDNA-040425-2053
+V233,,FR_5149,tdo2b,,,,ENSDARG00000023176,,,"tryptophan 2,3-dioxygenase b",cellular_component,"dioxygenase activity ; metal ion binding ; heme binding ; oxidoreductase activity ; tryptophan 2,3-dioxygenase activity",tryptophan catabolic process to kynurenine ; tryptophan catabolic process ; oxidation-reduction process ; tryptophan catabolic process to acetyl-CoA,,,N1981,,"G - 48 h  : Ø
+5 d: part of the intestine, liver",,T3,ACY9-ACY10,BC055123,1799,1,11 th sending,,,pME18S-FL3,ZDB-GENE-030131-6014, ZDB-CDNA-040425-1427
+V234,,FR_5175,rars2,,,,ENSDARG00000032277,,,"arginyl-tRNA synthetase 2, mitochondrial (putative)",mitochondrion,aminoacyl-tRNA ligase activity ; ligase activity ; nucleotide binding ; arginine-tRNA ligase activity ; ATP binding,tRNA aminoacylation for protein translation ; brain morphogenesis ; mitochondrial translation ; arginyl-tRNA aminoacylation ; translation,,NR,N2011 ,,Head NR ≥ 24 h,,T3,ACY9-ACY10,BC056803,1928,,6 th sending,,,pME18S-FL3,ZDB-GENE-040426-1244, ZDB-CDNA-040425-2177
+V235,,FR_5199,fpgs,,,,ENSDARG00000044809,,,folylpolyglutamate synthase,cellular_component,tetrahydrofolylpolyglutamate synthase activity ; ligase activity ; ATP binding,folic acid-containing compound biosynthetic process ; biosynthetic process ; tetrahydrofolylpolyglutamate biosynthetic process ; one-carbon metabolic process,,,N2041,,"G - MS : YSL
+24 h : YSl, eye, midbrain
+36 h : + liver primordium
+48 h : retina proliferative zone, posterior tectum, liver ++",,T3,ACY9-ACY10,BC058343,2577,2,11 th sending,,,pME18S-FL3,ZDB-GENE-040426-2781, ZDB-CDNA-040425-3728
+V236,,FR_5227,atp6v0d1,,,,ENSDARG00000069090,,,"ATPase, H+ transporting, lysosomal accessory protein 2",membrane ; integral component of membrane,receptor activity,intrahepatic bile duct development,,,N2071,,"G - ES : Ø
+MS : weak in trigeminal ganglia
+24 - 36 h : epiphysis, neurons in marginal zone, mucous cells
+48 h : brain, cranial ganglia (Ø in  ventricular zone)",,T3,ACY9-ACY10,BC056822,2134,2,11 th sending,,,pME18S-FL3,ZDB-GENE-040426-1960, ZDB-CDNA-040425-1162
+V237,,FR_5253,cyp2p9,,,,ENSDARG00000022631,,,"cytochrome P450, family 4, subfamily V, polypeptide 8",membrane ; integral component of membrane,"oxidoreductase activity, acting on paired donors, with incorporation or reduction of molecular oxygen ; iron ion binding ; metal ion binding ; monooxygenase activity ; heme binding ; oxidoreductase activity",oxidation-reduction process,,,N2101,,"G - 24 h : Ø
+36 h : liver primordium
+48 h : liver, intestinal bulb, intestine
+5 d: liver, intestinal bulb",,T3,ACY9-ACY10,BC056816,2347,2,11 th sending,,,pME18S-FL3,ZDB-GENE-061103-601, ZDB-CDNA-040425-219
+V238,,FR_5271,krit1,,,,ENSDARG00000098916,,,"KRIT1, ankyrin repeat containing",cell junction ; cytoskeleton ; microtubule ; membrane ; plasma membrane ; cytoplasm,NA,endothelial cell morphogenesis ; negative regulation of endothelial cell differentiation ; blood vessel lumenization ; heart morphogenesis ; blood vessel development ; vacuole organization ; multicellular organism development ; blood vessel morphogenesis ; vasculogenesis ; angiogenesis ; heart development,,NR,N2131 ,,NR,,T3,ACY9-ACY10,BC055149,1668,,6 th sending,,,pME18S-FL3,ZDB-GENE-030131-555, ZDB-CDNA-040425-1099
+V239,,FR_5283,cyp4v8,,,,,,,"cytochrome P450, family 4, subfamily V, polypeptide 8",membrane ; integral component of membrane,"oxidoreductase activity, acting on paired donors, with incorporation or reduction of molecular oxygen ; iron ion binding ; metal ion binding ; monooxygenase activity ; heme binding ; oxidoreductase activity",oxidation-reduction process,,,N2163,,"G - ES : Ø
+MS : ventral hematopoietic mesoderm
+24 h : ICM
+> : Ø",,T3,ACY9-ACY10,BC055161,1851,1,11 th sending,,,pME18S-FL3,ZDB-GENE-061103-601,
+V240,,FR_5298,romo1,,,,ENSDARG00000038076,,,reactive oxygen species modulator 1,mitochondrial inner membrane ; membrane ; mitochondrion ; integral component of membrane,NA,positive regulation of reactive oxygen species metabolic process ; cellular response to reactive oxygen species ; replicative cell aging ; positive regulation of cell proliferation ; defense response to bacterium,,,N2194,,"G - MS : Ø
+24 h : retina, tectum, myotomes
+36 h : retina, tectum, mytomes
+48 h : + pectoral fin, liver",,T7,PU-RP,BC059661,942,1,11 th sending,,,pBluescriptSK-,ZDB-GENE-040426-1768, ZDB-CDNA-040425-2708
+V241,,FR_5315,tmed10,,,,ENSDARG00000041391,,,transmembrane p24 trafficking protein 10,membrane ; integral component of membrane,NA,transport,,,N2221,,"G : axis
+ES : polster, notochord
+MS : NR more in notochord, hatching gland
+24 - 48 h : NR
+5 d: pancreas",,T7,PU-RP,BC059496,1747,1,11 th sending,,,pBluescriptSK-,ZDB-GENE-030131-4915, ZDB-CDNA-040425-1339
+V242,,FR_5336,tph1a,,,,ENSDARG00000029432,,,tryptophan hydroxylase 1 (tryptophan 5-monooxygenase) a,NA,"oxidoreductase activity, acting on paired donors, with incorporation or reduction of molecular oxygen, reduced pteridine as one donor, and incorporation of one atom of oxygen ; iron ion binding ; tryptophan 5-monooxygenase activity ; amino acid binding ; metal ion binding ; monooxygenase activity",aromatic amino acid family metabolic process ; serotonin biosynthetic process ; metabolic process ; oxidation-reduction process,,,N2251,,"G - MS : Ø
+24 h : epiphysis, ventral spinal chord neurons
+36 h - 5 d : epiphysis",,T7,PU-RP,BC059550,1710,3,11 th sending,,,pBluescriptSK-,ZDB-GENE-030317-1, ZDB-CDNA-040425-930
+V243,,FR_5363,mpeg1.1,,,,ENSDARG00000055290,,,"macrophage expressed 1, tandem duplicate 1",membrane ; integral component of membrane,molecular_function,defense response to bacterium,,,N2281,,"G - MS : Ø
+24 h - 5 d : macrophages",,T3,ACY9-ACY10,BC055644,2638,3,12 th sending,,,pME18S-FL3,ZDB-GENE-030131-7347, ZDB-CDNA-040425-3683
+V244,,FR_5390,nedd8,,,,ENSDARG00000007989,,,"neural precursor cell expressed, developmentally down-regulated 8, like",.,,,,NR,N2312 ,,NR,,T3,ACY9-ACY10,BC055645,658,,11 th sending,,,pME18S-FL3,ZDB-GENE-040718-295, ZDB-CDNA-040425-571
+V245,,FR_5414,dync2li1,,,,ENSDARG00000039770,,,"dynein, axonemal, intermediate chain 1, paralog 2",cellular_component,molecular_function,biological_process,,,N2343,,"G - ES: Ø
+MS : eye, tectum
+24 h : eye, tectum, myotomes
+36 - 48 h : retina proliferative zone, posterior tectum, pectoral fin muscles, branchial arches",,T3,ACY9-ACY10,BC055198,1443,1,12 th sending,,,pME18S-FL3,ZDB-GENE-070112-1302, ZDB-CDNA-040425-2163
+V246,,FR_5432,mhc1uxa2,,,,,,,major histocompatibility complex class I UXA2,,,,,NR,N2371 ,,NR,,T7,T7-SP6,BC066745,1207,,11 th sending,,,pCMV-SPORT6.1,ZDB-GENE-040426-1425,
+V247,,FR_5441,ipo7,,,,ENSDARG00000035751,,,importin 7,membrane ; nuclear envelope ; cytosol ; integral component of membrane,Ran GTPase binding ; protein transporter activity,protein import into nucleus ; signal transduction ; intracellular protein transport,,NR,N2405 ,,NR,,T7,T7-SP6,BC066524,4731,,11 th sending,,,pCMV-SPORT6.1,ZDB-GENE-030131-458, ZDB-CDNA-040425-2573
+V248,,FR_5451,ppm1aa,,,,ENSDARG00000032155,,,"protein phosphatase, Mg2+/Mn2+ dependent, 1Aa",NA,cation binding ; manganese ion binding ; metal ion binding ; catalytic activity ; protein serine/threonine phosphatase activity ; phosphoprotein phosphatase activity ; hydrolase activity ; magnesium ion binding,protein dephosphorylation,,NR,N2431 ,,NR,,T7,T7-SP6,BC066510,1924,,11 th sending,,,pCMV-SPORT6.1,ZDB-GENE-991102-15, ZDB-CDNA-040425-682
+V249,,FR_5457,nudcd3,,,,ENSDARG00000098361,,,NudC domain containing 3,cellular_component,molecular_function,biological_process,,NR,N2461 ,,NR,,T7,T7-SP6,BC065992,1418,,11 th sending,,,pCMV-SPORT6.1,ZDB-GENE-040426-2255, ZDB-CDNA-040425-3202
+V250,,FR_5470,rpf2,,,,ENSDARG00000043960,,,ribosome production factor 2 homolog,nucleolus,rRNA binding,"ribosomal large subunit assembly ; maturation of LSU-rRNA from tricistronic rRNA transcript (SSU-rRNA, 5.8S rRNA, LSU-rRNA)",,,N2492,tested-OV,"G : NR
+ES : anterior neural plate and segmental plate
+MS : NR, eye, midbrain, somites
+24 h : eye, tectum, myotomes, branchial arches, blood
+36 - 48 h : eye proliferative zone, posterior tectum, branchial arches, pectoral fin, gut",,T7,T7-SP6,BC065672,1793,1,15 th sending,,,pCMV-SPORT6.1,ZDB-GENE-040426-2501, ZDB-CDNA-040425-3448
+V251,,FR_5480,srsf7a,,,,ENSDARG00000035325,,,serine/arginine-rich splicing factor 7a,cellular_component,nucleotide binding ; metal ion binding ; nucleic acid binding ; zinc ion binding,NA,,NR,N2523 ,,NR,,T7,T7-SP6,BC065586,1500,,11 th sending,,,pCMV-SPORT6.1,ZDB-GENE-040426-1798, ZDB-CDNA-040425-2738
+V252,,FR_5488,hes6,,,,ENSDARG00000019335,,,hes family bHLH transcription factor 6,transcriptional repressor complex ; nucleus,protein dimerization activity ; protein heterodimerization activity ; DNA binding,"transcription, DNA-templated ; regulation of transcription, DNA-templated ; negative regulation of transcription, DNA-templated ; somitogenesis",,,N2551,tested-OV,"G : margin
+ES : paraxial mesoderm, tail bud
+MS : telencephalon, paraxial mesoderm,  tail bud
+24 - 48 h : retina, CNS subventricular zone",,T7,T7-SP6,BC065599,1294,3,12 th sending,,,pCMV-SPORT6.1,ZDB-GENE-030828-5, ZDB-CDNA-040425-366
+V253,,FR_5497,sox9b,,,,ENSDARG00000043923,,,SRY (sex determining region Y)-box 9b,nucleus,"RNA polymerase II transcription factor activity, sequence-specific DNA binding","heart valve development ; visceral serous pericardium development ; palate development ; hepaticobiliary system development ; proepicardium development ; regeneration ; inner ear development ; iridophore differentiation ; melanocyte differentiation ; otic vesicle formation ; retina development in camera-type eye ; regulation of transcription, DNA-templated ; embryonic pectoral fin morphogenesis ; otic placode formation ; pancreas development ; cartilage development",,,N2583,tested-OV,"G : Ø
+ES : polster, neural crest cells
+MS : ventral diencephalon, otic vesicle, neural crest cells +++
+24 h : anterior forebrain, eye, epiphysis, branchial arches, rhombomeres boundaries +++
+36 h : anterior forebrain, eye, epiphysis, branchial arches, rhombomeres boundaries +++, gall blader (?)
+48 h : eye, brain  ventricular zone, part of branchial arches, pectoral fin ++",,T7,T7-SP6,BC067133,3510,4,12 th sending,,,pCMV-SPORT6.1,ZDB-GENE-001103-2, ZDB-CDNA-040425-873
+V254,,FR_5517,nucb2a,,,,ENSDARG00000036299,,,nucleobindin 2a,NA,calcium ion binding,NA,,,N2611,tested,"NR
+G : Ø
+ES : axis, polster, somites
+MS : axis
+24 h : tail somites, axial vasculature, head blood vessels (at the MHB level)
+36 - 48 h : NR, head, pectoral fin, cleithrum",,T7,AIC287-M13F or PU,BC065437,1796,1,16 th sending,,,pExpress-1,ZDB-GENE-030826-14, ZDB-CDNA-040425-596
+V255,,FR_5533,sapcd2,,,,,,,suppressor APC domain containing 2,,,,,,N2660,,"G : NR more in axis
+ES - MS : salt and pepper pattern linked to cell cycle/ proliferative
+24 - 36 h : CNS, salt and pepper
+48 h : CNS proliferative zone",,T7,T7-SP6,BC067151,2110,0,12 th sending,,,pCMV-SPORT6.1,ZDB-GENE-050128-1,
+V256,,FR_5542,etv4,,,,ENSDARG00000018303,,,ets variant 4,nucleus,"RNA polymerase II transcription factor activity, sequence-specific DNA binding ; sequence-specific DNA binding ; DNA binding ; transcription factor activity, sequence-specific DNA binding","limb morphogenesis ; transcription, DNA-templated ; cell differentiation ; regulation of transcription, DNA-templated ; regulation of transcription from RNA polymerase II promoter ; pronephros development ; positive regulation of transcription, DNA-templated",,,N2671,tested-OV,"G : margin, axis
+ES : posterior mesoderm, notochord, MHB, neural crest or mesoderm at this presumptive branchial arches level
+MS : paraxial mesoderm segmental plate, notochord, somites, tail bud, head epidermis, head mesenchyme (at the level of branchial arches) PGCs (?), MHB, posterior midbrain, spinal chord neurons, lens placode, optic stalk
+24 h : part of telencephalon, optic stalk, lens, branchial arches, cranial ganglia, lateral line, spinal chord neurons, MHB, pancreas, pectoral fin bud
+36 h : lens, optic stalk, branchial arches, pectoral fin, pancreas, MHB, otic vesicle
+48 h : lens (midbrain, hindbrain) ventricular zone, otic vesicle, branchial arches, pectoral fin, anterior lateral line neuromasts/
+",,T7,T7-SP6,BC066500,1840,4,12 th sending,,,pCMV-SPORT6.1,ZDB-GENE-990415-71, ZDB-CDNA-040425-643
+V257,,FR_5564,sf3a1,,,,ENSDARG00000041887,,,"splicing factor 3a, subunit 1",U2 snRNP ; U2-type prespliceosome ; catalytic step 2 spliceosome,RNA binding,mRNA 3'-splice site recognition ; RNA processing,,NR,N2701 ,,NR,,T7,T7-SP6,BC066392,2782,,12 th sending,,,pCMV-SPORT6.1,ZDB-GENE-030616-156, ZDB-CDNA-040425-821
+V258,,FR_5580,znf410,,,,ENSDARG00000008218,,,zinc finger protein 410,NA,metal ion binding ; nucleic acid binding,NA,,NR,N2731 ,,NR,,T7,T7-SP6,BC065642,1407,,12 th sending,,,pCMV-SPORT6.1,ZDB-GENE-040426-1817, ZDB-CDNA-040425-2757
+V259,,FR_5726,hmga2,,,,ENSDARG00000069912,,,high mobility group AT-hook 2,chromatin ; nucleus,"DNA-(apurinic or apyrimidinic site) lyase activity ; DNA binding ; transcription factor activity, sequence-specific DNA binding","base-excision repair ; regulation of transcription, DNA-templated",,,N2761,tested,"G - ES : Ø
+MS : anterior diencephalon, head mesenchyme, pronephric ducts, dorsal part of somites, otic placodes
+24 h : head mesenchyme, pronephric ducts, gut, pectoral fin bud, branchial arches, choroid fissure
+36 h : head mesenchyme, midbrain hindbrain boundary, brain ventricular zone, pectoral fin, choroid fissure
+48 h : same, + pectoral fin, choroid fissure",,T7,AIC287-M13F or PU,BC065852,1398,3,16 th sending,,,pExpress-1,ZDB-GENE-030131-3148, ZDB-CDNA-040425-3240
+V260,,FR_6818,zp2.4,,,,,,,"zona pellucida glycoprotein 2, tandem duplicate 4",.,,,,,N2791,tested-OV,"G : NR
+ES : anterior neural plate
+MS : YSL, eye, midbrain, anterior spinal chord
+24 h : eye, midbrain-hindbrain boundary, YSL, branchial arches, anterior spinal chord
+36 h : YSL, eye, midbrain, cerebellum, dorsal diencephalon, forebrain ventricular zone, branchial arches, pectoral fin bud, anterior spinal chord
+48 h : retina proliferative zone, tectum, branchial arches, pectoral fin",,T3,ACY9-ACY10,BC058510,2247,2,13 th sending,,,pME18S-FL3,ZDB-GENE-010622-3,
+V261,,FR_6842,tmem110,,,,ENSDARG00000013694,,,transmembrane protein 110,membrane ; integral component of membrane,molecular_function,biological_process,,NR,N2821,,NR,,T3,ACY9-ACY10,BC055172,1867,,13 th sending,,,pME18S-FL3,ZDB-GENE-040426-1198, ZDB-CDNA-040425-2131
+V262,,FR_6671,adob,,,,,,,2-aminoethanethiol (cysteamine) dioxygenase b,mitochondrion,"oxidoreductase activity, acting on single donors with incorporation of molecular oxygen, incorporation of two atoms of oxygen ; dioxygenase activity ; oxidoreductase activity",oxidation-reduction process,,,N2861,tested-OV,"G - MS : Ø
+24 h : lens, YSL, pronephric ducts, weak in myotomes (Ø in myotomes)
+36 h : lens, YSL, pronephric ducts
+48 h : YSL, liver, posterior dorsal tectum, lens, anterior axial dorsal telencephalon
+5 d : YSL, liver",,T7,AIC287-M13F or PU,BC065461,1837,2,13 th sending,,,pExpress-1,ZDB-GENE-040426-2267,
+V263,,FR_6880,leg1.2,,,,ENSDARG00000095751,,,zgc:77778,extracellular region ; extracellular space,molecular_function,liver development ; digestive system development ; multicellular organism development,,,N2881,tested,"G - MS : Ø
+24 h : YSL on the yolk tube extension
+36 - 48 h : weak in ventral most YSL
+5 d : liver",,T7,AIC287-M13F or PU,BC065450,1242,2,13 th sending,,,pExpress-1,ZDB-GENE-040426-2281, ZDB-CDNA-040425-3228
+V264,,FR_6905,asb7,,,,ENSDARG00000006494,,,ankyrin repeat and SOCS box containing 7,NA,molecular_function,intracellular signal transduction ; protein ubiquitination,,NR,N2911 ,,NR,,T7,T7-SP6,BC065964,1554,,13 th sending,,,pCMV-SPORT6.1,ZDB-GENE-040426-2429, ZDB-CDNA-040425-3376
+V265,,FR_6925,jun,,,,ENSDARG00000043531,,,jun proto-oncogene,nuclear chromatin ; transcription factor complex,"transcription factor binding ; RNA polymerase II core promoter proximal region sequence-specific DNA binding ; transcription coactivator activity ; RNA polymerase II transcription factor activity, sequence-specific DNA binding ; sequence-specific DNA binding ; beta-catenin binding ; DNA binding ; transcription factor activity, sequence-specific DNA binding","response to cadmium ion ; response to methylmercury ; response to cAMP ; transcription, DNA-templated ; response to radiation ; positive regulation of cell differentiation ; response to mechanical stimulus ; response to cytokine ; cellular response to hormone stimulus ; regulation of cell death ; response to lipopolysaccharide ; response to drug ; regulation of cell cycle ; regulation of transcription, DNA-templated ; regulation of cell proliferation ; negative regulation of transcription from RNA polymerase II promoter ; canonical Wnt signaling pathway ; positive regulation of transcription from RNA polymerase II promoter",,,N2942,tested,"G : Ø
+ES : axis weak
+MS : ventral mesenchyme, epidermis, adaxial cells (muscle pioneers)
+24 h : nose, heart, lateral line ++, muscle pioneers, ventral caudal somites, epidermis
+36 h : nose, heart, lateral line ++, muscle pioneers, ventral caudal somites, epidermis, head mesenchyme
+48 h : head mesenchyme, branchial arches, mesenchyme around pectoral fin, oesophagus",,T7,T7-SP6,BC065976,1923,3,13 th sending,,,pCMV-SPORT6.1,ZDB-GENE-030131-7859, ZDB-CDNA-040425-1514
+V266,,FR_6941,mycla,,,,ENSDARG00000006003,,,v-myc avian myelocytomatosis viral oncogene lung carcinoma derived homolog a,nucleus,"protein dimerization activity ; DNA binding ; transcription factor activity, sequence-specific DNA binding","regulation of transcription, DNA-templated",,NR,N2971 ,,NR,,T7,T7-SP6,BC067723,1788,,13 th sending,,,pCMV-SPORT6.1,ZDB-GENE-040426-2439, ZDB-CDNA-040425-3386
+V267,,FR_6965,abhd14a,,,,ENSDARG00000058367,,,abhydrolase domain containing 14A,membrane ; integral component of membrane ; cytoplasm,coenzyme F390-A hydrolase activity ; coenzyme F390-G hydrolase activity ; GPI-anchor transamidase activity ; hydrolase activity,NA,,NR,N3001 ,,NR,,T7,T7-SP6,BC066291,1281,,13 th sending,,,pCMV-SPORT6.1,ZDB-GENE-040426-2428, ZDB-CDNA-040425-3375
+V268,,FR_6990,spred1,,,,ENSDARG00000041449,,,"sprouty-related, EVH1 domain containing 1",membrane,molecular_function,regulation of vascular endothelial growth factor receptor signaling pathway ; regulation of signal transduction ; multicellular organism development ; blood vessel morphogenesis,,NR,N3031 ,,NR,,T7,T7-SP6,BC068365,3089,,12 th sending,,,pCMV-SPORT6.1,ZDB-GENE-040426-2338, ZDB-CDNA-040425-3285
+V269,,FR_7015,slc10a3,,,,ENSDARG00000103220,,,"solute carrier family 10, member 4",membrane ; integral component of plasma membrane ; integral component of membrane,bile acid:sodium symporter activity,NA,,NR,N3061 ,,NR,,T7,T7-SP6,BC068432,2307,,12 th sending,,,pCMV-SPORT6.1,ZDB-GENE-041014-249, ZDB-CDNA-040425-3294
+V270,,FR_7038,tuba8l,,,,ENSDARG00000042708,,,"tubulin, alpha 4 like",cytoskeleton ; microtubule ; cytoplasm,nucleotide binding ; structural constituent of cytoskeleton ; GTP binding ; GTPase activity,microtubule-based process,,NR,N3091 ,,NR,,T7,T7-SP6,BC067582,1843,,12 th sending,,,pCMV-SPORT6.1,ZDB-GENE-030131-5588, ZDB-CDNA-040425-3398
+V271,,FR_7055,dbnla,,,,ENSDARG00000008170,,,drebrin-like a,intracellular,actin filament binding ; actin binding,ruffle assembly ; synapse assembly ; neuron projection morphogenesis ; receptor-mediated endocytosis,,,N3122,,NR,,T7,AIC287-M13F or PU,BC074079,1705,0,12 th sending,,,pExpress-1,ZDB-GENE-040704-42, ZDB-CDNA-040704-42
+V272,,FR_7077,bloc1s4,,,,ENSDARG00000007597,,,"biogenesis of lysosomal organelles complex-1, subunit 6, pallidin",extrinsic component of membrane ; transport vesicle ; BLOC-1 complex,molecular_function,intracellular transport,,,N3152,,NR,,T7,AIC287-M13F or PU,BC078382,1450,0,12 th sending,,,pExpress-1,ZDB-GENE-070112-1862, ZDB-CDNA-040801-228
+V273,,FR_7101,zgc:91944,,,,ENSDARG00000035887,,,zgc:91944,nucleus,DNA binding,"positive regulation of transcription, DNA-templated",,,N3182,,"G - MS : Ø
+24h : NR
+5d :  NR, lateral line ganglia",,T7,AIC287-M13F or PU,BC076519,2980,1,13 th sending,,,pExpress-1,ZDB-GENE-040718-417, ZDB-CDNA-040718-459
+V274,,FR_7127,bambib,,,,ENSDARG00000099677,,,BMP and activin membrane-bound inhibitor homolog (Xenopus laevis) b,membrane ; integral component of membrane,molecular_function,positive regulation of canonical Wnt signaling pathway ; negative regulation of transforming growth factor beta receptor signaling pathway,,,N3211,,"G : Ø
+ES : epidermis
+MS : epidermis, posterior retina
+24 h : retina dorsal to the lens, epidermis, median fin fold, pectoral fin bud, posterior otic vesicle
+36 h : retina dorsal to the lens, median fin fold, anterior and posterior otic vesicle, pectoral fin, posterior branchial arches
+48 h : same + dorsal telencephalon nuclei, AER of pectoral fin, cleithrum",,T7,AIC287-M13F or PU,BC072715,1445,2,13 th sending,,,pExpress-1,ZDB-GENE-040704-30, ZDB-CDNA-040704-30
+V275,,FR_7147,ubxn7,,,,ENSDARG00000009436,,,UBX domain protein 7,cellular_component,molecular_function,biological_process,,NR,N3241 ,,NR,,T7,AIC287-M13F or PU,BC074046,2165,,12 th sending,,,pExpress-1,ZDB-GENE-040704-8, ZDB-CDNA-040704-8
+V276,,FR_7170,kctd4,,,,ENSDARG00000068691,,,potassium channel tetramerization domain containing 4,NA,NA,protein homooligomerization ; ion transport ; transport,,,N3272,,NR,,T7,AIC287-M13F or PU,BC074061,1585,0,12 th sending,,,pExpress-1,ZDB-GENE-040704-71, ZDB-CDNA-040704-71
+V277,,FR_7188,rad17,,,,ENSDARG00000018918,,,RAD17 checkpoint clamp loader component,Rad17 RFC-like complex ; nucleus,nucleotide binding ; ATP binding ; DNA clamp loader activity,cell cycle ; DNA damage checkpoint ; DNA repair,,,N3301 ,,NR more in ventral mesoderm at MS,,T7,AIC287-M13F or PU,BC076494,2535,0,12 th sending,,,pExpress-1,ZDB-GENE-040718-409, ZDB-CDNA-040718-450
+V278,,FR_7215,lhfpl3,,,,ENSDARG00000021595,,,lipoma HMGIC fusion partner-like 3,membrane ; integral component of membrane,molecular_function,biological_process,,,N3331,,"G - MS : Ø
+24 - 5 d : CNS marginal zone",,T7,AIC287-M13F or PU,BC076060,1946,2,13 th sending,,,pExpress-1,ZDB-GENE-040801-180, ZDB-CDNA-040801-191
+V279,,FR_7243,gtf2h1,,,,ENSDARG00000026701,,,"general transcription factor IIH, polypeptide 2",core TFIIH complex,metal ion binding ; zinc ion binding,"transcription, DNA-templated ; nucleotide-excision repair ; DNA repair",,NR,N3361 ,,NR,,T7,AIC287-M13F or PU,BC081602,2493,,12 th sending,,,pExpress-1,ZDB-GENE-030131-1959, ZDB-CDNA-040912-166
+V28,V444,"CB715
+",her7,,,,,,,hairy and enhancer of split related-7,nucleus,protein dimerization activity ; DNA binding,"somite specification ; transcription, DNA-templated ; regulation of transcription, DNA-templated ; anterior/posterior pattern specification ; somitogenesis",,,DG2035,,"G : margin
+ES : segmentation clock, tail bud
+MS - 24 h : same",,T7,PU-RP,CB891041 ,1.1,4,sending CB,,,pBSIISK+,ZDB-GENE-000427-6,
+V280,,FR_7270,hrasls,,,,ENSDARG00000100021,,,HRAS-like suppressor,membrane ; integral component of membrane,molecular_function,biological_process,,NR,N3391 ,,NR,,T3,ACY9-ACY10,BC076195,837,,12 th sending,,,pME18S-FL3,ZDB-GENE-040718-330, ZDB-CDNA-040718-363
+V281,,FR_7296,tmem178b,,,,ENSDARG00000006747,,,transmembrane protein 178B,membrane ; integral component of membrane,NA,biological_process,,,N3421,,"G - ES : Ø
+MS : cranial ganglia
+24 h : telencephalon and diencephalon marginal zone, cranial ganglia, weak in spinal chord
+36 h : same, + hindbrain marginal zone, ventral anterior part of retina
+48 h : cranial ganglia, brain, retina inner nuclea layer
+5 d: same",,T3,ACY9-ACY10,BC076190,1070,3,13 th sending,,,pME18S-FL3,ZDB-GENE-040718-92, ZDB-CDNA-040718-113
+V282,,FR_7324,ndufab1a,,,,ENSDARG00000058463,,,"NADH dehydrogenase (ubiquinone) 1, subcomplex unknown, 2",respiratory chain ; mitochondrial inner membrane ; membrane ; mitochondrion,NADH dehydrogenase (ubiquinone) activity,"transport ; oxidation-reduction process ; mitochondrial electron transport, NADH to ubiquinone",,,N3451 ,,"G - MS : weak NR
+24 h : eye, tectum, somites
+36 h : same + branchial arches
+48 h : pectoral fin muscles",,T3,ACY9-ACY10,BC076098,764,,12 th sending,,,pME18S-FL3,ZDB-GENE-050320-87, ZDB-CDNA-040801-1
+V283,,FR_7344,zgc:92818,,,,ENSDARG00000002506,,,zgc:92818,cellular_component,molecular_function,biological_process,,,N3481,,"NR more in axis and midbrain at ES, CNS and notochord at MS",,T3,ACY9-ACY10,BC076286,1233,0,12 th sending,,,pME18S-FL3,ZDB-GENE-040718-217, ZDB-CDNA-040718-243
+V284,,FR_7369,ap3s2,,,,ENSDARG00000039882,,,"adaptor-related protein complex 3, beta 1 subunit a",.,,,,,N3512,,NR,,T3,ACY9-ACY10,BC076269,1043,0,12 th sending,,,pME18S-FL3,ZDB-GENE-031112-8, ZDB-CDNA-040718-304
+V285,,FR_7393,syt1a,,,,ENSDARG00000030614,,,synaptotagmin Ia,synaptic vesicle membrane ; membrane ; integral component of membrane,syntaxin binding ; clathrin binding ; calcium ion binding ; calcium-dependent phospholipid binding,synaptic vesicle endocytosis,,,N3543,,"G - MS : Ø
+24 - 48 h : brain marginal zone, epiphysis
+48 h : same + ganglion and inner cell layer of retina. Stronger in olfactory bulb",,T3,ACY9-ACY10,BC076355,1515,3,16 th sending,,,pME18S-FL3,ZDB-GENE-040718-165, ZDB-CDNA-040718-187
+V286,,FR_7416,gng3,,,,ENSDARG00000009553,,,"guanine nucleotide binding protein (G protein), gamma 8",membrane ; plasma membrane ; heterotrimeric G-protein complex,signal transducer activity,signal transduction ; G-protein coupled receptor signaling pathway,,,N3572,,"G - ES : Ø
+MS : trigeminal placode
+24 h: neurons in marginal zone, cranial ganglia
+36 h : same + nose
+48 h : CNS marginal, cranial ganglia, ganglion cell layer of retina",,T3,ACY9-ACY10,BC076314,1129,2,16 th sending,,,pME18S-FL3,ZDB-GENE-050522-312, ZDB-CDNA-040718-221
+V287,,FR_7438,tspo,,,,ENSDARG00000026655,,,translocator protein,membrane ; integral component of membrane,molecular_function,primitive erythrocyte differentiation,,,N3601,,"G - MS : Ø
+24 h - 5 d: blood",,T3,ACY9-ACY10,BC083388,914,2,16 th sending,,,pME18S-FL3,ZDB-GENE-041010-125, ZDB-CDNA-041010-125
+V288,,FR_7463,gcdhb,,,,ENSDARG00000098831,,,glutaryl-CoA dehydrogenase b,mitochondrion,"oxidoreductase activity, acting on the CH-CH group of donors ; fatty-acyl-CoA binding ; acyl-CoA dehydrogenase activity ; oxidoreductase activity, acting on the CH-CH group of donors, with a flavin as acceptor ; electron carrier activity ; flavin adenine dinucleotide binding ; oxidoreductase activity",metabolic process ; lipid homeostasis ; fatty acid beta-oxidation using acyl-CoA dehydrogenase ; oxidation-reduction process,,,N3631 ,,NR more in liver at 48 h,,T3,ACY9-ACY10,BC083397,1555,0,12 th sending,,,pME18S-FL3,ZDB-GENE-041010-117, ZDB-CDNA-041010-117
+V289,,FR_7489,ercc8,,,,ENSDARG00000069283,,,excision repair cross-complementation group 8,,,,,NR,N3661,,NR,,T3,ACY9-ACY10,BC083423,1635,,12 th sending,,,pME18S-FL3,ZDB-GENE-041010-60, ZDB-CDNA-041010-60
+V290,,FR_7515,slc38a4,,,,ENSDARG00000018149,,,"solute carrier family 38, member 5b",membrane ; integral component of plasma membrane ; integral component of membrane,glycine transmembrane transporter activity,NA,,NR,N3691,,NR,,T3,ACY9-ACY10,BC083465,1508,,12 th sending,,,pME18S-FL3,ZDB-GENE-040718-395, ZDB-CDNA-041010-14
+V291,,FR_7544,zgc:101566,,,,ENSDARG00000086342,,,zgc:101566,cellular_component,molecular_function,biological_process,,NR,N3721,,NR,,T3,ACY9-ACY10,BC083203,1508,,12 th sending,,,pME18S-FL3,ZDB-GENE-041010-73, ZDB-CDNA-041010-73
+V292,,FR_7572,zgc:103755,,,,ENSDARG00000104663,,,zgc:103755,,,,,NR,N3751,,NR strong,,T3,ACY9-ACY10,BC083481,1196,,12 th sending,,,pME18S-FL3,ZDB-GENE-041010-101, ZDB-CDNA-041010-101
+V293,,FR_7738,mllt10,,,,ENSDARG00000045401,,,"myeloid/lymphoid or mixed-lineage leukemia translocated to, 4a",NA,NA,signal transduction,,NR,N3781 ,,NR,,T7,AIC287-M13F or PU,BC085650,3,,13 th sending,,,pExpress-1,ZDB-GENE-050419-52, ZDB-CDNA-041114-176
+V294,,FR_7754,cdc42se1,,,,ENSDARG00000023724,,,CDC42 small effector 1,cytoskeleton ; membrane ; plasma membrane ; cytoplasm,structural molecule activity,signal transduction ; regulation of cell shape ; midbrain-hindbrain boundary morphogenesis,,NR,N3814 ,,NR,,T3,ACY9-ACY10,BC044443,2.1,,13 th sending,,,pME18S-FL3,ZDB-GENE-030131-9260, ZDB-CDNA-041122-6
+V295,,FR_7776,zgc:103536,,,,,,,zgc:103536,,,,,NR,N3841 ,,NR,,T3,ACY9-ACY10,BC086829,1.4,,13 th sending,,,pME18S-FL3,ZDB-GENE-041212-25,
+V296,,FR_7804,nfil3-6,,,,ENSDARG00000087188,,,"nuclear factor, interleukin 3 regulated, member 6",nucleus,"transcriptional repressor activity, RNA polymerase II core promoter proximal region sequence-specific binding ; sequence-specific DNA binding ; transcription factor activity, sequence-specific DNA binding","circadian regulation of gene expression ; regulation of transcription, DNA-templated",,,N3872,,"G - ES : Ø
+MS : epiphysis
+24 - 36 h : epiphysis
+48 h : epiphysis, retina photoreceptor cell layer
+5 d: retina inner cell layer",,T3,ACY9-ACY10,BC085591,2.5,2,15 th sending,,,pME18S-FL3,ZDB-GENE-040704-63, ZDB-CDNA-041114-48
+V297,,FR_7826,med28,,,,ENSDARG00000037410,,,mediator complex subunit 28,mediator complex ; nucleus,molecular_function,"transcription, DNA-templated ; regulation of transcription, DNA-templated",,NR,N3902 ,,NR,,T3,ACY9-ACY10,BC085569,1.1,,15 th sending,,,pME18S-FL3,ZDB-GENE-041121-4, ZDB-CDNA-041121-4
+V298,,FR_7847,nots,,,,,,,nothepsin,alveolar lamellar body ; lysosome ; extracellular space,peptidase activity ; hydrolase activity ; aspartic-type endopeptidase activity,protein catabolic process ; proteolysis,,NR,N3931 ,,NR,,T3,ACY9-ACY10,BC086835,1.7,,13 th sending,,,pME18S-FL3,ZDB-GENE-010620-1,
+V299,,FR_7871,csnk1g1,,,,ENSDARG00000104342,,,"casein kinase 1, alpha 1",cytoplasm ; nucleus,transferase activity ; nucleotide binding ; protein kinase activity ; ATP binding ; kinase activity ; protein serine/threonine kinase activity,peptidyl-serine phosphorylation ; protein phosphorylation ; phosphorylation ; Wnt signaling pathway ; phagocytosis ; heart development,,NR,N3962 ,,NR more in CNS,,T3,ACY9-ACY10,BC086705,1.8,,13 th sending,,,pME18S-FL3,ZDB-GENE-020419-19, ZDB-CDNA-041212-71
+V3,V408,CB143,ctsla,,,,,,,cathepsin La,lysosome ; extracellular space,cysteine-type peptidase activity ; peptidase activity ; hydrolase activity ; cysteine-type endopeptidase activity,proteolysis involved in cellular protein catabolic process ; proteolysis,,,BG163,,"G - MS : YSL
+24 - 48 hrs : YSL, ventral mesenchyme
+> kidney",,T7,PU-RP,BM259640BM259641,1.1,2,sending CB,,,pBSIISK+,ZDB-GENE-030131-106,
+V30,V444,CB717,tg,,,,,,,thyroglobulin,extracellular space,carboxylic ester hydrolase activity,NA,,,DG2412,,Thyroid,,T7,PU-RP,CB891044 CB891045,1.5,4,sending CB,,,pBSIISK+,ZDB-GENE-030519-1,
+V300,,FR_7898,spopla,,,,ENSDARG00000010563,,,speckle-type POZ protein-like a,Cul3-RING ubiquitin ligase complex ; nucleus,NA,negative regulation of protein ubiquitination ; proteasome-mediated ubiquitin-dependent protein catabolic process ; protein ubiquitination,,NR,N3992 ,,NR,,T3,ACY9-ACY10,BC090815,2.5,,13 th sending,,,pME18S-FL3,ZDB-GENE-050320-3, ZDB-CDNA-050320-3
+V301,,FR_7920,zgc:101716,,,,ENSDARG00000010738,,,zgc:101716,cellular_component,NA,biological_process,,NR,N4021 ,,NR,,T3,ACY9-ACY10,BC085422,1.3,,13 th sending,,,pME18S-FL3,ZDB-GENE-041114-135, ZDB-CDNA-041114-135
+V302,,FR_7947,ccdc113,,,,ENSDARG00000006981,,,coiled-coil domain containing 113,protein complex ; centriolar satellite ; cytoskeleton ; cytoplasm,molecular_function,cell projection organization ; cilium assembly,,NR,N4051 ,,"NR, axis, pronephric ducts",,T3,ACY9-ACY10,BC083263,1.6,,15 th sending,,,pME18S-FL3,ZDB-GENE-041010-163, ZDB-CDNA-041010-163
+V303,,FR_7974,cited2,,,,ENSDARG00000030905,,,"Cbp/p300-interacting transactivator, with Glu/Asp-rich carboxy-terminal domain, 4b",nucleus,RNA polymerase II transcription coactivator activity,"muscle cell differentiation ; regulation of transcription, DNA-templated",,,N4081,tested-OV,"G : expression asymetrical, NR on one side of the embryo (stochastic ?) for half of the population (in the axis - notochord for the other half)
+ES : same + eye field, somites, 
+MS : same eye, branchial arches
+24 h : lens, optic stalk, nucleus in dorsal telencephalon, branchial arches
+36 h : lens, optic nerve, branchial arches, part of hindbrain (2 rhombomere laterally)
+48 h : same (3 rhombomeres) lateral part",,T3,ACY9-ACY10,BC083367,3,3,15 th sending,,,pME18S-FL3,ZDB-GENE-030425-5, ZDB-CDNA-041010-141
+V304,,FR_7999,pdlim3a,,,,,,,PDZ and LIM domain 3a,cellular_component,metal ion binding ; zinc ion binding,NA,,NS,N4112 ,,no labelling,,T3,ACY9-ACY10,BC095249,1.5,,13 th sending,,,pME18S-FL3,ZDB-GENE-050505-1,
+V305,,FR_8025,lactb2,,,,,,,"lactamase, beta 2",.,,,,NR,N4141 ,,NR,,T3,ACY9-ACY10,BC095252,1.9,,13 th sending,,,pME18S-FL3,ZDB-GENE-040426-2257,
+V306,,FR_8049,nop10,,,,ENSDARG00000104227,,,NOP10 ribonucleoprotein homolog (yeast),box H/ACA RNP complex ; intracellular ribonucleoprotein complex ; nucleolus ; nucleus,snoRNA binding,pseudouridine synthesis ; rRNA processing ; ribosome biogenesis ; primitive hemopoiesis,,NR,N4171 ,,NR strong,,T3,ACY9-ACY10,BC095081,0.7,,13 th sending,,,pME18S-FL3,ZDB-GENE-041007-4, ZDB-CDNA-050522-162
+V307,,FR_8884,c1qa,,,,ENSDARG00000044613,,,"complement component 1, q subcomponent binding protein",mitochondrial matrix,molecular_function,biological_process,,NS,N4201 ,,no labelling,,T3,ACY9-ACY10,BC095042,1.2,,13 th sending,,,pME18S-FL3,ZDB-GENE-050417-408, ZDB-CDNA-050522-86
+V308,,FR_8911,isl2b,,,,ENSDARG00000053499,,,ISL LIM homeobox 2b,nucleus,metal ion binding ; zinc ion binding ; sequence-specific DNA binding ; DNA binding,"exocrine pancreas development ; multicellular organism development ; regulation of transcription, DNA-templated",,,N4231,,"G - ES : Ø
+MS : cranial ganglia (stronger in trigeminal), hindbrain, spinal chord neurons
+24 h : same + branchial arches, cells in pretectum and telencephalon
+36 h ; same + cells in retina, one endoderm primordium
+48 h : same + ganglion cell layer of retina
+5 d: cranial ganglia, ganglion cell layer of retina",,T3,ACY9-ACY10,BC095011,1.9,4,16 th sending,,,pME18S-FL3,ZDB-GENE-990415-133, ZDB-CDNA-050522-379
+V309,,FR_8937,irx3a,,,,ENSDARG00000101076,,,iroquois homeobox 3a,nucleus,sequence-specific DNA binding ; DNA binding,"gastrulation ; endocrine pancreas development ; regulation of transcription, DNA-templated",,,N4262,tested,"G : axis
+ES : notochord, ventral spinal chord, hindbrain (3 rhombomeres), midbrain (one stripe), ventral cephalic mesoderm (branchial arches)
+MS - 24 h : midbrain, Ø in MHB, hinbrain, spinal chord, chordo neural hinge
+36 h : same, part of posterior diencephalon or anterior tegmentum, otic vesicle
+48 h : same (Ø in spinal chord), cells in ganglion cell layer of retina",,T3,ACY9-ACY10,BC092694,2,3,16 th sending,,,pME18S-FL3,ZDB-GENE-991119-5, ZDB-CDNA-050417-31
+V31,V444,CB995,dnajb13,,,,,,,"DnaJ (Hsp40) homolog, subfamily B, member 13",cellular_component,unfolded protein binding,protein folding,,,DG2415,,"G - MS : Ø
+24 h : primary neurons
+36 h neurons in marginal zone
+48 h : same, anterior and posterior lateral line ganglion",,T7,PU-RP,CF673238,1.5,3,sending CB,,,pBSIISK+,ZDB-GENE-040910-4,
+V310,,FR_8962,prrg4,,,,ENSDARG00000030753,,,proline rich Gla (G-carboxyglutamic acid) 4 (transmembrane),extracellular region ; membrane ; integral component of membrane,metal ion binding ; calcium ion binding,biological_process,,NR ,N4291  ,,"NR more in polster, and in pronephric ducts at MS",,T3,ACY9-ACY10,BC092813,1705,,15 th sending,,,pME18S-FL3,ZDB-GENE-050417-112, ZDB-CDNA-050417-113
+V311,,FR_8988,zgc:110183,,,,,,,zgc:110183,,,,,NR,N4321 ,,NR,,T3,ACY9-ACY10,BC092779,1073,,15 th sending,,,pME18S-FL3,ZDB-GENE-050417-380,
+V312,,FR_9015,psmb8f,,,,,,,proteasome subunit beta 8f,,,,,NS,N4351 ,,NS,,T3,ACY9-ACY10,BC092889,1043,,15 th sending,,,pME18S-FL3,ZDB-GENE-050417-319,
+V313,,FR_9041,rab23,,,,ENSDARG00000004151,,,"RAB23, member RAS oncogene family",endosome membrane ; autophagosome,nucleotide binding ; GTP binding,determination of left/right asymmetry in lateral mesoderm ; protein transport ; small GTPase mediated signal transduction ; autophagosome assembly ; determination of liver left/right asymmetry ; determination of pancreatic left/right asymmetry ; determination of heart left/right asymmetry,,NR,N4381 ,,NR,,T3,ACY9-ACY10,BC095213,1555,,15 th sending,,,pME18S-FL3,ZDB-GENE-050522-328, ZDB-CDNA-050522-328
+V314,,FR_9069,meig1,,,,ENSDARG00000045705,,,meiosis/spermiogenesis associated 1,nucleus,NA,spermatogenesis ; cell differentiation,,,N4411,tested-OV,"G - ES : Ø
+MS : otic vesicle, rhombomere 5, pronephric ducts, ventral spinal chord
+24 h :otic vesicle, rhombomere 5, pronephric ducts, ventral spinal chord
+36 h : same + lens
+48 h : same + pectoral fin muscle",,T3,ACY9-ACY10,BC091461,462,2,17 th sending,,,pME18S-FL3,ZDB-GENE-050320-33, ZDB-CDNA-050320-33
+V315,,FR_9093,wbp1lb,,,,ENSDARG00000029751,,,WW domain binding protein 1-like b,membrane ; integral component of membrane,molecular_function,biological_process,,,N4441,,NR more in YSL at G - ES ,,T3,ACY9-ACY10,BC095609,1479,0,15 th sending,,,pME18S-FL3,ZDB-GENE-050522-112, ZDB-CDNA-050522-112
+V316,,FR_9117,zgc:112271,,,,,,,zgc:112271,,,,,NR,N4471 ,,NR,,T3,ACY9-ACY10,BC095718,459,,15 th sending,,,pME18S-FL3,ZDB-GENE-050522-443,
+V317,,FR_9145,nanp,,,,ENSDARG00000075143,,,N-acetylneuraminic acid phosphatase,cellular_component,hydrolase activity,metabolic process,,,N4501,,"NR, more in polster at ES",,T3,ACY9-ACY10,BC095610,1204,0,15 th sending,,,pME18S-FL3,ZDB-GENE-050522-94, ZDB-CDNA-050522-94
+V318,,FR_9171,leprot,,,,,,,leptin receptor overlapping transcript,,,,,,N4531,tested-OV,"G - ES : Ø
+MS : posterior pronephric ducts
+24 - 36 h : same + intestinal bulb
+48 h : pharynx",,T3,ACY9-ACY10,BC093304,1875,1,17 th sending,,,pME18S-FL3,ZDB-GENE-050417-314,
+V319,,FR_9196,ankrd45,,,,,,,ankyrin repeat domain 45,cellular_component,molecular_function,biological_process,,,N4561,tested,"G : Ø
+ES : Kupffer’s vesicle
+MS : anterior and posterior part of otic vesicle, cells in pronephric ducts
+24 : same
+36 h : same + posterior most ventral spinal chord
+48 h : cells in nose, otic vesicle, pronephric ducts, lateral line neuromasts, head ± NR
+5 d  : cells in nose, lateral line neuromasts (pas vu sur les photos)",,T3,ACY9-ACY10,BC095811,908,2,17 th sending,,,pME18S-FL3,ZDB-GENE-050522-311,
+V320,,FR_9219,zgc:112038,,,,ENSDARG00000046140,,,zgc:112038,membrane ; integral component of membrane,serine-type peptidase activity ; peptidase activity ; hydrolase activity ; serine-type endopeptidase activity,proteolysis,,NR,N4591 ,,NR,,T3,ACY9-ACY10,BC095652,1192,,15 th sending,,,pME18S-FL3,ZDB-GENE-050522-271, ZDB-CDNA-050522-271
+V321,,FR_9239,rab42b,,,,ENSDARG00000101170,,,"RAB42, member RAS oncogene family",NA,nucleotide binding ; GTP binding,protein transport ; small GTPase mediated signal transduction,,,N4621,tested-OV,"G - ES : Ø
+MS : adaxial cells, ventral mesoderm
+24 h : head epidermis, ICM, muscle pioneers (?) in posterior somites
+36 h : head epidermis, muscle pioneers (?) caudally, dorsal 2nd ventricule
+48 h : weak in dorsal 2nd ventricule",,T3,ACY9-ACY10,BC093158,1046,3,17 th sending,,,pME18S-FL3,ZDB-GENE-050417-172, ZDB-CDNA-050417-173
+V322,,FR_9263,hexa,,,,,,,hexosaminidase A (alpha polypeptide),cellular_component,"hydrolase activity, hydrolyzing O-glycosyl compounds ; beta-N-acetylhexosaminidase activity ; hydrolase activity, acting on glycosyl bonds ; hydrolase activity",metabolic process ; carbohydrate metabolic process,,,N4652,tested-OV,"G : Ø
+ES : polster, axis, one rhombomere
+MS : retina, epiphysis, spinal chord, YSL, rhombomre 5 + 6
+24 h : lens, YSL, caudal mesenchyme
+36 - 48 h : lens",,T3,ACY9-ACY10,BC093192,1893,1,,,,pME18S-FL3,ZDB-GENE-050417-283,
+V323,,FR_9286,si:ch73-314g15.3,,,,ENSDARG00000000423,,,si:ch73-314g15.3,NA,"metal ion binding ; iron-sulfur cluster binding ; 2 iron, 2 sulfur cluster binding ; oxidoreductase activity",oxidation-reduction process,,NR,N4681 ,,NR,,T3,ACY9-ACY10,BC096959,1828,,15 th sending,,,pME18S-FL3,ZDB-GENE-030616-19, ZDB-CDNA-050612-200
+V324,,FR_9314,zgc:113921,,,,,,,zgc:113921,,,,,NR,N4711 ,,NR more in axis at G - MS,,T3,ACY9-ACY10,BC097015,1280,,17 th sending,,,pME18S-FL3,ZDB-GENE-050913-116,
+V325,,FR_9339,mnx1,,,,,,,motor neuron and pancreas homeobox 1,nucleus,"sequence-specific DNA binding ; DNA binding ; transcription factor activity, sequence-specific DNA binding","type B pancreatic cell differentiation ; endocrine pancreas development ; spinal cord motor neuron cell fate specification ; neuron projection morphogenesis ; regulation of transcription, DNA-templated ; regulation of transcription from RNA polymerase II promoter",,,N4741,tested,"G : Ø
+ES : axis, posterior endoderm, ventral mesoderm
+MS : posterior notochord, posterior endoderm (?), hypochord, ventral spinal chord neurons (motorneurons)
+24 - 36 h : same + pancreas
+48 h ; same, + pharynx, 2 spots in ventral hindbrain at the level of rhombomere 5",,T3,ACY9-ACY10,BC093243,1486,4,,,,pME18S-FL3,ZDB-GENE-040409-1,
+V326,,FR_9365,aars,,,,,,,alanyl-tRNA synthetase,cytosol ; cytoplasm,"ligase activity, forming aminoacyl-tRNA and related compounds ; nucleotide binding ; amino acid binding ; alanine-tRNA ligase activity ; ATP binding ; nucleic acid binding ; tRNA binding",tRNA aminoacylation ; alanyl-tRNA aminoacylation ; tRNA modification,,NR,N4772 ,,NR more in adaxial,,T3,ACY9-ACY10,BC097014,1983,,17 th sending,,,pME18S-FL3,ZDB-GENE-030131-3663,
+V327,,FR_9390,pex11g,,,,,,,peroxisomal biogenesis factor 11 gamma,integral component of peroxisomal membrane,molecular_function,peroxisome fission,,NR,N4802 ,,weak NR,,T3,ACY9-ACY10,BC097141,1296,,17 th sending,,,pME18S-FL3,ZDB-GENE-050913-79,
+V328,,FR_9418,c1qtnf4,,,,,,,C1q and tumor necrosis factor related protein 4,cellular_component,molecular_function,biological_process,,,N4831,tested-OV,"G - ES : Ø
+MS : part of telencephalon
+24 - 36 h : telencephalon, epiphysis, neurons in diencephalon, tegmentum, hindbrain, spinal chord, cranial ganglia
+48 h : CNS marginal zone, cranial ganglia",,T3,ACY9-ACY10,BC093268,1529,3,,,,pME18S-FL3,ZDB-GENE-050417-198,
+V329,,FR_9445,zgc:112977,,,,,,,zgc:112977,NA,metal ion binding ; nucleic acid binding,NA,,NR,N4861 ,,NR,,T3,ADX299-M13F or PU,BC091788,2790,,17 th sending,,,pDNR-LIB,ZDB-GENE-050327-98,
+V330,,FR_9469,trim2a,,,,,,,tripartite motif containing 2a,intracellular,metal ion binding ; zinc ion binding,myeloid cell differentiation ; primitive hemopoiesis,,,N4891,,"G - MS : Ø
+24 - 48 h : lens, trigeminal ganglion
+5 d: ganglion cell layer of retina",,T3,ADX299-M13F or PU,BC091789,3120,1,,,,pDNR-LIB,ZDB-GENE-050327-99,
+V331,,FR_9496,capn2b,,,,,,,"calpain 2, (m/II) large subunit b",intracellular,cysteine-type peptidase activity ; peptidase activity ; hydrolase activity ; calcium ion binding ; calcium-dependent cysteine-type endopeptidase activity,proteolysis,,,N4921,tested-OV,"G : Ø
+ES : epidermis, polster
+MS - 48 h : epidermis
+",,T3,ADX299-M13F or PU,BC090435,2439,2,,,,pDNR-LIB,ZDB-GENE-050522-84,
+V332,,FR_9524,casp8ap2,,,,,,,caspase 8 associated protein 2,NA,DNA binding,biological_process,,NR,N4952 ,,NR,,T3,ADX299-M13F or PU,BC091840,2070,,17 th sending,,,pDNR-LIB,ZDB-GENE-030826-8,
+V333,,FR_9543,zgc:113278,,,,,,,zgc:113278,membrane ; integral component of membrane,molecular_function,protein transport ; transport,,NR,N4981 ,,NR,,T3,ADX299-M13F or PU,BC091895,1650,,17 th sending,,,pDNR-LIB,ZDB-GENE-050327-66,
+V334,,FR_9566,phf23b,,,,ENSDARG00000036305,,,PHD finger protein 23b,cytoplasm ; nucleus,metal ion binding ; zinc ion binding,negative regulation of autophagosome maturation ; negative regulation of autophagosome assembly ; positive regulation of protein ubiquitination ; autophagy,,NR,N5010 ,,NR,,T3,ADX299-M13F or PU,BC095292,2536,,17 th sending,,,pDNR-LIB,ZDB-GENE-030131-5895, ZDB-CDNA-050522-526
+V335,,FR_9588,npsn,,,,,,,nephrosin,cellular_component,peptidase activity ; metal ion binding ; hydrolase activity ; metallopeptidase activity ; metalloendopeptidase activity ; zinc ion binding,proteolysis,,,N5041,tested,"G - MS : Ø
+24 h - 5 d: macrophages +++",,T3,ADX299-M13F or PU,BC095288,1392,4,,,,pDNR-LIB,ZDB-GENE-040420-2,
+V336,,FR_9613,idh3g,,,,,,,isocitrate dehydrogenase 3 (NAD+) gamma,mitochondrion,"isocitrate dehydrogenase (NAD+) activity ; oxidoreductase activity, acting on the CH-OH group of donors, NAD or NADP as acceptor ; metal ion binding ; oxidoreductase activity ; NAD binding ; magnesium ion binding",tricarboxylic acid cycle ; oxidation-reduction process,,NR,N5071 ,,NR,,T3,ADX299-M13F or PU,BC093425,1417,,17 th sending,,,pDNR-LIB,ZDB-GENE-050417-435,
+V337,,FR_9640,pqlc2,,,,,,,PQ loop repeat containing 2,membrane ; integral component of membrane,molecular_function,biological_process,,,N5101,tested-OV,NR + YSL,,T3,ADX299-M13F or PU,BC090740,1765,0,,,,pDNR-LIB,ZDB-GENE-050306-4,
+V338,,FR_9664,psmb2,,,,ENSDARG00000031511,,,proteasome subunit beta 2,proteasome core complex ; proteasome complex ; cytoplasm ; nucleus,threonine-type endopeptidase activity ; peptidase activity ; hydrolase activity ; endopeptidase activity,proteolysis involved in cellular protein catabolic process ; proteolysis,,NR,N5132 ,,NR,,T7,AIC287-M13F or PU,BC075983,763,,17 th sending,,,pExpress-1,ZDB-GENE-040718-353, ZDB-CDNA-040718-388
+V339,,FR_9686,tsta3,,,,,,,tissue specific transplantation antigen P35B,cellular_component,GDP-L-fucose synthase activity ; coenzyme binding ; catalytic activity,'de novo' GDP-L-fucose biosynthetic process,,,N5161,tested-OV,"G : EVL, margin
+ES - MS : EVL, somites, adaxial cells
+24 - 36 h : weak NR
+48 h : lateral line neuromasts, pectoral fin, nose",,T3,ACY9-ACY10,BC086741,1708,1,,,,pME18S-FL3,ZDB-GENE-040722-1,
+V340,,FR_9708,gc,,,,,,,group-specific component (vitamin D binding protein),extracellular space,vitamin transporter activity ; vitamin D binding,vitamin transport ; transport,,,N5192,tested,"G - 48 ; Ø
+5 d: liver +++",,T3,ACY9-ACY10,BC095239,1541,3,,,,pME18S-FL3,ZDB-GENE-040718-307,
+V341,,FR_9731,eef1da,,,,ENSDARG00000102291,,,eukaryotic translation elongation factor 1 delta a (guanine nucleotide exchange protein),eukaryotic translation elongation factor 1 complex,translation elongation factor activity,translational elongation ; translation,,NR,N5221 ,,"± NR, more in myotomes",,T3,ACY9-ACY10,BC096865,919,,17 th sending,,,pME18S-FL3,ZDB-GENE-040426-2740, ZDB-CDNA-050612-214
+V342,,FR_9752,abcf1,,,,ENSDARG00000031795,,,"ATP-binding cassette, sub-family B (MDR/TAP), member 11b",membrane ; integral component of membrane,"nucleotide binding ; canalicular bile acid transmembrane transporter activity ; ATP binding ; ATPase activity ; ATPase activity, coupled to transmembrane movement of substances",bile acid and bile salt transport ; transport ; canalicular bile acid transport ; transmembrane transport,,NR,N5251 ,,NR,,T7,T7-SP6,BC068351,3465,,17 th sending,,,pCMV-SPORT6.1,ZDB-GENE-050517-14, ZDB-CDNA-040425-3181
+V343,,FR_9773,lsm14aa,,,,,,,LSM14A mRNA processing body assembly factor a,cellular_component,molecular_function,biological_process,,NR,N5281 ,,NR,,T3,ACY9-ACY10,BC055387,2135,,20 th sending ,,,pME18S-FL3,ZDB-GENE-040426-1567,
+V344,,FR_9788,rbm4.3,,,,,,,RNA binding motif protein 4.3,cellular_component,nucleotide binding ; protein kinase activity ; ATP binding ; nucleic acid binding,protein phosphorylation,,NR,N5315 ,,NR,,T7,T7-SP6,BC067153,1805,,17 th sending,,,pCMV-SPORT6.1,ZDB-GENE-040426-1938,
+V345,,FR_9810,slc25a5,,,,ENSDARG00000092553,,,"solute carrier family 25 (mitochondrial carrier  adenine nucleotide translocator), member 5",mitochondrial inner membrane ; membrane ; integral component of membrane,transporter activity ; structural constituent of ribosome,transport ; translation ; transmembrane transport,,NR,N5341 ,,NR,,T7,AIC287-M13F or PU,BC065434,1287,,17 th sending,,,pExpress-1,ZDB-GENE-020419-9, ZDB-CDNA-040425-851
+V36,V444,CB991,shbg,,,,,,,sex hormone-binding globulin,NA,androgen binding ; steroid binding,NA,,,DG3347,,"G : EVL
+ES : ±Ø
+MS : Ø
+24 h : epidermis, mucous cells
+36 - 48 h : epidermal cells",,T7,PU-RP,CF673234,1.2,2,sending CB,,,pBSIISK+,ZDB-GENE-030131-1324,
+V37,V444,CB987,zgc:174890,,,,,,,zgc:174890,,,,,,DG3533,,G - 48 h : evl,,T7,PU-RP,CF673230,1.7,2,sending CB,,,pBSIISK+,ZDB-GENE-030131-6213,
+V38,V444,CB985,mibp2,,,,,,,muscle-specific beta 1 integrin binding protein 2,NA,NA,basement membrane assembly ; cell-substrate adherens junction assembly ; integrin-mediated signaling pathway ; muscle organ development,,,DG3590,,"G    : Ø
+ES : anterior neural plate, eye field, midbrain
+MS : eye, tectum, somites
+24 h : eye, tectum, myotomes (Ø in myoseptum)
+36 h : lens, posterior tectum
+48 h : lens, posterior tectum, branchial arches, liver, intestinal bulb, pectoral fin muscles, hypaxial muscles, pancreas primordium",,T7,PU-RP,CF673228,1.3,2,sending CB,,,pBSIISK+,ZDB-GENE-031113-14,
+V39,V445,CB852,capza1a,,,,,,,"capping protein (actin filament) muscle Z-line, alpha 1a",F-actin capping protein complex ; Z disc,actin binding,actin filament capping ; barbed-end actin filament capping,,,GA6,,"G : not expressed 
+ES : weak and not restricted, adaxial cells
+MS : not restricted, cenral part of myotomes, nothing in the myoseptum
+36-48h : not restricted + myotomes
+",,T7,ABJ249-ABJ250,CF416963,2,1,sending CB,,,pBK CMV,ZDB-GENE-030131-5237,
+V4,V408,CB150,zcchc17,,,,,,,"zinc finger, CCHC domain containing 17",NA,nucleic acid binding ; zinc ion binding,NA,,,DS186,,"G : involuated mesoderm, prechordal plate, forerunners
+ES : anterior notochord, paraxial mesoderm of segmental plate (nothing in tail bud), adaxial ++, weak in telencephalon
+MS : somites, ear, weak in telencephalon
+24 hrs : same + lens
+36 - 48 hrs : weak in tegmentum, hindbrain, forebrain",,T7,PU-RP,BM259646BM259647,1.8,3,ZDB-GENE-040426-1979,,,pBSIISK+,ZDB-GENE-040325-2,
+V40,V445,CB865,hspa5,,,,,,,heat shock protein 5,extracellular region,nucleotide binding ; ATP binding,response to yeast ; response to hypoxia,,,GA70,,"G : YSl, axis
+ES : YSL, notochord, polster
+MS : hatching gland, trigeminal ganglion, otic vesicle, notochord
+24h : epidermis, floor plate, hypochord, posterior notochord
+36h : caudal fin epidermis, blood cells, AER pectoral fin, otic vesicle, lateral line neuromast (anteriorly) 
+48h : not restricted, epidermis, mucous cells ++, otic vesicle, subpopulation of blood cells, AER pectoral fin, lateral line neuromasts
+pattern variabla d’un embryon à l’autre, surtout pour le marquage dans l’épiderme.
+5d : lateral line, pancreas, liver, gut
+",,T7,ABJ249-ABJ250,,2.1,3,sending CB,,,pBK CMV,ZDB-GENE-031001-11,
+V41,V446,CB877,pah,,,,,,,phenylalanine hydroxylase,NA,"phenylalanine 4-monooxygenase activity ; oxidoreductase activity, acting on paired donors, with incorporation or reduction of molecular oxygen, reduced pteridine as one donor, and incorporation of one atom of oxygen ; iron ion binding ; amino acid binding ; metal ion binding ; monooxygenase activity",aromatic amino acid family metabolic process ; cellular response to estrogen stimulus ; metabolic process ; L-phenylalanine catabolic process ; oxidation-reduction process,,,GA150,,"G – ES : Ø
+MS : neural crest cells in cephalic region, weak in notochord
+24 h : neural crest cells migrating in lateral pathway, retina, pigmented epithelium
+36 h : same, + caudal fin epidermis
+48 h : same, + lens
+5 d : median fins epidermis, liver, epidermis on one branchial arche (lower jaw)
+",,T7,ABJ249-ABJ250,CF569052 ,2.4,4,sending CB,,,pBK CMV,ZDB-GENE-031006-2,
+V42,V446,CB884,notch2,,,,,,,notch 2,membrane ; integral component of membrane,calcium ion binding,regulation of developmental process ; cartilage development involved in endochondral bone morphogenesis ; lymphangiogenesis ; Notch signaling pathway ; vasculature development ; tissue regeneration ; liver development ; multicellular organism development ; cell differentiation ; face morphogenesis,,,GA222,,"G : involuted paraxial mesoderm (Ø in axis)
+ES : notochord, somites
+MS : otic vesicle, somites
+24 h : caudal somites, branchial arches
+36 h : cells around the eye, choroid fissure, otic vesicle
+48 h : cells around the eye, choroid fissure, otic vesicle
+",,T7,ABJ249-ABJ250,CF569057 ,2.8,2,sending CB,,,pBK CMV,ZDB-GENE-000329-4,
+V43,V447,CB1000,pepd,,,,,,,peptidase D,,,,,,GA351,,"G – ES : Ø
+MS :YSL
+24 – 36 h : YSL, migrating neural crest cells, axial vasculature
+48 h : Ø
+",,T7,ABJ249-ABJ250,CF924871,1.9,1,sending CB,,,pBK CMV,ZDB-GENE-030131-9444,
+V44,V447,CB917,si:ch211-217k17.8,,,,,,,si:ch211-217k17.8,,,,,,GA436,,"G  - 48h : EVL
+48 h : + pharynx and fin epidermis
+",,T7,ABJ249-ABJ250,CF569073 ,2.4,2,sending CB,,,pBK CMV,ZDB-GENE-031010-46,
+V45,V447,CB931,sema6dl,,,,,,,"sema domain, transmembrane domain (TM), and cytoplasmic domain, (semaphorin) 6D, like",membrane ; integral component of plasma membrane ; integral component of membrane,chemorepellent activity ; semaphorin receptor binding,semaphorin-plexin signaling pathway ; negative regulation of axon extension involved in axon guidance ; positive regulation of cell migration ; neural crest cell migration,,,GA525,,"G : Ø
+ES : anterior neural plate, rhombomere 3 and 5 +++, posterior notochord
+24 h : weak in rhombomere 3 and 5
+36 – 48 h : CNS NR
+",,T7,ABJ249-ABJ250,CF569082 ,1.6,2,sending CB,,,pBK CMV,ZDB-GENE-050417-171,
+V455,,EU13,arl8,,,,,,,ADP-ribosylation factor-like 8,intracellular,nucleotide binding ; GTP binding,small GTPase mediated signal transduction,,,EU13,,not restricted more in central nervous system subventricular zone ≥ 24 h,,T3 RNA polymerase,,NM_199824,1.1,0,EU - 1 st sending,,,PCR,ZDB-GENE-030131-5762,
+V456,,EU52,cdv3,,,,,,,carnitine deficiency-associated gene expressed in ventricle 3,cytoplasm,NA,NA,,,EU52,,"G - ES : weak and not restricted
+MS : not restricted
+24 h : ± not restricted weak, lens, MHB, myotomes
+36 h : ± not restricted, lens, posterior tectum, pectoral fin
+48 h : lens",,T3 RNA polymerase,,NM_212721,1.2,0,EU - 1 st sending,,,PCR,ZDB-GENE-030131-6034,
+V457,,EU103,lpar1,,,,,,,lysophosphatidic acid receptor 1,membrane ; integral component of membrane,lysophosphatidic acid receptor activity ; transferase activity ; kinase activity ; signal transducer activity ; G-protein coupled receptor activity,hemangioblast cell differentiation ; lymphangiogenesis ; signal transduction ; G-protein coupled receptor signaling pathway ; phosphorylation ; primitive hemopoiesis ; angiogenesis,,,EU103,,"G - ES : not expressed
+MS : trigeminal ganglia, spinal chord neurons, ventral anterior spinal chord
+24 h :  trigeminal ganglia, spinal chord neurons, ventral anterior spinal chord, nose
+5 d: not spatially restricted, more in cranial ganglia",,T3 RNA polymerase,,NM_001004502,0.9,0,EU - 1 st sending,,,PCR,ZDB-GENE-030616-499,
+V458,,EU149,cdk9,"CDK9 functions to guide a complex network of chromatin modifications including histone H2B monoubiquitination (H2Bub1), H3 lysine 4 trimethylation (H3K4me3) and H3K36me3. UniProt: Protein kinase involved in the regulation of transcription. Part of the complex P-TEFb involved in cotranscriptional histone modification.",,#,,epi,Histone modification cofactor,cyclin-dependent kinase 9 (CDC2-related kinase),NA,transferase activity ; nucleotide binding ; protein kinase activity ; ATP binding ; kinase activity,protein phosphorylation ; phosphorylation,#,,EU149,,NR,19844166,T3 RNA polymerase,,NM_212591,1.1,,EU - 1 st sending,#,#,PCR,ZDB-GENE-030131-321,
+V459,,EU195,cnot6a,,,,,,,"CCR4-NOT transcription complex, subunit 6a",.,,,,,EU195,,NR,,T3 RNA polymerase,,NM_199840,0.95,,EU - 1 st sending,,,PCR,ZDB-GENE-030131-2768,
+V46,V448,CB1002,jam2a,,,,,,,junctional adhesion molecule 2a,membrane ; integral component of membrane,protein heterodimerization activity ; protein binding,hematopoietic or lymphoid organ development ; myoblast fusion,,,GA623,,"G : not expressed
+ES : anterior somites weak
+MS : somites, not in adaxial cells, weak in midbrain hindbrain boundary
+24h : not restricted in the head, posterior myotomes
+36h : aorta wall
+48h : head muscles, pectoral fins, hypaxial muscles
+",,T7,ABJ249-ABJ250,CF924873,1.2,3,sending CB,,,pBK CMV,ZDB-GENE-031204-3,
+V460,,EU251,sb:eu251,,,,,,,sb:eu251,,,,,,EU251,,"G - MS : not expressed
+24h : caudal most notochord, lateral line primordium, tail epidermis (mainly in the axis)
+36 h : caudal most notochord, lateral line primordium, tail epidermis (mainly in the axis), caudal vein
+48 h : lateral line, tail epidermis, tail non axial part (posteriorly), caudal vein",,T3 RNA polymerase,,ENSDARG00000002672,0,2,EU - 1 st sending,,,PCR,ZDB-GENE-051107-11,
+V461,,EU301,nog3,,,,,,,noggin 3,extracellular region ; extracellular space,molecular_function,negative regulation of cell differentiation ; cloaca development ; embryonic viscerocranium morphogenesis ; negative regulation of BMP signaling pathway ; multicellular organism development ; nervous system development ; cell differentiation ; determination of left/right symmetry ; cartilage development ; dorsal/ventral pattern formation ; pronephros development ; osteoblast differentiation,,,EU301,,"G - 36 h : not expressed
+(24 h : tip of notochord)
+48 h : trabecula cranii, part of lower jaw, pectoral fin cartilage",,T3 RNA polymerase,,ENSDARG00000004625,0,2,EU - 1 st sending,,,PCR,ZDB-GENE-990714-8,
+V462,,EU351,prox1a,,,,,,,prospero homeobox 1a,nucleus,"transcriptional repressor activity, RNA polymerase II core promoter proximal region sequence-specific binding ; DNA binding",neuromast hair cell differentiation ; neuromast deposition ; lymphangiogenesis ; forebrain neuron development ; lymphatic endothelial cell differentiation ; cardiac muscle cell differentiation ; negative regulation of sequence-specific DNA binding transcription factor activity ; positive regulation of transcription from RNA polymerase II promoter ; myofibril assembly,,,EU351,,"G : not expressed
+ES : lens placode
+MS : lens, midbrain forebrain boundary, lateral line, adaxial cells
+24 - 36 h : lens, midbrain forebrain boundary, ratke’s pouch, mucous cells, hindbrain and spinal chord neurons, caudal somites (slow muscles fibers), lateral line, liver, part of pancreas
+48 h : retina, dorsal hindbrain, cranial ganglia, liver, habenula (less on left side), nucleus in diencephalon
+5 d : retina intermediate cell layer, habenula (less on left), microglial cells",,T3,,DU644490,1,4,EU - 2nd sending,,,PCR,ZDB-GENE-980526-397,
+V463,,EU402,hoxb1a,,,,,,,homeobox B1a,nucleus,sequence-specific DNA binding ; DNA binding,"rhombomere 4 development ; facial nerve development ; rhombomere 4 morphogenesis ; hindbrain maturation ; cell migration in hindbrain ; facial nucleus development ; transcription, DNA-templated ; multicellular organism development ; regulation of transcription, DNA-templated",,,EU402,,"G : not expressed
+ES : notochord, anterior spinal chord, one rhombomere (Rh4)
+MS : rhombomere 4, ventral mesenchyme and spinal chord 
+24 - 36  h : rhombomere 4, cells in ventral part of rhombomere 5, one posterior branchial arch, one endoderm primordium
+48 h : rhombomere 4, one posterior branchial arch",,T3,,DU644573,0.9,4,EU - 2nd sending,,,PCR,ZDB-GENE-990415-101,
+V464,,EU451,pou1f1,,,,,,,POU class 1 homeobox 1,nucleus,"sequence-specific DNA binding ; DNA binding ; transcription factor activity, sequence-specific DNA binding","transcription, DNA-templated ; regulation of transcription, DNA-templated ; cell fate specification",,,EU451,,"G - MS : not expressed
+24 - 48 h : adenohypophysis",,T3,,DU644625,0.5,4,EU - 2nd sending,,,PCR,ZDB-GENE-040630-7,
+V465,,EU500,hoxc6b,,,,,,,homeobox C6b,nucleus,"sequence-specific DNA binding ; DNA binding ; transcription factor activity, sequence-specific DNA binding","transcription, DNA-templated ; multicellular organism development ; regulation of transcription, DNA-templated",,,EU500,,"G : margin
+ES : segmental plate, part of spinal chord
+MS : somites, spinal chord (2/3 posterior of the embryo), tail bud
+24 - 48 h : spinal chord, ventral part of anterior somites, + neurons in marginal zone in anterior spinal chord",,T3,,DU644527,0.55,4,EU - 2nd sending,,,PCR,ZDB-GENE-000822-1,
+V466,,EU550,pxk,,,,,,,PX domain containing serine/threonine kinase,plasma membrane ; cytoplasm,protein kinase activity ; ATP binding ; actin binding ; phosphatidylinositol binding,negative regulation of ion transport ; negative regulation of ATPase activity ; protein phosphorylation ; regulation of membrane potential,,,EU550,,NR,,T3,,"DU644656,DU645113",0.4,,EU - 2nd sending,,,PCR,ZDB-GENE-050208-393,
+V467,,EU600,dhh,,,,,,,desert hedgehog,extracellular region ; membrane ; plasma membrane ; extracellular space,peptidase activity ; metal ion binding ; hydrolase activity,intein-mediated protein splicing ; cell communication ; multicellular organism development ; cell-cell signaling ; proteolysis,,,EU600,,no labelleing,,T3,,DU644949,0.5,,EU - 2nd sending,,,PCR,ZDB-GENE-990714-5,
+V468,,EU650,klf1,,,,,,,Kruppel-like factor 1 (erythroid),nucleus,"metal ion binding ; nucleic acid binding ; sequence-specific DNA binding ; transcription factor activity, sequence-specific DNA binding",positive regulation of gene expression ; primitive erythrocyte differentiation,,,EU650,,"G - MS : Ø
+24 h : ICM weak
+36 h : blood weak
+> Ø",,T3,,DU644792,1,1,EU - 2nd sending,,,PCR,ZDB-GENE-980526-55,
+V469,,EU700,sb:eu700,,,,,,,sb:eu700,,,,,,EU700,,"G : Ø
+ES : weak in adaxial cells
+MS : somites
+24 h : myotomes
+36 h : myotomes (decreasing)
+48 h : pectoral fin muscles",,T3,,DU644886,1.7,2,EU - 2nd sending,,,PCR,ZDB-GENE-060130-150,
+V47,V448,CB1009,hipk2,,,,,,,homeodomain interacting protein kinase 2,NA,transferase activity ; nucleotide binding ; protein kinase activity ; ATP binding ; kinase activity ; DNA binding,regulation of melanocyte differentiation ; convergent extension ; protein phosphorylation ; phosphorylation,,,GA681,,"G-ES : not expressed
+ES : weak in notochord
+MS : caudal notochord
+24 : NR, dorsal diencephalon, corpuscule of Stannuis
+36-48h : idem
+",,T7,ABJ249-ABJ250,CF924880,2.5,2,sending CB,,,pBK CMV,ZDB-GENE-031125-4,
+V470,,EU750,hoxb6b,,,,,,,homeobox B6b,nucleus,"sequence-specific DNA binding ; DNA binding ; transcription factor activity, sequence-specific DNA binding","transcription, DNA-templated ; multicellular organism development ; regulation of transcription, DNA-templated",,,EU750,,"G : margin
+ES : posterior part of the embryo
+MS : posterior spinal chord, somites, tail bud
+24 - 36 h :posterior spinal chord, neurons in lateral part of anterior spinal chord
+48 h-5d : anterior spinal chord",,T3,,DU644874,0.6,4,EU - 2nd sending,,,PCR,ZDB-GENE-000823-7,
+V471,,EU800,nccrp1,,,,,,,non-specific cytotoxic cell receptor protein 1,cytoplasm,NA,NA,,,EU800,,"G - MS : Ø
+24 - 36 h : proctodeum, subpopulation of blood cells
+48h : proctodeum",,T3,,DU644790,0.507,1,EU - 2nd sending,,,PCR,ZDB-GENE-000210-13,
+V472,,EU850,tlr20.4,,,,,,,"toll-like receptor 20, tandem duplicate 4",membrane ; integral component of membrane,NA,signal transduction,,,EU850,,NR weak,,T3,,DU644956,1.4,,EU - 2nd sending,,,PCR,ZDB-GENE-071002-1,
+V473,,EU902,ubap2l,,,,,,,ubiquitin associated protein 2-like,,,,,,EU902,,NR,,T3,,DU645144,0.5,,EU - 2nd sending,,,PCR,ZDB-GENE-060503-244,
+V474,,EU1000,khsrp,,,,,,,KH-type splicing regulatory protein,NA,nucleic acid binding ; RNA binding,NA,,,EU1000,,NR more in eye and tectum,,T3,,DU645105,0.45,,EU - 2nd sending,,,PCR,ZDB-GENE-030131-4357,
+V475,,EU1001,khsrp,,,,,,,KH-type splicing regulatory protein,NA,nucleic acid binding ; RNA binding,NA,,,EU1001,,no labelling,,T3,,DU645106,0.5,,EU - 2nd sending,,,PCR,ZDB-GENE-030131-4357,
+V476,,EU1051,serpinb5l,,,,,,,"serpin peptidase inhibitor, clade B (ovalbumin), member 5, like",.,,,,,EU1051,,"G - ES : Ø
+MS - 48 h : YSL
+48 h - 5 d : liver",,T3,,DX503523,1.5,2,,,,PCR,ZDB-GENE-040426-2047,
+V477,,EU1100,casc1,,,,,,,cancer susceptibility candidate 1,,,,,,EU1100,,"G : weak NR, forerunner cells
+ES : Kupffer’s vesicle
+MS : ventral spinal chord, pronephric ducts
+> Ø",,T3,,DX503406,0.5,1,,,,PCR,ZDB-GENE-041210-153,
+V478,,EU1152,pcloa,,,,,,,piccolo presynaptic cytomatrix protein a,synapse ; membrane,metal ion binding,NA,,,EU1152,,"G :  Ø
+ES : transient expression in anterior pronephric ducts
+MS : anterior pronephric ducts, neurons in dorsal postion
+24h-36h : neurons in marginal zone, cranial ganglia (lateral line)
+48h : CNS marginal zone, lateral line ganglia, ganglion cell layer retina
+5d : CNS marginal zone, lateral line ganglia, ganglion cell layer and photoreceptor layer of retina
+
+",,T3,,DX503344,1.1,3,,,,PCR,ZDB-GENE-030131-8115,
+V479,,EU1201,nitr9,,,,,,,novel immune-type receptor 9,membrane ; integral component of membrane,protein binding,response to bacterium ; phosphatidylinositol 3-kinase signaling,,NR,EU1201 ,,NR weak,,T3,,DX503500,0.7,,,,,PCR,ZDB-GENE-041001-6,
+V48,V449,CB1018,sb:cb1018,,,,,,,sb:cb1018,,,,,,GA794,,"G, ES  : Ø, MS : very weak in Rh3 and Rh5 (fainter), notochord, 24 hrs : anterior otic vesicle, posterior lateral line primordium, Rh3 and Rh5, 36 hrs : LL (anterior and posterior), spots in anterior part of otic vesicle, 48 hrs : Ø, > all lateral line (including LL nerve), Thymus +++, one nucleus in dorsal diencephalon",,T7,ABJ249-ABJ250,CF924889,1.1,4,sending CB,,,pBK CMV,ZDB-GENE-031204-19,
+V480,,EU1257,pnocb,,,,,,,prepronociceptin b ,NA,NA,ectodermal placode development ; synaptic transmission ; neuropeptide signaling pathway,,,EU1257,,"G : prechordal plate ++
+ES : prechordal plate (?) (polster + posterior region of prechordal plate, or telencephalon ?)
+MS : cells under the eye in mesoderm (?)
+24 h: nose, neurons in anterior midbrain and in hindbrain
+36 : same + neurons in dorsal telencephalon, dorsal anterior spinal chord
+48 h : same + cells below the heart
+5 d: cells in different part of the brain, retina (neurons ?) small population, nose
+(have a look of oligodendrocyte but not identical to oligodendrocytes)",,T3,,DX503457,1,4,_,,,PCR,ZDB-GENE-050208-412,
+V481,,EU1313,ttna,,,,,,,"titin, tandem duplicate 2",.,structural molecule activity conferring elasticity ; protein kinase activity ; ATP binding ; muscle alpha-actinin binding ; actin filament binding ; DNA binding ; structural constituent of muscle,cardiac myofibril assembly ; cardiac muscle fiber development ; skeletal muscle myosin thick filament assembly ; striated muscle contraction ; skeletal muscle thin filament assembly ; cardiac muscle tissue morphogenesis ; nucleosome assembly ; protein phosphorylation ; heart contraction ; cell morphogenesis ; sarcomere organization,,,EU1313,,"G - MS : Ø
+24 h : sclerotome, dermis (?), cells between somites (?)
+36 - 48 h : same
+5 d: same + cleithrum, anterior branchial arches",,T3,,DX503824,0.604,3,,,,PCR,ZDB-GENE-030113-2,
+V482,,EU1353,si:busm1-153o2.2,,,,,,,si:busm1-153o2.2,,,,,,EU1353,,"G-36h :  Ø
+48h-5d : midbrain ventricular zone to dorsal diencephalon",,T3,,DX503872,0.2,,,,,PCR,ZDB-GENE-030616-167,
+V483,,EU1403,cttnbp2nlb,,,,,,,CTTNBP2 N-terminal like b,,,,,,EU1403,,"G :  Ø
+ES : adaxial cells (anterior somites), dorsal neurons, neural crest
+MS : adaxial cells (anterior somites), dorsal neurons, neural crest, telencephalon, somites
+24h : CNS marginal zone, axial vasculature
+36h : leteral line neuromasts
+48h : retina, pectoral fins",,T3,,DX503652,1,2,_,,,PCR,ZDB-GENE-040724-65,
+V484,,EU1477,gabrr1,,,,,,,"gamma-aminobutyric acid (GABA) A receptor, rho 1",cell junction ; synapse ; membrane ; GABA-A receptor complex ; plasma membrane ; integral component of membrane,extracellular ligand-gated ion channel activity ; GABA-A receptor activity,ion transport ; transport,,,EU1477 ,,"G-48h : Ø
+ES : polster
+MS : Ø
+24h : axial vasculature
+36h : axial vasculature, liver primordium, median fin fold, posterior branchial arches
+48h : axial vasculature, liver primordium, median fin fold, posterior branchial arches, pancreas
+5d : instestinal bulb",,T3,,DX503603,0.65,3,_,,,PCR,ZDB-GENE-040724-212,
+V485,,EU1510,si:busm1-25n23.2,,,,,,,si:busm1-25n23.2,,,,,,EU1510,,"G : forerunner cells
+ES : axis, Küpffer vesicle
+MS : ventral spinal chord, pronephric ducts
+24h : ventral spinal chord, pronephric ducts, zona limitans
+36-48h :ventral spinal chord, zona limitans, nose, lateral line neuromasts
+5d : nose, lateral line neuromasts
+",,T3,,DX503665,0.45,1,,,,PCR,ZDB-GENE-040724-15,
+V486,,EU1551,si:dkey-204f11.43p,,,,,,,si:dkey-204f11.43p,,,,,NR,EU1551 ,,NR weak,,T3,,DX503755,0.5,,,,,PCR,,
+V487,,EU1601,mep1a.1,,,,,,,"meprin A, alpha (PABA peptide hydrolase), tandem duplicate 1",membrane,peptidase activity ; metal ion binding ; hydrolase activity ; metallopeptidase activity ; metalloendopeptidase activity ; zinc ion binding,proteolysis,,,EU1601,,"G-MS :  Ø
+24-48h : hindbrain, midbrain marginla zone, stronger in lateral posterior tegmentum at 36H and later
+48h : cerebellum",,T3,,DX504101,0.4507,3,,,,PCR,ZDB-GENE-041001-209,
+V488,,EU1652,slc10a4,,,,,,,"solute carrier family 10, member 4",membrane ; integral component of plasma membrane ; integral component of membrane,bile acid:sodium symporter activity,NA,,,EU1652,,"G - ES : Ø
+MS : ventral mesoderm
+24 h : blood, ventral spinal chord neurons (motorneurons)
+36 h : same + nuclei in longitudinal stripe in hindbrain
+48 h : same + blood
+5 d : same + nucleus in posterior midbrain",,T3,,DX503978,0.8,2,,,,PCR,ZDB-GENE-041014-249,
+V489,,EU1705,ptgs2b,,,,,,,prostaglandin-endoperoxide synthase 2b,NA,prostaglandin-endoperoxide synthase activity ; peroxidase activity ; heme binding,cyclooxygenase pathway ; response to oxidative stress ; regulation of blood pressure ; oxidation-reduction process ; inflammatory response ; prostaglandin biosynthetic process ; cellular response to organic cyclic compound,,,EU1705,,"G-24h : evl, periderm
+MS ; tail bud",,T3,,DX503997,0.607,2,,,,PCR,ZDB-GENE-041014-323,
+V49,V449,CB1024,mibp,,,,,,,muscle-specific beta 1 integrin binding protein,NA,transferase activity ; kinase activity,phosphorylation,,,GA878,,cell proliferation,,T7,ABJ249-ABJ250,CF924895,1.2,2,sending CB,,,pBK CMV,ZDB-GENE-030404-1,
+V490,,EU1753,kidins220a,,,,,,,kinase D-interacting substrate 220a,membrane ; integral component of membrane,PDZ domain binding ; protein kinase regulator activity,nerve growth factor signaling pathway,,,EU1753,,"G-ES :  Ø
+MS : caudal ganglia, spinal chord neurons, tail bud
+24h : cranial ganglia, spinal chord neurons, tail bud, nose, tegmentum, anterior diencephalon
+36h : brain, marginal zone (+++), nose
+48h : brain, marginal zone, nose, ganglion cell layer retina",,T3,,DX504060,0.45055,3,,,,PCR,ZDB-GENE-041014-170,
+V491,,EU1803,si:dkey-14d8.20,,,,,,,si:dkey-14d8.20,,,,,,EU1803,,"G-MS :  Ø
+24-48h : epiphysis",,T3,,DX504138,0.45065,1,,,,PCR,ZDB-GENE-041210-146,
+V492,,EU1853,si:dkey-27n6.5,,,,,,,si:dkey-27n6.5,,,,,,EU1853,,lateral line neuromasts from 24 h - 5 d,,T3,,DX502804,0.305,1,,,,PCR,ZDB-GENE-041014-44,
+V493,,EU1902,taar14l,,,,,,,trace amine associated receptor 14l,membrane ; integral component of membrane,trace-amine receptor activity ; signal transducer activity ; G-protein coupled receptor activity,signal transduction ; G-protein coupled receptor signaling pathway,,,EU1902,,cells in nose from 24 to 48 h ,,T3,,DX502967,1.2,1,,,,PCR,ZDB-GENE-041014-31,
+V494,,EU1952,si:ch211-223o1.5,,,,,,,si:ch211-223o1.5,,,,,,EU1952,,"G : Ø
+ES : tail bud, adaxial cells, cells in ventral mesenchyme ++
+MS - 48 h : same
+5 d : Ø",,T3,,DX502831,1.2,3,,,,PCR,ZDB-GENE-050419-137,
+V495,,EU2001,zbtb7a,,,,,,,zinc finger and BTB domain containing 7a,NA,metal ion binding ; nucleic acid binding,NA,,,EU2001,,NR more in EVL / periderm,,T3,,DX502900,1.2,0,,,,PCR,ZDB-GENE-050208-583,
+V496,,EU2051,fgf22,,,,,,,fibroblast growth factor 22,extracellular region,fibroblast growth factor receptor binding ; receptor binding ; growth factor activity,roof plate formation ; midbrain development ; cell proliferation in midbrain ; fibroblast growth factor receptor signaling pathway ; midbrain-hindbrain boundary development,,,EU2051,,"G - ES : Ø
+MS : MHB
+24 - 48 h : lateral MHB, otic vesicle, dorsal telencephalon
+",,T3,,DX503037,306,,,,,PCR,ZDB-GENE-050208-380,
+V497,,EU2101,si:dkey-269o24.2,,,,,,,si:dkey-269o24.2,.,,,,,EU2101,,NR more in brain ventricular zone and tectum,,T3,,DX502830,506,0,,,,PCR,ZDB-GENE-041210-348,
+V498,,EU2151,znf1181,,,,,,,zinc finger protein 1181,NA,metal ion binding ; nucleic acid binding,NA,,NR,EU2151 ,,NR,,T3,,DX503201,1114,,,,,PCR,ZDB-GENE-050208-386,
+V499,,EU2203,wash1,,,,,,,WAS protein family homolog 1,recycling endosome membrane ; WASH complex ; early endosome ; early endosome membrane ; recycling endosome ; membrane ; endosome,alpha-tubulin binding ; actin binding,"protein transport ; retrograde transport, endosome to Golgi ; transport ; Arp2/3 complex-mediated actin nucleation ; endosomal transport",,NS,EU2203 ,,No labelling,,T3,,DX503121,35,,,,,PCR,ZDB-GENE-050419-138,
+V5,V413,CB295,guk1a,,,,,,,guanylate kinase 1a,cellular_component,guanylate kinase activity,purine nucleotide metabolic process,,,B64,,"G-48 hrs : YSL (previously guanylate kinase)
+ES : + polster
+24 - 48 hrs : dorsal spinal chord, axial vasculature, caudal vein",,T3,VY13-M13R or RP,BQ826519,5,1,sending CB,,,pSPORT1,ZDB-GENE-040625-130,
+V50,V449,CB1034,mmp13a,,,,,,,matrix metallopeptidase 13a,extracellular matrix,peptidase activity ; metal ion binding ; hydrolase activity ; metallopeptidase activity ; metalloendopeptidase activity ; calcium ion binding ; zinc ion binding,macrophage chemotaxis ; proteolysis,,,GA978,,MS - late : macrophages,,T7,ABJ249-ABJ250,CF924905,1.6,3,sending CB,,,pBK CMV,ZDB-GENE-031202-2,
+V500,,EU2251,pus7l,,,,,,,pseudouridylate synthase 7-like,NA,baruol synthase activity ; o-hydroxylaminobenzoate mutase activity ; beta-amyrin synthase activity ; pivalyl-CoA mutase activity ; lupeol synthase activity ; isomerase activity ; RNA binding ; pseudouridine synthase activity,RNA modification ; pseudouridine synthesis ; tRNA processing,,NS,EU2251 ,,no labelling,,T3,,DX503284,25045,,,,,PCR,ZDB-GENE-050419-188,
+V501,,EU2301,si:ch211-208h1.1,,,,,,,si:ch211-208h1.1,,,,,,EU2301,,"G : Ø
+ES : Ø
+MS : ventral diencephalon, posteiror diencephalon, midbrain/diencephalon border, hindbrain rhombomere (less in rhombomere 3 and 4), weak in spinal chord
+24 - 48 h : anterior diencephalon, dorsal diencephalon, pretectum, hindbrain (less in rhombomere 3 and 4), nucleus in dorsal diencephalon",,T3,,DX503053,607,4,,,,PCR,ZDB-GENE-050419-107,
+V502,,EU2351,skor1b,,,,,,,SKI family transcriptional corepressor 1b,nucleus,transcription corepressor activity ; SMAD binding,"transcription, DNA-templated ; negative regulation of BMP signaling pathway ; regulation of transcription, DNA-templated ; negative regulation of transforming growth factor beta receptor signaling pathway ; negative regulation of transcription from RNA polymerase II promoter",,,EU2351,,"G - ES : Ø
+MS : neurons in dorsal telencephalon, in hindbrain and in spinal chord
+24 - 36 h : neurons in epiphysis, telencephalon, hypochord, hindbrain and spinal chord
+48 h : neurons in margina hindbrain, epiphysis, in subpopulation of inner cell layer of retina
+5 d = same",,T3,,DX503228,12,4,,,,PCR,ZDB-GENE-050419-82,
+V503,,EU2402,v2ra20,,,,,,,"vomeronasal 2 receptor, a20",membrane ; plasma membrane ; integral component of membrane,signal transducer activity ; G-protein coupled receptor activity,signal transduction ; G-protein coupled receptor signaling pathway,,NR,EU2402 ,,NR,,T3,,DX503177,12,,,,,PCR,ZDB-GENE-050419-220,
+V504,,EU2451,zcchc17,,,,,,,"zinc finger, CCHC domain containing 17",NA,nucleic acid binding ; zinc ion binding,NA,,,EU2451,,"G-36h : not expressed
+48h-5d : retina inner cell layer weak, nuclei in lateral hindbrain, left habenula
+",,T3,,ENSDARG00000061419-461F,45,2,,,,PCR,ZDB-GENE-040325-2,
+V505,,EU2501,c1qbp,,,,,,,"complement component 1, q subcomponent binding protein",mitochondrial matrix,molecular_function,biological_process,,,EU2501,,"G : not expressed
+ES : segmental plate, adaxial cells, anterior neural plate
+MS : eye, tectum, somites, segmental plate
+24h : retina, tectum, myotomes (slow muscle fibers), branchial arches 
+36h : retina proliferative zone, tectum, branchial arches, pectoral fins, liver, gut
+48h : retina, pectoral fin muscles, liver, gut, branchial arches
+5d : intestinal bulb, pancreas
+",,T3,,ENSDARG00000039887-442F,6,1,,,,PCR,ZDB-GENE-050417-408,
+V506,,EU2551,wbscr16,,,,,,,Williams-Beuren syndrome chromosome region 16 homolog (human),,,,,NR,EU2551 ,,NR,,T3,,ENSDARG00000059583-324F,7,,,,,PCR,ZDB-GENE-060526-370,
+V507,,EU2601,hoxd10a,,,,,,,homeobox D10a,nucleus,sequence-specific DNA binding ; DNA binding,"transcription, DNA-templated ; multicellular organism development ; regulation of transcription, DNA-templated",,,EU2601,,"G-ES : not expressed
+MS : posterior spinal chord, mesoderm at the same position
+24h-36h : posterior half of spinal chord, somites, pectoral fin buds
+48h : posterior half of spinal chord, somites, pectoral fin buds, dorsal part of pectoral fins
+5d : not expressed
+",,T3,,ENSDARG00000057859-445F,95,2,,,,PCR,ZDB-GENE-990415-116,
+V508,,EU2652,cpne5b,,,,,,,copine Vb,cellular_component,molecular_function,biological_process,,,EU2652,,"G-24h : not expressed
+36h-5d : nucleus in dorsal telencephalon
+",,T3,,ENSDARG00000070919-398F,5,2,,,,PCR,ZDB-GENE-040426-1398,
+V509,,EU2701,cdc42ep4b,,,,,,,CDC42 effector protein (Rho GTPase binding) 4b,plasma membrane ; cytoplasm,GTP-Rho binding ; GTPase activator activity,positive regulation of pseudopodium assembly ; positive regulation of actin filament polymerization ; regulation of cell shape ; Rho protein signal transduction,,,EU2701,,"G : not expressed
+ES : weak in adaxial cells anteriorly
+MS : trigeminal placode, spinal chord neurons (weak)
+24h : blood, CNS with stripes at rhombomere boundaries, lateral line
+36h : CNS, ventral mesenchyme, lateral line primordia, branchial arches
+48h : CNS proliferative zone, cranial ganglia, branchial arches, retina, pectoral fins,  photoreceptor cell layer of retina
+",,T3,,ENSDARG00000045036-438F,95,1,,,,PCR,ZDB-GENE-091008-2,
+V51,V450,CB1041,cyp4v8,,,,,,,"cytochrome P450, family 4, subfamily V, polypeptide 8",membrane ; integral component of membrane,"oxidoreductase activity, acting on paired donors, with incorporation or reduction of molecular oxygen ; iron ion binding ; metal ion binding ; monooxygenase activity ; heme binding ; oxidoreductase activity",oxidation-reduction process,,,GA1068,,"G, ES : Ø
+MS : anterior adaxial cells, ear
+24 hrs : slow muscles, cells in atnerior diencephalon, ear
+36 hrs : decreasing
+48 hrs : part of ear, swim bladder
+> liver, intestin brain ventricular zone",,T7,ABJ249-ABJ250,CF943677,2.2,3,sending CB,,,pBK CMV,ZDB-GENE-061103-601,
+V510,,EU2751,ddx3a,,,,,,,DEAD (Asp-Glu-Ala-Asp) box helicase 3a,cytoplasmic ribonucleoprotein granule,helicase activity ; nucleotide binding ; ATP binding ; nucleic acid binding ; hydrolase activity ; ATP-dependent RNA helicase activity,translational initiation ; regulation of gene expression ; RNA secondary structure unwinding ; chromosome segregation,,NS,EU2751 ,,NS,,T3,,ENSDARG00000009984-435F,7,,,,,PCR,ZDB-GENE-030131-1565,
+V511,,EU2801,si:ch211-285f17.1,,,,,,,si:ch211-285f17.1,NA,NA,embryonic skeletal system development,,,EU2801,,"G-MS : not spatialy restricted
+24-36h : not spatialy restricted, more labelling in epiphysis, hypothalamus, posterior midbrain (anterior midbrain hindbrain boundary)
+48h : not spatialy restricted, more in pectoral fins
+",,T3,,ENSDARG00000059333-443F,45,1,,,,PCR,ZDB-GENE-000607-77,
+V512,,EU2852,gps1,,,,,,,G protein pathway suppressor 1,COP9 signalosome,NA,cullin deneddylation,,NR,EU2852 ,,NR,,T3,,ENSDARG00000040650-422F,,,,,,PCR,ZDB-GENE-041111-240,
+V513,,EU2901,gc2,,,,,,,guanylyl cyclase 2,"guanylate cyclase complex, soluble ; membrane ; plasma membrane ; integral component of membrane",phosphorus-oxygen lyase activity ; lyase activity ; nucleotide binding ; protein kinase activity ; ATP binding ; guanylate cyclase activity,cyclic nucleotide biosynthetic process ; cGMP biosynthetic process ; signal transduction ; protein phosphorylation ; intracellular signal transduction,,NS,EU2901 ,,no labelling,,T3,,ENSDARG00000018329-343F,,,,,,PCR,ZDB-GENE-011128-8,
+V514,,EU2951,efcab7,,,,,,,EF-hand calcium binding domain 7,cellular_component,calcium ion binding,NA,,NR,EU2951 ,,not restricted,,T3,,ENSDARG00000020279-416F,,,,,,PCR,ZDB-GENE-040625-115,
+V515,,EU3001,rad54l2,ARIP4 =RAD54L2 contains SNF2 domain that functions as a motor protein in chromatin remodeling complexes.,,#,,epi,Chromatin remodelling,RAD54-like 2 (S. cerevisiae),NA,ATP binding,NA,#,NR,EU3001 ,,not restricted,19692572,T3,,ENSDARG00000063031-432F,,,,#,#,PCR,ZDB-GENE-030131-3097,
+V517,,FR_9821,tyro3,,,,,,,TYRO3 protein tyrosine kinase,membrane ; plasma membrane ; integral component of membrane,transmembrane receptor protein tyrosine kinase activity ; protein tyrosine kinase activity ; transferase activity ; nucleotide binding ; protein kinase activity ; ATP binding ; kinase activity,protein phosphorylation ; phosphorylation ; cell adhesion,,NR,WG1 ,,NR,,T7,,CU458897,13,,sending WG,,,PCR,ZDB-GENE-990714-13,
+V518,,FR_9871,pdgfra,,,,,,,"platelet-derived growth factor receptor, alpha polypeptide",membrane ; plasma membrane ; integral component of membrane,platelet-derived growth factor alpha-receptor activity ; transmembrane receptor protein tyrosine kinase activity ; protein tyrosine kinase activity ; transferase activity ; nucleotide binding ; protein kinase activity ; ATP binding ; kinase activity,palate development ; cerebellum vasculature development ; embryonic cranial skeleton morphogenesis ; chemotaxis ; transmembrane receptor protein tyrosine kinase signaling pathway ; multicellular organism development ; protein phosphorylation ; phosphorylation ; platelet-derived growth factor receptor signaling pathway,,,WG51,,"G : ventral (?) YSL nuclei
+ES : neural crest cells, ventral mesenchyme, segmental plate somites
+MS : migrating neural crest, ventral mesenchyme, ventral most part of somites, lens placode
+24 h : head mesenchyme, branchial arches ++, lens, parachordal, ventral mesenchyme, dorsal most and ventral most part of somites, choroid fissure
+36 h : same + pectoral fin bud
+48 h : branchial arches, pectoral fin, head mesenchyme",,T7,,CU458757,18,4,sending WG,,,PCR,ZDB-GENE-990415-208,
+V519,,FR_9921,elfn2a,,,,,,,extracellular leucine-rich repeat and fibronectin type III domain containing 2a,membrane ; integral component of membrane,protein binding,NA,,,WG101,,"G - MS : Ø
+24 h : primary neurons
+36 h - 5 d : ± NR head, neurons in marginal zone in brain and spinal chord",,T7,,CU468797,15,2,sending WG,,,PCR,ZDB-GENE-080327-26,
+V52,V450,CB1052,ivns1abpa,,,,,,,influenza virus NS1A binding protein a,cytoskeleton ; actin cytoskeleton ; cytoplasm ; nucleus,NA,NA,,,GA1149,,"G : Ø
+ES : ventral YSL, (>5s) anterior neural plate border (putative lens primordium), dorsal neurons in spinal chord (?), one putative primordium (ear, lateral line?)
+MS : YSL, pronephric ducts, lens primordium, neural crest cell
+24 hrs : YSL, lens, olfactory placode, ventral telencephalon/diencephalon border, pronephric duct, neural crest cells derivative (pigment cell dorso-axial)
+36 hrs : same, epiphysis, liver primordium
+48 hrs : same
+> epiphysis, nose, retina",,T7,ABJ249-ABJ250,CF943687,3.3,3,sending CB,,,pBK CMV,ZDB-GENE-031222-2,
+V520,,FR_9971,zgc:123297,,,,,,,zgc:123297,membrane ; integral component of membrane,molecular_function,biological_process,,NR,WG151 ,,NR,,T7,,CU638777,6,,sending WG,,,PCR,ZDB-GENE-051127-9,
+V521,,VL01,thraa,,,,ENSDARG00000000151,,,thyroid hormone receptor alpha a,nucleus,"thyroid hormone receptor activity ; transcription factor activity, RNA polymerase II transcription factor binding ; metal ion binding ; steroid hormone receptor activity ; zinc ion binding ; sequence-specific DNA binding ; protein binding ; DNA binding ; transcription factor activity, sequence-specific DNA binding","steroid hormone mediated signaling pathway ; response to hormone ; transcription, DNA-templated ; multicellular organism development ; regulation of transcription, DNA-templated ; negative regulation of transcription from RNA polymerase II promoter ; positive regulation of transcription from RNA polymerase II promoter ; negative regulation of transcription, DNA-templated ; positive regulation of transcription, DNA-templated",,NR,TR alpha A,,NR,,,,BC096778,900,,,,,pBS-KS,ZDB-GENE-990415-263, ZDB-CDNA-050612-31
+V522,,VL21,nr1i2,,,,,,,"nuclear receptor subfamily 1, group I, member 2",nucleus,"metal ion binding ; RNA polymerase II transcription factor activity, ligand-activated sequence-specific DNA binding ; steroid hormone receptor activity ; zinc ion binding ; RNA polymerase II transcription factor activity, sequence-specific DNA binding ; sequence-specific DNA binding ; DNA binding ; transcription factor activity, sequence-specific DNA binding","steroid hormone mediated signaling pathway ; transcription, DNA-templated ; transcription from RNA polymerase II promoter ; regulation of transcription, DNA-templated",,,ReverbbetaB,,"G - MS : Ø
+24 h : weak retina, epiphysis
+36 h : ± Ø
+48 h : retina, brain
+4.5 d : retina, brain
+
+ 72 h : expressed in all retina except in the photoreceptor cell layer",,,,AF342942,1079,2,,,,pCRII-Topo,ZDB-GENE-030903-3,
+V523,,VL42,nr2c2,,,,,,,"nuclear receptor subfamily 2, group C, member 2",nucleus,"metal ion binding ; steroid hormone receptor activity ; zinc ion binding ; sequence-specific DNA binding ; DNA binding ; transcription factor activity, sequence-specific DNA binding","steroid hormone mediated signaling pathway ; transcription, DNA-templated ; regulation of transcription, DNA-templated",,,SVP44/COUPalphaA,,"G : ± Ø
+ES : ventral mesoderm at the truncal level, weak in anterior segmental plate, midbrain
+MS : diencephalon, anterior midbrain, hindbrain, anterior spinal chord, notochord, ventral truncal mesoderm, posterior somites
+24 h : diencephalon, anterior midbrain (tegmentum), all hindbrain, part of otic vesicle, spinal chord, proximal part of anterior branchial arches
+36 - 48h : diencephalon, anterior midbrain (tegmentum), all hindbrain, part of otic vesicle, proximal part of anterior branchial arches
+5 d : decreasing
+",,T3,ADX299-M13F or PU,BC066671,586,4,,,,pDNR-LIB,ZDB-GENE-080403-8,
+V524,,VL61,kat2a,Current models of HAT protein activity suggest that one hypothesis for the role of hGCN5=KAT2A in c-Myc's activities might be due to the relaxing of chromatin packaging at target genes following histone acetylation by hGCN5.,,"TFTC-HAT, SAGA, ATAC, STAGA",,epi,Histone modification write,K(lysine) acetyltransferase 2A,nucleus,histone acetyltransferase activity ; N-acetyltransferase activity,"histone acetylation ; regulation of transcription, DNA-templated",Histone acetylation,NS?,PCAF,,Not expressed during embryogenesis,10611234,T3,ADX299-M13F or PU,DQ017634,570,,,#,#,pDNR-LIB,ZDB-GENE-080403-11,
+V525,,VL100,crebbpa,The transcriptional coactivators p300 and CBP=CREBBP are histone acetyltransferases.,,#,,epi," 	Histone modification write",CREB binding protein a,histone acetyltransferase complex ; nucleus,histone acetyltransferase activity ; transcription cofactor activity ; transcription coactivator activity ; zinc ion binding,"histone acetylation ; regulation of transcription, DNA-templated"," 	Histone acetylation",NR,CBP-B,,"NR, liver and intestinal bulb at 5d"," 	8945521",,PU-RP,DQ017641,716,,,#,histone,pBS-SK+,ZDB-GENE-050208-439,
+V526,,VL101,ep300b,,,,,epi,,E1A binding protein p300 b,histone acetyltransferase complex ; nucleus,histone acetyltransferase activity ; transcription cofactor activity ; transcription coactivator activity ; zinc ion binding,"histone acetylation ; regulation of transcription, DNA-templated",,NR,P300-B,,NR +  More labelling in brain ventricular zone and in intestinal bulb,,,,DQ017642,561,,,,,pBS-SK+,ZDB-GENE-080403-15,
+V53,V450,CB1058,sb:cb1058,,,,,,,sb:cb1058,,,,,,GA1254,,"G : Ø
+ES : notochord
+MS : caudal notochord, lateral mesoderm, pronephric duct
+24 hrs : pronephric duct, (less in medial part)
+36 hrs : same
+48 hrs : same, + ear, + liver",,T7,ABJ249-ABJ250,CF943694,1.5,2,sending CB,,,pBK CMV,ZDB-GENE-040108-9,
+V54,V451,CB1064,blvrb,,,,,,,biliverdin reductase B,cellular_component,molecular_function,biological_process,,,GA1350,,blood after 24 hrs,,T7,ABJ249-ABJ250,CF943700,1.5,3,sending CB,,,pBK CMV,ZDB-GENE-030131-1516,
+V55,V451,CB1073,slc13a1,,,,,,,"solute carrier family 13 (sodium/sulphate symporters), member 1",membrane ; integral component of plasma membrane ; integral component of membrane,sodium:sulfate symporter activity ; transporter activity,sodium ion transport ; sulfate transport ; transmembrane transport,,,GA1475,,"G : ? ES - 3d : Ø
+4, 5 dy : epidermis on the roof of III and IV th ventricule",,T7,ABJ249-ABJ250,CF943709,2.7,3,sending CB,,,pBK CMV,ZDB-GENE-031222-3,
+V56,V451,CB1079,ahcy,,,,,,,adenosylhomocysteinase,cytosol,adenosylhomocysteinase activity ; hydrolase activity,S-adenosylmethionine cycle ; one-carbon metabolic process,,,GA1584,,"G : Ø
+ES : Ø
+MS : retina, tectum, somites, posterior spinal chord, YSL
+24 hrs : YSL, retina, tectum, somites, branchial arches
+36 hrs : same
+48 hrs YSL, retina, tectum",,T7,ABJ249-ABJ250,CF943715,2,2,sending CB,,,pBK CMV,ZDB-GENE-031219-6,
+V57,V452,CB1086,spi1b,,,,,,,Spi-1 proto-oncogene b,nucleus,"RNA polymerase II transcription factor activity, sequence-specific DNA binding ; sequence-specific DNA binding ; protein binding ; DNA binding ; transcription factor activity, sequence-specific DNA binding","negative regulation of erythrocyte differentiation ; negative regulation of neutrophil differentiation ; positive regulation of gene expression ; neutrophil differentiation ; myeloid cell differentiation ; macrophage differentiation ; regulation of transcription, DNA-templated ; erythrocyte development",,,GA1691,,YSL (???),,T7,ABJ249-ABJ250,CF943722,2.7,1,sending CB,,,pBK CMV,ZDB-GENE-980526-164,
+V6,V413,CB289,tram1,,,,,,,translocation associated membrane protein 1,membrane ; integral component of membrane,NA,protein transport ; transport,,,B646,,"G : YSL, axis
+Es : YSL, notochord, polster +++
+MS : same, weak in ear
+24 hrs : YSL, notochord weak, hatching gland
+36 hrs : ear, branchial arches (weak), pectoral fin
+48 hrs : anterior branchial arches, part of otic capsule, pectoral fin, liver primoridium
+",,T3,VY13-M13R or RP,BU670696,2.2,2,sending CB,,,pSPORT1,ZDB-GENE-021011-1,
+V7,,CB452,myclb ,,,,,,,"MYCL proto-oncogene, bHLH transcription factor b",,,,,,B758,,"G : neural plate (except in axis)
+ES : hindbrain stripes, neural plate (at the spinal chord level) (look at the double HIS Krox20-ELF), dorsal and ventral neurons, weak in segmental plate
+MS : posterior diencephalon, posterior midbrain, MHB ( ?), hindbrain and spinal chord, mainly ventral and spinal chord neurons, trigeminal ganglia, somites, tail bud region (micro)
+24 hrs : cranial ganglia, ventral CNS from hindbrain to spinal chord, olfactory placodes, diencephalon, YSL, weak in somites, chordo-neural hinge ( ?), lateral line primordium
+36 – 48 hrs : cranial ganglia, diencephalon, ventral hindbrain, lateral line primordia
+",,T3,VY13-M13R or RP,,3.1,4,,,,pSPORT1,,
+V8,V410,CB197,pou5f3,,,,,,,"POU domain, class 5, transcription factor 3",nucleus,"protein heterodimerization activity ; sequence-specific DNA binding ; chromatin binding ; DNA binding ; transcription factor activity, sequence-specific DNA binding","morphogenesis of embryonic epithelium ; regulation of endodermal cell fate specification ; epiboly ; ectoderm development ; hindbrain development ; brain segmentation ; epiboly involved in gastrulation with mouth forming second ; transcription, DNA-templated ; embryonic pattern specification ; anatomical structure morphogenesis ; brain development ; mesoderm development ; multicellular organism development ; regulation of gene expression ; regulation of transcription, DNA-templated ; endoderm formation ; fin regeneration ; dorsal/ventral pattern formation ; regulation of DNA methylation ; positive regulation of transcription, DNA-templated",,,SH199,,"G : NR +++
+ES : 3 stripes (MHB, hindbrain), hindbrain neurons, ventral neural plate (more posteriorly), weak in postserior neural plate
+MS – 36 hrs : caudal spinal chord
+48 hrs – 5 d : Ø
+",,T3,PU-RP,CB417234,2.8,3,sending CB,,,pBSIISK+,ZDB-GENE-980526-485,
+V80,,FR_3479,denr,,,,,,,density-regulated protein,cellular_component,translation initiation factor activity,translational initiation ; translation,,,GS445,,"G - MS : Ø
+24 - 48 h : retina, tectum, myotomes",,T3,ADX299-M13F or PU,CB351775,1.3,2,14 th sending,,,pDNR-LIB,ZDB-GENE-040718-450,
+V81,,FR_1004,rlbp1b,,,,ENSDARG00000045808,,,retinaldehyde binding protein 1b,intracellular,transporter activity,optokinetic behavior ; response to light stimulus ; transport,,,GS904,,"G - MS : Ø
+24 - 48 h : retina and epiphysis",,T3,ADX299-M13F or PU,CB356544,1.7,4,3 rd sending,,,pDNR-LIB,ZDB-GENE-040426-1870, ZDB-EST-041008-13
+V82,,FR_1000,hoxd12a,,,,ENSDARG00000059263,,,homeobox D12a,nucleus,sequence-specific DNA binding ; DNA binding,"transcription, DNA-templated ; multicellular organism development ; regulation of transcription, DNA-templated",,,GS1115,,send,,T3,ADX299-M13F or PU,CB359704,1.8,4,3 rd sending,,,pDNR-LIB,ZDB-GENE-990415-118, ZDB-EST-041008-9
+V83,,FR_4113,gnpda1,,,,,,,glucosamine-6-phosphate deaminase 1,cytoplasm,glucosamine-6-phosphate deaminase activity ; hydrolase activity,N-acetylglucosamine metabolic process ; carbohydrate metabolic process,,,GS1335,,"G - MS : Ø
+24 - 36 h : very weak in paraxial mesoderm
+48 h : intestinal bulb
+5 d : intestinal bulb, intestine",,T3,ADX299-M13F or PU,"CB361845	",1.3,1,10 th sending,,,pDNR-LIB,ZDB-GENE-050417-417,
+V84,,FR_1100,ppib,,,,ENSDARG00000092798,,,peptidylprolyl isomerase B (cyclophilin B),cellular_component,isomerase activity ; peptidyl-prolyl cis-trans isomerase activity,protein peptidyl-prolyl isomerization ; protein folding,,,GS1844,,"G :axis
+ES : polster, notochord
+MS : hatching gland, notochord, ear
+≥ weak NR",,T3,ADX299-M13F or PU,CB365725,1.4,1,7 th sending,,,pDNR-LIB,ZDB-GENE-040426-1955, ZDB-EST-050208-6
+V85,,FR_1164,apoa4b.1,,,,ENSDARG00000040298,,,"apolipoprotein A-IV b, tandem duplicate 2",high-density lipoprotein particle ; blood microparticle ; chylomicron ; extracellular region,lipid binding ; cholesterol transporter activity ; phosphatidylcholine binding ; phosphatidylcholine-sterol O-acyltransferase activator activity ; cholesterol binding,triglyceride homeostasis ; lipid transport ; high-density lipoprotein particle assembly ; neuron projection regeneration ; transport ; phospholipid efflux ; positive regulation of fatty acid biosynthetic process ; reverse cholesterol transport ; cholesterol homeostasis ; cholesterol efflux ; positive regulation of cholesterol esterification ; positive regulation of lipoprotein lipase activity ; cholesterol biosynthetic process ; lipoprotein metabolic process ; phosphatidylcholine metabolic process ; regulation of intestinal cholesterol absorption ; very-low-density lipoprotein particle remodeling ; positive regulation of triglyceride catabolic process ; triglyceride catabolic process,,,GS1912,,"G : Ø
+ES - 5d : YSL",,T3,ADX299-M13F or PU,CB366235,1.7,2,3 rd sending,,,pDNR-LIB,ZDB-GENE-030131-3143, ZDB-EST-041008-47
+V86,,FR_1350,depdc7,,,,,,,DEP domain containing 7,NA,molecular_function,intracellular signal transduction,,,GS2157,,"3*
+
+G : involuted mesoderm, Ø in axis
+ES : tail bud, Ø in central part  (likely chordo neural hinge)
+MS : tail bud
+24 - 48 h  : nose",,T3,ADX299-M13F or PU,CK676254,2.2,3,3 rd sending,,,pDNR-LIB,ZDB-GENE-060512-176,
+V87,,FR_1593,si:ch73-234b20.5,,,,ENSDARG00000086996,,,si:ch73-234b20.5,cellular_component,molecular_function,biological_process,,,GS2468,,"G : forerunner cells
+ES : Kupffer's vesicle
+then NS",,T3,ADX299-M13F or PU,CK678365,1.2,2,3 th sending,,,pDNR-LIB,ZDB-GENE-041008-183, ZDB-EST-041008-408
+V88,,FR_1775,arhgef7b,,,,,,,Rho guanine nucleotide exchange factor (GEF) 7b,NA,Rho guanyl-nucleotide exchange factor activity ; guanyl-nucleotide exchange factor activity,regulation of Rho protein signal transduction ; protein localization to adherens junction ; endothelial cell proliferation ; blood vessel development ; epiboly involved in gastrulation with mouth forming second ; intracellular signal transduction ; angiogenesis,,,GS2739,,"G - ES : EVL
+MS : EVL, hatching gland, weak in olfactory placode
+24 h : nose, hatching gland, otic vesicle, lateral line primordium, pronephric ducts
+36 h : nose, hatching gland, otic vesicle, lateral line primordium, pronephric ducts
+48 h : + pharynx",,T3,ADX299-M13F or PU,CK680663,2.5,3,7 th sending,,,pDNR-LIB,ZDB-GENE-041212-49,
+V89,,FR_2031,chst1,,,,ENSDARG00000088593,,,carbohydrate (keratan sulfate Gal-6) sulfotransferase 1,Golgi apparatus ; Golgi membrane ; membrane ; integral component of membrane,"heparan sulfate 2-O-sulfotransferase activity ; proteoglycan sulfotransferase activity ; phenanthrol sulfotransferase activity ; trans-3,4-dihydrodiolphenanthrene sulfotransferase activity ; 1-phenanthrol sulfotransferase activity ; HNK-1 sulfotransferase activity ; cholesterol sulfotransferase activity ; 1-hydroxypyrene sulfotransferase activity ; 9-phenanthrol sulfotransferase activity ; 3-phenanthrol sulfotransferase activity ; hydroxyjasmonate sulfotransferase activity ; galactose 3-O-sulfotransferase activity ; 2-phenanthrol sulfotransferase activity ; 4-phenanthrol sulfotransferase activity ; trans-9R,10R-dihydrodiolphenanthrene sulfotransferase activity ; N-acetylgalactosamine 4-O-sulfotransferase activity ; transferase activity ; heparan sulfate 6-O-sulfotransferase activity ; keratan sulfotransferase activity ; N-acetylglucosamine 6-O-sulfotransferase activity ; sulfotransferase activity",sulfur compound metabolic process ; carbohydrate metabolic process,,,GS3151,,"G - ES : Ø
+MS : otic vesicle
+24 - 36 h : ± Ø
+48 h : inner cell layer of retina, brain nuclei",,T3,ADX299-M13F or PU,CK681701,3,1,8 th sending,,,pDNR-LIB,ZDB-GENE-040801-21, ZDB-EST-050309-11
+V9,V424,CB604,zgc:112994,,,,,,,zgc:112994,cellular_component,molecular_function,biological_process,,,SH310,,"G : YSL
+ES : same decreasing
+> Ø
+",,T3,VY13-M13R or RP,CA854259,2.1,3,sending CB,,,pSPORT1,ZDB-GENE-050522-519,
+V90,,FR_2240,im:7142016,,,,,,,im:7142016,,,,,,GS3597,,5 d: MHB,,T3,ADX299-M13F or PU,CK680384,2.3,1,9 th sending,,,pDNR-LIB,ZDB-GENE-050411-42,
+V91,,FR_2757,c3a.1,,,,,,,"complement component c3a, duplicate 1",extracellular region ; extracellular space,endopeptidase inhibitor activity,chordate embryonic development,,,GS4125,,"G-ES : Ø
+MS-late : YSL
+48h and later : liver",,T3,ADX299-M13F or PU,CK685472,1.5,2,14 th sending,,,pDNR-LIB,ZDB-GENE-990415-35,
+V92,,FR_2990,aacs,,,,ENSDARG00000012468,,,acetoacetyl-CoA synthetase,cytosol ; cytoplasm,acetoacetate-CoA ligase activity ; ligase activity ; nucleotide binding ; ATP binding ; catalytic activity,metabolic process ; lipid metabolic process ; fatty acid metabolic process,,,GS4445,,"G-MS : NR
+24h : NR, spinal chord neurons
+36h : eye, tectum, epiphysis
+48h-5d : midbrain, hindbrain nuclei+++, epiphysis
+5d : +liver",,T3,ADX299-M13F or PU,CK686414,1.7,3,4 th sending,,,pDNR-LIB,ZDB-GENE-040426-903, ZDB-EST-041111-339
+V93,,FR_3154,im:7153475,,,,,,,im:7153475,,,,,,GS4750,,"G - ES : Ø
+MS - 24 h : pronephric ducts
+> Ø",,T3,ADX299-M13F or PU,CK690181,1.2,2,8 th sending,,,pDNR-LIB,ZDB-GENE-050309-253,
+V94,,FR_5594,ppat,,,,,,,phosphoribosyl pyrophosphate amidotransferase,cellular_component,"amidophosphoribosyltransferase activity ; transferase activity ; metal ion binding ; transferase activity, transferring glycosyl groups ; iron-sulfur cluster binding",nucleoside metabolic process ; purine nucleobase biosynthetic process ; 'de novo' IMP biosynthetic process ; purine nucleotide biosynthetic process,,,GS5240,,"G - ES : YSL, anterior neural plate
+MS : NR, more in eye and midbrain
+24 h : eye, tectum,  neural crest cells, telencephalon, anterior diencephalon, YSL, branchial arches
+36 h : retina proliferative zone, tectum, migrating neural crest cells, YSL, branchial  arches
+48 h : retina proliferative zone, tectum, migrating neural crest cells, YSL, branchial  arches, liver",,T3,ADX299-M13F or PU,CK689465,1.5,1,18 th sending,,,pDNR-LIB,ZDB-GENE-041210-323,
+V95,,FR_5664,micall2a,,,,ENSDARG00000102366,,,mical-like 2a,NA,metal ion binding ; zinc ion binding,NA,,,GS5420,,"G : marginal YSL
+ES - MS : ventral vasculogenic mesoderm
+24 - 48 h : vasculature (stronger in caudal vein), caudal tip of spinal chord, blood vessels in trunk and head
+",,T3,ADX299-M13F or PU,CK690047,2.4,4,14 th sending,,,pDNR-LIB,ZDB-GENE-030131-5409, ZDB-EST-060810-159
+V96,,FR_5790,met,,,,,,,"MET proto-oncogene, receptor tyrosine kinase",membrane ; integral component of membrane,transmembrane receptor protein tyrosine kinase activity ; protein tyrosine kinase activity ; transferase activity ; nucleotide binding ; protein kinase activity ; ATP binding ; kinase activity ; semaphorin receptor activity,central nervous system neuron differentiation ; cerebellum morphogenesis ; cerebellar granule cell differentiation ; spinal cord motor neuron differentiation ; liver development ; exocrine pancreas development ; transmembrane receptor protein tyrosine kinase signaling pathway ; semaphorin-plexin signaling pathway ; protein phosphorylation ; phosphorylation ; cell migration ; neuron migration ; cerebellum development ; pectoral fin development,,,GS5541,,"G : Ø
+ES : eye field, anterior mesendoderm
+MS : eye, midbrain, anterior spinal chord, pronephric ducts
+24 h : nucleus in diencephalon, anterior midbrain, cephalic mesoderm, hypaxial muscles cells ++, laeral line primordia ++, motoneurons, caudal most spinal chord
+36 h : head mesenchyme (around the eye), hindbrain posterior nuclei, hypaxial muscles ++, lateral line primordium
+48 h : same, pectoral fin muscles ++, ventral midbrain, part of branchial arches, thyroid
+5 d : thyroid",,T3,ADX299-M13F or PU,CK690356 ,18,4,18 th sending,,,pDNR-LIB,ZDB-GENE-041014-1,
+V97,,FR_5799,rhd,,,,,,,"Rh blood group, D antigen",membrane ; integral component of plasma membrane ; integral component of membrane,ammonium transmembrane transporter activity,ammonium transport ; nitrogen utilization ; organic cation transport ; ammonium transmembrane transport ; cellular response to nitrogen starvation,,,GS5552,,MS - 24 h : blood,,T3,ADX299-M13F or PU,CK690487,25,2,20 th sending ,,,pDNR-LIB,ZDB-GENE-051213-1,
+V98,,FR_5917,tbl2,,,,,,,transducin (beta)-like 2,,,,,,GS5602 ,,"G : Ø
+ES - 48 h : YSL",,T3,ADX299-M13F or PU,CK691017,8,2,18 th sending,,,pDNR-LIB,ZDB-GENE-030131-9012,

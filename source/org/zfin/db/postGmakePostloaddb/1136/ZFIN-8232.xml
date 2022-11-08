@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+
+    <changeSet author="rtaylor" id="ZFIN-8232">
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1136/ZFIN-8232-filemaker-export-database-screen-april-2017.csv"
+                  schemaName="thisse"
+                  tableName="screen_april17" encoding="UTF-8" quotchar='"'>
+
+            <column header="count" name="count" type="String" />
+            <column header="Ori Name" name="ori_name" type="String" />
+            <column header="CB FR name" name="cb_fr_name" type="String" />
+            <column header="Star" name="star" type="String" />
+            <column header="sequence" name="sequence" type="String" />
+            <column header="zfin name" name="zfin_name" type="String" />
+            <column header="gene name" name="gene_name" type="String" />
+            <column header="size" name="size" type="String" />
+            <column header="vector" name="vector" type="String" />
+            <column header="Oligos" name="oligos" type="String" />
+            <column header="polymerase" name="polymerase" type="String" />
+            <column header="Box" name="box" type="String" />
+            <column header="library" name="library" type="String" />
+
+        </loadData>
+
+    </changeSet>
+
+</databaseChangeLog>

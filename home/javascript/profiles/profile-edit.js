@@ -135,6 +135,7 @@ var generatePassword = function(destinationClass) {
 
     jQuery('input.' + destinationClass).val(password);
     jQuery('span.' + destinationClass).text(password);
+
     jQuery('button#copy-generated-password').css('display', 'inline');
     jQuery('button#copy-generated-password').on('click', function() {
         copyToClipboard(password);

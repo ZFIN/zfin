@@ -2,6 +2,7 @@ package org.zfin;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.zfin.anatomy.DevelopmentStageTest;
 import org.zfin.anatomy.repository.AnatomyRepositoryTest;
 import org.zfin.antibody.AntibodyServiceTest;
 import org.zfin.antibody.repository.AntibodyRepositoryTest;
@@ -78,6 +79,7 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         CurationRPCTest.class,
         DatabaseServiceDbTest.class,
         DeleteRuleTest.class,
+        DevelopmentStageTest.class,
         DisplayGroupRepositoryTest.class,
         DTOConversionServiceTest.class,
         ExpressionRepositoryTest.class,

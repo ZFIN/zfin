@@ -71,7 +71,7 @@
             <analyzer type="index">
                 <tokenizer class="solr.StandardTokenizerFactory"/>
                 <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt"/>
-                <filter class="solr.WordDelimiterGraphFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="1" splitOnCaseChange="0" preserveOriginal="1"/>
+                <filter class="solr.WordDelimiterGraphFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="1" splitOnCaseChange="0" preserveOriginal="1" splitOnNumerics="0" types="wdgff_types.txt"/>
                 <filter class="solr.FlattenGraphFilterFactory"/>
                 <filter class="solr.ASCIIFoldingFilterFactory"/>
                 <filter class="solr.LowerCaseFilterFactory"/>
@@ -84,7 +84,7 @@
                 <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt"/>
                 <!-- it's possible that we don't want preserveOriginal here, since it puts in a pair of queries that both need to match....but then, because preserve original is on above,
                      they both sould be in there... something to consider at least -->
-                <filter class="solr.WordDelimiterGraphFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="0" catenateNumbers="0" catenateAll="1" splitOnCaseChange="0" preserveOriginal="1"/>
+                <filter class="solr.WordDelimiterGraphFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="0" catenateNumbers="0" catenateAll="1" splitOnCaseChange="0" preserveOriginal="1" splitOnNumerics="0" types="wdgff_types.txt"/>
                 <filter class="solr.ASCIIFoldingFilterFactory"/>
                 <filter class="solr.LowerCaseFilterFactory"/>
                 <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt"/>
