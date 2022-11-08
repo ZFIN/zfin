@@ -188,50 +188,76 @@
                        action="/action/profile/person/edit-user-details/${person.zdbID}"
                        enctype="multipart/form-data" id="person-edit-login" cssClass="mark-dirty"
                     >
-                <form:label path="accountInfo.login">Login:</form:label>
-                <form:input cssClass="login-first-field" size="50" path="accountInfo.login"/>
-                <zfin2:errors errorResult="${errors}" path="accountInfo.login"/>
+                <table>
+                    <tbody>
+                    <tr>
+                        <td><form:label path="accountInfo.login">Login:</form:label></td>
+                        <td><form:input cssClass="login-first-field" size="50" path="accountInfo.login"/></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><zfin2:errors errorResult="${errors}" path="accountInfo.login"/></td>
+                    </tr>
+                    <tr>
+                        <td><form:label path="accountInfo.pass1">Password:</form:label></td>
+                        <td><form:password size="50" path="accountInfo.pass1" cssClass="fill-with-generated-password"
+                                           onkeyup="testPassword(document.getElementById('accountInfo.pass1').value,'passwordScore','passwordVerdict');"/></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><zfin2:errors errorResult="${errors}" path="accountInfo.pass1"/></td>
+                    </tr>
+                    <tr>
+                        <td><form:label path="accountInfo.pass2">Repeat Password:</form:label></td>
+                        <td><form:password size="50" path="accountInfo.pass2" cssClass="fill-with-generated-password"/></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><zfin2:errors errorResult="${errors}" path="accountInfo.pass2"/></td>
+                    </tr>
+                    <tr>
+                        <td>Password Strength:</td>
+                        <td><strong><span id="passwordVerdict"></span></strong></td>
+                    </tr>
+                    <tr>
+                        <td><input type="button" id="generate-password-button" value="generate password"/></td>
+                        <td>
+                            <span class="fill-with-generated-password"></span>
+                            <span id="clipboard-actions">
+                                <button type="button" id="copy-generated-password"><i class="fa fa-clipboard"></i></button>
+                                <span id="copy-generated-password-message">Password Copied</span>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                    </tr>
 
-                <div>
-                    <form:label path="accountInfo.pass1">Password:</form:label>
-                    <form:password size="50" path="accountInfo.pass1" cssClass="fill-with-generated-password"
-                                   onkeyup="testPassword(document.getElementById('accountInfo.pass1').value,'passwordScore','passwordVerdict');"/>
-                    <zfin2:errors errorResult="${errors}" path="accountInfo.pass1"/>
-                </div>
-
-                <div>
-                    <form:label path="accountInfo.pass2">Repeat Password:</form:label>
-                    <form:password size="50" path="accountInfo.pass2" cssClass="fill-with-generated-password"/>
-                    <zfin2:errors errorResult="${errors}" path="accountInfo.pass2"/>
-                </div>
-
-                <input type="button" id="generate-password-button" value="generate password"/>
-                <span class="fill-with-generated-password"></span>
-
-                <div>Password Strength: <strong><span id="passwordVerdict"></span></strong></div>
-                <br>
-                <%--prevents changing your own accidentally --%>
-                <c:choose>
-                    <c:when test="${not empty securityPersonZdbID and person.zdbID ne securityPersonZdbID}">
-                        <form:label path="accountInfo.role">Privileges:</form:label>
-                        <form:select path="accountInfo.role" multiple="false">
-                            <form:option value="submit"/>
-                            <form:option value="root"/>
-                        </form:select>
-                    </c:when>
-                    <c:otherwise>
-                        <form:hidden path="accountInfo.role"/>
-                        <c:if test="${person.accountInfo.root}">
-                            <div>
-                                <form:label path="accountInfo.role">Privileges: </form:label>
-                                <span style="color: gray;"> ${person.accountInfo.role} </span>
-                            </div>
-                        </c:if>
-                    </c:otherwise>
-                </c:choose>
-
-
-                <br><br>
+                    <%--prevents changing your own accidentally --%>
+                    <c:choose>
+                        <c:when test="${not empty securityPersonZdbID and person.zdbID ne securityPersonZdbID}">
+                            <tr>
+                                <td><form:label path="accountInfo.role">Privileges:</form:label></td>
+                                <td>
+                                    <form:select path="accountInfo.role" multiple="false">
+                                        <form:option value="submit"/>
+                                        <form:option value="root"/>
+                                    </form:select>
+                                </td>
+                            </tr>
+                        </c:when>
+                        <c:otherwise>
+                            <tr>
+                                <td colspan="2"><form:hidden path="accountInfo.role"/></td>
+                            </tr>
+                            <c:if test="${person.accountInfo.root}">
+                            <tr>
+                                <td><form:label path="accountInfo.role">Privileges: </form:label></td>
+                                <td><span style="color: gray;"> ${person.accountInfo.role} </span></td>
+                            </tr>
+                            </c:if>
+                        </c:otherwise>
+                    </c:choose>
+                    </tbody>
+                </table>
 
                 <input type="submit" value="Save"/>
                 <a href="/action/profile/view/${person.zdbID}">Cancel</a>

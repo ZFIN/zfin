@@ -108,6 +108,24 @@ var addMember = function(personZdbID, organizationZdbID, position, name) {
     );
 };
 
+var copyToClipboard = function(value) {
+    const el = document.createElement('textarea');
+    el.value = value;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+
+    //hide the copy button
+    jQuery('button#copy-generated-password').hide();
+
+    //display a message the text was copied to clipboard
+    jQuery('span#copy-generated-password-message').css('display', 'inline');
+    setTimeout(() => {
+        jQuery('span#copy-generated-password-message').fadeOut();
+    }, 1000);
+}
+
 var generatePassword = function(destinationClass) {
     const passwordLength = 11;
     const password = [...crypto.getRandomValues(new Uint8Array(999))]
@@ -117,6 +135,10 @@ var generatePassword = function(destinationClass) {
 
     jQuery('input.' + destinationClass).val(password);
     jQuery('span.' + destinationClass).text(password);
+    jQuery('button#copy-generated-password').css('display', 'inline');
+    jQuery('button#copy-generated-password').on('click', function() {
+        copyToClipboard(password);
+    });
 };
 
 var personToAddZdbID;
