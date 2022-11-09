@@ -4,7 +4,10 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
-import org.hibernate.criterion.*;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 import org.zfin.Species;
@@ -15,9 +18,6 @@ import org.zfin.antibody.AntibodyType;
 import org.zfin.antibody.presentation.AntibodyAOStatistics;
 import org.zfin.antibody.presentation.AntibodySearchCriteria;
 import org.zfin.expression.Figure;
-import org.zfin.expression.FigureFigure;
-import org.zfin.expression.FigureType;
-import org.zfin.expression.TextOnlyFigure;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
@@ -46,7 +46,7 @@ import static org.hibernate.criterion.Restrictions.isNotEmpty;
 @Repository
 public class HibernateAntibodyRepository implements AntibodyRepository {
 
-    private AnatomyRepository anatomyRepository = RepositoryFactory.getAnatomyRepository();
+    private final AnatomyRepository anatomyRepository = RepositoryFactory.getAnatomyRepository();
 
     // These attributes are cashed for performance reasons
     // They are static, i.e. they do not change all that often.
@@ -61,20 +61,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         return session.get(Antibody.class, zdbID);
     }
 
-    /**
-     * Retrieve an antibody by ID for displaying on the detail page.
-     * Pre-populate most of its attributes and collections for speed.
-     *
-     * @param zdbID primary key
-     * @return antibody
-     */
-    public Antibody getAntibodyByZdbID(String zdbID) {
-        Criteria query = HibernateUtil.currentSession().createCriteria(Antibody.class);
-        query.add(Restrictions.eq("zdbID", zdbID));
-        return (Antibody) query.uniqueResult();
-    }
 
-    @SuppressWarnings("unchecked")
     public PaginationResult<Antibody> getAntibodies(AntibodySearchCriteria searchCriteria) {
         Session session = HibernateUtil.currentSession();
         StringBuilder hql = new StringBuilder("select distinct antibody ");
@@ -165,39 +152,36 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         return query.uniqueResult().intValue();
     }
 
-    @SuppressWarnings("unchecked")
     public List<Species> getHostSpeciesList() {
         if (hostSpeciesList != null) {
             return hostSpeciesList;
         }
 
         Session session = HibernateUtil.currentSession();
-        Query<Species> speciesQuery = session.createQuery("from Species where antibodyHost = true order by displayOrder");
+        Query<Species> speciesQuery = session.createQuery("from Species where antibodyHost = true order by displayOrder", Species.class);
         hostSpeciesList = speciesQuery.list();
         return hostSpeciesList;
     }
 
-    @SuppressWarnings("unchecked")
     public List<Species> getUsedHostSpeciesList() {
         Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(Species.class, "species");
-        criteria.add(eq("antibodyHost", true));
-        criteria.addOrder(Order.asc("displayOrder"));
-        DetachedCriteria antibodies = DetachedCriteria.forClass(Antibody.class, "ab");
-        antibodies.add(Restrictions.eqProperty("ab.hostSpecies", "species.commonName"));
-        antibodies.setProjection(Property.forName("ab.zdbID").count());
-        criteria.add(Subqueries.lt((long) 0, antibodies));
-        return criteria.list();
+        String hql = """
+            select distinct species from Species as species, Antibody as ab
+            where species.antibodyHost = true
+            and species.commonName = ab.hostSpecies
+            order by species.displayOrder
+            """;
+        Query<Species> query = session.createQuery(hql, Species.class);
+        return query.list();
     }
 
-    @SuppressWarnings("unchecked")
     public List<Species> getImmunogenSpeciesList() {
         if (immunogenSpeciesList != null) {
             return immunogenSpeciesList;
         }
 
         Session session = HibernateUtil.currentSession();
-        Query<Species> speciesQuery = session.createQuery("from Species where antibodyImmunogen = true order by displayOrder");
+        Query<Species> speciesQuery = session.createQuery("from Species where antibodyImmunogen = true order by displayOrder", Species.class);
         immunogenSpeciesList = speciesQuery.list();
         return immunogenSpeciesList;
     }
@@ -260,52 +244,6 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         return PaginationResultFactory.createResultFromScrollableResultAndClose(paginationBean, query.scroll());
     }
 
-    public int getNumberOfFiguresPerAoTerm(Antibody antibody, GenericTerm aoTerm, FigureType figureType) {
-        Session session = HibernateUtil.currentSession();
-        Criteria criteria;
-        if (figureType != null && figureType == FigureType.TOD) {
-            criteria = session.createCriteria(TextOnlyFigure.class);
-        } else {
-            criteria = session.createCriteria(FigureFigure.class);
-        }
-        criteria.setProjection(Projections.countDistinct("zdbID"));
-        Criteria results = criteria.createCriteria("expressionResults");
-        // check AO1 and AO2
-        results.add(Restrictions.or(
-            Restrictions.eq("entity.superterm", aoTerm),
-            Restrictions.eq("entity.subterm", aoTerm)));
-        results.add(eq("expressionFound", true));
-        Criteria labeling = results.createCriteria("expressionExperiment");
-        labeling.add(eq("antibody", antibody));
-        Criteria fishExperiment = labeling.createCriteria("fishExperiment");
-        fishExperiment.add(Restrictions.eq("standardOrGenericControl", true));
-        Criteria fish = fishExperiment.createCriteria("fish");
-        Criteria genotype = fish.createCriteria("genotype");
-        genotype.add(Restrictions.eq("wildtype", true));
-        return ((Long) criteria.list().get(0)).intValue();
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<Figure> getFiguresPerAoTerm(Antibody antibody, GenericTerm aoTerm) {
-        Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(Figure.class);
-        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-        Criteria results = criteria.createCriteria("expressionResults");
-        // check AO1 and AO2
-        results.add(Restrictions.or(
-            Restrictions.eq("entity.superterm", aoTerm),
-            Restrictions.eq("entity.subterm", aoTerm)));
-        results.add(eq("expressionFound", true));
-        Criteria labeling = results.createCriteria("expressionExperiment");
-        labeling.add(eq("antibody", antibody));
-        Criteria fishExperiment = labeling.createCriteria("fishExperiment");
-        fishExperiment.add(Restrictions.eq("standard", true));
-        Criteria fish = fishExperiment.createCriteria("fish");
-        Criteria genotype = fish.createCriteria("genotype");
-        genotype.add(Restrictions.eq("wildtype", true));
-
-        return (List<Figure>) labeling.list();
-    }
 
     @SuppressWarnings("unchecked")
     public PaginationResult<Publication> getPublicationsWithFigures(Antibody antibody, GenericTerm aoTerm) {
@@ -542,14 +480,6 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         return hql.toString();
     }
 
-    private void setPaginationParameters(Query query, PaginationBean paginationBean) {
-        if (paginationBean == null) {
-            return;
-        }
-        query.setMaxResults(paginationBean.getMaxDisplayRecordsInteger());
-        query.setFirstResult(paginationBean.getFirstRecord() - 1);
-    }
-
     public List<AntibodyStatistics> getAntibodyStatistics(GenericTerm aoTerm, PaginationBean pagination, boolean includeSubstructures) {
 
         String hql;
@@ -627,7 +557,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         List<Object[]> resultList = query.list();
 
         List<AntibodyStatistics> list = new ArrayList<>();
-        resultList.stream().map(objects -> (AntibodyAOStatistics) objects[0]).collect(toList())
+        resultList.stream().map(objects -> (AntibodyAOStatistics) objects[0]).toList()
             .forEach(antibodyStat -> populateAntibodyStatisticsRecord(antibodyStat, list, aoTerm));
         return list;
     }
@@ -664,7 +594,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         List<Object[]> resultList = query.list();
 
         List<HighQualityProbe> list = new ArrayList<>();
-        resultList.stream().map(objects -> (HighQualityProbeAOStatistics) objects[0]).collect(toList())
+        resultList.stream().map(objects -> (HighQualityProbeAOStatistics) objects[0]).toList()
             .forEach(highQualityProbe -> populateHighQualityProbeStatisticsRecord(highQualityProbe, list, aoTerm));
         return list;
     }
@@ -751,7 +681,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
 
     @SuppressWarnings("unchecked")
     public List<Antibody> getAllAntibodies() {
-        Query query = HibernateUtil.currentSession().createQuery("from Antibody a order by a.name asc");
+        Query<Antibody> query = HibernateUtil.currentSession().createQuery("from Antibody a order by a.name asc", Antibody.class);
         return query.list();
     }
 

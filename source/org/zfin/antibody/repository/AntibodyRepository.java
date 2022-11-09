@@ -31,15 +31,6 @@ public interface AntibodyRepository {
 	Antibody getAntibodyByID(String zdbID);
 
 	/**
-	 * Retrieve an antibody by ID for displaying on the detail page.
-	 * Pre-populate most of its attributes and collections for speed.
-	 *
-	 * @param zdbID primary key
-	 * @return antibody
-	 */
-	Antibody getAntibodyByZdbID(String zdbID);
-
-	/**
 	 * Search for antibodies with given ab parameters and given labeling.
 	 *
 	 * @param antibody Antibody with search parameters.
@@ -99,28 +90,6 @@ public interface AntibodyRepository {
 	 * @return number of antibodies
 	 */
 	PaginationResult<Antibody> getAntibodiesByAOTerm(GenericTerm aoTerm, PaginationBean paginationBean, boolean includeSubstructures);
-
-	/**
-	 * Counts distinct figures that are associated to an expression result with a given
-	 * ao term.
-	 *
-	 * @param antibody Antibody
-	 * @param aoTerm   AO Term
-	 * @param type:    true figures
-	 *                 text only figures
-	 *                 all figures (if null)
-	 * @return number
-	 */
-	int getNumberOfFiguresPerAoTerm(Antibody antibody, GenericTerm aoTerm, FigureType type);
-
-	/**
-	 * Get all figures for a given antibody and ao term.
-	 *
-	 * @param antibody antibody
-	 * @param aoTerm   ao term
-	 * @return list of figures
-	 */
-	List<Figure> getFiguresPerAoTerm(Antibody antibody, GenericTerm aoTerm);
 
 	/**
 	 * Retrieve distinct publications for given antibody and ao term that have
