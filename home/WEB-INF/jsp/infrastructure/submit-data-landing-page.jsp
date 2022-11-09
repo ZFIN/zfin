@@ -69,21 +69,17 @@
         </div>
 
         <hr />
+        <div>
+            <h4>Create ZFIN Account</h4>
+            <p>
+                <a href="/action/profile/person/submit">Request a ZFIN account</a> to be able to edit your records.
+            </p>
+        </div>
 
         <div>
-            <h4>Create a person, lab or company record</h4>
+            <h4>Create Lab or Company Record</h4>
             <p>
-                Contact <zfin2:mailTo to="zfinadmn@zfin.org"/> to create a person, lab or company record and a ZFIN
-                account to edit your records.
-            </p>
-            <p>
-                When requesting a person record please include any of the following information to be displayed on your
-                profile page: full name, email address, postal address, phone and/or fax numbers, website address.
-            </p>
-            <p>
-                When requesting a lab or company record please include the followig information: lab or company name,
-                contact person, phone and/or fax numbers, website address. Additionally, for each lab member:
-                their name, email address, and role (e.g. director, PI, post-doc, grad student, etc).
+                <a href="/action/profile/organization/submit">Request a lab or company record</a>.
             </p>
         </div>
 

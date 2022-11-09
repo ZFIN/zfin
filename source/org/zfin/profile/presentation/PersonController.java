@@ -19,6 +19,7 @@ import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.BeanFieldUpdate;
 import org.zfin.profile.service.ProfileService;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
@@ -339,9 +340,18 @@ public class PersonController {
     public String createPersonSetup(@RequestParam(value = "organization", required = false) String organizationZdbId,
                                     Model model,
                                     Person person,
-                                    Errors errors) {
+                                    Errors errors,
+                                    HttpServletRequest request) {
         model.addAttribute(LookupStrings.FORM_BEAN, person);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add Person");
+
+        //get prefilled values if any are provided
+        String firstName = request.getParameter("firstName");
+        model.addAttribute("firstName", firstName);
+        String lastName = request.getParameter("lastName");
+        model.addAttribute("lastName", lastName);
+        String email = request.getParameter("email");
+        model.addAttribute("email", email);
 
         if (!StringUtils.isEmpty(organizationZdbId)) {
             return createPersonSetupWithOrganization(organizationZdbId, model, person, errors);
