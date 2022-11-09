@@ -379,9 +379,9 @@ public class HibernateOntologyRepository implements OntologyRepository {
 		String hql = """
 			from GenericTerm where
 			             termName = :termName and
-			             secondary = 'f' and 
-			             obsolete = 'f' and
-			             ontology in (:ontoList) 
+			             secondary = false and
+			             obsolete = false and
+			             ontology in (:ontoList)
 			""";
 		org.hibernate.query.Query<GenericTerm> query = session.createQuery(hql, GenericTerm.class);
 		query.setParameter("termName", termName);

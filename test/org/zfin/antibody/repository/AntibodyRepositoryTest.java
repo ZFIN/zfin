@@ -46,14 +46,12 @@ import java.util.Set;
 
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.*;
-import static org.zfin.repository.RepositoryFactory.getAntibodyRepository;
-import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
-@SuppressWarnings({"FeatureEnvy"})
 public class AntibodyRepositoryTest extends AbstractDatabaseTest {
 
     /**
-     * Retrieving an antibody by ID'
+     * Retrieving an antibody by ID
      */
     @Test
     public void getAntibodyByID() {
@@ -64,7 +62,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
     }
 
     /**
-     * Retrieving an antibody by ID and a cellular component'
+     * Retrieving an antibody by ID and a cellular component
      */
     @Test
     public void getAntibodyWithCC() {
@@ -139,10 +137,6 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         endStage.setZdbID(stageZdbIDEnd);
         searchCriteria.setStartStage(startStage);
         searchCriteria.setEndStage(endStage);
-/*
-        searchCriteria.setName("anti");
-        searchCriteria.setAntibodyNameFilterType(FilterType.CONTAINS);
-*/
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodies(searchCriteria);
         assertNotNull(abs);
@@ -239,7 +233,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(abs);
 
         int numberOfAb = getAntibodyRepository().getNumberOfAntibodies(searchCriteria);
-        assertNotNull(numberOfAb);
+        assertTrue(numberOfAb > 1);
 
     }
 
@@ -758,8 +752,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         ActiveData data = new ActiveData();
         data.setZdbID(externalNoteZdbID);
 
-        InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
-        List<RecordAttribution> rec = ir.getRecordAttributions(data);
+        List<RecordAttribution> rec = getInfrastructureRepository().getRecordAttributions(data);
         assertNotNull(rec);
     }
 
@@ -795,8 +788,8 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         if (suppliers != null) {
             for (MarkerSupplier supplier : suppliers) {
                 Organization org = supplier.getOrganization();
-                SourceUrl url = org.getOrganizationOrderURL();
-                String urlString = supplier.getOrderURL();
+                org.getOrganizationOrderURL();
+                supplier.getOrderURL();
 
                 assertNotNull(org);
             }

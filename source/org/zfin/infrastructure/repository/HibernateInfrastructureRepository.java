@@ -8,7 +8,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.Example;
@@ -17,6 +16,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.jdbc.ReturningWork;
 import org.hibernate.jdbc.Work;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 import org.zfin.ExternalNote;
 import org.zfin.database.DbSystemUtil;
@@ -47,8 +47,8 @@ import org.zfin.util.DateUtil;
 import javax.persistence.NoResultException;
 import java.math.BigDecimal;
 import java.sql.*;
-import java.util.*;
 import java.util.Date;
+import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
 
@@ -250,14 +250,12 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
 
-    @SuppressWarnings("unchecked")
     public List<RecordAttribution> getRecordAttributions(ActiveData data) {
 
         Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(RecordAttribution.class);
-        criteria.add(Restrictions.eq("dataZdbID", data.getZdbID()));
-
-        return criteria.list();
+        Query<RecordAttribution> query = session.createQuery("from RecordAttribution where dataZdbID = :ID", RecordAttribution.class);
+        query.setParameter("ID", data.getZdbID());
+        return query.list();
     }
 
     @SuppressWarnings("unchecked")
@@ -274,8 +272,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     public PublicationAttribution getPublicationAttribution(PublicationAttribution attribution) {
         Session session = HibernateUtil.currentSession();
         String hql = "from PublicationAttribution " +
-                "where publication = :publication AND" +
-                "      dataZdbID = :dataID ";
+            "where publication = :publication AND" +
+            "      dataZdbID = :dataID ";
         Query query = session.createQuery(hql);
         query.setParameter("publication", attribution.getPublication());
         query.setParameter("dataID", attribution.getDataZdbID());
@@ -332,8 +330,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
 
         String hql = "select distinct term from GenericTerm term  " +
-                "where lower(term.termName) like :name " +
-                " AND term.obsolete = :obsolete ";
+            "where lower(term.termName) like :name " +
+            " AND term.obsolete = :obsolete ";
         if (ontologies.size() == 1) {
             hql += " AND term.ontology = :ontology ";
         } else {
@@ -353,8 +351,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         List<GenericTerm> list = (List<GenericTerm>) query.list();
 
         hql = "select alias.term from TermAlias alias " +
-                "where  alias.aliasLowerCase like :name " +
-                " AND alias.term.obsolete = :obsolete ";
+            "where  alias.aliasLowerCase like :name " +
+            " AND alias.term.obsolete = :obsolete ";
         if (ontologies.size() == 1) {
             hql += " AND alias.term.ontology = :ontology ";
         } else {
@@ -517,10 +515,10 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     @Override
     public List<Updates> getUpdates(String zdbID) {
         return HibernateUtil.currentSession()
-                .createCriteria(Updates.class)
-                .add(Restrictions.eq("recID", zdbID))
-                .addOrder(Order.desc("whenUpdated"))
-                .list();
+            .createCriteria(Updates.class)
+            .add(Restrictions.eq("recID", zdbID))
+            .addOrder(Order.desc("whenUpdated"))
+            .list();
     }
 
     @Override
@@ -617,7 +615,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
         Session session = HibernateUtil.currentSession();
         String hql = "" +
-                "delete from RecordAttribution ra where ra.dataZdbID in (:dataZdbIDs)";
+            "delete from RecordAttribution ra where ra.dataZdbID in (:dataZdbIDs)";
         Query query = session.createQuery(hql);
         query.setParameterList("dataZdbIDs", dataZdbIDs);
         return query.executeUpdate();
@@ -765,9 +763,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     public List<String> getDataAliasesWithAbbreviation(String aliasLowerName) {
         Session session = HibernateUtil.currentSession();
         SQLQuery sqlQuery = session.createSQLQuery("select distinct get_obj_abbrev(dalias_data_zdb_id) as abbreviation " +
-                "from data_alias, alias_group " +
-                "where dalias_alias_lower = :aliasLowerName and dalias_group_id = aliasgrp_pk_id " +
-                "                and aliasgrp_name != :aliasGroup ");
+            "from data_alias, alias_group " +
+            "where dalias_alias_lower = :aliasLowerName and dalias_group_id = aliasgrp_pk_id " +
+            "                and aliasgrp_name != :aliasGroup ");
         sqlQuery.addScalar("abbreviation");
         sqlQuery.setParameter("aliasLowerName", aliasLowerName);
         sqlQuery.setParameter("aliasGroup", DataAliasGroup.Group.SEQUENCE_SIMILARITY.toString());
@@ -785,73 +783,73 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     public int getDataAliasesAttributions(String zdbID, String pubZdbID) {
         return Integer.parseInt(
-                HibernateUtil.currentSession().createSQLQuery(" " +
-                        " select count(*) from record_attribution, data_alias" +
-                        "      where recattrib_data_zdb_id = dalias_zdb_id" +
-                        "      and dalias_data_zdb_id = :zdbID" +
-                        "      and recattrib_source_zdb_id = :pubZdbID" +
-                        " ")
-                        .setString("zdbID", zdbID)
-                        .setString("pubZdbID", pubZdbID)
-                        .uniqueResult().toString()
+            HibernateUtil.currentSession().createSQLQuery(" " +
+                    " select count(*) from record_attribution, data_alias" +
+                    "      where recattrib_data_zdb_id = dalias_zdb_id" +
+                    "      and dalias_data_zdb_id = :zdbID" +
+                    "      and recattrib_source_zdb_id = :pubZdbID" +
+                    " ")
+                .setString("zdbID", zdbID)
+                .setString("pubZdbID", pubZdbID)
+                .uniqueResult().toString()
         );
     }
 
     public int getOrthologRecordAttributions(String zdbID, String pubZdbID) {
         return Integer.parseInt(
-                HibernateUtil.currentSession().createSQLQuery(
-                        "select count(*) From ortholog as ortho, " +
-                                "              ortholog_evidence as oe " +
-                                "where ortho.ortho_zebrafish_gene_zdb_id = :zdbID " +
-                                "and   ortho.ortho_zdb_id = oe.oev_ortho_zdb_id " +
-                                "and   oe.oev_pub_zdb_id =  :pubZdbID")
-                        .setString("zdbID", zdbID)
-                        .setString("pubZdbID", pubZdbID)
-                        .uniqueResult().toString()
+            HibernateUtil.currentSession().createSQLQuery(
+                    "select count(*) From ortholog as ortho, " +
+                        "              ortholog_evidence as oe " +
+                        "where ortho.ortho_zebrafish_gene_zdb_id = :zdbID " +
+                        "and   ortho.ortho_zdb_id = oe.oev_ortho_zdb_id " +
+                        "and   oe.oev_pub_zdb_id =  :pubZdbID")
+                .setString("zdbID", zdbID)
+                .setString("pubZdbID", pubZdbID)
+                .uniqueResult().toString()
         );
     }
 
     public int getMarkerFeatureRelationshipAttributions(String zdbID, String pubZdbID) {
         return Integer.parseInt(
-                HibernateUtil.currentSession().createSQLQuery(" " +
-                        " select count(*) from record_attribution, feature_marker_relationship " +
-                        "      where recattrib_data_zdb_id = fmrel_ftr_zdb_id" +
-                        "      and fmrel_mrkr_zdb_id = :zdbID" +
-                        "      and recattrib_source_zdb_id = :pubZdbID" +
-                        " ")
-                        .setString("zdbID", zdbID)
-                        .setString("pubZdbID", pubZdbID)
-                        .uniqueResult().toString()
+            HibernateUtil.currentSession().createSQLQuery(" " +
+                    " select count(*) from record_attribution, feature_marker_relationship " +
+                    "      where recattrib_data_zdb_id = fmrel_ftr_zdb_id" +
+                    "      and fmrel_mrkr_zdb_id = :zdbID" +
+                    "      and recattrib_source_zdb_id = :pubZdbID" +
+                    " ")
+                .setString("zdbID", zdbID)
+                .setString("pubZdbID", pubZdbID)
+                .uniqueResult().toString()
         );
     }
 
 
     public int getMarkerGenotypeFeatureRelationshipAttributions(String zdbID, String pubZdbID) {
         return Integer.parseInt(
-                HibernateUtil.currentSession().createSQLQuery(" " +
-                        " select count(*) from record_attribution, feature_marker_relationship, genotype_feature " +
-                        "      where recattrib_data_zdb_id = genofeat_geno_zdb_id" +
-                        "      and fmrel_ftr_zdb_id = genofeat_feature_zdb_id " +
-                        "      and fmrel_mrkr_zdb_id = :zdbID" +
-                        "      and recattrib_source_zdb_id = :pubZdbID" +
-                        " ")
-                        .setString("zdbID", zdbID)
-                        .setString("pubZdbID", pubZdbID)
-                        .uniqueResult().toString()
+            HibernateUtil.currentSession().createSQLQuery(" " +
+                    " select count(*) from record_attribution, feature_marker_relationship, genotype_feature " +
+                    "      where recattrib_data_zdb_id = genofeat_geno_zdb_id" +
+                    "      and fmrel_ftr_zdb_id = genofeat_feature_zdb_id " +
+                    "      and fmrel_mrkr_zdb_id = :zdbID" +
+                    "      and recattrib_source_zdb_id = :pubZdbID" +
+                    " ")
+                .setString("zdbID", zdbID)
+                .setString("pubZdbID", pubZdbID)
+                .uniqueResult().toString()
         );
     }
 
     public int getFeatureGenotypeAttributions(String zdbID, String pubZdbID) {
         return Integer.parseInt(
-                HibernateUtil.currentSession().createSQLQuery(" " +
-                        " select count(*) from record_attribution, genotype_feature " +
-                        "      where recattrib_data_zdb_id = genofeat_geno_zdb_id" +
-                        "      and genofeat_feature_zdb_id = :zdbID" +
-                        "      and recattrib_source_zdb_id = :pubZdbID" +
-                        " ")
-                        .setString("zdbID", zdbID)
-                        .setString("pubZdbID", pubZdbID)
-                        .uniqueResult().toString()
+            HibernateUtil.currentSession().createSQLQuery(" " +
+                    " select count(*) from record_attribution, genotype_feature " +
+                    "      where recattrib_data_zdb_id = genofeat_geno_zdb_id" +
+                    "      and genofeat_feature_zdb_id = :zdbID" +
+                    "      and recattrib_source_zdb_id = :pubZdbID" +
+                    " ")
+                .setString("zdbID", zdbID)
+                .setString("pubZdbID", pubZdbID)
+                .uniqueResult().toString()
         );
     }
 
@@ -864,9 +862,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 "      and mrkrgoev_mrkr_zdb_id = :zdbID" +
                 "      and recattrib_source_zdb_id = :pubZdbID  " +
                 "")
-                .setString("zdbID", zdbID)
-                .setString("pubZdbID", pubZdbID)
-                .uniqueResult().toString()
+            .setString("zdbID", zdbID)
+            .setString("pubZdbID", pubZdbID)
+            .uniqueResult().toString()
         );
     }
 
@@ -878,9 +876,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 "      and dblink_linked_recid = :zdbID" +
                 "      and recattrib_source_zdb_id = :pubZdbID  " +
                 "")
-                .setString("zdbID", zdbID)
-                .setString("pubZdbID", pubZdbID)
-                .uniqueResult().toString()
+            .setString("zdbID", zdbID)
+            .setString("pubZdbID", pubZdbID)
+            .uniqueResult().toString()
         );
     }
 
@@ -894,9 +892,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 "     and mrel_type = 'gene encodes small segment' " +
                 "      and recattrib_source_zdb_id = :pubZdbID  " +
                 "")
-                .setString("zdbID", zdbID)
-                .setString("pubZdbID", pubZdbID)
-                .uniqueResult().toString()
+            .setString("zdbID", zdbID)
+            .setString("pubZdbID", pubZdbID)
+            .uniqueResult().toString()
         );
     }
 
@@ -916,9 +914,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 "      and mrel_mrkr_2_zdb_id = :zdbID" +
                 "      and recattrib_source_zdb_id = :pubZdbID  " +
                 "")
-                .setString("zdbID", zdbID)
-                .setString("pubZdbID", pubZdbID)
-                .uniqueResult().toString()
+            .setString("zdbID", zdbID)
+            .setString("pubZdbID", pubZdbID)
+            .uniqueResult().toString()
         );
     }
 
@@ -937,9 +935,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 "      and mrel_mrkr_1_zdb_id = :zdbID" +
                 "      and recattrib_source_zdb_id = :pubZdbID  " +
                 "")
-                .setString("zdbID", zdbID)
-                .setString("pubZdbID", pubZdbID)
-                .uniqueResult().toString()
+            .setString("zdbID", zdbID)
+            .setString("pubZdbID", pubZdbID)
+            .uniqueResult().toString()
         );
     }
 
@@ -952,9 +950,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                     " and ee.xpatex_atb_zdb_id = :zdbID " +
                     " and ee.xpatex_source_zdb_id = :pubZdbID " +
                     "")
-                    .setString("zdbID", m.getZdbID())
-                    .setString("pubZdbID", pubZdbID)
-                    .uniqueResult().toString()
+                .setString("zdbID", m.getZdbID())
+                .setString("pubZdbID", pubZdbID)
+                .uniqueResult().toString()
             );
         }
         // assume its a gene
@@ -966,9 +964,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                     " and ee.xpatex_gene_zdb_id = :zdbID " +
                     " and ee.xpatex_source_zdb_id = :pubZdbID " +
                     "")
-                    .setString("zdbID", m.getZdbID())
-                    .setString("pubZdbID", pubZdbID)
-                    .uniqueResult().toString()
+                .setString("zdbID", m.getZdbID())
+                .setString("pubZdbID", pubZdbID)
+                .uniqueResult().toString()
             );
         } else if (m.isInTypeGroup(Marker.TypeGroup.CDNA_AND_EST)) {
             return Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(" " +
@@ -978,9 +976,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                     " and ee.xpatex_probe_feature_zdb_id = :zdbID " +
                     " and ee.xpatex_source_zdb_id = :pubZdbID " +
                     "")
-                    .setString("zdbID", m.getZdbID())
-                    .setString("pubZdbID", pubZdbID)
-                    .uniqueResult().toString()
+                .setString("zdbID", m.getZdbID())
+                .setString("pubZdbID", pubZdbID)
+                .uniqueResult().toString()
             );
         } else {
             return 0;
@@ -995,9 +993,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 " and str.fishstr_str_zdb_id = :zdbID " +
                 " and  ra.recattrib_source_zdb_id = :pubZdbID " +
                 "")
-                .setString("zdbID", zdbID)
-                .setString("pubZdbID", pubZdbID)
-                .uniqueResult().toString()
+            .setString("zdbID", zdbID)
+            .setString("pubZdbID", pubZdbID)
+            .uniqueResult().toString()
         );
     }
 
@@ -1011,9 +1009,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 " and fish.fish_genotype_zdb_id = :genotypeID " +
                 " and  ra.recattrib_source_zdb_id = :pubZdbID " +
                 "")
-                .setString("genotypeID", genotypeID)
-                .setString("pubZdbID", pubZdbID)
-                .uniqueResult().toString()
+            .setString("genotypeID", genotypeID)
+            .setString("pubZdbID", pubZdbID)
+            .uniqueResult().toString()
         );
     }
 
@@ -1027,8 +1025,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     public int getGenotypePhenotypeRecordAttributions(String genotypeID, String publicationID) {
         Session session = HibernateUtil.currentSession();
         String hql = "select phenox from PhenotypeExperiment phenox where " +
-                " phenox.fishExperiment.fish.genotype.id = :genotypeID and " +
-                " phenox.figure.publication.id = :publicationID ";
+            " phenox.fishExperiment.fish.genotype.id = :genotypeID and " +
+            " phenox.figure.publication.id = :publicationID ";
         Query query = session.createQuery(hql);
         query.setString("genotypeID", genotypeID);
         query.setString("publicationID", publicationID);
@@ -1040,10 +1038,10 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     @SuppressWarnings("unchecked")
     public String getReplacedZdbID(String oldZdbID) {
         List<ReplacementZdbID> replacedAccessionList =
-                (List<ReplacementZdbID>) HibernateUtil.currentSession()
-                        .createCriteria(ReplacementZdbID.class)
-                        .add(Restrictions.eq("oldZdbID", oldZdbID))
-                        .list();
+            (List<ReplacementZdbID>) HibernateUtil.currentSession()
+                .createCriteria(ReplacementZdbID.class)
+                .add(Restrictions.eq("oldZdbID", oldZdbID))
+                .list();
         if (replacedAccessionList != null && replacedAccessionList.size() == 1) {
             return replacedAccessionList.get(0).getReplacementZdbID();
         } else if (replacedAccessionList == null) {
@@ -1065,10 +1063,10 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     public String getNewZdbID(String wdoldZdbID) {
         List<WithdrawnZdbID> replacedAccessionList =
-                (List<WithdrawnZdbID>) HibernateUtil.currentSession()
-                        .createCriteria(WithdrawnZdbID.class)
-                        .add(Restrictions.eq("wdoldZdbID", wdoldZdbID))
-                        .list();
+            (List<WithdrawnZdbID>) HibernateUtil.currentSession()
+                .createCriteria(WithdrawnZdbID.class)
+                .add(Restrictions.eq("wdoldZdbID", wdoldZdbID))
+                .list();
         if (replacedAccessionList != null && replacedAccessionList.size() == 1) {
             return replacedAccessionList.get(0).getWdnewZdbID();
         } else if (replacedAccessionList == null) {
@@ -1101,8 +1099,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                     session.flush();
                 } catch (SQLException exception) {
                     logger.error("could not execute statement in file '" + jdbcStatement.getScriptFile() + "' " +
-                            "and line [" + jdbcStatement.getStartLine() + "," + jdbcStatement.getEndLine() + "]: " +
-                            jdbcStatement.getHumanReadableQueryString(), exception);
+                        "and line [" + jdbcStatement.getStartLine() + "," + jdbcStatement.getEndLine() + "]: " +
+                        jdbcStatement.getHumanReadableQueryString(), exception);
                     logger.error(DbSystemUtil.getLockInfo());
                     throw new RuntimeException(exception);
                 } finally {
@@ -1112,8 +1110,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                         }
                     } catch (SQLException e) {
                         logger.error("could not close statement '" + jdbcStatement.getScriptFile() + "' " +
-                                "                    and line [" + jdbcStatement.getStartLine() + "," + jdbcStatement.getEndLine() + "]: " +
-                                jdbcStatement.getHumanReadableQueryString(), e);
+                            "                    and line [" + jdbcStatement.getStartLine() + "," + jdbcStatement.getEndLine() + "]: " +
+                            jdbcStatement.getHumanReadableQueryString(), e);
                     }
                 }
                 return affectedRows;
@@ -1178,8 +1176,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 }
             } catch (SQLException exception) {
                 logger.error("could not execute statement in file '" + jdbcStatement.getScriptFile() + "' " +
-                        "and line [" + jdbcStatement.getStartLine() + "," + jdbcStatement.getEndLine() + "]: " +
-                        jdbcStatement.getHumanReadableQueryString(), exception);
+                    "and line [" + jdbcStatement.getStartLine() + "," + jdbcStatement.getEndLine() + "]: " +
+                    jdbcStatement.getHumanReadableQueryString(), exception);
                 for (int index = 0; index < batchSize; index++) {
                     int index1 = accumulatedBatchCounter - batchSize + index;
                     logger.error("Record number " + index1 + ", record: " + data.get(index1));
@@ -1196,8 +1194,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                     }
                 } catch (SQLException e) {
                     logger.error("could not close statement '" + jdbcStatement.getScriptFile() + "' " +
-                            "                    and line [" + jdbcStatement.getStartLine() + "," + jdbcStatement.getEndLine() + "]: " +
-                            jdbcStatement.getQuery(), e);
+                        "                    and line [" + jdbcStatement.getStartLine() + "," + jdbcStatement.getEndLine() + "]: " +
+                        jdbcStatement.getQuery(), e);
                 }
                 // find out the individual line that caused the problem.
 /*
@@ -1283,8 +1281,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                         }
                     } catch (SQLException e) {
                         logger.error("could not close statement '" + jdbcStatement.getScriptFile() + "' " +
-                                "                    and line [" + jdbcStatement.getStartLine() + "," + jdbcStatement.getEndLine() + "]: " +
-                                jdbcStatement.getQuery(), e);
+                            "                    and line [" + jdbcStatement.getStartLine() + "," + jdbcStatement.getEndLine() + "]: " +
+                            jdbcStatement.getQuery(), e);
                     }
                 }
             }
@@ -1360,7 +1358,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
             subQuery.bindVariables(resultRecord);
             List<List<String>> c = executeNativeQuery(subQuery);
             if ((!subQuery.isExistsSubquery() && CollectionUtils.isEmpty(c)) ||
-                    (subQuery.isExistsSubquery() && CollectionUtils.isNotEmpty(c))) {
+                (subQuery.isExistsSubquery() && CollectionUtils.isNotEmpty(c))) {
                 if (subQuery.isListSubquery()) {
                     returnResultList.addAll(c);
                 } else {
@@ -1465,13 +1463,13 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     @Override
     public List<String> getPublicationAttributionZdbIdsForType(String microarrayPubZdbID, Marker.Type markerType) {
         String hql = " select distinct pa.dataZdbID from Marker m join m.publications pa " +
-                " where m.markerType.name = :type " +
-                " and pa.publication.zdbID = :pubZdbId  " +
-                " ";
+            " where m.markerType.name = :type " +
+            " and pa.publication.zdbID = :pubZdbId  " +
+            " ";
         return HibernateUtil.currentSession().createQuery(hql)
-                .setString("type", markerType.name())
-                .setString("pubZdbId", microarrayPubZdbID)
-                .list();
+            .setString("type", markerType.name())
+            .setString("pubZdbId", microarrayPubZdbID)
+            .list();
     }
 
     /**
@@ -1540,26 +1538,26 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     @Override
     public List<String> getPublicationAttributionsForPub(String microarrayPub) {
         String hql = " " +
-                "  select p.dataZdbID from Marker m join m.publications p where p.sourceZdbID = :pubZdbIDs " +
-                " ";
+            "  select p.dataZdbID from Marker m join m.publications p where p.sourceZdbID = :pubZdbIDs " +
+            " ";
         return HibernateUtil.currentSession().createQuery(hql)
-                .setString("pubZdbIDs", microarrayPub)
-                .list();
+            .setString("pubZdbIDs", microarrayPub)
+            .list();
     }
 
 
     @Override
     public boolean hasStandardPublicationAttribution(String zdbID, String microarrayPub) {
         String sql = " " +
-                " select count(*) from record_attribution ra " +
-                "where ra.recattrib_data_zdb_id= :zdbID " +
-                "and ra.recattrib_source_zdb_id= :pubZdbID " +
-                "and ra.recattrib_source_type='standard' " +
-                " ";
+            " select count(*) from record_attribution ra " +
+            "where ra.recattrib_data_zdb_id= :zdbID " +
+            "and ra.recattrib_source_zdb_id= :pubZdbID " +
+            "and ra.recattrib_source_type='standard' " +
+            " ";
         int numPubs = Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(sql)
-                .setString("zdbID", zdbID)
-                .setString("pubZdbID", microarrayPub)
-                .uniqueResult().toString());
+            .setString("zdbID", zdbID)
+            .setString("pubZdbID", microarrayPub)
+            .uniqueResult().toString());
 
         return numPubs > 0;
     }
@@ -1567,26 +1565,26 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     @Override
     public boolean hasStandardPublicationAttributionForRelatedMarkers(String zdbID, String microarrayPub) {
         String sql = " " +
-                " select count(*) from (" +
-                "select ra.recattrib_data_zdb_id " +
-                "from record_attribution ra " +
-                "where ra.recattrib_data_zdb_id= :zdbID " +
-                "and ra.recattrib_source_zdb_id= :pubZdbID " +
-                "and ra.recattrib_source_type='standard' " +
-                "union all " +
-                "select mr.mrel_mrkr_1_zdb_id " +
-                " from record_attribution ra  " +
-                " join marker_relationship mr on mr.mrel_mrkr_2_zdb_id=ra.recattrib_data_zdb_id " +
-                " where mr.mrel_mrkr_1_zdb_id=:zdbID " +
-                " and ra.recattrib_source_zdb_id=:pubZdbID " +
-                " and mr.mrel_type in ('gene encodes small segment','gene contains small segment')" +
-                " and ra.recattrib_source_type='standard' " +
-                ") as subquery" +
-                " ";
+            " select count(*) from (" +
+            "select ra.recattrib_data_zdb_id " +
+            "from record_attribution ra " +
+            "where ra.recattrib_data_zdb_id= :zdbID " +
+            "and ra.recattrib_source_zdb_id= :pubZdbID " +
+            "and ra.recattrib_source_type='standard' " +
+            "union all " +
+            "select mr.mrel_mrkr_1_zdb_id " +
+            " from record_attribution ra  " +
+            " join marker_relationship mr on mr.mrel_mrkr_2_zdb_id=ra.recattrib_data_zdb_id " +
+            " where mr.mrel_mrkr_1_zdb_id=:zdbID " +
+            " and ra.recattrib_source_zdb_id=:pubZdbID " +
+            " and mr.mrel_type in ('gene encodes small segment','gene contains small segment')" +
+            " and ra.recattrib_source_type='standard' " +
+            ") as subquery" +
+            " ";
         int numPubs = Integer.valueOf(HibernateUtil.currentSession().createSQLQuery(sql)
-                .setString("zdbID", zdbID)
-                .setString("pubZdbID", microarrayPub)
-                .uniqueResult().toString());
+            .setString("zdbID", zdbID)
+            .setString("pubZdbID", microarrayPub)
+            .uniqueResult().toString());
 
         return numPubs > 0;
     }
@@ -1697,9 +1695,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
                 " and ge.genox_fish_zdb_id = :zdbID " +
                 " and  ra.recattrib_source_zdb_id = :pubZdbID " +
                 "")
-                .setString("zdbID", zdbID)
-                .setString("pubZdbID", pubZdbID)
-                .uniqueResult().toString()
+            .setString("zdbID", zdbID)
+            .setString("pubZdbID", pubZdbID)
+            .uniqueResult().toString()
         );
     }
 
@@ -1715,8 +1713,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     @Override
     public List<Publication> getTermReferences(GenericTerm term, String orderBy) {
         String hql = "select distinct model.publication, model.publication.publicationDate, " +
-                "model.publication.authors  from DiseaseAnnotation as model where " +
-                "model.disease = :term";
+            "model.publication.authors  from DiseaseAnnotation as model where " +
+            "model.disease = :term";
 
         if (orderBy == null || orderBy.equalsIgnoreCase("date")) {
             hql += "     order by model.publication.publicationDate desc";
@@ -1763,8 +1761,8 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     @Override
     public long getDistinctPublicationsByData(String entityID) {
         String hql = "select distinct pubAtt.publication from PublicationAttribution as pubAtt " +
-                "where pubAtt.dataZdbID = :genotypeID AND " +
-                "pubAtt.sourceType = :type ";
+            "where pubAtt.dataZdbID = :genotypeID AND " +
+            "pubAtt.sourceType = :type ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("genotypeID", entityID);
         query.setParameter("type", RecordAttribution.SourceType.STANDARD);
@@ -1888,18 +1886,18 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     @Override
     public void setDisableUpdatesFlag(boolean readonlyMode) {
         Boolean.valueOf(HibernateUtil.currentSession().createSQLQuery("select " +
-                "        zflag_is_on  " +
-                "    from  zdb_flag " +
-                "    where zflag_name='disable updates'").uniqueResult().toString());
+            "        zflag_is_on  " +
+            "    from  zdb_flag " +
+            "    where zflag_name='disable updates'").uniqueResult().toString());
     }
 
     @Override
     public String getWithdrawnZdbID(String oldZdbID) {
         List<WithdrawnZdbID> withdraws =
-                (List<WithdrawnZdbID>) HibernateUtil.currentSession()
-                        .createCriteria(WithdrawnZdbID.class)
-                        .add(Restrictions.eq("wdoldZdbID", oldZdbID))
-                        .list();
+            (List<WithdrawnZdbID>) HibernateUtil.currentSession()
+                .createCriteria(WithdrawnZdbID.class)
+                .add(Restrictions.eq("wdoldZdbID", oldZdbID))
+                .list();
         if (withdraws != null && withdraws.size() == 1) {
             return withdraws.get(0).getWdnewZdbID();
         } else if (withdraws == null) {
@@ -1930,10 +1928,10 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     public List<ControlledVocab> getControlledVocabsForSpeciesByConstruct(Marker construct) {
         Session session = currentSession();
         String hql = "SELECT DISTINCT cv FROM ControlledVocab as cv, " +
-                " ConstructComponent AS cc " +
-                " WHERE cv.zdbID = cc.componentZdbID " +
-                "   AND cv.cvForeignSpecies is not null " +
-                "   AND cc.constructZdbID = :constructId ";
+            " ConstructComponent AS cc " +
+            " WHERE cv.zdbID = cc.componentZdbID " +
+            "   AND cv.cvForeignSpecies is not null " +
+            "   AND cc.constructZdbID = :constructId ";
 
         Query query = session.createQuery(hql);
         query.setParameter("constructId", construct.getZdbID());
@@ -1945,7 +1943,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     public void deletePubProcessingInfo(String zdbID) {
 
         String sql = "delete from PublicationProcessingChecklistEntry where " +
-                " publication.zdbID = :ID ";
+            " publication.zdbID = :ID ";
         final Query query = HibernateUtil.currentSession().createQuery(sql);
         query.setParameter("ID", zdbID);
         query.executeUpdate();
