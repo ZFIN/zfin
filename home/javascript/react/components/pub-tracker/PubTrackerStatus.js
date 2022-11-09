@@ -135,7 +135,7 @@ class PubTrackerStatus extends Component {
 
     readyToSave() {
         const { defaultStatus, defaultLocation, defaultOwner } = this.props;
-        const {status, location, owner} = this.state;
+        const {status, location, owner, resetTopics} = this.state;
 
         const statusChanged = getId(defaultStatus) !== getId(status);
         const locationChanged = getId(defaultLocation) !== getId(location);
@@ -158,13 +158,19 @@ class PubTrackerStatus extends Component {
             (ownerChanged && !locationRequired && !ownerRequired) ||
             (ownerChanged && !locationRequired && ownerSelected) ||
             (ownerChanged && !ownerRequired && locationSelected) ||
-            (ownerChanged && locationSelected && ownerSelected)
+            (ownerChanged && locationSelected && ownerSelected) ||
+            (resetTopics)
         );
     }
 
     isReopening() {
         const { defaultStatus } = this.props;
         const { status } = this.state;
+
+        //always show reset topics checkbox if status is INDEXING (ZFIN-8163)
+        if (status.type === 'INDEXING') {
+            return true;
+        }
 
         const statusChanged = getId(defaultStatus) !== getId(status);
         return statusChanged && defaultStatus.type === 'CLOSED' && status.type !== 'CLOSED';
