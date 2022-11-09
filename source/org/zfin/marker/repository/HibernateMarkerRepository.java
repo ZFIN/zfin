@@ -2024,11 +2024,25 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     public String getABRegID(String zdbID) {
         Session session = HibernateUtil.currentSession();
-        String hql = "select accessionNumber from DBLink where dataZdbID = :dataZdbID and " +
-                " accessionNumber like 'AB%' order by zdbID desc ";
-        return session.createQuery(hql, String.class)
+        String hql = """
+                        SELECT
+                            accessionNumber
+                        FROM
+                            DBLink
+                        WHERE
+                            dataZdbID = :dataZdbID
+                            AND accessionNumber LIKE 'AB%'
+                        ORDER BY
+                            zdbID DESC
+                    """;
+        List<String> resultList = session.createQuery(hql, String.class)
                 .setParameter("dataZdbID", zdbID)
-                .uniqueResult();
+                .setMaxResults(1)
+                .list();
+        if (resultList.isEmpty()) {
+            throw new RuntimeException("No ABReg ID found for " + zdbID);
+        }
+        return resultList.get(0);
     }
 
     public List<LinkDisplay> getMarkerLinkDisplay(String dbLinkId) {
