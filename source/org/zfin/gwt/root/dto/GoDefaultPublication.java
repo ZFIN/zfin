@@ -22,6 +22,8 @@ public enum GoDefaultPublication implements PubEnum {
     GOREF_PAINT("GO_REF:0000033", "ZDB-PUB-110330-1"),
     GOREF_ENSEMBL_NOTINF("GO_REF:0000107","ZDB-PUB-110127-1"),
     GOREF_ADD("GO_REF:0000015", "ZDB-PUB-031118-1"),
+    GOREF_RHEA("GO_REF:0000016", "ZDB-PUB-221108-20"),
+    GOREF_ARBA("GO_REF:0000017", "ZDB-PUB-221108-21"),
     ;
 
     private final String title;
@@ -103,6 +105,8 @@ public enum GoDefaultPublication implements PubEnum {
             goRefPubs.add(GOREF_PAINT);
             goRefPubs.add(GOREF_ADD);
             goRefPubs.add(GOREF_ENSEMBL_NOTINF);
+            goRefPubs.add(GOREF_RHEA);
+            goRefPubs.add(GOREF_ARBA);
         }
         return goRefPubs;
     }
