@@ -27,7 +27,7 @@
                             style="background: ${fp.excitationColorHexFixed}; color: ${fp.textExcitationColorHexFixed}; cursor: default; width: 110px !important;">${fp.excitationLength}
                         (${fp.excitationColor})
                     </button>
-                    <a href='https://www.fpbase.org/protein/${fn:replace((fn:toLowerCase(fp.protein.name)),".", "")}'>Fpbase:${fp.protein.name}</a>
+                    <a href='https://www.fpbase.org/protein/${fn:replace((fn:toLowerCase(fp.protein.ID)),".", "")}'>Fpbase:${fp.protein.name}</a>
                     <c:if test="${!loop.last}"></p></c:if>
                 </c:forEach>
             </c:if>
