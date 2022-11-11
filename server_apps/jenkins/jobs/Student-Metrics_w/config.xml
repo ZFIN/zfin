@@ -32,7 +32,7 @@
       <configuredTriggers>
         <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
           <email>
-            <recipientList>pm@zfin.org</recipientList>
+            <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
             <body>${FILE,path=&quot;$TARGETROOT/server_apps/DB_maintenance/report_data/Student-Metrics_w/statistics.html&quot;}
 
@@ -51,7 +51,7 @@
         </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
         <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
           <email>
-            <recipientList>pm@zfin.org</recipientList>
+            <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
             <body>${FILE,path=&quot;$TARGETROOT/server_apps/DB_maintenance/report_data/Student-Metrics_w/statistics.html&quot;}
 
