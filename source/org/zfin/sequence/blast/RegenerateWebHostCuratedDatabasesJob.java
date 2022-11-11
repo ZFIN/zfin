@@ -26,9 +26,11 @@ public class RegenerateWebHostCuratedDatabasesJob extends AbstractValidateDataRe
         logger.info("validating curated webhost database");
         int exitCode = 0;
         try {
+            HibernateUtil.createTransaction();
             if (MountedWublastBlastService.getInstance().validateCuratedDatabases()) {
                 MountedWublastBlastService.getInstance().regenerateCuratedDatabases();
             }
+            HibernateUtil.flushAndCommitCurrentSession();
         } catch (BlastDatabaseException e) {
             logger.error("failed to validate curated database", e);
             String reportName = jobName + ".errors";
