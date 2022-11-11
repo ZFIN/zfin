@@ -1,6 +1,8 @@
 package org.zfin.ontology;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.zfin.anatomy.DevelopmentStage;
@@ -14,6 +16,8 @@ import java.util.*;
 /**
  * Basic implementation of the Term interface.
  */
+@Setter
+@Getter
 @Entity
 @Table(name = "term")
 public class GenericTerm implements Term<GenericTermRelationship> {
@@ -63,6 +67,12 @@ public class GenericTerm implements Term<GenericTermRelationship> {
             inverseJoinColumns = {@JoinColumn(name = "iit_img_zdb_id",
                     nullable = false, updatable = false)})
     protected Set<Image> images;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "zdb_replaced_data", joinColumns = {
+            @JoinColumn(name = "zrepld_old_zdb_id", nullable = false, updatable = false)},
+            inverseJoinColumns = {@JoinColumn(name = "zrepld_new_zdb_id",
+                    nullable = false, updatable = false)})
+    protected Set<GenericTerm> secondaryMergeTerms;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "term_subset", joinColumns = {
             @JoinColumn(name = "termsub_term_zdb_id", nullable = false, updatable = false)},
@@ -139,78 +149,6 @@ public class GenericTerm implements Term<GenericTermRelationship> {
 
     // These attributes are set during object creation through a service.
     // they are currently not mapped.
-
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public Set<TermDBLink> getDbLinks() {
-        return dbLinks;
-    }
-
-    public void setDbLinks(Set<TermDBLink> dbLinks) {
-        this.dbLinks = dbLinks;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
-
-    public String getTermName() {
-        return termName;
-    }
-
-    public void setTermName(String termName) {
-        this.termName = termName;
-    }
-
-    public String getOboID() {
-        return oboID;
-    }
-
-    public void setOboID(String oboID) {
-        this.oboID = oboID;
-    }
-
-    public void setOntology(Ontology ontology) {
-        this.ontology = ontology;
-    }
-
-    public Ontology getOntology() {
-        return ontology;
-    }
-
-    public boolean isObsolete() {
-        return obsolete;
-    }
-
-    public void setObsolete(boolean obsolete) {
-        this.obsolete = obsolete;
-    }
-
-    public boolean isRoot() {
-        return root;
-    }
-
-    public void setRoot(boolean root) {
-        this.root = root;
-    }
-
-    public boolean isSecondary() {
-        return secondary;
-    }
-
-    public void setSecondary(boolean secondary) {
-        this.secondary = secondary;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
 
     public Set<TermAlias> getAliases() {
         return synonyms;

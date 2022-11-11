@@ -86,14 +86,14 @@ public class GafService {
 
         // get uniprot ReferenceDatabase
         uniprot = sequenceRepository.getZebrafishSequenceReferenceDatabase(
-                ForeignDB.AvailableName.UNIPROTKB
-                , ForeignDBDataType.DataType.POLYPEPTIDE
+            ForeignDB.AvailableName.UNIPROTKB
+            , ForeignDBDataType.DataType.POLYPEPTIDE
         );
     }
 
     public void processEntries(List<GafEntry> gafEntries, GafJobData gafJobData) {
         GafOrganization gafOrganization =
-                markerGoTermEvidenceRepository.getGafOrganization(organizationEnum);
+            markerGoTermEvidenceRepository.getGafOrganization(organizationEnum);
 
         logger.info("processing " + gafEntries.size() + " entries");
         if (gafEntries.size() == 0) {
@@ -139,14 +139,14 @@ public class GafService {
                     if (gafJobData.getNewEntries().contains(annotationToAdd)) {
 
                         throw new GafValidationError("A duplicate entry is being added:" +
-                                FileUtil.LINE_SEPARATOR + annotationToAdd + " from:" +
-                                FileUtil.LINE_SEPARATOR + gafEntry);
+                            FileUtil.LINE_SEPARATOR + annotationToAdd + " from:" +
+                            FileUtil.LINE_SEPARATOR + gafEntry);
                     }
                     String errorMessage = getMarkerGoTermEvidenceRepository().isValidMarkerGoTerm(annotationToAdd);
                     if (errorMessage != null) {
                         throw new GafValidationError(errorMessage +
-                                FileUtil.LINE_SEPARATOR + annotationToAdd + " from:" +
-                                FileUtil.LINE_SEPARATOR + gafEntry);
+                            FileUtil.LINE_SEPARATOR + annotationToAdd + " from:" +
+                            FileUtil.LINE_SEPARATOR + gafEntry);
 
                     }
                     gafJobData.addNewEntry(annotationToAdd);
@@ -170,7 +170,7 @@ public class GafService {
                 }*/
 
                 if (entryDate.after(existing.getModifiedWhen()) &&
-                        !isTermInRestrictedSubset(existing.getEvidenceCode().getCode(), existing.getGoTerm())) {
+                    !isTermInRestrictedSubset(existing.getEvidenceCode().getCode(), existing.getGoTerm())) {
                     existing.setModifiedWhen(entryDate);
                     gafJobData.addUpdateEntry(existing);
                 } else {
@@ -185,7 +185,7 @@ public class GafService {
             ++count;
             if (count % 200 == 0) {
                 logger.info("at " + count + " of " + gafEntries.size() + " done "
-                        + (Math.round((float) count / (float) gafEntries.size() * 100f) + "%"));
+                    + (Math.round((float) count / (float) gafEntries.size() * 100f) + "%"));
             }
 
         } // end of gaf entry for loop
@@ -197,8 +197,8 @@ public class GafService {
         if (uniprot == null) {
             // get uniprot ReferenceDatabase
             uniprot = sequenceRepository.getZebrafishSequenceReferenceDatabase(
-                    ForeignDB.AvailableName.UNIPROTKB
-                    , ForeignDBDataType.DataType.POLYPEPTIDE
+                ForeignDB.AvailableName.UNIPROTKB
+                , ForeignDBDataType.DataType.POLYPEPTIDE
             );
         }
 
@@ -286,7 +286,7 @@ public class GafService {
     }
 
     public MarkerGoTermEvidence generateAnnotation(GafEntry gafEntry, Marker gene, GafOrganization gafOrganization)
-            throws GafValidationError {
+        throws GafValidationError {
         // lookup GO annotation
         // System.out.println(gafEntry.getInferences());
         GenericTerm goTerm = getGoTerm(gafEntry);
@@ -366,14 +366,16 @@ public class GafService {
     }
 
     protected void handleInferences(GafEntry gafEntry, MarkerGoTermEvidence markerGoTermEvidence)
-            throws GafValidationError {
+        throws GafValidationError {
         String inferenceEntry = gafEntry.getInferences();
 
         if (StringUtils.isNotEmpty(inferenceEntry)) {
             GoEvidenceCodeEnum goEvidenceCodeEnum = GoEvidenceCodeEnum.getType(markerGoTermEvidence.getEvidenceCode().getCode());
             String publicationZdbId = markerGoTermEvidence.getSource().getZdbID();
             Set<InferenceGroupMember> inferredFrom = new HashSet<>();
-            Set<String> inferenceSet = new HashSet<>(Arrays.asList(inferenceEntry.split("\\|")));
+            Set<String> inferenceSet = new HashSet<>();
+            inferenceSet.addAll(Arrays.asList(inferenceEntry.split("\\|")));
+            //System.out.println(inferenceSet.size());
             if (!GoEvidenceValidator.isValidCardinality(goEvidenceCodeEnum, inferenceSet)) {
                 throw new GafValidationError(GoEvidenceValidator.generateErrorString(goEvidenceCodeEnum, publicationZdbId), gafEntry);
             }
@@ -384,7 +386,7 @@ public class GafService {
                 if (goEvidenceCodeEnum == GoEvidenceCodeEnum.IGI) {
                     if (InferenceCategory.UNIPROTKB.isType(inference)) {
                         List<MarkerDBLink> markerDBLinks = sequenceRepository.getMarkerDBLinksForAccession(
-                                inference.substring(InferenceCategory.UNIPROTKB.prefix().length()), SequenceService.getUniprotRefDB());
+                            inference.substring(InferenceCategory.UNIPROTKB.prefix().length()), SequenceService.getUniprotRefDB());
                         // if it is one gene, then set that as the prefix
                         if (markerDBLinks != null && markerDBLinks.size() == 1 && markerDBLinks.get(0).getMarker().isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
                             inference = InferenceCategory.ZFIN_GENE.prefix() + markerDBLinks.get(0).getMarker().getZdbID();
@@ -393,16 +395,16 @@ public class GafService {
                 }
                 if (inference == null) {
                     throw new GafValidationError("inference is null " +
-                            " for code " + goEvidenceCodeEnum.name() +
-                            " and pub " + publicationZdbId + " "
-                            , gafEntry);
+                        " for code " + goEvidenceCodeEnum.name() +
+                        " and pub " + publicationZdbId + " "
+                        , gafEntry);
                 }
 
                 if (!GoEvidenceValidator.isInferenceValid(inference, goEvidenceCodeEnum, publicationZdbId)) {
 
                     logger.debug("Invalid inference code[" + inference + "] " +
-                            " for code " + goEvidenceCodeEnum.name() +
-                            " and pub " + publicationZdbId + " "
+                        " for code " + goEvidenceCodeEnum.name() +
+                        " and pub " + publicationZdbId + " "
                     );
 
                 } else {
@@ -418,9 +420,9 @@ public class GafService {
             try {
                 GoEvidenceValidator.validateEvidenceVsPub(goEvidenceCodeEnum, publicationZdbId, inferenceSet.iterator().next());
                 GoEvidenceValidator.validateProteinBinding(goEvidenceCodeEnum, inferenceSet,
-                        markerGoTermEvidence.getGoTerm().getOboID(),
-                        markerGoTermEvidence.getGoTerm().getOntology().getOntologyName(),
-                        markerGoTermEvidence.getFlag());
+                    markerGoTermEvidence.getGoTerm().getOboID(),
+                    markerGoTermEvidence.getGoTerm().getOntology().getOntologyName(),
+                    markerGoTermEvidence.getFlag());
             } catch (ValidationException e) {
                 throw new GafValidationError(e.getMessage(), gafEntry);
             }
@@ -428,7 +430,7 @@ public class GafService {
     }
 
     protected void handleAnnotationExtns(GafEntry gafEntry, MarkerGoTermEvidence markerGoTermEvidence)
-            throws GafValidationError {
+        throws GafValidationError {
 
         String annotationExtns = gafEntry.getAnnotExtn();
 
@@ -459,7 +461,7 @@ public class GafService {
     }
 
     protected void saveAnnoExtns(String annotationExtensionString, MarkerGoTermAnnotationExtnGroup mgtAnnoExtnGroup, GafEntry gafEntry, MarkerGoTermEvidence markerGoTermEvidence)
-            throws GafValidationError {
+        throws GafValidationError {
 
         List<Ontology> ontologies = new ArrayList<>(2);
         ontologies.add(Ontology.ZFIN_RO);
@@ -477,8 +479,9 @@ public class GafService {
         MarkerGoTermAnnotationExtn mgtAnnoExtn = new MarkerGoTermAnnotationExtn(relationTerm.getZdbID(), identifierText);
         mgtAnnoExtn.setAnnotExtnGroupID(mgtAnnoExtnGroup);
         if (identifierText.startsWith("GO")) {
-            validateGoTerm(ontologyRepository.getTermByOboID(identifierText).getOboID(), gafEntry, " GO Term in Column 16");
-            mgtAnnoExtn.setIdentifierTerm(ontologyRepository.getTermByOboID(identifierText).getZdbID());
+            GenericTerm goTerm = ontologyRepository.getTermByOboID(identifierText);
+            GenericTerm realTerm = validateGoTerm(goTerm.getOboID(), gafEntry, " GO Term in Column 16");
+            mgtAnnoExtn.setIdentifierTerm(realTerm.getZdbID());
         }
         if (identifierText.startsWith("ZFIN")) {
             int colonIndex = identifierText.indexOf(":");
@@ -508,7 +511,7 @@ public class GafService {
             } else if (gafEntry.getQualifier().equals("colocalizes_with")) {
                 if (goTerm.getOntology() != Ontology.GO_CC) {
                     throw new GafValidationError(GoEvidenceQualifier.COLOCALIZES_WITH.toString() +
-                            " may only be used with " + Ontology.GO_CC.getCommonName());
+                        " may only be used with " + Ontology.GO_CC.getCommonName());
                 }
                 return GoEvidenceQualifier.COLOCALIZES_WITH;
             } else {
@@ -628,9 +631,7 @@ public class GafService {
                 validateGoTerm(inference, gafEntry, "Inference");
             }
         }
-        GenericTerm goTerm = ontologyRepository.getTermByOboID(gafEntry.getGoTermId());
-        validateGoTerm(gafEntry.getGoTermId(), gafEntry, "GO Term");
-        return goTerm;
+        return validateGoTerm(gafEntry.getGoTermId(), gafEntry, "GO Term");
     }
 
     protected MarkerDBLink getDBLink(GafEntry gafEntry) throws GafValidationError {
@@ -638,10 +639,10 @@ public class GafService {
 
 
         ReferenceDatabase refDB = sequenceRepository.getReferenceDatabase(
-                ForeignDB.AvailableName.UNIPROTKB,
-                ForeignDBDataType.DataType.POLYPEPTIDE,
-                ForeignDBDataType.SuperType.SEQUENCE,
-                Species.Type.ZEBRAFISH);
+            ForeignDB.AvailableName.UNIPROTKB,
+            ForeignDBDataType.DataType.POLYPEPTIDE,
+            ForeignDBDataType.SuperType.SEQUENCE,
+            Species.Type.ZEBRAFISH);
         int colonIndex = proteinID.indexOf(":");
 
         List<MarkerDBLink> proteinDBLinkList = sequenceRepository.getMarkerDBLinksForAccession(proteinID.substring(colonIndex + 1, proteinID.length()), refDB);
@@ -666,7 +667,11 @@ public class GafService {
             throw new GafValidationError("Go term in column [" + columnName + "] must not be obsolete:" + FileUtil.LINE_SEPARATOR + goTerm, gafEntry);
         }
         if (goTerm.isSecondary()) {
-            throw new GafValidationError("Go term in column [" + columnName + "] must not be secondary:" + FileUtil.LINE_SEPARATOR + goTerm, gafEntry);
+            if (CollectionUtils.isEmpty(goTerm.getSecondaryMergeTerms())) {
+                throw new GafValidationError("Go term in column [" + columnName + "] must not be secondary:" + FileUtil.LINE_SEPARATOR + goTerm, gafEntry);
+            } else {
+                goTerm.getSecondaryMergeTerms().iterator().next();
+            }
         }
         return goTerm;
     }
@@ -706,14 +711,14 @@ public class GafService {
     }
 
     protected boolean isMoreSpecificAnnotation(MarkerGoTermEvidence existingMarkerGoTermEvidence, MarkerGoTermEvidence markerGoTermEvidenceToAdd)
-            throws GafValidationError {
+        throws GafValidationError {
 
         return existingMarkerGoTermEvidence.isSameButGo(markerGoTermEvidenceToAdd) &&
-                ontologyRepository.isParentChildRelationshipExist(markerGoTermEvidenceToAdd.getGoTerm(), existingMarkerGoTermEvidence.getGoTerm());
+            ontologyRepository.isParentChildRelationshipExist(markerGoTermEvidenceToAdd.getGoTerm(), existingMarkerGoTermEvidence.getGoTerm());
     }
 
     public void addAnnotation(MarkerGoTermEvidence markerGoTermEvidenceToAdd, GafJobData gafJobData, boolean isInternalLoad)
-            throws GafValidationError {
+        throws GafValidationError {
         // everything seems to be fine, lets try adding some things!
         MarkerGoTermEvidence markerGoTermEvidenceToRemove;
         try {
@@ -860,8 +865,8 @@ public class GafService {
         Set<Subset> subset = term.getSubsets();
         for (Subset subsetT : subset) {
             if (subsetT.getInternalName().equalsIgnoreCase("gocheck_do_not_annotate") ||
-                    (subsetT.getInternalName().equalsIgnoreCase("gocheck_do_not_manually_annotate") &&
-                            !evidenceCode.equals("IEA"))) {
+                (subsetT.getInternalName().equalsIgnoreCase("gocheck_do_not_manually_annotate") &&
+                    !evidenceCode.equals("IEA"))) {
                 return true;
             }
         }

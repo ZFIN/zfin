@@ -41,6 +41,16 @@
         </z:attributeListItem>
     </c:if>
 
+    <c:if test="${term.secondary}">
+        <z:attributeListItem label="Secondary ID:">
+        </z:attributeListItem>
+        <z:attributeListItem label="Merged into">
+            <c:forEach var="term" items="${term.secondaryMergeTerms}">
+                <zfin:link entity="${term}"/>
+            </c:forEach>
+        </z:attributeListItem>
+    </c:if>
+
     <c:if test="${!empty term.images}">
         <z:attributeListItem label="Figures">
             <c:forEach var="image" items="${term.images}">
