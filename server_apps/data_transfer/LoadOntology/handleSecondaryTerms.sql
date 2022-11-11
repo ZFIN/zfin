@@ -33,8 +33,13 @@ update sec_oks
       		       from term
 		       where term_ont_id = sec_id);
 
+delete from sec_oks where prim_zdb_id = '' or sec_zdb_id = '' or prim_zdb_id is null or sec_zdb_id is null;
+
 unload to 'debug'
   select * from sec_oks;
+
+unload to 'debug'
+  select * from sec_oks where sec_zdb_id is not null;
 
 create temp table sec_unload
   (
@@ -77,6 +82,14 @@ update term
   where exists (Select 'x'
 		  from sec_oks
 		  where term_ont_id = sec_id) ;
+
+select sec_zdb_id, prim_zdb_id from sec_oks  where not exists
+    (select 'x' from zdb_replaced_data as d where d.zrepld_new_zdb_id =prim_zdb_id AND d.zrepld_old_zdb_id = sec_zdb_id);
+
+-- create zdb_replaced_data entries for secondary terms
+insert into zdb_replaced_data (zrepld_old_zdb_id, zrepld_new_zdb_id)
+select sec_zdb_id, prim_zdb_id from sec_oks where not exists
+    (select 'x' from zdb_replaced_data as d where d.zrepld_new_zdb_id =prim_zdb_id AND d.zrepld_old_zdb_id = sec_zdb_id);
 
 --unload to term_no_longer_secondary.txt
 --  select term_name, term_ont_id, term_zdb_id
