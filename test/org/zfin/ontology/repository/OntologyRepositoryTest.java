@@ -1,5 +1,6 @@
 package org.zfin.ontology.repository;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.NonUniqueResultException;
@@ -8,7 +9,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.anatomy.DevelopmentStage;
-import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionResult2;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.mutant.PhenotypeStatement;
@@ -65,8 +65,9 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getSecondaryTermInfo() {
         String termID = "ZDB-TERM-091209-29136";
-        Term term = ontologyRepository.getTermByZdbID(termID);
-        Assert.assertNotNull(term);
+        GenericTerm term = ontologyRepository.getTermByZdbID(termID);
+        assertNotNull(term);
+        assertTrue(CollectionUtils.isNotEmpty(term.getSecondaryMergeTerms()));
 
     }
 
@@ -327,7 +328,7 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     @Ignore("Disease ontology issue: uses disease_Ontology as a default namespace but then uses 'doid' " +
-            "as namespaces for some terms. Need to check with the working group")
+        "as namespaces for some terms. Need to check with the working group")
     public void getFirst2Terms() {
         List<String> allTerms = ontologyRepository.getFirstNTermsPerOntology(2);
         assertNotNull(allTerms);
