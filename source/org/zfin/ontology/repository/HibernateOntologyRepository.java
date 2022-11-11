@@ -397,7 +397,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
 	 * @return Generic Term
 	 */
 	public GenericTerm getTermByZdbID(String termZdbID) {
-		return (GenericTerm) HibernateUtil.currentSession().get(GenericTerm.class, termZdbID);
+		return HibernateUtil.currentSession().get(GenericTerm.class, termZdbID);
 	}
 
 	/**

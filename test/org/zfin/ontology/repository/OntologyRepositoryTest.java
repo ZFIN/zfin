@@ -63,6 +63,14 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void getSecondaryTermInfo() {
+        String termID = "ZDB-TERM-091209-29136";
+        Term term = ontologyRepository.getTermByZdbID(termID);
+        Assert.assertNotNull(term);
+
+    }
+
+    @Test
     public void getTermWithDefinitionReference() {
         String anatomyRootID = "ZFA:0000089";
         GenericTerm term = ontologyRepository.getTermByOboID(anatomyRootID);
