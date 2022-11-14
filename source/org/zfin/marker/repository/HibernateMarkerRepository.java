@@ -2024,10 +2024,20 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     public String getABRegID(String zdbID) {
         Session session = HibernateUtil.currentSession();
-        String hql = "select accessionNumber from DBLink where dataZdbID = :dataZdbID and " +
-                " accessionNumber like 'AB%' order by zdbID desc ";
+        String hql = """
+                        SELECT
+                            accessionNumber
+                        FROM
+                            DBLink
+                        WHERE
+                            dataZdbID = :dataZdbID
+                            AND accessionNumber LIKE 'AB%'
+                        ORDER BY
+                            zdbID DESC
+                    """;
         return session.createQuery(hql, String.class)
                 .setParameter("dataZdbID", zdbID)
+                .setMaxResults(1)
                 .uniqueResult();
     }
 
