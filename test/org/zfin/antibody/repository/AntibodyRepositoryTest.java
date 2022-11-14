@@ -1,6 +1,5 @@
 package org.zfin.antibody.repository;
 
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -12,18 +11,15 @@ import org.zfin.anatomy.service.AnatomyService;
 import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyExternalNote;
 import org.zfin.antibody.AntibodyType;
-import org.zfin.antibody.presentation.AntibodyAOStatistics;
 import org.zfin.antibody.presentation.AntibodySearchCriteria;
 import org.zfin.expression.Assay;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
-import org.zfin.expression.FigureType;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.RecordAttribution;
-import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerHistory;
@@ -35,7 +31,6 @@ import org.zfin.ontology.Ontology;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.profile.Organization;
 import org.zfin.profile.SourceUrl;
-import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -46,14 +41,12 @@ import java.util.Set;
 
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.*;
-import static org.zfin.repository.RepositoryFactory.getAntibodyRepository;
-import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
-@SuppressWarnings({"FeatureEnvy"})
 public class AntibodyRepositoryTest extends AbstractDatabaseTest {
 
     /**
-     * Retrieving an antibody by ID'
+     * Retrieving an antibody by ID
      */
     @Test
     public void getAntibodyByID() {
@@ -64,7 +57,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
     }
 
     /**
-     * Retrieving an antibody by ID and a cellular component'
+     * Retrieving an antibody by ID and a cellular component
      */
     @Test
     public void getAntibodyWithCC() {
@@ -139,10 +132,6 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         endStage.setZdbID(stageZdbIDEnd);
         searchCriteria.setStartStage(startStage);
         searchCriteria.setEndStage(endStage);
-/*
-        searchCriteria.setName("anti");
-        searchCriteria.setAntibodyNameFilterType(FilterType.CONTAINS);
-*/
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodies(searchCriteria);
         assertNotNull(abs);
@@ -227,8 +216,8 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getAntibodyByTwoAnatomyTermAndConnectedIncludingSubstructures() {
 
-        // floor plate rhombomere,rhombomere 1
-        String aoTermIds = "ZDB-TERM-100331-851,ZDB-TERM-100331-998,";
+        // brain, dorsal root ganglion
+        String aoTermIds = "ZDB-TERM-100331-8,ZDB-TERM-100331-187,";
 
         AntibodySearchCriteria searchCriteria = new AntibodySearchCriteria();
         searchCriteria.setAnatomyTermIDs(aoTermIds);
@@ -239,28 +228,29 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(abs);
 
         int numberOfAb = getAntibodyRepository().getNumberOfAntibodies(searchCriteria);
-        assertNotNull(numberOfAb);
+        assertTrue(numberOfAb > 1);
 
     }
 
-    // Test search by two ao terms ANDed (no OR supported as this time)
+    // Test search by two ao terms ANDed (no OR supported at this time)
 
     @Test
     public void getAntibodyByTwoAnatomyTermsAnd() {
 
-        // brain,rhombomere
-        String aoTermIds = "ZDB-TERM-100331-851,ZDB-TERM-100331-998,";
+        // brain, dorsal root ganglion
+        String aoTermIds = "ZDB-TERM-100331-8,ZDB-TERM-100331-187,";
 
         AntibodySearchCriteria searchCriteria = new AntibodySearchCriteria();
         searchCriteria.setAnatomyTermIDs(aoTermIds);
-        searchCriteria.setAnatomyTermNames("floor plate rhombomere 1|rhombomere 1");
+        searchCriteria.setAnatomyTermNames("brain|dorsal root ganglion");
         searchCriteria.setIncludeSubstructures(false);
         searchCriteria.setAnatomyEveryTerm(true);
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodies(searchCriteria);
         assertNotNull(abs);
 
-        getAntibodyRepository().getNumberOfAntibodies(searchCriteria);
+        int number = getAntibodyRepository().getNumberOfAntibodies(searchCriteria);
+        assertTrue(number > 5);
     }
 
     @Test
@@ -347,10 +337,8 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getAntibodyByZircOnlyFilter() {
 
-        boolean zircOnly = true;
-
         AntibodySearchCriteria searchCriteria = new AntibodySearchCriteria();
-        searchCriteria.setZircOnly(zircOnly);
+        searchCriteria.setZircOnly(true);
 
         PaginationResult<Antibody> abs = getAntibodyRepository().getAntibodies(searchCriteria);
         assertNotNull(abs);
@@ -358,8 +346,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         int numberOfAb = getAntibodyRepository().getNumberOfAntibodies(searchCriteria);
         assertTrue(numberOfAb > 0);
 
-        zircOnly = false;
-        searchCriteria.setZircOnly(zircOnly);
+        searchCriteria.setZircOnly(false);
         abs = getAntibodyRepository().getAntibodies(searchCriteria);
         assertNotNull(abs);
 
@@ -402,6 +389,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
                     if (alias.getAlias().contains(antigenName)) {
                         foundAB = ab;
                         foundGene = true;
+                        break;
                     }
                 }
             }
@@ -520,6 +508,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
                     if (alias.getAlias().contains(antigenName)) {
                         foundAB = ab;
                         foundGene = true;
+                        break;
                     }
                 }
             }
@@ -697,24 +686,6 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getFigureCount() {
-        // zn-5
-        //String abName = "Ab1-elavl";
-        String abZdbID = "ZDB-ATB-081003-2";
-        Antibody antibody = getAntibodyRepository().getAntibodyByID(abZdbID);
-        // spinal cord
-        GenericTerm aoTerm = getOntologyRepository().getTermByName("spinal cord", Ontology.ANATOMY);
-
-        int numOfFigures = getAntibodyRepository().getNumberOfFiguresPerAoTerm(antibody, aoTerm, FigureType.FIGURE);
-        assertTrue(numOfFigures > 0);
-        assertThat(numOfFigures, greaterThan(0));
-
-        List<Figure> figures = getAntibodyRepository().getFiguresPerAoTerm(antibody, aoTerm);
-        assertNotNull(figures);
-        assertThat(figures.size(), greaterThan(0));
-    }
-
-    @Test
     public void getPublicationsPerAntibodyAndAOTerm() {
         String abName = "Ab2-dag1";
         Antibody antibody = getAntibodyRepository().getAntibodyByName(abName);
@@ -758,8 +729,7 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         ActiveData data = new ActiveData();
         data.setZdbID(externalNoteZdbID);
 
-        InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
-        List<RecordAttribution> rec = ir.getRecordAttributions(data);
+        List<RecordAttribution> rec = getInfrastructureRepository().getRecordAttributions(data);
         assertNotNull(rec);
     }
 
@@ -780,9 +750,8 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         Antibody antibody = getAntibodyRepository().getAntibodyByName(antibodyName);
 
         String name = "Zebrafish International Resource Center (ZIRC)";
-        ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();
-        Organization org = profileRepository.getOrganizationByName(name);
-        MarkerSupplier sup = profileRepository.getSpecificSupplier(antibody, org);
+        Organization org = getProfileRepository().getOrganizationByName(name);
+        MarkerSupplier sup = getProfileRepository().getSpecificSupplier(antibody, org);
         assertNotNull(sup);
         assertNotNull(sup.getOrganization());
     }
@@ -795,17 +764,16 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         if (suppliers != null) {
             for (MarkerSupplier supplier : suppliers) {
                 Organization org = supplier.getOrganization();
-                SourceUrl url = org.getOrganizationOrderURL();
-                String urlString = supplier.getOrderURL();
+                org.getOrganizationOrderURL();
+                supplier.getOrderURL();
 
                 assertNotNull(org);
             }
         }
 
         String name = "Zebrafish International Resource Center (ZIRC)";
-        ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();
-        Organization org = profileRepository.getOrganizationByName(name);
-        MarkerSupplier sup = profileRepository.getSpecificSupplier(antibody, org);
+        Organization org = getProfileRepository().getOrganizationByName(name);
+        MarkerSupplier sup = getProfileRepository().getSpecificSupplier(antibody, org);
         assertNotNull(sup.getOrganization());
     }
 
@@ -873,51 +841,8 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(pubs);
     }
 
-    @Test
-    public void getFiguresPerAntibodyAndAoTerm() {
-        String antibodyName = "Ab-SV2";
-        String aoTermName = "spinal cord";
-        Antibody antibody = getAntibodyRepository().getAntibodyByName(antibodyName);
-        GenericTerm aoTerm = getOntologyRepository().getTermByName(aoTermName, Ontology.ANATOMY);
-
-        List<Figure> figures = getAntibodyRepository().getFiguresPerAoTerm(antibody, aoTerm);
-        assertNotNull(figures);
-    }
-
-    @Test
-    @SuppressWarnings("unchecked")
-    public void getAntibodiesForAoTerm() {
-        String aoTermName = "pancreas";
-        GenericTerm term = new GenericTerm();
-        term.setZdbID("ZDB-TERM-100331-130");
-        term.setTermName(aoTermName);
-
-        Session session = HibernateUtil.currentSession();
-        String hql = "select distinct stat.antibody " +
-                "     from AntibodyAOStatistics stat " +
-                "     where stat.superterm = :aoterm " +
-                "           and stat.subterm = :aoterm";
-        Query query = session.createQuery(hql);
-        query.setParameter("aoterm", term);
-
-        List<AntibodyAOStatistics> list = query.list();
-        assertNotNull(list);
-        assertTrue(list.size() > 0);
-
-        hql = " " +
-                "     from AntibodyAOStatistics stat " +
-                "     where stat.superterm = :aoterm " +
-                "           and stat.subterm = :aoterm";
-        query = session.createQuery(hql);
-        query.setParameter("aoterm", term);
-        List<AntibodyAOStatistics> listStat = query.list();
-        assertNotNull(listStat);
-        assertTrue(list.size() > 0);
-
-    }
-
     /**
-     * Check that antibody lookup by name is case insensitive.
+     * Check that antibody lookup by name is case-insensitive.
      */
     @Test
     public void getAntibodyByName() {

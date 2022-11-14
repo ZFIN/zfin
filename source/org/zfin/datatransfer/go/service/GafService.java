@@ -373,9 +373,7 @@ public class GafService {
             GoEvidenceCodeEnum goEvidenceCodeEnum = GoEvidenceCodeEnum.getType(markerGoTermEvidence.getEvidenceCode().getCode());
             String publicationZdbId = markerGoTermEvidence.getSource().getZdbID();
             Set<InferenceGroupMember> inferredFrom = new HashSet<>();
-            Set<String> inferenceSet = new HashSet<>();
-            inferenceSet.addAll(Arrays.asList(inferenceEntry.split("\\|")));
-            //System.out.println(inferenceSet.size());
+            Set<String> inferenceSet = new HashSet<>(Arrays.asList(inferenceEntry.split("\\|")));
             if (!GoEvidenceValidator.isValidCardinality(goEvidenceCodeEnum, inferenceSet)) {
                 throw new GafValidationError(GoEvidenceValidator.generateErrorString(goEvidenceCodeEnum, publicationZdbId), gafEntry);
             }
