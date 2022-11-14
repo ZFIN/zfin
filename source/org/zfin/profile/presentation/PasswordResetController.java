@@ -60,13 +60,17 @@ public class PasswordResetController {
 
         if (!errorsEncountered) {
             MailSender mailer = AbstractZfinMailSender.getInstance();
+
             String url = "https://"
                     + ZfinPropertiesEnum.DOMAIN_NAME.value()
                     + "/action/profile/password-reset/"
                     + person.getZdbID()
                     + "?resetKey="
                     + person.getAccountInfo().getPasswordResetKey();
-            String body = "<a href=\"" + url + "\">Follow this link</a> to reset your ZFIN password";
+
+            String body = "<a href=\"" + url + "\">Follow this link</a> to reset the password for your ZFIN account " +
+                    "(" + person.getAccountInfo().getLogin() + ").";
+
             boolean sent = mailer.sendHtmlMail(
                     "Reset ZFIN Password",
                     body,
