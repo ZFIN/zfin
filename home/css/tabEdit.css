@@ -47,3 +47,21 @@ div.panes div form {
     background-color: #efefef;
     border-radius: 0px 5px 5px 5px;
 }
+
+/* Style the clipboard functionality on edit person -> generate password */
+#clipboard-actions{
+    margin-left: 10px;
+}
+
+button#copy-generated-password {
+    display: none;
+}
+
+#copy-generated-password-message {
+    display: none;
+    background: white;
+    font-style: italic;
+    border: 1px solid #9696b9;
+    padding: 5px;
+    border-radius: 3px;
+}
