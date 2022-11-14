@@ -2035,6 +2035,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
                         ORDER BY
                             zdbID DESC
                     """;
+
         return session.createQuery(hql, String.class)
                 .setParameter("dataZdbID", zdbID)
                 .setMaxResults(1)
