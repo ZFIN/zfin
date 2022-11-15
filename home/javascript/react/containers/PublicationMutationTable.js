@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import DataTable from '../components/data-table';
 import {EntityLink, EntityList} from '../components/entity';
 
-const PublicationMarkerTable = ({url}) => {
+const PublicationMarkerTable = ({url, title, navigationCounter}) => {
     const columns = [
         {
             label: 'Allele',
@@ -24,12 +24,20 @@ const PublicationMarkerTable = ({url}) => {
             content: row => (<EntityList entities={row.affectedGenes}/>),
         },
     ];
+
+    const handleDataLoadedCount = (data) => {
+        if (navigationCounter && navigationCounter.setCounts && data.total) {
+            navigationCounter.setCounts(title, data.total);
+        }
+    };
+
     return (
         <DataTable
             columns={columns}
             dataUrl={url}
             rowKey={row => row.zdbID}
             pagination={true}
+            onDataLoaded={handleDataLoadedCount}
         />
     );
 };

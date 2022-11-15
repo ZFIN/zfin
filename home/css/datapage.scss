@@ -367,3 +367,8 @@ table.lab-view-summary-table dd a, table.company-view-summary-table dd a {
     display: inline;
     white-space: normal; /* <-- remove for ellipses truncation */
 }
+
+/* Set margin for figure component on publication view page */
+.publication-view #xpresimg_control_box {
+    margin-top: 20px;
+}

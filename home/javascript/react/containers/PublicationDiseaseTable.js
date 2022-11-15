@@ -4,7 +4,7 @@ import DataTable from '../components/data-table';
 import EntityGroupList from '../components/entity/EntityGroupList';
 import TermLink from '../components/entity/TermLink';
 
-const PublicationDiseaseTable = ({url}) => {
+const PublicationDiseaseTable = ({url, title, navigationCounter}) => {
     const columns = [
         {
             label: 'Human Disease',
@@ -26,12 +26,20 @@ const PublicationDiseaseTable = ({url}) => {
             width: '80px',
         },
     ];
+
+    const handleDataLoadedCount = (data) => {
+        if (navigationCounter && navigationCounter.setCounts && data.total) {
+            navigationCounter.setCounts(title, data.total);
+        }
+    };
+
     return (
         <DataTable
             columns={columns}
             dataUrl={url}
             rowKey={row => row.zdbID}
             pagination={true}
+            onDataLoaded={handleDataLoadedCount}
         />
     );
 };

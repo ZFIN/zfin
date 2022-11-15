@@ -3,6 +3,7 @@
 import 'regenerator-runtime/runtime';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import * as navigationCounter from './state/NavigationCounter';
 
 document
     .querySelectorAll('.__react-root')
@@ -12,7 +13,12 @@ document
         //     <div class="__react-root" id="MyContainer__one"></div>
         //     <div class="__react-root" id="MyContainer__two"></div>
         const container = element.id.split('__', 1)[0];
+
+        // this flag indicates that the component needs access to the navigation count state
+        const useNavigationCount = element.classList.contains('__use-navigation-counter');
+        const dataset = useNavigationCount ? {...element.dataset, navigationCounter} : {...element.dataset};
+
         import(`./containers/${container}`)
-            .then(Module => ReactDOM.render(<Module.default {...element.dataset} />, element))
+            .then(Module => ReactDOM.render(<Module.default {...dataset} />, element))
             .catch((error) => console.error('Unable to load container named: ' + container, error));
     });

@@ -4,7 +4,7 @@ import DataTable from '../components/data-table';
 import CommaSeparatedList from '../components/CommaSeparatedList';
 import {EntityLink, EntityList} from '../components/entity';
 
-const AntibodyTable = ({url}) => {
+const AntibodyTable = ({url, title, navigationCounter}) => {
     const columns = [
         {
             label: 'Name',
@@ -36,12 +36,20 @@ const AntibodyTable = ({url}) => {
             ),
         },
     ];
+
+    const handleDataLoadedCount = (data) => {
+        if (navigationCounter && navigationCounter.setCounts && data.total) {
+            navigationCounter.setCounts(title, data.total);
+        }
+    };
+
     return (
         <DataTable
             columns={columns}
             dataUrl={url}
             rowKey={row => row.zdbID}
             pagination={true}
+            onDataLoaded={handleDataLoadedCount}
         />
     );
 };

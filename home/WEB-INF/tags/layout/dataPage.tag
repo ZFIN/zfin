@@ -5,8 +5,9 @@
 <%@ attribute name="entityNameAddendum" required="false" fragment="true" %>
 <%@ attribute name="title" required="false" %>
 <%@ attribute name="pageBar" required="false" %>
-
 <%@ attribute name="additionalBodyClass" required="false" type="java.lang.String" %>
+<%@ attribute name="useNavigationCounter" required="false" type="java.lang.Boolean" %>
+
 <c:set var="additionalBodyClass" value="${(empty additionalBodyClass) ? '' : additionalBodyClass}" />
 
 <jsp:invoke fragment="entityName" var="entityNameValue"/>
@@ -29,9 +30,7 @@
                     </li>
                 </c:if>
                 <c:forEach var="section" items="${sections}">
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link" href="#${zfn:makeDomIdentifier(section)}">${section}</a>
-                    </li>
+                    <z:navigationItem title="${section}" useNavigationCounter="${useNavigationCounter}" />
                 </c:forEach>
             </ul>
         </div>
