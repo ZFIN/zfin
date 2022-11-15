@@ -1,5 +1,7 @@
 package org.zfin.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.zfin.marker.Marker;
 
 import java.util.ArrayList;
@@ -165,6 +167,15 @@ public class ZfinStringUtils {
 
     public static String removeHtmlTags(final String string) {
         return string.replaceAll("<.*?>", "");
+    }
+
+    public static String objectToJson(Object object) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+        }
+        return null;
     }
 
 }

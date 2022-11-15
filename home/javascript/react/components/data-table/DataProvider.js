@@ -37,7 +37,7 @@ const DataProvider = ({
     const data = useTableDataFetch(dataUrl, tableState);
     useEffect(() => {
         if (typeof onDataLoaded === 'function' && !data.loading && !data.rejected && data.value && data.value.total > 0) {
-            onDataLoaded();
+            onDataLoaded(data.value);
         }
         if (typeof onDataLoadedCount === 'function' && !data.loading && !data.rejected && data.value &&
             data.value.supplementalData && data.value.supplementalData.countIncludingChildren) {

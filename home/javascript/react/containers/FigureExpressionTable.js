@@ -7,7 +7,7 @@ import PostComposedEntity from '../components/PostComposedEntity';
 import Figure from '../components/Figure';
 
 
-const FigureExpressionTable = ({url, hideFigureColumn = false}) => {
+const FigureExpressionTable = ({url, hideFigureColumn = false, navigationCounter, title}) => {
 
     const columns = [
         {
@@ -81,12 +81,20 @@ const FigureExpressionTable = ({url, hideFigureColumn = false}) => {
             hidden: hideFigureColumn
         },
     ];
+
+    const handleDataLoadedCount = (data) => {
+        if (navigationCounter && navigationCounter.setCounts && data.total) {
+            navigationCounter.setCounts(title, data.total);
+        }
+    };
+
     return (
         <DataTable
             columns={columns}
             dataUrl={url}
             rowKey={row => row.id}
             pagination={true}
+            onDataLoaded={handleDataLoadedCount}
         />
     );
 };
@@ -94,6 +102,7 @@ const FigureExpressionTable = ({url, hideFigureColumn = false}) => {
 FigureExpressionTable.propTypes = {
     url: PropTypes.string,
     hideFigureColumn: PropTypes.bool,
+    navigationCounter: PropTypes.object,
 };
 
 export default FigureExpressionTable;

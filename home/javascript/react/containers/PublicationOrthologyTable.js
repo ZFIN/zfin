@@ -4,7 +4,7 @@ import DataTable from '../components/data-table';
 import {EntityLink} from '../components/entity';
 import OrthologyTable from './OrthologyTable';
 
-const PublicationOrthologyTable = ({url}) => {
+const PublicationOrthologyTable = ({url, title, navigationCounter}) => {
     const columns = [
         {
             label: 'Gene',
@@ -16,12 +16,20 @@ const PublicationOrthologyTable = ({url}) => {
             content: row => <OrthologyTable geneId={row.marker.zdbID} showDownload={false}/>,
         },
     ];
+
+    const handleDataLoadedCount = (data) => {
+        if (navigationCounter && navigationCounter.setCounts && data.total) {
+            navigationCounter.setCounts(title, data.total);
+        }
+    };
+
     return (
         <DataTable
             columns={columns}
             dataUrl={url}
             rowKey={row => row.zdbID}
             pagination={true}
+            onDataLoaded={handleDataLoadedCount}
         />
     );
 };

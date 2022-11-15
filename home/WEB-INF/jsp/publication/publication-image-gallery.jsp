@@ -1,12 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 
-<style>
-    #xpresimg_control_box {
-        margin-top: 20px;
-    }
-</style>
-
 <c:if test="${!empty imageResults}">
     <div id="xpresimg_all">
         <input type="hidden" name="xpatsel_thumbnail_page" id="xpatsel_thumbnail_page_hidden_field" value="1"/>

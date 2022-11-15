@@ -45,13 +45,14 @@
     </c:otherwise>
 </c:choose>
 
-<z:dataPage sections="${secs}">
+<z:dataPage sections="${secs}" useNavigationCounter="${useNavigationCounter}" additionalBodyClass="publication-view">
 
     <jsp:attribute name="entityName">
         <div data-toggle="tooltip" data-placement="bottom" title="${publication.citation}">
                 ${publication.shortAuthorList}
         </div>
     </jsp:attribute>
+
     <jsp:attribute name="entityNameAddendum">
         <div style="font-size: 12px">
                 ${publication.zdbID}
@@ -97,68 +98,96 @@
         </z:section>
 
         <z:section title="${GENES}">
-            <div class="__react-root" id="PublicationMarkerTable"
-                 data-url="/action/api/publication/${publication.zdbID}/marker"></div>
+            <div class="__react-root __use-navigation-counter" id="PublicationMarkerTable__0"
+                 data-url="/action/api/publication/${publication.zdbID}/marker"
+                 data-title="${GENES}"
+            ></div>
         </z:section>
 
         <z:section title="${FIGURES}" infoPopup="/ZFIN/help_files/expression_help.html">
-            <jsp:include page="publication-image-gallery.jsp"/>
+            <div class="__react-root __use-navigation-counter" id="PublicationFigureDisplay"
+                 data-title="${FIGURES}"
+                 data-images-json="${imagesJson}"
+                 data-publication-id="${publication.zdbID}"
+            ></div>
         </z:section>
 
         <z:section title="${EXPRESSION}">
-            <div class="__react-root" id="FigureExpressionTable"
-                 data-url="/action/api/publication/${publication.zdbID}/expression"></div>
+            <div class="__react-root __use-navigation-counter" id="FigureExpressionTable"
+                 data-url="/action/api/publication/${publication.zdbID}/expression"
+                 data-title="${EXPRESSION}"
+            ></div>
         </z:section>
 
         <z:section title="${PHENOTYPE}">
-            <div class="__react-root" id="FigurePhenotypeTable"
-                 data-url="/action/api/publication/${publication.zdbID}/phenotype"></div>
+            <div class="__react-root __use-navigation-counter" id="FigurePhenotypeTable"
+                 data-url="/action/api/publication/${publication.zdbID}/phenotype"
+                 data-title="${PHENOTYPE}"
+            ></div>
         </z:section>
 
         <z:section title="${MUTATION}">
-            <div class="__react-root" id="PublicationMutationTable"
-                 data-url="/action/api/publication/${publication.zdbID}/features"></div>
+            <div class="__react-root __use-navigation-counter" id="PublicationMutationTable"
+                 data-url="/action/api/publication/${publication.zdbID}/features"
+                 data-title="${MUTATION}"
+            ></div>
         </z:section>
 
         <z:section title="${DISEASE}">
-            <div class="__react-root" id="PublicationDiseaseTable"
-                 data-url="/action/api/publication/${publication.zdbID}/diseases"></div>
+            <div class="__react-root __use-navigation-counter" id="PublicationDiseaseTable"
+                 data-url="/action/api/publication/${publication.zdbID}/diseases"
+                 data-title="${DISEASE}"
+            ></div>
         </z:section>
 
         <z:section title="${STRS}">
-            <div class="__react-root" id="StrTable"
-                 data-url="/action/api/publication/${publication.zdbID}/strs"></div>
+            <div class="__react-root __use-navigation-counter" id="StrTable"
+                 data-url="/action/api/publication/${publication.zdbID}/strs"
+                 data-title="${STRS}"
+            ></div>
         </z:section>
 
         <z:section title="${FISH}">
-            <div class="__react-root" id="PublicationFishTable"
-                 data-url="/action/api/publication/${publication.zdbID}/fish"></div>
+            <div class="__react-root __use-navigation-counter" id="PublicationFishTable"
+                 data-url="/action/api/publication/${publication.zdbID}/fish"
+                 data-title="${FISH}"
+            ></div>
         </z:section>
 
         <z:section title="${ANTIBODIES}" infoPopup="/action/marker/note/antibodies">
-            <div class="__react-root" id="AntibodyTable"
-                 data-url="/action/api/publication/${publication.zdbID}/antibodies"></div>
+            <div class="__react-root __use-navigation-counter" id="AntibodyTable"
+                 data-url="/action/api/publication/${publication.zdbID}/antibodies"
+                 data-title="${ANTIBODIES}"
+            ></div>
         </z:section>
 
         <z:section title="${ORTHOLOGY}">
-            <div class="__react-root" id="PublicationOrthologyTable"
-                 data-url="/action/api/publication/${publication.zdbID}/orthology"></div>
+            <div class="__react-root __use-navigation-counter" id="PublicationOrthologyTable"
+                 data-url="/action/api/publication/${publication.zdbID}/orthology"
+                 data-title="${ORTHOLOGY}"
+            ></div>
         </z:section>
 
         <z:section title="${EFGs}">
-            <div class="__react-root" id="PublicationMarkerTable"
-                 data-url="/action/api/publication/${publication.zdbID}/efgs"></div>
+            <div class="__react-root __use-navigation-counter" id="PublicationMarkerTable__1"
+                 data-url="/action/api/publication/${publication.zdbID}/efgs"
+                 data-title="${EFGs}"
+            ></div>
         </z:section>
 
         <z:section title="${MAPPING}">
-            <div class="__react-root" id="PublicationMappingTable"
-                 data-url="/action/api/publication/${publication.zdbID}/mapping"></div>
+            <div class="__react-root __use-navigation-counter" id="PublicationMappingTable"
+                 data-url="/action/api/publication/${publication.zdbID}/mapping"
+                 data-title="${MAPPING}"
+            ></div>
         </z:section>
 
         <authz:authorize access="hasRole('root')">
             <z:section title="${DIRECTLY_ATTRIBUTED_DATA}">
-                <div class="__react-root" id="PublicationAttributionTable"
-                     data-url="/action/api/publication/${publication.zdbID}/direct-attribution"></div>
+                <div class="__react-root __use-navigation-counter" id="PublicationAttributionTable"
+                     data-url="/action/api/publication/${publication.zdbID}/direct-attribution"
+                     data-title="${DIRECTLY_ATTRIBUTED_DATA}"
+                ></div>
             </z:section>
         </authz:authorize>
 

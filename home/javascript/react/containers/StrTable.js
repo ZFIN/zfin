@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import DataTable from '../components/data-table';
 import {EntityLink} from '../components/entity';
 
-const StrTable = ({url}) => {
+const StrTable = ({url, title, navigationCounter}) => {
     const columns = [
         {
             label: 'Target',
@@ -23,12 +23,20 @@ const StrTable = ({url}) => {
             filterName: 'strName',
         },
     ];
+
+    const handleDataLoadedCount = (data) => {
+        if (navigationCounter && navigationCounter.setCounts && data.total) {
+            navigationCounter.setCounts(title, data.total);
+        }
+    };
+
     return (
         <DataTable
             columns={columns}
             dataUrl={url}
             rowKey={row => row.target.zdbID + row.str.zdbID}
             pagination={true}
+            onDataLoaded={handleDataLoadedCount}
         />
     );
 };
