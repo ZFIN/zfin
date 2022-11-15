@@ -6,8 +6,8 @@
         <h1>Reset Password</h1>
 
         <p>
-            Enter your ZFIN username or email address and we'll send you an email with a link to
-            reset your password.
+            Enter your ZFIN username or email address and we'll send you an email with
+            your username and a link to reset your password.
         </p>
 
         <form action="/action/profile/forgot-password" class="login-box" method="post">

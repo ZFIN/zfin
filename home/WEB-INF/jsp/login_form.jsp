@@ -36,8 +36,8 @@
 
         <div class="card">
             <div class="card-body">
-                <p><a href="/action/profile/forgot-password">Forgot password?</a></p>
-                <div>Need an account? <zfin2:mailTo>Contact us.</zfin2:mailTo></div>
+                <p><a href="/action/profile/forgot-password">Forgot password or username?</a></p>
+                <div>Need an account? <a href="/action/profile/person/submit">Register here.</a></div>
             </div>
         </div>
     </div>
