@@ -179,7 +179,8 @@ public class GafService {
                 }
             } catch (GafValidationError gafValidationError) {
                 logger.debug("Validation error: " + gafValidationError.getMessage() + " for " + gafEntry);
-                gafJobData.addError(gafValidationError);
+                if (!gafValidationError.getMessage().contains("GO_REF:0000043"))
+                    gafJobData.addError(gafValidationError);
             }
 
             ++count;
@@ -592,7 +593,7 @@ public class GafService {
                 throw new GafValidationError("Multiple pubs found for pmid: " + pubMedID);
             }
         }
-        // if special go_ref, than use the alternate pubmed id
+        // if special go_ref, then use the alternate pubmed id
         else if (pubMedID.startsWith(FpInferenceGafParser.GOREF_PREFIX)) {
             if (goRefPubMap.containsKey(pubMedID)) {
                 publication = goRefPubMap.get(pubMedID);
