@@ -346,15 +346,15 @@ public class MarkerLinkController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/link/{linkId}", method = RequestMethod.DELETE, produces = "text/plain")
-    public String deleteMarkerLink(@PathVariable String linkId) {
+    @RequestMapping(value = "/link/{linkId}", method = RequestMethod.DELETE)
+    public LinkDisplay deleteMarkerLink(@PathVariable String linkId) {
+        LinkDisplay linkDisplay = getLinkDisplayById(linkId);
         HibernateUtil.createTransaction();
         DBLink link = sequenceRepository.getDBLinkByID(linkId);
         sequenceRepository.deleteReferenceProteinByDBLinkID(linkId);
         sequenceRepository.removeDBLinks(Collections.singletonList(link));
-//        HibernateUtil.flushAndCommitCurrentSession();
-        throw new RuntimeException("cannot delete dblink as it does not belong to a gene");
-        //return "OK";
+        HibernateUtil.flushAndCommitCurrentSession();
+        return linkDisplay;
     }
 
     @ResponseBody
