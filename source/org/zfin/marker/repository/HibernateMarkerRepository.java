@@ -2035,14 +2035,11 @@ public class HibernateMarkerRepository implements MarkerRepository {
                         ORDER BY
                             zdbID DESC
                     """;
-        List<String> resultList = session.createQuery(hql, String.class)
+
+        return session.createQuery(hql, String.class)
                 .setParameter("dataZdbID", zdbID)
                 .setMaxResults(1)
-                .list();
-        if (resultList.isEmpty()) {
-            throw new RuntimeException("No ABReg ID found for " + zdbID);
-        }
-        return resultList.get(0);
+                .uniqueResult();
     }
 
     public List<LinkDisplay> getMarkerLinkDisplay(String dbLinkId) {
