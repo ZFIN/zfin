@@ -51,3 +51,8 @@ task thisseLegacyImportAnalysisTask(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.thisse.ThisseLegacyImportAnalysisTask'
 }
+
+task uniprotAnalysisTask(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.uniprot.UniProtAnalysisTask'
+}
