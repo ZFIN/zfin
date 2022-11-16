@@ -17,7 +17,7 @@
         <Logger name="com.mchange.v2.c3p0.impl" level="error"/>
         <Logger name="com.mchange" level="error"/>
         <Logger name="org.zfin" level="info"/>
-        <Logger name="org.zfin.datatransfer" level="debug"/>
+        <Logger name="org.zfin.datatransfer" level="info"/>
         <Root level="warn">
             <AppenderRef ref="STDOUT"/>
         </Root>

@@ -22,6 +22,8 @@ public enum InferenceCategory {
     REFSEQ("RefSeq"),
     SP_KW("SP_KW"),
     UNIPROTKB_KW("UniProtKB-KW"),
+    RHEA("RHEA"),
+    ARBA("ARBA"),
     INTERPRO("InterPro"),
     EC("EC"),
     HAMAP("HAMAP"),

@@ -671,7 +671,7 @@ public class GafService {
             if (CollectionUtils.isEmpty(goTerm.getSecondaryMergeTerms())) {
                 throw new GafValidationError("Go term in column [" + columnName + "] must not be secondary:" + FileUtil.LINE_SEPARATOR + goTerm, gafEntry);
             } else {
-                goTerm.getSecondaryMergeTerms().iterator().next();
+                goTerm = goTerm.getSecondaryMergeTerms().iterator().next();
             }
         }
         return goTerm;
