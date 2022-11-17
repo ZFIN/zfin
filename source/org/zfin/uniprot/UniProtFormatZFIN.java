@@ -19,7 +19,7 @@
  *
  */
 
-package	org.biojavax.bio.seq.io;
+package org.zfin.uniprot;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -70,6 +70,10 @@ import org.biojavax.SimpleRichAnnotation;
 import org.biojavax.bio.seq.RichFeature;
 import org.biojavax.bio.seq.RichLocation;
 import org.biojavax.bio.seq.RichSequence;
+import org.biojavax.bio.seq.io.RichSeqIOListener;
+import org.biojavax.bio.seq.io.RichSequenceFormat;
+import org.biojavax.bio.seq.io.UniProtCommentParser;
+import org.biojavax.bio.seq.io.UniProtLocationParser;
 import org.biojavax.bio.taxa.NCBITaxon;
 import org.biojavax.bio.taxa.SimpleNCBITaxon;
 import org.biojavax.ontology.ComparableTerm;
@@ -87,11 +91,11 @@ import org.biojavax.utils.StringTools;
  * @author George Waldon
  * @since 1.5
  */
-public class UniProtFormat extends RichSequenceFormat.HeaderlessFormat {
+public class UniProtFormatZFIN extends RichSequenceFormat.HeaderlessFormat {
 
     // Register this format with the format auto-guesser.
     static {
-        RichSequence.IOTools.registerFormat(UniProtFormat.class);
+        RichSequence.IOTools.registerFormat(UniProtFormatZFIN.class);
     }
 
     /**
