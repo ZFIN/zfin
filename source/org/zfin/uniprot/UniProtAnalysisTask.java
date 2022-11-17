@@ -107,6 +107,7 @@ public class UniProtAnalysisTask extends AbstractScriptWrapper {
 
         //skips parsing of certain sections that otherwise would throw exceptions
         inFormat.setElideFeatures(true);
+        inFormat.setElideReferences(true);
         inFormat.setElideSymbols(true);
 
         FiniteAlphabet alpha = (FiniteAlphabet) AlphabetManager.alphabetForName("PROTEIN");
