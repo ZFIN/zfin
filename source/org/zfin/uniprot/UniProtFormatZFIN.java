@@ -353,7 +353,7 @@ public class UniProtFormat extends RichSequenceFormat.HeaderlessFormat {
                         }
                     }
                     // Set the Taxon
-                    tax = (NCBITaxon)RichObjectFactory.getObject(SimpleNCBITaxon.class, new Object[]{new Integer(taxid)});
+                    tax = (NCBITaxon)RichObjectFactory.getObject(SimpleNCBITaxon.class, new Object[]{Integer.valueOf(taxid)});
                     rlistener.setTaxon(tax);
                     try {
                         if (sciname!=null) tax.addName(NCBITaxon.SCIENTIFIC,sciname);
@@ -467,7 +467,7 @@ public class UniProtFormat extends RichSequenceFormat.HeaderlessFormat {
                     // construct a DBXREF out of the dbname part[0] and accession part[1]
                     String dbname = parts[0].trim();
                     String acc = parts[1].trim();
-                    CrossRef crossRef = (CrossRef)RichObjectFactory.getObject(SimpleCrossRef.class,new Object[]{dbname,acc,new Integer(0)});
+                    CrossRef crossRef = (CrossRef)RichObjectFactory.getObject(SimpleCrossRef.class,new Object[]{dbname,acc,Integer.valueOf(0)});
                     // assign remaining bits of info as additional accession annotations
                     for (int j = 2; j < parts.length; j++) {
                         ComparableTerm t = (ComparableTerm)Terms.getAdditionalAccessionTerm();
@@ -581,9 +581,9 @@ public class UniProtFormat extends RichSequenceFormat.HeaderlessFormat {
                         }
                         DocRef dr = (DocRef)RichObjectFactory.getObject(SimpleDocRef.class,new Object[]{auths,locator,title});
                         // assign either the pubmed or medline to the docref - medline gets priority, then pubmed, then doi
-                        if (medline!=null) dr.setCrossref((CrossRef)RichObjectFactory.getObject(SimpleCrossRef.class,new Object[]{Terms.MEDLINE_KEY, medline, new Integer(0)}));
-                        else if (pubmed!=null) dr.setCrossref((CrossRef)RichObjectFactory.getObject(SimpleCrossRef.class,new Object[]{Terms.PUBMED_KEY, pubmed, new Integer(0)}));
-                        else if (doi!=null) dr.setCrossref((CrossRef)RichObjectFactory.getObject(SimpleCrossRef.class,new Object[]{Terms.DOI_KEY, doi, new Integer(0)}));
+                        if (medline!=null) dr.setCrossref((CrossRef)RichObjectFactory.getObject(SimpleCrossRef.class,new Object[]{Terms.MEDLINE_KEY, medline, Integer.valueOf(0)}));
+                        else if (pubmed!=null) dr.setCrossref((CrossRef)RichObjectFactory.getObject(SimpleCrossRef.class,new Object[]{Terms.PUBMED_KEY, pubmed, Integer.valueOf(0)}));
+                        else if (doi!=null) dr.setCrossref((CrossRef)RichObjectFactory.getObject(SimpleCrossRef.class,new Object[]{Terms.DOI_KEY, doi, Integer.valueOf(0)}));
                         // assign the remarks
                         if (!this.getElideComments()) dr.setRemark(remark);
                         // assign the docref to the bioentry
@@ -944,28 +944,28 @@ public class UniProtFormat extends RichSequenceFormat.HeaderlessFormat {
             else if (n.getTerm().equals(Terms.getGeneNameTerm()))  {
                 String ref = n.getValue();
                 int colon = ref.indexOf(':');
-                Integer refID = new Integer(0);
-                if (colon>=1) refID = new Integer(ref.substring(0,colon));
+                Integer refID = Integer.valueOf(0);
+                if (colon>=1) refID = Integer.valueOf(ref.substring(0,colon));
                 genenames.put(refID, ref.substring(colon+1)); // map of id -> string as only one name per gene
             } else if (n.getTerm().equals(Terms.getGeneSynonymTerm())) {
                 String ref = n.getValue();
                 int colon = ref.indexOf(':');
-                Integer refID = new Integer(0);
-                if (colon>=1) refID = new Integer(ref.substring(0,colon));
+                Integer refID = Integer.valueOf(0);
+                if (colon>=1) refID = Integer.valueOf(ref.substring(0,colon));
                 if (genesynonyms.get(refID)==null) genesynonyms.put(refID, new ArrayList());
                 ((List)genesynonyms.get(refID)).add(ref.substring(colon+1));
             } else if (n.getTerm().equals(Terms.getOrderedLocusNameTerm())) {
                 String ref = n.getValue();
                 int colon = ref.indexOf(':');
-                Integer refID = new Integer(0);
-                if (colon>=1) refID = new Integer(ref.substring(0,colon));
+                Integer refID = Integer.valueOf(0);
+                if (colon>=1) refID = Integer.valueOf(ref.substring(0,colon));
                 if (ordlocnames.get(refID)==null) ordlocnames.put(refID, new ArrayList());
                 ((List)ordlocnames.get(refID)).add(ref.substring(colon+1));
             } else if (n.getTerm().equals(Terms.getORFNameTerm())) {
                 String ref = n.getValue();
                 int colon = ref.indexOf(':');
-                Integer refID = new Integer(0);
-                if (colon>=1) refID = new Integer(ref.substring(0,colon));
+                Integer refID = Integer.valueOf(0);
+                if (colon>=1) refID = Integer.valueOf(ref.substring(0,colon));
                 if (orfnames.get(refID)==null) orfnames.put(refID, new ArrayList());
                 ((List)orfnames.get(refID)).add(ref.substring(colon+1));
             }
@@ -974,36 +974,36 @@ public class UniProtFormat extends RichSequenceFormat.HeaderlessFormat {
             else if (n.getTerm().equals(Terms.getSpeciesTerm())) {
                 String ref = n.getValue();
                 int colon = ref.indexOf(':');
-                Integer refID = new Integer(0);
-                if (colon>=1) refID = new Integer(ref.substring(0,colon));
+                Integer refID = Integer.valueOf(0);
+                if (colon>=1) refID = Integer.valueOf(ref.substring(0,colon));
                 if (speciesRecs.get(refID)==null) speciesRecs.put(refID, new ArrayList());
                 ((List)speciesRecs.get(refID)).add(ref.substring(colon+1));
             } else if (n.getTerm().equals(Terms.getStrainTerm()))  {
                 String ref = n.getValue();
                 int colon = ref.indexOf(':');
-                Integer refID = new Integer(0);
-                if (colon>=1) refID = new Integer(ref.substring(0,colon));
+                Integer refID = Integer.valueOf(0);
+                if (colon>=1) refID = Integer.valueOf(ref.substring(0,colon));
                 if (strainRecs.get(refID)==null) strainRecs.put(refID, new ArrayList());
                 ((List)strainRecs.get(refID)).add(ref.substring(colon+1));
             } else if (n.getTerm().equals(Terms.getTissueTerm()))  {
                 String ref = n.getValue();
                 int colon = ref.indexOf(':');
-                Integer refID = new Integer(0);
-                if (colon>=1) refID = new Integer(ref.substring(0,colon));
+                Integer refID = Integer.valueOf(0);
+                if (colon>=1) refID = Integer.valueOf(ref.substring(0,colon));
                 if (tissueRecs.get(refID)==null) tissueRecs.put(refID, new ArrayList());
                 ((List)tissueRecs.get(refID)).add(ref.substring(colon+1));
             } else if (n.getTerm().equals(Terms.getTransposonTerm()))  {
                 String ref = n.getValue();
                 int colon = ref.indexOf(':');
-                Integer refID = new Integer(0);
-                if (colon>=1) refID = new Integer(ref.substring(0,colon));
+                Integer refID = Integer.valueOf(0);
+                if (colon>=1) refID = Integer.valueOf(ref.substring(0,colon));
                 if (transpRecs.get(refID)==null) transpRecs.put(refID, new ArrayList());
                 ((List)transpRecs.get(refID)).add(ref.substring(colon+1));
             } else if (n.getTerm().equals(Terms.getPlasmidTerm()))  {
                 String ref = n.getValue();
                 int colon = ref.indexOf(':');
-                Integer refID = new Integer(0);
-                if (colon>=1) refID = new Integer(ref.substring(0,colon));
+                Integer refID = Integer.valueOf(0);
+                if (colon>=1) refID = Integer.valueOf(ref.substring(0,colon));
                 if (plasmidRecs.get(refID)==null) plasmidRecs.put(refID, new ArrayList());
                 ((List)plasmidRecs.get(refID)).add(ref.substring(colon+1));
             }
@@ -1108,7 +1108,7 @@ public class UniProtFormat extends RichSequenceFormat.HeaderlessFormat {
             if (rdr.getStart()!=null && rdr.getEnd()!=null && d.getRemark()!=null && !rppat.matcher(d.getRemark()).matches()) StringTools.writeKeyValueLine(RP_LINE_TAG, "SEQUENCE OF "+rdr.getStart()+"-"+rdr.getEnd()+".", 5, this.getLineWidth(), null, RP_LINE_TAG, this.getPrintStream());
             // RC lines
             StringBuffer rcline = new StringBuffer();
-            Integer rank = new Integer(rdr.getRank());
+            Integer rank = Integer.valueOf(rdr.getRank());
             if (speciesRecs.get(rank)!=null) {
                 rcline.append(Terms.SPECIES_KEY);
                 rcline.append("=");
