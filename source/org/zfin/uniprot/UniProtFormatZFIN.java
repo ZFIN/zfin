@@ -348,7 +348,7 @@ public class UniProtFormatZFIN extends RichSequenceFormat.HeaderlessFormat {
                             for (int j = 0; j < parts.length; j++) {
                                 String[] bits = parts[j].split("=");
                                 if (bits[0].equals("NCBI_TaxID")) {
-                                    String[] morebits = bits[1].split(",");
+                                    String[] morebits = bits[1].split("[,; ]");
                                     taxid = Integer.parseInt(morebits[0].trim());
                                 }
                             }
