@@ -1,4 +1,9 @@
 /*
+ * Modification of the UniProtFormat class from the BioJava Legacy project.
+ * https://github.com/biojava/biojava-legacy/blob/38a0466698d37be02a948ec0f1ad139b9616fdd6/core/src/main/java/org/biojavax/bio/seq/io/UniProtFormat.java#L342
+ */
+
+/*
  *                    BioJava development code
  *
  * This code may be freely distributed and modified under the
