@@ -26,6 +26,7 @@ import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -119,25 +120,19 @@ public class UniProtAnalysisTask extends AbstractScriptWrapper {
                 null);
     }
 
-    private List<ImmutablePair<String, String>> getUniProtRefSeqPairs(RichStreamReader sr) throws BioException {
-
-        int count = 0;
+    private List<ImmutablePair<String, String>> getUniProtRefSeqPairs(RichStreamReader richStreamReader) throws BioException {
         List<ImmutablePair<String, String>> UniProtRefSeqPairs = new ArrayList<>();
-        while (sr.hasNext()) {
-            count++;
-            RichSequence seq = sr.nextRichSequence();
+        while (richStreamReader.hasNext()) {
+            RichSequence seq = richStreamReader.nextRichSequence();
 
-            List<RankedCrossRef> filteredRefSeqs = seq.getRankedCrossRefs()
+            UniProtRefSeqPairs.addAll (((Set<RankedCrossRef>)seq.getRankedCrossRefs())
                     .stream()
                     .filter(rankedXref -> "RefSeq".equals(rankedXref.getCrossRef().getDbname()))
-                    .collect(Collectors.toList());
-
-            for ( RankedCrossRef xref : filteredRefSeqs) {
-                UniProtRefSeqPairs.add(new ImmutablePair<>(
-                        seq.getAccession(),
-                        xref.getCrossRef().getAccession().replaceAll("\\.\\d*", "")
-                ));
-            }
+                    .map(rankedXref -> new ImmutablePair<>(
+                            seq.getAccession(),
+                            rankedXref.getCrossRef().getAccession().replaceAll("\\.\\d*", "")
+                    ))
+                    .toList());
         }
         return UniProtRefSeqPairs;
     }
