@@ -80,15 +80,6 @@ public class CloneBean extends MarkerBean {
         this.summaryDBLinkDisplay = summaryDBLinkDisplay;
     }
 
-    public String getDeleteURL() {
-        return "none";
-    }
-
-    public String getEditURL() {
-        String zdbID = getClone().getZdbID();
-        return "/action/marker/marker-edit?zdbID=" + zdbID;
-    }
-
     public void addFakePubs(ReferenceDatabase ensemblDatabase) {
 
         if(hasRealPubs(ensemblDatabase)) return ;

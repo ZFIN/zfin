@@ -81,7 +81,7 @@
                 </ul>
                 <c:choose>
                     <c:when test="${fn:startsWith(zdbIdString, 'ZDB-ATB-')}">
-                        <a href="/action/marker/marker-edit?zdbID=${formBean.zdbIDToDelete}">[Edit this antibody]</a>
+                        <a href="/action/marker/antibody/edit/${formBean.zdbIDToDelete}">[Edit this antibody]</a>
                     </c:when>
                 </c:choose>
             </c:when>

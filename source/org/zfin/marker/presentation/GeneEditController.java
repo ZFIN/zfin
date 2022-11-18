@@ -26,7 +26,7 @@ public class GeneEditController {
     private MarkerService markerService;
 
     @SneakyThrows
-    @RequestMapping(value = "/gene/prototype-edit/{zdbID}")
+    @RequestMapping(value = "/gene/edit/{zdbID}")
     public String getGeneEdit(Model model, @PathVariable String zdbID) {
         Marker gene = markerRepository.getMarkerByID(zdbID);
         model.addAttribute("gene", gene);

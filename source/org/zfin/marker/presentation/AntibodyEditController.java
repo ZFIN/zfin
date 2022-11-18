@@ -27,7 +27,7 @@ public class AntibodyEditController {
     AntibodyRepository antibodyRepository;
 
     @SneakyThrows
-    @RequestMapping("/marker/antibody/prototype-edit/{zdbID}")
+    @RequestMapping("/marker/antibody/edit/{zdbID}")
     public String showAntibodyEdit(Model model, @PathVariable String zdbID) {
         Antibody antibody = antibodyRepository.getAntibodyByID(zdbID);
         if (antibody == null) {

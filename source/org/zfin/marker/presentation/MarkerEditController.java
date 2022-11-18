@@ -47,49 +47,6 @@ public class MarkerEditController {
     @Autowired
     private MessageSource messageSource;
 
-    @RequestMapping("/marker-edit")
-    public String getMarkerEdit(Model model
-            , @RequestParam("zdbID") String zdbID
-    ) throws Exception {
-        logger.info("zdbID: " + zdbID);
-
-        MarkerBean markerBean = new MarkerBean();
-
-        if (zdbID.startsWith("ZDB-TSCRIPT-")) {
-            Transcript transcript = markerRepository.getTranscriptByZdbID(zdbID);
-            if (transcript != null) {
-                markerBean.setMarker(transcript);
-                model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
-                model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.TRANSCRIPT.getEditTitleString() + transcript.getAbbreviation());
-                return "marker/transcript-edit";
-            }
-        }
-
-
-        if (zdbID.startsWith("ZDB-ATB-")) {
-            Antibody antibody = RepositoryFactory.getAntibodyRepository().getAntibodyByID(zdbID);
-            if (antibody != null) {
-                markerBean.setMarker(antibody);
-                model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
-                model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.ANTIBODY.getEditTitleString() + antibody.getAbbreviation());
-                return "marker/antibody-edit";
-            }
-        }
-
-
-        // handle things that mark to clone
-        Clone clone = markerRepository.getCloneById(zdbID);
-        if (clone != null) {
-            markerBean.setMarker(clone);
-            model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
-            model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.CLONE.getEditTitleString() + clone.getAbbreviation());
-            return "marker/clone-edit";
-        }
-
-        model.addAttribute(LookupStrings.ZDB_ID, zdbID);
-        return LookupStrings.RECORD_NOT_FOUND_PAGE;
-    }
-
     private MarkerHistory newMarkerHistory(Marker marker, MarkerHistory.Event event, String reason, String comments) {
         MarkerHistory history = new MarkerHistory();
         history.setComments(comments);

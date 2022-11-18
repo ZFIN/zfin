@@ -36,7 +36,7 @@ public class TranscriptEditController {
 
 
     @SneakyThrows
-    @RequestMapping("/marker/transcript/prototype-edit/{zdbID}")
+    @RequestMapping("/marker/transcript/edit/{zdbID}")
     public String showTranscriptPrototypeEdit(Model model, @PathVariable String zdbID) {
         Transcript transcript = markerRepository.getTranscriptByZdbID(zdbID);
         if (transcript == null) {
