@@ -9,11 +9,8 @@
 <z:dataPage sections="${[DETAILS, NOTES, SUPPLIERS]}">
     <z:dataManagerDropdown>
         <a class="dropdown-item" href="/${antibody.zdbID}">View</a>
-        <a class="dropdown-item" href="/action/marker/marker-edit?zdbID=${antibody.zdbID}">Edit</a>
         <a class="dropdown-item" href="/action/infrastructure/deleteRecord/${antibody.zdbID}">Delete</a>
         <a class="dropdown-item" href="/action/marker/merge?zdbIDToDelete=${antibody.zdbID}">Merge</a>
-        <div class="dropdown-divider"></div>
-        <a class="dropdown-item" href="/action/marker/antibody/prototype-edit/${antibody.zdbID}">Prototype Edit</a>
     </z:dataManagerDropdown>
 
     <h1>Edit ${antibody.zdbID}</h1>

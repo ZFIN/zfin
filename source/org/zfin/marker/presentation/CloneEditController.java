@@ -30,7 +30,7 @@ public class CloneEditController {
     private MarkerService markerService;
 
     @SneakyThrows
-    @RequestMapping(value = "/clone/prototype-edit/{zdbID}")
+    @RequestMapping(value = "/clone/edit/{zdbID}")
     private String showCloneEdit(@PathVariable String zdbID, Model model) {
         Clone clone = markerRepository.getCloneById(zdbID);
         if (clone == null) {
