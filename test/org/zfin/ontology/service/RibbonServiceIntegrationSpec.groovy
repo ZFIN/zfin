@@ -82,7 +82,7 @@ class RibbonServiceIntegrationSpec extends ZfinIntegrationSpec {
     }
 
     @Unroll
-    def "#geneID expression detail response with #termID filter should return more than #numberOfRecords "() {
+    def "#geneID expression detail response with #supertermID filter should return more than #numberOfRecords "() {
         when:
         JsonResultResponse<ExpressionDetail> response = ribbonService.buildExpressionDetail(geneID, supertermID, subtermID, ribbonTermID, includeReporter, onlyInSitu, new Pagination())
 
