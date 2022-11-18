@@ -69,7 +69,7 @@ public class CloneAddController {
         }
 
         String zdbID = clone.getZdbID();
-        return "redirect:/action/marker/marker-edit?zdbID=" + zdbID;
+        return "redirect:/action/marker/clone/edit/" + zdbID;
     }
 
 

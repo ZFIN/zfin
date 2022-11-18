@@ -115,7 +115,7 @@ public class AntibodyCreateController {
             throw new RuntimeException("Error during transaction. Rolled back.", e);
         }
 
-        return "redirect:/action/marker/marker-edit?zdbID=" + newAntibody.getZdbID() + "&antibodyDefPubZdbID=" + antibodyPub.getZdbID();
+        return "redirect:/action/marker/antibody/edit/" + newAntibody.getZdbID() ;
     }
 
     private void createAntibodyWiki(Antibody antibody) {

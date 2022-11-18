@@ -6,7 +6,6 @@
 <z:dataPage sections="${[NOMENCLATURE, RESOURCES, NOTES, MARKER_RELATIONSHIPS, SEQUENCES, ORTHOLOGY]}">
     <z:dataManagerDropdown>
         <a class="dropdown-item" href="/${eregion.zdbID}">View</a>
-        <a class="dropdown-item active" href="/action/marker/gene/edit/${eregion.zdbID}">Edit</a>
     </z:dataManagerDropdown>
 
     <h1>Edit ${eregion.zdbID}</h1>

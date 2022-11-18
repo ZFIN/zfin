@@ -10,10 +10,7 @@
 <z:dataPage sections="${[NOMENCLATURE, NOTES, MARKER_RELATIONSHIPS, DATA, SEQUENCES, SUPPLIERS]}">
     <z:dataManagerDropdown>
         <a class="dropdown-item" href="/${clone.zdbID}">View</a>
-        <a class="dropdown-item" href="/action/marker/marker-edit?zdbID=${clone.zdbID}">Edit</a>
         <a class="dropdown-item" href="/action/marker/merge?zdbIDToDelete=${clone.zdbID}">Merge</a>
-        <div class="dropdown-divider"></div>
-        <a class="dropdown-item" href="/action/marker/clone/prototype-edit/${clone.zdbID}">Prototype Edit</a>
     </z:dataManagerDropdown>
 
     <h1>Edit ${clone.zdbID}</h1>

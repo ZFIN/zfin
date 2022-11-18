@@ -282,56 +282,6 @@ public class GeneViewController {
         return "marker/gene/gene-view";
     }
 
-    @RequestMapping(value = "/gene/edit/{zdbID}")
-    public String getGeneEdit(Model model, @PathVariable String zdbID) throws MarkerNotFoundException {
-        // set base bean
-        GeneBean geneBean = new GeneBean();
-
-        zdbID = markerService.getActiveMarkerID(zdbID);
-        logger.info("zdbID: " + zdbID);
-
-        Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbID);
-        if (!gene.isGenedom() && !gene.isInTypeGroup(Marker.TypeGroup.EFG)) {
-            return "redirect:/" + zdbID;
-        }
-        logger.info("gene: " + gene);
-        geneBean.setMarker(gene);
-
-        MarkerService.createDefaultViewForMarker(geneBean);
-
-        // if it is a gene, also add any clones if related via a transcript
-        MarkerService.pullClonesOntoGeneFromTranscript(geneBean);
-
-
-        // OTHER GENE / MARKER PAGES:
-        // pull vega genes from transcript onto gene page
-        // case 7586
-//        geneBean.setOtherMarkerPages(RepositoryFactory.getMarkerRepository().getMarkerDBLinksFast(gene, DisplayGroup.GroupName.SUMMARY_PAGE));
-        List<LinkDisplay> otherMarkerDBLinksLinks = geneBean.getOtherMarkerPages();
-        otherMarkerDBLinksLinks.addAll(markerRepository.getVegaGeneDBLinksTranscript(
-                gene, DisplayGroup.GroupName.SUMMARY_PAGE));
-        Collections.sort(otherMarkerDBLinksLinks, linkDisplayOtherComparator);
-        geneBean.setOtherMarkerPages(otherMarkerDBLinksLinks);
-
-        // Gene Ontology
-        geneBean.setGeneOntologyOnMarkerBeans(MarkerService.getGeneOntologyOnMarker(gene));
-
-
-        // gene products
-        geneBean.setGeneProductsBean(markerRepository.getGeneProducts(gene.getZdbID()));
-
-        if (gene.getType() == Marker.Type.GENE) {
-            geneBean.setRelatedInteractions(markerRepository.getRelatedMarkerDisplayForTypes(
-                    gene, false, MarkerRelationship.Type.RNAGENE_INTERACTS_WITH_GENE, MarkerRelationship.Type.NTR_INTERACTS_WITH_GENE));
-        }
-
-        model.addAttribute(LookupStrings.FORM_BEAN, geneBean);
-        model.addAttribute("markerHistoryReasonCodes", MarkerHistory.Reason.values());
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.GENE.getEditTitleString() + gene.getAbbreviation());
-
-        return "marker/gene-edit";
-    }
-
     public void setExpressionService(ExpressionService expressionService) {
         this.expressionService = expressionService;
     }

@@ -76,12 +76,6 @@ public class AntibodyMarkerBean extends MarkerBean {
         this.distinctAssayNames = distinctAssayNames;
     }
 
-
-    public String getEditURL() {
-        String zdbID = marker.getZdbID();
-        return "/action/marker/marker-edit?zdbID=" + zdbID;
-    }
-
     public String getDeleteURL() {
         String zdbID = marker.getZdbID();
         return "/action/infrastructure/deleteRecord/" + zdbID;

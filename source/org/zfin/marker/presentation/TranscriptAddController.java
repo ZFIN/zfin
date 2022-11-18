@@ -78,7 +78,7 @@ public class TranscriptAddController {
             Marker marker = TranscriptService.createTranscript(formBean);
             String zdbID = marker.getZdbID();
             HibernateUtil.flushAndCommitCurrentSession();
-            return "redirect:marker-edit?zdbID=" + zdbID;
+            return "redirect:/action/marker/transcript/edit/" + zdbID;
         }
         catch (Exception e) {
             logger.error(e) ;

@@ -2777,7 +2777,8 @@ public class HibernateMarkerRepository implements MarkerRepository {
         Query<Marker> query = HibernateUtil.currentSession().createQuery(hql, Marker.class);
         query.setParameter("feature", feature);
         query.setParameterList("types", (new FeatureMarkerRelationshipTypeEnum[]{FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF}));
-        return query.uniqueResult();
+        List<Marker> list = query.list();
+        return list.get(0);
     }
 
     @Override

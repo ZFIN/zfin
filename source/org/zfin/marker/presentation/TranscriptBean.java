@@ -172,12 +172,4 @@ public class TranscriptBean extends MarkerBean {
         return returnString;
     }
 
-    public String getDeleteURL() {
-        return "none";
-    }
-
-    public String getEditURL() {
-        String zdbID = getTranscript().getZdbID();
-        return "/action/marker/marker-edit?zdbID=" + zdbID;
-    }
 }

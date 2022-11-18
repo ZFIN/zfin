@@ -35,7 +35,7 @@ public class EfgEditController {
     private MarkerService markerService;
 
     @SneakyThrows
-    @RequestMapping("/marker/efg/prototype-edit/{zdbID}")
+    @RequestMapping("/marker/efg/edit/{zdbID}")
     public String showAntibodyEdit(Model model, @PathVariable String zdbID) {
 
         zdbID = markerService.getActiveMarkerID(zdbID);

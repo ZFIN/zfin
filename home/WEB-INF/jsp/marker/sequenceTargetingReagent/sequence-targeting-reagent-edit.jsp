@@ -12,11 +12,8 @@
 <z:dataPage sections="${[NOMENCLATURE, SEQUENCE, TARGETS, SUPPLIERS, NOTES, OTHERPAGES]}">
     <z:dataManagerDropdown>
         <a class="dropdown-item" href="/${str.zdbID}">View</a>
-        <a class="dropdown-item" href="/action/str/${str.zdbID}/edit">Edit</a>
         <a class="dropdown-item" href="/action/marker/merge?zdbIDToDelete=${str.zdbID}">Merge</a>
         <a class="dropdown-item" href="/action/infrastructure/deleteRecord/${str.zdbID}">Delete</a>
-        <div class="dropdown-divider"></div>
-        <a class="dropdown-item" href="/action/marker/str/prototype-edit/${str.zdbID}">Prototype Edit</a>
     </z:dataManagerDropdown>
 
     <h1>Edit ${str.zdbID}</h1>
