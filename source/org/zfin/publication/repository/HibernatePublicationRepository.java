@@ -431,7 +431,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     public Publication getPublication(String zdbID) {
         Session session = HibernateUtil.currentSession();
-        return session.load(Publication.class, zdbID);
+        return session.get(Publication.class, zdbID);
     }
 
     public List<Publication> getPublications(List<String> zdbIDs) {
