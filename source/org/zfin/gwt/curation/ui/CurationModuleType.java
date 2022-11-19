@@ -51,12 +51,6 @@ public enum CurationModuleType {
             return new PhenotypeCurationModule(publicationID);
         }
     },
-    GO_CURATION("GO", "GO") {
-        @Override
-        public ZfinCurationModule initializeModule(String publicationID) {
-            return new GoCurationModule(publicationID);
-        }
-    },
     DISEASE_CURATION("DISEASE", "Disease") {
         @Override
         public ZfinCurationModule initializeModule(String publicationID) {
