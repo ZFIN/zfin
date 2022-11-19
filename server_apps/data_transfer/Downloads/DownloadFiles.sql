@@ -1191,7 +1191,7 @@ create view tgInsertions as
         a.szm_term_ont_id,
         fmrel_mrkr_zdb_id,
         mrkr_name,
-        b.szm_term_ont_id,
+        b.szm_term_ont_id as id2,
         CASE fmrel_type
             WHEN 'is allele of' THEN
                 mrkr_abbrev
