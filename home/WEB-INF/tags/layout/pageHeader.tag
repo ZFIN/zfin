@@ -258,7 +258,7 @@
 
     <div class="right">
         <authz:authorize access="hasRole('root')">
-            <ul class="menu list-unstyled" >
+            <ul class="menu list-unstyled" id="software-branch">
                 <li class="no-border">Version: ${zfn:getSoftwareBranch()}</li>
             </ul>
         </authz:authorize>
