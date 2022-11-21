@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset cmpich:ZFIN-8269
+--changeset cmpich:ZFIN-8296
 
 -- connect new EFG with FP protein
 insert into fpprotein_efg (fe_mrkr_zdb_id, fe_fl_protein_id)
