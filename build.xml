@@ -689,6 +689,10 @@
         <antcall target="deploy-solr"/>
     </target>
 
+    <target name="dirtycopy" depends="compile"
+            description="Like dirtydeploy, but without npmBuild or deploy-solr">
+        <copyWebApp from="${web.dir}" to="${home.target}"/>
+    </target>
 
     <target name="copy-to-pre-release" description="Copies built files to pre-release area">
         <!-- move non-binary files in order to not replace any characters in Binary files -->

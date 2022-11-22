@@ -20,9 +20,7 @@ import org.zfin.framework.ComparatorCreator;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.featureflag.FeatureFlagEnum;
 import org.zfin.framework.featureflag.FeatureFlags;
-import org.zfin.framework.presentation.LookupStrings;
-import org.zfin.framework.presentation.PaginationBean;
-import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.framework.presentation.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
@@ -55,8 +53,10 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.StringEscapeUtils.escapeXml;
+import static org.zfin.profile.UserService.isRootUser;
 import static org.zfin.repository.RepositoryFactory.getFigureRepository;
 import static org.zfin.util.ZfinStringUtils.objectToJson;
+import static org.zfin.util.servlet.ServletService.isAuthenticated;
 
 @Controller
 @RequestMapping("/publication")
@@ -127,8 +127,11 @@ public class PublicationViewController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication));
         model.addAttribute("relatedData", relatedDataService.getXrefsLinks(publication.getZdbID(), "Publication", null));
 
-        model.addAttribute("useNavigationCounter",
-                FeatureFlags.isFlagEnabled(FeatureFlagEnum.USE_NAVIGATION_COUNTER));
+        //set up the menu for the left hand navigation
+        PublicationNavigationMenu navigationMenu = new PublicationNavigationMenu();
+        navigationMenu.setRoot(isRootUser());
+        navigationMenu.setModel(model);
+        model.addAttribute("navigationMenu", navigationMenu);
 
         return "publication/publication-view";
     }

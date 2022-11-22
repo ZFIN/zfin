@@ -1,51 +1,27 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
-
 <jsp:useBean id="publication" class="org.zfin.publication.Publication" scope="request"/>
+<%@ page import="org.zfin.framework.presentation.NavigationMenuOptions" %>
 
-<c:set var="SUMMARY" value="Summary"/>
-<c:set var="ABSTRACT" value="Abstract"/>
-<c:set var="ZEBRASHARE" value="Zebrashare Submission Details"/>
-<c:set var="FIGURES" value="Figures"/>
-<c:set var="GENES" value="Genes / Markers"/>
-<c:set var="STRS" value="Sequence Targeting Reagents"/>
-<c:set var="ANTIBODIES" value="Antibodies"/>
-<c:set var="EFGs" value="Engineered Foreign Genes"/>
-<c:set var="EXPRESSION" value="Expression"/>
-<c:set var="PHENOTYPE" value="Phenotype"/>
-<c:set var="MUTATION" value="Mutation and Transgenics"/>
-<c:set var="MAPPING" value="Mapping"/>
-<c:set var="FISH" value="Fish"/>
-<c:set var="DISEASE" value="Human Disease / Model Data"/>
-<c:set var="ORTHOLOGY" value="Orthology"/>
-<c:set var="DIRECTLY_ATTRIBUTED_DATA" value="Directly Attributed Data"/>
-<c:set var="ERRATA" value="Errata and Notes"/>
+<%--Create shorter variable names for the enum values of navigation menu options / section titles from enum--%>
+<c:set var="SUMMARY" value="${NavigationMenuOptions.SUMMARY.value}"/>
+<c:set var="ABSTRACT" value="${NavigationMenuOptions.ABSTRACT.value}"/>
+<c:set var="ERRATA" value="${NavigationMenuOptions.ERRATA.value}"/>
+<c:set var="GENES" value="${NavigationMenuOptions.GENES.value}"/>
+<c:set var="FIGURES" value="${NavigationMenuOptions.FIGURES.value}"/>
+<c:set var="EXPRESSION" value="${NavigationMenuOptions.EXPRESSION.value}"/>
+<c:set var="PHENOTYPE" value="${NavigationMenuOptions.PHENOTYPE.value}"/>
+<c:set var="MUTATION" value="${NavigationMenuOptions.MUTATION.value}"/>
+<c:set var="DISEASE" value="${NavigationMenuOptions.DISEASE.value}"/>
+<c:set var="STRS" value="${NavigationMenuOptions.STRS.value}"/>
+<c:set var="FISH" value="${NavigationMenuOptions.FISH.value}"/>
+<c:set var="ANTIBODIES" value="${NavigationMenuOptions.ANTIBODIES.value}"/>
+<c:set var="ORTHOLOGY" value="${NavigationMenuOptions.ORTHOLOGY.value}"/>
+<c:set var="EFGs" value="${NavigationMenuOptions.EFGs.value}"/>
+<c:set var="MAPPING" value="${NavigationMenuOptions.MAPPING.value}"/>
+<c:set var="DIRECTLY_ATTRIBUTED_DATA" value="${NavigationMenuOptions.DIRECTLY_ATTRIBUTED_DATA.value}"/>
+<c:set var="ZEBRASHARE" value="${NavigationMenuOptions.ZEBRASHARE.value}"/>
 
-<c:set var="secs"/>
-
-<c:choose>
-    <c:when test="${not empty publication.zebrashareEditors}">&nbsp;
-        <authz:authorize access="isAuthenticated()">
-            <c:set var="secs"
-                   value="${[SUMMARY, ABSTRACT, GENES, FIGURES, EXPRESSION, PHENOTYPE, MUTATION, DISEASE, STRS, FISH, ANTIBODIES, ORTHOLOGY, EFGs, MAPPING, DIRECTLY_ATTRIBUTED_DATA, ERRATA, ZEBRASHARE]}"/>
-        </authz:authorize>
-        <authz:authorize access="!isAuthenticated()">
-            <c:set var="secs"
-                   value="${[SUMMARY, ABSTRACT, GENES, FIGURES, EXPRESSION, PHENOTYPE, MUTATION, DISEASE, STRS, FISH, ANTIBODIES, ORTHOLOGY, EFGs, MAPPING, ERRATA, ZEBRASHARE]}"/>
-        </authz:authorize>
-    </c:when>
-    <c:otherwise>
-        <authz:authorize access="isAuthenticated()">
-            <c:set var="secs"
-                   value="${[SUMMARY, ABSTRACT, GENES, FIGURES, EXPRESSION, PHENOTYPE, MUTATION, DISEASE, STRS, FISH, ANTIBODIES, ORTHOLOGY, EFGs, MAPPING, DIRECTLY_ATTRIBUTED_DATA, ERRATA]}"/>
-        </authz:authorize>
-        <authz:authorize access="!isAuthenticated()">
-            <c:set var="secs"
-                   value="${[SUMMARY, ABSTRACT, GENES, FIGURES, EXPRESSION, PHENOTYPE, MUTATION, DISEASE, STRS, FISH, ANTIBODIES, ORTHOLOGY, EFGs, MAPPING, ERRATA]}"/>
-        </authz:authorize>
-    </c:otherwise>
-</c:choose>
-
-<z:dataPage sections="${secs}" useNavigationCounter="${useNavigationCounter}" additionalBodyClass="publication-view">
+<z:dataPage sections="${[]}" navigationMenu="${navigationMenu}" additionalBodyClass="publication-view">
 
     <jsp:attribute name="entityName">
         <div data-toggle="tooltip" data-placement="bottom" title="${publication.citation}">
@@ -84,7 +60,6 @@
     </jsp:attribute>
 
     <jsp:body>
-
         <div id="${zfn:makeDomIdentifier(SUMMARY)}">
             <div class="small text-uppercase text-muted">PUBLICATION</div>
             <h1>${publication.title}</h1>
@@ -95,6 +70,11 @@
             <zfin2:subsection title="" test="${not empty abstractText}" showNoData="true">
                 ${abstractText}
             </zfin2:subsection>
+        </z:section>
+
+        <z:section title="${ERRATA}"
+                   navigationMenu="${navigationMenu}">
+            ${publication.errataAndNotes}
         </z:section>
 
         <z:section title="${GENES}">
@@ -182,28 +162,18 @@
             ></div>
         </z:section>
 
-        <authz:authorize access="hasRole('root')">
-            <z:section title="${DIRECTLY_ATTRIBUTED_DATA}">
-                <div class="__react-root __use-navigation-counter" id="PublicationAttributionTable"
+        <z:section title="${DIRECTLY_ATTRIBUTED_DATA}" navigationMenu="${navigationMenu}">
+            <div class="__react-root __use-navigation-counter" id="PublicationAttributionTable"
                      data-url="/action/api/publication/${publication.zdbID}/direct-attribution"
                      data-title="${DIRECTLY_ATTRIBUTED_DATA}"
                 ></div>
-            </z:section>
-        </authz:authorize>
-
-        <z:section title="${ERRATA}">
-            ${publication.errataAndNotes}
         </z:section>
 
-        <authz:authorize access="hasRole('root')">
-            <c:if test="${not empty publication.zebrashareEditors}">
-                <z:section title="${ZEBRASHARE}">
-                    <zfin2:subsection title="" showNoData="true">
-                        <jsp:include page="publication-zebrashare.jsp"/>
-                    </zfin2:subsection>
-                </z:section>
-            </c:if>
-        </authz:authorize>
+        <z:section title="${ZEBRASHARE}" navigationMenu="${navigationMenu}">
+            <zfin2:subsection title="" showNoData="true">
+                <jsp:include page="publication-zebrashare.jsp"/>
+            </zfin2:subsection>
+        </z:section>
 
     </jsp:body>
 

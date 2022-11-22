@@ -37,8 +37,14 @@ body.data-page {
         width: 100%;
     }
 }
+
+$left-nav-width: 220px;
+$left-nav-count-width: 70px;
+$left-nav-text-width: $left-nav-width - $left-nav-count-width;
+
 .data-page-nav-container {
-    width: 200px;
+
+    width: $left-nav-width;
     flex-shrink: 0;
     background: white;
     z-index: 1;
@@ -59,6 +65,16 @@ body.data-page {
         border-radius: 0;
         color: $primary;
     }
+
+    .with-counts .nav-text {
+        display: inline-block;
+        width: $left-nav-text-width;
+    }
+
+    .with-counts .nav-count {
+        float: right;
+    }
+
 }
 
 .data-page-content-container {
