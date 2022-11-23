@@ -34,7 +34,5 @@ require('./str-details.directive');
 require('./str-sequence.directive');
 
 require('./author-linking');
-require('./editMarker');
 require('./nomenclature');
-require('./ortho-edit');
 require('./sequence-information-edit');
