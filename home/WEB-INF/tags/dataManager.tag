@@ -19,8 +19,6 @@
 
 <%@ attribute name="isOwner" type="java.lang.Boolean" rtexprvalue="true" description="Determines if owner."
               required="false" %>
-<%@ attribute name="editMarker" type="java.lang.Boolean" rtexprvalue="true" description="This is the marker edit link"
-              required="false"%>
 
 
 <%-- default showLastUpdate to false --%>
@@ -52,7 +50,7 @@
             <zfin2:dataManagerPrivileged zdbID="${zdbID}" editURL="${editURL}" editLinkText="${editLinkText}"
                                          deleteURL="${deleteURL}" linkURL="${linkURL}" curateURL="${curateURL}" viewURL="${viewURL}"
                                          mergeURL="${mergeURL}" trackURL="${trackURL}" oboID="${oboID}"
-                                         showLastUpdate="${showLastUpdate}" editMarker="${editMarker}"
+                                         showLastUpdate="${showLastUpdate}"
                                          correspondenceURL="${correspondenceURL}" prototypeURL="${prototypeURL}" />
         </authz:authorize>
         <authz:authorize access="hasRole('submit')">
