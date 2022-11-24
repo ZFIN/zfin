@@ -41,6 +41,8 @@ const PublicationMappingTable = ({url, title, navigationCounter}) => {
 
 PublicationMappingTable.propTypes = {
     url: PropTypes.string,
+    title: PropTypes.string,
+    navigationCounter: PropTypes.object,
 };
 
 export default PublicationMappingTable;

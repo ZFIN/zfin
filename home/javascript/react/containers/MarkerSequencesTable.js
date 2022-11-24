@@ -101,7 +101,7 @@ const MarkerSequencesTable = ({markerId, showSummary}) => {
     return (
         <>
             {showSummary && hasData && (
-                <DataTableSummaryToggle detailLabel='All Sequences' showPopup={summary} onChange={setSummary}/>
+                <DataTableSummaryToggle childrenLabel='All Sequences' showPopup={summary} onChange={setSummary}/>
             )}
             <DataTable
                 columns={columns}

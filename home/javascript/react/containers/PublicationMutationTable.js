@@ -44,6 +44,8 @@ const PublicationMarkerTable = ({url, title, navigationCounter}) => {
 
 PublicationMarkerTable.propTypes = {
     url: PropTypes.string,
+    title: PropTypes.string,
+    navigationCounter: PropTypes.object,
 };
 
 export default PublicationMarkerTable;
