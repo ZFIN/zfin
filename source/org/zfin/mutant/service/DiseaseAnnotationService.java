@@ -85,26 +85,26 @@ public class DiseaseAnnotationService extends AllianceService {
         Fish fish = damo.getFishExperiment().getFish();
         AGMDiseaseAnnotationDTO annotation = new AGMDiseaseAnnotationDTO();
         annotation.setDataProvider("ZFIN");
-        annotation.setCreatedBy("ZFIN:curator");
-        annotation.setUpdatedBy("ZFIN:curator");
+        annotation.setCreatedByCurie("ZFIN:curator");
+        annotation.setUpdatedByCurie("ZFIN:curator");
         //annotation.setModifiedBy("ZFIN:curator");
 //            annotation.setModEntityId(damo.getDiseaseAnnotation().getZdbID());
-        annotation.setDiseaseRelation(RelationshipDTO.IS_MODEL_OF);
-        annotation.setSubject("ZFIN:" + fish.getZdbID());
+        annotation.setDiseaseRelationName(RelationshipDTO.IS_MODEL_OF);
+        annotation.setAgmCurie("ZFIN:" + fish.getZdbID());
         annotation.setDateUpdated(format(damo.getDiseaseAnnotation().getZdbID()));
 
-        annotation.setObject(damo.getDiseaseAnnotation().getDisease().getOboID());
+        annotation.setDoTermCurie(damo.getDiseaseAnnotation().getDisease().getOboID());
 
         List<String> ecoTerms = ZfinAllianceConverter.convertEvidenceCodes(damo.getDiseaseAnnotation().getEvidenceCode()).stream()
                 .map(ECOTerm::getCurie).collect(toList());
-        annotation.setEvidenceCodes(ecoTerms);
-        annotation.setSingleReference(getSingleReference(damo.getDiseaseAnnotation().getPublication()));
+        annotation.setEvidenceCodeCuries(ecoTerms);
+        annotation.setReferenceCurie(getSingleReference(damo.getDiseaseAnnotation().getPublication()));
 
         org.alliancegenome.curation_api.model.ingest.dto.ConditionRelationDTO condition = populateExperimentConditions(damo.getFishExperiment());
 //        org.alliancegenome.curation_api.model.ingest.dto.ConditionRelationDTO condition =new ConditionRelationDTO();
         condition.setHandle(damo.getFishExperiment().getExperiment().getName().replace("_", ""));
-        condition.setSingleReference(getSingleReference(damo.getDiseaseAnnotation().getPublication()));
-        annotation.setConditionRelations(List.of(condition));
+        condition.setReferenceCurie(getSingleReference(damo.getDiseaseAnnotation().getPublication()));
+        annotation.setConditionRelationDtos(List.of(condition));
         return annotation;
     }
 
@@ -127,25 +127,25 @@ public class DiseaseAnnotationService extends AllianceService {
         org.alliancegenome.curation_api.model.ingest.dto.ConditionRelationDTO relation = new org.alliancegenome.curation_api.model.ingest.dto.ConditionRelationDTO();
         if (fishExperiment.getExperiment() != null) {
             List<ExperimentCondition> allConditions = getMutantRepository().getExperimentConditions(fishExperiment.getExperiment());
-            relation.setConditionRelationType("has_condition");
+            relation.setConditionRelationTypeName("has_condition");
             List<ExperimentalConditionDTO> expconds = new ArrayList<>();
             for (ExperimentCondition condition : allConditions) {
                 ExperimentalConditionDTO expcond = new ExperimentalConditionDTO();
                 String conditionStatement = condition.getZecoTerm().getTermName();
                 if (condition.getAoTerm() != null) {
                     conditionStatement = conditionStatement + " " + condition.getAoTerm().getTermName();
-                    expcond.setConditionAnatomy(condition.getAoTerm().getOboID());
+                    expcond.setConditionAnatomyCurie(condition.getAoTerm().getOboID());
                 }
                 if (condition.getChebiTerm() != null) {
-                    expcond.setConditionChemical(condition.getChebiTerm().getOboID());
+                    expcond.setConditionChemicalCurie(condition.getChebiTerm().getOboID());
                     conditionStatement = conditionStatement + " " + condition.getChebiTerm().getTermName();
                 }
                 if (condition.getGoCCTerm() != null) {
-                    expcond.setConditionGeneOntology(condition.getGoCCTerm().getOboID());
+                    expcond.setConditionGeneOntologyCurie(condition.getGoCCTerm().getOboID());
                     conditionStatement = conditionStatement + " " + condition.getGoCCTerm().getTermName();
                 }
                 if (condition.getTaxaonymTerm() != null) {
-                    expcond.setConditionTaxon(condition.getTaxaonymTerm().getOboID());
+                    expcond.setConditionTaxonCurie(condition.getTaxaonymTerm().getOboID());
                     conditionStatement = conditionStatement + " " + condition.getTaxaonymTerm().getTermName();
                 }
                 populateConditionClass(expcond, condition);
@@ -155,7 +155,7 @@ public class DiseaseAnnotationService extends AllianceService {
 */
                 expconds.add(expcond);
             }
-            relation.setConditions(expconds);
+            relation.setConditionDtos(expconds);
 
         }
         return relation;
@@ -163,14 +163,14 @@ public class DiseaseAnnotationService extends AllianceService {
 
     private static void populateConditionClass(ExperimentalConditionDTO expcond, ExperimentCondition condition) {
         String oboID = condition.getZecoTerm().getOboID();
-        if (DiseaseAnnotationLinkMLInfo.highLevelConditionTerms.stream().map(GenericTerm::getOboID).collect(toList()).contains(oboID)) {
-            expcond.setConditionClass(oboID);
+        if (DiseaseAnnotationLinkMLInfo.highLevelConditionTerms.stream().map(GenericTerm::getOboID).toList().contains(oboID)) {
+            expcond.setConditionClassCurie(oboID);
         } else {
             Optional<GenericTerm> highLevelterm = DiseaseAnnotationLinkMLInfo.highLevelConditionTerms.stream().filter(parentTerm -> getOntologyRepository().isParentChildRelationshipExist(parentTerm, condition.getZecoTerm()))
                     .findFirst();
             if (highLevelterm.isPresent()) {
-                expcond.setConditionClass(highLevelterm.get().getOboID());
-                expcond.setConditionId(oboID);
+                expcond.setConditionClassCurie(highLevelterm.get().getOboID());
+                expcond.setConditionIdCurie(oboID);
             }
         }
     }
