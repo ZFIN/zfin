@@ -58,8 +58,8 @@ public class AlleleLinkMLInfo extends LinkMLInfo {
                 dto.setSymbol(feature.getAbbreviation());
                 dto.setName(feature.getName());
                 dto.setInternal(false);
-                dto.setCreatedBy("ZFIN:CURATOR");
-                dto.setTaxon(ZfinDTO.taxonId);
+                dto.setCreatedByCurie("ZFIN:CURATOR");
+                dto.setTaxonCurie(ZfinDTO.taxonId);
                 dto.setCurie("ZFIN:" + feature.getZdbID());
                 if (feature.getFtrEntryDate() != null) {
                     dto.setDateCreated(format(feature.getFtrEntryDate()));
@@ -67,7 +67,7 @@ public class AlleleLinkMLInfo extends LinkMLInfo {
                     GregorianCalendar date = ActiveData.getDateFromId(feature.getZdbID());
                     dto.setDateCreated(format(date));
                 }
-                dto.setReferences(getReferencesById(feature.getZdbID()));
+                dto.setReferenceCuries(getReferencesById(feature.getZdbID()));
                 if (feature.getSingleRelatedGenotype() != null) {
                     dto.setIsExtinct(feature.getSingleRelatedGenotype().isExtinct());
                 }

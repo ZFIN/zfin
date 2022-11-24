@@ -61,8 +61,8 @@ public class FishLinkMLInfo extends AbstractScriptWrapper {
                 .map(fish -> {
                     AffectedGenomicModelDTO dto = new AffectedGenomicModelDTO();
                     dto.setName(fish.getName());
-                    dto.setCreatedBy("ZFIN:CURATOR");
-                    dto.setTaxon(ZfinDTO.taxonId);
+                    dto.setCreatedByCurie("ZFIN:CURATOR");
+                    dto.setTaxonCurie(ZfinDTO.taxonId);
                     dto.setCurie("ZFIN:" + fish.getZdbID());
                     GregorianCalendar date = ActiveData.getDateFromId(fish.getZdbID());
                     dto.setDateCreated(format(date));

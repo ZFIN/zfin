@@ -55,13 +55,13 @@ public class LinkMLInfo extends AbstractScriptWrapper {
     private void populateConditionClass(ExperimentalConditionDTO expcond, ExperimentCondition condition) {
         String oboID = condition.getZecoTerm().getOboID();
         if (highLevelConditionTerms.stream().map(GenericTerm::getOboID).toList().contains(oboID)) {
-            expcond.setConditionClass(oboID);
+            expcond.setConditionClassCurie(oboID);
         } else {
             Optional<GenericTerm> highLevelterm = highLevelConditionTerms.stream().filter(parentTerm -> getOntologyRepository().isParentChildRelationshipExist(parentTerm, condition.getZecoTerm()))
                 .findFirst();
             if (highLevelterm.isPresent()) {
-                expcond.setConditionClass(highLevelterm.get().getOboID());
-                expcond.setConditionId(oboID);
+                expcond.setConditionClassCurie(highLevelterm.get().getOboID());
+                expcond.setConditionIdCurie(oboID);
             }
         }
     }
@@ -77,25 +77,25 @@ public class LinkMLInfo extends AbstractScriptWrapper {
         org.alliancegenome.curation_api.model.ingest.dto.ConditionRelationDTO relation = new org.alliancegenome.curation_api.model.ingest.dto.ConditionRelationDTO();
         if (fishExperiment.getExperiment() != null) {
             List<ExperimentCondition> allConditions = getMutantRepository().getExperimentConditions(fishExperiment.getExperiment());
-            relation.setConditionRelationType("has_condition");
+            relation.setConditionRelationTypeName("has_condition");
             List<ExperimentalConditionDTO> expconds = new ArrayList<>();
             for (ExperimentCondition condition : allConditions) {
                 ExperimentalConditionDTO expcond = new ExperimentalConditionDTO();
                 String conditionStatement = condition.getZecoTerm().getTermName();
                 if (condition.getAoTerm() != null) {
                     conditionStatement = conditionStatement + " " + condition.getAoTerm().getTermName();
-                    expcond.setConditionAnatomy(condition.getAoTerm().getOboID());
+                    expcond.setConditionAnatomyCurie(condition.getAoTerm().getOboID());
                 }
                 if (condition.getChebiTerm() != null) {
-                    expcond.setConditionChemical(condition.getChebiTerm().getOboID());
+                    expcond.setConditionChemicalCurie(condition.getChebiTerm().getOboID());
                     conditionStatement = conditionStatement + " " + condition.getChebiTerm().getTermName();
                 }
                 if (condition.getGoCCTerm() != null) {
-                    expcond.setConditionGeneOntology(condition.getGoCCTerm().getOboID());
+                    expcond.setConditionGeneOntologyCurie(condition.getGoCCTerm().getOboID());
                     conditionStatement = conditionStatement + " " + condition.getGoCCTerm().getTermName();
                 }
                 if (condition.getTaxaonymTerm() != null) {
-                    expcond.setConditionTaxon(condition.getTaxaonymTerm().getOboID());
+                    expcond.setConditionTaxonCurie(condition.getTaxaonymTerm().getOboID());
                     conditionStatement = conditionStatement + " " + condition.getTaxaonymTerm().getTermName();
                 }
                 populateConditionClass(expcond, condition);
@@ -105,7 +105,7 @@ public class LinkMLInfo extends AbstractScriptWrapper {
 */
                 expconds.add(expcond);
             }
-            relation.setConditions(expconds);
+            relation.setConditionDtos(expconds);
 
         }
         return relation;
