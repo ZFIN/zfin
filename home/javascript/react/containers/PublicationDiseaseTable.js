@@ -46,6 +46,8 @@ const PublicationDiseaseTable = ({url, title, navigationCounter}) => {
 
 PublicationDiseaseTable.propTypes = {
     url: PropTypes.string,
+    title: PropTypes.string,
+    navigationCounter: PropTypes.object,
 };
 
 export default PublicationDiseaseTable;

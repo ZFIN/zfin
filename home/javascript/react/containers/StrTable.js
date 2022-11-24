@@ -43,6 +43,8 @@ const StrTable = ({url, title, navigationCounter}) => {
 
 StrTable.propTypes = {
     url: PropTypes.string,
+    title: PropTypes.string,
+    navigationCounter: PropTypes.object,
 };
 
 export default StrTable;

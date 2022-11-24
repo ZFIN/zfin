@@ -78,10 +78,10 @@ const TermGeneTable = ({termId, directAnnotationOnly}) => {
         <>
             {directAnnotationOnly && count.countIncludingChildren > 0 && (
                 <DataTableSummaryToggle
-                    detailLabel={`Including children (${count.countIncludingChildren})`}
                     showPopup={directAnnotation}
+                    directCount={count.countDirect}
+                    childrenCount={count.countIncludingChildren}
                     onChange={setDirectAnnotation}
-                    overviewLabel={`Direct (${count.countDirect})`}
                 />
             )}
             <DataTable

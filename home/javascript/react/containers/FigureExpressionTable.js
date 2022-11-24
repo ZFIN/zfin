@@ -103,6 +103,7 @@ FigureExpressionTable.propTypes = {
     url: PropTypes.string,
     hideFigureColumn: PropTypes.bool,
     navigationCounter: PropTypes.object,
+    title: PropTypes.string,
 };
 
 export default FigureExpressionTable;

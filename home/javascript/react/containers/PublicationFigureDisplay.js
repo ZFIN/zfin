@@ -1,22 +1,23 @@
 import React, {useEffect} from 'react';
 import PropTypes from 'prop-types';
+import ImageBox from '../../zfin-common/imagebox';
 
 const PublicationFigureDisplay = ({title, imagesJson, publicationId, navigationCounter}) => {
     const images = JSON.parse(imagesJson);
     let storedpage = null;
 
     useEffect(() => {
-        var imageBox = new ImageBox();
-        imageBox.setImageDivById("xpresimg_box");
-        imageBox.setControlDivById("xpresimg_controls");
-        imageBox.setHiddenCountFieldById("xpatsel_thumbnail_page_hidden_field");
+        let imageBox = new ImageBox();
+        imageBox.setImageDivById('xpresimg_box');
+        imageBox.setControlDivById('xpresimg_controls');
+        imageBox.setHiddenCountFieldById('xpatsel_thumbnail_page_hidden_field');
         imageBox.setMaxImages(5000);
         imageBox.images = images.map(image => ({imgThumb: image.imageThumbnail, imgZdbId: image.imageZdbId}));
         document.getElementById('xpresimg_thumbs_title').innerHTML = `Figure Gallery (${images.length} images)`;
 
         function loadImages() {
             storedpage = imageBox.getHiddenCountInput().value;
-            if ((storedpage != null) && (storedpage != "") && Number.isInteger(storedpage)) {
+            if ((storedpage != null) && (storedpage !== '') && Number.isInteger(storedpage)) {
                 imageBox.jumpToPage(storedpage);
             } else {
                 imageBox.displayFirstSet();
@@ -30,15 +31,15 @@ const PublicationFigureDisplay = ({title, imagesJson, publicationId, navigationC
 
     return (
         <>
-            <div id="xpresimg_all">
-                <input type="hidden" name="xpatsel_thumbnail_page" id="xpatsel_thumbnail_page_hidden_field" value="1"/>
-                <div id="xpresimg_control_box">
-                    <span id="xpresimg_thumbs_title" className="summary"/>
-                    <span id="xpresimg_controls"></span>
+            <div id='xpresimg_all'>
+                <input type='hidden' name='xpatsel_thumbnail_page' id='xpatsel_thumbnail_page_hidden_field' value='1'/>
+                <div id='xpresimg_control_box'>
+                    <span id='xpresimg_thumbs_title' className='summary'/>
+                    <span id='xpresimg_controls'/>
                 </div>
-                <div id="xpresimg_box"></div>
-                <div id="imagebox_maxnote" style={{display: 'none'}}></div>
-                <div id="xpresimg_imagePreload"></div>
+                <div id='xpresimg_box'/>
+                <div id='imagebox_maxnote' style={{display: 'none'}}/>
+                <div id='xpresimg_imagePreload'/>
             </div>
             <div><a href={`/action/figure/all-figure-view/${publicationId}`}>Show all Figures</a></div>
         </>
@@ -47,6 +48,9 @@ const PublicationFigureDisplay = ({title, imagesJson, publicationId, navigationC
 
 PublicationFigureDisplay.propTypes = {
     title: PropTypes.string,
+    publicationId: PropTypes.string,
+    imagesJson: PropTypes.string,
+    navigationCounter: PropTypes.object,
 };
 
 export default PublicationFigureDisplay;
