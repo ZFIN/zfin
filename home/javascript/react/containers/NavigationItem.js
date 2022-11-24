@@ -7,7 +7,7 @@ const NavigationItem = ({ title, navigationCounter }) => {
 
     if (count) {
         return (
-            <><span className="badge badge-pill badge-secondary">{count}</span></>
+            <><span className='badge badge-pill badge-secondary'>{count}</span></>
         );
     } else {
         return (<></>);

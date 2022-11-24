@@ -36,6 +36,8 @@ const PublicationOrthologyTable = ({url, title, navigationCounter}) => {
 
 PublicationOrthologyTable.propTypes = {
     url: PropTypes.string,
+    title: PropTypes.string,
+    navigationCounter: PropTypes.object,
 };
 
 export default PublicationOrthologyTable;

@@ -109,7 +109,7 @@
                          data-direct-annotation-only="true"
                     ></div>
                 </z:section>
-                <z:section title="In Situ Probes">
+                <z:section title="Thisse recommended In Situ Probes" infoPopup="/zf_info/stars.html">
                     <div class="__react-root" id="TermInSituProbeTable"
                          data-term-id="${term.zdbID}"
                          data-direct-annotation-only="true"
