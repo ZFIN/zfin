@@ -17,7 +17,6 @@ import org.zfin.ontology.*;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.orthology.NcbiOrthoExternalReference;
 import org.zfin.orthology.NcbiOtherSpeciesGene;
-import org.zfin.orthology.repository.OrthologyRepository;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DisplayGroup;
@@ -255,17 +254,49 @@ public class OntologyService {
             .collect(Collectors.toList());
     }
 
+    public static List<Publication> getPublicationsFromDiseaseModelsWithFishAndExperiment(GenericTerm disease, Fish fish, Experiment experiment, boolean includeChildren) {
+        List<DiseaseAnnotationModel> modelList = getPhenotypeRepository().getHumanDiseaseModels(disease, fish, includeChildren);
+        if (CollectionUtils.isEmpty(modelList)) {
+            return null;
+        }
+        Set<Publication> publicationList = modelList.stream()
+            .filter(model -> model.getFishExperiment().getExperiment().getDisplayAllConditions().equals(experiment.getDisplayAllConditions()))
+            .map(diseaseAnnotationModel -> diseaseAnnotationModel.getDiseaseAnnotation().getPublication()).collect(toSet());
+        Map<Fish, Map<String, Map<GenericTerm, Set<DiseaseAnnotationModel>>>> fishExperimentConditionMap = modelList.stream()
+            .filter(Objects::nonNull)
+            .collect(groupingBy(diseaseAnnotationModel -> diseaseAnnotationModel.getFishExperiment().getFish(), LinkedHashMap::new,
+                groupingBy(annotation -> annotation.getFishExperiment().getExperiment().getDisplayAllConditions(), LinkedHashMap::new,
+                    groupingBy(annotation -> annotation.getDiseaseAnnotation().getDisease(), toSet()))
+            ));
+        List<FishModelDisplay> list = fishExperimentConditionMap.entrySet().stream()
+            .map(fishMapEntry -> {
+                Fish fish1 = fishMapEntry.getKey();
+                return fishMapEntry.getValue().values().stream()
+                    .map(genericTermSetMap -> genericTermSetMap.entrySet().stream()
+                        .map(diseaseEntrySet -> {
+                            FishModelDisplay display = new FishModelDisplay(fish1);
+                            display.setDisease(diseaseEntrySet.getKey());
+                            display.setFishModel(diseaseEntrySet.getValue().iterator().next().getFishExperiment());
+                            Set<Publication> publications = diseaseEntrySet.getValue().stream().map(diseaseAnnotationModel -> diseaseAnnotationModel.getDiseaseAnnotation().getPublication()).collect(toSet());
+                            if (publications.size() == 1) {
+                                display.setSinglePublication(publications.iterator().next());
+                            }
+                            display.setNumberOfPublications(publications.size());
+                            display.setExperiment(diseaseEntrySet.getValue().iterator().next().getFishExperiment().getExperiment());
+                            return display;
+                        }).collect(toList())).flatMap(Collection::stream)
+                    .collect(toList());
+            }).flatMap(Collection::stream).sorted().toList();
+
+        return new ArrayList<>(publicationList);
+    }
+
     public static List<FishModelDisplay> getDiseaseModelsWithFishModelsGrouped(GenericTerm disease, boolean includeChildren) {
         List<DiseaseAnnotationModel> modelList = getPhenotypeRepository().getHumanDiseaseModels(disease, includeChildren);
         if (CollectionUtils.isEmpty(modelList)) {
             return null;
         }
 
-        Map<Fish, Map<String, Set<DiseaseAnnotationModel>>> fishExperimentConditionMap = modelList.stream()
-            .filter(Objects::nonNull)
-            .collect(groupingBy(diseaseAnnotationModel -> diseaseAnnotationModel.getFishExperiment().getFish(), LinkedHashMap::new,
-                groupingBy(annotation -> annotation.getFishExperiment().getExperiment().getDisplayAllConditions(), toSet())
-            ));
         Map<Fish, Map<String, Map<GenericTerm, Set<DiseaseAnnotationModel>>>> fishExperimentConditionMap1 = modelList.stream()
             .filter(Objects::nonNull)
             .collect(groupingBy(diseaseAnnotationModel -> diseaseAnnotationModel.getFishExperiment().getFish(), LinkedHashMap::new,

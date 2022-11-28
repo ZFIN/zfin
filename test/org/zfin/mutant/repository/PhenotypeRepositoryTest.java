@@ -23,7 +23,6 @@ import org.zfin.mutant.*;
 import org.zfin.mutant.presentation.PostComposedPresentationBean;
 import org.zfin.ontology.*;
 import org.zfin.publication.Publication;
-import org.zfin.publication.presentation.FigureLink;
 import org.zfin.publication.presentation.PublicationLink;
 import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
@@ -325,21 +324,21 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
     public void getPhenotypeExperimentsWithoutAnnotation() {
         String publicationID = "ZDB-PUB-101011-54";
         List<PhenotypeExperiment> phenotypeExperiments =
-                getPhenotypeRepository().getPhenotypeExperimentsWithoutAnnotation(publicationID);
+            getPhenotypeRepository().getPhenotypeExperimentsWithoutAnnotation(publicationID);
         assertTrue(phenotypeExperiments.size() >= 0);
     }
 
     @Test
     public void getExperimentsHistory() {
         List<PhenotypeExperiment> phenotypeExperiments =
-                getPhenotypeRepository().getLatestPhenotypeExperiments(3);
+            getPhenotypeRepository().getLatestPhenotypeExperiments(3);
         //assertEquals(0, phenotypeExperiments.size());
     }
 
     @Test
     public void getPhenotypeStatementHistory() {
         List<PhenotypeStatement> phenotypeStatements =
-                getPhenotypeRepository().getLatestPhenotypeStatements(0, 2);
+            getPhenotypeRepository().getLatestPhenotypeStatements(0, 2);
         //assertEquals(0, phenotypeStatements.size());
     }
 
@@ -384,7 +383,6 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
         assertEquals("ZDB-PUB-080630-4", publicationLink.getPublicationZdbId());
         assertEquals("Dee <i>et al.</i>, 2008", publicationLink.getLinkContent());
     }
-
 
 
     @Test
@@ -450,8 +448,21 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
         GenericTerm disease = getOntologyRepository().getTermByOboID("DOID:162");
         List<DiseaseAnnotationModel> diseaseAnnotations = getPhenotypeRepository().getHumanDiseaseModels(disease, false);
         Map<FishExperiment, List<DiseaseAnnotationModel>> fishExperimentMap = diseaseAnnotations.stream()
-                .filter(Objects::nonNull)
-                .collect(groupingBy(DiseaseAnnotationModel::getFishExperiment));
+            .filter(Objects::nonNull)
+            .collect(groupingBy(DiseaseAnnotationModel::getFishExperiment));
+
+        assertNotNull(fishExperimentMap);
+    }
+
+    @Test
+    public void getHumanDiseaseModelsByFishAndExp() {
+        //cancer
+        GenericTerm disease = getOntologyRepository().getTermByOboID("DOID:162");
+        Fish fish = getMutantRepository().getFish("ZDB-PUB-170214-129");
+        List<DiseaseAnnotationModel> diseaseAnnotations = getPhenotypeRepository().getHumanDiseaseModels(disease, fish, false);
+        Map<FishExperiment, List<DiseaseAnnotationModel>> fishExperimentMap = diseaseAnnotations.stream()
+            .filter(Objects::nonNull)
+            .collect(groupingBy(DiseaseAnnotationModel::getFishExperiment));
 
         assertNotNull(fishExperimentMap);
     }

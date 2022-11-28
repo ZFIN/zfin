@@ -45,6 +45,9 @@ const TermZebrafishModelTable = ({termId, directAnnotationOnly}) => {
                 <PublicationSummary
                     numberOfPublications={row.numberOfPublications}
                     firstPublication={row.singlePublication}
+                    fishID={row.fish.zdbID}
+                    experimentID={row.experiment.zdbID}
+                    termID={row.disease.zdbID}
                     allPublicationUrl={`/action/ontology//phenotype-summary/${row.fish.zdbID}`}
                 />
             ),
