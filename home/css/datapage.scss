@@ -38,9 +38,16 @@ body.data-page {
     }
 }
 
-$left-nav-width: 220px;
+$left-nav-width: 200px;
 $left-nav-count-width: 70px;
 $left-nav-text-width: $left-nav-width - $left-nav-count-width;
+
+/* larger width for publication view */
+$left-nav-width-with-counts: 220px;
+$left-nav-text-width-with-counts: $left-nav-width-with-counts - $left-nav-count-width;
+.publication-view .data-page-nav-container {
+    width: $left-nav-width-with-counts;
+}
 
 .data-page-nav-container {
 
@@ -68,7 +75,7 @@ $left-nav-text-width: $left-nav-width - $left-nav-count-width;
 
     .with-counts .nav-text {
         display: inline-block;
-        width: $left-nav-text-width;
+        width: $left-nav-text-width-with-counts;
     }
 
     .with-counts .nav-count {
