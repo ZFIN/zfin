@@ -42,6 +42,8 @@ import java.util.*;
  */
 public interface PublicationRepository extends PaginationParameter {
 
+    int getNumberOfPublications_Deprecated(String abstractText);
+
     /**
      * Retrieve the number of publications that contain the
      * a term 'abstractText' in its abstract. This count is

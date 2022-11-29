@@ -83,12 +83,27 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     private ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();
 
-    public int getNumberOfPublications(String abstractText) {
-
+    @Override
+    public int getNumberOfPublications_Deprecated(String abstractText) {
         Criteria query = HibernateUtil.currentSession().createCriteria(Publication.class);
         query.add(Restrictions.ilike("abstractText", abstractText, MatchMode.ANYWHERE));
         query.setProjection(Projections.count("abstractText"));
         return ((Number) query.uniqueResult()).intValue();
+    }
+
+    public int getNumberOfPublications(String abstractText) {
+        String hql = """
+                        SELECT
+                            count(p)
+                        FROM
+                            Publication p
+                        WHERE
+                            upper(abstractText)
+                            LIKE '%' || :abstractText || '%'
+                    """;
+        Query<Number> query = currentSession().createQuery(hql, Number.class);
+        query.setParameter("abstractText", abstractText.toUpperCase());
+        return query.uniqueResult().intValue();
     }
 
     /**
