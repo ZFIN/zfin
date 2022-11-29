@@ -365,7 +365,8 @@ table.lab-view-summary-table dd a, table.company-view-summary-table dd a {
 /* Wrap the page title as it appears in the left navigation menu */
 .nav-title-wrap a.back-to-top-link {
     display: inline;
-    white-space: normal; /* <-- remove for ellipses truncation */
+    white-space: normal;   /* <-- remove for ellipses truncation */
+    word-break: break-all; /* <-- remove for ellipses truncation */
 }
 
 /* Set margin for figure component on publication view page */
