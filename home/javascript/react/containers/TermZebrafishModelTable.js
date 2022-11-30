@@ -37,7 +37,7 @@ const TermZebrafishModelTable = ({termId, directAnnotationOnly}) => {
         {
             label: 'Disease',
             content: ({disease}) => <EntityLink entity={disease}/>,
-            width: '120px',
+            width: '180px',
         },
         {
             label: 'Citation',
@@ -48,7 +48,7 @@ const TermZebrafishModelTable = ({termId, directAnnotationOnly}) => {
                     fishID={row.fish.zdbID}
                     experimentID={row.experiment.zdbID}
                     termID={row.disease.zdbID}
-                    allPublicationUrl={`/action/ontology//phenotype-summary/${row.fish.zdbID}`}
+                    allPublicationUrl={`/action/ontology/phenotype-summary/${row.fish.zdbID}`}
                 />
             ),
             width: '230px',
