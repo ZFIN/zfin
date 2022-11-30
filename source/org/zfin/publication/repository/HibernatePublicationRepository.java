@@ -59,6 +59,7 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.MarkerDBLink;
 
+import javax.persistence.Tuple;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -95,19 +96,17 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 AND publication = exp.publication
                 AND res.expressionExperiment = exp
                 AND exp.gene.zdbID = :zdbID
-                AND res.expressionFound = :expressionFound""";
+                AND res.expressionFound is true""";
         String sql = addOrderByParameters(hql);
-        Query query = session.createQuery(sql);
+        Query<Publication> query = session.createQuery(sql, Publication.class);
         addPaginationParameters(query);
-        query.setString("zdbID", geneID);
-        query.setString("aoZdbID", anatomyItemID);
-        query.setBoolean("expressionFound", true);
-        List<Publication> list = query.list();
-        return list;
+        query.setParameter("zdbID", geneID);
+        query.setParameter("aoZdbID", anatomyItemID);
+        return query.list();
     }
 
 
-    public List<String> getSNPPublicationIDs(Marker marker) {
+    public List<String> getSNPPublicationIDs_Deprecated(Marker marker) {
         Session session = HibernateUtil.currentSession();
         String sql = """
                 select distinct snpdattr_pub_zdb_id
@@ -117,6 +116,18 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         query.setString("zdbID", marker.getZdbID());
         List<String> pubIDs = query.list();
         return pubIDs;
+    }
+
+    public List<String> getSNPPublicationIDs(Marker marker) {
+        Session session = HibernateUtil.currentSession();
+        String sql = """
+                select distinct snpdattr_pub_zdb_id
+                 from snp_download_attribution, snp_download
+                 where snpdattr_snpd_pk_id = snpd_pk_id and snpd_mrkr_zdb_id = :zdbID""";
+        Query<Tuple> query = session.createNativeQuery(sql, Tuple.class);
+        query.setParameter("zdbID", marker.getZdbID());
+        List<Tuple> pubIDs = query.list();
+        return pubIDs.stream().map(tuple -> tuple.get(0, String.class)).toList();
     }
 
     /*
