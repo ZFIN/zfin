@@ -1184,13 +1184,33 @@ drop table tmp_geno_data;
 
 \echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/tgInsertions.txt' with delimiter as '	' null as '';'
 create view tgInsertions as
-select distinct feature_zdb_id, feature_abbrev, feature_name, a.szm_term_ont_id, fmrel_mrkr_zdb_id, mrkr_name, b.szm_term_ont_id as id2
-                     from feature, feature_marker_Relationship, marker, so_zfin_mapping a, so_zfin_mapping b
-                    where fmrel_ftr_zdb_id = feature_zdb_id
-		    and feature_type = 'TRANSGENIC_INSERTION'
-                    and fmrel_mrkr_zdb_id = mrkr_zdb_id
-		    and get_obj_type(mrkr_zdb_id) = b.szm_object_type
-		    and feature_type = a.szm_object_type;
+    SELECT DISTINCT
+        feature_zdb_id,
+        feature_abbrev,
+        feature_name,
+        a.szm_term_ont_id,
+        fmrel_mrkr_zdb_id,
+        mrkr_name,
+        b.szm_term_ont_id as id2,
+        CASE fmrel_type
+            WHEN 'is allele of' THEN
+                mrkr_abbrev
+            ELSE
+                ''
+            END as allele_of
+    FROM
+        feature,
+        feature_marker_Relationship,
+        marker,
+        so_zfin_mapping a,
+        so_zfin_mapping b
+    WHERE
+            fmrel_ftr_zdb_id = feature_zdb_id
+      AND feature_type IN ( 'TRANSGENIC_INSERTION' )
+      AND fmrel_mrkr_zdb_id = mrkr_zdb_id
+      AND get_obj_type ( mrkr_zdb_id ) = b.szm_object_type
+      AND feature_type = a.szm_object_type;
+
 \copy (select * from tgInsertions) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/tgInsertions.txt' with delimiter as '	' null as '';
 drop view tgInsertions;
 
