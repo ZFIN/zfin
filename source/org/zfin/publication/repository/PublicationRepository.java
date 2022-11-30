@@ -42,27 +42,6 @@ import java.util.*;
  */
 public interface PublicationRepository extends PaginationParameter {
 
-    int getNumberOfPublications_Deprecated(String abstractText);
-
-    /**
-     * Retrieve the number of publications that contain the
-     * a term 'abstractText' in its abstract. This count is
-     * done case insensitive.
-     *
-     * @param abstractText text
-     * @return number of publications
-     */
-    int getNumberOfPublications(String abstractText);
-
-    /**
-     * Retrieve all distinct publications that contain a high quality probe
-     * with a rating of 4.
-     *
-     * @param anatomyTerm Anatomy Term
-     * @return list of publications
-     */
-    List<Publication> getHighQualityProbePublications(GenericTerm anatomyTerm);
-
     /**
      * Retrieve all publication for a given geneID and anatomical structure.
      *
@@ -74,31 +53,12 @@ public interface PublicationRepository extends PaginationParameter {
     List<String> getSNPPublicationIDs(Marker marker);
 
     /**
-     * Retrieve the total number of publications for a given geneID and anatomical structure
-     * that contain figures.
-     *
-     * @param geneID        gene zdbID
-     * @param anatomyItemID anatomy ID
-     * @return number
-     */
-    int getNumberOfExpressedGenePublicationsWithFigures(String geneID, String anatomyItemID);
-
-    /**
      * Retrieve all publication that are annotated to genes expressed in a given
      * anatomical structure.
      *
      * @param anatomyItemID
      */
     List<Publication> getExpressedGenePublications(String anatomyItemID);
-
-    /**
-     * Retrieve the genes and CDNA/EST for the high-quality probes with
-     * rating of 4.
-     *
-     * @param term anatomy term
-     * @return list of High quality probes.
-     */
-    PaginationResult<HighQualityProbe> getHighQualityProbeNames(GenericTerm term);
 
     /**
      * Retrieve the genes and CDNA/EST for the high-quality probes with
@@ -112,17 +72,6 @@ public interface PublicationRepository extends PaginationParameter {
     PaginationResult<HighQualityProbe> getHighQualityProbeNames(Term term, int maxRow);
 
     /**
-     * Retrieve marker records that have a gene expression in the
-     * anatomy term, identified by the zdbID. The maxRow number
-     * limits the result set.
-     *
-     * @param zdbID  of the anatomy term.
-     * @param maxRow max number of records
-     * @return list of markers
-     */
-    List<Marker> getAllExpressedMarkers(String zdbID, int maxRow);
-
-    /**
      * Returns the appropriate # of records, as well as statistics on the total # of records.
      *
      * @param anatomyTerm term
@@ -131,15 +80,6 @@ public interface PublicationRepository extends PaginationParameter {
      * @return marker statistics
      */
     PaginationResult<MarkerStatistic> getAllExpressedMarkers(GenericTerm anatomyTerm, int firstRow, int maxRow);
-
-    /**
-     * Returns the appropriate # of records, as well as statistics on the total # of records.
-     *
-     * @param anatomyTerm term
-     * @return marker statistics
-     */
-    PaginationResult<MarkerStatistic> getAllExpressedMarkers(GenericTerm anatomyTerm);
-
 
     /**
      * Count the number of figures from all publications that have a gene
@@ -192,10 +132,6 @@ public interface PublicationRepository extends PaginationParameter {
     List<Figure> getFiguresByGeneID(String geneID, String publicationID);
 
     Figure getFigureByID(String figureZdbID);
-
-    List<Figure> getFiguresByGeneAndPublication(String geneID, String publicationID);
-
-    List<FeatureMarkerRelationship> getFeatureMarkerRelationshipsByPubID(String publicationID);
 
     /**
      * Return all figures for a specified gene, probe and anatommical structure.
@@ -312,11 +248,7 @@ public interface PublicationRepository extends PaginationParameter {
 
     List<Journal> getAllJournals();
 
-    Journal getJournalByTitle(String journalTitle);
-
     Journal findJournalByAbbreviation(String abbrevation);
-
-    void createJournal(Journal journal);
 
     Journal getJournalByPrintIssn(String pIssn);
 
@@ -380,15 +312,6 @@ public interface PublicationRepository extends PaginationParameter {
     List<Feature> getFeaturesByPublication(String pubID);
 
     List<Fish> getFishByPublication(String pubID);
-
-    /**
-     * Retrieve distinct list of genes that are attributed to a given
-     * publication and used in an experiment.
-     *
-     * @param pubID publication id
-     * @return list of markers
-     */
-    List<Marker> getGenesByExperiment(String pubID);
 
     /**
      * Retrieve list of Genotypes being used in experiments for a given publication
@@ -492,17 +415,7 @@ public interface PublicationRepository extends PaginationParameter {
 
     List<Publication> getPublicationByPmid(Integer pubMedID);
 
-    Publication getSinglePublicationByPmid(Integer pubMedID);
-
     int getNumberDirectPublications(String zdbID);
-
-    /**
-     * Retrieve list of mutants and transgenics being used in a publication
-     *
-     * @param publicationID publication ID
-     * @return list of genotype (non-wt)
-     */
-    List<Genotype> getMutantsAndTgsByPublication(String publicationID);
 
     List<Ortholog> getOrthologListByPub(String pubID);
 
@@ -519,8 +432,6 @@ public interface PublicationRepository extends PaginationParameter {
     SortedSet<Publication> getPublicationForJournal(Journal journal);
 
     Journal getJournalByID(String zdbID);
-
-    List<Journal> findJournalByAbbreviationAndName(String query);
 
     SortedSet<Publication> getAllPublicationsForGenotype(Genotype genotype);
 
@@ -594,8 +505,6 @@ public interface PublicationRepository extends PaginationParameter {
 
     List<Publication> getAllPublications();
 
-    List<Publication> getAllPubMedPublications();
-
     List<Publication> getAllOpenPublications();
 
     List<Publication> getAllOpenPublicationsOfJournalType(PublicationType type);
@@ -634,8 +543,6 @@ public interface PublicationRepository extends PaginationParameter {
 
     Long getDirectlyAttributed(Publication publication);
 
-    PublicationAttribution createPublicationAttribution(Publication publication, Marker marker);
-
     List<MetricsByDateBean> getMetricsByDate(Calendar start,
                                              Calendar end,
                                              PublicationMetricsFormBean.QueryType query,
@@ -652,8 +559,6 @@ public interface PublicationRepository extends PaginationParameter {
 
     List<PubmedPublicationAuthor> getPubmedPublicationAuthorsByPublication(Publication publication);
 
-    boolean isNewGenePubAttribution(Marker marker, String publicationId);
-
     boolean isNewFeaturePubAttribution(Feature feature, String publicationId);
 
     boolean hasCuratedOrthology(Marker marker);
@@ -663,4 +568,100 @@ public interface PublicationRepository extends PaginationParameter {
     List<SequenceTargetingReagent> getSTRsByPublication(String publicationID, Pagination pagination);
 
     List<Image> getImages(Publication publication);
+
+    boolean isNewGenePubAttribution(Marker marker, String publicationId);
+
+    PublicationAttribution createPublicationAttribution(Publication publication, Marker marker);
+
+    List<Publication> getAllPubMedPublications();
+
+    /**
+     * Retrieve the genes and CDNA/EST for the high-quality probes with
+     * rating of 4.
+     *
+     * @param term anatomy term
+     * @return list of High quality probes.
+     */
+    PaginationResult<HighQualityProbe> getHighQualityProbeNames(GenericTerm term);
+
+    /**
+     * Returns the appropriate # of records, as well as statistics on the total # of records.
+     *
+     * @param anatomyTerm term
+     * @return marker statistics
+     */
+    PaginationResult<MarkerStatistic> getAllExpressedMarkers(GenericTerm anatomyTerm);
+
+    /**
+     * Retrieve marker records that have a gene expression in the
+     * anatomy term, identified by the zdbID. The maxRow number
+     * limits the result set.
+     *
+     * @param zdbID  of the anatomy term.
+     * @param maxRow max number of records
+     * @return list of markers
+     */
+    List<Marker> getAllExpressedMarkers(String zdbID, int maxRow);
+
+    List<Figure> getFiguresByGeneAndPublication(String geneID, String publicationID);
+
+    List<FeatureMarkerRelationship> getFeatureMarkerRelationshipsByPubID(String publicationID);
+
+    Journal getJournalByTitle(String journalTitle);
+
+    void createJournal(Journal journal);
+
+    /**
+     * Retrieve distinct list of genes that are attributed to a given
+     * publication and used in an experiment.
+     *
+     * @param pubID publication id
+     * @return list of markers
+     */
+    List<Marker> getGenesByExperiment(String pubID);
+
+    List<Journal> findJournalByAbbreviationAndName(String query);
+
+    /**
+     * Retrieve list of mutants and transgenics being used in a publication
+     *
+     * @param publicationID publication ID
+     * @return list of genotype (non-wt)
+     */
+    List<Genotype> getMutantsAndTgsByPublication(String publicationID);
+
+    Publication getSinglePublicationByPmid(Integer pubMedID);
+
+    //TODO: delete this? Seems like it's only used in a test
+    /**
+     * Retrieve the total number of publications for a given geneID and anatomical structure
+     * that contain figures.
+     *
+     * @param geneID        gene zdbID
+     * @param anatomyItemID anatomy ID
+     * @return number
+     */
+    int getNumberOfExpressedGenePublicationsWithFigures(String geneID, String anatomyItemID);
+
+    //TODO: delete this? not used anywhere
+    /**
+     * Retrieve the number of publications that contain the
+     * a term 'abstractText' in its abstract. This count is
+     * done case insensitive.
+     *
+     * @param abstractText text
+     * @return number of publications
+     */
+    int getNumberOfPublications(String abstractText);
+
+    //TODO: delete this? not used anywhere except in PublicationRepositoryTest
+    /**
+     * Retrieve all distinct publications that contain a high quality probe
+     * with a rating of 4.
+     *
+     * @param anatomyTerm Anatomy Term
+     * @return list of publications
+     */
+    List<Publication> getHighQualityProbePublications(GenericTerm anatomyTerm);
+
 }

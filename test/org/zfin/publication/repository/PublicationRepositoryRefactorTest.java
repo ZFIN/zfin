@@ -73,9 +73,23 @@ public class PublicationRepositoryRefactorTest extends AbstractDatabaseTest {
 //        assertEquals("53 publication",53, number);
         assertTrue(number > 20);
 
-        number = publicationRepository.getNumberOfPublications("heart attack");
-        int referenceNumber = publicationRepository.getNumberOfPublications_Deprecated("heart attack");
-        assertEquals(referenceNumber, number);
+//        number = publicationRepository.getNumberOfPublications("heart attack");
+//        int referenceNumber = publicationRepository.getNumberOfPublications_Deprecated("heart attack");
+//        assertEquals(referenceNumber, number);
+    }
+
+    @Test
+    public void getExpressedGenePublications() {
+        List<Publication> pubs = publicationRepository.getExpressedGenePublications("ZDB-GENE-001103-4 ", "ZDB-TERM-100331-8");
+        assertNotNull(pubs);
+
+        //basilar artery -> cyp1a
+        pubs = publicationRepository.getExpressedGenePublications("ZDB-GENE-011219-1", "ZDB-TERM-100331-1678");
+        assertNotNull(pubs);
+        assertEquals(1, pubs.size());
+        assertEquals("ZDB-PUB-170818-4", pubs.get(0).getZdbID());
+
+        assertEquals("THIS ASSERTION SHOULD FAIL", pubs.get(0).getZdbID());
     }
 
 
