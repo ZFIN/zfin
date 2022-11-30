@@ -26,6 +26,7 @@ import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerStatistic;
 import org.zfin.marker.presentation.GeneBean;
+import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
@@ -104,6 +105,19 @@ public class PublicationRepositoryRefactorTest extends AbstractDatabaseTest {
 
     }
 
+    @Test
+    public void getHighQualityProbeNames() {
+        GenericTerm anatomyTerm = getOntologyRepository().getTermByZdbID("ZDB-TERM-100331-107");
+        PaginationResult<HighQualityProbe> hqp = publicationRepository.getHighQualityProbeNames(anatomyTerm, 5);
+
+        int total = hqp.getTotalCount();
+        assertEquals(27, total);
+
+        HighQualityProbe firstResult = hqp.getPopulatedResults().get(0);
+        Marker firstGene = ((Marker)(firstResult.getGenes().toArray()[0]));
+        assertEquals("ZDB-GENE-010328-3", firstGene.getZdbID());
+
+    }
 
 
 

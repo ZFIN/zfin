@@ -53,14 +53,6 @@ public interface PublicationRepository extends PaginationParameter {
     List<String> getSNPPublicationIDs(Marker marker);
 
     /**
-     * Retrieve all publication that are annotated to genes expressed in a given
-     * anatomical structure.
-     *
-     * @param anatomyItemID
-     */
-    List<Publication> getExpressedGenePublications(String anatomyItemID);
-
-    /**
      * Retrieve the genes and CDNA/EST for the high-quality probes with
      * rating of 4 (which equals 5 stars) associate to an anatomical structure.
      * Only return n records.
