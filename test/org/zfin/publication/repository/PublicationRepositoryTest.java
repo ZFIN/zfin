@@ -190,26 +190,6 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         assertTrue(number > 0);
     }
 
-    @Test
-    public void getFigurePublicationsForProbes() {
-        //  probe eu815
-        String probeZdbID = "ZDB-EST-051103-38";
-        Marker probe = new Marker();
-        probe.setZdbID(probeZdbID);
-        //  gene ascl1b
-        String geneZdbID = "ZDB-GENE-980526-174";
-        Marker gene = new Marker();
-        gene.setZdbID(geneZdbID);
-        // neural rod
-        String aoZdbID = "ZDB-ANAT-010921-561";
-        GenericTerm item = new GenericTerm();
-        item.setZdbID(aoZdbID);
-        List<Publication> pubs = publicationRepository.getPublicationsWithFiguresPerProbeAndAnatomy(gene, probe, item);
-        assertTrue(pubs != null);
-//        assertEquals("1 publication", 1, pubs.size());
-
-    }
-
     /**
      * anterior lateral line ganglia is expressed in a double mutant: fgf3t24149/+;fgf8ti282a/+
      */

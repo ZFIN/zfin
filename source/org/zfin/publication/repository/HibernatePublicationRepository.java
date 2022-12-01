@@ -328,42 +328,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Session session = HibernateUtil.currentSession();
         return (Figure) session.get(Figure.class, figureZdbID);
     }
-
-    private List<HighQualityProbe> createHighQualityProbeObjects(List<Object[]> list, Term aoTerm) {
-        List<HighQualityProbe> probes = new ArrayList<HighQualityProbe>();
-        if (list != null) {
-            for (Object[] array : list) {
-                Marker subGene = (Marker) array[0];
-                Marker gene = (Marker) array[1];
-                HighQualityProbe probe = new HighQualityProbe(subGene, aoTerm);
-                probe.addGene(gene);
-                probes.add(probe);
-                //probe.add(getFiguresPerProbeAndAnatomy(gene, subGene, aoTerm));
-            }
-        }
-        return probes;
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<Publication> getPublicationsWithFiguresPerProbeAndAnatomy(Marker gene, Marker subGene, GenericTerm aoTerm) {
-        Session session = HibernateUtil.currentSession();
-
-        String hql = "select distinct figure.publication from Figure figure, ExpressionExperiment exp, ExpressionResult res " +
-            "where exp.gene.zdbID = :geneID AND " +
-            "      exp.probe.zdbID = :cloneID AND " +
-            "      res member of exp.expressionResults AND " +
-            "      res.expressionFound = :expressionFound  AND " +
-            "      res.entity.superterm = :term AND " +
-            "      figure member of res.figures ";
-        Query query = session.createQuery(hql);
-        query.setString("geneID", gene.getZdbID());
-        query.setString("cloneID", subGene.getZdbID());
-        query.setParameter("term", aoTerm);
-        query.setBoolean("expressionFound", true);
-        return (List<Publication>) query.list();
-    }
-
-
+    
     public boolean updatePublications(List<Publication> publicationList) {
 
         Session session = HibernateUtil.currentSession();
@@ -2633,6 +2598,21 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             markers.add(statistic);
         }
         return markers;
+    }
+
+    private List<HighQualityProbe> createHighQualityProbeObjects(List<Object[]> list, Term aoTerm) {
+        List<HighQualityProbe> probes = new ArrayList<HighQualityProbe>();
+        if (list != null) {
+            for (Object[] array : list) {
+                Marker subGene = (Marker) array[0];
+                Marker gene = (Marker) array[1];
+                HighQualityProbe probe = new HighQualityProbe(subGene, aoTerm);
+                probe.addGene(gene);
+                probes.add(probe);
+                //probe.add(getFiguresPerProbeAndAnatomy(gene, subGene, aoTerm));
+            }
+        }
+        return probes;
     }
 
 }

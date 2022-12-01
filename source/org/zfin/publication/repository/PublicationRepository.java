@@ -101,16 +101,6 @@ public interface PublicationRepository extends PaginationParameter {
     Figure getFigureByID(String figureZdbID);
 
     /**
-     * Return all Publications for a specified gene, probe and anatommical structure with figures associated.
-     *
-     * @param gene    Gene
-     * @param subGene Probe
-     * @param aoTerm  anatomical structure
-     * @return list of figures
-     */
-    List<Publication> getPublicationsWithFiguresPerProbeAndAnatomy(Marker gene, Marker subGene, GenericTerm aoTerm);
-
-    /**
      * Retrieve the figures that can be found for a given publication and probe.
      *
      * @param probeID
