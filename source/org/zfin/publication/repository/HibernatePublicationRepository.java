@@ -292,7 +292,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public boolean publicationExists(String canonicalPublicationZdbID) {
         return getPublication(canonicalPublicationZdbID) != null;
     }
-
+    
     public Figure getFigureById(String zdbID) {
         Session session = HibernateUtil.currentSession();
         return session.get(Figure.class, zdbID);
@@ -302,15 +302,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Session session = HibernateUtil.currentSession();
         return session.get(Image.class, zdbID);
 
-    }
-
-    public List<Figure> getFiguresByGeneID(String geneID, String publicationID) {
-        Session session = HibernateUtil.currentSession();
-        Criteria crit = session.createCriteria(Figure.class);
-        Criteria critRes = crit.createCriteria("expressionResults");
-        Criteria critExp = critRes.createCriteria("expressionExperiment");
-        critExp.add(Restrictions.eq("publicationID", publicationID));
-        return (List<Figure>) crit.list();
     }
 
     @SuppressWarnings("unchecked")

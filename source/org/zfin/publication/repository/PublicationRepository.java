@@ -99,16 +99,6 @@ public interface PublicationRepository extends PaginationParameter {
     boolean publicationExists(String canonicalPublicationZdbID);
 
 
-    /**
-     * Figure getFigureById(String zdbID);
-     * <p/>
-     * Retrieve the figures that can be found for a given publication and gene.
-     *
-     * @param geneID
-     * @param publicationID
-     */
-    List<Figure> getFiguresByGeneID(String geneID, String publicationID);
-
     Figure getFigureByID(String figureZdbID);
 
     /**
