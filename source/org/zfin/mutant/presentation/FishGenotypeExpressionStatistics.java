@@ -34,27 +34,6 @@ public class FishGenotypeExpressionStatistics extends EntityStatistics {
         return fish;
     }
 
-    @Override
-    public int getNumberOfFigures() {
-        if (figures == null) {
-            figures = new HashSet<>(5);
-            for (FishExperiment fishExperiment : fishExperimentList)
-                for (ExpressionExperiment expressionExperiment : fishExperiment.getExpressionExperiments()) {
-                    if (expressionExperiment.getGene() != null)
-                        figures.addAll(expressionExperiment.getAllFigures());
-                }
-        }
-        return figures.size();
-    }
-
-    public Figure getFirstFigure() {
-        if (getNumberOfFigures() == 0) {
-            return null;
-        } else {
-            return figures.iterator().next();
-        }
-    }
-
     public boolean isImgInFigure() {
         if (isNoFigureOrFigLabel()) {
             return false;

@@ -230,40 +230,6 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getFiguresForGenotype() {
-        //  genotype adss^hi1433Tg
-        String genoZdbID = "ZDB-FISH-020426-5";
-        Fish geno = new Fish();
-        geno.setZdbID(genoZdbID);
-        // brain
-        String aoZdbID = "ZDB-ANAT-010921-415";
-        GenericTerm item = new GenericTerm();
-        item.setZdbID(aoZdbID);
-        PaginationResult<Figure> figs = publicationRepository.getFiguresByFishAndAnatomy(geno, item);
-        assertNotNull(figs.getPopulatedResults());
-
-/*      This case has two figures where one of them comes from a genotype with MOs and thus should not be retrieved.
-        // Df(LG23:acvr1b,sp5l,wnt1,wnt10b)w5/w5
-        genoZdbID = "ZDB-GENO-091207-3";
-        geno.setZdbID(genoZdbID);
-        // midbrain hindbrain boundary
-        aoZdbID = "ZDB-TERM-100331-40";
-        item.setZdbID(aoZdbID);
-        figs = publicationRepository.getFiguresByFishAndAnatomy(geno, item.createGenericTerm());
-        assertTrue(figs.getPopulatedResults() != null);
-*/
-    }
-
-    @Test
-    public void getFiguresForGenotypeAndAoPlusSubstructures() {
-        Fish fish = mutantRepository.getFish("ZDB-FISH-150901-25831");
-        GenericTerm item = getOntologyRepository().getTermByOboID("ZFA:0005435");
-        PaginationResult<Figure> figs = publicationRepository.getFiguresByFishAndAnatomy(fish, item, true);
-        assertNotNull(figs.getPopulatedResults());
-        assertTrue(figs.getPopulatedResults().size() > 0);
-    }
-
-    @Test
     public void getPublicationsForGenoAndAoIncludingSubstructures() {
         Fish geno = new Fish();
         geno.setZdbID("ZDB-FISH-150901-25831");

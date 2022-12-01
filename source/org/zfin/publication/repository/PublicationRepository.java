@@ -99,7 +99,7 @@ public interface PublicationRepository extends PaginationParameter {
     boolean publicationExists(String canonicalPublicationZdbID);
 
     Figure getFigureByID(String figureZdbID);
-    
+
     /**
      * Saves a list of publications in one transaction.
      *
@@ -107,26 +107,6 @@ public interface PublicationRepository extends PaginationParameter {
      * @return boolean
      */
     boolean updatePublications(List<Publication> publicationList);
-
-    /**
-     * Retrieve list of figures for a given genotype and anatomy term
-     * for mutant genotypes excluding SequenceTargetingReagent.
-     *
-     * @param fish genotype
-     * @param term anatomy term
-     * @return list of figures.
-     */
-    PaginationResult<Figure> getFiguresByFishAndAnatomy(Fish fish, GenericTerm term);
-
-    /**
-     * Retrieve list of figures for a given genotype and anatomy term
-     * for mutant genotypes excluding SequenceTargetingReagent.
-     *
-     * @param fish genotype
-     * @param term anatomy term
-     * @return list of figures.
-     */
-    PaginationResult<Figure> getFiguresByFishAndAnatomy(Fish fish, GenericTerm term, boolean includeSubstructures);
 
     PaginationResult<Figure> getFiguresByGeno(Genotype geno);
 

@@ -34,26 +34,6 @@ public class FishGenotypePhenotypeStatistics extends EntityStatistics {
         return fish;
     }
 
-    @Override
-    public int getNumberOfFigures() {
-        if (figures == null) {
-            figures = new HashSet<>(5);
-            for (FishExperiment fishExperiment : fishExperimentList)
-                for (PhenotypeExperiment phenotype : fishExperiment.getPhenotypeExperiments()) {
-                    figures.add(phenotype.getFigure());
-                }
-        }
-        return figures.size();
-    }
-
-    public Figure getFirstFigure() {
-        if (getNumberOfFigures() == 0) {
-            return null;
-        } else {
-            return figures.iterator().next();
-        }
-    }
-
     public Set<Figure> getFigures() {
         if (figures == null) {
             figures = fishExperimentList.stream()

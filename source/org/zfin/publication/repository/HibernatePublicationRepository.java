@@ -334,48 +334,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return (DOIAttempt) query.uniqueResult();
     }
 
-    /**
-     * Retrieve list of figures for a given genotype and anatomy term
-     * for mutant genotypes excluding sequenceTargetingReagent.
-     *
-     * @param fish genotype
-     * @param term anatomy term
-     * @return list of figures.
-     */
-    @SuppressWarnings("unchecked")
-    public PaginationResult<Figure> getFiguresByFishAndAnatomy(Fish fish, GenericTerm term, boolean includeSubstructures) {
-        Session session = HibernateUtil.currentSession();
-
-        String hql = "select distinct figure from Figure figure, PhenotypeStatementWarehouse phenos, " +
-            "FishExperiment fishox, TransitiveClosure transitiveClosure " +
-            "where fishox.fish = :fish AND " +
-            "      phenos.phenotypeWarehouse.fishExperiment = fishox  AND " +
-            "      phenos.phenotypeWarehouse.figure = figure AND " +
-            "      transitiveClosure.root = :aoTerm AND " +
-            "      ( phenos.e1a = transitiveClosure.child OR phenos.e1b = transitiveClosure.child OR " +
-            "        phenos.e2a = transitiveClosure.child OR phenos.e2b = transitiveClosure.child) " +
-            " AND exists (select 'x' from GeneGenotypeExperiment where fishExperiment = fishox) " +
-            "order by figure.orderingLabel    ";
-        Query query = session.createQuery(hql);
-        query.setParameter("fish", fish);
-        query.setParameter("aoTerm", term);
-        PaginationResult<Figure> paginationResult = new PaginationResult<>(query.list());
-        return paginationResult;
-    }
-
-    /**
-     * Retrieve list of figures for a given genotype and anatomy term
-     * for mutant genotypes excluding sequenceTargetingReagent.
-     *
-     * @param fish genotype
-     * @param term anatomy term
-     * @return list of figures.
-     */
-    @Override
-    public PaginationResult<Figure> getFiguresByFishAndAnatomy(Fish fish, GenericTerm term) {
-        return getFiguresByFishAndAnatomy(fish, term, false);
-    }
-
     public PaginationResult<Figure> getFiguresByGeno(Genotype geno) {
         Session session = HibernateUtil.currentSession();
         String hql = "select distinct figure from Figure figure, GenotypeFigure genofig " +

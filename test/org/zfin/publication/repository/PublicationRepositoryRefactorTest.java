@@ -133,7 +133,5 @@ public class PublicationRepositoryRefactorTest extends AbstractDatabaseTest {
         assertNotNull(fig);
     }
 
-
-
 }
 
