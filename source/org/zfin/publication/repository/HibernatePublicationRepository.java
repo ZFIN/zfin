@@ -300,22 +300,21 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                      join fish_experiment on genox_zdb_id = xpatex_genox_zdb_id
                      join marker on mrkr_zdb_id = xpatex_gene_zdb_id
                 where (xpatres_superterm_zdb_id = :termZdbId or xpatres_subterm_zdb_id = :termZdbId)
-                   and xpatres_expression_found = :expressionFound
-                   and genox_is_std_or_generic_control = :condition
+                   and xpatres_expression_found is true
+                   and genox_is_std_or_generic_control is true
                    and mrkr_abbrev not like :withdrawn
                    and not exists (select 'x' from clone
                                    where clone_mrkr_zdb_id = xpatex_probe_feature_zdb_id
                                      and clone_problem_type <> :chimeric);
                 """;
 
-        Query query = session.createSQLQuery(sql);
+        Query<Number> query = session.createNativeQuery(sql);
 
-        query.setBoolean("expressionFound", true);
         query.setParameter("termZdbId", anatomyTerm.getZdbID());
-        query.setBoolean("condition", true);
-        query.setString("withdrawn", Marker.WITHDRAWN + "%");
-        query.setString("chimeric", Clone.ProblemType.CHIMERIC.toString());
-        return ((Number) query.uniqueResult()).intValue();
+        query.setParameter("withdrawn", Marker.WITHDRAWN + "%");
+        query.setParameter("chimeric", Clone.ProblemType.CHIMERIC.toString());
+
+        return ((Number) query.getSingleResult()).intValue();
     }
 
     private List<MarkerStatistic> createMarkerStatistics(List<Object[]> list, GenericTerm anatomyTerm) {
