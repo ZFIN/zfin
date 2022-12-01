@@ -325,24 +325,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         session.flush();
         return true;
     }
-
-    public int getNumPublicationsWithFiguresPerGenotypeAndAnatomy(Genotype genotype, GenericTerm aoTerm) {
-        Session session = HibernateUtil.currentSession();
-
-        String hql = " select count(distinct figure.publication.zdbID ) from " +
-            " Figure figure, PhenotypeStatement phenotype " +
-            "where " +
-            "      ( phenotype.entity.superterm = :aoTerm OR phenotype.entity.subterm = :aoTerm OR " +
-            "        phenotype.relatedEntity.superterm = :aoTerm OR phenotype.relatedEntity.subterm = :aoTerm ) AND " +
-            "      phenotype.phenotypeExperiment.fishExperiment.fish.genotype.zdbID = :genoID AND " +
-            "      phenotype.phenotypeExperiment.figure =figure " +
-            "";
-        Query query = session.createQuery(hql);
-        query.setString("genoID", genotype.getZdbID());
-        query.setParameter("aoTerm", aoTerm);
-
-        return ((Number) (query.uniqueResult())).intValue();
-    }
+    /** PLACEHOLDER **/
 
     /**
      * Retrieve figures for a given gene and anatomy term.

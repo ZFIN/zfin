@@ -109,13 +109,6 @@ public interface PublicationRepository extends PaginationParameter {
     boolean updatePublications(List<Publication> publicationList);
 
     /**
-     * @param genotype Genotype
-     * @param aoTerm   ao term
-     * @return Number of publications with figures per genotype and anatomy
-     */
-    int getNumPublicationsWithFiguresPerGenotypeAndAnatomy(Genotype genotype, GenericTerm aoTerm);
-
-    /**
      * Retrieve figures for a given gene and anatomy term.
      *
      * @param gene        Gene

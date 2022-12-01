@@ -244,21 +244,6 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getPublicationsForFiguresForGenotype() {
-        //  genotype adss^hi1433Tg
-        String genoZdbID = "ZDB-GENO-020426-5";
-        Genotype geno = new Genotype();
-        geno.setZdbID(genoZdbID);
-        // brain
-        String aoZdbID = "ZDB-TERM-100331-8";
-        GenericTerm item = new GenericTerm();
-        item.setZdbID(aoZdbID);
-        int publicationCount = publicationRepository.getNumPublicationsWithFiguresPerGenotypeAndAnatomy(geno, item);
-        assertTrue(publicationCount > 0);
-//        assertEquals("1 publication", 1, publications.size());
-    }
-
-    @Test
     public void getFeatureCountForPub() {
         //  genotype adss^hi1433Tg
         String pubZdbID = "ZDB-PUB-140403-2";
