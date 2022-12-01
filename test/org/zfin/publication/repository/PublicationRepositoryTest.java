@@ -102,16 +102,6 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getNumberOfPubWithFigures() {
-        //  neural rod
-        String aoZdbID = "ZDB-TERM-100331-125";
-        String zdbID = "ZDB-GENE-980526-36";
-        int number = publicationRepository.getNumberOfExpressedGenePublicationsWithFigures(zdbID, aoZdbID);
-//        assertEquals("2 publications", 2, number);
-        assertTrue(number > 0);
-    }
-
-    @Test
     public void getNumberOfFiguresPerAnatomyStructure() {
         String termName = "neural rod";
         GenericTerm term = ontologyRepository.getTermByName(termName, Ontology.ANATOMY);
@@ -398,17 +388,6 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         item.setZdbID(aoZdbID);
         List<Figure> figs = publicationRepository.getFiguresByGeneAndAnatomy(marker, item);
         assertTrue(figs != null);
-    }
-
-    @Test
-    public void getHighQualityProbePublicationsForBrain() {
-        String termName = "neural rod";
-        OntologyRepository aoRepository = RepositoryFactory.getOntologyRepository();
-        GenericTerm item = aoRepository.getTermByName(termName, Ontology.ANATOMY);
-        List<Publication> qualityPubs = publicationRepository.getHighQualityProbePublications(item);
-        assertTrue(qualityPubs != null);
-//        assertEquals("2 pubs", 2, qualityPubs.size());
-
     }
 
     @Test

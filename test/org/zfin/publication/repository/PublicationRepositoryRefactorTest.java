@@ -46,6 +46,7 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.MarkerDBLink;
 
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -65,19 +66,6 @@ public class PublicationRepositoryRefactorTest extends AbstractDatabaseTest {
     private static OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
     private static AnatomyRepository anatomyRepository = RepositoryFactory.getAnatomyRepository();
     private static FigureViewService figureViewService = new FigureViewService();
-
-
-    @Test
-    public void getNumberOfPublications()
-    {
-        int number = publicationRepository.getNumberOfPublications("zebrafish central nervous system");
-//        assertEquals("53 publication",53, number);
-        assertTrue(number > 20);
-
-//        number = publicationRepository.getNumberOfPublications("heart attack");
-//        int referenceNumber = publicationRepository.getNumberOfPublications_Deprecated("heart attack");
-//        assertEquals(referenceNumber, number);
-    }
 
     @Test
     public void getExpressedGenePublications() {
@@ -116,7 +104,18 @@ public class PublicationRepositoryRefactorTest extends AbstractDatabaseTest {
         HighQualityProbe firstResult = hqp.getPopulatedResults().get(0);
         Marker firstGene = ((Marker)(firstResult.getGenes().toArray()[0]));
         assertEquals("ZDB-GENE-010328-3", firstGene.getZdbID());
+    }
 
+    @Test
+    public void getPublications() {
+        List<String> testPubs = List.of("ZDB-PUB-180130-17", "ZDB-PUB-190613-8");
+        List<Publication> pubs = publicationRepository.getPublications(testPubs);
+        assertEquals(2, pubs.size());
+
+        testPubs.containsAll(List.of(pubs.get(0).getZdbID(),pubs.get(1).getZdbID()));
+
+        pubs = publicationRepository.getPublications(null);
+        assertEquals(0, pubs.size());
     }
 
 
