@@ -108,6 +108,8 @@
                          data-term-id="${term.zdbID}"
                          data-direct-annotation-only="true"
                     ></div>
+                    <div><a href="/action/expression/results?anatomyTermNames=${term.termName}&anatomyTermIDs=${term.zdbID}&journalType=ALL&includeSubstructures=false&onlyWildtype=true">
+                        Search genes within Advanced Search</a></div>
                 </z:section>
                 <z:section title="Thisse recommended In Situ Probes" infoPopup="/zf_info/stars.html">
                     <div class="__react-root" id="TermInSituProbeTable"
