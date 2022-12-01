@@ -303,32 +303,11 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return session.get(Image.class, zdbID);
     }
 
-    @SuppressWarnings("unchecked")
-    public List<Figure> getFiguresByProbeAndPublication(String probeID, String publicationID) {
-        Session session = HibernateUtil.currentSession();
-
-
-        String hql = "select figure from Figure figure, ExpressionExperiment exp, ExpressionResult res " +
-            "where exp.publication.zdbID = :pubID AND " +
-            "      exp.probe.zdbID = :cloneID AND " +
-            "      res member of exp.expressionResults AND " +
-            "      figure member of res.figures " +
-            "order by figure.orderingLabel   ";
-        Query query = session.createQuery(hql);
-        query.setString("pubID", publicationID);
-        query.setString("cloneID", probeID);
-        // Only pick out the distinct records.
-        query.setResultTransformer(DistinctRootEntityResultTransformer.INSTANCE);
-        List<Figure> figures = query.list();
-
-        return figures;
-    }
-
     public Figure getFigureByID(String figureZdbID) {
         Session session = HibernateUtil.currentSession();
         return (Figure) session.get(Figure.class, figureZdbID);
     }
-    
+
     public boolean updatePublications(List<Publication> publicationList) {
 
         Session session = HibernateUtil.currentSession();

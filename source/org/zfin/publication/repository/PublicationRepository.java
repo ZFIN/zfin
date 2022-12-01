@@ -101,14 +101,6 @@ public interface PublicationRepository extends PaginationParameter {
     Figure getFigureByID(String figureZdbID);
 
     /**
-     * Retrieve the figures that can be found for a given publication and probe.
-     *
-     * @param probeID
-     * @param publicationID
-     */
-    List<Figure> getFiguresByProbeAndPublication(String probeID, String publicationID);
-
-    /**
      * Retrieves publications with Accession Number's (pubmed Ids) but with null or 'none' DOIs.
      *
      * @param maxResults number
