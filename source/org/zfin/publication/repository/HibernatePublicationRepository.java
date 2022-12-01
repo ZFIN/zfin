@@ -326,22 +326,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return true;
     }
 
-    //TODO: Remove? I don't think this is used anywhere. Sure, GenoExpStatistics uses it, but that method
-    //is never used
-    public PaginationResult<Publication> getPublicationsWithFiguresbyGenoExp(Genotype genotype) {
-        Session session = HibernateUtil.currentSession();
-        Criteria pubs = session.createCriteria(Publication.class);
-        Criteria expression = pubs.createCriteria("expressionExperiments");
-        Criteria genox = expression.createCriteria("fishExperiment");
-        Criteria fish = genox.createCriteria("fish");
-        fish.add(Restrictions.eq("genotype", genotype));
-        Criteria result = expression.createCriteria("expressionResults");
-        result.add(Restrictions.isNotEmpty("figures"));
-        expression.add(Restrictions.isNull("antibody"));
-        pubs.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-        return new PaginationResult<Publication>((List<Publication>) pubs.list());
-    }
-
     /**
      * Retrieve publications that have phenotype data for a given term and genotype
      *

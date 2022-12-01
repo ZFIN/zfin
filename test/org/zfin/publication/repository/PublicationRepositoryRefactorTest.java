@@ -132,18 +132,5 @@ public class PublicationRepositoryRefactorTest extends AbstractDatabaseTest {
         assertNotNull(fig);
     }
 
-//    @Test
-//    public void getDoiAttempt() {
-//        Publication pub = publicationRepository.getPublication("ZDB-PUB-040216-10");
-//        DOIAttempt attempt = publicationRepository.getDoiAttempt(pub);
-//        assertEquals(65, attempt.getNumAttempts());
-//    }
-
-    @Test
-    public void checkFeatureWithCleanPhenotypeOnPub() {
-        Feature feature = getFeatureRepository().getFeatureByID("ZDB-ALT-190821-6");
-        PhenotypeOnMarkerBean bean = FeatureService.getPhenotypeOnFeature(feature);
-        assertNotNull(bean);
-    }
 }
 

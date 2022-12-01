@@ -31,9 +31,8 @@ public class GenoExpStatistics extends EntityStatistics {
         return genotype;
     }
 
+    @Override
     protected PaginationResult<Publication> getPublicationPaginationResult() {
-        PublicationRepository repository = RepositoryFactory.getPublicationRepository();
-        return repository.getPublicationsWithFiguresbyGenoExp(genotype);
+        throw new RuntimeException("This method is never used so we should never see this exception");
     }
-
 }
