@@ -230,17 +230,6 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getPublicationsForGenoAndAoIncludingSubstructures() {
-        Fish geno = new Fish();
-        geno.setZdbID("ZDB-FISH-150901-25831");
-        // actinotrichium
-        GenericTerm item = getOntologyRepository().getTermByOboID("ZFA:0005435");
-        PaginationResult<Publication> publications = publicationRepository.getPublicationsWithFigures(geno, item, true);
-        assertNotNull(publications.getPopulatedResults());
-        assertTrue(publications.getPopulatedResults().size() > 0);
-    }
-
-    @Test
     public void getPubsForFeature() {
         //  genotype adss^hi1433Tg
         String featZdbID = "ZDB-ALT-980413-502";

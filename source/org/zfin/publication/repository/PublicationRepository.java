@@ -109,15 +109,6 @@ public interface PublicationRepository extends PaginationParameter {
     boolean updatePublications(List<Publication> publicationList);
 
     /**
-     * Retrieve publications that have phenotype data for a given term and genotype including
-     * substructures
-     *
-     * @param fish   Fish
-     * @param aoTerm ao term  @return Number of publications with figures per genotype and anatomy
-     */
-    PaginationResult<Publication> getPublicationsWithFigures(Fish fish, GenericTerm aoTerm, boolean includeSubstructures);
-
-    /**
      * @param genotype Genotype
      * @param aoTerm   ao term
      * @return Number of publications with figures per genotype and anatomy

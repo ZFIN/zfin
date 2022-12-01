@@ -326,36 +326,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return true;
     }
 
-    /**
-     * Retrieve publications that have phenotype data for a given term and genotype
-     *
-     * @param fish
-     * @param aoTerm ao term  @return Number of publications with figures per genotype and anatomy
-     */
-    public PaginationResult<Publication> getPublicationsWithFigures(Fish fish, GenericTerm aoTerm, boolean includeSubstructures) {
-        Session session = HibernateUtil.currentSession();
-        String hql = "select publication from Publication as publication, PhenotypeStatement as phenotype, " +
-            "     TransitiveClosure transitiveClosure, GeneGenotypeExperiment fastSearch " +
-            "where " +
-            " phenotype.phenotypeExperiment.figure.publication = publication and " +
-            " transitiveClosure.root = :aoTerm and " +
-            "(phenotype.entity.superterm = transitiveClosure.child OR phenotype.entity.subterm = transitiveClosure.child OR " +
-            " phenotype.relatedEntity.superterm = transitiveClosure.child OR phenotype.relatedEntity.subterm = transitiveClosure.child) " +
-            " AND phenotype.phenotypeExperiment.fishExperiment.fish = :fish" +
-            " AND exists (select 'x' from fastSearch where fishExperiment = phenotype.phenotypeExperiment.fishExperiment) ";
-
-        Query query = session.createQuery(hql);
-        query.setParameter("aoTerm", aoTerm);
-        query.setParameter("fish", fish);
-
-/*
-        Criteria experiment = genox.createCriteria("experiment");
-        experiment.add(Restrictions.in("name", new String[]{Experiment.STANDARD, Experiment.GENERIC_CONTROL}));
-*/
-        query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-        return new PaginationResult<>((List<Publication>) query.list());
-    }
-
     public int getNumPublicationsWithFiguresPerGenotypeAndAnatomy(Genotype genotype, GenericTerm aoTerm) {
         Session session = HibernateUtil.currentSession();
 
