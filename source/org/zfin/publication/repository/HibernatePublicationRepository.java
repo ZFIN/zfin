@@ -326,14 +326,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return true;
     }
 
-    private DOIAttempt getDoiAttempt(Publication publication) {
-        Session session = HibernateUtil.currentSession();
-        Query query = session.createQuery("from DOIAttempt " +
-            "where publication = :pub");
-        query.setParameter("pub", publication);
-        return (DOIAttempt) query.uniqueResult();
-    }
-
     public PaginationResult<Figure> getFiguresByGeno(Genotype geno) {
         Session session = HibernateUtil.currentSession();
         String hql = "select distinct figure from Figure figure, GenotypeFigure genofig " +
@@ -2537,6 +2529,17 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             }
         }
         return probes;
+    }
+
+    private DOIAttempt getDoiAttempt(Publication publication) {
+        Session session = HibernateUtil.currentSession();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<DOIAttempt> cr = cb.createQuery(DOIAttempt.class);
+
+        Root<DOIAttempt> root = cr.from(DOIAttempt.class);
+        cr.select(root).where(cb.equal(root.get("publication"), publication));
+
+        return session.createQuery(cr).uniqueResult();
     }
 
 }

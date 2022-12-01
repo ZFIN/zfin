@@ -36,10 +36,7 @@ import org.zfin.ontology.Ontology;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.orthology.Ortholog;
 import org.zfin.profile.Person;
-import org.zfin.publication.Publication;
-import org.zfin.publication.PublicationTrackingHistory;
-import org.zfin.publication.PublicationTrackingLocation;
-import org.zfin.publication.PublicationTrackingStatus;
+import org.zfin.publication.*;
 import org.zfin.publication.presentation.DashboardPublicationBean;
 import org.zfin.publication.presentation.DashboardPublicationList;
 import org.zfin.repository.RepositoryFactory;
@@ -133,5 +130,11 @@ public class PublicationRepositoryRefactorTest extends AbstractDatabaseTest {
         assertNotNull(fig);
     }
 
+//    @Test
+//    public void getDoiAttempt() {
+//        Publication pub = publicationRepository.getPublication("ZDB-PUB-040216-10");
+//        DOIAttempt attempt = publicationRepository.getDoiAttempt(pub);
+//        assertEquals(65, attempt.getNumAttempts());
+//    }
 }
 
