@@ -70,6 +70,8 @@ public class AlleleLinkMLInfo extends LinkMLInfo {
                 dto.setReferenceCuries(getReferencesById(feature.getZdbID()));
                 if (feature.getSingleRelatedGenotype() != null) {
                     dto.setIsExtinct(feature.getSingleRelatedGenotype().isExtinct());
+                } else {
+                    dto.setIsExtinct(false);
                 }
                 return dto;
             })
