@@ -99,16 +99,7 @@ public interface PublicationRepository extends PaginationParameter {
     boolean publicationExists(String canonicalPublicationZdbID);
 
     Figure getFigureByID(String figureZdbID);
-
-    /**
-     * Retrieves publications with Accession Number's (pubmed Ids) but with null or 'none' DOIs.
-     *
-     * @param maxResults number
-     * @return list
-     */
-    List<Publication> getPublicationsWithAccessionButNoDOI(int maxResults);
-
-
+    
     /**
      * Saves a list of publications in one transaction.
      *

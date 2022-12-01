@@ -1222,19 +1222,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     @SuppressWarnings("unchecked")
-    public List<Publication> getPublicationsWithAccessionButNoDOI(int maxResults) {
-        Session session = HibernateUtil.currentSession();
-        Criteria query = session.createCriteria(Publication.class);
-        query.add(Restrictions.isNull("doi"));
-        query.add(Restrictions.isNotNull("accessionNumber"));
-        query.addOrder(Order.desc("publicationDate"));
-        if (maxResults >= 0) {
-            query.setMaxResults(maxResults);
-        }
-        return query.list();
-    }
-
-    @SuppressWarnings("unchecked")
     @Override
     /**
      * Get N publication if not attempts have been registered, or the number of attempts is less than allowed amount.
