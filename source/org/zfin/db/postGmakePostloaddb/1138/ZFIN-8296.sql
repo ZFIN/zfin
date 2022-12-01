@@ -54,7 +54,8 @@ insert into zdb_active_data (zactvd_zdb_id)
 select id_mrel from tmp_mrel;
 
 insert into marker_relationship (mrel_zdb_id, mrel_type, mrel_mrkr_1_zdb_id, mrel_mrkr_2_zdb_id)
-  select id_mrel,'coding sequence of', id_construct, 'ZDB-EFG-221115-1' from tmp_mrel;
+  select id_mrel,'coding sequence of', id_construct, 'ZDB-EFG-221115-1' from tmp_mrel
+ON CONFLICT DO NOTHING;
 
 -- generate the color info
 select from create_color_info();
