@@ -127,5 +127,13 @@ public class PublicationRepositoryRefactorTest extends AbstractDatabaseTest {
         assertFalse(notExists);
     }
 
+    @Test
+    public void getFigureById() {
+        Figure fig = publicationRepository.getFigureByID("ZDB-FIG-080617-24"); //has xpat, pheno & AB
+        assertNotNull(fig);
+    }
+
+
+
 }
 

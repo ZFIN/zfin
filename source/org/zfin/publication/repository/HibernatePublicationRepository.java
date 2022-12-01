@@ -292,7 +292,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public boolean publicationExists(String canonicalPublicationZdbID) {
         return getPublication(canonicalPublicationZdbID) != null;
     }
-    
+
     public Figure getFigureById(String zdbID) {
         Session session = HibernateUtil.currentSession();
         return session.get(Figure.class, zdbID);
@@ -301,7 +301,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public Image getImageById(String zdbID) {
         Session session = HibernateUtil.currentSession();
         return session.get(Image.class, zdbID);
-
     }
 
     @SuppressWarnings("unchecked")
@@ -343,41 +342,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             }
         }
         return probes;
-    }
-
-    /**
-     * Return all figures for a specified gene, probe and anatommical structure.
-     * Clone information is not required.
-     *
-     * @param gene   Gene
-     * @param clone  Probe
-     * @param aoTerm anatomical structure
-     * @return list of figures
-     */
-    @SuppressWarnings("unchecked")
-    public List<Figure> getFiguresPerProbeAndAnatomy(Marker gene, Marker clone, GenericTerm aoTerm) {
-        Session session = HibernateUtil.currentSession();
-
-        StringBuilder hql = new StringBuilder("select figure from Figure figure, ExpressionExperiment exp, ");
-        hql.append("ExpressionResult res ");
-        hql.append("where exp.gene = :gene AND ");
-        if (clone != null) {
-            hql.append("      exp.probe = :clone AND ");
-        }
-        hql.append("      res member of exp.expressionResults AND ");
-        hql.append("      res.expressionFound = :expressionFound  AND ");
-        hql.append("      res.entity.superterm = :term AND ");
-        hql.append("      figure member of res.figures ");
-        hql.append("order by figure.orderingLabel    ");
-        Query query = session.createQuery(hql.toString());
-        query.setParameter("gene", gene);
-        if (clone != null) {
-            query.setParameter("clone", clone);
-        }
-        query.setParameter("term", aoTerm);
-        query.setBoolean("expressionFound", true);
-        List<Figure> figures = query.list();
-        return figures;
     }
 
     @SuppressWarnings("unchecked")
