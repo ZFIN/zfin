@@ -340,7 +340,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return session.get(Publication.class, zdbID);
     }
 
-    public List<Publication> getPublications(List<String> zdbIDs) {
+    public List<Publication> getPublications_Deprecated(List<String> zdbIDs) {
         if (CollectionUtils.isEmpty(zdbIDs)) {
             return Collections.emptyList();
         }
@@ -349,6 +349,22 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             .add(Restrictions.in("zdbID", zdbIDs))
             .list();
     }
+
+    public List<Publication> getPublications(List<String> zdbIDs) {
+        Session session = HibernateUtil.currentSession();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<Publication> cr = cb.createQuery(Publication.class);
+        Root<Publication> root = cr.from(Publication.class);
+
+
+        CriteriaBuilder.In<String> inClause = cb.in(root.get("zdbID"));
+        for (String id : zdbIDs) {
+            inClause.value(id);
+        }
+
+        return session.createQuery(cr).list();
+    }
+
 
     public Marker getMarker(String symbol) {
         Session session = HibernateUtil.currentSession();
