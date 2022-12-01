@@ -105,19 +105,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return query.list();
     }
 
-
-    public List<String> getSNPPublicationIDs_Deprecated(Marker marker) {
-        Session session = HibernateUtil.currentSession();
-        String sql = """
-                select distinct snpdattr_pub_zdb_id
-                 from snp_download_attribution, snp_download
-                 where snpdattr_snpd_pk_id = snpd_pk_id and snpd_mrkr_zdb_id = :zdbID""";
-        SQLQuery query = session.createSQLQuery(sql);
-        query.setString("zdbID", marker.getZdbID());
-        List<String> pubIDs = query.list();
-        return pubIDs;
-    }
-
     public List<String> getSNPPublicationIDs(Marker marker) {
         Session session = HibernateUtil.currentSession();
         String sql = """
@@ -128,39 +115,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         query.setParameter("zdbID", marker.getZdbID());
         List<Tuple> pubIDs = query.list();
         return pubIDs.stream().map(tuple -> tuple.get(0, String.class)).toList();
-    }
-
-    /*
-    public List<Publication> getSNPPublications(Marker marker) {
-       Session session = HibernateUtil.currentSession();
-        String hql = "SELECT distinct publication FROM Publication publication, ExpressionExperiment exp, ExpressionResult res, Marker marker   " +
-                "WHERE res.anatomyTerm.zdbID = :aoZdbID " +
-                "AND publication.zdbID = exp.publicationID " +
-                "AND res.expressionExperiment = exp " +
-                "AND marker.zdbID = exp.geneID " +
-                "AND marker.zdbID = :zdbID ";
-        String sql = addOrderByParameters(hql);
-        Query query = session.createQuery(sql);
-        query.setString("zdbID", marker.getZdbID());
-        List<Publication> list = query.list();
-        return list;
-    }     */
-
-
-    private String addOrderByParameters(String hql) {
-        if (!isUsePagination()) {
-            return hql;
-        }
-        StringBuilder sb = new StringBuilder(hql);
-        sb.append(getOrderByClause());
-        return sb.toString();
-    }
-
-    private void addPaginationParameters(Query query) {
-        if (isUsePagination()) {
-            query.setFirstResult(getFirstRow() - 1);
-            query.setMaxResults(getMaxDisplayRows());
-        }
     }
 
     //TODO: refactor to JPA Criteria?
@@ -317,24 +271,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return ((Number) query.getSingleResult()).intValue();
     }
 
-    private List<MarkerStatistic> createMarkerStatistics(List<Object[]> list, GenericTerm anatomyTerm) {
-        if (list == null) {
-            return null;
-        }
-
-        List<MarkerStatistic> markers = new ArrayList<MarkerStatistic>();
-        for (Object[] stats : list) {
-            String markerZdbID = (String) stats[0];
-            Marker marker = markerRepository.getMarkerByID(markerZdbID);
-            MarkerStatistic statistic = new MarkerStatistic(anatomyTerm, marker);
-            statistic.setNumberOfFigures((Integer) stats[2]);
-            //statistic.setNumberOfPublications(getNumberOfExpressedGenePublicationsWithFigures(marker.getZdbID(), anatomyTerm.getZdbID()));
-            markers.add(statistic);
-        }
-        return markers;
-    }
-
-
     public Publication getPublication(String zdbID) {
         Session session = HibernateUtil.currentSession();
         return session.get(Publication.class, zdbID);
@@ -353,28 +289,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return session.createQuery(cr).list();
     }
 
-
-    public Marker getMarker(String symbol) {
-        Session session = HibernateUtil.currentSession();
-        Criteria query = session.createCriteria(Marker.class);
-        query.add(Restrictions.eq("abbreviation", symbol));
-        Marker pub = (Marker) query.uniqueResult();
-        return pub;
-    }
-
-    public Marker getMarkerByZdbID(String zdbID) {
-        Session session = HibernateUtil.currentSession();
-        return (Marker) session.load(Marker.class, zdbID);
-    }
-
     public boolean publicationExists(String canonicalPublicationZdbID) {
-        Session session = HibernateUtil.currentSession();
-        Criteria query = session.createCriteria(Publication.class);
-        query.setProjection(Projections.count("zdbID"));
-        query.add(Restrictions.eq("zdbID", canonicalPublicationZdbID));
-        return (1 == ((Number) query.uniqueResult()).intValue());
+        return getPublication(canonicalPublicationZdbID) != null;
     }
-
 
     public Figure getFigureById(String zdbID) {
         Session session = HibernateUtil.currentSession();
@@ -2728,6 +2645,39 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public boolean hasCuratedOrthology(Marker marker) {
 
         return CollectionUtils.isNotEmpty(getOrthologListByMrkr(marker.zdbID));
+    }
+
+    private String addOrderByParameters(String hql) {
+        if (!isUsePagination()) {
+            return hql;
+        }
+        StringBuilder sb = new StringBuilder(hql);
+        sb.append(getOrderByClause());
+        return sb.toString();
+    }
+
+    private void addPaginationParameters(Query query) {
+        if (isUsePagination()) {
+            query.setFirstResult(getFirstRow() - 1);
+            query.setMaxResults(getMaxDisplayRows());
+        }
+    }
+
+    private List<MarkerStatistic> createMarkerStatistics(List<Object[]> list, GenericTerm anatomyTerm) {
+        if (list == null) {
+            return null;
+        }
+
+        List<MarkerStatistic> markers = new ArrayList<MarkerStatistic>();
+        for (Object[] stats : list) {
+            String markerZdbID = (String) stats[0];
+            Marker marker = markerRepository.getMarkerByID(markerZdbID);
+            MarkerStatistic statistic = new MarkerStatistic(anatomyTerm, marker);
+            statistic.setNumberOfFigures((Integer) stats[2]);
+            //statistic.setNumberOfPublications(getNumberOfExpressedGenePublicationsWithFigures(marker.getZdbID(), anatomyTerm.getZdbID()));
+            markers.add(statistic);
+        }
+        return markers;
     }
 
 }

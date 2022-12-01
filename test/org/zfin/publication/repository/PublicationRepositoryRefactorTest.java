@@ -118,7 +118,14 @@ public class PublicationRepositoryRefactorTest extends AbstractDatabaseTest {
         assertEquals(0, pubs.size());
     }
 
+    @Test
+    public void publicationExists() {
+        boolean exists = publicationRepository.publicationExists("ZDB-PUB-180130-17");
+        assertTrue(exists);
 
+        boolean notExists = publicationRepository.publicationExists("BOGUS-IDENTIFIER");
+        assertFalse(notExists);
+    }
 
 }
 

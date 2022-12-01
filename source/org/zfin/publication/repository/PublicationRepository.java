@@ -92,20 +92,6 @@ public interface PublicationRepository extends PaginationParameter {
     List<Publication> getPublications(List<String> zdbIDs);
 
     /**
-     * Retrieve a marker (gene) by its symbol name. If it is not unique a Hibernate runtime exception is thrown.
-     *
-     * @param symbol
-     */
-    Marker getMarker(String symbol);
-
-    /**
-     * Retrieve a marker by its zdbID
-     *
-     * @param zdbID
-     */
-    Marker getMarkerByZdbID(String zdbID);
-
-    /**
      * Check if a publication with the specified primary key exists.
      *
      * @param canonicalPublicationZdbID
@@ -153,17 +139,6 @@ public interface PublicationRepository extends PaginationParameter {
      * @param publicationID
      */
     List<Figure> getFiguresByProbeAndPublication(String probeID, String publicationID);
-
-
-    /**
-     * Used to add a sorting string onto the query.
-     *
-     * @param orderVariable
-     */
-    void addOrdering(String orderVariable);
-
-    void removeOrderByFields();
-
 
     /**
      * Retrieves publications with Accession Number's (pubmed Ids) but with null or 'none' DOIs.
