@@ -93,11 +93,6 @@ public class MarkerStatistic extends EntityStatistics {
         return figs.get(0);
     }
 
-    @JsonView(View.ExpressedGeneAPI.class)
-    public Figure getFirstFigure() {
-        return getFigure();
-    }
-
     public FigureStatistics getFigureStatistics() {
         return figureStatistics;
     }

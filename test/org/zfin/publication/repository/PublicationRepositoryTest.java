@@ -241,18 +241,6 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getFiguresForGeno() {
-        //  genotype adss^hi1433Tg
-        String genoZdbID = "ZDB-GENO-980202-822";
-        Genotype geno = new Genotype();
-        geno.setZdbID(genoZdbID);
-        // brain
-        PaginationResult<Figure> figs = publicationRepository.getFiguresByGeno(geno);
-        assertTrue(figs.getPopulatedResults() != null);
-    }
-
-
-    @Test
     public void getPubsForFeature() {
         //  genotype adss^hi1433Tg
         String featZdbID = "ZDB-ALT-980413-502";
@@ -262,21 +250,6 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
 
         PaginationResult<Publication> pubs = publicationRepository.getAllAssociatedPublicationsForFeature(feature, 0);
         assertTrue(pubs.getPopulatedResults() != null);
-//        assertEquals("1 figure", 1, figs.size());
-
-    }
-
-    @Test
-    public void getFiguresForGenotypeExp() {
-        //  genotype adss^hi1433Tg
-        String genoZdbID = "ZDB-GENO-020426-5";
-        Genotype geno = new Genotype();
-        geno.setZdbID(genoZdbID);
-        // brain
-
-
-        PaginationResult<Figure> figs = publicationRepository.getFiguresByGenoExp(geno);
-        assertTrue(figs.getPopulatedResults() != null);
 //        assertEquals("1 figure", 1, figs.size());
 
     }
@@ -294,7 +267,6 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         int publicationCount = publicationRepository.getNumPublicationsWithFiguresPerGenotypeAndAnatomy(geno, item);
         assertTrue(publicationCount > 0);
 //        assertEquals("1 publication", 1, publications.size());
-
     }
 
     @Test

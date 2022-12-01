@@ -108,10 +108,6 @@ public interface PublicationRepository extends PaginationParameter {
      */
     boolean updatePublications(List<Publication> publicationList);
 
-    PaginationResult<Figure> getFiguresByGeno(Genotype geno);
-
-    PaginationResult<Figure> getFiguresByGenoExp(Genotype geno);
-
     PaginationResult<Publication> getPublicationsWithFiguresbyGeno(Genotype genotype);
 
     PaginationResult<Publication> getPublicationsWithFiguresbyGenoExp(Genotype genotype);

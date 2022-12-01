@@ -326,39 +326,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return true;
     }
 
-    public PaginationResult<Figure> getFiguresByGeno(Genotype geno) {
-        Session session = HibernateUtil.currentSession();
-        String hql = "select distinct figure from Figure figure, GenotypeFigure genofig " +
-            "where genofig.genotype.zdbID = :genoID AND " +
-            "      genofig.figure.zdbID=figure.id " +
-            "order by figure.orderingLabel    ";
-
-        Query query = session.createQuery(hql);
-        query.setString("genoID", geno.getZdbID());
-
-        PaginationResult<Figure> paginationResult = new PaginationResult<Figure>(query.list());
-        return paginationResult;
-    }
-
-    public PaginationResult<Figure> getFiguresByGenoExp(Genotype geno) {
-        Session session = HibernateUtil.currentSession();
-
-        String hql = "select distinct figure from Figure figure, ExpressionResult res, ExpressionExperiment exp," +
-            "FishExperiment fishox, Genotype geno, ExpressionResultFigure xpatfig " +
-            "where geno.zdbID = :genoID AND " +
-            "      fishox.fish.genotype = geno AND " +
-            "   res.expressionExperiment = exp AND " +
-            "   xpatfig.expressionResult = res AND " +
-            "   xpatfig.figure = figure AND " +
-            "   exp.antibody is null AND " +
-            "   exp.fishExperiment = fishox  " +
-            "order by figure.orderingLabel    ";
-        Query query = session.createQuery(hql);
-        query.setString("genoID", geno.getZdbID());
-        PaginationResult<Figure> paginationResult = new PaginationResult<Figure>(query.list());
-        return paginationResult;
-    }
-
     /**
      * Retrieve publications that have phenotype data for a given term and genotype
      *
