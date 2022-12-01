@@ -108,10 +108,9 @@ public interface PublicationRepository extends PaginationParameter {
      */
     boolean updatePublications(List<Publication> publicationList);
 
-    PaginationResult<Publication> getPublicationsWithFiguresbyGeno(Genotype genotype);
-
+    //TODO: Remove? I don't think this is used anywhere. Sure, GenoExpStatistics uses it, but that method
+    //is never used
     PaginationResult<Publication> getPublicationsWithFiguresbyGenoExp(Genotype genotype);
-
 
     /**
      * Retrieve publications that have phenotype data for a given term and genotype including

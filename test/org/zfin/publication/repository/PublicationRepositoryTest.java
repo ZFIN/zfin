@@ -281,20 +281,6 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getPublicationsForFiguresForGeno() {
-        //  genotype adss^hi1433Tg
-        String genoZdbID = "ZDB-GENO-070615-1";
-        Genotype geno = new Genotype();
-        geno.setZdbID(genoZdbID);
-        // brain
-
-        PaginationResult<Publication> pubs = publicationRepository.getPublicationsWithFiguresbyGeno(geno);
-        assertTrue(pubs.getPopulatedResults() != null);
-//        assertEquals("1 publication", 1, publications.size());
-
-    }
-
-    @Test
     public void getFiguresForGene() {
         //  creb1a
         String markerZdbID = "ZDB-GENE-040426-750";

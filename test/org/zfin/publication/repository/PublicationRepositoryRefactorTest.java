@@ -17,6 +17,7 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.expression.ImageStage;
 import org.zfin.feature.Feature;
+import org.zfin.feature.repository.FeatureService;
 import org.zfin.figure.service.FigureViewService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.FieldFilter;
@@ -27,6 +28,7 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerStatistic;
 import org.zfin.marker.presentation.GeneBean;
 import org.zfin.marker.presentation.HighQualityProbe;
+import org.zfin.marker.presentation.PhenotypeOnMarkerBean;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
@@ -136,5 +138,12 @@ public class PublicationRepositoryRefactorTest extends AbstractDatabaseTest {
 //        DOIAttempt attempt = publicationRepository.getDoiAttempt(pub);
 //        assertEquals(65, attempt.getNumAttempts());
 //    }
+
+    @Test
+    public void checkFeatureWithCleanPhenotypeOnPub() {
+        Feature feature = getFeatureRepository().getFeatureByID("ZDB-ALT-190821-6");
+        PhenotypeOnMarkerBean bean = FeatureService.getPhenotypeOnFeature(feature);
+        assertNotNull(bean);
+    }
 }
 
