@@ -576,6 +576,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return new PaginationResult<Publication>((List<Publication>) pubs.list());
     }
 
+    @Override
     public PaginationResult<Publication> getPublicationsWithFigures_New(Marker marker, GenericTerm anatomyTerm) {
         Session session = HibernateUtil.currentSession();
         CriteriaBuilder cb = session.getCriteriaBuilder();
@@ -592,7 +593,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         List<Predicate> predicates = new ArrayList<>();
         predicates.add(cb.equal(expressionExperiments.get("gene"), marker));
 
-        Join<ExpressionExperiment, ExpressionResult> expressionResults = pubs.join("expressionResults", JoinType.INNER);
+        Join<ExpressionExperiment, ExpressionResult> expressionResults = expressionExperiments.join("expressionResults", JoinType.INNER);
 
         predicates.add(cb.isNotEmpty(expressionResults.get("figures"))); //compare to previous version, is expressionExperiments the right object for the .get(...) call?
         predicates.add(cb.or(cb.equal(expressionResults.get("entity.superterm"), anatomyTerm), cb.equal(expressionExperiments.get("entity.subterm"), anatomyTerm)));

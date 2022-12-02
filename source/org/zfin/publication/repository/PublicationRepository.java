@@ -142,6 +142,8 @@ public interface PublicationRepository extends PaginationParameter {
      */
     PaginationResult<Publication> getPublicationsWithFigures(Marker marker, GenericTerm anatomyTerm);
 
+    PaginationResult<Publication> getPublicationsWithFigures_New(Marker marker, GenericTerm anatomyTerm);
+
     /**
      * Retrieve a list of distinct figures, labels not IDs
      *

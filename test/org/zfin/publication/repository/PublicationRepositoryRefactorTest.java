@@ -168,8 +168,38 @@ public class PublicationRepositoryRefactorTest extends AbstractDatabaseTest {
 
         PaginationResult<Publication> qualityPubs = publicationRepository.getPublicationsWithFigures(pax2a, item);
         assertTrue(qualityPubs != null);
-//        assertEquals("2 pubs", 2, qualityPubs.size());
+        assertEquals("122 pubs", 122, qualityPubs.getPopulatedResults().size());
 
+    }
+
+    @Test
+    public void getPublicationsWithFigures() {
+        Marker marker = getMarkerRepository().getMarker("ZDB-GENE-990415-8");
+        OntologyRepository aoRepository = RepositoryFactory.getOntologyRepository();
+        GenericTerm item = aoRepository.getTermByZdbID("ZDB-TERM-100331-40");
+
+        PaginationResult<Publication> pubs = publicationRepository.getPublicationsWithFigures(marker, item);
+        assertEquals("122 pubs", 122, pubs.getPopulatedResults().size());
+
+        pubs = publicationRepository.getPublicationsWithFigures_New(marker, item);
+        assertEquals("122 pubs", 122, pubs.getPopulatedResults().size());    }
+
+    @Test
+    public void getPublicationsWithFigures2() {
+        //tbxta
+        Marker marker = getMarkerRepository().getMarker("ZDB-GENE-980526-437");
+        OntologyRepository aoRepository = RepositoryFactory.getOntologyRepository();
+
+        //dorsal region
+        GenericTerm item = aoRepository.getTermByZdbID("ZDB-TERM-100722-81");
+
+        PaginationResult<Publication> pubs = publicationRepository.getPublicationsWithFigures(marker, item);
+        assertEquals("5 pubs", 5, pubs.getPopulatedResults().size());
+
+        pubs = publicationRepository.getPublicationsWithFigures_New(marker, item);
+        assertEquals("5 pubs", 5, pubs.getPopulatedResults().size());
+
+//        getPublicationsWithFigures_New
     }
 
 }
