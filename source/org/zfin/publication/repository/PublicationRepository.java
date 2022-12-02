@@ -123,10 +123,9 @@ public interface PublicationRepository extends PaginationParameter {
     int getNumberAssociatedPublicationsForZdbID(String zdbID);
 
     /** PLACEHOLDER **/
-    PaginationResult<Publication> getAllAssociatedPublicationsForFeature(Feature feature, int maxPubs);
 
     /**
-     * Retrieve Figue by ID
+     * Retrieve Figure by ID
      *
      * @param zdbID ID
      * @return Figure

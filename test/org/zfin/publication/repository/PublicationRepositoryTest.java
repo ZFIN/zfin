@@ -230,20 +230,6 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getPubsForFeature() {
-        //  genotype adss^hi1433Tg
-        String featZdbID = "ZDB-ALT-980413-502";
-        Feature feature = new Feature();
-        feature.setZdbID(featZdbID);
-        // brain
-
-        PaginationResult<Publication> pubs = publicationRepository.getAllAssociatedPublicationsForFeature(feature, 0);
-        assertTrue(pubs.getPopulatedResults() != null);
-//        assertEquals("1 figure", 1, figs.size());
-
-    }
-
-    @Test
     public void getFeatureCountForPub() {
         //  genotype adss^hi1433Tg
         String pubZdbID = "ZDB-PUB-140403-2";

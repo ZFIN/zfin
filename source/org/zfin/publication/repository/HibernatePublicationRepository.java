@@ -532,79 +532,16 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     /** PLACEHOLDER **/
-    public PaginationResult<Publication> getAllAssociatedPublicationsForFeature(Feature feature, int maxPubs) {
-
-        PaginationResult<Publication> paginationResult = new PaginationResult<Publication>();
-        Set<Publication> pubList = new HashSet<Publication>();
-        Query query;
-        String hql;
-        List<Publication> resultList;
-        Session session = HibernateUtil.currentSession();
-
-        // short list:
-        hql = "select p.publication " +
-            " from PublicationAttribution p " +
-            " where p.dataZdbID = :featureZdbID ";
-        query = session.createQuery(hql);
-        query.setString("featureZdbID", feature.getZdbID());
-        resultList = query.list();
-        pubList.addAll(resultList);
-
-
-        hql = "select p.publication " +
-            " from PublicationAttribution p , DataAlias  da " +
-            "  where p.dataZdbID = da.zdbID " +
-            " and da.dataZdbID = :featureZdbID ";
-        query = session.createQuery(hql);
-        query.setString("featureZdbID", feature.getZdbID());
-        resultList = query.list();
-        pubList.addAll(resultList);
-
-
-        hql = "select p.publication " +
-            " from PublicationAttribution p , FeatureMarkerRelationship fmr " +
-            " where fmr.feature.zdbID  = :featureZdbID " +
-            " and fmr.feature.zdbID  = p.dataZdbID ";
-
-        query = session.createQuery(hql);
-        query.setString("featureZdbID", feature.getZdbID());
-        resultList = query.list();
-        pubList.addAll(resultList);
-
-
-        hql = "select p.publication " +
-            " from PublicationAttribution p , GenotypeFeature gtf " +
-            " where gtf.genotype.zdbID  = p.dataZdbID " +
-            "  and gtf.feature.zdbID = :featureZdbID ";
-        query = session.createQuery(hql);
-        query.setString("featureZdbID", feature.getZdbID());
-        resultList = query.list();
-        pubList.addAll(resultList);
-
-        String zdbIDs = "";
-        for (Publication pub : pubList) {
-            zdbIDs += pub.getZdbID() + "\n";
-        }
-
-        if (maxPubs >= 0) {
-            paginationResult.setPopulatedResults((new ArrayList(pubList)).subList(0, maxPubs));
-        } else {
-            paginationResult.setPopulatedResults(new ArrayList(pubList));
-        }
-        paginationResult.setTotalCount(pubList.size());
-        return paginationResult;
-    }
-
 
     /**
-     * Retrieve Figue by ID
+     * Retrieve Figure by ID
      *
      * @param zdbID ID
      * @return Figure
      */
     public Figure getFigure(String zdbID) {
         Session session = HibernateUtil.currentSession();
-        return (Figure) session.get(Figure.class, zdbID);
+        return session.get(Figure.class, zdbID);
     }
 
     @SuppressWarnings("unchecked")
