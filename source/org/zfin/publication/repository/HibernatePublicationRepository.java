@@ -365,43 +365,16 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     @Override
     public Journal findJournalByAbbreviation(String abbreviation) {
-        Session session = HibernateUtil.currentSession();
-        CriteriaBuilder cb = session.getCriteriaBuilder();
-        CriteriaQuery<Journal> cr = cb.createQuery(Journal.class);
-        Root<Journal> root = cr.from(Journal.class);
-        cr.select(root).where(cb.equal(root.get("abbreviation"), abbreviation));
-        return session.createQuery(cr).uniqueResult();
+        return getJournalByProperty("abbreviation", abbreviation);
     }
 
     /** PLACEHOLDER **/
     public Journal getJournalByPrintIssn(String pIssn) {
-        Session session = currentSession();
-        Criteria criteria = session.createCriteria(Journal.class);
-        criteria.add(Restrictions.eq("printIssn", pIssn));
-        return (Journal) criteria.uniqueResult();
+        return getJournalByProperty("printIssn", pIssn);
     }
 
     public Journal getJournalByEIssn(String eIssn) {
-        Session session = currentSession();
-        Criteria criteria = session.createCriteria(Journal.class);
-        criteria.add(Restrictions.eq("onlineIssn", eIssn));
-        return (Journal) criteria.uniqueResult();
-    }
-
-    /**
-     * Utility method for filling list to a max amount.  This is a destructive method on fillList.
-     *
-     * @param fillList   This list will get overwritten.
-     * @param sourceList
-     * @param maxFill
-     * @return fillList
-     */
-    private Collection fillList(Collection fillList, Collection sourceList, int maxFill) {
-        Iterator iter = sourceList.iterator();
-        while (fillList.size() < maxFill && iter.hasNext()) {
-            fillList.add(iter.next());
-        }
-        return fillList;
+        return getJournalByProperty("onlineIssn", eIssn);
     }
 
     //TODO: refactor this one? Seems like we could at least combine all if statements into a single one
@@ -2266,8 +2239,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             .list();
     }
 
-
-
     @Override
     public Map<Marker, Boolean> areNewGenePubAttribution(List<Marker> attributedMarker, String publicationId) {
         if (CollectionUtils.isEmpty(attributedMarker))
@@ -2394,4 +2365,12 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return session.createQuery(cr).uniqueResult();
     }
 
+    private Journal getJournalByProperty(String propertyName, String propertyValue) {
+        Session session = HibernateUtil.currentSession();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<Journal> cr = cb.createQuery(Journal.class);
+        Root<Journal> root = cr.from(Journal.class);
+        cr.select(root).where(cb.equal(root.get(propertyName), propertyValue));
+        return session.createQuery(cr).uniqueResult();
+    }
 }
