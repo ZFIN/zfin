@@ -85,14 +85,6 @@ public class MarkerStatistic extends EntityStatistics {
         this.gene = gene;
     }
 
-    public Figure getFigure() {
-        PublicationRepository publicationRep = RepositoryFactory.getPublicationRepository();
-        List<Figure> figs = publicationRep.getFiguresByGeneAndAnatomy(gene, anatomyTerm);
-        if (figs == null || figs.size() != 1)
-            return null;
-        return figs.get(0);
-    }
-
     public FigureStatistics getFigureStatistics() {
         return figureStatistics;
     }

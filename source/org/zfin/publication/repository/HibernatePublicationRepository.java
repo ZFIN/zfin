@@ -327,39 +327,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
     /** PLACEHOLDER **/
 
-    /**
-     * Retrieve figures for a given gene and anatomy term.
-     *
-     * @param marker      marker
-     * @param anatomyTerm anatomy
-     * @return a set of figures
-     */
-    @SuppressWarnings("unchecked")
-    public List<Figure> getFiguresByGeneAndAnatomy(Marker marker, GenericTerm anatomyTerm) {
-        Session session = HibernateUtil.currentSession();
-        String hql = "select distinct fig from Figure fig, ExpressionResult res, Marker marker, ExpressionExperiment exp, " +
-            "     FishExperiment fishox, ExpressionResultFigure xpatfig, Genotype geno " +
-            "where " +
-            "   marker = :marker AND " +
-            "   exp.gene = marker AND " +
-            "   res.expressionExperiment = exp AND " +
-            "   (res.entity.superterm = :aoTerm OR res.entity.subterm = :aoTerm) AND " +
-            "   xpatfig.expressionResult = res AND " +
-            "   xpatfig.figure = fig AND " +
-            "   res.expressionFound = :expressionFound AND " +
-            "   exp.fishExperiment = fishox AND " +
-            "   fishox.standardOrGenericControl = :condition AND " +
-            "   fishox.fish.genotype = geno AND " +
-            "   fishox.fish.genotype.wildtype = :isWildtype ";
-        Query query = session.createQuery(hql);
-        query.setBoolean("expressionFound", true);
-        query.setBoolean("isWildtype", true);
-        query.setParameter("aoTerm", anatomyTerm);
-        query.setParameter("marker", marker);
-        query.setBoolean("condition", true);
-        return (List<Figure>) query.list();
-    }
-
     @Override
     public Journal findJournalByAbbreviation(String abbrevation) {
         Criteria criteria = HibernateUtil.currentSession().createCriteria(Journal.class);

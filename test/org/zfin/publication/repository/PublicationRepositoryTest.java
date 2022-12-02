@@ -255,20 +255,6 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getFiguresForGene() {
-        //  creb1a
-        String markerZdbID = "ZDB-GENE-040426-750";
-        Marker marker = new Marker();
-        marker.setZdbID(markerZdbID);
-        //   telencephalic ventricle
-        String aoZdbID = "ZDB-TERM-100331-665";
-        GenericTerm item = new GenericTerm();
-        item.setZdbID(aoZdbID);
-        List<Figure> figs = publicationRepository.getFiguresByGeneAndAnatomy(marker, item);
-        assertTrue(figs != null);
-    }
-
-    @Test
     public void getExpressedGenesForFigure() {
         Figure fig = publicationRepository.getFigureByID("ZDB-FIG-080617-24"); //has xpat, pheno & AB
 

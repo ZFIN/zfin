@@ -108,15 +108,6 @@ public interface PublicationRepository extends PaginationParameter {
      */
     boolean updatePublications(List<Publication> publicationList);
 
-    /**
-     * Retrieve figures for a given gene and anatomy term.
-     *
-     * @param gene        Gene
-     * @param anatomyTerm anatomy
-     * @return a set of figures
-     */
-    List<Figure> getFiguresByGeneAndAnatomy(Marker gene, GenericTerm anatomyTerm);
-
     List<Publication> getPubsForDisplay(String zdbID);
 
     List<Journal> getAllJournals();
