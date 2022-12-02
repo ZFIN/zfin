@@ -351,21 +351,24 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return getPublications(publicationIDs, true);
     }
 
-    /** PLACEHOLDER **/
+    @Override
+    public List<Journal> getAllJournals() {
+        Session session = HibernateUtil.currentSession();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<Journal> cr = cb.createQuery(Journal.class);
 
+        Root<Journal> root = cr.from(Journal.class);
+        cr.select(root).orderBy(cb.asc(root.get("name")));
+
+        return session.createQuery(cr).list();
+    }
+
+    /** PLACEHOLDER **/
     @Override
     public Journal findJournalByAbbreviation(String abbrevation) {
         Criteria criteria = HibernateUtil.currentSession().createCriteria(Journal.class);
         criteria.add(Restrictions.eq("abbreviation", abbrevation));
         return (Journal) criteria.uniqueResult();
-    }
-
-    @Override
-    public List<Journal> getAllJournals() {
-        Session session = HibernateUtil.currentSession();
-        Criteria jrnlCriteria = session.createCriteria(Journal.class);
-        jrnlCriteria.addOrder(Order.asc("name"));
-        return jrnlCriteria.list();
     }
 
     public Journal getJournalByPrintIssn(String pIssn) {

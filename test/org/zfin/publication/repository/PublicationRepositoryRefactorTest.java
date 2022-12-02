@@ -139,5 +139,10 @@ public class PublicationRepositoryRefactorTest extends AbstractDatabaseTest {
         assertEquals(0, publicationRepository.getPubsForDisplay("ZDB-SSLP-000315-3").size());
     }
 
+    @Test
+    public void getAllJournals() {
+        List<Journal> journals = publicationRepository.getAllJournals();
+        assertTrue( journals.size() > 3000);
+    }
 }
 
