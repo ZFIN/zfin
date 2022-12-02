@@ -114,7 +114,6 @@ public interface PublicationRepository extends PaginationParameter {
 
     Journal getJournalByAbbreviation(String abbreviation);
 
-    /** PLACEHOLDER **/
     Journal getJournalByPrintIssn(String pIssn);
 
     Journal getJournalByEIssn(String eIssn);
@@ -123,6 +122,7 @@ public interface PublicationRepository extends PaginationParameter {
 
     int getNumberAssociatedPublicationsForZdbID(String zdbID);
 
+    /** PLACEHOLDER **/
     PaginationResult<Publication> getAllAssociatedPublicationsForFeature(Feature feature, int maxPubs);
 
     /**

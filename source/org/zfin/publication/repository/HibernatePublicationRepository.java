@@ -368,7 +368,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return getJournalByProperty("abbreviation", abbreviation);
     }
 
-    /** PLACEHOLDER **/
     public Journal getJournalByPrintIssn(String pIssn) {
         return getJournalByProperty("printIssn", pIssn);
     }
@@ -489,27 +488,50 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return commonPubSQL;
     }
 
+    public SourceAlias addJournalAlias(Journal journal, String alias) {
+        //first handle the alias..
+
+        SourceAlias journalAlias = new SourceAlias();
+        journalAlias.setDataZdbID(journal.getZdbID());
+        journalAlias.setAlias(alias);
+
+        if (journal.getAliases() == null) {
+            Set<SourceAlias> sourceAliases = new HashSet<>();
+            sourceAliases.add(journalAlias);
+            journal.setAliases(sourceAliases);
+        } else {
+            // if alias exists do not add continue...
+            if (!journal.getAliases().add(journalAlias)) {
+                return null;
+            }
+        }
+
+        currentSession().save(journalAlias);
+
+        //now handle the attribution
+     /*   String updateComment;
+
+        updateComment = "Added alias: '" + journalAlias.getAlias() + " with no attribution";
+
+
+        InfrastructureService.insertUpdate(journal, updateComment);
+*/
+        return journalAlias;
+    }
+
     @Override
     public int getNumberAssociatedPublicationsForZdbID(String zdbID) {
         String sql = " select count(*) from ( " + getCommonPublicationSQL(zdbID) + " ) as query ";
 
-        int count = Integer.valueOf(HibernateUtil.currentSession()
-            .createSQLQuery(sql)
-            .setString("markerZdbID", zdbID)
-            .uniqueResult().toString());
+        Session session = currentSession();
+        Query<Number> query = session.createNativeQuery(sql);
 
-        // remove if not pubs
-        return count;
+        query.setParameter("markerZdbID", zdbID);
+
+        return ((Number) query.getSingleResult()).intValue();
     }
 
-
-    /**
-     * @param feature
-     * @param maxPubs
-     * @return
-     */
-
-
+    /** PLACEHOLDER **/
     public PaginationResult<Publication> getAllAssociatedPublicationsForFeature(Feature feature, int maxPubs) {
 
         PaginationResult<Publication> paginationResult = new PaginationResult<Publication>();
@@ -1400,37 +1422,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         HibernateUtil.flushAndCommitCurrentSession();
     }
 
-
-    public SourceAlias addJournalAlias(Journal journal, String alias) {
-        //first handle the alias..
-
-        SourceAlias journalAlias = new SourceAlias();
-        journalAlias.setDataZdbID(journal.getZdbID());
-        journalAlias.setAlias(alias);
-
-        if (journal.getAliases() == null) {
-            Set<SourceAlias> sourceAliases = new HashSet<>();
-            sourceAliases.add(journalAlias);
-            journal.setAliases(sourceAliases);
-        } else {
-            // if alias exists do not add continue...
-            if (!journal.getAliases().add(journalAlias)) {
-                return null;
-            }
-        }
-
-        currentSession().save(journalAlias);
-
-        //now handle the attribution
-     /*   String updateComment;
-
-        updateComment = "Added alias: '" + journalAlias.getAlias() + " with no attribution";
-
-
-        InfrastructureService.insertUpdate(journal, updateComment);
-*/
-        return journalAlias;
-    }
 
 
     public long getMarkerCount(Publication publication) {

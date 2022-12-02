@@ -23,6 +23,8 @@ import org.zfin.repository.RepositoryFactory;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.*;
 
@@ -134,6 +136,26 @@ public class PublicationRepositoryRefactorTest extends AbstractDatabaseTest {
     public void getJournalByEIssn() {
         Journal journal = publicationRepository.getJournalByEIssn("2041-1723");
         assertEquals( "Nature communications", journal.getName());
+    }
+
+    @Test
+    public void getNumberAssociatedPublicationsForMarker() {
+
+        Marker m;
+        int numberPubs;
+
+        m = getMarkerRepository().getMarkerByID("ZDB-GENE-051005-1");
+        numberPubs = publicationRepository.getNumberAssociatedPublicationsForZdbID(m.getZdbID());
+        assertThat(numberPubs, greaterThan(15));
+        assertThat(numberPubs, lessThan(35));
+//        assertEquals(28, numberPubs);
+
+        m = getMarkerRepository().getMarkerByAbbreviation("pax6a");
+        numberPubs = publicationRepository.getNumberAssociatedPublicationsForZdbID(m.getZdbID());
+        assertThat(numberPubs, greaterThan(190));
+        assertThat(numberPubs, lessThan(500));
+//        assertEquals(334, numberPubs);
+
     }
 }
 
