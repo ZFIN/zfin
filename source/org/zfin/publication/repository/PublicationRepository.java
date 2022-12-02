@@ -98,8 +98,6 @@ public interface PublicationRepository extends PaginationParameter {
      */
     boolean publicationExists(String canonicalPublicationZdbID);
 
-    Figure getFigureByID(String figureZdbID);
-
     /**
      * Saves a list of publications in one transaction.
      *
@@ -122,8 +120,6 @@ public interface PublicationRepository extends PaginationParameter {
 
     int getNumberAssociatedPublicationsForZdbID(String zdbID);
 
-    /** PLACEHOLDER **/
-
     /**
      * Retrieve Figure by ID
      *
@@ -131,9 +127,11 @@ public interface PublicationRepository extends PaginationParameter {
      * @return Figure
      */
     Figure getFigure(String zdbID);
+    Figure getFigureByID(String figureZdbID);
 
     Image getImageById(String zdbID);
 
+    /** PLACEHOLDER **/
     /**
      * Retrieve all Publications with Figures for a given marker and ao term.
      * Standard condition and wildtype fish

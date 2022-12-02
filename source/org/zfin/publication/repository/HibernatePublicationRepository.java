@@ -303,21 +303,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return getPublication(canonicalPublicationZdbID) != null;
     }
 
-    public Figure getFigureById(String zdbID) {
-        Session session = HibernateUtil.currentSession();
-        return session.get(Figure.class, zdbID);
-    }
-
-    public Image getImageById(String zdbID) {
-        Session session = HibernateUtil.currentSession();
-        return session.get(Image.class, zdbID);
-    }
-
-    public Figure getFigureByID(String figureZdbID) {
-        Session session = HibernateUtil.currentSession();
-        return (Figure) session.get(Figure.class, figureZdbID);
-    }
-
     public boolean updatePublications(List<Publication> publicationList) {
 
         Session session = HibernateUtil.currentSession();
@@ -531,8 +516,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return ((Number) query.getSingleResult()).intValue();
     }
 
-    /** PLACEHOLDER **/
-
     /**
      * Retrieve Figure by ID
      *
@@ -544,6 +527,16 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return session.get(Figure.class, zdbID);
     }
 
+    public Figure getFigureByID(String zdbID) {
+        return getFigure(zdbID);
+    }
+
+    public Image getImageById(String zdbID) {
+        Session session = HibernateUtil.currentSession();
+        return session.get(Image.class, zdbID);
+    }
+
+    /** PLACEHOLDER **/
     @SuppressWarnings("unchecked")
     public PaginationResult<Publication> getPublicationsWithFigures(Marker marker, GenericTerm anatomyTerm) {
         Session session = HibernateUtil.currentSession();
