@@ -276,7 +276,13 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return session.get(Publication.class, zdbID);
     }
 
+    //TODO: merge this with the alternate below and always order by date desc?
+    //TODO: Seems fairly safe to have a default ordering
     public List<Publication> getPublications(List<String> zdbIDs) {
+        return getPublications(zdbIDs, false);
+    }
+
+    public List<Publication> getPublications(List<String> zdbIDs, boolean orderByDateDesc) {
         if (CollectionUtils.isEmpty(zdbIDs)) {
             return Collections.emptyList();
         }
@@ -286,6 +292,10 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         Root<Publication> root = cr.from(Publication.class);
         cr.select(root).where(root.get("zdbID").in(zdbIDs));
+        if (orderByDateDesc) {
+            cr.orderBy(cb.desc(root.get("publicationDate")));
+        }
+
         return session.createQuery(cr).list();
     }
 
@@ -325,6 +335,22 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         session.flush();
         return true;
     }
+
+    @Override
+    public List<Publication> getPubsForDisplay(String zdbID) {
+
+        List<String> publicationIDs = HibernateUtil.currentSession()
+                .createSQLQuery(getCommonPublicationSQL(zdbID))
+                .setString("markerZdbID", zdbID)
+                .list();
+
+        if (CollectionUtils.isEmpty(publicationIDs)) {
+            return new ArrayList<>();
+        }
+
+        return getPublications(publicationIDs, true);
+    }
+
     /** PLACEHOLDER **/
 
     @Override
@@ -372,7 +398,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return fillList;
     }
 
-
+    //TODO: refactor this one? Seems like we could at least combine all if statements into a single one
     public String getCommonPublicationSQL(String zdbID) {
         // Changes to this query need to be kept in sync with the analogous query
         // in db-data-config.sql!
@@ -483,32 +509,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         commonPubSQL += " ) as qt where recattrib_source_zdb_id like 'ZDB-PUB%'  ";
         return commonPubSQL;
     }
-
-    @Override
-    public List<Publication> getPubsForDisplay(String zdbID) {
-
-        List<String> publicationIDs = HibernateUtil.currentSession()
-            .createSQLQuery(getCommonPublicationSQL(zdbID))
-            .setString("markerZdbID", zdbID)
-            .list();
-
-        if (CollectionUtils.isEmpty(publicationIDs)) {
-            return new ArrayList<>();
-        }
-
-        String hql = " select p from Publication p  " +
-            " where p.zdbID in (:zdbIDs) " +
-            " order by p.publicationDate desc ";
-        List<Publication> publicationLinks = HibernateUtil.currentSession()
-            .createQuery(hql)
-            .setParameterList("zdbIDs", publicationIDs)
-            .list();
-
-
-        // remove if not pubs
-        return publicationLinks;
-    }
-
 
     @Override
     public int getNumberAssociatedPublicationsForZdbID(String zdbID) {

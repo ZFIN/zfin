@@ -110,6 +110,8 @@ public interface PublicationRepository extends PaginationParameter {
 
     List<Publication> getPubsForDisplay(String zdbID);
 
+    /** PLACEHOLDER **/
+    
     List<Journal> getAllJournals();
 
     Journal findJournalByAbbreviation(String abbrevation);
