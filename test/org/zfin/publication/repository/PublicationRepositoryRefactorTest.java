@@ -16,6 +16,7 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Ontology;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.publication.*;
 import org.zfin.repository.RepositoryFactory;
@@ -157,5 +158,19 @@ public class PublicationRepositoryRefactorTest extends AbstractDatabaseTest {
 //        assertEquals(334, numberPubs);
 
     }
+
+    @Test
+    public void getNumberOfPublicationForPax2aAndMHB() {
+        String termName = "midbrain hindbrain boundary";
+        OntologyRepository aoRepository = RepositoryFactory.getOntologyRepository();
+        GenericTerm item = aoRepository.getTermByName(termName, Ontology.ANATOMY);
+        Marker pax2a = getMarkerRepository().getMarkerByAbbreviation("pax2a");
+
+        PaginationResult<Publication> qualityPubs = publicationRepository.getPublicationsWithFigures(pax2a, item);
+        assertTrue(qualityPubs != null);
+//        assertEquals("2 pubs", 2, qualityPubs.size());
+
+    }
+
 }
 

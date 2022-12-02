@@ -542,13 +542,13 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Session session = HibernateUtil.currentSession();
 
         Criteria pubs = session.createCriteria(Publication.class);
-        Criteria expresssion = pubs.createCriteria("expressionExperiments");
-        expresssion.add(Restrictions.eq("gene", marker));
-        Criteria result = expresssion.createCriteria("expressionResults");
+        Criteria expression = pubs.createCriteria("expressionExperiments");
+        expression.add(Restrictions.eq("gene", marker));
+        Criteria result = expression.createCriteria("expressionResults");
         result.add(Restrictions.isNotEmpty("figures"));
         result.add(Restrictions.or(Restrictions.eq("entity.superterm", anatomyTerm), Restrictions.eq("entity.subterm", anatomyTerm)));
         result.add(Restrictions.eq("expressionFound", true));
-        Criteria genox = expresssion.createCriteria("fishExperiment");
+        Criteria genox = expression.createCriteria("fishExperiment");
         genox.add(Restrictions.eq("standardOrGenericControl", true));
         Criteria fish = genox.createCriteria("fish");
         Criteria genotype = fish.createCriteria("genotype");
