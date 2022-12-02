@@ -112,7 +112,7 @@ public interface PublicationRepository extends PaginationParameter {
 
     List<Journal> getAllJournals();
 
-    Journal findJournalByAbbreviation(String abbreviation);
+    Journal getJournalByAbbreviation(String abbreviation);
 
     /** PLACEHOLDER **/
     Journal getJournalByPrintIssn(String pIssn);

@@ -364,7 +364,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     @Override
-    public Journal findJournalByAbbreviation(String abbreviation) {
+    public Journal getJournalByAbbreviation(String abbreviation) {
         return getJournalByProperty("abbreviation", abbreviation);
     }
 
