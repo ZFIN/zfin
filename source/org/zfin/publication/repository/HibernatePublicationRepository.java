@@ -595,8 +595,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         Join<ExpressionExperiment, ExpressionResult> expressionResults = expressionExperiments.join("expressionResults", JoinType.INNER);
 
-        predicates.add(cb.isNotEmpty(expressionResults.get("figures"))); //compare to previous version, is expressionExperiments the right object for the .get(...) call?
-        predicates.add(cb.or(cb.equal(expressionResults.get("entity.superterm"), anatomyTerm), cb.equal(expressionExperiments.get("entity.subterm"), anatomyTerm)));
+        predicates.add(cb.isNotEmpty(expressionResults.get("figures")));
+        predicates.add(cb.or(cb.equal(expressionResults.get("entity").get("superterm"), anatomyTerm), cb.equal(expressionResults.get("entity").get("subterm"), anatomyTerm)));
         predicates.add(cb.equal(expressionResults.get("expressionFound"), true));
 
         // Join the fishExperiment property
