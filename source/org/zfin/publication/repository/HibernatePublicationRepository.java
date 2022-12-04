@@ -550,6 +550,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         expression.add(Restrictions.eq("gene", marker));
 
+
         Criteria result = expression.createCriteria("expressionResults");
 
         result.add(Restrictions.isNotEmpty("figures"));
