@@ -230,13 +230,14 @@ public class PublicationRepositoryRefactorTest extends AbstractDatabaseTest {
         String zdbID2 = "ZDB-PUB-150809-4";
 
         List<Marker> markers2 = publicationRepository.getMarkersPulledThroughSTRs(zdbID2);
-        List<Marker> markers3 = publicationRepository.getMarkersPulledThroughSTRs_New(zdbID2);
-        assertEquals(markers3.size(), markers2.size());
 
-        markers3 = publicationRepository.getGenesAndMarkersByPublication(zdbID2);
-        assertTrue(markers3 != null);
-        assertTrue(markers3.size() > 0);
-        assertTrue(markers3.size() == 29);
+        markers2 = publicationRepository.getGenesAndMarkersByPublication(zdbID2);
+        assertTrue(markers2 != null);
+        assertTrue(markers2.size() > 0);
+        assertTrue(markers2.size() == 29);
+        
+//        List<Marker> markers3 = publicationRepository.getMarkersPulledThroughSTRs_New(zdbID2);
+//        assertEquals(markers3.size(), markers2.size());
     }
 
 

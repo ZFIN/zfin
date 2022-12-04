@@ -637,8 +637,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Set<Marker> markers = new TreeSet<>(getMarkersByPublication(pubID, markerTypes));
 
         markers.addAll(getMarkersPulledThroughFeatures(pubID));
-//        markers.addAll(getMarkersPulledThroughSTRs(pubID));
-        markers.addAll(getMarkersPulledThroughSTRs_New(pubID));
+        markers.addAll(getMarkersPulledThroughSTRs(pubID));
 
         return new ArrayList<>(markers);
     }
@@ -670,23 +669,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     @Override
     public List<Marker> getMarkersPulledThroughSTRs(String pubID) {
-        // markers pulled through STRs
-        Session session = HibernateUtil.currentSession();
-        String hql = "select distinct marker from Marker marker, MarkerRelationship mrel, RecordAttribution attr " +
-            "where marker = mrel.secondMarker " +
-            "and mrel.type = :type " +
-            "and mrel.firstMarker = attr.dataZdbID " +
-            "and attr.sourceZdbID = :pubID ";
-        Query query = session.createQuery(hql);
-        query.setString("pubID", pubID);
-        query.setParameter("type", MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
-        String sql = SQLExtractor.from(query);
-        List markers = query.list();
-        return markers;
-    }
-
-    @Override
-    public List<Marker> getMarkersPulledThroughSTRs_New(String pubID) {
         Session session = HibernateUtil.currentSession();
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Marker> query = criteriaBuilder.createQuery(Marker.class);
