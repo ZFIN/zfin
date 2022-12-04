@@ -635,6 +635,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         markerTypes.addAll(markerRepository.getMarkerTypesByGroup(Marker.TypeGroup.SEARCH_MK));
         Set<Marker> markers = new TreeSet<>(getMarkersByPublication(pubID, markerTypes));
 
+//        markers.addAll(getMarkersPulledThroughFeatures_New(pubID));
         markers.addAll(getMarkersPulledThroughFeatures(pubID));
         markers.addAll(getMarkersPulledThroughSTRs(pubID));
 
@@ -644,30 +645,15 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     private List<Marker> getMarkersPulledThroughFeatures(String pubID) {
         // markers pulled through features
         Session session = HibernateUtil.currentSession();
-        String hql = "select distinct marker from Marker marker, RecordAttribution attr, Feature feature, FeatureMarkerRelationship fmrel " +
-                "where attr.dataZdbID = feature.zdbID " +
-                "and attr.sourceZdbID = :pubID " +
+        String hql = "select distinct marker from Marker marker, FeatureMarkerRelationship fmrel, Feature feature, RecordAttribution attr " +
+                "where marker = fmrel.marker " +
                 "and fmrel.type = :isAllele " +
                 "and fmrel.feature = feature " +
-                "and fmrel.marker = marker ";
+                "and feature.zdbID = attr.dataZdbID " +
+                "and attr.sourceZdbID = :pubID ";
         Query query = session.createQuery(hql);
         query.setString("pubID", pubID);
         query.setParameter("isAllele", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF);
-        List markers = query.list();
-        return markers;
-    }
-
-    private List<Marker> getMarkersPulledThroughSTRs(String pubID) {
-        // markers pulled through STRs
-        Session session = HibernateUtil.currentSession();
-        String hql = "select distinct marker from Marker marker, RecordAttribution attr, MarkerRelationship mrel " +
-            "where attr.sourceZdbID = :pubID " +
-            "and attr.dataZdbID = mrel.firstMarker " +
-            "and mrel.secondMarker = marker " +
-            "and mrel.type = :type ";
-        Query query = session.createQuery(hql);
-        query.setString("pubID", pubID);
-        query.setParameter("type", MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
         List markers = query.list();
         return markers;
     }
@@ -689,6 +675,45 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                                 criteriaBuilder.equal(attr.get("dataZdbID"), feature.get("zdbID")),
                                 criteriaBuilder.equal(attr.get("sourceZdbID"), pubID),
                                 criteriaBuilder.equal(fmrel.get("type"), FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF)
+                        )
+                );
+
+        return session.createQuery(query).getResultList();
+    }
+
+
+    private List<Marker> getMarkersPulledThroughSTRs(String pubID) {
+        // markers pulled through STRs
+        Session session = HibernateUtil.currentSession();
+        String hql = "select distinct marker from Marker marker, RecordAttribution attr, MarkerRelationship mrel " +
+            "where attr.sourceZdbID = :pubID " +
+            "and attr.dataZdbID = mrel.firstMarker " +
+            "and mrel.secondMarker = marker " +
+            "and mrel.type = :type ";
+        Query query = session.createQuery(hql);
+        query.setString("pubID", pubID);
+        query.setParameter("type", MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
+        List markers = query.list();
+        return markers;
+    }
+
+    private List<Marker> getMarkersPulledThroughSTRs_New(String pubID) {
+        Session session = HibernateUtil.currentSession();
+
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaQuery<Marker> query = criteriaBuilder.createQuery(Marker.class);
+        Root<Marker> marker = query.from(Marker.class);
+        Join<Marker, RecordAttribution> attr = marker.join("attr");
+        Join<RecordAttribution, MarkerRelationship> mrel = attr.join("mrel");
+
+        query.select(marker)
+                .distinct(true)
+                .where(
+                        criteriaBuilder.and(
+                                criteriaBuilder.equal(attr.get("sourceZdbID"), pubID),
+                                criteriaBuilder.equal(attr.get("dataZdbID"), mrel.get("firstMarker")),
+                                criteriaBuilder.equal(mrel.get("secondMarker"), marker),
+                                criteriaBuilder.equal(mrel.get("type"), MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE)
                         )
                 );
 
