@@ -216,8 +216,23 @@ public class PublicationRepositoryRefactorTest extends AbstractDatabaseTest {
 //        assertTrue(experiments != null);
 //        assertTrue(experiments.size() > 0);
 //        assertTrue(experiments.size() == 6);
+    }
 
+    @Test
+    public void getGenesAndMarkersByPublication() {
+        String zdbID = "ZDB-PUB-990507-16";
 
+        List<Marker> markers = publicationRepository.getGenesAndMarkersByPublication(zdbID);
+        assertTrue(markers != null);
+        assertTrue(markers.size() > 0);
+        assertTrue(markers.size() == 2);
+
+        zdbID = "ZDB-PUB-150809-4";
+
+        markers = publicationRepository.getGenesAndMarkersByPublication(zdbID);
+        assertTrue(markers != null);
+        assertTrue(markers.size() > 0);
+        assertTrue(markers.size() == 29);
     }
 
 

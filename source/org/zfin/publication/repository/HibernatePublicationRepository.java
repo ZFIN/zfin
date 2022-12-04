@@ -598,7 +598,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
      * @param pubID publication id
      * @return list of markers
      */
-    /** PLACEHOLDER **/
     @SuppressWarnings("unchecked")
     public List<Marker> getGenesByPublication(String pubID) {
         return getGenesByPublication(pubID, true);
@@ -629,38 +628,73 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return (List<Marker>) getMarkersByPublication(pubID, markerTypes);
     }
 
+    /** PLACEHOLDER **/
     public List<Marker> getGenesAndMarkersByPublication(String pubID) {
         // directly annotated markers
         List<MarkerType> markerTypes = markerRepository.getMarkerTypesByGroup(Marker.TypeGroup.GENEDOM_AND_NTR);
         markerTypes.addAll(markerRepository.getMarkerTypesByGroup(Marker.TypeGroup.SEARCH_MK));
         Set<Marker> markers = new TreeSet<>(getMarkersByPublication(pubID, markerTypes));
 
+        markers.addAll(getMarkersPulledThroughFeatures(pubID));
+        markers.addAll(getMarkersPulledThroughSTRs(pubID));
+
+        return new ArrayList<>(markers);
+    }
+
+    private List<Marker> getMarkersPulledThroughFeatures(String pubID) {
         // markers pulled through features
         Session session = HibernateUtil.currentSession();
         String hql = "select distinct marker from Marker marker, RecordAttribution attr, Feature feature, FeatureMarkerRelationship fmrel " +
-            "where attr.dataZdbID = feature.zdbID " +
-            "and attr.sourceZdbID = :pubID " +
-            "and fmrel.type = :isAllele " +
-            "and fmrel.feature = feature " +
-            "and fmrel.marker = marker ";
+                "where attr.dataZdbID = feature.zdbID " +
+                "and attr.sourceZdbID = :pubID " +
+                "and fmrel.type = :isAllele " +
+                "and fmrel.feature = feature " +
+                "and fmrel.marker = marker ";
         Query query = session.createQuery(hql);
         query.setString("pubID", pubID);
         query.setParameter("isAllele", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF);
-        markers.addAll(query.list());
+        List markers = query.list();
+        return markers;
+    }
 
+    private List<Marker> getMarkersPulledThroughSTRs(String pubID) {
         // markers pulled through STRs
-        hql = "select distinct marker from Marker marker, RecordAttribution attr, MarkerRelationship mrel " +
+        Session session = HibernateUtil.currentSession();
+        String hql = "select distinct marker from Marker marker, RecordAttribution attr, MarkerRelationship mrel " +
             "where attr.sourceZdbID = :pubID " +
             "and attr.dataZdbID = mrel.firstMarker " +
             "and mrel.secondMarker = marker " +
             "and mrel.type = :type ";
-        query = session.createQuery(hql);
+        Query query = session.createQuery(hql);
         query.setString("pubID", pubID);
         query.setParameter("type", MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
-        markers.addAll(query.list());
-
-        return new ArrayList<>(markers);
+        List markers = query.list();
+        return markers;
     }
+
+    private List<Marker> getMarkersPulledThroughFeatures_New(String pubID) {
+        Session session = HibernateUtil.currentSession();
+
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaQuery<Marker> query = criteriaBuilder.createQuery(Marker.class);
+        Root<Marker> marker = query.from(Marker.class);
+        Join<Marker, RecordAttribution> attr = marker.join("attr");
+        Join<RecordAttribution, Feature> feature = attr.join("feature");
+        Join<Feature, FeatureMarkerRelationship> fmrel = feature.join("fmrel");
+
+        query.select(marker)
+                .distinct(true)
+                .where(
+                        criteriaBuilder.and(
+                                criteriaBuilder.equal(attr.get("dataZdbID"), feature.get("zdbID")),
+                                criteriaBuilder.equal(attr.get("sourceZdbID"), pubID),
+                                criteriaBuilder.equal(fmrel.get("type"), FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF)
+                        )
+                );
+
+        return session.createQuery(query).getResultList();
+    }
+
 
     public List<Marker> getMarkersByTypeForPublication(String pubID, MarkerType markerType) {
         return (List<Marker>) getMarkersByPublication(pubID, Collections.singletonList(markerType));
