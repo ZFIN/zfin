@@ -235,7 +235,7 @@ public class PublicationRepositoryRefactorTest extends AbstractDatabaseTest {
         assertTrue(markers2 != null);
         assertTrue(markers2.size() > 0);
         assertTrue(markers2.size() == 29);
-        
+
 //        List<Marker> markers3 = publicationRepository.getMarkersPulledThroughSTRs_New(zdbID2);
 //        assertEquals(markers3.size(), markers2.size());
     }
