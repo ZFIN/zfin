@@ -576,23 +576,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
 
-    /** PLACEHOLDER **/
-    @SuppressWarnings("unchecked")
-    public List<String> getDistinctFigureLabels(String publicationID) {
-        Session session = HibernateUtil.currentSession();
-
-        String hql = "select figure.label from Figure figure" +
-            "     where figure.publication.zdbID = :pubID " +
-            "    order by figure.orderingLabel ";
-        Query query = session.createQuery(hql);
-        query.setString("pubID", publicationID);
-
-        return (List<String>) query.list();
-
-    }
-
     @Override
-    public List<String> getDistinctFigureLabels_New(String publicationID) {
+    public List<String> getDistinctFigureLabels(String publicationID) {
         Session session = HibernateUtil.currentSession();
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
 
@@ -613,6 +598,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
      * @param pubID publication id
      * @return list of markers
      */
+    /** PLACEHOLDER **/
     @SuppressWarnings("unchecked")
     public List<Marker> getGenesByPublication(String pubID) {
         return getGenesByPublication(pubID, true);

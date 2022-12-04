@@ -141,7 +141,6 @@ public interface PublicationRepository extends PaginationParameter {
      */
     PaginationResult<Publication> getPublicationsWithFigures(Marker marker, GenericTerm anatomyTerm);
 
-    /** PLACEHOLDER **/
     /**
      * Retrieve a list of distinct figures, labels not IDs
      *
@@ -149,7 +148,6 @@ public interface PublicationRepository extends PaginationParameter {
      * @return list of labels
      */
     List<String> getDistinctFigureLabels(String publicationID);
-    List<String> getDistinctFigureLabels_New(String publicationID);
 
     /**
      * Retrieve distinct list of genes that are attributed to a given
@@ -158,6 +156,7 @@ public interface PublicationRepository extends PaginationParameter {
      * @param pubID publication id
      * @return list of markers
      */
+    /** PLACEHOLDER **/
     List<Marker> getGenesByPublication(String pubID);
 
     List<Marker> getGenesByPublication(String pubID, boolean includeEFGs);
