@@ -212,10 +212,10 @@ public class PublicationRepositoryRefactorTest extends AbstractDatabaseTest {
         assertTrue(experiments.size() > 0);
         assertTrue(experiments.size() == 6);
 
-        experiments = publicationRepository.getDistinctFigureLabels_New(zdbID);
-        assertTrue(experiments != null);
-        assertTrue(experiments.size() > 0);
-        assertTrue(experiments.size() == 6);
+//        experiments = publicationRepository.getDistinctFigureLabels_New(zdbID);
+//        assertTrue(experiments != null);
+//        assertTrue(experiments.size() > 0);
+//        assertTrue(experiments.size() == 6);
 
 
     }
