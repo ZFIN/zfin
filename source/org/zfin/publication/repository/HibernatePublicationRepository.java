@@ -1,5 +1,6 @@
 package org.zfin.publication.repository;
 
+import com.vladmihalcea.hibernate.query.SQLExtractor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -636,7 +637,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         Set<Marker> markers = new TreeSet<>(getMarkersByPublication(pubID, markerTypes));
 
         markers.addAll(getMarkersPulledThroughFeatures(pubID));
-        markers.addAll(getMarkersPulledThroughSTRs(pubID));
+//        markers.addAll(getMarkersPulledThroughSTRs(pubID));
+        markers.addAll(getMarkersPulledThroughSTRs_New(pubID));
 
         return new ArrayList<>(markers);
     }
@@ -662,49 +664,50 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                         )
                 );
 
+
         return session.createQuery(query).getResultList();
     }
 
-
-
-    private List<Marker> getMarkersPulledThroughSTRs(String pubID) {
+    @Override
+    public List<Marker> getMarkersPulledThroughSTRs(String pubID) {
         // markers pulled through STRs
         Session session = HibernateUtil.currentSession();
-        String hql = "select distinct marker from Marker marker, RecordAttribution attr, MarkerRelationship mrel " +
-            "where attr.sourceZdbID = :pubID " +
-            "and attr.dataZdbID = mrel.firstMarker " +
-            "and mrel.secondMarker = marker " +
-            "and mrel.type = :type ";
+        String hql = "select distinct marker from Marker marker, MarkerRelationship mrel, RecordAttribution attr " +
+            "where marker = mrel.secondMarker " +
+            "and mrel.type = :type " +
+            "and mrel.firstMarker = attr.dataZdbID " +
+            "and attr.sourceZdbID = :pubID ";
         Query query = session.createQuery(hql);
         query.setString("pubID", pubID);
         query.setParameter("type", MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
+        String sql = SQLExtractor.from(query);
         List markers = query.list();
         return markers;
     }
 
-    private List<Marker> getMarkersPulledThroughSTRs_New(String pubID) {
+    @Override
+    public List<Marker> getMarkersPulledThroughSTRs_New(String pubID) {
         Session session = HibernateUtil.currentSession();
-
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Marker> query = criteriaBuilder.createQuery(Marker.class);
         Root<Marker> marker = query.from(Marker.class);
-        Join<Marker, RecordAttribution> attr = marker.join("attr");
-        Join<RecordAttribution, MarkerRelationship> mrel = attr.join("mrel");
-
+        Join<Marker, MarkerRelationship> mrel = marker.join("secondMarkerRelationships");
+        Join<MarkerRelationship, Marker> firstMarker = mrel.join("firstMarker");
+        Join<Marker, RecordAttribution> attr = firstMarker.join("publications");
         query.select(marker)
                 .distinct(true)
                 .where(
                         criteriaBuilder.and(
-                                criteriaBuilder.equal(attr.get("sourceZdbID"), pubID),
-                                criteriaBuilder.equal(attr.get("dataZdbID"), mrel.get("firstMarker")),
-                                criteriaBuilder.equal(mrel.get("secondMarker"), marker),
-                                criteriaBuilder.equal(mrel.get("type"), MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE)
+                                criteriaBuilder.equal(mrel.get("type"), MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE),
+                                criteriaBuilder.equal(attr.get("sourceZdbID"), pubID)
                         )
                 );
 
-        return session.createQuery(query).getResultList();
-    }
+        org.hibernate.query.Query<Marker> q2 = session.createQuery(query);
+        String sql = SQLExtractor.from(q2);
 
+        return q2.getResultList();
+    }
 
     public List<Marker> getMarkersByTypeForPublication(String pubID, MarkerType markerType) {
         return (List<Marker>) getMarkersByPublication(pubID, Collections.singletonList(markerType));
