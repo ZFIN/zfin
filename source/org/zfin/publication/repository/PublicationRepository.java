@@ -131,7 +131,6 @@ public interface PublicationRepository extends PaginationParameter {
 
     Image getImageById(String zdbID);
 
-    /** PLACEHOLDER **/
     /**
      * Retrieve all Publications with Figures for a given marker and ao term.
      * Standard condition and wildtype fish
@@ -142,8 +141,7 @@ public interface PublicationRepository extends PaginationParameter {
      */
     PaginationResult<Publication> getPublicationsWithFigures(Marker marker, GenericTerm anatomyTerm);
 
-    PaginationResult<Publication> getPublicationsWithFigures_New(Marker marker, GenericTerm anatomyTerm);
-
+    /** PLACEHOLDER **/
     /**
      * Retrieve a list of distinct figures, labels not IDs
      *
@@ -151,6 +149,7 @@ public interface PublicationRepository extends PaginationParameter {
      * @return list of labels
      */
     List<String> getDistinctFigureLabels(String publicationID);
+    List<String> getDistinctFigureLabels_New(String publicationID);
 
     /**
      * Retrieve distinct list of genes that are attributed to a given

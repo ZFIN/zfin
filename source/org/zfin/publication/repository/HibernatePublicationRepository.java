@@ -532,53 +532,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return session.get(Image.class, zdbID);
     }
 
-    /** PLACEHOLDER **/
-    @SuppressWarnings("unchecked")
-    public PaginationResult<Publication> getPublicationsWithFigures(Marker marker, GenericTerm anatomyTerm) {
-        Session session = HibernateUtil.currentSession();
-
-
-        Criteria pubs = session.createCriteria(Publication.class);
-
-
-
-
-
-        Criteria expression = pubs.createCriteria("expressionExperiments");
-
-
-
-        expression.add(Restrictions.eq("gene", marker));
-
-
-        Criteria result = expression.createCriteria("expressionResults");
-
-        result.add(Restrictions.isNotEmpty("figures"));
-        result.add(Restrictions.or(Restrictions.eq("entity.superterm", anatomyTerm), Restrictions.eq("entity.subterm", anatomyTerm)));
-        result.add(Restrictions.eq("expressionFound", true));
-
-
-        Criteria genox = expression.createCriteria("fishExperiment");
-        genox.add(Restrictions.eq("standardOrGenericControl", true));
-
-
-        Criteria fish = genox.createCriteria("fish");
-
-
-        Criteria genotype = fish.createCriteria("genotype");
-        genotype.add(Restrictions.eq("wildtype", true));
-
-
-        pubs.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-
-
-
-
-        return new PaginationResult<Publication>((List<Publication>) pubs.list());
-    }
-
     @Override
-    public PaginationResult<Publication> getPublicationsWithFigures_New(Marker marker, GenericTerm anatomyTerm) {
+    public PaginationResult<Publication> getPublicationsWithFigures(Marker marker, GenericTerm anatomyTerm) {
         Session session = HibernateUtil.currentSession();
         CriteriaBuilder cb = session.getCriteriaBuilder();
 
@@ -621,10 +576,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
 
-    public List<Publication> getPublicationsWithFiguresbygenotype(Genotype genotype) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
+    /** PLACEHOLDER **/
     @SuppressWarnings("unchecked")
     public List<String> getDistinctFigureLabels(String publicationID) {
         Session session = HibernateUtil.currentSession();
@@ -638,6 +590,22 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return (List<String>) query.list();
 
     }
+
+    @Override
+    public List<String> getDistinctFigureLabels_New(String publicationID) {
+        Session session = HibernateUtil.currentSession();
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+
+        CriteriaQuery<String> query = criteriaBuilder.createQuery(String.class);
+        Root<Figure> figure = query.from(Figure.class);
+
+        query.select(figure.get("label"))
+                .where(criteriaBuilder.equal(figure.get("publication").get("zdbID"), publicationID))
+                .orderBy(criteriaBuilder.asc(figure.get("orderingLabel")));
+
+        return session.createQuery(query).getResultList();
+    }
+
 
     /**
      * Retrieve distinct list of genes (GENEDOM_AND_EFG) that are attributed to a given publication.

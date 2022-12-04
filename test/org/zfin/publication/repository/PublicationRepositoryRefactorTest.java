@@ -181,8 +181,9 @@ public class PublicationRepositoryRefactorTest extends AbstractDatabaseTest {
         PaginationResult<Publication> pubs = publicationRepository.getPublicationsWithFigures(marker, item);
         assertEquals("122 pubs", 122, pubs.getPopulatedResults().size());
 
-        pubs = publicationRepository.getPublicationsWithFigures_New(marker, item);
-        assertEquals("122 pubs", 122, pubs.getPopulatedResults().size());    }
+//        pubs = publicationRepository.getPublicationsWithFigures_New(marker, item);
+//        assertEquals("122 pubs", 122, pubs.getPopulatedResults().size());
+    }
 
     @Test
     public void getPublicationsWithFigures2() {
@@ -196,11 +197,29 @@ public class PublicationRepositoryRefactorTest extends AbstractDatabaseTest {
         PaginationResult<Publication> pubs = publicationRepository.getPublicationsWithFigures(marker, item);
         assertEquals("5 pubs", 5, pubs.getPopulatedResults().size());
 
-        pubs = publicationRepository.getPublicationsWithFigures_New(marker, item);
-        assertEquals("5 pubs", 5, pubs.getPopulatedResults().size());
+//        pubs = publicationRepository.getPublicationsWithFigures_New(marker, item);
+//        assertEquals("5 pubs", 5, pubs.getPopulatedResults().size());
 
-//        getPublicationsWithFigures_New
     }
+
+
+    @Test
+    public void getFigureLabels() {
+        String zdbID = "ZDB-PUB-990507-16";
+
+        List<String> experiments = publicationRepository.getDistinctFigureLabels(zdbID);
+        assertTrue(experiments != null);
+        assertTrue(experiments.size() > 0);
+        assertTrue(experiments.size() == 6);
+
+        experiments = publicationRepository.getDistinctFigureLabels_New(zdbID);
+        assertTrue(experiments != null);
+        assertTrue(experiments.size() > 0);
+        assertTrue(experiments.size() == 6);
+
+
+    }
+
 
 }
 
