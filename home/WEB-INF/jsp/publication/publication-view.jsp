@@ -1,6 +1,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <jsp:useBean id="publication" class="org.zfin.publication.Publication" scope="request"/>
 <%@ page import="org.zfin.framework.presentation.NavigationMenuOptions" %>
+<%@ page import="org.zfin.framework.featureflag.FeatureFlagEnum" %>
 
 <%--Create shorter variable names for the enum values of navigation menu options / section titles from enum--%>
 <c:set var="SUMMARY" value="${NavigationMenuOptions.SUMMARY.value}"/>
@@ -21,7 +22,12 @@
 <c:set var="DIRECTLY_ATTRIBUTED_DATA" value="${NavigationMenuOptions.DIRECTLY_ATTRIBUTED_DATA.value}"/>
 <c:set var="ZEBRASHARE" value="${NavigationMenuOptions.ZEBRASHARE.value}"/>
 
-<z:dataPage sections="${[]}" navigationMenu="${navigationMenu}" additionalBodyClass="publication-view">
+<c:set var="BODYCLASSES" value="publication-view" />
+<c:if test="${zfn:isFlagEnabled(FeatureFlagEnum.USE_NAVIGATION_COUNTER)}">
+    <c:set var="BODYCLASSES" value="${BODYCLASSES} show-navigation-counters" />
+</c:if>
+
+<z:dataPage sections="${[]}" navigationMenu="${navigationMenu}" additionalBodyClass="${BODYCLASSES}">
 
     <jsp:attribute name="entityName">
         <div data-toggle="tooltip" data-placement="bottom" title="${publication.citation}">

@@ -42,10 +42,10 @@ $left-nav-width: 200px;
 $left-nav-count-width: 70px;
 $left-nav-text-width: $left-nav-width - $left-nav-count-width;
 
-/* larger width for publication view */
+/* larger width for publication view (or any page using the navigation counters */
 $left-nav-width-with-counts: 220px;
 $left-nav-text-width-with-counts: $left-nav-width-with-counts - $left-nav-count-width;
-.publication-view .data-page-nav-container {
+.show-navigation-counters .data-page-nav-container {
     width: $left-nav-width-with-counts;
 }
 
