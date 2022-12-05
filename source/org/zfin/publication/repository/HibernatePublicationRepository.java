@@ -629,7 +629,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return (List<Marker>) getMarkersByPublication(pubID, markerTypes);
     }
 
-    /** PLACEHOLDER **/
     public List<Marker> getGenesAndMarkersByPublication(String pubID) {
         // directly annotated markers
         List<MarkerType> markerTypes = markerRepository.getMarkerTypesByGroup(Marker.TypeGroup.GENEDOM_AND_NTR);
@@ -691,6 +690,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return q2.getResultList();
     }
 
+    /** PLACEHOLDER **/
     public List<Marker> getMarkersByTypeForPublication(String pubID, MarkerType markerType) {
         return (List<Marker>) getMarkersByPublication(pubID, Collections.singletonList(markerType));
     }
