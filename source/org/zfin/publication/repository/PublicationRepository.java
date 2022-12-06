@@ -166,13 +166,13 @@ public interface PublicationRepository extends PaginationParameter {
 
     List<Marker> getMarkersPulledThroughSTRs(String pubID);
 
-    /** PLACEHOLDER **/
     List<Marker> getMarkersByTypeForPublication(String pubID, MarkerType markerType);
 
     List<SequenceTargetingReagent> getSTRsByPublication(String pubID, MarkerType markerType);
 
     PaginationResult<Clone> getClonesByPublication(String pubID, PaginationBean paginationBean);
 
+    /** PLACEHOLDER **/
     List<Feature> getFeaturesByPublication(String pubID);
 
     List<Fish> getFishByPublication(String pubID);

@@ -1,6 +1,5 @@
 package org.zfin.publication.repository;
 
-import com.vladmihalcea.hibernate.query.SQLExtractor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -684,13 +683,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                         )
                 );
 
-        org.hibernate.query.Query<Marker> q2 = session.createQuery(query);
-        String sql = SQLExtractor.from(q2);
-
-        return q2.getResultList();
+        return session.createQuery(query).getResultList();
     }
 
-    /** PLACEHOLDER **/
     public List<Marker> getMarkersByTypeForPublication(String pubID, MarkerType markerType) {
         return (List<Marker>) getMarkersByPublication(pubID, Collections.singletonList(markerType));
     }
@@ -709,19 +704,28 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return getMarkersByPublicationQuery(pubID, markerTypes).list();
     }
 
-    private Query getMarkersByPublicationQuery(String pubID, List<MarkerType> markerTypes) {
+    private org.hibernate.query.Query<Marker> getMarkersByPublicationQuery(String pubID, List<MarkerType> markerTypes) {
         Session session = HibernateUtil.currentSession();
-        String hql = "select distinct marker from Marker marker, RecordAttribution attr" +
-            "     where attr.dataZdbID = marker.zdbID" +
-            "           and attr.sourceZdbID = :pubID " +
-            "           and marker.markerType in (:markerType)  " +
-            "    order by marker.abbreviationOrder ";
-        Query query = session.createQuery(hql);
-        query.setString("pubID", pubID);
-        query.setParameterList("markerType", markerTypes);
-        return query;
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+
+        CriteriaQuery<Marker> criteriaQuery = criteriaBuilder.createQuery(Marker.class);
+        Root<Marker> marker = criteriaQuery.from(Marker.class);
+        Join<Marker, RecordAttribution> publications = marker.join("publications", JoinType.INNER);
+
+        criteriaQuery.select(marker)
+                .distinct(true)
+                .where(
+                        criteriaBuilder.and(
+                                criteriaBuilder.equal(publications.get("sourceZdbID"), pubID),
+                                marker.get("markerType").in(markerTypes)
+                        )
+                )
+                .orderBy(criteriaBuilder.asc(marker.get("abbreviationOrder")));
+
+        return session.createQuery(criteriaQuery);
     }
 
+    /** PLACEHOLDER **/
     public List<Feature> getFeaturesByPublication(String pubID) {
         Session session = HibernateUtil.currentSession();
 

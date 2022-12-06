@@ -11,9 +11,13 @@ import org.zfin.AppConfig;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.expression.Figure;
 import org.zfin.figure.service.FigureViewService;
+import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerType;
 import org.zfin.marker.presentation.HighQualityProbe;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
@@ -28,6 +32,7 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.*;
+import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {AppConfig.class})
@@ -240,6 +245,48 @@ public class PublicationRepositoryRefactorTest extends AbstractDatabaseTest {
 //        assertEquals(markers3.size(), markers2.size());
     }
 
+    @Test
+    public void getMarkersByTypeForPublication() {
+        String publicationID = "ZDB-PUB-220412-11";
+        MarkerType efgType = getMarkerRepository().getMarkerTypeByName(Marker.Type.EFG.name());
+        List<Marker> markers = publicationRepository.getMarkersByTypeForPublication(publicationID, efgType);
+
+        assertEquals(3, markers.size());
+
+    }
+
+    @Test
+    public void getSTRsByPublication() {
+        MarkerType morpholinoMarkerType = getMarkerRepository().getMarkerTypeByName("MRPHLNO");
+        MarkerType crisprMarkerType = getMarkerRepository().getMarkerTypeByName("CRISPR");
+        String publicationID = "ZDB-PUB-190215-8";
+        List<SequenceTargetingReagent> morpholinos = publicationRepository.getSTRsByPublication(publicationID, morpholinoMarkerType);
+        List<SequenceTargetingReagent> crisprs = publicationRepository.getSTRsByPublication(publicationID, crisprMarkerType);
+
+        assertEquals(2, morpholinos.size());
+        assertEquals(3, crisprs.size());
+    }
+
+    @Test
+    public void getClonesByPublication() {
+        PaginationBean paginationBean = new PaginationBean();
+        PaginationResult<Clone> clones = publicationRepository.getClonesByPublication("ZDB-PUB-080422-3", paginationBean);
+        assertNotNull(clones);
+        assertEquals(1, clones.getTotalCount());
+    }
+
+    @Test
+    public void getMarkersByPublication() {
+        Marker.TypeGroup typeGroup = Marker.TypeGroup.GENEDOM;
+        List<MarkerType> markerTypes = getMarkerRepository().getMarkerTypesByGroup(typeGroup);
+        markerTypes.add(getMarkerRepository().getMarkerTypeByName(Marker.Type.EFG.toString()));
+
+        List<Marker> markers1 = publicationRepository.getMarkersByPublication("ZDB-PUB-080422-3", markerTypes);
+        List<Marker> markers2 = publicationRepository.getMarkersByPublication("ZDB-PUB-190215-8", markerTypes);
+
+        assertTrue(markers1.size() > 5);
+        assertTrue(markers2.size() > 5);
+    }
 
 }
 
