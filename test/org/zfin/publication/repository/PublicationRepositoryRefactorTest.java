@@ -1,5 +1,6 @@
 package org.zfin.publication.repository;
 
+import lombok.SneakyThrows;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.publication.*;
 import org.zfin.repository.RepositoryFactory;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -234,7 +236,8 @@ public class PublicationRepositoryRefactorTest extends AbstractDatabaseTest {
 
         String zdbID2 = "ZDB-PUB-150809-4";
 
-        List<Marker> markers2 = publicationRepository.getMarkersPulledThroughSTRs(zdbID2);
+//        List<Marker> markers2 = publicationRepository.getMarkersPulledThroughSTRs(zdbID2);
+        List<Marker> markers2 = getMarkersPulledThroughSTRs(zdbID2);
 
         markers2 = publicationRepository.getGenesAndMarkersByPublication(zdbID2);
         assertTrue(markers2 != null);
@@ -276,16 +279,40 @@ public class PublicationRepositoryRefactorTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getMarkersByPublication() {
+    public void getMarkersByPublication() throws Exception {
         Marker.TypeGroup typeGroup = Marker.TypeGroup.GENEDOM;
         List<MarkerType> markerTypes = getMarkerRepository().getMarkerTypesByGroup(typeGroup);
         markerTypes.add(getMarkerRepository().getMarkerTypeByName(Marker.Type.EFG.toString()));
 
-        List<Marker> markers1 = publicationRepository.getMarkersByPublication("ZDB-PUB-080422-3", markerTypes);
-        List<Marker> markers2 = publicationRepository.getMarkersByPublication("ZDB-PUB-190215-8", markerTypes);
+//        test private method, similar to the following if it were a public method:
+//        List<Marker> markers1 = publicationRepository.getMarkersByPublication("ZDB-PUB-080422-3", markerTypes);
+//        List<Marker> markers2 = publicationRepository.getMarkersByPublication("ZDB-PUB-190215-8", markerTypes);
+        List<Marker> markers1 = getMarkersByPublication("ZDB-PUB-080422-3", markerTypes);
+        List<Marker> markers2 = getMarkersByPublication("ZDB-PUB-190215-8", markerTypes);
 
         assertTrue(markers1.size() > 5);
         assertTrue(markers2.size() > 5);
+    }
+
+    // similar to the following method call, but with a workaround to access private method:
+    //   List<Marker> markers = publicationRepository.getMarkersPulledThroughSTRs(zdbID2);
+    @SneakyThrows
+    private List<Marker> getMarkersPulledThroughSTRs(String zdbID) {
+        Method getMarkersPulledThroughSTRs = HibernatePublicationRepository.class.getDeclaredMethod(
+                "getMarkersPulledThroughSTRs", String.class);
+
+        getMarkersPulledThroughSTRs.setAccessible(true);
+        return (List<Marker>) getMarkersPulledThroughSTRs.invoke(publicationRepository, zdbID);
+    }
+
+    // similar to the following method call, but with a workaround to access private method:
+    //   List<Marker> markers = publicationRepository.getMarkersByPublication(zdbID);
+    @SneakyThrows
+    private List<Marker> getMarkersByPublication(String zdbID, List<MarkerType> markerTypes) {
+        Method getMarkersByPublication = HibernatePublicationRepository.class.getDeclaredMethod(
+                "getMarkersByPublication", String.class, List.class);
+        getMarkersByPublication.setAccessible(true);
+        return (List<Marker>) getMarkersByPublication.invoke(publicationRepository, zdbID, markerTypes);
     }
 
 }

@@ -665,8 +665,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return session.createQuery(query).getResultList();
     }
 
-    @Override
-    public List<Marker> getMarkersPulledThroughSTRs(String pubID) {
+    private List<Marker> getMarkersPulledThroughSTRs(String pubID) {
         Session session = HibernateUtil.currentSession();
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Marker> query = criteriaBuilder.createQuery(Marker.class);

@@ -164,8 +164,6 @@ public interface PublicationRepository extends PaginationParameter {
 
     List<Marker> getGenesAndMarkersByPublication(String pubID);
 
-    List<Marker> getMarkersPulledThroughSTRs(String pubID);
-
     List<Marker> getMarkersByTypeForPublication(String pubID, MarkerType markerType);
 
     List<SequenceTargetingReagent> getSTRsByPublication(String pubID, MarkerType markerType);
