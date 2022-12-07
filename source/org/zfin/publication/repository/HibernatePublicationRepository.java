@@ -103,13 +103,14 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     public List<String> getSNPPublicationIDs(Marker marker) {
         Session session = HibernateUtil.currentSession();
-        String sql = "select distinct snpdattr_pub_zdb_id " +
-            " from snp_download_attribution, snp_download " +
-            " where snpdattr_snpd_pk_id = snpd_pk_id and snpd_mrkr_zdb_id = :zdbID";
-        SQLQuery query = session.createSQLQuery(sql);
-        query.setString("zdbID", marker.getZdbID());
-        List<String> pubIDs = query.list();
-        return pubIDs;
+        String sql = """
+                select distinct snpdattr_pub_zdb_id
+                 from snp_download_attribution, snp_download
+                 where snpdattr_snpd_pk_id = snpd_pk_id and snpd_mrkr_zdb_id = :zdbID""";
+        Query<Tuple> query = session.createNativeQuery(sql, Tuple.class);
+        query.setParameter("zdbID", marker.getZdbID());
+        List<Tuple> pubIDs = query.list();
+        return pubIDs.stream().map(tuple -> tuple.get(0, String.class)).toList();
     }
 
     public PaginationResult<HighQualityProbe> getHighQualityProbeNames(Term term, int maxRow) {
