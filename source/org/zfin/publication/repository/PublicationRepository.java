@@ -98,8 +98,6 @@ public interface PublicationRepository extends PaginationParameter {
      */
     boolean publicationExists(String canonicalPublicationZdbID);
 
-    Figure getFigureByID(String figureZdbID);
-
     /**
      * Saves a list of publications in one transaction.
      *
@@ -128,10 +126,6 @@ public interface PublicationRepository extends PaginationParameter {
      */
     PaginationResult<Figure> getFiguresByFishAndAnatomy(Fish fish, GenericTerm term, boolean includeSubstructures);
 
-    PaginationResult<Figure> getFiguresByGenoExp(Genotype geno);
-
-    PaginationResult<Publication> getPublicationsWithFiguresbyGenoExp(Genotype genotype);
-
     /**
      * Retrieve figures for a given gene and anatomy term.
      *
@@ -153,15 +147,21 @@ public interface PublicationRepository extends PaginationParameter {
 
     SourceAlias addJournalAlias(Journal journal, String alias);
 
+    PaginationResult<Figure> getFiguresByGenoExp(Genotype geno);
+
+    PaginationResult<Publication> getPublicationsWithFiguresbyGenoExp(Genotype genotype);
+
     int getNumberAssociatedPublicationsForZdbID(String zdbID);
 
     /**
-     * Retrieve Figue by ID
+     * Retrieve Figure by ID
      *
      * @param zdbID ID
      * @return Figure
      */
     Figure getFigure(String zdbID);
+
+    Figure getFigureByID(String figureZdbID);
 
     Image getImageById(String zdbID);
 
@@ -257,7 +257,6 @@ public interface PublicationRepository extends PaginationParameter {
      */
     List<Antibody> getAntibodiesByPublication(String publicationID);
 
-
     /**
      * Retrieve antibodies by publication and associated gene
      *
@@ -344,7 +343,6 @@ public interface PublicationRepository extends PaginationParameter {
     int deleteExpressionExperimentIDswithNoExpressionResult(Publication publication);
 
     List<String> getTalenOrCrisprFeaturesWithNoRelationship(String pubZdbID);
-
 
     long getMarkerCount(Publication publication);
 
@@ -453,7 +451,7 @@ public interface PublicationRepository extends PaginationParameter {
     PublicationProcessingChecklistEntry getProcessingChecklistEntry(long id);
 
     List<PubmedPublicationAuthor> getPubmedPublicationAuthorsByPublication(Publication publication);
-    
+
     boolean isNewFeaturePubAttribution(Feature feature, String publicationId);
 
     boolean hasCuratedOrthology(Marker marker);
@@ -463,4 +461,5 @@ public interface PublicationRepository extends PaginationParameter {
     List<SequenceTargetingReagent> getSTRsByPublication(String publicationID, Pagination pagination);
 
     List<Image> getImages(Publication publication);
+
 }
