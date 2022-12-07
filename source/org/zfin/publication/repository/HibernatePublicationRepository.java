@@ -85,21 +85,20 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     public List<Publication> getExpressedGenePublications(String geneID, String anatomyItemID) {
         Session session = HibernateUtil.currentSession();
-        String hql = "SELECT distinct publication FROM Publication publication, ExpressionExperiment exp, ExpressionResult res   " +
-            "WHERE (res.entity.superterm.zdbID = :aoZdbID OR" +
-            "       res.entity.subterm.zdbID = :aoZdbID) " +
-            "AND publication = exp.publication " +
-            "AND res.expressionExperiment = exp " +
-            "AND exp.gene.zdbID = :zdbID " +
-            "AND res.expressionFound = :expressionFound ";
+        String hql = """
+            SELECT distinct publication FROM Publication publication, ExpressionExperiment exp, ExpressionResult res  \s
+            WHERE (res.entity.superterm.zdbID = :aoZdbID OR
+                   res.entity.subterm.zdbID = :aoZdbID)
+            AND publication = exp.publication
+            AND res.expressionExperiment = exp
+            AND exp.gene.zdbID = :zdbID
+            AND res.expressionFound is true""";
         String sql = addOrderByParameters(hql);
-        Query query = session.createQuery(sql);
+        Query<Publication> query = session.createQuery(sql, Publication.class);
         addPaginationParameters(query);
-        query.setString("zdbID", geneID);
-        query.setString("aoZdbID", anatomyItemID);
-        query.setBoolean("expressionFound", true);
-        List<Publication> list = query.list();
-        return list;
+        query.setParameter("zdbID", geneID);
+        query.setParameter("aoZdbID", anatomyItemID);
+        return query.list();
     }
 
     public List<String> getSNPPublicationIDs(Marker marker) {
