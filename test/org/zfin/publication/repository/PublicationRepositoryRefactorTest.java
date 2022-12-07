@@ -8,10 +8,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.AppConfig;
+import org.zfin.marker.Marker;
 import org.zfin.publication.Publication;
 
 import java.util.List;
 import static org.junit.Assert.*;
+import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {AppConfig.class})
@@ -36,4 +38,14 @@ public class PublicationRepositoryRefactorTest extends AbstractDatabaseTest {
         assertTrue(pubs.size() >= 1);
         assertEquals("ZDB-PUB-170818-4", pubs.get(0).getZdbID());
     }
+
+    @Test
+    public void getSNPPublicationIDs() {
+        Marker marker = getMarkerRepository().getMarker("ZDB-BAC-050218-656");
+        List<String> pubs = publicationRepository.getSNPPublicationIDs(marker);
+        assertNotNull(pubs);
+        assertEquals(1, pubs.size());
+        assertEquals("ZDB-PUB-070427-10", pubs.get(0));
+    }
+
 }
