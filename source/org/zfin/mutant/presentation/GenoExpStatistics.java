@@ -56,4 +56,5 @@ public class GenoExpStatistics extends EntityStatistics {
         PublicationRepository repository = RepositoryFactory.getPublicationRepository();
         return repository.getPublicationsWithFiguresbyGenoExp(genotype);
     }
+
 }
