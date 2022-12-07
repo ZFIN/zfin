@@ -64,7 +64,7 @@ public class PublicationEditController {
             @Override
             public void setAsText(String text) {
                 if (!text.isEmpty()) {
-                    Journal journal = publicationRepository.findJournalByAbbreviation(text);
+                    Journal journal = publicationRepository.getJournalByAbbreviation(text);
                     if (journal == null) {
                         throw new IllegalArgumentException("Could not find journal with abbreviation " + text);
                     }
