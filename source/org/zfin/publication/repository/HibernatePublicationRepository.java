@@ -430,7 +430,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     @Override
-    public Journal findJournalByAbbreviation(String abbrevation) {
+    public Journal getJournalByAbbreviation(String abbrevation) {
         Criteria criteria = HibernateUtil.currentSession().createCriteria(Journal.class);
         criteria.add(Restrictions.eq("abbreviation", abbrevation));
         return (Journal) criteria.uniqueResult();
