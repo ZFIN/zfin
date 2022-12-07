@@ -176,9 +176,16 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
      */
     public List<Publication> getPublications(String aoZdbID) {
         List<Publication> pubs;
-
+/*
+        if (pubsPerAnatomy == null)
+            pubsPerAnatomy = new HashMap<String, List<Publication>>();
+        pubs = pubsPerAnatomy.get(aoZdbID);
+        if (pubs != null)
+            return pubs;
+*/
         PublicationRepository pr = RepositoryFactory.getPublicationRepository();
         pubs = pr.getExpressedGenePublications(zdbID, aoZdbID);
+//        pubsPerAnatomy.put(aoZdbID, pubs);
         return pubs;
     }
 
