@@ -46,6 +46,7 @@ import org.zfin.ontology.repository.OntologyRepositoryTest;
 import org.zfin.orthology.OrthologyRepositoryTest;
 import org.zfin.profile.repository.ProfileRepositoryTest;
 import org.zfin.profile.service.ProfileServiceTest;
+import org.zfin.publication.repository.PublicationRepositoryRefactorTest;
 import org.zfin.publication.repository.PublicationRepositoryTest;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.BlastRepositoryTest;
@@ -122,6 +123,7 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         ProfileRepositoryTest.class,
         ProfileServiceTest.class,
         PublicationRepositoryTest.class,
+//        PublicationRepositoryRefactorTest.class, //temporarily used while refactoring PublicationRepository
         RecordAttributionTest.class,
         RenoMultiRunTest.class,
         RenoRedundancyCandidateControllerTest.class,
