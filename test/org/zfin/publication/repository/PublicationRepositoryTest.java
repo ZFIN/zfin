@@ -102,16 +102,6 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getNumberOfPubWithFigures() {
-        //  neural rod
-        String aoZdbID = "ZDB-TERM-100331-125";
-        String zdbID = "ZDB-GENE-980526-36";
-        int number = publicationRepository.getNumberOfExpressedGenePublicationsWithFigures(zdbID, aoZdbID);
-//        assertEquals("2 publications", 2, number);
-        assertTrue(number > 0);
-    }
-
-    @Test
     public void getNumberOfFiguresPerAnatomyStructure() {
         String termName = "neural rod";
         GenericTerm term = ontologyRepository.getTermByName(termName, Ontology.ANATOMY);
@@ -200,26 +190,6 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         assertTrue(number > 0);
     }
 
-    @Test
-    public void getFigurePublicationsForProbes() {
-        //  probe eu815
-        String probeZdbID = "ZDB-EST-051103-38";
-        Marker probe = new Marker();
-        probe.setZdbID(probeZdbID);
-        //  gene ascl1b
-        String geneZdbID = "ZDB-GENE-980526-174";
-        Marker gene = new Marker();
-        gene.setZdbID(geneZdbID);
-        // neural rod
-        String aoZdbID = "ZDB-ANAT-010921-561";
-        GenericTerm item = new GenericTerm();
-        item.setZdbID(aoZdbID);
-        List<Publication> pubs = publicationRepository.getPublicationsWithFiguresPerProbeAndAnatomy(gene, probe, item);
-        assertTrue(pubs != null);
-//        assertEquals("1 publication", 1, pubs.size());
-
-    }
-
     /**
      * anterior lateral line ganglia is expressed in a double mutant: fgf3t24149/+;fgf8ti282a/+
      */
@@ -294,43 +264,6 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getPublicationsForGenoAndAoIncludingSubstructures() {
-        Fish geno = new Fish();
-        geno.setZdbID("ZDB-FISH-150901-25831");
-        // actinotrichium
-        GenericTerm item = getOntologyRepository().getTermByOboID("ZFA:0005435");
-        PaginationResult<Publication> publications = publicationRepository.getPublicationsWithFigures(geno, item, true);
-        assertNotNull(publications.getPopulatedResults());
-        assertTrue(publications.getPopulatedResults().size() > 0);
-    }
-
-    @Test
-    public void getFiguresForGeno() {
-        //  genotype adss^hi1433Tg
-        String genoZdbID = "ZDB-GENO-980202-822";
-        Genotype geno = new Genotype();
-        geno.setZdbID(genoZdbID);
-        // brain
-        PaginationResult<Figure> figs = publicationRepository.getFiguresByGeno(geno);
-        assertTrue(figs.getPopulatedResults() != null);
-    }
-
-
-    @Test
-    public void getPubsForFeature() {
-        //  genotype adss^hi1433Tg
-        String featZdbID = "ZDB-ALT-980413-502";
-        Feature feature = new Feature();
-        feature.setZdbID(featZdbID);
-        // brain
-
-        PaginationResult<Publication> pubs = publicationRepository.getAllAssociatedPublicationsForFeature(feature, 0);
-        assertTrue(pubs.getPopulatedResults() != null);
-//        assertEquals("1 figure", 1, figs.size());
-
-    }
-
-    @Test
     public void getFiguresForGenotypeExp() {
         //  genotype adss^hi1433Tg
         String genoZdbID = "ZDB-GENO-020426-5";
@@ -346,42 +279,12 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getPublicationsForFiguresForGenotype() {
-        //  genotype adss^hi1433Tg
-        String genoZdbID = "ZDB-GENO-020426-5";
-        Genotype geno = new Genotype();
-        geno.setZdbID(genoZdbID);
-        // brain
-        String aoZdbID = "ZDB-TERM-100331-8";
-        GenericTerm item = new GenericTerm();
-        item.setZdbID(aoZdbID);
-        int publicationCount = publicationRepository.getNumPublicationsWithFiguresPerGenotypeAndAnatomy(geno, item);
-        assertTrue(publicationCount > 0);
-//        assertEquals("1 publication", 1, publications.size());
-
-    }
-
-    @Test
     public void getFeatureCountForPub() {
         //  genotype adss^hi1433Tg
         String pubZdbID = "ZDB-PUB-140403-2";
         Publication pub = publicationRepository.getPublication(pubZdbID);
         long ftrCount = publicationRepository.getFeatureCount(pub);
         assertTrue(ftrCount > 0);
-//        assertEquals("1 publication", 1, publications.size());
-
-    }
-
-    @Test
-    public void getPublicationsForFiguresForGeno() {
-        //  genotype adss^hi1433Tg
-        String genoZdbID = "ZDB-GENO-070615-1";
-        Genotype geno = new Genotype();
-        geno.setZdbID(genoZdbID);
-        // brain
-
-        PaginationResult<Publication> pubs = publicationRepository.getPublicationsWithFiguresbyGeno(geno);
-        assertTrue(pubs.getPopulatedResults() != null);
 //        assertEquals("1 publication", 1, publications.size());
 
     }
@@ -398,17 +301,6 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         item.setZdbID(aoZdbID);
         List<Figure> figs = publicationRepository.getFiguresByGeneAndAnatomy(marker, item);
         assertTrue(figs != null);
-    }
-
-    @Test
-    public void getHighQualityProbePublicationsForBrain() {
-        String termName = "neural rod";
-        OntologyRepository aoRepository = RepositoryFactory.getOntologyRepository();
-        GenericTerm item = aoRepository.getTermByName(termName, Ontology.ANATOMY);
-        List<Publication> qualityPubs = publicationRepository.getHighQualityProbePublications(item);
-        assertTrue(qualityPubs != null);
-//        assertEquals("2 pubs", 2, qualityPubs.size());
-
     }
 
     @Test
