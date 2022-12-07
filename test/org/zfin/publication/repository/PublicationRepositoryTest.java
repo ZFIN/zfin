@@ -230,6 +230,55 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void getFiguresForGenotype() {
+        //  genotype adss^hi1433Tg
+        String genoZdbID = "ZDB-FISH-020426-5";
+        Fish geno = new Fish();
+        geno.setZdbID(genoZdbID);
+        // brain
+        String aoZdbID = "ZDB-ANAT-010921-415";
+        GenericTerm item = new GenericTerm();
+        item.setZdbID(aoZdbID);
+        PaginationResult<Figure> figs = publicationRepository.getFiguresByFishAndAnatomy(geno, item);
+        assertNotNull(figs.getPopulatedResults());
+
+/*      This case has two figures where one of them comes from a genotype with MOs and thus should not be retrieved.
+        // Df(LG23:acvr1b,sp5l,wnt1,wnt10b)w5/w5
+        genoZdbID = "ZDB-GENO-091207-3";
+        geno.setZdbID(genoZdbID);
+        // midbrain hindbrain boundary
+        aoZdbID = "ZDB-TERM-100331-40";
+        item.setZdbID(aoZdbID);
+        figs = publicationRepository.getFiguresByFishAndAnatomy(geno, item.createGenericTerm());
+        assertTrue(figs.getPopulatedResults() != null);
+*/
+    }
+
+    @Test
+    public void getFiguresForGenotypeAndAoPlusSubstructures() {
+        Fish fish = mutantRepository.getFish("ZDB-FISH-150901-25831");
+        GenericTerm item = getOntologyRepository().getTermByOboID("ZFA:0005435");
+        PaginationResult<Figure> figs = publicationRepository.getFiguresByFishAndAnatomy(fish, item, true);
+        assertNotNull(figs.getPopulatedResults());
+        assertTrue(figs.getPopulatedResults().size() > 0);
+    }
+
+    @Test
+    public void getFiguresForGenotypeExp() {
+        //  genotype adss^hi1433Tg
+        String genoZdbID = "ZDB-GENO-020426-5";
+        Genotype geno = new Genotype();
+        geno.setZdbID(genoZdbID);
+        // brain
+
+
+        PaginationResult<Figure> figs = publicationRepository.getFiguresByGenoExp(geno);
+        assertTrue(figs.getPopulatedResults() != null);
+//        assertEquals("1 figure", 1, figs.size());
+
+    }
+
+    @Test
     public void getFeatureCountForPub() {
         //  genotype adss^hi1433Tg
         String pubZdbID = "ZDB-PUB-140403-2";
@@ -238,6 +287,20 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         assertTrue(ftrCount > 0);
 //        assertEquals("1 publication", 1, publications.size());
 
+    }
+
+    @Test
+    public void getFiguresForGene() {
+        //  creb1a
+        String markerZdbID = "ZDB-GENE-040426-750";
+        Marker marker = new Marker();
+        marker.setZdbID(markerZdbID);
+        //   telencephalic ventricle
+        String aoZdbID = "ZDB-TERM-100331-665";
+        GenericTerm item = new GenericTerm();
+        item.setZdbID(aoZdbID);
+        List<Figure> figs = publicationRepository.getFiguresByGeneAndAnatomy(marker, item);
+        assertTrue(figs != null);
     }
 
     @Test

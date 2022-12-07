@@ -31,8 +31,29 @@ public class GenoExpStatistics extends EntityStatistics {
         return genotype;
     }
 
-    @Override
+
+    public int getNumberOfFigures() {
+        if (figureResults == null) {
+            figureResults = RepositoryFactory.getPublicationRepository().getFiguresByGenoExp(genotype);
+        }
+        return figureResults.getTotalCount();
+    }
+
+    /**
+     * @return There should be a single figure per GenotypeStatistics
+     */
+    public Figure getFigure() {
+        if (figureResults == null || figureResults.getTotalCount() != 1) {
+            figureResults = RepositoryFactory.getPublicationRepository().getFiguresByGenoExp(genotype);
+        }
+        if (figureResults == null || figureResults.getTotalCount() != 1) {
+            throw new RuntimeException("Can call this method only when there is exactly one figure");
+        }
+        return figureResults.getPopulatedResults().get(0);
+    }
+
     protected PaginationResult<Publication> getPublicationPaginationResult() {
-        throw new RuntimeException("This method is never used so we should never see this exception");
+        PublicationRepository repository = RepositoryFactory.getPublicationRepository();
+        return repository.getPublicationsWithFiguresbyGenoExp(genotype);
     }
 }

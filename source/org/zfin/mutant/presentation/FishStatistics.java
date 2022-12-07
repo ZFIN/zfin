@@ -59,6 +59,23 @@ public class FishStatistics extends EntityStatistics {
     private int numberOfFigures = -1;
 
     @JsonView(View.ExpressedGeneAPI.class)
+    public int getNumberOfFigures() {
+        if (numberOfFigures >= 0)
+            return numberOfFigures;
+        if (figureResults == null) {
+            figureResults = RepositoryFactory.getPublicationRepository().getFiguresByFishAndAnatomy(fish, anatomyItem, includeSubstructures);
+            if (publicationSet == null) {
+                publicationSet = new TreeSet<>();
+                for (Figure figure : figureResults.getPopulatedResults()) {
+                    publicationSet.add(figure.getPublication());
+                }
+            }
+        }
+        numberOfFigures = figureResults.getTotalCount();
+        return numberOfFigures;
+    }
+
+    @JsonView(View.ExpressedGeneAPI.class)
     public boolean isImgInFigure() {
         if (figureResults == null || figureResults.getTotalCount() == 0) {
             return false;
@@ -71,6 +88,25 @@ public class FishStatistics extends EntityStatistics {
             }
         }
         return thereIsImg;
+    }
+
+    /**
+     * @return There should be a single figure per GenotypeStatistics
+     */
+    @JsonView(View.ExpressedGeneAPI.class)
+    public Figure getFirstFigure() {
+        if (figureResults == null || figureResults.getTotalCount() != 1) {
+            figureResults = RepositoryFactory.getPublicationRepository().getFiguresByFishAndAnatomy(fish, anatomyItem);
+        }
+        if (figureResults == null || figureResults.getTotalCount() != 1) {
+            return null;
+        }
+        return figureResults.getPopulatedResults().get(0);
+    }
+
+    public Set<Publication> getPublicationSet() {
+        getNumberOfFigures();
+        return publicationSet;
     }
 
     @JsonView(View.ExpressedGeneAPI.class)

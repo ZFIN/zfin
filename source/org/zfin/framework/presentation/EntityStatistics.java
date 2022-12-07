@@ -76,6 +76,20 @@ public abstract class EntityStatistics {
         }
     }
 
+    @JsonView(View.API.class)
+    public int getNumberOfFigures() {
+        return figs.size();
+    }
+
+    @JsonView(View.API.class)
+    public Figure getFirstFigure() {
+        if (getNumberOfFigures() == 0) {
+            return null;
+        } else {
+            return figs.iterator().next();
+        }
+    }
+
     public void addFigure(Figure figure) {
         if (figure == null)
             return;

@@ -106,6 +106,35 @@ public interface PublicationRepository extends PaginationParameter {
      */
     boolean updatePublications(List<Publication> publicationList);
 
+    /**
+     * Retrieve list of figures for a given genotype and anatomy term
+     * for mutant genotypes excluding SequenceTargetingReagent.
+     *
+     * @param fish genotype
+     * @param term anatomy term
+     * @return list of figures.
+     */
+    PaginationResult<Figure> getFiguresByFishAndAnatomy(Fish fish, GenericTerm term);
+
+    /**
+     * Retrieve list of figures for a given genotype and anatomy term
+     * for mutant genotypes excluding SequenceTargetingReagent.
+     *
+     * @param fish genotype
+     * @param term anatomy term
+     * @return list of figures.
+     */
+    PaginationResult<Figure> getFiguresByFishAndAnatomy(Fish fish, GenericTerm term, boolean includeSubstructures);
+
+    /**
+     * Retrieve figures for a given gene and anatomy term.
+     *
+     * @param gene        Gene
+     * @param anatomyTerm anatomy
+     * @return a set of figures
+     */
+    List<Figure> getFiguresByGeneAndAnatomy(Marker gene, GenericTerm anatomyTerm);
+
     List<Publication> getPubsForDisplay(String zdbID);
 
     List<Journal> getAllJournals();
@@ -118,6 +147,10 @@ public interface PublicationRepository extends PaginationParameter {
 
     SourceAlias addJournalAlias(Journal journal, String alias);
 
+    PaginationResult<Figure> getFiguresByGenoExp(Genotype geno);
+
+    PaginationResult<Publication> getPublicationsWithFiguresbyGenoExp(Genotype genotype);
+
     int getNumberAssociatedPublicationsForZdbID(String zdbID);
 
     /**
@@ -127,6 +160,7 @@ public interface PublicationRepository extends PaginationParameter {
      * @return Figure
      */
     Figure getFigure(String zdbID);
+
     Figure getFigureByID(String figureZdbID);
 
     Image getImageById(String zdbID);
@@ -170,7 +204,6 @@ public interface PublicationRepository extends PaginationParameter {
 
     PaginationResult<Clone> getClonesByPublication(String pubID, PaginationBean paginationBean);
 
-    /** PLACEHOLDER **/
     List<Feature> getFeaturesByPublication(String pubID);
 
     List<Fish> getFishByPublication(String pubID);
@@ -223,7 +256,6 @@ public interface PublicationRepository extends PaginationParameter {
      * @return list of antibodies
      */
     List<Antibody> getAntibodiesByPublication(String publicationID);
-
 
     /**
      * Retrieve antibodies by publication and associated gene
@@ -311,7 +343,6 @@ public interface PublicationRepository extends PaginationParameter {
     int deleteExpressionExperimentIDswithNoExpressionResult(Publication publication);
 
     List<String> getTalenOrCrisprFeaturesWithNoRelationship(String pubZdbID);
-
 
     long getMarkerCount(Publication publication);
 
