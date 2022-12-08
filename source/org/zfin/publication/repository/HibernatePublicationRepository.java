@@ -113,15 +113,18 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return pubIDs.stream().map(tuple -> tuple.get(0, String.class)).toList();
     }
 
+    //TODO: refactor to JPA Criteria?
+    //TODO: ScrollableResults makes it difficult to refactor to Tuple-based hql
     public PaginationResult<HighQualityProbe> getHighQualityProbeNames(Term term, int maxRow) {
 
-        String hql = "select distinct exp.probe, marker " +
-            "FROM ExpressionExperiment exp, ExpressionResult res, Marker marker " +
-            "WHERE  res.entity.superterm = :term " +
-            "AND res.expressionExperiment = exp " +
-            "AND exp.probe.rating = 4 " +
-            "AND exp.gene = marker " +
-            "ORDER by marker.abbreviationOrder  ";
+        String hql = """
+            select distinct exp.probe, marker
+            FROM ExpressionExperiment exp, ExpressionResult res, Marker marker
+            WHERE  res.entity.superterm = :term
+            AND res.expressionExperiment = exp
+            AND exp.probe.rating = 4
+            AND exp.gene = marker
+            ORDER by marker.abbreviationOrder""";
         Session session = HibernateUtil.currentSession();
         Query query = session.createQuery(hql);
         query.setParameter("term", term);

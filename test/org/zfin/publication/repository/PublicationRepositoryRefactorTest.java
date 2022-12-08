@@ -8,12 +8,16 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.AppConfig;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
+import org.zfin.marker.presentation.HighQualityProbe;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 
 import java.util.List;
 import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
+import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {AppConfig.class})
@@ -46,6 +50,19 @@ public class PublicationRepositoryRefactorTest extends AbstractDatabaseTest {
         assertNotNull(pubs);
         assertEquals(1, pubs.size());
         assertEquals("ZDB-PUB-070427-10", pubs.get(0));
+    }
+
+    @Test
+    public void getHighQualityProbeNames() {
+        GenericTerm anatomyTerm = getOntologyRepository().getTermByZdbID("ZDB-TERM-100331-107");
+        PaginationResult<HighQualityProbe> hqp = publicationRepository.getHighQualityProbeNames(anatomyTerm, 5);
+
+        int total = hqp.getTotalCount();
+        assertEquals(27, total);
+
+        HighQualityProbe firstResult = hqp.getPopulatedResults().get(0);
+        Marker firstGene = ((Marker)(firstResult.getGenes().toArray()[0]));
+        assertEquals("ZDB-GENE-010328-3", firstGene.getZdbID());
     }
 
 }
