@@ -108,4 +108,22 @@ public class PublicationRepositoryRefactorTest extends AbstractDatabaseTest {
         assertTrue( journals.size() > 3000);
     }
 
+    @Test
+    public void getJournalByAbbreviation() {
+        Journal journal = publicationRepository.getJournalByAbbreviation("Food Chem X");
+        assertEquals( "Food chemistry: X", journal.getName());
+    }
+
+    @Test
+    public void getJournalByPrintIssn() {
+        Journal journal = publicationRepository.getJournalByPrintIssn("2590-1575");
+        assertEquals( "Food chemistry: X", journal.getName());
+    }
+
+    @Test
+    public void getJournalByEIssn() {
+        Journal journal = publicationRepository.getJournalByEIssn("2041-1723");
+        assertEquals( "Nature communications", journal.getName());
+    }
+
 }
