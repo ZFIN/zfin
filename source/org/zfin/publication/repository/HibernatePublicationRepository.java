@@ -396,9 +396,13 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     @Override
     public List<Journal> getAllJournals() {
         Session session = HibernateUtil.currentSession();
-        Criteria jrnlCriteria = session.createCriteria(Journal.class);
-        jrnlCriteria.addOrder(Order.asc("name"));
-        return jrnlCriteria.list();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<Journal> cr = cb.createQuery(Journal.class);
+
+        Root<Journal> root = cr.from(Journal.class);
+        cr.select(root).orderBy(cb.asc(root.get("name")));
+
+        return session.createQuery(cr).list();
     }
 
     @Override
