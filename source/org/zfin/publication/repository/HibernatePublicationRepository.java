@@ -508,7 +508,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public Image getImageById(String zdbID) {
         Session session = HibernateUtil.currentSession();
         return session.get(Image.class, zdbID);
-
     }
 
     @Override
@@ -611,29 +610,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         markerTypes.addAll(markerRepository.getMarkerTypesByGroup(Marker.TypeGroup.SEARCH_MK));
         Set<Marker> markers = new TreeSet<>(getMarkersByPublication(pubID, markerTypes));
 
-        // markers pulled through features
-        Session session = HibernateUtil.currentSession();
-        String hql = "select distinct marker from Marker marker, RecordAttribution attr, Feature feature, FeatureMarkerRelationship fmrel " +
-            "where attr.dataZdbID = feature.zdbID " +
-            "and attr.sourceZdbID = :pubID " +
-            "and fmrel.type = :isAllele " +
-            "and fmrel.feature = feature " +
-            "and fmrel.marker = marker ";
-        Query query = session.createQuery(hql);
-        query.setString("pubID", pubID);
-        query.setParameter("isAllele", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF);
-        markers.addAll(query.list());
-
-        // markers pulled through STRs
-        hql = "select distinct marker from Marker marker, RecordAttribution attr, MarkerRelationship mrel " +
-            "where attr.sourceZdbID = :pubID " +
-            "and attr.dataZdbID = mrel.firstMarker " +
-            "and mrel.secondMarker = marker " +
-            "and mrel.type = :type ";
-        query = session.createQuery(hql);
-        query.setString("pubID", pubID);
-        query.setParameter("type", MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
-        markers.addAll(query.list());
+        markers.addAll(getMarkersPulledThroughFeatures(pubID));
+        markers.addAll(getMarkersPulledThroughSTRs(pubID));
 
         return new ArrayList<>(markers);
     }
@@ -1010,7 +988,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         List<Ortholog> orthologList = (List<Ortholog>) query.list();
         return orthologList;
     }
-
 
     @Override
     public List<Ortholog> getOrthologListByMrkr(String mrkrID) {
@@ -2093,7 +2070,6 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             Marker marker = markerRepository.getMarkerByID(markerZdbID);
             MarkerStatistic statistic = new MarkerStatistic(anatomyTerm, marker);
             statistic.setNumberOfFigures((Integer) stats[2]);
-            //statistic.setNumberOfPublications(getNumberOfExpressedGenePublicationsWithFigures(marker.getZdbID(), anatomyTerm.getZdbID()));
             markers.add(statistic);
         }
         return markers;
@@ -2116,10 +2092,13 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     private DOIAttempt getDoiAttempt(Publication publication) {
         Session session = HibernateUtil.currentSession();
-        Query query = session.createQuery("from DOIAttempt " +
-                "where publication = :pub");
-        query.setParameter("pub", publication);
-        return (DOIAttempt) query.uniqueResult();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<DOIAttempt> cr = cb.createQuery(DOIAttempt.class);
+
+        Root<DOIAttempt> root = cr.from(DOIAttempt.class);
+        cr.select(root).where(cb.equal(root.get("publication"), publication));
+
+        return session.createQuery(cr).uniqueResult();
     }
 
     private Journal getJournalByProperty(String propertyName, String propertyValue) {
@@ -2148,6 +2127,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return session.createQuery(cr).list();
     }
 
+    //TODO: refactor this one? Seems like we could at least combine all if statements into a single one
     private String getCommonPublicationSQL(String zdbID) {
         // Changes to this query need to be kept in sync with the analogous query
         // in db-data-config.sql!
@@ -2259,21 +2239,74 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return commonPubSQL;
     }
 
+    private List<Marker> getMarkersPulledThroughFeatures(String pubID) {
+        Session session = HibernateUtil.currentSession();
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaQuery<Marker> query = criteriaBuilder.createQuery(Marker.class);
+        Root<Marker> marker = query.from(Marker.class);
+        Join<Marker, FeatureMarkerRelationship> fmrel = marker.join("featureMarkerRelationships");
+        Join<FeatureMarkerRelationship, Feature> feature = fmrel.join("feature");
+        Join<Feature, RecordAttribution> attr = feature.join("publications");
+
+        query.select(marker)
+                .distinct(true)
+                .where(
+                        criteriaBuilder.and(
+                                criteriaBuilder.equal(marker, fmrel.get("marker")),
+                                criteriaBuilder.equal(fmrel.get("type"), FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF),
+                                criteriaBuilder.equal(fmrel.get("feature"), feature),
+                                criteriaBuilder.equal(feature.get("zdbID"), attr.get("dataZdbID")),
+                                criteriaBuilder.equal(attr.get("sourceZdbID"), pubID)
+                        )
+                );
+
+
+        return session.createQuery(query).getResultList();
+    }
+
+    private List<Marker> getMarkersPulledThroughSTRs(String pubID) {
+        Session session = HibernateUtil.currentSession();
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaQuery<Marker> query = criteriaBuilder.createQuery(Marker.class);
+        Root<Marker> marker = query.from(Marker.class);
+        Join<Marker, MarkerRelationship> mrel = marker.join("secondMarkerRelationships");
+        Join<MarkerRelationship, Marker> firstMarker = mrel.join("firstMarker");
+        Join<Marker, RecordAttribution> attr = firstMarker.join("publications");
+        query.select(marker)
+                .distinct(true)
+                .where(
+                        criteriaBuilder.and(
+                                criteriaBuilder.equal(mrel.get("type"), MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE),
+                                criteriaBuilder.equal(attr.get("sourceZdbID"), pubID)
+                        )
+                );
+
+        return session.createQuery(query).getResultList();
+    }
+
     private List getMarkersByPublication(String pubID, List<MarkerType> markerTypes) {
         return getMarkersByPublicationQuery(pubID, markerTypes).list();
     }
 
-    private Query getMarkersByPublicationQuery(String pubID, List<MarkerType> markerTypes) {
+    private org.hibernate.query.Query<Marker> getMarkersByPublicationQuery(String pubID, List<MarkerType> markerTypes) {
         Session session = HibernateUtil.currentSession();
-        String hql = "select distinct marker from Marker marker, RecordAttribution attr" +
-                "     where attr.dataZdbID = marker.zdbID" +
-                "           and attr.sourceZdbID = :pubID " +
-                "           and marker.markerType in (:markerType)  " +
-                "    order by marker.abbreviationOrder ";
-        Query query = session.createQuery(hql);
-        query.setString("pubID", pubID);
-        query.setParameterList("markerType", markerTypes);
-        return query;
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+
+        CriteriaQuery<Marker> criteriaQuery = criteriaBuilder.createQuery(Marker.class);
+        Root<Marker> marker = criteriaQuery.from(Marker.class);
+        Join<Marker, RecordAttribution> publications = marker.join("publications", JoinType.INNER);
+
+        criteriaQuery.select(marker)
+                .distinct(true)
+                .where(
+                        criteriaBuilder.and(
+                                criteriaBuilder.equal(publications.get("sourceZdbID"), pubID),
+                                marker.get("markerType").in(markerTypes)
+                        )
+                )
+                .orderBy(criteriaBuilder.asc(marker.get("abbreviationOrder")));
+
+        return session.createQuery(criteriaQuery);
     }
 
     @SuppressWarnings("unchecked")
