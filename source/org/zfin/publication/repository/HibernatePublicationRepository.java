@@ -59,6 +59,10 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.MarkerDBLink;
 
+import javax.persistence.Tuple;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -271,22 +275,14 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return session.get(Publication.class, zdbID);
     }
 
+    //TODO: merge this with the private version alternate below and always order by date desc?
+    //TODO: Seems fairly safe to have a default ordering
     public List<Publication> getPublications(List<String> zdbIDs) {
-        if (CollectionUtils.isEmpty(zdbIDs)) {
-            return Collections.emptyList();
-        }
-        return HibernateUtil.currentSession()
-            .createCriteria(Publication.class)
-            .add(Restrictions.in("zdbID", zdbIDs))
-            .list();
+        return getPublications(zdbIDs, false);
     }
 
     public boolean publicationExists(String canonicalPublicationZdbID) {
-        Session session = HibernateUtil.currentSession();
-        Criteria query = session.createCriteria(Publication.class);
-        query.setProjection(Projections.count("zdbID"));
-        query.add(Restrictions.eq("zdbID", canonicalPublicationZdbID));
-        return (1 == ((Number) query.uniqueResult()).intValue());
+        return getPublication(canonicalPublicationZdbID) != null;
     }
 
     public boolean updatePublications(List<Publication> publicationList) {
@@ -394,17 +390,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             return new ArrayList<>();
         }
 
-        String hql = " select p from Publication p  " +
-                " where p.zdbID in (:zdbIDs) " +
-                " order by p.publicationDate desc ";
-        List<Publication> publicationLinks = HibernateUtil.currentSession()
-                .createQuery(hql)
-                .setParameterList("zdbIDs", publicationIDs)
-                .list();
-
-
-        // remove if not pubs
-        return publicationLinks;
+        return getPublications(publicationIDs, true);
     }
 
     @Override
@@ -2121,6 +2107,23 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "where publication = :pub");
         query.setParameter("pub", publication);
         return (DOIAttempt) query.uniqueResult();
+    }
+
+    private List<Publication> getPublications(List<String> zdbIDs, boolean orderByDateDesc) {
+        if (CollectionUtils.isEmpty(zdbIDs)) {
+            return Collections.emptyList();
+        }
+        Session session = HibernateUtil.currentSession();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<Publication> cr = cb.createQuery(Publication.class);
+
+        Root<Publication> root = cr.from(Publication.class);
+        cr.select(root).where(root.get("zdbID").in(zdbIDs));
+        if (orderByDateDesc) {
+            cr.orderBy(cb.desc(root.get("publicationDate")));
+        }
+
+        return session.createQuery(cr).list();
     }
 
     private String getCommonPublicationSQL(String zdbID) {
