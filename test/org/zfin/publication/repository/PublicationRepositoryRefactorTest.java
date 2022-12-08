@@ -13,6 +13,7 @@ import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
 
 import java.util.List;
@@ -92,6 +93,19 @@ public class PublicationRepositoryRefactorTest extends AbstractDatabaseTest {
     public void getFigureById() {
         Figure fig = publicationRepository.getFigureByID("ZDB-FIG-080617-24"); //has xpat, pheno & AB
         assertNotNull(fig);
+    }
+
+    @Test
+    public void getPubsForDisplay() {
+        assertTrue(publicationRepository.getPubsForDisplay("ZDB-GENE-040426-1855").size() > 10);
+        assertTrue(publicationRepository.getPubsForDisplay("ZDB-GENE-051005-1").size() > 15);
+        assertEquals(0, publicationRepository.getPubsForDisplay("ZDB-SSLP-000315-3").size());
+    }
+
+    @Test
+    public void getAllJournals() {
+        List<Journal> journals = publicationRepository.getAllJournals();
+        assertTrue( journals.size() > 3000);
     }
 
 }
