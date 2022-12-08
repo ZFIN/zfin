@@ -50,6 +50,7 @@ public class PublicationRepositoryRefactorTest extends AbstractDatabaseTest {
         assertNotNull(pubs);
         assertEquals(1, pubs.size());
         assertEquals("ZDB-PUB-070427-10", pubs.get(0));
+
     }
 
     @Test
@@ -63,6 +64,27 @@ public class PublicationRepositoryRefactorTest extends AbstractDatabaseTest {
         HighQualityProbe firstResult = hqp.getPopulatedResults().get(0);
         Marker firstGene = ((Marker)(firstResult.getGenes().toArray()[0]));
         assertEquals("ZDB-GENE-010328-3", firstGene.getZdbID());
+    }
+
+    @Test
+    public void getPublications() {
+        List<String> testPubs = List.of("ZDB-PUB-180130-17", "ZDB-PUB-190613-8");
+        List<Publication> pubs = publicationRepository.getPublications(testPubs);
+        assertEquals(2, pubs.size());
+
+        testPubs.containsAll(List.of(pubs.get(0).getZdbID(),pubs.get(1).getZdbID()));
+
+        pubs = publicationRepository.getPublications(null);
+        assertEquals(0, pubs.size());
+    }
+
+    @Test
+    public void publicationExists() {
+        boolean exists = publicationRepository.publicationExists("ZDB-PUB-180130-17");
+        assertTrue(exists);
+
+        boolean notExists = publicationRepository.publicationExists("BOGUS-IDENTIFIER");
+        assertFalse(notExists);
     }
 
 }
