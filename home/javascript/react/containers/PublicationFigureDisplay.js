@@ -1,6 +1,5 @@
 import React, {useEffect} from 'react';
 import PropTypes from 'prop-types';
-import ImageBox from '../../zfin-common/imagebox';
 
 const PublicationFigureDisplay = ({title, imagesJson, publicationId, navigationCounter}) => {
     const images = JSON.parse(imagesJson);
