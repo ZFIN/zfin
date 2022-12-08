@@ -148,6 +148,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     }
 
+    //TODO: refactor to JPA Criteria?
+    //TODO: ScrollableResults makes it difficult to refactor to Tuple-based hql
     /**
      * Note: firstRow must be 1 or greater, i.e. the way a user would describes
      * the record number. Hibernate starts with the first row numbered '0'.
@@ -169,43 +171,42 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         // todo: Rewrite as HQL and include the whole marker object as it is needed.
         // todo: note that when in SQL, start at 1 (current) , but when in HQL, start at 0
-        String hql = "SELECT exp.xpatex_gene_zdb_id as geneID, gene.mrkr_abbrev as geneSymbol, " +
-            "count(distinct fig.fig_zdb_id) as numOfFig  " +
-            "FROM  Expression_Experiment exp " +
-            "      join FISH_EXPERIMENT as genox on genox.genox_zdb_id=exp.xpatex_genox_zdb_id " +
-            "      join EXPRESSION_RESULT as result on result.xpatres_xpatex_zdb_id = exp.xpatex_zdb_id " +
-            "      join EXPRESSION_PATTERN_FIGURE as results on results.xpatfig_xpatres_zdb_id=result.xpatres_zdb_id " +
-            "      join Figure as fig on fig.fig_zdb_id=results.xpatfig_fig_zdb_id " +
-            "      join MARKER as gene on exp.xpatex_gene_zdb_id = gene.mrkr_zdb_id " +
-            "      join FISH as fish on fish.fish_zdb_Id = genox.genox_fish_zdb_id " +
-            "      join TERM as item_ on (result.xpatres_superterm_zdb_id = item_.term_zdb_id OR result.xpatres_subterm_zdb_id = item_.term_zdb_id) " +
-            "WHERE  item_.term_zdb_id = :termID AND " +
-            "       result.xpatres_expression_found = :expressionFound AND " +
-            "       fish.fish_is_wildtype = :isWildtype AND " +
-            "       genox.genox_is_std_or_generic_control = :condition AND " +
-            "       SUBSTRING (gene.mrkr_abbrev from  1 for 9) <> :withdrawn  AND   " +
-            "       not exists( " +
-            "           select 'x' from clone " +
-            "           where clone.clone_mrkr_zdb_id = exp.xpatex_probe_feature_zdb_id " +
-            "           and clone.clone_problem_type = :chimeric " +
-            "       ) AND " +
-            "       not exists( " +
-            "           select 'x' from marker m2" +
-            "           where m2.mrkr_zdb_id = exp.xpatex_probe_feature_zdb_id " +
-            "           and SUBSTRING (m2.mrkr_abbrev from 1 for 9) = :withdrawn  " +
-            "       ) " +
-            "GROUP BY exp.xpatex_gene_zdb_id, gene.mrkr_abbrev " +
-            "ORDER BY numOfFig DESC, geneSymbol ";
-        SQLQuery query = session.createSQLQuery(hql);
+        String sql = """
+            SELECT exp.xpatex_gene_zdb_id as geneID, gene.mrkr_abbrev as geneSymbol,
+            count(distinct fig.fig_zdb_id) as numOfFig 
+            FROM  Expression_Experiment exp
+                  join FISH_EXPERIMENT as genox on genox.genox_zdb_id=exp.xpatex_genox_zdb_id
+                  join EXPRESSION_RESULT as result on result.xpatres_xpatex_zdb_id = exp.xpatex_zdb_id
+                  join EXPRESSION_PATTERN_FIGURE as results on results.xpatfig_xpatres_zdb_id=result.xpatres_zdb_id
+                  join Figure as fig on fig.fig_zdb_id=results.xpatfig_fig_zdb_id
+                  join MARKER as gene on exp.xpatex_gene_zdb_id = gene.mrkr_zdb_id
+                  join FISH as fish on fish.fish_zdb_Id = genox.genox_fish_zdb_id
+                  join TERM as item_ on (result.xpatres_superterm_zdb_id = item_.term_zdb_id OR result.xpatres_subterm_zdb_id = item_.term_zdb_id)
+            WHERE  item_.term_zdb_id = :termID AND
+                   result.xpatres_expression_found is true AND
+                   fish.fish_is_wildtype is true AND
+                   genox.genox_is_std_or_generic_control is true AND
+                   SUBSTRING (gene.mrkr_abbrev from  1 for 9) <> :withdrawn  AND  
+                   not exists(
+                       select 'x' from clone
+                       where clone.clone_mrkr_zdb_id = exp.xpatex_probe_feature_zdb_id
+                       and clone.clone_problem_type = :chimeric
+                   ) AND
+                   not exists(
+                       select 'x' from marker m2
+                       where m2.mrkr_zdb_id = exp.xpatex_probe_feature_zdb_id
+                       and SUBSTRING (m2.mrkr_abbrev from 1 for 9) = :withdrawn 
+                   )
+            GROUP BY exp.xpatex_gene_zdb_id, gene.mrkr_abbrev
+            ORDER BY numOfFig DESC, geneSymbol
+                """;
+        SQLQuery query = session.createSQLQuery(sql);
         query.addScalar("geneID", StringType.INSTANCE);
         query.addScalar("geneSymbol", StringType.INSTANCE);
         query.addScalar("numOfFig", IntegerType.INSTANCE);
         query.setParameter("termID", anatomyTerm.getZdbID());
-        query.setBoolean("expressionFound", true);
-        query.setBoolean("isWildtype", true);
-        query.setBoolean("condition", true);
-        query.setString("withdrawn", Marker.WITHDRAWN);
-        query.setString("chimeric", Clone.ProblemType.CHIMERIC.toString()); // todo: use enum here
+        query.setParameter("withdrawn", Marker.WITHDRAWN);
+        query.setParameter("chimeric", Clone.ProblemType.CHIMERIC.toString()); // todo: use enum here
         ScrollableResults results = query.scroll();
 
         List<Object[]> list = new ArrayList<>();
