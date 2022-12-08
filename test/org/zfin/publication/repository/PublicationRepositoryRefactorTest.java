@@ -8,6 +8,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.AppConfig;
+import org.zfin.expression.Figure;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.HighQualityProbe;
@@ -85,6 +86,12 @@ public class PublicationRepositoryRefactorTest extends AbstractDatabaseTest {
 
         boolean notExists = publicationRepository.publicationExists("BOGUS-IDENTIFIER");
         assertFalse(notExists);
+    }
+
+    @Test
+    public void getFigureById() {
+        Figure fig = publicationRepository.getFigureByID("ZDB-FIG-080617-24"); //has xpat, pheno & AB
+        assertNotNull(fig);
     }
 
 }
