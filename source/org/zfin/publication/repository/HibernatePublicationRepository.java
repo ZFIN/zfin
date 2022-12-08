@@ -406,24 +406,16 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     @Override
-    public Journal getJournalByAbbreviation(String abbrevation) {
-        Criteria criteria = HibernateUtil.currentSession().createCriteria(Journal.class);
-        criteria.add(Restrictions.eq("abbreviation", abbrevation));
-        return (Journal) criteria.uniqueResult();
+    public Journal getJournalByAbbreviation(String abbreviation) {
+        return getJournalByProperty("abbreviation", abbreviation);
     }
 
     public Journal getJournalByPrintIssn(String pIssn) {
-        Session session = currentSession();
-        Criteria criteria = session.createCriteria(Journal.class);
-        criteria.add(Restrictions.eq("printIssn", pIssn));
-        return (Journal) criteria.uniqueResult();
+        return getJournalByProperty("printIssn", pIssn);
     }
 
     public Journal getJournalByEIssn(String eIssn) {
-        Session session = currentSession();
-        Criteria criteria = session.createCriteria(Journal.class);
-        criteria.add(Restrictions.eq("onlineIssn", eIssn));
-        return (Journal) criteria.uniqueResult();
+        return getJournalByProperty("onlineIssn", eIssn);
     }
 
     public SourceAlias addJournalAlias(Journal journal, String alias) {
@@ -2110,6 +2102,15 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                 "where publication = :pub");
         query.setParameter("pub", publication);
         return (DOIAttempt) query.uniqueResult();
+    }
+
+    private Journal getJournalByProperty(String propertyName, String propertyValue) {
+        Session session = HibernateUtil.currentSession();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<Journal> cr = cb.createQuery(Journal.class);
+        Root<Journal> root = cr.from(Journal.class);
+        cr.select(root).where(cb.equal(root.get(propertyName), propertyValue));
+        return session.createQuery(cr).uniqueResult();
     }
 
     private List<Publication> getPublications(List<String> zdbIDs, boolean orderByDateDesc) {
