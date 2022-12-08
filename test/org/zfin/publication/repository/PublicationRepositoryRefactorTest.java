@@ -13,6 +13,8 @@ import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Ontology;
+import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
 
@@ -126,4 +128,66 @@ public class PublicationRepositoryRefactorTest extends AbstractDatabaseTest {
         assertEquals( "Nature communications", journal.getName());
     }
 
+    @Test
+    public void getNumberAssociatedPublicationsForMarker() {
+
+        Marker m;
+        int numberPubs;
+
+        m = getMarkerRepository().getMarkerByID("ZDB-GENE-051005-1");
+        numberPubs = publicationRepository.getNumberAssociatedPublicationsForZdbID(m.getZdbID());
+        assertTrue(numberPubs > 15);
+        assertTrue(numberPubs < 35);
+//        assertEquals(28, numberPubs);
+
+        m = getMarkerRepository().getMarkerByAbbreviation("pax6a");
+        numberPubs = publicationRepository.getNumberAssociatedPublicationsForZdbID(m.getZdbID());
+        assertTrue(numberPubs > 190);
+        assertTrue(numberPubs < 500);
+//        assertEquals(334, numberPubs);
+
+    }
+
+    @Test
+    public void getNumberOfPublicationForPax2aAndMHB() {
+        String termName = "midbrain hindbrain boundary";
+        OntologyRepository aoRepository = getOntologyRepository();
+        GenericTerm item = aoRepository.getTermByName(termName, Ontology.ANATOMY);
+        Marker pax2a = getMarkerRepository().getMarkerByAbbreviation("pax2a");
+
+        PaginationResult<Publication> qualityPubs = publicationRepository.getPublicationsWithFigures(pax2a, item);
+        assertTrue(qualityPubs != null);
+        assertEquals("122 pubs", 122, qualityPubs.getPopulatedResults().size());
+
+    }
+
+    @Test
+    public void getPublicationsWithFigures() {
+        Marker marker = getMarkerRepository().getMarker("ZDB-GENE-990415-8");
+        OntologyRepository aoRepository = getOntologyRepository();
+        GenericTerm item = aoRepository.getTermByZdbID("ZDB-TERM-100331-40");
+
+        PaginationResult<Publication> pubs = publicationRepository.getPublicationsWithFigures(marker, item);
+        assertEquals("122 pubs", 122, pubs.getPopulatedResults().size());
+
+//        pubs = publicationRepository.getPublicationsWithFigures_New(marker, item);
+//        assertEquals("122 pubs", 122, pubs.getPopulatedResults().size());
+    }
+
+    @Test
+    public void getPublicationsWithFigures2() {
+        //tbxta
+        Marker marker = getMarkerRepository().getMarker("ZDB-GENE-980526-437");
+        OntologyRepository aoRepository = getOntologyRepository();
+
+        //dorsal region
+        GenericTerm item = aoRepository.getTermByZdbID("ZDB-TERM-100722-81");
+
+        PaginationResult<Publication> pubs = publicationRepository.getPublicationsWithFigures(marker, item);
+        assertEquals("5 pubs", 5, pubs.getPopulatedResults().size());
+
+//        pubs = publicationRepository.getPublicationsWithFigures_New(marker, item);
+//        assertEquals("5 pubs", 5, pubs.getPopulatedResults().size());
+
+    }
 }

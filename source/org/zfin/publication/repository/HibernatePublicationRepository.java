@@ -23,10 +23,7 @@ import org.zfin.curation.presentation.CorrespondenceDTO;
 import org.zfin.curation.presentation.PersonDTO;
 import org.zfin.curation.service.CurationDTOConversionService;
 import org.zfin.database.SearchUtil;
-import org.zfin.expression.Experiment;
-import org.zfin.expression.ExpressionExperiment;
-import org.zfin.expression.Figure;
-import org.zfin.expression.Image;
+import org.zfin.expression.*;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.framework.HibernateUtil;
@@ -44,6 +41,7 @@ import org.zfin.marker.presentation.GeneBean;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.Fish;
+import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
@@ -60,9 +58,7 @@ import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.MarkerDBLink;
 
 import javax.persistence.Tuple;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -486,13 +482,12 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public int getNumberAssociatedPublicationsForZdbID(String zdbID) {
         String sql = " select count(*) from ( " + getCommonPublicationSQL(zdbID) + " ) as query ";
 
-        int count = Integer.valueOf(HibernateUtil.currentSession()
-            .createSQLQuery(sql)
-            .setString("markerZdbID", zdbID)
-            .uniqueResult().toString());
+        Session session = currentSession();
+        Query<Number> query = session.createNativeQuery(sql);
 
-        // remove if not pubs
-        return count;
+        query.setParameter("markerZdbID", zdbID);
+
+        return ((Number) query.getSingleResult()).intValue();
     }
 
     /**
@@ -516,25 +511,47 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
     public PaginationResult<Publication> getPublicationsWithFigures(Marker marker, GenericTerm anatomyTerm) {
         Session session = HibernateUtil.currentSession();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
 
-        Criteria pubs = session.createCriteria(Publication.class);
-        Criteria expresssion = pubs.createCriteria("expressionExperiments");
-        expresssion.add(Restrictions.eq("gene", marker));
-        Criteria result = expresssion.createCriteria("expressionResults");
-        result.add(Restrictions.isNotEmpty("figures"));
-        result.add(Restrictions.or(Restrictions.eq("entity.superterm", anatomyTerm), Restrictions.eq("entity.subterm", anatomyTerm)));
-        result.add(Restrictions.eq("expressionFound", true));
-        Criteria genox = expresssion.createCriteria("fishExperiment");
-        genox.add(Restrictions.eq("standardOrGenericControl", true));
-        Criteria fish = genox.createCriteria("fish");
-        Criteria genotype = fish.createCriteria("genotype");
-        genotype.add(Restrictions.eq("wildtype", true));
-        pubs.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        CriteriaQuery<Publication> query = cb.createQuery(Publication.class);
 
-        return new PaginationResult<Publication>((List<Publication>) pubs.list());
+        // Define the root of the query
+        Root<Publication> pubs = query.from(Publication.class);
+
+        // Join the expressionExperiments property
+        Join<Publication, ExpressionExperiment> expressionExperiments = pubs.join("expressionExperiments", JoinType.INNER);
+
+        // Define the predicates for the query
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(cb.equal(expressionExperiments.get("gene"), marker));
+
+        Join<ExpressionExperiment, ExpressionResult> expressionResults = expressionExperiments.join("expressionResults", JoinType.INNER);
+
+        predicates.add(cb.isNotEmpty(expressionResults.get("figures")));
+        predicates.add(cb.or(cb.equal(expressionResults.get("entity").get("superterm"), anatomyTerm), cb.equal(expressionResults.get("entity").get("subterm"), anatomyTerm)));
+        predicates.add(cb.equal(expressionResults.get("expressionFound"), true));
+
+        // Join the fishExperiment property
+        Join<ExpressionExperiment, FishExperiment> genox = expressionExperiments.join("fishExperiment", JoinType.INNER);
+        predicates.add(cb.equal(genox.get("standardOrGenericControl"), true));
+
+        // Join the fish property
+        Join<FishExperiment, Fish> fish = genox.join("fish", JoinType.INNER);
+
+        // Join the genotype property
+        Join<Fish, Genotype> genotype = fish.join("genotype", JoinType.INNER);
+        predicates.add(cb.equal(genotype.get("wildtype"), true));
+
+        // Add the predicates to the query and apply DISTINCT_ROOT_ENTITY result transformer
+        query.where(predicates.toArray(new Predicate[0])).distinct(true);
+
+        List<Publication> results = session.createQuery(query).getResultList();
+
+        // Execute the query and return the result
+        return new PaginationResult<Publication>(results);
     }
 
     @SuppressWarnings("unchecked")
