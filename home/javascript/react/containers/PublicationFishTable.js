@@ -42,6 +42,8 @@ const PublicationFishTable = ({url, title, navigationCounter}) => {
 
 PublicationFishTable.propTypes = {
     url: PropTypes.string,
+    title: PropTypes.string,
+    navigationCounter: PropTypes.object,
 };
 
 export default PublicationFishTable;

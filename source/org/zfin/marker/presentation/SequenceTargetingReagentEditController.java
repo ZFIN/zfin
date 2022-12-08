@@ -43,7 +43,7 @@ public class SequenceTargetingReagentEditController {
     }
 
     @SneakyThrows
-    @RequestMapping("/marker/str/prototype-edit/{zdbID}")
+    @RequestMapping("/marker/str/edit/{zdbID}")
     public String showSTRPrototypeEdit(Model model, @PathVariable String zdbID) {
         SequenceTargetingReagent str = markerRepository.getSequenceTargetingReagent(zdbID);
         if (str == null) {

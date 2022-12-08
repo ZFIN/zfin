@@ -115,7 +115,7 @@ const DataProvider = ({
             {pagination && <>
                 {<div className='data-pagination-container'>
                     {total > 0 && <>
-                        {data.pending ? <LoadingSpinner/> : <span>{start} - {end} of {total}</span>}
+                        {data.pending ? <LoadingSpinner/> : <span>{start} - {end} of {total.toLocaleString()}</span>}
                         <div>
                             <span className='mr-1'>Show</span>
                             <select

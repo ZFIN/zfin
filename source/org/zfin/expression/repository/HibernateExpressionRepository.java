@@ -912,7 +912,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
      */
     public Experiment getExperimentByID(String experimentID) {
         Session session = HibernateUtil.currentSession();
-        return (Experiment) session.get(Experiment.class, experimentID);
+        return session.get(Experiment.class, experimentID);
     }
 
     public Experiment getExperimentByPubAndName(String pubID, String experimentID) {

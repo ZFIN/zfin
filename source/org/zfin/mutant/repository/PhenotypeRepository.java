@@ -1,5 +1,6 @@
 package org.zfin.mutant.repository;
 
+import org.zfin.expression.Experiment;
 import org.zfin.expression.Figure;
 import org.zfin.infrastructure.ZdbFlag;
 import org.zfin.marker.Marker;
@@ -281,6 +282,8 @@ public interface PhenotypeRepository {
      */
     //List<DiseaseAnnotation> getHumanDiseaseModels(GenericTerm disease);
     List<DiseaseAnnotationModel> getHumanDiseaseModels(GenericTerm disease, boolean includeChildren);
+
+    List<DiseaseAnnotationModel> getHumanDiseaseModels(GenericTerm disease, Fish fish, boolean includeChildren);
 
     /**
      * Retrieve phenotype statements (clean and dirty) for a given sequence targeting reagent.

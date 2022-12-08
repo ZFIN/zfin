@@ -73,6 +73,8 @@ const FigurePhenotypeTable = ({url, hideFigureColumn = false, navigationCounter,
 FigurePhenotypeTable.propTypes = {
     url: PropTypes.string,
     hideFigureColumn: PropTypes.bool,
+    title: PropTypes.string,
+    navigationCounter: PropTypes.object,
 };
 
 export default FigurePhenotypeTable;
