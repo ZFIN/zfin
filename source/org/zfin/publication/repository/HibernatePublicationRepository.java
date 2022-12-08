@@ -554,18 +554,19 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return new PaginationResult<Publication>(results);
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
     public List<String> getDistinctFigureLabels(String publicationID) {
         Session session = HibernateUtil.currentSession();
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
 
-        String hql = "select figure.label from Figure figure" +
-            "     where figure.publication.zdbID = :pubID " +
-            "    order by figure.orderingLabel ";
-        Query query = session.createQuery(hql);
-        query.setString("pubID", publicationID);
+        CriteriaQuery<String> query = criteriaBuilder.createQuery(String.class);
+        Root<Figure> figure = query.from(Figure.class);
 
-        return (List<String>) query.list();
+        query.select(figure.get("label"))
+                .where(criteriaBuilder.equal(figure.get("publication").get("zdbID"), publicationID))
+                .orderBy(criteriaBuilder.asc(figure.get("orderingLabel")));
 
+        return session.createQuery(query).getResultList();
     }
 
     /**
