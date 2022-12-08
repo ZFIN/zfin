@@ -500,19 +500,18 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     /**
-     * Retrieve Figue by ID
+     * Retrieve Figure by ID
      *
      * @param zdbID ID
      * @return Figure
      */
     public Figure getFigure(String zdbID) {
         Session session = HibernateUtil.currentSession();
-        return (Figure) session.get(Figure.class, zdbID);
+        return session.get(Figure.class, zdbID);
     }
 
-    public Figure getFigureByID(String figureZdbID) {
-        Session session = HibernateUtil.currentSession();
-        return (Figure) session.get(Figure.class, figureZdbID);
+    public Figure getFigureByID(String zdbID) {
+        return getFigure(zdbID);
     }
 
     public Image getImageById(String zdbID) {
