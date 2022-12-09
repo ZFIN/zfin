@@ -6,7 +6,7 @@ const NavigationItem = ({ title, navigationCounter }) => {
     navigationCounter.subscribe(title, newCount => setCount(newCount));
 
     return (
-        <><span className="badge">({count})</span></>
+        <><span className='badge'>({count})</span></>
     );
 
 };

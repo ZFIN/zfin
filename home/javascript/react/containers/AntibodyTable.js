@@ -56,6 +56,10 @@ const AntibodyTable = ({url, title, navigationCounter}) => {
 
 AntibodyTable.propTypes = {
     url: PropTypes.string,
+    title: PropTypes.string,
+    navigationCounter: PropTypes.shape({
+        setCounts: PropTypes.func
+    }),
 };
 
 export default AntibodyTable;

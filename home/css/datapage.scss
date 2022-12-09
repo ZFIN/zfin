@@ -75,7 +75,7 @@ $left-nav-text-width-with-counts: $left-nav-width-with-counts - $left-nav-count-
 
     .with-counts .nav-text {
         display: inline-block;
-        width: $left-nav-text-width-with-counts;
+        max-width: $left-nav-text-width-with-counts;
     }
 
     .with-counts .nav-count {

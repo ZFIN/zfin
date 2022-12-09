@@ -101,8 +101,11 @@ const FigureExpressionTable = ({url, hideFigureColumn = false, navigationCounter
 
 FigureExpressionTable.propTypes = {
     url: PropTypes.string,
+    title: PropTypes.string,
     hideFigureColumn: PropTypes.bool,
-    navigationCounter: PropTypes.object,
+    navigationCounter: PropTypes.shape({
+        setCounts: PropTypes.func
+    }),
 };
 
 export default FigureExpressionTable;
