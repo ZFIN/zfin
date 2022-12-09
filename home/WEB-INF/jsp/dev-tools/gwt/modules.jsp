@@ -37,12 +37,6 @@
             </td>
         </tr>
         <tr>
-            <td class="sectionTitle">GO Curation Interface</td>
-            <td>
-                <a href="/action/devtool/gwt/go-curation">Curation Interface: GO Section</a>
-            </td>
-        </tr>
-        <tr>
             <td class="sectionTitle">Human Disease</td>
             <td>
                 <a href="/action/devtool/gwt/human-disease-curation">Curation: Human Disease</a>
@@ -67,24 +61,6 @@
             </td>
         </tr>
         <tr>
-            <td class="sectionTitle">Transcript Edit</td>
-            <td>
-                <a href="/action/devtool/gwt/transcript-edit">Marker Edit: Transcripts</a>
-            </td>
-        </tr>
-        <tr>
-            <td class="sectionTitle">Clone Edit</td>
-            <td>
-                <a href="/action/devtool/gwt/clone-edit">Marker Edit: Clone</a>
-            </td>
-        </tr>
-        <tr>
-            <td class="sectionTitle">Antibody Edit</td>
-            <td>
-                <a href="/action/devtool/gwt/antibody-edit">Marker Edit: Antibody</a>
-            </td>
-        </tr>
-        <tr>
             <td class="sectionTitle">Construct Add</td>
             <td>
 
@@ -92,33 +68,9 @@
             </td>
         </tr>
         <tr>
-            <td class="sectionTitle">Gene Edit</td>
-            <td>
-                <a href="/action/devtool/gwt/gene-edit">Marker Edit: Gene on markerview</a>
-            </td>
-        </tr>
-        <tr>
-            <td class="sectionTitle">Alternate/New Gene Edit</td>
-            <td>
-                <a href="/action/devtool/gwt/alternate-gene-edit">Marker Edit: Gene</a>
-            </td>
-        </tr>
-        <tr>
-            <td class="sectionTitle">Test/TestComposite</td>
-            <td>
-                <a href="/action/devtool/gwt/test-composite">Test: TestComposite</a>
-            </td>
-        </tr>
-        <tr>
             <td class="sectionTitle">Image Edit Test</td>
             <td>
                 <a href="/action/devtool/gwt/image-edit-test">Image Edit Test</a>
-            </td>
-        </tr>
-        <tr>
-            <td class="sectionTitle">GO/Go Edit</td>
-            <td>
-                <a href="/action/devtool/gwt/go-edit">GO: GO Edit</a>
             </td>
         </tr>
     </table>

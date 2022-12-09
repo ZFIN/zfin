@@ -37,7 +37,7 @@ const TermZebrafishModelTable = ({termId, directAnnotationOnly}) => {
         {
             label: 'Disease',
             content: ({disease}) => <EntityLink entity={disease}/>,
-            width: '120px',
+            width: '180px',
         },
         {
             label: 'Citation',
@@ -45,7 +45,10 @@ const TermZebrafishModelTable = ({termId, directAnnotationOnly}) => {
                 <PublicationSummary
                     numberOfPublications={row.numberOfPublications}
                     firstPublication={row.singlePublication}
-                    allPublicationUrl={`/action/ontology//phenotype-summary/${row.fish.zdbID}`}
+                    fishID={row.fish.zdbID}
+                    experimentID={row.experiment.zdbID}
+                    termID={row.disease.zdbID}
+                    allPublicationUrl={`/action/ontology/phenotype-summary/${row.fish.zdbID}`}
                 />
             ),
             width: '230px',
@@ -62,10 +65,10 @@ const TermZebrafishModelTable = ({termId, directAnnotationOnly}) => {
         <>
             {directAnnotationOnly && count.countIncludingChildren > 0 && (
                 <DataTableSummaryToggle
-                    detailLabel={`Including children (${count.countIncludingChildren})`}
                     showPopup={directAnnotation}
+                    directCount={count.countDirect}
+                    childrenCount={count.countIncludingChildren}
                     onChange={setDirectAnnotation}
-                    overviewLabel={`Direct (${count.countDirect})`}
                 />
             )}
             <DataTable

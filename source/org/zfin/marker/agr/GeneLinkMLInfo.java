@@ -61,8 +61,8 @@ public class GeneLinkMLInfo extends AbstractScriptWrapper {
                     org.alliancegenome.curation_api.model.ingest.dto.GeneDTO dto = new org.alliancegenome.curation_api.model.ingest.dto.GeneDTO();
                     dto.setSymbol(marker.getAbbreviation());
                     dto.setName(marker.getName());
-                    dto.setCreatedBy("ZFIN:CURATOR");
-                    dto.setTaxon(ZfinDTO.taxonId);
+                    dto.setCreatedByCurie("ZFIN:CURATOR");
+                    dto.setTaxonCurie(ZfinDTO.taxonId);
                     dto.setCurie("ZFIN:" + marker.getZdbID());
                     GregorianCalendar date = ActiveData.getDateFromId(marker.getZdbID());
                     dto.setDateCreated(format(date));

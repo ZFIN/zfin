@@ -25,7 +25,7 @@ public class EngineeredRegionEditController {
     private MarkerService markerService;
 
     @SneakyThrows
-    @RequestMapping("/marker/eregion/prototype-edit/{zdbID}")
+    @RequestMapping("/marker/eregion/edit/{zdbID}")
     public String showAntibodyEdit(Model model, @PathVariable String zdbID) {
 
         zdbID = markerService.getActiveMarkerID(zdbID);

@@ -14,11 +14,10 @@
 
     <jsp:body>
         <z:dataManagerDropdown>
-            <a class="dropdown-item" href="${formBean.editURL}">Edit</a>
+            <a class="dropdown-item" href="/action/marker/antibody/edit/${formBean.marker.zdbID}">Edit</a>
             <a class="dropdown-item" href="${formBean.deleteURL}">Delete</a>
             <a class="dropdown-item" href="${formBean.mergeURL}">Merge</a>
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="/action/marker/antibody/prototype-edit/${formBean.marker.zdbID}">Prototype Edit</a>
         </z:dataManagerDropdown>
 
         <div id="${zfn:makeDomIdentifier(SUMMARY)}">

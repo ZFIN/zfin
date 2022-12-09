@@ -265,12 +265,6 @@ public class AntibodyBean extends PublicationListBean {
             return getNotesSortedByPubTime().size();
     }
 
-    public String getEditURL() {
-        String zdbID = antibody.getZdbID();
-//        return "/action/antibody/update-details?antibody.zdbID=" + zdbID;
-        return "/action/marker/marker-edit?zdbID=" + zdbID;
-    }
-
     public String getDeleteURL() {
         String zdbID = antibody.getZdbID();
         return "/action/marker/delete?zdbIDToDelete=" + zdbID;

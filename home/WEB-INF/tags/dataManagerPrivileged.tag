@@ -17,8 +17,6 @@
               description="Should the Last Updated: xxxx link show?" %>
 <%@ attribute name="isOwner" type="java.lang.Boolean" rtexprvalue="true" description="Determines if owner."
               required="false" %>
-<%@ attribute name="editMarker" type="java.lang.Boolean" rtexprvalue="true" description="This is the marker edit link"
-              required="false" %>
 
 <c:if test="${!empty viewURL}">
     <td>
@@ -38,12 +36,6 @@
                 <c:otherwise>${editLinkText}</c:otherwise>
             </c:choose>
         </a>
-    </td>
-</c:if>
-<c:if test="${editMarker}">
-    <td>
-        <div ng-click="eControl.editMarker()" ng-if="!editMode" style="cursor: pointer;" class="error">Edit</div>
-        <div ng-click="eControl.viewMarker()" ng-if="editMode" style="cursor: pointer;" class="error">View</div>
     </td>
 </c:if>
 <c:if test="${!empty deleteURL

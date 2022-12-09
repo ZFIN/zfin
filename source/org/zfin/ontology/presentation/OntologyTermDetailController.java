@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.anatomy.presentation.AnatomySearchBean;
+import org.zfin.expression.Experiment;
 import org.zfin.framework.presentation.*;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.TermDTO;
@@ -15,7 +16,9 @@ import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.MarkerStatistic;
 import org.zfin.marker.presentation.HighQualityProbe;
-import org.zfin.mutant.*;
+import org.zfin.mutant.Fish;
+import org.zfin.mutant.FishExperiment;
+import org.zfin.mutant.PhenotypeService;
 import org.zfin.mutant.presentation.FishModelDisplay;
 import org.zfin.ontology.*;
 import org.zfin.ontology.service.OntologyService;
@@ -194,8 +197,8 @@ public class OntologyTermDetailController {
 
     @RequestMapping("/prototype/{termID}")
     protected String termDetailPagePRototype(@PathVariable String termID,
-                                    @ModelAttribute("formBean") OntologyBean form,
-                                    Model model) throws Exception {
+                                             @ModelAttribute("formBean") OntologyBean form,
+                                             Model model) throws Exception {
 
         if (termID == null) {
             return getErrorPage(model);
@@ -235,24 +238,6 @@ public class OntologyTermDetailController {
 
         List<RelationshipPresentation> termRelationships = OntologyService.getRelatedTermsWithoutStages(term);
 
-        SectionVisibility sectionVisibility = form.getSectionVisibility();
-        if (sectionVisibility.isVisible(OntologySection.EXPRESSION)) {
-            sectionVisibility.setSectionData(OntologySection.EXPRESSION, true);
-        } else {
-            // check if there are any data in this section.
-            if (term.getOntology().isExpressionData()) {
-                sectionVisibility.setSectionData(OntologySection.EXPRESSION, hasExpressionData(term));
-            }
-        }
-        if (sectionVisibility.isVisible(OntologySection.PHENOTYPE)) {
-            sectionVisibility.setSectionData(OntologySection.PHENOTYPE, true);
-        } else {
-            if (term.getOntology().isPhenotypeData()) {
-                sectionVisibility.setSectionData(OntologySection.PHENOTYPE, hasPhenotypeData(term));
-            }
-        }
-
-
         form.setTermRelationships(termRelationships);
         form.setTerm(term);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
@@ -262,14 +247,6 @@ public class OntologyTermDetailController {
 
         model.addAttribute("numberOfCitations", number);
         boolean isDiseaseTerm = term.getOntology().equals(Ontology.DISEASE_ONTOLOGY);
-        if (isDiseaseTerm) {
-            int numberOfGenes = OntologyService.getNumberOfDiseaseGenes(term);
-            model.addAttribute("diseaseGenes", numberOfGenes);
-            form.setAgrDiseaseLinks(OntologyService.getAGRLinks(term));
-            form.setOmimPhenos(OntologyService.getOmimPhenotypeForTerm(term));
-            List<FishModelDisplay> diseaseModelsWithFishModel = OntologyService.getDiseaseModelsWithFishModel(term);
-            model.addAttribute("fishModels", diseaseModelsWithFishModel);
-        }
         model.addAttribute("isDiseaseTerm", isDiseaseTerm);
         model.addAttribute("showPhenotypeSection", !term.getOntology().equals(Ontology.ECO));
         return "ontology/term-view";
@@ -348,7 +325,7 @@ public class OntologyTermDetailController {
 
         model.addAttribute("entity", entity);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Post-Composed Term: " +
-                entity.getSuperterm().getTermName() + " " + entity.getSubterm().getTermName());
+            entity.getSuperterm().getTermName() + " " + entity.getSubterm().getTermName());
         return "ontology/post-composed-term-detail";
     }
 
@@ -373,6 +350,23 @@ public class OntologyTermDetailController {
         return "ontology/post-composed-term-detail-popup";
     }
 
+    @RequestMapping(value = {("/disease-model-publication-popup")})
+    public String getDiseaseModelPublicationPopup(@RequestParam String fishID,
+                                                  @RequestParam String experimentID,
+                                                  @RequestParam String termID,
+                                                  @RequestParam(defaultValue = "false") boolean includeChildren,
+                                                  Model model) {
+
+        GenericTerm term = getOntologyRepository().getTermByZdbIDOrOboId(termID);
+        Fish fish = getMutantRepository().getFish(fishID);
+        Experiment experiment = getExpressionRepository().getExperimentByID(experimentID);
+        List<Publication> publications = OntologyService.getPublicationsFromDiseaseModelsWithFishAndExperiment(term, fish, experiment, includeChildren);
+        model.addAttribute(LookupStrings.FORM_BEAN, publications);
+        model.addAttribute("fish", fish);
+        model.addAttribute("experiment", experiment);
+        return "ontology/term-view-disease-model-publication-popup";
+    }
+
     private boolean hasExpressionData(Term anatomyTerm) {
         //  AnatomyStatistics statistics = getAnatomyRepository().getAnatomyStatistics(anatomyTerm.getZdbID());
         GenericTerm anatTerm = getOntologyRepository().getTermByZdbID(anatomyTerm.getZdbID());
@@ -380,7 +374,7 @@ public class OntologyTermDetailController {
             return true;*/
         // check for antibody records including substructures
         PaginationResult<MarkerStatistic> emr =
-                getPublicationRepository().getAllExpressedMarkers(anatTerm, 0, AnatomySearchBean.MAX_NUMBER_EPRESSED_GENES);
+            getPublicationRepository().getAllExpressedMarkers(anatTerm, 0, AnatomySearchBean.MAX_NUMBER_EPRESSED_GENES);
         if (emr != null && emr.getTotalCount() > 0)
             return true;
         PaginationBean pagination = new PaginationBean();

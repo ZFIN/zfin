@@ -24,11 +24,8 @@
     <jsp:body>
     <z:dataManagerDropdown>
         <a class="dropdown-item" href="/${transcript.zdbID}">View</a>
-        <a class="dropdown-item" href="/action/marker/marker-edit?zdbID=${transcript.zdbID}">Edit</a>
         <a class="dropdown-item" href="/action/marker/merge?zdbIDToDelete=${transcript.zdbID}">Merge</a>
         <a class="dropdown-item" href="/action/infrastructure/deleteRecord/${transcript.zdbID}">Delete</a>
-        <div class="dropdown-divider"></div>
-        <a class="dropdown-item" href="/action/marker/transcript/prototype-edit/${transcript.zdbID}">Prototype Edit</a>
     </z:dataManagerDropdown>
 
     <h1>Edit ${transcript.zdbID}</h1>
