@@ -23,6 +23,8 @@ import org.zfin.publication.Publication;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.zfin.repository.RepositoryFactory.getFigureRepository;
+
 /**
  * This will likely end up merged with the existing FigureService
  */
@@ -474,6 +476,29 @@ public class FigureViewService {
         pubZdbIDs.add("ZDB-PUB-010810-1");
 
         return pubZdbIDs.contains(publication.getZdbID());
+    }
+
+    public List<Figure> getFiguresForPublicationAndProbe(Publication publication, Clone probe) {
+        //for direct submission pubs, publication.getFigures() won't be correct and we'll need to do a query...
+        List<Figure> figures = new ArrayList<>();
+
+        if (isZebrasharePub(publication)) {
+            figures.addAll(publication.getFigures());
+        } else {
+            if (publication.isUnpublished()) {
+                if (probe != null) {
+                    figures.addAll(getFigureRepository()
+                            .getFiguresForDirectSubmissionPublication(publication, probe));
+                } else {
+                    figures.addAll(publication.getFigures());
+                }
+            } else {
+                figures.addAll(publication.getFigures());
+            }
+        }
+
+        Collections.sort(figures, ComparatorCreator.orderBy("orderingLabel", "zdbID"));
+        return figures;
     }
 
 }
