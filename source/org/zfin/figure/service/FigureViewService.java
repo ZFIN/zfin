@@ -478,23 +478,21 @@ public class FigureViewService {
         return pubZdbIDs.contains(publication.getZdbID());
     }
 
+    /**
+     * Return the figures for a publication. This will just return publication.getFigures() unless
+     * the following conditions are met: isZebrashare and isUnpublished and probe is not null
+     * @param publication
+     * @param probe
+     * @return
+     */
     public List<Figure> getFiguresForPublicationAndProbe(Publication publication, Clone probe) {
         //for direct submission pubs, publication.getFigures() won't be correct and we'll need to do a query...
         List<Figure> figures = new ArrayList<>();
-
-        if (isZebrasharePub(publication)) {
-            figures.addAll(publication.getFigures());
+        if (probe != null && !isZebrasharePub(publication) && publication.isUnpublished()) {
+            figures = getFigureRepository()
+                        .getFiguresForDirectSubmissionPublication(publication, probe);
         } else {
-            if (publication.isUnpublished()) {
-                if (probe != null) {
-                    figures.addAll(getFigureRepository()
-                            .getFiguresForDirectSubmissionPublication(publication, probe));
-                } else {
-                    figures.addAll(publication.getFigures());
-                }
-            } else {
-                figures.addAll(publication.getFigures());
-            }
+            figures.addAll(publication.getFigures());
         }
 
         Collections.sort(figures, ComparatorCreator.orderBy("orderingLabel", "zdbID"));
