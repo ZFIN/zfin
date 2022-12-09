@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react';
 import PropTypes from 'prop-types';
+let ImageBox = window.ImageBox || (() => {console.error('no ImageBox found')});
 
 const PublicationFigureDisplay = ({title, imagesJson, publicationId, navigationCounter}) => {
     const images = JSON.parse(imagesJson);
