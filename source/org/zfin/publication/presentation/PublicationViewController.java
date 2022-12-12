@@ -121,8 +121,11 @@ public class PublicationViewController {
         }
         List<ImageResult> images = publicationService.getImageResults(publication);
         model.addAttribute("imageResults", images);
-
         model.addAttribute("imagesJson", escapeXml(objectToJson(images)));
+
+        //pass the count of figures in order to hide "show all figures" if 0.
+        // Should probe ever be provided? Does it affect the figureCount?
+        model.addAttribute("figureCount", figureViewService.getFiguresForPublicationAndProbe(publication, null).size());
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication));
         model.addAttribute("relatedData", relatedDataService.getXrefsLinks(publication.getZdbID(), "Publication", null));

@@ -163,9 +163,6 @@ public class FigureViewController {
         model.addAttribute("showElsevierMessage", figureViewService.showElsevierMessage(publication));
         model.addAttribute("hasAcknowledgment", figureViewService.hasAcknowledgment(publication));
         model.addAttribute("showMultipleMediumSizedImages", figureViewService.showMultipleMediumSizedImages(publication));
-        // model.addAttribute("isZebrasharePub", figureViewService.isZebrasharePub(publication));
-        //for direct submission pubs, publication.getFigures() won't be correct and we'll need to do a query...
-        List<Figure> figures = new ArrayList<>();
 
         //also for direct submission pubs, we should see if we got a probe
         Clone probe = null;
@@ -177,23 +174,8 @@ public class FigureViewController {
             List<OrganizationLink> suppliers = RepositoryFactory.getProfileRepository().getSupplierLinksForZdbId(probe.getZdbID());
             model.addAttribute("probeSuppliers", suppliers);
         }
-        if (figureViewService.isZebrasharePub(publication)) {
-            figures.addAll(publication.getFigures());
-        } else {
-            if (publication.isUnpublished()) {
-                if (!StringUtils.isEmpty(probeZdbID)) {
-                    figures.addAll(figureRepository.getFiguresForDirectSubmissionPublication(publication, probe));
-                } else {
-                    figures.addAll(publication.getFigures());
-                }
-            } else {
-                figures.addAll(publication.getFigures());
-            }
 
-        }
-
-
-        Collections.sort(figures, ComparatorCreator.orderBy("orderingLabel", "zdbID"));
+        List<Figure> figures = figureViewService.getFiguresForPublicationAndProbe(publication, probe);
 
         model.addAttribute("submitters", figureRepository.getSubmitters(publication, probe));
         model.addAttribute("showThisseInSituLink", figureViewService.showThisseInSituLink(publication));
