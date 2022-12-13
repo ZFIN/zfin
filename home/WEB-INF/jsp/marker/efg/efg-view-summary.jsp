@@ -19,14 +19,18 @@
         <z:attributeListItem label="[Em &lambda;][Ex &lambda;]">
             <c:if test="${formBean.marker.fluorescentMarkers != null}">
                 <c:forEach var="fp" items="${formBean.marker.fluorescentMarkers}" varStatus="loop">
-                    <button type="button" class="btn btn-primary"
-                            style="background: ${fp.emissionColorHexFixed}; color: ${fp.textEmissionColorHexFixed}; cursor: default; width: 110px !important;">${fp.emissionLength}
-                        (${fp.emissionColor})
-                    </button>
-                    <button type="button" class="btn btn-primary"
-                            style="background: ${fp.excitationColorHexFixed}; color: ${fp.textExcitationColorHexFixed}; cursor: default; width: 110px !important;">${fp.excitationLength}
-                        (${fp.excitationColor})
-                    </button>
+                    <c:if test="${not empty fp.emissionLength}">
+                        <button type="button" class="btn btn-primary"
+                                style="background: ${fp.emissionColorHexFixed}; color: ${fp.textEmissionColorHexFixed}; cursor: default; width: 110px !important;">${fp.emissionLength}
+                            (${fp.emissionColor})
+                        </button>
+                    </c:if>
+                    <c:if test="${not empty fp.excitationLength}">
+                        <button type="button" class="btn btn-primary"
+                                style="background: ${fp.excitationColorHexFixed}; color: ${fp.textExcitationColorHexFixed}; cursor: default; width: 110px !important;">${fp.excitationLength}
+                            (${fp.excitationColor})
+                        </button>
+                    </c:if>
                     <a href='https://www.fpbase.org/protein/${fn:replace((fn:toLowerCase(fp.protein.ID)),".", "")}'>Fpbase:${fp.protein.name}</a>
                     <c:if test="${!loop.last}"></p></c:if>
                 </c:forEach>
