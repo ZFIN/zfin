@@ -20,7 +20,7 @@ const PublicationFigureDisplay = ({title, imagesJson, navigationCounter}) => {
 
         function loadImages() {
             storedpage = imageBox.getHiddenCountInput().value;
-            if ((storedpage != null) && (storedpage !== '') && Number.isInteger(storedpage)) {
+            if ((storedpage !== null) && (storedpage !== '') && Number.isInteger(storedpage)) {
                 imageBox.jumpToPage(storedpage);
             } else {
                 imageBox.displayFirstSet();
@@ -56,7 +56,10 @@ const PublicationFigureDisplay = ({title, imagesJson, navigationCounter}) => {
 PublicationFigureDisplay.propTypes = {
     title: PropTypes.string,
     imagesJson: PropTypes.string,
-    navigationCounter: PropTypes.object,
+    publicationId: PropTypes.string,
+    navigationCounter: PropTypes.shape({
+        setCounts: PropTypes.func
+    }),
 };
 
 export default PublicationFigureDisplay;

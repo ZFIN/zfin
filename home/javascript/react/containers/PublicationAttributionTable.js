@@ -32,7 +32,9 @@ const PublicationAttributionTable = ({url, title, navigationCounter}) => {
 PublicationAttributionTable.propTypes = {
     url: PropTypes.string,
     title: PropTypes.string,
-    navigationCounter: PropTypes.object,
+    navigationCounter: PropTypes.shape({
+        setCounts: PropTypes.func
+    }),
 };
 
 export default PublicationAttributionTable;

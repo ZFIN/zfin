@@ -2,16 +2,13 @@ import React, {useState}  from 'react';
 import PropTypes from 'prop-types';
 
 const NavigationItem = ({ title, navigationCounter }) => {
-    const [count, setCount] = useState(null);
+    const [count, setCount] = useState(0);
     navigationCounter.subscribe(title, newCount => setCount(newCount));
 
-    if (count) {
-        return (
-            <><span className='badge badge-pill badge-secondary'>{count}</span></>
-        );
-    } else {
-        return (<></>);
-    }
+    return (
+        <><span className='badge'>({count})</span></>
+    );
+
 };
 
 NavigationItem.propTypes = {

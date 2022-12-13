@@ -5,18 +5,26 @@
 <%@ attribute name="cssClass" required="false" rtexprvalue="true" type="java.lang.String" %>
 <%@ attribute name="infoPopup" required="false" rtexprvalue="true" type="java.lang.String" %>
 <%@ attribute name="appendedText" required="false" rtexprvalue="true" type="java.lang.String" %>
+<%@ attribute name="navigationMenu" required="false" rtexprvalue="true" type="org.zfin.framework.presentation.NavigationMenu" %>
 
 <c:set var="anchorTitle" value="${title}"/>
+
+<c:if test="${!empty navigationMenu}">
+    <c:set var="hide" value="${!navigationMenu.include(title)}"/>
+</c:if>
 
 <c:if test="${!empty appendedText}">
     <c:set var="title" value="${title} ${appendedText}"/>
 </c:if>
 
-<section class="section ${cssClass}" id="${zfn:makeDomIdentifier(anchorTitle)}">
-    <c:if test="${!empty title}">
-        <div class="heading">${title} <c:if test="${not empty infoPopup}"><a class="popup-link info-popup-link" href="${infoPopup}"></a></c:if></div>
-    </c:if>
-    <z:ifHasData test="${hasData}">
-        <jsp:doBody />
-    </z:ifHasData>
-</section>
+<%-- Skip this section if "hide" attribute is true (ie. navigationMenu includes this section) --%>
+<c:if test="${!hide}">
+    <section class="section ${cssClass}" id="${zfn:makeDomIdentifier(anchorTitle)}">
+        <c:if test="${!empty title}">
+            <div class="heading">${title} <c:if test="${not empty infoPopup}"><a class="popup-link info-popup-link" href="${infoPopup}"></a></c:if></div>
+        </c:if>
+        <z:ifHasData test="${hasData}">
+            <jsp:doBody />
+        </z:ifHasData>
+    </section>
+</c:if>
