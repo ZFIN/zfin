@@ -96,6 +96,9 @@
                  data-images-json="${imagesJson}"
                  data-publication-id="${publication.zdbID}"
             ></div>
+            <c:if test="${figureCount > 0}">
+                <div><a href="/action/figure/all-figure-view/${publication.zdbID}">Show all Figures</a></div>
+            </c:if>
         </z:section>
 
         <z:section title="${EXPRESSION}">
