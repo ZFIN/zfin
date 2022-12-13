@@ -74,7 +74,9 @@ FigurePhenotypeTable.propTypes = {
     url: PropTypes.string,
     hideFigureColumn: PropTypes.bool,
     title: PropTypes.string,
-    navigationCounter: PropTypes.object,
+    navigationCounter: PropTypes.shape({
+        setCounts: PropTypes.func
+    }),
 };
 
 export default FigurePhenotypeTable;

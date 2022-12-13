@@ -1,26 +1,41 @@
 package org.zfin.framework.featureflag;
 
 
+import java.util.NoSuchElementException;
+
 public enum FeatureFlagEnum {
-    JBROWSE("jBrowse"),
-    CURATOR_JOB_POSTING("Curator Job Posting"),
-    USE_NAVIGATION_COUNTER("Show Navigation Counter");
+    JBROWSE("jBrowse", false),
+    CURATOR_JOB_POSTING("Curator Job Posting", true),
+    USE_NAVIGATION_COUNTER("Show Navigation Counter", false);
 
     private String name;
+    private boolean enabledByDefault;
 
-    FeatureFlagEnum(String name) {
+    FeatureFlagEnum(String name, boolean enabledByDefault) {
         this.name = name;
+        this.enabledByDefault = enabledByDefault;
     }
 
     public String getName() {
         return name;
     }
+    public boolean isEnabledByDefault() {
+        return enabledByDefault;
+    }
 
-    public static FeatureFlagEnum getFlag(String flag) {
+    public static FeatureFlagEnum getFlag(String flag) throws NoSuchElementException {
         for (FeatureFlagEnum t : values()) {
             if (t.toString().equals(flag))
                 return t;
         }
-        throw new RuntimeException("No flag named " + flag + " found.");
+        throw new NoSuchElementException("No such flag: " + flag );
+    }
+
+    public static FeatureFlagEnum getFlagByName(String flag) throws NoSuchElementException {
+        for (FeatureFlagEnum t : values()) {
+            if (t.getName().equals(flag))
+                return t;
+        }
+        throw new NoSuchElementException("No flag named " + flag + " found.");
     }
 }

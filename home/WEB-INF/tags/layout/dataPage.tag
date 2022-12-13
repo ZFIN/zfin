@@ -7,6 +7,7 @@
 <%@ attribute name="pageBar" required="false" %>
 <%@ attribute name="additionalBodyClass" required="false" type="java.lang.String" %>
 <%@ attribute name="useNavigationCounter" required="false" type="java.lang.Boolean" %>
+<%@ attribute name="navigationMenu" required="false" type="org.zfin.framework.presentation.NavigationMenu" %>
 
 <c:set var="additionalBodyClass" value="${(empty additionalBodyClass) ? '' : additionalBodyClass}" />
 
@@ -29,9 +30,27 @@
                         </h5>
                     </li>
                 </c:if>
-                <c:forEach var="section" items="${sections}">
-                    <z:navigationItem title="${section}" useNavigationCounter="${useNavigationCounter}" />
-                </c:forEach>
+
+<%--            If we have access to a navigationMenu object, use that to generate the left hand navigation, otherwise --%>
+<%--            use the array of sections. I would like to remove the array of sections version eventually. --%>
+                <c:choose>
+                    <c:when test="${empty navigationMenu}">
+                        <c:forEach var="section" items="${sections}" varStatus="loop">
+                            <z:navigationItem title="${section}"
+                                              order="${loop.index}"
+                            />
+                        </c:forEach>
+                    </c:when>
+                    <c:otherwise>
+                        <c:forEach var="item" items="${navigationMenu.displayedNavigationItems}" varStatus="loop">
+                            <z:navigationItem title="${item.toString()}"
+                                              useNavigationCounter="${item.showCount}"
+                                              borderBottom="${item.showBorder}"
+                                              order="${loop.index}"
+                            />
+                        </c:forEach>
+                    </c:otherwise>
+                </c:choose>
             </ul>
         </div>
 

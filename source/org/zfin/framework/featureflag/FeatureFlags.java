@@ -8,6 +8,7 @@ import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.zfin.infrastructure.ZdbFlag;
 import org.zfin.repository.RepositoryFactory;
@@ -16,7 +17,7 @@ import org.zfin.repository.RepositoryFactory;
 public class FeatureFlags {
     public static final String SESSION_PREFIX = "FEATURE:";
 
-    enum SessionState {ENABLED, DISABLED, UNSET};
+    enum SessionState {ENABLED, DISABLED, UNSET}
 
     public static List<FeatureFlag> getFlags() {
         List<FeatureFlag> flags = new ArrayList<>();
@@ -62,7 +63,11 @@ public class FeatureFlags {
             FeatureFlag flag = RepositoryFactory.getInfrastructureRepository().getFeatureFlag(flagName);
             return flag.isEnabledForGlobalScope();
         } catch (NoResultException e) {
-            return false;
+            try {
+                return FeatureFlagEnum.getFlagByName(flagName).isEnabledByDefault();
+            } catch (NoSuchElementException nsee) {
+                return false;
+            }
         }
     }
 
@@ -81,7 +86,7 @@ public class FeatureFlags {
 
         if (value == null) {
             return SessionState.UNSET;
-        } else if (value == true) {
+        } else if (value) {
             return SessionState.ENABLED;
         } else {
             return SessionState.DISABLED;
