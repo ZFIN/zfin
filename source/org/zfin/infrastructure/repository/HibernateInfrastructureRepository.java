@@ -45,12 +45,16 @@ import org.zfin.util.DatabaseJdbcStatement;
 import org.zfin.util.DateUtil;
 
 import javax.persistence.NoResultException;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.Date;
 import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 
 @Repository
 public class HibernateInfrastructureRepository implements InfrastructureRepository {
@@ -130,11 +134,40 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return (ActiveData) criteria.uniqueResult();
     }
 
+    @Override
+    public List<ActiveData> getAllActiveData(Set<String> zdbIDs) {
+        Session session = currentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<ActiveData> query = builder.createQuery(ActiveData.class);
+        Root<ActiveData> root = query.from(ActiveData.class);
+        query.select(root)
+            .where(
+                root.get("zdbID").in(zdbIDs)
+            );
+
+        return session.createQuery(query).list();
+    }
+
     public ActiveSource getActiveSource(String zdbID) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(ActiveSource.class);
         criteria.add(Restrictions.eq("zdbID", zdbID));
         return (ActiveSource) criteria.uniqueResult();
+    }
+
+
+    @Override
+    public List<ActiveSource> getAllActiveSource(Set<String> zdbIDs) {
+        Session session = currentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<ActiveSource> query = builder.createQuery(ActiveSource.class);
+        Root<ActiveSource> root = query.from(ActiveSource.class);
+        query.select(root)
+                .where(
+                        root.get("zdbID").in(zdbIDs)
+                );
+
+        return session.createQuery(query).list();
     }
 
     //todo: add a getter here, or do some mapping to objects so that we can test the insert in a routine way
@@ -743,6 +776,20 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         Criteria query = session.createCriteria(ReplacementZdbID.class);
         query.add(Restrictions.eq("oldZdbID", oldZdbID));
         return (ReplacementZdbID) query.uniqueResult();
+    }
+
+    @Override
+    public List<ReplacementZdbID> getAllReplacementZdbIds(List<String> oldZdbIDs) {
+        Session session = currentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<ReplacementZdbID> query = builder.createQuery(ReplacementZdbID.class);
+        Root<ReplacementZdbID> root = query.from(ReplacementZdbID.class);
+        query.select(root)
+                .where(
+                        root.get("oldZdbID").in(oldZdbIDs)
+                );
+
+        return session.createQuery(query).list();
     }
 
     @SuppressWarnings("unchecked")

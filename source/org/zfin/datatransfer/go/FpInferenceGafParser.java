@@ -1,5 +1,7 @@
 package org.zfin.datatransfer.go;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
@@ -29,6 +31,15 @@ public class FpInferenceGafParser {
     public int countPipes=0;
     public int countCommas=0;
     public int countBoth=0;
+
+
+    @Getter
+    @Setter
+    protected boolean errorEncountered = false;
+
+    @Getter
+    @Setter
+    protected String errorMessage = "";
 
     static {
         goRefExcludePubMap.add(GOREF_PREFIX + "0000002");

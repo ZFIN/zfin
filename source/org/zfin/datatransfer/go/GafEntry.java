@@ -3,6 +3,7 @@ package org.zfin.datatransfer.go;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -79,6 +80,65 @@ public class GafEntry {
                 (getTaxonId() == null ? "NULL" : getTaxonId()) +
                 (getCreatedBy() == null ? "NULL" : getCreatedBy()) +
                 (getCreatedDate() == null ? "NULL" : getCreatedDate());
-    }    
+    }
 
+    /**
+     * Returns the inferences as a list, instead of a comma delimited string
+     * @return list of inferences
+     */
+    public List<String> getInferencesAsList() {
+        if (null == getInferences()) {
+            return Collections.emptyList();
+        }
+        if (getInferences().contains("|")) {
+            return List.of(this.getInferences().split("\\|"));
+        } else {
+            return List.of(this.getInferences().split(","));
+        }
+    }
+
+    /**
+     * Returns inferences matching the given organization.
+     * The result set will not have the organization prefix.
+     *
+     * For example, if the inferences are: ZFIN:ZDB-GENE-070705-417,ZFIN:ZDB-GENE-020108-2,ALTORG:715381
+     * this method if called as getInferencesByOrganization("ZFIN"), will return the list:
+     *   "ZDB-GENE-070705-417", "ZDB-GENE-020108-2"
+     *
+     * @return list of inferences filtered by org (eg. ZFIN) without the org prefix
+     */
+    public List<String> getInferencesByOrganization(String organizationPrefix) {
+        String prefixWithColon = organizationPrefix + ":";
+
+        return getInferencesAsList()
+                .stream()
+                .filter(i -> i.startsWith(prefixWithColon))
+                .map(i -> i.substring(prefixWithColon.length()))
+                .toList();
+    }
+
+    public List<String> getPubmedIdAsList() {
+        if (null == getPubmedId()) {
+            return Collections.emptyList();
+        }
+        if (getPubmedId().contains("|")) {
+            return List.of(this.getPubmedId().split("\\|"));
+        } else {
+            return List.of(this.getPubmedId().split(","));
+        }
+    }
+
+    public List<String> getPubmedIDsByZfin() {
+        return getPubmedIDsByOrganization("ZFIN");
+    }
+
+    public List<String> getPubmedIDsByOrganization(String organizationPrefix) {
+        String prefixWithColon = organizationPrefix + ":";
+
+        return getPubmedIdAsList()
+                .stream()
+                .filter(i -> i.startsWith(prefixWithColon))
+                .map(i -> i.substring(prefixWithColon.length()))
+                .toList();
+    }
 }
