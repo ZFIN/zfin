@@ -40,9 +40,24 @@ public class AntibodyDetailsController {
     @RequestMapping(value = "/antibody/{antibodyZdbId}/details", method = RequestMethod.POST)
     public Antibody updateAntibodyDetails(@PathVariable String antibodyZdbId,
                                           @RequestBody Antibody formData) {
+        //compare logic of this method to old GWT way of calling 2 RPC methods: updateAntibodyHeaders(AntibodyDTO)
+        //                                              and for name change: addDataAliasRelatedEntity(RelatedEntityDTO)
+
         Antibody antibody = antibodyRepository.getAntibodyByID(antibodyZdbId);
 
         List<BeanFieldUpdate> updates = new ArrayList<>();
+
+        //antibody rules require the name and abbreviation be the same
+        BeanFieldUpdate nameUpdate = beanCompareService.compareBeanField("name", antibody, formData);
+        if (nameUpdate != null) {
+            BeanFieldUpdate abbreviationUpdate = nameUpdate.clone();
+            abbreviationUpdate.setField("abbreviation");
+            updates.add(nameUpdate);
+            updates.add(abbreviationUpdate);
+        }
+
+        CollectionUtils.addIgnoreNull(updates, beanCompareService.compareBeanField("name", antibody, formData));
+
         CollectionUtils.addIgnoreNull(updates, beanCompareService.compareBeanField("hostSpecies", antibody, formData));
         CollectionUtils.addIgnoreNull(updates, beanCompareService.compareBeanField("immunogenSpecies", antibody, formData));
         CollectionUtils.addIgnoreNull(updates, beanCompareService.compareBeanField("heavyChainIsotype", antibody, formData));

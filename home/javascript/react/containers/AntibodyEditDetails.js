@@ -20,6 +20,7 @@ const AntibodyEditDetails = ({
         setValue: setAntibodyDetails,
     } = useFetch(`/action/api/antibody/${antibodyId}/details`, {
         defaultValue: {
+            name: '',
             hostSpecies: '',
             immunogenSpecies: '',
             heavyChainIsotype: '',
@@ -60,6 +61,13 @@ const AntibodyEditDetails = ({
 
     return (
         <Form>
+            <FormGroup
+                label='Name'
+                field='name'
+                id='name'
+            >
+            </FormGroup>
+
             <FormGroup
                 label='Host Organism'
                 field='hostSpecies'
