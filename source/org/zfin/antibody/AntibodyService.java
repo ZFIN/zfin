@@ -2,11 +2,13 @@ package org.zfin.antibody;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.zfin.Species;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.presentation.AnatomyLabel;
 import org.zfin.antibody.presentation.AntibodySearchCriteria;
 import org.zfin.expression.*;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.MatchingText;
 import org.zfin.framework.presentation.MatchingTextType;
 import org.zfin.marker.Marker;
@@ -20,10 +22,17 @@ import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.ForeignDB;
+import org.zfin.sequence.ForeignDBDataType;
+import org.zfin.sequence.MarkerDBLink;
+import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.util.MatchType;
 import org.zfin.util.MatchingService;
 
 import java.util.*;
+
+import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
+import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 
 /**
  * Class that contains various methods retrieving aggregated info from
@@ -55,10 +64,38 @@ public class AntibodyService {
      */
 
     public String getRegistryID(){
-        Marker abMrkr=RepositoryFactory.getMarkerRepository().getMarkerByID(antibody.getZdbID());
-        return RepositoryFactory.getMarkerRepository().getABRegID(abMrkr.zdbID);
-
+        Marker abMrkr= getMarkerRepository().getMarkerByID(antibody.getZdbID());
+        return getMarkerRepository().getABRegID(abMrkr.zdbID);
     }
+
+    public static void setABRegistryID(Antibody antibody, String newRegistryID){
+        if (getMarkerRepository().getABRegID(antibody.getZdbID()) != null) {
+            ReferenceDatabase refDB = getSequenceRepository().getReferenceDatabase(ForeignDB.AvailableName.ABREGISTRY, ForeignDBDataType.DataType.OTHER, ForeignDBDataType.SuperType.SUMMARY_PAGE, Species.Type.ZEBRAFISH);
+            MarkerDBLink mdb = getMarkerRepository().getDBLink(antibody, getMarkerRepository().getABRegID(antibody.getZdbID()), refDB);
+
+            if (newRegistryID != null) {
+
+
+                mdb.setAccessionNumber(newRegistryID);
+                mdb.setAccessionNumberDisplay(newRegistryID);
+
+                HibernateUtil.currentSession().save(mdb);
+            } else {
+                HibernateUtil.currentSession().delete(mdb);
+            }
+        } else {
+            if (newRegistryID != null) {
+                ReferenceDatabase refDB = getSequenceRepository().getReferenceDatabase(ForeignDB.AvailableName.ABREGISTRY, ForeignDBDataType.DataType.OTHER, ForeignDBDataType.SuperType.SUMMARY_PAGE, Species.Type.ZEBRAFISH);
+                MarkerDBLink mdb = new MarkerDBLink();
+                mdb.setMarker(antibody);
+                mdb.setAccessionNumber(newRegistryID);
+                mdb.setAccessionNumberDisplay(newRegistryID);
+                mdb.setReferenceDatabase(refDB);
+                HibernateUtil.currentSession().save(mdb);
+            }
+        }
+    }
+
     public List<Term> getDistinctAnatomyTerms() {
         List<Term> distinctAoTerms = new ArrayList<>();
         Set<ExpressionExperiment> labelings = antibody.getAntibodyLabelings();

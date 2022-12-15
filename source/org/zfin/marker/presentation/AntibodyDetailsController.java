@@ -6,6 +6,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.antibody.Antibody;
+import org.zfin.antibody.AntibodyService;
 import org.zfin.antibody.repository.AntibodyRepository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.View;
@@ -15,6 +16,8 @@ import org.zfin.profile.service.BeanFieldUpdate;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 @RestController
 @RequestMapping("/api")
@@ -32,7 +35,9 @@ public class AntibodyDetailsController {
     @JsonView(View.AntibodyDetailsAPI.class)
     @RequestMapping(value = "/antibody/{antibodyZdbId}/details", method = RequestMethod.GET)
     public Antibody getAntibodyDetails(@PathVariable String antibodyZdbId) {
-        return antibodyRepository.getAntibodyByID(antibodyZdbId);
+        Antibody antibody = antibodyRepository.getAntibodyByID(antibodyZdbId);
+        antibody.setABRegistryID(getMarkerRepository().getABRegID(antibodyZdbId)); //hydrate ABRegistryID
+        return antibody;
     }
 
     @SneakyThrows
@@ -44,6 +49,7 @@ public class AntibodyDetailsController {
         //                                              and for name change: addDataAliasRelatedEntity(RelatedEntityDTO)
 
         Antibody antibody = antibodyRepository.getAntibodyByID(antibodyZdbId);
+        antibody.setABRegistryID(getMarkerRepository().getABRegID(antibodyZdbId)); //hydrate ABRegistryID
 
         List<BeanFieldUpdate> updates = new ArrayList<>();
 
@@ -56,7 +62,11 @@ public class AntibodyDetailsController {
             updates.add(abbreviationUpdate);
         }
 
-        CollectionUtils.addIgnoreNull(updates, beanCompareService.compareBeanField("name", antibody, formData));
+        //special handling for ABRegistryID?
+        if (null != beanCompareService.compareBeanField("ABRegistryID", antibody, formData)) {
+            AntibodyService.setABRegistryID(antibody, formData.getABRegistryID());
+            antibody.setABRegistryID(formData.getABRegistryID());
+        }
 
         CollectionUtils.addIgnoreNull(updates, beanCompareService.compareBeanField("hostSpecies", antibody, formData));
         CollectionUtils.addIgnoreNull(updates, beanCompareService.compareBeanField("immunogenSpecies", antibody, formData));

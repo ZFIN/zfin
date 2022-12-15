@@ -6,9 +6,9 @@ import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.framework.api.View;
-import org.zfin.marker.Gene;
 import org.zfin.marker.Marker;
 
+import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -36,6 +36,10 @@ public class Antibody extends Marker {
     private Set<AntibodyExternalNote> externalNotes;
     @JsonView(View.AntibodyDetailsAPI.class)
     private List<Marker> antigenGenes;
+
+    @JsonView(View.AntibodyDetailsAPI.class)
+    @Transient
+    private String ABRegistryID;
 
     /**
      * @param expressionExperiment Antibody label to compare.

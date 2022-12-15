@@ -69,6 +69,13 @@ const AntibodyEditDetails = ({
             </FormGroup>
 
             <FormGroup
+                label='Antibody Registry ID'
+                field='abregistryID'
+                id='abregistryID'
+            >
+            </FormGroup>
+
+            <FormGroup
                 label='Host Organism'
                 field='hostSpecies'
                 id='hostSpecies'
