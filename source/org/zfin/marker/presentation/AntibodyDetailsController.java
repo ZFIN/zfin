@@ -44,25 +44,32 @@ public class AntibodyDetailsController {
     @JsonView(View.AntibodyDetailsAPI.class)
     @RequestMapping(value = "/antibody/{antibodyZdbId}/details", method = RequestMethod.POST)
     public Antibody updateAntibodyDetails(@PathVariable String antibodyZdbId,
-                                          @RequestBody Antibody formData) {
+                                          @RequestBody Antibody formData,
+                                          @RequestParam(value = "publicationID", required = false) String publicationID) {
         //compare logic of this method to old GWT way of calling 2 RPC methods: updateAntibodyHeaders(AntibodyDTO)
         //                                              and for name change: addDataAliasRelatedEntity(RelatedEntityDTO)
+
+        HibernateUtil.createTransaction();
 
         Antibody antibody = antibodyRepository.getAntibodyByID(antibodyZdbId);
         antibody.setABRegistryID(getMarkerRepository().getABRegID(antibodyZdbId)); //hydrate ABRegistryID
 
         List<BeanFieldUpdate> updates = new ArrayList<>();
 
-        //antibody rules require the name and abbreviation be the same
+        //special logic for name change:
+        //  antibody rules require the name and abbreviation be the same
+        //  need a publication reference
         BeanFieldUpdate nameUpdate = beanCompareService.compareBeanField("name", antibody, formData);
         if (nameUpdate != null) {
             BeanFieldUpdate abbreviationUpdate = nameUpdate.clone();
             abbreviationUpdate.setField("abbreviation");
             updates.add(nameUpdate);
             updates.add(abbreviationUpdate);
+
+            AntibodyService.addDataAliasRelatedEntity(antibodyZdbId, formData.getName(), publicationID);
         }
 
-        //special handling for ABRegistryID?
+        //special handling for ABRegistryID
         if (null != beanCompareService.compareBeanField("ABRegistryID", antibody, formData)) {
             AntibodyService.setABRegistryID(antibody, formData.getABRegistryID());
             antibody.setABRegistryID(formData.getABRegistryID());
@@ -74,7 +81,6 @@ public class AntibodyDetailsController {
         CollectionUtils.addIgnoreNull(updates, beanCompareService.compareBeanField("lightChainIsotype", antibody, formData));
         CollectionUtils.addIgnoreNull(updates, beanCompareService.compareBeanField("clonalType", antibody, formData));
 
-        HibernateUtil.createTransaction();
         beanCompareService.applyUpdates(antibody, updates);
         HibernateUtil.currentSession().save(antibody);
         infrastructureRepository.insertUpdatesTable(antibodyZdbId, updates);

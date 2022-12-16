@@ -11,9 +11,11 @@ import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.MatchingText;
 import org.zfin.framework.presentation.MatchingTextType;
+import org.zfin.infrastructure.DataAlias;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerRelationship;
+import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.Genotype;
 import org.zfin.ontology.GenericTerm;
@@ -21,7 +23,6 @@ import org.zfin.ontology.Ontology;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
-import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.sequence.MarkerDBLink;
@@ -31,8 +32,7 @@ import org.zfin.util.MatchingService;
 
 import java.util.*;
 
-import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
-import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 /**
  * Class that contains various methods retrieving aggregated info from
@@ -797,4 +797,24 @@ public class AntibodyService {
     public void setFigureSummary(List<FigureSummaryDisplay> figureSummary) {
         this.figureSummary = figureSummary;
     }
+
+    /**
+     * Add alias attribute. Same logic as MarkerRPCServiceImpl::addDataAliasRelatedEntity
+     */
+    public static void addDataAliasRelatedEntity(String markerID, String aliasName, String publicationID) {
+        MarkerRepository markerRepository = getMarkerRepository();
+        Marker marker = markerRepository.getMarkerByID(markerID);
+        Publication publication = getPublicationRepository().getPublication(publicationID);
+
+        DataAlias dataAlias = markerRepository.getSpecificDataAlias(marker, aliasName);
+        if (dataAlias == null) {
+            markerRepository.addMarkerAlias(marker, aliasName, publication);
+        } else if (publication == null) {
+            //nothing to do. the alias already exists and we have no publication to attribute
+        } else if (!publication.equals(dataAlias.getSinglePublication())) {
+            //the alias already exists, but the attribution doesn't match our pub, so we add an attribution
+            markerRepository.addDataAliasAttribution(dataAlias, publication, marker);
+        }
+    }
+
 }

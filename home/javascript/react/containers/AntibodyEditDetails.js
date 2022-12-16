@@ -6,6 +6,7 @@ import http from '../utils/http';
 import FormGroup from '../components/form/FormGroup';
 import LoadingButton from '../components/LoadingButton';
 import equal from 'fast-deep-equal';
+import PublicationInput from '../components/form/PublicationInput';
 
 const AntibodyEditDetails = ({
     antibodyId,
@@ -44,7 +45,8 @@ const AntibodyEditDetails = ({
         defaultValues: antibodyDetails,
         onSubmit: async (values) => {
             try {
-                const updated = await http.post(`/action/api/antibody/${antibodyId}/details`, values);
+                const url = `/action/api/antibody/${antibodyId}/details` + (values.publicationID ? `?publicationID=${values.publicationID}` : '');
+                const updated = await http.post(url, values);
                 setMeta({
                     isTouched: false,
                     serverError: null,
@@ -58,6 +60,7 @@ const AntibodyEditDetails = ({
     });
 
     const isPristine = useMemo(() => equal(values, antibodyDetails), [values, antibodyDetails]);
+    const isNamePristine = useMemo(() => values.name == antibodyDetails.name, [values, antibodyDetails]);
 
     return (
         <Form>
@@ -67,6 +70,25 @@ const AntibodyEditDetails = ({
                 id='name'
             >
             </FormGroup>
+
+            {!isNamePristine &&
+            <>
+                <FormGroup
+                    id={`${antibodyId}-pub-id`}
+                    label='Publication for Name Change'
+                    tag={PublicationInput}
+                    field='publicationID'
+                    // inputClassName='col-md-10'
+                    // onChange={handlePubInputChange}
+                    validate={value => {
+                        if (!value) {
+                            return 'A publication ZDB ID is required for name changes';
+                        }
+                        return false;
+                    }}
+                />
+            </>
+            }
 
             <FormGroup
                 label='Antibody Registry ID'
