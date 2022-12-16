@@ -20,8 +20,9 @@
 
 <z:dataPage sections="${SECTIONS}">
     <z:dataManagerDropdown>
-        <a class="dropdown-item" href="/${gene.zdbID}">View</a>
-        <a class="dropdown-item" href="/action/marker/merge?zdbIDToDelete=${gene.zdbID}">Merge</a>
+        <a class="dropdown-item" href="/${gene.zdbID}"><i class="fas fa-eye"></i> View</a>
+        <a class="dropdown-item" href="/action/updates/${gene.zdbID}"><i class="fas fa-clock"></i> History</a>
+        <a class="dropdown-item" href="/action/marker/merge?zdbIDToDelete=${gene.zdbID}"><i class="fas fa-compress-alt"></i> Merge</a>
     </z:dataManagerDropdown>
 
     <h1>Edit ${gene.zdbID}</h1>
