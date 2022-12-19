@@ -3,10 +3,11 @@
 <jsp:useBean id="antibody" class="org.zfin.antibody.Antibody" scope="request"/>
 
 <c:set var="DETAILS" value="Antibody Details" />
+<c:set var="ANTIGEN_GENES" value="Antigen Genes" />
 <c:set var="NOTES" value="Notes" />
 <c:set var="SUPPLIERS" value="Suppliers" />
 
-<z:dataPage sections="${[DETAILS, NOTES, SUPPLIERS]}">
+<z:dataPage sections="${[DETAILS, ANTIGEN_GENES, NOTES, SUPPLIERS]}">
     <z:dataManagerDropdown>
         <a class="dropdown-item" href="/${antibody.zdbID}">View</a>
         <a class="dropdown-item" href="/action/infrastructure/deleteRecord/${antibody.zdbID}">Delete</a>
@@ -24,6 +25,13 @@
              data-heavy-chain-isotypes='${heavyChainIsotypes}'
              data-light-chain-isotypes='${lightChainIsotypes}'
              data-clonal-types='${clonalTypes}'>
+        </div>
+    </z:section>
+
+    <z:section title="${ANTIGEN_GENES}">
+        <div class="__react-root"
+             id="AntibodyEditAntigenGenes"
+             data-antibody-id="${antibody.zdbID}">
         </div>
     </z:section>
 

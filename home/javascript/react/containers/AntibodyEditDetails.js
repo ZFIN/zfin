@@ -22,6 +22,7 @@ const AntibodyEditDetails = ({
     } = useFetch(`/action/api/antibody/${antibodyId}/details`, {
         defaultValue: {
             name: '',
+            abregistryID: '',
             hostSpecies: '',
             immunogenSpecies: '',
             heavyChainIsotype: '',
@@ -60,7 +61,7 @@ const AntibodyEditDetails = ({
     });
 
     const isPristine = useMemo(() => equal(values, antibodyDetails), [values, antibodyDetails]);
-    const isNamePristine = useMemo(() => values.name == antibodyDetails.name, [values, antibodyDetails]);
+    const isNamePristine = useMemo(() => values.name === antibodyDetails.name, [values, antibodyDetails]);
 
     return (
         <Form>
@@ -68,8 +69,7 @@ const AntibodyEditDetails = ({
                 label='Name'
                 field='name'
                 id='name'
-            >
-            </FormGroup>
+            />
 
             {!isNamePristine &&
             <>
@@ -94,8 +94,7 @@ const AntibodyEditDetails = ({
                 label='Antibody Registry ID'
                 field='abregistryID'
                 id='abregistryID'
-            >
-            </FormGroup>
+            />
 
             <FormGroup
                 label='Host Organism'

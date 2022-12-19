@@ -1,5 +1,6 @@
 package org.zfin.antibody;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,6 +39,7 @@ public class Antibody extends Marker {
     private List<Marker> antigenGenes;
 
     @JsonView(View.AntibodyDetailsAPI.class)
+    @JsonProperty("abregistryID")
     @Transient
     private String ABRegistryID;
 
