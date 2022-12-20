@@ -15,6 +15,7 @@ const CloneData = ({
     digestList,
     polymeraseList,
     clone,
+    cloneProblemTypeList,
 }) => {
     const {
         value: cloneData,
@@ -25,6 +26,7 @@ const CloneData = ({
             library: '',
             polymerase: '',
             pcrAmplification: '',
+            problemType: '',
         }
     });
     const cloningSiteOptions = JSON.parse(cloningSiteList);
@@ -32,6 +34,7 @@ const CloneData = ({
     const vectorOptions = JSON.parse(vectorList);
     const digestOptions = JSON.parse(digestList);
     const polymeraseOptions = JSON.parse(polymeraseList);
+    const problemTypeOptions = JSON.parse(cloneProblemTypeList);
 
     const {
         Form,
@@ -60,6 +63,16 @@ const CloneData = ({
 
     return (
         <Form>
+            <FormGroup
+                label='Problem Type'
+                field='problemType'
+                id='problemType'
+                tag='select'
+            >
+                <option value=''/>
+                {problemTypeOptions.map(option => <option key={option}>{option}</option>)}
+            </FormGroup>
+
             <FormGroup
                 label='Cloning Site'
                 field='cloningSite'
@@ -153,7 +166,7 @@ const CloneData = ({
                     </LoadingButton>
 
                     {isSubmitted && isPristine &&
-                    <span className='text-success'><i className='fas fa-check'/> Saved</span>}
+                        <span className='text-success'><i className='fas fa-check'/> Saved</span>}
 
                     {serverError && <span className='text-danger'>Update not saved. Try again later.</span>}
                 </div>
@@ -169,6 +182,7 @@ CloneData.propTypes = {
     vectorList: PropTypes.string,
     digestList: PropTypes.string,
     polymeraseList: PropTypes.string,
+    cloneProblemTypeList: PropTypes.string,
     clone: PropTypes.object,
 };
 

@@ -60,7 +60,6 @@ AntibodyTable.propTypes = {
     navigationCounter: PropTypes.shape({
         setCounts: PropTypes.func
     }),
-    navigationCounter: PropTypes.object,
 };
 
 export default AntibodyTable;

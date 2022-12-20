@@ -36,8 +36,7 @@ const PublicationFigureDisplay = ({title, imagesJson, navigationCounter}) => {
         return (
             <>
                 <div id='xpresimg_all'>
-                    <input type='hidden' name='xpatsel_thumbnail_page' id='xpatsel_thumbnail_page_hidden_field'
-                           value='1'/>
+                    <input type='hidden' name='xpatsel_thumbnail_page' id='xpatsel_thumbnail_page_hidden_field' value='1'/>
                     <div id='xpresimg_control_box'>
                         <span id='xpresimg_thumbs_title' className='summary'/>
                         <span id='xpresimg_controls'/>
