@@ -42,6 +42,7 @@ public class CloneEditController {
         addJsonAttribute(model, "vectorList", escapeQuote(markerRepository.getVectorNames().stream().filter(Objects::nonNull).collect(toList())));
         addJsonAttribute(model, "digestList", escapeQuote(markerRepository.getDigests().stream().filter(Objects::nonNull).collect(toList())));
         addJsonAttribute(model, "polymeraseListList", escapeQuote(markerRepository.getPolymeraseNames().stream().filter(Objects::nonNull).collect(toList())));
+        addJsonAttribute(model, "cloneProblemTypeList", escapeQuote(markerRepository.getProblemTypes().stream().filter(Objects::nonNull).collect(toList())));
         model.addAttribute("markerRelationshipTypes", new ObjectMapper().writeValueAsString(
                 markerService.getMarkerRelationshipEditMetadata(clone,
                         MarkerRelationship.Type.CLONE_CONTAINS_GENE,

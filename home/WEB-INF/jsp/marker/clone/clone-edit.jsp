@@ -51,6 +51,7 @@
              data-vector-list='${vectorList}'
              data-digest-list='${digestList}'
              data-polymerase-list='${polymeraseListList}'
+             data-clone-problem-type-list='${cloneProblemTypeList}'
              >
         </div>
     </z:section>
