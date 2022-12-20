@@ -1,0 +1,4 @@
+!gpa-version: 1.2
+ZFIN	ZDB-GENE-000607-13	acts_upstream_of_or_within_negative_effect	GO:0050935	PMID:29621239	ECO:0000316	ZFIN:ZDB-GENO-190116-3,ZFIN:ZDB-GENO-980202-1565		20210519	ZFIN		noctua-model-id=gomodel:5b91dbd100002985|contributor=https://orcid.org/0000-0002-4142-7153|model-state=production
+ZFIN	ZDB-GENE-000607-13	acts_upstream_of_or_within_negative_effect	GO:0050936	PMID:29621239	ECO:0000316	ZFIN:ZDB-GENO-190116-3,ZFIN:ZDB-GENO-980202-1565,ZFIN:ZDB-GENO-650000-1		20210519	ZFIN		noctua-model-id=gomodel:5b91dbd100002985|contributor=https://orcid.org/0000-0002-4142-7153|model-state=production
+ZFIN	ZDB-GENE-000607-13	acts_upstream_of_or_within_negative_effect	GO:0050936	PMID:29621239	ECO:0000316	ZFIN:ZDB-GENO-190116-3,ZFIN:ZDB-GENO-650000-2,ZFIN:ZDB-GENO-650000-3		20210519	ZFIN		noctua-model-id=gomodel:5b91dbd100002985|contributor=https://orcid.org/0000-0002-4142-7153|model-state=production

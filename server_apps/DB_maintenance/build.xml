@@ -128,6 +128,22 @@
     </target>
 
     <target name="load-noctua-gpad" description="">
+        <!-- set some default values that can be overridden with environment variables like GOA_GAF_URL1 -->
+        <property environment="env"/>
+        <condition property="downloadUrl" value="${env.NOCTUA_GPAD_URL}" else="http://snapshot.geneontology.org/products/annotations/noctua_zfin.gpad.gz">
+            <isset property="env.NOCTUA_GPAD_URL" />
+        </condition>
+
+        <property name="parserClassName" value="org.zfin.datatransfer.go.GpadParser"/>
+
+        <echo message="Running GafLoadJob with arguments:"/>
+        <echo message="  propertyFilePath: ${web-inf.dir}/zfin.properties"/>
+        <echo message="  baseDir: ${validateData}/gafLoad"/>
+        <echo message="  jobName: ${jobName}"/>
+        <echo message="  organization: Noctua"/>
+        <echo message="  downloadUrl: ${downloadUrl}"/>
+        <echo message="  parserClassName: ${parserClassName}"/>
+
         <java classname="org.zfin.datatransfer.go.service.GafLoadJob"
               fork="yes"
               classpathref="extended.classpath"
@@ -136,8 +152,8 @@
             <arg value="${validateData}/gafLoad"/><!-- baseDir -->
             <arg value="${jobName}"/><!-- jobName -->
             <arg value="Noctua"/><!-- organization -->
-            <arg value="http://snapshot.geneontology.org/products/annotations/noctua_zfin.gpad.gz"/><!-- downloadUrl -->
-            <arg value="org.zfin.datatransfer.go.GpadParser"/><!-- parserClassName -->
+            <arg value="${downloadUrl}"/><!-- downloadUrl -->
+            <arg value="${parserClassName}"/><!-- parserClassName -->
             <jvmarg value="${jvm.arg.log4j}"/>
         </java>
     </target>
