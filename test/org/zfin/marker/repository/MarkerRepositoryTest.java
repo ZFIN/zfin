@@ -151,6 +151,12 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void getProblemTypes() {
+        List<String> problemTypes = markerRepository.getProblemTypes();
+        assertNotNull(problemTypes);
+    }
+
+    @Test
     public void getAllFluorescentProteins() {
         List<FluorescentProtein> efg = markerRepository.getAllFluorescentProteins();
         assertNotNull(efg);

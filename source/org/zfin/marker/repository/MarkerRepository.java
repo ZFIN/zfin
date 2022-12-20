@@ -27,10 +27,7 @@ import org.zfin.publication.Publication;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.Database;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 public interface MarkerRepository {
     Marker getMarker(Marker marker);
@@ -553,4 +550,7 @@ public interface MarkerRepository {
     int addMarkerDBLinks(ReferenceDatabase referenceDatabase, List<String> geneIdList);
 
     Long getSignafishLinkCount(ReferenceDatabase referenceDatabase);
+
+    List<String> getProblemTypes();
+
 }
