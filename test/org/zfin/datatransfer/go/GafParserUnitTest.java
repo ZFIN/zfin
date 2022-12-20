@@ -2,12 +2,19 @@ package org.zfin.datatransfer.go;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
+import org.zfin.AbstractDatabaseTest;
+import org.zfin.AppConfig;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
@@ -16,7 +23,10 @@ import static org.junit.Assert.*;
 /**
  * Test gaf parsing, etc.
  */
-public class GafParserUnitTest {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = {AppConfig.class})
+@WebAppConfiguration
+public class GafParserUnitTest extends AbstractDatabaseTest {
 
     private FpInferenceGafParser gafParser = new FpInferenceGafParser();
 
@@ -199,6 +209,92 @@ public class GafParserUnitTest {
         assertEquals(CollectionUtils.intersection(a, b).size(), a.size());
         a.add("2");
         assertNotSame(CollectionUtils.intersection(a, b).size(), a.size());
+    }
+
+    @Test
+    public void gpadParserTestWithSingleInference() throws Exception {
+        File testFile1 = new File(GPAD_DIRECTORY + "zfin3.gpad");
+        GpadParser parser = new GpadParser();
+        List<GafEntry> gafEntries = parser.parseGafFile(testFile1);
+        assertEquals(10, gafEntries.size());
+        GafEntry gafEntry = gafEntries.get(0);
+
+        //ZFIN	ZDB-GENE-041111-162	involved_in	GO:0000122	PMID:29719254	ECO:0000315	ZFIN:ZDB-MRPHLNO-180830-6		20190207	ZFIN	has_input(ZFIN:ZDB-GENE-980526-90)	contributor=https://orcid.org/0000-0002-4142-7153|noctua-model-id=gomodel:5c4605cc00000549|model-state=production
+        assertEquals("ZDB-GENE-041111-162", gafEntry.getEntryId());
+        assertEquals("GO:0000122", gafEntry.getGoTermId());
+        assertEquals("PMID:29719254", gafEntry.getPubmedId());
+        assertEquals("ECO:0000315", gafEntry.getEvidenceCode());
+        assertEquals("ZFIN:ZDB-MRPHLNO-180830-6", gafEntry.getInferences());
+        assertNull(gafEntry.getTaxonId());
+        assertEquals("ZFIN", gafEntry.getCreatedBy());
+    }
+
+    @Test
+    public void gpadParserTestWithMultipleInference() throws Exception {
+        File testFile1 = new File(GPAD_DIRECTORY + "zfin3.gpad");
+        GpadParser parser = new GpadParser();
+        List<GafEntry> gafEntries = parser.parseGafFile(testFile1);
+        assertEquals(10, gafEntries.size());
+        GafEntry gafEntry = gafEntries.get(3);
+
+        assertEquals("ZFIN:ZDB-CRISPR-180917-5,ZFIN:ZDB-CRISPR-180917-6,ZFIN:ZDB-CRISPR-180917-7,ZFIN:ZDB-CRISPR-180917-8,ZFIN:ZDB-CRISPR-180917-9,ZFIN:ZDB-CRISPR-180917-10", gafEntry.getInferences());
+    }
+
+    @Test
+    public void gpadParserTestWithInvalidInference() throws Exception {
+        File testFile1 = new File(GPAD_DIRECTORY + "zfin-test-with-invalid-inferences.gpad");
+        GpadParser parser = new GpadParser();
+        List<GafEntry> gafEntries = parser.parseGafFile(testFile1);
+        assertEquals(3, gafEntries.size());
+        GafEntry gafEntry = gafEntries.get(0);
+        assertEquals("ZFIN:ZDB-GENO-190116-3,ZFIN:ZDB-GENO-980202-1565", gafEntry.getInferences());
+        assertEquals(2, gafEntry.getInferencesAsList().size());
+
+        gafEntry = gafEntries.get(1);
+        assertEquals("ZFIN:ZDB-GENO-190116-3,ZFIN:ZDB-GENO-980202-1565,ZFIN:ZDB-GENO-650000-1", gafEntry.getInferences());
+
+        List<String> inferences = gafEntry.getInferencesByOrganization("ZFIN");
+        assertEquals(3, inferences.size());
+        assertEquals("ZDB-GENO-190116-3", inferences.get(0));
+        assertEquals("ZDB-GENO-980202-1565", inferences.get(1));
+        assertEquals("ZDB-GENO-650000-1", inferences.get(2));
+
+        gafEntry = gafEntries.get(2);
+        assertEquals("ZFIN:ZDB-GENO-190116-3,ZFIN:ZDB-GENO-650000-2,ZFIN:ZDB-GENO-650000-3", gafEntry.getInferences());
+
+        List<String> invalidIDs = GafEntriesValidator.findInvalidZdbIDs(gafEntries);
+        assertTrue(invalidIDs.containsAll(List.of("ZDB-GENO-650000-1", "ZDB-GENO-650000-2", "ZDB-GENO-650000-3")));
+        assertEquals(3, invalidIDs.size());
+    }
+
+    @Test
+    public void gpadParserTestThrowsExceptionForInvalidInference() throws Exception {
+        File testFile1 = new File(GPAD_DIRECTORY + "zfin-test-with-invalid-inferences.gpad");
+        GpadParser parser = new GpadParser();
+        List<GafEntry> gafEntries = parser.parseGafFile(testFile1);
+        assertEquals(3, gafEntries.size());
+
+        GafEntry gafEntry = gafEntries.get(2);
+        assertEquals("ZFIN:ZDB-GENO-190116-3,ZFIN:ZDB-GENO-650000-2,ZFIN:ZDB-GENO-650000-3", gafEntry.getInferences());
+
+        try {
+            GafEntriesValidator.raiseExceptionForAnyInvalidIDs(gafEntries);
+            fail("Should throw exception");
+        } catch (GafEntryValidationException e) {
+            assertTrue(e.getMessage().startsWith("Invalid ZDB IDs in GafEntries"));
+            assertTrue(e.getMessage().contains("ZDB-GENO-650000-1"));
+            assertTrue(e.getMessage().contains("ZDB-GENO-650000-2"));
+            assertTrue(e.getMessage().contains("ZDB-GENO-650000-3"));
+        }
+    }
+
+    @Test
+    public void gpadParserClassThrowsExceptionForInvalidInference() throws Exception {
+        File testFile1 = new File(GPAD_DIRECTORY + "zfin-test-with-invalid-inferences.gpad");
+        GpadParser parser = new GpadParser();
+        parser.setValidateInferences(true);
+        List<GafEntry> gafEntries = parser.parseGafFile(testFile1);
+        assertTrue(parser.isErrorEncountered());
     }
 
 
