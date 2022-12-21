@@ -466,4 +466,9 @@ public class OntologyTermDetailController {
         return "ontology/ontology-relationship-note";
     }
 
+    @RequestMapping("/clone-stars")
+    public String getCloneStars() {
+        return "zf_info/stars";
+    }
+
 }
