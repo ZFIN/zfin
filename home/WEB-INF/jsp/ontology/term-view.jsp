@@ -137,11 +137,9 @@
             </z:section>
         </c:if>
 
-        <c:if test="${isDiseaseTerm}">
-            <z:section title="${CITATIONS}">
-                <div class="__react-root" id="CitationTable" data-marker-id="${term.zdbID}"></div>
-            </z:section>
-        </c:if>
+        <z:section title="${CITATIONS}">
+            <div class="__react-root" id="CitationTable" data-marker-id="${term.zdbID}"></div>
+        </z:section>
     </jsp:body>
 
 
