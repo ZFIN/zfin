@@ -47,10 +47,10 @@ public class SequenceService {
     public ReferenceDatabase getOMIMHumanOrtholog() {
         if (omimHumanOrthologDB == null) {
             omimHumanOrthologDB = sequenceRepository.getReferenceDatabase(
-                    ForeignDB.AvailableName.OMIM,
-                    ForeignDBDataType.DataType.ORTHOLOG,
-                    ForeignDBDataType.SuperType.ORTHOLOG,
-                    Species.Type.HUMAN);
+                ForeignDB.AvailableName.OMIM,
+                ForeignDBDataType.DataType.ORTHOLOG,
+                ForeignDBDataType.SuperType.ORTHOLOG,
+                Species.Type.HUMAN);
         }
         return omimHumanOrthologDB;
     }
@@ -58,10 +58,10 @@ public class SequenceService {
     public ReferenceDatabase getEntrezGeneHumanRefDB() {
         if (entrezGeneHumarnRefDB == null) {
             entrezGeneHumarnRefDB = sequenceRepository.getReferenceDatabase(
-                    ForeignDB.AvailableName.GENE,
-                    ForeignDBDataType.DataType.ORTHOLOG,
-                    ForeignDBDataType.SuperType.ORTHOLOG,
-                    Species.Type.HUMAN);
+                ForeignDB.AvailableName.GENE,
+                ForeignDBDataType.DataType.ORTHOLOG,
+                ForeignDBDataType.SuperType.ORTHOLOG,
+                Species.Type.HUMAN);
         }
 
         return entrezGeneHumarnRefDB;
@@ -70,10 +70,10 @@ public class SequenceService {
     public ReferenceDatabase getEntrezGeneMouseRefDB() {
         if (entrezGeneMouseRefDB == null) {
             entrezGeneMouseRefDB = sequenceRepository.getReferenceDatabase(
-                    ForeignDB.AvailableName.GENE,
-                    ForeignDBDataType.DataType.ORTHOLOG,
-                    ForeignDBDataType.SuperType.ORTHOLOG,
-                    Species.Type.MOUSE);
+                ForeignDB.AvailableName.GENE,
+                ForeignDBDataType.DataType.ORTHOLOG,
+                ForeignDBDataType.SuperType.ORTHOLOG,
+                Species.Type.MOUSE);
         }
 
         return entrezGeneMouseRefDB;
@@ -82,10 +82,10 @@ public class SequenceService {
     public ReferenceDatabase getUniprotDb() {
         if (uniprotDB == null) {
             uniprotDB = sequenceRepository.getReferenceDatabase(
-                    ForeignDB.AvailableName.UNIPROTKB,
-                    ForeignDBDataType.DataType.POLYPEPTIDE,
-                    ForeignDBDataType.SuperType.SEQUENCE,
-                    Species.Type.ZEBRAFISH);
+                ForeignDB.AvailableName.UNIPROTKB,
+                ForeignDBDataType.DataType.POLYPEPTIDE,
+                ForeignDBDataType.SuperType.SEQUENCE,
+                Species.Type.ZEBRAFISH);
         }
 
         return uniprotDB;
@@ -93,8 +93,8 @@ public class SequenceService {
 
     public static ReferenceDatabase getUniprotRefDB() {
         return sequenceRepository.getZebrafishSequenceReferenceDatabase(
-                ForeignDB.AvailableName.UNIPROTKB
-                , ForeignDBDataType.DataType.POLYPEPTIDE
+            ForeignDB.AvailableName.UNIPROTKB
+            , ForeignDBDataType.DataType.POLYPEPTIDE
         );
     }
 
@@ -127,51 +127,51 @@ public class SequenceService {
             SequenceInfo supportingSequenceInfo = TranscriptService.getSupportingSequenceInfo((Transcript) marker);
             if (CollectionUtils.isNotEmpty(supportingSequenceInfo.getDbLinks())) {
                 allDBLinks.addAll(supportingSequenceInfo
-                        .getDbLinks()
-                        .stream()
-                        .map(dbLink -> MarkerService.getMarkerDBLink(marker, dbLink))
-                        .collect(Collectors.toList())
+                    .getDbLinks()
+                    .stream()
+                    .map(dbLink -> MarkerService.getMarkerDBLink(marker, dbLink))
+                    .collect(Collectors.toList())
                 );
             }
         } else {
             List<MarkerDBLink> dbLinks = sequenceRepository
-                    .getDBLinksForMarker(marker.getZdbID(), ForeignDBDataType.SuperType.SEQUENCE)
-                    .stream()
-                    .filter(dbLink -> !dbLink.getReferenceDatabase().getForeignDB().isFishMiRNAExpression())
-                    .map(dbLink -> MarkerService.getMarkerDBLink(marker, dbLink))
-                    .collect(Collectors.toList());
+                .getDBLinksForMarker(marker.getZdbID(), ForeignDBDataType.SuperType.SEQUENCE)
+                .stream()
+                .filter(dbLink -> !dbLink.getReferenceDatabase().getForeignDB().isFishMiRNAExpression())
+                .map(dbLink -> MarkerService.getMarkerDBLink(marker, dbLink))
+                .collect(Collectors.toList());
             allDBLinks.addAll(dbLinks);
             // populate FishMiRNA sequence info
             dbLinks.stream().filter(markerDBLink -> markerDBLink.getReferenceDatabase().getForeignDB().isFishMiRNA())
-                    .forEach(fishMiRnaDBLink -> {
-                        List<Sequence> sequences = MountedWublastBlastService.getInstance().
-                                getSequencesFromSource(fishMiRnaDBLink);
-                        if (CollectionUtils.isNotEmpty(sequences)) {
-                            fishMiRnaDBLink.setSequence(sequences.get(0));
-                        }
-                    });
+                .forEach(fishMiRnaDBLink -> {
+                    List<Sequence> sequences = MountedWublastBlastService.getInstance().
+                        getSequencesFromSource(fishMiRnaDBLink);
+                    if (CollectionUtils.isNotEmpty(sequences)) {
+                        fishMiRnaDBLink.setSequence(sequences.get(0));
+                    }
+                });
         }
 
         if (marker.isGenedom()) {
             List<RelatedMarkerDBLinkDisplay> relatedLinks = RepositoryFactory.getSequenceRepository()
-                    .getDBLinksForFirstRelatedMarker(
-                            marker,
-                            DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE,
-                            MarkerRelationship.Type.GENE_CONTAINS_SMALL_SEGMENT,
-                            MarkerRelationship.Type.CLONE_CONTAINS_SMALL_SEGMENT,
-                            MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT
-                    );
+                .getDBLinksForFirstRelatedMarker(
+                    marker,
+                    DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE,
+                    MarkerRelationship.Type.GENE_CONTAINS_SMALL_SEGMENT,
+                    MarkerRelationship.Type.CLONE_CONTAINS_SMALL_SEGMENT,
+                    MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT
+                );
             relatedLinks.addAll(RepositoryFactory.getSequenceRepository()
-                    .getDBLinksForSecondRelatedMarker(
-                            marker,
-                            DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE,
-                            MarkerRelationship.Type.CLONE_CONTAINS_GENE
-                    )
+                .getDBLinksForSecondRelatedMarker(
+                    marker,
+                    DisplayGroup.GroupName.MARKER_LINKED_SEQUENCE,
+                    MarkerRelationship.Type.CLONE_CONTAINS_GENE
+                )
             );
             relatedLinks.addAll(MarkerService.getTranscriptReferences(marker));
             allDBLinks.addAll(relatedLinks.stream()
-                    .map(RelatedMarkerDBLinkDisplay::getLink)
-                    .collect(Collectors.toList())
+                .map(RelatedMarkerDBLinkDisplay::getLink)
+                .collect(Collectors.toList())
             );
         }
 
@@ -179,17 +179,21 @@ public class SequenceService {
 
         // links must be sorted before going into the summarizer so that the correct first one gets kept
         groupedLinks.sort(new DbLinkDisplayComparator());
+        List<MarkerDBLink> displayedLinksOverview = new ArrayList<>();
+        Set<ForeignDBDataType.DataType> types = new HashSet<>();
+        for (MarkerDBLink link : groupedLinks) {
+            ForeignDBDataType.DataType linkType = link.getReferenceDatabase().getForeignDBDataType().getDataType();
+            if (!types.contains(linkType)) {
+                displayedLinksOverview.add(link);
+                types.add(linkType);
+            }
+        }
+        response.addSupplementalData("countDirect", displayedLinksOverview.size());
+        response.addSupplementalData("countIncludingChildren", groupedLinks.size());
+
         List<MarkerDBLink> displayedLinks;
         if (summary) {
-            Set<ForeignDBDataType.DataType> types = new HashSet<>();
-            displayedLinks = new ArrayList<>();
-            for (MarkerDBLink link : groupedLinks) {
-                ForeignDBDataType.DataType linkType = link.getReferenceDatabase().getForeignDBDataType().getDataType();
-                if (!types.contains(linkType)) {
-                    displayedLinks.add(link);
-                    types.add(linkType);
-                }
-            }
+            displayedLinks = displayedLinksOverview;
         } else {
             displayedLinks = groupedLinks;
         }
@@ -203,9 +207,9 @@ public class SequenceService {
 
         // paginating
         response.setResults(filteredDBLinksList.stream()
-                .skip(pagination.getStart())
-                .limit(pagination.getLimit())
-                .collect(Collectors.toList()));
+            .skip(pagination.getStart())
+            .limit(pagination.getLimit())
+            .collect(Collectors.toList()));
 
         return response;
     }
