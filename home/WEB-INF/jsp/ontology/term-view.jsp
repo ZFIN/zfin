@@ -111,7 +111,7 @@
                     <div><a href="/action/expression/results?anatomyTermNames=${term.termName}&anatomyTermIDs=${term.zdbID}&journalType=ALL&includeSubstructures=false&onlyWildtype=true">
                         Search genes within Advanced Search</a></div>
                 </z:section>
-                <z:section title="Thisse recommended In Situ Probes" infoPopup="/zf_info/stars.html">
+                <z:section title="Thisse recommended In Situ Probes" infoPopup="/action/ontology/clone-stars">
                     <div class="__react-root" id="TermInSituProbeTable"
                          data-term-id="${term.zdbID}"
                          data-direct-annotation-only="true"
