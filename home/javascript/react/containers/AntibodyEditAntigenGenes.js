@@ -22,7 +22,7 @@ const AntibodyEditAntigenGenes = ({
 
     const {
         value: antigenGenes,
-        setValue: setAntigens,
+        setValue: setAntigenGenes,
     } = useFetch(`/action/api/antibody/${antibodyId}/antigen-genes`, {defaultValue: []});
 
     const {
@@ -36,7 +36,7 @@ const AntibodyEditAntigenGenes = ({
         deleteUrl: isEdit ? `/action/api/antibody/${antibodyId}/antigen-genes/${modalRelationship.markerRelationshipZdbId}` : '',
         onSuccess: () => setModalRelationship(null),
         items: antigenGenes,
-        setItems: setAntigens,
+        setItems: setAntigenGenes,
         defaultValues: modalRelationship,
     });
 

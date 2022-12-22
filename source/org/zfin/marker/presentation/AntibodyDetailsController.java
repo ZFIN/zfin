@@ -7,13 +7,11 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.antibody.Antibody;
-import org.zfin.antibody.AntibodyAntigenGeneService;
 import org.zfin.antibody.AntibodyService;
 import org.zfin.antibody.repository.AntibodyRepository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.View;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
-import org.zfin.marker.MarkerRelationship;
 import org.zfin.profile.service.BeanCompareService;
 import org.zfin.profile.service.BeanFieldUpdate;
 
@@ -35,9 +33,6 @@ public class AntibodyDetailsController {
 
     @Autowired
     private InfrastructureRepository infrastructureRepository;
-
-    @Autowired
-    private AntibodyAntigenGeneService antibodyAntigenGeneService;
 
     @JsonView(View.AntibodyDetailsAPI.class)
     @RequestMapping(value = "/antibody/{antibodyZdbId}/details", method = RequestMethod.GET)
@@ -96,54 +91,5 @@ public class AntibodyDetailsController {
         return antibody;
     }
 
-
-    @JsonView(View.AntibodyMarkerRelationshipAPI.class)
-    @RequestMapping(value = "/antibody/{antibodyZdbId}/antigen-genes", method = RequestMethod.GET)
-    public List<MarkerRelationshipPresentation> getAntigensForAntibody(@PathVariable String antibodyZdbId) {
-        return antibodyAntigenGeneService.getAntigenGenes(antibodyZdbId);
-    }
-
-
-    @JsonView(View.AntibodyMarkerRelationshipAPI.class)
-    @RequestMapping(value = "/antibody/{antibodyZdbId}/antigen-genes", method = RequestMethod.POST)
-    public MarkerRelationshipPresentation addAntigenForAntibody(@PathVariable String antibodyZdbId,
-                                                                       @RequestBody MarkerRelationshipPresentation formData) {
-
-        HibernateUtil.createTransaction();
-        MarkerRelationship relationship = antibodyAntigenGeneService.addAntigenGeneForAntibody(antibodyZdbId, formData.getAbbreviation(), formData.getAttributionZdbIDs());
-        HibernateUtil.flushAndCommitCurrentSession();
-
-        formData.setMarkerRelationshipZdbId(relationship.getZdbID());
-        formData.setZdbID(relationship.getFirstMarker().getZdbID());
-        formData.setNumberOfPublications(formData.getAttributionZdbIDs().size());
-
-        return formData;
-    }
-
-    @RequestMapping(value = "/antibody/{antibodyZdbId}/antigen-genes/{mrelZdbId}", method = RequestMethod.DELETE)
-    public void deleteAntigenForAntibody(@PathVariable String antibodyZdbId,
-                                                                @PathVariable String mrelZdbId) throws Exception {
-        HibernateUtil.createTransaction();
-        antibodyAntigenGeneService.deleteAntigenGeneForAntibody(antibodyZdbId, mrelZdbId);
-        HibernateUtil.flushAndCommitCurrentSession();
-    }
-
-
-    @JsonView(View.AntibodyMarkerRelationshipAPI.class)
-    @RequestMapping(value = "/antibody/{antibodyZdbId}/antigen-genes/{mrelZdbId}", method = RequestMethod.POST)
-    public MarkerRelationshipPresentation updateAntigenForAntibody(@PathVariable String antibodyZdbId,
-                                                                   @PathVariable String mrelZdbId,
-                                                                   @RequestBody MarkerRelationshipPresentation formData) {
-
-        HibernateUtil.createTransaction();
-        MarkerRelationship relationship = antibodyAntigenGeneService.updateAntigenGeneForAntibody(mrelZdbId, formData.getAbbreviation(), formData.getAttributionZdbIDs());
-        HibernateUtil.flushAndCommitCurrentSession();
-
-        formData.setMarkerRelationshipZdbId(relationship.getZdbID());
-        formData.setZdbID(relationship.getFirstMarker().getZdbID());
-        formData.setNumberOfPublications(formData.getAttributionZdbIDs().size());
-
-        return formData;
-    }
 
 }
