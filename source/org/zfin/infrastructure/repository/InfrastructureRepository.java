@@ -25,6 +25,7 @@ import org.zfin.util.DatabaseJdbcStatement;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 public interface InfrastructureRepository {
 
@@ -33,6 +34,8 @@ public interface InfrastructureRepository {
     void insertActiveSource(String zdbID);
 
     ActiveData getActiveData(String zdbID);
+
+    List<ActiveData> getAllActiveData(Set<String> zdbID);
 
     public ActiveSource getActiveSource(String zdbID);
 
@@ -97,6 +100,8 @@ public interface InfrastructureRepository {
     PublicationAttribution getPublicationAttributionByID(long publicationAttributionID);
 
     // TODO: RecordAttribution has a composite primary key, so not needed just yet
+
+    List<ActiveSource> getAllActiveSource(Set<String> zdbIDs);
 
     RecordAttribution insertRecordAttribution(String dataZdbID, String sourceZdbID);
 
@@ -186,6 +191,13 @@ public interface InfrastructureRepository {
      * @return Replacement object
      */
     ReplacementZdbID getReplacementZdbId(String oldZdbID);
+
+    /**
+     * Bulk retrieve the replaced zdbID for a given zdbID.
+     * @param oldZdbIDs list of ZDB IDs
+     * @return all matching replaced objects
+     */
+    List<ReplacementZdbID> getAllReplacementZdbIds(List<String> oldZdbIDs);
 
     /**
      * Retrieve all data aliases for a given zdbID.

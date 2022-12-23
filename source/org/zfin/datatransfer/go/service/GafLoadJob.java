@@ -192,6 +192,14 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             details.flush();
             details.close();
 
+            //throw an exception if parser encountered an error
+            //do this at the end so the load works for records that are valid
+            if (gafParser.isErrorEncountered()) {
+                System.out.println(gafParser.getErrorMessage());
+                System.err.println(gafParser.getErrorMessage());
+                exitCode = 2;
+            }
+
         } catch (Exception e) {
             logger.error("Failed to process Gaf load job", e);
             if (HibernateUtil.currentSession().getTransaction() != null) {
@@ -361,6 +369,11 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
         String parserClassName = args[5];
         try {
             job.gafParser = (FpInferenceGafParser) context.getBean(Class.forName(parserClassName));
+
+            //if load-noctua-gpad job, then make sure to validate all ZDB IDs in inferences.
+            if (job.gafParser instanceof GpadParser) {
+                ((GpadParser) job.gafParser).setValidateInferences(true);
+            }
         } catch (ClassNotFoundException e) {
             logger.error("Could not load parser class " + parserClassName);
             System.exit(1);
