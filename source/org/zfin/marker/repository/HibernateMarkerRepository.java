@@ -3425,5 +3425,10 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return query.getResultList();
     }
 
+    public List<String> getProblemTypes() {
+        String hql = " select c.type from CloneProblem c ";
+        Session session = currentSession();
+        return session.createQuery(hql, String.class).list();
+    }
 }
 
