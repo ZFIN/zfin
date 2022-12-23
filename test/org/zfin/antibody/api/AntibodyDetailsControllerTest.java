@@ -100,15 +100,14 @@ public class AntibodyDetailsControllerTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getAntigenGeneRelationshipo() {
+    public void getAntigenGeneRelationship() {
         String zdbID = "ZDB-ATB-090616-1";
-        MarkerRelationship alcambMarkerRelationship = service.getAntibodyAntigenGeneMarkerRelationship(zdbID, "otofa");
+        MarkerRelationship otofaMarkerRelationship = service.getAntibodyAntigenGeneMarkerRelationship(zdbID, "otofa");
 
 
-        assertNotNull(alcambMarkerRelationship);
-        Set<PublicationAttribution> attributions = alcambMarkerRelationship.getPublications();
+        assertNotNull(otofaMarkerRelationship);
+        Set<PublicationAttribution> attributions = otofaMarkerRelationship.getPublications();
         assertEquals(2, attributions.size());
-
     }
 
     @Test

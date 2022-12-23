@@ -38,7 +38,7 @@ public class AntibodyDetailsController {
     @RequestMapping(value = "/antibody/{antibodyZdbId}/details", method = RequestMethod.GET)
     public Antibody getAntibodyDetails(@PathVariable String antibodyZdbId) {
         Antibody antibody = antibodyRepository.getAntibodyByID(antibodyZdbId);
-        antibody.setABRegistryID(getMarkerRepository().getABRegID(antibodyZdbId)); //hydrate ABRegistryID
+        antibody.setAbregistryID(getMarkerRepository().getABRegID(antibodyZdbId)); //hydrate ABRegistryID
         return antibody;
     }
 
@@ -54,7 +54,7 @@ public class AntibodyDetailsController {
         HibernateUtil.createTransaction();
 
         Antibody antibody = antibodyRepository.getAntibodyByID(antibodyZdbId);
-        antibody.setABRegistryID(getMarkerRepository().getABRegID(antibodyZdbId)); //hydrate ABRegistryID
+        antibody.setAbregistryID(getMarkerRepository().getABRegID(antibodyZdbId)); //hydrate ABRegistryID
 
         List<BeanFieldUpdate> updates = new ArrayList<>();
 
@@ -72,9 +72,9 @@ public class AntibodyDetailsController {
         }
 
         //special handling for ABRegistryID
-        if (null != beanCompareService.compareBeanField("ABRegistryID", antibody, formData)) {
-            AntibodyService.setABRegistryID(antibody, formData.getABRegistryID());
-            antibody.setABRegistryID(formData.getABRegistryID());
+        if (null != beanCompareService.compareBeanField("abregistryID", antibody, formData)) {
+            AntibodyService.setABRegistryID(antibody, formData.getAbregistryID());
+            antibody.setAbregistryID(formData.getAbregistryID());
         }
 
         CollectionUtils.addIgnoreNull(updates, beanCompareService.compareBeanField("hostSpecies", antibody, formData));
