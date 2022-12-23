@@ -6,9 +6,9 @@ import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.framework.api.View;
-import org.zfin.marker.Gene;
 import org.zfin.marker.Marker;
 
+import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -37,13 +37,17 @@ public class Antibody extends Marker {
     @JsonView(View.AntibodyDetailsAPI.class)
     private List<Marker> antigenGenes;
 
+    @JsonView(View.AntibodyDetailsAPI.class)
+    @Transient
+    private String abregistryID;
+
     /**
      * @param expressionExperiment Antibody label to compare.
      * @return Returns an antibody that prevents merging.
      */
     public ExpressionExperiment getMatchingAntibodyLabeling(ExpressionExperiment expressionExperiment) {
         for (ExpressionExperiment anExpressionExperiment : getAntibodyLabelings()) {
-            if (false == canMergeAntibodyLabel(anExpressionExperiment, expressionExperiment)) {
+            if (!canMergeAntibodyLabel(anExpressionExperiment, expressionExperiment)) {
                 return anExpressionExperiment;
             }
         }
@@ -69,19 +73,17 @@ public class Antibody extends Marker {
         if (eea.getProbe() == null && eeb.getProbe() != null) return true;
         if (eea.getProbe() != null && eeb.getProbe() == null) return true;
         if (eea.getProbe() != null && eeb.getProbe() != null &&
-                false == eea.getProbe().equals(eeb.getProbe())) return true;
+                !eea.getProbe().equals(eeb.getProbe())) return true;
 
         if (eea.getGene() == null && eeb.getGene() != null) return true;
         if (eea.getGene() != null && eeb.getGene() == null) return true;
         if (eea.getGene() != null && eeb.getGene() != null &&
-                false == eea.getGene().equals(eeb.getGene())) return true;
+                !eea.getGene().equals(eeb.getGene())) return true;
 
         if (eea.getMarkerDBLink() == null && eeb.getMarkerDBLink() != null) return true;
         if (eea.getMarkerDBLink() != null && eeb.getMarkerDBLink() == null) return true;
         if (eea.getMarkerDBLink() != null && eeb.getMarkerDBLink() != null
-                && false == eea.getMarkerDBLink().equals(eeb.getMarkerDBLink())) return true;
-
-        // we don't handle antibody
+                && !eea.getMarkerDBLink().equals(eeb.getMarkerDBLink())) return true;
 
         return false;
     }

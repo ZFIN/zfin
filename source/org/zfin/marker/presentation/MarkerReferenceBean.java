@@ -1,5 +1,7 @@
 package org.zfin.marker.presentation;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import org.zfin.framework.api.View;
 import org.zfin.publication.Publication;
 
 import java.util.Objects;
@@ -10,8 +12,13 @@ import lombok.Setter;
 @Setter
 public class MarkerReferenceBean {
 
+    @JsonView(View.API.class)
     private String zdbID;
+
+    @JsonView(View.API.class)
     private String title;
+
+    @JsonView(View.API.class)
     private String dataZdbID;
 
     public static MarkerReferenceBean convert(Publication publication) {
