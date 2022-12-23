@@ -15,6 +15,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.CloneDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.server.DTOMarkerService;
+import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Clone;
 import org.zfin.marker.ProbeLibrary;
@@ -74,6 +75,17 @@ public class CloneDataController {
         Session session = HibernateUtil.currentSession();
         Transaction transaction = session.beginTransaction();
         try {
+            if (clone.getProblem() == null) {
+                DTOMarkerService.insertMarkerUpdate(clone, "problemType", "", cloneDTO.getProblemType());
+            } else {
+                DTOMarkerService.insertMarkerUpdate(clone, "problemType", clone.getProblem().name(), cloneDTO.getProblemType());
+            }
+            if (StringUtils.isEmpty(cloneDTO.getProblemType())) {
+                clone.setProblem(null);
+            } else {
+                clone.setProblem(Clone.ProblemType.getProblemType(cloneDTO.getProblemType()));
+            }
+
             DTOMarkerService.insertMarkerUpdate(clone, "digest", clone.getDigest(), cloneDTO.getDigest());
             clone.setDigest(cloneDTO.getDigest());
 

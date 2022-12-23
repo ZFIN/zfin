@@ -9,8 +9,8 @@ import SequenceType from '../components/SequenceType';
 
 const MarkerSequencesTable = ({markerId, showSummary}) => {
     const [summary, setSummary] = useState(showSummary === 'true');
-    const [hasData, setHasData] = useState(false);
     const [showSequence, setShowSequence] = useState(false);
+    const [count, setCount] = useState({'countDirect':0,'countIncludingChildren':0});
 
     const showSeq = () => {
         setShowSequence(true)
@@ -100,13 +100,20 @@ const MarkerSequencesTable = ({markerId, showSummary}) => {
 
     return (
         <>
-            {showSummary && hasData && (
-                <DataTableSummaryToggle childrenLabel='All Sequences' showPopup={summary} onChange={setSummary}/>
+            {showSummary && (
+                <DataTableSummaryToggle
+                    directLabel='Overview'
+                    childrenLabel='All Sequences'
+                    directCount={count.countDirect}
+                    childrenCount={count.countIncludingChildren}
+                    showPopup={summary}
+                    onChange={setSummary}
+                />
             )}
             <DataTable
                 columns={columns}
                 dataUrl={`/action/api/marker/${markerId}/sequences?${qs.stringify(params)}`}
-                onDataLoaded={() => setHasData(true)}
+                onDataLoadedCount={(count) => setCount(count)}
                 pagination={!summary}
                 rowKey={row => row.zdbID}
             />
