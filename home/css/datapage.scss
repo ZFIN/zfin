@@ -396,3 +396,9 @@ table.lab-view-summary-table dd a, table.company-view-summary-table dd a {
 .publication-view #xpresimg_control_box {
     margin-top: 20px;
 }
+
+/* Add columns to direct attributions on antibody edit page */
+.antibody-edit-page #direct-attributions ul.list-unstyled {
+    columns: 15em;
+    column-gap: 1em;
+}

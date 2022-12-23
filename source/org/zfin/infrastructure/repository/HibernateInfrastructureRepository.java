@@ -172,9 +172,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
     //todo: add a getter here, or do some mapping to objects so that we can test the insert in a routine way
 
-    public void insertRecordAttribution(String dataZdbID, String sourceZdbID) {
+    public RecordAttribution insertRecordAttribution(String dataZdbID, String sourceZdbID) {
         if (hasStandardPublicationAttribution(dataZdbID, sourceZdbID)) {
-            return;
+            return null;
         }
 
         Session session = HibernateUtil.currentSession();
@@ -182,7 +182,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         // need to return null if no valid publication string
         if (null == session.get(Publication.class, sourceZdbID)) {
             logger.warn("try into insert record attribution with bad pub: " + sourceZdbID);
-            return;
+            return null;
         }
 
         RecordAttribution ra = new RecordAttribution();
@@ -191,6 +191,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         ra.setSourceType(RecordAttribution.SourceType.STANDARD);
 
         session.save(ra);
+        return ra;
     }
 
     public RecordAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID) {
@@ -284,10 +285,13 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
 
 
     public List<RecordAttribution> getRecordAttributions(ActiveData data) {
+        return getRecordAttributions(data.getZdbID());
+    }
 
+    public List<RecordAttribution> getRecordAttributions(String activeDataZdbID) {
         Session session = HibernateUtil.currentSession();
         Query<RecordAttribution> query = session.createQuery("from RecordAttribution where dataZdbID = :ID", RecordAttribution.class);
-        query.setParameter("ID", data.getZdbID());
+        query.setParameter("ID", activeDataZdbID);
         return query.list();
     }
 
@@ -302,14 +306,23 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return (RecordAttribution) criteria.uniqueResult();
     }
 
+    public PublicationAttribution getPublicationAttributionByID(long publicationAttributionID) {
+        Session session = HibernateUtil.currentSession();
+        return session.get(PublicationAttribution.class, publicationAttributionID);
+    }
+
     public PublicationAttribution getPublicationAttribution(PublicationAttribution attribution) {
+        return getPublicationAttribution(attribution.getPublication(), attribution.getDataZdbID());
+    }
+
+    public PublicationAttribution getPublicationAttribution(Publication publication, String dataZdbID) {
         Session session = HibernateUtil.currentSession();
         String hql = "from PublicationAttribution " +
             "where publication = :publication AND" +
             "      dataZdbID = :dataID ";
         Query query = session.createQuery(hql);
-        query.setParameter("publication", attribution.getPublication());
-        query.setParameter("dataID", attribution.getDataZdbID());
+        query.setParameter("publication", publication);
+        query.setParameter("dataID", dataZdbID);
 
         return (PublicationAttribution) query.uniqueResult();
     }
