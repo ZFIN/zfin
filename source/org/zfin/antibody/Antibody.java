@@ -66,26 +66,24 @@ public class Antibody extends Marker {
      * @return Whether or not an antibody label can be merged.
      */
     private boolean canMergeAntibodyLabel(ExpressionExperiment eea, ExpressionExperiment eeb) {
-        if (!eea.getPublication().equals(eeb.getPublication())) return true;
-        if (!eea.getFishExperiment().equals(eeb.getFishExperiment())) return true;
-        if (!eea.getAssay().equals(eeb.getAssay())) return true;
+        //if any of these conditions are true, return true, otherwise, false
+        return List.of(
+            !eea.getPublication().equals(eeb.getPublication()),
+            !eea.getFishExperiment().equals(eeb.getFishExperiment()),
+            !eea.getAssay().equals(eeb.getAssay()),
 
-        if (eea.getProbe() == null && eeb.getProbe() != null) return true;
-        if (eea.getProbe() != null && eeb.getProbe() == null) return true;
-        if (eea.getProbe() != null && eeb.getProbe() != null &&
-                !eea.getProbe().equals(eeb.getProbe())) return true;
+            eea.getProbe() == null && eeb.getProbe() != null,
+            eea.getProbe() != null && eeb.getProbe() == null,
+            eea.getProbe() != null && eeb.getProbe() != null && !eea.getProbe().equals(eeb.getProbe()),
 
-        if (eea.getGene() == null && eeb.getGene() != null) return true;
-        if (eea.getGene() != null && eeb.getGene() == null) return true;
-        if (eea.getGene() != null && eeb.getGene() != null &&
-                !eea.getGene().equals(eeb.getGene())) return true;
+            eea.getGene() == null && eeb.getGene() != null,
+            eea.getGene() != null && eeb.getGene() == null,
+            eea.getGene() != null && eeb.getGene() != null && !eea.getGene().equals(eeb.getGene()),
 
-        if (eea.getMarkerDBLink() == null && eeb.getMarkerDBLink() != null) return true;
-        if (eea.getMarkerDBLink() != null && eeb.getMarkerDBLink() == null) return true;
-        if (eea.getMarkerDBLink() != null && eeb.getMarkerDBLink() != null
-                && !eea.getMarkerDBLink().equals(eeb.getMarkerDBLink())) return true;
-
-        return false;
+            eea.getMarkerDBLink() == null && eeb.getMarkerDBLink() != null,
+            eea.getMarkerDBLink() != null && eeb.getMarkerDBLink() == null,
+            eea.getMarkerDBLink() != null && eeb.getMarkerDBLink() != null && !eea.getMarkerDBLink().equals(eeb.getMarkerDBLink())
+        ).contains(true);
     }
 
     @Override
