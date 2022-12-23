@@ -1,5 +1,7 @@
 package org.zfin.profile.service;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.Serializable;
@@ -7,45 +9,17 @@ import java.io.Serializable;
 /**
  * Used by BeanCompareService to communicate which fields have been changed.
  */
-public class BeanFieldUpdate implements Serializable{
+@Setter
+@Getter
+public class BeanFieldUpdate implements Cloneable, Serializable {
 
     private String field;
     private Object from;
     private Object to;
 
-    public String getField() {
-        return field;
-    }
-
-    public void setField(String field) {
-        this.field = field;
-    }
-
-    public Object getFrom() {
-        return from;
-    }
-
-    public void setFrom(Object from) {
-        this.from = from;
-    }
-
-    public Object getTo() {
-        return to;
-    }
-
-    public void setTo(Object to) {
-        this.to = to;
-    }
-
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append("BeanFieldUpdate");
-        sb.append("{field='").append(field).append('\'');
-        sb.append(", from=").append(from);
-        sb.append(", to=").append(to);
-        sb.append('}');
-        return sb.toString();
+        return "BeanFieldUpdate{field='%s', from=%s, to=%s}".formatted(field, from, to);
     }
 
     public void setNullToTrueNull() {
@@ -57,6 +31,15 @@ public class BeanFieldUpdate implements Serializable{
     public void setEmptyToNull() {
         if (to instanceof String && StringUtils.equals((String) to, "")) {
             setTo(null);
+        }
+    }
+
+    @Override
+    public BeanFieldUpdate clone() {
+        try {
+            return (BeanFieldUpdate) super.clone();
+        } catch (CloneNotSupportedException e) {
+            return null;
         }
     }
 
