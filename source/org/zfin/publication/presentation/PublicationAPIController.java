@@ -115,12 +115,14 @@ public class PublicationAPIController {
     @JsonView(View.FigureAPI.class)
     @RequestMapping(value = "/{pubID}/expression", method = RequestMethod.GET)
     public JsonResultResponse<ExpressionTableRow> getPublicationExpression(@PathVariable String pubID,
+                                                                           @RequestParam(value = "filter.geneAbbreviation", required = false) String geneAbbreviation,
                                                                            @Version Pagination pagination) {
 
         Publication publication = publicationRepository.getPublication(pubID);
         List<ExpressionTableRow> expressionTableRows = publication.getFigures().stream()
                 .map(figure -> figureViewService.getExpressionTableRows(figure))
                 .flatMap(Collection::stream)
+                .filter(figure -> StringUtils.isEmpty(geneAbbreviation) || figure.getGene().getAbbreviation().contains(geneAbbreviation))
                 .collect(Collectors.toList());
         JsonResultResponse<ExpressionTableRow> response = new JsonResultResponse<>();
         response.setTotal(expressionTableRows.size());
@@ -351,7 +353,6 @@ public class PublicationAPIController {
             for (Marker target : str.getTargetGenes()) {
                 if (StringUtils.isEmpty(targetName) || target.getAbbreviation().contains(targetName)) {
                     rows.add(new STRTargetRow(str, target));
-
                 }
             }
         }
