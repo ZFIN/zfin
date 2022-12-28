@@ -3,6 +3,7 @@ package org.zfin.gwt.marker.server;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.zfin.Species;
 import org.zfin.antibody.Antibody;
+import org.zfin.antibody.AntibodyService;
 import org.zfin.antibody.AntibodyType;
 import org.zfin.antibody.Isotype;
 import org.zfin.antibody.repository.AntibodyRepository;
@@ -19,9 +20,7 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
-import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.*;
 import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.wiki.service.AntibodyWikiWebService;
 
@@ -183,40 +182,9 @@ public class AntibodyRPCServiceImpl extends ZfinRemoteServiceServlet implements 
             updateAntibodyWiki(antibody);
 
         }
-        if (markerRepository.getABRegID(antibody.getZdbID())!=null){
-            ReferenceDatabase refDB = sr.getReferenceDatabase(ForeignDB.AvailableName.ABREGISTRY, ForeignDBDataType.DataType.OTHER, ForeignDBDataType.SuperType.SUMMARY_PAGE, Species.Type.ZEBRAFISH);
-            MarkerDBLink mdb = markerRepository.getDBLink(antibody, markerRepository.getABRegID(antibody.getZdbID()), refDB);
+        AntibodyService.setABRegistryID(antibody,dto.getRegistryID());
 
-            if (dto.getRegistryID()!=null) {
-
-
-
-               mdb.setAccessionNumber(dto.getRegistryID());
-               mdb.setAccessionNumberDisplay(dto.getRegistryID());
-
-               HibernateUtil.currentSession().save(mdb);
-           }
-            else{
-                HibernateUtil.currentSession().delete(mdb);
-            }
+        HibernateUtil.flushAndCommitCurrentSession();
         }
-        else{
-            if (dto.getRegistryID()!=null) {
-                ReferenceDatabase refDB = sr.getReferenceDatabase(ForeignDB.AvailableName.ABREGISTRY, ForeignDBDataType.DataType.OTHER, ForeignDBDataType.SuperType.SUMMARY_PAGE, Species.Type.ZEBRAFISH);
-                MarkerDBLink mdb = new MarkerDBLink();
-                mdb.setMarker(antibody);
-                mdb.setAccessionNumber(dto.getRegistryID());
-                mdb.setAccessionNumberDisplay(dto.getRegistryID());
-                mdb.setReferenceDatabase(refDB);
-                HibernateUtil.currentSession().save(mdb);
-            }
-            }
-
-            HibernateUtil.flushAndCommitCurrentSession();
-        }
-
-
-       // HibernateUtil.flushAndCommitCurrentSession();
-
 
     }
