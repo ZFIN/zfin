@@ -26,7 +26,6 @@ public class AntibodyMarkerBean extends MarkerBean {
     private int numberOfPublications ;
     private int numberOfDistinctComposedTerms ;
     private List<MarkerRelationshipPresentation> antigenGenes;
-    private String abRegistryID;
     private List<String> abRegistryIDs;
     private Antibody antibody;
 
