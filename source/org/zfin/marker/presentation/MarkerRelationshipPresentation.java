@@ -43,6 +43,7 @@ public class MarkerRelationshipPresentation implements ProvidesLink {
     private String markerRelationshipAttributionPubZdbId;
     private String supplierZdbId;
     private String link;
+    @JsonView(View.AntibodyMarkerRelationshipAPI.class)
     private Set<String> attributionZdbIDs = new HashSet<String>(); // TODO: implement with munging if needed
     private String arbitraryOrder;
     @JsonView(View.MarkerRelationshipAPI.class)

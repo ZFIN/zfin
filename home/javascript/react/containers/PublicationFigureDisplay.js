@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import PropTypes from 'prop-types';
 let ImageBox = window.ImageBox || (() => {console.error('no ImageBox found')});
 
-const PublicationFigureDisplay = ({title, imagesJson, publicationId, navigationCounter}) => {
+const PublicationFigureDisplay = ({title, imagesJson, navigationCounter}) => {
     const images = JSON.parse(imagesJson);
     let storedpage = null;
 
@@ -29,26 +29,33 @@ const PublicationFigureDisplay = ({title, imagesJson, publicationId, navigationC
         navigationCounter.setCounts(title, images.length);
     });
 
-    return (
-        <>
-            <div id='xpresimg_all'>
-                <input type='hidden' name='xpatsel_thumbnail_page' id='xpatsel_thumbnail_page_hidden_field' value='1'/>
-                <div id='xpresimg_control_box'>
-                    <span id='xpresimg_thumbs_title' className='summary'/>
-                    <span id='xpresimg_controls'/>
+    if (images.length && images.length > 0) {
+        return (
+            <>
+                <div id='xpresimg_all'>
+                    <input
+                        type='hidden'
+                        name='xpatsel_thumbnail_page'
+                        id='xpatsel_thumbnail_page_hidden_field'
+                        value='1'
+                    />
+                    <div id='xpresimg_control_box'>
+                        <span id='xpresimg_thumbs_title' className='summary'/>
+                        <span id='xpresimg_controls'/>
+                    </div>
+                    <div id='xpresimg_box'/>
+                    <div id='imagebox_maxnote' style={{display: 'none'}}/>
+                    <div id='xpresimg_imagePreload'/>
                 </div>
-                <div id='xpresimg_box'/>
-                <div id='imagebox_maxnote' style={{display: 'none'}}/>
-                <div id='xpresimg_imagePreload'/>
-            </div>
-            <div><a href={`/action/figure/all-figure-view/${publicationId}`}>Show all Figures</a></div>
-        </>
-    );
+            </>
+        );
+    } else {
+        return <i className='text-muted'>No images available</i>
+    }
 };
 
 PublicationFigureDisplay.propTypes = {
     title: PropTypes.string,
-    publicationId: PropTypes.string,
     imagesJson: PropTypes.string,
     navigationCounter: PropTypes.object,
 };
