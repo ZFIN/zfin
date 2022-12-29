@@ -1,11 +1,14 @@
 package org.zfin.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.profile.AccountInfo;
 import org.zfin.profile.Person;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
@@ -18,6 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
+
+import static org.zfin.repository.RepositoryFactory.getProfileRepository;
 
 /**
  * This class is needed to add a new cookie to the response object when the
@@ -56,6 +61,7 @@ public class ApgAuthenticationSuccessHandler extends SavedRequestAwareAuthentica
             }
         }
         HibernateUtil.closeSession();
+        storePasswordAsModernHashIfNecessary(request, authentication);
         super.onAuthenticationSuccess(request, response, authentication);
     }
 
@@ -98,4 +104,34 @@ public class ApgAuthenticationSuccessHandler extends SavedRequestAwareAuthentica
     public void setSessionRegistry(SessionRegistry sessionRegistry) {
         this.sessionRegistry = sessionRegistry;
     }
+
+
+    private void storePasswordAsModernHashIfNecessary(HttpServletRequest request, Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            String login = authentication.getName();
+            String password = request.getParameter(UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_PASSWORD_KEY);
+
+            Person person = getProfileRepository().getPersonByName(login);
+            if (person != null) {
+                AccountInfo accountInfo = person.getAccountInfo();
+                if (accountInfo != null) {
+                    String currentPasswordHash = accountInfo.getPassword();
+
+                    if (currentPasswordHash.contains("$2a$")) {
+                        //password was created after the move to bcrypt
+                        return;
+                    } else {
+                        try {
+                            HibernateUtil.createTransaction();
+                            (new ProfileService()).updatePassword(person, password);
+                            HibernateUtil.flushAndCommitCurrentSession();
+                        } catch (Exception e) {
+                            //ignore
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 }

@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-public class UserNameCachingAuthenticationFailureHandler
+public class MigratingAuthenticationFailureHandler
         extends SimpleUrlAuthenticationFailureHandler {
 
     public static final String LAST_USERNAME_ATTEMPTED = "LAST_USERNAME_ATTEMPTED";
