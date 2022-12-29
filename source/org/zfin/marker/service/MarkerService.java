@@ -871,14 +871,13 @@ public class MarkerService {
 
     public static List<String> getDirectAttributions(Marker marker) {
         // get direct attributions
-        ActiveData activeData = new ActiveData();
-        activeData.setZdbID(marker.getZdbID());
-        List<RecordAttribution> recordAttributions = RepositoryFactory.getInfrastructureRepository().getRecordAttributions(activeData);
-        List<String> attributions = new ArrayList<>();
-        for (RecordAttribution recordAttribution : recordAttributions) {
-            attributions.add(recordAttribution.getSourceZdbID());
-        }
-        return attributions;
+        return getDirectAttributions(marker.getZdbID());
+    }
+
+    public static List<String> getDirectAttributions(String markerZdbID) {
+        // get direct attributions
+        List<RecordAttribution> recordAttributions = getInfrastructureRepository().getRecordAttributions(markerZdbID);
+        return recordAttributions.stream().map(RecordAttribution::getSourceZdbID).toList();
     }
 
     public static MutantOnMarkerBean getMutantsOnGene(Marker gene) {

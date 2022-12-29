@@ -65,6 +65,8 @@ public interface InfrastructureRepository {
 
     List<RecordAttribution> getRecordAttributions(ActiveData data);
 
+    List<RecordAttribution> getRecordAttributions(String ActiveDataZdbID);
+
     /**
      * Retrieve a single record attribution record.
      * Since this table has a composite key you need to provide three parameters:
@@ -90,10 +92,15 @@ public interface InfrastructureRepository {
      * @return Publication Attribution
      */
     PublicationAttribution getPublicationAttribution(PublicationAttribution attribution);
+    PublicationAttribution getPublicationAttribution(Publication publication, String dataZdbID);
+
+    PublicationAttribution getPublicationAttributionByID(long publicationAttributionID);
 
     // TODO: RecordAttribution has a composite primary key, so not needed just yet
 
-    void insertRecordAttribution(String dataZdbID, String sourceZdbID);
+    List<ActiveSource> getAllActiveSource(Set<String> zdbIDs);
+
+    RecordAttribution insertRecordAttribution(String dataZdbID, String sourceZdbID);
 
     RecordAttribution insertPublicAttribution(String dataZdbID, String sourceZdbID);
 

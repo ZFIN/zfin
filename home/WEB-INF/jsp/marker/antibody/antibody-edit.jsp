@@ -3,10 +3,12 @@
 <jsp:useBean id="antibody" class="org.zfin.antibody.Antibody" scope="request"/>
 
 <c:set var="DETAILS" value="Antibody Details" />
+<c:set var="ANTIGEN_GENES" value="Antigen Genes" />
 <c:set var="NOTES" value="Notes" />
 <c:set var="SUPPLIERS" value="Suppliers" />
+<c:set var="DIRECT_ATTRIBUTIONS" value="Direct Attributions" />
 
-<z:dataPage sections="${[DETAILS, NOTES, SUPPLIERS]}">
+<z:dataPage sections="${[DETAILS, ANTIGEN_GENES, NOTES, SUPPLIERS, DIRECT_ATTRIBUTIONS]}" additionalBodyClass="antibody-edit-page">
     <z:dataManagerDropdown>
         <a class="dropdown-item" href="/${antibody.zdbID}">View</a>
         <a class="dropdown-item" href="/action/infrastructure/deleteRecord/${antibody.zdbID}">Delete</a>
@@ -27,6 +29,13 @@
         </div>
     </z:section>
 
+    <z:section title="${ANTIGEN_GENES}">
+        <div class="__react-root"
+             id="AntibodyEditAntigenGenes"
+             data-antibody-id="${antibody.zdbID}">
+        </div>
+    </z:section>
+
     <z:section title="${NOTES}">
         <div class="__react-root"
              id="MarkerEditNotes"
@@ -42,4 +51,12 @@
              data-marker-id="${antibody.zdbID}">
         </div>
     </z:section>
+
+    <z:section title="${DIRECT_ATTRIBUTIONS}">
+        <div class="__react-root"
+             id="MarkerDirectAttributions"
+             data-marker-id="${antibody.zdbID}">
+        </div>
+    </z:section>
+
 </z:dataPage>
