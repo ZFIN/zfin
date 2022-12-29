@@ -20,7 +20,7 @@ import org.zfin.properties.ZfinPropertiesEnum;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static org.zfin.security.UserNameCachingAuthenticationFailureHandler.LAST_USERNAME_ATTEMPTED;
+import static org.zfin.security.MigratingAuthenticationFailureHandler.LAST_USERNAME_ATTEMPTED;
 
 @Controller
 @RequestMapping(value = "/profile")

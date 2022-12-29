@@ -4,7 +4,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.dialect.MariaDB53Dialect;
 import org.owasp.html.PolicyFactory;
 import org.owasp.html.Sanitizers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 import org.zfin.feature.FeaturePrefix;
@@ -25,6 +23,7 @@ import org.zfin.profile.presentation.PersonMemberPresentation;
 import org.zfin.profile.presentation.ProfileUpdateMessageBean;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.security.MigratingPasswordEncoder;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -39,13 +38,11 @@ import static org.zfin.repository.RepositoryFactory.getProfileRepository;
 @Service
 public class ProfileService {
 
-    public static final String SALT = "dedicated to George Streisinger";
-    public static final int BCRYPT_STRENGTH = 10;
     private static final PolicyFactory POLICY = Sanitizers.FORMATTING.and(Sanitizers.LINKS);
 
     private Logger logger = LogManager.getLogger(ProfileService.class);
 
-    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(BCRYPT_STRENGTH);
+    private MigratingPasswordEncoder encoder = new MigratingPasswordEncoder();
 
     @Autowired
     private BeanCompareService beanCompareService;
@@ -576,6 +573,10 @@ public class ProfileService {
         return encoder.encode(password);
     }
 
+    public void updatePassword(Person person, String password) {
+        person.getAccountInfo().setPassword(encodePassword(password));
+    }
+
     public int findMembersEquals(int value, List<PersonMemberPresentation> labMembers) {
         int count = 0;
 
@@ -731,12 +732,11 @@ public class ProfileService {
             if (accountInfo != null) {
                 String currentPasswordHash = accountInfo.getPassword();
 
-                //TODO: add "last_updated_password" field to zdb_submitters table and use that instead of complicated logic below
                 if (currentPasswordHash.contains("$2a$")) {
                     //password was created after the move to bcrypt
                     return false;
                 } else {
-                    return currentPasswordHash.equals(md5encode(password));
+                    return currentPasswordHash.equals(md5Encode(password));
                 }
             }
         }
@@ -751,9 +751,8 @@ public class ProfileService {
         return person;
     }
 
-    public static String md5encode(String password) {
+    public static String md5Encode(String password) {
         Md5PasswordEncoder encoder = new Md5PasswordEncoder();
-        String salt = "dedicated to George Streisinger";
-        return encoder.encodePassword(password, salt);
+        return encoder.encodePassword(password, MigratingPasswordEncoder.SALT);
     }
 }

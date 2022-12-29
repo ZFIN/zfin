@@ -37,14 +37,13 @@
         <property name="useSecureCookie" value="false"/>
     </bean>
 
-    <bean id="bCryptPasswordEncoder"
-          class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
-        <constructor-arg value="10"/> <!-- strength of the hash (logarithmic) -->
+    <bean id="migratingPasswordEncoder"
+          class="org.zfin.security.MigratingPasswordEncoder">
     </bean>
 
     <security:authentication-manager alias="authenticationManager">
         <security:authentication-provider user-service-ref="userDetailsService">
-            <security:password-encoder ref="bCryptPasswordEncoder" />
+            <security:password-encoder ref="migratingPasswordEncoder" />
         </security:authentication-provider>
     </security:authentication-manager>
 
@@ -65,8 +64,8 @@
     <bean id="defaultRolesPrefixPostProcessor" class="org.zfin.framework.DefaultRolesPrefixPostProcessor"/>
 
     <bean
-            id="userNameCachingAuthenticationFailureHandler"
-            class="org.zfin.security.UserNameCachingAuthenticationFailureHandler">
+            id="migratingAuthenticationFailureHandler"
+            class="org.zfin.security.MigratingAuthenticationFailureHandler">
         <property name="defaultFailureUrl" value="/action/login-redirect?error=true"/>
     </bean>
 
@@ -88,7 +87,7 @@
         <security:csrf disabled="true"/>
         <security:form-login login-page="/action/login"
                              default-target-url="/"
-                             authentication-failure-handler-ref="userNameCachingAuthenticationFailureHandler"
+                             authentication-failure-handler-ref="migratingAuthenticationFailureHandler"
                              login-processing-url="/action/j_security-check"
                              always-use-default-target="false"
                              authentication-success-handler-ref="apgAuthenticationSuccessHandler"
