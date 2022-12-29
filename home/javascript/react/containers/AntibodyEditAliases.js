@@ -8,14 +8,15 @@ import useAddEditDeleteForm from '../hooks/useAddEditDeleteForm';
 import AddEditList from '../components/AddEditList';
 import InputField from '../components/form/InputField';
 import PublicationInput from '../components/form/PublicationInput';
-// import {EntityLink} from '../components/entity';
+import Modal from '../components/Modal';
+import http from '../utils/http';
 
 const AntibodyEditAliases = ({
     antibodyId,
 }) => {
 
     const [modalInformation, setModalInformation] = useState(null);
-    const isEdit = modalInformation && !!modalInformation.zdbID;
+    const [modalError, setModalError] = useState(null);
 
     const {
         value: aliases,
@@ -23,30 +24,42 @@ const AntibodyEditAliases = ({
     } = useFetch(`/action/api/antibody/${antibodyId}/aliases`, {defaultValue: []});
 
     const {
-        pushFieldValue,
-        removeFieldValue,
         values,
         modalProps
     } = useAddEditDeleteForm({
         addUrl: `/action/api/antibody/${antibodyId}/aliases`,
-        editUrl: isEdit ? `/action/api/antibody/${antibodyId}/aliases/${modalInformation.markerRelationshipZdbId}` : '',
-        deleteUrl: isEdit ? `/action/api/antibody/${antibodyId}/aliases/${modalInformation.markerRelationshipZdbId}` : '',
         onSuccess: () => setModalInformation(null),
         items: aliases,
         setItems: setAliases,
         defaultValues: modalInformation,
     });
 
-    const formatRelationship = (alias, editLink) => {
+    const handleDeleteClick = async (event, alias) => {
+        event.preventDefault();
+
+        try {
+            await http.delete(`/action/api/antibody/${antibodyId}/aliases/${alias.name}/${alias.publicationZdbID}`);
+            setAliases(aliases.filter(item => !(item.name === alias.name && item.publicationZdbID === alias.publicationZdbID) ));
+        } catch (error) {
+            if (error?.responseJSON?.message) {
+                setModalError(error.responseJSON.message);
+            } else {
+                setModalError('Error deleting alias');
+            }
+        }
+    };
+
+    const formatRelationship = (alias) => {
         if (!alias) {
             return null;
         }
         return (
             <>
-                <span>TODO: put alias here</span>
-                {/*<EntityLink entity={alias}/>*/}
-                {/*{alias.numberOfPublications > 0 && <> ({alias.numberOfPublications})</>}*/}
-                {editLink}
+                <span>{alias.name}</span>
+                {alias.publicationZdbID && <> ({alias.publicationZdbID})</>}
+                <a className='show-on-hover px-1' href='#' onClick={(e) => handleDeleteClick(e, alias)}>
+                    <i className='fas fa-trash'/>
+                </a>
             </>
         );
     };
@@ -66,65 +79,61 @@ const AntibodyEditAliases = ({
             <AddEditList
                 items={aliases}
                 newItem={{
-                    abbreviation: '',
-                    attributionZdbIDs: [''],
+                    name: '',
+                    publicationZdbID: '',
                 }}
                 setModalItem={setModalInformation}
-                itemKeyProp='zdbID'
+                itemKeyProp='name'
                 formatItem={formatRelationship}
             />
 
-            <AddEditDeleteModal {...modalProps} header='Antigen Gene'>
+            <AddEditDeleteModal {...modalProps} header='Alias'>
                 {values &&
                 <>
                     <FormGroup
                         inputClassName={inputClass}
                         labelClassName={labelClass}
                         label='Alias'
-                        id='alias'
-                        field='alias'
+                        id='name'
+                        field='name'
+                        validate={value => {
+                            if (!value) {
+                                return 'Alias is required';
+                            }
+                            return false
+                        }}
                     />
                     <div className='form-group row'>
                         <label className={labelClass}>Citations</label>
                         <div className={inputClass}>
-                            {
-                                values.attributionZdbIDs.map((reference, idx) => (
-                                    <div key={idx} className={`d-flex align-items-baseline ${idx > 0 ? 'mt-2' : ''}`}>
-                                        <div className='flex-grow-1'>
-                                            <InputField
-                                                tag={PublicationInput}
-                                                field={`attributionZdbIDs.${idx}`}
-                                                validate={value => {
-                                                    if (!value) {
-                                                        return 'A publication ZDB ID is required';
-                                                    }
-                                                    return false
-                                                }}
-                                            />
-                                        </div>
-                                        <button
-                                            type='button'
-                                            onClick={() => removeFieldValue('attributionZdbIDs', idx)}
-                                            className='btn btn-link'
-                                        >
-                                            <i className='fas fa-times' />
-                                        </button>
-                                    </div>
-                                ))
-                            }
-                            <button
-                                type='button'
-                                className='btn btn-link px-0'
-                                onClick={() => pushFieldValue('attributionZdbIDs')}
-                            >
-                                Add Citation
-                            </button>
+                            <div className={'d-flex align-items-baseline}'}>
+                                <div className='flex-grow-1'>
+                                    <InputField
+                                        tag={PublicationInput}
+                                        field={'publicationZdbID'}
+                                        validate={value => {
+                                            if (!value) {
+                                                return 'A publication ZDB ID is required';
+                                            }
+                                            return false
+                                        }}
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </>
                 }
 
             </AddEditDeleteModal>
+
+            <Modal open={modalError !== null}>
+                <div className='popup-header'>Error</div>
+                <div className='popup-body show-overflow'>
+                    {modalError && <div className='error'>{modalError}</div>}
+                    <button className='btn btn-outline-secondary float-right' onClick={() => setModalError(null)} type='button'>Close</button>
+                </div>
+            </Modal>
         </>
     );
 };

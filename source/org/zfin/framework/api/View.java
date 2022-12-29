@@ -36,6 +36,9 @@ public class View {
     public static class AntibodyMarkerRelationshipAPI extends MarkerRelationshipAPI {
     }
 
+    public static class AntibodyAliasAPI extends API {
+    }
+
     public static class GeneExpressionAPI extends API {
     }
 
