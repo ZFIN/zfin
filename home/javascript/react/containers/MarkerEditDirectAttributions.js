@@ -13,7 +13,7 @@ import http from '../utils/http';
 import Modal from '../components/Modal';
 
 
-const MarkerDirectAttributions = ({
+const MarkerEditDirectAttributions = ({
     markerId,
 }) => {
 
@@ -121,8 +121,8 @@ const MarkerDirectAttributions = ({
     );
 };
 
-MarkerDirectAttributions.propTypes = {
+MarkerEditDirectAttributions.propTypes = {
     markerId: PropTypes.string,
 };
 
-export default MarkerDirectAttributions;
+export default MarkerEditDirectAttributions;
