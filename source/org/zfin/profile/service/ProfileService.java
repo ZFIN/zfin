@@ -4,6 +4,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.dialect.MariaDB53Dialect;
 import org.owasp.html.PolicyFactory;
 import org.owasp.html.Sanitizers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 import org.zfin.feature.FeaturePrefix;
@@ -29,6 +31,8 @@ import javax.validation.ConstraintViolationException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.zfin.repository.RepositoryFactory.getProfileRepository;
+
 /**
  *
  */
@@ -36,10 +40,12 @@ import java.util.stream.Collectors;
 public class ProfileService {
 
     public static final String SALT = "dedicated to George Streisinger";
+    public static final int BCRYPT_STRENGTH = 10;
     private static final PolicyFactory POLICY = Sanitizers.FORMATTING.and(Sanitizers.LINKS);
 
     private Logger logger = LogManager.getLogger(ProfileService.class);
-    private Md5PasswordEncoder encoder = new Md5PasswordEncoder();
+
+    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(BCRYPT_STRENGTH);
 
     @Autowired
     private BeanCompareService beanCompareService;
@@ -567,7 +573,7 @@ public class ProfileService {
     }
 
     public String encodePassword(String password) {
-        return encoder.encodePassword(password, ProfileService.SALT);
+        return encoder.encode(password);
     }
 
     public int findMembersEquals(int value, List<PersonMemberPresentation> labMembers) {
@@ -716,5 +722,38 @@ public class ProfileService {
         if (existingLab != null && !StringUtils.equals(lab.getZdbID(), existingLab.getZdbID())) {
             errors.rejectValue("name", "lab.name.duplicate", new String[]{existingLab.getZdbID()}, "");
         }
+    }
+
+    public static boolean isPasswordExpiredFor(String emailOrLogin, String password) {
+        Person person = getPersonByEmailOrLogin(emailOrLogin);
+        if (person != null) {
+            AccountInfo accountInfo = person.getAccountInfo();
+            if (accountInfo != null) {
+                String currentPasswordHash = accountInfo.getPassword();
+
+                //TODO: add "last_updated_password" field to zdb_submitters table and use that instead of complicated logic below
+                if (currentPasswordHash.contains("$2a$")) {
+                    //password was created after the move to bcrypt
+                    return false;
+                } else {
+                    return currentPasswordHash.equals(md5encode(password));
+                }
+            }
+        }
+        return false;
+    }
+
+    public static Person getPersonByEmailOrLogin(String emailOrLogin) {
+        Person person = getProfileRepository().getPersonByEmail(emailOrLogin);
+        if (person == null) {
+            person = getProfileRepository().getPersonByName(emailOrLogin);
+        }
+        return person;
+    }
+
+    public static String md5encode(String password) {
+        Md5PasswordEncoder encoder = new Md5PasswordEncoder();
+        String salt = "dedicated to George Streisinger";
+        return encoder.encodePassword(password, salt);
     }
 }

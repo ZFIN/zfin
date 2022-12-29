@@ -6,7 +6,8 @@ import java.util.NoSuchElementException;
 public enum FeatureFlagEnum {
     JBROWSE("jBrowse", false),
     CURATOR_JOB_POSTING("Curator Job Posting", true),
-    USE_NAVIGATION_COUNTER("Show Navigation Counter", false);
+    USE_NAVIGATION_COUNTER("Show Navigation Counter", false),
+    REQUIRE_MODERN_PASSWORD_HASH("Require Modern Password Hash", false);
 
     private String name;
     private boolean enabledByDefault;
