@@ -7,7 +7,8 @@ public enum FeatureFlagEnum {
     JBROWSE("jBrowse", false),
     CURATOR_JOB_POSTING("Curator Job Posting", true),
     USE_NAVIGATION_COUNTER("Show Navigation Counter", false),
-    REQUIRE_MODERN_PASSWORD_HASH("Require Modern Password Hash", false);
+    REQUIRE_MODERN_PASSWORD_HASH("Require Modern Password Hash", false),
+    CONVERT_MD5_HASH_ON_LOGIN("Convert MD5 Hash to Modern Hash On User Login", false);
 
     private String name;
     private boolean enabledByDefault;

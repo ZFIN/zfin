@@ -20,6 +20,8 @@ import org.zfin.properties.ZfinPropertiesEnum;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.Calendar;
+
 import static org.zfin.security.MigratingAuthenticationFailureHandler.LAST_USERNAME_ATTEMPTED;
 
 @Controller

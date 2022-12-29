@@ -6,6 +6,8 @@ import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.featureflag.FeatureFlagEnum;
+import org.zfin.framework.featureflag.FeatureFlags;
 import org.zfin.profile.AccountInfo;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
@@ -106,7 +108,21 @@ public class ApgAuthenticationSuccessHandler extends SavedRequestAwareAuthentica
     }
 
 
+    /**
+     * If configured to do so, after a successful login, we can automatically convert a user's password hash to
+     * a modern version.  If the password hash is already a modern hash, we don't do anything.
+     *
+     * @param request
+     * @param authentication
+     */
     private void storePasswordAsModernHashIfNecessary(HttpServletRequest request, Authentication authentication) {
+        if (
+                FeatureFlags.isFlagEnabled(FeatureFlagEnum.REQUIRE_MODERN_PASSWORD_HASH) ||
+                !FeatureFlags.isFlagEnabled(FeatureFlagEnum.CONVERT_MD5_HASH_ON_LOGIN)
+        ) {
+            return;
+        }
+
         if (authentication != null && authentication.isAuthenticated()) {
             String login = authentication.getName();
             String password = request.getParameter(UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_PASSWORD_KEY);
