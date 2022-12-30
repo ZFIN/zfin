@@ -34,7 +34,7 @@ public interface InfrastructureRepository {
 
     ActiveData getActiveData(String zdbID);
 
-    public ActiveSource getActiveSource(String zdbID);
+    ActiveSource getActiveSource(String zdbID);
 
     void deleteActiveData(ActiveData activeData);
 
@@ -97,8 +97,6 @@ public interface InfrastructureRepository {
     PublicationAttribution getPublicationAttributionByID(long publicationAttributionID);
 
     // TODO: RecordAttribution has a composite primary key, so not needed just yet
-
-    List<ActiveSource> getAllActiveSource(Set<String> zdbIDs);
 
     RecordAttribution insertRecordAttribution(String dataZdbID, String sourceZdbID);
 
@@ -259,7 +257,7 @@ public interface InfrastructureRepository {
      * @param termID term id
      * @return Generic Term
      */
-    public GenericTerm getTermByID(String termID);
+    GenericTerm getTermByID(String termID);
 
     /**
      * Retrieve a single term by name and a list of ontologies. Checks for all ontologies and picks the first one.
