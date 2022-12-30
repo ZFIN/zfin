@@ -725,19 +725,15 @@ public class ProfileService {
         }
     }
 
-    public static boolean isPasswordExpiredFor(String emailOrLogin, String password) {
+    public static boolean isPasswordDeprecatedFor(String emailOrLogin, String password) {
         Person person = getPersonByEmailOrLogin(emailOrLogin);
-        if (person != null) {
-            AccountInfo accountInfo = person.getAccountInfo();
-            if (accountInfo != null) {
-                String currentPasswordHash = accountInfo.getPassword();
-
-                if (currentPasswordHash.contains("$2a$")) {
-                    //password was created after the move to bcrypt
-                    return false;
-                } else {
-                    return currentPasswordHash.equals(md5Encode(password));
-                }
+        if (person != null && person.getAccountInfo() != null) {
+            String currentPasswordHash = person.getAccountInfo().getPassword();
+            if (passwordHashIsMd5Encoded(currentPasswordHash)) {
+                return currentPasswordHash.equals(md5Encode(password));
+            } else {
+                //password was created after the move to bcrypt
+                return false;
             }
         }
         return false;
@@ -754,5 +750,22 @@ public class ProfileService {
     public static String md5Encode(String password) {
         Md5PasswordEncoder encoder = new Md5PasswordEncoder();
         return encoder.encodePassword(password, MigratingPasswordEncoder.SALT);
+    }
+
+    /**
+     * Used to determine if a hash is md5
+     *
+     * @param passwordHash
+     * @return
+     */
+    public static boolean passwordHashIsMd5Encoded(String passwordHash) {
+        //check if passwordHash is md5 hash
+        if (passwordHash.length() == 32) {
+            try {
+                Long.parseLong(passwordHash, 16);
+                return true;
+            } catch (NumberFormatException e) {}
+        }
+        return false;
     }
 }

@@ -6,6 +6,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.zfin.framework.featureflag.FeatureFlagEnum;
 import org.zfin.framework.featureflag.FeatureFlags;
 
+import static org.zfin.profile.service.ProfileService.passwordHashIsMd5Encoded;
+
 public class MigratingPasswordEncoder implements PasswordEncoder {
     public static final int BCRYPT_ROUNDS = 15;
     public static final String SALT = "dedicated to George Streisinger";
@@ -19,7 +21,7 @@ public class MigratingPasswordEncoder implements PasswordEncoder {
     public boolean matches(CharSequence plainTextPassword, String passwordInDatabase) {
         try {
             //is the password in the database md5?
-            boolean isMd5 = !passwordInDatabase.contains("$2a$");
+            boolean isMd5 = passwordHashIsMd5Encoded(passwordInDatabase);
             if (isMd5 && !FeatureFlags.isFlagEnabled(FeatureFlagEnum.REQUIRE_MODERN_PASSWORD_HASH)) {
                 return (new Md5PasswordEncoder()).isPasswordValid(passwordInDatabase, plainTextPassword.toString(), SALT);
             } else if (isMd5) {
