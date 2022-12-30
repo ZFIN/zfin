@@ -371,6 +371,7 @@ public interface MarkerRepository {
 
     MarkerDBLink getMarkerDBLink(String linkId);
     String getABRegID(String zdbID);
+    List<String> getABRegIDs(String zdbID);
 
     List<LinkDisplay> getMarkerLinkDisplay(String dbLinkId);
 
@@ -488,7 +489,9 @@ public interface MarkerRepository {
      * @return
      */
     String getAccessionNumber(Marker marker, Database.AvailableAbbrev database);
-    int deleteMarkerDBLinks(ReferenceDatabase referenceDatabase, List<String> ids);
+    int deleteMarkerDBLinksNotInList(ReferenceDatabase referenceDatabase, List<String> ids);
+    int deleteMarkerDBLinksByIDList(ReferenceDatabase referenceDatabase, List<String> ids);
+
 
     List<LookupEntry> getMarkerSuggestionList(String lookupString, Marker.TypeGroup ...groups);
 

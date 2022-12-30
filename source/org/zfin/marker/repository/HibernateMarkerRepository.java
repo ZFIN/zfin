@@ -55,10 +55,7 @@ import org.zfin.sequence.blast.Database;
 import org.zfin.util.NumberAwareStringComparator;
 
 import javax.persistence.Tuple;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -2023,22 +2020,27 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     public String getABRegID(String zdbID) {
+        List<String> abregIDList = getABRegIDs(zdbID);
+        if (abregIDList == null || abregIDList.size() == 0) {
+            return null;
+        }
+        return abregIDList.get(0);
+    }
+
+    public List<String> getABRegIDs(String zdbID) {
         Session session = HibernateUtil.currentSession();
-        String hql = """
-                        SELECT
-                            accessionNumber
-                        FROM
-                            DBLink
-                        WHERE
-                            dataZdbID = :dataZdbID
-                            AND accessionNumber LIKE 'AB%'
-                        ORDER BY
-                            zdbID DESC
-                    """;
-        return session.createQuery(hql, String.class)
-                .setParameter("dataZdbID", zdbID)
-                .setMaxResults(1)
-                .uniqueResult();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<String> query = cb.createQuery(String.class);
+        Root<DBLink> root = query.from(DBLink.class);
+        query.select(root.get("accessionNumber"))
+                .where(
+                        cb.and(
+                                cb.equal(root.get("dataZdbID"), zdbID),
+                                cb.like(root.get("accessionNumber"), "AB%")
+                        )
+                )
+                .orderBy(cb.desc(root.get("accessionNumber")));
+        return session.createQuery(query).getResultList();
     }
 
     public List<LinkDisplay> getMarkerLinkDisplay(String dbLinkId) {
@@ -2800,24 +2802,21 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     @Override
-    public int deleteMarkerDBLinks(ReferenceDatabase referenceDatabase, List<String> ids) {
-        String hql = "from MarkerDBLink " +
-                "where referenceDatabase = :database " +
-                "and accessionNumber not in (:list) ";
-        Query<MarkerDBLink> query = HibernateUtil.currentSession().createQuery(hql, MarkerDBLink.class);
-        query.setParameter("database", referenceDatabase);
-        query.setParameter("list", ids);
-        List<MarkerDBLink> dbLinks = query.list();
+    public int deleteMarkerDBLinksNotInList(ReferenceDatabase referenceDatabase, List<String> ids) {
+        List<MarkerDBLink> dbLinks = getMarkerDBLinksNotInList(referenceDatabase, ids);
         if (CollectionUtils.isEmpty(dbLinks)) {
             return 0;
         }
-        String deleteSQL = "delete from ActiveData where zdbID = :id ";
-        dbLinks.forEach(markerDBLink -> {
-            HibernateUtil.currentSession().createQuery(deleteSQL)
-                    .setParameter("id", markerDBLink.getZdbID())
-                    .executeUpdate();
-        });
-        return dbLinks.size();
+        return deleteMarkerDBLinksFromList(dbLinks);
+    }
+
+    @Override
+    public int deleteMarkerDBLinksByIDList(ReferenceDatabase referenceDatabase, List<String> ids) {
+        List<MarkerDBLink> dbLinks = getMarkerDBLinksInList(referenceDatabase, ids);
+        if (CollectionUtils.isEmpty(dbLinks)) {
+            return 0;
+        }
+        return deleteMarkerDBLinksFromList(dbLinks);
     }
 
     @Override
@@ -3429,6 +3428,44 @@ public class HibernateMarkerRepository implements MarkerRepository {
         String hql = " select c.type from CloneProblem c ";
         Session session = currentSession();
         return session.createQuery(hql, String.class).list();
+    }
+
+    private int deleteMarkerDBLinksFromList(List<MarkerDBLink> dbLinks) {
+        List<String> ids = dbLinks.stream().map(MarkerDBLink::getZdbID).toList();
+        Session session = HibernateUtil.currentSession();
+
+        CriteriaDelete<ActiveData> delete = session.getCriteriaBuilder().createCriteriaDelete(ActiveData.class);
+        delete.where(delete.from(ActiveData.class).get("zdbID").in(ids));
+
+        return session.createQuery(delete).executeUpdate();
+    }
+
+    private List<MarkerDBLink> getMarkerDBLinksNotInList(ReferenceDatabase referenceDatabase, List<String> ids) {
+        Session session = currentSession();
+        CriteriaBuilder cb = HibernateUtil.currentSession().getCriteriaBuilder();
+        CriteriaQuery<MarkerDBLink> query = cb.createQuery(MarkerDBLink.class);
+        Root<MarkerDBLink> root = query.from(MarkerDBLink.class);
+        query.where(
+                cb.and(
+                        cb.equal(root.get("referenceDatabase"), referenceDatabase),
+                        root.get("accessionNumber").in(ids).not()
+                ));
+
+        return session.createQuery(query).getResultList();
+    }
+
+    private List<MarkerDBLink> getMarkerDBLinksInList(ReferenceDatabase referenceDatabase, List<String> ids) {
+        Session session = currentSession();
+        CriteriaBuilder cb = HibernateUtil.currentSession().getCriteriaBuilder();
+        CriteriaQuery<MarkerDBLink> query = cb.createQuery(MarkerDBLink.class);
+        Root<MarkerDBLink> root = query.from(MarkerDBLink.class);
+        query.where(
+                cb.and(
+                        cb.equal(root.get("referenceDatabase"), referenceDatabase),
+                        root.get("accessionNumber").in(ids)
+                ));
+
+        return session.createQuery(query).getResultList();
     }
 }
 

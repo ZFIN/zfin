@@ -73,7 +73,7 @@ public class AntibodyViewController {
         // set source
         antibodyBean.setSuppliers(markerRepository.getSuppliersForMarker(antibody.getZdbID()));
 
-        antibodyBean.setAbRegistryID(markerRepository.getABRegID(antibody.getZdbID()));
+        antibodyBean.setAbRegistryIDs(markerRepository.getABRegIDs(antibody.getZdbID()));
 
 //      CITATIONS
         antibodyBean.setNumPubs(getPublicationRepository().getNumberDirectPublications(antibody.getZdbID()));

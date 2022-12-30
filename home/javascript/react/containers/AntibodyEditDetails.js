@@ -22,7 +22,7 @@ const AntibodyEditDetails = ({
     } = useFetch(`/action/api/antibody/${antibodyId}/details`, {
         defaultValue: {
             name: '',
-            abregistryID: '',
+            abregistryIDs: '',
             hostSpecies: '',
             immunogenSpecies: '',
             heavyChainIsotype: '',
@@ -92,8 +92,8 @@ const AntibodyEditDetails = ({
 
             <FormGroup
                 label='Antibody Registry ID'
-                field='abregistryID'
-                id='abregistryID'
+                field='abregistryIDs'
+                id='abregistryIDs'
             />
 
             <FormGroup

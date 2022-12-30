@@ -39,7 +39,7 @@ public class Antibody extends Marker {
 
     @JsonView(View.AntibodyDetailsAPI.class)
     @Transient
-    private String abregistryID;
+    private String abregistryIDs;
 
     /**
      * @param expressionExperiment Antibody label to compare.
