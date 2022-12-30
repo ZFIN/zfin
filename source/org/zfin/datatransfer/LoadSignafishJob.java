@@ -84,13 +84,13 @@ public class LoadSignafishJob extends AbstractValidateDataReportTask {
                 ForeignDBDataType.SuperType.SUMMARY_PAGE,
                 Species.Type.ZEBRAFISH);
 
-        int numberOfDefeletedIds = getMarkerRepository().deleteMarkerDBLinks(signafishDb, geneIdList);
+        int numberOfDeletedIds = getMarkerRepository().deleteMarkerDBLinksNotInList(signafishDb, geneIdList);
         getMarkerRepository().addMarkerDBLinks(signafishDb, geneIdList);
         ReportGenerator rg = new ReportGenerator();
         rg.setReportTitle("Report for " + jobName);
         rg.includeTimestamp();
         rg.addIntroParagraph("With this load there are now " + getMarkerRepository().getSignafishLinkCount(signafishDb) + " Signafish links in total.");
-        rg.addIntroParagraph("Deleted Records: " +numberOfDefeletedIds);
+        rg.addIntroParagraph("Deleted Records: " +numberOfDeletedIds);
         rg.writeFiles(new File(dataDirectory, jobName), "signafish-report");
     }
 

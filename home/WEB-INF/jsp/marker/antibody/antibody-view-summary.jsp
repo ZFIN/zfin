@@ -47,9 +47,13 @@
     </z:attributeListItem>
 
     <z:attributeListItem label="Antibody Registry ID">
-        <z:ifHasData test="${formBean.abRegistryID != null}" noDataMessage="None">
-            <c:set var="url">http://antibodyregistry.org/search.php?q=${formBean.abRegistryID}</c:set>
-            <zfin2:externalLink href="${url}">${formBean.abRegistryID}</zfin2:externalLink>
+        <z:ifHasData test="${formBean.abRegistryIDs != null && formBean.abRegistryIDs.size() > 0}" noDataMessage="None">
+            <ul class="comma-separated">
+            <c:forEach var="abreg" items="${formBean.abRegistryIDs}">
+                <c:set var="url">http://antibodyregistry.org/search.php?q=${abreg}</c:set>
+                <li><zfin2:externalLink href="${url}">${abreg}</zfin2:externalLink></li>
+            </c:forEach>
+            </ul>
         </z:ifHasData>
     </z:attributeListItem>
 

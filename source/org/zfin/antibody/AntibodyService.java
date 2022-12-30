@@ -96,6 +96,26 @@ public class AntibodyService {
         }
     }
 
+    public static void setABRegistryIDs(Antibody antibody, String newRegistryIDs){
+        List<String> listOfIDs = List.of(newRegistryIDs.split("\\s*,\\s*"));
+        List<String> existingIDs = getMarkerRepository().getABRegIDs(antibody.getZdbID());
+        ReferenceDatabase refDB = getSequenceRepository().getReferenceDatabase(ForeignDB.AvailableName.ABREGISTRY, ForeignDBDataType.DataType.OTHER, ForeignDBDataType.SuperType.SUMMARY_PAGE, Species.Type.ZEBRAFISH);
+
+        List<String> toDelete = new ArrayList<>(CollectionUtils.subtract(existingIDs, listOfIDs));
+        List<String> toAdd =  new ArrayList<>(CollectionUtils.subtract(listOfIDs, existingIDs));
+
+        int count = getMarkerRepository().deleteMarkerDBLinksByIDList(refDB, toDelete);
+
+        for(String newRegistryID : toAdd) {
+            MarkerDBLink mdb = new MarkerDBLink();
+            mdb.setMarker(antibody);
+            mdb.setAccessionNumber(newRegistryID);
+            mdb.setAccessionNumberDisplay(newRegistryID);
+            mdb.setReferenceDatabase(refDB);
+            HibernateUtil.currentSession().save(mdb);
+        }
+    }
+
     public List<Term> getDistinctAnatomyTerms() {
         List<Term> distinctAoTerms = new ArrayList<>();
         Set<ExpressionExperiment> labelings = antibody.getAntibodyLabelings();
