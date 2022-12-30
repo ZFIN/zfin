@@ -107,6 +107,17 @@ public class ExpressionTableRow {
             builder.append(start.getZdbID());
         if (end != null)
             builder.append(end.getZdbID());
+        if (experiment != null)
+            builder.append(experiment.getZdbID());
+        if (assay != null)
+            builder.append(assay.getAbbreviation());
+        if (figure != null)
+            builder.append(figure.getZdbID());
+        if (entity != null && entity.getSuperterm() != null)
+            builder.append(entity.getSuperterm().getZdbID());
+        if (entity != null && entity.getSubterm() != null)
+            builder.append(entity.getSubterm().getZdbID());
+
         return builder.toString();
     }
 }
