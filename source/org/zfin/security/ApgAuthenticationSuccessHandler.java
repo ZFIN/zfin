@@ -8,6 +8,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.featureflag.FeatureFlagEnum;
 import org.zfin.framework.featureflag.FeatureFlags;
+import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.profile.AccountInfo;
 import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
@@ -24,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
 
+import static org.zfin.profile.service.ProfileService.passwordHashIsMd5Encoded;
 import static org.zfin.repository.RepositoryFactory.getProfileRepository;
 
 /**
@@ -123,30 +125,33 @@ public class ApgAuthenticationSuccessHandler extends SavedRequestAwareAuthentica
             return;
         }
 
-        if (authentication != null && authentication.isAuthenticated()) {
-            String login = authentication.getName();
-            String password = request.getParameter(UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_PASSWORD_KEY);
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return;
+        }
 
-            Person person = getProfileRepository().getPersonByName(login);
-            if (person != null) {
-                AccountInfo accountInfo = person.getAccountInfo();
-                if (accountInfo != null) {
-                    String currentPasswordHash = accountInfo.getPassword();
+        String login = authentication.getName();
+        String password = request.getParameter(UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_PASSWORD_KEY);
 
-                    if (currentPasswordHash.contains("$2a$")) {
-                        //password was created after the move to bcrypt
-                        return;
-                    } else {
-                        try {
-                            HibernateUtil.createTransaction();
-                            (new ProfileService()).updatePassword(person, password);
-                            HibernateUtil.flushAndCommitCurrentSession();
-                        } catch (Exception e) {
-                            //ignore
-                        }
-                    }
-                }
-            }
+        if (StringUtils.isEmpty(password)) {
+            return;
+        }
+
+        Person person = getProfileRepository().getPersonByName(login);
+        if (person == null ||  person.getAccountInfo() == null) {
+            return;
+        }
+
+        String currentPasswordHash = person.getAccountInfo().getPassword();
+        if (!passwordHashIsMd5Encoded(currentPasswordHash)) {
+            return;
+        }
+
+        try {
+            HibernateUtil.createTransaction();
+            (new ProfileService()).updatePassword(person, password);
+            HibernateUtil.flushAndCommitCurrentSession();
+        } catch (Exception e) {
+            //ignore
         }
     }
 

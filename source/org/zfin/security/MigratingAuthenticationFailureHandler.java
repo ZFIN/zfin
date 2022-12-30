@@ -1,6 +1,5 @@
 package org.zfin.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -11,7 +10,6 @@ import org.zfin.profile.service.ProfileService;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 public class MigratingAuthenticationFailureHandler
@@ -25,20 +23,18 @@ public class MigratingAuthenticationFailureHandler
             AuthenticationException exception)
             throws IOException, ServletException {
 
-        handleRedirectForExpiredPassword(request, response);
+        handleRedirectForExpiredPassword(request);
         super.onAuthenticationFailure(request, response, exception);
 
     }
 
     /**
      * If the user's password has expired, redirect them to the change password page.
-     * @param response
-     * @return
      */
-    private void handleRedirectForExpiredPassword(HttpServletRequest request, HttpServletResponse response) {
+    private void handleRedirectForExpiredPassword(HttpServletRequest request) {
         String username = request.getParameter(UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_USERNAME_KEY);
         String password = request.getParameter(UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_PASSWORD_KEY);
-        if (FeatureFlags.isFlagEnabled(FeatureFlagEnum.REQUIRE_MODERN_PASSWORD_HASH) && ProfileService.isPasswordExpiredFor(username, password)) {
+        if (FeatureFlags.isFlagEnabled(FeatureFlagEnum.REQUIRE_MODERN_PASSWORD_HASH) && ProfileService.isPasswordDeprecatedFor(username, password)) {
             request.getSession().setAttribute(LAST_USERNAME_ATTEMPTED, username);
             setDefaultFailureUrl("/action/profile/expired-password");
         } else {
