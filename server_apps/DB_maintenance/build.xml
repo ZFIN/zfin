@@ -217,6 +217,17 @@
         </java>
     </target>
 
+    <target name="load-author-names" description="">
+        <java classname="org.zfin.datatransfer.LoadCompleteAuthorNames" fork="yes"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="${web-inf.dir}/zfin.properties"/>
+            <arg value="${validateData}/report_data"/>
+            <arg value="${jobName}"/>
+            <jvmarg value="${jvm.arg.log4j}"/>
+        </java>
+    </target>
+
     <target name="student-metrics" description="">
         <java classname="org.zfin.curation.presentation.StudentMetricsJob" fork="yes"
               classpathref="extended.classpath"
