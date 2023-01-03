@@ -6,6 +6,7 @@ import org.zfin.antibody.Antibody;
 import org.zfin.antibody.presentation.AntibodySearchCriteria;
 import org.zfin.expression.Figure;
 import org.zfin.expression.FigureType;
+import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
@@ -146,11 +147,11 @@ public interface AntibodyRepository {
 
 	int getAntibodyCount(Term anatomyItem, boolean includeSubstructure);
 
-	int getProbeCount(Term aoTerm, boolean includeSubstructures);
+	int getProbeCount(Term aoTerm, boolean includeSubstructures, Pagination pagination);
 
 	List<String> getPaginatedAntibodyIds(Term aoTerm, boolean includeSubstructures);
 
-	List<String> getPaginatedHighQualityProbeIds(Term aoTerm, boolean includeSubstructures);
+	List<String> getPaginatedHighQualityProbeIds(Term aoTerm, boolean includeSubstructures, Pagination pagination);
 
 	/**
 	 * Retrieve all antibodies sorted by name.

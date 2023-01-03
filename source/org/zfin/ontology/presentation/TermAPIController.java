@@ -13,6 +13,7 @@ import org.zfin.framework.api.Pagination;
 import org.zfin.framework.api.View;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.marker.MarkerStatistic;
 import org.zfin.marker.presentation.ExpressedGeneDisplay;
 import org.zfin.marker.presentation.HighQualityProbe;
@@ -72,6 +73,9 @@ public class TermAPIController {
     @RequestMapping(value = "/{termID}/inSituProbes", method = RequestMethod.GET)
     public JsonResultResponse<HighQualityProbe> getInSituProbes(@PathVariable String termID,
                                                                 @RequestParam(value = "directAnnotation", required = false, defaultValue = "false") boolean directAnnotation,
+                                                                @RequestParam(value = "filter.geneName", required = false) String filterName,
+                                                                @RequestParam(value = "filter.probeName", required = false) String filterProbeName,
+                                                                @RequestParam(value = "filter.termName", required = false) String filterTermName,
                                                                 @Version Pagination pagination) {
 
         HibernateUtil.createTransaction();
@@ -80,7 +84,15 @@ public class TermAPIController {
         GenericTerm term = ontologyRepository.getTermByZdbID(termID);
         if (term == null)
             return response;
-
+        if (StringUtils.isNotEmpty(filterName)) {
+            pagination.addToFilterMap("gene.abbreviation", filterName);
+        }
+        if (StringUtils.isNotEmpty(filterProbeName)) {
+            pagination.addToFilterMap("probe.abbreviation", filterProbeName);
+        }
+        if (StringUtils.isNotEmpty(filterTermName)) {
+            pagination.addToFilterMap("subterm.termName", filterTermName);
+        }
         AnatomySearchBean form = new AnatomySearchBean();
         form.setAoTerm(term);
         retrieveHighQualityProbeData(term, form, pagination, directAnnotation);
@@ -291,19 +303,16 @@ public class TermAPIController {
     }
 
     private void retrieveHighQualityProbeData(GenericTerm aoTerm, AnatomySearchBean form, Pagination pagi, boolean directAnnotation) {
-        PaginationBean pagination = new PaginationBean();
-        pagination.setMaxDisplayRecords(pagi.getLimit());
-        pagination.setPageInteger(pagi.getPage());
-        PaginationResult<HighQualityProbe> antibodies = AnatomyService.getHighQualityProbeStatistics(aoTerm, pagination, !directAnnotation);
+        PaginationResult<HighQualityProbe> antibodies = AnatomyService.getHighQualityProbeStatistics(aoTerm, pagi, !directAnnotation);
         form.setHighQualityProbeGenes(antibodies.getPopulatedResults());
         form.setNumberOfHighQualityProbes(antibodies.getTotalCount());
         // if direct annotations are empty check for included ones
         if (directAnnotation) {
-            int totalCount = RepositoryFactory.getAntibodyRepository().getProbeCount(aoTerm, true);
+            int totalCount = RepositoryFactory.getAntibodyRepository().getProbeCount(aoTerm, true, pagi);
             form.setCountDirect(antibodies.getTotalCount());
             form.setCountIncludingChildren(totalCount);
         } else {
-            int totalCount = RepositoryFactory.getAntibodyRepository().getProbeCount(aoTerm, false);
+            int totalCount = RepositoryFactory.getAntibodyRepository().getProbeCount(aoTerm, false, pagi);
             form.setCountIncludingChildren(antibodies.getTotalCount());
             form.setCountDirect(totalCount);
         }
