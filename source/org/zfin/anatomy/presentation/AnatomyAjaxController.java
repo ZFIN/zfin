@@ -15,6 +15,7 @@ import org.zfin.database.DbSystemUtil;
 import org.zfin.expression.FigureService;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
@@ -213,8 +214,8 @@ public class AnatomyAjaxController {
 
     private void retrieveAntibodyData(GenericTerm aoTerm, AnatomySearchBean form) {
 
-        PaginationBean pagination = new PaginationBean();
-        pagination.setMaxDisplayRecords(AnatomySearchBean.MAX_NUMBER_GENOTYPES);
+        Pagination pagination = new Pagination();
+        pagination.setLimit(AnatomySearchBean.MAX_NUMBER_GENOTYPES);
         PaginationResult<AntibodyStatistics> antibodies = AnatomyService.getAntibodyStatistics(aoTerm, pagination, false);
         form.setAntibodyStatistics(antibodies.getPopulatedResults());
         form.setAntibodyCount(antibodies.getTotalCount());

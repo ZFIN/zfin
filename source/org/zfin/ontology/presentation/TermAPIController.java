@@ -49,6 +49,9 @@ public class TermAPIController {
     @RequestMapping(value = "/{termID}/antibodies", method = RequestMethod.GET)
     public JsonResultResponse<AntibodyStatistics> getLabeledAntibodies(@PathVariable String termID,
                                                                        @RequestParam(value = "directAnnotation", required = false, defaultValue = "false") boolean directAnnotation,
+                                                                       @RequestParam(value = "filter.geneName", required = false) String filterGeneName,
+                                                                       @RequestParam(value = "filter.antibodyName", required = false) String filterAntibodyName,
+                                                                       @RequestParam(value = "filter.termName", required = false) String filterTermName,
                                                                        @Version Pagination pagination) {
 
         HibernateUtil.createTransaction();
@@ -58,6 +61,17 @@ public class TermAPIController {
         if (term == null)
             return response;
 
+        if (term == null)
+            return response;
+        if (StringUtils.isNotEmpty(filterGeneName)) {
+            pagination.addToFilterMap("gene.abbreviation", filterGeneName);
+        }
+        if (StringUtils.isNotEmpty(filterAntibodyName)) {
+            pagination.addToFilterMap("antibody.abbreviation", filterAntibodyName);
+        }
+        if (StringUtils.isNotEmpty(filterTermName)) {
+            pagination.addToFilterMap("subterm.termName", filterTermName);
+        }
         AnatomySearchBean form = new AnatomySearchBean();
         form.setAoTerm(term);
         retrieveAntibodyData(term, form, pagination, directAnnotation);
@@ -287,16 +301,16 @@ public class TermAPIController {
         PaginationBean pagination = new PaginationBean();
         pagination.setMaxDisplayRecords(pagi.getLimit());
         pagination.setPageInteger(pagi.getPage());
-        PaginationResult<org.zfin.mutant.presentation.AntibodyStatistics> antibodies = AnatomyService.getAntibodyStatistics(aoTerm, pagination, !directAnnotation);
+        PaginationResult<org.zfin.mutant.presentation.AntibodyStatistics> antibodies = AnatomyService.getAntibodyStatistics(aoTerm, pagi, !directAnnotation);
         form.setAntibodyStatistics(antibodies.getPopulatedResults());
         form.setAntibodyCount(antibodies.getTotalCount());
         // if direct annotations are empty check for included ones
         if (directAnnotation) {
-            int totalCount = RepositoryFactory.getAntibodyRepository().getAntibodyCount(aoTerm, true);
+            int totalCount = RepositoryFactory.getAntibodyRepository().getAntibodyCount(aoTerm, true, pagi);
             form.setCountDirect(antibodies.getTotalCount());
             form.setCountIncludingChildren(totalCount);
         } else {
-            int totalCount = RepositoryFactory.getAntibodyRepository().getAntibodyCount(aoTerm, false);
+            int totalCount = RepositoryFactory.getAntibodyRepository().getAntibodyCount(aoTerm, false, pagi);
             form.setCountIncludingChildren(antibodies.getTotalCount());
             form.setCountDirect(totalCount);
         }

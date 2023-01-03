@@ -15,16 +15,19 @@ const TermAntibodyTable = ({termId, directAnnotationOnly}) => {
         {
             label: 'Antibody',
             content: ({antibody}) => <EntityLink entity={antibody}/>,
+            filterName: 'antibodyName',
             width: '150px',
         },
         {
             label: 'Gene',
             content: ({genes}) => <EntityList entities={genes}/>,
+            filterName: 'geneName',
             width: '120px',
         },
         {
             label: 'Term',
             content: ({term}) => <EntityLink entity={term}/>,
+            filterName: 'termName',
             width: '120px',
         },
         {
