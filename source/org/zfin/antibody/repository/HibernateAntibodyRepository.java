@@ -540,8 +540,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
                 " LEFT JOIN FETCH stat.publication " +
                 " LEFT JOIN FETCH stat.antibody " +
                 "     where stat.superterm = :term" +
-                "           AND stat.antibody.zdbID in (:abIds) " +
-                "           order by lower(stat.antibody.name) ";
+                "           AND stat.antibody.zdbID in (:abIds) ";
         } else {
             hql = " select distinct stat, lower(stat.antibody.name) from AntibodyAOStatistics stat " +
                 " LEFT JOIN FETCH stat.figure " +
@@ -550,18 +549,28 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
                 " LEFT JOIN FETCH stat.antibody " +
                 "     where (stat.superterm = :term AND " +
                 "           stat.subterm = :term)  " +
-                "           AND stat.antibody.zdbID in (:abIds) " +
-                "           order by lower(stat.antibody.name) ";
+                "           AND stat.antibody.zdbID in (:abIds) ";
         }
+        if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
+            for (Map.Entry<String, String> entry : pagination.getFilterMap().entrySet()) {
+                hql += " AND lower(stat." + entry.getKey() + ") like :" + entry.getKey().replace(".", "") + " ";
+            }
+        }
+        hql += "           order by lower(stat.antibody.name) ";
 
         org.hibernate.query.Query<Object[]> query = HibernateUtil.currentSession().createQuery(hql, Object[].class);
         query.setParameter("term", aoTerm);
         query.setParameterList("abIds", termIDs);
+        if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
+            for (Map.Entry<String, String> entry : pagination.getFilterMap().entrySet()) {
+                query.setParameter(entry.getKey().replace(".", ""), "%" + entry.getValue().toLowerCase() + "%");
+            }
+        }
         List<Object[]> resultList = query.list();
 
         List<AntibodyStatistics> list = new ArrayList<>();
         resultList.stream().map(objects -> (AntibodyAOStatistics) objects[0]).toList()
-            .forEach(antibodyStat -> populateAntibodyStatisticsRecord(antibodyStat, list, aoTerm));
+            .forEach(antibodyStat -> populateAntibodyStatisticsRecord(antibodyStat, list, antibodyStat.getSubterm()));
         return list;
     }
 
@@ -612,7 +621,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     }
 
     @Override
-    public int getAntibodyCount(Term aoTerm, boolean includeSubstructures) {
+    public int getAntibodyCount(Term aoTerm, boolean includeSubstructures, Pagination pagination) {
         String hql;
         if (includeSubstructures) {
             hql = "select count(distinct stat.antibody) " +
@@ -624,8 +633,18 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
                 "     where (stat.superterm = :aoterm AND " +
                 "           stat.subterm = :aoterm) ";
         }
+        if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
+            for (Map.Entry<String, String> entry : pagination.getFilterMap().entrySet()) {
+                hql += " AND lower(stat." + entry.getKey() + ") like :" + entry.getKey().replace(".", "");
+            }
+        }
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("aoterm", aoTerm);
+        if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
+            for (Map.Entry<String, String> entry : pagination.getFilterMap().entrySet()) {
+                query.setParameter(entry.getKey().replace(".", ""), "%" + entry.getValue().toLowerCase() + "%");
+            }
+        }
         return ((Number) query.uniqueResult()).intValue();
     }
 
@@ -658,24 +677,34 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     }
 
     @Override
-    public List<String> getPaginatedAntibodyIds(Term aoTerm, boolean includeSubstructures) {
+    public List<String> getPaginatedAntibodyIds(Term aoTerm, boolean includeSubstructures, Pagination pagination) {
         String hql;
         if (includeSubstructures) {
             hql = "select stat.antibody.zdbID, stat.antibody.abbreviationOrder " +
                 "     from AntibodyAOStatistics stat " +
-                "     where stat.superterm = :aoterm " +
-                "           group by stat.antibody.zdbID, stat.antibody.abbreviationOrder " +
-                "           order by 2 ";
+                "     where stat.superterm = :aoterm ";
         } else {
             hql = "select stat.antibody.zdbID, stat.antibody.abbreviationOrder " +
                 "     from AntibodyAOStatistics stat " +
                 "     where stat.superterm = :aoterm and " +
-                "           stat.subterm = :aoterm  " +
-                "           group by stat.antibody.zdbID, stat.antibody.abbreviationOrder " +
-                "           order by 2 ";
+                "           stat.subterm = :aoterm  ";
         }
+        if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
+            for (Map.Entry<String, String> entry : pagination.getFilterMap().entrySet()) {
+                hql += " AND lower(stat." + entry.getKey() + ") like :" + entry.getKey().replace(".", "") + " ";
+            }
+        }
+        hql += """
+            group by stat.antibody.zdbID, stat.antibody.abbreviationOrder
+            order by 2
+             """;
         org.hibernate.query.Query<Object[]> query = HibernateUtil.currentSession().createQuery(hql, Object[].class);
         query.setParameter("aoterm", aoTerm);
+        if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
+            for (Map.Entry<String, String> entry : pagination.getFilterMap().entrySet()) {
+                query.setParameter(entry.getKey().replace(".", ""), "%" + entry.getValue().toLowerCase() + "%");
+            }
+        }
         return query.list().stream().map(objects -> (String) objects[0]).collect(toList());
     }
 

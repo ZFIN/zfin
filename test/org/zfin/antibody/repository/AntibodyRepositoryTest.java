@@ -16,6 +16,7 @@ import org.zfin.expression.Assay;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.expression.Figure;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.ActiveData;
@@ -859,8 +860,8 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         term.setZdbID("ZDB-TERM-100331-100");
         term.setTermName(aoTermName);
 
-        PaginationBean pagination = new PaginationBean();
-        pagination.setMaxDisplayRecords(5);
+        Pagination pagination = new Pagination();
+        pagination.setLimit(5);
         // without substructures
         PaginationResult<AntibodyStatistics> result = AnatomyService.getAntibodyStatistics(term, pagination, false);
         assertNotNull(result);

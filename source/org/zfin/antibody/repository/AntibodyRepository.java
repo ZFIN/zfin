@@ -145,11 +145,11 @@ public interface AntibodyRepository {
 
 	List<HighQualityProbe> getProbeStatisticsPaginated(GenericTerm aoTerm, PaginationBean pagination, List<String> termIDs, boolean includeSubstructures);
 
-	int getAntibodyCount(Term anatomyItem, boolean includeSubstructure);
+	int getAntibodyCount(Term anatomyItem, boolean includeSubstructure, Pagination pagination);
 
 	int getProbeCount(Term aoTerm, boolean includeSubstructures, Pagination pagination);
 
-	List<String> getPaginatedAntibodyIds(Term aoTerm, boolean includeSubstructures);
+	List<String> getPaginatedAntibodyIds(Term aoTerm, boolean includeSubstructures, Pagination pagination);
 
 	List<String> getPaginatedHighQualityProbeIds(Term aoTerm, boolean includeSubstructures, Pagination pagination);
 
