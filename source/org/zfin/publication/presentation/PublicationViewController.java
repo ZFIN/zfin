@@ -60,7 +60,8 @@ import static org.zfin.util.servlet.ServletService.isAuthenticated;
 
 @Controller
 @RequestMapping("/publication")
-public class PublicationViewController {
+public class
+PublicationViewController {
 
     private Logger logger = LogManager.getLogger(PublicationViewController.class);
 

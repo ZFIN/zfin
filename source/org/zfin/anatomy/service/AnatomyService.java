@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.presentation.StagePresentation;
 import org.zfin.expression.ExpressionResult;
+import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.presentation.HighQualityProbe;
@@ -46,21 +47,26 @@ public class AnatomyService {
 	}
 
 	public static PaginationResult<HighQualityProbe> getHighQualityProbeStatistics(GenericTerm aoTerm,
-																				   PaginationBean pagination,
+																				   Pagination pagination,
 																				   boolean includeSubstructures) {
-		int totalCount = RepositoryFactory.getAntibodyRepository().getProbeCount(aoTerm, includeSubstructures);
-		List<String> totalIds = RepositoryFactory.getAntibodyRepository().getPaginatedHighQualityProbeIds(aoTerm, includeSubstructures);
+		PaginationBean paginationBean = new PaginationBean();
+		paginationBean.setMaxDisplayRecords(pagination.getLimit());
+		paginationBean.setPageInteger(pagination.getPage());
+		paginationBean.setFilterMap(pagination.getFilterMap());
+
+		int totalCount = RepositoryFactory.getAntibodyRepository().getProbeCount(aoTerm, includeSubstructures, pagination);
+		List<String> totalIds = RepositoryFactory.getAntibodyRepository().getPaginatedHighQualityProbeIds(aoTerm, includeSubstructures, pagination);
 		// if no antibodies found return here
 		if (totalCount == 0)
 			return new PaginationResult<>(0, null);
 
 		//set paginated antibodyIDs
 		List<String> paginatedAntibodyIDs = totalIds.stream()
-			.skip(pagination.getFirstRecord() - 1)
-			.limit(pagination.getMaxDisplayRecordsInteger())
+			.skip(paginationBean.getFirstRecord() - 1)
+			.limit(paginationBean.getMaxDisplayRecordsInteger())
 			.collect(Collectors.toList());
 
-		List<HighQualityProbe> list = RepositoryFactory.getAntibodyRepository().getProbeStatisticsPaginated(aoTerm, pagination, paginatedAntibodyIDs, includeSubstructures);
+		List<HighQualityProbe> list = RepositoryFactory.getAntibodyRepository().getProbeStatisticsPaginated(aoTerm, paginationBean, paginatedAntibodyIDs, includeSubstructures);
 		return new PaginationResult<>(totalCount, list);
 	}
 
