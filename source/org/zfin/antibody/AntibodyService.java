@@ -12,6 +12,8 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.MatchingText;
 import org.zfin.framework.presentation.MatchingTextType;
 import org.zfin.infrastructure.DataAlias;
+import org.zfin.infrastructure.InfrastructureService;
+import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerRelationship;
@@ -23,6 +25,7 @@ import org.zfin.ontology.Ontology;
 import org.zfin.ontology.PostComposedEntity;
 import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
+import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.sequence.MarkerDBLink;
@@ -836,5 +839,53 @@ public class AntibodyService {
             markerRepository.addDataAliasAttribution(dataAlias, publication, marker);
         }
     }
+
+    /**
+     * For removing an alias name/publication from an antibody.  If the pair is unique, we remove the alias completely
+     * If there are multiple publications for that alias for the antibody, we simply remove the attribution.
+     *
+     * @param antibodyZdbId
+     * @param aliasName
+     * @param publicationId
+     */
+    public static void removeDataAliasAttributionAndAliasIfUnique(String antibodyZdbId, String aliasName, String publicationId) {
+        Marker marker = getMarkerRepository().getMarkerByID(antibodyZdbId);
+        DataAlias dataAlias = getMarkerRepository().getSpecificDataAlias(marker, aliasName);
+
+        List<RecordAttribution> attributions = getInfrastructureRepository().getRecordAttributions(dataAlias.getZdbID());
+
+        if (attributions.size() == 1 && StringUtils.equals(attributions.get(0).getSourceZdbID(), publicationId)) {
+            removeDataAliasRelatedEntity(antibodyZdbId, aliasName, publicationId);
+        } else if (attributions.size() > 1) {
+            removeDataAliasAttribution(antibodyZdbId, aliasName, publicationId);
+        }
+
+    }
+
+    /**
+     * Delete a dataAlias
+     * Same logic as MarkerRPCServiceImpl::removeDataAliasRelatedEntity
+     *
+     */
+    public static void removeDataAliasRelatedEntity(String antibodyZdbId, String aliasName, String publicationId) {
+        Marker marker = getMarkerRepository().getMarkerByID(antibodyZdbId);
+        Publication publication = null;
+        if (StringUtils.isNotEmpty(publicationId)) {
+            publication = RepositoryFactory.getPublicationRepository().getPublication(publicationId);
+        }
+        MarkerAlias dataAlias = getMarkerRepository().getSpecificDataAlias(marker, aliasName);
+        InfrastructureService.insertUpdate(marker, "Removed alias: " + dataAlias.getAlias() + "' attributed to publication: '"
+                + (publication == null ? "null" : publication.getZdbID()) + "'");
+        getMarkerRepository().deleteMarkerAlias(marker, dataAlias);
+    }
+
+    public static void removeDataAliasAttribution(String antibodyZdbId, String aliasName, String publicationId) {
+        Marker marker = getMarkerRepository().getMarkerByID(antibodyZdbId);
+        DataAlias dataAlias = getMarkerRepository().getSpecificDataAlias(marker, aliasName);
+
+        getInfrastructureRepository().deleteRecordAttribution(dataAlias.getZdbID(), publicationId);
+        InfrastructureService.insertUpdate(marker, "Removed attribution: '" + publicationId + "' from alias: '" + aliasName + "'");
+    }
+
 
 }
