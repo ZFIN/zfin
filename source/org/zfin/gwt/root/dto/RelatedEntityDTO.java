@@ -14,8 +14,11 @@ import java.util.List;
 public class RelatedEntityDTO implements IsSerializable, HasLink, Comparable , Serializable {
 
     // data
+    @JsonView(View.AntibodyAliasAPI.class)
     protected String zdbID ;  // the primary key of this object
+    @JsonView(View.AntibodyAliasAPI.class)
     protected String dataZdbID; // the attached value
+    @JsonView(View.AntibodyAliasAPI.class)
     protected String publicationZdbID;
     protected PublicationDTO publication;
     protected List<PublicationDTO> associatedPublications;
