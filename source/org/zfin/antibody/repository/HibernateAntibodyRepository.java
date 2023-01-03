@@ -1,5 +1,6 @@
 package org.zfin.antibody.repository;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.ScrollableResults;
@@ -19,6 +20,7 @@ import org.zfin.antibody.presentation.AntibodyAOStatistics;
 import org.zfin.antibody.presentation.AntibodySearchCriteria;
 import org.zfin.expression.Figure;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
@@ -34,6 +36,7 @@ import org.zfin.util.FilterType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
 import static org.hibernate.criterion.Restrictions.eq;
@@ -574,8 +577,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
                 " LEFT JOIN FETCH stat.publication " +
                 " LEFT JOIN FETCH stat.probe " +
                 "     where stat.superterm = :term" +
-                "           AND stat.gene.zdbID in (:geneIds) " +
-                "           order by lower(stat.gene.name) ";
+                "           AND stat.gene.zdbID in (:geneIds) ";
         } else {
             hql = " select distinct stat, lower(stat.gene.name) from HighQualityProbeAOStatistics stat " +
                 " LEFT JOIN FETCH stat.figure " +
@@ -584,18 +586,28 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
                 " LEFT JOIN FETCH stat.probe " +
                 "     where (stat.superterm = :term AND " +
                 "           stat.subterm = :term)  " +
-                "           AND stat.gene.zdbID in (:geneIds) " +
-                "           order by lower(stat.gene.name) ";
+                "           AND stat.gene.zdbID in (:geneIds) ";
         }
+        if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
+            for (Map.Entry<String, String> entry : pagination.getFilterMap().entrySet()) {
+                hql += " AND lower(stat." + entry.getKey() + ") like :" + entry.getKey().replace(".", "") + " ";
+            }
+        }
+        hql += "           order by lower(stat.gene.name) ";
 
         org.hibernate.query.Query<Object[]> query = HibernateUtil.currentSession().createQuery(hql, Object[].class);
         query.setParameter("term", aoTerm);
         query.setParameterList("geneIds", termIDs);
+        if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
+            for (Map.Entry<String, String> entry : pagination.getFilterMap().entrySet()) {
+                query.setParameter(entry.getKey().replace(".", ""), "%" + entry.getValue().toLowerCase() + "%");
+            }
+        }
         List<Object[]> resultList = query.list();
 
         List<HighQualityProbe> list = new ArrayList<>();
         resultList.stream().map(objects -> (HighQualityProbeAOStatistics) objects[0]).toList()
-            .forEach(highQualityProbe -> populateHighQualityProbeStatisticsRecord(highQualityProbe, list, aoTerm));
+            .forEach(highQualityProbe -> populateHighQualityProbeStatisticsRecord(highQualityProbe, list, highQualityProbe.getSubterm()));
         return list;
     }
 
@@ -618,7 +630,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     }
 
     @Override
-    public int getProbeCount(Term aoTerm, boolean includeSubstructures) {
+    public int getProbeCount(Term aoTerm, boolean includeSubstructures, Pagination pagination) {
         String hql;
         if (includeSubstructures) {
             hql = "select count(distinct stat.probe) " +
@@ -630,8 +642,18 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
                 "     where (stat.superterm = :aoterm AND " +
                 "           stat.subterm = :aoterm) ";
         }
+        if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
+            for (Map.Entry<String, String> entry : pagination.getFilterMap().entrySet()) {
+                hql += " AND lower(stat." + entry.getKey() + ") like :" + entry.getKey().replace(".", "");
+            }
+        }
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("aoterm", aoTerm);
+        if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
+            for (Map.Entry<String, String> entry : pagination.getFilterMap().entrySet()) {
+                query.setParameter(entry.getKey().replace(".", ""), "%" + entry.getValue().toLowerCase() + "%");
+            }
+        }
         return ((Number) query.uniqueResult()).intValue();
     }
 
@@ -658,24 +680,39 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
     }
 
     @Override
-    public List<String> getPaginatedHighQualityProbeIds(Term aoTerm, boolean includeSubstructures) {
+    public List<String> getPaginatedHighQualityProbeIds(Term aoTerm, boolean includeSubstructures, Pagination pagination) {
         String hql;
         if (includeSubstructures) {
-            hql = "select stat.gene.zdbID, stat.gene.abbreviationOrder " +
-                "     from HighQualityProbeAOStatistics stat " +
-                "     where stat.superterm = :aoterm " +
-                "           group by stat.gene.zdbID, stat.gene.abbreviationOrder " +
-                "           order by 2 ";
+            hql = """
+                select stat.gene.zdbID, stat.gene.abbreviationOrder
+                     from HighQualityProbeAOStatistics stat
+                     where stat.superterm = :aoterm
+                     """;
         } else {
-            hql = "select stat.gene.zdbID, stat.gene.abbreviationOrder " +
-                "     from HighQualityProbeAOStatistics stat " +
-                "     where stat.superterm = :aoterm and " +
-                "           stat.subterm = :aoterm  " +
-                "           group by stat.gene.zdbID, stat.gene.abbreviationOrder " +
-                "           order by 2 ";
+            hql = """
+                select stat.gene.zdbID, stat.gene.abbreviationOrder
+                     from HighQualityProbeAOStatistics stat
+                     where stat.superterm = :aoterm and
+                           stat.subterm = :aoterm
+                           """;
         }
+        if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
+            for (Map.Entry<String, String> entry : pagination.getFilterMap().entrySet()) {
+                hql += " AND lower(stat." + entry.getKey() + ") like :" + entry.getKey().replace(".", "") + " ";
+            }
+        }
+        hql += """
+            group by stat.gene.zdbID, stat.gene.abbreviationOrder
+            order by 2
+             """;
         org.hibernate.query.Query<Object[]> query = HibernateUtil.currentSession().createQuery(hql, Object[].class);
+        if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
+            for (Map.Entry<String, String> entry : pagination.getFilterMap().entrySet()) {
+                query.setParameter(entry.getKey().replace(".", ""), "%" + entry.getValue().toLowerCase() + "%");
+            }
+        }
         query.setParameter("aoterm", aoTerm);
+
         return query.list().stream().map(objects -> (String) objects[0]).collect(toList());
     }
 

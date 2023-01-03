@@ -1,5 +1,7 @@
 package org.zfin.framework.presentation;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang.StringUtils;
 import org.zfin.util.URLCreator;
 import org.zfin.util.validation.IntegerValue;
@@ -7,19 +9,23 @@ import org.zfin.util.validation.IntegerValue;
 import javax.validation.constraints.Max;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Basic bean object that can be used for any form bean to include pagination.
  * Inherit from this Bean and you get all the relevant request parameters from a
  * a web page. The JSP part can be found in the pagination.tag.
  */
-
+@Setter
+@Getter
 public class PaginationBean {
 
     public static final String PAGE = "page";
     public static final int MAXPAGELINKS = 9;
     public static final int MAX_DISPLAY_RECORDS_DEFAULT = 20;
+    private Map<String, String> filterMap = new HashMap<>();
 
     /* MAXPAGELINKS must be an odd integer that denotes the total number of
        page links to display at the bottom of each result page.  Calculate by:

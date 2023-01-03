@@ -4,10 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.StringJoiner;
+import java.util.*;
 
 @Setter
 @Getter
@@ -22,6 +19,7 @@ public class Pagination {
     private List<String> errorList = new ArrayList<>();
     private List<String> invalidFilterList = new ArrayList<>();
 
+    private Map<String, String> filterMap = new HashMap<>();
     private boolean isCount = false;
 
     public Pagination(Integer page, Integer limit, String sortBy, String asc) {
@@ -149,6 +147,14 @@ public class Pagination {
             }
             return null;
         }
+    }
+
+    public void addToFilterMap(String key, String value){
+        filterMap.put(key, value);
+    }
+
+    public Map<String, String> getFilterMap(){
+        return filterMap;
     }
 
     public int getIndexOfFirstElement() {
