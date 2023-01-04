@@ -110,6 +110,7 @@
                  data-images-json="${imagesJson}"
                  data-publication-id="${publication.zdbID}"
             ></div>
+            <div><a href="/action/figure/all-figure-view/${publication.zdbID}">Show all Figures</a></div>
         </z:section>
 
         <z:section title="${EXPRESSION}">
