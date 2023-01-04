@@ -146,6 +146,8 @@ public class TermAPIController {
     @RequestMapping(value = "/{termID}/phenotype", method = RequestMethod.GET)
     public JsonResultResponse<FishStatistics> getPhenotypes(@PathVariable String termID,
                                                             @RequestParam(value = "directAnnotation", required = false, defaultValue = "false") boolean directAnnotation,
+                                                            @RequestParam(value = "filter.fishName", required = false) String filterFishName,
+                                                            @RequestParam(value = "filter.phenotype", required = false) String filterPhenotype,
                                                             @Version Pagination pagination) {
 
         HibernateUtil.createTransaction();
@@ -155,11 +157,17 @@ public class TermAPIController {
         if (term == null)
             return response;
 
+        if (StringUtils.isNotEmpty(filterFishName)) {
+            pagination.addToFilterMap("fishoxFishName", filterFishName);
+        }
+        if (StringUtils.isNotEmpty(filterPhenotype)) {
+            pagination.addToFilterMap("phenotype", filterPhenotype);
+        }
         AnatomySearchBean form = new AnatomySearchBean();
         form.setAoTerm(term);
         form.setMaxDisplayRecords(pagination.getLimit());
         form.setPageInteger(pagination.getPage());
-        retrieveMutantData(term, form, !directAnnotation);
+        retrieveMutantData(term, form, !directAnnotation, pagination);
         response.setResults(form.getGenotypeStatistics());
         response.setTotal(form.getTotalRecords());
         if (directAnnotation) {
@@ -224,11 +232,13 @@ public class TermAPIController {
         return response;
     }
 
-    private void retrieveMutantData(GenericTerm ai, AnatomySearchBean form, boolean includeSubstructures) {
+    private void retrieveMutantData(GenericTerm ai, AnatomySearchBean form, boolean includeSubstructures, Pagination pagination) {
         PaginationBean bean = new PaginationBean();
-        bean.setPageInteger(1);
-        bean.setFirstPageRecord(1);
-        bean.setMaxDisplayRecords(1);
+        bean.setPageInteger(pagination.getPage());
+        bean.setFirstPageRecord(pagination.getStart());
+        bean.setMaxDisplayRecords(pagination.getLimit());
+        bean.setFilterMap(pagination.getFilterMap());
+        form.setFilterMap(pagination.getFilterMap());
         PaginationResult<Fish> genotypeResult;
         if (includeSubstructures) {
             genotypeResult = getMutantRepository().getFishByAnatomyTermIncludingSubstructures(ai, false, form);
@@ -279,9 +289,6 @@ public class TermAPIController {
         form.setFish(fishList);
         List<FishStatistics> genoStats = createGenotypeStats(fishList, ai, includeSubstructures);
         form.setGenotypeStatistics(genoStats);
-
-        AnatomyStatistics statistics = getAnatomyRepository().getAnatomyStatisticsForMutants(ai.getZdbID());
-        form.setAnatomyStatisticsMutant(statistics);
     }
 
     private List<FishStatistics> createGenotypeStats(List<Fish> fishList, GenericTerm ai, boolean includeSubstructures) {

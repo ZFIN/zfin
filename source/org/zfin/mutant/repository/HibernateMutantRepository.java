@@ -1,5 +1,6 @@
 package org.zfin.mutant.repository;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -64,21 +65,49 @@ public class HibernateMutantRepository implements MutantRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql =
-                "select distinct fishox.fish , fishox.fish.order, fishox.fish.nameOrder from FishExperiment fishox, " +
-                        "PhenotypeWarehouse phenoSource, PhenotypeStatementWarehouse phenoObserved " +
-                        "WHERE phenoSource.fishExperiment = fishox " +
-                        "AND phenoObserved.phenotypeWarehouse = phenoSource " +
-                        "AND (phenoObserved.e1a = :aoTerm " +
-                        "     or phenoObserved.e1b = :aoTerm " +
-                        "     or phenoObserved.e2a = :aoTerm " +
-                        "     or phenoObserved.e2b = :aoTerm) " +
-                        "AND phenoObserved.tag != :tag " +
-                        "AND exists (select 'x' from GeneGenotypeExperiment where fishExperiment = fishox) " +
-                        "ORDER BY fishox.fish.order, fishox.fish.nameOrder ";
+            "select distinct fishox.fish , fishox.fish.order, fishox.fish.nameOrder from FishExperiment fishox, " +
+                "PhenotypeWarehouse phenoSource, PhenotypeStatementWarehouse phenoObserved " +
+                "left outer join phenoObserved.e1a as e1a " +
+                "left outer join phenoObserved.e1b as e1b " +
+                "left outer join phenoObserved.e2a as e2a " +
+                "left outer join phenoObserved.e2b as e2b " +
+                "WHERE phenoSource.fishExperiment = fishox " +
+                "AND phenoObserved.phenotypeWarehouse = phenoSource " +
+                "AND (e1a = :aoTerm " +
+                "     or e1b = :aoTerm " +
+                "     or e2a = :aoTerm " +
+                "     or e2b = :aoTerm) " +
+                "AND phenoObserved.tag != :tag " +
+                "AND exists (select 'x' from GeneGenotypeExperiment where fishExperiment = fishox) ";
+        if (MapUtils.isNotEmpty(bean.getFilterMap())) {
+            for (Map.Entry<String, String> entry : bean.getFilterMap().entrySet()) {
+                if(entry.getKey().startsWith("fishox")) {
+                    hql += " AND lower(fishox.fish.name) like :" + entry.getKey() + " ";
+                }
+                if(entry.getKey().startsWith("phenotype")) {
+                    hql += " AND (";
+                    hql += "  (lower(e1a.termName) like :" + entry.getKey() + " ";
+                    hql += "  OR ";
+                    hql += "  lower(e1b.termName) like :" + entry.getKey() + ") ";
+                    hql += "  OR ";
+                    hql += "  (lower(e2a.termName) like :" + entry.getKey() + " ";
+                    hql += "  OR ";
+                    hql += "  lower(e2b.termName) like :" + entry.getKey() + ") ";
+                    hql += " )";
+                }
+            }
+        }
+        hql += "ORDER BY fishox.fish.order, fishox.fish.nameOrder ";
 
         Query query = session.createQuery(hql);
         query.setParameter("aoTerm", item);
         query.setParameter("tag", PhenotypeStatement.Tag.NORMAL.toString());
+        if (MapUtils.isNotEmpty(bean.getFilterMap())) {
+            for (Map.Entry<String, String> entry : bean.getFilterMap().entrySet()) {
+                query.setParameter(entry.getKey(), "%" + entry.getValue().toLowerCase() + "%");
+            }
+        }
+
         // have to add extra select because of ordering, but we only want to return the first
         query.setResultTransformer(new BasicTransformerAdapter() {
             @Override
@@ -95,17 +124,17 @@ public class HibernateMutantRepository implements MutantRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql =
-                "select distinct fishox.fish, fishox.fish.order, fishox.fish.nameOrder from FishExperiment fishox, " +
-                        "PhenotypeExperiment phenox, PhenotypeStatement phenoeq " +
-                        "WHERE phenox.fishExperiment = fishox " +
-                        "AND phenoeq.phenotypeExperiment = phenox " +
-                        "AND (phenoeq.entity.superterm = :aoTerm " +
-                        "     or phenoeq.entity.subterm = :aoTerm " +
-                        "     or phenoeq.relatedEntity.superterm = :aoTerm " +
-                        "     or phenoeq.relatedEntity.subterm = :aoTerm) " +
-                        "AND phenoeq.tag != :tag " +
-                        "AND fishox.standardOrGenericControl = :standardOrGeneric " +
-                        "AND size(fishox.fish.strList) = 0  ";
+            "select distinct fishox.fish, fishox.fish.order, fishox.fish.nameOrder from FishExperiment fishox, " +
+                "PhenotypeExperiment phenox, PhenotypeStatement phenoeq " +
+                "WHERE phenox.fishExperiment = fishox " +
+                "AND phenoeq.phenotypeExperiment = phenox " +
+                "AND (phenoeq.entity.superterm = :aoTerm " +
+                "     or phenoeq.entity.subterm = :aoTerm " +
+                "     or phenoeq.relatedEntity.superterm = :aoTerm " +
+                "     or phenoeq.relatedEntity.subterm = :aoTerm) " +
+                "AND phenoeq.tag != :tag " +
+                "AND fishox.standardOrGenericControl = :standardOrGeneric " +
+                "AND size(fishox.fish.strList) = 0  ";
 
         if (!wildtype) {
             hql += "AND fishox.fish.genotype.wildtype = 'f' ";
@@ -141,21 +170,48 @@ public class HibernateMutantRepository implements MutantRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql =
-                "select distinct fishox.fish , fishox.fish.order, fishox.fish.nameOrder from FishExperiment fishox, " +
-                        "PhenotypeWarehouse phenoSource, PhenotypeStatementWarehouse phenoObserved," +
-                        "TransitiveClosure transitiveClosure " +
-                        "WHERE phenoSource.fishExperiment = fishox " +
-                        "AND phenoObserved.phenotypeWarehouse = phenoSource " +
-                        "AND transitiveClosure.root = :aoTerm and " +
-                        "(phenoObserved.e1a = transitiveClosure.child OR phenoObserved.e1b = transitiveClosure.child OR " +
-                        " phenoObserved.e2a = transitiveClosure.child OR phenoObserved.e2b = transitiveClosure.child ) " +
-                        "AND phenoObserved.tag != :tag " +
-                        "AND exists (select 'x' from GeneGenotypeExperiment where fishExperiment = fishox) ";
+            "select distinct fishox.fish , fishox.fish.order, fishox.fish.nameOrder from FishExperiment fishox, " +
+                "PhenotypeWarehouse phenoSource, PhenotypeStatementWarehouse phenoObserved," +
+                "TransitiveClosure transitiveClosure " +
+                "left outer join phenoObserved.e1a as e1a " +
+                "left outer join phenoObserved.e1b as e1b " +
+                "left outer join phenoObserved.e2a as e2a " +
+                "left outer join phenoObserved.e2b as e2b " +
+                "WHERE phenoSource.fishExperiment = fishox " +
+                "AND phenoObserved.phenotypeWarehouse = phenoSource " +
+                "AND transitiveClosure.root = :aoTerm and " +
+                "(e1a = transitiveClosure.child OR e1b = transitiveClosure.child OR " +
+                " e2a = transitiveClosure.child OR e2b = transitiveClosure.child ) " +
+                "AND phenoObserved.tag != :tag " +
+                "AND exists (select 'x' from GeneGenotypeExperiment where fishExperiment = fishox) ";
+        if (MapUtils.isNotEmpty(bean.getFilterMap())) {
+            for (Map.Entry<String, String> entry : bean.getFilterMap().entrySet()) {
+                if(entry.getKey().startsWith("fishox")) {
+                    hql += " AND lower(fishox.fish.name) like :" + entry.getKey() + " ";
+                }
+                if(entry.getKey().startsWith("phenotype")) {
+                    hql += " AND (";
+                    hql += "  lower(e1a.termName) like :" + entry.getKey() + " ";
+                    hql += "  OR ";
+                    hql += "  lower(e1b.termName) like :" + entry.getKey() + " ";
+                    hql += "  OR ";
+                    hql += "  lower(e2a.termName) like :" + entry.getKey() + " ";
+                    hql += "  OR ";
+                    hql += "  lower(e2b.termName) like :" + entry.getKey() + " ";
+                    hql += ") ";
+                }
+            }
+        }
         hql += "ORDER BY fishox.fish.order, fishox.fish.nameOrder ";
 
         Query query = session.createQuery(hql);
         query.setParameter("aoTerm", item);
         query.setParameter("tag", PhenotypeStatement.Tag.NORMAL.toString());
+        if (MapUtils.isNotEmpty(bean.getFilterMap())) {
+            for (Map.Entry<String, String> entry : bean.getFilterMap().entrySet()) {
+                query.setParameter(entry.getKey(), "%" + entry.getValue().toLowerCase() + "%");
+            }
+        }
         // have to add extra select because of ordering, but we only want to return the first
         query.setResultTransformer(new BasicTransformerAdapter() {
             @Override
@@ -171,9 +227,9 @@ public class HibernateMutantRepository implements MutantRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select  distinct geno from Genotype geno, GenotypeFeature genofeat " +
-                "WHERE  genofeat.feature = :feature " +
-                "AND genofeat.genotype =geno " +
-                "ORDER BY geno.nameOrder";
+            "WHERE  genofeat.feature = :feature " +
+            "AND genofeat.genotype =geno " +
+            "ORDER BY geno.nameOrder";
 
         Query query = session.createQuery(hql);
         query.setParameter("feature", feature);
@@ -185,11 +241,11 @@ public class HibernateMutantRepository implements MutantRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql =
-                "select genoFeat from GenotypeFeature genoFeat, Genotype geno, Feature feat " +
-                        "WHERE  geno.zdbID= :zdbID " +
-                        "AND genoFeat.genotype =geno " +
-                        "AND genoFeat.feature =feat " +
-                        "ORDER by feat.abbreviationOrder";
+            "select genoFeat from GenotypeFeature genoFeat, Genotype geno, Feature feat " +
+                "WHERE  geno.zdbID= :zdbID " +
+                "AND genoFeat.genotype =geno " +
+                "AND genoFeat.feature =feat " +
+                "ORDER by feat.abbreviationOrder";
 
 
         Query query = session.createQuery(hql);
@@ -215,43 +271,43 @@ public class HibernateMutantRepository implements MutantRepository {
         }
 
         Query query = HibernateUtil.currentSession().createSQLQuery(
-                "select * " +
-                        "from ( " +
-                        "    select " +
-                        "      self.genofeat_zdb_id, " +
-                        "      fish_zdb_id, " +
-                        "      fish_name_order, " +
-                        "      zyg_name, " +
-                        "      string_agg(distinct affected_gene.mrkr_abbrev_order, ',' order by affected_gene.mrkr_abbrev_order) as affected_list, " +
-                        "      count(distinct affected_gene.mrkr_zdb_id) as affected_count, " +
-                        "      count(distinct fish_str.mrkr_zdb_id) as str_count, " +
-                        "      count(distinct other.genofeat_zdb_id) as feature_count " +
-                        "    from fish " +
-                        "      inner join genotype_feature self on self.genofeat_geno_zdb_id = fish_genotype_zdb_id " +
-                        "      inner join zygocity on genofeat_zygocity = zyg_zdb_id " +
-                        "      left outer join fish_components on fc_fish_zdb_id = fish_zdb_id " +
-                        "      left outer join marker affected_gene on fc_gene_zdb_id = affected_gene.mrkr_zdb_id " +
-                        "      left outer join marker fish_str on fc_affector_zdb_id = fish_str.mrkr_zdb_id " +
-                        "      left outer join genotype_feature other on other.genofeat_geno_zdb_id = fish_genotype_zdb_id " +
-                        "    where self.genofeat_feature_zdb_id = :feature_id " +
-                        "    group by self.genofeat_zdb_id, fish_zdb_id, zyg_name " +
-                        ") as sub " +
-                        excludeStrClause +
-                        "order by " +
-                        "  ( " +
-                        "    case " +
-                        "      when feature_count > 1 then 4 " +
-                        "      when str_count > 0 then 4 " +
-                        "      when zyg_name = 'homozygous' then 1 " +
-                        "      when zyg_name = 'heterozygous' then 2 " +
-                        "      when zyg_name = 'unknown' then 3 " +
-                        "      when zyg_name = 'complex' then 4 " +
-                        "      else 5 " +
-                        "    end " +
-                        "  ) asc, " +
-                        "  affected_count asc, " +
-                        "  affected_list asc, " +
-                        "  fish_name_order asc;"
+            "select * " +
+                "from ( " +
+                "    select " +
+                "      self.genofeat_zdb_id, " +
+                "      fish_zdb_id, " +
+                "      fish_name_order, " +
+                "      zyg_name, " +
+                "      string_agg(distinct affected_gene.mrkr_abbrev_order, ',' order by affected_gene.mrkr_abbrev_order) as affected_list, " +
+                "      count(distinct affected_gene.mrkr_zdb_id) as affected_count, " +
+                "      count(distinct fish_str.mrkr_zdb_id) as str_count, " +
+                "      count(distinct other.genofeat_zdb_id) as feature_count " +
+                "    from fish " +
+                "      inner join genotype_feature self on self.genofeat_geno_zdb_id = fish_genotype_zdb_id " +
+                "      inner join zygocity on genofeat_zygocity = zyg_zdb_id " +
+                "      left outer join fish_components on fc_fish_zdb_id = fish_zdb_id " +
+                "      left outer join marker affected_gene on fc_gene_zdb_id = affected_gene.mrkr_zdb_id " +
+                "      left outer join marker fish_str on fc_affector_zdb_id = fish_str.mrkr_zdb_id " +
+                "      left outer join genotype_feature other on other.genofeat_geno_zdb_id = fish_genotype_zdb_id " +
+                "    where self.genofeat_feature_zdb_id = :feature_id " +
+                "    group by self.genofeat_zdb_id, fish_zdb_id, zyg_name " +
+                ") as sub " +
+                excludeStrClause +
+                "order by " +
+                "  ( " +
+                "    case " +
+                "      when feature_count > 1 then 4 " +
+                "      when str_count > 0 then 4 " +
+                "      when zyg_name = 'homozygous' then 1 " +
+                "      when zyg_name = 'heterozygous' then 2 " +
+                "      when zyg_name = 'unknown' then 3 " +
+                "      when zyg_name = 'complex' then 4 " +
+                "      else 5 " +
+                "    end " +
+                "  ) asc, " +
+                "  affected_count asc, " +
+                "  affected_list asc, " +
+                "  fish_name_order asc;"
         );
         query.setParameter("feature_id", featureId);
         query.setResultTransformer(new BasicTransformerAdapter() {
@@ -274,14 +330,14 @@ public class HibernateMutantRepository implements MutantRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select count(distinct image) from Image image, Figure fig, ExpressionResult res, " +
-                "                                  ExpressionExperiment exp " +
-                "where " +
-                "res member of exp.expressionResults AND " +
-                "res.entity.superterm = :term AND " +
-                "fig member of res.figures AND " +
-                "image member of fig.images AND " +
-                "res.expressionFound = :expressionFound AND " +
-                "exp.fishExperiment.fish.genotype.zdbID = :genoZdbID ";
+            "                                  ExpressionExperiment exp " +
+            "where " +
+            "res member of exp.expressionResults AND " +
+            "res.entity.superterm = :term AND " +
+            "fig member of res.figures AND " +
+            "image member of fig.images AND " +
+            "res.expressionFound = :expressionFound AND " +
+            "exp.fishExperiment.fish.genotype.zdbID = :genoZdbID ";
         Query query = session.createQuery(hql);
         query.setBoolean("expressionFound", true);
         query.setParameter("term", term);
@@ -294,13 +350,13 @@ public class HibernateMutantRepository implements MutantRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select count(distinct figure.publication) from Figure figure, ExpressionResult res, " +
-                "                                               ExpressionExperiment exp " +
-                "where " +
-                "res member of exp.expressionResults AND " +
-                "res.entity.superterm = :term AND " +
-                "figure member of res.figures AND " +
-                "res.expressionFound = :expressionFound AND " +
-                "exp.fishExperiment.fish.genotype.zdbID = :genoZdbID ";
+            "                                               ExpressionExperiment exp " +
+            "where " +
+            "res member of exp.expressionResults AND " +
+            "res.entity.superterm = :term AND " +
+            "figure member of res.figures AND " +
+            "res.expressionFound = :expressionFound AND " +
+            "exp.fishExperiment.fish.genotype.zdbID = :genoZdbID ";
         Query query = session.createQuery(hql);
         query.setBoolean("expressionFound", true);
         query.setParameter("term", item);
@@ -353,10 +409,10 @@ public class HibernateMutantRepository implements MutantRepository {
 
 
         String hql = "select  distinct mapdel.lg from MappedDeletion mapdel, Marker m, Feature f" +
-                " where f.name =mapdel.allele " +
-                " AND mapdel.marker = m " +
-                " AND f.name=:ftr " +
-                " AND m.markerType.name =:type ";
+            " where f.name =mapdel.allele " +
+            " AND mapdel.marker = m " +
+            " AND f.name=:ftr " +
+            " AND m.markerType.name =:type ";
         Query query = session.createQuery(hql);
         query.setString("ftr", feat.getName());
         query.setString("type", Marker.Type.GENE.toString());
@@ -374,10 +430,10 @@ public class HibernateMutantRepository implements MutantRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select count(phenox) from PhenotypeExperiment phenox " +
-                "     where phenox.fishExperiment = :fishExperiment" +
-                "           and phenox.startStage = :start " +
-                "           and phenox.endStage = :endStage " +
-                "           and phenox.figure = :figure ";
+            "     where phenox.fishExperiment = :fishExperiment" +
+            "           and phenox.startStage = :start " +
+            "           and phenox.endStage = :endStage " +
+            "           and phenox.figure = :figure ";
 
         Query query = session.createQuery(hql);
         query.setParameter("fishExperiment", efs.getExpressionExperiment().getFishExperiment());
@@ -417,9 +473,9 @@ public class HibernateMutantRepository implements MutantRepository {
 
     public FishExperiment getGenotypeExperiment(String genotypeZdbID, String experimentZdbID) {
         Query query = HibernateUtil.currentSession().createQuery("" +
-                "from FishExperiment fe " +
-                "where fe.fish.genotype.zdbID = :genoID " +
-                "and fe.experiment.zdbID = :expID");
+            "from FishExperiment fe " +
+            "where fe.fish.genotype.zdbID = :genoID " +
+            "and fe.experiment.zdbID = :expID");
         query.setParameter("genoID", genotypeZdbID);
         query.setParameter("expID", experimentZdbID);
         return (FishExperiment) query.uniqueResult();
@@ -468,9 +524,9 @@ public class HibernateMutantRepository implements MutantRepository {
     @SuppressWarnings({"unchecked"})
     public List<Genotype> getGenotypesForStandardAttribution(Publication publication) {
         String hql = "select distinct g from PublicationAttribution pa , Genotype g " +
-                " where pa.dataZdbID=g.zdbID and pa.publication.zdbID= :pubZdbID  " +
-                " and pa.sourceType= :sourceType  " +
-                " order by g.handle ";
+            " where pa.dataZdbID=g.zdbID and pa.publication.zdbID= :pubZdbID  " +
+            " and pa.sourceType= :sourceType  " +
+            " order by g.handle ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setString("pubZdbID", publication.getZdbID());
         query.setString("sourceType", PublicationAttribution.SourceType.STANDARD.toString());
@@ -488,13 +544,13 @@ public class HibernateMutantRepository implements MutantRepository {
     @SuppressWarnings({"unchecked"})
     public List<GenericTerm> getGoTermsByMarkerAndPublication(Marker marker, Publication publication) {
         String hql = "select distinct g from PublicationAttribution pa , GenericTerm g , MarkerGoTermEvidence ev " +
-                " where pa.dataZdbID=ev.zdbID " +
-                " and pa.publication.zdbID= :pubZdbID  " +
-                " and ev.marker.zdbID = :markerZdbID " +
-                " and ev.evidenceCode.code not in (:excludedEvidenceCodes) " +
-                " and g.zdbID = ev.goTerm.zdbID " +
-                " and pa.sourceType= :sourceType  " +
-                " order by g.termName ";
+            " where pa.dataZdbID=ev.zdbID " +
+            " and pa.publication.zdbID= :pubZdbID  " +
+            " and ev.marker.zdbID = :markerZdbID " +
+            " and ev.evidenceCode.code not in (:excludedEvidenceCodes) " +
+            " and g.zdbID = ev.goTerm.zdbID " +
+            " and pa.sourceType= :sourceType  " +
+            " order by g.termName ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setString("pubZdbID", publication.getZdbID());
         query.setParameterList("excludedEvidenceCodes", new String[]{GoEvidenceCodeEnum.IEA.name(), GoEvidenceCodeEnum.IC.name()});
@@ -513,9 +569,9 @@ public class HibernateMutantRepository implements MutantRepository {
     @SuppressWarnings({"unchecked"})
     public List<GenericTerm> getGoTermsByPhenotypeAndPublication(Publication publication) {
         String hql = "select distinct phenotype from PhenotypeStatement phenotype , GenericTerm g  " +
-                " where phenotype.phenotypeExperiment.figure.publication.zdbID= :pubZdbID  " +
-                " and ( phenotype.entity.subterm = g and g.oboID like :oboIDLike" +
-                " or phenotype.entity.superterm = g or phenotype.relatedEntity.superterm = g OR phenotype.relatedEntity.subterm = g)";
+            " where phenotype.phenotypeExperiment.figure.publication.zdbID= :pubZdbID  " +
+            " and ( phenotype.entity.subterm = g and g.oboID like :oboIDLike" +
+            " or phenotype.entity.superterm = g or phenotype.relatedEntity.superterm = g OR phenotype.relatedEntity.subterm = g)";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setString("pubZdbID", publication.getZdbID());
         query.setString("oboIDLike", "GO:%");
@@ -555,15 +611,15 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public List<Genotype> getGenotypesForAttribution(String publicationZdbID) {
         String hql = "" +
-                " select distinct g from Genotype g, RecordAttribution ra " +
-                " where ra.dataZdbID=g.zdbID and ra.sourceType = :standard and ra.sourceZdbID = :pubZdbID " +
-                " order by g.handle" +
-                " ";
+            " select distinct g from Genotype g, RecordAttribution ra " +
+            " where ra.dataZdbID=g.zdbID and ra.sourceType = :standard and ra.sourceZdbID = :pubZdbID " +
+            " order by g.handle" +
+            " ";
 
         return (List<Genotype>) HibernateUtil.currentSession().createQuery(hql)
-                .setString("pubZdbID", publicationZdbID)
-                .setString("standard", RecordAttribution.SourceType.STANDARD.toString())
-                .list();
+            .setString("pubZdbID", publicationZdbID)
+            .setString("standard", RecordAttribution.SourceType.STANDARD.toString())
+            .list();
     }
 
     public FeatureAlias getSpecificDataAlias(Feature feature, String alias) {
@@ -577,7 +633,7 @@ public class HibernateMutantRepository implements MutantRepository {
     public FeatureDBLink getSpecificDBLink(Feature feature, String accessionNumber) {
         Session session = HibernateUtil.currentSession();
         String hql = "select distinct ftrDbLink from FeatureDBLink ftrDbLink  where " +
-                " ftrDbLink.feature = :feature ";
+            " ftrDbLink.feature = :feature ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("feature", feature);
         return (FeatureDBLink) query.uniqueResult();
@@ -595,9 +651,9 @@ public class HibernateMutantRepository implements MutantRepository {
                 " AND " +
                 " inf.infgrmem_inferred_from=:zdbID " +
                 " ")
-                .setString("zdbID", InferenceCategory.ZFIN_GENE.prefix() + zdbID)
-                .setString("pubZdbID", publicationZdbID)
-                .uniqueResult().toString()
+            .setString("zdbID", InferenceCategory.ZFIN_GENE.prefix() + zdbID)
+            .setString("pubZdbID", publicationZdbID)
+            .uniqueResult().toString()
         );
     }
 
@@ -612,11 +668,11 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public int getNumberMarkerGoTermEvidences(MarkerGoTermEvidence markerGoTermEvidence) {
         String hql = " " +
-                " select ev from MarkerGoTermEvidence ev " +
-                " where ev.marker = :marker " +
-                " and ev.goTerm = :goTerm " +
-                " and ev.source = :publication " +
-                " and ev.evidenceCode = :evidenceCode ";
+            " select ev from MarkerGoTermEvidence ev " +
+            " where ev.marker = :marker " +
+            " and ev.goTerm = :goTerm " +
+            " and ev.source = :publication " +
+            " and ev.evidenceCode = :evidenceCode ";
 
         if (markerGoTermEvidence.getFlag() != null) {
             hql += " and ev.flag = :flag ";
@@ -625,10 +681,10 @@ public class HibernateMutantRepository implements MutantRepository {
         }
 
         Query query = HibernateUtil.currentSession().createQuery(hql)
-                .setParameter("marker", markerGoTermEvidence.getMarker())
-                .setParameter("goTerm", markerGoTermEvidence.getGoTerm())
-                .setParameter("publication", markerGoTermEvidence.getSource())
-                .setString("evidenceCode", markerGoTermEvidence.getEvidenceCode().getCode());
+            .setParameter("marker", markerGoTermEvidence.getMarker())
+            .setParameter("goTerm", markerGoTermEvidence.getGoTerm())
+            .setParameter("publication", markerGoTermEvidence.getSource())
+            .setString("evidenceCode", markerGoTermEvidence.getEvidenceCode().getCode());
 
         if (markerGoTermEvidence.getFlag() != null) {
             query.setParameter("flag", markerGoTermEvidence.getFlag());
@@ -657,59 +713,59 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public List<BasicPhenotypeDTO> getBasicPhenotypeDTOObjects() {
         final String alleleQueryString = "select distinct fmrel1.fmrel_ftr_zdb_id, psg_short_name, zdb_id, accession_no as accession_no," +
-                "                e1a.term_ont_id as psg_e1a_id, e1b.term_ont_id as psg_e1b_id, e2a.term_ont_id as psg_e2a_id, e2b.term_ont_id as psg_e2b_id, quality.term_ont_id as psg_quality_id, fish_zdb_id" +
-                "                from feature_marker_relationship fmrel1" +
-                "                join genotype_feature on fmrel_ftr_zdb_id = genofeat_feature_zdb_id" +
-                "                join fish on genofeat_geno_zdb_id = fish_genotype_zdb_id" +
-                "                join fish_experiment on fish_zdb_id = genox_fish_zdb_id" +
-                "                join mutant_fast_search on mfs_genox_zdb_id = genox_zdb_id" +
-                "                join phenotype_source_generated on pg_genox_zdb_id = genox_zdb_id" +
-                "                join phenotype_observation_generated on psg_pg_id = pg_id" +
-                "                join figure on fig_zdb_id = pg_fig_zdb_id" +
-                "                join publication on fig_source_zdb_id = zdb_id" +
-                "                join term as e1a on psg_e1a_zdb_id = e1a.term_zdb_id" +
-                "                join term as quality on psg_quality_zdb_id = quality.term_zdb_id" +
-                "                left outer join term as e1b on e1b.term_zdb_id = psg_e1b_zdb_id" +
-                "                left outer join term as e2a on e2a.term_zdb_id = psg_e2a_zdb_id" +
-                "                left outer join term as e2b on e2b.term_zdb_id = psg_e2b_zdb_id" +
-                "                  where get_obj_type(fmrel1.fmrel_ftr_zdb_id) = 'ALT'" +
-                "                  and fmrel1.fmrel_type = 'is allele of' and not exists" +
-                "                               (select 'x' from feature_marker_relationship fmrel2" +
-                "                                     where fmrel1.fmrel_zdb_id != fmrel2.fmrel_zdb_id and fmrel1.fmrel_ftr_zdb_id = fmrel2.fmrel_ftr_zdb_id" +
-                "                                     and fmrel2.fmrel_type != 'created by')";
+            "                e1a.term_ont_id as psg_e1a_id, e1b.term_ont_id as psg_e1b_id, e2a.term_ont_id as psg_e2a_id, e2b.term_ont_id as psg_e2b_id, quality.term_ont_id as psg_quality_id, fish_zdb_id" +
+            "                from feature_marker_relationship fmrel1" +
+            "                join genotype_feature on fmrel_ftr_zdb_id = genofeat_feature_zdb_id" +
+            "                join fish on genofeat_geno_zdb_id = fish_genotype_zdb_id" +
+            "                join fish_experiment on fish_zdb_id = genox_fish_zdb_id" +
+            "                join mutant_fast_search on mfs_genox_zdb_id = genox_zdb_id" +
+            "                join phenotype_source_generated on pg_genox_zdb_id = genox_zdb_id" +
+            "                join phenotype_observation_generated on psg_pg_id = pg_id" +
+            "                join figure on fig_zdb_id = pg_fig_zdb_id" +
+            "                join publication on fig_source_zdb_id = zdb_id" +
+            "                join term as e1a on psg_e1a_zdb_id = e1a.term_zdb_id" +
+            "                join term as quality on psg_quality_zdb_id = quality.term_zdb_id" +
+            "                left outer join term as e1b on e1b.term_zdb_id = psg_e1b_zdb_id" +
+            "                left outer join term as e2a on e2a.term_zdb_id = psg_e2a_zdb_id" +
+            "                left outer join term as e2b on e2b.term_zdb_id = psg_e2b_zdb_id" +
+            "                  where get_obj_type(fmrel1.fmrel_ftr_zdb_id) = 'ALT'" +
+            "                  and fmrel1.fmrel_type = 'is allele of' and not exists" +
+            "                               (select 'x' from feature_marker_relationship fmrel2" +
+            "                                     where fmrel1.fmrel_zdb_id != fmrel2.fmrel_zdb_id and fmrel1.fmrel_ftr_zdb_id = fmrel2.fmrel_ftr_zdb_id" +
+            "                                     and fmrel2.fmrel_type != 'created by')";
 
         final String geneQueryString = "select distinct mfs_data_zdb_id, psg_short_name, zdb_id, accession_no as accession_no," +
-                "                e1a.term_ont_id as psg_e1a_id, e1b.term_ont_id as psg_e1b_id, e2a.term_ont_id as psg_e2a_id, " +
-                "                e2b.term_ont_id as psg_e2b_id, quality.term_ont_id as psg_quality_id, genox_fish_zdb_id" +
-                "                        from mutant_fast_search" +
-                "                        join phenotype_source_generated on pg_genox_zdb_id = mfs_genox_zdb_id" +
-                "                        join fish_experiment on mfs_genox_zdb_id = genox_zdb_id" +
-                "                        join phenotype_observation_generated on psg_pg_id = pg_id" +
-                "                        join figure on pg_fig_zdb_id = fig_zdb_id" +
-                "                        join publication on fig_source_zdb_id = zdb_id " +
-                "                        join term as e1a on e1a.term_zdb_id = psg_e1a_zdb_id" +
-                "                        join term as quality on psg_quality_zdb_id = quality.term_zdb_id" +
-                "                        left outer join term as e1b on e1b.term_zdb_id = psg_e1b_zdb_id" +
-                "                        left outer join term as e2a on e2a.term_zdb_id = psg_e2a_zdb_id" +
-                "                        left outer join term as e2b on e2b.term_zdb_id = psg_e2b_zdb_id" +
-                "                        where get_obj_type(mfs_data_zdb_id) not in ('CRISPR','TALEN','MRPHLNO')";
+            "                e1a.term_ont_id as psg_e1a_id, e1b.term_ont_id as psg_e1b_id, e2a.term_ont_id as psg_e2a_id, " +
+            "                e2b.term_ont_id as psg_e2b_id, quality.term_ont_id as psg_quality_id, genox_fish_zdb_id" +
+            "                        from mutant_fast_search" +
+            "                        join phenotype_source_generated on pg_genox_zdb_id = mfs_genox_zdb_id" +
+            "                        join fish_experiment on mfs_genox_zdb_id = genox_zdb_id" +
+            "                        join phenotype_observation_generated on psg_pg_id = pg_id" +
+            "                        join figure on pg_fig_zdb_id = fig_zdb_id" +
+            "                        join publication on fig_source_zdb_id = zdb_id " +
+            "                        join term as e1a on e1a.term_zdb_id = psg_e1a_zdb_id" +
+            "                        join term as quality on psg_quality_zdb_id = quality.term_zdb_id" +
+            "                        left outer join term as e1b on e1b.term_zdb_id = psg_e1b_zdb_id" +
+            "                        left outer join term as e2a on e2a.term_zdb_id = psg_e2a_zdb_id" +
+            "                        left outer join term as e2b on e2b.term_zdb_id = psg_e2b_zdb_id" +
+            "                        where get_obj_type(mfs_data_zdb_id) not in ('CRISPR','TALEN','MRPHLNO')";
 
         final String fishQueryString = "select distinct fish.fish_zdb_id, psg_short_name, zdb_id, accession_no as accession_no," +
-                "                e1a.term_ont_id as psg_e1a_id, e1b.term_ont_id as psg_e1b_id, e2a.term_ont_id as psg_e2a_id, e2b.term_ont_id as psg_e2b_id, quality.term_ont_id as psg_quality_id, " +
-                "                genox_zdb_id" +
-                "                from fish fish " +
-                "                join fish_experiment on fish_zdb_id = genox_fish_zdb_id" +
-                "                join phenotype_source_generated on pg_genox_zdb_id = genox_zdb_id" +
-                "                join phenotype_observation_generated on psg_pg_id = pg_id" +
-                "                join figure on fig_zdb_id = pg_fig_zdb_id" +
-                "                join publication on fig_source_zdb_id = zdb_id" +
-                "                join term as e1a on psg_e1a_zdb_id = e1a.term_zdb_id" +
-                "                join term as quality on psg_quality_zdb_id = quality.term_zdb_id" +
-                "                left outer join genotype_feature on genofeat_geno_zdb_id = genox_fish_zdb_id" +
-                "                left outer join feature_marker_relationship on fmrel_ftr_zdb_id = genofeat_feature_zdb_id" +
-                "                left outer join term as e1b on e1b.term_zdb_id = psg_e1b_zdb_id" +
-                "                left outer join term as e2a on e2a.term_zdb_id = psg_e2a_zdb_id" +
-                "                left outer join term as e2b on e2b.term_zdb_id = psg_e2b_zdb_id";
+            "                e1a.term_ont_id as psg_e1a_id, e1b.term_ont_id as psg_e1b_id, e2a.term_ont_id as psg_e2a_id, e2b.term_ont_id as psg_e2b_id, quality.term_ont_id as psg_quality_id, " +
+            "                genox_zdb_id" +
+            "                from fish fish " +
+            "                join fish_experiment on fish_zdb_id = genox_fish_zdb_id" +
+            "                join phenotype_source_generated on pg_genox_zdb_id = genox_zdb_id" +
+            "                join phenotype_observation_generated on psg_pg_id = pg_id" +
+            "                join figure on fig_zdb_id = pg_fig_zdb_id" +
+            "                join publication on fig_source_zdb_id = zdb_id" +
+            "                join term as e1a on psg_e1a_zdb_id = e1a.term_zdb_id" +
+            "                join term as quality on psg_quality_zdb_id = quality.term_zdb_id" +
+            "                left outer join genotype_feature on genofeat_geno_zdb_id = genox_fish_zdb_id" +
+            "                left outer join feature_marker_relationship on fmrel_ftr_zdb_id = genofeat_feature_zdb_id" +
+            "                left outer join term as e1b on e1b.term_zdb_id = psg_e1b_zdb_id" +
+            "                left outer join term as e2a on e2a.term_zdb_id = psg_e2a_zdb_id" +
+            "                left outer join term as e2b on e2b.term_zdb_id = psg_e2b_zdb_id";
 
         final Query alleleQuery = HibernateUtil.currentSession().createSQLQuery(alleleQueryString);
         final Query geneQuery = HibernateUtil.currentSession().createSQLQuery(geneQueryString);
@@ -851,9 +907,9 @@ public class HibernateMutantRepository implements MutantRepository {
         // using this type of query for both speed (an explicit join)
         // and because createSQLQuery had trouble binding the lvarchar of s.sequence
         final String queryString = "select m.zdbID ,m.abbreviation, s.sequence   from SequenceTargetingReagent m  " +
-                "inner join m.sequence s " +
-                "inner join m.firstMarkerRelationships  " +
-                "where m.markerType in  (:moType, :crisprType, :talenType) ";
+            "inner join m.sequence s " +
+            "inner join m.firstMarkerRelationships  " +
+            "where m.markerType in  (:moType, :crisprType, :talenType) ";
 
         final Query query = HibernateUtil.currentSession().createQuery(queryString);
         query.setString("moType", Marker.Type.MRPHLNO.toString());
@@ -861,7 +917,7 @@ public class HibernateMutantRepository implements MutantRepository {
         query.setString("talenType", Marker.Type.TALEN.toString());
 
         List<Object[]> sequences = query
-                .list();
+            .list();
 
         List<STRMarkerSequence> strSequences = new ArrayList<STRMarkerSequence>();
         for (Object[] seqObjects : sequences) {
@@ -881,15 +937,15 @@ public class HibernateMutantRepository implements MutantRepository {
         // using this type of query for both speed (an explicit join)
         // and because createSQLQuery had trouble binding the lvarchar of s.sequence
         final String queryString = "select m.zdbID ,m.abbreviation, s.sequence   from SequenceTargetingReagent m  " +
-                "inner join m.sequence s " +
-                "inner join m.firstMarkerRelationships  " +
-                "where m.markerType in  (:moType) ";
+            "inner join m.sequence s " +
+            "inner join m.firstMarkerRelationships  " +
+            "where m.markerType in  (:moType) ";
 
         final Query query = HibernateUtil.currentSession().createQuery(queryString);
         query.setString("moType", Marker.Type.MRPHLNO.toString());
 
         List<Object[]> sequences = query
-                .list();
+            .list();
 
         List<STRMarkerSequence> strSequences = new ArrayList<STRMarkerSequence>();
         for (Object[] seqObjects : sequences) {
@@ -909,15 +965,15 @@ public class HibernateMutantRepository implements MutantRepository {
         // using this type of query for both speed (an explicit join)
         // and because createSQLQuery had trouble binding the lvarchar of s.sequence
         final String queryString = "select m.zdbID ,m.abbreviation, s.sequence   from SequenceTargetingReagent m  " +
-                "inner join m.sequence s " +
-                "inner join m.firstMarkerRelationships  " +
-                "where m.markerType in  (:crisprType) ";
+            "inner join m.sequence s " +
+            "inner join m.firstMarkerRelationships  " +
+            "where m.markerType in  (:crisprType) ";
 
         final Query query = HibernateUtil.currentSession().createQuery(queryString);
         query.setString("crisprType", Marker.Type.CRISPR.toString());
 
         List<Object[]> sequences = query
-                .list();
+            .list();
 
         List<STRMarkerSequence> strSequences = new ArrayList<STRMarkerSequence>();
         for (Object[] seqObjects : sequences) {
@@ -938,15 +994,15 @@ public class HibernateMutantRepository implements MutantRepository {
         // using this type of query for both speed (an explicit join)
         // and because createSQLQuery had trouble binding the lvarchar of s.sequence
         final String queryString = "select m.zdbID ,m.abbreviation, s.sequence   from SequenceTargetingReagent m  " +
-                "inner join m.sequence s " +
-                "inner join m.firstMarkerRelationships  " +
-                "where m.markerType in  (:talenType) ";
+            "inner join m.sequence s " +
+            "inner join m.firstMarkerRelationships  " +
+            "where m.markerType in  (:talenType) ";
 
         final Query query = HibernateUtil.currentSession().createQuery(queryString);
         query.setString("talenType", Marker.Type.TALEN.toString());
 
         List<Object[]> sequences = query
-                .list();
+            .list();
 
         List<STRMarkerSequence> strSequences = new ArrayList<STRMarkerSequence>();
         for (Object[] seqObjects : sequences) {
@@ -969,9 +1025,9 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public List<PhenotypeStatementWarehouse> getPhenotypeWithEntity(GenericTerm term) {
         String hql = "select distinct pheno from PhenotypeStatementWarehouse pheno where " +
-                "(pheno.e1a = :term OR pheno.e1b = :term OR " +
-                "pheno.e2a = :term OR pheno.e2b = :term ) " +
-                "AND tag = :tag";
+            "(pheno.e1a = :term OR pheno.e1b = :term OR " +
+            "pheno.e2a = :term OR pheno.e2b = :term ) " +
+            "AND tag = :tag";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("term", term);
         query.setString("tag", PhenotypeStatement.Tag.ABNORMAL.toString());
@@ -980,9 +1036,9 @@ public class HibernateMutantRepository implements MutantRepository {
 
     public boolean hasPhenotype(GenericTerm term) {
         String hql = "select count(*) from PhenotypeStatementWarehouse where " +
-                "(e1a = :term OR e1b = :term OR " +
-                "e2a = :term OR e2b = :term ) " +
-                "AND tag = :tag";
+            "(e1a = :term OR e1b = :term OR " +
+            "e2a = :term OR e2b = :term ) " +
+            "AND tag = :tag";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("term", term);
         query.setString("tag", PhenotypeStatement.Tag.ABNORMAL.toString());
@@ -998,7 +1054,7 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public List<MarkerGoTermEvidence> getMarkerGoEvidence(GenericTerm term) {
         String hql = "select distinct evidence from MarkerGoTermEvidence evidence where " +
-                " goTerm = :term ";
+            " goTerm = :term ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("term", term);
         return (List<MarkerGoTermEvidence>) query.list();
@@ -1095,7 +1151,7 @@ public class HibernateMutantRepository implements MutantRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select distinct phenoStatement from PhenotypeStatementWarehouse phenoStatement " +
-                "WHERE phenoStatement.phenotypeWarehouse.fishExperiment.fish.genotype = :genotype";
+            "WHERE phenoStatement.phenotypeWarehouse.fishExperiment.fish.genotype = :genotype";
 
         Query query = session.createQuery(hql);
         query.setParameter("genotype", genotype);
@@ -1107,7 +1163,7 @@ public class HibernateMutantRepository implements MutantRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select distinct phenoStatement from PhenotypeStatementWarehouse phenoStatement " +
-                "WHERE phenoStatement.phenotypeWarehouse.fishExperiment = :fishExperiment";
+            "WHERE phenoStatement.phenotypeWarehouse.fishExperiment = :fishExperiment";
 
         Query query = session.createQuery(hql);
         query.setParameter("fishExperiment", fishExperiment);
@@ -1126,32 +1182,32 @@ public class HibernateMutantRepository implements MutantRepository {
         List<PhenotypeStatement> allPhenotypes = new ArrayList<PhenotypeStatement>();
 
         String hql = "select phenotype from PhenotypeStatement phenotype " +
-                "     where phenotype.quality is not null AND phenotype.quality.secondary = :secondary";
+            "     where phenotype.quality is not null AND phenotype.quality.secondary = :secondary";
         Query query = session.createQuery(hql);
         query.setBoolean("secondary", true);
 
         allPhenotypes.addAll((List<PhenotypeStatement>) query.list());
 
         hql = "select phenotype from PhenotypeStatement phenotype " +
-                "     where phenotype.entity.superterm is not null AND phenotype.entity.superterm.secondary = :secondary";
+            "     where phenotype.entity.superterm is not null AND phenotype.entity.superterm.secondary = :secondary";
         Query queryEntitySuper = session.createQuery(hql);
         queryEntitySuper.setBoolean("secondary", true);
         allPhenotypes.addAll((List<PhenotypeStatement>) queryEntitySuper.list());
 
         hql = "select phenotype from PhenotypeStatement phenotype " +
-                "     where phenotype.entity.subterm is not null AND phenotype.entity.subterm.secondary = :secondary";
+            "     where phenotype.entity.subterm is not null AND phenotype.entity.subterm.secondary = :secondary";
         Query queryEntitySub = session.createQuery(hql);
         queryEntitySub.setBoolean("secondary", true);
         allPhenotypes.addAll((List<PhenotypeStatement>) queryEntitySub.list());
 
         hql = "select phenotype from PhenotypeStatement phenotype " +
-                "     where phenotype.relatedEntity.superterm is not null AND phenotype.relatedEntity.superterm.secondary = :secondary";
+            "     where phenotype.relatedEntity.superterm is not null AND phenotype.relatedEntity.superterm.secondary = :secondary";
         Query queryRelatedEntitySuper = session.createQuery(hql);
         queryRelatedEntitySuper.setBoolean("secondary", true);
         allPhenotypes.addAll((List<PhenotypeStatement>) queryRelatedEntitySuper.list());
 
         hql = "select phenotype from PhenotypeStatement phenotype " +
-                "     where phenotype.relatedEntity.subterm is not null AND phenotype.relatedEntity.subterm.secondary = :secondary";
+            "     where phenotype.relatedEntity.subterm is not null AND phenotype.relatedEntity.subterm.secondary = :secondary";
         Query queryRelatedEntitySub = session.createQuery(hql);
         queryRelatedEntitySub.setBoolean("secondary", true);
         allPhenotypes.addAll((List<PhenotypeStatement>) queryRelatedEntitySub.list());
@@ -1168,7 +1224,7 @@ public class HibernateMutantRepository implements MutantRepository {
     public List<MarkerGoTermEvidence> getGoEvidenceOnObsoletedTerms() {
         Session session = HibernateUtil.currentSession();
         String hql = "select goEvidence from MarkerGoTermEvidence goEvidence " +
-                "     where goEvidence.goTerm.obsolete = :obsolete";
+            "     where goEvidence.goTerm.obsolete = :obsolete";
         Query query = session.createQuery(hql);
         query.setBoolean("obsolete", true);
 
@@ -1187,9 +1243,9 @@ public class HibernateMutantRepository implements MutantRepository {
 
         // retrieve entity.superterm
         String hql = "select phenotype.entity.superterm.zdbID, phenotype.entity.superterm.termName," +
-                "count(phenotype.entity.superterm) from PhenotypeStatement phenotype" +
-                "     group by phenotype.entity.superterm.zdbID,  phenotype.entity.superterm.termName" +
-                " order by count(phenotype.entity.superterm) desc";
+            "count(phenotype.entity.superterm) from PhenotypeStatement phenotype" +
+            "     group by phenotype.entity.superterm.zdbID,  phenotype.entity.superterm.termName" +
+            " order by count(phenotype.entity.superterm) desc";
         Query query = session.createQuery(hql);
         List<Object[]> result = query.list();
         if (result != null) {
@@ -1202,9 +1258,9 @@ public class HibernateMutantRepository implements MutantRepository {
         }
         // retrieve entity.subterm
         hql = "select phenotype.entity.subterm.zdbID, phenotype.entity.subterm.termName," +
-                "count(phenotype.entity.superterm) from PhenotypeStatement phenotype" +
-                "     group by phenotype.entity.subterm.zdbID,  phenotype.entity.subterm.termName" +
-                " order by count(phenotype.entity.subterm) desc";
+            "count(phenotype.entity.superterm) from PhenotypeStatement phenotype" +
+            "     group by phenotype.entity.subterm.zdbID,  phenotype.entity.subterm.termName" +
+            " order by count(phenotype.entity.subterm) desc";
         Query queryEntitySubterm = session.createQuery(hql);
         List<Object[]> resultEntitySubterm = queryEntitySubterm.list();
         if (resultEntitySubterm != null) {
@@ -1217,9 +1273,9 @@ public class HibernateMutantRepository implements MutantRepository {
         }
         // retrieve related entity.superterm
         hql = "select phenotype.relatedEntity.superterm.zdbID, phenotype.relatedEntity.superterm.termName," +
-                "count(phenotype.relatedEntity.superterm) from PhenotypeStatement phenotype" +
-                "     group by phenotype.relatedEntity.superterm.zdbID,  phenotype.relatedEntity.superterm.termName" +
-                " order by count(phenotype.relatedEntity.superterm) desc";
+            "count(phenotype.relatedEntity.superterm) from PhenotypeStatement phenotype" +
+            "     group by phenotype.relatedEntity.superterm.zdbID,  phenotype.relatedEntity.superterm.termName" +
+            " order by count(phenotype.relatedEntity.superterm) desc";
         Query queryRelatedEntitySuperbterm = session.createQuery(hql);
         List<Object[]> resultRelatedEntitySuperterm = queryRelatedEntitySuperbterm.list();
         if (resultRelatedEntitySuperterm != null) {
@@ -1232,9 +1288,9 @@ public class HibernateMutantRepository implements MutantRepository {
         }
         // retrieve related entity.subterm
         hql = "select phenotype.relatedEntity.subterm.zdbID, phenotype.relatedEntity.subterm.termName," +
-                "count(phenotype.relatedEntity.superterm) from PhenotypeStatement phenotype" +
-                "     group by phenotype.relatedEntity.subterm.zdbID,  phenotype.relatedEntity.subterm.termName" +
-                " order by count(phenotype.relatedEntity.subterm) desc";
+            "count(phenotype.relatedEntity.superterm) from PhenotypeStatement phenotype" +
+            "     group by phenotype.relatedEntity.subterm.zdbID,  phenotype.relatedEntity.subterm.termName" +
+            " order by count(phenotype.relatedEntity.subterm) desc";
         Query queryRelatedEntitySubterm = session.createQuery(hql);
         List<Object[]> resultRelatedEntitySubterm = queryRelatedEntitySubterm.list();
         if (resultRelatedEntitySubterm != null) {
@@ -1260,11 +1316,11 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public List<Feature> getAllelesForMarker(String zdbID, String type) {
         String hql = "select distinct " +
-                "feat from FeatureMarkerRelationship fmrel, Feature feat " +
-                "where fmrel.marker.zdbID= :zdbID " +
-                "and fmrel.type=:type " +
-                "and fmrel.feature = feat " +
-                "order by feat.abbreviationOrder";
+            "feat from FeatureMarkerRelationship fmrel, Feature feat " +
+            "where fmrel.marker.zdbID= :zdbID " +
+            "and fmrel.type=:type " +
+            "and fmrel.feature = feat " +
+            "order by feat.abbreviationOrder";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("zdbID", zdbID);
@@ -1276,14 +1332,14 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public List<Marker> getKnockdownReagents(Marker gene) {
         String hql = " select m from Marker m join m.firstMarkerRelationships mr " +
-                " where mr.secondMarker.zdbID = :markerZdbId  " +
-                " and mr.markerRelationshipType.name = :type " +
-                " order by m.abbreviationOrder " +
-                "";
+            " where mr.secondMarker.zdbID = :markerZdbId  " +
+            " and mr.markerRelationshipType.name = :type " +
+            " order by m.abbreviationOrder " +
+            "";
         return HibernateUtil.currentSession().createQuery(hql)
-                .setString("markerZdbId", gene.getZdbID())
-                .setString("type", MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE.toString())
-                .list();
+            .setString("markerZdbId", gene.getZdbID())
+            .setString("type", MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE.toString())
+            .list();
     }
 
     @Override
@@ -1292,8 +1348,8 @@ public class HibernateMutantRepository implements MutantRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select distinct genofeat.genotype from GenotypeFeature genofeat, FeatureMarkerRelationship featMarker " +
-                "where featMarker.marker = :marker " +
-                "and genofeat.feature = featMarker.feature ";
+            "where featMarker.marker = :marker " +
+            "and genofeat.feature = featMarker.feature ";
 
         Query query = session.createQuery(hql);
         query.setParameter("marker", construct);
@@ -1308,7 +1364,7 @@ public class HibernateMutantRepository implements MutantRepository {
      */
     public List<PhenotypeStatement> getPhenotypeStatementsByGenotypeExperiments(List<String> fishExperimentIDs) {
         String hql = " from PhenotypeStatement where " +
-                "phenotypeExperiment.fishExperiment.zdbID in (:fishoxIds)";
+            "phenotypeExperiment.fishExperiment.zdbID in (:fishoxIds)";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameterList("fishoxIds", fishExperimentIDs);
@@ -1317,7 +1373,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
     public List<PhenotypeStatement> getPhenotypeStatementsByFish(Fish fish) {
         String hql = " from PhenotypeStatement where " +
-                "phenotypeExperiment.fishExperiment.fish.zdbID = :fishZdbId";
+            "phenotypeExperiment.fishExperiment.fish.zdbID = :fishZdbId";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("fishZdbId", fish.getZdbID());
@@ -1326,7 +1382,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
     public List<PhenotypeStatementWarehouse> getPhenotypeStatementWarehousesByFish(Fish fish) {
         String hql = " from PhenotypeStatementWarehouse where " +
-                "phenotypeWarehouse.fishExperiment.fish.zdbID = :fishZdbId";
+            "phenotypeWarehouse.fishExperiment.fish.zdbID = :fishZdbId";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("fishZdbId", fish.getZdbID());
@@ -1343,7 +1399,7 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public List<ExpressionStatement> getExpressionStatementsByGenotypeExperiments(Set<FishExperiment> genotypeExperimentIDs) {
         String hql = " from ExpressionResult where " +
-                "expressionExperiment.fishExperiment in (:genoxIds)";
+            "expressionExperiment.fishExperiment in (:genoxIds)";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameterList("genoxIds", genotypeExperimentIDs);
@@ -1353,7 +1409,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
     public Set<String> getGenoxAttributions(List<String> fishExperimentIDs) {
         String hql = "select distinct publication.zdbID from ExpressionExperiment where " +
-                " fishExperiment.zdbID in (:fishoxIds)";
+            " fishExperiment.zdbID in (:fishoxIds)";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameterList("fishoxIds", fishExperimentIDs);
@@ -1363,7 +1419,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
         // phenotype experiments
         hql = "select distinct figure.publication.zdbID from PhenotypeExperiment where " +
-                " fishExperiment.zdbID in (:fishoxIds)";
+            " fishExperiment.zdbID in (:fishoxIds)";
         query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameterList("fishoxIds", fishExperimentIDs);
         pubIds = (List<String>) query.list();
@@ -1371,7 +1427,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
         // experiments
         hql = "select distinct experiment.publication.zdbID from FishExperiment where " +
-                " zdbID in (:fishoxIds)";
+            " zdbID in (:fishoxIds)";
         query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameterList("fishoxIds", fishExperimentIDs);
         pubIds = (List<String>) query.list();
@@ -1391,8 +1447,8 @@ public class HibernateMutantRepository implements MutantRepository {
 
         // direct attribution
         String hql = "select p.publication " +
-                " from PublicationAttribution p " +
-                " where p.dataZdbID = :fishZdbID ";
+            " from PublicationAttribution p " +
+            " where p.dataZdbID = :fishZdbID ";
 
         Query query = session.createQuery(hql);
         query.setString("fishZdbID", fish.getZdbID());
@@ -1437,7 +1493,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
         String hql = " select distinct expressionResult from ExpressionResult expressionResult where " +
 
-                " expressionResult.expressionExperiment.fishExperiment in (:fishOx) AND ";
+            " expressionResult.expressionExperiment.fishExperiment in (:fishOx) AND ";
         if (geneID == null) {
             hql += " expressionResult.expressionExperiment.gene is not null";
         } else {
@@ -1454,17 +1510,17 @@ public class HibernateMutantRepository implements MutantRepository {
 
     public List<ExperimentCondition> getExperimentConditions(Experiment experiment) {
         return HibernateUtil.currentSession()
-                .createCriteria(ExperimentCondition.class)
-                .add(Restrictions.eq("experiment", experiment))
-                .list();
+            .createCriteria(ExperimentCondition.class)
+            .add(Restrictions.eq("experiment", experiment))
+            .list();
     }
 
     public List<ExperimentCondition> getExperimentConditionsByExp(Experiment experiment) {
 
 
         String hql = " select distinct expressionResult from ExpressionResult expressionResult where " +
-                " expressionResult.expressionExperiment.fishExperiment.experiment= :exp AND " +
-                " expressionResult.expressionExperiment.gene is not null";
+            " expressionResult.expressionExperiment.fishExperiment.experiment= :exp AND " +
+            " expressionResult.expressionExperiment.gene is not null";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("exp", experiment);
@@ -1482,8 +1538,8 @@ public class HibernateMutantRepository implements MutantRepository {
         }
 
         String hql = " select distinct expressionResult from ExpressionResult expressionResult where " +
-                " expressionResult.expressionExperiment.fishExperiment.zdbID in (:genoxIds) AND " +
-                " expressionResult.expressionExperiment.gene is not null";
+            " expressionResult.expressionExperiment.fishExperiment.zdbID in (:genoxIds) AND " +
+            " expressionResult.expressionExperiment.gene is not null";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameterList("genoxIds", genoxIds);
@@ -1506,14 +1562,14 @@ public class HibernateMutantRepository implements MutantRepository {
         List fishOxList = new ArrayList(fishOx);
 
         String sql = "SELECT count(*) FROM figure, expression_experiment, expression_result, expression_pattern_figure, fish_experiment,fish" +
-                "  WHERE fig_zdb_id = xpatfig_fig_zdb_id" +
-                " AND xpatex_zdb_id = xpatres_xpatex_zdb_id" +
-                " AND xpatres_zdb_id = xpatfig_xpatres_zdb_id" +
-                " AND genox_fish_zdb_id = fish_zdb_id" +
-                " AND fish_genotype_zdb_id = :genotypeID" +
-                " AND xpatex_genox_zdb_id = genox_zdb_id" +
-                " AND genox_zdb_id IN (:fishOxList)" +
-                " AND exists (SELECT 'x' FROM image WHERE img_fig_Zdb_id = fig_zdb_id)";
+            "  WHERE fig_zdb_id = xpatfig_fig_zdb_id" +
+            " AND xpatex_zdb_id = xpatres_xpatex_zdb_id" +
+            " AND xpatres_zdb_id = xpatfig_xpatres_zdb_id" +
+            " AND genox_fish_zdb_id = fish_zdb_id" +
+            " AND fish_genotype_zdb_id = :genotypeID" +
+            " AND xpatex_genox_zdb_id = genox_zdb_id" +
+            " AND genox_zdb_id IN (:fishOxList)" +
+            " AND exists (SELECT 'x' FROM image WHERE img_fig_Zdb_id = fig_zdb_id)";
 
         Query query = currentSession().createSQLQuery(sql);
         query.setString("genotypeID", genotypeID);
@@ -1525,12 +1581,12 @@ public class HibernateMutantRepository implements MutantRepository {
 
     public List<PhenotypeStatementWarehouse> getPhenotypeStatementForMutantSummary(GenericTerm term, Genotype genotype, boolean includeSubstructures) {
         String hql = "select distinct pheno from PhenotypeStatementWarehouse pheno, PhenotypeTermFastSearch fastSearch " +
-                "where fastSearch.phenotypeStatement = pheno and " +
-                "pheno.phenotypeWarehouse.fishExperiment.fish.genotype = :genotype and " +
-                "fastSearch.directAnnotation = :directAnnotation " +
-                "AND not exists (select 1 from ExperimentCondition cond where" +
-                " cond.experiment = pheno.phenotypeWarehouse.fishExperiment.experiment " +
-                " AND cond.sequenceTargetingReagent is not null ) ";
+            "where fastSearch.phenotypeStatement = pheno and " +
+            "pheno.phenotypeWarehouse.fishExperiment.fish.genotype = :genotype and " +
+            "fastSearch.directAnnotation = :directAnnotation " +
+            "AND not exists (select 1 from ExperimentCondition cond where" +
+            " cond.experiment = pheno.phenotypeWarehouse.fishExperiment.experiment " +
+            " AND cond.sequenceTargetingReagent is not null ) ";
 
         if (term != null) {
             hql += " and fastSearch.term = :term ";
@@ -1548,9 +1604,9 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public List<PhenotypeStatementWarehouse> getPhenotypeStatementObservedForMutantSummary(GenericTerm term, Fish fish, boolean includeSubstructures) {
         String hql = "select distinct pheno from PhenotypeStatementWarehouse pheno, PhenotypeTermFastSearch fastSearch " +
-                "where fastSearch.phenotypeObserved = pheno and " +
-                "pheno.phenotypeWarehouse.fishExperiment.fish = :fish and " +
-                "fastSearch.directAnnotation = :directAnnotation ";
+            "where fastSearch.phenotypeObserved = pheno and " +
+            "pheno.phenotypeWarehouse.fishExperiment.fish = :fish and " +
+            "fastSearch.directAnnotation = :directAnnotation ";
 
         if (term != null) {
             hql += " and fastSearch.term = :term ";
@@ -1568,12 +1624,12 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public List<DiseaseAnnotationModel> getDiseaseAnnotationModels(int numfOfRecords) {
         String hql = " from DiseaseAnnotationModel model " +
-                "join fetch model.fishExperiment " +
-                "join fetch model.fishExperiment.fish " +
-                "join fetch model.fishExperiment.experiment " +
-                "join fetch model.diseaseAnnotation " +
-                "join fetch model.diseaseAnnotation.disease " +
-                "join fetch model.diseaseAnnotation.publication ";
+            "join fetch model.fishExperiment " +
+            "join fetch model.fishExperiment.fish " +
+            "join fetch model.fishExperiment.experiment " +
+            "join fetch model.diseaseAnnotation " +
+            "join fetch model.diseaseAnnotation.disease " +
+            "join fetch model.diseaseAnnotation.publication ";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
         if (numfOfRecords > 0)
@@ -1585,7 +1641,7 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public List<DiseaseAnnotationModel> getDiseaseAnnotationModelsNoStd(int numfOfRecords) {
         String hql = " from DiseaseAnnotationModel model " +
-                "where model.fishExperiment.standardOrGenericControl=false";
+            "where model.fishExperiment.standardOrGenericControl=false";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
         if (numfOfRecords > 0)
@@ -1597,10 +1653,10 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public List<GeneGenotypeExperiment> getGeneDiseaseAnnotationModels(int numfOfRecords) {
         String hql = "select distinct geneGenotype from GeneGenotypeExperiment geneGenotype, DiseaseAnnotationModel diseaseAnnotationModel " +
-                "join fetch geneGenotype.gene " +
-                "join fetch geneGenotype.fishExperiment " +
-                "where geneGenotype.fishExperiment = diseaseAnnotationModel.fishExperiment " +
-                "and geneGenotype.gene.markerType.name = :genedom ";
+            "join fetch geneGenotype.gene " +
+            "join fetch geneGenotype.fishExperiment " +
+            "where geneGenotype.fishExperiment = diseaseAnnotationModel.fishExperiment " +
+            "and geneGenotype.gene.markerType.name = :genedom ";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
         if (numfOfRecords > 0)
@@ -1614,10 +1670,10 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public List<GeneGenotypeExperiment> getGeneFishWithPhenotypes(int numfOfRecords) {
         String hql = "select distinct geneGenotype from GeneGenotypeExperiment geneGenotype, PhenotypeStatement phenox " +
-                "join fetch geneGenotype.gene " +
-                "join fetch geneGenotype.fishExperiment " +
-                "where geneGenotype.fishExperiment = phenox.fishExperiment " +
-                "and geneGenotype.gene.markerType.name = :genedom ";
+            "join fetch geneGenotype.gene " +
+            "join fetch geneGenotype.fishExperiment " +
+            "where geneGenotype.fishExperiment = phenox.fishExperiment " +
+            "and geneGenotype.gene.markerType.name = :genedom ";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
         if (numfOfRecords > 0)
@@ -1631,8 +1687,8 @@ public class HibernateMutantRepository implements MutantRepository {
     public List<PhenotypeObservationStatement> getPhenotypeStatements(String geneID, String termIDs) {
         String[] split = termIDs.split(",");
         String hql = "from PhenotypeObservationStatement as phenoObservation " +
-                //"where phenoObservation.gene.zdbID = :geneID " +
-                "WHERE phenoObservation.id in (:ids) ";
+            //"where phenoObservation.gene.zdbID = :geneID " +
+            "WHERE phenoObservation.id in (:ids) ";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameterList("ids", Arrays.stream(split).map(Long::valueOf).collect(Collectors.toList()));
@@ -1644,8 +1700,8 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public List<OmimPhenotype> getDiseaseModelsFromGenes(int numfOfRecords) {
         String hql = " from OmimPhenotype model " +
-                "where model.externalReferences is not empty " +
-                "order by model.ortholog.zebrafishGene.abbreviationOrder";
+            "where model.externalReferences is not empty " +
+            "order by model.ortholog.zebrafishGene.abbreviationOrder";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
         if (numfOfRecords > 0)
@@ -1655,9 +1711,9 @@ public class HibernateMutantRepository implements MutantRepository {
 
     public List<Genotype> getGenotypes(List<String> genotypeExperimentIDs) {
         String hql = "select distinct " +
-                "fish.genotype from  FishExperiment genoExp " +
-                "where genoExp.zdbID in (:genoxIDs)" +
-                " and genoExp.standardOrGenericControl=false";
+            "fish.genotype from  FishExperiment genoExp " +
+            "where genoExp.zdbID in (:genoxIDs)" +
+            " and genoExp.standardOrGenericControl=false";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameterList("genoxIDs", genotypeExperimentIDs);
@@ -1681,7 +1737,7 @@ public class HibernateMutantRepository implements MutantRepository {
 
         if (!individualOnly || ontology.equals(Ontology.QUALITY)) {
             String hql = "select phenotype from PhenotypeStatement phenotype " +
-                    "     where phenotype.quality is not null AND phenotype.quality.obsolete = :obsolete";
+                "     where phenotype.quality is not null AND phenotype.quality.obsolete = :obsolete";
             Query query = session.createQuery(hql);
             query.setBoolean("obsolete", true);
             allPhenotypes.addAll((List<PhenotypeStatement>) query.list());
@@ -1693,7 +1749,7 @@ public class HibernateMutantRepository implements MutantRepository {
         if (individualOnly)
             ontologyList = ontology.getIndividualOntologies().stream().map(Ontology::getDbOntologyName).collect(Collectors.toList());
         String hql = "select phenotype from PhenotypeStatement phenotype " +
-                "     where phenotype.entity.superterm is not null AND phenotype.entity.superterm.obsolete = :obsolete ";
+            "     where phenotype.entity.superterm is not null AND phenotype.entity.superterm.obsolete = :obsolete ";
         if (individualOnly) {
             hql += "      AND phenotype.entity.superterm.ontology in (:ontologyList)";
         }
@@ -1706,7 +1762,7 @@ public class HibernateMutantRepository implements MutantRepository {
         allPhenotypes.addAll((List<PhenotypeStatement>) queryEntitySuper.list());
 
         hql = "select phenotype from PhenotypeStatement phenotype " +
-                "     where phenotype.entity.subterm is not null AND phenotype.entity.subterm.obsolete = :obsolete";
+            "     where phenotype.entity.subterm is not null AND phenotype.entity.subterm.obsolete = :obsolete";
         if (individualOnly) {
             hql += "      AND phenotype.entity.subterm.ontology in (:ontologyList)";
         }
@@ -1718,7 +1774,7 @@ public class HibernateMutantRepository implements MutantRepository {
         allPhenotypes.addAll((List<PhenotypeStatement>) queryEntitySub.list());
 
         hql = "select phenotype from PhenotypeStatement phenotype " +
-                "     where phenotype.relatedEntity.superterm is not null AND phenotype.relatedEntity.superterm.obsolete = :obsolete";
+            "     where phenotype.relatedEntity.superterm is not null AND phenotype.relatedEntity.superterm.obsolete = :obsolete";
         if (individualOnly) {
             hql += "      AND phenotype.relatedEntity.superterm.ontology in (:ontologyList)";
         }
@@ -1730,7 +1786,7 @@ public class HibernateMutantRepository implements MutantRepository {
         allPhenotypes.addAll((List<PhenotypeStatement>) queryRelatedEntitySuper.list());
 
         hql = "select phenotype from PhenotypeStatement phenotype " +
-                "     where phenotype.relatedEntity.subterm is not null AND phenotype.relatedEntity.subterm.obsolete = :obsolete";
+            "     where phenotype.relatedEntity.subterm is not null AND phenotype.relatedEntity.subterm.obsolete = :obsolete";
         if (individualOnly) {
             hql += "      AND phenotype.relatedEntity.subterm.ontology in (:ontologyList)";
         }
@@ -1751,9 +1807,9 @@ public class HibernateMutantRepository implements MutantRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select distinct phenoStatement from PhenotypeStatement phenoStatement, GeneGenotypeExperiment geneGenox " +
-                "WHERE geneGenox.gene = :gene and " +
-                "phenoStatement.phenotypeExperiment.fishExperiment = geneGenox.fishExperiment " +
-                "and phenoStatement.tag = :tag";
+            "WHERE geneGenox.gene = :gene and " +
+            "phenoStatement.phenotypeExperiment.fishExperiment = geneGenox.fishExperiment " +
+            "and phenoStatement.tag = :tag";
         Query query = session.createQuery(hql);
         query.setParameter("gene", gene);
         query.setParameter("tag", "abnormal");
@@ -1767,15 +1823,15 @@ public class HibernateMutantRepository implements MutantRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select distinct genoFig from GenotypeFigure genoFig " +
-                "     where genoFig.sequenceTargetingReagent.zdbID = :zdbID";
+            "     where genoFig.sequenceTargetingReagent.zdbID = :zdbID";
         Query query = session.createQuery(hql);
         query.setParameter("zdbID", str.getZdbID());
 
         List<GenotypeFigure> genotypeFigures = (List<GenotypeFigure>) query.list();
 
         List<GenotypeFigure> notNormalGenotypeFigures = genotypeFigures.stream()
-                .filter(genotypeFigure -> genotypeFigure.getPhenotypeStatement().isNotNormal())
-                .collect(Collectors.toList());
+            .filter(genotypeFigure -> genotypeFigure.getPhenotypeStatement().isNotNormal())
+            .collect(Collectors.toList());
         return notNormalGenotypeFigures;
     }
 
@@ -1784,9 +1840,9 @@ public class HibernateMutantRepository implements MutantRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select str from SequenceTargetingReagent str , PublicationAttribution attrib " +
-                "     where attrib.publication.zdbID = :publicationID AND " +
-                "attrib.dataZdbID = str.zdbID " +
-                "order by str.abbreviationOrder";
+            "     where attrib.publication.zdbID = :publicationID AND " +
+            "attrib.dataZdbID = str.zdbID " +
+            "order by str.abbreviationOrder";
         Query query = session.createQuery(hql);
         query.setParameter("publicationID", publicationID);
 
@@ -1813,7 +1869,7 @@ public class HibernateMutantRepository implements MutantRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select fish from Fish fish " +
-                "     where fish.genotype = :genotype ";
+            "     where fish.genotype = :genotype ";
         boolean strsAvailable = CollectionUtils.isNotEmpty(fish.getStrList());
         if (strsAvailable) {
             int index = 0;
@@ -1821,8 +1877,8 @@ public class HibernateMutantRepository implements MutantRepository {
                 hql += " AND :str_" + index++ + " member of fish.strList ";
         }
         hql += " AND (select count(str.id) from Fish zfish" +
-                " inner join zfish.strList str " +
-                " where zfish.zdbID = fish.zdbID) = :numberOfStrs";
+            " inner join zfish.strList str " +
+            " where zfish.zdbID = fish.zdbID) = :numberOfStrs";
 
         Query query = session.createQuery(hql);
         query.setParameter("genotype", fish.getGenotype());
@@ -1865,7 +1921,7 @@ public class HibernateMutantRepository implements MutantRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select attrib.publication from PublicationAttribution attrib " +
-                "     where attrib.dataZdbID = :fishID ";
+            "     where attrib.dataZdbID = :fishID ";
         Query query = session.createQuery(hql);
         query.setParameter("fishID", fishID);
         return (List<Publication>) query.list();
@@ -1876,8 +1932,8 @@ public class HibernateMutantRepository implements MutantRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql = "from FishExperiment " +
-                "     where fish.zdbID = :fishID and" +
-                "     experiment.zdbID = :expID ";
+            "     where fish.zdbID = :fishID and" +
+            "     experiment.zdbID = :expID ";
         Query query = session.createQuery(hql);
         query.setParameter("fishID", fishID);
         query.setParameter("expID", expID);
@@ -1889,9 +1945,9 @@ public class HibernateMutantRepository implements MutantRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql = "from DiseaseAnnotation" +
-                "     where disease = :disease and" +
-                "     publication = :publication and " +
-                "     evidenceCode = :evidenceCode  ";
+            "     where disease = :disease and" +
+            "     publication = :publication and " +
+            "     evidenceCode = :evidenceCode  ";
 
         Query query = session.createQuery(hql);
         query.setParameter("disease", diseaseAnnotation.getDisease());
@@ -1913,8 +1969,8 @@ public class HibernateMutantRepository implements MutantRepository {
 
     public List<DiseaseAnnotationModel> getDiseaseAnnotationModelByZdb(String zdb) {
         Query query = HibernateUtil.currentSession().createQuery(
-                "from DiseaseAnnotationModel  " +
-                        "where diseaseAnnotation.zdbID = :zdb ");
+            "from DiseaseAnnotationModel  " +
+                "where diseaseAnnotation.zdbID = :zdb ");
 
         query.setParameter("zdb", zdb);
 
@@ -1937,10 +1993,10 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public List<DiseaseAnnotation> getDiseaseModel(String fishID, String pubID) {
         Query query = HibernateUtil.currentSession().createQuery("select dm " +
-                "from DiseaseAnnotation dm,DiseaseAnnotationModel dma " +
-                "where dm.publication.zdbID = :pubID " +
-                "AND dma.diseaseAnnotation=dm " +
-                "AND dma.fishExperiment.fish.zdbID = :fishID");
+            "from DiseaseAnnotation dm,DiseaseAnnotationModel dma " +
+            "where dm.publication.zdbID = :pubID " +
+            "AND dma.diseaseAnnotation=dm " +
+            "AND dma.fishExperiment.fish.zdbID = :fishID");
         query.setParameter("fishID", fishID);
         query.setParameter("pubID", pubID);
         return (List<DiseaseAnnotation>) query.list();
@@ -1951,10 +2007,10 @@ public class HibernateMutantRepository implements MutantRepository {
         Session session = HibernateUtil.currentSession();
 
         String hql = "select distinct fish from Fish fish, PublicationAttribution attrib " +
-                "     where attrib.publication.zdbID = :publicationID AND " +
-                "attrib.dataZdbID = fish.zdbID AND " +
-                "attrib.sourceType = :sourceType " +
-                "order by fish.nameOrder";
+            "     where attrib.publication.zdbID = :publicationID AND " +
+            "attrib.dataZdbID = fish.zdbID AND " +
+            "attrib.sourceType = :sourceType " +
+            "order by fish.nameOrder";
         Query query = session.createQuery(hql);
         query.setParameter("publicationID", publicationID);
         query.setParameter("sourceType", RecordAttribution.SourceType.STANDARD);
@@ -1970,8 +2026,8 @@ public class HibernateMutantRepository implements MutantRepository {
     public List<Fish> getFishListBySequenceTargetingReagent(SequenceTargetingReagent sequenceTargetingReagent) {
         Session session = HibernateUtil.currentSession();
         String hql = "select fish from Fish fish " +
-                " where :str member of fish.strList " +
-                " order by fish.name";
+            " where :str member of fish.strList " +
+            " order by fish.name";
         Query query = session.createQuery(hql);
         query.setParameter("str", sequenceTargetingReagent);
         return (List<Fish>) query.list();
@@ -2036,7 +2092,7 @@ public class HibernateMutantRepository implements MutantRepository {
         }
         if (publication != null) {
             hql += "AND gf.genotype.zdbID not in (select dataZdbID from RecordAttribution " +
-                    "where publication = :publication and sourceType = :standard) ";
+                "where publication = :publication and sourceType = :standard) ";
         }
         hql += "ORDER BY gf.genotype.nameOrder ";
 
@@ -2073,8 +2129,8 @@ public class HibernateMutantRepository implements MutantRepository {
     public List<FishExperiment> getFishExperiment(Genotype genotype) {
         Session session = HibernateUtil.currentSession();
         String hql = "select distinct fishExperiment, fishExperiment.fish.order FROM  FishExperiment fishExperiment " +
-                "WHERE fishExperiment.fish.genotype = :genotype " +
-                "order by fishExperiment.fish.order";
+            "WHERE fishExperiment.fish.genotype = :genotype " +
+            "order by fishExperiment.fish.order";
         Query query = session.createQuery(hql);
         query.setParameter("genotype", genotype);
 
@@ -2122,34 +2178,34 @@ public class HibernateMutantRepository implements MutantRepository {
     public void updateGenotypeNicknameWithHandleForPublication(Publication publication) {
         HibernateUtil.currentSession().createSQLQuery(
                 "UPDATE genotype " +
-                        "SET geno_nickname = geno_handle " +
-                        "WHERE EXISTS ( " +
-                        "  SELECT 'x' " +
-                        "  FROM record_attribution " +
-                        "  WHERE recattrib_data_zdb_id = geno_zdb_id " +
-                        "  AND recattrib_source_zdb_id = :pubID " +
-                        ");")
-                .setString("pubID", publication.getZdbID())
-                .executeUpdate();
+                    "SET geno_nickname = geno_handle " +
+                    "WHERE EXISTS ( " +
+                    "  SELECT 'x' " +
+                    "  FROM record_attribution " +
+                    "  WHERE recattrib_data_zdb_id = geno_zdb_id " +
+                    "  AND recattrib_source_zdb_id = :pubID " +
+                    ");")
+            .setString("pubID", publication.getZdbID())
+            .executeUpdate();
     }
 
     public void updateFishAffectedGeneCount(Fish fish) {
         HibernateUtil.currentSession().createSQLQuery(
                 "UPDATE fish " +
-                        "SET fish_name = fish_name " +
-                        "WHERE fish_Zdb_id=:fishID ;")
+                    "SET fish_name = fish_name " +
+                    "WHERE fish_Zdb_id=:fishID ;")
 
-                .setString("fishID", fish.getZdbID())
-                .executeUpdate();
+            .setString("fishID", fish.getZdbID())
+            .executeUpdate();
     }
 
 
     @Override
     public List<PhenotypeStatementWarehouse> getPhenotypeStatementForMarker(Marker marker) {
         String hql = "select distinct pheno from PhenotypeStatementWarehouse pheno, GeneGenotypeExperiment gge " +
-                "where pheno.phenotypeWarehouse.fishExperiment = gge.fishExperiment " +
-                "AND gge.gene = :gene " +
-                "AND pheno.tag != :tag";
+            "where pheno.phenotypeWarehouse.fishExperiment = gge.fishExperiment " +
+            "AND gge.gene = :gene " +
+            "AND pheno.tag != :tag";
 
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("gene", marker);
@@ -2169,7 +2225,7 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public List<Fish> getFishByGenotype(Genotype genotype) {
         String hql = "select fish from Fish as fish " +
-                "where fish.genotype = :genotype";
+            "where fish.genotype = :genotype";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("genotype", genotype);
         return query.list();
@@ -2178,8 +2234,8 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public String getFishByWTGenotype(Genotype genotype) {
         String hql = "select fish.zdbID from Fish as fish " +
-                "where fish.genotype = :genotype and " +
-                "fish.wildtype is true";
+            "where fish.genotype = :genotype and " +
+            "fish.wildtype is true";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("genotype", genotype);
         return query.uniqueResult().toString();
@@ -2188,8 +2244,8 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public List<Fish> getFishByGenotypeNoExperiment(Genotype genotype) {
         String hql = "select fish from Fish as fish " +
-                "where fish.genotype = :genotype and " +
-                "fish.fishExperiments is empty";
+            "where fish.genotype = :genotype and " +
+            "fish.fishExperiments is empty";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("genotype", genotype);
         return query.list();
@@ -2198,9 +2254,9 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public long getFishCountByGenotype(String genotypeID, String publicationID) {
         String hql = "select distinct fish from Fish as fish, PublicationAttribution pubAtt " +
-                "where fish.genotype.zdbID = :genotypeID AND " +
-                "pubAtt.publication.zdbID = :publicationID AND " +
-                "pubAtt.dataZdbID = fish.zdbID";
+            "where fish.genotype.zdbID = :genotypeID AND " +
+            "pubAtt.publication.zdbID = :publicationID AND " +
+            "pubAtt.dataZdbID = fish.zdbID";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("genotypeID", genotypeID);
         query.setParameter("publicationID", publicationID);
@@ -2214,8 +2270,8 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public long getPhenotypeByFishAndPublication(Fish fish, String publicationID) {
         String hql = "from PhenotypeStatement " +
-                "where phenotypeExperiment.fishExperiment.fish = :fish AND " +
-                "phenotypeExperiment.figure.publication.zdbID = :publicationID";
+            "where phenotypeExperiment.fishExperiment.fish = :fish AND " +
+            "phenotypeExperiment.figure.publication.zdbID = :publicationID";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("fish", fish);
         query.setParameter("publicationID", publicationID);
@@ -2229,9 +2285,9 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public long getInferredFromCountByGenotype(String genotypeID, String publicationID) {
         String hql = "select count(inferred.markerGoTermEvidenceZdbID) from InferenceGroupMember as inferred, MarkerGoTermEvidence as mgt " +
-                "where inferred.inferredFrom = :genotypeID AND " +
-                "mgt.source.zdbID = :publicationID AND " +
-                "inferred.markerGoTermEvidenceZdbID = mgt.zdbID ";
+            "where inferred.inferredFrom = :genotypeID AND " +
+            "mgt.source.zdbID = :publicationID AND " +
+            "inferred.markerGoTermEvidenceZdbID = mgt.zdbID ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("genotypeID", "ZFIN:" + genotypeID);
         query.setParameter("publicationID", publicationID);
@@ -2241,8 +2297,8 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public long getFishExperimentCountByGenotype(Fish fish, String publicationID) {
         String hql = "from PhenotypeExperiment " +
-                "where fishExperiment.fish = :fish AND " +
-                "figure.publication.zdbID = :publicationID";
+            "where fishExperiment.fish = :fish AND " +
+            "figure.publication.zdbID = :publicationID";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameter("fish", fish);
         query.setParameter("publicationID", publicationID);
@@ -2256,9 +2312,9 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public List<PhenotypeStatementWarehouse> getPhenotypeObserved(GenericTerm term, Fish fish, boolean includeSubstructures) {
         String hql = "select distinct pheno from PhenotypeStatementWarehouse pheno, PhenotypeTermFastSearch fastSearch " +
-                "where fastSearch.phenotypeObserved = pheno and " +
-                "pheno.phenotypeWarehouse.fishExperiment.fish = :fish and " +
-                "fastSearch.directAnnotation = :directAnnotation ";
+            "where fastSearch.phenotypeObserved = pheno and " +
+            "pheno.phenotypeWarehouse.fishExperiment.fish = :fish and " +
+            "fastSearch.directAnnotation = :directAnnotation ";
 
         if (term != null) {
             hql += " and fastSearch.term = :term ";

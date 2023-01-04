@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 import qs from 'qs';
 import DataTable from '../components/data-table';
-import {EntityLink, EntityList} from '../components/entity';
+import {EntityList} from '../components/entity';
 import DataTableSummaryToggle from '../components/DataTableSummaryToggle';
 import CommaSeparatedList from '../components/CommaSeparatedList';
 import PhenotypeStatementLink from '../components/entity/PhenotypeStatementLink';
@@ -25,6 +25,7 @@ const TermPhenotypeTable = ({termId, directAnnotationOnly}) => {
                 href={'/' + fish.zdbID}
                 dangerouslySetInnerHTML={{__html: fish.name}}
             />,
+            filterName: 'fishName',
             width: '120px',
         },
         {
@@ -34,12 +35,8 @@ const TermPhenotypeTable = ({termId, directAnnotationOnly}) => {
                     return <PhenotypeStatementLink key={entity.id} entity={entity}/>
                 })}
             </CommaSeparatedList>,
+            filterName: 'phenotype',
             width: '220px',
-        },
-        {
-            label: 'Term',
-            content: ({anatomyItem}) => <EntityLink entity={anatomyItem}/>,
-            width: '120px',
         },
         {
             label: 'Figures',

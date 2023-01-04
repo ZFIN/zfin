@@ -190,6 +190,9 @@ public class PhenotypeStatementWarehouse implements Comparable<PhenotypeStatemen
     public String getDisplayName() {
         StringBuilder builder = new StringBuilder();
         builder.append(getEntity());
+        if (gene != null) {
+            builder.append(" "+gene.getAbbreviation() + " expression");
+        }
         builder.append(" - ");
         builder.append(quality.getTermName());
         if (getRelatedEntity() != null) {

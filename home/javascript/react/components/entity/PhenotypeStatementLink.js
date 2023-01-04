@@ -8,7 +8,7 @@ const PhenotypeStatementLink = ({entity}) => {
             <a href={`/action/phenotype/statement/${entity.id}`}>
                 {entity.displayName}
             </a>
-            <a href={`/action/phenotype/statement/${entity.id}`} className='popup-link data-popup-link'/>
+            <a href={`/action/phenotype/statement-popup/${entity.id}`} className='popup-link data-popup-link'/>
         </>
     );
 };
