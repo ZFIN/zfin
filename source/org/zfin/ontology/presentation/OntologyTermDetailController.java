@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.anatomy.presentation.AnatomySearchBean;
 import org.zfin.expression.Experiment;
+import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.*;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.TermDTO;
@@ -379,7 +380,7 @@ public class OntologyTermDetailController {
             return true;
         PaginationBean pagination = new PaginationBean();
         pagination.setMaxDisplayRecords(1);
-        int numOfAntibodies = getAntibodyRepository().getAntibodyCount(anatomyTerm, true);
+        int numOfAntibodies = getAntibodyRepository().getAntibodyCount(anatomyTerm, true, new Pagination());
         if (numOfAntibodies > 0)
             return true;
 
