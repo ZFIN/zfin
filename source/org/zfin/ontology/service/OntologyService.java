@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.util.CollectionUtils;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Experiment;
+import org.zfin.framework.api.Pagination;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.RelationshipType;
 import org.zfin.gwt.root.dto.TermDTO;
@@ -232,7 +233,7 @@ public class OntologyService {
     }
 
     public static List<FishModelDisplay> getDiseaseModelsWithFishModel(GenericTerm disease) {
-        List<DiseaseAnnotationModel> modelList = getPhenotypeRepository().getHumanDiseaseModels(disease, false);
+        List<DiseaseAnnotationModel> modelList = getPhenotypeRepository().getHumanDiseaseModels(disease, false, new Pagination());
         if (CollectionUtils.isEmpty(modelList)) {
             return null;
         }
@@ -255,7 +256,7 @@ public class OntologyService {
     }
 
     public static List<Publication> getPublicationsFromDiseaseModelsWithFishAndExperiment(GenericTerm disease, Fish fish, Experiment experiment, boolean includeChildren) {
-        List<DiseaseAnnotationModel> modelList = getPhenotypeRepository().getHumanDiseaseModels(disease, fish, includeChildren);
+        List<DiseaseAnnotationModel> modelList = getPhenotypeRepository().getHumanDiseaseModels(disease, fish, includeChildren, new Pagination());
         if (CollectionUtils.isEmpty(modelList)) {
             return null;
         }
@@ -291,8 +292,8 @@ public class OntologyService {
         return new ArrayList<>(publicationList);
     }
 
-    public static List<FishModelDisplay> getDiseaseModelsWithFishModelsGrouped(GenericTerm disease, boolean includeChildren) {
-        List<DiseaseAnnotationModel> modelList = getPhenotypeRepository().getHumanDiseaseModels(disease, includeChildren);
+    public static List<FishModelDisplay> getDiseaseModelsWithFishModelsGrouped(GenericTerm disease, boolean includeChildren, Pagination pagination) {
+        List<DiseaseAnnotationModel> modelList = getPhenotypeRepository().getHumanDiseaseModels(disease, includeChildren, pagination);
         if (CollectionUtils.isEmpty(modelList)) {
             return null;
         }

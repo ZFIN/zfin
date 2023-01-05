@@ -16,6 +16,7 @@ import org.zfin.expression.FigureFigure;
 import org.zfin.expression.repository.ExpressionRepository;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.api.Pagination;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.marker.Marker;
@@ -446,7 +447,7 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
     public void getHumanDiseaseModelsByDisease() {
         //cancer
         GenericTerm disease = getOntologyRepository().getTermByOboID("DOID:162");
-        List<DiseaseAnnotationModel> diseaseAnnotations = getPhenotypeRepository().getHumanDiseaseModels(disease, false);
+        List<DiseaseAnnotationModel> diseaseAnnotations = getPhenotypeRepository().getHumanDiseaseModels(disease, false, new Pagination());
         Map<FishExperiment, List<DiseaseAnnotationModel>> fishExperimentMap = diseaseAnnotations.stream()
             .filter(Objects::nonNull)
             .collect(groupingBy(DiseaseAnnotationModel::getFishExperiment));
@@ -459,7 +460,7 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
         //cancer
         GenericTerm disease = getOntologyRepository().getTermByOboID("DOID:162");
         Fish fish = getMutantRepository().getFish("ZDB-PUB-170214-129");
-        List<DiseaseAnnotationModel> diseaseAnnotations = getPhenotypeRepository().getHumanDiseaseModels(disease, fish, false);
+        List<DiseaseAnnotationModel> diseaseAnnotations = getPhenotypeRepository().getHumanDiseaseModels(disease, fish, false, new Pagination());
         Map<FishExperiment, List<DiseaseAnnotationModel>> fishExperimentMap = diseaseAnnotations.stream()
             .filter(Objects::nonNull)
             .collect(groupingBy(DiseaseAnnotationModel::getFishExperiment));

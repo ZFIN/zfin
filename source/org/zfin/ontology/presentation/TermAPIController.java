@@ -217,6 +217,9 @@ public class TermAPIController {
     @RequestMapping(value = "/{termID}/zebrafish-models", method = RequestMethod.GET)
     public JsonResultResponse<FishModelDisplay> getZebrafishModels(@PathVariable String termID,
                                                                    @RequestParam(value = "directAnnotation", required = false, defaultValue = "false") boolean directAnnotation,
+                                                                   @RequestParam(value = "filter.fishName", required = false) String filterFishName,
+                                                                   @RequestParam(value = "filter.diseaseName", required = false) String filterDiseaseName,
+                                                                   @RequestParam(value = "filter.conditionName", required = false) String filterCondition,
                                                                    @Version Pagination pagination) {
 
         HibernateUtil.createTransaction();
@@ -225,6 +228,16 @@ public class TermAPIController {
         GenericTerm term = ontologyRepository.getTermByZdbIDOrOboId(termID);
         if (term == null)
             return response;
+
+        if (StringUtils.isNotEmpty(filterFishName)) {
+            pagination.addToFilterMap("fish", filterFishName);
+        }
+        if (StringUtils.isNotEmpty(filterDiseaseName)) {
+            pagination.addToFilterMap("diseaseModels", filterDiseaseName);
+        }
+        if (StringUtils.isNotEmpty(filterCondition)) {
+            pagination.addToFilterMap("condition", filterCondition);
+        }
 
         retrieveModelData(term, response, directAnnotation, pagination);
         HibernateUtil.flushAndCommitCurrentSession();
@@ -253,9 +266,9 @@ public class TermAPIController {
     }
 
     private void retrieveModelData(GenericTerm term, JsonResultResponse<FishModelDisplay> response, boolean directAnnotation, Pagination pagination) {
-        List<FishModelDisplay> diseaseModelsWithFishModel = OntologyService.getDiseaseModelsWithFishModelsGrouped(term, false);
-        List<FishModelDisplay> diseaseModelsWithFishModelIncluded = OntologyService.getDiseaseModelsWithFishModelsGrouped(term, true);
-        response.addSupplementalData("countIncludingChildren", diseaseModelsWithFishModelIncluded.size());
+        List<FishModelDisplay> diseaseModelsWithFishModel = OntologyService.getDiseaseModelsWithFishModelsGrouped(term, false, pagination);
+        List<FishModelDisplay> diseaseModelsWithFishModelIncluded = OntologyService.getDiseaseModelsWithFishModelsGrouped(term, true, pagination);
+        response.addSupplementalData("countIncludingChildren", diseaseModelsWithFishModelIncluded == null ? 0 : diseaseModelsWithFishModelIncluded.size());
         if (diseaseModelsWithFishModel != null) {
             response.addSupplementalData("countDirect", diseaseModelsWithFishModel.size());
         }
