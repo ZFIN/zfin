@@ -902,9 +902,9 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         // brain
         String termID = "ZDB-TERM-100331-8";
         GenericTerm term = getOntologyRepository().getTermByZdbID(termID);
-        int numberOfAntibodiesPerAOTerm = getAntibodyRepository().getAntibodyCount(term, false);
+        int numberOfAntibodiesPerAOTerm = getAntibodyRepository().getAntibodyCount(term, false, new Pagination());
         assertTrue(numberOfAntibodiesPerAOTerm > 50);
-        int numberOfAntibodiesIncludingSubstructures = getAntibodyRepository().getAntibodyCount(term, true);
+        int numberOfAntibodiesIncludingSubstructures = getAntibodyRepository().getAntibodyCount(term, true, new Pagination());
         assertTrue(numberOfAntibodiesIncludingSubstructures >= numberOfAntibodiesPerAOTerm);
     }
 
@@ -914,9 +914,9 @@ public class AntibodyRepositoryTest extends AbstractDatabaseTest {
         // axon
         String termID = "ZDB-TERM-091209-13933";
         GenericTerm term = getOntologyRepository().getTermByZdbID(termID);
-        int numberOfAntibodiesPerAOTerm = getAntibodyRepository().getAntibodyCount(term, false);
+        int numberOfAntibodiesPerAOTerm = getAntibodyRepository().getAntibodyCount(term, false, new Pagination());
         assertTrue(numberOfAntibodiesPerAOTerm > 0);
-        int numberOfAntibodiesIncludingSubstructures = getAntibodyRepository().getAntibodyCount(term, true);
+        int numberOfAntibodiesIncludingSubstructures = getAntibodyRepository().getAntibodyCount(term, true, new Pagination());
         assertTrue(numberOfAntibodiesIncludingSubstructures >= numberOfAntibodiesPerAOTerm);
     }
 }
