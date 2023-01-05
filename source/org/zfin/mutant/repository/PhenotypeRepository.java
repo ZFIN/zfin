@@ -2,6 +2,7 @@ package org.zfin.mutant.repository;
 
 import org.zfin.expression.Experiment;
 import org.zfin.expression.Figure;
+import org.zfin.framework.api.Pagination;
 import org.zfin.infrastructure.ZdbFlag;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
@@ -281,9 +282,9 @@ public interface PhenotypeRepository {
      * @return
      */
     //List<DiseaseAnnotation> getHumanDiseaseModels(GenericTerm disease);
-    List<DiseaseAnnotationModel> getHumanDiseaseModels(GenericTerm disease, boolean includeChildren);
+    List<DiseaseAnnotationModel> getHumanDiseaseModels(GenericTerm disease, boolean includeChildren, Pagination pagination);
 
-    List<DiseaseAnnotationModel> getHumanDiseaseModels(GenericTerm disease, Fish fish, boolean includeChildren);
+    List<DiseaseAnnotationModel> getHumanDiseaseModels(GenericTerm disease, Fish fish, boolean includeChildren, Pagination pagination);
 
     /**
      * Retrieve phenotype statements (clean and dirty) for a given sequence targeting reagent.
