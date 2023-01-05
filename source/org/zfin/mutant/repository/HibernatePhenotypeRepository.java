@@ -1,5 +1,6 @@
 package org.zfin.mutant.repository;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import org.zfin.database.InformixUtil;
 import org.zfin.expression.Figure;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.api.Pagination;
 import org.zfin.infrastructure.ZdbFlag;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
@@ -907,22 +909,28 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
     }
 
     @Override
-
-    public List<DiseaseAnnotationModel> getHumanDiseaseModels(GenericTerm disease, boolean includeChildren) {
-        return getHumanDiseaseModels(disease, null, includeChildren);
+    public List<DiseaseAnnotationModel> getHumanDiseaseModels(GenericTerm disease, boolean includeChildren, Pagination pagination) {
+        return getHumanDiseaseModels(disease, null, includeChildren, pagination);
     }
 
-    public List<DiseaseAnnotationModel> getHumanDiseaseModels(GenericTerm disease, Fish fish, boolean includeChildren) {
+    public List<DiseaseAnnotationModel> getHumanDiseaseModels(GenericTerm disease, Fish fish, boolean includeChildren, Pagination pagination) {
         String hql = """
             select damo  from DiseaseAnnotationModel damo
             left join fetch damo.fishExperiment fx
             left join fetch fx.experiment exp
             left join fetch fx.fish
-            left join fetch exp.experimentConditions
+            left join fetch exp.experimentConditions conditions
             left join fetch damo.diseaseAnnotation da
+            left join fetch da.disease term
             left join fetch da.publication
+            left join fetch conditions.zecoTerm zecoTerm
+            left join fetch conditions.chebiTerm chebiTerm
+            left join fetch conditions.aoTerm aoTerm
+            left join fetch conditions.spatialTerm spatialTerm
+            left join fetch conditions.goCCTerm goCCTerm
+            left join fetch conditions.taxaonymTerm taxonomyTerm
             where
-            damo.diseaseAnnotation.disease = :disease
+            da.disease = :disease
             """;
 
         if (includeChildren) {
@@ -931,14 +939,50 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
                 left join fetch damo.fishExperiment fx
                 left join fetch fx.experiment exp
                 left join fetch fx.fish
-                left join fetch exp.experimentConditions
+                left join fetch exp.experimentConditions conditions
                 left join fetch damo.diseaseAnnotation da
                 left join fetch da.publication
+                left join fetch conditions.zecoTerm zecoTerm
+                left join fetch conditions.chebiTerm chebiTerm
+                left join fetch conditions.aoTerm aoTerm
+                left join fetch conditions.spatialTerm spatialTerm
+                left join fetch conditions.goCCTerm goCCTerm
+                left join fetch conditions.taxaonymTerm taxonomyTerm
                 where
                 damo.diseaseAnnotation.disease = tc.child AND
                 tc.root = :disease
                 """;
         }
+        if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
+            for (Map.Entry<String, String> entry : pagination.getFilterMap().entrySet()) {
+                if (entry.getKey().startsWith("fish")) {
+                    hql += " AND lower(fx.fish.name) like :" + entry.getKey() + " ";
+                }
+                if (entry.getKey().startsWith("condition")) {
+                    hql += " AND (";
+                    hql += " lower(chebiTerm.termName) like :" + entry.getKey() + " ";
+                    hql += " OR ";
+                    hql += " lower(zecoTerm.termName) like :" + entry.getKey() + " ";
+                    hql += " OR ";
+                    hql += " lower(aoTerm.termName) like :" + entry.getKey() + " ";
+                    hql += " OR ";
+                    hql += " lower(spatialTerm.termName) like :" + entry.getKey() + " ";
+                    hql += " OR ";
+                    hql += " lower(goCCTerm.termName) like :" + entry.getKey() + " ";
+                    hql += " OR ";
+                    hql += " lower(taxonomyTerm.termName) like :" + entry.getKey() + " ";
+                    hql += " ) ";
+                }
+                if (entry.getKey().startsWith("diseaseModels")) {
+                    if (includeChildren) {
+                        hql += " AND  lower(tc.child.termName) like :" + entry.getKey() + " ";
+                    } else {
+                        hql += " AND  lower(term.termName) like :" + entry.getKey() + " ";
+                    }
+                }
+            }
+        }
+
         if (fish != null) {
             hql += " AND fx.fish = :fish ";
         }
@@ -947,6 +991,12 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         if (fish != null) {
             query.setParameter("fish", fish);
         }
+        if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
+            for (Map.Entry<String, String> entry : pagination.getFilterMap().entrySet()) {
+                query.setParameter(entry.getKey(), "%" + entry.getValue().toLowerCase() + "%");
+            }
+        }
+
         return query.list();
     }
 

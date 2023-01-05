@@ -18,6 +18,7 @@ const TermZebrafishModelTable = ({termId, directAnnotationOnly}) => {
                 href={'/' + row.fish.zdbID}
                 dangerouslySetInnerHTML={{__html: row.fish.name}}
             />,
+            filterName: 'fishName',
             width: '330px',
         },
         {
@@ -33,10 +34,12 @@ const TermZebrafishModelTable = ({termId, directAnnotationOnly}) => {
                     href={`/action/expression/experiment-popup?id=${row.experiment.zdbID}`}
                 />
             </span>,
+            filterName: 'conditionName',
         },
         {
             label: 'Disease',
             content: ({disease}) => <EntityLink entity={disease}/>,
+            filterName: 'diseaseName',
             width: '180px',
         },
         {
