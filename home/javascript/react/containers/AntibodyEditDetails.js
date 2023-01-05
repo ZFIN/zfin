@@ -7,6 +7,8 @@ import FormGroup from '../components/form/FormGroup';
 import LoadingButton from '../components/LoadingButton';
 import equal from 'fast-deep-equal';
 import PublicationInput from '../components/form/PublicationInput';
+import DEFAULT_PUB_SUGGESTIONS from '../constants/AntibodyPublications';
+
 
 const AntibodyEditDetails = ({
     antibodyId,
@@ -86,6 +88,7 @@ const AntibodyEditDetails = ({
                         }
                         return false;
                     }}
+                    defaultPubs={DEFAULT_PUB_SUGGESTIONS}
                 />
             </>
             }
