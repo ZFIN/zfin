@@ -8,7 +8,7 @@ import MarkerCuratorNotes from '../components/marker-edit/MarkerCuratorNotes';
 import { stringToBool } from '../utils';
 import MarkerExternalNotes from '../components/marker-edit/MarkerExternalNotes';
 
-const MarkerEditNotes = ({ currentUserId, markerId, showExternalNotes = 'false' }) => {
+const MarkerEditNotes = ({ currentUserId, markerId, showExternalNotes = 'false', defaultPubs=[] }) => {
     const {
         value: allNotes,
         pending,
@@ -63,6 +63,7 @@ const MarkerEditNotes = ({ currentUserId, markerId, showExternalNotes = 'false' 
                         notes={externalNotes}
                         setNotes={setExternalNotes}
                         type='antibody'
+                        defaultPubs={defaultPubs}
                     />
                 </Section>
             }
@@ -74,6 +75,7 @@ MarkerEditNotes.propTypes = {
     currentUserId: PropTypes.string,
     markerId: PropTypes.string,
     showExternalNotes: PropTypes.string,
+    defaultPubs: PropTypes.array,
 };
 
 export default MarkerEditNotes;
