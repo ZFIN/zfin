@@ -6,7 +6,8 @@ import AddEditDeleteModal from '../AddEditDeleteModal';
 import FormGroup from '../form/FormGroup';
 import PublicationInput from '../form/PublicationInput';
 
-const MarkerExternalNotes = ({markerId, notes, setNotes, type}) => {
+const MarkerExternalNotes = ({markerId, notes, setNotes, type, defaultPubs=[]}) => {
+
     const [modalNote, setModalNote] = useState(null);
     const isEdit = modalNote && !!modalNote.zdbID;
 
@@ -54,6 +55,7 @@ const MarkerExternalNotes = ({markerId, notes, setNotes, type}) => {
                         id='externalNotePub'
                         field='publicationZdbID'
                         validate={value => value ? false : 'A publication ZDB ID is required'}
+                        defaultPubs={defaultPubs}
                     />
 
                     <FormGroup
@@ -76,6 +78,7 @@ MarkerExternalNotes.propTypes = {
     notes: PropTypes.array,
     setNotes: PropTypes.func,
     type: PropTypes.string,
+    defaultPubs: PropTypes.array,
 };
 
 export default MarkerExternalNotes;
