@@ -846,15 +846,8 @@ public class MarkerService {
     }
 
     public static boolean markerHasSupplier(Marker marker, Organization supplier) {
-        Collection<MarkerSupplier> suppliers = marker.getSuppliers();
-        if (CollectionUtils.isNotEmpty(suppliers)) {
-            for (MarkerSupplier markerSupplier : marker.getSuppliers()) {
-                if (markerSupplier.getOrganization().equals(supplier)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        MarkerSupplier result = getProfileRepository().getSpecificSupplier(marker, supplier);
+        return result != null;
     }
 
     public static boolean markerHasAlias(Marker marker, String alias) {
