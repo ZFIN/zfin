@@ -67,11 +67,10 @@ public interface PublicationRepository extends PaginationParameter {
      * Returns the appropriate # of records, as well as statistics on the total # of records.
      *
      * @param anatomyTerm term
-     * @param firstRow    first   record
-     * @param maxRow      last record
+     * @param pagination  Pagination bean
      * @return marker statistics
      */
-    PaginationResult<MarkerStatistic> getAllExpressedMarkers(GenericTerm anatomyTerm, int firstRow, int maxRow);
+    PaginationResult<MarkerStatistic> getAllExpressedMarkers(GenericTerm anatomyTerm, Pagination pagination);
 
     /**
      * Count the number of figures from all publications that have a gene
