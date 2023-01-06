@@ -10,6 +10,8 @@ import AddEditList from '../components/AddEditList';
 import InputField from '../components/form/InputField';
 import PublicationInput from '../components/form/PublicationInput';
 import {EntityLink} from '../components/entity';
+import DEFAULT_PUB_SUGGESTIONS from '../constants/AntibodyPublications';
+
 
 const AntibodyEditAntigenGenes = ({
     antibodyId,
@@ -104,6 +106,7 @@ const AntibodyEditAntigenGenes = ({
                                                     }
                                                     return false
                                                 }}
+                                                defaultPubs={DEFAULT_PUB_SUGGESTIONS}
                                             />
                                         </div>
                                         <button

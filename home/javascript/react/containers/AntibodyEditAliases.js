@@ -10,6 +10,7 @@ import InputField from '../components/form/InputField';
 import PublicationInput from '../components/form/PublicationInput';
 import Modal from '../components/Modal';
 import http from '../utils/http';
+import DEFAULT_PUB_SUGGESTIONS from '../constants/AntibodyPublications';
 
 const AntibodyEditAliases = ({
     antibodyId,
@@ -117,6 +118,7 @@ const AntibodyEditAliases = ({
                                             }
                                             return false
                                         }}
+                                        defaultPubs={DEFAULT_PUB_SUGGESTIONS}
                                     />
                                 </div>
                             </div>
