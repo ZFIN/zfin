@@ -122,6 +122,7 @@ public class TermAPIController {
     @RequestMapping(value = "/{termID}/expressed-genes", method = RequestMethod.GET)
     public JsonResultResponse<ExpressedGeneDisplay> getExpressedGenes(@PathVariable String termID,
                                                                       @RequestParam(value = "directAnnotation", required = false, defaultValue = "false") boolean directAnnotation,
+                                                                      @RequestParam(value = "filter.geneName", required = false) String filterGeneName,
                                                                       @Version Pagination pagination) {
 
         HibernateUtil.createTransaction();
@@ -130,6 +131,10 @@ public class TermAPIController {
         GenericTerm term = ontologyRepository.getTermByZdbID(termID);
         if (term == null)
             return response;
+
+        if (StringUtils.isNotEmpty(filterGeneName)) {
+            pagination.addToFilterMap("gene_mrkr_abbrev", filterGeneName);
+        }
 
         AnatomySearchBean form = new AnatomySearchBean();
         form.setAoTerm(term);
@@ -355,7 +360,7 @@ public class TermAPIController {
     private void retrieveExpressedGenesData(GenericTerm anatomyTerm, AnatomySearchBean form, Pagination pagination) {
 
         PaginationResult<MarkerStatistic> expressionMarkersResult =
-            getPublicationRepository().getAllExpressedMarkers(anatomyTerm, pagination.getStart(), pagination.getLimit());
+            getPublicationRepository().getAllExpressedMarkers(anatomyTerm, pagination);
 
         List<MarkerStatistic> markers = expressionMarkersResult.getPopulatedResults();
         form.setExpressedGeneCount(expressionMarkersResult.getTotalCount());
@@ -368,13 +373,7 @@ public class TermAPIController {
         }
 
         form.setAllExpressedMarkers(expressedGenes);
-        // todo: could we get this as part of our statistic?
-        form.setTotalNumberOfFiguresPerAnatomyItem(getPublicationRepository().getTotalNumberOfFiguresPerAnatomyItem(anatomyTerm));
-        // maybe used later?
         form.setTotalNumberOfExpressedGenes(expressionMarkersResult.getTotalCount());
-
-        AnatomyStatistics statistics = getAnatomyRepository().getAnatomyStatistics(anatomyTerm.getZdbID());
-        form.setAnatomyStatistics(statistics);
     }
 
 

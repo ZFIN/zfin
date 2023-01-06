@@ -373,9 +373,12 @@ public class OntologyTermDetailController {
         GenericTerm anatTerm = getOntologyRepository().getTermByZdbID(anatomyTerm.getZdbID());
      /*   if (statistics == null || statistics.getNumberOfObjects() > 0 || statistics.getNumberOfTotalDistinctObjects() > 0)
             return true;*/
+        Pagination paginationBean = new Pagination();
+        paginationBean.setLimit(AnatomySearchBean.MAX_NUMBER_EPRESSED_GENES);
+
         // check for antibody records including substructures
         PaginationResult<MarkerStatistic> emr =
-            getPublicationRepository().getAllExpressedMarkers(anatTerm, 0, AnatomySearchBean.MAX_NUMBER_EPRESSED_GENES);
+            getPublicationRepository().getAllExpressedMarkers(anatTerm, paginationBean);
         if (emr != null && emr.getTotalCount() > 0)
             return true;
         PaginationBean pagination = new PaginationBean();
