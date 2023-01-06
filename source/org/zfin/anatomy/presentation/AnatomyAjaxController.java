@@ -63,7 +63,7 @@ public class AnatomyAjaxController {
 
     @RequestMapping(value = "/show-expressed-genes/{zdbID}")
     public String showExpressedGenes(Model model
-            , @PathVariable("zdbID") String termID
+        , @PathVariable("zdbID") String termID
     ) throws Exception {
         LOG.info("Start Anatomy Term Detail Controller");
 
@@ -80,7 +80,7 @@ public class AnatomyAjaxController {
 
     @RequestMapping(value = "/show-expressed-insitu-probes/{zdbID}")
     public String showExpressedInSituProbes(Model model
-            , @PathVariable("zdbID") String termID
+        , @PathVariable("zdbID") String termID
     ) throws Exception {
 
         GenericTerm term = ontologyRepository.getTermByZdbID(termID);
@@ -96,7 +96,7 @@ public class AnatomyAjaxController {
 
     @RequestMapping(value = "/show-labeled-antibodies/{zdbID}")
     public String showExpressedAntibodies(Model model
-            , @PathVariable("zdbID") String termID
+        , @PathVariable("zdbID") String termID
     ) {
 
         HibernateUtil.createTransaction();
@@ -146,8 +146,8 @@ public class AnatomyAjaxController {
 
     @RequestMapping(value = "/show-all-clean-fish-include-substructures/{zdbID}")
     public String showAllPhenotypeCleanFishIncludingSubs(Model model
-            , @ModelAttribute("formBean") AnatomySearchBean form
-            , @PathVariable("zdbID") String termID
+        , @ModelAttribute("formBean") AnatomySearchBean form
+        , @PathVariable("zdbID") String termID
     ) throws Exception {
 
         GenericTerm term = ontologyRepository.getTermByZdbID(termID);
@@ -162,8 +162,8 @@ public class AnatomyAjaxController {
 
     @RequestMapping(value = "/show-all-phenotype-mutants-substructures/{zdbID}")
     public String showAllPhenotypeMutantsIncludingSubstructures(Model model
-            , @ModelAttribute("formBean") AnatomySearchBean form
-            , @PathVariable("zdbID") String termID
+        , @ModelAttribute("formBean") AnatomySearchBean form
+        , @PathVariable("zdbID") String termID
     ) throws Exception {
 
         GenericTerm term = ontologyRepository.getTermByZdbID(termID);
@@ -179,11 +179,11 @@ public class AnatomyAjaxController {
 
     @RequestMapping(value = "/{oboID}/phenotype-summary/{fishID}")
     public String genotypeSummary(Model model
-            , @PathVariable("oboID") String oboID
-            , @PathVariable("fishID") String fishID
+        , @PathVariable("oboID") String oboID
+        , @PathVariable("fishID") String fishID
     ) throws Exception {
         GenericTerm term = null;
-        if(ActiveData.validateActiveData(oboID)){
+        if (ActiveData.validateActiveData(oboID)) {
             term = ontologyRepository.getTermByZdbID(oboID);
         } else {
             term = ontologyRepository.getTermByOboID(oboID);
@@ -248,8 +248,10 @@ public class AnatomyAjaxController {
 
     private void retrieveExpressedGenesData(GenericTerm anatomyTerm, AnatomySearchBean form) {
 
+        Pagination pagination = new Pagination();
+        pagination.setLimit(AnatomySearchBean.MAX_NUMBER_EPRESSED_GENES);
         PaginationResult<MarkerStatistic> expressionMarkersResult =
-                publicationRepository.getAllExpressedMarkers(anatomyTerm, 0, AnatomySearchBean.MAX_NUMBER_EPRESSED_GENES);
+            publicationRepository.getAllExpressedMarkers(anatomyTerm, pagination);
 
         List<MarkerStatistic> markers = expressionMarkersResult.getPopulatedResults();
         form.setExpressedGeneCount(expressionMarkersResult.getTotalCount());

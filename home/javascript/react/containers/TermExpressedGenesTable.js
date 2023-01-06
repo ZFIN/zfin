@@ -12,6 +12,7 @@ const TermExpressedGenesTable = ({termId}) => {
         {
             label: 'Gene',
             content: ({markerStat}) => <EntityLink entity={markerStat.gene}/>,
+            filterName: 'geneName',
             width: '150px',
         },
         {
