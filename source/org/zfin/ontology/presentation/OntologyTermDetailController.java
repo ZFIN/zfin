@@ -186,7 +186,7 @@ public class OntologyTermDetailController {
             int numberOfGenes = OntologyService.getNumberOfDiseaseGenes(term);
             model.addAttribute("diseaseGenes", numberOfGenes);
             form.setAgrDiseaseLinks(OntologyService.getAGRLinks(term));
-            form.setOmimPhenos(OntologyService.getOmimPhenotypeForTerm(term));
+            form.setOmimPhenos(OntologyService.getOmimPhenotypeForTerm(term, null));
             List<FishModelDisplay> diseaseModelsWithFishModel = OntologyService.getDiseaseModelsWithFishModel(term);
             model.addAttribute("fishModels", diseaseModelsWithFishModel);
         }

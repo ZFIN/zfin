@@ -14,21 +14,24 @@ const TermGeneTable = ({termId, directAnnotationOnly}) => {
     const columns = [
         {
             label: 'Human Gene',
-            content: (row) => <a href={'http://omim.org/entry/' + row.omimAccession}>{row.humanGene}</a>,
+            content: (row) => <a href={'http://omim.org/entry/' + row.omimAccession}>{row.symbol}</a>,
+            filterName: 'humanGeneName',
             width: '120px',
         },
         {
             label: 'Zebrafish Ortholog',
             content: (row) => <CommaSeparatedList>
-                {row.zfinGene.map(gene => {
-                    <EntityLink entity={gene}/>
-                })}
+                {row.zfinGene && (row.zfinGene.map(gene => {
+                    return <EntityLink entity={gene} key={gene.zdbID} />
+                }))}
             </CommaSeparatedList>,
+            filterName: 'zfinGeneName',
             width: '120px',
         },
         {
             label: 'OMIM Term',
             content: (row) => <span>{row.name}</span>,
+            filterName: 'omimName',
             width: '120px',
         },
         {
