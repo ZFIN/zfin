@@ -1,6 +1,7 @@
 package org.zfin.ontology.service;
 
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.collections.MapUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.util.CollectionUtils;
@@ -10,6 +11,7 @@ import org.zfin.framework.api.Pagination;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.RelationshipType;
 import org.zfin.gwt.root.dto.TermDTO;
+import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.*;
 import org.zfin.mutant.presentation.DiseaseModelDisplay;
@@ -155,7 +157,7 @@ public class OntologyService {
         return summaryLinks;
     }
 
-    public static List<OmimPhenotypeDisplay> getOmimPhenotypeForTerm(GenericTerm term) {
+    public static List<OmimPhenotypeDisplay> getOmimPhenotypeForTerm(GenericTerm term, Pagination pagination) {
         if (term == null) {
             return null;
         }
@@ -229,6 +231,29 @@ public class OntologyService {
             omimDisplays.addAll(omimDisplaysNoOrth);
         }
 
+        // apply filter elements
+        List<OmimPhenotypeDisplay> filteredList = new ArrayList<>(omimDisplays);
+        if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
+            for (Map.Entry<String, String> entry : pagination.getFilterMap().entrySet()) {
+                List<OmimPhenotypeDisplay> tempList = new ArrayList<>();
+                if (entry.getKey().startsWith("humanGeneName")) {
+                    tempList = filteredList.stream().filter(display -> display.getSymbol().toLowerCase().contains(entry.getValue().toLowerCase())).toList();
+                }
+                if (entry.getKey().startsWith("omimName")) {
+                    tempList = filteredList.stream().filter(display -> display.getName().toLowerCase().contains(entry.getValue().toLowerCase())).toList();
+                }
+                if (entry.getKey().startsWith("zfinGeneName")) {
+                    tempList = filteredList.stream().filter(display -> {
+                        if (display.getZfinGene() == null)
+                            return false;
+                        String concatenatedAbbrevs = display.getZfinGene().stream().map(Marker::getAbbreviation).collect(joining(","));
+                        return concatenatedAbbrevs.toLowerCase().contains(entry.getValue().toLowerCase());
+                    }).toList();
+                }
+                filteredList = tempList;
+            }
+            return filteredList;
+        }
         return omimDisplays;
     }
 

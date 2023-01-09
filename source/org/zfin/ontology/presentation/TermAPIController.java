@@ -191,6 +191,9 @@ public class TermAPIController {
     @RequestMapping(value = "/{termID}/genes", method = RequestMethod.GET)
     public JsonResultResponse<OmimPhenotypeDisplay> getGenesInvolved(@PathVariable String termID,
                                                                      @RequestParam(value = "directAnnotation", required = false, defaultValue = "false") boolean directAnnotation,
+                                                                     @RequestParam(value = "filter.humanGeneName", required = false) String filterHumanGeneName,
+                                                                     @RequestParam(value = "filter.zfinGeneName", required = false) String filterZfinGeneName,
+                                                                     @RequestParam(value = "filter.omimName", required = false) String filterOmimName,
                                                                      @Version Pagination pagination) {
 
         HibernateUtil.createTransaction();
@@ -200,9 +203,21 @@ public class TermAPIController {
         if (term == null)
             return response;
 
-        List<OmimPhenotypeDisplay> displayList = OntologyService.getOmimPhenotypeForTerm(term);
+        if (StringUtils.isNotEmpty(filterHumanGeneName)) {
+            pagination.addToFilterMap("humanGeneName", filterHumanGeneName);
+        }
+        if (StringUtils.isNotEmpty(filterZfinGeneName)) {
+            pagination.addToFilterMap("zfinGeneName", filterZfinGeneName);
+        }
+        if (StringUtils.isNotEmpty(filterOmimName)) {
+            pagination.addToFilterMap("omimName", filterOmimName);
+        }
+        List<OmimPhenotypeDisplay> displayList = OntologyService.getOmimPhenotypeForTerm(term,pagination);
 
-        response.setResults(displayList);
+        response.setResults(displayList.stream()
+            .skip(pagination.getStart())
+            .limit(pagination.getLimit())
+            .collect(Collectors.toList()));
         response.setTotal(displayList.size());
 /*
         if (directAnnotation) {
