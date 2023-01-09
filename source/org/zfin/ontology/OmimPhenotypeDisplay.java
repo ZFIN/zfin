@@ -41,5 +41,7 @@ public class OmimPhenotypeDisplay {
     private DBLink humanAccession;
     @JsonView(View.API.class)
     private List<Marker> zfinGene;
+    @JsonView(View.API.class)
+    private GenericTerm term;
 
 }

@@ -157,7 +157,7 @@ public class OntologyService {
         return summaryLinks;
     }
 
-    public static List<OmimPhenotypeDisplay> getOmimPhenotypeForTerm(GenericTerm term, Pagination pagination) {
+    public static List<OmimPhenotypeDisplay> getOmimPhenotypeForTerm(GenericTerm term) {
         if (term == null) {
             return null;
         }
@@ -175,7 +175,7 @@ public class OntologyService {
                     if (omimResult.getOrtholog().getOrganism().getCommonName().startsWith("Hu")) {
                         String key = omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation() + omimResult.getName();
 
-                        OmimPhenotypeDisplay omimDisplay = new OmimPhenotypeDisplay();
+                        OmimPhenotypeDisplay omimDisplay;
 
                         // if the key is not in the map, instantiate a display (OmimPhenotypeDisplay) object and add it to the map
                         // otherwise, just get the display object from the map
@@ -185,6 +185,7 @@ public class OntologyService {
                         } else {
                             omimDisplay = map.get(key);
                         }
+                        omimDisplay.setTerm(term);
                         omimDisplay.setOrthology(omimResult.getOrtholog());
                         omimDisplay.setSymbol(omimResult.getOrtholog().getSymbol());
                         //  omimDisplay.setHumanAccession(getSequenceRepository().getDBLinkByData(omimResult.getOrtholog().getZdbID(), sequenceService.getOMIMHumanOrtholog()));
@@ -230,7 +231,12 @@ public class OntologyService {
             omimDisplaysNoOrth.sort(new OmimPhenotypeDisplayComparator());
             omimDisplays.addAll(omimDisplaysNoOrth);
         }
+        return omimDisplays;
+    }
 
+    public static List<OmimPhenotypeDisplay> getOmimPhenotype(GenericTerm term, Pagination pagination, boolean includeChildren) {
+
+        List<OmimPhenotypeDisplay> omimDisplays = getOmimPhenotypeForTerm(term, includeChildren);
         // apply filter elements
         List<OmimPhenotypeDisplay> filteredList = new ArrayList<>(omimDisplays);
         if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
@@ -241,6 +247,9 @@ public class OntologyService {
                 }
                 if (entry.getKey().startsWith("omimName")) {
                     tempList = filteredList.stream().filter(display -> display.getName().toLowerCase().contains(entry.getValue().toLowerCase())).toList();
+                }
+                if (entry.getKey().startsWith("termName")) {
+                    tempList = filteredList.stream().filter(display -> display.getTerm().getTermName().toLowerCase().contains(entry.getValue().toLowerCase())).toList();
                 }
                 if (entry.getKey().startsWith("zfinGeneName")) {
                     tempList = filteredList.stream().filter(display -> {
@@ -254,7 +263,23 @@ public class OntologyService {
             }
             return filteredList;
         }
+
+        // sorting
+        omimDisplays.sort(new OmimPhenotypeDisplayComparator());
         return omimDisplays;
+    }
+
+    public static List<OmimPhenotypeDisplay> getOmimPhenotypeForTerm(GenericTerm term, boolean includeChildren) {
+        if (term == null) {
+            return null;
+        }
+        if (includeChildren) {
+            Set<GenericTerm> allChildren = term.getAllChildren();
+            allChildren.add(term);
+            return allChildren.stream().map(OntologyService::getOmimPhenotypeForTerm).flatMap(Collection::stream).collect(toList());
+        } else {
+            return getOmimPhenotypeForTerm(term);
+        }
     }
 
     public static List<FishModelDisplay> getDiseaseModelsWithFishModel(GenericTerm disease) {
