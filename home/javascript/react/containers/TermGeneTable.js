@@ -35,6 +35,12 @@ const TermGeneTable = ({termId, directAnnotationOnly}) => {
             width: '120px',
         },
         {
+            label: 'Disease',
+            content: (row) => <EntityLink entity={row.term} key={row.symbol}/>,
+            filterName: 'termName',
+            width: '120px',
+        },
+        {
             label: 'OMIM Phenotype ID',
             content: (row) => <a href={'http://omim.org/entry/' + row.omimNum}>{row.omimNum}</a>,
             width: '120px',
@@ -51,11 +57,6 @@ const TermGeneTable = ({termId, directAnnotationOnly}) => {
                 },
         */
         /*
-                {
-                    label: 'Term',
-                    content: ({anatomyItem}) => <EntityLink entity={anatomyItem}/>,
-                    width: '120px',
-                },
         */
         /*
                 {
