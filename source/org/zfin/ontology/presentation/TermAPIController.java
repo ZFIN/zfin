@@ -194,6 +194,7 @@ public class TermAPIController {
                                                                      @RequestParam(value = "filter.humanGeneName", required = false) String filterHumanGeneName,
                                                                      @RequestParam(value = "filter.zfinGeneName", required = false) String filterZfinGeneName,
                                                                      @RequestParam(value = "filter.omimName", required = false) String filterOmimName,
+                                                                     @RequestParam(value = "filter.termName", required = false) String filterTermName,
                                                                      @Version Pagination pagination) {
 
         HibernateUtil.createTransaction();
@@ -212,22 +213,26 @@ public class TermAPIController {
         if (StringUtils.isNotEmpty(filterOmimName)) {
             pagination.addToFilterMap("omimName", filterOmimName);
         }
-        List<OmimPhenotypeDisplay> displayList = OntologyService.getOmimPhenotypeForTerm(term,pagination);
+        if (StringUtils.isNotEmpty(filterTermName)) {
+            pagination.addToFilterMap("termName", filterTermName);
+        }
+        List<OmimPhenotypeDisplay> displayListSingle = OntologyService.getOmimPhenotype(term,pagination, false);
+        List<OmimPhenotypeDisplay> displayListDaf = OntologyService.getOmimPhenotype(term,pagination, true);
+        response.addSupplementalData("countDirect", displayListSingle.size());
+        response.addSupplementalData("countIncludingChildren", displayListDaf.size());
+
+        List<OmimPhenotypeDisplay> displayList;
+        if (directAnnotation) {
+            displayList = displayListSingle;
+        } else {
+            displayList = displayListDaf;
+        }
 
         response.setResults(displayList.stream()
             .skip(pagination.getStart())
             .limit(pagination.getLimit())
             .collect(Collectors.toList()));
         response.setTotal(displayList.size());
-/*
-        if (directAnnotation) {
-            response.addSupplementalData("countDirect", form.getTotalRecords());
-            response.addSupplementalData("countIncludingChildren", form.getTotalNumberOfExpressedGenes());
-        } else {
-            response.addSupplementalData("countIncludingChildren", form.getTotalRecords());
-            response.addSupplementalData("countDirect", form.getTotalNumberOfExpressedGenes());
-        }
-*/
         HibernateUtil.flushAndCommitCurrentSession();
 
         return response;
