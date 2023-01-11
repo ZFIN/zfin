@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset rtaylor:bcrypt
+--changeset rtaylor:zfin-8396
 
 alter table zdb_submitters
 

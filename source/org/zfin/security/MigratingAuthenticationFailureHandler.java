@@ -33,8 +33,7 @@ public class MigratingAuthenticationFailureHandler
      */
     private void handleRedirectForExpiredPassword(HttpServletRequest request) {
         String username = request.getParameter(UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_USERNAME_KEY);
-        String password = request.getParameter(UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_PASSWORD_KEY);
-        if (FeatureFlags.isFlagEnabled(FeatureFlagEnum.REQUIRE_MODERN_PASSWORD_HASH) && ProfileService.isPasswordDeprecatedFor(username, password)) {
+        if (ProfileService.isPasswordDeprecatedFor(username)) {
             request.getSession().setAttribute(LAST_USERNAME_ATTEMPTED, username);
             setDefaultFailureUrl("/action/profile/expired-password");
         } else {
