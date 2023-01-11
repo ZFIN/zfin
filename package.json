@@ -44,7 +44,7 @@
     "jquery.tipsy": "1.0.3",
     "masonry-layout": "^4.2.2",
     "mini-css-extract-plugin": "^1.6.2",
-    "node-sass": "^5.0.0",
+    "sass": "^1.57.1",
     "popper.js": "1.16.1",
     "postcss": "^8.3.9",
     "prop-types": "15.7.2",
