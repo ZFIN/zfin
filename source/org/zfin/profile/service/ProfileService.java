@@ -7,11 +7,11 @@ import org.apache.logging.log4j.Logger;
 import org.owasp.html.PolicyFactory;
 import org.owasp.html.Sanitizers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 import org.zfin.feature.FeaturePrefix;
@@ -23,7 +23,6 @@ import org.zfin.profile.presentation.PersonMemberPresentation;
 import org.zfin.profile.presentation.ProfileUpdateMessageBean;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.repository.RepositoryFactory;
-import org.zfin.security.MigratingPasswordEncoder;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -42,7 +41,8 @@ public class ProfileService {
 
     private Logger logger = LogManager.getLogger(ProfileService.class);
 
-    private MigratingPasswordEncoder encoder = new MigratingPasswordEncoder();
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
     private BeanCompareService beanCompareService;
@@ -570,7 +570,7 @@ public class ProfileService {
     }
 
     public String encodePassword(String password) {
-        return encoder.encode(password);
+        return bCryptPasswordEncoder.encode(password);
     }
 
     public void updatePassword(Person person, String password) {

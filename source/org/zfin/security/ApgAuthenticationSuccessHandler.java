@@ -1,17 +1,11 @@
 package org.zfin.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.featureflag.FeatureFlagEnum;
-import org.zfin.framework.featureflag.FeatureFlags;
-import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.profile.AccountInfo;
 import org.zfin.profile.Person;
-import org.zfin.profile.service.ProfileService;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
@@ -25,8 +19,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
 
-import static org.zfin.profile.service.ProfileService.passwordHashIsMd5Encoded;
-import static org.zfin.repository.RepositoryFactory.getProfileRepository;
 
 /**
  * This class is needed to add a new cookie to the response object when the
@@ -65,7 +57,6 @@ public class ApgAuthenticationSuccessHandler extends SavedRequestAwareAuthentica
             }
         }
         HibernateUtil.closeSession();
-        storePasswordAsModernHashIfNecessary(request, authentication);
         super.onAuthenticationSuccess(request, response, authentication);
     }
 
@@ -107,52 +98,6 @@ public class ApgAuthenticationSuccessHandler extends SavedRequestAwareAuthentica
 
     public void setSessionRegistry(SessionRegistry sessionRegistry) {
         this.sessionRegistry = sessionRegistry;
-    }
-
-
-    /**
-     * If configured to do so, after a successful login, we can automatically convert a user's password hash to
-     * a modern version.  If the password hash is already a modern hash, we don't do anything.
-     *
-     * @param request
-     * @param authentication
-     */
-    private void storePasswordAsModernHashIfNecessary(HttpServletRequest request, Authentication authentication) {
-        if (
-                FeatureFlags.isFlagEnabled(FeatureFlagEnum.REQUIRE_MODERN_PASSWORD_HASH) ||
-                !FeatureFlags.isFlagEnabled(FeatureFlagEnum.CONVERT_MD5_HASH_ON_LOGIN)
-        ) {
-            return;
-        }
-
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return;
-        }
-
-        String login = authentication.getName();
-        String password = request.getParameter(UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_PASSWORD_KEY);
-
-        if (StringUtils.isEmpty(password)) {
-            return;
-        }
-
-        Person person = getProfileRepository().getPersonByName(login);
-        if (person == null ||  person.getAccountInfo() == null) {
-            return;
-        }
-
-        String currentPasswordHash = person.getAccountInfo().getPassword();
-        if (!passwordHashIsMd5Encoded(currentPasswordHash)) {
-            return;
-        }
-
-        try {
-            HibernateUtil.createTransaction();
-            (new ProfileService()).updatePassword(person, password);
-            HibernateUtil.flushAndCommitCurrentSession();
-        } catch (Exception e) {
-            //ignore
-        }
     }
 
 }

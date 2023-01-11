@@ -37,13 +37,15 @@
         <property name="useSecureCookie" value="false"/>
     </bean>
 
-    <bean id="migratingPasswordEncoder"
-          class="org.zfin.security.MigratingPasswordEncoder">
+    <bean id="bCryptPasswordEncoder"
+          class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
+        <!-- this value should be tuned to the performance of our server such that encryption takes about 1 second -->
+        <constructor-arg value="15"/>
     </bean>
 
     <security:authentication-manager alias="authenticationManager">
         <security:authentication-provider user-service-ref="userDetailsService">
-            <security:password-encoder ref="migratingPasswordEncoder" />
+            <security:password-encoder ref="bCryptPasswordEncoder" />
         </security:authentication-provider>
     </security:authentication-manager>
 
