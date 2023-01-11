@@ -13,6 +13,9 @@
 
     <z:attributeListItem label="Genotype">
         <zfin:link entity="${fish.genotype}"/>
+        <c:if test="${fish.genotype.extinct}">
+            &nbsp;&nbsp; <i class="warning-icon" title="Extinct"></i>&nbsp;
+        </c:if>
     </z:attributeListItem>
 
     <z:attributeListItem label="Targeting Reagent">
