@@ -49,6 +49,7 @@ USER gradle
 COPY ./cshrc /home/gradle/.cshrc
 COPY ./bash_profile /tmp/bash_profile
 RUN cat /tmp/bash_profile >> /home/gradle/.profile
+RUN git config --global --add safe.directory /opt/zfin/source_roots/zfin.org
 
 #CMD ["/usr/bin/tcsh"]
 CMD ["/bin/bash","-l"]
