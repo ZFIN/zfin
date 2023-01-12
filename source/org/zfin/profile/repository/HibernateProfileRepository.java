@@ -42,6 +42,9 @@ public class HibernateProfileRepository implements ProfileRepository {
 	private final Logger logger = LogManager.getLogger(HibernateProfileRepository.class);
 
 	public Person getPerson(String zdbID) {
+		if (zdbID == null) {
+			return null;
+		}
 		return HibernateUtil.currentSession().get(Person.class, zdbID);
 	}
 
