@@ -56,6 +56,13 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest {
 
 	}
 
+
+	@Test
+	public void callGetPersonWithNullValue() {
+		Person person = profileRepository.getPerson(null);
+		assertNull(person);
+	}
+
 	@Test
 	public void createAndUpdateCuratorSessionWithNoPublication() {
 
