@@ -12,6 +12,7 @@ import org.zfin.antibody.Antibody;
 import org.zfin.antibody.AntibodyService;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
@@ -26,7 +27,7 @@ import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 @RequestMapping("/antibody")
 public class AntibodyViewController {
 
-    private Logger logger = LogManager.getLogger(AntibodyViewController.class);
+    private final Logger logger = LogManager.getLogger(AntibodyViewController.class);
 
     @Autowired
     private MarkerRepository markerRepository;
@@ -55,9 +56,8 @@ public class AntibodyViewController {
         antibodyBean.setAntigenGenes(markerRepository.getRelatedMarkerDisplayForTypes(antibody, false, MarkerRelationship.Type.GENE_PRODUCT_RECOGNIZED_BY_ANTIBODY));
 
         // set external notes (same as orthology)
-        List<ExternalNote> listOfNotes = new ArrayList<>();
-        listOfNotes.addAll(antibody.getExternalNotes());
-        if (antibody.getPublicComments() != null) {
+        List<ExternalNote> listOfNotes = new ArrayList<>(antibody.getExternalNotes());
+        if (StringUtils.isNotEmpty(antibody.getPublicComments())) {
             ExternalNote note = new ExternalNote();
             note.setNote(antibody.getPublicComments());
             note.setPublication(getPublicationRepository().getPublication("ZDB-PUB-020723-5"));
