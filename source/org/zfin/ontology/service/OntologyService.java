@@ -376,6 +376,38 @@ public class OntologyService {
             }).flatMap(Collection::stream).sorted().collect(toList());
     }
 
+    public static List<FishModelDisplay> getDiseaseModelsByFishModelsGrouped(Fish fish, Pagination pagination) {
+        List<DiseaseAnnotationModel> modelList = getPhenotypeRepository().getHumanDiseaseModels(null, fish, false, pagination);
+        if (CollectionUtils.isEmpty(modelList)) {
+            return null;
+        }
+
+        Comparator<FishModelDisplay> diseaseConditionDisease = Comparator.comparing(display -> display.getDisease().getTermName().toLowerCase());
+        Comparator<FishModelDisplay> diseaseConditionCond = Comparator.comparing(display -> display.getExperiment().getDisplayAllConditions().toLowerCase());
+
+        Map<String, Map<GenericTerm, Set<DiseaseAnnotationModel>>> fishExperimentConditionMap1 = modelList.stream()
+            .filter(Objects::nonNull)
+            .collect(groupingBy(annotation -> annotation.getFishExperiment().getExperiment().getDisplayAllConditions(), LinkedHashMap::new,
+                groupingBy(annotation -> annotation.getDiseaseAnnotation().getDisease(), toSet()))
+            );
+        return fishExperimentConditionMap1.values().stream()
+            .map(genericTermSetMap -> genericTermSetMap.entrySet().stream()
+                .map(diseaseEntrySet -> {
+                    FishModelDisplay display = new FishModelDisplay(fish);
+                    display.setDisease(diseaseEntrySet.getKey());
+                    display.setFishModel(diseaseEntrySet.getValue().iterator().next().getFishExperiment());
+                    Set<Publication> publications = diseaseEntrySet.getValue().stream().map(diseaseAnnotationModel -> diseaseAnnotationModel.getDiseaseAnnotation().getPublication()).collect(toSet());
+                    if (publications.size() == 1) {
+                        display.setSinglePublication(publications.iterator().next());
+                    }
+                    display.setNumberOfPublications(publications.size());
+                    display.setExperiment(diseaseEntrySet.getValue().iterator().next().getFishExperiment().getExperiment());
+                    return display;
+                }).collect(toList())).flatMap(Collection::stream)
+            .sorted(diseaseConditionDisease.thenComparing(diseaseConditionCond))
+            .collect(toList());
+    }
+
 
     public static String getDisplayName(GenericTerm superterm, GenericTerm subterm) {
         StringBuilder builder = new StringBuilder();

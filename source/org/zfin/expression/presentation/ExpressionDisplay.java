@@ -1,8 +1,12 @@
 package org.zfin.expression.presentation;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.Figure;
+import org.zfin.framework.api.View;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
@@ -12,15 +16,19 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 
-/**
- *  TODO: add comments
- */
+@Setter
+@Getter
 public class ExpressionDisplay implements Comparable<ExpressionDisplay> {
+    @JsonView(View.API.class)
     private Marker expressedGene;
+    @JsonView(View.API.class)
     private Set<Publication> publications;
+    @JsonView(View.API.class)
     private Set<Figure> figures;
     private List<ExpressionResult> expressionResults;
+    @JsonView(View.API.class)
     private Experiment experiment;
+    @JsonView(View.API.class)
     private Set<GenericTerm> expressionTerms;
     private SortedMap<Publication, SortedSet<Figure>> figuresPerPub;
 
@@ -37,14 +45,7 @@ public class ExpressionDisplay implements Comparable<ExpressionDisplay> {
         return expressedGene.compareTo(anotherExpressionDisplay.getExpressedGene());
     }
 
-    public Set<Figure> getFigures() {
-        return figures;
-    }
-
-    public void setFigures(Set<Figure> figures) {
-        this.figures = figures;
-    }
-
+    @JsonView(View.API.class)
     public int getNumberOfFigures() {
 		if (figures == null) {
 			return 0;
@@ -76,14 +77,7 @@ public class ExpressionDisplay implements Comparable<ExpressionDisplay> {
         return singlePub;
     }
 
-    public Set<Publication> getPublications() {
-        return publications;
-    }
-
-    public void setPublications(Set<Publication> publications) {
-        this.publications = publications;
-    }
-
+    @JsonView(View.API.class)
     public int getNumberOfPublications() {
 		if (publications == null) {
 			return 0;
@@ -128,35 +122,14 @@ public class ExpressionDisplay implements Comparable<ExpressionDisplay> {
         return noFigureLabel;
     }
 
-    public List<ExpressionResult> getExpressionResults() {
-        return expressionResults;
+    @JsonView(View.API.class)
+    public Publication getFirstPublication(){
+        return publications.iterator().next();
     }
 
-    public void setExpressionResults(List<ExpressionResult> expressionResults) {
-        this.expressionResults = expressionResults;
+    @JsonView(View.API.class)
+    public Figure getFirstFigure(){
+        return figures.iterator().next();
     }
 
-    public Experiment getExperiment() {
-        return experiment;
-    }
-
-    public void setExperiment(Experiment experiment) {
-        this.experiment = experiment;
-    }
-
-    public Set<GenericTerm> getExpressionTerms() {
-        return expressionTerms;
-    }
-
-    public void setExpressionTerms(Set<GenericTerm> expressionTerms) {
-        this.expressionTerms = expressionTerms;
-    }
-
-    public SortedMap<Publication, SortedSet<Figure>> getFiguresPerPub() {
-        return figuresPerPub;
-    }
-
-    public void setFiguresPerPub(SortedMap<Publication, SortedSet<Figure>> figuresPerPub) {
-        this.figuresPerPub = figuresPerPub;
-    }
 }

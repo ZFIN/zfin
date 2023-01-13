@@ -2,6 +2,7 @@ package org.zfin.framework.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +20,7 @@ import java.util.*;
 @Setter
 @Getter
 @JsonIgnoreProperties(value={ "nextPageURL" }, allowGetters=true)
+@JsonPropertyOrder({"results", "total", "returnedRecords", "errorMessage", "request", "requestDate", "requestDuration", "supplementalData"})
 public class JsonResultResponse<T> {
 
 

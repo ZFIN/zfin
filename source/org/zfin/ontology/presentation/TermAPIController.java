@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.anatomy.presentation.AnatomySearchBean;
 import org.zfin.anatomy.service.AnatomyService;
 import org.zfin.framework.HibernateUtil;
@@ -33,7 +32,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.zfin.repository.RepositoryFactory.*;
+import static org.zfin.repository.RepositoryFactory.getMutantRepository;
+import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 @RestController
 @RequestMapping("/api/ontology")
@@ -216,8 +216,8 @@ public class TermAPIController {
         if (StringUtils.isNotEmpty(filterTermName)) {
             pagination.addToFilterMap("termName", filterTermName);
         }
-        List<OmimPhenotypeDisplay> displayListSingle = OntologyService.getOmimPhenotype(term,pagination, false);
-        List<OmimPhenotypeDisplay> displayListDaf = OntologyService.getOmimPhenotype(term,pagination, true);
+        List<OmimPhenotypeDisplay> displayListSingle = OntologyService.getOmimPhenotype(term, pagination, false);
+        List<OmimPhenotypeDisplay> displayListDaf = OntologyService.getOmimPhenotype(term, pagination, true);
         response.addSupplementalData("countDirect", displayListSingle.size());
         response.addSupplementalData("countIncludingChildren", displayListDaf.size());
 
@@ -270,6 +270,33 @@ public class TermAPIController {
         return response;
     }
 
+    @JsonView(View.API.class)
+    @RequestMapping(value = "/fish/{fishID}/zebrafish-models", method = RequestMethod.GET)
+    public JsonResultResponse<FishModelDisplay> getZebrafishModelsByFish(@PathVariable String fishID,
+                                                                         @RequestParam(value = "filter.diseaseName", required = false) String filterDiseaseName,
+                                                                         @RequestParam(value = "filter.conditionName", required = false) String filterCondition,
+                                                                         @Version Pagination pagination) {
+
+        HibernateUtil.createTransaction();
+        JsonResultResponse<FishModelDisplay> response = new JsonResultResponse<>();
+        response.setHttpServletRequest(request);
+        Fish fish = getMutantRepository().getFish(fishID);
+        if (fish == null)
+            return response;
+
+        if (StringUtils.isNotEmpty(filterDiseaseName)) {
+            pagination.addToFilterMap("diseaseModels", filterDiseaseName);
+        }
+        if (StringUtils.isNotEmpty(filterCondition)) {
+            pagination.addToFilterMap("condition", filterCondition);
+        }
+
+        retrieveModelDataByFish(fish, response, pagination);
+        HibernateUtil.flushAndCommitCurrentSession();
+
+        return response;
+    }
+
     private void retrieveMutantData(GenericTerm ai, AnatomySearchBean form, boolean includeSubstructures, Pagination pagination) {
         PaginationBean bean = new PaginationBean();
         bean.setPageInteger(pagination.getPage());
@@ -315,6 +342,17 @@ public class TermAPIController {
             }
         }
 
+    }
+
+    private void retrieveModelDataByFish(Fish fish, JsonResultResponse<FishModelDisplay> response, Pagination pagination) {
+        List<FishModelDisplay> diseaseModelsWithFishModel = OntologyService.getDiseaseModelsByFishModelsGrouped(fish, pagination);
+        if (CollectionUtils.isNotEmpty(diseaseModelsWithFishModel)) {
+            response.setResults(diseaseModelsWithFishModel.stream()
+                .skip(pagination.getStart())
+                .limit(pagination.getLimit())
+                .collect(Collectors.toList()));
+            response.setTotal(diseaseModelsWithFishModel.size());
+        }
     }
 
     private void populateFormBeanForMutantList(GenericTerm ai, AnatomySearchBean form, PaginationResult<Fish> fishResult, boolean includeSubstructures) {
