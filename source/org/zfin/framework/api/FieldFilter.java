@@ -15,6 +15,7 @@ public enum FieldFilter {
     REGULATORY_REGION("regulatoryRegion"),
     CODING_SEQUENCE("codingSequence"),
     SPECIES("species"),
+    CONDITION_NAME("conditionName"),
     CITATION("citation"),
     ;
     private String name;

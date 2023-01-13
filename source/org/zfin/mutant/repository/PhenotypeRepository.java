@@ -284,6 +284,8 @@ public interface PhenotypeRepository {
     //List<DiseaseAnnotation> getHumanDiseaseModels(GenericTerm disease);
     List<DiseaseAnnotationModel> getHumanDiseaseModels(GenericTerm disease, boolean includeChildren, Pagination pagination);
 
+    List<DiseaseAnnotationModel> getHumanDiseaseModelsByFish(Fish fish, Pagination pagination);
+
     List<DiseaseAnnotationModel> getHumanDiseaseModels(GenericTerm disease, Fish fish, boolean includeChildren, Pagination pagination);
 
     /**

@@ -43,16 +43,16 @@
 
         <z:section title="${HUMAN_DISEASE}" infoPopup="/ZFIN/help_files/expression_help.html"
                    appendedText="modelled by ${fish.name}">
-            <z:section title="">
-                <jsp:include page="fish-view-human-disease.jsp"/>
-            </z:section>
+            <div class="__react-root" id="FishZebrafishModelTable"
+                 data-fish-id="${fish.zdbID}"
+            ></div>
         </z:section>
 
         <z:section title="${EXPRESSION}" infoPopup="/ZFIN/help_files/expression_help.html">
             <z:section title="RNA Expression">
-                <zfin2:fishExpressionData fishZdbID="${fish.zdbID}"
-                                          expressionDisplays="${geneCentricNonEfgExpressionDataList}"
-                                          showCondition="true"/>
+                <div class="__react-root" id="FishRnaExpressionTable"
+                     data-fish-id="${fish.zdbID}"
+                ></div>
             </z:section>
             <z:section title="Protein Expression">
                 <jsp:include page="fish-view-protein-detail.jsp"/>
