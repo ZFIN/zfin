@@ -348,6 +348,18 @@
         <path refid="classpath"/>
     </path>
 
+    <target name="writeClassPath">
+        <pathconvert property="classpathProp1" refid="extended.classpath"/>
+        <tempfile property="classpathFile1" suffix=".txt" createfile="true" prefix="extended.classpath." destdir="/tmp"/>
+        <echo file="${classpathFile1}">${classpathProp1}</echo>
+        <echo>extended.classpath is written to ${classpathFile1}</echo>
+
+        <pathconvert property="classpathProp2" refid="unittest.classpath"/>
+        <tempfile property="classpathFile2" suffix=".txt" createfile="true" prefix="unittest.classpath." destdir="/tmp"/>
+        <echo file="${classpathFile2}">${classpathProp2}</echo>
+        <echo>unittest.classpath is written to ${classpathFile2}</echo>
+    </target>
+
     <target name="instrument" depends="compile">
         <taskdef name="instrument" classname="org.hibernate.tool.instrument.javassist.InstrumentTask">
             <classpath refid="extended.classpath"/>
