@@ -185,6 +185,7 @@ public abstract class Figure implements Serializable, Comparable<Figure> {
     }
 
 
+    @JsonView({View.Default.class, View.API.class})
     public boolean isImgless() {
         return images == null || images.isEmpty();
     }

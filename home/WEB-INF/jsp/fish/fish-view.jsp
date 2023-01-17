@@ -55,7 +55,9 @@
                 ></div>
             </z:section>
             <z:section title="Protein Expression">
-                <jsp:include page="fish-view-protein-detail.jsp"/>
+                <div class="__react-root" id="FishProteinExpressionTable"
+                     data-fish-id="${fish.zdbID}"
+                ></div>
             </z:section>
             <z:section title="Reporter Gene Expression">
                 <zfin2:fishExpressionData fishZdbID="${fish.zdbID}"

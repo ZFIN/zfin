@@ -24,15 +24,15 @@ import java.util.*;
 @Table(name = "Publication")
 public class Publication implements Comparable<Publication>, Serializable, EntityZdbID {
 
-    @JsonView(View.Default.class)
+    @JsonView({View.Default.class, View.API.class})
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "Publication")
     @GenericGenerator(name = "Publication",
-            strategy = "org.zfin.database.ZdbIdGenerator",
-            parameters = {
-                    @org.hibernate.annotations.Parameter(name = "type", value = "PUB"),
-                    @org.hibernate.annotations.Parameter(name = "insertActiveSource", value = "true")
-            })
+        strategy = "org.zfin.database.ZdbIdGenerator",
+        parameters = {
+            @org.hibernate.annotations.Parameter(name = "type", value = "PUB"),
+            @org.hibernate.annotations.Parameter(name = "insertActiveSource", value = "true")
+        })
     @Column(name = "zdb_id")
     private String zdbID;
     @JsonView(View.Default.class)
@@ -43,10 +43,10 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "ppa_publication_zdb_id")
     private Set<PubmedPublicationAuthor> authorPubs;
-    @JsonView(View.Default.class)
+    @JsonView({View.Default.class, View.API.class})
     @Column(name = "pub_mini_ref")
     private String shortAuthorList;
-    @Basic( fetch = FetchType.LAZY )
+    @Basic(fetch = FetchType.LAZY)
     @Column(name = "pub_abstract")
     private String abstractText;
     @Column(name = "pub_volume")
@@ -55,10 +55,10 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private String pages;
     @Column(name = "jtype")
     @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
-            parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.publication.PublicationType")})
+        parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.publication.PublicationType")})
     private PublicationType type;
     @Column(name = "accession_no")
-    @Basic( fetch = FetchType.LAZY )
+    @Basic(fetch = FetchType.LAZY)
     private Integer accessionNumber;
     @Column(name = "pub_doi")
     private String doi;
@@ -66,7 +66,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     private String acknowledgment;
     @Column(name = "status")
     @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
-            parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.publication.Publication$Status")})
+        parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.publication.Publication$Status")})
     private Status status;
     @Column(name = "keywords")
     private String keywords;
@@ -84,6 +84,7 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "xpatex_source_zdb_id")
     private Set<ExpressionExperiment> expressionExperiments;
+    @JsonView(View.FigureAPI.class)
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "fig_source_zdb_id")
     private Set<Figure> figures;
@@ -92,10 +93,10 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     @JsonProperty("registeredAuthors")
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "int_person_pub", joinColumns = {
-            @JoinColumn(name = "target_id", nullable = false, updatable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "source_id",
-                    nullable = false, updatable = false)})
-    @OrderBy(value="full_name asc")
+        @JoinColumn(name = "target_id", nullable = false, updatable = false)},
+        inverseJoinColumns = {@JoinColumn(name = "source_id",
+            nullable = false, updatable = false)})
+    @OrderBy(value = "full_name asc")
     private Set<Person> people;
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "mh_pub_zdb_id")

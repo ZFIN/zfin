@@ -44,6 +44,7 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
     @JsonView(View.API.class)
     private Set<ExperimentCondition> experimentConditions;
 
+    @JsonView(View.API.class)
     public boolean isStandard() {
         return (name.equalsIgnoreCase(Experiment.STANDARD) || name.equalsIgnoreCase(Experiment.GENERIC_CONTROL));
     }

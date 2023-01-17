@@ -436,6 +436,10 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         return getType().getConstructs().contains(getType());
     }
 
+    public boolean isAntibody() {
+        return getType().isAntibody();
+    }
+
     public enum Type {
         ATB("ATB"),
         BAC("BAC"),
@@ -531,10 +535,17 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
             return false;
         }
 
+        public boolean isAntibody() {
+            for (Type markerType : values())
+                if (markerType.equals(Type.ATB))
+                    return true;
+            return false;
+        }
+
         public List<Type> getConstructs() {
             return Arrays.stream(values())
-                    .filter(type -> type.value.contains("CONSTRCT"))
-                    .collect(Collectors.toList());
+                .filter(type -> type.value.contains("CONSTRCT"))
+                .collect(Collectors.toList());
         }
     }
 

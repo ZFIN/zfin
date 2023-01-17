@@ -16,6 +16,7 @@ public enum FieldFilter {
     CODING_SEQUENCE("codingSequence"),
     SPECIES("species"),
     CONDITION_NAME("conditionName"),
+    ANTIBODY_NAME("antibodyName"),
     CITATION("citation"),
     ;
     private String name;
