@@ -744,6 +744,9 @@ public class HibernateProfileRepository implements ProfileRepository {
 
 	@Override
 	public Organization getOrganizationByZdbID(String orgZdbID) {
+		if (null == orgZdbID) {
+			return null;
+		}
 		return HibernateUtil.currentSession().get(Organization.class, orgZdbID);
 	}
 
