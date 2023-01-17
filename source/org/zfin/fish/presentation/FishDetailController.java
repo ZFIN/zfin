@@ -80,13 +80,10 @@ public class FishDetailController {
         // Expression data
         ExpressionRepository expressionRepository = RepositoryFactory.getExpressionRepository();
         List<ExpressionResult> fishEfgExpressionResults = expressionRepository.getEfgExpressionResultsByFish(fish);
-        List<ExpressionResult> fishProteinExpressionResults = expressionRepository.getProteinExpressionResultsByFish(fish);
         List<String> fishExpressionFigureIDs = expressionRepository.getExpressionFigureIDsByFish(fish);
         List<String> fishExpressionPublicationIDs = expressionRepository.getExpressionPublicationIDsByFish(fish);
         List<ExpressionDisplay> fishEfgExpressionDisplays = ExpressionService.createExpressionDisplays(fish.getZdbID(), fishEfgExpressionResults, fishExpressionFigureIDs, fishExpressionPublicationIDs, true);
         model.addAttribute("geneCentricEfgExpressionDataList", fishEfgExpressionDisplays);
-        List<ProteinExpressionDisplay> fishProteinExpressionDisplays = ExpressionService.createProteinExpressionDisplays(fish.getZdbID(), fishProteinExpressionResults, fishExpressionFigureIDs, fishExpressionPublicationIDs, true);
-        model.addAttribute("proteinExpressionDataList", fishProteinExpressionDisplays);
 
         model.addAttribute("totalNumberOfPublications", FishService.getCitationCount(fish));
         model.addAttribute("fishIsWildtypeWithoutReagents", fish.isWildtypeWithoutReagents());
