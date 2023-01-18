@@ -1,6 +1,10 @@
 --liquibase formatted sql
 --changeset rtaylor:ZFIN-5800-alias-attributions
 
+-- This sql will grab all the aliases with their associated publications, then join to the alias table to get
+-- the marker ID, then join back again to the record attribution table to find those markers
+-- without the direct attribution. ("ra2.recattrib_source_zdb_id IS NULL" in the where clause means no direct attribution)
+
 WITH alias_attributions AS (
     SELECT DISTINCT
         ra1.recattrib_source_zdb_id AS alias_pub,
