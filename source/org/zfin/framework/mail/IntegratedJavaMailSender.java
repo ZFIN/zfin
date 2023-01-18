@@ -126,6 +126,22 @@ public class IntegratedJavaMailSender extends AbstractZfinMailSender {
         return emailAddress.replaceAll("\\\\@", "@");
     }
 
+    public JavaMailSender getMailSender() {
+        return mailSender;
+    }
+
+    public void setMailSender(JavaMailSender mailSender) {
+        this.mailSender = mailSender;
+    }
+
+    public String getMailHost() {
+        return mailHost;
+    }
+
+    public void setMailHost(String mailHost) {
+        this.mailHost = mailHost;
+    }
+
     /**
      * Just a hacky test.
      *
