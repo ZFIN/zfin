@@ -60,9 +60,9 @@
                 ></div>
             </z:section>
             <z:section title="Reporter Gene Expression">
-                <zfin2:fishExpressionData fishZdbID="${fish.zdbID}"
-                                          expressionDisplays="${geneCentricEfgExpressionDataList}"
-                                          showCondition="true"/>
+                <div class="__react-root" id="FishReporterExpressionTable"
+                     data-fish-id="${fish.zdbID}"
+                ></div>
             </z:section>
         </z:section>
 

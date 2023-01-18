@@ -26,7 +26,7 @@ const FigureSummary = ({statistics, fishID}) => {
                 return <>{
                     publication.figures.map(figure => {
                         return <CommaSeparatedList key={figure.zdbID}>
-                            <a href={`/${figure.zdbID}`}>{figure.label}</a>{figure.imgless !== false && <CameraIcon/>}
+                            <><a href={`/${figure.zdbID}`}>{figure.label}</a>{figure.imgless !== false && <CameraIcon/>}</>
                         </CommaSeparatedList>
                     })}
                     from <PublicationCitationLink publication={publication}/>

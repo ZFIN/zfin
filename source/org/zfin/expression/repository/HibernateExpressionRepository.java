@@ -6,7 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -1814,17 +1814,19 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     public List<ExpressionResult> getEfgExpressionResultsByFish(Fish fish) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select xpRslt from ExpressionResult xpRslt, ExpressionExperiment xpExp, FishExperiment fishox " +
-                "      where fishox.fish = :fish " +
-                "        and fishox = xpExp.fishExperiment " +
-                "        and xpRslt.expressionExperiment = xpExp " +
-                "        and xpExp.gene != null" +
-                "        and xpExp.gene.zdbID like :markerId";
-        Query query = session.createQuery(hql);
+        String hql = """
+                select xpRslt from ExpressionResult xpRslt, ExpressionExperiment xpExp, FishExperiment fishox
+                      where fishox.fish = :fish
+                        and fishox = xpExp.fishExperiment
+                        and xpRslt.expressionExperiment = xpExp
+                        and xpExp.gene != null
+                        and xpExp.gene.zdbID like :markerId
+                """;
+        Query<ExpressionResult> query = session.createQuery(hql, ExpressionResult.class);
         query.setParameter("fish", fish);
         query.setParameter("markerId", "%" + "ZDB-EFG" + "%");
 
-        return (List<ExpressionResult>) query.list();
+        return query.list();
     }
 
     public List<ExpressionResult> getProteinExpressionResultsByFish(Fish fish) {

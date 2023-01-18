@@ -118,6 +118,52 @@ public class FishAPIController {
         return response;
     }
 
+    @JsonView(View.FigureAPI.class)
+    @RequestMapping(value = "/{fishID}/reporter-expression", method = RequestMethod.GET)
+    public JsonResultResponse<ExpressionDisplay> getReporterExpression(@PathVariable String fishID,
+                                                                       @RequestParam(value = "filter.geneName", required = false) String filterGeneName,
+                                                                       @RequestParam(value = "filter.conditionName", required = false) String filterConditionName,
+                                                                       @RequestParam(value = "filter.termName", required = false) String filterTermName,
+                                                                       @Version Pagination pagination) {
+
+        LocalDateTime startTime = LocalDateTime.now();
+        HibernateUtil.createTransaction();
+        JsonResultResponse<ExpressionDisplay> response = new JsonResultResponse<>();
+        response.setHttpServletRequest(request);
+        Fish fish = RepositoryFactory.getMutantRepository().getFish(fishID);
+        if (fish == null)
+            return response;
+
+        if (StringUtils.isNotEmpty(filterGeneName)) {
+            pagination.addFieldFilter(FieldFilter.NAME, filterGeneName);
+        }
+        if (StringUtils.isNotEmpty(filterTermName)) {
+            pagination.addFieldFilter(FieldFilter.FILTER_TERM_NAME, filterTermName);
+        }
+        if (StringUtils.isNotEmpty(filterConditionName)) {
+            pagination.addFieldFilter(FieldFilter.CONDITION_NAME, filterConditionName);
+        }
+
+        List<ExpressionResult> fishEfgExpressionResults = getExpressionRepository().getEfgExpressionResultsByFish(fish);
+        List<String> fishExpressionFigureIDs = getExpressionRepository().getExpressionFigureIDsByFish(fish);
+        List<String> fishExpressionPublicationIDs = getExpressionRepository().getExpressionPublicationIDsByFish(fish);
+        List<ExpressionDisplay> fishEfgExpressionDisplays = ExpressionService.createExpressionDisplays(fish.getZdbID(), fishEfgExpressionResults, fishExpressionFigureIDs, fishExpressionPublicationIDs, true);
+
+        // filtering
+        FilterService<ExpressionDisplay> filterService = new FilterService<>(new ExpressionDisplayFiltering());
+        List<ExpressionDisplay> filteredExpressionList = filterService.filterAnnotations(fishEfgExpressionDisplays, pagination.getFieldFilterValueMap());
+
+
+        response.setResults(filteredExpressionList.stream()
+            .skip(pagination.getStart())
+            .limit(pagination.getLimit())
+            .collect(Collectors.toList()));
+        response.setTotal(filteredExpressionList.size());
+        response.calculateRequestDuration(startTime);
+        HibernateUtil.flushAndCommitCurrentSession();
+        return response;
+    }
+
 
 }
 
