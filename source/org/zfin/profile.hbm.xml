@@ -76,6 +76,7 @@
                 <property name="student" column="is_student"/>
                 <property name="passwordResetKey" column="password_reset_key"/>
                 <property name="passwordResetDate" column="password_reset_date"/>
+                <property name="passwordLastUpdated" column="password_last_updated"/>
             </component>
         </join>
 

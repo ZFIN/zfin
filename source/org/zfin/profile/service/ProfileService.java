@@ -7,11 +7,11 @@ import org.apache.logging.log4j.Logger;
 import org.owasp.html.PolicyFactory;
 import org.owasp.html.Sanitizers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 import org.zfin.feature.FeaturePrefix;
@@ -29,17 +29,20 @@ import javax.validation.ConstraintViolationException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.zfin.repository.RepositoryFactory.getProfileRepository;
+
 /**
  *
  */
 @Service
 public class ProfileService {
 
-    public static final String SALT = "dedicated to George Streisinger";
     private static final PolicyFactory POLICY = Sanitizers.FORMATTING.and(Sanitizers.LINKS);
 
     private Logger logger = LogManager.getLogger(ProfileService.class);
-    private Md5PasswordEncoder encoder = new Md5PasswordEncoder();
+
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
     private BeanCompareService beanCompareService;
@@ -567,7 +570,11 @@ public class ProfileService {
     }
 
     public String encodePassword(String password) {
-        return encoder.encodePassword(password, ProfileService.SALT);
+        return bCryptPasswordEncoder.encode(password);
+    }
+
+    public void updatePassword(Person person, String password) {
+        person.getAccountInfo().setPassword(encodePassword(password));
     }
 
     public int findMembersEquals(int value, List<PersonMemberPresentation> labMembers) {
@@ -717,4 +724,22 @@ public class ProfileService {
             errors.rejectValue("name", "lab.name.duplicate", new String[]{existingLab.getZdbID()}, "");
         }
     }
+
+    public static boolean isPasswordDeprecatedFor(String emailOrLogin) {
+        Person person = getPersonByEmailOrLogin(emailOrLogin);
+        if (person != null && person.getAccountInfo() != null) {
+            String currentPasswordHash = person.getAccountInfo().getPassword();
+            return StringUtils.isEmpty(currentPasswordHash);
+        }
+        return false;
+    }
+
+    public static Person getPersonByEmailOrLogin(String emailOrLogin) {
+        Person person = getProfileRepository().getPersonByEmail(emailOrLogin);
+        if (person == null) {
+            person = getProfileRepository().getPersonByName(emailOrLogin);
+        }
+        return person;
+    }
+
 }

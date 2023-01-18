@@ -8,8 +8,8 @@ public enum FeatureFlagEnum {
     CURATOR_JOB_POSTING("Curator Job Posting", true),
     USE_NAVIGATION_COUNTER("Show Navigation Counter", false);
 
-    private String name;
-    private boolean enabledByDefault;
+    private final String name;
+    private final boolean enabledByDefault;
 
     FeatureFlagEnum(String name, boolean enabledByDefault) {
         this.name = name;

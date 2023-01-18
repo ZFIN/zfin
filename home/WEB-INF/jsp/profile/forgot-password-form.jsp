@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <z:page bootstrap="true">
-    <div class="login-container">
+    <div class="login-container border mt-5 p-4 rounded">
 
         <h1>Reset Password</h1>
 

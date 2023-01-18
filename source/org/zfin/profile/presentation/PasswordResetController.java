@@ -18,6 +18,12 @@ import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.properties.ZfinPropertiesEnum;
 
+import javax.servlet.http.HttpServletRequest;
+
+import java.util.Calendar;
+
+import static org.zfin.security.MigratingAuthenticationFailureHandler.LAST_USERNAME_ATTEMPTED;
+
 @Controller
 @RequestMapping(value = "/profile")
 public class PasswordResetController {
@@ -36,10 +42,7 @@ public class PasswordResetController {
     @RequestMapping(value = "/forgot-password", method = RequestMethod.POST)
     public String forgotPasswordSubmit(@RequestParam String emailOrLogin, Model model) {
         boolean errorsEncountered = false;
-        Person person = profileRepository.getPersonByEmail(emailOrLogin);
-        if (person == null) {
-            person = profileRepository.getPersonByName(emailOrLogin);
-        }
+        Person person = profileService.getPersonByEmailOrLogin(emailOrLogin);
 
         if (person == null) {
             model.addAttribute("error", "No user found for email or login: " + emailOrLogin);
@@ -153,6 +156,17 @@ public class PasswordResetController {
         tx.commit();
 
         return page;
+    }
+
+
+    @RequestMapping(value = "/expired-password", method = RequestMethod.GET)
+    public String expiredPasswordForm(HttpServletRequest request, Model model) throws Exception {
+        String username = (String) request.getSession().getAttribute(LAST_USERNAME_ATTEMPTED);
+        if (username == null) {
+            throw new Exception("No username found");
+        }
+        model.addAttribute("username", username);
+        return "profile/expired-password-form";
     }
 
 }

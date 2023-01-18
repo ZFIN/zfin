@@ -37,11 +37,15 @@
         <property name="useSecureCookie" value="false"/>
     </bean>
 
+    <bean id="bCryptPasswordEncoder"
+          class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
+        <!-- this value should be tuned to the performance of our server such that encryption takes about 1 second -->
+        <constructor-arg value="15"/>
+    </bean>
+
     <security:authentication-manager alias="authenticationManager">
         <security:authentication-provider user-service-ref="userDetailsService">
-            <security:password-encoder hash="md5">
-                <security:salt-source system-wide="dedicated to George Streisinger"/>
-            </security:password-encoder>
+            <security:password-encoder ref="bCryptPasswordEncoder" />
         </security:authentication-provider>
     </security:authentication-manager>
 
@@ -61,6 +65,12 @@
     <bean id="sessionRegistry" class="org.springframework.security.core.session.SessionRegistryImpl"/>
     <bean id="defaultRolesPrefixPostProcessor" class="org.zfin.framework.DefaultRolesPrefixPostProcessor"/>
 
+    <bean
+            id="migratingAuthenticationFailureHandler"
+            class="org.zfin.security.MigratingAuthenticationFailureHandler">
+        <property name="defaultFailureUrl" value="/action/login-redirect?error=true"/>
+    </bean>
+
     <!--maps action-->
     <!--filter action should correspond to this:-->
     <!--http://static.springsource.org/spring-security/site/docs/3.0.x/reference/ns-config.html#ns-requires-channel-->
@@ -79,7 +89,7 @@
         <security:csrf disabled="true"/>
         <security:form-login login-page="/action/login"
                              default-target-url="/"
-                             authentication-failure-url="/action/login-redirect?error=true"
+                             authentication-failure-handler-ref="migratingAuthenticationFailureHandler"
                              login-processing-url="/action/j_security-check"
                              always-use-default-target="false"
                              authentication-success-handler-ref="apgAuthenticationSuccessHandler"

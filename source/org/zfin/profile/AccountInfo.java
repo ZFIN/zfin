@@ -1,9 +1,12 @@
 package org.zfin.profile;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -11,6 +14,8 @@ import java.util.Date;
  * It contains all the credential-related info, including
  * role and cookie.
  */
+@Setter
+@Getter
 @JsonIgnoreProperties({"accountCreationDate", "cookie", "pass1", "pass2", "password", "previousLoginDate"})
 public class AccountInfo implements Serializable {
 
@@ -34,14 +39,7 @@ public class AccountInfo implements Serializable {
 
     private String passwordResetKey;
     private Date passwordResetDate;
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
+    private Date passwordLastUpdated;
 
     public boolean getRoot() {
         return role.equals(Role.ROOT.toString());
@@ -51,112 +49,13 @@ public class AccountInfo implements Serializable {
         role = (isRoot ? Role.ROOT.toString() : Role.SUBMIT.toString());
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public String getPass1() {
-        return pass1;
-    }
-
-    public void setPass1(String pass1) {
-        this.pass1 = pass1;
-    }
-
-    public String getPass2() {
-        return pass2;
-    }
-
-    public void setPass2(String pass2) {
-        this.pass2 = pass2;
-    }
-
     public String getUsername() {
         return login;
     }
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public String getCookie() {
-        return cookie;
-    }
-
-    public void setCookie(String cookie) {
-        this.cookie = cookie;
-    }
-
-    public Date getLoginDate() {
-        return loginDate;
-    }
-
-    public void setLoginDate(Date loginDate) {
-        this.loginDate = loginDate;
-    }
-
-    public Date getPreviousLoginDate() {
-        return previousLoginDate;
-    }
-
-    public void setPreviousLoginDate(Date previousLoginDate) {
-        this.previousLoginDate = previousLoginDate;
-    }
-
-    public Date getAccountCreationDate() {
-        return accountCreationDate;
-    }
-
-    public void setAccountCreationDate(Date accountCreationDate) {
-        this.accountCreationDate = accountCreationDate;
-    }
-
-    public boolean isCurator() {
-        return curator;
-    }
-
-    public void setCurator(boolean curator) {
-        this.curator = curator;
-    }
-
-    public boolean isStudent() {
-        return student;
-    }
-
-    public void setStudent(boolean student) {
-        this.student = student;
-    }
-
-    public String getPasswordResetKey() {
-        return passwordResetKey;
-    }
-
-    public void setPasswordResetKey(String passwordResetKey) {
-        this.passwordResetKey = passwordResetKey;
-    }
-
-    public Date getPasswordResetDate() {
-        return passwordResetDate;
-    }
-
-    public void setPasswordResetDate(Date passwordResetDate) {
-        this.passwordResetDate = passwordResetDate;
+        this.setPasswordLastUpdated(Calendar.getInstance().getTime());
     }
 
     @Override
@@ -174,14 +73,6 @@ public class AccountInfo implements Serializable {
         if (login != null)
             hash += hash * login.hashCode();
         return hash;
-    }
-
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
     }
 
     public boolean isAdmin() {
