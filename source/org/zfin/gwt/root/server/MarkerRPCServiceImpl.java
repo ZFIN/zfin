@@ -135,7 +135,10 @@ public class MarkerRPCServiceImpl extends ZfinRemoteServiceServlet implements Ma
     }
 
     public String removeAttribution(String markerZdbID, String pubZdbID) {
-        return MarkerAttributionService.deleteRecordAttribution(markerZdbID, pubZdbID);
+        HibernateUtil.createTransaction();
+        String result = MarkerAttributionService.deleteRecordAttribution(markerZdbID, pubZdbID);
+        HibernateUtil.flushAndCommitCurrentSession();
+        return result;
     }
 
     private String createMessage(String name, String message) {
