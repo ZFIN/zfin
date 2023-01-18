@@ -19,10 +19,7 @@ import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -79,15 +76,10 @@ public class MarkerAliasController {
         }
 
         // alias is created with the first reference. others added after the alias is created.
-        Iterator<MarkerReferenceBean> referenceBeanIterator = newAlias.getReferences().iterator();
-        Publication publication = publicationRepository.getPublication(referenceBeanIterator.next().getZdbID());
+        List<String> publicationIDs = newAlias.getReferences().stream().map(MarkerReferenceBean::getZdbID).collect(Collectors.toList());
 
         HibernateUtil.createTransaction();
-        MarkerAlias alias = markerRepository.addMarkerAlias(marker, newAlias.getAlias(), publication);
-        while (referenceBeanIterator.hasNext()) {
-            publication = publicationRepository.getPublication(referenceBeanIterator.next().getZdbID());
-            markerRepository.addDataAliasAttribution(alias, publication, marker);
-        }
+        MarkerAlias alias = MarkerService.createMarkerAlias(marker, newAlias.getAlias(), publicationIDs);
         HibernateUtil.flushAndCommitCurrentSession();
 
         return MarkerAliasBean.convert(alias);
