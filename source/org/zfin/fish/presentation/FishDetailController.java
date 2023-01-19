@@ -69,20 +69,7 @@ public class FishDetailController {
         }
 
         model.addAttribute("fish", fish);
-
-
-        // phenotype
-        List<PhenotypeStatementWarehouse> phenotypeStatements = getMutantRepository().getPhenotypeStatementWarehousesByFish(fish);
-        model.addAttribute("phenotypeStatements", phenotypeStatements);
-        model.addAttribute("phenotypeDisplays", PhenotypeService.getPhenotypeDisplays(phenotypeStatements, "condition", "phenotypeStatement"));
-
-        // disease model
-        // Expression data
-
-        model.addAttribute("totalNumberOfPublications", FishService.getCitationCount(fish));
-        model.addAttribute("fishIsWildtypeWithoutReagents", fish.isWildtypeWithoutReagents());
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Fish: " + getTitle(fish.getName()));
-
         return "fish/fish-view";
     }
 
