@@ -61,6 +61,7 @@ const FishZebrafishModelTable = ({fishId}) => {
                 <FigureProteinSummary
                     statistics={row}
                     fishID={fishId}
+                    markerID={row.antibody.zdbID}
                 />
             ),
             width: '180px',

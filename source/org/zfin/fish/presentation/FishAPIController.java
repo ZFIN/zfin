@@ -12,6 +12,9 @@ import org.zfin.expression.service.ExpressionService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.*;
 import org.zfin.mutant.Fish;
+import org.zfin.mutant.PhenotypeService;
+import org.zfin.mutant.PhenotypeStatementWarehouse;
+import org.zfin.mutant.presentation.PhenotypeDisplay;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.wiki.presentation.Version;
 
@@ -22,6 +25,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getExpressionRepository;
+import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
 @RestController
 @RequestMapping("/api/fish")
@@ -163,6 +167,46 @@ public class FishAPIController {
             .limit(pagination.getLimit())
             .collect(Collectors.toList()));
         response.setTotal(filteredExpressionList.size());
+        response.calculateRequestDuration(startTime);
+        HibernateUtil.flushAndCommitCurrentSession();
+        return response;
+    }
+
+    @JsonView(View.FigureAPI.class)
+    @RequestMapping(value = "/{fishID}/phenotype", method = RequestMethod.GET)
+    public JsonResultResponse<PhenotypeDisplay> getPHenotype(@PathVariable String fishID,
+                                                             @RequestParam(value = "filter.phenotype", required = false) String filterPhenotype,
+                                                             @RequestParam(value = "filter.conditionName", required = false) String filterConditionName,
+                                                             @Version Pagination pagination) {
+
+        LocalDateTime startTime = LocalDateTime.now();
+        HibernateUtil.createTransaction();
+        JsonResultResponse<PhenotypeDisplay> response = new JsonResultResponse<>();
+        response.setHttpServletRequest(request);
+        Fish fish = RepositoryFactory.getMutantRepository().getFish(fishID);
+        if (fish == null)
+            return response;
+
+        if (StringUtils.isNotEmpty(filterPhenotype)) {
+            pagination.addFieldFilter(FieldFilter.PHENOTYPE, filterPhenotype);
+        }
+        if (StringUtils.isNotEmpty(filterConditionName)) {
+            pagination.addFieldFilter(FieldFilter.CONDITION_NAME, filterConditionName);
+        }
+
+        List<PhenotypeStatementWarehouse> phenotypeStatements = getMutantRepository().getPhenotypeStatementWarehousesByFish(fish);
+        List<PhenotypeDisplay> phenotypeDisplayList = PhenotypeService.getPhenotypeDisplays(phenotypeStatements, "condition", "phenotypeStatement");
+
+        // filtering
+        FilterService<PhenotypeDisplay> filterService = new FilterService<>(new PhenotypeDisplayFiltering());
+        List<PhenotypeDisplay> filteredPhenotypeList = filterService.filterAnnotations(phenotypeDisplayList, pagination.getFieldFilterValueMap());
+
+
+        response.setResults(filteredPhenotypeList.stream()
+            .skip(pagination.getStart())
+            .limit(pagination.getLimit())
+            .collect(Collectors.toList()));
+        response.setTotal(filteredPhenotypeList.size());
         response.calculateRequestDuration(startTime);
         HibernateUtil.flushAndCommitCurrentSession();
         return response;
