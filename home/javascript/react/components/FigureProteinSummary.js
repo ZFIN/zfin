@@ -5,7 +5,7 @@ import {publicationType} from '../utils/types';
 import PublicationCitationLink from './PublicationCitationLink';
 import CommaSeparatedList from './CommaSeparatedList';
 
-const FigureSummary = ({statistics, fishID}) => {
+const FigureSummary = ({statistics, fishID, markerID =('')}) => {
     if (!statistics || statistics.numberOfFigures === 0) {
         return null;
     }
@@ -14,19 +14,19 @@ const FigureSummary = ({statistics, fishID}) => {
         <PublicationCitationLink publication={statistics.firstPublication}/> :
         `${statistics.numberOfPublications} publications`;
 
-    const urlPostfix = `?fishZdbID=${fishID}&expZdbID=${statistics.experiment.zdbID}&geneZdbID=${statistics.antibody.zdbID}&imagesOnly=false`;
+    const urlPostfix = `?fishZdbID=${fishID}&expZdbID=${statistics.experiment.zdbID}&geneZdbID=${markerID}&imagesOnly=false`;
 
     const url = (statistics.experiment && statistics.experiment.standard) ?
         '/action/expression/fish-expression-figure-summary-standard' + urlPostfix :
         '/action/expression/fish-expression-figure-summary-experiment' + urlPostfix;
 
-    if (statistics.numberOfFigures < 10) {
+    if (statistics.numberOfFigures < 5) {
         return <CommaSeparatedList>
             {statistics.publications.map(publication => {
                 return <>{
                     publication.figures.map(figure => {
                         return <CommaSeparatedList key={figure.zdbID}>
-                            <><a href={`/${figure.zdbID}`}>{figure.label}</a>{figure.imgless !== false && <CameraIcon/>}</>
+                            <><a href={`/${figure.zdbID}`}>{figure.label}</a>{figure.imgless !== true && <CameraIcon/>}</>
                         </CommaSeparatedList>
                     })}
                     from <PublicationCitationLink publication={publication}/>
@@ -42,6 +42,7 @@ const FigureSummary = ({statistics, fishID}) => {
 
 FigureSummary.propTypes = {
     fishID: PropTypes.string,
+    markerID: PropTypes.string,
     statistics: PropTypes.shape({
         numberOfPublications: PropTypes.number,
         numberOfFigures: PropTypes.number,

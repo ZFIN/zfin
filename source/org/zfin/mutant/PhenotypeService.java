@@ -12,6 +12,7 @@ import org.zfin.expression.Experiment;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
+import org.zfin.expression.presentation.ProteinExpressionDisplay;
 import org.zfin.figure.repository.FigureRepository;
 import org.zfin.fish.repository.FishService;
 import org.zfin.framework.api.JsonResultResponse;
@@ -513,6 +514,18 @@ public class PhenotypeService {
                     Collections.sort(phenoDisplays, new PhenotypeDisplayFishComparator());
                 }
             }
+
+            phenoDisplays.forEach(display -> {
+                List<Publication> pubs = display.getFiguresPerPub().keySet().stream()
+                    .map(publication -> {
+                        Publication pub = new Publication();
+                        pub.setZdbID(publication.getZdbID());
+                        pub.setShortAuthorList(publication.getShortAuthorList());
+                        pub.setFigures(display.getFiguresPerPub().get(publication));
+                        return pub;
+                    }).toList();
+                display.setPublications(pubs);
+            });
 
             return phenoDisplays;
 
