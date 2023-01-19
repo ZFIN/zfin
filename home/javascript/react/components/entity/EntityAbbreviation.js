@@ -41,6 +41,8 @@ const EntityAbbreviation = ({entity}) => {
     let linktext;
     if (['ETCONSTRCT', 'GTCONSTRCT', 'PTCONSTRCT', 'TGCONSTRCT', 'ATB'].includes(type)) {
         linktext = entity.name;
+    } else if (['FISH'].includes(type)) {
+        linktext = entity.name || '';
     } else if (['EXP'].includes(type)) {
         linktext = entity.conditions || '';
     } else if (['TERM'].includes(type)) {

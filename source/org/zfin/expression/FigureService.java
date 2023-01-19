@@ -68,10 +68,12 @@ public class FigureService {
         boolean isStandardEnvironment = true;
         ExpressionSummaryCriteria criteria = new ExpressionSummaryCriteria();
         criteria.setFish(fish);
-        if (gene.isAntibody()) {
-            criteria.setAntibody(getAntibodyRepository().getAntibodyByID(gene.zdbID));
-        } else {
-            criteria.setGene(gene);
+        if (gene != null) {
+            if (gene.isAntibody()) {
+                criteria.setAntibody(getAntibodyRepository().getAntibodyByID(gene.zdbID));
+            } else {
+                criteria.setGene(gene);
+            }
         }
         criteria.setWithImagesOnly(withImgsOnly);
         criteria.setStandardEnvironment(isStandardEnvironment);
