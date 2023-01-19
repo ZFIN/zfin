@@ -112,17 +112,6 @@ public class GenotypeDetailController {
         retrievePublicationData(form, genotype);
         if (!genotype.isWildtype()) {
             retrieveGenotypeFeatureData(form, genotype);
-
-            List<GenotypeFishResult> allFish = new ArrayList<>();
-
-            List<GenotypeFishResult> fishSummaryList = FishService.getFishExperimentSummaryForGenotype(genotype);
-            for (GenotypeFishResult fishSummary : fishSummaryList) {
-                fishSummary.setAffectedMarkers(GenotypeService.getAffectedMarker(genotype));
-                allFish.add(fishSummary);
-            }
-
-
-            model.addAttribute("fishList", allFish);
             model.addAttribute("affectedMarkerList", GenotypeService.getAffectedMarker(genotype));
         }
 
@@ -218,7 +207,7 @@ public class GenotypeDetailController {
     }
 
     @RequestMapping(value = {
-            "/show_all_phenotype" // this is the current style, have not changed
+        "/show_all_phenotype" // this is the current style, have not changed
     }
     )
     public String getAllPhenotypesForGenotype(@RequestParam String zdbID, Model model) throws Exception {
