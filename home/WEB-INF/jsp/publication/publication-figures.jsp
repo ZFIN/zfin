@@ -60,7 +60,7 @@
         </div>
 
         <c:forEach var="figure" items="${figures}">
-            <z:section title="${figure.label}">
+            <z:section title="${figure.label}" cssClass="figure-${figure.zdbID}">
                 <zfin-figure:imagesAndCaption
                         figure="${figure}"
                         autoplayVideo="false"
