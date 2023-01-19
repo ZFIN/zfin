@@ -9,9 +9,6 @@ import org.zfin.mutant.Fish;
 
 import java.util.SortedSet;
 
-/**
- * This class is a statistics class about Fish for given genotype
- */
 @Setter
 @Getter
 public class GenotypeFishResult implements Comparable<GenotypeFishResult> {

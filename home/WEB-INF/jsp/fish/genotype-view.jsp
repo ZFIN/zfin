@@ -87,9 +87,9 @@
             </z:section>
 
             <z:section title="${FISH}" appendedText="utilizing ${genotype.name}">
-                <z:section title=" ">
-                    <jsp:include page="genotype-fish.jsp"/>
-                </z:section>
+                <div class="__react-root" id="GenotypeFishTable"
+                     data-genotype-id="${genotype.zdbID}"
+                ></div>
             </z:section>
 
             <z:section title="${CITATIONS}" infoPopup="/action/marker/note/citations">
