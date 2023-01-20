@@ -2,6 +2,7 @@ package org.zfin.expression;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import org.zfin.framework.api.View;
+import org.zfin.infrastructure.ZdbID;
 import org.zfin.marker.Marker;
 import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
@@ -15,7 +16,7 @@ import java.util.Set;
 /**
  * Figure domain business object. It is a figure referenced in a publication.
  */
-public abstract class Figure implements Serializable, Comparable<Figure> {
+public abstract class Figure implements Serializable, Comparable<Figure>, ZdbID {
 
     public static String GELI = "GELI";
 

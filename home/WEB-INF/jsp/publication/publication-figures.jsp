@@ -29,7 +29,7 @@
             <div class="small text-uppercase text-muted">FIGURE SUMMARY</div>
             <z:attributeList>
                 <z:attributeListItem label="Title">
-                    <h4> <a href="/${publication.zdbID}">${publication.title}</a></h4>
+                    <h4><a href="/${publication.zdbID}">${publication.title}</a></h4>
                 </z:attributeListItem>
                 <z:attributeListItem label="Authors">
                     ${publication.authors}
@@ -60,7 +60,7 @@
         </div>
 
         <c:forEach var="figure" items="${figures}">
-            <z:section title="${figure.label}">
+            <z:section title="${figure.label}" entity="${figure}">
                 <zfin-figure:imagesAndCaption
                         figure="${figure}"
                         autoplayVideo="false"
