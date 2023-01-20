@@ -67,16 +67,25 @@
                         </tbody>
                     </z:dataTable>
                 </z:section>
+                <z:section title="External Notes" hasData="${genotype.externalNotes ne null && fn:length(genotype.externalNotes) > 0}">
+                    <c:if test="${genotype.externalNotes ne null && fn:length(genotype.externalNotes) > 0 }">
+                        <c:forEach var="extNote" items="${formBean.genotype.externalNotes}">
+                            <div>
+                                    ${extNote.note} &nbsp;(<a href='/${extNote.publication.zdbID}'>1</a>)
+                            </div>
+                        </c:forEach>
+                    </c:if>
+                </z:section>
             </authz:authorize>
-            <z:section title="External Notes">
-                <c:if test="${genotype.externalNotes ne null && fn:length(genotype.externalNotes) > 0 }">
+            <authz:authorize access="!hasRole('root')">
+                <z:section title="" hasData="${genotype.externalNotes ne null && fn:length(genotype.externalNotes) > 0}">
                     <c:forEach var="extNote" items="${formBean.genotype.externalNotes}">
                         <div>
                                 ${extNote.note} &nbsp;(<a href='/${extNote.publication.zdbID}'>1</a>)
                         </div>
                     </c:forEach>
-                </c:if>
-            </z:section>
+                </z:section>
+            </authz:authorize>
         </z:section>
 
         <c:if test="${!formBean.genotype.wildtype}">
