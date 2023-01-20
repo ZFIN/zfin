@@ -58,6 +58,7 @@
                 </button>
             </div>
         </div>
+
         <c:forEach var="figure" items="${figures}">
             <z:section title="${figure.label}">
                 <zfin-figure:imagesAndCaption
