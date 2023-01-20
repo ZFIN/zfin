@@ -3,6 +3,7 @@
 <%@ attribute name="image" type="org.zfin.expression.Image" rtexprvalue="true" required="true"  %>
 <%@ attribute name="autoplayVideo" type="java.lang.Boolean" rtexprvalue="true" required="false" %>
 <%@ attribute name="medium" type="java.lang.Boolean" rtexprvalue="true" required="false" %>
+<%@ attribute name="directLink" type="java.lang.Boolean" rtexprvalue="true" required="false" %>
 
 <c:set var="autoplay" value=""/>
 <c:if test="${autoplayVideo}">
@@ -31,8 +32,18 @@
         </video>
     </c:when>
     <c:otherwise>
-        <zfin:link entity="${image}">
-            <img class="figure-image ${medium ? 'medium' : ''}" src="/imageLoadUp/${filename}"/>
-        </zfin:link>
+        <!-- if the directLink attribute is true, link to the image source -->
+        <c:choose>
+            <c:when test="${!empty directLink}">
+                <a href="/imageLoadUp/${filename}" target="_blank">
+                    <img class="figure-image ${medium ? 'medium' : ''}" src="/imageLoadUp/${filename}"/>
+                </a>
+            </c:when>
+            <c:otherwise>
+                <zfin:link entity="${image}">
+                    <img class="figure-image ${medium ? 'medium' : ''}" src="/imageLoadUp/${filename}"/>
+                </zfin:link>
+            </c:otherwise>
+        </c:choose>
     </c:otherwise>
 </c:choose>
