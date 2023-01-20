@@ -5,9 +5,6 @@
 <%@ attribute name="showCaption" type="java.lang.Boolean" rtexprvalue="true" required="false" %>
 <%@ attribute name="showMultipleMediumSizedImages" type="java.lang.Boolean" rtexprvalue="true" required="true" %>
 
-<!-- DEBUGGING -->
-<%--<c:set var="showMultipleMediumSizedImages" value="false"/>--%>
-
 <c:set var="showCaption" value="${!showCaption ? false : true }"/>
 <table class="figure-image-and-caption">
     <tr>
