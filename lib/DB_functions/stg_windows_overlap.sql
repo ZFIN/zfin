@@ -6,7 +6,7 @@ create or replace function stg_windows_overlap(
 
   returns boolean as $true$
 
-  -- Returns true if the first stage window overlaps in any way with the 
+  -- Returns true if the first stage window isOverlapping in any way with the
   -- second stage window.
   -- A -746 error is returned if any of these conditions fails.
   --   All parameters must be non-null.  
@@ -16,7 +16,7 @@ create or replace function stg_windows_overlap(
    w1EndEnd      stage.stg_hours_start%TYPE;
    w2StartStart  stage.stg_hours_start%TYPE;
    w2EndEnd      stage.stg_hours_start%TYPE;
-   overlaps     boolean;
+   isOverlapping     boolean;
    consistent   boolean;
 
  begin 
@@ -53,14 +53,14 @@ create or replace function stg_windows_overlap(
 
   -- Data looks good, do the check.
 
-  overlaps := 't';
+  isOverlapping := 't';
 
   if (w1StartStart >= w2EndEnd or
       w1EndEnd   <= w2StartStart) then
-    overlaps := 'f';
+    isOverlapping := 'f';
   end if;
 
-  return overlaps;
+  return isOverlapping;
 
 end
 $true$ LANGUAGE plpgsql;

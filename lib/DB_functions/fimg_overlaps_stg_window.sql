@@ -18,7 +18,7 @@ fimg_overlaps_stg_window (
    imgEndEnd       stage.stg_hours_start%TYPE;
    windowStartStart stage.stg_hours_start%TYPE;
    windowEndEnd     stage.stg_hours_start%TYPE;
-   overlaps         boolean;
+   isOverlapping         boolean;
    consistent   	  boolean;
 
   begin
@@ -44,7 +44,7 @@ fimg_overlaps_stg_window (
   -- Window we are checking for is consistent.
   -- Get fish_image_stage records until we find one that overlaps.
 
-  overlaps = 'f';
+  isOverlapping = 'f';
   for imgStartStart, imgEndEnd in
     select startStg.stg_hours_start, endStg.stg_hours_end
       from image_stage, stage startStg, stage endStg
@@ -55,12 +55,12 @@ fimg_overlaps_stg_window (
 
 	if (windowStartStart < fimgEndEnd and
        	    windowEndEnd > fimgStartStart) then
-       	    overlaps = 't';
+       	    isOverlapping = 't';
     	    exit;          -- !!!! EXIT LOOP EARLY
      	end if;
     end loop;
  
-  return overlaps;
+  return isOverlapping;
 
 end 
 
