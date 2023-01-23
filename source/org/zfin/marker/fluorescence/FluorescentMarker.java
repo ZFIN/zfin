@@ -18,6 +18,7 @@ import java.util.List;
 public class FluorescentMarker extends AbstractFluorescence {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "fm_pk_id")
     private long id;
     @ManyToOne

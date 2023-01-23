@@ -3430,6 +3430,20 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return session.createQuery(hql, String.class).list();
     }
 
+    @Override
+    public List<FluorescentProtein> getFluorescentProteins(String query) {
+        String hql = " from FluorescentProtein where lower(name) like :query ";
+        Session session = currentSession();
+        Query<FluorescentProtein> query1 = session.createQuery(hql, FluorescentProtein.class);
+        query1.setParameter("query", "%"+query.toLowerCase()+"%");
+        return query1.list();
+    }
+
+    @Override
+    public FluorescentProtein getFluorescentProtein(Long identifier) {
+        return HibernateUtil.currentSession().get(FluorescentProtein.class, identifier);
+    }
+
     private int deleteMarkerDBLinksFromList(List<MarkerDBLink> dbLinks) {
         List<String> ids = dbLinks.stream().map(MarkerDBLink::getZdbID).toList();
         Session session = HibernateUtil.currentSession();
