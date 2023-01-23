@@ -7,6 +7,8 @@ import org.springframework.security.crypto.codec.Hex;
 import org.springframework.security.web.authentication.rememberme.InvalidCookieException;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 import org.springframework.util.StringUtils;
+import org.zfin.properties.ZfinProperties;
+import org.zfin.properties.ZfinPropertiesEnum;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,6 +26,10 @@ public class IpTokenRememberMeServices extends TokenBasedRememberMeServices{
 
     public IpTokenRememberMeServices(String key, UserDetailsService userDetailsService) {
         super(key, userDetailsService);
+
+        String timeout = ZfinPropertiesEnum.VALID_SESSION_TIMEOUT_SECONDS.value();
+        this.setTokenValiditySeconds(Integer.parseInt(timeout));
+
     }
 
     @Override
