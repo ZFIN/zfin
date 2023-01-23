@@ -1,6 +1,7 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <c:set var="NOMENCLATURE" value="Nomenclature"/>
+<c:set var="FPBASE" value="Fluorescent Proteins"/>
 <c:set var="NOTES" value="Notes"/>
 
 <z:dataPage sections="${[NOMENCLATURE, NOTES]}">
@@ -17,6 +18,13 @@
              data-marker-id="${efg.zdbID}"
              data-show-abbreviation-field="true"
              data-show-reason-fields="false">
+        </div>
+    </z:section>
+
+    <z:section title="${FPBASE}">
+        <div class="__react-root"
+             id="FPBase"
+             data-efg-id="${efg.zdbID}">
         </div>
     </z:section>
 
