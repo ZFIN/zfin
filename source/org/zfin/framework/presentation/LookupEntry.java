@@ -1,12 +1,18 @@
 package org.zfin.framework.presentation;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import org.zfin.framework.api.View;
+
 import java.io.Serializable;
 
 public class LookupEntry implements Serializable {
 
+    @JsonView(View.API.class)
     protected String id;
     protected String name ;
+    @JsonView(View.API.class)
     protected String label;
+    @JsonView(View.API.class)
     protected String value;
     private String url;
     private String category;

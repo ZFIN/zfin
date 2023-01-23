@@ -556,4 +556,6 @@ public interface MarkerRepository {
 
     List<String> getProblemTypes();
 
+    List<FluorescentProtein> getFluorescentProteins(String query);
+    FluorescentProtein getFluorescentProtein(Long identifier);
 }
