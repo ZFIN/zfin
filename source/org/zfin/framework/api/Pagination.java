@@ -94,8 +94,13 @@ public class Pagination {
         return asc ? "ASC" : "DESC";
     }
 
+
+    /**
+     * Uses 1-based indexing due to the client-side expectations
+     * @return
+     */
     public int getStart() {
-        if (page == null || limit == null)
+        if (page == null || page == 0)
             return 0;
         return (page - 1) * limit;
     }

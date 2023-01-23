@@ -95,7 +95,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         String zdbID = "ZDB-TERM-100331-665";
         GenericTerm term = new GenericTerm();
         term.setZdbID(zdbID);
-        Pagination pagination = new Pagination(0,5,null, null);
+        Pagination pagination = new Pagination(1,5,null, null);
 
         PaginationResult<MarkerStatistic> paginationResult = publicationRepository.getAllExpressedMarkers(term, pagination);
         List<MarkerStatistic> list = paginationResult.getPopulatedResults();
