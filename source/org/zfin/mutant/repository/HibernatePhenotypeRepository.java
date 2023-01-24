@@ -961,7 +961,7 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
                 """;
         }
         if (fish != null) {
-            if (includeChildren) {
+            if (includeChildren || disease != null) {
                 hql += "and ";
             }
             hql += " fx.fish = :fish ";
