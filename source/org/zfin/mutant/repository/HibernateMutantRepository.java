@@ -71,6 +71,7 @@ public class HibernateMutantRepository implements MutantRepository {
                 "left outer join phenoObserved.e1b as e1b " +
                 "left outer join phenoObserved.e2a as e2a " +
                 "left outer join phenoObserved.e2b as e2b " +
+                "left outer join phenoObserved.quality as quality " +
                 "WHERE phenoSource.fishExperiment = fishox " +
                 "AND phenoObserved.phenotypeWarehouse = phenoSource " +
                 "AND (e1a = :aoTerm " +
@@ -93,6 +94,8 @@ public class HibernateMutantRepository implements MutantRepository {
                     hql += "  (lower(e2a.termName) like :" + entry.getKey() + " ";
                     hql += "  OR ";
                     hql += "  lower(e2b.termName) like :" + entry.getKey() + ") ";
+                    hql += "  OR ";
+                    hql += "  lower(quality.termName) like :" + entry.getKey();
                     hql += " )";
                 }
             }
@@ -177,11 +180,12 @@ public class HibernateMutantRepository implements MutantRepository {
                 "left outer join phenoObserved.e1b as e1b " +
                 "left outer join phenoObserved.e2a as e2a " +
                 "left outer join phenoObserved.e2b as e2b " +
+                "left outer join phenoObserved.quality as quality " +
                 "WHERE phenoSource.fishExperiment = fishox " +
                 "AND phenoObserved.phenotypeWarehouse = phenoSource " +
                 "AND transitiveClosure.root = :aoTerm and " +
                 "(e1a = transitiveClosure.child OR e1b = transitiveClosure.child OR " +
-                " e2a = transitiveClosure.child OR e2b = transitiveClosure.child ) " +
+                " e2a = transitiveClosure.child OR e2b = transitiveClosure.child OR quality = transitiveClosure.child ) " +
                 "AND phenoObserved.tag != :tag " +
                 "AND exists (select 'x' from GeneGenotypeExperiment where fishExperiment = fishox) ";
         if (MapUtils.isNotEmpty(bean.getFilterMap())) {
@@ -198,6 +202,8 @@ public class HibernateMutantRepository implements MutantRepository {
                     hql += "  lower(e2a.termName) like :" + entry.getKey() + " ";
                     hql += "  OR ";
                     hql += "  lower(e2b.termName) like :" + entry.getKey() + " ";
+                    hql += "  OR ";
+                    hql += "  lower(quality.termName) like :" + entry.getKey() + " ";
                     hql += ") ";
                 }
             }
