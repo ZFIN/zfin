@@ -41,8 +41,13 @@
             <jsp:include page="fish-view-summary.jsp"/>
         </div>
 
+        <c:set var="modelTitle" value="modelled by"/>
+        <c:if test="${fish.clean}">
+            <c:set var="modelTitle" value="model utilizes"/>
+        </c:if>
+
         <z:section title="${HUMAN_DISEASE}" infoPopup="/ZFIN/help_files/expression_help.html"
-                   appendedText="modelled by ${fish.name}">
+                   appendedText="${modelTitle} ${fish.name}">
             <div class="__react-root" id="FishZebrafishModelTable"
                  data-fish-id="${fish.zdbID}"
             ></div>
