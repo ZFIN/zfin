@@ -3,13 +3,13 @@
 <jsp:useBean id="figure" type="org.zfin.expression.Figure" scope="request"/>
 
 <c:set var="SUMMARY" value="Summary"/>
-<c:set var="ABSTRACT" value="Figure Caption"/>
+<c:set var="FIGURE_CAPTION" value="Figure Caption"/>
 <c:set var="EXPRESSION" value="Expression Data"/>
 <c:set var="PHENOTYPE" value="Phenotype Data"/>
 <c:set var="ACKNOWLEDGMENTS" value="Acknowledgments"/>
 
 <z:dataPage
-        sections="${[SUMMARY, ABSTRACT, EXPRESSION, PHENOTYPE, ACKNOWLEDGMENTS]}">
+        sections="${[SUMMARY, FIGURE_CAPTION, EXPRESSION, PHENOTYPE, ACKNOWLEDGMENTS]}">
 
     <jsp:attribute name="entityName">
         ${figure.label}
@@ -25,7 +25,7 @@
             <jsp:include page="figure-view-summary.jsp"/>
         </div>
 
-        <z:section title="${ABSTRACT}" appendedText="${figure.label}">
+        <z:section title="${figure.label}" sectionID="${zfn:makeDomIdentifier(FIGURE_CAPTION)}">
             <zfin-figure:imagesAndCaptionPrototype figure="${figure}"
                                                    showMultipleMediumSizedImages="${showMultipleMediumSizedImages}"/>
         </z:section>
