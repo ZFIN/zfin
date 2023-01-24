@@ -14,14 +14,16 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Uses JavaMail integrated with Spring to send email.
  */
 public class IntegratedJavaMailSender extends AbstractZfinMailSender {
 
-    private static Logger logger = LogManager.getLogger(IntegratedJavaMailSender.class);
+    private static final Logger logger = LogManager.getLogger(IntegratedJavaMailSender.class);
 
     private JavaMailSender mailSender = new JavaMailSenderImpl();
     private String mailHost = ZfinPropertiesEnum.SMTP_HOST.value();
@@ -34,19 +36,28 @@ public class IntegratedJavaMailSender extends AbstractZfinMailSender {
 
     public boolean sendMail(String subject, String message, boolean doDefaultSubjectHeader, String fromEmail,
                             String[] recipients, boolean useHtml) {
-        return sendMail(subject, message, doDefaultSubjectHeader, fromEmail, recipients, useHtml, null);
+        return sendMailToMultipleRecipients(subject, message, doDefaultSubjectHeader, fromEmail, recipients, useHtml, null);
     }
 
-    public boolean sendMail(String subject, String message, boolean doDefaultSubjectHeader, String fromEmail,
-                            String[] recipients, boolean useHtml, String filename) {
+    private boolean sendMailToMultipleRecipients(String subject, String message, boolean doDefaultSubjectHeader, String fromEmail,
+                                                String[] recipients, boolean useHtml, String filename) {
+        boolean success = true;
+        for(String recipient : recipients) {
+            if (!sendMailToSingleRecipient(subject, message, doDefaultSubjectHeader, fromEmail, recipient, useHtml, filename)) {
+                success = false;
+            }
+        }
+        return success;
+    }
+
+    private boolean sendMailToSingleRecipient(String subject, String message, boolean doDefaultSubjectHeader, String fromEmail,
+                                                String recipient, boolean useHtml, String filename) {
 
         MimeMessage mimeMessage = mailSender.createMimeMessage();
 
         try {
             mimeMessage.setFrom(new InternetAddress(filterEmail(fromEmail)));
-            for (String recipient : recipients) {
-                mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(filterEmail(recipient)));
-            }
+            mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(filterEmail(recipient)));
 
             if (doDefaultSubjectHeader) {
                 subject = prependSubject(subject);
@@ -87,10 +98,9 @@ public class IntegratedJavaMailSender extends AbstractZfinMailSender {
             mailSender.send(mimeMessage);
             return true;
         } catch (Exception e) {
-            logger.error("Failed to send mail with subject[" + subject + "]", e);
+            logger.error("Failed to send mail to[" + recipient + "] with subject[" + subject + "]", e);
             return false;
         }
-
     }
 
     @Override
@@ -100,7 +110,7 @@ public class IntegratedJavaMailSender extends AbstractZfinMailSender {
 
     @Override
     public boolean sendHtmlMail(String subject, String message, boolean doDefaultSubjectHeader, String fromEmail, String[] recipients, String filename) {
-        return sendMail(subject, message, doDefaultSubjectHeader, fromEmail, recipients, true, filename);
+        return sendMailToMultipleRecipients(subject, message, doDefaultSubjectHeader, fromEmail, recipients, true, filename);
     }
 
     public String[] filterEmail(String... emailAddresses) {
@@ -143,12 +153,12 @@ public class IntegratedJavaMailSender extends AbstractZfinMailSender {
 
         String messageText = null;
         String subjectText = null;
-        String[] emailAddresses = ZfinProperties.getAdminEmailAddresses();
+        List<String> emailAddresses = List.of(ZfinProperties.getAdminEmailAddresses());
         StringBuilder stringBuilder = new StringBuilder();
         for (String arg : args) {
             stringBuilder.append(arg).append(" ");
         }
-        System.out.println("Sending mail with arguments: " + stringBuilder.toString() + " to " + emailAddresses[0]);
+
         if (args.length < 2) {
             subjectText = "test email from IntegratedJavaMailSender: " + new Date();
             messageText = "javamail message of test email: " + new Date();
@@ -156,12 +166,16 @@ public class IntegratedJavaMailSender extends AbstractZfinMailSender {
             subjectText = args[0] + " - " + new Date();
             messageText = args[1] + " - " + new Date();
             if (args.length > 2) {
-                emailAddresses = args[2].split(" ");
+                emailAddresses = new ArrayList<>();
+                for(int i = 2; i < args.length; i++) {
+                    emailAddresses.addAll(List.of(args[i].split(" ")));
+                }
             }
         }
+        System.out.println("Sending mail with arguments: " + stringBuilder.toString() + " to the following addresses: " + String.join(",", emailAddresses));
 
         MailSender sender = new IntegratedJavaMailSender();
-        sender.sendMail(subjectText, messageText, emailAddresses);
+        sender.sendMail(subjectText, messageText, emailAddresses.toArray(new String[0]));
     }
 
 }
