@@ -4,7 +4,7 @@ aoterm_overlaps_stg_window (
   startStageZdbId text,
   endStageZdbId   text)
 
-  returns boolean as $true$
+  returns boolean as $DELIMITER$
 
   -- Returns true if the stage window the anatomy item exists in overlaps in
   -- any way with stage window passed in to the routine
@@ -17,7 +17,7 @@ aoterm_overlaps_stg_window (
    anatEnd           stage.stg_hours_start%TYPE;
    windowStartStart  stage.stg_hours_start%TYPE;
    windowEndEnd      stage.stg_hours_start%TYPE;
-   overlaps         boolean;
+   isOverlapping         boolean;
    consistent   	  boolean := stg_window_consistent(startStageZdbId, endStageZdbId);
 
  begin
@@ -42,14 +42,14 @@ aoterm_overlaps_stg_window (
     from stage
     where stg_zdb_id = endStageZdbId;
 
-  overlaps = 't';
+  isOverlapping := 't';
 
   if (anatStart >= windowEndEnd or
       anatEnd   <= windowStartStart) then
-     overlaps = 'f';
+     isOverlapping := 'f';
   end if;
 
-  return overlaps;
+  return isOverlapping;
 
 end
-$true$ LANGUAGE plpgsql
+$DELIMITER$ LANGUAGE plpgsql;
