@@ -9,7 +9,7 @@
 <c:set var="secs" value="${figureCaptions}"/>
 <c:set var="UNPUBLISHED" value="${PublicationType.UNPUBLISHED}"/>
 
-<z:dataPage sections="${secs}">
+<z:dataPage sections="${secs}" additionalBodyClass="all-figures">
 
     <jsp:attribute name="entityName">
         <div data-toggle="tooltip" data-placement="bottom" title="${publication.citation}">

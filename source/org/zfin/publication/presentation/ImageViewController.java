@@ -83,6 +83,7 @@ public class ImageViewController {
             model.addAttribute("probe", probe);
         }
 
+        model.addAttribute("directLink", true);
         return "figure/image-view";
     }
 

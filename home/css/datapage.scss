@@ -402,3 +402,31 @@ table.lab-view-summary-table dd a, table.company-view-summary-table dd a {
     columns: 15em;
     column-gap: 1em;
 }
+
+/* All Figures View Page */
+.all-figures {
+    & div.multiple-medium-images {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        & a:hover {
+            box-shadow: 0 0 10px #555;
+        }
+        & a img.figure-image {
+            /* These two lines could be uncommented to make the images fill the row height */
+            /*object-fit: cover;*/
+            /*height: 100%;*/
+            margin: 0;
+            border: none;
+        }
+    }
+    & div.single-image {
+        & a img:hover {
+            box-shadow: 0 0 10px #555;
+        }
+        & a img.figure-image {
+            border: none;
+        }
+    }
+}
+
