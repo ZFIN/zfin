@@ -517,6 +517,10 @@ video {
     border: 1px solid blue;
 }
 
+.figure-image-and-caption tbody {
+    background-color: #FFF;
+}
+
 .fig-label-edit-container {
     width: 100px;
     white-space: nowrap;
