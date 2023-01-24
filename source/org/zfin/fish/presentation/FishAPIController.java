@@ -1,6 +1,7 @@
 package org.zfin.fish.presentation;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,7 @@ import org.zfin.wiki.presentation.Version;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -149,10 +151,12 @@ public class FishAPIController {
         List<String> fishExpressionPublicationIDs = getExpressionRepository().getExpressionPublicationIDsByFish(fish);
         List<ExpressionDisplay> fishEfgExpressionDisplays = ExpressionService.createExpressionDisplays(fish.getZdbID(), fishEfgExpressionResults, fishExpressionFigureIDs, fishExpressionPublicationIDs, true);
 
+        List<ExpressionDisplay> filteredExpressionList = new ArrayList<>();
         // filtering
-        FilterService<ExpressionDisplay> filterService = new FilterService<>(new ExpressionDisplayFiltering());
-        List<ExpressionDisplay> filteredExpressionList = filterService.filterAnnotations(fishEfgExpressionDisplays, pagination.getFieldFilterValueMap());
-
+        if (CollectionUtils.isNotEmpty(fishEfgExpressionDisplays)) {
+            FilterService<ExpressionDisplay> filterService = new FilterService<>(new ExpressionDisplayFiltering());
+            filteredExpressionList = filterService.filterAnnotations(fishEfgExpressionDisplays, pagination.getFieldFilterValueMap());
+        }
 
         response.setResults(filteredExpressionList.stream()
             .skip(pagination.getStart())
