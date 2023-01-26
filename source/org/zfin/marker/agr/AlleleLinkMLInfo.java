@@ -16,6 +16,8 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
+import static org.zfin.marker.agr.LinkMLInfoService.getNameSlotAnnotationDTO;
+import static org.zfin.marker.agr.LinkMLInfoService.getSymbolSlotAnnotationDTO;
 import static org.zfin.repository.RepositoryFactory.getFeatureRepository;
 import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
@@ -55,8 +57,8 @@ public class AlleleLinkMLInfo extends LinkMLInfo {
         return features.stream()
             .map(feature -> {
                 AlleleDTO dto = new AlleleDTO();
-                dto.setSymbol(feature.getAbbreviation());
-                dto.setName(feature.getName());
+                dto.setAlleleSymbolDto(getSymbolSlotAnnotationDTO(feature));
+                dto.setAlleleFullNameDto(getNameSlotAnnotationDTO(feature));
                 dto.setInternal(false);
                 dto.setCreatedByCurie("ZFIN:CURATOR");
                 dto.setTaxonCurie(ZfinDTO.taxonId);

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.alliancegenome.curation_api.model.ingest.dto.IngestDTO;
+import org.alliancegenome.curation_api.model.ingest.dto.NameSlotAnnotationDTO;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
@@ -19,6 +20,8 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
+import static org.zfin.marker.agr.LinkMLInfoService.getNameSlotAnnotationDTO;
+import static org.zfin.marker.agr.LinkMLInfoService.getSymbolSlotAnnotationDTO;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 public class GeneLinkMLInfo extends AbstractScriptWrapper {
@@ -59,8 +62,8 @@ public class GeneLinkMLInfo extends AbstractScriptWrapper {
         return genes.stream()
                 .map(marker -> {
                     org.alliancegenome.curation_api.model.ingest.dto.GeneDTO dto = new org.alliancegenome.curation_api.model.ingest.dto.GeneDTO();
-                    dto.setSymbol(marker.getAbbreviation());
-                    dto.setName(marker.getName());
+                    dto.setGeneSymbolDto(getSymbolSlotAnnotationDTO(marker));
+                    dto.setGeneFullNameDto(getNameSlotAnnotationDTO(marker));
                     dto.setCreatedByCurie("ZFIN:CURATOR");
                     dto.setTaxonCurie(ZfinDTO.taxonId);
                     dto.setCurie("ZFIN:" + marker.getZdbID());
