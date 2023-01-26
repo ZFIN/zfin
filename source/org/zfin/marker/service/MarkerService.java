@@ -864,25 +864,23 @@ public class MarkerService {
 
 
     public static MarkerAlias createMarkerAlias(Marker marker, String newAlias, List<String> publicationIDs) {
-        Iterator<String> publicationIDsIterator = publicationIDs.iterator();
+        int loopIndex=0;
+        MarkerAlias alias = null;
+        for(String pubID : publicationIDs){
+            Publication publication = publicationRepository.getPublication(pubID);
 
-        String pubID = publicationIDsIterator.next();
-        Publication publication = publicationRepository.getPublication(pubID);
+            // alias is created with the first reference. others added after the alias is created.
+            if (loopIndex == 0) {
+                alias = markerRepository.addMarkerAlias(marker, newAlias, publication);
+            }
 
-        // alias is created with the first reference. others added after the alias is created.
-        MarkerAlias alias = markerRepository.addMarkerAlias(marker, newAlias, publication);
-
-        // add direct attribution to aliased marker and provided publication
-        infrastructureRepository.insertStandardPubAttribution(marker.getZdbID(), publication);
-
-        while (publicationIDsIterator.hasNext()) {
-            pubID = publicationIDsIterator.next();
-            publication = publicationRepository.getPublication(pubID);
+            // add direct attribution to aliased marker and provided publications
+            infrastructureRepository.insertStandardPubAttribution(marker.getZdbID(), publication);
             markerRepository.addDataAliasAttribution(alias, publication, marker);
 
-            // add direct attribution to additional publications for the aliased marker
-            infrastructureRepository.insertStandardPubAttribution(marker.getZdbID(), publication);
+            loopIndex++;
         }
+
         return alias;
     }
 
