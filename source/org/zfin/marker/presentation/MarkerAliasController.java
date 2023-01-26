@@ -75,8 +75,7 @@ public class MarkerAliasController {
             throw new InvalidWebRequestException("Invalid alias", errors);
         }
 
-        // alias is created with the first reference. others added after the alias is created.
-        List<String> publicationIDs = newAlias.getReferences().stream().map(MarkerReferenceBean::getZdbID).collect(Collectors.toList());
+        List<String> publicationIDs = newAlias.getReferences().stream().map(MarkerReferenceBean::getZdbID).toList();
 
         HibernateUtil.createTransaction();
         MarkerAlias alias = MarkerService.createMarkerAlias(marker, newAlias.getAlias(), publicationIDs);
