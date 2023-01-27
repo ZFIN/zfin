@@ -24,6 +24,7 @@ import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.marker.presentation.HighQualityProbeAOStatistics;
 import org.zfin.mutant.presentation.AntibodyStatistics;
@@ -38,7 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.*;
 import static org.hibernate.criterion.Restrictions.eq;
 import static org.hibernate.criterion.Restrictions.isNotEmpty;
 
@@ -992,6 +993,23 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
 
         figures.addAll(criteria.list());
         return figures;
+    }
+
+    @Override
+    public Map<String, List<Marker>> getAntibodyAntigenGeneMap(List<String> antibodyIDs) {
+        String hql = """
+            from MarkerRelationship where secondMarker.zdbID in (:antibodyIdList)
+            """;
+
+        Query<MarkerRelationship> query = HibernateUtil.currentSession().createQuery(hql, MarkerRelationship.class);
+        query.setParameterList("antibodyIdList", antibodyIDs);
+        List<MarkerRelationship> markerRelationshipList = query.list();
+        Map<String, List<Marker>> antibodyAntigenGeneList = markerRelationshipList.stream()
+            .collect(groupingBy(MarkerRelationship::getSecondMarker))
+            .entrySet().stream()
+            .collect(toMap(entry -> entry.getKey().getZdbID(),
+                e -> e.getValue().stream().map(MarkerRelationship::getFirstMarker).toList()));
+        return antibodyAntigenGeneList;
     }
 
 }

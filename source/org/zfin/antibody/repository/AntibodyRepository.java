@@ -17,6 +17,7 @@ import org.zfin.ontology.Term;
 import org.zfin.publication.Publication;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Main repository.
@@ -186,4 +187,5 @@ public interface AntibodyRepository {
 	List<Figure> getFiguresForAntibodyWithTerms(Antibody antibody, GenericTerm term, boolean withImgOnly);
 
 
+    Map<String, List<Marker>> getAntibodyAntigenGeneMap(List<String> antibodyIDs);
 }
