@@ -22,6 +22,7 @@ import org.zfin.profile.*;
 import org.zfin.profile.presentation.PersonMemberPresentation;
 import org.zfin.profile.presentation.ProfileUpdateMessageBean;
 import org.zfin.profile.repository.ProfileRepository;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 
 import javax.validation.ConstraintViolation;
@@ -40,9 +41,6 @@ public class ProfileService {
     private static final PolicyFactory POLICY = Sanitizers.FORMATTING.and(Sanitizers.LINKS);
 
     private Logger logger = LogManager.getLogger(ProfileService.class);
-
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
     private BeanCompareService beanCompareService;
@@ -570,6 +568,8 @@ public class ProfileService {
     }
 
     public String encodePassword(String password) {
+        BCryptPasswordEncoder bCryptPasswordEncoder =
+                new BCryptPasswordEncoder(Integer.parseInt(ZfinPropertiesEnum.BCRYPT_WORK_FACTOR.value()));
         return bCryptPasswordEncoder.encode(password);
     }
 
