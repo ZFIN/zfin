@@ -3,6 +3,7 @@
 <%@ tag pageEncoding="UTF-8" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ tag import="org.zfin.properties.ZfinPropertiesEnum" %>
+<%@ tag import="org.zfin.framework.featureflag.FeatureFlagEnum" %>
 
 <%@ attribute name="title" rtexprvalue="true" required="false" type="java.lang.String" %>
 <%@ attribute name="bodyClass" rtexprvalue="true" required="false" type="java.lang.String" %>
@@ -11,6 +12,10 @@
 <%@ attribute name="additionalBodyClass" required="false" type="java.lang.String" %>
 <c:set var="additionalBodyClass" value="${(empty additionalBodyClass) ? '' : additionalBodyClass}" />
 
+<c:set var="GA4_ANALYTICS_ID" value="${ZfinPropertiesEnum.GA4_ANALYTICS_ID.value()}" />
+<c:if test="${empty GA4_ANALYTICS_ID}">
+    <c:set var="GA4_ANALYTICS_ID" value="0" />
+</c:if>
 
 <c:if test="${empty title}">
     <c:set var="title">
@@ -42,6 +47,7 @@
             <script src="${zfn:getAssetPath("bootstrap.js")}"></script>
         </c:if>
 
+        <c:if test="${zfn:isFlagEnabled(FeatureFlagEnum.USE_UNIVERSAL_ANALYTICS)}">
         <script>
             <c:choose>
             <c:when test="${ZfinPropertiesEnum.GOOGLE_ANALYTICS_ID.value() != '0'}">
@@ -59,6 +65,27 @@
             </c:otherwise>
             </c:choose>
         </script>
+        </c:if>
+
+        <c:if test="${zfn:isFlagEnabled(FeatureFlagEnum.USE_GA4_ANALYTICS)}">
+            <!-- Google tag (gtag.js) -->
+            <c:choose>
+                <c:when test="${GA4_ANALYTICS_ID != '0'}">
+                    <script async src="https://www.googletagmanager.com/gtag/js?id=${GA4_ANALYTICS_ID}"></script>
+                    <script>
+                        window.dataLayer = window.dataLayer || [];
+                        function gtag(){dataLayer.push(arguments);}
+                        gtag('js', new Date());
+
+                        gtag('config', '${GA4_ANALYTICS_ID}');
+                    </script>
+                </c:when>
+                <c:otherwise>
+                    <!-- No GA4_ANALYTICS_ID set -->
+                </c:otherwise>
+            </c:choose>
+        </c:if>
+
     </head>
 <%--
     <div class="uber-banner">

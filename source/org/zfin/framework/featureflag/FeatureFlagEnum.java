@@ -6,7 +6,10 @@ import java.util.NoSuchElementException;
 public enum FeatureFlagEnum {
     JBROWSE("jBrowse", false),
     CURATOR_JOB_POSTING("Curator Job Posting", true),
-    USE_NAVIGATION_COUNTER("Show Navigation Counter", false);
+    USE_NAVIGATION_COUNTER("Show Navigation Counter", false),
+    USE_UNIVERSAL_ANALYTICS("Use Universal Analytics", true),
+    USE_GA4_ANALYTICS("Use GA4 Analytics", false);
+
 
     private final String name;
     private final boolean enabledByDefault;
