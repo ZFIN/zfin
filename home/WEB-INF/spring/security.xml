@@ -40,7 +40,7 @@
     <bean id="bCryptPasswordEncoder"
           class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
         <!-- this value should be tuned to the performance of our server such that encryption takes about 1 second -->
-        <constructor-arg value="15"/>
+        <constructor-arg value="${BCRYPT_WORK_FACTOR}"/>
     </bean>
 
     <security:authentication-manager alias="authenticationManager">
