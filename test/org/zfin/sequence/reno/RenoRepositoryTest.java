@@ -64,6 +64,20 @@ public class RenoRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void getRunByID() {
+        // optic primordium
+        String runZDB = "ZDB-RUN-171215-1";
+
+        Run run = repository.getRunByID(runZDB);
+        assertTrue(run != null);
+
+        String fakeRunZDB = "ZDB-RUN-FAKE-ID";
+        Run fakeRun = repository.getRunByID(fakeRunZDB);
+        assertTrue(fakeRun == null);
+
+    }
+
+    @Test
     // Test that there are nomenclature runs in the database
     public void getNomenclatureRuns() {
         Session session = HibernateUtil.currentSession();
