@@ -862,6 +862,29 @@ public class MarkerService {
         return false;
     }
 
+
+    public static MarkerAlias createMarkerAlias(Marker marker, String newAlias, List<String> publicationIDs) {
+        boolean isFirstIteration = true;
+        MarkerAlias alias = null;
+
+        for(String pubID : publicationIDs){
+            Publication publication = publicationRepository.getPublication(pubID);
+
+            // alias is created with the first reference. others added after the alias is created.
+            if (isFirstIteration) {
+                alias = markerRepository.addMarkerAlias(marker, newAlias, publication);
+                isFirstIteration = false;
+            } else {
+                markerRepository.addDataAliasAttribution(alias, publication, marker);
+            }
+
+            // add direct attribution to aliased marker and provided publications
+            infrastructureRepository.insertStandardPubAttribution(marker.getZdbID(), publication);
+        }
+
+        return alias;
+    }
+
     public static List<String> getDirectAttributions(Marker marker) {
         // get direct attributions
         return getDirectAttributions(marker.getZdbID());

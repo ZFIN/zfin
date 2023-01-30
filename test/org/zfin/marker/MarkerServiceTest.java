@@ -491,4 +491,27 @@ public class MarkerServiceTest extends AbstractDatabaseTest {
         assertThat(marker.getZdbID() + " should have not alias sonic youth",
                 MarkerService.markerHasAlias(marker, "sonic youth"), is(false));
     }
+
+    @Test
+    public void addingMarkerAliasCreatesDirectAttribution() {
+        //randomly selected pubs:
+        List<String> pubIDs = List.of("ZDB-PUB-180419-3", "ZDB-PUB-190127-23");
+
+        //randomly selected marker (urod):
+        Marker marker = getMarkerRepository().getMarkerByID("ZDB-GENE-000208-18");
+
+        Set<Publication> beforeAliasAtts = MarkerService.getAliasAttributions(marker);
+        List<String> beforeDirectAtts = MarkerService.getDirectAttributions(marker);
+
+        //add alias:
+        MarkerService.createMarkerAlias(marker, "testUrodAlias", pubIDs);
+
+        Set<Publication> afterAliasAtts = MarkerService.getAliasAttributions(marker);
+        List<String> afterDirectAtts = MarkerService.getDirectAttributions(marker);
+
+        //confirm the two publications got added to the alias attributions and direct attributions
+        assertEquals(afterDirectAtts.size(), beforeDirectAtts.size() + 2);
+        assertEquals(afterAliasAtts.size(), beforeAliasAtts.size() + 2);
+
+    }
 }

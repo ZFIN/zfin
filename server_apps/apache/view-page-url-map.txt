@@ -91,3 +91,4 @@ ECO     /action/ontology/term-detail/ECO
 MMO     /action/ontology/term-detail/MMO
 OBI     /action/ontology/term-detail/OBI
 RO     /action/ontology/term-detail/RO
+DALIAS     /action/data/alias/ZDB-DALIAS
