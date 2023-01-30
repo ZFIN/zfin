@@ -3,14 +3,11 @@
  */
 package org.zfin.sequence.reno.repository;
 
-//import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
-
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.CacheMode;
 import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
-import org.zfin.framework.HibernateUtil;
 import org.zfin.profile.Person;
 import org.zfin.sequence.blast.Hit;
 import org.zfin.sequence.reno.NomenclatureRun;
@@ -33,7 +30,7 @@ public class HibernateRenoRepository implements RenoRepository {
     private static final Logger LOG = LogManager.getLogger(HibernateRenoRepository.class);
 
     public List<RedundancyRun> getRedundancyRuns() {
-        Session session = HibernateUtil.currentSession();
+        Session session = currentSession();
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<RedundancyRun> query = criteriaBuilder.createQuery(RedundancyRun.class);
         Root<RedundancyRun> root = query.from(RedundancyRun.class);
@@ -43,7 +40,7 @@ public class HibernateRenoRepository implements RenoRepository {
     }
 
     public List<NomenclatureRun> getNomenclatureRuns() {
-        Session session = HibernateUtil.currentSession();
+        Session session = currentSession();
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<NomenclatureRun> query = criteriaBuilder.createQuery(NomenclatureRun.class);
         Root<NomenclatureRun> root = query.from(NomenclatureRun.class);
@@ -53,7 +50,7 @@ public class HibernateRenoRepository implements RenoRepository {
     }
 
     public int getQueueCandidateCount(Run oneRun) {
-        Session session = HibernateUtil.currentSession();
+        Session session = currentSession();
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         Root<RunCandidate> root = criteriaQuery.from(RunCandidate.class);
@@ -70,7 +67,7 @@ public class HibernateRenoRepository implements RenoRepository {
     }
 
     public List<RunCandidate> getPendingCandidates(Run run) {
-        Session session = HibernateUtil.currentSession();
+        Session session = currentSession();
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<RunCandidate> criteriaQuery = criteriaBuilder.createQuery(RunCandidate.class);
         Root<RunCandidate> root = criteriaQuery.from(RunCandidate.class);
@@ -87,7 +84,7 @@ public class HibernateRenoRepository implements RenoRepository {
     }
 
     public int getPendingCandidateCount(Run oneRun) {
-        Session session = HibernateUtil.currentSession();
+        Session session = currentSession();
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         Root<RunCandidate> root = criteriaQuery.from(RunCandidate.class);
@@ -104,7 +101,7 @@ public class HibernateRenoRepository implements RenoRepository {
     }
 
     public int getFinishedCandidateCount(Run oneRun) {
-        Session session = HibernateUtil.currentSession();
+        Session session = currentSession();
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         Root<RunCandidate> root = criteriaQuery.from(RunCandidate.class);
@@ -138,18 +135,15 @@ public class HibernateRenoRepository implements RenoRepository {
     }
 
     public Run getRunByID(String zdbID) {
-        Session session = currentSession();
-        return session.get(Run.class, zdbID);
+        return currentSession().get(Run.class, zdbID);
     }
 
     public List<RunCandidate> getSangerRunCandidatesInQueue(Run run) {
-
-        Session session = HibernateUtil.currentSession();
         String hql = " from RunCandidate rc " +
                 " where rc.run.zdbID = :runid and rc.done is false and rc.lockPerson is null " +
                 " and rc.candidate.suggestedName like 'si:%'";
 
-        Query<RunCandidate> query = session.createQuery(hql, RunCandidate.class);
+        Query<RunCandidate> query = currentSession().createQuery(hql, RunCandidate.class);
         query.setParameter("runid", run.getZdbID());
         return query.list();
     }
@@ -168,7 +162,7 @@ public class HibernateRenoRepository implements RenoRepository {
      * @return list of RunCandidates
      */
     public List<RunCandidate> getSortedRunCandidates(Run run, String comparator, int maxNumRecords) {
-        Session session = HibernateUtil.currentSession();
+        Session session = currentSession();
         CacheMode oldCacheMode = session.getCacheMode();
         LOG.info("old cache mode: " + oldCacheMode);
 
@@ -235,7 +229,7 @@ public class HibernateRenoRepository implements RenoRepository {
     }
 
     public List<RunCandidate> getSortedNonZFRunCandidates(Run run, String comparator, int maxNumRecords) {
-        Session session = HibernateUtil.currentSession();
+        Session session = currentSession();
         CacheMode oldCacheMode = session.getCacheMode();
         LOG.info("old cache mode: " + oldCacheMode);
 
@@ -309,8 +303,7 @@ public class HibernateRenoRepository implements RenoRepository {
 
 
     public RunCandidate getRunCandidateByID(String runCandidateID) {
-        Session session = HibernateUtil.currentSession();
-        return session.get(RunCandidate.class, runCandidateID);
+        return currentSession().get(RunCandidate.class, runCandidateID);
     }
 
     /**
@@ -328,7 +321,6 @@ public class HibernateRenoRepository implements RenoRepository {
     }
 
     public Double getRunCandidateExpectValueByScore(String rcZdbId, Integer score) {
-        Session session = HibernateUtil.currentSession();
         String hql = " select min(h.expectValue) " +
                 "  from org.zfin.sequence.blast.Query q, " +
                 "       org.zfin.sequence.blast.Hit h " +
@@ -336,7 +328,7 @@ public class HibernateRenoRepository implements RenoRepository {
                 " and h.query.zdbID = q.zdbID " +
                 " and h.score = :score ";
 
-        Query<Number> query = session.createQuery(hql, Number.class);
+        Query<Number> query = currentSession().createQuery(hql, Number.class);
         query.setParameter("rcid", rcZdbId);
         query.setParameter("score", score);
         return query.uniqueResult().doubleValue();
