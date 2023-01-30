@@ -67,16 +67,25 @@
                         </tbody>
                     </z:dataTable>
                 </z:section>
+                <z:section title="External Notes" hasData="${genotype.externalNotes ne null && fn:length(genotype.externalNotes) > 0}">
+                    <c:if test="${genotype.externalNotes ne null && fn:length(genotype.externalNotes) > 0 }">
+                        <c:forEach var="extNote" items="${formBean.genotype.externalNotes}">
+                            <div>
+                                    ${extNote.note} &nbsp;(<a href='/${extNote.publication.zdbID}'>1</a>)
+                            </div>
+                        </c:forEach>
+                    </c:if>
+                </z:section>
             </authz:authorize>
-            <z:section title="External Notes">
-                <c:if test="${genotype.externalNotes ne null && fn:length(genotype.externalNotes) > 0 }">
+            <authz:authorize access="!hasRole('root')">
+                <z:section title="" hasData="${genotype.externalNotes ne null && fn:length(genotype.externalNotes) > 0}">
                     <c:forEach var="extNote" items="${formBean.genotype.externalNotes}">
                         <div>
                                 ${extNote.note} &nbsp;(<a href='/${extNote.publication.zdbID}'>1</a>)
                         </div>
                     </c:forEach>
-                </c:if>
-            </z:section>
+                </z:section>
+            </authz:authorize>
         </z:section>
 
         <c:if test="${!formBean.genotype.wildtype}">
@@ -87,9 +96,9 @@
             </z:section>
 
             <z:section title="${FISH}" appendedText="utilizing ${genotype.name}">
-                <z:section title=" ">
-                    <jsp:include page="genotype-fish.jsp"/>
-                </z:section>
+                <div class="__react-root" id="GenotypeFishTable"
+                     data-genotype-id="${genotype.zdbID}"
+                ></div>
             </z:section>
 
             <z:section title="${CITATIONS}" infoPopup="/action/marker/note/citations">

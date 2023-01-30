@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
 
+
 /**
  * This class is needed to add a new cookie to the response object when the
  * user is successfully authenticated through the login form.
@@ -98,4 +99,5 @@ public class ApgAuthenticationSuccessHandler extends SavedRequestAwareAuthentica
     public void setSessionRegistry(SessionRegistry sessionRegistry) {
         this.sessionRegistry = sessionRegistry;
     }
+
 }

@@ -913,6 +913,11 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         return getHumanDiseaseModels(disease, null, includeChildren, pagination);
     }
 
+    @Override
+    public List<DiseaseAnnotationModel> getHumanDiseaseModelsByFish(Fish fish, Pagination pagination) {
+        return null;
+    }
+
     public List<DiseaseAnnotationModel> getHumanDiseaseModels(GenericTerm disease, Fish fish, boolean includeChildren, Pagination pagination) {
         String hql = """
             select damo  from DiseaseAnnotationModel damo
@@ -930,8 +935,10 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
             left join fetch conditions.goCCTerm goCCTerm
             left join fetch conditions.taxaonymTerm taxonomyTerm
             where
-            da.disease = :disease
             """;
+        if (disease != null) {
+            hql += " da.disease = :disease ";
+        }
 
         if (includeChildren) {
             hql = """
@@ -952,6 +959,12 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
                 damo.diseaseAnnotation.disease = tc.child AND
                 tc.root = :disease
                 """;
+        }
+        if (fish != null) {
+            if (includeChildren || disease != null) {
+                hql += "and ";
+            }
+            hql += " fx.fish = :fish ";
         }
         if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
             for (Map.Entry<String, String> entry : pagination.getFilterMap().entrySet()) {
@@ -983,11 +996,10 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
             }
         }
 
-        if (fish != null) {
-            hql += " AND fx.fish = :fish ";
-        }
         Query<DiseaseAnnotationModel> query = HibernateUtil.currentSession().createQuery(hql, DiseaseAnnotationModel.class);
-        query.setParameter("disease", disease);
+        if (disease != null) {
+            query.setParameter("disease", disease);
+        }
         if (fish != null) {
             query.setParameter("fish", fish);
         }
@@ -996,7 +1008,6 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
                 query.setParameter(entry.getKey(), "%" + entry.getValue().toLowerCase() + "%");
             }
         }
-
         return query.list();
     }
 

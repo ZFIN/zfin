@@ -105,9 +105,9 @@ public class ExpressionService {
         for (ExpressionExperiment expressionExperiment : expressionExperiments) {
             // is there a record attribution for this expression experiment
             if (infrastructureRepository.getRecordAttribution(expressionExperiment.getZdbID(), expressionExperiment.getPublication().getZdbID(),
-                    RecordAttribution.SourceType.STANDARD) != null
-                    &&
-                    thissePublications.contains(expressionExperiment.getPublication().getZdbID())
+                RecordAttribution.SourceType.STANDARD) != null
+                &&
+                thissePublications.contains(expressionExperiment.getPublication().getZdbID())
             ) {
                 return true;
             }
@@ -180,31 +180,31 @@ public class ExpressionService {
         boolean hasGeoLink, shouldHaveGeoLink;
         if (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
             hasGeoLink = infrastructureRepository.hasStandardPublicationAttributionForRelatedMarkers(marker.getZdbID()
-                    , MicroarrayWebserviceJob.MICROARRAY_PUB);
+                , MicroarrayWebserviceJob.MICROARRAY_PUB);
             accessions = sequenceRepository.getDBLinkAccessionsForEncodedMarkers(marker, ForeignDBDataType.DataType.RNA);
             accessions.addAll(sequenceRepository.getDBLinkAccessionsForMarker(marker, ForeignDBDataType.DataType.RNA));
             shouldHaveGeoLink = NCBIEfetch.hasMicroarrayData(accessions, marker.getAbbreviation());
         } else {
             hasGeoLink = infrastructureRepository.hasStandardPublicationAttribution(marker.getZdbID()
-                    , MicroarrayWebserviceJob.MICROARRAY_PUB);
+                , MicroarrayWebserviceJob.MICROARRAY_PUB);
             accessions = sequenceRepository.getDBLinkAccessionsForMarker(marker, ForeignDBDataType.DataType.RNA);
             shouldHaveGeoLink = NCBIEfetch.hasMicroarrayData(accessions);
         }
         if (hasGeoLink != shouldHaveGeoLink) {
             if (hasGeoLink) {
                 infrastructureRepository.removeRecordAttributionForData(marker.getZdbID(),
-                        MicroarrayWebserviceJob.MICROARRAY_PUB
+                    MicroarrayWebserviceJob.MICROARRAY_PUB
                 );
                 return -1;
             } else {
                 RecordAttribution publicationAttribution = infrastructureRepository.insertPublicAttribution(marker.getZdbID()
-                        , MicroarrayWebserviceJob.MICROARRAY_PUB);
+                    , MicroarrayWebserviceJob.MICROARRAY_PUB);
                 if (publicationAttribution != null) {
                     logger.debug(publicationAttribution);
                     return 1;
                 } else {
                     logger.error("failed to add publication attribution for data[" + publicationAttribution.getDataZdbID()
-                            + "] source[" + publicationAttribution.getSourceZdbID() + "]");
+                        + "] source[" + publicationAttribution.getSourceZdbID() + "]");
                 }
             }
         }
@@ -305,7 +305,7 @@ public class ExpressionService {
             allMarkerExpressionInstance.setSinglePublication(pubs.get(0));
         }
         allMarkerExpressionInstance.setFigureCount(
-                expressionRepository.getExpressionFigureCountForGene(marker));
+            expressionRepository.getExpressionFigureCountForGene(marker));
 
         markerExpression.setAllMarkerExpressionInstance(allMarkerExpressionInstance);
         markerExpression.setExpressionAtlasLink(getExpressionAtlasForMarker(marker.zdbID, ForeignDB.AvailableName.EXPRESSIONATLAS));
@@ -352,13 +352,13 @@ public class ExpressionService {
         List<Publication> pubs = expressionRepository.getExpressionPub(marker);
         MarkerExpressionInstance allMarkerExpressionInstance = new MarkerExpressionInstance();
         allMarkerExpressionInstance.setPublicationCount(
-                expressionRepository.getExpressionPubCountForEfg(marker));
+            expressionRepository.getExpressionPubCountForEfg(marker));
 
         if (allMarkerExpressionInstance.getPublicationCount() == 1) {
             allMarkerExpressionInstance.setSinglePublication(pubs.get(0));
         }
         allMarkerExpressionInstance.setFigureCount(
-                expressionRepository.getExpressionFigureCountForEfg(marker));
+            expressionRepository.getExpressionFigureCountForEfg(marker));
         markerExpression.setAllMarkerExpressionInstance(allMarkerExpressionInstance);
         if (allMarkerExpressionInstance.getFigureCount() == 1) {
             allMarkerExpressionInstance.setSingleFigure(expressionRepository.getExpressionSingleFigure(marker));
@@ -374,7 +374,7 @@ public class ExpressionService {
     public MarkerExpression getExpressionForRnaClone(Clone clone) {
         MarkerExpression markerExpression = new MarkerExpression();
         if (clone.getMarkerType().getType() != Marker.Type.CDNA
-                && clone.getMarkerType().getType() != Marker.Type.EST
+            && clone.getMarkerType().getType() != Marker.Type.EST
         ) {
             logger.error("should not be trying to get rna clone expression for marker: \n" + clone);
             return markerExpression;
@@ -385,13 +385,13 @@ public class ExpressionService {
         // all expression
         MarkerExpressionInstance allMarkerExpressionInstance = new MarkerExpressionInstance();
         allMarkerExpressionInstance.setPublicationCount(
-                expressionRepository.getExpressionPubCountForClone(clone));
+            expressionRepository.getExpressionPubCountForClone(clone));
 
         if (allMarkerExpressionInstance.getPublicationCount() == 1) {
             allMarkerExpressionInstance.setSinglePublication(expressionRepository.getExpressionSinglePub(clone));
         }
         allMarkerExpressionInstance.setFigureCount(
-                expressionRepository.getExpressionFigureCountForClone(clone));
+            expressionRepository.getExpressionFigureCountForClone(clone));
 
         markerExpression.setAllMarkerExpressionInstance(allMarkerExpressionInstance);
 
@@ -667,8 +667,8 @@ public class ExpressionService {
                                                                    List<String> expressionPublicationIDs,
                                                                    boolean showCondition) {
         if (CollectionUtils.isEmpty(expressionResults) ||
-                CollectionUtils.isEmpty(expressionFigureIDs) ||
-                CollectionUtils.isEmpty(expressionPublicationIDs)) {
+            CollectionUtils.isEmpty(expressionFigureIDs) ||
+            CollectionUtils.isEmpty(expressionPublicationIDs)) {
             return null;
         }
 
@@ -822,8 +822,8 @@ public class ExpressionService {
      */
     public static List<ProteinExpressionDisplay> createProteinExpressionDisplays(String initialKey, List<ExpressionResult> expressionResults, List<String> expressionFigureIDs, List<String> expressionPublicationIDs, boolean showCondition) {
         if (CollectionUtils.isEmpty(expressionResults) ||
-                CollectionUtils.isEmpty(expressionFigureIDs) ||
-                CollectionUtils.isEmpty(expressionPublicationIDs)) {
+            CollectionUtils.isEmpty(expressionFigureIDs) ||
+            CollectionUtils.isEmpty(expressionPublicationIDs)) {
             return null;
         }
 
@@ -930,6 +930,17 @@ public class ExpressionService {
 
         List<ProteinExpressionDisplay> proteinExpressionDisplays = new ArrayList<>(map.size());
 
+        map.values().forEach(display -> {
+            Set<Publication> pubs = display.getPublications().stream()
+                .map(publication -> {
+                    Publication pub = new Publication();
+                    pub.setZdbID(publication.getZdbID());
+                    pub.setShortAuthorList(publication.getShortAuthorList());
+                    pub.setFigures(display.getFiguresPerPub().get(publication));
+                    return pub;
+                }).collect(Collectors.toSet());
+            display.setPublications(pubs);
+        });
         if (map.values().size() > 0) {
             proteinExpressionDisplays.addAll(map.values());
             Collections.sort(proteinExpressionDisplays);
@@ -966,19 +977,19 @@ public class ExpressionService {
         addInSituFilter(query, onlyInSitu);
 
         String jsonFacet = "{" +
-                "  images: {" +
-                "    terms: {" +
-                "      field: img_zdb_id," +
-                "      limit: " + pagination.getLimit() + "," +
-                "      offset: " + pagination.getStart() + "," +
-                "      numBuckets: true," +
-                "      sort: \"img_order desc\"," +
-                "      facet : {" +
-                "        img_order: \"max(expression_image_sort)\"" +
-                "      }" +
-                "    }" +
-                "  }" +
-                "}";
+            "  images: {" +
+            "    terms: {" +
+            "      field: img_zdb_id," +
+            "      limit: " + pagination.getLimit() + "," +
+            "      offset: " + pagination.getStart() + "," +
+            "      numBuckets: true," +
+            "      sort: \"img_order desc\"," +
+            "      facet : {" +
+            "        img_order: \"max(expression_image_sort)\"" +
+            "      }" +
+            "    }" +
+            "  }" +
+            "}";
         query.set("json.facet", jsonFacet);
 
         QueryResponse queryResponse = SolrService.getSolrClient().query(query);
@@ -991,8 +1002,8 @@ public class ExpressionService {
         } else {
             Integer total = (Integer) Optional.of(images.get("numBuckets")).orElse(0);
             List<String> imageIds = ((List<NamedList<Object>>) images.get("buckets")).stream()
-                    .map(bucket -> bucket.get("val").toString())
-                    .collect(Collectors.toList());
+                .map(bucket -> bucket.get("val").toString())
+                .collect(Collectors.toList());
             response.setTotal(total);
             response.setResults(figureRepository.getImages(imageIds));
         }

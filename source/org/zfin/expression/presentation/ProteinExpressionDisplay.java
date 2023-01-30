@@ -1,9 +1,13 @@
 package org.zfin.expression.presentation;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
 import org.zfin.antibody.Antibody;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.Figure;
+import org.zfin.framework.api.View;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
@@ -16,13 +20,21 @@ import java.util.SortedSet;
 /**
  *  TODO: add comments
  */
+@Setter
+@Getter
 public class ProteinExpressionDisplay implements Comparable<ProteinExpressionDisplay> {
+    @JsonView(View.API.class)
     private Antibody antibody;
+    @JsonView(View.API.class)
     private Marker antiGene;    // nullable
+    @JsonView(View.API.class)
     private Set<Publication> publications;
     private Set<Figure> figures;
+    @JsonView(View.API.class)
     private List<ExpressionResult> expressionResults;
+    @JsonView(View.API.class)
     private Experiment experiment;
+    @JsonView(View.API.class)
     private Set<GenericTerm> expressionTerms;
     private SortedMap<Publication, SortedSet<Figure>> figuresPerPub;
 
@@ -39,14 +51,7 @@ public class ProteinExpressionDisplay implements Comparable<ProteinExpressionDis
         return antiGene.compareTo(anotherProteinExpressionDisplay.getAntiGene());
     }
 
-    public Set<Figure> getFigures() {
-        return figures;
-    }
-
-    public void setFigures(Set<Figure> figures) {
-        this.figures = figures;
-    }
-
+    @JsonView(View.API.class)
     public int getNumberOfFigures() {
 		if (figures == null) {
 			return 0;
@@ -55,7 +60,8 @@ public class ProteinExpressionDisplay implements Comparable<ProteinExpressionDis
 		}
     }
 
-    public Figure getSingleFigure() {
+    @JsonView(View.API.class)
+    public Figure getFigure() {
 		if (figures == null || figures.size() != 1)
 		   return null;
 
@@ -67,7 +73,8 @@ public class ProteinExpressionDisplay implements Comparable<ProteinExpressionDis
         return singleFigure;
     }
 
-    public Publication getSinglePublication() {
+    @JsonView(View.API.class)
+    public Publication getPublication() {
 		if (publications == null || publications.size() != 1)
 		   return null;
 
@@ -78,14 +85,7 @@ public class ProteinExpressionDisplay implements Comparable<ProteinExpressionDis
         return singlePub;
     }
 
-    public Set<Publication> getPublications() {
-        return publications;
-    }
-
-    public void setPublications(Set<Publication> publications) {
-        this.publications = publications;
-    }
-
+    @JsonView(View.API.class)
     public int getNumberOfPublications() {
 		if (publications == null) {
 			return 0;
@@ -94,6 +94,7 @@ public class ProteinExpressionDisplay implements Comparable<ProteinExpressionDis
 		}
     }
 
+    @JsonView(View.API.class)
     public boolean isImgInFigure() {
         if (noFigureOrFigureWithNoLabel())   {
             return false;
@@ -108,6 +109,7 @@ public class ProteinExpressionDisplay implements Comparable<ProteinExpressionDis
         return thereIsImg;
     }
 
+    @JsonView(View.API.class)
     public boolean noFigureOrFigureWithNoLabel() {
         if (figures == null || figures.isEmpty())   {
             return true;
@@ -122,51 +124,4 @@ public class ProteinExpressionDisplay implements Comparable<ProteinExpressionDis
         return noFigureLabel;
     }
 
-    public List<ExpressionResult> getExpressionResults() {
-        return expressionResults;
-    }
-
-    public void setExpressionResults(List<ExpressionResult> expressionResults) {
-        this.expressionResults = expressionResults;
-    }
-
-    public Experiment getExperiment() {
-        return experiment;
-    }
-
-    public void setExperiment(Experiment experiment) {
-        this.experiment = experiment;
-    }
-
-    public Set<GenericTerm> getExpressionTerms() {
-        return expressionTerms;
-    }
-
-    public void setExpressionTerms(Set<GenericTerm> expressionTerms) {
-        this.expressionTerms = expressionTerms;
-    }
-
-    public SortedMap<Publication, SortedSet<Figure>> getFiguresPerPub() {
-        return figuresPerPub;
-    }
-
-    public void setFiguresPerPub(SortedMap<Publication, SortedSet<Figure>> figuresPerPub) {
-        this.figuresPerPub = figuresPerPub;
-    }
-
-    public Antibody getAntibody() {
-        return antibody;
-    }
-
-    public void setAntibody(Antibody antibody) {
-        this.antibody = antibody;
-    }
-
-    public Marker getAntiGene() {
-        return antiGene;
-    }
-
-    public void setAntiGene(Marker antiGene) {
-        this.antiGene = antiGene;
-    }
 }

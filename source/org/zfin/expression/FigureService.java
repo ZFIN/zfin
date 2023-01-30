@@ -1,22 +1,21 @@
 package org.zfin.expression;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
 import org.zfin.expression.repository.ExpressionRepository;
-import org.zfin.expression.repository.HibernateExpressionRepository;
 import org.zfin.figure.presentation.FigurePresentationBean;
 import org.zfin.figure.presentation.ImagePresentationBean;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
-import org.zfin.publication.repository.PublicationRepository;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.zfin.repository.RepositoryFactory.getAntibodyRepository;
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
 /**
@@ -33,7 +32,11 @@ public class FigureService {
     public static ExpressionSummaryCriteria createExpressionCriteria(FishExperiment genox, Marker gene, boolean withImgsOnly) {
         ExpressionSummaryCriteria criteria = new ExpressionSummaryCriteria();
         criteria.setFishExperiment(genox);
-        criteria.setGene(gene);
+        if (gene.isAntibody()) {
+            criteria.setAntibody(getAntibodyRepository().getAntibodyByID(gene.zdbID));
+        } else {
+            criteria.setGene(gene);
+        }
         criteria.setWithImagesOnly(withImgsOnly);
         criteria.setStandardEnvironment(false);
         criteria.setWildtypeOnly(false);
@@ -65,7 +68,13 @@ public class FigureService {
         boolean isStandardEnvironment = true;
         ExpressionSummaryCriteria criteria = new ExpressionSummaryCriteria();
         criteria.setFish(fish);
-        criteria.setGene(gene);
+        if (gene != null) {
+            if (gene.isAntibody()) {
+                criteria.setAntibody(getAntibodyRepository().getAntibodyByID(gene.zdbID));
+            } else {
+                criteria.setGene(gene);
+            }
+        }
         criteria.setWithImagesOnly(withImgsOnly);
         criteria.setStandardEnvironment(isStandardEnvironment);
         criteria.setWildtypeOnly(false);
@@ -121,7 +130,7 @@ public class FigureService {
 
     public static List<FigureSummaryDisplay> createExpressionFigureSummary(ExpressionSummaryCriteria expressionCriteria) {
         // a map of publicationID-FigureID as keys and figure summary display objects as values
-        Map<String, FigureSummaryDisplay> map = new HashMap<String, FigureSummaryDisplay>();
+        Map<String, FigureSummaryDisplay> map = new HashMap<>();
         List<Figure> figures;
 
         if (expressionCriteria.getSequenceTargetingReagent() != null) {
@@ -162,7 +171,7 @@ public class FigureService {
         }
 
 
-        List<FigureSummaryDisplay> summaryRows = new ArrayList<FigureSummaryDisplay>();
+        List<FigureSummaryDisplay> summaryRows = new ArrayList<>();
         if (map.values().size() > 0) {
             summaryRows.addAll(map.values());
         }
@@ -280,14 +289,14 @@ public class FigureService {
         bean.setPubZdbId(figure.getPublication().getZdbID());
         bean.setLabel(figure.getLabel());
         bean.setCaption(figure.getCaption());
-        int expCount = expressionRepository.getExperimentFigureStageByFigure(figure)== null ? 0 :expressionRepository.getExperimentFigureStageByFigure(figure).size();
+        int expCount = expressionRepository.getExperimentFigureStageByFigure(figure) == null ? 0 : expressionRepository.getExperimentFigureStageByFigure(figure).size();
         bean.setNumExpressionStatements(expCount);
-       // bean.setNumExpressionStatements(figure.getExpressionResults() == null ? 0 : figure.getExpressionResults().size());
+        // bean.setNumExpressionStatements(figure.getExpressionResults() == null ? 0 : figure.getExpressionResults().size());
         bean.setNumPhenotypeStatements(figure.getPhenotypeExperiments() == null ? 0 : figure.getPhenotypeExperiments().size());
         if (figure.getImages() != null) {
             bean.setImages(figure.getImages().stream()
-                            .map(FigureService::convertToImagePresentationBean)
-                            .collect(Collectors.toSet())
+                .map(FigureService::convertToImagePresentationBean)
+                .collect(Collectors.toSet())
             );
         }
         return bean;

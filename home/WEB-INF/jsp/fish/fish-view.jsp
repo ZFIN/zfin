@@ -41,34 +41,42 @@
             <jsp:include page="fish-view-summary.jsp"/>
         </div>
 
+        <c:set var="modelTitle" value="modelled by"/>
+        <c:if test="${fish.clean}">
+            <c:set var="modelTitle" value="model utilizes"/>
+        </c:if>
+
         <z:section title="${HUMAN_DISEASE}" infoPopup="/ZFIN/help_files/expression_help.html"
-                   appendedText="modelled by ${fish.name}">
-            <z:section title="">
-                <jsp:include page="fish-view-human-disease.jsp"/>
-            </z:section>
+                   appendedText="${modelTitle} ${fish.name}">
+            <div class="__react-root" id="FishZebrafishModelTable"
+                 data-fish-id="${fish.zdbID}"
+            ></div>
         </z:section>
 
         <z:section title="${EXPRESSION}" infoPopup="/ZFIN/help_files/expression_help.html">
             <z:section title="RNA Expression">
-                <zfin2:fishExpressionData fishZdbID="${fish.zdbID}"
-                                          expressionDisplays="${geneCentricNonEfgExpressionDataList}"
-                                          showCondition="true"/>
+                <div class="__react-root" id="FishRnaExpressionTable"
+                     data-fish-id="${fish.zdbID}"
+                ></div>
             </z:section>
             <z:section title="Protein Expression">
-                <jsp:include page="fish-view-protein-detail.jsp"/>
+                <div class="__react-root" id="FishProteinExpressionTable"
+                     data-fish-id="${fish.zdbID}"
+                ></div>
             </z:section>
             <z:section title="Reporter Gene Expression">
-                <zfin2:fishExpressionData fishZdbID="${fish.zdbID}"
-                                          expressionDisplays="${geneCentricEfgExpressionDataList}"
-                                          showCondition="true"/>
+                <div class="__react-root" id="FishReporterExpressionTable"
+                     data-fish-id="${fish.zdbID}"
+                ></div>
             </z:section>
         </z:section>
 
         <z:section title="${PHENOTYPE}" infoPopup="/action/marker/note/phenotype">
-                <z:section title=" " hasData="${!empty phenotypeDisplays}">
-                    <zfin2:all-phenotype phenotypeDisplays="${phenotypeDisplays}" fishAndCondition="true"
-                                         suppressMoDetails="true" secondColumn="condition"/>
-                </z:section>
+            <z:section title=" ">
+                <div class="__react-root" id="FishPhenotypeTable"
+                     data-fish-id="${fish.zdbID}"
+                ></div>
+            </z:section>
         </z:section>
 
         <z:section title="${CITATIONS}" infoPopup="/action/marker/note/citations">

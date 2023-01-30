@@ -9,12 +9,16 @@ public enum FieldFilter {
     RELATIONSHIP_TYPE("relationship.type"),
     GENE_ABBREVIATION("filter.geneAbbreviation"),
     NAME("name"),
+    FISH_NAME("fishName"),
     TARGET_NAME("targetName"),
     ENTITY_ID("entityId"),
     STR_NAME("strName"),
     REGULATORY_REGION("regulatoryRegion"),
     CODING_SEQUENCE("codingSequence"),
     SPECIES("species"),
+    CONDITION_NAME("conditionName"),
+    PHENOTYPE("phenotype"),
+    ANTIBODY_NAME("antibodyName"),
     CITATION("citation"),
     ;
     private String name;
