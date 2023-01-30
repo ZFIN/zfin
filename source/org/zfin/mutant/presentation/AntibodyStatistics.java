@@ -14,6 +14,7 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
