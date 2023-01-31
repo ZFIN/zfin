@@ -9,7 +9,7 @@ import DataTableSummaryToggle from '../components/DataTableSummaryToggle';
 const TermAntibodyTable = ({termId, directAnnotationOnly}) => {
 
     const [directAnnotation, setDirectAnnotation] = useState(directAnnotationOnly === 'true');
-    const [count, setCount] = useState({'countDirect':0,'countIncludingChildren':0});
+    const [count, setCount] = useState({'countDirect': 0, 'countIncludingChildren': 0});
 
     const columns = [
         {
@@ -20,7 +20,7 @@ const TermAntibodyTable = ({termId, directAnnotationOnly}) => {
         },
         {
             label: 'Gene',
-            content: ({genes}) => <EntityList entities={genes}/>,
+            content: ({antigenGeneList}) => <EntityList entities={antigenGeneList}/>,
             filterName: 'geneName',
             width: '120px',
         },
