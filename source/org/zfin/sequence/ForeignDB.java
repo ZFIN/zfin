@@ -1,10 +1,15 @@
 package org.zfin.sequence;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.Formula;
 import org.zfin.framework.api.View;
 
 import javax.persistence.*;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "FOREIGN_DB")
 public class ForeignDB implements Comparable<ForeignDB> {
@@ -17,6 +22,10 @@ public class ForeignDB implements Comparable<ForeignDB> {
     @org.hibernate.annotations.Type(type = "org.zfin.framework.StringEnumValueUserType",
             parameters = {@org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.zfin.sequence.ForeignDB$AvailableName")})
     private AvailableName dbName;
+
+    @Formula("fdb_db_name")
+    private String originalDbName;
+
     @Column(name = "fdb_db_query")
     @JsonView(View.MarkerRelationshipAPI.class)
     private String dbUrlPrefix;
@@ -28,54 +37,6 @@ public class ForeignDB implements Comparable<ForeignDB> {
     @JsonView(View.MarkerRelationshipAPI.class)
     @Column(name = "fdb_db_display_name")
     private String displayName;
-
-    public Long getDbID() {
-        return dbID;
-    }
-
-    public void setDbID(Long dbID) {
-        this.dbID = dbID;
-    }
-
-    public String getDbUrlPrefix() {
-        return dbUrlPrefix;
-    }
-
-    public void setDbUrlPrefix(String dbUrlPrefix) {
-        this.dbUrlPrefix = dbUrlPrefix;
-    }
-
-    public String getDbUrlSuffix() {
-        return dbUrlSuffix;
-    }
-
-    public void setDbUrlSuffix(String dbUrlSuffix) {
-        this.dbUrlSuffix = dbUrlSuffix;
-    }
-
-    public Integer getSignificance() {
-        return significance;
-    }
-
-    public void setSignificance(Integer significance) {
-        this.significance = significance;
-    }
-
-    public AvailableName getDbName() {
-        return dbName;
-    }
-
-    public void setDbName(AvailableName dbName) {
-        this.dbName = dbName;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
 
     public int compareTo(ForeignDB other) {
         if (other == null)

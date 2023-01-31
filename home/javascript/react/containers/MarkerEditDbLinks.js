@@ -57,6 +57,40 @@ const MarkerEditDbLinks = ({markerId, group = 'other marker pages'}) => {
         return null;
     }
 
+    function groupBy(items, getKey) {
+        return items.reduce((result, item) => {
+            const key = getKey(item);
+            result[key] = result[key] || [];
+            result[key].push(item);
+            return result;
+        }, {});
+    }
+
+    function filterDuplicateDatabasesByNameAndDBName(databases)  {
+        const groupedDatabases = groupBy(databases, (el) => el.name + el.originalDbName);
+        return Object.values(groupedDatabases).map( items => items[0] ).flat();
+    }
+
+    function optionsForDatabase(databases) {
+        //filter out database duplicates that have identical name and originalDbName and just accept the first one
+        const filteredDatabases = filterDuplicateDatabasesByNameAndDBName(databases);
+
+        //group by name to find duplicates by name only
+        const groupedDatabases = groupBy(filteredDatabases, (el) => el.name);
+
+        //for entries with duplicate names, append suffix of original database name to the end of the name
+        const options = Object.entries(groupedDatabases).map( ([groupName, items]) => {
+            if (items.length > 1) {
+                return items.map(item => {item.name = `${groupName} (${item.originalDbName})`; return item;});
+            }
+            return items[0];
+        }).flat();
+
+        return options.map(database => (
+            <option value={database.zdbID} key={database.zdbID}>{database.name}</option>
+        ));
+    }
+
     return (
         <>
             <AddEditList
@@ -82,9 +116,7 @@ const MarkerEditDbLinks = ({markerId, group = 'other marker pages'}) => {
                         validate={value => value ? false : 'A database is required'}
                     >
                         <option value='' />
-                        {databases.value.map(database => (
-                            <option value={database.zdbID} key={database.zdbID}>{database.name}</option>
-                        ))}
+                        {optionsForDatabase(databases.value)}
                     </FormGroup>
 
                     <FormGroup

@@ -300,6 +300,7 @@ public class DTOConversionService {
         ReferenceDatabaseDTO referenceDatabaseDTO = new ReferenceDatabaseDTO();
         referenceDatabaseDTO.setZdbID(referenceDatabase.getZdbID());
         referenceDatabaseDTO.setName(referenceDatabase.getForeignDB().getDbName().toString());
+        referenceDatabaseDTO.setOriginalDbName(referenceDatabase.getForeignDB().getOriginalDbName());
         referenceDatabaseDTO.setType(referenceDatabase.getForeignDBDataType().getDataType().toString());
         referenceDatabaseDTO.setSuperType(referenceDatabase.getForeignDBDataType().getSuperType().toString());
         if (referenceDatabase.getPrimaryBlastDatabase() != null) {
