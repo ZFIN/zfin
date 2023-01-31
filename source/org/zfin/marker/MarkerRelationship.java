@@ -1,6 +1,8 @@
 package org.zfin.marker;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.Getter;
+import lombok.Setter;
 import org.zfin.infrastructure.EntityAttribution;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.publication.Publication;
@@ -9,9 +11,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-/**
- * Class MarkerRelationship.
- */
+@Setter
+@Getter
 public class MarkerRelationship implements Comparable, EntityAttribution, AbstractMarkerRelationshipInterface {
 
     public enum Type {
@@ -76,88 +77,6 @@ public class MarkerRelationship implements Comparable, EntityAttribution, Abstra
     private MarkerRelationshipType markerRelationshipType;
 
     private Set<PublicationAttribution> publications;
-
-    /**
-     * Get zdbID.
-     *
-     * @return zdbID as String.
-     */
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    /**
-     * Set zdbID.
-     *
-     * @param zdbID the value to set.
-     */
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
-
-
-    public Type getType() {
-        return type;
-    }
-
-    public void setType(Type type) {
-        this.type = type;
-    }
-
-    public MarkerRelationshipType getMarkerRelationshipType() {
-        return markerRelationshipType;
-    }
-
-    public void setMarkerRelationshipType(MarkerRelationshipType markerRelationshipType) {
-        this.markerRelationshipType = markerRelationshipType;
-    }
-
-    /**
-     * Get firstMarker.
-     *
-     * @return firstMarker as Marker.
-     */
-    public Marker getFirstMarker() {
-        return firstMarker;
-    }
-
-    /**
-     * Set firstMarker.
-     *
-     * @param firstMarker the value to set.
-     */
-    public void setFirstMarker(Marker firstMarker) {
-        this.firstMarker = firstMarker;
-    }
-
-    /**
-     * Get secondMarker.
-     *
-     * @return secondMarker as Marker.
-     */
-    public Marker getSecondMarker() {
-        return secondMarker;
-    }
-
-    /**
-     * Set secondMarker.
-     *
-     * @param secondMarker the value to set.
-     */
-    public void setSecondMarker(Marker secondMarker) {
-        this.secondMarker = secondMarker;
-    }
-
-    public Set<PublicationAttribution> getPublications() {
-        if (publications == null) {
-            return new HashSet<PublicationAttribution>();
-        }
-        return publications;
-    }
-
-    public void setPublications(Set<PublicationAttribution> publications) {
-        this.publications = publications;
-    }
 
     public int getPublicationCount() {
         if (publications == null) {

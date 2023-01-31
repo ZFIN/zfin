@@ -7,10 +7,10 @@ import org.zfin.expression.ExpressionResult;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.presentation.AntibodyStatistics;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.repository.RepositoryFactory;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getAnatomyRepository;
+import static org.zfin.repository.RepositoryFactory.getAntibodyRepository;
 
 /**
  * Basic Anatomy service class.
@@ -29,8 +30,8 @@ public class AnatomyService {
     public static PaginationResult<AntibodyStatistics> getAntibodyStatistics(GenericTerm aoTerm,
                                                                              Pagination pagination,
                                                                              boolean includeSubstructures) {
-        int totalCount = RepositoryFactory.getAntibodyRepository().getAntibodyCount(aoTerm, includeSubstructures, pagination);
-        List<String> totalIds = RepositoryFactory.getAntibodyRepository().getPaginatedAntibodyIds(aoTerm, includeSubstructures, pagination);
+        int totalCount = getAntibodyRepository().getAntibodyCount(aoTerm, includeSubstructures, pagination);
+        List<String> totalIds = getAntibodyRepository().getPaginatedAntibodyIds(aoTerm, includeSubstructures, pagination);
         // if no antibodies found return here
         if (totalCount == 0)
             return new PaginationResult<>(0, null);
@@ -45,8 +46,11 @@ public class AnatomyService {
         paginationBean.setMaxDisplayRecords(pagination.getLimit());
         paginationBean.setPageInteger(pagination.getPage());
         paginationBean.setFilterMap(pagination.getFilterMap());
-        List<AntibodyStatistics> list = RepositoryFactory.getAntibodyRepository().getAntibodyStatisticsPaginated(aoTerm, paginationBean, paginatedAntibodyIDs, includeSubstructures);
-
+        List<AntibodyStatistics> list = getAntibodyRepository().getAntibodyStatisticsPaginated(aoTerm, paginationBean, paginatedAntibodyIDs, includeSubstructures);
+        Map<String, List<Marker>> antibodyAntigenGeneMap = getAntibodyRepository().getAntibodyAntigenGeneMap(paginatedAntibodyIDs);
+        list.forEach(antibodyStatistics -> {
+            antibodyStatistics.setAntigenGeneList(antibodyAntigenGeneMap.get(antibodyStatistics.getAntibody().getZdbID()));
+        });
         return new PaginationResult<>(totalCount, list);
     }
 
@@ -58,8 +62,8 @@ public class AnatomyService {
         paginationBean.setPageInteger(pagination.getPage());
         paginationBean.setFilterMap(pagination.getFilterMap());
 
-        int totalCount = RepositoryFactory.getAntibodyRepository().getProbeCount(aoTerm, includeSubstructures, pagination);
-        List<String> totalIds = RepositoryFactory.getAntibodyRepository().getPaginatedHighQualityProbeIds(aoTerm, includeSubstructures, pagination);
+        int totalCount = getAntibodyRepository().getProbeCount(aoTerm, includeSubstructures, pagination);
+        List<String> totalIds = getAntibodyRepository().getPaginatedHighQualityProbeIds(aoTerm, includeSubstructures, pagination);
         // if no antibodies found return here
         if (totalCount == 0)
             return new PaginationResult<>(0, null);
@@ -70,7 +74,7 @@ public class AnatomyService {
             .limit(paginationBean.getMaxDisplayRecordsInteger())
             .collect(Collectors.toList());
 
-        List<HighQualityProbe> list = RepositoryFactory.getAntibodyRepository().getProbeStatisticsPaginated(aoTerm, paginationBean, paginatedAntibodyIDs, includeSubstructures);
+        List<HighQualityProbe> list = getAntibodyRepository().getProbeStatisticsPaginated(aoTerm, paginationBean, paginatedAntibodyIDs, includeSubstructures);
         return new PaginationResult<>(totalCount, list);
     }
 
