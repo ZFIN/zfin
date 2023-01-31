@@ -66,6 +66,16 @@ where pth_location_id = ptl_pk_id
       and pth_status_is_current = 't'
 group by month, year;
 
+CREATE TEMP TABLE newDisease AS
+select count(*) as counter, month(pub_arrival_date) as month, year(pub_arrival_date) as year
+from pub_tracking_history,
+  pub_tracking_location,
+  publication
+where pth_location_id = ptl_pk_id
+      and pth_pub_Zdb_id = zdb_id
+      and ptl_location = 'DISEASE'
+      and pth_status_is_current = 't'
+group by month, year;
 
 CREATE TEMP TABLE newxpat AS
 select count(*) as counter, month(pub_arrival_date) as month, year(pub_arrival_date) as year
@@ -136,8 +146,14 @@ update monthly_curated_metric
 set mcm_number_in_expression_bin = nvl((select counter from newxpat
 where mcm_pub_arrival_date_month = month
       and mcm_pub_arrival_date_year = year),0);
+
 update monthly_curated_metric
 set mcm_number_in_ortho_bin = nvl((select counter from newortho
+where mcm_pub_arrival_date_month = month
+      and mcm_pub_arrival_date_year = year),0);
+
+update monthly_curated_metric
+set mcm_number_in_disease_bin = nvl((select counter from newDisease
 where mcm_pub_arrival_date_month = month
       and mcm_pub_arrival_date_year = year),0);
 
@@ -169,6 +185,7 @@ select mcm_date_Captured,
        mcm_number_in_phenotype_bin,
        mcm_number_in_expression_bin,
        mcm_number_in_ortho_bin,
+       mcm_number_in_disease_bin,
        mcm_number_closed_unread_this_month,
        mcm_number_archived_this_month,
        mcm_number_closed_Curated_this_month
