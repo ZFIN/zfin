@@ -26,6 +26,7 @@ import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.ForeignDB;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
@@ -195,11 +196,12 @@ public class OntologyService {
                         for (NcbiOrthoExternalReference othrRef : ncbiExternalReferenceList) {
                             if (othrRef.getReferenceDatabase().getForeignDB().getDbName() == ForeignDB.AvailableName.OMIM) {
                                 accessions.add(othrRef.getAccessionNumber());
+                                omimDisplay.setHumanGeneDetail(getHumanGeneDetail(othrRef.getAccessionNumber()));
                             }
                         }
                         omimDisplay.setOmimAccession(accessions.get(0));
                         omimDisplay.setName(omimResult.getName());
-                        omimDisplay.setOmimNum(omimResult.getOmimNum());
+                        ////omimDisplay.setOmimNum(omimResult.getOmimNum());
                         omimDisplay.setZfinGene(mR.getZfinOrtholog(omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation()));
                         if (omimResult.getOrtholog().getNcbiOtherSpeciesGene() != null) {
                             hA.add(omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation());
@@ -210,7 +212,7 @@ public class OntologyService {
                     OmimPhenotypeDisplay omimDisplayNoOrth = new OmimPhenotypeDisplay();
                     omimDisplayNoOrth.setName(omimResult.getName());
                     omimDisplayNoOrth.setHumanGeneDetail(ontologyRepository.getHumanGeneDetailById(omimResult.getHumanGeneMimNumber()));
-                    omimDisplayNoOrth.setOmimNum(omimResult.getOmimNum());
+                    ////omimDisplayNoOrth.setOmimNum(omimResult.getOmimNum());
                     omimDisplayNoOrth.setSymbol(omimDisplayNoOrth.getHumanGeneDetail().getGeneSymbol());
                     omimDisplaysNoOrth.add(omimDisplayNoOrth);
                 }
@@ -232,6 +234,17 @@ public class OntologyService {
             omimDisplays.addAll(omimDisplaysNoOrth);
         }
         return omimDisplays;
+    }
+
+    private static Map<String, HumanGeneDetail> humanGeneDetailMap;
+
+    private static HumanGeneDetail getHumanGeneDetail(String accessionNumber) {
+        if (humanGeneDetailMap == null) {
+            List<HumanGeneDetail> list = getPhenotypeRepository().getHumanGeneDetailList();
+            humanGeneDetailMap = list.stream().collect(toMap(HumanGeneDetail::getGeneMimNumber, Function.identity()));
+        }
+
+        return humanGeneDetailMap.get(accessionNumber);
     }
 
     public static List<OmimPhenotypeDisplay> getOmimPhenotype(GenericTerm term, Pagination pagination, boolean includeChildren) {
@@ -458,6 +471,16 @@ public class OntologyService {
         // check the closure if the given term is a child
         List<TransitiveClosure> transitiveClosures = getOntologyRepository().getChildrenTransitiveClosures(term);
         return transitiveClosures.stream().anyMatch(closure -> closure.getChild().getOboID().equals(allegedChildTerm.getOboID()));
+    }
+
+    private Map<String, GenericTerm> diseaseTermMap = null;
+    public static void fixupSearchColumns(List<OmimPhenotypeDisplay> displayListSingle) {
+        displayListSingle.forEach(display -> {
+            if (!CollectionUtils.isEmpty(display.getZfinGene())) {
+                display.setZfinGeneSymbols(display.getZfinGene().stream().map(Marker::getAbbreviation).toList().toArray(new String[display.getZfinGene().size()]));
+            }
+            display.
+        });
     }
 
     public List<GenericTerm> getRibbonStages() {

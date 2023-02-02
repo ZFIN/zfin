@@ -4,7 +4,9 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ReferenceDatabase;
 
-public class OrthologExternalReference implements Comparable<OrthologExternalReference> {
+import java.io.Serializable;
+
+public class OrthologExternalReference implements Comparable<OrthologExternalReference>, Serializable {
 
     private Ortholog ortholog;
     private String accessionNumber;

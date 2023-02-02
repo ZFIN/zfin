@@ -4,6 +4,7 @@ import org.zfin.mutant.OmimPhenotype;
 import org.zfin.sequence.ForeignDB;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Set;
 
 /**
@@ -11,7 +12,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "term_xref")
-public class TermExternalReference implements Comparable {
+public class TermExternalReference implements Comparable, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
