@@ -2,7 +2,6 @@ version: '3.8'
 
 services:
   compile:
-    container_name: compile_container
     build: ./compile/
     profiles:
       - compile
@@ -18,7 +17,7 @@ services:
       LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD}
 #      #UNCOMMENT BELOW FOR PERL DEBUGGING
 #    ports:
-#      - "127.0.0.1:12345:12345"
+#      - "127.0.0.1:12345-12354:12345"
     volumes:
       - www_data:/opt/zfin/www_homes/zfin.org
       - httpd_log:/opt/zfin/log/httpd
@@ -38,7 +37,6 @@ services:
       - ~/.ssh/known_hosts:/home/gradle/.ssh/known_hosts
       - /var/run/docker.sock:/var/run/docker.sock
   db:
-    container_name: pg_container
     build: ./postgresql/
     restart: always
     environment:
@@ -49,25 +47,25 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
     shm_size: 1g
 #    ports:
-#      - "127.0.0.1:5432:5432"
+#      - "127.0.0.1:5432-5441:5432"
     volumes:
       - pg_data:/var/lib/postgresql/data/
       - ./pg_pass:/run/secrets/pg_pass:ro
   solr:
-    container_name: solr_container
     build: ./solr/
     restart: always
     ports:
-      - "8983:8983"
+      - "8983-8992:8983"
     volumes:
       - solr_data:/var/solr
   httpd:
-    container_name: httpd_container
     build: ./httpd/
     restart: always
+    labels:
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${COMPOSE_PROJECT_NAME}.test`)"
     ports:
-      - "80:80"
-      - "443:443"
+      - "8080-8089:80"
+      - "8443-8452:443"
     volumes:
       - www_data:/opt/zfin/www_homes/zfin.org
       - httpd_log:/var/log/httpd
@@ -78,12 +76,10 @@ services:
       #- /etc/pki/tls/private/zfin_2021.key:/etc/pki/tls/private/zfin_2021.key,ro
       - certbot_data:/etc/letsencrypt
   certbot:
-    container_name: certbot_container
     build: ./certbot/
     volumes:
       - certbot_data:/etc/letsencrypt
   tomcat:
-    container_name: tomcat_container
     build: ./tomcat/
     restart: always
     environment:
@@ -95,7 +91,7 @@ services:
 #      JPDA_TRANSPORT: dt_socket
 #    entrypoint: ["catalina.sh", "jpda", "run"]
 #    ports:
-#      - "127.0.0.1:5000:5000"
+#      - "127.0.0.1:5000-5009:5000"
     volumes:
       - www_data:/opt/zfin/www_homes/zfin.org
       - catalina_base:/opt/zfin/catalina_bases/zfin.org
@@ -103,7 +99,6 @@ services:
       - ${DOCKER_BLASTSERVER_BLAST_DATABASE_PATH}:/opt/zfin/blastdb
       - ${DOCKER_ABBLAST_PATH}:/opt/ab-blast
   mailhog:
-    container_name: mailhog
     build: ./mailhog/
     restart: always
     environment:
@@ -112,13 +107,11 @@ services:
       - "25:1025"
       - "8025:8025"
   jenkins:
-    container_name: jenkins_container
     build: ./jenkins/
     restart: always
     ports:
-      - "8888:8080"
+      - "8888-8897:8080"
   elasticsearch:
-    container_name: elasticsearch_container
     build: 
       context: ./elasticsearch/
       args:
@@ -129,11 +122,10 @@ services:
       ES_JAVA_OPTS: -Xms512m -Xmx512m
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
     ports:
-      - "127.0.0.1:9200:9200"
+      - "127.0.0.1:9200-9209:9200"
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
   logstash:
-    container_name: logstash_container
     build: 
       context: ./logstash/
       args:
@@ -144,7 +136,6 @@ services:
       LS_JAVA_OPTS: -Xms256m -Xmx256m
       LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD}
   filebeat:
-    container_name: filebeat_container
     build: 
       context: ./filebeat/
       args:
@@ -157,7 +148,6 @@ services:
       - httpd_log:/var/log/httpd
       - catalina_base:/opt/zfin/catalina_bases/zfin.org
   kibana:
-    container_name: kibana_container
     build: 
       context: ./kibana/
       args:
@@ -167,7 +157,7 @@ services:
     environment:
       KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD}
     ports:
-      - "127.0.0.1:5601:5601"
+      - "127.0.0.1:5601-5610:5601"
     volumes:
       - kibana_data:/usr/share/kibana/data
   jbrowse:
