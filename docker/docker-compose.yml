@@ -170,6 +170,24 @@ services:
       - "127.0.0.1:5601:5601"
     volumes:
       - kibana_data:/usr/share/kibana/data
+  jbrowse:
+    profiles:
+      - jbrowse
+    build:
+      context: ./jbrowse/
+      dockerfile: ./Dockerfile
+    ports:
+      - "127.0.0.1:8898-8907:80"
+    volumes:
+      - jbrowse_data:/data
+  processgff:
+    profiles:
+      - jbrowse
+    build:
+      context: ./jbrowse/
+      dockerfile: ./Dockerfile.processgff
+    volumes:
+      - jbrowse_data:/data
 
 volumes:
   www_data:
@@ -183,6 +201,7 @@ volumes:
   elasticsearch_data:
   kibana_data:
   certbot_data:
+  jbrowse_data:
   nfs-zunloads:
     driver_opts:
       type: nfs
