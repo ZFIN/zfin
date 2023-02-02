@@ -4,10 +4,11 @@ import com.fasterxml.jackson.annotation.JsonView;
 import org.zfin.framework.api.View;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "FOREIGN_DB")
-public class ForeignDB implements Comparable<ForeignDB> {
+public class ForeignDB implements Comparable<ForeignDB>, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
