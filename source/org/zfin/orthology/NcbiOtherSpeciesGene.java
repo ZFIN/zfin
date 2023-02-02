@@ -2,12 +2,13 @@ package org.zfin.orthology;
 
 import org.zfin.Species;
 
+import java.io.Serializable;
 import java.util.Set;
 
 /**
  * External ortholog, i.e. the non-zebrafish ortholog found at NCBI
  */
-public class NcbiOtherSpeciesGene {
+public class NcbiOtherSpeciesGene implements Serializable {
 
     private String ID;
     private String name;

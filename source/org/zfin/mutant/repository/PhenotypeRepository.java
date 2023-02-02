@@ -8,6 +8,7 @@ import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
 import org.zfin.mutant.presentation.PostComposedPresentationBean;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.HumanGeneDetail;
 import org.zfin.publication.presentation.FigureLink;
 import org.zfin.publication.presentation.PublicationLink;
 
@@ -316,4 +317,6 @@ public interface PhenotypeRepository {
      * @return
      */
     List<DiseaseAnnotationModel> getDiseaseAnnotationModelsByGene(Marker gene);
+
+    List<HumanGeneDetail> getHumanGeneDetailList();
 }

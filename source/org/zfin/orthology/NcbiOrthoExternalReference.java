@@ -3,7 +3,9 @@ package org.zfin.orthology;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ReferenceDatabase;
 
-public class NcbiOrthoExternalReference implements Comparable<NcbiOrthoExternalReference> {
+import java.io.Serializable;
+
+public class NcbiOrthoExternalReference implements Comparable<NcbiOrthoExternalReference>, Serializable {
 
     private long ID;
     private ReferenceDatabase referenceDatabase;

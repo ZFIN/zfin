@@ -9,11 +9,12 @@ import lombok.Setter;
 import org.zfin.framework.api.View;
 import org.zfin.sequence.blast.Database;
 
+import java.io.Serializable;
 import java.util.*;
 
 @Setter
 @Getter
-public class ReferenceDatabase implements Comparable<ReferenceDatabase> {
+public class ReferenceDatabase implements Comparable<ReferenceDatabase>, Serializable {
 
     private String zdbID;
     @JsonView(View.MarkerRelationshipAPI.class)
