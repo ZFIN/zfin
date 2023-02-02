@@ -10,6 +10,7 @@
 
     <include file="source/org/zfin/db/postGmakePostloaddb/1140/ZFIN-8396-add-password-last-updated-field.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1140/ZFIN-8396-clear-old-passwords.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1140/ZFIN-8226.sql" />
 
 
 
