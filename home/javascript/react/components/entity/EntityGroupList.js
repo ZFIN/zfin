@@ -17,7 +17,7 @@ const EntityGroupList = ({entities, showLink, stringOnly}) => (
                         <li><EntityAbbreviation key={entity.zdbID} entity={entity}/></li>
                     </>
                 } else {
-                    return <li>{entity}</li>
+                    return <li key={entity.zdbID}>{entity}</li>
                 }
             }
         })}
