@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import PropTypes from 'prop-types';
-import {publicationType} from '../utils/types';
 import CommaSeparatedList from './CommaSeparatedList';
 import {EntityLink} from './entity';
 
@@ -50,17 +49,7 @@ const ShowExpressionStructureList = ({expressionTerms}) => {
 };
 
 ShowExpressionStructureList.propTypes = {
-    allFiguresUrl: PropTypes.string,
-    statistics: PropTypes.shape({
-        numberOfPublications: PropTypes.number,
-        numberOfFigures: PropTypes.number,
-        imgInFigure: PropTypes.bool,
-        firstFigure: PropTypes.shape({
-            zdbID: PropTypes.string,
-            label: PropTypes.string,
-        }),
-        firstPublication: publicationType,
-    })
-}
+    expressionTerms: PropTypes.array,
+};
 
 export default ShowExpressionStructureList;

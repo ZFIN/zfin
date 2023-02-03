@@ -90,7 +90,7 @@ const EditOrthologyEvidenceCell = ({defaultPubId, evidenceCodes, evidenceSet, or
 
     const evidenceGroupedByPub = {};
     evidenceSet.forEach(evidence => {
-        if (!evidenceGroupedByPub.hasOwnProperty(evidence.publication.zdbID)) {
+        if (!Object.hasOwn(evidenceGroupedByPub, evidence.publication.zdbID)) {
             evidenceGroupedByPub[evidence.publication.zdbID] = [];
         }
         evidenceGroupedByPub[evidence.publication.zdbID].push(evidence.evidenceCode);
@@ -115,7 +115,7 @@ const EditOrthologyEvidenceCell = ({defaultPubId, evidenceCodes, evidenceSet, or
     }
 
     const setModalItem = (item, isEdit, isInputChange) => {
-        const exists = evidenceGroupedByPub.hasOwnProperty(item.publicationID);
+        const exists = Object.hasOwn(evidenceGroupedByPub, item.publicationID);
         if ((!isEdit || isInputChange) && exists) {
             setModalWarning(`${item.publicationID} is already a reference for ${ortholog.organism} ${ortholog.abbreviation} orthology. You are now editing the existing record.`);
         } else {
@@ -127,7 +127,7 @@ const EditOrthologyEvidenceCell = ({defaultPubId, evidenceCodes, evidenceSet, or
 
     const handlePubInputChange = (event) => {
         const pubId = event.target.value;
-        const isEdit = evidenceGroupedByPub.hasOwnProperty(pubId);
+        const isEdit = Object.hasOwn(evidenceGroupedByPub, pubId);
         setModalItem({
             publicationID: pubId,
             orthologID: orthoZdbId,
