@@ -45,7 +45,4 @@
           </tr>
      </table>
 
-
-
-
 </zfin2:subsection>
