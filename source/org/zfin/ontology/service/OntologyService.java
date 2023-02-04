@@ -477,9 +477,8 @@ public class OntologyService {
     public static void fixupSearchColumns(List<OmimPhenotypeDisplay> displayListSingle) {
         displayListSingle.forEach(display -> {
             if (!CollectionUtils.isEmpty(display.getZfinGene())) {
-                display.setZfinGeneSymbols(display.getZfinGene().stream().map(Marker::getAbbreviation).toList().toArray(new String[display.getZfinGene().size()]));
+                display.setZfinGeneSymbolSearch(display.getZfinGene().stream().map(Marker::getAbbreviation).collect(joining(",")));
             }
-            display.
         });
     }
 
