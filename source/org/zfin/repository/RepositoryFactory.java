@@ -51,6 +51,8 @@ import org.zfin.sequence.repository.DisplayGroupRepository;
 import org.zfin.sequence.repository.HibernateDisplayGroupRepository;
 import org.zfin.sequence.repository.HibernateSequenceRepository;
 import org.zfin.sequence.repository.SequenceRepository;
+import org.zfin.ui.repository.DiseasePageRepository;
+import org.zfin.ui.repository.HibernateDiseasePageRepository;
 import org.zfin.zebrashare.repository.HibernateZebrashareRepository;
 import org.zfin.zebrashare.repository.ZebrashareRepository;
 
@@ -90,6 +92,16 @@ public class RepositoryFactory {
     private static ControlledVocabularyRepository<AminoAcidTerm> aminoAcidTermRepository;
     private static ControlledVocabularyRepository<TranscriptConsequence> transcriptTermRepository;
 
+    private static DiseasePageRepository diseasePageRepository;
+
+
+    public static DiseasePageRepository getDiseasePageRepository() {
+        if (diseasePageRepository == null) {
+            diseasePageRepository = new HibernateDiseasePageRepository() {
+            };
+        }
+        return diseasePageRepository;
+    }
 
     public static ControlledVocabularyRepository<TranscriptConsequence> getTranscriptTermRepository() {
         if (transcriptTermRepository == null) {

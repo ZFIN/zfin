@@ -14,7 +14,7 @@ const TermGeneTable = ({termId, directAnnotationOnly}) => {
     const columns = [
         {
             label: 'Human Gene',
-            content: (row) => <a href={'http://omim.org/entry/' + row.omimAccession}>{row.symbol}</a>,
+            content: (row) => <a href={'http://omim.org/entry/' + row.homoSapiensGene.id}>{row.homoSapiensGene.symbol}</a>,
             filterName: 'humanGeneName',
             width: '120px',
         },
@@ -36,7 +36,7 @@ const TermGeneTable = ({termId, directAnnotationOnly}) => {
         },
         {
             label: 'Disease',
-            content: (row) => (row.term && <a href={'/' + row.term.oboID}>{row.term.termName}</a>),
+            content: (row) => (row.disease && <a href={'/' + row.disease.oboID}>{row.disease.termName}</a>),
             filterName: 'termName',
             width: '120px',
         },

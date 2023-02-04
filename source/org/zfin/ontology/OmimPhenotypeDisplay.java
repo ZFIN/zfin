@@ -31,6 +31,7 @@ public class OmimPhenotypeDisplay implements Serializable {
 	@JsonView(View.API.class)
 	@Transient
 	private String omim;
+	@JsonView(View.API.class)
 	@Column(name = "opd_omim_term_name")
 	private String name;
 	@JsonView(View.API.class)
@@ -43,7 +44,7 @@ public class OmimPhenotypeDisplay implements Serializable {
 	@JsonView(View.API.class)
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "opd_human_gene_id")
-	private HumanGeneDetail humanGeneDetail;
+	private HumanGeneDetail homoSapiensGene;
 
 	@Transient
 	public DBLink getHumanAccession() {
@@ -51,7 +52,7 @@ public class OmimPhenotypeDisplay implements Serializable {
 	}
 
 	@JsonView(View.API.class)
-	@Transient
+	@Column(name = "opd_omim_accession")
 	public String omimAccession;
 
 	@JsonView(View.API.class)
@@ -70,7 +71,7 @@ public class OmimPhenotypeDisplay implements Serializable {
 	@JsonView(View.API.class)
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "opd_term_zdb_id")
-	private GenericTerm term;
+	private GenericTerm disease;
 
 	@Column(name = "opd_zfin_gene_symbols_search")
 	private String zfinGeneSymbolSearch;

@@ -141,6 +141,7 @@
         <mapping class="org.zfin.ontology.GenericTermRelationship"/>
         <mapping class="org.zfin.ontology.GenericTermRelationship"/>
         <mapping class="org.zfin.ontology.OntologyMetadata"/>
+        <mapping class="org.zfin.ontology.OmimPhenotypeDisplay"/>
         <mapping class="org.zfin.ontology.ReplacementTerm"/>
         <mapping class="org.zfin.ontology.Subset"/>
         <mapping class="org.zfin.ontology.TermAlias"/>

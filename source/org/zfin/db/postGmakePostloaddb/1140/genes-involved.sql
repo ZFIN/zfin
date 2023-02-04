@@ -8,6 +8,7 @@ create table UI_OMIM_PHENOTYPE_DISPLAY
 (
     opd_id                       serial8 not null,
     opd_omim_term_name           text,
+    opd_omim_accession           text,
     opd_term_zdb_id              text,
     opd_human_gene_id            text,
     opd_zfin_gene_symbols_search text
@@ -41,7 +42,7 @@ ALTER TABLE UI_OMIM_ZFIN_ASSOCIATION
 
 -- all_terms_contains table for disease terms for searching
 
-DROP table UI_ALL_TERMS_CONTAINS;
+/*DROP table UI_ALL_TERMS_CONTAINS;
 
 create table UI_ALL_TERMS_CONTAINS
 (
@@ -59,8 +60,10 @@ where child.term_zdb_id = alltermcon_contained_zdb_id
   and parent.term_zdb_id = alltermcon_container_zdb_id
 and child.term_is_obsolete != 't'
 group by alltermcon_contained_zdb_id;
-
+*/
 
 --CREATE EXTENSION pg_trgm;
 
 --CREATE INDEX trgm_idx_UI_OMIM_PHENOTYPE_DISPLAY ON UI_OMIM_PHENOTYPE_DISPLAY USING gin (opd_zfin_gene_symbols_search gin_trgm_ops);
+
+-- https://niallburkley.com/blog/index-columns-for-like-in-postgres/
