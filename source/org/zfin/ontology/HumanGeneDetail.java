@@ -1,5 +1,8 @@
 package org.zfin.ontology;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import org.zfin.framework.api.View;
+
 import javax.persistence.*;
 
 @Entity
@@ -7,39 +10,42 @@ import javax.persistence.*;
 public class HumanGeneDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView(View.API.class)
     @Column(name = "hgd_gene_id")
-    private String geneMimNumber;
+    private String id;
+    @JsonView(View.API.class)
     @Column(name = "hgd_gene_name")
-    private String geneName;
+    private String name;
+    @JsonView(View.API.class)
     @Column(name = "hgd_gene_symbol")
-    private String geneSymbol;
+    private String symbol;
 
     public HumanGeneDetail() {}
     public HumanGeneDetail(String geneMimNumber) {
-        this.geneMimNumber = geneMimNumber;
+        this.id = geneMimNumber;
     }
 
-    public String getGeneMimNumber() {
-        return geneMimNumber;
+    public String getId() {
+        return id;
     }
 
-    public void setGeneMimNumber(String geneMimNumber) {
-        this.geneMimNumber = geneMimNumber;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public String getGeneName() {
-        return geneName;
+    public String getName() {
+        return name;
     }
 
-    public void setGeneName(String geneName) {
-        this.geneName = geneName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getGeneSymbol() {
-        return geneSymbol;
+    public String getSymbol() {
+        return symbol;
     }
 
-    public void setGeneSymbol(String geneSymbol) {
-        this.geneSymbol = geneSymbol;
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
     }
 }

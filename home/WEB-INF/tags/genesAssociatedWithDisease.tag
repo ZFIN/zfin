@@ -32,7 +32,7 @@
                     <a href="http://omim.org/entry/${omimGene.omimAccession}">${omimGene.symbol}</a>
                 </c:when>
                 <c:otherwise>
-                    <a href="http://omim.org/entry/${omimGene.humanGeneDetail.geneMimNumber}">${omimGene.symbol}</a>
+                    <a href="http://omim.org/entry/${omimGene.homoSapiensGene.id}">${omimGene.symbol}</a>
                 </c:otherwise>
             </c:choose>    
                      </zfin:groupByDisplay>

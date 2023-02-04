@@ -216,22 +216,19 @@ public class TermAPIController {
         if (StringUtils.isNotEmpty(filterTermName)) {
             pagination.addToFilterMap("termName", filterTermName);
         }
-        List<OmimPhenotypeDisplay> displayListSingle = OntologyService.getOmimPhenotype(term, pagination, false);
-        List<OmimPhenotypeDisplay> displayListDaf = OntologyService.getOmimPhenotype(term, pagination, true);
+        List<OmimPhenotypeDisplay> displayListSingle = OntologyService.getGenesInvolvedForDisease(term, pagination, false);
+        List<OmimPhenotypeDisplay> displayListDag = OntologyService.getGenesInvolvedForDisease(term, pagination, true);
         response.addSupplementalData("countDirect", displayListSingle.size());
-        response.addSupplementalData("countIncludingChildren", displayListDaf.size());
+        response.addSupplementalData("countIncludingChildren", displayListDag.size());
 
         List<OmimPhenotypeDisplay> displayList;
         if (directAnnotation) {
             displayList = displayListSingle;
         } else {
-            displayList = displayListDaf;
+            displayList = displayListDag;
         }
 
-        response.setResults(displayList.stream()
-            .skip(pagination.getStart())
-            .limit(pagination.getLimit())
-            .collect(Collectors.toList()));
+        response.setResults(displayList);
         response.setTotal(displayList.size());
         HibernateUtil.flushAndCommitCurrentSession();
 
