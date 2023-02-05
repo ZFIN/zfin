@@ -205,16 +205,16 @@ public class TermAPIController {
 			return response;
 
 		if (StringUtils.isNotEmpty(filterHumanGeneName)) {
-			pagination.addToFilterMap("humanGeneName", filterHumanGeneName);
+			pagination.addToFilterMap("omimPhenotype.homoSapiensGene.symbol", filterHumanGeneName);
 		}
 		if (StringUtils.isNotEmpty(filterZfinGeneName)) {
-			pagination.addToFilterMap("zfinGeneName", filterZfinGeneName);
+			pagination.addToFilterMap("zfinGene.abbreviation", filterZfinGeneName);
 		}
 		if (StringUtils.isNotEmpty(filterOmimName)) {
-			pagination.addToFilterMap("omimName", filterOmimName);
+			pagination.addToFilterMap("omimPhenotype.name", filterOmimName);
 		}
 		if (StringUtils.isNotEmpty(filterTermName)) {
-			pagination.addToFilterMap("termName", filterTermName);
+			pagination.addToFilterMap("omimPhenotype.disease.termName", filterTermName);
 		}
 
 		PaginationResult<OmimPhenotypeDisplay> genesInvolvedForDiseaseDirect = OntologyService.getGenesInvolvedForDisease(term, pagination, false);

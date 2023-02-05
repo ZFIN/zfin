@@ -1,5 +1,6 @@
 package org.zfin.ui.repository;
 
+import org.apache.commons.collections4.MapUtils;
 import org.hibernate.query.Query;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.Pagination;
@@ -14,17 +15,20 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
 	@Override
 	public PaginationResult<OmimPhenotypeDisplay> getGenesInvolved(GenericTerm term, Pagination pagination, boolean includeChildren) {
 		PaginationBean bean = PaginationBean.getPaginationBean(pagination);
+		String hql;
 		if (!includeChildren) {
-			String hql = "from OmimPhenotypeDisplay where disease = :disease ";
-			hql += "order by homoSapiensGene.symbol";
-			Query<OmimPhenotypeDisplay> query = HibernateUtil.currentSession().createQuery(hql, OmimPhenotypeDisplay.class);
-			query.setParameter("disease", term);
-			return PaginationResultFactory.createResultFromScrollableResultAndClose(bean, query.scroll());
+			hql = "select omimPhenotype from OmimPhenotypeDisplay as omimPhenotype join omimPhenotype.zfinGene as zfinGene where omimPhenotype.disease = :disease ";
+		} else {
+			hql = "select omimPhenotype from OmimPhenotypeDisplay as omimPhenotype, TransitiveClosure as clo join omimPhenotype.zfinGene as zfinGene " +
+				"where clo.child = omimPhenotype.disease AND clo.root = :disease ";
 		}
-		String hql = "select omim from OmimPhenotypeDisplay as omim, TransitiveClosure as clo " +
-			"where clo.child = omim.disease AND clo.root = :disease ";
-		hql += "order by omim.homoSapiensGene.symbol";
-
+		if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
+			for (var entry : pagination.getFilterMap().entrySet()) {
+				hql += " AND ";
+				hql += "LOWER(" + entry.getKey() + ") like '%" + entry.getValue().toLowerCase() + "%' ";
+			}
+		}
+		hql += "order by omimPhenotype.homoSapiensGene.symbol";
 		Query<OmimPhenotypeDisplay> query = HibernateUtil.currentSession().createQuery(hql, OmimPhenotypeDisplay.class);
 		query.setParameter("disease", term);
 		return PaginationResultFactory.createResultFromScrollableResultAndClose(bean, query.scroll());
