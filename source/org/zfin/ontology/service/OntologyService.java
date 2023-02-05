@@ -8,6 +8,7 @@ import org.springframework.util.CollectionUtils;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Experiment;
 import org.zfin.framework.api.Pagination;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.RelationshipType;
 import org.zfin.gwt.root.dto.TermDTO;
@@ -294,7 +295,7 @@ public class OntologyService {
 		}
 	}
 
-	public static List<OmimPhenotypeDisplay> getGenesInvolvedForDisease(GenericTerm term, Pagination pagination, boolean includeChildren) {
+	public static PaginationResult<OmimPhenotypeDisplay> getGenesInvolvedForDisease(GenericTerm term, Pagination pagination, boolean includeChildren) {
 		if (term == null) {
 			return null;
 		}

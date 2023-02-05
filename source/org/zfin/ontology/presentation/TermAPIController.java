@@ -39,397 +39,403 @@ import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 @RequestMapping("/api/ontology")
 public class TermAPIController {
 
-    @Autowired
-    private OntologyRepository ontologyRepository;
+	@Autowired
+	private OntologyRepository ontologyRepository;
 
-    @Autowired
-    private HttpServletRequest request;
+	@Autowired
+	private HttpServletRequest request;
 
-    @JsonView(View.API.class)
-    @RequestMapping(value = "/{termID}/antibodies", method = RequestMethod.GET)
-    public JsonResultResponse<AntibodyStatistics> getLabeledAntibodies(@PathVariable String termID,
-                                                                       @RequestParam(value = "directAnnotation", required = false, defaultValue = "false") boolean directAnnotation,
-                                                                       @RequestParam(value = "filter.geneName", required = false) String filterGeneName,
-                                                                       @RequestParam(value = "filter.antibodyName", required = false) String filterAntibodyName,
-                                                                       @RequestParam(value = "filter.termName", required = false) String filterTermName,
-                                                                       @Version Pagination pagination) {
+	@JsonView(View.API.class)
+	@RequestMapping(value = "/{termID}/antibodies", method = RequestMethod.GET)
+	public JsonResultResponse<AntibodyStatistics> getLabeledAntibodies(@PathVariable String termID,
+																	   @RequestParam(value = "directAnnotation", required = false, defaultValue = "false") boolean directAnnotation,
+																	   @RequestParam(value = "filter.geneName", required = false) String filterGeneName,
+																	   @RequestParam(value = "filter.antibodyName", required = false) String filterAntibodyName,
+																	   @RequestParam(value = "filter.termName", required = false) String filterTermName,
+																	   @Version Pagination pagination) {
 
-        HibernateUtil.createTransaction();
-        JsonResultResponse<AntibodyStatistics> response = new JsonResultResponse<>();
-        response.setHttpServletRequest(request);
-        GenericTerm term = ontologyRepository.getTermByZdbID(termID);
-        if (term == null)
-            return response;
+		HibernateUtil.createTransaction();
+		JsonResultResponse<AntibodyStatistics> response = new JsonResultResponse<>();
+		response.setHttpServletRequest(request);
+		GenericTerm term = ontologyRepository.getTermByZdbID(termID);
+		if (term == null)
+			return response;
 
-        if (term == null)
-            return response;
-        if (StringUtils.isNotEmpty(filterGeneName)) {
-            pagination.addToFilterMap("gene.abbreviation", filterGeneName);
-        }
-        if (StringUtils.isNotEmpty(filterAntibodyName)) {
-            pagination.addToFilterMap("antibody.abbreviation", filterAntibodyName);
-        }
-        if (StringUtils.isNotEmpty(filterTermName)) {
-            pagination.addToFilterMap("subterm.termName", filterTermName);
-        }
-        AnatomySearchBean form = new AnatomySearchBean();
-        form.setAoTerm(term);
-        retrieveAntibodyData(term, form, pagination, directAnnotation);
-        response.setResults(form.getAntibodyStatistics());
-        response.setTotal(form.getAntibodyCount());
-        response.addSupplementalData("countDirect", form.getCountDirect());
-        response.addSupplementalData("countIncludingChildren", form.getCountIncludingChildren());
-        HibernateUtil.flushAndCommitCurrentSession();
-        return response;
-    }
+		if (term == null)
+			return response;
+		if (StringUtils.isNotEmpty(filterGeneName)) {
+			pagination.addToFilterMap("gene.abbreviation", filterGeneName);
+		}
+		if (StringUtils.isNotEmpty(filterAntibodyName)) {
+			pagination.addToFilterMap("antibody.abbreviation", filterAntibodyName);
+		}
+		if (StringUtils.isNotEmpty(filterTermName)) {
+			pagination.addToFilterMap("subterm.termName", filterTermName);
+		}
+		AnatomySearchBean form = new AnatomySearchBean();
+		form.setAoTerm(term);
+		retrieveAntibodyData(term, form, pagination, directAnnotation);
+		response.setResults(form.getAntibodyStatistics());
+		response.setTotal(form.getAntibodyCount());
+		response.addSupplementalData("countDirect", form.getCountDirect());
+		response.addSupplementalData("countIncludingChildren", form.getCountIncludingChildren());
+		HibernateUtil.flushAndCommitCurrentSession();
+		return response;
+	}
 
-    @JsonView(View.API.class)
-    @RequestMapping(value = "/{termID}/inSituProbes", method = RequestMethod.GET)
-    public JsonResultResponse<HighQualityProbe> getInSituProbes(@PathVariable String termID,
-                                                                @RequestParam(value = "directAnnotation", required = false, defaultValue = "false") boolean directAnnotation,
-                                                                @RequestParam(value = "filter.geneName", required = false) String filterName,
-                                                                @RequestParam(value = "filter.probeName", required = false) String filterProbeName,
-                                                                @RequestParam(value = "filter.termName", required = false) String filterTermName,
-                                                                @Version Pagination pagination) {
+	@JsonView(View.API.class)
+	@RequestMapping(value = "/{termID}/inSituProbes", method = RequestMethod.GET)
+	public JsonResultResponse<HighQualityProbe> getInSituProbes(@PathVariable String termID,
+																@RequestParam(value = "directAnnotation", required = false, defaultValue = "false") boolean directAnnotation,
+																@RequestParam(value = "filter.geneName", required = false) String filterName,
+																@RequestParam(value = "filter.probeName", required = false) String filterProbeName,
+																@RequestParam(value = "filter.termName", required = false) String filterTermName,
+																@Version Pagination pagination) {
 
-        HibernateUtil.createTransaction();
-        JsonResultResponse<HighQualityProbe> response = new JsonResultResponse<>();
-        response.setHttpServletRequest(request);
-        GenericTerm term = ontologyRepository.getTermByZdbID(termID);
-        if (term == null)
-            return response;
-        if (StringUtils.isNotEmpty(filterName)) {
-            pagination.addToFilterMap("gene.abbreviation", filterName);
-        }
-        if (StringUtils.isNotEmpty(filterProbeName)) {
-            pagination.addToFilterMap("probe.abbreviation", filterProbeName);
-        }
-        if (StringUtils.isNotEmpty(filterTermName)) {
-            pagination.addToFilterMap("subterm.termName", filterTermName);
-        }
-        AnatomySearchBean form = new AnatomySearchBean();
-        form.setAoTerm(term);
-        retrieveHighQualityProbeData(term, form, pagination, directAnnotation);
-        response.setResults(form.getHighQualityProbeGenes());
-        response.setTotal(form.getNumberOfHighQualityProbes());
-        response.addSupplementalData("countDirect", form.getCountDirect());
-        response.addSupplementalData("countIncludingChildren", form.getCountIncludingChildren());
-        HibernateUtil.flushAndCommitCurrentSession();
-        return response;
-    }
+		HibernateUtil.createTransaction();
+		JsonResultResponse<HighQualityProbe> response = new JsonResultResponse<>();
+		response.setHttpServletRequest(request);
+		GenericTerm term = ontologyRepository.getTermByZdbID(termID);
+		if (term == null)
+			return response;
+		if (StringUtils.isNotEmpty(filterName)) {
+			pagination.addToFilterMap("gene.abbreviation", filterName);
+		}
+		if (StringUtils.isNotEmpty(filterProbeName)) {
+			pagination.addToFilterMap("probe.abbreviation", filterProbeName);
+		}
+		if (StringUtils.isNotEmpty(filterTermName)) {
+			pagination.addToFilterMap("subterm.termName", filterTermName);
+		}
+		AnatomySearchBean form = new AnatomySearchBean();
+		form.setAoTerm(term);
+		retrieveHighQualityProbeData(term, form, pagination, directAnnotation);
+		response.setResults(form.getHighQualityProbeGenes());
+		response.setTotal(form.getNumberOfHighQualityProbes());
+		response.addSupplementalData("countDirect", form.getCountDirect());
+		response.addSupplementalData("countIncludingChildren", form.getCountIncludingChildren());
+		HibernateUtil.flushAndCommitCurrentSession();
+		return response;
+	}
 
-    @JsonView(View.ExpressedGeneAPI.class)
-    @RequestMapping(value = "/{termID}/expressed-genes", method = RequestMethod.GET)
-    public JsonResultResponse<ExpressedGeneDisplay> getExpressedGenes(@PathVariable String termID,
-                                                                      @RequestParam(value = "directAnnotation", required = false, defaultValue = "false") boolean directAnnotation,
-                                                                      @RequestParam(value = "filter.geneName", required = false) String filterGeneName,
-                                                                      @Version Pagination pagination) {
+	@JsonView(View.ExpressedGeneAPI.class)
+	@RequestMapping(value = "/{termID}/expressed-genes", method = RequestMethod.GET)
+	public JsonResultResponse<ExpressedGeneDisplay> getExpressedGenes(@PathVariable String termID,
+																	  @RequestParam(value = "directAnnotation", required = false, defaultValue = "false") boolean directAnnotation,
+																	  @RequestParam(value = "filter.geneName", required = false) String filterGeneName,
+																	  @Version Pagination pagination) {
 
-        HibernateUtil.createTransaction();
-        JsonResultResponse<ExpressedGeneDisplay> response = new JsonResultResponse<>();
-        response.setHttpServletRequest(request);
-        GenericTerm term = ontologyRepository.getTermByZdbID(termID);
-        if (term == null)
-            return response;
+		HibernateUtil.createTransaction();
+		JsonResultResponse<ExpressedGeneDisplay> response = new JsonResultResponse<>();
+		response.setHttpServletRequest(request);
+		GenericTerm term = ontologyRepository.getTermByZdbID(termID);
+		if (term == null)
+			return response;
 
-        if (StringUtils.isNotEmpty(filterGeneName)) {
-            pagination.addToFilterMap("gene_mrkr_abbrev", filterGeneName);
-        }
+		if (StringUtils.isNotEmpty(filterGeneName)) {
+			pagination.addToFilterMap("gene_mrkr_abbrev", filterGeneName);
+		}
 
-        AnatomySearchBean form = new AnatomySearchBean();
-        form.setAoTerm(term);
-        retrieveExpressedGenesData(term, form, pagination);
-        response.setResults(form.getAllExpressedMarkers());
-        response.setTotal(form.getTotalNumberOfExpressedGenes());
-        response.addSupplementalData("countDirect", form.getTotalNumberOfExpressedGenes());
-        response.addSupplementalData("countIncludingChildren", form.getTotalNumberOfExpressedGenes());
-        HibernateUtil.flushAndCommitCurrentSession();
-        return response;
-    }
+		AnatomySearchBean form = new AnatomySearchBean();
+		form.setAoTerm(term);
+		retrieveExpressedGenesData(term, form, pagination);
+		response.setResults(form.getAllExpressedMarkers());
+		response.setTotal(form.getTotalNumberOfExpressedGenes());
+		response.addSupplementalData("countDirect", form.getTotalNumberOfExpressedGenes());
+		response.addSupplementalData("countIncludingChildren", form.getTotalNumberOfExpressedGenes());
+		HibernateUtil.flushAndCommitCurrentSession();
+		return response;
+	}
 
-    @JsonView(View.ExpressedGeneAPI.class)
-    @RequestMapping(value = "/{termID}/phenotype", method = RequestMethod.GET)
-    public JsonResultResponse<FishStatistics> getPhenotypes(@PathVariable String termID,
-                                                            @RequestParam(value = "directAnnotation", required = false, defaultValue = "false") boolean directAnnotation,
-                                                            @RequestParam(value = "filter.fishName", required = false) String filterFishName,
-                                                            @RequestParam(value = "filter.phenotype", required = false) String filterPhenotype,
-                                                            @Version Pagination pagination) {
+	@JsonView(View.ExpressedGeneAPI.class)
+	@RequestMapping(value = "/{termID}/phenotype", method = RequestMethod.GET)
+	public JsonResultResponse<FishStatistics> getPhenotypes(@PathVariable String termID,
+															@RequestParam(value = "directAnnotation", required = false, defaultValue = "false") boolean directAnnotation,
+															@RequestParam(value = "filter.fishName", required = false) String filterFishName,
+															@RequestParam(value = "filter.phenotype", required = false) String filterPhenotype,
+															@Version Pagination pagination) {
 
-        HibernateUtil.createTransaction();
-        JsonResultResponse<FishStatistics> response = new JsonResultResponse<>();
-        response.setHttpServletRequest(request);
-        GenericTerm term = ontologyRepository.getTermByZdbID(termID);
-        if (term == null)
-            return response;
+		HibernateUtil.createTransaction();
+		JsonResultResponse<FishStatistics> response = new JsonResultResponse<>();
+		response.setHttpServletRequest(request);
+		GenericTerm term = ontologyRepository.getTermByZdbID(termID);
+		if (term == null)
+			return response;
 
-        if (StringUtils.isNotEmpty(filterFishName)) {
-            pagination.addToFilterMap("fishoxFishName", filterFishName);
-        }
-        if (StringUtils.isNotEmpty(filterPhenotype)) {
-            pagination.addToFilterMap("phenotype", filterPhenotype);
-        }
-        AnatomySearchBean form = new AnatomySearchBean();
-        form.setAoTerm(term);
-        form.setMaxDisplayRecords(pagination.getLimit());
-        form.setPageInteger(pagination.getPage());
-        retrieveMutantData(term, form, !directAnnotation, pagination);
-        response.setResults(form.getGenotypeStatistics());
-        response.setTotal(form.getTotalRecords());
-        if (directAnnotation) {
-            response.addSupplementalData("countDirect", form.getTotalRecords());
-            response.addSupplementalData("countIncludingChildren", form.getTotalNumberOfExpressedGenes());
-        } else {
-            response.addSupplementalData("countIncludingChildren", form.getTotalRecords());
-            response.addSupplementalData("countDirect", form.getTotalNumberOfExpressedGenes());
-        }
-        HibernateUtil.flushAndCommitCurrentSession();
+		if (StringUtils.isNotEmpty(filterFishName)) {
+			pagination.addToFilterMap("fishoxFishName", filterFishName);
+		}
+		if (StringUtils.isNotEmpty(filterPhenotype)) {
+			pagination.addToFilterMap("phenotype", filterPhenotype);
+		}
+		AnatomySearchBean form = new AnatomySearchBean();
+		form.setAoTerm(term);
+		form.setMaxDisplayRecords(pagination.getLimit());
+		form.setPageInteger(pagination.getPage());
+		retrieveMutantData(term, form, !directAnnotation, pagination);
+		response.setResults(form.getGenotypeStatistics());
+		response.setTotal(form.getTotalRecords());
+		if (directAnnotation) {
+			response.addSupplementalData("countDirect", form.getTotalRecords());
+			response.addSupplementalData("countIncludingChildren", form.getTotalNumberOfExpressedGenes());
+		} else {
+			response.addSupplementalData("countIncludingChildren", form.getTotalRecords());
+			response.addSupplementalData("countDirect", form.getTotalNumberOfExpressedGenes());
+		}
+		HibernateUtil.flushAndCommitCurrentSession();
 
-        return response;
-    }
+		return response;
+	}
 
-    @JsonView(View.API.class)
-    @RequestMapping(value = "/{termID}/genes", method = RequestMethod.GET)
-    public JsonResultResponse<OmimPhenotypeDisplay> getGenesInvolved(@PathVariable String termID,
-                                                                     @RequestParam(value = "directAnnotation", required = false, defaultValue = "false") boolean directAnnotation,
-                                                                     @RequestParam(value = "filter.humanGeneName", required = false) String filterHumanGeneName,
-                                                                     @RequestParam(value = "filter.zfinGeneName", required = false) String filterZfinGeneName,
-                                                                     @RequestParam(value = "filter.omimName", required = false) String filterOmimName,
-                                                                     @RequestParam(value = "filter.termName", required = false) String filterTermName,
-                                                                     @Version Pagination pagination) {
+	@JsonView(View.API.class)
+	@RequestMapping(value = "/{termID}/genes", method = RequestMethod.GET)
+	public JsonResultResponse<OmimPhenotypeDisplay> getGenesInvolved(@PathVariable String termID,
+																	 @RequestParam(value = "directAnnotation", required = false, defaultValue = "false") boolean directAnnotation,
+																	 @RequestParam(value = "filter.humanGeneName", required = false) String filterHumanGeneName,
+																	 @RequestParam(value = "filter.zfinGeneName", required = false) String filterZfinGeneName,
+																	 @RequestParam(value = "filter.omimName", required = false) String filterOmimName,
+																	 @RequestParam(value = "filter.termName", required = false) String filterTermName,
+																	 @Version Pagination pagination) {
 
-        HibernateUtil.createTransaction();
-        JsonResultResponse<OmimPhenotypeDisplay> response = new JsonResultResponse<>();
-        response.setHttpServletRequest(request);
-        GenericTerm term = ontologyRepository.getTermByZdbIDOrOboId(termID);
-        if (term == null)
-            return response;
+		HibernateUtil.createTransaction();
+		JsonResultResponse<OmimPhenotypeDisplay> response = new JsonResultResponse<>();
+		response.setHttpServletRequest(request);
+		GenericTerm term = ontologyRepository.getTermByZdbIDOrOboId(termID);
+		if (term == null)
+			return response;
 
-        if (StringUtils.isNotEmpty(filterHumanGeneName)) {
-            pagination.addToFilterMap("humanGeneName", filterHumanGeneName);
-        }
-        if (StringUtils.isNotEmpty(filterZfinGeneName)) {
-            pagination.addToFilterMap("zfinGeneName", filterZfinGeneName);
-        }
-        if (StringUtils.isNotEmpty(filterOmimName)) {
-            pagination.addToFilterMap("omimName", filterOmimName);
-        }
-        if (StringUtils.isNotEmpty(filterTermName)) {
-            pagination.addToFilterMap("termName", filterTermName);
-        }
-        List<OmimPhenotypeDisplay> displayListSingle = OntologyService.getGenesInvolvedForDisease(term, pagination, false);
-        List<OmimPhenotypeDisplay> displayListDag = OntologyService.getGenesInvolvedForDisease(term, pagination, true);
-        response.addSupplementalData("countDirect", displayListSingle.size());
-        response.addSupplementalData("countIncludingChildren", displayListDag.size());
+		if (StringUtils.isNotEmpty(filterHumanGeneName)) {
+			pagination.addToFilterMap("humanGeneName", filterHumanGeneName);
+		}
+		if (StringUtils.isNotEmpty(filterZfinGeneName)) {
+			pagination.addToFilterMap("zfinGeneName", filterZfinGeneName);
+		}
+		if (StringUtils.isNotEmpty(filterOmimName)) {
+			pagination.addToFilterMap("omimName", filterOmimName);
+		}
+		if (StringUtils.isNotEmpty(filterTermName)) {
+			pagination.addToFilterMap("termName", filterTermName);
+		}
 
-        List<OmimPhenotypeDisplay> displayList;
-        if (directAnnotation) {
-            displayList = displayListSingle;
-        } else {
-            displayList = displayListDag;
-        }
+		PaginationResult<OmimPhenotypeDisplay> genesInvolvedForDiseaseDirect = OntologyService.getGenesInvolvedForDisease(term, pagination, false);
+		PaginationResult<OmimPhenotypeDisplay> genesInvolvedForDiseaseAll = OntologyService.getGenesInvolvedForDisease(term, pagination, true);
 
-        response.setResults(displayList);
-        response.setTotal(displayList.size());
-        HibernateUtil.flushAndCommitCurrentSession();
+		int totalCountDirect = genesInvolvedForDiseaseDirect.getTotalCount();
+		response.addSupplementalData("countDirect", totalCountDirect);
+		int totalCountAll = genesInvolvedForDiseaseAll.getTotalCount();
+		response.addSupplementalData("countIncludingChildren", totalCountAll);
 
-        return response;
-    }
+		List<OmimPhenotypeDisplay> displayList;
+		if (directAnnotation) {
+			displayList = genesInvolvedForDiseaseDirect.getPopulatedResults();
+			;
+			response.setTotal(totalCountDirect);
+		} else {
+			displayList = genesInvolvedForDiseaseAll.getPopulatedResults();
+			response.setTotal(totalCountAll);
+		}
 
-    @JsonView(View.API.class)
-    @RequestMapping(value = "/{termID}/zebrafish-models", method = RequestMethod.GET)
-    public JsonResultResponse<FishModelDisplay> getZebrafishModels(@PathVariable String termID,
-                                                                   @RequestParam(value = "directAnnotation", required = false, defaultValue = "false") boolean directAnnotation,
-                                                                   @RequestParam(value = "filter.fishName", required = false) String filterFishName,
-                                                                   @RequestParam(value = "filter.diseaseName", required = false) String filterDiseaseName,
-                                                                   @RequestParam(value = "filter.conditionName", required = false) String filterCondition,
-                                                                   @Version Pagination pagination) {
+		response.setResults(displayList);
+		HibernateUtil.flushAndCommitCurrentSession();
 
-        HibernateUtil.createTransaction();
-        JsonResultResponse<FishModelDisplay> response = new JsonResultResponse<>();
-        response.setHttpServletRequest(request);
-        GenericTerm term = ontologyRepository.getTermByZdbIDOrOboId(termID);
-        if (term == null)
-            return response;
+		return response;
+	}
 
-        if (StringUtils.isNotEmpty(filterFishName)) {
-            pagination.addToFilterMap("fish", filterFishName);
-        }
-        if (StringUtils.isNotEmpty(filterDiseaseName)) {
-            pagination.addToFilterMap("diseaseModels", filterDiseaseName);
-        }
-        if (StringUtils.isNotEmpty(filterCondition)) {
-            pagination.addToFilterMap("condition", filterCondition);
-        }
+	@JsonView(View.API.class)
+	@RequestMapping(value = "/{termID}/zebrafish-models", method = RequestMethod.GET)
+	public JsonResultResponse<FishModelDisplay> getZebrafishModels(@PathVariable String termID,
+																   @RequestParam(value = "directAnnotation", required = false, defaultValue = "false") boolean directAnnotation,
+																   @RequestParam(value = "filter.fishName", required = false) String filterFishName,
+																   @RequestParam(value = "filter.diseaseName", required = false) String filterDiseaseName,
+																   @RequestParam(value = "filter.conditionName", required = false) String filterCondition,
+																   @Version Pagination pagination) {
 
-        retrieveModelData(term, response, directAnnotation, pagination);
-        HibernateUtil.flushAndCommitCurrentSession();
+		HibernateUtil.createTransaction();
+		JsonResultResponse<FishModelDisplay> response = new JsonResultResponse<>();
+		response.setHttpServletRequest(request);
+		GenericTerm term = ontologyRepository.getTermByZdbIDOrOboId(termID);
+		if (term == null)
+			return response;
 
-        return response;
-    }
+		if (StringUtils.isNotEmpty(filterFishName)) {
+			pagination.addToFilterMap("fish", filterFishName);
+		}
+		if (StringUtils.isNotEmpty(filterDiseaseName)) {
+			pagination.addToFilterMap("diseaseModels", filterDiseaseName);
+		}
+		if (StringUtils.isNotEmpty(filterCondition)) {
+			pagination.addToFilterMap("condition", filterCondition);
+		}
 
-    @JsonView(View.API.class)
-    @RequestMapping(value = "/fish/{fishID}/zebrafish-models", method = RequestMethod.GET)
-    public JsonResultResponse<FishModelDisplay> getZebrafishModelsByFish(@PathVariable String fishID,
-                                                                         @RequestParam(value = "filter.diseaseName", required = false) String filterDiseaseName,
-                                                                         @RequestParam(value = "filter.conditionName", required = false) String filterCondition,
-                                                                         @Version Pagination pagination) {
+		retrieveModelData(term, response, directAnnotation, pagination);
+		HibernateUtil.flushAndCommitCurrentSession();
 
-        HibernateUtil.createTransaction();
-        JsonResultResponse<FishModelDisplay> response = new JsonResultResponse<>();
-        response.setHttpServletRequest(request);
-        Fish fish = getMutantRepository().getFish(fishID);
-        if (fish == null)
-            return response;
+		return response;
+	}
 
-        if (StringUtils.isNotEmpty(filterDiseaseName)) {
-            pagination.addToFilterMap("diseaseModels", filterDiseaseName);
-        }
-        if (StringUtils.isNotEmpty(filterCondition)) {
-            pagination.addToFilterMap("condition", filterCondition);
-        }
+	@JsonView(View.API.class)
+	@RequestMapping(value = "/fish/{fishID}/zebrafish-models", method = RequestMethod.GET)
+	public JsonResultResponse<FishModelDisplay> getZebrafishModelsByFish(@PathVariable String fishID,
+																		 @RequestParam(value = "filter.diseaseName", required = false) String filterDiseaseName,
+																		 @RequestParam(value = "filter.conditionName", required = false) String filterCondition,
+																		 @Version Pagination pagination) {
 
-        retrieveModelDataByFish(fish, response, pagination);
-        HibernateUtil.flushAndCommitCurrentSession();
+		HibernateUtil.createTransaction();
+		JsonResultResponse<FishModelDisplay> response = new JsonResultResponse<>();
+		response.setHttpServletRequest(request);
+		Fish fish = getMutantRepository().getFish(fishID);
+		if (fish == null)
+			return response;
 
-        return response;
-    }
+		if (StringUtils.isNotEmpty(filterDiseaseName)) {
+			pagination.addToFilterMap("diseaseModels", filterDiseaseName);
+		}
+		if (StringUtils.isNotEmpty(filterCondition)) {
+			pagination.addToFilterMap("condition", filterCondition);
+		}
 
-    private void retrieveMutantData(GenericTerm ai, AnatomySearchBean form, boolean includeSubstructures, Pagination pagination) {
-        PaginationBean bean = new PaginationBean();
-        bean.setPageInteger(pagination.getPage());
-        bean.setFirstPageRecord(pagination.getStart());
-        bean.setMaxDisplayRecords(pagination.getLimit());
-        bean.setFilterMap(pagination.getFilterMap());
-        form.setFilterMap(pagination.getFilterMap());
-        PaginationResult<Fish> genotypeResult;
-        if (includeSubstructures) {
-            genotypeResult = getMutantRepository().getFishByAnatomyTermIncludingSubstructures(ai, false, form);
-            PaginationResult<Fish> genotypeResultDirectAnno = getMutantRepository().getFishByAnatomyTerm(ai, false, bean);
-            form.setTotalNumberOfExpressedGenes(genotypeResultDirectAnno.getTotalCount());
-        } else {
-            genotypeResult = getMutantRepository().getFishByAnatomyTerm(ai, false, form);
-            PaginationResult<Fish> genotypeResultIncludedChildren = getMutantRepository().getFishByAnatomyTermIncludingSubstructures(ai, false, bean);
-            form.setTotalNumberOfExpressedGenes(genotypeResultIncludedChildren.getTotalCount());
-        }
-        populateFormBeanForMutantList(ai, form, genotypeResult, includeSubstructures);
-    }
+		retrieveModelDataByFish(fish, response, pagination);
+		HibernateUtil.flushAndCommitCurrentSession();
 
-    private void retrieveModelData(GenericTerm term, JsonResultResponse<FishModelDisplay> response, boolean directAnnotation, Pagination pagination) {
-        List<FishModelDisplay> diseaseModelsWithFishModel = OntologyService.getDiseaseModelsWithFishModelsGrouped(term, false, pagination);
-        List<FishModelDisplay> diseaseModelsWithFishModelIncluded = OntologyService.getDiseaseModelsWithFishModelsGrouped(term, true, pagination);
-        response.addSupplementalData("countIncludingChildren", diseaseModelsWithFishModelIncluded == null ? 0 : diseaseModelsWithFishModelIncluded.size());
-        if (diseaseModelsWithFishModel != null) {
-            response.addSupplementalData("countDirect", diseaseModelsWithFishModel.size());
-        }
-        if (directAnnotation) {
-            if (CollectionUtils.isNotEmpty(diseaseModelsWithFishModel)) {
-                response.setResults(diseaseModelsWithFishModel.stream()
-                    .skip(pagination.getStart())
-                    .limit(pagination.getLimit())
-                    .collect(Collectors.toList()));
-                response.setTotal(diseaseModelsWithFishModel.size());
-            }
-        } else {
-            if (CollectionUtils.isNotEmpty(diseaseModelsWithFishModelIncluded)) {
-                response.setResults(diseaseModelsWithFishModelIncluded.stream()
-                    .skip(pagination.getStart())
-                    .limit(pagination.getLimit())
-                    .collect(Collectors.toList()));
-                response.setTotal(diseaseModelsWithFishModelIncluded.size());
-            }
-        }
+		return response;
+	}
 
-    }
+	private void retrieveMutantData(GenericTerm ai, AnatomySearchBean form, boolean includeSubstructures, Pagination pagination) {
+		PaginationBean bean = new PaginationBean();
+		bean.setPageInteger(pagination.getPage());
+		bean.setFirstPageRecord(pagination.getStart());
+		bean.setMaxDisplayRecords(pagination.getLimit());
+		bean.setFilterMap(pagination.getFilterMap());
+		form.setFilterMap(pagination.getFilterMap());
+		PaginationResult<Fish> genotypeResult;
+		if (includeSubstructures) {
+			genotypeResult = getMutantRepository().getFishByAnatomyTermIncludingSubstructures(ai, false, form);
+			PaginationResult<Fish> genotypeResultDirectAnno = getMutantRepository().getFishByAnatomyTerm(ai, false, bean);
+			form.setTotalNumberOfExpressedGenes(genotypeResultDirectAnno.getTotalCount());
+		} else {
+			genotypeResult = getMutantRepository().getFishByAnatomyTerm(ai, false, form);
+			PaginationResult<Fish> genotypeResultIncludedChildren = getMutantRepository().getFishByAnatomyTermIncludingSubstructures(ai, false, bean);
+			form.setTotalNumberOfExpressedGenes(genotypeResultIncludedChildren.getTotalCount());
+		}
+		populateFormBeanForMutantList(ai, form, genotypeResult, includeSubstructures);
+	}
 
-    private void retrieveModelDataByFish(Fish fish, JsonResultResponse<FishModelDisplay> response, Pagination pagination) {
-        List<FishModelDisplay> diseaseModelsWithFishModel = OntologyService.getDiseaseModelsByFishModelsGrouped(fish, pagination);
-        if (CollectionUtils.isNotEmpty(diseaseModelsWithFishModel)) {
-            response.setResults(diseaseModelsWithFishModel.stream()
-                .skip(pagination.getStart())
-                .limit(pagination.getLimit())
-                .collect(Collectors.toList()));
-            response.setTotal(diseaseModelsWithFishModel.size());
-        }
-    }
+	private void retrieveModelData(GenericTerm term, JsonResultResponse<FishModelDisplay> response, boolean directAnnotation, Pagination pagination) {
+		List<FishModelDisplay> diseaseModelsWithFishModel = OntologyService.getDiseaseModelsWithFishModelsGrouped(term, false, pagination);
+		List<FishModelDisplay> diseaseModelsWithFishModelIncluded = OntologyService.getDiseaseModelsWithFishModelsGrouped(term, true, pagination);
+		response.addSupplementalData("countIncludingChildren", diseaseModelsWithFishModelIncluded == null ? 0 : diseaseModelsWithFishModelIncluded.size());
+		if (diseaseModelsWithFishModel != null) {
+			response.addSupplementalData("countDirect", diseaseModelsWithFishModel.size());
+		}
+		if (directAnnotation) {
+			if (CollectionUtils.isNotEmpty(diseaseModelsWithFishModel)) {
+				response.setResults(diseaseModelsWithFishModel.stream()
+					.skip(pagination.getStart())
+					.limit(pagination.getLimit())
+					.collect(Collectors.toList()));
+				response.setTotal(diseaseModelsWithFishModel.size());
+			}
+		} else {
+			if (CollectionUtils.isNotEmpty(diseaseModelsWithFishModelIncluded)) {
+				response.setResults(diseaseModelsWithFishModelIncluded.stream()
+					.skip(pagination.getStart())
+					.limit(pagination.getLimit())
+					.collect(Collectors.toList()));
+				response.setTotal(diseaseModelsWithFishModelIncluded.size());
+			}
+		}
 
-    private void populateFormBeanForMutantList(GenericTerm ai, AnatomySearchBean form, PaginationResult<Fish> fishResult, boolean includeSubstructures) {
-        form.setFishCount(fishResult.getTotalCount());
-        form.setTotalRecords(fishResult.getTotalCount());
-        form.setQueryString(request.getQueryString());
-        form.setRequestUrl(new StringBuffer(request.getRequestURI()));
+	}
 
-        List<Fish> fishList = fishResult.getPopulatedResults();
-        form.setFish(fishList);
-        List<FishStatistics> genoStats = createGenotypeStats(fishList, ai, includeSubstructures);
-        form.setGenotypeStatistics(genoStats);
-    }
+	private void retrieveModelDataByFish(Fish fish, JsonResultResponse<FishModelDisplay> response, Pagination pagination) {
+		List<FishModelDisplay> diseaseModelsWithFishModel = OntologyService.getDiseaseModelsByFishModelsGrouped(fish, pagination);
+		if (CollectionUtils.isNotEmpty(diseaseModelsWithFishModel)) {
+			response.setResults(diseaseModelsWithFishModel.stream()
+				.skip(pagination.getStart())
+				.limit(pagination.getLimit())
+				.collect(Collectors.toList()));
+			response.setTotal(diseaseModelsWithFishModel.size());
+		}
+	}
 
-    private List<FishStatistics> createGenotypeStats(List<Fish> fishList, GenericTerm ai, boolean includeSubstructures) {
-        if (fishList == null || ai == null)
-            return null;
+	private void populateFormBeanForMutantList(GenericTerm ai, AnatomySearchBean form, PaginationResult<Fish> fishResult, boolean includeSubstructures) {
+		form.setFishCount(fishResult.getTotalCount());
+		form.setTotalRecords(fishResult.getTotalCount());
+		form.setQueryString(request.getQueryString());
+		form.setRequestUrl(new StringBuffer(request.getRequestURI()));
 
-        List<FishStatistics> stats = new ArrayList<>();
-        for (Fish fish : fishList) {
-            FishStatistics stat = new FishStatistics(fish, ai, includeSubstructures);
-            stats.add(stat);
-        }
-        return stats;
-    }
+		List<Fish> fishList = fishResult.getPopulatedResults();
+		form.setFish(fishList);
+		List<FishStatistics> genoStats = createGenotypeStats(fishList, ai, includeSubstructures);
+		form.setGenotypeStatistics(genoStats);
+	}
 
-    private void retrieveAntibodyData(GenericTerm aoTerm, AnatomySearchBean form, Pagination pagi, boolean directAnnotation) {
+	private List<FishStatistics> createGenotypeStats(List<Fish> fishList, GenericTerm ai, boolean includeSubstructures) {
+		if (fishList == null || ai == null)
+			return null;
 
-        PaginationBean pagination = new PaginationBean();
-        pagination.setMaxDisplayRecords(pagi.getLimit());
-        pagination.setPageInteger(pagi.getPage());
-        PaginationResult<org.zfin.mutant.presentation.AntibodyStatistics> antibodies = AnatomyService.getAntibodyStatistics(aoTerm, pagi, !directAnnotation);
-        form.setAntibodyStatistics(antibodies.getPopulatedResults());
-        form.setAntibodyCount(antibodies.getTotalCount());
-        // if direct annotations are empty check for included ones
-        if (directAnnotation) {
-            int totalCount = RepositoryFactory.getAntibodyRepository().getAntibodyCount(aoTerm, true, pagi);
-            form.setCountDirect(antibodies.getTotalCount());
-            form.setCountIncludingChildren(totalCount);
-        } else {
-            int totalCount = RepositoryFactory.getAntibodyRepository().getAntibodyCount(aoTerm, false, pagi);
-            form.setCountIncludingChildren(antibodies.getTotalCount());
-            form.setCountDirect(totalCount);
-        }
-    }
+		List<FishStatistics> stats = new ArrayList<>();
+		for (Fish fish : fishList) {
+			FishStatistics stat = new FishStatistics(fish, ai, includeSubstructures);
+			stats.add(stat);
+		}
+		return stats;
+	}
 
-    private void retrieveHighQualityProbeData(GenericTerm aoTerm, AnatomySearchBean form, Pagination pagi, boolean directAnnotation) {
-        PaginationResult<HighQualityProbe> antibodies = AnatomyService.getHighQualityProbeStatistics(aoTerm, pagi, !directAnnotation);
-        form.setHighQualityProbeGenes(antibodies.getPopulatedResults());
-        form.setNumberOfHighQualityProbes(antibodies.getTotalCount());
-        // if direct annotations are empty check for included ones
-        if (directAnnotation) {
-            int totalCount = RepositoryFactory.getAntibodyRepository().getProbeCount(aoTerm, true, pagi);
-            form.setCountDirect(antibodies.getTotalCount());
-            form.setCountIncludingChildren(totalCount);
-        } else {
-            int totalCount = RepositoryFactory.getAntibodyRepository().getProbeCount(aoTerm, false, pagi);
-            form.setCountIncludingChildren(antibodies.getTotalCount());
-            form.setCountDirect(totalCount);
-        }
-    }
+	private void retrieveAntibodyData(GenericTerm aoTerm, AnatomySearchBean form, Pagination pagi, boolean directAnnotation) {
 
-    private void retrieveExpressedGenesData(GenericTerm anatomyTerm, AnatomySearchBean form, Pagination pagination) {
+		PaginationBean pagination = new PaginationBean();
+		pagination.setMaxDisplayRecords(pagi.getLimit());
+		pagination.setPageInteger(pagi.getPage());
+		PaginationResult<org.zfin.mutant.presentation.AntibodyStatistics> antibodies = AnatomyService.getAntibodyStatistics(aoTerm, pagi, !directAnnotation);
+		form.setAntibodyStatistics(antibodies.getPopulatedResults());
+		form.setAntibodyCount(antibodies.getTotalCount());
+		// if direct annotations are empty check for included ones
+		if (directAnnotation) {
+			int totalCount = RepositoryFactory.getAntibodyRepository().getAntibodyCount(aoTerm, true, pagi);
+			form.setCountDirect(antibodies.getTotalCount());
+			form.setCountIncludingChildren(totalCount);
+		} else {
+			int totalCount = RepositoryFactory.getAntibodyRepository().getAntibodyCount(aoTerm, false, pagi);
+			form.setCountIncludingChildren(antibodies.getTotalCount());
+			form.setCountDirect(totalCount);
+		}
+	}
 
-        PaginationResult<MarkerStatistic> expressionMarkersResult =
-            getPublicationRepository().getAllExpressedMarkers(anatomyTerm, pagination);
+	private void retrieveHighQualityProbeData(GenericTerm aoTerm, AnatomySearchBean form, Pagination pagi, boolean directAnnotation) {
+		PaginationResult<HighQualityProbe> antibodies = AnatomyService.getHighQualityProbeStatistics(aoTerm, pagi, !directAnnotation);
+		form.setHighQualityProbeGenes(antibodies.getPopulatedResults());
+		form.setNumberOfHighQualityProbes(antibodies.getTotalCount());
+		// if direct annotations are empty check for included ones
+		if (directAnnotation) {
+			int totalCount = RepositoryFactory.getAntibodyRepository().getProbeCount(aoTerm, true, pagi);
+			form.setCountDirect(antibodies.getTotalCount());
+			form.setCountIncludingChildren(totalCount);
+		} else {
+			int totalCount = RepositoryFactory.getAntibodyRepository().getProbeCount(aoTerm, false, pagi);
+			form.setCountIncludingChildren(antibodies.getTotalCount());
+			form.setCountDirect(totalCount);
+		}
+	}
 
-        List<MarkerStatistic> markers = expressionMarkersResult.getPopulatedResults();
-        form.setExpressedGeneCount(expressionMarkersResult.getTotalCount());
-        List<ExpressedGeneDisplay> expressedGenes = new ArrayList<>();
-        if (markers != null) {
-            for (MarkerStatistic marker : markers) {
-                ExpressedGeneDisplay expressedGene = new ExpressedGeneDisplay(marker);
-                expressedGenes.add(expressedGene);
-            }
-        }
+	private void retrieveExpressedGenesData(GenericTerm anatomyTerm, AnatomySearchBean form, Pagination pagination) {
 
-        form.setAllExpressedMarkers(expressedGenes);
-        form.setTotalNumberOfExpressedGenes(expressionMarkersResult.getTotalCount());
-    }
+		PaginationResult<MarkerStatistic> expressionMarkersResult =
+			getPublicationRepository().getAllExpressedMarkers(anatomyTerm, pagination);
+
+		List<MarkerStatistic> markers = expressionMarkersResult.getPopulatedResults();
+		form.setExpressedGeneCount(expressionMarkersResult.getTotalCount());
+		List<ExpressedGeneDisplay> expressedGenes = new ArrayList<>();
+		if (markers != null) {
+			for (MarkerStatistic marker : markers) {
+				ExpressedGeneDisplay expressedGene = new ExpressedGeneDisplay(marker);
+				expressedGenes.add(expressedGene);
+			}
+		}
+
+		form.setAllExpressedMarkers(expressedGenes);
+		form.setTotalNumberOfExpressedGenes(expressionMarkersResult.getTotalCount());
+	}
 
 
 }
