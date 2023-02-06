@@ -7,9 +7,8 @@
 <c:set var="TARGETS" value="Targets" />
 <c:set var="SUPPLIERS" value="Suppliers" />
 <c:set var="NOTES" value="Notes" />
-<c:set var="OTHERPAGES" value="Other Pages" />
 
-<z:dataPage sections="${[NOMENCLATURE, SEQUENCE, TARGETS, SUPPLIERS, NOTES, OTHERPAGES]}">
+<z:dataPage sections="${[NOMENCLATURE, SEQUENCE, TARGETS, SUPPLIERS, NOTES]}">
     <z:dataManagerDropdown>
         <a class="dropdown-item" href="/${str.zdbID}">View</a>
         <a class="dropdown-item" href="/action/marker/merge?zdbIDToDelete=${str.zdbID}">Merge</a>
@@ -59,11 +58,4 @@
         </div>
     </z:section>
 
-    <z:section title="${OTHERPAGES}">
-        <div class="__react-root"
-             id="MarkerEditDbLinks"
-             data-group="str edit page"
-             data-marker-id="${str.zdbID}">
-        </div>
-    </z:section>
 </z:dataPage>
