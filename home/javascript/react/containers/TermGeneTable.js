@@ -42,7 +42,8 @@ const TermGeneTable = ({termId, directAnnotationOnly}) => {
         },
         {
             label: 'OMIM Phenotype ID',
-            content: (row) => <a href={'http://omim.org/entry/' + row.omimNum}>{row.omimNum}</a>,
+            content: (row) => <a href={'http://omim.org/entry/' + row.omimAccession}>{row.omimAccession}</a>,
+            filterName: 'omimAccessionID',
             width: '120px',
         },
     ];

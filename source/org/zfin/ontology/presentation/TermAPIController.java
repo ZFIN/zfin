@@ -195,6 +195,7 @@ public class TermAPIController {
 																	 @RequestParam(value = "filter.zfinGeneName", required = false) String filterZfinGeneName,
 																	 @RequestParam(value = "filter.omimName", required = false) String filterOmimName,
 																	 @RequestParam(value = "filter.termName", required = false) String filterTermName,
+																	 @RequestParam(value = "filter.omimAccessionID", required = false) String omimAccessionID,
 																	 @Version Pagination pagination) {
 
 		HibernateUtil.createTransaction();
@@ -215,6 +216,9 @@ public class TermAPIController {
 		}
 		if (StringUtils.isNotEmpty(filterTermName)) {
 			pagination.addToFilterMap("omimPhenotype.disease.termName", filterTermName);
+		}
+		if (StringUtils.isNotEmpty(omimAccessionID)) {
+			pagination.addToFilterMap("omimPhenotype.omimAccession", omimAccessionID);
 		}
 
 		PaginationResult<OmimPhenotypeDisplay> genesInvolvedForDiseaseDirect = OntologyService.getGenesInvolvedForDisease(term, pagination, false);
