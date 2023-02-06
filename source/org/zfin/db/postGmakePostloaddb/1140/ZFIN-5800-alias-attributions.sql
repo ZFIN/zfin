@@ -13,7 +13,7 @@ WITH alias_attributions AS (
         ra2.recattrib_source_zdb_id
     FROM
         record_attribution ra1
-            LEFT JOIN data_alias ON ra1.recattrib_data_zdb_id = dalias_zdb_id
+            JOIN data_alias ON ra1.recattrib_data_zdb_id = dalias_zdb_id
             LEFT JOIN record_attribution ra2 ON dalias_data_zdb_id = ra2.recattrib_data_zdb_id
             AND ra1.recattrib_source_zdb_id = ra2.recattrib_source_zdb_id
     WHERE
