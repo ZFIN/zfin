@@ -86,6 +86,21 @@
             <jvmarg value="${jvm.arg.log4j}"/>
         </java>
     </target>
+    <target name="update-ui-tables" description="">
+        <java classname="org.zfin.indexer.DiseaseGenesInvolvedIndexer"
+              fork="yes"
+              classpathref="extended.classpath"
+              failonerror="true">
+            <arg value="-webrootDirectory"/>
+            <arg value="${web.dir}"/>
+            <arg value="-loadDir"/>
+            <arg value="server_apps/DB_maintenance/validatedata"/>
+            <arg value="-jobName"/>
+            <arg value="Regenerate-UI-Tables_d"/>
+            <jvmarg value="${jvm.arg.log4j}"/>
+        </java>
+    </target>
+
 
     <target name="load-gaf-goa" description="">
         <!-- set some default values that can be overridden with environment variables like GOA_GAF_URL1 -->
