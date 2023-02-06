@@ -4,7 +4,7 @@ RUN apt update && apt install -y --no-install-recommends \
        ant groovy postgresql-client tcsh sudo \
        vim nano emacs iputils-ping imagemagick \
        libwww-perl libdbi-perl libdbd-pg-perl libmime-lite-perl \
-       cpanminus build-essential rsync \
+       cpanminus build-essential rsync bind9-dnsutils \
        gnupg lsb-release #needed for docker install below
 
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
