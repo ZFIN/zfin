@@ -1,7 +1,12 @@
 package org.zfin.sequence;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Set;
 
+@Setter
+@Getter
 public class DisplayGroup implements Comparable<DisplayGroup>{
 
 
@@ -9,38 +14,6 @@ public class DisplayGroup implements Comparable<DisplayGroup>{
     private GroupName groupName;
     private String definition;
     private Set<ReferenceDatabase> referenceDatabases;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public GroupName getGroupName() {
-        return groupName;
-    }
-
-    public void setGroupName(GroupName groupName) {
-        this.groupName = groupName;
-    }
-
-    public String getDefinition() {
-        return definition;
-    }
-
-    public void setDefinition(String definition) {
-        this.definition = definition;
-    }
-
-    public Set<ReferenceDatabase> getReferenceDatabases() {
-        return referenceDatabases;
-    }
-
-    public void setReferenceDatabases(Set<ReferenceDatabase> referenceDatabases) {
-        this.referenceDatabases = referenceDatabases;
-    }
 
     public enum GroupName {
         ADDABLE_NUCLEOTIDE_SEQUENCE("addable nucleotide sequence"),
@@ -58,6 +31,7 @@ public class DisplayGroup implements Comparable<DisplayGroup>{
         MICRORNA_TARGETS("microrna targets"),
         SUMMARY_PAGE("summary page"),
         GENE_VIEW_STEM_LOOP("gene view stem loop"),
+        STR_EDIT_PAGE("str edit page"),
         TRANSCRIPT_EDIT_ADDABLE_PROTEIN_SEQUENCE("transcript edit addable protein sequence"),
         TRANSCRIPT_EDIT_ADDABLE_NUCLEOTIDE_SEQUENCE("transcript edit addable nucleotide sequence"),
         TRANSCRIPT_EDIT_ADDABLE_MIRNA_NUCLEOTIDE_SEQUENCE("transcript edit addable miRNA nucleotide sequence"),
@@ -66,7 +40,7 @@ public class DisplayGroup implements Comparable<DisplayGroup>{
         PATHWAYS("pathways")
         ;
 
-        private String value;
+        private final String value;
 
         GroupName(String value) {
             this.value = value;
