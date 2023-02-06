@@ -62,7 +62,7 @@
     <z:section title="${OTHERPAGES}">
         <div class="__react-root"
              id="MarkerEditDbLinks"
-             data-group="summary page"
+             data-group="str edit page"
              data-marker-id="${str.zdbID}">
         </div>
     </z:section>
