@@ -23,6 +23,7 @@ services:
       - httpd_log:/opt/zfin/log/httpd
       - tls_certs:/opt/zfin/tls
       - keystore:/opt/apache/apache-tomcat/conf
+      - certbot_data:/etc/letsencrypt
       - catalina_base:/opt/zfin/catalina_bases/zfin.org
       - jenkins_data:/opt/zfin//www_homes/zfin.org/server_apps/jenkins/jenkins-home
       - ../:/opt/zfin/source_roots/zfin.org
@@ -79,6 +80,7 @@ services:
     build: ./certbot/
     volumes:
       - certbot_data:/etc/letsencrypt
+      - www_data:/opt/zfin/www_homes/zfin.org
   tomcat:
     build: ./tomcat/
     restart: always
