@@ -31,6 +31,7 @@ public class DisplayGroup implements Comparable<DisplayGroup>{
         MICRORNA_TARGETS("microrna targets"),
         SUMMARY_PAGE("summary page"),
         GENE_VIEW_STEM_LOOP("gene view stem loop"),
+        STR_EDIT_PAGE("str edit page"),
         TRANSCRIPT_EDIT_ADDABLE_PROTEIN_SEQUENCE("transcript edit addable protein sequence"),
         TRANSCRIPT_EDIT_ADDABLE_NUCLEOTIDE_SEQUENCE("transcript edit addable nucleotide sequence"),
         TRANSCRIPT_EDIT_ADDABLE_MIRNA_NUCLEOTIDE_SEQUENCE("transcript edit addable miRNA nucleotide sequence"),
