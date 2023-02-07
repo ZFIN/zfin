@@ -67,7 +67,7 @@
                         </tbody>
                     </z:dataTable>
                 </z:section>
-                <z:section title="External Notes" hasData="${genotype.externalNotes ne null && fn:length(genotype.externalNotes) > 0}">
+                <z:section title="Public Notes" hasData="${genotype.externalNotes ne null && fn:length(genotype.externalNotes) > 0}">
                     <c:if test="${genotype.externalNotes ne null && fn:length(genotype.externalNotes) > 0 }">
                         <c:forEach var="extNote" items="${formBean.genotype.externalNotes}">
                             <div>
