@@ -488,7 +488,13 @@ public class PublicationService {
         List<String> strings = new ArrayList<>();
 
         for (PubmedPublicationAuthor author : authors) {
-            strings.add(author.getLastName().trim() + ", " + author.getFirstName().trim());
+            String firstName = Objects.toString(author.getFirstName(), "");
+            String lastName = Objects.toString(author.getLastName(), "");
+            String fullName = lastName.trim();
+            if (StringUtils.isNotEmpty(firstName)) {
+                fullName += ", " + firstName.trim();
+            }
+            strings.add(fullName);
         }
 
         return strings;
