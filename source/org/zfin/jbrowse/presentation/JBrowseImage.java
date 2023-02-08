@@ -77,7 +77,7 @@ public class JBrowseImage implements GenomeBrowserImage {
         return imageUrl;
     }
 
-    private String calculateBaseUrl() {
+    public static String calculateBaseUrl() {
         String url = ZfinPropertiesEnum.JBROWSE_BASE_URL.value();
 
         boolean useProxy = "true".equals(ZfinPropertiesEnum.JBROWSE_USE_LOCAL_PROXY.value());
