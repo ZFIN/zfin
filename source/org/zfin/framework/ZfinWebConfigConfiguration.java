@@ -66,6 +66,11 @@ public class ZfinWebConfigConfiguration implements WebMvcConfigurer {
     }
 
     @Override
+    public void extendHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
+
+    }
+
+    @Override
     public void addInterceptors(InterceptorRegistry interceptorRegistry) {
 
     }
