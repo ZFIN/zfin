@@ -7,7 +7,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-import org.zfin.datatransfer.LoadCompleteAuthorNames;
 import org.zfin.datatransfer.ServiceConnectionException;
 import org.zfin.datatransfer.microarray.GeoMicorarrayEntriesBean;
 import org.zfin.sequence.EFetchDefline;
@@ -299,10 +298,15 @@ public class NCBIEfetch {
                     Element element = (Element) node;
                     String accession = element.getElementsByTagName("PMID").item(0).getTextContent();
                     NodeList authors = element.getElementsByTagName("Author");
-                    for (int index = 0; index < authors.getLength(); index++) {
-                        String lastname = getNullSafeElement(element.getElementsByTagName("LastName").item(index));
-                        String firstname = getNullSafeElement(element.getElementsByTagName("ForeName").item(index));
-                        String middleName = getNullSafeElement(element.getElementsByTagName("Initials").item(index));
+                    for (int authorIndex = 0; authorIndex < authors.getLength(); authorIndex++) {
+                        Node authorNode = authors.item(authorIndex);
+                        if (authorNode.getNodeType() != Node.ELEMENT_NODE) {
+                            continue;
+                        }
+                        Element authorElement = (Element) authorNode;
+                        String lastname = getNullSafeElement(authorElement.getElementsByTagName("LastName").item(0));
+                        String firstname = getNullSafeElement(authorElement.getElementsByTagName("ForeName").item(0));
+                        String middleName = getNullSafeElement(authorElement.getElementsByTagName("Initials").item(0));
                         NameRecord record = new NameRecord(firstname, middleName, lastname, accessionMap.get(accession), accession);
                         if (lastname != null) {
                             nameList.add(record);
