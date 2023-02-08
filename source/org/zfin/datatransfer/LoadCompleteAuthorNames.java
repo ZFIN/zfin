@@ -20,7 +20,6 @@ import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 public class LoadCompleteAuthorNames extends AbstractValidateDataReportTask {
 
     int numberOfPubsUpdated;
-    private String pubmedID;
 
     public LoadCompleteAuthorNames(String jobName, String propertyPath, String baseDir) {
         super(jobName, propertyPath, baseDir);
@@ -48,18 +47,11 @@ public class LoadCompleteAuthorNames extends AbstractValidateDataReportTask {
                 select distinct zdb_id, cast(accession_no as text)
                           from publication
                          where accession_no is not null
-                           and title is not null \s""";
-
-            if (isDebugMode()) {
-                // for debugging (don't use the where clause that limits to pubs that haven't been processed yet)
-                hql += " and accession_no = '" + pubmedID + "' \s";
-            } else {
-                hql += """
+                           and title is not null
                            and not exists (select 1 from pubmed_publication_author
                                             where cast(accession_no as text) = ppa_pubmed_id
-                                              and ppa_publication_zdb_id = zdb_id) \s""";
-            }
-
+                                              and ppa_publication_zdb_id = zdb_id)
+                                              """;
             Query<Tuple> query = HibernateUtil.currentSession().createNativeQuery(hql, Tuple.class);
             List<Tuple> idTuples = query.list();
             Map<String, String> accessionMap = new HashMap<>();
@@ -86,16 +78,9 @@ public class LoadCompleteAuthorNames extends AbstractValidateDataReportTask {
                 author.setLastName(nameRecord.lastName());
                 author.setPubmedId(nameRecord.accession());
                 author.setPublication(getPublicationRepository().getPublication(nameRecord.pubId()));
-                if (!isDebugMode()) {
-                    HibernateUtil.currentSession().save(author);
-                }
+                HibernateUtil.currentSession().save(author);
             });
-            if (isDebugMode()) {
-                printAuthorInfo(nameList);
-                HibernateUtil.rollbackTransaction();
-            } else {
-                HibernateUtil.flushAndCommitCurrentSession();
-            }
+            HibernateUtil.flushAndCommitCurrentSession();
             LOG.info("Committed load...");
         } catch (Exception e) {
             HibernateUtil.rollbackTransaction();
@@ -106,38 +91,11 @@ public class LoadCompleteAuthorNames extends AbstractValidateDataReportTask {
         }
     }
 
-    private void printAuthorInfo(List<NCBIEfetch.NameRecord> nameList) {
-        System.out.println("Number of PubmedPublicationAuthor records: " + nameList.size());
-        System.out.println("Details: ");
-        System.out.println("First Name\tMiddle Name\tLast Name\tAccession\tPublication ZDB ID");
 
-        nameList.forEach(nameRecord -> {
-            System.out.println(nameRecord.firstName() + "\t" + nameRecord.middleName() + "\t" + nameRecord.lastName() + "\t" + nameRecord.accession() + "\t" + nameRecord.pubId());
-        });
-    }
-
-    private boolean isDebugMode() {
-        return pubmedID != null;
-    }
-
-    /**
-     * Main method to run the code.
-     * @param args args[0] is the property file path ( from build.xml: ${web-inf.dir}/zfin.properties" )
-     *             args[1] is the report directory ( from build.xml: ${validateData}/report_data" )
-     *             args[2] is the job name ( from build.xml: name="load-author-names" )
-     *             args[3] is the pubmed id ( optional and used for debugging )
-     */
     public static void main(String[] args) {
         String jobName = args[2];
         LoadCompleteAuthorNames job = new LoadCompleteAuthorNames(jobName, args[0], args[1]);
         job.initDatabase();
-
-        if (args.length > 3) {
-            job.pubmedID = args[3];
-        } else {
-            job.pubmedID = null;
-        }
-
         System.exit(job.execute());
     }
 }
