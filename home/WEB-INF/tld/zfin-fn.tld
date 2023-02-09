@@ -358,4 +358,10 @@
         <function-signature>boolean isFlagEnabled(org.zfin.framework.featureflag.FeatureFlagEnum)</function-signature>
     </function>
 
+    <function>
+        <name>isRoot</name>
+        <function-class>org.zfin.framework.presentation.ZfinJSPFunctions</function-class>
+        <function-signature>boolean isRoot()</function-signature>
+    </function>
+
 </taglib>
