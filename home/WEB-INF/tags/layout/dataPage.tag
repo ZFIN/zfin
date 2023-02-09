@@ -44,7 +44,7 @@
                     <c:otherwise>
                         <c:forEach var="item" items="${navigationMenu.displayedNavigationItems}" varStatus="loop">
                             <z:navigationItem title="${item.toString()}"
-                                              useNavigationCounter="${item.showCount}"
+                                              useNavigationCounter="${item.showCount && zfn:isRoot()}"
                                               borderBottom="${item.showBorder}"
                                               order="${loop.index}"
                             />

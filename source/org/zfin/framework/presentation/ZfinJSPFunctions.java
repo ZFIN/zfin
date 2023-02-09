@@ -24,6 +24,7 @@ import org.zfin.ontology.Ontology;
 import org.zfin.ontology.OntologyManager;
 import org.zfin.ontology.Term;
 import org.zfin.profile.Person;
+import org.zfin.profile.UserService;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.blast.Database;
 import org.zfin.util.DateUtil;
@@ -424,5 +425,9 @@ public class ZfinJSPFunctions {
             return softwareVersion.substring(softwareVersion.indexOf("-") + 1);
         }
         return softwareVersion;
+    }
+
+    public static boolean isRoot() {
+        return UserService.isRootUser();
     }
 }
