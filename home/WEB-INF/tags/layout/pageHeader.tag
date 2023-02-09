@@ -1,4 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+<%@ tag import="org.zfin.framework.featureflag.FeatureFlagEnum" %>
 
 <header>
     <div class="mobile-only">
@@ -55,7 +56,14 @@
                 <div class="nav-column">
                     <span class="nav-column-header">Genome Browsers</span>
                     <ul>
-                        <li><a href="/@GBROWSE_PATH_FROM_ROOT@">ZFIN</a></li>
+                        <c:choose>
+                            <c:when test="${zfn:isFlagEnabled(FeatureFlagEnum.JBROWSE)}">
+                                <li><a href="/action/jbrowse">ZFIN</a></li>
+                            </c:when>
+                            <c:otherwise>
+                                <li><a href="/@GBROWSE_PATH_FROM_ROOT@">ZFIN</a></li>
+                            </c:otherwise>
+                        </c:choose>
                         <li><zfin2:externalLink href="http://www.ensembl.org/Danio_rerio/">Ensembl</zfin2:externalLink></li>
                         <li><zfin2:externalLink href="http://vega.sanger.ac.uk/Danio_rerio/">Vega</zfin2:externalLink></li>
                         <li><zfin2:externalLink href="http://www.ncbi.nlm.nih.gov/projects/genome/assembly/grc/zebrafish/">GRC</zfin2:externalLink></li>
