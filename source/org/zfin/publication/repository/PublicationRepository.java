@@ -1,5 +1,6 @@
 package org.zfin.publication.repository;
 
+import org.apache.commons.collections4.map.MultiKeyMap;
 import org.springframework.web.multipart.MultipartFile;
 import org.zfin.antibody.Antibody;
 import org.zfin.curation.presentation.CorrespondenceDTO;
@@ -21,6 +22,7 @@ import org.zfin.marker.presentation.GeneBean;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
+import org.zfin.mutant.PhenotypeStatementWarehouse;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
@@ -460,5 +462,7 @@ public interface PublicationRepository extends PaginationParameter {
     List<SequenceTargetingReagent> getSTRsByPublication(String publicationID, Pagination pagination);
 
     List<Image> getImages(Publication publication);
+
+    Map<Fish, Map<GenericTerm, List<PhenotypeStatementWarehouse>>> getAllFiguresForPhenotype();
 
 }

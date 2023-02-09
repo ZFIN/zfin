@@ -123,6 +123,7 @@
         <mapping class="org.zfin.marker.CloneProblem"/>
         <mapping class="org.zfin.mutant.SecondaryGenotype"/>
         <mapping class="org.zfin.mutant.FishStr"/>
+        <mapping class="org.zfin.mutant.presentation.FishStatistics"/>
         <mapping class="org.zfin.mutant.Genotype"/>
         <mapping class="org.zfin.mutant.GenotypeAlias"/>
         <mapping class="org.zfin.mutant.GenotypeExternalNote"/>

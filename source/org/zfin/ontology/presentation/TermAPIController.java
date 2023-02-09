@@ -168,22 +168,25 @@ public class TermAPIController {
 		if (StringUtils.isNotEmpty(filterPhenotype)) {
 			pagination.addToFilterMap("phenotype", filterPhenotype);
 		}
-		AnatomySearchBean form = new AnatomySearchBean();
-		form.setAoTerm(term);
-		form.setMaxDisplayRecords(pagination.getLimit());
-		form.setPageInteger(pagination.getPage());
-		retrieveMutantData(term, form, !directAnnotation, pagination);
-		response.setResults(form.getGenotypeStatistics());
-		response.setTotal(form.getTotalRecords());
-		if (directAnnotation) {
-			response.addSupplementalData("countDirect", form.getTotalRecords());
-			response.addSupplementalData("countIncludingChildren", form.getTotalNumberOfExpressedGenes());
-		} else {
-			response.addSupplementalData("countIncludingChildren", form.getTotalRecords());
-			response.addSupplementalData("countDirect", form.getTotalNumberOfExpressedGenes());
-		}
-		HibernateUtil.flushAndCommitCurrentSession();
 
+		PaginationResult<FishStatistics> genesInvolvedForDiseaseDirect = OntologyService.getPhenotypeForDisease(term, pagination, false);
+		PaginationResult<FishStatistics> genesInvolvedForDiseaseAll = OntologyService.getPhenotypeForDisease(term, pagination, true);
+
+		int totalCountDirect = genesInvolvedForDiseaseDirect.getTotalCount();
+		response.addSupplementalData("countDirect", totalCountDirect);
+		int totalCountAll = genesInvolvedForDiseaseAll.getTotalCount();
+		response.addSupplementalData("countIncludingChildren", totalCountAll);
+
+		List<FishStatistics> displayList;
+		if (directAnnotation) {
+			displayList = genesInvolvedForDiseaseDirect.getPopulatedResults();
+			response.setTotal(totalCountDirect);
+		} else {
+			displayList = genesInvolvedForDiseaseAll.getPopulatedResults();
+			response.setTotal(totalCountAll);
+		}
+		response.setResults(displayList);
+		HibernateUtil.flushAndCommitCurrentSession();
 		return response;
 	}
 

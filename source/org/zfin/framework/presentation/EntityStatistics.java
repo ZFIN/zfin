@@ -7,6 +7,7 @@ import org.zfin.framework.api.View;
 import org.zfin.marker.Marker;
 import org.zfin.publication.Publication;
 
+import javax.persistence.Transient;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -77,6 +78,7 @@ public abstract class EntityStatistics {
     }
 
     @JsonView(View.API.class)
+    @Transient
     public int getNumberOfFigures() {
         return figs.size();
     }
@@ -117,7 +119,7 @@ public abstract class EntityStatistics {
         if (images != null && !images.isEmpty()) {
             return images.size();
         }
-        Set<Image> imgs = new HashSet<Image>();
+        Set<Image> imgs = new HashSet<>();
         for (Figure fig : figs) {
             imgs.addAll(fig.getImages());
         }
