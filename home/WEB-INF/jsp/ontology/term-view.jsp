@@ -100,6 +100,12 @@
                 ></div>
             </z:section>
         </c:if>
+        <z:section title="${ZEBRAFISH_MODELS}">
+            <div class="__react-root" id="TermZebrafishModelTable"
+                 data-term-id="${term.zdbID}"
+                 data-direct-annotation-only="true"
+            ></div>
+        </z:section>
 
         <c:if test="${formBean.term.ontology.expressionData}">
             <z:section title="${EXPRESSION}" infoPopup="/ZFIN/help_files/expression_help.html">
