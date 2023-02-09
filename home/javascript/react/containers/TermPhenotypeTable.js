@@ -6,7 +6,7 @@ import {EntityList} from '../components/entity';
 import DataTableSummaryToggle from '../components/DataTableSummaryToggle';
 import CommaSeparatedList from '../components/CommaSeparatedList';
 import PhenotypeStatementLink from '../components/entity/PhenotypeStatementLink';
-import FigureSummary from '../components/FigureSummary';
+import FigureSummaryPhenotype from '../components/FigureSummaryPhenotype';
 
 const TermPhenotypeTable = ({termId, directAnnotationOnly}) => {
 
@@ -16,7 +16,8 @@ const TermPhenotypeTable = ({termId, directAnnotationOnly}) => {
     const columns = [
         {
             label: 'Affected Genomic Region',
-            content: ({fish}) => <EntityList entities={fish.affectedGenes}/>,
+            content: ({affectedGenes}) => <EntityList entities={affectedGenes}/>,
+            filterName: 'geneSymbol',
             width: '100px',
         },
         {
@@ -30,8 +31,8 @@ const TermPhenotypeTable = ({termId, directAnnotationOnly}) => {
         },
         {
             label: 'Phenotype',
-            content: ({phenotypeObserved}) => <CommaSeparatedList>
-                {phenotypeObserved.map(entity => {
+            content: ({phenotypeStatements}) => <CommaSeparatedList>
+                {phenotypeStatements.map(entity => {
                     return <PhenotypeStatementLink key={entity.id} entity={entity}/>
                 })}
             </CommaSeparatedList>,
@@ -39,11 +40,17 @@ const TermPhenotypeTable = ({termId, directAnnotationOnly}) => {
             width: '220px',
         },
         {
+            label: 'Term',
+            content: ({term}) => <a href={'/' + term.zdbID}>{term.termName}</a>,
+            filterName: 'termName',
+            width: '120px',
+        },
+        {
             label: 'Figures',
             content: row => (
-                <FigureSummary
+                <FigureSummaryPhenotype
                     statistics={row}
-                    allFiguresUrl={`/action/ontology/${row.anatomyItem.zdbID}/phenotype-summary/${row.fish.zdbID}`}
+                    allFiguresUrl={`/action/ontology/${row.term.zdbID}/phenotype-summary/${row.fish.zdbID}`}
                 />
             ),
             width: '100px',

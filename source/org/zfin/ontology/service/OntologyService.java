@@ -17,6 +17,7 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.*;
 import org.zfin.mutant.presentation.DiseaseModelDisplay;
 import org.zfin.mutant.presentation.FishModelDisplay;
+import org.zfin.mutant.presentation.FishStatistics;
 import org.zfin.ontology.*;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.orthology.NcbiOrthoExternalReference;
@@ -488,6 +489,13 @@ public class OntologyService {
 				display.setZfinGeneSymbolSearch(display.getZfinGene().stream().map(Marker::getAbbreviation).collect(joining(",")));
 			}
 		});
+	}
+
+	public static PaginationResult<FishStatistics> getPhenotypeForDisease(GenericTerm term, Pagination pagination, boolean includeChildren) {
+		if (term == null) {
+			return null;
+		}
+		return getDiseasePageRepository().getPhenotype(term, pagination, includeChildren);
 	}
 
 	public List<GenericTerm> getRibbonStages() {
