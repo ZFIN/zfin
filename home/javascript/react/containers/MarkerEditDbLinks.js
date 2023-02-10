@@ -99,7 +99,7 @@ const MarkerEditDbLinks = ({markerId, group = 'other marker pages'}) => {
                         <label className='col-md-2 col-form-label'>Citations</label>
                         <div className='col-md-10'>
                             {
-                                values.references.map((reference, idx) => (
+                                values.references && values.references.map((reference, idx) => (
                                     <div key={idx} className={`d-flex align-items-baseline ${idx > 0 ? 'mt-2' : ''}`}>
                                         <div className='flex-grow-1'>
                                             <InputField

@@ -397,6 +397,10 @@ public class MarkerLinkController {
         if (linkDisplays.size() > 1) {
             LOG.error("too many LinkDisplays returned for " + linkId);
         }
+        if (linkDisplays.size() == 0) {
+            LOG.error("zero LinkDisplays returned for " + linkId);
+            return null;
+        }
         return linkDisplays.get(0);
     }
 
