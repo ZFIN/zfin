@@ -173,6 +173,9 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     //todo: add a getter here, or do some mapping to objects so that we can test the insert in a routine way
 
     public RecordAttribution insertRecordAttribution(String dataZdbID, String sourceZdbID) {
+        if (sourceZdbID != null) {
+            sourceZdbID = sourceZdbID.trim();
+        }
         if (hasStandardPublicationAttribution(dataZdbID, sourceZdbID)) {
             return null;
         }
