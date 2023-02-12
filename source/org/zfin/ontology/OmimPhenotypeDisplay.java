@@ -19,7 +19,7 @@ import java.util.List;
 @Setter
 @Getter
 @Entity
-@Table(name = "UI_OMIM_PHENOTYPE_DISPLAY")
+@Table(name = "UI.OMIM_PHENOTYPE_DISPLAY")
 public class OmimPhenotypeDisplay implements Serializable {
 
 	@Id
@@ -63,7 +63,7 @@ public class OmimPhenotypeDisplay implements Serializable {
 
 	@JsonView(View.API.class)
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "UI_OMIM_ZFIN_ASSOCIATION", joinColumns = {
+	@JoinTable(name = "UI.OMIM_ZFIN_ASSOCIATION", joinColumns = {
 		@JoinColumn(name = "oza_human_phenotype_id", nullable = false, updatable = false)},
 		inverseJoinColumns = {@JoinColumn(name = "oza_zfin_gene_zdb_id",
 			nullable = false, updatable = false)})
