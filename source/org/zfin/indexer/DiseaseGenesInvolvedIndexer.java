@@ -31,8 +31,8 @@ public class DiseaseGenesInvolvedIndexer {
 	public static void main(String[] args) {
 		DiseaseGenesInvolvedIndexer indexer = new DiseaseGenesInvolvedIndexer();
 		indexer.init();
-		//indexer.runGenesInvolved();
-		indexer.runTermPhenotype();
+		indexer.runGenesInvolved();
+		//indexer.runTermPhenotype();
 		System.out.println("Finished Indexing");
 	}
 
@@ -44,7 +44,7 @@ public class DiseaseGenesInvolvedIndexer {
 		diseaseList.forEach(term -> {
 			List<OmimPhenotypeDisplay> displayListSingle = OntologyService.getOmimPhenotype(term, new Pagination(), false);
 			OntologyService.fixupSearchColumns(displayListSingle);
-			displayListSingle.forEach(omimisplay -> HibernateUtil.currentSession().save(omimisplay));
+			displayListSingle.forEach(omimDisplay -> HibernateUtil.currentSession().save(omimDisplay));
 		});
 		HibernateUtil.flushAndCommitCurrentSession();
 		//log.info("Number of Records: "+displayListSingle.size());
@@ -68,6 +68,7 @@ public class DiseaseGenesInvolvedIndexer {
 			if (pubs.size() == 1) {
 				stat.setPublication(pubs.iterator().next());
 			}
+			stat.setFishSearch(fish.getName().replaceAll("<[^>]*>", ""));
 			stat.setPhenotypeStatementSearch(phenotypeStatementWarehouses.stream().map(PhenotypeStatementWarehouse::getDisplayName).collect(Collectors.joining("|")));
 			stat.setGeneSymbolSearch(fish.getAffectedGenes().stream().map(Marker::getAbbreviation).sorted().collect(Collectors.joining("|")));
 			HibernateUtil.currentSession().save(stat);
