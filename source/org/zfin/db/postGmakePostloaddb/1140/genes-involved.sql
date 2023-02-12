@@ -1,10 +1,10 @@
 --liquibase formatted sql
 --changeset cmpich:zfin-8416
 
-drop table UI_OMIM_ZFIN_ASSOCIATION;
-Drop table UI_OMIM_PHENOTYPE_DISPLAY;
+drop table if exists UI.OMIM_ZFIN_ASSOCIATION;
+Drop table if exists UI.OMIM_PHENOTYPE_DISPLAY;
 
-create table UI_OMIM_PHENOTYPE_DISPLAY
+create table UI.OMIM_PHENOTYPE_DISPLAY
 (
     opd_id                       serial8 not null,
     opd_omim_term_name           text,
@@ -14,43 +14,43 @@ create table UI_OMIM_PHENOTYPE_DISPLAY
     opd_zfin_gene_symbols_search text
 );
 
-ALTER TABLE UI_OMIM_PHENOTYPE_DISPLAY
+ALTER TABLE UI.OMIM_PHENOTYPE_DISPLAY
     ADD CONSTRAINT OMIM_PHENOTYPE_DISPLAY_un UNIQUE (opd_id);
 
-ALTER TABLE UI_OMIM_PHENOTYPE_DISPLAY
+ALTER TABLE UI.OMIM_PHENOTYPE_DISPLAY
     ADD CONSTRAINT constraint_fk
         FOREIGN KEY (opd_term_zdb_id)
             REFERENCES term (term_zdb_id);
 
 
-create table UI_OMIM_ZFIN_ASSOCIATION
+create table UI.OMIM_ZFIN_ASSOCIATION
 (
     oza_zfin_gene_zdb_id   text,
     oza_human_phenotype_id integer
 );
 
-ALTER TABLE UI_OMIM_ZFIN_ASSOCIATION
+ALTER TABLE UI.OMIM_ZFIN_ASSOCIATION
     ADD CONSTRAINT constraint_fk1
         FOREIGN KEY (oza_zfin_gene_zdb_id)
             REFERENCES MARKER (mrkr_zdb_id);
 
-ALTER TABLE UI_OMIM_ZFIN_ASSOCIATION
+ALTER TABLE UI.OMIM_ZFIN_ASSOCIATION
     ADD CONSTRAINT constraint_fk2
         FOREIGN KEY (oza_human_phenotype_id)
-            REFERENCES UI_OMIM_PHENOTYPE_DISPLAY (opd_id);
+            REFERENCES UI.OMIM_PHENOTYPE_DISPLAY (opd_id);
 
 
 -- all_terms_contains table for disease terms for searching
 
-/*DROP table UI_ALL_TERMS_CONTAINS;
+/*DROP table UI.ALL_TERMS_CONTAINS;
 
-create table UI_ALL_TERMS_CONTAINS
+create table UI.ALL_TERMS_CONTAINS
 (
     atc_term_zdb_id  text,
     atc_parent_names text
 );
 
-insert into UI_ALL_TERMS_CONTAINS
+insert into UI.ALL_TERMS_CONTAINS
 select alltermcon_contained_zdb_id, array_to_string(ARRAY_AGG(parent.term_name),',')
 from all_term_contains,
      term as child,
@@ -64,6 +64,6 @@ group by alltermcon_contained_zdb_id;
 
 --CREATE EXTENSION pg_trgm;
 
---CREATE INDEX trgm_idx_UI_OMIM_PHENOTYPE_DISPLAY ON UI_OMIM_PHENOTYPE_DISPLAY USING gin (opd_zfin_gene_symbols_search gin_trgm_ops);
+--CREATE INDEX trgm_idx_UI.OMIM_PHENOTYPE_DISPLAY ON UI.OMIM_PHENOTYPE_DISPLAY USING gin (opd_zfin_gene_symbols_search gin_trgm_ops);
 
 -- https://niallburkley.com/blog/index-columns-for-like-in-postgres/

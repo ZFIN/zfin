@@ -2075,12 +2075,10 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 		phenoMap.forEach((fish, phenotypeStatementWarehouses) -> {
 			// groupBy Generic terms
 			Map<GenericTerm, List<PhenotypeStatementWarehouse>> map = new HashMap<>();
-			phenotypeStatementWarehouses.forEach(warehouse -> {
-				getTermIDs(warehouse).forEach(term -> {
-					List<PhenotypeStatementWarehouse> list = map.computeIfAbsent(term, k -> new ArrayList<>());
-					list.add(warehouse);
-				});
-			});
+			phenotypeStatementWarehouses.forEach(warehouse -> getTermIDs(warehouse).forEach(term -> {
+				List<PhenotypeStatementWarehouse> list = map.computeIfAbsent(term, k -> new ArrayList<>());
+				list.add(warehouse);
+			}));
 			phenMap.put(fish, map);
 		});
 		return phenMap;
@@ -2099,6 +2097,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 		}
 		if (phenotype.getRelatedEntity() != null && phenotype.getRelatedEntity().getSuperterm() != null) {
 			termIDs.add(phenotype.getRelatedEntity().getSuperterm());
+		}
+		if (phenotype.getQuality() != null) {
+			termIDs.add(phenotype.getQuality());
 		}
 		return termIDs;
 	}

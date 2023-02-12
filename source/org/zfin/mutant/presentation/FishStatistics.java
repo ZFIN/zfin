@@ -27,7 +27,7 @@ import java.util.TreeSet;
 @Setter
 @Getter
 @Entity
-@Table(name = "UI_TERM_PHENOTYPE_DISPLAY")
+@Table(name = "UI.TERM_PHENOTYPE_DISPLAY")
 @JsonPropertyOrder({"fish", "anatomyItem", "numberOfFigures", "imgInFigure", "firstFigure", "phenotypeObserved"})
 public class FishStatistics extends EntityStatistics {
 
@@ -51,14 +51,14 @@ public class FishStatistics extends EntityStatistics {
     private Publication publication;
     @JsonView(View.ExpressedGeneAPI.class)
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "UI_PHENOTYPE_ZFIN_ASSOCIATION", joinColumns = {
+    @JoinTable(name = "UI.PHENOTYPE_ZFIN_ASSOCIATION", joinColumns = {
         @JoinColumn(name = "pza_phenotype_id", nullable = false, updatable = false)},
         inverseJoinColumns = {@JoinColumn(name = "pza_gene_zdb_id",
             nullable = false, updatable = false)})
     private List<Marker> affectedGenes;
     @JsonView(View.ExpressedGeneAPI.class)
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "UI_PHENOTYPE_WAREHOUSE_ASSOCIATION", joinColumns = {
+    @JoinTable(name = "UI.PHENOTYPE_WAREHOUSE_ASSOCIATION", joinColumns = {
         @JoinColumn(name = "pwa_phenotype_id", nullable = false, updatable = false)},
         inverseJoinColumns = {@JoinColumn(name = "pwa_phenotype_warehouse_id",
             nullable = false, updatable = false)})
@@ -75,6 +75,9 @@ public class FishStatistics extends EntityStatistics {
     @JsonView(View.ExpressedGeneAPI.class)
     @Column(name = "tpd_pub_count")
     private int numberOfPubs;
+
+    @Column(name = "tpd_fish_search")
+    private String fishSearch;
 
     @Column(name = "tpd_phenotype_search")
     private String phenotypeStatementSearch;
