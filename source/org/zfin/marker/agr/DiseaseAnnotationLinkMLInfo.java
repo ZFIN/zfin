@@ -195,7 +195,7 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
 
         annotation.setDoTermCurie(damo.getDiseaseAnnotation().getDisease().getOboID());
 
-        List<String> ecoTerms = ZfinAllianceConverter.convertEvidenceCodes(damo.getDiseaseAnnotation().getEvidenceCode()).stream()
+        List<String> ecoTerms = ZfinAllianceConverter.convertEvidenceCodes(damo.getDiseaseAnnotation().getEvidenceCode().getZdbID()).stream()
             .map(ECOTerm::getCurie).collect(toList());
         annotation.setEvidenceCodeCuries(ecoTerms);
         annotation.setReferenceCurie(getSingleReference(damo.getDiseaseAnnotation().getPublication()));
@@ -301,7 +301,7 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
     // you can find TAS an IC.
     // Needs to be changed in the future.
     private String getEvidenceCodeString(DiseaseAnnotation diseaseAnnotations) {
-        return getEvidenceCodeFromString(diseaseAnnotations.getEvidenceCode());
+        return getEvidenceCodeFromString(diseaseAnnotations.getEvidenceCode().getZdbID());
     }
 
     private String getEvidenceCodeFromString(String ecoValue) {

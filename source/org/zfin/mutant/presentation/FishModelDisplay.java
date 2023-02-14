@@ -6,13 +6,15 @@ import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.zfin.expression.Experiment;
 import org.zfin.framework.api.View;
-import org.zfin.framework.presentation.EntityStatistics;
+import org.zfin.marker.Marker;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 
+import javax.persistence.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -20,26 +22,75 @@ import java.util.Set;
  */
 @Setter
 @Getter
+@Entity
+@Table(name = "UI.ZEBRAFISH_MODELS_DISPLAY")
 public class FishModelDisplay implements Comparable<FishModelDisplay> {
 
+	@Id
+	@JsonView(View.API.class)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "zmd_id", nullable = false)
+	private long id;
+
+	@JsonView({View.ExpressedGeneAPI.class, View.API.class})
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "zmd_fish_zdb_id")
+	private Fish fish;
+
+	@Transient
 	@JsonView(View.API.class)
 	private Set<Publication> publications;
 	@JsonView(View.API.class)
+	@Transient
 	private FishExperiment fishModel;
 	@JsonView(View.API.class)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "zmd_term_zdb_id")
 	private GenericTerm disease;
 
 	@JsonView(View.API.class)
-	private Fish fish;
-
-	@JsonView(View.API.class)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "zmd_experiment_zdb_id")
 	private Experiment experiment;
 
 	@JsonView(View.API.class)
+	@Column(name = "zmd_pub_count")
 	protected int numberOfPublications = 1;
 
+	@JsonView(View.ExpressedGeneAPI.class)
+	@Column(name = "zmd_evidence_search")
+	private String evidenceSearch;
+
+	@JsonView(View.ExpressedGeneAPI.class)
+	@Column(name = "zmd_fig_count")
+	private int numberOfFigs;
+
+	@Column(name = "zmd_fish_search")
+	private String fishSearch;
+
+	@Column(name = "zmd_condition_search")
+	private String conditionSearch;
+
 	@JsonView(View.API.class)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "zmd_pub_zdb_id")
 	protected Publication singlePublication;
+
+	@JsonView(View.API.class)
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "UI.ZEBRAFISH_MODELS_EVIDENCE_ASSOCIATION", joinColumns = {
+		@JoinColumn(name = "omea_zebfrafish_model_id", nullable = false, updatable = false)},
+		inverseJoinColumns = {@JoinColumn(name = "omea_term_zdb_id",
+			nullable = false, updatable = false)})
+	private List<GenericTerm> EvidenceCode;
+
+	@JsonView(View.API.class)
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "UI.ZEBRAFISH_MODELS_CHEBI_ASSOCIATION", joinColumns = {
+		@JoinColumn(name = "omca_zebfrafish_model_id", nullable = false, updatable = false)},
+		inverseJoinColumns = {@JoinColumn(name = "omca_term_zdb_id",
+			nullable = false, updatable = false)})
+	private List<GenericTerm> chebiTerms;
 
 
 	public FishModelDisplay(FishExperiment fishModel) {
@@ -48,6 +99,9 @@ public class FishModelDisplay implements Comparable<FishModelDisplay> {
 
 	public FishModelDisplay(Fish fish) {
 		this.fish = fish;
+	}
+
+	public FishModelDisplay() {
 	}
 
 	public Publication getPublication() {
