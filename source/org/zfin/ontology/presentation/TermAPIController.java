@@ -273,18 +273,34 @@ public class TermAPIController {
             return response;
 
         if (StringUtils.isNotEmpty(filterFishName)) {
-            pagination.addToFilterMap("fish", filterFishName);
+            pagination.addToFilterMap("fishModelDisplay.fish.displayName", filterFishName);
         }
         if (StringUtils.isNotEmpty(filterDiseaseName)) {
-            pagination.addToFilterMap("diseaseModels", filterDiseaseName);
+            pagination.addToFilterMap("fishModelDisplay.disease.termName", filterDiseaseName);
         }
         if (StringUtils.isNotEmpty(filterCondition)) {
-            pagination.addToFilterMap("condition", filterCondition);
+            pagination.addToFilterMap("fishModelDisplay.conditionSearch", filterCondition);
         }
 
-        retrieveModelData(term, response, directAnnotation, pagination);
-        HibernateUtil.flushAndCommitCurrentSession();
+        PaginationResult<FishModelDisplay> genesInvolvedForDiseaseDirect = OntologyService.getFishDiseaseModels(term, pagination, false);
+        PaginationResult<FishModelDisplay> genesInvolvedForDiseaseAll = OntologyService.getFishDiseaseModels(term, pagination, true);
 
+        int totalCountDirect = genesInvolvedForDiseaseDirect.getTotalCount();
+        response.addSupplementalData("countDirect", totalCountDirect);
+        int totalCountAll = genesInvolvedForDiseaseAll.getTotalCount();
+        response.addSupplementalData("countIncludingChildren", totalCountAll);
+
+        List<FishModelDisplay> displayList;
+        if (directAnnotation) {
+            displayList = genesInvolvedForDiseaseDirect.getPopulatedResults();
+            ;
+            response.setTotal(totalCountDirect);
+        } else {
+            displayList = genesInvolvedForDiseaseAll.getPopulatedResults();
+            response.setTotal(totalCountAll);
+        }
+        response.setResults(displayList);
+        HibernateUtil.flushAndCommitCurrentSession();
         return response;
     }
 
@@ -293,6 +309,7 @@ public class TermAPIController {
     public JsonResultResponse<FishModelDisplay> getZebrafishModelsByFish(@PathVariable String fishID,
                                                                          @RequestParam(value = "filter.diseaseName", required = false) String filterDiseaseName,
                                                                          @RequestParam(value = "filter.conditionName", required = false) String filterCondition,
+                                                                         @RequestParam(value = "filter.fishName", required = false) String filterFishName,
                                                                          @Version Pagination pagination) {
 
         HibernateUtil.createTransaction();
