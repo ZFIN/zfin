@@ -25,8 +25,8 @@ import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.mapping.FeatureLocation;
-import org.zfin.marker.*;
 import org.zfin.marker.Vector;
+import org.zfin.marker.*;
 import org.zfin.marker.presentation.MarkerPresentation;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.mutant.*;
@@ -194,12 +194,12 @@ public class DTOConversionService {
 
         ReferenceDatabase referenceDatabase;
         if (referenceDatabaseDTO.getZdbID() == null
-                && referenceDatabaseDTO.getName() != null) {
+            && referenceDatabaseDTO.getName() != null) {
             referenceDatabase = RepositoryFactory.getSequenceRepository().getReferenceDatabase(
-                    ForeignDB.AvailableName.getType(referenceDatabaseDTO.getName()),
-                    ForeignDBDataType.DataType.getType(referenceDatabaseDTO.getType()),
-                    ForeignDBDataType.SuperType.getType(referenceDatabaseDTO.getSuperType()),
-                    org.zfin.Species.Type.ZEBRAFISH);
+                ForeignDB.AvailableName.getType(referenceDatabaseDTO.getName()),
+                ForeignDBDataType.DataType.getType(referenceDatabaseDTO.getType()),
+                ForeignDBDataType.SuperType.getType(referenceDatabaseDTO.getSuperType()),
+                org.zfin.Species.Type.ZEBRAFISH);
         } else {
             referenceDatabase = (ReferenceDatabase) HibernateUtil.currentSession().get(ReferenceDatabase.class, referenceDatabaseDTO.getZdbID());
         }
@@ -1021,8 +1021,8 @@ public class DTOConversionService {
 
         MutantFigureStage mfs = new MutantFigureStage();
         FishExperiment fishExperiment =
-                getExpressionRepository().getFishExperimentByExperimentIDAndFishID(mutantFigureStage.getEnvironment().getZdbID(),
-                        mutantFigureStage.getFish().getZdbID());
+            getExpressionRepository().getFishExperimentByExperimentIDAndFishID(mutantFigureStage.getEnvironment().getZdbID(),
+                mutantFigureStage.getFish().getZdbID());
         if (fishExperiment != null) {
             mfs.setGenotypeExperiment(fishExperiment);
         }
@@ -1086,7 +1086,7 @@ public class DTOConversionService {
         GenericTerm quality = convertToTerm(phenotypeDTO.getQuality());
         if (quality == null) {
             throw new TermNotFoundException("No valid quality term found: " + phenotypeDTO.getQuality().getTermName() +
-                    " and " + phenotypeDTO.getQuality().getOntology());
+                " and " + phenotypeDTO.getQuality().getOntology());
         }
         structure.setQualityTerm(quality);
         if (phenotypeDTO.getTag() != null) {
@@ -1953,7 +1953,7 @@ public class DTOConversionService {
         DiseaseAnnotation diseaseAnnotation = new DiseaseAnnotation();
         diseaseAnnotation.setDisease(convertToTerm(diseaseAnnotationDTO.getDisease()));
         diseaseAnnotation.setPublication(convertToPublication(diseaseAnnotationDTO.getPublication()));
-        diseaseAnnotation.setEvidenceCode(diseaseAnnotationDTO.getEvidenceCode());
+        diseaseAnnotation.setEvidenceCode(convertToTerm(diseaseAnnotationDTO.getEvidenceCode()));
 
 
         return diseaseAnnotation;
@@ -2011,9 +2011,11 @@ public class DTOConversionService {
     }
 
     public static void setEvidenceCodeAbbreviation(DiseaseAnnotation model, DiseaseAnnotationDTO dto) {
-        String abbreviation = evidenceCodeIdToAbbreviation(model.getEvidenceCode());
+        String abbreviation = evidenceCodeIdToAbbreviation(model.getEvidenceCode().getZdbID());
         if (abbreviation != null) {
-            dto.setEvidenceCode(abbreviation);
+            TermDTO eco = new TermDTO();
+            eco.setName(abbreviation);
+            dto.setEvidenceCode(eco);
         }
     }
 

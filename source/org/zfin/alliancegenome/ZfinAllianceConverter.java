@@ -21,7 +21,7 @@ public class ZfinAllianceConverter {
         AGMDiseaseAnnotation annotation = new AGMDiseaseAnnotation();
         annotation.setObject(convertDisease(model.getDiseaseAnnotation().getDisease(), model.getDiseaseAnnotation().getPublication()));
         //TODO annotation.setSubject(convertFish(model.getFishExperiment().getFish()));
-        annotation.setEvidenceCodes(convertEvidenceCodes(model.getDiseaseAnnotation().getEvidenceCode()));
+        annotation.setEvidenceCodes(convertEvidenceCodes(model.getDiseaseAnnotation().getEvidenceCode().getZdbID()));
         //annotation.setReferenceList(convertReferences(model.getDiseaseAnnotation().getPublication()));
         VocabularyTerm isModelOf = new VocabularyTerm();
         isModelOf.setName("is model of");

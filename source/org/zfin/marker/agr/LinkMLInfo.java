@@ -133,7 +133,7 @@ public class LinkMLInfo extends AbstractScriptWrapper {
     // you can find TAS an IC.
     // Needs to be changed in the future.
     private String getEvidenceCodeString(DiseaseAnnotation diseaseAnnotations) {
-        return getEvidenceCodeFromString(diseaseAnnotations.getEvidenceCode());
+        return getEvidenceCodeFromString(diseaseAnnotations.getEvidenceCode().getZdbID());
     }
 
     private String getEvidenceCodeFromString(String ecoValue) {

@@ -935,8 +935,9 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
             left join fetch conditions.spatialTerm spatialTerm
             left join fetch conditions.goCCTerm goCCTerm
             left join fetch conditions.taxaonymTerm taxonomyTerm
-            where
             """;
+        if(disease != null || fish != null)
+            hql += " WHERE ";
         if (disease != null) {
             hql += " da.disease = :disease ";
         }

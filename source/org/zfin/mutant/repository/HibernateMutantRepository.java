@@ -1958,19 +1958,19 @@ public class HibernateMutantRepository implements MutantRepository {
         Query query = session.createQuery(hql);
         query.setParameter("disease", diseaseAnnotation.getDisease());
         query.setParameter("publication", diseaseAnnotation.getPublication());
-        query.setString("evidenceCode", diseaseAnnotation.getEvidenceCode());
+        query.setParameter("evidenceCode", diseaseAnnotation.getEvidenceCode());
 
         return (DiseaseAnnotation) query.uniqueResult();
     }
 
     @Override
     public DiseaseAnnotation getDiseaseModelByID(String zdbID) {
-        return (DiseaseAnnotation) HibernateUtil.currentSession().get(DiseaseAnnotation.class, zdbID);
+        return HibernateUtil.currentSession().get(DiseaseAnnotation.class, zdbID);
     }
 
     @Override
     public DiseaseAnnotationModel getDiseaseAnnotationModelByID(Long id) {
-        return (DiseaseAnnotationModel) HibernateUtil.currentSession().get(DiseaseAnnotationModel.class, id);
+        return HibernateUtil.currentSession().get(DiseaseAnnotationModel.class, id);
     }
 
     public List<DiseaseAnnotationModel> getDiseaseAnnotationModelByZdb(String zdb) {

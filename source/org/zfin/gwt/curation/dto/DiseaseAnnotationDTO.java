@@ -5,6 +5,7 @@ import org.zfin.gwt.root.dto.ExperimentDTO;
 import org.zfin.gwt.root.dto.FishDTO;
 import org.zfin.gwt.root.dto.PublicationDTO;
 import org.zfin.gwt.root.dto.TermDTO;
+import org.zfin.ontology.GenericTerm;
 
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class DiseaseAnnotationDTO implements IsSerializable {
     private TermDTO disease;
     private ExperimentDTO environment;
     private PublicationDTO publication;
-    private String evidenceCode;
+    private TermDTO evidenceCode;
 
 
     public FishDTO getFish() {
@@ -68,11 +69,11 @@ public class DiseaseAnnotationDTO implements IsSerializable {
         this.publication = publication;
     }
 
-    public String getEvidenceCode() {
+    public TermDTO getEvidenceCode() {
         return evidenceCode;
     }
 
-    public void setEvidenceCode(String evidenceCode) {
+    public void setEvidenceCode(TermDTO evidenceCode) {
         this.evidenceCode = evidenceCode;
     }
 

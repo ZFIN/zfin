@@ -6,6 +6,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.mutant.presentation.FishModelDisplay;
 import org.zfin.mutant.presentation.FishStatistics;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.OmimPhenotypeDisplay;
@@ -56,5 +57,27 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
 		query.setParameter("term", term);
 		return PaginationResultFactory.createResultFromScrollableResultAndClose(bean, query.scroll());
 	}
+
+    @Override
+    public PaginationResult<FishModelDisplay> getFishDiseaseModels(GenericTerm term, Pagination pagination, boolean includeChildren) {
+		PaginationBean bean = PaginationBean.getPaginationBean(pagination);
+		String hql;
+		if (!includeChildren) {
+			hql = "select fishModelDisplay from FishModelDisplay as fishModelDisplay where fishModelDisplay.disease = :term ";
+		} else {
+			hql = "select fishModelDisplay from FishModelDisplay as fishModelDisplay, TransitiveClosure as clo " +
+				"where clo.child = fishModelDisplay.disease AND clo.root = :term ";
+		}
+		if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
+			for (var entry : pagination.getFilterMap().entrySet()) {
+				hql += " AND ";
+				hql += "LOWER(" + entry.getKey() + ") like '%" + entry.getValue().toLowerCase() + "%' ";
+			}
+		}
+		hql += "order by upper(fishModelDisplay.fish.displayName) ";
+		Query<FishModelDisplay> query = HibernateUtil.currentSession().createQuery(hql, FishModelDisplay.class);
+		query.setParameter("term", term);
+		return PaginationResultFactory.createResultFromScrollableResultAndClose(bean, query.scroll());
+    }
 
 }

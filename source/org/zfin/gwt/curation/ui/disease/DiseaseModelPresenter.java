@@ -106,10 +106,14 @@ public class DiseaseModelPresenter implements Presenter {
         dto.setDisease(diseaseList.get(selectedIndexDis));
         String itemText = view.getEvidenceCodeSelectionBox().getItemText(view.getEvidenceCodeSelectionBox().getSelectedIndex());
         if (itemText.equals("TAS")) {
-            dto.setEvidenceCode("ZDB-TERM-170419-250");
+            TermDTO eco = new TermDTO();
+            eco.setZdbID("ZDB-TERM-170419-250");
+            dto.setEvidenceCode(eco);
         }
         if (itemText.equals("IC")) {
-            dto.setEvidenceCode("ZDB-TERM-170419-251");
+            TermDTO eco = new TermDTO();
+            eco.setZdbID("ZDB-TERM-170419-251");
+            dto.setEvidenceCode(eco);
         }
         PublicationDTO pubDto = new PublicationDTO();
         pubDto.setZdbID(publicationID);
@@ -338,7 +342,7 @@ public class DiseaseModelPresenter implements Presenter {
                 view.addDeleteButtonDisease(disease, index, new HumanDiseaseModelDeleteClickListener(disease));
             }
             view.addDisease(disease.getDisease(), index, new PopulateTermEntryClickListener(disease.getDisease()));
-            view.addEvidence(disease.getEvidenceCode(), index);
+            view.addEvidence(disease.getEvidenceCode().getTermName(), index);
         }
 
         @Override
