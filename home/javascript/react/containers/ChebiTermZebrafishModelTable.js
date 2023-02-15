@@ -6,19 +6,23 @@ import DataTableSummaryToggle from '../components/DataTableSummaryToggle';
 import PublicationSummary from '../components/PublicationSummary';
 import {EntityLink} from '../components/entity';
 
-const TermZebrafishModelTable = ({termId, directAnnotationOnly, isChebi = false}) => {
+const ChebiTermZebrafishModelTable = ({termId, directAnnotationOnly }) => {
 
     const [directAnnotation, setDirectAnnotation] = useState(directAnnotationOnly === 'true');
     const [count, setCount] = useState({'countDirect': 0, 'countIncludingChildren': 0});
 
-    const endpointUrl = isChebi ? 'chebi-zebrafish-models' : 'zebrafish-models'
-
     const columns = [
+        {
+            label: 'Disease',
+            content: (row) => <EntityLink entity={row.fishModelDisplay.disease}/>,
+            filterName: 'diseaseName',
+            width: '180px',
+        },
         {
             label: 'Fish',
             content: (row) => <a
-                href={'/' + row.fish.zdbID}
-                dangerouslySetInnerHTML={{__html: row.fish.name}}
+                href={'/' + row.fishModelDisplay.fish.zdbID}
+                dangerouslySetInnerHTML={{__html: row.fishModelDisplay.fish.name}}
             />,
             filterName: 'fishName',
             width: '330px',
@@ -28,32 +32,32 @@ const TermZebrafishModelTable = ({termId, directAnnotationOnly, isChebi = false}
             content: (row) => <span className='text-break'>
                 <a
                     className='text-break'
-                    href={`/${row.experiment.zdbID}`}
-                    dangerouslySetInnerHTML={{__html: row.experiment.conditions}}
+                    href={`/${row.fishModelDisplay.experiment.zdbID}`}
+                    dangerouslySetInnerHTML={{__html: row.fishModelDisplay.experiment.conditions}}
                 />
                 <a
                     className='popup-link data-popup-link'
-                    href={`/action/expression/experiment-popup?id=${row.experiment.zdbID}`}
+                    href={`/action/expression/experiment-popup?id=${row.fishModelDisplay.experiment.zdbID}`}
                 />
             </span>,
             filterName: 'conditionName',
         },
         {
-            label: 'Disease',
-            content: ({disease}) => <EntityLink entity={disease}/>,
-            filterName: 'diseaseName',
+            label: 'Chebi Term',
+            content: (row) => <EntityLink entity={row.chebi}/>,
+            filterName: 'chebiName',
             width: '180px',
         },
         {
             label: 'Citation',
             content: row => (
                 <PublicationSummary
-                    numberOfPublications={row.numberOfPublications}
-                    firstPublication={row.singlePublication}
-                    fishID={row.fish.zdbID}
-                    experimentID={row.experiment.zdbID}
-                    termID={row.disease.zdbID}
-                    allPublicationUrl={`/action/ontology/phenotype-summary/${row.fish.zdbID}`}
+                    numberOfPublications={row.fishModelDisplay.numberOfPublications}
+                    firstPublication={row.fishModelDisplay.singlePublication}
+                    fishID={row.fishModelDisplay.fish.zdbID}
+                    experimentID={row.fishModelDisplay.experiment.zdbID}
+                    termID={row.fishModelDisplay.disease.zdbID}
+                    allPublicationUrl={`/action/ontology/phenotype-summary/${row.fishModelDisplay.fish.zdbID}`}
                 />
             ),
             width: '230px',
@@ -78,7 +82,7 @@ const TermZebrafishModelTable = ({termId, directAnnotationOnly, isChebi = false}
             )}
             <DataTable
                 columns={columns}
-                dataUrl={`/action/api/ontology/${termId}/${endpointUrl}?${qs.stringify(params)}`}
+                dataUrl={`/action/api/ontology/${termId}/chebi-zebrafish-models?${qs.stringify(params)}`}
                 onDataLoadedCount={(count) => setCount(count)}
                 rowKey={row => row.zdbID}
             />
@@ -86,10 +90,9 @@ const TermZebrafishModelTable = ({termId, directAnnotationOnly, isChebi = false}
     );
 };
 
-TermZebrafishModelTable.propTypes = {
+ChebiTermZebrafishModelTable.propTypes = {
     termId: PropTypes.string,
-    isChebi: PropTypes.bool,
     directAnnotationOnly: PropTypes.string,
 };
 
-export default TermZebrafishModelTable;
+export default ChebiTermZebrafishModelTable;
