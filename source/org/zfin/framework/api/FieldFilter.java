@@ -10,6 +10,7 @@ public enum FieldFilter {
     GENE_ABBREVIATION("filter.geneAbbreviation"),
     NAME("name"),
     FISH_NAME("fishName"),
+    DISEASE_NAME("disease"),
     TARGET_NAME("targetName"),
     ENTITY_ID("entityId"),
     STR_NAME("strName"),

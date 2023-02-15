@@ -2,6 +2,7 @@ package org.zfin.indexer;
 
 import lombok.extern.log4j.Log4j2;
 import org.hibernate.SessionFactory;
+import org.zfin.expression.ExperimentCondition;
 import org.zfin.expression.Figure;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
@@ -10,6 +11,7 @@ import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.PhenotypeStatementWarehouse;
+import org.zfin.mutant.presentation.ChebiFishModelDisplay;
 import org.zfin.mutant.presentation.FishModelDisplay;
 import org.zfin.mutant.presentation.FishStatistics;
 import org.zfin.ontology.GenericTerm;
@@ -20,11 +22,10 @@ import org.zfin.properties.ZfinProperties;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toSet;
 import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
 @Log4j2
@@ -51,6 +52,19 @@ public class DiseaseGenesInvolvedIndexer {
             fishModelDisplay.setFishSearch(fishModelDisplay.getFish().getName().replaceAll("<[^>]*>", ""));
             fishModelDisplay.setConditionSearch(fishModelDisplay.getFishModel().getExperiment().getDisplayAllConditions());
             HibernateUtil.currentSession().save(fishModelDisplay);
+            Set<GenericTerm> chebiTerms = fishModelDisplay.getFishModel().getDiseaseAnnotationModels().stream()
+                .map(diseaseAnnotationModel -> diseaseAnnotationModel.getFishExperiment().getExperiment().getExperimentConditions().stream()
+                    .map(ExperimentCondition::getChebiTerm).toList()).toList()
+                .stream().flatMap(Collection::stream).collect(toSet());
+
+            chebiTerms.stream().filter(Objects::nonNull)
+                .forEach(chebiTerm -> {
+                    ChebiFishModelDisplay display = new ChebiFishModelDisplay();
+                    display.setFishModelDisplay(fishModelDisplay);
+                    display.setChebi(chebiTerm);
+                    HibernateUtil.currentSession().save(display);
+                });
+
         });
         HibernateUtil.flushAndCommitCurrentSession();
     }

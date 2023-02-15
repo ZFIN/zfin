@@ -16,9 +16,7 @@ import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.*;
-import org.zfin.mutant.presentation.DiseaseModelDisplay;
-import org.zfin.mutant.presentation.FishModelDisplay;
-import org.zfin.mutant.presentation.FishStatistics;
+import org.zfin.mutant.presentation.*;
 import org.zfin.ontology.*;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.orthology.NcbiOrthoExternalReference;
@@ -391,14 +389,9 @@ public class OntologyService {
                     .map(value -> value.getValue().entrySet().stream()
                         .map(diseaseEntrySet -> {
 
-                            Set<GenericTerm> chebiTerms = diseaseEntrySet.getValue().stream()
-                                .map(diseaseAnnotationModel -> diseaseAnnotationModel.getFishExperiment().getExperiment().getExperimentConditions().stream()
-                                    .map(ExperimentCondition::getChebiTerm).toList()).toList()
-                                .stream().flatMap(Collection::stream).collect(toSet());
                             FishModelDisplay display = new FishModelDisplay(fish);
                             display.setDisease(diseaseEntrySet.getKey());
                             display.setFishModel(diseaseEntrySet.getValue().iterator().next().getFishExperiment());
-                            display.setChebiTerms(new ArrayList<>(chebiTerms));
                             Set<Publication> publications = diseaseEntrySet.getValue().stream().map(diseaseAnnotationModel -> diseaseAnnotationModel.getDiseaseAnnotation().getPublication()).collect(toSet());
                             if (publications.size() == 1) {
                                 display.setSinglePublication(publications.iterator().next());
@@ -510,6 +503,13 @@ public class OntologyService {
             return null;
         }
         return getDiseasePageRepository().getPhenotype(term, pagination, includeChildren);
+    }
+
+    public static List<ChebiFishModelDisplay> getAllChebiFishDiseaseModels(GenericTerm term, boolean includeChildren) {
+        if (term == null) {
+            return null;
+        }
+        return getDiseasePageRepository().getFishDiseaseChebiModels(term, includeChildren);
     }
 
     public List<GenericTerm> getRibbonStages() {

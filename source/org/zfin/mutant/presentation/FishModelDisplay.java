@@ -84,15 +84,6 @@ public class FishModelDisplay implements Comparable<FishModelDisplay> {
 			nullable = false, updatable = false)})
 	private List<GenericTerm> EvidenceCode;
 
-	@JsonView(View.API.class)
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "UI.ZEBRAFISH_MODELS_CHEBI_ASSOCIATION", joinColumns = {
-		@JoinColumn(name = "omca_zebfrafish_model_id", nullable = false, updatable = false)},
-		inverseJoinColumns = {@JoinColumn(name = "omca_term_zdb_id",
-			nullable = false, updatable = false)})
-	private List<GenericTerm> chebiTerms;
-
-
 	public FishModelDisplay(FishExperiment fishModel) {
 		this.fishModel = fishModel;
 	}

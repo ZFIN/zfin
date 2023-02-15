@@ -6,10 +6,12 @@ import DataTableSummaryToggle from '../components/DataTableSummaryToggle';
 import PublicationSummary from '../components/PublicationSummary';
 import {EntityLink} from '../components/entity';
 
-const TermZebrafishModelTable = ({termId, directAnnotationOnly}) => {
+const TermZebrafishModelTable = ({termId, directAnnotationOnly, isChebi = false}) => {
 
     const [directAnnotation, setDirectAnnotation] = useState(directAnnotationOnly === 'true');
     const [count, setCount] = useState({'countDirect': 0, 'countIncludingChildren': 0});
+
+    const endpointUrl = isChebi ? 'chebi-zebrafish-models' : 'zebrafish-models'
 
     const columns = [
         {
@@ -76,7 +78,7 @@ const TermZebrafishModelTable = ({termId, directAnnotationOnly}) => {
             )}
             <DataTable
                 columns={columns}
-                dataUrl={`/action/api/ontology/${termId}/zebrafish-models?${qs.stringify(params)}`}
+                dataUrl={`/action/api/ontology/${termId}/${endpointUrl}?${qs.stringify(params)}`}
                 onDataLoadedCount={(count) => setCount(count)}
                 rowKey={row => row.zdbID}
             />
@@ -86,6 +88,7 @@ const TermZebrafishModelTable = ({termId, directAnnotationOnly}) => {
 
 TermZebrafishModelTable.propTypes = {
     termId: PropTypes.string,
+    isChebi: PropTypes.bool,
     directAnnotationOnly: PropTypes.string,
 };
 
