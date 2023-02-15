@@ -29,14 +29,14 @@ import static java.util.stream.Collectors.toSet;
 import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
 @Log4j2
-public class DiseaseGenesInvolvedIndexer {
+public class TermPageIndexer {
 
     public static void main(String[] args) {
-        DiseaseGenesInvolvedIndexer indexer = new DiseaseGenesInvolvedIndexer();
+        TermPageIndexer indexer = new TermPageIndexer();
         indexer.init();
         indexer.runFishModels();
-        //indexer.runGenesInvolved();
-        //indexer.runTermPhenotype();
+        indexer.runGenesInvolved();
+        indexer.runTermPhenotype();
         System.out.println("Finished Indexing");
     }
 

@@ -11,6 +11,10 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1140/ZFIN-8396-add-password-last-updated-field.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1140/ZFIN-8396-clear-old-passwords.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1140/ZFIN-8226.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1140/genes-involved.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1140/term_phenotype.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1140/zebrafish-models.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1140/zebrafish-models-chebi.sql" />
 
 
 
