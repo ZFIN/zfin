@@ -98,19 +98,6 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
         Query<ChebiFishModelDisplay> query = HibernateUtil.currentSession().createQuery(hql, ChebiFishModelDisplay.class);
         query.setParameter("chebiTerm", term);
         List<ChebiFishModelDisplay> list = query.list();
-/*
-        list.forEach(fishModelDisplay -> {
-            fishModelDisplay.getChebiTerms().forEach(chebi -> {
-                FishModelChebiDisplay chebiDisplay = new FishModelChebiDisplay();
-                chebiDisplay.setChebiTerm(chebi);
-                chebiDisplay.setDisease(fishModelDisplay.getDisease());
-                chebiDisplay.setFish(fishModelDisplay.getFish());
-                chebiDisplay.setConditionSearch(fishModelDisplay.getConditionSearch());
-                chebiDisplay.setEvidenceCode(fishModelDisplay.getEvidenceCode());
-                returnList.add(chebiDisplay);
-            });
-        });
-*/
         return list;
     }
 

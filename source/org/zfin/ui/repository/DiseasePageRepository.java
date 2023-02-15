@@ -3,7 +3,6 @@ package org.zfin.ui.repository;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.mutant.presentation.ChebiFishModelDisplay;
-import org.zfin.mutant.presentation.FishModelChebiDisplay;
 import org.zfin.mutant.presentation.FishModelDisplay;
 import org.zfin.mutant.presentation.FishStatistics;
 import org.zfin.ontology.GenericTerm;

@@ -6,6 +6,8 @@ public enum FieldFilter {
     SEQUENCE_ACCESSION("sequence.accession"),
     SEQUENCE_TYPE("sequence.type"),
     FILTER_TERM_NAME("termName"),
+    FILTER_EVIDENCE("evidence"),
+    FILTER_REF("ref"),
     RELATIONSHIP_TYPE("relationship.type"),
     GENE_ABBREVIATION("filter.geneAbbreviation"),
     NAME("name"),

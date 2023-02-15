@@ -8,6 +8,7 @@
 <c:set var="OTHER_PAGES" value="Other Pages"/>
 <c:set var="GENES_INVOLVED" value="Genes Involved"/>
 <c:set var="ZEBRAFISH_MODELS" value="Zebrafish Models"/>
+<c:set var="CHEBI_ZEBRAFISH_MODELS" value="Human Disease / Model Data"/>
 <c:set var="EXPRESSION" value="Expression"/>
 <c:set var="PHENOTYPE" value="Phenotype"/>
 <c:set var="CITATIONS" value="Citations"/>
@@ -101,7 +102,7 @@
         </c:if>
 
         <c:if test="${isChebiTerm}">
-            <z:section title="${ZEBRAFISH_MODELS}">
+            <z:section title="${CHEBI_ZEBRAFISH_MODELS}">
                 <div class="__react-root" id="ChebiTermZebrafishModelTable"
                      data-term-id="${term.zdbID}"
                      data-direct-annotation-only="true"

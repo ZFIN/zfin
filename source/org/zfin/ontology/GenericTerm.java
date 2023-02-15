@@ -8,6 +8,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Image;
 import org.zfin.framework.api.View;
+import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.util.NumberAwareStringComparator;
 
 import javax.persistence.*;
@@ -79,6 +80,16 @@ public class GenericTerm implements Term<GenericTermRelationship> {
             inverseJoinColumns = {@JoinColumn(name = "termsub_subset_id",
                     nullable = false, updatable = false)})
     private Set<Subset> subsets;
+
+    @Transient
+    private String abbreviation;
+
+    @JsonView({View.API.class, View.ExpressedGeneAPI.class})
+    public String getAbbreviation() {
+        if(oboID.startsWith("ECO"))
+            return DTOConversionService.evidenceCodeIdToAbbreviation(zdbID);
+        return termName;
+    }
 
     public GenericTerm() {
     }

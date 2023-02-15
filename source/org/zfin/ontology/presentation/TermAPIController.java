@@ -262,7 +262,9 @@ public class TermAPIController {
                                                                              @RequestParam(value = "filter.fishName", required = false) String filterFishName,
                                                                              @RequestParam(value = "filter.diseaseName", required = false) String filterDiseaseName,
                                                                              @RequestParam(value = "filter.conditionName", required = false) String filterCondition,
+                                                                             @RequestParam(value = "filter.evidenceCode", required = false) String filterEvidenceCode,
                                                                              @RequestParam(value = "filter.chebiName", required = false) String filterChebiName,
+                                                                             @RequestParam(value = "filter.citation", required = false) String filterCitation,
                                                                              @Version Pagination pagination) {
         HibernateUtil.createTransaction();
         JsonResultResponse<ChebiFishModelDisplay> response = new JsonResultResponse<>();
@@ -282,6 +284,12 @@ public class TermAPIController {
         }
         if (StringUtils.isNotEmpty(filterChebiName)) {
             pagination.addFieldFilter(FieldFilter.FILTER_TERM_NAME, filterChebiName);
+        }
+        if (StringUtils.isNotEmpty(filterEvidenceCode)) {
+            pagination.addFieldFilter(FieldFilter.FILTER_EVIDENCE, filterEvidenceCode);
+        }
+        if (StringUtils.isNotEmpty(filterCitation)) {
+            pagination.addFieldFilter(FieldFilter.FILTER_REF, filterCitation);
         }
 
         List<ChebiFishModelDisplay> chebiDirect = OntologyService.getAllChebiFishDiseaseModels(term, false);

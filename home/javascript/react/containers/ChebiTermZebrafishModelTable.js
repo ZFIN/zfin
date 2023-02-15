@@ -5,6 +5,7 @@ import DataTable from '../components/data-table';
 import DataTableSummaryToggle from '../components/DataTableSummaryToggle';
 import PublicationSummary from '../components/PublicationSummary';
 import {EntityLink} from '../components/entity';
+import CommaSeparatedList from '../components/CommaSeparatedList';
 
 const ChebiTermZebrafishModelTable = ({termId, directAnnotationOnly }) => {
 
@@ -43,6 +44,16 @@ const ChebiTermZebrafishModelTable = ({termId, directAnnotationOnly }) => {
             filterName: 'conditionName',
         },
         {
+            label: 'Evidence',
+            content: (row) => <CommaSeparatedList>
+                {row.fishModelDisplay.evidenceCodes.map(entity => {
+                    return <>{entity.abbreviation}</>
+                })}
+            </CommaSeparatedList>,
+            filterName: 'evidenceCode',
+            width: '180px',
+        },
+        {
             label: 'Chebi Term',
             content: (row) => <EntityLink entity={row.chebi}/>,
             filterName: 'chebiName',
@@ -60,6 +71,7 @@ const ChebiTermZebrafishModelTable = ({termId, directAnnotationOnly }) => {
                     allPublicationUrl={`/action/ontology/phenotype-summary/${row.fishModelDisplay.fish.zdbID}`}
                 />
             ),
+            filterName: 'citation',
             width: '230px',
         },
 
