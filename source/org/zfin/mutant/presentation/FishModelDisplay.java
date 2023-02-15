@@ -6,7 +6,6 @@ import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.zfin.expression.Experiment;
 import org.zfin.framework.api.View;
-import org.zfin.marker.Marker;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.ontology.GenericTerm;
@@ -82,7 +81,7 @@ public class FishModelDisplay implements Comparable<FishModelDisplay> {
 		@JoinColumn(name = "omea_zebfrafish_model_id", nullable = false, updatable = false)},
 		inverseJoinColumns = {@JoinColumn(name = "omea_term_zdb_id",
 			nullable = false, updatable = false)})
-	private List<GenericTerm> EvidenceCode;
+	private Set<GenericTerm> evidenceCodes;
 
 	public FishModelDisplay(FishExperiment fishModel) {
 		this.fishModel = fishModel;
