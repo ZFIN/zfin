@@ -87,7 +87,7 @@
         </java>
     </target>
     <target name="update-ui-tables" description="">
-        <java classname="org.zfin.indexer.DiseaseGenesInvolvedIndexer"
+        <java classname="org.zfin.indexer.TermPageIndexer"
               fork="yes"
               classpathref="extended.classpath"
               failonerror="true">
