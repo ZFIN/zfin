@@ -249,6 +249,7 @@ public class OntologyTermDetailController {
         model.addAttribute("numberOfCitations", number);
         boolean isDiseaseTerm = term.getOntology().equals(Ontology.DISEASE_ONTOLOGY);
         model.addAttribute("isDiseaseTerm", isDiseaseTerm);
+        model.addAttribute("isChebiTerm", term.getOntology().equals(Ontology.CHEBI));
         model.addAttribute("showPhenotypeSection", !term.getOntology().equals(Ontology.ECO));
         return "ontology/term-view";
 

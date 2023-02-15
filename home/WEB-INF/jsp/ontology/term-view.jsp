@@ -100,6 +100,16 @@
             </z:section>
         </c:if>
 
+        <c:if test="${isChebiTerm}">
+            <z:section title="${ZEBRAFISH_MODELS}">
+                <div class="__react-root" id="ChebiTermZebrafishModelTable"
+                     data-term-id="${term.zdbID}"
+                     data-direct-annotation-only="true"
+                     data-is-chebi="{true}"
+                ></div>
+            </z:section>
+        </c:if>
+
         <c:if test="${formBean.term.ontology.expressionData}">
             <z:section title="${EXPRESSION}" infoPopup="/ZFIN/help_files/expression_help.html">
                 <z:section title="Genes with most Figures">
