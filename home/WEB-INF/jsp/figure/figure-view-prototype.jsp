@@ -54,7 +54,7 @@
         <z:section title="${ACKNOWLEDGMENTS}">
             <c:choose>
                 <c:when test="${figure.publication.canShowImages && figure.publication.type != UNPUBLISHED}">
-                    <zfin2:acknowledgment publication="${figure.publication}"
+                    <zfin2:acknowledgment-text publication="${figure.publication}"
                                           showElsevierMessage="${showElsevierMessage}"
                                           hasAcknowledgment="${hasAcknowledgment}"/>
                 </c:when>
