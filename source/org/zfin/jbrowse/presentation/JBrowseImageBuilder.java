@@ -16,7 +16,6 @@ import org.zfin.repository.RepositoryFactory;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 import static org.zfin.repository.RepositoryFactory.getLinkageRepository;
 
@@ -184,7 +183,11 @@ public class JBrowseImageBuilder implements GenomeBrowserImageBuilder {
 
     @Override
     public GenomeBrowserImageBuilder highlight(Marker highlight) {
-        highlightMarker = highlight;
+
+        //Disable highlighting by marker for now
+        //TODO: uncomment when highlighting by marker is supported in jbrowse project.
+        //highlightMarker = highlight;
+
         return this;
     }
 
