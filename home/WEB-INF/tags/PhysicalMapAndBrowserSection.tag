@@ -3,18 +3,47 @@
 <%@ attribute name="locations" required="true" type="java.util.Collection" %>
 <%@ attribute name="gbrowseImage" required="false" type="org.zfin.genomebrowser.presentation.GenomeBrowserImage" %>
 
-<style>
-    .gbrowse-image {
-        width: 800px;
-        margin: 0;
-    }
-</style>
+<c:choose>
+    <c:when test="${empty locations}">
+        <!-- no locations -->
+    </c:when>
+    <c:otherwise>
 
-<c:if test="${not empty locations}">
     <table id="meioticPanel" class="summary">
         <tr>
             <td>
-                <div class="gbrowse-image"></div>
+            <!-- Mapping Details Genome Browser -->
+            <c:choose>
+                <c:when test="${empty gbrowseImage}">
+                    <!-- Without Genome Browser -->
+                </c:when>
+                <c:when test="${gbrowseImage.type == 'JBROWSE'}">
+                    <!-- JBROWSE Genome Browser -->
+                    <div class="jbrowse-image">
+                        <zfin-gbrowse:genomeBrowserImageComponent image="${gbrowseImage}" />
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <!-- GBROWSE Genome Browser -->
+                    <style>
+                        .gbrowse-image {
+                            width: 800px;
+                            margin: 0;
+                        }
+                    </style>
+
+                    <div class="gbrowse-image"></div>
+
+                    <script>
+                        $(".gbrowse-image").gbrowseImage({
+                            width: 700,
+                            imageUrl: "${gbrowseImage.imageUrl}",
+                            linkUrl: "${gbrowseImage.linkUrl}",
+                            build: "${gbrowseImage.build}"
+                        });
+                    </script>
+                </c:otherwise>
+            </c:choose>
             </td>
         </tr>
         <tr>
@@ -29,7 +58,7 @@
                         </tr>
                         <c:forEach var="genomeLocation" items="${locations}" varStatus="loop">
                             <zfin:alternating-tr loopName="loop">
-                                
+
                                 <c:if test="${genomeLocation.source.displayName eq 'Direct Data Submission'}">
 
                                     <td nowrap>${genomeLocation.source.displayName}
@@ -55,13 +84,5 @@
             </td>
         </tr>
     </table>
-
-    <script>
-        $(".gbrowse-image").gbrowseImage({
-            width: 700,
-            imageUrl: "${gbrowseImage.imageUrl}",
-            linkUrl: "${gbrowseImage.linkUrl}",
-            build: "${gbrowseImage.build}"
-        });
-    </script>
-</c:if>
+    </c:otherwise>
+</c:choose>

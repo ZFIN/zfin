@@ -15,15 +15,14 @@ import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gbrowse.GBrowseService;
 import org.zfin.genomebrowser.presentation.GenomeBrowserFactory;
+import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.ActiveData;
-import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
@@ -251,12 +250,12 @@ public class MappingDetailController {
         for (MarkerGenomeLocation genomeLocation : genomeLocations) {
             if (genomeLocation.getSource() == GenomeLocation.Source.ZFIN) {
                 model.addAttribute("gbrowseImage", genomeBrowserFactory.getImageBuilder()
-                                .setLandmarkByGenomeLocation(genomeLocation)
-                                .withCenteredRange(500000)
-                                .highlight(trackingGene)
-                                .highlightColor("pink")
-                                .tracks(GBrowseService.getGBrowseTracks(marker))
-                                .build()
+                        .setLandmarkByGenomeLocation(genomeLocation)
+                        .withCenteredRange(500000)
+                        .highlight(trackingGene) //ignored if using jbrowse for now
+                        .highlightColor("pink")
+                        .tracks(GBrowseService.getGBrowseTracks(marker))
+                        .build()
                 );
             }
         }
