@@ -52,10 +52,23 @@
                     e.preventDefault();
                 });
 
+                //deleteWithReference
+                jQuery("#deleteWithReference").click(function (e) {
+                    e.preventDefault();
+                    jQuery(".pubAttribution").show();
+                    jQuery("#deleteWithReference").hide();
+                    //prevent the submit
+                });
+
             });
 
 
         </script>
+        <style>
+            .pubAttribution {
+                display: none;
+            }
+        </style>
 
         <c:choose>
             <c:when test="${!empty validationReportList}">
@@ -110,19 +123,21 @@
                             </td>
                         </tr>
 
-                        <tr class="spaceUnder">
+                        <tr class="spaceUnder pubAttribution">
                             <td valign="top">
-                                <label for="publicationID">Publication ID (optional)</label>
+                                <label for="publicationID">Publication ID</label>
                                 <br/>
-                                <span><small>You may enter the publication ID of the paper that describes the deletion.</small></span>
+                                <span><small>You may enter the publication ID of the paper that describes the deletion. If someone visits the URL for the deleted entity, they will be redirected to this publication.</small></span>
                                 <br/>
                                 <input type="text" id="publicationID" name="publicationID" value="" />
                             </td>
                         </tr>
 
-                        <tr class="spaceUnder">
+                        <tr class="spaceUnder pubAttribution">
                             <td valign="top">
-                                <label for="comment">Comment (optional)</label>
+                                <label for="comment">Comment</label>
+                                <br/>
+                                <span><small>This comment will be displayed when a visitor is redirected to the publication page.</small></span>
                                 <br/>
                                 <textarea cols="60" rows="10" id="comment" name="comment" value=""></textarea>
                             </td>
@@ -139,7 +154,8 @@
                                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                     </c:when>
                                     <c:otherwise>
-                                        <input type="button" value="Delete this record" id="triggerConfirm"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input type="button" value="Delete this record" id="triggerConfirm"/>
+                                        <input type="button" value="Delete with reference" id="deleteWithReference"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                     </c:otherwise>
                                 </c:choose>
                                 <input type="button" value="Cancel"
