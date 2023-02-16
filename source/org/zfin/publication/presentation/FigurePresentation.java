@@ -5,6 +5,8 @@ import org.zfin.expression.FigureFigure;
 import org.zfin.framework.presentation.EntityPresentation;
 import org.zfin.infrastructure.ZfinEntity;
 
+import java.util.Objects;
+
 /**
  * To get/create output from a Figure object
  */
@@ -17,7 +19,9 @@ public class FigurePresentation extends EntityPresentation {
      * @return html for Figure link
      */
     public static String getLink(Figure figure) {
-        return getViewLink(figure.getZdbID(), figure.getLabel().replaceAll(" ", "&nbsp;"), null, "figure-link");
+        String label = Objects.toString(figure.getLabel(), "");
+        label = label.replaceAll(" ", "&nbsp;");
+        return getViewLink(figure.getZdbID(), label, null, "figure-link");
     }
 
     public static String getLink(String zdbID, String linkText) {

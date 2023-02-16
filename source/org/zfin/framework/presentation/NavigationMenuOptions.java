@@ -17,11 +17,21 @@ public enum NavigationMenuOptions {
     PHENOTYPE("Phenotype"),
     STRS("Sequence Targeting Reagents"),
     SUMMARY("Summary"),
-    ZEBRASHARE("Zebrashare Submission Details");
+    ZEBRASHARE("Zebrashare Submission Details"),
+
+    //Image View
+    IMAGE("Image"),
+    COMMENTS("Comments"),
+    FIGURE_CAPTION("Figure Caption"),
+    DEVELOPMENTAL_STAGE("Developmental Stage"),
+    ORIENTATION("Orientation"),
+    IMAGE_DETAILS("Image Details"),
+    FIGURE_DATA("Figure Data"),
+    ACKNOWLEDGEMENT("Acknowledgments");
 
     public final String value;
 
-    private NavigationMenuOptions(String value) {
+    NavigationMenuOptions(String value) {
         this.value = value;
     }
 

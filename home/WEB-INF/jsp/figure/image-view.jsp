@@ -11,18 +11,17 @@
     <c:set var="UNPUBLISHED" value="${PublicationType.UNPUBLISHED}"/>
     <c:set var="CURATION" value="${PublicationType.CURATION}"/>
 
+    <c:set var="prototypeURL">/action/image/view-prototype/${image.zdbID}</c:set>
     <c:set var="editURL">/action/publication/image-edit?zdbID=${image.zdbID}</c:set>
     <c:set var="deleteURL">/action/infrastructure/deleteRecord/${image.zdbID}</c:set>
 
 
     <zfin2:dataManager zdbID="${image.zdbID}"
+                       prototypeURL="${prototypeURL}"
                        editURL="${editURL}"
                        deleteURL="${deleteURL}"/>
 
-    <%--<zfin-figure:publicationInfo publication="${image.figure.publication}"
-                                 submitters="${submitters}"
-                                 showThisseInSituLink="${showThisseInSituLink}"
-                                 showErrataAndNotes="${showErrataAndNotes}"/>--%>
+
     <c:if test="${!empty image.figure}">
     <c:if test="${fn:length(image.figure.publication.figures) > 1}">
         <div style="margin-top: 1em;">
