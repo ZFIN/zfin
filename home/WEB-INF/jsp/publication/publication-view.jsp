@@ -66,6 +66,14 @@
     </jsp:attribute>
 
     <jsp:body>
+
+<%--        TODO: move this to the dataPage tag--%>
+        <c:if test="${!empty message}">
+            <div class="alert-warning alert border lead">
+                ${message}
+            </div>
+        </c:if>
+
         <div id="${zfn:makeDomIdentifier(SUMMARY)}">
             <div class="small text-uppercase text-muted">PUBLICATION</div>
             <h1>${publication.title}</h1>

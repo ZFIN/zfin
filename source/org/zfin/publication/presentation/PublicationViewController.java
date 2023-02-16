@@ -17,9 +17,8 @@ import org.zfin.figure.presentation.FigureExpressionSummary;
 import org.zfin.figure.presentation.FigurePhenotypeSummary;
 import org.zfin.figure.service.FigureViewService;
 import org.zfin.framework.ComparatorCreator;
+import org.zfin.framework.SessionUtil;
 import org.zfin.framework.api.Pagination;
-import org.zfin.framework.featureflag.FeatureFlagEnum;
-import org.zfin.framework.featureflag.FeatureFlags;
 import org.zfin.framework.presentation.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Clone;
@@ -56,7 +55,6 @@ import static org.apache.commons.lang.StringEscapeUtils.escapeXml;
 import static org.zfin.profile.UserService.isRootUser;
 import static org.zfin.repository.RepositoryFactory.getFigureRepository;
 import static org.zfin.util.ZfinStringUtils.objectToJson;
-import static org.zfin.util.servlet.ServletService.isAuthenticated;
 
 @Controller
 @RequestMapping("/publication")
@@ -136,6 +134,12 @@ PublicationViewController {
         navigationMenu.setRoot(isRootUser());
         navigationMenu.setModel(model);
         model.addAttribute("navigationMenu", navigationMenu);
+
+        String message = (String) SessionUtil.getVariable(LookupStrings.MESSAGE);
+        if (message != null) {
+            model.addAttribute(LookupStrings.MESSAGE, message);
+            SessionUtil.removeVariable(LookupStrings.MESSAGE);
+        }
 
         return "publication/publication-view";
     }

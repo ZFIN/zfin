@@ -72,6 +72,7 @@ public class DeleteRecordController {
             formBean.setPublicationCurated(rule.getPublication());
             getInfrastructureRepository().deletePubProcessingInfo(zdbID);
             getInfrastructureRepository().deleteActiveEntity(zdbID);
+            getInfrastructureRepository().insertReplacedDataReference(zdbID, formBean.getPublicationID(), formBean.getComment());
 
             HibernateUtil.currentSession().flush();
 

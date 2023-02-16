@@ -109,6 +109,25 @@
                               </span>
                             </td>
                         </tr>
+
+                        <tr class="spaceUnder">
+                            <td valign="top">
+                                <label for="publicationID">Publication ID (optional)</label>
+                                <br/>
+                                <span><small>You may enter the publication ID of the paper that describes the deletion.</small></span>
+                                <br/>
+                                <input type="text" id="publicationID" name="publicationID" value="" />
+                            </td>
+                        </tr>
+
+                        <tr class="spaceUnder">
+                            <td valign="top">
+                                <label for="comment">Comment (optional)</label>
+                                <br/>
+                                <textarea cols="60" rows="10" id="comment" name="comment" value=""></textarea>
+                            </td>
+                        </tr>
+
                         <tr class="spaceUnder">
                             <td valign="top">
                                 <c:choose>

@@ -2,6 +2,7 @@ package org.zfin.fish.presentation;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Predicate;
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
@@ -17,8 +18,10 @@ import org.zfin.expression.service.ExpressionService;
 import org.zfin.fish.FeatureGene;
 import org.zfin.fish.MutationType;
 import org.zfin.fish.repository.FishService;
+import org.zfin.framework.SessionUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.ExpressedGene;
+import org.zfin.infrastructure.ReplacedDataReference;
 import org.zfin.mutant.DiseaseAnnotationModel;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.PhenotypeService;
@@ -30,8 +33,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import static org.zfin.repository.RepositoryFactory.getMutantRepository;
-import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 /**
  * Controller that serves the fish detail page.
@@ -47,7 +49,7 @@ public class FishDetailController {
 
         Fish fish = RepositoryFactory.getMutantRepository().getFish(zdbID);
         if (fish == null) {
-            String replacedZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(zdbID);
+            String replacedZdbID = getInfrastructureRepository().getReplacedZdbID(zdbID);
             if (replacedZdbID != null) {
                 LOG.debug("found a replaced zdbID for: " + zdbID + "->" + replacedZdbID);
                 Fish replacedFish = RepositoryFactory.getMutantRepository().getFish(zdbID);
@@ -55,6 +57,17 @@ public class FishDetailController {
                     fish = replacedFish;
                 } else {
                     return "redirect:/" + replacedZdbID;
+                }
+            } else {
+                ReplacedDataReference replacedDataReference = getInfrastructureRepository().getReplacedZdbIDReference(zdbID);
+                if (replacedDataReference != null) {
+                    LOG.debug("found a replaced zdbID reference for: " + zdbID + "->" + replacedDataReference.getPublicationID());
+
+                    //set a session message variable
+                    if (!StringUtils.isEmpty(replacedDataReference.getComment())) {
+                        SessionUtil.setVariable(LookupStrings.MESSAGE, replacedDataReference.getComment());
+                    }
+                    return "redirect:/" + replacedDataReference.getPublicationID();
                 }
             }
         }
@@ -79,7 +92,7 @@ public class FishDetailController {
         Fish fish = RepositoryFactory.getMutantRepository().getFish(zdbID);
 
         if (fish == null) {
-            String replacedZdbID = RepositoryFactory.getInfrastructureRepository().getReplacedZdbID(zdbID);
+            String replacedZdbID = getInfrastructureRepository().getReplacedZdbID(zdbID);
             if (replacedZdbID != null) {
                 LOG.debug("found a replaced zdbID for: " + zdbID + "->" + replacedZdbID);
 
@@ -89,6 +102,17 @@ public class FishDetailController {
                     fish = replacedFish;
                 } else {
                     return "redirect:/" + replacedZdbID;
+                }
+            } else {
+                ReplacedDataReference replacedDataReference = getInfrastructureRepository().getReplacedZdbIDReference(zdbID);
+                if (replacedDataReference != null) {
+                    LOG.debug("found a replaced zdbID reference for: " + zdbID + "->" + replacedDataReference.getPublicationID());
+
+                    //set a session message variable
+                    if (!StringUtils.isEmpty(replacedDataReference.getComment())) {
+                        SessionUtil.setVariable(LookupStrings.MESSAGE, replacedDataReference.getComment());
+                    }
+                    return "redirect:/" + replacedDataReference.getPublicationID();
                 }
             }
         }

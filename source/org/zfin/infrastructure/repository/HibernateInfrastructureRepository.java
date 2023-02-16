@@ -31,6 +31,7 @@ import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerHistory;
+import org.zfin.infrastructure.ReplacedDataReference;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.GenotypeFeature;
@@ -54,7 +55,7 @@ import java.util.Date;
 import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
-import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
+import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 @Repository
 public class HibernateInfrastructureRepository implements InfrastructureRepository {
@@ -1116,6 +1117,29 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
     @Override
+    public ReplacedDataReference getReplacedZdbIDReference(String oldZdbID) {
+        Session session = HibernateUtil.currentSession();
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+
+        CriteriaQuery<ReplacedDataReference> query = criteriaBuilder.createQuery(ReplacedDataReference.class);
+        Root<ReplacedDataReference> root = query.from(ReplacedDataReference.class);
+
+        query.where(criteriaBuilder.equal(root.get("oldZdbID"), oldZdbID))
+                .orderBy(criteriaBuilder.asc(root.get("publicationID")));
+
+        List<ReplacedDataReference> replacementPubList = session.createQuery(query).getResultList();
+
+        if (replacementPubList == null) {
+            logger.warn("Replacement list is null for zdbID: " + oldZdbID);
+            return null;
+        }
+        if (replacementPubList.size() > 1) {
+            logger.warn("Replacement list has non-unique replacement references: " + replacementPubList.size() + " for zdbID: " + oldZdbID);
+        }
+        return replacementPubList.get(0);
+    }
+
+    @Override
     public List<ReplacementZdbID> getReplacedZdbIDsByType(ActiveData.Type type) {
         Session session = HibernateUtil.currentSession();
 
@@ -2011,6 +2035,34 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         query.setParameter("ID", zdbID);
         query.executeUpdate();
 
+    }
+
+    @Override
+    public void insertReplacedDataReference(String zdbID, String publicationID, String comment) throws Exception {
+        Session session = HibernateUtil.currentSession();
+
+        if (StringUtils.isEmpty(publicationID) && StringUtils.isEmpty(comment)) {
+            // nothing to do
+            return;
+        }
+        if (StringUtils.isEmpty(zdbID)) {
+            logger.error("ZdbID is null in ReplacedDataReference insert");
+            throw new Exception("No ZdbID provided in ReplacedDataReference insert");
+        }
+        if (!StringUtils.isEmpty(publicationID)) {
+            Publication publication = getPublicationRepository().getPublication(publicationID);
+            if (publication == null) {
+                logger.error("Publication does not exist in ReplacedDataReference insert: " + publicationID);
+                throw new Exception("Publication does not exist in ReplacedDataReference insert: " + publicationID);
+            }
+        }
+
+        ReplacedDataReference replacedDataReference = new ReplacedDataReference();
+        replacedDataReference.setOldZdbID(zdbID);
+        replacedDataReference.setPublicationID(publicationID);
+        replacedDataReference.setComment(comment);
+
+        session.save(replacedDataReference);
     }
 }
 

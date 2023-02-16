@@ -14,6 +14,7 @@ import org.zfin.infrastructure.*;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.marker.MarkerHistory;
+import org.zfin.infrastructure.ReplacedDataReference;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.ontology.GenericTerm;
@@ -334,6 +335,8 @@ public interface InfrastructureRepository {
 
     String getReplacedZdbID(String oldZdbID);
 
+    ReplacedDataReference getReplacedZdbIDReference(String oldZdbID);
+
     List<ReplacementZdbID> getReplacedZdbIDsByType(ActiveData.Type type);
 
     String getNewZdbID(String withdrawnZdbID);
@@ -486,6 +489,8 @@ public interface InfrastructureRepository {
     List<ControlledVocab> getControlledVocabsForSpeciesByConstruct(Marker construct);
 
     void deletePubProcessingInfo(String zdbID);
+
+    void insertReplacedDataReference(String zdbID, String publicationID, String comment) throws Exception;
 }
 
 

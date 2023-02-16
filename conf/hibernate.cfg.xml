@@ -105,6 +105,7 @@
         <mapping class="org.zfin.infrastructure.LabAttribution"/>
         <mapping class="org.zfin.infrastructure.RecordAttribution"/>
         <mapping class="org.zfin.infrastructure.ReplacementZdbID"/>
+        <mapping class="org.zfin.infrastructure.ReplacedDataReference"/>
         <mapping class="org.zfin.infrastructure.SourceAlias"/>
         <mapping class="org.zfin.infrastructure.TermAttribution"/>
         <mapping class="org.zfin.infrastructure.Updates"/>

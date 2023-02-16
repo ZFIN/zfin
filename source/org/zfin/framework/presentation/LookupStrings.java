@@ -11,6 +11,7 @@ public class LookupStrings {
     public final static String FORM_BEAN = "formBean";
     public final static String IS_OWNER = "isOwner";
     public final static String ERRORS = "errors";
+    public final static String MESSAGE = "message";
 
     // lookups
     public final static String ZDB_ID = "zdbID";
