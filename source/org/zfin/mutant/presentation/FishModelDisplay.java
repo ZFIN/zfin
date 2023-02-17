@@ -60,8 +60,7 @@ public class FishModelDisplay implements Comparable<FishModelDisplay> {
 	@Column(name = "zmd_evidence_search")
 	private String evidenceSearch;
 
-	@JsonView(View.ExpressedGeneAPI.class)
-	@Column(name = "zmd_fig_count")
+	@Transient
 	private int numberOfFigs;
 
 	@Column(name = "zmd_fish_search")

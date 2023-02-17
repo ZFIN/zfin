@@ -1,6 +1,9 @@
 --liquibase formatted sql
 --changeset cmpich:zfin-8416
 
+DROP SCHEMA IF EXISTS UI CASCADE;
+CREATE SCHEMA UI;
+
 drop table if exists UI.OMIM_ZFIN_ASSOCIATION;
 Drop table if exists UI.OMIM_PHENOTYPE_DISPLAY;
 
