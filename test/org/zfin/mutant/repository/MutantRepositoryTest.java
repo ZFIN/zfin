@@ -392,7 +392,9 @@ public class MutantRepositoryTest {
         DiseaseAnnotation model = new DiseaseAnnotation();
         model.setDisease(disease);
         model.setPublication(pub);
-        model.setEvidenceCode("IC");
+        GenericTerm term = new GenericTerm();
+        term.setZdbID("ZDB-TERM-170419-251");
+        model.setEvidenceCode(term);
         DiseaseAnnotation fishModel = RepositoryFactory.getMutantRepository().getDiseaseModel(model);
     }
 
