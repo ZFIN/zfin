@@ -22,11 +22,6 @@ ALTER TABLE UI.ZEBRAFISH_MODELS_DISPLAY
     ADD CONSTRAINT ZEBRAFISH_MODELS_DISPLAY_un UNIQUE (zmd_id);
 
 ALTER TABLE UI.ZEBRAFISH_MODELS_DISPLAY
-    ADD CONSTRAINT constraint_fk2
-        FOREIGN KEY (zmd_fig_zdb_id)
-            REFERENCES figure (fig_zdb_id);
-
-ALTER TABLE UI.ZEBRAFISH_MODELS_DISPLAY
     ADD CONSTRAINT constraint_fk3
         FOREIGN KEY (zmd_fish_zdb_id)
             REFERENCES fish (fish_zdb_id);
