@@ -32,6 +32,7 @@ public class GBrowseImageBuilder implements GenomeBrowserImageBuilder {
     private Marker highlightMarker;
     private Feature highlightFeature;
     private String highlightString;
+    private Integer height;
 
     @Override
     public GenomeBrowserImage build() {
@@ -122,6 +123,12 @@ public class GBrowseImageBuilder implements GenomeBrowserImageBuilder {
     }
 
     @Override
+    public GenomeBrowserImageBuilder withHeight(int height) {
+        this.height = height;
+        return this;
+    }
+
+    @Override
     public GenomeBrowserImageBuilder tracks(GenomeBrowserTrack... tracks) {
         return tracks(Arrays.asList(tracks));
     }
@@ -196,4 +203,8 @@ public class GBrowseImageBuilder implements GenomeBrowserImageBuilder {
         return highlightFeature;
     }
 
+    @Override
+    public Integer getHeight() {
+        return height;
+    }
 }
