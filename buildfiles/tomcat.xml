@@ -77,6 +77,7 @@
     </target>
 
     <target name="tail-tomcat" description="tail -f on catalina.log file">
+        <echo message="tail -f ${CATALINA_BASE}/logs/catalina.out"/>
         <exec executable="tail">
             <arg value="-f"/>
             <arg value="${CATALINA_BASE}/logs/catalina.out"/>

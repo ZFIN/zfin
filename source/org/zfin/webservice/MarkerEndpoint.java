@@ -1,5 +1,6 @@
 package org.zfin.webservice;
 
+import lombok.extern.java.Log;
 import org.jdom.JDOMException;
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
@@ -14,8 +15,14 @@ import org.zfin.webservice.schema.*;
 import javax.xml.bind.JAXBElement;
 import java.util.List;
 
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import javax.servlet.http.HttpServletRequest;
+
+
 /**
  */
+@Log
 @Endpoint
 public class MarkerEndpoint extends AbstractMarkerWebService {
 
@@ -38,6 +45,7 @@ public class MarkerEndpoint extends AbstractMarkerWebService {
     @PayloadRoot(localPart = GENE_REQUEST_LOCAL_NAME, namespace = NAMESPACE_URI)
     @ResponsePayload
     public GeneRetrieveResponse getGene(@RequestPayload GeneRetrieveRequest geneRequestElement) throws Exception {
+        logRequest("getGene", geneRequestElement.getGeneName());
 
         String geneZdbId = geneRequestElement.getGeneName();
         Marker returnGene = getGeneForValue(geneZdbId);
@@ -56,6 +64,7 @@ public class MarkerEndpoint extends AbstractMarkerWebService {
     @PayloadRoot(localPart = GENE_ANATOMY_EXPRESSION_REQUEST_LOCAL_NAME, namespace = NAMESPACE_URI)
     @ResponsePayload
     public GeneExpressionAnatomyWildTypeResponse getGeneAnatomyExpression(@RequestPayload JAXBElement<String> geneRequestElement) throws Exception {
+        logRequest("getGeneAnatomyExpression", geneRequestElement.getValue());
 
         String geneZdbId = geneRequestElement.getValue();
         Marker returnGene = getGeneForValue(geneZdbId);
@@ -74,6 +83,7 @@ public class MarkerEndpoint extends AbstractMarkerWebService {
     @PayloadRoot(localPart = GENE_SEARCH_REQUEST_LOCAL_NAME, namespace = NAMESPACE_URI)
     @ResponsePayload
     public GeneSearchResponse getGenesForName(@RequestPayload GeneSearchRequest geneRequestElement) throws Exception {
+        logRequest("getGenesForName", geneRequestElement.getGeneName());
 
         String abbreviation = geneRequestElement.getGeneName();
         List<Marker> markers = RepositoryFactory.getMarkerRepository().getGenesByAbbreviation(abbreviation);
@@ -84,5 +94,29 @@ public class MarkerEndpoint extends AbstractMarkerWebService {
         );
 
         return geneSearchResponse;
+    }
+
+    /**
+     * Some logging to help figure out if these methods are safe to deprecate.
+     * If these methods are never called, then it should be safe to remove them.
+     * Once removed, we can take out our dependencies: spring-ws-*.jar, spring-xml*.jar, and jdom-1.1.jar
+     */
+    private void logRequest(String methodName, String message) {
+        log.info("DEPRECATE THIS METHOD? " + methodName + ": " + message);
+
+        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (requestAttributes == null) {
+            log.info("Request Attributes is null");
+            return;
+        }
+
+        HttpServletRequest request = requestAttributes.getRequest();
+        if (request != null) {
+            log.info("Request URL: " + request.getRequestURL());
+            log.info("Request URI: " + request.getRequestURI());
+            log.info("More Request Info: " + request.getRemoteAddr() + " " + request.getRemoteHost() + " " + request.getRemotePort());
+        } else {
+            log.info("Request is null");
+        }
     }
 }
