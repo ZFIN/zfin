@@ -36,6 +36,8 @@ public interface GenomeBrowserImageBuilder {
 
     GenomeBrowserImageBuilder withPadding(int v);
 
+    GenomeBrowserImageBuilder withHeight(int height);
+
     GenomeBrowserImageBuilder grid(boolean grid);
 
     String getLandmark();
@@ -53,4 +55,6 @@ public interface GenomeBrowserImageBuilder {
     Feature getHighlightFeature();
 
     GenomeBrowserImage buildForClone(Clone clone);
+
+    Integer getHeight();
 }

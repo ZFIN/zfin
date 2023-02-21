@@ -101,6 +101,12 @@ public class GBrowseImage implements GenomeBrowserImage {
     }
 
     @Override
+    public Integer getHeight() {
+        //not used by gbrowse
+        return null;
+    }
+
+    @Override
     public String getBuild() {
         return build.getValue();
     }

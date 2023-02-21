@@ -254,6 +254,7 @@ public class MappingDetailController {
                         .withCenteredRange(500000)
                         .highlight(trackingGene) //ignored if using jbrowse for now
                         .highlightColor("pink")
+                        .withHeight(200)
                         .tracks(GBrowseService.getGBrowseTracks(marker))
                         .build()
                 );
