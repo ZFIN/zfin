@@ -20,6 +20,8 @@ public class Pagination {
     private List<String> invalidFilterList = new ArrayList<>();
 
     private Map<String, String> filterMap = new HashMap<>();
+    private Map<String, String> exactFilterMap = new HashMap<>();
+    private Set<String> notNullFilterMap = new HashSet<>();
     private boolean isCount = false;
 
     public Pagination(Integer page, Integer limit, String sortBy, String asc) {
@@ -97,6 +99,7 @@ public class Pagination {
 
     /**
      * Uses 1-based indexing due to the client-side expectations
+     *
      * @return
      */
     public int getStart() {
@@ -141,7 +144,7 @@ public class Pagination {
         public static String getAllValues() {
             StringJoiner values = new StringJoiner(",");
             Arrays.asList(values()).forEach(sorting ->
-                    values.add(sorting.name()));
+                values.add(sorting.name()));
             return values.toString();
         }
 
@@ -154,12 +157,28 @@ public class Pagination {
         }
     }
 
-    public void addToFilterMap(String key, String value){
+    public void addToFilterMap(String key, String value) {
         filterMap.put(key, value);
     }
 
-    public Map<String, String> getFilterMap(){
+    public void addToExactFilterMap(String key, String value) {
+        exactFilterMap.put(key, value);
+    }
+
+    public void addToNotNullFilterMap(String value) {
+        notNullFilterMap.add(value);
+    }
+
+    public Map<String, String> getFilterMap() {
         return filterMap;
+    }
+
+    public Map<String, String> getExactFilterMap() {
+        return exactFilterMap;
+    }
+
+    public Set<String> getNotNullFilterMap() {
+        return notNullFilterMap;
     }
 
     public int getIndexOfFirstElement() {

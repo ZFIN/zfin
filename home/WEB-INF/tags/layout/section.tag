@@ -3,6 +3,7 @@
 <%@ attribute name="title" required="false" rtexprvalue="true" type="java.lang.String" %>
 <%@ attribute name="entity" required="false" rtexprvalue="true" type="org.zfin.infrastructure.ZdbID" %>
 <%@ attribute name="hasData" required="false" rtexprvalue="true" type="java.lang.Boolean" %>
+<%@ attribute name="show" required="false" rtexprvalue="true" type="java.lang.Boolean" %>
 <%@ attribute name="cssClass" required="false" rtexprvalue="true" type="java.lang.String" %>
 <%@ attribute name="infoPopup" required="false" rtexprvalue="true" type="java.lang.String" %>
 <%@ attribute name="appendedText" required="false" rtexprvalue="true" type="java.lang.String" %>
@@ -24,7 +25,7 @@
 </c:if>
 
 <%-- Skip this section if "hide" attribute is true (ie. navigationMenu includes this section) --%>
-<c:if test="${!hide}">
+<c:if test="${!hide || show}">
     <section class="section ${cssClass}" id="${sectionID}">
         <c:if test="${!empty title}">
             <div class="heading">
