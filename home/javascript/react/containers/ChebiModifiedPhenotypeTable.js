@@ -2,24 +2,17 @@ import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 import qs from 'qs';
 import DataTable from '../components/data-table';
-import {EntityList} from '../components/entity';
 import DataTableSummaryToggle from '../components/DataTableSummaryToggle';
 import CommaSeparatedList from '../components/CommaSeparatedList';
 import PhenotypeStatementLink from '../components/entity/PhenotypeStatementLink';
 import FigureSummaryPhenotype from '../components/FigureSummaryPhenotype';
 
-const TermPhenotypeTable = ({termId, directAnnotationOnly, endpointUrl = 'phenotype'}) => {
+const ChebiModifiedPhenotypeTable = ({termId, directAnnotationOnly, endpointUrl = 'phenotype-chebi'}) => {
 
     const [directAnnotation, setDirectAnnotation] = useState(directAnnotationOnly === 'true');
     const [count, setCount] = useState({'countDirect': 0, 'countIncludingChildren': 0});
 
     const columns = [
-        {
-            label: 'Affected Genomic Region',
-            content: ({affectedGenes}) => <EntityList entities={affectedGenes}/>,
-            filterName: 'geneSymbol',
-            width: '100px',
-        },
         {
             label: 'Fish',
             content: ({fish}) => <a
@@ -30,6 +23,28 @@ const TermPhenotypeTable = ({termId, directAnnotationOnly, endpointUrl = 'phenot
             width: '120px',
         },
         {
+            label: 'Modification',
+            content: ({amelioratedExacerbatedPhenoSearch}) => <>{amelioratedExacerbatedPhenoSearch}</>,
+            filterName: 'modification',
+            width: '120px',
+        },
+        {
+            label: 'Conditions',
+            content: (row) => <span className='text-break'>
+                <a
+                    className='text-break'
+                    href={`/${row.experiment.zdbID}`}
+                    dangerouslySetInnerHTML={{__html: row.experiment.conditions}}
+                />
+                <a
+                    className='popup-link data-popup-link'
+                    href={`/action/expression/experiment-popup?id=${row.experiment.zdbID}`}
+                />
+            </span>,
+            filterName: 'conditionName',
+            width: '300px',
+        },
+        {
             label: 'Phenotype',
             content: ({phenotypeStatements}) => <CommaSeparatedList>
                 {phenotypeStatements.map(entity => {
@@ -37,7 +52,7 @@ const TermPhenotypeTable = ({termId, directAnnotationOnly, endpointUrl = 'phenot
                 })}
             </CommaSeparatedList>,
             filterName: 'phenotype',
-            width: '220px',
+            width: '300px',
         },
         {
             label: 'Term',
@@ -62,6 +77,7 @@ const TermPhenotypeTable = ({termId, directAnnotationOnly, endpointUrl = 'phenot
     if (directAnnotation) {
         params.directAnnotation = true;
     }
+    params.isAmelioratedExacerbated = true;
 
     return (
         <>
@@ -83,10 +99,10 @@ const TermPhenotypeTable = ({termId, directAnnotationOnly, endpointUrl = 'phenot
     );
 };
 
-TermPhenotypeTable.propTypes = {
+ChebiModifiedPhenotypeTable.propTypes = {
     termId: PropTypes.string,
     endpointUrl: PropTypes.string,
     directAnnotationOnly: PropTypes.string,
 };
 
-export default TermPhenotypeTable;
+export default ChebiModifiedPhenotypeTable;
