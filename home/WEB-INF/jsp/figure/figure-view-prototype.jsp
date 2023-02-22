@@ -22,12 +22,16 @@
 
         <div id="${zfn:makeDomIdentifier(SUMMARY)}">
             <div class="small text-uppercase text-muted">FIGURE</div>
+            <h1>${figure.label}</h1>
             <jsp:include page="figure-view-summary.jsp"/>
         </div>
 
         <z:section title="${figure.label}" sectionID="${zfn:makeDomIdentifier(FIGURE_CAPTION)}">
-            <zfin-figure:imagesAndCaptionPrototype figure="${figure}"
-                                                   showMultipleMediumSizedImages="${showMultipleMediumSizedImages}"/>
+            <zfin-figure:imagesAndCaption
+                    figure="${figure}"
+                    autoplayVideo="false"
+                    showMultipleMediumSizedImages="${showMultipleMediumSizedImages}"
+                    showCaption="true"></zfin-figure:imagesAndCaption>
         </z:section>
 
         <z:section title="${EXPRESSION}">

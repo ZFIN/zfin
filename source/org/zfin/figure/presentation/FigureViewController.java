@@ -62,6 +62,9 @@ public class FigureViewController {
             model.addAttribute("probeSuppliers", suppliers);
         }
 
+        List<Figure> otherFigures = figureViewService.getOrderedFiguresForPublication(figure.getPublication());
+        model.addAttribute("otherFigures", otherFigures);
+
         List<PhenotypeWarehouse> warehouseList = getPhenotypeRepository().getPhenotypeWarehouse(figure.getZdbID());
         FigureExpressionSummary expressionSummary = figureViewService.getFigureExpressionSummary(figure);
         model.addAttribute("expressionSummary", expressionSummary);

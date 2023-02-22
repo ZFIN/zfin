@@ -38,7 +38,7 @@
         </z:dataManagerDropdown>
 
         <div id="${zfn:makeDomIdentifier(SUMMARY)}">
-            <div class="small text-uppercase text-muted">${SUMMARY}</div>
+            <div class="small text-uppercase text-muted">IMAGE</div>
             <h1><a href="${titleUrl}">${title}</a></h1>
             <z:attributeList>
                 <z:attributeListItem label="ID">
