@@ -135,7 +135,7 @@ public class TermPageIndexer {
                     .map(PhenotypeStatementWarehouse::getTag)
                     .collect(toSet());
                 if (phenotypeTags.size() > 0) {
-                    display.setAmelioratedExacerbatedPhenoSearch(String.join("|", phenotypeTags));
+                    display.setAmelioratedExacerbatedPhenoSearch(String.join(", ", phenotypeTags));
                 }
                 Set<Figure> figs = phenotypeStatementWarehouses.stream().map(warehouse -> warehouse.getPhenotypeWarehouse().getFigure()).collect(Collectors.toSet());
                 display.setNumberOfFigs(figs.size());
