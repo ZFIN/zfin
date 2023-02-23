@@ -27,6 +27,7 @@
 
         <z:section title="${figure.label}" sectionID="${zfn:makeDomIdentifier(FIGURE_CAPTION)}">
             <zfin-figure:imagesAndCaptionPrototype figure="${figure}"
+                                          showCaption="${true}"
                                                    showMultipleMediumSizedImages="${showMultipleMediumSizedImages}"/>
         </z:section>
 

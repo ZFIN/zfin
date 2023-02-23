@@ -61,7 +61,7 @@
 
         <c:forEach var="figure" items="${figures}">
             <z:section title="${figure.label}" entity="${figure}">
-                <zfin-figure:imagesAndCaption
+                <zfin-figure:imagesAndCaptionPrototype
                         figure="${figure}"
                         autoplayVideo="false"
                         showMultipleMediumSizedImages="${showMultipleMediumSizedImages}"
@@ -84,7 +84,7 @@
                     </c:if>
                     <zfin-figure:constructLinks figure="${figure}"/>
 
-                </zfin-figure:imagesAndCaption>
+                </zfin-figure:imagesAndCaptionPrototype>
             </z:section>
         </c:forEach>
 
