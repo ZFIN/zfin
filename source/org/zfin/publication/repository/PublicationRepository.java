@@ -1,6 +1,5 @@
 package org.zfin.publication.repository;
 
-import org.apache.commons.collections4.map.MultiKeyMap;
 import org.springframework.web.multipart.MultipartFile;
 import org.zfin.antibody.Antibody;
 import org.zfin.curation.presentation.CorrespondenceDTO;
@@ -8,11 +7,9 @@ import org.zfin.expression.Experiment;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.feature.Feature;
-import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.SourceAlias;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
@@ -466,5 +463,27 @@ public interface PublicationRepository extends PaginationParameter {
     Map<Fish, Map<GenericTerm, List<PhenotypeStatementWarehouse>>> getAllFiguresForPhenotype();
 
     Map<Fish, Map<Experiment, Map<GenericTerm, Set<PhenotypeStatementWarehouse>>>> getAllChebiPhenotype();
+
+    CorrespondenceNeed getCorrespondenceNeed(long id);
+
+    List<CorrespondenceNeed> getCorrespondenceNeedByPublicationID(String zdbID);
+
+    List<CorrespondenceNeedReason> getAllCorrespondenceNeedReasons();
+
+    void deleteCorrespondenceNeedByPublicationID(String pubID);
+
+    CorrespondenceNeedReason getCorrespondenceNeedReasonByID(long id);
+
+    void insertCorrespondenceNeed(CorrespondenceNeed correspondenceNeed);
+
+    List<CorrespondenceResolution> getCorrespondenceResolutionByPublicationID(String zdbID);
+
+    List<CorrespondenceResolutionType> getAllCorrespondenceResolutionTypes();
+
+    void deleteCorrespondenceResolutionByPublicationID(String pubID);
+
+    CorrespondenceResolutionType getCorrespondenceResolutionTypeByID(long id);
+
+    void insertCorrespondenceResolution(CorrespondenceResolution correspondenceResolution);
 
 }
