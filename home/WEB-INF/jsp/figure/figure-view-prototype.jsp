@@ -28,11 +28,11 @@
 
         <z:section title="${figure.label}" sectionID="${zfn:makeDomIdentifier(FIGURE_CAPTION)}">
 
-            <zfin-figure:imagesAndCaption
+            <zfin-figure:imagesAndCaptionPrototype
                     figure="${figure}"
                     autoplayVideo="false"
                     showMultipleMediumSizedImages="${showMultipleMediumSizedImages}"
-                    showCaption="true"></zfin-figure:imagesAndCaption>
+                    showCaption="true"></zfin-figure:imagesAndCaptionPrototype>
 
         </z:section>
 
