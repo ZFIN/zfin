@@ -24,6 +24,9 @@ public class JBrowseImage implements GenomeBrowserImage {
     private String linkUrlBase;
     private String linkUrl;
 
+    private static final int DEFAULT_HEIGHT = 400;
+    private Integer height = DEFAULT_HEIGHT;
+
     private GenomeBrowserBuild build;
     private GenomeBrowserType type = GenomeBrowserType.JBROWSE;
 
@@ -33,7 +36,7 @@ public class JBrowseImage implements GenomeBrowserImage {
         this.highlightFeature = builder.getHighlightLandmark();
         this.highlightColor = builder.getHighlightColor();
         this.grid = builder.isGrid();
-
+        this.height = builder.getHeight();
         this.build = builder.getGenomeBuild();
         this.linkUrlBase = this.build.getPath();
         this.imageUrlBase= this.build.getImagePath();
@@ -126,6 +129,14 @@ public class JBrowseImage implements GenomeBrowserImage {
     @Override
     public GenomeBrowserType getType() {
         return type;
+    }
+
+    @Override
+    public Integer getHeight() {
+        if (height == null) {
+            return DEFAULT_HEIGHT;
+        }
+        return height;
     }
 
     @Override

@@ -27,11 +27,13 @@
         </div>
 
         <z:section title="${figure.label}" sectionID="${zfn:makeDomIdentifier(FIGURE_CAPTION)}">
+
             <zfin-figure:imagesAndCaption
                     figure="${figure}"
                     autoplayVideo="false"
                     showMultipleMediumSizedImages="${showMultipleMediumSizedImages}"
                     showCaption="true"></zfin-figure:imagesAndCaption>
+
         </z:section>
 
         <z:section title="${EXPRESSION}">

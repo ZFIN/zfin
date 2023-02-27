@@ -63,12 +63,13 @@ public class FishAPIController {
         FilterService<ExpressionDisplay> filterService = new FilterService<>(new ExpressionDisplayFiltering());
         List<ExpressionDisplay> filteredExpressionList = filterService.filterAnnotations(fishNonEfgExpressionDisplays, pagination.getFieldFilterValueMap());
 
-
-        response.setResults(filteredExpressionList.stream()
-            .skip(pagination.getStart())
-            .limit(pagination.getLimit())
-            .collect(Collectors.toList()));
-        response.setTotal(filteredExpressionList.size());
+        if (CollectionUtils.isNotEmpty(filteredExpressionList)) {
+            response.setResults(filteredExpressionList.stream()
+                .skip(pagination.getStart())
+                .limit(pagination.getLimit())
+                .collect(Collectors.toList()));
+            response.setTotal(filteredExpressionList.size());
+        }
         response.calculateRequestDuration(startTime);
         HibernateUtil.flushAndCommitCurrentSession();
         return response;
@@ -114,11 +115,13 @@ public class FishAPIController {
         List<ProteinExpressionDisplay> filteredExpressionList = filterService.filterAnnotations(fishProteinExpressionDisplays, pagination.getFieldFilterValueMap());
 
 
-        response.setResults(filteredExpressionList.stream()
-            .skip(pagination.getStart())
-            .limit(pagination.getLimit())
-            .collect(Collectors.toList()));
-        response.setTotal(filteredExpressionList.size());
+        if (CollectionUtils.isNotEmpty(filteredExpressionList)) {
+            response.setResults(filteredExpressionList.stream()
+                .skip(pagination.getStart())
+                .limit(pagination.getLimit())
+                .collect(Collectors.toList()));
+            response.setTotal(filteredExpressionList.size());
+        }
         response.calculateRequestDuration(startTime);
         HibernateUtil.flushAndCommitCurrentSession();
         return response;
@@ -202,11 +205,13 @@ public class FishAPIController {
         List<PhenotypeDisplay> filteredPhenotypeList = filterService.filterAnnotations(phenotypeDisplayList, pagination.getFieldFilterValueMap());
 
 
-        response.setResults(filteredPhenotypeList.stream()
-            .skip(pagination.getStart())
-            .limit(pagination.getLimit())
-            .collect(Collectors.toList()));
-        response.setTotal(filteredPhenotypeList.size());
+        if (CollectionUtils.isNotEmpty(filteredPhenotypeList)) {
+            response.setResults(filteredPhenotypeList.stream()
+                .skip(pagination.getStart())
+                .limit(pagination.getLimit())
+                .collect(Collectors.toList()));
+            response.setTotal(filteredPhenotypeList.size());
+        }
         response.calculateRequestDuration(startTime);
         HibernateUtil.flushAndCommitCurrentSession();
         return response;
