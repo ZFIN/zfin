@@ -6,7 +6,7 @@
 <%@ attribute name="showMultipleMediumSizedImages" type="java.lang.Boolean" rtexprvalue="true" required="true" %>
 
 <c:set var="showCaption" value="${!showCaption ? false : true }"/>
-<table class="figure-image-and-caption">
+<table class="figure-image-and-caption hover-shadow">
     <tr>
         <td>
             <zfin-figure:placeholderImages figure="${figure}"/>
