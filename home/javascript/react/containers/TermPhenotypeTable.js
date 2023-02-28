@@ -8,7 +8,7 @@ import CommaSeparatedList from '../components/CommaSeparatedList';
 import PhenotypeStatementLink from '../components/entity/PhenotypeStatementLink';
 import FigureSummaryPhenotype from '../components/FigureSummaryPhenotype';
 
-const TermPhenotypeTable = ({termId, directAnnotationOnly}) => {
+const TermPhenotypeTable = ({termId, directAnnotationOnly, endpointUrl = 'phenotype'}) => {
 
     const [directAnnotation, setDirectAnnotation] = useState(directAnnotationOnly === 'true');
     const [count, setCount] = useState({'countDirect': 0, 'countIncludingChildren': 0});
@@ -75,7 +75,7 @@ const TermPhenotypeTable = ({termId, directAnnotationOnly}) => {
             )}
             <DataTable
                 columns={columns}
-                dataUrl={`/action/api/ontology/${termId}/phenotype?${qs.stringify(params)}`}
+                dataUrl={`/action/api/ontology/${termId}/${endpointUrl}?${qs.stringify(params)}`}
                 onDataLoadedCount={(count) => setCount(count)}
                 rowKey={row => row.fish.zdbID}
             />
@@ -85,6 +85,7 @@ const TermPhenotypeTable = ({termId, directAnnotationOnly}) => {
 
 TermPhenotypeTable.propTypes = {
     termId: PropTypes.string,
+    endpointUrl: PropTypes.string,
     directAnnotationOnly: PropTypes.string,
 };
 

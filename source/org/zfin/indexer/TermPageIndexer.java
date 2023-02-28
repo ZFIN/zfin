@@ -2,6 +2,7 @@ package org.zfin.indexer;
 
 import lombok.extern.log4j.Log4j2;
 import org.hibernate.SessionFactory;
+import org.zfin.expression.Experiment;
 import org.zfin.expression.ExperimentCondition;
 import org.zfin.expression.Figure;
 import org.zfin.framework.HibernateSessionCreator;
@@ -10,8 +11,10 @@ import org.zfin.framework.api.Pagination;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Fish;
+import org.zfin.mutant.PhenotypeStatement;
 import org.zfin.mutant.PhenotypeStatementWarehouse;
 import org.zfin.mutant.presentation.ChebiFishModelDisplay;
+import org.zfin.mutant.presentation.ChebiPhenotypeDisplay;
 import org.zfin.mutant.presentation.FishModelDisplay;
 import org.zfin.mutant.presentation.FishStatistics;
 import org.zfin.ontology.GenericTerm;
@@ -34,9 +37,12 @@ public class TermPageIndexer {
     public static void main(String[] args) {
         TermPageIndexer indexer = new TermPageIndexer();
         indexer.init();
+/*
         indexer.runFishModels();
         indexer.runGenesInvolved();
         indexer.runTermPhenotype();
+*/
+        indexer.runChebiPhenotype();
         System.out.println("Finished Indexing");
     }
 
@@ -105,6 +111,48 @@ public class TermPageIndexer {
             stat.setPhenotypeStatementSearch(phenotypeStatementWarehouses.stream().map(PhenotypeStatementWarehouse::getDisplayName).collect(Collectors.joining("|")));
             stat.setGeneSymbolSearch(fish.getAffectedGenes().stream().map(Marker::getAbbreviation).sorted().collect(Collectors.joining("|")));
             HibernateUtil.currentSession().save(stat);
+        }));
+        HibernateUtil.flushAndCommitCurrentSession();
+        //log.info("Number of Records: "+displayListSingle.size());
+    }
+
+    private void runChebiPhenotype() {
+        HibernateUtil.createTransaction();
+        Map<Fish, Map<Experiment, Map<GenericTerm, Set<PhenotypeStatementWarehouse>>>> figureMap = RepositoryFactory.getPublicationRepository().getAllChebiPhenotype();
+
+        figureMap.forEach((fish, termMap) -> termMap.forEach((experiment, experimentMao) -> {
+            experimentMao.forEach((term, phenotypeStatementWarehouses) -> {
+                ChebiPhenotypeDisplay display = new ChebiPhenotypeDisplay(fish, term);
+                List<PhenotypeStatementWarehouse> phenotypeStatements = (new ArrayList<>(phenotypeStatementWarehouses).stream().sorted()).toList();
+                display.setPhenotypeStatements(phenotypeStatements);
+                display.setExperiment(experiment);
+                if (experiment.getExperimentConditions().stream().filter(experimentCondition -> experimentCondition.getChebiTerm() != null).collect(toSet()).size() > 1) {
+                    display.setMultiChebiCondition(true);
+                }
+                Set<String> phenotypeTags = phenotypeStatements.stream()
+                    .filter(warehouse -> (warehouse.getTag().equals(PhenotypeStatement.Tag.AMELIORATED.toString()) ||
+                        warehouse.getTag().equals(PhenotypeStatement.Tag.EXACERBATED.toString())))
+                    .map(PhenotypeStatementWarehouse::getTag)
+                    .collect(toSet());
+                if (phenotypeTags.size() > 0) {
+                    display.setAmelioratedExacerbatedPhenoSearch(String.join(", ", phenotypeTags));
+                }
+                Set<Figure> figs = phenotypeStatementWarehouses.stream().map(warehouse -> warehouse.getPhenotypeWarehouse().getFigure()).collect(Collectors.toSet());
+                display.setNumberOfFigs(figs.size());
+                if (figs.size() == 1) {
+                    display.setFigure(figs.iterator().next());
+                }
+                Set<Publication> pubs = phenotypeStatementWarehouses.stream().map(warehouse -> warehouse.getPhenotypeWarehouse().getFigure().getPublication()).collect(Collectors.toSet());
+                display.setNumberOfPubs(pubs.size());
+                if (pubs.size() == 1) {
+                    display.setPublication(pubs.iterator().next());
+                }
+                display.setFishSearch(fish.getName().replaceAll("<[^>]*>", ""));
+                display.setPhenotypeStatementSearch(phenotypeStatementWarehouses.stream().map(PhenotypeStatementWarehouse::getDisplayName).collect(Collectors.joining("|")));
+                display.setGeneSymbolSearch(fish.getAffectedGenes().stream().map(Marker::getAbbreviation).sorted().collect(Collectors.joining("|")));
+                display.setConditionSearch(experiment.getDisplayAllConditions());
+                HibernateUtil.currentSession().save(display);
+            });
         }));
         HibernateUtil.flushAndCommitCurrentSession();
         //log.info("Number of Records: "+displayListSingle.size());

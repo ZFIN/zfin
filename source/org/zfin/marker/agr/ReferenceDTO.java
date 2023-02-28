@@ -1,5 +1,6 @@
 package org.zfin.marker.agr;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.GregorianCalendar;
@@ -32,6 +33,7 @@ public class ReferenceDTO {
     @JsonProperty("MODReferenceTypes")
     private List<MODReferenceTypeDTO> MODReferenceTypes;
     private List<ReferenceTagDTO> tags;
+    @JsonIgnore
     private List<MESHDetailDTO> meshTerms;
     private List<CrossReferenceDTO> crossReferences;
     private String resourceAbbreviation;
