@@ -3,6 +3,16 @@ package org.zfin.framework.api;
 public class View {
 
     // Generic Views
+    public static class UI {
+    }
+
+    public static class PublicationUI extends UI {
+    }
+
+    public static class ExpressionPublicationUI extends PublicationUI {
+    }
+
+
     public static class Default {
     }
 
@@ -63,4 +73,6 @@ public class View {
     public static class TranscriptDetailsAPI extends API {
     }
 
+    public static class FigureImageAPI extends API {
+    }
 }

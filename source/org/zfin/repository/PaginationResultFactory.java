@@ -86,8 +86,8 @@ public class PaginationResultFactory {
      */
     @SuppressWarnings("unchecked")
     public static <T> PaginationResult<T> createResultFromScrollableResultAndClose(int startRecord, int stopRecord, ScrollableResults scrollableResults) {
-        PaginationResult<T> returnResult = new PaginationResult<T>();
-        List<T> list = new ArrayList<T>();
+        PaginationResult<T> returnResult = new PaginationResult<>();
+        List<T> list = new ArrayList<>();
         if (startRecord == 0) {
             scrollableResults.beforeFirst();
         } else {

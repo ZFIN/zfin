@@ -20,11 +20,11 @@ public abstract class Figure implements Serializable, Comparable<Figure>, ZdbID 
 
     public static String GELI = "GELI";
 
-    @JsonView({View.API.class, View.ExpressedGeneAPI.class})
+    @JsonView({View.API.class, View.ExpressedGeneAPI.class, View.UI.class})
     private String zdbID;
     private String caption;
     private String comments;
-    @JsonView({View.API.class, View.ExpressedGeneAPI.class})
+    @JsonView({View.API.class, View.ExpressedGeneAPI.class, View.UI.class})
     private String label;
     private String orderingLabel;
     private Set<ExpressionResult> expressionResults;

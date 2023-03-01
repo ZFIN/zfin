@@ -10,8 +10,8 @@ import org.zfin.framework.api.View;
  */
 public class PostComposedEntity implements Comparable<PostComposedEntity> {
 
-    @JsonView(View.API.class) protected GenericTerm superterm;
-    @JsonView(View.API.class) protected GenericTerm subterm;
+    @JsonView({View.API.class, View.UI.class}) protected GenericTerm superterm;
+    @JsonView({View.API.class, View.UI.class}) protected GenericTerm subterm;
 
     public GenericTerm getSuperterm() {
         return superterm;
