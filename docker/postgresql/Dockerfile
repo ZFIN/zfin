@@ -1,3 +1,3 @@
-FROM postgres:13.1
+FROM postgres:15
 
 COPY ./addUsers.sql /docker-entrypoint-initdb.d/addUsers.sql
