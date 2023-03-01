@@ -15,9 +15,11 @@ public enum NavigationMenuOptions {
     MUTATION("Mutations / Transgenics"),
     ORTHOLOGY("Orthology"),
     PHENOTYPE("Phenotype"),
+    PHENOTYPE_CHEBI("Phenotype "),
     STRS("Sequence Targeting Reagents"),
     SUMMARY("Summary"),
     ZEBRASHARE("Zebrashare Submission Details"),
+    CITATION("Citation"),
 
     //Image View
     IMAGE("Image"),
@@ -27,7 +29,11 @@ public enum NavigationMenuOptions {
     ORIENTATION("Orientation"),
     IMAGE_DETAILS("Image Details"),
     FIGURE_DATA("Figure Data"),
-    ACKNOWLEDGEMENT("Acknowledgments");
+    ACKNOWLEDGEMENT("Acknowledgments"),
+    CHEBI_HUMAN_DISEASE("Human Disease / Model Data"),
+    RELATIONSHIPS("Relationships"),
+    ZEBRAFISH_MODELS("Zebrafish Models"),
+    GENES_INVOLVED("Genes Invovled");
 
     public final String value;
 

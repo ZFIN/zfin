@@ -197,7 +197,7 @@ public class OntologyTermDetailController {
     }
 
     @RequestMapping("/prototype/{termID}")
-    protected String termDetailPagePRototype(@PathVariable String termID,
+    protected String termDetailPagePrototype(@PathVariable String termID,
                                              @ModelAttribute("formBean") OntologyBean form,
                                              Model model) throws Exception {
 
@@ -249,8 +249,22 @@ public class OntologyTermDetailController {
         model.addAttribute("numberOfCitations", number);
         boolean isDiseaseTerm = term.getOntology().equals(Ontology.DISEASE_ONTOLOGY);
         model.addAttribute("isDiseaseTerm", isDiseaseTerm);
-        model.addAttribute("isChebiTerm", term.getOntology().equals(Ontology.CHEBI));
+        boolean isChebi = term.getOntology().equals(Ontology.CHEBI);
+        model.addAttribute("isChebiTerm", isChebi);
         model.addAttribute("showPhenotypeSection", !term.getOntology().equals(Ontology.ECO));
+
+        NavigationMenu menu = new DefaultTermNavigationMenu();
+        if (isChebi) {
+            menu = new ChebiNavigationMenu();
+        }
+        if (isDiseaseTerm) {
+            menu = new DiseaseNavigationMenu();
+        }
+        if (term.getOntology().equals(Ontology.ANATOMY)) {
+            menu = new ZFANavigationMenu();
+        }
+        model.addAttribute("navigationMenu", menu);
+
         return "ontology/term-view";
 
     }

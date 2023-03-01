@@ -1,47 +1,22 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+<%@ page import="org.zfin.framework.presentation.NavigationMenuOptions" %>
 
 <jsp:useBean id="formBean" class="org.zfin.ontology.presentation.OntologyBean" scope="request"/>
 <c:set var="term" value="${formBean.term}"/>
 
-<c:set var="SUMMARY" value="Summary"/>
-<c:set var="RELATIONSHIP" value="Relationships"/>
-<c:set var="OTHER_PAGES" value="Other Pages"/>
-<c:set var="GENES_INVOLVED" value="Genes Involved"/>
-<c:set var="ZEBRAFISH_MODELS" value="Zebrafish Models"/>
-<c:set var="CHEBI_ZEBRAFISH_MODELS" value="Human Disease / Model Data"/>
-<c:set var="EXPRESSION" value="Expression"/>
-<c:set var="PHENOTYPE" value="Phenotype"/>
-<c:set var="CITATIONS" value="Citations"/>
+<c:set var="SUMMARY" value="${NavigationMenuOptions.SUMMARY.value}"/>
+<c:set var="RELATIONSHIP" value="${NavigationMenuOptions.RELATIONSHIPS.value}"/>
+<c:set var="HUMAN_DISEASE" value="${NavigationMenuOptions.CHEBI_HUMAN_DISEASE.value}"/>
+<c:set var="PHENOTYPE" value="${NavigationMenuOptions.PHENOTYPE.value}"/>
+<c:set var="PHENOTYPE_CHEBI" value="${NavigationMenuOptions.PHENOTYPE_CHEBI.value}"/>
+<c:set var="GENES_INVOLVED" value="${NavigationMenuOptions.GENES_INVOLVED.value}"/>
+<c:set var="ZEBRAFISH_MODELS" value="${NavigationMenuOptions.ZEBRAFISH_MODELS.value}"/>
+<c:set var="EXPRESSION" value="${NavigationMenuOptions.EXPRESSION.value}"/>
+<c:set var="CITATIONS" value="${NavigationMenuOptions.CITATION.value}"/>
 
 <c:set var="secs"/>
 
-<c:choose>
-    <c:when test="${isDiseaseTerm}">&nbsp;
-        <c:set var="secs"
-               value="${[SUMMARY, RELATIONSHIP, OTHER_PAGES, GENES_INVOLVED, ZEBRAFISH_MODELS, PHENOTYPE, CITATIONS]}"/>
-    </c:when>
-    <c:otherwise>
-        <c:choose>
-            <c:when test="${formBean.term.ontology.expressionData && showPhenotypeSection}">
-                <c:set var="secs" value="${[SUMMARY, RELATIONSHIP, EXPRESSION, PHENOTYPE]}"/>
-            </c:when>
-            <c:otherwise>
-                <c:choose>
-                    <c:when test="${formBean.term.ontology.expressionData}">
-                        <c:set var="secs" value="${[SUMMARY, RELATIONSHIP, EXPRESSION]}"/>
-                    </c:when>
-                    <c:otherwise>
-                        <c:if test="${showPhenotypeSection}">
-                            <c:set var="secs" value="${[SUMMARY, RELATIONSHIP, PHENOTYPE]}"/>
-                        </c:if>
-                    </c:otherwise>
-                </c:choose>
-            </c:otherwise>
-        </c:choose>
-    </c:otherwise>
-</c:choose>
-
-<z:dataPage sections="${secs}">
+<z:dataPage sections="${[]}" navigationMenu="${navigationMenu}">
 
     <jsp:attribute name="entityName">
        ${term.termName}
@@ -62,58 +37,77 @@
             <jsp:include page="term-view-relationship.jsp"/>
         </z:section>
 
-        <c:if test="${isDiseaseTerm}">
-            <z:section title="${OTHER_PAGES}">
-                <zfin2:subsection title="${title}" test="${!empty formBean.agrDiseaseLinks}" showNoData="true" noDataText="No links to external sites">
-                    <table class="horizontal-solidblock">
-                        <c:forEach var="link" items="${formBean.agrDiseaseLinks}" varStatus="loop">
-                            <tr>
-                                <td>
-                                    <zfin:link entity="${link}"/>
-                                    <c:if test="${link.publicationCount > 0}">
-                                        <c:choose>
-                                            <c:when test="${link.publicationCount == 1}">
-                                                (<a href="/${link.singlePublication.zdbID}">${link.publicationCount}</a>)
-                                            </c:when>
-                                            <c:otherwise>
-                                                (<a href="/action/infrastructure/data-citation-list/${link.zdbID}">${link.publicationCount}</a>)
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </c:if>
-                                </td>
-                            </tr>
-                        </c:forEach>
-                    </table>
-                </zfin2:subsection>
-            </z:section>
+        <z:section title="${OTHER_PAGES}">
+            <zfin2:subsection title="${title}" test="${!empty formBean.agrDiseaseLinks}" showNoData="true" noDataText="No links to external sites">
+                <table class="horizontal-solidblock">
+                    <c:forEach var="link" items="${formBean.agrDiseaseLinks}" varStatus="loop">
+                        <tr>
+                            <td>
+                                <zfin:link entity="${link}"/>
+                                <c:if test="${link.publicationCount > 0}">
+                                    <c:choose>
+                                        <c:when test="${link.publicationCount == 1}">
+                                            (<a href="/${link.singlePublication.zdbID}">${link.publicationCount}</a>)
+                                        </c:when>
+                                        <c:otherwise>
+                                            (<a href="/action/infrastructure/data-citation-list/${link.zdbID}">${link.publicationCount}</a>)
+                                        </c:otherwise>
+                                    </c:choose>
+                                </c:if>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                </table>
+            </zfin2:subsection>
+        </z:section>
 
-            <z:section title="${GENES_INVOLVED}">
-                <div class="__react-root" id="TermGeneTable"
-                     data-term-id="${term.zdbID}"
-                     data-direct-annotation-only="true"
-                ></div>
-            </z:section>
-            <z:section title="${ZEBRAFISH_MODELS}">
-                <div class="__react-root" id="TermZebrafishModelTable"
-                     data-term-id="${term.zdbID}"
-                     data-direct-annotation-only="true"
-                ></div>
-            </z:section>
-        </c:if>
+        <z:section title="${GENES_INVOLVED}">
+            <div class="__react-root" id="TermGeneTable"
+                 data-term-id="${term.zdbID}"
+                 data-direct-annotation-only="true"
+            ></div>
+        </z:section>
+        <z:section title="${ZEBRAFISH_MODELS}">
+            <div class="__react-root" id="TermZebrafishModelTable"
+                 data-term-id="${term.zdbID}"
+                 data-direct-annotation-only="true"
+            ></div>
+        </z:section>
 
-        <c:if test="${isChebiTerm}">
-            <z:section title="${CHEBI_ZEBRAFISH_MODELS}">
-                <div class="__react-root" id="ChebiTermZebrafishModelTable"
+        <z:section title="${HUMAN_DISEASE}">
+            <div class="__react-root" id="ChebiTermZebrafishModelTable"
+                 data-term-id="${term.zdbID}"
+                 data-direct-annotation-only="true"
+                 data-is-chebi="{true}"
+            ></div>
+        </z:section>
+
+        <z:section title="${PHENOTYPE_CHEBI}">
+            <z:section title="Phenotype resulting from" appendedText="${term.termName}" show="${true}">
+                <div class="__react-root" id="ChebiPhenotypeTable"
                      data-term-id="${term.zdbID}"
                      data-direct-annotation-only="true"
-                     data-is-chebi="{true}"
+                     data-is-wildtype="true"
+                     data-is-multi-chebi-condition="false"
                 ></div>
             </z:section>
-        </c:if>
+            <z:section title="Phenotype where environments contain" appendedText="${term.termName}" show="${true}">
+                <div class="__react-root" id="ChebiPhenotypeTable"
+                     data-term-id="${term.zdbID}"
+                     data-direct-annotation-only="true"
+                ></div>
+            </z:section>
+            <z:section title="Phenotype modified by environments containing" appendedText="${term.termName}" show="${true}">
+                <div class="__react-root" id="ChebiModifiedPhenotypeTable"
+                     data-term-id="${term.zdbID}"
+                     data-direct-annotation-only="true"
+                ></div>
+            </z:section>
+        </z:section>
 
         <c:if test="${formBean.term.ontology.expressionData}">
             <z:section title="${EXPRESSION}" infoPopup="/ZFIN/help_files/expression_help.html">
-                <z:section title="Genes with most Figures">
+                <z:section title="Genes with most Figures" show="${true}">
                     <div class="__react-root" id="TermExpressedGenesTable"
                          data-term-id="${term.zdbID}"
                          data-direct-annotation-only="true"
@@ -121,13 +115,13 @@
                     <div><a href="/action/expression/results?anatomyTermNames=${term.termName}&anatomyTermIDs=${term.zdbID}&journalType=ALL&includeSubstructures=false&onlyWildtype=true">
                         Search genes within Advanced Search</a></div>
                 </z:section>
-                <z:section title="Thisse recommended In Situ Probes" infoPopup="/action/ontology/clone-stars">
+                <z:section title="Thisse recommended In Situ Probes" infoPopup="/action/ontology/clone-stars" show="${true}">
                     <div class="__react-root" id="TermInSituProbeTable"
                          data-term-id="${term.zdbID}"
                          data-direct-annotation-only="true"
                     ></div>
                 </z:section>
-                <z:section title="Antibody Labeling">
+                <z:section title="Antibody Labeling" show="${true}">
                     <div class="__react-root" id="TermAntibodyTable"
                          data-term-id="${term.zdbID}"
                          data-direct-annotation-only="true"
@@ -138,7 +132,7 @@
 
         <c:if test="${showPhenotypeSection}">
             <z:section title="${PHENOTYPE}">
-                <z:section title="Phenotype caused by Genes">
+                <z:section title="Phenotype caused by Genes" show="${true}">
                     <div class="__react-root" id="TermPhenotypeTable"
                          data-term-id="${term.zdbID}"
                          data-direct-annotation-only="true"

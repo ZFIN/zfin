@@ -1,5 +1,6 @@
 package org.zfin.ui.repository;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.hibernate.query.Query;
 import org.zfin.framework.HibernateUtil;
@@ -7,6 +8,7 @@ import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.mutant.presentation.ChebiFishModelDisplay;
+import org.zfin.mutant.presentation.ChebiPhenotypeDisplay;
 import org.zfin.mutant.presentation.FishModelDisplay;
 import org.zfin.mutant.presentation.FishStatistics;
 import org.zfin.ontology.GenericTerm;
@@ -99,6 +101,40 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
         query.setParameter("chebiTerm", term);
         List<ChebiFishModelDisplay> list = query.list();
         return list;
+    }
+
+    @Override
+    public PaginationResult<ChebiPhenotypeDisplay> getPhenotypeChebi(GenericTerm term, Pagination pagination, boolean includeChildren) {
+        PaginationBean bean = PaginationBean.getPaginationBean(pagination);
+        String hql;
+        if (!includeChildren) {
+            hql = "select chebiPhenotype from ChebiPhenotypeDisplay as chebiPhenotype where chebiPhenotype.term = :term ";
+        } else {
+            hql = "select chebiPhenotype from ChebiPhenotypeDisplay as chebiPhenotype, TransitiveClosure as clo  " +
+                "where clo.child = chebiPhenotype.term AND clo.root = :term ";
+        }
+        if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
+            for (var entry : pagination.getFilterMap().entrySet()) {
+                hql += " AND ";
+                hql += "LOWER(" + entry.getKey() + ") like '%" + entry.getValue().toLowerCase() + "%' ";
+            }
+        }
+        if (MapUtils.isNotEmpty(pagination.getExactFilterMap())) {
+            for (var entry : pagination.getExactFilterMap().entrySet()) {
+                hql += " AND ";
+                hql += entry.getKey() + "= '" + entry.getValue() + "' ";
+            }
+        }
+        if (CollectionUtils.isNotEmpty(pagination.getNotNullFilterMap())) {
+            for (var entry : pagination.getNotNullFilterMap()) {
+                hql += " AND ";
+                hql += entry + " is not null ";
+            }
+        }
+        hql += "order by chebiPhenotype.fish.displayName";
+        Query<ChebiPhenotypeDisplay> query = HibernateUtil.currentSession().createQuery(hql, ChebiPhenotypeDisplay.class);
+        query.setParameter("term", term);
+        return PaginationResultFactory.createResultFromScrollableResultAndClose(bean, query.scroll());
     }
 
 }
