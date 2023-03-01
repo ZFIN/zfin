@@ -464,8 +464,6 @@ public interface PublicationRepository extends PaginationParameter {
 
     Map<Fish, Map<Experiment, Map<GenericTerm, Set<PhenotypeStatementWarehouse>>>> getAllChebiPhenotype();
 
-    CorrespondenceNeed getCorrespondenceNeed(long id);
-
     List<CorrespondenceNeed> getCorrespondenceNeedByPublicationID(String zdbID);
 
     List<CorrespondenceNeedReason> getAllCorrespondenceNeedReasons();
