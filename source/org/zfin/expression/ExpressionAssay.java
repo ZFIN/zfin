@@ -8,11 +8,11 @@ import org.zfin.framework.api.View;
  */
 public class ExpressionAssay implements Comparable<ExpressionAssay> {
 
-    @JsonView(View.API.class)
+    @JsonView({View.API.class, View.UI.class})
     private String name;
     private String comments;
     private int displayOrder;
-    @JsonView(View.API.class)
+    @JsonView({View.API.class, View.UI.class})
     private String abbreviation;
     private boolean immunogen;
 

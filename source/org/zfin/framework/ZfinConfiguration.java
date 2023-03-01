@@ -3,14 +3,12 @@ package org.zfin.framework;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Repository;
-import org.springframework.test.context.ContextConfiguration;
 
 @Configuration
 @ComponentScan({"org.zfin"})
@@ -20,7 +18,7 @@ import org.springframework.test.context.ContextConfiguration;
 public class ZfinConfiguration {
 
     public ZfinConfiguration() {
-        String name ="";
+        String name = "";
     }
 
     @Bean

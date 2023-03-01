@@ -44,7 +44,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
 
     /*private String zdbID;
     private String name;*/
-    @JsonView({View.API.class, View.ExpressedGeneAPI.class})
+    @JsonView({View.API.class, View.ExpressedGeneAPI.class, View.UI.class})
     private String abbreviation;
     private String abbreviationOrder;
     private Set<ExpressionExperiment> probeExpressionExperiments;

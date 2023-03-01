@@ -12,6 +12,7 @@
         <property name="dialect">org.hibernate.dialect.PostgreSQL9Dialect</property>
         <property name="connection.datasource">java:comp/env/jdbc/zfin</property>
         <property name="hibernate.show_sql">false</property>
+        <property name="hibernate.generate_statistics">true</property>
         <property name="hibernate.format_sql">true</property>
         <property name="hibernate.cache.use_second_level_cache">false</property>
         <property name="hibernate.cache.use_query_cache">false</property>
@@ -90,6 +91,7 @@
         <mapping class="org.zfin.feature.SecondaryFeature"/>
         <mapping class="org.zfin.feature.TranscriptConsequence"/>
         <mapping class="org.zfin.fish.WarehouseSummary"/>
+        <mapping class="org.zfin.figure.presentation.ExpressionTableRow"/>
         <mapping class="org.zfin.framework.featureflag.FeatureFlag"/>
         <mapping class="org.zfin.mutant.FishAlias"/>
         <mapping class="org.zfin.mutant.SecondaryFish"/>

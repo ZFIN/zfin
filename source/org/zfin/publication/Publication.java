@@ -24,7 +24,7 @@ import java.util.*;
 @Table(name = "Publication")
 public class Publication implements Comparable<Publication>, Serializable, EntityZdbID {
 
-    @JsonView({View.Default.class, View.API.class})
+    @JsonView({View.Default.class, View.API.class, View.ExpressionPublicationUI.class})
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "Publication")
     @GenericGenerator(name = "Publication",
