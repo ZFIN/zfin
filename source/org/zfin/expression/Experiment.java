@@ -32,16 +32,16 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
                     @org.hibernate.annotations.Parameter(name = "insertActiveData", value = "true")
             })
     @Column(name = "exp_zdb_id")
-    @JsonView(View.API.class)
+    @JsonView({View.API.class, View.UI.class})
     private String zdbID;
-    @JsonView(View.API.class)
+    @JsonView({View.API.class, View.UI.class})
     @Column(name = "exp_name")
     private String name;
     @ManyToOne
     @JoinColumn(name = "exp_source_zdb_id")
     private Publication publication;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "experiment")
-    @JsonView(View.API.class)
+    @JsonView({View.API.class, View.UI.class})
     private Set<ExperimentCondition> experimentConditions;
 
     @JsonView(View.API.class)
@@ -150,7 +150,7 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
         experimentConditions.add(condition);
     }
 
-    @JsonView(View.API.class)
+    @JsonView({View.API.class, View.UI.class})
     @JsonProperty("conditions")
     public String getDisplayAllConditions() {
         String displayConditions = "";

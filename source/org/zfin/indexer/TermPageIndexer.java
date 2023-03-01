@@ -4,7 +4,9 @@ import lombok.extern.log4j.Log4j2;
 import org.hibernate.SessionFactory;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.ExperimentCondition;
+import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.Figure;
+import org.zfin.figure.presentation.ExpressionTableRow;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.Pagination;
@@ -29,6 +31,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toSet;
+import static org.zfin.repository.RepositoryFactory.getExpressionRepository;
 import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
 @Log4j2
@@ -37,11 +40,10 @@ public class TermPageIndexer {
     public static void main(String[] args) {
         TermPageIndexer indexer = new TermPageIndexer();
         indexer.init();
-/*
+        indexer.publicationExpressions();
         indexer.runFishModels();
         indexer.runGenesInvolved();
         indexer.runTermPhenotype();
-*/
         indexer.runChebiPhenotype();
         System.out.println("Finished Indexing");
     }
@@ -71,6 +73,20 @@ public class TermPageIndexer {
                     HibernateUtil.currentSession().save(display);
                 });
 
+        });
+        HibernateUtil.flushAndCommitCurrentSession();
+    }
+
+    private void publicationExpressions() {
+        HibernateUtil.createTransaction();
+        List<ExpressionResult> expressionResults = getExpressionRepository().getAllExpressionResults();
+        expressionResults.forEach(expressionResult -> {
+            expressionResult.getFigures().forEach(figure -> {
+                ExpressionTableRow row = new ExpressionTableRow(expressionResult);
+                row.setFigure(figure);
+                row.setPublication(expressionResult.getExpressionExperiment().getPublication());
+                HibernateUtil.currentSession().save(row);
+            });
         });
         HibernateUtil.flushAndCommitCurrentSession();
     }

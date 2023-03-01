@@ -21,13 +21,13 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
 
     public static final String WT = "WT";
 
-    @JsonView({View.API.class, View.ExpressedGeneAPI.class})
+    @JsonView({View.API.class, View.ExpressedGeneAPI.class, View.UI.class})
     private String zdbID;
     private Genotype genotype;
-    @JsonView({View.API.class, View.ExpressedGeneAPI.class})
+    @JsonView({View.API.class, View.ExpressedGeneAPI.class, View.UI.class})
     private String name;
     private String nameOrder;
-    @JsonView({View.API.class, View.ExpressedGeneAPI.class})
+    @JsonView({View.API.class, View.ExpressedGeneAPI.class, View.UI.class})
     private String displayName;
     private String handle;
     private long order;

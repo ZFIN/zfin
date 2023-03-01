@@ -2854,5 +2854,22 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         return (ArrayList<HTPDatasetSampleDetail>) query.list();
     }
 
+    @Override
+    public List<ExpressionResult> getAllExpressionResults() {
+        Session session = HibernateUtil.currentSession();
+        String hql = """
+            select result from ExpressionResult result
+            left join fetch result.expressionExperiment as experiment
+            left join fetch experiment.gene as gene
+            left join fetch result.startStage as start
+            left join fetch result.endStage as end
+            left join fetch experiment.fishExperiment as fishExperiment
+            left join fetch fishExperiment.fish as fish
+            where experiment.gene is not null
+            """;
+        Query<ExpressionResult> query = session.createQuery(hql, ExpressionResult.class);
+        return query.list();
+    }
+
 
 }

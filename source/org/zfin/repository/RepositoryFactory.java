@@ -52,6 +52,8 @@ import org.zfin.sequence.repository.HibernateDisplayGroupRepository;
 import org.zfin.sequence.repository.HibernateSequenceRepository;
 import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.ui.repository.DiseasePageRepository;
+import org.zfin.ui.repository.HibernatePublicationPageRepository;
+import org.zfin.ui.repository.PublicationPageRepository;
 import org.zfin.ui.repository.HibernateDiseasePageRepository;
 import org.zfin.zebrashare.repository.HibernateZebrashareRepository;
 import org.zfin.zebrashare.repository.ZebrashareRepository;
@@ -93,6 +95,7 @@ public class RepositoryFactory {
     private static ControlledVocabularyRepository<TranscriptConsequence> transcriptTermRepository;
 
     private static DiseasePageRepository diseasePageRepository;
+    private static PublicationPageRepository publicationPageRepository;
 
 
     public static DiseasePageRepository getDiseasePageRepository() {
@@ -101,6 +104,14 @@ public class RepositoryFactory {
             };
         }
         return diseasePageRepository;
+    }
+
+    public static PublicationPageRepository getPublicationPageRepository() {
+        if (publicationPageRepository == null) {
+            publicationPageRepository = new HibernatePublicationPageRepository(); {
+            };
+        }
+        return publicationPageRepository;
     }
 
     public static ControlledVocabularyRepository<TranscriptConsequence> getTranscriptTermRepository() {

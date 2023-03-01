@@ -24,25 +24,25 @@ import java.util.*;
 public class JsonResultResponse<T> {
 
 
-    @JsonView(View.Default.class)
+    @JsonView({View.Default.class, View.UI.class})
     private Collection<T> results = new ArrayList<T>();
-    @JsonView(View.Default.class)
+    @JsonView({View.Default.class, View.UI.class})
     private long total;
-    @JsonView({View.Default.class})
+    @JsonView({View.Default.class, View.UI.class})
     private int returnedRecords;
-    @JsonView({View.Default.class})
+    @JsonView({View.Default.class, View.UI.class})
     private String errorMessage = "";
-    @JsonView({View.Default.class})
+    @JsonView({View.Default.class, View.UI.class})
     private String note = "";
-    @JsonView({View.Default.class})
+    @JsonView({View.Default.class, View.UI.class})
     private String requestDuration;
-    @JsonView({View.Default.class})
+    @JsonView({View.Default.class, View.UI.class})
     private Request request;
-    @JsonView({View.Default.class})
+    @JsonView({View.Default.class, View.UI.class})
     private String apiVersion;
-    @JsonView({View.Default.class})
+    @JsonView({View.Default.class, View.UI.class})
     private String requestDate;
-    @JsonView({View.Default.class})
+    @JsonView({View.Default.class, View.UI.class})
     private Map<String, Object> supplementalData;
     @JsonIgnore
     private Pagination pagination;
@@ -82,7 +82,7 @@ public class JsonResultResponse<T> {
 
     }
 
-    @JsonView({View.Default.class})
+    @JsonView({View.Default.class, View.UI.class})
     public String getNextPageURL() {
         String uri = request.getUri();
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
