@@ -17,7 +17,8 @@ public class DiseaseNavigationMenu extends NavigationMenu {
             title(NavigationMenuOptions.SUMMARY).showCount(false),
             title(NavigationMenuOptions.RELATIONSHIPS).showCount(false),
             title(NavigationMenuOptions.GENES_INVOLVED).showCount(false),
-            title(NavigationMenuOptions.ZEBRAFISH_MODELS).showCount(false)
+            title(NavigationMenuOptions.ZEBRAFISH_MODELS).showCount(false),
+            title(NavigationMenuOptions.ALLELE).showCount(false)
         );
     }
 
