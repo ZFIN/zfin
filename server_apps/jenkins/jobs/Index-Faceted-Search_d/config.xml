@@ -18,13 +18,13 @@
   <customWorkspace>$SOURCEROOT</customWorkspace>
   <builders>
      <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/DB_maintenance/warehouse &amp;&amp; regenPhenotypeMart.sh </command>
+      <command>cd $TARGETROOT/server_apps/DB_maintenance/warehouse &amp;&amp; ./regenPhenotypeMart.sh </command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/DB_maintenance/warehouse &amp;&amp; regenExpressionMart.sh </command>
+      <command>cd $TARGETROOT/server_apps/DB_maintenance/warehouse &amp;&amp; ./regenExpressionMart.sh </command>
     </hudson.tasks.Shell>
   <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/DB_maintenance &amp;&amp; regen.sh </command>
+      <command>cd $TARGETROOT/server_apps/DB_maintenance &amp;&amp; ./regen.sh </command>
  </hudson.tasks.Shell>
     <hudson.tasks.Shell>
       <command>cd $SOURCEROOT</command>
@@ -87,11 +87,5 @@
     </hudson.plugins.emailext.ExtendedEmailPublisher>
   </publishers>
   <buildWrappers>
-    <EnvInjectBuildWrapper plugin="envinject@1.89">
-      <info>
-        <propertiesFilePath>$TARGETROOT/home/WEB-INF/zfin.properties</propertiesFilePath>
-        <loadFilesFromMaster>false</loadFilesFromMaster>
-      </info>
-    </EnvInjectBuildWrapper>
   </buildWrappers>
 </project>

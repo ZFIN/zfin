@@ -18,7 +18,7 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/DB_maintenance &amp;&amp; fx_permission_check.pl</command>
+      <command>cd $TARGETROOT/server_apps/DB_maintenance &amp;&amp; ./fx_permission_check.pl</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
@@ -78,11 +78,5 @@ $PROJECT_DEFAULT_CONTENT
     </hudson.plugins.emailext.ExtendedEmailPublisher>
   </publishers>
   <buildWrappers>
-    <EnvInjectBuildWrapper plugin="envinject@1.89">
-      <info>
-        <propertiesFilePath>$TARGETROOT/home/WEB-INF/zfin.properties</propertiesFilePath>
-        <loadFilesFromMaster>false</loadFilesFromMaster>
-      </info>
-    </EnvInjectBuildWrapper>
   </buildWrappers>
 </project>

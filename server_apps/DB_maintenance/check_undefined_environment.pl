@@ -69,11 +69,12 @@ chdir "<!--|ROOT_PATH|-->/server_apps/DB_maintenance/";
 print "checking for undefined environments ... \n";
 
 $dbname = "<!--|DB_NAME|-->";
+$pghost = "<!--|PGHOST|-->";
 $username = "";
 $password = "";
 
 ### open a handle on the db
-$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password) or die "Cannot connect to Informix database: $DBI::errstr\n";
+$dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$pghost", $username, $password) or die "Cannot connect to Informix database: $DBI::errstr\n";
 
 $sql = "select exp_zdb_id, exp_name, exp_source_zdb_id
           from experiment, curation

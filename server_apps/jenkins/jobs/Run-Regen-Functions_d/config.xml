@@ -19,7 +19,7 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/DB_maintenance &amp;&amp; regen.sh </command>
+      <command>cd $TARGETROOT/server_apps/DB_maintenance &amp;&amp; ./regen.sh </command>
  </hudson.tasks.Shell>
   </builders>
   <publishers>
@@ -76,11 +76,5 @@
       </hudson.plugins.emailext.ExtendedEmailPublisher>
   </publishers>
     <buildWrappers>
-        <EnvInjectBuildWrapper plugin="envinject@1.89">
-            <info>
-                <propertiesFilePath>$TARGETROOT/home/WEB-INF/zfin.properties</propertiesFilePath>
-                <loadFilesFromMaster>false</loadFilesFromMaster>
-            </info>
-        </EnvInjectBuildWrapper>
     </buildWrappers>
 </project>
