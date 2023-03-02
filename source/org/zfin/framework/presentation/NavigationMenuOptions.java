@@ -15,6 +15,7 @@ public enum NavigationMenuOptions {
     MUTATION("Mutations / Transgenics"),
     ORTHOLOGY("Orthology"),
     PHENOTYPE("Phenotype"),
+    ALLELE("Associated Alleles"),
     PHENOTYPE_CHEBI("Phenotype "),
     STRS("Sequence Targeting Reagents"),
     SUMMARY("Summary"),
