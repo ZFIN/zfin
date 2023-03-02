@@ -47,6 +47,16 @@
             </div>
 
             <div class="form-group row">
+                <form:label path="country" cssClass="col-md-3 col-form-label">Country</form:label>
+                <div class="col-md-5">
+                    <form:select path="country" cssClass="form-control">
+                        <form:option value="" />
+                        <form:options items="${countryList}" />
+                    </form:select>
+                </div>
+            </div>
+
+            <div class="form-group row">
                 <form:label path="phone" cssClass="col-md-3 col-form-label">Phone</form:label>
                 <div class="col-md-5">
                     <form:input path="phone" cssClass="form-control"/>

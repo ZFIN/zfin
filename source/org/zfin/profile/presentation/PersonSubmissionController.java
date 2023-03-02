@@ -13,6 +13,7 @@ import org.zfin.framework.mail.AbstractZfinMailSender;
 import org.zfin.profile.OrganizationPosition;
 import org.zfin.profile.PersonSubmission;
 import org.zfin.profile.repository.ProfileRepository;
+import org.zfin.profile.service.ProfileService;
 import org.zfin.properties.ZfinPropertiesEnum;
 
 import java.io.UnsupportedEncodingException;
@@ -28,6 +29,9 @@ public class PersonSubmissionController {
     @Autowired
     ProfileRepository profileRepository;
 
+    @Autowired
+    ProfileService profileService;
+
     @RequestMapping(value = "/submit", method = RequestMethod.GET)
     public String newPersonForm(Model model) {
         List<OrganizationPosition> roleOptions = profileRepository.getLabPositions();
@@ -35,6 +39,7 @@ public class PersonSubmissionController {
 
         PersonSubmission submission = new PersonSubmission();
         model.addAttribute("submission", submission);
+        model.addAttribute("countryList", profileService.getCountries());
 
         return "profile/person-submit";
     }
@@ -85,6 +90,7 @@ public class PersonSubmissionController {
                 "Last Name: " + submission.getLastName() + "\n" +
                 "Email: " + submission.getEmail() + "\n" +
                 "Address: " + submission.getAddress() + "\n" +
+                "Country: " + profileService.getCountryDisplayName(submission.getCountry()) + "\n" +
                 "Phone: " + submission.getPhone() + "\n" +
                 "Lab: " + submission.getLab() + "\n" +
                 "URL: " + submission.getUrl() + "\n" +
@@ -103,6 +109,7 @@ public class PersonSubmissionController {
                 "Last Name: " + submission.getLastName() + "\n" +
                 "Email: " + submission.getEmail() + "\n" +
                 "Address: " + submission.getAddress() + "\n" +
+                "Country: " + profileService.getCountryDisplayName(submission.getCountry()) + "\n" +
                 "Phone: " + submission.getPhone() + "\n" +
                 "Lab: " + submission.getLab() + "\n" +
                 "URL: " + submission.getUrl() + "\n" +

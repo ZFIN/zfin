@@ -2,6 +2,7 @@ package org.zfin.profile;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.zfin.profile.service.ProfileService;
 
 /**
  * Domain business object that describes a request to create a new account for a single person.
@@ -15,6 +16,7 @@ public class PersonSubmission {
     private String email;
     private String email2;
     private String address;
+    private String country;
     private String phone;
     private String lab;
     private String role;
