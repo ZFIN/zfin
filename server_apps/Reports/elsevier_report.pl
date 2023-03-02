@@ -28,11 +28,12 @@ sub openReport()
 # open a handle on the db
 
 $dbname = "<!--|DB_NAME|-->";
+$pghost = "<!--|PGHOST|-->";
 $username = "";
 $password = "";
 
 ### open a handle on the db
-my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=localhost", $username, $password)
+my $dbh = DBI->connect ("DBI:Pg:dbname=$dbname;host=$pghost", $username, $password)
     or die "Cannot connect to database: $DBI::errstr\n";
 
 

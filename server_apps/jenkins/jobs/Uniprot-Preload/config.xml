@@ -43,7 +43,7 @@ SKIP_PRE_ZFIN_GEN=
     <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
         <hudson.tasks.Shell>
-            <command>cd $TARGETROOT/server_apps/data_transfer/SWISS-PROT/ &amp;&amp; runUniprotPreload.sh
+            <command>cd $TARGETROOT/server_apps/data_transfer/SWISS-PROT/ &amp;&amp; ./runUniprotPreload.sh
             </command>
             <configuredLocalRules/>
         </hudson.tasks.Shell>
@@ -60,11 +60,5 @@ SKIP_PRE_ZFIN_GEN=
         </hudson.tasks.ArtifactArchiver>
     </publishers>
     <buildWrappers>
-        <EnvInjectBuildWrapper plugin="envinject@1.89">
-            <info>
-                <propertiesFilePath>$TARGETROOT/home/WEB-INF/zfin.properties</propertiesFilePath>
-                <loadFilesFromMaster>false</loadFilesFromMaster>
-            </info>
-        </EnvInjectBuildWrapper>
     </buildWrappers>
 </project>

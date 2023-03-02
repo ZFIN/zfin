@@ -18,7 +18,7 @@
     <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/Reports/PubTracking &amp;&amp; runPaperlessPubTrackingDailyIndexedMetrics.sh </command>
+      <command>cd $TARGETROOT/server_apps/Reports/PubTracking &amp;&amp; ./runPaperlessPubTrackingDailyIndexedMetrics.sh </command>
     </hudson.tasks.Shell>
         <hudson.tasks.Ant plugin="ant@1.2">
             <targets>validate-data-report-simple -DJobName=CheckPaperBinStatus_d</targets>
@@ -103,11 +103,5 @@
         </hudson.plugins.emailext.ExtendedEmailPublisher>
     </publishers>
     <buildWrappers>
-        <EnvInjectBuildWrapper plugin="envinject@1.89">
-            <info>
-                <propertiesFilePath>$TARGETROOT/home/WEB-INF/zfin.properties</propertiesFilePath>
-                <loadFilesFromMaster>false</loadFilesFromMaster>
-            </info>
-        </EnvInjectBuildWrapper>
     </buildWrappers>
 </project>
