@@ -52,11 +52,5 @@ http://fogbugz.zfin.org/default.asp?W1589</description>
         <hudson.plugins.build__timeout.operations.AbortOperation/>
       </operationList>
     </hudson.plugins.build__timeout.BuildTimeoutWrapper>
-    <EnvInjectBuildWrapper plugin="envinject@1.89">
-      <info>
-        <propertiesFilePath>$TARGETROOT/home/WEB-INF/zfin.properties</propertiesFilePath>
-        <loadFilesFromMaster>false</loadFilesFromMaster>
-      </info>
-    </EnvInjectBuildWrapper>
   </buildWrappers>
 </project>

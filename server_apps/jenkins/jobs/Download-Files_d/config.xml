@@ -26,13 +26,13 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/data_transfer/Downloads &amp;&amp; DownloadFiles.pl</command>
+      <command>cd $TARGETROOT/server_apps/data_transfer/Downloads &amp;&amp; ./DownloadFiles.pl</command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/data_transfer/Downloads/GFF3 &amp;&amp; generateGff3.sh</command>
+      <command>cd $TARGETROOT/server_apps/data_transfer/Downloads/GFF3 &amp;&amp; ./generateGff3.sh</command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/data_transfer/GO  &amp;&amp; go.pl  &amp;&amp; cp gene_association.zfin.gz $DOWNLOAD_DIRECTORY/current/</command>
+      <command>cd $TARGETROOT/server_apps/data_transfer/GO  &amp;&amp; ./go.pl  &amp;&amp; cp gene_association.zfin.gz $DOWNLOAD_DIRECTORY/current/</command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
       <command>touch $DOWNLOAD_DIRECTORY/reload-status/reload</command>
@@ -53,11 +53,5 @@
     </hudson.tasks.BuildTrigger>
   </publishers>
   <buildWrappers>
-    <EnvInjectBuildWrapper plugin="envinject@1.89">
-      <info>
-        <propertiesFilePath>$TARGETROOT/home/WEB-INF/zfin.properties</propertiesFilePath>
-        <loadFilesFromMaster>false</loadFilesFromMaster>
-      </info>
-    </EnvInjectBuildWrapper>
   </buildWrappers>
 </project>

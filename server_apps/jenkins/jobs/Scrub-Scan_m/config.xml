@@ -33,7 +33,7 @@ this script should be examined and either:&#xd;
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/DB_maintenance &amp;&amp; scrubscan.pl $DBNAME -d</command>
+      <command>cd $TARGETROOT/server_apps/DB_maintenance &amp;&amp; ./scrubscan.pl $DBNAME -d</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
@@ -85,11 +85,5 @@ this script should be examined and either:&#xd;
     </hudson.plugins.emailext.ExtendedEmailPublisher>
   </publishers>
   <buildWrappers>
-    <EnvInjectBuildWrapper plugin="envinject@1.89">
-      <info>
-        <propertiesFilePath>$TARGETROOT/home/WEB-INF/zfin.properties</propertiesFilePath>
-        <loadFilesFromMaster>false</loadFilesFromMaster>
-      </info>
-    </EnvInjectBuildWrapper>
   </buildWrappers>
 </project>

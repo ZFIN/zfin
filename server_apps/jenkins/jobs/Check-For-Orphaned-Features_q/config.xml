@@ -103,11 +103,5 @@ i.e. no record_attribution record exists for a given feature ID. It also checks 
     </hudson.plugins.emailext.ExtendedEmailPublisher>
   </publishers>
   <buildWrappers>
-    <EnvInjectBuildWrapper plugin="envinject@1.89">
-      <info>
-        <propertiesFilePath>$TARGETROOT/home/WEB-INF/zfin.properties</propertiesFilePath>
-        <loadFilesFromMaster>false</loadFilesFromMaster>
-      </info>
-    </EnvInjectBuildWrapper>
   </buildWrappers>
 </project>

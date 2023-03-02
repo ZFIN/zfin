@@ -3,18 +3,6 @@
   <actions/>
   <description>Do this load as needed, after Ekker Lab postes the new data: http://www.zfishbook.org/staticpages/index.php?page=zircBlocksReports</description>
   <keepDependencies>false</keepDependencies>
-  <properties>
-    <EnvInjectJobProperty plugin="envinject@1.89">
-      <info>
-        <propertiesFilePath>$SOURCEROOT/commons/env/$INSTANCE.env</propertiesFilePath>
-        <loadFilesFromMaster>false</loadFilesFromMaster>
-      </info>
-      <on>true</on>
-      <keepJenkinsSystemVariables>true</keepJenkinsSystemVariables>
-      <keepBuildVariables>true</keepBuildVariables>
-      <contributors/>
-    </EnvInjectJobProperty>
-  </properties>
   <scm class="hudson.scm.NullSCM"/>
   <canRoam>true</canRoam>
   <disabled>false</disabled>
@@ -25,7 +13,7 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/data_transfer/zfishbook/ &amp;&amp; zfishbook.sh
+      <command>cd $TARGETROOT/server_apps/data_transfer/zfishbook/ &amp;&amp; ./zfishbook.sh
 
 </command>
     </hudson.tasks.Shell>
@@ -83,11 +71,5 @@
     </hudson.plugins.emailext.ExtendedEmailPublisher>
   </publishers>
   <buildWrappers>
-    <EnvInjectBuildWrapper plugin="envinject@1.89">
-      <info>
-        <propertiesFilePath>$TARGETROOT/home/WEB-INF/zfin.properties</propertiesFilePath>
-        <loadFilesFromMaster>false</loadFilesFromMaster>
-      </info>
-    </EnvInjectBuildWrapper>
   </buildWrappers>
 </project>

@@ -23,7 +23,7 @@ pre_load_input_omim.txt and reports what have been loaded with whatHaveBeenInser
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/data_transfer/OMIM &amp;&amp; OMIM.pl</command>
+      <command>cd $TARGETROOT/server_apps/data_transfer/OMIM &amp;&amp; ./OMIM.pl</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
@@ -80,11 +80,5 @@ pre_load_input_omim.txt and reports what have been loaded with whatHaveBeenInser
     </hudson.plugins.emailext.ExtendedEmailPublisher>
   </publishers>
   <buildWrappers>
-    <EnvInjectBuildWrapper plugin="envinject@1.89">
-      <info>
-        <propertiesFilePath>$TARGETROOT/home/WEB-INF/zfin.properties</propertiesFilePath>
-        <loadFilesFromMaster>false</loadFilesFromMaster>
-      </info>
-    </EnvInjectBuildWrapper>
   </buildWrappers>
 </project>

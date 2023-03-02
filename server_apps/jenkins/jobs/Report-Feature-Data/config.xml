@@ -14,7 +14,7 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/Reports/ &amp;&amp; reportFeatureData.pl</command>
+      <command>cd $TARGETROOT/server_apps/Reports/ &amp;&amp; ./reportFeatureData.pl</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>

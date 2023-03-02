@@ -32,7 +32,7 @@ http://fogbugz.zfin.org/default.asp?W1589</description>
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/data_transfer/PUBMED &amp;&amp; getPDFandImages.groovy</command>
+      <command>cd $TARGETROOT/server_apps/data_transfer/PUBMED &amp;&amp; ./getPDFandImages.groovy</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
@@ -98,11 +98,5 @@ http://fogbugz.zfin.org/default.asp?W1589</description>
         <hudson.plugins.build__timeout.operations.AbortOperation/>
       </operationList>
     </hudson.plugins.build__timeout.BuildTimeoutWrapper>
-    <EnvInjectBuildWrapper plugin="envinject@1.89">
-      <info>
-        <propertiesFilePath>$TARGETROOT/home/WEB-INF/zfin.properties</propertiesFilePath>
-        <loadFilesFromMaster>false</loadFilesFromMaster>
-      </info>
-    </EnvInjectBuildWrapper>
   </buildWrappers>
 </project>

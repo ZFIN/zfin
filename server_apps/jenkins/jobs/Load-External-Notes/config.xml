@@ -14,7 +14,7 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/DB_maintenance/ &amp;&amp; loadExternalNotes.pl</command>
+      <command>cd $TARGETROOT/server_apps/DB_maintenance/ &amp;&amp; ./loadExternalNotes.pl</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>

@@ -18,7 +18,7 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/DB_maintenance/warehouse &amp;&amp; regenChromosomeMart.sh </command>
+      <command>cd $TARGETROOT/server_apps/DB_maintenance/warehouse &amp;&amp; ./regenChromosomeMart.sh </command>
     </hudson.tasks.Shell>7
   </builders>
   <publishers>
@@ -75,11 +75,5 @@
       </hudson.plugins.emailext.ExtendedEmailPublisher>
   </publishers>
     <buildWrappers>
-        <EnvInjectBuildWrapper plugin="envinject@1.89">
-            <info>
-                <propertiesFilePath>$TARGETROOT/home/WEB-INF/zfin.properties</propertiesFilePath>
-                <loadFilesFromMaster>false</loadFilesFromMaster>
-            </info>
-        </EnvInjectBuildWrapper>
     </buildWrappers>
 </project>

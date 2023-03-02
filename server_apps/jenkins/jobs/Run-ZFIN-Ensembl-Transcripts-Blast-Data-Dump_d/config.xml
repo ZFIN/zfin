@@ -17,7 +17,7 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/data_transfer/BLAST/ &amp;&amp; runZfinEnsemblTscripts.sh</command>
+      <command>cd $TARGETROOT/server_apps/data_transfer/BLAST/ &amp;&amp; ./runZfinEnsemblTscripts.sh</command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
       <command></command>
@@ -56,11 +56,5 @@
     </hudson.plugins.emailext.ExtendedEmailPublisher>
   </publishers>
   <buildWrappers>
-    <EnvInjectBuildWrapper plugin="envinject@1.89">
-      <info>
-        <propertiesFilePath>$TARGETROOT/home/WEB-INF/zfin.properties</propertiesFilePath>
-        <loadFilesFromMaster>false</loadFilesFromMaster>
-      </info>
-    </EnvInjectBuildWrapper>
   </buildWrappers>
 </project>
