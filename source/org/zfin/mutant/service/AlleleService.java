@@ -2,6 +2,7 @@ package org.zfin.mutant.service;
 
 import lombok.extern.log4j.Log4j2;
 import org.alliancegenome.curation_api.model.entities.Allele;
+import org.alliancegenome.curation_api.model.entities.slotAnnotations.alleleSlotAnnotations.AlleleSymbolSlotAnnotation;
 import org.alliancegenome.curation_api.response.ObjectResponse;
 import org.springframework.stereotype.Service;
 import org.zfin.alliancegenome.AlleleRESTAllianceService;
@@ -17,7 +18,9 @@ public class AlleleService extends AllianceService {
     public void submitAlleleToAlliance(Feature feature) {
         Allele allele = new Allele();
         allele.setCurie("ZFIN:" + feature.getZdbID());
-        allele.setSymbol(feature.getAbbreviation());
+        AlleleSymbolSlotAnnotation symbol = new AlleleSymbolSlotAnnotation();
+        symbol.setDisplayText(feature.getAbbreviation());
+        allele.setAlleleSymbol(symbol);
         allele.setTaxon(getNcbiTaxonTerm());
 
         ObjectResponse<Allele> alleleResponse = null;

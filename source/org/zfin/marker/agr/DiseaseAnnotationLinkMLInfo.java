@@ -121,7 +121,7 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
                         // Use wildtype fish with STR
                         // treat as purely implicated by a gene
                         AGMDiseaseAnnotationDTO annotation = new AGMDiseaseAnnotationDTO();
-                        annotation.setDataProvider("ZFIN");
+                        annotation.setDataProviderName("ZFIN");
 
                         annotation.setDiseaseRelationName(RelationshipDTO.IS_MODEL_OF);
                         AffectedGenomicModel model = getAffectedGenomicModel(fish);
@@ -185,7 +185,7 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
     private AGMDiseaseAnnotationDTO getAgmDiseaseAnnotationDTO(DiseaseAnnotationModel damo) {
         Fish fish = damo.getFishExperiment().getFish();
         AGMDiseaseAnnotationDTO annotation = new AGMDiseaseAnnotationDTO();
-        annotation.setDataProvider("ZFIN");
+        annotation.setDataProviderName("ZFIN");
         annotation.setCreatedByCurie("ZFIN:curator");
         //annotation.setModifiedBy("ZFIN:curator");
 //            annotation.setModEntityId(damo.getDiseaseAnnotation().getZdbID());

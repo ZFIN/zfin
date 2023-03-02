@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.alliancegenome.curation_api.model.ingest.dto.AlleleDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.IngestDTO;
+import org.alliancegenome.curation_api.model.ingest.dto.NameSlotAnnotationDTO;
 import org.zfin.feature.Feature;
 import org.zfin.infrastructure.ActiveData;
 
@@ -55,8 +56,8 @@ public class AlleleLinkMLInfo extends LinkMLInfo {
         return features.stream()
             .map(feature -> {
                 AlleleDTO dto = new AlleleDTO();
-                dto.setSymbol(feature.getAbbreviation());
-                dto.setName(feature.getName());
+                dto.setAlleleSymbolDto(GeneLinkMLInfo.getNameSlotAnnotationDTOAbbrev(feature.getAbbreviation()));
+                dto.setAlleleFullNameDto(GeneLinkMLInfo.getNameSlotAnnotationDTOName(feature.getName()));
                 dto.setInternal(false);
                 dto.setCreatedByCurie("ZFIN:CURATOR");
                 dto.setTaxonCurie(ZfinDTO.taxonId);

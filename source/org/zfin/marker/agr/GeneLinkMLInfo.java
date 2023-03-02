@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.alliancegenome.curation_api.model.ingest.dto.IngestDTO;
+import org.alliancegenome.curation_api.model.ingest.dto.NameSlotAnnotationDTO;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
@@ -57,18 +58,34 @@ public class GeneLinkMLInfo extends AbstractScriptWrapper {
     public List<org.alliancegenome.curation_api.model.ingest.dto.GeneDTO> getAllGenes(int numberOrRecords) {
         List<Marker> genes = getMarkerRepository().getMarkerByGroup(Marker.TypeGroup.GENEDOM_AND_EFG, numberOrRecords);
         return genes.stream()
-                .map(marker -> {
-                    org.alliancegenome.curation_api.model.ingest.dto.GeneDTO dto = new org.alliancegenome.curation_api.model.ingest.dto.GeneDTO();
-                    dto.setSymbol(marker.getAbbreviation());
-                    dto.setName(marker.getName());
-                    dto.setCreatedByCurie("ZFIN:CURATOR");
-                    dto.setTaxonCurie(ZfinDTO.taxonId);
-                    dto.setCurie("ZFIN:" + marker.getZdbID());
-                    GregorianCalendar date = ActiveData.getDateFromId(marker.getZdbID());
-                    dto.setDateCreated(format(date));
-                    return dto;
-                })
-                .collect(toList());
+            .map(marker -> {
+                org.alliancegenome.curation_api.model.ingest.dto.GeneDTO dto = new org.alliancegenome.curation_api.model.ingest.dto.GeneDTO();
+                dto.setGeneSymbolDto(getNameSlotAnnotationDTOAbbrev(marker.getAbbreviation()));
+                dto.setGeneFullNameDto(getNameSlotAnnotationDTOName(marker.getAbbreviation()));
+                dto.setCreatedByCurie("ZFIN:CURATOR");
+                dto.setTaxonCurie(ZfinDTO.taxonId);
+                dto.setCurie("ZFIN:" + marker.getZdbID());
+                GregorianCalendar date = ActiveData.getDateFromId(marker.getZdbID());
+                dto.setDateCreated(format(date));
+                return dto;
+            })
+            .collect(toList());
+    }
+
+    public static NameSlotAnnotationDTO getNameSlotAnnotationDTOName(String name) {
+        NameSlotAnnotationDTO slotAnnotation = new NameSlotAnnotationDTO();
+        slotAnnotation.setDisplayText(name);
+        slotAnnotation.setFormatText(name);
+        slotAnnotation.setNameTypeName("full_name");
+        return slotAnnotation;
+    }
+
+    public static NameSlotAnnotationDTO getNameSlotAnnotationDTOAbbrev(String abbreviation) {
+        NameSlotAnnotationDTO slotAnnotation = new NameSlotAnnotationDTO();
+        slotAnnotation.setDisplayText(abbreviation);
+        slotAnnotation.setFormatText(abbreviation);
+        slotAnnotation.setNameTypeName("nomenclature_symbol");
+        return slotAnnotation;
     }
 
     public static String format(String zdbID) {
