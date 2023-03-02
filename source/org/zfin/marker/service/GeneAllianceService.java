@@ -2,6 +2,9 @@ package org.zfin.marker.service;
 
 import lombok.extern.log4j.Log4j2;
 import org.alliancegenome.curation_api.model.entities.Gene;
+import org.alliancegenome.curation_api.model.entities.slotAnnotations.geneSlotAnnotations.GeneFullNameSlotAnnotation;
+import org.alliancegenome.curation_api.model.entities.slotAnnotations.geneSlotAnnotations.GeneSymbolSlotAnnotation;
+import org.alliancegenome.curation_api.model.ingest.dto.NameSlotAnnotationDTO;
 import org.alliancegenome.curation_api.response.ObjectResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,8 +23,13 @@ public class GeneAllianceService extends AllianceService {
     public void submitGeneToAlliance(Marker marker) {
         Gene model = new Gene();
         model.setCurie("ZFIN:" + marker.getZdbID());
-        model.setName(marker.getName());
-        model.setSymbol(marker.getAbbreviation());
+        GeneFullNameSlotAnnotation nameDtoName = new GeneFullNameSlotAnnotation();
+        nameDtoName.setDisplayText(marker.getName());
+        model.setGeneFullName(nameDtoName);
+
+        GeneSymbolSlotAnnotation nameDtoSymbol= new GeneSymbolSlotAnnotation();
+        nameDtoSymbol.setDisplayText(marker.getName());
+        model.setGeneSymbol(nameDtoSymbol);
         model.setTaxon(getNcbiTaxonTerm());
 
         ObjectResponse<Gene> geneResponse = null;
