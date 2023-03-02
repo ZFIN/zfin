@@ -62,6 +62,7 @@ const JbrowseImage = ({imageUrl, linkUrl, build, chromosome, height = '400'}) =>
 JbrowseImage.propTypes = {
     imageUrl: PropTypes.string.isRequired,
     linkUrl: PropTypes.string.isRequired,
+    height: PropTypes.string,
     build: PropTypes.string,
     chromosome: PropTypes.string,
 };
