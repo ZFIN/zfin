@@ -2,7 +2,8 @@ package org.zfin.sequence.blast.presentation;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.biojava.bio.seq.io.SymbolTokenization;
 import org.biojavax.SimpleNamespace;
 import org.biojavax.bio.seq.RichSequence;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.support.StringMultipartFileEditor;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.profile.Person;
 import org.zfin.repository.RepositoryFactory;
@@ -76,7 +78,7 @@ public class XMLBlastController {
                 xmlBlastBean.setExpectValue(1E-25);
             }
             if (xmlBlastBean.getSequenceType() == null ||
-                    XMLBlastBean.SequenceType.NUCLEOTIDE == XMLBlastBean.SequenceType.getSequenceType(xmlBlastBean.getSequenceType())) {
+                XMLBlastBean.SequenceType.NUCLEOTIDE == XMLBlastBean.SequenceType.getSequenceType(xmlBlastBean.getSequenceType())) {
                 xmlBlastBean.setWordLength(11);
                 xmlBlastBean.setDust(true);
                 xmlBlastBean.setPoly_a(true);
@@ -94,11 +96,11 @@ public class XMLBlastController {
             }
 
             if (StringUtils.contains(xmlBlastBean.getDataLibraryString(), "MicroRNA")
-                    || StringUtils.contains(xmlBlastBean.getDataLibraryString(), "miRNA")
-                    || StringUtils.contains(xmlBlastBean.getDataLibraryString(), "zfin_microRNA")
-                    || StringUtils.contains(xmlBlastBean.getDataLibraryString(), "zfin_mrph")
-                    || StringUtils.contains(xmlBlastBean.getDataLibraryString(), "zfin_talen")
-                    || StringUtils.contains(xmlBlastBean.getDataLibraryString(), "zfin_crispr")) {
+                || StringUtils.contains(xmlBlastBean.getDataLibraryString(), "miRNA")
+                || StringUtils.contains(xmlBlastBean.getDataLibraryString(), "zfin_microRNA")
+                || StringUtils.contains(xmlBlastBean.getDataLibraryString(), "zfin_mrph")
+                || StringUtils.contains(xmlBlastBean.getDataLibraryString(), "zfin_talen")
+                || StringUtils.contains(xmlBlastBean.getDataLibraryString(), "zfin_crispr")) {
                 //these values should match blast.js
                 xmlBlastBean.setShortAndNearlyExact(true);
                 xmlBlastBean.setExpectValue(1000d);
@@ -139,7 +141,7 @@ public class XMLBlastController {
             sequenceID = sequenceID.trim();
             sequenceID = sequenceID.replaceFirst("\\..*", "");
             List<Sequence> sequences =
-                    MultipleBlastServerService.getSequencesForAccessionAndReferenceDBs(sequenceID);
+                MultipleBlastServerService.getSequencesForAccessionAndReferenceDBs(sequenceID);
             // If not found in ZFIN go out to NCBI
             if (CollectionUtils.isEmpty(sequences))
                 sequences = MultipleBlastServerService.getAccessionFromNcbi(sequenceID, xmlBlastBean.getSequenceType().equals("nt") ? NCBIEfetch.Type.NUCLEOTIDE : NCBIEfetch.Type.POLYPEPTIDE);
@@ -238,7 +240,7 @@ public class XMLBlastController {
                 for (Database databaseTarget : actualDatabaseTargets) {
                     try {
                         if (WebHostDatabaseStatisticsCache.getInstance().getDatabaseStatistics(databaseTarget).getNumSequences() > 0
-                                && !databaseTargets.contains(databaseTarget)) {
+                            && !databaseTargets.contains(databaseTarget)) {
                             databaseTargets.add(databaseTarget);
                         }
                     } catch (Exception e) {
@@ -248,9 +250,9 @@ public class XMLBlastController {
             } else {
                 try {
                     if (WebHostDatabaseStatisticsCache.getInstance().getDatabaseStatistics(targetDatabase).getNumSequences() > 0
-                            &&
-                            !databaseTargets.contains(targetDatabase)
-                            ) {
+                        &&
+                        !databaseTargets.contains(targetDatabase)
+                    ) {
                         databaseTargets.add(targetDatabase);
                     }
                 } catch (Exception e) {
@@ -275,7 +277,7 @@ public class XMLBlastController {
     public static String prependSequenceWithDefline(String sequence) {
         if (sequence != null && !sequence.startsWith(">")) {
             sequence = ">single query\n" +
-                    sequence;
+                sequence;
         }
         return sequence;
     }
@@ -290,6 +292,7 @@ public class XMLBlastController {
     protected String initiateBlast(Model model,
                                    @ModelAttribute("formBean") XMLBlastBean inputXMLBlastBean,
                                    BindingResult result) throws Exception {
+        HibernateUtil.createTransaction();
         onBind(inputXMLBlastBean, result);
         String querySequence = inputXMLBlastBean.getQuerySequence();
         StringReader in = new StringReader(querySequence);
@@ -305,7 +308,7 @@ public class XMLBlastController {
         BufferedReader bufferedReader = new BufferedReader(in);
         SymbolTokenization symbolTokenization;
         if (inputXMLBlastBean.getSequenceType() == null ||
-                XMLBlastBean.SequenceType.NUCLEOTIDE == XMLBlastBean.SequenceType.getSequenceType(inputXMLBlastBean.getSequenceType())) {
+            XMLBlastBean.SequenceType.NUCLEOTIDE == XMLBlastBean.SequenceType.getSequenceType(inputXMLBlastBean.getSequenceType())) {
             symbolTokenization = RichSequence.IOTools.getNucleotideParser();
         } else {
             symbolTokenization = RichSequence.IOTools.getProteinParser();
@@ -352,7 +355,8 @@ public class XMLBlastController {
         if (resultXMLBlastBeans.size() > 0) {
             inputXMLBlastBean = resultXMLBlastBeans.get(0);
         }
-	model.addAttribute(LookupStrings.FORM_BEAN, inputXMLBlastBean);
+        HibernateUtil.flushAndCommitCurrentSession();
+        model.addAttribute(LookupStrings.FORM_BEAN, inputXMLBlastBean);
         return "blast/blast_processing";
     }
 
