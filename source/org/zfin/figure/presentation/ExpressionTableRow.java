@@ -18,7 +18,7 @@ import org.zfin.publication.Publication;
 import javax.persistence.*;
 
 /**
- * Stores a collection of entities used to display one row of the figureview expression table
+ * Stores a collection of entities used to display one row of the figureView expression table
  */
 @Setter
 @Getter
