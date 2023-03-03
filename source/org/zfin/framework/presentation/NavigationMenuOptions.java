@@ -16,6 +16,7 @@ public enum NavigationMenuOptions {
     ORTHOLOGY("Orthology"),
     PHENOTYPE("Phenotype"),
     ALLELE("Associated Alleles"),
+    DISEASE_ASSOCIATION("Disease Association"),
     PHENOTYPE_CHEBI("Phenotype "),
     STRS("Sequence Targeting Reagents"),
     SUMMARY("Summary"),
