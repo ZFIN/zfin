@@ -90,7 +90,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
                             .stream()
                             .collect(
                                     Collectors.groupingBy(DiseaseAnnotation::getPublication,
-                                            Collectors.mapping(this::getEvidenceCodeString, toList())
+                                            Collectors.mapping(annotation -> annotation.getEvidenceCode().getOboID(), toList())
                                     )
                             );
                     Map<Publication, List<String>> publicationDateMap = diseaseAnnotations
@@ -224,7 +224,7 @@ public class DiseaseInfo extends AbstractScriptWrapper {
             DiseaseDTO fishDiseaseDto2 = getBaseDiseaseDTO(fish.getZdbID(), fish.getName(), disease.getDisease());
             RelationshipDTO fishRelationship = new RelationshipDTO(RelationshipDTO.IS_MODEL_OF, RelationshipDTO.FISH);
             fishDiseaseDto2.setObjectRelation(fishRelationship);
-            List<String> evidenceList = List.of(getEvidenceCodeString(damo.getDiseaseAnnotation()));
+            List<String> evidenceList = List.of(damo.getDiseaseAnnotation().getEvidenceCode().getOboID());
             fishDiseaseDto2.setEvidence(getEvidenceDTO(damo.getDiseaseAnnotation().getPublication(), evidenceList));
 
 
@@ -373,18 +373,6 @@ public class DiseaseInfo extends AbstractScriptWrapper {
         EvidenceDTO evDto = new EvidenceDTO(fixedPub);
         evDto.setEvidenceCodes(evidences);
         return evDto;
-    }
-
-    // hard-coded for now as the ECO ontology does not provide the codes in
-    // abbreviated form easily. The term names are very long and only in the synonym list
-    // you can find TAS an IC.
-    // Needs to be changed in the future.
-    private String getEvidenceCodeString(DiseaseAnnotation diseaseAnnotations) {
-        if (diseaseAnnotations.getEvidenceCode().equals("ZDB-TERM-170419-250"))
-            return "ECO:0000304";
-        if (diseaseAnnotations.getEvidenceCode().equals("ZDB-TERM-170419-251"))
-            return "ECO:0000305";
-        return "";
     }
 
     class Item {
