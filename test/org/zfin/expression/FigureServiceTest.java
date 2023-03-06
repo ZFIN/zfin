@@ -65,10 +65,10 @@ public class FigureServiceTest extends AbstractDatabaseTest {
         oticPlacodeStatement.setExpressionFound(true);
 
 
-        PostComposedEntity ectodermEntity = new PostComposedEntity();
-        ectodermEntity.setSuperterm(ontologyRepository.getTermByOboID("ZFA:0000016"));
+        PostComposedEntity oticVesicle = new PostComposedEntity();
+        oticVesicle.setSuperterm(ontologyRepository.getTermByOboID("ZFA:0000051"));
         ExpressionStatement ectodermStatement = new ExpressionStatement();
-        ectodermStatement.setEntity(ectodermEntity);
+        ectodermStatement.setEntity(oticVesicle);
         ectodermStatement.setExpressionFound(true);
 
         boolean withImgOnly = false;
@@ -120,8 +120,8 @@ public class FigureServiceTest extends AbstractDatabaseTest {
 
         // optic placode
         ExpressionStatement presentStatement = generateExpressionStatement("ZFA:0000138", null, true);
-        // ectoderm
-        ExpressionStatement notPresentStatement = generateExpressionStatement("ZFA:0000016", null, true);
+        // otic vesicle
+        ExpressionStatement notPresentStatement = generateExpressionStatement("ZFA:0000051", null, true);
 
         boolean imagesOnly = false;
 
