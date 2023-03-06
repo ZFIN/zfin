@@ -140,6 +140,7 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
                                         annotation.setInferredAlleleCurie("ZFIN:" + feature.getZdbID());
                                     }
                                 });
+                                annotation.setInferredGeneCurie("ZFIN:" + gene.getZdbID());
                             }
 
                         }

@@ -99,7 +99,7 @@ public class BasicReferenceInfo extends AbstractScriptWrapper {
                                     AuthorReferenceDTO authorRef = new AuthorReferenceDTO();
                                     authorRef.setFirstName(authorPub.getFirstName());
                                     authorRef.setLastName(authorPub.getLastName());
-                                    if (authorPub.getFirstName().length() > 0) {
+                                    if (authorPub.getFirstName()!= null && authorPub.getFirstName().length() > 0) {
                                         authorRef.setName(authorPub.getLastName() + "," + authorPub.getFirstName().charAt(0) + ".");
                                     }
                                     else if (authorPub.getLastName().length() >0 ){

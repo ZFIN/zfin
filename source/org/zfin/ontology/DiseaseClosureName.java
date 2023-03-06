@@ -12,6 +12,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * OMIM Phenotype
@@ -19,7 +20,7 @@ import java.util.List;
 @Setter
 @Getter
 @Entity
-@Table(name = "UI_ALL_TERMS_CONTAINS")
+@Table(name = "UI.ALL_TERMS_CONTAINS")
 public class DiseaseClosureName implements Serializable {
 
 	@Id
@@ -29,4 +30,16 @@ public class DiseaseClosureName implements Serializable {
 
 	@Column(name = "atc_parent_names")
 	private String parentNames;
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof DiseaseClosureName that)) return false;
+		return Objects.equals(getChild(), that.getChild()) && Objects.equals(getParentNames(), that.getParentNames());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getChild(), getParentNames());
+	}
 }
