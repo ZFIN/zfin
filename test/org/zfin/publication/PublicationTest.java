@@ -2,12 +2,10 @@ package org.zfin.publication;
 
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
+import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 
 public class PublicationTest {
 

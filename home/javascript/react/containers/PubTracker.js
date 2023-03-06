@@ -36,12 +36,15 @@ import {
     PubCorrespondenceSection,
 } from '../components/pub-tracker';
 import PubPDFLink from '../components/PubPDFLink';
+import PubCorrespondenceNeeded from '../components/pub-tracker/PubCorrespondenceNeeded';
+import PubCorrespondenceResolution from '../components/pub-tracker/PubCorrespondenceResolution';
 
 const STATUS = 'Status';
 const TOPICS = 'Topics';
 const NOTES = 'Notes';
 const DATA_OBJECTS = 'Data Objects';
 const CONTACT_AUTHORS = 'Contact Authors';
+const CORRESPONDENCE_NEEDED = 'Correspondence Needed';
 const CORRESPONDENCE = 'Correspondence';
 
 const SECTIONS = [
@@ -316,6 +319,10 @@ class PubTracker extends React.Component {
                     />
                 </Section>
 
+                <Section title={CORRESPONDENCE_NEEDED}>
+                    <PubCorrespondenceNeeded pubId={pubId} />
+                    <PubCorrespondenceResolution pubId={pubId} />
+                </Section>
                 <Section title={CORRESPONDENCE}>
                     <PubCorrespondenceSection
                         pubDetails={pubDetails}

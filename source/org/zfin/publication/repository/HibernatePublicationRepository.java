@@ -2504,4 +2504,81 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return criteria;
     }
 
+	@Override
+	public List<CorrespondenceNeed> getCorrespondenceNeedByPublicationID(String zdbID) {
+		CriteriaBuilder criteriaBuilder = currentSession().getCriteriaBuilder();
+		CriteriaQuery<CorrespondenceNeed> cr = criteriaBuilder.createQuery(CorrespondenceNeed.class);
+		Root<CorrespondenceNeed> root = cr.from(CorrespondenceNeed.class);
+		cr.select(root);
+		cr.where(criteriaBuilder.equal(root.get("publication").get("zdbID"), zdbID));
+		return currentSession().createQuery(cr).list();
+	}
+
+	@Override
+	public List<CorrespondenceNeedReason> getAllCorrespondenceNeedReasons() {
+		CriteriaBuilder criteriaBuilder = currentSession().getCriteriaBuilder();
+		CriteriaQuery<CorrespondenceNeedReason> cr = criteriaBuilder.createQuery(CorrespondenceNeedReason.class);
+		Root<CorrespondenceNeedReason> root = cr.from(CorrespondenceNeedReason.class);
+		cr.select(root);
+		cr.orderBy(criteriaBuilder.asc(root.get("order")));
+		return currentSession().createQuery(cr).list();
+	}
+
+	@Override
+	public void deleteCorrespondenceNeedByPublicationID(String pubID) {
+		CriteriaBuilder criteriaBuilder = currentSession().getCriteriaBuilder();
+		CriteriaDelete<CorrespondenceNeed> cr = criteriaBuilder.createCriteriaDelete(CorrespondenceNeed.class);
+		Root<CorrespondenceNeed> root = cr.from(CorrespondenceNeed.class);
+		cr.where(criteriaBuilder.equal(root.get("publication").get("zdbID"), pubID));
+		currentSession().createQuery(cr).executeUpdate();
+	}
+
+	@Override
+	public CorrespondenceNeedReason getCorrespondenceNeedReasonByID(long id) {
+		return currentSession().get(CorrespondenceNeedReason.class, id);
+	}
+
+	@Override
+	public void insertCorrespondenceNeed(CorrespondenceNeed correspondenceNeed) {
+		currentSession().save(correspondenceNeed);
+	}
+
+	@Override
+	public List<CorrespondenceResolution> getCorrespondenceResolutionByPublicationID(String zdbID) {
+		CriteriaBuilder criteriaBuilder = currentSession().getCriteriaBuilder();
+		CriteriaQuery<CorrespondenceResolution> cr = criteriaBuilder.createQuery(CorrespondenceResolution.class);
+		Root<CorrespondenceResolution> root = cr.from(CorrespondenceResolution.class);
+		cr.select(root);
+		cr.where(criteriaBuilder.equal(root.get("publication").get("zdbID"), zdbID));
+		return currentSession().createQuery(cr).list();
+	}
+
+	@Override
+	public List<CorrespondenceResolutionType> getAllCorrespondenceResolutionTypes() {
+		CriteriaBuilder criteriaBuilder = currentSession().getCriteriaBuilder();
+		CriteriaQuery<CorrespondenceResolutionType> cr = criteriaBuilder.createQuery(CorrespondenceResolutionType.class);
+		Root<CorrespondenceResolutionType> root = cr.from(CorrespondenceResolutionType.class);
+		cr.select(root);
+		cr.orderBy(criteriaBuilder.asc(root.get("order")));
+		return currentSession().createQuery(cr).list();
+	}
+
+	@Override
+	public void deleteCorrespondenceResolutionByPublicationID(String pubID) {
+		CriteriaBuilder criteriaBuilder = currentSession().getCriteriaBuilder();
+		CriteriaDelete<CorrespondenceResolution> cr = criteriaBuilder.createCriteriaDelete(CorrespondenceResolution.class);
+		Root<CorrespondenceResolution> root = cr.from(CorrespondenceResolution.class);
+		cr.where(criteriaBuilder.equal(root.get("publication").get("zdbID"), pubID));
+		currentSession().createQuery(cr).executeUpdate();
+	}
+
+	@Override
+	public CorrespondenceResolutionType getCorrespondenceResolutionTypeByID(long id) {
+		return currentSession().get(CorrespondenceResolutionType.class, id);
+	}
+
+	@Override
+	public void insertCorrespondenceResolution(CorrespondenceResolution correspondenceResolution) {
+		currentSession().save(correspondenceResolution);
+	}
 }
