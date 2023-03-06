@@ -21,23 +21,23 @@ import org.zfin.mutant.presentation.FishModelDisplay;
 import org.zfin.mutant.presentation.FishStatistics;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.OmimPhenotypeDisplay;
-import org.zfin.ontology.Ontology;
 import org.zfin.ontology.service.OntologyService;
 import org.zfin.properties.ZfinProperties;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
+import javax.persistence.JoinTable;
+import javax.persistence.Table;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toSet;
-import static org.zfin.repository.RepositoryFactory.getExpressionRepository;
-import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 @Log4j2
 public class TermPageIndexer {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws NoSuchFieldException {
         TermPageIndexer indexer = new TermPageIndexer();
         indexer.init();
         indexer.publicationExpressions();
@@ -48,8 +48,10 @@ public class TermPageIndexer {
         System.out.println("Finished Indexing");
     }
 
-    private void runFishModels() {
+    private void runFishModels() throws NoSuchFieldException {
         HibernateUtil.createTransaction();
+        cleanoutFishModelsTables();
+
         List<FishModelDisplay> diseaseModelsWithFishModel = OntologyService.getDiseaseModelsWithFishModelsGrouped(null, false, new Pagination());
         diseaseModelsWithFishModel.forEach(fishModelDisplay -> {
             fishModelDisplay.setEvidenceSearch(fishModelDisplay.getFishModel().getDiseaseAnnotationModels().stream()
@@ -79,6 +81,8 @@ public class TermPageIndexer {
 
     private void publicationExpressions() {
         HibernateUtil.createTransaction();
+        cleanoutPublicationExpressionTables();
+
         List<ExpressionResult> expressionResults = getExpressionRepository().getAllExpressionResults();
         expressionResults.forEach(expressionResult -> {
             expressionResult.getFigures().forEach(figure -> {
@@ -91,22 +95,65 @@ public class TermPageIndexer {
         HibernateUtil.flushAndCommitCurrentSession();
     }
 
-    private void runGenesInvolved() {
+    private void runGenesInvolved() throws NoSuchFieldException {
         HibernateUtil.createTransaction();
-        //GenericTerm term = getOntologyRepository().getTermByOboID("DOID:0112009");
-        List<GenericTerm> diseaseList = getOntologyRepository().getAllTermsFromOntology(Ontology.DISEASE_ONTOLOGY);
+        cleanoutGenesInvolvedTables();
+
+        Set<GenericTerm> diseaseList = getOntologyRepository().getDiseaseTermsOmimPhenotype();
+        System.out.println("Total number of terms: " + diseaseList.size());
         //GenericTerm term = getOntologyRepository().getTermByOboID("DOID:9952");
-        diseaseList.forEach(term -> {
+        int index = 0;
+        for (GenericTerm term : diseaseList) {
             List<OmimPhenotypeDisplay> displayListSingle = OntologyService.getOmimPhenotype(term, new Pagination(), false);
             OntologyService.fixupSearchColumns(displayListSingle);
             displayListSingle.forEach(omimDisplay -> HibernateUtil.currentSession().save(omimDisplay));
-        });
+            if (index % 200 == 0)
+                System.out.println(index);
+            index++;
+        }
         HibernateUtil.flushAndCommitCurrentSession();
         //log.info("Number of Records: "+displayListSingle.size());
     }
 
-    private void runTermPhenotype() {
+    private static void cleanoutGenesInvolvedTables() throws NoSuchFieldException {
+        String associationTable = OmimPhenotypeDisplay.class.getDeclaredField("zfinGene").getAnnotation(JoinTable.class).name();
+        String omimTable = OmimPhenotypeDisplay.class.getAnnotation(Table.class).name();
+        getDiseasePageRepository().deleteUiTables(associationTable, omimTable);
+        HibernateUtil.currentSession().flush();
+    }
+
+    private static void cleanoutFishModelsTables() throws NoSuchFieldException {
+        String associationTable = FishModelDisplay.class.getDeclaredField("evidenceCodes").getAnnotation(JoinTable.class).name();
+        String fishModelTable = FishModelDisplay.class.getAnnotation(Table.class).name();
+        getDiseasePageRepository().deleteUiTables(associationTable, fishModelTable);
+        HibernateUtil.currentSession().flush();
+    }
+
+    private static void cleanoutFishStatisticsTables() throws NoSuchFieldException {
+        String associationTable = FishStatistics.class.getDeclaredField("affectedGenes").getAnnotation(JoinTable.class).name();
+        String associationTable1 = FishStatistics.class.getDeclaredField("phenotypeStatements").getAnnotation(JoinTable.class).name();
+        String fishStatsTable = FishStatistics.class.getAnnotation(Table.class).name();
+        getDiseasePageRepository().deleteUiTables(associationTable, associationTable1, fishStatsTable);
+        HibernateUtil.currentSession().flush();
+    }
+
+    private static void cleanoutChebiPhenotypeDisplayTables() throws NoSuchFieldException {
+        String associationTable = ChebiPhenotypeDisplay.class.getDeclaredField("phenotypeStatements").getAnnotation(JoinTable.class).name();
+        String chebiPhenotypeTable = ChebiPhenotypeDisplay.class.getAnnotation(Table.class).name();
+        getDiseasePageRepository().deleteUiTables(associationTable, chebiPhenotypeTable);
+        HibernateUtil.currentSession().flush();
+    }
+
+    private static void cleanoutPublicationExpressionTables() {
+        String expressionPub = ExpressionTableRow.class.getAnnotation(Table.class).name();
+        getDiseasePageRepository().deleteUiTables(expressionPub);
+        HibernateUtil.currentSession().flush();
+    }
+
+    private void runTermPhenotype() throws NoSuchFieldException {
         HibernateUtil.createTransaction();
+        cleanoutFishStatisticsTables();
+
         Map<Fish, Map<GenericTerm, List<PhenotypeStatementWarehouse>>> figureMap = RepositoryFactory.getPublicationRepository().getAllFiguresForPhenotype();
 
         figureMap.forEach((fish, termMap) -> termMap.forEach((term, phenotypeStatementWarehouses) -> {
@@ -132,8 +179,10 @@ public class TermPageIndexer {
         //log.info("Number of Records: "+displayListSingle.size());
     }
 
-    private void runChebiPhenotype() {
+    private void runChebiPhenotype() throws NoSuchFieldException {
         HibernateUtil.createTransaction();
+        cleanoutChebiPhenotypeDisplayTables();
+
         Map<Fish, Map<Experiment, Map<GenericTerm, Set<PhenotypeStatementWarehouse>>>> figureMap = RepositoryFactory.getPublicationRepository().getAllChebiPhenotype();
 
         figureMap.forEach((fish, termMap) -> termMap.forEach((experiment, experimentMao) -> {

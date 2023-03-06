@@ -15,6 +15,7 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.OmimPhenotypeDisplay;
 import org.zfin.repository.PaginationResultFactory;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class HibernateDiseasePageRepository implements DiseasePageRepository {
@@ -135,6 +136,17 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
         Query<ChebiPhenotypeDisplay> query = HibernateUtil.currentSession().createQuery(hql, ChebiPhenotypeDisplay.class);
         query.setParameter("term", term);
         return PaginationResultFactory.createResultFromScrollableResultAndClose(bean, query.scroll());
+    }
+
+    // empty out fast search tables (starting with ui.)
+    @Override
+    public int deleteUiTables(String... tableNames) {
+        Arrays.stream(tableNames).filter(s -> s.toLowerCase().startsWith("ui.")).forEach(tableName -> {
+            String hql = String.format("delete from %s", tableName);
+            Query query = HibernateUtil.currentSession().createNativeQuery(hql);
+            query.executeUpdate();
+        });
+        return 0;
     }
 
 }
