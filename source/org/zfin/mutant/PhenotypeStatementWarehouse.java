@@ -16,7 +16,7 @@ import javax.persistence.*;
 public class PhenotypeStatementWarehouse implements Comparable<PhenotypeStatementWarehouse> {
 
     @Id
-    @JsonView({View.FigureAPI.class, View.ExpressedGeneAPI.class})
+    @JsonView({View.FigureAPI.class, View.ExpressedGeneAPI.class, View.API.class})
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "psg_id")
     private long id;
