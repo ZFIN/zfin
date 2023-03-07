@@ -67,7 +67,8 @@ const PubCorrespondenceResolution = ({pubId}) => {
                         className='custom-control-input'
                         checked={resolution.resolved}
                         id={'resolution-' + resolution.id}
-                        type='checkbox'
+                        type='radio'
+                        name='correspondence-resolution'
                         onChange={event => onToggleResolution(resolution, event.target.checked)}
                     />
                     <label
