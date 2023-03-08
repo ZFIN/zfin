@@ -41,7 +41,7 @@ public class FigureAPIController {
         return result;
     }
 
-    @JsonView(View.FigureAPI.class)
+    @JsonView(View.ExpressionPublicationUI.class)
     @RequestMapping(value = "/{zdbID}/expression-detail", method = RequestMethod.GET)
     public JsonResultResponse<ExpressionTableRow> getFigureExpressionDetail(@PathVariable String zdbID,
                                                                             @RequestParam(value = "filter.geneAbbreviation", required = false) String geneAbbreviation,
