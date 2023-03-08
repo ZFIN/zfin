@@ -12,6 +12,8 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1141/ZFIN-8470-construct-edit.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1141/ZFIN-8426-construct-cleanup-for-GFP.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1141/ZFIN-8448-withdraw-fish-with-reference.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1141/ZFIN-8471-construct-edit.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1141/ZFIN-8237-correspondence-need.sql" />
+
 
 </databaseChangeLog>
