@@ -31,15 +31,15 @@ const PubCorrespondenceResolution = ({pubId}) => {
             setErrorSaving(true);
         });
     }
-    const onToggleResolution = (resolution, checked) => {
+    const onToggleResolution = (resolution) => {
         let updatedResolutions = [ ...correspondenceResolutions ];
-        updatedResolutions.find(r => r.id === resolution.id).resolved = checked;
+        updatedResolutions = updatedResolutions.map(r => ({...r, resolved:  r.id === resolution.id}));
         setCorrespondenceResolutions(updatedResolutions);
         saveToServer(updatedResolutions);
     }
 
     if (pending) {
-        return <LoadingSpinner/>;
+        return (null);
     }
 
     if (failed || errorSaving || !correspondenceResolutions) {
@@ -62,14 +62,14 @@ const PubCorrespondenceResolution = ({pubId}) => {
         </div>
         <div className='row pl-2 pr-3'>
             {correspondenceResolutions.map((resolution) =>
-                <div key={resolution.id} className='col-sm-3 custom-control custom-checkbox pb-2 pt-2'>
+                <div key={resolution.id} className='col-sm-3 custom-control custom-radio pb-2 pt-2'>
                     <input
                         className='custom-control-input'
                         checked={resolution.resolved}
                         id={'resolution-' + resolution.id}
                         type='radio'
                         name='correspondence-resolution'
-                        onChange={event => onToggleResolution(resolution, event.target.checked)}
+                        onChange={event => onToggleResolution(resolution)}
                     />
                     <label
                         className='cursor-pointer font-weight-normal d-block custom-control-label'
