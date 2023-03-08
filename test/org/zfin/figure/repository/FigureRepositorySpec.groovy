@@ -1,6 +1,7 @@
 package org.zfin.figure.repository
 import org.zfin.AbstractZfinIntegrationSpec
 import org.zfin.expression.Figure
+import org.zfin.expression.Image
 import org.zfin.figure.FigureData
 import org.zfin.marker.Clone
 import org.zfin.profile.Person
@@ -69,6 +70,24 @@ class FigureRepositorySpec extends AbstractZfinIntegrationSpec {
         then: "it should have the correct number of figures in ascending order"
         figures.size() == 7;
         ["Fig. 1", "Fig. 2", "Fig. 3", "Fig. 4", "Fig. 5", "Fig. 6", "Fig. 7"]== figures*.label
+    }
+
+    def "getImages should return and preserve ID order"() {
+        when: "get the images list"
+        List<Image> images = RepositoryFactory.figureRepository.getImages(["ZDB-IMAGE-001220-14", "ZDB-IMAGE-001220-11", "ZDB-IMAGE-001220-15"])
+
+        then: "it should have the correct number of images in order"
+        images.size() == 3;
+        ["ZDB-IMAGE-001220-14", "ZDB-IMAGE-001220-11", "ZDB-IMAGE-001220-15"] == images*.zdbID
+    }
+
+    def "getRecentlyCuratedImages should contain > 50 images (assuming we've been adding images over the last year)"() {
+        when: "get the images list"
+        List<Image> images = RepositoryFactory.figureRepository.getRecentlyCuratedImages()
+
+        then: "it should have the correct number of images in order"
+        images.size() >= 50;
+        images.size() == 117;
     }
 
 }
