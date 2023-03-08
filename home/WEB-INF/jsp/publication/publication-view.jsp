@@ -9,6 +9,7 @@
 <c:set var="ERRATA" value="${NavigationMenuOptions.ERRATA.value}"/>
 <c:set var="GENES" value="${NavigationMenuOptions.GENES.value}"/>
 <c:set var="FIGURES" value="${NavigationMenuOptions.FIGURES.value}"/>
+<c:set var="PROBES" value="${NavigationMenuOptions.PROBES.value}"/>
 <c:set var="EXPRESSION" value="${NavigationMenuOptions.EXPRESSION.value}"/>
 <c:set var="PHENOTYPE" value="${NavigationMenuOptions.PHENOTYPE.value}"/>
 <c:set var="MUTATION" value="${NavigationMenuOptions.MUTATION.value}"/>
@@ -86,6 +87,14 @@
         <z:section title="${GENES}">
             <div class="__react-root __use-navigation-counter" id="PublicationMarkerTable__0"
                  data-url="/action/api/publication/${publication.zdbID}/marker"
+                 data-title="${GENES}"
+            ></div>
+        </z:section>
+
+        <z:section title="${PROBES}">
+            <div class="__react-root __use-navigation-counter" id="PublicationProbeTable__0"
+                 data-url="/action/api/publication/${publication.zdbID}/probes"
+                 data-publication-id="${publication.zdbID}"
                  data-title="${GENES}"
             ></div>
         </z:section>
