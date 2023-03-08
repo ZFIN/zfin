@@ -41,7 +41,7 @@ public class GenericTerm implements Term<GenericTermRelationship> {
     @Column(name = "term_name_order")
     protected String termNameOrder;
 
-    @JsonView(View.API.class)
+    @JsonView({View.API.class, View.ExpressionPublicationUI.class})
     @Column(name = "term_ont_id")
     protected String oboID;
 
