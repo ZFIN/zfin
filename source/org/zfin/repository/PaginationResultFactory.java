@@ -1,6 +1,7 @@
 package org.zfin.repository;
 
 import org.hibernate.ScrollableResults;
+import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 
@@ -130,6 +131,10 @@ public class PaginationResultFactory {
      */
     public static <T> PaginationResult<T> createResultFromScrollableResultAndClose(PaginationBean bean, ScrollableResults scrollableResults) {
         return createResultFromScrollableResultAndClose(bean.getFirstRecord() - 1, bean.getLastRecord(), scrollableResults);
+    }
+
+    public static <T> PaginationResult<T> createResultFromScrollableResultAndClose(Pagination pagination, ScrollableResults scrollableResults) {
+        return createResultFromScrollableResultAndClose(pagination.getStart(), pagination.getEnd(), scrollableResults);
     }
 
     /**

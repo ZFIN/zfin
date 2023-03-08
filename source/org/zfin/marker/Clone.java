@@ -10,7 +10,7 @@ import java.util.Set;
  */
 public class Clone extends Marker{
 
-    @JsonView(View.API.class)
+    @JsonView({View.API.class, View.UI.class})
     private Integer rating;
     private ProblemType problem;
     private Set<ExpressionExperiment> expressionExperiments;

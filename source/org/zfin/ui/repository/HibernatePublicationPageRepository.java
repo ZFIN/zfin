@@ -7,7 +7,9 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.marker.Clone;
 import org.zfin.publication.Publication;
+import org.zfin.repository.PaginationResultFactory;
 
 public class HibernatePublicationPageRepository implements PublicationPageRepository {
 
@@ -53,6 +55,28 @@ public class HibernatePublicationPageRepository implements PublicationPageReposi
         queryCount.setParameter("pub", publication);
         result.setTotalCount((int) (long) queryCount.getSingleResult());
         return result;
+    }
+
+    @Override
+    public PaginationResult<Clone> getProbes(Publication publication, Pagination pagination) {
+        String hql = """
+            select distinct exp.probe from ExpressionExperiment as exp
+            where exp.publication = :publication
+            """;
+        if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
+            for (var entry : pagination.getFilterMap().entrySet()) {
+                hql += " AND ";
+                if (entry.getKey().endsWith("integer")) {
+                    hql += entry.getKey().substring(0, entry.getKey().lastIndexOf(".")) + " =" + entry.getValue().toLowerCase();
+                } else {
+                    hql += "LOWER(" + entry.getKey() + ") like '%" + entry.getValue().toLowerCase() + "%' ";
+                }
+            }
+        }
+        hql += " order by exp.probe.abbreviationOrder";
+        Query<Clone> query = HibernateUtil.currentSession().createQuery(hql, Clone.class);
+        query.setParameter("publication", publication);
+        return PaginationResultFactory.createResultFromScrollableResultAndClose(pagination, query.scroll());
     }
 
 }

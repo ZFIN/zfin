@@ -23,6 +23,7 @@ import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.mapping.MappingService;
+import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.MarkerType;
@@ -131,6 +132,35 @@ public class PublicationAPIController {
         }
 
         PaginationResult<ExpressionTableRow> expressionTableRows = getPublicationPageRepository().getPublicationExpression(publication, pagination);
+
+        response.setTotal(expressionTableRows.getTotalCount());
+        response.setResults(expressionTableRows.getPopulatedResults());
+        response.setHttpServletRequest(request);
+        response.calculateRequestDuration(startTime);
+        return response;
+    }
+
+    @JsonView(View.PublicationUI.class)
+    @RequestMapping(value = "/{pubID}/probes", method = RequestMethod.GET)
+    public JsonResultResponse<Clone> getPublicationProbes(@PathVariable String pubID,
+                                                                       @RequestParam(value = "filter.symbol", required = false) String probeSymbol,
+                                                                       @RequestParam(value = "filter.rating", required = false) String probeRating,
+                                                                       @Version Pagination pagination) {
+
+        LocalDateTime startTime = LocalDateTime.now();
+        JsonResultResponse<Clone> response = new JsonResultResponse<>();
+        Publication publication = publicationRepository.getPublication(pubID);
+        if (publication == null)
+            return response;
+
+        if (StringUtils.isNotEmpty(probeSymbol)) {
+            pagination.addToFilterMap("exp.probe.abbreviation", probeSymbol);
+        }
+        if (StringUtils.isNotEmpty(probeRating)) {
+            pagination.addToFilterMap("exp.probe.rating.integer", probeRating);
+        }
+
+        PaginationResult<Clone> expressionTableRows = getPublicationPageRepository().getProbes(publication, pagination);
 
         response.setTotal(expressionTableRows.getTotalCount());
         response.setResults(expressionTableRows.getPopulatedResults());

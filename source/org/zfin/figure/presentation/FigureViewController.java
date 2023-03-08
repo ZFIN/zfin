@@ -149,7 +149,7 @@ public class FigureViewController {
     }
 
 
-    // get together all of the data that you need later in the JSP it returns
+    // get together all the data that you need later in the JSP it returns
     @RequestMapping("/all-figure-view/{zdbID}")
     public String getAllFigureView(Model model,
                                    @PathVariable("zdbID") String zdbID,
