@@ -2342,6 +2342,7 @@ create view phenoGeneCleanDataFish as
   From tmp_dumpCleanPheno, tmp_phenotype_statement tps, marker
   where tps.phenos_pk_id = phenos_id
 and mrkr_Zdb_id = gene_zdb_id
+  and tps.quality_tag = 'abnormal'
   order by mrkr_abbrev;
 \copy (select * from phenoGeneCleanDataFish) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenoGeneCleanData_fish.txt' with delimiter as '	' null as '';  
 drop view phenoGeneCleanDataFish;
