@@ -9,7 +9,14 @@
 
 
     <authz:authorize access="hasRole('root')">
-        <a class="dropdown-item" href="/action/publication/${publication.zdbID}/all-figures">Prototype View</a>
+        <c:choose>
+            <c:when test="${!empty probe}">
+                <a class="dropdown-item" href="/action/publication/${publication.zdbID}/all-figures?probeZdbID=${probe.zdbID}">Prototype View</a>
+            </c:when>
+            <c:otherwise>
+                <a class="dropdown-item" href="/action/publication/${publication.zdbID}/all-figures">Prototype View</a>
+            </c:otherwise>
+        </c:choose>
     </authz:authorize>
 
 
