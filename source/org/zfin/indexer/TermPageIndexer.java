@@ -40,10 +40,8 @@ public class TermPageIndexer {
     public static void main(String[] args) throws NoSuchFieldException {
         TermPageIndexer indexer = new TermPageIndexer();
         indexer.init();
-/*
         indexer.publicationExpressions();
         indexer.runFishModels();
-*/
         indexer.runGenesInvolved();
         indexer.runTermPhenotype();
         indexer.runChebiPhenotype();
