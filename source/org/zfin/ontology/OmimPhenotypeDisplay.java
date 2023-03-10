@@ -28,6 +28,9 @@ public class OmimPhenotypeDisplay implements Serializable {
 	@Column(name = "opd_id", nullable = false)
 	private long id;
 
+	@Transient
+	private String omimNum;
+
 	@JsonView(View.API.class)
 	@Transient
 	private String omim;
