@@ -21,6 +21,7 @@ const FigureExpressionTable = ({url, hideFigureColumn = false, navigationCounter
             content: row => {
                 row.antibody && <EntityLink entity={row.antibody}/>
             },
+            filterName: 'antibody',
             width: '150px',
         },
         {
@@ -36,6 +37,7 @@ const FigureExpressionTable = ({url, hideFigureColumn = false, navigationCounter
                     href={`/action/fish/fish-detail-popup/${row.fish.zdbID}`}
                 />
             </span>,
+            filterName: 'fish',
             width: '150px',
         },
         {
@@ -51,11 +53,13 @@ const FigureExpressionTable = ({url, hideFigureColumn = false, navigationCounter
                     href={`/action/expression/experiment-popup?id=${row.experiment.zdbID}`}
                 />
             </span>,
+            filterName: 'experiment',
             width: '150px',
         },
         {
             label: 'Stage',
             content: (row) => <StageRange start={row.start} end={row.end}/>,
+            filterName: 'stage',
             width: '150px',
         },
         {
@@ -68,11 +72,13 @@ const FigureExpressionTable = ({url, hideFigureColumn = false, navigationCounter
         {
             label: 'Anatomy',
             content: row => <PostComposedEntity postComposedEntity={row.entity}/>,
+            filterName: 'anatomy',
             width: '150px',
         },
         {
             label: 'Assay',
             content: row => row.assay.abbreviation,
+            filterName: 'assay',
             width: '150px',
         },
         {

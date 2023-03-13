@@ -45,8 +45,20 @@ public class FigureAPIController {
     @RequestMapping(value = "/{zdbID}/expression-detail", method = RequestMethod.GET)
     public JsonResultResponse<ExpressionTableRow> getFigureExpressionDetail(@PathVariable String zdbID,
                                                                             @RequestParam(value = "filter.geneAbbreviation", required = false) String geneAbbreviation,
+                                                                            @RequestParam(value = "filter.antibody", required = false) String antibody,
+                                                                            @RequestParam(value = "filter.stage", required = false) String stage,
+                                                                            @RequestParam(value = "filter.anatomy", required = false) String anatomy,
+                                                                            @RequestParam(value = "filter.assay", required = false) String assay,
+                                                                            @RequestParam(value = "filter.fish", required = false) String fish,
+                                                                            @RequestParam(value = "filter.experiment", required = false) String experiment,
                                                                             @Version Pagination pagination) {
         pagination.addFieldFilter(FieldFilter.GENE_ABBREVIATION, geneAbbreviation);
+        pagination.addFieldFilter(FieldFilter.ANTIBODY_NAME, antibody);
+        pagination.addFieldFilter(FieldFilter.ANATOMY, anatomy);
+        pagination.addFieldFilter(FieldFilter.STAGE, stage);
+        pagination.addFieldFilter(FieldFilter.FISH_NAME, fish);
+        pagination.addFieldFilter(FieldFilter.ASSAY, assay);
+        pagination.addFieldFilter(FieldFilter.EXPERIMENT, experiment);
         Figure figure = figureRepository.getFigure(zdbID);
 
         List<ExpressionTableRow> expressionTableRows = figureViewService.getExpressionTableRows(figure);
@@ -58,9 +70,9 @@ public class FigureAPIController {
 
         response.setTotal(filteredExpressionList.size());
         List<ExpressionTableRow> paginatedExpressionList = filteredExpressionList.stream()
-                .skip(pagination.getStart())
-                .limit(pagination.getLimit())
-                .collect(Collectors.toList());
+            .skip(pagination.getStart())
+            .limit(pagination.getLimit())
+            .collect(Collectors.toList());
 
         response.setResults(paginatedExpressionList);
         response.setHttpServletRequest(request);
@@ -77,9 +89,9 @@ public class FigureAPIController {
         JsonResultResponse<AntibodyTableRow> response = new JsonResultResponse<>();
         response.setTotal(antibodyTableRows.size());
         List<AntibodyTableRow> paginatedFeatureList = antibodyTableRows.stream()
-                .skip(pagination.getStart())
-                .limit(pagination.getLimit())
-                .collect(Collectors.toList());
+            .skip(pagination.getStart())
+            .limit(pagination.getLimit())
+            .collect(Collectors.toList());
 
         response.setResults(paginatedFeatureList);
         response.setHttpServletRequest(request);
@@ -97,9 +109,9 @@ public class FigureAPIController {
         JsonResultResponse<PhenotypeTableRow> response = new JsonResultResponse<>();
         response.setTotal(phenotypeTableRows.size());
         List<PhenotypeTableRow> paginatedFeatureList = phenotypeTableRows.stream()
-                .skip(pagination.getStart())
-                .limit(pagination.getLimit())
-                .collect(Collectors.toList());
+            .skip(pagination.getStart())
+            .limit(pagination.getLimit())
+            .collect(Collectors.toList());
 
         response.setResults(paginatedFeatureList);
         response.setHttpServletRequest(request);
