@@ -98,7 +98,7 @@ const FigureExpressionTable = ({url, hideFigureColumn = false, navigationCounter
         <DataTable
             columns={columns}
             dataUrl={url}
-            rowKey={row => row.id}
+            rowKey={() => Math.random()}
             pagination={true}
             onDataLoaded={handleDataLoadedCount}
         />
