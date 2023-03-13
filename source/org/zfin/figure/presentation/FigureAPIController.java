@@ -101,19 +101,35 @@ public class FigureAPIController {
     @JsonView(View.FigureAPI.class)
     @RequestMapping(value = "/{zdbID}/phenotype-detail", method = RequestMethod.GET)
     public JsonResultResponse<PhenotypeTableRow> getFigurePhenotypeDetail(@PathVariable String zdbID,
+                                                                          @RequestParam(value = "filter.fish", required = false) String fish,
+                                                                          @RequestParam(value = "filter.stage", required = false) String stage,
+                                                                          @RequestParam(value = "filter.phenotype", required = false) String phenotype,
+                                                                          @RequestParam(value = "filter.condition", required = false) String condition,
                                                                           @Version Pagination pagination) {
+
+        pagination.addFieldFilter(FieldFilter.PHENOTYPE, phenotype);
+        pagination.addFieldFilter(FieldFilter.STAGE, stage);
+        pagination.addFieldFilter(FieldFilter.FISH_NAME, fish);
+        pagination.addFieldFilter(FieldFilter.EXPERIMENT, condition);
+
         Figure figure = figureRepository.getFigure(zdbID);
 
         List<PhenotypeWarehouse> warehouseList = getPhenotypeRepository().getPhenotypeWarehouse(figure.getZdbID());
         List<PhenotypeTableRow> phenotypeTableRows = figureViewService.getPhenotypeTableRows(warehouseList);
         JsonResultResponse<PhenotypeTableRow> response = new JsonResultResponse<>();
-        response.setTotal(phenotypeTableRows.size());
-        List<PhenotypeTableRow> paginatedFeatureList = phenotypeTableRows.stream()
+
+
+        // filtering
+        FilterService<PhenotypeTableRow> filterService = new FilterService<>(new PhenotypeTableRowFiltering());
+        List<PhenotypeTableRow> filteredExpressionList = filterService.filterAnnotations(phenotypeTableRows, pagination.getFieldFilterValueMap());
+
+        response.setTotal(filteredExpressionList.size());
+        List<PhenotypeTableRow> paginatedExpressionList = filteredExpressionList.stream()
             .skip(pagination.getStart())
             .limit(pagination.getLimit())
             .collect(Collectors.toList());
 
-        response.setResults(paginatedFeatureList);
+        response.setResults(paginatedExpressionList);
         response.setHttpServletRequest(request);
         return response;
     }
