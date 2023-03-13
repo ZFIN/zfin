@@ -1,4 +1,4 @@
-FROM gradle:jdk17
+FROM gradle:7-jdk17
 
 RUN apt update && apt install -y --no-install-recommends \
        ant groovy postgresql-client tcsh sudo \
