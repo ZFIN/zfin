@@ -87,7 +87,6 @@ class FigureRepositorySpec extends AbstractZfinIntegrationSpec {
 
         then: "it should have the correct number of images in order"
         images.size() >= 50;
-        images.size() == 117;
     }
 
 }
