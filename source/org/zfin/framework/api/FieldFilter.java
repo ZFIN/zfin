@@ -12,6 +12,7 @@ public enum FieldFilter {
     GENE_ABBREVIATION("filter.geneAbbreviation"),
     NAME("name"),
     FISH_NAME("fishName"),
+    ASSAY("assay"),
     DISEASE_NAME("disease"),
     TARGET_NAME("targetName"),
     ENTITY_ID("entityId"),
@@ -23,7 +24,11 @@ public enum FieldFilter {
     PHENOTYPE("phenotype"),
     ANTIBODY_NAME("antibodyName"),
     CITATION("citation"),
-    ;
+    ANATOMY("anatomy"),
+
+    STAGE("stage"),
+    EXPERIMENT("experiment");
+
     private String name;
 
     FieldFilter(String name) {
