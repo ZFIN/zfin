@@ -67,7 +67,7 @@ const TermGeneTable = ({termId, directAnnotationOnly}) => {
                 columns={columns}
                 dataUrl={`/action/api/ontology/${termId}/genes?${qs.stringify(params)}`}
                 onDataLoadedCount={(count) => setCount(count)}
-                rowKey={row => row.omimAccession}
+                rowKey={() => Math.random()}
             />
         </>
     );

@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import useFetch from '../../hooks/useFetch';
-import LoadingSpinner from '../LoadingSpinner';
 import GenericErrorMessage from '../GenericErrorMessage';
 
 const PubCorrespondenceResolution = ({pubId}) => {
@@ -69,7 +68,7 @@ const PubCorrespondenceResolution = ({pubId}) => {
                         id={'resolution-' + resolution.id}
                         type='radio'
                         name='correspondence-resolution'
-                        onChange={event => onToggleResolution(resolution)}
+                        onChange={() => onToggleResolution(resolution)}
                     />
                     <label
                         className='cursor-pointer font-weight-normal d-block custom-control-label'
