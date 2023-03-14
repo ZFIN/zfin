@@ -168,21 +168,6 @@
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>TermService</servlet-name>
-        <servlet-class>org.zfin.gwt.root.server.MarkerGoEvidenceRPCServiceImpl</servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>TermService</servlet-name>
-        <url-pattern>/ajax/termservice</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>MarkerService</servlet-name>
-        <servlet-class>org.zfin.gwt.root.server.MarkerRPCServiceImpl</servlet-class>
-    </servlet>
-
-    <servlet>
         <servlet-name>CurationStructureService</servlet-name>
         <servlet-class>org.zfin.gwt.curation.server.StructureRPCImpl</servlet-class>
     </servlet>
@@ -191,11 +176,6 @@
         <servlet-name>CurationPhenotypeService</servlet-name>
         <servlet-class>org.zfin.gwt.curation.server.CurationPhenotypeRPCImpl</servlet-class>
     </servlet>
-
-    <servlet-mapping>
-        <servlet-name>MarkerService</servlet-name>
-        <url-pattern>/ajax/markerservice</url-pattern>
-    </servlet-mapping>
 
     <servlet>
         <servlet-name>CloneService</servlet-name>

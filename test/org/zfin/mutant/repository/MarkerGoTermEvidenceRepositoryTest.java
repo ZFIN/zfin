@@ -1,14 +1,13 @@
 package org.zfin.mutant.repository;
 
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.datatransfer.go.GafOrganization;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
-import org.zfin.gwt.root.dto.GoEvidenceDTO;
-import org.zfin.gwt.root.server.MarkerGoEvidenceRPCServiceImpl;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.InferenceGroupMember;
 import org.zfin.mutant.MarkerGoTermEvidence;
@@ -23,17 +22,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.junit.Assert.*;
 
 /**
+ *
  */
 public class MarkerGoTermEvidenceRepositoryTest extends AbstractDatabaseTest {
 
     private Logger logger = LogManager.getLogger(MarkerGoTermEvidenceRepositoryTest.class);
     private static MarkerGoTermEvidenceRepository markerGoTermEvidenceRepository =
-            RepositoryFactory.getMarkerGoTermEvidenceRepository();
+        RepositoryFactory.getMarkerGoTermEvidenceRepository();
 
 
     @Test
@@ -45,44 +44,11 @@ public class MarkerGoTermEvidenceRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getMarkerGoTermEvidenceByZdbID() {
-        MarkerGoTermEvidence markerGoTermEvidence = (MarkerGoTermEvidence) HibernateUtil.currentSession().createQuery("from MarkerGoTermEvidence ev")
-                .setMaxResults(1)
-                .uniqueResult();
-        MarkerGoTermEvidence evidenceTest = markerGoTermEvidenceRepository.getMarkerGoTermEvidenceByZdbID(markerGoTermEvidence.getZdbID());
-        assertNotNull(evidenceTest);
-        assertEquals(markerGoTermEvidence, evidenceTest);
-    }
-
-    @Test
-    public void getMarkerGoTermEvidencesForMarkerZdbID() {
-        MarkerGoTermEvidence markerGoTermEvidence = (MarkerGoTermEvidence) HibernateUtil.currentSession().createQuery("from MarkerGoTermEvidence ev")
-                .setMaxResults(1)
-                .uniqueResult();
-        List<MarkerGoTermEvidence> evidences = markerGoTermEvidenceRepository.getMarkerGoTermEvidencesForMarkerZdbID(markerGoTermEvidence.getMarker().getZdbID());
-        assertNotNull(evidences);
-        logger.debug(evidences.size());
-        assertTrue(evidences.size() > 0);
-    }
-
-    @Test
     public void getMarkerGoTermEvidencesForPubZdbID() {
         String pubId = "ZDB-PUB-160828-8";
         List<MarkerGoTermEvidence> evidences = markerGoTermEvidenceRepository.getMarkerGoTermEvidencesForPubZdbID(pubId);
         assertNotNull(evidences);
         assertThat(evidences.size(), greaterThanOrEqualTo(2));
-    }
-
-    @Test
-    public void getMarkerGoTermEvidencesForMarkerZdbIDOrdered() {
-        MarkerGoTermEvidence markerGoTermEvidence = (MarkerGoTermEvidence) HibernateUtil.currentSession().createQuery("from MarkerGoTermEvidence ev")
-                .setMaxResults(1)
-                .uniqueResult();
-        List<MarkerGoTermEvidence> evidences = markerGoTermEvidenceRepository.getMarkerGoTermEvidencesForMarkerZdbIDOrdered(markerGoTermEvidence.getMarker().getZdbID());
-        assertNotNull(evidences);
-        logger.debug(evidences.size());
-        assertTrue(evidences.size() > 0);
-
     }
 
     @Test
@@ -145,45 +111,6 @@ public class MarkerGoTermEvidenceRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void addEvidenceWithInference() {
-        MarkerGoTermEvidence existingEvidence = (MarkerGoTermEvidence) HibernateUtil.currentSession().createCriteria(MarkerGoTermEvidence.class)
-                .add(Restrictions.eq("zdbID", "ZDB-MRKRGOEV-211013-579"))
-                .uniqueResult();
-        MarkerGoTermEvidence evidence = new MarkerGoTermEvidence();
-        evidence.setMarker(existingEvidence.getMarker());
-        evidence.setSource(existingEvidence.getSource());
-        evidence.setFlag(existingEvidence.getFlag());
-        evidence.setGafOrganization(existingEvidence.getGafOrganization());
-        evidence.setGoTerm(existingEvidence.getGoTerm());
-        evidence.setCreatedBy(existingEvidence.getCreatedBy());
-        evidence.setCreatedWhen(existingEvidence.getCreatedWhen());
-        evidence.setEvidenceCode(existingEvidence.getEvidenceCode());
-        evidence.setModifiedBy(existingEvidence.getModifiedBy());
-        evidence.setModifiedWhen(existingEvidence.getModifiedWhen());
-        evidence.setOrganizationCreatedBy(existingEvidence.getOrganizationCreatedBy());
-
-        // change the
-        InferenceGroupMember inferenceGroupMember = new InferenceGroupMember();
-        inferenceGroupMember.setInferredFrom("UniProtKB:Q9NXR7");
-        Set<InferenceGroupMember> inferenceGroupMemberSet = new HashSet<>();
-        inferenceGroupMemberSet.add(inferenceGroupMember);
-
-        evidence.setInferredFrom(inferenceGroupMemberSet);
-        markerGoTermEvidenceRepository.addEvidence(evidence, false);
-
-        assertNotNull(HibernateUtil.currentSession().createCriteria(MarkerGoTermEvidence.class)
-                .add(Restrictions.eq("zdbID", evidence.getZdbID()))
-                .uniqueResult());
-
-        InferenceGroupMember inferenceGroupMemberFound = (InferenceGroupMember) HibernateUtil.currentSession().createQuery(" select ev.inferredFrom from MarkerGoTermEvidence ev where ev.zdbID = :zdbID ")
-                .setParameter("zdbID", evidence.getZdbID())
-                .uniqueResult();
-
-        assertNotNull(inferenceGroupMemberFound);
-        assertEquals("UniProtKB:Q9NXR7", inferenceGroupMemberFound.getInferredFrom());
-    }
-
-    @Test
     public void getEvidenceForMarkerCount() {
         Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
         int count = markerGoTermEvidenceRepository.getEvidenceForMarkerCount(m);
@@ -198,13 +125,6 @@ public class MarkerGoTermEvidenceRepositoryTest extends AbstractDatabaseTest {
         assertNotNull(markerGoTermEvidenceRepository.getFirstEvidenceForMarkerOntology(m, Ontology.GO_BP));
         assertNotNull(markerGoTermEvidenceRepository.getFirstEvidenceForMarkerOntology(m, Ontology.GO_MF));
         assertNotNull(markerGoTermEvidenceRepository.getFirstEvidenceForMarkerOntology(m, Ontology.GO_CC));
-    }
-
-    @Test
-    public void getMarkerGoEvidence() {
-        MarkerGoEvidenceRPCServiceImpl service = new MarkerGoEvidenceRPCServiceImpl();
-        List<GoEvidenceDTO> list = service.getMarkerGoTermEvidencesForPub("ZDB-PUB-160828-8");
-        assertNotNull(list);
     }
 
     @Test
