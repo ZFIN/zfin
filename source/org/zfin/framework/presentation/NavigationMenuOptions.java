@@ -35,7 +35,7 @@ public enum NavigationMenuOptions {
     CHEBI_HUMAN_DISEASE("Human Disease / Model Data"),
     RELATIONSHIPS("Relationships"),
     ZEBRAFISH_MODELS("Zebrafish Models"),
-    GENES_INVOLVED("Genes Invovled");
+    GENES_INVOLVED("Genes Involved");
 
     public final String value;
 
