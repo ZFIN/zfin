@@ -1305,7 +1305,7 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
      on c.mrkr_Zdb_id = fc_construct_zdb_id
    where fc_affector_zdb_id like 'ZDB-ALT%'
 ;
-\copy (select * from fish_components_fish) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fish_components_fish.txt' with delimiter as '	' null as '';
+\copy (select * from fish_components_fish order by fc_fish_name) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fish_components_fish.txt' with delimiter as '	' null as '';
 drop view fish_components_fish;
 
 -- generate a file with zdb history data
