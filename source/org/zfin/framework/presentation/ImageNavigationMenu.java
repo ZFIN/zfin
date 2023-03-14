@@ -47,7 +47,7 @@ public class ImageNavigationMenu extends NavigationMenu {
     public void setModel(Model model) {
         Image image = (Image)(model.asMap().get("image"));
 
-        this.setHidden(NavigationMenuOptions.FIGURE_CAPTION,image.getFigure() == null);
+        this.setHidden(NavigationMenuOptions.FIGURE_CAPTION,image.getFigure() == null || image.getFigure().getCaption() == null);
 
         this.setHidden(NavigationMenuOptions.COMMENTS, StringUtils.isEmpty(image.getComments()));
         this.setHidden(NavigationMenuOptions.DEVELOPMENTAL_STAGE, image.getImageStage() == null || image.getImageStage().getStart() == null);
