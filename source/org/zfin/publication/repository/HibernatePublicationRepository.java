@@ -21,6 +21,7 @@ import org.zfin.antibody.Antibody;
 import org.zfin.curation.presentation.CorrespondenceDTO;
 import org.zfin.curation.presentation.PersonDTO;
 import org.zfin.curation.service.CurationDTOConversionService;
+import org.zfin.database.transform.FirstElementResultTransformer;
 import org.zfin.expression.*;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
@@ -1257,12 +1258,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             " );";
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
         query.setString("pubID", pubZdbID);
-        query.setResultTransformer(new BasicTransformerAdapter() {
-            @Override
-            public Object transformTuple(Object[] tuple, String[] aliases) {
-                return tuple[0];
-            }
-        });
+        query.setResultTransformer(new FirstElementResultTransformer());
         return query.list();
     }
 

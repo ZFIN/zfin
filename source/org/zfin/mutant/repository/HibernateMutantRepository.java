@@ -5,12 +5,13 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.springframework.stereotype.Repository;
+import org.zfin.database.transform.FirstElementResultTransformer;
 import org.zfin.expression.*;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureAlias;
@@ -112,12 +113,7 @@ public class HibernateMutantRepository implements MutantRepository {
         }
 
         // have to add extra select because of ordering, but we only want to return the first
-        query.setResultTransformer(new BasicTransformerAdapter() {
-            @Override
-            public Object transformTuple(Object[] tuple, String[] aliases) {
-                return tuple[0];
-            }
-        });
+        query.setResultTransformer(new FirstElementResultTransformer());
 
         return PaginationResultFactory.createResultFromScrollableResultAndClose(bean, query.scroll());
     }
@@ -148,13 +144,9 @@ public class HibernateMutantRepository implements MutantRepository {
         query.setParameter("aoTerm", item);
         query.setParameter("tag", PhenotypeStatement.Tag.NORMAL.toString());
         query.setParameter("standardOrGeneric", false);
+
         // have to add extra select because of ordering, but we only want to return the first
-        query.setResultTransformer(new BasicTransformerAdapter() {
-            @Override
-            public Object transformTuple(Object[] tuple, String[] aliases) {
-                return tuple[0];
-            }
-        });
+        query.setResultTransformer(new FirstElementResultTransformer());
 
         return PaginationResultFactory.createResultFromScrollableResultAndClose(bean, query.scroll());
     }
@@ -219,12 +211,7 @@ public class HibernateMutantRepository implements MutantRepository {
             }
         }
         // have to add extra select because of ordering, but we only want to return the first
-        query.setResultTransformer(new BasicTransformerAdapter() {
-            @Override
-            public Object transformTuple(Object[] tuple, String[] aliases) {
-                return tuple[0];
-            }
-        });
+        query.setResultTransformer(new FirstElementResultTransformer());
         return PaginationResultFactory.createResultFromScrollableResultAndClose(bean, query.scroll());
     }
 
