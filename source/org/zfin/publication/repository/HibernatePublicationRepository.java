@@ -9,7 +9,6 @@ import org.hibernate.*;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.transform.BasicTransformerAdapter;
 import org.hibernate.transform.ResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.IntegerType;
@@ -60,6 +59,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
+import static org.zfin.database.HibernateUpgradeHelper.setTupleResultTransformer;
 import static org.zfin.framework.HibernateUtil.currentSession;
 
 /**
