@@ -6,10 +6,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.*;
+import org.hibernate.query.Query;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.transform.ResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.StringType;
@@ -20,7 +20,6 @@ import org.zfin.antibody.Antibody;
 import org.zfin.curation.presentation.CorrespondenceDTO;
 import org.zfin.curation.presentation.PersonDTO;
 import org.zfin.curation.service.CurationDTOConversionService;
-import org.zfin.database.transform.FirstElementResultTransformer;
 import org.zfin.expression.*;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
@@ -989,17 +988,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             "order by ortho.zebrafishGene.abbreviationOrder, ortho.ncbiOtherSpeciesGene.organism.displayOrder";
         Query query = session.createQuery(hql);
         query.setString("pubID", pubID);
-        query.setResultTransformer(new ResultTransformer() {
-            @Override
-            public Object transformTuple(Object[] objects, String[] strings) {
-                return objects[0];
-            }
 
-            @Override
-            public List transformList(List collection) {
-                return collection;
-            }
-        });
+        setTupleResultTransformer(query, (Object[] tuple, String[] aliases) -> tuple[0]);
+
         List<Ortholog> orthologList = (List<Ortholog>) query.list();
         return orthologList;
     }
@@ -1015,17 +1006,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             "order by ortho.zebrafishGene.abbreviationOrder, ortho.ncbiOtherSpeciesGene.organism.displayOrder";
         Query query = session.createQuery(hql);
         query.setString("mrkrID", mrkrID);
-        query.setResultTransformer(new ResultTransformer() {
-            @Override
-            public Object transformTuple(Object[] objects, String[] strings) {
-                return objects[0];
-            }
+        setTupleResultTransformer(query, (Object[] tuple, String[] aliases) -> tuple[0]);
 
-            @Override
-            public List transformList(List collection) {
-                return collection;
-            }
-        });
         List<Ortholog> orthologList = (List<Ortholog>) query.list();
         return orthologList;
     }
@@ -1041,17 +1023,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             "order by ortho.zebrafishGene.abbreviationOrder, ortho.ncbiOtherSpeciesGene.organism.displayOrder";
         Query query = session.createQuery(hql);
         query.setString("pubID", pubID);
-        query.setResultTransformer(new ResultTransformer() {
-            @Override
-            public Object transformTuple(Object[] objects, String[] strings) {
-                return objects[0];
-            }
+        setTupleResultTransformer(query, (Object[] tuple, String[] aliases) -> tuple[0]);
 
-            @Override
-            public List transformList(List collection) {
-                return collection;
-            }
-        });
         return (List<Ortholog>) query.list();
     }
 
@@ -1066,17 +1039,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             "order by ortho.zebrafishGene.abbreviationOrder, ortho.ncbiOtherSpeciesGene.organism.displayOrder";
         Query query = session.createQuery(hql);
         query.setString("pubID", pubID);
-        query.setResultTransformer(new ResultTransformer() {
-            @Override
-            public Object transformTuple(Object[] objects, String[] strings) {
-                return objects[0];
-            }
+        setTupleResultTransformer(query, (Object[] tuple, String[] aliases) -> tuple[0]);
 
-            @Override
-            public List transformList(List collection) {
-                return collection;
-            }
-        });
         List<Ortholog> orthologList = (List<Ortholog>) query.list();
         PaginationResult<Ortholog> paginationResult = PaginationResultFactory.createResultFromScrollableResultAndClose(
             searchBean.getFirstRecordOnPage() - 1, searchBean.getLastRecordOnPage(), query.scroll());
@@ -1258,7 +1222,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             " );";
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
         query.setString("pubID", pubZdbID);
-        query.setResultTransformer(new FirstElementResultTransformer());
+        setTupleResultTransformer(query, (Object[] tuple, String[] aliases) -> tuple[0]);
+
         return query.list();
     }
 
