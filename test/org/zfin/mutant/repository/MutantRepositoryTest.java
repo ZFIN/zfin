@@ -11,6 +11,8 @@ import org.zfin.feature.Feature;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.api.Pagination;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
@@ -25,6 +27,7 @@ import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.zfin.repository.RepositoryFactory.*;
 
@@ -514,5 +517,14 @@ public class MutantRepositoryTest {
         assertNotNull(models);
         assertThat(models.size(), greaterThan(5));
 
+    }
+
+    @Test
+    public void getFishByFeature() {
+        Pagination pagination = new Pagination(1, 10, null, null);
+        PaginationResult<FishGenotypeFeature> result = getMutantRepository().getFishByFeature("ZDB-ALT-000412-8", false, pagination);
+        assertNotNull(result);
+        assertThat(result.getTotalCount(), greaterThan(0));
+        assertEquals(8, result.getTotalCount());
     }
 }

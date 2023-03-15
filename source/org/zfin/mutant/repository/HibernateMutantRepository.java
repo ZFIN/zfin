@@ -39,6 +39,7 @@ import org.zfin.sequence.STRMarkerSequence;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.zfin.database.HibernateUpgradeHelper.setTupleResultTransformer;
 import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
@@ -113,7 +114,7 @@ public class HibernateMutantRepository implements MutantRepository {
         }
 
         // have to add extra select because of ordering, but we only want to return the first
-        query.setResultTransformer(new FirstElementResultTransformer());
+        setTupleResultTransformer(query, (Object[] tuple, String[] aliases) -> tuple[0]);
 
         return PaginationResultFactory.createResultFromScrollableResultAndClose(bean, query.scroll());
     }
@@ -264,56 +265,58 @@ public class HibernateMutantRepository implements MutantRepository {
         }
 
         Query query = HibernateUtil.currentSession().createSQLQuery(
-            "select * " +
-                "from ( " +
-                "    select " +
-                "      self.genofeat_zdb_id, " +
-                "      fish_zdb_id, " +
-                "      fish_name_order, " +
-                "      zyg_name, " +
-                "      string_agg(distinct affected_gene.mrkr_abbrev_order, ',' order by affected_gene.mrkr_abbrev_order) as affected_list, " +
-                "      count(distinct affected_gene.mrkr_zdb_id) as affected_count, " +
-                "      count(distinct fish_str.mrkr_zdb_id) as str_count, " +
-                "      count(distinct other.genofeat_zdb_id) as feature_count " +
-                "    from fish " +
-                "      inner join genotype_feature self on self.genofeat_geno_zdb_id = fish_genotype_zdb_id " +
-                "      inner join zygocity on genofeat_zygocity = zyg_zdb_id " +
-                "      left outer join fish_components on fc_fish_zdb_id = fish_zdb_id " +
-                "      left outer join marker affected_gene on fc_gene_zdb_id = affected_gene.mrkr_zdb_id " +
-                "      left outer join marker fish_str on fc_affector_zdb_id = fish_str.mrkr_zdb_id " +
-                "      left outer join genotype_feature other on other.genofeat_geno_zdb_id = fish_genotype_zdb_id " +
-                "    where self.genofeat_feature_zdb_id = :feature_id " +
-                "    group by self.genofeat_zdb_id, fish_zdb_id, zyg_name " +
-                ") as sub " +
+            """
+                select * 
+                from ( 
+                    select 
+                      self.genofeat_zdb_id, 
+                      fish_zdb_id, 
+                      fish_name_order, 
+                      zyg_name, 
+                      string_agg(distinct affected_gene.mrkr_abbrev_order, ',' order by affected_gene.mrkr_abbrev_order) as affected_list, 
+                      count(distinct affected_gene.mrkr_zdb_id) as affected_count, 
+                      count(distinct fish_str.mrkr_zdb_id) as str_count, 
+                      count(distinct other.genofeat_zdb_id) as feature_count 
+                    from fish 
+                      inner join genotype_feature self on self.genofeat_geno_zdb_id = fish_genotype_zdb_id 
+                      inner join zygocity on genofeat_zygocity = zyg_zdb_id 
+                      left outer join fish_components on fc_fish_zdb_id = fish_zdb_id 
+                      left outer join marker affected_gene on fc_gene_zdb_id = affected_gene.mrkr_zdb_id 
+                      left outer join marker fish_str on fc_affector_zdb_id = fish_str.mrkr_zdb_id 
+                      left outer join genotype_feature other on other.genofeat_geno_zdb_id = fish_genotype_zdb_id 
+                    where self.genofeat_feature_zdb_id = :feature_id 
+                    group by self.genofeat_zdb_id, fish_zdb_id, zyg_name 
+                ) as sub 
+                """ +
                 excludeStrClause +
-                "order by " +
-                "  ( " +
-                "    case " +
-                "      when feature_count > 1 then 4 " +
-                "      when str_count > 0 then 4 " +
-                "      when zyg_name = 'homozygous' then 1 " +
-                "      when zyg_name = 'heterozygous' then 2 " +
-                "      when zyg_name = 'unknown' then 3 " +
-                "      when zyg_name = 'complex' then 4 " +
-                "      else 5 " +
-                "    end " +
-                "  ) asc, " +
-                "  affected_count asc, " +
-                "  affected_list asc, " +
-                "  fish_name_order asc;"
+                """
+                order by 
+                  ( 
+                    case 
+                      when feature_count > 1 then 4 
+                      when str_count > 0 then 4 
+                      when zyg_name = 'homozygous' then 1 
+                      when zyg_name = 'heterozygous' then 2 
+                      when zyg_name = 'unknown' then 3 
+                      when zyg_name = 'complex' then 4 
+                      else 5 
+                    end 
+                  ) asc, 
+                  affected_count asc, 
+                  affected_list asc, 
+                  fish_name_order asc;
+                """
         );
         query.setParameter("feature_id", featureId);
-        query.setResultTransformer(new BasicTransformerAdapter() {
-            @Override
-            public FishGenotypeFeature transformTuple(Object[] objects, String[] strings) {
-                String genotypeFeatureId = (String) objects[0];
-                String fishId = (String) objects[1];
 
-                GenotypeFeature genotypeFeature = getGenotypeFeature(genotypeFeatureId);
-                Fish fish = getFish(fishId);
+        setTupleResultTransformer(query, (Object[] tuples, String[] aliases) -> {
+            String genotypeFeatureId = (String) tuples[0];
+            String fishId = (String) tuples[1];
 
-                return new FishGenotypeFeature(fish, genotypeFeature);
-            }
+            GenotypeFeature genotypeFeature = getGenotypeFeature(genotypeFeatureId);
+            Fish fish = getFish(fishId);
+
+            return new FishGenotypeFeature(fish, genotypeFeature);
         });
 
         return PaginationResultFactory.createResultFromScrollableResultAndClose(pagination.getStart(), pagination.getEnd(), query.scroll());
