@@ -112,14 +112,6 @@ public interface MutantRepository {
     boolean isPatoExists(ExpressionFigureStage efs);
 
     /**
-     * Lookup a term by name. Term must not be obsolete.
-     *
-     * @param termName term name
-     * @return Term object
-     */
-    GenericTerm getQualityTermByName(String termName);
-
-    /**
      * Retrieve a genotype experiment by PK.
      *
      * @param genotypeExperimentID pk
@@ -473,8 +465,6 @@ public interface MutantRepository {
     List<Fish> getAllWildtypeFish();
     List<Fish> getAllFish();
     List<SequenceTargetingReagent> getAllSTRs();
-    List<String> getFishAliases();
-    List<Fish> getFishBackgrounds();
 
     List<Genotype> getGenotypesByFeatureAndBackground(Feature feature, Genotype background, Publication publication);
 

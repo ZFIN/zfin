@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.zfin.TestConfiguration;
 import org.zfin.expression.ExpressionFigureStage;
 import org.zfin.feature.Feature;
+import org.zfin.feature.FeatureAlias;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
@@ -526,5 +527,14 @@ public class MutantRepositoryTest {
         assertNotNull(result);
         assertThat(result.getTotalCount(), greaterThan(0));
         assertEquals(8, result.getTotalCount());
+    }
+
+    @Test
+    public void getSpecificDataAlias() {
+        String featureId = "ZDB-ALT-980203-1256";
+        String alias = "tz57";
+        Feature feature = getFeatureRepository().getFeatureByID(featureId);
+        FeatureAlias aliasResult = getMutantRepository().getSpecificDataAlias(feature, alias);
+        assertNotNull(aliasResult);
     }
 }
