@@ -19,6 +19,7 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.*;
 import org.zfin.mutant.presentation.PostComposedPresentationBean;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.HumanGeneDetail;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.FigureLink;
@@ -934,8 +935,9 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
             left join fetch conditions.spatialTerm spatialTerm
             left join fetch conditions.goCCTerm goCCTerm
             left join fetch conditions.taxaonymTerm taxonomyTerm
-            where
             """;
+        if(disease != null || fish != null)
+            hql += " WHERE ";
         if (disease != null) {
             hql += " da.disease = :disease ";
         }
@@ -1104,5 +1106,10 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
         }
 
         return diseaseAnnotationModels;
+    }
+
+    @Override
+    public List<HumanGeneDetail> getHumanGeneDetailList() {
+        return HibernateUtil.currentSession().createQuery("from HumanGeneDetail", HumanGeneDetail.class).list();
     }
 }

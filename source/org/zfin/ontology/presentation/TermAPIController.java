@@ -7,9 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.zfin.anatomy.presentation.AnatomySearchBean;
 import org.zfin.anatomy.service.AnatomyService;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.api.JsonResultResponse;
-import org.zfin.framework.api.Pagination;
-import org.zfin.framework.api.View;
+import org.zfin.framework.api.*;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.root.util.StringUtils;
@@ -17,9 +15,7 @@ import org.zfin.marker.MarkerStatistic;
 import org.zfin.marker.presentation.ExpressedGeneDisplay;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.Fish;
-import org.zfin.mutant.presentation.AntibodyStatistics;
-import org.zfin.mutant.presentation.FishModelDisplay;
-import org.zfin.mutant.presentation.FishStatistics;
+import org.zfin.mutant.presentation.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.OmimPhenotypeDisplay;
 import org.zfin.ontology.repository.OntologyRepository;
@@ -32,8 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.zfin.repository.RepositoryFactory.getMutantRepository;
-import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 @RestController
 @RequestMapping("/api/ontology")
@@ -151,8 +146,10 @@ public class TermAPIController {
     @RequestMapping(value = "/{termID}/phenotype", method = RequestMethod.GET)
     public JsonResultResponse<FishStatistics> getPhenotypes(@PathVariable String termID,
                                                             @RequestParam(value = "directAnnotation", required = false, defaultValue = "false") boolean directAnnotation,
+                                                            @RequestParam(value = "filter.geneSymbol", required = false) String filterGeneSymbol,
                                                             @RequestParam(value = "filter.fishName", required = false) String filterFishName,
                                                             @RequestParam(value = "filter.phenotype", required = false) String filterPhenotype,
+                                                            @RequestParam(value = "filter.termName", required = false) String filterTermName,
                                                             @Version Pagination pagination) {
 
         HibernateUtil.createTransaction();
@@ -162,28 +159,104 @@ public class TermAPIController {
         if (term == null)
             return response;
 
+        if (StringUtils.isNotEmpty(filterGeneSymbol)) {
+            pagination.addToFilterMap("fishStat.geneSymbolSearch", filterGeneSymbol);
+        }
         if (StringUtils.isNotEmpty(filterFishName)) {
-            pagination.addToFilterMap("fishoxFishName", filterFishName);
+            pagination.addToFilterMap("fishStat.fish.name", filterFishName);
         }
         if (StringUtils.isNotEmpty(filterPhenotype)) {
-            pagination.addToFilterMap("phenotype", filterPhenotype);
+            pagination.addToFilterMap("fishStat.phenotypeStatementSearch", filterPhenotype);
         }
-        AnatomySearchBean form = new AnatomySearchBean();
-        form.setAoTerm(term);
-        form.setMaxDisplayRecords(pagination.getLimit());
-        form.setPageInteger(pagination.getPage());
-        retrieveMutantData(term, form, !directAnnotation, pagination);
-        response.setResults(form.getGenotypeStatistics());
-        response.setTotal(form.getTotalRecords());
-        if (directAnnotation) {
-            response.addSupplementalData("countDirect", form.getTotalRecords());
-            response.addSupplementalData("countIncludingChildren", form.getTotalNumberOfExpressedGenes());
-        } else {
-            response.addSupplementalData("countIncludingChildren", form.getTotalRecords());
-            response.addSupplementalData("countDirect", form.getTotalNumberOfExpressedGenes());
+        if (StringUtils.isNotEmpty(filterTermName)) {
+            pagination.addToFilterMap("fishStat.term.termName", filterTermName);
         }
-        HibernateUtil.flushAndCommitCurrentSession();
 
+        PaginationResult<FishStatistics> genesInvolvedForDiseaseDirect = OntologyService.getPhenotypeForDisease(term, pagination, false);
+        PaginationResult<FishStatistics> genesInvolvedForDiseaseAll = OntologyService.getPhenotypeForDisease(term, pagination, true);
+
+        int totalCountDirect = genesInvolvedForDiseaseDirect.getTotalCount();
+        response.addSupplementalData("countDirect", totalCountDirect);
+        int totalCountAll = genesInvolvedForDiseaseAll.getTotalCount();
+        response.addSupplementalData("countIncludingChildren", totalCountAll);
+
+        List<FishStatistics> displayList;
+        if (directAnnotation) {
+            displayList = genesInvolvedForDiseaseDirect.getPopulatedResults();
+            response.setTotal(totalCountDirect);
+        } else {
+            displayList = genesInvolvedForDiseaseAll.getPopulatedResults();
+            response.setTotal(totalCountAll);
+        }
+        response.setResults(displayList);
+        HibernateUtil.flushAndCommitCurrentSession();
+        return response;
+    }
+
+    @JsonView(View.API.class)
+    @RequestMapping(value = "/{termID}/phenotype-chebi", method = RequestMethod.GET)
+    public JsonResultResponse<ChebiPhenotypeDisplay> getPhenotypeChebi(@PathVariable String termID,
+                                                                       @RequestParam(value = "directAnnotation", required = false, defaultValue = "false") boolean directAnnotation,
+                                                                       @RequestParam(value = "isWildtype", required = false) Boolean wildType,
+                                                                       @RequestParam(value = "isMultiChebiCondition", required = false) Boolean isMultiChebiCondition,
+                                                                       @RequestParam(value = "isAmelioratedExacerbated", required = false) Boolean isAmelioratedExacerbated,
+                                                                       @RequestParam(value = "filter.conditionName", required = false) String filterConditionName,
+                                                                       @RequestParam(value = "filter.modification", required = false) String filterModification,
+                                                                       @RequestParam(value = "filter.fishName", required = false) String filterFishName,
+                                                                       @RequestParam(value = "filter.phenotype", required = false) String filterPhenotype,
+                                                                       @RequestParam(value = "filter.termName", required = false) String filterTermName,
+                                                                       @Version Pagination pagination) {
+
+        HibernateUtil.createTransaction();
+        JsonResultResponse<ChebiPhenotypeDisplay> response = new JsonResultResponse<>();
+        response.setHttpServletRequest(request);
+        GenericTerm term = ontologyRepository.getTermByZdbID(termID);
+        if (term == null)
+            return response;
+
+        if (isAmelioratedExacerbated != null) {
+            pagination.addToNotNullFilterMap("chebiPhenotype.amelioratedExacerbatedPhenoSearch");
+        }
+        if (wildType != null) {
+            pagination.addToExactFilterMap("chebiPhenotype.fish.wildtype", wildType ? "t" : "f");
+        }
+        if (isMultiChebiCondition != null) {
+            pagination.addToExactFilterMap("chebiPhenotype.multiChebiCondition", isMultiChebiCondition ? "t" : "f");
+        }
+        if (StringUtils.isNotEmpty(filterConditionName)) {
+            pagination.addToFilterMap("chebiPhenotype.conditionSearch", filterConditionName);
+        }
+        if (StringUtils.isNotEmpty(filterModification)) {
+            pagination.addToFilterMap("chebiPhenotype.amelioratedExacerbatedPhenoSearch", filterModification);
+        }
+        if (StringUtils.isNotEmpty(filterFishName)) {
+            pagination.addToFilterMap("chebiPhenotype.fish.name", filterFishName);
+        }
+        if (StringUtils.isNotEmpty(filterPhenotype)) {
+            pagination.addToFilterMap("chebiPhenotype.phenotypeStatementSearch", filterPhenotype);
+        }
+        if (StringUtils.isNotEmpty(filterTermName)) {
+            pagination.addToFilterMap("chebiPhenotype.term.termName", filterTermName);
+        }
+
+        PaginationResult<ChebiPhenotypeDisplay> genesInvolvedForDiseaseDirect = getDiseasePageRepository().getPhenotypeChebi(term, pagination, false);
+        PaginationResult<ChebiPhenotypeDisplay> genesInvolvedForDiseaseAll = getDiseasePageRepository().getPhenotypeChebi(term, pagination, true);
+
+        int totalCountDirect = genesInvolvedForDiseaseDirect.getTotalCount();
+        response.addSupplementalData("countDirect", totalCountDirect);
+        int totalCountAll = genesInvolvedForDiseaseAll.getTotalCount();
+        response.addSupplementalData("countIncludingChildren", totalCountAll);
+
+        List<ChebiPhenotypeDisplay> displayList;
+        if (directAnnotation) {
+            displayList = genesInvolvedForDiseaseDirect.getPopulatedResults();
+            response.setTotal(totalCountDirect);
+        } else {
+            displayList = genesInvolvedForDiseaseAll.getPopulatedResults();
+            response.setTotal(totalCountAll);
+        }
+        response.setResults(displayList);
+        HibernateUtil.flushAndCommitCurrentSession();
         return response;
     }
 
@@ -195,6 +268,7 @@ public class TermAPIController {
                                                                      @RequestParam(value = "filter.zfinGeneName", required = false) String filterZfinGeneName,
                                                                      @RequestParam(value = "filter.omimName", required = false) String filterOmimName,
                                                                      @RequestParam(value = "filter.termName", required = false) String filterTermName,
+                                                                     @RequestParam(value = "filter.omimAccessionID", required = false) String omimAccessionID,
                                                                      @Version Pagination pagination) {
 
         HibernateUtil.createTransaction();
@@ -205,36 +279,106 @@ public class TermAPIController {
             return response;
 
         if (StringUtils.isNotEmpty(filterHumanGeneName)) {
-            pagination.addToFilterMap("humanGeneName", filterHumanGeneName);
+            pagination.addToFilterMap("omimPhenotype.homoSapiensGene.symbol", filterHumanGeneName);
         }
         if (StringUtils.isNotEmpty(filterZfinGeneName)) {
-            pagination.addToFilterMap("zfinGeneName", filterZfinGeneName);
+            pagination.addToFilterMap("zfinGene.abbreviation", filterZfinGeneName);
         }
         if (StringUtils.isNotEmpty(filterOmimName)) {
-            pagination.addToFilterMap("omimName", filterOmimName);
+            pagination.addToFilterMap("omimPhenotype.name", filterOmimName);
         }
         if (StringUtils.isNotEmpty(filterTermName)) {
-            pagination.addToFilterMap("termName", filterTermName);
+            pagination.addToFilterMap("omimPhenotype.disease.termName", filterTermName);
         }
-        List<OmimPhenotypeDisplay> displayListSingle = OntologyService.getOmimPhenotype(term, pagination, false);
-        List<OmimPhenotypeDisplay> displayListDaf = OntologyService.getOmimPhenotype(term, pagination, true);
-        response.addSupplementalData("countDirect", displayListSingle.size());
-        response.addSupplementalData("countIncludingChildren", displayListDaf.size());
+        if (StringUtils.isNotEmpty(omimAccessionID)) {
+            pagination.addToFilterMap("omimPhenotype.omimAccession", omimAccessionID);
+        }
+
+        PaginationResult<OmimPhenotypeDisplay> genesInvolvedForDiseaseDirect = OntologyService.getGenesInvolvedForDisease(term, pagination, false);
+        PaginationResult<OmimPhenotypeDisplay> genesInvolvedForDiseaseAll = OntologyService.getGenesInvolvedForDisease(term, pagination, true);
+
+        int totalCountDirect = genesInvolvedForDiseaseDirect.getTotalCount();
+        response.addSupplementalData("countDirect", totalCountDirect);
+        int totalCountAll = genesInvolvedForDiseaseAll.getTotalCount();
+        response.addSupplementalData("countIncludingChildren", totalCountAll);
 
         List<OmimPhenotypeDisplay> displayList;
         if (directAnnotation) {
-            displayList = displayListSingle;
+            displayList = genesInvolvedForDiseaseDirect.getPopulatedResults();
+            ;
+            response.setTotal(totalCountDirect);
         } else {
-            displayList = displayListDaf;
+            displayList = genesInvolvedForDiseaseAll.getPopulatedResults();
+            response.setTotal(totalCountAll);
         }
 
-        response.setResults(displayList.stream()
+        response.setResults(displayList);
+        HibernateUtil.flushAndCommitCurrentSession();
+
+        return response;
+    }
+
+    @JsonView(View.API.class)
+    @RequestMapping(value = "/{termID}/chebi-zebrafish-models", method = RequestMethod.GET)
+    public JsonResultResponse<ChebiFishModelDisplay> getChebiZebrafishModels(@PathVariable String termID,
+                                                                             @RequestParam(value = "directAnnotation", required = false, defaultValue = "false") boolean directAnnotation,
+                                                                             @RequestParam(value = "filter.fishName", required = false) String filterFishName,
+                                                                             @RequestParam(value = "filter.diseaseName", required = false) String filterDiseaseName,
+                                                                             @RequestParam(value = "filter.conditionName", required = false) String filterCondition,
+                                                                             @RequestParam(value = "filter.evidenceCode", required = false) String filterEvidenceCode,
+                                                                             @RequestParam(value = "filter.chebiName", required = false) String filterChebiName,
+                                                                             @RequestParam(value = "filter.citation", required = false) String filterCitation,
+                                                                             @Version Pagination pagination) {
+        HibernateUtil.createTransaction();
+        JsonResultResponse<ChebiFishModelDisplay> response = new JsonResultResponse<>();
+        response.setHttpServletRequest(request);
+        GenericTerm term = ontologyRepository.getTermByZdbIDOrOboId(termID);
+        if (term == null)
+            return response;
+
+        if (StringUtils.isNotEmpty(filterFishName)) {
+            pagination.addFieldFilter(FieldFilter.FISH_NAME, filterFishName);
+        }
+        if (StringUtils.isNotEmpty(filterDiseaseName)) {
+            pagination.addFieldFilter(FieldFilter.DISEASE_NAME, filterDiseaseName);
+        }
+        if (StringUtils.isNotEmpty(filterCondition)) {
+            pagination.addFieldFilter(FieldFilter.CONDITION_NAME, filterCondition);
+        }
+        if (StringUtils.isNotEmpty(filterChebiName)) {
+            pagination.addFieldFilter(FieldFilter.FILTER_TERM_NAME, filterChebiName);
+        }
+        if (StringUtils.isNotEmpty(filterEvidenceCode)) {
+            pagination.addFieldFilter(FieldFilter.FILTER_EVIDENCE, filterEvidenceCode);
+        }
+        if (StringUtils.isNotEmpty(filterCitation)) {
+            pagination.addFieldFilter(FieldFilter.FILTER_REF, filterCitation);
+        }
+
+        List<ChebiFishModelDisplay> chebiDirect = OntologyService.getAllChebiFishDiseaseModels(term, false);
+        List<ChebiFishModelDisplay> chebiAllChildren = OntologyService.getAllChebiFishDiseaseModels(term, true);
+
+        // filtering
+        FilterService<ChebiFishModelDisplay> filterService = new FilterService<>(new ChebiFishModelDisplayFiltering());
+
+        response.addSupplementalData("countDirect", chebiDirect.size());
+        response.addSupplementalData("countIncludingChildren", chebiAllChildren.size());
+
+        List<ChebiFishModelDisplay> filteredDisplay = null;
+        if (directAnnotation) {
+            List<ChebiFishModelDisplay> filteredChebiDirect = filterService.filterAnnotations(chebiDirect, pagination.getFieldFilterValueMap());
+            filteredDisplay = filteredChebiDirect;
+            response.setTotal(filteredChebiDirect.size());
+        } else {
+            List<ChebiFishModelDisplay> filteredAllChebi = filterService.filterAnnotations(chebiAllChildren, pagination.getFieldFilterValueMap());
+            filteredDisplay = filteredAllChebi;
+            response.setTotal(filteredAllChebi.size());
+        }
+        response.setResults(filteredDisplay.stream()
             .skip(pagination.getStart())
             .limit(pagination.getLimit())
             .collect(Collectors.toList()));
-        response.setTotal(displayList.size());
         HibernateUtil.flushAndCommitCurrentSession();
-
         return response;
     }
 
@@ -255,18 +399,34 @@ public class TermAPIController {
             return response;
 
         if (StringUtils.isNotEmpty(filterFishName)) {
-            pagination.addToFilterMap("fish", filterFishName);
+            pagination.addToFilterMap("fishModelDisplay.fish.displayName", filterFishName);
         }
         if (StringUtils.isNotEmpty(filterDiseaseName)) {
-            pagination.addToFilterMap("diseaseModels", filterDiseaseName);
+            pagination.addToFilterMap("fishModelDisplay.disease.termName", filterDiseaseName);
         }
         if (StringUtils.isNotEmpty(filterCondition)) {
-            pagination.addToFilterMap("condition", filterCondition);
+            pagination.addToFilterMap("fishModelDisplay.conditionSearch", filterCondition);
         }
 
-        retrieveModelData(term, response, directAnnotation, pagination);
-        HibernateUtil.flushAndCommitCurrentSession();
+        PaginationResult<FishModelDisplay> genesInvolvedForDiseaseDirect = OntologyService.getFishDiseaseModels(term, pagination, false);
+        PaginationResult<FishModelDisplay> genesInvolvedForDiseaseAll = OntologyService.getFishDiseaseModels(term, pagination, true);
 
+        int totalCountDirect = genesInvolvedForDiseaseDirect.getTotalCount();
+        response.addSupplementalData("countDirect", totalCountDirect);
+        int totalCountAll = genesInvolvedForDiseaseAll.getTotalCount();
+        response.addSupplementalData("countIncludingChildren", totalCountAll);
+
+        List<FishModelDisplay> displayList;
+        if (directAnnotation) {
+            displayList = genesInvolvedForDiseaseDirect.getPopulatedResults();
+            ;
+            response.setTotal(totalCountDirect);
+        } else {
+            displayList = genesInvolvedForDiseaseAll.getPopulatedResults();
+            response.setTotal(totalCountAll);
+        }
+        response.setResults(displayList);
+        HibernateUtil.flushAndCommitCurrentSession();
         return response;
     }
 
@@ -275,6 +435,7 @@ public class TermAPIController {
     public JsonResultResponse<FishModelDisplay> getZebrafishModelsByFish(@PathVariable String fishID,
                                                                          @RequestParam(value = "filter.diseaseName", required = false) String filterDiseaseName,
                                                                          @RequestParam(value = "filter.conditionName", required = false) String filterCondition,
+                                                                         @RequestParam(value = "filter.fishName", required = false) String filterFishName,
                                                                          @Version Pagination pagination) {
 
         HibernateUtil.createTransaction();
@@ -295,53 +456,6 @@ public class TermAPIController {
         HibernateUtil.flushAndCommitCurrentSession();
 
         return response;
-    }
-
-    private void retrieveMutantData(GenericTerm ai, AnatomySearchBean form, boolean includeSubstructures, Pagination pagination) {
-        PaginationBean bean = new PaginationBean();
-        bean.setPageInteger(pagination.getPage());
-        bean.setFirstPageRecord(pagination.getStart());
-        bean.setMaxDisplayRecords(pagination.getLimit());
-        bean.setFilterMap(pagination.getFilterMap());
-        form.setFilterMap(pagination.getFilterMap());
-        PaginationResult<Fish> genotypeResult;
-        if (includeSubstructures) {
-            genotypeResult = getMutantRepository().getFishByAnatomyTermIncludingSubstructures(ai, false, form);
-            PaginationResult<Fish> genotypeResultDirectAnno = getMutantRepository().getFishByAnatomyTerm(ai, false, bean);
-            form.setTotalNumberOfExpressedGenes(genotypeResultDirectAnno.getTotalCount());
-        } else {
-            genotypeResult = getMutantRepository().getFishByAnatomyTerm(ai, false, form);
-            PaginationResult<Fish> genotypeResultIncludedChildren = getMutantRepository().getFishByAnatomyTermIncludingSubstructures(ai, false, bean);
-            form.setTotalNumberOfExpressedGenes(genotypeResultIncludedChildren.getTotalCount());
-        }
-        populateFormBeanForMutantList(ai, form, genotypeResult, includeSubstructures);
-    }
-
-    private void retrieveModelData(GenericTerm term, JsonResultResponse<FishModelDisplay> response, boolean directAnnotation, Pagination pagination) {
-        List<FishModelDisplay> diseaseModelsWithFishModel = OntologyService.getDiseaseModelsWithFishModelsGrouped(term, false, pagination);
-        List<FishModelDisplay> diseaseModelsWithFishModelIncluded = OntologyService.getDiseaseModelsWithFishModelsGrouped(term, true, pagination);
-        response.addSupplementalData("countIncludingChildren", diseaseModelsWithFishModelIncluded == null ? 0 : diseaseModelsWithFishModelIncluded.size());
-        if (diseaseModelsWithFishModel != null) {
-            response.addSupplementalData("countDirect", diseaseModelsWithFishModel.size());
-        }
-        if (directAnnotation) {
-            if (CollectionUtils.isNotEmpty(diseaseModelsWithFishModel)) {
-                response.setResults(diseaseModelsWithFishModel.stream()
-                    .skip(pagination.getStart())
-                    .limit(pagination.getLimit())
-                    .collect(Collectors.toList()));
-                response.setTotal(diseaseModelsWithFishModel.size());
-            }
-        } else {
-            if (CollectionUtils.isNotEmpty(diseaseModelsWithFishModelIncluded)) {
-                response.setResults(diseaseModelsWithFishModelIncluded.stream()
-                    .skip(pagination.getStart())
-                    .limit(pagination.getLimit())
-                    .collect(Collectors.toList()));
-                response.setTotal(diseaseModelsWithFishModelIncluded.size());
-            }
-        }
-
     }
 
     private void retrieveModelDataByFish(Fish fish, JsonResultResponse<FishModelDisplay> response, Pagination pagination) {

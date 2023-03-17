@@ -35,14 +35,14 @@ public class DevelopmentStage implements Serializable, Comparable<DevelopmentSta
                     @Parameter(name = "type", value = "STAGE")
             })
     @Column(name = "stg_zdb_id")
-    @JsonView(View.API.class)
+    @JsonView({View.API.class, View.UI.class})
     private String zdbID;
 
     @Column(name = "stg_obo_id")
     private String oboID;
 
     @Column(name = "stg_name")
-    @JsonView(View.API.class)
+    @JsonView({View.API.class, View.UI.class})
     private String name;
 
     @Column(name = "stg_name_long")

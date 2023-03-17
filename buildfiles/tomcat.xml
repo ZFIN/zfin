@@ -27,18 +27,22 @@
 
     <target name="docker-tomcat-start" if="isdocker" description="Starts tomcat if docker">
         <exec executable="/usr/bin/docker" failifexecutionfails="true">
-            <arg value="container"/>
+            <arg value="compose"/>
+	    <arg value="-f"/>
+	    <arg value="/opt/zfin/source_roots/zfin.org/docker/docker-compose.yml"/>
             <arg value="start"/>
-            <arg value="tomcat_container"/>
+            <arg value="tomcat"/>
         </exec>
         <echo message=":TOMCAT START SUCCESSFUL:"/>
     </target>
 
     <target name="docker-tomcat-stop" if="isdocker" description="Stops tomcat if docker">
         <exec executable="/usr/bin/docker" failifexecutionfails="true">
-            <arg value="container"/>
+            <arg value="compose"/>
+	    <arg value="-f"/>
+	    <arg value="/opt/zfin/source_roots/zfin.org/docker/docker-compose.yml"/>
             <arg value="stop"/>
-            <arg value="tomcat_container"/>
+            <arg value="tomcat"/>
         </exec>
         <echo message=":TOMCAT STOP SUCCESSFUL:"/>
     </target>
@@ -77,6 +81,7 @@
     </target>
 
     <target name="tail-tomcat" description="tail -f on catalina.log file">
+        <echo message="tail -f ${CATALINA_BASE}/logs/catalina.out"/>
         <exec executable="tail">
             <arg value="-f"/>
             <arg value="${CATALINA_BASE}/logs/catalina.out"/>

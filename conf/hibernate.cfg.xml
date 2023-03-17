@@ -12,6 +12,7 @@
         <property name="dialect">org.hibernate.dialect.PostgreSQL9Dialect</property>
         <property name="connection.datasource">java:comp/env/jdbc/zfin</property>
         <property name="hibernate.show_sql">false</property>
+        <property name="hibernate.generate_statistics">true</property>
         <property name="hibernate.format_sql">true</property>
         <property name="hibernate.cache.use_second_level_cache">false</property>
         <property name="hibernate.cache.use_query_cache">false</property>
@@ -90,6 +91,7 @@
         <mapping class="org.zfin.feature.SecondaryFeature"/>
         <mapping class="org.zfin.feature.TranscriptConsequence"/>
         <mapping class="org.zfin.fish.WarehouseSummary"/>
+        <mapping class="org.zfin.figure.presentation.ExpressionTableRow"/>
         <mapping class="org.zfin.framework.featureflag.FeatureFlag"/>
         <mapping class="org.zfin.mutant.FishAlias"/>
         <mapping class="org.zfin.mutant.SecondaryFish"/>
@@ -123,6 +125,10 @@
         <mapping class="org.zfin.marker.CloneProblem"/>
         <mapping class="org.zfin.mutant.SecondaryGenotype"/>
         <mapping class="org.zfin.mutant.FishStr"/>
+        <mapping class="org.zfin.mutant.presentation.FishStatistics"/>
+        <mapping class="org.zfin.mutant.presentation.FishModelDisplay"/>
+        <mapping class="org.zfin.mutant.presentation.ChebiFishModelDisplay"/>
+        <mapping class="org.zfin.mutant.presentation.ChebiPhenotypeDisplay"/>
         <mapping class="org.zfin.mutant.Genotype"/>
         <mapping class="org.zfin.mutant.GenotypeAlias"/>
         <mapping class="org.zfin.mutant.GenotypeExternalNote"/>
@@ -141,6 +147,7 @@
         <mapping class="org.zfin.ontology.GenericTermRelationship"/>
         <mapping class="org.zfin.ontology.GenericTermRelationship"/>
         <mapping class="org.zfin.ontology.OntologyMetadata"/>
+        <mapping class="org.zfin.ontology.OmimPhenotypeDisplay"/>
         <mapping class="org.zfin.ontology.ReplacementTerm"/>
         <mapping class="org.zfin.ontology.Subset"/>
         <mapping class="org.zfin.ontology.TermAlias"/>
@@ -148,8 +155,12 @@
         <mapping class="org.zfin.ontology.TermDefinitionReference"/>
         <mapping class="org.zfin.ontology.TermExternalReference"/>
         <mapping class="org.zfin.ontology.TermStage"/>
-        <mapping class="org.zfin.ontology.TransitiveClosure"/>        
+        <mapping class="org.zfin.ontology.TransitiveClosure"/>
         <mapping class="org.zfin.publication.CorrespondenceComposedMessage"/>
+        <mapping class="org.zfin.publication.CorrespondenceNeed"/>
+        <mapping class="org.zfin.publication.CorrespondenceNeedReason"/>
+        <mapping class="org.zfin.publication.CorrespondenceResolution"/>
+        <mapping class="org.zfin.publication.CorrespondenceResolutionType"/>
         <mapping class="org.zfin.publication.CorrespondenceReceivedMessage"/>
         <mapping class="org.zfin.publication.CorrespondenceRecipient"/>
         <mapping class="org.zfin.publication.CorrespondenceSentMessage"/>

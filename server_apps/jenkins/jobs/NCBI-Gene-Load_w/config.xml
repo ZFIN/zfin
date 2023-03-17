@@ -18,7 +18,7 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/data_transfer/NCBIGENE &amp;&amp; NCBI_gene_load.pl</command>
+      <command>cd $TARGETROOT/server_apps/data_transfer/NCBIGENE &amp;&amp; ./NCBI_gene_load.pl</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>

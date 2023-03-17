@@ -7,11 +7,9 @@ import org.zfin.expression.Experiment;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.feature.Feature;
-import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
-import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.SourceAlias;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
@@ -21,6 +19,7 @@ import org.zfin.marker.presentation.GeneBean;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
+import org.zfin.mutant.PhenotypeStatementWarehouse;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
@@ -460,5 +459,29 @@ public interface PublicationRepository extends PaginationParameter {
     List<SequenceTargetingReagent> getSTRsByPublication(String publicationID, Pagination pagination);
 
     List<Image> getImages(Publication publication);
+
+    Map<Fish, Map<GenericTerm, List<PhenotypeStatementWarehouse>>> getAllFiguresForPhenotype();
+
+    Map<Fish, Map<Experiment, Map<GenericTerm, Set<PhenotypeStatementWarehouse>>>> getAllChebiPhenotype();
+
+    List<CorrespondenceNeed> getCorrespondenceNeedByPublicationID(String zdbID);
+
+    List<CorrespondenceNeedReason> getAllCorrespondenceNeedReasons();
+
+    void deleteCorrespondenceNeedByPublicationID(String pubID);
+
+    CorrespondenceNeedReason getCorrespondenceNeedReasonByID(long id);
+
+    void insertCorrespondenceNeed(CorrespondenceNeed correspondenceNeed);
+
+    List<CorrespondenceResolution> getCorrespondenceResolutionByPublicationID(String zdbID);
+
+    List<CorrespondenceResolutionType> getAllCorrespondenceResolutionTypes();
+
+    void deleteCorrespondenceResolutionByPublicationID(String pubID);
+
+    CorrespondenceResolutionType getCorrespondenceResolutionTypeByID(long id);
+
+    void insertCorrespondenceResolution(CorrespondenceResolution correspondenceResolution);
 
 }

@@ -15,13 +15,32 @@ public enum NavigationMenuOptions {
     MUTATION("Mutations / Transgenics"),
     ORTHOLOGY("Orthology"),
     PHENOTYPE("Phenotype"),
+    ALLELE("Associated Alleles"),
+    DISEASE_ASSOCIATION("Disease Association"),
+    PHENOTYPE_CHEBI("Phenotype "),
     STRS("Sequence Targeting Reagents"),
     SUMMARY("Summary"),
-    ZEBRASHARE("Zebrashare Submission Details");
+    ZEBRASHARE("Zebrashare Submission Details"),
+    CITATION("Citation"),
+
+    //Image View
+    IMAGE("Image"),
+    COMMENTS("Comments"),
+    FIGURE_CAPTION("Figure Caption"),
+    DEVELOPMENTAL_STAGE("Developmental Stage"),
+    ORIENTATION("Orientation"),
+    IMAGE_DETAILS("Image Details"),
+    FIGURE_DATA("Figure Data"),
+    ACKNOWLEDGEMENT("Acknowledgments"),
+    CHEBI_HUMAN_DISEASE("Human Disease / Model Data"),
+    RELATIONSHIPS("Relationships"),
+    ZEBRAFISH_MODELS("Zebrafish Models"),
+    GENES_INVOLVED("Genes Involved"),
+    PROBES("Probes");
 
     public final String value;
 
-    private NavigationMenuOptions(String value) {
+    NavigationMenuOptions(String value) {
         this.value = value;
     }
 

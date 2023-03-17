@@ -30,8 +30,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import static org.zfin.repository.RepositoryFactory.getMutantRepository;
-import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 /**
  * Controller that serves the fish detail page.
@@ -56,6 +55,11 @@ public class FishDetailController {
                 } else {
                     return "redirect:/" + replacedZdbID;
                 }
+            }
+            replacedZdbID = getInfrastructureRepository().getWithdrawnZdbID(zdbID);
+            if (replacedZdbID != null) {
+                LOG.debug("found a withdrawn zdbID for: " + zdbID + "->" + replacedZdbID);
+                return "redirect:/" + replacedZdbID;
             }
         }
 
@@ -90,6 +94,11 @@ public class FishDetailController {
                 } else {
                     return "redirect:/" + replacedZdbID;
                 }
+            }
+            replacedZdbID = getInfrastructureRepository().getWithdrawnZdbID(zdbID);
+            if (replacedZdbID != null) {
+                LOG.debug("found a withdrawn zdbID for: " + zdbID + "->" + replacedZdbID);
+                return "redirect:/" + replacedZdbID;
             }
         }
 

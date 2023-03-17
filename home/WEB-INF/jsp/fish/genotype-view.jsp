@@ -18,7 +18,6 @@
     <jsp:attribute name="pageBar">
         <authz:authorize access="hasRole('root')">
             <nav class="navbar navbar-light admin text-center border-bottom">
-                <a class="col-sm" href="/action/genotype/view/${genotype.zdbID}">Old View</a>
                 <a class="col-sm" href="/action/updates/${genotype.zdbID}">
                     Last Update:
                     <c:set var="latestUpdate" value="${zfn:getLastUpdate(genotype.zdbID)}"/>

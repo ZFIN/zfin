@@ -17,11 +17,13 @@ import org.zfin.framework.api.FieldFilter;
 import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.api.View;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.mapping.MappingService;
+import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.MarkerType;
@@ -39,6 +41,7 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.wiki.presentation.Version;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -80,9 +83,9 @@ public class PublicationAPIController {
         JsonResultResponse<Feature> response = new JsonResultResponse<>();
         response.setTotal(featureList.size());
         List<Feature> paginatedFeatureList = featureList.stream()
-                .skip(pagination.getStart())
-                .limit(pagination.getLimit())
-                .collect(Collectors.toList());
+            .skip(pagination.getStart())
+            .limit(pagination.getLimit())
+            .collect(Collectors.toList());
 
         response.setResults(paginatedFeatureList);
         response.setHttpServletRequest(request);
@@ -96,43 +99,73 @@ public class PublicationAPIController {
 
         Publication publication = publicationRepository.getPublication(pubID);
         List<PhenotypeWarehouse> warehouseList = publication.getFigures().stream()
-                .map(figure -> getPhenotypeRepository().getPhenotypeWarehouse(figure.getZdbID()))
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+            .map(figure -> getPhenotypeRepository().getPhenotypeWarehouse(figure.getZdbID()))
+            .flatMap(Collection::stream)
+            .collect(Collectors.toList());
         List<PhenotypeTableRow> phenotypeTableRows = figureViewService.getPhenotypeTableRows(warehouseList);
         JsonResultResponse<PhenotypeTableRow> response = new JsonResultResponse<>();
         response.setTotal(phenotypeTableRows.size());
         List<PhenotypeTableRow> paginatedFeatureList = phenotypeTableRows.stream()
-                .skip(pagination.getStart())
-                .limit(pagination.getLimit())
-                .collect(Collectors.toList());
+            .skip(pagination.getStart())
+            .limit(pagination.getLimit())
+            .collect(Collectors.toList());
 
         response.setResults(paginatedFeatureList);
         response.setHttpServletRequest(request);
         return response;
     }
 
-    @JsonView(View.FigureAPI.class)
+    @JsonView(View.ExpressionPublicationUI.class)
     @RequestMapping(value = "/{pubID}/expression", method = RequestMethod.GET)
     public JsonResultResponse<ExpressionTableRow> getPublicationExpression(@PathVariable String pubID,
                                                                            @RequestParam(value = "filter.geneAbbreviation", required = false) String geneAbbreviation,
                                                                            @Version Pagination pagination) {
 
-        Publication publication = publicationRepository.getPublication(pubID);
-        List<ExpressionTableRow> expressionTableRows = publication.getFigures().stream()
-                .map(figure -> figureViewService.getExpressionTableRows(figure))
-                .flatMap(Collection::stream)
-                .filter(figure -> StringUtils.isEmpty(geneAbbreviation) || figure.getGene().getAbbreviation().contains(geneAbbreviation))
-                .collect(Collectors.toList());
+        LocalDateTime startTime = LocalDateTime.now();
         JsonResultResponse<ExpressionTableRow> response = new JsonResultResponse<>();
-        response.setTotal(expressionTableRows.size());
-        List<ExpressionTableRow> paginatedFeatureList = expressionTableRows.stream()
-                .skip(pagination.getStart())
-                .limit(pagination.getLimit())
-                .collect(Collectors.toList());
+        Publication publication = publicationRepository.getPublication(pubID);
+        if (publication == null)
+            return response;
 
-        response.setResults(paginatedFeatureList);
+        if (StringUtils.isNotEmpty(geneAbbreviation)) {
+            pagination.addToFilterMap("tableRow.gene.abbreviation", geneAbbreviation);
+        }
+
+        PaginationResult<ExpressionTableRow> expressionTableRows = getPublicationPageRepository().getPublicationExpression(publication, pagination);
+
+        response.setTotal(expressionTableRows.getTotalCount());
+        response.setResults(expressionTableRows.getPopulatedResults());
         response.setHttpServletRequest(request);
+        response.calculateRequestDuration(startTime);
+        return response;
+    }
+
+    @JsonView(View.PublicationUI.class)
+    @RequestMapping(value = "/{pubID}/probes", method = RequestMethod.GET)
+    public JsonResultResponse<Clone> getPublicationProbes(@PathVariable String pubID,
+                                                                       @RequestParam(value = "filter.symbol", required = false) String probeSymbol,
+                                                                       @RequestParam(value = "filter.rating", required = false) String probeRating,
+                                                                       @Version Pagination pagination) {
+
+        LocalDateTime startTime = LocalDateTime.now();
+        JsonResultResponse<Clone> response = new JsonResultResponse<>();
+        Publication publication = publicationRepository.getPublication(pubID);
+        if (publication == null)
+            return response;
+
+        if (StringUtils.isNotEmpty(probeSymbol)) {
+            pagination.addToFilterMap("exp.probe.abbreviation", probeSymbol);
+        }
+        if (StringUtils.isNotEmpty(probeRating)) {
+            pagination.addToFilterMap("exp.probe.rating.integer", probeRating);
+        }
+
+        PaginationResult<Clone> expressionTableRows = getPublicationPageRepository().getProbes(publication, pagination);
+
+        response.setTotal(expressionTableRows.getTotalCount());
+        response.setResults(expressionTableRows.getPopulatedResults());
+        response.setHttpServletRequest(request);
+        response.calculateRequestDuration(startTime);
         return response;
     }
 
@@ -148,9 +181,9 @@ public class PublicationAPIController {
         response.setTotal(list.size());
 
         response.setResults(list.stream()
-                .skip(pagination.getStart())
-                .limit(pagination.getLimit())
-                .collect(Collectors.toList()));
+            .skip(pagination.getStart())
+            .limit(pagination.getLimit())
+            .collect(Collectors.toList()));
         response.setHttpServletRequest(request);
         return response;
     }
@@ -192,9 +225,9 @@ public class PublicationAPIController {
         JsonResultResponse<Marker> response = new JsonResultResponse<>();
         response.setTotal(markers.size());
         List<Marker> markerList = markers.stream()
-                .skip(pagination.getStart())
-                .limit(pagination.getLimit())
-                .collect(Collectors.toList());
+            .skip(pagination.getStart())
+            .limit(pagination.getLimit())
+            .collect(Collectors.toList());
 
         response.setResults(markerList);
         response.setHttpServletRequest(request);
@@ -214,9 +247,9 @@ public class PublicationAPIController {
         JsonResultResponse<Antibody> response = new JsonResultResponse<>();
         response.setTotal(antibodies.size());
         List<Antibody> antibodyList = antibodies.stream()
-                .skip(pagination.getStart())
-                .limit(pagination.getLimit())
-                .collect(Collectors.toList());
+            .skip(pagination.getStart())
+            .limit(pagination.getLimit())
+            .collect(Collectors.toList());
 
         antibodyList.forEach(antibody -> {
             AntibodyService service = new AntibodyService(antibody);
@@ -237,9 +270,9 @@ public class PublicationAPIController {
         JsonResultResponse<Fish> response = new JsonResultResponse<>();
         response.setTotal(fishList.size());
         List<Fish> paginatedFishList = fishList.stream()
-                .skip(pagination.getStart())
-                .limit(pagination.getLimit())
-                .collect(Collectors.toList());
+            .skip(pagination.getStart())
+            .limit(pagination.getLimit())
+            .collect(Collectors.toList());
 
         response.setResults(paginatedFishList);
         response.setHttpServletRequest(request);
@@ -256,9 +289,9 @@ public class PublicationAPIController {
         JsonResultResponse<String> response = new JsonResultResponse<>();
         response.setTotal(directedAttributionIDs.size());
         List<String> paginatedDirectedAttributionIDs = directedAttributionIDs.stream()
-                .skip(pagination.getStart())
-                .limit(pagination.getLimit())
-                .collect(Collectors.toList());
+            .skip(pagination.getStart())
+            .limit(pagination.getLimit())
+            .collect(Collectors.toList());
 
         response.setResults(paginatedDirectedAttributionIDs);
         response.setHttpServletRequest(request);
@@ -277,9 +310,9 @@ public class PublicationAPIController {
             return response;
         response.setTotal(markers.size());
         List<Marker> markerList = markers.stream()
-                .skip(pagination.getStart())
-                .limit(pagination.getLimit())
-                .collect(Collectors.toList());
+            .skip(pagination.getStart())
+            .limit(pagination.getLimit())
+            .collect(Collectors.toList());
 
         response.setResults(markerList);
         return response;
@@ -296,13 +329,13 @@ public class PublicationAPIController {
 
         // add chromosome info
         List<ChromosomeLinkage> list = mappedEntities.stream()
-                .map(entityZdbID -> {
-                    ChromosomeLinkage linkage = new ChromosomeLinkage();
-                    linkage.setEntity(entityZdbID);
-                    linkage.setChromosome(MappingService.getChromosomeLocationDisplay(entityZdbID));
-                    return linkage;
-                })
-                .collect(Collectors.toList());
+            .map(entityZdbID -> {
+                ChromosomeLinkage linkage = new ChromosomeLinkage();
+                linkage.setEntity(entityZdbID);
+                linkage.setChromosome(MappingService.getChromosomeLocationDisplay(entityZdbID));
+                return linkage;
+            })
+            .collect(Collectors.toList());
 
         JsonResultResponse<ChromosomeLinkage> response = new JsonResultResponse<>();
         response.setHttpServletRequest(request);
@@ -310,9 +343,9 @@ public class PublicationAPIController {
             return response;
         response.setTotal(list.size());
         List<ChromosomeLinkage> markerList = list.stream()
-                .skip(pagination.getStart())
-                .limit(pagination.getLimit())
-                .collect(Collectors.toList());
+            .skip(pagination.getStart())
+            .limit(pagination.getLimit())
+            .collect(Collectors.toList());
 
         response.setResults(markerList);
         return response;
@@ -329,9 +362,9 @@ public class PublicationAPIController {
             return response;
         response.setTotal(list.size());
         List<DiseaseAnnotation> markerList = list.stream()
-                .skip(pagination.getStart())
-                .limit(pagination.getLimit())
-                .collect(Collectors.toList());
+            .skip(pagination.getStart())
+            .limit(pagination.getLimit())
+            .collect(Collectors.toList());
 
         response.setResults(markerList);
         return response;
@@ -363,9 +396,9 @@ public class PublicationAPIController {
             return response;
         response.setTotal(rows.size());
         List<STRTargetRow> markerList = rows.stream()
-                .skip(pagination.getStart())
-                .limit(pagination.getLimit())
-                .collect(Collectors.toList());
+            .skip(pagination.getStart())
+            .limit(pagination.getLimit())
+            .collect(Collectors.toList());
 
         response.setResults(markerList);
         return response;

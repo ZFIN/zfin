@@ -499,5 +499,12 @@ public class FigureViewService {
         return figures;
     }
 
+    public List<Figure> getOrderedFiguresForPublication(Publication publication) {
+        List<Figure> figures = new ArrayList<>();
+        figures.addAll(publication.getFigures());
+
+        Collections.sort(figures, ComparatorCreator.orderBy("orderingLabel", "zdbID"));
+        return figures;
+    }
 }
 

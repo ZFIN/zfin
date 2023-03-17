@@ -4,10 +4,11 @@ import com.fasterxml.jackson.annotation.JsonView;
 import org.zfin.framework.api.View;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "organism")
-public class Species {
+public class Species implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

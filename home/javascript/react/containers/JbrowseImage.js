@@ -7,19 +7,10 @@ const GBROWSE_PADDING = 90;
 const IMAGE_SIZE_STEP = 200;
 const DEBOUNCE_INTERVAL = 250;
 
-const JbrowseImage = ({imageUrl, linkUrl, build, chromosome}) => {
-//    const [imageLoaded, setImageLoaded] = useState(false);
+const JbrowseImage = ({imageUrl, linkUrl, build, chromosome, height = '400'}) => {
     const [imgSrc, setImageSrc] = useState(null);
     const containerRef = useRef(null);
     const sep = imageUrl.indexOf('?') < 0 ? '?' : '&';
-    /*
-        const hiddenStyle = {
-            position: 'absolute',
-            height: 0,
-            width: '100%',
-            overflow: 'hidden',
-        };
-    */
 
     // useLayoutEffect instead of useEffect since we're going to measure elements inside
     useLayoutEffect(() => {
@@ -57,7 +48,7 @@ const JbrowseImage = ({imageUrl, linkUrl, build, chromosome}) => {
                     <object
                         type='text/html'
                         width='1000'
-                        height='400'
+                        height={height}
                         className='d-block mx-auto mb-3 pe-none'
                         data={imgSrc}
                         //onLoad={() => setImageLoaded(true)}
@@ -71,6 +62,7 @@ const JbrowseImage = ({imageUrl, linkUrl, build, chromosome}) => {
 JbrowseImage.propTypes = {
     imageUrl: PropTypes.string.isRequired,
     linkUrl: PropTypes.string.isRequired,
+    height: PropTypes.string,
     build: PropTypes.string,
     chromosome: PropTypes.string,
 };

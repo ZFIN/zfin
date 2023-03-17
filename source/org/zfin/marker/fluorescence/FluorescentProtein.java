@@ -68,4 +68,8 @@ public class FluorescentProtein extends AbstractFluorescence {
         return id;
     }
 
+    public long getIdentifier(){
+        return id;
+    }
+
 }

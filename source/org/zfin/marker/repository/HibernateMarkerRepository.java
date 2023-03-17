@@ -42,6 +42,7 @@ import org.zfin.mutant.Genotype;
 import org.zfin.mutant.OmimPhenotype;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.orthology.Ortholog;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.profile.Organization;
 import org.zfin.profile.Person;
@@ -59,6 +60,7 @@ import javax.persistence.criteria.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.repository.RepositoryFactory.*;
@@ -2033,13 +2035,13 @@ public class HibernateMarkerRepository implements MarkerRepository {
         CriteriaQuery<String> query = cb.createQuery(String.class);
         Root<DBLink> root = query.from(DBLink.class);
         query.select(root.get("accessionNumber"))
-                .where(
-                        cb.and(
-                                cb.equal(root.get("dataZdbID"), zdbID),
-                                cb.like(root.get("accessionNumber"), "AB%")
-                        )
+            .where(
+                cb.and(
+                    cb.equal(root.get("dataZdbID"), zdbID),
+                    cb.like(root.get("accessionNumber"), "AB%")
                 )
-                .orderBy(cb.desc(root.get("accessionNumber")));
+            )
+            .orderBy(cb.desc(root.get("accessionNumber")));
         return session.createQuery(query).getResultList();
     }
 
@@ -3097,16 +3099,26 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return query.list();
     }
 
-    public List<Marker> getZfinOrtholog(String humanAbbrev) {
-        Session session = HibernateUtil.currentSession();
-        String sql = "select zebrafishGene FROM Ortholog ortholog " +
-            "WHERE ortholog.symbol = :symbol " +
-            "AND ortholog.organism.commonName = :organism ";
+    Map<String, List<Marker>> zfinOrthologMap = new HashMap<>();
 
-        Query<Marker> query = session.createQuery(sql, Marker.class);
-        query.setParameter("symbol", humanAbbrev);
+    public List<Marker> getZfinOrtholog(String humanAbbrev) {
+        if (zfinOrthologMap.size() > 0) {
+            return zfinOrthologMap.get(humanAbbrev);
+        }
+
+        Session session = HibernateUtil.currentSession();
+        String sql = """
+            select ortho FROM Ortholog as ortho
+            join ortho.ncbiOtherSpeciesGene
+            WHERE ortho.organism.commonName = :organism
+            """;
+
+        Query<Ortholog> query = session.createQuery(sql, Ortholog.class);
         query.setParameter("organism", Species.Type.HUMAN.toString());
-        return query.list();
+        List<Ortholog> list = query.list();
+
+        zfinOrthologMap = list.stream().collect(groupingBy(ortholog -> ortholog.getNcbiOtherSpeciesGene().getAbbreviation(), Collectors.mapping(Ortholog::getZebrafishGene, toList())));
+        return zfinOrthologMap.get(humanAbbrev);
     }
 
     public void addConstructRelationships(Set<Marker> promMarker, Set<Marker> codingMarker, Marker marker, String pubID) {
@@ -3430,6 +3442,20 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return session.createQuery(hql, String.class).list();
     }
 
+    @Override
+    public List<FluorescentProtein> getFluorescentProteins(String query) {
+        String hql = " from FluorescentProtein where lower(name) like :query ";
+        Session session = currentSession();
+        Query<FluorescentProtein> query1 = session.createQuery(hql, FluorescentProtein.class);
+        query1.setParameter("query", "%" + query.toLowerCase() + "%");
+        return query1.list();
+    }
+
+    @Override
+    public FluorescentProtein getFluorescentProtein(Long identifier) {
+        return HibernateUtil.currentSession().get(FluorescentProtein.class, identifier);
+    }
+
     private int deleteMarkerDBLinksFromList(List<MarkerDBLink> dbLinks) {
         List<String> ids = dbLinks.stream().map(MarkerDBLink::getZdbID).toList();
         Session session = HibernateUtil.currentSession();
@@ -3446,10 +3472,10 @@ public class HibernateMarkerRepository implements MarkerRepository {
         CriteriaQuery<MarkerDBLink> query = cb.createQuery(MarkerDBLink.class);
         Root<MarkerDBLink> root = query.from(MarkerDBLink.class);
         query.where(
-                cb.and(
-                        cb.equal(root.get("referenceDatabase"), referenceDatabase),
-                        root.get("accessionNumber").in(ids).not()
-                ));
+            cb.and(
+                cb.equal(root.get("referenceDatabase"), referenceDatabase),
+                root.get("accessionNumber").in(ids).not()
+            ));
 
         return session.createQuery(query).getResultList();
     }
@@ -3460,10 +3486,10 @@ public class HibernateMarkerRepository implements MarkerRepository {
         CriteriaQuery<MarkerDBLink> query = cb.createQuery(MarkerDBLink.class);
         Root<MarkerDBLink> root = query.from(MarkerDBLink.class);
         query.where(
-                cb.and(
-                        cb.equal(root.get("referenceDatabase"), referenceDatabase),
-                        root.get("accessionNumber").in(ids)
-                ));
+            cb.and(
+                cb.equal(root.get("referenceDatabase"), referenceDatabase),
+                root.get("accessionNumber").in(ids)
+            ));
 
         return session.createQuery(query).getResultList();
     }

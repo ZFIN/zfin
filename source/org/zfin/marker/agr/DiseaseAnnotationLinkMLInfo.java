@@ -121,7 +121,7 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
                         // Use wildtype fish with STR
                         // treat as purely implicated by a gene
                         AGMDiseaseAnnotationDTO annotation = new AGMDiseaseAnnotationDTO();
-                        annotation.setDataProvider("ZFIN");
+                        annotation.setDataProviderName("ZFIN");
 
                         annotation.setDiseaseRelationName(RelationshipDTO.IS_MODEL_OF);
                         AffectedGenomicModel model = getAffectedGenomicModel(fish);
@@ -140,6 +140,7 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
                                         annotation.setInferredAlleleCurie("ZFIN:" + feature.getZdbID());
                                     }
                                 });
+                                annotation.setInferredGeneCurie("ZFIN:" + gene.getZdbID());
                             }
 
                         }
@@ -185,7 +186,7 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
     private AGMDiseaseAnnotationDTO getAgmDiseaseAnnotationDTO(DiseaseAnnotationModel damo) {
         Fish fish = damo.getFishExperiment().getFish();
         AGMDiseaseAnnotationDTO annotation = new AGMDiseaseAnnotationDTO();
-        annotation.setDataProvider("ZFIN");
+        annotation.setDataProviderName("ZFIN");
         annotation.setCreatedByCurie("ZFIN:curator");
         //annotation.setModifiedBy("ZFIN:curator");
 //            annotation.setModEntityId(damo.getDiseaseAnnotation().getZdbID());
@@ -195,7 +196,7 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
 
         annotation.setDoTermCurie(damo.getDiseaseAnnotation().getDisease().getOboID());
 
-        List<String> ecoTerms = ZfinAllianceConverter.convertEvidenceCodes(damo.getDiseaseAnnotation().getEvidenceCode()).stream()
+        List<String> ecoTerms = ZfinAllianceConverter.convertEvidenceCodes(damo.getDiseaseAnnotation().getEvidenceCode().getZdbID()).stream()
             .map(ECOTerm::getCurie).collect(toList());
         annotation.setEvidenceCodeCuries(ecoTerms);
         annotation.setReferenceCurie(getSingleReference(damo.getDiseaseAnnotation().getPublication()));
@@ -301,7 +302,7 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
     // you can find TAS an IC.
     // Needs to be changed in the future.
     private String getEvidenceCodeString(DiseaseAnnotation diseaseAnnotations) {
-        return getEvidenceCodeFromString(diseaseAnnotations.getEvidenceCode());
+        return getEvidenceCodeFromString(diseaseAnnotations.getEvidenceCode().getZdbID());
     }
 
     private String getEvidenceCodeFromString(String ecoValue) {

@@ -29,6 +29,7 @@ public class PublicationNavigationMenu extends NavigationMenu {
             title(NavigationMenuOptions.ERRATA).showCount(false).showBorder(true),
             title(NavigationMenuOptions.GENES),
             title(NavigationMenuOptions.FIGURES),
+            title(NavigationMenuOptions.PROBES),
             title(NavigationMenuOptions.EXPRESSION),
             title(NavigationMenuOptions.PHENOTYPE),
             title(NavigationMenuOptions.MUTATION),

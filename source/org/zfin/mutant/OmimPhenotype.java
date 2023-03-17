@@ -1,14 +1,17 @@
 package org.zfin.mutant;
 
+import lombok.Getter;
+import lombok.Setter;
+import org.zfin.ontology.HumanGeneDetail;
 import org.zfin.ontology.TermExternalReference;
 import org.zfin.orthology.Ortholog;
 
+import java.io.Serializable;
 import java.util.Set;
 
-/**
- * OMIM Phenotype
- */
-public class OmimPhenotype implements Comparable<OmimPhenotype> {
+@Setter
+@Getter
+public class OmimPhenotype implements Comparable<OmimPhenotype>, Serializable {
     private long id;
     private String name;
     private String omimNum;
@@ -16,45 +19,7 @@ public class OmimPhenotype implements Comparable<OmimPhenotype> {
     private Set<TermExternalReference> externalReferences;
     private String humanGeneMimNumber;
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getOmimNum() {
-        return omimNum;
-    }
-
-    public void setOmimNum(String omimNum) {
-        this.omimNum = omimNum;
-    }
-
-    public Ortholog getOrtholog() {
-        return ortholog;
-    }
-
-    public void setOrtholog(Ortholog ortholog) {
-        this.ortholog = ortholog;
-    }
-
-    public Set<TermExternalReference> getExternalReferences() {
-        return externalReferences;
-    }
-
-    public void setExternalReferences(Set<TermExternalReference> externalReferences) {
-        this.externalReferences = externalReferences;
-    }
+    private HumanGeneDetail humanGeneDetail;
 
     @Override
     public int compareTo(OmimPhenotype anotherOmimPhenotype) {

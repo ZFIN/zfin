@@ -18,6 +18,8 @@ public interface GenomeBrowserImage {
 
     GenomeBrowserType getType();
 
+    Integer getHeight();
+
     @Override
     boolean equals(Object o);
 

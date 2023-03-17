@@ -69,7 +69,9 @@ public class DiseaseAnnotationRESTAllianceService extends RestAllianceService {
         dam.setFishExperiment(experiment);
         DiseaseAnnotation diseaseAnnotation = new DiseaseAnnotation();
         diseaseAnnotation.setZdbID("ZDB-DAT-220710-12");
-        diseaseAnnotation.setEvidenceCode("ECO:0000304");
+        GenericTerm evidence = new GenericTerm();
+        evidence.setOboID("ECO:0000304");
+        diseaseAnnotation.setEvidenceCode(evidence);
         GenericTerm disease = new GenericTerm();
         disease.setOboID("DOID:4");
         diseaseAnnotation.setDisease(disease);

@@ -10,7 +10,7 @@ import org.zfin.framework.api.View;
 @Getter
 public class SequenceFeature {
 
-    @JsonView({View.API.class, View.ExpressedGeneAPI.class})
+    @JsonView({View.API.class, View.ExpressedGeneAPI.class, View.UI.class})
     public String zdbID;
 
     public String getNameOrder() {

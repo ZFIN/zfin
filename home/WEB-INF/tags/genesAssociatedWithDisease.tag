@@ -29,10 +29,10 @@
                                          groupByBean="symbol">
             <c:choose>
                 <c:when test="${omimGene.orthology != null}">
-                    <a href="http://omim.org/entry/${omimGene.omimAccession}">${omimGene.symbol}</a>
+                    <a href="http://omim.org/entry/${omimGene.homoSapiensGene.id}">${omimGene.homoSapiensGene.symbol}</a>
                 </c:when>
                 <c:otherwise>
-                    <a href="http://omim.org/entry/${omimGene.humanGeneDetail.geneMimNumber}">${omimGene.symbol}</a>
+                    <a href="http://omim.org/entry/${omimGene.homoSapiensGene.id}">${omimGene.symbol}</a>
                 </c:otherwise>
             </c:choose>    
                      </zfin:groupByDisplay>
@@ -53,7 +53,7 @@
                         ${omimGene.name}
                 </td>
                 <td>
-                    <a href="http://omim.org/entry/${omimGene.omimNum}">${omimGene.omimNum}</a>
+                    <a href="http://omim.org/entry/${omimGene.omimAccession}">${omimGene.omimAccession}</a>
 
                 </td>
             </zfin:alternating-tr>

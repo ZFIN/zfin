@@ -25,7 +25,7 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/data_transfer/PUBMED/Journal/ &amp;&amp; mergeJournals.pl
+      <command>cd $TARGETROOT/server_apps/data_transfer/PUBMED/Journal/ &amp;&amp; ./mergeJournals.pl
 
 </command>
     </hudson.tasks.Shell>
@@ -38,11 +38,5 @@
     </hudson.tasks.ArtifactArchiver>
   </publishers>
   <buildWrappers>
-    <EnvInjectBuildWrapper plugin="envinject@1.89">
-      <info>
-        <propertiesFilePath>$TARGETROOT/home/WEB-INF/zfin.properties</propertiesFilePath>
-        <loadFilesFromMaster>false</loadFilesFromMaster>
-      </info>
-    </EnvInjectBuildWrapper>
   </buildWrappers>
 </project>

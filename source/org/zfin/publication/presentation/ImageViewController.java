@@ -15,8 +15,9 @@ import org.zfin.figure.presentation.FigureExpressionSummary;
 import org.zfin.figure.presentation.FigureFromPublicationLink;
 import org.zfin.figure.presentation.FigureGalleryImagePresentation;
 import org.zfin.figure.presentation.FigurePhenotypeSummary;
-import org.zfin.figure.repository.FigureRepository;
+import org.zfin.publication.Publication;
 import org.zfin.figure.service.FigureViewService;
+import org.zfin.framework.presentation.ImageNavigationMenu;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.marker.Clone;
 import org.zfin.ontology.GenericTerm;
@@ -36,27 +37,32 @@ import java.util.Map;
 @RequestMapping("/image")
 public class ImageViewController {
 
-    private static Logger LOG = LogManager.getLogger(ImageViewController.class);
+    private static final Logger LOG = LogManager.getLogger(ImageViewController.class);
 
     @Autowired
     private FigureViewService figureViewService;
 
     @Autowired
     private PublicationRepository publicationRepository;
-    @Autowired
-    private FigureRepository figureRepository;
 
     @Autowired
     private OntologyRepository ontologyRepository;
 
-    @RequestMapping("/view/{zdbID}")
-    public String getImageView(Model model, @PathVariable("zdbID") String zdbID) {
+    @RequestMapping(value = {"/view/{zdbID}"})
+    public String getOldImageView(Model model, @PathVariable("zdbID") String zdbID) {
+        return getImageView(model, zdbID, "figure/image-view");
+    }
 
+    @RequestMapping(value = {"/view-prototype/{zdbID}"})
+    public String getPrototypeImageView(Model model, @PathVariable("zdbID") String zdbID) {
+        return getImageView(model, zdbID, "figure/image-view-prototype");
+    }
+
+    public String getImageView(Model model, String zdbID, String template) {
         Image image = publicationRepository.getImageById(zdbID);
         if (image == null) {
             String replacedZdbID = RepositoryFactory.getInfrastructureRepository().getWithdrawnZdbID(zdbID);
             if (replacedZdbID != null) {
-
                 return "redirect:/" + replacedZdbID;
             } else {
                 model.addAttribute(LookupStrings.ZDB_ID, zdbID);
@@ -84,9 +90,20 @@ public class ImageViewController {
         }
 
         model.addAttribute("directLink", true);
-        return "figure/image-view";
-    }
 
+        ImageNavigationMenu navigationMenu = new ImageNavigationMenu();
+        navigationMenu.setModel(model);
+        model.addAttribute("navigationMenu", navigationMenu);
+
+        if (image.getFigure() != null && image.getFigure().getPublication() != null ) {
+            Publication publication = image.getFigure().getPublication();
+            model.addAttribute("publication", publication);
+            model.addAttribute("showElsevierMessage", figureViewService.showElsevierMessage(publication));
+            model.addAttribute("hasAcknowledgment", figureViewService.hasAcknowledgment(publication));
+        }
+
+        return template;
+    }
 
     @RequestMapping("/publication/image-popup/{zdbID}")
     public String updateOrthologyNote(@PathVariable String zdbID,

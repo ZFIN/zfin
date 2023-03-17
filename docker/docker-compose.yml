@@ -20,12 +20,13 @@ services:
 #      - "127.0.0.1:12345-12354:12345"
     volumes:
       - www_data:/opt/zfin/www_homes/zfin.org
+      - downloads_data:/opt/zfin/download-files
       - httpd_log:/opt/zfin/log/httpd
       - tls_certs:/opt/zfin/tls
       - keystore:/opt/apache/apache-tomcat/conf
       - certbot_data:/etc/letsencrypt
       - catalina_base:/opt/zfin/catalina_bases/zfin.org
-      - jenkins_data:/opt/zfin//www_homes/zfin.org/server_apps/jenkins/jenkins-home
+      - jenkins_data:/opt/zfin/www_homes/zfin.org/server_apps/jenkins/jenkins-home
       - ../:/opt/zfin/source_roots/zfin.org
       #- nfs-zunloads:/research/zunloads
       - ${DOCKER_DB_UNLOADS_PATH}:/opt/zfin/unloads/db
@@ -60,10 +61,9 @@ services:
     volumes:
       - solr_data:/var/solr
   httpd:
+    hostname: zfin.org
     build: ./httpd/
     restart: always
-    labels:
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${COMPOSE_PROJECT_NAME}.test`)"
     ports:
       - "8080-8089:80"
       - "8443-8452:443"
@@ -110,9 +110,19 @@ services:
       - "8025:8025"
   jenkins:
     build: ./jenkins/
-    restart: always
+    #restart: always
     ports:
-      - "8888-8897:8080"
+      - "9499-9509:9499"
+    environment:
+      PGHOST: db
+      PGUSER: postgres
+      TZ: ${TZ}
+    volumes:
+      #- jenkins_data:/var/jenkins_home
+      - ../:/opt/zfin/source_roots/zfin.org
+      - www_data:/opt/zfin/www_homes/zfin.org
+      - downloads_data:/opt/zfin/download-files
+      - jenkins_data:/opt/zfin/www_homes/zfin.org/server_apps/jenkins/jenkins-home
   elasticsearch:
     build: 
       context: ./elasticsearch/
@@ -189,6 +199,7 @@ volumes:
   catalina_base:
   pg_data:
   solr_data:
+  downloads_data:
   jenkins_data:
   elasticsearch_data:
   kibana_data:

@@ -11,42 +11,100 @@ import org.zfin.framework.api.View;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.FishExperiment;
+import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.PostComposedEntity;
+import org.zfin.publication.Publication;
+
+import javax.persistence.*;
 
 /**
- * Stores a collection of entities used to display one row of the figureview expression table
+ * Stores a collection of entities used to display one row of the figureView expression table
  */
 @Setter
 @Getter
+@Entity
+@Table(name = "UI.PUBLICATION_EXPRESSION_DISPLAY")
 public class ExpressionTableRow {
 
-    @JsonView(View.FigureAPI.class)
+    @Id
+    @JsonView(View.ExpressionPublicationUI.class)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ped_id", nullable = false)
+    private long id;
+
+    @JsonView(View.ExpressionPublicationUI.class)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ped_pub_zdb_id")
+    private Publication publication;
+
+    @JsonView(View.ExpressionPublicationUI.class)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ped_subterm_zdb_id")
+    private GenericTerm subterm;
+
+    @JsonView(View.ExpressionPublicationUI.class)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ped_superterm_zdb_id")
+    private GenericTerm superterm;
+
+    @JsonView(View.ExpressionPublicationUI.class)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ped_gene_zdb_id")
     private Marker gene;
-    @JsonView(View.FigureAPI.class)
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ped_antibody_zdb_id")
+    @JsonView(View.ExpressionPublicationUI.class)
     private Antibody antibody;
+
+    @JsonView(View.ExpressionPublicationUI.class)
+    @Transient
     private FishExperiment fishExperiment;
-    @JsonView(View.FigureAPI.class)
+    @JsonView(View.ExpressionPublicationUI.class)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ped_fish_zdb_id")
     private Fish fish;
-    @JsonView(View.FigureAPI.class)
+    @JsonView(View.ExpressionPublicationUI.class)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ped_exp_zdb_id")
     private Experiment experiment;
-    @JsonView(View.FigureAPI.class)
+    @JsonView(View.ExpressionPublicationUI.class)
+    @Column(name = "ped_qualifier")
     private String qualifier;
+
+    @Transient
     private Boolean isExpressionFound;
-    @JsonView(View.FigureAPI.class)
+    @JsonView(View.ExpressionPublicationUI.class)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ped_start_zdb_id")
     private DevelopmentStage start;
-    @JsonView(View.FigureAPI.class)
+
+    @JsonView(View.ExpressionPublicationUI.class)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ped_end_zdb_id")
     private DevelopmentStage end;
-    @JsonView(View.FigureAPI.class)
+
+    @JsonView(View.ExpressionPublicationUI.class)
+    @Transient
     private PostComposedEntity entity;
-    @JsonView(View.FigureAPI.class)
+
+    @JsonView(View.ExpressionPublicationUI.class)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ped_assay_id")
     private ExpressionAssay assay;
+
+    @Transient
     private String fishNameOrder;
-    @JsonView(View.FigureAPI.class)
+
+    @JsonView(View.ExpressionPublicationUI.class)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ped_fig_zdb_id")
     private Figure figure;
 
 
     //this is a key used for deciding whether to repeat the genotype in the display tag
     // (it's a "new" genotype if it's a new gene and the same genotype...)
+    @Transient
     private String geneGenoxZdbIDs;
 
     public ExpressionTableRow() {
@@ -63,6 +121,8 @@ public class ExpressionTableRow {
         setStart(expressionResult.getStartStage());
         setEnd(expressionResult.getEndStage());
         setIsExpressionFound(expressionResult.isExpressionFound());
+        setSuperterm(expressionResult.getSuperTerm());
+        setSubterm(expressionResult.getSubTerm());
         if (!expressionResult.isExpressionFound()) {
             setQualifier("Not Detected");
         }
@@ -94,7 +154,16 @@ public class ExpressionTableRow {
         this.fishExperiment = fishExperiment;
     }
 
-    @JsonView(View.FigureAPI.class)
+
+    @JsonView(View.ExpressionPublicationUI.class)
+    public PostComposedEntity getEntity() {
+        PostComposedEntity entity = new PostComposedEntity();
+        entity.setSuperterm(superterm);
+        entity.setSubterm(subterm);
+        return entity;
+    }
+
+    @JsonView(View.ExpressionPublicationUI.class)
     @JsonProperty("id")
     public String getUniqueKey() {
         StringBuilder builder = new StringBuilder();

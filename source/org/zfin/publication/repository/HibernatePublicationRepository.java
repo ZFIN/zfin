@@ -38,10 +38,7 @@ import org.zfin.marker.*;
 import org.zfin.marker.presentation.GeneBean;
 import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.mutant.Fish;
-import org.zfin.mutant.FishExperiment;
-import org.zfin.mutant.Genotype;
-import org.zfin.mutant.SequenceTargetingReagent;
+import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Term;
 import org.zfin.orthology.Ortholog;
@@ -61,6 +58,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.groupingBy;
 import static org.zfin.framework.HibernateUtil.currentSession;
 
 /**
@@ -2059,6 +2057,92 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return query.list();
     }
 
+    @Override
+    public Map<Fish, Map<GenericTerm, List<PhenotypeStatementWarehouse>>> getAllFiguresForPhenotype() {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = """
+            select phenos from PhenotypeStatementWarehouse phenos,
+            FishExperiment fishox
+            where  phenos.phenotypeWarehouse.fishExperiment = fishox  AND
+            exists (select 'x' from GeneGenotypeExperiment where fishExperiment = fishox)
+            """;
+        org.hibernate.query.Query<PhenotypeStatementWarehouse> query = session.createQuery(hql, PhenotypeStatementWarehouse.class);
+
+        Map<Fish, List<PhenotypeStatementWarehouse>> phenoMap = query.list().stream()
+            .collect(groupingBy((pheno) -> pheno.getPhenotypeExperiment().getFishExperiment().getFish()));
+        Map<Fish, Map<GenericTerm, List<PhenotypeStatementWarehouse>>> phenMap = new HashMap<>();
+        phenoMap.forEach((fish, phenotypeStatementWarehouses) -> {
+            // groupBy Generic terms
+            Map<GenericTerm, List<PhenotypeStatementWarehouse>> map = new HashMap<>();
+            phenotypeStatementWarehouses.forEach(warehouse -> getTermIDs(warehouse).forEach(term -> {
+                List<PhenotypeStatementWarehouse> list = map.computeIfAbsent(term, k -> new ArrayList<>());
+                list.add(warehouse);
+            }));
+            phenMap.put(fish, map);
+        });
+        return phenMap;
+    }
+
+    @Override
+    public Map<Fish, Map<Experiment, Map<GenericTerm, Set<PhenotypeStatementWarehouse>>>> getAllChebiPhenotype() {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = """
+            select phenos from PhenotypeStatementWarehouse phenos,
+            FishExperiment fishox, ExperimentCondition condition
+            where  phenos.phenotypeWarehouse.fishExperiment = fishox  AND
+            fishox.experiment = condition.experiment
+            AND condition.chebiTerm is not null
+            """;
+        org.hibernate.query.Query<PhenotypeStatementWarehouse> query = session.createQuery(hql, PhenotypeStatementWarehouse.class);
+
+        Map<Fish, Map<Experiment, List<PhenotypeStatementWarehouse>>> phenoMap = query.list().stream()
+            .collect(groupingBy((pheno) -> pheno.getPhenotypeExperiment().getFishExperiment().getFish(),
+                groupingBy(pheno -> pheno.getPhenotypeWarehouse().getFishExperiment().getExperiment())));
+        Map<Fish, Map<Experiment, Map<GenericTerm, Set<PhenotypeStatementWarehouse>>>> phenMap = new HashMap<>();
+        phenoMap.forEach((fish, phenotypeStatementWarehouses) -> {
+            Map<Experiment, Map<GenericTerm, Set<PhenotypeStatementWarehouse>>> phMap = new HashMap<>();
+            phenotypeStatementWarehouses.forEach((experiment, phenotypeStatementWarehouses1) -> {
+                // groupBy Generic terms
+                Map<GenericTerm, Set<PhenotypeStatementWarehouse>> map = new HashMap<>();
+                phenotypeStatementWarehouses1.forEach(warehouse -> getChebiTermIDs(warehouse).forEach(term -> {
+                    Set<PhenotypeStatementWarehouse> list = map.computeIfAbsent(term, k -> new HashSet<>());
+                    list.add(warehouse);
+                }));
+                phMap.put(experiment, map);
+            });
+            phenMap.put(fish, phMap);
+        });
+        return phenMap;
+    }
+
+    private static List<GenericTerm> getTermIDs(PhenotypeStatementWarehouse phenotype) {
+        List<GenericTerm> termIDs = new ArrayList<>();
+        if (phenotype.getEntity().getSubterm() != null) {
+            termIDs.add(phenotype.getEntity().getSubterm());
+        }
+        if (phenotype.getEntity().getSuperterm() != null) {
+            termIDs.add(phenotype.getEntity().getSuperterm());
+        }
+        if (phenotype.getRelatedEntity() != null && phenotype.getRelatedEntity().getSubterm() != null) {
+            termIDs.add(phenotype.getRelatedEntity().getSubterm());
+        }
+        if (phenotype.getRelatedEntity() != null && phenotype.getRelatedEntity().getSuperterm() != null) {
+            termIDs.add(phenotype.getRelatedEntity().getSuperterm());
+        }
+        if (phenotype.getQuality() != null) {
+            termIDs.add(phenotype.getQuality());
+        }
+        return termIDs;
+    }
+
+    private static List<GenericTerm> getChebiTermIDs(PhenotypeStatementWarehouse phenotype) {
+        return phenotype.getPhenotypeWarehouse().getFishExperiment().getExperiment().getExperimentConditions().stream()
+            .filter(Objects::nonNull)
+            .map(ExperimentCondition::getChebiTerm).toList();
+    }
+
     private String addOrderByParameters(String hql) {
         if (!isUsePagination()) {
             return hql;
@@ -2420,4 +2504,81 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return criteria;
     }
 
+	@Override
+	public List<CorrespondenceNeed> getCorrespondenceNeedByPublicationID(String zdbID) {
+		CriteriaBuilder criteriaBuilder = currentSession().getCriteriaBuilder();
+		CriteriaQuery<CorrespondenceNeed> cr = criteriaBuilder.createQuery(CorrespondenceNeed.class);
+		Root<CorrespondenceNeed> root = cr.from(CorrespondenceNeed.class);
+		cr.select(root);
+		cr.where(criteriaBuilder.equal(root.get("publication").get("zdbID"), zdbID));
+		return currentSession().createQuery(cr).list();
+	}
+
+	@Override
+	public List<CorrespondenceNeedReason> getAllCorrespondenceNeedReasons() {
+		CriteriaBuilder criteriaBuilder = currentSession().getCriteriaBuilder();
+		CriteriaQuery<CorrespondenceNeedReason> cr = criteriaBuilder.createQuery(CorrespondenceNeedReason.class);
+		Root<CorrespondenceNeedReason> root = cr.from(CorrespondenceNeedReason.class);
+		cr.select(root);
+		cr.orderBy(criteriaBuilder.asc(root.get("order")));
+		return currentSession().createQuery(cr).list();
+	}
+
+	@Override
+	public void deleteCorrespondenceNeedByPublicationID(String pubID) {
+		CriteriaBuilder criteriaBuilder = currentSession().getCriteriaBuilder();
+		CriteriaDelete<CorrespondenceNeed> cr = criteriaBuilder.createCriteriaDelete(CorrespondenceNeed.class);
+		Root<CorrespondenceNeed> root = cr.from(CorrespondenceNeed.class);
+		cr.where(criteriaBuilder.equal(root.get("publication").get("zdbID"), pubID));
+		currentSession().createQuery(cr).executeUpdate();
+	}
+
+	@Override
+	public CorrespondenceNeedReason getCorrespondenceNeedReasonByID(long id) {
+		return currentSession().get(CorrespondenceNeedReason.class, id);
+	}
+
+	@Override
+	public void insertCorrespondenceNeed(CorrespondenceNeed correspondenceNeed) {
+		currentSession().save(correspondenceNeed);
+	}
+
+	@Override
+	public List<CorrespondenceResolution> getCorrespondenceResolutionByPublicationID(String zdbID) {
+		CriteriaBuilder criteriaBuilder = currentSession().getCriteriaBuilder();
+		CriteriaQuery<CorrespondenceResolution> cr = criteriaBuilder.createQuery(CorrespondenceResolution.class);
+		Root<CorrespondenceResolution> root = cr.from(CorrespondenceResolution.class);
+		cr.select(root);
+		cr.where(criteriaBuilder.equal(root.get("publication").get("zdbID"), zdbID));
+		return currentSession().createQuery(cr).list();
+	}
+
+	@Override
+	public List<CorrespondenceResolutionType> getAllCorrespondenceResolutionTypes() {
+		CriteriaBuilder criteriaBuilder = currentSession().getCriteriaBuilder();
+		CriteriaQuery<CorrespondenceResolutionType> cr = criteriaBuilder.createQuery(CorrespondenceResolutionType.class);
+		Root<CorrespondenceResolutionType> root = cr.from(CorrespondenceResolutionType.class);
+		cr.select(root);
+		cr.orderBy(criteriaBuilder.asc(root.get("order")));
+		return currentSession().createQuery(cr).list();
+	}
+
+	@Override
+	public void deleteCorrespondenceResolutionByPublicationID(String pubID) {
+		CriteriaBuilder criteriaBuilder = currentSession().getCriteriaBuilder();
+		CriteriaDelete<CorrespondenceResolution> cr = criteriaBuilder.createCriteriaDelete(CorrespondenceResolution.class);
+		Root<CorrespondenceResolution> root = cr.from(CorrespondenceResolution.class);
+		cr.where(criteriaBuilder.equal(root.get("publication").get("zdbID"), pubID));
+		currentSession().createQuery(cr).executeUpdate();
+	}
+
+	@Override
+	public CorrespondenceResolutionType getCorrespondenceResolutionTypeByID(long id) {
+		return currentSession().get(CorrespondenceResolutionType.class, id);
+	}
+
+	@Override
+	public void insertCorrespondenceResolution(CorrespondenceResolution correspondenceResolution) {
+		currentSession().save(correspondenceResolution);
+	}
 }

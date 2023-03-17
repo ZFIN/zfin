@@ -37,6 +37,26 @@
                 <z:attributeListItem label="Source">
                     <zfin-figure:journalAbbrev publication="${publication}"/>
                 </z:attributeListItem>
+                <c:if test="${!empty probe}">
+                    <z:attributeListItem label="Probe">
+                        <zfin:link entity="${probe}"/>
+
+                        <c:if test="${!empty probe.rating}">
+                            &nbsp; <strong><a href="/zf_info/stars.html">Quality:</a></strong>
+                            <zfin2:starRating rating="${probe.rating}" />
+                        </c:if>
+                    </z:attributeListItem>
+                    <z:attributeListItem label="Supplier">
+                        <c:if test="${!empty probeSuppliers}">
+                            <tr>
+                                <th>Supplier:</th>
+                                <td><c:forEach var="supplier" items="${probeSuppliers}">
+                                    ${supplier.linkWithAttributionAndOrderThis}
+                                </c:forEach></td>
+                            </tr>
+                        </c:if>
+                    </z:attributeListItem>
+                </c:if>
             </z:attributeList>
         </div>
 
@@ -61,7 +81,7 @@
 
         <c:forEach var="figure" items="${figures}">
             <z:section title="${figure.label}" entity="${figure}">
-                <zfin-figure:imagesAndCaption
+                <zfin-figure:imagesAndCaptionPrototype
                         figure="${figure}"
                         autoplayVideo="false"
                         showMultipleMediumSizedImages="${showMultipleMediumSizedImages}"
@@ -84,7 +104,7 @@
                     </c:if>
                     <zfin-figure:constructLinks figure="${figure}"/>
 
-                </zfin-figure:imagesAndCaption>
+                </zfin-figure:imagesAndCaptionPrototype>
             </z:section>
         </c:forEach>
 

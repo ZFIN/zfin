@@ -1,6 +1,7 @@
 package org.zfin.expression;
 
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
@@ -64,10 +65,10 @@ public class FigureServiceTest extends AbstractDatabaseTest {
         oticPlacodeStatement.setExpressionFound(true);
 
 
-        PostComposedEntity ectodermEntity = new PostComposedEntity();
-        ectodermEntity.setSuperterm(ontologyRepository.getTermByOboID("ZFA:0000016"));
+        PostComposedEntity oticVesicle = new PostComposedEntity();
+        oticVesicle.setSuperterm(ontologyRepository.getTermByOboID("ZFA:0000051"));
         ExpressionStatement ectodermStatement = new ExpressionStatement();
-        ectodermStatement.setEntity(ectodermEntity);
+        ectodermStatement.setEntity(oticVesicle);
         ectodermStatement.setExpressionFound(true);
 
         boolean withImgOnly = false;
@@ -117,8 +118,10 @@ public class FigureServiceTest extends AbstractDatabaseTest {
 
         Figure figure = publicationRepository.getFigure("ZDB-FIG-041108-3");
 
+        // optic placode
         ExpressionStatement presentStatement = generateExpressionStatement("ZFA:0000138", null, true);
-        ExpressionStatement notPresentStatement = generateExpressionStatement("ZFA:0000016", null, true);
+        // otic vesicle
+        ExpressionStatement notPresentStatement = generateExpressionStatement("ZFA:0000051", null, true);
 
         boolean imagesOnly = false;
 
@@ -128,13 +131,17 @@ public class FigureServiceTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void standardEnvironmentOnlyGenotypeExprsesionFigureSummaryTest() {
+    @Ignore // the method, FigureService.createExpressionCriteriaStandardEnvironment,`
+    // has not been used yet. ignoring it for now.
+    public void standardEnvironmentOnlyGenotypeExpressionFigureSummaryTest() {
 
         Genotype geno = mutantRepository.getGenotypeByID("ZDB-GENO-980202-822");
+        // myod1
         Marker gene = markerRepository.getMarkerByID("ZDB-GENE-980526-561");
-
+        // Fig. 11 of Hamade et al.
         Figure figure = publicationRepository.getFigure("ZDB-FIG-060201-11");
 
+        // optic placode
         ExpressionStatement presentStatement = generateExpressionStatement("ZFA:0000138", null, false);
         ExpressionStatement notPresentStatement = generateExpressionStatement("ZFA:0007046", null, true);
 

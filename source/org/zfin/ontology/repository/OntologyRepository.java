@@ -362,4 +362,7 @@ public interface OntologyRepository {
     boolean termExists(String id);
 
     GenericTerm getTermByZdbIDOrOboId(String termID);
+
+    Set<GenericTerm> getDiseaseTermsOmimPhenotype();
+
 }

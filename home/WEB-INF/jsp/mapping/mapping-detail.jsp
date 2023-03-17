@@ -125,4 +125,5 @@
         </script>
 
     </authz:authorize>
+    <script src="${zfn:getAssetPath("react.js")}"></script>
 </z:page>

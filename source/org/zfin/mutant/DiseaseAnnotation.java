@@ -28,7 +28,7 @@ public class DiseaseAnnotation implements EntityZdbID {
     @JsonView(View.API.class)
     private GenericTerm disease;
     private Publication publication;
-    private String evidenceCode;
+    private GenericTerm evidenceCode;
     private List<DiseaseAnnotationModel> diseaseAnnotationModel;
 
     @JsonView(View.API.class)
@@ -39,11 +39,6 @@ public class DiseaseAnnotation implements EntityZdbID {
     @JsonView(View.API.class)
     public List<Experiment> getEnvironmentList(){
         return diseaseAnnotationModel.stream().map(model -> model.getFishExperiment().getExperiment()).collect(Collectors.toList());
-    }
-
-    @JsonView(View.API.class)
-    public List<String> getEvidenceCodeList(){
-        return diseaseAnnotationModel.stream().map(model -> model.getDiseaseAnnotation().getCodeName()).collect(Collectors.toList());
     }
 
     @Override
@@ -65,11 +60,6 @@ public class DiseaseAnnotation implements EntityZdbID {
     @Override
     public String getEntityName() {
         return disease.getTermName();
-    }
-
-    public String getCodeName(){
-        String codeName = getFeatureGenomeLocationEvidenceCode(evidenceCode);
-        return Objects.requireNonNullElse(codeName, "");
     }
 
 }

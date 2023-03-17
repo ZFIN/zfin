@@ -84,7 +84,7 @@ public class DiseaseAnnotationService extends AllianceService {
     public static AGMDiseaseAnnotationDTO getAgmDiseaseAnnotationDTO(DiseaseAnnotationModel damo) {
         Fish fish = damo.getFishExperiment().getFish();
         AGMDiseaseAnnotationDTO annotation = new AGMDiseaseAnnotationDTO();
-        annotation.setDataProvider("ZFIN");
+        annotation.setDataProviderName("ZFIN");
         annotation.setCreatedByCurie("ZFIN:curator");
         annotation.setUpdatedByCurie("ZFIN:curator");
         //annotation.setModifiedBy("ZFIN:curator");
@@ -95,7 +95,7 @@ public class DiseaseAnnotationService extends AllianceService {
 
         annotation.setDoTermCurie(damo.getDiseaseAnnotation().getDisease().getOboID());
 
-        List<String> ecoTerms = ZfinAllianceConverter.convertEvidenceCodes(damo.getDiseaseAnnotation().getEvidenceCode()).stream()
+        List<String> ecoTerms = ZfinAllianceConverter.convertEvidenceCodes(damo.getDiseaseAnnotation().getEvidenceCode().getZdbID()).stream()
                 .map(ECOTerm::getCurie).collect(toList());
         annotation.setEvidenceCodeCuries(ecoTerms);
         annotation.setReferenceCurie(getSingleReference(damo.getDiseaseAnnotation().getPublication()));

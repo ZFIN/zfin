@@ -1,4 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+<%@ page import="org.zfin.framework.featureflag.FeatureFlagEnum" %>
+<%@ page import="org.zfin.framework.presentation.NavigationMenuOptions" %>
 
 <jsp:useBean id="formBean" class="org.zfin.feature.presentation.FeatureBean" scope="request"/>
 
@@ -10,6 +12,7 @@
 <c:set var="FISH" value="Fish"/>
 <c:set var="SUPPLEMENTAL" value="Supplemental Information"/>
 <c:set var="SEQUENCES" value="Sequences"/>
+<c:set var="DISEASE_ASSOCIATION" value="${NavigationMenuOptions.DISEASE_ASSOCIATION.value}"/>
 <c:set var="GBROWSE" value="Genome Browser"/>
 <c:set var="CITATIONS" value="Citations"/>
 
@@ -50,6 +53,14 @@
         <z:section title="${FISH}">
             <div class="__react-root" id="FeatureFishTable" data-feature-id="${formBean.feature.zdbID}"></div>
         </z:section>
+
+        <c:if test="${zfn:isFlagEnabled(FeatureFlagEnum.SHOW_ALLIANCE_DATA)}">
+            <z:section title="${DISEASE_ASSOCIATION}">
+                <div class="__react-root" id="DiseaseAssociationTable"
+                     data-allele-id="${formBean.feature.zdbID}"
+                ></div>
+            </z:section>
+        </c:if>
 
         <z:section title="${SUPPLEMENTAL}" >
             <jsp:include page="feature-view-zirc.jsp"/>

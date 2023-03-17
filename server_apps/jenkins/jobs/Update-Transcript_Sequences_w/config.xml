@@ -18,7 +18,7 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/data_transfer/RNACentral &amp;&amp; runTscriptSequenceLoad.pl</command>
+      <command>cd $TARGETROOT/server_apps/data_transfer/RNACentral &amp;&amp; ./runTscriptSequenceLoad.pl</command>
     </hudson.tasks.Shell>
   </builders> 
   <publishers>
@@ -73,11 +73,5 @@
     </hudson.plugins.emailext.ExtendedEmailPublisher>
   </publishers>
   <buildWrappers>
-    <EnvInjectBuildWrapper plugin="envinject@1.89">
-      <info>
-        <propertiesFilePath>$TARGETROOT/home/WEB-INF/zfin.properties</propertiesFilePath>
-        <loadFilesFromMaster>false</loadFilesFromMaster>
-      </info>
-    </EnvInjectBuildWrapper>
   </buildWrappers>
 </project>

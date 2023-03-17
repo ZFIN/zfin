@@ -3,6 +3,7 @@ package org.zfin.framework.presentation;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang.StringUtils;
+import org.zfin.framework.api.Pagination;
 import org.zfin.util.URLCreator;
 import org.zfin.util.validation.IntegerValue;
 
@@ -274,6 +275,14 @@ public class PaginationBean {
 
     public int getMaxDisplayRecordsInteger() {
         return maxDisplayRecordsInteger;
+    }
+
+    public static PaginationBean getPaginationBean(Pagination pagination) {
+        PaginationBean bean = new PaginationBean();
+        bean.setMaxDisplayRecords(pagination.getLimit());
+        bean.setFirstPageRecord(pagination.getStart());
+        bean.setPageInteger(pagination.getPage());
+        return bean;
     }
 
 }

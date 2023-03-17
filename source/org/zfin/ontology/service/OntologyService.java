@@ -7,15 +7,17 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.util.CollectionUtils;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Experiment;
+import org.zfin.expression.ExperimentCondition;
 import org.zfin.framework.api.Pagination;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.RelationshipType;
 import org.zfin.gwt.root.dto.TermDTO;
+import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.*;
-import org.zfin.mutant.presentation.DiseaseModelDisplay;
-import org.zfin.mutant.presentation.FishModelDisplay;
+import org.zfin.mutant.presentation.*;
 import org.zfin.ontology.*;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.orthology.NcbiOrthoExternalReference;
@@ -26,11 +28,11 @@ import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.ForeignDB;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
-import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
-import static org.zfin.repository.RepositoryFactory.getPhenotypeRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 /**
  * This service provides a bridge between the OntologyRepository and business logic.
@@ -185,7 +187,7 @@ public class OntologyService {
                         } else {
                             omimDisplay = map.get(key);
                         }
-                        omimDisplay.setTerm(term);
+                        omimDisplay.setDisease(term);
                         omimDisplay.setOrthology(omimResult.getOrtholog());
                         omimDisplay.setSymbol(omimResult.getOrtholog().getSymbol());
                         //  omimDisplay.setHumanAccession(getSequenceRepository().getDBLinkByData(omimResult.getOrtholog().getZdbID(), sequenceService.getOMIMHumanOrtholog()));
@@ -195,11 +197,11 @@ public class OntologyService {
                         for (NcbiOrthoExternalReference othrRef : ncbiExternalReferenceList) {
                             if (othrRef.getReferenceDatabase().getForeignDB().getDbName() == ForeignDB.AvailableName.OMIM) {
                                 accessions.add(othrRef.getAccessionNumber());
+                                omimDisplay.setHomoSapiensGene(getHumanGeneDetail(othrRef.getAccessionNumber()));
                             }
                         }
-                        omimDisplay.setOmimAccession(accessions.get(0));
+                        omimDisplay.setOmimAccession(omimResult.getOmimNum());
                         omimDisplay.setName(omimResult.getName());
-                        omimDisplay.setOmimNum(omimResult.getOmimNum());
                         omimDisplay.setZfinGene(mR.getZfinOrtholog(omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation()));
                         if (omimResult.getOrtholog().getNcbiOtherSpeciesGene() != null) {
                             hA.add(omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation());
@@ -209,9 +211,8 @@ public class OntologyService {
                 } else {
                     OmimPhenotypeDisplay omimDisplayNoOrth = new OmimPhenotypeDisplay();
                     omimDisplayNoOrth.setName(omimResult.getName());
-                    omimDisplayNoOrth.setHumanGeneDetail(ontologyRepository.getHumanGeneDetailById(omimResult.getHumanGeneMimNumber()));
-                    omimDisplayNoOrth.setOmimNum(omimResult.getOmimNum());
-                    omimDisplayNoOrth.setSymbol(omimDisplayNoOrth.getHumanGeneDetail().getGeneSymbol());
+                    omimDisplayNoOrth.setHomoSapiensGene(ontologyRepository.getHumanGeneDetailById(omimResult.getHumanGeneMimNumber()));
+                    omimDisplayNoOrth.setSymbol(omimDisplayNoOrth.getHomoSapiensGene().getSymbol());
                     omimDisplaysNoOrth.add(omimDisplayNoOrth);
                 }
             }
@@ -234,6 +235,17 @@ public class OntologyService {
         return omimDisplays;
     }
 
+    private static Map<String, HumanGeneDetail> humanGeneDetailMap;
+
+    private static HumanGeneDetail getHumanGeneDetail(String accessionNumber) {
+        if (humanGeneDetailMap == null) {
+            List<HumanGeneDetail> list = getPhenotypeRepository().getHumanGeneDetailList();
+            humanGeneDetailMap = list.stream().collect(toMap(HumanGeneDetail::getId, Function.identity()));
+        }
+
+        return humanGeneDetailMap.get(accessionNumber);
+    }
+
     public static List<OmimPhenotypeDisplay> getOmimPhenotype(GenericTerm term, Pagination pagination, boolean includeChildren) {
 
         List<OmimPhenotypeDisplay> omimDisplays = getOmimPhenotypeForTerm(term, includeChildren);
@@ -249,7 +261,7 @@ public class OntologyService {
                     tempList = filteredList.stream().filter(display -> display.getName().toLowerCase().contains(entry.getValue().toLowerCase())).toList();
                 }
                 if (entry.getKey().startsWith("termName")) {
-                    tempList = filteredList.stream().filter(display -> display.getTerm().getTermName().toLowerCase().contains(entry.getValue().toLowerCase())).toList();
+                    tempList = filteredList.stream().filter(display -> display.getDisease().getTermName().toLowerCase().contains(entry.getValue().toLowerCase())).toList();
                 }
                 if (entry.getKey().startsWith("zfinGeneName")) {
                     tempList = filteredList.stream().filter(display -> {
@@ -280,6 +292,20 @@ public class OntologyService {
         } else {
             return getOmimPhenotypeForTerm(term);
         }
+    }
+
+    public static PaginationResult<OmimPhenotypeDisplay> getGenesInvolvedForDisease(GenericTerm term, Pagination pagination, boolean includeChildren) {
+        if (term == null) {
+            return null;
+        }
+        return getDiseasePageRepository().getGenesInvolved(term, pagination, includeChildren);
+    }
+
+    public static PaginationResult<FishModelDisplay> getFishDiseaseModels(GenericTerm term, Pagination pagination, boolean includeChildren) {
+        if (term == null) {
+            return null;
+        }
+        return getDiseasePageRepository().getFishDiseaseModels(term, pagination, includeChildren);
     }
 
     public static List<FishModelDisplay> getDiseaseModelsWithFishModel(GenericTerm disease) {
@@ -361,6 +387,7 @@ public class OntologyService {
                 return fishMapEntry.getValue().entrySet().stream()
                     .map(value -> value.getValue().entrySet().stream()
                         .map(diseaseEntrySet -> {
+
                             FishModelDisplay display = new FishModelDisplay(fish);
                             display.setDisease(diseaseEntrySet.getKey());
                             display.setFishModel(diseaseEntrySet.getValue().iterator().next().getFishExperiment());
@@ -458,6 +485,30 @@ public class OntologyService {
         // check the closure if the given term is a child
         List<TransitiveClosure> transitiveClosures = getOntologyRepository().getChildrenTransitiveClosures(term);
         return transitiveClosures.stream().anyMatch(closure -> closure.getChild().getOboID().equals(allegedChildTerm.getOboID()));
+    }
+
+    private Map<String, GenericTerm> diseaseTermMap = null;
+
+    public static void fixupSearchColumns(List<OmimPhenotypeDisplay> displayListSingle) {
+        displayListSingle.forEach(display -> {
+            if (!CollectionUtils.isEmpty(display.getZfinGene())) {
+                display.setZfinGeneSymbolSearch(display.getZfinGene().stream().map(Marker::getAbbreviation).collect(joining(",")));
+            }
+        });
+    }
+
+    public static PaginationResult<FishStatistics> getPhenotypeForDisease(GenericTerm term, Pagination pagination, boolean includeChildren) {
+        if (term == null) {
+            return null;
+        }
+        return getDiseasePageRepository().getPhenotype(term, pagination, includeChildren);
+    }
+
+    public static List<ChebiFishModelDisplay> getAllChebiFishDiseaseModels(GenericTerm term, boolean includeChildren) {
+        if (term == null) {
+            return null;
+        }
+        return getDiseasePageRepository().getFishDiseaseChebiModels(term, includeChildren);
     }
 
     public List<GenericTerm> getRibbonStages() {

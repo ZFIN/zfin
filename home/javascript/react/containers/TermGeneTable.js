@@ -14,7 +14,7 @@ const TermGeneTable = ({termId, directAnnotationOnly}) => {
     const columns = [
         {
             label: 'Human Gene',
-            content: (row) => <a href={'http://omim.org/entry/' + row.omimAccession}>{row.symbol}</a>,
+            content: (row) => <a href={'http://omim.org/entry/' + row.homoSapiensGene.id}>{row.homoSapiensGene.symbol}</a>,
             filterName: 'humanGeneName',
             width: '120px',
         },
@@ -22,7 +22,7 @@ const TermGeneTable = ({termId, directAnnotationOnly}) => {
             label: 'Zebrafish Ortholog',
             content: (row) => <CommaSeparatedList>
                 {row.zfinGene && (row.zfinGene.map(gene => {
-                    return <EntityLink entity={gene} key={gene.zdbID} />
+                    return <EntityLink entity={gene} key={gene.zdbID}/>
                 }))}
             </CommaSeparatedList>,
             filterName: 'zfinGeneName',
@@ -36,41 +36,16 @@ const TermGeneTable = ({termId, directAnnotationOnly}) => {
         },
         {
             label: 'Disease',
-            content: (row) => <EntityLink entity={row.term} key={row.symbol}/>,
+            content: (row) => (row.disease && <a href={'/' + row.disease.oboID}>{row.disease.termName}</a>),
             filterName: 'termName',
             width: '120px',
         },
         {
             label: 'OMIM Phenotype ID',
-            content: (row) => <a href={'http://omim.org/entry/' + row.omimNum}>{row.omimNum}</a>,
+            content: (row) => <a href={'http://omim.org/entry/' + row.omimAccession}>{row.omimAccession}</a>,
+            filterName: 'omimAccessionID',
             width: '120px',
         },
-        /*
-                {
-                    label: 'Phenotype',
-                    content: ({phenotypeObserved}) => <CommaSeparatedList>
-                        {phenotypeObserved.map(entity => {
-                            return <PhenotypeStatementLink key={entity.id} entity={entity}/>
-                        })}
-                    </CommaSeparatedList>,
-                    width: '220px',
-                },
-        */
-        /*
-        */
-        /*
-                {
-                    label: 'Citation',
-                    content: row => (
-                        <FigureSummary
-                            statistics={row}
-                            allFiguresUrl={`/action/ontology/${row.anatomyItem.zdbID}/phenotype-summary/${row.fish.zdbID}`}
-                        />
-                    ),
-                    width: '100px',
-                },
-        */
-
     ];
 
     const params = {};
@@ -92,7 +67,7 @@ const TermGeneTable = ({termId, directAnnotationOnly}) => {
                 columns={columns}
                 dataUrl={`/action/api/ontology/${termId}/genes?${qs.stringify(params)}`}
                 onDataLoadedCount={(count) => setCount(count)}
-                rowKey={row => row.omimAccession}
+                rowKey={() => Math.random()}
             />
         </>
     );
