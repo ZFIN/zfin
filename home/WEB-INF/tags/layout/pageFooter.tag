@@ -1,4 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+<%@ tag import="org.zfin.framework.featureflag.FeatureFlagEnum" %>
 
 <footer>
     <div class="footer-row">
@@ -61,7 +62,14 @@
                 <div class="nav-column-header">Genomics</div>
                 <ul>
                     <li><a href="/action/blast/blast">BLAST</a></li>
-                    <li><a href="/@GBROWSE_PATH_FROM_ROOT@">Genome Browser</a></li>
+                    <c:choose>
+                        <c:when test="${zfn:isFlagEnabled(FeatureFlagEnum.JBROWSE)}">
+                            <li><a href="/action/jbrowse">ZFIN</a></li>
+                        </c:when>
+                        <c:otherwise>
+                            <li><a href="/@GBROWSE_PATH_FROM_ROOT@">ZFIN</a></li>
+                        </c:otherwise>
+                    </c:choose>
                 </ul>
             </div>
 
