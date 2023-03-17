@@ -103,10 +103,10 @@ this will be an exciting period for zebrafish research.
 <b>Contacts:</b></h3>
 Marc Ekker - <a href="mailto:ekker@civich.ottawa.on.ca">ekker@civich.ottawa.on.ca</a>
 <br>Marnie Halpern - <a href="mailto:halpern@mail1.ciwemb.edu">halpern@mail1.ciwemb.edu</a>
-<br>Steve Johnson - <a href="mailto:monte@uoneuro.uoregon.edu">sjohnson@genetics.wustl.edu</a>
+<br>Steve Johnson - <a href="mailto:monte@uoregon.edu">sjohnson@genetics.wustl.edu</a>
 <br>Will Talbot - <a href="mailto:talbot@saturn.med.nyu.edu">talbot@saturn.med.nyu.edu</a>
 <br>John Postlethwait - <a href="mailto:jpostle@oregon.uoregon.edu">jpostle@oregon.uoregon.edu</a>
-<br>Monte Westerfield - <a href="mailto:monte@uoneuro.uoregon.edu">monte@uoneuro.uoregon.edu</a>
+<br>Monte Westerfield - <a href="mailto:monte@uoregon.edu">monte@uoregon.edu</a>
 <br>Len Zon - <a href="mailto:zon@rascal.med.harvard.edu">zon@rascal.med.harvard.edu</a>
 
 </div>

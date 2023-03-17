@@ -81,7 +81,7 @@ Genetik, Spemannstrasse 35, 72076 T&#252;bingen, Germany</font></font></p>
 <hr>
 <p><font face="Times New Roman" size="6"><a name="ZEBRAFISH PATHOLOGY AND HEALTH SERVICES"><strong>ZEBRAFISH
 PATHOLOGY AND HEALTH SERVICES</strong></a></font></p>
-<p><font face="Comic Sans MS"><font size="2">By <a href="mailto:monte@uoneuro.uoregon.edu">M.
+<p><font face="Comic Sans MS"><font size="2">By <a href="mailto:monte@uoregon.edu">M.
 Westerfield</a>, Zebrafish International Resource Center, 5274 University of Oregon,
 Eugene, OR 97405-5274 USA</font><big><big> </big></big></font></p>
 <p><font face="Comic Sans MS"><strong><em>Got some sick fish?</em></strong> The Zebrafish
@@ -354,7 +354,7 @@ generations. For more information on this subject refer to <a href="/zf_info/zfb
 IN THE NEURAL PLATE AND REQUIRES <em>CYCLOPS</em>.</p></strong></font><font size="3">(<em>Development</em>,
 in press.)</font></a>
 <p><font face="Comic Sans MS" size="2">By <a href="mailto:varga@uni-freiburg.de">Z.M.
-Varga</a>, <a href="mailto:wegner@uoneuro.uoregon.edu">J. Wegner</a>, and <a href="mailto:monte@uoneuro.uoregon.edu">M. Westerfield</a>, Institute of Neuroscience,
+Varga</a>, <a href="mailto:wegner@uoneuro.uoregon.edu">J. Wegner</a>, and <a href="mailto:monte@uoregon.edu">M. Westerfield</a>, Institute of Neuroscience,
 University of Oregon, Eugene, OR 97403 USA</font></p>
 <p><font face="Comic Sans MS">A currently favored hypothesis postulates that a single
 field of cells in the neural plate forms bilateral retinas. To learn how retinal
@@ -489,7 +489,7 @@ assembly program. <em>Genome Res.</em> <strong>9</strong>(9), 868-877. </font></
 <font face="Times New Roman" size="6"><a name="ZEBRAFISH NOMENCLATURE COMMITTEE"><strong>
 <p>ZEBRAFISH NOMENCLATURE COMMITTEE</p></strong></a></font>
 <p><font face="Comic Sans MS" size="2">By <a href="mailto:kfs@zfin.org">K. Fraser</a><sup>1</sup>,
-<a href="mailto:mullins@mail.med.upenn.edu">M. Mullins</a><sup>2</sup>, <a href="mailto:jpostle@oregon.uoregon.edu">J. Postlethwait</a><sup>1</sup>, and <a href="mailto:monte@uoneuro.uoregon.edu">M. Westerfield</a><sup>1</sup>; <sup>1</sup>
+<a href="mailto:mullins@mail.med.upenn.edu">M. Mullins</a><sup>2</sup>, <a href="mailto:jpostle@oregon.uoregon.edu">J. Postlethwait</a><sup>1</sup>, and <a href="mailto:monte@uoregon.edu">M. Westerfield</a><sup>1</sup>; <sup>1</sup>
 Institute of Neuroscience, University of Oregon, Eugene, OR 97403-1254 USA; <sup>2</sup>
 Department of Cell and Developmental Biology, University of Pennsylvania, 1211 BRB II/III,
 421 Curie Blvd, Philadelphia, PA 19104-6058 USA</font></p>

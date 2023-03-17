@@ -498,7 +498,7 @@ Massachusetts General Hospital</dt>
 <td><b>Dr. Steve Johnson</b>
 <br>Washington University
 <br>314-362-0362
-<br><a href="mailto:monte@uoneuro.uoregon.edu">sjohnson@genetics.wustl.edu</a></td>
+<br><a href="mailto:monte@uoregon.edu">sjohnson@genetics.wustl.edu</a></td>
 <td><strong>Dr. Robert Karp</strong>
 National Institute of Alcohol Abuse and Alcoholism
 <br>301 443-2239
@@ -532,7 +532,7 @@ National Cancer Institute</dt>
 <tr><td><b>Dr. Monte Westerfield</b>
 <br>University of Oregon
 <br>541-346-4607
-<br><a href="mailto:monte@uoneuro.uoregon.edu">monte@uoneuro.uoregon.edu </a></td>
+<br><a href="mailto:monte@uoregon.edu">monte@uoregon.edu </a></td>
 <td><strong>Dr. Leonard Zon, Grantee</strong>
 <br>Children's Hospital Corporation, Boston
 <br>617 355-7707
