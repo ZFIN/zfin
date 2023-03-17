@@ -1,4 +1,5 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+<%@ page import="org.zfin.framework.featureflag.FeatureFlagEnum" %>
 
 <z:section title="Additional Resources">
     <b>Data Mining</b>
@@ -14,7 +15,14 @@
     <b>Browse Genome</b>
     <ul class="list-inline">
         <li class="list-inline-item">
-            <a href="action/gbrowse/">ZFIN</a>
+            <c:choose>
+                <c:when test="${zfn:isFlagEnabled(FeatureFlagEnum.JBROWSE)}">
+                    <a href="/action/jbrowse">ZFIN</a>
+                </c:when>
+                <c:otherwise>
+                    <a href="/@GBROWSE_PATH_FROM_ROOT@">ZFIN</a>
+                </c:otherwise>
+            </c:choose>
         </li>
         <li class="list-inline-item">
             <zfin2:externalLink href="http://www.ensembl.org/Danio_rerio/">Ensembl</zfin2:externalLink>
