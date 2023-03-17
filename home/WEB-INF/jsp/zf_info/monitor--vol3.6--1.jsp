@@ -20,7 +20,7 @@ be included in the database.</p><p>
 database.</p><p>
 </p><p>
 
-Please send suggestions to either Monte Westerfield <a href="mailto:monte@uoneuro.uoregon.edu">monte@uoneuro.uoregon.edu</a> or
+Please send suggestions to either Monte Westerfield <a href="mailto:monte@uoregon.edu">monte@uoregon.edu</a> or
 Wolfgang Driever <a href="mailto:driever@helix.mgh.harvard.edu">driever@helix.mgh.harvard.edu</a>.</p><p>
 </p><p>
 
