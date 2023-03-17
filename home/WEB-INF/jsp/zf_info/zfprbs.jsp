@@ -121,7 +121,7 @@ fax: (301) 496-0243<br>
 Embryonic cDNA
 libraries are unfortunately no longer available from David Grunwald or Bruce Appel.
 </p><hr>
-<p> If you know of any other sources, please <a href="mailto:monte@uoneuro.uoregon.edu">contact us</a>. 
+<p> If you know of any other sources, please <a href="mailto:monte@uoregon.edu">contact us</a>.
 
 
 </p></div>
