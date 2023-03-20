@@ -58,17 +58,21 @@
                         </tr>
                         <c:forEach var="genomeLocation" items="${locations}" varStatus="loop">
                             <zfin:alternating-tr loopName="loop">
-
-                                <c:if test="${genomeLocation.source.displayName eq 'Direct Data Submission'}">
-
-                                    <td nowrap>${genomeLocation.source.displayName}
-                                    </td>
-                                </c:if>
-                                <c:if test="${genomeLocation.source.displayName ne 'Direct Data Submission'}">
-
-                                    <td nowrap><a href="${genomeLocation.url}">${genomeLocation.source.displayName}</a>
-                                    </td>
-                                </c:if>
+                                <c:choose>
+                                    <c:when test="${genomeLocation.source.displayName eq 'Direct Data Submission'}">
+                                        <td nowrap>${genomeLocation.source.displayName}
+                                        </td>
+                                    </c:when>
+                                    <c:when test="${genomeLocation.source.displayName ne 'Direct Data Submission' && genomeLocation.source.displayName eq 'ZFIN Gbrowse' && gbrowseImage.type eq 'JBROWSE'}">
+<%--                                        TODO: update name of genomeLocation.source.displayName to ZFIN JBrowse in DB when we switch to JBrowse--%>
+                                            <td nowrap><a href="${genomeLocation.url}">ZFIN JBrowse</a>
+                                            </td>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <td nowrap><a href="${genomeLocation.url}">${genomeLocation.source.displayName}</a>
+                                        </td>
+                                    </c:otherwise>
+                                </c:choose>
 
                                 <td>${genomeLocation.chromosome}</td>
                                 <td nowrap>
