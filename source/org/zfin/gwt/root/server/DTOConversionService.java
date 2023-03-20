@@ -1157,12 +1157,18 @@ public class DTOConversionService {
         if (termDTO == null) {
             return null;
         }
+        GenericTerm term = null;
+        if(termDTO.getZdbID() != null){
+            term = getOntologyRepository().getTermByZdbID(termDTO.getZdbID());
+            if(term != null){
+                return term;
+            }
+        }
         if (termDTO.getOntology() == null || StringUtils.isEmpty(termDTO.getTermName())) {
             return null;
         }
         Ontology ontology = convertToOntology(termDTO.getOntology());
         // first search by
-        GenericTerm term = null;
         if (!StringUtils.isEmpty(termDTO.getOboID())) {
             term = RepositoryFactory.getOntologyRepository().getTermByOboID(termDTO.getOboID());
         }
