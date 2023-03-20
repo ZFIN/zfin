@@ -15,4 +15,14 @@ INSERT INTO construct_component ("cc_construct_zdb_id", "cc_component_type", "cc
 INSERT INTO construct_component ("cc_construct_zdb_id", "cc_component_type", "cc_component_category", "cc_component_zdb_id", "cc_component", "cc_cassette_number", "cc_order") VALUES ('ZDB-TGCONSTRCT-110329-1', 'coding sequence of', 'coding component', 'ZDB-EFG-070117-1', 'EGFP', 1, 8);
 INSERT INTO construct_component ("cc_construct_zdb_id", "cc_component_type", "cc_component_category", "cc_component_zdb_id", "cc_component", "cc_cassette_number", "cc_order") VALUES ('ZDB-TGCONSTRCT-110329-1', 'controlled vocab component', 'construct wrapper component', 'ZDB-CV-150506-8', ')', 1, 9);
 
+
+INSERT INTO zdb_active_data values ('ZDB-MREL-230319-1');
+
+INSERT INTO "public"."marker_relationship" ("mrel_zdb_id", "mrel_type", "mrel_mrkr_1_zdb_id", "mrel_mrkr_2_zdb_id", "mrel_comments")
+VALUES ('ZDB-MREL-230319-1', 'coding sequence of', 'ZDB-TGCONSTRCT-110329-1', 'ZDB-EREGION-141218-2', NULL);
+
+INSERT INTO "public"."record_attribution" ("recattrib_data_zdb_id", "recattrib_source_zdb_id", "recattrib_source_significance", "recattrib_source_type", "recattrib_created_at", "recattrib_modified_at", "recattrib_modified_count")
+VALUES ('ZDB-MREL-230319-1', 'ZDB-PUB-110321-1', NULL, 'standard', NULL, NULL, NULL);
+
+
 SELECT regen_construct_marker ('ZDB-TGCONSTRCT-110329-1');
