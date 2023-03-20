@@ -76,4 +76,5 @@ public class OmimPhenotypeDisplay implements Serializable {
 	@Column(name = "opd_zfin_gene_symbols_search")
 	private String zfinGeneSymbolSearch;
 
+	private String omimNum;
 }
