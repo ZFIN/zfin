@@ -32,7 +32,7 @@ Laboratory suggest that <i>Danio rerio</i> should now be used.
     whose insight and gentle support got us all started.<br>
 </center>
 <hr>
-<i>Adapted for the Web by ZFIN. Please address corrections and additions to: <a href="mailto:monte@uoneuro.uoregon.edu">Monte
+<i>Adapted for the Web by ZFIN. Please address corrections and additions to: <a href="mailto:monte@uoregon.edu">Monte
     Westerfield</a>, Institute of Neuroscience, University of Oregon, Eugene, OR 97403.
     Copyright &#169; 1993 by Monte Westerfield. 4th Edition, 2000. 5th Edition, 2007.</i><br>
 <hr>

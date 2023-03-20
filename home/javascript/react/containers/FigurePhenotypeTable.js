@@ -21,6 +21,7 @@ const FigurePhenotypeTable = ({url, hideFigureColumn = false, navigationCounter,
                     href={`/action/fish/fish-detail-popup/${row.fish.zdbID}`}
                 />
             </span>,
+            filterName: 'fish',
         },
         {
             label: 'Conditions',
@@ -35,15 +36,18 @@ const FigurePhenotypeTable = ({url, hideFigureColumn = false, navigationCounter,
                     href={`/action/expression/experiment-popup?id=${row.experiment.zdbID}`}
                 />
             </span>,
+            filterName: 'condition',
         },
         {
             label: 'Stage',
             content: (row) => <StageRange start={row.start} end={row.end}/>,
+            filterName: 'stage',
             width: '150px',
         },
         {
             label: 'Phenotype',
-            content: (row) => <PhenotypeStatement statement={row.phenotypeStatement}/>
+            content: (row) => <PhenotypeStatement statement={row.phenotypeStatement}/>,
+            filterName: 'phenotype',
         },
         {
             label: 'Figure',
@@ -63,7 +67,7 @@ const FigurePhenotypeTable = ({url, hideFigureColumn = false, navigationCounter,
         <DataTable
             columns={columns}
             dataUrl={url}
-            rowKey={row => row.rowKey}
+            rowKey={() => Math.random()}
             onDataLoaded={handleDataLoadedCount}
             //sortOptions={sortOptions}
         />

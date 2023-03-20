@@ -1305,7 +1305,7 @@ select fc_fish_zdb_id, fc_fish_name, fc_gene_zdb_id, a.mrkr_abbrev, fc_affector_
      on c.mrkr_Zdb_id = fc_construct_zdb_id
    where fc_affector_zdb_id like 'ZDB-ALT%'
 ;
-\copy (select * from fish_components_fish) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fish_components_fish.txt' with delimiter as '	' null as '';
+\copy (select * from fish_components_fish order by fc_fish_name) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/fish_components_fish.txt' with delimiter as '	' null as '';
 drop view fish_components_fish;
 
 -- generate a file with zdb history data
@@ -2342,6 +2342,7 @@ create view phenoGeneCleanDataFish as
   From tmp_dumpCleanPheno, tmp_phenotype_statement tps, marker
   where tps.phenos_pk_id = phenos_id
 and mrkr_Zdb_id = gene_zdb_id
+  and tps.quality_tag = 'abnormal'
   order by mrkr_abbrev;
 \copy (select * from phenoGeneCleanDataFish) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/phenoGeneCleanData_fish.txt' with delimiter as '	' null as '';  
 drop view phenoGeneCleanDataFish;

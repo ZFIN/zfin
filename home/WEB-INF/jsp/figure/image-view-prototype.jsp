@@ -14,7 +14,7 @@
 
 
 <c:set var="title" value="${image.zdbID}"/>
-<c:if test="${!empty image.figure}">
+<c:if test="${!empty image.figure && !empty image.figure.label}">
     <c:set var="title" value="${image.figure.label}"/>
 </c:if>
 

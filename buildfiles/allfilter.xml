@@ -11,6 +11,7 @@
 <filter token="APACHE_PORT_SECURE" value="${APACHE_PORT_SECURE}"/>
 <filter token="APACHE_SERVER_NAME" value="${APACHE_SERVER_NAME}"/>
 <filter token="APACHE_USER" value="${APACHE_USER}"/>
+<filter token="BCRYPT_WORK_FACTOR" value="${BCRYPT_WORK_FACTOR}"/>
 <filter token="BLASTSCRIPT_TARGET_PATH" value="${BLASTSCRIPT_TARGET_PATH}"/>
 <filter token="BLASTSERVER_BINARY_PATH" value="${BLASTSERVER_BINARY_PATH}"/>
 <filter token="BLASTSERVER_BLAST_DATABASE_PATH" value="${BLASTSERVER_BLAST_DATABASE_PATH}"/>
@@ -59,6 +60,9 @@
 <filter token="ENVIRONMENT" value="${ENVIRONMENT}"/>
 <filter token="FTPROOT_PATH" value="${FTPROOT_PATH}"/>
 <filter token="FTP_ROOT" value="${FTP_ROOT}"/>
+<filter token="GA4_ANALYTICS_ID" value="${GA4_ANALYTICS_ID}"/>
+<filter token="GA4_ANALYTICS_ID_PRODUCTION" value="${GA4_ANALYTICS_ID_PRODUCTION}"/>
+<filter token="GA4_ANALYTICS_ID_ZFINLABS" value="${GA4_ANALYTICS_ID_ZFINLABS}"/>
 <filter token="GBROWSE_DB" value="${GBROWSE_DB}"/>
 <filter token="GBROWSE_DB_HOST" value="${GBROWSE_DB_HOST}"/>
 <filter token="GBROWSE_GRCZ10_IMG_PATH_FROM_ROOT" value="${GBROWSE_GRCZ10_IMG_PATH_FROM_ROOT}"/>
@@ -84,8 +88,6 @@
 <filter token="INDEXER_WIKI_HOSTNAME" value="${INDEXER_WIKI_HOSTNAME}"/>
 <filter token="INDEXER_WIKI_PASSWORD" value="${INDEXER_WIKI_PASSWORD}"/>
 <filter token="INDEXER_WIKI_USERNAME" value="${INDEXER_WIKI_USERNAME}"/>
-<filter token="INFORMIX_PORT" value="${INFORMIX_PORT}"/>
-<filter token="INFORMIX_SERVER" value="${INFORMIX_SERVER}"/>
 <filter token="INSPECTLET_ID" value="${INSPECTLET_ID}"/>
 <filter token="INSTANCE" value="${INSTANCE}"/>
 <filter token="INTERNAL_BLAST_PATH" value="${INTERNAL_BLAST_PATH}"/>
@@ -141,6 +143,7 @@
 <filter token="SHARED_DOMAIN_NAME" value="${SHARED_DOMAIN_NAME}"/>
 <filter token="SHOW_SQL" value="${SHOW_SQL}"/>
 <filter token="SHUTDOWNPORT" value="${SHUTDOWNPORT}"/>
+<filter token="SMTP_HOST" value="${SMTP_HOST}"/>
 <filter token="SOLR_CONTEXT" value="${SOLR_CONTEXT}"/>
 <filter token="SOLR_CORE" value="${SOLR_CORE}"/>
 <filter token="SOLR_CREATE_BACKUPS" value="${SOLR_CREATE_BACKUPS}"/>

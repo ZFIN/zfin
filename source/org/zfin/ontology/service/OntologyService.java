@@ -200,9 +200,8 @@ public class OntologyService {
                                 omimDisplay.setHomoSapiensGene(getHumanGeneDetail(othrRef.getAccessionNumber()));
                             }
                         }
-                        omimDisplay.setOmimAccession(accessions.get(0));
+                        omimDisplay.setOmimAccession(omimResult.getOmimNum());
                         omimDisplay.setName(omimResult.getName());
-                        ////omimDisplay.setOmimNum(omimResult.getOmimNum());
                         omimDisplay.setZfinGene(mR.getZfinOrtholog(omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation()));
                         if (omimResult.getOrtholog().getNcbiOtherSpeciesGene() != null) {
                             hA.add(omimResult.getOrtholog().getNcbiOtherSpeciesGene().getAbbreviation());
@@ -213,7 +212,6 @@ public class OntologyService {
                     OmimPhenotypeDisplay omimDisplayNoOrth = new OmimPhenotypeDisplay();
                     omimDisplayNoOrth.setName(omimResult.getName());
                     omimDisplayNoOrth.setHomoSapiensGene(ontologyRepository.getHumanGeneDetailById(omimResult.getHumanGeneMimNumber()));
-                    ////omimDisplayNoOrth.setOmimNum(omimResult.getOmimNum());
                     omimDisplayNoOrth.setSymbol(omimDisplayNoOrth.getHomoSapiensGene().getSymbol());
                     omimDisplaysNoOrth.add(omimDisplayNoOrth);
                 }

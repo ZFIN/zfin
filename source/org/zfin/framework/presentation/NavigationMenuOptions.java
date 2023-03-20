@@ -15,6 +15,8 @@ public enum NavigationMenuOptions {
     MUTATION("Mutations / Transgenics"),
     ORTHOLOGY("Orthology"),
     PHENOTYPE("Phenotype"),
+    ALLELE("Associated Alleles"),
+    DISEASE_ASSOCIATION("Disease Association"),
     PHENOTYPE_CHEBI("Phenotype "),
     STRS("Sequence Targeting Reagents"),
     SUMMARY("Summary"),
@@ -33,7 +35,8 @@ public enum NavigationMenuOptions {
     CHEBI_HUMAN_DISEASE("Human Disease / Model Data"),
     RELATIONSHIPS("Relationships"),
     ZEBRAFISH_MODELS("Zebrafish Models"),
-    GENES_INVOLVED("Genes Invovled");
+    GENES_INVOLVED("Genes Involved"),
+    PROBES("Probes");
 
     public final String value;
 

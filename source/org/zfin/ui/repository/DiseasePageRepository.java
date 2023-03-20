@@ -1,6 +1,5 @@
 package org.zfin.ui.repository;
 
-import org.zfin.figure.presentation.ExpressionTableRow;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.mutant.presentation.ChebiFishModelDisplay;
@@ -9,7 +8,6 @@ import org.zfin.mutant.presentation.FishModelDisplay;
 import org.zfin.mutant.presentation.FishStatistics;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.OmimPhenotypeDisplay;
-import org.zfin.publication.Publication;
 
 import java.util.List;
 
@@ -24,4 +22,6 @@ public interface DiseasePageRepository {
     List<ChebiFishModelDisplay> getFishDiseaseChebiModels(GenericTerm term, boolean includeChildren);
 
     PaginationResult<ChebiPhenotypeDisplay> getPhenotypeChebi(GenericTerm term, Pagination pagination, boolean includeChildren);
+
+    int deleteUiTables(String... tableName);
 }

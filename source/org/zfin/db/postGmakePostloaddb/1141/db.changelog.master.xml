@@ -9,8 +9,10 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1141/ZFIN-8462-revert-ppa-changes.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1141/ZFIN-8447-construct-edit.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1141/ZFIN-8467-construct-edit.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1141/ZFIN-8470-construct-edit.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1141/ZFIN-8426-construct-cleanup-for-GFP.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1141/ZFIN-8448-withdraw-fish-with-reference.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1141/ZFIN-8471-construct-edit.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1141/ZFIN-8237-correspondence-need.sql" />
 
 </databaseChangeLog>

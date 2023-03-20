@@ -11,8 +11,6 @@ import java.util.List;
 public interface FigureRepository {
 
     Figure getFigure(String zdbID);
-    Figure getDeepFetchedFigure(String zdbID);
-
 
     List<Person> getSubmitters(Publication publication, Clone probe);
 

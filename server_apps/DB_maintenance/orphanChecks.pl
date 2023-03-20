@@ -37,12 +37,13 @@ if (@ARGV < 1) {
 #
 
 $globalDbName = $ARGV[0]; #"<!--|DB_NAME|-->";
+$globalpghost = "<!--|PGHOST|-->";
 $globalUsername = "";
 $globalPassword = "";
 
 #set environment variables
 
-$dbh = DBI->connect ("DBI:Pg:dbname=$globalDbName;host=localhost", $globalUsername, $globalPassword) or die "Cannot connect to database: $DBI::errstr\n";
+$dbh = DBI->connect ("DBI:Pg:dbname=$globalDbName;host=$globalpghost", $globalUsername, $globalPassword) or die "Cannot connect to database: $DBI::errstr\n";
 
 $dbaEmail = '<!--|VALIDATION_EMAIL_DBA|-->';
   

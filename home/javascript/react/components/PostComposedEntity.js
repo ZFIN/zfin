@@ -23,7 +23,7 @@ const PostComposedEntity = ({postComposedEntity}) => {
             <div key={postComposedEntity.superterm.zdbID + postComposedEntity.subterm.zdbID}>
                 <a
                     key={postComposedEntity.superterm.zdbID + postComposedEntity.subterm.zdbID}
-                    href={'/action/ontology/post-composed-term-detail?superTermID=' + postComposedEntity.superterm.oboID + '&subTermID=' + postComposedEntity.superterm.oboID}
+                    href={'/action/ontology/post-composed-term-detail?superTermID=' + postComposedEntity.superterm.oboID + '&subTermID=' + postComposedEntity.subterm.oboID}
                     dangerouslySetInnerHTML={{__html: postComposedEntity.superterm.termName + ' ' + postComposedEntity.subterm.termName}}
                 />
                 <a

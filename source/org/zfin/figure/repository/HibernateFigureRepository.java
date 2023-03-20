@@ -1,59 +1,38 @@
 package org.zfin.figure.repository;
 
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
+import org.zfin.expression.ExpressionExperiment;
+import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.framework.ComparatorCreator;
-import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Clone;
 import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 import org.zfin.publication.PublicationTrackingStatus;
 import org.zfin.repository.RepositoryFactory;
 
+import javax.persistence.criteria.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.Calendar.YEAR;
+import static org.zfin.framework.HibernateUtil.currentSession;
 
 @Repository
 public class HibernateFigureRepository implements FigureRepository {
     private static Logger logger = LogManager.getLogger(HibernateFigureRepository.class);
 
     public Figure getFigure(String zdbID) {
-        Session session = HibernateUtil.currentSession();
-        return (Figure) session.get(Figure.class, zdbID);
+        Session session = currentSession();
+        return session.get(Figure.class, zdbID);
     }
-
-    public Figure getDeepFetchedFigure(String zdbID) {
-        Session session = HibernateUtil.currentSession();
-        String hql = "from Figure figure " +
-                " join fetch figure.expressionResults xpatres" +
-                " join fetch xpatres.expressionExperiment xpatex " +
-                " join fetch xpatex.gene gene " +
-                " join fetch xpatex.genotypeExperiment genox" +
-                " join fetch genox.genotype geno " +
-                " join fetch genox.experiment exp " +
-                " where figure.zdbID = :zdbID";
-
-        Query query = session.createQuery(hql);
-        query.setParameter("zdbID",zdbID);
-
-        return (Figure) query.list().get(0);
-    }
-
 
     /*  for multi-object hql transformations, check out HibernateExpressionRepository.getExperimentFigureStagesByGeneAndFish2 */
-
 
     public List<Person> getSubmitters(Publication publication, Clone probe) {
         List<Person> submitters = new ArrayList<>();
@@ -63,13 +42,15 @@ public class HibernateFigureRepository implements FigureRepository {
             probeZdbID = probe.getZdbID();
         }
         
-        Session session = HibernateUtil.currentSession();
+        Session session = currentSession();
 
-        String sql = "SELECT ids_source_zdb_id " +
-                "FROM int_data_source, expression_experiment " +
-                "WHERE xpatex_zdb_id = ids_data_zdb_id " +
-                "  and xpatex_source_zdb_id = :pubZdbID " +
-                "  and substring(ids_source_zdb_id from 1 for 8) = 'ZDB-PERS'";
+        String sql = """
+                        SELECT ids_source_zdb_id 
+                        FROM int_data_source, expression_experiment 
+                        WHERE xpatex_zdb_id = ids_data_zdb_id 
+                          and xpatex_source_zdb_id = :pubZdbID 
+                          and ids_source_zdb_id like 'ZDB-PERS-%'
+                      """;
 
         if (probeZdbID != null) {
             sql += "  and xpatex_probe_feature_zdb_id = :probeZdbID ";
@@ -93,100 +74,78 @@ public class HibernateFigureRepository implements FigureRepository {
         Collections.sort(submitters, ComparatorCreator.orderBy("lastName", "firstName"));
 
         return submitters;
-
-             /* This is the query from the apg:
-
-                   SELECT get_person_full_name(zdb_id),zdb_id
-             FROM person, int_data_source, expression_experiment
-             WHERE xpatex_probe_feature_zdb_id = '$fxpubdis_probe_zdb_id'
-             and xpatex_zdb_id=ids_data_zdb_id
-             and ids_source_zdb_id = zdb_id
-	     and xpatex_source_zdb_id = '$fxpubdis_zdb_id'
-             ORDER by 1;
-
-     */
     }
 
 
     public List<Figure> getFiguresForDirectSubmissionPublication(Publication publication, Clone probe) {
+        CriteriaBuilder criteriaBuilder = currentSession().getCriteriaBuilder();
+        CriteriaQuery<Figure> query = criteriaBuilder.createQuery(Figure.class);
+        Root<Figure> figureRoot = query.from(Figure.class);
 
-        List<Figure> figures = new ArrayList<Figure>();
+        Join<Figure, ExpressionResult> xpatres = figureRoot.join("expressionResults");
+        Join<ExpressionResult, ExpressionExperiment> xpatex = xpatres.join("expressionExperiment");
+        Join<ExpressionExperiment, Publication> pub = xpatex.join("publication");
+        Join<ExpressionExperiment, Clone> cl = xpatex.join("probe");
 
-        Session session = HibernateUtil.currentSession();
+        Predicate pred1 = criteriaBuilder.equal(pub.get("zdbID"), publication.getZdbID());
+        Predicate pred2 = criteriaBuilder.equal(cl.get("zdbID"), probe.getZdbID());
+        Predicate andPredicate = criteriaBuilder.and(pred1, pred2);
 
-        Criteria cr = session.createCriteria(Figure.class, "figure");      // from Figure figure
+        query.where(andPredicate);
+        query.orderBy(criteriaBuilder.asc(figureRoot.get("label")));
+        query.distinct(true);
 
-        cr.createAlias("figure.expressionResults", "xpatres");             // join fetch figure.expressionResults xpatres
-        cr.createAlias("xpatres.expressionExperiment", "xpatex");          // join txpatres.expressionExperimen xpatex
-        cr.createAlias("xpatex.publication", "publication");               // join xpatex.publication publication
-        cr.createAlias("xpatex.probe", "probe");                           // join xpatex.probe probe
-        cr.add(Restrictions.and(                                           // where publication.zdbID = pubZdbID and probe.zdbID = probeZDBID
-                Restrictions.eq("publication.zdbID", publication.getZdbID()),
-                Restrictions.eq("probe.zdbID", probe.getZdbID())
-        ));
-        cr.addOrder(Order.asc("figure.label"));                            // order by figure.label
-        cr.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);            // set distinct without using projections.distinct
-//
-//        ProjectionList projectionList = Projections.projectionList();      // select distinct figure.zdbID, figure.label
-//        projectionList.add(Projections.distinct(Projections.property("figure.zdbID")));
-//        projectionList.add(Projections.property("figure.label"));
-//        cr.setProjection(projectionList);
-//
-        figures.addAll(cr.list());
-
+        List<Figure> figures = currentSession().createQuery(query).getResultList();
         return figures;
-
     }
 
+
     public List<Image> getImages(List<String> zdbIDs) {
-        if (CollectionUtils.isEmpty(zdbIDs)) {
-            return Collections.emptyList();
-        }
-        return ((List<Image>) HibernateUtil.currentSession()
-                .createCriteria(Image.class)
-                .add(Restrictions.in("zdbID", zdbIDs)).list()).stream()
+        CriteriaBuilder criteriaBuilder = currentSession().getCriteriaBuilder();
+        CriteriaQuery<Image> query = criteriaBuilder.createQuery(Image.class);
+        Root<Image> imageRoot = query.from(Image.class);
+
+        query.where(imageRoot.get("zdbID").in(zdbIDs));
+
+        List<Image> images = currentSession().createQuery(query).getResultList();
+
+        return images.stream()
                 .sorted(Comparator.comparing(img -> zdbIDs.indexOf(img.getZdbID())))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public List<Image> getRecentlyCuratedImages() {
-        String hql = "select distinct image " +
-                "from Image as image " +
-                "inner join image.figure as figure " +
-                "inner join figure.publication as publication " +
-                "inner join publication.statusHistory as pubStatus " +
-                "left outer join figure.expressionResults as expression " +
-                "left outer join figure.phenotypeExperiments as phenotype " +
-                "where pubStatus.isCurrent = true " +
-                "and pubStatus.status.name = :closedCurated " +
-                "and pubStatus.date > :oneYearAgo " +
-                "and publication.publicationDate > :oneYearAgo " +
-                "and publication.canShowImages = true " +
-                "and image.imageFilename is not null " +
-                "and ( " +
-                "  phenotype.id is not null " +
-                "  or ( " +
-                "    expression.xpatresID is not null " +
-                "    and (" +
-                "      expression.expressionExperiment.assay.name = 'Immunohistochemistry' " +
-                "      or expression.expressionExperiment.assay.name = 'mRNA in situ hybridization' " +
-                "    ) " +
-                "  ) " +
-                ") ";
-
-        Query query = HibernateUtil.currentSession().createQuery(hql);
+        String hql = """
+                select distinct image 
+                from Image as image 
+                inner join image.figure as figure 
+                inner join figure.publication as publication 
+                inner join publication.statusHistory as pubStatus 
+                left outer join figure.expressionResults as expression 
+                left outer join figure.phenotypeExperiments as phenotype 
+                where pubStatus.isCurrent = true 
+                and pubStatus.status.name = :closedCurated 
+                and pubStatus.date > :oneYearAgo 
+                and publication.publicationDate > :oneYearAgo 
+                and publication.canShowImages = true 
+                and image.imageFilename is not null 
+                and ( 
+                  phenotype.id is not null 
+                  or ( 
+                    expression.xpatresID is not null 
+                    and (
+                      expression.expressionExperiment.assay.name = 'Immunohistochemistry' 
+                      or expression.expressionExperiment.assay.name = 'mRNA in situ hybridization' 
+                    ) 
+                  ) 
+                ) 
+                """;
 
         Calendar oneYearAgo = Calendar.getInstance();
         oneYearAgo.add(YEAR, -1);
+        Query query = currentSession().createQuery(hql, Image.class);
         query.setParameter("oneYearAgo", oneYearAgo);
-
-//        Calendar twoYearsAgo = Calendar.getInstance();
-//        twoYearsAgo.add(YEAR, -2);
-//        query.setParameter("twoYearsAgo", twoYearsAgo);
-
         query.setParameter("closedCurated", PublicationTrackingStatus.Name.CLOSED_CURATED);
-
-        // TODO: figure out how to shuffle the list in the query instead of returning the whole list here
 
         return query.list();
     }

@@ -57,7 +57,7 @@
     experts where needed, and curate contributions. development of the dictionary. 
   </li>
 <li>The first meeting is scheduled for December 10, 1999. <a href="mailto:toyama@box-t.nih.gov">Reiko 
-    Toyama</a> and <a href="mailto:monte@uoneuro.uoregon.edu">Monte Westerfield</a> 
+    Toyama</a> and <a href="mailto:monte@uoregon.edu">Monte Westerfield</a>
     are co-organizers.</li>
 </ul>
 </font>

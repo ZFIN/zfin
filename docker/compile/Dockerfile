@@ -1,11 +1,11 @@
-FROM gradle:jdk17
+FROM gradle:7-jdk17
 
 RUN apt update && apt install -y --no-install-recommends \
        ant groovy postgresql-client tcsh sudo \
        vim nano emacs iputils-ping imagemagick \
        libwww-perl libdbi-perl libdbd-pg-perl libmime-lite-perl \
        cpanminus build-essential rsync bind9-dnsutils \
-       gnupg lsb-release #needed for docker install below
+       gnupg lsb-release 
 
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 RUN echo \
@@ -34,10 +34,16 @@ RUN mkdir -p /opt/zfin/www_homes/zfin.org/server_apps/jenkins/jenkins-home
 RUN mkdir -p /opt/zfin/tls/certs
 RUN mkdir -p /opt/zfin/tls/private
 RUN mkdir -p /opt/zfin/catalina_bases/zfin.org
-RUN mkdir -p /opt/zfin/download-files/zfindb
+RUN mkdir -p /opt/zfin/download-files/zfindb/current
+RUN mkdir -p /opt/zfin/bin
+RUN ln -s /usr/bin/perl /opt/zfin/bin/perl
 RUN chown -R gradle:gradle /opt/zfin/
 RUN mkdir -p /opt/apache/apache-tomcat/conf && chown -R gradle /opt/apache/apache-tomcat 
 RUN mkdir -p /opt/zfin/log/httpd && cd /opt/zfin/log/httpd && touch zfin_access zfin_access.json zfin_errors && chmod 664 *
+RUN mkdir -p /usr/local/tomcat/lib
+RUN mkdir -p /local/bin
+RUN ln -s /usr/bin/wget /local/bin/wget
+RUN ln -s /usr/bin/gunzip /local/bin/gunzip
 
 RUN groupmod -n zfin gradle
 RUN groupadd -g 8983 solr 

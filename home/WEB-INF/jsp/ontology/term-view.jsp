@@ -1,5 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page import="org.zfin.framework.presentation.NavigationMenuOptions" %>
+<%@ page import="org.zfin.framework.featureflag.FeatureFlagEnum" %>
 
 <jsp:useBean id="formBean" class="org.zfin.ontology.presentation.OntologyBean" scope="request"/>
 <c:set var="term" value="${formBean.term}"/>
@@ -8,6 +9,7 @@
 <c:set var="RELATIONSHIP" value="${NavigationMenuOptions.RELATIONSHIPS.value}"/>
 <c:set var="HUMAN_DISEASE" value="${NavigationMenuOptions.CHEBI_HUMAN_DISEASE.value}"/>
 <c:set var="PHENOTYPE" value="${NavigationMenuOptions.PHENOTYPE.value}"/>
+<c:set var="ALLELES" value="${NavigationMenuOptions.ALLELE.value}"/>
 <c:set var="PHENOTYPE_CHEBI" value="${NavigationMenuOptions.PHENOTYPE_CHEBI.value}"/>
 <c:set var="GENES_INVOLVED" value="${NavigationMenuOptions.GENES_INVOLVED.value}"/>
 <c:set var="ZEBRAFISH_MODELS" value="${NavigationMenuOptions.ZEBRAFISH_MODELS.value}"/>
@@ -138,6 +140,14 @@
                          data-direct-annotation-only="true"
                     ></div>
                 </z:section>
+            </z:section>
+        </c:if>
+
+        <c:if test="${zfn:isFlagEnabled(FeatureFlagEnum.SHOW_ALLIANCE_DATA)}">
+            <z:section title="${ALLELES}">
+                <div class="__react-root" id="TermAlleleTable"
+                     data-term-id="${term.oboID}"
+                ></div>
             </z:section>
         </c:if>
 
