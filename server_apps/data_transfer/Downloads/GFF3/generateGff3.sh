@@ -1,5 +1,5 @@
 #!/bin/sh
 
-psql -v ON_ERROR_STOP=1 -d $DBNAME -f E_zfin_ensembl_gene.sql -f E_expression_gff3.sql -f E_phenotype_gff3.sql -f E_antibody_gff3.sql -f unload_mutants.sql
+psql -v ON_ERROR_STOP=1 -d $DBNAME -f E_zfin_ensembl_gene.sql -f E_expression_gff3.sql -f E_phenotype_gff3.sql -f E_antibody_gff3.sql -f unload_mutants.sql -f zfin_zmp_gff3.sql
 
 ./generateGff3.groovy
