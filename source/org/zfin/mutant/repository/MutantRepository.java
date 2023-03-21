@@ -141,8 +141,6 @@ public interface MutantRepository {
 
     List<GenericTerm> getGoTermsByMarkerAndPublication(Marker marker, Publication publication);
 
-    List<GenericTerm> getGoTermsByPhenotypeAndPublication(Publication publication);
-
     InferenceGroupMember addInferenceToGoMarkerTermEvidence(MarkerGoTermEvidence markerGoTermEvidence, String inferenceToAdd);
 
     void removeInferenceToGoMarkerTermEvidence(MarkerGoTermEvidence markerGoTermEvidence, String inference);
@@ -260,14 +258,6 @@ public interface MutantRepository {
     List<PhenotypeStatement> getPhenotypeStatementsByFish(Fish fish);
 
     List<PhenotypeStatementWarehouse> getPhenotypeStatementWarehousesByFish(Fish fish);
-
-    /**
-     * Retrieve phenotype statements by genotype experiment ids
-     *
-     * @param genotypeExperimentIDs genox ids
-     * @return list of expression statements
-     */
-    List<ExpressionStatement> getExpressionStatementsByGenotypeExperiments(Set<FishExperiment> genotypeExperimentIDs);
 
     /**
      * Retrieve citation list of pub ids
