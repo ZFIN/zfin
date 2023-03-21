@@ -130,14 +130,6 @@ public class MutantRepositoryTest {
     }
 
     @Test
-    public void goTermsByPhenotypeAndPublication() {
-        Publication publication = RepositoryFactory.getPublicationRepository().getPublication("ZDB-PUB-080501-10");
-        List<GenericTerm> goTerms = getMutantRepository().getGoTermsByPhenotypeAndPublication(publication);
-        assertThat(goTerms, notNullValue());
-    }
-
-
-    @Test
     public void getZFINInferences() {
         mutantRepository.getZFINInferences("ZDB-MRPHLNO-041110-25", "ZDB-PUB-090324-13");
     }
