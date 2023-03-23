@@ -105,13 +105,28 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
     }
 
-    private void updateFeatureLocation(FeatureLocation fl, FeatureDTO dto){
+    private void updateFeatureLocation(FeatureLocation fl, FeatureDTO dto) {
+        // check if no value was submitted. If so then delete it
+        if (StringUtils.isEmpty(dto.getFeatureChromosome()) &&
+            StringUtils.isEmpty(dto.getFeatureAssembly()) &&
+            StringUtils.isEmpty(dto.getEvidence()) &&
+            dto.getFeatureStartLoc() == null &&
+            dto.getFeatureEndLoc() == null) {
+            infrastructureRepository.deleteRecordAttribution(fl.getZdbID(), dto.getPublicationZdbID());
+            HibernateUtil.currentSession().delete(fl);
+            return;
+        }
         fl.setChromosome(dto.getFeatureChromosome());
         fl.setAssembly(dto.getFeatureAssembly());
         fl.setStartLocation(dto.getFeatureStartLoc());
         fl.setEndLocation(dto.getFeatureEndLoc());
         // convert code into TermID and then get GenericTerm
-        fl.setLocationEvidence(ontologyRepository.getTermByZdbID(FeatureService.getFeatureGenomeLocationEvidenceCodeTerm(dto.getEvidence())));
+        String evidenceCodeTerm = FeatureService.getFeatureGenomeLocationEvidenceCodeTerm(dto.getEvidence());
+        if (StringUtils.isNotEmpty(evidenceCodeTerm)) {
+            fl.setLocationEvidence(ontologyRepository.getTermByZdbID(evidenceCodeTerm));
+        } else {
+            fl.setLocationEvidence(null);
+        }
         HibernateUtil.currentSession().save(fl);
         infrastructureRepository.insertPublicAttribution(fl.getZdbID(), dto.getPublicationZdbID(), RecordAttribution.SourceType.STANDARD);
     }
@@ -131,7 +146,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         checkDupes(featureDTO);
         validateUnspecified(featureDTO);
 
-        Feature feature = (Feature) HibernateUtil.currentSession().get(Feature.class, featureDTO.getZdbID());
+        Feature feature = HibernateUtil.currentSession().get(Feature.class, featureDTO.getZdbID());
         FeatureTypeEnum oldFeatureType = feature.getType();
         String oldFtrName = feature.getName();
 
@@ -202,14 +217,11 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             if (StringUtils.isNotEmpty(featureDTO.getFeatureChromosome())) {
                 updateFeatureLocation(fgl, featureDTO);
             }
-        }
-        else{
-            if (featureLocationNeedsUpdate(featureDTO, fgl))
-            {
+        } else {
+            if (featureLocationNeedsUpdate(featureDTO, fgl)) {
                 updateFeatureLocation(fgl, featureDTO);
             }
         }
-
 
 
         // get labs of origin for feature
@@ -393,11 +405,12 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     private boolean featureLocationNeedsUpdate(FeatureDTO featureDTO, FeatureLocation fgl) {
         //null safe
         return !(
-                    StringUtils.equals(featureDTO.getFeatureChromosome(), fgl.getChromosome()) &&
-                    StringUtils.equals(featureDTO.getFeatureAssembly(), fgl.getAssembly()) &&
-                    Objects.equals(featureDTO.getFeatureStartLoc(), fgl.getStartLocation()) &&
-                    Objects.equals(featureDTO.getFeatureEndLoc(), fgl.getEndLocation())
-                );
+            StringUtils.equals(featureDTO.getFeatureChromosome(), fgl.getChromosome()) &&
+                StringUtils.equals(featureDTO.getFeatureAssembly(), fgl.getAssembly()) &&
+                Objects.equals(featureDTO.getFeatureStartLoc(), fgl.getStartLocation()) &&
+                Objects.equals(featureDTO.getFeatureEndLoc(), fgl.getEndLocation()) &&
+                Objects.equals(featureDTO.getEvidence(), FeatureService.getFeatureGenomeLocationEvidenceCode(fgl.getLocationEvidence().getZdbID()))
+        );
     }
 
 
@@ -735,8 +748,8 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             solrDoc.put(FieldName.URL, "/" + feature.getZdbID());
             if (feature.getAliases() != null) {
                 List<String> aliases = feature.getAliases().stream()
-                        .map(DataAlias::getAlias)
-                        .collect(Collectors.toList());
+                    .map(DataAlias::getAlias)
+                    .collect(Collectors.toList());
                 solrDoc.put(FieldName.ALIAS, aliases);
             }
             solrDoc.put(FieldName.DATE, new Date());
@@ -768,7 +781,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
         featureDBLink.setAccessionNumberDisplay(sequence);
         ReferenceDatabase genBankRefDB = sequenceRepository.getReferenceDatabase(ForeignDB.AvailableName.GENBANK,
-                ForeignDBDataType.DataType.GENOMIC, ForeignDBDataType.SuperType.SEQUENCE, Species.Type.ZEBRAFISH);
+            ForeignDBDataType.DataType.GENOMIC, ForeignDBDataType.SuperType.SEQUENCE, Species.Type.ZEBRAFISH);
         featureDBLink.setReferenceDatabase(genBankRefDB);
 
         currentSession().save(featureDBLink);
@@ -794,17 +807,17 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             Marker m = RepositoryFactory.getMarkerRepository().getMarkerByAbbreviation(featureDTO.getOptionalName());
             if (m == null) {
                 throw new ValidationException("[" + featureDTO.getOptionalName() + "] not found.  "
-                        + MESSAGE_UNSPECIFIED_FEATURE
+                    + MESSAGE_UNSPECIFIED_FEATURE
                 );
             } else if (false == m.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
                 throw new ValidationException("[" + featureDTO.getOptionalName() + "] must be a gene.  "
-                        + MESSAGE_UNSPECIFIED_FEATURE
+                    + MESSAGE_UNSPECIFIED_FEATURE
                 );
             }
             if (getInfrastructureRepository().getRecordAttribution(m.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.STANDARD)
-                    == null) {
+                == null) {
                 throw new ValidationException("The gene [" + featureDTO.getOptionalName() + "] must be attributed to this pub [" + featureDTO.getPublicationZdbID() + "]. "
-                        + MESSAGE_UNSPECIFIED_FEATURE);
+                    + MESSAGE_UNSPECIFIED_FEATURE);
             }
         }
     }
@@ -814,12 +827,12 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         HibernateUtil.createTransaction();
         String zdbID = featureMarkerRelationshipDTO.getZdbID();
         infrastructureRepository.insertUpdatesTable(zdbID, "Feature", zdbID, "",
-                "deleted feature/marker relationship between: "
-                        + featureMarkerRelationshipDTO.getFeatureDTO().getAbbreviation()
-                        + " and "
-                        + featureMarkerRelationshipDTO.getMarkerDTO().getName()
-                        + " of type "
-                        + featureMarkerRelationshipDTO.getRelationshipType()
+            "deleted feature/marker relationship between: "
+                + featureMarkerRelationshipDTO.getFeatureDTO().getAbbreviation()
+                + " and "
+                + featureMarkerRelationshipDTO.getMarkerDTO().getName()
+                + " of type "
+                + featureMarkerRelationshipDTO.getRelationshipType()
         );
         infrastructureRepository.deleteActiveDataByZdbID(zdbID);
         HibernateUtil.flushAndCommitCurrentSession();
