@@ -56,7 +56,7 @@ public class GeneLinkMLInfo extends AbstractScriptWrapper {
     }
 
     public List<org.alliancegenome.curation_api.model.ingest.dto.GeneDTO> getAllGenes(int numberOrRecords) {
-        List<Marker> genes = getMarkerRepository().getMarkerByGroup(Marker.TypeGroup.GENEDOM_AND_EFG, numberOrRecords);
+        List<Marker> genes = getMarkerRepository().getMarkerByGroup(Marker.TypeGroup.GENEDOM, numberOrRecords);
         return genes.stream()
             .map(marker -> {
                 org.alliancegenome.curation_api.model.ingest.dto.GeneDTO dto = new org.alliancegenome.curation_api.model.ingest.dto.GeneDTO();
