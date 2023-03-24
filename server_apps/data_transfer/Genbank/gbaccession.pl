@@ -8,6 +8,7 @@
 #
 use strict;
 use Try::Tiny;
+use POSIX;
 use lib "<!--|ROOT_PATH|-->/server_apps/";
 use ZFINPerlModules;
 
@@ -101,6 +102,10 @@ if (! system ("/bin/mv $accfile nc_zf_acc.unl")) {
     # load the updates into accesson_bank and db_link
     try {
       ZFINPerlModules->doSystemCommand("$ENV{'PGBINDIR'}/psql -v ON_ERROR_STOP=1 <!--|DB_NAME|--> < GenBank-Accession-Update_d.sql >> $report 2>&1");
+
+      #Keep archive of psql output for help troubleshooting
+      my $timestamp = strftime("%Y-%m-%d-%H-%M-%S", localtime(time()));
+      ZFINPerlModules->doSystemCommand("cp $report $report-$timestamp");      
     } catch {
       warn "Failed at GenBank-Accession-Update_d.sql - $_";
       exit -1;
