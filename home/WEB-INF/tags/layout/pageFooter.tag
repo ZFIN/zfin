@@ -104,6 +104,7 @@
         <div>
             <a class="no-icon" href="http://www.uoregon.edu/"><img src="/images/UOSignature-WHT.png"></a>
             <a class="no-icon" href="http://www.alliancegenome.org/"><img src="/images/AllianceLogoWhite.png"></a>
+            <a class="no-icon" href="https://globalbiodata.org/scientific-activities/global-core-biodata-resources"><img id="gcbr-logo" src="/images/GCBR-Logo-Light-Foreground-Transparent.svg"></a>
         </div>
         <div class="nav-column right-align">
             <div class="nowrap">&copy; 1994&ndash;${copyrightYear} University of Oregon</div>
