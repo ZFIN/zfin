@@ -409,7 +409,8 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 StringUtils.equals(featureDTO.getFeatureAssembly(), fgl.getAssembly()) &&
                 Objects.equals(featureDTO.getFeatureStartLoc(), fgl.getStartLocation()) &&
                 Objects.equals(featureDTO.getFeatureEndLoc(), fgl.getEndLocation()) &&
-                Objects.equals(featureDTO.getEvidence(), FeatureService.getFeatureGenomeLocationEvidenceCode(fgl.getLocationEvidence().getZdbID()))
+                Objects.equals(featureDTO.getEvidence(), fgl.getLocationEvidence() != null ?
+                    FeatureService.getFeatureGenomeLocationEvidenceCode(fgl.getLocationEvidence().getZdbID()) : null)
         );
     }
 
