@@ -2,10 +2,6 @@ package org.zfin.gbrowse;
 
 import org.zfin.genomebrowser.GenomeBrowserTrack;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.stream.Collectors;
-
 /**
  * Names of the gBrowse tracks.
  */
@@ -20,6 +16,7 @@ public enum GBrowseTrack {
     ANTIBODY("antibody"),
     KNOCKDOWN_REAGENT("knockdown_reagent"),
     INSERTION("insertion"),
+    ZFIN_MUTANT("mutant"),
     CNE("CNE"),
     COMPLETE_CLONES("fullclone"),
     ALLZMP("allzmp"),
@@ -48,6 +45,7 @@ public enum GBrowseTrack {
             case ANTIBODY -> GenomeBrowserTrack.ANTIBODY;
             case KNOCKDOWN_REAGENT -> GenomeBrowserTrack.KNOCKDOWN_REAGENT;
             case INSERTION -> GenomeBrowserTrack.INSERTION;
+            case ZFIN_MUTANT -> GenomeBrowserTrack.ZFIN_MUTANT;
             case CNE -> GenomeBrowserTrack.CNE;
             case COMPLETE_CLONES -> GenomeBrowserTrack.COMPLETE_CLONES;
             case ALLZMP -> GenomeBrowserTrack.ALLZMP;
