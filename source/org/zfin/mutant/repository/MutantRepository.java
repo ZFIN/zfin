@@ -112,14 +112,6 @@ public interface MutantRepository {
     boolean isPatoExists(ExpressionFigureStage efs);
 
     /**
-     * Lookup a term by name. Term must not be obsolete.
-     *
-     * @param termName term name
-     * @return Term object
-     */
-    GenericTerm getQualityTermByName(String termName);
-
-    /**
      * Retrieve a genotype experiment by PK.
      *
      * @param genotypeExperimentID pk
@@ -148,8 +140,6 @@ public interface MutantRepository {
     List<Genotype> getGenotypesForStandardAttribution(Publication publication);
 
     List<GenericTerm> getGoTermsByMarkerAndPublication(Marker marker, Publication publication);
-
-    List<GenericTerm> getGoTermsByPhenotypeAndPublication(Publication publication);
 
     InferenceGroupMember addInferenceToGoMarkerTermEvidence(MarkerGoTermEvidence markerGoTermEvidence, String inferenceToAdd);
 
@@ -270,14 +260,6 @@ public interface MutantRepository {
     List<PhenotypeStatementWarehouse> getPhenotypeStatementWarehousesByFish(Fish fish);
 
     /**
-     * Retrieve phenotype statements by genotype experiment ids
-     *
-     * @param genotypeExperimentIDs genox ids
-     * @return list of expression statements
-     */
-    List<ExpressionStatement> getExpressionStatementsByGenotypeExperiments(Set<FishExperiment> genotypeExperimentIDs);
-
-    /**
      * Retrieve citation list of pub ids
      *
      * @param genotypeExperimentIDs
@@ -315,7 +297,6 @@ public interface MutantRepository {
      */
     List<ExpressionResult> getExpressionSummary(Set<FishExperiment> fishOx, String geneID);
     List<ExperimentCondition> getExperimentConditions (Experiment experiment);
-    List<ExperimentCondition> getExperimentConditionsByExp (Experiment experiment);
     List<ExpressionResult> getConstructExpressionSummary(List<String> genoxIds);
 
 
@@ -473,8 +454,6 @@ public interface MutantRepository {
     List<Fish> getAllWildtypeFish();
     List<Fish> getAllFish();
     List<SequenceTargetingReagent> getAllSTRs();
-    List<String> getFishAliases();
-    List<Fish> getFishBackgrounds();
 
     List<Genotype> getGenotypesByFeatureAndBackground(Feature feature, Genotype background, Publication publication);
 
