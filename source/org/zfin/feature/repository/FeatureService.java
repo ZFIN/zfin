@@ -326,11 +326,14 @@ public class FeatureService {
                 .highlight(feature);
 
         GenomeLocation.Source source;
+        GenomeBrowserTrack extraTrack = null;
         if (featureLocation.getAssembly().equals("Zv9")) {
             imageBuilder.genomeBuild(GenomeBrowserBuild.ZV9);
+            extraTrack = GenomeBrowserTrack.ZFIN_MUTANT;
             source = GenomeLocation.Source.ZFIN_Zv9;
         } else if (featureLocation.getAssembly().equals("GRCz10")) {
             imageBuilder.genomeBuild(GenomeBrowserBuild.GRCZ10);
+            extraTrack = GenomeBrowserTrack.ZFIN_MUTANT;
             source = GenomeLocation.Source.ZFIN_Zv9; //TODO: Should this be Zv10?
         } else {
             imageBuilder.genomeBuild(GenomeBrowserBuild.CURRENT);
@@ -351,7 +354,7 @@ public class FeatureService {
         //currently only ZMP features on previous builds need anything other than the ZFIN_FEATURES track
         GenomeBrowserTrack featureTrack = featureLocation.getGenomeBrowserTrack() == null ? GenomeBrowserTrack.ZFIN_FEATURES : featureLocation.getGenomeBrowserTrack();
 
-        imageBuilder.tracks(new GenomeBrowserTrack[]{GenomeBrowserTrack.GENES, featureTrack, GenomeBrowserTrack.TRANSCRIPTS});
+        imageBuilder.tracks(new GenomeBrowserTrack[]{GenomeBrowserTrack.GENES, featureTrack, GenomeBrowserTrack.TRANSCRIPTS, extraTrack});
 
         return imageBuilder.build();
     }

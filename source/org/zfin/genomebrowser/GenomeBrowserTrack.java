@@ -20,6 +20,7 @@ public enum GenomeBrowserTrack {
     ANTIBODY("ZFIN Genes with Antibody"),
     KNOCKDOWN_REAGENT("Knockdown Reagent"),
     INSERTION("Transgenic Insertion"),
+    ZFIN_MUTANT("ZFIN Mutants"),
     CNE("CNE"),
     COMPLETE_CLONES("Complete Assembly Clones"),
     ALLZMP("allzmp"),
@@ -67,6 +68,7 @@ public enum GenomeBrowserTrack {
             case ANTIBODY -> GBrowseTrack.ANTIBODY;
             case KNOCKDOWN_REAGENT -> GBrowseTrack.KNOCKDOWN_REAGENT;
             case INSERTION -> GBrowseTrack.INSERTION;
+            case ZFIN_MUTANT -> GBrowseTrack.ZFIN_MUTANT;
             case CNE -> GBrowseTrack.CNE;
             case COMPLETE_CLONES -> GBrowseTrack.COMPLETE_CLONES;
             case ALLZMP -> GBrowseTrack.ALLZMP;
