@@ -6,7 +6,7 @@ import {EntityAbbreviation} from './index';
 
 const EntityGroupList = ({entities, showLink, stringOnly}) => (
     <ul className='unordered'>
-        {entities.map(entity => {
+        {entities && entities.map(entity => {
             if (showLink) {
                 return <>
                     <li><SpecialEntityLink key={entity.zdbID} entity={entity} displayName={entity.name}/></li>
