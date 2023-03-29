@@ -4,6 +4,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.*;
+import org.hibernate.query.Query;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
@@ -462,26 +463,20 @@ public class HibernateFeatureRepository implements FeatureRepository {
         String hql = "select fs  from  FeatureLocation fs " +
                 "     where fs.feature = :feature and fs.assembly like '%z1%' order by fs.assembly desc  ";
 
-        Query query = session.createQuery(hql);
+        Query<FeatureLocation> query = session.createQuery(hql, FeatureLocation.class);
         query.setParameter("feature", ftr);
         query.setMaxResults(1);
+        FeatureLocation fl = query.uniqueResult();
 
-
-        FeatureLocation fl = (FeatureLocation) query.uniqueResult();
         if (fl == null) {
             String hql1 = "select fs  from  FeatureLocation fs " +
                     "     where fs.feature = :feature and fs.assembly like '%9%' order by fs.assembly desc ";
 
-            Query query1 = session.createQuery(hql1);
-            query.setParameter("feature", ftr);
-
-
-            FeatureLocation fl1 = (FeatureLocation) query.uniqueResult();
-            return fl1;
-
+            Query<FeatureLocation> query1 = session.createQuery(hql1, FeatureLocation.class);
+            query1.setParameter("feature", ftr);
+            return  query1.uniqueResult();
         }
         return fl;
-
     }
 
 
