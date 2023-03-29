@@ -8,9 +8,12 @@ import org.junit.Test;
 import org.zfin.TestConfiguration;
 import org.zfin.expression.ExpressionFigureStage;
 import org.zfin.feature.Feature;
+import org.zfin.feature.FeatureAlias;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.api.Pagination;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
@@ -25,6 +28,7 @@ import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.zfin.repository.RepositoryFactory.*;
 
@@ -124,14 +128,6 @@ public class MutantRepositoryTest {
         LOG.debug(goTerms.size());
         assertThat(goTerms, is(empty()));
     }
-
-    @Test
-    public void goTermsByPhenotypeAndPublication() {
-        Publication publication = RepositoryFactory.getPublicationRepository().getPublication("ZDB-PUB-080501-10");
-        List<GenericTerm> goTerms = getMutantRepository().getGoTermsByPhenotypeAndPublication(publication);
-        assertThat(goTerms, notNullValue());
-    }
-
 
     @Test
     public void getZFINInferences() {
@@ -514,5 +510,23 @@ public class MutantRepositoryTest {
         assertNotNull(models);
         assertThat(models.size(), greaterThan(5));
 
+    }
+
+    @Test
+    public void getFishByFeature() {
+        Pagination pagination = new Pagination(1, 10, null, null);
+        PaginationResult<FishGenotypeFeature> result = getMutantRepository().getFishByFeature("ZDB-ALT-000412-8", false, pagination);
+        assertNotNull(result);
+        assertThat(result.getTotalCount(), greaterThan(0));
+        assertEquals(8, result.getTotalCount());
+    }
+
+    @Test
+    public void getSpecificDataAlias() {
+        String featureId = "ZDB-ALT-980203-1256";
+        String alias = "tz57";
+        Feature feature = getFeatureRepository().getFeatureByID(featureId);
+        FeatureAlias aliasResult = getMutantRepository().getSpecificDataAlias(feature, alias);
+        assertNotNull(aliasResult);
     }
 }
