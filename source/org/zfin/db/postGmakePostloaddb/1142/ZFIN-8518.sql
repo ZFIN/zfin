@@ -29,6 +29,10 @@ update expression_experiment2
 set xpatex_gene_zdb_id = 'ZDB-GENE-101020-1'
 where xpatex_gene_zdb_id = 'ZDB-GENEP-101020-1';
 
+update expression_experiment
+set xpatex_gene_zdb_id = 'ZDB-GENE-101020-1'
+where xpatex_gene_zdb_id = 'ZDB-GENEP-101020-1';
+
 delete
 from zdb_active_data
 where zactvd_zdb_id = 'ZDB-GENEP-101020-1';
