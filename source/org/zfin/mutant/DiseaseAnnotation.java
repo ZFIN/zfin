@@ -5,16 +5,13 @@ import lombok.Getter;
 import lombok.Setter;
 import org.zfin.expression.Experiment;
 import org.zfin.framework.api.View;
+import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
-
-import static org.zfin.feature.repository.FeatureService.getFeatureGenomeLocationEvidenceCode;
 
 /**
  * Disease model entity:
@@ -32,12 +29,12 @@ public class DiseaseAnnotation implements EntityZdbID {
     private List<DiseaseAnnotationModel> diseaseAnnotationModel;
 
     @JsonView(View.API.class)
-    public List<Fish> getFishList(){
+    public List<Fish> getFishList() {
         return diseaseAnnotationModel.stream().map(model -> model.getFishExperiment().getFish()).collect(Collectors.toList());
     }
 
     @JsonView(View.API.class)
-    public List<Experiment> getEnvironmentList(){
+    public List<Experiment> getEnvironmentList() {
         return diseaseAnnotationModel.stream().map(model -> model.getFishExperiment().getExperiment()).collect(Collectors.toList());
     }
 
@@ -60,6 +57,14 @@ public class DiseaseAnnotation implements EntityZdbID {
     @Override
     public String getEntityName() {
         return disease.getTermName();
+    }
+
+    @JsonView(View.API.class)
+    public String getEvidenceCodeString() {
+        if (getEvidenceCode() == null) {
+            return "";
+        }
+        return DTOConversionService.evidenceCodeIdToAbbreviation(evidenceCode.getZdbID());
     }
 
 }
