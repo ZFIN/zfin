@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import DataTable from '../components/data-table';
-import EntityGroupList from '../components/entity/EntityGroupList';
 import TermLink from '../components/entity/TermLink';
+import {EntityList} from '../components/entity';
 
 const PublicationDiseaseTable = ({url, title, navigationCounter}) => {
     const columns = [
@@ -12,17 +12,17 @@ const PublicationDiseaseTable = ({url, title, navigationCounter}) => {
         },
         {
             label: 'Fish',
-            content: row => (<EntityGroupList entities={row.fishList} showLink={true} stringOnly={false}/>),
+            content: row => (<EntityList entities={row.fishList}/>),
             width: '300px',
         },
         {
             label: 'Environment',
-            content: row => (<EntityGroupList entities={row.environmentList} showLink={false} stringOnly={false}/>),
+            content: row => (<EntityList entities={row.environmentList}/>),
             width: '350px',
         },
         {
             label: 'Evidence',
-            content: row => (<EntityGroupList entities={row.evidenceCodeList} showLink={false} stringOnly={true}/>),
+            content: row => row.evidenceCodeString,
             width: '80px',
         },
     ];
