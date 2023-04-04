@@ -66,7 +66,7 @@ task loadGafFPInference(type: JavaExec) {
                 "${validateData}/gafLoad",
                 "Load-GAF-FP-Inference_m",
                 "FP Inferences",
-                "http://current.geneontology.org/products/annotations/zfin-prediction.gaf",
+                "https://current.geneontology.org/products/upstream_and_raw_data/zfin-prediction.gaf",
                 "org.zfin.datatransfer.go.FpInferenceGafParser"
 
         ]
@@ -81,7 +81,7 @@ task loadNoctuaGpad(type: JavaExec) {
             "${validateData}/gafLoad",
             "Load-GPAD-Noctua",
             "Noctua",
-            "http://snapshot.geneontology.org/products/annotations/noctua_zfin.gpad.gz",
+            "https://snapshot.geneontology.org/products/upstream_and_raw_data/noctua_zfin.gpad.gz",
             "org.zfin.datatransfer.go.GoaGafParser"
     ]
 
