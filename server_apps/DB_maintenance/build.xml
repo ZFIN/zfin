@@ -145,7 +145,7 @@
     <target name="load-noctua-gpad" description="">
         <!-- set some default values that can be overridden with environment variables like GOA_GAF_URL1 -->
         <property environment="env"/>
-        <condition property="downloadUrl" value="${env.NOCTUA_GPAD_URL}" else="http://snapshot.geneontology.org/products/annotations/noctua_zfin.gpad.gz">
+        <condition property="downloadUrl" value="${env.NOCTUA_GPAD_URL}" else="https://snapshot.geneontology.org/products/upstream_and_raw_data/noctua_zfin.gpad.gz">
             <isset property="env.NOCTUA_GPAD_URL" />
         </condition>
 
@@ -182,7 +182,7 @@
             <arg value="${validateData}/gafLoad"/><!-- baseDir -->
             <arg value="${jobName}"/><!-- jobName -->
             <arg value="FP Inferences"/><!-- organization -->
-            <arg value="http://current.geneontology.org/products/annotations/zfin-prediction.gaf"/><!-- downloadUrl -->
+            <arg value="https://current.geneontology.org/products/upstream_and_raw_data/zfin-prediction.gaf"/><!-- downloadUrl -->
             <arg value="org.zfin.datatransfer.go.FpInferenceGafParser"/><!-- parserClassName -->
         </java>
     </target>
