@@ -3109,7 +3109,8 @@ public class HibernateMarkerRepository implements MarkerRepository {
         Session session = HibernateUtil.currentSession();
         String sql = """
             select ortho FROM Ortholog as ortho
-            join ortho.ncbiOtherSpeciesGene
+            join fetch ortho.zebrafishGene
+            join fetch ortho.ncbiOtherSpeciesGene
             WHERE ortho.organism.commonName = :organism
             """;
 
