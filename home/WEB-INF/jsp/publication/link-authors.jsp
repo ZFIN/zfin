@@ -2,7 +2,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <z:page bootstrap="true">
-    <script src="${zfn:getAssetPath("angular.js")}"></script>
 
     <c:set var="publication" value="${publicationBean.publication}" scope="page"/>
     <c:set var="viewURL">/${publication.zdbID}</c:set>
@@ -51,66 +50,13 @@
                 </div>
             </div>
         </div>
-
-
-        <div ng-controller="AuthorLinkingController as alCtrl" data-pub-zdb-id="${publication.zdbID}" ng-cloak>
-
-            <div class="alert alert-danger" ng-show="alCtrl.errorString">
-                {{alCtrl.errorString}}
-            </div>
-
-            <div class="row">
-                <div class="col-4">
-                    <h4>Listed Authors</h4>
-                    <form class="form-inline">
-                        <input class="form-control" ng-model="alCtrl.filterValue" placeholder="Filter authors">
-                    </form>
-                    <ul class="list-unstyled">
-                        <li class="author-item"
-                            ng-repeat="author in alCtrl.authors | filter:alCtrl.filterValue"
-                            ng-class="{'author-selected': author === alCtrl.selectedAuthor}">
-                            <a href="#" ng-click="alCtrl.selectAuthor(author)">{{author.label}}</a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="col-4">
-                    <h4>
-                        Suggested Authors
-                        <span ng-show="alCtrl.selectedAuthor">
-                            for {{alCtrl.selectedAuthor.label}}
-                        </span>
-                    </h4>
-                    <div class="text-muted" ng-show="!alCtrl.selectedAuthor">
-                        <i>Select a listed author to view suggestions.</i>
-                    </div>
-                    <div class="alert alert-warning" ng-show="alCtrl.selectedAuthor.loadedSuggestions && alCtrl.selectedAuthor.suggestions.length == 0">
-                        <strong>Bummer.</strong> No suggestions found.
-                    </div>
-                    <ul class="list-unstyled">
-                        <li class="author-item" ng-repeat="person in alCtrl.selectedAuthor.suggestions">
-                            <a href="#" title="Link this author" ng-click="alCtrl.addAuthor(person)" ng-show="!alCtrl.isLinked(person)"><i class="fas fa-fw fa-plus-circle"></i></a>
-                            <span ng-show="alCtrl.isLinked(person)" title="Author already linked">
-                                <i class="fas fa-fw fa-check"></i>
-                            </span>
-                            <a ng-href="/{{person.zdbID}}" target="_blank">{{person.display}}</a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="col-4">
-                    <h4>Linked Authors</h4>
-                    <div class="form-inline">
-                        <input ng-model="alCtrl.authorZdbID" class="form-control" placeholder="Link by ZDB ID..."/>
-                        <button class="btn btn-success" ng-click="alCtrl.addAuthorByID()">Link</button>
-                    </div>
-                    <ul class="list-unstyled">
-                        <li class="author-item" ng-repeat="author in alCtrl.registeredAuthors">
-                            <a href="#" title="Unlink this author" ng-click="alCtrl.removeAuthor(author)"><i class="fas fa-trash fa-fw"></i></a>
-                            <a ng-href="/{{author.zdbID}}" target="_blank">{{author.display}}</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+        <div class="author-linking-container">
+            <div class="__react-root"
+                 id="LinkAuthors"
+                 data-pub-id="${publication.zdbID}"
+            ></div>
         </div>
+    </div>
     </div>
 
     <script src="${zfn:getAssetPath("react.js")}"></script>
