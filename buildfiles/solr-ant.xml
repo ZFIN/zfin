@@ -223,9 +223,11 @@
     <target name="start-solr-docker" description="Start up Solr " if="isDocker">
         <echo message="Source: ${solr}"/>
         <exec executable="/usr/bin/docker">
-            <arg value="container"/>
+            <arg value="compose"/>
+            <arg value="-f"/>
+            <arg value="/opt/zfin/source_roots/zfin.org/docker/docker-compose.yml"/>
             <arg value="start"/>
-            <arg value="solr_container"/>
+            <arg value="solr"/>
         </exec>
     </target>
 
@@ -244,9 +246,11 @@
 
     <target name="stop-solr-docker" description="Stop Solr " if="isDocker">
         <exec executable="/usr/bin/docker">
-            <arg value="container"/>
+            <arg value="compose"/>
+            <arg value="-f"/>
+            <arg value="/opt/zfin/source_roots/zfin.org/docker/docker-compose.yml"/>
             <arg value="stop"/>
-            <arg value="solr_container"/>
+            <arg value="solr"/>
         </exec>
     </target>
 
@@ -264,9 +268,11 @@
 
     <target name="restart-solr-docker" description="Restart Solr" if="isDocker">
         <exec executable="/usr/bin/docker">
-            <arg value="container"/>
+            <arg value="compose"/>
+            <arg value="-f"/>
+            <arg value="/opt/zfin/source_roots/zfin.org/docker/docker-compose.yml"/>
             <arg value="restart"/>
-            <arg value="solr_container"/>
+            <arg value="solr"/>
         </exec>
     </target>
 
