@@ -109,6 +109,7 @@ public class Curation {
         ANTIBODIES("Antibodies"),
         BEHAVIOR("Behavior"),
         DISEASE("Disease"),
+        DISEASE_XENOGRAFT("Disease Xenograft"),
         ELECTROPHYSIOLOGY("Electrophysiology"),
         EXPRESSION("Expression"),
         FEATURES("Features (Mutant)"),
@@ -125,6 +126,10 @@ public class Curation {
         REGIONS("Regions"),
         SEQUENCE("Sequence"),
         TOXICOLOGY("Toxicology"),
+        TOX_DRUG_CHARACTERIZATION_TREATMENT ("Tox. Drug Characterization/Treatment"),
+        TOX_ENVIRONMENTAL_CONTAMINATION ("Tox. Environmental Contamination"),
+        TOX_NANOMATERIALS ("Tox. Nanomaterials"),
+        TOX_NATURAL_PRODUCT_CHARACTERIZATION ("Tox. Natural Product Characterization"),
         TRANSCRIPTS("Transcripts"),
         TRANSGENIC_CONSTRUCT("Transgenic Construct"),
         ZEBRAFISH_SEQUENCE_VARIANT("Zebrafish Sequence Variant");
