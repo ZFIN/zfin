@@ -85,7 +85,7 @@ public class HibernatePublicationPageRepository implements PublicationPageReposi
                         }
                         hql += ")";
                     } else {
-                        hql += "LOWER(" + entry.getKey() + ") like '%zdb-" + entry.getValue().toLowerCase() + "%' ";
+                        hql += "LOWER(" + entry.getKey() + ") like '%" + entry.getValue().toLowerCase() + "%' ";
                     }
                 }
             }
