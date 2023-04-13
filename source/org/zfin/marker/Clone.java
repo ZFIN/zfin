@@ -3,6 +3,7 @@ package org.zfin.marker;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.framework.api.View;
+import org.zfin.infrastructure.ActiveData;
 
 import java.util.Set;
 
@@ -182,5 +183,10 @@ public class Clone extends Marker{
 
     public void setSequenceType(String sequenceType) {
         this.sequenceType = sequenceType;
+    }
+
+    @JsonView({View.UI.class})
+    public String getCloneType(){
+        return ActiveData.getType(zdbID).name();
     }
 }

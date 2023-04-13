@@ -21,7 +21,7 @@ const Table = ({
                         {columns.map(column => !column.hidden && (
                             <th key={column.key || column.label} style={{width: column.width, textAlign: column.align}}>
                                 {columnHeaderFormat ?
-                                    columnHeaderFormat(column) :
+                                    columnHeaderFormat(column, supplementalData) :
                                     column.label
                                 }
                             </th>

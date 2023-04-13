@@ -33,11 +33,12 @@ const DataTable = ({
         }));
     };
 
-    const columnHeaderFormat = column => (
+    const columnHeaderFormat = (column, supplementalData) => (
         <HeaderCell
             column={column}
             filterValue={tableState.filter && tableState.filter[column.filterName]}
             onFilterChange={handleFilterChange}
+            supplementalData={supplementalData}
         />
     );
 
