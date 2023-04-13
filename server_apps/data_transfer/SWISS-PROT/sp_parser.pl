@@ -129,6 +129,12 @@ while (<>) {
       next;
   }
 
+  #\tREFSEQ match: ZDB-GENE-*-*     #sp_check.pl write out this line
+  if (/REFSEQ match: (.*)/) {
+      $single_gene = $1;
+      next;
+  }
+
   if (/^DR\s+ZFIN;\s+(.+);\s/ ) {
       push @gene_array, $1;
       next;

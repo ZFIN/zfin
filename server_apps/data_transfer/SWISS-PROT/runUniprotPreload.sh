@@ -20,23 +20,26 @@ set -eo pipefail
 
 main() {
 echo "#########################################################################"
-echo "run pre_loadsp.pl " $(date "+%Y-%m-%d %H:%M:%S")
 
+echo "run pre_loadsp.pl " $(date "+%Y-%m-%d %H:%M:%S")
 ./pre_loadsp.pl ;
 
-echo "run sp_check.pl " $(date "+%Y-%m-%d %H:%M:%S")
+echo "run validate_zfin_dat.pl " $(date "+%Y-%m-%d %H:%M:%S")
+./validate_zfin_dat.pl ;
 
+echo "run sp_check.pl " $(date "+%Y-%m-%d %H:%M:%S")
 ./sp_check.pl ;
 
-echo "/bin/cat prob1 prob2 prob3 prob4 prob5 prob6 prob7 prob8 > allproblems.txt " $(date "+%Y-%m-%d %H:%M:%S")
+echo "/bin/cat prob1 prob2 prob3 prob4 prob5 prob6 prob7 prob8 prob9 prob10 > allproblems.txt " $(date "+%Y-%m-%d %H:%M:%S")
 
-/bin/cat prob1 prob2 prob3 prob4 prob5 prob6 prob7 prob8 > allproblems.txt ;
+/bin/cat prob1 prob2 prob3 prob4 prob5 prob6 prob7 prob8 prob9 prob10 > allproblems.txt ;
 
 echo "run sp_match.pl manuallyCuratedUniProtIDs.txt " $(date "+%Y-%m-%d %H:%M:%S")
 
 ./sp_match.pl manuallyCuratedUniProtIDs.txt ;
 
 echo "copying generated preload files to network drive"
+echo /usr/bin/scp "$ROOT_PATH"/server_apps/data_transfer/SWISS-PROT/{okfile,ok2file,ec2go,interpro2go,spkw2go} /research/zarchive/load_files/UniProt/
 
 /usr/bin/scp "$ROOT_PATH"/server_apps/data_transfer/SWISS-PROT/{okfile,ok2file,ec2go,interpro2go,spkw2go} /research/zarchive/load_files/UniProt/
 
