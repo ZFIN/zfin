@@ -33,6 +33,5 @@ require('./reference-editor.directive');
 require('./str-details.directive');
 require('./str-sequence.directive');
 
-require('./author-linking');
 require('./nomenclature');
 require('./sequence-information-edit');
