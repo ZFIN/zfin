@@ -51,7 +51,7 @@ const EntityAbbreviation = ({entity}) => {
         linktext = entity.abbreviation || '';
     }
 
-    return <span className={className}>{linktext}</span>;
+    return <span className={className} dangerouslySetInnerHTML={{__html: linktext}}/>;
 };
 
 EntityAbbreviation.propTypes = {
