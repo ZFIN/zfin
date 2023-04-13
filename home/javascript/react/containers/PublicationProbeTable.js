@@ -12,10 +12,11 @@ const PublicationProbeTable = ({url, publicationId, navigationCounter, title}) =
             width: '250px',
         },
         {
-            label: 'Rating',
-            content: row => row.rating,
-            filterName: 'rating',
-            width: '200px',
+            label: 'Type',
+            content: row => row.cloneType,
+            filterName: 'type',
+            filterOptionFromSupplementalData: 'probeTypes',
+            width: '100px',
         },
         {
             label: 'All Figures',
