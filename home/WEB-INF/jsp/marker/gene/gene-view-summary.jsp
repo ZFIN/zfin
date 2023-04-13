@@ -31,7 +31,7 @@
     <zfin2:entityNotesAttributeListItems entity="${formBean.marker}" />
     <z:attributeListItem label="Comparative Information">
         <a href="https://alliancegenome.org/gene/ZFIN:${formBean.marker.zdbID}#orthology">
-        <img border="0" height="40" src="/images/alliance_hexes3.png">
+        <img border="0" height="40" src="/images/alliance_hexes4.png">
         </a>
 
     </z:attributeListItem>
