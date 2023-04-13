@@ -237,13 +237,13 @@ runCmdOrFail("psql -v ON_ERROR_STOP=1 -d $ENV{'DB_NAME'} -a -f sp_addbackattr.sq
       "Failed to execute sp_addbackattr.sql");
 
 #--------------- Capture some history from last SWISS-PROT loading-----
-print "\n Capturing data from last SWISS-PROT loading.\n";
+print "\n Capturing data from last SWISS-PROT loading at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . "\n";
 
 runCmdOrFail("psql -v ON_ERROR_STOP=1 -d $ENV{'DB_NAME'} -a -f sp_capture.sql >capturereport.txt",
     "Failed to execute sp_capture.sql");
 
 #--------------- Delete records from last SWISS-PROT loading-----
-print "\n delete records source from last SWISS-PROT loading.\n";
+print "\n delete records source from last SWISS-PROT loading at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . "\n";
 
 runCmdOrFail("psql -v ON_ERROR_STOP=1 -d $ENV{'DB_NAME'} -a -f sp_delete.sql >deletereport.txt",
     "Failed to execute sp_delete.sql");
@@ -251,11 +251,12 @@ runCmdOrFail("psql -v ON_ERROR_STOP=1 -d $ENV{'DB_NAME'} -a -f sp_delete.sql >de
 # good records for loading
 # concatenate okfile ok2file
 
-system("cat ok2file >> okfile");
+# system("cat ok2file >> okfile");
+print "Skipping ok2file, uncomment to re-use ok2file\n";
 
 
 # ----------- Parse the SWISS-PROT file ----------------
-print "\n sp_parser.pl okfile \n";
+print "\n sp_parser.pl okfile  at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . "\n";
 system ("$ENV{'ROOT_PATH'}/server_apps/data_transfer/SWISS-PROT/sp_parser.pl okfile");
 
 $count = 0;
@@ -287,7 +288,7 @@ while( !( -e "dr_dblink.unl" &&
 system("ls *.unl");
 
 # ------------ Parse spkw2go ---------------
-print "\nsptogo.pl spkw2go\n";
+print "\nsptogo.pl spkw2go  at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . "\n";
 system ("$ENV{'ROOT_PATH'}/server_apps/data_transfer/SWISS-PROT/sptogo.pl spkw2go");
 $count = 0;
 $retry = 1;
@@ -313,7 +314,7 @@ while( !( -e "sp_mrkrgoterm.unl")) {
 }
 
 # ------------ Parse interpro2go ---------------
-print "\niptogo.pl interpro2go\n";
+print "\niptogo.pl interpro2go  at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . "\n";
 system ("$ENV{'ROOT_PATH'}/server_apps/data_transfer/SWISS-PROT/iptogo.pl interpro2go");
 $count = 0;
 $retry = 1;
@@ -341,7 +342,7 @@ while( !( -e "ip_mrkrgoterm.unl")) {
 
 # ------------ Parse ec2go ---------------
 
-print "\nectogo.pl ec2go\n";
+print "\nectogo.pl ec2go at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . "\n";
 system ("$ENV{'ROOT_PATH'}/server_apps/data_transfer/SWISS-PROT/ectogo.pl ec2go");
 $count = 0;
 $retry = 1;
@@ -368,7 +369,7 @@ while( !( -e "ec_mrkrgoterm.unl")) {
 
 
 # ------------ Loading ---------------------
-print "\nloading... at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . "\n";
+print "\nloading (sp_load.sql) at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . "\n";
 runCmdOrFail("psql -v ON_ERROR_STOP=1 -d $ENV{'DB_NAME'} -a -f sp_load.sql > report.txt",
     "Failed to execute sp_load.sql");
 
