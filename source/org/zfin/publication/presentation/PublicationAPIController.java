@@ -143,9 +143,9 @@ public class PublicationAPIController {
     @JsonView(View.PublicationUI.class)
     @RequestMapping(value = "/{pubID}/probes", method = RequestMethod.GET)
     public JsonResultResponse<Clone> getPublicationProbes(@PathVariable String pubID,
-                                                                       @RequestParam(value = "filter.symbol", required = false) String probeSymbol,
-                                                                       @RequestParam(value = "filter.rating", required = false) String probeRating,
-                                                                       @Version Pagination pagination) {
+                                                          @RequestParam(value = "filter.symbol", required = false) String probeSymbol,
+                                                          @RequestParam(value = "filter.type", required = false) String probeType,
+                                                          @Version Pagination pagination) {
 
         LocalDateTime startTime = LocalDateTime.now();
         JsonResultResponse<Clone> response = new JsonResultResponse<>();
@@ -156,14 +156,17 @@ public class PublicationAPIController {
         if (StringUtils.isNotEmpty(probeSymbol)) {
             pagination.addToFilterMap("exp.probe.abbreviation", probeSymbol);
         }
-        if (StringUtils.isNotEmpty(probeRating)) {
-            pagination.addToFilterMap("exp.probe.rating.integer", probeRating);
+        if (StringUtils.isNotEmpty(probeType)) {
+            pagination.addToFilterMap("exp.probe.zdbID", probeType);
         }
 
         PaginationResult<Clone> expressionTableRows = getPublicationPageRepository().getProbes(publication, pagination);
 
         response.setTotal(expressionTableRows.getTotalCount());
         response.setResults(expressionTableRows.getPopulatedResults());
+        response.addSupplementalData("probeTypes", getPublicationPageRepository().getProbeTypes(publication, pagination));
+
+
         response.setHttpServletRequest(request);
         response.calculateRequestDuration(startTime);
         return response;

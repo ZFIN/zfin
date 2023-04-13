@@ -6,9 +6,13 @@ import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Clone;
 import org.zfin.publication.Publication;
 
+import java.util.List;
+
 public interface PublicationPageRepository {
 
     PaginationResult<ExpressionTableRow> getPublicationExpression(Publication publication, Pagination pagination);
 
     PaginationResult<Clone> getProbes(Publication publication, Pagination pagination);
+
+    List<String> getProbeTypes(Publication publication, Pagination pagination);
 }
