@@ -8,8 +8,11 @@ import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Clone;
+import org.zfin.marker.MarkerType;
 import org.zfin.publication.Publication;
 import org.zfin.repository.PaginationResultFactory;
+
+import java.util.List;
 
 public class HibernatePublicationPageRepository implements PublicationPageRepository {
 
@@ -69,7 +72,21 @@ public class HibernatePublicationPageRepository implements PublicationPageReposi
                 if (entry.getKey().endsWith("integer")) {
                     hql += entry.getKey().substring(0, entry.getKey().lastIndexOf(".")) + " =" + entry.getValue().toLowerCase();
                 } else {
-                    hql += "LOWER(" + entry.getKey() + ") like '%" + entry.getValue().toLowerCase() + "%' ";
+                    if (entry.getKey().equals("exp.probe.zdbID")) {
+                        String[] vals = entry.getValue().split("||");
+                        hql += "(";
+                        for (int i = 0; i < vals.length - 1; i++) {
+                            String val = vals[i];
+                            if (i > 0) {
+                                hql += " OR ";
+                            }
+                            val = "zdb-" + val.toLowerCase();
+                            hql += "LOWER(" + entry.getKey() + ") like '%" + val + "%' ";
+                        }
+                        hql += ")";
+                    } else {
+                        hql += "LOWER(" + entry.getKey() + ") like '%zdb-" + entry.getValue().toLowerCase() + "%' ";
+                    }
                 }
             }
         }
@@ -77,6 +94,17 @@ public class HibernatePublicationPageRepository implements PublicationPageReposi
         Query<Clone> query = HibernateUtil.currentSession().createQuery(hql, Clone.class);
         query.setParameter("publication", publication);
         return PaginationResultFactory.createResultFromScrollableResultAndClose(pagination, query.scroll());
+    }
+
+    @Override
+    public List<String> getProbeTypes(Publication publication, Pagination pagination) {
+        String hql = """
+            select distinct exp.probe.markerType from ExpressionExperiment as exp
+            where exp.publication = :publication
+            """;
+        Query<MarkerType> query = HibernateUtil.currentSession().createQuery(hql, MarkerType.class);
+        query.setParameter("publication", publication);
+        return query.list().stream().map(MarkerType::getName).sorted().toList();
     }
 
 }
