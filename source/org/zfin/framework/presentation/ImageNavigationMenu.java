@@ -3,9 +3,19 @@ package org.zfin.framework.presentation;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.log4j.Log4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.ui.Model;
+import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
+import org.zfin.figure.presentation.FigureExpressionSummary;
+import org.zfin.figure.presentation.FigurePhenotypeSummary;
+import org.zfin.mutant.Fish;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class encapsulates the logic for which navigation items to show on the publication view page,
@@ -14,6 +24,7 @@ import org.zfin.expression.Image;
  */
 @Getter
 @Setter
+@Log4j
 public class ImageNavigationMenu extends NavigationMenu {
 
     /**
@@ -57,8 +68,42 @@ public class ImageNavigationMenu extends NavigationMenu {
             "not specified".equals(image.getDirection()) &&
             "not specified".equals(image.getView()));
 
-        this.setHidden(NavigationMenuOptions.FIGURE_DATA, image.getFigure() == null && image.getTerms() == null);
+        this.setHidden(NavigationMenuOptions.FIGURE_DATA, isFigureDataEmpty(image, model));
 
+    }
+
+    /*
+    * This method is used to determine if the figure data section should be hidden.
+    * There are a few sources of data to check if they are all empty
+     */
+    public boolean isFigureDataEmpty(Image image, Model model) {
+        boolean termsEmpty = CollectionUtils.isEmpty(image.getTerms());
+
+        if (!termsEmpty) {
+            return false;
+        }
+
+        if (image.getFigure() == null) {
+            return true;
+        }
+
+        boolean expressionEmpty = false;
+        boolean phenotypeEmpty = false;
+
+        try {
+            Map<Figure, FigureExpressionSummary> expressionSummaryMap = (Map<Figure, FigureExpressionSummary>) (model.asMap().get("expressionSummaryMap"));
+            Map<Figure, FigurePhenotypeSummary> phenotypeSummaryMap = (Map<Figure, FigurePhenotypeSummary>) (model.asMap().get("phenotypeSummaryMap"));
+
+            DevelopmentStage startStage = expressionSummaryMap.get(image.getFigure()).getStartStage();
+            List<Fish> fish = phenotypeSummaryMap.get(image.getFigure()).getFish();
+
+            expressionEmpty = startStage == null;
+            phenotypeEmpty = CollectionUtils.isEmpty(fish);
+        } catch (Exception e) {
+            log.error("Error getting expression and phenotype summary maps");
+        }
+
+        return expressionEmpty && phenotypeEmpty;
     }
 
 }
