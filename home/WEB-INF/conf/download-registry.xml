@@ -1856,7 +1856,7 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
         </Download>        
         <Download orderIndex="1">
             <Name>
-                Fish with Abnormal Phenotypes
+                Fish with Abnormal and Normal Phenotypes
             </Name>
             <Category>
                 Phenotype Data
