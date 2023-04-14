@@ -56,3 +56,8 @@ task uniprotAnalysisTask(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.uniprot.UniProtAnalysisTask'
 }
+
+task ncbiMatchThroughEnsemblTask(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.uniprot.NcbiMatchThroughEnsemblTask'
+}
