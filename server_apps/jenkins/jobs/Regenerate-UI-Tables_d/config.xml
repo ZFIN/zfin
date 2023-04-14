@@ -23,11 +23,6 @@
     </hudson.tasks.Ant>
   </builders>
   <publishers>
-    <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/DB_maintenance/report_data/Regenerate-UI-Tables_d/*</artifacts>
-      <latestOnly>false</latestOnly>
-      <allowEmptyArchive>true</allowEmptyArchive>
-    </hudson.tasks.ArtifactArchiver>
     <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
       <recipientList></recipientList>
       <configuredTriggers>
