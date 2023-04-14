@@ -263,6 +263,9 @@ public class OntologyTermDetailController {
         if (term.getOntology().equals(Ontology.ANATOMY)) {
             menu = new ZFANavigationMenu();
         }
+        if (Ontology.isGoOntology(term.getOntology())) {
+            menu = new GONavigationMenu();
+        }
         model.addAttribute("navigationMenu", menu);
 
         return "ontology/term-view";

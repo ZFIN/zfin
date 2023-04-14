@@ -66,21 +66,21 @@ public class HibernateMutantRepository implements MutantRepository {
         Session session = currentSession();
 
         String hql = """
-            select distinct fishox.fish , fishox.fish.order, fishox.fish.nameOrder from FishExperiment fishox, 
-                PhenotypeWarehouse phenoSource, PhenotypeStatementWarehouse phenoObserved 
-                left outer join phenoObserved.e1a as e1a 
-                left outer join phenoObserved.e1b as e1b 
-                left outer join phenoObserved.e2a as e2a 
-                left outer join phenoObserved.e2b as e2b 
-                left outer join phenoObserved.quality as quality 
-                WHERE phenoSource.fishExperiment = fishox 
-                AND phenoObserved.phenotypeWarehouse = phenoSource 
-                AND (e1a = :aoTerm 
-                     or e1b = :aoTerm 
-                     or e2a = :aoTerm 
-                     or e2b = :aoTerm) 
-                AND phenoObserved.tag != :tag 
-                AND exists (select 'x' from GeneGenotypeExperiment where fishExperiment = fishox) 
+            select distinct fishox.fish , fishox.fish.order, fishox.fish.nameOrder from FishExperiment fishox,
+                PhenotypeWarehouse phenoSource, PhenotypeStatementWarehouse phenoObserved
+                left outer join phenoObserved.e1a as e1a
+                left outer join phenoObserved.e1b as e1b
+                left outer join phenoObserved.e2a as e2a
+                left outer join phenoObserved.e2b as e2b
+                left outer join phenoObserved.quality as quality
+                WHERE phenoSource.fishExperiment = fishox
+                AND phenoObserved.phenotypeWarehouse = phenoSource
+                AND (e1a = :aoTerm
+                     or e1b = :aoTerm
+                     or e2a = :aoTerm
+                     or e2b = :aoTerm)
+                AND phenoObserved.tag != :tag
+                AND exists (select 'x' from GeneGenotypeExperiment where fishExperiment = fishox)
             """;
 
         if (MapUtils.isNotEmpty(bean.getFilterMap())) {
