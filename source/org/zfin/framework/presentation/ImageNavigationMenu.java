@@ -87,6 +87,11 @@ public class ImageNavigationMenu extends NavigationMenu {
             return true;
         }
 
+        boolean constructsEmpty = CollectionUtils.isEmpty(image.getFigure().getConstructs());
+        if (!constructsEmpty) {
+            return false;
+        }
+
         boolean expressionEmpty = false;
         boolean phenotypeEmpty = false;
 
