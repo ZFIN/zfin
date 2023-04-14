@@ -48,14 +48,10 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
 
         try {
             task.runTask(args);
-        } catch (IOException e) {
-            System.err.println("IOException Error while running task: " + e.getMessage());
+        } catch (IOException | SQLException e) {
+            System.err.println("Exception Error while running task: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
-        } catch (SQLException e) {
-            System.err.println("SQLException Error while running task: " + e.getMessage());
-            e.printStackTrace();
-            System.exit(3);
         }
 
         HibernateUtil.closeSession();
