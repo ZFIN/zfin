@@ -14,6 +14,7 @@
 <c:set var="GENES_INVOLVED" value="${NavigationMenuOptions.GENES_INVOLVED.value}"/>
 <c:set var="ZEBRAFISH_MODELS" value="${NavigationMenuOptions.ZEBRAFISH_MODELS.value}"/>
 <c:set var="EXPRESSION" value="${NavigationMenuOptions.EXPRESSION.value}"/>
+<c:set var="OTHER_PAGES" value="${NavigationMenuOptions.OTHER_PAGE.value}"/>
 <c:set var="CITATIONS" value="${NavigationMenuOptions.CITATION.value}"/>
 
 <c:set var="secs"/>

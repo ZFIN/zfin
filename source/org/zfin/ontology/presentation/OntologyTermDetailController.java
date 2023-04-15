@@ -252,6 +252,7 @@ public class OntologyTermDetailController {
         boolean isChebi = term.getOntology().equals(Ontology.CHEBI);
         model.addAttribute("isChebiTerm", isChebi);
         model.addAttribute("showPhenotypeSection", !term.getOntology().equals(Ontology.ECO));
+        form.setAgrDiseaseLinks(OntologyService.getAGRLinks(term));
 
         NavigationMenu menu = new DefaultTermNavigationMenu();
         if (isChebi) {
