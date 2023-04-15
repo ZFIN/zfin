@@ -40,10 +40,12 @@ public class TermPageIndexer {
     public static void main(String[] args) throws NoSuchFieldException {
         TermPageIndexer indexer = new TermPageIndexer();
         indexer.init();
+/*
         indexer.publicationExpressions();
         indexer.runFishModels();
         indexer.runGenesInvolved();
         indexer.runTermPhenotype();
+*/
         indexer.runChebiPhenotype();
         System.out.println("Finished Indexing");
     }
@@ -227,6 +229,11 @@ public class TermPageIndexer {
                 display.setPhenotypeStatementSearch(phenotypeStatementWarehouses.stream().map(PhenotypeStatementWarehouse::getDisplayName).collect(Collectors.joining("|")));
                 display.setGeneSymbolSearch(fish.getAffectedGenes().stream().map(Marker::getAbbreviation).sorted().collect(Collectors.joining("|")));
                 display.setConditionSearch(experiment.getDisplayAllConditions());
+                display.setExpConditionChebiSearch(experiment.getExperimentConditions().stream()
+                    .filter(experimentCondition -> experimentCondition.getChebiTerm() != null)
+                    .map(ExperimentCondition::getChebiTerm)
+                    .map(GenericTerm::getTermName)
+                    .collect(Collectors.joining("|")));
                 HibernateUtil.currentSession().save(display);
             });
         }));
