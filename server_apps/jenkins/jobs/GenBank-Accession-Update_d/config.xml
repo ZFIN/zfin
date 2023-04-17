@@ -24,6 +24,11 @@ original flat file are moved to /research/zblastfiles/files/daily for weekly BLA
     </hudson.tasks.Shell>
   </builders>
   <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>server_apps/data_transfer/Genbank/acc_update.report</artifacts>
+      <latestOnly>false</latestOnly>
+      <allowEmptyArchive>true</allowEmptyArchive>
+    </hudson.tasks.ArtifactArchiver>
     <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
       <recipientList>${DB_OWNER}@zfin.org</recipientList>
       <configuredTriggers>

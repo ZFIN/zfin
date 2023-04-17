@@ -1,7 +1,7 @@
 begin work;
 
 create temp table tmp_acc_bk (
-	tp_acc_num	     varchar(30) not null,
+	tp_acc_num	     varchar(255) not null,
 	tp_length            integer,
 	tp_fdbcont_zdb_id    varchar(50)
 	);
@@ -9,7 +9,7 @@ create temp table tmp_acc_bk (
 create unique index tmp_acc_bk_primary_key 
 	on tmp_acc_bk(tp_acc_num);
 
-\copy tmp_acc_bk from ./nc_zf_acc.unl;
+\copy tmp_acc_bk from ./nc_zf_acc.unl DELIMITER '|';
 
 update accession_bank
    set accbk_length = (select tp_length
