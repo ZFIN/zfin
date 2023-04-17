@@ -1885,9 +1885,10 @@ public class HibernateMutantRepository implements MutantRepository {
         Query<Fish> query = session.createQuery(hql, Fish.class);
         query.setParameter("genotype", fish.getGenotype());
         if (strsAvailable) {
-            query.setParameter("numberOfStrs", fish.getStrList().size());
+            Long numberOfStrs = Long.valueOf(fish.getStrList().size());
+            query.setParameter("numberOfStrs", numberOfStrs);
         } else {
-            query.setParameter("numberOfStrs", 0);
+            query.setParameter("numberOfStrs", 0L);
         }
         if (strsAvailable) {
             int index = 0;
