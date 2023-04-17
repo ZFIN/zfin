@@ -3,6 +3,9 @@ package org.zfin.framework.presentation;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.zfin.framework.featureflag.FeatureFlagEnum;
+
+import static org.zfin.framework.featureflag.FeatureFlags.isFlagEnabled;
 
 @Getter
 @Setter
@@ -18,7 +21,8 @@ public class DiseaseNavigationMenu extends NavigationMenu {
             title(NavigationMenuOptions.RELATIONSHIPS).showCount(false),
             title(NavigationMenuOptions.GENES_INVOLVED).showCount(false),
             title(NavigationMenuOptions.ZEBRAFISH_MODELS).showCount(false),
-            title(NavigationMenuOptions.ALLELE).showCount(false)
+            isFlagEnabled(FeatureFlagEnum.SHOW_ALLIANCE_DATA) ?
+                title(NavigationMenuOptions.ALLELE).showCount(false) : null
         );
     }
 

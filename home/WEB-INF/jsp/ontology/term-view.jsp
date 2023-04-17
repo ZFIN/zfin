@@ -18,7 +18,7 @@
 
 <c:set var="secs"/>
 
-<z:dataPage sections="${[]}" navigationMenu="${navigationMenu}">
+<z:dataPage sections="${[]}" navigationMenu="${navigationMenu}" additionalBodyClass="term-view nav-title-wrap-break-word">
 
     <jsp:attribute name="entityName">
        ${term.termName}

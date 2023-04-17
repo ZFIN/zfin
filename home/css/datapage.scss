@@ -392,6 +392,13 @@ table.lab-view-summary-table dd a, table.company-view-summary-table dd a {
     word-break: break-all; /* <-- remove for ellipses truncation */
 }
 
+/* Wrap the page title as it appears in the left navigation menu and break on word separators */
+.nav-title-wrap-break-word a.back-to-top-link {
+    display: inline;
+    white-space: normal;
+    word-break: break-word;
+}
+
 /* Set margin for figure component on publication view page */
 .publication-view #xpresimg_control_box {
     margin-top: 20px;
