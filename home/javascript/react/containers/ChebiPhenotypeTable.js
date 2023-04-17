@@ -50,7 +50,11 @@ const ChebiPhenotypeTable = ({termId, directAnnotationOnly, endpointUrl = 'pheno
         },
         {
             label: 'Term',
-            content: ({term}) => <a href={'/' + term.zdbID}>{term.termName}</a>,
+            content: ({allChebiTerms}) => <CommaSeparatedList>
+                {allChebiTerms.map(term => {
+                    return <a href={'/' + term.zdbID} key={Math.random()}>{term.termName}</a>
+                })}
+            </CommaSeparatedList>,
             filterName: 'termName',
             width: '120px',
         },
