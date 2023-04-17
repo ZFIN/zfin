@@ -52,6 +52,7 @@ public enum GenomeBrowserTrack {
         }
         return tracks
                 .stream()
+                .filter(track -> track != null)
                 .map(GenomeBrowserTrack::convertGenomeBrowserTrackToGBrowse)
                 .collect(Collectors.toList());
     }
