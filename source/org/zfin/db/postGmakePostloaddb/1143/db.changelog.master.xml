@@ -9,6 +9,7 @@
 
     <include file="source/org/zfin/db/postGmakePostloaddb/1143/ZFIN-8519.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1143/ZFIN-8520.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1143/ZFIN-8531-construct-relationship.sql" />
 
 
 </databaseChangeLog>
