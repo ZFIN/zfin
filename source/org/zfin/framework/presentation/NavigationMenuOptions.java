@@ -8,6 +8,7 @@ public enum NavigationMenuOptions {
     EFGs("Engineered Foreign Genes"),
     ERRATA("Errata / Notes"),
     EXPRESSION("Expression"),
+    OTHER_PAGE("Other Pages"),
     FIGURES("Figures"),
     FISH("Fish"),
     GENES("Genes / Markers"),

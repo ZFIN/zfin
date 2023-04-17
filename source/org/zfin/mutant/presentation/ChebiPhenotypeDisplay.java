@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
 import org.zfin.expression.Experiment;
+import org.zfin.expression.ExperimentCondition;
 import org.zfin.expression.Figure;
 import org.zfin.framework.api.View;
 import org.zfin.mutant.Fish;
@@ -13,6 +14,8 @@ import org.zfin.publication.Publication;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * class to retrieve chebi term page - phenotype
@@ -85,6 +88,10 @@ public class ChebiPhenotypeDisplay {
     @Column(name = "cpd_ameliorated_exacerbated_phenotype_search")
     private String amelioratedExacerbatedPhenoSearch;
 
+    @JsonView(View.API.class)
+    @Column(name = "cpd_exp_condition_chebi_search")
+    private String expConditionChebiSearch;
+
     @Transient
     private boolean includeSubstructures;
 
@@ -100,4 +107,19 @@ public class ChebiPhenotypeDisplay {
         return fish;
     }
 
+    @JsonView(View.API.class)
+    public Set<GenericTerm> getAllChebiTerms() {
+        Set<GenericTerm> allTerms = new TreeSet<>();
+        allTerms.add(term);
+        allTerms.addAll(experiment.getExperimentConditions()
+            .stream()
+            .filter(experimentCondition -> experimentCondition.getChebiTerm() != null)
+            .map(ExperimentCondition::getChebiTerm)
+            .sorted()
+            .toList());
+        return allTerms;
+    }
+
+    public void setAllChebiTerms(Set<GenericTerm> terms) {
+    }
 }
