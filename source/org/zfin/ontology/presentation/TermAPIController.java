@@ -236,7 +236,6 @@ public class TermAPIController {
             pagination.addToFilterMap("chebiPhenotype.phenotypeStatementSearch", filterPhenotype);
         }
         if (StringUtils.isNotEmpty(filterTermName)) {
-            //pagination.addToFilterMap("chebiPhenotype.term.termName", filterTermName);
             pagination.addToFilterMap("chebiPhenotype.expConditionChebiSearch", filterTermName);
         }
 
