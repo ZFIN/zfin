@@ -77,14 +77,6 @@
             ></div>
         </z:section>
 
-        <z:section title="${HUMAN_DISEASE}">
-            <div class="__react-root" id="ChebiTermZebrafishModelTable"
-                 data-term-id="${term.zdbID}"
-                 data-direct-annotation-only="true"
-                 data-is-chebi="{true}"
-            ></div>
-        </z:section>
-
         <z:section title="${PHENOTYPE_CHEBI}">
             <z:section title="Phenotype resulting from" appendedText="${term.termName}" show="${true}">
                 <div class="__react-root" id="ChebiPhenotypeTable"
@@ -106,6 +98,14 @@
                      data-direct-annotation-only="true"
                 ></div>
             </z:section>
+        </z:section>
+
+        <z:section title="${HUMAN_DISEASE}">
+            <div class="__react-root" id="ChebiTermZebrafishModelTable"
+                 data-term-id="${term.zdbID}"
+                 data-direct-annotation-only="true"
+                 data-is-chebi="{true}"
+            ></div>
         </z:section>
 
         <c:if test="${formBean.term.ontology.expressionData}">
