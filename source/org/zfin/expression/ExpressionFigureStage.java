@@ -1,6 +1,7 @@
 package org.zfin.expression;
 
 import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.gwt.root.dto.ExpressedTermDTO;
 import org.zfin.ontology.ComposedFxTerm;
 
 import javax.persistence.*;
@@ -125,6 +126,25 @@ public class ExpressionFigureStage {
             return absentPhenotypic && eapNotAbsentPhenotypic;
         }
         return false;
+    }
+
+    /**
+     * @param expTerm ExpressedTermDTO
+     * @return error message if not valid EaP
+     */
+    public String isValidEaP(ExpressedTermDTO expTerm) {
+        // if not EaP then return null
+        if (expTerm == null || !expTerm.isEap())
+            return null;
+        if (expressionExperiment.isWildtype())
+            return "Cannot add an EaP annotation to a wildtype / standard fish";
+        // two functional changes and standard experiment -> valid EaP
+        if (expressionExperiment.getFishExperiment().getFish().getFishFunctionalAffectedGeneCount() == 2 && expressionExperiment.getFishExperiment().isStandard())
+            return null;
+        // one functional change and non-standard environment -> valid EaP
+        if (expressionExperiment.getFishExperiment().getFish().getFishFunctionalAffectedGeneCount() == 1 && !expressionExperiment.getFishExperiment().isStandard())
+            return null;
+        return "EaP annotations require two functional modifications with standard environment or one functional modification with non-standard environment";
     }
 }
 

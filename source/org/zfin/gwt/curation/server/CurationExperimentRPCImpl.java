@@ -2,8 +2,8 @@ package org.zfin.gwt.curation.server;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
@@ -91,9 +91,9 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
 
     public List<ExpressionExperimentDTO> getExperimentsByFilter(ExpressionExperimentDTO experimentFilter) {
         List<ExpressionExperiment2> experiments =
-                expRepository.getExperimentsByGeneAndFish(experimentFilter.getPublicationID(),
-                        experimentFilter.getGene() == null ? null : experimentFilter.getGene().getZdbID(),
-                        experimentFilter.getFishID());
+            expRepository.getExperimentsByGeneAndFish(experimentFilter.getPublicationID(),
+                experimentFilter.getGene() == null ? null : experimentFilter.getGene().getZdbID(),
+                experimentFilter.getFishID());
         if (experiments == null)
             return null;
 
@@ -320,7 +320,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
             Marker marker = dbLink.getMarker();
             // If the genbank number is an EST or a cDNA then persist their id in the clone column
             if (marker.getType().equals(Marker.Type.EST) ||
-                    marker.getType().equals(Marker.Type.CDNA)) {
+                marker.getType().equals(Marker.Type.CDNA)) {
                 // TOdo: Change to setClone(clone) when clone is subclassed from Marker
                 Clone clone = RepositoryFactory.getMarkerRepository().getCloneById(marker.getZdbID());
                 expressionExperiment.setProbe(clone);
@@ -384,9 +384,9 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
      */
     public List<ExpressionFigureStageDTO> getExpressionsByFilter(ExpressionExperimentDTO experimentFilter, String figureID) {
         List<ExpressionFigureStage> experiments = expRepository.getExperimentFigureStagesByGeneAndFish(experimentFilter.getPublicationID(),
-                experimentFilter.getGene() == null ? null : experimentFilter.getGene().getZdbID(),
-                experimentFilter.getFishID(),
-                figureID);
+            experimentFilter.getGene() == null ? null : experimentFilter.getGene().getZdbID(),
+            experimentFilter.getFishID(),
+            figureID);
         if (experiments == null)
             return null;
 
@@ -807,8 +807,9 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
                     // add expression if marked as such
                     if (pileStructure.getAction() == PileStructureAnnotationDTO.Action.ADD) {
                         ExpressedTermDTO expTerm = addExpressionToAnnotation(experiment, expressionStructure, pileStructure.isExpressed());
-                        if (experiment.getExpressionExperiment().isWildtype() && expTerm != null && expTerm.isEap())
-                            throw new ValidationException("Cannot add an EaP annotation to a wildtype / standard fish");
+                        String errorMessage = experiment.isValidEaP(expTerm);
+                        if (errorMessage != null)
+                            throw new ValidationException(errorMessage);
                         if (experiment.hasInvalidCombination())
                             throw new ValidationException("Cannot add 'absent phenotypic with a non-absent phenotypic term");
                         if (expTerm != null) {
@@ -834,15 +835,15 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
             setFigureAnnotationStatus(dto, false);
         }
         List<ExpressionFigureStageDTO> updatedAnnotations =
-                updatedAnnotationList.stream()
-                        .map(expressionFigureStage ->
-                                {
-                                    ExpressionFigureStageDTO dto = DTOConversionService.convertToExpressionFigureStageDTO(expressionFigureStage);
-                                    dto.setPatoExists(getMutantRepository().isPatoExists(expressionFigureStage));
-                                    return dto;
-                                }
-                        )
-                        .collect(toList());
+            updatedAnnotationList.stream()
+                .map(expressionFigureStage ->
+                    {
+                        ExpressionFigureStageDTO dto = DTOConversionService.convertToExpressionFigureStageDTO(expressionFigureStage);
+                        dto.setPatoExists(getMutantRepository().isPatoExists(expressionFigureStage));
+                        return dto;
+                    }
+                )
+                .collect(toList());
 
         return updatedAnnotations;
     }
@@ -938,7 +939,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         if (result != null) {
             // cannot add EaP to non-EaP and vice versa
             if ((result.isEap() && !expressionStructure.isEap()) ||
-                    (!result.isEap() && expressionStructure.isEap())) {
+                (!result.isEap() && expressionStructure.isEap())) {
                 throw new ValidationException("Cannot add a phenotypic term to a non-phenotypic one");
             }
             result.addPhenotypeTerm(expressionStructure);
@@ -983,7 +984,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         if (term != null)
             subtermID = term.getZdbID();
         if (subtermID == null && expressionStructure.getSubterm() != null ||
-                subtermID != null && expressionStructure.getSubterm() == null)
+            subtermID != null && expressionStructure.getSubterm() == null)
             return false;
         if (subtermID != null && !subtermID.equals(expressionStructure.getSubterm().getZdbID()))
             return false;
@@ -992,7 +993,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
             return false;
         // check qualities
         if ((CollectionUtils.isEmpty(result.getPhenotypeTermSet()) && expressionStructure.getEapQualityTerm() != null) ||
-                (CollectionUtils.isNotEmpty(result.getPhenotypeTermSet()) && expressionStructure.getEapQualityTerm() == null))
+            (CollectionUtils.isNotEmpty(result.getPhenotypeTermSet()) && expressionStructure.getEapQualityTerm() == null))
             return false;
         // if no EaP is found then they must equal
         if (CollectionUtils.isEmpty(result.getPhenotypeTermSet()))
