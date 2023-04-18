@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
@@ -22,14 +23,15 @@ public class NavigationMenu {
 
     public NavigationMenu(NavigationItem.NavigationItemBuilder ...navigationItemBuilders) {
         this.navigationItems = Stream.of(navigationItemBuilders)
+                .filter(Objects::nonNull)
                 .map(NavigationItem.NavigationItemBuilder::build)
                 .toList();
     }
 
     /**
      * Set the hidden attribute for the NavigationItem in this menu matching the given title
-     * @param title
-     * @param value
+     * @param title title of the item we are looking for (enum)
+     * @param value true if the item should be hidden
      */
     public void setHidden(NavigationMenuOptions title, boolean value) {
         for(NavigationItem item : navigationItems) {
