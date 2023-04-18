@@ -21,6 +21,21 @@ begin
 --raise notice 'fishid: %', vFishId;
 --raise notice 'geno: %', vGenoId;
 for workingMrkr in
+    --get the phenotypic Tg marker
+    select  fmrel_mrkr_zdb_id
+    from fish, genotype_Feature, feature_marker_Relationship
+    where fish_genotype_zdb_id =vGenoId
+      and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
+      and fish_genotype_zdb_id =genofeat_geno_zdb_id
+      and fmrel_type in ('contains phenotypic sequence feature')
+    union
+    select  fmrel_mrkr_zdb_id
+    from fish, genotype_Feature, feature_marker_Relationship
+    where fish_genotype_zdb_id =genofeat_geno_zdb_id
+      and fmrel_ftr_zdb_id = genofeat_feature_zdb_id
+      and fish_zdb_id = vFishId
+      and fmrel_type in ('contains phenotypic sequence feature')
+    union
 	--get the allele-ish genes
 	select  fmrel_mrkr_zdb_id
 	   from fish, genotype_Feature, feature_marker_Relationship
