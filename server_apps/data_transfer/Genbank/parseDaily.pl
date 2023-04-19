@@ -87,10 +87,10 @@ while (my $gbfile = shift @ARGV) {
 	if ($organism eq 'Danio rerio'){
 
 	    if ($type eq "mRNA") {
-		print ZFACC substr($accession,0,index($accession, '.'))."|$bp|ZDB-FDBCONT-040412-37|\n";
+		print ZFACC substr($accession,0,index($accession, '.'))."|$bp|ZDB-FDBCONT-040412-37\n";
 	    }
 	    elsif ($type eq "DNA") {
-		print ZFACC substr($accession,0,index($accession, '.'))."|$bp|ZDB-FDBCONT-040412-36|\n";
+		print ZFACC substr($accession,0,index($accession, '.'))."|$bp|ZDB-FDBCONT-040412-36\n";
 	    }
 	    else {
 		print ZF ">gi|$gi|$dbsource|$accession|$locus $definition \n";
