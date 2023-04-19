@@ -392,11 +392,13 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         List<MarkerType> markerTypes = getMarkerTypesByGroup(Marker.TypeGroup.RNAGENE);
 
-        String hql = " select mr1.secondMarker from MarkerRelationship mr1,  Marker m " +
-            " where mr1.firstMarker.zdbID=m.zdbID " +
-            " and mr1.firstMarker.markerType in (:markerType) " +
-            " and mr1.type = :markerRelationshipType1" +
-            " ";
+        String hql = """
+            select t from MarkerRelationship mr1,  Marker m, Transcript t
+                       where mr1.firstMarker.zdbID = m.zdbID
+                       and mr1.secondMarker.zdbID = t.zdbID
+                       and mr1.firstMarker.markerType in (:markerType)
+                       and mr1.type = :markerRelationshipType1
+                       """;
 
 
         return currentSession().createQuery(hql, Transcript.class)
