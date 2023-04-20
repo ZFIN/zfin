@@ -46,8 +46,7 @@
             <c:set var="modelTitle" value="model utilizes"/>
         </c:if>
 
-        <z:section title="${HUMAN_DISEASE}" infoPopup="/ZFIN/help_files/expression_help.html"
-                   appendedText="${modelTitle} ${fish.name}">
+        <z:section title="${HUMAN_DISEASE}" appendedText="${modelTitle} ${fish.name}">
             <div class="__react-root" id="FishZebrafishModelTable"
                  data-fish-id="${fish.zdbID}"
             ></div>
