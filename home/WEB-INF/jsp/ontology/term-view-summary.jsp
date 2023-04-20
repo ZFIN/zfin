@@ -59,4 +59,8 @@
         </z:attributeListItem>
     </c:if>
 
+    <z:attributeListItem label="Ontology">
+            <span>${term.ontology.commonName}</span>
+    </z:attributeListItem>
+
 </z:attributeList>
