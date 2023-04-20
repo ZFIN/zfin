@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.anatomy.presentation.AnatomySearchBean;
 import org.zfin.expression.Experiment;
+import org.zfin.expression.Figure;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.*;
 import org.zfin.gwt.root.dto.OntologyDTO;
@@ -20,6 +21,7 @@ import org.zfin.marker.presentation.HighQualityProbe;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.FishExperiment;
 import org.zfin.mutant.PhenotypeService;
+import org.zfin.mutant.PhenotypeStatementWarehouse;
 import org.zfin.mutant.presentation.FishModelDisplay;
 import org.zfin.ontology.*;
 import org.zfin.ontology.service.OntologyService;
@@ -29,6 +31,7 @@ import org.zfin.publication.presentation.PublicationListBean;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.*;
 
@@ -482,6 +485,40 @@ public class OntologyTermDetailController {
         model.addAttribute("citationList", citationBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication List");
         return "ontology/fish-model-publication-list";
+    }
+
+    @RequestMapping("/{termID}/chebi-phenotype-summary/{experimentID}")
+    public String phenotypeSummaryByChebiList(@PathVariable String termID,
+                                              @PathVariable String experimentID,
+                                              Model model) {
+
+        if (experimentID == null) {
+            return getErrorPage(model);
+        }
+
+        GenericTerm disease;
+        if (ActiveData.validateActiveData(termID)) {
+            disease = getOntologyRepository().getTermByZdbID(termID);
+        } else {
+            disease = getOntologyRepository().getTermByOboID(termID);
+        }
+        if (disease == null) {
+            model.addAttribute(LookupStrings.ZDB_ID, termID);
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+
+        Experiment experiment = RepositoryFactory.getMutantRepository().getExperiment(experimentID);
+        List<PhenotypeStatementWarehouse> warehouseList = getPublicationRepository().getAllChebiPhenotypeExperiment(experiment);
+        Map<Figure,List<PhenotypeStatementWarehouse>> wareList = warehouseList.stream()
+                .collect(Collectors.groupingBy(warehouse -> warehouse.getPhenotypeWarehouse().getFigure()));
+        warehouseList.sort(Comparator.comparing(warehouse -> warehouse.getPhenotypeWarehouse().getFigure()));
+        Fish fish = warehouseList.get(0).getPhenotypeWarehouse().getFishExperiment().getFish();
+        model.addAttribute("phenotypeSummaryList", wareList);
+        model.addAttribute("term", disease);
+        model.addAttribute("fish", fish);
+        model.addAttribute("experiment", experiment);
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Phenotype Figure Summary");
+        return "ontology/phenotype-summary";
     }
 
     @RequestMapping("/note/ontology-relationship")
