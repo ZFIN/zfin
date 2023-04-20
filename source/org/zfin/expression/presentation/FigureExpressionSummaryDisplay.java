@@ -1,5 +1,7 @@
 package org.zfin.expression.presentation;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Figure;
 import org.zfin.marker.ExpressedGene;
@@ -7,20 +9,14 @@ import org.zfin.mutant.ExpressedGenotype;
 import org.zfin.mutant.Genotype;
 import org.zfin.publication.Publication;
 
+@Setter
+@Getter
 public class FigureExpressionSummaryDisplay implements Comparable<FigureExpressionSummaryDisplay> {
     private Figure figure;
     private ExpressedGene expressedGene;
     private Genotype expressedGenotype;
 
     private boolean publicationDisplayed;
-
-    public Genotype getExpressedGenotype() {
-        return expressedGenotype;
-    }
-
-    public void setExpressedGenotype(Genotype expressedGenotype) {
-        this.expressedGenotype = expressedGenotype;
-    }
 
     public FigureExpressionSummaryDisplay(Figure figure) {
 
@@ -29,18 +25,6 @@ public class FigureExpressionSummaryDisplay implements Comparable<FigureExpressi
 
     public Publication getPublication() {
         return figure.getPublication();
-    }
-
-    public Figure getFigure() {
-        return figure;
-    }
-
-    public ExpressedGene getExpressedGene() {
-        return expressedGene;
-    }
-
-    public void setExpressedGene(ExpressedGene expressedGene) {
-        this.expressedGene = expressedGene;
     }
 
     public String getThumbnail() {

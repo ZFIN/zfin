@@ -69,7 +69,7 @@ const ChebiModifiedPhenotypeTable = ({termId, directAnnotationOnly, endpointUrl 
             content: row => (
                 <FigureSummaryPhenotype
                     statistics={row}
-                    allFiguresUrl={`/action/ontology/${row.term.zdbID}/phenotype-summary/${row.fish.zdbID}`}
+                    allFiguresUrl={`/action/ontology/${row.term.zdbID}/chebi-phenotype-summary/${row.experiment.zdbID}`}
                 />
             ),
             width: '100px',

@@ -515,6 +515,7 @@ public interface MutantRepository {
     List<PhenotypeStatementWarehouse> getPhenotypeObserved(GenericTerm term, Fish fish, boolean includeSubstructures);
 
     List<PhenotypeStatementWarehouse> getPhenotypeStatementObservedForMutantSummary(GenericTerm term, Fish fish, boolean includeSubstructures);
+    List<PhenotypeStatementWarehouse> getPhenotypeStatementObservedForMutantSummary(GenericTerm term, Experiment experiment, boolean includeSubstructures);
 
     List<DiseaseAnnotationModel> getDiseaseAnnotationModels(int numfOfRecords);
     List<DiseaseAnnotationModel> getDiseaseAnnotationModelsNoStd(int numofRecords);
@@ -525,5 +526,7 @@ public interface MutantRepository {
     List<GeneGenotypeExperiment> getGeneFishWithPhenotypes(int numberOfRecords);
 
     List<PhenotypeObservationStatement> getPhenotypeStatements(String geneID, String termID);
+
+    Experiment getExperiment(String experimentID);
 }
 
