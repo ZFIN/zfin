@@ -9,7 +9,6 @@ const ShowExpressionStructureList = ({expressionTerms}) => {
 
     const truncatedExpressionList = expressionTerms.slice(0, 5);
 
-    const emptyUrl = '';
     if (truncateElement) {
         return <>
             <CommaSeparatedList>
@@ -25,7 +24,7 @@ const ShowExpressionStructureList = ({expressionTerms}) => {
             </CommaSeparatedList>
             <>
                 {expressionTerms.length > 5 && (
-                    <a href={emptyUrl} onClick={() => setTruncateElement(false)}>(all {expressionTerms.length})</a>
+                    <span className='gwt-Hyperlink' onClick={() => setTruncateElement(false)}>(all {expressionTerms.length})</span>
                 )}
             </>
         </>
@@ -43,7 +42,7 @@ const ShowExpressionStructureList = ({expressionTerms}) => {
                     </>
                 })}
             </CommaSeparatedList>
-            <a href={emptyUrl} onClick={() => setTruncateElement(true)}>(first 5)</a>
+            <span className='gwt-Hyperlink' onClick={() => setTruncateElement(true)}>(first 5)</span>
         </>
     }
 };
