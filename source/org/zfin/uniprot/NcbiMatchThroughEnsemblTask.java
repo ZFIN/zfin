@@ -245,7 +245,7 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
         BigInteger count = (BigInteger) session.createSQLQuery(query).uniqueResult();
         System.out.println("Number of NCBI genes that have a link to ZFIN, but we don't have a reciprocal link: " + count);
 
-        // Get final report using the above mapping tables.
+        // Get semi-final report using the above mapping tables.
         // First (step 1), get all ncbi genes that have a link to zfin, but we don't have a reciprocal link.
         // Then, get all zfin genes that have a common link to the same ensembl gene as those ncbi genes from step 1.
         query = """
@@ -256,6 +256,7 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
                     symbol,
                     string_agg(dbl2.dblink_zdb_id, ', ') AS dblinks,
                     string_agg(ra.recattrib_source_zdb_id, ', ') AS pubs
+                    INTO TEMP TABLE ncbi_match_report
                 FROM
                     tmp_ncbi2zfin n2z
                     LEFT JOIN db_link dbl ON dbl.dblink_acc_num = n2z.ncbi_id
@@ -273,9 +274,18 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
                     ensembl_id,
                     symbol ORDER BY n2z.ncbi_id
                 """;
+        session.createSQLQuery(query).executeUpdate();
 
-        //iterate over query results
+        // Add the rna accessions to the report.
+        query = """
+         select nmr.*, string_agg(dblink_acc_num, ',') as rna_accessions from ncbi_match_report nmr
+         left join (select dblink_linked_recid, dblink_acc_num from
+        						db_link left join foreign_db_contains on dblink_fdbcont_zdb_id = fdbcont_zdb_id where fdbcont_fdbdt_id = 3) subq
+        						on subq.dblink_linked_recid = nmr.zdb_id
+         group by ncbi_id, zdb_id, ensembl_id, symbol, db_links, publications
+            """;
         List<Object[]> results = session.createSQLQuery(query).list();
+
         transaction.commit();
 
         System.out.println("Number of those NCBI genes with shared ensembl id : " + results.size());
