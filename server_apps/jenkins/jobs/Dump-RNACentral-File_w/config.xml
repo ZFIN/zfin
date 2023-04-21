@@ -23,16 +23,24 @@
     </hudson.tasks.Ant>
   </builders>
   <publishers>
-    <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>server_apps/data_transfer/RNACentral/rnaCentral*</artifacts>
+      <latestOnly>false</latestOnly>
+      <allowEmptyArchive>true</allowEmptyArchive>
+    </hudson.tasks.ArtifactArchiver>
+    <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.36">
+      <recipientList></recipientList>
+      <configuredTriggers>
+    <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.36">
       <recipientList></recipientList>
       <configuredTriggers>
         <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
           <email>
             <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-          <!--  <body>${FILE,path=&quot;server_apps/DB_maintenance/gafLoad/Load-GAF-GOA_m/Load-GAF-GOA_m_summary.txt&quot;}
-
-See full details at ${BUILD_URL}artifact/server_apps/DB_maintenance/gafLoad/Load-GAF-GOA_m/Load-GAF-GOA_m_details.txt</body>-->
+            <body>
+              See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
+            </body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
@@ -41,14 +49,14 @@ See full details at ${BUILD_URL}artifact/server_apps/DB_maintenance/gafLoad/Load
             <attachBuildLog>false</attachBuildLog>
             <compressBuildLog>false</compressBuildLog>
             <replyTo></replyTo>
-            <contentType>project</contentType>
+            <contentType>text/html</contentType>
           </email>
         </hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
-        <!--<hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+        <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
           <email>
             <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&quot;server_apps/DB_maintenance/gafLoad/Load-GAF-GOA_m/Load-GAF-GOA_m_errors.txt&quot;}</body>
+            <body>$PROJECT_DEFAULT_CONTENT</body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
@@ -59,8 +67,7 @@ See full details at ${BUILD_URL}artifact/server_apps/DB_maintenance/gafLoad/Load
             <replyTo></replyTo>
             <contentType>project</contentType>
           </email>
-        </hudson.plugins.emailext.plugins.trigger.FailureTrigger>-->
-      </configuredTriggers>
+        </hudson.plugins.emailext.plugins.trigger.FailureTrigger>      </configuredTriggers>
       <contentType>text/plain</contentType>
       <defaultSubject>[Jenkins] ${PROJECT_NAME}: ${BUILD_STATUS}: [${DOMAIN_NAME}]</defaultSubject>
       <defaultContent>$DEFAULT_CONTENT</defaultContent>
