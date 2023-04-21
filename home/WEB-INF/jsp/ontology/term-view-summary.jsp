@@ -51,6 +51,10 @@
         </z:attributeListItem>
     </c:if>
 
+    <z:attributeListItem label="Ontology">
+        <span>${term.ontology.commonName}</span>
+    </z:attributeListItem>
+
     <c:if test="${!empty term.images}">
         <z:attributeListItem label="Figures">
             <c:forEach var="image" items="${term.images}">
@@ -58,9 +62,5 @@
             </c:forEach>
         </z:attributeListItem>
     </c:if>
-
-    <z:attributeListItem label="Ontology">
-            <span>${term.ontology.commonName}</span>
-    </z:attributeListItem>
 
 </z:attributeList>
