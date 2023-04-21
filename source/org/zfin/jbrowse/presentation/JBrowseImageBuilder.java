@@ -190,11 +190,7 @@ public class JBrowseImageBuilder implements GenomeBrowserImageBuilder {
 
     @Override
     public GenomeBrowserImageBuilder highlight(Marker highlight) {
-
-        //Disable highlighting by marker for now
-        //TODO: uncomment when highlighting by marker is supported in jbrowse project.
-        //highlightMarker = highlight;
-
+        highlightMarker = highlight;
         return this;
     }
 
