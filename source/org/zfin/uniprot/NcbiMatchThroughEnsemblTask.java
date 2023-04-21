@@ -255,7 +255,7 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
                     ensembl_id,
                     symbol,
                     string_agg(dbl2.dblink_zdb_id, ', ') AS dblinks,
-                    string_agg(ra.recattrib_source_zdb_id, ', ') AS pubs
+                    string_agg(ra.recattrib_source_zdb_id, ', ') AS publications
                     INTO TEMP TABLE ncbi_match_report
                 FROM
                     tmp_ncbi2zfin n2z
@@ -282,7 +282,7 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
          left join (select dblink_linked_recid, dblink_acc_num from
         						db_link left join foreign_db_contains on dblink_fdbcont_zdb_id = fdbcont_zdb_id where fdbcont_fdbdt_id = 3) subq
         						on subq.dblink_linked_recid = nmr.zdb_id
-         group by ncbi_id, zdb_id, ensembl_id, symbol, db_links, publications
+         group by ncbi_id, zdb_id, ensembl_id, symbol, dblinks, publications
             """;
         List<Object[]> results = session.createSQLQuery(query).list();
 
@@ -301,7 +301,7 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
     private void writeResultsToCsv(List<Object[]> results) {
         try (Writer writer = Files.newBufferedWriter(Paths.get(CSV_FILE));
              CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
-                     .withHeader("ncbi_id", "zdb_id", "ensembl_id", "symbol", "db_links", "publications"))) {
+                     .withHeader("ncbi_id", "zdb_id", "ensembl_id", "symbol", "dblinks", "publications", "rna_accessions"))) {
             for (Object[] result : results) {
                 csvPrinter.printRecord(result);
             }
