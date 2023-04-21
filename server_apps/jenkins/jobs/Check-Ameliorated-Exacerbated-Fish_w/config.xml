@@ -39,7 +39,7 @@
                 </htmlpublisher.HtmlPublisherTarget>
             </reportTargets>
         </htmlpublisher.HtmlPublisher>
-        <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
+        <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.36">
             <recipientList></recipientList>
             <configuredTriggers>
                 <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
