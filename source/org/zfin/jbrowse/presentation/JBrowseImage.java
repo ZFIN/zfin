@@ -71,7 +71,9 @@ public class JBrowseImage implements GenomeBrowserImage {
 
             String highlight = getHighlightString();
             if (StringUtils.isNotBlank(highlight)) {
-                url.addNameValuePair("highlight", highlight);
+                //Disable highlighting by marker for now
+                //TODO: uncomment when highlighting by marker is supported in jbrowse project.
+//                url.addNameValuePair("highlight", highlight);
             }
 
             //url.addNameValuePair("grid", grid ? "1" : "0");
