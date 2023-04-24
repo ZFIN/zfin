@@ -20,7 +20,7 @@ const TermExpressedGenesTable = ({termId}) => {
             content: row => (
                 <FigureSummary
                     statistics={row.markerStat}
-                    allFiguresUrl={`https://zfin.org/action/expression/results?geneField=myb&geneZdbID=${row.markerStat.gene.zdbID}&anatomyTermNames=kidney&anatomyTermIDs=${row.markerStat.anatomyTerm.zdbID}&journalType=ALL&includeSubstructures=false&onlyWildtype=true`}
+                    allFiguresUrl={`/action/expression/results?geneField=${row.markerStat.gene.abbreviation}&geneZdbID=${row.markerStat.gene.zdbID}&anatomyTermNames=${row.markerStat.anatomyTerm.termName}&anatomyTermIDs=${row.markerStat.anatomyTerm.zdbID}&journalType=ALL&includeSubstructures=false&onlyWildtype=true`}
                 />
             ),
             width: '100px',
