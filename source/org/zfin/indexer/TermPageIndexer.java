@@ -9,6 +9,7 @@ import org.zfin.expression.Figure;
 import org.zfin.figure.presentation.ExpressionTableRow;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.api.Duration;
 import org.zfin.framework.api.Pagination;
 import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.marker.Marker;
@@ -28,6 +29,7 @@ import org.zfin.repository.RepositoryFactory;
 
 import javax.persistence.JoinTable;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -50,12 +52,22 @@ public class TermPageIndexer {
     }
 
     private void runFishModels() throws NoSuchFieldException {
+
+        log.info("Start retrieving fish models...");
+        LocalDateTime startTime = LocalDateTime.now();
         HibernateUtil.createTransaction();
         List<FishModelDisplay> diseaseModelsWithFishModel = OntologyService.getDiseaseModelsWithFishModelsGrouped(null, false, new Pagination());
         HibernateUtil.flushAndCommitCurrentSession();
         HibernateUtil.createTransaction();
+        log.info("Retrieve fish models: " + calculateRequestDuration(startTime));
+        startTime = LocalDateTime.now();
         cleanoutFishModelsTables();
+        HibernateUtil.flushAndCommitCurrentSession();
+        log.info("Deleting fish models: " + calculateRequestDuration(startTime));
 
+        log.info("Saving fish models: ");
+        startTime = LocalDateTime.now();
+        HibernateUtil.createTransaction();
         diseaseModelsWithFishModel.forEach(fishModelDisplay -> {
             fishModelDisplay.setEvidenceSearch(fishModelDisplay.getFishModel().getDiseaseAnnotationModels().stream()
                 .map(model -> DTOConversionService.evidenceCodeIdToAbbreviation(model.getDiseaseAnnotation().getEvidenceCode().getZdbID()))
@@ -79,16 +91,24 @@ public class TermPageIndexer {
                 });
 
         });
+        log.info("Finished creating fish models: " + calculateRequestDuration(startTime));
         HibernateUtil.flushAndCommitCurrentSession();
     }
 
     private void publicationExpressions() {
+        log.info("Start retrieving publication expressions...");
+        LocalDateTime startTime = LocalDateTime.now();
         HibernateUtil.createTransaction();
         List<ExpressionResult> expressionResults = getExpressionRepository().getAllExpressionResults();
         HibernateUtil.flushAndCommitCurrentSession();
+        log.info("Retrieve publication expressions: " + calculateRequestDuration(startTime));
         HibernateUtil.createTransaction();
         cleanoutPublicationExpressionTables();
+        HibernateUtil.flushAndCommitCurrentSession();
 
+        startTime = LocalDateTime.now();
+        log.info("Saving publication expressions... ");
+        HibernateUtil.createTransaction();
         expressionResults.forEach(expressionResult -> {
             expressionResult.getFigures().forEach(figure -> {
                 ExpressionTableRow row = new ExpressionTableRow(expressionResult);
@@ -97,6 +117,7 @@ public class TermPageIndexer {
                 HibernateUtil.currentSession().save(row);
             });
         });
+        log.info("Creation publication expressions: " + calculateRequestDuration(startTime));
         HibernateUtil.flushAndCommitCurrentSession();
     }
 
@@ -208,7 +229,7 @@ public class TermPageIndexer {
                 }
                 Set<String> phenotypeTags = phenotypeStatements.stream()
                     .filter(warehouse -> (warehouse.getTag().equals(PhenotypeStatement.Tag.AMELIORATED.toString()) ||
-                        warehouse.getTag().equals(PhenotypeStatement.Tag.EXACERBATED.toString())))
+                                          warehouse.getTag().equals(PhenotypeStatement.Tag.EXACERBATED.toString())))
                     .map(PhenotypeStatementWarehouse::getTag)
                     .collect(toSet());
                 if (phenotypeTags.size() > 0) {
@@ -246,6 +267,12 @@ public class TermPageIndexer {
         if (sessionFactory == null) {
             new HibernateSessionCreator(false);
         }
+    }
+
+    public String calculateRequestDuration(LocalDateTime startTime) {
+        LocalDateTime endTime = LocalDateTime.now();
+        Duration duration = new Duration(startTime, endTime);
+        return duration.toString();
     }
 
 }

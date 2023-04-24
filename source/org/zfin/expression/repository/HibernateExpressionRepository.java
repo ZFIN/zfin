@@ -2865,6 +2865,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             left join fetch result.endStage as end
             left join fetch experiment.fishExperiment as fishExperiment
             left join fetch fishExperiment.fish as fish
+            left join fetch result.figures
             where experiment.gene is not null
             """;
         Query<ExpressionResult> query = session.createQuery(hql, ExpressionResult.class);
