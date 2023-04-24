@@ -27,7 +27,8 @@ public class FishModelDisplay implements Comparable<FishModelDisplay> {
 
 	@Id
 	@JsonView(View.API.class)
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@SequenceGenerator(name="seq-gen",sequenceName="zebrafish_models_display_seq", initialValue=1, allocationSize=1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen")
 	@Column(name = "zmd_id", nullable = false)
 	private long id;
 
