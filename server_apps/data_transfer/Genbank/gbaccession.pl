@@ -66,7 +66,7 @@ if (!(-e "$newfile")) {
 }
 
 #file without the .gz extension
-$uncompressed = $newfile;
+my $uncompressed = $newfile;
 $uncompressed =~ s/\.gz$//;
 
 #decompress files
