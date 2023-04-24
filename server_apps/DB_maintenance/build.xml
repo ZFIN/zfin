@@ -187,6 +187,9 @@
         </java>
     </target>
     <target name="load-flank-seq" description="">
+        <echo message="arg1: ${web-inf.dir}/zfin.properties"/>
+        <echo message="arg2: ${validateData}/report_data"/>
+        <echo message="arg3: ${jobName}"/>
         <java classname="org.zfin.datatransfer.flankingsequence.FlankSeqLoadJob"
               fork="yes"
               classpathref="extended.classpath"
