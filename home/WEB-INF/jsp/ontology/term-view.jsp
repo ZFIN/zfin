@@ -1,6 +1,8 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page import="org.zfin.framework.presentation.NavigationMenuOptions" %>
 <%@ page import="org.zfin.framework.featureflag.FeatureFlagEnum" %>
+<%@ page import="org.zfin.ontology.Ontology" %>
+<%@ page import="org.zfin.framework.presentation.LookupStrings" %>
 
 <jsp:useBean id="formBean" class="org.zfin.ontology.presentation.OntologyBean" scope="request"/>
 <c:set var="term" value="${formBean.term}"/>
@@ -29,6 +31,12 @@
         <z:dataManagerDropdown>
             <a class="dropdown-item" href="/action/ontology/term-detail/${formBean.term.zdbID}">Old View</a>
         </z:dataManagerDropdown>
+        <p/>
+        <div class="float-right">
+            Search Ontology: <zfin2:lookup ontologyName="${Ontology.AOGODO.toString()}"
+                                           action="${LookupStrings.ACTION_TERM_SEARCH}"
+                                           wildcard="true" useIdAsTerm="true" termsWithDataOnly="false"/>
+        </div>
 
         <div id="${zfn:makeDomIdentifier(SUMMARY)}">
             <div class="small text-uppercase text-muted">${term.ontology.commonName}</div>
