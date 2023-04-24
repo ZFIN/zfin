@@ -28,7 +28,8 @@ public class ExpressionTableRow {
 
     @Id
     @JsonView(View.ExpressionPublicationUI.class)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name="seq-gen-expression",sequenceName="publication_expression_display_seq", initialValue=1, allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen-expression")
     @Column(name = "ped_id", nullable = false)
     private long id;
 
