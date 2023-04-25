@@ -5,6 +5,7 @@ import org.apache.commons.csv.CSVRecord;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 
 import java.io.*;
@@ -15,11 +16,17 @@ import java.nio.file.Paths;
 import java.sql.SQLException;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
+import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.DBLink;
+import org.zfin.sequence.ForeignDBDataType;
+import org.zfin.sequence.MarkerDBLink;
+import org.zfin.sequence.service.SequenceService;
 
 
 /**
@@ -67,9 +74,53 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
         createTemporaryNcbiTable();
         copyFromNcbiFileIntoDatabase(extractedCsvFile);
         List<Object[]> results = getReportOfPotentialNcbiGenes();
-        writeResultsToCsv(results);
+        List<NcbiMatchReportRow> ncbiMatchReportRows = convertResultsToReportRow(results);
+
+        addRnaAccessionsToReportRows(ncbiMatchReportRows);
+
+        writeResultsToCsv(ncbiMatchReportRows);
         dropTemporaryTables();
         extractedCsvFile.delete();
+    }
+
+    private void addRnaAccessionsToReportRows(List<NcbiMatchReportRow> ncbiMatchReportRows) {
+        HibernateUtil.createTransaction();
+
+        for (NcbiMatchReportRow ncbiMatchReportRow : ncbiMatchReportRows) {
+            List<String> rnaAccessions = getRnaAccessions(ncbiMatchReportRow.getZdbId());
+
+            //progress
+            System.out.print(".");
+
+            ncbiMatchReportRow.setRnaAccessions(String.join(",", rnaAccessions));
+        }
+
+        HibernateUtil.flushAndCommitCurrentSession();
+    }
+
+    private List<String> getRnaAccessions(String zdbId) {
+        MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
+        SequenceService sequenceService = new SequenceService();
+        sequenceService.setMarkerRepository(markerRepository);
+        List<MarkerDBLink> results = sequenceService.getMarkerDBLinkResultsForMarkerZdbID(zdbId, false, null);
+        return results.stream()
+                .filter(markerDBLink -> ForeignDBDataType.DataType.RNA.equals(markerDBLink.getReferenceDatabase().getForeignDBDataType().getDataType()))
+                .map(DBLink::getAccessionNumber)
+                .toList();
+    }
+
+    private List<NcbiMatchReportRow> convertResultsToReportRow(List<Object[]> inputRows) {
+        return inputRows.stream().map(inputRow ->
+                NcbiMatchReportRow.builder()
+                    .ncbiId((String) inputRow[0])
+                    .zdbId((String) inputRow[1])
+                    .ensemblId((String) inputRow[2])
+                    .symbol((String) inputRow[3])
+                    .dblinks((String) inputRow[4])
+                    .publications((String) inputRow[5])
+                    .rnaAccessions((String) inputRow[6])
+                    .build()
+        ).toList();
     }
 
     /**
@@ -298,12 +349,12 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
      *
      * @param results The results from DB query to write to CSV.
      */
-    private void writeResultsToCsv(List<Object[]> results) {
+    private void writeResultsToCsv(List<NcbiMatchReportRow> results) {
         try (Writer writer = Files.newBufferedWriter(Paths.get(CSV_FILE));
              CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
                      .withHeader("ncbi_id", "zdb_id", "ensembl_id", "symbol", "dblinks", "publications", "rna_accessions"))) {
-            for (Object[] result : results) {
-                csvPrinter.printRecord(result);
+            for (NcbiMatchReportRow result : results) {
+                csvPrinter.printRecord(result.toList());
             }
             csvPrinter.flush();
             System.out.println("Wrote results to " + CSV_FILE);
