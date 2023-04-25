@@ -26,7 +26,7 @@ const FigureSummary = ({statistics, fishID, markerID =('')}) => {
                 return <>{
                     publication.figures.map(figure => {
                         return <CommaSeparatedList key={figure.zdbID}>
-                            <><a href={`/${figure.zdbID}`}>{figure.label}</a>{figure.imgless !== true && <CameraIcon/>}</>
+                            <><a href={`/${figure.zdbID}`}>{figure.label}</a> {figure.imgless !== true && <CameraIcon/>}</>
                         </CommaSeparatedList>
                     })}
                     from <PublicationCitationLink publication={publication}/>
@@ -38,7 +38,7 @@ const FigureSummary = ({statistics, fishID, markerID =('')}) => {
     const manyFigLink = <a href={url}>{statistics.numberOfFigures} figures </a>;
     return <>{manyFigLink}{statistics.imgInFigure && <CameraIcon/>} from {publicationDisplay}</>;
 
-};
+}
 
 FigureSummary.propTypes = {
     fishID: PropTypes.string,

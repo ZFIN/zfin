@@ -21,7 +21,7 @@ const FishZebrafishModelTable = ({fishId}) => {
                 {row.antiGene && <EntityLink entity={row.antiGene}/>}
             </>,
             filterName: 'geneName',
-            width: '80px',
+            width: '90px',
         },
         {
             label: 'Structure',
