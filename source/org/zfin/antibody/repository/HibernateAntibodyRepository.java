@@ -813,7 +813,9 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         Figure figure = record.getFigure();
         if (figure != null) {
             newAntibodyStat.addFigure(figure);
-            newAntibodyStat.setHasImages(CollectionUtils.isNotEmpty(figure.getImages()));
+            // do not unset images (false) once they are set to true
+            if (CollectionUtils.isNotEmpty(figure.getImages()))
+                newAntibodyStat.setHasImages(true);
         }
         Publication publication = record.getPublication();
         if (publication != null) {
@@ -857,7 +859,8 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         Figure figure = record.getFigure();
         if (figure != null) {
             newAntibodyStat.addFigure(figure);
-            newAntibodyStat.setHasImages(CollectionUtils.isNotEmpty(figure.getImages()));
+            if (CollectionUtils.isNotEmpty(figure.getImages()))
+                newAntibodyStat.setHasImages(true);
         }
         Publication publication = record.getPublication();
         if (publication != null) {
