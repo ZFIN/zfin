@@ -2141,7 +2141,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             return null;
         }
 
-        List<MarkerStatistic> markers = new ArrayList<MarkerStatistic>();
+        List<MarkerStatistic> markers = new ArrayList<>();
         for (Object[] stats : list) {
             String markerZdbID = (String) stats[0];
             Marker marker = markerRepository.getMarkerByID(markerZdbID);
