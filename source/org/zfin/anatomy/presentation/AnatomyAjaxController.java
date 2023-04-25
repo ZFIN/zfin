@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.anatomy.AnatomyStatistics;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.anatomy.service.AnatomyService;
@@ -178,11 +179,12 @@ public class AnatomyAjaxController {
     }
 
     @RequestMapping(value = "/{oboID}/phenotype-summary/{fishID}")
-    public String genotypeSummary(Model model
-        , @PathVariable("oboID") String oboID
-        , @PathVariable("fishID") String fishID
-    ) throws Exception {
-        GenericTerm term = null;
+    public String genotypeSummary(Model model,
+                                  @PathVariable("oboID") String oboID,
+                                  @PathVariable("fishID") String fishID,
+                                  @RequestParam(value = "includeSubstructure", defaultValue = "true") boolean includeSubstructure
+    ) {
+        GenericTerm term;
         if (ActiveData.validateActiveData(oboID)) {
             term = ontologyRepository.getTermByZdbID(oboID);
         } else {
@@ -201,12 +203,12 @@ public class AnatomyAjaxController {
         AnatomySearchBean form = new AnatomySearchBean();
         form.setAoTerm(term);
 
-        List<FigureSummaryDisplay> figureSummaryDisplayList = FigureService.createPhenotypeFigureSummary(term, fish, true);
+        List<FigureSummaryDisplay> figureSummaryDisplayList = FigureService.createPhenotypeFigureSummary(term, fish, includeSubstructure);
         model.addAttribute("figureSummaryDisplayList", figureSummaryDisplayList);
 
-        retrieveMutantData(term, form, true);
+        retrieveMutantData(term, form, includeSubstructure);
         model.addAttribute(LookupStrings.FORM_BEAN, form);
-        model.addAttribute("includingSubstructures", true);
+        model.addAttribute("includingSubstructures", includeSubstructure);
         model.addAttribute("fish", fish);
         model.addAttribute("entity", term);
         return "anatomy/phenotype-summary";

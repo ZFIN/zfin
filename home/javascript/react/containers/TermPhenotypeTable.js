@@ -50,7 +50,7 @@ const TermPhenotypeTable = ({termId, directAnnotationOnly, endpointUrl = 'phenot
             content: row => (
                 <FigureSummaryPhenotype
                     statistics={row}
-                    allFiguresUrl={`/action/ontology/${row.term.zdbID}/phenotype-summary/${row.fish.zdbID}`}
+                    allFiguresUrl={`/action/ontology/${row.term.zdbID}/phenotype-summary/${row.fish.zdbID}?includeSubstructure=false`}
                 />
             ),
             width: '100px',
