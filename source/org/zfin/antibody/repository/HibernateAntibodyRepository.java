@@ -1,6 +1,7 @@
 package org.zfin.antibody.repository;
 
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.ScrollableResults;
@@ -430,9 +431,9 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             }
             hasOneWhereClause = true;
             hql.append("  exists ( select result from ExpressionResult result " +
-                "                  where result.startStage.hoursStart >= :hoursStart " +
-                "                    AND result.endStage.hoursStart <= :hoursEnd " +
-                "                    AND result.expressionExperiment.antibody = antibody ) ");
+                       "                  where result.startStage.hoursStart >= :hoursStart " +
+                       "                    AND result.endStage.hoursStart <= :hoursEnd " +
+                       "                    AND result.expressionExperiment.antibody = antibody ) ");
         }
         if (searchCriteria.isAnatomyDefined()) {
             if (hasOneWhereClause) {
@@ -443,12 +444,12 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
             int numberOfTerms = searchCriteria.getTermIDs().length;
             // handle the first term
             hql.append("     expressionTerm.term.zdbID = :aoTermID_0 " +
-                "                     AND experiment.antibody = antibody " +
-                "                     AND expressionTerm.expressionResult = expressionResult" +
-                "                     AND expressionResult.expressionExperiment = experiment ");
+                       "                     AND experiment.antibody = antibody " +
+                       "                     AND expressionTerm.expressionResult = expressionResult" +
+                       "                     AND expressionResult.expressionExperiment = experiment ");
             if (searchCriteria.isStageDefined()) {
                 hql.append("                  AND expressionResult.startStage.hoursStart >= :hoursStart " +
-                    "                     AND expressionResult.endStage.hoursEnd <= :hoursEnd ");
+                           "                     AND expressionResult.endStage.hoursEnd <= :hoursEnd ");
             }
             if (!searchCriteria.isIncludeSubstructures()) {
                 hql.append("    AND expressionTerm.originalAnnotation = 't' ");
@@ -462,15 +463,15 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
                         hql.append(" OR ");
                     }
                     hql.append(" exists (select expressionTerm from ExpressionTermFastSearch expressionTerm, " +
-                        "ExpressionResult expressionResult2, ExpressionExperiment experiment2 " +
-                        "   where " +
-                        "       expressionTerm.term.zdbID = :aoTermID_" + i +
-                        "                     AND expressionResult2.expressionExperiment = experiment2 " +
-                        "                     AND experiment2.antibody = antibody " +
-                        "                     AND expressionTerm.expressionResult = expressionResult2 ");
+                               "ExpressionResult expressionResult2, ExpressionExperiment experiment2 " +
+                               "   where " +
+                               "       expressionTerm.term.zdbID = :aoTermID_" + i +
+                               "                     AND expressionResult2.expressionExperiment = experiment2 " +
+                               "                     AND experiment2.antibody = antibody " +
+                               "                     AND expressionTerm.expressionResult = expressionResult2 ");
                     if (searchCriteria.isStageDefined()) {
                         hql.append("                  AND expressionResult2.startStage.hoursStart >= :hoursStart " +
-                            "                     AND expressionResult2.endStage.hoursEnd <= :hoursEnd ");
+                                   "                     AND expressionResult2.endStage.hoursEnd <= :hoursEnd ");
                     }
                     if (!searchCriteria.isIncludeSubstructures()) {
                         hql.append("    AND expressionTerm.originalAnnotation = 't' ");
@@ -491,20 +492,20 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         // bean is reached.
         if (includeSubstructures) {
             hql = "  from AntibodyAOStatistics stat " +
-                " LEFT JOIN FETCH stat.figure " +
-                " LEFT JOIN FETCH stat.gene " +
-                " LEFT JOIN FETCH stat.publication " +
-                " LEFT JOIN FETCH stat.antibody " +
-                "     where stat.superterm = :aoterm";
+                  " LEFT JOIN FETCH stat.figure " +
+                  " LEFT JOIN FETCH stat.gene " +
+                  " LEFT JOIN FETCH stat.publication " +
+                  " LEFT JOIN FETCH stat.antibody " +
+                  "     where stat.superterm = :aoterm";
         } else {
             hql = " select distinct stat, lower(stat.antibody.name) from AntibodyAOStatistics stat " +
-                " LEFT JOIN FETCH stat.figure " +
-                " LEFT JOIN FETCH stat.gene " +
-                " LEFT JOIN FETCH stat.publication " +
-                " LEFT JOIN FETCH stat.antibody " +
-                "     where stat.superterm = :aoterm and " +
-                "           stat.subterm = :aoterm " +
-                "           order by lower(stat.antibody.name) ";
+                  " LEFT JOIN FETCH stat.figure " +
+                  " LEFT JOIN FETCH stat.gene " +
+                  " LEFT JOIN FETCH stat.publication " +
+                  " LEFT JOIN FETCH stat.antibody " +
+                  "     where stat.superterm = :aoterm and " +
+                  "           stat.subterm = :aoterm " +
+                  "           order by lower(stat.antibody.name) ";
         }
 
         ScrollableResults scrollableResults = HibernateUtil.currentSession().createQuery(hql)
@@ -536,21 +537,23 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         // bean is reached.
         if (includeSubstructures) {
             hql = " select distinct stat, lower(stat.antibody.name) from AntibodyAOStatistics stat " +
-                " LEFT JOIN FETCH stat.figure " +
-                " LEFT JOIN FETCH stat.gene " +
-                " LEFT JOIN FETCH stat.publication " +
-                " LEFT JOIN FETCH stat.antibody " +
-                "     where stat.superterm = :term" +
-                "           AND stat.antibody.zdbID in (:abIds) ";
+                  " LEFT JOIN FETCH stat.figure " +
+                  " LEFT JOIN FETCH stat.image " +
+                  " LEFT JOIN FETCH stat.gene " +
+                  " LEFT JOIN FETCH stat.publication " +
+                  " LEFT JOIN FETCH stat.antibody " +
+                  "     where stat.superterm = :term" +
+                  "           AND stat.antibody.zdbID in (:abIds) ";
         } else {
             hql = " select distinct stat, lower(stat.antibody.name) from AntibodyAOStatistics stat " +
-                " LEFT JOIN FETCH stat.figure " +
-                " LEFT JOIN FETCH stat.gene " +
-                " LEFT JOIN FETCH stat.publication " +
-                " LEFT JOIN FETCH stat.antibody " +
-                "     where (stat.superterm = :term AND " +
-                "           stat.subterm = :term)  " +
-                "           AND stat.antibody.zdbID in (:abIds) ";
+                  " LEFT JOIN FETCH stat.figure " +
+                  " LEFT JOIN FETCH stat.image " +
+                  " LEFT JOIN FETCH stat.gene " +
+                  " LEFT JOIN FETCH stat.publication " +
+                  " LEFT JOIN FETCH stat.antibody " +
+                  "     where (stat.superterm = :term AND " +
+                  "           stat.subterm = :term)  " +
+                  "           AND stat.antibody.zdbID in (:abIds) ";
         }
         if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
             for (Map.Entry<String, String> entry : pagination.getFilterMap().entrySet()) {
@@ -582,21 +585,21 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         // bean is reached.
         if (includeSubstructures) {
             hql = " select distinct stat, lower(stat.gene.name) from HighQualityProbeAOStatistics stat " +
-                " LEFT JOIN FETCH stat.figure " +
-                " LEFT JOIN FETCH stat.gene " +
-                " LEFT JOIN FETCH stat.publication " +
-                " LEFT JOIN FETCH stat.probe " +
-                "     where stat.superterm = :term" +
-                "           AND stat.gene.zdbID in (:geneIds) ";
+                  " LEFT JOIN FETCH stat.figure " +
+                  " LEFT JOIN FETCH stat.gene " +
+                  " LEFT JOIN FETCH stat.publication " +
+                  " LEFT JOIN FETCH stat.probe " +
+                  "     where stat.superterm = :term" +
+                  "           AND stat.gene.zdbID in (:geneIds) ";
         } else {
             hql = " select distinct stat, lower(stat.gene.name) from HighQualityProbeAOStatistics stat " +
-                " LEFT JOIN FETCH stat.figure " +
-                " LEFT JOIN FETCH stat.gene " +
-                " LEFT JOIN FETCH stat.publication " +
-                " LEFT JOIN FETCH stat.probe " +
-                "     where (stat.superterm = :term AND " +
-                "           stat.subterm = :term)  " +
-                "           AND stat.gene.zdbID in (:geneIds) ";
+                  " LEFT JOIN FETCH stat.figure " +
+                  " LEFT JOIN FETCH stat.gene " +
+                  " LEFT JOIN FETCH stat.publication " +
+                  " LEFT JOIN FETCH stat.probe " +
+                  "     where (stat.superterm = :term AND " +
+                  "           stat.subterm = :term)  " +
+                  "           AND stat.gene.zdbID in (:geneIds) ";
         }
         if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
             for (Map.Entry<String, String> entry : pagination.getFilterMap().entrySet()) {
@@ -626,13 +629,13 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         String hql;
         if (includeSubstructures) {
             hql = "select count(distinct stat.antibody) " +
-                "     from AntibodyAOStatistics stat " +
-                "     where stat.superterm = :aoterm ";
+                  "     from AntibodyAOStatistics stat " +
+                  "     where stat.superterm = :aoterm ";
         } else {
             hql = "select count(distinct stat.antibody) " +
-                "     from AntibodyAOStatistics stat " +
-                "     where (stat.superterm = :aoterm AND " +
-                "           stat.subterm = :aoterm) ";
+                  "     from AntibodyAOStatistics stat " +
+                  "     where (stat.superterm = :aoterm AND " +
+                  "           stat.subterm = :aoterm) ";
         }
         if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
             for (Map.Entry<String, String> entry : pagination.getFilterMap().entrySet()) {
@@ -654,13 +657,13 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         String hql;
         if (includeSubstructures) {
             hql = "select count(distinct stat.probe) " +
-                "     from HighQualityProbeAOStatistics stat " +
-                "     where stat.superterm = :aoterm ";
+                  "     from HighQualityProbeAOStatistics stat " +
+                  "     where stat.superterm = :aoterm ";
         } else {
             hql = "select count(distinct stat.probe) " +
-                "     from HighQualityProbeAOStatistics stat " +
-                "     where (stat.superterm = :aoterm AND " +
-                "           stat.subterm = :aoterm) ";
+                  "     from HighQualityProbeAOStatistics stat " +
+                  "     where (stat.superterm = :aoterm AND " +
+                  "           stat.subterm = :aoterm) ";
         }
         if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
             for (Map.Entry<String, String> entry : pagination.getFilterMap().entrySet()) {
@@ -682,13 +685,13 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         String hql;
         if (includeSubstructures) {
             hql = "select stat.antibody.zdbID, stat.antibody.abbreviationOrder " +
-                "     from AntibodyAOStatistics stat " +
-                "     where stat.superterm = :aoterm ";
+                  "     from AntibodyAOStatistics stat " +
+                  "     where stat.superterm = :aoterm ";
         } else {
             hql = "select stat.antibody.zdbID, stat.antibody.abbreviationOrder " +
-                "     from AntibodyAOStatistics stat " +
-                "     where stat.superterm = :aoterm and " +
-                "           stat.subterm = :aoterm  ";
+                  "     from AntibodyAOStatistics stat " +
+                  "     where stat.superterm = :aoterm and " +
+                  "           stat.subterm = :aoterm  ";
         }
         if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
             for (Map.Entry<String, String> entry : pagination.getFilterMap().entrySet()) {
@@ -810,6 +813,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         Figure figure = record.getFigure();
         if (figure != null) {
             newAntibodyStat.addFigure(figure);
+            newAntibodyStat.setHasImages(CollectionUtils.isNotEmpty(figure.getImages()));
         }
         Publication publication = record.getPublication();
         if (publication != null) {
@@ -853,6 +857,7 @@ public class HibernateAntibodyRepository implements AntibodyRepository {
         Figure figure = record.getFigure();
         if (figure != null) {
             newAntibodyStat.addFigure(figure);
+            newAntibodyStat.setHasImages(CollectionUtils.isNotEmpty(figure.getImages()));
         }
         Publication publication = record.getPublication();
         if (publication != null) {
