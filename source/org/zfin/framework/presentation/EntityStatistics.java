@@ -1,6 +1,8 @@
 package org.zfin.framework.presentation;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.framework.api.View;
@@ -12,6 +14,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Setter
+@Getter
 public abstract class EntityStatistics {
 
     protected List<Publication> publications;
@@ -23,6 +27,8 @@ public abstract class EntityStatistics {
     private Set<Image> images = new HashSet<>();
     @JsonView(View.API.class)
     private boolean hasData;
+    @JsonView(View.API.class)
+    private boolean hasImages;
 
     @JsonView({View.API.class, View.ExpressedGeneAPI.class})
     public int getNumberOfPublications() {
