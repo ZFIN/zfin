@@ -61,6 +61,7 @@
 
     <z:attributeListItem label="Ontology">
             <span>${term.ontology.commonName}</span>
+        <zfin2:ontologyTermLinks term="${formBean.term}"/>
     </z:attributeListItem>
 
 </z:attributeList>
