@@ -6,7 +6,6 @@ import org.hibernate.MappingException;
 import org.hibernate.Session;
 import org.hibernate.boot.model.relational.Database;
 import org.hibernate.boot.model.relational.SqlStringGenerationContext;
-import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.id.Configurable;
@@ -21,7 +20,6 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.profile.Company;
 import org.zfin.profile.Lab;
-import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 
 import java.io.Serializable;
@@ -68,7 +66,7 @@ public class ZdbIdGenerator implements IdentifierGenerator, Configurable {
             throws HibernateException, SQLException {
 
         if (!session.isTransactionInProgress()) {
-            throw new HibernateException("Generating ZdbID without a transaction: " + type);
+            throw new HibernateException("Generating ZDB-ID without a transaction: " + type);
         }
 
         objectType = type;
