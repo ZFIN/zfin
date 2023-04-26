@@ -61,33 +61,38 @@ if (!(-e "$newfile")) {
 }
 
 #decompress files
-system("/local/bin/gunzip $newfile");
-
 $count = 0;
 #wait until the files are decompressed
 while( !(-e "$unzipfile") ) {
     $count++;
     if ($count < 10){
-	    system("/local/bin/gunzip -f $newfile");
+        print "Extracting $newfile to $unzipfile \n";
+        system("/local/bin/gunzip -c $newfile > $unzipfile") && die("gunzip failed");
     }
 }
 
+if (!(-e "$unzipfile")) {
+    die "failed to extract genbank file" ;
+}
+print "File extracted to: $unzipfile\n";
 
 
 # parse out accession number, length, datatype for zebrafish records,
 # also parse out flat file into several fasta files for blast db update
 
+print "Running parseDaily.pl on $unzipfile \n";
 system ("parseDaily.pl $unzipfile")  &&  &writeReport("parseDaily.pl failed.");
 
 
 # only move the FASTA files and flat files to development_machine if that script
 # is run from production.
 
-$dir_on_development_machine = "/research/zblastfiles/files/daily" ;    
-my $move_blast_files_to_development = "<!--|MOVE_BLAST_FILES_TO_DEVELOPMENT|-->";
+$dir_on_development_machine = "/research/zblastfiles/files/daily" ;
 
-if ($move_blast_files_to_development eq "true") {
-	if (! system ("/bin/mv *.fa *.flat $dir_on_development_machine") ) {
+
+if ($MOVE_BLAST_FILES_TO_DEVELOPMENT eq "true") {
+    print "Moving blast files to development \n";
+    if (! system ("/bin/mv *.fa *.flat $dir_on_development_machine") ) {
 
 		&writeReport("Fasta files moved to development_machine.");
 		system ("/bin/touch $dir_on_development_machine/fileMoved.$md_date");
@@ -98,17 +103,18 @@ if ($move_blast_files_to_development eq "true") {
 }
 # rename daily zebrafish accession file and use that to update the database
 if (! system ("/bin/mv $accfile nc_zf_acc.unl")) {
-    
+    print "Running psql to load the unload files.\n";
+
     # load the updates into accesson_bank and db_link
     try {
-      ZFINPerlModules->doSystemCommand("$ENV{'PGBINDIR'}/psql -v ON_ERROR_STOP=1 <!--|DB_NAME|--> < GenBank-Accession-Update_d.sql >> $report 2>&1");
+        ZFINPerlModules->doSystemCommand("$ENV{'PGBINDIR'}/psql --echo-all -v ON_ERROR_STOP=1 $ENV{'DB_NAME'} < GenBank-Accession-Update_d.sql >> $report 2>&1");
 
       #Keep archive of psql output for help troubleshooting
       my $timestamp = strftime("%Y-%m-%d-%H-%M-%S", localtime(time()));
       ZFINPerlModules->doSystemCommand("cp $report $report-$timestamp");      
     } catch {
-      warn "Failed at GenBank-Accession-Update_d.sql - $_";
-      exit -1;
+        warn "Failed at GenBank-Accession-Update_d.sql - $_";
+        exit -1;
     };
 
 } else {
@@ -122,8 +128,7 @@ if (! system ("/bin/mv $accfile nc_zf_acc.unl")) {
 #
 
 sub downloadDailyUpdateFile() {
-    my $file = $_[0];
-    #print "download: $file\n";
+    print "Running: /local/bin/wget -q ftp://ftp.ncbi.nlm.nih.gov/genbank/daily-nc/$newfile;\n";
     system("/local/bin/wget -q ftp://ftp.ncbi.nlm.nih.gov/genbank/daily-nc/$newfile;");
 }
 
@@ -131,13 +136,13 @@ sub emailError() {
     &writeReport($_[0]);
     &sendReport();
     exit;
-    }
+}
 
 sub writeReport() {
     open (REPORT, ">>$report") or die "cannot open report";
     print REPORT "$_[0] \n\n";
     close (REPORT);
-  }
+}
 
 sub sendReport() {
     open(MAIL, "| $mailprog") || die "cannot open mailprog $mailprog, stopped";
