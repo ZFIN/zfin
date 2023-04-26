@@ -20,9 +20,7 @@ import org.zfin.publication.repository.PublicationRepository;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
 
@@ -31,6 +29,8 @@ import static org.zfin.framework.HibernateUtil.currentSession;
  *
  */
 public class FlankSeqProcessor {
+
+    public static final String FASTA_URL = "/research/zprodmore/gff3/Danio_rerio.fa";
 
     private FeatureRepository featureRepository = new HibernateFeatureRepository();
     private PublicationRepository pubRepo = new HibernatePublicationRepository();
@@ -47,7 +47,7 @@ public class FlankSeqProcessor {
     public void updateFlankingSequences() {
         try {
 
-            File fasta = new File("/research/zprodmore/gff3/Danio_rerio.fa");
+            File fasta = new File(FASTA_URL);
             IndexedFastaSequenceFile ref = new IndexedFastaSequenceFile(fasta);
             int locStart = 0;
             int locEnd = 0;
@@ -58,10 +58,16 @@ public class FlankSeqProcessor {
 
             try {
                 HibernateUtil.createTransaction();
-//We are not loading flanking sequences for sa alleles. they have alreday bene loaded via a one time SQL script
-                for (Feature feature : featureRepository.getDeletionFeatures()) {
 
+                //We are not loading flanking sequences for sa alleles. They have already been loaded via a one time SQL script.
+                List<Feature> deletionFeatures = featureRepository.getDeletionFeatures();
+                System.out.println("deletionFeatures.size() = " + deletionFeatures.size());
+
+                for (Feature feature : deletionFeatures) {
+
+                    //get Optional
                     FeatureLocation ftrLoc = featureRepository.getAllFeatureLocationsOnGRCz11(feature);
+
                     if (ftrLoc != null
                             && ftrLoc.getStartLocation() != null && ftrLoc.getStartLocation().toString() != ""
                             && ftrLoc.getEndLocation() != null && ftrLoc.getEndLocation().toString() != ""
@@ -72,23 +78,27 @@ public class FlankSeqProcessor {
                         locStart = ftrLoc.getStartLocation();
                         locEnd = ftrLoc.getEndLocation();
                         if (feature.getFeatureGenomicMutationDetail() == null) {
-
                             String refSeq = new String(ref.getSubsequenceAt(ftrChrom, locStart, locEnd).getBases());
+                            System.out.print(".");
                             InsertFeatureGenomeRecord(feature, refSeq);
                         }
-
                     }
                 }
-                for (Feature feature : featureRepository.getNonSaFeaturesWithGenomicMutDets()) {
-                    if (feature.getType() == FeatureTypeEnum.INDEL || feature.getType() == FeatureTypeEnum.DELETION || feature.getType() == FeatureTypeEnum.INSERTION || feature.getType() == FeatureTypeEnum.MNV || feature.getType() == FeatureTypeEnum.POINT_MUTATION) {
+                System.out.println("");
 
+                List<Feature> nonSaFeaturesWithGenomicMutDets = featureRepository.getNonSaFeaturesWithGenomicMutDets();
+                System.out.println("nonSaFeaturesWithGenomicMutDets.size() = " + nonSaFeaturesWithGenomicMutDets.size());
+
+                int i = 0;
+                for (Feature feature : nonSaFeaturesWithGenomicMutDets) {
+                    if (feature.getType() == FeatureTypeEnum.INDEL || feature.getType() == FeatureTypeEnum.DELETION || feature.getType() == FeatureTypeEnum.INSERTION || feature.getType() == FeatureTypeEnum.MNV || feature.getType() == FeatureTypeEnum.POINT_MUTATION) {
                         FeatureLocation ftrLoc = featureRepository.getAllFeatureLocationsOnGRCz11(feature);
                         if (ftrLoc != null
                                 && ftrLoc.getStartLocation() != null && ftrLoc.getStartLocation().toString() != ""
                                 && ftrLoc.getEndLocation() != null && ftrLoc.getEndLocation().toString() != ""
                                 && ftrLoc.getAssembly() != null
-
                         ) {
+                            i++;
                             String ftrChrom = ftrLoc.getChromosome();
                             locStart = ftrLoc.getStartLocation();
                             locEnd = ftrLoc.getEndLocation();
@@ -124,9 +134,13 @@ public class FlankSeqProcessor {
                                     seq1 = new String(ref.getSubsequenceAt(ftrChrom, locStart - offset, locStart - 1).getBases());
                                     seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd + 1, locEnd + offset).getBases());
                                     break;
-
                             }
 
+                            //progress output
+                            System.out.print(".");
+                            if (i % 100 == 0) {
+                                System.out.println("\n " + i + " / " + nonSaFeaturesWithGenomicMutDets.size() + " features processed");
+                            }
 
                             insertFlankSeq(feature, seq1, seq2, offset);
                         }
@@ -135,8 +149,7 @@ public class FlankSeqProcessor {
                 }
                 HibernateUtil.flushAndCommitCurrentSession();
             } catch (NullPointerException e) {
-                System.err.println("Cannot fetch sequence " +
-                        " for fasta file " + fasta);
+                System.err.println("Cannot fetch sequence for fasta file " + fasta);
                 e.printStackTrace();
                 logger.error(e);
                 errors.add(ExceptionUtils.getFullStackTrace(e));
@@ -163,21 +176,19 @@ public class FlankSeqProcessor {
         fgmd.setFeature(ftr);
         fgmd.setFgmdVarStrand("+");
         HibernateUtil.currentSession().save(fgmd);
-        //HibernateUtil.currentSession().getTransaction().commit();
+
         HibernateUtil.flushAndCommitCurrentSession();
+        HibernateUtil.createTransaction();
         HibernateUtil.currentSession().update(fgmd);
         HibernateUtil.currentSession().refresh(fgmd);
         HibernateUtil.currentSession().update(ftr);
         HibernateUtil.currentSession().refresh(ftr);
-        // HibernateUtil.closeSession();
-
 
     }
 
     private void insertFlankSeq(Feature ftr, String seq1, String seq2, int offset) {
         VariantSequence vrSeq = new VariantSequence();
         if (featureRepository.getFeatureVariant(ftr) != null) {
-
             vrSeq = featureRepository.getFeatureVariant(ftr);
         }
         vrSeq.setVseqDataZDB(ftr.getZdbID());
@@ -207,7 +218,6 @@ public class FlankSeqProcessor {
             vrSeq.setVfsVariation(ftr.getFeatureGenomicMutationDetail().getFgmdSeqRef() + "/" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqVar());
         }
         if (ftr.getType() == FeatureTypeEnum.MNV) {
-
             vrSeq.setVfsTargetSequence(seq1 + "[" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqRef() + "/" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqVar() + "]" + seq2);
             vrSeq.setVfsVariation(ftr.getFeatureGenomicMutationDetail().getFgmdSeqRef() + "/" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqVar());
         }
@@ -219,8 +229,6 @@ public class FlankSeqProcessor {
             pa.setSourceType(RecordAttribution.SourceType.STANDARD);
             currentSession().save(pa);
         }
-
-
     }
 
 
@@ -236,7 +244,6 @@ public class FlankSeqProcessor {
         return updated;
     }
 
-
     public static void main(String[] args) {
         try {
             FlankSeqProcessor driver = new FlankSeqProcessor();
@@ -245,6 +252,4 @@ public class FlankSeqProcessor {
             e.printStackTrace();
         }
     }
-
-
 }
