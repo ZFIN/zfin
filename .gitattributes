@@ -885,6 +885,7 @@
 /server_apps/jenkins/plugins/maven-plugin.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/mina-sshd-api-common.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/mina-sshd-api-core.jpi filter=lfs diff=lfs merge=lfs -text
+/server_apps/jenkins/plugins/naginator.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/nested-view.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/next-executions.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/plugin-util-api.jpi filter=lfs diff=lfs merge=lfs -text
@@ -901,6 +902,7 @@
 /server_apps/jenkins/plugins/trilead-api.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/windows-slaves.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/workflow-api.jpi filter=lfs diff=lfs merge=lfs -text
+/server_apps/jenkins/plugins/workflow-job.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/workflow-step-api.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/workflow-support.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/solr/server/lib/ext/jcl-over-slf4j-1.7.7.jar filter=lfs diff=lfs merge=lfs -text
