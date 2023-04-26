@@ -31,8 +31,6 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.FeatureLocation;
 import org.zfin.mapping.VariantSequence;
 import org.zfin.marker.Marker;
-import org.zfin.marker.presentation.HighQualityProbe;
-import org.zfin.marker.presentation.HighQualityProbeAOStatistics;
 import org.zfin.marker.presentation.PreviousNameLight;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
@@ -697,7 +695,6 @@ public class HibernateFeatureRepository implements FeatureRepository {
         FeatureLocation ftrLoc = (FeatureLocation) featureLocationCriteria.uniqueResult();
         return ftrLoc;
     }
-
 
     public List<FeatureGenomicMutationDetail> getAllFeatureGenomicMutationDetails() {
         Criteria fgmdCriteria = HibernateUtil.currentSession().createCriteria(FeatureGenomicMutationDetail.class);
