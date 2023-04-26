@@ -49,7 +49,7 @@ public class ChebiPhenotypeIndexer extends UiIndexer<GenericTerm> {
 
     protected Map<Fish, Map<Experiment, Map<GenericTerm, Set<PhenotypeStatementWarehouse>>>> retrieveRecordMap() {
         indexerHelper = new IndexerHelper();
-        startTransaction("Start retrieving chebi phenotype...");
+        startTransaction();
         Map<Fish, Map<Experiment, Map<GenericTerm, Set<PhenotypeStatementWarehouse>>>> figureMap = RepositoryFactory.getPublicationRepository().getAllChebiPhenotype();
         commitTransaction("Finished retrieving chebi phenotype: ", figureMap.size());
         return figureMap;

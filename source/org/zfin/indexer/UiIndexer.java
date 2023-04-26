@@ -9,7 +9,9 @@ import org.zfin.properties.ZfinProperties;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.zfin.repository.RepositoryFactory.getDiseasePageRepository;
 
@@ -81,6 +83,10 @@ public abstract class UiIndexer<Entity> extends Thread {
         HibernateUtil.createTransaction();
     }
 
+    protected void startTransaction() {
+        startTransaction(null);
+    }
+
     public String calculateRequestDuration(LocalDateTime startTime) {
         LocalDateTime endTime = LocalDateTime.now();
         Duration duration = new Duration(startTime, endTime);
@@ -88,6 +94,15 @@ public abstract class UiIndexer<Entity> extends Thread {
     }
 
     public static void main(String[] args) throws NoSuchFieldException {
+
+        args = new String[1];
+        args[0] = "ChebiPhenotype";
+        Set<String> argumentSet = new HashSet<>();
+        for (int i = 0; i < args.length; i++) {
+            argumentSet.add(args[i]);
+            log.info("Args[" + i + "]: " + args[i]);
+        }
+
         HashMap<String, UiIndexer<?>> indexers = new HashMap<>();
         for (UiIndexerConfig uic : UiIndexerConfig.values()) {
             try {
@@ -102,12 +117,16 @@ public abstract class UiIndexer<Entity> extends Thread {
 
         boolean isThreadedExecution = false;
         for (String type : indexers.keySet()) {
-            if (isThreadedExecution) {
-                log.info("Starting in threaded mode for: " + type);
-                indexers.get(type).start();
+            if (argumentSet.size() == 0 || argumentSet.contains(type)) {
+                if (isThreadedExecution) {
+                    log.info("Starting in threaded mode for: " + type);
+                    indexers.get(type).start();
+                } else {
+                    log.info("Starting indexer sequentially: " + type);
+                    indexers.get(type).runIndex();
+                }
             } else {
-                log.info("Starting indexer sequentially: " + type);
-                indexers.get(type).runIndex();
+                log.info("Not Starting indexer: " + type);
             }
         }
 
