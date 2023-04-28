@@ -62,12 +62,10 @@ public class ImageNavigationMenu extends NavigationMenu {
         this.setHidden(NavigationMenuOptions.FIGURE_CAPTION,image.getFigure() == null || image.getFigure().getCaption() == null);
 
         this.setHidden(NavigationMenuOptions.COMMENTS, StringUtils.isEmpty(image.getComments()));
+
         this.setHidden(NavigationMenuOptions.DEVELOPMENTAL_STAGE, image.getImageStage() == null || image.getImageStage().getStart() == null);
-        this.setHidden(NavigationMenuOptions.ORIENTATION,
-        "not specified".equals(image.getPreparation()) ||
-            "not specified".equals(image.getForm()) ||
-            "not specified".equals(image.getDirection()) ||
-            "not specified".equals(image.getView()));
+
+        this.setHidden(NavigationMenuOptions.ORIENTATION, image.hideOrientationInformation());
 
         boolean showAcknowledgments = image.getFigure() != null &&
                 image.getFigure().getPublication() != null &&
