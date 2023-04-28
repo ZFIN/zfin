@@ -23,12 +23,12 @@ const FigureSummary = ({statistics, fishID, markerID =('')}) => {
     if (statistics.numberOfFigures < 5) {
         return <CommaSeparatedList>
             {statistics.publications.map(publication => {
-                return <>{
-                    publication.figures.map(figure => {
-                        return <CommaSeparatedList key={figure.zdbID}>
-                            <><a href={`/${figure.zdbID}`}>{figure.label}</a> {figure.imgless !== true && <CameraIcon/>}</>
-                        </CommaSeparatedList>
-                    })}
+                return <>
+                    <CommaSeparatedList>
+                        {publication.figures.map(figure => {
+                            return <><a href={`/${figure.zdbID}`}>{figure.label}</a>{figure.imgless !== true && <> <CameraIcon/></>}</>
+                        })}
+                    </CommaSeparatedList>
                     from <PublicationCitationLink publication={publication}/>
                 </>
             })}
