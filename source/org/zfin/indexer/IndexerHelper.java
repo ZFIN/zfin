@@ -13,7 +13,10 @@ public class IndexerHelper {
     protected void addQuickReport(String message, Integer numberOfRecords) {
         if (message != null) {
             message += " Duration: " + getDuration();
-            message += ", Records: " + String.format("%,d", numberOfRecords);
+            if (numberOfRecords != null)
+                message += ", Records: " + String.format("%,d", numberOfRecords);
+            log.info(message);
+        } else {
             log.info(message);
         }
     }
@@ -30,4 +33,11 @@ public class IndexerHelper {
         return duration.toString();
     }
 
+    public void startProcess() {
+        startProcess(null);
+    }
+
+    public void addQuickReport(String message) {
+        addQuickReport(message, null);
+    }
 }
