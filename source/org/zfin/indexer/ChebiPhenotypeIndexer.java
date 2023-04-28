@@ -5,7 +5,6 @@ import org.zfin.expression.Experiment;
 import org.zfin.expression.ExperimentCondition;
 import org.zfin.expression.Figure;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.api.Pagination;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.PhenotypeStatement;
@@ -13,78 +12,28 @@ import org.zfin.mutant.PhenotypeStatementWarehouse;
 import org.zfin.mutant.presentation.ChebiPhenotypeDisplay;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.OmimPhenotypeDisplay;
-import org.zfin.ontology.service.OntologyService;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
 import javax.persistence.JoinTable;
 import javax.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toSet;
-import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
 @Log4j2
-public class ChebiPhenotypeIndexer extends UiIndexer<GenericTerm> {
+public class ChebiPhenotypeIndexer extends UiIndexer<ChebiPhenotypeDisplay> {
 
     public ChebiPhenotypeIndexer(UiIndexerConfig config) {
         super(config);
     }
 
     @Override
-    protected void index() {
-        Map<Fish, Map<Experiment, Map<GenericTerm, Set<PhenotypeStatementWarehouse>>>> figureMap = retrieveRecordMap();
-        cleanUiTables();
-        saveRecordMap(figureMap);
-    }
-
-    @Override
-    protected List<GenericTerm> retrieveRecords() {
-        return null;
-    }
-
-    protected Map<Fish, Map<Experiment, Map<GenericTerm, Set<PhenotypeStatementWarehouse>>>> retrieveRecordMap() {
-        indexerHelper = new IndexerHelper();
-        startTransaction();
+    protected List<ChebiPhenotypeDisplay> inputOutput() {
         Map<Fish, Map<Experiment, Map<GenericTerm, Set<PhenotypeStatementWarehouse>>>> figureMap = RepositoryFactory.getPublicationRepository().getAllChebiPhenotype();
-        commitTransaction("Finished retrieving chebi phenotype: ", figureMap.size());
-        return figureMap;
-    }
-
-    @Override
-    protected void cleanUiTables() {
-        try {
-            String associationTable = ChebiPhenotypeDisplay.class.getDeclaredField("phenotypeStatements").getAnnotation(JoinTable.class).name();
-            String chebiPhenotypeTable = ChebiPhenotypeDisplay.class.getAnnotation(Table.class).name();
-            cleanoutTable(associationTable, chebiPhenotypeTable);
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    protected void saveRecords(List<GenericTerm> diseaseList) {
-        indexerHelper = new IndexerHelper();
-        startTransaction("Start saving genes involved...");
-        int index = 0;
-        for (GenericTerm term : diseaseList) {
-            List<OmimPhenotypeDisplay> displayListSingle = OntologyService.getOmimPhenotype(term, new Pagination(), false);
-            OntologyService.fixupSearchColumns(displayListSingle);
-            displayListSingle.forEach(omimDisplay -> HibernateUtil.currentSession().save(omimDisplay));
-            if (index % 200 == 0)
-                System.out.println(index);
-            index++;
-        }
-        commitTransaction("Finished saving genes involved: ", diseaseList.size());
-    }
-
-    protected void saveRecordMap(Map<Fish, Map<Experiment, Map<GenericTerm, Set<PhenotypeStatementWarehouse>>>> figureMap) {
-        indexerHelper = new IndexerHelper();
-        startTransaction("Start saving chebi phenotype...");
+        List<ChebiPhenotypeDisplay> resultList = new ArrayList<>();
         figureMap.forEach((fish, termMap) -> termMap.forEach((experiment, experimentMao) -> {
             experimentMao.forEach((term, phenotypeStatementWarehouses) -> {
                 ChebiPhenotypeDisplay display = new ChebiPhenotypeDisplay(fish, term);
@@ -121,11 +70,21 @@ public class ChebiPhenotypeIndexer extends UiIndexer<GenericTerm> {
                     .map(ExperimentCondition::getChebiTerm)
                     .map(GenericTerm::getTermName)
                     .collect(Collectors.joining("|")));
-                HibernateUtil.currentSession().save(display);
+                resultList.add(display);
             });
         }));
-        commitTransaction("Finished saving chebi phenotype: ", figureMap.size());
+        return resultList;
     }
 
+    @Override
+    protected void cleanUiTables() {
+        try {
+            String associationTable = ChebiPhenotypeDisplay.class.getDeclaredField("phenotypeStatements").getAnnotation(JoinTable.class).name();
+            String chebiPhenotypeTable = ChebiPhenotypeDisplay.class.getAnnotation(Table.class).name();
+            cleanoutTable(associationTable, chebiPhenotypeTable);
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }

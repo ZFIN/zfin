@@ -16,7 +16,10 @@
         <property name="hibernate.format_sql">true</property>
         <property name="hibernate.cache.use_second_level_cache">false</property>
         <property name="hibernate.cache.use_query_cache">false</property>
-        <property name="hibernate.jdbc.batch_size">20</property>
+        <property name="hibernate.jdbc.batch_size">50</property>
+        <property name="hibernate.order_inserts">true</property>
+        <property name="hibernate.order_updates">true</property>
+        <property name="hibernate.jdbc.batch_versioned_data">true</property>
         <property name="cache.provider_configuration_file_resource_path">ehcache.xml</property>
         <property name="org.hibernate.envers.audit_table_suffix">_audit</property>
         <property name="org.hibernate.envers.do_not_audit_optimistic_locking_field">true</property>

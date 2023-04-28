@@ -41,7 +41,8 @@ public class FishModelDisplay implements Comparable<FishModelDisplay> {
 	@JsonView(View.API.class)
 	private Set<Publication> publications;
 	@JsonView(View.API.class)
-	@Transient
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "zmd_fishox_zdb_id")
 	private FishExperiment fishModel;
 	@JsonView(View.API.class)
 	@ManyToOne(fetch = FetchType.LAZY)

@@ -24,7 +24,8 @@ public class OmimPhenotypeDisplay implements Serializable {
 
 	@Id
 	@JsonView(View.API.class)
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@SequenceGenerator(name="omim_display_display_seq",sequenceName="omim_display_display_seq", initialValue=1, allocationSize=1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "omim_display_display_seq")
 	@Column(name = "opd_id", nullable = false)
 	private long id;
 

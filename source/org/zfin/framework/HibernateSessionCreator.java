@@ -152,6 +152,8 @@ public class HibernateSessionCreator {
         }
     }
 
+    public static final int BATCH_SIZE = 50;
+
     private Configuration createConfiguration(String db) {
         Configuration config = new Configuration();
         config.setInterceptor(new StringCleanInterceptor());
@@ -170,6 +172,9 @@ public class HibernateSessionCreator {
         config.setProperty("hibernate.c3p0.min_size", "2");
         config.setProperty("hibernate.c3p0.max_siz", "5");
         config.setProperty("hibernate.cache.provider_configuration_file_resource_path", "conf");
+        config.setProperty("hibernate.jdbc.batch_size", String.valueOf(BATCH_SIZE));
+        config.setProperty("hibernate.order_inserts", "true");
+        config.setProperty("hibernate.order_updates", "true");
         config.setProperty("hibernate.cache.use_second_level_cache", "false");
         //config.setProperty("hibernate.cache.use_query_cache", "true");
 //        config.setProperty("hibernate.use_sql_comments", "true");

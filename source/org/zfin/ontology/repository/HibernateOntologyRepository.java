@@ -1255,7 +1255,9 @@ public class HibernateOntologyRepository implements OntologyRepository {
             	select ref.term from TermExternalReference as ref
             	where ref.omimPhenotypes is not empty
             """;
-        return new HashSet<>(HibernateUtil.currentSession().createQuery(hql, GenericTerm.class).getResultList());
+        org.hibernate.query.Query<GenericTerm> query = HibernateUtil.currentSession().createQuery(hql, GenericTerm.class);
+//        query.setMaxResults(20);
+        return new HashSet<>(query.getResultList());
     }
 
     private List<GenericTerm> filterTermsByOntology(List<GenericTerm> terms, Ontology ontology) {

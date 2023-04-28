@@ -20,6 +20,7 @@ public interface DiseasePageRepository {
     PaginationResult<FishModelDisplay> getFishDiseaseModels(GenericTerm term, Pagination pagination, boolean includeChildren);
 
     List<ChebiFishModelDisplay> getFishDiseaseChebiModels(GenericTerm term, boolean includeChildren);
+    List<FishModelDisplay> getAllFishDiseaseModels();
 
     PaginationResult<ChebiPhenotypeDisplay> getPhenotypeChebi(GenericTerm term, Pagination pagination, boolean includeChildren);
 
