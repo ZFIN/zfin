@@ -10,26 +10,27 @@ import org.zfin.mutant.presentation.FishModelDisplay;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.service.OntologyService;
 
-import javax.persistence.JoinTable;
 import javax.persistence.Table;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toSet;
+import static org.zfin.repository.RepositoryFactory.getDiseasePageRepository;
 
 @Log4j2
-public class FishModelIndexer extends UiIndexer<FishModelDisplay> {
+public class ChebiFishModelIndexer extends UiIndexer<ChebiFishModelDisplay> {
 
-    public FishModelIndexer(UiIndexerConfig config) {
+    public ChebiFishModelIndexer(UiIndexerConfig config) {
         super(config);
     }
 
     @Override
-    protected List<FishModelDisplay> inputOutput() {
-        List<FishModelDisplay> diseaseModelsWithFishModelsGrouped = OntologyService.getDiseaseModelsWithFishModelsGrouped(null, false, new Pagination());
+    protected List<ChebiFishModelDisplay> inputOutput() {
+        List<FishModelDisplay> fishModelList = getDiseasePageRepository().getAllFishDiseaseModels();
 
-        diseaseModelsWithFishModelsGrouped.forEach(fishModelDisplay -> {
+        List<ChebiFishModelDisplay> resultList = new ArrayList<>();
+        fishModelList.forEach(fishModelDisplay -> {
             fishModelDisplay.setEvidenceSearch(fishModelDisplay.getFishModel().getDiseaseAnnotationModels().stream()
                 .map(model -> DTOConversionService.evidenceCodeIdToAbbreviation(model.getDiseaseAnnotation().getEvidenceCode().getZdbID()))
                 .distinct()
@@ -37,20 +38,27 @@ public class FishModelIndexer extends UiIndexer<FishModelDisplay> {
             fishModelDisplay.setEvidenceCodes(new HashSet<>(fishModelDisplay.getFishModel().getDiseaseAnnotationModels().stream().map(model -> model.getDiseaseAnnotation().getEvidenceCode()).collect(Collectors.toList())));
             fishModelDisplay.setFishSearch(fishModelDisplay.getFish().getName().replaceAll("<[^>]*>", ""));
             fishModelDisplay.setConditionSearch(fishModelDisplay.getFishModel().getExperiment().getDisplayAllConditions());
+
+            Set<GenericTerm> chebiTerms = fishModelDisplay.getFishModel().getDiseaseAnnotationModels().stream()
+                .map(diseaseAnnotationModel -> diseaseAnnotationModel.getFishExperiment().getExperiment().getExperimentConditions().stream()
+                    .map(ExperimentCondition::getChebiTerm).toList()).toList()
+                .stream().flatMap(Collection::stream).collect(toSet());
+
+            chebiTerms.stream().filter(Objects::nonNull)
+                .forEach(chebiTerm -> {
+                    ChebiFishModelDisplay display = new ChebiFishModelDisplay();
+                    display.setFishModelDisplay(fishModelDisplay);
+                    display.setChebi(chebiTerm);
+                    resultList.add(display);
+                });
         });
-        return diseaseModelsWithFishModelsGrouped;
+        return resultList;
     }
 
     @Override
     protected void cleanUiTables() {
-        String associationTable;
-        try {
-            associationTable = FishModelDisplay.class.getDeclaredField("evidenceCodes").getAnnotation(JoinTable.class).name();
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        }
-        String fishModelTable = FishModelDisplay.class.getAnnotation(Table.class).name();
-        cleanoutTable(associationTable, fishModelTable);
+        String fishModelTable = ChebiFishModelDisplay.class.getAnnotation(Table.class).name();
+        cleanoutTable(fishModelTable);
     }
 
 }
