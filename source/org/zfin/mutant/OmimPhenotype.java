@@ -64,8 +64,7 @@ public class OmimPhenotype implements Comparable<OmimPhenotype>, Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof OmimPhenotype) {
-            OmimPhenotype anotherOmimPhenotype = (OmimPhenotype) o;
+        if (o instanceof OmimPhenotype anotherOmimPhenotype) {
             if (anotherOmimPhenotype == null) {
                 return false;
             }

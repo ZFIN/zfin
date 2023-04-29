@@ -243,8 +243,7 @@ public class CreateLinkTag extends BodyTagSupport {
         if (o == null)
             return Tag.SKIP_BODY;
 
-        if (o instanceof Collection) {
-            Collection collection = (Collection) o;
+        if (o instanceof Collection collection) {
             int numberOfItems = collection.size();
             int index = 1;
             for (Object ob : collection) {

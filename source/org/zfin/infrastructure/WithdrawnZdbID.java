@@ -42,10 +42,9 @@ public class WithdrawnZdbID implements Serializable {
     }
 
     public boolean equals(Object o) {
-        if (!(o instanceof WithdrawnZdbID))
+        if (!(o instanceof WithdrawnZdbID wdnewZdbID))
             return false;
 
-        WithdrawnZdbID wdnewZdbID = (WithdrawnZdbID) o;
         return wdnewZdbID.getCompositeKey().equals(this.getCompositeKey());
     }
 

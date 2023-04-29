@@ -66,9 +66,8 @@ public class EntrezMGI implements Serializable {
     public boolean equals(Object o) {
         if (o == null)
             return false;
-        if (!(o instanceof EntrezMGI))
+        if (!(o instanceof EntrezMGI mgi))
             return false;
-        EntrezMGI mgi = (EntrezMGI) o;
 
         if (entrezAccessionNum == null)
             throw new RuntimeException("entrezAccessionNum is null but should not!");

@@ -48,9 +48,8 @@ public abstract class ObjectSupplier implements Serializable {
     public boolean equals(Object o) {
         if (o == null)
             return false;
-        if (!(o instanceof ObjectSupplier))
+        if (!(o instanceof ObjectSupplier supplier))
             return false;
-        ObjectSupplier supplier = (ObjectSupplier) o;
 
         if (organization == null)
             throw new RuntimeException("Organization is null but should not!");

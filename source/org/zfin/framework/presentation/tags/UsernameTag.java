@@ -14,8 +14,7 @@ public class UsernameTag extends TagSupport {
     public int doStartTag() throws JspException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object o = authentication.getPrincipal();
-        if (o instanceof Person) {
-            Person person = (Person) o;
+        if (o instanceof Person person) {
             AccountInfo accountInfo = person.getAccountInfo();
             if (accountInfo == null)
                 return EVAL_PAGE;

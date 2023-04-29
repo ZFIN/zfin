@@ -52,11 +52,10 @@ public abstract class Figure implements Serializable, Comparable<Figure>, ZdbID 
     public abstract FigureType getType();
 
     public boolean equals(Object otherFigure) {
-        if (!(otherFigure instanceof Figure)) {
+        if (!(otherFigure instanceof Figure figure)) {
             return false;
         }
 
-        Figure figure = (Figure) otherFigure;
         return getZdbID().equals(figure.getZdbID());
     }
 

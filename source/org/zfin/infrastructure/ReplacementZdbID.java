@@ -52,10 +52,9 @@ public class ReplacementZdbID implements Serializable {
     }
 
     public boolean equals(Object o) {
-        if (!(o instanceof ReplacementZdbID))
+        if (!(o instanceof ReplacementZdbID replacementZdbID))
             return false;
 
-        ReplacementZdbID replacementZdbID = (ReplacementZdbID) o;
         return replacementZdbID.getCompositeKey().equals(this.getCompositeKey());
     }
 

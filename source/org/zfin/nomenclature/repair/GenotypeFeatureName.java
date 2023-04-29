@@ -57,8 +57,7 @@ public class GenotypeFeatureName {
     public boolean equals(Object other) {
         if (other == null) return false;
         if (other == this) return true;
-        if (!(other instanceof GenotypeFeatureName)) return false;
-        GenotypeFeatureName genotypeFeatureName = (GenotypeFeatureName)other;
+        if (!(other instanceof GenotypeFeatureName genotypeFeatureName)) return false;
         return this.originalRepresentation.equals(genotypeFeatureName.originalRepresentation);
     }
 

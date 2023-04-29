@@ -37,9 +37,8 @@ public class GenotypeSupplier extends ObjectSupplier implements Serializable, Co
     public boolean equals(Object o) {
         if (o == null)
             return false;
-        if (!(o instanceof GenotypeSupplier))
+        if (!(o instanceof GenotypeSupplier supplier))
             return false;
-        GenotypeSupplier supplier = (GenotypeSupplier) o;
 
         if (genotype == null)
             throw new RuntimeException("Genotype is null but should not!");

@@ -259,8 +259,7 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
     }
 
     public boolean equals(Object o) {
-        if (o instanceof DBLink) {
-            DBLink dbLink = (DBLink) o;
+        if (o instanceof DBLink dbLink) {
             if (getZdbID() != null && dbLink.getZdbID().equals(getZdbID())) {
                 return true;
             }

@@ -40,9 +40,8 @@ public class MarkerSupplier extends ObjectSupplier implements Serializable, Comp
     public boolean equals(Object o) {
         if (o == null)
             return false;
-        if (!(o instanceof MarkerSupplier))
+        if (!(o instanceof MarkerSupplier supplier))
             return false;
-        MarkerSupplier supplier = (MarkerSupplier) o;
 
         if (marker == null)
             throw new RuntimeException("Marker is null but should not!");

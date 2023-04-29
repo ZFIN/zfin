@@ -39,10 +39,8 @@ public class ZdbIDHistogram {
     public boolean equals(Object obj) {
         if (obj == null)
             return false;
-        if (!(obj instanceof ZdbIDHistogram))
+        if (!(obj instanceof ZdbIDHistogram that))
             return false;
-
-        ZdbIDHistogram that = (ZdbIDHistogram) obj;
 
         return this.aoID.equals(that.aoID) &&
                 this.numberOfOccurrences.equals(that.numberOfOccurrences);
