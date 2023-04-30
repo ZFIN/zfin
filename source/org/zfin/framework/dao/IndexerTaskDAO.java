@@ -1,0 +1,1 @@
+package org.zfin.framework.dao;import org.zfin.indexer.IndexerTask;public class IndexerTaskDAO extends BaseSQLDAO<IndexerTask> {    public IndexerTaskDAO() {        super(IndexerTask.class);    }}

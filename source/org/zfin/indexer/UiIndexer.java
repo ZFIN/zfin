@@ -1,12 +1,13 @@
 package org.zfin.indexer;
 
 import lombok.extern.log4j.Log4j2;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.Duration;
-import org.zfin.ontology.OmimPhenotypeDisplay;
+import org.zfin.framework.dao.IndexerInfoDAO;
+import org.zfin.framework.dao.IndexerRunDAO;
+import org.zfin.framework.dao.IndexerTaskDAO;
 import org.zfin.properties.ZfinProperties;
 
 import java.time.LocalDateTime;
@@ -22,10 +23,12 @@ public abstract class UiIndexer<Entity> extends Thread {
 
     protected UiIndexerConfig indexerConfig;
 
-    protected IndexerHelper indexerHelper;
+    protected IndexerRun indexerRun;
 
     public UiIndexer(UiIndexerConfig indexerConfig) {
         this.indexerConfig = indexerConfig;
+        indexerInfo = new IndexerInfo();
+        indexerInfo.setName(indexerConfig.getTypeName());
         init();
     }
 
@@ -41,11 +44,19 @@ public abstract class UiIndexer<Entity> extends Thread {
         return "[" + indexerConfig.getTypeName() + "]";
     }
 
+    private IndexerInfo indexerInfo;
+    private IndexerInfoDAO infoDAO = new IndexerInfoDAO();
+    private IndexerTaskDAO taskDAO = new IndexerTaskDAO();
+
     public void runIndex() {
         try {
             IndexerHelper helper = new IndexerHelper();
             helper.startProcess(getLogPrefix() + " 0. Start... ");
-            index();
+            indexerInfo.setIndexerRun(indexerRun);
+            logIndexerInfo(infoDAO, true);
+            int numberOfRecords = index();
+            indexerInfo.setCount(numberOfRecords);
+            logIndexerInfo(infoDAO, false);
             helper.addQuickReport(getLogPrefix() + " 0. End");
         } catch (Exception e) {
             e.printStackTrace();
@@ -54,11 +65,56 @@ public abstract class UiIndexer<Entity> extends Thread {
         }
     }
 
-    protected void index(){
+
+    private IndexerTask indexerTaskInputOutput;
+    private IndexerTask indexerTaskDelete;
+    private IndexerTask indexerTaskSave;
+
+    protected Integer index() {
+        logIndexerTask(getIndexerTask(IndexerTask.Type.INPUT_OUTPUT), true);
         List<Entity> output = createInputOutput();
+        logIndexerTask(getIndexerTask(IndexerTask.Type.INPUT_OUTPUT), false);
+
+        logIndexerTask(getIndexerTask(IndexerTask.Type.DELETE), true);
         cleanUiTables();
+        logIndexerTask(getIndexerTask(IndexerTask.Type.DELETE), false);
+
+        logIndexerTask(getIndexerTask(IndexerTask.Type.SAVE), true);
         persistOutput(output);
+        logIndexerTask(getIndexerTask(IndexerTask.Type.SAVE), false);
+        return output.size();
     }
+
+    private IndexerTask getIndexerTask(IndexerTask.Type type) {
+        switch (type) {
+            case INPUT_OUTPUT -> {
+                if (indexerTaskInputOutput == null) {
+                    indexerTaskInputOutput = new IndexerTask();
+                    indexerTaskInputOutput.setIndexerInfo(indexerInfo);
+                    indexerTaskInputOutput.setName(IndexerTask.Type.INPUT_OUTPUT.name());
+                }
+                return indexerTaskInputOutput;
+            }
+            case DELETE -> {
+                if (indexerTaskDelete == null) {
+                    indexerTaskDelete = new IndexerTask();
+                    indexerTaskDelete.setIndexerInfo(indexerInfo);
+                    indexerTaskDelete.setName(IndexerTask.Type.DELETE.name());
+                }
+                return indexerTaskDelete;
+            }
+            case SAVE -> {
+                if (indexerTaskSave == null) {
+                    indexerTaskSave = new IndexerTask();
+                    indexerTaskSave.setIndexerInfo(indexerInfo);
+                    indexerTaskSave.setName(IndexerTask.Type.SAVE.name());
+                }
+                return indexerTaskSave;
+            }
+        }
+        throw new RuntimeException("No indexer task found for " + type);
+    }
+
 
     protected abstract List<Entity> inputOutput();
 
@@ -91,7 +147,7 @@ public abstract class UiIndexer<Entity> extends Thread {
 
     protected abstract void cleanUiTables();
 
-    protected void saveRecords(Collection<List<Entity>> batchedList){
+    protected void saveRecords(Collection<List<Entity>> batchedList) {
         HibernateUtil.createTransaction();
         batchedList.forEach(batch -> {
             for (Entity entity : batch) {
@@ -104,17 +160,12 @@ public abstract class UiIndexer<Entity> extends Thread {
 
     protected void cleanoutTable(String... tables) {
         List<String> tableNames = Arrays.stream(tables).map(String::toLowerCase).toList();
-        log.info(getLogPrefix()+" Cleaning out tables: " );
+        log.info(getLogPrefix() + " Cleaning out tables: ");
         tableNames.forEach(table -> {
             HibernateUtil.createTransaction();
             getDiseasePageRepository().deleteUiTables(table);
             HibernateUtil.flushAndCommitCurrentSession();
         });
-    }
-
-    protected void startTransaction(String message) {
-        indexerHelper.startProcess(message);
-        HibernateUtil.createTransaction();
     }
 
     public String calculateRequestDuration(LocalDateTime startTime) {
@@ -125,20 +176,13 @@ public abstract class UiIndexer<Entity> extends Thread {
 
     public static void main(String[] args) throws NoSuchFieldException {
 
-        args = new String[6];
-        args[0] = "ChebiPhenotype";
-        args[1] = "GenesInvolved";
-        args[2] = "FishModel";
-        args[3] = "ChebiFishModel";
-        args[4] = "PublicationExpression";
-        args[5] = "TermPhenotype";
         Set<String> argumentSet = new HashSet<>();
         for (int i = 0; i < args.length; i++) {
             argumentSet.add(args[i]);
             log.info("Args[" + i + "]: " + args[i]);
         }
 
-        HashMap<String, UiIndexer<?>> indexers = new HashMap<>();
+        Map<String, UiIndexer<?>> indexers = new LinkedHashMap<>();
         for (UiIndexerConfig uic : UiIndexerConfig.getAllIndexerSorted()) {
             try {
                 UiIndexer<?> i = (UiIndexer<?>) uic.getIndexClazz().getDeclaredConstructor(UiIndexerConfig.class).newInstance(uic);
@@ -150,20 +194,63 @@ public abstract class UiIndexer<Entity> extends Thread {
             }
         }
 
+        IndexerRunDAO indexerRunDAO = new IndexerRunDAO();
+        IndexerRun indexerRun = new IndexerRun();
+        logRunIndexer(indexerRun, indexerRunDAO, true);
         boolean isThreadedExecution = false;
         for (String type : indexers.keySet()) {
             if (argumentSet.size() == 0 || argumentSet.contains(type)) {
                 if (isThreadedExecution) {
                     indexers.get(type).start();
                 } else {
-                    indexers.get(type).runIndex();
+                    UiIndexer<?> uiIndexer = indexers.get(type);
+                    uiIndexer.indexerRun = indexerRun;
+                    uiIndexer.runIndex();
                 }
             } else {
                 log.info("Not Starting indexer: " + type);
             }
         }
+        logRunIndexer(indexerRun, indexerRunDAO, false);
 
         log.info("Finished UI Indexing");
+    }
+
+    private static void logRunIndexer(IndexerRun indexerRun, IndexerRunDAO indexerRunDAO, Boolean isStart) {
+        if (isStart) {
+            indexerRun.setStartDate(LocalDateTime.now());
+        } else {
+            indexerRun.setEndDate(LocalDateTime.now());
+            indexerRun.setDuration(java.time.Duration.between(indexerRun.getStartDate(), indexerRun.getEndDate()).toSeconds());
+        }
+        HibernateUtil.createTransaction();
+        indexerRunDAO.entityManager = HibernateUtil.currentSession();
+        indexerRunDAO.persist(indexerRun);
+        HibernateUtil.flushAndCommitCurrentSession();
+    }
+
+    private void logIndexerInfo(IndexerInfoDAO indexerInfoDAO, Boolean isStart) {
+        if (isStart) {
+            indexerInfo.setStartDate(LocalDateTime.now());
+        } else {
+            indexerInfo.setDuration(java.time.Duration.between(indexerInfo.getStartDate(), LocalDateTime.now()).toSeconds());
+        }
+        HibernateUtil.createTransaction();
+        indexerInfoDAO.entityManager = HibernateUtil.currentSession();
+        indexerInfoDAO.persist(indexerInfo);
+        HibernateUtil.flushAndCommitCurrentSession();
+    }
+
+    private void logIndexerTask(IndexerTask indexerTask,  Boolean isStart) {
+        if (isStart) {
+            indexerTask.setStartDate(LocalDateTime.now());
+        } else {
+            indexerTask.setDuration(java.time.Duration.between(indexerTask.getStartDate(), LocalDateTime.now()).toSeconds());
+        }
+        HibernateUtil.createTransaction();
+        taskDAO.entityManager = HibernateUtil.currentSession();
+        taskDAO.persist(indexerTask);
+        HibernateUtil.flushAndCommitCurrentSession();
     }
 
 

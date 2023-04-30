@@ -1,0 +1,1 @@
+package org.zfin.framework.dao;import org.zfin.indexer.IndexerInfo;public class IndexerInfoDAO extends BaseSQLDAO<IndexerInfo> {    public IndexerInfoDAO() {        super(IndexerInfo.class);    }}
