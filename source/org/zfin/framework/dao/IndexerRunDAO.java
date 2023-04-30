@@ -1,0 +1,1 @@
+package org.zfin.framework.dao;import org.zfin.indexer.IndexerRun;public class IndexerRunDAO extends BaseSQLDAO<IndexerRun>{    public IndexerRunDAO() {        super(IndexerRun.class);    }}
