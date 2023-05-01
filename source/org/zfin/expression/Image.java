@@ -84,11 +84,10 @@ public class Image implements Serializable {
     }
 
     public boolean equals(Object otherImage) {
-        if (!(otherImage instanceof Image)) {
+        if (!(otherImage instanceof Image image)) {
             return false;
         }
 
-        Image image = (Image) otherImage;
         return getZdbID().equals(image.getZdbID());
     }
 
@@ -115,6 +114,14 @@ public class Image implements Serializable {
 
     public String getThumbnailUrl() {
         return "/imageLoadUp/" + getThumbnail();
+    }
+
+    public boolean hideOrientationInformation() {
+        //if all of the orientation information is "not specified", then we don't show the orientation information
+        return NOT_SPECIFIED.equals(getPreparation()) &&
+               NOT_SPECIFIED.equals(getForm()) &&
+               NOT_SPECIFIED.equals(getDirection()) &&
+               NOT_SPECIFIED.equals(getView());
     }
 
 }

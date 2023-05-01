@@ -91,16 +91,16 @@ public class ImageViewController {
 
         model.addAttribute("directLink", true);
 
-        ImageNavigationMenu navigationMenu = new ImageNavigationMenu();
-        navigationMenu.setModel(model);
-        model.addAttribute("navigationMenu", navigationMenu);
-
         if (image.getFigure() != null && image.getFigure().getPublication() != null ) {
             Publication publication = image.getFigure().getPublication();
             model.addAttribute("publication", publication);
             model.addAttribute("showElsevierMessage", figureViewService.showElsevierMessage(publication));
             model.addAttribute("hasAcknowledgment", figureViewService.hasAcknowledgment(publication));
         }
+
+        ImageNavigationMenu navigationMenu = new ImageNavigationMenu();
+        navigationMenu.setModel(model);
+        model.addAttribute("navigationMenu", navigationMenu);
 
         return template;
     }

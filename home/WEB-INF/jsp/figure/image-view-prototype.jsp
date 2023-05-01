@@ -120,7 +120,7 @@
         </z:section>
 
         <z:section title="${ORIENTATION}">
-            <c:if test="${image.preparation ne 'not specified' && image.form ne 'not specified' && image.direction ne 'not specified' && image.view ne 'not specified'}">
+            <c:if test="${image.preparation ne 'not specified' || image.form ne 'not specified' || image.direction ne 'not specified' || image.view ne 'not specified'}">
                 <table class="summary bg-white border-white">
                     <tr>
 
