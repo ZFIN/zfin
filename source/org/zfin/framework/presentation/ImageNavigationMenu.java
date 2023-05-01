@@ -13,6 +13,7 @@ import org.zfin.expression.Image;
 import org.zfin.figure.presentation.FigureExpressionSummary;
 import org.zfin.figure.presentation.FigurePhenotypeSummary;
 import org.zfin.mutant.Fish;
+import org.zfin.publication.PublicationType;
 
 import java.util.List;
 import java.util.Map;
@@ -61,12 +62,17 @@ public class ImageNavigationMenu extends NavigationMenu {
         this.setHidden(NavigationMenuOptions.FIGURE_CAPTION,image.getFigure() == null || image.getFigure().getCaption() == null);
 
         this.setHidden(NavigationMenuOptions.COMMENTS, StringUtils.isEmpty(image.getComments()));
+
         this.setHidden(NavigationMenuOptions.DEVELOPMENTAL_STAGE, image.getImageStage() == null || image.getImageStage().getStart() == null);
-        this.setHidden(NavigationMenuOptions.ORIENTATION,
-        "not specified".equals(image.getPreparation()) &&
-            "not specified".equals(image.getForm()) &&
-            "not specified".equals(image.getDirection()) &&
-            "not specified".equals(image.getView()));
+
+        this.setHidden(NavigationMenuOptions.ORIENTATION, image.hideOrientationInformation());
+
+        boolean showAcknowledgments = image.getFigure() != null &&
+                image.getFigure().getPublication() != null &&
+                image.getFigure().getPublication().isCanShowImages() &&
+                image.getFigure().getPublication().getType() != PublicationType.UNPUBLISHED;
+
+        this.setHidden(NavigationMenuOptions.ACKNOWLEDGEMENT, !showAcknowledgments);
 
         this.setHidden(NavigationMenuOptions.FIGURE_DATA, isFigureDataEmpty(image, model));
 
