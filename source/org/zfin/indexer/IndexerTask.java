@@ -1,5 +1,6 @@
 package org.zfin.indexer;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,7 +19,7 @@ import java.time.LocalDateTime;
 public class IndexerTask extends BaseEntity {
 
     @Id
-    @JsonView(View.ExpressionPublicationUI.class)
+    @JsonView(View.API.class)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "it_id", nullable = false)
     private long id;
@@ -27,12 +28,16 @@ public class IndexerTask extends BaseEntity {
     @JoinColumn(name = "it_ii_id")
     private IndexerInfo indexerInfo;
 
+    @JsonView(View.API.class)
     @Column(name = "it_name")
     private String name;
 
+    @JsonView(View.API.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
     @Column(name = "it_start_date")
     private LocalDateTime startDate;
 
+    @JsonView(View.API.class)
     @Column(name = "it_duration")
     private Long duration;
 
@@ -41,7 +46,7 @@ public class IndexerTask extends BaseEntity {
         DELETE("Delete"),
         SAVE("Save");
 
-        private String displayName;
+        private final String displayName;
 
         Type(String displayName) {
             this.displayName = displayName;

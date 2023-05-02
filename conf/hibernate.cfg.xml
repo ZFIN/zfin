@@ -99,6 +99,9 @@
         <mapping class="org.zfin.mutant.FishAlias"/>
         <mapping class="org.zfin.mutant.SecondaryFish"/>
         <mapping class="org.zfin.framework.presentation.AnatomyFact"/>
+        <mapping class="org.zfin.indexer.IndexerRun"/>
+        <mapping class="org.zfin.indexer.IndexerInfo"/>
+        <mapping class="org.zfin.indexer.IndexerTask"/>
         <mapping class="org.zfin.infrastructure.ActiveData"/>
         <mapping class="org.zfin.infrastructure.ActiveSource"/>
         <mapping class="org.zfin.infrastructure.ControlledVocab"/>
