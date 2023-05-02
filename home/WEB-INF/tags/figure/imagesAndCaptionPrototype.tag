@@ -20,7 +20,7 @@
                         <%--CAPTION--%>
                         <c:if test="${showCaption}">
                             <!-- show caption -->
-                            <zfin-figure:figureLabelAndCaption figure="${figure}"/>
+                            <zfin-figure:figureLabelAndCaption figure="${figure}" hideLabel="true"/>
                         </c:if>
                         <div class="multiple-medium-images">
                             <c:forEach var="image" items="${figure.images}">
@@ -40,7 +40,7 @@
                         <%--CAPTION--%>
                         <c:if test="${showCaption}">
                             <!-- show caption -->
-                            <zfin-figure:figureLabelAndCaption figure="${figure}"/>
+                            <zfin-figure:figureLabelAndCaption figure="${figure}" hideLabel="true"/>
                         </c:if>
                     </c:otherwise>
                 </c:choose>
@@ -63,7 +63,7 @@
                 <%--CAPTION--%>
                 <c:if test="${showCaption}">
                     <!-- show caption -->
-                    <zfin-figure:figureLabelAndCaption figure="${figure}"/>
+                    <zfin-figure:figureLabelAndCaption figure="${figure}" hideLabel="true"/>
                 </c:if>
             </c:otherwise>
 
