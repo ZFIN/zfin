@@ -10,7 +10,7 @@
     <property name="web.lib" value="${web-inf.dir}/lib"/>
     <property name="log.dir" value="${basedir}/logs"/>
     <property name="jvm.mem" value="-Xmx4g"/>
-    <property name="jvm.arg.log4j" value="-Dlog4j.configurationFile=./home/WEB-INF/conf/log4j2.xml"/>
+    <property name="jvm.arg.log4j" value="-Dlog4j.configurationFile=${web-inf.dir}/conf/log4j2.xml"/>
 
 
     <property environment="env"/>
