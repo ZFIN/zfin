@@ -37,7 +37,7 @@ const IndexerRunTable = () => {
                 <Checkbox
                     checked={showIndexerInfo && row.id === runId}
                     id={row.id}
-                    onClick={() =>handleRunSelection(row.id)}
+                    onClick={() => handleRunSelection(row.id)}
                 />
             </div>
             ,
@@ -60,7 +60,8 @@ const IndexerRunTable = () => {
         },
         {
             label: 'Duration [s]',
-            content: row => row.duration.toLocaleString(),
+            content: row => (<>{row.duration && (<>{row.duration.toLocaleString()}</>)}</>)
+            ,
             width: '80px',
         },
     ];
@@ -90,13 +91,13 @@ const IndexerRunTable = () => {
         },
         {
             label: 'Duration [s]',
-            content: row => row.duration.toLocaleString(),
+            content: row => (<>{row.duration && (<>{row.duration.toLocaleString()}</>)}</>),
             align: 'right',
             width: '80px',
         },
         {
             label: 'Count',
-            content: row => row.count.toLocaleString(),
+            content: row => (<>{row.duration && (<>{row.count.toLocaleString()}</>)}</>),
             align: 'right',
             width: '80px',
         },
@@ -120,7 +121,7 @@ const IndexerRunTable = () => {
         },
         {
             label: 'Duration [s]',
-            content: row => row.duration.toLocaleString(),
+            content: row => (<>{row.duration && (<>{row.duration.toLocaleString()}</>)}</>),
             align: 'right',
             width: '80px',
         },

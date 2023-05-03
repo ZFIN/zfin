@@ -32,7 +32,7 @@ public abstract class UiIndexer<Entity> extends Thread {
         init();
     }
 
-    public void init() {
+    public static void init() {
         ZfinProperties.init();
         SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
         if (sessionFactory == null) {
@@ -176,6 +176,7 @@ public abstract class UiIndexer<Entity> extends Thread {
 
     public static void main(String[] args) throws NoSuchFieldException {
 
+        UiIndexer.init();
         Set<String> argumentSet = new HashSet<>();
         for (int i = 0; i < args.length; i++) {
             argumentSet.add(args[i]);
