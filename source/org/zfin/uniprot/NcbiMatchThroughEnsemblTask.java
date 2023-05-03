@@ -5,6 +5,7 @@ import org.apache.commons.csv.CSVRecord;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 
 import java.io.*;
@@ -15,11 +16,17 @@ import java.nio.file.Paths;
 import java.sql.SQLException;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
+import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.DBLink;
+import org.zfin.sequence.ForeignDBDataType;
+import org.zfin.sequence.MarkerDBLink;
+import org.zfin.sequence.service.SequenceService;
 
 
 /**
@@ -67,9 +74,53 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
         createTemporaryNcbiTable();
         copyFromNcbiFileIntoDatabase(extractedCsvFile);
         List<Object[]> results = getReportOfPotentialNcbiGenes();
-        writeResultsToCsv(results);
+        List<NcbiMatchReportRow> ncbiMatchReportRows = convertResultsToReportRow(results);
+
+        addRnaAccessionsToReportRows(ncbiMatchReportRows);
+
+        writeResultsToCsv(ncbiMatchReportRows);
         dropTemporaryTables();
         extractedCsvFile.delete();
+    }
+
+    private void addRnaAccessionsToReportRows(List<NcbiMatchReportRow> ncbiMatchReportRows) {
+        HibernateUtil.createTransaction();
+
+        for (NcbiMatchReportRow ncbiMatchReportRow : ncbiMatchReportRows) {
+            List<String> rnaAccessions = getRnaAccessions(ncbiMatchReportRow.getZdbId());
+
+            //progress
+            System.out.print(".");
+
+            ncbiMatchReportRow.setRnaAccessions(String.join(",", rnaAccessions));
+        }
+
+        HibernateUtil.flushAndCommitCurrentSession();
+    }
+
+    private List<String> getRnaAccessions(String zdbId) {
+        MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
+        SequenceService sequenceService = new SequenceService();
+        sequenceService.setMarkerRepository(markerRepository);
+        List<MarkerDBLink> results = sequenceService.getMarkerDBLinkResultsForMarkerZdbID(zdbId, false, null);
+        return results.stream()
+                .filter(markerDBLink -> ForeignDBDataType.DataType.RNA.equals(markerDBLink.getReferenceDatabase().getForeignDBDataType().getDataType()))
+                .map(DBLink::getAccessionNumber)
+                .toList();
+    }
+
+    private List<NcbiMatchReportRow> convertResultsToReportRow(List<Object[]> inputRows) {
+        return inputRows.stream().map(inputRow ->
+                NcbiMatchReportRow.builder()
+                    .ncbiId((String) inputRow[0])
+                    .zdbId((String) inputRow[1])
+                    .ensemblId((String) inputRow[2])
+                    .symbol((String) inputRow[3])
+                    .dblinks((String) inputRow[4])
+                    .publications((String) inputRow[5])
+                    .rnaAccessions((String) inputRow[6])
+                    .build()
+        ).toList();
     }
 
     /**
@@ -245,7 +296,7 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
         BigInteger count = (BigInteger) session.createSQLQuery(query).uniqueResult();
         System.out.println("Number of NCBI genes that have a link to ZFIN, but we don't have a reciprocal link: " + count);
 
-        // Get final report using the above mapping tables.
+        // Get semi-final report using the above mapping tables.
         // First (step 1), get all ncbi genes that have a link to zfin, but we don't have a reciprocal link.
         // Then, get all zfin genes that have a common link to the same ensembl gene as those ncbi genes from step 1.
         query = """
@@ -255,7 +306,8 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
                     ensembl_id,
                     symbol,
                     string_agg(dbl2.dblink_zdb_id, ', ') AS dblinks,
-                    string_agg(ra.recattrib_source_zdb_id, ', ') AS pubs
+                    string_agg(ra.recattrib_source_zdb_id, ', ') AS publications
+                    INTO TEMP TABLE ncbi_match_report
                 FROM
                     tmp_ncbi2zfin n2z
                     LEFT JOIN db_link dbl ON dbl.dblink_acc_num = n2z.ncbi_id
@@ -273,9 +325,18 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
                     ensembl_id,
                     symbol ORDER BY n2z.ncbi_id
                 """;
+        session.createSQLQuery(query).executeUpdate();
 
-        //iterate over query results
+        // Add the rna accessions to the report.
+        query = """
+         select nmr.*, string_agg(dblink_acc_num, ',') as rna_accessions from ncbi_match_report nmr
+         left join (select dblink_linked_recid, dblink_acc_num from
+        						db_link left join foreign_db_contains on dblink_fdbcont_zdb_id = fdbcont_zdb_id where fdbcont_fdbdt_id = 3) subq
+        						on subq.dblink_linked_recid = nmr.zdb_id
+         group by ncbi_id, zdb_id, ensembl_id, symbol, dblinks, publications
+            """;
         List<Object[]> results = session.createSQLQuery(query).list();
+
         transaction.commit();
 
         System.out.println("Number of those NCBI genes with shared ensembl id : " + results.size());
@@ -288,12 +349,12 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
      *
      * @param results The results from DB query to write to CSV.
      */
-    private void writeResultsToCsv(List<Object[]> results) {
+    private void writeResultsToCsv(List<NcbiMatchReportRow> results) {
         try (Writer writer = Files.newBufferedWriter(Paths.get(CSV_FILE));
              CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
-                     .withHeader("ncbi_id", "zdb_id", "ensembl_id", "symbol", "db_links", "publications"))) {
-            for (Object[] result : results) {
-                csvPrinter.printRecord(result);
+                     .withHeader("ncbi_id", "zdb_id", "ensembl_id", "symbol", "dblinks", "publications", "rna_accessions"))) {
+            for (NcbiMatchReportRow result : results) {
+                csvPrinter.printRecord(result.toList());
             }
             csvPrinter.flush();
             System.out.println("Wrote results to " + CSV_FILE);
