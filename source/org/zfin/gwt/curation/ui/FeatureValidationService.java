@@ -3,26 +3,22 @@ package org.zfin.gwt.curation.ui;
 import com.google.gwt.user.client.Window;
 import org.zfin.gwt.root.dto.FeatureDTO;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
-import org.zfin.gwt.root.dto.NoteDTO;
-import org.zfin.gwt.root.util.CollectionUtils;
 import org.zfin.gwt.root.util.StringUtils;
 
-
+import java.util.Objects;
 
 /**
  */
 public class FeatureValidationService {
 
     public static final String UNSPECIFIED_FEATURE_NAME = "_unspecified";
-    private static final String DATE_PATTERN = "/^\\d{2}[//-]\\d{2}[//-]\\d{2}$/";
-
 
     public static String isValidToSave(FeatureDTO featureDTO) {
 
         // should never get here
 
         if (!isFeatureSaveable(featureDTO))
-            return "You must specify a lab prefix, feature type, and feature line number,assembly, start and end positions.";
+            return "You must specify a lab prefix, feature type, and feature line number, assembly, start and end positions.";
 
         if (StringUtils.isNotEmpty(featureDTO.getFeatureChromosome())) {
 
@@ -31,6 +27,15 @@ public class FeatureValidationService {
                     return "Start location cannot be greater than end location";
                 }
             }
+
+            if (featureDTO.getFeatureStartLoc() != null || featureDTO.getFeatureEndLoc() != null) {
+                if (featureDTO.getAssembly() == null) {
+                    return "You must specify an assembly if you specify a location";
+                }
+            }
+
+        } else if (featureDTO.getFeatureStartLoc() != null || featureDTO.getFeatureEndLoc() != null) {
+            return "You must specify a chromosome if you specify a location";
         }
 
         if (StringUtils.isNotEmpty(featureDTO.getAssemblyInfoDate())) {
@@ -49,13 +54,11 @@ public class FeatureValidationService {
         }
 
         FeatureTypeEnum featureTypeEnum = featureDTO.getFeatureType();
-        switch (featureTypeEnum) {
-            case COMPLEX_SUBSTITUTION:
-                if (featureDTO.getPublicNoteList() == null) {
-                    boolean yes = Window.confirm("Do you want to briefly summarize authors statement about " + featureTypeEnum.getDisplay() + "?");
-                    return (yes ? "Briefly summarize authors' statement about " + featureTypeEnum.getDisplay() + " in a public note." : null);
-                }
-                break;
+        if (Objects.requireNonNull(featureTypeEnum) == FeatureTypeEnum.COMPLEX_SUBSTITUTION) {
+            if (featureDTO.getPublicNoteList() == null) {
+                boolean yes = Window.confirm("Do you want to briefly summarize authors statement about " + featureTypeEnum.getDisplay() + "?");
+                return (yes ? "Briefly summarize authors' statement about " + featureTypeEnum.getDisplay() + " in a public note." : null);
+            }
         }
 
         return null;
@@ -114,7 +117,7 @@ public class FeatureValidationService {
     }
 
     /**
-     * Rules from here: http://zfinwinserver1.uoregon.edu/fogbugz/default.asp?pg=pgDownload&pgType=pgWikiAttachment&ixAttachment=1269&sFileName=Splitlabdesignations.20100809.pptx
+     * Rules from here: <a href="http://zfinwinserver1.uoregon.edu/fogbugz/default.asp?pg=pgDownload&pgType=pgWikiAttachment&ixAttachment=1269&sFileName=Splitlabdesignations.20100809.pptx">...</a>
      *
      * @param dtoFromGUI The feaure DTO generated from the GUI (or another DTO)
      * @return Name to display for feature.
@@ -174,7 +177,6 @@ public class FeatureValidationService {
         if (featureType == null) {
             return null;
         }
-        boolean isKnownInSite = dtoFromGUI.getKnownInsertionSite();
 
         String returnString = (dtoFromGUI.getDominant() ? "d" : "");
         switch (featureType) {
