@@ -32,9 +32,8 @@ public class TermDBLink  extends DBLink implements Comparable<TermDBLink>, Seria
 
 
         public boolean equals(Object o) {
-            if (o instanceof org.zfin.ontology.TermDBLink) {
-                org.zfin.ontology.TermDBLink dbLink = (org.zfin.ontology.TermDBLink) o;
-//            if( getZdbID()!=null && dbLink.getZdbID().equals(getZdbID()) ){
+            if (o instanceof TermDBLink dbLink) {
+                //            if( getZdbID()!=null && dbLink.getZdbID().equals(getZdbID()) ){
 //                return true ;
 //            }
 

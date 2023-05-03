@@ -28,10 +28,9 @@ public class AnnualStats implements Serializable, Comparable<AnnualStats> {
     private Date date;
 
     public boolean equals(Object o) {
-        if (!(o instanceof AnnualStats))
+        if (!(o instanceof AnnualStats annualStats))
             return false;
 
-        AnnualStats annualStats = (AnnualStats) o;
         return annualStats.getId() == this.getId();
     }
 

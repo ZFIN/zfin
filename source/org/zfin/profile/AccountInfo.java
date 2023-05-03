@@ -60,10 +60,9 @@ public class AccountInfo implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof AccountInfo))
+        if (!(o instanceof AccountInfo accountInfo))
             return false;
 
-        AccountInfo accountInfo = (AccountInfo) o;
         return StringUtils.equals(login, accountInfo.getLogin());
     }
 

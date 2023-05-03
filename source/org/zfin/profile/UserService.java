@@ -26,8 +26,7 @@ public class UserService {
     public static boolean isRootUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object o = authentication.getPrincipal();
-        if (o instanceof Person) {
-            Person person = (Person) o;
+        if (o instanceof Person person) {
             AccountInfo accountInfo = person.getAccountInfo();
             String role = accountInfo.getRole();
             if (role != null && role.equals("root"))
@@ -48,10 +47,9 @@ public class UserService {
     public static boolean isOwner(String zdbID, Class clazz) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object o = authentication.getPrincipal();
-        if (!(o instanceof Person))
+        if (!(o instanceof Person user))
             return false;
 
-        Person user = (Person) o;
         String personID = user.getZdbID();
 
         Session session = HibernateUtil.currentSession();
@@ -72,8 +70,7 @@ public class UserService {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object o = authentication.getPrincipal();
-        if (o instanceof AccountInfo) {
-            AccountInfo accountInfo = (AccountInfo) o;
+        if (o instanceof AccountInfo accountInfo) {
             String role = accountInfo.getRole();
             if (role != null && role.equals(roleName))
                 return true;

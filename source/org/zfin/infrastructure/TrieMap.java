@@ -552,9 +552,7 @@ public class TrieMap<V>
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof TrieMap)) return false;
-
-        TrieMap trieMap = (TrieMap) o;
+        if (!(o instanceof TrieMap trieMap)) return false;
 
         if (ignoreCase != trieMap.ignoreCase) return false;
         if (maxDepth != trieMap.maxDepth) return false;

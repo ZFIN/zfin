@@ -21,9 +21,8 @@ public class TranscriptDBLink extends DBLink implements Comparable<TranscriptDBL
     }
 
     public boolean equals(Object o) {
-        if (o instanceof TranscriptDBLink) {
-            TranscriptDBLink dbLink = (TranscriptDBLink) o;
-//            if( getZdbID()!=null && dbLink.getZdbID().equals(getZdbID()) ){
+        if (o instanceof TranscriptDBLink dbLink) {
+            //            if( getZdbID()!=null && dbLink.getZdbID().equals(getZdbID()) ){
 //                return true ;
 //            }
 

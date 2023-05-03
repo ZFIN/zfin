@@ -51,9 +51,8 @@ public class TransitiveClosure implements Serializable, Comparable<TransitiveClo
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof TransitiveClosure))
+        if (!(o instanceof TransitiveClosure aoChildren))
             return false;
-        TransitiveClosure aoChildren = (TransitiveClosure) o;
         return
                 ObjectUtils.equals(root, aoChildren.getRoot()) &&
                         ObjectUtils.equals(child, aoChildren.getChild());

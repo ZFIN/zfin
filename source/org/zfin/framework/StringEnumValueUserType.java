@@ -105,8 +105,7 @@ public class StringEnumValueUserType implements UserType, ParameterizedType {
         if (value == null) {
             st.setNull(index, StandardBasicTypes.STRING.sqlType());
         } else {
-            if (value instanceof Ontology) {
-                Ontology ontology = (Ontology) value;
+            if (value instanceof Ontology ontology) {
                 st.setString(index, ontology.getDbOntologyName());
             } else if (value instanceof GenomeLocation.Source) {
                 st.setString(index, ((GenomeLocation.Source) value).getName());

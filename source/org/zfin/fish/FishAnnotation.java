@@ -134,14 +134,13 @@ public class FishAnnotation {
     }
 
     public boolean equals(Object other) {
-        if (!(other instanceof FishAnnotation)) {
+        if (!(other instanceof FishAnnotation anotherFishAnnotation)) {
             if (other instanceof Genotype) {
                 return ((Genotype) other).getZdbID().equals(getGenotypeID());
             } else {
                 return false;
             }
         }
-        FishAnnotation anotherFishAnnotation = (FishAnnotation) other;
         return getID() == anotherFishAnnotation.getID();
 
     }

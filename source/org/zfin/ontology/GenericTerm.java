@@ -441,10 +441,8 @@ public class GenericTerm implements Term<GenericTermRelationship> {
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null || !(o instanceof GenericTerm))
+        if (o == null || !(o instanceof GenericTerm genericTerm))
             return false;
-
-        GenericTerm genericTerm = (GenericTerm) o;
 
         if (zdbID != null && genericTerm.getZdbID() != null) {
             return zdbID.equals(genericTerm.getZdbID());

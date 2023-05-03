@@ -186,9 +186,7 @@ public class DataAlias implements Comparable, EntityAttribution, Serializable, E
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DataAlias)) return false;
-
-        DataAlias dataAlias = (DataAlias) o;
+        if (!(o instanceof DataAlias dataAlias)) return false;
 
         if (!alias.equals(dataAlias.alias)) return false;
         if (dataZdbID != null ? !dataZdbID.equals(dataAlias.dataZdbID) : dataAlias.dataZdbID != null) return false;

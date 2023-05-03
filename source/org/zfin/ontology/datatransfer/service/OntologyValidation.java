@@ -145,8 +145,7 @@ public class OntologyValidation extends AbstractScriptWrapper {
     private void parseOboFile() {
         int numberOfTerms = 0;
         for (IdentifiedObject obj : oboSession.getObjects()) {
-            if (obj instanceof OBOClass) {
-                OBOClass term = (OBOClass) obj;
+            if (obj instanceof OBOClass term) {
                 if (!term.getID().startsWith("obo:")) {
                     numberOfTerms++;
                     pushToParsedTerms(term);

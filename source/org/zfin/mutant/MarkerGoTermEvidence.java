@@ -265,9 +265,7 @@ public class MarkerGoTermEvidence implements Comparable<MarkerGoTermEvidence> {
     @Override
     public boolean equals(Object o) {
 //        if (this == o) return true;
-        if (!(o instanceof MarkerGoTermEvidence)) return false;
-
-        MarkerGoTermEvidence that = (MarkerGoTermEvidence) o;
+        if (!(o instanceof MarkerGoTermEvidence that)) return false;
 
         // check the zdbID
         if (zdbID != null && that.zdbID != null) {
