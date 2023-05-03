@@ -5,12 +5,17 @@ import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang.time.DateUtils;
+import org.zfin.framework.api.Duration;
 import org.zfin.framework.api.View;
 import org.zfin.framework.entity.BaseEntity;
 
 import javax.persistence.*;
+import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.Set;
 
 @Log4j2
@@ -44,5 +49,20 @@ public class IndexerRun extends BaseEntity {
     @OrderBy("startDate")
     private Set<IndexerInfo> indexerInfos;
 
+    @JsonView(View.API.class)
+    public String getDurationString() {
+        if (startDate == null || endDate == null)
+            return null;
+        Duration duration = new Duration(startDate, endDate);
+        return duration.toString();
+    }
+
+    @JsonView(View.API.class)
+    public String getStartDay() {
+        if(DateUtils.isSameDay(Date.from(startDate.atZone(ZoneId.systemDefault()).toInstant()), Date.from(Instant.now())))
+            return "Today";
+        DateTimeFormatter formatters = DateTimeFormatter.ofPattern("d/MM/uuuu");
+        return startDate.format(formatters);
+    }
 
 }
