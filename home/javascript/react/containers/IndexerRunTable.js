@@ -49,8 +49,13 @@ const IndexerRunTable = () => {
             width: '80px',
         },
         {
-            label: 'Start',
-            content: row => row.startDate,
+            label: 'Start Day',
+            content: row => row.startDay,
+            width: '300px',
+        },
+        {
+            label: 'Start Time',
+            content: row => (new Date(row.startDate)).getTime(),
             width: '300px',
         },
         {
@@ -60,7 +65,7 @@ const IndexerRunTable = () => {
         },
         {
             label: 'Duration [s]',
-            content: row => (<>{row.duration && (<>{row.duration.toLocaleString()}</>)}</>)
+            content: row => (<>{row.durationString && (<>{row.durationString.toLocaleString()}</>)}</>)
             ,
             width: '80px',
         },
