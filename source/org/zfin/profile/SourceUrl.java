@@ -50,9 +50,8 @@ public class SourceUrl implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof SourceUrl))
+        if (!(o instanceof SourceUrl url))
             return false;
-        SourceUrl url = (SourceUrl) o;
         return
                 ObjectUtils.equals(organization, url.getOrganization()) &&
                         StringUtils.equals(businessPurpose, url.getBusinessPurpose()) &&

@@ -428,8 +428,7 @@ public class RenoService {
 
         for (DBLink link : links) {
 
-            if (link instanceof MarkerDBLink) {
-                MarkerDBLink markerLink = (MarkerDBLink) link;
+            if (link instanceof MarkerDBLink markerLink) {
                 markers.add(markerLink.getMarker());
             }
         }

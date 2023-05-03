@@ -118,8 +118,7 @@ public class Accession implements Comparable, Serializable {
         List<Marker> markers = new ArrayList<Marker>();
         for (DBLink link : getDbLinks()) {
             // for some reason this doesn't seem to always work here, so use a try catch block, as well
-            if (link instanceof MarkerDBLink) {
-                MarkerDBLink markerLink = (MarkerDBLink) link;
+            if (link instanceof MarkerDBLink markerLink) {
                 markers.add(markerLink.getMarker());
             }
         }
@@ -137,8 +136,7 @@ public class Accession implements Comparable, Serializable {
     }
 
     public int compareTo(Object o) {
-        if (o instanceof Accession) {
-            Accession a = (Accession) o;
+        if (o instanceof Accession a) {
             return a.getNumber().compareTo(getNumber());
         } else {
             return 0;
@@ -205,8 +203,7 @@ public class Accession implements Comparable, Serializable {
     }
 
     public boolean equals(Object o) {
-        if (o instanceof Accession) {
-            Accession a = (Accession) o;
+        if (o instanceof Accession a) {
             if (a.getNumber().equals(getNumber())
                     &&
                     a.getReferenceDatabase().getForeignDB().getDbName().equals(getReferenceDatabase().getForeignDB().getDbName())

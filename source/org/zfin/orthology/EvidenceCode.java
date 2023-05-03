@@ -34,11 +34,10 @@ public class EvidenceCode implements Comparable<EvidenceCode>, Serializable {
             return false;
         }
 
-        if (!(o instanceof EvidenceCode)) {
+        if (!(o instanceof EvidenceCode that)) {
             return false;
         }
 
-        EvidenceCode that = (EvidenceCode) o;
         return !(code != null ? !code.equals(that.getCode()) : that.getCode() != null);
 
     }

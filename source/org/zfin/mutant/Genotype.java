@@ -125,14 +125,13 @@ public class Genotype implements Comparable, EntityZdbID {
      * @return boolean for equality
      */
     public boolean equals(Object otherGenotype) {
-        if (!(otherGenotype instanceof Genotype)) {
+        if (!(otherGenotype instanceof Genotype og)) {
             if (otherGenotype instanceof FishAnnotation) {
                 return ((FishAnnotation) otherGenotype).getGenotypeID().equals(getZdbID());
             } else {
                 return false;
             }
         }
-        Genotype og = (Genotype) otherGenotype;
         return getZdbID().equals(og.getZdbID());
     }
 

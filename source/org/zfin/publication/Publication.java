@@ -357,11 +357,10 @@ public class Publication implements Comparable<Publication>, Serializable, Entit
     }
 
     public boolean equals(Object otherPublication) {
-        if (!(otherPublication instanceof Publication)) {
+        if (!(otherPublication instanceof Publication publication)) {
             return false;
         }
 
-        Publication publication = (Publication) otherPublication;
         return getZdbID().equals(publication.getZdbID());
     }
 

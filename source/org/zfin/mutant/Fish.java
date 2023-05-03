@@ -98,9 +98,7 @@ public class Fish implements EntityZdbID, Comparable<Fish> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Fish)) return false;
-
-        Fish fish = (Fish) o;
+        if (!(o instanceof Fish fish)) return false;
 
         return zdbID != null ? zdbID.equals(fish.zdbID) : fish.zdbID == null;
     }

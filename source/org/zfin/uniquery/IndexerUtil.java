@@ -38,8 +38,7 @@ public class IndexerUtil {
         HTMLTokenizer ht = new HTMLTokenizer(new StringReader(summary.getBody()));
         for (Enumeration e = ht.getTokens(); e.hasMoreElements(); ) {
             Object obj = e.nextElement();
-            if (obj instanceof TagToken) {
-                TagToken tag = (TagToken) obj;
+            if (obj instanceof TagToken tag) {
                 String tagName = tag.getName();
                 if (tagName != null) {
                     tagName = tagName.toLowerCase();
@@ -58,8 +57,7 @@ public class IndexerUtil {
                         if (obj instanceof TextToken) {
                             titleString.append(obj);
                         }
-                        if (obj instanceof TagToken) {
-                            TagToken internalTag = (TagToken) obj;
+                        if (obj instanceof TagToken internalTag) {
                             if (internalTag.getName().equals("title") && internalTag.isEndTag()) {
                                 summary.setTitle(titleString.toString());
                                 break;
@@ -117,8 +115,7 @@ public class IndexerUtil {
                         }
                     }
                 }
-            } else if ((obj instanceof TextToken) && !inScriptTag) {
-                TextToken t = (TextToken) obj;
+            } else if ((obj instanceof TextToken t) && !inScriptTag) {
                 String tokenText = t.getText();
                 if (tokenText != null && tokenText.trim().length() > 0) {
                     strippedText.append(tokenText.trim()).append(" ");

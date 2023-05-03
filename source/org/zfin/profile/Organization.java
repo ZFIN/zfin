@@ -230,9 +230,8 @@ public abstract class Organization implements Comparable<Organization>, HasUpdat
 
 
     public boolean equals(Object o) {
-        if (!(o instanceof Organization))
+        if (!(o instanceof Organization lab))
             return false;
-        Organization lab = (Organization) o;
         return
                 ObjectUtils.equals(address, lab.getAddress()) &&
                         StringUtils.equals(email, lab.getEmail()) &&

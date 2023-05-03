@@ -75,10 +75,8 @@ public class AnatomyTreeInfo implements Serializable {
     public boolean equals(Object o) {
         if (o == null)
             return false;
-        if (!(o instanceof AnatomyTreeInfo))
+        if (!(o instanceof AnatomyTreeInfo itemOne))
             return false;
-
-        AnatomyTreeInfo itemOne = (AnatomyTreeInfo) o;
 
         return EqualsUtil.areEqual(sequenceNumber, itemOne.getSequenceNumber()) &&
                 EqualsUtil.areEqual(indent, itemOne.getIndent()) &&

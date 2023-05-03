@@ -55,9 +55,8 @@ public class EntrezOMIM implements Serializable {
     public boolean equals(Object o) {
         if (o == null)
             return false;
-        if (!(o instanceof EntrezOMIM))
+        if (!(o instanceof EntrezOMIM omim))
             return false;
-        EntrezOMIM omim = (EntrezOMIM) o;
 
         if (omimAccession == null)
             throw new RuntimeException("omimAccession is null but should not!");

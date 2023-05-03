@@ -25,9 +25,8 @@ public class FeatureDBLink extends DBLink implements Comparable<FeatureDBLink>, 
     }
 
     public boolean equals(Object o) {
-        if (o instanceof FeatureDBLink) {
-            FeatureDBLink dbLink = (FeatureDBLink) o;
-//            if( getZdbID()!=null && dbLink.getZdbID().equals(getZdbID()) ){
+        if (o instanceof FeatureDBLink dbLink) {
+            //            if( getZdbID()!=null && dbLink.getZdbID().equals(getZdbID()) ){
 //                return true ;
 //            }
 

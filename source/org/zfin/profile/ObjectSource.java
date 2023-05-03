@@ -48,9 +48,8 @@ public class ObjectSource implements Serializable {
     public boolean equals(Object o) {
         if (o == null)
             return false;
-        if (!(o instanceof ObjectSource))
+        if (!(o instanceof ObjectSource source))
             return false;
-        ObjectSource source = (ObjectSource) o;
 
         if (organization == null)
             throw new RuntimeException("Organization is null but should not!");

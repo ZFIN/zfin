@@ -21,9 +21,8 @@ public class MarkerDBLink extends DBLink implements Comparable<MarkerDBLink>, Se
     }
 
     public boolean equals(Object o) {
-        if (o instanceof MarkerDBLink) {
-            MarkerDBLink dbLink = (MarkerDBLink) o;
-//            if( getZdbID()!=null && dbLink.getZdbID().equals(getZdbID()) ){
+        if (o instanceof MarkerDBLink dbLink) {
+            //            if( getZdbID()!=null && dbLink.getZdbID().equals(getZdbID()) ){
 //                return true ;
 //            }
 

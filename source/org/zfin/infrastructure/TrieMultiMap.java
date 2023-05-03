@@ -594,9 +594,7 @@ public class TrieMultiMap<V extends Collection> implements Serializable, Map // 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof TrieMultiMap)) return false;
-
-        TrieMultiMap trieMap = (TrieMultiMap) o;
+        if (!(o instanceof TrieMultiMap trieMap)) return false;
 
         if (ignoreCase != trieMap.ignoreCase) return false;
         if (maxDepth != trieMap.maxDepth) return false;

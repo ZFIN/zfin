@@ -356,10 +356,9 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
      * @return equality boolean
      */
     public boolean equals(Object otherMarker) {
-        if (!(otherMarker instanceof Marker))
+        if (!(otherMarker instanceof Marker om))
             return false;
 
-        Marker om = (Marker) otherMarker;
         return getZdbID().equals(om.getZdbID());
     }
 

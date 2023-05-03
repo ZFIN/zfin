@@ -454,8 +454,7 @@ public class ResultService {
         if (CollectionUtils.isNotEmpty(cloneEncodesGene)) {
             result.addAttribute(CLONE_ENCODED_BY_GENES, withCommasAndLink(cloneEncodesGene, "abbreviation", "zdbID"));
         }
-        if (marker instanceof Clone) {
-            Clone clone = (Clone) marker;
+        if (marker instanceof Clone clone) {
             if (clone.getRating() != null) {
                 result.addAttribute(QUALITY, clone.getRating().toString());
             }

@@ -107,9 +107,7 @@ public class TranscriptStatus {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof TranscriptStatus)) return false;
-
-        TranscriptStatus that = (TranscriptStatus) o;
+        if (!(o instanceof TranscriptStatus that)) return false;
 
         if ( display.equals(that.getDisplay())
              && id.equals(that.getId())

@@ -43,9 +43,7 @@ public class CuratorSession extends CuratorSessionDTO {
 
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof CuratorSession)) return false;
-
-        CuratorSession that = (CuratorSession) o;
+        if (!(o instanceof CuratorSession that)) return false;
 
         if (ID != null ? !ID.equals(that.getID()) : that.getID() != null) return false;
         if (curator != null ? !curator.equals(that.getCurator()) : that.getCurator() != null) return false;

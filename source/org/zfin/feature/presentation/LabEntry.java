@@ -46,8 +46,7 @@ public class LabEntry implements Comparable<LabEntry> {
     @Override
     public boolean equals(Object o) {
         if(o==null) return false ;
-        if(o instanceof LabEntry){
-            LabEntry otherLab = (LabEntry) o ;
+        if(o instanceof LabEntry otherLab){
             return organization.equals(otherLab.getOrganization());
         }
         return false ;

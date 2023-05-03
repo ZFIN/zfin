@@ -99,10 +99,9 @@ public class RecordAttribution implements Serializable {
     }
 
     public boolean equals(Object o) {
-        if (!(o instanceof RecordAttribution))
+        if (!(o instanceof RecordAttribution recordAttribution))
             return false;
 
-        RecordAttribution recordAttribution = (RecordAttribution) o;
         return recordAttribution.getCompositeKey().equals(this.getCompositeKey());
     }
 

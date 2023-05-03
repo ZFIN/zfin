@@ -60,8 +60,7 @@ public class DisplayGroup implements Comparable<DisplayGroup>{
 
     public boolean equals(Object o){
 
-        if(o instanceof DisplayGroup){
-            DisplayGroup displayGroup = (DisplayGroup) o ;
+        if(o instanceof DisplayGroup displayGroup){
             if(id!=null && displayGroup.getId()!=null){
                 return (id==displayGroup.getId() || id.equals(displayGroup.getId()) ) ;
             }

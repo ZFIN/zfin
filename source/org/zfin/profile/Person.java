@@ -389,11 +389,10 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
     }
 
     public boolean equals(Object o) {
-        if (!(o instanceof Person)) {
+        if (!(o instanceof Person p)) {
             return false;
         }
 
-        Person p = (Person) o;
         return getZdbID().equals(p.getZdbID());
     }
 

@@ -34,10 +34,9 @@ public class FeatureSupplier extends ObjectSupplier implements Serializable, Com
         if (o == null) {
             return false;
         }
-        if (!(o instanceof FeatureSupplier)) {
+        if (!(o instanceof FeatureSupplier supplier)) {
             return false;
         }
-        FeatureSupplier supplier = (FeatureSupplier) o;
 
         if (feature == null) {
             throw new RuntimeException("Feature is null but should not!");

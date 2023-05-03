@@ -28,8 +28,7 @@ public class DiseaseDisplay implements Comparable<DiseaseDisplay> {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof DiseaseDisplay) {
-            DiseaseDisplay anotherDiseaseDisplay = (DiseaseDisplay) o;
+        if (o instanceof DiseaseDisplay anotherDiseaseDisplay) {
             if (anotherDiseaseDisplay == null) {
                 return false;
             }

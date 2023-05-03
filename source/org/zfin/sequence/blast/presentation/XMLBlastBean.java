@@ -564,8 +564,7 @@ public class XMLBlastBean extends BlastInfoBean implements Cloneable {
      */
     @Override
     public boolean equals(Object o) {
-        if (o instanceof XMLBlastBean) {
-            XMLBlastBean xmlBlastBean = (XMLBlastBean) o;
+        if (o instanceof XMLBlastBean xmlBlastBean) {
             if (xmlBlastBean.getResultFile() == null || resultFile == null) {
                 return super.equals(o);
             } else if (xmlBlastBean.getResultFile().getName().equals(resultFile.getName())) {

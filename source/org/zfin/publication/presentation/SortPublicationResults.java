@@ -25,13 +25,10 @@ class SortPublicationResults implements Comparator {
     }
 
     public int compare(Object o1, Object o2) {
-        if (!(o1 instanceof Publication))
+        if (!(o1 instanceof Publication pubOne))
             throw new RuntimeException("Incorrect Classs type <");
-        if (!(o2 instanceof Publication))
+        if (!(o2 instanceof Publication pubTwo))
             throw new RuntimeException("Incorrect Classs type <");
-
-        Publication pubOne = (Publication) o1;
-        Publication pubTwo = (Publication) o2;
 
 
         if (sortingType.equals("date")) {
