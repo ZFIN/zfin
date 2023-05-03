@@ -932,17 +932,17 @@ public class HibernateSequenceRepository implements SequenceRepository {
     @Override
     public List<RelatedMarkerDBLinkDisplay> getDBLinksForFirstRelatedMarker(Marker marker, DisplayGroup.GroupName groupName, MarkerRelationship.Type... markerRelationshipTypes) {
 
-        String hql = " select distinct dbl, mr " +
-                " from DBLink dbl, DisplayGroup dg, ReferenceDatabase ref,  " +
-                " MarkerRelationship  mr  " +
-                " where dg.groupName = :displayGroup " +
-                " and dbl.referenceDatabase=ref " +
-                " and dg in elements(ref.displayGroups) " +
-                " and mr.secondMarker.zdbID=dbl.dataZdbID " +
-                " and mr.markerRelationshipType.name in (:types) " +
-                " and mr.firstMarker.zdbID = :markerZdbId " +
-                " ";
-
+        String hql = """
+                select distinct dbl, mr 
+                from DBLink dbl, DisplayGroup dg, ReferenceDatabase ref,  
+                MarkerRelationship  mr  
+                where dg.groupName = :displayGroup 
+                and dbl.referenceDatabase=ref 
+                and dg in elements(ref.displayGroups) 
+                and mr.secondMarker.zdbID=dbl.dataZdbID 
+                and mr.markerRelationshipType.name in (:types) 
+                and mr.firstMarker.zdbID = :markerZdbId 
+            """;
         Set<String> types = new HashSet<>();
         if (markerRelationshipTypes.length != 0) {
             for (MarkerRelationship.Type type : markerRelationshipTypes) {
@@ -952,7 +952,6 @@ public class HibernateSequenceRepository implements SequenceRepository {
             for (MarkerRelationship.Type type : MarkerRelationship.Type.values()) {
                 types.add(type.toString());
             }
-
         }
         Query query = HibernateUtil.currentSession().createQuery(hql)
                 .setParameter("markerZdbId", marker.getZdbID())
