@@ -63,7 +63,9 @@ public class IndexerAPIController {
         form.setAoTerm(term);
         retrieveAntibodyData(term, form, pagination, directAnnotation);
 */
-        response.setResults(runs.getResults());
+        List<IndexerRun> results = runs.getResults();
+        results.sort(Comparator.comparing(IndexerRun::getStartDate).reversed());
+        response.setResults(results);
         response.setTotal(runs.getTotalResults());
         HibernateUtil.flushAndCommitCurrentSession();
         return response;
