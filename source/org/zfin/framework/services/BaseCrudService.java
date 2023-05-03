@@ -1,1 +1,4 @@
-package org.zfin.framework.services;public class BaseCrudService {}
+package org.zfin.framework.services;
+
+public class BaseCrudService {
+}
