@@ -893,6 +893,18 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
     }
 
     @Override
+    public List<DiseaseAnnotationModel> getHumanDiseaseAnnotationModels(String publicationID) {
+        String hql = """
+            from DiseaseAnnotationModel as model where
+             model.diseaseAnnotation.publication.zdbID = :publicationID
+            order by model.diseaseAnnotation.disease.termName
+            """;
+        Query<DiseaseAnnotationModel> query = HibernateUtil.currentSession().createQuery(hql, DiseaseAnnotationModel.class);
+        query.setParameter("publicationID", publicationID);
+        return query.list();
+    }
+
+    @Override
     public List<DiseaseAnnotationModel> getHumanDiseaseModelsByFish(String fishID) {
         String hql = "from DiseaseAnnotationModel as disease where" +
             " disease.fishExperiment.fish.zdbID = :fishID";

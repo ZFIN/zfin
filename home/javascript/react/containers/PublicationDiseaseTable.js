@@ -2,27 +2,28 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import DataTable from '../components/data-table';
 import TermLink from '../components/entity/TermLink';
-import {EntityList} from '../components/entity';
+import {EntityLink} from '../components/entity';
+import Fish from '../components/Fish';
 
 const PublicationDiseaseTable = ({url, title, navigationCounter}) => {
     const columns = [
         {
             label: 'Human Disease',
-            content: row => <TermLink key={row.disease} entity={row.disease}/>,
+            content: row => <TermLink key={row.diseaseAnnotation.disease} entity={row.diseaseAnnotation.disease}/>,
         },
         {
             label: 'Fish',
-            content: row => (<EntityList entities={row.fishList}/>),
+            content: row => (<Fish entity={row.fishExperiment.fish}/>),
             width: '300px',
         },
         {
             label: 'Environment',
-            content: row => (<EntityList entities={row.environmentList}/>),
+            content: row => (<EntityLink entity={row.fishExperiment.experiment}/>),
             width: '350px',
         },
         {
             label: 'Evidence',
-            content: row => row.evidenceCodeString,
+            content: row => row.diseaseAnnotation.evidenceCodeString,
             width: '80px',
         },
     ];
