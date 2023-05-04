@@ -13,7 +13,7 @@ import org.zfin.marker.Marker;
  */
 public class FishAnnotationPresentation extends EntityPresentation {
 
-    private static final String uri = "/action/fish/fish-detail/";
+    private static final String uri = "/action/fish/";
     private static final String popupUri = "fish/fish-detail-popup/";
 
     private static Logger logger = LogManager.getLogger(FishAnnotationPresentation.class);

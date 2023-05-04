@@ -412,10 +412,6 @@ public class FishService {
     }
 
 
-    public static Integer getCitationCount(Fish fish) {
-        return getFishPublications(fish).size();
-    }
-
     public static Set<Publication> getFishPublications(Fish fish) {
         List<Publication> pubs = RepositoryFactory.getMutantRepository().getFishAttributionList(fish);
         Set<Publication> publicationSet = new HashSet<>(pubs.size());
