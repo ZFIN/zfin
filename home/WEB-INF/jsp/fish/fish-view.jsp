@@ -17,7 +17,6 @@
     <jsp:attribute name="pageBar">
         <authz:authorize access="hasRole('root')">
                 <nav class="navbar navbar-light admin text-center border-bottom">
-                    <a class="col-sm" href="/action/fish/fish-detail/${fish.zdbID}">Old View</a>
                     <a class="col-sm" href="/action/updates/${fish.zdbID}">
                         Last Update:
                         <c:set var="latestUpdate" value="${zfn:getLastUpdate(fish.zdbID)}"/>
