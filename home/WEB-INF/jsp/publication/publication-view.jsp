@@ -23,7 +23,7 @@
 <c:set var="DIRECTLY_ATTRIBUTED_DATA" value="${NavigationMenuOptions.DIRECTLY_ATTRIBUTED_DATA.value}"/>
 <c:set var="ZEBRASHARE" value="${NavigationMenuOptions.ZEBRASHARE.value}"/>
 
-<c:set var="BODYCLASSES" value="publication-view" />
+<c:set var="BODYCLASSES" value="publication-view nav-title-wrap-break-word" />
 <c:if test="${zfn:isFlagEnabled(FeatureFlagEnum.USE_NAVIGATION_COUNTER)}">
     <c:set var="BODYCLASSES" value="${BODYCLASSES} show-navigation-counters" />
 </c:if>
