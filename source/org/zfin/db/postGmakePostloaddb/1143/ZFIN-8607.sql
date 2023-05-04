@@ -69,3 +69,6 @@ create table UI.INDEXER_TASK
     it_duration   integer
 );
 
+delete from expression_figure_stage where not exists (select * from figure where fig_zdb_id = efs_fig_zdb_id);
+
+delete from expression_result where not exists (select * from figure where fig_zdb_id = xpatres_fig_zdb_id);
