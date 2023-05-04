@@ -15,6 +15,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Set;
 
@@ -61,7 +62,15 @@ public class IndexerRun extends BaseEntity {
     public String getStartDay() {
         if(DateUtils.isSameDay(Date.from(startDate.atZone(ZoneId.systemDefault()).toInstant()), Date.from(Instant.now())))
             return "Today";
-        DateTimeFormatter formatters = DateTimeFormatter.ofPattern("d/MM/uuuu");
+        if(DateUtils.isSameDay(Date.from(startDate.atZone(ZoneId.systemDefault()).toInstant()), Date.from(Instant.now().minus(1, ChronoUnit.DAYS))))
+            return "Yesterday";
+        DateTimeFormatter formatters = DateTimeFormatter.ofPattern("YYYY-MM-DD");
+        return startDate.format(formatters);
+    }
+
+    @JsonView(View.API.class)
+    public String getStartTime() {
+        DateTimeFormatter formatters = DateTimeFormatter.ofPattern("hh:mm:dd");
         return startDate.format(formatters);
     }
 
