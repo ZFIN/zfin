@@ -67,14 +67,6 @@ public class FeatureValidationService {
     public static boolean isFeatureSaveable(FeatureDTO dtoFromGUI) {
         if (dtoFromGUI.getFeatureType() == null) return false;
 
-
-       /* if (StringUtils.isEmpty(dtoFromGUI.getFeatureChromosome())) {
-            if (dtoFromGUI.getFeatureStartLoc()==null){
-                Window.alert("You must specify a location if you specify a chromosome");
-                return false;
-            }
-        }*/
-
         switch (dtoFromGUI.getFeatureType()) {
             case TRANSGENIC_INSERTION:
                 boolean isKnownInSite = dtoFromGUI.getKnownInsertionSite();
@@ -181,16 +173,6 @@ public class FeatureValidationService {
         String returnString = (dtoFromGUI.getDominant() ? "d" : "");
         switch (featureType) {
             case TRANSGENIC_INSERTION:
-                /*if(isKnownInSite){
-                    returnString += featureDTO.getLabPrefix()
-                            + featureDTO.getLineNumber()
-                            + featureDTO.getTransgenicSuffix() ;
-                }
-                else{
-                    returnString += featureDTO.getOptionalName()
-                            + featureDTO.getLabPrefix()
-                            + featureDTO.getLineNumber()  ;
-                }*/
                 returnString += dtoFromGUI.getLabPrefix()
                         + dtoFromGUI.getLineNumber()
                         + dtoFromGUI.getTransgenicSuffix();
@@ -241,17 +223,6 @@ public class FeatureValidationService {
                         + featureDTO.getLabPrefix()
                         + featureDTO.getLineNumber()
                         + featureDTO.getTransgenicSuffix();
-                /*if(featureDTO.getKnownInsertionSite()){
-                    return dominantString
-                            +  featureDTO.getLabPrefix()
-                            + featureDTO.getLineNumber()
-                            + featureDTO.getTransgenicSuffix() ;
-                }
-                else{
-                    return  dominantString
-                            +  featureDTO.getLabPrefix()
-                            + featureDTO.getLineNumber()  ;
-                }*/
             case INVERSION:
             case INDEL:
             case TRANSLOC:
@@ -284,12 +255,7 @@ public class FeatureValidationService {
         String name = featureDTO.getName();
         switch (featureDTO.getFeatureType()) {
             case TRANSGENIC_INSERTION:
-               /* if(featureDTO.getKnownInsertionSite()){
-                    return null ;
-                }
-                else{*/
                 return name.substring(0, name.indexOf(featureDTO.getLabPrefix() + featureDTO.getLineNumber())).substring(dominantIndex);
-//                }
             case POINT_MUTATION:
             case DELETION:
             case SEQUENCE_VARIANT:
