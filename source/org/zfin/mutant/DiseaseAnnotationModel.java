@@ -1,35 +1,19 @@
 package org.zfin.mutant;
 
-/**
- * Disease model entity:
- */
-public class DiseaseAnnotationModel  {
+import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
+import org.zfin.framework.api.View;
 
+@Setter
+@Getter
+public class DiseaseAnnotationModel {
+
+    @JsonView(View.API.class)
     private long ID;
+    @JsonView(View.API.class)
     private DiseaseAnnotation diseaseAnnotation;
+    @JsonView(View.API.class)
     private FishExperiment fishExperiment;
-
-    public FishExperiment getFishExperiment() {
-        return fishExperiment;
-    }
-
-    public void setFishExperiment(FishExperiment fishExperiment) {
-        this.fishExperiment = fishExperiment;
-    }
-    public long getID() {
-        return ID;
-    }
-
-    public void setID(long ID) {
-        this.ID = ID;
-    }
-
-    public DiseaseAnnotation getDiseaseAnnotation() {
-        return diseaseAnnotation;
-    }
-
-    public void setDiseaseAnnotation(DiseaseAnnotation diseaseAnnotation) {
-        this.diseaseAnnotation = diseaseAnnotation;
-    }
 
 }

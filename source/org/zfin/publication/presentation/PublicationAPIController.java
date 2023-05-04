@@ -30,7 +30,7 @@ import org.zfin.marker.MarkerType;
 import org.zfin.marker.presentation.GeneBean;
 import org.zfin.marker.presentation.STRTargetRow;
 import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.mutant.DiseaseAnnotation;
+import org.zfin.mutant.DiseaseAnnotationModel;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.PhenotypeWarehouse;
 import org.zfin.mutant.SequenceTargetingReagent;
@@ -356,15 +356,15 @@ public class PublicationAPIController {
 
     @JsonView(View.API.class)
     @RequestMapping(value = "/{publicationID}/diseases")
-    public JsonResultResponse<DiseaseAnnotation> getPublicationDisease(@PathVariable("publicationID") String publicationID,
-                                                                       @Version Pagination pagination) {
-        List<DiseaseAnnotation> list = getPhenotypeRepository().getHumanDiseaseModels(publicationID);
-        JsonResultResponse<DiseaseAnnotation> response = new JsonResultResponse<>();
+    public JsonResultResponse<DiseaseAnnotationModel> getPublicationDisease(@PathVariable("publicationID") String publicationID,
+                                                                            @Version Pagination pagination) {
+        List<DiseaseAnnotationModel> list = getPhenotypeRepository().getHumanDiseaseAnnotationModels(publicationID);
+        JsonResultResponse<DiseaseAnnotationModel> response = new JsonResultResponse<>();
         response.setHttpServletRequest(request);
         if (CollectionUtils.isEmpty(list))
             return response;
         response.setTotal(list.size());
-        List<DiseaseAnnotation> markerList = list.stream()
+        List<DiseaseAnnotationModel> markerList = list.stream()
             .skip(pagination.getStart())
             .limit(pagination.getLimit())
             .collect(Collectors.toList());

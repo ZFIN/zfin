@@ -4,23 +4,14 @@ import DataTable from '../components/data-table';
 import StageRange from '../components/StageRange';
 import Figure from '../components/Figure';
 import PhenotypeStatement from '../components/PhenotypeStatement';
+import Fish from '../components/Fish';
 
 
 const FigurePhenotypeTable = ({url, hideFigureColumn = false, navigationCounter, title}) => {
     const columns = [
         {
             label: 'Fish',
-            content: (row) => <span className='text-break'>
-                <a
-                    className='text-break'
-                    href={`/${row.fish.zdbID}`}
-                    dangerouslySetInnerHTML={{__html: row.fish.displayName}}
-                />
-                <a
-                    className='popup-link data-popup-link'
-                    href={`/action/fish/fish-detail-popup/${row.fish.zdbID}`}
-                />
-            </span>,
+            content: (row) => <Fish entity={row.fish}/>,
             filterName: 'fish',
         },
         {

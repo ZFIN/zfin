@@ -5,6 +5,7 @@ import {EntityLink} from '../components/entity';
 import StageRange from '../components/StageRange';
 import PostComposedEntity from '../components/PostComposedEntity';
 import Figure from '../components/Figure';
+import Fish from '../components/Fish';
 
 
 const FigureExpressionTable = ({url, hideFigureColumn = false, navigationCounter, title}) => {
@@ -26,17 +27,7 @@ const FigureExpressionTable = ({url, hideFigureColumn = false, navigationCounter
         },
         {
             label: 'Fish',
-            content: (row) => <span className='text-break'>
-                <a
-                    className='text-break'
-                    href={`/${row.fish.zdbID}`}
-                    dangerouslySetInnerHTML={{__html: row.fish.displayName}}
-                />
-                <a
-                    className='popup-link data-popup-link'
-                    href={`/action/fish/fish-detail-popup/${row.fish.zdbID}`}
-                />
-            </span>,
+            content: (row) => <Fish entity={row.fish}/>,
             filterName: 'fish',
             width: '150px',
         },

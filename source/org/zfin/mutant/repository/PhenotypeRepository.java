@@ -1,6 +1,5 @@
 package org.zfin.mutant.repository;
 
-import org.zfin.expression.Experiment;
 import org.zfin.expression.Figure;
 import org.zfin.framework.api.Pagination;
 import org.zfin.infrastructure.ZdbFlag;
@@ -264,6 +263,8 @@ public interface PhenotypeRepository {
      * @return
      */
     List<DiseaseAnnotation> getHumanDiseaseModels(String publicationID);
+
+    List<DiseaseAnnotationModel> getHumanDiseaseAnnotationModels(String publicationID);
 
     /**
      * Retrieve disease model list by fish id.
