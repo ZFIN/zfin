@@ -2,7 +2,7 @@
 /home/WEB-INF/lib/FastInfoset-1.2.15.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/XmlSchema-1.4.2.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/activation-1.1.1.jar filter=lfs diff=lfs merge=lfs -text
-/home/WEB-INF/lib/agr_curation_api-v0.16.0.jar filter=lfs diff=lfs merge=lfs -text
+/home/WEB-INF/lib/agr_curation_api-v0.17.2.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/ant-1.8.1.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/ant-antlr-1.6.5.jar filter=lfs diff=lfs merge=lfs -text
 /home/WEB-INF/lib/antlr-2.7.7.jar filter=lfs diff=lfs merge=lfs -text

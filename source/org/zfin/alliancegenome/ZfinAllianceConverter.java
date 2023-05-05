@@ -63,7 +63,7 @@ public class ZfinAllianceConverter {
         DOTerm doTerm = new DOTerm();
         doTerm.setCurie(disease.getOboID());
         CrossReference reference = new CrossReference();
-        reference.setCurie("PU");
+        reference.setReferencedCurie("PU");
         doTerm.setCrossReferences(List.of(reference));
         return doTerm;
     }
