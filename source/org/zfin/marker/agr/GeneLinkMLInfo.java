@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import org.alliancegenome.curation_api.model.ingest.dto.DataProviderDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.IngestDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.NameSlotAnnotationDTO;
 import org.zfin.infrastructure.ActiveData;
@@ -63,6 +64,9 @@ public class GeneLinkMLInfo extends AbstractScriptWrapper {
                 dto.setGeneSymbolDto(getNameSlotAnnotationDTOAbbrev(marker.getAbbreviation()));
                 dto.setGeneFullNameDto(getNameSlotAnnotationDTOName(marker.getAbbreviation()));
                 dto.setCreatedByCurie("ZFIN:CURATOR");
+                DataProviderDTO dataProvider = new DataProviderDTO();
+                dataProvider.setSourceOrganizationAbbreviation("ZFIN");
+                dto.setDataProviderDto(dataProvider);
                 dto.setTaxonCurie(ZfinDTO.taxonId);
                 dto.setCurie("ZFIN:" + marker.getZdbID());
                 GregorianCalendar date = ActiveData.getDateFromId(marker.getZdbID());

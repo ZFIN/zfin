@@ -7,6 +7,7 @@ import org.alliancegenome.curation_api.model.entities.Reference;
 import org.alliancegenome.curation_api.model.entities.ontology.DOTerm;
 import org.alliancegenome.curation_api.model.entities.ontology.ECOTerm;
 import org.alliancegenome.curation_api.model.ingest.dto.AGMDiseaseAnnotationDTO;
+import org.alliancegenome.curation_api.model.ingest.dto.DataProviderDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.ExperimentalConditionDTO;
 import org.springframework.stereotype.Service;
 import org.zfin.alliancegenome.ApiException;
@@ -84,7 +85,10 @@ public class DiseaseAnnotationService extends AllianceService {
     public static AGMDiseaseAnnotationDTO getAgmDiseaseAnnotationDTO(DiseaseAnnotationModel damo) {
         Fish fish = damo.getFishExperiment().getFish();
         AGMDiseaseAnnotationDTO annotation = new AGMDiseaseAnnotationDTO();
-        annotation.setDataProviderName("ZFIN");
+
+        org.alliancegenome.curation_api.model.ingest.dto.DataProviderDTO dataProvider = new DataProviderDTO();
+        dataProvider.setSourceOrganizationAbbreviation("ZFIN");
+        annotation.setDataProviderDto(dataProvider);
         annotation.setCreatedByCurie("ZFIN:curator");
         annotation.setUpdatedByCurie("ZFIN:curator");
         //annotation.setModifiedBy("ZFIN:curator");

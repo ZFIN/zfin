@@ -3,6 +3,8 @@ package org.zfin.mutant.service;
 import lombok.extern.log4j.Log4j2;
 import org.alliancegenome.curation_api.model.entities.AffectedGenomicModel;
 import org.alliancegenome.curation_api.model.entities.CrossReference;
+import org.alliancegenome.curation_api.model.entities.ResourceDescriptor;
+import org.alliancegenome.curation_api.model.entities.ResourceDescriptorPage;
 import org.alliancegenome.curation_api.response.ObjectResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,8 +27,13 @@ public class FishService extends AllianceService {
         model.setName(fish.getDisplayName());
         model.setTaxon(getNcbiTaxonTerm());
         CrossReference reference = new CrossReference();
-        reference.setCurie(model.getCurie());
-        reference.setPageAreas(List.of("pages"));
+        reference.setReferencedCurie(model.getCurie());
+        ResourceDescriptorPage page = new ResourceDescriptorPage();
+        page.setPageDescription("pages");
+        ResourceDescriptor resourceDescriptor = new ResourceDescriptor();
+        resourceDescriptor.setPrefix("ZFIN");
+        page.setResourceDescriptor(resourceDescriptor);
+        reference.setResourceDescriptorPage(page);
 //        model.setCrossReferences(List.of(reference));
 
         ObjectResponse<AffectedGenomicModel> agmFish = null;

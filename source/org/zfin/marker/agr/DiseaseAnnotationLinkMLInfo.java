@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import org.alliancegenome.curation_api.model.entities.AffectedGenomicModel;
 import org.alliancegenome.curation_api.model.entities.ontology.ECOTerm;
 import org.alliancegenome.curation_api.model.ingest.dto.AGMDiseaseAnnotationDTO;
+import org.alliancegenome.curation_api.model.ingest.dto.DataProviderDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.ExperimentalConditionDTO;
 import org.zfin.alliancegenome.ZfinAllianceConverter;
 import org.zfin.expression.ExperimentCondition;
@@ -121,7 +122,9 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
                         // Use wildtype fish with STR
                         // treat as purely implicated by a gene
                         AGMDiseaseAnnotationDTO annotation = new AGMDiseaseAnnotationDTO();
-                        annotation.setDataProviderName("ZFIN");
+                        org.alliancegenome.curation_api.model.ingest.dto.DataProviderDTO dataProvider = new DataProviderDTO();
+                        dataProvider.setSourceOrganizationAbbreviation("ZFIN");
+                        annotation.setDataProviderDto(dataProvider);
 
                         annotation.setDiseaseRelationName(RelationshipDTO.IS_MODEL_OF);
                         AffectedGenomicModel model = getAffectedGenomicModel(fish);
@@ -186,7 +189,10 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
     private AGMDiseaseAnnotationDTO getAgmDiseaseAnnotationDTO(DiseaseAnnotationModel damo) {
         Fish fish = damo.getFishExperiment().getFish();
         AGMDiseaseAnnotationDTO annotation = new AGMDiseaseAnnotationDTO();
-        annotation.setDataProviderName("ZFIN");
+
+        org.alliancegenome.curation_api.model.ingest.dto.DataProviderDTO dataProvider = new DataProviderDTO();
+        dataProvider.setSourceOrganizationAbbreviation("ZFIN");
+        annotation.setDataProviderDto(dataProvider);
         annotation.setCreatedByCurie("ZFIN:curator");
         //annotation.setModifiedBy("ZFIN:curator");
 //            annotation.setModEntityId(damo.getDiseaseAnnotation().getZdbID());
