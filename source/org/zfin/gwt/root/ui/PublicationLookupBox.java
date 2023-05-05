@@ -49,7 +49,9 @@ public class PublicationLookupBox extends Composite implements DirectAttribution
         // this won't run
         DeferredCommand.addCommand(new Command() {
             public void execute() {
-                publicationChanged(new PublicationChangeEvent(defaultPubList.getValue(0)));
+                if (defaultPubList.getItemCount() > 0) {
+                    publicationChanged(new PublicationChangeEvent(defaultPubList.getValue(0)));
+                }
             }
         });
 
