@@ -130,6 +130,8 @@
         <security:intercept-url pattern="/action/marker/clone/prototype-view/*" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/marker/transcribedRegion-add" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/marker/engineeredRegion-add" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/indexer*" access="hasRole('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/indexer/*" access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/marker/sequence-targeting-reagent-add"
                                 access="hasRole('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/construct/construct-add"
