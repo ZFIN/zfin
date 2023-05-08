@@ -28,6 +28,14 @@ public enum UiIndexerConfig {
         this.order = order;
     }
 
+    public static UiIndexerConfig getIndexerByName(String indexerName) {
+        for(UiIndexerConfig config: values()){
+            if(config.typeName.equals(indexerName))
+                return config;
+        }
+        return null;
+    }
+
     public String getTypeName() {
         return typeName;
     }
