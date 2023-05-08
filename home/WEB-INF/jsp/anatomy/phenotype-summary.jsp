@@ -15,8 +15,7 @@
             <tr>
                 <th>Term:</th>
                 <td><zfin:link entity="${entity}" suppressPopupLink="false"/>
-            <c:if test="${!empty includingSubstructures}"> or substructures
-            </c:if>
+            <c:if test="${!empty includingSubstructures && includingSubstructures}"> or substructures</c:if>
 
             </td>
             </tr>
