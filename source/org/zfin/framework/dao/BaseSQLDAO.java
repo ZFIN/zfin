@@ -5,6 +5,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.api.SearchResponse;
 import org.zfin.framework.entity.BaseEntity;
+import org.zfin.gwt.root.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -63,7 +64,9 @@ public class BaseSQLDAO<E extends BaseEntity> extends BaseEntityDAO<E> {
         IdentifiableType<E> of = (IdentifiableType<E>) metaModel.managedType(myClass);
 
         CriteriaQuery<E> all = findQuery.select(rootEntry).orderBy(cb.asc(rootEntry.get(of.getId(of.getIdType().getJavaType()).getName())));
-
+        if (pagination != null && StringUtils.isNotEmpty(pagination.getSortBy())) {
+            all.orderBy(cb.desc(rootEntry.get(pagination.getSortBy())));
+        }
         CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
         countQuery.select(cb.count(countQuery.from(myClass)));
         Long totalResults = entityManager.createQuery(countQuery).getSingleResult();
