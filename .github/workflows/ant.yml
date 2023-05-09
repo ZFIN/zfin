@@ -23,5 +23,4 @@ jobs:
         distribution: 'temurin'
     - name: Build with Ant
       run:
-        source commons/env/github.bash
         ant do unittests
