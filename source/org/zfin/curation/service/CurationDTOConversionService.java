@@ -116,12 +116,7 @@ public class CurationDTOConversionService {
     }
 
     public Collection<CurationDTO> allCurationTopics(Collection<Curation> curationRecords) {
-        Set<CurationDTO> curationSet = new TreeSet<>(new Comparator<CurationDTO>() {
-            @Override
-            public int compare(CurationDTO o1, CurationDTO o2) {
-                return o1.getTopic().compareTo(o2.getTopic());
-            }
-        });
+        Set<CurationDTO> curationSet = new TreeSet<>(Comparator.comparing(CurationDTO::getTopic));
         List<Curation.Topic> existingTopics = new ArrayList<>();
         // Add curation records which exist
         for (Curation c : curationRecords) {
