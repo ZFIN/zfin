@@ -37,16 +37,18 @@ public class AutoCompleteController {
     @ResponseBody
     @RequestMapping("/marker")
     public List<LookupEntry> lookupMarker(@RequestParam String query,
-                                          @RequestParam(required = false) String typeGroup) {
+                                          @RequestParam(required = false) List<String> typeGroups) {
         // if the UI didn't provide a typeGroup don't send any suggestions. the other option would
         // be to send suggestions for all marker types but that seems like it could be more error-prone
-        Marker.TypeGroup group;
+        List<Marker.TypeGroup> groups = new ArrayList<>();
         try {
-            group = Marker.TypeGroup.getType(typeGroup);
+            typeGroups.forEach(typeGroup ->{
+                groups.add(Marker.TypeGroup.getType(typeGroup));
+            });
         } catch (Exception e) {
             return new ArrayList<>();
         }
-        return markerRepository.getMarkerSuggestionList(query, group);
+        return markerRepository.getMarkerSuggestionList(query, groups.toArray(new Marker.TypeGroup[0]));
     }
 
 }
