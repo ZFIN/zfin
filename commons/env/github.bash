@@ -1,7 +1,7 @@
 #!/local/bin/bash
 
-export ANT_HOME="/usr/share/ant"
-export ANT_OPTS="-Xms256m -Xmx4096m"
+#export ANT_HOME="/usr/share/ant"
+#export ANT_OPTS="-Xms256m -Xmx4096m"
 export CATALINA_BASE="/opt/zfin//catalina_bases/zfin.org"
 export CATALINA_HOME="/usr/local/tomcat"
 export CATALINA_PID="/opt/zfin//catalina_bases/zfin.org/catalina_pid"
@@ -28,7 +28,7 @@ export INDEXER_WIKI_PASSWORD="dan1orer1o"
 export INDEXER_WIKI_USERNAME="webservice"
 export INSPECTLET_ID="0000000000"
 export INSTANCE="github"
-export JAVA_HOME="/opt/java/openjdk"
+#export JAVA_HOME="/opt/java/openjdk"
 export JENKINS_HOME="/opt/zfin//www_homes/zfin.org/server_apps/jenkins/jenkins-home"
 export JENKINS_PORT="9499"
 export JPDA_ADDRESS="5000"
