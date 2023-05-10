@@ -84,6 +84,9 @@ public class ChebiPhenotypeDisplay {
     @Column(name = "cpd_is_multi_chebi_condition")
     private boolean multiChebiCondition;
 
+    @Column(name = "cpd_is_single_misfortune")
+    private boolean singleMisfortune;
+
     @JsonView(View.API.class)
     @Column(name = "cpd_ameliorated_exacerbated_phenotype_search")
     private String amelioratedExacerbatedPhenoSearch;

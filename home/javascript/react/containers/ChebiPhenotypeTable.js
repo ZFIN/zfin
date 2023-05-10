@@ -7,7 +7,7 @@ import CommaSeparatedList from '../components/CommaSeparatedList';
 import PhenotypeStatementLink from '../components/entity/PhenotypeStatementLink';
 import FigureSummaryPhenotype from '../components/FigureSummaryPhenotype';
 
-const ChebiPhenotypeTable = ({termId, directAnnotationOnly, endpointUrl = 'phenotype-chebi', isWildtype, isMultiChebiCondition}) => {
+const ChebiPhenotypeTable = ({termId, directAnnotationOnly, endpointUrl = 'phenotype-chebi', isWildtype, isMultiChebiCondition, isSingleMisfortune}) => {
 
     const [directAnnotation, setDirectAnnotation] = useState(directAnnotationOnly === 'true');
     const [count, setCount] = useState({'countDirect': 0, 'countIncludingChildren': 0});
@@ -81,6 +81,9 @@ const ChebiPhenotypeTable = ({termId, directAnnotationOnly, endpointUrl = 'pheno
     if (isMultiChebiCondition) {
         params.isMultiChebiCondition = isMultiChebiCondition;
     }
+    if (isSingleMisfortune) {
+        params.isSingleMisfortune = isSingleMisfortune;
+    }
     return (
         <>
             {directAnnotationOnly && count.countIncludingChildren > 0 && (
@@ -106,6 +109,7 @@ ChebiPhenotypeTable.propTypes = {
     endpointUrl: PropTypes.string,
     isWildtype: PropTypes.bool,
     isMultiChebiCondition: PropTypes.bool,
+    isSingleMisfortune: PropTypes.bool,
     directAnnotationOnly: PropTypes.string,
 };
 
