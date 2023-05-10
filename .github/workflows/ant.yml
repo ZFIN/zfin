@@ -26,5 +26,6 @@ jobs:
         groovy-version: '3.0.9'
     - name: Build with Ant
       run: |
+       which groovy
        source commons/env/github.bash
        ant do unittests
