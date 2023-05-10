@@ -22,6 +22,5 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
     - name: Build with Ant
-      run:
-        source commons/env/github.bash
-        ant do unittests
+    - run: source commons/env/github.bash
+    - run: ant do unittests
