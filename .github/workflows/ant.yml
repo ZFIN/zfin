@@ -21,6 +21,9 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
+    - uses: wtfjoke/setup-groovy@v1
+      with:
+        groovy-version: '3.0.9'
     - name: Build with Ant
       run: |
        source commons/env/github.bash
