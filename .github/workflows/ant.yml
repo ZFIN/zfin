@@ -26,6 +26,10 @@ jobs:
         groovy-version: '3.0.9'
     - name: Build with Ant
       run: |
-       which groovy
+       export GROOVY_BIN=`which groovy`
+       export GROOVY_PATH=${GROOVY_BIN%.bin.groovy}
+       echo $GROOVY_PATH
+       mkdir -p /opt/misc/
+       ln -s $GROOVY_PATH /opt/misc/groovy
        source commons/env/github.bash
        ant do unittests
