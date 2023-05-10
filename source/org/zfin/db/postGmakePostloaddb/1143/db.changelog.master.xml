@@ -11,6 +11,7 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1143/ZFIN-8520.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1143/ZFIN-8531-construct-relationship.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1143/ZFIN-8504.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1143/ZFIN-8504a.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1143/ZFIN-8512.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1143/ZFIN-8541.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1143/ZFIN-8514.sql" />

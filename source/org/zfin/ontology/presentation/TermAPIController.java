@@ -199,6 +199,7 @@ public class TermAPIController {
                                                                        @RequestParam(value = "directAnnotation", required = false, defaultValue = "false") boolean directAnnotation,
                                                                        @RequestParam(value = "isWildtype", required = false) Boolean wildType,
                                                                        @RequestParam(value = "isMultiChebiCondition", required = false) Boolean isMultiChebiCondition,
+                                                                       @RequestParam(value = "isSingleMisfortune", required = false) Boolean isSingleMisfortune,
                                                                        @RequestParam(value = "isAmelioratedExacerbated", required = false) Boolean isAmelioratedExacerbated,
                                                                        @RequestParam(value = "filter.conditionName", required = false) String filterConditionName,
                                                                        @RequestParam(value = "filter.modification", required = false) String filterModification,
@@ -222,6 +223,9 @@ public class TermAPIController {
         }
         if (isMultiChebiCondition != null) {
             pagination.addToExactFilterMap("chebiPhenotype.multiChebiCondition", isMultiChebiCondition ? "t" : "f");
+        }
+        if (isSingleMisfortune != null) {
+            pagination.addToExactFilterMap("chebiPhenotype.singleMisfortune", isSingleMisfortune ? "t" : "f");
         }
         if (StringUtils.isNotEmpty(filterConditionName)) {
             pagination.addToFilterMap("chebiPhenotype.conditionSearch", filterConditionName);

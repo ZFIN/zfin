@@ -92,6 +92,7 @@
                      data-direct-annotation-only="true"
                      data-is-wildtype="true"
                      data-is-multi-chebi-condition="false"
+                     data-is-single-misfortune="true"
                 ></div>
             </z:section>
             <z:section title="Phenotype where environments contain" appendedText="${term.termName}" show="${true}">
