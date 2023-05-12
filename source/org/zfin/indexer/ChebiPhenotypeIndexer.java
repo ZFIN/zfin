@@ -65,6 +65,7 @@ public class ChebiPhenotypeIndexer extends UiIndexer<ChebiPhenotypeDisplay> {
                 display.setPhenotypeStatementSearch(phenotypeStatementWarehouses.stream().map(PhenotypeStatementWarehouse::getDisplayName).collect(Collectors.joining("|")));
                 display.setGeneSymbolSearch(fish.getAffectedGenes().stream().map(Marker::getAbbreviation).sorted().collect(Collectors.joining("|")));
                 display.setConditionSearch(experiment.getDisplayAllConditions());
+                display.setSingleMisfortune(experiment.isSingleMisfortune());
                 display.setExpConditionChebiSearch(experiment.getExperimentConditions().stream()
                     .filter(experimentCondition -> experimentCondition.getChebiTerm() != null)
                     .map(ExperimentCondition::getChebiTerm)
