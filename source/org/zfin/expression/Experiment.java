@@ -186,4 +186,8 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
             return 11;
         return experimentConditions.stream().mapToInt(ExperimentCondition::hashCode).sum();
     }
+
+    public boolean isSingleMisfortune() {
+        return experimentConditions.size() == 1 && !isStandard();
+    }
 }
