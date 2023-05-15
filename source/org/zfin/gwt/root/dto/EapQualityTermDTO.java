@@ -1,7 +1,5 @@
 package org.zfin.gwt.root.dto;
 
-import com.google.gwt.user.client.Window;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -89,5 +87,10 @@ public class EapQualityTermDTO implements Serializable, Comparable<EapQualityTer
         int result = term.hashCode();
         result = 31 * result + tag.hashCode();
         return result;
+    }
+
+    public Boolean isOKEapTerm() {
+        String termName = nicknameMap.get(term.getOboID() + "," + tag);
+        return termName != null && termName.endsWith("ok");
     }
 }

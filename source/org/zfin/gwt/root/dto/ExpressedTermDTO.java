@@ -205,6 +205,10 @@ public class ExpressedTermDTO implements IsSerializable, Comparable<ExpressedTer
         return (qualityTermDTOList != null && qualityTermDTOList.size() > 0) || (qualityTerm != null);
     }
 
+    public boolean isOkEap() {
+        return (qualityTermDTOList != null && qualityTermDTOList.size() > 0) || (qualityTerm != null && qualityTerm.isOKEapTerm());
+    }
+
     public boolean hasUniqueID(String id) {
         if (qualityTermDTOList == null || qualityTermDTOList.size() == 0)
             return getUniqueID().equals(id);
