@@ -138,7 +138,12 @@ public class ExpressionFigureStage {
             return null;
         if (expressionExperiment.isWildtype())
             return "Cannot add an EaP annotation to a wildtype / standard fish";
+        // if Eap is not an 'OK' term all is well.
+        if(!expTerm.isOkEap())
+            return null;
+        
         // two functional changes and standard experiment -> valid EaP
+        // for OK EAPs
         if (expressionExperiment.getFishExperiment().getFish().getFishFunctionalAffectedGeneCount() == 2 && expressionExperiment.getFishExperiment().isStandard())
             return null;
         // one functional change and non-standard environment -> valid EaP
