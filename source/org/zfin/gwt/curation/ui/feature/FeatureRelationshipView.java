@@ -10,10 +10,12 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.FeatureDTO;
+import org.zfin.gwt.root.dto.FeatureMarkerRelationshipDTO;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.ui.ShowHideToggle;
 import org.zfin.gwt.root.ui.SimpleErrorElement;
 import org.zfin.gwt.root.ui.StringListBox;
+import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.gwt.root.util.WidgetUtil;
 
 public class FeatureRelationshipView extends Composite {
@@ -91,13 +93,19 @@ public class FeatureRelationshipView extends Composite {
         dataTable.resizeRows(1);
     }
 
-    public void addFeatureCell(FeatureDTO feature, FeatureDTO lastFeature, int elementIndex) {
+    public void addFeatureCell(FeatureMarkerRelationshipDTO fmrDTO, FeatureDTO feature, FeatureDTO lastFeature, int elementIndex) {
         dataTable.resizeRows(elementIndex + 2);
         int row = elementIndex + 1;
         String lastID = null;
         if (lastFeature != null)
             lastID = lastFeature.getZdbID();
-        currentGroupIndex = WidgetUtil.setRowStyle(row, feature.getZdbID(), lastID, currentGroupIndex, dataTable);
+
+        String highlighting = "";
+        if (StringUtils.isNotEmpty(fmrDTO.getPublicationZdbID())) {
+            highlighting = WidgetUtil.CssStyles.HIGHLIGHT_ROW.toString();
+        }
+
+        currentGroupIndex = WidgetUtil.setRowStyle(row, feature.getZdbID(), lastID, currentGroupIndex, dataTable, highlighting);
         Anchor fishAnchor = new Anchor(SafeHtmlUtils.fromTrustedString(feature.getName()), "/" + feature.getZdbID());
         fishAnchor.setTitle(feature.getZdbID());
         if (lastID == null || !feature.getZdbID().equals(lastID))
@@ -121,11 +129,15 @@ public class FeatureRelationshipView extends Composite {
         dataTable.setWidget(row, 3, fishAnchor);
     }
 
-    public void addDeletButton(Button deleteButton, int elementIndex) {
+    public void addDeleteButton(Button deleteButton, int elementIndex) {
         int row = elementIndex + 1;
         dataTable.setWidget(row, 4, deleteButton);
     }
 
+    public void addDebugCell(FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO, int elementIndex) {
+        int row = elementIndex + 1;
+        dataTable.setText(row, 5, featureMarkerRelationshipDTO.getPublicationZdbID());
+    }
     protected void endTableUpdate() {
         int rows = dataTable.getRowCount() + 1;
         dataTable.resizeRows(rows);

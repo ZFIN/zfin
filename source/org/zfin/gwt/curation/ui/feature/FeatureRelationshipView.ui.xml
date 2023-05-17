@@ -52,7 +52,7 @@
                         <g:Label text="Target" styleName="bold" horizontalAlignment="left"/>
                     </g:customCell>
                     <g:customCell>
-                        <g:Label text="Delete" styleName="bold" horizontalAlignment="left"/>
+                        <g:Label text="Delete Relationship" styleName="bold" horizontalAlignment="left"/>
                     </g:customCell>
                 </g:row>
                 <g:row>
@@ -68,6 +68,7 @@
                     <g:customCell>
                         <zfin:StringListBox ui:field="targetMarkerList"/>
                     </g:customCell>
+                    <g:cell/>
                     <g:cell/>
                 </g:row>
             </g:Grid>

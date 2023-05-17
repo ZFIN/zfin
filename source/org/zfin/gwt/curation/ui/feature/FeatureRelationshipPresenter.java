@@ -37,6 +37,8 @@ public class FeatureRelationshipPresenter implements HandlesError {
     private String featureNameFilter;
     private String featureTypeFilter;
 
+    private String warningMessage = null;
+
     public FeatureRelationshipPresenter(FeatureRelationshipView view, String publicationID) {
         this.publicationID = publicationID;
         this.view = view;
@@ -56,11 +58,15 @@ public class FeatureRelationshipPresenter implements HandlesError {
             if (featureTypeFilter != null && !relationshipDTO.getFeatureDTO().getFeatureType().getDisplay().equals(featureTypeFilter))
                 continue;
             FeatureDTO feature = relationshipDTO.getFeatureDTO();
-            view.addFeatureCell(feature, pastFeature, elementIndex);
-            view.addFeatureTypeCell(relationshipDTO.getFeatureDTO(), elementIndex);
+            view.addFeatureCell(relationshipDTO, feature, pastFeature, elementIndex);
+            view.addFeatureTypeCell(feature, elementIndex);
             view.addFeatureRelationshipCell(relationshipDTO.getRelationshipType(), elementIndex);
             view.addTargetMarker(relationshipDTO.getMarkerDTO(), elementIndex);
-            view.addDeletButton(new DeleteFeatureMarkerRelationshipButton(relationshipDTO, this), elementIndex);
+            view.addDeleteButton(new DeleteFeatureMarkerRelationshipWithWarningButton(relationshipDTO, this), elementIndex);
+
+            //DEBUG
+            view.addDebugCell(relationshipDTO, elementIndex);
+
             elementIndex++;
             pastFeature = feature;
         }
@@ -358,39 +364,50 @@ public class FeatureRelationshipPresenter implements HandlesError {
         populateDataTable();
     }
 
-    private class DeleteFeatureMarkerRelationshipButton extends Button {
+    private class DeleteFeatureMarkerRelationshipWithWarningButton extends Button {
         private FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO;
 
-        public DeleteFeatureMarkerRelationshipButton(final FeatureMarkerRelationshipDTO relationshipDTO, final HandlesError handlesError) {
+        public DeleteFeatureMarkerRelationshipWithWarningButton(final FeatureMarkerRelationshipDTO relationshipDTO, final HandlesError handlesError) {
             super("X");
             this.featureMarkerRelationshipDTO = relationshipDTO;
 
             addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
-                    if (!Window.confirm("Are you sure you want to delete this relationship?")) {
-                        return;
-                    }
                     setEnabled(false);
-                    FeatureRPCService.App.getInstance().deleteFeatureMarkerRelationship(featureMarkerRelationshipDTO,
-                            new FeatureEditCallBack<Void>("Unable to remove feature marker relationship: " + featureMarkerRelationshipDTO, handlesError) {
+                    String response = "";
+                    FeatureRPCService.App.getInstance().getWarningForDeleteRelationship(featureMarkerRelationshipDTO, new FeatureEditCallBack<String>(response, handlesError) {
 
-                                @Override
-                                public void onFailure(Throwable throwable) {
-                                    super.onFailure(throwable);
-                                    setEnabled(true);
-                                }
+                        @Override
+                        public void onSuccess(String warningMessage) {
+                            if (!Window.confirm( warningMessage)) {
+                                setEnabled(true);
+                                return;
+                            }
+                            FeatureRPCService.App.getInstance().deleteFeatureMarkerRelationship(featureMarkerRelationshipDTO, new FeatureEditCallBack<Void>("Unable to remove feature marker relationship: " + featureMarkerRelationshipDTO, handlesError) {
 
                                 @Override
                                 public void onSuccess(Void result) {
                                     loadValues();
                                     AppUtils.EVENT_BUS.fireEvent(new CurationEvent(EventType.DELETE_FEATURE_RELATIONSHIP, relationshipDTO.toString()));
                                 }
+
+                                @Override
+                                public void onFailure(Throwable throwable) {
+                                    super.onFailure(throwable);
+                                    setEnabled(true);
+                                }
                             });
+                        }
+
+                        @Override
+                        public void onFailure(Throwable throwable) {
+                            super.onFailure(throwable);
+                            setEnabled(true);
+                        }
+                    });
                 }
             });
         }
-
     }
-
 }
