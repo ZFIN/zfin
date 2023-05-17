@@ -190,4 +190,14 @@ public class Experiment implements Comparable<Experiment>, EntityZdbID {
     public boolean isSingleMisfortune() {
         return experimentConditions.size() == 1 && !isStandard();
     }
+
+    public boolean isDoubleChemical() {
+        if(experimentConditions.size() != 2)
+            return false;
+        
+        experimentConditions.forEach(experimentCondition -> {
+            experimentCondition.isChemicalCondition();
+        });
+        return experimentConditions.size() == 2 && !isStandard();
+    }
 }

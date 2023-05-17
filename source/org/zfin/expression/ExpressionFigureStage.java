@@ -144,11 +144,20 @@ public class ExpressionFigureStage {
         
         // two functional changes and standard experiment -> valid EaP
         // for OK EAPs
-        if (expressionExperiment.getFishExperiment().getFish().getFishFunctionalAffectedGeneCount() == 2 && expressionExperiment.getFishExperiment().isStandard())
+        long fishFunctionalAffectedGeneCount = expressionExperiment.getFishExperiment().getFish().getFishFunctionalAffectedGeneCount();
+        if (fishFunctionalAffectedGeneCount == 2 && expressionExperiment.getFishExperiment().isStandard())
             return null;
         // one functional change and non-standard environment -> valid EaP
-        if (expressionExperiment.getFishExperiment().getFish().getFishFunctionalAffectedGeneCount() == 1 && !expressionExperiment.getFishExperiment().isStandard())
+        if (fishFunctionalAffectedGeneCount == 1 && !expressionExperiment.getFishExperiment().isStandard())
             return null;
+        // zero-functional fish and double chemical
+        if(fishFunctionalAffectedGeneCount == 0){
+            Experiment experiment = expressionExperiment.getFishExperiment().getExperiment();
+            if(experiment.isDoubleChemical())
+                return null;
+        }
+
+
         return "EaP annotations require two functional modifications with standard environment or one functional modification with non-standard environment";
     }
 }
