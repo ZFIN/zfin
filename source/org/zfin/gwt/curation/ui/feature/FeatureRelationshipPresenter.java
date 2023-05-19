@@ -64,9 +64,6 @@ public class FeatureRelationshipPresenter implements HandlesError {
             view.addTargetMarker(relationshipDTO.getMarkerDTO(), elementIndex);
             view.addDeleteButton(new DeleteFeatureMarkerRelationshipWithWarningButton(relationshipDTO, this), elementIndex);
 
-            //DEBUG
-            view.addDebugCell(relationshipDTO, elementIndex);
-
             elementIndex++;
             pastFeature = feature;
         }

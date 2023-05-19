@@ -134,10 +134,6 @@ public class FeatureRelationshipView extends Composite {
         dataTable.setWidget(row, 4, deleteButton);
     }
 
-    public void addDebugCell(FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO, int elementIndex) {
-        int row = elementIndex + 1;
-        dataTable.setText(row, 5, featureMarkerRelationshipDTO.getPublicationZdbID());
-    }
     protected void endTableUpdate() {
         int rows = dataTable.getRowCount() + 1;
         dataTable.resizeRows(rows);

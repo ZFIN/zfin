@@ -302,9 +302,9 @@ table.summary td.no-data {
 }
 
 tr.even.newgroup.highlight-row {
-    background-color: rgba(255, 255, 0, 0.5);
+    background-color: rgba(255, 255, 0, 0.3);
 }
 
 tr.odd.newgroup.highlight-row {
-    background-color: rgba(255, 255, 0, 0.3);
+    background-color: rgba(255, 255, 0, 0.5);
 }

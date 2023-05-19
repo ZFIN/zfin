@@ -69,7 +69,6 @@
                         <zfin:StringListBox ui:field="targetMarkerList"/>
                     </g:customCell>
                     <g:cell/>
-                    <g:cell/>
                 </g:row>
             </g:Grid>
             <g:VerticalPanel>
