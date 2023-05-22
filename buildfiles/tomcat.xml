@@ -39,8 +39,8 @@
     <target name="docker-tomcat-stop" if="isdocker" description="Stops tomcat if docker">
         <exec executable="/usr/bin/docker" failifexecutionfails="true">
             <arg value="compose"/>
-	    <arg value="-f"/>
-	    <arg value="/opt/zfin/source_roots/zfin.org/docker/docker-compose.yml"/>
+	        <arg value="-f"/>
+	        <arg value="/opt/zfin/source_roots/zfin.org/docker/docker-compose.yml"/>
             <arg value="stop"/>
             <arg value="tomcat"/>
         </exec>
