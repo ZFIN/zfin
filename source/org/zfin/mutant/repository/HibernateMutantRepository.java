@@ -44,8 +44,7 @@ import java.util.stream.Collectors;
 
 import static org.zfin.database.HibernateUpgradeHelper.setTupleResultTransformer;
 import static org.zfin.framework.HibernateUtil.currentSession;
-import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
-import static org.zfin.repository.RepositoryFactory.getMutantRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 
 /**
@@ -241,6 +240,11 @@ public class HibernateMutantRepository implements MutantRepository {
         return (List<Genotype>) query.list();
     }
 
+    @SuppressWarnings({"unchecked"})
+    public List<Genotype> getGenotypesByFeatureID(String featureID) {
+        Feature feature = getFeatureRepository().getFeatureByID(featureID);
+        return getGenotypesByFeature(feature);
+    }
 
     public List<GenotypeFeature> getGenotypeFeaturesByGenotype(Genotype genotype) {
         Session session = currentSession();

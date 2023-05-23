@@ -64,6 +64,7 @@ public interface InfrastructureRepository {
                                            RecordAttribution.SourceType sourceType);
 
     List<RecordAttribution> getRecordAttributionsForType(String dataZdbID, RecordAttribution.SourceType sourceType);
+    List<RecordAttribution> getRecordAttributionsForPublicationAndType(String pubZdbID, RecordAttribution.SourceType sourceType);
 
 
     List<RecordAttribution> getRecordAttributions(ActiveData data);

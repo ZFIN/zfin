@@ -69,6 +69,9 @@ public interface FeatureRPCServiceAsync {
 
     void getTranscriptConsequenceList(AsyncCallback<List<MutationDetailControlledVocabularyTermDTO>> zfinAsyncCallback);
 
+    void getWarningForDeleteRelationship(FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO, AsyncCallback<String> zfinAsyncCallback);
+
     void isValidAccession(String accessionNumber, String type, AsyncCallback<String> valid);
+
 }
 
