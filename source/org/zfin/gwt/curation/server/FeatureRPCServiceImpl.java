@@ -853,7 +853,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     }
 
     @Override
-    public List<FeatureMarkerRelationshipDTO> addFeatureMarkerRelationShip(FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO, String publicationID) {
+    public List<FeatureMarkerRelationshipDTO> addFeatureMarkerRelationShip(FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO, String publicationID) throws ValidationException {
 
         FeatureDTO featureDTO = featureMarkerRelationshipDTO.getFeatureDTO();
         HibernateUtil.createTransaction();
@@ -866,6 +866,8 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         featureMarkerRelationship.setMarker(marker);
 
         featureMarkerRelationship.setType(FeatureMarkerRelationshipTypeEnum.getType(featureMarkerRelationshipDTO.getRelationshipType()));
+
+        validateNewFeatureMarkerRelationship(featureMarkerRelationship);
 
         HibernateUtil.currentSession().save(featureMarkerRelationship);
         infrastructureRepository.insertPublicAttribution(featureMarkerRelationship.getZdbID(), featureMarkerRelationshipDTO.getPublicationZdbID());
@@ -885,6 +887,18 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         HibernateUtil.closeSession();
         List<FeatureMarkerRelationshipDTO> dtos = getFeatureMarkerRelationshipsForPub(publicationID);
         return dtos;
+    }
+
+    private void validateNewFeatureMarkerRelationship(FeatureMarkerRelationship featureMarkerRelationship) throws ValidationException {
+        //check if feature is deficiency type and relationship is "is allele of", in which case, it must be the only relationship
+        if (featureMarkerRelationship.getFeature().getType().equals(FeatureTypeEnum.DEFICIENCY)) {
+            if (featureMarkerRelationship.getType().equals(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF)) {
+                List<Marker> isAlleleMarkers = featureRepository.getMarkerIsAlleleOf(featureMarkerRelationship.getFeature());
+                if (isAlleleMarkers != null && isAlleleMarkers.size() > 0) {
+                    throw new ValidationException("The feature [" + featureMarkerRelationship.getFeature().getAbbreviation() + "] is a deficiency and can only have one 'is allele of' relationship.");
+                }
+            }
+        }
     }
 
     @Override

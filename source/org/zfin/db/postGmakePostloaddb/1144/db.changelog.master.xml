@@ -5,4 +5,5 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
     <include file="source/org/zfin/db/postGmakePostloaddb/1144/ZFIN-8560-issn-for-journal-of-icthiology.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1144/ZFIN-8598-new-feature-marker-rel-type.sql" />
 </databaseChangeLog>
