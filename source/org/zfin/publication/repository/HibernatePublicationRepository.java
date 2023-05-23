@@ -1139,31 +1139,27 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return (Journal) HibernateUtil.currentSession().get(Journal.class, zdbID);
     }
 
-    public SortedSet<Publication> getAllPublicationsForGenotype(Genotype genotype) {
+    public SortedSet<Publication> getAllPublicationsForGenotypes(List<Genotype> genotypes) {
+        List<String> genotypeZdbIDs = genotypes.stream().map(Genotype::getZdbID).toList();
+
         SortedSet<Publication> pubList = new TreeSet<Publication>();
-        Query query;
-        String hql;
-        List<Publication> resultList;
         Session session = HibernateUtil.currentSession();
 
-        hql = "select p.publication " +
-            " from PublicationAttribution p " +
-            " where p.dataZdbID = :genotypeZdbID ";
-        query = session.createQuery(hql);
-        query.setString("genotypeZdbID", genotype.getZdbID());
-        resultList = query.list();
-        pubList.addAll(resultList);
+        String hql = "SELECT p.publication FROM PublicationAttribution p WHERE p.dataZdbID IN :genotypeZdbIDs";
+        Query query = session.createQuery(hql);
+        query.setParameter("genotypeZdbIDs", genotypeZdbIDs);
+        pubList.addAll(query.list());
 
-        hql = "select p.publication " +
-            " from PublicationAttribution p , DataAlias  da " +
-            "  where p.dataZdbID = da.zdbID " +
-            " and da.dataZdbID = :genotypeZdbID ";
+        hql = "SELECT p.publication FROM PublicationAttribution p, DataAlias da WHERE p.dataZdbID = da.zdbID AND da.dataZdbID IN :genotypeZdbIDs";
         query = session.createQuery(hql);
-        query.setString("genotypeZdbID", genotype.getZdbID());
-        resultList = query.list();
-        pubList.addAll(resultList);
+        query.setParameter("genotypeZdbIDs", genotypeZdbIDs);
+        pubList.addAll(query.list());
 
         return pubList;
+    }
+
+    public SortedSet<Publication> getAllPublicationsForGenotype(Genotype genotype) {
+        return getAllPublicationsForGenotypes(List.of(genotype));
     }
 
     public List<String> getPublicationIDsForGOwithField(String zdbID) {

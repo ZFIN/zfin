@@ -83,6 +83,10 @@ public final class WidgetUtil {
 
     // Returns the group index
     public static int setRowStyle(int rowIndex, String currentID, String previousID, int currentGroupIndex, Grid grid) {
+        return setRowStyle(rowIndex, currentID, previousID, currentGroupIndex, grid, null);
+    }
+
+    public static int setRowStyle(int rowIndex, String currentID, String previousID, int currentGroupIndex, Grid grid, String additionalStyle) {
         StringBuilder sb = new StringBuilder(50);
         // check even/odd row
         if (rowIndex % 2 == 0)
@@ -113,6 +117,12 @@ public final class WidgetUtil {
         // add row
         sb.append(" ");
         sb.append(CssStyles.EXPERIMENT_ROW.toString());
+
+        if (additionalStyle != null) {
+            sb.append(" ");
+            sb.append(additionalStyle);
+        }
+
         grid.getRowFormatter().setStyleName(rowIndex, sb.toString());
         return currentGroupIndex;
     }
@@ -185,7 +195,8 @@ public final class WidgetUtil {
         EXPERIMENT_ROW("experiment-row"),
         SEARCHRESULTS("searchresults"),
         GROUPSTRIPES_HOVER("groupstripes-hover"),
-        TABLE_HEADER("table-header");
+        TABLE_HEADER("table-header"),
+        HIGHLIGHT_ROW("highlight-row");
 
         private final String value;
 
