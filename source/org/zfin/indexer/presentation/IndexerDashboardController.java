@@ -1,13 +1,11 @@
 package org.zfin.indexer.presentation;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.zfin.framework.api.View;
 import org.zfin.indexer.UiIndexer;
 import org.zfin.indexer.UiIndexerConfig;
 
