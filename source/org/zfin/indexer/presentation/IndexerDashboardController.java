@@ -5,6 +5,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.zfin.indexer.UiIndexer;
 import org.zfin.indexer.UiIndexerConfig;
 
@@ -17,7 +18,8 @@ public class IndexerDashboardController {
         return "indexer/indexer-view";
     }
 
-    @RequestMapping(value = "/runIndexer/{indexerName}", method = RequestMethod.GET)
+    @ResponseBody
+    @RequestMapping(value = "/runIndexer/{indexerName}", method = RequestMethod.POST)
     public String runIndexer(@PathVariable String indexerName) {
         UiIndexerConfig config = UiIndexerConfig.getIndexerByName(indexerName);
         if (config != null) {
@@ -30,8 +32,7 @@ public class IndexerDashboardController {
                 }
             }).start();
         }
-        return "redirect:/action/indexer/";
+        return "OK";
     }
-
 
 }
