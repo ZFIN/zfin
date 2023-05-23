@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 
-const Modal = ({ children, open = false, onClose }) => {
+const Modal = ({ children, open = false, onClose, config={} }) => {
     const [jqModal, setJqModal] = useState(null);
     const modalRefCallback = useCallback(node => {
         if (!node) {
@@ -18,9 +18,9 @@ const Modal = ({ children, open = false, onClose }) => {
         }
         if (open) {
             jqModal.modal({
-                escapeClose: false,
-                clickClose: false,
-                showClose: false,
+                escapeClose: config.escapeClose === undefined ? false : config.escapeClose,
+                clickClose: config.clickClose === undefined ? false : config.clickClose,
+                showClose: config.showClose === undefined ? false : config.showClose,
                 fadeDuration: 100,
             });
         } else {
@@ -39,6 +39,7 @@ Modal.propTypes = {
     children: PropTypes.node,
     open: PropTypes.bool,
     onClose: PropTypes.func,
+    config: PropTypes.object,
 };
 
 export default Modal;

@@ -34,4 +34,3 @@ require('./str-details.directive');
 require('./str-sequence.directive');
 
 require('./nomenclature');
-require('./sequence-information-edit');
