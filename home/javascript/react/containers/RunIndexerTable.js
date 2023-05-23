@@ -4,9 +4,10 @@ import qs from 'qs';
 
 const RunIndexerTable = () => {
 
-    const postRunIndexer = (e) => {
+    const postRunIndexer = async (e) => {
         e.preventDefault();
-        fetch(e.target.href, {method: 'POST'});
+        await fetch(e.target.href, {method: 'POST'});
+        window.location.reload();
     }
 
     const columns = [
