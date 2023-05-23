@@ -33,6 +33,7 @@ services:
       - ${DOCKER_SOLR_UNLOADS_PATH}:/opt/zfin/unloads/solr
       - ${DOCKER_BLASTSERVER_BLAST_DATABASE_PATH}:/opt/zfin/blastdb
       - ${DOCKER_ABBLAST_PATH}:/opt/ab-blast
+      - ${DOCKER_RESEARCH_PATH}:/research
       - solr_data:/var/solr
       - ./pg_pass:/run/secrets/pg_pass
       - ${DOCKER_SSH_AUTH_SOCK}:/run/host-services/ssh-auth.sock
@@ -123,6 +124,7 @@ services:
       - www_data:/opt/zfin/www_homes/zfin.org
       - downloads_data:/opt/zfin/download-files
       - jenkins_data:/opt/zfin/www_homes/zfin.org/server_apps/jenkins/jenkins-home
+      - ${DOCKER_RESEARCH_PATH}:/research
   elasticsearch:
     build: 
       context: ./elasticsearch/
