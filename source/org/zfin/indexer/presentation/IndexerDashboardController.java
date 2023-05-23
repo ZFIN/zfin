@@ -17,7 +17,7 @@ public class IndexerDashboardController {
         return "indexer/indexer-view";
     }
 
-    @RequestMapping(value = "/runIndexer/{indexerName}", method = RequestMethod.GET)
+    @RequestMapping(value = "/runIndexer/{indexerName}", method = RequestMethod.POST)
     public String runIndexer(@PathVariable String indexerName) {
         UiIndexerConfig config = UiIndexerConfig.getIndexerByName(indexerName);
         if (config != null) {
@@ -32,6 +32,5 @@ public class IndexerDashboardController {
         }
         return "redirect:/action/indexer/";
     }
-
 
 }

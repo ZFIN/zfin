@@ -4,6 +4,12 @@ import qs from 'qs';
 
 const RunIndexerTable = () => {
 
+    const postRunIndexer = (e, row) => {
+        e.preventDefault();
+        const url = `/action/indexer/runIndexer/${row}`;
+        fetch(url, {method: 'POST'});
+    }
+
     const columns = [
         {
             label: 'Name',
@@ -11,7 +17,7 @@ const RunIndexerTable = () => {
         },
         {
             label: 'Run',
-            content: row => <a href={`/action/indexer/runIndexer/${row}`}>Run</a>,
+            content: row => <a href={`/action/indexer/runIndexer/${row}`} onClick={(e) => {postRunIndexer(e, row)}}>Run</a>,
         },
     ];
 
