@@ -25,7 +25,7 @@ public class FeatureSupplier extends ObjectSupplier implements Serializable, Com
 
     /**
      * This method assumes that dataZdbID and supplierZdbID are not null.
-     * Otherwise this method throws an exception.
+     * Otherwise, this method throws an exception.
      *
      * @param o Object
      * @return boolean
