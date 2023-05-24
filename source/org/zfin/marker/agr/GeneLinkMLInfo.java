@@ -15,10 +15,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
@@ -74,6 +72,16 @@ public class GeneLinkMLInfo extends AbstractScriptWrapper {
                 return dto;
             })
             .collect(toList());
+    }
+
+    public static List<NameSlotAnnotationDTO> getSynonymSlotAnnotationDTOs(List<String> names) {
+        return names.stream().map(name -> {
+            NameSlotAnnotationDTO slotAnnotation = new NameSlotAnnotationDTO();
+            slotAnnotation.setDisplayText(name);
+            slotAnnotation.setFormatText(name);
+            slotAnnotation.setNameTypeName("unspecified");
+            return slotAnnotation;
+        }).toList();
     }
 
     public static NameSlotAnnotationDTO getNameSlotAnnotationDTOName(String name) {
