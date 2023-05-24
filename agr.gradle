@@ -123,16 +123,6 @@ task createFishLinkMLFile(type: JavaExec) {
     main = 'org.zfin.marker.agr.FishLinkMLInfo'
 }
 
-task createUIIndex(type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    main = 'org.zfin.indexer.UiIndexer'
-}
-
-task createUIIndexOld(type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    main = 'org.zfin.indexer.TermPageIndexer'
-}
-
 task createAllianceFiles {
     dependsOn createDiseaseInfoFile
     dependsOn createBasicPhenotypeInfoFile

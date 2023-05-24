@@ -42,7 +42,7 @@ echo "cd'd to <!--|SOURCEROOT|-->" ;
 cp reports/tests/phenotypeMartUnitTests.txt <!--|TARGETROOT|-->/server_apps/DB_maintenance/warehouse/phenotypeMart/.
 
 if ($? != 0) then
-   echo "regen phenotype mart (the building tables, not the public tables) failed on unit tests";  
+   echo "regen phenotype mart (the building tables, not the public tables) failed on unit tests";
 exit 1;
 endif
 
@@ -93,6 +93,17 @@ exit 1;
 endif
 date;
 echo "done with pheno_term_regen()";
+
+
+echo "start gradle runChebiPhenotypeIndexer";
+cd $SOURCEROOT
+gradle runChebiPhenotypeIndexer
+if ($? != 0) then
+   echo "gradle runChebiPhenotypeIndexer failed";
+exit 1;
+endif
+date;
+echo "done with gradle runChebiPhenotypeIndexer";
 
 
 
