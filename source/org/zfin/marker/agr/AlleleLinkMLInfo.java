@@ -5,14 +5,20 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.alliancegenome.curation_api.model.ingest.dto.AlleleDTO;
+import org.alliancegenome.curation_api.model.ingest.dto.AlleleMutationTypeSlotAnnotationDTO;
+import org.alliancegenome.curation_api.model.ingest.dto.AlleleSecondaryIdSlotAnnotationDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.IngestDTO;
-import org.alliancegenome.curation_api.model.ingest.dto.NameSlotAnnotationDTO;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.zfin.feature.Feature;
 import org.zfin.infrastructure.ActiveData;
+import org.zfin.infrastructure.DataAlias;
+import org.zfin.marker.ReplacedData;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -58,6 +64,25 @@ public class AlleleLinkMLInfo extends LinkMLInfo {
                 AlleleDTO dto = new AlleleDTO();
                 dto.setAlleleSymbolDto(GeneLinkMLInfo.getNameSlotAnnotationDTOAbbrev(feature.getAbbreviation()));
                 dto.setAlleleFullNameDto(GeneLinkMLInfo.getNameSlotAnnotationDTOName(feature.getName()));
+                dto.setAlleleSynonymDtos(GeneLinkMLInfo.getSynonymSlotAnnotationDTOs(feature.getAliases().stream().map(DataAlias::getAlias).toList()));
+/*
+                List<String> curies = new ArrayList<>();
+                curies.addAll(feature.getFeatureDnaMutationDetailSet().stream().map(mutationDetail -> mutationDetail.getDnaMutationTerm().getTerm().getOboID()).toList());
+                curies.addAll(feature.getFeatureProteinMutationDetailSet().stream().map(mutationDetail -> mutationDetail.getProteinConsequence().getTerm().getOboID()).toList());
+*/
+                String curie = feature.getType().getCurie();
+                if (StringUtils.isNotEmpty(curie)) {
+                    dto.setAlleleMutationTypeDtos(getMutationTypeAnnotationDTOs(List.of(curie)));
+                }
+                List<String> secondaries = new ArrayList<>(feature.getSecondaryFeatureSet().stream().map(ReplacedData::getOldID).toList());
+                if (CollectionUtils.isNotEmpty(secondaries)) {
+                    dto.setAlleleSecondaryIdDtos(
+                        secondaries.stream().map(id -> {
+                            AlleleSecondaryIdSlotAnnotationDTO alleleDto = new AlleleSecondaryIdSlotAnnotationDTO();
+                            alleleDto.setSecondaryId(id);
+                            return alleleDto;
+                        }).toList());
+                }
                 dto.setInternal(false);
                 dto.setCreatedByCurie("ZFIN:CURATOR");
                 dto.setTaxonCurie(ZfinDTO.taxonId);
@@ -77,6 +102,14 @@ public class AlleleLinkMLInfo extends LinkMLInfo {
                 return dto;
             })
             .collect(toList());
+    }
+
+    private List<AlleleMutationTypeSlotAnnotationDTO> getMutationTypeAnnotationDTOs(List<String> curies) {
+        return curies.stream().map(curie -> {
+            AlleleMutationTypeSlotAnnotationDTO dto = new AlleleMutationTypeSlotAnnotationDTO();
+            dto.setMutationTypeCuries(List.of(curie));
+            return dto;
+        }).toList();
     }
 
     private List<String> getReferencesById(String zdbID) {

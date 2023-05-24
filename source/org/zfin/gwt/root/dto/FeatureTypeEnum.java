@@ -7,14 +7,14 @@ import org.zfin.framework.api.View;
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum FeatureTypeEnum implements IsSerializable{
-    TRANSGENIC_INSERTION("Transgenic Insertion", "Transgenic insertion"),
-    POINT_MUTATION("Point Mutation", "Allele with one point mutation"),
-    DELETION("Small Deletion", "Allele with one deletion"),
-    INSERTION("Insertion", "Allele with one insertion"),
-    INDEL("Indel", "Allele with one delins"),
+    TRANSGENIC_INSERTION("Transgenic Insertion", "Transgenic insertion","SO:0001218"),
+    POINT_MUTATION("Point Mutation", "Allele with one point mutation","SO:1000008"),
+    DELETION("Small Deletion", "Allele with one deletion","SO:0000159"),
+    INSERTION("Insertion", "Allele with one insertion","SO:0000667"),
+    INDEL("Indel", "Allele with one delins","SO:1000032"),
     TRANSLOC("Translocation", "Translocation"),
     INVERSION("Inversion", "Inversion"),
-    DEFICIENCY("Deficiency", "Deficiency"),
+    DEFICIENCY("Deficiency", "Deficiency", "SO:1000029"),
     COMPLEX_SUBSTITUTION("Complex", "Allele with multiple variants"),
     SEQUENCE_VARIANT("Unknown", "unknown"),
     UNSPECIFIED("Unspecified", "Unspecified Allele"),
@@ -26,6 +26,13 @@ public enum FeatureTypeEnum implements IsSerializable{
     private String display;
     @JsonView(View.API.class)
     private String typeDisplay;
+    private String curie;
+
+    FeatureTypeEnum(String display, String typeDisplay, String curie) {
+        this.display = display;
+        this.typeDisplay = typeDisplay;
+        this.curie = curie;
+    }
 
     FeatureTypeEnum(String value, String typeDisplay) {
         this.display = value;
@@ -59,6 +66,10 @@ public enum FeatureTypeEnum implements IsSerializable{
 
     public String getTypeDisplay() {
         return typeDisplay;
+    }
+
+    public String getCurie() {
+        return curie;
     }
 
     // provided for bean access
