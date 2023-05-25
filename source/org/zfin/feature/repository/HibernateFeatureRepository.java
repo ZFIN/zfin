@@ -279,6 +279,14 @@ public class HibernateFeatureRepository implements FeatureRepository {
     }
 
     @Override
+    public FeatureTypeGroup getFeatureTypeGroupByName(String name) {
+        Session session = HibernateUtil.currentSession();
+        Query<FeatureTypeGroup> query = session.createQuery("SELECT ftg FROM FeatureTypeGroup ftg WHERE ftg.name = :name", FeatureTypeGroup.class);
+        query.setParameter("name", name);
+        return query.uniqueResult();
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public List<Marker> getMarkersForFeatureRelationAndSource(String featureRelationshipName, String publicationZdbID) {
         String sql = "select distinct mrkr_zdb_id " +

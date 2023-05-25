@@ -47,6 +47,8 @@ public interface FeatureRepository {
 
     List<String> getRelationshipTypesForFeatureType(FeatureTypeEnum featureTypeEnum);
 
+    FeatureTypeGroup getFeatureTypeGroupByName(String name);
+
     List<Marker> getMarkersForFeatureRelationAndSource(String featureRelationshipName, String publicationZdbID);
 
     List<FeatureLabEntry> getFeaturesForPrefix(String prefix);

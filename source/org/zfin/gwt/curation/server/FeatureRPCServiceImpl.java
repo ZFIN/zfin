@@ -890,12 +890,22 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     }
 
     private void validateNewFeatureMarkerRelationship(FeatureMarkerRelationship featureMarkerRelationship) throws ValidationException {
-        //check if feature is deficiency type and relationship is "is allele of", in which case, it must be the only relationship
-        if (featureMarkerRelationship.getFeature().getType().equals(FeatureTypeEnum.DEFICIENCY)) {
+        FeatureTypeEnum featureType = featureMarkerRelationship.getFeature().getType();
+        FeatureTypeGroup featureTypeGroup = featureRepository.getFeatureTypeGroupByName(Marker.Type.MUTANT.name());
+        boolean isMutant = featureTypeGroup.getTypeStrings().contains(featureType.toString());
+
+        //check if feature is of deficiency/inversion/translocation type and relationship is "is allele of", in which case, it is not allowed
+        if (List.of(FeatureTypeEnum.DEFICIENCY, FeatureTypeEnum.INVERSION, FeatureTypeEnum.TRANSLOC).contains(featureType)) {
+            if (featureMarkerRelationship.getType().equals(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF)) {
+                throw new ValidationException("The feature [" + featureMarkerRelationship.getFeature().getAbbreviation() + "] is a '" + featureType.getDisplay() + "' and cannot have 'is allele of' relationships.");
+            }
+        }
+
+        if (isMutant) {
             if (featureMarkerRelationship.getType().equals(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF)) {
                 List<Marker> isAlleleMarkers = featureRepository.getMarkerIsAlleleOf(featureMarkerRelationship.getFeature());
                 if (isAlleleMarkers != null && isAlleleMarkers.size() > 0) {
-                    throw new ValidationException("The feature [" + featureMarkerRelationship.getFeature().getAbbreviation() + "] is a deficiency and can only have one 'is allele of' relationship.");
+                    throw new ValidationException("The feature [" + featureMarkerRelationship.getFeature().getAbbreviation() + "] is a mutant type and can only have one 'is allele of' relationship.");
                 }
             }
         }
