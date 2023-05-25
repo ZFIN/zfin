@@ -21,6 +21,7 @@ const AntibodyEditAntigenGenes = ({
     const isEdit = modalRelationship && !!modalRelationship.zdbID;
 
     const relatedMarkerTypeGroup = 'GENEDOM_PROD_PROTEIN';
+    const relatedMarkerTypeGroup2 = 'EFG';
 
     const {
         value: antigenGenes,
@@ -88,6 +89,7 @@ const AntibodyEditAntigenGenes = ({
                         id='antigen-gene'
                         field='abbreviation'
                         typeGroup={relatedMarkerTypeGroup}
+                        typeGroup2={relatedMarkerTypeGroup2}
                         tag={MarkerInput}
                     />
                     <div className='form-group row'>

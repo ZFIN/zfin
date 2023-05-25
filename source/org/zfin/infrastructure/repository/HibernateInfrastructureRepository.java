@@ -278,6 +278,15 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
     @SuppressWarnings("unchecked")
+    public List<RecordAttribution> getRecordAttributionsForPublicationAndType(String sourceZdbID, RecordAttribution.SourceType sourceType) {
+        Session session = HibernateUtil.currentSession();
+        String hql = "FROM RecordAttribution WHERE sourceZdbID = :sourceZdbID AND sourceType = :sourceType";
+        Query<RecordAttribution> query = session.createQuery(hql, RecordAttribution.class);
+        query.setParameter("sourceZdbID", sourceZdbID);
+        query.setParameter("sourceType", sourceType.toString());
+        return query.list();
+    }
+
     public List<RecordAttribution> getRecordAttributionsForType(String dataZdbID, RecordAttribution.SourceType sourceType) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(RecordAttribution.class);

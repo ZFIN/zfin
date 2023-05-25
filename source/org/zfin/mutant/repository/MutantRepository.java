@@ -57,6 +57,8 @@ public interface MutantRepository {
 
     List<Genotype> getGenotypesByFeature(Feature feature);
 
+    List<Genotype> getGenotypesByFeatureID(String featureID);
+
     List<GenotypeFeature> getGenotypeFeaturesByGenotype(Genotype genotype);
 
     List<GenotypeFeature> getGenotypeFeaturesByGenotype(String genotypeID);

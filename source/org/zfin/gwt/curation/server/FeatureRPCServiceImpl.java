@@ -25,6 +25,7 @@ import org.zfin.infrastructure.*;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.FeatureLocation;
 import org.zfin.marker.Marker;
+import org.zfin.mutant.Genotype;
 import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.mutant.service.AlleleService;
 import org.zfin.ontology.repository.OntologyRepository;
@@ -458,12 +459,20 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
 
     public List<FeatureMarkerRelationshipDTO> getFeatureMarkerRelationshipsForPub(String publicationZdbID) {
+        List<RecordAttribution> recordAttributions = infrastructureRepository.getRecordAttributionsForPublicationAndType(publicationZdbID, RecordAttribution.SourceType.FEATURE_TYPE);
+        List<String> featureZdbIDs = recordAttributions.stream().map(RecordAttribution::getDataZdbID).toList();
 
         List<FeatureMarkerRelationshipDTO> featureDTOs = new ArrayList<>();
         List<FeatureMarkerRelationship> featureMarkerRelationships = featureRepository.getFeatureRelationshipsByPublication(publicationZdbID);
         if (CollectionUtils.isNotEmpty(featureMarkerRelationships)) {
             for (FeatureMarkerRelationship featureMarkerRelationship : featureMarkerRelationships) {
-                featureDTOs.add(DTOConversionService.convertToFeatureMarkerRelationshipDTO(featureMarkerRelationship));
+                FeatureMarkerRelationshipDTO featureDTO = DTOConversionService.convertToFeatureMarkerRelationshipDTO(featureMarkerRelationship);
+
+                if (featureZdbIDs.contains(featureMarkerRelationship.getFeature().getZdbID())) {
+                    featureDTO.setPublicationZdbID(publicationZdbID);
+                }
+
+                featureDTOs.add(featureDTO);
             }
         }
         return featureDTOs;
@@ -1101,6 +1110,23 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             return referenceDatabase != null ? referenceDatabase.getForeignDB().getDbName().toString() : null;
         }
     }
+
+    @Override
+    public String getWarningForDeleteRelationship(FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO) {
+        HibernateUtil.createTransaction();
+        List<Genotype> genotypes = mutantRepository.getGenotypesByFeatureID(featureMarkerRelationshipDTO.getFeatureDTO().getZdbID());
+        SortedSet<Publication> pubs = pubRepository.getAllPublicationsForGenotypes(genotypes);
+        HibernateUtil.flushAndCommitCurrentSession();
+
+        return String.format("""
+                There are %d genotype%s from %d paper%s using this feature. 
+                Deleting this relationship will influence all of them. 
+                Are you sure you want to delete the relationship?
+                """,
+                genotypes.size(), genotypes.size() == 1 ? "" : "s",
+                pubs.size(), pubs.size() == 1 ? "" : "s");
+    }
+
 
     private class SupplierCacheThread extends Thread {
 

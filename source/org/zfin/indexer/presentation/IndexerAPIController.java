@@ -12,6 +12,7 @@ import org.zfin.framework.dao.IndexerRunDAO;
 import org.zfin.indexer.IndexerInfo;
 import org.zfin.indexer.IndexerRun;
 import org.zfin.indexer.IndexerTask;
+import org.zfin.indexer.UiIndexerConfig;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.wiki.presentation.Version;
 
@@ -40,7 +41,7 @@ public class IndexerAPIController {
         HibernateUtil.createTransaction();
         JsonResultResponse<IndexerRun> response = new JsonResultResponse<>();
         response.setHttpServletRequest(request);
-
+        pagination.setSortBy("startDate");
         IndexerRunDAO dao = new IndexerRunDAO();
         SearchResponse<IndexerRun> runs = dao.findAll(pagination);
 /*
@@ -68,6 +69,18 @@ public class IndexerAPIController {
         response.setResults(results);
         response.setTotal(runs.getTotalResults());
         HibernateUtil.flushAndCommitCurrentSession();
+        return response;
+    }
+
+    @JsonView(View.API.class)
+    @RequestMapping(value = "/config", method = RequestMethod.GET)
+    public JsonResultResponse<String> getIndexerRunConfig() {
+
+        JsonResultResponse<String> response = new JsonResultResponse<>();
+        response.setHttpServletRequest(request);
+
+        response.setResults(UiIndexerConfig.getAllIndexerSorted().stream().map(UiIndexerConfig::getTypeName).toList());
+        response.setTotal(UiIndexerConfig.getAllIndexerSorted().size());
         return response;
     }
 
