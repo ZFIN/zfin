@@ -6,4 +6,5 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
     <include file="source/org/zfin/db/postGmakePostloaddb/1144/ZFIN-8560-issn-for-journal-of-icthiology.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1144/ZFIN-8521.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1144/ZFIN-8620-mrel-recattrib-cleanup-for-constructs.sql" />
 </databaseChangeLog>
