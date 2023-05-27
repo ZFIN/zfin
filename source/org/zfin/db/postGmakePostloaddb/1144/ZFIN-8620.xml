@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <include file="source/org/zfin/db/postGmakePostloaddb/1144/ZFIN-8620-01-pre.sql" />
+
+    <changeSet author="rtaylor" id="ZFIN-8620-temp-csv">
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1144/ZFIN-8620-02-keeps.csv"
+                  tableName="temp_8620" encoding="UTF-8" quotchar='"'>
+            <column header="pub" name="pub" type="String"/>
+            <column header="mrel_mrkr_1_zdb_id" name="mrel_mrkr_1_zdb_id" type="String"/>
+            <column header="mrel_mrkr_2_zdb_id" name="mrel_mrkr_2_zdb_id" type="String"/>
+            <column header="mrel_type" name="mrel_type" type="String"/>
+        </loadData>
+    </changeSet>
+
+    <include file="source/org/zfin/db/postGmakePostloaddb/1144/ZFIN-8620-03-post.sql" />
+
+</databaseChangeLog>
