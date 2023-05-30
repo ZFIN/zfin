@@ -250,28 +250,40 @@ public class HibernateFeatureRepository implements FeatureRepository {
     @SuppressWarnings("unchecked")
     public List<String> getRelationshipTypesForFeatureType(FeatureTypeEnum featureTypeEnum) {
 
-        String sql = "select distinct fmreltype_name " +
-                "   from " +
-                "   feature_marker_relationship_type, feature_type_group," +
-                "   feature_type_group_member" +
-                "   where" +
-                "   ftrgrpmem_ftr_type= :featureType " +
-                "   and ftrgrpmem_ftr_type_group=fmreltype_ftr_type_group";
-
-        sql += "   union" +
-                "   select distinct mreltype_name " +
-                "   from" +
-                "   marker_relationship_type, marker_type_group, " +
-                "   marker_type_group_member   " +
-                "   where" +
-                "   mtgrpmem_mrkr_type= :featureType " +
-                "   and mtgrpmem_mrkr_type_group=mtgrp_name" +
-                "   and (mreltype_mrkr_type_group_1=mtgrpmem_mrkr_type_group" +
-                "   or mreltype_mrkr_type_group_2=mtgrpmem_mrkr_type_group) " +
-                "";
+        String sql = """ 
+                SELECT DISTINCT
+                    fmreltype_name
+                FROM
+                    feature_marker_relationship_type,
+                    feature_type_group,
+                    feature_type_group_member
+                WHERE
+                    ftrgrpmem_ftr_type = :featureType
+                    AND ftrgrpmem_ftr_type_group = fmreltype_ftr_type_group
+                UNION
+                SELECT DISTINCT
+                    mreltype_name
+                FROM
+                    marker_relationship_type,
+                    marker_type_group,
+                    marker_type_group_member
+                WHERE
+                    mtgrpmem_mrkr_type = :featureType
+                    AND mtgrpmem_mrkr_type_group = mtgrp_name
+                    AND (mreltype_mrkr_type_group_1 = mtgrpmem_mrkr_type_group
+                        OR mreltype_mrkr_type_group_2 = mtgrpmem_mrkr_type_group)
+                """;
         return (List<String>) HibernateUtil.currentSession().createSQLQuery(sql)
                 .setString("featureType", featureTypeEnum.name())
                 .list();
+    }
+
+    @Override
+    public FeatureTypeGroup getFeatureTypeGroupByName(String name) {
+        Session session = HibernateUtil.currentSession();
+        Query<FeatureTypeGroup> query = session.createQuery("SELECT ftg FROM FeatureTypeGroup ftg WHERE ftg.name = :name", FeatureTypeGroup.class);
+        query.setParameter("name", name);
+        return query.uniqueResult();
     }
 
     @Override

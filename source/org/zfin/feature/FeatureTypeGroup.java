@@ -17,8 +17,8 @@ public class FeatureTypeGroup {
     @Column(name = "ftrgrp_comments")
     private String comment;
     @ElementCollection
-    @CollectionTable(name="feature_type_group_member", joinColumns=@JoinColumn(name="ftrgrpmem_ftr_type"))
-    @Column(name="ftrgrpmem_ftr_type_group")
+    @CollectionTable(name="feature_type_group_member", joinColumns=@JoinColumn(name="ftrgrpmem_ftr_type_group"))
+    @Column(name="ftrgrpmem_ftr_type")
     private Set<String> typeStrings;
 
     public Set<String> getTypeStrings() {

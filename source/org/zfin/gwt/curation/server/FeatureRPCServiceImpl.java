@@ -862,7 +862,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     }
 
     @Override
-    public List<FeatureMarkerRelationshipDTO> addFeatureMarkerRelationShip(FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO, String publicationID) {
+    public List<FeatureMarkerRelationshipDTO> addFeatureMarkerRelationShip(FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO, String publicationID) throws ValidationException {
 
         FeatureDTO featureDTO = featureMarkerRelationshipDTO.getFeatureDTO();
         HibernateUtil.createTransaction();
@@ -875,6 +875,8 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         featureMarkerRelationship.setMarker(marker);
 
         featureMarkerRelationship.setType(FeatureMarkerRelationshipTypeEnum.getType(featureMarkerRelationshipDTO.getRelationshipType()));
+
+        validateNewFeatureMarkerRelationship(featureMarkerRelationship);
 
         HibernateUtil.currentSession().save(featureMarkerRelationship);
         infrastructureRepository.insertPublicAttribution(featureMarkerRelationship.getZdbID(), featureMarkerRelationshipDTO.getPublicationZdbID());
@@ -894,6 +896,28 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         HibernateUtil.closeSession();
         List<FeatureMarkerRelationshipDTO> dtos = getFeatureMarkerRelationshipsForPub(publicationID);
         return dtos;
+    }
+
+    private void validateNewFeatureMarkerRelationship(FeatureMarkerRelationship featureMarkerRelationship) throws ValidationException {
+        FeatureTypeEnum featureType = featureMarkerRelationship.getFeature().getType();
+        FeatureTypeGroup featureTypeGroup = featureRepository.getFeatureTypeGroupByName(Marker.Type.MUTANT.name());
+        boolean isMutant = featureTypeGroup.getTypeStrings().contains(featureType.toString());
+
+        //check if feature is of deficiency/inversion/translocation type and relationship is "is allele of", in which case, it is not allowed
+        if (List.of(FeatureTypeEnum.DEFICIENCY, FeatureTypeEnum.INVERSION, FeatureTypeEnum.TRANSLOC).contains(featureType)) {
+            if (featureMarkerRelationship.getType().equals(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF)) {
+                throw new ValidationException("The feature [" + featureMarkerRelationship.getFeature().getAbbreviation() + "] is a '" + featureType.getDisplay() + "' and cannot have 'is allele of' relationships.");
+            }
+        }
+
+        if (isMutant) {
+            if (featureMarkerRelationship.getType().equals(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF)) {
+                List<Marker> isAlleleMarkers = featureRepository.getMarkerIsAlleleOf(featureMarkerRelationship.getFeature());
+                if (isAlleleMarkers != null && isAlleleMarkers.size() > 0) {
+                    throw new ValidationException("The feature [" + featureMarkerRelationship.getFeature().getAbbreviation() + "] is a mutant type and can only have one 'is allele of' relationship.");
+                }
+            }
+        }
     }
 
     @Override

@@ -63,7 +63,7 @@ public interface FeatureRPCService extends RemoteService {
 
     List<MarkerDTO> getMarkersForFeatureRelationAndSource(String featureTypeName, String publicationZdbID);
 
-    List<FeatureMarkerRelationshipDTO> addFeatureMarkerRelationShip(FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO, String publicationID);
+    List<FeatureMarkerRelationshipDTO> addFeatureMarkerRelationShip(FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO, String publicationID) throws ValidationException;
 
     // note stuff
     FeatureDTO editPublicNote(NoteDTO noteDTO);
