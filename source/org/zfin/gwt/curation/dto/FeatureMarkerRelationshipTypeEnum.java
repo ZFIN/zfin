@@ -15,7 +15,8 @@ public enum FeatureMarkerRelationshipTypeEnum {
     MARKERS_MISSING("markers missing"),
     MARKERS_MOVED("markers moved"),
     CREATED_BY("created by"),
-    MARKERS_PRESENT("markers present");
+    MARKERS_PRESENT("markers present"),
+    MUTATION_INVOLVES("mutation involves");
 
     private final String value;
 
