@@ -6,6 +6,8 @@
 # Use environment variable "SKIP_SLEEP" to not to sleep for 500 seconds at various parts
 # Use environment variable "ARCHIVE_ARTIFACTS" to to save a copy of all generated artifacts in subdirectory called archives/$TIMESTAMP
 # Use environment variable "SKIP_PRE_ZFIN_GEN" to skip the step of building pre_zfin.dat. Useful for troubleshooting if a pre_zfin.dat file is already in place.
+# Use environment variable "USE_LEGACY_LOGIC" to tell sp_check.pl to use the pre-refseq logic for matching
+
 # Flags are useful for being a good citizen and not putting too much strain on servers.
 #
 # Can run with those env vars in tcsh like so: (https://stackoverflow.com/questions/5946736/)

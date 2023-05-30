@@ -19,6 +19,11 @@
 # TODO: If a record has an embl id, but doesn't match anything, we should try a refseq match.
 #       Currently we only try a refseq match if there is no embl id at all
 
+# There are flags available to control the behavior of the script:
+#  USE_LEGACY_LOGIC - If set, use older logic without RefSeq matching, default is false
+# example usage:
+# ( setenv USE_LEGACY_LOGIC 1 ; perl sp_check.pl )
+
 use strict;
 use warnings;
 use DBI;
@@ -337,14 +342,13 @@ sub handleMissingEmblAndRefSeqRecord {
 
         $num_prob++;
         return 1;
-    } elsif (!$ENV{"USE_LEGACY_LOGIC"} && $record !~ /DR\s*EMBL;/ && $record !~ /DR\s*RefSeq;/) {
+    } elsif (!$ENV{"USE_LEGACY_LOGIC"} && $record !~ /DR\s+EMBL;\s+(\w+);\s+(\w+)\./ && $record !~ /DR\s*RefSeq;/) {
         # if no EMBL line
         file_append("prob7", $record);
         file_append("problemfile", $record);
-
         $num_prob++;
         return 1;
-    } elsif (!$ENV{"USE_LEGACY_LOGIC"} && $record !~ /DR\s*EMBL;/ && $record =~ /DR\s*RefSeq; (.*)/) {
+    } elsif (!$ENV{"USE_LEGACY_LOGIC"} && $record !~ /DR\s+EMBL;\s+(\w+);\s+(\w+)\./ && $record =~ /DR\s*RefSeq; (.*)/) {
         $use_refseq_match = 1;
     }
     return 0;
