@@ -6,6 +6,8 @@
 # Use environment variable "SKIP_SLEEP" to not to sleep for 500 seconds at various parts
 # Use environment variable "ARCHIVE_ARTIFACTS" to to save a copy of all generated artifacts in subdirectory called archives/$TIMESTAMP
 # Use environment variable "SKIP_PRE_ZFIN_GEN" to skip the step of building pre_zfin.dat. Useful for troubleshooting if a pre_zfin.dat file is already in place.
+# Use environment variable "USE_LEGACY_LOGIC" to tell sp_check.pl to use the pre-refseq logic for matching
+
 # Flags are useful for being a good citizen and not putting too much strain on servers.
 #
 # Can run with those env vars in tcsh like so: (https://stackoverflow.com/questions/5946736/)
@@ -33,6 +35,12 @@ echo "run sp_check.pl " $(date "+%Y-%m-%d %H:%M:%S")
 echo "/bin/cat prob1 prob2 prob3 prob4 prob5 prob6 prob7 prob8 prob9 prob10 > allproblems.txt " $(date "+%Y-%m-%d %H:%M:%S")
 
 /bin/cat prob1 prob2 prob3 prob4 prob5 prob6 prob7 prob8 prob9 prob10 > allproblems.txt ;
+
+echo "problem files post processing " $(date "+%Y-%m-%d %H:%M:%S")
+./validate_prob_files.pl
+./clean_prob_files.pl
+./rearrange_prob_files.pl
+./move_prob_files.pl
 
 echo "run sp_match.pl manuallyCuratedUniProtIDs.txt " $(date "+%Y-%m-%d %H:%M:%S")
 
