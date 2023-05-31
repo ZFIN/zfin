@@ -76,7 +76,7 @@ const IndexerRunTable = () => {
             content: row => <div className='mb-2'>
                 <Checkbox
                     checked={showIndexerTask && row.id === runInfoId}
-                    id={row.id}
+                    id={row.id+row.name}
                     onChange={() => handleRunInfoSelection(row.id)}
                 />
             </div>
