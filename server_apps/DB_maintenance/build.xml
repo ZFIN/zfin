@@ -268,6 +268,12 @@
     </target>
 
     <target name="regenerate-webhost-curated-databases" description="">
+        <echo message="Regenerate webhost curated databases"/>
+        <echo message="main class: org.zfin.sequence.blast.RegenerateWebHostCuratedDatabasesJob"/>
+        <echo message="arg1: ${web-inf.dir}/zfin.properties"/>
+        <echo message="arg2: ${validateData}/report_data"/>
+        <echo message="arg3: ${jobName}"/>
+
         <java classname="org.zfin.sequence.blast.RegenerateWebHostCuratedDatabasesJob" fork="yes"
               classpathref="extended.classpath"
               failonerror="true">
