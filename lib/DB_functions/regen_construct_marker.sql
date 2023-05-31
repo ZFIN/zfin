@@ -12,30 +12,30 @@ returns void as $$
     declare mrel_id  marker_relationship.mrel_zdb_id%TYPE;
         mrel_1_id  marker_relationship.mrel_mrkr_1_zdb_id%TYPE;
         mrel_2_id  marker_relationship.mrel_mrkr_2_zdb_id%TYPE;
-        mrel_type  marker_relationship.mrel_type%TYPE;
+        mrel_type_arg  marker_relationship.mrel_type%TYPE;
 
     begin
-        create temp table to_delete as
+        create temp table mrel_to_delete as
         select * from marker_relationship
         where constructZdbID = mrel_mrkr_1_zdb_id;
 
-        for mrel_id, mrel_1_id, mrel_2_id, mrel_type in
+        for mrel_id, mrel_1_id, mrel_2_id, mrel_type_arg in
             select get_id('MREL'), conmrkrrel_construct_zdb_id,conmrkrrel_mrkr_zdb_id,conmrkrrel_relationship_type
             from construct_marker_relationship
             where conmrkrrel_construct_zdb_id = constructZdbId
             loop
 
                 -- if the relationship already exists, do nothing and delete it from the temp table
-                if exists (select 'x' from to_delete where mrel_mrkr_1_zdb_id = mrel_1_id and mrel_mrkr_2_zdb_id = mrel_2_id and mrel_type = mrel_type)
+                if exists (select 'x' from mrel_to_delete where mrel_mrkr_1_zdb_id = mrel_1_id and mrel_mrkr_2_zdb_id = mrel_2_id and mrel_type = mrel_type_arg)
                 then
-                    delete from to_delete where mrel_mrkr_1_zdb_id = mrel_1_id and mrel_mrkr_2_zdb_id = mrel_2_id and mrel_type = mrel_type;
+                    delete from mrel_to_delete where mrel_mrkr_1_zdb_id = mrel_1_id and mrel_mrkr_2_zdb_id = mrel_2_id and mrel_type = mrel_type_arg;
                 else
                     -- otherwise, insert the relationship
                     insert into zdb_Active_data
                     values (mrel_id);
 
                     insert into marker_relationship (mrel_zdb_id, mrel_mrkr_1_zdb_id, mrel_mrkr_2_zdb_id, mrel_type)
-                    values (mrel_id, mrel_1_id, mrel_2_id, mrel_type);
+                    values (mrel_id, mrel_1_id, mrel_2_id, mrel_type_arg);
 
                     insert into record_Attribution (recattrib_Data_zdb_id, recattrib_source_zdb_id)
                     select mrel_id, recattrib_source_zdb_id
@@ -48,7 +48,9 @@ returns void as $$
 
         -- delete any relationships that are left in the temp table
         delete from marker_relationship
-        where mrel_zdb_id in (select mrel_zdb_id from to_delete);
+        where mrel_zdb_id in (select mrel_zdb_id from mrel_to_delete);
+
+        drop table mrel_to_delete;
 
     end;
 $$ LANGUAGE plpgsql;
@@ -60,7 +62,7 @@ returns void as $$
  declare mrel_id  marker_relationship.mrel_zdb_id%TYPE;
   mrel_1_id  marker_relationship.mrel_mrkr_1_zdb_id%TYPE;
   mrel_2_id  marker_relationship.mrel_mrkr_2_zdb_id%TYPE;
-  mrel_type  marker_relationship.mrel_type%TYPE;
+  mrel_type_arg  marker_relationship.mrel_type%TYPE;
 
   begin
   
@@ -107,7 +109,7 @@ returns void as $$
 	  where construct_zdb_id = constructZdbId;
 
 
-	for  mrel_id, mrel_1_id, mrel_2_id, mrel_type in
+	for  mrel_id, mrel_1_id, mrel_2_id, mrel_type_arg in
  	       select get_id('MREL'), conmrkrrel_construct_zdb_id,conmrkrrel_mrkr_zdb_id,conmrkrrel_relationship_type  
 	       	      from construct_marker_relationship
 		      where conmrkrrel_construct_zdb_id = constructZdbId 
@@ -118,7 +120,7 @@ returns void as $$
 	       values (mrel_id);
 
 	insert into marker_relationship (mrel_zdb_id, mrel_mrkr_1_zdb_id, mrel_mrkr_2_zdb_id, mrel_type)
- 	       values (mrel_id, mrel_1_id, mrel_2_id, mrel_type);
+ 	       values (mrel_id, mrel_1_id, mrel_2_id, mrel_type_arg);
 
 	insert into record_Attribution (recattrib_Data_zdb_id, recattrib_source_zdb_id)
             select mrel_id, recattrib_source_zdb_id
