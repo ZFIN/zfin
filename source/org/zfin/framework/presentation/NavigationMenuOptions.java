@@ -22,7 +22,7 @@ public enum NavigationMenuOptions {
     STRS("Sequence Targeting Reagents"),
     SUMMARY("Summary"),
     ZEBRASHARE("Zebrashare Submission Details"),
-    CITATION("Citation"),
+    CITATION("Citations"),
 
     //Image View
     IMAGE("Image"),
