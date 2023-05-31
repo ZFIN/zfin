@@ -12,12 +12,14 @@
         ${figure.publication.title}
     </z:attributeListItem>
 
-    <z:attributeListItem label="Other Figures">
-        <zfin2:toggledLinkList collection="${otherFigures}" maxNumber="5" commaDelimited="true"/>
-    </z:attributeListItem>
+    <c:if test="${!isLargeDataPublication}">
+        <z:attributeListItem label="Other Figures">
+            <zfin2:toggledLinkList collection="${otherFigures}" maxNumber="5" commaDelimited="true"/>
+        </z:attributeListItem>
 
-    <z:attributeListItem label="All Figure Page">
-        <a href="/action/figure/all-figure-view/${figure.publication.zdbID}">Back to All Figure Page</a>
-    </z:attributeListItem>
+        <z:attributeListItem label="All Figure Page">
+            <a href="/action/figure/all-figure-view/${figure.publication.zdbID}">Back to All Figure Page</a>
+        </z:attributeListItem>
+    </c:if>
 
 </z:attributeList>
