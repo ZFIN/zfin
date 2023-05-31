@@ -14,9 +14,12 @@ const IndexerRunTable = () => {
         if (runID === runId) {
             setShowIndexerInfo(false)
             setRunId(null)
+            setRunInfoId(null)
+            setShowIndexerTask(false)
         } else {
             setShowIndexerInfo(true)
             setRunId(runID)
+            setShowIndexerTask(false)
         }
     };
 
