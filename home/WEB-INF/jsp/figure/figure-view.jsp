@@ -1,74 +1,76 @@
-<%@ page import="org.zfin.publication.PublicationType" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
-<z:page>
-    <meta name="figure-view-page"/> <%-- this is used by the web testing framework to know which page this is--%>
+<jsp:useBean id="figure" type="org.zfin.expression.Figure" scope="request"/>
 
-    <%--
-         Nothing is stored in the updates table for figures, so no lastUpdated date is passed in
-    --%>
+<c:set var="SUMMARY" value="Summary"/>
+<c:set var="FIGURE_CAPTION" value="Figure Caption"/>
+<c:set var="EXPRESSION" value="Expression Data"/>
+<c:set var="PHENOTYPE" value="Phenotype Data"/>
+<c:set var="ACKNOWLEDGMENTS" value="Acknowledgments"/>
 
-    <c:set var="UNPUBLISHED" value="${PublicationType.UNPUBLISHED}"/>
-    <c:set var="CURATION" value="${PublicationType.CURATION}"/>
+<z:dataPage
+        sections="${[SUMMARY, FIGURE_CAPTION, EXPRESSION, PHENOTYPE, ACKNOWLEDGMENTS]}">
 
-    <zfin2:dataManager zdbID="${figure.zdbID}"/>
+    <jsp:attribute name="entityName">
+        ${figure.label}
+    </jsp:attribute>
 
-    <authz:authorize access="hasRole('root')">
-        <a class="dropdown-item" href="/action/figure/view-prototype/${figure.zdbID}">Prototype View</a>
-    </authz:authorize>
+    <jsp:body>
+        <z:dataManagerList>
+            <a class="dropdown-item" href="/action/figure/view/${figure.zdbID}">Old View</a>
+        </z:dataManagerList>
 
-    <zfin-figure:publicationInfo publication="${figure.publication}"
-                                 submitters="${submitters}"
-                                 showThisseInSituLink="${showThisseInSituLink}"
-                                 showErrataAndNotes="${showErrataAndNotes}"/>
-
-    <c:if test="${fn:length(figure.publication.figures) > 1}">
-        <div style="margin-top: 1em;">
-            <c:set var="probeUrlPart" value=""/>
-            <c:if test="${!empty probe}">
-                <c:set var="probeUrlPart" value="?probeZdbID=${probe.zdbID}"/>
-            </c:if>
-
-        <c:if test="${figure.publication.type == CURATION}">
-            <c:if test="${!empty probe}">
-            <a class="additional-figures-link" href="/action/figure/all-figure-view/${figure.publication.zdbID}${probeUrlPart}">ADDITIONAL FIGURES</a>
-            </c:if>
-            </c:if>
-        <c:if test="${figure.publication.type != CURATION}">
-            <a class="additional-figures-link" href="/action/figure/all-figure-view/${figure.publication.zdbID}${probeUrlPart}">ADDITIONAL FIGURES</a>
-            </c:if>
+        <div id="${zfn:makeDomIdentifier(SUMMARY)}">
+            <div class="small text-uppercase text-muted">FIGURE</div>
+            <h1>${figure.label}</h1>
+            <jsp:include page="figure-view-summary.jsp"/>
         </div>
-    </c:if>
 
-    <zfin-figure:expressionSummary summary="${expressionSummary}"/>
+        <z:section title="${figure.label}" sectionID="${zfn:makeDomIdentifier(FIGURE_CAPTION)}">
 
-    <zfin-figure:phenotypeSummary summary="${phenotypeSummary}"/>
+            <zfin-figure:imagesAndCaptionPrototype
+                    figure="${figure}"
+                    autoplayVideo="false"
+                    showMultipleMediumSizedImages="${showMultipleMediumSizedImages}"
+                    showCaption="true"></zfin-figure:imagesAndCaptionPrototype>
 
-    <zfin-figure:imagesAndCaption figure="${figure}" showMultipleMediumSizedImages="${showMultipleMediumSizedImages}" showCaption="true"/>
+        </z:section>
 
-    <zfin-figure:expressionTable expressionTableRows="${expressionTableRows}" showQualifierColumn="${showExpressionQualifierColumn}"/>
+        <z:section title="${EXPRESSION}">
+            <zfin-figure:expressionSummaryPrototype summary="${expressionSummary}"/>
+            <p/>
+            <z:section title="Expression Detail">
+                <div class="__react-root" id="FigureExpressionTable" data-hide-figure-column="true"
+                     data-url="/action/api/figure/${figure.zdbID}/expression-detail"></div>
+            </z:section>
+            <z:section title="Antibody Labeling">
+                <div class="__react-root" id="FigureExpressionAntibodyTable" data-figure-id="${figure.zdbID}"></div>
+            </z:section>
+        </z:section>
 
-    <zfin-figure:antibodyTable antibodyTableRows="${antibodyTableRows}" showQualifierColumn="${showAntibodyQualifierColumn}"/>
+        <z:section title="${PHENOTYPE}">
+            <zfin-figure:phenotypeSummaryPrototype summary="${phenotypeSummary}"/>
+            <p/>
+            <z:section title="Phenotype Detail">
+                <div class="__react-root" id="FigurePhenotypeTable" data-hide-figure-column="true"
+                     data-url="/action/api/figure/${figure.zdbID}/phenotype-detail"></div>
+            </z:section>
+        </z:section>
 
-    <zfin-figure:phenotypeTable phenotypeTableRows="${phenotypeTableRows}"/>
+        <z:section title="${ACKNOWLEDGMENTS}">
+            <c:choose>
+                <c:when test="${figure.publication.canShowImages && figure.publication.type != UNPUBLISHED}">
+                    <zfin2:acknowledgment-text publication="${figure.publication}"
+                                               showElsevierMessage="${showElsevierMessage}"
+                                               hasAcknowledgment="${hasAcknowledgment}"/>
+                </c:when>
+                <c:otherwise>
+                    <zfin2:subsection>
+                        <zfin-figure:journalAbbrev publication="${figure.publication}"/>
+                    </zfin2:subsection>
+                </c:otherwise>
+            </c:choose>
+        </z:section>
+    </jsp:body>
 
-    <zfin-figure:constructLinks figure="${figure}"/>
-
-
-    <c:choose>
-        <c:when test="${figure.publication.canShowImages && figure.publication.type != UNPUBLISHED}">
-            <zfin2:acknowledgment publication="${figure.publication}" showElsevierMessage="${showElsevierMessage}" hasAcknowledgment="${hasAcknowledgment}"/>
-        </c:when>
-        <c:otherwise>
-            <zfin2:subsection>
-                <zfin-figure:journalAbbrev publication="${figure.publication}"/>
-            </zfin2:subsection>
-        </c:otherwise>
-    </c:choose>
-
-    <script>
-        jQuery(document).ready(function() {
-            jQuery('.fish-label').tipsy({gravity:'sw', opacity:1, delayIn:750, delayOut:200});
-        });
-    </script>
-</z:page>
+</z:dataPage>
