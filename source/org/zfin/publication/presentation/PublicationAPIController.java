@@ -117,9 +117,9 @@ public class PublicationAPIController {
         List<PhenotypeTableRow> paginatedFeatureList = filteredExpressionList.stream()
             .skip(pagination.getStart())
             .limit(pagination.getLimit())
-            .collect(Collectors.toList());
+            .toList();
 
-        response.setResults(filteredExpressionList);
+        response.setResults(paginatedFeatureList);
         response.setHttpServletRequest(request);
         return response;
     }
@@ -347,7 +347,7 @@ public class PublicationAPIController {
                 linkage.setChromosome(MappingService.getChromosomeLocationDisplay(entityZdbID));
                 return linkage;
             })
-            .collect(Collectors.toList());
+            .toList();
 
         JsonResultResponse<ChromosomeLinkage> response = new JsonResultResponse<>();
         response.setHttpServletRequest(request);
@@ -418,7 +418,7 @@ public class PublicationAPIController {
 
     @Getter
     @Setter
-    class ChromosomeLinkage {
+    static class ChromosomeLinkage {
         @JsonView(View.API.class)
         private EntityZdbID entity;
         @JsonView(View.API.class)
