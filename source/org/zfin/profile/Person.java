@@ -266,13 +266,13 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
         return fullName;
     }
 
-    public String getFirstLastName(){
+    public String getFirstLastName() {
         String ret = "";
-        if(firstName != null) {
+        if (firstName != null) {
             ret += firstName;
             ret += " ";
         }
-        if(lastName != null)
+        if (lastName != null)
             ret += lastName;
         return ret;
     }
@@ -378,6 +378,14 @@ public class Person implements UserDetails, Serializable, Comparable<Person>, Ha
             return false;
         }
         return person.getAccountInfo().getRole().equals(AccountInfo.Role.ROOT.toString());
+    }
+
+    public static boolean isDeveloper() {
+        Person person = ProfileService.getCurrentSecurityUser();
+        if (person == null || person.getAccountInfo() == null) {
+            return false;
+        }
+        return person.getAccountInfo().getRole().equals(AccountInfo.Role.ROOT.toString()) && !person.getAccountInfo().isCurator();
     }
 
     public int hashCode() {
