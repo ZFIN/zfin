@@ -1,5 +1,6 @@
 package org.zfin.mutant.presentation;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
@@ -64,6 +65,11 @@ public class ChebiPhenotypeDisplay {
     @JsonView(View.API.class)
     @Column(name = "cpd_fig_count")
     private int numberOfFigs;
+
+    @JsonView(View.API.class)
+    @JsonProperty("imgInFigure")
+    @Column(name = "cpd_has_images")
+    private boolean hasImages;
 
     @JsonView(View.API.class)
     @Column(name = "cpd_pub_count")
