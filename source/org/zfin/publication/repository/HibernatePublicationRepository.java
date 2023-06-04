@@ -171,12 +171,14 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         // todo: note that when in SQL, start at 1 (current) , but when in HQL, start at 0
         String sql = """
             SELECT exp.xpatex_gene_zdb_id as geneID, gene.mrkr_abbrev as geneSymbol,
-            count(distinct fig.fig_zdb_id) as numOfFig 
+            count(distinct fig.fig_zdb_id) as numOfFig,
+            count(distinct img.img_zdb_id) as numOfImg
             FROM  Expression_Experiment exp
                   join FISH_EXPERIMENT as genox on genox.genox_zdb_id=exp.xpatex_genox_zdb_id
                   join EXPRESSION_RESULT as result on result.xpatres_xpatex_zdb_id = exp.xpatex_zdb_id
                   join EXPRESSION_PATTERN_FIGURE as results on results.xpatfig_xpatres_zdb_id=result.xpatres_zdb_id
                   join Figure as fig on fig.fig_zdb_id=results.xpatfig_fig_zdb_id
+                  left outer join Image as img on img.img_fig_zdb_id=fig.fig_zdb_id
                   join MARKER as gene on exp.xpatex_gene_zdb_id = gene.mrkr_zdb_id
                   join FISH as fish on fish.fish_zdb_Id = genox.genox_fish_zdb_id
                   join TERM as item_ on (result.xpatres_superterm_zdb_id = item_.term_zdb_id OR result.xpatres_subterm_zdb_id = item_.term_zdb_id)
@@ -212,6 +214,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         query.addScalar("geneID", StringType.INSTANCE);
         query.addScalar("geneSymbol", StringType.INSTANCE);
         query.addScalar("numOfFig", IntegerType.INSTANCE);
+        query.addScalar("numOfImg", IntegerType.INSTANCE);
         query.setParameter("termID", anatomyTerm.getZdbID());
         query.setParameter("withdrawn", Marker.WITHDRAWN);
         query.setParameter("chimeric", Clone.ProblemType.CHIMERIC.toString()); // todo: use enum here
@@ -378,7 +381,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             "   exp.fishExperiment = fishox AND " +
             "   fishox.standardOrGenericControl = :condition AND " +
             "   fishox.fish.genotype = geno AND " +
-            "   fishox.fish.genotype.wildtype = :isWildtype ";
+            "   fishox.fish.wildtype = :isWildtype ";
         Query query = session.createQuery(hql);
         query.setBoolean("expressionFound", true);
         query.setBoolean("isWildtype", true);
@@ -2143,6 +2146,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             Marker marker = markerRepository.getMarkerByID(markerZdbID);
             MarkerStatistic statistic = new MarkerStatistic(anatomyTerm, marker);
             statistic.setNumberOfFigures((Integer) stats[2]);
+            statistic.setHasImages(((Integer)stats[3]) > 0);
             markers.add(statistic);
         }
         return markers;
