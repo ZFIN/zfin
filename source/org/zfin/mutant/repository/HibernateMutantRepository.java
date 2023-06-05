@@ -915,49 +915,21 @@ public class HibernateMutantRepository implements MutantRepository {
         return basicPhenos;
     }
 
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<STRMarkerSequence> getSequenceTargetingReagentsWithMarkerRelationships() {
-
-        // using this type of query for both speed (an explicit join)
-        // and because createSQLQuery had trouble binding the lvarchar of s.sequence
-        final String queryString = "select m.zdbID ,m.abbreviation, s.sequence   from SequenceTargetingReagent m  " +
-            "inner join m.sequence s " +
-            "inner join m.firstMarkerRelationships  " +
-            "where m.markerType in  (:moType, :crisprType, :talenType) ";
-
-        final Query<Tuple> query = currentSession().createQuery(queryString, Tuple.class);
-        query.setParameter("moType", Marker.Type.MRPHLNO.toString());
-        query.setParameter("crisprType", Marker.Type.CRISPR.toString());
-        query.setParameter("talenType", Marker.Type.TALEN.toString());
-
-        List<Tuple> sequences = query.list();
-
-        List<STRMarkerSequence> strSequences = new ArrayList<STRMarkerSequence>();
-        for (Tuple seqObjects : sequences) {
-            STRMarkerSequence strSequence = new STRMarkerSequence();
-            strSequence.setZdbID(seqObjects.get(0).toString());
-            strSequence.setName(seqObjects.get(1).toString());
-            strSequence.setSequence(seqObjects.get(2).toString());
-            strSequences.add(strSequence);
-        }
-        return strSequences;
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     public List<STRMarkerSequence> getMorpholinosWithMarkerRelationships() {
 
         // using this type of query for both speed (an explicit join)
         // and because createSQLQuery had trouble binding the lvarchar of s.sequence
-        final String queryString = "select m.zdbID ,m.abbreviation, s.sequence   from SequenceTargetingReagent m  " +
-            "inner join m.sequence s " +
-            "inner join m.firstMarkerRelationships  " +
-            "where m.markerType in  (:moType) ";
+        final String queryString = """ 
+            select m.zdbID, m.abbreviation, s.sequence from SequenceTargetingReagent m  
+            inner join m.sequence s 
+            inner join m.firstMarkerRelationships 
+            where m.markerType.name = :markerTypeName 
+            """;
 
         final Query<Tuple> query = currentSession().createQuery(queryString, Tuple.class);
-        query.setParameter("moType", Marker.Type.MRPHLNO.toString());
+        query.setParameter("markerTypeName", Marker.Type.MRPHLNO.name());
 
         List<Tuple> sequences = query.list();
 
@@ -978,13 +950,14 @@ public class HibernateMutantRepository implements MutantRepository {
 
         // using this type of query for both speed (an explicit join)
         // and because createSQLQuery had trouble binding the lvarchar of s.sequence
-        final String queryString = "select m.zdbID ,m.abbreviation, s.sequence   from SequenceTargetingReagent m  " +
-            "inner join m.sequence s " +
-            "inner join m.firstMarkerRelationships  " +
-            "where m.markerType in  (:crisprType) ";
-
+        final String queryString = """
+            select m.zdbID, m.abbreviation, s.sequence from SequenceTargetingReagent m 
+            inner join m.sequence s
+            inner join m.firstMarkerRelationships 
+            where m.markerType.name = :markerTypeName 
+            """;
         final Query<Tuple> query = currentSession().createQuery(queryString, Tuple.class);
-        query.setParameter("crisprType", Marker.Type.CRISPR.toString());
+        query.setParameter("markerTypeName", Marker.Type.CRISPR.name());
 
         List<Tuple> sequences = query.list();
 
@@ -1006,13 +979,15 @@ public class HibernateMutantRepository implements MutantRepository {
 
         // using this type of query for both speed (an explicit join)
         // and because createSQLQuery had trouble binding the lvarchar of s.sequence
-        final String queryString = "select m.zdbID ,m.abbreviation, s.sequence   from SequenceTargetingReagent m  " +
-            "inner join m.sequence s " +
-            "inner join m.firstMarkerRelationships  " +
-            "where m.markerType in  (:talenType) ";
+        final String queryString = """
+            select m.zdbID, m.abbreviation, s.sequence from SequenceTargetingReagent m
+            inner join m.sequence s
+            inner join m.firstMarkerRelationships
+            where m.markerType.name = :markerTypeName
+            """;
 
         final Query<Tuple> query = currentSession().createQuery(queryString, Tuple.class);
-        query.setParameter("talenType", Marker.Type.TALEN.toString());
+        query.setParameter("markerTypeName", Marker.Type.TALEN.name());
 
         List<Tuple> sequences = query.list();
 
