@@ -60,7 +60,7 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
                 hql += "LOWER(" + entry.getKey() + ") like '%" + entry.getValue().toLowerCase() + "%' ";
             }
         }
-        hql += "order by fishStat.geneSymbolSearch";
+        hql += "order by fishStat.fish.order, fishStat.fish.nameOrder, fishStat.geneSymbolSearch";
         Query<FishStatistics> query = HibernateUtil.currentSession().createQuery(hql, FishStatistics.class);
         query.setParameter("term", term);
         return PaginationResultFactory.createResultFromScrollableResultAndClose(bean, query.scroll());
