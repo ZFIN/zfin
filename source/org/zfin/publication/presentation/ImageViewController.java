@@ -49,7 +49,7 @@ public class ImageViewController {
     private OntologyRepository ontologyRepository;
 
     @RequestMapping(value = {"/view/{zdbID}"})
-    public String getPrototypeImageView(Model model, @PathVariable("zdbID") String zdbID) {
+    public String getImageView(Model model, @PathVariable("zdbID") String zdbID) {
         return getImageView(model, zdbID, "figure/image-view");
     }
 
