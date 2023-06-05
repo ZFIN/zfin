@@ -934,6 +934,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
         query.setString("feat", feature.getZdbID());
 
 
+        //SEE ZFIN-8676 before uncommenting?
         //query.setString("type", Marker.Type.GENE.toString());
 
         return (List<Marker>) query.list();
