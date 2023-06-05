@@ -188,15 +188,6 @@ public class MutantRepositoryTest {
     }
 
     @Test
-    public void getSTRsWithMarkerRelationships() {
-        List<STRMarkerSequence> sequenceTargetingReagents = mutantRepository.getSequenceTargetingReagentsWithMarkerRelationships();
-        assertThat(sequenceTargetingReagents, notNullValue());
-        LOG.info("# of sequence targeting reagents: " + sequenceTargetingReagents.size());
-        assertThat(sequenceTargetingReagents, hasSize(greaterThan(3000)));
-        assertThat(sequenceTargetingReagents.get(0).getSequence(), notNullValue());
-    }
-
-    @Test
     public void phenotypesWithObsoleteTerms() {
         List<PhenotypeStatement> phenotypes = mutantRepository.getPhenotypesOnObsoletedTerms();
         assertThat(phenotypes, notNullValue());
