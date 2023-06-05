@@ -566,7 +566,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
         query.setString("markerZdbID", marker.getZdbID());
         query.setString("superType", "sequence");
         query.setString("type", referenceDatabaseType.name());
-        query.setString("markerType", Marker.Type.GENE.name());
+        query.setString("markerType", Marker.Type.GENE.name()); //if using setParameter, change hql to use "...markerType.name = :markerType..."
         // todo: and marker_relation type = .....
 //        query.setString("markerRelationshipType", MarkerRelationship.Type.GENE_ENCODES_SMALL_SEGMENT.name()) ;
         dbLinks.addAll(query.list());

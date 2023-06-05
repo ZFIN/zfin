@@ -160,8 +160,6 @@ public interface MutantRepository {
 
     List<BasicPhenotypeDTO> getBasicPhenotypeDTOObjects();
 
-    List<STRMarkerSequence> getSequenceTargetingReagentsWithMarkerRelationships();
-
     List<STRMarkerSequence> getMorpholinosWithMarkerRelationships();
 
     List<STRMarkerSequence> getCrisprsWithMarkerRelationships();
