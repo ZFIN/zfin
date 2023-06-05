@@ -21,7 +21,7 @@ const TermZebrafishModelTable = ({termId, directAnnotationOnly, isChebi = false}
                 dangerouslySetInnerHTML={{__html: row.fish.name}}
             />,
             filterName: 'fishName',
-            width: '330px',
+            width: '300px',
         },
         {
             label: 'Conditions',
@@ -36,6 +36,7 @@ const TermZebrafishModelTable = ({termId, directAnnotationOnly, isChebi = false}
                     href={`/action/expression/experiment-popup?id=${row.experiment.zdbID}`}
                 />
             </span>,
+            width: '200px',
             filterName: 'conditionName',
         },
         {
