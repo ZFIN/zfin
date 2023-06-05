@@ -7,17 +7,18 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.util.CollectionUtils;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.Experiment;
-import org.zfin.expression.ExperimentCondition;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.RelationshipType;
 import org.zfin.gwt.root.dto.TermDTO;
-import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.*;
-import org.zfin.mutant.presentation.*;
+import org.zfin.mutant.presentation.ChebiFishModelDisplay;
+import org.zfin.mutant.presentation.DiseaseModelDisplay;
+import org.zfin.mutant.presentation.FishModelDisplay;
+import org.zfin.mutant.presentation.FishStatistics;
 import org.zfin.ontology.*;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.orthology.NcbiOrthoExternalReference;
@@ -501,7 +502,14 @@ public class OntologyService {
         if (term == null) {
             return null;
         }
-        return getDiseasePageRepository().getPhenotype(term, pagination, includeChildren);
+        PaginationResult<FishStatistics> phenotype = getDiseasePageRepository().getPhenotype(term, pagination, includeChildren);
+        // make phenotype statement list unique
+        phenotype.getPopulatedResults().forEach(fishStatistics -> {
+            SortedSet<PhenotypeStatementWarehouse> set = new TreeSet<>(Comparator.comparing(statement -> statement.equalsByName(statement)));
+            set.addAll(fishStatistics.getPhenotypeStatements());
+            fishStatistics.setPhenotypeStatements(new ArrayList<>(set));
+        });
+        return phenotype;
     }
 
     public static List<ChebiFishModelDisplay> getAllChebiFishDiseaseModels(GenericTerm term, boolean includeChildren) {
