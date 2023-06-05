@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.expression.Figure;
+import org.zfin.expression.FigureService;
 import org.zfin.figure.repository.FigureRepository;
 import org.zfin.figure.service.FigureViewService;
 import org.zfin.framework.presentation.LookupStrings;
@@ -91,23 +92,7 @@ public class FigureViewController {
 
         model.addAttribute("showElsevierMessage", figureViewService.showElsevierMessage(figure.getPublication()));
         model.addAttribute("hasAcknowledgment", figureViewService.hasAcknowledgment(figure.getPublication()));
-        List<String> pubs = List.of("ZDB-PUB-031103-24",
-            "ZDB-PUB-180514-4",
-            "ZDB-PUB-141007-8",
-            "ZDB-PUB-151008-10",
-            "ZDB-PUB-090311-2",
-            "ZDB-PUB-080227-22",
-            "ZDB-PUB-080220-1",
-            "ZDB-PUB-060606-1",
-            "ZDB-PUB-050913-8",
-            "ZDB-PUB-040907-1",
-            "ZDB-PUB-050309-6",
-            "ZDB-PUB-010810-1",
-            "ZDB-PUB-140822-10",
-            "ZDB-PUB-031103-23",
-            "ZDB-PUB-050502-1"
-        );
-        model.addAttribute("isLargeDataPublication", pubs.contains(figure.getPublication().getZdbID()));
+        model.addAttribute("isLargeDataPublication", FigureService.pubsWithLargeData.contains(figure.getPublication().getZdbID()));
         return "figure/figure-view";
     }
 
