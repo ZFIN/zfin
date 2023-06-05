@@ -197,8 +197,7 @@ public class HibernateConstructRepository implements ConstructRepository {
         types.add(Marker.Type.ETCONSTRCT.name());
 
 
-        String hql = "select m from Marker m " +
-                " where m.markerType.name in (:types) ";
+        String hql = "select m from Marker m  where m.markerType.name in (:types) ";
         Query query = HibernateUtil.currentSession().createQuery(hql);
         query.setParameterList("types", types);
         return (List<Marker>) query.list();
