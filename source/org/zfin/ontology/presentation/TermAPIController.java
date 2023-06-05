@@ -172,20 +172,20 @@ public class TermAPIController {
             pagination.addToFilterMap("fishStat.term.termName", filterTermName);
         }
 
-        PaginationResult<FishStatistics> genesInvolvedForDiseaseDirect = OntologyService.getPhenotypeForDisease(term, pagination, false);
-        PaginationResult<FishStatistics> genesInvolvedForDiseaseAll = OntologyService.getPhenotypeForDisease(term, pagination, true);
+        PaginationResult<FishStatistics> phenotypeForDiseaseDirect = OntologyService.getPhenotypeForDisease(term, pagination, false);
+        PaginationResult<FishStatistics> phenotypeForDiseaseAll = OntologyService.getPhenotypeForDisease(term, pagination, true);
 
-        int totalCountDirect = genesInvolvedForDiseaseDirect.getTotalCount();
+        int totalCountDirect = phenotypeForDiseaseDirect.getTotalCount();
         response.addSupplementalData("countDirect", totalCountDirect);
-        int totalCountAll = genesInvolvedForDiseaseAll.getTotalCount();
+        int totalCountAll = phenotypeForDiseaseAll.getTotalCount();
         response.addSupplementalData("countIncludingChildren", totalCountAll);
 
         List<FishStatistics> displayList;
         if (directAnnotation) {
-            displayList = genesInvolvedForDiseaseDirect.getPopulatedResults();
+            displayList = phenotypeForDiseaseDirect.getPopulatedResults();
             response.setTotal(totalCountDirect);
         } else {
-            displayList = genesInvolvedForDiseaseAll.getPopulatedResults();
+            displayList = phenotypeForDiseaseAll.getPopulatedResults();
             response.setTotal(totalCountAll);
         }
         response.setResults(displayList);
