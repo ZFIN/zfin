@@ -27,7 +27,7 @@ public abstract class EntityStatistics {
     private Set<Image> images = new HashSet<>();
     @JsonView(View.API.class)
     private boolean hasData;
-    @JsonView(View.API.class)
+    @JsonView({View.API.class, View.ExpressedGeneAPI.class})
     private boolean hasImages;
 
     @JsonView({View.API.class, View.ExpressedGeneAPI.class})
