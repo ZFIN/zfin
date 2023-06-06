@@ -25,7 +25,7 @@
                         <li><a href="/action/expression/search">Expression</a></li>
                         <li><a href="/action/fish/search">Mutants / Tg</a></li>
                         <li><a href="/action/antibody/search">Antibodies</a></li>
-                        <li><a href="/action/ontology/search">Anatomy / GO / Human Disease</a></li>
+                        <li><a href="/action/ontology/search">Anatomy / GO / Human Disease / Chemical</a></li>
                         <li><a href="/action/publication/search">Publications</a></li>
                     </ul>
                 </div>
