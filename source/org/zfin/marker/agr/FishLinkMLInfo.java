@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.alliancegenome.curation_api.model.ingest.dto.AffectedGenomicModelDTO;
+import org.alliancegenome.curation_api.model.ingest.dto.DataProviderDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.IngestDTO;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.mutant.Fish;
@@ -67,6 +68,9 @@ public class FishLinkMLInfo extends AbstractScriptWrapper {
                     dto.setCurie("ZFIN:" + fish.getZdbID());
                     GregorianCalendar date = ActiveData.getDateFromId(fish.getZdbID());
                     dto.setDateCreated(format(date));
+                    org.alliancegenome.curation_api.model.ingest.dto.DataProviderDTO dataProvider = new DataProviderDTO();
+                    dataProvider.setSourceOrganizationAbbreviation("ZFIN");
+                    dto.setDataProviderDto(dataProvider);
                     return dto;
                 })
                 .collect(toList());
