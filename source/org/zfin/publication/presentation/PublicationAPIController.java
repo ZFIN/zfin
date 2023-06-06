@@ -13,10 +13,7 @@ import org.zfin.feature.Feature;
 import org.zfin.figure.presentation.ExpressionTableRow;
 import org.zfin.figure.presentation.PhenotypeTableRow;
 import org.zfin.figure.service.FigureViewService;
-import org.zfin.framework.api.FieldFilter;
-import org.zfin.framework.api.JsonResultResponse;
-import org.zfin.framework.api.Pagination;
-import org.zfin.framework.api.View;
+import org.zfin.framework.api.*;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
@@ -95,7 +92,15 @@ public class PublicationAPIController {
     @JsonView(View.FigureAPI.class)
     @RequestMapping(value = "/{pubID}/phenotype", method = RequestMethod.GET)
     public JsonResultResponse<PhenotypeTableRow> getPublicationPhenotype(@PathVariable String pubID,
+                                                                         @RequestParam(value = "filter.fish", required = false) String fish,
+                                                                         @RequestParam(value = "filter.stage", required = false) String stage,
+                                                                         @RequestParam(value = "filter.phenotype", required = false) String phenotype,
+                                                                         @RequestParam(value = "filter.condition", required = false) String condition,
                                                                          @Version Pagination pagination) {
+        pagination.addFieldFilter(FieldFilter.PHENOTYPE, phenotype);
+        pagination.addFieldFilter(FieldFilter.STAGE, stage);
+        pagination.addFieldFilter(FieldFilter.FISH_NAME, fish);
+        pagination.addFieldFilter(FieldFilter.EXPERIMENT, condition);
 
         Publication publication = publicationRepository.getPublication(pubID);
         List<PhenotypeWarehouse> warehouseList = publication.getFigures().stream()
@@ -103,12 +108,16 @@ public class PublicationAPIController {
             .flatMap(Collection::stream)
             .collect(Collectors.toList());
         List<PhenotypeTableRow> phenotypeTableRows = figureViewService.getPhenotypeTableRows(warehouseList);
+        // filtering
+        FilterService<PhenotypeTableRow> filterService = new FilterService<>(new PhenotypeTableRowFiltering());
+        List<PhenotypeTableRow> filteredExpressionList = filterService.filterAnnotations(phenotypeTableRows, pagination.getFieldFilterValueMap());
+
         JsonResultResponse<PhenotypeTableRow> response = new JsonResultResponse<>();
-        response.setTotal(phenotypeTableRows.size());
-        List<PhenotypeTableRow> paginatedFeatureList = phenotypeTableRows.stream()
+        response.setTotal(filteredExpressionList.size());
+        List<PhenotypeTableRow> paginatedFeatureList = filteredExpressionList.stream()
             .skip(pagination.getStart())
             .limit(pagination.getLimit())
-            .collect(Collectors.toList());
+            .toList();
 
         response.setResults(paginatedFeatureList);
         response.setHttpServletRequest(request);
@@ -338,7 +347,7 @@ public class PublicationAPIController {
                 linkage.setChromosome(MappingService.getChromosomeLocationDisplay(entityZdbID));
                 return linkage;
             })
-            .collect(Collectors.toList());
+            .toList();
 
         JsonResultResponse<ChromosomeLinkage> response = new JsonResultResponse<>();
         response.setHttpServletRequest(request);
@@ -409,7 +418,7 @@ public class PublicationAPIController {
 
     @Getter
     @Setter
-    class ChromosomeLinkage {
+    static class ChromosomeLinkage {
         @JsonView(View.API.class)
         private EntityZdbID entity;
         @JsonView(View.API.class)
