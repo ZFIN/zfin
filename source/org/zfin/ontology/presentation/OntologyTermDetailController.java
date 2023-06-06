@@ -1,5 +1,6 @@
 package org.zfin.ontology.presentation;
 
+import org.alliancegenome.curation_api.services.PersonService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,6 +26,7 @@ import org.zfin.mutant.PhenotypeStatementWarehouse;
 import org.zfin.mutant.presentation.FishModelDisplay;
 import org.zfin.ontology.*;
 import org.zfin.ontology.service.OntologyService;
+import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
 import org.zfin.publication.presentation.PublicationListAdapter;
 import org.zfin.publication.presentation.PublicationListBean;
@@ -255,6 +257,7 @@ public class OntologyTermDetailController {
         boolean isChebi = term.getOntology().equals(Ontology.CHEBI);
         model.addAttribute("isChebiTerm", isChebi);
         model.addAttribute("showPhenotypeSection", !term.getOntology().equals(Ontology.ECO));
+        model.addAttribute("showDevInfo", Person.isDeveloper());
         form.setAgrDiseaseLinks(OntologyService.getAGRLinks(term));
 
         NavigationMenu menu = new DefaultTermNavigationMenu();

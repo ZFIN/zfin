@@ -6,8 +6,9 @@ import DataTableSummaryToggle from '../components/DataTableSummaryToggle';
 import CommaSeparatedList from '../components/CommaSeparatedList';
 import PhenotypeStatementLink from '../components/entity/PhenotypeStatementLink';
 import FigureSummaryPhenotype from '../components/FigureSummaryPhenotype';
+import ShowDevInfo from '../components/ShowDevInfo';
 
-const ChebiPhenotypeTable = ({termId, directAnnotationOnly, endpointUrl = 'phenotype-chebi', isWildtype, isMultiChebiCondition}) => {
+const ChebiPhenotypeTable = ({termId, directAnnotationOnly, endpointUrl = 'phenotype-chebi', isWildtype, isMultiChebiCondition, showDevInfo = false, indexer}) => {
 
     const [directAnnotation, setDirectAnnotation] = useState(directAnnotationOnly === 'true');
     const [count, setCount] = useState({'countDirect': 0, 'countIncludingChildren': 0});
@@ -83,19 +84,27 @@ const ChebiPhenotypeTable = ({termId, directAnnotationOnly, endpointUrl = 'pheno
     }
     return (
         <>
+            <ShowDevInfo
+                show={showDevInfo}
+                url={`/action/api/ontology/${termId}/${endpointUrl}?${qs.stringify(params)}`}
+                indexer={indexer}
+            />
+
             {directAnnotationOnly && count.countIncludingChildren > 0 && (
                 <DataTableSummaryToggle
                     showPopup={directAnnotation}
                     directCount={count.countDirect}
                     childrenCount={count.countIncludingChildren}
                     onChange={setDirectAnnotation}
+                    url={`/action/api/ontology/${termId}/${endpointUrl}?${qs.stringify(params)}`}
+                    show={showDevInfo}
                 />
             )}
             <DataTable
                 columns={columns}
                 dataUrl={`/action/api/ontology/${termId}/${endpointUrl}?${qs.stringify(params)}`}
                 onDataLoadedCount={(count) => setCount(count)}
-                rowKey={row => row.fish.zdbID}
+                rowKey={row => row.fish.zdbID + row.experiment.zdbID}
             />
         </>
     );
@@ -103,8 +112,10 @@ const ChebiPhenotypeTable = ({termId, directAnnotationOnly, endpointUrl = 'pheno
 
 ChebiPhenotypeTable.propTypes = {
     termId: PropTypes.string,
+    indexer: PropTypes.string,
     endpointUrl: PropTypes.string,
     isWildtype: PropTypes.bool,
+    showDevInfo: PropTypes.bool,
     isMultiChebiCondition: PropTypes.bool,
     directAnnotationOnly: PropTypes.string,
 };
