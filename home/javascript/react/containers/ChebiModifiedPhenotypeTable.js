@@ -6,8 +6,9 @@ import DataTableSummaryToggle from '../components/DataTableSummaryToggle';
 import CommaSeparatedList from '../components/CommaSeparatedList';
 import PhenotypeStatementLink from '../components/entity/PhenotypeStatementLink';
 import FigureSummaryPhenotype from '../components/FigureSummaryPhenotype';
+import ShowDevInfo from '../components/ShowDevInfo';
 
-const ChebiModifiedPhenotypeTable = ({termId, directAnnotationOnly, endpointUrl = 'phenotype-chebi'}) => {
+const ChebiModifiedPhenotypeTable = ({termId, directAnnotationOnly, endpointUrl = 'phenotype-chebi', showDevInfo, indexer}) => {
 
     const [directAnnotation, setDirectAnnotation] = useState(directAnnotationOnly === 'true');
     const [count, setCount] = useState({'countDirect': 0, 'countIncludingChildren': 0});
@@ -85,6 +86,11 @@ const ChebiModifiedPhenotypeTable = ({termId, directAnnotationOnly, endpointUrl 
 
     return (
         <>
+            <ShowDevInfo
+                show={showDevInfo}
+                url={`/action/api/ontology/${termId}/${endpointUrl}?${qs.stringify(params)}`}
+                indexer={indexer}
+            />
             {directAnnotationOnly && count.countIncludingChildren > 0 && (
                 <DataTableSummaryToggle
                     showPopup={directAnnotation}
@@ -106,7 +112,9 @@ const ChebiModifiedPhenotypeTable = ({termId, directAnnotationOnly, endpointUrl 
 ChebiModifiedPhenotypeTable.propTypes = {
     termId: PropTypes.string,
     endpointUrl: PropTypes.string,
+    showDevInfo: PropTypes.bool,
     directAnnotationOnly: PropTypes.string,
+    indexer: PropTypes.string,
 };
 
 export default ChebiModifiedPhenotypeTable;

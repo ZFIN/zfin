@@ -1,4 +1,4 @@
-import React  from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import {columnDefinitionType, downloadOptionType, sortOptionType, tableStateType} from '../../utils/types';
 import DataProvider from './DataProvider';

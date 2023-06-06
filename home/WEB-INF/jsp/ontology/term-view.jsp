@@ -2,6 +2,7 @@
 <%@ page import="org.zfin.framework.presentation.NavigationMenuOptions" %>
 <%@ page import="org.zfin.framework.featureflag.FeatureFlagEnum" %>
 <%@ page import="org.zfin.ontology.Ontology" %>
+<%@ page import="org.zfin.indexer.UiIndexerConfig" %>
 <%@ page import="org.zfin.framework.presentation.LookupStrings" %>
 
 <jsp:useBean id="formBean" class="org.zfin.ontology.presentation.OntologyBean" scope="request"/>
@@ -83,27 +84,32 @@
                  data-term-id="${term.zdbID}"
                  data-direct-annotation-only="true"
             ></div>
-        </z:section>
-
+        </z:section>${UiIndexerConfig.ChebiPhenotypeIndexer.typeName}
         <z:section title="${PHENOTYPE_CHEBI}">
             <z:section title="Phenotype resulting from" appendedText="${term.termName}" show="${true}">
                 <div class="__react-root" id="ChebiPhenotypeTable"
                      data-term-id="${term.zdbID}"
-                     data-direct-annotation-only="true"
-                     data-is-wildtype="true"
-                     data-is-multi-chebi-condition="false"
+                     data-direct-annotation-only="${true}"
+                     data-is-wildtype="${true}"
+                     data-is-multi-chebi-condition="${false}"
+                     data-show-dev-info=${showDevInfo}
+                             data-indexer=${UiIndexerConfig.ChebiPhenotypeIndexer.typeName}
                 ></div>
             </z:section>
             <z:section title="Phenotype where environments contain" appendedText="${term.termName}" show="${true}">
                 <div class="__react-root" id="ChebiPhenotypeTable"
                      data-term-id="${term.zdbID}"
                      data-direct-annotation-only="true"
+                     data-show-dev-info=${showDevInfo}
+                             data-indexer=${UiIndexerConfig.ChebiPhenotypeIndexer.typeName}
                 ></div>
             </z:section>
             <z:section title="Phenotype modified by environments containing" appendedText="${term.termName}" show="${true}">
                 <div class="__react-root" id="ChebiModifiedPhenotypeTable"
                      data-term-id="${term.zdbID}"
                      data-direct-annotation-only="true"
+                     data-show-dev-info=${showDevInfo}
+                             data-indexer=${UiIndexerConfig.ChebiPhenotypeIndexer.typeName}
                 ></div>
             </z:section>
         </z:section>
