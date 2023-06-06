@@ -17,7 +17,7 @@ const FigureSummary = ({statistics, allFiguresUrl}) => {
         <PublicationCitationLink publication={statistics.firstPublication} /> :
         `${statistics.numberOfPublications} publications`;
 
-    return <>{figureLink} {(statistics.imgInFigure || statistics.hasImages || !statistics.firstFigure.imgless) && <CameraIcon />} from {publicationDisplay}</>;
+    return <>{figureLink} {(statistics.imgInFigure || statistics.hasImages || (statistics.firstFigure && !statistics.firstFigure.imgless)) && <CameraIcon />} from {publicationDisplay}</>;
 };
 
 FigureSummary.propTypes = {
