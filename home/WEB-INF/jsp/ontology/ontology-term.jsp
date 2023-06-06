@@ -23,7 +23,7 @@
                 </td>
                 <td rowspan="3" valign="top" align="right" width="5%">
                     <span style="font-size: 12px">
-                    Search Ontology: <zfin2:lookup ontologyName="${Ontology.AOGODO.toString()}"
+                    Search Ontology: <zfin2:lookup ontologyName="${Ontology.AOGODOCHEBI.toString()}"
                                                    action="${LookupStrings.ACTION_TERM_SEARCH}"
                                                    wildcard="true" useIdAsTerm="true" termsWithDataOnly="false"/>
                         </span>

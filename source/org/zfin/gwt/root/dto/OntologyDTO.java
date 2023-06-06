@@ -54,6 +54,12 @@ public enum OntologyDTO implements IsSerializable {
             return null;
         }
     },
+    AOGODOCHEBI(1, "AOGODOCHEBI", "zebrafish_anatomy,cellular_component,molecular_function,biological_process,disease_ontology,chebi_ontology", true) {
+        @Override
+        public OntologyDTO getAssociatedQualityOntology() {
+            return null;
+        }
+    },
     // Subset of GO: Cellular Components
     GO_CC(2, "GO-CC", "cellular_component", false) {
         @Override

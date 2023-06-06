@@ -34,7 +34,7 @@
         </z:dataManagerDropdown>
         <p/>
         <div class="float-right">
-            Search Ontology: <zfin2:lookup ontologyName="${Ontology.AOGODO.toString()}"
+            Search Ontology: <zfin2:lookup ontologyName="${Ontology.AOGODOCHEBI.toString()}"
                                            action="${LookupStrings.ACTION_TERM_SEARCH}"
                                            wildcard="true" useIdAsTerm="true" termsWithDataOnly="false"/>
         </div>
