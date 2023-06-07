@@ -10,7 +10,7 @@
 
     <script src="${zfn:getAssetPath("angular.js")}"></script>
 
-    <div ng-app="app" ng-controller="EditController as eControl">
+    <div ng-app="app" ng-controller="NomenclatureController as eControl">
         <script>
             markerID = '${marker.zdbID}';
 
