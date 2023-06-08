@@ -84,6 +84,7 @@ public class PhenotypeStatementWarehouse implements Comparable<PhenotypeStatemen
         return e2b;
     }
 
+    @JsonView({View.ExpressedGeneAPI.class, View.API.class})
     public String getShortName() {
         return shortName;
     }
