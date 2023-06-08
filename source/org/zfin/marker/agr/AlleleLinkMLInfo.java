@@ -46,7 +46,7 @@ public class AlleleLinkMLInfo extends LinkMLInfo {
 
     private void init() throws IOException {
         initAll();
-        IngestDTO ingestDTO = new IngestDTO();
+        IngestDTO ingestDTO = getIngestDTO();
         List<AlleleDTO> allDiseaseDTO = getAllAlleles(numfOfRecords);
         ingestDTO.setAlleleIngestSet(allDiseaseDTO);
         ObjectMapper mapper = new ObjectMapper();

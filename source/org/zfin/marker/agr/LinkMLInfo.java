@@ -2,6 +2,7 @@ package org.zfin.marker.agr;
 
 import org.alliancegenome.curation_api.model.entities.AffectedGenomicModel;
 import org.alliancegenome.curation_api.model.ingest.dto.ExperimentalConditionDTO;
+import org.alliancegenome.curation_api.model.ingest.dto.IngestDTO;
 import org.zfin.expression.ExperimentCondition;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.mutant.DiseaseAnnotation;
@@ -32,6 +33,13 @@ public class LinkMLInfo extends AbstractScriptWrapper {
             return "PMID:" + publication.getAccessionNumber();
         return "ZFIN:" + publication.getZdbID();
     }
+
+    protected IngestDTO getIngestDTO() {
+        IngestDTO ingestDTO = new IngestDTO();
+        ingestDTO.setLinkMLVersion("v1.7.3");
+        return ingestDTO;
+    }
+
 
     public static String format(String zdbID) {
         GregorianCalendar date = ActiveData.getDateFromId(zdbID);
