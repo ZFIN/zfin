@@ -8,7 +8,7 @@ import produce, {setAutoFreeze} from 'immer';
 setAutoFreeze(false);
 
 import useTableState from '../../hooks/useTableState';
-import ShowDevInfo from "../ShowDevInfo";
+import ShowDevInfo from '../ShowDevInfo';
 
 const DataTable = ({
     columns,
