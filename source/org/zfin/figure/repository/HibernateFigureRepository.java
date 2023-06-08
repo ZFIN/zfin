@@ -27,13 +27,14 @@ import static org.zfin.framework.HibernateUtil.currentSession;
 public class HibernateFigureRepository implements FigureRepository {
     private static Logger logger = LogManager.getLogger(HibernateFigureRepository.class);
 
+    @Override
     public Figure getFigure(String zdbID) {
         Session session = currentSession();
         return session.get(Figure.class, zdbID);
     }
 
     /*  for multi-object hql transformations, check out HibernateExpressionRepository.getExperimentFigureStagesByGeneAndFish2 */
-
+    @Override
     public List<Person> getSubmitters(Publication publication, Clone probe) {
         List<Person> submitters = new ArrayList<>();
 
@@ -77,6 +78,7 @@ public class HibernateFigureRepository implements FigureRepository {
     }
 
 
+    @Override
     public List<Figure> getFiguresForDirectSubmissionPublication(Publication publication, Clone probe) {
         CriteriaBuilder criteriaBuilder = currentSession().getCriteriaBuilder();
         CriteriaQuery<Figure> query = criteriaBuilder.createQuery(Figure.class);
@@ -100,6 +102,7 @@ public class HibernateFigureRepository implements FigureRepository {
     }
 
 
+    @Override
     public List<Image> getImages(List<String> zdbIDs) {
         CriteriaBuilder criteriaBuilder = currentSession().getCriteriaBuilder();
         CriteriaQuery<Image> query = criteriaBuilder.createQuery(Image.class);
@@ -114,6 +117,22 @@ public class HibernateFigureRepository implements FigureRepository {
                 .toList();
     }
 
+    @Override
+    public List<Image> getAllImagesWithFigures() {
+        CriteriaBuilder criteriaBuilder = currentSession().getCriteriaBuilder();
+        CriteriaQuery<Image> query = criteriaBuilder.createQuery(Image.class);
+        Root<Image> imageRoot = query.from(Image.class);
+
+        Join<Image, Figure> figureJoin = imageRoot.join("figure");
+
+        query.orderBy(criteriaBuilder.desc(imageRoot.get("zdbID")));
+
+        List<Image> images = currentSession().createQuery(query).getResultList();
+
+        return images;
+    }
+
+    @Override
     public List<Image> getRecentlyCuratedImages() {
         String hql = """
                 select distinct image 
