@@ -23,12 +23,10 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 import static org.zfin.repository.RepositoryFactory.getFishRepository;
 
-public class FishLinkMLInfo extends AbstractScriptWrapper {
-
-    private int numfOfRecords = 0;
+public class FishLinkMLInfo extends LinkMLInfo {
 
     public FishLinkMLInfo(int number) {
-        numfOfRecords = number;
+        super(number);
     }
 
 
@@ -44,7 +42,7 @@ public class FishLinkMLInfo extends AbstractScriptWrapper {
 
     private void init() throws IOException {
         initAll();
-        IngestDTO ingestDTO = new IngestDTO();
+        IngestDTO ingestDTO = getIngestDTO();
         List<AffectedGenomicModelDTO> allDiseaseDTO = getAllFish(numfOfRecords);
         ingestDTO.setAgmIngestSet(allDiseaseDTO);
         ObjectMapper mapper = new ObjectMapper();

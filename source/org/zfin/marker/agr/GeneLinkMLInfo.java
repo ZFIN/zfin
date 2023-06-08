@@ -21,12 +21,10 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toList;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
-public class GeneLinkMLInfo extends AbstractScriptWrapper {
-
-    private int numfOfRecords = 0;
+public class GeneLinkMLInfo extends LinkMLInfo {
 
     public GeneLinkMLInfo(int number) {
-        numfOfRecords = number;
+        super(number);
     }
 
 
@@ -43,6 +41,7 @@ public class GeneLinkMLInfo extends AbstractScriptWrapper {
     private void init() throws IOException {
         initAll();
         IngestDTO ingestDTO = new IngestDTO();
+        ingestDTO.setLinkMLVersion("v1.7.3");
         List<org.alliancegenome.curation_api.model.ingest.dto.GeneDTO> allDiseaseDTO = getAllGenes(numfOfRecords);
         ingestDTO.setGeneIngestSet(allDiseaseDTO);
         ObjectMapper mapper = new ObjectMapper();
