@@ -8,6 +8,7 @@ import produce, {setAutoFreeze} from 'immer';
 setAutoFreeze(false);
 
 import useTableState from '../../hooks/useTableState';
+import ShowDevInfo from '../ShowDevInfo';
 
 const DataTable = ({
     columns,
@@ -66,6 +67,7 @@ const DataTable = ({
                 sortOptions={sortOptions}
                 tableState={tableState}
             />
+            <ShowDevInfo show={true} url={dataUrl} />
         </div>
     )
 };
