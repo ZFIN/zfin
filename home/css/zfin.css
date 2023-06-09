@@ -785,6 +785,11 @@ a + .inline-upload {
     font-size: 0.8em;
 }
 
+.zfin-button.disabled {
+    background: #DDDDDD;
+    color: #2b3037;
+}
+
 .zfin-button.cancel {
     background: #b0b4b3;
     color: #2b3037;

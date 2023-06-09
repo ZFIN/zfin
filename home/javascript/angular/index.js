@@ -33,4 +33,3 @@ require('./reference-editor.directive');
 require('./str-details.directive');
 require('./str-sequence.directive');
 
-require('./nomenclature');

@@ -1,5 +1,7 @@
 package org.zfin.nomenclature.presentation;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
@@ -17,17 +19,17 @@ import org.zfin.gwt.root.server.DTOConversionService;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerHistory;
+import org.zfin.marker.MarkerHistoryDTO;
 import org.zfin.nomenclature.*;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 @RequestMapping("/nomenclature")
@@ -41,14 +43,15 @@ public class NomenclatureSubmissionController {
         if (zdbID == null) {
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
         }
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Marker History");
+
         Marker marker = RepositoryFactory.getMarkerRepository().getMarkerByID(zdbID);
         if (marker == null) {
             model.addAttribute(LookupStrings.ZDB_ID, "No marker with ID " + zdbID + " found");
+        } else {
+            model.addAttribute("markerZdbID", marker.getZdbID());
         }
-        model.addAttribute("marker", marker);
-        model.addAttribute("markerHistoryReasonCodes", MarkerHistory.Reason.values());
 
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Marker History");
         return "nomenclature/history-view";
     }
 
@@ -273,6 +276,5 @@ public class NomenclatureSubmissionController {
     private String getConfirmationSubjectLine(NameSubmission submission) {
         return "ZFIN Confirmation for " + submission.getSubjectLine();
     }
-
 
 }
