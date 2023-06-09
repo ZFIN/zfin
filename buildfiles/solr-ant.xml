@@ -219,6 +219,7 @@
     <target name="start-solr" description="Start up Solr"
         depends="start-solr-docker,start-solr-systemctl">
     </target>
+    <target name="solr-start" description="Alias for start-solr" depends="start-solr"></target>
 
     <target name="start-solr-docker" description="Start up Solr " if="isDocker">
         <echo message="Source: ${solr}"/>
@@ -243,6 +244,7 @@
     <target name="stop-solr" description="Stop Solr"
         depends="stop-solr-docker,stop-solr-systemctl">
     </target>
+    <target name="solr-stop" description="Alias for stop-solr" depends="stop-solr"></target>
 
     <target name="stop-solr-docker" description="Stop Solr " if="isDocker">
         <exec executable="/usr/bin/docker">
@@ -265,6 +267,7 @@
     <target name="restart-solr" description="Restart Solr"
         depends="restart-solr-docker,restart-solr-systemctl">
     </target>
+    <target name="solr-restart" description="Alias for restart-solr" depends="restart-solr"></target>
 
     <target name="restart-solr-docker" description="Restart Solr" if="isDocker">
         <exec executable="/usr/bin/docker">
