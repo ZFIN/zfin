@@ -450,12 +450,14 @@
             <arg value="start"/>
         </exec>
     </target>
+    <target name="jenkins-start" description="Alias for start-jenkins" depends="start-jenkins"></target>
 
     <target name="stop-jenkins" depends="create-jenkins-symlink" description="Stop Jenkins ">
         <exec executable="${jenkins}/jenkins.sh">
             <arg value="stop"/>
         </exec>
     </target>
+    <target name="jenkins-stop" description="Alias for stop-jenkins" depends="stop-jenkins"></target>
 
     <target name="kill-jenkins" depends="create-jenkins-symlink" description="Stop Jenkins ">
         <exec executable="${jenkins}/jenkins.sh">
@@ -468,6 +470,7 @@
             <arg value="restart"/>
         </exec>
     </target>
+    <target name="jenkins-restart" description="Alias for restart-jenkins" depends="restart-jenkins"></target>
 
     <target name="pid-jenkins" description="Display the PID of Jenkins server">
         <loadfile property="jenkins-pid" srcFile="${JENKINS_HOME}/jenkins.pid"/>
