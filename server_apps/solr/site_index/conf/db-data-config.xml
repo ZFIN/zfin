@@ -5120,7 +5120,7 @@ and child.term_ontology = 'disease_ontology';
             <entity name="pub_disease"
                     query="select
                                term_name as disease,
-                               term_ont_id as xref,
+                               term_zdb_id as xref,
                                dat_source_zdb_id as pub_zdb_id
                                from term
                                join disease_annotation on term.term_zdb_id = disease_annotation.dat_term_zdb_id
