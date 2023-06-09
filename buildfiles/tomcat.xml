@@ -66,6 +66,9 @@
     <target name="tomcat-start" depends="mutant-tomcat-start,informix-zfishweb-tomcat-start,docker-tomcat-start"
             description="Starts tomcat by calling all tomcat stop targets"/>
 
+    <!-- Aliases for start and stop -->
+    <target name="start-tomcat" depends="tomcat-start" description="Alias"></target>
+    <target name="stop-tomcat" depends="tomcat-stop" description="Alias"></target>
 
     <target name="tomcat-debug-start" description="Starts tomcat in debug mode">
         <exec executable="${tomcat-script-mutant}">
@@ -87,6 +90,7 @@
             <arg value="${CATALINA_BASE}/logs/catalina.out"/>
         </exec>
     </target>
+    <target name="tomcat-tail" depends="tail-tomcat" description="Alias"></target>
 
     <target name="tail-connections" description="tail -f on db-connection-pool-monitor.txt file">
         <exec executable="tail">
@@ -126,6 +130,7 @@
     <target name="tomcat-debug-restart" depends="tomcat-debug-stop,tomcat-debug-start"
             description="Restarts tomcat in debug mode"/>
     <target name="restart" depends="tomcat-restart" description="Restarts tomcat for the appropriate environment"/>
+    <target name="restart-tomcat" depends="tomcat-restart" description="Alias"/>
     <target name="debug-restart" depends="tomcat-debug-restart" description="Restarts tomcat in debug mode"/>
 
     <!-- an alias to create-mutant-instance with a more explanatory name -->
