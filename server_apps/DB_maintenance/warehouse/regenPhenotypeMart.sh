@@ -95,15 +95,15 @@ date;
 echo "done with pheno_term_regen()";
 
 
-echo "start gradle runChebiPhenotypeIndexer";
+echo "start gradle runPhenotypeIndexer";
 cd $SOURCEROOT
-gradle runChebiPhenotypeIndexer
+gradle runPhenotypeIndexer
 if ($? != 0) then
-   echo "gradle runChebiPhenotypeIndexer failed";
+   echo "gradle runPhenotypeIndexer failed";
 exit 1;
 endif
 date;
-echo "done with gradle runChebiPhenotypeIndexer";
+echo "done with gradle runPhenotypeIndexer";
 
 
 
