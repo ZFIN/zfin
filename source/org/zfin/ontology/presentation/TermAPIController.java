@@ -146,6 +146,7 @@ public class TermAPIController {
     @RequestMapping(value = "/{termID}/phenotype", method = RequestMethod.GET)
     public JsonResultResponse<FishStatistics> getPhenotypes(@PathVariable String termID,
                                                             @RequestParam(value = "directAnnotation", required = false, defaultValue = "false") boolean directAnnotation,
+                                                            @RequestParam(value = "includeNormalPhenotype", required = false, defaultValue = "false") boolean isIncludeNormalPhenotype,
                                                             @RequestParam(value = "filter.geneSymbol", required = false) String filterGeneSymbol,
                                                             @RequestParam(value = "filter.fishName", required = false) String filterFishName,
                                                             @RequestParam(value = "filter.phenotype", required = false) String filterPhenotype,
@@ -172,8 +173,8 @@ public class TermAPIController {
             pagination.addToFilterMap("fishStat.term.termName", filterTermName);
         }
 
-        PaginationResult<FishStatistics> phenotypeForDiseaseDirect = OntologyService.getPhenotypeForDisease(term, pagination, false);
-        PaginationResult<FishStatistics> phenotypeForDiseaseAll = OntologyService.getPhenotypeForDisease(term, pagination, true);
+        PaginationResult<FishStatistics> phenotypeForDiseaseDirect = OntologyService.getPhenotypeForDisease(term, pagination, false, isIncludeNormalPhenotype);
+        PaginationResult<FishStatistics> phenotypeForDiseaseAll = OntologyService.getPhenotypeForDisease(term, pagination, true, isIncludeNormalPhenotype);
 
         int totalCountDirect = phenotypeForDiseaseDirect.getTotalCount();
         response.addSupplementalData("countDirect", totalCountDirect);

@@ -7,11 +7,13 @@ import DataTableSummaryToggle from '../components/DataTableSummaryToggle';
 import CommaSeparatedList from '../components/CommaSeparatedList';
 import PhenotypeStatementLink from '../components/entity/PhenotypeStatementLink';
 import FigureSummaryPhenotype from '../components/FigureSummaryPhenotype';
+import Checkbox from '../components/Checkbox';
 
 const TermPhenotypeTable = ({termId, directAnnotationOnly, endpointUrl = 'phenotype'}) => {
 
     const [directAnnotation, setDirectAnnotation] = useState(directAnnotationOnly === 'true');
     const [count, setCount] = useState({'countDirect': 0, 'countIncludingChildren': 0});
+    const [includeNormalPhenotype, setIncludeNormalPhenotype] = useState(false);
 
     const columns = [
         {
@@ -58,10 +60,17 @@ const TermPhenotypeTable = ({termId, directAnnotationOnly, endpointUrl = 'phenot
 
     ];
 
+
+    const baseUrl = `/action/api/ontology/${termId}/${endpointUrl}`;
     const params = {};
     if (directAnnotation) {
         params.directAnnotation = true;
     }
+    if (includeNormalPhenotype) {
+        params.includeNormalPhenotype = true;
+    }
+    const dataUrl = baseUrl + qs.stringify(params, {addQueryPrefix: true});
+
 
     return (
         <>
@@ -73,11 +82,20 @@ const TermPhenotypeTable = ({termId, directAnnotationOnly, endpointUrl = 'phenot
                     onChange={setDirectAnnotation}
                 />
             )}
+            <div className='mb-3 mt-3'>
+                <Checkbox
+                    checked={includeNormalPhenotype}
+                    id='includeNormalPhenotypeCheckbox'
+                    onChange={e => setIncludeNormalPhenotype(e.target.checked)}
+                >
+                    Include Normal Phenotypes
+                </Checkbox>
+            </div>
             <DataTable
                 columns={columns}
-                dataUrl={`/action/api/ontology/${termId}/${endpointUrl}?${qs.stringify(params)}`}
+                dataUrl={dataUrl}
                 onDataLoadedCount={(count) => setCount(count)}
-                rowKey={row => row.fish.zdbID}
+                rowKey={row => row.fish.zdbID+row.term.zdbID}
             />
         </>
     );

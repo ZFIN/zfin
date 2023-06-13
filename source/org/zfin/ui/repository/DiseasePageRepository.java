@@ -15,7 +15,7 @@ public interface DiseasePageRepository {
 
     PaginationResult<OmimPhenotypeDisplay> getGenesInvolved(GenericTerm term, Pagination pagination, boolean includeChildren);
 
-    PaginationResult<FishStatistics> getPhenotype(GenericTerm term, Pagination pagination, boolean includeChildren);
+    PaginationResult<FishStatistics> getPhenotype(GenericTerm term, Pagination pagination, Boolean includeChildren, Boolean isIncludeNormalPhenotype);
 
     PaginationResult<FishModelDisplay> getFishDiseaseModels(GenericTerm term, Pagination pagination, boolean includeChildren);
 

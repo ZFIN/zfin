@@ -45,14 +45,26 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
     }
 
     @Override
-    public PaginationResult<FishStatistics> getPhenotype(GenericTerm term, Pagination pagination, boolean includeChildren) {
+    public PaginationResult<FishStatistics> getPhenotype(GenericTerm term, Pagination pagination, Boolean includeChildren, Boolean isIncludeNormalPhenotype) {
         PaginationBean bean = PaginationBean.getPaginationBean(pagination);
         String hql;
         if (!includeChildren) {
-            hql = "select fishStat from FishStatistics as fishStat join fishStat.affectedGenes as zfinGene where fishStat.term = :term ";
+            hql = """
+                select fishStat from FishStatistics as fishStat
+                join fishStat.affectedGenes as zfinGene
+                join fishStat.phenotypeStatements as phenoStats
+                where fishStat.term = :term
+                """;
         } else {
-            hql = "select fishStat from FishStatistics as fishStat, TransitiveClosure as clo join fishStat.affectedGenes as zfinGene " +
-                  "where clo.child = fishStat.term AND clo.root = :term ";
+            hql = """
+                select fishStat from FishStatistics as fishStat, TransitiveClosure as clo
+                join fishStat.affectedGenes as zfinGene
+                join fishStat.phenotypeStatements as phenoStats
+                where clo.child = fishStat.term AND clo.root = :term
+                """;
+        }
+        if (!isIncludeNormalPhenotype) {
+            hql += "AND phenoStats.tag = 'abnormal'";
         }
         if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
             for (var entry : pagination.getFilterMap().entrySet()) {
@@ -108,7 +120,7 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
 
     public List<FishModelDisplay> getAllFishDiseaseModels() {
         String hql;
-            hql = "select display from FishModelDisplay as display";
+        hql = "select display from FishModelDisplay as display";
         Query<FishModelDisplay> query = HibernateUtil.currentSession().createQuery(hql, FishModelDisplay.class);
         List<FishModelDisplay> list = query.list();
         return list;
