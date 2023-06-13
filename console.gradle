@@ -67,9 +67,10 @@ task createUIIndex(type: JavaExec) {
     main = 'org.zfin.indexer.UiIndexer'
 }
 
-task runChebiPhenotypeIndexer(type: JavaExec) {
+task runPhenotypeIndexer(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.indexer.UiIndexer'
+    args 'TermPhenotype'
     args 'ChebiPhenotype'
 }
 
