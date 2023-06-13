@@ -498,11 +498,11 @@ public class OntologyService {
         });
     }
 
-    public static PaginationResult<FishStatistics> getPhenotypeForDisease(GenericTerm term, Pagination pagination, boolean includeChildren) {
+    public static PaginationResult<FishStatistics> getPhenotypeForDisease(GenericTerm term, Pagination pagination, boolean includeChildren, boolean isIncludeNormalPhenotype) {
         if (term == null) {
             return null;
         }
-        PaginationResult<FishStatistics> phenotype = getDiseasePageRepository().getPhenotype(term, pagination, includeChildren);
+        PaginationResult<FishStatistics> phenotype = getDiseasePageRepository().getPhenotype(term, pagination, includeChildren, isIncludeNormalPhenotype);
         // make phenotype statement list unique
         phenotype.getPopulatedResults().forEach(fishStatistics -> {
             SortedSet<PhenotypeStatementWarehouse> set = new TreeSet<>(Comparator.comparing(statement -> statement.equalsByName(statement)));
