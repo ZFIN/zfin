@@ -20,7 +20,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.GregorianCalendar;
 import java.util.regex.Matcher;
@@ -32,7 +31,11 @@ public class ImageService {
 
     private final static File IMAGE_LOADUP_DIR = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString(), ZfinPropertiesEnum.IMAGE_LOAD.toString());
     private final static String THUMB = "_thumb";
+    private final static String THUMB_DIMENSIONS = "1000x64";
+
     private final static String MEDIUM = "_medium";
+    private final static String MEDIUM_DIMENSIONS = "500x550";
+
 
     public static Image processImage(Figure figure, MultipartFile file, Person owner, String publicationZdbId) throws IOException {
         return processImage(figure, owner, false, file.getOriginalFilename(), file.getInputStream(), publicationZdbId);
@@ -125,23 +128,38 @@ public class ImageService {
         Files.copy(imageStream, destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
         try {
-            String convertBinary = ZfinPropertiesEnum.CONVERT_BINARY_PATH.value();
-            if (convertBinary == null) {
-                throw new RuntimeException("Environment variable CONVERT_BINARY_PATH must be set");
-            }
-            if (!FileUtil.checkFileExists(convertBinary)) {
-                throw new RuntimeException("Cannot find imagemagick's \"convert\" binary at: " + convertBinary);
-            }
-            String makeMedium = convertBinary + " -thumbnail 1000x64 " + destinationFile + " " + thumbnailFile;
-            Runtime.getRuntime().exec(makeMedium);
-            String makeThumbnail = convertBinary + " -thumbnail 500x550 " + destinationFile + " " + mediumFile;
-            Runtime.getRuntime().exec(makeThumbnail);
-
+            convertImageToThumbnail(destinationFile.getAbsolutePath(), thumbnailFile.getAbsolutePath(), false);
+            convertImageToMedium(destinationFile.getAbsolutePath(), mediumFile.getAbsolutePath(), false);
         } catch (IOException e) {
+            log.error("Error converting image to thumbnail or medium", e);
             e.printStackTrace();
         }
 
         return image;
+    }
+
+    public static String convertImageToMedium(String imageFilename, String mediumFilename, boolean previewCommandOnly) throws IOException {
+        return convertImageToDimensions(imageFilename, mediumFilename, MEDIUM_DIMENSIONS, previewCommandOnly);
+    }
+
+    public static String convertImageToThumbnail(String imageFilename, String thumbnailFilename, boolean previewCommandOnly) throws IOException {
+        return convertImageToDimensions(imageFilename, thumbnailFilename, THUMB_DIMENSIONS, previewCommandOnly);
+    }
+
+    public static String convertImageToDimensions(String imageFilename, String thumbnailFilename, String dimensions, boolean previewCommandOnly) throws IOException {
+        String convertBinary = ZfinPropertiesEnum.CONVERT_BINARY_PATH.value();
+        if (convertBinary == null) {
+            throw new RuntimeException("Environment variable CONVERT_BINARY_PATH must be set");
+        }
+        if (!FileUtil.checkFileExists(convertBinary)) {
+            throw new RuntimeException("Cannot find imagemagick's \"convert\" binary at: " + convertBinary);
+        }
+        String makeThumb = convertBinary + " -thumbnail " + dimensions + " " + imageFilename + " " + thumbnailFilename;
+        log.info("running makeThumb command: " + makeThumb);
+        if (!previewCommandOnly) {
+            Runtime.getRuntime().exec(makeThumb);
+        }
+        return makeThumb;
     }
 
     private static void createDestinationParentDirectoryIfNotExists(String publicationZdbId) throws IOException {

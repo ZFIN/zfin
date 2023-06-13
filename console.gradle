@@ -73,3 +73,9 @@ task runChebiPhenotypeIndexer(type: JavaExec) {
     args 'ChebiPhenotype'
 }
 
+task imageThumbnailFixTask(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.figure.service.ImageThumbnailFixTask'
+    systemProperty "runImageFixes", System.getProperty("runImageFixes", null)
+}
+
