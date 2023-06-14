@@ -902,7 +902,9 @@
 /server_apps/jenkins/plugins/trilead-api.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/windows-slaves.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/workflow-api.jpi filter=lfs diff=lfs merge=lfs -text
+/server_apps/jenkins/plugins/workflow-cps.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/workflow-job.jpi filter=lfs diff=lfs merge=lfs -text
+/server_apps/jenkins/plugins/workflow-scm-step.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/workflow-step-api.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/workflow-support.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/solr/server/lib/ext/jcl-over-slf4j-1.7.7.jar filter=lfs diff=lfs merge=lfs -text
