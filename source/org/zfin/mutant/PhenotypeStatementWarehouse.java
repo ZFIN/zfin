@@ -7,6 +7,7 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.PostComposedEntity;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 /**
  * Main Experiment object that contains expression annotations.
@@ -220,6 +221,16 @@ public class PhenotypeStatementWarehouse implements Comparable<PhenotypeStatemen
         return true;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PhenotypeStatementWarehouse that)) return false;
+        return getId() == that.getId();
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
+    }
 }
 
