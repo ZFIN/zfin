@@ -502,13 +502,7 @@ public class OntologyService {
         if (term == null) {
             return null;
         }
-        PaginationResult<FishStatistics> phenotype = getDiseasePageRepository().getPhenotype(term, pagination, includeChildren, isIncludeNormalPhenotype);
-        // make phenotype statement list unique
-        phenotype.getPopulatedResults().forEach(fishStatistics -> {
-            SortedSet<PhenotypeStatementWarehouse> set = new TreeSet<>(Comparator.comparing(statement -> statement.equalsByName(statement)));
-            set.addAll(fishStatistics.getPhenotypeStatements());
-            fishStatistics.setPhenotypeStatements(new ArrayList<>(set));
-        });
+        PaginationResult<FishStatistics> phenotype = getDiseasePageRepository().getPhenotype(term, pagination, includeChildren);
         return phenotype;
     }
 
