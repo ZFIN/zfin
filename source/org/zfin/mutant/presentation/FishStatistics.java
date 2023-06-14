@@ -58,7 +58,7 @@ public class FishStatistics extends EntityStatistics {
             nullable = false, updatable = false)})
     private Set<Marker> affectedGenes;
     @JsonView(View.ExpressedGeneAPI.class)
-    @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+    @ManyToMany(fetch=FetchType.LAZY)
     @JoinTable(name = "UI.PHENOTYPE_WAREHOUSE_ASSOCIATION", joinColumns = {
         @JoinColumn(name = "pwa_phenotype_id", nullable = false, updatable = false)},
         inverseJoinColumns = {@JoinColumn(name = "pwa_phenotype_warehouse_id",

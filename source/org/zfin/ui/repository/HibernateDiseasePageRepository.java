@@ -51,20 +51,19 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
         if (!includeChildren) {
             hql = """
                 select fishStat from FishStatistics as fishStat
-                join fishStat.affectedGenes as zfinGene
-                join fishStat.phenotypeStatements as phenoStats
+                left join fishStat.fish
+                left join fishStat.affectedGenes
+                left join fishStat.phenotypeStatements
                 where fishStat.term = :term
                 """;
         } else {
             hql = """
                 select fishStat from FishStatistics as fishStat, TransitiveClosure as clo
-                join fishStat.affectedGenes as zfinGene
-                join fishStat.phenotypeStatements as phenoStats
+                left join fishStat.fish
+                left join fishStat.affectedGenes as zfinGene
+                left join fishStat.phenotypeStatements
                 where clo.child = fishStat.term AND clo.root = :term
-                """;
-        }
-        if (!isIncludeNormalPhenotype) {
-            hql += "AND phenoStats.tag = 'abnormal'";
+                   """;
         }
         if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
             for (var entry : pagination.getFilterMap().entrySet()) {
