@@ -2,7 +2,6 @@ package org.zfin.indexer;
 
 import lombok.extern.log4j.Log4j2;
 import org.zfin.expression.Figure;
-import org.zfin.framework.HibernateUtil;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.PhenotypeStatementWarehouse;
@@ -13,10 +12,7 @@ import org.zfin.repository.RepositoryFactory;
 
 import javax.persistence.JoinTable;
 import javax.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -32,8 +28,15 @@ public class TermPhenotypeIndexer extends UiIndexer<FishStatistics> {
         List<FishStatistics> resultList = new ArrayList<>();
         figureMap.forEach((fish, termMap) -> termMap.forEach((term, phenotypeStatementWarehouses) -> {
             FishStatistics stat = new FishStatistics(fish, term);
-            stat.setAffectedGenes(fish.getAffectedGenes());
-            stat.setPhenotypeStatements(phenotypeStatementWarehouses);
+            stat.setAffectedGenes(new HashSet<>(fish.getAffectedGenes()));
+            // remove phenotype statements with the same display name
+            SortedSet<PhenotypeStatementWarehouse> set1 = new TreeSet<>();
+            Map<String, List<PhenotypeStatementWarehouse>> map = phenotypeStatementWarehouses.stream().collect(Collectors.groupingBy(
+                PhenotypeStatementWarehouse::getShortName));
+            map.forEach((s, phenotypeStatementWarehouses1) -> {
+                set1.add(phenotypeStatementWarehouses1.get(0));
+            });
+            stat.setPhenotypeStatements(set1);
             Set<Figure> figs = phenotypeStatementWarehouses.stream().map(warehouse -> warehouse.getPhenotypeWarehouse().getFigure()).collect(Collectors.toSet());
             stat.setNumberOfFigs(figs.size());
             if (figs.size() == 1) {

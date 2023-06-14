@@ -18,6 +18,7 @@ import org.zfin.repository.RepositoryFactory;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -55,14 +56,14 @@ public class FishStatistics extends EntityStatistics {
         @JoinColumn(name = "pza_phenotype_id", nullable = false, updatable = false)},
         inverseJoinColumns = {@JoinColumn(name = "pza_gene_zdb_id",
             nullable = false, updatable = false)})
-    private List<Marker> affectedGenes;
+    private Set<Marker> affectedGenes;
     @JsonView(View.ExpressedGeneAPI.class)
-    @ManyToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
     @JoinTable(name = "UI.PHENOTYPE_WAREHOUSE_ASSOCIATION", joinColumns = {
         @JoinColumn(name = "pwa_phenotype_id", nullable = false, updatable = false)},
         inverseJoinColumns = {@JoinColumn(name = "pwa_phenotype_warehouse_id",
             nullable = false, updatable = false)})
-    private List<PhenotypeStatementWarehouse> phenotypeStatements;
+    private Set<PhenotypeStatementWarehouse> phenotypeStatements;
     @JsonView(View.ExpressedGeneAPI.class)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tpd_term_zdb_id")
@@ -182,5 +183,15 @@ public class FishStatistics extends EntityStatistics {
         return phenotypeObserved;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof FishStatistics that)) return false;
+        return getId() == that.getId();
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
+    }
 }
