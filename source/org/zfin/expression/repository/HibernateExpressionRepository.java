@@ -169,11 +169,14 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 
     @Override
     public List<Publication> getExpressionPub(Marker marker) {
-        String sql = "  select distinct p from Publication p " +
-                "join p.expressionExperiments ee " +
-                "where ee.gene = :gene " +
-                "and not exists (from Clone as clone " +
-                "where ee.probe = clone and clone.problem = :chimeric)";
+        String sql = """
+            select distinct p from Publication p
+            join p.expressionExperiments ee
+            where ee.gene = :gene
+            and not exists (from Clone as clone
+            where ee.probe = clone and clone.problem = :chimeric)
+            AND size(ee.expressionResults) != 0
+            """;
         Query query = HibernateUtil.currentSession().createQuery(sql);
         query.setString("gene", marker.getZdbID());
         query.setParameter("chimeric", Clone.ProblemType.CHIMERIC);
