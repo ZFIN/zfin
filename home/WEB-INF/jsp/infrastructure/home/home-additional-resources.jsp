@@ -17,7 +17,7 @@
         <li class="list-inline-item">
             <c:choose>
                 <c:when test="${zfn:isFlagEnabled(FeatureFlagEnum.JBROWSE)}">
-                    <a href="/action/jbrowse">ZFIN</a>
+                    <a href="/jbrowse/?data=data/GRCz11">ZFIN</a>
                 </c:when>
                 <c:otherwise>
                     <a href="/@GBROWSE_PATH_FROM_ROOT@">ZFIN</a>
