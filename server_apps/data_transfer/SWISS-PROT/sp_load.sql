@@ -125,7 +125,7 @@ alter table tmp_uniprot_db_link_with_dups
 
 --!echo 'Attribute db links to the internal pub record'
 	insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
-		select dblink_zdb_id, 'ZDB-PUB-020723-2'
+		select dblink_zdb_id, 'ZDB-PUB-230615-71'
 		  from tmp_uniprot_pre_db_link;
 --!echo '		into record_attribution'
 
@@ -465,7 +465,7 @@ and exists (Select 'x' from pre_marker_go_term_evidence
         );
         
         insert into tmp_uniprot_pre_external_note (p_extnote_note,p_extnote_data_zdb_id, p_extnote_source_zdb_id)
-                select nondupl_cc_note, dblink_zdb_id, 'ZDB-PUB-020723-2'
+                select nondupl_cc_note, dblink_zdb_id, 'ZDB-PUB-230615-71'
 	          from temporary_nondupl_mrkr_cc, db_link
 		 where nondupl_gene_zdb_id = dblink_linked_recid
 		   and nondupl_sp_acc_num  = dblink_acc_num
