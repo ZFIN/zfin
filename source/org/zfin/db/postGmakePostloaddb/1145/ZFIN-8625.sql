@@ -17,12 +17,12 @@ ALTER TABLE public.developer_data ADD CONSTRAINT dd_key_unique UNIQUE (dd_key);
 
 -- last modified trigger function
 CREATE OR REPLACE FUNCTION developer_data_sync_modified_at()
-    RETURNS trigger AS $BODY$
+    RETURNS trigger AS '
 BEGIN
     NEW.dd_modified_at := NOW();
     RETURN NEW;
 END;
-$BODY$ LANGUAGE plpgsql;
+' LANGUAGE plpgsql;
 
 -- last modified trigger
 DROP TRIGGER IF EXISTS developer_data_sync_modified_at_trigger on developer_data;
