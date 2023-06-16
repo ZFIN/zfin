@@ -502,7 +502,7 @@ public class OntologyService {
         if (term == null) {
             return null;
         }
-        PaginationResult<FishStatistics> phenotype = getDiseasePageRepository().getPhenotype(term, pagination, includeChildren);
+        PaginationResult<FishStatistics> phenotype = getDiseasePageRepository().getPhenotype(term, pagination, includeChildren, isIncludeNormalPhenotype);
         return phenotype;
     }
 
