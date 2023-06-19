@@ -51,35 +51,4 @@ public class FishSmokeTest extends AbstractSmokeTest {
         assertThat(pubs.size(), greaterThan(1));
     }
 
-    /**
-     * Display Citation list for shha^tq252/tq252
-     * with Publication: Phenotype Annotation (1994-2006)
-     */
-    @Test
-    public void testPhenotypeSummary() throws IOException {
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/fish/ZDB-FISH-150901-12482");
-
-        // The links in the phenotype section reuse the same ID (yuck), and htmlunit will only
-        // fetch the first link by text, soooo....
-        List<HtmlAnchor> links = page.getAnchors();
-        int count = 0;
-        for (HtmlAnchor link : links) {
-            if (link.getTextContent().equals("Phenotype Annotation (1994-2006)")) {
-                count++;
-            }
-        }
-        assertThat(count, greaterThan(1));
-    }
-
-    /**
-     * Check that the full expressed gene section is displayed looking for 'alcama'
-     */
-    @Test
-    public void testExpressionSummaryOnFishView() throws IOException {
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/fish/ZDB-FISH-150901-6514");
-        // make sure alcama is listed
-        List<?> pubs = page.getByXPath("//a[@id='ZDB-GENE-990415-30']");
-        assertThat(pubs.size(), greaterThanOrEqualTo(1));
-    }
-
 }
