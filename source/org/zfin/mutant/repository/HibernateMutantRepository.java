@@ -1466,9 +1466,10 @@ public class HibernateMutantRepository implements MutantRepository {
         }
 
         String hql = """ 
-            select distinct expressionResult from ExpressionResult expressionResult where 
-            expressionResult.expressionExperiment.fishExperiment in (:fishOx) AND 
-            expressionResult.expressionExperiment.gene """ + (geneID == null ? " is not null" : " = :geneID");
+            select distinct expressionResult from ExpressionResult expressionResult where
+            expressionResult.expressionExperiment.fishExperiment in (:fishOx) AND
+            expressionResult.expressionExperiment.gene.zdbID
+            """ + (geneID == null ? " is not null" : " = :geneID");
 
         Query<ExpressionResult> query = currentSession().createQuery(hql, ExpressionResult.class);
 
