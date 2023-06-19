@@ -76,7 +76,7 @@ public class FishSmokeTest extends AbstractSmokeTest {
      */
     @Test
     public void testExpressionSummaryOnFishView() throws IOException {
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/fish/fish-detail/ZDB-FISH-150901-6514");
+        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/fish/ZDB-FISH-150901-6514");
         // make sure alcama is listed
         List<?> pubs = page.getByXPath("//a[@id='ZDB-GENE-990415-30']");
         assertThat(pubs.size(), greaterThanOrEqualTo(1));
