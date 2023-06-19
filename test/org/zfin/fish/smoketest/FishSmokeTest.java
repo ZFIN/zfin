@@ -57,7 +57,7 @@ public class FishSmokeTest extends AbstractSmokeTest {
      */
     @Test
     public void testPhenotypeSummary() throws IOException {
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/fish/fish-detail/ZDB-FISH-150901-12482");
+        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/fish/ZDB-FISH-150901-12482");
 
         // The links in the phenotype section reuse the same ID (yuck), and htmlunit will only
         // fetch the first link by text, soooo....
