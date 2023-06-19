@@ -1,10 +1,14 @@
 package org.zfin.mutant;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
 import org.zfin.framework.api.View;
 
 /**
  */
+@Getter
+@Setter
 public class GoEvidenceCode {
 
     // enum is it root.dto, atleast for now
@@ -15,27 +19,4 @@ public class GoEvidenceCode {
     private String name;
     private Integer order;
 
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getOrder() {
-        return order;
-    }
-
-    public void setOrder(Integer order) {
-        this.order = order;
-    }
 }
