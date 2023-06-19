@@ -56,7 +56,7 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
                 left join fetch fishStat.figure
                 left join fetch fishStat.publication
                 left join fetch fishStat.affectedGenes
-                left join fetch fishStat.phenotypeStatements
+                left join fetch fishStat.phenotypeStatements as phenoStats
                 where fishStat.term = :term
                 """;
         } else {
@@ -67,9 +67,12 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
                 left join fetch fishStat.figure
                 left join fetch fishStat.publication
                 left join fetch fishStat.affectedGenes
-                left join fetch fishStat.phenotypeStatements
+                left join fetch fishStat.phenotypeStatements as phenoStats
                 where clo.child = fishStat.term AND clo.root = :term
                    """;
+        }
+        if (!isIncludeNormalPhenotype) {
+            hql += "AND phenoStats.tag = 'abnormal'";
         }
         if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
             for (var entry : pagination.getFilterMap().entrySet()) {
