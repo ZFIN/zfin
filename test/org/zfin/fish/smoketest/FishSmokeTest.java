@@ -37,7 +37,7 @@ public class FishSmokeTest extends AbstractSmokeTest {
      */
     @Test
     public void testFishDetailPageOk() throws IOException {
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/fish/fish-detail/ZDB-FISH-150901-19155");
+        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/fish/ZDB-FISH-150901-19155");
         assertThat(page.getTitleText(), containsString("WT + MO1-shha"));
     }
 
