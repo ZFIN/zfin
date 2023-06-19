@@ -664,7 +664,7 @@ public class HibernateMutantRepository implements MutantRepository {
     }
 
     /**
-     * Uses an alternate key that also includes the "inferrence" field, as well, which makes things kind
+     * Uses an alternate key that also includes the "inference" field, as well, which makes things kind
      * of tricky.
      *
      * @param markerGoTermEvidence Evidence to check against.
@@ -674,11 +674,11 @@ public class HibernateMutantRepository implements MutantRepository {
     @Override
     public int getNumberMarkerGoTermEvidences(MarkerGoTermEvidence markerGoTermEvidence) {
         String hql = """
-                        select ev from MarkerGoTermEvidence ev 
-                        where ev.marker = :marker 
-                        and ev.goTerm = :goTerm 
-                        and ev.source = :publication 
-                        and ev.evidenceCode = :evidenceCode 
+                        select ev from MarkerGoTermEvidence ev
+                        where ev.marker = :marker
+                        and ev.goTerm = :goTerm
+                        and ev.source = :publication
+                        and ev.evidenceCode.code = :evidenceCode
             """;
 
 
