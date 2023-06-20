@@ -37,6 +37,19 @@
                 <z:attributeListItem label="Source">
                     <zfin-figure:journalAbbrev publication="${publication}"/>
                 </z:attributeListItem>
+                <c:if test="${!empty submitters}">
+                    <z:attributeListItem label="Submitted By">
+                        <zfin:link entity="${submitters}"/>
+                        <a style="margin-left: 5em"
+                           class="citing-this-work-link"
+                           href=/action/publication/search/printable?zdbID=${publication.zdbID}>(Citing this work)</a>
+                    </z:attributeListItem>
+                </c:if>
+                <c:if test="${showThisseInSituLink}">
+                    <z:attributeListItem label="Protocol">
+                        <a class="thisse-protocol-link" href="/ZFIN/Methods/ThisseProtocol.html"><b>Thisse <i>in situ</i> hybridization protocol</b></a>
+                    </z:attributeListItem>
+                </c:if>
                 <c:if test="${!empty probe}">
                     <z:attributeListItem label="Probe">
                         <zfin:link entity="${probe}"/>
