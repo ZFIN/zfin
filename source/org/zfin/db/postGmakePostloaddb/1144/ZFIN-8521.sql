@@ -152,4 +152,3 @@ insert into curation (cur_zdb_id, cur_pub_zdb_id, cur_curator_zdb_id, cur_data_f
 select cur_zdb_id, zdb_id, 'ZDB-PERS-060413-1', 't', now(), 'Tox. Nanomaterials'
 from pubs_temp;
 
-drop table pubs_temp;
