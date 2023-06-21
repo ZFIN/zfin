@@ -36,6 +36,12 @@ echo "/bin/cat prob1 prob2 prob3 prob4 prob5 prob6 prob7 prob8 prob9 prob10 > al
 
 /bin/cat prob1 prob2 prob3 prob4 prob5 prob6 prob7 prob8 prob9 prob10 > allproblems.txt ;
 
+echo "problem files post processing " $(date "+%Y-%m-%d %H:%M:%S")
+./validate_prob_files.pl
+./clean_prob_files.pl
+./rearrange_prob_files.pl
+./move_prob_files.pl
+
 echo "run sp_match.pl manuallyCuratedUniProtIDs.txt " $(date "+%Y-%m-%d %H:%M:%S")
 
 ./sp_match.pl manuallyCuratedUniProtIDs.txt ;
