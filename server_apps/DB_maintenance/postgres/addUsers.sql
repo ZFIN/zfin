@@ -1,6 +1,6 @@
 CREATE OR REPLACE FUNCTION add_users() RETURNS void AS $$
 DECLARE
-  userlist text[] := ARRAY['rtaylor', 'staylor','ryanm','cmpich','xshao','informix','zfishweb','zfinner'];
+  userlist text[] := ARRAY['rtaylor','ryanm','cmpich','informix','zfishweb','zfinner','solr'];
   username text;
 BEGIN
   FOREACH username IN ARRAY userlist
