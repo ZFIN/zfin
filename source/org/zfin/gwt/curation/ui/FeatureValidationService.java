@@ -29,7 +29,7 @@ public class FeatureValidationService {
             }
 
             if (featureDTO.getFeatureStartLoc() != null || featureDTO.getFeatureEndLoc() != null) {
-                if (featureDTO.getAssembly() == null) {
+                if (StringUtils.isEmptyTrim(featureDTO.getFeatureAssembly())) {
                     return "You must specify an assembly if you specify a location";
                 }
             }
