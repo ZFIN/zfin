@@ -123,7 +123,15 @@ update tmp_go set mv_qualifier ='colocalizes_with' where mv_qualifier='colocaliz
 update tmp_go set mv_flag='contributes_to' where mv_flag='contributes to';
 update tmp_go set mv_flag ='colocalizes_with' where mv_flag='colocalizes with';
 
-
+-- as per ZFIN-8491, if term is descendant of protein containing complex, then "located_in" qualifier should be "part_of"
+update tmp_go set mv_qualifier = 'part_of'
+where mv_qualifier = 'located_in'
+and t_ont_id in
+    (SELECT term_ont_id
+     FROM all_term_contains, term
+     WHERE
+        alltermcon_container_zdb_id = 'ZDB-TERM-091209-16423' -- (protein containing complex)
+        AND term_zdb_id = alltermcon_contained_zdb_id);
 
 select distinct gene_type from tmp_go where gene_type is not null;
 
