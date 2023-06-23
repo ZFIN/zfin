@@ -17,7 +17,8 @@ public class GONavigationMenu extends NavigationMenu {
             title(NavigationMenuOptions.SUMMARY).showCount(false),
             title(NavigationMenuOptions.RELATIONSHIPS).showCount(false),
             title(NavigationMenuOptions.EXPRESSION).showCount(false),
-            title(NavigationMenuOptions.PHENOTYPE).showCount(false)
+            title(NavigationMenuOptions.PHENOTYPE).showCount(false),
+            title(NavigationMenuOptions.CITATION).showCount(false)
         );
     }
 
