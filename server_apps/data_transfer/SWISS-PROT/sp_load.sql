@@ -15,10 +15,6 @@
 
 begin work;
 
-\echo 'Deleting from reference_protein';
-delete from reference_protein;
-
-
 --set pdqpriority 50;
 
 --the unloaded record if already in, only add zdb_id into record_attribution with SWISS_PROT source

@@ -1,6 +1,9 @@
 begin work;
 
-    --    set pdqpriority 50;
+\echo 'Deleting from reference_protein';
+delete from reference_protein;
+
+--    set pdqpriority 50;
 
 	create temporary table pre_delete(
 		rec_data_zdb_id		text
