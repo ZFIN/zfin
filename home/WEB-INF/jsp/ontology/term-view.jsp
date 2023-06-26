@@ -84,7 +84,7 @@
                  data-term-id="${term.zdbID}"
                  data-direct-annotation-only="true"
             ></div>
-        </z:section>${UiIndexerConfig.ChebiPhenotypeIndexer.typeName}
+        </z:section>
         <z:section title="${PHENOTYPE_CHEBI}">
             <z:section title="Phenotype resulting from" appendedText="${term.termName}" show="${true}">
                 <div class="__react-root" id="ChebiPhenotypeTable"
