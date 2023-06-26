@@ -1,6 +1,9 @@
 begin work;
 
-    --    set pdqpriority 50;
+\echo 'Deleting from reference_protein';
+delete from reference_protein;
+
+--    set pdqpriority 50;
 
 	create temporary table pre_delete(
 		rec_data_zdb_id		text
@@ -12,13 +15,13 @@ begin work;
 	insert into pre_delete
 		select recattrib_data_zdb_id from record_attribution
 		where recattrib_source_zdb_id in 
-		   ('ZDB-PUB-020723-2','ZDB-PUB-020723-1','ZDB-PUB-020724-1','ZDB-PUB-031118-3');
+		   ('ZDB-PUB-230615-71','ZDB-PUB-020723-2','ZDB-PUB-020723-1','ZDB-PUB-020724-1','ZDB-PUB-031118-3');
 
 
 --!echo '//Delete from record_attribution records from SP load'
 	delete from record_attribution
 		where recattrib_source_zdb_id in 
-		  ('ZDB-PUB-020723-2','ZDB-PUB-020723-1','ZDB-PUB-020724-1','ZDB-PUB-031118-3');
+		  ('ZDB-PUB-230615-71','ZDB-PUB-020723-2','ZDB-PUB-020723-1','ZDB-PUB-020724-1','ZDB-PUB-031118-3');
 		  
 --!echo '//Take the records that have other sources from the delete list' 
 
