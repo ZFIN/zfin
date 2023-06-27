@@ -3,6 +3,7 @@ package org.zfin.ui.repository;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.hibernate.ScrollMode;
 import org.hibernate.query.Query;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.Pagination;
@@ -50,7 +51,7 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
         String hql;
         if (!includeChildren) {
             hql = """
-                select fishStat from FishStatistics as fishStat
+                select distinct fishStat from FishStatistics as fishStat
                 left join fetch fishStat.fish
                 left join fetch fishStat.term
                 left join fetch fishStat.figure
@@ -61,7 +62,7 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
                 """;
         } else {
             hql = """
-                select fishStat from FishStatistics as fishStat, TransitiveClosure as clo
+                select distinct fishStat from FishStatistics as fishStat, TransitiveClosure as clo
                 left join fetch fishStat.fish
                 left join fetch fishStat.term
                 left join fetch fishStat.figure
