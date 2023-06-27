@@ -87,15 +87,25 @@ public class PaginationResultFactory {
      */
     @SuppressWarnings("unchecked")
     public static <T> PaginationResult<T> createResultFromScrollableResultAndClose(int startRecord, int stopRecord, ScrollableResults scrollableResults) {
+        // if there are potentially duplicate records in the result
+        // scrollableResults.getRowNumber() == 0
+        // instead of
+        // scrollableResults.getRowNumber() == -1
+        boolean hasPotentialDuplicates = scrollableResults.getRowNumber() == 0;
         PaginationResult<T> returnResult = new PaginationResult<>();
         List<T> list = new ArrayList<>();
         if (startRecord == 0) {
             scrollableResults.beforeFirst();
         } else {
+            if (hasPotentialDuplicates)
+                ++startRecord;
             scrollableResults.setRowNumber(startRecord - 1);
         }
         boolean foundAtLeastOneRecord = false;
         int numberOfDuplicates = 0;
+        if (hasPotentialDuplicates) {
+            ++stopRecord;
+        }
         while (scrollableResults.next() && scrollableResults.getRowNumber() < stopRecord) {
             foundAtLeastOneRecord = true;
             if (scrollableResults.get().length == 1) {
@@ -114,10 +124,15 @@ public class PaginationResultFactory {
         }
         scrollableResults.last();
         // first row is '0' in Hibernate.
+
+        int maxRowNumber = scrollableResults.getRowNumber() + 1;
+        if (hasPotentialDuplicates) {
+            --maxRowNumber;
+        }
         if (foundAtLeastOneRecord) {
-            returnResult.setTotalCount(scrollableResults.getRowNumber() + 1 - numberOfDuplicates);
+            returnResult.setTotalCount(maxRowNumber - numberOfDuplicates);
         } else {
-            returnResult.setTotalCount(scrollableResults.getRowNumber() - numberOfDuplicates);
+            returnResult.setTotalCount(maxRowNumber - 1 - numberOfDuplicates);
         }
         returnResult.setPopulatedResults(list);
         scrollableResults.close();
