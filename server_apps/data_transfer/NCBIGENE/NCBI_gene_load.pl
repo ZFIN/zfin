@@ -3368,7 +3368,15 @@ sub reportAllLoadStatistics {
     $ctGenPeptWithMultipleZDBgeneAfterLoad = 0;
     foreach $GenPept (sort keys %GenPeptWithMultipleZDBgeneAfterLoad) {
         $ref_arrayZDBgeneIds = $GenPeptWithMultipleZDBgeneAfterLoad{$GenPept};
-        print STATS "$GenPept\t$GenPeptsToLoad{$GenPept}\t@$ref_arrayZDBgeneIds\n";
+
+        my $genPeptToLoad = "";
+        if(exists($GenPeptsToLoad{$GenPept})) {
+            $genPeptToLoad = $GenPeptsToLoad{$GenPept};
+        } else {
+            $genPeptToLoad = "[not in GenPeptsToLoad hash]";
+            print "ERROR - GenPept $GenPept not in GenPeptsToLoad hash\n";
+        }
+        print STATS "$GenPept\t$genPeptToLoad\t@$ref_arrayZDBgeneIds\n";
         $ctGenPeptWithMultipleZDBgeneAfterLoad++;
     }
     print STATS "-----------------------------------------\nTotal: $ctGenPeptWithMultipleZDBgeneAfterLoad\n\n\n";
