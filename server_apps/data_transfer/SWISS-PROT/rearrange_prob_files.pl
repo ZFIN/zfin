@@ -46,9 +46,6 @@ sub rearrange_problem_files {
 
     $/ = "\/\/\n"; #custom record separator
     foreach my $record (<INPUT>) {
-        if ($record eq "#\n") {
-            next;
-        }
         my $ac_line;
         my @ac = ();
         my $ac_count = 0;
@@ -58,8 +55,14 @@ sub rearrange_problem_files {
         #split lines by newline
         my @lines = split /\n/, $record;
 
+        my $newRecord = "";
+
         #check each line
         foreach my $line (@lines) {
+            if ($line eq "#") {
+                next;
+            }
+
             #check for ID line
             if ($line =~ /^AC\s+(.*)/) {
                 $ac_line = $1;
@@ -74,10 +77,13 @@ sub rearrange_problem_files {
                 #check each AC line
                 $already_exists_pubs = check_ac_exists_in_database(\@ac);
             }
+            $newRecord .= "$line\n";
         }
         if (!$ac_count) {
             #print "$filename: No AC lines found in record $record_count\n";
         }
+
+        $record = $newRecord;
         $record_count++;
 
         $has_zfin_gene = check_for_zfin_gene($record);
