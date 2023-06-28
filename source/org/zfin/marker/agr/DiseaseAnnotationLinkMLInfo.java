@@ -16,13 +16,11 @@ import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
-import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.publication.Publication;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -40,7 +38,7 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
     public static void main(String[] args) throws IOException {
         int number = 0;
         if (args.length > 0) {
-            number = Integer.valueOf(args[0]);
+            number = Integer.parseInt(args[0]);
         }
         DiseaseAnnotationLinkMLInfo diseaseInfo = new DiseaseAnnotationLinkMLInfo(number);
         diseaseInfo.init();
@@ -117,7 +115,7 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
                         ids.sort(Comparator.naturalOrder());
                         map.put(publication, ids.get(0));
                     });
-                    // loop over each publication: final loop as each publication should generate a individual record in the file.
+                    // loop over each publication: final loop as each publication should generate an individual record in the file.
                     evidenceMap.forEach((publication, evidenceSet) -> {
                         // Use wildtype fish with STR
                         // treat as purely implicated by a gene
@@ -155,18 +153,9 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
                         annotation.setEvidenceCodeCuries(evidenceCodes);
                         annotation.setReferenceCurie(getSingleReference(publication));
 
-                        if (genotype.isWildtype()) {
-                            // inferred Genes
-/*
-                            Gene inferredGene = new Gene();
-                            inferredGene.setCurie("ZFIN:" + gene.getZdbID());
-                            annotation.set(inferredGene);
-*/
-                            diseaseDTOList.add(annotation);
-                        }
                         org.alliancegenome.curation_api.model.ingest.dto.ConditionRelationDTO condition = populateExperimentConditions(fishExperiment);
                         condition.setHandle(fishExperiment.getExperiment().getName().replace("_", ""));
-                        condition.setReferenceCurie( getSingleReference(publication));
+                        condition.setReferenceCurie(getSingleReference(publication));
                         annotation.setConditionRelationDtos(List.of(condition));
                         diseaseDTOList.add(annotation);
 
@@ -212,7 +201,7 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
         condition.setHandle(damo.getFishExperiment().getExperiment().getName().replace("_", ""));
         condition.setReferenceCurie(getSingleReference(damo.getDiseaseAnnotation().getPublication()));
         conditions.add(condition);
-        annotation.setConditionRelationDtos(List.of(condition));
+        annotation.setConditionRelationDtos(conditions);
         return annotation;
     }
 
@@ -319,45 +308,6 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
         return "";
     }
 
-    class Item {
-
-        private String name;
-        private int qty;
-        private BigDecimal price;
-
-        public Item(String name, int qty, BigDecimal price) {
-            this.name = name;
-            this.qty = qty;
-            this.price = price;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public int getQty() {
-            return qty;
-        }
-
-        public void setQty(int qty) {
-            this.qty = qty;
-        }
-
-        public BigDecimal getPrice() {
-            return price;
-        }
-
-        public void setPrice(BigDecimal price) {
-            this.price = price;
-        }
-
-        //constructors, getter/setters
-    }
-
     // ToDo: This list should be a slim in ZECO to identify those high-level terms.
     public static final List<GenericTerm> highLevelConditionTerms = new ArrayList<>(18);
 
@@ -384,9 +334,7 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
     }
 
     private static void populateHighLevelConditionTerms() {
-        highLevelConditionTerms.forEach(genericTerm -> {
-            genericTerm.setTermName(getOntologyRepository().getTermByOboID(genericTerm.getOboID()).getTermName());
-        });
+        highLevelConditionTerms.forEach(genericTerm -> genericTerm.setTermName(getOntologyRepository().getTermByOboID(genericTerm.getOboID()).getTermName()));
     }
 
 }
