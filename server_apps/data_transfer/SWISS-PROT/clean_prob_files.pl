@@ -20,13 +20,14 @@ sub main {
     my $files = [0..10];
     foreach my $file (@$files) {
         my $filename = "prob$file";
-        rearrange_problem_files($filename);
+        clean_problem_file($filename);
     }
 }
 
-sub rearrange_problem_files {
+sub clean_problem_file {
     my $filename = shift;
     my $record_count = 1;
+    my $is_reading_header = 1;
     $/ = "\/\/\n"; #custom record separator
     open INPUT, $filename or die "Cannot open $filename";
     open (OUTPUT, ">$filename.clean") ||  die "Cannot open $filename.clean : $!\n";
@@ -42,6 +43,14 @@ sub rearrange_problem_files {
 
         #check each line
         foreach my $line (@lines) {
+
+            #let the header pass through
+            if ($line =~ /^#.*/ && $is_reading_header) {
+                print OUTPUT "$line\n";
+                next;
+            }
+            $is_reading_header = 0;
+
             #check for ID line
             if ($line =~ /^AC\s+(.*)/) {
                 $ac_line = $1;
