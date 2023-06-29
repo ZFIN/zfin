@@ -1,7 +1,16 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description></description>
+  <description>
+    This jobs does this:
+    1. get all transcripts with their existing OTTDART (if exists) → getSequence
+
+    2. Blast each of the OTTDART ids against vega_zfin and output transcriptID, OTTDART, sequence → loadedSeq.txt
+
+    3. Drop transcript_Sequence table
+
+    4. load all data from loadedSeq.txt into transcript_sequence
+  </description>
   <keepDependencies>false</keepDependencies>
   <properties/>
   <scm class="hudson.scm.NullSCM"/>
