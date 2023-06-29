@@ -121,7 +121,7 @@ alter table tmp_uniprot_db_link_with_dups
 
 --!echo 'Attribute db links to the internal pub record'
 	insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
-		select dblink_zdb_id, 'ZDB-PUB-020723-2'
+		select dblink_zdb_id, 'ZDB-PUB-230615-71'
 		  from tmp_uniprot_pre_db_link;
 --!echo '		into record_attribution'
 
@@ -415,7 +415,17 @@ and exists (Select 'x' from pre_marker_go_term_evidence
 			select mrkrgoev_inference, pre_mrkrgoev_zdb_id
 			  from pre_marker_go_term_evidence
 			 where exists (select * from marker_go_term_evidence where pre_mrkrgoev_zdb_id = mrkrgoev_zdb_id);
-		
+
+-- load inference_group_member for self-binding
+INSERT INTO inference_group_member (infgrmem_mrkrgoev_zdb_id, infgrmem_inferred_from)
+    SELECT
+        mrkrgoev_zdb_id, 'ZFIN:' || mrkrgoev_mrkr_zdb_id
+    FROM
+        marker_go_term_evidence LEFT JOIN term ON mrkrgoev_term_zdb_id = term.term_zdb_id
+    WHERE
+        term_ont_id IN ('GO:0042803', 'GO:0051260', 'GO:0051289', 'GO:0070207', 'GO:0043621', 'GO:0032840') -- self binding terms
+    ON CONFLICT (infgrmem_mrkrgoev_zdb_id, infgrmem_inferred_from) DO NOTHING;
+
 --!echo '		into inference_group_member'
 
 ---------------- loading cc field -----------------------------
@@ -461,7 +471,7 @@ and exists (Select 'x' from pre_marker_go_term_evidence
         );
         
         insert into tmp_uniprot_pre_external_note (p_extnote_note,p_extnote_data_zdb_id, p_extnote_source_zdb_id)
-                select nondupl_cc_note, dblink_zdb_id, 'ZDB-PUB-020723-2'
+                select nondupl_cc_note, dblink_zdb_id, 'ZDB-PUB-230615-71'
 	          from temporary_nondupl_mrkr_cc, db_link
 		 where nondupl_gene_zdb_id = dblink_linked_recid
 		   and nondupl_sp_acc_num  = dblink_acc_num
