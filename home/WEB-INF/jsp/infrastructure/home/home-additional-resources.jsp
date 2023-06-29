@@ -5,7 +5,7 @@
     <b>Data Mining</b>
     <ul class="list-inline">
         <li class="list-inline-item">
-            <zfin2:externalLink href="https://www.alliancegenome.org/alliancemine">AllianceMine</zfin2:externalLink>
+            <zfin2:externalLink href="https://www.alliancegenome.org/bluegenes/alliancemine">AllianceMine</zfin2:externalLink>
         </li>
         <li class="list-inline-item">
             <zfin2:externalLink href="https://ensembl.org/biomart/martview">BioMart</zfin2:externalLink>
