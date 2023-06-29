@@ -190,6 +190,7 @@ def translateVariableSet = [
         'GROOVY_CLASSPATH',
         'INSTANCE',
         'JAVA_HOME',
+        'JBROWSE_PATH_FROM_ROOT',
         'LOADUP_FULL_PATH',
         'MOVE_BLAST_FILES_TO_DEVELOPMENT',
         'MUTANT_NAME',

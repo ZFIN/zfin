@@ -19,7 +19,6 @@ public class JBrowseImage implements GenomeBrowserImage {
     private final String highlightColor;
     private final boolean grid;
 
-    private String imageUrlBase;
     private String imageUrl;
     private String linkUrlBase;
     private String linkUrl;
@@ -38,8 +37,7 @@ public class JBrowseImage implements GenomeBrowserImage {
         this.grid = builder.isGrid();
         this.height = builder.getHeight();
         this.build = builder.getGenomeBuild();
-        this.linkUrlBase = this.build.getPath();
-        this.imageUrlBase= this.build.getImagePath();
+        this.linkUrlBase = this.build.getJBrowsePath();
     }
 
     @Override

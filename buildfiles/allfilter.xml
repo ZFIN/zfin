@@ -95,6 +95,9 @@
 <filter token="JBROWSE_BASE_URL" value="${JBROWSE_BASE_URL}"/>
 <filter token="JBROWSE_PROXY_BASE_URL" value="${JBROWSE_PROXY_BASE_URL}"/>
 <filter token="JBROWSE_USE_LOCAL_PROXY" value="${JBROWSE_USE_LOCAL_PROXY}"/>
+<filter token="JBROWSE_GRCZ10_PATH_FROM_ROOT" value="${JBROWSE_GRCZ10_PATH_FROM_ROOT}"/>
+<filter token="JBROWSE_PATH_FROM_ROOT" value="${JBROWSE_PATH_FROM_ROOT}"/>
+<filter token="JBROWSE_ZV9_PATH_FROM_ROOT" value="${JBROWSE_ZV9_PATH_FROM_ROOT}"/>
 <filter token="JDBC_DRIVER" value="${JDBC_DRIVER}"/>
 <filter token="JDBC_URL" value="${JDBC_URL}"/>
 <filter token="JENKINS_HOME" value="${JENKINS_HOME}"/>
