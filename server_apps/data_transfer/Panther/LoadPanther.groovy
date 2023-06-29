@@ -66,8 +66,7 @@ println("Loading terms into $dbname")
 
 psql dbname, """
 
-\\copy (SELECT dblink_linked_recid,dblink_acc_num
-    FROM db_link where dblink_fdbcont_zdb_id=(select fdbcont_zdb_id from foreign_db_contains where fdbcont_fdb_db_id=65)) TO $PRE_FILE;
+\\copy (SELECT dblink_linked_recid,dblink_acc_num FROM db_link where dblink_fdbcont_zdb_id=(select fdbcont_zdb_id from foreign_db_contains where fdbcont_fdb_db_id=65)) TO $PRE_FILE;
 
   CREATE TEMP TABLE tmp_terms(
     dblinkid text,
@@ -76,7 +75,7 @@ psql dbname, """
     fdbcontid text
   ) ;
 
-  \\COPY tmp_terms FROM '$OUTFILE' delimiter '|' ;
+\\copy tmp_terms FROM '$OUTFILE' delimiter '|' ;
 
 
 update tmp_terms set fdbcontid = (select fdbcont_zdb_id from foreign_db_contains where fdbcont_fdb_db_id=65);
@@ -96,11 +95,7 @@ insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
   select dblinkid,'ZDB-PUB-170810-14' from tmp_terms;
 
 
-
-
-  \\copy (SELECT dblink_linked_recid,dblink_acc_num
-    FROM db_link where dblink_fdbcont_zdb_id=(select fdbcont_zdb_id from foreign_db_contains where fdbcont_fdb_db_id=65)) TO $POST_FILE
-    ;
+\\copy (SELECT dblink_linked_recid,dblink_acc_num FROM db_link where dblink_fdbcont_zdb_id=(select fdbcont_zdb_id from foreign_db_contains where fdbcont_fdb_db_id=65)) TO $POST_FILE;
 """
 
 if (args) {
