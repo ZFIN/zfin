@@ -105,7 +105,15 @@ def generateGenesAndTranscripts() {
     }
 
     Map<String,List<String>> aliasMap = [:]
-    db.eachRow("""select dalias_data_zdb_id, dalias_alias from data_alias join db_link on dblink_linked_recid = dalias_data_zdb_id where dblink_acc_num like 'ENSDARG%'""") { row ->
+    db.eachRow("""
+         SELECT dalias_data_zdb_id,
+                dalias_alias
+         FROM   data_alias
+         WHERE  EXISTS (SELECT 'x'
+                        FROM   db_link
+                        WHERE  dblink_linked_recid = dalias_data_zdb_id
+                               AND dblink_acc_num LIKE 'ENSDARG%');
+        """) { row ->
         String id = row.dalias_data_zdb_id
         String alias = row.dalias_alias
 
