@@ -92,7 +92,7 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
             //progress
             System.out.print(".");
 
-            ncbiMatchReportRow.setRnaAccessions(String.join(",", rnaAccessions));
+            ncbiMatchReportRow.setRnaAccessions(String.join(";", rnaAccessions));
         }
 
         HibernateUtil.flushAndCommitCurrentSession();
@@ -138,8 +138,11 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
         } else {
             inputFile = System.getenv("NCBI_FILE_URL");
             if (inputFile == null) {
-                System.out.println("No input file url specified. Please set the environment variable NCBI_FILE_URL. Using default url.");
-                inputFile = DEFAULT_INPUT_FILE_URL;
+                inputFile = System.getProperty("ncbiFileUrl");
+                if (inputFile == null) {
+                    System.out.println("No input file url specified. Please set the environment variable NCBI_FILE_URL or property ncbiFileUrl. Using default url.");
+                    inputFile = DEFAULT_INPUT_FILE_URL;
+                }
             }
         }
         System.out.println("Using input file url: " + inputFile);
@@ -305,8 +308,8 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
                     zdb_id,
                     ensembl_id,
                     symbol,
-                    string_agg(dbl2.dblink_zdb_id, ', ') AS dblinks,
-                    string_agg(ra.recattrib_source_zdb_id, ', ') AS publications
+                    string_agg(dbl2.dblink_zdb_id, '; ') AS dblinks,
+                    string_agg(ra.recattrib_source_zdb_id, '; ') AS publications
                     INTO TEMP TABLE ncbi_match_report
                 FROM
                     tmp_ncbi2zfin n2z
@@ -329,7 +332,7 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
 
         // Add the rna accessions to the report.
         query = """
-         select nmr.*, string_agg(dblink_acc_num, ',') as rna_accessions from ncbi_match_report nmr
+         select nmr.*, string_agg(dblink_acc_num, ';') as rna_accessions from ncbi_match_report nmr
          left join (select dblink_linked_recid, dblink_acc_num from
         						db_link left join foreign_db_contains on dblink_fdbcont_zdb_id = fdbcont_zdb_id where fdbcont_fdbdt_id = 3) subq
         						on subq.dblink_linked_recid = nmr.zdb_id
