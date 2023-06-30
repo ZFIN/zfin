@@ -203,8 +203,8 @@ publication record the explains SWISS-PROT to GO translation table file
 ("ZDB-PUB-020723-1") or InterPro to GO translation table file 
 ("ZDB-PUB-020724-1"). All the other loaded records are attributed to an 
 internal publication record ("ZDB-PUB-020723-2") that explains the 
-SWISS-PROT loading process. These attribution facts are stored in the 
-record_attribution table.
+SWISS-PROT loading process -- replaced with (ZDB-PUB-230615-71).
+These attribution facts are stored in the record_attribution table.
   The reloading also need to take care of the information that are in the 
 unloading file, but already recorded in zfin. The unique zdb id of those
 records will be put into a temp table. The conflict loading will be avoid, 

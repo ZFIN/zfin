@@ -3,7 +3,20 @@
   <actions/>
   <description></description>
   <keepDependencies>false</keepDependencies>
-  <properties/>
+
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.BooleanParameterDefinition>
+          <name>LOAD_NCBI_ONE_WAY_GENES</name>
+          <description>Enable this flag to additionally add NCBI genes that have a link to ZFIN without an equivalent link back from ZFIN to NCBI.
+          These are validated by having a shared ensembl id.  See ZFIN-8517 for details.</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+
   <scm class="hudson.scm.NullSCM"/>
   <canRoam>true</canRoam>
   <disabled>false</disabled>
@@ -23,7 +36,7 @@
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/data_transfer/NCBIGENE/report*,server_apps/data_transfer/NCBIGENE/log*,server_apps/data_transfer/NCBIGENE/*.unl,server_apps/data_transfer/NCBIGENE/*Log*,server_apps/data_transfer/NCBIGENE/debug*</artifacts>
+      <artifacts>server_apps/data_transfer/NCBIGENE/report*,server_apps/data_transfer/NCBIGENE/log*,server_apps/data_transfer/NCBIGENE/*.unl,server_apps/data_transfer/NCBIGENE/*Log*,server_apps/data_transfer/NCBIGENE/debug*,server_apps/data_transfer/NCBIGENE/*csv</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
