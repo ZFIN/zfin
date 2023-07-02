@@ -1,6 +1,5 @@
 package org.zfin.ontology.presentation;
 
-import org.alliancegenome.curation_api.services.PersonService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +11,8 @@ import org.zfin.anatomy.presentation.AnatomySearchBean;
 import org.zfin.expression.Experiment;
 import org.zfin.expression.Figure;
 import org.zfin.framework.api.Pagination;
+import org.zfin.framework.featureflag.FeatureFlagEnum;
+import org.zfin.framework.featureflag.FeatureFlags;
 import org.zfin.framework.presentation.*;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.TermDTO;
@@ -117,7 +118,9 @@ public class OntologyTermDetailController {
         return histogram;
     }
 
-    @RequestMapping("/term-detail/{termID}")
+    @RequestMapping("/" +
+                    "" +
+                    "term-detail/{termID}")
     protected String termDetailPage(@PathVariable String termID,
                                     @ModelAttribute("formBean") OntologyBean form,
                                     Model model) throws Exception {
@@ -201,10 +204,13 @@ public class OntologyTermDetailController {
 
     }
 
-    @RequestMapping("/prototype/{termID}")
+    @RequestMapping("/term/{termID}")
     protected String termDetailPagePrototype(@PathVariable String termID,
                                              @ModelAttribute("formBean") OntologyBean form,
                                              Model model) throws Exception {
+        if (FeatureFlags.isFlagEnabled(FeatureFlagEnum.OLD_TERM_PAGES)) {
+            return termDetailPage(termID, form, model);
+        }
 
         if (termID == null) {
             return getErrorPage(model);
@@ -351,7 +357,7 @@ public class OntologyTermDetailController {
 
         model.addAttribute("entity", entity);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Post-Composed Term: " +
-            entity.getSuperterm().getTermName() + " " + entity.getSubterm().getTermName());
+                                                        entity.getSuperterm().getTermName() + " " + entity.getSubterm().getTermName());
         return "ontology/post-composed-term-detail";
     }
 
@@ -512,8 +518,8 @@ public class OntologyTermDetailController {
 
         Experiment experiment = RepositoryFactory.getMutantRepository().getExperiment(experimentID);
         List<PhenotypeStatementWarehouse> warehouseList = getPublicationRepository().getAllChebiPhenotypeExperiment(experiment);
-        Map<Figure,List<PhenotypeStatementWarehouse>> wareList = warehouseList.stream()
-                .collect(Collectors.groupingBy(warehouse -> warehouse.getPhenotypeWarehouse().getFigure()));
+        Map<Figure, List<PhenotypeStatementWarehouse>> wareList = warehouseList.stream()
+            .collect(Collectors.groupingBy(warehouse -> warehouse.getPhenotypeWarehouse().getFigure()));
         warehouseList.sort(Comparator.comparing(warehouse -> warehouse.getPhenotypeWarehouse().getFigure()));
         Fish fish = warehouseList.get(0).getPhenotypeWarehouse().getFishExperiment().getFish();
         model.addAttribute("phenotypeSummaryList", wareList);

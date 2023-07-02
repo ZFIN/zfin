@@ -50,7 +50,7 @@ public class OntologyControllerTest extends AbstractDatabaseTest {
 
     @Test
     public void retrieveTermByOboID() throws Exception {
-        request.setRequestURI("/ontology/term-detail/GO:0032502");
+        request.setRequestURI("/ontology/term/GO:0032502");
         ModelAndView mav = handlerAdapter.handle(request, response, controller);
         assertNotNull(mav);
         assertEquals("ontology/ontology-term", mav.getViewName());
@@ -59,7 +59,7 @@ public class OntologyControllerTest extends AbstractDatabaseTest {
     @Test
     public void retrieveTermByTermID() throws Exception {
         // presumptive forebrain midbrain boundary
-        request.setRequestURI("/ontology/term-detail/ZDB-TERM-100331-1323");
+        request.setRequestURI("/ontology/term/ZDB-TERM-100331-1323");
         ModelAndView mav = handlerAdapter.handle(request, response, controller);
         assertNotNull(mav);
         assertEquals("ontology/ontology-term", mav.getViewName());
@@ -74,11 +74,11 @@ public class OntologyControllerTest extends AbstractDatabaseTest {
     @Test
     public void retrieveTermByAnatomyID() throws Exception {
         // Rohon-Beard neuron
-        request.setRequestURI("/ontology/term-detail/ZDB-ANAT-010921-407");
+        request.setRequestURI("/ontology/term/ZDB-ANAT-010921-407");
         ModelAndView mav = handlerAdapter.handle(request, response, controller);
         assertNotNull(mav);
         // redirect to Rohon-Beard neurons
-        assertEquals("redirect:/action/ontology/term-detail/ZDB-TERM-100331-2208", mav.getViewName());
+        assertEquals("redirect:/action/ontology/term/ZDB-TERM-100331-2208", mav.getViewName());
     }
 
     // Todo: This is broken only within the test environment (must be a bug in spring) as it is working
@@ -90,7 +90,7 @@ public class OntologyControllerTest extends AbstractDatabaseTest {
         ModelAndView mav = handlerAdapter.handle(request, response, controller);
         assertNotNull(mav);
         // redirect to 'liver'
-        assertEquals("redirect:/action/ontology/term-detail/ZFA:0000123", mav.getViewName());
+        assertEquals("redirect:/action/ontology/term/ZFA:0000123", mav.getViewName());
     }
 
     // Todo: This is broken only within the test environment (must be a bug in spring) as it is working
@@ -102,7 +102,7 @@ public class OntologyControllerTest extends AbstractDatabaseTest {
         ModelAndView mav = handlerAdapter.handle(request, response, controller);
         assertNotNull(mav);
         // redirect to 'liver'
-        assertEquals("redirect:/action/ontology/term-detail/ZFA:0000123", mav.getViewName());
+        assertEquals("redirect:/action/ontology/term/ZFA:0000123", mav.getViewName());
     }
 
     @Test
@@ -112,6 +112,6 @@ public class OntologyControllerTest extends AbstractDatabaseTest {
         ModelAndView mav = handlerAdapter.handle(request, response, controller);
         assertNotNull(mav);
         // redirect to 'liver'
-        assertEquals("redirect:/action/ontology/term-detail/ZFA:0000123", mav.getViewName());
+        assertEquals("redirect:/action/ontology/term/ZFA:0000123", mav.getViewName());
     }
 }

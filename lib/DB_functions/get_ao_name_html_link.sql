@@ -31,7 +31,7 @@ create or replace function get_ao_name_html_link( aoZdbId varchar ) returns varc
   aoNameHTML := '<span class="mutant">' || aoName || '</span>';
 
   return 
-    '<a href="/action/ontology/term-detail/' || aoZdbId || '">' ||aoNameHTML || '</a>';
+    '<a href="/action/ontology/term/' || aoZdbId || '">' ||aoNameHTML || '</a>';
   end
  
 $htmlLink$ LANGUAGE plpgsql;
