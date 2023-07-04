@@ -118,9 +118,7 @@ public class OntologyTermDetailController {
         return histogram;
     }
 
-    @RequestMapping("/" +
-                    "" +
-                    "term-detail/{termID}")
+    @RequestMapping("/term-detail/{termID}")
     protected String termDetailPage(@PathVariable String termID,
                                     @ModelAttribute("formBean") OntologyBean form,
                                     Model model) throws Exception {
