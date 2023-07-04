@@ -129,7 +129,7 @@ RewriteCond %{QUERY_STRING} ^anatomyItem.zdbID=([\w-]+)&wildtype=([\w]+)$ [NC]
 RewriteRule ^/action/anatomy/show-all-morpholino-experiments /action/anatomy/show-all-sequence-targeting-reagents/%1/%2? [NC,R=301]
 
 RewriteCond %{QUERY_STRING} ^termID=([\w-:]+)$ [NC]
-RewriteRule ^/action/ontology/term-detail$ /action/ontology/term-detail/%1? [NC,R=301]
+RewriteRule ^/action/ontology/term-detail$ /action/ontology/term/%1? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}     ^antibody.zdbID=([\w-]+)$    [NC]
 RewriteRule ^/action/antibody/detail /%1? [NC,R=301]
@@ -141,7 +141,7 @@ RewriteCond %{QUERY_STRING}    ^anatomyItem.zdbID=([\w-]+)$    [NC]
 RewriteRule ^/action/anatomy/term-detail /action/anatomy/anatomy-view/%1? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}    ^termID=([\w-:]+)$    [NC]
-RewriteRule ^/action/ontology/term-detail/ /%1? [NC,R=301]
+RewriteRule ^/action/ontology/term/ /%1? [NC,R=301]
 
 RewriteCond %{QUERY_STRING}    ^zdbID=([\w-:]+)$    [NC]
 RewriteRule ^/action/genotype/genotype-detail$ /%1? [NC,R=301]
@@ -155,7 +155,7 @@ RewriteRule ^/action/quicksearch/query  /search?q=%1   [NC,R=301]
 
 RewriteRule /action/anatomy/anatomy-search    /action/ontology/ontology-search [NC,R=301]
 
-RewriteRule ^/action/anatomy/anatomy-view/(.+) /action/ontology/term-detail/$1 [NC]
+RewriteRule ^/action/anatomy/anatomy-view/(.+) /action/ontology/term/$1 [NC]
 RewriteRule ^/action/marker/marker-go-view/(.+) /$1#gene-ontology [NE,R]
 
 RewriteCond %{QUERY_STRING}    ^MIval=aa-anatdict.apg

@@ -11,7 +11,7 @@ public class AnatomySearchSubmitAction implements SubmitAction {
     public void doSubmit(String value) {
         value = value.replaceAll(" ", "%20");
         if (value!= null) {
-            Window.open("/action/ontology/term-detail/" + value.replaceAll(" ", "%20"), "_self",
+            Window.open("/action/ontology/term/" + value.replaceAll(" ", "%20"), "_self",
                     "");
         }
     }

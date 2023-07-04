@@ -9,7 +9,7 @@ const PostComposedEntity = ({postComposedEntity}) => {
             >
                 <a
                     key={postComposedEntity.superterm.zdbID}
-                    href={'/action/ontology/term-detail/' + postComposedEntity.superterm.oboID}
+                    href={'/action/ontology/term/' + postComposedEntity.superterm.oboID}
                     dangerouslySetInnerHTML={{__html: postComposedEntity.superterm.termName}}
                 />
                 <a

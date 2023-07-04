@@ -104,7 +104,7 @@
     </div>
     <p></p>
     <c:if test="${!empty term && fn:contains(term.ontology.commonName,'Anatomy Ontology')}">
-        <a href="/action/ontology/term-detail/${term.zdbID}" target="_blank">Show Anatomy Details</a>
+        <a href="/action/ontology/term/${term.zdbID}" target="_blank">Show Anatomy Details</a>
     </c:if>
 </div>
 <script>
