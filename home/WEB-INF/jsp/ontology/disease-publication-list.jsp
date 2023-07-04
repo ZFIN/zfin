@@ -26,7 +26,7 @@
         <table class="primary-entity-attributes">
             <tr>
                 <th>Term Name</th>
-                <td><a href="/action/ontology/term-detail/${term.oboID}">${term.termName}</a></td>
+                <td><a href="/action/ontology/term/${term.oboID}">${term.termName}</a></td>
             </tr>
         </table>
 

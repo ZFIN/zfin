@@ -29,10 +29,6 @@
     </jsp:attribute>
 
     <jsp:body>
-        <z:dataManagerDropdown>
-            <a class="dropdown-item" href="/action/ontology/term-detail/${formBean.term.zdbID}">Old View</a>
-        </z:dataManagerDropdown>
-        <p/>
         <div class="float-right">
             Search Ontology: <zfin2:lookup ontologyName="${Ontology.AOGODOCHEBI.toString()}"
                                            action="${LookupStrings.ACTION_TERM_SEARCH}"

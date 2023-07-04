@@ -9,7 +9,7 @@ import org.zfin.gwt.root.dto.TermDTO;
  */
 public class TermDTOPresentation extends EntityPresentation {
 
-    private static final String uri = "ontology/term-detail/";
+    private static final String uri = "ontology/term/";
 
     /**
      * Create hyperlink to term detail page.

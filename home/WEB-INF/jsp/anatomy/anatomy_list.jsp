@@ -14,7 +14,7 @@
                 <!-- This creates the visual level in the graph -->
                                     <span style="margin-left: <c:out value="${statisticItem.indentationLevel}" />pt">
                                 </c:if>
-                <a href='/action/ontology/term-detail/<c:out value="${statisticItem.term.oboID}"/>'>
+                <a href='/action/ontology/term/<c:out value="${statisticItem.term.oboID}"/>'>
                         <%--<!-- Highlight the search term or the highlight term if provided -->--%>
                     <zfin:highlight highlightEntity="${statisticItem.term.termName}"
                                     highlightString="${formBean.highlightText}"/>
