@@ -188,4 +188,6 @@ public interface AntibodyRepository {
 
 
     Map<String, List<Marker>> getAntibodyAntigenGeneMap(List<String> antibodyIDs);
+
+	Map<Publication, List<Antibody>> getAntibodiesFromAllPublications();
 }

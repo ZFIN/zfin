@@ -14,6 +14,7 @@ import org.zfin.zebrashare.FeatureCommunityContribution;
 import org.zfin.zebrashare.ZebrashareEditor;
 import org.zfin.zebrashare.ZebrashareSubmissionMetadata;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Repository
@@ -123,5 +124,13 @@ public class HibernateZebrashareRepository implements ZebrashareRepository {
                 .setParameter("person", person)
                 .list();
     }
+
+    @Override
+    public List<ZebrashareSubmissionMetadata> getAllZebrashareFromPublication() {
+        return (List<ZebrashareSubmissionMetadata>) HibernateUtil.currentSession()
+            .createCriteria(ZebrashareSubmissionMetadata.class)
+            .list();
+    }
+
 
 }
