@@ -8,6 +8,7 @@ import org.zfin.zebrashare.FeatureCommunityContribution;
 import org.zfin.zebrashare.ZebrashareEditor;
 import org.zfin.zebrashare.ZebrashareSubmissionMetadata;
 
+import java.util.Arrays;
 import java.util.List;
 
 public interface ZebrashareRepository {
@@ -34,4 +35,5 @@ public interface ZebrashareRepository {
 
     List<Publication> getZebraSharePublicationsForPerson(Person person);
 
+    List<ZebrashareSubmissionMetadata> getAllZebrashareFromPublication();
 }
