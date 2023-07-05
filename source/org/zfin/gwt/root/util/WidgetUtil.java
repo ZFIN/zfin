@@ -196,6 +196,7 @@ public final class WidgetUtil {
         SEARCHRESULTS("searchresults"),
         GROUPSTRIPES_HOVER("groupstripes-hover"),
         TABLE_HEADER("table-header"),
+        ORIGINATING_ROW("originating-row"),
         HIGHLIGHT_ROW("highlight-row");
 
         private final String value;

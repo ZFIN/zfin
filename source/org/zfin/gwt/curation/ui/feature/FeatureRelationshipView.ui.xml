@@ -24,6 +24,10 @@
             <g:Label text="Feature Relationship" addStyleNames="bold" horizontalAlignment="left"/>
             <g:Label text=":&nbsp;" addStyleNames="bold"/>
             <zfin:ShowHideToggle widget="{featureRelationshipPanel}" ui:field="showHideToggle" show="true"/>
+            <g:HorizontalPanel title="Highlight Features Created by This Publication" ui:field="highlightRowsContainer" styleName="feature-highlight-toggle">
+                <g:Label>Highlight New Features &nbsp;</g:Label>
+                <g:CheckBox ui:field="highlightRowsCheckBox" title="Highlight Features Created by This Publication"/>
+            </g:HorizontalPanel>
         </g:HorizontalPanel>
         <g:VerticalPanel ui:field="featureRelationshipPanel" width="100%">
             <g:HorizontalPanel title="Filter" addStyleNames="curation-filter" width="100%">

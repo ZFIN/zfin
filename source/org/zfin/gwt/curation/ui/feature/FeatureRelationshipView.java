@@ -30,6 +30,10 @@ public class FeatureRelationshipView extends Composite {
     @UiField
     ShowHideToggle showHideToggle;
     @UiField
+    HorizontalPanel highlightRowsContainer;
+    @UiField
+    CheckBox highlightRowsCheckBox;
+    @UiField
     StringListBox featureTypeList;
     @UiField
     StringListBox featureNameList;
@@ -57,6 +61,22 @@ public class FeatureRelationshipView extends Composite {
     @UiHandler("showHideToggle")
     void onClickShowHide(@SuppressWarnings("unused") ClickEvent event) {
         showHideToggle.toggleVisibility();
+        highlightRowsContainer.setVisible(showHideToggle.isVisible());
+    }
+
+    @UiHandler("highlightRowsCheckBox")
+    void onClickHighlightRows(@SuppressWarnings("unused") ClickEvent event) {
+        Boolean isHighlighted = highlightRowsCheckBox.getValue();
+        for(int i = 0; i < dataTable.getRowCount(); i++) {
+            String currentStyle = dataTable.getRowFormatter().getStyleName(i);
+            if (currentStyle.contains(WidgetUtil.CssStyles.ORIGINATING_ROW.toString())) {
+                String newStyle = currentStyle.replace(WidgetUtil.CssStyles.HIGHLIGHT_ROW.toString(), "");
+                if (isHighlighted) {
+                    newStyle = newStyle + " " + WidgetUtil.CssStyles.HIGHLIGHT_ROW.toString();
+                }
+                dataTable.getRowFormatter().setStyleName(i, newStyle);
+            }
+        }
     }
 
     @UiHandler("addButton")
@@ -100,12 +120,12 @@ public class FeatureRelationshipView extends Composite {
         if (lastFeature != null)
             lastID = lastFeature.getZdbID();
 
-        String highlighting = "";
+        String additionalClassNames = "";
         if (StringUtils.isNotEmpty(fmrDTO.getPublicationZdbID())) {
-            highlighting = WidgetUtil.CssStyles.HIGHLIGHT_ROW.toString();
+            additionalClassNames = WidgetUtil.CssStyles.ORIGINATING_ROW.toString();
         }
 
-        currentGroupIndex = WidgetUtil.setRowStyle(row, feature.getZdbID(), lastID, currentGroupIndex, dataTable, highlighting);
+        currentGroupIndex = WidgetUtil.setRowStyle(row, feature.getZdbID(), lastID, currentGroupIndex, dataTable, additionalClassNames);
         Anchor fishAnchor = new Anchor(SafeHtmlUtils.fromTrustedString(feature.getName()), "/" + feature.getZdbID());
         fishAnchor.setTitle(feature.getZdbID());
         if (lastID == null || !feature.getZdbID().equals(lastID))
