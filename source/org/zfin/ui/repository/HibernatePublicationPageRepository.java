@@ -5,7 +5,6 @@ import org.hibernate.query.Query;
 import org.zfin.figure.presentation.ExpressionTableRow;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.Pagination;
-import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.marker.Clone;
 import org.zfin.marker.MarkerType;
@@ -13,6 +12,8 @@ import org.zfin.publication.Publication;
 import org.zfin.repository.PaginationResultFactory;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class HibernatePublicationPageRepository implements PublicationPageRepository {
 
@@ -33,29 +34,40 @@ public class HibernatePublicationPageRepository implements PublicationPageReposi
             join fetch tableRow.gene
             left join fetch tableRow.antibody
             join fetch tableRow.experiment
-            where tableRow.publication = :pub
             """;
 
+        if (publication != null) {
+            hql += "where tableRow.publication = :pub ";
+        }
+
         if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
+            if (publication == null) {
+                hql += "where ";
+            }
             for (var entry : pagination.getFilterMap().entrySet()) {
                 hql += " AND ";
-                hql += "LOWER(" + entry.getKey() + ") like '%" + entry.getValue().toLowerCase() + "%' ";
+                hql += " LOWER(" + entry.getKey() + ") like '%" + entry.getValue().toLowerCase() + "%' ";
             }
         }
         hql += "order by upper(tableRow.gene.abbreviation), tableRow.fish.displayName ";
         Query<ExpressionTableRow> query = HibernateUtil.currentSession().createQuery(hql, ExpressionTableRow.class);
-        query.setParameter("pub", publication);
-        query.setMaxResults(pagination.getLimit());
-        query.setFirstResult(pagination.getStart());
+        if (publication != null) {
+            query.setParameter("pub", publication);
+            query.setMaxResults(pagination.getLimit());
+        }
         PaginationResult<ExpressionTableRow> result = new PaginationResult<>();
         result.setPopulatedResults(query.getResultList());
 
         hql = """
             select count(tableRow) from ExpressionTableRow as tableRow
-            where tableRow.publication = :pub
             """;
-        Query queryCount = HibernateUtil.currentSession().createQuery(hql);
-        queryCount.setParameter("pub", publication);
+        if (publication != null) {
+            hql += "where tableRow.publication = :pub ";
+        }
+        Query<Long> queryCount = HibernateUtil.currentSession().createQuery(hql, Long.class);
+        if (publication != null) {
+            queryCount.setParameter("pub", publication);
+        }
         result.setTotalCount((int) (long) queryCount.getSingleResult());
         return result;
     }
@@ -105,6 +117,18 @@ public class HibernatePublicationPageRepository implements PublicationPageReposi
         Query<MarkerType> query = HibernateUtil.currentSession().createQuery(hql, MarkerType.class);
         query.setParameter("publication", publication);
         return query.list().stream().map(MarkerType::getName).sorted().toList();
+    }
+
+    private Map<Publication, List<ExpressionTableRow>> allPublicationExpressionMap = null;
+
+    @Override
+    public Map<Publication, List<ExpressionTableRow>> getAllPublicationExpression(Pagination pagination) {
+        if (allPublicationExpressionMap != null) {
+            return allPublicationExpressionMap;
+        }
+        PaginationResult<ExpressionTableRow> publicationExpression = getPublicationExpression(null, pagination);
+        allPublicationExpressionMap = publicationExpression.getPopulatedResults().stream().collect(Collectors.groupingBy(ExpressionTableRow::getPublication));
+        return allPublicationExpressionMap;
     }
 
 }
