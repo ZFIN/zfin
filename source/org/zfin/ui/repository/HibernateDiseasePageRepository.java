@@ -172,6 +172,7 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
         Query<ChebiPhenotypeDisplay> query = HibernateUtil.currentSession().createQuery(hql, ChebiPhenotypeDisplay.class);
         query.setParameter("term", term);
         PaginationResult<ChebiPhenotypeDisplay> result = PaginationResultFactory.createResultFromScrollableResultAndClose(bean, query.scroll());
+        // make phenotypeStatementWharehouse objects a unique list
         result.getPopulatedResults().forEach(chebiPhenotypeDisplay -> {
             Map<String, List<PhenotypeStatementWarehouse>> groupedMap = chebiPhenotypeDisplay.getPhenotypeStatements().stream()
                 .collect(groupingBy(PhenotypeStatementWarehouse::getDisplayName));
