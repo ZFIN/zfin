@@ -69,7 +69,7 @@ public class ChebiPhenotypeDisplay {
     @JsonView(View.API.class)
     @JsonProperty("imgInFigure")
     @Column(name = "cpd_has_images")
-    private boolean hasImages;
+    private Boolean hasImages;
 
     @JsonView(View.API.class)
     @Column(name = "cpd_pub_count")
