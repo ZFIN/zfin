@@ -416,16 +416,6 @@ and exists (Select 'x' from pre_marker_go_term_evidence
 			  from pre_marker_go_term_evidence
 			 where exists (select * from marker_go_term_evidence where pre_mrkrgoev_zdb_id = mrkrgoev_zdb_id);
 
--- load inference_group_member for self-binding
-INSERT INTO inference_group_member (infgrmem_mrkrgoev_zdb_id, infgrmem_inferred_from)
-    SELECT
-        mrkrgoev_zdb_id, 'ZFIN:' || mrkrgoev_mrkr_zdb_id
-    FROM
-        marker_go_term_evidence LEFT JOIN term ON mrkrgoev_term_zdb_id = term.term_zdb_id
-    WHERE
-        term_ont_id IN ('GO:0042803', 'GO:0051260', 'GO:0051289', 'GO:0070207', 'GO:0043621', 'GO:0032840') -- self binding terms
-    ON CONFLICT (infgrmem_mrkrgoev_zdb_id, infgrmem_inferred_from) DO NOTHING;
-
 --!echo '		into inference_group_member'
 
 ---------------- loading cc field -----------------------------
