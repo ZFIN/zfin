@@ -23,7 +23,6 @@ public class HibernatePublicationPageRepository implements PublicationPageReposi
         String hql;
         hql = """
             select tableRow from ExpressionTableRow as tableRow
-            join fetch tableRow.fish
             join fetch tableRow.publication
             join fetch tableRow.figure
             join fetch tableRow.start
@@ -31,7 +30,6 @@ public class HibernatePublicationPageRepository implements PublicationPageReposi
             join fetch tableRow.assay
             left join fetch tableRow.subterm
             join fetch tableRow.superterm
-            join fetch tableRow.gene
             left join fetch tableRow.antibody
             join fetch tableRow.experiment
             """;
@@ -49,11 +47,12 @@ public class HibernatePublicationPageRepository implements PublicationPageReposi
                 hql += " LOWER(" + entry.getKey() + ") like '%" + entry.getValue().toLowerCase() + "%' ";
             }
         }
-        hql += "order by upper(tableRow.gene.abbreviation), tableRow.fish.displayName ";
+        hql += "order by upper(tableRow.gene.abbreviation), tableRow.fish.displayName, tableRow.superterm.termName , tableRow.subterm.termName ";
         Query<ExpressionTableRow> query = HibernateUtil.currentSession().createQuery(hql, ExpressionTableRow.class);
         if (publication != null) {
             query.setParameter("pub", publication);
             query.setMaxResults(pagination.getLimit());
+            query.setFirstResult(pagination.getStart());
         }
         PaginationResult<ExpressionTableRow> result = new PaginationResult<>();
         result.setPopulatedResults(query.getResultList());
