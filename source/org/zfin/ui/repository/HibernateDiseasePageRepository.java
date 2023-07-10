@@ -9,6 +9,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.mutant.PhenotypeStatementWarehouse;
 import org.zfin.mutant.presentation.ChebiFishModelDisplay;
 import org.zfin.mutant.presentation.ChebiPhenotypeDisplay;
 import org.zfin.mutant.presentation.FishModelDisplay;
@@ -17,8 +18,12 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.OmimPhenotypeDisplay;
 import org.zfin.repository.PaginationResultFactory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+
+import static java.util.stream.Collectors.groupingBy;
 
 @Log4j2
 public class HibernateDiseasePageRepository implements DiseasePageRepository {
@@ -166,7 +171,16 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
         hql += "order by chebiPhenotype.fish.displayName";
         Query<ChebiPhenotypeDisplay> query = HibernateUtil.currentSession().createQuery(hql, ChebiPhenotypeDisplay.class);
         query.setParameter("term", term);
-        return PaginationResultFactory.createResultFromScrollableResultAndClose(bean, query.scroll());
+        PaginationResult<ChebiPhenotypeDisplay> result = PaginationResultFactory.createResultFromScrollableResultAndClose(bean, query.scroll());
+        // make phenotypeStatementWharehouse objects a unique list
+        result.getPopulatedResults().forEach(chebiPhenotypeDisplay -> {
+            Map<String, List<PhenotypeStatementWarehouse>> groupedMap = chebiPhenotypeDisplay.getPhenotypeStatements().stream()
+                .collect(groupingBy(PhenotypeStatementWarehouse::getDisplayName));
+            List<PhenotypeStatementWarehouse> warehouse = new ArrayList<>();
+            groupedMap.forEach((s, phenotypeStatementWarehouses) -> warehouse.add(phenotypeStatementWarehouses.get(0)));
+            chebiPhenotypeDisplay.setPhenotypeStatements(warehouse);
+        });
+        return result;
     }
 
     // empty out fast search tables (starting with ui.)
