@@ -1002,17 +1002,7 @@ public class StatisticPublicationService {
 
 //        ColumnStats publicationTypeStat = getColumnStatsPubType(publicationMap, row, unfilteredPubList);
 
-/*
-        ColumnStats publicationNameStat = new ColumnStats("Pub Short Author", true, false, true, false);
-        ColumnValues columnValValues = new ColumnValues();
-        columnValValues.setTotalNumber(publicationMap.size());
-        List<Publication> arrayList = new ArrayList<>();
-        arrayList.addAll(publicationMap.keySet());
-        columnValValues.setTotalDistinctNumber(getTotalDistinctNumberOnObject(List.of(arrayList), Publication::getShortAuthorList));
-        row.put(publicationNameStat, columnValValues);
-*/
-
-        ColumnStats geneStat = new ColumnStats("Gene Symbol", false, true, false, false);
+        ColumnStats geneStat = new ColumnStats("Gene Symbol", false, false, false, false);
         ColumnValues geneValues = getColumnValues(publicationMap, expressionTableRow -> expressionTableRow.getGene().getAbbreviation());
         row.put(geneStat, geneValues);
 
@@ -1039,6 +1029,36 @@ public class StatisticPublicationService {
             return null;
         });
         row.put(experimentStat, experimentValues);
+
+        ColumnStats stageStat = new ColumnStats("Stage", false, false, false, true);
+        ColumnValues stageValues = getColumnValues(publicationMap,
+            expressionTableRow -> expressionTableRow.getStart().getAbbreviation() + ":" + expressionTableRow.getEnd().getAbbreviation());
+        row.put(stageStat, stageValues);
+
+        ColumnStats qualifierStat = new ColumnStats("Qualifier", false, false, false, true);
+        ColumnValues qualifierValues = getColumnValues(publicationMap,
+            ExpressionTableRow::getQualifier);
+        row.put(qualifierStat, qualifierValues);
+
+        ColumnStats anatomyStat = new ColumnStats("Anatomy", false, false, false, false);
+        ColumnValues anatomyValues = getColumnValues(publicationMap, expressionTableRow -> {
+            String anatomy = expressionTableRow.getSuperterm().getTermName();
+            if (expressionTableRow.getSubterm() != null)
+                anatomy += expressionTableRow.getSubterm().getTermName();
+            return anatomy;
+        });
+        row.put(anatomyStat, anatomyValues);
+
+        ColumnStats assayStat = new ColumnStats("Assay", false, false, false, true);
+        ColumnValues assayValues = getColumnValues(publicationMap,
+            expressionTableRow -> expressionTableRow.getAssay().getName());
+        row.put(assayStat, assayValues);
+
+        ColumnStats figureStat = new ColumnStats("Figure", false, false, false, true);
+        ColumnValues figureValues = getColumnValues(publicationMap,
+            expressionTableRow -> expressionTableRow.getFigure().getLabel());
+        row.put(figureStat, figureValues);
+
 /*
 
         ColumnStats antibodyIsotypeStat = new ColumnStats("Isotype", false, false, false, true);
@@ -1106,46 +1126,64 @@ public class StatisticPublicationService {
             colPubNameValues.setValue(pubEntry.getKey().getShortAuthorList());
             statRow.put(publicationNameStat, colPubNameValues);
 
-  /*          ColumnValues colPubTypeValues = new ColumnValues();
-            colPubTypeValues.setValue(pubEntry.getKey().getType().getDisplay());
-            statRow.put(publicationTypeStat, colPubTypeValues);
+            ColumnValues colValueGene = new ColumnValues();
+            colValueGene.setTotalNumber(pubEntry.getValue());
+            colValueGene.setTotalDistinctNumber(getTotalDistinctNumber(publicationMap.get(pubEntry.getKey()), ExpressionTableRow::getGene));
+            statRow.put(geneStat, colValueGene);
 
-  */
-            ColumnValues colValueAnti = new ColumnValues();
-            colValueAnti.setTotalNumber(pubEntry.getValue());
-            statRow.put(geneStat, colValueAnti);
-
-            ColumnValues colValueClonaltype = new ColumnValues();
-            colValueClonaltype.setTotalNumber(getTotalNumberBase(publicationMap.get(pubEntry.getKey()), ExpressionTableRow::getAntibody));
-            colValueClonaltype.setTotalDistinctNumber(getTotalDistinctNumber(publicationMap.get(pubEntry.getKey()), ExpressionTableRow::getAntibody));
-            statRow.put(antibodyStat, colValueClonaltype);
+            ColumnValues colValueAntibody = new ColumnValues();
+            colValueAntibody.setTotalNumber(getTotalNumberBase(publicationMap.get(pubEntry.getKey()), ExpressionTableRow::getAntibody));
+            colValueAntibody.setTotalDistinctNumber(getTotalDistinctNumber(publicationMap.get(pubEntry.getKey()), ExpressionTableRow::getAntibody));
+            statRow.put(antibodyStat, colValueAntibody);
 
             ColumnValues colValueFish = new ColumnValues();
             colValueFish.setTotalNumber(getTotalNumberBase(publicationMap.get(pubEntry.getKey()), ExpressionTableRow::getFish));
-            colValueFish.setTotalDistinctNumber(getTotalDistinctNumber(publicationMap.get(pubEntry.getKey()), ExpressionTableRow::getFish));
+            colValueFish.setTotalDistinctNumber(getTotalDistinctNumber(publicationMap.get(pubEntry.getKey()),
+                expressionTableRow -> expressionTableRow.getFish().getDisplayName()));
             statRow.put(fishStat, colValueFish);
 
             ColumnValues colValueExperiment = new ColumnValues();
             colValueExperiment.setTotalNumber(getTotalNumberBase(publicationMap.get(pubEntry.getKey()), ExpressionTableRow::getExperiment));
-            colValueExperiment.setTotalDistinctNumber(getTotalDistinctNumber(publicationMap.get(pubEntry.getKey()), ExpressionTableRow::getExperiment));
+            colValueExperiment.setTotalDistinctNumber(getTotalDistinctNumber(publicationMap.get(pubEntry.getKey()),
+                expressionTableRow -> expressionTableRow.getExperiment().getDisplayAllConditions()));
             statRow.put(experimentStat, colValueExperiment);
 
+            ColumnValues colValueStage = new ColumnValues();
+            colValueStage.setTotalNumber(getTotalNumberBase(publicationMap.get(pubEntry.getKey()),
+                expressionTableRow -> expressionTableRow.getStart().getAbbreviation()));
+            colValueStage.setTotalDistinctNumber(getTotalDistinctNumber(publicationMap.get(pubEntry.getKey()),
+                expressionTableRow -> expressionTableRow.getExperiment().getDisplayAllConditions()));
+            statRow.put(stageStat, colValueExperiment);
+
+            ColumnValues colValueQualifier = new ColumnValues();
+            colValueQualifier.setTotalNumber(getTotalNumberBase(publicationMap.get(pubEntry.getKey()),
+                ExpressionTableRow::getQualifier));
+            colValueQualifier.setTotalDistinctNumber(getTotalDistinctNumber(publicationMap.get(pubEntry.getKey()),
+                ExpressionTableRow::getQualifier));
+            statRow.put(qualifierStat, colValueQualifier);
+
+            ColumnValues colValueAnatomy = new ColumnValues();
+            colValueAnatomy.setTotalNumber(getTotalNumberBase(publicationMap.get(pubEntry.getKey()),
+                expressionTableRow -> expressionTableRow.getSuperterm().getTermName()));
+            colValueAnatomy.setTotalDistinctNumber(getTotalDistinctNumber(publicationMap.get(pubEntry.getKey()),
+                expressionTableRow -> expressionTableRow.getSuperterm().getTermName()));
+            statRow.put(anatomyStat, colValueAnatomy);
+
+            ColumnValues colValueAssay = new ColumnValues();
+            colValueAssay.setTotalNumber(getTotalNumberBase(publicationMap.get(pubEntry.getKey()),
+                expressionTableRow -> expressionTableRow.getAssay().getName()));
+            colValueAssay.setTotalDistinctNumber(getTotalDistinctNumber(publicationMap.get(pubEntry.getKey()),
+                expressionTableRow -> expressionTableRow.getAssay().getName()));
+            statRow.put(assayStat, colValueAssay);
+
+            ColumnValues colValueFigure = new ColumnValues();
+            colValueFigure.setTotalNumber(getTotalNumberBase(publicationMap.get(pubEntry.getKey()),
+                expressionTableRow -> expressionTableRow.getAssay().getName()));
+            colValueFigure.setTotalDistinctNumber(getTotalDistinctNumber(publicationMap.get(pubEntry.getKey()),
+                expressionTableRow -> expressionTableRow.getAssay().getName()));
+            statRow.put(figureStat, colValueFigure);
+
 /*
-            ColumnValues colValueClonaltype = new ColumnValues();
-            colValueClonaltype.setTotalNumber(getTotalNumberBase(publicationMap.get(pubEntry.getKey()), Antibody::getClonalType));
-            colValueClonaltype.setTotalDistinctNumber(getTotalDistinctNumber(publicationMap.get(pubEntry.getKey()), Antibody::getClonalType));
-            statRow.put(antibodyClonalTypeStat, colValueClonaltype);
-
-            ColumnValues isotypeStat = new ColumnValues();
-            isotypeStat.setTotalNumber(getTotalNumberBase(publicationMap.get(pubEntry.getKey()), Antibody::getHeavyChainIsotype));
-            isotypeStat.setTotalDistinctNumber(getTotalDistinctNumber(publicationMap.get(pubEntry.getKey()), Antibody::getHeavyChainIsotype));
-            statRow.put(antibodyIsotypeStat, isotypeStat);
-
-            ColumnValues hostStat = new ColumnValues();
-            hostStat.setTotalNumber(getTotalNumberBase(publicationMap.get(pubEntry.getKey()), Antibody::getHostSpecies));
-            hostStat.setTotalDistinctNumber(getTotalDistinctNumber(publicationMap.get(pubEntry.getKey()), Antibody::getHostSpecies));
-            statRow.put(antibodyHostStat, hostStat);
-
             ColumnValues assayStat = new ColumnValues();
             assayStat.setTotalNumber(getTotalNumberMultiValuedBase(publicationMap.get(pubEntry.getKey()), Antibody::getDistinctAssayNames));
             assayStat.setTotalDistinctNumber(getTotalDistinctNumberPerUberEntity(publicationMap.get(pubEntry.getKey()), Antibody::getDistinctAssayNames));
@@ -1360,6 +1398,7 @@ public class StatisticPublicationService {
 
     private static <T extends ZdbID, ID> long getTotalDistinctNumber(List<T> map, Function<T, ID> function) {
         return map.stream()
+            .filter(o -> function.apply(o) != null)
             .map(function)
             .distinct()
             .count();

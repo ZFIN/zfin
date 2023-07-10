@@ -620,7 +620,7 @@ PublicationViewController {
         return "publication/publication-figures";
     }
 
-    @RequestMapping("/publication/stats")
+    @RequestMapping("/stats")
     public String viewPublicationUberTable(Model model) {
         List<String> genedom = List.of(Marker.TypeGroup.GENEDOM.name());
 /*
@@ -629,7 +629,7 @@ PublicationViewController {
         model.addAttribute("pubMarkerCount", histogramPubMarkerCount);
         model.addAttribute("markerCount", histogramMarkerCount);
 */
-
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication View Statistics " );
         return "publication/publication-view-stats";
     }
 }
