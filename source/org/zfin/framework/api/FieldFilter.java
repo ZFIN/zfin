@@ -33,6 +33,8 @@ public enum FieldFilter {
     TARGET_GENE("filter.targetGene"),
     ANTIGEN_GENE("filter.antigenGenes"),
     ANTIBODY_NAME("antibodyName"),
+    ANTIBODY("antibody"),
+    QUALIFIER("qualifier"),
     CITATION("citation"),
     ANATOMY("anatomy"),
 
