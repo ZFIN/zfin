@@ -1,5 +1,6 @@
 package org.zfin.zebrashare;
 
+import org.zfin.infrastructure.ZdbID;
 import org.zfin.profile.Lab;
 import org.zfin.profile.Person;
 import org.zfin.publication.Publication;
@@ -10,7 +11,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "zebrashare_submission_metadata")
-public class ZebrashareSubmissionMetadata implements Serializable {
+public class ZebrashareSubmissionMetadata  implements ZdbID, Serializable {
 
     @Id
     @MapsId
@@ -89,5 +90,15 @@ public class ZebrashareSubmissionMetadata implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(publication, submitter, submitterName, submitterEmail, labOfOrigin);
+    }
+
+    @Override
+    public String getZdbID() {
+        return publication.getZdbID();
+    }
+
+    @Override
+    public void setZdbID(String zdbID) {
+
     }
 }
