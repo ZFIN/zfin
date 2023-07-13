@@ -57,6 +57,7 @@ const FigureExpressionTable = ({url, hideFigureColumn = false, navigationCounter
             content: row =>
                 row.qualifier
             ,
+            filterName: 'qualifier',
             width: '150px',
         },
         {

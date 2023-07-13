@@ -28,6 +28,30 @@ const UberCell = ({value, onCardinalitySortChange}) => {
                             <td>T [D]</td>
                             <td>{value.columnStat.totalNumber.toLocaleString()} [{value.columnStat.totalDistinctNumber.toLocaleString()}]</td>
                         </tr>
+                        <tr>
+                            <td>M</td>
+                            <td>{value.columnStat.multiplicity}
+                                <button
+                                    className='btn text-muted bg-transparent border-0 p-0'
+                                    onClick={toggleSortingFilter}
+                                    role='button'
+                                >
+
+                                    {sortField === 1 && (
+                                        <i className='fas fa-sort'/>
+                                    )
+                                    }
+                                    {sortField === 2 && (
+                                        <i className='fas fa-sort-down'/>
+                                    )
+                                    }
+                                    {sortField === 0 && (
+                                        <i className='fas fa-sort-up'/>
+                                    )
+                                    }
+                                </button>
+                            </td>
+                        </tr>
                         {value.columnDefinition.multiValued && (
                             <tr>
                                 <td>C</td>

@@ -125,6 +125,7 @@ public class PublicationAPIController {
     @RequestMapping(value = "/{pubID}/expression", method = RequestMethod.GET)
     public JsonResultResponse<ExpressionTableRow> getPublicationExpression(@PathVariable String pubID,
                                                                            @RequestParam(value = "filter.geneAbbreviation", required = false) String geneAbbreviation,
+                                                                           @RequestParam(value = "filter.qualifier", required = false) String qualifier,
                                                                            @Version Pagination pagination) {
 
         LocalDateTime startTime = LocalDateTime.now();
@@ -135,6 +136,9 @@ public class PublicationAPIController {
 
         if (StringUtils.isNotEmpty(geneAbbreviation)) {
             pagination.addToFilterMap("tableRow.gene.abbreviation", geneAbbreviation);
+        }
+        if (StringUtils.isNotEmpty(qualifier)) {
+            pagination.addToFilterMap("tableRow.qualifier", qualifier);
         }
 
         PaginationResult<ExpressionTableRow> expressionTableRows = getPublicationPageRepository().getPublicationExpression(publication, pagination);

@@ -34,20 +34,23 @@ public class HibernatePublicationPageRepository implements PublicationPageReposi
             join fetch tableRow.experiment
             """;
 
+        String hqlWhereClause = "";
         if (publication != null) {
-            hql += "where tableRow.publication = :pub ";
+            hqlWhereClause += "where tableRow.publication = :pub ";
         }
 
         if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
             if (publication == null) {
-                hql += "where ";
+                hqlWhereClause += "where ";
             }
             for (var entry : pagination.getFilterMap().entrySet()) {
-                hql += " AND ";
-                hql += " LOWER(" + entry.getKey() + ") like '%" + entry.getValue().toLowerCase() + "%' ";
+                hqlWhereClause += " AND ";
+                hqlWhereClause += " LOWER(" + entry.getKey() + ") like '%" + entry.getValue().toLowerCase() + "%' ";
             }
         }
-        hql += "order by upper(tableRow.gene.abbreviation), tableRow.fish.displayName, tableRow.superterm.termName , tableRow.subterm.termName ";
+        hql += hqlWhereClause;
+        String hqlOrderBy = "order by upper(tableRow.gene.abbreviation), tableRow.fish.displayName, tableRow.superterm.termName , tableRow.subterm.termName ";
+        hql += hqlOrderBy;
         Query<ExpressionTableRow> query = HibernateUtil.currentSession().createQuery(hql, ExpressionTableRow.class);
         if (publication != null) {
             query.setParameter("pub", publication);
@@ -60,9 +63,7 @@ public class HibernatePublicationPageRepository implements PublicationPageReposi
         hql = """
             select count(tableRow) from ExpressionTableRow as tableRow
             """;
-        if (publication != null) {
-            hql += "where tableRow.publication = :pub ";
-        }
+        hql += hqlWhereClause;
         Query<Long> queryCount = HibernateUtil.currentSession().createQuery(hql, Long.class);
         if (publication != null) {
             queryCount.setParameter("pub", publication);
