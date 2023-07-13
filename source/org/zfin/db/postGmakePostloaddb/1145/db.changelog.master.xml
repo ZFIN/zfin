@@ -8,4 +8,5 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1145/ZFIN-8625.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1145/indexer-tuning.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1145/ZFIN-8684.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1145/ZFIN-8726.sql" />
 </databaseChangeLog>
