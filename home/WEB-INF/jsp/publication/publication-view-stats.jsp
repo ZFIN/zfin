@@ -59,12 +59,12 @@
                     </z:section>
                 </z:section>
 
-                <z:section title="${ZEBRASHARE}">
-                    <z:section title="">
-                        <div class="__react-root" id="PublicationMarkerStatTable" data-type="zebrashare"></div>
-                    </z:section>
-                </z:section>
         --%>
+        <z:section title="${ZEBRASHARE}">
+            <z:section title="">
+                <div class="__react-root" id="PublicationMarkerStatTable" data-type="zebrashare"></div>
+            </z:section>
+        </z:section>
 
     </jsp:body>
 

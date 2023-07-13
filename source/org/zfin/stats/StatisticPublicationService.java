@@ -39,7 +39,6 @@ public class StatisticPublicationService {
             .collect(groupingBy(ZebrashareSubmissionMetadata::getPublication));
 
         // filter records
-
 /*
         publicationMap.keySet().forEach(key -> {
             List<Feature> list = publicationMap.get(key);
@@ -54,36 +53,24 @@ public class StatisticPublicationService {
         publicationMap.entrySet().removeIf(entry -> CollectionUtils.isEmpty(entry.getValue()));
 
 
-        HashMap<Publication, Integer> integerMap = null;
+        HashMap<Publication, Integer> integerMap;
         // default sorting: number of entities
-        if (pagination.hasSortingValue()) {
-/*
-            switch (pagination.getSortFilter()) {
-                case ASSAY:
-                    integerMap = publicationMap.entrySet().stream()
-                            .collect(HashMap::new, (map, entry) -> {
-                                Range range = getCardinalityPerUniqueRow(List.of(entry.getValue()), Antibody::getDistinctAssayNames);
-                                map.put(entry.getKey(), (Integer) range.getMaximum());
-                            }, HashMap::putAll);
-                    break;
-            }
-*/
-        } else {
-            integerMap = publicationMap.entrySet().stream()
-                .collect(HashMap::new, (map, entry) -> map.put(entry.getKey(), entry.getValue().size()), HashMap::putAll);
-        }
+        integerMap = publicationMap.entrySet().stream()
+            .collect(HashMap::new, (map, entry) -> map.put(entry.getKey(), entry.getValue().size()), HashMap::putAll);
         Map<Publication, Integer> sortedMap = integerMap.entrySet().
             stream().
             sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).
             collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 
-        StatisticRow row = new StatisticRow();
-        ColumnStats publicationStat = new ColumnStats("Publication", true, false, false, false);
-        ColumnValues columnValues = new ColumnValues();
-        columnValues.setTotalNumber(publicationMap.size());
-        row.put(publicationStat, columnValues);
+        List<Publication> unfilteredPubList = new ArrayList<>(publicationMap.keySet());
 
-        ColumnStats publicationNameStat = new ColumnStats("Pub Short Author", true, false, true, false);
+        StatisticRow row = new StatisticRow();
+        ColumnStats publicationStat = getColumnStatsPublication(publicationMap, row);
+
+        ColumnStats publicationNameStat = getColumnStatsPubAuthor(publicationMap, row);
+
+        ColumnStats publicationTypeStat = getColumnStatsPubType(publicationMap, row, unfilteredPubList);
+
         ColumnValues columnValValues = new ColumnValues();
         columnValValues.setTotalNumber(publicationMap.size());
         List<Publication> arrayList = new ArrayList<>();
@@ -103,6 +90,10 @@ public class StatisticPublicationService {
             ColumnValues colPubNameValues = new ColumnValues();
             colPubNameValues.setValue(pubEntry.getKey().getShortAuthorList());
             statRow.put(publicationNameStat, colPubNameValues);
+
+            ColumnValues colPubTypeValues = new ColumnValues();
+            colPubTypeValues.setValue(pubEntry.getKey().getType().getDisplay());
+            statRow.put(publicationTypeStat, colPubTypeValues);
 
             rows.add(statRow);
         });
