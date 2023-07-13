@@ -18,4 +18,6 @@ public interface PublicationPageRepository {
     List<String> getProbeTypes(Publication publication, Pagination pagination);
 
     Map<Publication, List<ExpressionTableRow>> getAllPublicationExpression(Pagination pagination);
+
+    Map<Publication, List<Clone>> getAllProbes(Pagination pagination);
 }

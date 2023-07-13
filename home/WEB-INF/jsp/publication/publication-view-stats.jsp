@@ -10,6 +10,7 @@
 <c:set var="EXPRESSION" value="Expression Data"/>
 <c:set var="MUTATION" value="Mutation and Transgenics"/>
 <c:set var="FISH" value="Fish"/>
+<c:set var="PROBES" value="Probes"/>
 <c:set var="DIRECTLY_ATTRIBUTED_DATA" value="Directly Attributed Data"/>
 
 <z:dataPage
@@ -26,6 +27,12 @@
             <jsp:include page="publication-view-stats-summary.jsp"/>
         </z:section>
 --%>
+
+        <z:section title="${PROBES}">
+            <z:section title="">
+                <div class="__react-root" id="PublicationMarkerStatTable" data-type="probe"></div>
+            </z:section>
+        </z:section>
 
         <z:section title="${ANTIBODIES}">
             <z:section title="">

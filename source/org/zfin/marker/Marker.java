@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
  */
 @Setter
 @Getter
-public class Marker extends SequenceFeature implements Serializable, Comparable, EntityAlias, EntityNotes, EntityID {
+public class Marker extends SequenceFeature implements Serializable, Comparable, EntityAlias, EntityNotes, EntityID, ZdbID {
 
     public static final String WITHDRAWN = "WITHDRAWN:";
     private static Logger LOG = LogManager.getLogger(Marker.class);
