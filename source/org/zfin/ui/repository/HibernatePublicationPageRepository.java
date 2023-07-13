@@ -11,6 +11,9 @@ import org.zfin.marker.MarkerType;
 import org.zfin.publication.Publication;
 import org.zfin.repository.PaginationResultFactory;
 
+import javax.persistence.Tuple;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -78,6 +81,9 @@ public class HibernatePublicationPageRepository implements PublicationPageReposi
             select distinct exp.probe from ExpressionExperiment as exp
             where exp.publication = :publication
             """;
+        if (publication != null) {
+            hql += " where exp.publication = :publication ";
+        }
         if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
             for (var entry : pagination.getFilterMap().entrySet()) {
                 hql += " AND ";
@@ -104,7 +110,9 @@ public class HibernatePublicationPageRepository implements PublicationPageReposi
         }
         hql += " order by exp.probe.abbreviationOrder";
         Query<Clone> query = HibernateUtil.currentSession().createQuery(hql, Clone.class);
-        query.setParameter("publication", publication);
+        if (publication != null) {
+            query.setParameter("publication", publication);
+        }
         return PaginationResultFactory.createResultFromScrollableResultAndClose(pagination, query.scroll());
     }
 
@@ -129,6 +137,45 @@ public class HibernatePublicationPageRepository implements PublicationPageReposi
         PaginationResult<ExpressionTableRow> publicationExpression = getPublicationExpression(null, pagination);
         allPublicationExpressionMap = publicationExpression.getPopulatedResults().stream().collect(Collectors.groupingBy(ExpressionTableRow::getPublication));
         return allPublicationExpressionMap;
+    }
+
+    @Override
+    public Map<Publication, List<Clone>> getAllProbes(Pagination pagination) {
+        String hql = """
+            select exp.probe, exp.publication from ExpressionExperiment as exp
+            """;
+        if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
+            for (var entry : pagination.getFilterMap().entrySet()) {
+                hql += " AND ";
+                if (entry.getKey().endsWith("integer")) {
+                    hql += entry.getKey().substring(0, entry.getKey().lastIndexOf(".")) + " =" + entry.getValue().toLowerCase();
+                } else {
+                    if (entry.getKey().equals("exp.probe.zdbID")) {
+                        String[] vals = entry.getValue().split("||");
+                        hql += "(";
+                        for (int i = 0; i < vals.length - 1; i++) {
+                            String val = vals[i];
+                            if (i > 0) {
+                                hql += " OR ";
+                            }
+                            val = "zdb-" + val.toLowerCase();
+                            hql += "LOWER(" + entry.getKey() + ") like '%" + val + "%' ";
+                        }
+                        hql += ")";
+                    } else {
+                        hql += "LOWER(" + entry.getKey() + ") like '%" + entry.getValue().toLowerCase() + "%' ";
+                    }
+                }
+            }
+        }
+        hql += " order by exp.probe.abbreviationOrder";
+        Query<Tuple> query = HibernateUtil.currentSession().createQuery(hql, Tuple.class);
+        Map<Publication, List<Clone>> map = new HashMap<>();
+        query.list().forEach(tuple -> {
+            List<Clone> clones = map.computeIfAbsent((Publication) tuple.get(1), k -> new ArrayList<>());
+            clones.add((Clone) tuple.get(0));
+        });
+        return map;
     }
 
 }

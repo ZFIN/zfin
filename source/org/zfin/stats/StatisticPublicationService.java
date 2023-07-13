@@ -8,6 +8,7 @@ import org.zfin.feature.Feature;
 import org.zfin.figure.presentation.ExpressionTableRow;
 import org.zfin.framework.api.*;
 import org.zfin.infrastructure.ZdbID;
+import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Fish;
 import org.zfin.publication.Publication;
@@ -294,28 +295,28 @@ public class StatisticPublicationService {
         row.put(fishTypeStat, cloneValues);
         // create return result set
         List<StatisticRow> rows = new ArrayList<>();
-        sortedMap.entrySet().forEach(pubEntry -> {
+        sortedMap.forEach((key, value) -> {
             StatisticRow statRow = new StatisticRow();
 
             ColumnValues colValues = new ColumnValues();
-            colValues.setValue(pubEntry.getKey().getZdbID());
+            colValues.setValue(key.getZdbID());
             statRow.put(publicationStat, colValues);
 
             ColumnValues colPubNameValues = new ColumnValues();
-            colPubNameValues.setValue(pubEntry.getKey().getShortAuthorList());
+            colPubNameValues.setValue(key.getShortAuthorList());
             statRow.put(publicationNameStat, colPubNameValues);
 
             ColumnValues colPubTypeValues = new ColumnValues();
-            colPubTypeValues.setValue(pubEntry.getKey().getType().getDisplay());
+            colPubTypeValues.setValue(key.getType().getDisplay());
             statRow.put(publicationTypeStat, colPubTypeValues);
 
             ColumnValues colValueAllele = new ColumnValues();
-            colValueAllele.setTotalNumber(pubEntry.getValue());
+            colValueAllele.setTotalNumber(value);
             statRow.put(fishStat, colValueAllele);
 
             ColumnValues colValueFeatureType = new ColumnValues();
-            colValueFeatureType.setTotalNumber(getTotalNumberBase(publicationMap.get(pubEntry.getKey()), (fish -> String.valueOf(fish.isWildtype()))));
-            colValueFeatureType.setTotalDistinctNumber(getTotalDistinctNumber(publicationMap.get(pubEntry.getKey()), (fish -> String.valueOf(fish.isWildtype()))));
+            colValueFeatureType.setTotalNumber(getTotalNumberBase(publicationMap.get(key), (fish -> String.valueOf(fish.isWildtype()))));
+            colValueFeatureType.setTotalDistinctNumber(getTotalDistinctNumber(publicationMap.get(key), (fish -> String.valueOf(fish.isWildtype()))));
             statRow.put(fishTypeStat, colValueFeatureType);
 
             rows.add(statRow);
@@ -432,7 +433,6 @@ public class StatisticPublicationService {
 
         Map<Publication, List<Antibody>> publicationMap = new HashMap<>(getAntibodyRepository().getAntibodiesFromAllPublications());
 
-
         List<Publication> unfilteredPubList = new ArrayList<>(publicationMap.keySet());
         // filter on Publication
         filterOnPublication(pagination, publicationMap);
@@ -486,7 +486,7 @@ public class StatisticPublicationService {
 
         ColumnStats publicationNameStat = getColumnStatsPubAuthor(publicationMap, row);
 
-        ColumnStats publicationTypeStat = getColumnStatsPubType(publicationMap, row, unfilteredPubList);
+        //ColumnStats publicationTypeStat = getColumnStatsPubType(publicationMap, row, unfilteredPubList);
 
 /*
         ColumnStats publicationNameStat = new ColumnStats("Pub Short Author", true, false, true, false);
@@ -751,19 +751,13 @@ public class StatisticPublicationService {
                 getLabel());
 
         // put all columns into a statistic row
-        columns.forEach((columnStats, function) ->
-        {
-            ColumnValues colValues = getColumnValues(publicationMap, function);
-            row.put(columnStats, colValues);
-        });
+        addColumnsToRows(publicationMap, row, columns);
 
 
         // create return result set
         List<StatisticRow> rows = new ArrayList<>();
         sortedMap.entrySet().
-
             forEach(pubEntry ->
-
             {
                 StatisticRow statRow = new StatisticRow();
 
@@ -781,7 +775,6 @@ public class StatisticPublicationService {
                     columnValues.setTotalDistinctNumber(getTotalDistinctNumber(publicationMap.get(pubEntry.getKey()), function));
                     statRow.put(columnStats, columnValues);
                 });
-
                 rows.add(statRow);
             });
 
@@ -1078,4 +1071,135 @@ public class StatisticPublicationService {
 
     private List<ColumnStats<Antibody, ?>> stats;
 
+    public JsonResultResponse<StatisticRow> getAllProbeStats(Pagination pagination) {
+
+        pagination.setLimit(1000000);
+        Map<Publication, List<Clone>> publicationMap = getPublicationPageRepository().getAllProbes(pagination);
+
+        List<Publication> unfilteredPubList = new ArrayList<>(publicationMap.keySet());
+        // filter on Publication
+        filterOnPublication(pagination, publicationMap);
+
+        // filter records
+        publicationMap.keySet().forEach(key -> {
+            List<Clone> list = publicationMap.get(key);
+            if (list != null) {
+                FilterService<ExpressionTableRow> filterService = new FilterService<>(new ExpressionTableRowFiltering());
+/*
+                List<ExpressionTableRow> expressionTableRows = filterService.filterAnnotations(list, pagination.getFieldFilterValueMap());
+                publicationMap.put(key, expressionTableRows);
+*/
+            }
+        });
+        // remove empty publications
+        publicationMap.entrySet().removeIf(entry -> CollectionUtils.isEmpty(entry.getValue()));
+
+
+        HashMap<Publication, Integer> integerMap = null;
+        // default sorting: number of entities
+        if (pagination.hasSortingValue()) {
+            switch (pagination.getSortFilter()) {
+/*
+                case ASSAY:
+                    integerMap = publicationMap.entrySet().stream()
+                            .collect(HashMap::new, (map, entry) -> {
+                                Range range = getCardinalityPerUniqueRow(List.of(entry.getValue()), Antibody::getDistinctAssayNames);
+                                map.put(entry.getKey(), (Integer) range.getMaximum());
+                            }, HashMap::putAll);
+                    break;
+                case ANTIGEN_GENE:
+                    integerMap = publicationMap.entrySet().stream()
+                            .collect(HashMap::new, (map, entry) -> {
+                                Range range = getCardinalityPerUniqueRow(List.of(entry.getValue()), Antibody::getAntigenGenes);
+                                map.put(entry.getKey(), (Integer) range.getMaximum());
+                            }, HashMap::putAll);
+                    break;
+*/
+                case ANTIBODY -> {
+                    Function<Clone, String> function = expressionTableRow -> {
+                        if (expressionTableRow.getName() != null)
+                            return expressionTableRow.getName();
+                        return null;
+                    };
+                    integerMap = getCardinalityPerRowPub(publicationMap, function);
+                }
+                case ANTIBODY_NAME -> integerMap = publicationMap.entrySet().stream()
+                    .collect(HashMap::new, (map, entry) -> map.put(entry.getKey(), entry.getValue().size()), HashMap::putAll);
+            }
+        } else {
+            integerMap = publicationMap.entrySet().stream()
+                .collect(HashMap::new, (map, entry) -> map.put(entry.getKey(), entry.getValue().size()), HashMap::putAll);
+        }
+
+        Map<Publication, Integer> sortedMap = integerMap.entrySet().
+            stream().
+            sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).
+            collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+
+        StatisticRow row = new StatisticRow();
+        ColumnStats publicationStat = getColumnStatsPublication(publicationMap, row);
+
+        ColumnStats publicationNameStat = getColumnStatsPubAuthor(publicationMap, row);
+
+//        ColumnStats publicationTypeStat = getColumnStatsPubType(publicationMap, row, unfilteredPubList);
+
+        Map<ColumnStats, Function<Clone, String>> columns = new LinkedHashMap<>();
+        columns.put(
+            new ColumnStats("Probe", false, false, false, false),
+            expressionTableRow -> expressionTableRow.getName());
+        columns.put(
+            new ColumnStats("Type", false, false, false, true),
+            expressionTableRow -> expressionTableRow.getType().name());
+
+        // put all columns into a statistic row
+        addColumnsToRows(publicationMap, row, columns);
+
+
+        // create return result set
+        List<StatisticRow> rows = new ArrayList<>();
+        sortedMap.forEach((key, value) -> {
+            StatisticRow statRow = new StatisticRow();
+
+            ColumnValues colValues = new ColumnValues();
+            colValues.setValue(key.getZdbID());
+            statRow.put(publicationStat, colValues);
+
+            ColumnValues colPubNameValues = new ColumnValues();
+            colPubNameValues.setValue(key.getShortAuthorList());
+            statRow.put(publicationNameStat, colPubNameValues);
+
+            columns.forEach((columnStats, function) -> {
+                ColumnValues columnValues = new ColumnValues();
+                columnValues.setTotalNumber(getTotalNumberBase(publicationMap.get(key), function));
+                columnValues.setTotalDistinctNumber(getTotalDistinctNumber(publicationMap.get(key), function));
+                statRow.put(columnStats, columnValues);
+            });
+
+            rows.add(statRow);
+        });
+
+        JsonResultResponse<StatisticRow> response = new JsonResultResponse<>();
+        response.setResults(rows);
+        response.setTotal(rows.size());
+        response.setResults(rows.stream()
+                .
+
+            skip(pagination.getStart())
+                .
+
+            limit(pagination.getLimit())
+                .
+
+            collect(toList()));
+        response.addSupplementalData("statistic", row);
+        return response;
+    }
+
+    private <T extends ZdbID> void addColumnsToRows(Map<Publication, List<T>> publicationMap, StatisticRow row, Map<ColumnStats, Function<T, String>> columns) {
+        columns.forEach((columnStats, function) ->
+        {
+            ColumnValues colValues = getColumnValues(publicationMap, function);
+            row.put(columnStats, colValues);
+        });
+    }
 }

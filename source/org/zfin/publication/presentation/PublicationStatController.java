@@ -7,6 +7,8 @@ import org.zfin.framework.api.FieldFilter;
 import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.api.View;
+import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.publication.Publication;
@@ -19,6 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static org.zfin.repository.RepositoryFactory.getPublicationPageRepository;
 
 @RestController
 @RequestMapping("/api/publication/stats")
@@ -178,6 +182,19 @@ public class PublicationStatController {
         pagination.addFieldSorting(FieldFilter.ANTIBODY_NAME, multiplicitySortAntibody);
         StatisticPublicationService service = new StatisticPublicationService();
         JsonResultResponse<StatisticRow> response = service.getAllZebrashareStats(pagination);
+        response.setHttpServletRequest(request);
+        return response;
+    }
+
+    @JsonView(View.API.class)
+    @RequestMapping(value = "/probe/histogram", method = RequestMethod.GET)
+    public JsonResultResponse<StatisticRow> getPublicationProbes(@RequestParam(value = "filter.publicationID", required = false) String publicationID,
+                                                                          @RequestParam(value = "multiplicitySort.antibody", required = false) String multiplicitySortAntibody,
+                                                                          @Version Pagination pagination) {
+
+        pagination.addFieldSorting(FieldFilter.ANTIBODY_NAME, multiplicitySortAntibody);
+        StatisticPublicationService service = new StatisticPublicationService();
+        JsonResultResponse<StatisticRow> response = service.getAllProbeStats(pagination);
         response.setHttpServletRequest(request);
         return response;
     }
