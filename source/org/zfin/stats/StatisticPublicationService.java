@@ -720,7 +720,7 @@ public class StatisticPublicationService {
                 return null;
             });
         columns.put(
-            new ColumnStats("Fish", false, false, false, true),
+            new ColumnStats("Fish", false, false, false, false),
             expressionTableRow ->
             {
                 if (expressionTableRow.getFish() != null)
@@ -728,7 +728,7 @@ public class StatisticPublicationService {
                 return null;
             });
         columns.put(
-            new ColumnStats("Experiment", false, false, false, true),
+            new ColumnStats("Experiment", false, false, false, false),
             expressionTableRow ->
             {
                 if (expressionTableRow.getExperiment() != null)
@@ -755,7 +755,7 @@ public class StatisticPublicationService {
             new ColumnStats("Assay", false, false, false, true),
             expressionTableRow -> expressionTableRow.getAssay().getName());
         columns.put(
-            new ColumnStats("Figure", false, false, false, true),
+            new ColumnStats("Figure", false, false, false, false),
             expressionTableRow -> expressionTableRow.getFigure().
                 getLabel());
 
