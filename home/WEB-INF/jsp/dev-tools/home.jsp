@@ -98,7 +98,9 @@
                         </td>
                     </tr>
                     <tr>
-                        <td></td>
+                        <td>
+                            <a href="/action/publication/stats">Statistics for Publication View Page</a>
+                        </td>
                         <td>
                             <a href="/action/devtool/phenotype-curation-history-statements">History: Phenotype
                                 Statements</a>
