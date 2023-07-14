@@ -33,7 +33,7 @@ begin
 for featAbbrev, featMrkrAbbrev, featName, featType in
     select feature_abbrev, mrkr_abbrev, feature_name, feature_type
        from feature left outer join feature_marker_relationship on fmrel_ftr_zdb_id = feature_zdb_id
-    	 	 and fmrel_type = 'is allele of'
+    	 	 and fmrel_type in ('is allele of', 'mutation involves')
     	 	 left outer join marker on fmrel_mrkr_zdb_id = mrkr_zdb_id
         where feature_zdb_id = featZdbId
 
