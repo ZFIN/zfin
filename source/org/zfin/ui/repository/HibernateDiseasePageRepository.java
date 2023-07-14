@@ -26,6 +26,7 @@ import java.util.Map;
 import static java.util.stream.Collectors.groupingBy;
 import static org.zfin.util.ZfinCollectionUtils.firstInEachGrouping;
 
+
 @Log4j2
 public class HibernateDiseasePageRepository implements DiseasePageRepository {
 
