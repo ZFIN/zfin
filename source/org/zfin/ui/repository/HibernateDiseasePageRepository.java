@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.stream.Collectors.groupingBy;
+import static org.zfin.util.ZfinCollectionUtils.firstInEachGrouping;
+
 
 @Log4j2
 public class HibernateDiseasePageRepository implements DiseasePageRepository {
@@ -172,13 +174,11 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
         Query<ChebiPhenotypeDisplay> query = HibernateUtil.currentSession().createQuery(hql, ChebiPhenotypeDisplay.class);
         query.setParameter("term", term);
         PaginationResult<ChebiPhenotypeDisplay> result = PaginationResultFactory.createResultFromScrollableResultAndClose(bean, query.scroll());
-        // make phenotypeStatementWharehouse objects a unique list
+        // make phenotypeStatementWarehouse objects a unique list
         result.getPopulatedResults().forEach(chebiPhenotypeDisplay -> {
-            Map<String, List<PhenotypeStatementWarehouse>> groupedMap = chebiPhenotypeDisplay.getPhenotypeStatements().stream()
-                .collect(groupingBy(PhenotypeStatementWarehouse::getDisplayName));
-            List<PhenotypeStatementWarehouse> warehouse = new ArrayList<>();
-            groupedMap.forEach((s, phenotypeStatementWarehouses) -> warehouse.add(phenotypeStatementWarehouses.get(0)));
-            chebiPhenotypeDisplay.setPhenotypeStatements(warehouse);
+            var psws = chebiPhenotypeDisplay.getPhenotypeStatements();
+            psws = firstInEachGrouping(psws, p -> p.getDisplayName());
+            chebiPhenotypeDisplay.setPhenotypeStatements(psws);
         });
         return result;
     }

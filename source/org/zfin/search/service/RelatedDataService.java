@@ -14,6 +14,8 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.feature.Feature;
 import org.zfin.feature.repository.FeatureService;
+import org.zfin.framework.featureflag.FeatureFlagEnum;
+import org.zfin.framework.featureflag.FeatureFlags;
 import org.zfin.genomebrowser.presentation.GenomeBrowserImage;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.mapping.GenomeLocation;
@@ -97,7 +99,7 @@ public class RelatedDataService {
                 if (numberOfTargetGenes > 1) {
                     return null;
                 }
-                gBrowseLink = makeLink(GENOME_BROWSER, "/" + ZfinPropertiesEnum.GBROWSE_ZV9_PATH_FROM_ROOT + "?name=" + id);
+                gBrowseLink = makeGenomeBrowserLinkByID(id);
                 links.add(gBrowseLink);
             }
 
@@ -106,9 +108,7 @@ public class RelatedDataService {
                 List<MarkerGenomeLocation> genomeLocations = getLinkageRepository().getGenomeLocation(getMarkerRepository().getMarkerByID(id));
                 for (MarkerGenomeLocation genomeLocation : genomeLocations) {
                     if (genomeLocation.getSource() == GenomeLocation.Source.ZFIN) {
-
-
-                        gBrowseLink = makeLink(GENOME_BROWSER, "/" + ZfinPropertiesEnum.GBROWSE_ZV9_PATH_FROM_ROOT + "?name=" + id);
+                        gBrowseLink = makeGenomeBrowserLinkByID(id);
                         links.add(gBrowseLink);
                     }
                 }
@@ -205,6 +205,15 @@ public class RelatedDataService {
         }
 
         return links;
+    }
+
+    private String makeGenomeBrowserLinkByID(String id) {
+        String url = GenomeLocation.Source.ZFIN_Zv9.getUrl() + id;
+
+        if (FeatureFlags.isFlagEnabled(FeatureFlagEnum.JBROWSE)) {
+            url = "/action/jbrowse/byName?name=" + id;
+        }
+        return makeLink(GENOME_BROWSER, url);
     }
 
     private void getRelatedDataForAnatomyGO(List<String> links, String id) {
