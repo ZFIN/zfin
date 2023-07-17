@@ -50,10 +50,6 @@ public class ImageViewController {
 
     @RequestMapping(value = {"/view/{zdbID}"})
     public String getImageView(Model model, @PathVariable("zdbID") String zdbID) {
-        return getImageView(model, zdbID, "figure/image-view");
-    }
-
-    public String getImageView(Model model, String zdbID, String template) {
         Image image = publicationRepository.getImageById(zdbID);
         if (image == null) {
             String replacedZdbID = RepositoryFactory.getInfrastructureRepository().getWithdrawnZdbID(zdbID);
@@ -97,7 +93,7 @@ public class ImageViewController {
         navigationMenu.setModel(model);
         model.addAttribute("navigationMenu", navigationMenu);
 
-        return template;
+        return "figure/image-view";
     }
 
     @RequestMapping("/publication/image-popup/{zdbID}")
