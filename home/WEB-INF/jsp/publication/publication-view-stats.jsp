@@ -2,6 +2,7 @@
 
 <c:set var="SUMMARY" value="Summary"/>
 <c:set var="ZEBRASHARE" value="Zebrashare Submission Details"/>
+<c:set var="DATASETS" value="Data Sets"/>
 <c:set var="FIGURES" value="Figures"/>
 <c:set var="GENES" value="Genes / Markers"/>
 <c:set var="STRS" value="Sequence Targeting Reagents"/>
@@ -67,9 +68,16 @@
                 </z:section>
 
         --%>
+
         <z:section title="${ZEBRASHARE}">
             <z:section title="">
                 <div class="__react-root" id="PublicationMarkerStatTable" data-type="zebrashare"></div>
+            </z:section>
+        </z:section>
+
+        <z:section title="${DATASETS}">
+            <z:section title="">
+                <div class="__react-root" id="PublicationMarkerStatTable" data-type="datasets"></div>
             </z:section>
         </z:section>
 

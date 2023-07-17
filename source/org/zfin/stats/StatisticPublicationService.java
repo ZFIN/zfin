@@ -12,6 +12,7 @@ import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Fish;
 import org.zfin.publication.Publication;
+import org.zfin.publication.PublicationDbXref;
 import org.zfin.zebrashare.ZebrashareSubmissionMetadata;
 
 import java.util.*;
@@ -81,20 +82,112 @@ public class StatisticPublicationService {
 
         // create return result set
         List<StatisticRow> rows = new ArrayList<>();
-        sortedMap.entrySet().forEach(pubEntry -> {
+        sortedMap.forEach((key, value) -> {
             StatisticRow statRow = new StatisticRow();
 
             ColumnValues colValues = new ColumnValues();
-            colValues.setValue(pubEntry.getKey().getZdbID());
+            colValues.setValue(key.getZdbID());
             statRow.put(publicationStat, colValues);
 
             ColumnValues colPubNameValues = new ColumnValues();
-            colPubNameValues.setValue(pubEntry.getKey().getShortAuthorList());
+            colPubNameValues.setValue(key.getShortAuthorList());
             statRow.put(publicationNameStat, colPubNameValues);
 
             ColumnValues colPubTypeValues = new ColumnValues();
-            colPubTypeValues.setValue(pubEntry.getKey().getType().getDisplay());
+            colPubTypeValues.setValue(key.getType().getDisplay());
             statRow.put(publicationTypeStat, colPubTypeValues);
+
+            rows.add(statRow);
+        });
+
+        JsonResultResponse<StatisticRow> response = new JsonResultResponse<>();
+        response.setResults(rows);
+        response.setTotal(rows.size());
+        response.setResults(rows.stream()
+            .skip(pagination.getStart())
+            .limit(pagination.getLimit())
+            .collect(toList()));
+        response.addSupplementalData("statistic", row);
+        return response;
+    }
+
+
+    public JsonResultResponse<StatisticRow> getDataSetsStats(Pagination pagination) {
+        Map<Publication, List<PublicationDbXref>> publicationMap = getPublicationRepository().getAllDataSetsPublication();
+
+        // remove empty publications
+        publicationMap.entrySet().removeIf(entry -> CollectionUtils.isEmpty(entry.getValue()));
+
+
+        HashMap<Publication, Integer> integerMap;
+        // default sorting: number of entities
+        integerMap = publicationMap.entrySet().stream()
+            .collect(HashMap::new, (map, entry) -> map.put(entry.getKey(), entry.getValue().size()), HashMap::putAll);
+        Map<Publication, Integer> sortedMap = integerMap.entrySet().
+            stream().
+            sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).
+            collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+
+        List<Publication> unfilteredPubList = new ArrayList<>(publicationMap.keySet());
+
+        StatisticRow row = new StatisticRow();
+        ColumnStats publicationStat = getColumnStatsPublication(publicationMap, row);
+
+        ColumnStats publicationNameStat = getColumnStatsPubAuthor(publicationMap, row);
+
+        Map<ColumnStats, Function<PublicationDbXref, String>> columns = new LinkedHashMap<>();
+        columns.put(
+            new ColumnStats("Accession ID", false, true, false, false),
+            PublicationDbXref::getAccessionNumber);
+        columns.put(
+            new ColumnStats("Type", false, false, false, false),
+            publicationDbXref -> publicationDbXref.getReferenceDatabase().getForeignDB().getDbName().name());
+
+        // put all columns into a statistic row
+        addColumnsToRows(publicationMap, row, columns);
+
+/*
+        Map<ColumnStats, Function<PublicationDbXref, List<String>>> columnsMulti = new LinkedHashMap<>();
+        columnsMulti.put(
+            new ColumnStats("Type", false, false, true, true),
+            publicationDbXref -> publicationDbXref.getReferenceDatabase().getForeignDB().getDbName());
+        columnsMulti.put(
+            new ColumnStats("Antigen Genes", false, false, true, false),
+            antibody -> antibody.getAntigenGenes().stream().map(Marker::getAbbreviation).collect(toList()));
+
+        addColumnsToRowsList(publicationMap, row, columnsMulti);
+*/
+
+
+        // create return result set
+        List<StatisticRow> rows = new ArrayList<>();
+        sortedMap.forEach((key, value) -> {
+            StatisticRow statRow = new StatisticRow();
+
+            ColumnValues colValues = new ColumnValues();
+            colValues.setValue(key.getZdbID());
+            statRow.put(publicationStat, colValues);
+
+            ColumnValues colPubNameValues = new ColumnValues();
+            colPubNameValues.setValue(key.getShortAuthorList());
+            statRow.put(publicationNameStat, colPubNameValues);
+
+            columns.forEach((columnStats, function) -> {
+                ColumnValues columnValues = new ColumnValues();
+                columnValues.setTotalNumber(getTotalNumberBase(publicationMap.get(key), function));
+                columnValues.setTotalDistinctNumber(getTotalDistinctNumber(publicationMap.get(key), function));
+                statRow.put(columnStats, columnValues);
+            });
+
+/*
+            columnsMulti.forEach((columnStats, function) -> {
+                ColumnValues columnValues = new ColumnValues();
+                columnValues.setTotalNumber(getTotalNumberMultiValuedObject(publicationMap.get(key), function));
+                columnValues.setTotalDistinctNumber(getTotalDistinctNumberPerUberEntity(publicationMap.get(key), function));
+                columnValues.setCardinality(getCardinalityPerUniqueRow(List.of(publicationMap.get(key)), function));
+                statRow.put(columnStats, columnValues);
+            });
+*/
 
             rows.add(statRow);
         });

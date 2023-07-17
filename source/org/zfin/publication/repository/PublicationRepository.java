@@ -487,4 +487,6 @@ public interface PublicationRepository extends PaginationParameter {
 
     void insertCorrespondenceResolution(CorrespondenceResolution correspondenceResolution);
 
+    Map<Publication, List<PublicationDbXref>> getAllDataSetsPublication();
+
 }

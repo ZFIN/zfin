@@ -1,12 +1,13 @@
 package org.zfin.publication;
 
+import org.zfin.infrastructure.ZdbID;
 import org.zfin.sequence.ReferenceDatabase;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "pub_db_xref")
-public class PublicationDbXref {
+public class PublicationDbXref implements ZdbID {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,5 +55,15 @@ public class PublicationDbXref {
 
     public void setReferenceDatabase(ReferenceDatabase referenceDatabase) {
         this.referenceDatabase = referenceDatabase;
+    }
+
+    @Override
+    public String getZdbID() {
+        return String.valueOf(Id);
+    }
+
+    @Override
+    public void setZdbID(String zdbID) {
+
     }
 }

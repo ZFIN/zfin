@@ -187,6 +187,19 @@ public class PublicationStatController {
     }
 
     @JsonView(View.API.class)
+    @RequestMapping(value = "/datasets/histogram", method = RequestMethod.GET)
+    public JsonResultResponse<StatisticRow> getPublicationDatasetsStats(@RequestParam(value = "filter.publicationID", required = false) String publicationID,
+                                                                          @RequestParam(value = "multiplicitySort.antibody", required = false) String multiplicitySortAntibody,
+                                                                          @Version Pagination pagination) {
+
+        pagination.addFieldSorting(FieldFilter.ANTIBODY_NAME, multiplicitySortAntibody);
+        StatisticPublicationService service = new StatisticPublicationService();
+        JsonResultResponse<StatisticRow> response = service.getDataSetsStats(pagination);
+        response.setHttpServletRequest(request);
+        return response;
+    }
+
+    @JsonView(View.API.class)
     @RequestMapping(value = "/probe/histogram", method = RequestMethod.GET)
     public JsonResultResponse<StatisticRow> getPublicationProbes(@RequestParam(value = "filter.publicationID", required = false) String publicationID,
                                                                           @RequestParam(value = "multiplicitySort.antibody", required = false) String multiplicitySortAntibody,
