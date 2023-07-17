@@ -95,7 +95,7 @@
             <div class="__react-root __use-navigation-counter" id="PublicationProbeTable__0"
                  data-url="/action/api/publication/${publication.zdbID}/probes"
                  data-publication-id="${publication.zdbID}"
-                 data-title="${GENES}"
+                 data-title="${PROBES}"
             ></div>
         </z:section>
 
