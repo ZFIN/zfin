@@ -2,15 +2,14 @@ import React, {useLayoutEffect, useRef, useState} from 'react';
 import PropTypes from 'prop-types';
 import NoData from '../components/NoData';
 
-// when you request a gbrowse image of a specific width, the image that comes back is actually 90 pixels wider
-const GBROWSE_PADDING = 90;
-const IMAGE_SIZE_STEP = 200;
+const IMAGE_SIZE_STEP = 100;
+const IMAGE_MAX_WIDTH = 1600;
+const IMAGE_MIN_WIDTH = 300;
 const DEBOUNCE_INTERVAL = 250;
 
 const JbrowseImage = ({imageUrl, linkUrl, build, chromosome, height = '400'}) => {
-    const [imgSrc, setImageSrc] = useState(null);
+    const [width, setWidth] = useState('1000');
     const containerRef = useRef(null);
-    const sep = imageUrl.indexOf('?') < 0 ? '?' : '&';
 
     // useLayoutEffect instead of useEffect since we're going to measure elements inside
     useLayoutEffect(() => {
@@ -19,10 +18,13 @@ const JbrowseImage = ({imageUrl, linkUrl, build, chromosome, height = '400'}) =>
         }
 
         const doUpdate = () => {
-            const containerWidth = containerRef.current.clientWidth;
-            const imgWidth = Math.max(Math.floor(containerWidth / IMAGE_SIZE_STEP) * IMAGE_SIZE_STEP, IMAGE_SIZE_STEP);
-            setImageSrc(`${imageUrl}${sep}width=${imgWidth - GBROWSE_PADDING}`);
+            const containerWidth = Math.min(containerRef.current.clientWidth, window.innerWidth);
+            const imgWidth = Math.floor(containerWidth / IMAGE_SIZE_STEP) * IMAGE_SIZE_STEP;
+
+            //constrain to within min and max
+            setWidth(Math.min(IMAGE_MAX_WIDTH, Math.max(IMAGE_MIN_WIDTH, imgWidth)));
         };
+
         let timer;
         const debouncedUpdate = () => {
             clearTimeout(timer);
@@ -39,7 +41,6 @@ const JbrowseImage = ({imageUrl, linkUrl, build, chromosome, height = '400'}) =>
         return <NoData/>;
     }
 
-    //<div ref={containerRef} style={imageLoaded ? undefined : hiddenStyle}>
     return (
         <div className='position-relative'>
             <div ref={containerRef}>
@@ -47,11 +48,10 @@ const JbrowseImage = ({imageUrl, linkUrl, build, chromosome, height = '400'}) =>
                 <a href={linkUrl}>
                     <object
                         type='text/html'
-                        width='1000'
+                        width={width}
                         height={height}
                         className='d-block mx-auto mb-3 pe-none'
-                        data={imgSrc}
-                        //onLoad={() => setImageLoaded(true)}
+                        data={imageUrl}
                     />
                 </a>
             </div>
