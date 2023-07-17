@@ -15,6 +15,8 @@ import javax.persistence.Table;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.zfin.util.ZfinCollectionUtils.firstInEachGrouping;
+
 @Log4j2
 public class TermPhenotypeIndexer extends UiIndexer<FishStatistics> {
 
@@ -31,11 +33,7 @@ public class TermPhenotypeIndexer extends UiIndexer<FishStatistics> {
             stat.setAffectedGenes(new HashSet<>(fish.getAffectedGenes()));
             // remove phenotype statements with the same display name
             SortedSet<PhenotypeStatementWarehouse> set1 = new TreeSet<>();
-            Map<String, List<PhenotypeStatementWarehouse>> map = phenotypeStatementWarehouses.stream().collect(Collectors.groupingBy(
-                PhenotypeStatementWarehouse::getShortName));
-            map.forEach((s, phenotypeStatementWarehouses1) -> {
-                set1.add(phenotypeStatementWarehouses1.get(0));
-            });
+            set1.addAll(firstInEachGrouping(phenotypeStatementWarehouses, p -> p.getShortName()));
             stat.setPhenotypeStatements(set1);
             Set<Figure> figs = phenotypeStatementWarehouses.stream().map(warehouse -> warehouse.getPhenotypeWarehouse().getFigure()).collect(Collectors.toSet());
             stat.setNumberOfFigs(figs.size());
