@@ -1,5 +1,7 @@
 package org.zfin.mapping;
 
+import org.zfin.framework.featureflag.FeatureFlagEnum;
+import org.zfin.framework.featureflag.FeatureFlags;
 import org.zfin.gbrowse.GBrowseTrack;
 import org.zfin.genomebrowser.GenomeBrowserTrack;
 import org.zfin.gwt.root.util.StringUtils;
@@ -8,6 +10,9 @@ import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 
 import java.io.Serializable;
+import java.util.List;
+
+import static org.zfin.mapping.GenomeLocation.Source.*;
 
 /**
  * Genome Location entity for NCBI, Vega, Ensembl and other sources for physical location.
@@ -109,10 +114,12 @@ public class GenomeLocation implements Serializable, Comparable<GenomeLocation> 
     }
 
     public String getUrl() {
-        if (source.getDisplayName().contains("NCBI")){
-            return source.getUrl() +accessionNumber +"&assm=GCF_000002035.6&context=gene";
-        }
-        else {
+        if (source.getDisplayName().contains("NCBI")) {
+            return source.getUrl() + accessionNumber + "&assm=GCF_000002035.6&context=gene";
+        } else if (FeatureFlags.isFlagEnabled(FeatureFlagEnum.JBROWSE)
+                && List.of(ZFIN, ZFIN_Zv9).contains(source)) {
+            return "/action/jbrowse/byName?name=" + accessionNumber;
+        } else {
             return source.getUrl() + accessionNumber;
         }
     }
