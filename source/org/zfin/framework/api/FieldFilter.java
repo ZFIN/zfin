@@ -21,6 +21,7 @@ public enum FieldFilter {
     TARGET_NAME("targetName"),
     ENTITY_ID("entityId"),
     STR_NAME("strName"),
+    STR_TYPE("strType"),
     REGULATORY_REGION("regulatoryRegion"),
     CODING_SEQUENCE("codingSequence"),
     SPECIES("species"),

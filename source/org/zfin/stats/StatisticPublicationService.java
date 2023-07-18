@@ -10,6 +10,7 @@ import org.zfin.framework.api.*;
 import org.zfin.infrastructure.ZdbID;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
+import org.zfin.marker.presentation.STRTargetRow;
 import org.zfin.mutant.Fish;
 import org.zfin.publication.Publication;
 import org.zfin.publication.PublicationDbXref;
@@ -188,6 +189,87 @@ public class StatisticPublicationService {
                 statRow.put(columnStats, columnValues);
             });
 */
+
+            rows.add(statRow);
+        });
+
+        JsonResultResponse<StatisticRow> response = new JsonResultResponse<>();
+        response.setResults(rows);
+        response.setTotal(rows.size());
+        response.setResults(rows.stream()
+            .skip(pagination.getStart())
+            .limit(pagination.getLimit())
+            .collect(toList()));
+        response.addSupplementalData("statistic", row);
+        return response;
+    }
+
+    public JsonResultResponse<StatisticRow> getAllPublicationStrs(Pagination pagination) {
+        Map<Publication, List<STRTargetRow>> unfilteredMap = getPublicationRepository().getAllAttributedSTRs(pagination);
+
+        // remove empty publications
+        unfilteredMap.entrySet().removeIf(entry -> CollectionUtils.isEmpty(entry.getValue()));
+
+        Map<Publication, List<STRTargetRow>> publicationMap = new HashMap<>();
+        unfilteredMap.keySet().forEach(key -> {
+            List<STRTargetRow> list = unfilteredMap.get(key);
+            if (list != null) {
+                FilterService<STRTargetRow> filterService = new FilterService<>(new STRTargetRowFiltering());
+                List<STRTargetRow> strRow = filterService.filterAnnotations(list, pagination.getFieldFilterValueMap());
+                publicationMap.put(key, strRow);
+            }
+        });
+        // remove empty publications
+        publicationMap.entrySet().removeIf(entry -> CollectionUtils.isEmpty(entry.getValue()));
+
+        HashMap<Publication, Integer> integerMap;
+        // default sorting: number of entities
+        integerMap = publicationMap.entrySet().stream()
+            .collect(HashMap::new, (map, entry) -> map.put(entry.getKey(), entry.getValue().size()), HashMap::putAll);
+        Map<Publication, Integer> sortedMap = integerMap.entrySet().
+            stream().
+            sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).
+            collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+
+
+        StatisticRow row = new StatisticRow();
+        ColumnStats publicationStat = getColumnStatsPublication(publicationMap, row);
+
+        ColumnStats publicationNameStat = getColumnStatsPubAuthor(publicationMap, row);
+
+        Map<ColumnStats, Function<STRTargetRow, String>> columns = new LinkedHashMap<>();
+        columns.put(
+            new ColumnStats("Target Gene", false, false, false, false),
+            strTargetRow -> strTargetRow.getTarget().getAbbreviation());
+        columns.put(
+            new ColumnStats("Reagent", false, false, false, false),
+            strTargetRow -> strTargetRow.getStr().getAbbreviation());
+        columns.put(
+            new ColumnStats("Reagent Type", false, false, false, false),
+            strTargetRow -> strTargetRow.getStr().getType().toString());
+
+        // put all columns into a statistic row
+        addColumnsToRows(publicationMap, row, columns);
+
+        // create return result set
+        List<StatisticRow> rows = new ArrayList<>();
+        sortedMap.forEach((key, value) -> {
+            StatisticRow statRow = new StatisticRow();
+
+            ColumnValues colValues = new ColumnValues();
+            colValues.setValue(key.getZdbID());
+            statRow.put(publicationStat, colValues);
+
+            ColumnValues colPubNameValues = new ColumnValues();
+            colPubNameValues.setValue(key.getShortAuthorList());
+            statRow.put(publicationNameStat, colPubNameValues);
+
+            columns.forEach((columnStats, function) -> {
+                ColumnValues columnValues = new ColumnValues();
+                columnValues.setTotalNumber(getTotalNumberBase(publicationMap.get(key), function));
+                columnValues.setTotalDistinctNumber(getTotalDistinctNumber(publicationMap.get(key), function));
+                statRow.put(columnStats, columnValues);
+            });
 
             rows.add(statRow);
         });
@@ -996,6 +1078,8 @@ public class StatisticPublicationService {
     }
 
     private static <T extends ZdbID, O extends Object> int getTotalNumberBase(List<T> list, Function<T, O> function) {
+        if (list == null)
+            return 0;
         return (int) list.stream()
             .filter(o -> function.apply(o) != null)
             .count();
@@ -1052,6 +1136,8 @@ public class StatisticPublicationService {
     }
 
     private static <T extends ZdbID, ID> long getTotalDistinctNumber(List<T> map, Function<T, ID> function) {
+        if(map == null)
+            return 0;
         return map.stream()
             .filter(o -> function.apply(o) != null)
             .map(function)

@@ -36,6 +36,7 @@ import org.zfin.infrastructure.SourceAlias;
 import org.zfin.marker.*;
 import org.zfin.marker.presentation.GeneBean;
 import org.zfin.marker.presentation.HighQualityProbe;
+import org.zfin.marker.presentation.STRTargetRow;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.mutant.*;
 import org.zfin.ontology.GenericTerm;
@@ -1996,15 +1997,21 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     @Override
     public List<SequenceTargetingReagent> getSTRsByPublication(String publicationID, Pagination pagination) {
         Session session = HibernateUtil.currentSession();
-        String hql = "select distinct marker from SequenceTargetingReagent marker, RecordAttribution attr" +
-                     "     where attr.dataZdbID = marker.zdbID" +
-                     "           and attr.sourceZdbID = :pubID " +
-                     "           and marker.markerType.name in (:markerTypes)";
+        String hql = """
+            select distinct marker from SequenceTargetingReagent marker, RecordAttribution attr
+                 where attr.dataZdbID = marker.zdbID
+                       and marker.markerType.name in (:markerTypes)
+            """;
+        if (publicationID != null) {
+            hql += "and attr.sourceZdbID = :pubID ";
+        }
         if (pagination.getFieldFilter(FieldFilter.STR_NAME) != null) {
             hql += " AND marker.abbreviation like '%" + pagination.getFieldFilter(FieldFilter.STR_NAME) + "%'";
         }
         Query query = session.createQuery(hql);
-        query.setString("pubID", publicationID);
+        if (publicationID != null) {
+            query.setString("pubID", publicationID);
+        }
         query.setParameterList("markerTypes", List.of(Marker.Type.MRPHLNO.name(), Marker.Type.CRISPR.name(), Marker.Type.TALEN.name()));
         return query.list();
     }
@@ -2575,4 +2582,38 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         });
         return returnMap;
     }
+
+    private Map<Publication, List<STRTargetRow>> strMaps;
+
+    @Override
+    public Map<Publication, List<STRTargetRow>> getAllAttributedSTRs(Pagination pagination) {
+        if (strMaps != null)
+            return strMaps;
+        Session session = HibernateUtil.currentSession();
+        String hql = """
+            select marker, attr.publication from SequenceTargetingReagent marker, PublicationAttribution attr
+                 where attr.dataZdbID = marker.zdbID
+                       and marker.markerType.name in (:markerTypes)
+            """;
+        if (pagination.getFieldFilter(FieldFilter.STR_NAME) != null) {
+            hql += " AND marker.abbreviation like '%" + pagination.getFieldFilter(FieldFilter.STR_NAME) + "%'";
+        }
+        if (pagination.getFieldFilter(FieldFilter.STR_TYPE) != null) {
+            hql += " AND marker.zdbID like '%" + pagination.getFieldFilter(FieldFilter.STR_TYPE) + "%'";
+        }
+        Query<Tuple> query = session.createQuery(hql, Tuple.class);
+        query.setParameterList("markerTypes", List.of(Marker.Type.MRPHLNO.name(), Marker.Type.CRISPR.name(), Marker.Type.TALEN.name()));
+        Map<Publication, List<STRTargetRow>> map = new HashMap<>();
+        query.list().forEach(tuple -> {
+            SequenceTargetingReagent str = (SequenceTargetingReagent) tuple.get(0);
+            for (Marker target : str.getTargetGenes()) {
+                STRTargetRow row = new STRTargetRow(str, target);
+                List<STRTargetRow> rows = map.computeIfAbsent((Publication) tuple.get(1), k -> new ArrayList<>());
+                rows.add(row);
+            }
+        });
+        strMaps = map;
+        return strMaps;
+    }
+
 }
