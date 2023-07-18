@@ -1,6 +1,9 @@
 <%@ tag import="org.zfin.properties.ZfinPropertiesEnum" %>
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
+<%@attribute name="queryString" required="true" type="java.lang.String" %>
+<%@attribute name="baseUrlWithoutPage" required="true" type="java.lang.String" %>
+
 
 <!-- Modal -->
 <div class="modal fade" id="facet-value-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -13,7 +16,7 @@
             </div>
             <div class="modal-body">
 
-                <zfin-search:facetAutocomplete/>
+                <zfin-search:facetAutocomplete queryString="${queryString}" baseUrlWithoutPage="${baseUrlWithoutPage}"/>
 
             </div>
             <div class="modal-footer">
@@ -26,13 +29,11 @@
 
 <script>
     jQuery(document).ready(function() {
-
         jQuery('.facet-value-modal-link').on('click', function() {
-            var category = jQuery(this).attr('category');
             var field = jQuery(this).attr('field');
             var title = jQuery(this).attr('modal-title');
             jQuery('#all-facet-modal-title').text(title);
-            angular.element(jQuery('#facet-list-controller')).scope().fetchValues(category, field, title);
+            window.zfinEventBus.publish('facet-modal-open', field);
         });
     });
 
