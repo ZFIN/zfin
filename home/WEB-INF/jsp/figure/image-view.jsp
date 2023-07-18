@@ -94,19 +94,15 @@
             </div>
         </z:section>
 
-        <c:if test="${!empty image.comments}">
-            <z:section title="${COMMENTS}">
-                <p class="fig">
-                        ${image.comments}
-                </p>
-            </z:section>
-        </c:if>
+        <z:section title="${COMMENTS}">
+            <p class="fig">
+                    ${image.comments}
+            </p>
+        </z:section>
 
-        <c:if test="${!empty image.figure}">
-            <z:section title="${FIGURE_CAPTION}">
-                <zfin-figure:figureLabelAndCaption figure="${image.figure}"/>
-            </z:section>
-        </c:if>
+        <z:section title="${FIGURE_CAPTION}">
+            <zfin-figure:figureLabelAndCaption figure="${image.figure}"/>
+        </z:section>
 
         <z:section title="${DEVELOPMENTAL_STAGE}">
             <c:if test="${!empty image.imageStage.start}">

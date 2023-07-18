@@ -9,6 +9,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
+import org.zfin.mutant.PhenotypeStatementWarehouse;
 import org.zfin.mutant.presentation.ChebiFishModelDisplay;
 import org.zfin.mutant.presentation.ChebiPhenotypeDisplay;
 import org.zfin.mutant.presentation.FishModelDisplay;
@@ -17,8 +18,14 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.OmimPhenotypeDisplay;
 import org.zfin.repository.PaginationResultFactory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+
+import static java.util.stream.Collectors.groupingBy;
+import static org.zfin.util.ZfinCollectionUtils.firstInEachGrouping;
+
 
 @Log4j2
 public class HibernateDiseasePageRepository implements DiseasePageRepository {
@@ -166,7 +173,14 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
         hql += "order by chebiPhenotype.fish.displayName";
         Query<ChebiPhenotypeDisplay> query = HibernateUtil.currentSession().createQuery(hql, ChebiPhenotypeDisplay.class);
         query.setParameter("term", term);
-        return PaginationResultFactory.createResultFromScrollableResultAndClose(bean, query.scroll());
+        PaginationResult<ChebiPhenotypeDisplay> result = PaginationResultFactory.createResultFromScrollableResultAndClose(bean, query.scroll());
+        // make phenotypeStatementWarehouse objects a unique list
+        result.getPopulatedResults().forEach(chebiPhenotypeDisplay -> {
+            var psws = chebiPhenotypeDisplay.getPhenotypeStatements();
+            psws = firstInEachGrouping(psws, p -> p.getDisplayName());
+            chebiPhenotypeDisplay.setPhenotypeStatements(psws);
+        });
+        return result;
     }
 
     // empty out fast search tables (starting with ui.)
