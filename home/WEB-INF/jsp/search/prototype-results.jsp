@@ -18,7 +18,6 @@
 <c:set var="figureCategoryName" value="${Category.FIGURE.name}"/>
 
 <z:page bootstrap="true">
-    <script src="${zfn:getAssetPath("angular.js")}"></script>
     <script src="${zfn:getAssetPath("search.js")}"></script>
 
     <div class="container-fluid">
@@ -78,15 +77,6 @@
                     </div>
                 </div>
             </div>
-
-            <form style="display:none;">  <%-- packing these away here to be used by javascript --%>
-                <input type="hidden" name="queryString" id="query-string" value="${queryString}"/>
-                <input type="hidden" name="baseUrl" id="base-url" value="${baseUrl}"/>
-                <input type="hidden" name="baseUrlWithoutQ" id="base-url-without-q" value="${baseUrlWithoutQ}"/>
-                <input type="hidden" name="baseUrlWithoutPage" id="base-url-without-page" value="${baseUrlWithoutPage}"/>
-                <input type="hidden" name="defaultAction" id="default-action" value="/prototype"/>
-            </form>
-
         </div>
 
 
@@ -330,7 +320,7 @@
     </div>
 
 
-    <zfin-search:allFacetsModal/>
+    <zfin-search:allFacetsModal queryString="${queryString}" baseUrlWithoutPage="${baseUrlWithoutPage}"/>
 
     <div id="figureGalleryModal" class="figure-gallery-modal modal" tabindex="-1" role="dialog">
         <div class="modal-dialog"></div>
@@ -576,4 +566,7 @@
 
     });
     </script>
+
+    <script src="${zfn:getAssetPath("react.js")}"></script>
+
 </z:page>
