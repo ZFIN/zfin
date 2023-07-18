@@ -47,6 +47,12 @@
             </z:section>
         </z:section>
 
+        <z:section title="${STRS}">
+            <z:section title="">
+                <div class="__react-root" id="PublicationMarkerStatTable" data-type="str"></div>
+            </z:section>
+        </z:section>
+
         <%--
 
                 <z:section title="${MUTATION}">
