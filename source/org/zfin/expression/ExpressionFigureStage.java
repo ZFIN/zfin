@@ -149,6 +149,8 @@ public class ExpressionFigureStage {
         // one functional change and non-standard environment -> valid EaP
         if (expressionExperiment.getFishExperiment().getFish().getFishFunctionalAffectedGeneCount() == 1 && !expressionExperiment.getFishExperiment().isStandard())
             return null;
+        if (expressionExperiment.getFishExperiment().getFish().isWildtype() && expressionExperiment.getFishExperiment().isTwoChangesInEnvironment())
+            return null;
         return "EaP annotations require two functional modifications with standard environment or one functional modification with non-standard environment";
     }
 }

@@ -48,12 +48,12 @@ public class FishExperiment implements Comparable<FishExperiment> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!getClass().isAssignableFrom(o.getClass()) ||
-                o.getClass().isAssignableFrom(getClass())) {
+            o.getClass().isAssignableFrom(getClass())) {
             return false;
         }
         FishExperiment that = (FishExperiment) o;
         return Objects.equals(this.getExperiment(), that.getExperiment()) &&
-                Objects.equals(this.getFish(), that.getFish());
+               Objects.equals(this.getFish(), that.getFish());
     }
 
     @Override
@@ -68,9 +68,13 @@ public class FishExperiment implements Comparable<FishExperiment> {
             return true;
         if (totalCount == 1 && !isStandardOrGenericControl())
             return true;
-        if (totalCount == 0 && getExperiment().getExperimentConditions().size() >= 2 )
+        if (totalCount == 0 && getExperiment().getExperimentConditions().size() >= 2)
             return true;
 
         return false;
+    }
+
+    public boolean isTwoChangesInEnvironment() {
+        return getExperiment().getExperimentConditions().size() == 2;
     }
 }
