@@ -67,7 +67,7 @@ const DataTable = ({
                 sortOptions={sortOptions}
                 tableState={tableState}
             />
-            <ShowDevInfo show={true} url={dataUrl} />
+            <ShowDevInfo show={false} url={dataUrl} />
         </div>
     )
 };
