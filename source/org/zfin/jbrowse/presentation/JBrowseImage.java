@@ -113,6 +113,10 @@ public class JBrowseImage implements GenomeBrowserImage {
                 url.addNameValuePair("h_feat", highlight);
             }
 
+            if (CollectionUtils.isNotEmpty(tracks)) {
+                url.addNameValuePair("tracks", StringUtils.join(tracks, ","));
+            }
+
             linkUrl = "/" + url.getURL();
         }
         return linkUrl;

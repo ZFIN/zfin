@@ -4,6 +4,7 @@ import 'regenerator-runtime/runtime';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import * as navigationCounter from './state/NavigationCounter';
+import * as zfinEventBus from './state/ZfinEventBus';
 
 document
     .querySelectorAll('.__react-root')
@@ -16,7 +17,13 @@ document
 
         // this flag indicates that the component needs access to the navigation count state
         const useNavigationCount = element.classList.contains('__use-navigation-counter');
-        const dataset = useNavigationCount ? {...element.dataset, navigationCounter} : {...element.dataset};
+
+        // this flag indicates that the component needs access to the event bus state
+        const useEventBus = element.classList.contains('__use-event-bus');
+
+        //build the dataset
+        let dataset = useNavigationCount ? {...element.dataset, navigationCounter} : {...element.dataset};
+        dataset = useEventBus ? {...dataset, eventBus: zfinEventBus} : {...dataset};
 
         import(`./containers/${container}`)
             .then(Module => ReactDOM.render(<Module.default {...dataset} />, element))
