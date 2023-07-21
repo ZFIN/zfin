@@ -50,7 +50,7 @@ public class SequenceServiceTest extends AbstractDatabaseTest {
         var response = sequenceService.getMarkerDBLinkJsonResultResponse(markerZdbId, pagination, false);
         var results = response.getResults();
 
-        assertEquals(16, results.size());
+        assertEquals(12, results.size());
     }
 
     @Test

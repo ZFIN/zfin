@@ -66,9 +66,7 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
     public void testAnatomyDetailPageByAnatId() throws IOException {
         HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term/ZDB-ANAT-010921-415");
         assertEquals("ZFIN Anatomy Ontology: brain", page.getTitleText());
-        List<?> byXPath = page.getByXPath("//a[. = 'PHENOTYPE']");
-        assertNotNull("Phenotype section is not displayed", byXPath);
-        assertTrue("Phenotype section is not displayed", byXPath.size() > 0);
+        assertNotNull(page.getByXPath("//span[. = 'Phenotype']").get(0));
     }
 
     // liver page
@@ -91,7 +89,7 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
     // liver page
     @Test
     public void testAnatomyDetailPageByName() throws IOException {
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term/term?name=liver ");
+        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term-detail/term?name=liver");
         assertNotNull(page);
         assertEquals("ZFIN Anatomy Ontology: liver", page.getTitleText());
         assertNotNull(page.getByXPath("//span[. = 'Phenotype']").get(0));

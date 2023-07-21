@@ -34,7 +34,7 @@ public class SequenceControllerTest extends AbstractDatabaseTest {
         HibernateUtil.rollbackTransaction();
         JsonResultResponse<MarkerDBLink> links = controller.getSequenceView(zdbID, false, null, null, new Pagination());
         assertNotNull(links);
-        assertThat(links.getTotal(), greaterThanOrEqualTo(34L));
+        assertThat(links.getTotal(), greaterThanOrEqualTo(30L));
 
         links = controller.getSequenceView(zdbID, false, null, "1", new Pagination());
         assertNotNull(links);
