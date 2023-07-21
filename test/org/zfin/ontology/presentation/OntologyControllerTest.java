@@ -53,7 +53,7 @@ public class OntologyControllerTest extends AbstractDatabaseTest {
         request.setRequestURI("/ontology/term/GO:0032502");
         ModelAndView mav = handlerAdapter.handle(request, response, controller);
         assertNotNull(mav);
-        assertEquals("ontology/ontology-term", mav.getViewName());
+        assertEquals("ontology/term-view", mav.getViewName());
     }
 
     @Test
@@ -62,7 +62,7 @@ public class OntologyControllerTest extends AbstractDatabaseTest {
         request.setRequestURI("/ontology/term/ZDB-TERM-100331-1323");
         ModelAndView mav = handlerAdapter.handle(request, response, controller);
         assertNotNull(mav);
-        assertEquals("ontology/ontology-term", mav.getViewName());
+        assertEquals("ontology/term-view", mav.getViewName());
         Map<String, Object> model = mav.getModel();
         assertNotNull(model);
         Object formBean = model.get(LookupStrings.FORM_BEAN);
