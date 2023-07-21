@@ -223,7 +223,7 @@ public class OntologyTermDetailController {
                 model.addAttribute(LookupStrings.ZDB_ID, "No replacement term ID found for " + termID);
                 return LookupStrings.RECORD_NOT_FOUND_PAGE;
             }
-            return "redirect:/action/ontology/term-detail/" + newTermID;
+            return "redirect:/action/ontology/term/" + newTermID;
         }
 
         GenericTerm term = null;
