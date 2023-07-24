@@ -70,7 +70,6 @@ import org.zfin.util.*;
 //        ActiveSourceTest.class,
         AnatomyPresentationTest.class,
         AntibodySearchCriteriaTest.class,
-        ApgPaginationBeanTest.class,
         BeanCompareServiceTest.class,
         //BlastNonDBTest.class,
         BlastPresentationServiceTest.class,
