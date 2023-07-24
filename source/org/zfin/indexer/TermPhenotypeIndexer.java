@@ -33,7 +33,7 @@ public class TermPhenotypeIndexer extends UiIndexer<FishStatistics> {
             stat.setAffectedGenes(new HashSet<>(fish.getAffectedGenes()));
             // remove phenotype statements with the same display name
             SortedSet<PhenotypeStatementWarehouse> set1 = new TreeSet<>();
-            set1.addAll(firstInEachGrouping(phenotypeStatementWarehouses, p -> p.getShortName()));
+            set1.addAll(firstInEachGrouping(phenotypeStatementWarehouses, PhenotypeStatementWarehouse::getShortName));
             stat.setPhenotypeStatements(set1);
             Set<Figure> figs = phenotypeStatementWarehouses.stream().map(warehouse -> warehouse.getPhenotypeWarehouse().getFigure()).collect(Collectors.toSet());
             stat.setNumberOfFigs(figs.size());
