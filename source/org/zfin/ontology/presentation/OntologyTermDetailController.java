@@ -46,11 +46,19 @@ import static org.zfin.repository.RepositoryFactory.*;
 public class OntologyTermDetailController {
 
 
+    @RequestMapping("/term/term")
+    protected String termSearchPageByName(@RequestParam(required = true) String name,
+                                          @RequestParam(required = false) String ontologyName,
+                                          @ModelAttribute("formBean") OntologyBean form,
+                                          Model model) {
+        return termDetailPageByName(name, ontologyName, form, model);
+    }
+
     @RequestMapping("/term-detail/term")
     protected String termDetailPageByName(@RequestParam(required = true) String name,
                                           @RequestParam(required = false) String ontologyName,
                                           @ModelAttribute("formBean") OntologyBean form,
-                                          Model model) throws Exception {
+                                          Model model) {
         if (name == null) {
             model.addAttribute(LookupStrings.ZDB_ID, "No term name provided");
             return LookupStrings.RECORD_NOT_FOUND_PAGE;
