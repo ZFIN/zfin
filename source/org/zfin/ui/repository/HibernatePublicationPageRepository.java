@@ -47,6 +47,7 @@ public class HibernatePublicationPageRepository implements PublicationPageReposi
         Query<ExpressionTableRow> query = HibernateUtil.currentSession().createQuery(hql, ExpressionTableRow.class);
         query.setParameter("pub", publication);
         query.setMaxResults(pagination.getLimit());
+        query.setFirstResult(pagination.getStart());
         PaginationResult<ExpressionTableRow> result = new PaginationResult<>();
         result.setPopulatedResults(query.getResultList());
 
