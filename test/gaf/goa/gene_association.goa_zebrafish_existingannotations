@@ -3,7 +3,7 @@ UniProtKB	Q5RFW2	tab2		GO:0046872	GO_REF:0000004	IEA	SP_KW:KW-0479	F	TGF-beta-ac
 UniProtKB	Q5RFW2	tab2		GO:0008270	GO_REF:0000002	IEA	InterPro:IPR001876	F	TGF-beta-activated kinase 1 and MAP3K7-binding protein 2	tab2|zgc:77446|map3k7ip2|IPI00497931|IPI00637926|TAB2_DANRE|Q6NZS9	protein	taxon:7955	20101211	InterPro		
 UniProtKB	Q5RFW2	tab2		GO:0007507	PMID:20493459	IMP		P	TGF-beta-activated kinase 1 and MAP3K7-binding protein 2	tab2|zgc:77446|map3k7ip2|IPI00497931|IPI00637926|TAB2_DANRE|Q6NZS9	protein	taxon:7955	20100923	UniProtKB		
 UniProtKB	Q5RFW2	tab2		GO:0005622	GO_REF:0000002	IEA	InterPro:IPR001876	C	TGF-beta-activated kinase 1 and MAP3K7-binding protein 2	tab2|zgc:77446|map3k7ip2|IPI00497931|IPI00637926|TAB2_DANRE|Q6NZS9	protein	taxon:7955	20101211	InterPro		
-UniProtKB	Q58EK5	tdrd1		GO:0043046	GO_REF:0000024	ISS	UniProtKB:Q99MV1	P	Tudor domain-containing protein 1	tdrd1|im:7155161|IPI00481706|TDRD1_DANRE	protein	taxon:7955	20090720	UniProtKB		
+UniProtKB	Q58EK5	tdrd1		GO:0061017	GO_REF:0000024	ISS	UniProtKB:Q99MV1	P	Tudor domain-containing protein 1	tdrd1|im:7155161|IPI00481706|TDRD1_DANRE	protein	taxon:7955	20090720	UniProtKB
 UniProtKB	Q58EK5	tdrd1		GO:0007281	GO_REF:0000024	ISS	UniProtKB:Q99MV1	P	Tudor domain-containing protein 1	tdrd1|im:7155161|IPI00481706|TDRD1_DANRE	protein	taxon:7955	20090326	UniProtKB		
 UniProtKB	Q58EK5	tdrd1		GO:0007126	GO_REF:0000004	IEA	SP_KW:KW-0469	P	Tudor domain-containing protein 1	tdrd1|im:7155161|IPI00481706|TDRD1_DANRE	protein	taxon:7955	20101211	UniProtKB		
 UniProtKB	Q58EK5	tdrd1		GO:0005737	GO_REF:0000024	ISS	UniProtKB:Q99MV1	C	Tudor domain-containing protein 1	tdrd1|im:7155161|IPI00481706|TDRD1_DANRE	protein	taxon:7955	20090506	UniProtKB		
