@@ -16,8 +16,8 @@ drop table if exists final491;
 drop table if exists tmp_final;
 
 -- Report-Genetic-Interactions
-drop table if exists tmp_fish_thatfitthebill;
-drop table if exists tmp_fishnoeap;
-drop table if exists tmp_onlyfish;
-drop table if exists tmp_fish490;
-drop table if exists tmp_onlydeficiencies;
+tmp_fish_thatfitthebill;
+tmp_fishnoeap;
+tmp_onlyfish;
+tmp_fish490;
+tmp_onlydeficiencies;
