@@ -64,6 +64,18 @@ public class HibernateFeatureRepository implements FeatureRepository {
         return HibernateUtil.currentSession().get(Feature.class, zdbID);
     }
 
+    public FeatureGenomicMutationDetail getFgmdByID(String zdbID) {
+        return HibernateUtil.currentSession().get(FeatureGenomicMutationDetail.class, zdbID);
+    }
+
+    public DataAlias getSpecificDataAlias(Feature feature, String alias) {
+        Session session = currentSession();
+        Criteria criteria = session.createCriteria(DataAlias.class);
+        criteria.add(Restrictions.eq("feature", feature));
+        criteria.add(Restrictions.eq("alias", alias));
+        return (DataAlias) criteria.uniqueResult();
+    }
+
     /**
      * Retrieve a list of all feature for a given publication.
      * Features need to be directly attributed to the publication in question.
