@@ -69,7 +69,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
     }
 
     public FeatureGenomicMutationDetail getFgmdByID(String zdbID) {
-        return (FeatureGenomicMutationDetail) HibernateUtil.currentSession().get(FeatureGenomicMutationDetail.class, zdbID);
+        return HibernateUtil.currentSession().get(FeatureGenomicMutationDetail.class, zdbID);
     }
 
     public DataAlias getSpecificDataAlias(Feature feature, String alias) {
@@ -112,10 +112,10 @@ public class HibernateFeatureRepository implements FeatureRepository {
         String hql = "select distinct fmrel.marker from FeatureMarkerRelationship fmrel, Feature feature" +
                      " where fmrel.type in (:relation) and fmrel.feature = feature and feature.zdbID = :featureZdbId";
 
-        Query query = currentSession().createQuery(hql);
+        Query<Marker> query = currentSession().createQuery(hql, Marker.class);
         query.setString("relation", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF.toString());
         query.setString("featureZdbId", featureZdbId);
-        return (Marker) query.uniqueResult();
+        return query.uniqueResult();
     }
 
 
@@ -126,12 +126,12 @@ public class HibernateFeatureRepository implements FeatureRepository {
                      " where fmrel1.type in (:innocuous, :phenotypic) " +
                      " and fmrel1.feature = :featureZdbId";
 
-        Query query = currentSession().createQuery(hql);
+        Query<Marker> query = currentSession().createQuery(hql, Marker.class);
         query.setString("innocuous", FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString());
         query.setString("phenotypic", FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString());
         query.setString("featureZdbId", featureZdbId);
 
-        return (List<Marker>) query.list();
+        return query.list();
     }
 
     @Override
