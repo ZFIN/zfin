@@ -390,7 +390,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
     /**
      * We can use the f.sources[0] notation, because there is a 1-1 relationship between Feature and Lab source.
      *
-     * @param prefix prefix string
+     * @param prefix
      */
     @Override
     public List<FeatureLabEntry> getFeaturesForPrefix(String prefix) {
