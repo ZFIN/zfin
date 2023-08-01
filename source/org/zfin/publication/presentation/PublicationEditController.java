@@ -142,6 +142,26 @@ public class PublicationEditController {
         return "publication/edit-publication";
     }
 
+    @RequestMapping(value = "/{zdbID}/edit2", method = RequestMethod.GET)
+    public String showEditPublicationForm2(Model model,
+                                          @PathVariable String zdbID) {
+        Publication publication = publicationRepository.getPublication(zdbID);
+        if (publication == null) {
+            return LookupStrings.RECORD_NOT_FOUND_PAGE;
+        }
+        PublicationBean publicationBean = new PublicationBean();
+        publicationBean.setPublication(publication);
+        if (publication.getAccessionNumber() != null) {
+            publicationBean.setAccessionNumber(publication.getAccessionNumber().toString());
+        }
+
+        model.addAttribute("publicationBean", publicationBean);
+        model.addAttribute("allowCuration", publicationService.allowCuration(publication));
+        model.addAttribute("hasCorrespondence", publicationService.hasCorrespondence(publication));
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Edit Pub: " + publication.getTitle());
+        return "publication/edit-publication2";
+    }
+
     @RequestMapping(value = "/{zdbID}/edit", method = RequestMethod.POST)
     public String processUpdatedPublication(Model model,
                                             @PathVariable String zdbID,

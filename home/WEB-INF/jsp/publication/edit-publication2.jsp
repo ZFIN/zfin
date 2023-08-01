@@ -1,7 +1,6 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <z:page bootstrap="true">
-    <script src="${zfn:getAssetPath("angular.js")}"></script>
 
     <c:set var="pubID">${publicationBean.publication.zdbID}</c:set>
     <c:set var="linkURL">/action/publication/${pubID}/link</c:set>
@@ -52,7 +51,7 @@
             </div>
             <div role="tabpanel" class="tab-pane figure-edit-panel" id="figures">
 
-                <div figure-edit pub-id="${pubID}"></div>
+                <div class="__react-root" id="FigureEdit" data-pub-id="${pubID}"></div>
 
 
                 <div class="__react-root"
