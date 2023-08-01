@@ -1,21 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from 'react';
 
 const InlineEditTextarea = ({
-                                text: initialText = "",
-                                error: initialError = "",
-                                onSave = () => {},
-                                wrapperClass = "",
-                                errorClass = "error",
-                                defaultText = "Click to add",
-                                textAreaClass = "form-control form-group",
-                                saveButtonClass = "btn btn-primary",
-                                cancelButtonClass = "btn btn-outline-secondary",
-                                useIcons = false,
-                                useInput = false
-                            }) => {
+    text: initialText = '',
+    error: initialError = '',
+    onSave = () => {},
+    wrapperClass = '',
+    errorClass = 'error',
+    defaultText = 'Click to add',
+    textAreaClass = 'form-control form-group',
+    saveButtonClass = 'btn btn-primary',
+    cancelButtonClass = 'btn btn-outline-secondary',
+    useIcons = false,
+    useInput = false
+}) => {
     const [text, setText] = useState(initialText);
     const [error, setError] = useState(initialError);
-    const [originalText, setOriginalText] = useState("");
+    const [originalText, setOriginalText] = useState('');
     const [editing, setEditing] = useState(false);
     const [saving, setSaving] = useState(false);
 
@@ -47,27 +47,27 @@ const InlineEditTextarea = ({
         <div className={wrapperClass}>
             {error && <div className={errorClass}>{error}</div>}
             {!editing && (
-                <div onClick={beginEdit} className="inline-edit" title="Click to edit">
-                    {text ? <div dangerouslySetInnerHTML={{ __html: text }}></div> : <div className="muted">{defaultText}</div>}
+                <div onClick={beginEdit} className='inline-edit' title='Click to edit'>
+                    {text ? <div dangerouslySetInnerHTML={{ __html: text }}/> : <div className='muted'>{defaultText}</div>}
                 </div>
             )}
             {editing && (
                 <div>
                     {useInput ? (
-                        <input type="text" value={text} onChange={(e) => setText(e.target.value)} className={textAreaClass} />
+                        <input type='text' value={text} onChange={(e) => setText(e.target.value)} className={textAreaClass} />
                     ) : (
-                        <textarea value={text} onChange={(e) => setText(e.target.value)} className={textAreaClass} rows="5" />
+                        <textarea value={text} onChange={(e) => setText(e.target.value)} className={textAreaClass} rows='5' />
                     )}
-                    <button type="button" onClick={cancelEdit} className={cancelButtonClass}>
-                        {useIcons ? <i className="fas fa-fw fa-times"></i> : "Cancel"}
+                    <button type='button' onClick={cancelEdit} className={cancelButtonClass}>
+                        {useIcons ? <i className='fas fa-fw fa-times'/> : 'Cancel'}
                     </button>
-                    <button type="button" onClick={saveEdit} className={saveButtonClass} disabled={saving}>
+                    <button type='button' onClick={saveEdit} className={saveButtonClass} disabled={saving}>
                         {saving ? (
-                            <i className="fas fa-spinner fa-spin"></i>
+                            <i className='fas fa-spinner fa-spin'/>
                         ) : useIcons ? (
-                            <i className="fas fa-fw fa-check"></i>
+                            <i className='fas fa-fw fa-check'/>
                         ) : (
-                            "Save"
+                            'Save'
                         )}
                     </button>
                 </div>

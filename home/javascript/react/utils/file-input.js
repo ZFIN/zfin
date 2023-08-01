@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 
 function FileInput({ multiple, accept = '', onChange = () => {}, reRenderKey = '' }) {
     const [files, setFiles] = useState([]);
-    const [errorMessage, setErrorMessage] = useState('');
     const [label, setLabel] = useState('');
+    const [error, setError] = useState('');
     const [dragMsg, setDragMsg] = useState('');
     const inputRef = useRef(null);
 
@@ -25,16 +25,16 @@ function FileInput({ multiple, accept = '', onChange = () => {}, reRenderKey = '
         let errorMsg = '';
         const validType = accept.replace(/\*$/, '');
 
-        for (let file of files) {
+        files.forEach(file => {
             if (file.type.startsWith(validType)) {
                 validFiles.push(file);
             } else {
                 invalidFiles.push(file);
             }
-        }
+        });
 
         if (invalidFiles.length > 0) {
-            errorMsg = "Invalid file type: " + invalidFiles.map(f => f.name).join(', ');
+            errorMsg = 'Invalid file type: ' + invalidFiles.map(f => f.name).join(', ');
         }
 
         if (!multiple) {
@@ -42,7 +42,7 @@ function FileInput({ multiple, accept = '', onChange = () => {}, reRenderKey = '
         }
 
         setFiles(validFiles);
-        setErrorMessage(errorMsg);
+        setError(errorMsg);
         onChange(validFiles);
     };
 
@@ -67,23 +67,24 @@ function FileInput({ multiple, accept = '', onChange = () => {}, reRenderKey = '
 
     return (
         <div
-            className="file-drag-target"
+            className='file-drag-target'
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
         >
-            <ul className="list-unstyled">
+            <ul className='list-unstyled'>
                 {files.map(file => <li key={file.name}>{file.name}</li>)}
             </ul>
             <input
-                type="file"
-                id="file-input"
+                type='file'
+                id='file-input'
                 accept={accept}
                 multiple={multiple}
                 onChange={handleInputChange}
                 ref={inputRef}
             />
-            <label htmlFor="file-input"><strong>{label}</strong></label> or {dragMsg}.
+            <label htmlFor='file-input'><strong>{label}</strong></label> or {dragMsg}.
+            {error && <div className='text-danger'>{error}</div>}
         </div>
     );
 }
@@ -92,7 +93,7 @@ FileInput.propTypes = {
     multiple: PropTypes.bool,
     accept: PropTypes.string,
     onChange: PropTypes.func,
-    files: PropTypes.array,
+    reRenderKey: PropTypes.string,
 };
 
 export default FileInput;

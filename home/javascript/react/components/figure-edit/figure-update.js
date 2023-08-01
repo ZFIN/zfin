@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import ImageElement from './image-element';
-import InlineEditTextarea from "../../utils/inline-edit-textarea";
+import InlineEditTextarea from '../../utils/inline-edit-textarea';
 import * as FigureService from '../../api/figure';
 
 const FigureUpdate = ({ figure, hasPermissions }) => {
@@ -10,30 +10,30 @@ const FigureUpdate = ({ figure, hasPermissions }) => {
     const addImage = (file) => {
         setUploading(true);
         FigureService.addImage(figure, file)
-          .then((response) => {
-            setImageError('');
-            // Update the figure with the new image.
-            let images = Array.isArray(figure.images) ? figure.images : [];
-            images.push(response);
-            figure.images = images;
-          })
-          .catch((error) => {
-            if (error.message) {
-              setImageError(error.message);
-            }
-          })
-          .finally(() => {
-            setUploading(false);
-          });
+            .then((response) => {
+                setImageError('');
+                // Update the figure with the new image.
+                let images = Array.isArray(figure.images) ? figure.images : [];
+                images.push(response);
+                figure.images = images;
+            })
+            .catch((error) => {
+                if (error.message) {
+                    setImageError(error.message);
+                }
+            })
+            .finally(() => {
+                setUploading(false);
+            });
     };
 
     const deleteImage = (image) => {
         setUploading(true);
         FigureService.deleteImage(image)
-          .then(() => {
-            setImageError('');
-            figure.images = figure.images.filter((img) => img.zdbId !== image.zdbId);
-          })
+            .then(() => {
+                setImageError('');
+                figure.images = figure.images.filter((img) => img.zdbId !== image.zdbId);
+            })
             .finally(() => {
                 setUploading(false);
             });
@@ -42,18 +42,18 @@ const FigureUpdate = ({ figure, hasPermissions }) => {
     const updateFigureCaption = (newCaption) => {
         figure.caption = newCaption;
         FigureService.updateFigure(figure)
-          .then((response) => {
-            setImageError('');
-          });
+            .then(() => {
+                setImageError('');
+            });
     };
 
     return (
         <>
             {hasPermissions ? (
                 <div>
-                    <p className="image-edit-block">
+                    <p className='image-edit-block'>
                         {!figure.images || figure.images.length === 0 ? (
-                            <span className="text-muted">No images yet</span>
+                            <span className='text-muted'>No images yet</span>
                         ) : (
                             figure.images.map((image, index) => (
                                 <ImageElement
@@ -65,33 +65,33 @@ const FigureUpdate = ({ figure, hasPermissions }) => {
                         )}
                         <input
                             id={`image-add-input-${figure.zdbId}`}
-                            type="file"
-                            className="image-add-input"
-                            accept="image/*"
+                            type='file'
+                            className='image-add-input'
+                            accept='image/*'
                             onChange={(e) => addImage(e.target.files[0])}
                         />
                         {!uploading ? (
-                            <label className="image-add-label" title="Add image" htmlFor={`image-add-input-${figure.zdbId}`}>
+                            <label className='image-add-label' title='Add image' htmlFor={`image-add-input-${figure.zdbId}`}>
                                 +
                             </label>
                         ) : (
-                            <span className="image-add-uploading">
-                                <i className="fas fa-spinner fa-spin"></i>
-                              </span>
+                            <span className='image-add-uploading'>
+                                <i className='fas fa-spinner fa-spin'/>
+                            </span>
                         )}
                     </p>
-                    <span className="text-danger">{imageError}</span>
+                    <span className='text-danger'>{imageError}</span>
                     <InlineEditTextarea
-                      text={figure.caption}
-                      defaultText="Add caption"
-                      onSave={updateFigureCaption}
+                        text={figure.caption}
+                        defaultText='Add caption'
+                        onSave={updateFigureCaption}
                     />
                 </div>
             ) : (
                 <div>
-          <span className="text-muted">
-            Cannot add images and caption without permissions.
-          </span>
+                    <span className='text-muted'>
+                        Cannot add images and caption without permissions.
+                    </span>
                 </div>
             )}
         </>

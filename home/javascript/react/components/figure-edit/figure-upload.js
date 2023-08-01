@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import * as FigureService from '../../api/figure';
-import FileInput from "../../utils/file-input";
+import FileInput from '../../utils/file-input';
 
 function FigureUpload({ pubId, figures, hasPermissions, onSave = () => {} }) {
     const [label, setLabel] = useState('');
@@ -26,14 +26,12 @@ function FigureUpload({ pubId, figures, hasPermissions, onSave = () => {} }) {
         setUploading(true);
         FigureService.addFigure(pubId, 'Fig. ' + label, caption, files)
             .then((response) => {
-                console.log('addfig response', response);
                 let newFigures = [...figures];
                 newFigures.push(response);
                 onSave(newFigures);
 
                 setLabel('');
                 setCaption('');
-                // setFiles([]);
                 setReRenderFileInput(Math.random());
                 setErrorMessage('');
             })
@@ -48,59 +46,59 @@ function FigureUpload({ pubId, figures, hasPermissions, onSave = () => {} }) {
     };
 
     return (
-        <form className="form-horizontal">
-            <div className="form-group row">
-                <label className="col-md-2 col-form-label">Label</label>
-                <div className="col-md-6">
+        <form className='form-horizontal'>
+            <div className='form-group row'>
+                <label className='col-md-2 col-form-label'>Label</label>
+                <div className='col-md-6'>
                     Fig. <input
-                    className="form-control form-control-fixed-width-sm"
-                    value={label}
-                    onChange={handleLabelChange}
-                />
+                        className='form-control form-control-fixed-width-sm'
+                        value={label}
+                        onChange={handleLabelChange}
+                    />
                 </div>
             </div>
             {hasPermissions ? (
                 <>
-                    <div className="form-group row">
-                        <label className="col-md-2 col-form-label">Caption</label>
-                        <div className="col-md-6">
-              <textarea
-                  className="form-control"
-                  rows="6"
-                  value={caption}
-                  onChange={handleCaptionChange}
-              />
+                    <div className='form-group row'>
+                        <label className='col-md-2 col-form-label'>Caption</label>
+                        <div className='col-md-6'>
+                            <textarea
+                                className='form-control'
+                                rows='6'
+                                value={caption}
+                                onChange={handleCaptionChange}
+                            />
                         </div>
                     </div>
-                    <div className="form-group row">
-                        <label className="col-md-2 col-form-label">Images</label>
-                        <div className="col-md-6">
+                    <div className='form-group row'>
+                        <label className='col-md-2 col-form-label'>Images</label>
+                        <div className='col-md-6'>
                             <div>
-                                <FileInput accept={"image/*"} onChange={handleFileChange} multiple={true} errorMessage={errorMessage} reRenderKey={reRenderFileInput}/>
+                                <FileInput accept={'image/*'} onChange={handleFileChange} multiple={true} errorMessage={errorMessage} reRenderKey={reRenderFileInput}/>
                             </div>
                         </div>
                     </div>
                 </>
             ) : (
-                <div className="row">
-                    <div className="offset-md-2 col-md-6">
-                        <div className="alert alert-warning">
-                            Publication's journal does not grant automatic permission to display captions and images.
-                            If this publication has permission, indicate so in the <a href="#details">Details</a> tab.
+                <div className='row'>
+                    <div className='offset-md-2 col-md-6'>
+                        <div className='alert alert-warning'>
+                            Publication&apos;s journal does not grant automatic permission to display captions and images.
+                            If this publication has permission, indicate so in the <a href='#details'>Details</a> tab.
                         </div>
                     </div>
                 </div>
             )}
-            <div className="form-group row">
-                <div className="offset-md-2 col-md-6">
+            <div className='form-group row'>
+                <div className='offset-md-2 col-md-6'>
                     <button
-                        className="btn btn-primary"
+                        className='btn btn-primary'
                         onClick={upload}
                         disabled={!label || uploading}
                     >
-                        {!uploading ? 'Save' : <i className="fas fa-spin fa-spinner"></i>}
+                        {!uploading ? 'Save' : <i className='fas fa-spin fa-spinner'/>}
                     </button>
-                    <span className="text-danger" style={{ display: errorMessage ? 'block' : 'none' }}>{errorMessage}</span>
+                    <span className='text-danger' style={{ display: errorMessage ? 'block' : 'none' }}>{errorMessage}</span>
                 </div>
             </div>
         </form>
