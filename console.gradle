@@ -60,6 +60,7 @@ task uniprotAnalysisTask(type: JavaExec) {
 task ncbiMatchThroughEnsemblTask(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.uniprot.NcbiMatchThroughEnsemblTask'
+    systemProperty "ncbiFileUrl", System.getProperty("ncbiFileUrl", null)
 }
 
 task createUIIndex(type: JavaExec) {
