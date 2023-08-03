@@ -32,6 +32,14 @@ my $WHIRLEY_LAST_OUTPUT_TIME=0;
 #rate limit whirley outputs in number of seconds
 my $WHIRLEY_TIME_LIMIT = 10;
 
+#------- Default sendmail path
+my $SENDMAIL_FLAGS="-t -oi";
+my $SENDMAIL_COMMAND="/usr/lib/sendmail";
+if (exists($ENV{'SENDMAIL_COMMAND'})) {
+    $SENDMAIL_COMMAND = $ENV{'SENDMAIL_COMMAND'};
+}
+$SENDMAIL_COMMAND .= " " . $SENDMAIL_FLAGS;
+
 sub doSystemCommand {                  
 
   my $systemCommand = $_[1];
@@ -81,8 +89,7 @@ sub sendMailWithAttachedReport {
 	Path     => "$TXTFILE";
 
     # Output the message to sendmail
-    
-    open (SENDMAIL, "| /usr/lib/sendmail -t -oi");
+    open (SENDMAIL, "| $SENDMAIL_COMMAND");
     $msg->print(\*SENDMAIL);
     close (SENDMAIL);
 
@@ -267,7 +274,7 @@ sub downloadOrUseLocalFile {
         }
 
         #set the number of bytes that a dot represents in wget progress bar to 10M
-        system("/local/bin/wget --progress=dot -e dotbytes=10M '$url' -O '$outfile'");
+        system("wget --progress=dot -e dotbytes=10M '$url' -O '$outfile'");
     }
 }
 

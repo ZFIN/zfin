@@ -174,7 +174,7 @@ our %geneZDBidsSymbols;
 ###########################
 sub main {
 
-    assertEnvironment('ROOT_PATH', 'PGHOST', 'DB_NAME', 'SWISSPROT_EMAIL_ERR', 'SWISSPROT_EMAIL_REPORT');
+    assertEnvironment('ROOT_PATH', 'PGHOST', 'DB_NAME', 'SWISSPROT_EMAIL_ERR', 'SWISSPROT_EMAIL_REPORT', 'SOURCEROOT', 'TARGETROOT');
 
     system("/bin/date");
 
@@ -429,8 +429,10 @@ sub removeOldFiles {
     #------------------------------------------------
 
     if (!$ENV{"SKIP_DOWNLOADS"}) {
-        print "Removing old files in 30 seconds...\n";
-        sleep(30);
+        if (!$ENV{"NO_SLEEP"}) {
+            print "Removing old files in 30 seconds...\n";
+            sleep(30);
+        }
 
         print "Removing prepareLog* loadLog* logNCBIgeneLoad debug* report* toDelete.unl toMap.unl toLoad.unl length.unl noLength.unl seq.fasta *.gz zf_gene_info.gz gene2vega.gz gene2accession.gz RefSeqCatalog.gz RELEASE_NUMBER\n";
         system("/bin/rm -f prepareLog*");
@@ -2103,25 +2105,37 @@ sub addReverseMappedGenesFromNCBItoZFINFromSupplementaryLoad {
     print LOG "More information in debug15 file\n";
 
     my $debugBuffer = "";
+    my $file = $ENV{'SOURCEROOT'} . "/ncbi_matches_through_ensembl.csv";
 
-    my $currentDir = cwd;
+    #check if environment variable is set to give a specific report file to parse so we don't have to run the gradle task
+    if (!exists($ENV{'LOAD_NCBI_ONE_WAY_REPORT'}) || $ENV{'LOAD_NCBI_ONE_WAY_REPORT'} eq "") {
+        my $currentDir = cwd;
 
-    # Set the JAVA_HOME path to override the jenkins one
-    $ENV{'JAVA_HOME'} = getPropertyValue("JAVA_HOME");
+        # Set the JAVA_HOME path to override the jenkins one
+        $ENV{'JAVA_HOME'} = getPropertyValue("JAVA_HOME");
+        if (exists($ENV{'OVERRIDE_JAVA_HOME'})) {
+            print "Overriding JAVA_HOME with $ENV{'OVERRIDE_JAVA_HOME'}\n";
+            $ENV{'JAVA_HOME'} = $ENV{'OVERRIDE_JAVA_HOME'};
+        }
 
-    my $cmdString = "cd " . $ENV{'SOURCEROOT'} . " ; " .
-        "gradle '-DncbiFileUrl=file://$currentDir/zf_gene_info.gz' " .
-        "         ncbiMatchThroughEnsemblTask ; " .
-        "cd $currentDir";
-    print "Executing $cmdString\n";
-    print LOG "Executing $cmdString\n";
+        my $cmdString = "cd " . $ENV{'SOURCEROOT'} . " ; " .
+            "gradle '-DncbiFileUrl=file://$currentDir/zf_gene_info.gz' " .
+            "         ncbiMatchThroughEnsemblTask ; " .
+            "cd $currentDir";
+        print "Executing $cmdString\n";
+        print LOG "Executing $cmdString\n";
 
-    doSystemCommand($cmdString);
+        doSystemCommand($cmdString);
+    } else {
+        $file = $ENV{'LOAD_NCBI_ONE_WAY_REPORT'};
+        print "Skipping gradle and using provided $file through environment variable LOAD_NCBI_ONE_WAY_REPORT\n";
+        print LOG "Skipping gradle and using provided $file through environment variable LOAD_NCBI_ONE_WAY_REPORT\n";
+    }
+
 
     #
     # Read the results
     #
-    my $file = $ENV{'SOURCEROOT'} . "/ncbi_matches_through_ensembl.csv";
     print LOG "Reading $file\n";
     doSystemCommand("cp $file .");
     open(FILE, "<$file") or die "Can't open $file: $!\n";
@@ -2694,15 +2708,21 @@ sub calculateLengthForAccessionsWithoutLength {
     # Using the above noLength.unl as input, call efetch to get the fasta sequences
     # and output to seq.fasta file. This step is time-consuming.
 
-    if ($ENV{"SKIP_DOWNLOADS"}) {
+    if (exists($ENV{"SKIP_DOWNLOADS"}) && $ENV{"SKIP_DOWNLOADS"}) {
         print LOG "\nSKIP_DOWNLOADS is set, so skipping the efetch step.\n\n";
         print "\nSKIP_DOWNLOADS is set, so skipping the efetch step.\n\n";
     } else {
+        print LOG "\nRunning the gradle job for efetch step.\n";
+        print "\nRunning the gradle job for efetch step.\n";
+
         my $currentDir = cwd;
 
         # Set the JAVA_HOME path to override the jenkins one
         $ENV{'JAVA_HOME'} = getPropertyValue("JAVA_HOME");
-
+        if (exists($ENV{'OVERRIDE_JAVA_HOME'})) {
+            print "Overriding JAVA_HOME with $ENV{'OVERRIDE_JAVA_HOME'}\n";
+            $ENV{'JAVA_HOME'} = $ENV{'OVERRIDE_JAVA_HOME'};
+        }
 
         my $cmdEfetch = "cd " . $ENV{'SOURCEROOT'} . " ; " .
             "gradle '-DncbiLoadInput=$currentDir/noLength.unl' " .
