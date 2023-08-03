@@ -308,8 +308,8 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
                     zdb_id,
                     ensembl_id,
                     symbol,
-                    string_agg(dbl2.dblink_zdb_id, '; ') AS dblinks,
-                    string_agg(ra.recattrib_source_zdb_id, '; ') AS publications
+                    string_agg(dbl2.dblink_zdb_id, '; ' order by dbl2.dblink_zdb_id) AS dblinks,
+                    string_agg(ra.recattrib_source_zdb_id, '; ' order by ra.recattrib_source_zdb_id) AS publications
                     INTO TEMP TABLE ncbi_match_report
                 FROM
                     tmp_ncbi2zfin n2z
@@ -332,11 +332,35 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
 
         // Add the rna accessions to the report.
         query = """
-         select nmr.*, string_agg(dblink_acc_num, ';') as rna_accessions from ncbi_match_report nmr
-         left join (select dblink_linked_recid, dblink_acc_num from
-        						db_link left join foreign_db_contains on dblink_fdbcont_zdb_id = fdbcont_zdb_id where fdbcont_fdbdt_id = 3) subq
-        						on subq.dblink_linked_recid = nmr.zdb_id
-         group by ncbi_id, zdb_id, ensembl_id, symbol, dblinks, publications
+            SELECT
+                nmr.*,
+                string_agg(dblink_acc_num, ';' ORDER BY dblink_acc_num) AS rna_accessions
+            FROM
+                ncbi_match_report nmr
+                LEFT JOIN (
+                    SELECT
+                        dblink_linked_recid,
+                        dblink_acc_num
+                    FROM
+                        db_link
+                        LEFT JOIN foreign_db_contains ON dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                    WHERE
+                        fdbcont_fdbdt_id = 3) subq ON subq.dblink_linked_recid = nmr.zdb_id
+            GROUP BY
+                ncbi_id,
+                zdb_id,
+                ensembl_id,
+                symbol,
+                dblinks,
+                publications
+            ORDER BY
+                4 COLLATE "C" ASC, -- because some systems don't sort the same based on locale (examples: dre-mir-21-2 and dre-mir-212, see: https://stackoverflow.com/questions/22534484)
+                1,
+                2,
+                3,
+                5,
+                6,
+                7
             """;
         List<Object[]> results = session.createSQLQuery(query).list();
 
