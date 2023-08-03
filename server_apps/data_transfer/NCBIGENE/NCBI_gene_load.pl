@@ -35,7 +35,7 @@ use FindBin;
 
 #relative path to library file(s) (ZFINPerlModules.pm)
 use lib "$FindBin::Bin/../../";
-use ZFINPerlModules qw(assertEnvironment trim getPropertyValue downloadOrUseLocalFile);
+use ZFINPerlModules qw(assertEnvironment trim getPropertyValue downloadOrUseLocalFile md5File);
 
 our $debug = 1;
 #########################
@@ -485,6 +485,10 @@ sub getReleaseNumber {
     }
 
     close REFSEQRELEASENUM;
+
+    my $hash = md5File('RELEASE_NUMBER');
+    print "RELEASE_NUMBER md5: $hash\n";
+
     return $releaseNum;
 }
 
@@ -495,13 +499,22 @@ sub downloadNCBIFilesForRelease {
     my $ftpNCBIrefSeqCatalog = $catlogFolder . $catalogFile;
 
     try {
+        my $hash;
         downloadOrUseLocalFile($ftpNCBIrefSeqCatalog, "RefSeqCatalog.gz");
+        $hash = md5File('RefSeqCatalog.gz');
+        print "RefSeqCatalog.gz md5: $hash at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n";
 
         downloadOrUseLocalFile("ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2accession.gz", "gene2accession.gz");
+        $hash = md5File('gene2accession.gz');
+        print "gene2accession.gz md5: $hash at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n";
 
         downloadOrUseLocalFile("ftp://ftp.ncbi.nih.gov/gene/DATA/ARCHIVE/gene2vega.gz", "gene2vega.gz");
+        $hash = md5File('gene2vega.gz');
+        print "gene2vega.gz md5: $hash at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n";
 
         downloadOrUseLocalFile("ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Non-mammalian_vertebrates/Danio_rerio.gene_info.gz", "zf_gene_info.gz");
+        $hash = md5File('zf_gene_info.gz');
+        print "zf_gene_info.gz md5: $hash at " . strftime("%Y-%m-%d %H:%M:%S", localtime(time())) . " \n";
     }
     catch {
         chomp $_;
@@ -2708,7 +2721,11 @@ sub calculateLengthForAccessionsWithoutLength {
     # Using the above noLength.unl as input, call efetch to get the fasta sequences
     # and output to seq.fasta file. This step is time-consuming.
 
-    if (exists($ENV{"SKIP_DOWNLOADS"}) && $ENV{"SKIP_DOWNLOADS"}) {
+    my $forceEfetchStep = 0;
+    if (exists($ENV{"FORCE_EFETCH"}) && $ENV{"FORCE_EFETCH"}) {
+        $forceEfetchStep = 1;
+    }
+    if (!$forceEfetchStep && exists($ENV{"SKIP_DOWNLOADS"}) && $ENV{"SKIP_DOWNLOADS"}) {
         print LOG "\nSKIP_DOWNLOADS is set, so skipping the efetch step.\n\n";
         print "\nSKIP_DOWNLOADS is set, so skipping the efetch step.\n\n";
     } else {
@@ -2741,7 +2758,7 @@ sub calculateLengthForAccessionsWithoutLength {
     system("/bin/date");
 
     if (!-e "seq.fasta") {
-        print LOG "\nCannot execute efetch for input noLength.unl and output seq.fasta: $! \n\n";
+        print LOG "\n No seq.fasta found (maybe issue with efetch): $! \n\n";
         close STATS;
         my $subjectLine = "Auto from $dbname: " . "NCBI_gene_load.pl :: ERROR with efetch";
         reportErrAndExit($subjectLine);
