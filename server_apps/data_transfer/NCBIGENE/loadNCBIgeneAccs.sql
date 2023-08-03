@@ -15,13 +15,13 @@ create temporary table ncbi_gene_delete (
 
 create index t_id_index on ncbi_gene_delete (delete_dblink_zdb_id);
 
-\copy ncbi_gene_delete from '<!--|ROOT_PATH|-->/server_apps/data_transfer/NCBIGENE/toDelete.unl';
+\copy ncbi_gene_delete from 'toDelete.unl';
 
 create temporary table ncbi_dblink_to_preserve (
   prsv_dblink_zdb_id    text not null
 );
 create index prsv_id_index on ncbi_dblink_to_preserve (prsv_dblink_zdb_id);
-\copy ncbi_dblink_to_preserve from '<!--|ROOT_PATH|-->/server_apps/data_transfer/NCBIGENE/toPreserve.unl';
+\copy ncbi_dblink_to_preserve from 'toPreserve.unl';
 
 create temporary table ncbi_gene_load (
   mapped_zdb_gene_id    text not null,
@@ -32,7 +32,7 @@ create temporary table ncbi_gene_load (
   load_pub_zdb_id       text not null
 );
 
-\copy ncbi_gene_load from '<!--|ROOT_PATH|-->/server_apps/data_transfer/NCBIGENE/toLoad.unl' (delimiter '|');
+\copy ncbi_gene_load from 'toLoad.unl' (delimiter '|');
 
 update ncbi_gene_load 
  set sequence_length = null
@@ -54,7 +54,7 @@ select count(dblink_zdb_id) as noLengthBefore
 --!echo 'Delete from zdb_active_data table and cause delete cascades on db_link records'
 
 \echo 'Deleting from reference_protein';
-\copy (select * from reference_protein where rp_dblink_zdb_id in (select * from ncbi_gene_delete)) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/NCBIGENE/referenceProteinDeletes.unl' (delimiter '|');
+\copy (select * from reference_protein where rp_dblink_zdb_id in (select * from ncbi_gene_delete)) to 'referenceProteinDeletes.unl' (delimiter '|');
 delete from reference_protein where rp_dblink_zdb_id in (select * from ncbi_gene_delete);
 delete from zdb_active_data where zactvd_zdb_id in (select * from ncbi_gene_delete);
 
@@ -100,7 +100,7 @@ select zdb_id, load_pub_zdb_id
 
 --! echo "Dump all the GenPept accession associated with genes at ZFIN that are still attributed to a non-load pub"
 
---unload to "<!--|ROOT_PATH|-->/server_apps/data_transfer/NCBIGENE/reportNonLoadPubGenPept"
+--unload to "reportNonLoadPubGenPept"
 create view reportNonLoadPubGenPept as
 select recattrib_source_zdb_id, dblink_acc_num, dblink_linked_recid 
   from db_link, record_attribution 
@@ -110,7 +110,7 @@ select recattrib_source_zdb_id, dblink_acc_num, dblink_linked_recid
    and recattrib_source_zdb_id not in ('ZDB-PUB-020723-3','ZDB-PUB-130725-2') 
 group by recattrib_source_zdb_id, dblink_acc_num, dblink_linked_recid 
 order by recattrib_source_zdb_id, dblink_acc_num, dblink_linked_recid;
-\copy (select * from reportNonLoadPubGenPept) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/NCBIGENE/reportNonLoadPubGenPept' with delimiter as '	' null as '';
+\copy (select * from reportNonLoadPubGenPept) to 'reportNonLoadPubGenPept' with delimiter as '	' null as '';
 drop view reportNonLoadPubGenPept;
 
 --!echo 'CHECK: how many RefSeq and GenBank accessions missing length after the load'
