@@ -34,16 +34,16 @@ PUBS_TO_GIVE_PERMISSIONS = new File("pubsToGivePermission.txt")
 
 def idsToGrab = [:]
 
-//if an argument is provided, use that to query the DB instead
+//if the environment variable PUB_ZDB_IDs exists or we are passed command line arguments, use those IDs to query the DB instead
+def specificPubZdbIDs = System.getenv("PUB_ZDB_IDs")?.split("[,\\s]+").findAll { it != null && it != ""}
 if (args.length > 0) {
+    specificPubZdbIDs = Arrays.asList(args)
+}
 
-    pubZdbIDs = ""
-    for (int i = 0; i < args.length; i++) {
-        if (i > 0) {
-            pubZdbIDs += ","
-        }
-        pubZdbIDs += "'" + args[i] + "'"
-    }
+//if an argument is provided, use that to query the DB instead
+if (specificPubZdbIDs.size() > 0) {
+
+    pubZdbIDs = "'" + specificPubZdbIDs.join("','") + "'"
 
     println "Publication ZDB ID (s) provided, checking for PDFs for $pubZdbIDs."
 
