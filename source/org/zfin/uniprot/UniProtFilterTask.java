@@ -1,15 +1,16 @@
 package org.zfin.uniprot;
 
-import lombok.extern.log4j.Log4j2;
 import org.biojava.bio.BioException;
 import org.biojavax.RankedCrossRef;
 import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.bio.seq.io.RichStreamReader;
 import org.biojavax.bio.seq.io.RichStreamWriter;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 
 import java.io.*;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.zfin.uniprot.UniProtTools.getRichStreamReaderForUniprotDatFile;
@@ -24,83 +25,102 @@ import static org.zfin.uniprot.UniProtTools.getRichStreamWriterForUniprotDatFile
  * 2. GeneID (NCBI) (eg. DR   GeneID; 100537590; -.)
  * 3. RefSeq (eg. DR   RefSeq; XP_003199568.1; XM_003199520.5.
  *
+ * Invoke this class with an environment variable (UNIPROT_INPUT_FILE) to point to the input dat file.
+ *  and an environment variable (UNIPROT_OUTPUT_FILE) to point to the output dat file.
+ *
+ * Example with bash:
+ * $ UNIPROT_INPUT_FILE=pre_zfin.dat UNIPROT_OUTPUT_FILE=pre_zfin.filtered.dat gradle uniProtFilterTask
+ *
  */
-@Log4j2
 public class UniProtFilterTask extends AbstractScriptWrapper {
-    private BufferedReader inputFileReader;
-    private BufferedReader filteredInputFileReader = null;
-    private FileOutputStream outputFileWriter;
+    public String inputFilename;
+    public String outputFilename;
 
-    private UniProtRoughTaxonFilter roughTaxonFilter = null;
-
-    public UniProtFilterTask(BufferedReader bufferedReader, FileOutputStream fileOutputStream) {
-        this.inputFileReader = bufferedReader;
-        this.outputFileWriter = fileOutputStream;
+    public UniProtFilterTask(String inputFilename, String outputFilename) {
+        this.inputFilename = inputFilename;
+        this.outputFilename = outputFilename;
     }
 
-    public void runTask() throws IOException, BioException {
-        initIO();
+    public static void main(String[] args) {
+        String inputFilename = null;
+        String outputFilename = null;
+        if (args.length >= 1) {
+            inputFilename = args[0];
+        }
+        if (args.length >= 2) {
+            outputFilename = args[1];
+        }
+        UniProtFilterTask task = new UniProtFilterTask(inputFilename, outputFilename);
+
+        try {
+            task.runTask();
+        } catch (IOException e) {
+            System.err.println("IOException Error while running task: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        } catch (BioException e) {
+            System.err.println("BioException Error while running task: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(2);
+        } catch (SQLException e) {
+            System.err.println("SQLException Error while running task: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(3);
+        }
+
+        HibernateUtil.closeSession();
+        System.out.println("Task completed successfully.");
+        System.exit(0);
+    }
+
+    public void runTask() throws IOException, BioException, SQLException {
+        initIOFiles();
         initAll();
 
-        RichStreamReader sr = getRichStreamReaderForUniprotDatFile(filteredInputFileReader, true);
+        RichStreamReader sr = getRichStreamReaderForUniprotDatFile(inputFilename, true);
 
-        log.debug("Starting to read file: " );
+        System.out.println("Starting to read file: " + inputFilename);
         List<RichSequence> outputEntries = readAndFilterSequencesFromStream(sr);
-        log.debug("Finished reading file: " + outputEntries.size() + " entries read.");
+        System.out.println("Finished reading file: " + outputEntries.size() + " entries read.");
 
-        log.debug("Starting to write file: " );
-        writeOutputFile(outputEntries, outputFileWriter);
+        System.out.println("Starting to write file: " + outputFilename);
+        writeOutputFile(outputEntries, outputFilename);
     }
 
-    private void initIO() throws IOException {
-        roughTaxonFilter = new UniProtRoughTaxonFilter(inputFileReader);
-        filteredInputFileReader = roughTaxonFilter.getFilteredReader();
+    private void initIOFiles() {
+        setInputFilename();
+        setOutputFilename();
     }
 
     private List<RichSequence> readAndFilterSequencesFromStream(RichStreamReader richStreamReader) throws BioException {
         List<String> xrefsToKeep = List.of("ZFIN", "GeneID", "RefSeq", "EMBL", "GO", "InterPro", "Pfam", "PROSITE", "PDB", "Ensembl");
-        RichSequence lastSequence = null;
-        int count = 0;
+
         List<RichSequence> uniProtSequences = new ArrayList<>();
         while (richStreamReader.hasNext()) {
-            try {
-                RichSequence seq = richStreamReader.nextRichSequence();
-                count++;
-                if (count % 1000 == 0) {
-                    log.debug("Read " + count + " sequences.");
+            RichSequence seq = richStreamReader.nextRichSequence();
+
+            if (seq.getTaxon().getNCBITaxID() != 7955) {
+                if (!seq.getTaxon().getDisplayName().toLowerCase().contains("danio rerio")) {
+                    // seq is not zebrafish, but account for entries like "Danio rerio x Danio aff. kyathit RC0455"
+                    continue;
                 }
-
-                if (seq.getTaxon().getNCBITaxID() != 7955) {
-                    if (!seq.getTaxon().getDisplayName().toLowerCase().contains("danio rerio")) {
-                        // seq is not zebrafish, but account for entries like "Danio rerio x Danio aff. kyathit RC0455"
-                        continue;
-                    }
-                }
-
-                TreeSet<RankedCrossRef> sortedRankedCrossRefs = new TreeSet<>();
-
-                for (RankedCrossRef rankedCrossRef : (Set<RankedCrossRef>)seq.getRankedCrossRefs() ) {
-                    if (xrefsToKeep.contains(rankedCrossRef.getCrossRef().getDbname())) {
-                        sortedRankedCrossRefs.add(rankedCrossRef);
-                    }
-                }
-
-                seq.setRankedCrossRefs(sortedRankedCrossRefs);
-                uniProtSequences.add(seq);
-
-                lastSequence = seq;
-            } catch (Exception e) {
-                if (lastSequence == null) {
-                    throw e;
-                }
-                log.error("Error while processing sequence after " + count + " records. Last sequence read: " + lastSequence.getAccession() + " " + lastSequence.getName(), e);
             }
+
+            TreeSet<RankedCrossRef> sortedRankedCrossRefs = new TreeSet<>();
+
+            for (RankedCrossRef rankedCrossRef : seq.getRankedCrossRefs()) {
+                if (xrefsToKeep.contains(rankedCrossRef.getCrossRef().getDbname())) {
+                    sortedRankedCrossRefs.add(rankedCrossRef);
+                }
+            }
+
+            seq.setRankedCrossRefs(sortedRankedCrossRefs);
+            uniProtSequences.add(seq);
         }
-        roughTaxonFilter.cleanup();
         return uniProtSequences;
     }
 
-    private void writeOutputFile(List<RichSequence> outputEntries, FileOutputStream outfile) {
+    private void writeOutputFile(List<RichSequence> outputEntries, String outfile) {
         try {
             RichStreamWriter sw = getRichStreamWriterForUniprotDatFile(outfile);
             sw.writeStream(new SequenceListIterator(outputEntries), null);
@@ -108,6 +128,31 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
             throw new RuntimeException(e);
         }
 
+    }
+
+    private void setInputFilename() {
+        if (inputFilename != null) {
+            return;
+        }
+
+        inputFilename = System.getenv("UNIPROT_INPUT_FILE");
+        if (inputFilename == null) {
+            System.err.println("No input file specified. Please set the environment variable UNIPROT_INPUT_FILE.");
+            System.exit(3);
+        }
+    }
+
+    private void setOutputFilename() {
+        if (outputFilename != null) {
+            return;
+        }
+
+        outputFilename = System.getenv("UNIPROT_OUTPUT_FILE");
+
+        if (outputFilename == null) {
+            String timestamp = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
+            outputFilename = inputFilename + ".out." + timestamp;
+        }
     }
 
 }
