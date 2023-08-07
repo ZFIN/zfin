@@ -4,9 +4,6 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.biojava.bio.BioException;
-import org.biojava.bio.seq.io.SymbolTokenization;
-import org.biojava.bio.symbol.AlphabetManager;
-import org.biojava.bio.symbol.FiniteAlphabet;
 import org.biojavax.RankedCrossRef;
 import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.bio.seq.io.*;
@@ -27,7 +24,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import static org.zfin.uniprot.UniProtDatFileReader.getRichStreamReaderForUniprotDatFile;
 
 /**
  * This class is used to analyze the uniprot problem7 file data.
@@ -102,30 +100,12 @@ public class UniProtAnalysisTask extends AbstractScriptWrapper {
         return inputFile;
     }
 
-    private RichStreamReader getRichStreamReaderForUniprotDatFile(String inputFileName) throws FileNotFoundException, BioException {
-        BufferedReader br = new BufferedReader(new FileReader(inputFileName));
-        RichSequenceFormat inFormat = new UniProtFormatZFIN();
-
-        //skips parsing of certain sections that otherwise would throw exceptions
-        inFormat.setElideFeatures(true);
-        inFormat.setElideReferences(true);
-        inFormat.setElideSymbols(true);
-
-        FiniteAlphabet alpha = (FiniteAlphabet) AlphabetManager.alphabetForName("PROTEIN");
-        SymbolTokenization tokenization = alpha.getTokenization("default");
-
-        return new RichStreamReader(
-                br, inFormat, tokenization,
-                RichSequenceBuilderFactory.THRESHOLD,
-                null);
-    }
-
     private List<ImmutablePair<String, String>> getUniProtRefSeqPairs(RichStreamReader richStreamReader) throws BioException {
         List<ImmutablePair<String, String>> UniProtRefSeqPairs = new ArrayList<>();
         while (richStreamReader.hasNext()) {
             RichSequence seq = richStreamReader.nextRichSequence();
 
-            UniProtRefSeqPairs.addAll (((Set<RankedCrossRef>)seq.getRankedCrossRefs())
+            UniProtRefSeqPairs.addAll (seq.getRankedCrossRefs()
                     .stream()
                     .filter(rankedXref -> "RefSeq".equals(rankedXref.getCrossRef().getDbname()))
                     .map(rankedXref -> new ImmutablePair<>(

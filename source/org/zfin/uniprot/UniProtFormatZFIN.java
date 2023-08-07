@@ -48,11 +48,7 @@ import org.biojava.bio.seq.Sequence;
 import org.biojava.bio.seq.io.ParseException;
 import org.biojava.bio.seq.io.SeqIOListener;
 import org.biojava.bio.seq.io.SymbolTokenization;
-import org.biojava.bio.symbol.IllegalAlphabetException;
-import org.biojava.bio.symbol.IllegalSymbolException;
-import org.biojava.bio.symbol.SimpleSymbolList;
-import org.biojava.bio.symbol.Symbol;
-import org.biojava.bio.symbol.SymbolList;
+import org.biojava.bio.symbol.*;
 import org.biojava.ontology.Term;
 import org.biojava.utils.ChangeVetoException;
 import org.biojavax.Comment;
@@ -64,7 +60,6 @@ import org.biojavax.Note;
 import org.biojavax.RankedCrossRef;
 import org.biojavax.RankedDocRef;
 import org.biojavax.RichObjectFactory;
-import org.biojavax.SimpleComment;
 import org.biojavax.SimpleCrossRef;
 import org.biojavax.SimpleDocRef;
 import org.biojavax.SimpleDocRefAuthor;
@@ -94,6 +89,9 @@ import org.biojavax.utils.StringTools;
  * @author Richard Holland
  * @author Mark Schreiber
  * @author George Waldon
+ *
+ * @modified by Ryan Taylor from (https://github.com/biojava/biojava-legacy/blob/38a0466698/core/src/main/java/org/biojavax/bio/seq/io/UniProtFormat.java)
+ *
  * @since 1.5
  */
 public class UniProtFormatZFIN extends RichSequenceFormat.HeaderlessFormat {
@@ -155,6 +153,8 @@ public class UniProtFormatZFIN extends RichSequenceFormat.HeaderlessFormat {
     protected static final Pattern fp = Pattern.compile("^\\s*([\\d?<]+\\s+[\\d?>]+)(\\s+(.*))?$");
 
     protected static final Pattern headerLine = Pattern.compile("^ID.*");
+
+    private Alphabet overrideAlphabet = null;
 
     /**
      * Implements some UniProt-specific terms.
@@ -906,7 +906,8 @@ public class UniProtFormatZFIN extends RichSequenceFormat.HeaderlessFormat {
 
         SymbolTokenization tok;
         try {
-            tok = rs.getAlphabet().getTokenization("token");
+            Alphabet alphabet = this.overrideAlphabet == null ? rs.getAlphabet() : this.overrideAlphabet;
+            tok = alphabet.getTokenization("token");
         } catch (Exception e) {
             throw new RuntimeException("Unable to get alphabet tokenizer",e);
         }
@@ -1313,5 +1314,9 @@ public class UniProtFormatZFIN extends RichSequenceFormat.HeaderlessFormat {
             }
         }
         return parseBlock.toString();
+    }
+
+    public void setOverrideAlphabet(Alphabet alpha) {
+        this.overrideAlphabet = alpha;
     }
 }
