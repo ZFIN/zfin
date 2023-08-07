@@ -99,12 +99,15 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
         while (richStreamReader.hasNext()) {
             RichSequence seq = richStreamReader.nextRichSequence();
 
-            Set<RankedCrossRef> uniProtSequenceSet = new HashSet<>(seq.getRankedCrossRefs()
-                    .stream()
-                    .filter(rankedXref -> xrefsToKeep.contains(rankedXref.getCrossRef().getDbname()))
-                    .toList());
+            TreeSet<RankedCrossRef> sortedRankedCrossRefs = new TreeSet<>();
 
-            seq.setRankedCrossRefs(uniProtSequenceSet);
+            for (RankedCrossRef rankedCrossRef : seq.getRankedCrossRefs()) {
+                if (xrefsToKeep.contains(rankedCrossRef.getCrossRef().getDbname())) {
+                    sortedRankedCrossRefs.add(rankedCrossRef);
+                }
+            }
+
+            seq.setRankedCrossRefs(sortedRankedCrossRefs);
             uniProtSequences.add(seq);
         }
         return uniProtSequences;
