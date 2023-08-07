@@ -77,7 +77,7 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
         initIOFiles();
         initAll();
 
-        RichStreamReader sr = getRichStreamReaderForUniprotDatFile(inputFilename, false);
+        RichStreamReader sr = getRichStreamReaderForUniprotDatFile(inputFilename, true);
 
         System.out.println("Starting to read file: " + inputFilename);
         List<RichSequence> outputEntries = readAndFilterSequencesFromStream(sr);
@@ -98,6 +98,13 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
         List<RichSequence> uniProtSequences = new ArrayList<>();
         while (richStreamReader.hasNext()) {
             RichSequence seq = richStreamReader.nextRichSequence();
+
+            if (seq.getTaxon().getNCBITaxID() != 7955) {
+                if (!seq.getTaxon().getDisplayName().toLowerCase().contains("danio rerio")) {
+                    // seq is not zebrafish, but account for entries like "Danio rerio x Danio aff. kyathit RC0455"
+                    continue;
+                }
+            }
 
             TreeSet<RankedCrossRef> sortedRankedCrossRefs = new TreeSet<>();
 
