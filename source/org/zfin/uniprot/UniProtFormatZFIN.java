@@ -48,11 +48,7 @@ import org.biojava.bio.seq.Sequence;
 import org.biojava.bio.seq.io.ParseException;
 import org.biojava.bio.seq.io.SeqIOListener;
 import org.biojava.bio.seq.io.SymbolTokenization;
-import org.biojava.bio.symbol.IllegalAlphabetException;
-import org.biojava.bio.symbol.IllegalSymbolException;
-import org.biojava.bio.symbol.SimpleSymbolList;
-import org.biojava.bio.symbol.Symbol;
-import org.biojava.bio.symbol.SymbolList;
+import org.biojava.bio.symbol.*;
 import org.biojava.ontology.Term;
 import org.biojava.utils.ChangeVetoException;
 import org.biojavax.Comment;
@@ -64,7 +60,6 @@ import org.biojavax.Note;
 import org.biojavax.RankedCrossRef;
 import org.biojavax.RankedDocRef;
 import org.biojavax.RichObjectFactory;
-import org.biojavax.SimpleComment;
 import org.biojavax.SimpleCrossRef;
 import org.biojavax.SimpleDocRef;
 import org.biojavax.SimpleDocRefAuthor;
@@ -94,9 +89,14 @@ import org.biojavax.utils.StringTools;
  * @author Richard Holland
  * @author Mark Schreiber
  * @author George Waldon
+ *
+ * @modified by Ryan Taylor from (https://github.com/biojava/biojava-legacy/blob/38a0466698/core/src/main/java/org/biojavax/bio/seq/io/UniProtFormat.java)
+ *
  * @since 1.5
  */
 public class UniProtFormatZFIN extends RichSequenceFormat.HeaderlessFormat {
+
+    private static final int READ_AHEAD_LIMIT = 10000;
 
     // Register this format with the format auto-guesser.
     static {
@@ -137,7 +137,7 @@ public class UniProtFormatZFIN extends RichSequenceFormat.HeaderlessFormat {
     protected static final String END_SEQUENCE_TAG = "//";
 
     // locus line for uniprot format
-    protected static final Pattern lp_uniprot = Pattern.compile("^((\\S+)_(\\S+))\\s+(\\S+);\\s+(PRT)?;?\\s*\\d+\\s+AA\\.$");
+    protected static final Pattern lp_uniprot = Pattern.compile("^((\\S+)_(\\S+))\\s+(\\S+);\\s+(PRT)?;?\\s*(\\d+)\\s+AA\\.$");
     // locus line for IPI format
     protected static final Pattern lp_ipi = Pattern.compile("^((\\S+)\\.(\\d+))\\s+(IPI);\\s+(PRT)?;?\\s*\\d+\\s+AA\\.$");
     // RP line parser
@@ -155,6 +155,8 @@ public class UniProtFormatZFIN extends RichSequenceFormat.HeaderlessFormat {
     protected static final Pattern fp = Pattern.compile("^\\s*([\\d?<]+\\s+[\\d?>]+)(\\s+(.*))?$");
 
     protected static final Pattern headerLine = Pattern.compile("^ID.*");
+
+    private Alphabet overrideAlphabet = null;
 
     /**
      * Implements some UniProt-specific terms.
@@ -294,6 +296,9 @@ public class UniProtFormatZFIN extends RichSequenceFormat.HeaderlessFormat {
                         if (m.groupCount() > 4){
                             rlistener.addSequenceProperty(Terms.getDataClassTerm(),m.group(4));
                             rlistener.addSequenceProperty(Terms.getMolTypeTerm(),m.group(5));
+
+                            ComparableTerm lengthTerm = RichObjectFactory.getDefaultOntology().getOrCreateTerm("sequence_length"); //instead of creating Terms.getSequenceLengthTerm()
+                            rlistener.addSequenceProperty(lengthTerm, m.group(6));
                         }else{
                             rlistener.addSequenceProperty(Terms.getDataClassTerm(), m.group(4));
                             rlistener.addSequenceProperty(Terms.getMolTypeTerm(), "");
@@ -706,7 +711,7 @@ public class UniProtFormatZFIN extends RichSequenceFormat.HeaderlessFormat {
         try {
             while (!done) {
                 // mark buffer
-                br.mark(160);
+                br.mark(READ_AHEAD_LIMIT);
                 // read token
                 line = br.readLine();
                 if (line.length()<2) {
@@ -719,7 +724,7 @@ public class UniProtFormatZFIN extends RichSequenceFormat.HeaderlessFormat {
                     //      from next line, read sequence until // - leave // on stack
                     StringBuffer sb = new StringBuffer();
                     while (!done) {
-                        br.mark(160);
+                        br.mark(READ_AHEAD_LIMIT);
                         line = br.readLine();
                         if (line.startsWith(END_SEQUENCE_TAG)) {
                             br.reset();
@@ -739,7 +744,7 @@ public class UniProtFormatZFIN extends RichSequenceFormat.HeaderlessFormat {
                     if (!line.startsWith(COMMENT_TAG+"   -!-")) wasMisc = true;
                     currentVal.append(line.substring(5));
                     while (!done) {
-                        br.mark(160);
+                        br.mark(READ_AHEAD_LIMIT);
                         line = br.readLine();
                         if (((!wasMisc) && line.charAt(5)!=' ') || !line.startsWith("C") || line.startsWith(COMMENT_TAG+"   -!-")) {
                             br.reset();
@@ -760,7 +765,7 @@ public class UniProtFormatZFIN extends RichSequenceFormat.HeaderlessFormat {
                     StringBuffer currentVal = new StringBuffer();
                     section.add(new String[]{FEATURE_TAG,null});
                     while (!done) {
-                        br.mark(160);
+                        br.mark(READ_AHEAD_LIMIT);
                         line = br.readLine();
                         if (!line.startsWith(FEATURE_TAG)) {
                             br.reset();
@@ -827,7 +832,7 @@ public class UniProtFormatZFIN extends RichSequenceFormat.HeaderlessFormat {
                     char currentTagStart = '\0';
                     StringBuffer currentVal = null;
                     while (!done) {
-                        br.mark(160);
+                        br.mark(READ_AHEAD_LIMIT);
                         line = br.readLine();
                         if (currentTagStart=='\0') currentTagStart = line.charAt(0);
                         if (!line.startsWith(""+currentTagStart) ||
@@ -906,7 +911,8 @@ public class UniProtFormatZFIN extends RichSequenceFormat.HeaderlessFormat {
 
         SymbolTokenization tok;
         try {
-            tok = rs.getAlphabet().getTokenization("token");
+            Alphabet alphabet = this.overrideAlphabet == null ? rs.getAlphabet() : this.overrideAlphabet;
+            tok = alphabet.getTokenization("token");
         } catch (Exception e) {
             throw new RuntimeException("Unable to get alphabet tokenizer",e);
         }
@@ -1025,7 +1031,23 @@ public class UniProtFormatZFIN extends RichSequenceFormat.HeaderlessFormat {
         locusLine.append(StringTools.leftPad(dataclass,19));
         //locusLine.append(";      PRT; "); //Uniprot no longer uses the PRT;
         locusLine.append("; ");
-        locusLine.append(StringTools.leftPad(""+rs.length(),11));
+
+
+        //adding length to the output of the locus line. this is a hack to preserve the parsed length from the originally read DAT file
+        //normally the length is calculated by the sequence section, but if we use "setElideSymbols" then the sequence section is not used
+        int length = rs.length();
+        if (length == 0) {
+            SimpleRichAnnotation annotation = new SimpleRichAnnotation();
+            annotation.setNoteSet(rs.getNoteSet());
+            try {
+                length = Integer.parseInt(annotation.getProperty("sequence_length").toString());
+            } catch (Exception e) {
+                // do nothing, length remains zero
+            }
+        }
+        locusLine.append(StringTools.leftPad(""+length,11));
+        //end of length hack
+
         locusLine.append(" AA.");
         StringTools.writeKeyValueLine(LOCUS_TAG, locusLine.toString(), 5, this.getLineWidth(), null, LOCUS_TAG, this.getPrintStream());
 
@@ -1313,5 +1335,9 @@ public class UniProtFormatZFIN extends RichSequenceFormat.HeaderlessFormat {
             }
         }
         return parseBlock.toString();
+    }
+
+    public void setOverrideAlphabet(Alphabet alpha) {
+        this.overrideAlphabet = alpha;
     }
 }
