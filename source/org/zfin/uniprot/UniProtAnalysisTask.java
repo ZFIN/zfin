@@ -4,7 +4,6 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.biojava.bio.BioException;
-import org.biojavax.RankedCrossRef;
 import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.bio.seq.io.*;
 import org.hibernate.Session;
@@ -23,9 +22,8 @@ import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-import static org.zfin.uniprot.UniProtDatFileReader.getRichStreamReaderForUniprotDatFile;
+import static org.zfin.uniprot.UniProtDatFileTools.getRichStreamReaderForUniprotDatFile;
 
 /**
  * This class is used to analyze the uniprot problem7 file data.
