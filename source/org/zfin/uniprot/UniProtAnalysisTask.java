@@ -72,7 +72,7 @@ public class UniProtAnalysisTask extends AbstractScriptWrapper {
         initAll();
 
         String inputFileName = getInputFileName();
-        RichStreamReader sr = getRichStreamReaderForUniprotDatFile(inputFileName);
+        RichStreamReader sr = getRichStreamReaderForUniprotDatFile(inputFileName, true);
 
         System.out.println("Starting to read file: " + inputFileName);
         List<ImmutablePair<String, String>> pairs = getUniProtRefSeqPairs(sr);

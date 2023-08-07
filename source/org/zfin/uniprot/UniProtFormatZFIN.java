@@ -1032,19 +1032,7 @@ public class UniProtFormatZFIN extends RichSequenceFormat.HeaderlessFormat {
         //locusLine.append(";      PRT; "); //Uniprot no longer uses the PRT;
         locusLine.append("; ");
 
-        //adding length to the output of the locus line. this is a hack to preserve the parsed length from the originally read DAT file
-        int length = rs.length();
-        if (length == 0) {
-            SimpleRichAnnotation annotation = new SimpleRichAnnotation();
-            annotation.setNoteSet(rs.getNoteSet());
-            try {
-                length = Integer.parseInt(annotation.getProperty("sequence_length").toString());
-            } catch (Exception e) {
-                // do nothing, length remains zero
-            }
-        }
-        locusLine.append(StringTools.leftPad(""+length,11));
-        //end of length hack
+        locusLine.append(StringTools.leftPad(""+rs.length(),11));
 
         locusLine.append(" AA.");
         StringTools.writeKeyValueLine(LOCUS_TAG, locusLine.toString(), 5, this.getLineWidth(), null, LOCUS_TAG, this.getPrintStream());

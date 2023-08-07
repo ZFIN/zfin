@@ -77,7 +77,7 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
         initIOFiles();
         initAll();
 
-        RichStreamReader sr = getRichStreamReaderForUniprotDatFile(inputFilename);
+        RichStreamReader sr = getRichStreamReaderForUniprotDatFile(inputFilename, false);
 
         System.out.println("Starting to read file: " + inputFilename);
         List<RichSequence> outputEntries = readAndFilterSequencesFromStream(sr);

@@ -17,14 +17,14 @@ import java.io.FileReader;
 public class UniProtDatFileTools {
     private static final int MAX_LINE_WIDTH = 500;
 
-    public static RichStreamReader getRichStreamReaderForUniprotDatFile(String inputFileName) throws FileNotFoundException, BioException {
+    public static RichStreamReader getRichStreamReaderForUniprotDatFile(String inputFileName, boolean elideSymbols) throws FileNotFoundException, BioException {
         BufferedReader br = new BufferedReader(new FileReader(inputFileName));
         RichSequenceFormat inFormat = new UniProtFormatZFIN();
 
         //skips parsing of certain sections that otherwise would throw exceptions
         inFormat.setElideFeatures(true);
         inFormat.setElideReferences(true);
-        inFormat.setElideSymbols(true);
+        inFormat.setElideSymbols(elideSymbols);
 
         FiniteAlphabet alpha = (FiniteAlphabet) AlphabetManager.alphabetForName("PROTEIN");
         SymbolTokenization tokenization = alpha.getTokenization("default");
@@ -43,7 +43,6 @@ public class UniProtDatFileTools {
         format.setOverrideAlphabet(alphabet);
         format.setLineWidth(MAX_LINE_WIDTH);
 
-        RichStreamWriter sw = new RichStreamWriter(fos, format);
-        return sw;
+        return new RichStreamWriter(fos, format);
     }
 }
