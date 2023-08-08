@@ -10,7 +10,7 @@ import org.biojavax.bio.seq.io.RichStreamWriter;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 
-import java.io.IOException;
+import java.io.*;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -33,6 +33,8 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
     private String inputFilename1;
     private String inputFilename2;
     private String outputFilename;
+    
+    private PrintWriter outputWriter;
     
     private Map<String, RichSequence> sequences1 = new HashMap<>();
     private Map<String, RichSequence> sequences2 = new HashMap<>();
@@ -91,6 +93,7 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
         populateSequenceMap(getRichStreamReaderForUniprotDatFile(inputFilename2, true), sequences2);
         System.out.println("Finished reading file " + inputFilename2 + ". Found " + sequences2.size() + " entries.");
 
+        System.out.println("Starting to compare files. Writing to file: " + outputFilename);
         writeAccessionsDiff();
         compareCommonAccessions();
     }
@@ -101,20 +104,15 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
             RichSequence seq1 = sequences1.get(accession);
             RichSequence seq2 = sequences2.get(accession);
 
-            System.out.println("Comparing accession: " + accession);
-            System.out.println("====================================");
-
-            System.out.printf("seq1: %s\tseq2: %s\n", seq1.getName(), seq2.getName());
-
             seq1.getRankedCrossRefs().forEach(crossRef -> {
                 if (!seq2.getRankedCrossRefs().contains(crossRef)) {
-                    System.out.println("Found crossRef only in seq1: " + crossRef);
+                    outputWriter.println("Found crossRef only in seq1: " + crossRef);
                 }
             });
 
             seq2.getRankedCrossRefs().forEach(crossRef -> {
                 if (!seq1.getRankedCrossRefs().contains(crossRef)) {
-                    System.out.println("Found crossRef only in seq2: " + crossRef);
+                    outputWriter.println("Found crossRef only in seq2: " + crossRef);
                 }
             });
 
@@ -122,13 +120,13 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
             List<Note> keywords2 = getKeywordNotes(seq2);
             keywords1.forEach(keyword -> {
                 if (!keywords2.contains(keyword)) {
-                    System.out.println("Found keyword only in seq1: " + keyword.getValue());
+                    outputWriter.println("Found keyword only in seq1: " + keyword.getValue());
                 }
             });
 
             keywords2.forEach(keyword -> {
                 if (!keywords1.contains(keyword)) {
-                    System.out.println("Found keyword only in seq2: " + keyword.getValue());
+                    outputWriter.println("Found keyword only in seq2: " + keyword.getValue());
                 }
             });
 
@@ -145,14 +143,14 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
     private void writeAccessionsDiff() {
         Collection<String> namesOnlyInSet1 = CollectionUtils.removeAll(sequences1.keySet(), sequences2.keySet());
         Collection<String> namesOnlyInSet2 = CollectionUtils.removeAll(sequences2.keySet(), sequences1.keySet());
+        
+        outputWriter.println("Found " + namesOnlyInSet1.size() + " entries only in " + inputFilename1);
+        outputWriter.println("============================");
+        outputWriter.println(String.join(", ", namesOnlyInSet1) + "\n");
 
-        System.out.println("Found " + namesOnlyInSet1.size() + " entries only in " + inputFilename1);
-        System.out.println("============================");
-        System.out.println(String.join(", ", namesOnlyInSet1) + "\n");
-
-        System.out.println("Found " + namesOnlyInSet2.size() + " entries only in " + inputFilename2);
-        System.out.println("============================");
-        System.out.println(String.join(", ", namesOnlyInSet2) + "\n");
+        outputWriter.println("Found " + namesOnlyInSet2.size() + " entries only in " + inputFilename2);
+        outputWriter.println("============================");
+        outputWriter.println(String.join(", ", namesOnlyInSet2) + "\n");
 
     }
 
@@ -160,6 +158,21 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
         setInputFilename1();
         setInputFilename2();
         setOutputFilename();
+        setOutputStream();
+    }
+
+    private void setOutputStream() {
+        if (outputFilename == null) {
+            return;
+        }
+
+        try {
+            outputWriter = new PrintWriter(new FileWriter(outputFilename));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void populateSequenceMap(RichStreamReader richStreamReader, Map<String, RichSequence> sequences) throws BioException {
