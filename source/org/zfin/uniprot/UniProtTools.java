@@ -1,6 +1,8 @@
 package org.zfin.uniprot;
 
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.biojava.bio.BioException;
+import org.biojava.bio.seq.Sequence;
 import org.biojava.bio.seq.io.SymbolTokenization;
 import org.biojava.bio.symbol.AlphabetManager;
 import org.biojava.bio.symbol.FiniteAlphabet;
@@ -12,10 +14,7 @@ import org.biojavax.bio.seq.io.RichSequenceFormat;
 import org.biojavax.bio.seq.io.RichStreamReader;
 import org.biojavax.bio.seq.io.RichStreamWriter;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,13 +41,17 @@ public class UniProtTools {
 
     public static RichStreamWriter getRichStreamWriterForUniprotDatFile(String outfile) throws FileNotFoundException {
         FileOutputStream fos = new FileOutputStream(outfile);
+        RichSequenceFormat format = getUniProtFormatForWriting();
+        return new RichStreamWriter(fos, format);
+    }
+
+    public static UniProtFormatZFIN getUniProtFormatForWriting() {
         UniProtFormatZFIN format = new UniProtFormatZFIN();
 
         FiniteAlphabet alphabet = (FiniteAlphabet) AlphabetManager.alphabetForName("PROTEIN");
         format.setOverrideAlphabet(alphabet);
         format.setLineWidth(MAX_LINE_WIDTH);
-
-        return new RichStreamWriter(fos, format);
+        return format;
     }
 
 
@@ -60,4 +63,18 @@ public class UniProtTools {
     }
 
 
+    public static String sequenceToString(Sequence seq1) {
+        UniProtFormatZFIN format = getUniProtFormatForWriting();
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        try {
+            PrintStream printStream = new PrintStream(outputStream);
+            format.beginWriting();
+            format.writeSequence(seq1, printStream);
+            format.finishWriting();
+        } catch (IOException se) {
+            se.printStackTrace();
+            throw new RuntimeException(se);
+        }
+        return outputStream.toString();
+    }
 }
