@@ -178,7 +178,7 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
     private void populateSequenceMap(RichStreamReader richStreamReader, Map<String, RichSequence> sequences) throws BioException {
         while (richStreamReader.hasNext()) {
             RichSequence seq = richStreamReader.nextRichSequence();
-            sequences.put(seq.getName(), seq);
+            sequences.put(seq.getAccession(), seq);
         }
     }
 
