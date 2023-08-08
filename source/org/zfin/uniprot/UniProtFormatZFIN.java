@@ -1293,23 +1293,25 @@ public class UniProtFormatZFIN extends RichSequenceFormat.HeaderlessFormat {
 
         // sequence stuff
         Symbol[] syms = (Symbol[])rs.toList().toArray(new Symbol[0]);
-        int symCount = 0;
-        this.getPrintStream().print("    ");
-        for (int i = 0; i < syms.length; i++) {
-            if (symCount % 60 == 0 && symCount>0) {
-                this.getPrintStream().print("\n    ");
+        if (syms.length > 0) {
+            int symCount = 0;
+            this.getPrintStream().print("    ");
+            for (int i = 0; i < syms.length; i++) {
+                if (symCount % 60 == 0 && symCount > 0) {
+                    this.getPrintStream().print("\n    ");
+                }
+                if (symCount % 10 == 0) {
+                    this.getPrintStream().print(" ");
+                }
+                try {
+                    this.getPrintStream().print(tok.tokenizeSymbol(syms[i]));
+                } catch (IllegalSymbolException e) {
+                    throw new RuntimeException("Found illegal symbol: " + syms[i]);
+                }
+                symCount++;
             }
-            if (symCount % 10 == 0) {
-                this.getPrintStream().print(" ");
-            }
-            try {
-                this.getPrintStream().print(tok.tokenizeSymbol(syms[i]));
-            } catch (IllegalSymbolException e) {
-                throw new RuntimeException("Found illegal symbol: "+syms[i]);
-            }
-            symCount++;
+            this.getPrintStream().print("\n");
         }
-        this.getPrintStream().print("\n");
         this.getPrintStream().println(END_SEQUENCE_TAG);
     }
 
