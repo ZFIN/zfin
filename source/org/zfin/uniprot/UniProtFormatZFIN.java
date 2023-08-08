@@ -1277,23 +1277,24 @@ public class UniProtFormatZFIN extends RichSequenceFormat.HeaderlessFormat {
             if (ftid!=null) StringTools.writeKeyValueLine(FEATURE_TAG, "/FTId="+ftid+".", 34, this.getLineWidth(), null, FEATURE_TAG, this.getPrintStream());
         }
 
-        // sequence header
-        int mw = 0;
-        try {
-            mw = (int)MassCalc.getMolecularWeight(rs);
-        } catch (IllegalSymbolException e) {
-            throw new RuntimeException("Found illegal symbol", e);
-        }
-        CRC64Checksum crc = new CRC64Checksum();
-        String seqstr = rs.seqString();
-        crc.update(seqstr.getBytes(),0,seqstr.length());
-        this.getPrintStream().print(START_SEQUENCE_TAG+"   SEQUENCE  "+StringTools.leftPad(""+rs.length(),4)+" AA;  ");
-        this.getPrintStream().print(StringTools.leftPad(""+mw,5)+" MW;  ");
-        this.getPrintStream().println(crc+" CRC64;");
-
         // sequence stuff
+        // sequence header
         Symbol[] syms = (Symbol[])rs.toList().toArray(new Symbol[0]);
         if (syms.length > 0) {
+
+            int mw = 0;
+            try {
+                mw = (int)MassCalc.getMolecularWeight(rs);
+            } catch (IllegalSymbolException e) {
+                throw new RuntimeException("Found illegal symbol", e);
+            }
+            CRC64Checksum crc = new CRC64Checksum();
+            String seqstr = rs.seqString();
+            crc.update(seqstr.getBytes(),0,seqstr.length());
+            this.getPrintStream().print(START_SEQUENCE_TAG+"   SEQUENCE  "+StringTools.leftPad(""+rs.length(),4)+" AA;  ");
+            this.getPrintStream().print(StringTools.leftPad(""+mw,5)+" MW;  ");
+            this.getPrintStream().println(crc+" CRC64;");
+
             int symCount = 0;
             this.getPrintStream().print("    ");
             for (int i = 0; i < syms.length; i++) {
