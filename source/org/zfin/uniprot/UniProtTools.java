@@ -4,6 +4,9 @@ import org.biojava.bio.BioException;
 import org.biojava.bio.seq.io.SymbolTokenization;
 import org.biojava.bio.symbol.AlphabetManager;
 import org.biojava.bio.symbol.FiniteAlphabet;
+import org.biojavax.Note;
+import org.biojavax.SimpleRichAnnotation;
+import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.bio.seq.io.RichSequenceBuilderFactory;
 import org.biojavax.bio.seq.io.RichSequenceFormat;
 import org.biojavax.bio.seq.io.RichStreamReader;
@@ -13,8 +16,10 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.List;
 
-public class UniProtDatFileTools {
+public class UniProtTools {
     private static final int MAX_LINE_WIDTH = 500;
 
     public static RichStreamReader getRichStreamReaderForUniprotDatFile(String inputFileName, boolean elideSymbols) throws FileNotFoundException, BioException {
@@ -45,4 +50,14 @@ public class UniProtDatFileTools {
 
         return new RichStreamWriter(fos, format);
     }
+
+
+    public static List<Note> getKeywordNotes(RichSequence seq1) {
+        SimpleRichAnnotation seq1NoteSet = new SimpleRichAnnotation();
+        seq1NoteSet.setNoteSet(seq1.getNoteSet());
+        Note[] keywords = seq1NoteSet.getProperties(RichSequence.Terms.getKeywordTerm());
+        return List.of(keywords);
+    }
+
+
 }

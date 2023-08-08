@@ -13,8 +13,8 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static org.zfin.uniprot.UniProtDatFileTools.getRichStreamReaderForUniprotDatFile;
-import static org.zfin.uniprot.UniProtDatFileTools.getRichStreamWriterForUniprotDatFile;
+import static org.zfin.uniprot.UniProtTools.getRichStreamReaderForUniprotDatFile;
+import static org.zfin.uniprot.UniProtTools.getRichStreamWriterForUniprotDatFile;
 
 /**
  * This class is used to slim down the uniprot load files.

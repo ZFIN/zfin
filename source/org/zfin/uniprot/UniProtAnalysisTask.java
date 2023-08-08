@@ -23,7 +23,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.zfin.uniprot.UniProtDatFileTools.getRichStreamReaderForUniprotDatFile;
+import static org.zfin.uniprot.UniProtTools.getRichStreamReaderForUniprotDatFile;
 
 /**
  * This class is used to analyze the uniprot problem7 file data.

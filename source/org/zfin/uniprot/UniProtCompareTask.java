@@ -2,6 +2,8 @@ package org.zfin.uniprot;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.biojava.bio.BioException;
+import org.biojavax.Note;
+import org.biojavax.SimpleRichAnnotation;
 import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.bio.seq.io.RichStreamReader;
 import org.biojavax.bio.seq.io.RichStreamWriter;
@@ -13,8 +15,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static org.zfin.uniprot.UniProtDatFileTools.getRichStreamReaderForUniprotDatFile;
-import static org.zfin.uniprot.UniProtDatFileTools.getRichStreamWriterForUniprotDatFile;
+import static org.zfin.uniprot.UniProtTools.*;
 
 /**
  * This class is used to compare uniprot load files. Provide two files and it will compare them and output the differences.
@@ -91,6 +92,54 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
         System.out.println("Finished reading file " + inputFilename2 + ". Found " + sequences2.size() + " entries.");
 
         writeAccessionsDiff();
+        compareCommonAccessions();
+    }
+
+    private void compareCommonAccessions() {
+        Collection<String> commonSet = CollectionUtils.intersection(sequences1.keySet(), sequences2.keySet());
+        for(String accession : commonSet) {
+            RichSequence seq1 = sequences1.get(accession);
+            RichSequence seq2 = sequences2.get(accession);
+
+            System.out.println("Comparing accession: " + accession);
+            System.out.println("====================================");
+
+            System.out.printf("seq1: %s\tseq2: %s\n", seq1.getName(), seq2.getName());
+
+            seq1.getRankedCrossRefs().forEach(crossRef -> {
+                if (!seq2.getRankedCrossRefs().contains(crossRef)) {
+                    System.out.println("Found crossRef only in seq1: " + crossRef);
+                }
+            });
+
+            seq2.getRankedCrossRefs().forEach(crossRef -> {
+                if (!seq1.getRankedCrossRefs().contains(crossRef)) {
+                    System.out.println("Found crossRef only in seq2: " + crossRef);
+                }
+            });
+
+            List<Note> keywords1 = getKeywordNotes(seq1);
+            List<Note> keywords2 = getKeywordNotes(seq2);
+            keywords1.forEach(keyword -> {
+                if (!keywords2.contains(keyword)) {
+                    System.out.println("Found keyword only in seq1: " + keyword.getValue());
+                }
+            });
+
+            keywords2.forEach(keyword -> {
+                if (!keywords1.contains(keyword)) {
+                    System.out.println("Found keyword only in seq2: " + keyword.getValue());
+                }
+            });
+
+
+
+//            if (!seq1.equals(seq2)) {
+//                System.out.println("Found differences for accession: " + accession);
+//                System.out.println("====================================");
+//                System.out.println();
+//            }
+        }
     }
 
     private void writeAccessionsDiff() {
