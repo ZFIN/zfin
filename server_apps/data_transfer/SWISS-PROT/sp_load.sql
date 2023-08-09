@@ -91,13 +91,34 @@ alter table tmp_uniprot_db_link_with_dups
                         )
 				); 
 
-	delete from tmp_uniprot_pre_db_link where exists (
-		select d.dblink_zdb_id
-		  from db_link d
-		 where tmp_uniprot_pre_db_link.linked_recid=d.dblink_linked_recid
-           and tmp_uniprot_pre_db_link.acc_num=d.dblink_acc_num
-		   and tmp_uniprot_pre_db_link.dblink_fdbcont_zdb_id = d.dblink_fdbcont_zdb_id
-		);
+-- This is where we delete from our incoming dblinks table (tmp_uniprot_pre_db_link) any records that are already in the db_link table.
+-- Based on having the same linked_recid, acc_num, and fdbcont_zdb_id. In Aug 2023, there were 374 record that matched.
+
+-- preserve the IDs of those entries that already exist so we can create a second attribution to show that the load logic also agrees with those relationships
+SELECT DISTINCT
+    d.dblink_zdb_id,
+    d.dblink_linked_recid,
+    d.dblink_acc_num,
+    d.dblink_fdbcont_zdb_id
+    INTO TEMP TABLE db_links_that_overlap_with_load
+FROM
+    tmp_uniprot_pre_db_link t
+INNER JOIN db_link d ON t.linked_recid = d.dblink_linked_recid
+    AND t.acc_num = d.dblink_acc_num
+    AND t.dblink_fdbcont_zdb_id = d.dblink_fdbcont_zdb_id;
+
+-- delete the incoming records that are already in the db_link table
+DELETE FROM tmp_uniprot_pre_db_link
+WHERE (linked_recid, acc_num, dblink_fdbcont_zdb_id) IN (
+    SELECT
+        dblink_linked_recid,
+        dblink_acc_num,
+        dblink_fdbcont_zdb_id
+    FROM
+        db_links_that_overlap_with_load);
+
+
+
 --!echo '		from tmp_uniprot_pre_db_link'
 
      --   update statistics high for table tmp_uniprot_pre_db_link;
@@ -125,6 +146,13 @@ alter table tmp_uniprot_db_link_with_dups
 		  from tmp_uniprot_pre_db_link;
 --!echo '		into record_attribution'
 
+-- Attribute to the internal pub record the db links that were already in the db_link table
+-- See the comment above where we create the temp table db_links_that_overlap_with_load
+insert into record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
+    select dblink_zdb_id, 'ZDB-PUB-230615-71'
+        from db_links_that_overlap_with_load;
+
+\copy (select * from db_links_that_overlap_with_load order by 2,3,4,1) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/SWISS-PROT/dblinks-overlap.csv' with csv header;
 
 ------------------- loading ac alias ------------------------
 -- from June, 2010, no longer load dblink ids into data_alias table (see FB case 5770) -----------------
