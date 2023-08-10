@@ -496,9 +496,6 @@ public class TermAPIController {
 
     private void retrieveAntibodyData(GenericTerm aoTerm, AnatomySearchBean form, Pagination pagi, boolean directAnnotation) {
 
-        PaginationBean pagination = new PaginationBean();
-        pagination.setMaxDisplayRecords(pagi.getLimit());
-        pagination.setPageInteger(pagi.getPage());
         PaginationResult<org.zfin.mutant.presentation.AntibodyStatistics> antibodies = AnatomyService.getAntibodyStatistics(aoTerm, pagi, !directAnnotation);
         form.setAntibodyStatistics(antibodies.getPopulatedResults());
         form.setAntibodyCount(antibodies.getTotalCount());
