@@ -14,7 +14,7 @@ from pub_tracking_history,
      publication
 where zdb_id = pth_pub_zdb_id
   and pth_location_id = 6
-  and (lower(title) like '%therap%' or lower(title) like '%preclincial drug%' or lower(title) like '%efficacy%')
+  and (lower(title) like '%therap%' or lower(title) like '%preclinical drug%' or lower(title) like '%efficacy%')
 ;
 
 insert into pubs_temp (zdb_id)
@@ -23,7 +23,7 @@ from pub_tracking_history,
      publication
 where zdb_id = pth_pub_zdb_id
   and pth_location_id = 6
-  and (lower(title) like '%therap%' or lower(title) like '%preclincial drug%' or lower(title) like '%efficacy%')
+  and (lower(title) like '%therap%' or lower(title) like '%preclinical drug%' or lower(title) like '%efficacy%')
 ;
 
 
@@ -34,7 +34,7 @@ where exists(
               from publication
               where zdb_id = pth_pub_zdb_id
                 and pth_location_id = 6
-                and (lower(title) like '%therap%' or lower(title) like '%preclincial drug%' or lower(title) like '%efficacy%')
+                and (lower(title) like '%therap%' or lower(title) like '%preclinical drug%' or lower(title) like '%efficacy%')
           )
 ;
 
@@ -45,7 +45,7 @@ from pub_tracking_history,
      publication
 where zdb_id = pth_pub_zdb_id
   and pth_location_id = 6
-  and (lower(pub_abstract) like '%therap%' or lower(pub_abstract) like '%preclincial drug%' or lower(pub_abstract) like '%efficacy%')
+  and (lower(pub_abstract) like '%therap%' or lower(pub_abstract) like '%preclinical drug%' or lower(pub_abstract) like '%efficacy%')
 ;
 
 insert into pubs_temp (zdb_id)
@@ -54,7 +54,7 @@ from pub_tracking_history,
      publication
 where zdb_id = pth_pub_zdb_id
   and pth_location_id = 6
-  and (lower(pub_abstract) like '%therap%' or lower(pub_abstract) like '%preclincial drug%' or lower(pub_abstract) like '%efficacy%')
+  and (lower(pub_abstract) like '%therap%' or lower(pub_abstract) like '%preclinical drug%' or lower(pub_abstract) like '%efficacy%')
 ;
 
 update pub_tracking_history
@@ -64,7 +64,7 @@ where exists(
               from publication
               where zdb_id = pth_pub_zdb_id
                 and pth_location_id = 6
-                and (lower(pub_abstract) like '%therap%' or lower(pub_abstract) like '%preclincial drug%' or lower(pub_abstract) like '%efficacy%')
+                and (lower(pub_abstract) like '%therap%' or lower(pub_abstract) like '%preclinical drug%' or lower(pub_abstract) like '%efficacy%')
           )
 ;
 
@@ -74,7 +74,7 @@ from pub_tracking_history,
      publication
 where zdb_id = pth_pub_zdb_id
   and pth_location_id = 6
-  and (lower(keywords) like '%therap%' or lower(keywords) like '%preclincial drug%' or lower(keywords) like '%efficacy%')
+  and (lower(keywords) like '%therap%' or lower(keywords) like '%preclinical drug%' or lower(keywords) like '%efficacy%')
 ;
 
 insert into pubs_temp (zdb_id)
@@ -83,8 +83,8 @@ from pub_tracking_history,
      publication
 where zdb_id = pth_pub_zdb_id
   and pth_location_id = 6
-  and (lower(keywords) like '%therap%' or lower(keywords) like '%preclincial drug%' or lower(keywords) like '%efficacy%'
-  and (lower(keywords) like '%therap%' or lower(keywords) like '%preclincial drug%'))
+  and (lower(keywords) like '%therap%' or lower(keywords) like '%preclinical drug%' or lower(keywords) like '%efficacy%'
+  and (lower(keywords) like '%therap%' or lower(keywords) like '%preclinical drug%'))
 ;
 
 
@@ -95,8 +95,8 @@ where exists(
               from publication
               where zdb_id = pth_pub_zdb_id
                 and pth_location_id = 6
-                and (lower(keywords) like '%therap%' or lower(keywords) like '%preclincial drug%' or lower(keywords) like '%efficacy%'
-                and (lower(keywords) like '%therap%' or lower(keywords) like '%preclincial drug%')
+                and (lower(keywords) like '%therap%' or lower(keywords) like '%preclinical drug%' or lower(keywords) like '%efficacy%'
+                and (lower(keywords) like '%therap%' or lower(keywords) like '%preclinical drug%')
           ))
 ;
 
@@ -110,7 +110,7 @@ where zdb_id = pth_pub_zdb_id
   and mh_pub_zdb_id = zdb_id
   and mesht_mesh_id = mh_mesht_mesh_descriptor_id
   and pth_location_id = 6
-  and (lower(mesht_term_name) like '%therap%' or lower(mesht_term_name) like '%preclincial drug%' or lower(mesht_term_name) like '%efficacy%')
+  and (lower(mesht_term_name) like '%therap%' or lower(mesht_term_name) like '%preclinical drug%' or lower(mesht_term_name) like '%efficacy%')
 ;
 
 insert into pubs_temp (zdb_id)
@@ -123,7 +123,7 @@ where zdb_id = pth_pub_zdb_id
   and mh_pub_zdb_id = zdb_id
   and mesht_mesh_id = mh_mesht_mesh_descriptor_id
   and pth_location_id = 6
-  and (lower(mesht_term_name) like '%therap%' or lower(mesht_term_name) like '%preclincial drug%' or lower(mesht_term_name) like '%efficacy%')
+  and (lower(mesht_term_name) like '%therap%' or lower(mesht_term_name) like '%preclinical drug%' or lower(mesht_term_name) like '%efficacy%')
 ;
 
 
@@ -138,7 +138,7 @@ where exists(
                 and mh_pub_zdb_id = zdb_id
                 and mesht_mesh_id = mh_mesht_mesh_descriptor_id
                 and pth_location_id = 6
-                and (lower(mesht_term_name) like '%therap%' or lower(mesht_term_name) like '%preclincial drug%' or lower(mesht_term_name) like '%efficacy%' )
+                and (lower(mesht_term_name) like '%therap%' or lower(mesht_term_name) like '%preclinical drug%' or lower(mesht_term_name) like '%efficacy%' )
           )
 ;
 
