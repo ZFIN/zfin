@@ -13,12 +13,12 @@ const PublicationDiseaseTable = ({url, title, navigationCounter}) => {
         },
         {
             label: 'Fish',
-            content: row => (<Fish entity={row.fishExperiment.fish}/>),
+            content: row => row.fishExperiment && (<Fish entity={row.fishExperiment.fish}/>),
             width: '300px',
         },
         {
             label: 'Environment',
-            content: row => (<EntityLink entity={row.fishExperiment.experiment}/>),
+            content: row => row.fishExperiment && (<EntityLink entity={row.fishExperiment.experiment}/>),
             width: '350px',
         },
         {
