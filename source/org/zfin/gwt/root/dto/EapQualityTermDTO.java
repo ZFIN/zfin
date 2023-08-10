@@ -53,14 +53,14 @@ public class EapQualityTermDTO implements Serializable, Comparable<EapQualityTer
     static {
         nicknameMap.put("PATO:0000462,abnormal", ABSENT_PHENOTYPIC);
         nicknameMap.put("PATO:0000628,abnormal", "mislocalized");
-        nicknameMap.put("PATO:0000140,ameliorated", "position ok");
+        nicknameMap.put("PATO:0000140,ameliorated", "position amel");
         nicknameMap.put("PATO:0001672,abnormal", "decreased distribution");
         nicknameMap.put("PATO:0001671,abnormal", "increased distribution");
         nicknameMap.put("PATO:0000060,abnormal", "spatial pattern abnormal");
-        nicknameMap.put("PATO:0000060,ameliorated", "spatial pattern ok");
+        nicknameMap.put("PATO:0000060,ameliorated", "spatial pattern amel");
         nicknameMap.put("PATO:0001997,abnormal", "decreased amount");
         nicknameMap.put("PATO:0000470,abnormal", "increased amount");
-        nicknameMap.put("PATO:0000070,ameliorated", "amount ok");
+        nicknameMap.put("PATO:0000070,ameliorated", "amount amel");
     }
 
 

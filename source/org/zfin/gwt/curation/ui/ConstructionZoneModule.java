@@ -109,7 +109,7 @@ public class ConstructionZoneModule extends Composite implements HandlesError {
     private CheckBox getQualityCheckBox(String name) {
         CheckBox box = new CheckBox(name);
         box.setStyleName("small");
-        if (name.contains("ok"))
+        if (name.contains("amel"))
             box.addStyleName("phenotype-normal");
         if (name.equals(EapQualityTermDTO.ABSENT_PHENOTYPIC))
             box.addStyleName("red");
