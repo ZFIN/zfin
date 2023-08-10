@@ -19,7 +19,6 @@ public class HibernatePublicationPageRepository implements PublicationPageReposi
 
     @Override
     public PaginationResult<ExpressionTableRow> getPublicationExpression(Publication publication, Pagination pagination) {
-        PaginationBean bean = PaginationBean.getPaginationBean(pagination);
         String hql;
         hql = """
             select tableRow from ExpressionTableRow as tableRow

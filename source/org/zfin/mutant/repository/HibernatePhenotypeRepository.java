@@ -9,6 +9,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.BasicTransformerAdapter;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 import org.zfin.database.InformixUtil;
 import org.zfin.expression.Figure;
 import org.zfin.framework.HibernateUtil;
@@ -30,6 +31,7 @@ import org.zfin.repository.RepositoryFactory;
 
 import java.math.BigInteger;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getMutantRepository;
 
@@ -895,13 +897,24 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
     @Override
     public List<DiseaseAnnotationModel> getHumanDiseaseAnnotationModels(String publicationID) {
         String hql = """
-            from DiseaseAnnotationModel as model where
-             model.diseaseAnnotation.publication.zdbID = :publicationID
-            order by model.diseaseAnnotation.disease.termName
+            from DiseaseAnnotation as model where
+             model.publication.zdbID = :publicationID
+            order by model.disease.termName
             """;
-        Query<DiseaseAnnotationModel> query = HibernateUtil.currentSession().createQuery(hql, DiseaseAnnotationModel.class);
+        Query<DiseaseAnnotation> query = HibernateUtil.currentSession().createQuery(hql, DiseaseAnnotation.class);
         query.setParameter("publicationID", publicationID);
-        return query.list();
+        List<DiseaseAnnotation> list = query.list();
+
+        return list.stream()
+            .map(diseaseAnnotation -> {
+                if (CollectionUtils.isEmpty(diseaseAnnotation.getDiseaseAnnotationModel())) {
+                    DiseaseAnnotationModel model = new DiseaseAnnotationModel();
+                    model.setDiseaseAnnotation(diseaseAnnotation);
+                    return List.of(model);
+                }
+                return diseaseAnnotation.getDiseaseAnnotationModel();
+            }).flatMap(Collection::stream)
+            .collect(Collectors.toList());
     }
 
     @Override
