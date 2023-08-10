@@ -17,6 +17,17 @@ http://fogbugz.zfin.org/default.asp?W1589</description>
         <artifactNumToKeep>-1</artifactNumToKeep>
       </strategy>
     </jenkins.model.BuildDiscarderProperty>
+
+      <hudson.model.ParametersDefinitionProperty>
+        <parameterDefinitions>
+          <hudson.model.StringParameterDefinition>
+            <name>PUB_ZDB_IDs</name>
+            <description>Leave blank for default logic. If specified, will pull in assets for specific ZDB IDs</description>
+            <defaultValue></defaultValue>
+          </hudson.model.StringParameterDefinition>
+        </parameterDefinitions>
+      </hudson.model.ParametersDefinitionProperty>
+
   </properties>
   <scm class="hudson.scm.NullSCM"/>
   <canRoam>true</canRoam>

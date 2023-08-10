@@ -1,6 +1,12 @@
 #!/bin/bash
 //usr/bin/env groovy -cp "$GROOVY_CLASSPATH:." "$0" $@; exit $?
 
+/**
+ * This script will download PDFs and images from PubMed.
+ * By default, it uses the database to find publications that need PDFs and images.
+ * If publication ZDB ID(s) are provided as command line arguments, it will only check for those.
+ */
+
 import groovy.io.FileType
 import groovy.time.TimeCategory
 import groovy.time.TimeDuration
@@ -28,18 +34,41 @@ PUBS_TO_GIVE_PERMISSIONS = new File("pubsToGivePermission.txt")
 
 def idsToGrab = [:]
 
-PubmedUtils.psql DBNAME, """
-  \\copy (
-  SELECT pub_pmc_id, zdb_id
-  FROM publication
-  WHERE pub_pmc_id IS NOT NULL and pub_pmc_id != ''
-     AND NOT EXISTS (SELECT 'x' 
-                    FROM publication_file 
-                    WHERE pf_pub_zdb_id = zdb_id 
-                    AND pf_file_type_id =1)
-     AND NOT EXISTS (select 'x' from figure where fig_source_zdb_id = zdb_id) 
-     ) to '$PUB_IDS_TO_CHECK' delimiter ',';
-"""
+//if the environment variable PUB_ZDB_IDs exists or we are passed command line arguments, use those IDs to query the DB instead
+def specificPubZdbIDs = System.getenv("PUB_ZDB_IDs")?.split("[,\\s]+").findAll { it != null && it != ""}
+if (args.length > 0) {
+    specificPubZdbIDs = Arrays.asList(args)
+}
+
+//if an argument is provided, use that to query the DB instead
+if (specificPubZdbIDs.size() > 0) {
+
+    pubZdbIDs = "'" + specificPubZdbIDs.join("','") + "'"
+
+    println "Publication ZDB ID (s) provided, checking for PDFs for $pubZdbIDs."
+
+    PubmedUtils.psql DBNAME, """
+      \\copy (
+      SELECT pub_pmc_id, zdb_id
+      FROM publication
+      WHERE zdb_id in ($pubZdbIDs)
+         ) to '$PUB_IDS_TO_CHECK' delimiter ',';
+    """
+} else {
+    println "No publication ZDB ID provided as command line argument, checking for all publications using standard logic."
+    PubmedUtils.psql DBNAME, """
+      \\copy (
+      SELECT pub_pmc_id, zdb_id
+      FROM publication
+      WHERE pub_pmc_id IS NOT NULL and pub_pmc_id != ''
+         AND NOT EXISTS (SELECT 'x' 
+                        FROM publication_file 
+                        WHERE pf_pub_zdb_id = zdb_id 
+                        AND pf_file_type_id =1)
+         AND NOT EXISTS (select 'x' from figure where fig_source_zdb_id = zdb_id) 
+         ) to '$PUB_IDS_TO_CHECK' delimiter ',';
+    """
+}
 
 def addSummaryPDF(String zdbId, String pmcId, pubYear) {
 
@@ -64,7 +93,9 @@ def downloadPMCFileBundle(String url, String zdbId, String pubYear) {
         directory.mkdir()
     }
 
-    def file = new FileOutputStream("${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/$zdbId" + ".tar.gz")
+    def tarOutputFile = "${System.getenv()['LOADUP_FULL_PATH']}/$pubYear/$zdbId/$zdbId" + ".tar.gz"
+    println("Writing to $tarOutputFile")
+    def file = new FileOutputStream("$tarOutputFile")
     def out = new BufferedOutputStream(file)
 
     out << new URL(url).openStream()
@@ -229,7 +260,6 @@ def parseLabelCaptionImage(groupMatchString, zdbId, pmcId, imageFilePath, pubYea
         }
     }
 }
-
 
 def makeThumbnailAndMediumImage(fileName, fileNameNoExtension, pubZdbId, pubYear) {
 
