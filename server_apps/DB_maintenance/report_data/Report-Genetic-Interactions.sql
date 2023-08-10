@@ -1,12 +1,6 @@
 
-drop table if exists tmp_fish_thatfitthebill;
-drop table if exists tmp_fishnoeap;
-drop table if exists tmp_onlyfish;
-drop table if exists tmp_fish490;
-drop table if exists tmp_onlydeficiencies;
-
 select fmrel_ftr_zdb_id as featdef
-into tmp_onlydeficiencies
+into temp tmp_onlydeficiencies
 from feature, feature_marker_relationship, marker
 where feature_type='DEFICIENCY'
 and fmrel_ftr_zdb_id=feature_zdb_id
@@ -21,7 +15,7 @@ and fish_genotype_zdb_id = genofeat_geno_zdb_id
 and genofeat_feature_Zdb_id = fmrel_Ftr_zdb_id
 and feature_zdb_id = fmrel_ftr_zdb_id
 and fmrel_mrkr_zdb_id = mrkr_zdb_id
-and feature_type in ('POINT_MUTATION','COMPLEX','DELETION','INSERTION','INDEL');
+and feature_type in ('POINT_MUTATION','COMPLEX','DELETION','INSERTION','INDEL')
 union
 select distinct fish_zdb_id, fish_name, concat(featdef,E'\t',feature_abbrev,E'\t',mrkr_zdb_id,E'\t',mrkr_abbrev,E'\t',feature_type) as affector
 from fish, genotype_Feature, feature_marker_relationship, feature,marker,tmp_onlydeficiencies
@@ -53,7 +47,7 @@ and mrel_type='knockdown reagent targets gene';
 
 
 
-select fish_zdb_id, fish_name, string_agg(affector,',') as affected_components into tmp_fish490 from tmp_onlyfish group by fish_zdb_id, fish_name;
+select fish_zdb_id, fish_name, string_agg(affector,',') as affected_components into temp tmp_fish490 from tmp_onlyfish group by fish_zdb_id, fish_name;
 
 
 
@@ -61,7 +55,7 @@ select fish_zdb_id, fish_name, string_agg(affector,',') as affected_components i
 select distinct fish_zdb_id , fish_name,affected_components, genox_exp_zdb_id,exp_name,genox_zdb_id,
 nvl((Select term_ont_id from term where term_zdb_id = psg_e1b_zdb_id),'') as e1subtermid ,nvl(psg_e1b_name,'') as e1subtermname,psg_e1_relation_name,nvl((Select term_ont_id from term where term_zdb_id = psg_e1a_zdb_id),'') as e1supertermid ,nvl(psg_e1a_name,'') as e1supertermname,
 nvl((Select term_ont_id from term where term_zdb_id =psg_e2b_zdb_id),'') as e2subtermid,nvl(psg_e2b_name,'') as e2subtermname ,psg_e2_relation_name,nvl((Select term_ont_id from term where term_zdb_id =psg_e2a_zdb_id),'') as e2supertermid,nvl(psg_e2a_name,'') as e2supertermname,psg_tag,psg_quality_zdb_id,psg_quality_name,fig_zdb_id, fig_label,fig_source_zdb_id,coalesce(accession_no,0) as pubmedid
-into tmp_fish_thatfitthebill from tmp_fish490,fish_Experiment, experiment,phenotype_source_generated,phenotype_observation_generated,figure,publication
+into temp tmp_fish_thatfitthebill from tmp_fish490,fish_Experiment, experiment,phenotype_source_generated,phenotype_observation_generated,figure,publication
      where (psg_tag like '%ameliorated%' or psg_tag like '%exacerbated%')
 	and psg_pg_id = pg_id
 	and genox_Zdb_id = pg_genox_zdb_id
@@ -73,7 +67,7 @@ and fig_source_zdb_id=zdb_id
 order by fish_zdb_id;
 
 
-select  * into tmp_fishnoeap from tmp_fish_thatfitthebill
+select  * into temp tmp_fishnoeap from tmp_fish_thatfitthebill
 where genox_zdb_id not in
 (select distinct genox_zdb_id
 from fish_experiment, expression_experiment2, expression_figure_stage,expression_result2, expression_phenotype_term
