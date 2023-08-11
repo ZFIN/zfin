@@ -29,7 +29,6 @@ const StatisticDataTable = ({
             }
             state.page = 1;
             state.filter[field] = value;
-            state
         }));
     };
 
