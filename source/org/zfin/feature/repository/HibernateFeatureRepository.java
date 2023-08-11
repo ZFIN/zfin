@@ -64,6 +64,10 @@ public class HibernateFeatureRepository implements FeatureRepository {
         return HibernateUtil.currentSession().get(Feature.class, zdbID);
     }
 
+    public FeatureGenomicMutationDetail getFgmdByID(String zdbID) {
+        return HibernateUtil.currentSession().get(FeatureGenomicMutationDetail.class, zdbID);
+    }
+
     /**
      * Retrieve a list of all feature for a given publication.
      * Features need to be directly attributed to the publication in question.
@@ -390,7 +394,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
     /**
      * We can use the f.sources[0] notation, because there is a 1-1 relationship between Feature and Lab source.
      *
-     * @param prefix prefix string
+     * @param prefix
      */
     @Override
     public List<FeatureLabEntry> getFeaturesForPrefix(String prefix) {

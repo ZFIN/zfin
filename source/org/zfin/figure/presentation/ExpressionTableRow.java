@@ -8,6 +8,7 @@ import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.antibody.Antibody;
 import org.zfin.expression.*;
 import org.zfin.framework.api.View;
+import org.zfin.infrastructure.ZdbID;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.FishExperiment;
@@ -24,7 +25,7 @@ import javax.persistence.*;
 @Getter
 @Entity
 @Table(name = "UI.PUBLICATION_EXPRESSION_DISPLAY")
-public class ExpressionTableRow {
+public class ExpressionTableRow implements ZdbID {
 
     @Id
     @JsonView(View.ExpressionPublicationUI.class)
@@ -53,9 +54,9 @@ public class ExpressionTableRow {
     @JoinColumn(name = "ped_gene_zdb_id")
     private Marker gene;
 
+    @JsonView(View.ExpressionPublicationUI.class)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ped_antibody_zdb_id")
-    @JsonView(View.ExpressionPublicationUI.class)
     private Antibody antibody;
 
     @JsonView(View.ExpressionPublicationUI.class)
@@ -189,5 +190,15 @@ public class ExpressionTableRow {
             builder.append(entity.getSubterm().getZdbID());
 
         return builder.toString();
+    }
+
+    @Override
+    public String getZdbID() {
+        return String.valueOf(id);
+    }
+
+    @Override
+    public void setZdbID(String zdbID) {
+
     }
 }

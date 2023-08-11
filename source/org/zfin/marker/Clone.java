@@ -1,15 +1,17 @@
 package org.zfin.marker;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
 import org.zfin.expression.ExpressionExperiment;
 import org.zfin.framework.api.View;
 import org.zfin.infrastructure.ActiveData;
 
 import java.util.Set;
 
-/**
- */
-public class Clone extends Marker{
+@Setter
+@Getter
+public class Clone extends Marker {
 
     @JsonView({View.API.class, View.UI.class})
     private Integer rating;
@@ -64,44 +66,12 @@ public class Clone extends Marker{
     }
 
 
-    public Integer getRating() {
-        return rating;
-    }
-
-    public void setRating(Integer rating) {
-        this.rating = rating;
-    }
-
     public Set<ExpressionExperiment> getExpressionExperiments() {
         return expressionExperiments;
     }
 
     public void setExpressionExperiments(Set<ExpressionExperiment> expressionExperiments) {
         this.expressionExperiments = expressionExperiments;
-    }
-
-    public ProblemType getProblem() {
-        return problem;
-    }
-
-    public void setProblem(ProblemType problemType) {
-        this.problem = problemType;
-    }
-
-    public Vector getVector() {
-        return vector;
-    }
-
-    public void setVector(Vector vector) {
-        this.vector = vector;
-    }
-
-    public ProbeLibrary getProbeLibrary() {
-        return probeLibrary;
-    }
-
-    public void setProbeLibrary(ProbeLibrary probeLibrary) {
-        this.probeLibrary = probeLibrary;
     }
 
     // note: Must not have "isProblem" method as it will assume that 'problem' is a BooleanType
@@ -127,62 +97,6 @@ public class Clone extends Marker{
         sb.append("problem: ").append(problem);
         sb.append("\n");
         return sb.toString();
-    }
-
-    public String getDigest() {
-        return digest;
-    }
-
-    public void setDigest(String digest) {
-        this.digest = digest;
-    }
-
-    public Integer getInsertSize() {
-        return insertSize;
-    }
-
-    public void setInsertSize(Integer insertSize) {
-        this.insertSize = insertSize;
-    }
-
-    public String getPolymeraseName() {
-        return polymeraseName;
-    }
-
-    public void setPolymeraseName(String polymeraseName) {
-        this.polymeraseName = polymeraseName;
-    }
-
-    public String getPcrAmplification() {
-        return pcrAmplification;
-    }
-
-    public void setPcrAmplification(String pcrAmplification) {
-        this.pcrAmplification = pcrAmplification;
-    }
-
-    public String getCloneComments() {
-        return cloneComments;
-    }
-
-    public void setCloneComments(String cloneComments) {
-        this.cloneComments = cloneComments;
-    }
-
-    public String getCloningSite() {
-        return cloningSite;
-    }
-
-    public void setCloningSite(String cloningSite) {
-        this.cloningSite = cloningSite;
-    }
-
-    public String getSequenceType() {
-        return sequenceType;
-    }
-
-    public void setSequenceType(String sequenceType) {
-        this.sequenceType = sequenceType;
     }
 
     @JsonView({View.UI.class})

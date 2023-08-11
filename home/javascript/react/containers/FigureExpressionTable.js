@@ -6,6 +6,7 @@ import StageRange from '../components/StageRange';
 import PostComposedEntity from '../components/PostComposedEntity';
 import Figure from '../components/Figure';
 import Fish from '../components/Fish';
+import AntibodyLink from '../components/entity/AntibodyLink';
 
 
 const FigureExpressionTable = ({url, hideFigureColumn = false, navigationCounter, title}) => {
@@ -19,9 +20,7 @@ const FigureExpressionTable = ({url, hideFigureColumn = false, navigationCounter
         },
         {
             label: 'Antibody',
-            content: row => {
-                row.antibody && <EntityLink entity={row.antibody}/>
-            },
+            content: row => <AntibodyLink antibody={row.antibody}/>,
             filterName: 'antibody',
             width: '150px',
         },
@@ -58,6 +57,7 @@ const FigureExpressionTable = ({url, hideFigureColumn = false, navigationCounter
             content: row =>
                 row.qualifier
             ,
+            filterName: 'qualifier',
             width: '150px',
         },
         {
