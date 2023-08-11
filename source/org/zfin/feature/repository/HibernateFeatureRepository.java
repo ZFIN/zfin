@@ -26,7 +26,6 @@ import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.gwt.root.dto.Mutagee;
 import org.zfin.gwt.root.dto.Mutagen;
-import org.zfin.infrastructure.DataAlias;
 import org.zfin.infrastructure.DataNote;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
@@ -45,6 +44,7 @@ import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DBLink;
 
+import javax.persistence.Tuple;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -53,31 +53,15 @@ import java.util.stream.Collectors;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
 
-
-/**
- * Hibernate implementation of the Antibody Repository.
- */
 @Repository
 public class HibernateFeatureRepository implements FeatureRepository {
 
-    private static InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
+    private static final InfrastructureRepository infrastructureRepository = RepositoryFactory.getInfrastructureRepository();
 
-    private Logger logger = LogManager.getLogger(HibernateFeatureRepository.class);
+    private final Logger logger = LogManager.getLogger(HibernateFeatureRepository.class);
 
     public Feature getFeatureByID(String zdbID) {
         return HibernateUtil.currentSession().get(Feature.class, zdbID);
-    }
-
-    public FeatureGenomicMutationDetail getFgmdByID(String zdbID) {
-        return HibernateUtil.currentSession().get(FeatureGenomicMutationDetail.class, zdbID);
-    }
-
-    public DataAlias getSpecificDataAlias(Feature feature, String alias) {
-        Session session = currentSession();
-        Criteria criteria = session.createCriteria(DataAlias.class);
-        criteria.add(Restrictions.eq("feature", feature));
-        criteria.add(Restrictions.eq("alias", alias));
-        return (DataAlias) criteria.uniqueResult();
     }
 
     /**
@@ -87,25 +71,25 @@ public class HibernateFeatureRepository implements FeatureRepository {
      * @param publicationID publication
      * @return list of features
      */
-    @SuppressWarnings("unchecked")
     public List<Feature> getFeaturesByPublication(String publicationID) {
-        Session session = currentSession();
-        Criteria criteria = session.createCriteria(Feature.class);
-        criteria.setFetchMode("featureAssay", FetchMode.JOIN);
-        criteria.setFetchMode("featureMarkerRelations", FetchMode.JOIN);
-        criteria.setFetchMode("featureDnaMutationDetail", FetchMode.JOIN);
-        criteria.setFetchMode("featureProteinMutationDetail", FetchMode.JOIN);
-        criteria.createAlias("publications", "pubAttributions");
-        criteria.add(Restrictions.eq("pubAttributions.publication.zdbID", publicationID));
-        criteria.add(Restrictions.eq("pubAttributions.sourceType", RecordAttribution.SourceType.STANDARD));
-        criteria.addOrder(Order.asc("abbreviationOrder"));
-        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-        List<Feature> list = criteria.list();
-        return list;
+        String hql = """
+            select distinct feature from Feature as feature, PublicationAttribution as pubAttribution
+            left outer join fetch feature.featureAssay
+            left outer join fetch feature.featureMarkerRelations
+            left outer join fetch feature.featureDnaMutationDetailSet
+            left outer join fetch feature.featureProteinMutationDetailSet
+            where pubAttribution.publication.zdbID = :publicationID
+            AND pubAttribution.sourceType = :type
+            AND feature.zdbID = pubAttribution.dataZdbID
+            order by feature.abbreviationOrder
+            """;
+        Query<Feature> query = HibernateUtil.currentSession().createQuery(hql, Feature.class);
+        query.setParameter("publicationID", publicationID);
+        query.setParameter("type", RecordAttribution.SourceType.STANDARD);
+        return query.getResultList();
     }
 
     ///change to SQL
-    @SuppressWarnings("unchecked")
     @Override
     public Marker getSingleAllelicGene(String featureZdbId) {
 
@@ -113,13 +97,12 @@ public class HibernateFeatureRepository implements FeatureRepository {
                      " where fmrel.type in (:relation) and fmrel.feature = feature and feature.zdbID = :featureZdbId";
 
         Query<Marker> query = currentSession().createQuery(hql, Marker.class);
-        query.setString("relation", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF.toString());
-        query.setString("featureZdbId", featureZdbId);
+        query.setParameter("relation", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF.toString());
+        query.setParameter("featureZdbId", featureZdbId);
         return query.uniqueResult();
     }
 
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<Marker> getConstruct(String featureZdbId) {
         String hql = "select distinct fmrel1.marker from FeatureMarkerRelationship fmrel1" +
@@ -127,9 +110,9 @@ public class HibernateFeatureRepository implements FeatureRepository {
                      " and fmrel1.feature = :featureZdbId";
 
         Query<Marker> query = currentSession().createQuery(hql, Marker.class);
-        query.setString("innocuous", FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString());
-        query.setString("phenotypic", FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString());
-        query.setString("featureZdbId", featureZdbId);
+        query.setParameter("innocuous", FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString());
+        query.setParameter("phenotypic", FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString());
+        query.setParameter("featureZdbId", featureZdbId);
 
         return query.list();
     }
@@ -173,7 +156,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
                 String s = formatter.format(feature.getFtrEntryDate());
                 DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("MMM dd yyyy");
                 LocalDate date1 = LocalDate.parse(s, formatter1);
-                //Alliance loads may happen only twice  a year..chekcing if date of feature is greater than 6 months
+                //Alliance loads may happen only twice  a year. checking if date of feature is greater than 6 months
                 Date today = new Date();
                 String currentDate = formatter.format(today);
                 LocalDate date2 = LocalDate.parse(currentDate, formatter1);
@@ -189,7 +172,6 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<Feature> getFeaturesWithLocationOnAssembly11() {
         String hql = "select distinct fs.feature from FeatureLocation fs where fs.assembly like '%z11' ";
@@ -197,7 +179,6 @@ public class HibernateFeatureRepository implements FeatureRepository {
         return query.list();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<Feature> getFeaturesWithGenomicMutDets() {
         String hql = "select distinct fs.feature from FeatureGenomicMutationDetail fs ";
@@ -205,7 +186,6 @@ public class HibernateFeatureRepository implements FeatureRepository {
         return query.list();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<Feature> getNonSaFeaturesWithGenomicMutDets() {
         String hql = """
@@ -307,9 +287,9 @@ public class HibernateFeatureRepository implements FeatureRepository {
             .setParameter("pubZdbID", publicationZdbID)
             .setParameter("featureRelation", featureRelationshipName)
             .list();
-        List<Marker> markers = new ArrayList<Marker>();
+        List<Marker> markers = new ArrayList<>();
         for (String zdbId : markerZdbIds) {
-            Marker m = (Marker) HibernateUtil.currentSession().get(Marker.class, zdbId);
+            Marker m = HibernateUtil.currentSession().get(Marker.class, zdbId);
             markers.add(m);
         }
         return markers;
@@ -317,7 +297,6 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<String> getAllFeaturePrefixes() {
         return HibernateUtil.currentSession().createQuery(
             " select distinct fp.prefixString from FeaturePrefix fp order by fp.prefixString asc ", String.class).list();
@@ -328,7 +307,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
     /**
      * This is rewritten for speed.
      * @return Gets a representation of all FeaturePrefixes with their associated labs.
-     */
+     **/
     public List<FeaturePrefixLight> getFeaturePrefixWithLabs() {
         String sql = """
             SELECT fp.fp_prefix AS prefix,
@@ -411,7 +390,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
     /**
      * We can use the f.sources[0] notation, because there is a 1-1 relationship between Feature and Lab source.
      *
-     * @param prefix
+     * @param prefix prefix string
      */
     @Override
     public List<FeatureLabEntry> getFeaturesForPrefix(String prefix) {
@@ -426,7 +405,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
         List<Object[]> featureEntryObjects = currentSession().createQuery(hql)
             .setParameter("featurePrefix", prefix)
             .list();
-        List<FeatureLabEntry> featureLabEntries = new ArrayList<FeatureLabEntry>();
+        List<FeatureLabEntry> featureLabEntries = new ArrayList<>();
         for (Object[] featureEntryObj : featureEntryObjects) {
             FeatureLabEntry featureLabEntry = new FeatureLabEntry();
             featureLabEntry.setFeature((Feature) featureEntryObj[0]);
@@ -513,7 +492,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
         Query<String> queryLab = session.createQuery(hqlLab1, String.class);
         queryLab.setParameter("labZdbID", labZdbID);
         queryLab.setParameter("currentDesignation", true);
-        return (String) queryLab.uniqueResult();
+        return queryLab.uniqueResult();
 
     }
 
@@ -523,10 +502,9 @@ public class HibernateFeatureRepository implements FeatureRepository {
             select distinct lfp.organization from OrganizationFeaturePrefix lfp
             where lfp.featurePrefix is not null
             and lfp.organization.name is not null
-            and lfp.currentDesignation = :true
+            and lfp.currentDesignation = true
             """;
         Query<Organization> query = HibernateUtil.currentSession().createQuery(hqlLab, Organization.class);
-        query.setParameter("true", true);
         List<Organization> organizations = query.list();
         organizations.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
         return organizations;
@@ -586,12 +564,10 @@ public class HibernateFeatureRepository implements FeatureRepository {
     /**
      * This is a helper method for getLabPrefixes and getLabPrefixesById
      *
-     * @param organizationFeaturePrefixes
-     * @param assignIfEmpty
      * @return featurePrefixes
      */
     private List<FeaturePrefix> generateFeaturePrefixes(List<OrganizationFeaturePrefix> organizationFeaturePrefixes, boolean assignIfEmpty) {
-        List<FeaturePrefix> featurePrefixes = new ArrayList<FeaturePrefix>();
+        List<FeaturePrefix> featurePrefixes = new ArrayList<>();
         for (OrganizationFeaturePrefix organizationFeaturePrefix : organizationFeaturePrefixes) {
             FeaturePrefix featurePrefix = organizationFeaturePrefix.getFeaturePrefix();
             featurePrefix.setCurrentDesignationForSet(organizationFeaturePrefix.getCurrentDesignation());
@@ -647,17 +623,17 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
 
     public FeatureAssay getFeatureAssay(Feature feature) {
-        Criteria criteria = HibernateUtil.currentSession().createCriteria(FeatureAssay.class);
-        criteria.add(Restrictions.eq("feature", feature));
-        criteria.setMaxResults(1);
-        FeatureAssay ftrAss = (FeatureAssay) criteria.uniqueResult();
-        return ftrAss;
+        Query<FeatureAssay> query = HibernateUtil.currentSession().createQuery("from FeatureAssay " +
+                                                                               "where feature = :feature", FeatureAssay.class);
+        query.setParameter("feature", feature);
+        query.setMaxResults(1);
+        return query.getSingleResult();
     }
 
     public VariantSequence getFeatureVariant(Feature feature) {
         Session session = HibernateUtil.currentSession();
         String hqlSeq = " select vs from  VariantSequence vs where vs.vseqDataZDB =:ftrID";
-        Query queryLab = session.createQuery(hqlSeq);
+        Query<VariantSequence> queryLab = session.createQuery(hqlSeq, VariantSequence.class);
         queryLab.setParameter("ftrID", feature.getZdbID());
         return (VariantSequence) queryLab.uniqueResult();
     }
@@ -670,14 +646,6 @@ public class HibernateFeatureRepository implements FeatureRepository {
         return (String) queryLab.uniqueResult();
     }
 
-    public FeatureLocation getFeatureLocation(Feature feature) {
-        Criteria criteria = HibernateUtil.currentSession().createCriteria(FeatureLocation.class);
-        criteria.add(Restrictions.eq("feature", feature));
-        criteria.setMaxResults(1);
-        FeatureLocation ftrLocation = (FeatureLocation) criteria.uniqueResult();
-        return ftrLocation;
-    }
-
 
     public FeatureGenomicMutationDetail getFeatureGenomicDetail(Feature feature) {
         Criteria criteria = HibernateUtil.currentSession().createCriteria(FeatureGenomicMutationDetail.class);
@@ -688,17 +656,20 @@ public class HibernateFeatureRepository implements FeatureRepository {
     }
 
     public FeatureLocation getAllFeatureLocationsOnGRCz11(Feature feature) {
-        Criteria featureLocationCriteria = HibernateUtil.currentSession().createCriteria(FeatureLocation.class);
-        featureLocationCriteria.add(Restrictions.eq("assembly", "GRCz11"));
-        featureLocationCriteria.add(Restrictions.eq("feature", feature));
-        featureLocationCriteria.setMaxResults(1);
-        FeatureLocation ftrLoc = (FeatureLocation) featureLocationCriteria.uniqueResult();
-        return ftrLoc;
+        String hql = """
+            from FeatureLocation
+            where assembly = :assembly
+            AND feature = :feature
+            """;
+        Query<FeatureLocation> query = HibernateUtil.currentSession().createQuery(hql, FeatureLocation.class);
+        query.setMaxResults(1);
+        query.setParameter("assembly", "GRCz11");
+        query.setParameter("feature", feature);
+        return query.getSingleResult();
     }
 
     public List<FeatureGenomicMutationDetail> getAllFeatureGenomicMutationDetails() {
-        Criteria fgmdCriteria = HibernateUtil.currentSession().createCriteria(FeatureGenomicMutationDetail.class);
-        return fgmdCriteria.list();
+        return currentSession().createQuery("from FeatureGenomicMutationDetail", FeatureGenomicMutationDetail.class).list();
     }
 
     @Override
@@ -768,10 +739,10 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
     @Override
     public Feature getFeatureByAbbreviation(String name) {
-        return (Feature) currentSession().createCriteria(Feature.class)
-            .add(Restrictions.eq("abbreviation", name))
-            .uniqueResult()
-            ;
+        String hql = "from Feature where abbreviation = :abbrev";
+        Query<Feature> query = currentSession().createQuery(hql, Feature.class);
+        query.setParameter("abbrev", name);
+        return query.getSingleResult();
     }
 
     @Override
@@ -967,7 +938,6 @@ public class HibernateFeatureRepository implements FeatureRepository {
     }
 
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<Feature> getFeaturesForLab(String zdbID) {
         return getFeaturesForLab(zdbID, 0);
@@ -1135,16 +1105,16 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
     @Override
     public List<PreviousNameLight> getPreviousNamesLight(final Genotype genotype) {
-        String sql = "  " +
-                     " select da.dalias_alias, ra.recattrib_source_zdb_id, da.dalias_zdb_id " +
-                     "    from data_alias da " +
-                     "    join alias_group ag on da.dalias_group_id=ag.aliasgrp_pk_id " +
-                     "    left outer join record_attribution ra on ra.recattrib_data_zdb_id=da.dalias_zdb_id  " +
-                     "    where dalias_data_zdb_id = :markerZdbID " +
-                     "    and aliasgrp_pk_id = dalias_group_id " +
-                     "    and aliasgrp_name = 'alias' " +
-                     " ";
-        return (List<PreviousNameLight>) HibernateUtil.currentSession().createSQLQuery(sql)
+        String sql = """
+            select da.dalias_alias, ra.recattrib_source_zdb_id, da.dalias_zdb_id
+            from data_alias da
+               join alias_group ag on da.dalias_group_id=ag.aliasgrp_pk_id
+               left outer join record_attribution ra on ra.recattrib_data_zdb_id=da.dalias_zdb_id
+               where dalias_data_zdb_id = :markerZdbID
+               and aliasgrp_pk_id = dalias_group_id
+                and aliasgrp_name = 'alias'
+            """;
+        return HibernateUtil.currentSession().createNativeQuery(sql, PreviousNameLight.class)
             .setParameter("markerZdbID", genotype.getZdbID())
             .setResultTransformer(new BasicTransformerAdapter() {
                 @Override
@@ -1163,7 +1133,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
                 @Override
                 public List transformList(List list) {
-                    Map<String, PreviousNameLight> map = new HashMap<String, PreviousNameLight>();
+                    Map<String, PreviousNameLight> map = new HashMap<>();
                     for (Object o : list) {
                         PreviousNameLight previousName = (PreviousNameLight) o;
                         PreviousNameLight previousNameStored = map.get(previousName.getAlias());
@@ -1198,8 +1168,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
                  and fmrel.type  = :relation
             """;
 
-        Query<Feature> query = session.createQuery(hql,Feature.class);
-
+        Query<Feature> query = session.createQuery(hql, Feature.class);
         query.setParameter("marker", marker);
         query.setParameter("relation", FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF.toString());
         return query.list();
@@ -1252,9 +1221,11 @@ public class HibernateFeatureRepository implements FeatureRepository {
             return null;
 
         Session session = currentSession();
-        String hql = "select fmrel from FeatureMarkerRelationship fmrel " +
-                     " where fmrel.featureMarkerRelationshipType.name = :createdBy " +
-                     "   and fmrel.marker.zdbID = :strZDBid ";
+        String hql = """
+            select fmrel from FeatureMarkerRelationship fmrel
+            where fmrel.featureMarkerRelationshipType.name = :createdBy
+            and fmrel.marker.zdbID = :strZDBid
+            """;
 
         Query<FeatureMarkerRelationship> query = session.createQuery(hql, FeatureMarkerRelationship.class);
         query.setParameter("createdBy", "created by");
@@ -1265,8 +1236,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
             return null;
 
         Set<Feature> featuresCreatedBySTR = new HashSet<>();
-        for (Iterator iterator = featureMarkerRelationships.iterator(); iterator.hasNext(); ) {
-            FeatureMarkerRelationship fmr = (FeatureMarkerRelationship) iterator.next();
+        for (FeatureMarkerRelationship fmr : featureMarkerRelationships) {
             featuresCreatedBySTR.add(fmr.getFeature());
         }
         return featuresCreatedBySTR;
@@ -1396,18 +1366,18 @@ public class HibernateFeatureRepository implements FeatureRepository {
             where fmrel_mrkr_zdb_id = :zdbID
             and fmrel_type in (:relation1, :relation2)
             """;
-        Query query = currentSession().createNativeQuery(sql).addScalar("num", IntegerType.INSTANCE);
+        Query<Tuple> query = currentSession().createNativeQuery(sql, Tuple.class).addScalar("num", IntegerType.INSTANCE);
         query.setParameter("zdbID", construct.getZdbID());
         query.setParameter("relation1", FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString());
         query.setParameter("relation2", FeatureMarkerRelationshipTypeEnum.CONTAINS_PHENOTYPIC_SEQUENCE_FEATURE.toString());
-        return (Integer) query.uniqueResult();
+        return (int) query.uniqueResult().get(0);
     }
 
     @Override
     public List<Feature> getAllFeatureList(int firstNIds) {
         Session session = HibernateUtil.currentSession();
         String hql = "from Feature order by zdbID";
-        Query query = session.createQuery(hql);
+        Query<Feature> query = session.createQuery(hql, Feature.class);
         if (firstNIds > 0)
             query.setMaxResults(firstNIds);
         return query.list();

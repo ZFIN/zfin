@@ -30,10 +30,6 @@ public interface FeatureRepository {
 
     public Feature getFeatureByID(String zdbID);
 
-    public FeatureGenomicMutationDetail getFgmdByID(String zdbID);
-
-    DataAlias getSpecificDataAlias(Feature feature, String alias);
-
     /**
      * Retrieve a list of all feature for a given publication.
      * Features need to be directly attributed to the publication in question.
@@ -105,8 +101,6 @@ public interface FeatureRepository {
     VariantSequence getFeatureVariant(Feature feature);
 
     String getAALink(Feature feature);
-
-    FeatureLocation getFeatureLocation(Feature feature);
 
     FeatureGenomicMutationDetail getFeatureGenomicDetail(Feature feature);
 
