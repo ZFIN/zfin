@@ -23,6 +23,10 @@ public class UniProtTools {
 
     public static RichStreamReader getRichStreamReaderForUniprotDatFile(String inputFileName, boolean elideSymbols) throws FileNotFoundException, BioException {
         BufferedReader br = new BufferedReader(new FileReader(inputFileName));
+        return getRichStreamReaderForUniprotDatFile(br, elideSymbols);
+    }
+
+    public static RichStreamReader getRichStreamReaderForUniprotDatFile(BufferedReader inputFileReader, boolean elideSymbols) throws FileNotFoundException, BioException {
         RichSequenceFormat inFormat = new UniProtFormatZFIN();
 
         //skips parsing of certain sections that otherwise would throw exceptions
@@ -34,15 +38,18 @@ public class UniProtTools {
         SymbolTokenization tokenization = alpha.getTokenization("default");
 
         return new RichStreamReader(
-                br, inFormat, tokenization,
+                inputFileReader, inFormat, tokenization,
                 RichSequenceBuilderFactory.THRESHOLD,
                 null);
     }
 
     public static RichStreamWriter getRichStreamWriterForUniprotDatFile(String outfile) throws FileNotFoundException {
-        FileOutputStream fos = new FileOutputStream(outfile);
+        return getRichStreamWriterForUniprotDatFile(new FileOutputStream(outfile));
+    }
+
+    public static RichStreamWriter getRichStreamWriterForUniprotDatFile(OutputStream out) throws FileNotFoundException {
         RichSequenceFormat format = getUniProtFormatForWriting();
-        return new RichStreamWriter(fos, format);
+        return new RichStreamWriter(out, format);
     }
 
     public static UniProtFormatZFIN getUniProtFormatForWriting() {
