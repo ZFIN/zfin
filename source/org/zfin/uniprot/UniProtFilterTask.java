@@ -33,12 +33,19 @@ import static org.zfin.uniprot.UniProtTools.getRichStreamWriterForUniprotDatFile
  *
  */
 public class UniProtFilterTask extends AbstractScriptWrapper {
+    private BufferedReader inputFileReader = null;
+    private FileOutputStream outputFileWriter = null;
     public String inputFilename;
     public String outputFilename;
 
     public UniProtFilterTask(String inputFilename, String outputFilename) {
         this.inputFilename = inputFilename;
         this.outputFilename = outputFilename;
+    }
+
+    public UniProtFilterTask(BufferedReader bufferedReader, FileOutputStream fileOutputStream) {
+        this.inputFileReader = bufferedReader;
+        this.outputFileWriter = fileOutputStream;
     }
 
     public static void main(String[] args) {
@@ -77,19 +84,28 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
         initIOFiles();
         initAll();
 
-        RichStreamReader sr = getRichStreamReaderForUniprotDatFile(inputFilename, true);
+        RichStreamReader sr = getRichStreamReaderForUniprotDatFile(inputFileReader, true);
 
-        System.out.println("Starting to read file: " + inputFilename);
+        System.out.println("Starting to read file: " );
         List<RichSequence> outputEntries = readAndFilterSequencesFromStream(sr);
         System.out.println("Finished reading file: " + outputEntries.size() + " entries read.");
 
-        System.out.println("Starting to write file: " + outputFilename);
-        writeOutputFile(outputEntries, outputFilename);
+        System.out.println("Starting to write file: " );
+        writeOutputFile(outputEntries, outputFileWriter);
     }
 
-    private void initIOFiles() {
+    private void initIOFiles() throws FileNotFoundException {
+        if (inputFileReader != null && outputFileWriter != null) {
+            //already initialized
+            return;
+        }
+
         setInputFilename();
         setOutputFilename();
+        System.out.println("Input file: " + inputFilename);
+        System.out.println("Output file: " + outputFilename);
+        this.inputFileReader = new BufferedReader(new FileReader(inputFilename));
+        this.outputFileWriter = new FileOutputStream(outputFilename);
     }
 
     private List<RichSequence> readAndFilterSequencesFromStream(RichStreamReader richStreamReader) throws BioException {
@@ -120,7 +136,7 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
         return uniProtSequences;
     }
 
-    private void writeOutputFile(List<RichSequence> outputEntries, String outfile) {
+    private void writeOutputFile(List<RichSequence> outputEntries, FileOutputStream outfile) {
         try {
             RichStreamWriter sw = getRichStreamWriterForUniprotDatFile(outfile);
             sw.writeStream(new SequenceListIterator(outputEntries), null);
