@@ -1,18 +1,20 @@
 package org.zfin.uniprot;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.biojava.bio.BioException;
-import org.biojavax.Note;
-import org.biojavax.RankedCrossRef;
 import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.bio.seq.io.RichStreamReader;
 import org.biojavax.bio.seq.io.RichStreamWriter;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
+import org.zfin.properties.ZfinPropertiesEnum;
+import org.zfin.uniprot.diff.RichSequenceDiff;
+import org.zfin.uniprot.diff.UniProtDiffSet;
+import org.zfin.uniprot.diff.UniProtDiffSetSerializer;
 
 import java.io.*;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.zfin.uniprot.UniProtTools.*;
@@ -25,8 +27,10 @@ import static org.zfin.uniprot.UniProtTools.*;
  *  - UNIPROT_INPUT_FILE_2 to point to the second input dat file (also accepted as second argument to main).
  *  - UNIPROT_OUTPUT_FILE as the output dat file name (also accepted as third argument to main). Default is {UNIPROT_INPUT_FILE_1}-{UNIPROT_INPUT_FILE_2}.out.timestamp
  *
+ * In addition to UNIPROT_OUTPUT_FILE, this generates a report file named UNIPROT_OUTPUT_FILE.report.html (ignoring original extension)
+ *
  * Example with bash:
- * $ UNIPROT_INPUT_FILE_1=pre_zfin.dat.a UNIPROT_INPUT_FILE_2=pre_zfin.dat.b UNIPROT_OUTPUT_FILE=pre_zfin.diffs gradle uniprotCompareTask
+ * $ UNIPROT_INPUT_FILE_1=pre_zfin.dat.a UNIPROT_INPUT_FILE_2=pre_zfin.dat.b UNIPROT_OUTPUT_FILE=pre_zfin.diffs.json gradle uniprotCompareTask
  *
  */
 public class UniProtCompareTask extends AbstractScriptWrapper {
@@ -39,7 +43,7 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
     private Map<String, RichSequence> sequences1 = new HashMap<>();
     private Map<String, RichSequence> sequences2 = new HashMap<>();
 
-    private Set<String> sequencesWithDifferencesKeySet = new TreeSet<>();
+    private UniProtDiffSet diffSet = new UniProtDiffSet();
 
     public UniProtCompareTask(String inputFilename1, String inputFilename2, String outputFilename) {
         this.inputFilename1 = inputFilename1;
@@ -48,34 +52,18 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
     }
 
     public static void main(String[] args) {
-        String inputFilename1 = null;
-        String inputFilename2 = null;
-        String outputFilename = null;
-        if (args.length >= 1) {
-            inputFilename1 = args[0];
-        }
-        if (args.length >= 2) {
-            inputFilename2 = args[1];
-        }
-        if (args.length >= 3) {
-            outputFilename = args[2];
-        }
+        String inputFilename1 = getArgOrEnvironmentVar(args, 0, "UNIPROT_INPUT_FILE_1");
+        String inputFilename2 = getArgOrEnvironmentVar(args, 1, "UNIPROT_INPUT_FILE_2");
+        String outputFilename = getArgOrEnvironmentVar(args, 2, "OUTPUT_FILE");
+
         UniProtCompareTask task = new UniProtCompareTask(inputFilename1, inputFilename2, outputFilename);
 
         try {
             task.runTask();
-        } catch (IOException e) {
-            System.err.println("IOException Error while running task: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Exception Error while running task: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
-        } catch (BioException e) {
-            System.err.println("BioException Error while running task: " + e.getMessage());
-            e.printStackTrace();
-            System.exit(2);
-        } catch (SQLException e) {
-            System.err.println("SQLException Error while running task: " + e.getMessage());
-            e.printStackTrace();
-            System.exit(3);
         }
 
         HibernateUtil.closeSession();
@@ -96,120 +84,79 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
         System.out.println("Finished reading file " + inputFilename2 + ". Found " + sequences2.size() + " entries.");
 
         System.out.println("Starting to compare files. Writing to file: " + outputFilename);
-        writeAccessionsDiff();
-        compareCommonAccessions();
+        populateDiffSetForNewAndRemoved();
+        populateDiffSetForChangedRecords();
+        populateDates();
 
-        writeSequencesWithDifferences();
-
+        outputWriter.println(UniProtDiffSetSerializer.serializeToString(diffSet));
         outputWriter.close();
+
+        writeOutputReportFile();
     }
 
-    private void writeSequencesWithDifferences() {
-        outputWriter.println("\n\nSequences with differences:");
-        outputWriter.println("----------------------------");
-
-        for(String accession : sequencesWithDifferencesKeySet) {
-            outputWriter.println(accession);
-
-            RichSequence seq1 = sequences1.get(accession);
-            RichSequence seq2 = sequences2.get(accession);
-
-            outputWriter.println("File 1:");
-            outputWriter.println("----------------");
-            outputWriter.println(UniProtTools.sequenceToString(seq1));
-
-            outputWriter.println("File 2:");
-            outputWriter.println("----------------");
-            outputWriter.println(UniProtTools.sequenceToString(seq2));
-
+    private void populateDates() {
+        for(RichSequence seq : sequences1.values()) {
+            diffSet.updateLatestDate1(seq);
+        }
+        for(RichSequence seq : sequences2.values()) {
+            diffSet.updateLatestDate2(seq);
         }
     }
 
-    private void compareCommonAccessions() {
+    private void populateDiffSetForNewAndRemoved() {
+        Collection<String> namesOnlyInSet1 = CollectionUtils.removeAll(sequences1.keySet(), sequences2.keySet());
+        Collection<String> namesOnlyInSet2 = CollectionUtils.removeAll(sequences2.keySet(), sequences1.keySet());
+
+        for(String accession : namesOnlyInSet2) {
+            RichSequence seq = sequences2.get(accession);
+            diffSet.addNewSequence(seq);
+        }
+
+        for(String accession : namesOnlyInSet1) {
+            RichSequence seq = sequences1.get(accession);
+            diffSet.addRemovedSequence(seq);
+        }
+    }
+
+
+    private void populateDiffSetForChangedRecords() {
         List<String> sortedCommonList = new ArrayList<>(CollectionUtils.intersection(sequences1.keySet(), sequences2.keySet()));
         Collections.sort(sortedCommonList);
-
-        int diffCount = 0;
 
         for(String accession : sortedCommonList) {
             RichSequence seq1 = sequences1.get(accession);
             RichSequence seq2 = sequences2.get(accession);
-            boolean isDifferent = false;
-            StringBuilder outputBuffer = new StringBuilder();
 
-            Collection<String> nameDiffs = crossRefNamesInFirstSeqOnly(seq1, seq2);
-            for (String name : nameDiffs) {
-                outputBuffer.append(accession + ": file 1 only : crossRef line (DR) : " + name + "\n");
-                isDifferent = true;
+            RichSequenceDiff diff = RichSequenceDiff.create(seq1, seq2);
+
+            if (!diff.hasChanges()) {
+                continue;
             }
 
-            nameDiffs = crossRefNamesInFirstSeqOnly(seq2, seq1);
-            for (String name : nameDiffs) {
-                outputBuffer.append(accession + ": file 2 only : crossRef line (DR) : " + name + "\n");
-                isDifferent = true;
+            if (!hasChangesWeCareAbout(diff)) {
+                continue;
             }
 
-            List<Note> keywords1 = getKeywordNotes(seq1);
-            List<Note> keywords2 = getKeywordNotes(seq2);
-            for (Note note : keywords1) {
-                if (!keywords2.contains(note)) {
-                    outputBuffer.append(accession + ": file 1 only : keyword (KW) : " + note.getValue() + "\n");
-                    isDifferent = true;
-                }
-            }
-
-            for (Note keyword : keywords2) {
-                if (!keywords1.contains(keyword)) {
-                    outputBuffer.append(accession + ": file 2 only : keyword (KW) : " + keyword.getValue() + "\n");
-                    isDifferent = true;
-                }
-            }
-
-            if (isDifferent) {
-                diffCount++;
-                outputWriter.println("Found differences for accession: " + accession );
-                outputWriter.println("====================================");
-                outputWriter.println(outputBuffer);
-
-                sequencesWithDifferencesKeySet.add(accession);
-            }
+            diffSet.addChangedSequence(diff);
         }
 
-        outputWriter.println("Found " + diffCount + " accessions with differences.");
     }
 
-    private Collection<String> crossRefNamesInFirstSeqOnly(RichSequence seq1, RichSequence seq2) {
-        List<String> seq1Names = seq1.getRankedCrossRefs()
-                .stream()
-                .map(xref -> xref.getCrossRef().getDbname() + ":" + xref.getCrossRef().getAccession())
-                .toList();
-
-        List<String> seq2Names = seq2.getRankedCrossRefs()
-                .stream()
-                .map(xref -> xref.getCrossRef().getDbname() + ":" + xref.getCrossRef().getAccession())
-                .toList();
-
-        return CollectionUtils.removeAll(seq1Names, seq2Names);
+    private boolean hasChangesWeCareAbout(RichSequenceDiff diff) {
+        if (diff.hasChangesInDB("RefSeq")) {
+            return true;
+        }
+        if (diff.hasChangesInDB("GeneID")) {
+            return true;
+        }
+        if (diff.hasChangesInDB("ZFIN")) {
+            return true;
+        }
+        return false;
     }
 
-    private void writeAccessionsDiff() {
-        Collection<String> namesOnlyInSet1 = CollectionUtils.removeAll(sequences1.keySet(), sequences2.keySet());
-        Collection<String> namesOnlyInSet2 = CollectionUtils.removeAll(sequences2.keySet(), sequences1.keySet());
-        
-        outputWriter.println("Found " + namesOnlyInSet1.size() + " entries only in " + inputFilename1);
-        outputWriter.println("============================");
-        outputWriter.println(String.join(", ", namesOnlyInSet1) + "\n\n");
-
-        outputWriter.println("Found " + namesOnlyInSet2.size() + " entries only in " + inputFilename2);
-        outputWriter.println("============================");
-        outputWriter.println(String.join(", ", namesOnlyInSet2) + "\n\n");
-
-    }
 
     private void initIOFiles() {
-        setInputFilename1();
-        setInputFilename2();
-        setOutputFilename();
         setOutputStream();
     }
 
@@ -232,51 +179,28 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
         }
     }
 
-    private void writeOutputFile(List<RichSequence> outputEntries, String outfile) {
-        try {
-            RichStreamWriter sw = getRichStreamWriterForUniprotDatFile(outfile);
-            sw.writeStream(new SequenceListIterator(outputEntries), null);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
-
-    private void setInputFilename1() {
-        if (inputFilename1 != null) {
-            return;
-        }
-
-        inputFilename1 = System.getenv("UNIPROT_INPUT_FILE_1");
-        if (inputFilename1 == null) {
-            System.err.println("No input file specified. Please set the environment variable UNIPROT_INPUT_FILE_1.");
-            System.exit(3);
-        }
-    }
-
-    private void setInputFilename2() {
-        if (inputFilename2 != null) {
-            return;
-        }
-
-        inputFilename2 = System.getenv("UNIPROT_INPUT_FILE_2");
-        if (inputFilename2 == null) {
-            System.err.println("No input file specified. Please set the environment variable UNIPROT_INPUT_FILE_2.");
-            System.exit(3);
-        }
-    }
-
-    private void setOutputFilename() {
-        if (outputFilename != null) {
-            return;
-        }
-
-        outputFilename = System.getenv("UNIPROT_OUTPUT_FILE");
-
+    private void writeOutputReportFile() {
         if (outputFilename == null) {
-            String timestamp = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
-            outputFilename = inputFilename1 + "-" + inputFilename2 + ".out." + timestamp;
+            return;
         }
+
+        //remove extension
+        String outputFilenameWithoutExtension = outputFilename.indexOf(".") == -1 ?
+                outputFilename :
+                outputFilename.substring(0, outputFilename.lastIndexOf("."));
+
+        String reportfile = outputFilenameWithoutExtension + ".report.html";
+        System.out.println("Creating report file: " + reportfile);
+        try {
+            String outfileContents = FileUtils.readFileToString(new File(outputFilename));
+            String template = ZfinPropertiesEnum.SOURCEROOT.value() + "/home/uniprot/report.html";
+            String templateContents = FileUtils.readFileToString(new File(template));
+            String filledTemplate = templateContents.replace("JSON_GOES_HERE", outfileContents);
+            FileUtils.writeStringToFile(new File(reportfile), filledTemplate);
+        } catch (IOException e) {
+            System.err.println("Error creating report (" + reportfile + ") from template (" + outputFilename + ")\n" + e.getMessage());
+        }
+
     }
 
 }
