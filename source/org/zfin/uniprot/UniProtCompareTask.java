@@ -1,14 +1,15 @@
 package org.zfin.uniprot;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.biojava.bio.BioException;
 import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.bio.seq.io.RichStreamReader;
 import org.biojavax.bio.seq.io.RichStreamWriter;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
+import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.uniprot.diff.RichSequenceDiff;
-import org.zfin.uniprot.diff.RichSequenceDiffSerializer;
 import org.zfin.uniprot.diff.UniProtDiffSet;
 import org.zfin.uniprot.diff.UniProtDiffSetSerializer;
 
@@ -87,6 +88,8 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
 
         outputWriter.println(UniProtDiffSetSerializer.serializeToString(diffSet));
         outputWriter.close();
+
+        writeOutputReportFile();
     }
 
     private void populateDates() {
@@ -174,12 +177,20 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
         }
     }
 
-    private void writeOutputFile(List<RichSequence> outputEntries, String outfile) {
+    private void writeOutputReportFile() {
+        if (outputFilename == null) {
+            return;
+        }
+        String reportfile = outputFilename + ".report.html";
+        System.out.println("Creating report file: " + reportfile);
         try {
-            RichStreamWriter sw = getRichStreamWriterForUniprotDatFile(outfile);
-            sw.writeStream(new SequenceListIterator(outputEntries), null);
+            String outfileContents = FileUtils.readFileToString(new File(outputFilename));
+            String template = ZfinPropertiesEnum.SOURCEROOT.value() + "/home/uniprot/report.html";
+            String templateContents = FileUtils.readFileToString(new File(template));
+            String filledTemplate = templateContents.replace("JSON_GOES_HERE", outfileContents);
+            FileUtils.writeStringToFile(new File(reportfile), filledTemplate);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.err.println("Error creating report (" + reportfile + ") from template (" + outputFilename + ")\n" + e.getMessage());
         }
 
     }
