@@ -20,12 +20,12 @@
         <hudson.model.StringParameterDefinition>
           <name>OUTPUT_FILE</name>
           <description>Location of output report files (eg. /tmp/may-june-diffs.json)</description>
-          <defaultValue></defaultValue>
+          <defaultValue>$WORKSPACE/diffs.json</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>KEEP_TEMP_FILES_IN</name>
           <description>If you want to keep the temp files (concatenated and filtered file sets), directory to keep them in</description>
-          <defaultValue></defaultValue>
+          <defaultValue>__DELETE__</defaultValue>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
@@ -49,7 +49,7 @@
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts></artifacts>
+      <artifacts>*</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>

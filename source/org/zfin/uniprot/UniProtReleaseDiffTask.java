@@ -91,7 +91,7 @@ public class UniProtReleaseDiffTask extends AbstractScriptWrapper {
         compareTask.runTask();
 
         //cleanup
-        if (keepTempFilesIn != null && !keepTempFilesIn.equals("")) {
+        if (keepTempFilesIn != null && !keepTempFilesIn.equals("") && !keepTempFilesIn.equals("__DELETE__")) {
             Path keepFilesPath = Path.of(keepTempFilesIn);
             if (!Files.exists(keepFilesPath)) {
                 System.err.println("Keep files path does not exist: " + keepFilesPath.toAbsolutePath());
