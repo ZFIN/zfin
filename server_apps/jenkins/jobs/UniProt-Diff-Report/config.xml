@@ -11,21 +11,25 @@
           <name>INPUT_FILESET_1</name>
           <description>Comma separated list of input files (set 1)</description>
           <defaultValue></defaultValue>
+          <trim>true</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>INPUT_FILESET_2</name>
           <description>Comma separated list of input files (set 2)</description>
           <defaultValue></defaultValue>
+          <trim>true</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>OUTPUT_FILE</name>
           <description>Location of output report files (eg. /tmp/may-june-diffs.json)</description>
           <defaultValue>$WORKSPACE/diffs.json</defaultValue>
+          <trim>true</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>KEEP_TEMP_FILES_IN</name>
           <description>If you want to keep the temp files (concatenated and filtered file sets), directory to keep them in</description>
           <defaultValue>__DELETE__</defaultValue>
+          <trim>true</trim>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>

@@ -102,28 +102,37 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
 
     private List<RichSequence> readAndFilterSequencesFromStream(RichStreamReader richStreamReader) throws BioException {
         List<String> xrefsToKeep = List.of("ZFIN", "GeneID", "RefSeq", "EMBL", "GO", "InterPro", "Pfam", "PROSITE", "PDB", "Ensembl");
-
+        RichSequence lastSequence = null;
+        int count = 0;
         List<RichSequence> uniProtSequences = new ArrayList<>();
         while (richStreamReader.hasNext()) {
-            RichSequence seq = richStreamReader.nextRichSequence();
+            try {
+                RichSequence seq = richStreamReader.nextRichSequence();
+                count++;
 
-            if (seq.getTaxon().getNCBITaxID() != 7955) {
-                if (!seq.getTaxon().getDisplayName().toLowerCase().contains("danio rerio")) {
-                    // seq is not zebrafish, but account for entries like "Danio rerio x Danio aff. kyathit RC0455"
-                    continue;
+                if (seq.getTaxon().getNCBITaxID() != 7955) {
+                    if (!seq.getTaxon().getDisplayName().toLowerCase().contains("danio rerio")) {
+                        // seq is not zebrafish, but account for entries like "Danio rerio x Danio aff. kyathit RC0455"
+                        continue;
+                    }
                 }
-            }
 
-            TreeSet<RankedCrossRef> sortedRankedCrossRefs = new TreeSet<>();
+                TreeSet<RankedCrossRef> sortedRankedCrossRefs = new TreeSet<>();
 
-            for (RankedCrossRef rankedCrossRef : seq.getRankedCrossRefs()) {
-                if (xrefsToKeep.contains(rankedCrossRef.getCrossRef().getDbname())) {
-                    sortedRankedCrossRefs.add(rankedCrossRef);
+                for (RankedCrossRef rankedCrossRef : seq.getRankedCrossRefs()) {
+                    if (xrefsToKeep.contains(rankedCrossRef.getCrossRef().getDbname())) {
+                        sortedRankedCrossRefs.add(rankedCrossRef);
+                    }
                 }
-            }
 
-            seq.setRankedCrossRefs(sortedRankedCrossRefs);
-            uniProtSequences.add(seq);
+                seq.setRankedCrossRefs(sortedRankedCrossRefs);
+                uniProtSequences.add(seq);
+
+                lastSequence = seq;
+            } catch (Exception e) {
+                System.out.println("Error while processing sequence after " + count + ": " + lastSequence.getAccession() + " " + lastSequence.getName());
+                throw e;
+            }
         }
         return uniProtSequences;
     }
