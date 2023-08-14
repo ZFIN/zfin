@@ -57,18 +57,10 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
 
         try {
             task.runTask();
-        } catch (IOException e) {
-            System.err.println("IOException Error while running task: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Exception Error while running task: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
-        } catch (BioException e) {
-            System.err.println("BioException Error while running task: " + e.getMessage());
-            e.printStackTrace();
-            System.exit(2);
-        } catch (SQLException e) {
-            System.err.println("SQLException Error while running task: " + e.getMessage());
-            e.printStackTrace();
-            System.exit(3);
         }
 
         HibernateUtil.closeSession();
