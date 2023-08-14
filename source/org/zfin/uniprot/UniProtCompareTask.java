@@ -49,34 +49,18 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
     }
 
     public static void main(String[] args) {
-        String inputFilename1 = null;
-        String inputFilename2 = null;
-        String outputFilename = null;
-        if (args.length >= 1) {
-            inputFilename1 = args[0];
-        }
-        if (args.length >= 2) {
-            inputFilename2 = args[1];
-        }
-        if (args.length >= 3) {
-            outputFilename = args[2];
-        }
+        String inputFilename1 = getArgOrEnvironmentVar(args, 0, "INPUT_FILESET_1");
+        String inputFilename2 = getArgOrEnvironmentVar(args, 1, "INPUT_FILESET_2");
+        String outputFilename = getArgOrEnvironmentVar(args, 2, "OUTPUT_FILE");
+
         UniProtCompareTask task = new UniProtCompareTask(inputFilename1, inputFilename2, outputFilename);
 
         try {
             task.runTask();
-        } catch (IOException e) {
-            System.err.println("IOException Error while running task: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Exception Error while running task: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
-        } catch (BioException e) {
-            System.err.println("BioException Error while running task: " + e.getMessage());
-            e.printStackTrace();
-            System.exit(2);
-        } catch (SQLException e) {
-            System.err.println("SQLException Error while running task: " + e.getMessage());
-            e.printStackTrace();
-            System.exit(3);
         }
 
         HibernateUtil.closeSession();
