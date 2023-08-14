@@ -1,0 +1,902 @@
+ID   A0A8M9QG34_DANRE        Unreviewed;       514 AA.
+AC   A0A8M9QG34;
+DT   03-AUG-2022, integrated into UniProtKB/TrEMBL.
+DT   03-AUG-2022, sequence version 1.
+DT   03-MAY-2023, entry version 5.
+DE   SubName: Full=TBC1 domain family member 4 isoform X6 {ECO:0000313|RefSeq:XP_021334661.1, ECO:0000313|RefSeq:XP_021334662.1};
+GN   Name=tbc1d4 {ECO:0000313|RefSeq:XP_021334661.1,
+GN   ECO:0000313|RefSeq:XP_021334662.1};
+OS   Danio rerio (Zebrafish) (Brachydanio rerio).
+OC   Eukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi;
+OC   Actinopterygii; Neopterygii; Teleostei; Ostariophysi; Cypriniformes;
+OC   Danionidae; Danioninae; Danio.
+OX   NCBI_TaxID=7955 {ECO:0000313|Proteomes:UP000000437, ECO:0000313|RefSeq:XP_021334661.1};
+RN   [1] {ECO:0000313|RefSeq:XP_021334661.1, ECO:0000313|RefSeq:XP_021334662.1}
+RP   IDENTIFICATION.
+RC   STRAIN=Tuebingen {ECO:0000313|RefSeq:XP_021334661.1,
+RC   ECO:0000313|RefSeq:XP_021334662.1};
+RG   RefSeq;
+RL   Submitted (JAN-2023) to UniProtKB.
+CC   ---------------------------------------------------------------------------
+CC   Copyrighted by the UniProt Consortium, see https://www.uniprot.org/terms
+CC   Distributed under the Creative Commons Attribution (CC BY 4.0) License
+CC   ---------------------------------------------------------------------------
+DR   RefSeq; XP_021334661.1; XM_021478986.1.
+DR   RefSeq; XP_021334662.1; XM_021478987.1.
+DR   Proteomes; UP000000437; Chromosome 9.
+DR   Gene3D; 1.10.10.2750; -; 1.
+DR   Gene3D; 1.10.8.270; putative rabgap domain of human tbc1 domain family member 14 like domains; 1.
+DR   Gene3D; 1.10.472.80; Ypt/Rab-GAP domain of gyp1p, domain 3; 1.
+DR   InterPro; IPR021785; DUF3350.
+DR   InterPro; IPR000195; Rab-GAP-TBC_dom.
+DR   InterPro; IPR035969; Rab-GAP_TBC_sf.
+DR   PANTHER; PTHR47219; RAB GTPASE-ACTIVATING PROTEIN 1-LIKE; 1.
+DR   PANTHER; PTHR47219:SF5; TBC1 DOMAIN FAMILY MEMBER 1; 1.
+DR   Pfam; PF11830; DUF3350; 1.
+DR   Pfam; PF00566; RabGAP-TBC; 1.
+DR   SMART; SM00164; TBC; 1.
+DR   SUPFAM; SSF47923; Ypt/Rab-GAP domain of gyp1p; 2.
+DR   PROSITE; PS50086; TBC_RABGAP; 1.
+PE   1: Evidence at protein level;
+KW   Phosphoprotein {ECO:0000256|ARBA:ARBA00022553};
+KW   Proteomics identification {ECO:0007829|PeptideAtlas:A0A8M9QG34};
+KW   Reference proteome {ECO:0000313|Proteomes:UP000000437}.
+FT   DOMAIN          135..329
+FT                   /note="Rab-GAP TBC"
+FT                   /evidence="ECO:0000259|PROSITE:PS50086"
+FT   REGION          1..52
+FT                   /note="Disordered"
+FT                   /evidence="ECO:0000256|SAM:MobiDB-lite"
+FT   REGION          482..514
+FT                   /note="Disordered"
+FT                   /evidence="ECO:0000256|SAM:MobiDB-lite"
+FT   COMPBIAS        27..49
+FT                   /note="Polar residues"
+FT                   /evidence="ECO:0000256|SAM:MobiDB-lite"
+SQ   SEQUENCE   514 AA;  59267 MW;  C08E6A6E8606CD92 CRC64;
+     MNKPSDSMQN VDHMDGRELL PLSPRALTQD QGDQTGPQSP EQSSAGQKRS PADYRGLWKK
+     AIHQQILLIR MEKENQRLEE ASRDELHIRK MKLDYQEVCS CSKELQALWD RKLSSPCRTK
+     VQWNKEEIHS AVCQGVPKSR RGEVWLLLSQ QHRLRQRLPH RQQPPETPFQ DLLKQLTAQQ
+     HAILVDLGRT FPTHQYFSAQ LGAGQLSLYN LLKAYSLLDT EVGYCQGISF VAGLLLLHMS
+     EEQSFDTLKF LMYDLGIRRQ YRPDMISLQI QMYQLSRLLH DYHRNLYSHL DEHEICPSLY
+     AAPWFLTLFA SQFPLGFVAR IFDLLFVQGT EVIFKVALCL LSSHEGEILE CDSFESIVDY
+     LKSTIPTLTH SQMEEIITKA IEMDISKQLQ AYEVEYHVLQ DELSDAPPLS EDSDRLDKLE
+     KANTQLRKQN MDLLEKLQAA RLKIQTLESS VESFLSRESK MKHLIRSLEQ EKASYQKTIE
+     RMRNSLPSDT TAEVEMTQLK SSTNGKAKAA CNKP
+//
+ID   Q6DI10_DANRE            Unreviewed;       746 AA.
+AC   Q6DI10;
+DT   16-AUG-2004, integrated into UniProtKB/TrEMBL.
+DT   16-AUG-2004, sequence version 1.
+DT   03-MAY-2023, entry version 96.
+DE   SubName: Full=52 kDa repressor of the inhibitor of the protein kinase {ECO:0000313|RefSeq:NP_001002680.1};
+DE   SubName: Full=Zgc:86870 {ECO:0000313|EMBL:AAH75781.1};
+GN   Name=zgc:86870 {ECO:0000313|EMBL:AAH75781.1,
+GN   ECO:0000313|RefSeq:NP_001002680.1};
+GN   Synonyms=prkrir {ECO:0000313|RefSeq:NP_001002680.1}, prkrirb
+GN   {ECO:0000313|RefSeq:NP_001002680.1,
+GN   ECO:0000313|ZFIN:ZDB-GENE-040718-429};
+GN   OrderedLocusNames=thap12b {ECO:0000313|RefSeq:NP_001002680.1,
+GN   ECO:0000313|ZFIN:ZDB-GENE-040718-429};
+OS   Danio rerio (Zebrafish) (Brachydanio rerio).
+OC   Eukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi;
+OC   Actinopterygii; Neopterygii; Teleostei; Ostariophysi; Cypriniformes;
+OC   Danionidae; Danioninae; Danio.
+OX   NCBI_TaxID=7955 {ECO:0000313|EMBL:AAH75781.1};
+RN   [1] {ECO:0000313|EMBL:AAH75781.1}
+RP   NUCLEOTIDE SEQUENCE [LARGE SCALE MRNA].
+RC   TISSUE=Embryo {ECO:0000313|EMBL:AAH75781.1};
+RG   NIH - Zebrafish Gene Collection (ZGC) project;
+RL   Submitted (JUL-2004) to the EMBL/GenBank/DDBJ databases.
+RN   [2] {ECO:0000313|RefSeq:NP_001002680.1}
+RP   NUCLEOTIDE SEQUENCE.
+RX   PubMed=15863623; DOI=10.1073/pnas.0406882102;
+RA   Clouaire T., Roussigne M., Ecochard V., Mathe C., Amalric F., Girard J.P.;
+RT   "The THAP domain of THAP1 is a large C2CH module with zinc-dependent
+RT   sequence-specific DNA-binding activity.";
+RL   Proc. Natl. Acad. Sci. U.S.A. 102:6907-6912(2005).
+RN   [3] {ECO:0000313|RefSeq:NP_001002680.1}
+RP   NUCLEOTIDE SEQUENCE.
+RX   PubMed=26469318;
+RA   Elkon R., Milon B., Morrison L., Shah M., Vijayakumar S., Racherla M.,
+RA   Leitch C.C., Silipino L., Hadi S., Weiss-Gayet M., Barras E., Schmid C.D.,
+RA   Ait-Lounis A., Barnes A., Song Y., Eisenman D.J., Eliyahu E.,
+RA   Frolenkov G.I., Strome S.E., Durand B., Zaghloul N.A., Jones S.M.,
+RA   Reith W., Hertzano R.;
+RT   "RFX transcription factors are essential for hearing in mice.";
+RL   Nat. Commun. 6:8549-8549(2015).
+RN   [4] {ECO:0000313|RefSeq:NP_001002680.1}
+RP   NUCLEOTIDE SEQUENCE.
+RX   PubMed=27189481;
+RA   Pasquier J., Cabau C., Nguyen T., Jouanno E., Severac D., Braasch I.,
+RA   Journot L., Pontarotti P., Klopp C., Postlethwait J.H., Guiguen Y.,
+RA   Bobe J.;
+RT   "Gene evolution and gene expression after whole genome duplication in fish:
+RT   the PhyloFish database.";
+RL   BMC Genomics 17:368-368(2016).
+RN   [5] {ECO:0000313|RefSeq:NP_001002680.1}
+RP   IDENTIFICATION.
+RG   RefSeq;
+RL   Submitted (JAN-2023) to UniProtKB.
+CC   ---------------------------------------------------------------------------
+CC   Copyrighted by the UniProt Consortium, see https://www.uniprot.org/terms
+CC   Distributed under the Creative Commons Attribution (CC BY 4.0) License
+CC   ---------------------------------------------------------------------------
+DR   EMBL; BC075781; AAH75781.1; -; mRNA.
+DR   RefSeq; NP_001002680.1; NM_001002680.1.
+DR   GeneID; 436953; -.
+DR   KEGG; dre:436953; -.
+DR   CTD; 436953; -.
+DR   ZFIN; ZDB-GENE-040718-429; thap12b.
+DR   OrthoDB; 3405036at2759; -.
+DR   PhylomeDB; Q6DI10; -.
+DR   Proteomes; UP000000437; Chromosome 15.
+DR   GO; GO:0003677; F:DNA binding; IEA:UniProtKB-UniRule.
+DR   InterPro; IPR025398; DUF4371.
+DR   InterPro; IPR006612; THAP_Znf.
+DR   PANTHER; PTHR46289; 52 KDA REPRESSOR OF THE INHIBITOR OF THE PROTEIN KINASE-LIKE PROTEIN-RELATED; 1.
+DR   PANTHER; PTHR46289:SF13; THAP DOMAIN-CONTAINING 12A-RELATED; 1.
+DR   Pfam; PF14291; DUF4371; 1.
+DR   Pfam; PF05485; THAP; 1.
+DR   SMART; SM00692; DM3; 1.
+DR   SMART; SM00980; THAP; 1.
+DR   SUPFAM; SSF57716; Glucocorticoid receptor-like (DNA-binding domain); 1.
+DR   PROSITE; PS50950; ZF_THAP; 1.
+PE   1: Evidence at protein level;
+KW   DNA-binding {ECO:0000256|PROSITE-ProRule:PRU00309};
+KW   Metal-binding {ECO:0000256|PROSITE-ProRule:PRU00309};
+KW   Proteomics identification {ECO:0007829|PeptideAtlas:Q6DI10};
+KW   Reference proteome {ECO:0000313|Proteomes:UP000000437};
+KW   Zinc {ECO:0000256|PROSITE-ProRule:PRU00309};
+KW   Zinc-finger {ECO:0000256|PROSITE-ProRule:PRU00309}.
+FT   DOMAIN          1..86
+FT                   /note="THAP-type"
+FT                   /evidence="ECO:0000259|PROSITE:PS50950"
+FT   REGION          122..149
+FT                   /note="Disordered"
+FT                   /evidence="ECO:0000256|SAM:MobiDB-lite"
+SQ   SEQUENCE   746 AA;  85946 MW;  6CF717E4CDF50629 CRC64;
+     MPNFCAAPNC TRKSTQSDLA FFRFPRDPER CRLWVENCRR ADLEEKTPDQ LNKHYRLCAK
+     HFEPAMICKT SPYRTVLRDT AIPTIFDLTS HLGNPHSRHR KRIKVLTDEE VQKIKERRLE
+     SSIEQLSKKD SDAQDDSETT DDVPRLTPEQ KDLREFLKSS FEVMILIGRQ SFPYSSNARE
+     DEMRSKEEWL FNPGNFQALL ENRINAGDEF LRRRFESAAV NEEYCPAVQQ RQLLDVCERC
+     VREEILQQVR ECRFFSIVTG ELVDFPEGEH LPIFLRFVDQ DNTLREEFIE FLSFEGEEVT
+     VAERLESRLM KGWGLSMEHC RGQAYAGSGI LGTKMKVITS QLKEKYPMAV ITPTSTCALN
+     VHLANGMSLT GVQVVMSVLK KSNAFFRASP LLQTELDNAI SILCQGNLEK ESILKEGSRS
+     TWTDLHNLFE MAVDLLEPLL LCMDSIHDNE DLKWSDQVTS DAYAISEALA DFEFIVTLVI
+     LKNALSFTRA FGKNLQGETI DVFFAANSLT AVLHSLHEVS DNLEVYHEFW FEEAVNMATA
+     MEVPVRVPRL FLRKQQTPDT IEIQAESFFK EYLTQPVMEY ITQEVKDIFS ENHLKALKCL
+     SLVPAVMGQM RFNTSEESHA DIYRTDLPHP DTLPAELHCW RIKWKHRGKE VSLPSTIYET
+     LQHSDVKFFP NVNAFLKILA TLPVLKLDGS HGETAQRRLQ AYLTDTAVSQ RCKNLAVLNI
+     NYHIKTDLEE MVQCYLKRYP EESKTD
+//
+ID   Q6IQL7_DANRE            Unreviewed;       371 AA.
+AC   Q6IQL7; A0A8M1MZT4; F1R5R3;
+DT   05-JUL-2004, integrated into UniProtKB/TrEMBL.
+DT   05-JUL-2004, sequence version 1.
+DT   03-MAY-2023, entry version 149.
+DE   SubName: Full=Peptidyl-prolyl cis-trans isomerase D {ECO:0000313|RefSeq:NP_001002065.1};
+DE            EC=5.2.1.8 {ECO:0000313|RefSeq:NP_001002065.1};
+DE   SubName: Full=Peptidylprolyl isomerase D {ECO:0000313|Ensembl:ENSDARP00000107677};
+DE   SubName: Full=Peptidylprolyl isomerase D (Cyclophilin D) {ECO:0000313|EMBL:AAH71388.1};
+GN   Name=wu:fb18b07 {ECO:0000313|RefSeq:NP_001002065.1};
+GN   Synonyms=zgc:86711 {ECO:0000313|RefSeq:NP_001002065.1};
+GN   OrderedLocusNames=ppid {ECO:0000313|EMBL:AAH71388.1,
+GN   ECO:0000313|ZFIN:ZDB-GENE-040625-34};
+OS   Danio rerio (Zebrafish) (Brachydanio rerio).
+OC   Eukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi;
+OC   Actinopterygii; Neopterygii; Teleostei; Ostariophysi; Cypriniformes;
+OC   Danionidae; Danioninae; Danio.
+OX   NCBI_TaxID=7955 {ECO:0000313|EMBL:AAH71388.1};
+RN   [1] {ECO:0000313|EMBL:AAH71388.1}
+RP   NUCLEOTIDE SEQUENCE [LARGE SCALE MRNA].
+RC   TISSUE=Embryo {ECO:0000313|EMBL:AAH71388.1};
+RG   NIH - Zebrafish Gene Collection (ZGC) project;
+RL   Submitted (JUN-2004) to the EMBL/GenBank/DDBJ databases.
+RN   [2] {ECO:0000313|RefSeq:NP_001002065.1}
+RP   NUCLEOTIDE SEQUENCE.
+RX   PubMed=16109975;
+RA   Woods I.G., Wilson C., Friedlander B., Chang P., Reyes D.K., Nix R.,
+RA   Kelly P.D., Chu F., Postlethwait J.H., Talbot W.S.;
+RT   "The zebrafish gene map defines ancestral vertebrate chromosomes.";
+RL   Genome Res. 15:1307-1314(2005).
+RN   [3] {ECO:0000313|Ensembl:ENSDARP00000107677}
+RP   IDENTIFICATION.
+RC   STRAIN=Tuebingen {ECO:0000313|Ensembl:ENSDARP00000107677};
+RG   Ensembl;
+RL   Submitted (JUL-2011) to UniProtKB.
+RN   [4] {ECO:0000313|RefSeq:NP_001002065.1}
+RP   NUCLEOTIDE SEQUENCE.
+RX   PubMed=22140076;
+RA   Zhao S., Xie P., Li G., Jun C., Cai Y., Xiong Q., Zhao Y.;
+RT   "The proteomic study on cellular responses of the testes of zebrafish
+RT   (Danio rerio) exposed to microcystin-RR.";
+RL   Proteomics 12:300-312(2012).
+RN   [5] {ECO:0000313|RefSeq:NP_001002065.1}
+RP   NUCLEOTIDE SEQUENCE.
+RX   PubMed=23582643;
+RA   Roca F.J., Ramakrishnan L.;
+RT   "TNF dually mediates resistance and susceptibility to mycobacteria via
+RT   mitochondrial reactive oxygen species.";
+RL   Cell 153:521-534(2013).
+RN   [6] {ECO:0000313|Ensembl:ENSDARP00000107677}
+RP   NUCLEOTIDE SEQUENCE [LARGE SCALE GENOMIC DNA].
+RC   STRAIN=Tuebingen {ECO:0000313|Ensembl:ENSDARP00000107677};
+RX   PubMed=23594743; DOI=10.1038/nature12111;
+RA   Howe K., Clark M.D., Torroja C.F., Torrance J., Berthelot C., Muffato M.,
+RA   Collins J.E., Humphray S., McLaren K., Matthews L., McLaren S., Sealy I.,
+RA   Caccamo M., Churcher C., Scott C., Barrett J.C., Koch R., Rauch G.J.,
+RA   White S., Chow W., Kilian B., Quintais L.T., Guerra-Assuncao J.A., Zhou Y.,
+RA   Gu Y., Yen J., Vogel J.H., Eyre T., Redmond S., Banerjee R., Chi J., Fu B.,
+RA   Langley E., Maguire S.F., Laird G.K., Lloyd D., Kenyon E., Donaldson S.,
+RA   Sehra H., Almeida-King J., Loveland J., Trevanion S., Jones M., Quail M.,
+RA   Willey D., Hunt A., Burton J., Sims S., McLay K., Plumb B., Davis J.,
+RA   Clee C., Oliver K., Clark R., Riddle C., Elliot D., Threadgold G.,
+RA   Harden G., Ware D., Begum S., Mortimore B., Kerry G., Heath P.,
+RA   Phillimore B., Tracey A., Corby N., Dunn M., Johnson C., Wood J., Clark S.,
+RA   Pelan S., Griffiths G., Smith M., Glithero R., Howden P., Barker N.,
+RA   Lloyd C., Stevens C., Harley J., Holt K., Panagiotidis G., Lovell J.,
+RA   Beasley H., Henderson C., Gordon D., Auger K., Wright D., Collins J.,
+RA   Raisen C., Dyer L., Leung K., Robertson L., Ambridge K., Leongamornlert D.,
+RA   McGuire S., Gilderthorp R., Griffiths C., Manthravadi D., Nichol S.,
+RA   Barker G., Whitehead S., Kay M., Brown J., Murnane C., Gray E.,
+RA   Humphries M., Sycamore N., Barker D., Saunders D., Wallis J., Babbage A.,
+RA   Hammond S., Mashreghi-Mohammadi M., Barr L., Martin S., Wray P.,
+RA   Ellington A., Matthews N., Ellwood M., Woodmansey R., Clark G., Cooper J.,
+RA   Tromans A., Grafham D., Skuce C., Pandian R., Andrews R., Harrison E.,
+RA   Kimberley A., Garnett J., Fosker N., Hall R., Garner P., Kelly D., Bird C.,
+RA   Palmer S., Gehring I., Berger A., Dooley C.M., Ersan-Urun Z., Eser C.,
+RA   Geiger H., Geisler M., Karotki L., Kirn A., Konantz J., Konantz M.,
+RA   Oberlander M., Rudolph-Geiger S., Teucke M., Lanz C., Raddatz G.,
+RA   Osoegawa K., Zhu B., Rapp A., Widaa S., Langford C., Yang F.,
+RA   Schuster S.C., Carter N.P., Harrow J., Ning Z., Herrero J., Searle S.M.,
+RA   Enright A., Geisler R., Plasterk R.H., Lee C., Westerfield M.,
+RA   de Jong P.J., Zon L.I., Postlethwait J.H., Nusslein-Volhard C.,
+RA   Hubbard T.J., Roest Crollius H., Rogers J., Stemple D.L.;
+RT   "The zebrafish reference genome sequence and its relationship to the human
+RT   genome.";
+RL   Nature 496:498-503(2013).
+RN   [7] {ECO:0000313|RefSeq:NP_001002065.1}
+RP   NUCLEOTIDE SEQUENCE.
+RX   PubMed=26469318;
+RA   Elkon R., Milon B., Morrison L., Shah M., Vijayakumar S., Racherla M.,
+RA   Leitch C.C., Silipino L., Hadi S., Weiss-Gayet M., Barras E., Schmid C.D.,
+RA   Ait-Lounis A., Barnes A., Song Y., Eisenman D.J., Eliyahu E.,
+RA   Frolenkov G.I., Strome S.E., Durand B., Zaghloul N.A., Jones S.M.,
+RA   Reith W., Hertzano R.;
+RT   "RFX transcription factors are essential for hearing in mice.";
+RL   Nat. Commun. 6:8549-8549(2015).
+RN   [8] {ECO:0000313|RefSeq:NP_001002065.1}
+RP   IDENTIFICATION.
+RG   RefSeq;
+RL   Submitted (JAN-2023) to UniProtKB.
+CC   ---------------------------------------------------------------------------
+CC   Copyrighted by the UniProt Consortium, see https://www.uniprot.org/terms
+CC   Distributed under the Creative Commons Attribution (CC BY 4.0) License
+CC   ---------------------------------------------------------------------------
+DR   EMBL; CR812918; -; NOT_ANNOTATED_CDS; Genomic_DNA.
+DR   EMBL; LO018285; -; NOT_ANNOTATED_CDS; Genomic_DNA.
+DR   EMBL; BC071388; AAH71388.1; -; mRNA.
+DR   RefSeq; NP_001002065.1; NM_001002065.1.
+DR   STRING; 7955.ENSDARP00000107677; -.
+DR   Ensembl; ENSDART00000124773.4; ENSDARP00000107677.2; ENSDARG00000038835.7.
+DR   GeneID; 415155; -.
+DR   KEGG; dre:415155; -.
+DR   CTD; 5481; -.
+DR   ZFIN; ZDB-GENE-040625-34; ppid.
+DR   eggNOG; KOG0546; Eukaryota.
+DR   HOGENOM; CLU_012062_37_1_1; -.
+DR   OMA; EMEQNCN; -.
+DR   OrthoDB; 339082at2759; -.
+DR   TreeFam; TF354259; -.
+DR   Reactome; R-DRE-8939211; ESR-mediated signaling.
+DR   Proteomes; UP000000437; Chromosome 14.
+DR   Bgee; ENSDARG00000038835; Expressed in testis and 30 other tissues.
+DR   GO; GO:0005737; C:cytoplasm; IBA:GO_Central.
+DR   GO; GO:0016018; F:cyclosporin A binding; IBA:GO_Central.
+DR   GO; GO:0003755; F:peptidyl-prolyl cis-trans isomerase activity; IBA:GO_Central.
+DR   GO; GO:0006457; P:protein folding; IBA:GO_Central.
+DR   GO; GO:0000413; P:protein peptidyl-prolyl isomerization; IBA:GO_Central.
+DR   CDD; cd01926; cyclophilin_ABH_like; 1.
+DR   Gene3D; 2.40.100.10; Cyclophilin-like; 1.
+DR   Gene3D; 1.25.40.10; Tetratricopeptide repeat domain; 1.
+DR   InterPro; IPR029000; Cyclophilin-like_dom_sf.
+DR   InterPro; IPR020892; Cyclophilin-type_PPIase_CS.
+DR   InterPro; IPR002130; Cyclophilin-type_PPIase_dom.
+DR   InterPro; IPR011990; TPR-like_helical_dom_sf.
+DR   InterPro; IPR019734; TPR_repeat.
+DR   PANTHER; PTHR11071; PEPTIDYL-PROLYL CIS-TRANS ISOMERASE; 1.
+DR   PANTHER; PTHR11071:SF561; PEPTIDYL-PROLYL CIS-TRANS ISOMERASE D-RELATED; 1.
+DR   Pfam; PF00160; Pro_isomerase; 1.
+DR   PRINTS; PR00153; CSAPPISMRASE.
+DR   SMART; SM00028; TPR; 3.
+DR   SUPFAM; SSF50891; Cyclophilin-like; 1.
+DR   SUPFAM; SSF48452; TPR-like; 1.
+DR   PROSITE; PS00170; CSA_PPIASE_1; 1.
+DR   PROSITE; PS50072; CSA_PPIASE_2; 1.
+DR   PROSITE; PS50005; TPR; 1.
+PE   1: Evidence at protein level;
+KW   Isomerase {ECO:0000313|EMBL:AAH71388.1, ECO:0000313|RefSeq:NP_001002065.1};
+KW   Proteomics identification {ECO:0007829|PeptideAtlas:Q6IQL7};
+KW   Reference proteome {ECO:0000313|Proteomes:UP000000437};
+KW   TPR repeat {ECO:0000256|PROSITE-ProRule:PRU00339}.
+FT   DOMAIN          19..183
+FT                   /note="PPIase cyclophilin-type"
+FT                   /evidence="ECO:0000259|PROSITE:PS50072"
+FT   REPEAT          308..341
+FT                   /note="TPR"
+FT                   /evidence="ECO:0000256|PROSITE-ProRule:PRU00339"
+SQ   SEQUENCE   371 AA;  41282 MW;  AC230D1DB6B1E3E3 CRC64;
+     MSNPTPEAKP GNAENPRVFF DVEIGAERVG RVVFELFADV VPKTAENFRA LCTGEKGVGK
+     STGKPLHFKG CPFHRIIKSF MIQGGDFSNQ NGTGGESIYG DKFEDENFHY KHDREGLLSM
+     ANAGPNTNGS QFFITTVPTP HLDGKHVVFG QVLKGMGVVK MLEAMETKED NPVKPCVIAE
+     CGEHKAGDDW SIALNDGSGD AYPDFPEDSE VDFKDVDKVL SVAEDLKNIG NNFFKAQNWQ
+     SAIKKYSKAL RYLEMCGNIV DDDSSQKKLE PTALSCILNT AACKLKLKLW QEAIESCDEV
+     LELNQTNTKA LFRRAQAWQG LKEFNKAMVD LKKAHEIAPE DKAIGNEMNK VKQQVKEEKE
+     KEKKIYAKMF A
+//
+ID   Q6YI50_DANRE            Unreviewed;       312 AA.
+AC   Q6YI50;
+DT   05-JUL-2004, integrated into UniProtKB/TrEMBL.
+DT   05-JUL-2004, sequence version 1.
+DT   03-MAY-2023, entry version 112.
+DE   SubName: Full=Scratch-a transcription factor {ECO:0000313|EMBL:AAN18024.1};
+DE   SubName: Full=Transcriptional repressor scratch 2 {ECO:0000313|RefSeq:NP_998802.1};
+GN   Name=scrta {ECO:0000313|EMBL:AAN18024.1,
+GN   ECO:0000313|RefSeq:NP_998802.1};
+GN   Synonyms=fc69h09 {ECO:0000313|RefSeq:NP_998802.1}, scrt-a
+GN   {ECO:0000313|RefSeq:NP_998802.1}, wu:fc69h09
+GN   {ECO:0000313|RefSeq:NP_998802.1}, zgc:162551
+GN   {ECO:0000313|RefSeq:NP_998802.1};
+GN   OrderedLocusNames=scrt2 {ECO:0000313|RefSeq:NP_998802.1,
+GN   ECO:0000313|ZFIN:ZDB-GENE-030131-4097};
+OS   Danio rerio (Zebrafish) (Brachydanio rerio).
+OC   Eukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi;
+OC   Actinopterygii; Neopterygii; Teleostei; Ostariophysi; Cypriniformes;
+OC   Danionidae; Danioninae; Danio.
+OX   NCBI_TaxID=7955 {ECO:0000313|EMBL:AAN18024.1};
+RN   [1] {ECO:0000313|EMBL:AAN18024.1}
+RP   NUCLEOTIDE SEQUENCE.
+RA   Yoo K.-W., Hong S.-K., Kim C.-H.;
+RL   Submitted (SEP-2002) to the EMBL/GenBank/DDBJ databases.
+RN   [2] {ECO:0000313|RefSeq:NP_998802.1}
+RP   NUCLEOTIDE SEQUENCE.
+RX   PubMed=21252910;
+RA   Rodriguez-Aznar E., Nieto M.A.;
+RT   "Repression of Puma by scratch2 is required for neuronal survival during
+RT   embryonic development.";
+RL   Cell Death Differ. 18:1196-1207(2011).
+RN   [3] {ECO:0000313|RefSeq:NP_998802.1}
+RP   NUCLEOTIDE SEQUENCE.
+RX   PubMed=21448584;
+RA   Dam T.M., Kim H.T., Moon H.Y., Hwang K.S., Jeong Y.M., You K.H., Lee J.S.,
+RA   Kim C.H.;
+RT   "Neuron-specific expression of scratch genes during early zebrafish
+RT   development.";
+RL   Mol. Cells 31:471-475(2011).
+RN   [4] {ECO:0000313|RefSeq:NP_998802.1}
+RP   NUCLEOTIDE SEQUENCE.
+RX   PubMed=23516276;
+RA   Rodriguez-Aznar E., Barrallo-Gimeno A., Nieto M.A.;
+RT   "Scratch2 prevents cell cycle re-entry by repressing miR-25 in postmitotic
+RT   primary neurons.";
+RL   J. Neurosci. 33:5095-5105(2013).
+RN   [5] {ECO:0000313|RefSeq:NP_998802.1}
+RP   NUCLEOTIDE SEQUENCE.
+RX   PubMed=26469318;
+RA   Elkon R., Milon B., Morrison L., Shah M., Vijayakumar S., Racherla M.,
+RA   Leitch C.C., Silipino L., Hadi S., Weiss-Gayet M., Barras E., Schmid C.D.,
+RA   Ait-Lounis A., Barnes A., Song Y., Eisenman D.J., Eliyahu E.,
+RA   Frolenkov G.I., Strome S.E., Durand B., Zaghloul N.A., Jones S.M.,
+RA   Reith W., Hertzano R.;
+RT   "RFX transcription factors are essential for hearing in mice.";
+RL   Nat. Commun. 6:8549-8549(2015).
+RN   [6] {ECO:0000313|RefSeq:NP_998802.1}
+RP   NUCLEOTIDE SEQUENCE.
+RX   PubMed=27189481;
+RA   Pasquier J., Cabau C., Nguyen T., Jouanno E., Severac D., Braasch I.,
+RA   Journot L., Pontarotti P., Klopp C., Postlethwait J.H., Guiguen Y.,
+RA   Bobe J.;
+RT   "Gene evolution and gene expression after whole genome duplication in fish:
+RT   the PhyloFish database.";
+RL   BMC Genomics 17:368-368(2016).
+RN   [7] {ECO:0000313|RefSeq:NP_998802.1}
+RP   IDENTIFICATION.
+RG   RefSeq;
+RL   Submitted (JAN-2023) to UniProtKB.
+CC   ---------------------------------------------------------------------------
+CC   Copyrighted by the UniProt Consortium, see https://www.uniprot.org/terms
+CC   Distributed under the Creative Commons Attribution (CC BY 4.0) License
+CC   ---------------------------------------------------------------------------
+DR   EMBL; AY147850; AAN18024.1; -; mRNA.
+DR   RefSeq; NP_998802.1; NM_213637.1.
+DR   GeneID; 325372; -.
+DR   KEGG; dre:325372; -.
+DR   CTD; 85508; -.
+DR   ZFIN; ZDB-GENE-030131-4097; scrt2.
+DR   OrthoDB; 658032at2759; -.
+DR   PhylomeDB; Q6YI50; -.
+DR   Proteomes; UP000000437; Chromosome 8.
+DR   GO; GO:0000785; C:chromatin; IDA:BHF-UCL.
+DR   GO; GO:0000981; F:DNA-binding transcription factor activity, RNA polymerase II-specific; IBA:GO_Central.
+DR   GO; GO:0001227; F:DNA-binding transcription repressor activity, RNA polymerase II-specific; IDA:BHF-UCL.
+DR   GO; GO:0070888; F:E-box binding; IDA:BHF-UCL.
+DR   GO; GO:0000978; F:RNA polymerase II cis-regulatory region sequence-specific DNA binding; IBA:GO_Central.
+DR   GO; GO:0000977; F:RNA polymerase II transcription regulatory region sequence-specific DNA binding; IDA:BHF-UCL.
+DR   GO; GO:1902042; P:negative regulation of extrinsic apoptotic signaling pathway via death domain receptors; IMP:BHF-UCL.
+DR   GO; GO:1902166; P:negative regulation of intrinsic apoptotic signaling pathway in response to DNA damage by p53 class mediator; IMP:BHF-UCL.
+DR   GO; GO:0000122; P:negative regulation of transcription by RNA polymerase II; IMP:BHF-UCL.
+DR   GO; GO:0043516; P:regulation of DNA damage response, signal transduction by p53 class mediator; IGI:ZFIN.
+DR   GO; GO:0006355; P:regulation of DNA-templated transcription; IBA:GO_Central.
+DR   GO; GO:2000177; P:regulation of neural precursor cell proliferation; IGI:ZFIN.
+DR   GO; GO:0043523; P:regulation of neuron apoptotic process; IMP:ZFIN.
+DR   Gene3D; 3.30.160.60; Classic Zinc Finger; 4.
+DR   InterPro; IPR036236; Znf_C2H2_sf.
+DR   InterPro; IPR013087; Znf_C2H2_type.
+DR   PANTHER; PTHR24388:SF48; TRANSCRIPTIONAL REPRESSOR SCRATCH 2; 1.
+DR   PANTHER; PTHR24388; ZINC FINGER PROTEIN; 1.
+DR   Pfam; PF00096; zf-C2H2; 4.
+DR   Pfam; PF13912; zf-C2H2_6; 1.
+DR   SMART; SM00355; ZnF_C2H2; 5.
+DR   SUPFAM; SSF57667; beta-beta-alpha zinc fingers; 2.
+DR   PROSITE; PS00028; ZINC_FINGER_C2H2_1; 3.
+DR   PROSITE; PS50157; ZINC_FINGER_C2H2_2; 4.
+PE   2: Evidence at transcript level;
+KW   Metal-binding {ECO:0000256|PROSITE-ProRule:PRU00042};
+KW   Reference proteome {ECO:0000313|Proteomes:UP000000437};
+KW   Zinc {ECO:0000256|PROSITE-ProRule:PRU00042};
+KW   Zinc-finger {ECO:0000256|PROSITE-ProRule:PRU00042}.
+FT   DOMAIN          162..189
+FT                   /note="C2H2-type"
+FT                   /evidence="ECO:0000259|PROSITE:PS50157"
+FT   DOMAIN          219..246
+FT                   /note="C2H2-type"
+FT                   /evidence="ECO:0000259|PROSITE:PS50157"
+FT   DOMAIN          247..274
+FT                   /note="C2H2-type"
+FT                   /evidence="ECO:0000259|PROSITE:PS50157"
+FT   DOMAIN          275..306
+FT                   /note="C2H2-type"
+FT                   /evidence="ECO:0000259|PROSITE:PS50157"
+FT   REGION          16..37
+FT                   /note="Disordered"
+FT                   /evidence="ECO:0000256|SAM:MobiDB-lite"
+FT   REGION          84..107
+FT                   /note="Disordered"
+FT                   /evidence="ECO:0000256|SAM:MobiDB-lite"
+FT   COMPBIAS        18..37
+FT                   /note="Basic and acidic residues"
+FT                   /evidence="ECO:0000256|SAM:MobiDB-lite"
+SQ   SEQUENCE   312 AA;  35029 MW;  A07E12D19A185532 CRC64;
+     MPRSFLVKKI KLDDFSSSPV SNHHHHHHND RHMDDSFSRS RSSLGVRLCE NGYIKDYISS
+     SEYTEEKQAD MKLNSELLYS PVSSGGGEYC QPDLEHPDSP QSGLTARGYF SSESESLSEG
+     YTMDAFFISD GRSRRKGEVS EAAKADEVEK EVVGVNNGGA RHTCNECGKT YATSSNLSRH
+     KQTHRSLDSK MARKCPTCDK VYVSMPALAM HILTHDLKHK CHVCSKAFSR PWLLQGHMRS
+     HTGEKPFACA HCGKAFADRS NLRAHMQTHS AFKHYSCKRC NKTFALKSYL NKHYESACFR
+     GSGDEDESGS EN
+//
+ID   A8WGT6_DANRE            Unreviewed;       425 AA.
+AC   A8WGT6;
+DT   15-JAN-2008, integrated into UniProtKB/TrEMBL.
+DT   15-JAN-2008, sequence version 1.
+DT   03-MAY-2023, entry version 74.
+DE   SubName: Full=Zgc:175284 protein {ECO:0000313|EMBL:AAI54844.1};
+DE   SubName: Full=Zinc finger protein 347-like {ECO:0000313|RefSeq:NP_001107086.1};
+GN   OrderedLocusNames=zgc:175284 {ECO:0000313|EMBL:AAI54844.1,
+GN   ECO:0000313|RefSeq:NP_001107086.1,
+GN   ECO:0000313|ZFIN:ZDB-GENE-080219-49};
+OS   Danio rerio (Zebrafish) (Brachydanio rerio).
+OC   Eukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi;
+OC   Actinopterygii; Neopterygii; Teleostei; Ostariophysi; Cypriniformes;
+OC   Danionidae; Danioninae; Danio.
+OX   NCBI_TaxID=7955 {ECO:0000313|EMBL:AAI54844.1};
+RN   [1] {ECO:0000313|RefSeq:NP_001107086.1}
+RP   NUCLEOTIDE SEQUENCE.
+RX   PubMed=12477932; DOI=10.1073/pnas.242603899;
+RG   Mammalian Gene Collection Program Team;
+RA   Strausberg R.L., Feingold E.A., Grouse L.H., Derge J.G., Klausner R.D.,
+RA   Collins F.S., Wagner L., Shenmen C.M., Schuler G.D., Altschul S.F.,
+RA   Zeeberg B., Buetow K.H., Schaefer C.F., Bhat N.K., Hopkins R.F., Jordan H.,
+RA   Moore T., Max S.I., Wang J., Hsieh F., Diatchenko L., Marusina K.,
+RA   Farmer A.A., Rubin G.M., Hong L., Stapleton M., Soares M.B., Bonaldo M.F.,
+RA   Casavant T.L., Scheetz T.E., Brownstein M.J., Usdin T.B., Toshiyuki S.,
+RA   Carninci P., Prange C., Raha S.S., Loquellano N.A., Peters G.J.,
+RA   Abramson R.D., Mullahy S.J., Bosak S.A., McEwan P.J., McKernan K.J.,
+RA   Malek J.A., Gunaratne P.H., Richards S., Worley K.C., Hale S., Garcia A.M.,
+RA   Gay L.J., Hulyk S.W., Villalon D.K., Muzny D.M., Sodergren E.J., Lu X.,
+RA   Gibbs R.A., Fahey J., Helton E., Ketteman M., Madan A., Rodrigues S.,
+RA   Sanchez A., Whiting M., Madan A., Young A.C., Shevchenko Y., Bouffard G.G.,
+RA   Blakesley R.W., Touchman J.W., Green E.D., Dickson M.C., Rodriguez A.C.,
+RA   Grimwood J., Schmutz J., Myers R.M., Butterfield Y.S., Krzywinski M.I.,
+RA   Skalska U., Smailus D.E., Schnerch A., Schein J.E., Jones S.J., Marra M.A.;
+RT   "Generation and initial analysis of more than 15,000 full-length human and
+RT   mouse cDNA sequences.";
+RL   Proc. Natl. Acad. Sci. U.S.A. 99:16899-16903(2002).
+RN   [2] {ECO:0000313|EMBL:AAI54844.1}
+RP   NUCLEOTIDE SEQUENCE [LARGE SCALE MRNA].
+RC   TISSUE=Kidney {ECO:0000313|EMBL:AAI54844.1};
+RG   NIH - Zebrafish Gene Collection (ZGC) project;
+RL   Submitted (NOV-2007) to the EMBL/GenBank/DDBJ databases.
+RN   [3] {ECO:0000313|RefSeq:NP_001107086.1}
+RP   NUCLEOTIDE SEQUENCE.
+RX   PubMed=21873635;
+RA   Gaudet P., Livstone M.S., Lewis S.E., Thomas P.D.;
+RT   "Phylogenetic-based propagation of functional annotations within the Gene
+RT   Ontology consortium.";
+RL   Brief. Bioinform. 12:449-462(2011).
+RN   [4] {ECO:0000313|RefSeq:NP_001107086.1}
+RP   NUCLEOTIDE SEQUENCE.
+RX   PubMed=26469318;
+RA   Elkon R., Milon B., Morrison L., Shah M., Vijayakumar S., Racherla M.,
+RA   Leitch C.C., Silipino L., Hadi S., Weiss-Gayet M., Barras E., Schmid C.D.,
+RA   Ait-Lounis A., Barnes A., Song Y., Eisenman D.J., Eliyahu E.,
+RA   Frolenkov G.I., Strome S.E., Durand B., Zaghloul N.A., Jones S.M.,
+RA   Reith W., Hertzano R.;
+RT   "RFX transcription factors are essential for hearing in mice.";
+RL   Nat. Commun. 6:8549-8549(2015).
+RN   [5] {ECO:0000313|RefSeq:NP_001107086.1}
+RP   IDENTIFICATION.
+RG   RefSeq;
+RL   Submitted (JAN-2023) to UniProtKB.
+CC   ---------------------------------------------------------------------------
+CC   Copyrighted by the UniProt Consortium, see https://www.uniprot.org/terms
+CC   Distributed under the Creative Commons Attribution (CC BY 4.0) License
+CC   ---------------------------------------------------------------------------
+DR   EMBL; BC154843; AAI54844.1; -; mRNA.
+DR   RefSeq; NP_001107086.1; NM_001113614.1.
+DR   GeneID; 569236; -.
+DR   KEGG; dre:569236; -.
+DR   ZFIN; ZDB-GENE-080219-49; zgc:175284.
+DR   OrthoDB; 5340731at2759; -.
+DR   PhylomeDB; A8WGT6; -.
+DR   Proteomes; UP000000437; Chromosome 22.
+DR   GO; GO:0005634; C:nucleus; IBA:GO_Central.
+DR   GO; GO:0000981; F:DNA-binding transcription factor activity, RNA polymerase II-specific; IBA:GO_Central.
+DR   GO; GO:0000977; F:RNA polymerase II transcription regulatory region sequence-specific DNA binding; IBA:GO_Central.
+DR   GO; GO:0008270; F:zinc ion binding; IEA:InterPro.
+DR   GO; GO:0006357; P:regulation of transcription by RNA polymerase II; IBA:GO_Central.
+DR   Gene3D; 3.30.160.60; Classic Zinc Finger; 11.
+DR   InterPro; IPR036236; Znf_C2H2_sf.
+DR   InterPro; IPR013087; Znf_C2H2_type.
+DR   InterPro; IPR001607; Znf_UBP.
+DR   PANTHER; PTHR24393:SF115; SI:CH73-138E16.6-RELATED; 1.
+DR   PANTHER; PTHR24393; ZINC FINGER PROTEIN; 1.
+DR   Pfam; PF00096; zf-C2H2; 11.
+DR   SMART; SM00355; ZnF_C2H2; 11.
+DR   SUPFAM; SSF57667; beta-beta-alpha zinc fingers; 7.
+DR   PROSITE; PS50271; ZF_UBP; 1.
+DR   PROSITE; PS00028; ZINC_FINGER_C2H2_1; 11.
+DR   PROSITE; PS50157; ZINC_FINGER_C2H2_2; 11.
+PE   2: Evidence at transcript level;
+KW   Metal-binding {ECO:0000256|PROSITE-ProRule:PRU00502};
+KW   Reference proteome {ECO:0000313|Proteomes:UP000000437};
+KW   Zinc {ECO:0000256|PROSITE-ProRule:PRU00502};
+KW   Zinc-finger {ECO:0000256|PROSITE-ProRule:PRU00502}.
+FT   DOMAIN          62..89
+FT                   /note="C2H2-type"
+FT                   /evidence="ECO:0000259|PROSITE:PS50157"
+FT   DOMAIN          90..117
+FT                   /note="C2H2-type"
+FT                   /evidence="ECO:0000259|PROSITE:PS50157"
+FT   DOMAIN          118..141
+FT                   /note="C2H2-type"
+FT                   /evidence="ECO:0000259|PROSITE:PS50157"
+FT   DOMAIN          180..207
+FT                   /note="C2H2-type"
+FT                   /evidence="ECO:0000259|PROSITE:PS50157"
+FT   DOMAIN          208..235
+FT                   /note="C2H2-type"
+FT                   /evidence="ECO:0000259|PROSITE:PS50157"
+FT   DOMAIN          236..275
+FT                   /note="C2H2-type"
+FT                   /evidence="ECO:0000259|PROSITE:PS50157"
+FT   DOMAIN          276..303
+FT                   /note="C2H2-type"
+FT                   /evidence="ECO:0000259|PROSITE:PS50157"
+FT   DOMAIN          304..331
+FT                   /note="C2H2-type"
+FT                   /evidence="ECO:0000259|PROSITE:PS50157"
+FT   DOMAIN          332..359
+FT                   /note="C2H2-type"
+FT                   /evidence="ECO:0000259|PROSITE:PS50157"
+FT   DOMAIN          360..425
+FT                   /note="UBP-type"
+FT                   /evidence="ECO:0000259|PROSITE:PS50271"
+FT   DOMAIN          360..387
+FT                   /note="C2H2-type"
+FT                   /evidence="ECO:0000259|PROSITE:PS50157"
+FT   DOMAIN          388..415
+FT                   /note="C2H2-type"
+FT                   /evidence="ECO:0000259|PROSITE:PS50157"
+FT   REGION          24..49
+FT                   /note="Disordered"
+FT                   /evidence="ECO:0000256|SAM:MobiDB-lite"
+FT   REGION          148..168
+FT                   /note="Disordered"
+FT                   /evidence="ECO:0000256|SAM:MobiDB-lite"
+FT   COMPBIAS        24..44
+FT                   /note="Basic and acidic residues"
+FT                   /evidence="ECO:0000256|SAM:MobiDB-lite"
+SQ   SEQUENCE   425 AA;  49801 MW;  2F6731DDBB7DB249 CRC64;
+     MSDPEPCRIK QEETEELIDV MVKEEREELS EDEEKHEVKS ESETQSETEN SILMKETATK
+     DLTCTLCGKS LGRKYDLKRH MRIHTGEKPY KCSHCEKRFN HSGYLKIHER THTGEKPFHC
+     TACGKSYTHS SSLQTHTKNV HNLIVVEESE ELSEDEEKHH NKSDEKTRSE IEDSILLKGL
+     TCTQCGKSFW HKYHLKLHMR IHTGEKPYKC PHCDKRFNFS GNLKTHLRTH TGEKPYHCTD
+     CGKSFSDSST LRRHTKNYHN LMIKKEESVH SKEKPHSCSL CGKSFKQQSH LRRHQMVHTD
+     EKPHKCDQCG KVFQRNSDLK NHLRVHADEK PYTCSWCGKF FSYQSHLRQH QMIHTGEKPY
+     KCSHCDKRFS KLNNLKSHQR IHTGEKPYTC AQCGKSFRHS SSINQHLLIH SREKTHNLII
+     TAIHL
+//
+ID   U3JAR7_DANRE            Unreviewed;       721 AA.
+AC   U3JAR7; A0A8M2B2A3;
+DT   13-NOV-2013, integrated into UniProtKB/TrEMBL.
+DT   13-NOV-2013, sequence version 1.
+DT   03-MAY-2023, entry version 62.
+DE   SubName: Full=Nfe2-like bZIP transcription factor 1b {ECO:0000313|Ensembl:ENSDARP00000127336};
+DE   SubName: Full=Nuclear factor erythroid 2-related factor 1 isoform X2 {ECO:0000313|RefSeq:XP_005156303.1};
+GN   OrderedLocusNames=nfe2l1b {ECO:0000313|Ensembl:ENSDARP00000127336,
+GN   ECO:0000313|RefSeq:XP_005156303.1,
+GN   ECO:0000313|ZFIN:ZDB-GENE-120319-2};
+OS   Danio rerio (Zebrafish) (Brachydanio rerio).
+OC   Eukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi;
+OC   Actinopterygii; Neopterygii; Teleostei; Ostariophysi; Cypriniformes;
+OC   Danionidae; Danioninae; Danio.
+OX   NCBI_TaxID=7955 {ECO:0000313|Ensembl:ENSDARP00000127336};
+RN   [1] {ECO:0000313|Ensembl:ENSDARP00000127336}
+RP   NUCLEOTIDE SEQUENCE [LARGE SCALE GENOMIC DNA].
+RC   STRAIN=Tuebingen {ECO:0000313|Ensembl:ENSDARP00000127336};
+RX   PubMed=23594743; DOI=10.1038/nature12111;
+RA   Howe K., Clark M.D., Torroja C.F., Torrance J., Berthelot C., Muffato M.,
+RA   Collins J.E., Humphray S., McLaren K., Matthews L., McLaren S., Sealy I.,
+RA   Caccamo M., Churcher C., Scott C., Barrett J.C., Koch R., Rauch G.J.,
+RA   White S., Chow W., Kilian B., Quintais L.T., Guerra-Assuncao J.A., Zhou Y.,
+RA   Gu Y., Yen J., Vogel J.H., Eyre T., Redmond S., Banerjee R., Chi J., Fu B.,
+RA   Langley E., Maguire S.F., Laird G.K., Lloyd D., Kenyon E., Donaldson S.,
+RA   Sehra H., Almeida-King J., Loveland J., Trevanion S., Jones M., Quail M.,
+RA   Willey D., Hunt A., Burton J., Sims S., McLay K., Plumb B., Davis J.,
+RA   Clee C., Oliver K., Clark R., Riddle C., Elliot D., Threadgold G.,
+RA   Harden G., Ware D., Begum S., Mortimore B., Kerry G., Heath P.,
+RA   Phillimore B., Tracey A., Corby N., Dunn M., Johnson C., Wood J., Clark S.,
+RA   Pelan S., Griffiths G., Smith M., Glithero R., Howden P., Barker N.,
+RA   Lloyd C., Stevens C., Harley J., Holt K., Panagiotidis G., Lovell J.,
+RA   Beasley H., Henderson C., Gordon D., Auger K., Wright D., Collins J.,
+RA   Raisen C., Dyer L., Leung K., Robertson L., Ambridge K., Leongamornlert D.,
+RA   McGuire S., Gilderthorp R., Griffiths C., Manthravadi D., Nichol S.,
+RA   Barker G., Whitehead S., Kay M., Brown J., Murnane C., Gray E.,
+RA   Humphries M., Sycamore N., Barker D., Saunders D., Wallis J., Babbage A.,
+RA   Hammond S., Mashreghi-Mohammadi M., Barr L., Martin S., Wray P.,
+RA   Ellington A., Matthews N., Ellwood M., Woodmansey R., Clark G., Cooper J.,
+RA   Tromans A., Grafham D., Skuce C., Pandian R., Andrews R., Harrison E.,
+RA   Kimberley A., Garnett J., Fosker N., Hall R., Garner P., Kelly D., Bird C.,
+RA   Palmer S., Gehring I., Berger A., Dooley C.M., Ersan-Urun Z., Eser C.,
+RA   Geiger H., Geisler M., Karotki L., Kirn A., Konantz J., Konantz M.,
+RA   Oberlander M., Rudolph-Geiger S., Teucke M., Lanz C., Raddatz G.,
+RA   Osoegawa K., Zhu B., Rapp A., Widaa S., Langford C., Yang F.,
+RA   Schuster S.C., Carter N.P., Harrow J., Ning Z., Herrero J., Searle S.M.,
+RA   Enright A., Geisler R., Plasterk R.H., Lee C., Westerfield M.,
+RA   de Jong P.J., Zon L.I., Postlethwait J.H., Nusslein-Volhard C.,
+RA   Hubbard T.J., Roest Crollius H., Rogers J., Stemple D.L.;
+RT   "The zebrafish reference genome sequence and its relationship to the human
+RT   genome.";
+RL   Nature 496:498-503(2013).
+RN   [2] {ECO:0000313|Ensembl:ENSDARP00000127336}
+RP   IDENTIFICATION.
+RC   STRAIN=Tuebingen {ECO:0000313|Ensembl:ENSDARP00000127336};
+RG   Ensembl;
+RL   Submitted (SEP-2013) to UniProtKB.
+RN   [3] {ECO:0000313|RefSeq:XP_005156303.1}
+RP   IDENTIFICATION.
+RC   STRAIN=Tuebingen {ECO:0000313|RefSeq:XP_005156303.1};
+RG   RefSeq;
+RL   Submitted (JAN-2023) to UniProtKB.
+CC   -!- SIMILARITY: Belongs to the bZIP family. CNC subfamily.
+CC       {ECO:0000256|ARBA:ARBA00008157}.
+CC   ---------------------------------------------------------------------------
+CC   Copyrighted by the UniProt Consortium, see https://www.uniprot.org/terms
+CC   Distributed under the Creative Commons Attribution (CC BY 4.0) License
+CC   ---------------------------------------------------------------------------
+DR   EMBL; BX248092; -; NOT_ANNOTATED_CDS; Genomic_DNA.
+DR   RefSeq; XP_005156303.1; XM_005156246.3.
+DR   AlphaFoldDB; U3JAR7; -.
+DR   PaxDb; U3JAR7; -.
+DR   Ensembl; ENSDART00000152991.3; ENSDARP00000127336.1; ENSDARG00000076533.5.
+DR   GeneID; 558772; -.
+DR   CTD; 558772; -.
+DR   ZFIN; ZDB-GENE-120319-2; nfe2l1b.
+DR   eggNOG; KOG3863; Eukaryota.
+DR   HOGENOM; CLU_024173_1_0_1; -.
+DR   OMA; KPWRDPF; -.
+DR   OrthoDB; 382726at2759; -.
+DR   Proteomes; UP000000437; Chromosome 12.
+DR   Bgee; ENSDARG00000076533; Expressed in testis and 23 other tissues.
+DR   ExpressionAtlas; U3JAR7; baseline.
+DR   GO; GO:0005634; C:nucleus; IBA:GO_Central.
+DR   GO; GO:0003700; F:DNA-binding transcription factor activity; IEA:InterPro.
+DR   GO; GO:0000981; F:DNA-binding transcription factor activity, RNA polymerase II-specific; IBA:GO_Central.
+DR   GO; GO:0000978; F:RNA polymerase II cis-regulatory region sequence-specific DNA binding; IBA:GO_Central.
+DR   GO; GO:0006357; P:regulation of transcription by RNA polymerase II; IBA:GO_Central.
+DR   CDD; cd14720; bZIP_NFE2-like; 1.
+DR   Gene3D; 1.10.880.10; Transcription factor, Skn-1-like, DNA-binding domain; 1.
+DR   InterPro; IPR004827; bZIP.
+DR   InterPro; IPR004826; bZIP_Maf.
+DR   InterPro; IPR047167; NFE2-like.
+DR   InterPro; IPR008917; TF_DNA-bd_sf.
+DR   PANTHER; PTHR24411:SF31; ENDOPLASMIC RETICULUM MEMBRANE SENSOR NFE2L1; 1.
+DR   PANTHER; PTHR24411; NUCLEAR FACTOR ERYTHROID 2-RELATED FACTOR; 1.
+DR   Pfam; PF03131; bZIP_Maf; 1.
+DR   SMART; SM00338; BRLZ; 1.
+DR   SUPFAM; SSF47454; A DNA-binding domain in eukaryotic transcription factors; 1.
+DR   PROSITE; PS50217; BZIP; 1.
+DR   PROSITE; PS00036; BZIP_BASIC; 1.
+PE   3: Inferred from homology;
+KW   Activator {ECO:0000256|ARBA:ARBA00023159};
+KW   Coiled coil {ECO:0000256|SAM:Coils};
+KW   DNA-binding {ECO:0000256|ARBA:ARBA00023125};
+KW   Reference proteome {ECO:0000313|Proteomes:UP000000437};
+KW   Transcription {ECO:0000256|ARBA:ARBA00023163};
+KW   Transcription regulation {ECO:0000256|ARBA:ARBA00023015}.
+FT   DOMAIN          604..667
+FT                   /note="BZIP"
+FT                   /evidence="ECO:0000259|PROSITE:PS50217"
+FT   REGION          114..184
+FT                   /note="Disordered"
+FT                   /evidence="ECO:0000256|SAM:MobiDB-lite"
+FT   REGION          211..247
+FT                   /note="Disordered"
+FT                   /evidence="ECO:0000256|SAM:MobiDB-lite"
+FT   REGION          411..483
+FT                   /note="Disordered"
+FT                   /evidence="ECO:0000256|SAM:MobiDB-lite"
+FT   REGION          522..570
+FT                   /note="Disordered"
+FT                   /evidence="ECO:0000256|SAM:MobiDB-lite"
+FT   REGION          694..721
+FT                   /note="Disordered"
+FT                   /evidence="ECO:0000256|SAM:MobiDB-lite"
+FT   COILED          622..649
+FT                   /evidence="ECO:0000256|SAM:Coils"
+FT   COMPBIAS        114..158
+FT                   /note="Polar residues"
+FT                   /evidence="ECO:0000256|SAM:MobiDB-lite"
+FT   COMPBIAS        216..247
+FT                   /note="Polar residues"
+FT                   /evidence="ECO:0000256|SAM:MobiDB-lite"
+FT   COMPBIAS        411..474
+FT                   /note="Polar residues"
+FT                   /evidence="ECO:0000256|SAM:MobiDB-lite"
+FT   COMPBIAS        522..557
+FT                   /note="Polar residues"
+FT                   /evidence="ECO:0000256|SAM:MobiDB-lite"
+SQ   SEQUENCE   721 AA;  79450 MW;  2C609D28BA3F20C5 CRC64;
+     MLYLKKYFTE GLIQFTILLS LIGVRVDLDT YLNNQLPPLR EIILGPSSAY TQTQFHNLRN
+     TLDGYGIHPK SVDLDHFFAT RRLLNQVRSL DHLRVPSTEL SAWLVHRDPE TVVSATSQSG
+     PSIALDNGGS LEDVNNSEAS AMRGAGGTSE TTYSLSGEDS LGAVAPEDSQ EQGERESSDD
+     LSKELTSLGA QTSLSLQECL RLLEATFPFG EEPEFQATAP TSQLRATTEE TPSTSQGIPL
+     QPTLSQTDTP LDLEQQWQDI MSIMELQDME VNNTAVNATI NNDPNNNNAS TTESATVGNF
+     GLPRSTLINQ DVSLQQALLP SCGQDFPTLF NPELGGQQPT LVRLSSSNSS NINSTFGATN
+     LTGIFFPPPL NSTTNVTTTP VLPDPFSSLL EESMLDEISL LDLAMEEGFS QAQASQLEDE
+     LDSDSGLSLD SSHSPASPSN SETSCSSAAS SSSTSATFSE EGAVGYSTDS EAATAETEEG
+     AVGGYQPEYS KLCRMSYQDP SQFHGVPQLE SVNHNHTYNL PLASSFSERS QLSTSSSKKG
+     RDKQMQQTKL QPPQDCIDRQ SSRDERRARA MDIPFSNEKI INLPVEEFNE LLAKHHLNED
+     QLSLIRDIRR RGKNKMAAQN CRKRKLDTIL NLEQGVQDLQ REKSQLLKEK IEYMKCIRQT
+     KQKVQSLSQE LFAQLRNEEG RPYSANEYSL QFGPDGVVLM PRNMSTEQSN KPDKKQKDKK
+     K
+//
+ID   X1WDA2_DANRE            Unreviewed;       644 AA.
+AC   X1WDA2; A0A8M1PUS3;
+DT   14-MAY-2014, integrated into UniProtKB/TrEMBL.
+DT   14-MAY-2014, sequence version 1.
+DT   03-MAY-2023, entry version 48.
+DE   SubName: Full=F-box/LRR-repeat protein 2 isoform X1 {ECO:0000313|RefSeq:XP_001339819.4};
+DE   SubName: Full=Leucine-rich repeat-containing 29 {ECO:0000313|Ensembl:ENSDARP00000128199};
+GN   Name=fbxl9 {ECO:0000313|ZFIN:ZDB-GENE-030131-7165};
+GN   OrderedLocusNames=lrrc29 {ECO:0000313|Ensembl:ENSDARP00000128199,
+GN   ECO:0000313|RefSeq:XP_001339819.4};
+OS   Danio rerio (Zebrafish) (Brachydanio rerio).
+OC   Eukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi;
+OC   Actinopterygii; Neopterygii; Teleostei; Ostariophysi; Cypriniformes;
+OC   Danionidae; Danioninae; Danio.
+OX   NCBI_TaxID=7955 {ECO:0000313|Ensembl:ENSDARP00000128199};
+RN   [1] {ECO:0000313|Ensembl:ENSDARP00000128199}
+RP   NUCLEOTIDE SEQUENCE [LARGE SCALE GENOMIC DNA].
+RC   STRAIN=Tuebingen {ECO:0000313|Ensembl:ENSDARP00000128199};
+RX   PubMed=23594743; DOI=10.1038/nature12111;
+RA   Howe K., Clark M.D., Torroja C.F., Torrance J., Berthelot C., Muffato M.,
+RA   Collins J.E., Humphray S., McLaren K., Matthews L., McLaren S., Sealy I.,
+RA   Caccamo M., Churcher C., Scott C., Barrett J.C., Koch R., Rauch G.J.,
+RA   White S., Chow W., Kilian B., Quintais L.T., Guerra-Assuncao J.A., Zhou Y.,
+RA   Gu Y., Yen J., Vogel J.H., Eyre T., Redmond S., Banerjee R., Chi J., Fu B.,
+RA   Langley E., Maguire S.F., Laird G.K., Lloyd D., Kenyon E., Donaldson S.,
+RA   Sehra H., Almeida-King J., Loveland J., Trevanion S., Jones M., Quail M.,
+RA   Willey D., Hunt A., Burton J., Sims S., McLay K., Plumb B., Davis J.,
+RA   Clee C., Oliver K., Clark R., Riddle C., Elliot D., Threadgold G.,
+RA   Harden G., Ware D., Begum S., Mortimore B., Kerry G., Heath P.,
+RA   Phillimore B., Tracey A., Corby N., Dunn M., Johnson C., Wood J., Clark S.,
+RA   Pelan S., Griffiths G., Smith M., Glithero R., Howden P., Barker N.,
+RA   Lloyd C., Stevens C., Harley J., Holt K., Panagiotidis G., Lovell J.,
+RA   Beasley H., Henderson C., Gordon D., Auger K., Wright D., Collins J.,
+RA   Raisen C., Dyer L., Leung K., Robertson L., Ambridge K., Leongamornlert D.,
+RA   McGuire S., Gilderthorp R., Griffiths C., Manthravadi D., Nichol S.,
+RA   Barker G., Whitehead S., Kay M., Brown J., Murnane C., Gray E.,
+RA   Humphries M., Sycamore N., Barker D., Saunders D., Wallis J., Babbage A.,
+RA   Hammond S., Mashreghi-Mohammadi M., Barr L., Martin S., Wray P.,
+RA   Ellington A., Matthews N., Ellwood M., Woodmansey R., Clark G., Cooper J.,
+RA   Tromans A., Grafham D., Skuce C., Pandian R., Andrews R., Harrison E.,
+RA   Kimberley A., Garnett J., Fosker N., Hall R., Garner P., Kelly D., Bird C.,
+RA   Palmer S., Gehring I., Berger A., Dooley C.M., Ersan-Urun Z., Eser C.,
+RA   Geiger H., Geisler M., Karotki L., Kirn A., Konantz J., Konantz M.,
+RA   Oberlander M., Rudolph-Geiger S., Teucke M., Lanz C., Raddatz G.,
+RA   Osoegawa K., Zhu B., Rapp A., Widaa S., Langford C., Yang F.,
+RA   Schuster S.C., Carter N.P., Harrow J., Ning Z., Herrero J., Searle S.M.,
+RA   Enright A., Geisler R., Plasterk R.H., Lee C., Westerfield M.,
+RA   de Jong P.J., Zon L.I., Postlethwait J.H., Nusslein-Volhard C.,
+RA   Hubbard T.J., Roest Crollius H., Rogers J., Stemple D.L.;
+RT   "The zebrafish reference genome sequence and its relationship to the human
+RT   genome.";
+RL   Nature 496:498-503(2013).
+RN   [2] {ECO:0000313|Ensembl:ENSDARP00000128199}
+RP   IDENTIFICATION.
+RC   STRAIN=Tuebingen {ECO:0000313|Ensembl:ENSDARP00000128199};
+RG   Ensembl;
+RL   Submitted (MAR-2014) to UniProtKB.
+RN   [3] {ECO:0000313|RefSeq:XP_001339819.4}
+RP   IDENTIFICATION.
+RC   STRAIN=Tuebingen {ECO:0000313|RefSeq:XP_001339819.4};
+RG   RefSeq;
+RL   Submitted (JAN-2023) to UniProtKB.
+CC   ---------------------------------------------------------------------------
+CC   Copyrighted by the UniProt Consortium, see https://www.uniprot.org/terms
+CC   Distributed under the Creative Commons Attribution (CC BY 4.0) License
+CC   ---------------------------------------------------------------------------
+DR   EMBL; CU855816; -; NOT_ANNOTATED_CDS; Genomic_DNA.
+DR   RefSeq; XP_001339819.4; XM_001339783.8.
+DR   AlphaFoldDB; X1WDA2; -.
+DR   STRING; 7955.ENSDARP00000128199; -.
+DR   PaxDb; X1WDA2; -.
+DR   Ensembl; ENSDART00000154134.2; ENSDARP00000128199.1; ENSDARG00000076425.5.
+DR   GeneID; 799466; -.
+DR   KEGG; dre:799466; -.
+DR   CTD; 234684; -.
+DR   ZFIN; ZDB-GENE-030131-7165; fbxl9.
+DR   eggNOG; KOG1947; Eukaryota.
+DR   HOGENOM; CLU_026044_0_0_1; -.
+DR   OMA; SINLWYC; -.
+DR   OrthoDB; 70540at2759; -.
+DR   Proteomes; UP000000437; Chromosome 25.
+DR   Bgee; ENSDARG00000076425; Expressed in liver and 20 other tissues.
+DR   GO; GO:0019005; C:SCF ubiquitin ligase complex; IBA:GO_Central.
+DR   GO; GO:0031146; P:SCF-dependent proteasomal ubiquitin-dependent protein catabolic process; IBA:GO_Central.
+DR   Gene3D; 3.80.10.10; Ribonuclease Inhibitor; 4.
+DR   InterPro; IPR036047; F-box-like_dom_sf.
+DR   InterPro; IPR001810; F-box_dom.
+DR   InterPro; IPR001611; Leu-rich_rpt.
+DR   InterPro; IPR006553; Leu-rich_rpt_Cys-con_subtyp.
+DR   InterPro; IPR032675; LRR_dom_sf.
+DR   PANTHER; PTHR13318:SF190; F-BOX/LRR-REPEAT PROTEIN 14; 1.
+DR   PANTHER; PTHR13318; UNCHARACTERIZED; 1.
+DR   Pfam; PF12937; F-box-like; 1.
+DR   Pfam; PF13516; LRR_6; 3.
+DR   SMART; SM00256; FBOX; 1.
+DR   SMART; SM00367; LRR_CC; 12.
+DR   SUPFAM; SSF81383; F-box domain; 1.
+DR   SUPFAM; SSF52047; RNI-like; 2.
+DR   PROSITE; PS50181; FBOX; 1.
+PE   4: Predicted;
+KW   Reference proteome {ECO:0000313|Proteomes:UP000000437};
+KW   Ubl conjugation pathway {ECO:0000256|ARBA:ARBA00022786}.
+FT   DOMAIN          1..46
+FT                   /note="F-box"
+FT                   /evidence="ECO:0000259|PROSITE:PS50181"
+SQ   SEQUENCE   644 AA;  72086 MW;  6246ED1F13C97F2C CRC64;
+     MESLHLPSEI ITYIFSFLHV MDRKEASLVC KSWYNASQDY PFKRNLTFKF PASSSSLGFI
+     RGLARHPRCG LVISHLDGSS VSRQVLLEVG LHLGPRLDSL ALPGSSITES CLLELLPRLT
+     SLRKLDLQGL DSLFMSGAFL SREEHRRKVY RALLNLEELN LSNLRYLSDL SFNRLTICTP
+     GLRRLSLSGC HISFEFDPYR GCPVGSGSSA LVSLRNLLNL LQKQTSTLRS LDLSRTGITP
+     KSLRSISKLR GLRLEELNLH GCKELTDYSI EILCKYQSGL RMLDLSGCME LSCRAVLAVG
+     AELKELRVLS FSQDWKITDK GLAELMMLPH LRSLDLSECL HVSGTELVKG LSGPEPRAQV
+     ETLSLRNCTY IRDSVVFSLA QLLGVHLREL DLSSCVYLTD LSVRAIATFL PALLVLRLGW
+     CKEISDWGLL GMTEPTKHCQ PSDREEDKGP SFTRTFGNMG FFQPPSLPFQ DKPRLVTDED
+     LEEFRDQQGA SLLALRELQV LELTACSKLT DTSITQVLRF PELQRLSLSM LPEITDDSLV
+     SVALHCCSLT SLSLSHCPQI SDKGMARALP LLHRLQHLYL ACCNAITNET LSIIALHCDR
+     LRTLDVSMCK DITVHQVDLL QSRLPFLEKV QCRFANGADF TMVL
+//
