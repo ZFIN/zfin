@@ -8,12 +8,12 @@ import org.biojavax.bio.seq.io.RichStreamWriter;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.uniprot.diff.RichSequenceDiff;
+import org.zfin.uniprot.diff.RichSequenceDiffSerializer;
 import org.zfin.uniprot.diff.UniProtDiffSet;
 import org.zfin.uniprot.diff.UniProtDiffSetSerializer;
 
 import java.io.*;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.zfin.uniprot.UniProtTools.*;
@@ -49,8 +49,8 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
     }
 
     public static void main(String[] args) {
-        String inputFilename1 = getArgOrEnvironmentVar(args, 0, "INPUT_FILESET_1");
-        String inputFilename2 = getArgOrEnvironmentVar(args, 1, "INPUT_FILESET_2");
+        String inputFilename1 = getArgOrEnvironmentVar(args, 0, "UNIPROT_INPUT_FILE_1");
+        String inputFilename2 = getArgOrEnvironmentVar(args, 1, "UNIPROT_INPUT_FILE_2");
         String outputFilename = getArgOrEnvironmentVar(args, 2, "OUTPUT_FILE");
 
         UniProtCompareTask task = new UniProtCompareTask(inputFilename1, inputFilename2, outputFilename);
@@ -83,9 +83,19 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
         System.out.println("Starting to compare files. Writing to file: " + outputFilename);
         populateDiffSetForNewAndRemoved();
         populateDiffSetForChangedRecords();
+        populateDates();
 
         outputWriter.println(UniProtDiffSetSerializer.serializeToString(diffSet));
         outputWriter.close();
+    }
+
+    private void populateDates() {
+        for(RichSequence seq : sequences1.values()) {
+            diffSet.updateLatestDate1(seq);
+        }
+        for(RichSequence seq : sequences2.values()) {
+            diffSet.updateLatestDate2(seq);
+        }
     }
 
     private void populateDiffSetForNewAndRemoved() {
@@ -93,13 +103,16 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
         Collection<String> namesOnlyInSet2 = CollectionUtils.removeAll(sequences2.keySet(), sequences1.keySet());
 
         for(String accession : namesOnlyInSet2) {
-            diffSet.addNewSequence(sequences2.get(accession));
+            RichSequence seq = sequences2.get(accession);
+            diffSet.addNewSequence(seq);
         }
 
         for(String accession : namesOnlyInSet1) {
-            diffSet.addRemovedSequence(sequences1.get(accession));
+            RichSequence seq = sequences1.get(accession);
+            diffSet.addRemovedSequence(seq);
         }
     }
+
 
     private void populateDiffSetForChangedRecords() {
         List<String> sortedCommonList = new ArrayList<>(CollectionUtils.intersection(sequences1.keySet(), sequences2.keySet()));
@@ -139,9 +152,6 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
 
 
     private void initIOFiles() {
-        setInputFilename1();
-        setInputFilename2();
-        setOutputFilename();
         setOutputStream();
     }
 
@@ -172,43 +182,6 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
             throw new RuntimeException(e);
         }
 
-    }
-
-    private void setInputFilename1() {
-        if (inputFilename1 != null) {
-            return;
-        }
-
-        inputFilename1 = System.getenv("UNIPROT_INPUT_FILE_1");
-        if (inputFilename1 == null) {
-            System.err.println("No input file specified. Please set the environment variable UNIPROT_INPUT_FILE_1.");
-            System.exit(3);
-        }
-    }
-
-    private void setInputFilename2() {
-        if (inputFilename2 != null) {
-            return;
-        }
-
-        inputFilename2 = System.getenv("UNIPROT_INPUT_FILE_2");
-        if (inputFilename2 == null) {
-            System.err.println("No input file specified. Please set the environment variable UNIPROT_INPUT_FILE_2.");
-            System.exit(3);
-        }
-    }
-
-    private void setOutputFilename() {
-        if (outputFilename != null) {
-            return;
-        }
-
-        outputFilename = System.getenv("UNIPROT_OUTPUT_FILE");
-
-        if (outputFilename == null) {
-            String timestamp = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
-            outputFilename = inputFilename1 + "-" + inputFilename2 + ".out." + timestamp;
-        }
     }
 
 }
