@@ -20,6 +20,18 @@ import static org.zfin.uniprot.UniProtTools.getArgOrEnvironmentVar;
  * Input files for release 1 can be a single file or multiple files. They can be gzipped or not.
  * Input files for release 2 can be a single file or multiple files. They can be gzipped or not.
  * Output file is a single report file that contains the JSON diff.
+ *
+ * Invoke this class with these environment variables:
+ * - INPUT_FILESET_1 to point to the first input dat file(s). Can be a comma separated list of files that may be gzipped or not (also accepted as first argument to main).
+ * - INPUT_FILESET_2 to point to the second input dat file(s). Can be a comma separated list of files that may be gzipped or not (also accepted as second argument to main).
+ * - OUTPUT_FILE as the output json file name (also accepted as third argument to main).
+ * - KEEP_TEMP_FILES_IN as the directory to keep the temporary files in. Set to "" to not preserve.  These temp files are:
+ *   - filtered_set1.dat: The result of filtering and concatenating the first input fileset.
+ *   - filtered_set2.dat: The result of filtering and concatenating the second input fileset.
+ *
+ * The OUTPUT_FILE is generated as a json blob.
+ * There is also an html report that is generated for viewing the json blob.  It will be named OUTPUT_FILE.report.html.
+ *
  */
 @Log4j
 public class UniProtReleaseDiffTask extends AbstractScriptWrapper {
@@ -28,20 +40,20 @@ public class UniProtReleaseDiffTask extends AbstractScriptWrapper {
     private String outputFilename;
     private Path tempDirectory;
 
-    private boolean keepTempFiles = false;
+    private String keepTempFilesIn = null;
 
-    public UniProtReleaseDiffTask(String inputFilenameSet1, String inputFilenameSet2, String outputFilename, boolean keepTempFiles) {
+    public UniProtReleaseDiffTask(String inputFilenameSet1, String inputFilenameSet2, String outputFilename, String keepTempFiles) {
         this.inputFilenameSet1 = inputFilenameSet1;
         this.inputFilenameSet2 = inputFilenameSet2;
         this.outputFilename = outputFilename;
-        this.keepTempFiles = keepTempFiles;
+        this.keepTempFilesIn = keepTempFiles;
     }
 
     public static void main(String[] args) {
         String set1 = getArgOrEnvironmentVar(args, 0, "INPUT_FILESET_1");
         String set2 = getArgOrEnvironmentVar(args, 1, "INPUT_FILESET_2");
         String output = getArgOrEnvironmentVar(args, 2, "OUTPUT_FILE");
-        boolean keepTempFiles = parseBooleanString(getArgOrEnvironmentVar(args, 3, "KEEP_TEMP_FILES"));
+        String keepTempFiles = getArgOrEnvironmentVar(args, 3, "KEEP_TEMP_FILES_IN");
         UniProtReleaseDiffTask task = new UniProtReleaseDiffTask(set1, set2, output, keepTempFiles);
 
         try {
@@ -56,14 +68,6 @@ public class UniProtReleaseDiffTask extends AbstractScriptWrapper {
         System.exit(0);
     }
 
-    private static boolean parseBooleanString(String keepTempFiles) {
-        if (keepTempFiles == null) {
-            return false;
-        }
-        return keepTempFiles.equalsIgnoreCase("true") ||
-                keepTempFiles.equalsIgnoreCase("y") ||
-                keepTempFiles.equalsIgnoreCase("1");
-    }
 
     public void runTask() throws IOException, BioException, SQLException {
         initAll();
@@ -87,8 +91,20 @@ public class UniProtReleaseDiffTask extends AbstractScriptWrapper {
         compareTask.runTask();
 
         //cleanup
-        if (keepTempFiles) {
-            System.out.println("Keeping temp files in: " + tempDirectory.toAbsolutePath());
+        if (keepTempFilesIn != null && !keepTempFilesIn.equals("")) {
+            Path keepFilesPath = Path.of(keepTempFilesIn);
+            if (!Files.exists(keepFilesPath)) {
+                System.err.println("Keep files path does not exist: " + keepFilesPath.toAbsolutePath());
+                System.err.println("Keeping temp files in: " + tempDirectory.toAbsolutePath());
+            } else if (!Files.isDirectory(keepFilesPath)) {
+                System.err.println("Keep files path is not a directory: " + keepFilesPath.toAbsolutePath());
+                System.err.println("Keeping temp files in: " + tempDirectory.toAbsolutePath());
+            } else {
+                System.out.println("Moving temp files to: " + keepFilesPath.toAbsolutePath());
+                Files.move(filteredFile1, keepFilesPath.resolve(filteredFile1.getFileName()));
+                Files.move(filteredFile2, keepFilesPath.resolve(filteredFile2.getFileName()));
+                Files.deleteIfExists(tempDirectory);
+            }
         } else {
             Files.deleteIfExists(filteredFile1);
             Files.deleteIfExists(filteredFile2);

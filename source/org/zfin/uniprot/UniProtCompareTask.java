@@ -27,8 +27,10 @@ import static org.zfin.uniprot.UniProtTools.*;
  *  - UNIPROT_INPUT_FILE_2 to point to the second input dat file (also accepted as second argument to main).
  *  - UNIPROT_OUTPUT_FILE as the output dat file name (also accepted as third argument to main). Default is {UNIPROT_INPUT_FILE_1}-{UNIPROT_INPUT_FILE_2}.out.timestamp
  *
+ * In addition to UNIPROT_OUTPUT_FILE, this generates a report file named UNIPROT_OUTPUT_FILE.report.html (ignoring original extension)
+ *
  * Example with bash:
- * $ UNIPROT_INPUT_FILE_1=pre_zfin.dat.a UNIPROT_INPUT_FILE_2=pre_zfin.dat.b UNIPROT_OUTPUT_FILE=pre_zfin.diffs gradle uniprotCompareTask
+ * $ UNIPROT_INPUT_FILE_1=pre_zfin.dat.a UNIPROT_INPUT_FILE_2=pre_zfin.dat.b UNIPROT_OUTPUT_FILE=pre_zfin.diffs.json gradle uniprotCompareTask
  *
  */
 public class UniProtCompareTask extends AbstractScriptWrapper {
@@ -181,7 +183,13 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
         if (outputFilename == null) {
             return;
         }
-        String reportfile = outputFilename + ".report.html";
+
+        //remove extension
+        String outputFilenameWithoutExtension = outputFilename.indexOf(".") == -1 ?
+                outputFilename :
+                outputFilename.substring(0, outputFilename.lastIndexOf("."));
+
+        String reportfile = outputFilenameWithoutExtension + ".report.html";
         System.out.println("Creating report file: " + reportfile);
         try {
             String outfileContents = FileUtils.readFileToString(new File(outputFilename));
