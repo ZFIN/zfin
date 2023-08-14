@@ -109,6 +109,9 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
             try {
                 RichSequence seq = richStreamReader.nextRichSequence();
                 count++;
+                if (count % 1000 == 0) {
+                    System.out.println("Read " + count + " sequences.");
+                }
 
                 if (seq.getTaxon().getNCBITaxID() != 7955) {
                     if (!seq.getTaxon().getDisplayName().toLowerCase().contains("danio rerio")) {
