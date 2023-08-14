@@ -9,7 +9,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.uniprot.diff.RichSequenceDiff;
 import org.zfin.uniprot.diff.UniProtDiffSet;
-import org.zfin.uniprot.diff.UniProtDiffSetJsonSerializer;
+import org.zfin.uniprot.diff.UniProtDiffSetSerializer;
 
 import java.io.*;
 import java.sql.SQLException;
@@ -100,7 +100,7 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
         populateDiffSetForNewAndRemoved();
         populateDiffSetForChangedRecords();
 
-        outputWriter.println(UniProtDiffSetJsonSerializer.serializeToString(diffSet));
+        outputWriter.println(UniProtDiffSetSerializer.serializeToString(diffSet));
         outputWriter.close();
     }
 

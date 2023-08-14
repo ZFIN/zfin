@@ -3,6 +3,7 @@ package org.zfin.uniprot.diff;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import org.biojavax.bio.seq.RichSequence;
 import org.zfin.uniprot.UniProtTools;
@@ -42,6 +43,12 @@ public class UniProtDiffSetSerializer extends JsonSerializer<UniProtDiffSet> {
         gen.writeEndArray();
 
         gen.writeEndObject();
+    }
+
+    public static String serializeToString(UniProtDiffSet diffSet) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(diffSet);
+        return json;
     }
 
 }
