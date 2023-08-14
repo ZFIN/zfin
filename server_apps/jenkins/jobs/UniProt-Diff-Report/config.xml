@@ -44,7 +44,7 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd $SOURCEROOT &amp;&amp; gradle uniprotReleaseDiffTask</command>
+      <command>rm $WORKSPACE/* &amp;&amp; cd $SOURCEROOT &amp;&amp; gradle uniprotReleaseDiffTask</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
