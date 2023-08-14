@@ -15,7 +15,9 @@ import org.biojavax.bio.seq.io.RichStreamReader;
 import org.biojavax.bio.seq.io.RichStreamWriter;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class UniProtTools {
@@ -67,6 +69,20 @@ public class UniProtTools {
         seq1NoteSet.setNoteSet(seq1.getNoteSet());
         Note[] keywords = seq1NoteSet.getProperties(RichSequence.Terms.getKeywordTerm());
         return List.of(keywords);
+    }
+
+    public static Date getDateUpdatedFromNotes(RichSequence seq1) {
+        SimpleRichAnnotation seq1NoteSet = new SimpleRichAnnotation();
+        seq1NoteSet.setNoteSet(seq1.getNoteSet());
+
+        String stringDate = (String) seq1NoteSet.getProperty(RichSequence.Terms.getDateUpdatedTerm());
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
+
+        try {
+            return formatter.parse(stringDate);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 
