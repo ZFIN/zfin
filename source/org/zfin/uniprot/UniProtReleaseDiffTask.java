@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
+import static org.zfin.uniprot.UniProtTools.getArgOrEnvironmentVar;
+
 /**
  * Combine filtering and diffing into one task.
  * Input files for release 1 can be a single file or multiple files. They can be gzipped or not.
@@ -26,37 +28,41 @@ public class UniProtReleaseDiffTask extends AbstractScriptWrapper {
     private String outputFilename;
     private Path tempDirectory;
 
-    public UniProtReleaseDiffTask(String inputFilenameSet1, String inputFilenameSet2, String outputFilename) {
+    private boolean keepTempFiles = false;
+
+    public UniProtReleaseDiffTask(String inputFilenameSet1, String inputFilenameSet2, String outputFilename, boolean keepTempFiles) {
         this.inputFilenameSet1 = inputFilenameSet1;
         this.inputFilenameSet2 = inputFilenameSet2;
         this.outputFilename = outputFilename;
+        this.keepTempFiles = keepTempFiles;
     }
 
     public static void main(String[] args) {
         String set1 = getArgOrEnvironmentVar(args, 0, "INPUT_FILESET_1");
         String set2 = getArgOrEnvironmentVar(args, 1, "INPUT_FILESET_2");
         String output = getArgOrEnvironmentVar(args, 2, "OUTPUT_FILE");
-
-        UniProtReleaseDiffTask task = new UniProtReleaseDiffTask(set1, set2, output);
+        boolean keepTempFiles = parseBooleanString(getArgOrEnvironmentVar(args, 3, "KEEP_TEMP_FILES"));
+        UniProtReleaseDiffTask task = new UniProtReleaseDiffTask(set1, set2, output, keepTempFiles);
 
         try {
             task.runTask();
-        } catch (IOException e) {
-            System.err.println("IOException Error while running task: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Exception Error while running task: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
-        } catch (BioException e) {
-            System.err.println("BioException Error while running task: " + e.getMessage());
-            e.printStackTrace();
-            System.exit(2);
-        } catch (SQLException e) {
-            System.err.println("SQLException Error while running task: " + e.getMessage());
-            e.printStackTrace();
-            System.exit(3);
         }
 
         HibernateUtil.closeSession();
         System.exit(0);
+    }
+
+    private static boolean parseBooleanString(String keepTempFiles) {
+        if (keepTempFiles == null) {
+            return false;
+        }
+        return keepTempFiles.equalsIgnoreCase("true") ||
+                keepTempFiles.equalsIgnoreCase("y") ||
+                keepTempFiles.equalsIgnoreCase("1");
     }
 
     public void runTask() throws IOException, BioException, SQLException {
@@ -66,14 +72,30 @@ public class UniProtReleaseDiffTask extends AbstractScriptWrapper {
         //handle input file set 1
         //filter the input files using a filter object (FilterTask) and concatenate to create a single filtered file
         Path filteredFile1 = combineAndFilterInputFileSet(inputFilenameSet1, "filtered_set1.dat");
+        System.out.println("Filtered file 1: " + filteredFile1.toAbsolutePath());
 
         //handle input file set 2 the same way
         Path filteredFile2 = combineAndFilterInputFileSet(inputFilenameSet2, "filtered_set2.dat");
+        System.out.println("Filtered file 2: " + filteredFile2.toAbsolutePath());
 
         //pass the 2 filtered files to the diff task (UniProtCompareTask) and get the result
+        UniProtCompareTask compareTask = new UniProtCompareTask(
+                filteredFile1.toString(),
+                filteredFile2.toString(),
+                outputFilename);
+
+        compareTask.runTask();
 
         //cleanup
+        if (keepTempFiles) {
+            System.out.println("Keeping temp files in: " + tempDirectory.toAbsolutePath());
+        } else {
+            Files.deleteIfExists(filteredFile1);
+            Files.deleteIfExists(filteredFile2);
+            Files.deleteIfExists(tempDirectory);
+        }
 
+        System.out.println("File diff written to " + outputFilename);
     }
 
     private void initWorkspace() {
@@ -107,6 +129,7 @@ public class UniProtReleaseDiffTask extends AbstractScriptWrapper {
     private Path combineAndFilterInputFileSet(String inputFileNames, String outputFilename) throws IOException {
         //create a set of input files from the input file set 1 based on comma separated list
         List<File> inputFiles = getInputFiles(inputFileNames);
+        System.out.println("Filtering file(s): " + inputFileNames.join(","));
 
         //for each of the input files, check if they are gzipped or not and create appropriate readers
         List<BufferedReader> inputFileReaderList = inputFiles.stream().map(file -> getReaderForFile(file)).toList();
@@ -115,9 +138,8 @@ public class UniProtReleaseDiffTask extends AbstractScriptWrapper {
         FileOutputStream fileOutputStream = new FileOutputStream(outputFilePath.toFile());
 
         try {
-            for(File inputFile : inputFiles) {
-                System.out.println("Filtering file: " + inputFile.getAbsolutePath());
-                UniProtFilterTask filterTask = new UniProtFilterTask(new BufferedReader(new FileReader(inputFile)), fileOutputStream);
+            for(BufferedReader inputReader : inputFileReaderList) {
+                UniProtFilterTask filterTask = new UniProtFilterTask(inputReader, fileOutputStream);
                 filterTask.runTask();
             }
         } catch (Exception e) {
@@ -148,19 +170,5 @@ public class UniProtReleaseDiffTask extends AbstractScriptWrapper {
         return null;
     }
 
-    private static String getArgOrEnvironmentVar(String[] args, int index, String envVar) {
-        if (args.length > index && args[index] != null) {
-            return args[index];
-        }
-
-        String result = System.getenv(envVar);
-
-        if (result == null) {
-            System.err.println("Missing required argument: " + envVar + ". Please provide it as an environment variable or as argument: " + (index + 1) + ". ");
-            System.exit(1);
-        }
-
-        return result;
-    }
 
 }

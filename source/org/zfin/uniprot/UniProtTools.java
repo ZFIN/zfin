@@ -84,4 +84,20 @@ public class UniProtTools {
         }
         return outputStream.toString();
     }
+
+
+    public static String getArgOrEnvironmentVar(String[] args, int index, String envVar) {
+        if (args.length > index && args[index] != null) {
+            return args[index];
+        }
+
+        String result = System.getenv(envVar);
+
+        if (result == null) {
+            System.err.println("Missing required argument: " + envVar + ". Please provide it as an environment variable or as argument: " + (index + 1) + ". ");
+            System.exit(1);
+        }
+
+        return result;
+    }
 }
