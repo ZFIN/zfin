@@ -148,6 +148,7 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
                 System.err.println("Error while processing sequence after " + count + " records. Last sequence read: " + lastSequence.getAccession() + " " + lastSequence.getName());
             }
         }
+        roughTaxonFilter.cleanup();
         return uniProtSequences;
     }
 

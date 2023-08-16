@@ -48,4 +48,9 @@ public class UniProtRoughTaxonFilter {
         return new BufferedReader(new FileReader(tempFile));
     }
 
+    public void cleanup() {
+        if (tempFile != null && tempFile.exists()) {
+            tempFile.delete();
+        }
+    }
 }
