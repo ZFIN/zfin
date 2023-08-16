@@ -25,60 +25,24 @@ import static org.zfin.uniprot.UniProtTools.getRichStreamWriterForUniprotDatFile
  * 2. GeneID (NCBI) (eg. DR   GeneID; 100537590; -.)
  * 3. RefSeq (eg. DR   RefSeq; XP_003199568.1; XM_003199520.5.
  *
- * Invoke this class with an environment variable (UNIPROT_INPUT_FILE) to point to the input dat file.
- *  and an environment variable (UNIPROT_OUTPUT_FILE) to point to the output dat file.
- *
- * Example with bash:
- * $ UNIPROT_INPUT_FILE=pre_zfin.dat UNIPROT_OUTPUT_FILE=pre_zfin.filtered.dat gradle uniProtFilterTask
- *
  */
 public class UniProtFilterTask extends AbstractScriptWrapper {
     private BufferedReader inputFileReader = null;
+    private BufferedReader filteredInputFileReader = null;
     private FileOutputStream outputFileWriter = null;
-    public String inputFilename;
-    public String outputFilename;
 
     private UniProtRoughTaxonFilter roughTaxonFilter = null;
-
-    public UniProtFilterTask(String inputFilename, String outputFilename) {
-        this.inputFilename = inputFilename;
-        this.outputFilename = outputFilename;
-    }
 
     public UniProtFilterTask(BufferedReader bufferedReader, FileOutputStream fileOutputStream) {
         this.inputFileReader = bufferedReader;
         this.outputFileWriter = fileOutputStream;
     }
 
-    public static void main(String[] args) {
-        String inputFilename = null;
-        String outputFilename = null;
-        if (args.length >= 1) {
-            inputFilename = args[0];
-        }
-        if (args.length >= 2) {
-            outputFilename = args[1];
-        }
-        UniProtFilterTask task = new UniProtFilterTask(inputFilename, outputFilename);
-
-        try {
-            task.runTask();
-        } catch (Exception e) {
-            System.err.println("IOException Error while running task: " + e.getMessage());
-            e.printStackTrace();
-            System.exit(1);
-        }
-
-        HibernateUtil.closeSession();
-        System.out.println("Task completed successfully.");
-        System.exit(0);
-    }
-
     public void runTask() throws IOException, BioException, SQLException {
-        initIOFiles();
+        initIO();
         initAll();
 
-        RichStreamReader sr = getRichStreamReaderForUniprotDatFile(inputFileReader, true);
+        RichStreamReader sr = getRichStreamReaderForUniprotDatFile(filteredInputFileReader, true);
 
         System.out.println("Starting to read file: " );
         List<RichSequence> outputEntries = readAndFilterSequencesFromStream(sr);
@@ -88,31 +52,15 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
         writeOutputFile(outputEntries, outputFileWriter);
     }
 
-    private void initIOFiles() throws IOException {
-        if (inputFileReader != null && outputFileWriter != null) {
-            if (roughTaxonFilter == null) {
-                roughTaxonFilter = new UniProtRoughTaxonFilter(inputFileReader);
-                this.inputFileReader = roughTaxonFilter.getFilteredReader();
-            }
-            //already initialized
-            return;
-        }
-
-        setInputFilename();
-        setOutputFilename();
-        System.out.println("Input file: " + inputFilename);
-        System.out.println("Output file: " + outputFilename);
-
-        roughTaxonFilter = new UniProtRoughTaxonFilter(new FileReader(inputFilename));
-        this.inputFileReader = roughTaxonFilter.getFilteredReader();
-        this.outputFileWriter = new FileOutputStream(outputFilename);
+    private void initIO() throws IOException {
+        roughTaxonFilter = new UniProtRoughTaxonFilter(inputFileReader);
+        filteredInputFileReader = roughTaxonFilter.getFilteredReader();
     }
 
     private List<RichSequence> readAndFilterSequencesFromStream(RichStreamReader richStreamReader) throws BioException {
         List<String> xrefsToKeep = List.of("ZFIN", "GeneID", "RefSeq", "EMBL", "GO", "InterPro", "Pfam", "PROSITE", "PDB", "Ensembl");
         RichSequence lastSequence = null;
         int count = 0;
-        long max_int_size = Long.MAX_VALUE - 1;
         List<RichSequence> uniProtSequences = new ArrayList<>();
         while (richStreamReader.hasNext()) {
             try {
@@ -160,31 +108,6 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
             throw new RuntimeException(e);
         }
 
-    }
-
-    private void setInputFilename() {
-        if (inputFilename != null) {
-            return;
-        }
-
-        inputFilename = System.getenv("UNIPROT_INPUT_FILE");
-        if (inputFilename == null) {
-            System.err.println("No input file specified. Please set the environment variable UNIPROT_INPUT_FILE.");
-            System.exit(3);
-        }
-    }
-
-    private void setOutputFilename() {
-        if (outputFilename != null) {
-            return;
-        }
-
-        outputFilename = System.getenv("UNIPROT_OUTPUT_FILE");
-
-        if (outputFilename == null) {
-            String timestamp = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
-            outputFilename = inputFilename + ".out." + timestamp;
-        }
     }
 
 }
