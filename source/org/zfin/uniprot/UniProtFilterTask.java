@@ -38,6 +38,8 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
     public String inputFilename;
     public String outputFilename;
 
+    private UniProtRoughTaxonFilter roughTaxonFilter = null;
+
     public UniProtFilterTask(String inputFilename, String outputFilename) {
         this.inputFilename = inputFilename;
         this.outputFilename = outputFilename;
@@ -86,8 +88,12 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
         writeOutputFile(outputEntries, outputFileWriter);
     }
 
-    private void initIOFiles() throws FileNotFoundException {
+    private void initIOFiles() throws IOException {
         if (inputFileReader != null && outputFileWriter != null) {
+            if (roughTaxonFilter == null) {
+                roughTaxonFilter = new UniProtRoughTaxonFilter(inputFileReader);
+                this.inputFileReader = roughTaxonFilter.getFilteredReader();
+            }
             //already initialized
             return;
         }
@@ -96,7 +102,9 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
         setOutputFilename();
         System.out.println("Input file: " + inputFilename);
         System.out.println("Output file: " + outputFilename);
-        this.inputFileReader = new BufferedReader(new FileReader(inputFilename));
+
+        roughTaxonFilter = new UniProtRoughTaxonFilter(new FileReader(inputFilename));
+        this.inputFileReader = roughTaxonFilter.getFilteredReader();
         this.outputFileWriter = new FileOutputStream(outputFilename);
     }
 
@@ -104,6 +112,7 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
         List<String> xrefsToKeep = List.of("ZFIN", "GeneID", "RefSeq", "EMBL", "GO", "InterPro", "Pfam", "PROSITE", "PDB", "Ensembl");
         RichSequence lastSequence = null;
         int count = 0;
+        long max_int_size = Long.MAX_VALUE - 1;
         List<RichSequence> uniProtSequences = new ArrayList<>();
         while (richStreamReader.hasNext()) {
             try {
@@ -133,8 +142,10 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
 
                 lastSequence = seq;
             } catch (Exception e) {
-                System.out.println("Error while processing sequence after " + count + ": " + lastSequence.getAccession() + " " + lastSequence.getName());
-                throw e;
+                if (lastSequence == null) {
+                    throw e;
+                }
+                System.err.println("Error while processing sequence after " + count + " records. Last sequence read: " + lastSequence.getAccession() + " " + lastSequence.getName());
             }
         }
         return uniProtSequences;
