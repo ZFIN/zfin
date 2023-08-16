@@ -93,7 +93,7 @@ public class Zygosity {
         return builder.toString();
     }
 
-    enum Type {
+    public enum Type {
         HOMOZYGOUS("homozygous", "2"),
         HETEROZYGOUS("heterozygous", "1"),
         UNKNOWN("unknown", "U"),
