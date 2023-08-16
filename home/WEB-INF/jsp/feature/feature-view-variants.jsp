@@ -14,7 +14,7 @@
             <c:when test="${fn:length(formBean.featureLocations)>0}">
 
                 <zfin2:displayFullLocation location="${formBean.featureLocations[0]}"
-                                           hideLink="${empty formBean.feature.affectedGenes}"/>
+                                           hideLink="${empty formBean.feature.affectedGenes || isDeficiency}"/>
 
             </c:when>
             <c:otherwise>

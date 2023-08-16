@@ -16,6 +16,7 @@ import org.zfin.feature.repository.FeatureService;
 import org.zfin.feature.service.MutationDetailsConversionService;
 import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
+import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.repository.LinkageRepository;
@@ -109,7 +110,7 @@ public class FeatureDetailController {
         form.setVarType(FeatureService.getVarType(feature));
         retrieveSortedGenotypeData(feature, form);
         retrievePubData(feature, form);
-
+        model.addAttribute("isDeficiency",feature.getType().equals(FeatureTypeEnum.DEFICIENCY));
         model.addAttribute(LookupStrings.FORM_BEAN, form);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.FEATURE.getTitleString() + feature.getName());
 
