@@ -8,7 +8,8 @@ const ShowDevInfo = ({show = false, url, indexer}) => {
         setHide(!hideOption)
     }
 
-    if (show) {
+    //TODO: remove this and figure out why it's cast as a string
+    if (false) {
         return <>
             <div>Developer Info: <span onClick={() => handleShowHide(hide)}>show</span></div>
             {!hide && (
