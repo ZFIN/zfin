@@ -17,6 +17,7 @@ import org.zfin.marker.MarkerStatistic;
 import org.zfin.marker.MarkerType;
 import org.zfin.marker.presentation.GeneBean;
 import org.zfin.marker.presentation.HighQualityProbe;
+import org.zfin.marker.presentation.STRTargetRow;
 import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.PhenotypeStatementWarehouse;
@@ -487,4 +488,7 @@ public interface PublicationRepository extends PaginationParameter {
 
     void insertCorrespondenceResolution(CorrespondenceResolution correspondenceResolution);
 
+    Map<Publication, List<PublicationDbXref>> getAllDataSetsPublication();
+
+    Map<Publication, List<STRTargetRow>> getAllAttributedSTRs(Pagination pagination);
 }

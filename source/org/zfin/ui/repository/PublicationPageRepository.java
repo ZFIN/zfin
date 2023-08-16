@@ -7,6 +7,7 @@ import org.zfin.marker.Clone;
 import org.zfin.publication.Publication;
 
 import java.util.List;
+import java.util.Map;
 
 public interface PublicationPageRepository {
 
@@ -15,4 +16,8 @@ public interface PublicationPageRepository {
     PaginationResult<Clone> getProbes(Publication publication, Pagination pagination);
 
     List<String> getProbeTypes(Publication publication, Pagination pagination);
+
+    Map<Publication, List<ExpressionTableRow>> getAllPublicationExpression(Pagination pagination);
+
+    Map<Publication, List<Clone>> getAllProbes(Pagination pagination);
 }

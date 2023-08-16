@@ -619,6 +619,19 @@ PublicationViewController {
 
         return "publication/publication-figures";
     }
+
+    @RequestMapping("/stats")
+    public String viewPublicationUberTable(Model model) {
+        List<String> genedom = List.of(Marker.TypeGroup.GENEDOM.name());
+/*
+        int histogramPubMarkerCount = publicationRepository.getPublicationAttributionPubCount(genedom);
+        int histogramMarkerCount = publicationRepository.getPublicationAttributionMarkerCount(genedom);
+        model.addAttribute("pubMarkerCount", histogramPubMarkerCount);
+        model.addAttribute("markerCount", histogramMarkerCount);
+*/
+        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Publication View Statistics " );
+        return "publication/publication-view-stats";
+    }
 }
 
 

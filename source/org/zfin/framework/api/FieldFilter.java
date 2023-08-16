@@ -3,6 +3,10 @@ package org.zfin.framework.api;
 import java.util.StringJoiner;
 
 public enum FieldFilter {
+    PUBLICATION_TYPE("publication.type"),
+    PUBLICATION_ID("publication.id"),
+    PUBLICATION_AUTHOR("publication.shortAuthor"),
+    FISH_TYPE("fish.type"),
     SEQUENCE_ACCESSION("sequence.accession"),
     SEQUENCE_TYPE("sequence.type"),
     FILTER_TERM_NAME("termName"),
@@ -17,12 +21,21 @@ public enum FieldFilter {
     TARGET_NAME("targetName"),
     ENTITY_ID("entityId"),
     STR_NAME("strName"),
+    STR_TYPE("strType"),
     REGULATORY_REGION("regulatoryRegion"),
     CODING_SEQUENCE("codingSequence"),
     SPECIES("species"),
     CONDITION_NAME("conditionName"),
     PHENOTYPE("phenotype"),
+    CLONAL_TYPE("filter.clonalType"),
+    ISOTYPE("filter.asisotypeay"),
+    HOST("filter.host"),
+    ZDB_ENTITY_TYPE("zdb.entity.type"),
+    TARGET_GENE("filter.targetGene"),
+    ANTIGEN_GENE("filter.antigenGenes"),
     ANTIBODY_NAME("antibodyName"),
+    ANTIBODY("antibody"),
+    QUALIFIER("qualifier"),
     CITATION("citation"),
     ANATOMY("anatomy"),
 

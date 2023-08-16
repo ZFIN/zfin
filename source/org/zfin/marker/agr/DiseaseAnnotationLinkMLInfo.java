@@ -122,6 +122,12 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
                         AGMDiseaseAnnotationDTO annotation = new AGMDiseaseAnnotationDTO();
                         org.alliancegenome.curation_api.model.ingest.dto.DataProviderDTO dataProvider = new DataProviderDTO();
                         dataProvider.setSourceOrganizationAbbreviation("ZFIN");
+                        org.alliancegenome.curation_api.model.ingest.dto.CrossReferenceDTO crossReferenceDTO = new org.alliancegenome.curation_api.model.ingest.dto.CrossReferenceDTO();
+                        crossReferenceDTO.setDisplayName(disease.getOboID());
+                        crossReferenceDTO.setPrefix("ZFIN");
+                        crossReferenceDTO.setPageArea("disease/zfin");
+                        crossReferenceDTO.setReferencedCurie(disease.getOboID());
+                        dataProvider.setCrossReferenceDto(crossReferenceDTO);
                         annotation.setDataProviderDto(dataProvider);
 
                         annotation.setDiseaseRelationName(RelationshipDTO.IS_MODEL_OF);
