@@ -130,7 +130,7 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
                         org.alliancegenome.curation_api.model.ingest.dto.CrossReferenceDTO crossReferenceDTO = new org.alliancegenome.curation_api.model.ingest.dto.CrossReferenceDTO();
                         crossReferenceDTO.setDisplayName(disease.getOboID());
                         crossReferenceDTO.setPrefix("ZFIN");
-                        crossReferenceDTO.setPageArea("disease/zfin");
+                        crossReferenceDTO.setPageArea("disease");
                         crossReferenceDTO.setReferencedCurie(disease.getOboID());
                         dataProvider.setCrossReferenceDto(crossReferenceDTO);
                         annotation.setDataProviderDto(dataProvider);
