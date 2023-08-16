@@ -26,7 +26,7 @@ const ChebiTermZebrafishModelTable = ({termId, directAnnotationOnly }) => {
                 dangerouslySetInnerHTML={{__html: row.fishModelDisplay.fish.name}}
             />,
             filterName: 'fishName',
-            width: '330px',
+            width: '300px',
         },
         {
             label: 'Conditions',
@@ -42,6 +42,7 @@ const ChebiTermZebrafishModelTable = ({termId, directAnnotationOnly }) => {
                 />
             </span>,
             filterName: 'conditionName',
+            width: '200px',
         },
         {
             label: 'Evidence',
