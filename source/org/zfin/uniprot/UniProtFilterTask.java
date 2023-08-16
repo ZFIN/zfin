@@ -79,7 +79,7 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
 
                 TreeSet<RankedCrossRef> sortedRankedCrossRefs = new TreeSet<>();
 
-                for (RankedCrossRef rankedCrossRef : seq.getRankedCrossRefs()) {
+                for (RankedCrossRef rankedCrossRef : (Set<RankedCrossRef>)seq.getRankedCrossRefs() ) {
                     if (xrefsToKeep.contains(rankedCrossRef.getCrossRef().getDbname())) {
                         sortedRankedCrossRefs.add(rankedCrossRef);
                     }
