@@ -88,7 +88,7 @@
                      data-direct-annotation-only="${true}"
                      data-is-wildtype="${true}"
                      data-is-multi-chebi-condition="${false}"
-                     data-show-dev-info=${showDevInfo}
+                     data-show-dev-info="${showDevInfo}"
                              data-indexer=${UiIndexerConfig.ChebiPhenotypeIndexer.typeName}
                 ></div>
             </z:section>

@@ -21,7 +21,6 @@ const TermAntibodyTable = ({termId, directAnnotationOnly}) => {
         {
             label: 'Gene',
             content: ({antigenGeneList}) => <EntityList entities={antigenGeneList}/>,
-            filterName: 'geneName',
             width: '120px',
         },
         {
