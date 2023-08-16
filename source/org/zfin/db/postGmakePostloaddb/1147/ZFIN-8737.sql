@@ -3,6 +3,7 @@
 
 -- remove all attributions except the oldest for marker-relationship IDs on type=contains region
 
+-- put all MREL IDs that have more than one attribution into temp table
 select recattrib_data_zdb_id, count(*) as ct
 into TEMP table temp_id
 from record_attribution,
@@ -24,6 +25,7 @@ from temp_id;
 -- so that only one of the record_attributions is left
 -- (the one with the lowest PK ID
 
+-- remove all records attributions that are not the min PK ID for each MREL
 delete
 from record_attribution as r
 where r.recattrib_pk_id not in (select min(ra.recattrib_pk_id)
