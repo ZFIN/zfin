@@ -51,21 +51,17 @@ public class UniProtDiffSet {
     }
 
     public UniProtDiffSetSummary getSummary() {
-        UniProtDiffSetSummary summary = new UniProtDiffSetSummary();
-
-        summary.setAdded(addedSequences.size());
-        summary.setRemoved(removedSequences.size());
-        summary.setChanged(changedSequences.size());
-        summary.setTotal(addedSequences.size() + removedSequences.size() + changedSequences.size());
-
-        summary.setChangedGeneID((int) changedSequences.stream().filter(s -> s.hasChangesInDB("GeneID")).count());
-        summary.setChangedRefSeq((int) changedSequences.stream().filter(s -> s.hasChangesInDB("RefSeq")).count());
-        summary.setChangedZFIN((int) changedSequences.stream().filter(s -> s.hasChangesInDB("ZFIN")).count());
-
-        summary.setLatestUpdateFromSequence1(new java.text.SimpleDateFormat("yyyy-MM-dd").format(latestUpdateFromSequence1));
-        summary.setLatestUpdateFromSequence2(new java.text.SimpleDateFormat("yyyy-MM-dd").format(latestUpdateFromSequence2));
-
-        return summary;
+        return new UniProtDiffSetSummary(
+                addedSequences.size(),
+                removedSequences.size(),
+                changedSequences.size(),
+                addedSequences.size() + removedSequences.size() + changedSequences.size(),
+                (int) changedSequences.stream().filter(s -> s.hasChangesInDB("RefSeq")).count(),
+                (int) changedSequences.stream().filter(s -> s.hasChangesInDB("ZFIN")).count(),
+                (int) changedSequences.stream().filter(s -> s.hasChangesInDB("GeneID")).count(),
+                new java.text.SimpleDateFormat("yyyy-MM-dd").format(latestUpdateFromSequence1),
+                new java.text.SimpleDateFormat("yyyy-MM-dd").format(latestUpdateFromSequence2)
+        );
     }
 
     public void updateLatestDate1(RichSequence seq) {
