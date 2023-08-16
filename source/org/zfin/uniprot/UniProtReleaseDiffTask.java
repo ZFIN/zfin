@@ -177,7 +177,7 @@ public class UniProtReleaseDiffTask extends AbstractScriptWrapper {
                 input = fileStream;
             }
 
-            return new BufferedReader(new InputStreamReader(input));
+            return (new UniProtRoughTaxonFilter(new InputStreamReader(input))).getFilteredReader();
         } catch (IOException e) {
             System.err.println("Error while opening file: " + file.getAbsolutePath());
             e.printStackTrace();
