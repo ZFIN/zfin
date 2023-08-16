@@ -2,7 +2,10 @@
 use strict;
 use warnings;
 
-# Write a program that takes a multi-FASTA file of DNA sequences and prints the
+# This replaces the previous version of the script, which was written
+# in awk. The awk version is still available in the git history (fasta_len.awk).
+
+# This program takes a multi-FASTA file of DNA sequences and prints the
 # ID and length of each sequence in the file. The file name should be
 # specified on the command line.
 
@@ -24,7 +27,6 @@ use warnings;
 # ACGTGTCTAAATGA
 #
 # ...
-
 
 # Get filename from command line arguments
 my $input_file = $ARGV[0];
