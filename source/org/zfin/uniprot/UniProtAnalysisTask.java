@@ -4,6 +4,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.biojava.bio.BioException;
+import org.biojavax.RankedCrossRef;
 import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.bio.seq.io.*;
 import org.hibernate.Session;
@@ -105,10 +106,10 @@ public class UniProtAnalysisTask extends AbstractScriptWrapper {
 
             UniProtRefSeqPairs.addAll (seq.getRankedCrossRefs()
                     .stream()
-                    .filter(rankedXref -> "RefSeq".equals(rankedXref.getCrossRef().getDbname()))
+                    .filter(rankedXref -> "RefSeq".equals(((RankedCrossRef)rankedXref).getCrossRef().getDbname()))
                     .map(rankedXref -> new ImmutablePair<>(
                             seq.getAccession(),
-                            rankedXref.getCrossRef().getAccession().replaceAll("\\.\\d*", "")
+                            ((RankedCrossRef)rankedXref).getCrossRef().getAccession().replaceAll("\\.\\d*", "")
                     ))
                     .toList());
         }

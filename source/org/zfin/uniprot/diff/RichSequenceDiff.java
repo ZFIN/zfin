@@ -10,6 +10,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.biojavax.Note;
+import org.biojavax.RankedCrossRef;
 import org.biojavax.bio.seq.RichSequence;
 
 import static org.zfin.uniprot.UniProtTools.getKeywordNotes;
@@ -63,8 +64,8 @@ public class RichSequenceDiff {
     private List<CrossRef> crossRefsInFirstSeqOnly(RichSequence seq1, RichSequence seq2) {
 
         //convert the ranked crossrefs to a list of crossrefs
-        Set<CrossRef> xrefs1 = seq1.getRankedCrossRefs().stream().map(xref -> xref.getCrossRef()).collect(Collectors.toSet());
-        Set<CrossRef> xrefs2 = seq2.getRankedCrossRefs().stream().map(xref -> xref.getCrossRef()).collect(Collectors.toSet());
+        Set<CrossRef> xrefs1 = (Set<CrossRef>)seq1.getRankedCrossRefs().stream().map(xref -> ((RankedCrossRef)xref).getCrossRef()).collect(Collectors.toSet());
+        Set<CrossRef> xrefs2 = (Set<CrossRef>)seq2.getRankedCrossRefs().stream().map(xref -> ((RankedCrossRef)xref).getCrossRef()).collect(Collectors.toSet());
 
         //create a map, indexed by xref.dbname and xref.accession
         //if the same xref is in both lists, then remove it from the map
