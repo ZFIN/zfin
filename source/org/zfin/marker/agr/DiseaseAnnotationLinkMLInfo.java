@@ -51,6 +51,7 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
         List<AGMDiseaseAnnotationDTO> allDiseaseDTO = getDiseaseInfo(numfOfRecords);
         BasicDiseaseAnnotationLinkML basicInfo = new BasicDiseaseAnnotationLinkML();
         basicInfo.setDiseaseAgmIngest(allDiseaseDTO);
+        basicInfo.setLinkMlVersion("v1.7.3");
         ObjectMapper mapper = new ObjectMapper();
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
