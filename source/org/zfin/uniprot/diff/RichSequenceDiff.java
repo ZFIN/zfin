@@ -1,6 +1,5 @@
 package org.zfin.uniprot.diff;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,6 +11,7 @@ import java.util.stream.Collectors;
 import org.biojavax.Note;
 import org.biojavax.RankedCrossRef;
 import org.biojavax.bio.seq.RichSequence;
+import org.zfin.uniprot.serialize.RichSequenceDiffSerializer;
 
 import static org.zfin.uniprot.UniProtTools.getKeywordNotes;
 

@@ -1,4 +1,4 @@
-package org.zfin.uniprot.diff;
+package org.zfin.uniprot.serialize;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import org.biojavax.CrossRef;
 import org.biojavax.Note;
 import org.biojavax.bio.seq.RichSequence;
+import org.zfin.uniprot.diff.RichSequenceDiff;
 
 import java.io.IOException;
 
