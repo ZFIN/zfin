@@ -27,7 +27,8 @@ begin
   ELSIF (format = 'YYYY-MM-DD') THEN
       -- datetime year to day format.
       dateFromId := century || substr(zdb_date,1,2) || '-' || substr(zdb_date,3,2) || '-' || substr(zdb_date,5,2);
-  
+  ELSIF (format = 'YYMMDD') THEN
+      dateFromId := zdb_date;
   ELSE
       -- date format YYYYMMDD.
       dateFromId := century || zdb_date;
