@@ -36,21 +36,26 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
     }
 
     public static void main(String[] args) throws IOException {
+        String linkMlVersion = null;
         int number = 0;
         if (args.length > 0) {
-            number = Integer.parseInt(args[0]);
+            linkMlVersion = args[0];
+        }
+        if (args.length > 1) {
+            number = Integer.parseInt(args[1]);
         }
         DiseaseAnnotationLinkMLInfo diseaseInfo = new DiseaseAnnotationLinkMLInfo(number);
-        diseaseInfo.init();
+        diseaseInfo.init(linkMlVersion);
         System.exit(0);
     }
 
-    private void init() throws IOException {
+    private void init(String linkMlVersion) throws IOException {
         initAll();
         populateHighLevelConditionTerms();
         List<AGMDiseaseAnnotationDTO> allDiseaseDTO = getDiseaseInfo(numfOfRecords);
         BasicDiseaseAnnotationLinkML basicInfo = new BasicDiseaseAnnotationLinkML();
         basicInfo.setDiseaseAgmIngest(allDiseaseDTO);
+        basicInfo.setLinkMlVersion(linkMlVersion);
         ObjectMapper mapper = new ObjectMapper();
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
@@ -125,7 +130,7 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
                         org.alliancegenome.curation_api.model.ingest.dto.CrossReferenceDTO crossReferenceDTO = new org.alliancegenome.curation_api.model.ingest.dto.CrossReferenceDTO();
                         crossReferenceDTO.setDisplayName(disease.getOboID());
                         crossReferenceDTO.setPrefix("ZFIN");
-                        crossReferenceDTO.setPageArea("disease/zfin");
+                        crossReferenceDTO.setPageArea("disease");
                         crossReferenceDTO.setReferencedCurie(disease.getOboID());
                         dataProvider.setCrossReferenceDto(crossReferenceDTO);
                         annotation.setDataProviderDto(dataProvider);
