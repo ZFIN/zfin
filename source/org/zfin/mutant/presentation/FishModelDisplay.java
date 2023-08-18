@@ -71,6 +71,9 @@ public class FishModelDisplay implements Comparable<FishModelDisplay> {
 	@Column(name = "zmd_condition_search")
 	private String conditionSearch;
 
+	@Column(name = "zmd_order")
+	private Integer order;
+
 	@JsonView(View.API.class)
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "zmd_pub_zdb_id")
