@@ -110,7 +110,7 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
                 hql += "LOWER(" + entry.getKey() + ") like '%" + entry.getValue().toLowerCase() + "%' ";
             }
         }
-        hql += "order by fishModelDisplay.fish.order ";
+        hql += " order by fishModelDisplay.order, fishModelDisplay.fish.order, upper(fishModelDisplay.fish.displayName) ";
         Query<FishModelDisplay> query = HibernateUtil.currentSession().createQuery(hql, FishModelDisplay.class);
         query.setParameter("term", term);
         return PaginationResultFactory.createResultFromScrollableResultAndClose(bean, query.scroll());
@@ -127,7 +127,7 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
                   "where  " +
                   "clo.child = chebiDisplay.chebi AND clo.root = :chebiTerm ";
         }
-        hql += " order by upper(chebiDisplay.fishModelDisplay.fish.displayName) ";
+        hql += " order by chebiDisplay.order, chebiDisplay.fishModel.fish.order, upper(chebiDisplay.fishModelDisplay.fish.displayName) ";
         Query<ChebiFishModelDisplay> query = HibernateUtil.currentSession().createQuery(hql, ChebiFishModelDisplay.class);
         query.setParameter("chebiTerm", term);
         List<ChebiFishModelDisplay> list = query.list();
