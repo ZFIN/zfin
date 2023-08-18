@@ -354,13 +354,13 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
                 dblinks,
                 publications
             ORDER BY
-                4 COLLATE "C" ASC, -- because some systems don't sort the same based on locale (examples: dre-mir-21-2 and dre-mir-212, see: https://stackoverflow.com/questions/22534484)
-                1,
-                2,
-                3,
-                5,
-                6,
-                7
+                symbol COLLATE "C" ASC, -- because some systems don't sort the same based on locale (examples: dre-mir-21-2 and dre-mir-212, see: https://stackoverflow.com/questions/22534484)
+                ncbi_id,
+                zdb_id,
+                ensembl_id,
+                dblinks,
+                publications,
+                rna_accessions
             """;
         List<Object[]> results = session.createSQLQuery(query).list();
 
