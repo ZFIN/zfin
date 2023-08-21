@@ -40,7 +40,7 @@
                 Transaction Isolation Level
             </td>
             <td class="listContent">
-                <c:out value="${metadata.connection.transactionIsolation}"/> <br>
+                <c:out value="${txIsolationLevel}"/><br>
                 0: No transactions supported<br>
                 1: Dirty reads are possible<br>
                 2: No dirty reads<br>
