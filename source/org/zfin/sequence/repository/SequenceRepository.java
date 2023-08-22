@@ -3,7 +3,6 @@
  */
 package org.zfin.sequence.repository;
 
-import org.apache.commons.collections.map.MultiValueMap;
 import org.zfin.Species;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
@@ -40,7 +39,7 @@ public interface SequenceRepository {
 
     Map<String, MarkerDBLink> getUniqueMarkerDBLinks(ReferenceDatabase... referenceDatabases);
 
-    MultiValueMap getMarkerDBLinks(ReferenceDatabase... referenceDatabases);
+    Map<String, Collection<MarkerDBLink>> getMarkerDBLinks(ReferenceDatabase... referenceDatabases);
 
     Set<String> getAccessions(ReferenceDatabase... referenceDatabases);
 

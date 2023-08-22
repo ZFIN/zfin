@@ -175,12 +175,7 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
         }
     }
 
-    private void populateSequenceMap(RichStreamReader richStreamReader, Map<String, RichSequence> sequences) throws BioException {
-        while (richStreamReader.hasNext()) {
-            RichSequence seq = richStreamReader.nextRichSequence();
-            sequences.put(seq.getAccession(), seq);
-        }
-    }
+
 
     private void writeOutputReportFile() {
         if (outputFilename == null) {
@@ -203,7 +198,6 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
         } catch (IOException e) {
             System.err.println("Error creating report (" + reportfile + ") from template (" + outputFilename + ")\n" + e.getMessage());
         }
-
     }
 
 }

@@ -73,6 +73,7 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
         while (richStreamReader.hasNext()) {
             try {
                 RichSequence seq = richStreamReader.nextRichSequence();
+                String accession = seq.getAccession();
                 count++;
                 if (count % 1000 == 0) {
                     System.out.println("Read " + count + " sequences.");
