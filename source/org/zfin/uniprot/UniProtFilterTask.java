@@ -1,16 +1,15 @@
 package org.zfin.uniprot;
 
+import lombok.extern.log4j.Log4j2;
 import org.biojava.bio.BioException;
 import org.biojavax.RankedCrossRef;
 import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.bio.seq.io.RichStreamReader;
 import org.biojavax.bio.seq.io.RichStreamWriter;
-import org.zfin.framework.HibernateUtil;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 
 import java.io.*;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.zfin.uniprot.UniProtTools.getRichStreamReaderForUniprotDatFile;
@@ -26,10 +25,11 @@ import static org.zfin.uniprot.UniProtTools.getRichStreamWriterForUniprotDatFile
  * 3. RefSeq (eg. DR   RefSeq; XP_003199568.1; XM_003199520.5.
  *
  */
+@Log4j2
 public class UniProtFilterTask extends AbstractScriptWrapper {
-    private BufferedReader inputFileReader = null;
+    private BufferedReader inputFileReader;
     private BufferedReader filteredInputFileReader = null;
-    private FileOutputStream outputFileWriter = null;
+    private FileOutputStream outputFileWriter;
 
     private UniProtRoughTaxonFilter roughTaxonFilter = null;
 
@@ -38,17 +38,17 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
         this.outputFileWriter = fileOutputStream;
     }
 
-    public void runTask() throws IOException, BioException, SQLException {
+    public void runTask() throws IOException, BioException {
         initIO();
         initAll();
 
         RichStreamReader sr = getRichStreamReaderForUniprotDatFile(filteredInputFileReader, true);
 
-        System.out.println("Starting to read file: " );
+        log.debug("Starting to read file: " );
         List<RichSequence> outputEntries = readAndFilterSequencesFromStream(sr);
-        System.out.println("Finished reading file: " + outputEntries.size() + " entries read.");
+        log.debug("Finished reading file: " + outputEntries.size() + " entries read.");
 
-        System.out.println("Starting to write file: " );
+        log.debug("Starting to write file: " );
         writeOutputFile(outputEntries, outputFileWriter);
     }
 
@@ -67,7 +67,7 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
                 RichSequence seq = richStreamReader.nextRichSequence();
                 count++;
                 if (count % 1000 == 0) {
-                    System.out.println("Read " + count + " sequences.");
+                    log.debug("Read " + count + " sequences.");
                 }
 
                 if (seq.getTaxon().getNCBITaxID() != 7955) {
@@ -93,7 +93,7 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
                 if (lastSequence == null) {
                     throw e;
                 }
-                System.err.println("Error while processing sequence after " + count + " records. Last sequence read: " + lastSequence.getAccession() + " " + lastSequence.getName());
+                log.error("Error while processing sequence after " + count + " records. Last sequence read: " + lastSequence.getAccession() + " " + lastSequence.getName(), e);
             }
         }
         roughTaxonFilter.cleanup();
