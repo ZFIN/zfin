@@ -67,6 +67,12 @@ task uniprotReleaseDiffTask(type: JavaExec) {
     main = 'org.zfin.uniprot.UniProtReleaseDiffTask'
 }
 
+task uniprotLoadTask(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.uniprot.UniProtLoadTask'
+    systemProperty "log4j2.configurationFile", System.getProperty("log4j2.configurationFile", "./home/WEB-INF/log4j2-debug.xml")
+}
+
 task ncbiMatchThroughEnsemblTask(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.uniprot.NcbiMatchThroughEnsemblTask'
