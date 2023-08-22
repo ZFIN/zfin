@@ -1,5 +1,6 @@
 package org.zfin.uniprot;
 
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 import org.hibernate.Session;
@@ -16,7 +17,6 @@ import java.nio.file.Paths;
 import java.sql.SQLException;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
@@ -45,6 +45,7 @@ import org.zfin.sequence.service.SequenceService;
  * Alternatively, set the environment variable NCBI_FILE_URL to the input file.
  *
  */
+@Log4j2
 public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
     private static final String CSV_FILE = "ncbi_matches_through_ensembl.csv";
     private static final String DEFAULT_INPUT_FILE_URL = "https://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/Non-mammalian_vertebrates/Danio_rerio.gene_info.gz";
@@ -56,13 +57,13 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
         try {
             task.runTask(args);
         } catch (IOException | SQLException e) {
-            System.err.println("Exception Error while running task: " + e.getMessage());
+            log.error("Exception Error while running task: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }
 
         HibernateUtil.closeSession();
-        System.out.println("Task completed successfully.");
+        log.info("Task completed successfully.");
         System.exit(0);
     }
 
@@ -140,12 +141,12 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
             if (inputFile == null) {
                 inputFile = System.getProperty("ncbiFileUrl");
                 if (inputFile == null) {
-                    System.out.println("No input file url specified. Please set the environment variable NCBI_FILE_URL or property ncbiFileUrl. Using default url.");
+                    log.error("No input file url specified. Please set the environment variable NCBI_FILE_URL or property ncbiFileUrl. Using default url.");
                     inputFile = DEFAULT_INPUT_FILE_URL;
                 }
             }
         }
-        System.out.println("Using input file url: " + inputFile);
+        log.info("Using input file url: " + inputFile);
         this.inputFileUrl = inputFile;
     }
 
@@ -222,7 +223,7 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
                 throw new RuntimeException("Unexpected header format. Expected #tax_id but found " + headerRecord.get(0));
             }
 
-            System.out.println("Parsing file: " + inputFile.getAbsolutePath() + " and loading into temporary table in database.");
+            log.info("Parsing file: " + inputFile.getAbsolutePath() + " and loading into temporary table in database.");
             Session session = HibernateUtil.currentSession();
             Transaction tx = session.beginTransaction();
             int recordCount = 0;
@@ -254,7 +255,7 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
                         .executeUpdate();
             }
             tx.commit();
-            System.out.println("Finished data load of " + recordCount + " records.");
+            log.info("Finished data load of " + recordCount + " records.");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -297,7 +298,7 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
                 dblink_linked_recid IS NULL) AS x
         """;
         BigInteger count = (BigInteger) session.createSQLQuery(query).uniqueResult();
-        System.out.println("Number of NCBI genes that have a link to ZFIN, but we don't have a reciprocal link: " + count);
+        log.info("Number of NCBI genes that have a link to ZFIN, but we don't have a reciprocal link: " + count);
 
         // Get semi-final report using the above mapping tables.
         // First (step 1), get all ncbi genes that have a link to zfin, but we don't have a reciprocal link.
@@ -366,7 +367,7 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
 
         transaction.commit();
 
-        System.out.println("Number of those NCBI genes with shared ensembl id : " + results.size());
+        log.info("Number of those NCBI genes with shared ensembl id : " + results.size());
 
         return results;
     }
@@ -384,9 +385,9 @@ public class NcbiMatchThroughEnsemblTask extends AbstractScriptWrapper {
                 csvPrinter.printRecord(result.toList());
             }
             csvPrinter.flush();
-            System.out.println("Wrote results to " + CSV_FILE);
+            log.info("Wrote results to " + CSV_FILE);
         } catch (IOException e) {
-            System.err.println("IOException Error while writing results to csv: " + e.getMessage());
+            log.error("IOException Error while writing results to csv: " + e.getMessage());
             e.printStackTrace();
             System.exit(4);
         }
