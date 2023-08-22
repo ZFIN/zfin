@@ -102,8 +102,6 @@ public interface FeatureRepository {
 
     String getAALink(Feature feature);
 
-    FeatureGenomicMutationDetail getFeatureGenomicDetail(Feature feature);
-
     FeatureLocation getAllFeatureLocationsOnGRCz11(Feature feature);
 
     List<FeatureGenomicMutationDetail> getAllFeatureGenomicMutationDetails();
