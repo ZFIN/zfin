@@ -148,14 +148,13 @@ public abstract class UiIndexer<Entity> extends Thread {
     protected abstract void cleanUiTables();
 
     protected void saveRecords(Collection<List<Entity>> batchedList) {
-        HibernateUtil.createTransaction();
+        HibernateUtil.createStatelessTransaction();
         batchedList.forEach(batch -> {
             for (Entity entity : batch) {
-                HibernateUtil.currentSession().save(entity);
+                HibernateUtil.currentStatelessSession().insert(entity);
             }
-            HibernateUtil.currentSession().flush();
         });
-        HibernateUtil.flushAndCommitCurrentSession();
+        HibernateUtil.flushAndCommitCurrentStatelessSession();
     }
 
     protected void cleanoutTable(String... tables) {

@@ -52,11 +52,14 @@ public class DatabaseInfoController {
     }
 
     @RequestMapping("/jdbc-driver-info")
-    public String showJdbcDriverInfo(Model model) throws ServletException, NamingException {
+    public String showJdbcDriverInfo(Model model) throws ServletException, NamingException, SQLException {
+        HibernateUtil.createTransaction();
         model.addAttribute("metadata", getMetaData());
         InitialContext ictx = new InitialContext();
         ComboPooledDataSource pds = (ComboPooledDataSource) ictx.lookup("java:comp/env/jdbc/zfin");
         model.addAttribute("pds", pds);
+        model.addAttribute("txIsolationLevel", pds.getConnection().getTransactionIsolation());
+        HibernateUtil.flushAndCommitCurrentSession();
         return "dev-tools/view-database-driver-info";
     }
 

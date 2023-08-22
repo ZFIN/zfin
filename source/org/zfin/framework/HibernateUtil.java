@@ -29,6 +29,7 @@ public class HibernateUtil {
     private static SessionFactory sessionFactory;
 
     private static final ThreadLocal<Session> localSession = new ThreadLocal<Session>();
+    private static final ThreadLocal<StatelessSession> localStatelessSession = new ThreadLocal<StatelessSession>();
 
     /**
      * Method that forces Hibernate to initialize.
@@ -63,6 +64,10 @@ public class HibernateUtil {
         return currentSession().beginTransaction();
     }
 
+    public static Transaction createStatelessTransaction() {
+        return currentStatelessSession().beginTransaction();
+    }
+
     public static void rollbackTransaction() {
         try {
             Transaction t = currentSession().getTransaction();
@@ -75,6 +80,10 @@ public class HibernateUtil {
     public static void flushAndCommitCurrentSession() {
         currentSession().flush();
         currentSession().getTransaction().commit();
+    }
+
+    public static void flushAndCommitCurrentStatelessSession() {
+        currentStatelessSession().getTransaction().commit();
     }
 
     /**
@@ -99,6 +108,20 @@ public class HibernateUtil {
         s = sessionFactory.openSession();
         localSession.set(s);
         s.enableFilter("noSecondaryAliasesForAO").setParameter("group", DataAliasGroup.Group.SECONDARY_ID.toString());
+        return s;
+    }
+
+    public static StatelessSession currentStatelessSession() {
+        if (sessionFactory == null) {
+            SessionCreator.instantiateDBForHostedMode();
+        }
+
+        StatelessSession s = localStatelessSession.get();
+        if (s != null)
+            return s;
+        // create a new session
+        s = sessionFactory.openStatelessSession();
+        localStatelessSession.set(s);
         return s;
     }
 
