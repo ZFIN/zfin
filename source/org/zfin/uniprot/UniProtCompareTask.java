@@ -1,5 +1,6 @@
 package org.zfin.uniprot;
 
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.biojava.bio.BioException;
@@ -32,6 +33,7 @@ import static org.zfin.uniprot.UniProtTools.*;
  * $ UNIPROT_INPUT_FILE_1=pre_zfin.dat.a UNIPROT_INPUT_FILE_2=pre_zfin.dat.b UNIPROT_OUTPUT_FILE=pre_zfin.diffs.json gradle uniprotCompareTask
  *
  */
+@Log4j2
 public class UniProtCompareTask extends AbstractScriptWrapper {
     private String inputFilename1;
     private String inputFilename2;
@@ -60,13 +62,13 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
         try {
             task.runTask();
         } catch (Exception e) {
-            System.err.println("Exception Error while running task: " + e.getMessage());
+            log.error("Exception Error while running task: " + e.getMessage(), e);
             e.printStackTrace();
             System.exit(1);
         }
 
         HibernateUtil.closeSession();
-        System.out.println("Task completed successfully.");
+        log.debug("Task completed successfully.");
         System.exit(0);
     }
 
@@ -74,15 +76,15 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
         initIOFiles();
         initAll();
 
-        System.out.println("Starting to read file: " + inputFilename1);
+        log.debug("Starting to read file: " + inputFilename1);
         populateSequenceMap(getRichStreamReaderForUniprotDatFile(inputFilename1, true), sequences1);
-        System.out.println("Finished reading file " + inputFilename1 + ". Found " + sequences1.size() + " entries.");
+        log.debug("Finished reading file " + inputFilename1 + ". Found " + sequences1.size() + " entries.");
 
-        System.out.println("Starting to read file: " + inputFilename2);
+        log.debug("Starting to read file: " + inputFilename2);
         populateSequenceMap(getRichStreamReaderForUniprotDatFile(inputFilename2, true), sequences2);
-        System.out.println("Finished reading file " + inputFilename2 + ". Found " + sequences2.size() + " entries.");
+        log.debug("Finished reading file " + inputFilename2 + ". Found " + sequences2.size() + " entries.");
 
-        System.out.println("Starting to compare files. Writing to file: " + outputFilename);
+        log.debug("Starting to compare files. Writing to file: " + outputFilename);
         populateDiffSetForNewAndRemoved();
         populateDiffSetForChangedRecords();
         populateDates();
@@ -189,7 +191,7 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
                 outputFilename.substring(0, outputFilename.lastIndexOf("."));
 
         String reportfile = outputFilenameWithoutExtension + ".report.html";
-        System.out.println("Creating report file: " + reportfile);
+        log.debug("Creating report file: " + reportfile);
         try {
             String outfileContents = FileUtils.readFileToString(new File(outputFilename));
             String template = ZfinPropertiesEnum.SOURCEROOT.value() + "/home/uniprot/report.html";
