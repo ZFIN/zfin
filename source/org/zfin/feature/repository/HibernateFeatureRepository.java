@@ -3,13 +3,8 @@ package org.zfin.feature.repository;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.FetchMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
-import org.hibernate.criterion.CriteriaSpecification;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.hibernate.transform.BasicTransformerAdapter;
@@ -202,31 +197,29 @@ public class HibernateFeatureRepository implements FeatureRepository {
         return query.list();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<Feature> getDeletionFeatures() {
-
-
         Session session = HibernateUtil.currentSession();
-        Criteria criteria = session.createCriteria(Feature.class);
-        criteria.add(Restrictions.eq("type", FeatureTypeEnum.DELETION));
-        criteria.addOrder(Order.asc("abbreviationOrder"));
-        return (List<Feature>) criteria.list();
+        String hql = "select feat from Feature feat  where feat.type = :type order by feat.abbreviationOrder";
+        Query<Feature> query = session.createQuery(hql, Feature.class);
+        query.setParameter("type", FeatureTypeEnum.DELETION);
+        return query.list();
     }
 
 
-    @SuppressWarnings("unchecked")
     public List<FeatureMarkerRelationship> getFeatureRelationshipsByPublication(String publicationZdbID) {
 
-        Session session = currentSession();
-        Criteria criteria = session.createCriteria(FeatureMarkerRelationship.class);
-        criteria.setFetchMode("feature", FetchMode.JOIN);
-        criteria.setFetchMode("feature.featureProteinMutationDetail", FetchMode.JOIN);
-        criteria.setFetchMode("feature.featureDnaMutationDetail", FetchMode.JOIN);
-        criteria.createAlias("feature.publications", "pubAttributions");
-        criteria.add(Restrictions.eq("pubAttributions.publication.zdbID", publicationZdbID));
-        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-        List<FeatureMarkerRelationship> featureMarkerRelationships = criteria.list();
+        String hql = """
+            select f from FeatureMarkerRelationship f
+            join f.feature feature
+            left outer join feature.featureProteinMutationDetailSet
+            left outer join feature.featureProteinMutationDetailSet
+            join feature.publications attribution
+            where attribution.publication.zdbID = :zdbID
+            """;
+        Query<FeatureMarkerRelationship> query = currentSession().createQuery(hql, FeatureMarkerRelationship.class);
+        query.setParameter("zdbID", publicationZdbID);
+        List<FeatureMarkerRelationship> featureMarkerRelationships = query.list();
 
         // order
         return featureMarkerRelationships.stream()
@@ -308,7 +301,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
     @Override
 
-    /**
+    /*
      * This is rewritten for speed.
      * @return Gets a representation of all FeaturePrefixes with their associated labs.
      **/
@@ -394,7 +387,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
     /**
      * We can use the f.sources[0] notation, because there is a 1-1 relationship between Feature and Lab source.
      *
-     * @param prefix
+     * @param prefix prefix
      */
     @Override
     public List<FeatureLabEntry> getFeaturesForPrefix(String prefix) {
@@ -627,8 +620,8 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
 
     public FeatureAssay getFeatureAssay(Feature feature) {
-        Query<FeatureAssay> query = HibernateUtil.currentSession().createQuery("from FeatureAssay " +
-                                                                               "where feature = :feature", FeatureAssay.class);
+        Query<FeatureAssay> query = HibernateUtil.currentSession().createQuery( "select fa from FeatureAssay fa " +
+                                                                                "where fa.feature = :feature", FeatureAssay.class);
         query.setParameter("feature", feature);
         query.setMaxResults(1);
         return query.getSingleResult();
@@ -651,19 +644,11 @@ public class HibernateFeatureRepository implements FeatureRepository {
     }
 
 
-    public FeatureGenomicMutationDetail getFeatureGenomicDetail(Feature feature) {
-        Criteria criteria = HibernateUtil.currentSession().createCriteria(FeatureGenomicMutationDetail.class);
-        criteria.add(Restrictions.eq("feature", feature));
-        criteria.setMaxResults(1);
-        FeatureGenomicMutationDetail fgmd = (FeatureGenomicMutationDetail) criteria.uniqueResult();
-        return fgmd;
-    }
-
     public FeatureLocation getAllFeatureLocationsOnGRCz11(Feature feature) {
         String hql = """
-            from FeatureLocation
-            where assembly = :assembly
-            AND feature = :feature
+            select fl from FeatureLocation fl
+            where fl.assembly = :assembly
+            AND fl.feature = :feature
             """;
         Query<FeatureLocation> query = HibernateUtil.currentSession().createQuery(hql, FeatureLocation.class);
         query.setMaxResults(1);
@@ -673,7 +658,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
     }
 
     public List<FeatureGenomicMutationDetail> getAllFeatureGenomicMutationDetails() {
-        return currentSession().createQuery("from FeatureGenomicMutationDetail", FeatureGenomicMutationDetail.class).list();
+        return currentSession().createQuery("select fgm from FeatureGenomicMutationDetail fgm", FeatureGenomicMutationDetail.class).list();
     }
 
     @Override
@@ -743,7 +728,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
     @Override
     public Feature getFeatureByAbbreviation(String name) {
-        String hql = "from Feature where abbreviation = :abbrev";
+        String hql = "select feature from Feature feature where feature.abbreviation = :abbrev";
         Query<Feature> query = currentSession().createQuery(hql, Feature.class);
         query.setParameter("abbrev", name);
         return query.getSingleResult();
@@ -789,19 +774,16 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
 
     public List<Feature> getFeaturesByAbbreviation(String name) {
-        List<Feature> features = new ArrayList<>();
         Session session = currentSession();
 
-        Criteria criteria1 = session.createCriteria(Feature.class);
-        criteria1.add(Restrictions.like("abbreviation", name, MatchMode.START).ignoreCase());
-        criteria1.addOrder(Order.asc("abbreviationOrder"));
-        features.addAll(criteria1.list());
+        Query<Feature> query = session.createQuery("from Feature where abbreviation like '" + name + "%'" +
+                                                   " order by abbreviationOrder", Feature.class);
+        List<Feature> features = new ArrayList<>(query.list());
 
-        Criteria criteria2 = session.createCriteria(Feature.class);
-        criteria2.add(Restrictions.like("abbreviation", name, MatchMode.ANYWHERE).ignoreCase());
-        criteria2.add(Restrictions.not(Restrictions.like("abbreviation", name, MatchMode.START).ignoreCase()));
-        criteria2.addOrder(Order.asc("abbreviationOrder"));
-        features.addAll(criteria2.list());
+        Query<Feature> query2 = session.createQuery("from Feature where abbreviation like '%" + name + "%' " +
+                                                    " and abbreviation not like '" + name + "%' " +
+                                                    " order by abbreviationOrder", Feature.class);
+        features.addAll(query2.list());
         return features;
     }
 
@@ -880,7 +862,6 @@ public class HibernateFeatureRepository implements FeatureRepository {
         return query.list();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<Marker> getMarkersPresentForFeature(Feature feature) {
         Session session = HibernateUtil.currentSession();
@@ -891,7 +872,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
                      " and fmrel.marker=m " +
                      " and m.markerType =:type";
 
-        Query query = session.createQuery(hql);
+        Query<Marker> query = session.createQuery(hql, Marker.class);
         query.setParameter("relationship", FeatureMarkerRelationshipTypeEnum.MARKERS_PRESENT.toString());
         query.setParameter("feat", feature.getZdbID());
 
@@ -948,36 +929,31 @@ public class HibernateFeatureRepository implements FeatureRepository {
     }
 
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<Feature> getFeaturesForLab(String zdbID, int numberOfRecords) {
-        Session session = currentSession();
-        Criteria criteria = session.createCriteria(Feature.class);
-        criteria.setFetchMode("featureAssay", FetchMode.JOIN);
-        criteria.setFetchMode("featureDnaMutationDetail", FetchMode.JOIN);
-        criteria.setFetchMode("featureProteinMutationDetail", FetchMode.JOIN);
-        criteria.createAlias("sources", "source");
-        criteria.add(Restrictions.eq("source.organization.zdbID", zdbID));
-        criteria.addOrder(Order.asc("abbreviationOrder"));
-        if (numberOfRecords > 0)
-            criteria.setMaxResults(numberOfRecords);
-        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-        List<Feature> list = criteria.list();
-        return list;
+        Pagination pagination = new Pagination();
+        pagination.setLimit(numberOfRecords);
+        PaginationResult<Feature> result = getFeaturesForLab(zdbID, pagination);
+        return result.getPopulatedResults();
     }
 
     @Override
     public PaginationResult<Feature> getFeaturesForLab(String zdbID, Pagination pagination) {
         Session session = currentSession();
-        Criteria criteria = session.createCriteria(Feature.class);
-        criteria.setFetchMode("featureAssay", FetchMode.JOIN);
-        criteria.setFetchMode("featureDnaMutationDetail", FetchMode.JOIN);
-        criteria.setFetchMode("featureProteinMutationDetail", FetchMode.JOIN);
-        criteria.createAlias("sources", "source");
-        criteria.add(Restrictions.eq("source.organization.zdbID", zdbID));
-        criteria.addOrder(Order.asc("abbreviationOrder"));
-        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-        ScrollableResults scrollableResults = criteria.scroll();
+        String hql = """
+            select distinct feature from Feature feature
+            join feature.featureAssay
+            join feature.sources source
+            where source.organization.zdbID = :ID
+            order By feature.abbreviationOrder
+            """;
+        Query<Feature> query = session.createQuery(hql, Feature.class);
+        query.setParameter("ID", zdbID);
+        if (pagination.getLimit() > 0) {
+            query.setMaxResults(pagination.getLimit());
+        }
+
+        ScrollableResults scrollableResults = query.scroll();
         List<Feature> list = new ArrayList<>();
 
         if (pagination.getStart() == 0) {
@@ -997,18 +973,6 @@ public class HibernateFeatureRepository implements FeatureRepository {
         PaginationResult<Feature> paginationResult = new PaginationResult<>(total, list);
         scrollableResults.close();
         return paginationResult;
-    }
-
-    public List<Feature> getFeaturesForLabCount(String zdbID, Pagination pagination) {
-        Session session = currentSession();
-        Criteria criteria = session.createCriteria(Feature.class);
-        criteria.createAlias("sources", "source");
-        criteria.add(Restrictions.eq("source.organization.zdbID", zdbID));
-        criteria.setMaxResults(pagination.getLimit());
-        criteria.setFirstResult(pagination.getStart());
-        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-        List<Feature> list = criteria.list();
-        return list;
     }
 
     @Override
@@ -1380,7 +1344,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
     @Override
     public List<Feature> getAllFeatureList(int firstNIds) {
         Session session = HibernateUtil.currentSession();
-        String hql = "from Feature order by zdbID";
+        String hql = "select f from Feature f order by f.zdbID";
         Query<Feature> query = session.createQuery(hql, Feature.class);
         if (firstNIds > 0)
             query.setMaxResults(firstNIds);

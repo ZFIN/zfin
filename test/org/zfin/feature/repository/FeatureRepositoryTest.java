@@ -6,13 +6,12 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
-import org.zfin.feature.Feature;
-import org.zfin.feature.FeatureMarkerRelationship;
-import org.zfin.feature.FeaturePrefix;
-import org.zfin.feature.FeatureTranscriptMutationDetail;
+import org.zfin.feature.*;
 import org.zfin.feature.presentation.FeatureLabEntry;
 import org.zfin.feature.presentation.FeaturePrefixLight;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.framework.api.Pagination;
+import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.gwt.curation.dto.FeatureMarkerRelationshipTypeEnum;
 import org.zfin.gwt.curation.server.CurationFilterRPCImpl;
 import org.zfin.gwt.curation.server.FeatureRPCServiceImpl;
@@ -21,13 +20,16 @@ import org.zfin.gwt.curation.ui.PublicationNotFoundException;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.gwt.root.dto.FilterValuesDTO;
 import org.zfin.gwt.root.dto.MutationDetailControlledVocabularyTermDTO;
+import org.zfin.mapping.FeatureLocation;
 import org.zfin.marker.Marker;
+import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.profile.Organization;
 import org.zfin.repository.RepositoryFactory;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThan;
@@ -75,7 +77,7 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
         List<Feature> features = featureRepository.getFeaturesByPublication(pubID);
         assertNotNull("feature list exists", CollectionUtils.isNotEmpty(features));
         HashSet<Feature> set = new HashSet<>(features);
-        assertTrue("contains duplicate features", features.size() == set.size());
+        assertEquals("contains duplicate features", features.size(), set.size());
     }
 
     /**
@@ -424,6 +426,87 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
 
         feature = getFeatureRepository().getFeatureByID("ZDB-ALT-161003-14982");
         assertTrue(getFeatureRepository().isSingleAffectedGeneAlleles(feature));
+    }
+
+    @Test
+    public void getAllFeatureLocationsOnGRCz11() {
+        Feature feature = getFeatureRepository().getFeatureByID("ZDB-ALT-211102-4");
+        FeatureLocation featureLocation = getFeatureRepository().getAllFeatureLocationsOnGRCz11(feature);
+        assertNotNull(featureLocation);
+        assertEquals("13", featureLocation.getChromosome());
+
+    }
+
+    @Test
+    public void getAllFeatureGenomicMutationDetails() {
+        List<FeatureGenomicMutationDetail> list = getFeatureRepository().getAllFeatureGenomicMutationDetails();
+        assertNotNull(list);
+        assertTrue(list.size() > 1000);
+
+    }
+
+    @Test
+    public void getAllFeatureList() {
+        int i = 100;
+        List<Feature> list = getFeatureRepository().getAllFeatureList(i);
+        assertNotNull(list);
+        assertEquals(i, list.size());
+
+    }
+
+    @Test
+    public void getFeaturesCreatedBySequenceTargetingReagent() {
+        SequenceTargetingReagent str = RepositoryFactory.getMarkerRepository().getSequenceTargetingReagent("ZDB-CRISPR-230209-1");
+        Set<Feature> list = getFeatureRepository().getFeaturesCreatedBySequenceTargetingReagent(str);
+        assertNotNull(list);
+        assertTrue(list.size() > 0);
+
+    }
+
+    @Test
+    public void getFeatureAssay() {
+        Feature feature = getFeatureRepository().getFeatureByID("ZDB-ALT-211102-4");
+        FeatureAssay featureAssay = getFeatureRepository().getFeatureAssay(feature);
+        assertNotNull(featureAssay);
+        //assertTrue(featureAssay);
+
+    }
+
+    @Test
+    public void getDeletionFeatures() {
+        List<Feature> features = getFeatureRepository().getDeletionFeatures();
+        assertNotNull(features);
+        assertTrue(features.size() > 1000);
+    }
+
+    @Test
+    public void getFeatureRelationshipsByPublication() {
+        List<FeatureMarkerRelationship> featureMarkerRelationships = getFeatureRepository().getFeatureRelationshipsByPublication("ZDB-PUB-210716-17");
+        assertNotNull(featureMarkerRelationships);
+        assertEquals(7, featureMarkerRelationships.size());
+    }
+
+    @Test
+    public void getFeaturesByAbbreviation() {
+        List<Feature> featureMarkerRelationships = getFeatureRepository().getFeaturesByAbbreviation("hg");
+        assertNotNull(featureMarkerRelationships);
+        assertTrue(featureMarkerRelationships.size() > 290);
+    }
+
+    @Test
+    public void getFeaturesForLabNum() {
+        List<Feature> featureMarkerRelationships = getFeatureRepository().getFeaturesForLab("ZDB-LAB-970408-1", 500);
+        assertNotNull(featureMarkerRelationships);
+        assertTrue(featureMarkerRelationships.size() > 45);
+    }
+
+    @Test
+    public void getFeaturesForLabPagination() {
+        Pagination pagination = new Pagination();
+        pagination.setLimit(60);
+        PaginationResult<Feature> result = getFeatureRepository().getFeaturesForLab("ZDB-LAB-970408-1", pagination);
+        assertNotNull(result);
+        assertTrue(result.getPopulatedResults().size() > 45);
     }
 
 }
