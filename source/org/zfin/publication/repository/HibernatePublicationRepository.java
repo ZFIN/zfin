@@ -631,8 +631,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
 
         markers.addAll(getMarkersPulledThroughFeatures(pubID));
         markers.addAll(getMarkersPulledThroughSTRs(pubID));
-
-        return new ArrayList<>(markers);
+        return new ArrayList<>(markers.stream().sorted(Comparator.comparing(Marker::getAbbreviation)).toList());
     }
 
     public List<Marker> getMarkersByTypeForPublication(String pubID, MarkerType markerType) {
