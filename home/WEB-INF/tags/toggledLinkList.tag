@@ -14,10 +14,8 @@
 <c:if test="${fn:length(collection) > 0 }">
     <ul class="${commaDelimited ? 'comma-separated' : 'list-unstyled'}" data-toggle="collapse"
         data-show="${maxNumber}" data-count="${numberOfEntities}" data-url="${ajaxLink}">
-        <c:forEach var="entity" items="${collection}">
-            <li>
-                <zfin:link entity="${entity}" /><c:if test="${showAttributionLinks}"> <zfin:attribution entity="${entity}" /></c:if>
-            </li>
+        <c:forEach var="entity" items="${collection}"><!-- The following text is scrunched down to avoid adding whitespace -->
+            <li><zfin:link entity="${entity}" /><c:if test="${showAttributionLinks}"><zfin:attribution entity="${entity}" /></c:if></li>
         </c:forEach>
     </ul>
 </c:if>
