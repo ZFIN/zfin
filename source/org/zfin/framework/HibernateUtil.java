@@ -95,7 +95,7 @@ public class HibernateUtil {
      *
      */
     public static Session currentSession() {
-        // if no session factory is created yet we may be in hosted mode. Then
+        // if no session factory is created we may be in hosted mode. Then
         // initialize
         if (sessionFactory == null) {
             SessionCreator.instantiateDBForHostedMode();

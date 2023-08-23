@@ -148,13 +148,13 @@ public abstract class UiIndexer<Entity> extends Thread {
     protected abstract void cleanUiTables();
 
     protected void saveRecords(Collection<List<Entity>> batchedList) {
-        HibernateUtil.createStatelessTransaction();
+        HibernateUtil.createTransaction();
         batchedList.forEach(batch -> {
             for (Entity entity : batch) {
-                HibernateUtil.currentStatelessSession().insert(entity);
+                HibernateUtil.currentSession().save(entity);
             }
         });
-        HibernateUtil.flushAndCommitCurrentStatelessSession();
+        HibernateUtil.flushAndCommitCurrentSession();
     }
 
     protected void cleanoutTable(String... tables) {
@@ -241,7 +241,7 @@ public abstract class UiIndexer<Entity> extends Thread {
         HibernateUtil.flushAndCommitCurrentSession();
     }
 
-    private void logIndexerTask(IndexerTask indexerTask,  Boolean isStart) {
+    private void logIndexerTask(IndexerTask indexerTask, Boolean isStart) {
         if (isStart) {
             indexerTask.setStartDate(LocalDateTime.now());
         } else {
