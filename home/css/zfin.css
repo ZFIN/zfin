@@ -866,11 +866,11 @@ ul.comma-separated {
 }
 
 .comma-separated > li:last-child::after {
-    content: "";
+    content: " ";
 }
 
 .comma-separated > li.no-comma::after {
-    content: "";
+    content: " ";
 }
 
 .list-unstyled {
