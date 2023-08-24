@@ -18,13 +18,13 @@
     <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
         <hudson.tasks.Ant plugin="ant@1.2">
-            <targets>validate-data-report-simple -DJobName=Check-Marker-GO-Evidence-Flag-Duplication_d</targets>
+            <targets>validate-data-report-simple -DJobName=Check-Marker-GO-Evidence-Flag-Duplication_m</targets>
             <buildFile>$TARGETROOT/server_apps/DB_maintenance/build.xml</buildFile>
         </hudson.tasks.Ant>
     </builders>
     <publishers>
         <hudson.tasks.ArtifactArchiver>
-            <artifacts>server_apps/DB_maintenance/validatedata/Check-Marker-GO-Evidence-Flag-Duplication_d/*</artifacts>
+            <artifacts>server_apps/DB_maintenance/validatedata/Check-Marker-GO-Evidence-Flag-Duplication_m/*</artifacts>
             <latestOnly>false</latestOnly>
             <allowEmptyArchive>true</allowEmptyArchive>
         </hudson.tasks.ArtifactArchiver>
@@ -37,8 +37,8 @@
             <reportTargets>
                 <htmlpublisher.HtmlPublisherTarget>
                     <reportName>Error Report</reportName>
-                    <reportDir>server_apps/DB_maintenance/validatedata/Check-Marker-GO-Evidence-Flag-Duplication_d</reportDir>
-                    <reportFiles>Check-Marker-GO-Evidence-Flag-Duplication_d.html</reportFiles>
+                    <reportDir>server_apps/DB_maintenance/validatedata/Check-Marker-GO-Evidence-Flag-Duplication_m</reportDir>
+                    <reportFiles>Check-Marker-GO-Evidence-Flag-Duplication_m.html</reportFiles>
                     <keepAll>false</keepAll>
                     <allowMissing>false</allowMissing>
                 </htmlpublisher.HtmlPublisherTarget>
