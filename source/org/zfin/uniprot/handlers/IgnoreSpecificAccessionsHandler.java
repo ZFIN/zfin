@@ -14,7 +14,7 @@ import java.util.*;
 @Log4j2
 public class IgnoreSpecificAccessionsHandler implements UniProtLoadHandler {
     @Override
-    public void handle(Map<String, RichSequenceAdapter> uniProtRecords, List<UniProtLoadAction> actions, UniProtLoadContext context) {
+    public void handle(Map<String, RichSequenceAdapter> uniProtRecords, Set<UniProtLoadAction> actions, UniProtLoadContext context) {
         String inclusionsFilename = System.getenv("ACCESSIONS_INCLUSIONS_FILE");
         if (inclusionsFilename == null) {
             return;

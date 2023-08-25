@@ -14,7 +14,7 @@ import java.util.Set;
 @Log4j2
 public class IgnoreAccessionsAlreadyInDatabaseHandler implements UniProtLoadHandler {
     @Override
-    public void handle(Map<String, RichSequenceAdapter> uniProtRecords, List<UniProtLoadAction> actions, UniProtLoadContext context) {
+    public void handle(Map<String, RichSequenceAdapter> uniProtRecords, Set<UniProtLoadAction> actions, UniProtLoadContext context) {
         log.info("Uniprot Accessions in Load File: " + uniProtRecords.size());
         log.info("Uniprot Accessions in DB: " + context.getUniprotDbLinks().size());
 

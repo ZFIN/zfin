@@ -17,7 +17,7 @@ import static org.zfin.uniprot.UniProtTools.transformCrossRefNoteSetByTerm;
 
 public class RemoveVersionHandler implements UniProtLoadHandler {
     @Override
-    public void handle(Map<String, RichSequenceAdapter> uniProtRecords, List<UniProtLoadAction> actions, UniProtLoadContext context) {
+    public void handle(Map<String, RichSequenceAdapter> uniProtRecords, Set<UniProtLoadAction> actions, UniProtLoadContext context) {
         for (String acc : uniProtRecords.keySet()) {
             //find matching RefSeq accession
             RichSequenceAdapter loadFileSequence = uniProtRecords.get(acc);

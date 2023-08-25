@@ -214,7 +214,11 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
 
     @JsonView(View.SequenceAPI.class)
     public String getPublicationIds(){
-        return publications.stream().map(publicationAttribution -> publicationAttribution.getPublication().getZdbID()).collect(Collectors.joining(","));
+        return String.join(",", getPublicationIdsAsList());
+    }
+
+    public List<String> getPublicationIdsAsList(){
+        return publications.stream().map(publicationAttribution -> publicationAttribution.getPublication().getZdbID()).toList();
     }
 
     @JsonView(View.SequenceAPI.class)

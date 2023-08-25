@@ -6,15 +6,13 @@ import org.biojavax.bio.seq.RichSequence;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
 import org.zfin.uniprot.handlers.UniProtLoadHandler;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Getter
 @Setter
 public class UniProtLoadPipeline {
     private List<UniProtLoadHandler> handlers = new ArrayList<>();
-    private List<UniProtLoadAction> actions = new ArrayList<>();
+    private Set<UniProtLoadAction> actions = new TreeSet<>();
     private UniProtLoadContext context;
 
     private Map<String, RichSequenceAdapter> uniProtRecords;
@@ -23,7 +21,7 @@ public class UniProtLoadPipeline {
         handlers.add(handler);
     }
 
-    public List<UniProtLoadAction> execute() {
+    public Set<UniProtLoadAction> execute() {
         for (UniProtLoadHandler handler : handlers) {
             handler.handle(uniProtRecords, actions, context);
         }

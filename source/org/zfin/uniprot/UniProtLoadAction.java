@@ -2,14 +2,17 @@ package org.zfin.uniprot;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.ObjectUtils;
 import org.biojavax.bio.seq.RichSequence;
 import org.zfin.ExternalNote;
 
 import java.util.*;
 
+import static java.lang.CharSequence.compare;
+
 @Getter
 @Setter
-public class UniProtLoadAction {
+public class UniProtLoadAction implements Comparable<UniProtLoadAction> {
     private String title;
     private String accession;
     private String geneZdbID;
@@ -47,4 +50,38 @@ public class UniProtLoadAction {
             return value;
         }
     }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("UniProtLoadAction: ");
+        sb.append("accession: ").append(accession);
+        sb.append(" title: ").append(title);
+        sb.append(" geneZdbID: ").append(geneZdbID);
+        sb.append(" details: ").append(details);
+        sb.append(" type: ").append(type);
+        sb.append(" links: ").append(links);
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UniProtLoadAction)) return false;
+        UniProtLoadAction that = (UniProtLoadAction) o;
+        return compareTo(that) == 0;
+    }
+
+    @Override
+    public int compareTo(UniProtLoadAction o) {
+        Comparator<UniProtLoadAction> comparator = Comparator.comparing(
+                (UniProtLoadAction obj) -> obj.accession, ObjectUtils::compare)
+                .thenComparing(obj -> obj.type, ObjectUtils::compare)
+                .thenComparing(obj -> obj.title, ObjectUtils::compare)
+                .thenComparing(obj -> obj.geneZdbID, ObjectUtils::compare)
+                .thenComparing(obj -> obj.details, ObjectUtils::compare)
+                ;
+        return comparator.compare(this, o);
+    }
+
+
 }

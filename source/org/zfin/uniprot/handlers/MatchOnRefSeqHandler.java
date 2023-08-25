@@ -1,13 +1,10 @@
 package org.zfin.uniprot.handlers;
 
-import org.biojavax.RankedCrossRef;
-import org.biojavax.bio.seq.RichSequence;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
-import org.zfin.uniprot.datfiles.UniProtFormatZFIN;
 import org.zfin.uniprot.UniProtLoadAction;
 import org.zfin.uniprot.UniProtLoadContext;
 import org.zfin.uniprot.UniProtLoadLink;
-import org.zfin.uniprot.dto.UniProtContextSequenceDTO;
+import org.zfin.uniprot.dto.DBLinkSlimDTO;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -18,9 +15,9 @@ import static org.zfin.uniprot.UniProtTools.isAnyGeneAccessionRelationshipSuppor
 public class MatchOnRefSeqHandler implements UniProtLoadHandler {
 
     @Override
-    public void handle(Map<String, RichSequenceAdapter> uniProtRecords, List<UniProtLoadAction> actions, UniProtLoadContext context) {
+    public void handle(Map<String, RichSequenceAdapter> uniProtRecords, Set<UniProtLoadAction> actions, UniProtLoadContext context) {
 
-        Map<String, List<UniProtContextSequenceDTO>> refseqsInDb = context.getRefseqDbLinks();
+        Map<String, List<DBLinkSlimDTO>> refseqsInDb = context.getRefseqDbLinks();
 
         MatchOnRefSeqResults matchResults = new MatchOnRefSeqResults();
 
@@ -34,7 +31,7 @@ public class MatchOnRefSeqHandler implements UniProtLoadHandler {
 
             for(String refseq : refseqs) {
                 if (refseqsInDb.containsKey(refseq)) {
-                    for(UniProtContextSequenceDTO dto : refseqsInDb.get(refseq)) {
+                    for(DBLinkSlimDTO dto : refseqsInDb.get(refseq)) {
                         matchResults.put(accession, dto);
                     }
                 }
@@ -52,10 +49,13 @@ public class MatchOnRefSeqHandler implements UniProtLoadHandler {
             action.setAccession(uniprotAccession);
             action.setDetails(details);
             setActionLinks(action, result);
-            actions.add(action);
 
             if (result.hasMultipleGeneMatches()) {
-                if (isAnyGeneAccessionRelationshipSupportedByNonLoadPublication(result.uniprotAccession, result.getGeneZdbIDs())) {
+                boolean isWarning = isAnyGeneAccessionRelationshipSupportedByNonLoadPublication(uniprotAccession,
+                        result.getGeneZdbIDs(),
+                        context.getUniprotDbLinks().get(uniprotAccession));
+
+                if (isWarning) {
                     action.setTitle(UniProtLoadAction.MatchTitle.MULTIPLE_GENES_PER_ACCESSION_BUT_APPROVED.getValue());
                     action.setType(UniProtLoadAction.Type.WARNING);
                     action.setDetails("This UniProt accession has multiple genes associated with it, but at least one of the gene associations is supported by a non-load publication.\n\n" + details);
@@ -68,7 +68,7 @@ public class MatchOnRefSeqHandler implements UniProtLoadHandler {
                 action.setType(UniProtLoadAction.Type.LOAD);
                 action.setGeneZdbID(result.getGeneZdbIDs().get(0));
             }
-
+            actions.add(action);
         }
     }
 
@@ -88,7 +88,7 @@ public class MatchOnRefSeqHandler implements UniProtLoadHandler {
 
     private static String accessionWithMatchingGeneAndRefSeqToString(String uniprotAccession, MatchOnRefSeqResult result) {
         StringBuilder sb = new StringBuilder();
-        sb.append("UniProt Accession: " + uniprotAccession + "\n");
+        sb.append("UniProt Accession: ").append(uniprotAccession).append("\n");
         sb.append("==========================\n");
         for( Map.Entry<String, MatchOnRefSeqResultSubItem> subItem: result.subItems.entrySet() ) {
             String geneZdbID = subItem.getKey();
@@ -104,10 +104,11 @@ public class MatchOnRefSeqHandler implements UniProtLoadHandler {
 
     /**
      * These 3 classes are used to build up a data structure that links accession to gene(s) with list of matched refseqs
+     * something like {"A0A0R4IKB2":[{"ZDB-GENE-030131-5416":["XP_005170963", "XP_005170964"]}, {"ZDB-GENE-030131-5417":["XP..."]}, ...]}
      */
     private class MatchOnRefSeqResults {
         public Map<String, MatchOnRefSeqResult> results = new HashMap<>();
-        public void put(String uniprotAccession, UniProtContextSequenceDTO refseq) {
+        public void put(String uniprotAccession, DBLinkSlimDTO refseq) {
             MatchOnRefSeqResult result = results.get(uniprotAccession);
             if (result == null) {
                 result = new MatchOnRefSeqResult(uniprotAccession);
@@ -126,7 +127,7 @@ public class MatchOnRefSeqHandler implements UniProtLoadHandler {
             this.subItems = new HashMap<>();
         }
 
-        public void put(UniProtContextSequenceDTO refseq) {
+        public void put(DBLinkSlimDTO refseq) {
             MatchOnRefSeqResultSubItem subItem = subItems.get(refseq.getDataZdbID());
             if (subItem == null) {
                 subItem = new MatchOnRefSeqResultSubItem(refseq.getDataZdbID());
@@ -139,9 +140,6 @@ public class MatchOnRefSeqHandler implements UniProtLoadHandler {
             return subItems.size() > 1;
         }
 
-        public String getGeneZdbIDsString() {
-            return String.join(", ", getGeneZdbIDs());
-        }
         public List<String> getGeneZdbIDs() {
             return subItems.keySet().stream().toList();
         }
@@ -149,29 +147,33 @@ public class MatchOnRefSeqHandler implements UniProtLoadHandler {
         public List<String> refSeqAccessions() {
             return subItems.values().stream().flatMap(s -> s.refSeqAccessions().stream()).collect(Collectors.toList());
         }
+
+        public List<DBLinkSlimDTO> getDBLinkSlimDTOs() {
+            return subItems.values().stream().flatMap(s -> s.refseqs.stream()).toList();
+        }
     }
 
     private class MatchOnRefSeqResultSubItem {
         public String geneZdbID;
-        public List<UniProtContextSequenceDTO> refseqs;
+        public List<DBLinkSlimDTO> refseqs;
 
         public MatchOnRefSeqResultSubItem(String dataZdbID) {
             this.geneZdbID = dataZdbID;
             this.refseqs = new ArrayList<>();
         }
 
-        public void add(UniProtContextSequenceDTO refseq) {
+        public void add(DBLinkSlimDTO refseq) {
             if (!contains(refseq)) {
                 refseqs.add(refseq);
             }
         }
 
-        public boolean contains(UniProtContextSequenceDTO refseq) {
+        public boolean contains(DBLinkSlimDTO refseq) {
             return refseqs.stream().anyMatch(r -> r.getAccession().equals(refseq.getAccession()));
         }
 
         public List<String> refSeqAccessions() {
-            return refseqs.stream().map(UniProtContextSequenceDTO::getAccession).toList();
+            return refseqs.stream().map(DBLinkSlimDTO::getAccession).toList();
         }
     }
 }
