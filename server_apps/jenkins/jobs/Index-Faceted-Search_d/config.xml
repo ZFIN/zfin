@@ -17,15 +17,9 @@
   <concurrentBuild>false</concurrentBuild>
   <customWorkspace>$SOURCEROOT</customWorkspace>
   <builders>
-     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/DB_maintenance/warehouse &amp;&amp; ./regenPhenotypeMart.sh </command>
-    </hudson.tasks.Shell>
     <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/DB_maintenance/warehouse &amp;&amp; ./regenExpressionMart.sh </command>
+      <command>cd $TARGETROOT/server_apps/DB_maintenance &amp;&amp; ./facetedSearchIndexerRegenWrapper.sh </command>
     </hudson.tasks.Shell>
-  <hudson.tasks.Shell>
-      <command>cd $TARGETROOT/server_apps/DB_maintenance &amp;&amp; ./regen.sh </command>
- </hudson.tasks.Shell>
     <hudson.tasks.Shell>
       <command>cd $SOURCEROOT</command>
     </hudson.tasks.Shell>
@@ -37,6 +31,9 @@
       <targets>cleanup-solr-backup-files</targets>
       <buildFile>$SOURCEROOT/build.xml</buildFile>
     </hudson.tasks.Ant>
+    <hudson.tasks.Shell>
+      <command>cd $TARGETROOT/server_apps/DB_maintenance/warehouse &amp;&amp; ./regenPhenotypeMartCleanup.sh</command>
+    </hudson.tasks.Shell>
   </builders>
   <publishers>
     <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
