@@ -1,21 +1,20 @@
 package org.zfin.uniprot;
 
+import lombok.extern.log4j.Log4j2;
 import org.biojava.bio.BioException;
 import org.biojavax.RankedCrossRef;
-import org.biojavax.bio.seq.RichSequence;
-import org.biojavax.bio.seq.io.RichStreamReader;
 import org.biojavax.bio.seq.io.RichStreamWriter;
-import org.zfin.framework.HibernateUtil;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
+import org.zfin.uniprot.adapter.RichSequenceAdapter;
+import org.zfin.uniprot.adapter.RichStreamReaderAdapter;
 
 import java.io.*;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.zfin.uniprot.UniProtTools.getRichStreamReaderForUniprotDatFile;
-import static org.zfin.uniprot.UniProtTools.getRichStreamWriterForUniprotDatFile;
+import static org.zfin.uniprot.datfiles.DatFileReader.getRichStreamReaderForUniprotDatFile;
+import static org.zfin.uniprot.datfiles.DatFileWriter.getRichStreamWriterForUniprotDatFile;
 
 /**
  * This class is used to slim down the uniprot load files.
@@ -27,6 +26,7 @@ import static org.zfin.uniprot.UniProtTools.getRichStreamWriterForUniprotDatFile
  * 3. RefSeq (eg. DR   RefSeq; XP_003199568.1; XM_003199520.5.
  *
  */
+@Log4j2
 public class UniProtFilterTask extends AbstractScriptWrapper {
     private BufferedReader inputFileReader = null;
     private BufferedReader filteredInputFileReader = null;
@@ -40,21 +40,21 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
     }
 
     public void runTask() throws IOException, BioException, SQLException {
-        List<RichSequence> outputEntries = getFilteredRichSequences();
+        List<RichSequenceAdapter> outputEntries = getFilteredRichSequences();
 
         if (outputFileWriter != null) {
-            System.out.println("Starting to write file: ");
+            log.info("Starting to write file: ");
             writeOutputFile(outputEntries, outputFileWriter);
         }
     }
 
-    private List<RichSequence> getFilteredRichSequences() throws IOException, BioException {
+    private List<RichSequenceAdapter> getFilteredRichSequences() throws IOException, BioException {
         initIO();
         initAll();
 
-        System.out.println("Starting to read file: " );
-        List<RichSequence> outputEntries = readAndFilterSequencesFromStream();
-        System.out.println("Finished reading file: " + outputEntries.size() + " entries read.");
+        log.info("Starting to read file: " );
+        List<RichSequenceAdapter> outputEntries = readAndFilterSequencesFromStream();
+        log.info("Finished reading file: " + outputEntries.size() + " entries read.");
         return outputEntries;
     }
 
@@ -63,27 +63,23 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
         filteredInputFileReader = roughTaxonFilter.getFilteredReader();
     }
 
-    private List<RichSequence> readAndFilterSequencesFromStream() throws BioException, FileNotFoundException {
-        RichStreamReader richStreamReader = getRichStreamReaderForUniprotDatFile(filteredInputFileReader, true);
+    private List<RichSequenceAdapter> readAndFilterSequencesFromStream() throws BioException, FileNotFoundException {
+        RichStreamReaderAdapter richStreamReader = getRichStreamReaderForUniprotDatFile(filteredInputFileReader, true);
 
         List<String> xrefsToKeep = List.of("ZFIN", "GeneID", "RefSeq", "EMBL", "GO", "InterPro", "Pfam", "PROSITE", "PDB", "Ensembl");
-        RichSequence lastSequence = null;
+        RichSequenceAdapter lastSequence = null;
         int count = 0;
-        List<RichSequence> uniProtSequences = new ArrayList<>();
+        List<RichSequenceAdapter> uniProtSequences = new ArrayList<>();
         while (richStreamReader.hasNext()) {
             try {
-                RichSequence seq = richStreamReader.nextRichSequence();
-                String accession = seq.getAccession();
+                RichSequenceAdapter seq = richStreamReader.nextRichSequence();
                 count++;
                 if (count % 1000 == 0) {
-                    System.out.println("Read " + count + " sequences.");
+                    log.info("Read " + count + " sequences.");
                 }
 
-                if (seq.getTaxon().getNCBITaxID() != 7955) {
-                    if (!seq.getTaxon().getDisplayName().toLowerCase().contains("danio rerio")) {
-                        // seq is not zebrafish, but account for entries like "Danio rerio x Danio aff. kyathit RC0455"
-                        continue;
-                    }
+                if (!seq.isDanioRerioOrRelated()) {
+                    continue;
                 }
 
                 TreeSet<RankedCrossRef> sortedRankedCrossRefs = new TreeSet<>();
@@ -109,7 +105,7 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
         return uniProtSequences;
     }
 
-    private void writeOutputFile(List<RichSequence> outputEntries, FileOutputStream outfile) {
+    private void writeOutputFile(List<RichSequenceAdapter> outputEntries, FileOutputStream outfile) {
         try {
             RichStreamWriter sw = getRichStreamWriterForUniprotDatFile(outfile);
             sw.writeStream(new SequenceListIterator(outputEntries), null);
@@ -118,12 +114,12 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
         }
     }
 
-    public static List<RichSequence> readAllZebrafishEntriesFromSource(BufferedReader reader) throws BioException, IOException {
+    public static List<RichSequenceAdapter> readAllZebrafishEntriesFromSource(BufferedReader reader) throws BioException, IOException {
         UniProtFilterTask filterTask = new UniProtFilterTask(reader, null);
         return filterTask.getFilteredRichSequences();
     }
-    public static Map<String, RichSequence> readAllZebrafishEntriesFromSourceIntoMap(BufferedReader reader) throws BioException, IOException {
-        return readAllZebrafishEntriesFromSource(reader).stream().collect(Collectors.toMap(RichSequence::getAccession, entry -> entry));
+    public static Map<String, RichSequenceAdapter> readAllZebrafishEntriesFromSourceIntoMap(BufferedReader reader) throws BioException, IOException {
+        return readAllZebrafishEntriesFromSource(reader).stream().collect(Collectors.toMap(RichSequenceAdapter::getAccession, entry -> entry));
     }
 
 }

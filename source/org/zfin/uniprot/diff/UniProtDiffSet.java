@@ -2,19 +2,17 @@ package org.zfin.uniprot.diff;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.biojavax.bio.seq.RichSequence;
+import org.zfin.uniprot.adapter.RichSequenceAdapter;
 
 import java.util.*;
-
-import static org.zfin.uniprot.UniProtTools.getDateUpdatedFromNotes;
 
 @Getter
 @Setter
 public class UniProtDiffSet {
 
-    private List<RichSequence> addedSequences = new ArrayList<>();
+    private List<RichSequenceAdapter> addedSequences = new ArrayList<>();
 
-    private List<RichSequence> removedSequences = new ArrayList<>();
+    private List<RichSequenceAdapter> removedSequences = new ArrayList<>();
 
     private List<RichSequenceDiff> changedSequences = new ArrayList<>();
 
@@ -22,24 +20,14 @@ public class UniProtDiffSet {
     private Date latestUpdateFromSequence1 = new Date(0);
     private Date latestUpdateFromSequence2 = new Date(0);
 
-    public UniProtDiffSet(List<RichSequence> addedSequences, List<RichSequence> removedSequences, List<RichSequenceDiff> changedSequences) {
-        this.addedSequences = addedSequences;
-        this.removedSequences = removedSequences;
-        this.changedSequences = changedSequences;
-    }
-
     public UniProtDiffSet() {
     }
 
-    public boolean hasChanges() {
-        return !addedSequences.isEmpty() || !removedSequences.isEmpty() || !changedSequences.isEmpty();
-    }
-
-    public void addNewSequence(RichSequence sequence) {
+    public void addNewSequence(RichSequenceAdapter sequence) {
         addedSequences.add(sequence);
     }
 
-    public void addRemovedSequence(RichSequence sequence) {
+    public void addRemovedSequence(RichSequenceAdapter sequence) {
         removedSequences.add(sequence);
     }
 
@@ -61,16 +49,16 @@ public class UniProtDiffSet {
         );
     }
 
-    public void updateLatestDate1(RichSequence seq) {
+    public void updateLatestDate1(RichSequenceAdapter seq) {
         updateMostRecentDate(latestUpdateFromSequence1, seq);
     }
 
-    public void updateLatestDate2(RichSequence seq) {
+    public void updateLatestDate2(RichSequenceAdapter seq) {
         updateMostRecentDate(latestUpdateFromSequence2, seq);
     }
 
-    private void updateMostRecentDate(Date latestDateFoundSoFar, RichSequence seq) {
-        Date dateUpdated = getDateUpdatedFromNotes(seq);
+    private void updateMostRecentDate(Date latestDateFoundSoFar, RichSequenceAdapter seq) {
+        Date dateUpdated = seq.getDateUpdated();
         updateMostRecentDate(latestDateFoundSoFar, dateUpdated);
     }
 

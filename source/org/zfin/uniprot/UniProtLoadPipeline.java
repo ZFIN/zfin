@@ -3,6 +3,7 @@ package org.zfin.uniprot;
 import lombok.Getter;
 import lombok.Setter;
 import org.biojavax.bio.seq.RichSequence;
+import org.zfin.uniprot.adapter.RichSequenceAdapter;
 import org.zfin.uniprot.handlers.UniProtLoadHandler;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ public class UniProtLoadPipeline {
     private List<UniProtLoadAction> actions = new ArrayList<>();
     private UniProtLoadContext context;
 
-    private Map<String, RichSequence> uniProtRecords;
+    private Map<String, RichSequenceAdapter> uniProtRecords;
 
     public void addHandler(UniProtLoadHandler handler) {
         handlers.add(handler);
