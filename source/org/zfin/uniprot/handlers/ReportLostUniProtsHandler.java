@@ -1,18 +1,16 @@
 package org.zfin.uniprot.handlers;
 
 import org.biojavax.bio.seq.RichSequence;
-import org.zfin.infrastructure.RecordAttribution;
-import org.zfin.sequence.DBLink;
 import org.zfin.uniprot.UniProtLoadAction;
 import org.zfin.uniprot.UniProtLoadContext;
 import org.zfin.uniprot.UniProtLoadLink;
-import org.zfin.uniprot.UniProtTools;
+import org.zfin.uniprot.adapter.RichSequenceAdapter;
+import org.zfin.uniprot.datfiles.DatFileWriter;
 import org.zfin.uniprot.dto.UniProtContextSequenceDTO;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.zfin.repository.RepositoryFactory.*;
 import static org.zfin.uniprot.UniProtTools.isGeneAccessionRelationshipSupportedByNonLoadPublication;
 
 /**
@@ -21,7 +19,7 @@ import static org.zfin.uniprot.UniProtTools.isGeneAccessionRelationshipSupported
 public class ReportLostUniProtsHandler implements UniProtLoadHandler {
 
     @Override
-    public void handle(Map<String, RichSequence> uniProtRecords, List<UniProtLoadAction> actions, UniProtLoadContext context) {
+    public void handle(Map<String, RichSequenceAdapter> uniProtRecords, List<UniProtLoadAction> actions, UniProtLoadContext context) {
         //actions should contain all cases where we have a match based on RefSeq
         List<UniProtLoadAction> actionsMatchedOnRefSeq = actions.stream().filter(action -> action.getTitle().equals(UniProtLoadAction.MatchTitle.MATCH_BY_REFSEQ.getValue())).toList();
 
@@ -70,10 +68,10 @@ public class ReportLostUniProtsHandler implements UniProtLoadHandler {
 
             String sequenceDetails = "";
             String sequenceDatFileDetails = "Sequence details: \n=================\n";
-            RichSequence richSequence = uniProtRecords.get(lostUniProt.getAccession());
+            RichSequenceAdapter richSequence = uniProtRecords.get(lostUniProt.getAccession());
 
             if (richSequence != null) {
-                sequenceDatFileDetails += UniProtTools.sequenceToString(richSequence);
+                sequenceDatFileDetails += DatFileWriter.sequenceToString(richSequence);
 
                 //gene1
                 Set<String> affectedGenes = new HashSet<>();

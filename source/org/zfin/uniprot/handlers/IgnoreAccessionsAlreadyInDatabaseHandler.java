@@ -4,6 +4,7 @@ import lombok.extern.log4j.Log4j2;
 import org.biojavax.bio.seq.RichSequence;
 import org.zfin.uniprot.UniProtLoadAction;
 import org.zfin.uniprot.UniProtLoadContext;
+import org.zfin.uniprot.adapter.RichSequenceAdapter;
 
 import java.util.HashSet;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.Set;
 @Log4j2
 public class IgnoreAccessionsAlreadyInDatabaseHandler implements UniProtLoadHandler {
     @Override
-    public void handle(Map<String, RichSequence> uniProtRecords, List<UniProtLoadAction> actions, UniProtLoadContext context) {
+    public void handle(Map<String, RichSequenceAdapter> uniProtRecords, List<UniProtLoadAction> actions, UniProtLoadContext context) {
         log.info("Uniprot Accessions in Load File: " + uniProtRecords.size());
         log.info("Uniprot Accessions in DB: " + context.getUniprotDbLinks().size());
 

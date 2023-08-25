@@ -24,8 +24,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.zfin.uniprot.UniProtTools.getRichStreamReaderForUniprotDatFile;
-
 /**
  * This class is used to analyze the uniprot problem7 file data.
  * The problem7 file lists uniprot records that don't have EMBL references.
@@ -72,22 +70,26 @@ public class UniProtAnalysisTask extends AbstractScriptWrapper {
     public void runTask() throws IOException, BioException, SQLException {
         initAll();
 
-        String inputFileName = getInputFileName();
-        RichStreamReader sr = getRichStreamReaderForUniprotDatFile(inputFileName, true);
+        System.out.println("This method has been disabled temporarily");
+        System.err.println("This method has been disabled temporarily");
+        System.exit(1);
 
-        System.out.println("Starting to read file: " + inputFileName);
-        List<ImmutablePair<String, String>> pairs = getUniProtRefSeqPairs(sr);
-        System.out.println("Finished file: " + pairs.size());
-
-        System.out.println("Writing to temp file");
-        File tempFile = writePairsToTemporaryFile(pairs);
-        System.out.println("Finished writing to temp file: " + tempFile.getAbsolutePath());
-
-        writeFileToTemporaryTable(tempFile);
-        generateReport();
-        System.out.println("Finished writing report to file: " + CSV_FILE);
-
-        dropTemporaryTable();
+//        String inputFileName = getInputFileName();
+//        RichStreamReaderWrapper richStreamReader = getRichStreamReaderForUniprotDatFile(inputFileName, true);
+//
+//        System.out.println("Starting to read file: " + inputFileName);
+//        List<ImmutablePair<String, String>> pairs = getUniProtRefSeqPairs(richStreamReader);
+//        System.out.println("Finished file: " + pairs.size());
+//
+//        System.out.println("Writing to temp file");
+//        File tempFile = writePairsToTemporaryFile(pairs);
+//        System.out.println("Finished writing to temp file: " + tempFile.getAbsolutePath());
+//
+//        writeFileToTemporaryTable(tempFile);
+//        generateReport();
+//        System.out.println("Finished writing report to file: " + CSV_FILE);
+//
+//        dropTemporaryTable();
     }
 
     private String getInputFileName() {

@@ -1,9 +1,9 @@
 package org.zfin.uniprot.handlers;
 
-import org.biojavax.Note;
 import org.biojavax.RankedCrossRef;
 import org.biojavax.bio.seq.RichSequence;
-import org.zfin.uniprot.UniProtFormatZFIN;
+import org.zfin.uniprot.adapter.RichSequenceAdapter;
+import org.zfin.uniprot.datfiles.UniProtFormatZFIN;
 import org.zfin.uniprot.UniProtLoadAction;
 import org.zfin.uniprot.UniProtLoadContext;
 import org.zfin.uniprot.UniProtLoadLink;
@@ -18,7 +18,7 @@ import static org.zfin.uniprot.UniProtTools.isAnyGeneAccessionRelationshipSuppor
 public class MatchOnRefSeqHandler implements UniProtLoadHandler {
 
     @Override
-    public void handle(Map<String, RichSequence> uniProtRecords, List<UniProtLoadAction> actions, UniProtLoadContext context) {
+    public void handle(Map<String, RichSequenceAdapter> uniProtRecords, List<UniProtLoadAction> actions, UniProtLoadContext context) {
 
         Map<String, List<UniProtContextSequenceDTO>> refseqsInDb = context.getRefseqDbLinks();
 
@@ -30,7 +30,7 @@ public class MatchOnRefSeqHandler implements UniProtLoadHandler {
         for (String accession : uniProtRecords.keySet()) {
 
             //all refseqs in the load file for this accession
-            List<String> refseqs = getRefSeqsFromRichSequence(uniProtRecords.get(accession));
+            Set<String> refseqs = uniProtRecords.get(accession).getRefSeqs();
 
             for(String refseq : refseqs) {
                 if (refseqsInDb.containsKey(refseq)) {
@@ -101,26 +101,6 @@ public class MatchOnRefSeqHandler implements UniProtLoadHandler {
         return sb.toString();
     }
 
-    private static List<String> getRefSeqsFromRichSequence(RichSequence richSequence) {
-        List<String> refseqs = richSequence.getRankedCrossRefs().stream()
-                .filter(rc -> ((RankedCrossRef)rc).getCrossRef().getDbname().equals("RefSeq"))
-                .map(rc -> ((RankedCrossRef)rc).getCrossRef().getAccession())
-                .toList();
-
-        List<String> additionalRefseqs = richSequence.getRankedCrossRefs().stream()
-                .filter(rc -> ((RankedCrossRef) rc).getCrossRef().getDbname().equals("RefSeq"))
-                .flatMap(rc -> ((RankedCrossRef) rc).getCrossRef().getNoteSet().stream())
-                .filter(note -> note.getTerm().equals(UniProtFormatZFIN.Terms.getAdditionalAccessionTerm()))
-                .map(note -> note.getValue())
-                .toList();
-
-        //return union
-        List<String> combined = new ArrayList<>();
-        combined.addAll(refseqs);
-        combined.addAll(additionalRefseqs);
-        return combined;
-
-    }
 
     /**
      * These 3 classes are used to build up a data structure that links accession to gene(s) with list of matched refseqs

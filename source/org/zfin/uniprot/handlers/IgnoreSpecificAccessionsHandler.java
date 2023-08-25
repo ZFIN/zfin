@@ -4,6 +4,7 @@ import lombok.extern.log4j.Log4j2;
 import org.biojavax.bio.seq.RichSequence;
 import org.zfin.uniprot.UniProtLoadAction;
 import org.zfin.uniprot.UniProtLoadContext;
+import org.zfin.uniprot.adapter.RichSequenceAdapter;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +14,7 @@ import java.util.*;
 @Log4j2
 public class IgnoreSpecificAccessionsHandler implements UniProtLoadHandler {
     @Override
-    public void handle(Map<String, RichSequence> uniProtRecords, List<UniProtLoadAction> actions, UniProtLoadContext context) {
+    public void handle(Map<String, RichSequenceAdapter> uniProtRecords, List<UniProtLoadAction> actions, UniProtLoadContext context) {
         String inclusionsFilename = System.getenv("ACCESSIONS_INCLUSIONS_FILE");
         if (inclusionsFilename == null) {
             return;
@@ -40,9 +41,9 @@ public class IgnoreSpecificAccessionsHandler implements UniProtLoadHandler {
         }
 
         log.info("Will only include accessions from : " + inclusionsFilename + " (" + accessionsToInclude.size() + " accessions)");
-        Iterator<Map.Entry<String, RichSequence>> iter = uniProtRecords.entrySet().iterator();
+        Iterator<Map.Entry<String, RichSequenceAdapter>> iter = uniProtRecords.entrySet().iterator();
         while (iter.hasNext()) {
-            Map.Entry<String, RichSequence> entry = iter.next();
+            Map.Entry<String, RichSequenceAdapter> entry = iter.next();
             String accession = entry.getKey();
             if (!accessionsToInclude.contains(accession)) {
                 log.debug("Removing accession " + accession + " from load file because it is not in the list of accessions to include.");

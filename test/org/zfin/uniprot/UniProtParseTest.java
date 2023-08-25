@@ -1,16 +1,11 @@
 package org.zfin.uniprot;
 
-import org.biojava.bio.BioException;
-import org.biojava.bio.seq.Sequence;
-import org.biojavax.bio.seq.RichSequence;
-import org.biojavax.bio.seq.io.RichStreamReader;
 import org.junit.Test;
-import org.zfin.datatransfer.webservice.NCBIEfetch;
-import org.zfin.datatransfer.webservice.NCBIRequest;
+import org.zfin.uniprot.adapter.RichSequenceAdapter;
+import org.zfin.uniprot.adapter.RichStreamReaderAdapter;
+import org.zfin.uniprot.datfiles.DatFileWriter;
 import org.zfin.uniprot.handlers.RemoveVersionHandler;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -19,7 +14,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.zfin.uniprot.UniProtTools.getMapOfAccessionsToSequencesFromStreamReader;
+import static org.zfin.uniprot.datfiles.DatFileReader.getRichStreamReaderForUniprotDatString;
+import static org.zfin.uniprot.datfiles.DatFileReader.getMapOfAccessionsToSequencesFromStreamReader;
 
 public class UniProtParseTest {
 
@@ -27,9 +23,9 @@ public class UniProtParseTest {
     public void parseRefSeqLineCorrectly() {
         String record = testBareBonesDat();
         try {
-            RichStreamReader reader = UniProtTools.getRichStreamReaderForUniprotDatString(record, true);
-            Sequence sequence = reader.nextSequence();
-            String rawData = UniProtTools.sequenceToString(sequence);
+            RichStreamReaderAdapter reader = getRichStreamReaderForUniprotDatString(record, true);
+            RichSequenceAdapter sequence = reader.nextRichSequence();
+            String rawData = DatFileWriter.sequenceToString(sequence);
             assertTrue(rawData.contains("RefSeq; XP_001343958.4; XM_001343922.7"));
         } catch (Exception e) {
             fail("Should not have thrown an exception");
@@ -40,11 +36,11 @@ public class UniProtParseTest {
     public void parseRefSeqLineAndRemoveVersion() {
         String record = testBareBonesDat();
         try {
-            RichStreamReader reader = UniProtTools.getRichStreamReaderForUniprotDatString(record, true);
-            Map<String, RichSequence> sequencesByAccession = getMapOfAccessionsToSequencesFromStreamReader(reader);
+            RichStreamReaderAdapter reader = getRichStreamReaderForUniprotDatString(record, true);
+            Map<String, RichSequenceAdapter> sequencesByAccession = getMapOfAccessionsToSequencesFromStreamReader(reader);
             RemoveVersionHandler handler = new RemoveVersionHandler();
             handler.handle(sequencesByAccession, null, null);
-            String rawData = UniProtTools.sequenceToString(sequencesByAccession.get("E9QDC9"));
+            String rawData = DatFileWriter.sequenceToString(sequencesByAccession.get("E9QDC9"));
             assertFalse(rawData.contains("RefSeq; XP_001343958; XM_001343922.7."));
             assertTrue(rawData.contains("RefSeq; XP_001343958; XM_001343922."));
 
