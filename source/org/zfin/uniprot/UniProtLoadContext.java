@@ -2,15 +2,10 @@ package org.zfin.uniprot;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.io.FileUtils;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.sequence.ReferenceDatabase;
-import org.zfin.sequence.Sequence;
-import org.zfin.sequence.SequenceList;
-import org.zfin.uniprot.dto.UniProtContextSequenceDTO;
+import org.zfin.uniprot.dto.DBLinkSlimDTO;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 import static org.zfin.Species.Type.ZEBRAFISH;
@@ -29,8 +24,8 @@ import static org.zfin.sequence.ForeignDBDataType.SuperType.SEQUENCE;
 @Setter
 public class UniProtLoadContext {
 
-    private Map<String, List<UniProtContextSequenceDTO>> uniprotDbLinks;
-    private Map<String, List<UniProtContextSequenceDTO>> refseqDbLinks;
+    private Map<String, List<DBLinkSlimDTO>> uniprotDbLinks;
+    private Map<String, List<DBLinkSlimDTO>> refseqDbLinks;
 
     public static UniProtLoadContext createFromDBConnection() {
         UniProtLoadContext uniprotLoadContext = new UniProtLoadContext();
@@ -38,14 +33,11 @@ public class UniProtLoadContext {
         ReferenceDatabase uniprotRefDB = getSequenceRepository().getReferenceDatabase(UNIPROTKB, POLYPEPTIDE, SEQUENCE, ZEBRAFISH);
         uniprotLoadContext.setUniprotDbLinks( convertToDTO(getSequenceRepository().getMarkerDBLinks(uniprotRefDB)) );
 
-        UniProtContextSequenceDTO sequenceDTO = new UniProtContextSequenceDTO();
-
         ReferenceDatabase refseqRefDB = getSequenceRepository().getReferenceDatabase(REFSEQ, POLYPEPTIDE, SEQUENCE, ZEBRAFISH);
         ReferenceDatabase refseqRNARefDB = getSequenceRepository().getReferenceDatabase(REFSEQ, RNA, SEQUENCE, ZEBRAFISH);
 
         System.out.println("refseqRefDB: " + refseqRefDB.getZdbID());
         System.out.println("refseqRNARefDB: " + refseqRNARefDB.getZdbID());
-
 
         Map<String, Collection<MarkerDBLink>> markerDBLinks = getSequenceRepository().getMarkerDBLinks(refseqRNARefDB, refseqRefDB);
         uniprotLoadContext.setRefseqDbLinks( convertToDTO(markerDBLinks));
@@ -53,17 +45,19 @@ public class UniProtLoadContext {
         return uniprotLoadContext;
     }
 
-    private static Map<String, List<UniProtContextSequenceDTO>> convertToDTO(Map<String, Collection<MarkerDBLink>> markerDBLinks) {
-        Map<String, List<UniProtContextSequenceDTO>> transformedMap = new HashMap<String, List<UniProtContextSequenceDTO>>();
+    private static Map<String, List<DBLinkSlimDTO>> convertToDTO(Map<String, Collection<MarkerDBLink>> markerDBLinks) {
+        Map<String, List<DBLinkSlimDTO>> transformedMap = new HashMap<>();
         for(Map.Entry<String, Collection<MarkerDBLink>> entry : markerDBLinks.entrySet()) {
             String key = entry.getKey();
-            ArrayList<UniProtContextSequenceDTO> sequenceDTOs = new ArrayList<UniProtContextSequenceDTO>();
+            ArrayList<DBLinkSlimDTO> sequenceDTOs = new ArrayList<>();
 
             for(MarkerDBLink markerDBLink : entry.getValue()) {
-                UniProtContextSequenceDTO sequenceDTO = new UniProtContextSequenceDTO();
+                DBLinkSlimDTO sequenceDTO = new DBLinkSlimDTO();
                 sequenceDTO.setAccession(markerDBLink.getAccessionNumber());
                 sequenceDTO.setDataZdbID(markerDBLink.getDataZdbID());
                 sequenceDTO.setMarkerAbbreviation(markerDBLink.getMarker().getAbbreviation());
+                sequenceDTO.setDbName(markerDBLink.getReferenceDatabase().getForeignDB().getDbName().name());
+                sequenceDTO.setPublicationIDs( markerDBLink.getPublicationIdsAsList() );
                 sequenceDTOs.add(sequenceDTO);
             }
             transformedMap.put(key, sequenceDTOs);

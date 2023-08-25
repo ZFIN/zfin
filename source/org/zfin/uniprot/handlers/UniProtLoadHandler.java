@@ -7,7 +7,8 @@ import org.zfin.uniprot.adapter.RichSequenceAdapter;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface UniProtLoadHandler {
-    void handle(Map<String, RichSequenceAdapter> uniProtRecords, List<UniProtLoadAction> actions, UniProtLoadContext context);
+    void handle(Map<String, RichSequenceAdapter> uniProtRecords, Set<UniProtLoadAction> actions, UniProtLoadContext context);
 }

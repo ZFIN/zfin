@@ -1,5 +1,7 @@
 package org.zfin.uniprot;
 
+import com.fasterxml.jackson.core.exc.StreamReadException;
+import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.FileUtils;
@@ -59,22 +61,21 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         pipeline.addHandler(new RemoveVersionHandler());
         pipeline.addHandler(new IgnoreSpecificAccessionsHandler());
 
-        //these two work together to get list of genes that would lose accessions
-        pipeline.addHandler(new MatchOnRefSeqHandler());
-        pipeline.addHandler(new ReportLostUniProtsHandler());
+        pipeline.addHandler(new ReportWouldBeLostHandler());
 
-        //reset everything back to the beginning
-        pipeline.addHandler(new ResetLoadActionsHandler());
         pipeline.addHandler(new IgnoreAccessionsAlreadyInDatabaseHandler());
         pipeline.addHandler(new MatchOnRefSeqHandler());
-        List<UniProtLoadAction> actions = pipeline.execute();
+
+        //TODO: remove this handler
+        pipeline.addHandler(new UniqueActionsHandler());
+        Set<UniProtLoadAction> actions = pipeline.execute();
 
         //do something with the actions
         writeActions(actions);
         writeOutputReportFile(actions);
     }
 
-    private void writeActions(List<UniProtLoadAction> actions) {
+    private void writeActions(Set<UniProtLoadAction> actions) {
         String tempFileName = "/tmp/uniprot_load_report_" + System.currentTimeMillis() + ".json";
         System.out.println("report tempfile: " + tempFileName);
         try {
@@ -84,7 +85,7 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         }
     }
 
-    private String actionsToJson(List<UniProtLoadAction> actions) {
+    private String actionsToJson(Set<UniProtLoadAction> actions) {
         ObjectMapper mapper = new ObjectMapper();
         try {
             return mapper.writeValueAsString(actions);
@@ -94,7 +95,7 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         return null;
     }
 
-    private void writeOutputReportFile(List<UniProtLoadAction> actions) {
+    private void writeOutputReportFile(Set<UniProtLoadAction> actions) {
         String reportfile = "/tmp/uniprot_load_" + System.currentTimeMillis() + ".report.html";
 
         System.out.println("Creating report file: " + reportfile);
@@ -113,16 +114,25 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
     private void calculateContext() {
         context = UniProtLoadContext.createFromDBConnection();
 
-        //create temp file
-        try {
-            String tempFileName = "/tmp/uniprot_load_" + System.currentTimeMillis() + ".tmp";
-            System.out.println("tempFileName: " + tempFileName);
-            File tempFile = new File(tempFileName);
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.writeValue(tempFile, context);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        //TODO: convert to handling these temp files according to arguments or env vars
+//        //create temp file
+//        String tempFileName = "/tmp/uniprot_load_" + System.currentTimeMillis() + ".tmp";
+//        ObjectMapper mapper = new ObjectMapper();
+//        try {
+//            System.out.println("tempFileName: " + tempFileName);
+//            File tempFile = new File(tempFileName);
+//            mapper.writeValue(tempFile, context);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        //load from temp file
+//        try {
+//            UniProtLoadContext newContext = mapper.readValue(new File(tempFileName), UniProtLoadContext.class);
+//            System.out.println("newContext: refseqs size: " + newContext.getRefseqDbLinks().size());
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
 
     }
 }
