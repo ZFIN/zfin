@@ -1,7 +1,6 @@
-create or replace function regen_clean_expression() 
+create or replace function regen_clean_expression()
 returns int as $log$
-
-
+DECLARE clean_expression_fast_search_rename_to text;
   begin 
 
 
@@ -104,7 +103,20 @@ returns int as $log$
       on clean_expression_fast_search_new (cefs_genox_zdb_id);
 
  
-      drop table clean_expression_fast_search;
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'clean_expression_fast_search' AND table_schema = 'public') THEN
+        -- Set the new table name with the current timestamp
+        clean_expression_fast_search_rename_to := 'clean_expression_fast_search_old_' || to_char(now(), 'YYYY_MM_DD_HH24_MI_SS_MS');
+
+        -- Use EXECUTE to run dynamic SQL
+        EXECUTE 'ALTER TABLE clean_expression_fast_search RENAME TO ' || clean_expression_fast_search_rename_to;
+        EXECUTE 'TRUNCATE ' || clean_expression_fast_search_rename_to;
+--         EXECUTE 'DROP TABLE ' || clean_expression_fast_search_rename_to;
+
+        execute 'alter index clean_expression_fast_search' || '_primary_key rename to ' || clean_expression_fast_search_rename_to || '_primary_key';
+        execute 'alter index clean_expression_fast_search' || '_pk_index rename to ' || clean_expression_fast_search_rename_to || '_pk_index';
+        execute 'alter index clean_expression_fast_search' || '_mrkr_zdb_id_fk_index rename to ' || clean_expression_fast_search_rename_to || '_mrkr_zdb_id_fk_index';
+        execute 'alter index clean_expression_fast_search' || '_genox_zdb_id_fk_index rename to ' || clean_expression_fast_search_rename_to || '_genox_zdb_id_fk_index';
+    END IF;
 
       
       alter table clean_expression_fast_search_new rename to clean_expression_fast_search;
