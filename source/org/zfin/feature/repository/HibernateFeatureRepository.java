@@ -731,7 +731,8 @@ public class HibernateFeatureRepository implements FeatureRepository {
         String hql = "select feature from Feature feature where feature.abbreviation = :abbrev";
         Query<Feature> query = currentSession().createQuery(hql, Feature.class);
         query.setParameter("abbrev", name);
-        return query.getSingleResult();
+        Optional<Feature> first = query.getResultList().stream().findFirst();
+        return first.orElse(null);
     }
 
     @Override
