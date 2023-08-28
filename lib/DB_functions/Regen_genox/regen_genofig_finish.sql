@@ -1,6 +1,6 @@
 create or replace function regen_genofig_finish(vUpdate boolean, pgId int8)
 returns text as $regen_genofig_finish$
-
+ declare genotype_figure_fast_search_rename_to text;
  begin 
    if (vUpdate != 't') then
 
@@ -72,8 +72,34 @@ returns text as $regen_genofig_finish$
 
         -- Make changes public for genotype_figure_fast_search_new
       --let errorHint = "drop genotype_figure_fast_search table ";
-      
-     drop table if exists genotype_figure_fast_search;
+
+    -- if table exists, do the following
+
+
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'genotype_figure_fast_search' AND table_schema = 'public') THEN
+        -- Set the new table name with the current timestamp
+        genotype_figure_fast_search_rename_to := 'genotype_figure_fast_search_old_' || to_char(now(), 'YYYY_MM_DD_HH24_MI_SS_MS');
+
+        -- Use EXECUTE to run dynamic SQL
+        EXECUTE 'ALTER TABLE genotype_figure_fast_search RENAME TO ' || genotype_figure_fast_search_rename_to;
+        EXECUTE 'TRUNCATE ' || genotype_figure_fast_search_rename_to;
+--         EXECUTE 'DROP TABLE ' || genotype_figure_fast_search_rename_to;
+
+        execute 'alter index genotype_figure_fast_search_geno_zdb_id_foreign_key_index
+            rename to ' || genotype_figure_fast_search_rename_to || '_geno_zdb_id_foreign_key_index';
+        execute 'alter index genotype_figure_fast_search_fig_zdb_id_foreign_key_index
+            rename to ' || genotype_figure_fast_search_rename_to || '_fig_zdb_id_foreign_key_index';
+        execute 'alter index genotype_figure_fast_search_morph_zdb_id_foreign_key_index
+            rename to ' || genotype_figure_fast_search_rename_to || '_morph_zdb_id_foreign_key_index';
+        execute 'alter index genotype_figure_fast_search_fish_zdb_id_foreign_key_index
+            rename to ' || genotype_figure_fast_search_rename_to || '_fish_zdb_id_foreign_key_index';
+        execute 'alter index genotype_figure_fast_search_pg_id_foreign_key_index
+            rename to ' || genotype_figure_fast_search_rename_to || '_pg_id_foreign_key_index';
+        execute 'alter index genotype_figure_fast_search_psg_id_foreign_key_index
+            rename to ' || genotype_figure_fast_search_rename_to || '_psg_id_foreign_key_index';
+
+    END IF;
+
 
       --let errorHint = "rename table gffs";
      alter table  genotype_figure_fast_search_new rename to genotype_figure_fast_search;
