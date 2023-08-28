@@ -32,13 +32,13 @@ public class MatchingTermService {
     }
 
     public List<TermDTO> getMatchingTermList(String query, Ontology ontology) {
-        List<TermDTO> termDTOList = new ArrayList<TermDTO>(0);
+        List<TermDTO> termDTOList = new ArrayList<>(0);
 
         List<MatchingTerm> matchingTerms = getMatchingTerms(query, ontology);
         if (matchingTerms == null)
             return termDTOList;
 
-        termDTOList = new ArrayList<TermDTO>(matchingTerms.size());
+        termDTOList = new ArrayList<>(matchingTerms.size());
         for (MatchingTerm matchingTerm : matchingTerms) {
             termDTOList.add(matchingTerm.getTerm());
         }
@@ -47,7 +47,7 @@ public class MatchingTermService {
 
 
     protected Set<MatchingTerm> getMatchingTerms(String query, PatriciaTrieMultiMap<TermDTO> termMap) {
-        Set<MatchingTerm> matchingTermSet = new TreeSet<MatchingTerm>(new MatchingTermComparator(query));
+        Set<MatchingTerm> matchingTermSet = new TreeSet<>(new MatchingTermComparator(query));
         String[] termsToMatch = query.toLowerCase().trim().split("\\s+");
         for (String termToMatch : termsToMatch) {
             Set<TermDTO> matchedTerms = termMap.getSuggestedValues(termToMatch);
@@ -134,7 +134,7 @@ public class MatchingTermService {
      * @return list of terms
      */
     public List<MatchingTerm> getMatchingTerms(String query, Ontology ontology) {
-        List<MatchingTerm> matchingTermsForSet = new ArrayList<MatchingTerm>();
+        List<MatchingTerm> matchingTermsForSet = new ArrayList<>();
         if (StringUtils.isEmpty(query.trim())) {
             return matchingTermsForSet;
         }
@@ -148,9 +148,9 @@ public class MatchingTermService {
                 matchingTermsForSet.addAll(getMatchingTerms(query, OntologyManager.getInstance().getTermsForOntology(ontologyDTO)));
             }
         }
-        Collections.sort(matchingTermsForSet, new MatchingTermComparator(query));
+        matchingTermsForSet.sort(new MatchingTermComparator(query));
         if (maximumNumberOfMatches > 0 && matchingTermsForSet.size() > maximumNumberOfMatches) {
-            List<MatchingTerm> matchingTerms = new ArrayList<MatchingTerm>();
+            List<MatchingTerm> matchingTerms = new ArrayList<>();
             int i = 0;
             for (Iterator<MatchingTerm> iterator = matchingTermsForSet.iterator();
                  iterator.hasNext() && i < maximumNumberOfMatches; ) {
