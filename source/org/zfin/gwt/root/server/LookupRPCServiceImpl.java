@@ -3,10 +3,10 @@ package org.zfin.gwt.root.server;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zfin.antibody.Antibody;
 import org.zfin.feature.Feature;
-import org.zfin.gwt.root.dto.AttributionType;
 import org.zfin.gwt.root.dto.*;
 import org.zfin.gwt.root.server.rpc.ZfinRemoteServiceServlet;
 import org.zfin.gwt.root.ui.ItemSuggestOracle;
@@ -160,43 +160,62 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
 
         List<SuggestOracle.Suggestion> suggestions = new ArrayList<>(NUMBER_OF_SUGGESTIONS);
         if (query.length() > 2) {
-            // We add one in order to add an additional term that is not displayed.
-            // When it comes back we can add the '...' implying that there are more.
-            // Unfortunately, Response does not have an easy fix for this other than exceeding the Response. 
-            MatchingTermService matcher = new MatchingTermService(request.getLimit() + 1);
-            highlighter.setMatch(query);
-            String previousSuggestionString = "";
-            int index = 0;
-            ItemSuggestion previousSuggestion = null;
-            for (MatchingTerm term : matcher.getMatchingTerms(query, ontology)) {
-                if (termsWithDataOnly && !OntologyDataManager.getInstance().hasExpressionOrPhenotypeData(term.getTerm()))
-                    continue;
-                String suggestion = term.getMatchingTermDisplay();
-                // add comment field with pure term name for display
-                StringBuilder builder = highlighter.hidePureTermNameHtml(term.getTerm().getTermName());
-                String displayName = highlighter.highlight(suggestion);
-                builder.append(displayName);
-                String termValue = term.getTerm().getOboID();
-                StringBuilder fillBuilder = new StringBuilder(builder);
-                fillBuilder.append(" [");
-                fillBuilder.append(term.getTerm().getOntology().getDisplayName());
-                fillBuilder.append("]");
-                ItemSuggestion fullItemSuggestion = new ItemSuggestion(fillBuilder.toString(), termValue);
-                if (previousSuggestionString.equals(suggestion)) {
-                    suggestions.remove(index - 1);
-                    suggestions.add(previousSuggestion);
-                    suggestions.add(fullItemSuggestion);
-                } else {
-                    suggestions.add(new ItemSuggestion(builder.toString(), termValue));
+            String oboIdPrefix = ontology.getOboIdPrefix();
+            if (query.startsWith(oboIdPrefix)) {
+                TermDTO termDTO = OntologyManager.getInstance().getTermByID(query, DTOConversionService.convertToOntologyDTO(ontology));
+                MatchingTerm term = new MatchingTerm(termDTO, termDTO.getTermName());
+                StringBuilder builder = getStringBuilder(term, termDTO.getTermName());
+                ItemSuggestion fullItemSuggestion = new ItemSuggestion(builder.toString(), query);
+                suggestions.add(fullItemSuggestion);
+            } else {
+                // We add one in order to add an additional term that is not displayed.
+                // When it comes back we can add the '...' implying that there are more.
+                // Unfortunately, Response does not have an easy fix for this other than exceeding the Response.
+                MatchingTermService matcher = new MatchingTermService(request.getLimit() + 1);
+                highlighter.setMatch(query);
+                String previousSuggestionString = "";
+                int index = 0;
+                ItemSuggestion previousSuggestion = null;
+                for (MatchingTerm term : matcher.getMatchingTerms(query, ontology)) {
+                    if (termsWithDataOnly && !OntologyDataManager.getInstance().hasExpressionOrPhenotypeData(term.getTerm()))
+                        continue;
+                    String suggestion = term.getMatchingTermDisplay();
+                    // add comment field with pure term name for display
+                    StringBuilder builder = getStringBuilder(term, suggestion);
+                    String termValue = term.getTerm().getOboID();
+                    StringBuilder fillBuilder = getStringBuilder(term, builder);
+                    ItemSuggestion fullItemSuggestion = new ItemSuggestion(fillBuilder.toString(), termValue);
+                    if (previousSuggestionString.equals(suggestion)) {
+                        suggestions.remove(index - 1);
+                        suggestions.add(previousSuggestion);
+                        suggestions.add(fullItemSuggestion);
+                    } else {
+                        suggestions.add(new ItemSuggestion(builder.toString(), termValue));
+                    }
+                    previousSuggestionString = suggestion;
+                    previousSuggestion = fullItemSuggestion;
+                    index++;
                 }
-                previousSuggestionString = suggestion;
-                previousSuggestion = fullItemSuggestion;
-                index++;
             }
         }
         resp.setSuggestions(suggestions);
         logger.info("found " + suggestions.size() + " suggestions for " + request);
         return resp;
+    }
+
+    private static StringBuilder getStringBuilder(MatchingTerm term, StringBuilder builder) {
+        StringBuilder fillBuilder = new StringBuilder(builder);
+        fillBuilder.append(" [");
+        fillBuilder.append(term.getTerm().getOntology().getDisplayName());
+        fillBuilder.append("]");
+        return fillBuilder;
+    }
+
+    private StringBuilder getStringBuilder(MatchingTerm term, String suggestion) {
+        StringBuilder builder = highlighter.hidePureTermNameHtml(term.getTerm().getTermName());
+        String displayName = highlighter.highlight(suggestion);
+        builder.append(displayName);
+        return builder;
     }
 
 
