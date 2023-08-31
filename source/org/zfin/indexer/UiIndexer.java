@@ -148,6 +148,14 @@ public abstract class UiIndexer<Entity> extends Thread {
     protected abstract void cleanUiTables();
 
     protected void saveRecords(Collection<List<Entity>> batchedList) {
+        if(this.getClass().equals(UiIndexerConfig.PublicationExpressionIndexer.getIndexClazz())) {
+            saveWithStatefulSession(batchedList);
+        } else {
+            saveWithStatelessSession(batchedList);
+        }
+    }
+
+    private void saveWithStatefulSession(Collection<List<Entity>> batchedList) {
         HibernateUtil.createTransaction();
         batchedList.forEach(batch -> {
             for (Entity entity : batch) {
@@ -156,6 +164,15 @@ public abstract class UiIndexer<Entity> extends Thread {
         });
         HibernateUtil.flushAndCommitCurrentSession();
     }
+
+    private void saveWithStatelessSession(Collection<List<Entity>> batchedList) {
+        HibernateUtil.createStatelessTransaction();
+        batchedList.forEach(batch -> {
+            for (Entity entity : batch) {
+                HibernateUtil.currentStatelessSession().insert(entity);
+            }
+        });
+        HibernateUtil.flushAndCommitCurrentStatelessSession();    }
 
     protected void cleanoutTable(String... tables) {
         List<String> tableNames = Arrays.stream(tables).map(String::toLowerCase).toList();
