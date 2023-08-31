@@ -112,6 +112,7 @@ DECLARE clean_expression_fast_search_rename_to text;
         EXECUTE 'TRUNCATE ' || clean_expression_fast_search_rename_to;
 --         EXECUTE 'DROP TABLE ' || clean_expression_fast_search_rename_to;
 
+        execute 'alter index clean_expression_fast_search' || '_primary_key rename to ' || clean_expression_fast_search_rename_to || '_primary_key';
         execute 'alter index clean_expression_fast_search' || '_pk_index rename to ' || clean_expression_fast_search_rename_to || '_pk_index';
         execute 'alter index clean_expression_fast_search' || '_mrkr_zdb_id_fk_index rename to ' || clean_expression_fast_search_rename_to || '_mrkr_zdb_id_fk_index';
         execute 'alter index clean_expression_fast_search' || '_genox_zdb_id_fk_index rename to ' || clean_expression_fast_search_rename_to || '_genox_zdb_id_fk_index';
