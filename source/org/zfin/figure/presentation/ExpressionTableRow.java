@@ -24,7 +24,7 @@ import javax.persistence.*;
 @Setter
 @Getter
 @Entity
-@Table(name = "UI.PUBLICATION_EXPRESSION_DISPLAY")
+@Table(name = "ui.publication_expression_display")
 public class ExpressionTableRow implements ZdbID {
 
     @Id

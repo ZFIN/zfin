@@ -126,6 +126,10 @@ public class PublicationAPIController {
     public JsonResultResponse<ExpressionTableRow> getPublicationExpression(@PathVariable String pubID,
                                                                            @RequestParam(value = "filter.geneAbbreviation", required = false) String geneAbbreviation,
                                                                            @RequestParam(value = "filter.qualifier", required = false) String qualifier,
+                                                                           @RequestParam(value = "filter.anatomy", required = false) String anatomyFilter,
+                                                                           @RequestParam(value = "filter.fish", required = false) String fishFilter,
+                                                                           @RequestParam(value = "filter.stage", required = false) String stageFilter,
+                                                                           @RequestParam(value = "filter.assay", required = false) String assayFilter,
                                                                            @Version Pagination pagination) {
 
         LocalDateTime startTime = LocalDateTime.now();
@@ -139,6 +143,18 @@ public class PublicationAPIController {
         }
         if (StringUtils.isNotEmpty(qualifier)) {
             pagination.addToFilterMap("tableRow.qualifier", qualifier);
+        }
+       if (StringUtils.isNotEmpty(anatomyFilter)) {
+           pagination.addToFilterMap("tableRow.superterm.termName", anatomyFilter);
+        }
+       if (StringUtils.isNotEmpty(fishFilter)) {
+            pagination.addToFilterMap("tableRow.fish.name", fishFilter);
+        }
+       if (StringUtils.isNotEmpty(assayFilter)) {
+            pagination.addToFilterMap("tableRow.assay.abbreviation", assayFilter);
+        }
+       if (StringUtils.isNotEmpty(stageFilter)) {
+            pagination.addToFilterMap("tableRow.start.name OR tableRow.end.name", stageFilter);
         }
 
         PaginationResult<ExpressionTableRow> expressionTableRows = getPublicationPageRepository().getPublicationExpression(publication, pagination);
