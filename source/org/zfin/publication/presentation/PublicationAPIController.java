@@ -145,7 +145,7 @@ public class PublicationAPIController {
             pagination.addToFilterMap("tableRow.qualifier", qualifier);
         }
        if (StringUtils.isNotEmpty(anatomyFilter)) {
-           pagination.addToFilterMap("tableRow.superterm.termName", anatomyFilter);
+           pagination.addToFilterMap("tableRow.anatomyDisplay", anatomyFilter);
         }
        if (StringUtils.isNotEmpty(fishFilter)) {
             pagination.addToFilterMap("tableRow.fish.name", fishFilter);
