@@ -95,6 +95,10 @@ public class ExpressionTableRow implements ZdbID {
     private String anatomyDisplay;
 
     @JsonView(View.ExpressionPublicationUI.class)
+    @Column(name = "ped_experiment_display")
+    private String experimentDisplay;
+
+    @JsonView(View.ExpressionPublicationUI.class)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ped_assay_id")
     private ExpressionAssay assay;
@@ -134,6 +138,7 @@ public class ExpressionTableRow implements ZdbID {
         } else {
             setAnatomyDisplay(expressionResult.getSuperTerm().getTermName());
         }
+        setExperimentDisplay(expressionExperiment.getFishExperiment().getExperiment().getDisplayAllConditions());
         if (!expressionResult.isExpressionFound()) {
             setQualifier("Not Detected");
         }

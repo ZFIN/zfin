@@ -130,6 +130,7 @@ public class PublicationAPIController {
                                                                            @RequestParam(value = "filter.fish", required = false) String fishFilter,
                                                                            @RequestParam(value = "filter.stage", required = false) String stageFilter,
                                                                            @RequestParam(value = "filter.assay", required = false) String assayFilter,
+                                                                           @RequestParam(value = "filter.experiment", required = false) String experimentFilter,
                                                                            @Version Pagination pagination) {
 
         LocalDateTime startTime = LocalDateTime.now();
@@ -152,6 +153,9 @@ public class PublicationAPIController {
         }
        if (StringUtils.isNotEmpty(assayFilter)) {
             pagination.addToFilterMap("tableRow.assay.abbreviation", assayFilter);
+        }
+       if (StringUtils.isNotEmpty(experimentFilter)) {
+            pagination.addToFilterMap("tableRow.experimentDisplay", experimentFilter);
         }
        if (StringUtils.isNotEmpty(stageFilter)) {
             pagination.addToFilterMap("tableRow.start.name OR tableRow.end.name", stageFilter);
