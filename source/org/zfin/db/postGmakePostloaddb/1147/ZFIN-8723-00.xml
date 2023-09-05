@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <include file="source/org/zfin/db/postGmakePostloaddb/1147/ZFIN-8723-01-pre.sql" />
+
+    <changeSet author="rtaylor" id="ZFIN-8723-redundant-db-links-csv">
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1147/ZFIN-8723-02-redundant-db-links.csv"
+                  tableName="temp_8723" encoding="UTF-8" quotchar='"'>
+
+            <column header="dblink_linked_recid" name="dblink_linked_recid" type="String"/>
+            <column header="dblink_acc_num" name="dblink_acc_num" type="String"/>
+            <column header="dblink_info" name="dblink_info" type="String"/>
+            <column header="dblink_zdb_id" name="dblink_zdb_id" type="String"/>
+            <column header="dblink_acc_num_display" name="dblink_acc_num_display" type="String"/>
+            <column header="dblink_length" name="dblink_length" type="String"/>
+            <column header="dblink_fdbcont_zdb_id" name="dblink_fdbcont_zdb_id" type="String"/>
+            <column header="incoming_info" name="incoming_info" type="String"/>
+            <column header="incoming_length" name="incoming_length" type="String"/>
+            <column header="incoming_length_matches" name="incoming_length_matches" type="String"/>
+
+        </loadData>
+    </changeSet>
+
+    <include file="source/org/zfin/db/postGmakePostloaddb/1147/ZFIN-8723-03-post.sql" />
+
+</databaseChangeLog>
