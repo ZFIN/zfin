@@ -215,7 +215,7 @@ public class FacetBuilderService {
         facetGroups.add(buildSingleFacetGroup("Sequence Targeting Reagent (STR)",
                 FieldName.SEQUENCE_TARGETING_REAGENT.getName(),
                 Category.EXPRESSIONS.getFacetQueriesForField(FieldName.SEQUENCE_TARGETING_REAGENT),false));
-        facetGroups.add(buildSingleFacetGroup("Conditions", FieldName.CONDITIONS.getName(), false));
+        facetGroups.add(buildSingleFacetGroup("Conditions", ZECO_CONDITIONS.getName(), false));
 
 
         return facetGroups;
