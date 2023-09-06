@@ -78,7 +78,11 @@ returns text as $regen_genofig_finish$
 
     IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'genotype_figure_fast_search' AND table_schema = 'public') THEN
         -- Set the new table name with the current timestamp
-        genotype_figure_fast_search_rename_to := 'genotype_figure_fast_search_old_' || to_char(now(), 'YYYY_MM_DD_HH24_MI_SS_MS');
+        genotype_figure_fast_search_rename_to := 'genotype_figure_fast_search_old_'  || to_char(now(), 'YYMMDDHH24MI');
+
+        -- append 4 random characters
+        genotype_figure_fast_search_rename_to := genotype_figure_fast_search_rename_to || '_' || substring(md5(random()::text), 1, 4);
+
 
         -- Use EXECUTE to run dynamic SQL
         EXECUTE 'ALTER TABLE genotype_figure_fast_search RENAME TO ' || genotype_figure_fast_search_rename_to;
