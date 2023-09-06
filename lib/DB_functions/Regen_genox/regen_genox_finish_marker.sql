@@ -1,6 +1,6 @@
 create or replace function regen_genox_finish_marker ()
 returns text as $regen_genox_finish_marker$
-
+declare mutant_fast_search_rename_to text;
 begin
      insert into mutant_fast_search_new 
         ( mfs_data_zdb_id, mfs_genox_zdb_id )
@@ -45,7 +45,31 @@ begin
    
 
      -- let errorHint = "drop mutant_fast_search table ";
-      drop table mutant_fast_search;
+     IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'mutant_fast_search' AND table_schema = 'public') THEN
+         -- Set the new table name with the current timestamp
+         mutant_fast_search_rename_to := 'mutant_fast_search_old_' || to_char(now(), 'YYMMDDHH24MI');
+
+         -- append 4 random characters
+         mutant_fast_search_rename_to := mutant_fast_search_rename_to || '_' || substring(md5(random()::text), 1, 4);
+
+         -- Use EXECUTE to run dynamic SQL
+         EXECUTE 'ALTER TABLE mutant_fast_search RENAME TO ' || mutant_fast_search_rename_to;
+         EXECUTE 'TRUNCATE ' || mutant_fast_search_rename_to;
+--         EXECUTE 'DROP TABLE ' || mutant_fast_search_rename_to;
+
+        execute 'alter index mutant_fast_search_genox_zdb_id_foreign_key_index
+            rename to ' || mutant_fast_search_rename_to || '_genox_zdb_id_foreign_key_index';
+
+        execute 'alter index mutant_fast_search_data_zdb_id_foreign_key_index
+            rename to ' || mutant_fast_search_rename_to || '_data_zdb_id_foreign_key_index';
+
+        execute 'alter index mutant_fast_search_primary_key_index
+            rename to ' || mutant_fast_search_rename_to || '_primary_key_index';
+
+
+     END IF;
+
+
 
      -- let errorHint = "rename table ";
       alter table  mutant_fast_search_new rename to mutant_fast_search;
