@@ -123,7 +123,7 @@ public class BasicRNASeqMetaDatasampleInfo extends AbstractScriptWrapper {
                             dto.setTaxonId("NCBITaxon:7955");
 
 
-                            ArrayList<HTPDatasetSampleDetail> anatomySampleDetails = getExpressionRepository().getSampleDetail(datasample);
+                            List<HTPDatasetSampleDetail> anatomySampleDetails = getExpressionRepository().getSampleDetail(datasample);
                             ArrayList<ExpressionTermIdentifiersDTO> anatomies = new ArrayList<>();
 
                             Map<String, List<UberonSlimTermDTO>> zfaUberonMap = getExpressionRepository().getAllZfaUberonMap();
