@@ -54,14 +54,16 @@ begin
          EXECUTE 'TRUNCATE ' || mutant_fast_search_rename_to;
 --         EXECUTE 'DROP TABLE ' || mutant_fast_search_rename_to;
 
-         execute 'alter index mutant_fast_search_geno_zdb_id_foreign_key_index
-            rename to ' || mutant_fast_search_rename_to || '_geno_zdb_id_foreign_key_index';
-
         execute 'alter index mutant_fast_search_genox_zdb_id_foreign_key_index
             rename to ' || mutant_fast_search_rename_to || '_genox_zdb_id_foreign_key_index';
 
         execute 'alter index mutant_fast_search_data_zdb_id_foreign_key_index
             rename to ' || mutant_fast_search_rename_to || '_data_zdb_id_foreign_key_index';
+
+        execute 'alter index mutant_fast_search_primary_key_index
+            rename to ' || mutant_fast_search_rename_to || '_primary_key_index';
+
+
      END IF;
 
 
