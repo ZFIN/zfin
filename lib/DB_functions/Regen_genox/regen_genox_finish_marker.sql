@@ -1,6 +1,6 @@
 create or replace function regen_genox_finish_marker ()
 returns text as $regen_genox_finish_marker$
-
+declare mutant_fast_search_rename_to text;
 begin
      insert into mutant_fast_search_new 
         ( mfs_data_zdb_id, mfs_genox_zdb_id )

@@ -2848,13 +2848,13 @@ public class HibernateExpressionRepository implements ExpressionRepository {
     }
 
     @Override
-    public ArrayList<HTPDatasetSampleDetail> getSampleDetail(HTPDatasetSample sample) {
+    public List<HTPDatasetSampleDetail> getSampleDetail(HTPDatasetSample sample) {
         Session session = HibernateUtil.currentSession();
         String hql = "select htpdsetsampledetail from HTPDatasetSampleDetail htpdsetsampledetail " +
                 "where htpdsetsampledetail.htpDatasetSample = :sample";
-        Query query = session.createQuery(hql);
+        Query<HTPDatasetSampleDetail> query = session.createQuery(hql, HTPDatasetSampleDetail.class);
         query.setParameter("sample", sample);
-        return (ArrayList<HTPDatasetSampleDetail>) query.list();
+        return query.list();
     }
 
     @Override
