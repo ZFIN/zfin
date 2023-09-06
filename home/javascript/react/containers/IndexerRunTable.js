@@ -68,6 +68,12 @@ const IndexerRunTable = () => {
             width: '150px',
         },
         {
+            label: 'Current Duration',
+            content: row => (<>{row.currentDuration && (<>{row.currentDuration.toLocaleString()}</>)}</>),
+            align: 'right',
+            width: '80px',
+        },
+        {
             label: 'End',
             content: row => row.endDate,
         },
@@ -103,6 +109,12 @@ const IndexerRunTable = () => {
             width: '80px',
         },
         {
+            label: 'Current Duration',
+            content: row => (<>{row.currentDuration && (<>{row.currentDuration.toLocaleString()}</>)}</>),
+            align: 'right',
+            width: '80px',
+        },
+        {
             label: 'Count',
             content: row => (<>{row.duration && (<>{row.count.toLocaleString()}</>)}</>),
             align: 'right',
@@ -129,6 +141,12 @@ const IndexerRunTable = () => {
         {
             label: 'Duration',
             content: row => (<>{row.duration && (<>{row.duration.toLocaleString()}</>)}</>),
+            align: 'right',
+            width: '80px',
+        },
+        {
+            label: 'Current Duration',
+            content: row => (<>{row.currentDuration && (<>{row.currentDuration.toLocaleString()}</>)}</>),
             align: 'right',
             width: '80px',
         },

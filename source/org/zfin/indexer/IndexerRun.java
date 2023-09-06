@@ -1,6 +1,7 @@
 package org.zfin.indexer;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
@@ -60,9 +61,9 @@ public class IndexerRun extends BaseEntity {
 
     @JsonView(View.API.class)
     public String getStartDay() {
-        if(DateUtils.isSameDay(Date.from(startDate.atZone(ZoneId.systemDefault()).toInstant()), Date.from(Instant.now())))
+        if (DateUtils.isSameDay(Date.from(startDate.atZone(ZoneId.systemDefault()).toInstant()), Date.from(Instant.now())))
             return "Today";
-        if(DateUtils.isSameDay(Date.from(startDate.atZone(ZoneId.systemDefault()).toInstant()), Date.from(Instant.now().minus(1, ChronoUnit.DAYS))))
+        if (DateUtils.isSameDay(Date.from(startDate.atZone(ZoneId.systemDefault()).toInstant()), Date.from(Instant.now().minus(1, ChronoUnit.DAYS))))
             return "Yesterday";
         DateTimeFormatter formatters = DateTimeFormatter.ofPattern("YYYY-MM-DD");
         return startDate.format(formatters);
@@ -72,6 +73,15 @@ public class IndexerRun extends BaseEntity {
     public String getStartTime() {
         DateTimeFormatter formatters = DateTimeFormatter.ofPattern("hh:mm:dd");
         return startDate.format(formatters);
+    }
+
+    @JsonView(View.API.class)
+    @JsonProperty("currentDuration")
+    public String getCurrentDuration() {
+        if (endDate != null)
+            return null;
+        Duration duration = new Duration(startDate, LocalDateTime.now());
+        return duration.toString();
     }
 
 }

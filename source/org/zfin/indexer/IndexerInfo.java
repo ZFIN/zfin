@@ -1,10 +1,12 @@
 package org.zfin.indexer;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
+import org.zfin.framework.api.Duration;
 import org.zfin.framework.api.View;
 import org.zfin.framework.entity.BaseEntity;
 import org.zfin.ontology.HumanGeneDetail;
@@ -50,5 +52,15 @@ public class IndexerInfo extends BaseEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "indexerInfo", fetch = FetchType.LAZY)
     @OrderBy("startDate")
     private Set<IndexerTask> indexerTasks;
+
+    @JsonView(View.API.class)
+    @JsonProperty("currentDuration")
+    public String getCurrentDuration() {
+        if (duration != null)
+            return null;
+        Duration duration = new Duration(startDate, LocalDateTime.now());
+        return duration.toString();
+    }
+
 
 }

@@ -12,10 +12,7 @@ import org.zfin.publication.Publication;
 import org.zfin.repository.PaginationResultFactory;
 
 import javax.persistence.Tuple;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class HibernatePublicationPageRepository implements PublicationPageRepository {
@@ -48,7 +45,22 @@ public class HibernatePublicationPageRepository implements PublicationPageReposi
             }
             for (var entry : pagination.getFilterMap().entrySet()) {
                 hqlWhereClause += " AND ";
-                hqlWhereClause += " LOWER(" + entry.getKey() + ") like '%" + entry.getValue().toLowerCase() + "%' ";
+
+                String key = entry.getKey();
+                if (key.contains("OR")) {
+                    // multiple OR clauses
+                    String[] keys = key.split("OR");
+                    hqlWhereClause += "(";
+                    StringJoiner joiner = new StringJoiner(" OR ");
+                    for (String singleKey : keys) {
+                        joiner.add(" LOWER(" + singleKey + ") like '%" + entry.getValue().toLowerCase() + "%' ");
+                    }
+                    hqlWhereClause += joiner.toString();
+                    hqlWhereClause += ")";
+                } else {
+                    // just a single clause
+                    hqlWhereClause += " LOWER(" + key + ") like '%" + entry.getValue().toLowerCase() + "%' ";
+                }
             }
         }
         hql += hqlWhereClause;
