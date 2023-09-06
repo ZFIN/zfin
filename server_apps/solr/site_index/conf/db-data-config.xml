@@ -3554,6 +3554,35 @@
                     where="efs_pk_id=expression.id"
             />
 
+            <entity name="expression_zeco_conditions"
+                    query="select
+                                nvl(zeco.term_name,'') ||
+                                nvl(': ' || ao.term_name,'') ||
+                                nvl(': ' || go_cc.term_name,'') ||
+                                nvl(': ' || chebi.term_name,'') ||
+                                nvl(': ' || taxon.term_name,'') as conditions,
+                                zecoParent.term_name as zeco_conditions,
+                                zecoParent.term_zdb_id,
+                                'xpatex-' || efs_pk_id as efs_pk_id
+                                from experiment_condition
+                             join fish_experiment on genox_exp_zdb_id = expcond_exp_zdb_id and genox_is_std_or_generic_control = 'f'
+                             join expression_experiment2 on xpatex_genox_zdb_id = genox_zdb_id
+                             join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                             join term zeco on zeco.term_zdb_id = expcond_zeco_term_zdb_id
+                             join all_term_contains atc on atc.alltermcon_contained_zdb_id = expcond_zeco_term_zdb_id
+                             join term zecoParent on zecoParent.term_zdb_id = atc.alltermcon_container_zdb_id
+                             left outer join term ao on ao.term_zdb_id = expcond_ao_term_zdb_id
+                             left outer join term go_cc on go_cc.term_zdb_id = expcond_go_cc_term_zdb_id
+                             left outer join term chebi on chebi.term_zdb_id = expcond_chebi_term_zdb_id
+                             left outer join term taxon on taxon.term_zdb_id = expcond_taxon_term_zdb_id
+                             where zecoParent.term_ont_id in ('ZECO:0000105','ZECO:0000111','ZECO:0000112',
+                             'ZECO:0000222','ZECO:0000113','ZECO:0000252','ZECO:0000154','ZECO:0000140'
+                             ,'ZECO:0000143','ZECO:0000146','ZECO:0000229','ZECO:0000208','ZECO:0000131','ZECO:0000160','ZECO:0000182','ZECO:0000182')
+"
+                    cacheImpl="SortedMapBackedCache"
+                    where="efs_pk_id=expression.id"
+            />
+
             <entity name="expression_fish_xref"
                     query="select
                               genox_fish_zdb_id as xref,

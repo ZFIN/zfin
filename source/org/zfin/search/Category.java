@@ -138,7 +138,7 @@ public enum Category {
             ASSAY,
             GENOTYPE_FULL_NAME,
             AUTHOR,
-            CONDITIONS,
+        ZECO_CONDITIONS,
             HAS_IMAGE,
             FieldName.SEQUENCE_TARGETING_REAGENT,
             IS_WILDTYPE
