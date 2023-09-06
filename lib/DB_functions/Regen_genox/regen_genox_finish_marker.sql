@@ -45,7 +45,26 @@ begin
    
 
      -- let errorHint = "drop mutant_fast_search table ";
-      drop table mutant_fast_search;
+     IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'mutant_fast_search' AND table_schema = 'public') THEN
+         -- Set the new table name with the current timestamp
+         mutant_fast_search_rename_to := 'mutant_fast_search_old_' || to_char(now(), 'YYYY_MM_DD_HH24_MI_SS_MS');
+
+         -- Use EXECUTE to run dynamic SQL
+         EXECUTE 'ALTER TABLE mutant_fast_search RENAME TO ' || mutant_fast_search_rename_to;
+         EXECUTE 'TRUNCATE ' || mutant_fast_search_rename_to;
+--         EXECUTE 'DROP TABLE ' || mutant_fast_search_rename_to;
+
+         execute 'alter index mutant_fast_search_geno_zdb_id_foreign_key_index
+            rename to ' || mutant_fast_search_rename_to || '_geno_zdb_id_foreign_key_index';
+
+        execute 'alter index mutant_fast_search_genox_zdb_id_foreign_key_index
+            rename to ' || mutant_fast_search_rename_to || '_genox_zdb_id_foreign_key_index';
+
+        execute 'alter index mutant_fast_search_data_zdb_id_foreign_key_index
+            rename to ' || mutant_fast_search_rename_to || '_data_zdb_id_foreign_key_index';
+     END IF;
+
+
 
      -- let errorHint = "rename table ";
       alter table  mutant_fast_search_new rename to mutant_fast_search;
