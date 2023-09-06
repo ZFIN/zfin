@@ -24,12 +24,12 @@ import javax.persistence.*;
 @Setter
 @Getter
 @Entity
-@Table(name = "UI.PUBLICATION_EXPRESSION_DISPLAY")
+@Table(name = "ui.publication_expression_display")
 public class ExpressionTableRow implements ZdbID {
 
     @Id
     @JsonView(View.ExpressionPublicationUI.class)
-    @SequenceGenerator(name="seq-gen-expression",sequenceName="publication_expression_display_seq", initialValue=1, allocationSize=1)
+    @SequenceGenerator(name = "seq-gen-expression", sequenceName = "publication_expression_display_seq", initialValue = 1, allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen-expression")
     @Column(name = "ped_id", nullable = false)
     private long id;
@@ -91,6 +91,14 @@ public class ExpressionTableRow implements ZdbID {
     private PostComposedEntity entity;
 
     @JsonView(View.ExpressionPublicationUI.class)
+    @Column(name = "ped_anatomy_display")
+    private String anatomyDisplay;
+
+    @JsonView(View.ExpressionPublicationUI.class)
+    @Column(name = "ped_experiment_display")
+    private String experimentDisplay;
+
+    @JsonView(View.ExpressionPublicationUI.class)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ped_assay_id")
     private ExpressionAssay assay;
@@ -124,7 +132,13 @@ public class ExpressionTableRow implements ZdbID {
         setEnd(expressionResult.getEndStage());
         setIsExpressionFound(expressionResult.isExpressionFound());
         setSuperterm(expressionResult.getSuperTerm());
-        setSubterm(expressionResult.getSubTerm());
+        if (expressionResult.getSubTerm() != null) {
+            setSubterm(expressionResult.getSubTerm());
+            setAnatomyDisplay(expressionResult.getSubTerm().getTermName() + " " + expressionResult.getSuperTerm().getTermName());
+        } else {
+            setAnatomyDisplay(expressionResult.getSuperTerm().getTermName());
+        }
+        setExperimentDisplay(expressionExperiment.getFishExperiment().getExperiment().getDisplayAllConditions());
         if (!expressionResult.isExpressionFound()) {
             setQualifier("Not Detected");
         }

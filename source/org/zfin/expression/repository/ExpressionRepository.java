@@ -477,7 +477,7 @@ public interface ExpressionRepository {
     ArrayList<Publication> getHTPPubs(String datasetId);
 
     ArrayList<String> getCategoryTags(String datasetId);
-    ArrayList<HTPDatasetSampleDetail> getSampleDetail(HTPDatasetSample sample);
+    List<HTPDatasetSampleDetail> getSampleDetail(HTPDatasetSample sample);
 
     List<ExpressionResult> getAllExpressionResults();
 
