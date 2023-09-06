@@ -45,7 +45,6 @@ begin
    
 
      -- let errorHint = "drop mutant_fast_search table ";
-      drop table mutant_fast_search;
      IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'mutant_fast_search' AND table_schema = 'public') THEN
          -- Set the new table name with the current timestamp
          mutant_fast_search_rename_to := 'mutant_fast_search_old_' || to_char(now(), 'YYYY_MM_DD_HH24_MI_SS_MS');
