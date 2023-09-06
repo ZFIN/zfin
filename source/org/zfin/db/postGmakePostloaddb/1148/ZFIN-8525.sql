@@ -2,7 +2,7 @@
 --changeset cmpich:ZFIN-8525.sql
 
 
-create temp table pubs_temp
+create temp table IF NOT EXISTS pubs_temp
 (
     zdb_id     text,
     cur_zdb_id text
