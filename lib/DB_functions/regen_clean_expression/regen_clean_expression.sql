@@ -105,7 +105,11 @@ DECLARE clean_expression_fast_search_rename_to text;
  
     IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'clean_expression_fast_search' AND table_schema = 'public') THEN
         -- Set the new table name with the current timestamp
-        clean_expression_fast_search_rename_to := 'clean_expression_fast_search_old_' || to_char(now(), 'YYYY_MM_DD_HH24_MI_SS_MS');
+        clean_expression_fast_search_rename_to := 'clean_expression_fast_search_old_' || to_char(now(), 'YYMMDDHH24MI');
+
+        -- append 4 random characters
+        clean_expression_fast_search_rename_to := clean_expression_fast_search_rename_to || '_' || substring(md5(random()::text), 1, 4);
+
 
         -- Use EXECUTE to run dynamic SQL
         EXECUTE 'ALTER TABLE clean_expression_fast_search RENAME TO ' || clean_expression_fast_search_rename_to;
