@@ -17,8 +17,6 @@ public class UniProtRoughTaxonFilter {
     private final BufferedReader delegate;
     private File tempFile;
 
-    private LinkedList<String> lineBuffer = new LinkedList<>();
-
     public UniProtRoughTaxonFilter(Reader in) {
         delegate = new BufferedReader(in);
     }

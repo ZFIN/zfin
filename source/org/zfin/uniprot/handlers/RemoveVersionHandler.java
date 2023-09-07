@@ -1,14 +1,12 @@
 package org.zfin.uniprot.handlers;
 
 import org.biojavax.*;
-import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.ontology.ComparableTerm;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
 import org.zfin.uniprot.datfiles.UniProtFormatZFIN;
 import org.zfin.uniprot.UniProtLoadAction;
 import org.zfin.uniprot.UniProtLoadContext;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,7 +31,6 @@ public class RemoveVersionHandler implements UniProtLoadHandler {
                     String refSeqAccessionWithoutVersion = refSeqAccession.replaceAll("\\.\\d+$", "");
 
                     //do the same thing for the noteset which is where additional accessions are stored
-                    Set<Note> noteset = xref.getNoteSet();
                     setAccession(xref, refSeqAccessionWithoutVersion);
                     transformCrossRefNoteSetByTerm(xref, (ComparableTerm) UniProtFormatZFIN.Terms.getAdditionalAccessionTerm(),
                             s -> s.replaceAll("\\.\\d+$", ""));

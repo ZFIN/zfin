@@ -35,12 +35,12 @@ import static org.zfin.uniprot.UniProtTools.getArgOrEnvironmentVar;
  */
 @Log4j
 public class UniProtReleaseDiffTask extends AbstractScriptWrapper {
-    private String inputFilenameSet1;
-    private String inputFilenameSet2;
-    private String outputFilename;
+    private final String inputFilenameSet1;
+    private final String inputFilenameSet2;
+    private final String outputFilename;
     private Path tempDirectory;
 
-    private String keepTempFilesIn = null;
+    private String keepTempFilesIn;
 
     public UniProtReleaseDiffTask(String inputFilenameSet1, String inputFilenameSet2, String outputFilename, String keepTempFiles) {
         this.inputFilenameSet1 = inputFilenameSet1;
@@ -143,12 +143,12 @@ public class UniProtReleaseDiffTask extends AbstractScriptWrapper {
     }
 
     public static Path combineAndFilterInputPathSet(List<Path> inputFiles, Path outputFile) throws IOException {
-        return combineAndFilterInputFileSet(inputFiles.stream().map(path -> path.toFile()).toList(), outputFile);
+        return combineAndFilterInputFileSet(inputFiles.stream().map(Path::toFile).toList(), outputFile);
     }
 
     public static Path combineAndFilterInputFileSet(List<File> inputFiles, Path outputFile) throws IOException {
         //for each of the input files, check if they are gzipped or not and create appropriate readers
-        List<BufferedReader> inputFileReaderList = inputFiles.stream().map(file -> getReaderForFile(file)).toList();
+        List<BufferedReader> inputFileReaderList = inputFiles.stream().map(UniProtReleaseDiffTask::getReaderForFile).toList();
 
         FileOutputStream fileOutputStream = new FileOutputStream(outputFile.toFile());
 
@@ -167,7 +167,7 @@ public class UniProtReleaseDiffTask extends AbstractScriptWrapper {
 
     public static Path combineAndFilterInputFileSet(String inputFileNames, Path outputFile) throws IOException {
         //create a set of input files from the input file set 1 based on comma separated list
-        log.debug("Filtering file(s): " + inputFileNames.join(","));
+        log.debug("Filtering file(s): " + String.join(",", inputFileNames));
 
         List<File> inputFiles = getInputFiles(inputFileNames);
         return combineAndFilterInputFileSet(inputFiles, outputFile);

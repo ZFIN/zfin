@@ -1,6 +1,5 @@
 package org.zfin.uniprot.dto;
 
-import org.biojavax.bio.seq.RichSequence;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
 import org.zfin.uniprot.datfiles.DatFileWriter;
 

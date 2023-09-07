@@ -90,7 +90,7 @@ public class ReportLostUniProtsHandler implements UniProtLoadHandler {
                         .getUniprotDbLinks()
                         .get(lostUniProt.getAccession())
                         .stream()
-                        .map(seq -> seq.getDataZdbID())
+                        .map(DBLinkSlimDTO::getDataZdbID)
                         .collect(Collectors.toSet()));
 
                 for(String gene: affectedGenes) {

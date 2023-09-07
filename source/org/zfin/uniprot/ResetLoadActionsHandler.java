@@ -3,7 +3,6 @@ package org.zfin.uniprot;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
 import org.zfin.uniprot.handlers.UniProtLoadHandler;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 

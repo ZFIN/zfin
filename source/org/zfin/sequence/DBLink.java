@@ -19,7 +19,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Setter
 @Getter
@@ -268,9 +267,9 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
                 return true;
             }
 
-            if (dbLink.getAccessionNumber().equals(dbLink.getAccessionNumber())
+            if (getAccessionNumber().equals(dbLink.getAccessionNumber())
                     &&
-                    dbLink.getReferenceDatabase().equals(dbLink.getReferenceDatabase())
+                    getReferenceDatabase().equals(dbLink.getReferenceDatabase())
             ) {
                 return true;
             }
