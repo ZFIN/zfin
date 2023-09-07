@@ -28,9 +28,9 @@ import static org.zfin.uniprot.datfiles.DatFileWriter.getRichStreamWriterForUnip
  */
 @Log4j2
 public class UniProtFilterTask extends AbstractScriptWrapper {
-    private BufferedReader inputFileReader = null;
+    private BufferedReader inputFileReader;
     private BufferedReader filteredInputFileReader = null;
-    private FileOutputStream outputFileWriter = null;
+    private FileOutputStream outputFileWriter;
 
     private UniProtRoughTaxonFilter roughTaxonFilter = null;
 
@@ -63,7 +63,7 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
         filteredInputFileReader = roughTaxonFilter.getFilteredReader();
     }
 
-    private List<RichSequenceAdapter> readAndFilterSequencesFromStream() throws BioException, FileNotFoundException {
+    private List<RichSequenceAdapter> readAndFilterSequencesFromStream() throws BioException {
         RichStreamReaderAdapter richStreamReader = getRichStreamReaderForUniprotDatFile(filteredInputFileReader, true);
 
         List<String> xrefsToKeep = List.of("ZFIN", "GeneID", "RefSeq", "EMBL", "GO", "InterPro", "Pfam", "PROSITE", "PDB", "Ensembl");

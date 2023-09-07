@@ -3,16 +3,12 @@ package org.zfin.uniprot;
 import org.biojavax.CrossRef;
 import org.biojavax.Note;
 import org.biojavax.ontology.ComparableTerm;
-import org.zfin.infrastructure.RecordAttribution;
-import org.zfin.sequence.DBLink;
 import org.zfin.uniprot.dto.DBLinkSlimDTO;
 
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Function;
 
-import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
-import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 
 public class UniProtTools {
     public static final String MANUAL_CURATION_OF_PROTEIN_IDS = "ZDB-PUB-170131-9";
@@ -21,7 +17,6 @@ public class UniProtTools {
     public static final String CURATION_OF_PROTEIN_DATABASE_LINKS = "ZDB-PUB-020723-2";
     public static final String AUTOMATED_CURATION_OF_UNIPROT_DATABASE_LINKS = "ZDB-PUB-230615-71";
 
-    public static final String[] NON_LOAD_PUBS = new String[]{MANUAL_CURATION_OF_PROTEIN_IDS, UNIPROT_ID_LOAD_FROM_ENSEMBL, MANUAL_CURATION_OF_UNIPROT_IDS};
     public static final String[] LOAD_PUBS = new String[]{CURATION_OF_PROTEIN_DATABASE_LINKS, AUTOMATED_CURATION_OF_UNIPROT_DATABASE_LINKS};
 
 
@@ -94,7 +89,7 @@ public class UniProtTools {
         if (attributionPubIDs == null) {
             return false;
         }
-        return attributionPubIDs.stream().anyMatch(pubID -> isNonLoadPublication(pubID));
+        return attributionPubIDs.stream().anyMatch(UniProtTools::isNonLoadPublication);
     }
 
     public static boolean isAnyGeneAccessionRelationshipSupportedByNonLoadPublication(String accession,

@@ -2,6 +2,7 @@ package org.zfin.uniprot.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.zfin.uniprot.UniProtTools;
 
 import java.util.List;
 
@@ -16,16 +17,6 @@ public class DBLinkSlimDTO {
     private String dbName;
     private List<String> publicationIDs;
 
-    public String debugString() {
-        return "DBLinkSlimDTO{" +
-                "accession='" + accession + '\'' +
-                ", dataZdbID='" + dataZdbID + '\'' +
-                ", markerAbbreviation='" + markerAbbreviation + '\'' +
-                ", dbName='" + dbName + '\'' +
-                ", publicationIDs='" + getPublicationIDsAsString() + '\'' +
-                '}';
-    }
-
     private String getPublicationIDsAsString() {
         if (publicationIDs == null) {
             return "";
@@ -37,6 +28,6 @@ public class DBLinkSlimDTO {
         if (publicationIDs == null) {
             return false;
         }
-        return publicationIDs.stream().anyMatch(id -> isNonLoadPublication(id));
+        return publicationIDs.stream().anyMatch(UniProtTools::isNonLoadPublication);
     }
 }

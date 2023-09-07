@@ -7,7 +7,6 @@ import org.zfin.uniprot.adapter.RichStreamReaderAdapter;
 import org.zfin.uniprot.datfiles.DatFileWriter;
 import org.zfin.uniprot.handlers.RemoveVersionHandler;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -16,7 +15,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.zfin.uniprot.UniProtTools.isAnyGeneAccessionRelationshipSupportedByNonLoadPublication;
 import static org.zfin.uniprot.datfiles.DatFileReader.getRichStreamReaderForUniprotDatString;
 import static org.zfin.uniprot.datfiles.DatFileReader.getMapOfAccessionsToSequencesFromStreamReader;
 
@@ -71,7 +69,7 @@ public class UniProtParseTest extends AbstractDatabaseTest {
                 DR   RefSeq; XP_001343958.4; XM_001343922.7.
                 PE   3: Inferred from homology;
                 KW   Metal-binding {ECO:0000256|ARBA:ARBA00022723}; Reference proteome {ECO:0000313|Proteomes:UP000000437}; Zinc {ECO:0000256|ARBA:ARBA00022833}.
-                //                
+                //
                 """;
     }
 
@@ -95,7 +93,7 @@ public class UniProtParseTest extends AbstractDatabaseTest {
                 DR   RefSeq; XP_001343958; -.
                 PE   3: Inferred from homology;
                 KW   Metal-binding {ECO:0000256|ARBA:ARBA00022723}; Reference proteome {ECO:0000313|Proteomes:UP000000437}; Zinc {ECO:0000256|ARBA:ARBA00022833}.
-                //                
+                //
                 """;
     }
 

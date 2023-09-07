@@ -3,12 +3,8 @@ package org.zfin.uniprot;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.ObjectUtils;
-import org.biojavax.bio.seq.RichSequence;
-import org.zfin.ExternalNote;
 
 import java.util.*;
-
-import static java.lang.CharSequence.compare;
 
 @Getter
 @Setter
@@ -44,7 +40,7 @@ public class UniProtLoadAction implements Comparable<UniProtLoadAction> {
         LOST_UNIPROT_PREV_MATCH_BY_GB("Previously Matched by GenBank: No RefSeq Match"),
         LOST_UNIPROT_PREV_MATCH_BY_GP("Previously Matched by GenPept: No RefSeq Match");
 
-        private String value;
+        private final String value;
 
         MatchTitle(String s) {
             this.value = s;
@@ -56,23 +52,20 @@ public class UniProtLoadAction implements Comparable<UniProtLoadAction> {
     }
 
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("UniProtLoadAction: ");
-        sb.append("accession: ").append(accession);
-        sb.append(" title: ").append(title);
-        sb.append(" geneZdbID: ").append(geneZdbID);
-        sb.append(" details: ").append(details);
-        sb.append(" type: ").append(type);
-        sb.append(" length: ").append(length);
-        sb.append(" links: ").append(links);
-        return sb.toString();
+        return "UniProtLoadAction: " +
+                "accession: " + accession +
+                " title: " + title +
+                " geneZdbID: " + geneZdbID +
+                " details: " + details +
+                " type: " + type +
+                " length: " + length +
+                " links: " + links;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof UniProtLoadAction)) return false;
-        UniProtLoadAction that = (UniProtLoadAction) o;
+        if (!(o instanceof UniProtLoadAction that)) return false;
         return compareTo(that) == 0;
     }
 

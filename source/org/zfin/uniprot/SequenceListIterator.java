@@ -1,6 +1,5 @@
 package org.zfin.uniprot;
 
-import org.biojava.bio.BioException;
 import org.biojava.bio.seq.Sequence;
 import org.biojava.bio.seq.SequenceIterator;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;

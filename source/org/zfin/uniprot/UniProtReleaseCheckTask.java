@@ -22,7 +22,6 @@ import java.util.stream.Stream;
 import static org.zfin.datatransfer.service.DownloadService.*;
 import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
-import static org.zfin.uniprot.UniProtReleaseDiffTask.combineAndFilterInputFileSet;
 import static org.zfin.uniprot.UniProtReleaseDiffTask.combineAndFilterInputPathSet;
 
 /**
@@ -145,10 +144,9 @@ public class UniProtReleaseCheckTask extends AbstractScriptWrapper {
     }
 
     private String generateReleaseNotes(Date releaseDate) {
-        String notes = "Release " + releaseDate + " downloaded from: \n" +
+        return "Release " + releaseDate + " downloaded from: \n" +
                 downloadUrlForTremblFile + " ( " + downloadedFile1.toFile().length() + " bytes ) and \n" +
                 downloadUrlForSprotFile + " ( " + downloadedFile2.toFile().length() + " bytes )";
-        return notes;
     }
 
     private static void recordReleaseProcessedInDB(Date releaseDate, Path relativeDownloadDirectory, String md5, long size, String notes) {

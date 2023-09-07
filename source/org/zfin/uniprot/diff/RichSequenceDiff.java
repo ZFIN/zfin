@@ -1,6 +1,5 @@
 package org.zfin.uniprot.diff;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.Setter;
 import org.biojavax.CrossRef;
@@ -10,7 +9,6 @@ import java.util.stream.Collectors;
 
 import org.biojavax.Note;
 import org.biojavax.RankedCrossRef;
-import org.biojavax.bio.seq.RichSequence;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
 
 
@@ -47,8 +45,7 @@ public class RichSequenceDiff {
     }
 
     public static RichSequenceDiff create(RichSequenceAdapter oldSequence, RichSequenceAdapter newSequence) {
-        RichSequenceDiff diff = new RichSequenceDiff(oldSequence, newSequence);
-        return diff;
+        return new RichSequenceDiff(oldSequence, newSequence);
     }
 
     private void populateDiffs() {

@@ -1,7 +1,6 @@
 package org.zfin.uniprot.handlers;
 
 import lombok.extern.log4j.Log4j2;
-import org.biojavax.bio.seq.RichSequence;
 import org.zfin.uniprot.UniProtLoadAction;
 import org.zfin.uniprot.UniProtLoadContext;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
@@ -35,7 +34,7 @@ public class IgnoreSpecificAccessionsHandler implements UniProtLoadHandler {
             return;
         }
 
-        if (accessionsToInclude == null || accessionsToInclude.isEmpty()) {
+        if (accessionsToInclude.isEmpty()) {
             log.error("File " + inclusionsFilename + " to use as a list of accessions to include was empty. Skipping.");
             return;
         }
