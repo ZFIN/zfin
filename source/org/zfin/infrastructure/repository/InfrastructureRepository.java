@@ -492,6 +492,10 @@ public interface InfrastructureRepository {
     UniProtRelease getUniProtReleaseByDate(Date date);
 
     void insertUniProtRelease(UniProtRelease release);
+
+    void updateUniProtRelease(UniProtRelease release);
+
+    void upsertUniProtRelease(UniProtRelease release);
 }
 
 
