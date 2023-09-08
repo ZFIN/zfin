@@ -12,6 +12,7 @@ import java.io.*;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.zfin.uniprot.UniProtTools.getRichStreamReaderForUniprotDatFile;
 import static org.zfin.uniprot.UniProtTools.getRichStreamWriterForUniprotDatFile;
@@ -39,17 +40,22 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
     }
 
     public void runTask() throws IOException, BioException, SQLException {
+        List<RichSequence> outputEntries = getFilteredRichSequences();
+
+        if (outputFileWriter != null) {
+            System.out.println("Starting to write file: ");
+            writeOutputFile(outputEntries, outputFileWriter);
+        }
+    }
+
+    private List<RichSequence> getFilteredRichSequences() throws IOException, BioException {
         initIO();
         initAll();
 
-        RichStreamReader sr = getRichStreamReaderForUniprotDatFile(filteredInputFileReader, true);
-
         System.out.println("Starting to read file: " );
-        List<RichSequence> outputEntries = readAndFilterSequencesFromStream(sr);
+        List<RichSequence> outputEntries = readAndFilterSequencesFromStream();
         System.out.println("Finished reading file: " + outputEntries.size() + " entries read.");
-
-        System.out.println("Starting to write file: " );
-        writeOutputFile(outputEntries, outputFileWriter);
+        return outputEntries;
     }
 
     private void initIO() throws IOException {
@@ -57,7 +63,9 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
         filteredInputFileReader = roughTaxonFilter.getFilteredReader();
     }
 
-    private List<RichSequence> readAndFilterSequencesFromStream(RichStreamReader richStreamReader) throws BioException {
+    private List<RichSequence> readAndFilterSequencesFromStream() throws BioException, FileNotFoundException {
+        RichStreamReader richStreamReader = getRichStreamReaderForUniprotDatFile(filteredInputFileReader, true);
+
         List<String> xrefsToKeep = List.of("ZFIN", "GeneID", "RefSeq", "EMBL", "GO", "InterPro", "Pfam", "PROSITE", "PDB", "Ensembl");
         RichSequence lastSequence = null;
         int count = 0;
@@ -107,7 +115,14 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
 
+    public static List<RichSequence> readAllZebrafishEntriesFromSource(BufferedReader reader) throws BioException, IOException {
+        UniProtFilterTask filterTask = new UniProtFilterTask(reader, null);
+        return filterTask.getFilteredRichSequences();
+    }
+    public static Map<String, RichSequence> readAllZebrafishEntriesFromSourceIntoMap(BufferedReader reader) throws BioException, IOException {
+        return readAllZebrafishEntriesFromSource(reader).stream().collect(Collectors.toMap(RichSequence::getAccession, entry -> entry));
     }
 
 }

@@ -1,17 +1,17 @@
 package org.zfin.uniprot;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.biojava.bio.BioException;
 import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.bio.seq.io.RichStreamReader;
-import org.biojavax.bio.seq.io.RichStreamWriter;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.uniprot.diff.RichSequenceDiff;
 import org.zfin.uniprot.diff.UniProtDiffSet;
-import org.zfin.uniprot.diff.UniProtDiffSetSerializer;
+import org.zfin.uniprot.dto.UniProtDiffSetDTO;
 
 import java.io.*;
 import java.sql.SQLException;
@@ -88,7 +88,10 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
         populateDiffSetForChangedRecords();
         populateDates();
 
-        outputWriter.println(UniProtDiffSetSerializer.serializeToString(diffSet));
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(UniProtDiffSetDTO.from(diffSet));
+
+        outputWriter.println(json);
         outputWriter.close();
 
         writeOutputReportFile();
