@@ -39,12 +39,19 @@ public class UniProtTools {
         try {
             return getArgOrEnvironmentVar(args, index, envVar);
         } catch (IllegalArgumentException e) {
-            return defaultValue;
+            if (defaultValue == null) {
+                throw e;
+            } else {
+                return defaultValue;
+            }
         }
     }
 
     public static String getArgOrEnvironmentVar(String[] args, int index, String envVar) throws IllegalArgumentException {
         if (args.length > index && args[index] != null) {
+            if ("null".equals(args[index])) {
+                throw new IllegalArgumentException("Empty required argument: " + envVar + ". Please provide it as an environment variable or as argument: " + (index + 1) + ". ");
+            }
             return args[index];
         }
 

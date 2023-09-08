@@ -490,6 +490,7 @@ public interface InfrastructureRepository {
     void deletePubProcessingInfo(String zdbID);
 
     UniProtRelease getUniProtReleaseByDate(Date date);
+    UniProtRelease getLatestUnprocessedUniProtRelease();
 
     void insertUniProtRelease(UniProtRelease release);
 

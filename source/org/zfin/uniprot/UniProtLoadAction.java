@@ -19,6 +19,8 @@ public class UniProtLoadAction implements Comparable<UniProtLoadAction> {
     private String details;
     private Type type;
 
+    private int length;
+
     private Set<UniProtLoadLink> links = new TreeSet<>();
 
     public UniProtLoadAction() {
@@ -61,6 +63,7 @@ public class UniProtLoadAction implements Comparable<UniProtLoadAction> {
         sb.append(" geneZdbID: ").append(geneZdbID);
         sb.append(" details: ").append(details);
         sb.append(" type: ").append(type);
+        sb.append(" length: ").append(length);
         sb.append(" links: ").append(links);
         return sb.toString();
     }

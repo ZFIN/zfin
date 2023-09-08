@@ -34,9 +34,9 @@ public class UniProtReleaseCheckTask extends AbstractScriptWrapper {
 
     private static final String COMBINED_FILE_NAME = "pre_zfin.dat";
 
-    private String downloadUrlForTremblFile = "http://127.0.0.1:8080/uniprot_trembl_vertebrates.dat.gz";
-    private String downloadUrlForSprotFile = "http://127.0.0.1:8080/uniprot_sprot_vertebrates.dat.gz";
-    private String downloadDestinationForUniProtReleases = "/opt/research/zarchive/load_files/UniProt-archive";
+    private String downloadUrlForTremblFile;
+    private String downloadUrlForSprotFile;
+    private String downloadDestinationForUniProtReleases;
 
     private Path downloadedFile1;
     private Path downloadedFile2;
