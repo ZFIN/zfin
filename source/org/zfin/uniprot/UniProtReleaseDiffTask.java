@@ -75,11 +75,11 @@ public class UniProtReleaseDiffTask extends AbstractScriptWrapper {
 
         //handle input file set 1
         //filter the input files using a filter object (FilterTask) and concatenate to create a single filtered file
-        Path filteredFile1 = combineAndFilterInputFileSet(inputFilenameSet1, "filtered_set1.dat");
+        Path filteredFile1 = combineAndFilterInputFileSet(inputFilenameSet1, tempDirectory.resolve("filtered_set1.dat"));
         System.out.println("Filtered file 1: " + filteredFile1.toAbsolutePath());
 
         //handle input file set 2 the same way
-        Path filteredFile2 = combineAndFilterInputFileSet(inputFilenameSet2, "filtered_set2.dat");
+        Path filteredFile2 = combineAndFilterInputFileSet(inputFilenameSet2, tempDirectory.resolve("filtered_set2.dat"));
         System.out.println("Filtered file 2: " + filteredFile2.toAbsolutePath());
 
         //pass the 2 filtered files to the diff task (UniProtCompareTask) and get the result
@@ -125,7 +125,7 @@ public class UniProtReleaseDiffTask extends AbstractScriptWrapper {
     }
 
 
-    private List<File> getInputFiles(String filePath) {
+    private static List<File> getInputFiles(String filePath) {
         List<File> fileList = new ArrayList<>();
 
         String[] filenames = filePath.split(",");
@@ -142,16 +142,15 @@ public class UniProtReleaseDiffTask extends AbstractScriptWrapper {
         return fileList;
     }
 
-    private Path combineAndFilterInputFileSet(String inputFileNames, String outputFilename) throws IOException {
-        //create a set of input files from the input file set 1 based on comma separated list
-        List<File> inputFiles = getInputFiles(inputFileNames);
-        System.out.println("Filtering file(s): " + inputFileNames.join(","));
+    public static Path combineAndFilterInputPathSet(List<Path> inputFiles, Path outputFile) throws IOException {
+        return combineAndFilterInputFileSet(inputFiles.stream().map(path -> path.toFile()).toList(), outputFile);
+    }
 
+    public static Path combineAndFilterInputFileSet(List<File> inputFiles, Path outputFile) throws IOException {
         //for each of the input files, check if they are gzipped or not and create appropriate readers
         List<BufferedReader> inputFileReaderList = inputFiles.stream().map(file -> getReaderForFile(file)).toList();
 
-        Path outputFilePath = tempDirectory.resolve(outputFilename);
-        FileOutputStream fileOutputStream = new FileOutputStream(outputFilePath.toFile());
+        FileOutputStream fileOutputStream = new FileOutputStream(outputFile.toFile());
 
         try {
             for(BufferedReader inputReader : inputFileReaderList) {
@@ -163,10 +162,18 @@ public class UniProtReleaseDiffTask extends AbstractScriptWrapper {
             System.exit(1);
         }
 
-        return outputFilePath;
+        return outputFile;
     }
 
-    private BufferedReader getReaderForFile(File file) {
+    public static Path combineAndFilterInputFileSet(String inputFileNames, Path outputFile) throws IOException {
+        //create a set of input files from the input file set 1 based on comma separated list
+        log.debug("Filtering file(s): " + inputFileNames.join(","));
+
+        List<File> inputFiles = getInputFiles(inputFileNames);
+        return combineAndFilterInputFileSet(inputFiles, outputFile);
+    }
+
+    private static BufferedReader getReaderForFile(File file) {
         try {
             InputStream fileStream = new FileInputStream(file);
             InputStream input;
