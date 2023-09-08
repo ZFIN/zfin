@@ -40,6 +40,7 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
     private final String outputJsonName;
     private final String outputReportName;
     private final boolean commitChanges;
+    private final String contextOutputFile;
     private UniProtLoadContext context;
 
     private UniProtRelease release;
@@ -55,15 +56,17 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
      *  2. The output JSON file name (if omitted or "null", the default is /tmp/uniprot_load_<timestamp>.json)
      *  3. The output report file name (if omitted or "null", the default is /tmp/uniprot_load_<timestamp>.html)
      *  4. Whether to commit the changes to the database -> false = dry run (if omitted or "null", the default is false),
+     *  5. The output file name to record this load's "context" (aka the current state of the DB). If omitted or "null", the default is to not record it.
      *
      *  The arguments can also be passed as environment variables:
      *  1. UNIPROT_INPUT_FILE
      *  2. UNIPROT_OUTPUT_JSON_FILE
      *  3. UNIPROT_OUTPUT_REPORT_FILE
      *  4. UNIPROT_COMMIT_CHANGES
+     *  5. UNIPROT_CONTEXT_FILE
      *
      * @param args Command line arguments
-     * @throws Exception
+     *
      */
     public static void main(String[] args) throws Exception {
 
@@ -72,8 +75,9 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         String outputJsonName = getArgOrEnvironmentVar(args, 1, "UNIPROT_OUTPUT_JSON_FILE", calculateDefaultOutputFileName(startTime, "json"));
         String outputReportName = getArgOrEnvironmentVar(args, 2, "UNIPROT_OUTPUT_REPORT_FILE", calculateDefaultOutputFileName(startTime, "report.html"));
         String commitChanges = getArgOrEnvironmentVar(args, 3, "UNIPROT_COMMIT_CHANGES", "false");
+        String contextOutputFile = getArgOrEnvironmentVar(args, 4, "UNIPROT_CONTEXT_FILE", "");
 
-        UniProtLoadTask task = new UniProtLoadTask(inputFileName, outputJsonName, outputReportName, "true".equals(commitChanges));
+        UniProtLoadTask task = new UniProtLoadTask(inputFileName, outputJsonName, outputReportName, "true".equals(commitChanges), contextOutputFile);
         log.debug("Starting UniProtLoadTask for file " + inputFileName + " with output files " + outputJsonName + " and " + outputReportName + ".");
         log.debug("Commit changes: " + commitChanges + ".");
         task.runTask();
@@ -83,11 +87,12 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         return Optional.ofNullable(getInfrastructureRepository().getLatestUnprocessedUniProtRelease());
     }
 
-    public UniProtLoadTask(String inputFileName, String outputJsonName, String outputReportName, boolean commitChanges) {
+    public UniProtLoadTask(String inputFileName, String outputJsonName, String outputReportName, boolean commitChanges, String contextOutputFile) {
         this.inputFileName = inputFileName;
         this.outputJsonName = outputJsonName;
         this.outputReportName = outputReportName;
         this.commitChanges = commitChanges;
+        this.contextOutputFile = contextOutputFile;
     }
 
     public void runTask() throws IOException, BioException, SQLException {
@@ -113,10 +118,23 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         UniProtLoadService.processActions(actions, release);
     }
 
-    private void initialize() {
+    public void initialize() {
         initAll();
         setInputFileName();
         calculateContext();
+        writeContext();
+    }
+
+    private void writeContext() {
+        if (contextOutputFile != null && !contextOutputFile.isEmpty()) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                log.info("Writing context file: " + contextOutputFile + ".");
+                objectMapper.writeValue(new File(contextOutputFile), context);
+            } catch (IOException e) {
+                log.error("Error writing context file " + contextOutputFile + ": " + e.getMessage(), e);
+            }
+        }
     }
 
     private void setInputFileName() {
@@ -146,8 +164,6 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         pipeline.addHandler(new IgnoreAccessionsAlreadyInDatabaseHandler());
         pipeline.addHandler(new MatchOnRefSeqHandler());
         pipeline.addHandler(new ReportLegacyProblemFilesHandler());
-        pipeline.addHandler(new ReportDuplicateAccessionsHandler());
-
 
         Set<UniProtLoadAction> actions = pipeline.execute();
         return actions;
