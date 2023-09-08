@@ -24,6 +24,10 @@ public class UniProtRoughTaxonFilter {
         tempFile.deleteOnExit();
 
         System.out.println("Temp file : " + tempFile.getAbsolutePath());
+        long lineCount = 0;
+
+        long startTime = System.currentTimeMillis();
+        long notifyInterval = 30_000;
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
             String line;
@@ -37,6 +41,17 @@ public class UniProtRoughTaxonFilter {
                     record.setLength(0); // Reset the record
                 } else {
                     record.append(line).append("\n");
+                }
+
+                //notify of progress
+                lineCount++;
+                if (lineCount % 10_000_000 == 0) {
+                    if (System.currentTimeMillis() - startTime > notifyInterval) {
+                        startTime = System.currentTimeMillis();
+
+                        String prettyFormat = String.format("%,d", lineCount);
+                        System.out.println("Line count: " + prettyFormat);
+                    }
                 }
             }
             // Handle the last record if it wasn't followed by a separator

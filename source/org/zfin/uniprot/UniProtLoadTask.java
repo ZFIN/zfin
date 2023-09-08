@@ -66,23 +66,10 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         pipeline.addHandler(new IgnoreAccessionsAlreadyInDatabaseHandler());
         pipeline.addHandler(new MatchOnRefSeqHandler());
 
-        //TODO: remove this handler
-        pipeline.addHandler(new UniqueActionsHandler());
         Set<UniProtLoadAction> actions = pipeline.execute();
 
         //do something with the actions
-        writeActions(actions);
         writeOutputReportFile(actions);
-    }
-
-    private void writeActions(Set<UniProtLoadAction> actions) {
-        String tempFileName = "/tmp/uniprot_load_report_" + System.currentTimeMillis() + ".json";
-        System.out.println("report tempfile: " + tempFileName);
-        try {
-            FileUtils.writeStringToFile(new File(tempFileName), actionsToJson(actions));
-        } catch (IOException e) {
-            log.error("Error writing report file: " + tempFileName, e);
-        }
     }
 
     private String actionsToJson(Set<UniProtLoadAction> actions) {

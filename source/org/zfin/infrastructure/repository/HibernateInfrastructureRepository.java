@@ -41,6 +41,7 @@ import org.zfin.profile.Person;
 import org.zfin.profile.service.BeanFieldUpdate;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
+import org.zfin.uniprot.history.UniProtRelease;
 import org.zfin.util.DatabaseJdbcStatement;
 import org.zfin.util.DateUtil;
 
@@ -2021,6 +2022,25 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         query.executeUpdate();
 
     }
+
+    @Override
+    public UniProtRelease getUniProtReleaseByDate(Date date) {
+        Session session = currentSession();
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+
+        CriteriaQuery<UniProtRelease> query = criteriaBuilder.createQuery(UniProtRelease.class);
+        Root<UniProtRelease> uniProtRelease = query.from(UniProtRelease.class);
+        query.where(criteriaBuilder.equal(uniProtRelease.get("date"), date));
+
+        return session.createQuery(query).getResultList().stream().findFirst().orElse(null);
+    }
+
+    @Override
+    public void insertUniProtRelease(UniProtRelease release) {
+        currentSession().save(release);
+    }
+
+
 }
 
 
