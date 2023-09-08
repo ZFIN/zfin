@@ -11,8 +11,8 @@ import org.zfin.uniprot.dto.DBLinkSlimDTO;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.zfin.uniprot.UniProtLoadAction.MatchTitle.LOST_UNIPROT_PREV_MATCH_BY_GB;
-import static org.zfin.uniprot.UniProtLoadAction.MatchTitle.LOST_UNIPROT_PREV_MATCH_BY_GP;
+import static org.zfin.uniprot.UniProtLoadAction.SubType.LOST_UNIPROT_PREV_MATCH_BY_GB;
+import static org.zfin.uniprot.UniProtLoadAction.SubType.LOST_UNIPROT_PREV_MATCH_BY_GP;
 
 /**
  * This handler creates DELETE actions that let curators know about any genes that currently have uniprot associations,
@@ -29,7 +29,7 @@ public class ReportLostUniProtsHandler implements UniProtLoadHandler {
     @Override
     public void handle(Map<String, RichSequenceAdapter> uniProtRecords, Set<UniProtLoadAction> actions, UniProtLoadContext context) {
         //actions should contain all cases where we have a match based on RefSeq
-        List<UniProtLoadAction> actionsMatchedOnRefSeq = actions.stream().filter(action -> action.getTitle().equals(UniProtLoadAction.MatchTitle.MATCH_BY_REFSEQ.getValue())).toList();
+        List<UniProtLoadAction> actionsMatchedOnRefSeq = actions.stream().filter(action -> action.getSubType().equals(UniProtLoadAction.SubType.MATCH_BY_REFSEQ)).toList();
 
         log.debug("ReportLostUniProtsHandler - Count of actions: " + actions.size());
         log.debug("ReportLostUniProtsHandler - Filtered count of actions: " + actionsMatchedOnRefSeq.size());
@@ -109,7 +109,7 @@ public class ReportLostUniProtsHandler implements UniProtLoadHandler {
             }
 
             action.setGeneZdbID(lostUniProt.getDataZdbID());
-            action.setTitle(UniProtLoadAction.MatchTitle.LOST_UNIPROT.getValue());
+            action.setSubType(UniProtLoadAction.SubType.LOST_UNIPROT);
             action.setType(UniProtLoadAction.Type.DELETE);
             action.setAccession(lostUniProt.getAccession());
             action.setDetails("This gene currently has a UniProt association, but when we run the latest\n" +
@@ -208,13 +208,13 @@ public class ReportLostUniProtsHandler implements UniProtLoadHandler {
         String gene = lostUniProt.getDataZdbID();
 
         if (genBankMap.containsKey(accession) && genBankMap.get(accession).equals(gene)) {
-            action.setTitle(LOST_UNIPROT_PREV_MATCH_BY_GB.getValue());
+            action.setSubType(LOST_UNIPROT_PREV_MATCH_BY_GB);
             action.setDetails("UniProt accession " + accession + " previously matched gene " + gene + " by GenBank.\n" + action.getDetails());
             action.setType(UniProtLoadAction.Type.INFO);
         }
 
         if (genPeptMap.containsKey(accession) && genPeptMap.get(accession).equals(gene)) {
-            action.setTitle(LOST_UNIPROT_PREV_MATCH_BY_GP.getValue());
+            action.setSubType(LOST_UNIPROT_PREV_MATCH_BY_GP);
             action.setDetails("UniProt accession " + accession + " previously matched gene " + gene + " by GenPept.\n" + action.getDetails());
             action.setType(UniProtLoadAction.Type.INFO);
         }

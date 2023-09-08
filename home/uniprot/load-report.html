@@ -2,7 +2,6 @@
 <html>
 <!-- See: https://github.com/rtaylorzfin/embedded-preact-report-template -->
 <head>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
 
     <!-- Embed the minified version of the preact library files -->
     <!--    https://esm.sh/v131/htm@3.1.1/es2022/preact/standalone.js -->
@@ -146,7 +145,7 @@
                     let counts = {};
                     const filteredItems = items.filter( item => item.type === type);
                     for(let item of filteredItems) {
-                        counts[item.title] = counts[item.title] ? counts[item.title] + 1 : 1;
+                        counts[item.subType] = counts[item.subType] ? counts[item.subType] + 1 : 1;
                     }
                     setTitleSummary(Object.keys(counts).map(type => ({type, count: counts[type]})));
                 }
@@ -172,7 +171,7 @@
             useEffect(() => {
                 if (items) {
                     let counts = {};
-                    const filteredItems = items.filter( item => item.type === type && item.title === subtype);
+                    const filteredItems = items.filter( item => item.type === type && item.subType === subtype);
                     setSubTypeItems(filteredItems);
                 }
             }, [items, type, subtype]);
@@ -209,7 +208,7 @@
                     <div><button href="#" onClick="${() => prevClick()}" className="prev">Prev</button>  <button href="#" onClick="${() => nextClick()}" className="next">Next</button></div>
                     <h3>${item.accession}</h3>
                     <p>${detailSummary(item)}</p>
-                    <h3>${item.title}</h3>
+                    <h3>${item.subType}</h3>
                     <pre>${item.details}</pre>
                     <h4>Links</h4>
                     <ul>
@@ -311,7 +310,7 @@
 
                     //find the previous item that matches subtype
                     for(let i = index - 1; i >= 0; i--) {
-                        if (reportData[i].title == subTypeName) {
+                        if (reportData[i].subType == subTypeName) {
                             setActiveDetails(reportData[i]);
                             return;
                         }
@@ -329,7 +328,7 @@
 
                 //find the next item that matches subtype
                 for(let i = index + 1; i < reportData.length; i++) {
-                    if (reportData[i].title == subTypeName) {
+                    if (reportData[i].subType == subTypeName) {
                         setActiveDetails(reportData[i]);
                         return;
                     }
@@ -370,6 +369,7 @@
                 </div>
             `;
         }
+        document.getElementById('root').innerHTML = '';
         render(html`<${App} reportData=${window.UNIPROT_REPORT}/>`, document.getElementById('root'));
     }
 
@@ -378,7 +378,12 @@
     });
 </script>
 
-<div id="root"></div>
+<div id="root">
+    <div class="error">
+        <h2>Error Loading Report</h2>
+        <p>If you are viewing this report in Jenkins, you may have to download the file first by pressing ctrl+s or cmd+s</p>
+    </div>
+</div>
 
 </body>
 

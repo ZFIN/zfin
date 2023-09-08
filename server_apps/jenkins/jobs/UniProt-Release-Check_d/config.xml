@@ -3,7 +3,7 @@
   <actions/>
   <description>Check if there is a new UniProt release based on the timestamp.
 If there is a new release, then download the UniProt files and store the filtered version (zebrafish only).
-Send alert there is a new release and if the download was successful.
+Notifications are handled by the Check-Recent-UniProt-Releases_d job.
   </description>
   <keepDependencies>false</keepDependencies>
 

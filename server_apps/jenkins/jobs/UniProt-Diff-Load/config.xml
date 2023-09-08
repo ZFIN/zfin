@@ -1,7 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description></description>
+  <description>
+    This job loads the UniProt data into the database.
+    It will only load the data if there is a new release (as captured by UniProt-Release-Check_d).
+
+  </description>
   <keepDependencies>false</keepDependencies>
 
   <properties>
@@ -9,7 +13,7 @@
       <parameterDefinitions>
         <hudson.model.BooleanParameterDefinition>
           <name>UNIPROT_COMMIT_CHANGES</name>
-          <description>Check if we want to commit the results of the load. Otherwise, it's a dry run.</description>
+          <description>Check this option to commit the results of the load. Otherwise, it's a dry run.</description>
           <defaultValue>false</defaultValue>
           <trim>true</trim>
         </hudson.model.BooleanParameterDefinition>
