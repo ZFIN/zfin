@@ -34,7 +34,16 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>touch $WORKSPACE/tempfile &amp;&amp; rm $WORKSPACE/* &amp;&amp; cd $SOURCEROOT &amp;&amp; (UNIPROT_OUTPUT_REPORT_FILE="$WORKSPACE/uniprot_load_report.html" gradle uniprotLoadTask)</command>
+      <command>
+        <![CDATA[
+        touch $WORKSPACE/tempfile
+        rm $WORKSPACE/*
+        cd $SOURCEROOT
+        export UNIPROT_OUTPUT_REPORT_FILE="$WORKSPACE/uniprot_load_report.html"
+        export UNIPROT_CONTEXT_FILE="$WORKSPACE/uniprot_context.json"
+        gradle uniprotLoadTask
+        ]]>
+      </command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>

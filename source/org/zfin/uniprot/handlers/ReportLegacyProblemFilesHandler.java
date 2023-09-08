@@ -8,6 +8,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * This handler reports the accessions that we encounter that were previously in the legacy problem files.
+ * Eventually, this class should become unnecessary.
+ */
 public class ReportLegacyProblemFilesHandler implements UniProtLoadHandler {
 
     @Override
