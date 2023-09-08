@@ -2040,6 +2040,15 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         currentSession().save(release);
     }
 
+    @Override
+    public void updateUniProtRelease(UniProtRelease release) {
+        currentSession().update(release);
+    }
+
+    @Override
+    public void upsertUniProtRelease(UniProtRelease release) {
+        currentSession().saveOrUpdate(release);
+    }
 
 }
 

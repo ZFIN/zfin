@@ -1,5 +1,8 @@
 package org.zfin.datatransfer.service;
 
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -9,11 +12,16 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketException;
 import java.net.URL;
+import java.net.URLConnection;
+import java.nio.file.Path;
 import java.text.NumberFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 /**
@@ -54,28 +62,11 @@ public class DownloadService {
      */
     protected File downloadFileFtp(File localFile, URL remoteFile, boolean useExistingFile, boolean isGzip) {
         try {
-            FTPClient ftpClient = new FTPClient();
-            ftpClient.setDataTimeout(FTP_TIMEOUT);
-            ftpClient.connect(remoteFile.getHost());
-            ftpClient.setBufferSize(BUFFER_SIZE);
-            ftpClient.login(ANONYMOUS_USERNAME, ANONYMOUS_PASSWORD);
+            FTPClient ftpClient = getFtpClient(remoteFile);
+            FTPFile ftpFile = getSingleFTPFile(remoteFile, ftpClient);
+            long remoteFileSize = ftpFile.getSize();
 
-            ftpClient.changeWorkingDirectory(remoteFile.getPath());
-
-            ftpClient.enterLocalPassiveMode();
-            FTPFile[] ftpFiles = ftpClient.listFiles(remoteFile.getPath());
-
-            if (ftpFiles.length != 1) {
-                String errorText = "Problem retrieving file from server of name: " +
-                        remoteFile.toExternalForm();
-                logger.error(errorText);
-                throw new RuntimeException(errorText);
-            }
-
-            FTPFile ftpFile = ftpFiles[0];
-
-            long remoteFileSize = ftpFile.getSize(); // this file is gzipped
-            long localFileSize = localFile.length(); // ths file is not
+            long localFileSize = localFile.length(); // ths file is not gzipped
 
             // do we have a local file?
             logger.info("downloaded file should be here: " + localFile.getAbsolutePath());
@@ -217,4 +208,156 @@ public class DownloadService {
             throw new RuntimeException("Failed to download file properly, bailing out of load for file: " + localFile.getName(), e);
         }
     }
+
+    public long fileSizeFtp(URL remoteFile) {
+        try {
+            FTPClient ftpClient = getFtpClient(remoteFile);
+            FTPFile ftpFile = getSingleFTPFile(remoteFile, ftpClient);
+
+            long remoteFileSize = ftpFile.getSize(); // this file is gzipped
+
+            ftpClient.logout();
+            return remoteFileSize;
+        } catch (SocketException socketException) {
+            logger.error("Failed to connect for file size" );
+            throw new RuntimeException(socketException);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Date fileDateFtp(URL remoteFile) {
+        try {
+            FTPClient ftpClient = getFtpClient(remoteFile);
+            FTPFile ftpFile = getSingleFTPFile(remoteFile, ftpClient);
+
+            Date remoteFileDate = ftpFile.getTimestamp().getTime(); // this file is gzipped
+
+            ftpClient.logout();
+            return remoteFileDate;
+        } catch (SocketException socketException) {
+            logger.error("Failed to connect for file size" );
+            throw new RuntimeException(socketException);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    private FTPClient getFtpClient(URL remoteFile) throws IOException {
+        FTPClient ftpClient = new FTPClient();
+        ftpClient.setDataTimeout(FTP_TIMEOUT);
+        ftpClient.connect(remoteFile.getHost());
+        ftpClient.setBufferSize(BUFFER_SIZE);
+        ftpClient.login(ANONYMOUS_USERNAME, ANONYMOUS_PASSWORD);
+        ftpClient.changeWorkingDirectory(remoteFile.getPath());
+        ftpClient.enterLocalPassiveMode();
+        return ftpClient;
+    }
+
+    private FTPFile getSingleFTPFile(URL remoteFile, FTPClient ftpClient) throws IOException {
+        FTPFile[] ftpFiles = ftpClient.listFiles(remoteFile.getPath());
+
+        if (ftpFiles.length != 1) {
+            String errorText = "Problem retrieving file from server of name: " +
+                    remoteFile.toExternalForm();
+            logger.error(errorText);
+            throw new RuntimeException(errorText);
+        }
+
+        FTPFile ftpFile = ftpFiles[0];
+        return ftpFile;
+    }
+
+
+    public static Date getLastModifiedOnServer(URL url) throws IOException {
+
+        if ("ftp".equals(url.getProtocol())) {
+            return getDateFromFTPServer(url);
+        } else {
+            return getDateFromHTTPServer(url);
+        }
+    }
+
+    private static Date getDateFromHTTPServer(URL url) throws IOException {
+        URLConnection urlConnection = url.openConnection();
+        urlConnection.connect();
+        long lastModifiedLong = urlConnection.getLastModified();
+
+        Date lastModified = new Date(lastModifiedLong);
+        return lastModified;
+    }
+
+    private static Date getDateFromFTPServer(URL url) throws IOException {
+        return (new DownloadService()).fileDateFtp(url);
+    }
+
+    public static long getFileSizeOnServer(URL url) throws IOException {
+        if ("ftp".equals(url.getProtocol())) {
+            return getFileSizeOnFTPServer(url);
+        } else {
+            return getFileSizeOnHTTPServer(url);
+        }
+    }
+
+    private static long getFileSizeOnFTPServer(URL urlString) throws IOException {
+        return (new DownloadService()).fileSizeFtp(urlString);
+    }
+
+    private static long getFileSizeOnHTTPServer(URL url) throws IOException {
+        URLConnection urlConnection = url.openConnection();
+        urlConnection.connect();
+        return urlConnection.getContentLengthLong();
+    }
+
+    public static void downloadFileViaWget(String url, Path destination, long timeout, Logger log) throws IOException {
+        //do some checking on existing file
+        //if file exists, check size. Then, either skip download, resume download, or throw exception
+        if (destination.toFile().exists()) {
+            log.error("File already exists: " + destination);
+            long serverSize = getFileSizeOnServer(new URL(url));
+            long localSize = destination.toFile().length();
+            if (serverSize == localSize) {
+                log.info("File sizes match.  Skipping download.");
+                return;
+            } else if (serverSize > localSize) {
+                log.error("Server file is larger than local file.  Downloading anyway assuming resumed download.");
+            } else {
+                throw new IOException("Server file is smaller than local file.  This should not happen.");
+            }
+        }
+
+        Map map = new HashMap();
+        map.put("destination", destination.toFile());
+        map.put("url", url);
+        CommandLine cmdLine = new CommandLine("wget");
+
+        //continue download if file already exists (resume)
+        cmdLine.addArgument("-c");
+
+        //show progress. show dots every 10MB since these are large files
+        cmdLine.addArgument("--progress=dot");
+        cmdLine.addArgument("-e");
+        cmdLine.addArgument("dotbytes=10M");
+
+        //save to destination
+        cmdLine.addArgument("-O");
+        cmdLine.addArgument("${destination}");
+
+        //download from url
+        cmdLine.addArgument("${url}");
+        cmdLine.setSubstitutionMap(map);
+        if (log != null) {
+            log.info("Running command: " + cmdLine.toString());
+        }
+
+        DefaultExecutor executor = new DefaultExecutor();
+        executor.setExitValue(0);
+        if (timeout > 0) {
+            ExecuteWatchdog watchdog = new ExecuteWatchdog(timeout);
+            executor.setWatchdog(watchdog);
+        }
+        executor.execute(cmdLine);
+    }
+
 }
