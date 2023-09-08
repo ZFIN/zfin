@@ -6,7 +6,7 @@ import org.apache.commons.io.FileUtils;
 import org.biojava.bio.BioException;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.properties.ZfinPropertiesEnum;
-import org.zfin.uniprot.history.UniProtRelease;
+import org.zfin.uniprot.persistence.UniProtRelease;
 
 import java.io.File;
 import java.io.IOException;

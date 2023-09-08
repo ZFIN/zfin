@@ -45,22 +45,6 @@ Send alert there is a new release and if the download was successful.
             <contentType>project</contentType>
           </email>
         </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
-        <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
-          <email>
-            <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
-            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>$PROJECT_DEFAULT_CONTENT</body>
-            <sendToDevelopers>true</sendToDevelopers>
-            <sendToRequester>false</sendToRequester>
-            <includeCulprits>false</includeCulprits>
-            <sendToRecipientList>false</sendToRecipientList>
-            <attachmentsPattern></attachmentsPattern>
-            <attachBuildLog>false</attachBuildLog>
-            <compressBuildLog>false</compressBuildLog>
-            <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>
-            <contentType>project</contentType>
-          </email>
-        </hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
       </configuredTriggers>
       <contentType>default</contentType>
       <defaultSubject>[Jenkins][${DOMAIN_NAME}]: ${PROJECT_NAME}: ${BUILD_STATUS}</defaultSubject>
@@ -72,6 +56,18 @@ Send alert there is a new release and if the download was successful.
       <replyTo>$DEFAULT_REPLYTO</replyTo>
       <saveOutput>false</saveOutput>
     </hudson.plugins.emailext.ExtendedEmailPublisher>
+
+
+
+    <hudson.tasks.BuildTrigger>
+      <childProjects>Check-Recent-UniProt-Releases_d</childProjects>
+      <threshold>
+        <name>FAILURE</name>
+        <ordinal>2</ordinal>
+        <color>RED</color>
+        <completeBuild>true</completeBuild>
+      </threshold>
+    </hudson.tasks.BuildTrigger>
 
   </publishers>
   <buildWrappers/>

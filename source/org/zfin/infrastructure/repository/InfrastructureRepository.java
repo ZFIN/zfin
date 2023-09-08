@@ -20,7 +20,7 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.profile.service.BeanFieldUpdate;
 import org.zfin.publication.Publication;
-import org.zfin.uniprot.history.UniProtRelease;
+import org.zfin.uniprot.persistence.UniProtRelease;
 import org.zfin.util.DatabaseJdbcStatement;
 
 import java.util.Collection;

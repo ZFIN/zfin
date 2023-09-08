@@ -36,9 +36,6 @@ public class UniProtLoadContext {
         ReferenceDatabase refseqRefDB = getSequenceRepository().getReferenceDatabase(REFSEQ, POLYPEPTIDE, SEQUENCE, ZEBRAFISH);
         ReferenceDatabase refseqRNARefDB = getSequenceRepository().getReferenceDatabase(REFSEQ, RNA, SEQUENCE, ZEBRAFISH);
 
-        System.out.println("refseqRefDB: " + refseqRefDB.getZdbID());
-        System.out.println("refseqRNARefDB: " + refseqRNARefDB.getZdbID());
-
         Map<String, Collection<MarkerDBLink>> markerDBLinks = getSequenceRepository().getMarkerDBLinks(refseqRNARefDB, refseqRefDB);
         uniprotLoadContext.setRefseqDbLinks( convertToDTO(markerDBLinks));
 
