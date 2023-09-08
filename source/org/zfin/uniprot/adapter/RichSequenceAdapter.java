@@ -88,6 +88,18 @@ public class RichSequenceAdapter {
         }
     }
 
+    public int getLength() {
+        SimpleRichAnnotation annotation = new SimpleRichAnnotation();
+        annotation.setNoteSet(originalRichSequence.getNoteSet());
+        int length = 0;
+        try {
+            length = Integer.parseInt(annotation.getProperty("sequence_length").toString());
+        } catch (Exception e) {
+            // do nothing, length remains zero
+        }
+        return length;
+    }
+
 
     public List<Note> getKeywordNotes() {
         SimpleRichAnnotation seq1NoteSet = new SimpleRichAnnotation();

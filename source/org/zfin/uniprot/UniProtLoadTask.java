@@ -13,12 +13,15 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
 import org.zfin.uniprot.handlers.*;
+import org.zfin.uniprot.persistence.UniProtRelease;
 
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 import static org.zfin.uniprot.UniProtFilterTask.readAllZebrafishEntriesFromSourceIntoMap;
 import static org.zfin.uniprot.UniProtTools.getArgOrEnvironmentVar;
 
@@ -33,43 +36,80 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
     private static final String LOAD_REPORT_TEMPLATE_HTML = "/home/uniprot/load-report.html";
     private static final String JSON_PLACEHOLDER_IN_TEMPLATE = "JSON_GOES_HERE";
     private static final String UNIPROT_LOAD_OUTPUT_FILENAME_TEMPLATE = "/tmp/uniprot_load_%s.%s";
-    private final BufferedReader inputFileReader;
+    private String inputFileName;
     private final String outputJsonName;
     private final String outputReportName;
+    private final boolean commitChanges;
     private UniProtLoadContext context;
+
+    private UniProtRelease release;
 
 
     public static void main(String[] args) throws Exception {
-        String inputFileName = getArgOrEnvironmentVar(args, 0, "UNIPROT_INPUT_FILE");
-        String outputJsonName = getArgOrEnvironmentVar(args, 1, "UNIPROT_OUTPUT_JSON_FILE", calculateDefaultOutputFileName("json"));
-        String outputReportName = getArgOrEnvironmentVar(args, 2, "UNIPROT_OUTPUT_REPORT_FILE", calculateDefaultOutputFileName("report.html"));
 
-        try (BufferedReader inputFileReader = new BufferedReader(new java.io.FileReader(inputFileName))) {
-            UniProtLoadTask task = new UniProtLoadTask(inputFileReader, outputJsonName, outputReportName);
-            log.debug("Starting UniProtLoadTask for file " + inputFileName + " with output files " + outputJsonName + " and " + outputReportName + ".");
-            task.runTask();
-        }
+        Date startTime = new Date();
+        String inputFileName = getArgOrEnvironmentVar(args, 0, "UNIPROT_INPUT_FILE", "");
+        String outputJsonName = getArgOrEnvironmentVar(args, 1, "UNIPROT_OUTPUT_JSON_FILE", calculateDefaultOutputFileName(startTime, "json"));
+        String outputReportName = getArgOrEnvironmentVar(args, 2, "UNIPROT_OUTPUT_REPORT_FILE", calculateDefaultOutputFileName(startTime, "report.html"));
+        String commitChanges = getArgOrEnvironmentVar(args, 3, "UNIPROT_COMMIT_CHANGES", "false");
+
+        UniProtLoadTask task = new UniProtLoadTask(inputFileName, outputJsonName, outputReportName, "true".equals(commitChanges));
+        log.debug("Starting UniProtLoadTask for file " + inputFileName + " with output files " + outputJsonName + " and " + outputReportName + ".");
+        log.debug("Commit changes: " + commitChanges + ".");
+        task.runTask();
     }
 
-    public UniProtLoadTask(BufferedReader bufferedReader, String outputJsonName, String outputReportName) {
-        this.inputFileReader = bufferedReader;
+    private static Optional<UniProtRelease> getLatestUnprocessedUniProtRelease() {
+        return Optional.ofNullable(getInfrastructureRepository().getLatestUnprocessedUniProtRelease());
+    }
+
+    public UniProtLoadTask(String inputFileName, String outputJsonName, String outputReportName, boolean commitChanges) {
+        this.inputFileName = inputFileName;
         this.outputJsonName = outputJsonName;
         this.outputReportName = outputReportName;
+        this.commitChanges = commitChanges;
     }
 
     public void runTask() throws IOException, BioException, SQLException {
         initialize();
-        Map<String, RichSequenceAdapter> entries = readUniProtEntries();
-        Set<UniProtLoadAction> actions = executePipeline(entries);
-        writeOutputReportFile(actions);
+        try (BufferedReader inputFileReader = new BufferedReader(new java.io.FileReader(inputFileName))) {
+            Map<String, RichSequenceAdapter> entries = readUniProtEntries(inputFileReader);
+            Set<UniProtLoadAction> actions = executePipeline(entries);
+            writeOutputReportFile(actions);
+            loadChangesIfNotDryRun(actions);
+        }
+    }
+
+    private void loadChangesIfNotDryRun(Set<UniProtLoadAction> actions) {
+        if (commitChanges) {
+            log.info("Loading changes into database.");
+            loadChanges(actions);
+        } else {
+            log.info("Dry run, not loading changes into database.");
+        }
+    }
+
+    private void loadChanges(Set<UniProtLoadAction> actions) {
+        UniProtLoadService.processActions(actions, release);
     }
 
     private void initialize() {
         initAll();
+        setInputFileName();
         calculateContext();
     }
 
-    private Map<String, RichSequenceAdapter> readUniProtEntries() throws BioException, IOException {
+    private void setInputFileName() {
+        Optional<UniProtRelease> releaseOptional = getLatestUnprocessedUniProtRelease();
+        if (inputFileName.isEmpty() && releaseOptional.isPresent()) {
+            inputFileName = releaseOptional.get().getLocalFile().getAbsolutePath();
+            release = releaseOptional.get();
+        } else if (inputFileName.isEmpty()) {
+            throw new RuntimeException("No input file specified and no unprocessed UniProt release found.");
+        }
+    }
+
+    private Map<String, RichSequenceAdapter> readUniProtEntries(BufferedReader inputFileReader) throws BioException, IOException {
         Map<String, RichSequenceAdapter> entries = readAllZebrafishEntriesFromSourceIntoMap(inputFileReader);
         log.debug("Finished reading file: " + entries.size() + " entries read.");
         return entries;
@@ -117,8 +157,9 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         context = UniProtLoadContext.createFromDBConnection();
     }
 
-    private static String calculateDefaultOutputFileName(String extension) {
-        return String.format(UNIPROT_LOAD_OUTPUT_FILENAME_TEMPLATE, System.currentTimeMillis(), extension);
+    private static String calculateDefaultOutputFileName(Date startTime, String extension) {
+        String timestamp = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS").format(startTime);
+        return String.format(UNIPROT_LOAD_OUTPUT_FILENAME_TEMPLATE, timestamp, extension);
     }
 
 }

@@ -94,7 +94,7 @@ public class ReportLostUniProtsHandler implements UniProtLoadHandler {
                         .collect(Collectors.toSet()));
 
                 for(String gene: affectedGenes) {
-                    action.addLink(new UniProtLoadLink("ZFIN: " + gene, "https://zfin.org/" + gene));
+                    action.addLink(new UniProtLoadLink("ZFIN: " + gene, "https://zfin.org/" + gene + "#sequences"));
                 }
 
                 sequenceDetails = lostUniProt.getDataZdbID() + " (" + lostUniProt.getMarkerAbbreviation() + ") would lose its UniProt association with " + lostUniProt.getAccession() + ".\n";
@@ -116,7 +116,7 @@ public class ReportLostUniProtsHandler implements UniProtLoadHandler {
                     "UniProt release through our matching pipeline, we don't find a match.\n" +
                     "This UniProt link will be removed.\n\n" + sequenceDetails);
 
-            action.addLink(new UniProtLoadLink("ZFIN: " + lostUniProt.getDataZdbID(), "https://zfin.org/" + lostUniProt.getDataZdbID() + "#sequences" + ":~:text=" + lostUniProt.getAccession()));
+            action.addLink(new UniProtLoadLink("ZFIN: " + lostUniProt.getDataZdbID(), "https://zfin.org/" + lostUniProt.getDataZdbID() + "#sequences" ));
             action.addLink(new UniProtLoadLink("UniProt: " + lostUniProt.getAccession(), "https://www.uniprot.org/uniprot/" + lostUniProt.getAccession()));
 
             setActionTitleAndDetailsForGenPeptGenBank(lostUniProt, action);

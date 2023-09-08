@@ -67,6 +67,7 @@ public class MatchOnRefSeqHandler implements UniProtLoadHandler {
                 action.setTitle(UniProtLoadAction.MatchTitle.MATCH_BY_REFSEQ.getValue());
                 action.setType(UniProtLoadAction.Type.LOAD);
                 action.setGeneZdbID(result.getGeneZdbIDs().get(0));
+                action.setLength(uniProtRecords.get(uniprotAccession).getLength());
             }
             actions.add(action);
         }
