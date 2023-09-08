@@ -2,7 +2,6 @@
 <html>
 <!-- See: https://github.com/rtaylorzfin/embedded-preact-report-template -->
 <head>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
 
     <!-- Embed the minified version of the preact library files -->
     <!--    https://esm.sh/v131/htm@3.1.1/es2022/preact/standalone.js -->
@@ -80,7 +79,7 @@
         }
 
         #breadcrumb li::before {
-            content: " \00AB ";
+            content: " \00BB ";
         }
 
         #breadcrumb li:first-child::before {
@@ -370,6 +369,7 @@
                 </div>
             `;
         }
+        document.getElementById('root').innerHTML = '';
         render(html`<${App} reportData=${window.UNIPROT_REPORT}/>`, document.getElementById('root'));
     }
 
@@ -378,8 +378,12 @@
     });
 </script>
 
-<div id="root"></div>
-
+<div id="root">
+    <div class="error">
+        <h2>Error Loading Report</h2>
+        <p>If you are viewing this report in Jenkins, you may have to download the file first by pressing ctrl+s or cmd+s</p>
+    </div>
+</div>
 </body>
 
 </html>

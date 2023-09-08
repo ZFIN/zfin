@@ -45,6 +45,26 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
     private UniProtRelease release;
 
 
+    /**
+     * Run the UniProtLoadTask. This will load the UniProt data from the given release file that's been downloaded
+     * from UniProt. It will then process the data using a pipeline of handlers. Finally, it will generate a report
+     * and a JSON file.
+     *
+     * It can be called from the command line with the following positional arguments:
+     *  1. The input file name (if omitted or "null", the default is the latest release file from UniProt that we have in our DB table "uniprot_release")
+     *  2. The output JSON file name (if omitted or "null", the default is /tmp/uniprot_load_<timestamp>.json)
+     *  3. The output report file name (if omitted or "null", the default is /tmp/uniprot_load_<timestamp>.html)
+     *  4. Whether to commit the changes to the database -> false = dry run (if omitted or "null", the default is false),
+     *
+     *  The arguments can also be passed as environment variables:
+     *  1. UNIPROT_INPUT_FILE
+     *  2. UNIPROT_OUTPUT_JSON_FILE
+     *  3. UNIPROT_OUTPUT_REPORT_FILE
+     *  4. UNIPROT_COMMIT_CHANGES
+     *
+     * @param args Command line arguments
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception {
 
         Date startTime = new Date();
@@ -109,13 +129,13 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         }
     }
 
-    private Map<String, RichSequenceAdapter> readUniProtEntries(BufferedReader inputFileReader) throws BioException, IOException {
+    public Map<String, RichSequenceAdapter> readUniProtEntries(BufferedReader inputFileReader) throws BioException, IOException {
         Map<String, RichSequenceAdapter> entries = readAllZebrafishEntriesFromSourceIntoMap(inputFileReader);
         log.debug("Finished reading file: " + entries.size() + " entries read.");
         return entries;
     }
 
-    private Set<UniProtLoadAction> executePipeline(Map<String, RichSequenceAdapter> entries) {
+    public Set<UniProtLoadAction> executePipeline(Map<String, RichSequenceAdapter> entries) {
         // data entry pipeline
         UniProtLoadPipeline pipeline = new UniProtLoadPipeline();
         pipeline.setContext(context);
@@ -125,6 +145,9 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         pipeline.addHandler(new ReportWouldBeLostHandler());
         pipeline.addHandler(new IgnoreAccessionsAlreadyInDatabaseHandler());
         pipeline.addHandler(new MatchOnRefSeqHandler());
+        pipeline.addHandler(new ReportLegacyProblemFilesHandler());
+        pipeline.addHandler(new ReportDuplicateAccessionsHandler());
+
 
         Set<UniProtLoadAction> actions = pipeline.execute();
         return actions;

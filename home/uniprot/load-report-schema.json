@@ -3,9 +3,9 @@
     "type": "array",
     "items": {
         "type": "object",
-        "required": ["title", "accession", "details", "type"],
+        "required": ["subType", "accession", "details", "type"],
         "properties": {
-            "title": {
+            "subType": {
                 "type": "string"
             },
             "accession": {
@@ -15,8 +15,7 @@
                 "type": "string"
             },
             "type": {
-                "type": "string",
-                "enum": ["LOAD", "ERROR"]
+                "type": "string"
             },
             "links": {
                 "type": "array",

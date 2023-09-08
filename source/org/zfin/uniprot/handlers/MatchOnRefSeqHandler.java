@@ -56,15 +56,15 @@ public class MatchOnRefSeqHandler implements UniProtLoadHandler {
                         context.getUniprotDbLinks().get(uniprotAccession));
 
                 if (isWarning) {
-                    action.setTitle(UniProtLoadAction.MatchTitle.MULTIPLE_GENES_PER_ACCESSION_BUT_APPROVED.getValue());
+                    action.setSubType(UniProtLoadAction.SubType.MULTIPLE_GENES_PER_ACCESSION_BUT_APPROVED);
                     action.setType(UniProtLoadAction.Type.WARNING);
                     action.setDetails("This UniProt accession has multiple genes associated with it, but at least one of the gene associations is supported by a non-load publication.\n\n" + details);
                 } else {
-                    action.setTitle(UniProtLoadAction.MatchTitle.MULTIPLE_GENES_PER_ACCESSION.getValue());
+                    action.setSubType(UniProtLoadAction.SubType.MULTIPLE_GENES_PER_ACCESSION);
                     action.setType(UniProtLoadAction.Type.ERROR);
                 }
             } else {
-                action.setTitle(UniProtLoadAction.MatchTitle.MATCH_BY_REFSEQ.getValue());
+                action.setSubType(UniProtLoadAction.SubType.MATCH_BY_REFSEQ);
                 action.setType(UniProtLoadAction.Type.LOAD);
                 action.setGeneZdbID(result.getGeneZdbIDs().get(0));
                 action.setLength(uniProtRecords.get(uniprotAccession).getLength());
