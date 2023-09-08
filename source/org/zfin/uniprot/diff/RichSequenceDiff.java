@@ -1,6 +1,5 @@
 package org.zfin.uniprot.diff;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +16,6 @@ import static org.zfin.uniprot.UniProtTools.getKeywordNotes;
 
 @Getter
 @Setter
-@JsonSerialize(using = RichSequenceDiffSerializer.class)
 public class RichSequenceDiff {
     private List<CrossRef> addedCrossRefs;
     private List<CrossRef> removedCrossRefs;

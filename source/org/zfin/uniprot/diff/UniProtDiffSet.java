@@ -1,6 +1,5 @@
 package org.zfin.uniprot.diff;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.Setter;
 import org.biojavax.bio.seq.RichSequence;
@@ -11,7 +10,6 @@ import static org.zfin.uniprot.UniProtTools.getDateUpdatedFromNotes;
 
 @Getter
 @Setter
-@JsonSerialize(using = UniProtDiffSetSerializer.class)
 public class UniProtDiffSet {
 
     private List<RichSequence> addedSequences = new ArrayList<>();
@@ -49,24 +47,18 @@ public class UniProtDiffSet {
         changedSequences.add(sequence);
     }
 
-    public Map<String, String> getSummary() {
-        Map<String, String> summary = new TreeMap<>();
-        summary.put("added", String.valueOf(addedSequences.size()));
-        summary.put("removed", String.valueOf(removedSequences.size()));
-        summary.put("changed", String.valueOf(changedSequences.size()));
-
-
-        summary.put("total", String.valueOf(addedSequences.size() + removedSequences.size() + changedSequences.size()));
-
-        //TODO: change "RefSeq", "ZFIN", "GeneID" to constants
-        summary.put("changed RefSeq", changedSequences.stream().filter(s -> s.hasChangesInDB("RefSeq")).count() + "");
-        summary.put("changed ZFIN", changedSequences.stream().filter(s -> s.hasChangesInDB("ZFIN")).count() + "");
-        summary.put("changed GeneID", changedSequences.stream().filter(s -> s.hasChangesInDB("GeneID")).count() + "");
-
-        summary.put("latest update in set 1", new java.text.SimpleDateFormat("dd-MMM-yyyy").format(latestUpdateFromSequence1));
-        summary.put("latest update in set 2", new java.text.SimpleDateFormat("dd-MMM-yyyy").format(latestUpdateFromSequence2));
-
-        return summary;
+    public UniProtDiffSetSummary getSummary() {
+        return new UniProtDiffSetSummary(
+                addedSequences.size(),
+                removedSequences.size(),
+                changedSequences.size(),
+                addedSequences.size() + removedSequences.size() + changedSequences.size(),
+                (int) changedSequences.stream().filter(s -> s.hasChangesInDB("RefSeq")).count(),
+                (int) changedSequences.stream().filter(s -> s.hasChangesInDB("ZFIN")).count(),
+                (int) changedSequences.stream().filter(s -> s.hasChangesInDB("GeneID")).count(),
+                new java.text.SimpleDateFormat("yyyy-MM-dd").format(latestUpdateFromSequence1),
+                new java.text.SimpleDateFormat("yyyy-MM-dd").format(latestUpdateFromSequence2)
+        );
     }
 
     public void updateLatestDate1(RichSequence seq) {
