@@ -35,7 +35,15 @@ public class UniProtTools {
         }
     }
 
-    public static String getArgOrEnvironmentVar(String[] args, int index, String envVar) {
+    public static String getArgOrEnvironmentVar(String[] args, int index, String envVar, String defaultValue) {
+        try {
+            return getArgOrEnvironmentVar(args, index, envVar);
+        } catch (IllegalArgumentException e) {
+            return defaultValue;
+        }
+    }
+
+    public static String getArgOrEnvironmentVar(String[] args, int index, String envVar) throws IllegalArgumentException {
         if (args.length > index && args[index] != null) {
             return args[index];
         }
@@ -43,8 +51,7 @@ public class UniProtTools {
         String result = System.getenv(envVar);
 
         if (result == null) {
-            System.err.println("Missing required argument: " + envVar + ". Please provide it as an environment variable or as argument: " + (index + 1) + ". ");
-            System.exit(1);
+            throw new IllegalArgumentException("Missing required argument: " + envVar + ". Please provide it as an environment variable or as argument: " + (index + 1) + ". ");
         }
 
         return result;
@@ -65,9 +72,6 @@ public class UniProtTools {
     }
 
     public static List<String> getAttributionsSupportingGeneAccessionRelationship(String geneID, String accession, List<DBLinkSlimDTO> dbLinkSlimDTOs) {
-        if (accession.equals("Q6PI20")) {
-            System.out.println("debug");
-        }
         if (dbLinkSlimDTOs == null) {
             return Collections.emptyList();
         }
@@ -77,16 +81,6 @@ public class UniProtTools {
                 .flatMap(dbLinkSlimDTO -> dbLinkSlimDTO.getPublicationIDs().stream())
                 .toList();
     }
-
-//    public static List<String> _getAttributionsSupportingGeneAccessionRelationship(String geneID, String accession) {
-//        DBLink dblink = getSequenceRepository().getDBLink(geneID, accession);
-//        if (dblink != null) {
-//            List<RecordAttribution> attributions = getInfrastructureRepository().getRecordAttributions(dblink.getZdbID());
-//            return attributions.stream().map(RecordAttribution::getSourceZdbID).toList();
-//        } else {
-//            return null;
-//        }
-//    }
 
     public static boolean isGeneAccessionRelationshipSupportedByNonLoadPublication(String geneID, String accession, List<DBLinkSlimDTO> dbLinkSlimDTOs) {
         List<String> attributionPubIDs = getAttributionsSupportingGeneAccessionRelationship(geneID, accession, dbLinkSlimDTOs);

@@ -1,11 +1,15 @@
 package org.zfin.uniprot;
 
+import lombok.extern.log4j.Log4j2;
+
 import java.io.*;
 import java.util.LinkedList;
 
 /**
- * This is for making a first pass through the uniprot file to remove the records that aren't 7955
+ * This is for making a first pass through the uniprot file to remove the records that aren't 7955.
+ * It doesn't have the overhead of the UniProtFilterTask because it doesn't need to parse the records.
  */
+@Log4j2
 public class UniProtRoughTaxonFilter {
 
     private static final String SEPARATOR = "//";
@@ -23,7 +27,7 @@ public class UniProtRoughTaxonFilter {
         tempFile = File.createTempFile("uniprot", ".dat");
         tempFile.deleteOnExit();
 
-        System.out.println("Temp file : " + tempFile.getAbsolutePath());
+        log.debug("Temp file used for quick filtering by taxon: " + tempFile.getAbsolutePath());
         long lineCount = 0;
 
         long startTime = System.currentTimeMillis();
@@ -50,7 +54,7 @@ public class UniProtRoughTaxonFilter {
                         startTime = System.currentTimeMillis();
 
                         String prettyFormat = String.format("%,d", lineCount);
-                        System.out.println("Line count: " + prettyFormat);
+                        log.info("Taxon Filter Processed Line Count: " + prettyFormat);
                     }
                 }
             }

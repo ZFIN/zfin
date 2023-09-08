@@ -41,7 +41,7 @@ import org.zfin.profile.Person;
 import org.zfin.profile.service.BeanFieldUpdate;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
-import org.zfin.uniprot.history.UniProtRelease;
+import org.zfin.uniprot.persistence.UniProtRelease;
 import org.zfin.util.DatabaseJdbcStatement;
 import org.zfin.util.DateUtil;
 
@@ -55,7 +55,6 @@ import java.util.Date;
 import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
-import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 
 @Repository
 public class HibernateInfrastructureRepository implements InfrastructureRepository {

@@ -32,13 +32,15 @@ public class UniProtLoadAction implements Comparable<UniProtLoadAction> {
         this.links.addAll(links);
     }
 
-    public enum Type {LOAD, INFO, WARNING, ERROR}
+    public enum Type {LOAD, INFO, WARNING, ERROR, DELETE, IGNORE}
 
     public enum MatchTitle {
         MULTIPLE_GENES_PER_ACCESSION("Multiple Genes per Accession"),
         MULTIPLE_GENES_PER_ACCESSION_BUT_APPROVED("Multiple Genes per Accession: Contains Approved Accession"),
         MATCH_BY_REFSEQ("Matched via RefSeq: Single Gene per Accession"),
-        LOST_UNIPROT("ZFIN Gene Losing UniProt Accession");
+        LOST_UNIPROT("ZFIN Gene Losing UniProt Accession"),
+        LOST_UNIPROT_PREV_MATCH_BY_GB("Previously Matched by GenBank: No RefSeq Match"),
+        LOST_UNIPROT_PREV_MATCH_BY_GP("Previously Matched by GenPept: No RefSeq Match");
 
         private String value;
 
