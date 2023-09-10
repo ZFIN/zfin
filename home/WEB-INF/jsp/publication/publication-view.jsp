@@ -23,9 +23,9 @@
 <c:set var="DIRECTLY_ATTRIBUTED_DATA" value="${NavigationMenuOptions.DIRECTLY_ATTRIBUTED_DATA.value}"/>
 <c:set var="ZEBRASHARE" value="${NavigationMenuOptions.ZEBRASHARE.value}"/>
 
-<c:set var="BODYCLASSES" value="publication-view nav-title-wrap-break-word" />
+<c:set var="BODYCLASSES" value="publication-view nav-title-wrap-break-word"/>
 <c:if test="${zfn:isFlagEnabled(FeatureFlagEnum.USE_NAVIGATION_COUNTER)}">
-    <c:set var="BODYCLASSES" value="${BODYCLASSES} show-navigation-counters" />
+    <c:set var="BODYCLASSES" value="${BODYCLASSES} show-navigation-counters"/>
 </c:if>
 
 <z:dataPage sections="${[]}" navigationMenu="${navigationMenu}" additionalBodyClass="${BODYCLASSES}">
@@ -91,7 +91,7 @@
             ></div>
         </z:section>
 
-        <z:section title="${PROBES}">
+        <z:section title="${PROBES}" statsLink="${NavigationMenuOptions.PROBES.value}">
             <div class="__react-root __use-navigation-counter" id="PublicationProbeTable__0"
                  data-url="/action/api/publication/${publication.zdbID}/probes"
                  data-publication-id="${publication.zdbID}"
@@ -110,7 +110,7 @@
             </c:if>
         </z:section>
 
-        <z:section title="${EXPRESSION}">
+        <z:section title="${EXPRESSION}" statsLink="${NavigationMenuOptions.EXPRESSION.value}">
             <div class="__react-root __use-navigation-counter" id="FigureExpressionTable"
                  data-url="/action/api/publication/${publication.zdbID}/expression"
                  data-title="${EXPRESSION}"
@@ -138,7 +138,7 @@
             ></div>
         </z:section>
 
-        <z:section title="${STRS}">
+        <z:section title="${STRS}" statsLink="${NavigationMenuOptions.STRS.value}">
             <div class="__react-root __use-navigation-counter" id="StrTable"
                  data-url="/action/api/publication/${publication.zdbID}/strs"
                  data-title="${STRS}"
@@ -152,7 +152,7 @@
             ></div>
         </z:section>
 
-        <z:section title="${ANTIBODIES}" infoPopup="/action/marker/note/antibodies">
+        <z:section title="${ANTIBODIES}" infoPopup="/action/marker/note/antibodies" statsLink="${NavigationMenuOptions.ANTIBODIES.value}">
             <div class="__react-root __use-navigation-counter" id="AntibodyTable"
                  data-url="/action/api/publication/${publication.zdbID}/antibodies"
                  data-title="${ANTIBODIES}"
@@ -182,12 +182,12 @@
 
         <z:section title="${DIRECTLY_ATTRIBUTED_DATA}" navigationMenu="${navigationMenu}">
             <div class="__react-root __use-navigation-counter" id="PublicationAttributionTable"
-                     data-url="/action/api/publication/${publication.zdbID}/direct-attribution"
-                     data-title="${DIRECTLY_ATTRIBUTED_DATA}"
-                ></div>
+                 data-url="/action/api/publication/${publication.zdbID}/direct-attribution"
+                 data-title="${DIRECTLY_ATTRIBUTED_DATA}"
+            ></div>
         </z:section>
 
-        <z:section title="${ZEBRASHARE}" navigationMenu="${navigationMenu}">
+        <z:section title="${ZEBRASHARE}" navigationMenu="${navigationMenu}" statsLink="${NavigationMenuOptions.ZEBRASHARE.value}">
             <zfin2:subsection title="" showNoData="true">
                 <jsp:include page="publication-zebrashare.jsp"/>
             </zfin2:subsection>

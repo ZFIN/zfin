@@ -15,7 +15,7 @@
 <c:set var="DIRECTLY_ATTRIBUTED_DATA" value="Directly Attributed Data"/>
 
 <z:dataPage
-        sections="${[SUMMARY, FIGURES, GENES, STRS, ANTIBODIES, EFGs, EXPRESSION, MUTATION, FISH, ZEBRASHARE]}">
+        sections="${[SUMMARY, PROBES, ANTIBODIES, EXPRESSION, STRS, ZEBRASHARE, DATASETS]}">
 
     <jsp:body>
 

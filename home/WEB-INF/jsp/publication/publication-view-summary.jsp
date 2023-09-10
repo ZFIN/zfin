@@ -56,7 +56,7 @@
     </z:attributeListItem>
 
     <c:if test="${!empty publication.dbXrefs}">
-        <z:attributeListItem label="Datasets">
+        <z:attributeListItem label="Datasets" statsLink="Datasets">
             <c:forEach var="xref" items="${publication.dbXrefs}" varStatus="loop">
                 <zfin:link entity="${xref}"/><c:if test="${!loop.last}">, </c:if>
             </c:forEach>
@@ -123,6 +123,10 @@
 
         <z:attributeListItem label="Related Data">
             ${relatedData}
+        </z:attributeListItem>
+
+        <z:attributeListItem label="Statistics Data (Testing)">
+            <a href="stats">Publication Statistics</a>
         </z:attributeListItem>
 
     </authz:authorize>

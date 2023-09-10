@@ -6,6 +6,7 @@
 <%@ attribute name="show" required="false" rtexprvalue="true" type="java.lang.Boolean" %>
 <%@ attribute name="cssClass" required="false" rtexprvalue="true" type="java.lang.String" %>
 <%@ attribute name="infoPopup" required="false" rtexprvalue="true" type="java.lang.String" %>
+<%@ attribute name="statsLink" required="false" rtexprvalue="true" type="java.lang.String" %>
 <%@ attribute name="appendedText" required="false" rtexprvalue="true" type="java.lang.String" %>
 <%@ attribute name="sectionID" required="false" rtexprvalue="true" type="java.lang.String" %>
 <%@ attribute name="navigationMenu" required="false" rtexprvalue="true" type="org.zfin.framework.presentation.NavigationMenu" %>
@@ -38,6 +39,7 @@
                     </c:otherwise>
                 </c:choose>
                 <c:if test="${not empty infoPopup}"><a class="popup-link info-popup-link" href="${infoPopup}"></a></c:if>
+                <c:if test="${not empty statsLink}"><a class="popup-link info-popup-link" href="/action/publication/stats/view?section=${statsLink}"></a></c:if>
             </div>
         </c:if>
         <z:ifHasData test="${hasData}">
