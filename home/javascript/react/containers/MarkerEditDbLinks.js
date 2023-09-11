@@ -82,9 +82,10 @@ const MarkerEditDbLinks = ({markerId, group = 'other marker pages'}) => {
                         validate={value => value ? false : 'A database is required'}
                     >
                         <option value='' />
-                        {databases.value.map(database => (
-                            <option value={database.zdbID} key={database.zdbID}>{database.name}</option>
-                        ))}
+                        {databases.value
+                            .filter(database => database.zdbID != 'ZDB-FDBCONT-040412-1' /*don't allow adding ncbi genes manually*/)
+                            .map(database => <option value={database.zdbID} key={database.zdbID}>{database.name}</option>)
+                        }
                     </FormGroup>
 
                     <FormGroup
