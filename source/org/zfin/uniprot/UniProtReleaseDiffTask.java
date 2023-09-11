@@ -159,7 +159,8 @@ public class UniProtReleaseDiffTask extends AbstractScriptWrapper {
             }
         } catch (Exception e) {
             System.err.println("Exception Error while running task: " + e.getMessage());
-            System.exit(1);
+            log.error("Exception Error while running task: " + e.getMessage(), e);
+            throw new IOException(e);
         }
 
         return outputFile;

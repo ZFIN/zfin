@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.SocketException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -279,13 +280,35 @@ public class DownloadService {
         }
     }
 
+    /**
+     * Get the last modified date of a file on an HTTP server.
+     * If none provided, return null
+     * @param url
+     * @return
+     * @throws IOException
+     */
     private static Date getDateFromHTTPServer(URL url) throws IOException {
-        URLConnection urlConnection = url.openConnection();
-        urlConnection.connect();
-        long lastModifiedLong = urlConnection.getLastModified();
+        HttpURLConnection httpCon = null;
+        try {
+            httpCon = (HttpURLConnection) url.openConnection();
+            httpCon.setRequestMethod("HEAD");
 
-        Date lastModified = new Date(lastModifiedLong);
-        return lastModified;
+            if (httpCon.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                long dateLong = httpCon.getLastModified();
+
+                if (dateLong == 0) {
+                    return null;
+                }
+
+                return new Date(dateLong);
+            } else {
+                throw new IOException("Failed to get last modified date. HTTP response code: " + httpCon.getResponseCode());
+            }
+        } finally {
+            if (httpCon != null) {
+                httpCon.disconnect();
+            }
+        }
     }
 
     private static Date getDateFromFTPServer(URL url) throws IOException {

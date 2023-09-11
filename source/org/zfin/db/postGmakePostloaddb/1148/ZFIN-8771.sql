@@ -16,7 +16,7 @@ CREATE TABLE uniprot_release (
 
 ALTER TABLE uniprot_release OWNER TO informix;
 
-INSERT INTO uniprot_release (upr_date, upr_size, upr_md5, upr_path)
-    VALUES ('2023-05-03', 319230408, '266ca58c9512c50e51f72b96c1ba31a1', '2023-05/pre_zfin.dat');
+INSERT INTO uniprot_release (upr_date, upr_size, upr_md5, upr_path, upr_download_date)
+    VALUES ('2023-05-03', 319230408, '266ca58c9512c50e51f72b96c1ba31a1', '2023-05/pre_zfin.dat', '2023-05-03');
 
 

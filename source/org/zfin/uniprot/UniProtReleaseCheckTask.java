@@ -32,7 +32,10 @@ import static org.zfin.uniprot.UniProtReleaseDiffTask.combineAndFilterInputPathS
 public class UniProtReleaseCheckTask extends AbstractScriptWrapper {
 
     private static final String COMBINED_FILE_NAME = "pre_zfin.dat";
+    public static final String TREMBL_LOCAL_FILENAME = "uniprot_trembl_vertebrates.dat.gz";
+    public static final String SPROT_LOCAL_FILENAME = "uniprot_sprot_vertebrates.dat.gz";
 
+    private String urlForReleaseDate;
     private String downloadUrlForTremblFile;
     private String downloadUrlForSprotFile;
     private String downloadDestinationForUniProtReleases;
@@ -103,10 +106,10 @@ public class UniProtReleaseCheckTask extends AbstractScriptWrapper {
 
     private void downloadFiles(Date releaseDate) {
         String url1 = downloadUrlForTremblFile;
-        String fileName1 = url1.substring(url1.lastIndexOf('/') + 1);
+        String fileName1 = TREMBL_LOCAL_FILENAME;
 
         String url2 = downloadUrlForSprotFile;
-        String fileName2 = url2.substring(url2.lastIndexOf('/') + 1);
+        String fileName2 = SPROT_LOCAL_FILENAME;
 
         //set class properties
         downloadedDirectory = createPathForDownloadDestination(releaseDate);
@@ -203,11 +206,12 @@ public class UniProtReleaseCheckTask extends AbstractScriptWrapper {
     }
 
     private Date getLatestReleaseTimestamp() throws IOException {
-        String url = downloadUrlForTremblFile;
+        String url = urlForReleaseDate;
         if (url == null) {
             throw new RuntimeException("No URL found for uniprot release file.");
         }
 
+        log.debug("Getting last modified date from: " + url);
         Date lastModified = getLastModifiedOnServer(new URL(url));
 
         //if before 2023, throw exception
@@ -224,11 +228,11 @@ public class UniProtReleaseCheckTask extends AbstractScriptWrapper {
         if (this.downloadDestinationForUniProtReleases == null) {
             this.downloadDestinationForUniProtReleases = ZfinPropertiesEnum.UNIPROT_RELEASE_ARCHIVE_DIR.value();
         }
+        urlForReleaseDate = ZfinPropertiesEnum.UNIPROT_URL_FOR_RELEASE_DATE.value();
 
         if (this.downloadUrlForTremblFile != null && this.downloadUrlForSprotFile != null) {
             return;
         }
-
         List<String> tremblUrlsToTry = Stream.of(
                 ZfinPropertiesEnum.UNIPROT_TREMBL_FILE_URL.value(),
                 ZfinPropertiesEnum.UNIPROT_TREMBL_FILE_URL_ALT1.value(),
