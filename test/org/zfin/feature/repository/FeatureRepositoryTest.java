@@ -56,8 +56,8 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
     public void getFeatureForPublication() {
         //  publication: Abdelilah
         String[] pubIdList = new String[]{
-            "ZDB-PUB-970210-18",
-            "ZDB-PUB-100702-19", // has features with null prefixes
+                "ZDB-PUB-970210-18",
+                "ZDB-PUB-100702-19", // has features with null prefixes
         };
         for (String pubID : pubIdList) {
             List<Feature> features = featureRepository.getFeaturesByPublication(pubID);
@@ -96,6 +96,8 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getNonSaFeaturesWithGenomicMutDets() {
+
+
         List<Feature> features = featureRepository.getNonSaFeaturesWithGenomicMutDets();
 
         assertNotNull("feature list exists", features);
@@ -106,7 +108,7 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
 
     @Test
     public void getFeatureRelationshipTypesForPointMutationType() {
-        List<String> pointMutantTypes = new ArrayList<>();
+        List<String> pointMutantTypes = new ArrayList<String>();
         pointMutantTypes.add(FeatureMarkerRelationshipTypeEnum.IS_ALLELE_OF.toString());
         pointMutantTypes.add(FeatureMarkerRelationshipTypeEnum.CREATED_BY.toString());
 
@@ -243,7 +245,7 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
         for (int i = 0; i < 5; i++) {
             // just test the toString() method
             labs.get(i).toString();
-            assertTrue("Lab must have a prefix", featureRepository.getLabPrefixes(labs.get(i).getName()).size() > 0);
+            assertNotSame("Lab must have a prefix", 0, featureRepository.getLabPrefixes(labs.get(i).getName()));
         }
     }
 
@@ -252,6 +254,16 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
         List<FeaturePrefix> featurePrefixes = featureRepository.getLabPrefixes("Stainier Lab");
         assertNotNull(featurePrefixes);
         assertTrue(featurePrefixes.size() > 3);
+/*
+        assertEquals("s", featurePrefixes.get(0).getPrefixString());
+        assertTrue(featurePrefixes.get(0).isActiveForSet());
+        assertEquals("m", featurePrefixes.get(1).getPrefixString());
+        assertFalse(featurePrefixes.get(1).isActiveForSet());
+        assertEquals("sk", featurePrefixes.get(2).getPrefixString());
+        assertFalse(featurePrefixes.get(2).isActiveForSet());
+        assertEquals("st", featurePrefixes.get(3).getPrefixString());
+        assertFalse(featurePrefixes.get(3).isActiveForSet());
+*/
     }
 
     @Test
