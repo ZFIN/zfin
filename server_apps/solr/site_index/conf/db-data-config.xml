@@ -2694,7 +2694,6 @@
                              join term zeco on zeco.term_zdb_id = expcond_zeco_term_zdb_id
                              join all_term_contains atc on atc.alltermcon_contained_zdb_id = expcond_zeco_term_zdb_id
                              join term zecoParent on zecoParent.term_zdb_id = atc.alltermcon_container_zdb_id
-                             left outer join term zeco on zeco.term_zdb_id = expcond_zeco_term_zdb_id
                              left outer join term ao on ao.term_zdb_id = expcond_ao_term_zdb_id
                              left outer join term go_cc on go_cc.term_zdb_id = expcond_go_cc_term_zdb_id
                              left outer join term chebi on chebi.term_zdb_id = expcond_chebi_term_zdb_id
