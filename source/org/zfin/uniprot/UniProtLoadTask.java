@@ -78,8 +78,6 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         String contextOutputFile = getArgOrEnvironmentVar(args, 4, "UNIPROT_CONTEXT_FILE", "");
 
         UniProtLoadTask task = new UniProtLoadTask(inputFileName, outputJsonName, outputReportName, "true".equals(commitChanges), contextOutputFile);
-        log.debug("Starting UniProtLoadTask for file " + inputFileName + " with output files " + outputJsonName + " and " + outputReportName + ".");
-        log.debug("Commit changes: " + commitChanges + ".");
         task.runTask();
     }
 
@@ -97,6 +95,9 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
 
     public void runTask() throws IOException, BioException, SQLException {
         initialize();
+        log.debug("Starting UniProtLoadTask for file " + inputFileName + " with output files " + outputJsonName + " and " + outputReportName + ".");
+        log.debug("Commit changes: " + commitChanges + ".");
+
         try (BufferedReader inputFileReader = new BufferedReader(new java.io.FileReader(inputFileName))) {
             Map<String, RichSequenceAdapter> entries = readUniProtEntries(inputFileReader);
             Set<UniProtLoadAction> actions = executePipeline(entries);
