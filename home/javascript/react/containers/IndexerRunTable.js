@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import DataTable from '../components/data-table';
 import qs from 'qs';
 import Checkbox from '../components/Checkbox';
+import Duration from '../utils/duration';
 
 const IndexerRunTable = () => {
 
@@ -63,15 +64,9 @@ const IndexerRunTable = () => {
         },
         {
             label: 'Duration',
-            content: row => (<>{row.durationString && (<>{row.durationString.toLocaleString()}</>)}</>),
+            content: row => <Duration duration={row.durationString} isRunning={row.isRunning} currentDuration={row.currentDuration}/>,
             align: 'right',
             width: '150px',
-        },
-        {
-            label: 'Current Duration',
-            content: row => (<>{row.currentDuration && (<>{row.currentDuration.toLocaleString()}</>)}</>),
-            align: 'right',
-            width: '80px',
         },
         {
             label: 'End',
@@ -85,7 +80,7 @@ const IndexerRunTable = () => {
             content: row => <div className='mb-2'>
                 <Checkbox
                     checked={showIndexerTask && row.id === runInfoId}
-                    id={row.id+row.name}
+                    id={row.id + row.name}
                     onChange={() => handleRunInfoSelection(row.id)}
                 />
             </div>
@@ -104,15 +99,9 @@ const IndexerRunTable = () => {
         },
         {
             label: 'Duration',
-            content: row => (<>{row.duration && (<>{row.duration.toLocaleString()}</>)}</>),
+            content: row => <Duration duration={row.durationString} isRunning={row.isRunning} currentDuration={row.currentDuration}/>,
             align: 'right',
-            width: '80px',
-        },
-        {
-            label: 'Current Duration',
-            content: row => (<>{row.currentDuration && (<>{row.currentDuration.toLocaleString()}</>)}</>),
-            align: 'right',
-            width: '80px',
+            width: '150px',
         },
         {
             label: 'Count',
@@ -140,15 +129,9 @@ const IndexerRunTable = () => {
         },
         {
             label: 'Duration',
-            content: row => (<>{row.duration && (<>{row.duration.toLocaleString()}</>)}</>),
+            content: row => <Duration duration={row.durationString} isRunning={row.isRunning} currentDuration={row.currentDuration}/>,
             align: 'right',
-            width: '80px',
-        },
-        {
-            label: 'Current Duration',
-            content: row => (<>{row.currentDuration && (<>{row.currentDuration.toLocaleString()}</>)}</>),
-            align: 'right',
-            width: '80px',
+            width: '150px',
         },
         {
             label: 'Start',

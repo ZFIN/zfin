@@ -61,7 +61,6 @@ public abstract class UiIndexer<Entity> extends Thread {
         } catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
-            System.exit(-1);
         }
     }
 
@@ -207,7 +206,6 @@ public abstract class UiIndexer<Entity> extends Thread {
             } catch (Exception e) {
                 e.printStackTrace();
                 log.error(e.getMessage());
-                System.exit(-1);
             }
         }
 

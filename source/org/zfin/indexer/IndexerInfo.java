@@ -49,6 +49,9 @@ public class IndexerInfo extends BaseEntity {
     @Column(name = "ii_count")
     private Integer count;
 
+    @Transient
+    private Boolean running;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "indexerInfo", fetch = FetchType.LAZY)
     @OrderBy("startDate")
     private Set<IndexerTask> indexerTasks;
@@ -60,6 +63,16 @@ public class IndexerInfo extends BaseEntity {
             return null;
         Duration duration = new Duration(startDate, LocalDateTime.now());
         return duration.toString();
+    }
+
+    @JsonView(View.API.class)
+    public String getDurationString() {
+        if (startDate == null || duration == null)
+            return null;
+        long hours = duration / 3600;
+        long minutes = (duration % 3600) / 60;
+        long seconds = duration % 60;
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
 
 
