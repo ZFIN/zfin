@@ -3,7 +3,7 @@ CREATE OR REPLACE FUNCTION convert_gene_to_ncrna(
 ) RETURNS text AS $$
 BEGIN
 
-return convert_gene_to_type(geneId, 'NCRNAG');
+return convert_marker_type(geneId, 'NCRNAG');
 
 END;
 $$ LANGUAGE plpgsql;

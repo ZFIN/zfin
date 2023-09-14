@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION convert_gene_to_type(
+CREATE OR REPLACE FUNCTION convert_marker_type(
     oldGeneId VARCHAR,
     newGeneType VARCHAR
 ) RETURNS text AS $$
