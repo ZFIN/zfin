@@ -1,10 +1,19 @@
 package org.zfin.sequence;
 
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class DisplayGroupMember {
     private Long id;
     private ReferenceDatabase referenceDatabase;
     private DisplayGroup displayGroup;
+
+    private boolean canRead;
+    private boolean canAdd;
+    private boolean canDelete;
+    private boolean canEdit;
 
     public ReferenceDatabase getForeignDBContains() {
         return referenceDatabase;

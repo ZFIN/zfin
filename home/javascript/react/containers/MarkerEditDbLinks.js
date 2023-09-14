@@ -83,7 +83,7 @@ const MarkerEditDbLinks = ({markerId, group = 'other marker pages'}) => {
                     >
                         <option value='' />
                         {databases.value
-                            .filter(database => database.zdbID != 'ZDB-FDBCONT-040412-1' /*don't allow adding ncbi genes manually*/)
+                            // .filter(database => database.zdbID != 'ZDB-FDBCONT-040412-1' /*don't allow adding ncbi genes manually*/)
                             .map(database => <option value={database.zdbID} key={database.zdbID}>{database.name}</option>)
                         }
                     </FormGroup>
