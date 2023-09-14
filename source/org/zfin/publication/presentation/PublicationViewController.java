@@ -55,6 +55,7 @@ import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.StringEscapeUtils.escapeXml;
 import static org.zfin.profile.UserService.isRootUser;
 import static org.zfin.repository.RepositoryFactory.getFigureRepository;
+import static org.zfin.repository.RepositoryFactory.getPublicationPageRepository;
 import static org.zfin.util.ZfinStringUtils.objectToJson;
 import static org.zfin.util.servlet.ServletService.isAuthenticated;
 
@@ -130,6 +131,12 @@ PublicationViewController {
 
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, getTitle(publication));
         model.addAttribute("relatedData", relatedDataService.getXrefsLinks(publication.getZdbID(), "Publication", null));
+        Pagination pagination = new Pagination();
+        pagination.setLimit(1);
+        PaginationResult<Clone> clones = getPublicationPageRepository().getProbes(publication, pagination);
+        if(CollectionUtils.isNotEmpty(clones.getPopulatedResults())){
+            model.addAttribute("hasProbes", true);
+        }
 
         //set up the menu for the left hand navigation
         PublicationNavigationMenu navigationMenu = new PublicationNavigationMenu();

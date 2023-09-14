@@ -79,7 +79,6 @@ public class HibernatePublicationPageRepository implements PublicationPageReposi
     public PaginationResult<Clone> getProbes(Publication publication, Pagination pagination) {
         String hql = """
             select distinct exp.probe from ExpressionExperiment as exp
-            where exp.publication = :publication
             """;
         if (publication != null) {
             hql += " where exp.publication = :publication ";
