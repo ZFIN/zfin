@@ -3,11 +3,16 @@ package org.zfin.framework.presentation;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.ui.Model;
+import org.zfin.framework.api.Pagination;
 import org.zfin.framework.featureflag.FeatureFlagEnum;
 import org.zfin.framework.featureflag.FeatureFlags;
+import org.zfin.marker.Clone;
 import org.zfin.publication.Publication;
+
+import static org.zfin.repository.RepositoryFactory.getPublicationPageRepository;
 
 /**
  * This class encapsulates the logic for which navigation items to show on the publication view page,
@@ -60,7 +65,7 @@ public class PublicationNavigationMenu extends NavigationMenu {
      * @param model The page model for publication-view
      */
     public void setModel(Model model) {
-        Publication publication = (Publication)(model.asMap().get("publication"));
+        Publication publication = (Publication) (model.asMap().get("publication"));
 
         //show zebrashare nav item if data is present
         this.setHidden(NavigationMenuOptions.ZEBRASHARE, !model.containsAttribute("zebraShareMetadata"));
@@ -75,6 +80,9 @@ public class PublicationNavigationMenu extends NavigationMenu {
                 abstractNavItem.setShowBorder(true);
             }
         }
+        Pagination pagination = new Pagination();
+        pagination.setLimit(1);
+        this.setHidden(NavigationMenuOptions.PROBES, !model.containsAttribute("hasProbes"));
     }
 
 }
