@@ -3,7 +3,7 @@
 <z:dataList hasData="${!empty formBean.pathwayDBLinks}">
     <c:forEach var="link" items="${formBean.pathwayDBLinks}">
         <li>
-            <a href="${link.link}">${link.referenceDatabaseName}</a>
+            <zfin2:externalLink href="${link.link}">${link.referenceDatabaseName}</zfin2:externalLink>
         </li>
     </c:forEach>
 </z:dataList>

@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import DataTable from '../components/data-table';
 import OrthologyEvidenceLink from '../components/OrthologyEvidenceLink';
+import Link from '../components/ExternalLinkMaybe';
+
 
 const OrthologyTable = ({geneId}) => {
     const columns = [
@@ -25,7 +27,7 @@ const OrthologyTable = ({geneId}) => {
             content: row => (
                 row.orthologousGeneReference.map((reference) => (
                     <div key={reference.accession.url}>
-                        <a href={reference.accession.url}>{reference.accession.name}</a>
+                        <Link href={reference.accession.url}>{reference.accession.name}</Link>
                     </div>
                 ))
             ),

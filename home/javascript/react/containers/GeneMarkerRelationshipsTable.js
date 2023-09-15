@@ -4,14 +4,15 @@ import DataTable from '../components/data-table';
 import CommaSeparatedList from '../components/CommaSeparatedList';
 import AttributionLink from '../components/AttributionLink';
 import {EntityLink} from '../components/entity';
+import Link from '../components/ExternalLinkMaybe';
 
 const AccessionNumberList = ({dblinks}) => (
     <CommaSeparatedList>
         {dblinks.map(dblink => {
             return (
-                <a href={`${dblink.referenceDatabase.foreignDB.dbUrlPrefix}${dblink.accessionNumber}`} key={dblink.accessionNumber}>
+                <Link href={`${dblink.referenceDatabase.foreignDB.dbUrlPrefix}${dblink.accessionNumber}`} key={dblink.accessionNumber}>
                     {dblink.accessionNumber}
-                </a>
+                </Link>
             );
         })}
     </CommaSeparatedList>

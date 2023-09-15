@@ -269,5 +269,39 @@ public abstract class EntityPresentation {
         return sb.toString();
     }
 
+    /**
+     * This method is used to create a hyperlink.
+     * If the link is external, add the appropriate css class.
+     *
+     * @param href the url
+     * @param text the text to display
+     * @param isExternal is the link external?
+     * @return
+     */
+    public static String getGeneralHyperLink(String href, String text, boolean isExternal) {
+        if (isExternal) {
+            return String.format("""
+                    <a href="%s" target="_blank" rel="noopener noreferrer" class="external">%s</a>
+                    """, href, text).trim();
+        } else {
+            return String.format("<a href=\"%s\">%s</a>", href, text);
+        }
+    }
+
+    /**
+     * This method is used to create a hyperlink.
+     * It will automatically determine if the link is external or not and add the appropriate css class.
+     *
+     * @param href the url
+     * @param text the text to display
+     * @return
+     */
+    public static String getHyperLink(String href, String text) {
+        //TODO: should we use better logic? This would match "http://example.org/page/zfin.org" for example
+        //we are using the same logic as defined in the site css for external links: a[href^="http://"]:not([href*="zfin.org"])
+        boolean isExternal = href.startsWith("http") && !href.contains("zfin.org");
+        return getGeneralHyperLink(href, text, isExternal);
+    }
+
 
 }

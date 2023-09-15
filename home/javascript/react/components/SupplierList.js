@@ -1,5 +1,6 @@
 import React from 'react';
 import { arrayOf, shape, string } from 'prop-types';
+import Link from './ExternalLinkMaybe';
 
 const SupplierList = ({suppliers}) => {
     if (!suppliers) {
@@ -9,7 +10,7 @@ const SupplierList = ({suppliers}) => {
     return suppliers.map((supplier) => (
         <div className='mb-1' key={supplier.organization.zdbID}>
             <a href={supplier.organization.zdbID}>{supplier.organization.name}</a> (
-            <a href={supplier.orderURL}>order this</a>)
+            <Link href={supplier.orderURL}>order this</Link>)
         </div>
     ));
 };

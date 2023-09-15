@@ -9,6 +9,7 @@ import DataTable from '../components/data-table';
 import NoData from '../components/NoData';
 import {Ribbon, getSelectedTermQueryParams} from '../components/ribbon';
 import GenericErrorMessage from '../components/GenericErrorMessage';
+import Link from '../components/ExternalLinkMaybe';
 import produce, {setAutoFreeze} from 'immer';
 setAutoFreeze(false);
 
@@ -67,9 +68,9 @@ const GeneOntologyRibbon = ({geneId}) => {
         {
             label: 'Evidence',
             content: ({evidenceCode}) => (
-                <a href={`http://www.geneontology.org/GO.evidence.shtml#${evidenceCode.code.toLowerCase()}`}>
+                <Link href={`http://www.geneontology.org/GO.evidence.shtml#${evidenceCode.code.toLowerCase()}`}>
                     {evidenceCode.code}
-                </a>
+                </Link>
             ),
             width: '65px',
         },

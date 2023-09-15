@@ -20,7 +20,7 @@
 
                 <td>
                     <c:if test="${!empty row.diseaseTerm}">
-                        <a href="http://www.alliancegenome.org/disease/${row.diseaseTerm.oboID}">Alliance</a>
+                        <zfin2:externalLink href="http://www.alliancegenome.org/disease/${row.diseaseTerm.oboID}">Alliance</zfin2:externalLink>
                     </c:if>
                 </td>
 
@@ -28,7 +28,7 @@
 
                 <td>
                     <c:if test="${!empty row.omimPhenotype.omimNum}">
-                        <a href="http://omim.org/entry/${row.omimPhenotype.omimNum}">${row.omimPhenotype.omimNum}</a>
+                        <zfin2:externalLink href="http://omim.org/entry/${row.omimPhenotype.omimNum}">${row.omimPhenotype.omimNum}</zfin2:externalLink>
                     </c:if>
                 </td>
             </tr>

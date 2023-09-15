@@ -10,17 +10,17 @@
     <c:when test="${organization != null}">
         <c:forEach var="url" items="${organization.organizationUrls}">
             <c:if test="${(url.businessPurpose != null) && (url.businessPurpose eq 'order')}">
-                &nbsp;(<span style="font-size: smaller;"><a href="${url.urlPrefix}${accessionNumber}">${url.hyperlinkName}</a></span>)
+                &nbsp;(<span style="font-size: smaller;"><zfin2:externalLink href="${url.urlPrefix}${accessionNumber}">${url.hyperlinkName}</zfin2:externalLink></span>)
             </c:if>
         </c:forEach>
     </c:when>
     <c:otherwise>
         <c:forEach var="markerSupplier" items="${markerSuppliers}">
-            <a href="${markerSupplier.organization.url}"
-               id="${markerSupplier.organization.zdbID}">${markerSupplier.organization.name}</a>
+            <zfin2:externalLink href="${markerSupplier.organization.url}"
+               id="${markerSupplier.organization.zdbID}">${markerSupplier.organization.name}</zfin2:externalLink>
             <c:forEach var="url" items="${markerSupplier.organization.organizationUrls}">
                 <c:if test="${url.businessPurpose eq 'order'}">
-                    &nbsp;(<span style="font-size: smaller;"><a href="${url.urlPrefix}${accessionNumber}">${url.hyperlinkName}</a></span>)
+                    &nbsp;(<span style="font-size: smaller;"><zfin2:externalLink href="${url.urlPrefix}${accessionNumber}">${url.hyperlinkName}</zfin2:externalLink></span>)
                 </c:if>
             </c:forEach>
             <br/>

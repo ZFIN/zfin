@@ -23,14 +23,14 @@ public class DBLinkPresentation extends EntityPresentation {
     public static String getLink(DBLink dbLink) {
         StringBuilder sb = new StringBuilder("");
         if (dbLink != null) {
-            sb.append("<a href=\"");
 
             sb.append(dbLink.getReferenceDatabase().getForeignDB().getDbUrlPrefix());
             sb.append(dbLink.getAccessionNumber());
             if (dbLink.getReferenceDatabase().getForeignDB().getDbUrlSuffix() != null) {
                 sb.append(dbLink.getReferenceDatabase().getForeignDB().getDbUrlSuffix());
             }
-            sb.append("\">");
+            String href = sb.toString();
+            sb = new StringBuilder();
 
             sb.append(dbLink.getReferenceDatabase().getForeignDB().getDbName());
             if (false == dbLink.getReferenceDatabase().isInDisplayGroup(DisplayGroup.GroupName.MICROARRAY_EXPRESSION)) {
@@ -42,9 +42,10 @@ public class DBLinkPresentation extends EntityPresentation {
                     sb.append((dbLink.getAccessionNumberDisplay() != null ? dbLink.getAccessionNumberDisplay() : dbLink.getAccessionNumber()));
                 }
             }
-            sb.append("</a>");
+            String linkText = sb.toString();
+            return getHyperLink(href, linkText);
         }
-        return sb.toString();
+        return "";
     }
 
     /**
