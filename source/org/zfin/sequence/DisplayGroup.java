@@ -15,6 +15,12 @@ public class DisplayGroup implements Comparable<DisplayGroup>{
     private String definition;
     private Set<DisplayGroupMember> displayGroupMembers;
 
+    public Set<ReferenceDatabase> getReferenceDatabases() {
+        return this.displayGroupMembers.stream()
+                .map(DisplayGroupMember::getReferenceDatabase)
+                .collect(java.util.stream.Collectors.toSet());
+    }
+
     public enum GroupName {
         ADDABLE_NUCLEOTIDE_SEQUENCE("addable nucleotide sequence"),
         DBLINK_ADDING_ON_CLONE_EDIT("dblink adding on clone-edit"),
