@@ -13,7 +13,7 @@ public class DisplayGroup implements Comparable<DisplayGroup>{
     private Long id;
     private GroupName groupName;
     private String definition;
-    private Set<ReferenceDatabase> referenceDatabases;
+    private Set<DisplayGroupMember> displayGroupMembers;
 
     public enum GroupName {
         ADDABLE_NUCLEOTIDE_SEQUENCE("addable nucleotide sequence"),

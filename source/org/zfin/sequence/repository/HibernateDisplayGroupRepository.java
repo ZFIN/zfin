@@ -28,7 +28,7 @@ public class HibernateDisplayGroupRepository implements DisplayGroupRepository {
 
         String hql =
                 "select rd from ReferenceDatabase rd " +
-                        "join rd.displayGroups dgs " +
+                        "join rd.displayGroupMembers dgs " +
                         "join dgs.displayGroup dg " +
                         "where dg.groupName in (:groupNames) " +
                         "order by rd.foreignDB.dbName, rd.foreignDBDataType.dataType";

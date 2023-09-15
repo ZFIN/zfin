@@ -85,7 +85,7 @@
             <many-to-many class="org.zfin.sequence.blast.Database" column="ifat_blastdb_zdb_id"/>
         </bag>
 
-        <set name="displayGroups" lazy="true" table="foreign_db_contains_display_group_member" inverse="true">
+        <set name="displayGroupMembers" lazy="true" table="foreign_db_contains_display_group_member" inverse="true">
             <key column="fdbcdgm_fdbcont_zdb_id"/>
             <one-to-many class="org.zfin.sequence.DisplayGroupMember"/>
         </set>
@@ -102,7 +102,7 @@
         <property name="definition" column="fdbcdg_definition" not-null="true"/>
 
 
-        <set name="referenceDatabases" lazy="true" cascade="all">
+        <set name="displayGroupMembers" lazy="true" cascade="all">
             <key column="fdbcdgm_group_id"/>
             <one-to-many class="org.zfin.sequence.DisplayGroupMember"/>
         </set>
@@ -110,9 +110,15 @@
 
     <class name="org.zfin.sequence.DisplayGroupMember" table="foreign_db_contains_display_group_member">
         <id name="id">
-            <column name="association_id" not-null="true"/>
+            <column name="fdbcdgm_pk_id" not-null="true"/>
             <generator class="identity"/>
         </id>
+
+        <property name="canAdd" column="fdbcdgm_can_add" type="boolean"/>
+        <property name="canEdit" column="fdbcdgm_can_edit" type="boolean"/>
+        <property name="canDelete" column="fdbcdgm_can_delete" type="boolean"/>
+        <property name="canView" column="fdbcdgm_can_view" type="boolean"/>
+
 
         <many-to-one name="displayGroup" class="org.zfin.sequence.DisplayGroup" column="fdbcdgm_group_id" not-null="true" />
         <many-to-one name="referenceDatabase" class="org.zfin.sequence.ReferenceDatabase" column="fdbcdgm_fdbcont_zdb_id" not-null="true" />
