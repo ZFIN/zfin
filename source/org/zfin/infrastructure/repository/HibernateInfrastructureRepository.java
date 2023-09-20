@@ -41,6 +41,7 @@ import org.zfin.profile.Person;
 import org.zfin.profile.service.BeanFieldUpdate;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
+import org.zfin.uniprot.persistence.UniProtRelease;
 import org.zfin.util.DatabaseJdbcStatement;
 import org.zfin.util.DateUtil;
 
@@ -54,7 +55,6 @@ import java.util.Date;
 import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
-import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 
 @Repository
 public class HibernateInfrastructureRepository implements InfrastructureRepository {
@@ -2021,6 +2021,48 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         query.executeUpdate();
 
     }
+
+    @Override
+    public UniProtRelease getUniProtReleaseByDate(Date date) {
+        Session session = currentSession();
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+
+        CriteriaQuery<UniProtRelease> query = criteriaBuilder.createQuery(UniProtRelease.class);
+        Root<UniProtRelease> uniProtRelease = query.from(UniProtRelease.class);
+        query.where(criteriaBuilder.equal(uniProtRelease.get("date"), date));
+
+        return session.createQuery(query).getResultList().stream().findFirst().orElse(null);
+    }
+
+    @Override
+    public UniProtRelease getLatestUnprocessedUniProtRelease() {
+        Session session = currentSession();
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+
+        CriteriaQuery<UniProtRelease> query = criteriaBuilder.createQuery(UniProtRelease.class);
+        Root<UniProtRelease> uniProtRelease = query.from(UniProtRelease.class);
+        query.where(criteriaBuilder.isNull(uniProtRelease.get("processedDate")));
+        query.orderBy(criteriaBuilder.desc(uniProtRelease.get("date")));
+
+        return session.createQuery(query).getResultList().stream().findFirst().orElse(null);
+    }
+
+
+    @Override
+    public void insertUniProtRelease(UniProtRelease release) {
+        currentSession().save(release);
+    }
+
+    @Override
+    public void updateUniProtRelease(UniProtRelease release) {
+        currentSession().update(release);
+    }
+
+    @Override
+    public void upsertUniProtRelease(UniProtRelease release) {
+        currentSession().saveOrUpdate(release);
+    }
+
 }
 
 

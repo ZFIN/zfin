@@ -1,119 +1,105 @@
 package org.zfin.uniprot;
 
-import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.biojava.bio.BioException;
-import org.biojava.bio.seq.Sequence;
-import org.biojava.bio.seq.io.SymbolTokenization;
-import org.biojava.bio.symbol.AlphabetManager;
-import org.biojava.bio.symbol.FiniteAlphabet;
+import org.biojavax.CrossRef;
 import org.biojavax.Note;
-import org.biojavax.SimpleRichAnnotation;
-import org.biojavax.bio.seq.RichSequence;
-import org.biojavax.bio.seq.io.RichSequenceBuilderFactory;
-import org.biojavax.bio.seq.io.RichSequenceFormat;
-import org.biojavax.bio.seq.io.RichStreamReader;
-import org.biojavax.bio.seq.io.RichStreamWriter;
+import org.biojavax.ontology.ComparableTerm;
+import org.zfin.uniprot.dto.DBLinkSlimDTO;
 
-import java.io.*;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.function.Function;
+
 
 public class UniProtTools {
-    private static final int MAX_LINE_WIDTH = 500;
+    public static final String MANUAL_CURATION_OF_PROTEIN_IDS = "ZDB-PUB-170131-9";
+    public static final String UNIPROT_ID_LOAD_FROM_ENSEMBL = "ZDB-PUB-170502-16";
+    public static final String MANUAL_CURATION_OF_UNIPROT_IDS = "ZDB-PUB-220705-2";
+    public static final String CURATION_OF_PROTEIN_DATABASE_LINKS = "ZDB-PUB-020723-2";
+    public static final String AUTOMATED_CURATION_OF_UNIPROT_DATABASE_LINKS = "ZDB-PUB-230615-71";
 
-    public static RichStreamReader getRichStreamReaderForUniprotDatFile(String inputFileName, boolean elideSymbols) throws FileNotFoundException, BioException {
-        BufferedReader br = new BufferedReader(new FileReader(inputFileName));
-        return getRichStreamReaderForUniprotDatFile(br, elideSymbols);
-    }
-
-    public static RichStreamReader getRichStreamReaderForUniprotDatFile(BufferedReader inputFileReader, boolean elideSymbols) throws FileNotFoundException, BioException {
-        RichSequenceFormat inFormat = new UniProtFormatZFIN();
-
-        //skips parsing of certain sections that otherwise would throw exceptions
-        inFormat.setElideFeatures(true);
-        inFormat.setElideReferences(true);
-        inFormat.setElideSymbols(elideSymbols);
-
-        FiniteAlphabet alpha = (FiniteAlphabet) AlphabetManager.alphabetForName("PROTEIN");
-        SymbolTokenization tokenization = alpha.getTokenization("default");
-
-        return new RichStreamReader(
-                inputFileReader, inFormat, tokenization,
-                RichSequenceBuilderFactory.THRESHOLD,
-                null);
-    }
-
-    public static RichStreamWriter getRichStreamWriterForUniprotDatFile(String outfile) throws FileNotFoundException {
-        return getRichStreamWriterForUniprotDatFile(new FileOutputStream(outfile));
-    }
-
-    public static RichStreamWriter getRichStreamWriterForUniprotDatFile(OutputStream out) throws FileNotFoundException {
-        RichSequenceFormat format = getUniProtFormatForWriting();
-        return new RichStreamWriter(out, format);
-    }
-
-    public static UniProtFormatZFIN getUniProtFormatForWriting() {
-        UniProtFormatZFIN format = new UniProtFormatZFIN();
-
-        FiniteAlphabet alphabet = (FiniteAlphabet) AlphabetManager.alphabetForName("PROTEIN");
-        format.setOverrideAlphabet(alphabet);
-        format.setLineWidth(MAX_LINE_WIDTH);
-        return format;
-    }
+    public static final String[] LOAD_PUBS = new String[]{CURATION_OF_PROTEIN_DATABASE_LINKS, AUTOMATED_CURATION_OF_UNIPROT_DATABASE_LINKS};
 
 
-    public static List<Note> getKeywordNotes(RichSequence seq1) {
-        SimpleRichAnnotation seq1NoteSet = new SimpleRichAnnotation();
-        seq1NoteSet.setNoteSet(seq1.getNoteSet());
-        Note[] keywords = seq1NoteSet.getProperties(RichSequence.Terms.getKeywordTerm());
-        return List.of(keywords);
-    }
-
-    public static Date getDateUpdatedFromNotes(RichSequence seq1) {
-        SimpleRichAnnotation seq1NoteSet = new SimpleRichAnnotation();
-        seq1NoteSet.setNoteSet(seq1.getNoteSet());
-
-        String stringDate = (String) seq1NoteSet.getProperty(RichSequence.Terms.getDateUpdatedTerm());
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
-
-        try {
-            return formatter.parse(stringDate);
-        } catch (Exception e) {
-            return null;
+    //use passed in lambda expression to transform the notes
+    public static void transformCrossRefNoteSetByTerm(CrossRef crossRef, ComparableTerm term, Function<String, String> transformer) {
+        Set<Note> notes = crossRef.getNoteSet();
+        for (Note note : notes) {
+            if (note.getTerm().equals(term)) {
+                note.setValue(transformer.apply(note.getValue()));
+            }
         }
     }
 
-
-    public static String sequenceToString(Sequence seq1) {
-        UniProtFormatZFIN format = getUniProtFormatForWriting();
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    public static String getArgOrEnvironmentVar(String[] args, int index, String envVar, String defaultValue) {
         try {
-            PrintStream printStream = new PrintStream(outputStream);
-            format.beginWriting();
-            format.writeSequence(seq1, printStream);
-            format.finishWriting();
-        } catch (IOException se) {
-            se.printStackTrace();
-            throw new RuntimeException(se);
+            return getArgOrEnvironmentVar(args, index, envVar);
+        } catch (IllegalArgumentException e) {
+            if (defaultValue == null) {
+                throw e;
+            } else {
+                return defaultValue;
+            }
         }
-        return outputStream.toString();
     }
 
-
-    public static String getArgOrEnvironmentVar(String[] args, int index, String envVar) {
+    public static String getArgOrEnvironmentVar(String[] args, int index, String envVar) throws IllegalArgumentException {
         if (args.length > index && args[index] != null) {
+            if ("null".equals(args[index])) {
+                throw new IllegalArgumentException("Empty required argument: " + envVar + ". Please provide it as an environment variable or as argument: " + (index + 1) + ". ");
+            }
             return args[index];
         }
 
         String result = System.getenv(envVar);
 
         if (result == null) {
-            System.err.println("Missing required argument: " + envVar + ". Please provide it as an environment variable or as argument: " + (index + 1) + ". ");
-            System.exit(1);
+            throw new IllegalArgumentException("Missing required argument: " + envVar + ". Please provide it as an environment variable or as argument: " + (index + 1) + ". ");
         }
 
         return result;
     }
+
+    //TODO: remove this method once we have a proper way to set accession
+    //CrossRef doesn't allow setting accession, so we have to use reflection
+    //We already wrap RichSequence with a custom class, so we should do the same for CrossRef
+    public static void setAccession(CrossRef xref, String accession) {
+        try {
+            Method method;
+            method = xref.getClass().getDeclaredMethod("setAccession", String.class);
+            method.setAccessible(true);
+            method.invoke(xref, accession);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<String> getAttributionsSupportingGeneAccessionRelationship(String geneID, String accession, List<DBLinkSlimDTO> dbLinkSlimDTOs) {
+        if (dbLinkSlimDTOs == null) {
+            return Collections.emptyList();
+        }
+
+        return dbLinkSlimDTOs.stream()
+                .filter(dbLinkSlimDTO -> dbLinkSlimDTO.getAccession().equals(accession) && dbLinkSlimDTO.getDataZdbID().equals(geneID))
+                .flatMap(dbLinkSlimDTO -> dbLinkSlimDTO.getPublicationIDs().stream())
+                .toList();
+    }
+
+    public static boolean isGeneAccessionRelationshipSupportedByNonLoadPublication(String geneID, String accession, List<DBLinkSlimDTO> dbLinkSlimDTOs) {
+        List<String> attributionPubIDs = getAttributionsSupportingGeneAccessionRelationship(geneID, accession, dbLinkSlimDTOs);
+        if (attributionPubIDs == null) {
+            return false;
+        }
+        return attributionPubIDs.stream().anyMatch(UniProtTools::isNonLoadPublication);
+    }
+
+    public static boolean isAnyGeneAccessionRelationshipSupportedByNonLoadPublication(String accession,
+                                                                                      List<String> geneIDs,
+                                                                                      List<DBLinkSlimDTO> dbLinkSlimDTOs) {
+        return geneIDs.stream().anyMatch(geneID -> isGeneAccessionRelationshipSupportedByNonLoadPublication(geneID, accession, dbLinkSlimDTOs));
+    }
+
+    public static boolean isLoadPublication(String pubID) {return List.of(LOAD_PUBS).contains(pubID);}
+
+    public static boolean isNonLoadPublication(String pubID) {return !isLoadPublication(pubID);}
+
 }

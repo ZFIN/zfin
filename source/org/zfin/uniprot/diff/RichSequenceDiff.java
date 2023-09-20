@@ -1,6 +1,5 @@
 package org.zfin.uniprot.diff;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.Setter;
 import org.biojavax.CrossRef;
@@ -10,14 +9,11 @@ import java.util.stream.Collectors;
 
 import org.biojavax.Note;
 import org.biojavax.RankedCrossRef;
-import org.biojavax.bio.seq.RichSequence;
-import org.zfin.uniprot.serialize.RichSequenceDiffSerializer;
+import org.zfin.uniprot.adapter.RichSequenceAdapter;
 
-import static org.zfin.uniprot.UniProtTools.getKeywordNotes;
 
 @Getter
 @Setter
-@JsonSerialize(using = RichSequenceDiffSerializer.class)
 public class RichSequenceDiff {
     private List<CrossRef> addedCrossRefs;
     private List<CrossRef> removedCrossRefs;
@@ -25,12 +21,12 @@ public class RichSequenceDiff {
     private List<Note> addedKeywords;
     private List<Note> removedKeywords;
 
-    private RichSequence oldSequence;
-    private RichSequence newSequence;
+    private RichSequenceAdapter oldSequence;
+    private RichSequenceAdapter newSequence;
 
     private String accession;
 
-    public RichSequenceDiff(RichSequence oldSequence, RichSequence newSequence) {
+    public RichSequenceDiff(RichSequenceAdapter oldSequence, RichSequenceAdapter newSequence) {
         if (oldSequence == null || newSequence == null) {
             throw new IllegalArgumentException("Both sequences must be non-null");
         }
@@ -48,9 +44,8 @@ public class RichSequenceDiff {
                 !addedKeywords.isEmpty() || !removedKeywords.isEmpty();
     }
 
-    public static RichSequenceDiff create(RichSequence oldSequence, RichSequence newSequence) {
-        RichSequenceDiff diff = new RichSequenceDiff(oldSequence, newSequence);
-        return diff;
+    public static RichSequenceDiff create(RichSequenceAdapter oldSequence, RichSequenceAdapter newSequence) {
+        return new RichSequenceDiff(oldSequence, newSequence);
     }
 
     private void populateDiffs() {
@@ -61,7 +56,7 @@ public class RichSequenceDiff {
         this.setAddedKeywords(keywordsInFirstSeqOnly(newSequence, oldSequence));
     }
 
-    private List<CrossRef> crossRefsInFirstSeqOnly(RichSequence seq1, RichSequence seq2) {
+    private List<CrossRef> crossRefsInFirstSeqOnly(RichSequenceAdapter seq1, RichSequenceAdapter seq2) {
 
         //convert the ranked crossrefs to a list of crossrefs
         Set<CrossRef> xrefs1 = (Set<CrossRef>)seq1.getRankedCrossRefs().stream().map(xref -> ((RankedCrossRef)xref).getCrossRef()).collect(Collectors.toSet());
@@ -80,9 +75,9 @@ public class RichSequenceDiff {
         return new ArrayList<>(mappedXrefs1.values());
     }
 
-    private List<Note> keywordsInFirstSeqOnly(RichSequence seq1, RichSequence seq2) {
-        List<Note> keywords1 = getKeywordNotes(seq1);
-        List<Note> keywords2 = getKeywordNotes(seq2);
+    private List<Note> keywordsInFirstSeqOnly(RichSequenceAdapter seq1, RichSequenceAdapter seq2) {
+        List<Note> keywords1 = seq1.getKeywordNotes();
+        List<Note> keywords2 = seq2.getKeywordNotes();
         List<Note> keywordsInFirstSeqOnly = new ArrayList<>();
         for (Note keyword : keywords1) {
             if (!keywords2.contains(keyword)) {

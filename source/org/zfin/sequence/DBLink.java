@@ -19,7 +19,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Setter
 @Getter
@@ -214,7 +213,11 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
 
     @JsonView(View.SequenceAPI.class)
     public String getPublicationIds(){
-        return publications.stream().map(publicationAttribution -> publicationAttribution.getPublication().getZdbID()).collect(Collectors.joining(","));
+        return String.join(",", getPublicationIdsAsList());
+    }
+
+    public List<String> getPublicationIdsAsList(){
+        return publications.stream().map(publicationAttribution -> publicationAttribution.getPublication().getZdbID()).toList();
     }
 
     @JsonView(View.SequenceAPI.class)
@@ -264,9 +267,9 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
                 return true;
             }
 
-            if (dbLink.getAccessionNumber().equals(dbLink.getAccessionNumber())
+            if (getAccessionNumber().equals(dbLink.getAccessionNumber())
                     &&
-                    dbLink.getReferenceDatabase().equals(dbLink.getReferenceDatabase())
+                    getReferenceDatabase().equals(dbLink.getReferenceDatabase())
             ) {
                 return true;
             }

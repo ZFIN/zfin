@@ -20,6 +20,7 @@ import org.zfin.ontology.GenericTerm;
 import org.zfin.ontology.Ontology;
 import org.zfin.profile.service.BeanFieldUpdate;
 import org.zfin.publication.Publication;
+import org.zfin.uniprot.persistence.UniProtRelease;
 import org.zfin.util.DatabaseJdbcStatement;
 
 import java.util.Collection;
@@ -487,6 +488,15 @@ public interface InfrastructureRepository {
     List<ControlledVocab> getControlledVocabsForSpeciesByConstruct(Marker construct);
 
     void deletePubProcessingInfo(String zdbID);
+
+    UniProtRelease getUniProtReleaseByDate(Date date);
+    UniProtRelease getLatestUnprocessedUniProtRelease();
+
+    void insertUniProtRelease(UniProtRelease release);
+
+    void updateUniProtRelease(UniProtRelease release);
+
+    void upsertUniProtRelease(UniProtRelease release);
 }
 
 

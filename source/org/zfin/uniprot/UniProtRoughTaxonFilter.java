@@ -6,7 +6,8 @@ import java.io.*;
 import java.util.LinkedList;
 
 /**
- * This is for making a first pass through the uniprot file to remove the records that aren't 7955
+ * This is for making a first pass through the uniprot file to remove the records that aren't 7955.
+ * It doesn't have the overhead of the UniProtFilterTask because it doesn't need to parse the records.
  */
 @Log4j2
 public class UniProtRoughTaxonFilter {
@@ -16,7 +17,6 @@ public class UniProtRoughTaxonFilter {
     private final BufferedReader delegate;
     private File tempFile;
 
-
     public UniProtRoughTaxonFilter(Reader in) {
         delegate = new BufferedReader(in);
     }
@@ -25,7 +25,11 @@ public class UniProtRoughTaxonFilter {
         tempFile = File.createTempFile("uniprot", ".dat");
         tempFile.deleteOnExit();
 
-        log.debug("Temp file : " + tempFile.getAbsolutePath());
+        log.debug("Temp file used for quick filtering by taxon: " + tempFile.getAbsolutePath());
+        long lineCount = 0;
+
+        long startTime = System.currentTimeMillis();
+        long notifyInterval = 30_000;
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
             String line;
@@ -39,6 +43,17 @@ public class UniProtRoughTaxonFilter {
                     record.setLength(0); // Reset the record
                 } else {
                     record.append(line).append("\n");
+                }
+
+                //notify of progress
+                lineCount++;
+                if (lineCount % 10_000_000 == 0) {
+                    if (System.currentTimeMillis() - startTime > notifyInterval) {
+                        startTime = System.currentTimeMillis();
+
+                        String prettyFormat = String.format("%,d", lineCount);
+                        log.info("Taxon Filter Processed Line Count: " + prettyFormat);
+                    }
                 }
             }
             // Handle the last record if it wasn't followed by a separator

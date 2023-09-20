@@ -3,17 +3,18 @@ package org.zfin.uniprot;
 import lombok.extern.log4j.Log4j2;
 import org.biojava.bio.BioException;
 import org.biojavax.RankedCrossRef;
-import org.biojavax.bio.seq.RichSequence;
-import org.biojavax.bio.seq.io.RichStreamReader;
 import org.biojavax.bio.seq.io.RichStreamWriter;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
+import org.zfin.uniprot.adapter.RichSequenceAdapter;
+import org.zfin.uniprot.adapter.RichStreamReaderAdapter;
 
 import java.io.*;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Collectors;
 
-import static org.zfin.uniprot.UniProtTools.getRichStreamReaderForUniprotDatFile;
-import static org.zfin.uniprot.UniProtTools.getRichStreamWriterForUniprotDatFile;
+import static org.zfin.uniprot.datfiles.DatFileReader.getRichStreamReaderForUniprotDatFile;
+import static org.zfin.uniprot.datfiles.DatFileWriter.getRichStreamWriterForUniprotDatFile;
 
 /**
  * This class is used to slim down the uniprot load files.
@@ -38,18 +39,23 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
         this.outputFileWriter = fileOutputStream;
     }
 
-    public void runTask() throws IOException, BioException {
+    public void runTask() throws IOException, BioException, SQLException {
+        List<RichSequenceAdapter> outputEntries = getFilteredRichSequences();
+
+        if (outputFileWriter != null) {
+            log.info("Starting to write file: ");
+            writeOutputFile(outputEntries, outputFileWriter);
+        }
+    }
+
+    private List<RichSequenceAdapter> getFilteredRichSequences() throws IOException, BioException {
         initIO();
         initAll();
 
-        RichStreamReader sr = getRichStreamReaderForUniprotDatFile(filteredInputFileReader, true);
-
-        log.debug("Starting to read file: " );
-        List<RichSequence> outputEntries = readAndFilterSequencesFromStream(sr);
-        log.debug("Finished reading file: " + outputEntries.size() + " entries read.");
-
-        log.debug("Starting to write file: " );
-        writeOutputFile(outputEntries, outputFileWriter);
+        log.info("Starting to read file: " );
+        List<RichSequenceAdapter> outputEntries = readAndFilterSequencesFromStream();
+        log.info("Finished reading file: " + outputEntries.size() + " entries read.");
+        return outputEntries;
     }
 
     private void initIO() throws IOException {
@@ -57,24 +63,23 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
         filteredInputFileReader = roughTaxonFilter.getFilteredReader();
     }
 
-    private List<RichSequence> readAndFilterSequencesFromStream(RichStreamReader richStreamReader) throws BioException {
+    private List<RichSequenceAdapter> readAndFilterSequencesFromStream() throws BioException {
+        RichStreamReaderAdapter richStreamReader = getRichStreamReaderForUniprotDatFile(filteredInputFileReader, true);
+
         List<String> xrefsToKeep = List.of("ZFIN", "GeneID", "RefSeq", "EMBL", "GO", "InterPro", "Pfam", "PROSITE", "PDB", "Ensembl");
-        RichSequence lastSequence = null;
+        RichSequenceAdapter lastSequence = null;
         int count = 0;
-        List<RichSequence> uniProtSequences = new ArrayList<>();
+        List<RichSequenceAdapter> uniProtSequences = new ArrayList<>();
         while (richStreamReader.hasNext()) {
             try {
-                RichSequence seq = richStreamReader.nextRichSequence();
+                RichSequenceAdapter seq = richStreamReader.nextRichSequence();
                 count++;
                 if (count % 1000 == 0) {
-                    log.debug("Read " + count + " sequences.");
+                    log.info("Read " + count + " sequences.");
                 }
 
-                if (seq.getTaxon().getNCBITaxID() != 7955) {
-                    if (!seq.getTaxon().getDisplayName().toLowerCase().contains("danio rerio")) {
-                        // seq is not zebrafish, but account for entries like "Danio rerio x Danio aff. kyathit RC0455"
-                        continue;
-                    }
+                if (!seq.isDanioRerioOrRelated()) {
+                    continue;
                 }
 
                 TreeSet<RankedCrossRef> sortedRankedCrossRefs = new TreeSet<>();
@@ -93,21 +98,28 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
                 if (lastSequence == null) {
                     throw e;
                 }
-                log.error("Error while processing sequence after " + count + " records. Last sequence read: " + lastSequence.getAccession() + " " + lastSequence.getName(), e);
+                System.err.println("Error while processing sequence after " + count + " records. Last sequence read: " + lastSequence.getAccession() + " " + lastSequence.getName());
             }
         }
         roughTaxonFilter.cleanup();
         return uniProtSequences;
     }
 
-    private void writeOutputFile(List<RichSequence> outputEntries, FileOutputStream outfile) {
+    private void writeOutputFile(List<RichSequenceAdapter> outputEntries, FileOutputStream outfile) {
         try {
             RichStreamWriter sw = getRichStreamWriterForUniprotDatFile(outfile);
             sw.writeStream(new SequenceListIterator(outputEntries), null);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
 
+    public static List<RichSequenceAdapter> readAllZebrafishEntriesFromSource(BufferedReader reader) throws BioException, IOException {
+        UniProtFilterTask filterTask = new UniProtFilterTask(reader, null);
+        return filterTask.getFilteredRichSequences();
+    }
+    public static Map<String, RichSequenceAdapter> readAllZebrafishEntriesFromSourceIntoMap(BufferedReader reader) throws BioException, IOException {
+        return readAllZebrafishEntriesFromSource(reader).stream().collect(Collectors.toMap(RichSequenceAdapter::getAccession, entry -> entry));
     }
 
 }
