@@ -116,6 +116,7 @@ update marker set mrkr_name = markerAbbrev, mrkr_abbrev = markerAbbrev where mrk
 -- re-add expression_experiment2 rows
 update expression_experiment2_rows2change set xpatex_gene_zdb_id = newGeneId;
 insert into expression_experiment2 (select * from expression_experiment2_rows2change);
+drop table expression_experiment2_rows2change;
 -- finished with re-add
 
 perform regen_genox_marker(newGeneId);
