@@ -290,7 +290,25 @@ public class DTOConversionService {
         List<ReferenceDatabaseDTO> referenceDatabaseDTOList = new ArrayList<>();
 
         for (ReferenceDatabase referenceDatabase : referenceDatabases) {
+            Set<DisplayGroup> groups = referenceDatabase.getDisplayGroups();
+            logger.debug("groups: " + groups.size());
             referenceDatabaseDTOList.add(convertToReferenceDatabaseDTO(referenceDatabase));
+        }
+
+        return referenceDatabaseDTOList;
+    }
+
+    public static List<ReferenceDatabaseDTO> convertToReferenceDatabaseDTOs(List<ReferenceDatabase> referenceDatabases, DisplayGroup.GroupName groupName) {
+        List<ReferenceDatabaseDTO> referenceDatabaseDTOList = new ArrayList<>();
+
+        for (ReferenceDatabase referenceDatabase : referenceDatabases) {
+            DisplayGroupMember dgm = referenceDatabase.getDisplayGroupMembers()
+                    .stream()
+                    .filter(dg -> dg.getDisplayGroup().getGroupName().equals(groupName))
+                    .findFirst()
+                    .orElse(null);
+
+            referenceDatabaseDTOList.add(convertToReferenceDatabaseDTO(referenceDatabase, dgm));
         }
 
         return referenceDatabaseDTOList;
@@ -306,6 +324,14 @@ public class DTOConversionService {
             referenceDatabaseDTO.setBlastName(referenceDatabase.getPrimaryBlastDatabase().getName());
         }
         referenceDatabaseDTO.setUrl(referenceDatabase.getForeignDB().getDbUrlPrefix());
+        return referenceDatabaseDTO;
+    }
+
+    private static ReferenceDatabaseDTO convertToReferenceDatabaseDTO(ReferenceDatabase referenceDatabase, DisplayGroupMember dgm) {
+        ReferenceDatabaseDTO referenceDatabaseDTO = convertToReferenceDatabaseDTO(referenceDatabase);
+        if (dgm != null) {
+            referenceDatabaseDTO.setPermissions(dgm.getPermissions());
+        }
         return referenceDatabaseDTO;
     }
 
