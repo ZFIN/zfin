@@ -84,4 +84,8 @@ public class IndexerRun extends BaseEntity {
         return duration.toString();
     }
 
+    @Transient
+    @JsonView(View.API.class)
+    private Boolean isRunning;
+
 }

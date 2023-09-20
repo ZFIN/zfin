@@ -66,6 +66,11 @@ public class IndexerAPIController {
 */
         List<IndexerRun> results = runs.getResults();
         results.sort(Comparator.comparing(IndexerRun::getStartDate).reversed());
+        results.stream().findFirst()
+            .ifPresent(run -> run.setIsRunning(run.getEndDate() == null));
+        results.stream().skip(1)
+            .forEach(run -> run.setIsRunning(false));
+
         response.setResults(results);
         response.setTotal(runs.getTotalResults());
         HibernateUtil.flushAndCommitCurrentSession();
@@ -118,6 +123,8 @@ public class IndexerAPIController {
 */
         List<IndexerInfo> infos = new ArrayList<>(run.getIndexerInfos());
         infos.sort(Comparator.comparing(IndexerInfo::getStartDate));
+        infos.stream().filter(indexerInfo -> indexerInfo.getCurrentDuration() != null).skip(1)
+            .forEach(indexerInfo -> indexerInfo.setRunning(true));
         response.setResults(run.getIndexerInfos());
         response.setTotal(run.getIndexerInfos().size());
         HibernateUtil.flushAndCommitCurrentSession();
@@ -140,6 +147,9 @@ public class IndexerAPIController {
         Set<IndexerInfo> indexerInfos = run.getIndexerInfos().stream().filter(indexerInfo -> indexerInfo.getId() == Long.parseLong(infoID)).collect(Collectors.toSet());
         List<IndexerTask> infos = new ArrayList<>(indexerInfos.iterator().next().getIndexerTasks());
         infos.sort(Comparator.comparing(IndexerTask::getStartDate));
+        infos.stream().filter(indexerInfo -> indexerInfo.getDuration() == null)
+            .forEach(indexerInfo -> indexerInfo.setRunning(true));
+
         response.setResults(infos);
         response.setTotal(infos.size());
         HibernateUtil.flushAndCommitCurrentSession();

@@ -14,5 +14,6 @@ require('./tabbify');
 require('./table-collapse');
 require('./multirow-table');
 require('./data-page');
+require('./open-external-links-in-new-tab')
 
 window.ImageBox = require('exports-loader?ImageBox!./imagebox');

@@ -16,6 +16,8 @@ import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.sequence.ReferenceDatabase;
 
+import static org.zfin.framework.presentation.EntityPresentation.getHyperLink;
+
 /**
  *
  */
@@ -233,65 +235,38 @@ public class MarkerGoEvidencePresentation {
 
 
     public static String createGOLink(String accession, ForeignDB foreignDB, InferenceCategory inferenceCategory) {
-        StringBuilder sb = new StringBuilder("");
-        sb.append("<a href=\"");
+        GenericTerm goTerm = RepositoryFactory.getOntologyRepository()
+                .getTermByOboID(inferenceCategory.prefix() + accession);
 
-        sb.append(foreignDB.getDbUrlPrefix());
-        sb.append(inferenceCategory.prefix());
-        sb.append(accession);
-        if (foreignDB.getDbUrlSuffix() != null) {
-            sb.append(foreignDB.getDbUrlSuffix());
-        }
-        sb.append("\">");
-        GenericTerm goTerm =
-                RepositoryFactory.getOntologyRepository()
-                        .getTermByOboID(inferenceCategory.prefix() + accession);
-        if (goTerm != null) {
-            sb.append(goTerm.getTermName());
-        } else {
-            sb.append(inferenceCategory.prefix());
-            sb.append(accession);
-        }
-        sb.append("</a>");
-        return sb.toString();
+        String href = foreignDB.getDbUrlPrefix()
+                + inferenceCategory.prefix()
+                + accession
+                + (foreignDB.getDbUrlSuffix() != null ? foreignDB.getDbUrlSuffix() : "");
+
+        String linkText = goTerm == null ?
+                inferenceCategory.prefix() + accession :
+                goTerm.getTermName();
+
+        return getHyperLink(href, linkText);
     }
 
     public static String createLink(String accession, ForeignDB foreignDB, InferenceCategory inferenceCategory) {
-        StringBuilder sb = new StringBuilder("");
-        sb.append("<a href=\"");
-
-        sb.append(foreignDB.getDbUrlPrefix());
-        sb.append(accession);
+        String href = foreignDB.getDbUrlPrefix() + accession;
         if (foreignDB.getDbUrlSuffix() != null) {
-            sb.append(foreignDB.getDbUrlSuffix());
+            href += foreignDB.getDbUrlSuffix();
         }
-        sb.append("\">");
 
-        sb.append(inferenceCategory.prefix());
-        sb.append(accession);
-        sb.append("</a>");
-        return sb.toString();
+        String text = inferenceCategory.prefix() + accession;
+        return getHyperLink(href, text);
     }
 
     public static String createUniRuleLink(String accession, InferenceCategory inferenceCategory) {
-        StringBuilder sb = new StringBuilder("");
-        sb.append("<a href=\"http://prosite.expasy.org/unirule/");
-        sb.append(accession);
-        sb.append("\">");
-        sb.append(inferenceCategory.prefix());
-        sb.append(accession);
-        sb.append("</a>");
-        return sb.toString();
+        return getHyperLink("http://prosite.expasy.org/unirule/" + accession,
+                inferenceCategory.prefix() + accession);
     }
 
     public static String createPantherLink(String accession, InferenceCategory inferenceCategory) {
-        StringBuilder sb = new StringBuilder("");
-        sb.append("<a href=\"http://pantree.org/node/annotationNode.jsp?id=");
-        sb.append(accession);
-        sb.append("\">");
-        sb.append(inferenceCategory.prefix());
-        sb.append(accession);
-        sb.append("</a>");
-        return sb.toString();
+        return getHyperLink("https://pantree.org/node/annotationNode.jsp?id=" + accession,
+                inferenceCategory.prefix() + accession);
     }
 }
