@@ -13,7 +13,13 @@ public class DisplayGroup implements Comparable<DisplayGroup>{
     private Long id;
     private GroupName groupName;
     private String definition;
-    private Set<ReferenceDatabase> referenceDatabases;
+    private Set<DisplayGroupMember> displayGroupMembers;
+
+    public Set<ReferenceDatabase> getReferenceDatabases() {
+        return this.displayGroupMembers.stream()
+                .map(DisplayGroupMember::getReferenceDatabase)
+                .collect(java.util.stream.Collectors.toSet());
+    }
 
     public enum GroupName {
         ADDABLE_NUCLEOTIDE_SEQUENCE("addable nucleotide sequence"),

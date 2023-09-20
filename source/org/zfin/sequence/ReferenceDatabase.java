@@ -11,6 +11,7 @@ import org.zfin.sequence.blast.Database;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Setter
 @Getter
@@ -22,7 +23,7 @@ public class ReferenceDatabase implements Comparable<ReferenceDatabase>, Seriali
     private String organism;
     private ForeignDBDataType foreignDBDataType;
     private Database primaryBlastDatabase;
-    private Set<DisplayGroup> displayGroups;
+    private Set<DisplayGroupMember> displayGroupMembers;
     private List<Database> relatedBlastDbs;
 
     public String getBaseURL() {
@@ -62,6 +63,12 @@ public class ReferenceDatabase implements Comparable<ReferenceDatabase>, Seriali
             }
         }
         return false;
+    }
+
+    public Set<DisplayGroup> getDisplayGroups() {
+        return getDisplayGroupMembers().stream()
+                .map(DisplayGroupMember::getDisplayGroup)
+                .collect(Collectors.toSet());
     }
 
     public String getView() {

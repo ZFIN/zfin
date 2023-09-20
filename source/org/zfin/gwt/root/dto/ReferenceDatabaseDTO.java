@@ -2,6 +2,8 @@ package org.zfin.gwt.root.dto;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import java.util.Set;
+
 /**
  */
 @SuppressWarnings({"CloneDoesntCallSuperClone", "CloneDoesntDeclareCloneNotSupportedException"})
@@ -13,6 +15,8 @@ public class ReferenceDatabaseDTO implements IsSerializable {
     private String superType;
     private String blastName;
     private String url;
+
+    private Set<String> permissions;
 
     public String getZdbID() {
         return zdbID;
@@ -58,6 +62,16 @@ public class ReferenceDatabaseDTO implements IsSerializable {
         this.blastName = blastName;
     }
 
+    public Set<String> getPermissions() {
+        if (permissions == null) {
+            permissions = new java.util.HashSet<String>();
+        }
+        return permissions;
+    }
+
+    public void setPermissions(Set<String> permissions) {
+        this.permissions = permissions;
+    }
 
     public String getUrl() {
         return url;

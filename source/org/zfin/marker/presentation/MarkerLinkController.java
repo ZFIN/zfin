@@ -75,8 +75,9 @@ public class MarkerLinkController {
     @RequestMapping("/link/databases")
     public Collection<ReferenceDatabaseDTO> getLinkDatabases(@RequestParam(name = "group", required = true) String groupName) {
         DisplayGroup.GroupName group = DisplayGroup.GroupName.getGroup(groupName);
+//        DisplayGroup displayGroup = displayGroupRepository.getDisplayGroupByName(group);
         List<ReferenceDatabase> databases = displayGroupRepository.getReferenceDatabasesForDisplayGroup(group);
-        return DTOConversionService.convertToReferenceDatabaseDTOs(databases);
+        return DTOConversionService.convertToReferenceDatabaseDTOs(databases, group);
     }
 
     @ResponseBody

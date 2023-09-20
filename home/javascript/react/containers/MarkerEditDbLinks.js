@@ -57,6 +57,7 @@ const MarkerEditDbLinks = ({markerId, group = 'other marker pages'}) => {
         return null;
     }
 
+
     return (
         <>
             <AddEditList
@@ -82,9 +83,10 @@ const MarkerEditDbLinks = ({markerId, group = 'other marker pages'}) => {
                         validate={value => value ? false : 'A database is required'}
                     >
                         <option value='' />
-                        {databases.value.map(database => (
-                            <option value={database.zdbID} key={database.zdbID}>{database.name}</option>
-                        ))}
+                        {databases.value
+                            .filter(database => database.permissions.includes('add'))
+                            .map(database => <option value={database.zdbID} key={database.zdbID}>{database.name}</option>)
+                        }
                     </FormGroup>
 
                     <FormGroup
