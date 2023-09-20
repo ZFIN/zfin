@@ -25,6 +25,7 @@ public class ReportLegacyProblemFilesHandler implements UniProtLoadHandler {
                 action.setType(UniProtLoadAction.Type.INFO);
                 action.setSubType(UniProtLoadAction.SubType.LEGACY_PROBLEM_FILE);
                 action.setDetails("This accession was in " + legacyProblemFiles.get(accession) + "\n\n" + legacyProblemFiles.get(accession));
+                actions.add(action);
             }
         }
     }
