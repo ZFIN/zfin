@@ -364,7 +364,7 @@ public class FacetBuilderService {
 
         facetGroups.add(buildSingleFacetGroup("Sequence Targeting Reagent (STR)", SEQUENCE_TARGETING_REAGENT.getName(), false));
         facetGroups.add(buildSingleFacetGroup("Is Monogenic", "is_monogenic", false));
-        facetGroups.add(buildSingleFacetGroup("Conditions", FieldName.ZECO_CONDITIONS.getName(), false));
+        facetGroups.add(buildSingleFacetGroup("Conditions", FieldName.CONDITIONS.getName(), false));
 
         facetGroups.add(buildSingleFacetGroup("Has Image", "has_image", false));
         //todo: stage, conditions, author, data_source

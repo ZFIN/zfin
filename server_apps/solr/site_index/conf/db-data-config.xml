@@ -2680,12 +2680,7 @@
 
             <entity name="phenotype_zeco_condition"
                     query="select
-                                nvl(zeco.term_name,'') ||
-                                nvl(': ' || ao.term_name,'') ||
-                                nvl(': ' || go_cc.term_name,'') ||
-                                nvl(': ' || chebi.term_name,'') ||
-                                nvl(': ' || taxon.term_name,'') as conditions,
-                                zecoParent.term_name as zeco_conditions,
+                                zecoParent.term_name as conditions,
                                 zecoParent.term_zdb_id,
                                 'pg-' || pg_id as pg_id
                                 from experiment_condition
@@ -2699,8 +2694,8 @@
                              left outer join term chebi on chebi.term_zdb_id = expcond_chebi_term_zdb_id
                              left outer join term taxon on taxon.term_zdb_id = expcond_taxon_term_zdb_id
                              where zecoParent.term_ont_id in ('ZECO:0000105','ZECO:0000111','ZECO:0000112',
-                             'ZECO:0000222','ZECO:0000113','ZECO:0000252','ZECO:0000154','ZECO:0000140'
-                             ,'ZECO:0000143','ZECO:0000146','ZECO:0000229','ZECO:0000208','ZECO:0000131','ZECO:0000160','ZECO:0000182','ZECO:0000182')
+                             'ZECO:0000222','ZECO:0000113','ZECO:0000252','ZECO:0000154','ZECO:0000140',
+                             'ZECO:0000143','ZECO:0000146','ZECO:0000229','ZECO:0000208','ZECO:0000131','ZECO:0000160','ZECO:0000182')
                             "
                     cacheImpl="SortedMapBackedCache"
                     where="pg_id=phenotype.id"
@@ -3567,7 +3562,7 @@
                                 nvl(': ' || ao.term_name,'') ||
                                 nvl(': ' || go_cc.term_name,'') ||
                                 nvl(': ' || chebi.term_name,'') ||
-                                nvl(': ' || taxon.term_name,'') as conditions,
+                                nvl(': ' || taxon.term_name,'') as zeco_conditions,
                                 'xpatex-' || efs_pk_id as efs_pk_id
                                 from experiment_condition
                              join fish_experiment on genox_exp_zdb_id = expcond_exp_zdb_id and genox_is_std_or_generic_control = 'f'
@@ -3584,11 +3579,6 @@
 
             <entity name="expression_zeco_conditions"
                     query="select
-                                nvl(zeco.term_name,'') ||
-                                nvl(': ' || ao.term_name,'') ||
-                                nvl(': ' || go_cc.term_name,'') ||
-                                nvl(': ' || chebi.term_name,'') ||
-                                nvl(': ' || taxon.term_name,'') as conditions,
                                 zecoParent.term_name as zeco_conditions,
                                 zecoParent.term_zdb_id,
                                 'xpatex-' || efs_pk_id as efs_pk_id
@@ -3605,8 +3595,19 @@
                              left outer join term taxon on taxon.term_zdb_id = expcond_taxon_term_zdb_id
                              where zecoParent.term_ont_id in ('ZECO:0000105','ZECO:0000111','ZECO:0000112',
                              'ZECO:0000222','ZECO:0000113','ZECO:0000252','ZECO:0000154','ZECO:0000140'
-                             ,'ZECO:0000143','ZECO:0000146','ZECO:0000229','ZECO:0000208','ZECO:0000131','ZECO:0000160','ZECO:0000182','ZECO:0000182')
+                             ,'ZECO:0000143','ZECO:0000146','ZECO:0000229','ZECO:0000208','ZECO:0000131','ZECO:0000160','ZECO:0000182')
 "
+                    cacheImpl="SortedMapBackedCache"
+                    where="efs_pk_id=expression.id"
+            />
+
+            <entity name="expression_standard_conditions_zeco"
+                    query="select 'standard or control' as zeco_conditions,
+                                   'xpatex-' || efs_pk_id as efs_pk_id
+                            from expression_experiment2
+                                 join expression_figure_stage on efs_xpatex_zdb_id = xpatex_zdb_id
+                                 join fish_experiment on genox_zdb_id = xpatex_genox_zdb_id
+                                      and genox_is_std_or_generic_control = 't';"
                     cacheImpl="SortedMapBackedCache"
                     where="efs_pk_id=expression.id"
             />
