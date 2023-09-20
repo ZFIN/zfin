@@ -24,7 +24,7 @@
  *
  */
 
-package org.zfin.uniprot;
+package org.zfin.uniprot.datfiles;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;

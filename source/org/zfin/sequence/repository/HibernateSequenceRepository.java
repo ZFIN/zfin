@@ -1,7 +1,8 @@
 package org.zfin.sequence.repository;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections.map.MultiValueMap;
+import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
@@ -168,7 +169,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
         return results;
     }
 
-    public MultiValueMap getMarkerDBLinks(ReferenceDatabase... referenceDatabases) {
+    public Map<String, Collection<MarkerDBLink>> getMarkerDBLinks(ReferenceDatabase... referenceDatabases) {
         Session session = HibernateUtil.currentSession();
 
         Criteria criteria = session.createCriteria(MarkerDBLink.class);
@@ -176,12 +177,12 @@ public class HibernateSequenceRepository implements SequenceRepository {
         criteria.addOrder(Order.asc("accessionNumber"));
         List<MarkerDBLink> dbLinks = criteria.list();
 
-        MultiValueMap returnMap = new MultiValueMap();
+        MultiValuedMap returnMap = new ArrayListValuedHashMap<String, MarkerDBLink>();
         for (MarkerDBLink markerDBLink : dbLinks) {
             returnMap.put(markerDBLink.getAccessionNumber(), markerDBLink);
         }
 
-        return returnMap;
+        return returnMap.asMap();
     }
 
     public DBLink getDBLinkByID(String zdbID) {

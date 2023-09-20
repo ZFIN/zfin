@@ -1,6 +1,5 @@
 package org.zfin.uniprot;
 
-import lombok.extern.log4j.Log4j2;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -25,8 +24,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.zfin.uniprot.UniProtTools.getRichStreamReaderForUniprotDatFile;
-
 /**
  * This class is used to analyze the uniprot problem7 file data.
  * The problem7 file lists uniprot records that don't have EMBL references.
@@ -42,57 +39,57 @@ import static org.zfin.uniprot.UniProtTools.getRichStreamReaderForUniprotDatFile
  *
  * See: ZFIN-8275
  */
-@Log4j2
 public class UniProtAnalysisTask extends AbstractScriptWrapper {
 
     private static final String CSV_FILE = "uniprot_analysis_zfin_8275.csv";
 
     public static void main(String[] args) {
         UniProtAnalysisTask task = new UniProtAnalysisTask();
-        task.runTaskAndHandleExceptions();
-    }
 
-    public void runTaskAndHandleExceptions() {
         try {
-            this.runTask();
+            task.runTask();
         } catch (IOException e) {
-            log.error("IOException Error while running task: " + e.getMessage(), e);
+            System.err.println("IOException Error while running task: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         } catch (BioException e) {
-            log.error("BioException Error while running task: " + e.getMessage(), e);
+            System.err.println("BioException Error while running task: " + e.getMessage());
             e.printStackTrace();
             System.exit(2);
         } catch (SQLException e) {
-            log.error("SQLException Error while running task: " + e.getMessage(), e);
+            System.err.println("SQLException Error while running task: " + e.getMessage());
             e.printStackTrace();
             System.exit(3);
         }
 
         HibernateUtil.closeSession();
-        log.debug("Task completed successfully.");
+        System.out.println("Task completed successfully.");
         System.exit(0);
     }
 
     public void runTask() throws IOException, BioException, SQLException {
         initAll();
 
-        String inputFileName = getInputFileName();
-        RichStreamReader sr = getRichStreamReaderForUniprotDatFile(inputFileName, true);
+        System.out.println("This method has been disabled temporarily");
+        System.err.println("This method has been disabled temporarily");
+        System.exit(1);
 
-        log.debug("Starting to read file: " + inputFileName);
-        List<ImmutablePair<String, String>> pairs = getUniProtRefSeqPairs(sr);
-        log.debug("Finished file: " + pairs.size());
-
-        log.debug("Writing to temp file");
-        File tempFile = writePairsToTemporaryFile(pairs);
-        log.debug("Finished writing to temp file: " + tempFile.getAbsolutePath());
-
-        writeFileToTemporaryTable(tempFile);
-        generateReport();
-        log.debug("Finished writing report to file: " + CSV_FILE);
-
-        dropTemporaryTable();
+//        String inputFileName = getInputFileName();
+//        RichStreamReaderWrapper richStreamReader = getRichStreamReaderForUniprotDatFile(inputFileName, true);
+//
+//        System.out.println("Starting to read file: " + inputFileName);
+//        List<ImmutablePair<String, String>> pairs = getUniProtRefSeqPairs(richStreamReader);
+//        System.out.println("Finished file: " + pairs.size());
+//
+//        System.out.println("Writing to temp file");
+//        File tempFile = writePairsToTemporaryFile(pairs);
+//        System.out.println("Finished writing to temp file: " + tempFile.getAbsolutePath());
+//
+//        writeFileToTemporaryTable(tempFile);
+//        generateReport();
+//        System.out.println("Finished writing report to file: " + CSV_FILE);
+//
+//        dropTemporaryTable();
     }
 
     private String getInputFileName() {
@@ -161,7 +158,7 @@ public class UniProtAnalysisTask extends AbstractScriptWrapper {
         Transaction tx = sessImpl.beginTransaction();
         CopyManager copyManager = new CopyManager(conn);
         long numInserted = copyManager.copyIn("copy up_to_refseq_temp (uniprot, refseq) from STDIN with csv", fileReader);
-        log.debug("Number of rows inserted: " + numInserted);
+        System.out.println("Number of rows inserted: " + numInserted);
         sessImpl.flush();
         session.flush();
         tx.commit();

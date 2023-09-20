@@ -1,6 +1,6 @@
 package org.zfin.uniprot;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.log4j.Log4j;
 import org.biojava.bio.BioException;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
@@ -33,14 +33,14 @@ import static org.zfin.uniprot.UniProtTools.getArgOrEnvironmentVar;
  * There is also an html report that is generated for viewing the json blob.  It will be named OUTPUT_FILE.report.html.
  *
  */
-@Log4j2
+@Log4j
 public class UniProtReleaseDiffTask extends AbstractScriptWrapper {
-    private String inputFilenameSet1;
-    private String inputFilenameSet2;
-    private String outputFilename;
+    private final String inputFilenameSet1;
+    private final String inputFilenameSet2;
+    private final String outputFilename;
     private Path tempDirectory;
 
-    private String keepTempFilesIn = null;
+    private String keepTempFilesIn;
 
     public UniProtReleaseDiffTask(String inputFilenameSet1, String inputFilenameSet2, String outputFilename, String keepTempFiles) {
         this.inputFilenameSet1 = inputFilenameSet1;
@@ -59,7 +59,7 @@ public class UniProtReleaseDiffTask extends AbstractScriptWrapper {
         try {
             task.runTask();
         } catch (Exception e) {
-            log.error("Exception Error while running task: " + e.getMessage());
+            System.err.println("Exception Error while running task: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }
@@ -75,12 +75,12 @@ public class UniProtReleaseDiffTask extends AbstractScriptWrapper {
 
         //handle input file set 1
         //filter the input files using a filter object (FilterTask) and concatenate to create a single filtered file
-        Path filteredFile1 = combineAndFilterInputFileSet(inputFilenameSet1, "filtered_set1.dat");
-        log.debug("Filtered file 1: " + filteredFile1.toAbsolutePath());
+        Path filteredFile1 = combineAndFilterInputFileSet(inputFilenameSet1, tempDirectory.resolve("filtered_set1.dat"));
+        System.out.println("Filtered file 1: " + filteredFile1.toAbsolutePath());
 
         //handle input file set 2 the same way
-        Path filteredFile2 = combineAndFilterInputFileSet(inputFilenameSet2, "filtered_set2.dat");
-        log.debug("Filtered file 2: " + filteredFile2.toAbsolutePath());
+        Path filteredFile2 = combineAndFilterInputFileSet(inputFilenameSet2, tempDirectory.resolve("filtered_set2.dat"));
+        System.out.println("Filtered file 2: " + filteredFile2.toAbsolutePath());
 
         //pass the 2 filtered files to the diff task (UniProtCompareTask) and get the result
         UniProtCompareTask compareTask = new UniProtCompareTask(
@@ -94,13 +94,13 @@ public class UniProtReleaseDiffTask extends AbstractScriptWrapper {
         if (keepTempFilesIn != null && !keepTempFilesIn.equals("") && !keepTempFilesIn.equals("__DELETE__")) {
             Path keepFilesPath = Path.of(keepTempFilesIn);
             if (!Files.exists(keepFilesPath)) {
-                log.error("Keep files path does not exist: " + keepFilesPath.toAbsolutePath());
-                log.error("Keeping temp files in: " + tempDirectory.toAbsolutePath());
+                System.err.println("Keep files path does not exist: " + keepFilesPath.toAbsolutePath());
+                System.err.println("Keeping temp files in: " + tempDirectory.toAbsolutePath());
             } else if (!Files.isDirectory(keepFilesPath)) {
-                log.error("Keep files path is not a directory: " + keepFilesPath.toAbsolutePath());
-                log.error("Keeping temp files in: " + tempDirectory.toAbsolutePath());
+                System.err.println("Keep files path is not a directory: " + keepFilesPath.toAbsolutePath());
+                System.err.println("Keeping temp files in: " + tempDirectory.toAbsolutePath());
             } else {
-                log.debug("Moving temp files to: " + keepFilesPath.toAbsolutePath());
+                System.out.println("Moving temp files to: " + keepFilesPath.toAbsolutePath());
                 Files.move(filteredFile1, keepFilesPath.resolve(filteredFile1.getFileName()));
                 Files.move(filteredFile2, keepFilesPath.resolve(filteredFile2.getFileName()));
                 Files.deleteIfExists(tempDirectory);
@@ -111,7 +111,7 @@ public class UniProtReleaseDiffTask extends AbstractScriptWrapper {
             Files.deleteIfExists(tempDirectory);
         }
 
-        log.debug("File diff written to " + outputFilename);
+        System.out.println("File diff written to " + outputFilename);
     }
 
     private void initWorkspace() {
@@ -125,14 +125,14 @@ public class UniProtReleaseDiffTask extends AbstractScriptWrapper {
     }
 
 
-    private List<File> getInputFiles(String filePath) {
+    private static List<File> getInputFiles(String filePath) {
         List<File> fileList = new ArrayList<>();
 
         String[] filenames = filePath.split(",");
         for (String file : filenames) {
             Path path = Path.of(file.trim());
             if (!Files.exists(path)) {
-                log.error("File does not exist: " + path.toAbsolutePath());
+                System.err.println("File does not exist: " + path.toAbsolutePath());
                 System.exit(1);
             }
             LOG.debug("Input file: " + path.getFileName());
@@ -142,16 +142,15 @@ public class UniProtReleaseDiffTask extends AbstractScriptWrapper {
         return fileList;
     }
 
-    private Path combineAndFilterInputFileSet(String inputFileNames, String outputFilename) throws IOException {
-        //create a set of input files from the input file set 1 based on comma separated list
-        List<File> inputFiles = getInputFiles(inputFileNames);
-        log.debug("Filtering file(s): " + inputFileNames.join(","));
+    public static Path combineAndFilterInputPathSet(List<Path> inputFiles, Path outputFile) throws IOException {
+        return combineAndFilterInputFileSet(inputFiles.stream().map(Path::toFile).toList(), outputFile);
+    }
 
+    public static Path combineAndFilterInputFileSet(List<File> inputFiles, Path outputFile) throws IOException {
         //for each of the input files, check if they are gzipped or not and create appropriate readers
-        List<BufferedReader> inputFileReaderList = inputFiles.stream().map(file -> getReaderForFile(file)).toList();
+        List<BufferedReader> inputFileReaderList = inputFiles.stream().map(UniProtReleaseDiffTask::getReaderForFile).toList();
 
-        Path outputFilePath = tempDirectory.resolve(outputFilename);
-        FileOutputStream fileOutputStream = new FileOutputStream(outputFilePath.toFile());
+        FileOutputStream fileOutputStream = new FileOutputStream(outputFile.toFile());
 
         try {
             for(BufferedReader inputReader : inputFileReaderList) {
@@ -159,14 +158,23 @@ public class UniProtReleaseDiffTask extends AbstractScriptWrapper {
                 filterTask.runTask();
             }
         } catch (Exception e) {
-            log.error("Exception Error while running task: " + e.getMessage());
-            System.exit(1);
+            System.err.println("Exception Error while running task: " + e.getMessage());
+            log.error("Exception Error while running task: " + e.getMessage(), e);
+            throw new IOException(e);
         }
 
-        return outputFilePath;
+        return outputFile;
     }
 
-    private BufferedReader getReaderForFile(File file) {
+    public static Path combineAndFilterInputFileSet(String inputFileNames, Path outputFile) throws IOException {
+        //create a set of input files from the input file set 1 based on comma separated list
+        log.debug("Filtering file(s): " + String.join(",", inputFileNames));
+
+        List<File> inputFiles = getInputFiles(inputFileNames);
+        return combineAndFilterInputFileSet(inputFiles, outputFile);
+    }
+
+    private static BufferedReader getReaderForFile(File file) {
         try {
             InputStream fileStream = new FileInputStream(file);
             InputStream input;
@@ -179,7 +187,7 @@ public class UniProtReleaseDiffTask extends AbstractScriptWrapper {
 
             return (new UniProtRoughTaxonFilter(new InputStreamReader(input))).getFilteredReader();
         } catch (IOException e) {
-            log.error("Error while opening file: " + file.getAbsolutePath());
+            System.err.println("Error while opening file: " + file.getAbsolutePath());
             e.printStackTrace();
             System.exit(1);
         }
