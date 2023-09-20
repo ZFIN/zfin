@@ -1,10 +1,22 @@
 package org.zfin.sequence;
 
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.HashSet;
+import java.util.Set;
+
+@Getter
+@Setter
 public class DisplayGroupMember {
     private Long id;
     private ReferenceDatabase referenceDatabase;
     private DisplayGroup displayGroup;
+
+    private boolean canView;
+    private boolean canAdd;
+    private boolean canDelete;
+    private boolean canEdit;
 
     public ReferenceDatabase getForeignDBContains() {
         return referenceDatabase;
@@ -32,7 +44,20 @@ public class DisplayGroupMember {
     }
 
 
-
-
-
+    public Set<String> getPermissions() {
+        HashSet<String> permissions = new HashSet<String>();
+        if (canView) {
+            permissions.add("view");
+        }
+        if (canAdd) {
+            permissions.add("add");
+        }
+        if (canDelete) {
+            permissions.add("delete");
+        }
+        if (canEdit) {
+            permissions.add("edit");
+        }
+        return permissions;
+    }
 }

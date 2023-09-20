@@ -2071,19 +2071,21 @@ public class HibernateMarkerRepository implements MarkerRepository {
             return new ArrayList<>();
         }
 
-        String sql = "select fdbdt.fdbdt_data_type,dbl.dblink_length,dbl.dblink_linked_recid,dbl.dblink_acc_num,fdb.fdb_db_display_name,fdb.fdb_db_query,fdb.fdb_url_suffix, " +
-            "ra.recattrib_source_zdb_id, fdb.fdb_db_significance, dbl.dblink_zdb_id, fdbc.fdbcont_zdb_id, pub.title, fdbdt.fdbdt_display_order, dbl.dblink_acc_num_display " +
-            "from db_link dbl  " +
-            "join foreign_db_contains_display_group_member m on m.fdbcdgm_fdbcont_zdb_id=dbl.dblink_fdbcont_zdb_id " +
-            "join foreign_db_contains_display_group g on g.fdbcdg_pk_id=m.fdbcdgm_group_id " +
-            "join foreign_db_contains fdbc on dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id " +
-            "join foreign_db_data_type fdbdt on fdbdt.fdbdt_pk_id = fdbc.fdbcont_fdbdt_id " +
-            "join foreign_db fdb on fdbc.fdbcont_fdb_db_id=fdb.fdb_db_pk_id " +
-            "left outer join record_attribution ra on ra.recattrib_data_zdb_id=dbl.dblink_zdb_id " +
-            "left outer join publication pub on ra.recattrib_source_zdb_id=pub.zdb_id " +
-            "where g.fdbcdg_name= :displayGroup " +
-            "and " +
-            "dbl.dblink_linked_recid= :markerZdbId ";
+        String sql = """
+            select fdbdt.fdbdt_data_type,dbl.dblink_length,dbl.dblink_linked_recid,dbl.dblink_acc_num,fdb.fdb_db_display_name,fdb.fdb_db_query,fdb.fdb_url_suffix,
+            ra.recattrib_source_zdb_id, fdb.fdb_db_significance, dbl.dblink_zdb_id, fdbc.fdbcont_zdb_id, pub.title, fdbdt.fdbdt_display_order, dbl.dblink_acc_num_display
+            from db_link dbl
+            join foreign_db_contains_display_group_member m on m.fdbcdgm_fdbcont_zdb_id=dbl.dblink_fdbcont_zdb_id
+            join foreign_db_contains_display_group g on g.fdbcdg_pk_id=m.fdbcdgm_group_id
+            join foreign_db_contains fdbc on dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id
+            join foreign_db_data_type fdbdt on fdbdt.fdbdt_pk_id = fdbc.fdbcont_fdbdt_id
+            join foreign_db fdb on fdbc.fdbcont_fdb_db_id=fdb.fdb_db_pk_id
+            left outer join record_attribution ra on ra.recattrib_data_zdb_id=dbl.dblink_zdb_id
+            left outer join publication pub on ra.recattrib_source_zdb_id=pub.zdb_id
+            where g.fdbcdg_name= :displayGroup
+            and
+            dbl.dblink_linked_recid= :markerZdbId
+            """;
         // case 7586 suppress OTTDARG's and ENSDARGG's on transcript pages
         if (marker.getZdbID().startsWith("ZDB-TSCRIPT")) {
             sql += " and fdb.fdb_db_name != 'VEGA' ";

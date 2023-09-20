@@ -1,4 +1,14 @@
 DOCKER_SSH_AUTH_SOCK=${SSH_AUTH_SOCK}
 DOCKER_SSH_USER=ryanm
-DOCKER_DB_UNLOADS_PATH=~/development/unloads/db
-DOCKER_SOLR_UNLOADS_PATH=~/development/unloads/solr
+DOCKER_DB_UNLOADS_PATH=/research/zunloads/databases/zfindb
+DOCKER_SOLR_UNLOADS_PATH=/research/zunloads/solr/zfindb
+DOCKER_BLASTSERVER_BLAST_DATABASE_PATH=/research/zblastfiles/zmore/dev_blastdb
+DOCKER_ABBLAST_PATH=~/development/blast/ab-blast
+DOCKER_RESEARCH_PATH=/research
+DOCKER_VIRTUAL_HOST=dazed.zfin.org
+COMPOSE_PROJECT_NAME=dazed
+TZ=PST8PDT
+ELK_VERSION=8.2.3
+ELASTIC_PASSWORD=ChangeMe!
+LOGSTASH_INTERNAL_PASSWORD=ChangeMe!
+KIBANA_SYSTEM_PASSWORD=ChangeMe!
