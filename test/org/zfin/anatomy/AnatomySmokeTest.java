@@ -89,7 +89,7 @@ public class AnatomySmokeTest extends AbstractSmokeTest {
     // liver page
     @Test
     public void testAnatomyDetailPageByName() throws IOException {
-        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term-detail/term?name=liver");
+        HtmlPage page = webClient.getPage(nonSecureUrlDomain + "/action/ontology/term/term?name=liver");
         assertNotNull(page);
         assertEquals("ZFIN Anatomy Ontology: liver", page.getTitleText());
         assertNotNull(page.getByXPath("//span[. = 'Phenotype']").get(0));
