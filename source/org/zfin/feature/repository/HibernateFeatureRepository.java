@@ -963,7 +963,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
             scrollableResults.setRowNumber(pagination.getStart());
         }
 
-        while (scrollableResults.next() && list.size() < pagination.getLimit() + 1) {
+        while (scrollableResults.next() && ((pagination.getLimit() == 0) || (list.size() < pagination.getLimit() + 1))) {
             list.add((Feature) scrollableResults.get()[0]);
         }
 

@@ -1,5 +1,7 @@
 package org.zfin.sequence;
 
+import org.apache.commons.lang3.tuple.ImmutableTriple;
+import org.apache.commons.lang3.tuple.Triple;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Test;
@@ -66,47 +68,43 @@ public class SequenceServiceTest extends AbstractDatabaseTest {
 //        ZDB-DBLINK-200410-62470:ACS94979:GENPEPT
 //        ZDB-DBLINK-200410-64440:C6KFA3:GENPEPT
 //        ZDB-DBLINK-200410-81082:DX504044:GENBANK
-//        ZDB-DBLINK-220118-119663:U3JAV0:UNIPROTKB
-//        ZDB-DBLINK-220118-150587:F1Q7U5:UNIPROTKB
-//        ZDB-DBLINK-220118-15278:U3JAN0:UNIPROTKB
-//        ZDB-DBLINK-220118-36814:E7F1G3:UNIPROTKB
-//        ZDB-DBLINK-220118-97652:C6KFA3:UNIPROTKB
 //        ZDB-DBLINK-090218-130:DX504044:GENBANK
 //        ZDB-DBLINK-041007-144:BX004780:GENBANK
 //        ZDB-DBLINK-041007-144:BX004780:GENBANK
         String markerZdbID = "ZDB-GENE-041014-357";
         String bacZdbID = "ZDB-BAC-041007-134";
+
+        List<Triple<String,String,String>> accessions = new ArrayList<>();
+        accessions.add(new ImmutableTriple<>(markerZdbID, "CAI11751", "GenPept"));
+        accessions.add(new ImmutableTriple<>(markerZdbID, "GQ202546", "GenBank"));
+        accessions.add(new ImmutableTriple<>(markerZdbID, "GDQH01030811", "GenBank"));
+        accessions.add(new ImmutableTriple<>(markerZdbID, "NM_001163291", "RefSeq"));
+        accessions.add(new ImmutableTriple<>(markerZdbID, "NM_001369129", "RefSeq"));
+        accessions.add(new ImmutableTriple<>(markerZdbID, "NP_001156763", "RefSeq"));
+        accessions.add(new ImmutableTriple<>(markerZdbID, "NP_001356058", "RefSeq"));
+        accessions.add(new ImmutableTriple<>(markerZdbID, "ACS94979", "GenPept"));
+        accessions.add(new ImmutableTriple<>(markerZdbID, "C6KFA3", "GenPept"));
+        accessions.add(new ImmutableTriple<>(markerZdbID, "DX504044", "GenBank"));
+        accessions.add(new ImmutableTriple<>(markerZdbID, "C6KFA3", "UniProtKB"));
+        accessions.add(new ImmutableTriple<>(markerZdbID, "DX504044", "GenBank"));
+        accessions.add(new ImmutableTriple<>(bacZdbID, "BX004780", "GenBank"));
+        accessions.add(new ImmutableTriple<>(bacZdbID, "BX004780", "GenBank"));
+
         List<MarkerDBLink> links = new ArrayList<>();
-
-        links.add((MarkerDBLink)getSequenceRepository().getDBLink(markerZdbID, "CAI11751", "GenPept"));
-        links.add((MarkerDBLink)getSequenceRepository().getDBLink(markerZdbID, "GQ202546", "GenBank"));
-        links.add((MarkerDBLink)getSequenceRepository().getDBLink(markerZdbID, "GDQH01030811", "GenBank"));
-        links.add((MarkerDBLink)getSequenceRepository().getDBLink(markerZdbID, "NM_001163291", "RefSeq"));
-        links.add((MarkerDBLink)getSequenceRepository().getDBLink(markerZdbID, "NM_001369129", "RefSeq"));
-        links.add((MarkerDBLink)getSequenceRepository().getDBLink(markerZdbID, "NP_001156763", "RefSeq"));
-        links.add((MarkerDBLink)getSequenceRepository().getDBLink(markerZdbID, "NP_001356058", "RefSeq"));
-        links.add((MarkerDBLink)getSequenceRepository().getDBLink(markerZdbID, "ACS94979", "GenPept"));
-        links.add((MarkerDBLink)getSequenceRepository().getDBLink(markerZdbID, "C6KFA3", "GenPept"));
-        links.add((MarkerDBLink)getSequenceRepository().getDBLink(markerZdbID, "DX504044", "GenBank"));
-        links.add((MarkerDBLink)getSequenceRepository().getDBLink(markerZdbID, "U3JAV0", "UniProtKB"));
-        links.add((MarkerDBLink)getSequenceRepository().getDBLink(markerZdbID, "F1Q7U5", "UniProtKB"));
-        links.add((MarkerDBLink)getSequenceRepository().getDBLink(markerZdbID, "U3JAN0", "UniProtKB"));
-        links.add((MarkerDBLink)getSequenceRepository().getDBLink(markerZdbID, "E7F1G3", "UniProtKB"));
-        links.add((MarkerDBLink)getSequenceRepository().getDBLink(markerZdbID, "C6KFA3", "UniProtKB"));
-        links.add((MarkerDBLink)getSequenceRepository().getDBLink(markerZdbID, "DX504044", "GenBank"));
-        links.add((MarkerDBLink)getSequenceRepository().getDBLink(bacZdbID, "BX004780", "GenBank"));
-        links.add((MarkerDBLink)getSequenceRepository().getDBLink(bacZdbID, "BX004780", "GenBank"));
-
-        for(int i = 0; i < links.size(); i++) {
-            assertNotNull("Null Value at " + i, links.get(i));
+        List<String> accessionsNotFound = new ArrayList<>();
+        for(Triple<String,String,String> acc : accessions) {
+            MarkerDBLink mdl = (MarkerDBLink) getSequenceRepository().getDBLink(acc.getLeft(), acc.getMiddle(), acc.getRight());
+            links.add(mdl);
+            if (mdl == null) {
+                accessionsNotFound.add(acc.getLeft() + " " + acc.getMiddle() + " " + acc.getRight());
+            }
         }
-        assertEquals(links.size(), 18);
+
+        assertEquals( "Accessions not found: " + accessionsNotFound.toString(), 0, accessionsNotFound.size());
+        assertEquals(links.size(), 14);
 
         List<MarkerDBLink> aggregatedLinks = MarkerService.aggregateDBLinksByPub(links);
 
-        assertEquals(aggregatedLinks.size(), 16);
+        assertEquals(aggregatedLinks.size(), 12);
     }
-
 }
-
-
