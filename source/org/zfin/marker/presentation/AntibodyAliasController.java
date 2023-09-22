@@ -11,6 +11,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.View;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.server.DTOMarkerService;
+import org.zfin.infrastructure.DataAlias;
 import org.zfin.marker.MarkerAlias;
 
 import java.util.List;
@@ -43,9 +44,9 @@ public class AntibodyAliasController {
                                                 @RequestBody RelatedEntityDTO formData) {
 
         HibernateUtil.createTransaction();
-        AntibodyService.addDataAliasRelatedEntity(antibodyZdbId, formData.getName(), formData.getPublicationZdbID());
+        DataAlias alias = AntibodyService.addDataAliasRelatedEntity(antibodyZdbId, formData.getName(), formData.getPublicationZdbID());
         HibernateUtil.flushAndCommitCurrentSession();
-
+        formData.setZdbID(alias.getZdbID());
         return formData;
     }
 

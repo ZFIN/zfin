@@ -824,20 +824,22 @@ public class AntibodyService {
     /**
      * Add alias attribute. Same logic as MarkerRPCServiceImpl::addDataAliasRelatedEntity
      */
-    public static void addDataAliasRelatedEntity(String markerID, String aliasName, String publicationID) {
+    public static DataAlias addDataAliasRelatedEntity(String markerID, String aliasName, String publicationID) {
         MarkerRepository markerRepository = getMarkerRepository();
         Marker marker = markerRepository.getMarkerByID(markerID);
         Publication publication = getPublicationRepository().getPublication(publicationID);
 
         DataAlias dataAlias = markerRepository.getSpecificDataAlias(marker, aliasName);
         if (dataAlias == null) {
-            markerRepository.addMarkerAlias(marker, aliasName, publication);
+            return markerRepository.addMarkerAlias(marker, aliasName, publication);
+
         } else if (publication == null) {
             //nothing to do. the alias already exists and we have no publication to attribute
         } else if (!publication.equals(dataAlias.getSinglePublication())) {
             //the alias already exists, but the attribution doesn't match our pub, so we add an attribution
             markerRepository.addDataAliasAttribution(dataAlias, publication, marker);
         }
+        return dataAlias;
     }
 
     /**
