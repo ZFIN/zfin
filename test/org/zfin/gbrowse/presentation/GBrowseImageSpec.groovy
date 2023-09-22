@@ -1,6 +1,8 @@
 package org.zfin.gbrowse.presentation
 
 import org.zfin.AbstractZfinIntegrationSpec
+import org.zfin.framework.featureflag.FeatureFlagEnum
+import org.zfin.framework.featureflag.FeatureFlags
 import org.zfin.genomebrowser.GenomeBrowserBuild
 import org.zfin.genomebrowser.presentation.GenomeBrowserFactory
 import org.zfin.mapping.GenomeLocation
@@ -15,6 +17,10 @@ class GBrowseImageSpec extends AbstractZfinIntegrationSpec {
 
     @Shared
     LinkageRepository linkageRepository = RepositoryFactory.linkageRepository
+
+    def setup() {
+        FeatureFlags.setFeatureFlagForGlobalScope(FeatureFlagEnum.JBROWSE.getName(), false)
+    }
 
     def "urls contain correct base url"() {
         when:
@@ -44,6 +50,7 @@ class GBrowseImageSpec extends AbstractZfinIntegrationSpec {
         def image = GenomeBrowserFactory.getStaticImageBuilder()
                 .setLandmarkByGenomeLocation(location)
                 .build()
+//        def debug = image.imageUrl
 
         then:
         image.imageUrl =~ /\d+%3A\d+..\d+/
