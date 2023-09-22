@@ -36,7 +36,14 @@ public class DisplayGroupRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void testDisplayGroupData() {
         Session session = HibernateUtil.currentSession();
-        Query query = session.createQuery("select dg.referenceDatabases from DisplayGroup dg where dg.groupName = :groupName ");
+        String hql = """
+            select dgm.referenceDatabase 
+            from DisplayGroup dg 
+            join dg.displayGroupMembers dgm
+            where dg.groupName = :groupName
+        """;
+
+        Query query = session.createQuery(hql);
         query.setString("groupName", DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE.toString());
         List<ReferenceDatabase> referenceDatabaseList = query.list();
         for (ReferenceDatabase referenceDatabase : referenceDatabaseList) {
@@ -56,10 +63,15 @@ public class DisplayGroupRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void dblinkIsInDisplayGroup() {
         Session session = HibernateUtil.currentSession();
-        String hql = "" +
-                "select dbl from DBLink dbl join dbl.referenceDatabase rdb " +
-                "join rdb.displayGroups dg where dg.groupName = :groupName " +
-                "";
+        String hql = """
+            select dbl 
+            from DBLink dbl 
+            join dbl.referenceDatabase rdb 
+            join DisplayGroupMember dgm on rdb = dgm.referenceDatabase 
+            join dgm.displayGroup dg 
+            where dg.groupName = :groupName
+        """;
+
         Query query = session.createQuery(hql);
         query.setString("groupName", DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE.toString());
         query.setMaxResults(3); // test 3
@@ -74,10 +86,14 @@ public class DisplayGroupRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void referenceDatabaseIsInDisplayGroup() {
         Session session = HibernateUtil.currentSession();
-        String hql = "" +
-                "select rdb from ReferenceDatabase rdb " +
-                "join rdb.displayGroups dg where dg.groupName = :groupName " +
-                "";
+        String hql = """
+            select rdb 
+            from ReferenceDatabase rdb 
+            join DisplayGroupMember dgm on rdb = dgm.referenceDatabase 
+            join dgm.displayGroup dg 
+            where dg.groupName = :groupName
+        """;
+
         Query query = session.createQuery(hql);
         query.setString("groupName", DisplayGroup.GroupName.DISPLAYED_NUCLEOTIDE_SEQUENCE.toString());
         List<ReferenceDatabase> referenceDatabases = query.list();
@@ -95,7 +111,12 @@ public class DisplayGroupRepositoryTest extends AbstractDatabaseTest {
     public void getDisplayGroupsForReferenceDatabase() {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select rd from DisplayGroup dg join dg.referenceDatabases rd where rd.foreignDB.dbName = :dbName ";
+        String hql = """
+            select dgm.referenceDatabase 
+            from DisplayGroup dg 
+            join dg.displayGroupMembers dgm
+            where dgm.referenceDatabase.foreignDB.dbName = :dbName
+        """;
         Query query = session.createQuery(hql);
         query.setString("dbName", ForeignDB.AvailableName.GENPEPT.toString());
         // display groups from query
