@@ -1,12 +1,15 @@
 package org.zfin.marker.presentation;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.zfin.framework.HibernateUtil;
@@ -21,6 +24,7 @@ import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.marker.service.MarkerSolrService;
 import org.zfin.mutant.SequenceTargetingReagent;
+import org.zfin.mutant.repository.MutantRepository;
 import org.zfin.profile.Organization;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.publication.Publication;
@@ -34,9 +38,10 @@ import org.zfin.sequence.repository.SequenceRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/marker")
@@ -45,23 +50,27 @@ public class SequenceTargetingReagentAddController {
     private static Logger LOG = LogManager.getLogger(SequenceTargetingReagentAddController.class);
 
     private static MarkerRepository mr = RepositoryFactory.getMarkerRepository();
+    private static MutantRepository mur = RepositoryFactory.getMutantRepository();
     private static PublicationRepository pr = RepositoryFactory.getPublicationRepository();
     private static InfrastructureRepository ir = RepositoryFactory.getInfrastructureRepository();
     private static SequenceRepository sr = RepositoryFactory.getSequenceRepository();
     private static ProfileRepository profileRepository = RepositoryFactory.getProfileRepository();
 
     @Autowired
+    private ResourceBundleMessageSource messageSource;
+
+    @Autowired
     MarkerSolrService markerSolrService;
+
+    @Autowired
+    private HttpServletRequest request;
 
     @ModelAttribute("formBean")
     private SequenceTargetingReagentAddBean getDefaultSearchForm(@RequestParam(value = "sequenceTargetingReagentType", required = false) String type,
                                                                  @RequestParam(value = "sequenceTargetingReagentPublicationZdbID", required = false) String pubZdbID) {
         SequenceTargetingReagentAddBean sequenceTargetingReagentBean = new SequenceTargetingReagentAddBean();
 
-        Map<String, String> strTypes = new HashMap<>(3);
-        strTypes.put(Marker.Type.CRISPR.name(), "CRISPR");
-        strTypes.put(Marker.Type.MRPHLNO.name(), "Morpholino");
-        strTypes.put(Marker.Type.TALEN.name(), "TALEN");
+        Map<String, String> strTypes = getStrTypesMap();
         sequenceTargetingReagentBean.setStrTypes(strTypes);
 
         sequenceTargetingReagentBean.setStrType(type);
@@ -73,9 +82,6 @@ public class SequenceTargetingReagentAddController {
         return sequenceTargetingReagentBean;
     }
 
-    @Autowired
-    private HttpServletRequest request;
-
     @InitBinder("formBean")
     protected void initBinder(WebDataBinder binder) {
         binder.setValidator(new SequenceTargetingReagentAddBeanValidator());
@@ -83,17 +89,21 @@ public class SequenceTargetingReagentAddController {
 
     @RequestMapping(value = "/sequence-targeting-reagent-add", method = RequestMethod.GET)
     protected String showForm(Model model) throws Exception {
-
+        String strTypesJson = new ObjectMapper().writeValueAsString(getStrTypesMap()).replaceAll("\"", "&quot;");
+        model.addAttribute("strTypesJson", strTypesJson);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add Sequence Targeting Reagent");
         return "marker/sequence-targeting-reagent-add";
     }
 
     @RequestMapping(value = "/sequence-targeting-reagent-add", method = RequestMethod.POST)
-    public String addSequenceTargetingReagent(Model model,
+    public String addSequenceTargetingReagentReact(Model model,
                                               @Valid @ModelAttribute("formBean") SequenceTargetingReagentAddBean formBean,
                                               BindingResult result) throws Exception {
 
         if (result.hasErrors()) {
+            model.addAttribute("fieldErrorsJson",
+                    new ObjectMapper().writeValueAsString(
+                            mapFieldErrors(result.getFieldErrors())).replaceAll("\"", "&quot;"));
             return showForm(model);
         }
 
@@ -140,20 +150,24 @@ public class SequenceTargetingReagentAddController {
                 mr.addMarkerDataNote(newSequenceTargetingReagent, curationNote);
             }
 
-            String targetGeneAbbr = formBean.getTargetGeneSymbol();
-          //  Marker targetGene = mr.getGeneByAbbreviation(targetGeneAbbr);
-            Marker targetGene = mr.getMarkerByAbbreviation(targetGeneAbbr);
+            List<String> targetGeneAbbrs = formBean.getTargetGeneSymbols();
+            if (targetGeneAbbrs == null) {
+                targetGeneAbbrs = Collections.emptyList();
+            }
+            for (String targetGeneAbbr : targetGeneAbbrs) {
+                Marker targetGene = mr.getMarkerByAbbreviation(targetGeneAbbr);
 
-            if (targetGene != null && !StringUtils.isEmpty(pubZdbID)) {
-                if (targetGene.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
-                    MarkerService.addMarkerRelationship(newSequenceTargetingReagent, targetGene, pubZdbID, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
-                }
-                if (targetGene.isInTypeGroup(Marker.TypeGroup.NONTSCRBD_REGION)) {
-                    if (newSequenceTargetingReagent.getType()== Marker.Type.CRISPR) {
-                        MarkerService.addMarkerRelationship(newSequenceTargetingReagent, targetGene, pubZdbID, MarkerRelationship.Type.CRISPR_TARGETS_REGION);
+                if (targetGene != null && !StringUtils.isEmpty(pubZdbID)) {
+                    if (targetGene.isInTypeGroup(Marker.TypeGroup.GENEDOM)) {
+                        MarkerService.addMarkerRelationship(newSequenceTargetingReagent, targetGene, pubZdbID, MarkerRelationship.Type.KNOCKDOWN_REAGENT_TARGETS_GENE);
                     }
-                    if (newSequenceTargetingReagent.getType()== Marker.Type.TALEN) {
-                        MarkerService.addMarkerRelationship(newSequenceTargetingReagent, targetGene, pubZdbID, MarkerRelationship.Type.TALEN_TARGETS_REGION);
+                    if (targetGene.isInTypeGroup(Marker.TypeGroup.NONTSCRBD_REGION)) {
+                        if (newSequenceTargetingReagent.getType() == Marker.Type.CRISPR) {
+                            MarkerService.addMarkerRelationship(newSequenceTargetingReagent, targetGene, pubZdbID, MarkerRelationship.Type.CRISPR_TARGETS_REGION);
+                        }
+                        if (newSequenceTargetingReagent.getType() == Marker.Type.TALEN) {
+                            MarkerService.addMarkerRelationship(newSequenceTargetingReagent, targetGene, pubZdbID, MarkerRelationship.Type.TALEN_TARGETS_REGION);
+                        }
                     }
                 }
             }
@@ -213,6 +227,69 @@ public class SequenceTargetingReagentAddController {
     List<LookupEntry> lookupRelationshipTargets(@RequestParam("term") String lookupString) {
 
         return mr.getRelationshipTargetsForString(lookupString);
+    }
+
+    @RequestMapping(value = "/propose-name-by-type-and-genes", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    String proposeNameByTypeAndGenes(@RequestParam("type") String type, @RequestParam("genes") String genes) {
+        Set<String> geneSet = Set.of(genes.split(","));
+        List<Marker> strList = mr.getMarkerWithRelationshipsBySecondMarkers(geneSet);
+
+        //filtered by type
+        strList = strList.stream().filter(str -> str.getMarkerType().getName().equals(type)).toList();
+
+        Integer maxIndex = 0;
+        if (!strList.isEmpty()) {
+            //use regex to extract number from eg. CRISPR3-abc,def,ghi
+            maxIndex = strList.stream().map(
+                            (str) -> {
+                                Pattern pattern = Pattern.compile("[A-Z]+(\\d+)");
+                                Matcher matcher = pattern.matcher(str.getAbbreviation());
+                                matcher.find();
+                                return matcher.group(1);
+                            })
+                    .map(Integer::parseInt)
+                    .max(Integer::compareTo).orElse(0);
+        }
+        return "" + type + (maxIndex + 1) + "-" + geneSet.stream().sorted().collect(Collectors.joining(","));
+    }
+
+    @RequestMapping(value = "/find-count-by-type-and-genes-2", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    String lookupCountByTypeAndGene2() {
+        Marker mrkr = mr.getMarkerByName("rubis");
+        return "2";
+    }
+
+    private static Map<String, String> getStrTypesMap() {
+        Map<String, String> strTypes = new HashMap<>(3);
+        strTypes.put(Marker.Type.CRISPR.name(), "CRISPR");
+        strTypes.put(Marker.Type.MRPHLNO.name(), "Morpholino");
+        strTypes.put(Marker.Type.TALEN.name(), "TALEN");
+        return strTypes;
+    }
+
+    /**
+     * Translating fieldErrors to json for the client.
+     * The result should be something like: [{message: "error message...", rejectedValue: "the bad value", field: "publicationID"},{...},...]
+     * @param fieldErrors
+     * @return a list of maps (each map to be translated to a json object)
+     */
+    private List<Map<String, String>> mapFieldErrors(List<FieldError> fieldErrors) {
+        List<Map<String,String>> mappedErrors = new ArrayList<>();
+        for (FieldError error : fieldErrors) {
+            Map<String, String> map = new HashMap<>();
+            String message = messageSource.getMessage(error.getCode(), error.getArguments(), Locale.getDefault());
+            map.put("message", message);
+            if (!StringUtils.isEmpty((String)error.getRejectedValue())) {
+                map.put("rejectedValue", (String)error.getRejectedValue());
+            }
+            map.put("field", error.getField());
+            mappedErrors.add(map);
+        }
+        return mappedErrors;
     }
 }
 

@@ -3057,6 +3057,36 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return query.list();
     }
 
+    /**
+     * Retrieve marker that has relationships for a given set of markers.
+     * The marker relationships must contain all the given markers and no additional markers.
+     * @param secondMarkerAbbreviations
+     * @return
+     */
+    @Override
+    public List<Marker> getMarkerWithRelationshipsBySecondMarkers(Set<String> secondMarkerAbbreviations) {
+        if (secondMarkerAbbreviations == null || secondMarkerAbbreviations.size() == 0) {
+            return null;
+        }
+
+        long size = secondMarkerAbbreviations.size();
+
+        String hql = """
+            from Marker m where m.zdbID in (
+                select rel.firstMarker.zdbID  
+                from MarkerRelationship as rel   
+                where rel.secondMarker.abbreviation IN (:secondMarkers)
+                group by rel.firstMarker.zdbID
+               having count(distinct rel.secondMarker) = :secondMarkerCount
+           )  
+        """;
+
+        Session session = currentSession();
+        Query<Marker> query = session.createQuery(hql, Marker.class);
+        query.setParameter("secondMarkers", secondMarkerAbbreviations);
+        query.setParameter("secondMarkerCount", size);
+        return query.list();
+    }
 
     @Override
     public PaginationResult<Marker> getRelatedMarker(Marker marker, Set<MarkerRelationship.Type> types, PaginationBean paginationBean) {

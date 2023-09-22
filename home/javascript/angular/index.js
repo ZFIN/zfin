@@ -30,6 +30,4 @@ require('./pub-lookup.directive');
 require('./public-note.directive');
 require('./quick-figure.directive');
 require('./reference-editor.directive');
-require('./str-details.directive');
-require('./str-sequence.directive');
 

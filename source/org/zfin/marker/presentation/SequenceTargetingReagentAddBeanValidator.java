@@ -11,6 +11,8 @@ import org.zfin.publication.presentation.PublicationValidator;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.util.ZfinStringUtils;
 
+import java.util.List;
+
 public class SequenceTargetingReagentAddBeanValidator implements Validator {
 
     private MarkerRepository mr = RepositoryFactory.getMarkerRepository();
@@ -40,13 +42,20 @@ public class SequenceTargetingReagentAddBeanValidator implements Validator {
         String targetGeneSymbol = formBean.getTargetGeneSymbol();
         if (StringUtils.isEmpty(targetGeneSymbol)) {
             errors.rejectValue("targetGeneSymbol", "str.target.empty");
-        } else if (mr.getMarkerByAbbreviation(targetGeneSymbol) == null) {
-
-            errors.rejectValue("targetGeneSymbol", "str.target.notfound");
+        } else  {
+            List<String> geneSymbols = List.of(targetGeneSymbol.split(","));
+            for(String geneSymbol : geneSymbols){
+                if (mr.getMarkerByAbbreviation(geneSymbol) == null) {
+                    errors.rejectValue("targetGeneSymbol", "str.target.notfound");
+                }
+            }
+            formBean.setTargetGeneSymbols(geneSymbols);
         }
         if (type == Marker.Type.MRPHLNO) {
-            if(mr.getMarkerByAbbreviation(targetGeneSymbol).isInTypeGroup(Marker.TypeGroup.NONTSCRBD_REGION)){
-                errors.rejectValue("targetGeneSymbol", "str.target.invalid");
+            for(String geneSymbol : formBean.getTargetGeneSymbols()){
+                if(mr.getMarkerByAbbreviation(geneSymbol).isInTypeGroup(Marker.TypeGroup.NONTSCRBD_REGION)){
+                    errors.rejectValue("targetGeneSymbol", "str.target.invalid");
+                }
             }
         }
         String strSupplier = formBean.getSupplier();
@@ -55,7 +64,6 @@ public class SequenceTargetingReagentAddBeanValidator implements Validator {
                 errors.rejectValue("supplier", "str.supplier.notfound");
             }
         }
-
 
         if (StringUtils.isBlank(strType)) {
             errors.rejectValue("strType", "str.type.empty");

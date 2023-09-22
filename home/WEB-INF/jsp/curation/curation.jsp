@@ -33,7 +33,7 @@
                    onClick=open("/action/marker/gene-add?type=GENE&source=${publication.zdbID}","helpwindow","scrollbars=yes,height=850,width=650,resizable=yes")>
                     Add New Gene</a> |
                 <a class="small-new-link" href="javascript:"
-                   onClick=open("/action/marker/sequence-targeting-reagent-add?sequenceTargetingReagentPublicationZdbID=${publication.zdbID}&sequenceTargetingReagentType=MRPHLNO","helpwindow","scrollbars=yes,height=900,width=1150,resizable=yes")>
+                   onClick=open("/action/marker/sequence-targeting-reagent-add?sequenceTargetingReagentPublicationZdbID=${publication.zdbID}&sequenceTargetingReagentType=CRISPR","helpwindow","scrollbars=yes,height=900,width=1150,resizable=yes")>
                     Add New STR</a> |
                 <a class="small-new-link" href="javascript:"
                    onClick=open("/action/antibody/add?antibodyPublicationZdbID=${publication.zdbID}","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>
