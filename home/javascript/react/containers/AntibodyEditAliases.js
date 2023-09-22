@@ -39,7 +39,7 @@ const AntibodyEditAliases = ({
         event.preventDefault();
 
         try {
-            await http.delete(`/action/api/antibody/${antibodyId}/aliases/${alias.name}/${alias.publicationZdbID}`);
+            await http.delete(`/action/api/antibody/${alias.publicationZdbID}/${alias.zdbID}`);
             setAliases(aliases.filter(item => !(item.name === alias.name && item.publicationZdbID === alias.publicationZdbID) ));
         } catch (error) {
             if (error?.responseJSON?.message) {
