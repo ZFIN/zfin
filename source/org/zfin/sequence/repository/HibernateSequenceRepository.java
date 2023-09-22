@@ -797,10 +797,16 @@ public class HibernateSequenceRepository implements SequenceRepository {
     @Override
     public List<DBLink> getDBLinksForMarker(String zdbID, ForeignDBDataType.SuperType superType) {
         Session session = HibernateUtil.currentSession();
-        String hql = "select distinct dbl from DBLink dbl, DisplayGroup dg, ReferenceDatabase ref " +
-                "where dbl.referenceDatabase = ref and ref.foreignDBDataType.superType = :superType " +
-                "and dbl.dataZdbID = :markerZdbId and dg not member of ref.displayGroups " +
-                "and dg.groupName = :groupName ";
+        String hql = """
+            select distinct dbl 
+            from DBLink dbl, DisplayGroup dg, ReferenceDatabase ref 
+            where dbl.referenceDatabase = ref 
+            and ref.foreignDBDataType.superType = :superType 
+            and dbl.dataZdbID = :markerZdbId 
+            and not exists (from DisplayGroupMember dgm where dgm.referenceDatabase = ref and dgm.displayGroup = dg)
+            and dg.groupName = :groupName
+        """;
+
 
         Query query = session.createQuery(hql);
         query.setParameter("superType", superType);
@@ -884,8 +890,8 @@ public class HibernateSequenceRepository implements SequenceRepository {
 //                ;
 
         String hql = "select distinct dbl from DBLink dbl  " +
-                "join dbl.referenceDatabase.displayGroups dg " +
-                "where dg.groupName = :displayGroup " +
+                "join dbl.referenceDatabase.displayGroupMembers dgm " +
+                "where dgm.displayGroup.groupName = :displayGroup " +
                 "and " +
                 "dbl.dataZdbID = :markerZdbId ";
         Query query = HibernateUtil.currentSession().createQuery(hql)
@@ -896,11 +902,16 @@ public class HibernateSequenceRepository implements SequenceRepository {
 
     @Override
     public List<TranscriptDBLink> getTranscriptDBLinksForMarkerAndDisplayGroup(Transcript transcript, DisplayGroup.GroupName groupName) {
-        String hql = "select distinct dbl from TranscriptDBLink dbl  " +
-                "join dbl.referenceDatabase.displayGroups dg " +
-                "where dg.groupName = :displayGroup " +
-                "and " +
-                "dbl.dataZdbID = :markerZdbId ";
+        String hql = """
+            select distinct dbl
+            from TranscriptDBLink dbl
+            join dbl.referenceDatabase dgmRef
+            join DisplayGroupMember dgm on dgmRef = dgm.referenceDatabase
+            join dgm.displayGroup dg
+            where dg.groupName = :displayGroup
+            and dbl.dataZdbID = :markerZdbId
+        """;
+
         Query query = HibernateUtil.currentSession().createQuery(hql)
                 .setParameter("markerZdbId", transcript.getZdbID())
                 .setParameter("displayGroup", groupName.toString());
@@ -935,11 +946,12 @@ public class HibernateSequenceRepository implements SequenceRepository {
 
         String hql = """
                 select distinct dbl, mr 
-                from DBLink dbl, DisplayGroup dg, ReferenceDatabase ref,  
+                from DBLink dbl, DisplayGroup dg, DisplayGroupMember dgm, ReferenceDatabase ref,
                 MarkerRelationship  mr  
                 where dg.groupName = :displayGroup 
                 and dbl.referenceDatabase=ref 
-                and dg in elements(ref.displayGroups) 
+                and dgm.referenceDatabase = ref
+                and dgm.displayGroup = dg
                 and mr.secondMarker.zdbID=dbl.dataZdbID 
                 and mr.markerRelationshipType.name in (:types) 
                 and mr.firstMarker.zdbID = :markerZdbId 
@@ -965,15 +977,16 @@ public class HibernateSequenceRepository implements SequenceRepository {
     @Override
     public List<RelatedMarkerDBLinkDisplay> getDBLinksForSecondRelatedMarker(Marker marker, DisplayGroup.GroupName groupName, MarkerRelationship.Type... markerRelationshipTypes) {
         String hql = " select distinct dbl, mr " +
-                " from DBLink dbl, DisplayGroup dg, ReferenceDatabase ref,  " +
+                " from DBLink dbl, DisplayGroup dg, DisplayGroupMember dgm, ReferenceDatabase ref,  " +
                 " MarkerRelationship  mr  " +
                 " where dg.groupName = :displayGroup " +
                 " and dbl.referenceDatabase=ref " +
-                " and dg in elements(ref.displayGroups) " +
+                " and dgm.referenceDatabase = ref " +
+                " and dgm.displayGroup = dg " +
                 " and mr.firstMarker.zdbID=dbl.dataZdbID " +
                 " and mr.markerRelationshipType.name in (:types) " +
-                " and mr.secondMarker.zdbID = :markerZdbId " +
-                " ";
+                " and mr.secondMarker.zdbID = :markerZdbId ";
+
 
         Set<String> types = new HashSet<String>();
         if (markerRelationshipTypes.length != 0) {
@@ -1075,17 +1088,19 @@ public class HibernateSequenceRepository implements SequenceRepository {
 
     @Override
     public List<MarkerDBLink> getWeakReferenceDBLinks(Marker gene, MarkerRelationship.Type type1, MarkerRelationship.Type type2) {
-        String hql = " select distinct dbl " +
-                " from DBLink dbl, DisplayGroup dg, ReferenceDatabase ref,  MarkerRelationship  ctmr, MarkerRelationship gtmr   " +
-                " where ctmr.firstMarker.zdbID=dbl.dataZdbID " +
-                " and dg.groupName = :displayGroup " +
-                " and gtmr.firstMarker.zdbID= :markerZdbId " +
-                " and dbl.referenceDatabase=ref " +
-                " and dg in elements(ref.displayGroups) " +
-                " and gtmr.secondMarker.zdbID = ctmr.secondMarker.zdbID " +
-                " and gtmr.type = :type1 " +
-                " and ctmr.type = :type2 " +
-                " ";
+        String hql = """
+            select distinct dbl 
+            from DBLink dbl, DisplayGroup dg, DisplayGroupMember dgm, ReferenceDatabase ref, MarkerRelationship ctmr, MarkerRelationship gtmr
+            where ctmr.firstMarker.zdbID = dbl.dataZdbID
+            and dg.groupName = :displayGroup
+            and gtmr.firstMarker.zdbID = :markerZdbId
+            and dbl.referenceDatabase = ref
+            and dgm.referenceDatabase = ref
+            and dgm.displayGroup = dg
+            and gtmr.secondMarker.zdbID = ctmr.secondMarker.zdbID
+            and gtmr.type = :type1
+            and ctmr.type = :type2
+        """;
 
         //     " and gtmr.type = 'gene produces transcript' " +
 //                " and ctmr.type = 'clone contains transcript' " +
