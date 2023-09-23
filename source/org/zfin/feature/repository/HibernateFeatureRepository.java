@@ -1083,7 +1083,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
                and aliasgrp_pk_id = dalias_group_id
                 and aliasgrp_name = 'alias'
             """;
-        return HibernateUtil.currentSession().createNativeQuery(sql, PreviousNameLight.class)
+        return HibernateUtil.currentSession().createNativeQuery(sql)
             .setParameter("markerZdbID", genotype.getZdbID())
             .setResultTransformer(new BasicTransformerAdapter() {
                 @Override
