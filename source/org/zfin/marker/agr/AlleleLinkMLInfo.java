@@ -5,10 +5,10 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.alliancegenome.curation_api.model.ingest.dto.AlleleDTO;
-import org.alliancegenome.curation_api.model.ingest.dto.AlleleMutationTypeSlotAnnotationDTO;
-import org.alliancegenome.curation_api.model.ingest.dto.AlleleSecondaryIdSlotAnnotationDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.DataProviderDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.IngestDTO;
+import org.alliancegenome.curation_api.model.ingest.dto.slotAnnotions.SecondaryIdSlotAnnotationDTO;
+import org.alliancegenome.curation_api.model.ingest.dto.slotAnnotions.alleleSlotAnnotations.AlleleMutationTypeSlotAnnotationDTO;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.zfin.feature.Feature;
@@ -79,7 +79,7 @@ public class AlleleLinkMLInfo extends LinkMLInfo {
                 if (CollectionUtils.isNotEmpty(secondaries)) {
                     dto.setAlleleSecondaryIdDtos(
                         secondaries.stream().map(id -> {
-                            AlleleSecondaryIdSlotAnnotationDTO alleleDto = new AlleleSecondaryIdSlotAnnotationDTO();
+                            SecondaryIdSlotAnnotationDTO alleleDto = new SecondaryIdSlotAnnotationDTO();
                             alleleDto.setSecondaryId(id);
                             return alleleDto;
                         }).toList());
