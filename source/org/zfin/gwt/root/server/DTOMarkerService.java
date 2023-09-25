@@ -74,11 +74,13 @@ public class DTOMarkerService {
     public static List<RelatedEntityDTO> getMarkerAliasDTOs(Marker marker) {
         // get alias's
         Set<MarkerAlias> aliases = marker.getAliases();
-        List<RelatedEntityDTO> aliasRelatedEntities = new ArrayList<RelatedEntityDTO>();
+        List<RelatedEntityDTO> aliasRelatedEntities = new ArrayList<>();
         if (aliases != null) {
             for (MarkerAlias alias : aliases) {
                 Set<PublicationAttribution> publicationAttributions = alias.getPublications();
-                aliasRelatedEntities.addAll(DTOConversionService.convertPublicationAttributionsToDTOs(marker.getZdbID(), DTOConversionService.unescapeString(alias.getAlias()), publicationAttributions));
+                Set<RelatedEntityDTO> dtos = DTOConversionService.convertPublicationAttributionsToDTOs(marker.getZdbID(), DTOConversionService.unescapeString(alias.getAlias()), publicationAttributions);
+                dtos.forEach(relatedEntityDTO -> relatedEntityDTO.setZdbID(alias.getZdbID()));
+                aliasRelatedEntities.addAll(dtos);
             }
         }
         return aliasRelatedEntities;

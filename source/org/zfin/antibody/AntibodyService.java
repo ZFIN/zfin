@@ -66,12 +66,12 @@ public class AntibodyService {
      * @return ist of distinct and sorted AO terms.
      */
 
-    public String getRegistryID(){
-        Marker abMrkr= getMarkerRepository().getMarkerByID(antibody.getZdbID());
+    public String getRegistryID() {
+        Marker abMrkr = getMarkerRepository().getMarkerByID(antibody.getZdbID());
         return getMarkerRepository().getABRegID(abMrkr.zdbID);
     }
 
-    public static void setABRegistryID(Antibody antibody, String newRegistryID){
+    public static void setABRegistryID(Antibody antibody, String newRegistryID) {
         if (getMarkerRepository().getABRegID(antibody.getZdbID()) != null) {
             ReferenceDatabase refDB = getSequenceRepository().getReferenceDatabase(ForeignDB.AvailableName.ABREGISTRY, ForeignDBDataType.DataType.OTHER, ForeignDBDataType.SuperType.SUMMARY_PAGE, Species.Type.ZEBRAFISH);
             MarkerDBLink mdb = getMarkerRepository().getDBLink(antibody, getMarkerRepository().getABRegID(antibody.getZdbID()), refDB);
@@ -99,17 +99,17 @@ public class AntibodyService {
         }
     }
 
-    public static void setABRegistryIDs(Antibody antibody, String newRegistryIDs){
+    public static void setABRegistryIDs(Antibody antibody, String newRegistryIDs) {
         List<String> listOfIDs = List.of(newRegistryIDs.split("\\s*,\\s*"));
         List<String> existingIDs = getMarkerRepository().getABRegIDs(antibody.getZdbID());
         ReferenceDatabase refDB = getSequenceRepository().getReferenceDatabase(ForeignDB.AvailableName.ABREGISTRY, ForeignDBDataType.DataType.OTHER, ForeignDBDataType.SuperType.SUMMARY_PAGE, Species.Type.ZEBRAFISH);
 
         List<String> toDelete = new ArrayList<>(CollectionUtils.subtract(existingIDs, listOfIDs));
-        List<String> toAdd =  new ArrayList<>(CollectionUtils.subtract(listOfIDs, existingIDs));
+        List<String> toAdd = new ArrayList<>(CollectionUtils.subtract(listOfIDs, existingIDs));
 
         int count = getMarkerRepository().deleteMarkerDBLinksByIDList(refDB, toDelete);
 
-        for(String newRegistryID : toAdd) {
+        for (String newRegistryID : toAdd) {
             MarkerDBLink mdb = new MarkerDBLink();
             mdb.setMarker(antibody);
             mdb.setAccessionNumber(newRegistryID);
@@ -375,7 +375,7 @@ public class AntibodyService {
         }
     }
 
-    protected void     addMatchOnAntibody() {
+    protected void addMatchOnAntibody() {
 
         if (StringUtils.isEmpty(antibodySearchCriteria.getName())) {
             return;
@@ -824,40 +824,38 @@ public class AntibodyService {
     /**
      * Add alias attribute. Same logic as MarkerRPCServiceImpl::addDataAliasRelatedEntity
      */
-    public static void addDataAliasRelatedEntity(String markerID, String aliasName, String publicationID) {
+    public static DataAlias addDataAliasRelatedEntity(String markerID, String aliasName, String publicationID) {
         MarkerRepository markerRepository = getMarkerRepository();
         Marker marker = markerRepository.getMarkerByID(markerID);
         Publication publication = getPublicationRepository().getPublication(publicationID);
 
         DataAlias dataAlias = markerRepository.getSpecificDataAlias(marker, aliasName);
         if (dataAlias == null) {
-            markerRepository.addMarkerAlias(marker, aliasName, publication);
+            return markerRepository.addMarkerAlias(marker, aliasName, publication);
+
         } else if (publication == null) {
             //nothing to do. the alias already exists and we have no publication to attribute
         } else if (!publication.equals(dataAlias.getSinglePublication())) {
             //the alias already exists, but the attribution doesn't match our pub, so we add an attribution
             markerRepository.addDataAliasAttribution(dataAlias, publication, marker);
         }
+        return dataAlias;
     }
 
     /**
      * For removing an alias name/publication from an antibody.  If the pair is unique, we remove the alias completely
      * If there are multiple publications for that alias for the antibody, we simply remove the attribution.
      *
-     * @param antibodyZdbId
-     * @param aliasName
+     * @param alias
      * @param publicationId
      */
-    public static void removeDataAliasAttributionAndAliasIfUnique(String antibodyZdbId, String aliasName, String publicationId) {
-        Marker marker = getMarkerRepository().getMarkerByID(antibodyZdbId);
-        DataAlias dataAlias = getMarkerRepository().getSpecificDataAlias(marker, aliasName);
-
-        List<RecordAttribution> attributions = getInfrastructureRepository().getRecordAttributions(dataAlias.getZdbID());
+    public static void removeDataAliasAttributionAndAliasIfUnique(MarkerAlias alias, String publicationId) {
+        List<RecordAttribution> attributions = getInfrastructureRepository().getRecordAttributions(alias.getZdbID());
 
         if (attributions.size() == 1 && StringUtils.equals(attributions.get(0).getSourceZdbID(), publicationId)) {
-            removeDataAliasRelatedEntity(antibodyZdbId, aliasName, publicationId);
+            removeDataAliasRelatedEntity(alias, publicationId);
         } else if (attributions.size() > 1) {
-            removeDataAliasAttribution(antibodyZdbId, aliasName, publicationId);
+            removeDataAliasAttribution(alias, publicationId);
         }
 
     }
@@ -865,26 +863,20 @@ public class AntibodyService {
     /**
      * Delete a dataAlias
      * Same logic as MarkerRPCServiceImpl::removeDataAliasRelatedEntity
-     *
      */
-    public static void removeDataAliasRelatedEntity(String antibodyZdbId, String aliasName, String publicationId) {
-        Marker marker = getMarkerRepository().getMarkerByID(antibodyZdbId);
+    public static void removeDataAliasRelatedEntity(MarkerAlias alias, String publicationId) {
         Publication publication = null;
         if (StringUtils.isNotEmpty(publicationId)) {
             publication = RepositoryFactory.getPublicationRepository().getPublication(publicationId);
         }
-        MarkerAlias dataAlias = getMarkerRepository().getSpecificDataAlias(marker, aliasName);
-        InfrastructureService.insertUpdate(marker, "Removed alias: " + dataAlias.getAlias() + "' attributed to publication: '"
-                + (publication == null ? "null" : publication.getZdbID()) + "'");
-        getMarkerRepository().deleteMarkerAlias(marker, dataAlias);
+        InfrastructureService.insertUpdate(alias.getMarker(), "Removed alias: " + alias.getAlias() + "' attributed to publication: '"
+                                                   + (publication == null ? "null" : publication.getZdbID()) + "'");
+        getMarkerRepository().deleteMarkerAlias(alias.getMarker(), alias);
     }
 
-    public static void removeDataAliasAttribution(String antibodyZdbId, String aliasName, String publicationId) {
-        Marker marker = getMarkerRepository().getMarkerByID(antibodyZdbId);
-        DataAlias dataAlias = getMarkerRepository().getSpecificDataAlias(marker, aliasName);
-
-        getInfrastructureRepository().deleteRecordAttribution(dataAlias.getZdbID(), publicationId);
-        InfrastructureService.insertUpdate(marker, "Removed attribution: '" + publicationId + "' from alias: '" + aliasName + "'");
+    public static void removeDataAliasAttribution(MarkerAlias alias, String publicationId) {
+        getInfrastructureRepository().deleteRecordAttribution(alias.getZdbID(), publicationId);
+        InfrastructureService.insertUpdate(alias.getMarker(), "Removed attribution: '" + publicationId + "' from alias: '" + alias.getAlias() + "'");
     }
 
 
