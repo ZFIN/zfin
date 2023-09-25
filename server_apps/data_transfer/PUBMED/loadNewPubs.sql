@@ -22,7 +22,7 @@ create temp table tmp_pubs (
   pubType text);
 
 \copy tmp_pubs from 'parsePubs.log';
-\copy (select zdb_id from tmp_pubs,publication where accession_no = pmid) to '/Users/cmpich/projects/zfin/schlapp/pubAlreadyinZFIN.txt' delimiter '|';
+\copy (select zdb_id from tmp_pubs,publication where accession_no = pmid) to '<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/pubAlreadyinZFIN.txt' delimiter '|';
 
 delete from tmp_pubs
 where (authors = 'none' or authors is null)
