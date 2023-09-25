@@ -11,8 +11,12 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.View;
 import org.zfin.gwt.root.dto.RelatedEntityDTO;
 import org.zfin.gwt.root.server.DTOMarkerService;
+import org.zfin.infrastructure.DataAlias;
+import org.zfin.marker.MarkerAlias;
 
 import java.util.List;
+
+import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 @Log4j2
 @RestController
@@ -28,36 +32,36 @@ public class AntibodyAliasController {
         Antibody antibody = antibodyRepository.getAntibodyByID(antibodyZdbId);
 
         return DTOMarkerService.getMarkerAliasDTOs(antibody)
-                .stream()
-                .peek(dto -> dto.setDataZdbID(antibodyZdbId)) //the DTOs dataZdbIDs are empty initially?
-                .toList();
+            .stream()
+            .peek(dto -> dto.setDataZdbID(antibodyZdbId)) //the DTOs dataZdbIDs are empty initially?
+            .toList();
     }
 
 
     @JsonView(View.AntibodyAliasAPI.class)
     @RequestMapping(value = "/antibody/{antibodyZdbId}/aliases", method = RequestMethod.POST)
     public RelatedEntityDTO addAliasForAntibody(@PathVariable String antibodyZdbId,
-                                                   @RequestBody RelatedEntityDTO formData) {
+                                                @RequestBody RelatedEntityDTO formData) {
 
         HibernateUtil.createTransaction();
-        AntibodyService.addDataAliasRelatedEntity(antibodyZdbId, formData.getName(), formData.getPublicationZdbID());
+        DataAlias alias = AntibodyService.addDataAliasRelatedEntity(antibodyZdbId, formData.getName(), formData.getPublicationZdbID());
         HibernateUtil.flushAndCommitCurrentSession();
-
+        formData.setZdbID(alias.getZdbID());
         return formData;
     }
 
     @JsonView(View.API.class)
-    @RequestMapping(value = "/antibody/{antibodyZdbId}/aliases/{aliasName}/{publicationId}", method = RequestMethod.DELETE)
-    public String deleteAliasForAntibody(@PathVariable String antibodyZdbId,
-                                                   @PathVariable String aliasName,
-                                                   @PathVariable String publicationId) {
+    @RequestMapping(value = "/antibody/{publicationId}/{aliasID}", method = RequestMethod.DELETE)
+    public String deleteAliasForAntibody(@PathVariable String aliasID,
+                                         @PathVariable String publicationId) {
 
 
         HibernateUtil.createTransaction();
-        AntibodyService.removeDataAliasAttributionAndAliasIfUnique(antibodyZdbId, aliasName, publicationId);
+        MarkerAlias alias = getMarkerRepository().getMarkerAlias(aliasID);
+        AntibodyService.removeDataAliasAttributionAndAliasIfUnique(alias, publicationId);
         HibernateUtil.flushAndCommitCurrentSession();
 
-        return aliasName;
+        return alias.getAlias();
     }
 
 }
