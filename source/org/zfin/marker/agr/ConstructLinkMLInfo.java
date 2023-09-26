@@ -43,6 +43,7 @@ public class ConstructLinkMLInfo extends LinkMLInfo {
         initAll();
         IngestDTO ingestDTO = getIngestDTO();
         List<org.alliancegenome.curation_api.model.ingest.dto.ConstructDTO> allDiseaseDTO = getAllConstructInfo();
+        ingestDTO.setLinkMLVersion("v1.9.0");
         ingestDTO.setConstructIngestSet(allDiseaseDTO);
         ObjectMapper mapper = new ObjectMapper();
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
