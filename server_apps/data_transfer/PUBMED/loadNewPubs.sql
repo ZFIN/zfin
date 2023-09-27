@@ -21,7 +21,7 @@ create temp table tmp_pubs (
   status text,
   pubType text);
 
-\copy tmp_pubs from '<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/parsePubs.log';
+\copy tmp_pubs from 'parsePubs.log';
 \copy (select zdb_id from tmp_pubs,publication where accession_no = pmid) to '<!--|TARGETROOT|-->/server_apps/data_transfer/PUBMED/pubAlreadyinZFIN.txt' delimiter '|';
 
 delete from tmp_pubs
@@ -55,7 +55,7 @@ create temp table tmp_new_pubs (
 
 insert into tmp_new_pubs
    (pmcid,
-   mid,zdb_id ,
+   mid ,
   pmid ,
   keywords ,
   title ,
@@ -72,7 +72,7 @@ insert into tmp_new_pubs
   iso ,
   status ,
   journal_zdb_id, pubType)
-  select pmcid,mid,get_id('PUB'),
+  select pmcid,mid,
     pmid,
     keywords,
     title,
@@ -94,14 +94,18 @@ insert into tmp_new_pubs
   where not exists (select 'x' from publication
   where accession_no = pmid::int);
 
-create temp table tmp_journal_matches as 
+delete from tmp_new_pubs where pubtype='preprint';
+
+update tmp_new_pubs set zdb_id = get_id('PUB');
+
+create temp table tmp_journal_matches as
 select distinct jrnl_zdb_id, jrnl_abbrev_lower, jrnl_name_lower, jrnl_print_issn,jrnl_online_issn
 from journal, tmp_pubs
 where   (lower(trim(journaltitle)) = trim(jrnl_name_lower)
       or lower(iso) = trim(jrnl_abbrev_lower)
      or trim(jrnl_print_issn) = trim(issn) or trim(jrnl_online_issn) = trim(issn));
 
-create temp table tmp_first_journal_to_match as 
+create temp table tmp_first_journal_to_match as
 select min(jrnl_zdb_id) as id, jrnl_abbrev_lower, jrnl_name_lower, jrnl_print_issn,jrnl_online_issn
 from tmp_journal_matches
 group by jrnl_abbrev_lower, jrnl_name_lower, jrnl_print_issn,jrnl_online_issn;
@@ -131,7 +135,7 @@ where journal_zdb_id is null
 and issn is not null
 and issn != '';
 
-create temp table tmp_new_journals as 
+create temp table tmp_new_journals as
 select distinct journaltitle, iso, issn from tmp_new_pubs
 where journal_zdb_id is null;
 
@@ -175,8 +179,6 @@ where status = 'aheadofprint';
 update tmp_new_pubs
  set pubtype = 'Review'
  where pubtype = 'review';
-
-delete from tmp_new_pubs where pubtype='preprint';
 
 insert into zdb_active_source
   select zdb_id from tmp_new_pubs;
