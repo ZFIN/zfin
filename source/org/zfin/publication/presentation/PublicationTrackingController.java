@@ -528,7 +528,7 @@ public class PublicationTrackingController {
         letter.getRecipients().add(sender.getEmail());
 
         HibernateUtil.createTransaction();
-        // make sure all the expression data will appear on the all-figure-view page we
+        // make sure all the expression data will appear on the all-figures page we
         // link to in the email
         InformixUtil.runProcedure("regen_expression_mart_per_pub", id);
         HibernateUtil.flushAndCommitCurrentSession();

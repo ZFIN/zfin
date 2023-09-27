@@ -17,7 +17,7 @@
                     <c:if test="${marker.markerType.type != 'EFG'  }">
                             ${directlySubmittedExpression.probeFeatureAbbrev}
                     </c:if>
-                    <a href="/action/figure/all-figure-view/${directlySubmittedExpression.publicationZdbID}?probeZdbID=${directlySubmittedExpression.probeFeatureZdbId}">
+                    <a href="/action/publication/${directlySubmittedExpression.publicationZdbID}/all-figures?probeZdbID=${directlySubmittedExpression.probeFeatureZdbId}">
                         (${directlySubmittedExpression.numImages}
                         image${directlySubmittedExpression.numImages ne 1 ? 's' : ''})
                     </a>

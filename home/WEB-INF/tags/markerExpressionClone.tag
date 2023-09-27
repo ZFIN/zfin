@@ -26,7 +26,7 @@
 
 
 
-                                <a href="/action/figure/all-figure-view/${directlySubmittedExpression.publicationZdbID}?probeZdbID=${directlySubmittedExpression.probeFeatureZdbId}">
+                                <a href="/action/publication/${directlySubmittedExpression.publicationZdbID}/all-figures?probeZdbID=${directlySubmittedExpression.probeFeatureZdbId}">
                                         ${directlySubmittedExpression.numFigures}
                                     figure${directlySubmittedExpression.numFigures ne 1 ? 's' : ''}
                                     (${directlySubmittedExpression.numImages}

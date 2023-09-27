@@ -16,9 +16,6 @@
     </jsp:attribute>
 
     <jsp:body>
-        <z:dataManagerList>
-            <a class="dropdown-item" href="/action/figure/view/${figure.zdbID}">Old View</a>
-        </z:dataManagerList>
 
         <div id="${zfn:makeDomIdentifier(SUMMARY)}">
             <div class="small text-uppercase text-muted">FIGURE</div>

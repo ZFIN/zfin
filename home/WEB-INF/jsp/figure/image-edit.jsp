@@ -30,11 +30,11 @@
 
         <c:if test="${image.figure.publication.type == CURATION}">
             <c:if test="${!empty probe}">
-            <a class="additional-figures-link" href="/action/figure/all-figure-view/${image.figure.publication.zdbID}${probeUrlPart}">All Figures for ${image.figure.publication.shortAuthorList}</a>
+            <a class="additional-figures-link" href="/action/publciation/${image.figure.publication.zdbID}/all-figures${probeUrlPart}">All Figures for ${image.figure.publication.shortAuthorList}</a>
             </c:if>
             </c:if>
         <c:if test="${image.figure.publication.type != CURATION}">
-            <a class="additional-figures-link" href="/action/figure/all-figure-view/${image.figure.publication.zdbID}${probeUrlPart}">All Figures for ${image.figure.publication.shortAuthorList}</a>
+            <a class="additional-figures-link" href="/action/publication/${image.figure.publication.zdbID}/all-figures${probeUrlPart}">All Figures for ${image.figure.publication.shortAuthorList}</a>
             </c:if>
         </div>
     </c:if>
