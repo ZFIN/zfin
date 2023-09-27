@@ -34,7 +34,6 @@
     <jsp:body>
         <z:dataManagerDropdown>
             <a class="dropdown-item" href="/action/publication/image-edit?zdbID=${image.zdbID}"><i class="fas fa-pen"></i> Edit</a>
-            <a class="dropdown-item" href="/action/image/view/${image.zdbID}"><i class="fas fa-eye"></i> Old View</a>
         </z:dataManagerDropdown>
 
         <div id="${zfn:makeDomIdentifier(SUMMARY)}">
@@ -65,11 +64,11 @@
 
                         <c:if test="${image.figure.publication.type == CURATION}">
                             <c:if test="${!empty probe}">
-                                <a class="additional-figures-link" href="/action/figure/all-figure-view/${image.figure.publication.zdbID}${probeUrlPart}">All Figures for ${image.figure.publication.shortAuthorList}</a>
+                                <a class="additional-figures-link" href="/action/publication/${image.figure.publication.zdbID}/all-figures${probeUrlPart}">All Figures for ${image.figure.publication.shortAuthorList}</a>
                             </c:if>
                         </c:if>
                         <c:if test="${image.figure.publication.type != CURATION}">
-                            <a class="additional-figures-link" href="/action/figure/all-figure-view/${image.figure.publication.zdbID}${probeUrlPart}">Figures for ${image.figure.publication.shortAuthorList}${probeDisplay}</a>
+                            <a class="additional-figures-link" href="/action/publication/${image.figure.publication.zdbID}/all-figures${probeUrlPart}">Figures for ${image.figure.publication.shortAuthorList}${probeDisplay}</a>
                         </c:if>
                     </c:if>
                 </z:attributeListItem>

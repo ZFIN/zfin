@@ -20,7 +20,7 @@ const PublicationProbeTable = ({url, publicationId, navigationCounter, title}) =
         },
         {
             label: 'All Figures',
-            content: row => <a href={`/action/figure/all-figure-view/${publicationId}?probeZdbID=${row.zdbID}`}>Show all Figures</a>,
+            content: row => <a href={`/action/publication/${publicationId}/all-figures?probeZdbID=${row.zdbID}`}>Show all Figures</a>,
         },
     ];
 

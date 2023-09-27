@@ -106,7 +106,7 @@
                  data-publication-id="${publication.zdbID}"
             ></div>
             <c:if test="${figureCount > 0 && figureCount < 50}">
-                <div><a href="/action/figure/all-figure-view/${publication.zdbID}">Show all Figures</a></div>
+                <div><a href="/action/publication/${publication.zdbID}/all-figures">Show all Figures</a></div>
             </c:if>
         </z:section>
 

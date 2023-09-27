@@ -18,7 +18,7 @@
         </z:attributeListItem>
 
         <z:attributeListItem label="All Figure Page">
-            <a href="/action/figure/all-figure-view/${figure.publication.zdbID}">Back to All Figure Page</a>
+            <a href="/action/publication/${figure.publication.zdbID}/all-figures">Back to All Figure Page</a>
         </z:attributeListItem>
     </c:if>
 
