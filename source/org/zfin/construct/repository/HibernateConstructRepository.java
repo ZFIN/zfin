@@ -180,16 +180,16 @@ public class HibernateConstructRepository implements ConstructRepository {
 
     public ConstructCuration getConstructByID(String zdbID) {
         Session session = currentSession();
-        return (ConstructCuration) session.get(ConstructCuration.class, zdbID);
+        return session.get(ConstructCuration.class, zdbID);
     }
 
     public ConstructCuration getConstructByName(String conName) {
         Session session = currentSession();
-        return (ConstructCuration) session.get(ConstructCuration.class, conName);
+        return session.get(ConstructCuration.class, conName);
     }
 
     public List<Marker> getAllConstructs(){
-        List<String> types = new ArrayList<String>();
+        List<String> types = new ArrayList<>();
 
         types.add(Marker.Type.TGCONSTRCT.name());
         types.add(Marker.Type.GTCONSTRCT.name());
