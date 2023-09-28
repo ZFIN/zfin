@@ -26,7 +26,8 @@ public class AllianceRestEndpointTest {
         entity.setNegated(Boolean.TRUE);
         VocabularyTerm vocabularyTerm = new VocabularyTerm();
         vocabularyTerm.setName("is_marker_of");
-        entity.setDiseaseRelation(vocabularyTerm);
+        // TODO: needs fixing up
+        //entity.setDiseaseRelation(vocabularyTerm);
         //ObjectResponse<DiseaseAnnotation> ann = api.updateDiseaseAnnotation(annotation.getEntity());
         ObjectResponse<DiseaseAnnotation> ann = api.updateDiseaseAnnotation(entity);
         //ObjectResponse<DiseaseAnnotation> annotation1 = api1.get(4491701L);

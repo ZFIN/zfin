@@ -4,7 +4,6 @@ import lombok.extern.log4j.Log4j2;
 import org.alliancegenome.curation_api.model.entities.Gene;
 import org.alliancegenome.curation_api.model.entities.slotAnnotations.geneSlotAnnotations.GeneFullNameSlotAnnotation;
 import org.alliancegenome.curation_api.model.entities.slotAnnotations.geneSlotAnnotations.GeneSymbolSlotAnnotation;
-import org.alliancegenome.curation_api.model.ingest.dto.NameSlotAnnotationDTO;
 import org.alliancegenome.curation_api.response.ObjectResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,7 +26,7 @@ public class GeneAllianceService extends AllianceService {
         nameDtoName.setDisplayText(marker.getName());
         model.setGeneFullName(nameDtoName);
 
-        GeneSymbolSlotAnnotation nameDtoSymbol= new GeneSymbolSlotAnnotation();
+        GeneSymbolSlotAnnotation nameDtoSymbol = new GeneSymbolSlotAnnotation();
         nameDtoSymbol.setDisplayText(marker.getName());
         model.setGeneSymbol(nameDtoSymbol);
         model.setTaxon(getNcbiTaxonTerm());
