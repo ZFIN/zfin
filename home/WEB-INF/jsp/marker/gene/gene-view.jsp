@@ -28,8 +28,9 @@
 
     <jsp:body>
         <z:dataManagerDropdown>
-            <a class="dropdown-item" href="/action/marker/gene/edit/${formBean.marker.zdbID}">Edit</a>
-            <a class="dropdown-item" href="/action/marker/merge?zdbIDToDelete=${formBean.marker.zdbID}">Merge</a>
+            <a class="dropdown-item" href="/action/marker/gene/edit/${formBean.marker.zdbID}"><i class="fas fa-edit"></i> Edit</a>
+            <a class="dropdown-item" href="/action/marker/merge?zdbIDToDelete=${formBean.marker.zdbID}"><i class="fa-solid fa-code-merge"></i> Merge</a>
+            <a class="dropdown-item" href="/action/updates/${formBean.marker.zdbID}"><i class="fas fa-clock"></i> History</a>
         </z:dataManagerDropdown>
 
         <div id="${zfn:makeDomIdentifier(SUMMARY)}">
