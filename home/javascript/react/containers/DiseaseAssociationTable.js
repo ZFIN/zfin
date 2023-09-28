@@ -17,6 +17,7 @@ const DiseaseAssociationTable = ({alleleId, directAnnotationOnly}) => {
             filterName: 'disease',
             width: '120px',
         },
+        /*
         {
             label: 'Evidence',
             content: (row) => <CommaSeparatedList>
@@ -27,6 +28,7 @@ const DiseaseAssociationTable = ({alleleId, directAnnotationOnly}) => {
             filterName: 'evidenceCode',
             width: '120px',
         },
+        */
         {
             label: 'Reference',
             content: (row) => <CommaSeparatedList>
