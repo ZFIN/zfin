@@ -3682,14 +3682,23 @@ sub reportAllLoadStatistics {
     #combine the contents of the two files into one
     open(STATS_PRIORITY1, "<reportStatistics_p1") or die "Cannot open reportStatistics_p1 : $!\n";
     open(STATS_PRIORITY2, "<reportStatistics_p2") or die "Cannot open reportStatistics_p2 : $!\n";
+    my $outputBuffer = "";
     while(<STATS_PRIORITY1>) {
-        print STATS $_;
+        $outputBuffer .= $_;
     }
     while(<STATS_PRIORITY2>) {
-        print STATS $_;
+        $outputBuffer .= $_;
     }
     close STATS_PRIORITY1;
     close STATS_PRIORITY2;
+
+    #get all key value pairs of %geneZDBidsSymbols and do a search and replace of outputBuffer (s/key/value/)
+    foreach my $zdbGeneId (@keysSortedByValues) {
+        $symbol = $geneZDBidsSymbols{$zdbGeneId};
+        $outputBuffer =~ s/$zdbGeneId/$zdbGeneId($symbol)/;
+    }
+    print STATS $outputBuffer;
+
     close STATS;
     #delete the two files
     unlink "reportStatistics_p1";
