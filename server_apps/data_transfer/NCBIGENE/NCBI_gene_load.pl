@@ -3654,8 +3654,7 @@ sub reportAllLoadStatistics {
         if (exists($genesWithRefSeqBeforeLoad{$zdbGeneId})
             && !exists($genesWithRefSeqAfterLoad{$zdbGeneId})) {
             $ctGenesLostRefSeq++;
-            print STATS_PRIORITY1 "$symbol\t$zdbGeneId\n";
-
+            print STATS_PRIORITY1 "$zdbGeneId\n";
         }
     }
 
@@ -3670,7 +3669,7 @@ sub reportAllLoadStatistics {
         if (exists($genesWithRefSeqAfterLoad{$zdbGeneId})
             && !exists($genesWithRefSeqBeforeLoad{$zdbGeneId})) {
             $ctGenesGainRefSeq++;
-            print STATS_PRIORITY1 "$symbol\t$zdbGeneId\n";
+            print STATS_PRIORITY1 "$zdbGeneId\n";
 
         }
     }
@@ -3692,7 +3691,7 @@ sub reportAllLoadStatistics {
     close STATS_PRIORITY1;
     close STATS_PRIORITY2;
 
-    #get all key value pairs of %geneZDBidsSymbols and do a search and replace of outputBuffer (s/key/value/)
+    #replace the zdb ids with ID and symbol
     foreach my $zdbGeneId (@keysSortedByValues) {
         $symbol = $geneZDBidsSymbols{$zdbGeneId};
         $outputBuffer =~ s/$zdbGeneId/$zdbGeneId($symbol)/;
