@@ -3694,7 +3694,7 @@ sub reportAllLoadStatistics {
     #replace the zdb ids with ID and symbol
     foreach my $zdbGeneId (@keysSortedByValues) {
         $symbol = $geneZDBidsSymbols{$zdbGeneId};
-        $outputBuffer =~ s/$zdbGeneId/$zdbGeneId($symbol)/;
+        $outputBuffer =~ s/$zdbGeneId([^\d])/$zdbGeneId($symbol)$1/g;
     }
     print STATS $outputBuffer;
 
