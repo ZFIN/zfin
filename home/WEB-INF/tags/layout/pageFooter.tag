@@ -79,7 +79,7 @@
                     <li><a href="https://@WIKI_HOST@/display/news">News</a></li>
                     <li><a href="https://@WIKI_HOST@/display/meetings">Meetings</a></li>
                     <li><a href="https://@WIKI_HOST@/display/jobs/Zebrafish-Related+Job+Announcements">Jobs</a></li>
-                    <li><a href="https://community.alliancegenome.org/categories">Community Forum</a></li>
+                    <li><a href="https://community.alliancegenome.org/categories">Alliance Community Forum</a></li>
                     <li><a href="/action/profile/person/search">People</a></li>
                     <li><a href="/action/profile/lab/search">Labs</a></li>
                     <li><a href="/action/profile/company/search">Companies</a></li>
