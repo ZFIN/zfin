@@ -526,6 +526,8 @@ sub removeOldFiles {
 
 sub openLoggingFileHandles {
     open LOG, '>', "logNCBIgeneLoad" or die "can not open logNCBIgeneLoad: $! \n";
+    open STATS_PRIORITY1, '>', "reportStatistics_p1" or die "can not open reportStatistics_p1" ;
+    open STATS_PRIORITY2, '>', "reportStatistics_p2" or die "can not open reportStatistics_p2" ;
     open STATS, '>', "reportStatistics" or die "can not open reportStatistics" ;
     print LOG "Start ... \n";
 }
@@ -939,8 +941,8 @@ sub readZfinGeneInfoFile {
     print LOG "\nTotal number of records on NCBI's Danio_rerio.gene_info file: $ctlines\n\n";
     print LOG "\nctVegaIdsNCBI:  $ctVegaIdsNCBI\n\n" if $ctVegaIdsNCBI > 0;
 
-    print STATS "\nTotal number of records on NCBI's Danio_rerio.gene_info file: $ctlines\n";
-    print STATS "\nNumber of Vega Gene Id/NCBI Gene Id pairs on Danio_rerio.gene_info file: $ctVegaIdsNCBI\n\n" if $ctVegaIdsNCBI > 0;
+    print STATS_PRIORITY1 "\nTotal number of records on NCBI's Danio_rerio.gene_info file: $ctlines\n";
+    print STATS_PRIORITY1 "\nNumber of Vega Gene Id/NCBI Gene Id pairs on Danio_rerio.gene_info file: $ctVegaIdsNCBI\n\n" if $ctVegaIdsNCBI > 0;
 
     if ($ctVegaIdsNCBI == 0) {
         $ctlines = $ctVegaIdsNCBI = 0;
@@ -1011,12 +1013,12 @@ sub readZfinGeneInfoFile {
         print LOG "\nTotal number of records on NCBI's gene2vega file: $ctlines\n\n";
         print LOG "\nctVegaIdsNCBI:  $ctVegaIdsNCBI\n\n" if $ctVegaIdsNCBI > 0;
 
-        print STATS "\nTotal number of records on NCBI's gene2vega file: $ctlines\n";
-        print STATS "\nNumber of Vega Gene Id/NCBI Gene Id pairs on gene2vega file: $ctVegaIdsNCBI\n\n" if $ctVegaIdsNCBI > 0;
+        print STATS_PRIORITY1 "\nTotal number of records on NCBI's gene2vega file: $ctlines\n";
+        print STATS_PRIORITY1 "\nNumber of Vega Gene Id/NCBI Gene Id pairs on gene2vega file: $ctVegaIdsNCBI\n\n" if $ctVegaIdsNCBI > 0;
     }
 
     if($ctVegaIdsNCBI > 0) {
-        print STATS "On NCBI's gene2vega file, the following Vega Ids correspond to more than 1 NCBI genes\n\n";
+        print STATS_PRIORITY2 "On NCBI's gene2vega file, the following Vega Ids correspond to more than 1 NCBI genes\n\n";
         print LOG "On NCBI's gene2vega file, the following Vega Ids correspond to more than 1 NCBI genes\n";
 
         my $ctVegaIdWithMultipleNCBIgene = 0;
@@ -1024,7 +1026,7 @@ sub readZfinGeneInfoFile {
             $ctVegaIdWithMultipleNCBIgene++;
             my $ref_arrayNCBIGenes = $vegaIdwithMultipleNCBIids{$vega};
             print LOG "$vega @$ref_arrayNCBIGenes\n";
-            print STATS "$vega @$ref_arrayNCBIGenes\n";
+            print STATS_PRIORITY2 "$vega @$ref_arrayNCBIGenes\n";
         }
 
         print LOG "\nctVegaIdWithMultipleNCBIgene = $ctVegaIdWithMultipleNCBIgene\n\n";
@@ -1274,20 +1276,20 @@ sub initializeSetsOfZfinRecords {
 
     }
 
-    print STATS "\n\nThe following GenBank RNA accessions found at ZFIN are associated with multiple ZFIN genes.";
-    print STATS "\nThe ZDB Gene Ids associated with these GenBank RNAs are excluded from mapping and hence the loading.\n\n";
+    print STATS_PRIORITY2 "\n\nThe following GenBank RNA accessions found at ZFIN are associated with multiple ZFIN genes.";
+    print STATS_PRIORITY2 "\nThe ZDB Gene Ids associated with these GenBank RNAs are excluded from mapping and hence the loading.\n\n";
 
     open (DBG3, ">debug3") ||  die "Cannot open debug3 : $!\n" if $debug;
     my $ctGenBankRNAsupportingMultipleZFINgenes = 0;
     foreach my $accSupportingMoreThan1 (sort keys %accZFINsupportingMoreThan1) {
         my $ref_accSupportingMoreThan1 = $accZFINsupportingMoreThan1{$accSupportingMoreThan1};
-        print STATS "$accSupportingMoreThan1\t@$ref_accSupportingMoreThan1\n";
+        print STATS_PRIORITY2 "$accSupportingMoreThan1\t@$ref_accSupportingMoreThan1\n";
         print DBG3 "$accSupportingMoreThan1\t@$ref_accSupportingMoreThan1\n" if $debug;
         $ctGenBankRNAsupportingMultipleZFINgenes++;
     }
     close DBG3 if $debug;
 
-    print STATS "\nTotal: $ctGenBankRNAsupportingMultipleZFINgenes\n\n";
+    print STATS_PRIORITY2 "\nTotal: $ctGenBankRNAsupportingMultipleZFINgenes\n\n";
 
     my $ref_accs;
     if ($debug) {
@@ -1307,7 +1309,7 @@ sub initializeSetsOfZfinRecords {
 
     ## if the numbers don't add up, stop the whole process
     if ($ctAccZFINSupportingOnly1 + $ctAccZFINSupportingMoreThan1 != $ctAllSupportingAccZFIN) {
-        close STATS;
+        close STATS_PRIORITY2;
         my $subjectLine = "Auto from $dbname: " . "NCBI_gene_load.pl :: some numbers don't add up";
         reportErrAndExit($subjectLine);
     }
@@ -1657,7 +1659,7 @@ sub countNCBIGenesWithSupportingGenBankRNA {
     }
     close DBG5 if $debug;
     print LOG "\nThe number of NCBI genes with supporting GenBank RNA: $ctGeneIdsNCBIonGene2accession\n\n";
-    print STATS "\n\nThe number of NCBI genes with supporting GenBank RNA: $ctGeneIdsNCBIonGene2accession\n\n";
+    print STATS_PRIORITY2 "\n\nThe number of NCBI genes with supporting GenBank RNA: $ctGeneIdsNCBIonGene2accession\n\n";
 
 }
 
@@ -1768,22 +1770,22 @@ sub initializeHashOfNCBIAccessionsSupportingMultipleGenes {
 
     }
 
-    print STATS "\nThe following GenBank accession found on NCBI's gene2accession file support more than 1 NCBI genes\n";
+    print STATS_PRIORITY2 "\nThe following GenBank accession found on NCBI's gene2accession file support more than 1 NCBI genes\n";
     print LOG "\nThe following GenBank accession found on NCBI's gene2accession file support more than 1 NCBI genes\n";
 
     foreach my $accSupportingMoreThan1 (sort keys %accNCBIsupportingMoreThan1) {
         my $ref_accSupportingMoreThan1 = $accNCBIsupportingMoreThan1{$accSupportingMoreThan1};
-        print STATS "$accSupportingMoreThan1\t@$ref_accSupportingMoreThan1\n";
+        print STATS_PRIORITY2 "$accSupportingMoreThan1\t@$ref_accSupportingMoreThan1\n";
         print LOG "$accSupportingMoreThan1\t@$ref_accSupportingMoreThan1\n";
     }
 
-    print STATS "\nThe following NCBI's Gene Ids have at least 1 supporting GenBank accession that supports more than 1 NCBI genes\n";
+    print STATS_PRIORITY2 "\nThe following NCBI's Gene Ids have at least 1 supporting GenBank accession that supports more than 1 NCBI genes\n";
     print LOG "\nThe following NCBI's Gene Ids have at least 1 supporting GenBank accession that supports more than 1 NCBI genes\n";
 
     foreach my $geneWithAtLeast1accSupportingMoreThan1 (sort keys %geneNCBIwithAccSupportingMoreThan1) {
         my $ref_accs = $geneNCBIwithAccSupportingMoreThan1{$geneWithAtLeast1accSupportingMoreThan1};
         print LOG "$geneWithAtLeast1accSupportingMoreThan1\t@$ref_accs\n";
-        print STATS "$geneWithAtLeast1accSupportingMoreThan1\t@$ref_accs\n";
+        print STATS_PRIORITY2 "$geneWithAtLeast1accSupportingMoreThan1\t@$ref_accs\n";
     }
 
     print LOG "\nThe following should add up \nctAccNCBISupportingOnly1 + ctAccNCBISupportingMoreThan1 = ctAllSupportingAccNCBI \nOtherwise there is bug.\n";
@@ -1791,7 +1793,7 @@ sub initializeHashOfNCBIAccessionsSupportingMultipleGenes {
 
     ## if the numbers don't add up, stop the whole process
     if ($ctAccNCBISupportingOnly1 + $ctAccNCBISupportingMoreThan1 != $ctAllSupportingAccNCBI) {
-        close STATS;
+        close STATS_PRIORITY2;
         my $subjectLine = "Auto from $dbname: " . "NCBI_gene_load.pl :: some numbers don't add up";
         reportErrAndExit($subjectLine);
     }
@@ -1940,7 +1942,7 @@ sub initializeMapOfZfinToNCBIgeneIds {
 
     ## if the numbers don't add up, stop the whole process
     if ($ct1to1ZFINtoNCBI + $ct1toNZFINtoNCBI + $ctZFINgenesWithAllAccsNotFoundAtNCBI != $ctProcessedZFINgenes) {
-        close STATS;
+        close STATS_PRIORITY2;
         my $subjectLine = "Auto from $dbname: " . "NCBI_gene_load.pl :: some numbers don't add up";
         reportErrAndExit($subjectLine);
     }
@@ -1961,7 +1963,7 @@ sub logOneToZeroAssociations {
 
     print LOG "\nctOneToZero = $ctOneToZero\n\n";
 
-    print STATS "\nMapping result statistics: number of 1:0 (ZFIN to NCBI) - $ctOneToZero\n\n";
+    print STATS_PRIORITY2 "\nMapping result statistics: number of 1:0 (ZFIN to NCBI) - $ctOneToZero\n\n";
 }
 
 sub oneWayMappingNCBItoZfinGenes {
@@ -2122,12 +2124,12 @@ sub oneWayMappingNCBItoZfinGenes {
 
     ## if the numbers don't add up, stop the whole process
     if ($ct1to1NCBItoZFIN + $ct1toNNCBItoZFIN + $ctNCBIgenesWithAllAccsNotFoundAtZFIN != $ctProcessedNCBIgenes) {
-        close STATS;
+        close STATS_PRIORITY2;
         my $subjectLine = "Auto from $dbname: " . "NCBI_gene_load.pl :: some numbers don't add up";
         reportErrAndExit($subjectLine);
     }
 
-    print STATS "\nMapping result statistics: number of 0:1 (ZFIN to NCBI) - $ctzeroToOne\n\n";
+    print STATS_PRIORITY2 "\nMapping result statistics: number of 0:1 (ZFIN to NCBI) - $ctzeroToOne\n\n";
 }
 
 sub prepare2WayMappingResults {
@@ -2185,7 +2187,7 @@ sub prepare2WayMappingResults {
     }
 
     print LOG "\n ctAllpotentialOneToOneNCBI = $ctAllpotentialOneToOneNCBI \n ctOneToOneNCBI = $ctOneToOneNCBI\n\n";
-    print STATS "\nMapping result statistics: number of 1:1 based on GenBank RNA - $ctOneToOneNCBI\n\n";
+    print STATS_PRIORITY2 "\nMapping result statistics: number of 1:1 based on GenBank RNA - $ctOneToOneNCBI\n\n";
 }
 
 sub addReverseMappedGenesFromNCBItoZFINFromSupplementaryLoad {
@@ -2435,8 +2437,8 @@ sub getOneToNNCBItoZFINgeneIds {
 
     print LOG "\nctOneToN = $ctOneToN\nctNtoNfromZFIN = $ctNtoNfromZFIN\n\n";
 
-    print STATS "\nMapping result statistics: number of 1:N (ZFIN to NCBI) - $ctOneToN\n\n";
-    print STATS "\nMapping result statistics: number of N:N (ZFIN to NCBI) - $ctNtoNfromZFIN\n\n";
+    print STATS_PRIORITY2 "\nMapping result statistics: number of 1:N (ZFIN to NCBI) - $ctOneToN\n\n";
+    print STATS_PRIORITY2 "\nMapping result statistics: number of N:N (ZFIN to NCBI) - $ctNtoNfromZFIN\n\n";
 }
 
 sub getNtoOneAndNtoNfromZFINtoNCBI {
@@ -2545,8 +2547,8 @@ sub getNtoOneAndNtoNfromZFINtoNCBI {
 
     print LOG "\nctNtoOne = $ctNtoOne\nctNtoNfromNCBI = $ctNtoNfromNCBI\n\n";
 
-    print STATS "\nMapping result statistics: number of N:1 (ZFIN to NCBI) - $ctNtoOne\n\n";
-    print STATS "\nMapping result statistics: number of N:N (NCBI to ZFIN) - $ctNtoNfromNCBI\n\n";
+    print STATS_PRIORITY2 "\nMapping result statistics: number of N:1 (ZFIN to NCBI) - $ctNtoOne\n\n";
+    print STATS_PRIORITY2 "\nMapping result statistics: number of N:N (NCBI to ZFIN) - $ctNtoNfromNCBI\n\n";
 
     my $subject = "Auto from $dbname: " . "NCBI_gene_load.pl :: List of N to N";
     ZFINPerlModules->sendMailWithAttachedReport($ENV{'SWISSPROT_EMAIL_REPORT'},"$subject","reportNtoN");
@@ -2682,7 +2684,7 @@ sub buildVegaIDMappings {
 
     print LOG "\nctTotalZDBgeneIdVegaGeneIds = $ctTotalZDBgeneIdVegaGeneIds\n\n";
 
-    print STATS "\nThe total number of ZFIN genes with Vega Gene Id: $ctTotalZDBgeneIdVegaGeneIds\n\n";
+    print STATS_PRIORITY2 "\nThe total number of ZFIN genes with Vega Gene Id: $ctTotalZDBgeneIdVegaGeneIds\n\n";
 
     $curGetZDBgeneIdVegaGeneId->finish();
 
@@ -2764,8 +2766,8 @@ sub writeCommonVegaGeneIdMappings {
 
     my $ctTotalMapped = $ctMappedViaVega + $ctOneToOneNCBI;
     print LOG "\nctMappedViaVega = $ctMappedViaVega\n\nTotal number of the gene records mapped: $ctMappedViaVega + $ctOneToOneNCBI = $ctTotalMapped\n\n";
-    print STATS "\nMapping result via Vega Gene Id: $ctMappedViaVega additional gene records are mapped\n\n";
-    print STATS "Total number of the gene records mapped: $ctMappedViaVega + $ctOneToOneNCBI = $ctTotalMapped\n\n";
+    print STATS_PRIORITY2 "\nMapping result via Vega Gene Id: $ctMappedViaVega additional gene records are mapped\n\n";
+    print STATS_PRIORITY2 "Total number of the gene records mapped: $ctMappedViaVega + $ctOneToOneNCBI = $ctTotalMapped\n\n";
 }
 
 sub calculateLengthForAccessionsWithoutLength {
@@ -2797,7 +2799,7 @@ sub calculateLengthForAccessionsWithoutLength {
 
     if (!-e "noLength.unl") {
         print LOG "\nCannot find noLength.unl as input file for efetch.\n\n";
-        close STATS;
+        close STATS_PRIORITY2;
         my $subjectLine = "Auto from $dbname: " . "NCBI_gene_load.pl :: no input file for efetch.r";
         reportErrAndExit($subjectLine);
     }
@@ -2846,7 +2848,7 @@ sub calculateLengthForAccessionsWithoutLength {
 
     if (!-e "seq.fasta") {
         print LOG "\n No seq.fasta found (maybe issue with efetch): $! \n\n";
-        close STATS;
+        close STATS_PRIORITY2;
         my $subjectLine = "Auto from $dbname: " . "NCBI_gene_load.pl :: ERROR with efetch";
         reportErrAndExit($subjectLine);
     }
@@ -2864,7 +2866,7 @@ sub calculateLengthForAccessionsWithoutLength {
 
     if (!-e "length.unl") {
         print LOG "\nError happened when execute $FASTA_LEN_COMMAND seq.fasta >length.unl: $! \n\n";
-        close STATS;
+        close STATS_PRIORITY2;
         my $subjectLine = "Auto from $dbname: NCBI_gene_load.pl :: ERROR with $FASTA_LEN_COMMAND";
         reportErrAndExit($subjectLine);
     }
@@ -3064,7 +3066,7 @@ sub processGenBankAccessionsAssociatedToNonLoadPubs {
 
     print LOG "---------------------------------------------------------------\nTotal: $ctToAttribute\n\n";
 
-    print STATS "\nNon-load attribution for the $ctToAttribute manually curated GenPept db_link records get replaced by;\n 1 of the 2 load pubs (depending on mapping type).\n\n";
+    print STATS_PRIORITY2 "\nNon-load attribution for the $ctToAttribute manually curated GenPept db_link records get replaced by;\n 1 of the 2 load pubs (depending on mapping type).\n\n";
 }
 
 sub printGenPeptsAssociatedWithGeneAtZFIN {
@@ -3139,7 +3141,7 @@ sub printGenPeptsAssociatedWithGeneAtZFIN {
     }
     print LOG "-----------------------------------------\nTotal: $ctGenPeptWithMultipleZDBgeneToLoad\n\n\n";
 
-    print STATS "\nBefore the load, the total number of GenPept accessions associated with multiple ZFIN genes: $ctGenPeptWithMultipleZDBgeneToLoad\n\n";
+    print STATS_PRIORITY2 "\nBefore the load, the total number of GenPept accessions associated with multiple ZFIN genes: $ctGenPeptWithMultipleZDBgeneToLoad\n\n";
 
 }
 
@@ -3329,7 +3331,7 @@ sub printStatsBeforeDelete {
     system("/bin/date");
     print LOG "Done everything before doing the deleting and inserting\n";
     print LOG "\n$ctToDelete total number of db_link records are dropped.\n$ctToLoad total number of new records are added.\n\n";
-    print STATS "\n$ctToDelete total number of db_link records are dropped.\n$ctToLoad total number of new records are added.\n\n";
+    print STATS_PRIORITY2 "\n$ctToDelete total number of db_link records are dropped.\n$ctToLoad total number of new records are added.\n\n";
 }
 
 sub executeDeleteAndLoadSQLFile {
@@ -3339,7 +3341,7 @@ sub executeDeleteAndLoadSQLFile {
 
     if (!-e "toLoad.unl" || $ctToLoad == 0) {
         print LOG "\nMissing the add list, toLoad.unl, or it is empty. Something is wrong!\n\n";
-        close STATS;
+        close STATS_PRIORITY2;
         my $subjectLine = "Auto from $dbname: " . "NCBI_gene_load.pl :: missing or empty add list, toLoad.unl";
         reportErrAndExit($subjectLine);
     }
@@ -3416,9 +3418,9 @@ sub reportAllLoadStatistics {
 
     print LOG "\nctGenPeptWithMultipleZDBgeneAfterLoad = $ctGenPeptWithMultipleZDBgeneAfterLoad\n\n";
 
-    print STATS "----- After the load, the GenBank accessions associated with multiple ZFIN genes----\n\n";
-    print STATS "GenPept \t mapped gene \tall associated genes\n";
-    print STATS "--------\t-------------\t-------------\n";
+    print STATS_PRIORITY2 "----- After the load, the GenBank accessions associated with multiple ZFIN genes----\n\n";
+    print STATS_PRIORITY2 "GenPept \t mapped gene \tall associated genes\n";
+    print STATS_PRIORITY2 "--------\t-------------\t-------------\n";
 
     $ctGenPeptWithMultipleZDBgeneAfterLoad = 0;
     foreach $GenPept (sort keys %GenPeptWithMultipleZDBgeneAfterLoad) {
@@ -3431,32 +3433,17 @@ sub reportAllLoadStatistics {
             $genPeptToLoad = "[not in GenPeptsToLoad hash]";
             print "ERROR - GenPept $GenPept not in GenPeptsToLoad hash\n";
         }
-        print STATS "$GenPept\t$genPeptToLoad\t@$ref_arrayZDBgeneIds\n";
+        print STATS_PRIORITY2 "$GenPept\t$genPeptToLoad\t@$ref_arrayZDBgeneIds\n";
         $ctGenPeptWithMultipleZDBgeneAfterLoad++;
     }
-    print STATS "-----------------------------------------\nTotal: $ctGenPeptWithMultipleZDBgeneAfterLoad\n\n\n";
+    print STATS_PRIORITY2 "-----------------------------------------\nTotal: $ctGenPeptWithMultipleZDBgeneAfterLoad\n\n\n";
 
     print LOG "\nctGenPeptWithMultipleZDBgeneAfterLoad = $ctGenPeptWithMultipleZDBgeneAfterLoad\n\n";
 
     #-------------------------------------------------------------------------------------------------
     # Report GenPept accessions associated with ZFIN genes still attributed to a non-load pub.
     #-------------------------------------------------------------------------------------------------
-    print STATS "\n------GenPept accessions with ZFIN genes still attributed to non-load publication ----------\n\n";
 
-    open (NONLOADPUBGENPPEPT, "reportNonLoadPubGenPept") ||  die "Cannot open reportNonLoadPubGenPept : $!\n";
-
-    my @lines = <NONLOADPUBGENPPEPT>;
-    my $ctGenPeptNonLoadPub = 0;
-    foreach my $line (@lines) {
-        $ctGenPeptNonLoadPub++;
-        chop($line);
-        my @fields = split(/\t/, $line);
-        print STATS "$fields[0]\t$fields[1]\t$fields[2]\n";
-    }
-
-    close NONLOADPUBGENPPEPT;
-
-    print STATS "--------------------------\nTotal: $ctGenPeptNonLoadPub\n\n\n";
 
     #-------------------------------------------------------------------------------------------------
     # Do the record counts after the load, and report statistics.
@@ -3580,85 +3567,85 @@ sub reportAllLoadStatistics {
 
     my $numGenesGenBankAfter = ZFINPerlModules->countData($sql);
 
-    print STATS "\n********* Percentage change of various categories of records *************\n\n";
+    print STATS_PRIORITY1 "\n********* Percentage change of various categories of records *************\n\n";
 
-    print STATS "number of db_link records with gene     \t";
-    print STATS "before load\t";
-    print STATS "after load\t";
-    print STATS "percentage change\n";
-    print STATS "----------------------------------------\t-----------\t-----------\t-------------------------\n";
+    print STATS_PRIORITY1 "number of db_link records with gene     \t";
+    print STATS_PRIORITY1 "before load\t";
+    print STATS_PRIORITY1 "after load\t";
+    print STATS_PRIORITY1 "percentage change\n";
+    print STATS_PRIORITY1 "----------------------------------------\t-----------\t-----------\t-------------------------\n";
 
-    print STATS "NCBI gene Id                                  \t";
-    print STATS "$numNCBIgeneIdBefore   \t";
-    print STATS "$numNCBIgeneIdAfter   \t";
-    printf STATS "%.2f\n", ($numNCBIgeneIdAfter - $numNCBIgeneIdBefore) / $numNCBIgeneIdBefore * 100 if ($numNCBIgeneIdBefore > 0);
+    print STATS_PRIORITY1 "NCBI gene Id                                  \t";
+    print STATS_PRIORITY1 "$numNCBIgeneIdBefore   \t";
+    print STATS_PRIORITY1 "$numNCBIgeneIdAfter   \t";
+    printf STATS_PRIORITY1 "%.2f\n", ($numNCBIgeneIdAfter - $numNCBIgeneIdBefore) / $numNCBIgeneIdBefore * 100 if ($numNCBIgeneIdBefore > 0);
 
-    print STATS "RefSeq RNA                                 \t";
-    print STATS "$numRefSeqRNABefore        \t";
-    print STATS "$numRefSeqRNAAfter       \t";
-    printf STATS "%.2f\n", ($numRefSeqRNAAfter - $numRefSeqRNABefore) / $numRefSeqRNABefore * 100 if ($numRefSeqRNABefore > 0);
+    print STATS_PRIORITY1 "RefSeq RNA                                 \t";
+    print STATS_PRIORITY1 "$numRefSeqRNABefore        \t";
+    print STATS_PRIORITY1 "$numRefSeqRNAAfter       \t";
+    printf STATS_PRIORITY1 "%.2f\n", ($numRefSeqRNAAfter - $numRefSeqRNABefore) / $numRefSeqRNABefore * 100 if ($numRefSeqRNABefore > 0);
 
-    print STATS "RefPept                                 \t";
-    print STATS "$numRefPeptBefore   \t";
-    print STATS "$numRefPeptAfter   \t";
-    printf STATS "%.2f\n", ($numRefPeptAfter - $numRefPeptBefore) / $numRefPeptBefore * 100 if ($numRefPeptBefore > 0);
+    print STATS_PRIORITY1 "RefPept                                 \t";
+    print STATS_PRIORITY1 "$numRefPeptBefore   \t";
+    print STATS_PRIORITY1 "$numRefPeptAfter   \t";
+    printf STATS_PRIORITY1 "%.2f\n", ($numRefPeptAfter - $numRefPeptBefore) / $numRefPeptBefore * 100 if ($numRefPeptBefore > 0);
 
-    print STATS "RefSeq DNA                                 \t";
-    print STATS "$numRefSeqDNABefore      \t";
-    print STATS "$numRefSeqDNAAfter        \t";
+    print STATS_PRIORITY1 "RefSeq DNA                                 \t";
+    print STATS_PRIORITY1 "$numRefSeqDNABefore      \t";
+    print STATS_PRIORITY1 "$numRefSeqDNAAfter        \t";
     if ($numRefSeqDNABefore > 0) {
-        printf STATS "%.2f\n", ($numRefSeqDNAAfter - $numRefSeqDNABefore) / $numRefSeqDNABefore * 100;
+        printf STATS_PRIORITY1 "%.2f\n", ($numRefSeqDNAAfter - $numRefSeqDNABefore) / $numRefSeqDNABefore * 100;
     } else {
-        printf STATS "\n";
+        printf STATS_PRIORITY1 "\n";
     }
 
-    print STATS "GenBank RNA                                 \t";
-    print STATS "$numGenBankRNABefore        \t";
-    print STATS "$numGenBankRNAAfter       \t";
-    printf STATS "%.2f\n", ($numGenBankRNAAfter - $numGenBankRNABefore) / $numGenBankRNABefore * 100 if ($numGenBankRNABefore > 0);
+    print STATS_PRIORITY1 "GenBank RNA                                 \t";
+    print STATS_PRIORITY1 "$numGenBankRNABefore        \t";
+    print STATS_PRIORITY1 "$numGenBankRNAAfter       \t";
+    printf STATS_PRIORITY1 "%.2f\n", ($numGenBankRNAAfter - $numGenBankRNABefore) / $numGenBankRNABefore * 100 if ($numGenBankRNABefore > 0);
 
-    print STATS "GenPept                                 \t";
-    print STATS "$numGenPeptBefore   \t";
-    print STATS "$numGenPeptAfter   \t";
-    printf STATS "%.2f\n", ($numGenPeptAfter - $numGenPeptBefore) / $numGenPeptBefore * 100 if ($numGenPeptBefore > 0);
+    print STATS_PRIORITY1 "GenPept                                 \t";
+    print STATS_PRIORITY1 "$numGenPeptBefore   \t";
+    print STATS_PRIORITY1 "$numGenPeptAfter   \t";
+    printf STATS_PRIORITY1 "%.2f\n", ($numGenPeptAfter - $numGenPeptBefore) / $numGenPeptBefore * 100 if ($numGenPeptBefore > 0);
 
-    print STATS "GenBank DNA                                 \t";
-    print STATS "$numGenBankDNABefore       \t";
-    print STATS "$numGenBankDNAAfter        \t";
-    printf STATS "%.2f\n", ($numGenBankDNAAfter - $numGenBankDNABefore) / $numGenBankDNABefore * 100 if ($numGenBankDNABefore > 0);
+    print STATS_PRIORITY1 "GenBank DNA                                 \t";
+    print STATS_PRIORITY1 "$numGenBankDNABefore       \t";
+    print STATS_PRIORITY1 "$numGenBankDNAAfter        \t";
+    printf STATS_PRIORITY1 "%.2f\n", ($numGenBankDNAAfter - $numGenBankDNABefore) / $numGenBankDNABefore * 100 if ($numGenBankDNABefore > 0);
 
-    print STATS "\n\n";
+    print STATS_PRIORITY1 "\n\n";
 
-    print STATS "number of genes                              \t";
-    print STATS "before load\t";
-    print STATS "after load\t";
-    print STATS "percentage change\n";
-    print STATS "----------------------------------------\t-----------\t-----------\t-------------------------\n";
+    print STATS_PRIORITY1 "number of genes                              \t";
+    print STATS_PRIORITY1 "before load\t";
+    print STATS_PRIORITY1 "after load\t";
+    print STATS_PRIORITY1 "percentage change\n";
+    print STATS_PRIORITY1 "----------------------------------------\t-----------\t-----------\t-------------------------\n";
 
-    print STATS "with RefSeq                             \t";
-    print STATS "$ctGenesWithRefSeqBefore   \t";
-    print STATS "$ctGenesWithRefSeqAfter   \t";
-    printf STATS "%.2f\n", ($ctGenesWithRefSeqAfter - $ctGenesWithRefSeqBefore) / $ctGenesWithRefSeqBefore * 100 if ($ctGenesWithRefSeqBefore > 0);
+    print STATS_PRIORITY1 "with RefSeq                             \t";
+    print STATS_PRIORITY1 "$ctGenesWithRefSeqBefore   \t";
+    print STATS_PRIORITY1 "$ctGenesWithRefSeqAfter   \t";
+    printf STATS_PRIORITY1 "%.2f\n", ($ctGenesWithRefSeqAfter - $ctGenesWithRefSeqBefore) / $ctGenesWithRefSeqBefore * 100 if ($ctGenesWithRefSeqBefore > 0);
 
-    print STATS "with RefSeq NM                          \t";
-    print STATS "$numGenesRefSeqRNABefore   \t";
-    print STATS "$numGenesRefSeqRNAAfter   \t";
-    printf STATS "%.2f\n", ($numGenesRefSeqRNAAfter - $numGenesRefSeqRNABefore) / $numGenesRefSeqRNABefore * 100 if ($numGenesRefSeqRNABefore > 0);
+    print STATS_PRIORITY1 "with RefSeq NM                          \t";
+    print STATS_PRIORITY1 "$numGenesRefSeqRNABefore   \t";
+    print STATS_PRIORITY1 "$numGenesRefSeqRNAAfter   \t";
+    printf STATS_PRIORITY1 "%.2f\n", ($numGenesRefSeqRNAAfter - $numGenesRefSeqRNABefore) / $numGenesRefSeqRNABefore * 100 if ($numGenesRefSeqRNABefore > 0);
 
-    print STATS "with RefSeq NP                          \t";
-    print STATS "$numGenesRefSeqPeptBefore   \t";
-    print STATS "$numGenesRefSeqPeptAfter   \t";
-    printf STATS "%.2f\n", ($numGenesRefSeqPeptAfter - $numGenesRefSeqPeptBefore) / $numGenesRefSeqPeptBefore * 100 if ($numGenesRefSeqPeptBefore > 0);
+    print STATS_PRIORITY1 "with RefSeq NP                          \t";
+    print STATS_PRIORITY1 "$numGenesRefSeqPeptBefore   \t";
+    print STATS_PRIORITY1 "$numGenesRefSeqPeptAfter   \t";
+    printf STATS_PRIORITY1 "%.2f\n", ($numGenesRefSeqPeptAfter - $numGenesRefSeqPeptBefore) / $numGenesRefSeqPeptBefore * 100 if ($numGenesRefSeqPeptBefore > 0);
 
-    print STATS "with GenBank                            \t";
-    print STATS "$numGenesGenBankBefore        \t";
-    print STATS "$numGenesGenBankAfter       \t";
-    printf STATS "%.2f\n", ($numGenesGenBankAfter - $numGenesGenBankBefore) / $numGenesGenBankBefore * 100 if ($numGenesGenBankBefore > 0);
+    print STATS_PRIORITY1 "with GenBank                            \t";
+    print STATS_PRIORITY1 "$numGenesGenBankBefore        \t";
+    print STATS_PRIORITY1 "$numGenesGenBankAfter       \t";
+    printf STATS_PRIORITY1 "%.2f\n", ($numGenesGenBankAfter - $numGenesGenBankBefore) / $numGenesGenBankBefore * 100 if ($numGenesGenBankBefore > 0);
 
     my @keysSortedByValues = sort { lc($geneZDBidsSymbols{$a}) cmp lc($geneZDBidsSymbols{$b}) } keys %geneZDBidsSymbols;
 
-    print STATS "\n\nList of genes used to have RefSeq acc but no longer having any:\n";
-    print STATS "-------------------------------------------------------------------\n";
+    print STATS_PRIORITY1 "\n\nList of genes used to have RefSeq acc but no longer having any:\n";
+    print STATS_PRIORITY1 "-------------------------------------------------------------------\n";
 
     my $symbol;
     my $ctGenesLostRefSeq = 0;
@@ -3667,15 +3654,14 @@ sub reportAllLoadStatistics {
         if (exists($genesWithRefSeqBeforeLoad{$zdbGeneId})
             && !exists($genesWithRefSeqAfterLoad{$zdbGeneId})) {
             $ctGenesLostRefSeq++;
-            print STATS "$symbol\t$zdbGeneId\n";
-
+            print STATS_PRIORITY1 "$zdbGeneId\n";
         }
     }
 
-    print STATS "\ntotal: $ctGenesLostRefSeq\n\n";
+    print STATS_PRIORITY1 "\ntotal: $ctGenesLostRefSeq\n\n";
 
-    print STATS "\n\nList of genes now having RefSeq acc but used to have none ReSeq:\n";
-    print STATS "-------------------------------------------------------------------\n";
+    print STATS_PRIORITY1 "\n\nList of genes now having RefSeq acc but used to have none ReSeq:\n";
+    print STATS_PRIORITY1 "-------------------------------------------------------------------\n";
 
     my $ctGenesGainRefSeq = 0;
     foreach my $zdbGeneId (@keysSortedByValues) {
@@ -3683,14 +3669,39 @@ sub reportAllLoadStatistics {
         if (exists($genesWithRefSeqAfterLoad{$zdbGeneId})
             && !exists($genesWithRefSeqBeforeLoad{$zdbGeneId})) {
             $ctGenesGainRefSeq++;
-            print STATS "$symbol\t$zdbGeneId\n";
+            print STATS_PRIORITY1 "$zdbGeneId\n";
 
         }
     }
 
-    print STATS "\ntotal: $ctGenesGainRefSeq\n\n\n";
+    print STATS_PRIORITY1 "\ntotal: $ctGenesGainRefSeq\n\n\n";
+    close STATS_PRIORITY1;
+    close STATS_PRIORITY2;
+
+    #combine the contents of the two files into one
+    open(STATS_PRIORITY1, "<reportStatistics_p1") or die "Cannot open reportStatistics_p1 : $!\n";
+    open(STATS_PRIORITY2, "<reportStatistics_p2") or die "Cannot open reportStatistics_p2 : $!\n";
+    my $outputBuffer = "";
+    while(<STATS_PRIORITY1>) {
+        $outputBuffer .= $_;
+    }
+    while(<STATS_PRIORITY2>) {
+        $outputBuffer .= $_;
+    }
+    close STATS_PRIORITY1;
+    close STATS_PRIORITY2;
+
+    #replace the zdb ids with ID and symbol
+    foreach my $zdbGeneId (@keysSortedByValues) {
+        $symbol = $geneZDBidsSymbols{$zdbGeneId};
+        $outputBuffer =~ s/$zdbGeneId([^\d])/$zdbGeneId($symbol)$1/g;
+    }
+    print STATS $outputBuffer;
 
     close STATS;
+    #delete the two files
+    unlink "reportStatistics_p1";
+    unlink "reportStatistics_p2";
 }
 
 sub emailLoadReports {
