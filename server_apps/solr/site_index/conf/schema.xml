@@ -1049,6 +1049,7 @@
     <copyField source="full_mesh_term" dest="full_mesh_term_t"/>
     <copyField source="conditions" dest="conditions_t"/>
     <copyField source="zeco_conditions" dest="zeco_conditions_t"/>
+    <copyField source="zeco_conditions" dest="conditions"/>
     <copyField source="engineered_region" dest="engineered_region_t"/>
     <copyField source="expressed_in" dest="expressed_in_t"/>
     <copyField source="assay" dest="assay_t"/>

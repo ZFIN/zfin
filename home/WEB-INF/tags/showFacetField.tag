@@ -1,11 +1,13 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
 <%@attribute name="open" type="java.lang.Boolean" required="true" %>
-<%@attribute name="facet" type="org.zfin.search.presentation.Facet"%>
+<%@attribute name="facet" type="org.zfin.search.presentation.Facet" %>
 <%@attribute name="showLabel" type="java.lang.Boolean" required="true" %>
 
 
 <c:set var="name" value="${facet.name}"/>
+<c:set var="maxFacetValuesToDisplay" value="${facet.maxValuesToShow}"/>
+<c:set var="showAllLink" value="${facet.displayShowAllLink}"/>
 
 <ol class="facet-value-list list-unstyled" id="${name}-facet-value-list">
 
@@ -13,7 +15,7 @@
 
     <c:if test="${showLabel}">
         <div id="${name}-facet-label-container" class="facet-label-container">
-            <%-- Only show the widgets if there are values --%>
+                <%-- Only show the widgets if there are values --%>
             <c:choose>
                 <c:when test="${(fn:length(facet.selectedFacetValues) + fn:length(facet.facetValues)) > 0}">
                     <span class="icon-toggle ${open ? 'open' : ''}"><i class="fas fa-fw fa-caret-right"></i></span>
@@ -25,13 +27,13 @@
             <span class="facet-label"
                   id="${name}-facet-label"
                   <c:if test="${addLeftLabelSpacing}">style="padding-left: 16px;"</c:if>
-                    >
+            >
                     ${facet.label}
             </span>
 
             <span id="${name}-facet-field-count" class="facet-field-count"
                   <c:if test="${open}">style=" display:none" </c:if>
-                    >[<fmt:formatNumber value="${facet.nonEmptyDocumentCount}" pattern="##,###"/>]
+            >[<fmt:formatNumber value="${facet.nonEmptyDocumentCount}" pattern="##,###"/>]
             </span>
 
         </div>
@@ -54,20 +56,21 @@
             </c:forEach>
 
             <c:forEach var="facetValue" items="${facet.facetValues}" varStatus="loop">
-                <c:if test="${loop.index == 4 && !facet.alwaysShowAllFacets}">
+                <c:if test="${loop.index == maxFacetValuesToDisplay && !facet.alwaysShowAllFacets}">
                     <div id="${name}-additional-values"
                     class="additional-facet-values ${name}-toggle">
                 </c:if>
                 <zfin2:showFacetValue gaCategory="${zfn:buildFacetedSearchGACategory(category, facet.label)}"
                                       value="${facetValue}" showIncludeExclude="${facet.showIncludeExcludeIcons}"/>
 
-                <c:if test="${loop.count > 4 && loop.last && !facet.alwaysShowAllFacets}">
+                <c:if test="${loop.count > maxFacetValuesToDisplay && loop.last && !facet.alwaysShowAllFacets}">
                     </div>
                 </c:if>
             </c:forEach>
 
         </div>
-        <c:if test="${(fn:length(facet.facetValues) + fn:length(facet.selectedFacetValues)) > 4 && !facet.alwaysShowAllFacets}">
+        <c:if test="${((fn:length(facet.facetValues) + fn:length(facet.selectedFacetValues)) > maxFacetValuesToDisplay || showAllLink)
+        && !facet.alwaysShowAllFacets}">
             <li class="row">
                 <div class="col-lg-2 col-2"> <%-- this is a placehold because tight-on-the-left breaks the offsets --%></div>
                 <div id="${name}-facet-expand-contract-links"
@@ -76,7 +79,7 @@
                         <a class="facet-show-all-facets-link facet-value-modal-link" href="#"
                            onclick="ga('send', 'event', '${zfn:buildFacetedSearchGACategory(category, facet.label)} Facet', 'show all');"
                            data-toggle="modal" data-target="#facet-value-modal"
-                           category="${category}" field="${facet.name}" modal-title="${facet.label}">Show
+                           category="${category}" field="${facet.showAllFieldName}" modal-title="${facet.label}">Show
                             All</a>
                     </div>
                 </div>
