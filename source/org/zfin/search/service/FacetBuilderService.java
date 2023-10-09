@@ -138,9 +138,7 @@ public class FacetBuilderService {
         FacetGroup diseaseModel = new FacetGroup("Disease Model", true);
         diseaseModel.addFacet(buildFacet(FieldName.FISH.getName(), true));
         Facet facet = buildFacet(ZECO_CONDITIONS.getName(), true);
-        facet.setMaxValuesToShow(16);
-        facet.setDisplayShowAllLink(true);
-        facet.setShowAllFieldName(CONDITIONS.getName());
+        configureConditionsFacet(facet);
         diseaseModel.addFacet(facet);
         facetGroups.add(diseaseModel);
         return facetGroups;
@@ -221,9 +219,7 @@ public class FacetBuilderService {
             Category.EXPRESSIONS.getFacetQueriesForField(FieldName.SEQUENCE_TARGETING_REAGENT), false));
         FacetGroup conditions = buildSingleFacetGroup("Conditions", ZECO_CONDITIONS.getName(), false);
         // show all facet values
-        conditions.getFacets().get(0).setMaxValuesToShow(16);
-        conditions.getFacets().get(0).setDisplayShowAllLink(true);
-        conditions.getFacets().get(0).setShowAllFieldName(CONDITIONS.getName());
+        configureConditionsFacet(conditions.getFacets().get(0));
         facetGroups.add(conditions);
 
 
@@ -375,15 +371,20 @@ public class FacetBuilderService {
         facetGroups.add(buildSingleFacetGroup("Is Monogenic", "is_monogenic", false));
         FacetGroup conditions = buildSingleFacetGroup("Conditions", ZECO_CONDITIONS.getName(), false);
         // show all facet values
-        conditions.getFacets().get(0).setMaxValuesToShow(16);
-        conditions.getFacets().get(0).setDisplayShowAllLink(true);
-        conditions.getFacets().get(0).setShowAllFieldName(CONDITIONS.getName());
+        Facet facet = conditions.getFacets().get(0);
+        configureConditionsFacet(facet);
         facetGroups.add(conditions);
 
         facetGroups.add(buildSingleFacetGroup("Has Image", "has_image", false));
         //todo: stage, conditions, author, data_source
 
         return facetGroups;
+    }
+
+    private static void configureConditionsFacet(Facet facet) {
+        facet.setMaxValuesToShow(16);
+        facet.setDisplayShowAllLink(true);
+        facet.setShowAllFieldName(CONDITIONS.getName());
     }
 
 
