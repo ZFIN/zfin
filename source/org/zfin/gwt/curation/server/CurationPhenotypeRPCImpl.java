@@ -226,12 +226,10 @@ public class CurationPhenotypeRPCImpl extends ZfinRemoteServiceServlet implement
      * @param publicationID publication
      */
     public boolean isReCreatePhenotypePileLinkNeeded(String publicationID) {
-        Publication publication = getPublicationRepository().getPublication(publicationID);
-        if (publication.getCloseDate() != null)
-            return false;
         boolean hasMutants = getPhenotypeRepository().hasMutantExpressions(publicationID);
         boolean hasStructures = getPhenotypeRepository().hasPhenotypeStructures(publicationID);
-        return hasMutants && !hasStructures;
+        boolean hasObsoletePhenotypes = getPhenotypeRepository().hasObsoletePhenotype(publicationID);
+        return hasMutants && (!hasStructures || hasObsoletePhenotypes);
     }
 
     /**

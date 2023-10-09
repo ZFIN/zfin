@@ -91,4 +91,10 @@ public class PhenotypeExperiment {
         return "PhenotypeExperiment{" +
                 "id=" + id  + '}';
     }
+
+    public boolean hasObsoletePhenotype() {
+        if(phenotypeStatements == null)
+            return false;
+        return phenotypeStatements.stream().anyMatch(PhenotypeStatement::hasObsoletePhenotype);
+    }
 }
