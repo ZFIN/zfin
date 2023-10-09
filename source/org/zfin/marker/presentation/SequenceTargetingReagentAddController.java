@@ -255,6 +255,17 @@ public class SequenceTargetingReagentAddController {
         return "" + type + (maxIndex + 1) + "-" + geneSet.stream().sorted().collect(Collectors.joining(","));
     }
 
+    @RequestMapping(value = "/name-exists", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    String proposeNameByTypeAndGenes(@RequestParam("name") String name) {
+        Marker marker = mr.getMarkerByName(name);
+        if (marker != null) {
+            return "Name already exists: " + marker.getAbbreviation() + " (" + marker.getZdbID() + ")";
+        }
+        return "";
+    }
+
     private static Map<String, String> getStrTypesMap() {
         Map<String, String> strTypes = new HashMap<>(3);
         strTypes.put(Marker.Type.CRISPR.name(), "CRISPR");

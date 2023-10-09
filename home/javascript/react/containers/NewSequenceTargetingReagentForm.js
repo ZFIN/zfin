@@ -12,6 +12,8 @@ const NewSequenceTargetingReagentForm = ({ pubId: defaultPubId, strType: default
     const [targetGene, setTargetGene] = useState('');
     const [stagedGene, setStagedGene] = useState('');
     const [strType, setStrType] = useState(defaultStrType);
+    const [isManuallyNamed, setIsManuallyNamed] = useState(false);
+    const [manualNamingError, setManualNamingError] = useState('');
 
     const [defaultFormValues] = useState({
         publicationID: defaultPubId,
@@ -80,12 +82,26 @@ const NewSequenceTargetingReagentForm = ({ pubId: defaultPubId, strType: default
     }
 
     function computeName(newType, newGenes) {
+        if (isManuallyNamed) {
+            return;
+        }
+
         const combinedGenes = newGenes.join(',');
         fetch(`/action/marker/propose-name-by-type-and-genes?type=${newType}&genes=${combinedGenes}`)
             .then(response => response.text())
             .then(data => {
                 setFieldValue('name', data);
             });
+    }
+
+    function handleNameChange(event) {
+        if (isManuallyNamed) {
+            fetch(`/action/marker/name-exists?name=${encodeURIComponent(event.target.value)}`)
+                .then(response => response.text())
+                .then(data => {
+                    setManualNamingError(data);
+                });
+        }
     }
 
     function formElement() {
@@ -175,15 +191,24 @@ const NewSequenceTargetingReagentForm = ({ pubId: defaultPubId, strType: default
 
                 <div className='form-group row'>
                     <label htmlFor='name' className='col-md-2 col-form-label'>Name</label>
-                    <div className='col-md-4'>
+                    <div className='col-md-3'>
                         <InputField
                             id='name'
                             name='name'
                             field='name'
-                            readOnly={true}
+                            readOnly={!isManuallyNamed}
+                            onChange={handleNameChange}
                         />
                     </div>
+                    <button type={'button'} className={'btn btn-sm btn-secondary'} onClick={() => {setIsManuallyNamed(!isManuallyNamed)}}>{isManuallyNamed ? 'Auto Name' : 'Manually Name'}</button>
                 </div>
+
+                {manualNamingError &&
+                <div className='form-group row'>
+                    <div className='col-md-2 col-form-label'></div>
+                    <div className='ml-3 p-2 alert alert-danger'>{manualNamingError}</div>
+                </div>}
+
                 <div className='form-group row'>
                     <label htmlFor='alias' className='col-md-2 col-form-label'>Alias</label>
                     <div className='col-md-4'>
