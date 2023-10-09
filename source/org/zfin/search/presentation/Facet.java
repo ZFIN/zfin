@@ -1,13 +1,14 @@
 package org.zfin.search.presentation;
 
+import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.solr.client.solrj.response.FacetField;
 import org.zfin.search.service.SolrService;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Facet  {
+@Data
+public class Facet {
 
     String name;
     List<FacetValue> selectedFacetValues;
@@ -18,60 +19,15 @@ public class Facet  {
     Boolean showAutocompleteBox;
     Boolean alwaysShowAllFacets;
     Boolean showIncludeExcludeIcons;
+    Boolean displayShowAllLink;
+    Integer maxValuesToShow = 4;
+    String showAllFieldName;
 
     public Facet(String name) {
         this.name = name;
         this.showAutocompleteBox = true;
         this.alwaysShowAllFacets = false;
         this.showIncludeExcludeIcons = true;
-    }
-
-    public List<FacetValue> getSelectedFacetValues() {
-        return selectedFacetValues;
-    }
-
-    public void setSelectedFacetValues(List<FacetValue> selectedFacetValues) {
-        this.selectedFacetValues = selectedFacetValues;
-    }
-
-    public List<FacetValue> getFacetValues() {
-        return facetValues;
-    }
-
-    public void setFacetValues(List<FacetValue> facetValues) {
-        this.facetValues = facetValues;
-    }
-
-    public int getNonEmptyDocumentCount() {
-        return nonEmptyDocumentCount;
-    }
-
-    public void setNonEmptyDocumentCount(int nonEmptyDocumentCount) {
-        this.nonEmptyDocumentCount = nonEmptyDocumentCount;
-    }
-
-    public Boolean getOpenByDefault() {
-        return openByDefault;
-    }
-
-    public void setOpenByDefault(Boolean openByDefault) {
-        this.openByDefault = openByDefault;
-    }
-
-    public Boolean getShowAutocompleteBox() {
-        return showAutocompleteBox;
-    }
-
-    public void setShowAutocompleteBox(Boolean showAutocompleteBox) {
-        this.showAutocompleteBox = showAutocompleteBox;
-    }
-
-    public Boolean getAlwaysShowAllFacets() {
-        return alwaysShowAllFacets;
-    }
-
-    public void setAlwaysShowAllFacets(Boolean alwaysShowAllFacets) {
-        this.alwaysShowAllFacets = alwaysShowAllFacets;
     }
 
     public String getLabel() {
@@ -83,9 +39,7 @@ public class Facet  {
     }
 
     public boolean getHasSelectedValues() {
-        if (selectedFacetValues != null && selectedFacetValues.size() > 0)
-            return true;
-        return false;
+        return selectedFacetValues != null && selectedFacetValues.size() > 0;
     }
 
     public boolean getEmpty() {
@@ -96,27 +50,16 @@ public class Facet  {
         return getHasSelectedValues() || openByDefault;
     }
 
-    public Boolean getShowIncludeExcludeIcons() {
-        return showIncludeExcludeIcons;
-    }
-
-    public void setShowIncludeExcludeIcons(Boolean showIncludeExcludeIcons) {
-        this.showIncludeExcludeIcons = showIncludeExcludeIcons;
-    }
-
-    public List<FacetQuery> getFacetQueries() {
-        return facetQueries;
-    }
-
-    public void setFacetQueries(List<FacetQuery> facetQueries) {
-        this.facetQueries = facetQueries;
+    public String getShowAllFieldName() {
+        return showAllFieldName == null ? name : showAllFieldName;
     }
 
     public void addFacetQuery(FacetQuery facetQuery) {
         if (facetQueries == null)
-            facetQueries = new ArrayList<FacetQuery>();
+            facetQueries = new ArrayList<>();
 
         if (facetQuery != null)
             facetQueries.add(facetQuery);
     }
+
 }

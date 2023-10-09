@@ -3,7 +3,8 @@ package org.zfin.search.service;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.NameValuePair;
-import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.PivotField;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -136,9 +137,10 @@ public class FacetBuilderService {
 
         FacetGroup diseaseModel = new FacetGroup("Disease Model", true);
         diseaseModel.addFacet(buildFacet(FieldName.FISH.getName(), true));
-        diseaseModel.addFacet(buildFacet(FieldName.CONDITIONS.getName(), true));
+        Facet facet = buildFacet(ZECO_CONDITIONS.getName(), true);
+        configureConditionsFacet(facet);
+        diseaseModel.addFacet(facet);
         facetGroups.add(diseaseModel);
-
         return facetGroups;
     }
 
@@ -187,11 +189,11 @@ public class FacetBuilderService {
         FacetGroup expressedGene = new FacetGroup("Expressed Gene", true);
 
         expressedGene.addFacet(buildFacet(FieldName.ZEBRAFISH_GENE.getName(),
-                Category.EXPRESSIONS.getFacetQueriesForField(FieldName.ZEBRAFISH_GENE),
-                true));
+            Category.EXPRESSIONS.getFacetQueriesForField(FieldName.ZEBRAFISH_GENE),
+            true));
         expressedGene.addFacet(buildFacet(FieldName.REPORTER_GENE.getName(),
-                Category.EXPRESSIONS.getFacetQueriesForField(FieldName.REPORTER_GENE),
-                false));
+            Category.EXPRESSIONS.getFacetQueriesForField(FieldName.REPORTER_GENE),
+            false));
 
         facetGroups.add(expressedGene);
 
@@ -207,15 +209,18 @@ public class FacetBuilderService {
 
 
         FacetGroup genotype = buildSingleFacetGroup("Genotype", FieldName.GENOTYPE_FULL_NAME.getName(),
-                Category.EXPRESSIONS.getFacetQueriesForField(FieldName.GENOTYPE),
-                false);
+            Category.EXPRESSIONS.getFacetQueriesForField(FieldName.GENOTYPE),
+            false);
 
         facetGroups.add(genotype);
 
         facetGroups.add(buildSingleFacetGroup("Sequence Targeting Reagent (STR)",
-                FieldName.SEQUENCE_TARGETING_REAGENT.getName(),
-                Category.EXPRESSIONS.getFacetQueriesForField(FieldName.SEQUENCE_TARGETING_REAGENT),false));
-        facetGroups.add(buildSingleFacetGroup("Conditions", ZECO_CONDITIONS.getName(), false));
+            FieldName.SEQUENCE_TARGETING_REAGENT.getName(),
+            Category.EXPRESSIONS.getFacetQueriesForField(FieldName.SEQUENCE_TARGETING_REAGENT), false));
+        FacetGroup conditions = buildSingleFacetGroup("Conditions", ZECO_CONDITIONS.getName(), false);
+        // show all facet values
+        configureConditionsFacet(conditions.getFacets().get(0));
+        facetGroups.add(conditions);
 
 
         return facetGroups;
@@ -358,18 +363,28 @@ public class FacetBuilderService {
         //facetGroups.add(buildSingleFacetGroup("Genes With Altered Expression","genes_with_altered_expression",false,  filterQuerySelectionMap));
 
         FacetGroup genotype = buildSingleFacetGroup("Genotype", FieldName.GENOTYPE_FULL_NAME.getName(),
-                Category.PHENOTYPE.getFacetQueriesForField(FieldName.GENOTYPE),
-                false);
+            Category.PHENOTYPE.getFacetQueriesForField(FieldName.GENOTYPE),
+            false);
         facetGroups.add(genotype);
 
         facetGroups.add(buildSingleFacetGroup("Sequence Targeting Reagent (STR)", SEQUENCE_TARGETING_REAGENT.getName(), false));
         facetGroups.add(buildSingleFacetGroup("Is Monogenic", "is_monogenic", false));
-        facetGroups.add(buildSingleFacetGroup("Conditions", FieldName.CONDITIONS.getName(), false));
+        FacetGroup conditions = buildSingleFacetGroup("Conditions", ZECO_CONDITIONS.getName(), false);
+        // show all facet values
+        Facet facet = conditions.getFacets().get(0);
+        configureConditionsFacet(facet);
+        facetGroups.add(conditions);
 
         facetGroups.add(buildSingleFacetGroup("Has Image", "has_image", false));
         //todo: stage, conditions, author, data_source
 
         return facetGroups;
+    }
+
+    private static void configureConditionsFacet(Facet facet) {
+        facet.setMaxValuesToShow(16);
+        facet.setDisplayShowAllLink(true);
+        facet.setShowAllFieldName(CONDITIONS.getName());
     }
 
 
@@ -515,12 +530,12 @@ public class FacetBuilderService {
     }
 
     private FacetGroup buildSingleFacetGroup(String label, String fieldName,
-                                            boolean openByDefault) {
+                                             boolean openByDefault) {
         return buildSingleFacetGroup(label, fieldName, new ArrayList<>(), openByDefault);
     }
 
     private FacetGroup buildSingleFacetGroup(String label, String fieldName, List<FacetQueryEnum> facetQueryEnumList,
-                                            boolean openByDefault) {
+                                             boolean openByDefault) {
         FacetGroup group = new FacetGroup(label, openByDefault);
         group.addFacet(buildFacet(fieldName, true));
         group.setFacetQueries(buildFacetQueries(facetQueryEnumList));
@@ -546,7 +561,7 @@ public class FacetBuilderService {
 
 
     private Facet buildFacet(String fieldName,
-                            boolean openByDefault) {
+                             boolean openByDefault) {
         FieldName fieldNameInstance = FieldName.getFieldName(fieldName);
         return buildFacet(fieldName, new ArrayList<>(), openByDefault);
     }
@@ -556,14 +571,16 @@ public class FacetBuilderService {
                              boolean openByDefault) {
         FieldName fieldNameInstance = FieldName.getFieldName(fieldName);
 
-        if (fieldNameInstance == null) { return null; }
+        if (fieldNameInstance == null) {
+            return null;
+        }
 
         return buildFacet(fieldNameInstance, facetQueryEnumList, openByDefault);
     }
 
     private Facet buildFacet(FieldName fieldNameInstance,
-                            List<FacetQueryEnum> facetQueryEnumList,
-                            boolean openByDefault) {
+                             List<FacetQueryEnum> facetQueryEnumList,
+                             boolean openByDefault) {
 
         FacetField facetField = response.getFacetField(fieldNameInstance.getName());
 
@@ -610,7 +627,7 @@ public class FacetBuilderService {
         if (fieldNameInstance.isHierarchical()) {
 
             for (PivotField pivotField : response.getFacetPivot().get(fieldNameInstance.getPivotKey())) {
-                    facetValues.add(buildFacetValue(pivotField, isSelected(pivotField), baseUrl));
+                facetValues.add(buildFacetValue(pivotField, isSelected(pivotField), baseUrl));
             }
         } else {
             for (FacetField.Count count : facetField.getValues()) {
