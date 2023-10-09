@@ -320,4 +320,6 @@ public interface PhenotypeRepository {
     List<DiseaseAnnotationModel> getDiseaseAnnotationModelsByGene(Marker gene);
 
     List<HumanGeneDetail> getHumanGeneDetailList();
+
+    boolean hasObsoletePhenotype(String publicationID);
 }

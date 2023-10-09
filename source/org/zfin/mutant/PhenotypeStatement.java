@@ -249,6 +249,19 @@ public class PhenotypeStatement implements Comparable<PhenotypeStatement>, Entit
 
     }
 
+    public boolean hasObsoletePhenotype() {
+        if (entity.getSuperterm().isObsolete())
+            return true;
+        if (entity.getSubterm() != null && entity.getSubterm().isObsolete())
+            return true;
+        if (relatedEntity != null && relatedEntity.getSuperterm() != null && relatedEntity.getSuperterm().isObsolete())
+            return true;
+        if (relatedEntity != null && relatedEntity.getSubterm() != null && relatedEntity.getSubterm().isObsolete())
+            return true;
+        return quality.isObsolete();
+    }
+
+
     public static enum Tag {
         NORMAL("normal"),
         ABNORMAL("abnormal"),
