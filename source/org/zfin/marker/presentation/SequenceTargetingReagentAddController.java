@@ -255,14 +255,6 @@ public class SequenceTargetingReagentAddController {
         return "" + type + (maxIndex + 1) + "-" + geneSet.stream().sorted().collect(Collectors.joining(","));
     }
 
-    @RequestMapping(value = "/find-count-by-type-and-genes-2", method = RequestMethod.GET)
-    public
-    @ResponseBody
-    String lookupCountByTypeAndGene2() {
-        Marker mrkr = mr.getMarkerByName("rubis");
-        return "2";
-    }
-
     private static Map<String, String> getStrTypesMap() {
         Map<String, String> strTypes = new HashMap<>(3);
         strTypes.put(Marker.Type.CRISPR.name(), "CRISPR");
