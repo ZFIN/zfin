@@ -365,4 +365,6 @@ public interface OntologyRepository {
 
     Set<GenericTerm> getDiseaseTermsOmimPhenotype();
 
+    TermExternalReference getTermExternalReference(String casID, String prefix);
+    List<TermExternalReference> getAllCasReferences();
 }
