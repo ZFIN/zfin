@@ -205,7 +205,7 @@ const NewSequenceTargetingReagentForm = ({ pubId: defaultPubId, strType: default
 
                 {manualNamingError &&
                 <div className='form-group row'>
-                    <div className='col-md-2 col-form-label'></div>
+                    <div className='col-md-2 col-form-label'/>
                     <div className='ml-3 p-2 alert alert-danger'>{manualNamingError}</div>
                 </div>}
 
