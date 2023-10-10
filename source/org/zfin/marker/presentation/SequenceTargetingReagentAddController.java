@@ -268,9 +268,9 @@ public class SequenceTargetingReagentAddController {
 
     private static Map<String, String> getStrTypesMap() {
         Map<String, String> strTypes = new HashMap<>(3);
-        strTypes.put(Marker.Type.CRISPR.name(), "CRISPR");
-        strTypes.put(Marker.Type.MRPHLNO.name(), "Morpholino");
-        strTypes.put(Marker.Type.TALEN.name(), "TALEN");
+        strTypes.put("CRISPR", "CRISPR");
+        strTypes.put("MO", "Morpholino");
+        strTypes.put("TALEN", "TALEN");
         return strTypes;
     }
 
