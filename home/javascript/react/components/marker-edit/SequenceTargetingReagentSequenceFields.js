@@ -36,6 +36,7 @@ const SequenceTargetingReagentSequenceFields = ({
     complementedField,
     displayedSequenceField,
     setDisplayedSequence,
+    newRow = false,
 }) => {
     useEffect(() => {
         let sequence = values[reportedSequenceField].toUpperCase();
@@ -48,15 +49,19 @@ const SequenceTargetingReagentSequenceFields = ({
         setDisplayedSequence(sequence);
     }, [values[reportedSequenceField], values[reversedField], values[complementedField]]);
 
+    const inputFieldRowClass = newRow ? 'col-md-12' : 'col-md-8';
+
     return (
         <>
             <div className='form-group row'>
                 <label htmlFor='reportedSequence1' className='col-md-2 col-form-label'>{reportedLabel}</label>
-                <div className='col-md-8'>
+                <div className={inputFieldRowClass}>
                     <InputField
                         field={reportedSequenceField}
                         id={reportedSequenceField}
+                        name={reportedSequenceField}
                         tag={SequenceInput}
+                        style={{ textTransform: 'uppercase' }}
                         validate={value => {
                             if (!value) {
                                 return 'A sequence is required';
@@ -71,13 +76,15 @@ const SequenceTargetingReagentSequenceFields = ({
                         <InputCheckbox
                             field={reversedField}
                             id={reversedField}
-                        /><label className='form-check-label' htmlFor='reversed1'>Reverse</label>
+                            name={reversedField}
+                        /><label className='form-check-label' htmlFor={reversedField}>Reverse</label>
                     </div>
                     <div className='form-check form-check-inline'>
                         <InputCheckbox
                             field={complementedField}
                             id={complementedField}
-                        /><label className='form-check-label' htmlFor='complemented1'>Complement</label>
+                            name={complementedField}
+                        /><label className='form-check-label' htmlFor={complementedField}>Complement</label>
                     </div>
                     {(values[reversedField] || values[complementedField]) &&
                         <div className='text-muted'>
@@ -91,9 +98,10 @@ const SequenceTargetingReagentSequenceFields = ({
                 label={displayedLabel}
                 field={displayedSequenceField}
                 id={displayedSequenceField}
+                name={displayedSequenceField}
                 tag={SequenceInput}
-                inputClassName='col-md-8'
-                disabled
+                inputClassName={inputFieldRowClass}
+                readOnly={true}
             />
         </>
     );
@@ -109,6 +117,7 @@ SequenceTargetingReagentSequenceFields.propTypes = {
     complementedField: PropTypes.string,
     displayedSequenceField: PropTypes.string,
     setDisplayedSequence: PropTypes.func,
+    newRow: PropTypes.bool,
 };
 
 export default SequenceTargetingReagentSequenceFields;
