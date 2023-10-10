@@ -3,12 +3,10 @@ package org.zfin.marker;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import org.zfin.framework.api.View;
-import org.zfin.infrastructure.PublicationAttribution;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Set;
 
 @Data
 public class MarkerHistoryDTO implements Serializable {
@@ -42,7 +40,9 @@ public class MarkerHistoryDTO implements Serializable {
         dto.setEventName(history.getEvent().toString());
         dto.setEventDisplay(history.getEvent().getDisplay());
         dto.setZdbID(history.getZdbID());
-        dto.setReason(history.getReason().toString());
+        if (history.getReason() != null) {
+            dto.setReason(history.getReason().toString());
+        }
         dto.setNewValue(history.getNewValue());
         dto.setOldSymbol(history.getOldSymbol());
         dto.setDate(new SimpleDateFormat("yyyy-MM-dd").format(history.getDate()));
