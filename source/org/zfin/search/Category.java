@@ -59,7 +59,7 @@ public enum Category {
     DISEASE("Human Disease",
             FieldName.GENE,
             FieldName.FISH,
-            FieldName.CONDITIONS
+            FieldName.ZECO_CONDITIONS
     ),
     MUTANT("Mutation / Tg",
             TYPE,
@@ -138,7 +138,7 @@ public enum Category {
             ASSAY,
             GENOTYPE_FULL_NAME,
             AUTHOR,
-        ZECO_CONDITIONS,
+            ZECO_CONDITIONS,
             HAS_IMAGE,
             FieldName.SEQUENCE_TARGETING_REAGENT,
             IS_WILDTYPE
@@ -156,7 +156,7 @@ public enum Category {
             MISEXPRESSED_GENE,
             GENOTYPE_FULL_NAME,
             HAS_IMAGE,
-            CONDITIONS,
+            ZECO_CONDITIONS,
             FieldName.SEQUENCE_TARGETING_REAGENT
     ),
     COMMUNITY("Community",
