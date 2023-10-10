@@ -506,6 +506,8 @@ public interface MarkerRepository {
     List<Marker> getSecondMarkersByFirstMarkerAndMarkerRelationshipType(Marker firstMarker, MarkerRelationship.Type relationshipType);
      List<MarkerRelationship> getMarkerRelationshipBySecondMarker(Marker secondMarker);
 
+    List<Marker> getMarkerWithRelationshipsBySecondMarkers(Set<String> secondMarkerAbbreviations);
+
     PaginationResult<Marker> getRelatedMarker(Marker marker, Set<MarkerRelationship.Type> types, PaginationBean paginationBean);
 
     List<OmimPhenotype> getOmimPhenotype(Marker marker);
