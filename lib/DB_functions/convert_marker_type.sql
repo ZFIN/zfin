@@ -116,13 +116,18 @@ if exists(select 1 from feature_marker_relationship where fmrel_mrkr_zdb_id = ol
 end if;
 -- end of feature_marker_relationship handling, will re-add later
 
+-- gene_description
+create temp table gene_description_rows2change as select * from gene_description where gd_gene_zdb_id = oldGeneId;
+if exists(select 1 from gene_description where gd_gene_zdb_id = oldGeneId) then
+    raise warning 'There are gene_descriptions for this gene. Will update with new gene ID in gene_description table.';
+    delete from gene_description where gd_gene_zdb_id = oldGeneId;
+end if;
+-- end of gene_description handling, will re-add later
+
 delete from zdb_active_data where zactvd_zdb_id = oldGeneId;
 insert into zdb_replaced_data (zrepld_old_zdb_id, zrepld_new_zdb_id) values (oldGeneId, newGeneId);
 
 update marker set mrkr_name = markerAbbrev, mrkr_abbrev = markerAbbrev where mrkr_zdb_id = newGeneId;
-
--- expression_experiment
-update expression_experiment set xpatex_gene_zdb_id = newGeneId where xpatex_gene_zdb_id = oldGeneId;
 
 -- re-add expression_experiment2 rows
 update expression_experiment2_rows2change set xpatex_gene_zdb_id = newGeneId;
@@ -136,8 +141,17 @@ insert into feature_marker_relationship (select * from feature_marker_relationsh
 drop table feature_marker_relationship_rows2change;
 -- end of re-add feature_marker_relationship rows
 
+-- re-add gene_description rows
+update gene_description_rows2change set gd_gene_zdb_id = newGeneId;
+insert into gene_description (select * from gene_description_rows2change);
+drop table gene_description_rows2change;
+-- end of re-add gene_description rows
+
 -- update accession_bank
 update accession_bank set accbk_defline = replace(accbk_defline, oldGeneId || ' ', newGeneId || ' ') where accbk_defline like '%' || oldGeneId || ' %';
+
+-- expression_experiment
+update expression_experiment set xpatex_gene_zdb_id = newGeneId where xpatex_gene_zdb_id = oldGeneId;
 
 
 
