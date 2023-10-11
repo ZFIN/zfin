@@ -210,7 +210,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
     public List<FeatureMarkerRelationship> getFeatureRelationshipsByPublication(String publicationZdbID) {
 
         String hql = """
-            select f from FeatureMarkerRelationship f
+            select distinct f from FeatureMarkerRelationship f
             join f.feature feature
             left outer join feature.featureProteinMutationDetailSet
             left outer join feature.featureProteinMutationDetailSet
