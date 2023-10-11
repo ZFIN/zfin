@@ -102,7 +102,7 @@ update zdb_replaced_data set zrepld_new_zdb_id = newGeneId where zrepld_new_zdb_
 
 -- delete from expression_experiment2 in case of foreign key constraint
 create temp table expression_experiment2_rows2change as select * from expression_experiment2 where xpatex_gene_zdb_id = oldGeneId;
-if exists(select 1 from expression_experiment2 where xpatex_gene_zdb_id = oldGeneId) then
+if exists(select 1 from expression_experiment2_rows2change) then
     raise warning 'There are expression experiments for this gene. Will update with new gene ID in expression_experiment2 table.';
     delete from expression_experiment2 where xpatex_gene_zdb_id = oldGeneId;
 end if;
@@ -110,7 +110,7 @@ end if;
 
 -- feature_marker_relationship
 create temp table feature_marker_relationship_rows2change as select * from feature_marker_relationship where fmrel_mrkr_zdb_id = oldGeneId;
-if exists(select 1 from feature_marker_relationship where fmrel_mrkr_zdb_id = oldGeneId) then
+if exists(select 1 from feature_marker_relationship_rows2change) then
     raise warning 'There are feature_marker_relationships for this gene. Will update with new gene ID in feature_marker_relationship table.';
     delete from feature_marker_relationship where fmrel_mrkr_zdb_id = oldGeneId;
 end if;
@@ -118,16 +118,29 @@ end if;
 
 -- gene_description
 create temp table gene_description_rows2change as select * from gene_description where gd_gene_zdb_id = oldGeneId;
-if exists(select 1 from gene_description where gd_gene_zdb_id = oldGeneId) then
+if exists(select 1 from gene_description_rows2change) then
     raise warning 'There are gene_descriptions for this gene. Will update with new gene ID in gene_description table.';
     delete from gene_description where gd_gene_zdb_id = oldGeneId;
 end if;
 -- end of gene_description handling, will re-add later
 
+-- snp_download (snpd_mrkr_zdb_id is foreign key)
+create temp table snp_download_rows2change as select * from snp_download where snpd_mrkr_zdb_id = oldGeneId;
+if exists(select 1 from snp_download_rows2change) then
+    raise warning 'There are snp_downloads for this gene. Will update with new gene ID in snp_download table.';
+    delete from snp_download where snpd_mrkr_zdb_id = oldGeneId;
+end if;
+-- end of snp_download handling, will re-add later
+
+--------------------------------------------------
+-- THIS IS WHERE THE ACTUAL ID CHANGE HAPPENS
+-- -----------------------------------------------
 delete from zdb_active_data where zactvd_zdb_id = oldGeneId;
 insert into zdb_replaced_data (zrepld_old_zdb_id, zrepld_new_zdb_id) values (oldGeneId, newGeneId);
-
 update marker set mrkr_name = markerAbbrev, mrkr_abbrev = markerAbbrev where mrkr_zdb_id = newGeneId;
+-- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-- END OF ID CHANGE
+
 
 -- re-add expression_experiment2 rows
 update expression_experiment2_rows2change set xpatex_gene_zdb_id = newGeneId;
@@ -146,6 +159,12 @@ update gene_description_rows2change set gd_gene_zdb_id = newGeneId;
 insert into gene_description (select * from gene_description_rows2change);
 drop table gene_description_rows2change;
 -- end of re-add gene_description rows
+
+-- re-add snp_download rows
+update snp_download_rows2change set snpd_mrkr_zdb_id = newGeneId;
+insert into snp_download (select * from snp_download_rows2change);
+drop table snp_download_rows2change;
+-- end of re-add snp_download rows
 
 -- update accession_bank
 update accession_bank set accbk_defline = replace(accbk_defline, oldGeneId || ' ', newGeneId || ' ') where accbk_defline like '%' || oldGeneId || ' %';
