@@ -108,16 +108,33 @@ if exists(select 1 from expression_experiment2 where xpatex_gene_zdb_id = oldGen
 end if;
 -- finished with expression_experiment2 delete, will re-add later
 
+-- feature_marker_relationship
+create temp table feature_marker_relationship_rows2change as select * from feature_marker_relationship where fmrel_mrkr_zdb_id = oldGeneId;
+if exists(select 1 from feature_marker_relationship where fmrel_mrkr_zdb_id = oldGeneId) then
+    raise warning 'There are feature_marker_relationships for this gene. Will update with new gene ID in feature_marker_relationship table.';
+    delete from feature_marker_relationship where fmrel_mrkr_zdb_id = oldGeneId;
+end if;
+-- end of feature_marker_relationship handling, will re-add later
+
 delete from zdb_active_data where zactvd_zdb_id = oldGeneId;
 insert into zdb_replaced_data (zrepld_old_zdb_id, zrepld_new_zdb_id) values (oldGeneId, newGeneId);
 
 update marker set mrkr_name = markerAbbrev, mrkr_abbrev = markerAbbrev where mrkr_zdb_id = newGeneId;
 
+-- expression_experiment
+update expression_experiment set xpatex_gene_zdb_id = newGeneId where xpatex_gene_zdb_id = oldGeneId;
+
 -- re-add expression_experiment2 rows
 update expression_experiment2_rows2change set xpatex_gene_zdb_id = newGeneId;
 insert into expression_experiment2 (select * from expression_experiment2_rows2change);
 drop table expression_experiment2_rows2change;
--- finished with re-add
+-- finished with re-add of expression_experiment2 rows
+
+-- re-add feature_marker_relationship rows
+update feature_marker_relationship_rows2change set fmrel_mrkr_zdb_id = newGeneId;
+insert into feature_marker_relationship (select * from feature_marker_relationship_rows2change);
+drop table feature_marker_relationship_rows2change;
+-- end of re-add feature_marker_relationship rows
 
 perform regen_genox_marker(newGeneId);
 
