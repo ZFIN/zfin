@@ -136,6 +136,11 @@ insert into feature_marker_relationship (select * from feature_marker_relationsh
 drop table feature_marker_relationship_rows2change;
 -- end of re-add feature_marker_relationship rows
 
+-- update accession_bank
+update accession_bank set accbk_defline = replace(accbk_defline, oldGeneId || ' ', newGeneId || ' ') where accbk_defline like '%' || oldGeneId || ' %';
+
+
+
 perform regen_genox_marker(newGeneId);
 
 return newGeneId;
