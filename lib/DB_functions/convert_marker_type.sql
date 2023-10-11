@@ -35,7 +35,6 @@ newGeneId := get_backdated_id(newGeneType, extractedDate);
 --notify the ID change
 raise notice 'ID to change from % to %', oldGeneId, newGeneId;
 
-
 -- get the backdated ID for the new nomenclature
 nomenId := get_id('NOMEN');
 
@@ -52,7 +51,7 @@ select newGeneId, mrkr_name || '_temp', mrkr_comments, mrkr_abbrev || '_temp', n
 from marker
 where mrkr_zdb_id = oldGeneId;
 
--- updates as performed if running merge_markers.pl
+-- UPDATES AS PERFORMED IF RUNNING: merge_markers.pl
 update marker_history set mhist_mrkr_zdb_id = newGeneId where mhist_mrkr_zdb_id = oldGeneId;
 update marker_history_audit set mha_mrkr_zdb_id = newGeneId where mha_mrkr_zdb_id = oldGeneId;
 update marker_relationship set mrel_mrkr_1_zdb_id = newGeneId where mrel_mrkr_1_zdb_id = oldGeneId;
@@ -61,9 +60,9 @@ update db_link set dblink_linked_recid = newGeneId where dblink_linked_recid = o
 update paneled_markers set zdb_id = newGeneId where zdb_id = oldGeneId;
 update sequence_feature_chromosome_location_generated set sfclg_data_zdb_id = newGeneId where sfclg_data_zdb_id = oldGeneId;
 update record_attribution set recattrib_data_zdb_id = newGeneId where recattrib_data_zdb_id = oldGeneId;
+-- END OF merge_markers.pl UPDATES
 
--- not in merge_markers.pl
-
+-- UPDATES NOT IN: merge_markers.pl
 -- zmap_pub_pan_mark table
 update zmap_pub_pan_mark set zdb_id= newGeneId where zdb_id = oldGeneId;
 
@@ -72,8 +71,7 @@ update unique_location set ul_data_zdb_id = newGeneId where ul_data_zdb_id = old
 
 -- updates table
 update updates set rec_id = newGeneId where rec_id = oldGeneId;
-
--- end of updates not in merge_markers.pl
+-- END OF UPDATES NOT IN merge_markers.pl
 
 
 -- create alias and nomenclature history (is this necessary for ID change? or only for name change?)
@@ -95,7 +93,6 @@ where exists(select 1 from db_link
                and dblink_linked_recid = newGeneId
                and dblink_acc_num = oldGeneId
                and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-171018-1');
-
 
 delete from zdb_replaced_data where zrepld_old_zdb_id = oldGeneId;
 update zdb_replaced_data set zrepld_new_zdb_id = newGeneId where zrepld_new_zdb_id = oldGeneId;
