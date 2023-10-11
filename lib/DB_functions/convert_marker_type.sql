@@ -105,6 +105,12 @@ if exists(select 1 from expression_experiment2_rows2change) then
 end if;
 -- finished with expression_experiment2 delete, will re-add later
 
+create temp table expression_figure_stage_rows2change as select * from expression_figure_stage where efs_xpatex_zdb_id in (select xpatex_zdb_id from expression_experiment2_rows2change);
+if exists(select 1 from expression_figure_stage_rows2change) then
+    raise warning 'There are expression_figure_stages for this gene. Will update with new gene ID in expression_figure_stage table.';
+--     delete from expression_figure_stage where efs_xpatex_zdb_id in (select xpatex_zdb_id from expression_experiment2_rows2change);
+end if;
+
 -- feature_marker_relationship
 create temp table feature_marker_relationship_rows2change as select * from feature_marker_relationship where fmrel_mrkr_zdb_id = oldGeneId;
 if exists(select 1 from feature_marker_relationship_rows2change) then
@@ -145,6 +151,11 @@ insert into expression_experiment2 (select * from expression_experiment2_rows2ch
 drop table expression_experiment2_rows2change;
 -- finished with re-add of expression_experiment2 rows
 
+-- re-add expression_figure_stage rows
+insert into expression_figure_stage (select * from expression_figure_stage_rows2change);
+drop table expression_figure_stage_rows2change;
+-- end of re-add expression_figure_stage rows
+
 -- re-add feature_marker_relationship rows
 update feature_marker_relationship_rows2change set fmrel_mrkr_zdb_id = newGeneId;
 insert into feature_marker_relationship (select * from feature_marker_relationship_rows2change);
@@ -169,7 +180,8 @@ update accession_bank set accbk_defline = replace(accbk_defline, oldGeneId || ' 
 -- expression_experiment
 update expression_experiment set xpatex_gene_zdb_id = newGeneId where xpatex_gene_zdb_id = oldGeneId;
 
-
+-- xpat_exp_details_generated
+update xpat_exp_details_generated set xedg_gene_zdb_id = newGeneId where xedg_gene_zdb_id = oldGeneId;
 
 perform regen_genox_marker(newGeneId);
 
