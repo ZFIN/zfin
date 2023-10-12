@@ -22,10 +22,49 @@ UPDATE xpat_exp_details_generated SET xedg_gene_zdb_id = 'ZDB-NCRNAG-041001-1' W
 UPDATE xpat_exp_details_generated SET xedg_gene_zdb_id = 'ZDB-NCRNAG-031010-1' WHERE xedg_gene_zdb_id = 'ZDB-GENE-031010-46';
 UPDATE xpat_exp_details_generated SET xedg_gene_zdb_id = 'ZDB-NCRNAG-030131-4' WHERE xedg_gene_zdb_id = 'ZDB-GENE-030131-2681';
 
-
 -- not used anymore
 drop table ensdarg_post_proc;
 drop table inputensdarg;
+
+-- ZDB-GENE-030131-7012
+update zfin_ensembl_gene set zeg_id_name = replace(zeg_id_name, 'gene_id=ZDB-GENE-030131-7012;', 'gene_id=ZDB-NCRNAG-030131-5;'),
+                             zeg_gene_zdb_id='ZDB-NCRNAG-030131-5'
+                         where zeg_gene_zdb_id='ZDB-GENE-030131-7012';
+
+-- ZDB-GENE-030616-59
+update zfin_ensembl_gene set zeg_id_name = replace(zeg_id_name, 'gene_id=ZDB-GENE-030616-59;', 'gene_id=ZDB-NCRNAG-030616-1;'),
+                             zeg_gene_zdb_id='ZDB-NCRNAG-030616-1'
+                         where zeg_gene_zdb_id='ZDB-GENE-030616-59';
+
+-- ZDB-GENE-031010-46
+update zfin_ensembl_gene set zeg_id_name = replace(zeg_id_name, 'gene_id=ZDB-GENE-031010-46;', 'gene_id=ZDB-NCRNAG-031010-1;'),
+                             zeg_gene_zdb_id='ZDB-NCRNAG-031010-1'
+                         where zeg_gene_zdb_id='ZDB-GENE-031010-46';
+
+-- ZDB-GENE-041001-123
+update zfin_ensembl_gene set zeg_id_name = replace(zeg_id_name, 'gene_id=ZDB-GENE-041001-123;', 'gene_id=ZDB-NCRNAG-041001-1;'),
+                             zeg_gene_zdb_id='ZDB-NCRNAG-041001-1'
+                         where zeg_gene_zdb_id='ZDB-GENE-041001-123';
+
+-- ZDB-GENE-041210-148
+update zfin_ensembl_gene set zeg_id_name = replace(zeg_id_name, 'gene_id=ZDB-GENE-041210-148;', 'gene_id=ZDB-NCRNAG-041210-1;'),
+                             zeg_gene_zdb_id='ZDB-NCRNAG-041210-1'
+                         where zeg_gene_zdb_id='ZDB-GENE-041210-148';
+
+-- ZDB-GENE-060526-243
+update zfin_ensembl_gene set zeg_id_name = replace(zeg_id_name, 'gene_id=ZDB-GENE-060526-243;', 'gene_id=ZDB-NCRNAG-060526-1;'),
+                             zeg_gene_zdb_id='ZDB-NCRNAG-060526-1'
+                         where zeg_gene_zdb_id='ZDB-GENE-060526-243';
+
+-- ZDB-GENE-070705-20
+update zfin_ensembl_gene set zeg_id_name = replace(zeg_id_name, 'gene_id=ZDB-GENE-070705-20;', 'gene_id=ZDB-NCRNAG-070705-1;'),
+                             zeg_gene_zdb_id='ZDB-NCRNAG-070705-1'
+                         where zeg_gene_zdb_id='ZDB-GENE-070705-20';
+
+-- ZDB-GENE-070912-717
+update zfin_ensembl_gene set zeg_id_name = replace(zeg_id_name, 'gene_id=ZDB-GENE-070912-717;', 'gene_id=ZDB-NCRNAG-070912-1;'),
+                             zeg_gene_zdb_id='ZDB-NCRNAG-070912-1'
+                         where zeg_gene_zdb_id='ZDB-GENE-070912-717';
 
 -- recent changes
 -- old id	new id

@@ -138,6 +138,7 @@ end if;
 --------------------------------------------------
 -- THIS IS WHERE THE ACTUAL ID CHANGE HAPPENS
 -- -----------------------------------------------
+-- TODO: can the delete be changed to an update with cascades?
 delete from zdb_active_data where zactvd_zdb_id = oldGeneId;
 insert into zdb_replaced_data (zrepld_old_zdb_id, zrepld_new_zdb_id) values (oldGeneId, newGeneId);
 update marker set mrkr_name = markerAbbrev, mrkr_abbrev = markerAbbrev where mrkr_zdb_id = newGeneId;
@@ -182,6 +183,12 @@ update expression_experiment set xpatex_gene_zdb_id = newGeneId where xpatex_gen
 
 -- xpat_exp_details_generated
 update xpat_exp_details_generated set xedg_gene_zdb_id = newGeneId where xedg_gene_zdb_id = oldGeneId;
+
+-- zfin_ensembl_gene
+update zfin_ensembl_gene set zeg_id_name = replace(zeg_id_name, 'gene_id=' || oldGeneId || ';', 'gene_id=' || newGeneId || ';'),
+                             zeg_gene_zdb_id = newGeneId
+                         where zeg_gene_zdb_id = oldGeneId;
+
 
 perform regen_genox_marker(newGeneId);
 
