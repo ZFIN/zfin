@@ -654,7 +654,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
         query.setMaxResults(1);
         query.setParameter("assembly", "GRCz11");
         query.setParameter("feature", feature);
-        return query.getSingleResult();
+        return query.getResultList().stream().findFirst().orElse(null);
     }
 
     public List<FeatureGenomicMutationDetail> getAllFeatureGenomicMutationDetails() {
