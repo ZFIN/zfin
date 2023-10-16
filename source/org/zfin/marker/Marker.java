@@ -452,7 +452,7 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         GENEFAMILY("GENEFAMILY"),
         GENEP("GENEP"),
         GTCONSTRCT("GTCONSTRCT"),
-        MRPHLNO("MRPHLNO"),
+        MRPHLNO("MRPHLNO", "MO"),
         MUTANT("MUTANT"),
         PAC("PAC"),
         PAC_END("PAC_END"),
@@ -501,13 +501,23 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         SRPRNAG("SRPRNAG");
 
         private final String value;
+        private final String prefix;
 
         private Type(String type) {
+            this.value = type; this.prefix = type;
+        }
+
+        private Type(String type, String prefix) {
             this.value = type;
+            this.prefix = prefix;
         }
 
         public String toString() {
             return this.value;
+        }
+
+        public String getPrefix() {
+            return this.prefix;
         }
 
         public static Type getType(String type) {
