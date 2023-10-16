@@ -10,6 +10,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.presentation.RelationshipSorting;
+import org.zfin.datatransfer.ctd.MeshChebiMapping;
 import org.zfin.datatransfer.go.EcoGoEvidenceCodeMapping;
 import org.zfin.expression.ExpressionResult2;
 import org.zfin.framework.HibernateUtil;
@@ -1305,6 +1306,11 @@ public class HibernateOntologyRepository implements OntologyRepository {
     @Override
     public List<TermExternalReference> getAllCasReferences() {
         return getAllTermExternalReference().get("CAS");
+    }
+
+    @Override
+    public void saveMeshChebi(MeshChebiMapping mapping) {
+        HibernateUtil.currentStatelessSession().insert(mapping);
     }
 
     private List<GenericTerm> filterTermsByOntology(List<GenericTerm> terms, Ontology ontology) {

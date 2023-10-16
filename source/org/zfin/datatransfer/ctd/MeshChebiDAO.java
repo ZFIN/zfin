@@ -1,0 +1,1 @@
+package org.zfin.datatransfer.ctd;import org.hibernate.Session;import org.zfin.framework.HibernateUtil;import java.util.List;public class MeshChebiDAO {    protected Session entityManager = HibernateUtil.currentSession();    public List<MeshChebiMapping> findAll(long id) {        return entityManager.(MeshChebiMapping.class, id)    }}

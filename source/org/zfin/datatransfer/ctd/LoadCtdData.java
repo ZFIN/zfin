@@ -3,6 +3,8 @@ package org.zfin.datatransfer.ctd;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.StringUtils;
+import org.zfin.datatransfer.service.DownloadService;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.ant.DataReportTask;
 import org.zfin.ontology.TermExternalReference;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
@@ -12,6 +14,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -66,6 +70,15 @@ public class LoadCtdData extends AbstractScriptWrapper {
 
     private void printOneToOneMeshChebiRelations() {
         writeOneToOneFile(mapping.getOneToOneRelations(), "mesh-chebi-one-to-one.csv");
+
+        HibernateUtil.createStatelessTransaction();
+        mapping.getOneToOneRelations().forEach(relation -> {
+            MeshChebiMapping mcMapping = new MeshChebiMapping();
+            mcMapping.setMeshID(relation.getMesh());
+            mcMapping.setChebiID(relation.getChebi());
+            getOntologyRepository().saveMeshChebi(mcMapping);
+        });
+        HibernateUtil.flushAndCommitCurrentStatelessSession();
     }
 
     private void reportNonJointCasIds() {
@@ -120,11 +133,12 @@ public class LoadCtdData extends AbstractScriptWrapper {
     }
 
     private void loadMeshAndChebi() throws IOException {
-        File downloadedFile = new File("CTD_chemicals.csv");
+        downloadChemicalFile();
+        //File downloadedFile = new File("CTD_chemicals.csv");
         List<MeshCasChebiRelation> relations = new ArrayList<>();
 
         Map<String, String> meshToCasMap = new HashMap<>();
-        Reader in = new FileReader(downloadedFile);
+        Reader in = new FileReader(downloadedChemicalFile);
         Iterable<CSVRecord> records = CSVFormat.EXCEL
             .withHeader(CHEMICALS.class)
             .parse(in);
@@ -134,7 +148,7 @@ public class LoadCtdData extends AbstractScriptWrapper {
             if (lineNumber == 1)
                 continue;
             // ignore header info
-            if (record.get(0).startsWith("!"))
+            if (record.get(0).startsWith("!") || record.get(0).startsWith("#"))
                 continue;
             MeshCasChebiRelation relation = new MeshCasChebiRelation();
             relation.setMesh(record.get(CHEMICALS.MESH));
@@ -149,6 +163,21 @@ public class LoadCtdData extends AbstractScriptWrapper {
         mapping.addChebiCasRelations(getChebiToCasMapping());
         System.out.println("Unique Chebi-Cas relations: " + mapping.getChebiCasUnique().size());
         System.out.println("Unique Cas-Chebi relations: " + mapping.getCasChebiUnique().size());
+    }
+
+    protected DownloadService downloadService = new DownloadService();
+
+    private File downloadedChemicalFile;
+
+    private void downloadChemicalFile() {
+        String fileName = "CTD_chemicals.csv";
+        String url = "https://ctdbase.org/reports/" + fileName + ".gz";
+        try {
+            downloadedChemicalFile = downloadService.downloadFile(new File(fileName), new URL(url), false);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     private List<MeshCasChebiRelation> getChebiToCasMapping() {
