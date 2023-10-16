@@ -177,8 +177,8 @@ public class HibernateExpressionRepository implements ExpressionRepository {
             where ee.probe = clone and clone.problem = :chimeric)
             AND size(ee.expressionResults) != 0
             """;
-        Query query = HibernateUtil.currentSession().createQuery(sql);
-        query.setString("gene", marker.getZdbID());
+        Query<Publication> query = HibernateUtil.currentSession().createQuery(sql, Publication.class);
+        query.setParameter("gene", marker);
         query.setParameter("chimeric", Clone.ProblemType.CHIMERIC);
         return query.list();
     }
