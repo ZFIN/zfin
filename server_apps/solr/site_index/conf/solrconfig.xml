@@ -405,7 +405,6 @@
       <str name="facet.sort">count</str>
       <str name="facet.limit">5</str>
       <str name="f.zeco_conditions.facet.limit">16</str>
-      <str name="f.conditions.facet.limit">16</str>
       <str name="facet.mincount">1</str>
 
       <!-- initial settings for special case facets -->
