@@ -59,6 +59,7 @@ public class LoadCtdData extends AbstractScriptWrapper {
         writeOneToOneFile(mapping.getOneToOneRelations(), "mesh-chebi-one-to-one.csv");
 
         HibernateUtil.createStatelessTransaction();
+        //boolean success = dao.dropAll();
         mapping.getOneToOneRelations().forEach(relation -> {
             MeshChebiMapping mcMapping = new MeshChebiMapping();
             mcMapping.setMeshID(relation.getMesh());
