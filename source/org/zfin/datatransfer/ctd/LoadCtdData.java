@@ -33,29 +33,16 @@ public class LoadCtdData extends AbstractScriptWrapper {
         options.addOption(DataReportTask.jobNameOpt);
     }
 
-    private LoadCtdData(String jobName, String propertyFilePath, String dataDirectoryString) {
-        // super(jobName, propertyFilePath, dataDirectoryString);
-    }
-
     public LoadCtdData() {
     }
 
     private MeshCasChebiMappings mapping = new MeshCasChebiMappings();
 
     public static void main(String[] arguments) throws IOException {
-/*
-        initLogging();
-        CommandLine commandLine = parseArguments(arguments, "load <>");
-        String jobName = commandLine.getOptionValue(DataReportTask.jobNameOpt.getOpt());
-        String webrootDir = commandLine.getOptionValue(webrootDirectory.getOpt());
-        String propertyFileName = getPropertyFileFromWebroot(webrootDir);
-*/
-/*
-        String loadingDir = commandLine.getOptionValue(loadDir.getOpt());
-*/
 
         LoadCtdData load = new LoadCtdData();
         load.initAll();
+        load.dao = new MeshChebiDAO(HibernateUtil.currentSession());
         //getReferenceCDT();
         load.loadMeshAndChebi();
         load.reportNonJointCasIds();
@@ -75,7 +62,9 @@ public class LoadCtdData extends AbstractScriptWrapper {
         mapping.getOneToOneRelations().forEach(relation -> {
             MeshChebiMapping mcMapping = new MeshChebiMapping();
             mcMapping.setMeshID(relation.getMesh());
+            mcMapping.setMeshName(relation.getMeshName());
             mcMapping.setChebiID(relation.getChebi());
+            mcMapping.setCasID(relation.getCas());
             getOntologyRepository().saveMeshChebi(mcMapping);
         });
         HibernateUtil.flushAndCommitCurrentStatelessSession();
@@ -96,12 +85,7 @@ public class LoadCtdData extends AbstractScriptWrapper {
 
     }
 
-    public int execute() {
-        //initAll(propertyFilePath);
-        return 0;
-    }
-
-    private static void getReferenceCDT() throws IOException {
+    private void getReferenceCDT() throws IOException {
         File downloadedFile = new File("CTD_references_20230928080547.csv");
         List<String> pubmedIDs = new ArrayList<>();
         Reader in = new FileReader(downloadedFile);
@@ -134,7 +118,6 @@ public class LoadCtdData extends AbstractScriptWrapper {
 
     private void loadMeshAndChebi() throws IOException {
         downloadChemicalFile();
-        //File downloadedFile = new File("CTD_chemicals.csv");
         List<MeshCasChebiRelation> relations = new ArrayList<>();
 
         Map<String, String> meshToCasMap = new HashMap<>();
@@ -177,8 +160,9 @@ public class LoadCtdData extends AbstractScriptWrapper {
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
-
     }
+
+    MeshChebiDAO dao;
 
     private List<MeshCasChebiRelation> getChebiToCasMapping() {
 
@@ -310,7 +294,7 @@ public class LoadCtdData extends AbstractScriptWrapper {
         }
     }
 
-    private static void getChemGeneInteractionCDT() throws IOException {
+    private void getChemGeneInteractionCDT() throws IOException {
         File downloadedFile = new File("CTD_chem_gene_ixns.csv");
         List<String> pubmedIDs = new ArrayList<>();
         List<CSVRecord> recordsDR = new ArrayList<>();
