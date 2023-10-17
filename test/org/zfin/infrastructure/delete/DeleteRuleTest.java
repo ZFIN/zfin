@@ -6,6 +6,7 @@ import org.zfin.AbstractDatabaseTest;
 import org.zfin.marker.service.DeleteService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -138,9 +139,11 @@ public class DeleteRuleTest extends AbstractDatabaseTest {
         List<DeleteValidationReport> reportList = feature.validate();
         assertNotNull(reportList);
         assertTrue(reportList.size() > 0);
-        assertTrue(reportList.get(0).getValidationMessage().contains("constructs"));
-        assertTrue(reportList.get(1).getValidationMessage().contains("figure"));
-        assertTrue(reportList.get(2).getValidationMessage().contains("publications"));
+        String fullReportString = reportList.stream().map(DeleteValidationReport::getValidationMessage).collect(Collectors.joining());
+        assertTrue(fullReportString.contains("constructs"));
+        assertTrue(fullReportString.contains("antibod"));
+        assertTrue(fullReportString.contains("figure"));
+        assertTrue(fullReportString.contains("publications"));
     }
 
     @Test
