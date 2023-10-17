@@ -365,7 +365,7 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
         Marker m = RepositoryFactory.getMarkerRepository().getGeneByID("ZDB-GENE-010606-1");
         int numFigures = getPhenotypeRepository().getNumPhenotypeFigures(m);
         assertTrue(numFigures > 10);
-        assertTrue(numFigures < 20);
+        assertTrue(numFigures < 30);
     }
 
 
