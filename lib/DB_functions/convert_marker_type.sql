@@ -135,8 +135,8 @@ if exists(select 1 from snp_download_rows2change) then
 end if;
 -- end of snp_download handling, will re-add later
 
-create temp table ui.publication_expression_display_rows2change as select * from ui.publication_expression_display where ped_gene_zdb_id = oldGeneId;
-if exists(select 1 from ui.publication_expression_display_rows2change) then
+create temp table publication_expression_display_rows2change as select * from ui.publication_expression_display where ped_gene_zdb_id = oldGeneId;
+if exists(select 1 from publication_expression_display_rows2change) then
     raise info 'There are ui.publication_expression_display for this gene. Will update with new gene ID in snp_download table.';
     delete from ui.publication_expression_display where ped_gene_zdb_id = oldGeneId;
 end if;
@@ -182,9 +182,9 @@ drop table snp_download_rows2change;
 -- end of re-add snp_download rows
 
 -- re-add ui.publication_expression_display rows
-update ui.publication_expression_display_rows2change set ped_gene_zdb_id = newGeneId;
-insert into ui.publication_expression_display (select * from ui.publication_expression_display_rows2change);
-drop table ui.publication_expression_display_rows2change;
+update publication_expression_display_rows2change set ped_gene_zdb_id = newGeneId;
+insert into ui.publication_expression_display (select * from publication_expression_display_rows2change);
+drop table publication_expression_display_rows2change;
 -- end of re-add ui.publication_expression_display rows
 
 -- update accession_bank
