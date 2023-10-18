@@ -55,7 +55,8 @@ public class FpInferenceGafParser {
 
         List<GafEntry> gafEntries = new ArrayList<>();
         Map<String, GafEntry> gafEntriesHash = new HashMap<>();
-        try (LineIterator it = FileUtils.lineIterator(downloadedFile)) {
+        LineIterator it = FileUtils.lineIterator(downloadedFile);
+        try {
             while (it.hasNext()) {
                 String line = it.nextLine();
 
@@ -69,6 +70,8 @@ public class FpInferenceGafParser {
                     logger.warn("not a valid gaf entry, ignoring: " + gafEntry);
                 }
             }
+        } finally {
+            it.close();
         }
         logger.info("Finishing parseGafFile at " + (new Date()) );
 
