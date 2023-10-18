@@ -239,7 +239,7 @@ public class SequenceTargetingReagentAddController {
         Marker.Type strType = Marker.Type.getTypeByPrefix(type);
 
         //filtered by type
-        strList = strList.stream().filter(str -> str.getMarkerType().getName().equals(strType.toString())).collect(Collectors.toList());
+        strList = strList.stream().filter(str -> str.getMarkerType().getName().equals(strType.toString())).toList();
 
         Integer maxIndex = 0;
         if (!strList.isEmpty()) {
