@@ -528,6 +528,14 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
             throw new RuntimeException("No run type of string " + type + " found.");
         }
 
+        public static Type getTypeByPrefix(String prefix) {
+            for (Type t : values()) {
+                if (t.getPrefix().equals(prefix))
+                    return t;
+            }
+            throw new RuntimeException("No run type of prefix " + prefix + " found.");
+        }
+
         public static boolean isMarkerType(String type) {
             if (type == null)
                 return false;
