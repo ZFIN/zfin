@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION convert_marker_type (
+CREATE OR REPLACE FUNCTION convert_marker_type(
     oldGeneId VARCHAR,
     newGeneType VARCHAR
 ) RETURNS text AS $$
@@ -48,31 +48,31 @@ BEGIN
     INSERT INTO zdb_active_data (zactvd_zdb_id) VALUES (newGeneId);
 
     insert into marker (mrkr_zdb_id, mrkr_name, mrkr_comments, mrkr_abbrev, mrkr_type, mrkr_owner, mrkr_name_order, mrkr_abbrev_order)
-    select newGeneId, mrkr_name || '_temp', mrkr_comments, mrkr_abbrev || '_temp', newGeneType, mrkr_owner, mrkr_name_order, mrkr_abbrev_order
-    from marker
-    where mrkr_zdb_id = oldGeneId;
+        select newGeneId, mrkr_name || '_temp', mrkr_comments, mrkr_abbrev || '_temp', newGeneType, mrkr_owner, mrkr_name_order, mrkr_abbrev_order
+        from marker
+        where mrkr_zdb_id = oldGeneId;
 
 -- create alias and nomenclature history (is this necessary for ID change? or only for name change?)
     insert into zdb_active_data values(daliasId);
     insert into data_alias (dalias_zdb_id, dalias_data_zdb_id, dalias_alias, dalias_group_id)
-    values (daliasId, newGeneId, markerAbbrev, '1');
+        values (daliasId, newGeneId, markerAbbrev, '1');
 
     insert into zdb_active_data values(nomenId);
     insert into marker_history (mhist_zdb_id, mhist_mrkr_zdb_id, mhist_event, mhist_reason, mhist_date,
                                 mhist_mrkr_name_on_mhist_date, mhist_mrkr_abbrev_on_mhist_date, mhist_comments,mhist_dalias_zdb_id)
-    values (nomenId, newGeneId, 'renamed', 'same marker', now(),
-            markerAbbrev, markerAbbrev, 'ID changed from ' || oldGeneId || ' to ' || newGeneId, daliasId);
+        values (nomenId, newGeneId, 'renamed', 'same marker', now(),
+                markerAbbrev, markerAbbrev, 'ID changed from ' || oldGeneId || ' to ' || newGeneId, daliasId);
     -- end of alias / nomenclature
 
 -- delete db_link for "AGR Gene" foreign DB
-    delete from zdb_active_data
-    where exists(select 1 from db_link
-                 where dblink_zdb_id = zactvd_zdb_id
-                   and dblink_linked_recid = newGeneId
-                   and dblink_acc_num = oldGeneId
-                   and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-171018-1');
+--     delete from zdb_active_data
+--     where exists(select 1 from db_link
+--                  where dblink_zdb_id = zactvd_zdb_id
+--                    and dblink_linked_recid = newGeneId
+--                    and dblink_acc_num = oldGeneId
+--                    and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-171018-1');
 
-    delete from zdb_replaced_data where zrepld_old_zdb_id = oldGeneId;
+--     delete from zdb_replaced_data where zrepld_old_zdb_id = oldGeneId;
 
     update zfin_ensembl_gene
         set zeg_id_name = replace(zeg_id_name, 'gene_id=' || oldGeneId || ';', 'gene_id=' || newGeneId || ';'),
@@ -82,12 +82,14 @@ BEGIN
 -- tables that have dependencies on marker and the column name (could be foreign key or just a column)
     FOR table_name_column_pair IN (SELECT *
        FROM (VALUES
+                 ('record_attribution', 'recattrib_data_zdb_id'),
                  ('accession_bank', 'accbk_defline'),
                  ('antibody', 'atb_zdb_id'),
                  ('clean_expression_fast_search', 'cefs_mrkr_zdb_id'),
                  ('clone', 'clone_mrkr_zdb_id'),
                  ('construct_marker_relationship', 'conmrkrrel_mrkr_zdb_id'),
                  ('data_alias', 'dalias_data_zdb_id'),
+                 ('db_link', 'dblink_acc_num'),
                  ('db_link', 'dblink_linked_recid'),
                  ('expression_experiment', 'xpatex_gene_zdb_id'),
                  ('expression_experiment2', 'xpatex_gene_zdb_id'),
@@ -106,14 +108,13 @@ BEGIN
                  ('marker_relationship', 'mrel_mrkr_1_zdb_id'),
                  ('marker_relationship', 'mrel_mrkr_2_zdb_id'),
                  ('marker_sequence', 'seq_mrkr_zdb_id'),
-                 ('marker_to_protein', 'pti_interpro_id'),
-                 ('marker_to_protein', 'mtp_mrkr_zdb_id'),
+--                  ('marker_to_protein', 'pti_interpro_id'),
+--                  ('marker_to_protein', 'mtp_mrkr_zdb_id'),
                  ('ortholog', 'ortho_zebrafish_gene_zdb_id'),
                  ('paneled_markers', 'zdb_id'),
                  ('primer_set', 'marker_id'),
-                 ('protein_to_interpro', 'pti_interpro_id'),
-                 ('protein_to_interpro', 'mtp_mrkr_zdb_id'),
-                 ('record_attribution', 'recattrib_data_zdb_id'),
+--                  ('protein_to_interpro', 'pti_interpro_id'),
+--                  ('protein_to_interpro', 'mtp_mrkr_zdb_id'),
                  ('reference_protein', 'rp_gene_zdb_id'),
                  ('sequence_feature_chromosome_location_generated', 'sfclg_data_zdb_id'),
                  ('snp_download', 'snpd_mrkr_zdb_id'),
@@ -130,6 +131,22 @@ BEGIN
                            table_name_column_pair.table_name, table_name_column_pair.fk_column_name, table_name_column_pair.fk_column_name)
                 USING newGeneId, oldGeneId;
 
+        END LOOP;
+
+    -- do the same for the ui tables. This time get the names of the tables and columns dynamically:
+    FOR table_name_column_pair IN
+        SELECT tc.table_name as table_name, kcu.column_name as fk_column_name
+        FROM information_schema.table_constraints tc
+                 JOIN information_schema.key_column_usage kcu ON tc.constraint_name = kcu.constraint_name
+                 JOIN information_schema.constraint_column_usage ccu ON ccu.constraint_name = tc.constraint_name
+        WHERE constraint_type = 'FOREIGN KEY'
+          AND ccu.table_name='marker'
+          and tc.table_schema = 'ui'
+          and ccu.column_name = 'mrkr_zdb_id'
+        LOOP
+            EXECUTE format('UPDATE ui.%I SET %I = $1 WHERE %I = $2',
+                           table_name_column_pair.table_name, table_name_column_pair.fk_column_name, table_name_column_pair.fk_column_name)
+                USING newGeneId, oldGeneId;
         END LOOP;
 
     --------------------------------------------------
