@@ -285,8 +285,10 @@ public class OntologyTermDetailController {
         if (Ontology.isGoOntology(term.getOntology())) {
             menu = new GONavigationMenu();
         }
+        if (term.getOntology().equals(Ontology.CHEBI)) {
+            model.addAttribute("meshID", MatchingTermService.getMeshID(term.getOboID()).replace("MESH:", ""));
+        }
         model.addAttribute("navigationMenu", menu);
-
         return "ontology/term-view";
 
     }
