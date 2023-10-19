@@ -91,7 +91,7 @@
             ></div>
         </z:section>
 
-        <z:section title="${PROBES}" statsLink="${NavigationMenuOptions.PROBES.value}">
+        <z:section title="${PROBES}">
             <div class="__react-root __use-navigation-counter" id="PublicationProbeTable__0"
                  data-url="/action/api/publication/${publication.zdbID}/probes"
                  data-publication-id="${publication.zdbID}"
@@ -110,7 +110,7 @@
             </c:if>
         </z:section>
 
-        <z:section title="${EXPRESSION}" statsLink="${NavigationMenuOptions.EXPRESSION.value}">
+        <z:section title="${EXPRESSION}">
             <div class="__react-root __use-navigation-counter" id="FigureExpressionTable"
                  data-url="/action/api/publication/${publication.zdbID}/expression"
                  data-title="${EXPRESSION}"
@@ -138,7 +138,7 @@
             ></div>
         </z:section>
 
-        <z:section title="${STRS}" statsLink="${NavigationMenuOptions.STRS.value}">
+        <z:section title="${STRS}">
             <div class="__react-root __use-navigation-counter" id="StrTable"
                  data-url="/action/api/publication/${publication.zdbID}/strs"
                  data-title="${STRS}"
@@ -152,7 +152,7 @@
             ></div>
         </z:section>
 
-        <z:section title="${ANTIBODIES}" infoPopup="/action/marker/note/antibodies" statsLink="${NavigationMenuOptions.ANTIBODIES.value}">
+        <z:section title="${ANTIBODIES}" infoPopup="/action/marker/note/antibodies">
             <div class="__react-root __use-navigation-counter" id="AntibodyTable"
                  data-url="/action/api/publication/${publication.zdbID}/antibodies"
                  data-title="${ANTIBODIES}"
@@ -187,7 +187,7 @@
             ></div>
         </z:section>
 
-        <z:section title="${ZEBRASHARE}" navigationMenu="${navigationMenu}" statsLink="${NavigationMenuOptions.ZEBRASHARE.value}">
+        <z:section title="${ZEBRASHARE}" navigationMenu="${navigationMenu}">
             <zfin2:subsection title="" showNoData="true">
                 <jsp:include page="publication-zebrashare.jsp"/>
             </zfin2:subsection>

@@ -19,6 +19,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.zfin.ontology.datatransfer.OntologyCommandLineOptions.loadDir;
 import static org.zfin.ontology.datatransfer.OntologyCommandLineOptions.webrootDirectory;
@@ -56,19 +57,32 @@ public class LoadCtdData extends AbstractScriptWrapper {
 
 
     private void printOneToOneMeshChebiRelations() {
-        writeOneToOneFile(mapping.getOneToOneRelations(), "mesh-chebi-one-to-one.csv");
+        Set<MeshCasChebiRelation> oneToOneRelations = mapping.getOneToOneRelations();
+        writeOneToOneFile(oneToOneRelations, "mesh-chebi-one-to-one.csv");
 
-        HibernateUtil.createStatelessTransaction();
-        //boolean success = dao.dropAll();
-        mapping.getOneToOneRelations().forEach(relation -> {
-            MeshChebiMapping mcMapping = new MeshChebiMapping();
-            mcMapping.setMeshID(relation.getMesh());
-            mcMapping.setMeshName(relation.getMeshName());
-            mcMapping.setChebiID(relation.getChebi());
-            mcMapping.setCasID(relation.getCas());
-            getOntologyRepository().saveMeshChebi(mcMapping);
-        });
-        HibernateUtil.flushAndCommitCurrentStatelessSession();
+        List<MeshChebiMapping> newRecords = oneToOneRelations.stream().map(LoadCtdData::getMeshChebiMapping).collect(Collectors.toList());
+        HibernateUtil.createTransaction();
+        List<MeshChebiMapping> oldRecords = dao.forceRetrieveAll();
+        oldRecords.removeAll(newRecords);
+        // remove records that are not found in the ingest file
+        for (MeshChebiMapping meshChebiMapping : oldRecords) {
+            dao.delete(meshChebiMapping);
+        }
+        List<MeshChebiMapping> updatedOldRecords = dao.forceRetrieveAll();
+        newRecords.removeAll(updatedOldRecords);
+
+        // add records that are only found in the ingest file
+        newRecords.forEach(relation -> dao.persist(relation));
+        HibernateUtil.flushAndCommitCurrentSession();
+    }
+
+    private static MeshChebiMapping getMeshChebiMapping(MeshCasChebiRelation relation) {
+        MeshChebiMapping mcMapping = new MeshChebiMapping();
+        mcMapping.setMeshID(relation.getMesh());
+        mcMapping.setMeshName(relation.getMeshName());
+        mcMapping.setChebiID(relation.getChebi());
+        mcMapping.setCasID(relation.getCas());
+        return mcMapping;
     }
 
     private void reportNonJointCasIds() {

@@ -14,6 +14,9 @@ create table mesh_chebi_mapping
 
 
 ALTER TABLE mesh_chebi_mapping
+    add  primary key (mcm_id);
+
+ALTER TABLE mesh_chebi_mapping
     ADD CONSTRAINT mesh_chebi_mapping_chebi_fk1
         FOREIGN KEY (mcm_chebi_id)
             REFERENCES term (term_ont_id);
