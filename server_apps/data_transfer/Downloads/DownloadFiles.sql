@@ -2185,17 +2185,25 @@ INSERT INTO tmp_mutation_details
   LEFT OUTER JOIN foreign_db_contains prot_dbc ON fpmd_fdbcont_zdb_id = prot_dbc.fdbcont_zdb_id
   LEFT OUTER JOIN foreign_db prot_db ON prot_db.fdb_db_pk_id = prot_dbc.fdbcont_fdb_db_id;
 
+create temp table feature_chromosome as
+select feature_zdb_id,  (SELECT STRING_AGG(distinct sfcl_chromosome, ',') ) as chromosomes from feature
+                                       full join sequence_feature_chromosome_location on feature_zdb_id = sfcl_feature_zdb_id
+where sfcl_feature_zdb_id = feature_zdb_id
+group by feature_zdb_id
+;
+
+
 \echo ''<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/features-affected-genes.txt' with delimiter as '	' null as '';'
 create view featuresAffectedGenes as
   SELECT
-    feature_zdb_id,
+    f.feature_zdb_id,
     a.szm_term_ont_id,
-    feature_name,
+    f.feature_name,
     mrkr_abbrev,
     mrkr_zdb_id,
     b.szm_term_ont_id as id2,
     fmrel_type,
-    feature_type,
+    f.feature_type,
     dna_change_so_id,
     dna_ref_nucleotide,
     dna_mut_nucleotide,
@@ -2220,19 +2228,22 @@ create view featuresAffectedGenes as
     protein_aa_removed,
     protein_position_start,
     protein_position_end,
-    protein_reference_seq
-  FROM feature, feature_marker_relationship,marker, marker_type_group_member, so_zfin_mapping a, so_zfin_mapping b, tmp_mutation_details
-  WHERE fmrel_ftr_zdb_id = feature_zdb_id
+    protein_reference_seq,
+    fc.chromosomes
+  FROM feature f
+  full join feature_chromosome fc on fc.feature_zdb_id = f.feature_zdb_id
+          , feature_marker_relationship,marker, marker_type_group_member, so_zfin_mapping a, so_zfin_mapping b, tmp_mutation_details
+  WHERE fmrel_ftr_zdb_id = f.feature_zdb_id
   AND mrkr_zdb_id = fmrel_mrkr_zdb_id
-  AND a.szm_object_type = feature_type
+  AND a.szm_object_type = f.feature_type
   AND b.szm_objecT_type = mrkr_type
   AND mrkr_type =mtgrpmem_mrkr_type and mtgrpmem_mrkr_type_group='GENEDOM_AND_NTR' AND (
-    (feature_type IN ('POINT_MUTATION', 'DELETION', 'INSERTION','COMPLEX_SUBSTITUTION','SEQUENCE_VARIANT',
+    (f.feature_type IN ('POINT_MUTATION', 'DELETION', 'INSERTION','COMPLEX_SUBSTITUTION','SEQUENCE_VARIANT',
                       'UNSPECIFIED','TRANSGENIC_INSERTION', 'INDEL') AND fmrel_type ='is allele of') OR
-    (feature_type IN ('TRANSLOC', 'INVERSION') AND fmrel_type IN ('is allele of', 'markers moved')) OR
-    (feature_type IN ('DEFICIENCY') AND fmrel_type IN ('is allele of','markers missing')))
-  AND tmp_feat_zdb_id = feature_zdb_id
-  ORDER BY LOWER(feature_name);
+    (f.feature_type IN ('TRANSLOC', 'INVERSION') AND fmrel_type IN ('is allele of', 'markers moved')) OR
+    (f.feature_type IN ('DEFICIENCY') AND fmrel_type IN ('is allele of','markers missing')))
+  AND tmp_feat_zdb_id = f.feature_zdb_id
+  ORDER BY LOWER(f.feature_name);
 \copy (select * from featuresAffectedGenes) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/features-affected-genes.txt' with delimiter as '	' null as '';
 drop view featuresAffectedGenes;
 
