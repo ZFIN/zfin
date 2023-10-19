@@ -236,8 +236,10 @@ public class SequenceTargetingReagentAddController {
         Set<String> geneSet = Set.of(genes.split(","));
         List<Marker> strList = mr.getMarkerWithRelationshipsBySecondMarkers(geneSet);
 
+        Marker.Type strType = Marker.Type.getTypeByPrefix(type);
+
         //filtered by type
-        strList = strList.stream().filter(str -> str.getMarkerType().getName().equals(type)).toList();
+        strList = strList.stream().filter(str -> str.getMarkerType().getName().equals(strType.toString())).toList();
 
         Integer maxIndex = 0;
         if (!strList.isEmpty()) {
