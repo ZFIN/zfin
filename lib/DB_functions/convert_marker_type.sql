@@ -130,21 +130,11 @@ BEGIN
 
         END LOOP;
 
-    -- do the same for the ui tables. This time get the names of the tables and columns dynamically:
-    FOR table_name_column_pair IN
-        SELECT tc.table_name as table_name, kcu.column_name as fk_column_name
-        FROM information_schema.table_constraints tc
-                 JOIN information_schema.key_column_usage kcu ON tc.constraint_name = kcu.constraint_name
-                 JOIN information_schema.constraint_column_usage ccu ON ccu.constraint_name = tc.constraint_name
-        WHERE constraint_type = 'FOREIGN KEY'
-          AND ccu.table_name='marker'
-          and tc.table_schema = 'ui'
-          and ccu.column_name = 'mrkr_zdb_id'
-        LOOP
-            EXECUTE format('UPDATE ui.%I SET %I = $1 WHERE %I = $2',
-                           table_name_column_pair.table_name, table_name_column_pair.fk_column_name, table_name_column_pair.fk_column_name)
-                USING newGeneId, oldGeneId;
-        END LOOP;
+    -- update ui schema
+    UPDATE ui.omim_zfin_association set oza_zfin_gene_zdb_id = newGeneId where oza_zfin_gene_zdb_id = oldGeneId;
+    UPDATE ui.phenotype_zfin_association set pza_gene_zdb_id = newGeneId where pza_gene_zdb_id = oldGeneId;
+    UPDATE ui.publication_expression_display set ped_gene_zdb_id = newGeneId where ped_gene_zdb_id = oldGeneId;
+    UPDATE ui.publication_expression_display set ped_antibody_zdb_id = newGeneId where ped_antibody_zdb_id = oldGeneId;
 
     --------------------------------------------------
     -- THIS IS WHERE THE ACTUAL ID CHANGE HAPPENS
