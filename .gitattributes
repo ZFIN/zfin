@@ -841,7 +841,7 @@
 /server_apps/data_transfer/NCBIGENE/ncbi_ensembl.tsv filter=lfs diff=lfs merge=lfs -text
 /server_apps/data_transfer/RNACentral/rnaCentral.json filter=lfs diff=lfs merge=lfs -text
 /server_apps/data_transfer/SangerMutants/InputFiles/Danio_rerio.Zv9.70.cdna.all.fa filter=lfs diff=lfs merge=lfs -text
-/server_apps/jenkins/jenkins-2.375.1.war filter=lfs diff=lfs merge=lfs -text
+/server_apps/jenkins/jenkins-2.414.3.war filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/ant.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/antisamy-markup-formatter.jpi filter=lfs diff=lfs merge=lfs -text
 /server_apps/jenkins/plugins/apache-httpcomponents-client-4-api.jpi filter=lfs diff=lfs merge=lfs -text
