@@ -1,11 +1,16 @@
 FROM gradle:7-jdk17
 
 RUN apt update && apt install -y --no-install-recommends \
-       ant groovy postgresql-client tcsh sudo \
+       ant groovy tcsh sudo \
        vim nano emacs iputils-ping imagemagick \
        libwww-perl libdbi-perl libdbd-pg-perl libmime-lite-perl \
        cpanminus build-essential rsync bind9-dnsutils \
-       gnupg lsb-release 
+       gnupg lsb-release
+
+#add the postgresql repo so we can have a postgresql client that matches the server
+ADD pgdg.asc /etc/apt/trusted.gpg.d/pgdg.asc
+RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list' \
+    && apt update && apt install -y postgresql-client
 
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 RUN echo \
