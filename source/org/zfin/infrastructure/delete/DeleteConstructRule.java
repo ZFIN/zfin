@@ -2,14 +2,13 @@ package org.zfin.infrastructure.delete;
 
 import org.zfin.feature.Feature;
 import org.zfin.infrastructure.DataAlias;
+import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class DeleteConstructRule extends AbstractDeleteEntityRule implements DeleteEntityRule {
 
@@ -31,12 +30,15 @@ public class DeleteConstructRule extends AbstractDeleteEntityRule implements Del
 
     private void checkForDataAliasRelationships(Marker construct) {
         Set<MarkerAlias> aliases = construct.getAliases();
+        Optional<PublicationAttribution> constructPublication = construct.getPublications().stream().findFirst();
         if (aliases != null && aliases.size() > 0) {
             addToValidationReport("Construct has data alias history that will be lost", aliases);
 
-            List<Publication> relevantPublications = aliases.stream().map(DataAlias::getSinglePublication).toList();
+            List<Publication> relevantPublications = aliases.stream().map(DataAlias::getSinglePublication).filter(Objects::nonNull).distinct().toList();
             if (relevantPublications.size() > 0) {
                 addToValidationReport("See publications: ", relevantPublications);
+            } else if (constructPublication.isPresent()) {
+                addToValidationReport("See publication: ", Collections.singletonList(constructPublication.get().getPublication()));
             }
         }
     }
