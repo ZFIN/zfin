@@ -132,7 +132,8 @@ public class SequenceTargetingReagentAddController {
         }
         Publication sequenceTargetingReagentPub = pr.getPublication(formBean.getPublicationID());
 
-        MarkerType mt = mr.getMarkerTypeByName(formBean.getStrType());
+        Marker.Type markerTypeEnum = Marker.Type.getTypeByPrefix(formBean.getStrType());
+        MarkerType mt = mr.getMarkerTypeByName(markerTypeEnum.toString());
         newSequenceTargetingReagent.setMarkerType(mt);
 
         try {
