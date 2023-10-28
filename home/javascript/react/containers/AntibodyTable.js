@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import DataTable from '../components/data-table';
-import CommaSeparatedList from '../components/CommaSeparatedList';
 import {EntityLink, EntityList} from '../components/entity';
 
 const AntibodyTable = ({url, title, navigationCounter}) => {
@@ -26,14 +25,6 @@ const AntibodyTable = ({url, title, navigationCounter}) => {
         {
             label: 'Host Organism',
             content: row => row.hostSpecies,
-        },
-        {
-            label: 'Assay',
-            content: row => (
-                <CommaSeparatedList>
-                    {row.distinctAssayNames.map(name => <i key={name}>{name}</i>)}
-                </CommaSeparatedList>
-            ),
         },
     ];
 
