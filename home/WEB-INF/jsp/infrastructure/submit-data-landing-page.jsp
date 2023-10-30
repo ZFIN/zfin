@@ -77,9 +77,9 @@
         </div>
 
         <div>
-            <h4>Create Lab or Company Record</h4>
+            <h4>Create Lab Record</h4>
             <p>
-                <a href="/action/profile/organization/submit">Request a lab or company record</a>.
+                <a href="/action/profile/organization/submit">Request a lab record</a>.
             </p>
         </div>
 
