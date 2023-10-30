@@ -37,7 +37,7 @@ public class SequenceTargetingReagentAddBeanValidator implements Validator {
 
         String strSequence = formBean.getSequence();
         String strType = formBean.getStrType();
-        Marker.Type type = Marker.Type.getType(strType);
+        Marker.Type type = Marker.Type.getTypeByPrefix(strType);
         validateSequence(errors, "sequence", strSequence, type);
         String targetGeneSymbol = formBean.getTargetGeneSymbol();
         if (StringUtils.isEmpty(targetGeneSymbol)) {
