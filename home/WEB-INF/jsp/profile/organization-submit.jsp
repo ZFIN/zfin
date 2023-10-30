@@ -11,7 +11,7 @@
         <form:form action="" method="POST" commandName="submission" id="nomenclature">
 
             <div class="form-group row">
-                <form:label path="name" cssClass="col-md-3 col-form-label required">Lab / Company Name</form:label>
+                <form:label path="name" cssClass="col-md-3 col-form-label required">Lab Name</form:label>
                 <div class="col-md-5">
                     <form:input path="name" cssClass="form-control" required="true"/>
                 </div>
