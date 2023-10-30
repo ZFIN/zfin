@@ -51,7 +51,7 @@ public class FpInferenceGafParser {
     }
 
     public List<GafEntry> parseGafFile(File downloadedFile) throws Exception {
-        logger.debug("Beginning parseGafFile at " + (new Date()) );
+        logger.info("Beginning parseGafFile at " + (new Date()) );
 
         List<GafEntry> gafEntries = new ArrayList<>();
         Map<String, GafEntry> gafEntriesHash = new HashMap<>();
@@ -67,13 +67,13 @@ public class FpInferenceGafParser {
                 if (isValidGafEntry(gafEntry)) {
                     addGafEntryOrUpdateExisting(gafEntriesHash, gafEntries, gafEntry);
                 } else {
-                    logger.debug("not a valid gaf entry, ignoring: " + gafEntry);
+                    logger.warn("not a valid gaf entry, ignoring: " + gafEntry);
                 }
             }
         } finally {
             it.close();
         }
-        logger.debug("Finishing parseGafFile at " + (new Date()) );
+        logger.info("Finishing parseGafFile at " + (new Date()) );
 
         return gafEntries;
     }
@@ -107,7 +107,7 @@ public class FpInferenceGafParser {
      */
     private void updateSimilarRecord(GafEntry existingSimilarRecord, GafEntry gafEntry) {
         if (StringUtils.isEmpty(existingSimilarRecord.getGeneProductFormID()) && StringUtils.isNotEmpty(gafEntry.getGeneProductFormID())) {
-            logger.debug("Found match to update instead of adding potential duplicate: " + existingSimilarRecord.getEntryId() + " : " + gafEntry.getEntryId());
+            logger.info("Found match to update instead of adding potential duplicate: " + existingSimilarRecord.getEntryId() + " : " + gafEntry.getEntryId());
             existingSimilarRecord.setGeneProductFormID(gafEntry.getGeneProductFormID());
             existingSimilarRecord.setEntryId(gafEntry.getEntryId());
         }
