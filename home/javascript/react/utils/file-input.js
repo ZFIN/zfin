@@ -25,7 +25,7 @@ function FileInput({ multiple, accept = '', onChange = () => {}, reRenderKey = '
         let errorMsg = '';
         const validType = accept.replace(/\*$/, '');
 
-        files.forEach(file => {
+        Array.from(files).forEach(file => {
             if (file.type.startsWith(validType)) {
                 validFiles.push(file);
             } else {
