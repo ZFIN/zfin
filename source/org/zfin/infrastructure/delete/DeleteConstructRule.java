@@ -1,13 +1,14 @@
 package org.zfin.infrastructure.delete;
 
 import org.zfin.feature.Feature;
+import org.zfin.infrastructure.DataAlias;
+import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.marker.Marker;
+import org.zfin.marker.MarkerAlias;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class DeleteConstructRule extends AbstractDeleteEntityRule implements DeleteEntityRule {
 
@@ -21,17 +22,31 @@ public class DeleteConstructRule extends AbstractDeleteEntityRule implements Del
         if (construct == null)
             throw new NullPointerException("No Construct found: " + zdbID);
 
-        List<Feature> featureList = RepositoryFactory.getFeatureRepository().getFeaturesByConstruct(construct);
-        Collections.sort(featureList, new Comparator<Feature>() {
-            @Override
-            public int compare(Feature o1, Feature o2) {
-                return o1.getAbbreviationOrder().compareTo(o2.getAbbreviationOrder());
-            }
-        });
-        addToValidationReport("Construct has a relationship to the following list of features", featureList);
+        checkForDataAliasRelationships(construct);
+        checkForFeatureRelationships(construct);
         entity = construct;
         return validationReportList;
+    }
 
+    private void checkForDataAliasRelationships(Marker construct) {
+        Set<MarkerAlias> aliases = construct.getAliases();
+        Optional<PublicationAttribution> constructPublication = construct.getPublications().stream().findFirst();
+        if (aliases != null && aliases.size() > 0) {
+            addToValidationReport("Construct has data alias history that will be lost", aliases);
+
+            List<Publication> relevantPublications = aliases.stream().map(DataAlias::getSinglePublication).filter(Objects::nonNull).distinct().toList();
+            if (relevantPublications.size() > 0) {
+                addToValidationReport("See publications: ", relevantPublications);
+            } else if (constructPublication.isPresent()) {
+                addToValidationReport("See publication: ", Collections.singletonList(constructPublication.get().getPublication()));
+            }
+        }
+    }
+
+    private void checkForFeatureRelationships(Marker construct) {
+        List<Feature> featureList = RepositoryFactory.getFeatureRepository().getFeaturesByConstruct(construct);
+        featureList.sort(Comparator.comparing(Feature::getAbbreviationOrder));
+        addToValidationReport("Construct has a relationship to the following list of features", featureList);
     }
 
     @Override
