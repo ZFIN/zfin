@@ -20,7 +20,7 @@
     <builders>
         <hudson.tasks.Shell>
             <command><![CDATA[
-cd $SOURCE_ROOT
+cd $SOURCEROOT
 gradle cleanMarkerGoTermEvidenceDuplicatesTask
             ]]>
             </command>
