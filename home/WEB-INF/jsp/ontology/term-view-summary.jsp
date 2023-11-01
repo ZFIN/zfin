@@ -6,9 +6,16 @@
 <c:set var="term" value="${formBean.term}"/>
 
 <z:attributeList>
+
     <z:attributeListItem label="Term ID">
         ${term.oboID}
     </z:attributeListItem>
+
+    <authz:authorize access="hasRole('root')">
+        <z:attributeListItem label="Term ZDB ID">
+            ${term.zdbID}
+        </z:attributeListItem>
+    </authz:authorize>
 
     <z:attributeListItem label="Synonyms">
         <ul class="comma-separated" data-toggle="collapse" data-show="3">
