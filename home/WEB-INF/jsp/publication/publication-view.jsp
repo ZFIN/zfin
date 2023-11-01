@@ -23,9 +23,9 @@
 <c:set var="DIRECTLY_ATTRIBUTED_DATA" value="${NavigationMenuOptions.DIRECTLY_ATTRIBUTED_DATA.value}"/>
 <c:set var="ZEBRASHARE" value="${NavigationMenuOptions.ZEBRASHARE.value}"/>
 
-<c:set var="BODYCLASSES" value="publication-view nav-title-wrap-break-word" />
+<c:set var="BODYCLASSES" value="publication-view nav-title-wrap-break-word"/>
 <c:if test="${zfn:isFlagEnabled(FeatureFlagEnum.USE_NAVIGATION_COUNTER)}">
-    <c:set var="BODYCLASSES" value="${BODYCLASSES} show-navigation-counters" />
+    <c:set var="BODYCLASSES" value="${BODYCLASSES} show-navigation-counters"/>
 </c:if>
 
 <z:dataPage sections="${[]}" navigationMenu="${navigationMenu}" additionalBodyClass="${BODYCLASSES}">
@@ -182,9 +182,9 @@
 
         <z:section title="${DIRECTLY_ATTRIBUTED_DATA}" navigationMenu="${navigationMenu}">
             <div class="__react-root __use-navigation-counter" id="PublicationAttributionTable"
-                     data-url="/action/api/publication/${publication.zdbID}/direct-attribution"
-                     data-title="${DIRECTLY_ATTRIBUTED_DATA}"
-                ></div>
+                 data-url="/action/api/publication/${publication.zdbID}/direct-attribution"
+                 data-title="${DIRECTLY_ATTRIBUTED_DATA}"
+            ></div>
         </z:section>
 
         <z:section title="${ZEBRASHARE}" navigationMenu="${navigationMenu}">

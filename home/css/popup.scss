@@ -52,6 +52,40 @@ div.phenotype-popup-body {
     }
 }
 
+.popup-stats {
+    text-decoration: none !important;
+    font-family: "Font Awesome 5 Free";
+    font-weight: 300; // solid
+
+    &.info-popup-link {
+        &::after {
+            content: "\f080";
+        }
+    }
+
+    &.help-popup-stats {
+        &::after {
+            content: "\f059";
+        }
+    }
+
+    &.data-popup-link {
+        color: $data-popup-icon-color;
+        opacity: 0.3;
+        margin-left: 0.25rem;
+
+        &:hover {
+            opacity: 0.7;
+        }
+
+        &::after {
+            content: "\f2d0";
+            font-weight: 400; // regular
+            font-size: .875em;
+        }
+    }
+}
+
 hr.popup-divider {
     background-color: $border-color;
     height: 2px;

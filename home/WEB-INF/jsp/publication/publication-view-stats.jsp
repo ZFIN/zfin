@@ -10,12 +10,13 @@
 <c:set var="EFGs" value="Engineered Foreign Genes"/>
 <c:set var="EXPRESSION" value="Expression Data"/>
 <c:set var="MUTATION" value="Mutation and Transgenics"/>
+<c:set var="DISEASES" value="Human Disease / Model"/>
 <c:set var="FISH" value="Fish"/>
 <c:set var="PROBES" value="Probes"/>
 <c:set var="DIRECTLY_ATTRIBUTED_DATA" value="Directly Attributed Data"/>
 
 <z:dataPage
-        sections="${[SUMMARY, FIGURES, GENES, STRS, ANTIBODIES, EFGs, EXPRESSION, MUTATION, FISH, ZEBRASHARE]}">
+        sections="${[SUMMARY, PROBES, ANTIBODIES, EXPRESSION, STRS, ZEBRASHARE, DATASETS]}">
 
     <jsp:body>
 
@@ -44,6 +45,12 @@
         <z:section title="${EXPRESSION}">
             <z:section title="">
                 <div class="__react-root" id="PublicationMarkerStatTable" data-type="expression"></div>
+            </z:section>
+        </z:section>
+
+        <z:section title="${DISEASES}">
+            <z:section title="">
+                <div class="__react-root" id="PublicationMarkerStatTable" data-type="disease"></div>
             </z:section>
         </z:section>
 

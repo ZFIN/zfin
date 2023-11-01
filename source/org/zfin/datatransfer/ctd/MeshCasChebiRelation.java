@@ -1,0 +1,1 @@
+package org.zfin.datatransfer.ctd;import lombok.Data;@Datapublic class MeshCasChebiRelation {    private String mesh;    private String meshName;    private String cas;    private String chebi;    private String chebiName;}

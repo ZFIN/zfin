@@ -1,6 +1,7 @@
 package org.zfin.ontology.repository;
 
 import org.zfin.anatomy.DevelopmentStage;
+import org.zfin.datatransfer.ctd.MeshChebiMapping;
 import org.zfin.datatransfer.go.EcoGoEvidenceCodeMapping;
 import org.zfin.expression.ExpressionResult;
 import org.zfin.expression.ExpressionResult2;
@@ -365,4 +366,8 @@ public interface OntologyRepository {
 
     Set<GenericTerm> getDiseaseTermsOmimPhenotype();
 
+    TermExternalReference getTermExternalReference(String casID, String prefix);
+    List<TermExternalReference> getAllCasReferences();
+
+    void saveMeshChebi(MeshChebiMapping mapping);
 }

@@ -110,3 +110,8 @@ task imageThumbnailFixTask(type: JavaExec) {
     systemProperty "runImageFixes", System.getProperty("runImageFixes", null)
 }
 
+task runMeshChebiGenerator(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.datatransfer.ctd.LoadCtdData'
+}
+

@@ -2,6 +2,8 @@ package org.zfin.ontology;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager; import org.apache.logging.log4j.Logger;
+import org.zfin.datatransfer.ctd.MeshChebiDAO;
+import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.root.dto.OntologyDTO;
 import org.zfin.gwt.root.dto.TermDTO;
 import org.zfin.infrastructure.PatriciaTrieMultiMap;
@@ -29,6 +31,12 @@ public class MatchingTermService {
             maximumNumberOfMatches = Integer.MAX_VALUE;
         else
             maximumNumberOfMatches = maxLimit;
+    }
+
+
+    public static String getMeshID(String oboID) {
+        MeshChebiDAO dao = new MeshChebiDAO(HibernateUtil.currentSession());
+        return dao.getMeshID(oboID);
     }
 
     public List<TermDTO> getMatchingTermList(String query, Ontology ontology) {

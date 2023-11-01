@@ -42,176 +42,178 @@
             <div class="table-responsive col-lg-6">
                 <table class="table table-striped">
                     <thead>
-                    <tr>
-                        <th>Testing Tools</th>
-                        <th>Job Dashboard</th>
-                    </tr>
+                        <tr>
+                            <th>Testing Tools</th>
+                            <th>Job Dashboard</th>
+                        </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>
-                            <a href="/action/devtool/ontology/summary">Check Ontology Chache</a>
-                        </td>
-                        <td>
-                            <a href="/action/devtool/blast-jobs">Blast Jobs</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <a href="/action/devtool/gwt/modules">GWT Modules</a>
-                        </td>
-                        <td>
-                            <a href="/action/blast/blast-definitions">Blast Contents</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <a href="/action/fluorescence/proteins">Fluorescent Proteins</a>
-                        </td>
-                        <td>
-                            <a href="/action/blast/blast-files">Downloadable Blast Files</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <a href="/action/ontology/version-info">Ontology Version Info</a>
-                        </td>
-                        <td>
-                            <a href="/action/devtool/display-groups">ReferenceDB/DBLink Display Groups</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <a href="/action/devtool/test-error-page">Test Error Page</a>
-                            &nbsp;
-                        </td>
-                        <td>
-                            <a href="/action/devtool/blastable-databases">Blast Database Groups</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <a href="/action/devtool/request/ZDB-LAB-000114-8">Test jQuery Ajax Lab Page</a>
-                        </td>
-                        <td>
-                            <a href="/action/devtool/phenotype-curation-history">History: Phenotype Experiments</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <a href="/action/publication/stats">Statistics for Publication View Page</a>
-                        </td>
-                        <td>
-                            <a href="/action/devtool/phenotype-curation-history-statements">History: Phenotype
-                                Statements</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td>
-                            <a href="/action/ontology/reports">Ontology Reports</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td>
-                            <a href="/action/indexer/">Indexer Dashboard</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>JVM Configuration</th>
-                        <th>Session Info</th>
-                    </tr>
-                    <tr>
-                        <td>
-                            <a href="/action/devtool/java-properties">Java Properties</a>
-                        </td>
-                        <td>
-                            <a href="/action/devtool/test-browser">Check HTTP header of your browser</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <a href="/action/devtool/thread-info">Thread Info</a>
-                        </td>
-                        <td>
-                            <a href="/action/devtool/view-session-info">Current Session Info</a>
-                            -
-                            <a href="/action/devtool/view-global-session">Global Session Info</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <a href="/action/devtool/classpath-info">View Classpath Info</a>
-                        </td>
-                        <td>
-                            <a href="/action/devtool/servlet-context">Servlet Context Info</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <a href="/action/devtool/test-request-headers">Request Headers</a>&nbsp;
-                        </td>
-                        <td>
-                            <a href="/action/devtool/application-context">Application Context Info</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>ZFIN Properties</th>
-                        <th>Miscellaneous</th>
-                    </tr>
-                    <tr>
-                        <td>
-                            <a href="/action/devtool/zfin-properties">Zfin Properties</a>
-                        </td>
-                        <td>
-                            <a href="/action/database/browse-database">Browse Database tables</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                        </td>
-                        <td>
-                            <a href="/action/unload/downloads/archive">Download Files Archive</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                        </td>
-                        <td>
-                            <a href="/action/devtool/home-carousel-items">Home Carousel Items</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                        </td>
-                        <td>
-                            <a href="/action/devtool/feature-flags/home">Feature Flags</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>
-                            <b>Database Configuration</b>
-                        </td>
-                        <td>
-                            <b>&nbsp;</b>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <a href="/action/devtool/database-info">Database Info</a><br/>
-                        </td>
-                        <td>
-                            <a href="/action/database/all-sessions">Postgres Database </a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <a href="/action/devtool/jdbc-driver-info">JDBC Driver Info</a>
-                        </td>
-                        <td>
-                        </td>
-                    </tr>
+                        <tr>
+                            <td>
+                                <a href="/action/publication/stats">Publication Statistics</a>
+                            </td>
+                            <td>
+                                <a href="/action/indexer/">Indexer Dashboard</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="/action/devtool/ontology/summary">Check Ontology Cache</a>
+                            </td>
+                            <td>
+                                <a href="/action/devtool/blast-jobs">Blast Jobs</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="/action/devtool/gwt/modules">GWT Modules</a>
+                            </td>
+                            <td>
+                                <a href="/action/blast/blast-definitions">Blast Contents</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="/action/fluorescence/proteins">Fluorescent Proteins</a>
+                            </td>
+                            <td>
+                                <a href="/action/blast/blast-files">Downloadable Blast Files</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="/action/ontology/version-info">Ontology Version Info</a>
+                            </td>
+                            <td>
+                                <a href="/action/devtool/display-groups">ReferenceDB/DBLink Display Groups</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="/action/devtool/test-error-page">Test Error Page</a>
+                                &nbsp;
+                            </td>
+                            <td>
+                                <a href="/action/devtool/blastable-databases">Blast Database Groups</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="/action/devtool/request/ZDB-LAB-000114-8">Test jQuery Ajax Lab Page</a>
+                            </td>
+                            <td>
+                                <a href="/action/devtool/phenotype-curation-history">History: Phenotype Experiments</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="/action/publication/stats">Statistics for Publication View Page</a>
+                            </td>
+                            <td>
+                                <a href="/action/devtool/phenotype-curation-history-statements">History: Phenotype
+                                    Statements</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <a href="/action/ontology/reports">Ontology Reports</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>JVM Configuration</th>
+                            <th>Session Info</th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="/action/devtool/java-properties">Java Properties</a>
+                            </td>
+                            <td>
+                                <a href="/action/devtool/test-browser">Check HTTP header of your browser</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="/action/devtool/thread-info">Thread Info</a>
+                            </td>
+                            <td>
+                                <a href="/action/devtool/view-session-info">Current Session Info</a>
+                                -
+                                <a href="/action/devtool/view-global-session">Global Session Info</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="/action/devtool/classpath-info">View Classpath Info</a>
+                            </td>
+                            <td>
+                                <a href="/action/devtool/servlet-context">Servlet Context Info</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="/action/devtool/test-request-headers">Request Headers</a>&nbsp;
+                            </td>
+                            <td>
+                                <a href="/action/devtool/application-context">Application Context Info</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>ZFIN Properties</th>
+                            <th>Miscellaneous</th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="/action/devtool/zfin-properties">Zfin Properties</a>
+                            </td>
+                            <td>
+                                <a href="/action/database/browse-database">Browse Database tables</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                            </td>
+                            <td>
+                                <a href="/action/unload/downloads/archive">Download Files Archive</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                            </td>
+                            <td>
+                                <a href="/action/devtool/home-carousel-items">Home Carousel Items</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                            </td>
+                            <td>
+                                <a href="/action/devtool/feature-flags/home">Feature Flags</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <b>Database Configuration</b>
+                            </td>
+                            <td>
+                                <b>&nbsp;</b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="/action/devtool/database-info">Database Info</a><br/>
+                            </td>
+                            <td>
+                                <a href="/action/database/all-sessions">Postgres Database </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="/action/devtool/jdbc-driver-info">JDBC Driver Info</a>
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
