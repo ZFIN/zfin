@@ -161,7 +161,7 @@ public class LookupRPCServiceImpl extends ZfinRemoteServiceServlet implements Lo
         List<SuggestOracle.Suggestion> suggestions = new ArrayList<>(NUMBER_OF_SUGGESTIONS);
         if (query.length() > 2) {
             String oboIdPrefix = ontology.getOboIdPrefix();
-            if (query.startsWith(oboIdPrefix)) {
+            if (oboIdPrefix != null && query.startsWith(oboIdPrefix)) {
                 TermDTO termDTO = OntologyManager.getInstance().getTermByID(query, DTOConversionService.convertToOntologyDTO(ontology));
                 MatchingTerm term = new MatchingTerm(termDTO, termDTO.getTermName());
                 StringBuilder builder = getStringBuilder(term, termDTO.getTermName());
