@@ -1,6 +1,8 @@
 package org.zfin.ontology;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
 import org.zfin.framework.api.View;
 
 /**
@@ -8,26 +10,12 @@ import org.zfin.framework.api.View;
  * intended to be used as a component in expression and phenotype
  * records
  */
+@Setter
+@Getter
 public class PostComposedEntity implements Comparable<PostComposedEntity> {
 
     @JsonView({View.API.class, View.UI.class}) protected GenericTerm superterm;
     @JsonView({View.API.class, View.UI.class}) protected GenericTerm subterm;
-
-    public GenericTerm getSuperterm() {
-        return superterm;
-    }
-
-    public void setSuperterm(GenericTerm superterm) {
-        this.superterm = superterm;
-    }
-
-    public GenericTerm getSubterm() {
-        return subterm;
-    }
-
-    public void setSubterm(GenericTerm subterm) {
-        this.subterm = subterm;
-    }
 
     @Override
     public boolean equals(Object o) {
