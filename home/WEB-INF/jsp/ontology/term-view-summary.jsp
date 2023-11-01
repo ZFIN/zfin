@@ -71,4 +71,12 @@
         <zfin2:ontologyTermLinks term="${formBean.term}"/>
     </z:attributeListItem>
 
+    <c:if test="${!empty meshID}">
+        <z:attributeListItem label="Resources">
+            <a href="https://ctdbase.org/detail.go?type=chem&acc=${meshID}">CTD</a>
+        </z:attributeListItem>
+    </c:if>
+
+
+
 </z:attributeList>

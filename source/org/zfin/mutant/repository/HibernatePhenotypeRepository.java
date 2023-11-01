@@ -4,7 +4,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.BasicTransformerAdapter;
@@ -866,32 +866,32 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
                      "        and genoFig.fish = :fish" +
                      "        and genoFig.figure = :figure";
 
-        Query query = session.createQuery(hql);
+        Query<PhenotypeStatement> query = session.createQuery(hql, PhenotypeStatement.class);
         query.setParameter("figure", figure);
         query.setParameter("fish", fish);
-        return (List<PhenotypeStatement>) query.list();
+        return query.list();
     }
 
     @Override
     public List<GenericTerm> getHumanDiseases(String publicationID) {
 
         String hql = "select term from TermAttribution as termAtt where " +
-                     "       termAtt.publication.zdbID = :publicationID " +
-                     "     order by termAtt.term.termName";
-        Query query = HibernateUtil.currentSession().createQuery(hql);
+            "       termAtt.publication.zdbID = :publicationID " +
+            "     order by termAtt.term.termName";
+        Query<GenericTerm> query = HibernateUtil.currentSession().createQuery(hql, GenericTerm.class);
         query.setParameter("publicationID", publicationID);
 
-        return (List<GenericTerm>) query.list();
+        return query.list();
     }
 
     @Override
     public List<DiseaseAnnotation> getHumanDiseaseModels(String publicationID) {
         String hql = "from DiseaseAnnotation as disease where" +
-                     " disease.publication.zdbID = :publicationID " +
-                     "order by disease.disease.termName";
-        Query query = HibernateUtil.currentSession().createQuery(hql);
+            " disease.publication.zdbID = :publicationID " +
+            "order by disease.disease.termName";
+        Query<DiseaseAnnotation> query = HibernateUtil.currentSession().createQuery(hql, DiseaseAnnotation.class);
         query.setParameter("publicationID", publicationID);
-        return (List<DiseaseAnnotation>) query.list();
+        return query.list();
     }
 
     @Override
@@ -903,6 +903,28 @@ public class HibernatePhenotypeRepository implements PhenotypeRepository {
             """;
         Query<DiseaseAnnotation> query = HibernateUtil.currentSession().createQuery(hql, DiseaseAnnotation.class);
         query.setParameter("publicationID", publicationID);
+        List<DiseaseAnnotation> list = query.list();
+
+        return list.stream()
+            .map(diseaseAnnotation -> {
+                if (CollectionUtils.isEmpty(diseaseAnnotation.getDiseaseAnnotationModel())) {
+                    DiseaseAnnotationModel model = new DiseaseAnnotationModel();
+                    model.setDiseaseAnnotation(diseaseAnnotation);
+                    return List.of(model);
+                }
+                return diseaseAnnotation.getDiseaseAnnotationModel();
+            }).flatMap(Collection::stream)
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<DiseaseAnnotationModel> getAllHumanDiseaseAnnotationModels() {
+        String hql = """
+            from DiseaseAnnotation as model
+            order by model.disease.termName
+            """;
+        Query<DiseaseAnnotation> query = HibernateUtil.currentSession().createQuery(hql, DiseaseAnnotation.class);
+        //query.setParameter("publicationID", publicationID);
         List<DiseaseAnnotation> list = query.list();
 
         return list.stream()

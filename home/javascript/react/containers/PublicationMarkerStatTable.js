@@ -3,13 +3,16 @@ import PropTypes from 'prop-types';
 import StatisticDataTable from '../components/data-table/StatisticDataTable';
 
 
-const PublicationMarkerStatTable = ({type}) => {
+const PublicationMarkerStatTable = ({type, show = false}) => {
     const [hasData, setHasData] = useState(false);
 
     function showData() {
         setHasData(true)
     }
 
+    if(show) {
+        showData();
+    }
     return (
         <>
             {!hasData && (
@@ -30,6 +33,7 @@ const PublicationMarkerStatTable = ({type}) => {
 
 PublicationMarkerStatTable.propTypes = {
     type: PropTypes.string,
+    show: PropTypes.bool,
 };
 
 export default PublicationMarkerStatTable;

@@ -2,6 +2,7 @@
 
 <%@ attribute name="label" required="true" rtexprvalue="true" %>
 <%@ attribute name="link" required="false" rtexprvalue="true" %>
+<%@ attribute name="statsLink" required="false" rtexprvalue="true" type="java.lang.String" %>
 
 <%@ attribute name="dtColSize" required="false" type="java.lang.Integer" %>
 <c:set var="dtColSize" value="${(empty dtColSize) ? 2 : dtColSize}" />
@@ -14,7 +15,7 @@
         <dt class="col-sm-${dtColSize} mb-sm-2"><a href="${link}">${label}</a></dt>
     </c:when>
     <c:otherwise>
-        <dt class="col-sm-${dtColSize} mb-sm-2">${label}</dt>
+        <dt class="col-sm-${dtColSize} mb-sm-2">${label} <c:if test="${not empty statsLink}"><a class="popup-link info-popup-link" href="/action/publication/stats/view?section=${statsLink}"></a></c:if></dt>
     </c:otherwise>
 </c:choose>
 <dd class="col-sm-${ddColSize}"><jsp:doBody /></dd>
