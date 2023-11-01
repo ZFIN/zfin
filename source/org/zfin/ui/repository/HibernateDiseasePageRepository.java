@@ -127,7 +127,7 @@ public class HibernateDiseasePageRepository implements DiseasePageRepository {
                   "where  " +
                   "clo.child = chebiDisplay.chebi AND clo.root = :chebiTerm ";
         }
-        hql += " order by chebiDisplay.order, chebiDisplay.fishModel.fish.order, upper(chebiDisplay.fishModelDisplay.fish.displayName) ";
+        hql += " order by chebiDisplay.fishModelDisplay.order, chebiDisplay.fishModelDisplay.fish.order, upper(chebiDisplay.fishModelDisplay.fish.displayName) ";
         Query<ChebiFishModelDisplay> query = HibernateUtil.currentSession().createQuery(hql, ChebiFishModelDisplay.class);
         query.setParameter("chebiTerm", term);
         List<ChebiFishModelDisplay> list = query.list();
