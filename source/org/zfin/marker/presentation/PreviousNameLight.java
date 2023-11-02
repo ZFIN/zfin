@@ -1,5 +1,7 @@
 package org.zfin.marker.presentation;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang.StringUtils;
 import org.zfin.framework.presentation.ProvidesLink;
 import org.zfin.publication.presentation.PublicationPresentation;
@@ -8,6 +10,8 @@ import java.util.regex.Pattern;
 
 /**
  */
+@Setter
+@Getter
 public class PreviousNameLight implements ProvidesLink , Comparable<PreviousNameLight>{
 
     private String markerZdbID;
@@ -31,30 +35,6 @@ public class PreviousNameLight implements ProvidesLink , Comparable<PreviousName
         this.realName = realName ;
     }
 
-    public String getMarkerZdbID() {
-        return markerZdbID;
-    }
-
-    public void setMarkerZdbID(String markerZdbID) {
-        this.markerZdbID = markerZdbID;
-    }
-
-    public String getAliasZdbID() {
-        return aliasZdbID;
-    }
-
-    public void setAliasZdbID(String aliasZdbID) {
-        this.aliasZdbID = aliasZdbID;
-    }
-
-
-    public String getPureAliasName() {
-        return pureAliasName;
-    }
-
-    public void setPureAliasName(String pureAliasName) {
-        this.pureAliasName = pureAliasName;
-    }
 
     @Override
     public String getLink() {
@@ -75,30 +55,6 @@ public class PreviousNameLight implements ProvidesLink , Comparable<PreviousName
         }
     }
 
-    public String getAlias() {
-        return alias;
-    }
-
-    public void setAlias(String alias) {
-        this.alias = alias;
-    }
-
-    public String getPublicationZdbID() {
-        return publicationZdbID;
-    }
-
-    public void setPublicationZdbID(String publicationZdbID) {
-        this.publicationZdbID = publicationZdbID;
-    }
-
-    public String getRealName() {
-        return realName;
-    }
-
-    public void setRealName(String realName) {
-        this.realName = realName;
-    }
-
     public boolean isUninformative(){
         if(isUninformative(alias)){
             return true;
@@ -110,14 +66,6 @@ public class PreviousNameLight implements ProvidesLink , Comparable<PreviousName
 
     public int getDistance(String s1, String s2){
         return StringUtils.getLevenshteinDistance(s1.replaceAll("\\p{Punct}+","").toLowerCase(),s2.replaceAll("\\p{Punct}+","").toLowerCase());
-    }
-
-    public int getPublicationCount() {
-        return publicationCount;
-    }
-
-    public void setPublicationCount(int publicationCount) {
-        this.publicationCount = publicationCount;
     }
 
     /**
@@ -153,5 +101,24 @@ public class PreviousNameLight implements ProvidesLink , Comparable<PreviousName
         if(uninformativePrefixPattern.matcher(name).matches()) return true ;
         if(name.contains(":") && false==transgenicPrefixPattern.matcher(name).matches()) return true ;
         return false ;
+    }
+
+    public void setPureAliasName(String pureAliasName) {
+        this.pureAliasName = pureAliasName;
+        setAliasWithItalics();
+    }
+
+    public void setMarkerZdbID(String markerZdbID) {
+        this.markerZdbID = markerZdbID;
+        setAliasWithItalics();
+    }
+
+    private void setAliasWithItalics() {
+        if (getMarkerZdbID() == null || getPureAliasName() == null) {
+            return;
+        }
+        boolean shouldItalicize = getMarkerZdbID().contains("GENE") || getMarkerZdbID().contains("CONSTRCT");
+        String aliasWithItalics = shouldItalicize ? "<i>" + getPureAliasName() + "</i>" : getPureAliasName();
+        this.setAlias(aliasWithItalics);
     }
 }

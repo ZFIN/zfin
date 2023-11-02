@@ -68,18 +68,22 @@ public class ConstructViewController {
         List<MarkerRelationshipPresentation> containsSequencePresentations = new ArrayList<>();
 
         for (MarkerRelationshipPresentation markerRelationshipPresentation : cloneRelationships) {
-            if (markerRelationshipPresentation.getRelationshipType().equals("Has Promoter")) {
-                markerRelationshipPresentation.setArbitraryOrder(1);
-                markerRelationshipPresentation.setMappedMarkerRelationshipType("Regulatory Regions:");
-                regulatoryRegionPresentations.add(markerRelationshipPresentation);
-            } else if (markerRelationshipPresentation.getRelationshipType().equals("Has Coding Sequence")) {
-                markerRelationshipPresentation.setArbitraryOrder(2);
-                markerRelationshipPresentation.setMappedMarkerRelationshipType("Coding Sequences:");
-                codingSequencePresentations.add(markerRelationshipPresentation);
-            } else if (markerRelationshipPresentation.getRelationshipType().equals("Contains")) {
-                markerRelationshipPresentation.setArbitraryOrder(3);
-                markerRelationshipPresentation.setMappedMarkerRelationshipType("Contains:");
-                containsSequencePresentations.add(markerRelationshipPresentation);
+            switch (markerRelationshipPresentation.getRelationshipType()) {
+                case "Has Promoter" -> {
+                    markerRelationshipPresentation.setArbitraryOrder(1);
+                    markerRelationshipPresentation.setMappedMarkerRelationshipType("Regulatory Regions:");
+                    regulatoryRegionPresentations.add(markerRelationshipPresentation);
+                }
+                case "Has Coding Sequence" -> {
+                    markerRelationshipPresentation.setArbitraryOrder(2);
+                    markerRelationshipPresentation.setMappedMarkerRelationshipType("Coding Sequences:");
+                    codingSequencePresentations.add(markerRelationshipPresentation);
+                }
+                case "Contains" -> {
+                    markerRelationshipPresentation.setArbitraryOrder(3);
+                    markerRelationshipPresentation.setMappedMarkerRelationshipType("Contains:");
+                    containsSequencePresentations.add(markerRelationshipPresentation);
+                }
             }
         }
         markerBean.setCodingSequencePresentations(codingSequencePresentations);
@@ -115,6 +119,8 @@ public class ConstructViewController {
             Collections.sort(allFish);
             markerBean.setFish(allFish);
         }
+        //construct should include previous names only recorded in marker history table
+        markerBean.setPreviousNames(markerRepository.getPreviousNamesMergedWithMarkerHistory(construct));
 
         model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, markerBean.getMarkerTypeDisplay() + ": " + construct.getName());

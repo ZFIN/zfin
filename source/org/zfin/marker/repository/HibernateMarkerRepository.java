@@ -20,6 +20,7 @@ import org.zfin.antibody.AntibodyExternalNote;
 import org.zfin.construct.ConstructComponent;
 import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.presentation.ConstructComponentPresentation;
+import org.zfin.database.HibernateUpgradeHelper;
 import org.zfin.expression.*;
 import org.zfin.feature.Feature;
 import org.zfin.framework.HibernateUtil;
@@ -54,6 +55,7 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.Database;
 import org.zfin.util.NumberAwareStringComparator;
+import org.zfin.util.ZfinCollectionUtils;
 
 import javax.persistence.Tuple;
 import javax.persistence.criteria.*;
@@ -63,6 +65,7 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static org.zfin.framework.HibernateUtil.currentSession;
+import static org.zfin.marker.MarkerHistory.Event.RENAMED;
 import static org.zfin.repository.RepositoryFactory.*;
 
 
@@ -1746,43 +1749,36 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
     @Override
     public List<PreviousNameLight> getPreviousNamesLight(final Marker gene) {
-        String sql = "  " +
-            " SELECT da.dalias_alias, ra.recattrib_source_zdb_id, da.dalias_zdb_id " +
-            "    FROM data_alias da " +
-            "    JOIN alias_group ag ON da.dalias_group_id=ag.aliasgrp_pk_id " +
-            "    LEFT OUTER JOIN record_attribution ra ON ra.recattrib_data_zdb_id=da.dalias_zdb_id  " +
-            "    WHERE dalias_data_zdb_id = :markerZdbID " +
-            "    AND aliasgrp_pk_id = dalias_group_id " +
-            "    AND aliasgrp_name = 'alias' " +
-            " ";
-        return (List<PreviousNameLight>) HibernateUtil.currentSession().createSQLQuery(sql)
-            .setParameter("markerZdbID", gene.getZdbID())
-            .setResultTransformer(new BasicTransformerAdapter() {
-                @Override
-                public Object transformTuple(Object[] tuple, String[] aliases) {
+        String sql = """
+             SELECT da.dalias_alias, ra.recattrib_source_zdb_id, da.dalias_zdb_id
+                FROM data_alias da 
+                JOIN alias_group ag ON da.dalias_group_id=ag.aliasgrp_pk_id 
+                LEFT OUTER JOIN record_attribution ra ON ra.recattrib_data_zdb_id=da.dalias_zdb_id  
+                WHERE dalias_data_zdb_id = :markerZdbID 
+                AND aliasgrp_pk_id = dalias_group_id 
+                AND aliasgrp_name = 'alias' 
+            """;
+        NativeQuery query = currentSession().createSQLQuery(sql);
+        query.setParameter("markerZdbID", gene.getZdbID());
+        HibernateUpgradeHelper.setTupleResultAndListTransformer(query,
+                (Object[] tuple, String[] aliases) -> {
+                    String pureAliasName = (String) tuple[0];
+                    String publicationZdbID = (String) tuple[1];
+                    String aliasZdbID = (String) tuple[2];
+
                     PreviousNameLight previousNameLight = new PreviousNameLight(gene.getAbbreviation());
                     previousNameLight.setMarkerZdbID(gene.getZdbID());
-                    previousNameLight.setPureAliasName(tuple[0].toString());
-                    if (gene.getZdbID().contains("GENE")) {
-                        previousNameLight.setAlias("<i>" + tuple[0].toString() + "</i>");
-                    } else {
-                        if (gene.getZdbID().contains("CONSTRCT")) {
-                            previousNameLight.setAlias("<i>" + tuple[0].toString() + "</i>");
-                        } else {
-                            previousNameLight.setAlias(tuple[0].toString());
-                        }
-                    }
-                    previousNameLight.setAliasZdbID(tuple[2].toString());
-                    if (tuple[1] != null) {
-                        previousNameLight.setPublicationZdbID(tuple[1].toString());
+                    previousNameLight.setPureAliasName(pureAliasName);
+                    previousNameLight.setAliasZdbID(aliasZdbID);
+
+                    if (publicationZdbID != null) {
+                        previousNameLight.setPublicationZdbID(publicationZdbID);
                         previousNameLight.setPublicationCount(1);
                     }
 
                     return previousNameLight;
-                }
-
-                @Override
-                public List transformList(List list) {
+                },
+                (List list) -> {
                     Map<String, PreviousNameLight> map = new HashMap<>();
                     for (Object o : list) {
                         PreviousNameLight previousName = (PreviousNameLight) o;
@@ -1802,11 +1798,30 @@ public class HibernateMarkerRepository implements MarkerRepository {
                     Collections.sort(list);
 
                     return list;
-                }
-            })
-            .list();
+                });
+        return query.list();
     }
 
+    @Override
+    public List<PreviousNameLight> getPreviousNamesMergedWithMarkerHistory(Marker marker) {
+        List<PreviousNameLight> previousNames = getPreviousNamesLight(marker);
+        Set<MarkerHistory> histories = marker.getMarkerHistory();
+        if (histories != null) {
+            List<PreviousNameLight> historiesAsPreviousNames = histories.stream()
+                    .filter(history -> RENAMED.equals(history.getEvent())) //only "rename" events
+                    .filter(history -> !history.getName().equals(marker.getAbbreviation())) //exclude the current name
+                    .map(history -> {
+                        PreviousNameLight pnl = new PreviousNameLight(marker.getAbbreviation());
+                        pnl.setPureAliasName(history.getName());
+                        pnl.setMarkerZdbID(marker.getZdbID());
+                        return pnl;
+                    })
+                    .toList();
+
+            ZfinCollectionUtils.addToListIfNotContainsBy(previousNames, historiesAsPreviousNames, PreviousNameLight::getPureAliasName);
+        }
+        return previousNames;
+    }
 
     @Override
     public List<MarkerRelationshipPresentation> getRelatedMarkerOrderDisplayExcludeTypes(Marker marker, boolean is1to2, MarkerRelationship.Type... typesNotIn) {
