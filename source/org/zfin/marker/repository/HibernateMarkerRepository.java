@@ -1803,7 +1803,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     @Override
-    public List<PreviousNameLight> getPreviousNamesMergedWithMarkerHistory(Marker marker) {
+    public List<PreviousNameLight> getPreviousNamesLightMergedWithMarkerHistory(Marker marker) {
         List<PreviousNameLight> previousNames = getPreviousNamesLight(marker);
         Set<MarkerHistory> histories = marker.getMarkerHistory();
         if (histories != null) {

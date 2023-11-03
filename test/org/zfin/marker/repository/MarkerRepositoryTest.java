@@ -722,6 +722,15 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void getPreviousNamesLightConstruct() {
+        Marker m = markerRepository.getMarkerByID("ZDB-TGCONSTRCT-070117-94");
+        List<PreviousNameLight> previousNames = markerRepository.getPreviousNamesLight(m);
+        List<PreviousNameLight> previousNamesMergedWithHistory = markerRepository.getPreviousNamesLightMergedWithMarkerHistory(m);
+        assertEquals(0, previousNames.size());
+        assertEquals(1, previousNamesMergedWithHistory.size());
+    }
+
+    @Test
     public void getPreviousNamesLightMultipleAttributionTest() {
         Marker m = markerRepository.getGeneByID("ZDB-GENE-010504-1");
         List<PreviousNameLight> previousNames = markerRepository.getPreviousNamesLight(m);
