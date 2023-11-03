@@ -116,6 +116,7 @@ public class LoadCtdData extends AbstractScriptWrapper {
         }
         pubmedIDs.remove(0);
 
+        List<String> publicationsNotFound = new ArrayList<>();
         List<String> existingIDs = new ArrayList<>();
         List<PublicationCtd> newPubCtds = new ArrayList<>();
         pubmedIDs.forEach(id -> {
@@ -129,8 +130,11 @@ public class LoadCtdData extends AbstractScriptWrapper {
                     pubCtd.setCtdID(String.valueOf(pubID));
                     newPubCtds.add(pubCtd);
                 });
+            } else {
+                publicationsNotFound.add(id);
             }
         });
+
         HibernateUtil.createTransaction();
         List<PublicationCtd> existingRecords = pubDao.findAll();
         // only persist new records
@@ -142,6 +146,9 @@ public class LoadCtdData extends AbstractScriptWrapper {
         //savePublicationCtds();
         System.out.println("Number of new records: " + newPubCtds.size());
         newPubCtds.forEach(publicationCtd -> System.out.println(publicationCtd.getCtdID()));
+
+        System.out.println("\rNumber of records not found in ZFIN: " + publicationsNotFound.size());
+        publicationsNotFound.forEach(System.out::println);
     }
 
     private void loadMeshAndChebi() throws IOException {
