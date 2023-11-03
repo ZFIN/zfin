@@ -104,10 +104,11 @@ public class PreviousNameLight implements ProvidesLink , Comparable<PreviousName
     }
 
     public String getAlias() {
-        if (getPureAliasName() == null) {
+        if (alias != null) {
+            return alias;
+        } else if (getPureAliasName() == null) {
             return null;
-        }
-        if (getMarkerZdbID() == null) {
+        } else if (getMarkerZdbID() == null) {
             return getPureAliasName();
         }
         boolean shouldItalicize = getMarkerZdbID().contains("GENE") || getMarkerZdbID().contains("CONSTRCT");
