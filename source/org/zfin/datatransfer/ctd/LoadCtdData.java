@@ -44,7 +44,8 @@ public class LoadCtdData extends AbstractScriptWrapper {
         LoadCtdData load = new LoadCtdData();
         load.initAll();
         load.dao = new MeshChebiDAO(HibernateUtil.currentSession());
-        //getReferenceCDT();
+        load.pubDao = new PublicationCtdDAO(HibernateUtil.currentSession());
+        load.getReferenceCDT();
         load.loadMeshAndChebi();
         load.reportNonJointCasIds();
         load.printOneToOneMeshChebiRelations();
@@ -101,34 +102,46 @@ public class LoadCtdData extends AbstractScriptWrapper {
     }
 
     private void getReferenceCDT() throws IOException {
-        File downloadedFile = new File("CTD_references_20230928080547.csv");
+        downloadPublicationFile();
         List<String> pubmedIDs = new ArrayList<>();
-        Reader in = new FileReader(downloadedFile);
-        Iterable<CSVRecord> records = CSVFormat.EXCEL
-            .withHeader(Header.class)
-            .parse(in);
+        Reader in = new FileReader(downloadedPublicationFile);
+        Iterable<CSVRecord> records = CSVFormat.EXCEL.withHeader(Header.class).parse(in);
         int lineNumber = 0;
         for (CSVRecord record : records) {
             lineNumber++;
             // ignore header info
-            if (record.get(0).startsWith("!"))
-                continue;
+            if (record.get(0).startsWith("!")) continue;
             String id = record.get(Header.PID);
             pubmedIDs.add(id);
         }
         pubmedIDs.remove(0);
+
         List<String> existingIDs = new ArrayList<>();
+        List<PublicationCtd> newPubCtds = new ArrayList<>();
         pubmedIDs.forEach(id -> {
             Integer pubID = Integer.parseInt(id);
             List<Publication> publicationByPmid = getPublicationRepository().getPublicationByPmid(pubID);
             if (publicationByPmid != null) {
                 publicationByPmid.forEach(publication -> {
                     existingIDs.add(publication.getZdbID());
+                    PublicationCtd pubCtd = new PublicationCtd();
+                    pubCtd.setPublication(publication);
+                    pubCtd.setCtdID(String.valueOf(pubID));
+                    newPubCtds.add(pubCtd);
                 });
             }
         });
+        HibernateUtil.createTransaction();
+        List<PublicationCtd> existingRecords = pubDao.findAll();
+        // only persist new records
+        newPubCtds.removeAll(existingRecords);
+        newPubCtds.forEach(publicationCtd -> pubDao.persist(publicationCtd));
 
-        System.out.println("Number of records: " + pubmedIDs.size());
+
+        HibernateUtil.flushAndCommitCurrentSession();
+        //savePublicationCtds();
+        System.out.println("Number of new records: " + newPubCtds.size());
+        newPubCtds.forEach(publicationCtd -> System.out.println(publicationCtd.getCtdID()));
     }
 
     private void loadMeshAndChebi() throws IOException {
@@ -137,17 +150,13 @@ public class LoadCtdData extends AbstractScriptWrapper {
 
         Map<String, String> meshToCasMap = new HashMap<>();
         Reader in = new FileReader(downloadedChemicalFile);
-        Iterable<CSVRecord> records = CSVFormat.EXCEL
-            .withHeader(CHEMICALS.class)
-            .parse(in);
+        Iterable<CSVRecord> records = CSVFormat.EXCEL.withHeader(CHEMICALS.class).parse(in);
         int lineNumber = 0;
         for (CSVRecord record : records) {
             lineNumber++;
-            if (lineNumber == 1)
-                continue;
+            if (lineNumber == 1) continue;
             // ignore header info
-            if (record.get(0).startsWith("!") || record.get(0).startsWith("#"))
-                continue;
+            if (record.get(0).startsWith("!") || record.get(0).startsWith("#")) continue;
             MeshCasChebiRelation relation = new MeshCasChebiRelation();
             relation.setMesh(record.get(CHEMICALS.MESH));
             relation.setMeshName(record.get(CHEMICALS.NAME));
@@ -166,6 +175,17 @@ public class LoadCtdData extends AbstractScriptWrapper {
     protected DownloadService downloadService = new DownloadService();
 
     private File downloadedChemicalFile;
+    private File downloadedPublicationFile;
+
+    private void downloadPublicationFile() {
+        String fileName = "CTD_references.csv";
+        String url = "https://ctdbase.org/query.go?type=reference&d-1340579-e=1&action=Search&taxon=TAXON%3A7955&reviewStatus=curated&6578706f7274=1";
+        try {
+            downloadedPublicationFile = downloadService.downloadFile(new File(fileName), new URL(url), false);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private void downloadChemicalFile() {
         String fileName = "CTD_chemicals.csv";
@@ -178,6 +198,7 @@ public class LoadCtdData extends AbstractScriptWrapper {
     }
 
     MeshChebiDAO dao;
+    PublicationCtdDAO pubDao;
 
     private List<MeshCasChebiRelation> getChebiToCasMapping() {
 
@@ -206,13 +227,9 @@ public class LoadCtdData extends AbstractScriptWrapper {
         System.out.println("Number of multiples: Cas-Chebi: " + mapping.getCasChebiMultiple().size());
 
         List<String> outputChebiCasMultiple = new ArrayList<>();
-        mapping.getChebiCasMulti()
-            .forEach((id, meshCasChebiRelations) ->
-                meshCasChebiRelations.forEach(relation -> outputChebiCasMultiple.add(getChebiCasMeshOutputRecord(relation))));
+        mapping.getChebiCasMulti().forEach((id, meshCasChebiRelations) -> meshCasChebiRelations.forEach(relation -> outputChebiCasMultiple.add(getChebiCasMeshOutputRecord(relation))));
         writeOutMultipleFile(outputChebiCasMultiple, "chebi-cas-mapping-multiple.csv");
-        mapping.getCasChebiMulti()
-            .forEach((id, meshCasChebiRelations) ->
-                meshCasChebiRelations.forEach(relation -> outputChebiCasMultiple.add(getCasChebiMeshOutputRecord(relation))));
+        mapping.getCasChebiMulti().forEach((id, meshCasChebiRelations) -> meshCasChebiRelations.forEach(relation -> outputChebiCasMultiple.add(getCasChebiMeshOutputRecord(relation))));
         writeOutMultipleFile(outputChebiCasMultiple, "cas-chebi-mapping-multiple.csv");
         writeOutFile(mapChebiMultiple, "cas-chebi-mapping.txt");
         writeOutFile(mapCasMultipleNames, "cas-chebi-mapping-names.txt");
@@ -314,19 +331,15 @@ public class LoadCtdData extends AbstractScriptWrapper {
         List<String> pubmedIDs = new ArrayList<>();
         List<CSVRecord> recordsDR = new ArrayList<>();
         Reader in = new FileReader(downloadedFile);
-        Iterable<CSVRecord> records = CSVFormat.EXCEL
-            .withHeader(HeaderChem.class)
-            .parse(in);
+        Iterable<CSVRecord> records = CSVFormat.EXCEL.withHeader(HeaderChem.class).parse(in);
         int lineNumber = 0;
         for (CSVRecord record : records) {
             lineNumber++;
             // ignore header info
-            if (record.get(0).startsWith("!"))
-                continue;
+            if (record.get(0).startsWith("!")) continue;
             String id = record.get(HeaderChem.PUBMED_ID);
             String org = record.get(HeaderChem.ORGANISM_ID);
-            if (id != null && org.contains("7955"))
-                recordsDR.add(record);
+            if (id != null && org.contains("7955")) recordsDR.add(record);
         }
         System.out.println("Number of Danio records: " + recordsDR.size());
 
@@ -336,8 +349,7 @@ public class LoadCtdData extends AbstractScriptWrapper {
         recordsDR.stream().filter(record -> StringUtils.isNotEmpty(record.get(HeaderChem.CAS_RN))).forEach(record -> {
             String casID = record.get(HeaderChem.CAS_RN);
             TermExternalReference ref = getOntologyRepository().getTermExternalReference(casID, "CAS");
-            if (ref != null)
-                existingIDs.add(ref.getTerm().getOboID());
+            if (ref != null) existingIDs.add(ref.getTerm().getOboID());
         });
         System.out.println("Number of records with identified CAS Chebi terms: " + existingIDs.size());
 
@@ -345,8 +357,7 @@ public class LoadCtdData extends AbstractScriptWrapper {
         recordsDR.stream().filter(record -> StringUtils.isNotEmpty(record.get(HeaderChem.CHEMID))).forEach(record -> {
             String meshID = record.get(HeaderChem.CHEMID);
             TermExternalReference ref = getOntologyRepository().getTermExternalReference(meshID, "MESH");
-            if (ref != null)
-                existingIDsWithMesh.add(ref.getTerm().getOboID());
+            if (ref != null) existingIDsWithMesh.add(ref.getTerm().getOboID());
         });
         System.out.println("Number of records with identified Mesh-Chebi terms: " + existingIDsWithMesh.size());
 
