@@ -44,28 +44,6 @@ public class ZfinCollectionUtils {
                 .anyMatch(key -> key.equals(keyFunction.apply(element)));
     }
 
-    /**
-     * Adds items from the itemsToAdd list to the existingList if they are not already contained in it,
-     * based on the specified key function.
-     *
-     * The uniqueness of items is determined by applying the keyFunction to each item.
-     * If the key value of an item from itemsToAdd is not found in the key values of existingList,
-     * then the item will be added to existingList.
-     *
-     *
-     * @param <T>           the type of the items in the lists
-     * @param existingList  the list to which items may be added
-     * @param itemsToAdd    the list of items to consider adding to {@code existingList}
-     * @param keyFunction   a function to produce a key value for an item, used to determine uniqueness
-     */
-    public static <T> void addToListIfNotContainsBy(List<T> existingList, List<T> itemsToAdd, Function<T, ?> keyFunction) {
-        itemsToAdd.forEach(item -> {
-            if (!ZfinCollectionUtils.containsBy(existingList, item, keyFunction)) {
-                existingList.add(item);
-            }
-        });
-    }
-
 }
 
 

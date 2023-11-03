@@ -103,22 +103,14 @@ public class PreviousNameLight implements ProvidesLink , Comparable<PreviousName
         return false ;
     }
 
-    public void setPureAliasName(String pureAliasName) {
-        this.pureAliasName = pureAliasName;
-        setAliasWithItalics();
-    }
-
-    public void setMarkerZdbID(String markerZdbID) {
-        this.markerZdbID = markerZdbID;
-        setAliasWithItalics();
-    }
-
-    private void setAliasWithItalics() {
-        if (getMarkerZdbID() == null || getPureAliasName() == null) {
-            return;
+    public String getAlias() {
+        if (getPureAliasName() == null) {
+            return null;
+        }
+        if (getMarkerZdbID() == null) {
+            return getPureAliasName();
         }
         boolean shouldItalicize = getMarkerZdbID().contains("GENE") || getMarkerZdbID().contains("CONSTRCT");
-        String aliasWithItalics = shouldItalicize ? "<i>" + getPureAliasName() + "</i>" : getPureAliasName();
-        this.setAlias(aliasWithItalics);
+        return shouldItalicize ? "<i>" + getPureAliasName() + "</i>" : getPureAliasName();
     }
 }

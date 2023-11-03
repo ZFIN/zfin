@@ -119,8 +119,6 @@ public class ConstructViewController {
             Collections.sort(allFish);
             markerBean.setFish(allFish);
         }
-        //construct should include previous names only recorded in marker history table
-        markerBean.setPreviousNames(markerRepository.getPreviousNamesLightMergedWithMarkerHistory(construct));
 
         model.addAttribute(LookupStrings.FORM_BEAN, markerBean);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, markerBean.getMarkerTypeDisplay() + ": " + construct.getName());

@@ -362,8 +362,6 @@ public interface MarkerRepository {
 
     List<PreviousNameLight> getPreviousNamesLight(Marker gene);
 
-    List<PreviousNameLight> getPreviousNamesLightMergedWithMarkerHistory(Marker marker);
-
     List<MarkerRelationshipPresentation> getRelatedMarkerOrderDisplayExcludeTypes(Marker marker, boolean is1to2, MarkerRelationship.Type... types);
 
     List<Marker> getMarkersByAlias(String key);

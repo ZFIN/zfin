@@ -1803,27 +1803,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
     }
 
     @Override
-    public List<PreviousNameLight> getPreviousNamesLightMergedWithMarkerHistory(Marker marker) {
-        List<PreviousNameLight> previousNames = getPreviousNamesLight(marker);
-        Set<MarkerHistory> histories = marker.getMarkerHistory();
-        if (histories != null) {
-            List<PreviousNameLight> historiesAsPreviousNames = histories.stream()
-                    .filter(history -> RENAMED.equals(history.getEvent())) //only "rename" events
-                    .filter(history -> !history.getName().equals(marker.getAbbreviation())) //exclude the current name
-                    .map(history -> {
-                        PreviousNameLight pnl = new PreviousNameLight(marker.getAbbreviation());
-                        pnl.setPureAliasName(history.getName());
-                        pnl.setMarkerZdbID(marker.getZdbID());
-                        return pnl;
-                    })
-                    .toList();
-
-            ZfinCollectionUtils.addToListIfNotContainsBy(previousNames, historiesAsPreviousNames, PreviousNameLight::getPureAliasName);
-        }
-        return previousNames;
-    }
-
-    @Override
     public List<MarkerRelationshipPresentation> getRelatedMarkerOrderDisplayExcludeTypes(Marker marker, boolean is1to2, MarkerRelationship.Type... typesNotIn) {
         String sql1To2 = " 	select mrkr_abbrev, mrkr_zdb_id, mrkr_abbrev_order, mrkrtype_type_display,  " +
             "	       mreltype_1_to_2_comments, " +
