@@ -22,14 +22,13 @@ function FigureEdit({ pubId }) {
             });
     }, [pubId]);
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         setFigureTooltips();
     }, [loading]);
 
     function setFigureTooltips() {
         const buttons = document.querySelectorAll('.btn-dense');
 
-        // Convert NodeList to Array
         Array.from(buttons).forEach((button, index) => {
             const figure = figures[index];
             const tooltip = figureDeleteTooltip(figure);
