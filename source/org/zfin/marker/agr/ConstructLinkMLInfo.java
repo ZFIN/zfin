@@ -4,8 +4,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import org.alliancegenome.curation_api.model.ingest.dto.ConstructDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.DataProviderDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.IngestDTO;
+import org.alliancegenome.curation_api.model.ingest.dto.associations.constructAssociations.ConstructGenomicEntityAssociationDTO;
+import org.alliancegenome.curation_api.model.ingest.dto.slotAnnotions.NameSlotAnnotationDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.slotAnnotions.constructSlotAnnotations.ConstructComponentSlotAnnotationDTO;
 import org.apache.commons.collections4.CollectionUtils;
 import org.zfin.construct.ConstructComponent;
@@ -43,7 +46,7 @@ public class ConstructLinkMLInfo extends LinkMLInfo {
         initAll();
         IngestDTO ingestDTO = getIngestDTO();
         List<org.alliancegenome.curation_api.model.ingest.dto.ConstructDTO> allDiseaseDTO = getAllConstructInfo();
-        ingestDTO.setLinkMLVersion("v1.9.0");
+        ingestDTO.setLinkMLVersion("v1.11.0");
         ingestDTO.setConstructIngestSet(allDiseaseDTO);
         ObjectMapper mapper = new ObjectMapper();
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -52,7 +55,18 @@ public class ConstructLinkMLInfo extends LinkMLInfo {
         try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_Construct_ml.json"))) {
             out.print(jsonInString);
         }
+
+        IngestDTO ingestDTOGenomicAssociations = getIngestDTO();
+        ingestDTOGenomicAssociations.setLinkMLVersion("v1.11.0");
+        ingestDTOGenomicAssociations.setConstructGenomicEntityAssociationIngestSet(genomicEntityAssociationDTOList);
+        jsonInString = writer.writeValueAsString(ingestDTOGenomicAssociations);
+        try (PrintStream out = new PrintStream(new FileOutputStream("ZFIN_Construct_Association_ml.json"))) {
+            out.print(jsonInString);
+        }
+
     }
+
+    private List<ConstructGenomicEntityAssociationDTO> genomicEntityAssociationDTOList = new ArrayList<>();
 
     public List<org.alliancegenome.curation_api.model.ingest.dto.ConstructDTO> getAllConstructInfo() {
         List<Marker> allConstructs = getConstructRepository().getAllConstructs();
@@ -62,13 +76,24 @@ public class ConstructLinkMLInfo extends LinkMLInfo {
             .map(
                 construct -> {
 
-                    org.alliancegenome.curation_api.model.ingest.dto.ConstructDTO dto = new org.alliancegenome.curation_api.model.ingest.dto.ConstructDTO();
-                    dto.setName(construct.getName());
-                    org.alliancegenome.curation_api.model.ingest.dto.DataProviderDTO dataProvider = new DataProviderDTO();
+                    ConstructDTO dto = new ConstructDTO();
+                    NameSlotAnnotationDTO name = new NameSlotAnnotationDTO();
+                    name.setDisplayText(construct.getName());
+                    name.setFormatText(construct.getName());
+                    name.setNameTypeName("full_name");
+                    dto.setConstructFullNameDto(name);
+
+                    NameSlotAnnotationDTO symbol = new NameSlotAnnotationDTO();
+                    symbol.setDisplayText(construct.getAbbreviation());
+                    symbol.setFormatText(construct.getAbbreviation());
+                    symbol.setNameTypeName("nomenclature_symbol");
+                    dto.setConstructSymbolDto(symbol);
+
+                    DataProviderDTO dataProvider = new DataProviderDTO();
                     dataProvider.setSourceOrganizationAbbreviation("ZFIN");
                     dto.setDataProviderDto(dataProvider);
                     dto.setCreatedByCurie("ZFIN:CURATOR");
-                    dto.setTaxonCurie(ZfinDTO.taxonId);
+                    //dto.setTaxonCurie(ZfinDTO.taxonId);
                     dto.setModEntityId("ZFIN:" + construct.getZdbID());
                     GregorianCalendar date = ActiveData.getDateFromId(construct.getZdbID());
                     dto.setDateCreated(format(date));
@@ -78,30 +103,35 @@ public class ConstructLinkMLInfo extends LinkMLInfo {
                     List<ConstructComponentSlotAnnotationDTO> componentDTOs = new ArrayList<>();
                     if (CollectionUtils.isNotEmpty(components)) {
                         for (ConstructComponent component : components) {
+                            switch (component.getType()) {
+                                case CODING_SEQUENCE_OF, CODING_SEQUENCE_OF_, PROMOTER_OF, PROMOTER_OF_ -> {
+                                    ConstructGenomicEntityAssociationDTO associationDTO = new ConstructGenomicEntityAssociationDTO();
+                                    associationDTO.setConstructIdentifier("ZFIN:" + construct.zdbID);
+                                    associationDTO.setGenomicEntityCurie("ZFIN:" + component.getComponentZdbID());
+                                    switch (component.getType()) {
+                                        case CODING_SEQUENCE_OF, CODING_SEQUENCE_OF_ -> associationDTO.setGenomicEntityRelationName("expresses");
+                                        case PROMOTER_OF, PROMOTER_OF_ -> associationDTO.setGenomicEntityRelationName("is_regulated_by");
+                                        default -> {
+                                        }
+                                    }
+                                    genomicEntityAssociationDTOList.add(associationDTO);
+                                    continue;
+                                }
+                                default -> {
+                                }
+                            }
+
+
                             ConstructComponentSlotAnnotationDTO componentSlotAnnotationDTO = new ConstructComponentSlotAnnotationDTO();
                             componentSlotAnnotationDTO.setComponentSymbol(component.getComponentValue());
-/*
+                            componentSlotAnnotationDTO.setRelationName(component.getType().name());
                             componentSlotAnnotationDTO.setTaxonCurie(ZfinDTO.taxonId);
                             componentSlotAnnotationDTO.setTaxonText(ZfinDTO.taxonId);
-*/
-
-                            ConstructComponentDTO componentDTO = new ConstructComponentDTO();
-                            // currently only populate the component ZDB id when we've already submitted the gene in the BGI (ie: no EFGs, regions at this time)
-                            if (component.getComponentZdbID() != null) {
-                                if ((component.getComponentZdbID().startsWith("ZDB-GENE") || (component.getComponentZdbID().contains("RNAG"))))
-                                    componentDTO.setComponentID("ZFIN:" + component.getComponentZdbID());
-                            }
-                            if (component.getType().equals(ConstructComponent.Type.CODING_SEQUENCE_OF) || component.getType().equals(ConstructComponent.Type.CODING_SEQUENCE_OF_)) {
-                                componentDTO.setComponentRelation("expresses");
-                            } else if (component.getType().equals(ConstructComponent.Type.PROMOTER_OF) || component.getType().equals(ConstructComponent.Type.PROMOTER_OF_)) {
-                                componentDTO.setComponentRelation("is_regulated_by");
-                            } else {
-                                continue;
-                            }
                             componentDTOs.add(componentSlotAnnotationDTO);
                         }
                     }
-                    dto.setConstructComponentDtos(componentDTOs);
+                    //// need to work this out
+                    //dto.setConstructComponentDtos(componentDTOs);
 /*
                     List<ConstructComponent> components = getConstructRepository().getConstructComponentsByConstructZdbId(construct.getZdbID());
                     List<ConstructComponentDTO> componentDTOs = new ArrayList<>();
