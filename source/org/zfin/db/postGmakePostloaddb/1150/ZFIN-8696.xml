@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="rtaylor" id="ZFIN-8696-01-pre">
+        <sql>
+            -- CREATE TEMP TABLE TO HOLD DATA FIXES
+            DROP TABLE IF EXISTS temp_8696;
+            CREATE TABLE temp_8696 (
+                                       accession TEXT,
+                                       feature_id TEXT,
+                                       fmrel_type TEXT,
+                                       marker_id TEXT,
+                                       symbol TEXT,
+                                       ensdarg TEXT
+            );
+        </sql>
+    </changeSet>
+
+    <!-- equivalent to:   \copy temp_8696 from 'ZFIN-8696.csv' with csv header;-->
+    <changeSet author="rtaylor" id="ZFIN-8696-02-load-csv">
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1150/ZFIN-8696.csv"
+                  tableName="temp_8696" encoding="UTF-8" quotchar='"'>
+            <column header="accession" name="accession" type="String"/>
+            <column header="feature_id" name="feature_id" type="String"/>
+            <column header="fmrel_type" name="fmrel_type" type="String"/>
+            <column header="marker_id" name="marker_id" type="String"/>
+            <column header="symbol" name="symbol" type="String"/>
+            <column header="ensdarg" name="ensdarg" type="String"/>
+        </loadData>
+    </changeSet>
+
+    <include file="source/org/zfin/db/postGmakePostloaddb/1150/ZFIN-8696-03-post.sql" />
+
+    <changeSet author="rtaylor" id="ZFIN-8696-04-cleanup">
+        <sql>
+            DROP TABLE temp_8696;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
