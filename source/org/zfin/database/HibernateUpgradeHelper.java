@@ -9,9 +9,15 @@ package org.zfin.database;
 import org.hibernate.query.Query;
 import org.hibernate.transform.BasicTransformerAdapter;
 
+import java.util.List;
+
 public class HibernateUpgradeHelper {
     public interface TupleTransformer {
         Object transformTuple(Object[] var1, String[] var2);
+    }
+
+    public interface ListTransformer {
+        List transformList(List list) ;
     }
 
     public static Query setTupleResultTransformer(Query query, TupleTransformer transformer) {
@@ -19,6 +25,20 @@ public class HibernateUpgradeHelper {
             @Override
             public Object transformTuple(Object[] tuple, String[] aliases) {
                 return transformer.transformTuple(tuple, aliases);
+            }
+        });
+    }
+
+    public static Query setTupleResultAndListTransformer(Query query, TupleTransformer transformer, ListTransformer listTransformer) {
+        return query.setResultTransformer(new BasicTransformerAdapter() {
+            @Override
+            public Object transformTuple(Object[] tuple, String[] aliases) {
+                return transformer.transformTuple(tuple, aliases);
+            }
+
+            @Override
+            public List transformList(List list) {
+                return listTransformer.transformList(list);
             }
         });
     }
@@ -34,4 +54,7 @@ public class HibernateUpgradeHelper {
 //        return query.setTupleTransformer(transformer);
 //    }
 //
+//    public static Query setTupleResultAndListTransformer(Query query, TupleTransformer transformer, ListTransformer listTransformer) {
+//        //TODO: handle setTupleResultAndListTransformer
+//    }
 //}

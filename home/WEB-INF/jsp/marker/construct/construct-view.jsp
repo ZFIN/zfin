@@ -18,7 +18,9 @@
 
     <jsp:body>
         <z:dataManagerDropdown>
-            <a class="dropdown-item" href="/action/infrastructure/deleteRecord/${formBean.marker.zdbID}">Delete</a>
+            <a class="dropdown-item" href="/action/infrastructure/deleteRecord/${formBean.marker.zdbID}"><i class="fas fa-trash"></i> Delete</a>
+            <a class="dropdown-item" href="/action/updates/${formBean.marker.zdbID}"><i class="fas fa-clock"></i> History</a>
+            <a class="dropdown-item" href="/action/nomenclature/history/${formBean.marker.zdbID}"><i class="fas fa-tags"></i> Nomenclature History</a>
         </z:dataManagerDropdown>
 
         <div id="${zfn:makeDomIdentifier(SUMMARY)}">
