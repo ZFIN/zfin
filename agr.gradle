@@ -124,6 +124,11 @@ task createConstructLinkMLFile(type: JavaExec) {
     main = 'org.zfin.marker.agr.ConstructLinkMLInfo'
 }
 
+task createVariantLinkMLFile(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.marker.agr.VariantLinkMLInfo'
+}
+
 task createFishLinkMLFile(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.marker.agr.FishLinkMLInfo'

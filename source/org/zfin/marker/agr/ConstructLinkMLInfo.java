@@ -101,90 +101,65 @@ public class ConstructLinkMLInfo extends LinkMLInfo {
 
                     List<ConstructComponent> components = getConstructRepository().getConstructComponentsByConstructZdbId(construct.getZdbID());
                     List<ConstructComponentSlotAnnotationDTO> componentDTOs = new ArrayList<>();
+
                     if (CollectionUtils.isNotEmpty(components)) {
                         for (ConstructComponent component : components) {
-                            switch (component.getType()) {
-                                case CODING_SEQUENCE_OF, CODING_SEQUENCE_OF_, PROMOTER_OF, PROMOTER_OF_ -> {
-                                    ConstructGenomicEntityAssociationDTO associationDTO = new ConstructGenomicEntityAssociationDTO();
-                                    associationDTO.setConstructIdentifier("ZFIN:" + construct.zdbID);
-                                    associationDTO.setGenomicEntityCurie("ZFIN:" + component.getComponentZdbID());
+                            String componentZdbID = component.getComponentZdbID();
+                            if (componentZdbID != null) {
+                                boolean isGeneOrRNAG = componentZdbID.startsWith("ZDB-GENE") || (componentZdbID.contains("RNAG"));
+                                if (isGeneOrRNAG) {
                                     switch (component.getType()) {
-                                        case CODING_SEQUENCE_OF, CODING_SEQUENCE_OF_ -> associationDTO.setGenomicEntityRelationName("expresses");
-                                        case PROMOTER_OF, PROMOTER_OF_ -> associationDTO.setGenomicEntityRelationName("is_regulated_by");
+                                        case CODING_SEQUENCE_OF, CODING_SEQUENCE_OF_, PROMOTER_OF, PROMOTER_OF_ -> {
+                                            ConstructGenomicEntityAssociationDTO associationDTO = new ConstructGenomicEntityAssociationDTO();
+                                            associationDTO.setConstructIdentifier("ZFIN:" + construct.zdbID);
+                                            associationDTO.setGenomicEntityCurie("ZFIN:" + componentZdbID);
+                                            associationDTO.setGenomicEntityRelationName(populateRelationship(component));
+                                            genomicEntityAssociationDTOList.add(associationDTO);
+                                        }
                                         default -> {
                                         }
                                     }
-                                    genomicEntityAssociationDTOList.add(associationDTO);
-                                    continue;
-                                }
-                                default -> {
+                                } else if (!componentZdbID.startsWith("ZDB-CV")) {
+
+                                    ConstructComponentSlotAnnotationDTO componentSlotAnnotationDTO = new ConstructComponentSlotAnnotationDTO();
+                                    componentSlotAnnotationDTO.setComponentSymbol(component.getComponentValue());
+                                    componentSlotAnnotationDTO.setRelationName(populateRelationship(component));
+                                    componentSlotAnnotationDTO.setTaxonCurie(ZfinDTO.taxonId);
+                                    componentSlotAnnotationDTO.setTaxonText(ZfinDTO.taxonId);
+                                    componentDTOs.add(componentSlotAnnotationDTO);
                                 }
                             }
-
-
-                            ConstructComponentSlotAnnotationDTO componentSlotAnnotationDTO = new ConstructComponentSlotAnnotationDTO();
-                            componentSlotAnnotationDTO.setComponentSymbol(component.getComponentValue());
-                            componentSlotAnnotationDTO.setRelationName(component.getType().name());
-                            componentSlotAnnotationDTO.setTaxonCurie(ZfinDTO.taxonId);
-                            componentSlotAnnotationDTO.setTaxonText(ZfinDTO.taxonId);
-                            componentDTOs.add(componentSlotAnnotationDTO);
                         }
                     }
-                    //// need to work this out
-                    //dto.setConstructComponentDtos(componentDTOs);
-/*
-                    List<ConstructComponent> components = getConstructRepository().getConstructComponentsByConstructZdbId(construct.getZdbID());
-                    List<ConstructComponentDTO> componentDTOs = new ArrayList<>();
-                    if (CollectionUtils.isNotEmpty(components)) {
-                        for (ConstructComponent component : components) {
-                            ConstructComponentDTO componentDTO = new ConstructComponentDTO();
-                            // currently only populate the component ZDB id when we've already submitted the gene in the BGI (ie: no EFGs, regions at this time)
-                            if (component.getComponentZdbID() != null) {
-                                if ((component.getComponentZdbID().startsWith("ZDB-GENE")||(component.getComponentZdbID().contains("RNAG"))))
-                                    componentDTO.setComponentID("ZFIN:" + component.getComponentZdbID());
-                            }
-                            if (component.getType().equals(ConstructComponent.Type.CODING_SEQUENCE_OF) || component.getType().equals(ConstructComponent.Type.CODING_SEQUENCE_OF_)) {
-                                componentDTO.setComponentRelation("expresses");
-                            } else if (component.getType().equals(ConstructComponent.Type.PROMOTER_OF) || component.getType().equals(ConstructComponent.Type.PROMOTER_OF_)) {
-                                componentDTO.setComponentRelation("is_regulated_by");
-                            } else {
-                                continue;
-                            }
-                            componentDTO.setComponentSymbol(component.getComponentValue());
-                            componentDTOs.add(componentDTO);
-                        }
-                    }
-                    if (!componentDTOs.isEmpty()) {
-                        dto.setConstructComponents(componentDTOs);
-                    }
-*/
+                    dto.setConstructComponentDtos(componentDTOs);
                     if (CollectionUtils.isNotEmpty(construct.getAliases())) {
                         List<String> aliasList = new ArrayList<>(construct.getAliases().size());
                         for (MarkerAlias alias : construct.getAliases()) {
                             aliasList.add(alias.getAlias());
                         }
-                        //dto.set(aliasList);
                     }
                     if (CollectionUtils.isNotEmpty(construct.getSecondaryMarkerSet())) {
                         Set<String> secondaryDTOs = new HashSet<>();
                         for (SecondaryMarker secMarker : construct.getSecondaryMarkerSet()) {
                             secondaryDTOs.add(secMarker.getOldID());
                         }
-                        //dto.setSecondaryIds(secondaryDTOs);
                     }
-/*
-                    List<String> pages = new ArrayList<>();
-                    pages.add("construct");
-                    List<CrossReferenceDTO> xRefs = new ArrayList<>();
-                    CrossReferenceDTO xref = new CrossReferenceDTO("ZFIN", construct.getZdbID(), pages);
-                    xRefs.add(xref);
-                    dto.setCrossReferences(xRefs);
-*/
                     return dto;
                 })
             .collect(Collectors.toList());
 
         return allConstructDTOList;
+    }
+
+    private static String populateRelationship(ConstructComponent component) {
+        String value = null;
+        switch (component.getType()) {
+            case CODING_SEQUENCE_OF, CODING_SEQUENCE_OF_ -> value = "expresses";
+            case PROMOTER_OF, PROMOTER_OF_ -> value = "is_regulated_by";
+            default -> {
+            }
+        }
+        return value;
     }
 
 }
