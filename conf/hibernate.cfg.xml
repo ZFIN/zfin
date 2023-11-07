@@ -65,6 +65,7 @@
         <mapping class="org.zfin.curation.PublicationNote"/>
         <mapping class="org.zfin.database.UnloadInfo"/>
         <mapping class="org.zfin.datatransfer.ctd.MeshChebiMapping"/>
+        <mapping class="org.zfin.datatransfer.ctd.PublicationCtd"/>
         <mapping class="org.zfin.expression.Experiment"/>
         <mapping class="org.zfin.expression.ExperimentCondition"/>
         <mapping class="org.zfin.expression.ExpressionExperiment2"/>
