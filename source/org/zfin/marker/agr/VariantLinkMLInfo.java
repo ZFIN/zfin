@@ -62,7 +62,7 @@ public class VariantLinkMLInfo extends LinkMLInfo {
             .map(variant -> {
                 org.alliancegenome.curation_api.model.ingest.dto.VariantDTO dto = new org.alliancegenome.curation_api.model.ingest.dto.VariantDTO();
                 Feature feature = variant.getFeature();
-                dto.setCurie("ZFIN:" + feature.getZdbID());
+                dto.setCurie("ZFIN:" + feature.getZdbID().replace("ZDB-ALT","ZDB-VAR"));
                 dto.setTaxonCurie(ZfinDTO.taxonId);
                 org.alliancegenome.curation_api.model.ingest.dto.DataProviderDTO dataProvider = new DataProviderDTO();
                 dataProvider.setSourceOrganizationAbbreviation("ZFIN");
@@ -77,72 +77,13 @@ public class VariantLinkMLInfo extends LinkMLInfo {
                     switch (variant.getFeature().getType()) {
                         case POINT_MUTATION, DELETION, INSERTION, INDEL -> {
                             switch (variant.getFeature().getType()) {
-                                case POINT_MUTATION -> {
-                                    dto.setVariantTypeCurie("SO:1000008");
-/*
-                                dto.setGenomicReferenceSequence(variant.getFgmdSeqRef());
-                                dto.setGenomicVariantSequence(variant.getFgmdSeqVar());
-*/
-                                    if (variant.getFgmdSeqRef() == null || variant.getFgmdSeqRef() == "" || variant.getFgmdSeqVar().length() > 1
-                                        || variant.getFgmdSeqRef().length() > 1) {
-                                        System.out.println(feature.getZdbID());
-                                    }
-                                    if (variant.getFgmdSeqVar() == null || variant.getFgmdSeqVar() == "") {
-                                        System.out.println(feature.getZdbID());
-                                    }
-                                }
-                                case DELETION -> {
-                                    dto.setVariantTypeCurie("SO:0000159");
-//                                dto.setGenomicVariantSequence("N/A");
-                                    //                              dto.setGenomicReferenceSequence(variant.getFgmdSeqRef());
-                                    if (variant.getFgmdSeqRef() == null || variant.getFgmdSeqRef() == "") {
-                                        System.out.println(feature.getZdbID());
-                                    }
-                                }
-                                case INSERTION -> {
-                                    dto.setVariantTypeCurie("SO:0000667");
-/*
-                                dto.setGenomicReferenceSequence("N/A");
-                                dto.setGenomicVariantSequence(variant.getFgmdSeqVar());
-*/
-                                    if (variant.getFgmdSeqVar() == null || variant.getFgmdSeqVar() == "") {
-                                        System.out.println(feature.getZdbID());
-                                    }
-                                }
-                                case INDEL -> {
-                                    dto.setVariantTypeCurie("SO:1000032");
-                                    //dto.setGenomicVariantSequence(variant.getFgmdSeqVar());
-                                }
+                                case POINT_MUTATION -> dto.setVariantTypeCurie("SO:1000008");
+                                case DELETION -> dto.setVariantTypeCurie("SO:0000159");
+                                case INSERTION -> dto.setVariantTypeCurie("SO:0000667");
+                                case INDEL -> dto.setVariantTypeCurie("SO:1000032");
                                 default -> System.out.println("invalid feature type");
 
                             }
-                            ///                            dto.setSequenceOfReferenceAccessionNumber("RefSeq:" + ftrLoc.getReferenceSequenceAccessionNumber());
-///                            dto.setAssembly(ftrLoc.getAssembly());
-///                            dto.setStart(ftrLoc.getStartLocation());
-///                            dto.setEnd(ftrLoc.getEndLocation());
-///                            dto.setChromosome(ftrLoc.getChromosome());
-/*
-                            if (CollectionUtils.isNotEmpty(getPublicationRepository().getAllPublicationsForFeature(feature))) {
-                                ArrayList<PublicationAgrDTO> datasetPubs = new ArrayList<>();
-                                for (Publication pub : getPublicationRepository().getAllPublicationsForFeature(feature)) {
-
-                                    PublicationAgrDTO fixedPub = new PublicationAgrDTO();
-                                    List<String> pubPages = new ArrayList<>();
-                                    pubPages.add("reference");
-
-                                    CrossReferenceDTO pubXref = new CrossReferenceDTO("ZFIN", pub.getZdbID(), pubPages);
-                                    if (pub.getAccessionNumber() != null) {
-                                        fixedPub.setPublicationId("PMID:" + pub.getAccessionNumber());
-                                        fixedPub.setCrossReference(pubXref);
-                                    } else {
-                                        fixedPub.setPublicationId("ZFIN:" + pub.getZdbID());
-                                    }
-                                    datasetPubs.add(fixedPub);
-                                }
-///                                dto.setReferences(datasetPubs);
-
-                            }
-*/
                             if (CollectionUtils.isNotEmpty(feature.getExternalNotes())) {
                                 ArrayList<NoteDTO> noteDTOS = new ArrayList<>();
                                 for (FeatureNote varNote : feature.getExternalNotes()) {
@@ -178,41 +119,15 @@ public class VariantLinkMLInfo extends LinkMLInfo {
                                     }).toList());
                                 }
                             }
-                            List<String> pages = new ArrayList<>();
-                            pages.add("variation");
-                            List<CrossReferenceDTO> xRefs = new ArrayList<>();
-                            CrossReferenceDTO xref = new CrossReferenceDTO("ZFIN", feature.getZdbID(), pages);
-                            xRefs.add(xref);
-///                            dto.setCrossReferences(xRefs);
                         }
                         default -> {
                         }
                     }
                 }
-
                 return dto;
             }).toList();
-
-/*
-        List<VariantDTO> allVariantDTOListNoNulls = new ArrayList<>();
-        for (VariantDTO vDto : allVariantDTOList) {
-            if (!(vDto == null)) {
-                if (!(vDto.getAlleleId() == null)) {
-                    allVariantDTOListNoNulls.add(vDto);
-                }
-            }
-        }
-        System.out.printf("%,d%n", allVariantDTOListNoNulls.size());
-        AllVariantDTO allVariantDTO = new AllVariantDTO();
-        allVariantDTO.setVariants(allVariantDTOListNoNulls);
-        String dataProvider = "ZFIN";
-        List<String> pages = new ArrayList<>();
-        pages.add("homepage");
-        MetaDataDTO meta = new MetaDataDTO(new DataProviderDTO("curated", new CrossReferenceDTO(dataProvider, dataProvider, pages)));
-        allVariantDTO.setMetaData(meta);
-*/
-        return allVariantDTOList;
-
+        // weed out alleles not in the list
+        return allVariantDTOList.stream().filter(variantDTO -> variantDTO.getVariantTypeCurie() != null).toList();
     }
 
 }
