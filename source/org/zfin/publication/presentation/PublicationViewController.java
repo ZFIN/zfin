@@ -35,6 +35,7 @@ import org.zfin.mutant.Fish;
 import org.zfin.mutant.Genotype;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.mutant.repository.PhenotypeRepository;
+import org.zfin.ontology.MatchingTermService;
 import org.zfin.orthology.Ortholog;
 import org.zfin.publication.Journal;
 import org.zfin.publication.Publication;
@@ -143,7 +144,7 @@ PublicationViewController {
         navigationMenu.setRoot(isRootUser());
         navigationMenu.setModel(model);
         model.addAttribute("navigationMenu", navigationMenu);
-
+        model.addAttribute("ctdPublicationID", MatchingTermService.getCtdPubID(publication.getZdbID()));
         return "publication/publication-view";
     }
 

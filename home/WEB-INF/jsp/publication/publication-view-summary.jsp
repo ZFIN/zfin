@@ -92,6 +92,12 @@
                 </span>
     </z:attributeListItem>
 
+    <c:if test="${!empty ctdPublicationID}">
+        <z:attributeListItem label="CTD">
+            <a href="https://ctdbase.org/detail.go?type=reference&acc=${ctdPublicationID}">${ctdPublicationID}</a>
+        </z:attributeListItem>
+    </c:if>
+
     <authz:authorize access="hasRole('root')">
         <z:attributeListItem label="Files">
             <c:forEach items="${publication.files}" var="file" varStatus="loop">

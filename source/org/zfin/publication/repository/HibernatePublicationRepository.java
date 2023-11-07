@@ -965,9 +965,10 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     public List<Publication> getPublicationByPmid(Integer pubMedID) {
-        return (List<Publication>) HibernateUtil.currentSession().createCriteria(Publication.class)
-            .add(Restrictions.eq("accessionNumber", pubMedID))
-            .list();
+        String hql = "from Publication where accessionNumber = :id";
+        Query<Publication> query = HibernateUtil.currentSession().createQuery(hql, Publication.class);
+        query.setParameter("id", pubMedID);
+        return query.list();
     }
 
     @Override
@@ -1402,24 +1403,24 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     public Boolean canDeletePublication(Publication publication) {
 
         String sql = """
-                       select count(recattrib_source_zdb_id) 
-                           from record_attribution, figure 
-                          where recattrib_source_zdb_id = :zdbID
-                            and recattrib_data_zdb_id = fig_zdb_id
-                            and (exists (select 'x' 
-                                           from phenotype_experiment
-                                          where phenox_fig_zdb_id = fig_zdb_id)
-                              or exists (select 'x' 
-                           from construct_figure
-                                          where consfig_fig_zdb_id = fig_zdb_id)
-                              or exists (select 'x' 
-                           from expression_pattern_figure
-                                          where xpatfig_fig_zdb_id = fig_zdb_id)
-                              or exists (select 'x' 
-                           from genotype_figure_fast_search
-                                          where gffs_fig_zdb_id = fig_zdb_id)
-                                );
-                                """;
+            select count(recattrib_source_zdb_id) 
+                from record_attribution, figure 
+               where recattrib_source_zdb_id = :zdbID
+                 and recattrib_data_zdb_id = fig_zdb_id
+                 and (exists (select 'x' 
+                                from phenotype_experiment
+                               where phenox_fig_zdb_id = fig_zdb_id)
+                   or exists (select 'x' 
+                from construct_figure
+                               where consfig_fig_zdb_id = fig_zdb_id)
+                   or exists (select 'x' 
+                from expression_pattern_figure
+                               where xpatfig_fig_zdb_id = fig_zdb_id)
+                   or exists (select 'x' 
+                from genotype_figure_fast_search
+                               where gffs_fig_zdb_id = fig_zdb_id)
+                     );
+                     """;
 
         Long figureDataCount = getCount(sql, publication.getZdbID());
 
