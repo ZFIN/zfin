@@ -45,11 +45,11 @@ public class HibernateProfileRepository implements ProfileRepository {
 		if (zdbID == null) {
 			return null;
 		}
-		return HibernateUtil.currentSession().get(Person.class, zdbID);
+		return currentSession().get(Person.class, zdbID);
 	}
 
 	public Organization getOrganizationByName(String name) {
-		Session session = HibernateUtil.currentSession();
+		Session session = currentSession();
 		String hql = "select distinct o  from  Organization o" +
 			"     where o.name = :name";
 		Query<Organization> query = session.createQuery(hql, Organization.class);
@@ -59,13 +59,13 @@ public class HibernateProfileRepository implements ProfileRepository {
 
 
 	public void insertPerson(Person person) {
-		Session session = HibernateUtil.currentSession();
+		Session session = currentSession();
 		session.save(person);
 	}
 
 
 	public void addSupplier(Organization organization, Marker marker) {
-		Session session = HibernateUtil.currentSession();
+		Session session = currentSession();
 		MarkerSupplier supplier = new MarkerSupplier();
 		supplier.setOrganization(organization);
 		supplier.setMarker(marker);
@@ -75,7 +75,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 	}
 
 	public void removeSupplier(Organization organization, Marker marker) {
-		Session session = HibernateUtil.currentSession();
+		Session session = currentSession();
 		MarkerSupplier supplier = getSpecificSupplier(marker, organization);
 		if (supplier != null) {
 			session.delete(supplier);
@@ -84,7 +84,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 	}
 
 	public void insertLab(Lab lab) {
-		Session session = HibernateUtil.currentSession();
+		Session session = currentSession();
 		session.save(lab);
 	}
 
@@ -100,7 +100,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 	}
 
 	public CuratorSession getCuratorSession(String curatorZdbID, String pubZdbID, String field) {
-		Session session = HibernateUtil.currentSession();
+		Session session = currentSession();
 		String hql = "from CuratorSession where curator.zdbID = :curID AND field = :field ";
 		if (pubZdbID != null) {
 			hql += " AND publication.zdbID = :pubID";
@@ -121,7 +121,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 			return null;
 		}
 
-		Session session = HibernateUtil.currentSession();
+		Session session = currentSession();
 		Criteria criteria = session.createCriteria(CuratorSession.class);
 		criteria.add(Restrictions.eq("curator.zdbID", curator.getZdbID()));
 		criteria.add(Restrictions.eq("publication.zdbID", pubID));
@@ -131,7 +131,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 
 	public CuratorSession createCuratorSession(String curatorZdbID, String pubZdbID, String field, String value) {
 		PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
-		Session session = HibernateUtil.currentSession();
+		Session session = currentSession();
 
 		CuratorSession cs = new CuratorSession();
 
@@ -152,13 +152,13 @@ public class HibernateProfileRepository implements ProfileRepository {
 			return;
 		}
 
-		Session session = HibernateUtil.currentSession();
+		Session session = currentSession();
 		AccountInfo info = session.get(AccountInfo.class, person.getZdbID());
 		session.delete(info);
 	}
 
 	public boolean userExists(String login) {
-		Session session = HibernateUtil.currentSession();
+		Session session = currentSession();
 		Criteria crit = session.createCriteria(Person.class);
 		crit.add(Restrictions.eq("accountInfo.login", login));
 		Person person = (Person) crit.uniqueResult();
@@ -175,7 +175,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 			return;
 		}
 
-		Session session = HibernateUtil.currentSession();
+		Session session = currentSession();
 		String newName = newAccountInfo.getName();
 		Person submittingPerson = ProfileService.getCurrentSecurityUser();
 		if (StringUtils.isNotEmpty(newName) && !newName.equals(currentAccountInfo.getName())) {
@@ -244,7 +244,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 	 * @param visibility  attribute value
 	 */
 	public void setCuratorSession(String pubID, CuratorSession.Attribute showSection, boolean visibility) {
-		Session session = HibernateUtil.currentSession();
+		Session session = currentSession();
 		CuratorSession curationAttribute = getCuratorSession(pubID, showSection);
 		if (curationAttribute != null) {
 			curationAttribute.setValue(String.valueOf(visibility));
@@ -273,7 +273,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 	 * @param zdbID         zdbID
 	 */
 	public void setCuratorSession(String publicationID, CuratorSession.Attribute attributeName, String zdbID) {
-		Session session = HibernateUtil.currentSession();
+		Session session = currentSession();
 		CuratorSession curationAttribute = getCuratorSession(publicationID, attributeName);
 		if (curationAttribute != null) {
 			curationAttribute.setValue(zdbID);
@@ -295,7 +295,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 	}
 
 	public Person getPersonByEmail(String email) {
-		return (Person) HibernateUtil.currentSession()
+		return (Person) currentSession()
 			.createCriteria(Person.class)
 			.add(Restrictions.eq("email", email)).uniqueResult();
 	}
@@ -308,7 +308,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 	 * @return person
 	 */
 	public Person getPersonByName(String login) {
-		Session session = HibernateUtil.currentSession();
+		Session session = currentSession();
 		Criteria criteria = session.createCriteria(Person.class);
 		criteria.add(Restrictions.eq("accountInfo.login", login));
 		return (Person) criteria.uniqueResult();
@@ -323,7 +323,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 	 *
 	 * */
 	public List<Person> getPeopleByFullName(String fullName) {
-		Session session = HibernateUtil.currentSession();
+		Session session = currentSession();
 		Query<Person> query = session.createQuery("from Person where fullName = :fullName", Person.class);
 		query.setParameter("fullName", fullName);
 		return query.list();
@@ -335,7 +335,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 	 * @param curatorSession CuratorSession
 	 */
 	public void deleteCuratorSession(CuratorSession curatorSession) {
-		Session session = HibernateUtil.currentSession();
+		Session session = currentSession();
 		session.delete(curatorSession);
 	}
 
@@ -348,7 +348,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 	 * @return curator session
 	 */
 	public CuratorSession getCuratorSession(String publicationID, String boxDivID, CuratorSession.Attribute mutantDisplayBox) {
-		Session session = HibernateUtil.currentSession();
+		Session session = currentSession();
 		Person curator = ProfileService.getCurrentSecurityUser();
 		String hql = "from CuratorSession where publication.zdbID = :publicationID " +
 			"AND field = :fieldName AND curator = :person";
@@ -360,7 +360,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 	}
 
 	public List<Organization> getOrganizationsByName(String name) {
-		Query<Organization> query = HibernateUtil.currentSession().createQuery("from Organization where lower(name) like :name", Organization.class);
+		Query<Organization> query = currentSession().createQuery("from Organization where lower(name) like :name", Organization.class);
 		query.setParameter("name", "%" + name.toLowerCase() + "%");
 		List<Organization> labs = query.getResultList();
 		Collections.sort(labs);
@@ -370,12 +370,12 @@ public class HibernateProfileRepository implements ProfileRepository {
 
 	@Override
 	public Lab getLabById(String labZdbId) {
-		return HibernateUtil.currentSession().get(Lab.class, labZdbId);
+		return currentSession().get(Lab.class, labZdbId);
 	}
 
 	@Override
 	public Lab getLabByName(String name) {
-		return HibernateUtil.currentSession().createQuery("from Lab where name = :name", Lab.class)
+		return currentSession().createQuery("from Lab where name = :name", Lab.class)
 			.setParameter("name", name).uniqueResult();
 	}
 
@@ -399,7 +399,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 						WHERE  id.idsup_data_zdb_id =  :OID
 			""";
 
-		return HibernateUtil.currentSession().createSQLQuery(sql)
+		return currentSession().createSQLQuery(sql)
 			.setParameter("OID", zdbID)
 			.setResultTransformer(new BasicTransformerAdapter() {
 				@Override
@@ -432,7 +432,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 
 	@Override
 	public Company getCompanyById(String zdbID) {
-		return HibernateUtil.currentSession().get(Company.class, zdbID);
+		return currentSession().get(Company.class, zdbID);
 	}
 
 	@Override
@@ -450,7 +450,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 						    and a.position_id=c.compos_pk_id
 						    order by c.compos_order desc;
 			""";
-		List<Tuple> tupleList = HibernateUtil.currentSession().createNativeQuery(sql, Tuple.class)
+		List<Tuple> tupleList = currentSession().createNativeQuery(sql, Tuple.class)
 			.setParameter("zdbID", zdbID)
 			.list();
 
@@ -481,7 +481,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 						        and a.position_id=c.labpos_pk_id
 						        order by c.labpos_order desc, b.name
 			""";
-		List<Tuple> tupleList = HibernateUtil.currentSession().createNativeQuery(sql, Tuple.class)
+		List<Tuple> tupleList = currentSession().createNativeQuery(sql, Tuple.class)
 			.setParameter("zdbID", zdbID)
 			.list();
 		return tupleList.stream()
@@ -506,7 +506,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 						 and a.position_id = c.labpos_pk_id
 						 order by c.labpos_order,b.last_name, b.first_name
 			""";
-		List<Tuple> tupleList = HibernateUtil.currentSession().createNativeQuery(sql, Tuple.class)
+		List<Tuple> tupleList = currentSession().createNativeQuery(sql, Tuple.class)
 			.setParameter("zdbID", zdbID)
 			.list();
 		return tupleList.stream()
@@ -559,7 +559,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 						        c.compos_position,
 						        b.last_name , b.first_name
 			""";
-		List<Tuple> tupleList = HibernateUtil.currentSession().createNativeQuery(sql, Tuple.class)
+		List<Tuple> tupleList = currentSession().createNativeQuery(sql, Tuple.class)
 			.setParameter("zdbID", zdbID)
 			.list();
 		return tupleList.stream()
@@ -604,7 +604,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 			logger.error("Not a valid organization to remove member from: " + organizationZdbID);
 			return 0;
 		}
-		return HibernateUtil.currentSession().createSQLQuery(sql)
+		return currentSession().createSQLQuery(sql)
 			.setParameter("personZdbID", personZdbID.toUpperCase())
 			.setParameter("organizationZdbID", organizationZdbID.toUpperCase())
 			.executeUpdate();
@@ -639,7 +639,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 		logger.debug("personZdbID: " + personZdbID);
 		logger.debug("organizationZdbID: " + organizationZdbID);
 		logger.debug("positionID: " + position);
-		return HibernateUtil.currentSession().createSQLQuery(sql)
+		return currentSession().createSQLQuery(sql)
 			.setParameter("personZdbID", personZdbID)
 			.setParameter("companyZdbID", organizationZdbID)
 			.setParameter("positionID", position)
@@ -653,7 +653,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 		logger.debug("person: " + personZdbID);
 		logger.debug("lab: " + organizationZdbID);
 		logger.debug("positionID: " + positionID);
-		return HibernateUtil.currentSession().createSQLQuery(sql)
+		return currentSession().createSQLQuery(sql)
 			.setParameter("personZdbID", personZdbID)
 			.setParameter("labZdbID", organizationZdbID)
 			.setParameter("positionID", positionID)
@@ -667,7 +667,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 		logger.debug("person: " + personZdbID);
 		logger.debug("lab: " + organizationZdbID);
 		logger.debug("positionID: " + positionID);
-		return HibernateUtil.currentSession().createSQLQuery(sql)
+		return currentSession().createSQLQuery(sql)
 			.setParameter("personZdbID", personZdbID)
 			.setParameter("labZdbID", organizationZdbID)
 			.setParameter("positionID", positionID)
@@ -717,7 +717,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 		logger.debug("person: " + personZdbID);
 		logger.debug("company: " + organizationZdbID);
 		logger.debug("positionID: " + positionID);
-		return HibernateUtil.currentSession().createSQLQuery(sql)
+		return currentSession().createSQLQuery(sql)
 			.setParameter("personZdbID", personZdbID)
 			.setParameter("companyZdbID", organizationZdbID)
 			.setParameter("positionID", positionID)
@@ -727,7 +727,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 	@Override
 	public int removeLabMember(String personZdbID, String organizationZdbID) {
 		String sql = "delete from int_person_lab where source_id = :personZdbID and target_id = :organizationID ";
-		return HibernateUtil.currentSession().createSQLQuery(sql)
+		return currentSession().createSQLQuery(sql)
 			.setParameter("personZdbID", personZdbID)
 			.setParameter("organizationID", organizationZdbID)
 			.executeUpdate();
@@ -736,7 +736,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 	@Override
 	public int removeCompanyMember(String personZdbID, String organizationZdbID) {
 		String sql = "delete from int_person_company where source_id = :personZdbID and target_id = :organizationID ";
-		return HibernateUtil.currentSession().createSQLQuery(sql)
+		return currentSession().createSQLQuery(sql)
 			.setParameter("personZdbID", personZdbID)
 			.setParameter("organizationID", organizationZdbID)
 			.executeUpdate();
@@ -747,18 +747,18 @@ public class HibernateProfileRepository implements ProfileRepository {
 		if (null == orgZdbID) {
 			return null;
 		}
-		return HibernateUtil.currentSession().get(Organization.class, orgZdbID);
+		return currentSession().get(Organization.class, orgZdbID);
 	}
 
 	@Override
 	public List<Lab> getLabs() {
-		return HibernateUtil.currentSession().createQuery("from Lab order by name", Lab.class)
+		return currentSession().createQuery("from Lab order by name", Lab.class)
 			.getResultList();
 	}
 
 	@Override
 	public List<Company> getCompanies() {
-		return HibernateUtil.currentSession().createQuery("from Company order by name", Company.class)
+		return currentSession().createQuery("from Company order by name", Company.class)
 			.getResultList();
 	}
 
@@ -766,7 +766,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 	@Override
 	public PaginationResult<Company> searchCompanies(CompanySearchBean searchBean) {
 
-		Criteria criteria = HibernateUtil.currentSession()
+		Criteria criteria = currentSession()
 			.createCriteria(Company.class).addOrder(Order.asc("name"));
 		if (StringUtils.isNotEmpty(searchBean.getName())) {
 			criteria = addTokenizedLikeRestriction("name", searchBean.getName(), criteria);
@@ -798,7 +798,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 	@Override
 	public PaginationResult<Lab> searchLabs(LabSearchBean searchBean) {
 
-		Criteria criteria = HibernateUtil.currentSession()
+		Criteria criteria = currentSession()
 			.createCriteria(Lab.class).addOrder(Order.asc("name"));
 		if (StringUtils.isNotEmpty(searchBean.getName())) {
 			criteria = addTokenizedLikeRestriction("name", searchBean.getName(), criteria);
@@ -830,11 +830,11 @@ public class HibernateProfileRepository implements ProfileRepository {
 	public List<Person> getPersonByLastNameStartsWith(String lastNameStartsWith) {
 		if (lastNameStartsWith == null) {
 			String hql = "from Person where lastName is null order by zdbID";
-			return HibernateUtil.currentSession().createQuery(hql, Person.class)
+			return currentSession().createQuery(hql, Person.class)
 				.list();
 		}
 		String hql = "from Person where lastName like :lastName order by lastName, firstName";
-		return HibernateUtil.currentSession().createQuery(hql, Person.class)
+		return currentSession().createQuery(hql, Person.class)
 			.setParameter("lastName", lastNameStartsWith + "%")
 			.list();
 	}
@@ -877,7 +877,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 			select ipl.source_id, ipl.target_id from int_person_lab ipl
 			where ipl.source_id=:personZdbID  and ipl.target_id= :organizationZdbID
 			""";
-		return HibernateUtil.currentSession().createNativeQuery(queryString)
+		return currentSession().createNativeQuery(queryString)
 			.setParameter("personZdbID", personZdbID)
 			.setParameter("organizationZdbID", organizationZdbID)
 			.list()
@@ -887,13 +887,13 @@ public class HibernateProfileRepository implements ProfileRepository {
 
 	@Override
 	public Address getAddress(Long addressId) {
-		return HibernateUtil.currentSession().get(Address.class, addressId);
+		return currentSession().get(Address.class, addressId);
 	}
 
 	@Override
 	public PaginationResult<Person> searchPeople(PersonSearchBean searchBean) {
 
-		Criteria criteria = HibernateUtil.currentSession()
+		Criteria criteria = currentSession()
 			.createCriteria(Person.class)
 			.add(Restrictions.eq("hidden", false))
 			.addOrder(Order.asc("lastName"))
@@ -1005,7 +1005,7 @@ public class HibernateProfileRepository implements ProfileRepository {
 
 	@Override
 	public boolean emailExists(String email) {
-		Session session = HibernateUtil.currentSession();
+		Session session = currentSession();
 		Query<Person> query = session.createQuery("from Person where email = :email", Person.class);
 		query.setParameter("email", email);
 		List<Person> persons = query.list();
