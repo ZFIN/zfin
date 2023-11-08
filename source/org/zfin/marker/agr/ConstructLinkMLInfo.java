@@ -12,6 +12,7 @@ import org.alliancegenome.curation_api.model.ingest.dto.slotAnnotions.NameSlotAn
 import org.alliancegenome.curation_api.model.ingest.dto.slotAnnotions.constructSlotAnnotations.ConstructComponentSlotAnnotationDTO;
 import org.apache.commons.collections4.CollectionUtils;
 import org.zfin.construct.ConstructComponent;
+import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerAlias;
@@ -107,13 +108,17 @@ public class ConstructLinkMLInfo extends LinkMLInfo {
                             String componentZdbID = component.getComponentZdbID();
                             if (componentZdbID != null) {
                                 boolean isGeneOrRNAG = componentZdbID.startsWith("ZDB-GENE") || (componentZdbID.contains("RNAG"));
+                                String relationName = populateRelationship(component);
+                                if(StringUtils.isEmpty(relationName)){
+                                    continue;
+                                }
                                 if (isGeneOrRNAG) {
                                     switch (component.getType()) {
                                         case CODING_SEQUENCE_OF, CODING_SEQUENCE_OF_, PROMOTER_OF, PROMOTER_OF_ -> {
                                             ConstructGenomicEntityAssociationDTO associationDTO = new ConstructGenomicEntityAssociationDTO();
                                             associationDTO.setConstructIdentifier("ZFIN:" + construct.zdbID);
                                             associationDTO.setGenomicEntityCurie("ZFIN:" + componentZdbID);
-                                            associationDTO.setGenomicEntityRelationName(populateRelationship(component));
+                                            associationDTO.setGenomicEntityRelationName(relationName);
                                             genomicEntityAssociationDTOList.add(associationDTO);
                                         }
                                         default -> {
@@ -123,7 +128,7 @@ public class ConstructLinkMLInfo extends LinkMLInfo {
 
                                     ConstructComponentSlotAnnotationDTO componentSlotAnnotationDTO = new ConstructComponentSlotAnnotationDTO();
                                     componentSlotAnnotationDTO.setComponentSymbol(component.getComponentValue());
-                                    componentSlotAnnotationDTO.setRelationName(populateRelationship(component));
+                                    componentSlotAnnotationDTO.setRelationName(relationName);
                                     componentSlotAnnotationDTO.setTaxonCurie(ZfinDTO.taxonId);
                                     componentSlotAnnotationDTO.setTaxonText(ZfinDTO.taxonId);
                                     componentDTOs.add(componentSlotAnnotationDTO);
