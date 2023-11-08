@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import * as FigureService from '../api/figure';
 import InlineEditTextarea from '../utils/inline-edit-textarea';
 import FigureUpload from '../components/figure-edit/figure-upload';
@@ -21,6 +21,50 @@ function FigureEdit({ pubId }) {
                 setLoading(false);
             });
     }, [pubId]);
+
+    useEffect(() => {
+        setFigureTooltips();
+    }, [loading]);
+
+    function setFigureTooltips() {
+        const buttons = document.querySelectorAll('.btn-dense');
+
+        Array.from(buttons).forEach((button, index) => {
+            const figure = figures[index];
+            const tooltip = figureDeleteTooltip(figure);
+            if (tooltip) {
+                $(button.parentElement).tooltip(tooltip);
+            }
+        });
+    }
+
+    function figureDeleteTooltip(figure) {
+        const numExpr = figure.numExpressionStatements;
+        const numPheno = figure.numPhenotypeStatements;
+
+        let title = '';
+        if (numExpr || numPheno) {
+            title = 'This figure cannot be deleted because it is used in ';
+            if (numExpr) {
+                title += '<b>' + numExpr + ' expression</b> ';
+            }
+            if (numExpr && numPheno) {
+                title += 'and ';
+            }
+            if (numPheno) {
+                title += '<b>' + numPheno + ' phenotype</b> ';
+            }
+            title += 'statements';
+        }
+        if (title) {
+            return {
+                title: title,
+                html: true,
+                placement: 'left'
+            };
+        }
+        return null;
+    }
 
     function deleteFigure(fig) {
         fig.deleting = true;
