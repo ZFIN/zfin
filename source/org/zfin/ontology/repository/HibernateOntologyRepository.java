@@ -1280,53 +1280,6 @@ public class HibernateOntologyRepository implements OntologyRepository {
         return new HashSet<>(query.getResultList());
     }
 
-    private Map<String, List<TermExternalReference>> casMap = null;
-
-    public Map<String, List<TermExternalReference>> getAllTermExternalReference() {
-        if (casMap != null)
-            return casMap;
-        String hql = """
-            from TermExternalReference where prefix in (:prefix)
-            """;
-        org.hibernate.query.Query<TermExternalReference> query = HibernateUtil.currentSession().createQuery(hql, TermExternalReference.class);
-        query.setParameterList("prefix", List.of("CAS", "MESH"));
-        List<TermExternalReference> list = query.list();
-        casMap = list.stream().collect(groupingBy(TermExternalReference::getPrefix));
-        return casMap;
-    }
-
-    @Override
-    public TermExternalReference getTermExternalReference(String accession, String prefix) {
-/*
-        String hql = """
-            from TermExternalReference where
-            prefix = :prefix and accessionNumber = :accession
-            """;
-
-        org.hibernate.query.Query<TermExternalReference> query = HibernateUtil.currentSession().createQuery(hql, TermExternalReference.class);
-        query.setParameter("prefix", prefix);
-        query.setParameter("accession", accession);
-*/
-        List<TermExternalReference> list = getAllTermExternalReference().get(accession);
-
-        if (list == null) {
-            System.out.println("No Chebi Terms found for " + accession);
-            return null;
-        }
-        if (list.size() > 1) {
-            System.out.println("Multiple Chebi Terms found for " + accession);
-            list.forEach(reference -> System.out.println(reference.getTerm().getOboID()));
-            return null;
-        }
-
-        return list.get(0);
-    }
-
-    @Override
-    public List<TermExternalReference> getAllCasReferences() {
-        return getAllTermExternalReference().get("CAS");
-    }
-
     @Override
     public Map<String, GenericTerm> getGoTermsToZdbID() {
         String hql = " from GenericTerm where oboID like 'GO:%' ";
