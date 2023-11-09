@@ -101,6 +101,13 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return session.get(Marker.class, zdbID);
     }
 
+    @Override
+    public List<Marker> getMarkersByZdbIDs(List<String> zdbIDs) {
+        String hql = "select m from Marker m where m.zdbID in (:IDs) ";
+        Query<Marker> query = HibernateUtil.currentSession().createQuery(hql, Marker.class);
+        query.setParameterList("IDs", zdbIDs);
+        return query.list();
+    }
 
     public SNP getSNPByID(String zdbID) {
         Session session = currentSession();
@@ -3299,6 +3306,15 @@ public class HibernateMarkerRepository implements MarkerRepository {
         }
         return query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
+
+    @Override
+    public List<Marker> getWithdrawnMarkers() {
+        String hql = "from Marker where mrkr_abbrev like :withdrawn ";
+        Query<Marker> query = HibernateUtil.currentSession().createQuery(hql, Marker.class);
+        query.setParameter("withdrawn", Marker.WITHDRAWN + "%");
+        return query.list();
+    }
+
 
     @Override
     public Map<String, GenericTerm> getSoTermMapping() {

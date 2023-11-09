@@ -8,10 +8,8 @@ import org.zfin.sequence.MarkerDBLink;
 import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.uniprot.persistence.UniProtRelease;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.zfin.Species.Type.ZEBRAFISH;
 import static org.zfin.framework.HibernateUtil.currentSession;
@@ -28,7 +26,9 @@ public class UniProtLoadService {
 
     public static void processActions(Set<UniProtLoadAction> actions, UniProtRelease release) {
         currentSession().beginTransaction();
-        for(UniProtLoadAction action : actions) {processAction(action);}
+
+        bulkProcessActions(actions);
+
         if (release != null) {
             release.setProcessedDate(new Date());
             currentSession().saveOrUpdate(release);
@@ -36,18 +36,49 @@ public class UniProtLoadService {
         currentSession().getTransaction().commit();
     }
 
-    public static ReferenceDatabase getUniProtReferenceDatabase() {
-        return getSequenceRepository().getReferenceDatabase(UNIPROTKB, POLYPEPTIDE, SEQUENCE, ZEBRAFISH);
+    private static void bulkProcessActions(Set<UniProtLoadAction> actions) {
+        Map<UniProtLoadAction.Type, List<UniProtLoadAction>> groupedActions = actions.stream().collect(Collectors.groupingBy(UniProtLoadAction::getType));
+        for(UniProtLoadAction.Type type : groupedActions.keySet()) {
+            if(type.equals(UniProtLoadAction.Type.LOAD)) {
+                bulkLoadAction(groupedActions.get(type));
+            } else if(type.equals(UniProtLoadAction.Type.DELETE)) {
+                bulkDeleteAction(groupedActions.get(type));
+            } else {
+                //ignore other action types used for reporting
+            }
+        }
     }
 
-    private static void processAction(UniProtLoadAction action) {
-        if (action.getType().equals(UniProtLoadAction.Type.LOAD)) {
-            loadAction(action);
-        } else if (action.getType().equals(UniProtLoadAction.Type.DELETE)) {
-            deleteAction(action);
-        } else {
-            //ignore other action types used for reporting
+    private static void bulkLoadAction(List<UniProtLoadAction> actions) {
+        List<Marker> markers = getMarkerRepository().getMarkersByZdbIDs(actions.stream().map(UniProtLoadAction::getGeneZdbID).toList());
+        Map<String, Marker> markerMap = markers.stream().collect(Collectors.toMap(Marker::getZdbID, marker -> marker));
+        List<MarkerDBLink> dblinks = new ArrayList<>();
+        for(UniProtLoadAction action : actions) {
+            log.debug("Adding dblink: " + action.getAccession() + " " + action.getGeneZdbID());
+            Marker marker = markerMap.get(action.getGeneZdbID());
+            MarkerDBLink newLink = new MarkerDBLink();
+            newLink.setAccessionNumber(action.getAccession());
+            newLink.setMarker(marker);
+            newLink.setReferenceDatabase(getUniProtReferenceDatabase());
+            newLink.setLength(action.getLength());
+            newLink.setLinkInfo(getUniProtLoadLinkInfo());
+            dblinks.add(newLink);
         }
+        Publication publication = getPublicationRepository().getPublication(PUBLICATION_ATTRIBUTION_ID);
+        getSequenceRepository().addDBLinks(dblinks, publication, 50);
+    }
+
+    private static void bulkDeleteAction(List<UniProtLoadAction> actions) {
+        ReferenceDatabase referenceDatabase = getUniProtReferenceDatabase();
+        List<DBLink> dblinksToDelete = new ArrayList<>();
+        for(UniProtLoadAction action : actions) {
+            DBLink dblink = getSequenceRepository().getDBLink(action.getGeneZdbID(), action.getAccession(), referenceDatabase.getForeignDB().getDbName().toString());
+            System.err.println("Removing dblink: " + dblink.getZdbID() + " " + dblink.getAccessionNumber() + " " + action.getGeneZdbID());
+            log.debug("Removing dblink: " + dblink.getZdbID());
+            getSequenceRepository().deleteReferenceProteinByDBLinkID(dblink.getZdbID());
+            dblinksToDelete.add(dblink);
+        }
+        getSequenceRepository().removeDBLinks(dblinksToDelete);
     }
 
     private static void loadAction(UniProtLoadAction action) {
@@ -64,6 +95,10 @@ public class UniProtLoadService {
         ArrayList<MarkerDBLink> dblinks = new ArrayList<>();
         dblinks.add(newLink);
         getSequenceRepository().addDBLinks(dblinks, publication, 1);
+    }
+
+    public static ReferenceDatabase getUniProtReferenceDatabase() {
+        return getSequenceRepository().getReferenceDatabase(UNIPROTKB, POLYPEPTIDE, SEQUENCE, ZEBRAFISH);
     }
 
     private static void deleteAction(UniProtLoadAction action) {

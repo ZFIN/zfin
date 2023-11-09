@@ -10,7 +10,9 @@ public class GafOrganization {
         FP_INFERENCES("FP Inferences"),
         GOA("GOA"),
         NOCTUA("Noctua"),
-        PAINT("PAINT"),;
+        PAINT("PAINT"),
+        UNIPROT("UniProt"),
+        ;
 
         private String value;
 

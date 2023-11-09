@@ -54,17 +54,17 @@ task thisseLegacyImportAnalysisTask(type: JavaExec) {
 
 task uniprotAnalysisTask(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = 'org.zfin.uniprot.UniProtAnalysisTask'
+    main = 'org.zfin.uniprot.task.UniProtAnalysisTask'
 }
 
 task uniprotCompareTask(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = 'org.zfin.uniprot.UniProtCompareTask'
+    main = 'org.zfin.uniprot.task.UniProtCompareTask'
 }
 
 task uniprotReleaseDiffTask(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = 'org.zfin.uniprot.UniProtReleaseDiffTask'
+    main = 'org.zfin.uniprot.task.UniProtReleaseDiffTask'
 }
 
 task uniprotReleaseCheckTask(type: JavaExec) {
@@ -77,18 +77,18 @@ task uniprotReleaseCheckTask(type: JavaExec) {
 task uniprotLoadTask(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.uniprot.task.UniProtLoadTask'
-//    systemProperty "log4j2.configurationFile", System.getProperty("log4j2.configurationFile", "./home/WEB-INF/log4j2-debug.xml")
+    systemProperty "log4j2.configurationFile", System.getProperty("log4j2.configurationFile", "./conf/gradle-log4j2.xml")
 }
 
-task interproTask(type: JavaExec) {
+task uniprotSecondaryTermLoadTask(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = 'org.zfin.uniprot.task.InterproTask'
-//    systemProperty "log4j2.configurationFile", System.getProperty("log4j2.configurationFile", "./home/WEB-INF/log4j2-debug.xml")
+    main = 'org.zfin.uniprot.task.UniprotSecondaryTermLoadTask'
+    systemProperty "log4j2.configurationFile", System.getProperty("log4j2.configurationFile", "./conf/gradle-log4j2.xml")
 }
 
 task ncbiMatchThroughEnsemblTask(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = 'org.zfin.uniprot.NcbiMatchThroughEnsemblTask'
+    main = 'org.zfin.uniprot.task.NcbiMatchThroughEnsemblTask'
     systemProperty "ncbiFileUrl", System.getProperty("ncbiFileUrl", null)
 }
 

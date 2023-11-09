@@ -1,4 +1,4 @@
-package org.zfin.uniprot;
+package org.zfin.uniprot.task;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;

@@ -1,4 +1,4 @@
-package org.zfin.uniprot;
+package org.zfin.uniprot.task;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,6 +17,10 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.zfin.properties.ZfinPropertiesEnum;
+import org.zfin.uniprot.UniProtLoadAction;
+import org.zfin.uniprot.UniProtLoadContext;
+import org.zfin.uniprot.UniProtLoadPipeline;
+import org.zfin.uniprot.UniProtLoadService;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
 import org.zfin.uniprot.handlers.*;
 import org.zfin.uniprot.persistence.UniProtRelease;

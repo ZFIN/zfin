@@ -66,7 +66,7 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
     private List<RichSequenceAdapter> readAndFilterSequencesFromStream() throws BioException {
         RichStreamReaderAdapter richStreamReader = getRichStreamReaderForUniprotDatFile(filteredInputFileReader, true);
 
-        List<String> xrefsToKeep = List.of("ZFIN", "GeneID", "RefSeq", "EMBL", "GO", "InterPro", "Pfam", "PROSITE", "PDB", "Ensembl");
+        List<String> xrefsToKeep = List.of("ZFIN", "GeneID", "RefSeq", "EMBL", "GO", "InterPro", "Pfam", "PROSITE", "PDB", "Ensembl", "EC");
         RichSequenceAdapter lastSequence = null;
         int count = 0;
         List<RichSequenceAdapter> uniProtSequences = new ArrayList<>();

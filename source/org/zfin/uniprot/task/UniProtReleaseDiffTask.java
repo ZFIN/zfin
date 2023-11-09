@@ -1,9 +1,11 @@
-package org.zfin.uniprot;
+package org.zfin.uniprot.task;
 
 import lombok.extern.log4j.Log4j;
 import org.biojava.bio.BioException;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
+import org.zfin.uniprot.UniProtFilterTask;
+import org.zfin.uniprot.UniProtRoughTaxonFilter;
 
 import java.io.*;
 import java.nio.file.Files;

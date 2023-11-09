@@ -17,14 +17,19 @@ public class ReportLegacyProblemFilesHandler implements UniProtLoadHandler {
     @Override
     public void handle(Map<String, RichSequenceAdapter> uniProtRecords, Set<UniProtLoadAction> actions, UniProtLoadContext context) {
         Map<String, String> legacyProblemFiles = getLegacyProblemFiles();
+        Map<String, String> problemFileDescriptions = getLegacyProblemFileDescriptions();
         for (Map.Entry<String, RichSequenceAdapter> entry : uniProtRecords.entrySet()) {
             String accession = entry.getKey();
             if (legacyProblemFiles.containsKey(accession)) {
                 UniProtLoadAction action = new UniProtLoadAction();
+                String problemFile = legacyProblemFiles.get(accession);
                 action.setAccession(accession);
                 action.setType(UniProtLoadAction.Type.INFO);
                 action.setSubType(UniProtLoadAction.SubType.LEGACY_PROBLEM_FILE);
-                action.setDetails("This accession was in " + legacyProblemFiles.get(accession) + "\n\n" + legacyProblemFiles.get(accession));
+                action.setDetails("This accession was in " + problemFile + "\n\n" +
+                        problemFile + "\n\n" +
+                        "Problem File Description: \n" + problemFileDescriptions.get(problemFile)
+                );
                 actions.add(action);
             }
         }
@@ -132,4 +137,39 @@ public class ReportLegacyProblemFilesHandler implements UniProtLoadHandler {
         legacyAccessions.put("Q7SXA1", "prob8.txt");
         return legacyAccessions;
     }
+
+    public Map<String, String> getLegacyProblemFileDescriptions() {
+        Map<String, String> problemFileDescriptions = new HashMap<>();
+        problemFileDescriptions.put("prob2.txt", """
+                ”GenPept Acc#s associated with different genes”
+                GenPept IDs in a single UniProt record are associated with different ZFIN genes.  
+                UniProt is saying there is one gene, ZFIN is saying there are two.             
+                """);
+        problemFileDescriptions.put("prob3.txt", """
+                ”at least one GenBank Acc# in ZFIN, but not consistent”
+                There is an RNA sequence in the UniProt ID, but that sequence ID matches more than one gene in ZFIN.  
+                This is likely an error.  Looking at this section, there is some other stuff thrown in.  
+                I’m not sure what is going on, but I am not that worried about it.
+                """);
+        problemFileDescriptions.put("prob6.txt", """
+                ”GenBank #s not in ZFIN; PubMed # not present, or not in ZFIN”
+                A sequence ID in UniProt is not found in ZFIN.  The is no PubMed ID in the UniProt record or there is 
+                one, but it is not found in ZFIN.  So if there is no PubMed ID, there's really not a good way to get
+                 the sequence ID into ZFIN.  If there is a PubMed ID, that paper could potentially be added to ZFIN.  
+                 Once the paper is annotated (and the sequence ID added), the UniProt script might make a match.
+                """);
+        problemFileDescriptions.put("prob8.txt", """
+                ”>1 DR ZFIN lines”
+                The UniProt record associates the protein record to more than one ZFIN gene and the data is ambiguous.  
+                Looking through this file could be useful in that there are likely to be some merge candidates, 
+                incorrectly associated sequence IDs, chimeric sequences, etc.  However, some records cannot be 
+                reconciled as ZFIN and UniProt handle data differently (i.e.- protocadherins).
+                """);
+        problemFileDescriptions.put("prob10.txt", """
+                ”No refseq matches”
+                Could not find a match based on RefSeq IDs.
+                """);
+        return problemFileDescriptions;
+    }
+
 }

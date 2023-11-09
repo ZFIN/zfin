@@ -1,5 +1,6 @@
 package org.zfin.uniprot.adapter;
 
+import org.biojavax.Comment;
 import org.biojavax.Note;
 import org.biojavax.RankedCrossRef;
 import org.biojavax.SimpleRichAnnotation;
@@ -8,6 +9,11 @@ import org.zfin.uniprot.datfiles.UniProtFormatZFIN;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import static org.zfin.sequence.ForeignDB.AvailableName.EC;
 
 public class RichSequenceAdapter {
     private final RichSequence originalRichSequence;
@@ -101,6 +107,9 @@ public class RichSequenceAdapter {
     }
 
 
+    /*
+     * Return notes that correspond to keyword terms
+     */
     public List<Note> getKeywordNotes() {
         SimpleRichAnnotation seq1NoteSet = new SimpleRichAnnotation();
         seq1NoteSet.setNoteSet(this.getNoteSet());
@@ -108,8 +117,82 @@ public class RichSequenceAdapter {
         return List.of(keywords);
     }
 
+    /**
+     * Return keywords as strings
+     */
+    public List<String> getKeywords() {
+        return getKeywordNotes().stream()
+                .map(note -> note.getValue())
+                .toList();
+    }
+
+    /**
+     * Removes the curly braces and the text inside them
+     * Example: return "Glycosyltransferase" from "Glycosyltransferase {ECO:0000256|ARBA:ARBA00022676, ECO:0000256|RuleBase:RU003718}"
+     * @return
+     */
+    public List<String> getPlainKeywords() {
+        return getKeywords().stream()
+                .map(keyword -> keyword.replaceAll("\\{.*?\\}", "").trim())
+                .toList();
+    }
+
     private Set<Note> getNoteSet() {
         return this.wo().getNoteSet();
     }
 
+    public Collection<CrossRefAdapter> getCrossRefsByDatabase(String dbName) {
+        if (dbName == null) {
+            return Collections.emptyList();
+        }
+        if (dbName.equals(EC.toString())) {
+            return getECCrossReferences();
+        }
+        Set<RankedCrossRef> matches = getRankedCrossRefs().stream().filter(rc -> rc.getCrossRef().getDbname().equals(dbName)).collect(Collectors.toSet());
+        return CrossRefAdapter.fromRankedCrossRefs(matches);
+    }
+
+    /**
+     * @return a list of cross references that are EC numbers
+     * This is a special case since the uniprot file puts the EC number in the description
+     */
+    public Collection<CrossRefAdapter> getECCrossReferences() {
+        String description = originalRichSequence.getDescription();
+
+        Pattern pattern = Pattern.compile("^\\s+EC=(.*);", Pattern.MULTILINE);
+        Matcher matcher = pattern.matcher(description);
+
+        List<CrossRefAdapter> results = new ArrayList<>();
+
+        while (matcher.find()) {
+            String ecnumberLine = matcher.group(1);
+            String ecnumber = "";
+
+            if (ecnumberLine.contains("{")) {  // EC=2.7.4.6 {ECO:0000256|RuleBase:RU004013};
+                String[] ecLineSplit = ecnumberLine.split("\\{");
+                String ecWithBracket = ecLineSplit[0].trim();  // trim() will remove trailing and leading spaces
+
+                if (ecWithBracket.matches("[\\d\\.\\-]*")) {
+                    ecnumber = ecWithBracket;
+                }
+            } else {  // EC=2.7.8.2;
+                if (ecnumberLine.matches("[\\d\\.\\-]*")) {
+                    ecnumber = ecnumberLine;
+                }
+            }
+
+            if (!ecnumber.isEmpty()) {
+                results.add(CrossRefAdapter.create("EC", ecnumber));
+            }
+        }
+        return results;
+    }
+
+    public List<String> getComments() {
+        return originalRichSequence
+                .getComments()
+                .stream()
+                .map(comment -> ((org.biojavax.Comment)comment).getComment().replaceFirst("\\-\\!\\- ", ""))
+                .toList();
+    }
 }

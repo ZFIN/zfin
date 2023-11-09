@@ -36,6 +36,8 @@ public interface MarkerRepository {
 
     Marker getMarkerByID(String zdbID);
 
+    List<Marker> getMarkersByZdbIDs(List<String> zdbIDs);
+
     SNP getSNPByID(String zdbID);
 
     ConstructCuration getConstructByID(String zdbID);
@@ -528,6 +530,8 @@ public interface MarkerRepository {
     List<Marker> getMarkerByGroup(Marker.TypeGroup group, int number);
      List<Transcript> getAllNonCodingTranscripts();
     List<Transcript> getTranscriptsForNonCodingGenes();
+
+    List<Marker> getWithdrawnMarkers();
 
     Map<String,GenericTerm> getSoTermMapping();
 

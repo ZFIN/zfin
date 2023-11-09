@@ -875,6 +875,7 @@ dependencies {
 
 
     testAnnotationProcessor "org.projectlombok:lombok:1.18.20"
+    implementation 'org.jooq:jool:0.9.15'
 }
 
 sourceSets {
@@ -907,6 +908,7 @@ test {
     }
     filter {
         includeTestsMatching "org.zfin.UnitTests"
+        includeTestsMatching "org.zfin.uniprot.UniProtInterproTest"
         //spock tests
 
         includeTestsMatching "org.zfin.publication.MeshHeadingSpec"

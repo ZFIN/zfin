@@ -1,4 +1,4 @@
-package org.zfin.uniprot;
+package org.zfin.uniprot.task;
 
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 import static org.zfin.datatransfer.service.DownloadService.*;
 import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
-import static org.zfin.uniprot.UniProtReleaseDiffTask.combineAndFilterInputPathSet;
+import static org.zfin.uniprot.task.UniProtReleaseDiffTask.combineAndFilterInputPathSet;
 
 /**
  * This class is used to check for new releases of uniprot.

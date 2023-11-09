@@ -1,0 +1,35 @@
+TODO:
+======
+- [x] Remove the marker_go_term_evidence rows if needed
+- [x] PFAM and PROSITE
+- [x] Implement some of the filtering logic for the GO terms in sp_load.sql
+    - [x] WITHDRAWN
+    - [x] gocheck_do_not_annotate
+- [x] Add the marker_go_term_evidence rows for:
+    - [x] SPKW2GO
+    - [x] EC2GO
+    - [x] InterPro2GO
+- [x] Remove the marker_go_term_evidence rows for:
+    - [x] SPKW2GO
+    - [x] EC2GO
+    - [x] InterPro2GO
+- [x] handle cc load (https://github.com/rtaylorzfin/zfin/blob/zfin-8797/server_apps/data_transfer/SWISS-PROT/sp_load.sql#L452-L452)
+- [x] Add Inference Groups
+- [x] Remove the inference groups if needed
+- [x] Add a circuit break if there are too many actions to process
+- [.] Interpro domains?? (automatically handled by the InterPro2GO load)
+- [.] clean up names of classes in the code (for example some have "...Interpro..." but actually handle InterPro, EC, etc.) [partially done]
+- [x] Do something with ac_dalias.unl?
+        No. The current script builds up ac_dalias.unl based on lines like 'AC   E7F1E7; A0A8M2B1W7;'
+        but it doesn't seem to be used anywhere. The notes indicate it should be used in the data_alias table, but it's not.
+- [x] Improve the original load diff report to have more info on uniprot probfile entries
+- [x] Implement an interpro report based on actions
+- [x] Add a column to UniprotRelease called "SecondaryLoadDate" and set it to true when the secondary terms are loaded
+
+### Misc:
+- [ ] Add a test for the InterPro2GO
+- [ ] Is there a need to handle multiple genes? For example, when loading SPKW2GO, we are going from the uniprot accession to the gene, but what if there are multiple genes for some uniprot accessions?
+- [ ] Add a test for comparing the diffs of this load against the current load
+- [ ] Make sure we handle zdb_replaced_data
+- [ ] Does this line need to be replicated? (--!echo 'unload accession# with no attribution')
+
