@@ -369,6 +369,9 @@ public interface OntologyRepository {
 
     GenericTerm getTermByZdbIDOrOboId(String termID);
 
+    TermExternalReference getTermExternalReference(String casID, String prefix);
+    List<TermExternalReference> getAllCasReferences();
+
     Set<GenericTerm> getDiseaseTermsOmimPhenotype();
 
     Map<String, GenericTerm> getGoTermsToZdbID();
