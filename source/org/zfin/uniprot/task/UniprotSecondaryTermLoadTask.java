@@ -12,6 +12,8 @@ import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
+import org.zfin.uniprot.interpro.EntryListItemDTO;
+import org.zfin.uniprot.interpro.EntryListTranslator;
 import org.zfin.uniprot.secondary.*;
 import org.zfin.uniprot.persistence.UniProtRelease;
 
@@ -55,6 +57,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
     private List<SecondaryTerm2GoTerm> ipToGoRecords;
     private List<SecondaryTerm2GoTerm> ecToGoRecords;
     private List<SecondaryTerm2GoTerm> upToGoRecords;
+    private List<EntryListItemDTO> downloadedInterproDomainRecords;
 
     public static void main(String[] args) throws Exception {
 
@@ -268,6 +271,9 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
         pipeline.addHandler(new RemoveSpKeywordTermToGoHandler(UNIPROTKB, upToGoRecords));
 
         pipeline.addHandler(new ExternalNotesHandler());
+
+        pipeline.addHandler(new ProteinDomainHandler(downloadedInterproDomainRecords));
+
         return pipeline.execute();
     }
 
@@ -311,6 +317,16 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
             log.debug("Loading " + ecToGo);
             ecToGoRecords = SecondaryTerm2GoTermTranslator.convertTranslationFileToUnloadFile(ecToGo, SecondaryTerm2GoTermTranslator.SecondaryTermType.EC);
             log.debug("Loaded " + ecToGoRecords.size() + " EC to GO records.");
+
+            log.debug("Downloading entry.list for domain info");
+            File downloadedFile4 = File.createTempFile("entry", ".list");
+//            String url4 = ZfinPropertiesEnum.UNIPROT_ENTRY_LIST_FILE_URL.value();
+            String url4 = "https://ftp.ebi.ac.uk/pub/databases/interpro/current_release/entry.list";
+            downloadFileViaWget(url4, downloadedFile4.toPath(), 10_000, log);
+            log.debug("Loading " + downloadedFile4.getAbsolutePath());
+            List<EntryListItemDTO> entryList = EntryListTranslator.parseFile(downloadedFile4);
+            log.debug("Loaded " + entryList.size() + " entries.");
+            this.downloadedInterproDomainRecords = entryList;
 
         } catch (IOException e) {
             log.error("Failed to load translation file: ", e);

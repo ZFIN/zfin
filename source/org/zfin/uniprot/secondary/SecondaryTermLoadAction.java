@@ -23,7 +23,7 @@ public class SecondaryTermLoadAction implements Comparable<SecondaryTermLoadActi
     private String goID;
     private String goTermZdbID;
     private String geneZdbID;
-//    private String pubZdbID;
+    private String relatedEntityID;
     private String details;
     private int length;
 
@@ -34,13 +34,14 @@ public class SecondaryTermLoadAction implements Comparable<SecondaryTermLoadActi
         links = new TreeSet<>();
     }
 
-    public SecondaryTermLoadAction(Type type, SubType subType, ForeignDB.AvailableName dbName, String accession, String goID, String goTermZdbID, String geneZdbID, String details, int length, Set<UniProtLoadLink> links) {
+    public SecondaryTermLoadAction(Type type, SubType subType, ForeignDB.AvailableName dbName, String accession, String goID, String goTermZdbID, String geneZdbID, String relatedEntityID, String details, int length, Set<UniProtLoadLink> links) {
         this.type = type;
         this.subType = subType;
         this.accession = accession;
         this.goID = goID;
         this.goTermZdbID = goTermZdbID;
         this.geneZdbID = geneZdbID;
+        this.relatedEntityID = relatedEntityID;
         this.details = details;
         this.length = length;
         this.links = links;
@@ -72,7 +73,8 @@ public class SecondaryTermLoadAction implements Comparable<SecondaryTermLoadActi
     public enum SubType {
         MARKER_GO_TERM_EVIDENCE("MarkerGoTermEvidence"),
         EXTERNAL_NOTE("ExternalNote"),
-        DB_LINK("DBLink");
+        DB_LINK("DBLink"),
+        PROTEIN_DOMAIN("ProteinDomain");
 
         private final String value;
 
@@ -106,7 +108,7 @@ public class SecondaryTermLoadAction implements Comparable<SecondaryTermLoadActi
     }
 
     public String toString() {
-        return "InterproLoadAction: " + " action=" + type + " subtype=" + subType + " accession=" + accession + " goID=" + goID + " goTermZdbID=" + goTermZdbID + " geneZdbID=" + geneZdbID + " details=" + details + " length=" + length + " links=" + links;
+        return "InterproLoadAction: " + " action=" + type + " subtype=" + subType + " accession=" + accession + " goID=" + goID + " goTermZdbID=" + goTermZdbID + " geneZdbID=" + geneZdbID + " relatedEntityID=" + relatedEntityID + " details=" + details + " length=" + length + " links=" + links;
     }
 
     public String markerGoTermEvidenceRepresentation() {
