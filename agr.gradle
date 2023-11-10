@@ -134,6 +134,16 @@ task createFishLinkMLFile(type: JavaExec) {
     main = 'org.zfin.marker.agr.FishLinkMLInfo'
 }
 
+task createAllianceLinkMLFiles {
+    dependsOn createGenesLinkMLFile
+    dependsOn createAllelesLinkMLFile
+    dependsOn createFishLinkMLFile
+    dependsOn createDiseaseInfoLinkMLFile
+    dependsOn createConstructLinkMLFile
+    dependsOn createVariantLinkMLFile
+    dependsOn createFishLinkMLFile
+}
+
 task createAllianceFiles {
     dependsOn createDiseaseInfoFile
     dependsOn createBasicPhenotypeInfoFile
