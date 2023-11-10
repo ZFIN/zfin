@@ -35,7 +35,7 @@ services:
       - ${DOCKER_ABBLAST_PATH}:/opt/ab-blast
       - ${DOCKER_RESEARCH_PATH}:/research
       - solr_data:/var/solr
-      - ./pg_pass:/run/secrets/pg_pass
+      - ${DOCKER_SOURCE_ROOTS_PATH}/docker/pg_pass:/run/secrets/pg_pass
       - ${DOCKER_SSH_AUTH_SOCK}:/run/host-services/ssh-auth.sock
       - ~/.ssh/known_hosts:/home/gradle/.ssh/known_hosts
       - /var/run/docker.sock:/var/run/docker.sock
