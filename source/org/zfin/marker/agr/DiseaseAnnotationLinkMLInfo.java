@@ -36,16 +36,12 @@ public class DiseaseAnnotationLinkMLInfo extends LinkMLInfo {
     }
 
     public static void main(String[] args) throws IOException {
-        String linkMlVersion = null;
         int number = 0;
-        if (args.length > 0) {
-            linkMlVersion = args[0];
-        }
         if (args.length > 1) {
             number = Integer.parseInt(args[1]);
         }
         DiseaseAnnotationLinkMLInfo diseaseInfo = new DiseaseAnnotationLinkMLInfo(number);
-        diseaseInfo.init(linkMlVersion);
+        diseaseInfo.init(LINK_ML_VERSION);
         System.exit(0);
     }
 
