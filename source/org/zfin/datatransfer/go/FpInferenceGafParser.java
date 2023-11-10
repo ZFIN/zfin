@@ -194,10 +194,10 @@ public class FpInferenceGafParser {
 
         );
 
-        if (entries.length >= 16) {
+        if (entries.length > 15) {
             gafEntry.setAnnotExtn(entries[15]);
         }
-        if (entries.length >= 17) {
+        if (entries.length > 16) {
             gafEntry.setGeneProductFormID(entries[16]);
         }
 
