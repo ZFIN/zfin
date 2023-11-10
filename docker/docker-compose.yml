@@ -27,7 +27,7 @@ services:
       - certbot_data:/etc/letsencrypt
       - catalina_base:/opt/zfin/catalina_bases/zfin.org
       - jenkins_data:/opt/zfin/www_homes/zfin.org/server_apps/jenkins/jenkins-home
-      - ../:/opt/zfin/source_roots/zfin.org
+      - ${DOCKER_SOURCE_ROOTS_PATH}:/opt/zfin/source_roots/zfin.org
       #- nfs-zunloads:/research/zunloads
       - ${DOCKER_DB_UNLOADS_PATH}:/opt/zfin/unloads/db
       - ${DOCKER_SOLR_UNLOADS_PATH}:/opt/zfin/unloads/solr
