@@ -10,10 +10,12 @@ import org.zfin.sequence.MarkerDBLink;
 import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.uniprot.dto.DBLinkExternalNoteSlimDTO;
 import org.zfin.uniprot.dto.DBLinkSlimDTO;
+import org.zfin.uniprot.interpro.EntryListItemDTO;
 
 import java.util.*;
 
 import static org.zfin.Species.Type.ZEBRAFISH;
+import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.repository.RepositoryFactory.*;
 import static org.zfin.sequence.ForeignDB.AvailableName.*;
 import static org.zfin.sequence.ForeignDBDataType.DataType.DOMAIN;
@@ -43,6 +45,7 @@ public class SecondaryLoadContext {
 
     private List<SecondaryTerm2GoTerm> interproTranslationRecords;
     private List<SecondaryTerm2GoTerm> ecTranslationRecords;
+    private List<EntryListItemDTO> existingInterproDomainRecords;
 
     public static SecondaryLoadContext createFromDBConnection() {
         SecondaryLoadContext loadContext = new SecondaryLoadContext();
@@ -91,7 +94,24 @@ public class SecondaryLoadContext {
                 getInfrastructureRepository().getDBLinkExternalNoteByPublicationID(SecondaryTermLoadService.EXTNOTE_PUBLICATION_ATTRIBUTION_ID)
         );
 
+        log.debug("Load Step 9: Getting Existing Interpro Domain Entry Records");
+        loadContext.setExistingInterproDomainRecords(fetchExistingInterproDomainRecords());
+
         return loadContext;
+    }
+
+    public static List<EntryListItemDTO> fetchExistingInterproDomainRecords() {
+        String sql = "select ip_interpro_id, ip_name, ip_type from interpro_protein";
+        List queryResults = currentSession().createSQLQuery(sql).list();
+        List<EntryListItemDTO> interproDomainRecords = new ArrayList<>();
+        for(Object result : queryResults) {
+            Object[] row = (Object[]) result;
+            String ipInterproId = (String) row[0];
+            String ipName = (String) row[1];
+            String ipType = (String) row[2];
+            interproDomainRecords.add(new EntryListItemDTO(ipInterproId, ipType, ipName));
+        }
+        return interproDomainRecords;
     }
 
     private void setExternalNotesByUniprotAccession(List<DBLinkExternalNote> dbLinkExternalNoteByPublicationID) {
