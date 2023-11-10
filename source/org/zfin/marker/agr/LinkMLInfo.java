@@ -21,7 +21,7 @@ import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
 public class LinkMLInfo extends AbstractScriptWrapper {
 
-    static String LINK_ML_VERSION = "v.1.11.0";
+    static String LINK_ML_VERSION = "v1.11.0";
     protected int numfOfRecords = 0;
 
     public LinkMLInfo(int number) {
