@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.repository.RepositoryFactory.*;
+import static org.zfin.uniprot.UniProtTools.AUTOMATED_CURATION_OF_UNIPROT_DATABASE_LINKS;
 
 @Getter
 @Setter
@@ -31,11 +32,11 @@ import static org.zfin.repository.RepositoryFactory.*;
 public class SecondaryTermLoadService {
 
 
-    public static final String DBLINK_PUBLICATION_ATTRIBUTION_ID = "ZDB-PUB-230615-71";
+    public static final String DBLINK_PUBLICATION_ATTRIBUTION_ID = AUTOMATED_CURATION_OF_UNIPROT_DATABASE_LINKS;
     public static final String EC_MRKRGOEV_PUBLICATION_ATTRIBUTION_ID = "ZDB-PUB-031118-3";
     public static final String IP_MRKRGOEV_PUBLICATION_ATTRIBUTION_ID = "ZDB-PUB-020724-1";
     public static final String SPKW_MRKRGOEV_PUBLICATION_ATTRIBUTION_ID = "ZDB-PUB-020723-1";
-    public static final String EXTNOTE_PUBLICATION_ATTRIBUTION_ID = "ZDB-PUB-230615-71";
+    public static final String EXTNOTE_PUBLICATION_ATTRIBUTION_ID = AUTOMATED_CURATION_OF_UNIPROT_DATABASE_LINKS;
 
 
     public static final String EXTNOTE_REFERENCE_DATABASE_ID = "ZDB-FDBCONT-040412-47";

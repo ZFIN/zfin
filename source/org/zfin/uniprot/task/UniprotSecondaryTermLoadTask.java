@@ -1,7 +1,6 @@
 package org.zfin.uniprot.task;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.Setter;
@@ -272,7 +271,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
 
         pipeline.addHandler(new ExternalNotesHandler());
 
-        pipeline.addHandler(new ProteinDomainHandler(downloadedInterproDomainRecords));
+        pipeline.addHandler(new InterproDomainHandler(downloadedInterproDomainRecords));
 
         return pipeline.execute();
     }

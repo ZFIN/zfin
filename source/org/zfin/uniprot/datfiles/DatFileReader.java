@@ -57,4 +57,9 @@ public class DatFileReader {
         return sequences;
     }
 
+    public static Map<String, RichSequenceAdapter> getRecordsFromFile(String inputFileName) throws BioException, FileNotFoundException {
+        RichStreamReaderAdapter richStreamReader = getRichStreamReaderForUniprotDatFile(inputFileName, true);
+        return getMapOfAccessionsToSequencesFromStreamReader(richStreamReader);
+    }
+
 }

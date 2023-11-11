@@ -28,13 +28,17 @@ public class SecondaryTermLoadAction implements Comparable<SecondaryTermLoadActi
     private int length;
 
     @Builder.Default
+    private Map<String, String> relatedEntityFields = new HashMap<>();
+
+    @Builder.Default
     private Set<UniProtLoadLink> links = new TreeSet<>();
 
     public SecondaryTermLoadAction() {
         links = new TreeSet<>();
     }
 
-    public SecondaryTermLoadAction(Type type, SubType subType, ForeignDB.AvailableName dbName, String accession, String goID, String goTermZdbID, String geneZdbID, String relatedEntityID, String details, int length, Set<UniProtLoadLink> links) {
+    public SecondaryTermLoadAction(Type type, SubType subType, ForeignDB.AvailableName dbName, String accession, String goID, String goTermZdbID, String geneZdbID, String relatedEntityID, String details, int length, Map<String, String> relatedEntityFields, Set<UniProtLoadLink> links)
+    {
         this.type = type;
         this.subType = subType;
         this.accession = accession;
@@ -46,6 +50,7 @@ public class SecondaryTermLoadAction implements Comparable<SecondaryTermLoadActi
         this.length = length;
         this.links = links;
         this.dbName = dbName;
+        this.relatedEntityFields = relatedEntityFields;
     }
 
     public void addLink(UniProtLoadLink uniProtLoadLink) {
@@ -74,7 +79,8 @@ public class SecondaryTermLoadAction implements Comparable<SecondaryTermLoadActi
         MARKER_GO_TERM_EVIDENCE("MarkerGoTermEvidence"),
         EXTERNAL_NOTE("ExternalNote"),
         DB_LINK("DBLink"),
-        PROTEIN_DOMAIN("ProteinDomain");
+        PROTEIN_DOMAIN("ProteinDomain"),
+        PROTEIN("Protein");
 
         private final String value;
 

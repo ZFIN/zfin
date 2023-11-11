@@ -11,6 +11,9 @@ import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.uniprot.dto.DBLinkExternalNoteSlimDTO;
 import org.zfin.uniprot.dto.DBLinkSlimDTO;
 import org.zfin.uniprot.interpro.EntryListItemDTO;
+import org.zfin.uniprot.interpro.MarkerToProteinDTO;
+import org.zfin.uniprot.interpro.ProteinDTO;
+import org.zfin.uniprot.interpro.ProteinToInterproDTO;
 
 import java.util.*;
 
@@ -46,6 +49,10 @@ public class SecondaryLoadContext {
     private List<SecondaryTerm2GoTerm> interproTranslationRecords;
     private List<SecondaryTerm2GoTerm> ecTranslationRecords;
     private List<EntryListItemDTO> existingInterproDomainRecords;
+    private List<ProteinDTO> existingProteinRecords;
+    private List<MarkerToProteinDTO> existingMarkerToProteinRecords;
+    private List<ProteinToInterproDTO> existingProteinToInterproRecords;
+
 
     public static SecondaryLoadContext createFromDBConnection() {
         SecondaryLoadContext loadContext = new SecondaryLoadContext();
@@ -97,6 +104,15 @@ public class SecondaryLoadContext {
         log.debug("Load Step 9: Getting Existing Interpro Domain Entry Records");
         loadContext.setExistingInterproDomainRecords(fetchExistingInterproDomainRecords());
 
+        log.debug("Load Step 10: Getting Existing Protein Records");
+        loadContext.setExistingProteinRecords(fetchExistingProteinRecords());
+
+        log.debug("Load Step 11: Getting Existing Protein Records");
+        loadContext.setExistingMarkerToProteinRecords(fetchExistingMarkerToProteinRecords());
+
+        log.debug("Load Step 12: Getting Existing Protein to Interpro Records");
+        loadContext.setExistingProteinToInterproRecords(fetchExistingProteinToInterproRecords());
+
         return loadContext;
     }
 
@@ -112,6 +128,45 @@ public class SecondaryLoadContext {
             interproDomainRecords.add(new EntryListItemDTO(ipInterproId, ipType, ipName));
         }
         return interproDomainRecords;
+    }
+
+    public static List<ProteinDTO> fetchExistingProteinRecords() {
+        String sql = "select up_uniprot_id, up_length from protein";
+        List queryResults = currentSession().createSQLQuery(sql).list();
+        List<ProteinDTO> proteinRecords = new ArrayList<>();
+        for(Object result : queryResults) {
+            Object[] row = (Object[]) result;
+            String accession = (String) row[0];
+            Integer length = (Integer) row[1];
+            proteinRecords.add(new ProteinDTO(accession, length));
+        }
+        return proteinRecords;
+    }
+
+    public static List<MarkerToProteinDTO> fetchExistingMarkerToProteinRecords() {
+        String sql = "select mtp_mrkr_zdb_id, mtp_uniprot_id from marker_to_protein";
+        List queryResults = currentSession().createSQLQuery(sql).list();
+        List<MarkerToProteinDTO> markerToProteinRecords = new ArrayList<>();
+        for(Object result : queryResults) {
+            Object[] row = (Object[]) result;
+            String markerZdbID = (String) row[0];
+            String uniprotAccession = (String) row[1];
+            markerToProteinRecords.add(new MarkerToProteinDTO(markerZdbID, uniprotAccession));
+        }
+        return markerToProteinRecords;
+    }
+
+    public static List<ProteinToInterproDTO> fetchExistingProteinToInterproRecords() {
+        String sql = "select pti_uniprot_id, pti_interpro_id from protein_to_interpro";
+        List queryResults = currentSession().createSQLQuery(sql).list();
+        List<ProteinToInterproDTO> proteinToInterproRecords = new ArrayList<>();
+        for(Object result : queryResults) {
+            Object[] row = (Object[]) result;
+            String uniprotAccession = (String) row[0];
+            String interproId = (String) row[1];
+            proteinToInterproRecords.add(new ProteinToInterproDTO(uniprotAccession, interproId));
+        }
+        return proteinToInterproRecords;
     }
 
     private void setExternalNotesByUniprotAccession(List<DBLinkExternalNote> dbLinkExternalNoteByPublicationID) {

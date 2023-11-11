@@ -17,12 +17,13 @@ import static org.zfin.repository.RepositoryFactory.*;
 import static org.zfin.sequence.ForeignDB.AvailableName.UNIPROTKB;
 import static org.zfin.sequence.ForeignDBDataType.DataType.POLYPEPTIDE;
 import static org.zfin.sequence.ForeignDBDataType.SuperType.SEQUENCE;
+import static org.zfin.uniprot.UniProtTools.AUTOMATED_CURATION_OF_UNIPROT_DATABASE_LINKS;
 
 @Log4j2
 public class UniProtLoadService {
 
 
-    private static final String PUBLICATION_ATTRIBUTION_ID = "ZDB-PUB-230615-71";
+    private static final String PUBLICATION_ATTRIBUTION_ID = AUTOMATED_CURATION_OF_UNIPROT_DATABASE_LINKS;
 
     public static void processActions(Set<UniProtLoadAction> actions, UniProtRelease release) {
         currentSession().beginTransaction();
