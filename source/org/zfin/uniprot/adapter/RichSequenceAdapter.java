@@ -16,6 +16,27 @@ import java.util.stream.Collectors;
 import static org.zfin.sequence.ForeignDB.AvailableName.EC;
 
 public class RichSequenceAdapter {
+    public enum DatabaseSource {
+        ZFIN("ZFIN"),
+        GENEID("GeneID"),
+        REFSEQ("RefSeq"),
+        EMBL("EMBL"),
+        GO("GO"),
+        INTERPRO("InterPro"),
+        PFAM("Pfam"),
+        PROSITE("PROSITE"),
+        PDB("PDB"),
+        ENSEMBL("Ensembl"),
+        EC("EC");
+        private final String value;
+        DatabaseSource(String s) {
+            this.value = s;
+        }
+        public String getValue() {
+            return value;
+        }
+    }
+
     private final RichSequence originalRichSequence;
 
     public RichSequenceAdapter(RichSequence wrappedObject) {
@@ -150,6 +171,9 @@ public class RichSequenceAdapter {
         }
         Set<RankedCrossRef> matches = getRankedCrossRefs().stream().filter(rc -> rc.getCrossRef().getDbname().equals(dbName)).collect(Collectors.toSet());
         return CrossRefAdapter.fromRankedCrossRefs(matches);
+    }
+    public Collection<CrossRefAdapter> getCrossRefsByDatabase(DatabaseSource source) {
+        return getCrossRefsByDatabase(source.getValue());
     }
 
     /**
