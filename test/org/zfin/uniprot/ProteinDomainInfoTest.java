@@ -11,13 +11,8 @@ import org.zfin.AbstractDatabaseTest;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
 import org.zfin.uniprot.datfiles.DatFileReader;
-import org.zfin.uniprot.interpro.EntryListItemDTO;
-import org.zfin.uniprot.interpro.EntryListTranslator;
-import org.zfin.uniprot.interpro.ProteinDTO;
-import org.zfin.uniprot.secondary.InterproDomainHandler;
-import org.zfin.uniprot.secondary.InterproProteinHandler;
-import org.zfin.uniprot.secondary.SecondaryLoadContext;
-import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
+import org.zfin.uniprot.interpro.*;
+import org.zfin.uniprot.secondary.*;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -29,8 +24,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.zfin.uniprot.secondary.SecondaryLoadContext.fetchExistingInterproDomainRecords;
-import static org.zfin.uniprot.secondary.SecondaryLoadContext.fetchExistingProteinRecords;
+import static org.zfin.uniprot.secondary.SecondaryLoadContext.*;
 
 public class ProteinDomainInfoTest extends AbstractDatabaseTest {
     private final String LEGACY_SP_DIRECTORY = "server_apps/data_transfer/SWISS-PROT/";
@@ -118,6 +112,63 @@ public class ProteinDomainInfoTest extends AbstractDatabaseTest {
         executeBashCommand("sort /tmp/protein.txt -o /tmp/protein.txt");
 
         exitValue = executeBashCommand("diff " + getWorkingDir() + "/protein.txt /tmp/protein.txt");
+        assertTrue(exitValue == 0);
+    }
+    @Test
+    public void compareToLegacyOutputMarkerToProteinText() throws IOException, BioException {
+//        int exitValue = executeBashCommand(PERLBIN + " protein_domain_info_load_for_testing.pl");
+//        assertTrue(exitValue == 0);
+
+        Map<String, RichSequenceAdapter> uniprotRecords = DatFileReader.getRecordsFromFile(PREZFIN);
+        List<SecondaryTermLoadAction> actions = new ArrayList<>();
+        SecondaryLoadContext context = SecondaryLoadContext.createFromDBConnection();
+        context.setExistingMarkerToProteinRecords(fetchExistingMarkerToProteinRecords());
+        InterproMarkerToProteinHandler handler = new InterproMarkerToProteinHandler();
+        handler.handle(uniprotRecords, actions, context);
+        assertTrue(actions.size() > 0);
+
+        BufferedWriter writer = new BufferedWriter(new FileWriter("/tmp/zfinprotein.txt"));
+        for(SecondaryTermLoadAction action: actions){
+            assertEquals(SecondaryTermLoadAction.SubType.INTERPRO_MARKER_TO_PROTEIN, action.getSubType());
+            MarkerToProteinDTO entry = new MarkerToProteinDTO(action.getGeneZdbID(), action.getAccession());
+            writer.write(entry.markerZdbID() + "|" + entry.accession() + "\n");
+        }
+        writer.close();
+
+        //sort them
+        executeBashCommand("sort " + getWorkingDir() + "/zfinprotein.txt -o " + getWorkingDir() + "/zfinprotein.txt");
+        executeBashCommand("sort /tmp/zfinprotein.txt -o /tmp/zfinprotein.txt");
+
+        int exitValue = executeBashCommand("diff " + getWorkingDir() + "/zfinprotein.txt /tmp/zfinprotein.txt");
+        assertTrue(exitValue == 0);
+    }
+
+    @Test
+    public void compareToLegacyOutputProteinToInterproText() throws IOException, BioException {
+//        int exitValue = executeBashCommand(PERLBIN + " protein_domain_info_load_for_testing.pl");
+//        assertTrue(exitValue == 0);
+
+        Map<String, RichSequenceAdapter> uniprotRecords = DatFileReader.getRecordsFromFile(PREZFIN);
+        List<SecondaryTermLoadAction> actions = new ArrayList<>();
+        SecondaryLoadContext context = SecondaryLoadContext.createFromDBConnection();
+        context.setExistingProteinToInterproRecords(fetchExistingProteinToInterproRecords());
+        ProteinToInterproHandler handler = new ProteinToInterproHandler();
+        handler.handle(uniprotRecords, actions, context);
+        assertTrue(actions.size() > 0);
+
+        BufferedWriter writer = new BufferedWriter(new FileWriter("/tmp/unipro2interpro.txt"));
+        for(SecondaryTermLoadAction action: actions){
+            assertEquals(SecondaryTermLoadAction.SubType.PROTEIN_TO_INTERPRO, action.getSubType());
+            ProteinToInterproDTO entry = ProteinToInterproDTO.fromMap(action.getRelatedEntityFields());
+            writer.write(entry.uniprot() + "|" + entry.interpro() + "\n");
+        }
+        writer.close();
+
+        //sort them
+        executeBashCommand("sort " + getWorkingDir() + "/unipro2interpro.txt -o " + getWorkingDir() + "/unipro2interpro.txt");
+        executeBashCommand("sort /tmp/unipro2interpro.txt -o /tmp/unipro2interpro.txt");
+
+        int exitValue = executeBashCommand("diff " + getWorkingDir() + "/unipro2interpro.txt /tmp/unipro2interpro.txt");
         assertTrue(exitValue == 0);
     }
 

@@ -272,6 +272,9 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
         pipeline.addHandler(new ExternalNotesHandler());
 
         pipeline.addHandler(new InterproDomainHandler(downloadedInterproDomainRecords));
+        pipeline.addHandler(new InterproProteinHandler());
+        pipeline.addHandler(new InterproMarkerToProteinHandler());
+        pipeline.addHandler(new ProteinToInterproHandler());
 
         return pipeline.execute();
     }

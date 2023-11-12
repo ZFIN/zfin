@@ -80,7 +80,9 @@ public class SecondaryTermLoadAction implements Comparable<SecondaryTermLoadActi
         EXTERNAL_NOTE("ExternalNote"),
         DB_LINK("DBLink"),
         PROTEIN_DOMAIN("ProteinDomain"),
-        PROTEIN("Protein");
+        PROTEIN("Protein"),
+        INTERPRO_MARKER_TO_PROTEIN("InterproMarkerToProtein"),
+        PROTEIN_TO_INTERPRO("ProteinToInterpro");
 
         private final String value;
 

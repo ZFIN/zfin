@@ -62,7 +62,7 @@ public class InterproProteinHandler implements SecondaryLoadHandler {
 
         Optional<DBLinkSlimDTO> autoCuratedDbLinks = existingDbLinks
                 .stream()
-//                .filter(dblink -> dblink.getPublicationIDs().contains(AUTOMATED_CURATION_OF_UNIPROT_DATABASE_LINKS))
+//                .filter(dblink -> dblink.getPublicationIDs().contains(AUTOMATED_CURATION_OF_UNIPROT_DATABASE_LINKS)) //do we need this?
                 .filter(dblink -> zdbIDs.contains(dblink.getDataZdbID())) //do we need this?
                 .findFirst();
 
