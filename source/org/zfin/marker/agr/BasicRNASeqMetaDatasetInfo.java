@@ -50,7 +50,7 @@ public class BasicRNASeqMetaDatasetInfo extends AbstractScriptWrapper {
     }
 
     public AllRNASeqMetaDatasetDTO getAllDatasetInfo() {
-        ArrayList<HTPDataset> allDatasets = getExpressionRepository().getAllHTPDatasets();
+        List<HTPDataset> allDatasets = getExpressionRepository().getAllHTPDatasets();
         System.out.println(allDatasets.size());
 
         List<BasicRNASeqMetaDatasetDTO> allDatasetDTOList = allDatasets.stream()
