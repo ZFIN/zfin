@@ -5,12 +5,18 @@ import org.zfin.uniprot.adapter.CrossRefAdapter;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
 import org.zfin.uniprot.interpro.MarkerToProteinDTO;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+
 /**
  * Creates actions for adding and deleting marker to protein information (replaces part of protein_domain_info_load.pl)
+ * marker_to_protein table
+ * zfinprotein.txt was the legacy load file
+ * Uses MarkerToProteinDTO
+ *
  */
 @Log4j2
 public class InterproMarkerToProteinHandler implements SecondaryLoadHandler {
@@ -18,10 +24,10 @@ public class InterproMarkerToProteinHandler implements SecondaryLoadHandler {
     @Override
     public void handle(Map<String, RichSequenceAdapter> uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
 
-        //TODO: create delete actions and load actions
-
         List<MarkerToProteinDTO> existingRecords = context.getExistingMarkerToProteinRecords();
+        List<MarkerToProteinDTO> keepRecords = new ArrayList<>(); //all the records to keep (not delete) includes new records too
 
+        //create new records
         for(String uniprotKey : uniProtRecords.keySet()) {
             RichSequenceAdapter richSequenceAdapter = uniProtRecords.get(uniprotKey);
             Collection<CrossRefAdapter> zfinCrossRefs = richSequenceAdapter.getCrossRefsByDatabase("ZFIN");
@@ -30,20 +36,38 @@ public class InterproMarkerToProteinHandler implements SecondaryLoadHandler {
             }
             List<String> uniprotRecordZdbIDs = zfinCrossRefs.stream().map(ref -> ref.getAccession()).toList();
             for(String zdbID : uniprotRecordZdbIDs) {
+                MarkerToProteinDTO newRecord = new MarkerToProteinDTO(zdbID, uniprotKey);
                 if (!existingRecords.contains(new MarkerToProteinDTO(zdbID, uniprotKey))) {
-//                    existingRecordsAsMap.put(zdbID, uniprotKey);
-                    actions.add(createLoadAction(zdbID, uniprotKey));
+                    actions.add(createLoadAction(newRecord));
+                    keepRecords.add(newRecord);
+                } else {
+                    keepRecords.add(newRecord);
                 }
+            }
+        }
+
+        //delete records
+        for(MarkerToProteinDTO existingRecord : existingRecords) {
+            if (!keepRecords.contains(existingRecord)) {
+                actions.add(createDeleteAction(existingRecord));
             }
         }
 
     }
 
-    private SecondaryTermLoadAction createLoadAction(String zdbID, String uniprotAccession) {
+    private SecondaryTermLoadAction createLoadAction(MarkerToProteinDTO newRecord) {
         return SecondaryTermLoadAction.builder()
-                .geneZdbID(zdbID)
-                .accession(uniprotAccession)
+                .geneZdbID(newRecord.markerZdbID())
+                .accession(newRecord.accession())
                 .type(SecondaryTermLoadAction.Type.LOAD)
+                .subType(SecondaryTermLoadAction.SubType.INTERPRO_MARKER_TO_PROTEIN)
+                .build();
+    }
+    private SecondaryTermLoadAction createDeleteAction(MarkerToProteinDTO recordToDelete) {
+        return SecondaryTermLoadAction.builder()
+                .geneZdbID(recordToDelete.markerZdbID())
+                .accession(recordToDelete.accession())
+                .type(SecondaryTermLoadAction.Type.DELETE)
                 .subType(SecondaryTermLoadAction.SubType.INTERPRO_MARKER_TO_PROTEIN)
                 .build();
     }

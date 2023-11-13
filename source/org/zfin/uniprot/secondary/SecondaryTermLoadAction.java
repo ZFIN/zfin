@@ -82,7 +82,9 @@ public class SecondaryTermLoadAction implements Comparable<SecondaryTermLoadActi
         PROTEIN_DOMAIN("ProteinDomain"),
         PROTEIN("Protein"),
         INTERPRO_MARKER_TO_PROTEIN("InterproMarkerToProtein"),
-        PROTEIN_TO_INTERPRO("ProteinToInterpro");
+        PROTEIN_TO_INTERPRO("ProteinToInterpro"),
+        PDB("PDB"),
+        ;
 
         private final String value;
 

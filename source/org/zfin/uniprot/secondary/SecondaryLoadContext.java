@@ -10,10 +10,7 @@ import org.zfin.sequence.MarkerDBLink;
 import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.uniprot.dto.DBLinkExternalNoteSlimDTO;
 import org.zfin.uniprot.dto.DBLinkSlimDTO;
-import org.zfin.uniprot.interpro.EntryListItemDTO;
-import org.zfin.uniprot.interpro.MarkerToProteinDTO;
-import org.zfin.uniprot.interpro.ProteinDTO;
-import org.zfin.uniprot.interpro.ProteinToInterproDTO;
+import org.zfin.uniprot.interpro.*;
 
 import java.util.*;
 
@@ -52,6 +49,7 @@ public class SecondaryLoadContext {
     private List<ProteinDTO> existingProteinRecords;
     private List<MarkerToProteinDTO> existingMarkerToProteinRecords;
     private List<ProteinToInterproDTO> existingProteinToInterproRecords;
+    private List<PdbDTO> existingPdbRecords;
 
 
     public static SecondaryLoadContext createFromDBConnection() {
@@ -167,6 +165,19 @@ public class SecondaryLoadContext {
             proteinToInterproRecords.add(new ProteinToInterproDTO(uniprotAccession, interproId));
         }
         return proteinToInterproRecords;
+    }
+
+    public static List<PdbDTO> fetchExistingPdbRecords() {
+        String sql = "select ptp_uniprot_id, ptp_pdb_id from protein_to_pdb";
+        List queryResults = currentSession().createSQLQuery(sql).list();
+        List<PdbDTO> pdbRecords = new ArrayList<>();
+        for(Object result : queryResults) {
+            Object[] row = (Object[]) result;
+            String uniprotID = (String) row[0];
+            String pdbID = (String) row[1];
+            pdbRecords.add(new PdbDTO(uniprotID, pdbID));
+        }
+        return pdbRecords;
     }
 
     private void setExternalNotesByUniprotAccession(List<DBLinkExternalNote> dbLinkExternalNoteByPublicationID) {

@@ -16,6 +16,9 @@ import static org.zfin.uniprot.UniProtTools.AUTOMATED_CURATION_OF_UNIPROT_DATABA
 
 /**
  * Creates actions for adding and deleting protein domain information (replaces part of protein_domain_info_load.pl)
+ * protein table load/delete (select up_uniprot_id, up_length from protein)
+ * protein.txt was the legacy load file
+ * Uses ProteinDTO
  */
 @Log4j2
 public class InterproProteinHandler implements SecondaryLoadHandler {
@@ -24,6 +27,7 @@ public class InterproProteinHandler implements SecondaryLoadHandler {
     public void handle(Map<String, RichSequenceAdapter> uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
 
         List<ProteinDTO> existingProteins = context.getExistingProteinRecords();
+        List<ProteinDTO> proteinsToKeep = new ArrayList<>();
         Map<String, Integer> existingProteinsAsMap = existingProteins.stream().collect(Collectors.toMap(ProteinDTO::accession, ProteinDTO::length));
 
         for(String uniprotKey : uniProtRecords.keySet()) {
@@ -41,12 +45,20 @@ public class InterproProteinHandler implements SecondaryLoadHandler {
                 if (length > 0 && !existingLength.equals(length)) {
                     existingProteinsAsMap.put(accession, length);
                     createLoadAction(context, actions, accession, length, zfinCrossRefs);
+                } else {
+                    proteinsToKeep.add(new ProteinDTO(accession, length));
                 }
             } else {
                 existingProteinsAsMap.put(accession, length);
                 createLoadAction(context, actions, accession, length, zfinCrossRefs);
+                proteinsToKeep.add(new ProteinDTO(accession, length));
             }
+        }
 
+        for(ProteinDTO protein : existingProteins) {
+            if (!proteinsToKeep.contains(protein)) {
+                actions.add(createDeleteAction(protein));
+            }
         }
     }
 
@@ -80,5 +92,13 @@ public class InterproProteinHandler implements SecondaryLoadHandler {
         }
     }
 
+    private SecondaryTermLoadAction createDeleteAction(ProteinDTO protein) {
+        return SecondaryTermLoadAction.builder()
+                .type(SecondaryTermLoadAction.Type.DELETE)
+                .subType(SecondaryTermLoadAction.SubType.PROTEIN)
+                .accession(protein.accession())
+                .length(protein.length())
+                .build();
+    }
 
 }

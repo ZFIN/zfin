@@ -38,28 +38,13 @@ public class ProteinDomainInfoTest extends AbstractDatabaseTest {
 
     @Test
     public void compareToLegacyOutputDomainText() throws IOException, BioException {
-        DefaultExecutor executor = new DefaultExecutor();
-        String workingDir = getWorkingDir();
-        executor.setWorkingDirectory(new File(workingDir));
-
-        Map<String, String> env = new HashMap<>();
-        env.put("PGHOST", ZfinPropertiesEnum.PGHOST.value());
-        env.put("DB_NAME", ZfinPropertiesEnum.DB_NAME.value());
-        env.put("PERL5LIB", PERL5LIB);
-
-        PumpStreamHandler streamHandler = new PumpStreamHandler(System.out, System.err);
-        executor.setStreamHandler(streamHandler);
-
-        CommandLine cmdLine = new CommandLine(BASHBIN);
-        cmdLine.addArguments(new String[]{"-lc", "cd " + workingDir + " && " + PERLBIN + " protein_domain_info_load_for_testing.pl"}, false);
-        int exitValue = executor.execute(cmdLine, env);
-
-        assertFalse(executor.isFailure(exitValue));
+//        int exitValue = executeBashCommand(PERLBIN + " protein_domain_info_load_for_testing.pl");
+//        assertTrue(exitValue == 0);
 
         List<EntryListItemDTO> existingDbRecords = fetchExistingInterproDomainRecords();
         assertTrue(existingDbRecords.size() > 0);
 
-        List<EntryListItemDTO> downloadedEntries = EntryListTranslator.parseFile(new File(workingDir + "entry.list"));
+        List<EntryListItemDTO> downloadedEntries = EntryListTranslator.parseFile(new File(getWorkingDir() + "entry.list"));
         InterproDomainHandler handler = new InterproDomainHandler(downloadedEntries);
 
         Map<String, RichSequenceAdapter> uniprotRecords = new HashMap<>();
@@ -79,10 +64,9 @@ public class ProteinDomainInfoTest extends AbstractDatabaseTest {
         writer.close();
 
         //check that we have successfully recreated the output of domain.txt:
-        CommandLine diffCmd = new CommandLine("diff");
-        cmdLine.addArguments(new String[]{workingDir + "/domain.txt", "/tmp/domain.txt"}, false);
-        exitValue = executor.execute(cmdLine, env);
-        assertFalse(executor.isFailure(exitValue));
+        int exitValue = executeBashCommand("diff " + getWorkingDir() + "/domain.txt /tmp/domain.txt");
+        assertTrue(exitValue == 0);
+
 
     }
 
@@ -169,6 +153,35 @@ public class ProteinDomainInfoTest extends AbstractDatabaseTest {
         executeBashCommand("sort /tmp/unipro2interpro.txt -o /tmp/unipro2interpro.txt");
 
         int exitValue = executeBashCommand("diff " + getWorkingDir() + "/unipro2interpro.txt /tmp/unipro2interpro.txt");
+        assertTrue(exitValue == 0);
+    }
+    
+    @Test
+    public void compareToLegacyOutputProteinToPDBText() throws IOException, BioException {
+//        int exitValue = executeBashCommand(PERLBIN + " protein_domain_info_load_for_testing.pl");
+//        assertTrue(exitValue == 0);
+
+        Map<String, RichSequenceAdapter> uniprotRecords = DatFileReader.getRecordsFromFile(PREZFIN);
+        List<SecondaryTermLoadAction> actions = new ArrayList<>();
+        SecondaryLoadContext context = SecondaryLoadContext.createFromDBConnection();
+        context.setExistingPdbRecords(fetchExistingPdbRecords());
+        PDBHandler handler = new PDBHandler();
+        handler.handle(uniprotRecords, actions, context);
+        assertTrue(actions.size() > 0);
+
+        BufferedWriter writer = new BufferedWriter(new FileWriter("/tmp/unipro2pdb.txt"));
+        for(SecondaryTermLoadAction action: actions){
+            assertEquals(SecondaryTermLoadAction.SubType.PDB, action.getSubType());
+            PdbDTO entry = PdbDTO.fromMap(action.getRelatedEntityFields());
+            writer.write(entry.uniprot() + "|" + entry.pdb() + "\n");
+        }
+        writer.close();
+
+        //sort them
+        executeBashCommand("sort " + getWorkingDir() + "/unipro2pdb.txt -o " + getWorkingDir() + "/unipro2pdb.txt");
+        executeBashCommand("sort /tmp/unipro2pdb.txt -o /tmp/unipro2pdb.txt");
+
+        int exitValue = executeBashCommand("diff " + getWorkingDir() + "/unipro2pdb.txt /tmp/unipro2pdb.txt");
         assertTrue(exitValue == 0);
     }
 

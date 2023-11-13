@@ -9,6 +9,9 @@ import java.util.*;
 
 /**
  * Creates actions for adding and deleting protein domain information
+ * interpro_protein table for load/delete
+ * domain.txt was the legacy load file
+ * Uses EntryListItemDTO
  */
 @Log4j2
 public class InterproDomainHandler implements SecondaryLoadHandler {
