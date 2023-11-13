@@ -265,9 +265,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
         return session.createQuery(cr).uniqueResult();
     }
 
-    //remove override?
-    @Override
-    public List<GenericTerm> getTermsInOboIDList(List<String> oboIDs, boolean preserveOrder) {
+    private static List<GenericTerm> getTermsInOboIDList(List<String> oboIDs, boolean preserveOrder) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(GenericTerm.class);
         criteria.add(Restrictions.in("oboID", oboIDs));

@@ -62,8 +62,6 @@ public interface OntologyRepository {
      */
     GenericTerm getTermByOboID(String termID);
 
-    List<GenericTerm> getTermsInOboIDList(List<String> oboIDs, boolean preserveOrder);
-
     /**
      * @param terms
      * @return
