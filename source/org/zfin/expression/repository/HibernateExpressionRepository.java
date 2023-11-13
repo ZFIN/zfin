@@ -1566,10 +1566,9 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 	public List<ExpressionResult> getExpressionsWithEntity(GenericTerm term) {
 		String hql = "select distinct expression from ExpressionResult expression where " +
 			"(entity.superterm = :term OR entity.subterm = :term) " +
-			" AND expressionFound = :expressionFound ";
+			" AND expressionFound = true ";
 		Query<ExpressionResult> query = HibernateUtil.currentSession().createQuery(hql, ExpressionResult.class);
 		query.setParameter("term", term);
-		query.setParameter("expressionFound", true);
 		return query.list();
 	}
 
@@ -2357,16 +2356,14 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 		Session session = HibernateUtil.currentSession();
 
 		String hql = "select result from ExpressionResult result " +
-			"     where result.entity is not null AND result.entity.superterm is not null AND result.entity.superterm.secondary = :secondary";
+			"     where result.entity is not null AND result.entity.superterm is not null AND result.entity.superterm.secondary = true";
 		Query<ExpressionResult> query = session.createQuery(hql, ExpressionResult.class);
-		query.setParameter("secondary", true);
 
 		List<ExpressionResult> allExpressions = new ArrayList<>(query.list());
 
 		hql = "select result from ExpressionResult result " +
-			"     where result.entity is not null AND result.entity.subterm is not null AND result.entity.subterm.secondary = :secondary";
+			"     where result.entity is not null AND result.entity.subterm is not null AND result.entity.subterm.secondary = true";
 		Query<ExpressionResult> queryEntitySub = session.createQuery(hql, ExpressionResult.class);
-		queryEntitySub.setParameter("secondary", true);
 		allExpressions.addAll(queryEntitySub.list());
 
 		return allExpressions;
@@ -2382,16 +2379,14 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 		Session session = HibernateUtil.currentSession();
 
 		String hql = "from ExpressionResult2 " +
-			"     where superTerm is not null AND superTerm.obsolete = :obsolete";
+			"     where superTerm is not null AND superTerm.obsolete = true";
 		Query<ExpressionResult2> query = session.createQuery(hql, ExpressionResult2.class);
-		query.setParameter("obsolete", true);
 
 		List<ExpressionResult2> allExpressions = new ArrayList<>(query.list());
 
 		hql = "from ExpressionResult2 " +
-			"     where subTerm is not null AND subTerm.obsolete = :obsolete";
+			"     where subTerm is not null AND subTerm.obsolete = true";
 		Query<ExpressionResult2> queryEntitySub = session.createQuery(hql, ExpressionResult2.class);
-		queryEntitySub.setParameter("obsolete", true);
 		allExpressions.addAll(queryEntitySub.list());
 
 		return allExpressions;
