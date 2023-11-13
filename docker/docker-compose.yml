@@ -49,9 +49,8 @@ services:
       POSTGRES_DB: zfindb
       POSTGRES_HOST_AUTH_METHOD: trust
     shm_size: 1g
-    ports:
-      - "127.0.0.1:5432-5441:5432"
-      - "127.0.0.2:5432:5432"
+#    ports:
+#      - "127.0.0.1:5432-5441:5432"
     volumes:
       - pg_data:/var/lib/postgresql/data/
       - ./pg_pass:/run/secrets/pg_pass:ro
@@ -60,22 +59,25 @@ services:
     restart: always
     ports:
       - "8983-8992:8983"
-      - "127.0.0.2:8983:8983"
     volumes:
       - solr_data:/var/solr
   httpd:
     hostname: zfin.org
     build: ./httpd/
     restart: always
+    environment:
+      VIRTUAL_HOST: ${DOCKER_VIRTUAL_HOST}
+      VIRTUAL_PROTO: https
+      VIRTUAL_PORT: 443
     ports:
       - "8080-8089:80"
       - "8443-8452:443"
-      - "127.0.0.2:443:443"
     volumes:
       - www_data:/opt/zfin/www_homes/zfin.org
       - httpd_log:/var/log/httpd
       - tls_certs:/opt/zfin/tls
       #- nfs-loadup:/opt/zfin/loadUp
+      - ${DOCKER_RESEARCH_PATH}/zcentral/loadUp:/opt/zfin/loadUp
       #- /etc/pki/tls/certs/incommon_intermediate_bundle.crt:/etc/pki/tls/certs/incommon_intermediate_bundle.crt,ro
       #- /etc/pki/tls/certs/zfin_2021.crt:/etc/pki/tls/certs/zfin_2021.crt,ro
       #- /etc/pki/tls/private/zfin_2021.key:/etc/pki/tls/private/zfin_2021.key,ro
@@ -92,13 +94,12 @@ services:
       CATALINA_BASE: /opt/zfin/catalina_bases/zfin.org
       INSTANCE: docker
       JVM_OPTS: -Xms2048m -Xmx8192m -Xss2m
-      #UNCOMMENT BELOW TO ENABLE DEBUGGING#
-      JPDA_ADDRESS: "*:5000"
-      JPDA_TRANSPORT: dt_socket
-    entrypoint: ["catalina.sh", "jpda", "run"]
-    ports:
-      - "127.0.0.1:5000-5009:5000"
-      - "127.0.0.2:5000:5000"
+#      #UNCOMMENT BELOW TO ENABLE DEBUGGING#
+#      JPDA_ADDRESS: "*:5000"
+#      JPDA_TRANSPORT: dt_socket
+#    entrypoint: ["catalina.sh", "jpda", "run"]
+#    ports:
+#      - "127.0.0.1:5000-5009:5000"
     volumes:
       - www_data:/opt/zfin/www_homes/zfin.org
       - catalina_base:/opt/zfin/catalina_bases/zfin.org
