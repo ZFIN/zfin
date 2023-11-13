@@ -371,6 +371,9 @@ public interface OntologyRepository {
 
     Set<GenericTerm> getDiseaseTermsOmimPhenotype();
 
+    TermExternalReference getTermExternalReference(String casID, String prefix);
+    List<TermExternalReference> getAllCasReferences();
     Map<String, GenericTerm> getGoTermsToZdbID();
 
+    void saveMeshChebi(MeshChebiMapping mapping);
 }
