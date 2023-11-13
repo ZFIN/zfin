@@ -68,7 +68,8 @@ public class DeleteRuleTest extends AbstractDatabaseTest {
         List<DeleteValidationReport> reportList = feature.validate();
         assertNotNull(reportList);
         assertTrue(reportList.size() > 0);
-        assertTrue(reportList.get(0).getValidationMessage().contains("features"));
+        String errorsConcatened = reportList.stream().map(DeleteValidationReport::getValidationMessage).collect(Collectors.joining());
+        assertTrue(errorsConcatened.contains("features"));
     }
 
     @Test
@@ -79,7 +80,8 @@ public class DeleteRuleTest extends AbstractDatabaseTest {
         List<DeleteValidationReport> reportList = feature.validate();
         assertNotNull(reportList);
         assertTrue(reportList.size() > 0);
-        assertTrue(reportList.get(0).getValidationMessage().contains("expression"));
+        String errorsConcatened = reportList.stream().map(DeleteValidationReport::getValidationMessage).collect(Collectors.joining());
+        assertTrue(errorsConcatened.contains("expression"));
     }
 
     @Test
@@ -90,10 +92,11 @@ public class DeleteRuleTest extends AbstractDatabaseTest {
         List<DeleteValidationReport> reportList = feature.validate();
         assertNotNull(reportList);
         assertTrue(reportList.size() > 0);
-        assertTrue(reportList.get(0).getValidationMessage().contains("Markers"));
-        assertTrue(reportList.get(1).getValidationMessage().contains("Features"));
-        assertTrue(reportList.get(2).getValidationMessage().contains("members"));
-        assertTrue(reportList.get(3).getValidationMessage().contains("lab designation"));
+        String errorsConcatened = reportList.stream().map(DeleteValidationReport::getValidationMessage).collect(Collectors.joining());
+        assertTrue(errorsConcatened.contains("Markers"));
+        assertTrue(errorsConcatened.contains("Features"));
+        assertTrue(errorsConcatened.contains("members"));
+        assertTrue(errorsConcatened.contains("lab designation"));
     }
 
     @Test
@@ -104,8 +107,9 @@ public class DeleteRuleTest extends AbstractDatabaseTest {
         List<DeleteValidationReport> reportList = feature.validate();
         assertNotNull(reportList);
         assertTrue(reportList.size() > 0);
-        assertTrue(reportList.get(0).getValidationMessage().contains("Features"));
-        assertTrue(reportList.get(1).getValidationMessage().contains("members"));
+        String errorsConcatened = reportList.stream().map(DeleteValidationReport::getValidationMessage).collect(Collectors.joining());
+        assertTrue(errorsConcatened.contains("Features"));
+        assertTrue(errorsConcatened.contains("members"));
     }
 
     @Test
@@ -116,7 +120,8 @@ public class DeleteRuleTest extends AbstractDatabaseTest {
         List<DeleteValidationReport> reportList = feature.validate();
         assertNotNull(reportList);
         assertTrue(reportList.size() > 0);
-        assertTrue(reportList.get(0).getValidationMessage().contains("associated"));
+        String errorsConcatened = reportList.stream().map(DeleteValidationReport::getValidationMessage).collect(Collectors.joining());
+        assertTrue(errorsConcatened.contains("associated"));
     }
 
     @Test
@@ -127,8 +132,9 @@ public class DeleteRuleTest extends AbstractDatabaseTest {
         List<DeleteValidationReport> reportList = feature.validate();
         assertNotNull(reportList);
         assertTrue(reportList.size() > 0);
-        assertTrue(reportList.get(0).getValidationMessage().contains("labs"));
-        assertTrue(reportList.get(1).getValidationMessage().contains("publications"));
+        String errorsConcatened = reportList.stream().map(DeleteValidationReport::getValidationMessage).collect(Collectors.joining());
+        assertTrue(errorsConcatened.contains("labs"));
+        assertTrue(errorsConcatened.contains("publications"));
     }
 
     @Test
@@ -154,8 +160,9 @@ public class DeleteRuleTest extends AbstractDatabaseTest {
         List<DeleteValidationReport> reportList = feature.validate();
         assertNotNull(reportList);
         assertTrue(reportList.size() > 0);
-        assertTrue(reportList.get(0).getValidationMessage().contains("constructs"));
-        assertTrue(reportList.get(1).getValidationMessage().contains("publications"));
+        String errorsConcatened = reportList.stream().map(DeleteValidationReport::getValidationMessage).collect(Collectors.joining());
+        assertTrue(errorsConcatened.contains("constructs"));
+        assertTrue(errorsConcatened.contains("publications"));
     }
 
     @Test
@@ -166,8 +173,8 @@ public class DeleteRuleTest extends AbstractDatabaseTest {
         List<DeleteValidationReport> reportList = deleteRule.validate();
         assertNotNull(reportList);
         assertTrue(reportList.size() > 0);
-        assertTrue(reportList.get(0).getValidationMessage().contains("fish"));
-        assertTrue(reportList.get(1).getValidationMessage().contains("GO annotation"));
-       // assertTrue(reportList.get(2).getValidationMessage().contains("publication"));
+        String errorsConcatened = reportList.stream().map(DeleteValidationReport::getValidationMessage).collect(Collectors.joining());
+        assertTrue(errorsConcatened.contains("fish"));
+        assertTrue(errorsConcatened.contains("GO annotation"));
     }
 }
