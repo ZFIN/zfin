@@ -384,8 +384,6 @@ public interface ExpressionRepository {
     int getImagesFromPubAndClone(PublicationExpressionBean publicationExpressionBean);
     int getImagesForEfg(PublicationExpressionBean publicationExpressionBean);
 
-    StageExpressionPresentation getStageExpressionForMarker(String zdbID);
-
     List<ExpressedStructurePresentation> getWildTypeExpressionExperiments(String zdbID);
 
     /**
@@ -419,8 +417,6 @@ public interface ExpressionRepository {
      * Retrieve list of expression experiment records for a given gene.
      * @return list of expression experiment records
      */
-    List<ExpressionExperiment> getExpressionExperimentByGene(Marker gene);
-
     long getExpressionExperimentByFishAndPublication(Fish fish, String publicationID);
 
     List<ExpressionExperiment2> getExperiments2(String zdbID);
@@ -470,7 +466,7 @@ public interface ExpressionRepository {
 
     List<ExpressionFigureStage> getExperimentFigureStagesByIds(List<Integer> expressionIDs);
 
-    ArrayList<HTPDataset> getAllHTPDatasets();
+    List<HTPDataset> getAllHTPDatasets();
     ArrayList<HTPDatasetSample> getAllHTPDatasetSamples();
     ArrayList<HTPDatasetSampleDetail> getAllHTPDatasetSampleDetails();
     ArrayList<String> getHTPSecondaryIds(String datasetId);
