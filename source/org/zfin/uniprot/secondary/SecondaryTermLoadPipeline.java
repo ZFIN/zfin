@@ -29,7 +29,7 @@ public class SecondaryTermLoadPipeline {
         for (SecondaryLoadHandler handler : handlers) {
             String handlerClassName = handler.getClass().getName();
             log.debug("Starting handler " + i + " of " + handlers.size() + " (" + handlerClassName + ")");
-            handler.handle(uniprotRecords, actions, context);
+            handler.createActions(uniprotRecords, actions, context);
             actionCount = actions.size();
             log.debug("Finished handler " + i + " of " + handlers.size() + " (" + handlerClassName + ")");
 

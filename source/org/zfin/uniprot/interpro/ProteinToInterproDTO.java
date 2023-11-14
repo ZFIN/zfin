@@ -1,5 +1,7 @@
 package org.zfin.uniprot.interpro;
 
+import org.zfin.sequence.ProteinToInterPro;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,5 +17,12 @@ public record ProteinToInterproDTO(String uniprot, String interpro) {
         map.put("uniprot", uniprot);
         map.put("interpro", interpro);
         return map;
+    }
+
+    public ProteinToInterPro toProteinToInterpro() {
+        ProteinToInterPro p2i = new ProteinToInterPro();
+        p2i.setUniProtID(uniprot);
+        p2i.setInterProID(interpro);
+        return p2i;
     }
 }

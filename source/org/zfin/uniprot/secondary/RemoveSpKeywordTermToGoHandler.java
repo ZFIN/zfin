@@ -8,16 +8,26 @@ import org.zfin.uniprot.adapter.RichSequenceAdapter;
 import java.util.List;
 import java.util.Map;
 
+import static org.zfin.uniprot.secondary.AddNewSecondaryTermToGoHandler.filterTerms;
+
+/**
+ * Remove from our marker_go_term_evidence table if the new uniprot release no longer contains it.
+ * This is related to AddNewSpKeywordTermToGoHandler which handles inserts
+ */
 @Log4j2
-public class RemoveSpKeywordTermToGoHandler extends AddNewSecondaryTermToGoHandler {
+public class RemoveSpKeywordTermToGoHandler extends RemoveSecondaryTermToGoHandler {
     private static final ForeignDB.AvailableName FOREIGN_DB_NAME = ForeignDB.AvailableName.UNIPROTKB;
+
+    public RemoveSpKeywordTermToGoHandler() {
+        super();
+    }
 
     public RemoveSpKeywordTermToGoHandler(ForeignDB.AvailableName dbName, List<SecondaryTerm2GoTerm> translationRecords) {
         super(dbName, translationRecords);
     }
 
     @Override
-    public void handle(Map<String, RichSequenceAdapter> uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
+    public void createActions(Map<String, RichSequenceAdapter> uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
 
         log.debug("Creating actions to remove SPKW terms");
 
@@ -27,7 +37,7 @@ public class RemoveSpKeywordTermToGoHandler extends AddNewSecondaryTermToGoHandl
         List<MarkerGoTermEvidence> existingRecords = context.getExistingMarkerGoTermEvidenceRecordsForSPKW();
 
         //these are all the marker_go_term_evidence entries that have the SPKW terms based on the parsed uniprot records
-        newMarkerGoTermEvidenceLoadActions = AddNewSpKeywordTermToGoHandler.createMarkerGoTermEvidenceLoadActionsFromUniprotKeywords(uniProtRecords, context, translationRecords);
+        newMarkerGoTermEvidenceLoadActions = AddNewSpKeywordTermToGoHandler.createMarkerGoTermEvidenceLoadActionsFromUniprotKeywords(uniProtRecords, context, this.translationRecords);
         List<SecondaryTermLoadAction> filteredMarkerGoTermEvidences = filterTerms(newMarkerGoTermEvidenceLoadActions);
 
         //difference:
@@ -53,6 +63,7 @@ public class RemoveSpKeywordTermToGoHandler extends AddNewSecondaryTermToGoHandl
                         .goID(record.getGoTerm().getOboID())
                         .goTermZdbID(record.getGoTerm().getZdbID())
                         .geneZdbID(record.getMarker().getZdbID())
+                        .handlerClass(this.getClass().getName())
                         .build()
         ).toList();
     }

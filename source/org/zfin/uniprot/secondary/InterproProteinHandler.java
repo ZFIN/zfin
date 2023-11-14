@@ -1,18 +1,16 @@
 package org.zfin.uniprot.secondary;
 
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.collections4.ListUtils;
 import org.zfin.uniprot.adapter.CrossRefAdapter;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
 import org.zfin.uniprot.dto.DBLinkSlimDTO;
-import org.zfin.uniprot.interpro.EntryListItemDTO;
 import org.zfin.uniprot.interpro.ProteinDTO;
 
+import java.sql.PreparedStatement;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import static org.zfin.uniprot.UniProtTools.AUTOMATED_CURATION_OF_UNIPROT_DATABASE_LINKS;
+import static org.zfin.framework.HibernateUtil.currentSession;
 
 /**
  * Creates actions for adding and deleting protein domain information (replaces part of protein_domain_info_load.pl)
@@ -24,7 +22,7 @@ import static org.zfin.uniprot.UniProtTools.AUTOMATED_CURATION_OF_UNIPROT_DATABA
 public class InterproProteinHandler implements SecondaryLoadHandler {
 
     @Override
-    public void handle(Map<String, RichSequenceAdapter> uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
+    public void createActions(Map<String, RichSequenceAdapter> uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
 
         List<ProteinDTO> existingProteins = context.getExistingProteinRecords();
         List<ProteinDTO> proteinsToKeep = new ArrayList<>();
@@ -62,6 +60,45 @@ public class InterproProteinHandler implements SecondaryLoadHandler {
         }
     }
 
+    @Override
+    public void processActions(List<SecondaryTermLoadAction> actions) {
+        processInsertQueries(actions);
+        processDeleteQueries(actions);
+    }
+
+    private static void processInsertQueries(List<SecondaryTermLoadAction> actions) {
+        currentSession().doWork(connection -> {
+            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO protein (up_uniprot_id, up_length) VALUES (?, ?)" +
+                    " ON CONFLICT (up_uniprot_id) DO UPDATE SET up_length = EXCLUDED.up_length")) {
+                for(SecondaryTermLoadAction action : actions) {
+                    if (action.getType().equals(SecondaryTermLoadAction.Type.LOAD)) {
+                        statement.setString(1, action.getAccession());
+                        statement.setInt(2, action.getLength());
+                        statement.execute();
+                    }
+                }
+            }
+        });
+    }
+
+    private static void processDeleteQueries(List<SecondaryTermLoadAction> actions) {
+        currentSession().doWork(connection -> {
+            try (PreparedStatement statement = connection.prepareStatement("DELETE FROM protein WHERE up_uniprot_id = ?")) {
+                for(SecondaryTermLoadAction action : actions) {
+                    if (action.getType().equals(SecondaryTermLoadAction.Type.DELETE)) {
+                        statement.setString(1, action.getAccession());
+                        statement.execute();
+                    }
+                }
+            }
+        });
+    }
+
+    @Override
+    public SecondaryTermLoadAction.SubType isSubTypeHandlerFor() {
+        return SecondaryTermLoadAction.SubType.PROTEIN;
+    }
+
     private void createLoadAction(SecondaryLoadContext context, List<SecondaryTermLoadAction> actions, String accession, int length, Collection<CrossRefAdapter> zfinCrossRefs) {
         List<String> zdbIDs = zfinCrossRefs.stream().map(ref -> ref.getAccession()).toList();
 
@@ -86,6 +123,7 @@ public class InterproProteinHandler implements SecondaryLoadHandler {
                     .accession(accession)
                     .details(String.join(",", zdbIDs))
                     .length(length)
+                    .handlerClass(this.getClass().getName())
                     .build());
         } else {
             log.debug("No auto-curated gene association found for UniProt accession: " + accession);
@@ -98,6 +136,7 @@ public class InterproProteinHandler implements SecondaryLoadHandler {
                 .subType(SecondaryTermLoadAction.SubType.PROTEIN)
                 .accession(protein.accession())
                 .length(protein.length())
+                .handlerClass(this.getClass().getName())
                 .build();
     }
 

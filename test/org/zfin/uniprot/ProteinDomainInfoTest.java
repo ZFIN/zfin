@@ -5,7 +5,6 @@ import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.biojava.bio.BioException;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Assert;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.properties.ZfinPropertiesEnum;
@@ -21,8 +20,6 @@ import java.io.IOException;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.zfin.uniprot.secondary.SecondaryLoadContext.*;
 
@@ -41,27 +38,29 @@ public class ProteinDomainInfoTest extends AbstractDatabaseTest {
 //        int exitValue = executeBashCommand(PERLBIN + " protein_domain_info_load_for_testing.pl");
 //        assertTrue(exitValue == 0);
 
-        List<EntryListItemDTO> existingDbRecords = fetchExistingInterproDomainRecords();
+        List<InterProProteinDTO> existingDbRecords = fetchExistingInterproDomainRecords();
         assertTrue(existingDbRecords.size() > 0);
 
-        List<EntryListItemDTO> downloadedEntries = EntryListTranslator.parseFile(new File(getWorkingDir() + "entry.list"));
+        List<InterProProteinDTO> downloadedEntries = EntryListTranslator.parseFile(new File(getWorkingDir() + "entry.list"));
         InterproDomainHandler handler = new InterproDomainHandler(downloadedEntries);
 
         Map<String, RichSequenceAdapter> uniprotRecords = new HashMap<>();
         List<SecondaryTermLoadAction> actions = new ArrayList<>();
         SecondaryLoadContext context = new SecondaryLoadContext();
         context.setExistingInterproDomainRecords(existingDbRecords);
-        handler.handle(uniprotRecords, actions, context);
+        handler.createActions(uniprotRecords, actions, context);
 
         //open file for writing
 //        BufferedWriter writer = new FileWriter("/tmp/domain.txt");
         BufferedWriter writer = new BufferedWriter(new FileWriter("/tmp/domain.txt"));
         for(SecondaryTermLoadAction action: actions){
             Map<String, String> map = action.getRelatedEntityFields();
-            EntryListItemDTO entry = EntryListItemDTO.fromMap(map);
+            InterProProteinDTO entry = InterProProteinDTO.fromMap(map);
             writer.write(entry.accession() + "|" + entry.name() + "|" + entry.type() + "\n");
         }
         writer.close();
+
+        SecondaryTermLoadService.processActions(actions, null);
 
         //check that we have successfully recreated the output of domain.txt:
         int exitValue = executeBashCommand("diff " + getWorkingDir() + "/domain.txt /tmp/domain.txt");
@@ -80,7 +79,7 @@ public class ProteinDomainInfoTest extends AbstractDatabaseTest {
         SecondaryLoadContext context = SecondaryLoadContext.createFromDBConnection();
         context.setExistingProteinRecords(fetchExistingProteinRecords());
         InterproProteinHandler handler = new InterproProteinHandler();
-        handler.handle(uniprotRecords, actions, context);
+        handler.createActions(uniprotRecords, actions, context);
         assertTrue(actions.size() > 0);
 
         BufferedWriter writer = new BufferedWriter(new FileWriter("/tmp/protein.txt"));
@@ -108,7 +107,7 @@ public class ProteinDomainInfoTest extends AbstractDatabaseTest {
         SecondaryLoadContext context = SecondaryLoadContext.createFromDBConnection();
         context.setExistingMarkerToProteinRecords(fetchExistingMarkerToProteinRecords());
         InterproMarkerToProteinHandler handler = new InterproMarkerToProteinHandler();
-        handler.handle(uniprotRecords, actions, context);
+        handler.createActions(uniprotRecords, actions, context);
         assertTrue(actions.size() > 0);
 
         BufferedWriter writer = new BufferedWriter(new FileWriter("/tmp/zfinprotein.txt"));
@@ -137,7 +136,7 @@ public class ProteinDomainInfoTest extends AbstractDatabaseTest {
         SecondaryLoadContext context = SecondaryLoadContext.createFromDBConnection();
         context.setExistingProteinToInterproRecords(fetchExistingProteinToInterproRecords());
         ProteinToInterproHandler handler = new ProteinToInterproHandler();
-        handler.handle(uniprotRecords, actions, context);
+        handler.createActions(uniprotRecords, actions, context);
         assertTrue(actions.size() > 0);
 
         BufferedWriter writer = new BufferedWriter(new FileWriter("/tmp/unipro2interpro.txt"));
@@ -166,7 +165,7 @@ public class ProteinDomainInfoTest extends AbstractDatabaseTest {
         SecondaryLoadContext context = SecondaryLoadContext.createFromDBConnection();
         context.setExistingPdbRecords(fetchExistingPdbRecords());
         PDBHandler handler = new PDBHandler();
-        handler.handle(uniprotRecords, actions, context);
+        handler.createActions(uniprotRecords, actions, context);
         assertTrue(actions.size() > 0);
 
         BufferedWriter writer = new BufferedWriter(new FileWriter("/tmp/unipro2pdb.txt"));

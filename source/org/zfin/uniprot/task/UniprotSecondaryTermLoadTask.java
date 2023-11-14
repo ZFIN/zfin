@@ -11,7 +11,7 @@ import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
-import org.zfin.uniprot.interpro.EntryListItemDTO;
+import org.zfin.uniprot.interpro.InterProProteinDTO;
 import org.zfin.uniprot.interpro.EntryListTranslator;
 import org.zfin.uniprot.secondary.*;
 import org.zfin.uniprot.persistence.UniProtRelease;
@@ -34,7 +34,7 @@ import static org.zfin.uniprot.UniProtTools.getArgOrEnvironmentVar;
 @Setter
 public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
 
-    private static final int ACTION_SIZE_ERROR_THRESHOLD = 10_000;
+    private static final int ACTION_SIZE_ERROR_THRESHOLD = 20_000;
     private static final String LOAD_REPORT_TEMPLATE_HTML = "/home/uniprot/secondary-load-report.html";
     private static final String JSON_PLACEHOLDER_IN_TEMPLATE = "JSON_GOES_HERE";
 
@@ -56,7 +56,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
     private List<SecondaryTerm2GoTerm> ipToGoRecords;
     private List<SecondaryTerm2GoTerm> ecToGoRecords;
     private List<SecondaryTerm2GoTerm> upToGoRecords;
-    private List<EntryListItemDTO> downloadedInterproDomainRecords;
+    private List<InterProProteinDTO> downloadedInterproDomainRecords;
 
     public static void main(String[] args) throws Exception {
 
@@ -327,7 +327,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
             String url4 = "https://ftp.ebi.ac.uk/pub/databases/interpro/current_release/entry.list";
             downloadFileViaWget(url4, downloadedFile4.toPath(), 10_000, log);
             log.debug("Loading " + downloadedFile4.getAbsolutePath());
-            List<EntryListItemDTO> entryList = EntryListTranslator.parseFile(downloadedFile4);
+            List<InterProProteinDTO> entryList = EntryListTranslator.parseFile(downloadedFile4);
             log.debug("Loaded " + entryList.size() + " entries.");
             this.downloadedInterproDomainRecords = entryList;
 

@@ -12,9 +12,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Adds new SPKW terms to marker_go_term_evidence table.
+ * Special case of AddNewSecondaryTermToGoHandler.
+ */
 @Log4j2
 public class AddNewSpKeywordTermToGoHandler extends AddNewSecondaryTermToGoHandler {
     private static final ForeignDB.AvailableName FOREIGN_DB_NAME = ForeignDB.AvailableName.UNIPROTKB;
+
+    public AddNewSpKeywordTermToGoHandler() {
+        super();
+    }
 
     public AddNewSpKeywordTermToGoHandler(ForeignDB.AvailableName dbName, List<SecondaryTerm2GoTerm> translationRecords) {
         super(dbName, translationRecords);
@@ -24,7 +32,7 @@ public class AddNewSpKeywordTermToGoHandler extends AddNewSecondaryTermToGoHandl
 
 
     @Override
-    public void handle(Map<String, RichSequenceAdapter> uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
+    public void createActions(Map<String, RichSequenceAdapter> uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
 
         //create newMarkerGoTermEvidenceLoadActions from new interpro IDs
         log.debug("Creating newMarkerGoTermEvidenceLoadActions from new " + dbName + " IDs");
@@ -97,6 +105,7 @@ public class AddNewSpKeywordTermToGoHandler extends AddNewSecondaryTermToGoHandl
                     .geneZdbID(geneKeyword.geneZdbID())
                     .goID(item2go.goID())
                     .goTermZdbID(item2go.termZdbID())
+                    .handlerClass(AddNewSpKeywordTermToGoHandler.class.getName())
                     .build();
             newMarkerGoTermEvidences.add(newAction);
         }

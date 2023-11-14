@@ -10,6 +10,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
+
 
 /**
  * Creates actions for adding and deleting marker to protein information (replaces part of protein_domain_info_load.pl)
@@ -22,7 +24,7 @@ import java.util.Map;
 public class InterproMarkerToProteinHandler implements SecondaryLoadHandler {
 
     @Override
-    public void handle(Map<String, RichSequenceAdapter> uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
+    public void createActions(Map<String, RichSequenceAdapter> uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
 
         List<MarkerToProteinDTO> existingRecords = context.getExistingMarkerToProteinRecords();
         List<MarkerToProteinDTO> keepRecords = new ArrayList<>(); //all the records to keep (not delete) includes new records too
@@ -61,6 +63,7 @@ public class InterproMarkerToProteinHandler implements SecondaryLoadHandler {
                 .accession(newRecord.accession())
                 .type(SecondaryTermLoadAction.Type.LOAD)
                 .subType(SecondaryTermLoadAction.SubType.INTERPRO_MARKER_TO_PROTEIN)
+                .handlerClass(this.getClass().getName())
                 .build();
     }
     private SecondaryTermLoadAction createDeleteAction(MarkerToProteinDTO recordToDelete) {
@@ -69,7 +72,35 @@ public class InterproMarkerToProteinHandler implements SecondaryLoadHandler {
                 .accession(recordToDelete.accession())
                 .type(SecondaryTermLoadAction.Type.DELETE)
                 .subType(SecondaryTermLoadAction.SubType.INTERPRO_MARKER_TO_PROTEIN)
+                .handlerClass(this.getClass().getName())
                 .build();
+    }
+
+    @Override
+    public void processActions(List<SecondaryTermLoadAction> actions) {
+        processInserts(actions);
+        processDeletes(actions);
+    }
+
+    private void processInserts(List<SecondaryTermLoadAction> actions) {
+        for(SecondaryTermLoadAction action : actions) {
+            if (action.getType() == SecondaryTermLoadAction.Type.LOAD) {
+                getMarkerRepository().insertInterProForMarker(action.getGeneZdbID(), action.getAccession());
+            }
+        }
+    }
+
+    private void processDeletes(List<SecondaryTermLoadAction> actions) {
+        for(SecondaryTermLoadAction action : actions) {
+            if (action.getType() == SecondaryTermLoadAction.Type.DELETE) {
+                getMarkerRepository().deleteInterProForMarker(action.getGeneZdbID(), action.getAccession());
+            }
+        }
+    }
+
+    @Override
+    public SecondaryTermLoadAction.SubType isSubTypeHandlerFor() {
+        return SecondaryTermLoadAction.SubType.INTERPRO_MARKER_TO_PROTEIN;
     }
 
 }

@@ -45,7 +45,7 @@ public class SecondaryLoadContext {
 
     private List<SecondaryTerm2GoTerm> interproTranslationRecords;
     private List<SecondaryTerm2GoTerm> ecTranslationRecords;
-    private List<EntryListItemDTO> existingInterproDomainRecords;
+    private List<InterProProteinDTO> existingInterproDomainRecords;
     private List<ProteinDTO> existingProteinRecords;
     private List<MarkerToProteinDTO> existingMarkerToProteinRecords;
     private List<ProteinToInterproDTO> existingProteinToInterproRecords;
@@ -111,19 +111,22 @@ public class SecondaryLoadContext {
         log.debug("Load Step 12: Getting Existing Protein to Interpro Records");
         loadContext.setExistingProteinToInterproRecords(fetchExistingProteinToInterproRecords());
 
+        log.debug("Load Step 13: Getting Existing PDB Records");
+        loadContext.setExistingPdbRecords(fetchExistingPdbRecords());
+
         return loadContext;
     }
 
-    public static List<EntryListItemDTO> fetchExistingInterproDomainRecords() {
+    public static List<InterProProteinDTO> fetchExistingInterproDomainRecords() {
         String sql = "select ip_interpro_id, ip_name, ip_type from interpro_protein";
         List queryResults = currentSession().createSQLQuery(sql).list();
-        List<EntryListItemDTO> interproDomainRecords = new ArrayList<>();
+        List<InterProProteinDTO> interproDomainRecords = new ArrayList<>();
         for(Object result : queryResults) {
             Object[] row = (Object[]) result;
             String ipInterproId = (String) row[0];
             String ipName = (String) row[1];
             String ipType = (String) row[2];
-            interproDomainRecords.add(new EntryListItemDTO(ipInterproId, ipType, ipName));
+            interproDomainRecords.add(new InterProProteinDTO(ipInterproId, ipType, ipName));
         }
         return interproDomainRecords;
     }

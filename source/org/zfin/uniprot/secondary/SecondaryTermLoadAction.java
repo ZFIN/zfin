@@ -26,6 +26,7 @@ public class SecondaryTermLoadAction implements Comparable<SecondaryTermLoadActi
     private String relatedEntityID;
     private String details;
     private int length;
+    private String handlerClass;
 
     @Builder.Default
     private Map<String, String> relatedEntityFields = new HashMap<>();
@@ -37,7 +38,7 @@ public class SecondaryTermLoadAction implements Comparable<SecondaryTermLoadActi
         links = new TreeSet<>();
     }
 
-    public SecondaryTermLoadAction(Type type, SubType subType, ForeignDB.AvailableName dbName, String accession, String goID, String goTermZdbID, String geneZdbID, String relatedEntityID, String details, int length, Map<String, String> relatedEntityFields, Set<UniProtLoadLink> links)
+    public SecondaryTermLoadAction(Type type, SubType subType, ForeignDB.AvailableName dbName, String accession, String goID, String goTermZdbID, String geneZdbID, String relatedEntityID, String details, int length, String handlerClass, Map<String, String> relatedEntityFields, Set<UniProtLoadLink> links)
     {
         this.type = type;
         this.subType = subType;
@@ -48,6 +49,7 @@ public class SecondaryTermLoadAction implements Comparable<SecondaryTermLoadActi
         this.relatedEntityID = relatedEntityID;
         this.details = details;
         this.length = length;
+        this.handlerClass = handlerClass;
         this.links = links;
         this.dbName = dbName;
         this.relatedEntityFields = relatedEntityFields;
@@ -118,7 +120,18 @@ public class SecondaryTermLoadAction implements Comparable<SecondaryTermLoadActi
     }
 
     public String toString() {
-        return "InterproLoadAction: " + " action=" + type + " subtype=" + subType + " accession=" + accession + " goID=" + goID + " goTermZdbID=" + goTermZdbID + " geneZdbID=" + geneZdbID + " relatedEntityID=" + relatedEntityID + " details=" + details + " length=" + length + " links=" + links;
+        return "InterproLoadAction: " + " action=" + type +
+                " subtype=" + subType +
+                " accession=" + accession +
+                " goID=" + goID +
+                " goTermZdbID=" + goTermZdbID +
+                " geneZdbID=" + geneZdbID +
+                " relatedEntityID=" + relatedEntityID +
+                " details=" + details +
+                " length=" + length +
+                " handlerClass=" + handlerClass +
+                " relatedEntityFields=" + relatedEntityFields +
+                " links=" + links;
     }
 
     public String markerGoTermEvidenceRepresentation() {

@@ -138,6 +138,20 @@
         return item.dbName;
     }
 
+    function itemListingTitle(item) {
+        if (item.accession && item.geneZdbID) {
+            return `${item.accession} - ${item.geneZdbID}`;
+        } else if (item.accession) {
+            return item.accession;
+        } else if (item.relatedEntityFields) {
+            let buffer = "";
+            Object.keys(item.relatedEntityFields).forEach(key => {
+                buffer += `${key}: ${item.relatedEntityFields[key]} `;
+            });
+            return buffer;
+        }
+    }
+
     function reportApplication() {
         const { html, render, useState, useEffect } = window.preactStandalone;
 
@@ -225,7 +239,7 @@
                 <ul>
                     ${subTypeItems.map(item => html`
                         <li><a href="#" onClick=${() => onClick(item)}>
-                            ${item.accession} ${item.geneZdbID && ' - ' + item.geneZdbID}
+                            ${itemListingTitle(item)}
                             </a>
                         </li>
                     `)}

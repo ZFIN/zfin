@@ -11,7 +11,6 @@ import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.DataAlias;
 import org.zfin.infrastructure.DataNote;
-import org.zfin.mapping.GenomeLocation;
 import org.zfin.mapping.Location;
 import org.zfin.mapping.MarkerLocation;
 import org.zfin.marker.*;
@@ -386,6 +385,9 @@ public interface MarkerRepository {
 
      List<InterProProtein> getInterProForMarker(Marker marker);
 
+    void insertInterProForMarker(String markerZdbID, String uniprot);
+
+    void deleteInterProForMarker(String markerZdbID, String uniprot);
 
     List<String> getProteinType(Marker marker);
     List<String> getIPNames( String uniprot);

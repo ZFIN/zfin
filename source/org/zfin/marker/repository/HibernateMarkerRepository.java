@@ -55,7 +55,6 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.Database;
 import org.zfin.util.NumberAwareStringComparator;
-import org.zfin.util.ZfinCollectionUtils;
 
 import javax.persistence.Tuple;
 import javax.persistence.criteria.*;
@@ -65,7 +64,6 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static org.zfin.framework.HibernateUtil.currentSession;
-import static org.zfin.marker.MarkerHistory.Event.RENAMED;
 import static org.zfin.repository.RepositoryFactory.*;
 
 
@@ -2220,6 +2218,28 @@ public class HibernateMarkerRepository implements MarkerRepository {
         Query<InterProProtein> query = session.createQuery(sql, InterProProtein.class);
         query.setParameter("marker", marker);
         return query.list();
+    }
+
+    @Override
+    public void insertInterProForMarker(String markerZdbID, String uniprot) {
+        Session session = currentSession();
+        String sql = " insert into marker_to_protein (mtp_mrkr_zdb_id, mtp_uniprot_id) " +
+            " values (:markerZdbID, :uniprot) ";
+        Query query = session.createNativeQuery(sql);
+        query.setParameter("markerZdbID", markerZdbID);
+        query.setParameter("uniprot", uniprot);
+        query.executeUpdate();
+    }
+
+    @Override
+    public void deleteInterProForMarker(String markerZdbID, String uniprot) {
+        Session session = currentSession();
+        String sql = " delete from marker_to_protein " +
+            " where mtp_mrkr_zdb_id=:markerZdbID and mtp_uniprot_id=:uniprot ";
+        Query query = session.createNativeQuery(sql);
+        query.setParameter("markerZdbID", markerZdbID);
+        query.setParameter("uniprot", uniprot);
+        query.executeUpdate();
     }
 
 
