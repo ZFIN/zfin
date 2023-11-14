@@ -3,6 +3,7 @@ package org.zfin.datatransfer.ctd;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.StringUtils;
+import org.zfin.curation.PublicationNote;
 import org.zfin.datatransfer.service.DownloadService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.ant.DataReportTask;
@@ -23,8 +24,7 @@ import java.util.stream.Collectors;
 
 import static org.zfin.ontology.datatransfer.OntologyCommandLineOptions.loadDir;
 import static org.zfin.ontology.datatransfer.OntologyCommandLineOptions.webrootDirectory;
-import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
-import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
+import static org.zfin.repository.RepositoryFactory.*;
 
 public class LoadCtdData extends AbstractScriptWrapper {
 
@@ -45,6 +45,7 @@ public class LoadCtdData extends AbstractScriptWrapper {
         load.initAll();
         load.dao = new MeshChebiDAO(HibernateUtil.currentSession());
         load.pubDao = new PublicationCtdDAO(HibernateUtil.currentSession());
+        load.publicationNoteDao = new PublicationNoteDAO(HibernateUtil.currentSession());
         load.getReferenceCDT();
         load.loadMeshAndChebi();
         load.reportNonJointCasIds();
@@ -119,6 +120,7 @@ public class LoadCtdData extends AbstractScriptWrapper {
         List<String> publicationsNotFound = new ArrayList<>();
         List<String> existingIDs = new ArrayList<>();
         List<PublicationCtd> newPubCtds = new ArrayList<>();
+        List<PublicationNote> noteList = new ArrayList<>();
         pubmedIDs.forEach(id -> {
             Integer pubID = Integer.parseInt(id);
             List<Publication> publicationByPmid = getPublicationRepository().getPublicationByPmid(pubID);
@@ -128,6 +130,13 @@ public class LoadCtdData extends AbstractScriptWrapper {
                     PublicationCtd pubCtd = new PublicationCtd();
                     pubCtd.setPublication(publication);
                     pubCtd.setCtdID(String.valueOf(pubID));
+                    PublicationNote note =  new PublicationNote();
+                    note.setPublication(publication);
+                    note.setDate(new Date());
+                    note.setText("Curated by CTD");
+                    // Ceri
+                    note.setCurator(getProfileRepository().getPerson("ZDB-PERS-030612-1"));
+                    noteList.add(note);
                     newPubCtds.add(pubCtd);
                 });
             } else {
@@ -138,8 +147,10 @@ public class LoadCtdData extends AbstractScriptWrapper {
         HibernateUtil.createTransaction();
         List<PublicationCtd> existingRecords = pubDao.findAll();
         // only persist new records
+        List<Publication> existingPubs = existingRecords.stream().map(PublicationCtd::getPublication).toList();
         newPubCtds.removeAll(existingRecords);
         newPubCtds.forEach(publicationCtd -> pubDao.persist(publicationCtd));
+        noteList.stream().filter(publicationNote -> !existingPubs.contains(publicationNote.getPublication())).forEach(publicationNote -> publicationNoteDao.persist(publicationNote));
 
 
         HibernateUtil.flushAndCommitCurrentSession();
@@ -206,6 +217,7 @@ public class LoadCtdData extends AbstractScriptWrapper {
 
     MeshChebiDAO dao;
     PublicationCtdDAO pubDao;
+    PublicationNoteDAO publicationNoteDao;
 
     private List<MeshCasChebiRelation> getChebiToCasMapping() {
 
