@@ -38,7 +38,7 @@ public class PreviousNameLight implements ProvidesLink , Comparable<PreviousName
 
     @Override
     public String getLink() {
-        return alias ;
+        return getAlias();
     }
 
     @Override
@@ -49,18 +49,18 @@ public class PreviousNameLight implements ProvidesLink , Comparable<PreviousName
     @Override
     public String getLinkWithAttribution() {
         if (publicationZdbID!=null){
-            return alias + MarkerPresentation.getAttributionLink(this);        }
+            return getAlias() + MarkerPresentation.getAttributionLink(this);        }
         else{
             return getLink();
         }
     }
 
     public boolean isUninformative(){
-        if(isUninformative(alias)){
+        if(isUninformative(getAlias())){
             return true;
         }
         else{
-            return getDistance(alias,realName) >= realName.length();
+            return getDistance(getAlias(),realName) >= realName.length();
         }
     }
 
@@ -84,14 +84,14 @@ public class PreviousNameLight implements ProvidesLink , Comparable<PreviousName
         }
 
 
-        return  alias.compareToIgnoreCase(previousNameLight.getAlias());
+        return  getAlias().compareToIgnoreCase(previousNameLight.getAlias());
     }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append("PreviousNameLight");
-        sb.append("{alias='").append(alias).append('\'');
+        sb.append("{alias='").append(getAlias()).append('\'');
         sb.append(", publicationZdbID='").append(publicationZdbID).append('\'');
         sb.append('}');
         return sb.toString();

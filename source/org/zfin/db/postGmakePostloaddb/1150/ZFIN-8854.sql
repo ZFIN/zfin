@@ -26,6 +26,8 @@ WHERE mhist_mrkr_zdb_id LIKE '%CONSTRCT%'
     NOT IN (SELECT dalias_data_zdb_id, dalias_alias FROM data_alias)
   AND (mhist_mrkr_zdb_id, mhist_mrkr_name_on_mhist_date)              -- filter out the current name from marker table
     NOT IN (SELECT mrkr_zdb_id, mrkr_name FROM marker WHERE mrkr_type LIKE '%CONSTRCT')
+  AND (mhist_mrkr_zdb_id, replace(mhist_mrkr_name_on_mhist_date, ' ', ''))  -- filter out alias that differs from current name only by spaces
+    NOT IN (SELECT mrkr_zdb_id, replace(mrkr_name, ' ', '') FROM marker WHERE mrkr_type LIKE '%CONSTRCT')    
 ORDER BY
     mhist_mrkr_zdb_id,
     mhist_mrkr_name_on_mhist_date;
