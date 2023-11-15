@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as FigureService from '../api/figure';
 import InlineEditTextarea from '../utils/inline-edit-textarea';
 import FigureUpload from '../components/figure-edit/figure-upload';

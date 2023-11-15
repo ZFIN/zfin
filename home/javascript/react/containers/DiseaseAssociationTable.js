@@ -13,30 +13,28 @@ const DiseaseAssociationTable = ({alleleId, directAnnotationOnly}) => {
     const columns = [
         {
             label: 'Disease',
-            content: ({disease}) => <a href={'/' + disease.id}>{disease.name}</a>,
+            content: ({object}) => <a href={'/' + object.id}>{object.name}</a>,
             filterName: 'disease',
             width: '120px',
         },
-        /*
         {
             label: 'Evidence',
-            content: (row) => <CommaSeparatedList>
-                {row.evidenceCodes.map(code => {
-                    return <>{code.displaySynonym}</>
+            content: (evidenceCodes) => <CommaSeparatedList>
+                {evidenceCodes.evidenceCodes.map(code => {
+                    return <>{code.abbreviation}</>
                 })}
             </CommaSeparatedList>,
             filterName: 'evidenceCode',
             width: '120px',
         },
-        */
         {
             label: 'Reference',
             content: (row) => <CommaSeparatedList>
-                {row.publications.map(publication => {
+                {row.references.map(reference => {
                     return <a
-                        href={publication.url}
-                        dangerouslySetInnerHTML={{__html: publication.id}}
-                        key={publication.id}
+                        href={reference.curie}
+                        dangerouslySetInnerHTML={{__html: reference.shortCitation}}
+                        key={reference.curie}
                     />
                 })}
             </CommaSeparatedList>,
