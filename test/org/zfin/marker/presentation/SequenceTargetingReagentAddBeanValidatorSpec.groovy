@@ -77,7 +77,7 @@ class SequenceTargetingReagentAddBeanValidatorSpec extends AbstractZfinIntegrati
 
         where:
         type      | sequence
-        "MRPHLNO" | "GGTCTGCTTTGCAGTGAATATCCAT"
+        "MO" | "GGTCTGCTTTGCAGTGAATATCCAT"
         "CRISPR"  | "GCACCGGACATGGACTCGAG"
     }
 
@@ -119,9 +119,9 @@ class SequenceTargetingReagentAddBeanValidatorSpec extends AbstractZfinIntegrati
 
         where:
         formType  | sequenceType | sequence
-        "MRPHLNO" | "CRISPR"     | "GCACCGGACATGGACTCGAG"
+        "MO" | "CRISPR"     | "GCACCGGACATGGACTCGAG"
         "CRISPR"  | "MRPHLNO"    | "GGTCTGCTTTGCAGTGAATATCCAT"
-        "MRPHLNO" | "TALEN"      | "TACAATACTCCCACTGAA"
+        "MO" | "TALEN"      | "TACAATACTCCCACTGAA"
         "CRISPR"  | "TALEN"      | "TACAATACTCCCACTGAA"
     }
 
