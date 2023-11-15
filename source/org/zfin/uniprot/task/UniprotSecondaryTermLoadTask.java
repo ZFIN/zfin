@@ -173,8 +173,9 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
         try {
             SecondaryTermLoadActionsContainer actionsContainer =
                     new ObjectMapper().readValue(new File(jsonFile), SecondaryTermLoadActionsContainer.class);
-
-            this.release = getInfrastructureRepository().getUniProtReleaseByID(actionsContainer.getReleaseID());
+            if (actionsContainer.getReleaseID() != null) {
+                this.release = getInfrastructureRepository().getUniProtReleaseByID(actionsContainer.getReleaseID());
+            }
             return actionsContainer.getActions();
         } catch (IOException e) {
             log.error("Failed to read JSON file: " + jsonFile, e);
@@ -277,6 +278,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
         pipeline.addHandler(new ProteinToInterproHandler());
         pipeline.addHandler(new PDBHandler());
 
+        //TODO: re-use pipeline class for processing actions too
         return pipeline.execute();
     }
 

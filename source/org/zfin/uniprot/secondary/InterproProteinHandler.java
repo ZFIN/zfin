@@ -20,6 +20,13 @@ import static org.zfin.framework.HibernateUtil.currentSession;
  */
 @Log4j2
 public class InterproProteinHandler implements SecondaryLoadHandler {
+    @Override
+    public SecondaryTermLoadAction.SubType isSubTypeHandlerFor() {
+        return SecondaryTermLoadAction.SubType.PROTEIN;
+    }
+
+
+    private static final String FDBCONTID = "ZDB-FDBCONT-040412-47";
 
     @Override
     public void createActions(Map<String, RichSequenceAdapter> uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
@@ -30,26 +37,24 @@ public class InterproProteinHandler implements SecondaryLoadHandler {
 
         for(String uniprotKey : uniProtRecords.keySet()) {
             RichSequenceAdapter richSequenceAdapter = uniProtRecords.get(uniprotKey);
-            Collection<CrossRefAdapter> zfinCrossRefs = richSequenceAdapter.getCrossRefsByDatabase("ZFIN");
-            if (zfinCrossRefs.isEmpty()) {
+            List<String> zdbIDs = richSequenceAdapter.getCrossRefIDsByDatabase(RichSequenceAdapter.DatabaseSource.ZFIN);
+            if (zdbIDs.isEmpty()) {
                 continue;
             }
 
-            String accession = richSequenceAdapter.getAccession();
             int length = richSequenceAdapter.getLength();
-
-            if (existingProteinsAsMap.containsKey(accession)) {
-                Integer existingLength = existingProteinsAsMap.get(accession);
+            if (existingProteinsAsMap.containsKey(uniprotKey)) {
+                Integer existingLength = existingProteinsAsMap.get(uniprotKey);
                 if (length > 0 && !existingLength.equals(length)) {
-                    existingProteinsAsMap.put(accession, length);
-                    createLoadAction(context, actions, accession, length, zfinCrossRefs);
+                    existingProteinsAsMap.put(uniprotKey, length);
+                    createLoadAction(context, actions, uniprotKey, length, zdbIDs);
                 } else {
-                    proteinsToKeep.add(new ProteinDTO(accession, length));
+                    proteinsToKeep.add(new ProteinDTO(uniprotKey, length));
                 }
             } else {
-                existingProteinsAsMap.put(accession, length);
-                createLoadAction(context, actions, accession, length, zfinCrossRefs);
-                proteinsToKeep.add(new ProteinDTO(accession, length));
+                existingProteinsAsMap.put(uniprotKey, length);
+                createLoadAction(context, actions, uniprotKey, length, zdbIDs);
+                proteinsToKeep.add(new ProteinDTO(uniprotKey, length));
             }
         }
 
@@ -67,48 +72,44 @@ public class InterproProteinHandler implements SecondaryLoadHandler {
     }
 
     private static void processInsertQueries(List<SecondaryTermLoadAction> actions) {
-        currentSession().doWork(connection -> {
-            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO protein (up_uniprot_id, up_length) VALUES (?, ?)" +
-                    " ON CONFLICT (up_uniprot_id) DO UPDATE SET up_length = EXCLUDED.up_length")) {
-                for(SecondaryTermLoadAction action : actions) {
-                    if (action.getType().equals(SecondaryTermLoadAction.Type.LOAD)) {
-                        statement.setString(1, action.getAccession());
-                        statement.setInt(2, action.getLength());
-                        statement.execute();
-                    }
-                }
-            }
-        });
+        for(SecondaryTermLoadAction action : actions) {
+            currentSession().createSQLQuery("""
+            INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES (:uniprot)
+            ON CONFLICT (zactvd_zdb_id)
+            DO NOTHING 
+            """).setParameter("uniprot", action.getAccession())
+                    .executeUpdate();
+
+            currentSession().createSQLQuery("""
+            INSERT INTO protein (up_uniprot_id, up_fdbcont_zdb_id, up_length) VALUES (:uniprot, :fdbcont, :length) 
+            ON CONFLICT (up_uniprot_id) 
+            DO UPDATE SET up_length = EXCLUDED.up_length
+            """).setParameter("uniprot", action.getAccession())
+                    .setParameter("fdbcont", FDBCONTID)
+                    .setParameter("length", action.getLength())
+                    .executeUpdate();
+        }
     }
 
     private static void processDeleteQueries(List<SecondaryTermLoadAction> actions) {
-        currentSession().doWork(connection -> {
-            try (PreparedStatement statement = connection.prepareStatement("DELETE FROM protein WHERE up_uniprot_id = ?")) {
-                for(SecondaryTermLoadAction action : actions) {
-                    if (action.getType().equals(SecondaryTermLoadAction.Type.DELETE)) {
-                        statement.setString(1, action.getAccession());
-                        statement.execute();
-                    }
-                }
+        for(SecondaryTermLoadAction action: actions) {
+            if (action.getType().equals(SecondaryTermLoadAction.Type.DELETE)) {
+                currentSession().createSQLQuery("DELETE FROM protein WHERE up_uniprot_id = :uniprot")
+                        .setParameter("uniprot", action.getAccession())
+                        .executeUpdate();
             }
-        });
+        }
     }
 
-    @Override
-    public SecondaryTermLoadAction.SubType isSubTypeHandlerFor() {
-        return SecondaryTermLoadAction.SubType.PROTEIN;
-    }
+    private void createLoadAction(SecondaryLoadContext context, List<SecondaryTermLoadAction> actions, String accession, int length, List<String> zdbIDs) {
 
-    private void createLoadAction(SecondaryLoadContext context, List<SecondaryTermLoadAction> actions, String accession, int length, Collection<CrossRefAdapter> zfinCrossRefs) {
-        List<String> zdbIDs = zfinCrossRefs.stream().map(ref -> ref.getAccession()).toList();
-
-        List<DBLinkSlimDTO> existingDbLinks = context
-                .getGeneByUniprot(accession);
-        if (existingDbLinks == null) {
+        //if we don't have a gene association, we don't want to add the protein
+        if (!context.hasAnyUniprotGeneAssociation(accession, zdbIDs)) {
             log.warn("No existing gene association found for UniProt accession: " + accession);
             return;
         }
 
+        List<DBLinkSlimDTO> existingDbLinks = context.getGeneByUniprot(accession);
         Optional<DBLinkSlimDTO> autoCuratedDbLinks = existingDbLinks
                 .stream()
 //                .filter(dblink -> dblink.getPublicationIDs().contains(AUTOMATED_CURATION_OF_UNIPROT_DATABASE_LINKS)) //do we need this?

@@ -176,6 +176,14 @@ public class RichSequenceAdapter {
         return getCrossRefsByDatabase(source.getValue());
     }
 
+    public List<String> getCrossRefIDsByDatabase(String dbName) {
+        return getCrossRefsByDatabase(dbName).stream().map(crossRef -> crossRef.getAccession()).toList();
+    }
+
+    public List<String> getCrossRefIDsByDatabase(DatabaseSource source) {
+        return getCrossRefIDsByDatabase(source.getValue());
+    }
+
     /**
      * @return a list of cross references that are EC numbers
      * This is a special case since the uniprot file puts the EC number in the description

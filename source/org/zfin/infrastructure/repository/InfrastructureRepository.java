@@ -34,6 +34,8 @@ public interface InfrastructureRepository {
 
     void insertActiveData(String zdbID);
 
+    void insertActiveDataWithoutValidation(String zdbID);
+
     void insertActiveSource(String zdbID);
 
     ActiveData getActiveData(String zdbID);

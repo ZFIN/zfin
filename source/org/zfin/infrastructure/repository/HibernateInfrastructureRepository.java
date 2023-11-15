@@ -73,6 +73,14 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         session.save(activeData);
     }
 
+    @Override
+    public void insertActiveDataWithoutValidation(String zdbID) {
+        Session session = HibernateUtil.currentSession();
+        ActiveData activeData = new ActiveData();
+        activeData.setZdbIDWithoutValidation(zdbID);
+        session.save(activeData);
+    }
+
     public void insertActiveSource(String zdbID) {
         Session session = HibernateUtil.currentSession();
         ActiveSource activeSource = new ActiveSource();

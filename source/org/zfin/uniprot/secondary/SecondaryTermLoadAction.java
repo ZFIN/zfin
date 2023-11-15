@@ -78,25 +78,31 @@ public class SecondaryTermLoadAction implements Comparable<SecondaryTermLoadActi
     public enum Type {LOAD, INFO, WARNING, ERROR, DELETE, IGNORE, DUPES}
 
     public enum SubType {
-        MARKER_GO_TERM_EVIDENCE("MarkerGoTermEvidence"),
-        EXTERNAL_NOTE("ExternalNote"),
-        DB_LINK("DBLink"),
-        PROTEIN_DOMAIN("ProteinDomain"),
-        PROTEIN("Protein"),
-        INTERPRO_MARKER_TO_PROTEIN("InterproMarkerToProtein"),
-        PROTEIN_TO_INTERPRO("ProteinToInterpro"),
-        PDB("PDB"),
+        MARKER_GO_TERM_EVIDENCE("MarkerGoTermEvidence", 1),
+        EXTERNAL_NOTE("ExternalNote", 2),
+        DB_LINK("DBLink", 3),
+        PROTEIN_DOMAIN("ProteinDomain", 4),
+        PROTEIN("Protein", 5),
+        INTERPRO_MARKER_TO_PROTEIN("InterproMarkerToProtein", 6),
+        PROTEIN_TO_INTERPRO("ProteinToInterpro", 7),
+        PDB("PDB", 8),
         ;
 
         private final String value;
+        private final int processActionOrder;
 
-        SubType(String s) {
+        SubType(String s, int o) {
             this.value = s;
+            this.processActionOrder = o;
         }
 
         @JsonValue
         public String getValue() {
             return value;
+        }
+
+        public int getProcessActionOrder() {
+            return processActionOrder;
         }
     }
 

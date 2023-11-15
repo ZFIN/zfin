@@ -20,6 +20,11 @@ import static org.zfin.framework.HibernateUtil.currentSession;
  */
 @Log4j2
 public class ProteinToInterproHandler implements SecondaryLoadHandler {
+    @Override
+    public SecondaryTermLoadAction.SubType isSubTypeHandlerFor() {
+        return SecondaryTermLoadAction.SubType.PROTEIN_TO_INTERPRO;
+    }
+
 
     @Override
     public void createActions(Map<String, RichSequenceAdapter> uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
@@ -29,13 +34,12 @@ public class ProteinToInterproHandler implements SecondaryLoadHandler {
 
         for(String uniprotKey : uniProtRecords.keySet()) {
             RichSequenceAdapter richSequenceAdapter = uniProtRecords.get(uniprotKey);
-            Collection<CrossRefAdapter> zfinCrossRefs = richSequenceAdapter.getCrossRefsByDatabase(RichSequenceAdapter.DatabaseSource.ZFIN);
-            if (zfinCrossRefs.isEmpty()) {
+            List<String> zdbIDs = richSequenceAdapter.getCrossRefIDsByDatabase(RichSequenceAdapter.DatabaseSource.ZFIN);
+            if (!context.hasAnyUniprotGeneAssociation(uniprotKey, zdbIDs)) {
                 continue;
             }
-            List<String> iprs = richSequenceAdapter.getCrossRefsByDatabase(RichSequenceAdapter.DatabaseSource.INTERPRO)
-                    .stream()
-                    .map(ref -> ref.getAccession()).toList();
+
+            List<String> iprs = richSequenceAdapter.getCrossRefIDsByDatabase(RichSequenceAdapter.DatabaseSource.INTERPRO);
 
             for(String ipr : iprs) {
                 ProteinToInterproDTO newRecord = new ProteinToInterproDTO(uniprotKey, ipr);
@@ -85,7 +89,17 @@ public class ProteinToInterproHandler implements SecondaryLoadHandler {
 
     private void processInsert(SecondaryTermLoadAction action) {
         ProteinToInterproDTO proteinToInterproDTO = ProteinToInterproDTO.fromMap(action.getRelatedEntityFields());
-        currentSession().save(proteinToInterproDTO.toProteinToInterpro());
+        log.debug("inserting protein to interpro record: " + proteinToInterproDTO.uniprot() + "/" + proteinToInterproDTO.interpro());
+        String sqlQuery = """
+                insert into protein_to_interpro (pti_uniprot_id, pti_interpro_id) 
+                select :uniprot, :interpro 
+                where exists (select 1 from interpro_protein where ip_interpro_id = :interpro) 
+                and exists (select 1 from protein where up_uniprot_id = :uniprot)
+                """;
+        currentSession().createSQLQuery(sqlQuery)
+                .setParameter("uniprot", proteinToInterproDTO.uniprot())
+                .setParameter("interpro", proteinToInterproDTO.interpro())
+                .executeUpdate();
     }
 
     private void processDelete(SecondaryTermLoadAction action) {
@@ -99,11 +113,6 @@ public class ProteinToInterproHandler implements SecondaryLoadHandler {
                 .setParameter("uniprot", proteinToInterproDTO.uniprot())
                 .setParameter("interpro", proteinToInterproDTO.interpro())
                 .executeUpdate();
-    }
-
-    @Override
-    public SecondaryTermLoadAction.SubType isSubTypeHandlerFor() {
-        return SecondaryTermLoadAction.SubType.PROTEIN_TO_INTERPRO;
     }
 
 }

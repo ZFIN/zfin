@@ -254,6 +254,22 @@ public class SecondaryLoadContext {
         return this.uniprotDbLinks.get(dataZdbID);
     }
 
+    public boolean hasAnyUniprotGeneAssociation(String uniprotAccession, List<String> geneZdbIDs) {
+        List<DBLinkSlimDTO> dblinks = this.uniprotDbLinks.get(uniprotAccession);
+        if(dblinks == null) {
+            return false;
+        }
+        return dblinks.stream().anyMatch(dbLinkSlimDTO -> geneZdbIDs.contains(dbLinkSlimDTO.getDataZdbID()));
+    }
+
+    public boolean hasUniprotGeneAssociation(String uniprotAccession, String geneZdbID) {
+        List<DBLinkSlimDTO> dblinks = this.uniprotDbLinks.get(uniprotAccession);
+        if(dblinks == null) {
+            return false;
+        }
+        return dblinks.stream().anyMatch(dbLinkSlimDTO -> dbLinkSlimDTO.getDataZdbID().equals(geneZdbID));
+    }
+
     public Map<String, List<DBLinkSlimDTO>> getDbLinksByDbName(ForeignDB.AvailableName dbName) {
         return switch (dbName) {
             case INTERPRO -> getInterproDbLinks();

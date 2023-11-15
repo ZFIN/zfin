@@ -7,6 +7,8 @@ import org.zfin.uniprot.adapter.RichSequenceAdapter;
 
 import java.util.*;
 
+
+//TODO: we should move the logic for processing actions into this class
 @Getter
 @Setter
 @Log4j2

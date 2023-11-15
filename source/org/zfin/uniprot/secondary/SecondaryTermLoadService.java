@@ -54,9 +54,19 @@ public class SecondaryTermLoadService {
         //groupBy the actions
         Map<SecondaryTermLoadAction.Type, List<SecondaryTermLoadAction>> groupedByType = actions.stream().collect(Collectors.groupingBy(SecondaryTermLoadAction::getType));
 
+        //only perform actions for LOAD and DELETE for now
+        //LOADs come first (though maybe it doesn't matter?)
+        List<SecondaryTermLoadAction.Type> typesOfActions = new ArrayList<>();
+        if (groupedByType.containsKey(SecondaryTermLoadAction.Type.LOAD)) {
+            typesOfActions.add(SecondaryTermLoadAction.Type.LOAD);
+        }
+        if (groupedByType.containsKey(SecondaryTermLoadAction.Type.DELETE)) {
+            typesOfActions.add(SecondaryTermLoadAction.Type.DELETE);
+        }
+
         //process the actions
         currentSession().beginTransaction();
-        for(SecondaryTermLoadAction.Type type : groupedByType.keySet()) {
+        for(SecondaryTermLoadAction.Type type : typesOfActions) {
             log.debug("Processing action types of " + type);
             List<SecondaryTermLoadAction> transactionActions = groupedByType.get(type);
             processLoadActions(type, transactionActions);
@@ -76,20 +86,17 @@ public class SecondaryTermLoadService {
     }
 
     private static void processLoadActions(SecondaryTermLoadAction.Type type, List<SecondaryTermLoadAction> transactionActions) {
-        if (type != SecondaryTermLoadAction.Type.LOAD && type != SecondaryTermLoadAction.Type.DELETE) {
-            log.warn("Ignoring action type " + type);
-            return;
-        }
-
         //groupBy the actions by subtype
         Map<SecondaryTermLoadAction.SubType, List<SecondaryTermLoadAction>> groupedBySubType =
                 transactionActions.stream().collect(Collectors.groupingBy(SecondaryTermLoadAction::getSubType));
 
-        for(SecondaryTermLoadAction.SubType subType : groupedBySubType.keySet()) {
-            log.debug("Processing action subtypes of " + subType);
+        //sort by SubType.ordinal
+        List<SecondaryTermLoadAction.SubType> orderedSubTypes =
+                groupedBySubType.keySet().stream().sorted(Comparator.comparingInt(subtype -> subtype.getProcessActionOrder())).toList();
+
+        for(SecondaryTermLoadAction.SubType subType : orderedSubTypes) {
             List<SecondaryTermLoadAction> subTypeActions = groupedBySubType.get(subType);
             processLoadActionsBySubType(subType, subTypeActions);
-            log.debug("Finished action subtypes of " + subType);
         }
     }
 
@@ -99,7 +106,12 @@ public class SecondaryTermLoadService {
         if (handler.isSubTypeHandlerFor() != subType) {
             throw new RuntimeException("Handler class " + handlerClass + " does not support subType " + subType);
         }
+        log.debug("Processing " + subTypeActions.size() + " actions for " + subType + " using handler " + handlerClass);
+        Date timestamp = new Date();
         handler.processActions(subTypeActions);
+        long timeElapsed = new Date().getTime() - timestamp.getTime();
+        long secondsElapsed = timeElapsed / 1000;
+        log.debug("Finished processing " + subTypeActions.size() + " actions in " + secondsElapsed + " seconds for " + subType + " using handler " + handlerClass);
     }
 
     /**

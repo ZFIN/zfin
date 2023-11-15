@@ -9,6 +9,7 @@ import org.zfin.uniprot.interpro.InterProProteinDTO;
 import java.util.*;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 
 /**
  * Creates actions for adding and deleting protein domain information
@@ -18,6 +19,11 @@ import static org.zfin.framework.HibernateUtil.currentSession;
  */
 @Log4j2
 public class InterproDomainHandler implements SecondaryLoadHandler {
+    @Override
+    public SecondaryTermLoadAction.SubType isSubTypeHandlerFor() {
+        return SecondaryTermLoadAction.SubType.PROTEIN_DOMAIN;
+    }
+
 
     private final List<InterProProteinDTO> downloadedInterproDomainRecords;
 
@@ -33,11 +39,6 @@ public class InterproDomainHandler implements SecondaryLoadHandler {
     public void createActions(Map<String, RichSequenceAdapter> uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
         addAndRemoveFromInterproProteinTable(actions, context);
 
-    }
-
-    @Override
-    public SecondaryTermLoadAction.SubType isSubTypeHandlerFor() {
-        return SecondaryTermLoadAction.SubType.PROTEIN_DOMAIN;
     }
 
     private void addAndRemoveFromInterproProteinTable(List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
@@ -89,11 +90,14 @@ public class InterproDomainHandler implements SecondaryLoadHandler {
             InterProProteinDTO iprDTO = InterProProteinDTO.fromMap(action.getRelatedEntityFields());
             InterProProtein ipr = iprDTO.toInterProProtein();
             if (action.getType() == SecondaryTermLoadAction.Type.LOAD) {
+                getInfrastructureRepository().insertActiveDataWithoutValidation(ipr.getIpID());
                 currentSession().save(ipr);
             } else if (action.getType() == SecondaryTermLoadAction.Type.DELETE) {
                 currentSession().delete(ipr);
             }
         }
+        currentSession().flush();
+//        currentSession().clear();
     }
 
 }

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
+import static org.zfin.uniprot.adapter.RichSequenceAdapter.DatabaseSource.ZFIN;
 
 
 /**
@@ -32,13 +33,16 @@ public class InterproMarkerToProteinHandler implements SecondaryLoadHandler {
         //create new records
         for(String uniprotKey : uniProtRecords.keySet()) {
             RichSequenceAdapter richSequenceAdapter = uniProtRecords.get(uniprotKey);
-            Collection<CrossRefAdapter> zfinCrossRefs = richSequenceAdapter.getCrossRefsByDatabase("ZFIN");
-            if (zfinCrossRefs.isEmpty()) {
-                continue;
-            }
-            List<String> uniprotRecordZdbIDs = zfinCrossRefs.stream().map(ref -> ref.getAccession()).toList();
-            for(String zdbID : uniprotRecordZdbIDs) {
+            List<String> uniprotRecordZdbIDs = richSequenceAdapter.getCrossRefIDsByDatabase(ZFIN);
+            for (String zdbID : uniprotRecordZdbIDs) {
                 MarkerToProteinDTO newRecord = new MarkerToProteinDTO(zdbID, uniprotKey);
+
+                //skip records that don't exist in ZFIN db_link table
+                if (!context.hasUniprotGeneAssociation(uniprotKey, zdbID)) {
+                    keepRecords.add(newRecord);
+                    continue;
+                }
+
                 if (!existingRecords.contains(new MarkerToProteinDTO(zdbID, uniprotKey))) {
                     actions.add(createLoadAction(newRecord));
                     keepRecords.add(newRecord);
@@ -85,6 +89,7 @@ public class InterproMarkerToProteinHandler implements SecondaryLoadHandler {
     private void processInserts(List<SecondaryTermLoadAction> actions) {
         for(SecondaryTermLoadAction action : actions) {
             if (action.getType() == SecondaryTermLoadAction.Type.LOAD) {
+                log.debug("inserting interpro for marker: " + action.getGeneZdbID() + " interpro: " + action.getAccession());
                 getMarkerRepository().insertInterProForMarker(action.getGeneZdbID(), action.getAccession());
             }
         }
@@ -93,6 +98,7 @@ public class InterproMarkerToProteinHandler implements SecondaryLoadHandler {
     private void processDeletes(List<SecondaryTermLoadAction> actions) {
         for(SecondaryTermLoadAction action : actions) {
             if (action.getType() == SecondaryTermLoadAction.Type.DELETE) {
+                log.debug("deleting interpro for marker: " + action.getGeneZdbID() + " interpro: " + action.getAccession());
                 getMarkerRepository().deleteInterProForMarker(action.getGeneZdbID(), action.getAccession());
             }
         }
