@@ -22,6 +22,11 @@ import static org.zfin.uniprot.secondary.SecondaryTermLoadService.getReferenceDa
  */
 @Log4j2
 public class RemoveFromLostUniProtsHandler implements SecondaryLoadHandler {
+    @Override
+    public SecondaryTermLoadAction.SubType isSubTypeHandlerFor() {
+        return SecondaryTermLoadAction.SubType.DB_LINK;
+    }
+
     private final ForeignDB.AvailableName dbName;
 
     public RemoveFromLostUniProtsHandler() {
@@ -67,10 +72,5 @@ public class RemoveFromLostUniProtsHandler implements SecondaryLoadHandler {
             dblinksToDelete.add(dblink);
         }
         getSequenceRepository().removeDBLinks(dblinksToDelete);
-    }
-
-    @Override
-    public SecondaryTermLoadAction.SubType isSubTypeHandlerFor() {
-        return SecondaryTermLoadAction.SubType.DB_LINK;
     }
 }

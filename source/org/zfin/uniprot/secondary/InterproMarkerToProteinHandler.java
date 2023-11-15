@@ -23,6 +23,11 @@ import static org.zfin.uniprot.adapter.RichSequenceAdapter.DatabaseSource.ZFIN;
  */
 @Log4j2
 public class InterproMarkerToProteinHandler implements SecondaryLoadHandler {
+    @Override
+    public SecondaryTermLoadAction.SubType isSubTypeHandlerFor() {
+        return SecondaryTermLoadAction.SubType.INTERPRO_MARKER_TO_PROTEIN;
+    }
+
 
     @Override
     public void createActions(Map<String, RichSequenceAdapter> uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
@@ -60,7 +65,6 @@ public class InterproMarkerToProteinHandler implements SecondaryLoadHandler {
         }
 
     }
-
     private SecondaryTermLoadAction createLoadAction(MarkerToProteinDTO newRecord) {
         return SecondaryTermLoadAction.builder()
                 .geneZdbID(newRecord.markerZdbID())
@@ -70,6 +74,7 @@ public class InterproMarkerToProteinHandler implements SecondaryLoadHandler {
                 .handlerClass(this.getClass().getName())
                 .build();
     }
+
     private SecondaryTermLoadAction createDeleteAction(MarkerToProteinDTO recordToDelete) {
         return SecondaryTermLoadAction.builder()
                 .geneZdbID(recordToDelete.markerZdbID())
@@ -102,11 +107,6 @@ public class InterproMarkerToProteinHandler implements SecondaryLoadHandler {
                 getMarkerRepository().deleteInterProForMarker(action.getGeneZdbID(), action.getAccession());
             }
         }
-    }
-
-    @Override
-    public SecondaryTermLoadAction.SubType isSubTypeHandlerFor() {
-        return SecondaryTermLoadAction.SubType.INTERPRO_MARKER_TO_PROTEIN;
     }
 
 }

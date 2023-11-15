@@ -26,6 +26,10 @@ import static org.zfin.util.ZfinCollectionUtils.firstInEachGrouping;
  */
 @Log4j2
 public class AddNewFromUniProtsHandler implements SecondaryLoadHandler {
+    @Override
+    public SecondaryTermLoadAction.SubType isSubTypeHandlerFor() {
+        return SecondaryTermLoadAction.SubType.DB_LINK;
+    }
 
     private final ForeignDB.AvailableName dbName;
 
@@ -125,11 +129,6 @@ public class AddNewFromUniProtsHandler implements SecondaryLoadHandler {
         }
         Publication publication = getPublicationRepository().getPublication(SecondaryTermLoadService.DBLINK_PUBLICATION_ATTRIBUTION_ID);
         getSequenceRepository().addDBLinks(dblinks, publication, 50);
-    }
-
-    @Override
-    public SecondaryTermLoadAction.SubType isSubTypeHandlerFor() {
-        return SecondaryTermLoadAction.SubType.DB_LINK;
     }
 
 }

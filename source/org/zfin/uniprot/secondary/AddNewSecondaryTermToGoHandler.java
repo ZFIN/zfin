@@ -34,11 +34,16 @@ import static org.zfin.repository.RepositoryFactory.*;
  */
 @Log4j2
 public class AddNewSecondaryTermToGoHandler implements SecondaryLoadHandler {
+    @Override
+    public SecondaryTermLoadAction.SubType isSubTypeHandlerFor() {
+        return SecondaryTermLoadAction.SubType.MARKER_GO_TERM_EVIDENCE;
+    }
     public static final String EC_MRKRGOEV_PUBLICATION_ATTRIBUTION_ID = "ZDB-PUB-031118-3";
     public static final String IP_MRKRGOEV_PUBLICATION_ATTRIBUTION_ID = "ZDB-PUB-020724-1";
-    public static final String SPKW_MRKRGOEV_PUBLICATION_ATTRIBUTION_ID = "ZDB-PUB-020723-1";
 
+    public static final String SPKW_MRKRGOEV_PUBLICATION_ATTRIBUTION_ID = "ZDB-PUB-020723-1";
     protected final ForeignDB.AvailableName dbName;
+
     protected final List<SecondaryTerm2GoTerm> translationRecords;
 
     public AddNewSecondaryTermToGoHandler() {
@@ -153,11 +158,6 @@ public class AddNewSecondaryTermToGoHandler implements SecondaryLoadHandler {
         for(SecondaryTermLoadAction action : subTypeActions) {
             loadMarkerGoTermEvidence(action);
         }
-    }
-
-    @Override
-    public SecondaryTermLoadAction.SubType isSubTypeHandlerFor() {
-        return SecondaryTermLoadAction.SubType.MARKER_GO_TERM_EVIDENCE;
     }
 
     private static void loadMarkerGoTermEvidence(SecondaryTermLoadAction action)  {

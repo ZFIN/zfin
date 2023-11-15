@@ -19,7 +19,12 @@ import static org.zfin.uniprot.secondary.AddNewSecondaryTermToGoHandler.*;
  */
 @Log4j2
 public class RemoveSecondaryTermToGoHandler implements SecondaryLoadHandler {
+    @Override
+    public SecondaryTermLoadAction.SubType isSubTypeHandlerFor() {
+        return SecondaryTermLoadAction.SubType.MARKER_GO_TERM_EVIDENCE;
+    }
     private final ForeignDB.AvailableName dbName;
+
     protected final List<SecondaryTerm2GoTerm> translationRecords;
 
     public RemoveSecondaryTermToGoHandler() {
@@ -77,11 +82,6 @@ public class RemoveSecondaryTermToGoHandler implements SecondaryLoadHandler {
                 default -> log.error("Unknown marker_go_term_evidence dbname to delete " + action.getDbName());
             }
         }
-    }
-
-    @Override
-    public SecondaryTermLoadAction.SubType isSubTypeHandlerFor() {
-        return SecondaryTermLoadAction.SubType.MARKER_GO_TERM_EVIDENCE;
     }
 
     private static void deleteMarkerGoTermEvidence(SecondaryTermLoadAction action, String pubID) {

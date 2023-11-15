@@ -25,6 +25,11 @@ import static org.zfin.util.ZfinStringUtils.isEqualIgnoringWhiteSpace;
  */
 @Log4j2
 public class ExternalNotesHandler implements SecondaryLoadHandler {
+    @Override
+    public SecondaryTermLoadAction.SubType isSubTypeHandlerFor() {
+        return SecondaryTermLoadAction.SubType.EXTERNAL_NOTE;
+    }
+
 
     @Override
     public void createActions(Map<String, RichSequenceAdapter> uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
@@ -49,11 +54,6 @@ public class ExternalNotesHandler implements SecondaryLoadHandler {
 
         getInfrastructureRepository().deleteRecordAttributionsForData(externalNoteZdbID);
         getInfrastructureRepository().deleteDBLinkExternalNote(externalNoteZdbID);
-    }
-
-    @Override
-    public SecondaryTermLoadAction.SubType isSubTypeHandlerFor() {
-        return SecondaryTermLoadAction.SubType.EXTERNAL_NOTE;
     }
 
     public void realHandle(Map<String, RichSequenceAdapter> uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
