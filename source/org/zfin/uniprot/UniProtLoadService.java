@@ -1,6 +1,7 @@
 package org.zfin.uniprot;
 
 import lombok.extern.log4j.Log4j2;
+import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.DBLink;
@@ -23,7 +24,7 @@ import static org.zfin.uniprot.UniProtTools.AUTOMATED_CURATION_OF_UNIPROT_DATABA
 public class UniProtLoadService {
 
 
-    private static final String PUBLICATION_ATTRIBUTION_ID = AUTOMATED_CURATION_OF_UNIPROT_DATABASE_LINKS;
+    public static final String PUBLICATION_ATTRIBUTION_ID = AUTOMATED_CURATION_OF_UNIPROT_DATABASE_LINKS;
 
     public static void processActions(Set<UniProtLoadAction> actions, UniProtRelease release) {
         currentSession().beginTransaction();
@@ -74,41 +75,34 @@ public class UniProtLoadService {
         List<DBLink> dblinksToDelete = new ArrayList<>();
         for(UniProtLoadAction action : actions) {
             DBLink dblink = getSequenceRepository().getDBLink(action.getGeneZdbID(), action.getAccession(), referenceDatabase.getForeignDB().getDbName().toString());
-            System.err.println("Removing dblink: " + dblink.getZdbID() + " " + dblink.getAccessionNumber() + " " + action.getGeneZdbID());
-            log.debug("Removing dblink: " + dblink.getZdbID());
-            getSequenceRepository().deleteReferenceProteinByDBLinkID(dblink.getZdbID());
-            dblinksToDelete.add(dblink);
+            List<String> pubIDs = dblink.getPublicationIdsAsList();
+            if (pubIDs.size() == 1 && pubIDs.get(0).equals(PUBLICATION_ATTRIBUTION_ID)) {
+                //only delete if this is the only attribution
+                System.err.println("Removing dblink: " + dblink.getZdbID() + " " + dblink.getAccessionNumber() + " " + action.getGeneZdbID());
+                log.debug("Removing dblink: " + dblink.getZdbID());
+                getSequenceRepository().deleteReferenceProteinByDBLinkID(dblink.getZdbID());
+                dblinksToDelete.add(dblink);
+            } else {
+                //otherwise just remove the attribution
+                removeAttribution(dblink, action);
+            }
         }
         getSequenceRepository().removeDBLinks(dblinksToDelete);
     }
 
-    private static void loadAction(UniProtLoadAction action) {
-        Marker marker = getMarkerRepository().getMarker(action.getGeneZdbID());
-        MarkerDBLink newLink = new MarkerDBLink();
-        newLink.setAccessionNumber(action.getAccession());
-        newLink.setMarker(marker);
-        newLink.setReferenceDatabase(getUniProtReferenceDatabase());
-        newLink.setLength(action.getLength());
-        newLink.setLinkInfo(getUniProtLoadLinkInfo());
-
-        Publication publication = getPublicationRepository().getPublication(PUBLICATION_ATTRIBUTION_ID);
-
-        ArrayList<MarkerDBLink> dblinks = new ArrayList<>();
-        dblinks.add(newLink);
-        getSequenceRepository().addDBLinks(dblinks, publication, 1);
+    private static void removeAttribution(DBLink dblink, UniProtLoadAction action) {
+        System.err.println("Removing attribution from dblink: " + dblink.getZdbID() + " " + dblink.getAccessionNumber() + " " + action.getGeneZdbID());
+        log.debug("Removing attribution from dblink: " + dblink.getZdbID());
+        dblink.getPublications()
+            .stream()
+            .filter(attribution -> attribution.getSourceZdbID().equals(PUBLICATION_ATTRIBUTION_ID))
+            .forEach(attribution -> {
+                getInfrastructureRepository().deleteRecordAttribution(dblink.getZdbID(),PUBLICATION_ATTRIBUTION_ID);
+            });
     }
 
     public static ReferenceDatabase getUniProtReferenceDatabase() {
         return getSequenceRepository().getReferenceDatabase(UNIPROTKB, POLYPEPTIDE, SEQUENCE, ZEBRAFISH);
-    }
-
-    private static void deleteAction(UniProtLoadAction action) {
-        ReferenceDatabase referenceDatabase = getUniProtReferenceDatabase();
-        DBLink dblink = getSequenceRepository().getDBLink(action.getGeneZdbID(), action.getAccession(), referenceDatabase.getForeignDB().getDbName().toString());
-        System.err.println("Removing dblink: " + dblink.getZdbID() + " " + dblink.getAccessionNumber() + " " + action.getGeneZdbID());
-        log.debug("Removing dblink: " + dblink.getZdbID());
-        getSequenceRepository().deleteReferenceProteinByDBLinkID(dblink.getZdbID());
-        getSequenceRepository().removeDBLinks(Collections.singletonList(dblink));
     }
 
     private static String getUniProtLoadLinkInfo() {

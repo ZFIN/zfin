@@ -15,6 +15,7 @@ import static org.zfin.sequence.ForeignDB.AvailableName.REFSEQ;
 import static org.zfin.sequence.ForeignDBDataType.DataType.POLYPEPTIDE;
 import static org.zfin.sequence.ForeignDBDataType.DataType.RNA;
 import static org.zfin.sequence.ForeignDBDataType.SuperType.SEQUENCE;
+import static org.zfin.uniprot.UniProtTools.AUTOMATED_CURATION_OF_UNIPROT_DATABASE_LINKS;
 
 /**
  * This class is meant to represent the context in which a UniProt load is being performed.
@@ -60,5 +61,44 @@ public class UniProtLoadContext {
             transformedMap.put(key, sequenceDTOs);
         }
         return transformedMap;
+    }
+
+    public DBLinkSlimDTO getDBLinkByUniprotAndGene(String accession, String gene) {
+        List<DBLinkSlimDTO> dblinks = this.getUniprotDbLinks().get(accession);
+        if (dblinks == null) {
+            return null;
+        }
+        for (DBLinkSlimDTO dbl : dblinks) {
+            if (dbl.getDataZdbID().equals(gene)) {
+                return dbl;
+            }
+        }
+        return null;
+    }
+
+    public boolean hasExistingUniprotForGene(String accession, String gene) {
+        return getDBLinkByUniprotAndGene(accession, gene) != null;
+    }
+
+
+    /**
+     * Does our current database state (context) have a uniprot entry for this gene? In addition, does it have
+     * an attribution that is not the result of automated curation of uniprot database links?
+     *
+     * @param accession
+     * @param gene
+     * @return
+     */
+    public boolean hasExistingUniprotWithNonLoadAttributions(String accession, String gene) {
+        if (hasExistingUniprotForGene(accession, gene)) {
+            DBLinkSlimDTO existingDBLink = getDBLinkByUniprotAndGene(accession, gene);
+            if (existingDBLink.getPublicationIDs().size() == 1 &&
+                    existingDBLink.getPublicationIDs().get(0).equals(AUTOMATED_CURATION_OF_UNIPROT_DATABASE_LINKS) ) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+        return false;
     }
 }

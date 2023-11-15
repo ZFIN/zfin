@@ -113,13 +113,16 @@ public class ReportLostUniProtsHandler implements UniProtLoadHandler {
             action.setType(UniProtLoadAction.Type.DELETE);
             action.setAccession(lostUniProt.getAccession());
             action.setDetails("This gene currently has a UniProt association, but when we run the latest\n" +
-                    "UniProt release through our matching pipeline, we don't find a match.\n" +
-                    "This UniProt link will be removed.\n\n" + sequenceDetails);
+                    "UniProt release through our matching pipeline, we don't find a match.\n");
 
             action.addLink(new UniProtLoadLink("ZFIN: " + lostUniProt.getDataZdbID(), "https://zfin.org/" + lostUniProt.getDataZdbID() + "#sequences" ));
             action.addLink(new UniProtLoadLink("UniProt: " + lostUniProt.getAccession(), "https://www.uniprot.org/uniprot/" + lostUniProt.getAccession()));
 
-            setActionTitleAndDetailsForGenPeptGenBank(lostUniProt, action);
+            setActionTitleAndDetailsForGenPeptGenBank(lostUniProt, action, context);
+            if (action.getType().equals(UniProtLoadAction.Type.DELETE)) {
+                action.setDetails(action.getDetails() + "\n" + "This association will be removed.");
+            }
+            action.setDetails(action.getDetails() + "\n\n" + sequenceDetails);
 
             actions.add(action);
         }
@@ -132,8 +135,9 @@ public class ReportLostUniProtsHandler implements UniProtLoadHandler {
      *
      * @param lostUniProt
      * @param action
+     * @param context
      */
-    private void setActionTitleAndDetailsForGenPeptGenBank(DBLinkSlimDTO lostUniProt, UniProtLoadAction action) {
+    private void setActionTitleAndDetailsForGenPeptGenBank(DBLinkSlimDTO lostUniProt, UniProtLoadAction action, UniProtLoadContext context) {
         Map<String, String> genBankMap = new HashMap<>();
         genBankMap.put("A0PGL6","ZDB-GENE-060818-12");
         genBankMap.put("A4GT83","ZDB-GENE-060131-1");
@@ -209,14 +213,24 @@ public class ReportLostUniProtsHandler implements UniProtLoadHandler {
 
         if (genBankMap.containsKey(accession) && genBankMap.get(accession).equals(gene)) {
             action.setSubType(LOST_UNIPROT_PREV_MATCH_BY_GB);
-            action.setDetails("UniProt accession " + accession + " previously matched gene " + gene + " by GenBank.\n" + action.getDetails());
-            action.setType(UniProtLoadAction.Type.INFO);
+            if(context.hasExistingUniprotWithNonLoadAttributions(accession, gene)) {
+                action.setType(UniProtLoadAction.Type.INFO);
+                action.setDetails("UniProt accession " + accession + " previously matched gene " + gene + " by GenBank. \nThis also has a non-load attribution.\n" + action.getDetails());
+            } else {
+                action.setType(UniProtLoadAction.Type.WARNING);
+                action.setDetails("UniProt accession " + accession + " previously matched gene " + gene + " by GenBank.\n" + action.getDetails());
+            }
         }
 
         if (genPeptMap.containsKey(accession) && genPeptMap.get(accession).equals(gene)) {
             action.setSubType(LOST_UNIPROT_PREV_MATCH_BY_GP);
-            action.setDetails("UniProt accession " + accession + " previously matched gene " + gene + " by GenPept.\n" + action.getDetails());
-            action.setType(UniProtLoadAction.Type.INFO);
+            if (context.hasExistingUniprotWithNonLoadAttributions(accession, gene)) {
+                action.setType(UniProtLoadAction.Type.INFO);
+                action.setDetails("UniProt accession " + accession + " previously matched gene " + gene + " by GenPept. \nThis also has a non-load attribution.\n" + action.getDetails());
+            } else {
+                action.setType(UniProtLoadAction.Type.WARNING);
+                action.setDetails("UniProt accession " + accession + " previously matched gene " + gene + " by GenPept.\n" + action.getDetails());
+            }
         }
 
     }
