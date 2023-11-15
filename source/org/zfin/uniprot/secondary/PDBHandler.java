@@ -23,6 +23,10 @@ import static org.zfin.framework.HibernateUtil.currentSession;
  */
 @Log4j2
 public class PDBHandler implements SecondaryLoadHandler {
+    @Override
+    public SecondaryTermLoadAction.SubType isSubTypeHandlerFor() {
+        return SecondaryTermLoadAction.SubType.PDB;
+    }
 
     @Override
     public void createActions(Map<String, RichSequenceAdapter> uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
@@ -99,21 +103,16 @@ public class PDBHandler implements SecondaryLoadHandler {
         }
     }
 
-    @Override
-    public SecondaryTermLoadAction.SubType isSubTypeHandlerFor() {
-        return SecondaryTermLoadAction.SubType.PDB;
-    }
-
     public void insertProteinToPDB(String uniprot, String pdb) {
-        String sql = """
-        insert into protein_to_pdb(ptp_uniprot_id, ptp_pdb_id)
-        values (:uniprot, :pdb)                
-        """;
-
-        Query query = currentSession().createNativeQuery(sql);
-        query.setParameter("uniprot", uniprot);
-        query.setParameter("pdb", pdb);
-        query.executeUpdate();
+        String sqlQuery = """
+                insert into protein_to_pdb(ptp_uniprot_id, ptp_pdb_id) 
+                select :uniprot, :pdb 
+                where exists (select 1 from protein where up_uniprot_id = :uniprot)
+                """;
+        currentSession().createSQLQuery(sqlQuery)
+            .setParameter("uniprot", uniprot)
+            .setParameter("pdb", pdb)
+            .executeUpdate();
     }
 
     private void deleteProteinToPDB(String uniprot) {
