@@ -1,4 +1,4 @@
-package org.zfin.uniprot.secondary;
+package org.zfin.uniprot.secondary.handlers;
 
 import lombok.extern.log4j.Log4j2;
 import org.jooq.lambda.Seq;
@@ -7,6 +7,9 @@ import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
 import org.zfin.uniprot.dto.DBLinkSlimDTO;
+import org.zfin.uniprot.secondary.SecondaryLoadContext;
+import org.zfin.uniprot.secondary.SecondaryTerm2GoTerm;
+import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,14 +20,10 @@ import java.util.Map;
  * Special case of AddNewSecondaryTermToGoHandler.
  */
 @Log4j2
-public class AddNewSpKeywordTermToGoHandler extends AddNewSecondaryTermToGoHandler {
+public class AddNewSpKeywordTermToGoActionCreator extends AddNewSecondaryTermToGoActionCreator {
     private static final ForeignDB.AvailableName FOREIGN_DB_NAME = ForeignDB.AvailableName.UNIPROTKB;
 
-    public AddNewSpKeywordTermToGoHandler() {
-        super();
-    }
-
-    public AddNewSpKeywordTermToGoHandler(ForeignDB.AvailableName dbName, List<SecondaryTerm2GoTerm> translationRecords) {
+    public AddNewSpKeywordTermToGoActionCreator(ForeignDB.AvailableName dbName, List<SecondaryTerm2GoTerm> translationRecords) {
         super(dbName, translationRecords);
     }
 
@@ -32,8 +31,7 @@ public class AddNewSpKeywordTermToGoHandler extends AddNewSecondaryTermToGoHandl
 
 
     @Override
-    public void createActions(Map<String, RichSequenceAdapter> uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
-
+    public List<SecondaryTermLoadAction> createActions(Map<String, RichSequenceAdapter> uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
         //create newMarkerGoTermEvidenceLoadActions from new interpro IDs
         log.debug("Creating newMarkerGoTermEvidenceLoadActions from new " + dbName + " IDs");
         List<SecondaryTermLoadAction> newMarkerGoTermEvidenceLoadActions;
@@ -49,7 +47,7 @@ public class AddNewSpKeywordTermToGoHandler extends AddNewSecondaryTermToGoHandl
         log.debug("Remaining: " + newMarkerGoTermEvidenceLoadActions.size() + " newMarkerGoTermEvidenceLoadActions before filtering for obsoletes, etc.");
         List<SecondaryTermLoadAction> filteredMarkerGoTermEvidences = filterTerms(newMarkerGoTermEvidenceLoadActions);
 
-        actions.addAll(filteredMarkerGoTermEvidences);
+        return filteredMarkerGoTermEvidences;
     }
 
 
@@ -105,7 +103,6 @@ public class AddNewSpKeywordTermToGoHandler extends AddNewSecondaryTermToGoHandl
                     .geneZdbID(geneKeyword.geneZdbID())
                     .goID(item2go.goID())
                     .goTermZdbID(item2go.termZdbID())
-                    .handlerClass(AddNewSpKeywordTermToGoHandler.class.getName())
                     .build();
             newMarkerGoTermEvidences.add(newAction);
         }

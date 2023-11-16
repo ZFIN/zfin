@@ -12,6 +12,7 @@ import org.zfin.uniprot.adapter.RichSequenceAdapter;
 import org.zfin.uniprot.datfiles.DatFileReader;
 import org.zfin.uniprot.interpro.*;
 import org.zfin.uniprot.secondary.*;
+import org.zfin.uniprot.secondary.handlers.*;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -24,12 +25,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.zfin.uniprot.secondary.SecondaryLoadContext.*;
 
 public class ProteinDomainInfoTest extends AbstractDatabaseTest {
-    private final String LEGACY_SP_DIRECTORY = "server_apps/data_transfer/SWISS-PROT/";
-    private final String PERLBIN = "/Users/ryan/perl5/perlbrew/perls/perl-5.32.0/bin/perl";
-    private final String PERL5LIB = "/Users/ryan/perl5/lib/perl5";
-
-    private final String BASHBIN = "/usr/local/bin/bash";
-    private final String PREZFIN = "/tmp/pre_zfin.dat.2023-11";
+    private static final String LEGACY_SP_DIRECTORY = "server_apps/data_transfer/SWISS-PROT/";
+    private static final String PERLBIN = "/Users/ryan/perl5/perlbrew/perls/perl-5.32.0/bin/perl";
+    private static final String PERL5LIB = "/Users/ryan/perl5/lib/perl5";
+    private static final String BASHBIN = "/usr/local/bin/bash";
+    private static final String PREZFIN = "/tmp/pre_zfin.dat.2023-11";
 
 
 
@@ -42,7 +42,7 @@ public class ProteinDomainInfoTest extends AbstractDatabaseTest {
         assertTrue(existingDbRecords.size() > 0);
 
         List<InterProProteinDTO> downloadedEntries = EntryListTranslator.parseFile(new File(getWorkingDir() + "entry.list"));
-        InterproDomainHandler handler = new InterproDomainHandler(downloadedEntries);
+        InterproDomainActionCreator handler = new InterproDomainActionCreator(downloadedEntries);
 
         Map<String, RichSequenceAdapter> uniprotRecords = new HashMap<>();
         List<SecondaryTermLoadAction> actions = new ArrayList<>();
@@ -60,7 +60,7 @@ public class ProteinDomainInfoTest extends AbstractDatabaseTest {
         }
         writer.close();
 
-        SecondaryTermLoadService.processActions(actions, null);
+//        SecondaryTermLoadService.processActions(actions, null);
 
         //check that we have successfully recreated the output of domain.txt:
         int exitValue = executeBashCommand("diff " + getWorkingDir() + "/domain.txt /tmp/domain.txt");
@@ -78,7 +78,7 @@ public class ProteinDomainInfoTest extends AbstractDatabaseTest {
         List<SecondaryTermLoadAction> actions = new ArrayList<>();
         SecondaryLoadContext context = SecondaryLoadContext.createFromDBConnection();
         context.setExistingProteinRecords(fetchExistingProteinRecords());
-        InterproProteinHandler handler = new InterproProteinHandler();
+        InterproProteinActionCreator handler = new InterproProteinActionCreator();
         handler.createActions(uniprotRecords, actions, context);
         assertTrue(actions.size() > 0);
 
@@ -106,7 +106,7 @@ public class ProteinDomainInfoTest extends AbstractDatabaseTest {
         List<SecondaryTermLoadAction> actions = new ArrayList<>();
         SecondaryLoadContext context = SecondaryLoadContext.createFromDBConnection();
         context.setExistingMarkerToProteinRecords(fetchExistingMarkerToProteinRecords());
-        InterproMarkerToProteinHandler handler = new InterproMarkerToProteinHandler();
+        InterproMarkerToProteinActionCreator handler = new InterproMarkerToProteinActionCreator();
         handler.createActions(uniprotRecords, actions, context);
         assertTrue(actions.size() > 0);
 
@@ -135,7 +135,7 @@ public class ProteinDomainInfoTest extends AbstractDatabaseTest {
         List<SecondaryTermLoadAction> actions = new ArrayList<>();
         SecondaryLoadContext context = SecondaryLoadContext.createFromDBConnection();
         context.setExistingProteinToInterproRecords(fetchExistingProteinToInterproRecords());
-        ProteinToInterproHandler handler = new ProteinToInterproHandler();
+        ProteinToInterproActionCreator handler = new ProteinToInterproActionCreator();
         handler.createActions(uniprotRecords, actions, context);
         assertTrue(actions.size() > 0);
 
@@ -164,7 +164,7 @@ public class ProteinDomainInfoTest extends AbstractDatabaseTest {
         List<SecondaryTermLoadAction> actions = new ArrayList<>();
         SecondaryLoadContext context = SecondaryLoadContext.createFromDBConnection();
         context.setExistingPdbRecords(fetchExistingPdbRecords());
-        PDBHandler handler = new PDBHandler();
+        PDBActionCreator handler = new PDBActionCreator();
         handler.createActions(uniprotRecords, actions, context);
         assertTrue(actions.size() > 0);
 

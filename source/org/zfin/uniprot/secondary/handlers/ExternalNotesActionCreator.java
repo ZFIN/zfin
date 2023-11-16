@@ -1,4 +1,4 @@
-package org.zfin.uniprot.secondary;
+package org.zfin.uniprot.secondary.handlers;
 
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.ListUtils;
@@ -9,6 +9,8 @@ import org.zfin.sequence.DBLinkExternalNote;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
 import org.zfin.uniprot.dto.DBLinkExternalNoteSlimDTO;
 import org.zfin.uniprot.dto.DBLinkSlimDTO;
+import org.zfin.uniprot.secondary.SecondaryLoadContext;
+import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
 import java.util.*;
 
@@ -24,7 +26,7 @@ import static org.zfin.util.ZfinStringUtils.isEqualIgnoringWhiteSpace;
  * since it is not displayed anywhere.
  */
 @Log4j2
-public class ExternalNotesHandler implements SecondaryLoadHandler {
+public class ExternalNotesActionCreator implements ActionCreator, ActionProcessor {
     @Override
     public SecondaryTermLoadAction.SubType isSubTypeHandlerFor() {
         return SecondaryTermLoadAction.SubType.EXTERNAL_NOTE;
@@ -32,9 +34,8 @@ public class ExternalNotesHandler implements SecondaryLoadHandler {
 
 
     @Override
-    public void createActions(Map<String, RichSequenceAdapter> uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
-        log.debug("disabling external notes for now");
-        //use the "realHandle" method to re-enable this
+    public List<SecondaryTermLoadAction> createActions(Map<String, RichSequenceAdapter> uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
+        return Collections.emptyList();
     }
 
     @Override
@@ -88,7 +89,6 @@ public class ExternalNotesHandler implements SecondaryLoadHandler {
                     .details(combinedComment)
                     .type(SecondaryTermLoadAction.Type.LOAD)
                     .subType(SecondaryTermLoadAction.SubType.EXTERNAL_NOTE)
-                    .handlerClass(this.getClass().getName())
                     .build();
 
             DBLinkExternalNoteSlimDTO existingNote = context.getExternalNoteByGeneAndAccession(firstGeneZdbID, uniprot);

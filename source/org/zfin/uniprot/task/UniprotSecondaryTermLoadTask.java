@@ -15,6 +15,7 @@ import org.zfin.uniprot.interpro.InterProProteinDTO;
 import org.zfin.uniprot.interpro.EntryListTranslator;
 import org.zfin.uniprot.secondary.*;
 import org.zfin.uniprot.persistence.UniProtRelease;
+import org.zfin.uniprot.secondary.handlers.*;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -58,22 +59,22 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
     private List<SecondaryTerm2GoTerm> upToGoRecords;
     private List<InterProProteinDTO> downloadedInterproDomainRecords;
 
+    private SecondaryTermLoadPipeline pipeline;
+
     public static void main(String[] args) throws Exception {
 
-        String mode = "";
         String inputFileName = "";
         String ipToGoTranslationFile = "";
         String ecToGoTranslationFile = "";
         String upToGoTranslationFile = "";
         String outputJsonName = "";
-
         String actionsFileName = "";
 
         //mode can be one of the following:
         // 1. "REPORT" - generate actions from the input file and write them to a file (no load)
         // 2. "LOAD" - load actions from a file into the database
         // 3. "LOAD_AND_REPORT" - generate actions from the input file, write them to a file, and load them into the database
-        mode = getArgOrEnvironmentVar(args, 0, "UNIPROT_LOAD_MODE", "REPORT");
+        String mode = getArgOrEnvironmentVar(args, 0, "UNIPROT_LOAD_MODE", "REPORT");
 
         if (mode.equalsIgnoreCase("REPORT") || mode.equalsIgnoreCase("LOAD_AND_REPORT")) {
             inputFileName = getArgOrEnvironmentVar(args, 1, "UNIPROT_INPUT_FILE", "");
@@ -132,15 +133,15 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
             try (BufferedReader inputFileReader = new BufferedReader(new java.io.FileReader(inputFileName))) {
                 loadTranslationFiles();
                 Map<String, RichSequenceAdapter> entries = readUniProtEntries(inputFileReader);
-                List<SecondaryTermLoadAction> actions = executePipeline(entries);
-                log.debug("Finished executing pipeline: " + actions.size() + " actions created.");
-                writeActions(actions);
-                writeOutputReportFile(actions);
+                executePipeline(entries);
+                log.debug("Finished executing pipeline: " + pipeline.getActions().size() + " actions created.");
+                writeActionsToFile(pipeline.getActions());
+                writeOutputReportFile(pipeline.getActions());
 
                 String overrideEnv = System.getenv("ACTION_SIZE_ERROR_THRESHOLD");
                 long overrideThreshold = overrideEnv == null ? ACTION_SIZE_ERROR_THRESHOLD : Long.parseLong(overrideEnv);
-                if (actions.size() > overrideThreshold) {
-                    log.error("Too many actions created: " + actions.size() + " actions created.");
+                if (pipeline.getActions().size() > overrideThreshold) {
+                    log.error("Too many actions created: " + pipeline.getActions().size() + " actions created.");
                     log.error("Threshold set to: " + ACTION_SIZE_ERROR_THRESHOLD);
                     log.error("Override threshold with environment variable: ACTION_SIZE_ERROR_THRESHOLD");
                     log.error("Exiting script in case this is due to an error.");
@@ -148,13 +149,17 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
                 }
 
                 if (mode.equals(LoadTaskMode.LOAD_AND_REPORT)) {
-                    processActions(actions);
+                    pipeline.setRelease(release);
+                    pipeline.processActions();
                 }
             }
         } else if (mode.equals(LoadTaskMode.LOAD)) {
             List<SecondaryTermLoadAction> actions = readActionsFile();
             log.debug("Finished reading actions file: " + actions.size() + " actions read.");
-            processActions(actions);
+            pipeline = new SecondaryTermLoadPipeline();
+            pipeline.setActions(actions);
+            pipeline.setRelease(release);
+            pipeline.processActions();
         } else {
             System.out.println("Invalid mode: " + mode);
             printUsage();
@@ -183,38 +188,12 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
         }
     }
 
-
-    private void writeActions(List<SecondaryTermLoadAction> actions) {
-        String jsonFile = this.outputJsonName;
-        log.debug("Creating JSON file: " + jsonFile);
-        try {
-            String jsonContents = actionsToJson(actions);
-            FileUtils.writeStringToFile(new File(jsonFile), jsonContents, "UTF-8");
-        } catch (IOException e) {
-            log.error("Failed to write JSON file: " + jsonFile, e);
-        }
-    }
-
-    private String actionsToJson(List<SecondaryTermLoadAction> actions) {
-        SecondaryTermLoadActionsContainer actionsContainer = new SecondaryTermLoadActionsContainer(
-                this.release == null ? null : this.release.getUpr_id(),
-                new Date(),
-                actions);
-
-        try {
-            return (new ObjectMapper()).writeValueAsString(actionsContainer);
-        } catch (JsonProcessingException e) {
-            return null;
-        }
-    }
-
-
     private void writeOutputReportFile(List<SecondaryTermLoadAction> actions) {
         String reportFile = this.outputReportName;
 
         log.debug("Creating report file: " + reportFile);
         try {
-            String jsonContents = actionsToJson(actions);
+            String jsonContents = actionsToJsonString(actions);
             String template = ZfinPropertiesEnum.SOURCEROOT.value() + LOAD_REPORT_TEMPLATE_HTML;
             String templateContents = FileUtils.readFileToString(new File(template), "UTF-8");
             String filledTemplate = templateContents.replace(JSON_PLACEHOLDER_IN_TEMPLATE, jsonContents);
@@ -222,6 +201,29 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
         } catch (IOException e) {
             log.error("Error creating report (" + reportFile + ") from template\n" + e.getMessage(), e);
         }
+    }
+
+    private void writeActionsToFile(List<SecondaryTermLoadAction> actions) {
+        SecondaryTermLoadActionsContainer actionsContainer = new SecondaryTermLoadActionsContainer(
+                this.release == null ? null : this.release.getUpr_id(),
+                new Date(),
+                actions);
+
+        try {
+            (new ObjectMapper()).writeValue(new File(this.outputJsonName), actionsContainer);
+        } catch (IOException e) {
+            log.error("Failed to write JSON file: " + this.outputJsonName, e);
+            //do nothing
+        }
+    }
+
+    private String actionsToJsonString(List<SecondaryTermLoadAction> actions) throws JsonProcessingException {
+        SecondaryTermLoadActionsContainer actionsContainer = new SecondaryTermLoadActionsContainer(
+                this.release == null ? null : this.release.getUpr_id(),
+                new Date(),
+                actions);
+
+        return (new ObjectMapper()).writeValueAsString(actionsContainer);
     }
 
     private void writeContext(SecondaryLoadContext context) {
@@ -237,49 +239,45 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
 //        }
     }
 
-    private void processActions(List<SecondaryTermLoadAction> actions) {
-        SecondaryTermLoadService.processActions(actions, release);
-    }
-
-    private List<SecondaryTermLoadAction> executePipeline(Map<String, RichSequenceAdapter> entries) {
-        SecondaryTermLoadPipeline pipeline = new SecondaryTermLoadPipeline();
+    private void executePipeline(Map<String, RichSequenceAdapter> entries) {
+        this.pipeline = new SecondaryTermLoadPipeline();
         pipeline.setUniprotRecords(entries);
 
         SecondaryLoadContext context = SecondaryLoadContext.createFromDBConnection();
         writeContext(context);
         pipeline.setContext(context);
 
-        pipeline.addHandler(new RemoveFromLostUniProtsHandler(INTERPRO));
-        pipeline.addHandler(new AddNewFromUniProtsHandler(INTERPRO));
+        pipeline.addHandler(new RemoveFromLostUniProtsActionCreator(INTERPRO), RemoveFromLostUniProtsActionProcessor.class);
+        pipeline.addHandler(new AddNewDBLinksFromUniProtsActionCreator(INTERPRO), AddNewDBLinksFromUniProtsActionProcessor.class);
 
-        pipeline.addHandler(new RemoveFromLostUniProtsHandler(EC));
-        pipeline.addHandler(new AddNewFromUniProtsHandler(EC));
+        pipeline.addHandler(new RemoveFromLostUniProtsActionCreator(EC), RemoveFromLostUniProtsActionProcessor.class);
+        pipeline.addHandler(new AddNewDBLinksFromUniProtsActionCreator(EC), AddNewDBLinksFromUniProtsActionProcessor.class);
 
-        pipeline.addHandler(new RemoveFromLostUniProtsHandler(PFAM));
-        pipeline.addHandler(new AddNewFromUniProtsHandler(PFAM));
+        pipeline.addHandler(new RemoveFromLostUniProtsActionCreator(PFAM), RemoveFromLostUniProtsActionProcessor.class);
+        pipeline.addHandler(new AddNewDBLinksFromUniProtsActionCreator(PFAM), AddNewDBLinksFromUniProtsActionProcessor.class);
 
-        pipeline.addHandler(new RemoveFromLostUniProtsHandler(PROSITE));
-        pipeline.addHandler(new AddNewFromUniProtsHandler(PROSITE));
+        pipeline.addHandler(new RemoveFromLostUniProtsActionCreator(PROSITE), RemoveFromLostUniProtsActionProcessor.class);
 
-        pipeline.addHandler(new AddNewSecondaryTermToGoHandler(INTERPRO, ipToGoRecords));
-        pipeline.addHandler(new RemoveSecondaryTermToGoHandler(INTERPRO, ipToGoRecords));
+        pipeline.addHandler(new AddNewDBLinksFromUniProtsActionCreator(PROSITE), AddNewDBLinksFromUniProtsActionProcessor.class);
 
-        pipeline.addHandler(new AddNewSecondaryTermToGoHandler(EC, ecToGoRecords));
-        pipeline.addHandler(new RemoveSecondaryTermToGoHandler(EC, ecToGoRecords));
+        pipeline.addHandler(new AddNewSecondaryTermToGoActionCreator(INTERPRO, ipToGoRecords), AddNewSecondaryTermToGoActionProcessor.class);
+        pipeline.addHandler(new RemoveSecondaryTermToGoActionCreator(INTERPRO, ipToGoRecords), RemoveSecondaryTermToGoActionProcessor.class);
 
-        pipeline.addHandler(new AddNewSpKeywordTermToGoHandler(UNIPROTKB, upToGoRecords));
-        pipeline.addHandler(new RemoveSpKeywordTermToGoHandler(UNIPROTKB, upToGoRecords));
+        pipeline.addHandler(new AddNewSecondaryTermToGoActionCreator(EC, ecToGoRecords), AddNewSecondaryTermToGoActionProcessor.class);
+        pipeline.addHandler(new RemoveSecondaryTermToGoActionCreator(EC, ecToGoRecords), RemoveSecondaryTermToGoActionProcessor.class);
 
-        pipeline.addHandler(new ExternalNotesHandler());
+        pipeline.addHandler(new AddNewSpKeywordTermToGoActionCreator(UNIPROTKB, upToGoRecords), AddNewSpKeywordTermToGoActionProcessor.class);
+        pipeline.addHandler(new RemoveSpKeywordTermToGoActionCreator(UNIPROTKB, upToGoRecords), RemoveSpKeywordTermToGoActionProcessor.class);
 
-        pipeline.addHandler(new InterproDomainHandler(downloadedInterproDomainRecords));
-        pipeline.addHandler(new InterproProteinHandler());
-        pipeline.addHandler(new InterproMarkerToProteinHandler());
-        pipeline.addHandler(new ProteinToInterproHandler());
-        pipeline.addHandler(new PDBHandler());
+//        pipeline.addHandler(new ExternalNotesActionCreationHandler(),);
 
-        //TODO: re-use pipeline class for processing actions too
-        return pipeline.execute();
+        pipeline.addHandler(new InterproDomainActionCreator(downloadedInterproDomainRecords), InterproDomainActionProcessor.class);
+        pipeline.addHandler(new InterproProteinActionCreator(), InterproProteinActionProcessor.class);
+        pipeline.addHandler(new InterproMarkerToProteinActionCreator(), InterproMarkerToProteinActionProcessor.class);
+        pipeline.addHandler(new ProteinToInterproActionCreator(), ProteinToInterproActionProcessor.class);
+        pipeline.addHandler(new PDBActionCreator(), PDBActionProcessor.class);
+
+        pipeline.createActions();
     }
 
     public void initialize() {

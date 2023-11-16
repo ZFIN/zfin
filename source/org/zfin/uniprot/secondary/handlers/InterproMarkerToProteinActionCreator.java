@@ -1,16 +1,15 @@
-package org.zfin.uniprot.secondary;
+package org.zfin.uniprot.secondary.handlers;
 
 import lombok.extern.log4j.Log4j2;
-import org.zfin.uniprot.adapter.CrossRefAdapter;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
 import org.zfin.uniprot.interpro.MarkerToProteinDTO;
+import org.zfin.uniprot.secondary.SecondaryLoadContext;
+import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 import static org.zfin.uniprot.adapter.RichSequenceAdapter.DatabaseSource.ZFIN;
 
 
@@ -22,18 +21,18 @@ import static org.zfin.uniprot.adapter.RichSequenceAdapter.DatabaseSource.ZFIN;
  *
  */
 @Log4j2
-public class InterproMarkerToProteinHandler implements SecondaryLoadHandler {
+public class InterproMarkerToProteinActionCreator implements ActionCreator {
     @Override
     public SecondaryTermLoadAction.SubType isSubTypeHandlerFor() {
         return SecondaryTermLoadAction.SubType.INTERPRO_MARKER_TO_PROTEIN;
     }
 
-
     @Override
-    public void createActions(Map<String, RichSequenceAdapter> uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
+    public List<SecondaryTermLoadAction> createActions(Map<String, RichSequenceAdapter> uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
 
         List<MarkerToProteinDTO> existingRecords = context.getExistingMarkerToProteinRecords();
         List<MarkerToProteinDTO> keepRecords = new ArrayList<>(); //all the records to keep (not delete) includes new records too
+        List <SecondaryTermLoadAction> newActions = new ArrayList<>();
 
         //create new records
         for(String uniprotKey : uniProtRecords.keySet()) {
@@ -49,7 +48,7 @@ public class InterproMarkerToProteinHandler implements SecondaryLoadHandler {
                 }
 
                 if (!existingRecords.contains(new MarkerToProteinDTO(zdbID, uniprotKey))) {
-                    actions.add(createLoadAction(newRecord));
+                    newActions.add(createLoadAction(newRecord));
                     keepRecords.add(newRecord);
                 } else {
                     keepRecords.add(newRecord);
@@ -60,18 +59,18 @@ public class InterproMarkerToProteinHandler implements SecondaryLoadHandler {
         //delete records
         for(MarkerToProteinDTO existingRecord : existingRecords) {
             if (!keepRecords.contains(existingRecord)) {
-                actions.add(createDeleteAction(existingRecord));
+                newActions.add(createDeleteAction(existingRecord));
             }
         }
-
+        return newActions;
     }
+
     private SecondaryTermLoadAction createLoadAction(MarkerToProteinDTO newRecord) {
         return SecondaryTermLoadAction.builder()
                 .geneZdbID(newRecord.markerZdbID())
                 .accession(newRecord.accession())
                 .type(SecondaryTermLoadAction.Type.LOAD)
                 .subType(SecondaryTermLoadAction.SubType.INTERPRO_MARKER_TO_PROTEIN)
-                .handlerClass(this.getClass().getName())
                 .build();
     }
 
@@ -81,32 +80,6 @@ public class InterproMarkerToProteinHandler implements SecondaryLoadHandler {
                 .accession(recordToDelete.accession())
                 .type(SecondaryTermLoadAction.Type.DELETE)
                 .subType(SecondaryTermLoadAction.SubType.INTERPRO_MARKER_TO_PROTEIN)
-                .handlerClass(this.getClass().getName())
                 .build();
     }
-
-    @Override
-    public void processActions(List<SecondaryTermLoadAction> actions) {
-        processInserts(actions);
-        processDeletes(actions);
-    }
-
-    private void processInserts(List<SecondaryTermLoadAction> actions) {
-        for(SecondaryTermLoadAction action : actions) {
-            if (action.getType() == SecondaryTermLoadAction.Type.LOAD) {
-                log.debug("inserting interpro for marker: " + action.getGeneZdbID() + " interpro: " + action.getAccession());
-                getMarkerRepository().insertInterProForMarker(action.getGeneZdbID(), action.getAccession());
-            }
-        }
-    }
-
-    private void processDeletes(List<SecondaryTermLoadAction> actions) {
-        for(SecondaryTermLoadAction action : actions) {
-            if (action.getType() == SecondaryTermLoadAction.Type.DELETE) {
-                log.debug("deleting interpro for marker: " + action.getGeneZdbID() + " interpro: " + action.getAccession());
-                getMarkerRepository().deleteInterProForMarker(action.getGeneZdbID(), action.getAccession());
-            }
-        }
-    }
-
 }

@@ -1,15 +1,13 @@
-package org.zfin.uniprot.secondary;
+package org.zfin.uniprot.secondary.handlers;
 
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.ListUtils;
-import org.zfin.sequence.InterProProtein;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
 import org.zfin.uniprot.interpro.InterProProteinDTO;
+import org.zfin.uniprot.secondary.SecondaryLoadContext;
+import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
 import java.util.*;
-
-import static org.zfin.framework.HibernateUtil.currentSession;
-import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 
 /**
  * Creates actions for adding and deleting protein domain information
@@ -18,30 +16,26 @@ import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
  * Uses InterProProteinDTO
  */
 @Log4j2
-public class InterproDomainHandler implements SecondaryLoadHandler {
+public class InterproDomainActionCreator implements ActionCreator {
     @Override
     public SecondaryTermLoadAction.SubType isSubTypeHandlerFor() {
         return SecondaryTermLoadAction.SubType.PROTEIN_DOMAIN;
     }
 
-
     private final List<InterProProteinDTO> downloadedInterproDomainRecords;
 
-    public InterproDomainHandler() {
-        this.downloadedInterproDomainRecords = null;
-    }
-
-    public InterproDomainHandler(List<InterProProteinDTO> downloadedInterproDomainRecords) {
+    public InterproDomainActionCreator(List<InterProProteinDTO> downloadedInterproDomainRecords) {
         this.downloadedInterproDomainRecords = downloadedInterproDomainRecords;
     }
 
     @Override
-    public void createActions(Map<String, RichSequenceAdapter> uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
-        addAndRemoveFromInterproProteinTable(actions, context);
-
+    public List<SecondaryTermLoadAction> createActions(Map<String, RichSequenceAdapter> uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
+        return addAndRemoveFromInterproProteinTable(context);
     }
 
-    private void addAndRemoveFromInterproProteinTable(List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
+    private List<SecondaryTermLoadAction> addAndRemoveFromInterproProteinTable(SecondaryLoadContext context) {
+        List<SecondaryTermLoadAction> newActions = new ArrayList<>();
+
         //existing records
         List<InterProProteinDTO> existingProteinDomains = context.getExistingInterproDomainRecords();
 
@@ -56,11 +50,12 @@ public class InterproDomainHandler implements SecondaryLoadHandler {
 
         //create new actions for each of the above result sets
         for (InterProProteinDTO toDeleteProteinDomain : toDeleteProteinDomains) {
-            actions.add(createDeleteAction(toDeleteProteinDomain));
+            newActions.add(createDeleteAction(toDeleteProteinDomain));
         }
         for (InterProProteinDTO toAddProteinDomain : toAddProteinDomains) {
-            actions.add(createAddAction(toAddProteinDomain));
+            newActions.add(createAddAction(toAddProteinDomain));
         }
+        return newActions;
     }
 
     private SecondaryTermLoadAction createAddAction(InterProProteinDTO toAddProteinDomain) {
@@ -69,7 +64,6 @@ public class InterproDomainHandler implements SecondaryLoadHandler {
                 .subType(SecondaryTermLoadAction.SubType.PROTEIN_DOMAIN)
                 .relatedEntityID(toAddProteinDomain.accession())
                 .relatedEntityFields(toAddProteinDomain.toMap())
-                .handlerClass(this.getClass().getName())
                 .build();
     }
 
@@ -79,25 +73,7 @@ public class InterproDomainHandler implements SecondaryLoadHandler {
                 .subType(SecondaryTermLoadAction.SubType.PROTEIN_DOMAIN)
                 .relatedEntityID(toDeleteProteinDomain.accession())
                 .relatedEntityFields(toDeleteProteinDomain.toMap())
-                .handlerClass(this.getClass().getName())
                 .build();
-    }
-
-
-    @Override
-    public void processActions(List<SecondaryTermLoadAction> actions) {
-        for (SecondaryTermLoadAction action : actions) {
-            InterProProteinDTO iprDTO = InterProProteinDTO.fromMap(action.getRelatedEntityFields());
-            InterProProtein ipr = iprDTO.toInterProProtein();
-            if (action.getType() == SecondaryTermLoadAction.Type.LOAD) {
-                getInfrastructureRepository().insertActiveDataWithoutValidation(ipr.getIpID());
-                currentSession().save(ipr);
-            } else if (action.getType() == SecondaryTermLoadAction.Type.DELETE) {
-                currentSession().delete(ipr);
-            }
-        }
-        currentSession().flush();
-//        currentSession().clear();
     }
 
 }

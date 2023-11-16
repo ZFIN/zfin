@@ -268,7 +268,8 @@
             return html`
                 <div>
                     <h2>Details for Action</h2>
-                    <div><button href="#" onClick="${() => prevClick()}" className="prev">Prev</button>  <button href="#" onClick="${() => nextClick()}" className="next">Next</button></div>
+                    <!-- NEED TO FIX LOGIC FOR PREVIOUS AND NEXT BUTTONS -->
+                    <div><button disabled href="#" onClick="${() => prevClick()}" className="prev">Prev</button>  <button disabled href="#" onClick="${() => nextClick()}" className="next">Next</button></div>
                     <h3>${item.subType}</h3>
                     <dl>
                         ${ (item.dbName && html`<dt>Database Name</dt><dd>${dbNameDisplay(item)}</dd>`) }

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 import org.apache.commons.lang3.ObjectUtils;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.uniprot.UniProtLoadLink;
@@ -12,69 +11,8 @@ import org.zfin.uniprot.UniProtLoadLink;
 import java.util.*;
 
 @Getter
-@Setter
-@Builder
+@Builder(toBuilder = true)
 public class SecondaryTermLoadAction implements Comparable<SecondaryTermLoadAction> {
-    private Type type;
-    private SubType subType;
-
-    private ForeignDB.AvailableName dbName;
-    private String accession;
-    private String goID;
-    private String goTermZdbID;
-    private String geneZdbID;
-    private String relatedEntityID;
-    private String details;
-    private int length;
-    private String handlerClass;
-
-    @Builder.Default
-    private Map<String, String> relatedEntityFields = new HashMap<>();
-
-    @Builder.Default
-    private Set<UniProtLoadLink> links = new TreeSet<>();
-
-    public SecondaryTermLoadAction() {
-        links = new TreeSet<>();
-    }
-
-    public SecondaryTermLoadAction(Type type, SubType subType, ForeignDB.AvailableName dbName, String accession, String goID, String goTermZdbID, String geneZdbID, String relatedEntityID, String details, int length, String handlerClass, Map<String, String> relatedEntityFields, Set<UniProtLoadLink> links)
-    {
-        this.type = type;
-        this.subType = subType;
-        this.accession = accession;
-        this.goID = goID;
-        this.goTermZdbID = goTermZdbID;
-        this.geneZdbID = geneZdbID;
-        this.relatedEntityID = relatedEntityID;
-        this.details = details;
-        this.length = length;
-        this.handlerClass = handlerClass;
-        this.links = links;
-        this.dbName = dbName;
-        this.relatedEntityFields = relatedEntityFields;
-    }
-
-    public void addLink(UniProtLoadLink uniProtLoadLink) {
-        links.add(uniProtLoadLink);
-    }
-
-    public void addLinks(Collection<UniProtLoadLink> links) {
-        this.links.addAll(links);
-    }
-
-    @JsonIgnore
-    public String getPrefixedAccession() {
-        String prefixedAccession = "";
-        switch(dbName) {
-            case INTERPRO -> prefixedAccession = "InterPro:" + accession;
-            case UNIPROTKB -> prefixedAccession = "UniProtKB-KW:" + accession;
-            case EC -> prefixedAccession = "EC:" + accession;
-            default -> prefixedAccession = dbName.toString() + ":" + accession;
-        }
-        return prefixedAccession;
-    }
-
     public enum Type {LOAD, INFO, WARNING, ERROR, DELETE, IGNORE, DUPES}
 
     public enum SubType {
@@ -105,6 +43,29 @@ public class SecondaryTermLoadAction implements Comparable<SecondaryTermLoadActi
             return processActionOrder;
         }
     }
+    private final Type type;
+    private final SubType subType;
+    private final ForeignDB.AvailableName dbName;
+    private final String accession;
+    private final String goID;
+    private final String goTermZdbID;
+    private final String geneZdbID;
+    private final String relatedEntityID;
+    private final String details;
+    private final int length;
+    private final String handlerClass;
+    private final Map<String, String> relatedEntityFields;
+    private final Set<UniProtLoadLink> links;
+
+    @JsonIgnore
+    public String getPrefixedAccession() {
+        return switch(dbName) {
+            case INTERPRO ->  "InterPro:" + accession;
+            case UNIPROTKB ->  "UniProtKB-KW:" + accession;
+            case EC -> "EC:" + accession;
+            default ->  dbName.toString() + ":" + accession;
+        };
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -116,7 +77,7 @@ public class SecondaryTermLoadAction implements Comparable<SecondaryTermLoadActi
     @Override
     public int compareTo(SecondaryTermLoadAction o) {
         Comparator<SecondaryTermLoadAction> comparator = Comparator.comparing(
-                (SecondaryTermLoadAction obj) -> obj.accession, ObjectUtils::compare)
+                        (SecondaryTermLoadAction obj) -> obj.accession, ObjectUtils::compare)
                 .thenComparing(obj -> obj.type, ObjectUtils::compare)
                 .thenComparing(obj -> obj.subType, ObjectUtils::compare)
                 .thenComparing(obj -> obj.geneZdbID, ObjectUtils::compare)
