@@ -23,6 +23,7 @@ import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.profile.MarkerSupplier;
 import org.zfin.publication.Publication;
+import org.zfin.publication.PublicationDbXref;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.Database;
 
@@ -571,4 +572,7 @@ public interface MarkerRepository {
     FluorescentProtein getFluorescentProtein(Long identifier);
 
     void updateMarkerName(String constructZdbID, String toString);
+
+    Map<Marker, List<Transcript>> getAllTranscripts();
+
 }
