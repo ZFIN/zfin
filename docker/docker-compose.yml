@@ -27,7 +27,7 @@ services:
       - certbot_data:/etc/letsencrypt
       - catalina_base:/opt/zfin/catalina_bases/zfin.org
       - jenkins_data:/opt/zfin/www_homes/zfin.org/server_apps/jenkins/jenkins-home
-      - ../:/opt/zfin/source_roots/zfin.org
+      - ${DOCKER_SOURCE_ROOTS_PATH}:/opt/zfin/source_roots/zfin.org:rw
       #- nfs-zunloads:/research/zunloads
       - ${DOCKER_DB_UNLOADS_PATH}:/opt/zfin/unloads/db
       - ${DOCKER_SOLR_UNLOADS_PATH}:/opt/zfin/unloads/solr
@@ -35,7 +35,6 @@ services:
       - ${DOCKER_ABBLAST_PATH}:/opt/ab-blast
       - ${DOCKER_RESEARCH_PATH}:/research
       - solr_data:/var/solr
-      - ./pg_pass:/run/secrets/pg_pass
       - ${DOCKER_SSH_AUTH_SOCK}:/run/host-services/ssh-auth.sock
       - ~/.ssh/known_hosts:/home/gradle/.ssh/known_hosts
       - /var/run/docker.sock:/var/run/docker.sock
@@ -53,7 +52,7 @@ services:
 #      - "127.0.0.1:5432-5441:5432"
     volumes:
       - pg_data:/var/lib/postgresql/data/
-      - ./pg_pass:/run/secrets/pg_pass:ro
+      - ${DOCKER_SOURCE_ROOTS_PATH}/docker/pg_pass:/run/secrets/pg_pass:ro
   solr:
     build: ./solr/
     restart: always
@@ -125,7 +124,7 @@ services:
       TZ: ${TZ}
     volumes:
       #- jenkins_data:/var/jenkins_home
-      - ../:/opt/zfin/source_roots/zfin.org
+      - ${DOCKER_SOURCE_ROOTS_PATH}:/opt/zfin/source_roots/zfin.org
       - www_data:/opt/zfin/www_homes/zfin.org
       - downloads_data:/opt/zfin/download-files
       - jenkins_data:/opt/zfin/www_homes/zfin.org/server_apps/jenkins/jenkins-home

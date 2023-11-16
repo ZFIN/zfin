@@ -5,6 +5,7 @@ DOCKER_SOLR_UNLOADS_PATH=~/development/unloads/solr
 DOCKER_BLASTSERVER_BLAST_DATABASE_PATH=~/development/blast
 DOCKER_ABBLAST_PATH=~/development/blast/ab-blast
 DOCKER_RESEARCH_PATH=~/development/research
+DOCKER_SOURCE_ROOTS_PATH="../"
 DOCKER_VIRTUAL_HOST=zfin.org
 COMPOSE_PROJECT_NAME=zfin_org
 TZ=PST8PDT
