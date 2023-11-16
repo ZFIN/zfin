@@ -106,17 +106,17 @@
                     return html`<div>DELETE - These are cases where an accession will be dropped from a gene.</div>`;
                 case 'ERROR':
                     return html`<div>ERROR - These accessions have been marked as having errors so won't be loaded.</div>`;
-                case 'INFO':
-                    return html`<div>INFO - These cases are informational and will not be loaded.</div>`;
                 case 'WARNING':
                     return html`<div>WARNING - These cases are warnings and will not be loaded.</div>`;
+                case 'INFO':
+                    return html`<div>INFO - These cases are informational and will not be loaded.</div>`;
             }
         }
 
         function ReportSummary({reportSummary, onSummaryClick}) {
 
             //sort by LOAD, DELETE, ERROR, INFO, WARNING
-            const orderedKeys = ['LOAD', 'DELETE', 'ERROR', 'INFO', 'WARNING'];
+            const orderedKeys = ['LOAD', 'DELETE', 'ERROR', 'WARNING', 'INFO'];
             const remainingKeys = reportSummary.map(item => item.type).filter(item => !orderedKeys.includes(item));
             const allKeys = orderedKeys.concat(remainingKeys);
 

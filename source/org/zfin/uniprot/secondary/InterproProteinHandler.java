@@ -122,7 +122,6 @@ public class InterproProteinHandler implements SecondaryLoadHandler {
                     .type(SecondaryTermLoadAction.Type.LOAD)
                     .subType(SecondaryTermLoadAction.SubType.PROTEIN)
                     .accession(accession)
-                    .details(String.join(",", zdbIDs))
                     .length(length)
                     .handlerClass(this.getClass().getName())
                     .build());
