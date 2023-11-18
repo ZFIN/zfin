@@ -53,6 +53,11 @@ public class MeshChebiDAO {
     }
 
     public String getMeshID(String oboID) {
-        return findAll().get(oboID).getMeshID();
+        MeshChebiMapping mapping = findAll().get(oboID);
+        if ( mapping == null) {
+            return null;
+        }
+        return mapping.getMeshID();
     }
 }
+
