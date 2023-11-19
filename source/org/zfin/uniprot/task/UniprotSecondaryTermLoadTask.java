@@ -10,8 +10,8 @@ import org.biojava.bio.BioException;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.properties.ZfinPropertiesEnum;
-import org.zfin.uniprot.adapter.RichSequenceAdapter;
-import org.zfin.uniprot.interpro.InterProProteinDTO;
+import org.zfin.uniprot.datfiles.UniprotReleaseRecords;
+import org.zfin.uniprot.dto.InterProProteinDTO;
 import org.zfin.uniprot.interpro.EntryListTranslator;
 import org.zfin.uniprot.secondary.*;
 import org.zfin.uniprot.persistence.UniProtRelease;
@@ -27,7 +27,7 @@ import java.util.*;
 import static org.zfin.datatransfer.service.DownloadService.downloadFileViaWget;
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 import static org.zfin.sequence.ForeignDB.AvailableName.*;
-import static org.zfin.uniprot.UniProtFilterTask.readAllZebrafishEntriesFromSourceIntoMap;
+import static org.zfin.uniprot.UniProtFilterTask.readAllZebrafishEntriesFromSourceIntoRecords;
 import static org.zfin.uniprot.UniProtTools.getArgOrEnvironmentVar;
 
 @Log4j2
@@ -38,6 +38,8 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
     private static final int ACTION_SIZE_ERROR_THRESHOLD = 20_000;
     private static final String LOAD_REPORT_TEMPLATE_HTML = "/home/uniprot/secondary-load-report.html";
     private static final String JSON_PLACEHOLDER_IN_TEMPLATE = "JSON_GOES_HERE";
+    private final String domainFile;
+    private final String contextInputFile;
 
     private enum LoadTaskMode {
         REPORT,
@@ -67,8 +69,10 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
         String ipToGoTranslationFile = "";
         String ecToGoTranslationFile = "";
         String upToGoTranslationFile = "";
+        String domainFile = "";
         String outputJsonName = "";
         String actionsFileName = "";
+        String contextInputFile = "";
 
         //mode can be one of the following:
         // 1. "REPORT" - generate actions from the input file and write them to a file (no load)
@@ -81,7 +85,9 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
             ipToGoTranslationFile = getArgOrEnvironmentVar(args, 2, "IP2GO_FILE", "");
             ecToGoTranslationFile = getArgOrEnvironmentVar(args, 3, "EC2GO_FILE", "");
             upToGoTranslationFile = getArgOrEnvironmentVar(args, 4, "UP2GO_FILE", "");
+            domainFile = getArgOrEnvironmentVar(args, 4, "DOMAIN_FILE", "");
             outputJsonName = getArgOrEnvironmentVar(args, 5, "UNIPROT_OUTPUT_FILE", defaultOutputFileName(inputFileName));
+            contextInputFile = getArgOrEnvironmentVar(args, 6, "CONTEXT_INPUT_FILE", "");
         } else if (mode.equalsIgnoreCase("LOAD")) {
             actionsFileName = getArgOrEnvironmentVar(args, 1, "UNIPROT_ACTIONS_FILE", "");
         } else {
@@ -89,7 +95,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
             System.exit(1);
         }
 
-        UniprotSecondaryTermLoadTask task = new UniprotSecondaryTermLoadTask(mode, inputFileName, outputJsonName, ipToGoTranslationFile, ecToGoTranslationFile, upToGoTranslationFile, actionsFileName);
+        UniprotSecondaryTermLoadTask task = new UniprotSecondaryTermLoadTask(mode, inputFileName, outputJsonName, ipToGoTranslationFile, ecToGoTranslationFile, upToGoTranslationFile, domainFile, contextInputFile, actionsFileName);
         task.runTask();
     }
 
@@ -112,7 +118,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
                 .findFirst();
     }
 
-    public UniprotSecondaryTermLoadTask(String mode, String inputFileName, String outputJsonName, String ipToGoTranslationFile, String ecToGoTranslationFile, String upToGoTranslationFile, String actionsFileName) {
+    public UniprotSecondaryTermLoadTask(String mode, String inputFileName, String outputJsonName, String ipToGoTranslationFile, String ecToGoTranslationFile, String upToGoTranslationFile, String domainFile, String contextInputFile, String actionsFileName) {
         this.mode = LoadTaskMode.valueOf(mode.toUpperCase());
         this.inputFileName = inputFileName;
         this.outputJsonName = outputJsonName;
@@ -122,17 +128,19 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
         this.ipToGoTranslationFile = ipToGoTranslationFile;
         this.ecToGoTranslationFile = ecToGoTranslationFile;
         this.upToGoTranslationFile = upToGoTranslationFile;
+        this.domainFile = domainFile;
+        this.contextInputFile = contextInputFile;
         this.actionsFileName = actionsFileName;
     }
 
     public void runTask() throws IOException, BioException, SQLException {
         initialize();
-        log.debug("Starting UniProtLoadTask for file " + inputFileName + ".");
+        log.debug("Starting UniProtSecondaryTermLoadTask for file " + inputFileName + ".");
 
         if (mode.equals(LoadTaskMode.REPORT) || mode.equals(LoadTaskMode.LOAD_AND_REPORT)) {
             try (BufferedReader inputFileReader = new BufferedReader(new java.io.FileReader(inputFileName))) {
                 loadTranslationFiles();
-                Map<String, RichSequenceAdapter> entries = readUniProtEntries(inputFileReader);
+                UniprotReleaseRecords entries = readUniProtEntries(inputFileReader);
                 executePipeline(entries);
                 log.debug("Finished executing pipeline: " + pipeline.getActions().size() + " actions created.");
                 writeActionsToFile(pipeline.getActions());
@@ -227,26 +235,43 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
     }
 
     private void writeContext(SecondaryLoadContext context) {
-        log.debug("TODO: Implement serialization for writing context file: " + contextOutputFile + ".");
-//        if (contextOutputFile != null && !contextOutputFile.isEmpty()) {
-//            ObjectMapper objectMapper = new ObjectMapper();
-//            try {
-//                log.info("Writing context file: " + contextOutputFile + ".");
-//                objectMapper.writeValue(new File(contextOutputFile), context);
-//            } catch (IOException e) {
-//                log.error("Error writing context file " + contextOutputFile + ": " + e.getMessage(), e);
-//            }
-//        }
+//        log.debug("TODO: Implement serialization for writing context file: " + contextOutputFile + ".");
+        if (contextOutputFile != null && !contextOutputFile.isEmpty()) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                log.info("Writing context file: " + contextOutputFile + ".");
+                objectMapper.writeValue(new File(contextOutputFile), context);
+            } catch (IOException e) {
+                log.error("Error writing context file " + contextOutputFile + ": " + e.getMessage(), e);
+            }
+        }
     }
 
-    private void executePipeline(Map<String, RichSequenceAdapter> entries) {
+    private void executePipeline(UniprotReleaseRecords entries) {
+        setupPipeline(entries);
+        calculatePipelineActions();
+    }
+
+    private void setupPipeline(UniprotReleaseRecords entries) {
         this.pipeline = new SecondaryTermLoadPipeline();
         pipeline.setUniprotRecords(entries);
 
-        SecondaryLoadContext context = SecondaryLoadContext.createFromDBConnection();
-        writeContext(context);
-        pipeline.setContext(context);
+        SecondaryLoadContext context;
+        if (StringUtils.isEmpty(contextInputFile)) {
+            context = SecondaryLoadContext.createFromDBConnection();
+            writeContext(context);
+        } else {
+            try {
+                 context = SecondaryLoadContext.createFromContextFile(contextInputFile);
+            } catch (IOException e) {
+                throw new RuntimeException("Error reading context file: " + contextInputFile + ": " + e.getMessage(), e);
+            }
+        }
 
+        pipeline.setContext(context);
+    }
+
+    private void calculatePipelineActions() {
         pipeline.addHandler(new RemoveFromLostUniProtsActionCreator(INTERPRO), RemoveFromLostUniProtsActionProcessor.class);
         pipeline.addHandler(new AddNewDBLinksFromUniProtsActionCreator(INTERPRO), AddNewDBLinksFromUniProtsActionProcessor.class);
 
@@ -260,11 +285,9 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
 
         pipeline.addHandler(new AddNewDBLinksFromUniProtsActionCreator(PROSITE), AddNewDBLinksFromUniProtsActionProcessor.class);
 
-        pipeline.addHandler(new AddNewSecondaryTermToGoActionCreator(INTERPRO, ipToGoRecords), AddNewSecondaryTermToGoActionProcessor.class);
-        pipeline.addHandler(new RemoveSecondaryTermToGoActionCreator(INTERPRO, ipToGoRecords), RemoveSecondaryTermToGoActionProcessor.class);
+        pipeline.addHandler(new MarkerGoTermEvidenceActionCreator(INTERPRO, ipToGoRecords), MarkerGoTermEvidenceActionProcessor.class);
 
-        pipeline.addHandler(new AddNewSecondaryTermToGoActionCreator(EC, ecToGoRecords), AddNewSecondaryTermToGoActionProcessor.class);
-        pipeline.addHandler(new RemoveSecondaryTermToGoActionCreator(EC, ecToGoRecords), RemoveSecondaryTermToGoActionProcessor.class);
+        pipeline.addHandler(new MarkerGoTermEvidenceActionCreator(EC, ecToGoRecords), MarkerGoTermEvidenceActionProcessor.class);
 
         pipeline.addHandler(new AddNewSpKeywordTermToGoActionCreator(UNIPROTKB, upToGoRecords), AddNewSpKeywordTermToGoActionProcessor.class);
         pipeline.addHandler(new RemoveSpKeywordTermToGoActionCreator(UNIPROTKB, upToGoRecords), RemoveSpKeywordTermToGoActionProcessor.class);
@@ -321,13 +344,17 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
             ecToGoRecords = SecondaryTerm2GoTermTranslator.convertTranslationFileToUnloadFile(ecToGo, SecondaryTerm2GoTermTranslator.SecondaryTermType.EC);
             log.debug("Loaded " + ecToGoRecords.size() + " EC to GO records.");
 
-            log.debug("Downloading entry.list for domain info");
-            File downloadedFile4 = File.createTempFile("entry", ".list");
-//            String url4 = ZfinPropertiesEnum.UNIPROT_ENTRY_LIST_FILE_URL.value();
-            String url4 = "https://ftp.ebi.ac.uk/pub/databases/interpro/current_release/entry.list";
-            downloadFileViaWget(url4, downloadedFile4.toPath(), 10_000, log);
-            log.debug("Loading " + downloadedFile4.getAbsolutePath());
-            List<InterProProteinDTO> entryList = EntryListTranslator.parseFile(downloadedFile4);
+            String domainFilename = this.domainFile;
+            if (StringUtils.isEmpty(domainFilename)) {
+                log.debug("Downloading entry.list for domain info");
+                File downloadedFile4 = File.createTempFile("entry", ".list");
+                //            String url4 = ZfinPropertiesEnum.UNIPROT_ENTRY_LIST_FILE_URL.value();
+                String url4 = "https://ftp.ebi.ac.uk/pub/databases/interpro/current_release/entry.list";
+                downloadFileViaWget(url4, downloadedFile4.toPath(), 10_000, log);
+                log.debug("Loading " + downloadedFile4.getAbsolutePath());
+                domainFilename = downloadedFile4.getAbsolutePath();
+            }
+            List<InterProProteinDTO> entryList = EntryListTranslator.parseFile(new File(domainFilename));
             log.debug("Loaded " + entryList.size() + " entries.");
             this.downloadedInterproDomainRecords = entryList;
 
@@ -352,8 +379,8 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
         }
     }
 
-    public Map<String, RichSequenceAdapter> readUniProtEntries(BufferedReader inputFileReader) throws BioException, IOException {
-        Map<String, RichSequenceAdapter> entries = readAllZebrafishEntriesFromSourceIntoMap(inputFileReader);
+    public UniprotReleaseRecords readUniProtEntries(BufferedReader inputFileReader) throws BioException, IOException {
+        UniprotReleaseRecords entries = readAllZebrafishEntriesFromSourceIntoRecords(inputFileReader);
         log.debug("Finished reading file: " + entries.size() + " entries read.");
 
         return entries;

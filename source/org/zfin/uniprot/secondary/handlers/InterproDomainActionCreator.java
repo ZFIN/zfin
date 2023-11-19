@@ -2,12 +2,13 @@ package org.zfin.uniprot.secondary.handlers;
 
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.ListUtils;
-import org.zfin.uniprot.adapter.RichSequenceAdapter;
-import org.zfin.uniprot.interpro.InterProProteinDTO;
+import org.zfin.uniprot.datfiles.UniprotReleaseRecords;
+import org.zfin.uniprot.dto.InterProProteinDTO;
 import org.zfin.uniprot.secondary.SecondaryLoadContext;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Creates actions for adding and deleting protein domain information
@@ -29,7 +30,7 @@ public class InterproDomainActionCreator implements ActionCreator {
     }
 
     @Override
-    public List<SecondaryTermLoadAction> createActions(Map<String, RichSequenceAdapter> uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
+    public List<SecondaryTermLoadAction> createActions(UniprotReleaseRecords uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
         return addAndRemoveFromInterproProteinTable(context);
     }
 

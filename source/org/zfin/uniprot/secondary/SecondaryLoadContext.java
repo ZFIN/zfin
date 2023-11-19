@@ -1,18 +1,20 @@
 package org.zfin.uniprot.secondary;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
-import org.zfin.mutant.MarkerGoTermEvidence;
+import org.zfin.gwt.root.dto.GoDefaultPublication;
 import org.zfin.sequence.DBLinkExternalNote;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.sequence.repository.SequenceRepository;
-import org.zfin.uniprot.dto.DBLinkExternalNoteSlimDTO;
-import org.zfin.uniprot.dto.DBLinkSlimDTO;
-import org.zfin.uniprot.interpro.*;
+import org.zfin.uniprot.dto.*;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.zfin.Species.Type.ZEBRAFISH;
 import static org.zfin.framework.HibernateUtil.currentSession;
@@ -32,6 +34,9 @@ import static org.zfin.sequence.ForeignDBDataType.SuperType.SEQUENCE;
 @Log4j2
 public class SecondaryLoadContext {
     private static final String SPKW_PUB_ID = "ZDB-PUB-020723-1";
+    public static final String GO_TERM_BIOLOGICAL_PROCESS_ID = "ZDB-TERM-091209-6070";
+    public static final String GO_TERM_MOLECULAR_FUNCTION_ID = "ZDB-TERM-091209-2432";
+    public static final String GO_TERM_CELLULAR_COMPONENT_ID = "ZDB-TERM-091209-4029";
 
     private Map<String, List<DBLinkSlimDTO>> uniprotDbLinks;
     private Map<String, List<DBLinkSlimDTO>> interproDbLinks;
@@ -39,9 +44,10 @@ public class SecondaryLoadContext {
     private Map<String, List<DBLinkSlimDTO>> prositeDbLinks;
     private Map<String, List<DBLinkSlimDTO>> pfamDbLinks;
     private Map<String, List<DBLinkSlimDTO>> uniprotDbLinksByGeneZdbID;
-    private Map<DBLinkSlimDTO, DBLinkExternalNoteSlimDTO> externalNotesByUniprotAccession;
+//    private Map<DBLinkSlimDTO, DBLinkExternalNoteSlimDTO> externalNotesByUniprotAccession;
 
-    private List<MarkerGoTermEvidence> existingMarkerGoTermEvidenceRecordsForSPKW;
+//    private List<MarkerGoTermEvidenceSlimDTO> existingMarkerGoTermEvidenceRecordsForSPKW;
+    private List<MarkerGoTermEvidenceSlimDTO> existingMarkerGoTermEvidenceRecords;
 
     private List<SecondaryTerm2GoTerm> interproTranslationRecords;
     private List<SecondaryTerm2GoTerm> ecTranslationRecords;
@@ -54,67 +60,137 @@ public class SecondaryLoadContext {
 
     public static SecondaryLoadContext createFromDBConnection() {
         SecondaryLoadContext loadContext = new SecondaryLoadContext();
+        loadContext.initializeContext();
+
+        return loadContext;
+    }
+
+    public static SecondaryLoadContext createFromContextFile(String contextInputFile) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        SecondaryLoadContext loadContext = mapper.readValue(new File(contextInputFile), SecondaryLoadContext.class);
+        return loadContext;
+    }
+
+    public void initializeContext() {
+
+        initializeUniprotDBLinksFromDatabase();
+
+        initializeInterproDBLinksFromDatabase();
+
+        initializeECDBLinksFromDatabase();
+
+        initializePfamDBLinksFromDatabase();
+
+        initializePrositeDBLinksFromDatabase();
+
+        initializeMarkerGoTermEvidenceFromDatabase();
+
+        // commented out -> need to review the logic and see if it is needed to be specific to SPKW
+//        log.debug("Load Step 7: Getting Existing MarkerGoTermEvidence Records");
+//
+//        loadContext.setExistingMarkerGoTermEvidenceRecordsForSPKW(
+//
+//                MarkerGoTermEvidenceSlimDTO.fromMarkerGoTermEvidences(
+//                        getMarkerGoTermEvidenceRepository().getMarkerGoTermEvidencesForPubZdbID(SPKW_PUB_ID)
+//                )
+//        );
+
+        //initializeExternalNotesFromDatabase
+//        log.debug("Load Step 8: Getting Existing External Notes");
+//        setExternalNotesByUniprotAccession(
+//                getInfrastructureRepository().getDBLinkExternalNoteByPublicationID(SecondaryTermLoadService.EXTNOTE_PUBLICATION_ATTRIBUTION_ID)
+//        );
+
+        //initializeInterproDomainRecordsFromDatabase
+        log.debug("Load Step 9: Getting Existing Interpro Domain Entry Records");
+        setExistingInterproDomainRecords(fetchExistingInterproDomainRecords());
+
+        //initializeProteinRecordsFromDatabase
+        log.debug("Load Step 10: Getting Existing Protein Records");
+        setExistingProteinRecords(fetchExistingProteinRecords());
+
+        //initializeMarkerToProteinRecordsFromDatabase
+        log.debug("Load Step 11: Getting Existing Protein Records");
+        setExistingMarkerToProteinRecords(fetchExistingMarkerToProteinRecords());
+
+        //initializeProteinToInterproRecordsFromDatabase
+        log.debug("Load Step 12: Getting Existing Protein to Interpro Records");
+        setExistingProteinToInterproRecords(fetchExistingProteinToInterproRecords());
+
+        //initializePdbRecordsFromDatabase
+        log.debug("Load Step 13: Getting Existing PDB Records");
+        setExistingPdbRecords(fetchExistingPdbRecords());
+    }
+
+    public void initializeMarkerGoTermEvidenceFromDatabase() {
+        log.debug("Load Step 7: Getting Existing MarkerGoTermEvidence Records");
+        setExistingMarkerGoTermEvidenceRecords(
+                MarkerGoTermEvidenceSlimDTO.fromMarkerGoTermEvidences(
+                        getMarkerGoTermEvidenceRepository()
+                                .getMarkerGoTermEvidencesForPubZdbIDs(List.of(
+                                        GoDefaultPublication.UNIPROTKBKW.zdbID(),
+                                        GoDefaultPublication.EC.zdbID(),
+                                        GoDefaultPublication.INTERPRO.zdbID()
+                                ))
+                                .stream()
+                                //filter? to only allow 'ZDB-TERM-091209-6070','ZDB-TERM-091209-2432','ZDB-TERM-091209-4029'
+                                //based on mgte.getGoTerm().getZdbID()
+//                                .filter(mgte -> mgte.getGoTerm().getZdbID().equals(GO_TERM_MOLECULAR_FUNCTION_ID)
+//                                        || mgte.getGoTerm().getZdbID().equals(GO_TERM_BIOLOGICAL_PROCESS_ID)
+//                                        || mgte.getGoTerm().getZdbID().equals(GO_TERM_CELLULAR_COMPONENT_ID))
+                                .toList()
+                )
+        );
+    }
+
+    public void initializePrositeDBLinksFromDatabase() {
         SequenceRepository sr = getSequenceRepository();
-
-        log.debug("Load Step 1: Getting Existing Uniprot DB Links");
-        loadContext.setUniprotDbLinks(
-                convertToDTO(
-                        sr.getMarkerDBLinks(
-                                sr.getReferenceDatabase(UNIPROTKB, POLYPEPTIDE, SEQUENCE, ZEBRAFISH))));
-
-        log.debug("Load Step 2: Getting Existing Interpro DB Links");
-        loadContext.setInterproDbLinks(
-                convertToDTO(
-                        sr.getMarkerDBLinks(
-                                sr.getReferenceDatabase(INTERPRO, DOMAIN, PROTEIN, ZEBRAFISH))));
-
-        log.debug("Load Step 3: Getting Existing EC DB Links");
-        loadContext.setEcDbLinks(
-                convertToDTO(
-                        sr.getMarkerDBLinks(
-                                sr.getReferenceDatabase(EC, DOMAIN, PROTEIN, ZEBRAFISH))));
-
-        log.debug("Load Step 4: Getting Existing PFAM DB Links");
-        loadContext.setPfamDbLinks(
-                convertToDTO(
-                        sr.getMarkerDBLinks(
-                                sr.getReferenceDatabase(PFAM, DOMAIN, PROTEIN, ZEBRAFISH))));
-
+        
         log.debug("Load Step 5: Getting Existing PROSITE DB Links");
-        loadContext.setPrositeDbLinks(
+        setPrositeDbLinks(
                 convertToDTO(
                         sr.getMarkerDBLinks(
                                 sr.getReferenceDatabase(PROSITE, DOMAIN, PROTEIN, ZEBRAFISH))));
+    }
 
-        log.debug("Load Step 6: Creating Index of Uniprot DB Links by Gene ZDB ID");
-        loadContext.createUniprotDbLinksByGeneZdbID();
+    public void initializePfamDBLinksFromDatabase() {
+        SequenceRepository sr = getSequenceRepository();
+        
+        log.debug("Load Step 4: Getting Existing PFAM DB Links");
+        setPfamDbLinks(
+                convertToDTO(
+                        sr.getMarkerDBLinks(
+                                sr.getReferenceDatabase(PFAM, DOMAIN, PROTEIN, ZEBRAFISH))));
+    }
 
-        log.debug("Load Step 7: Getting Existing MarkerGoTermEvidence Records");
-        loadContext.setExistingMarkerGoTermEvidenceRecordsForSPKW(
-                getMarkerGoTermEvidenceRepository().getMarkerGoTermEvidencesForPubZdbID(SPKW_PUB_ID)
-        );
+    public void initializeECDBLinksFromDatabase() {
+        SequenceRepository sr = getSequenceRepository();
+        
+        log.debug("Load Step 3: Getting Existing EC DB Links");
+        setEcDbLinks(
+                convertToDTO(
+                        sr.getMarkerDBLinks(
+                                sr.getReferenceDatabase(EC, DOMAIN, PROTEIN, ZEBRAFISH))));
+    }
 
-        log.debug("Load Step 8: Getting Existing External Notes");
-        loadContext.setExternalNotesByUniprotAccession(
-                getInfrastructureRepository().getDBLinkExternalNoteByPublicationID(SecondaryTermLoadService.EXTNOTE_PUBLICATION_ATTRIBUTION_ID)
-        );
+    public void initializeInterproDBLinksFromDatabase() {
+        SequenceRepository sr = getSequenceRepository();
+        
+        log.debug("Load Step 2: Getting Existing Interpro DB Links");
+        setInterproDbLinks(
+                convertToDTO(
+                        sr.getMarkerDBLinks(
+                                sr.getReferenceDatabase(INTERPRO, DOMAIN, PROTEIN, ZEBRAFISH))));
+    }
 
-        log.debug("Load Step 9: Getting Existing Interpro Domain Entry Records");
-        loadContext.setExistingInterproDomainRecords(fetchExistingInterproDomainRecords());
-
-        log.debug("Load Step 10: Getting Existing Protein Records");
-        loadContext.setExistingProteinRecords(fetchExistingProteinRecords());
-
-        log.debug("Load Step 11: Getting Existing Protein Records");
-        loadContext.setExistingMarkerToProteinRecords(fetchExistingMarkerToProteinRecords());
-
-        log.debug("Load Step 12: Getting Existing Protein to Interpro Records");
-        loadContext.setExistingProteinToInterproRecords(fetchExistingProteinToInterproRecords());
-
-        log.debug("Load Step 13: Getting Existing PDB Records");
-        loadContext.setExistingPdbRecords(fetchExistingPdbRecords());
-
-        return loadContext;
+    public void initializeUniprotDBLinksFromDatabase() {
+        SequenceRepository sr = getSequenceRepository();
+        
+        log.debug("Load Step 1: Getting Existing Uniprot DB Links");
+        setUniprotDbLinks(
+                convertToDTO(
+                        sr.getMarkerDBLinks(
+                                sr.getReferenceDatabase(UNIPROTKB, POLYPEPTIDE, SEQUENCE, ZEBRAFISH))));
     }
 
     public static List<InterProProteinDTO> fetchExistingInterproDomainRecords() {
@@ -183,32 +259,34 @@ public class SecondaryLoadContext {
         return pdbRecords;
     }
 
-    private void setExternalNotesByUniprotAccession(List<DBLinkExternalNote> dbLinkExternalNoteByPublicationID) {
-        this.externalNotesByUniprotAccession = new HashMap<>();
-        dbLinkExternalNoteByPublicationID.forEach(dbLinkExternalNote -> {
-            DBLinkSlimDTO notesKey = new DBLinkSlimDTO();
-            notesKey.setAccession(dbLinkExternalNote.getDblink().getAccessionNumber());
-            notesKey.setDataZdbID(dbLinkExternalNote.getDblink().getDataZdbID());
+//    private void setExternalNotesByUniprotAccession(List<DBLinkExternalNote> dbLinkExternalNoteByPublicationID) {
+//        this.externalNotesByUniprotAccession = new HashMap<>();
+//        dbLinkExternalNoteByPublicationID.forEach(dbLinkExternalNote -> {
+//            DBLinkSlimDTO notesKey = DBLinkSlimDTO.builder()
+//                            .accession(dbLinkExternalNote.getDblink().getAccessionNumber())
+//                            .dataZdbID(dbLinkExternalNote.getDblink().getDataZdbID())
+//                            .build();
+//
+//            this.externalNotesByUniprotAccession.put(notesKey, DBLinkExternalNoteSlimDTO.from(dbLinkExternalNote));
+//        });
+//    }
 
-            this.externalNotesByUniprotAccession.put(notesKey, DBLinkExternalNoteSlimDTO.from(dbLinkExternalNote));
-        });
-    }
-
-    public DBLinkExternalNoteSlimDTO getExternalNoteByGeneAndAccession(String geneZdbID, String accessionNumber) {
-        DBLinkSlimDTO notesKey = new DBLinkSlimDTO();
-        notesKey.setAccession(accessionNumber);
-        notesKey.setDataZdbID(geneZdbID);
-
-        if (externalNotesByUniprotAccession == null) {
-            throw new RuntimeException("Initialize error external notes");
-        }
-
-        if (externalNotesByUniprotAccession.containsKey(notesKey)) {
-            return externalNotesByUniprotAccession.get(notesKey);
-        }
-
-        return null;
-    }
+//    public DBLinkExternalNoteSlimDTO getExternalNoteByGeneAndAccession(String geneZdbID, String accessionNumber) {
+//        DBLinkSlimDTO notesKey = DBLinkSlimDTO.builder()
+//                .accession(accessionNumber)
+//                .dataZdbID(geneZdbID)
+//                .build();
+//
+//        if (externalNotesByUniprotAccession == null) {
+//            throw new RuntimeException("Initialize error external notes");
+//        }
+//
+//        if (externalNotesByUniprotAccession.containsKey(notesKey)) {
+//            return externalNotesByUniprotAccession.get(notesKey);
+//        }
+//
+//        return null;
+//    }
 
     private void createUniprotDbLinksByGeneZdbID() {
         log.debug("Creating uniprotDbLinksByGeneZdbID");
@@ -226,27 +304,30 @@ public class SecondaryLoadContext {
         log.debug("Finished Creating uniprotDbLinksByGeneZdbID");
     }
 
-    private static Map<String, List<DBLinkSlimDTO>> convertToDTO(Map<String, Collection<MarkerDBLink>> markerDBLinks) {
+    public static Map<String, List<DBLinkSlimDTO>> convertToDTO(Map<String, Collection<MarkerDBLink>> markerDBLinks) {
         Map<String, List<DBLinkSlimDTO>> transformedMap = new HashMap<>();
         for(Map.Entry<String, Collection<MarkerDBLink>> entry : markerDBLinks.entrySet()) {
             String key = entry.getKey();
-            ArrayList<DBLinkSlimDTO> sequenceDTOs = new ArrayList<>();
+            ArrayList<DBLinkSlimDTO> dblinks = new ArrayList<>();
 
             for(MarkerDBLink markerDBLink : entry.getValue()) {
-                DBLinkSlimDTO sequenceDTO = new DBLinkSlimDTO();
-                sequenceDTO.setAccession(markerDBLink.getAccessionNumber());
-                sequenceDTO.setDataZdbID(markerDBLink.getDataZdbID());
-                sequenceDTO.setMarkerAbbreviation(markerDBLink.getMarker().getAbbreviation());
-                sequenceDTO.setDbName(markerDBLink.getReferenceDatabase().getForeignDB().getDbName().name());
-                sequenceDTO.setPublicationIDs( markerDBLink.getPublicationIdsAsList() );
-                sequenceDTOs.add(sequenceDTO);
+                dblinks.add(DBLinkSlimDTO.builder()
+                .accession(markerDBLink.getAccessionNumber())
+                .dataZdbID(markerDBLink.getDataZdbID())
+                .markerAbbreviation(markerDBLink.getMarker().getAbbreviation())
+                .dbName(markerDBLink.getReferenceDatabase().getForeignDB().getDbName().name())
+                .publicationIDs( markerDBLink.getPublicationIdsAsList() )
+                .build());
             }
-            transformedMap.put(key, sequenceDTOs);
+            transformedMap.put(key, dblinks);
         }
         return transformedMap;
     }
 
     public DBLinkSlimDTO getUniprotByGene(String dataZdbID) {
+        if (uniprotDbLinksByGeneZdbID == null) {
+            createUniprotDbLinksByGeneZdbID();
+        }
         return uniprotDbLinksByGeneZdbID.get(dataZdbID) == null ? null : uniprotDbLinksByGeneZdbID.get(dataZdbID).stream().findFirst().orElse(null);
     }
 
@@ -293,8 +374,31 @@ public class SecondaryLoadContext {
                 .orElse(null);
     }
 
-    public Collection<DBLinkExternalNoteSlimDTO> getAllExternalNotes() {
-        Map<DBLinkSlimDTO, DBLinkExternalNoteSlimDTO> map = getExternalNotesByUniprotAccession();
-        return map.values();
+//    public Collection<DBLinkExternalNoteSlimDTO> getAllExternalNotes() {
+//        Map<DBLinkSlimDTO, DBLinkExternalNoteSlimDTO> map = getExternalNotesByUniprotAccession();
+//        return map.values();
+//    }
+
+    public void setInterproDbLinksByList(List<DBLinkSlimDTO> dblinks) {
+        this.setInterproDbLinks(dblinks.stream().collect(Collectors.groupingBy(DBLinkSlimDTO::getAccession)));
+    }
+
+    public void setUniprotDbLinksByList(List<DBLinkSlimDTO> dblinks) {
+        this.setUniprotDbLinks(dblinks.stream().collect(Collectors.groupingBy(DBLinkSlimDTO::getAccession)));
+    }
+    public List<MarkerGoTermEvidenceSlimDTO> getExistingMarkerGoTermEvidenceRecords(ForeignDB.AvailableName dbName) {
+        String pubID = getPubIDForMarkerGoTermEvidenceByDB(dbName);
+        return this.getExistingMarkerGoTermEvidenceRecords()
+                .stream()
+                .filter(markerGoTermEvidenceSlimDTO -> markerGoTermEvidenceSlimDTO.getPublicationID().equals(pubID))
+                .toList();
+    }
+    public String getPubIDForMarkerGoTermEvidenceByDB(ForeignDB.AvailableName dbName) {
+        return switch (dbName) {
+            case INTERPRO -> GoDefaultPublication.INTERPRO.zdbID();
+            case EC -> GoDefaultPublication.EC.zdbID();
+            case UNIPROTKB -> GoDefaultPublication.UNIPROTKBKW.zdbID();
+            default -> null;
+        };
     }
 }

@@ -47,18 +47,19 @@ public class UniProtLoadContext {
         Map<String, List<DBLinkSlimDTO>> transformedMap = new HashMap<>();
         for(Map.Entry<String, Collection<MarkerDBLink>> entry : markerDBLinks.entrySet()) {
             String key = entry.getKey();
-            ArrayList<DBLinkSlimDTO> sequenceDTOs = new ArrayList<>();
+            ArrayList<DBLinkSlimDTO> dblinks = new ArrayList<>();
 
             for(MarkerDBLink markerDBLink : entry.getValue()) {
-                DBLinkSlimDTO sequenceDTO = new DBLinkSlimDTO();
-                sequenceDTO.setAccession(markerDBLink.getAccessionNumber());
-                sequenceDTO.setDataZdbID(markerDBLink.getDataZdbID());
-                sequenceDTO.setMarkerAbbreviation(markerDBLink.getMarker().getAbbreviation());
-                sequenceDTO.setDbName(markerDBLink.getReferenceDatabase().getForeignDB().getDbName().name());
-                sequenceDTO.setPublicationIDs( markerDBLink.getPublicationIdsAsList() );
-                sequenceDTOs.add(sequenceDTO);
+                dblinks.add(
+                        DBLinkSlimDTO.builder()
+                        .accession(markerDBLink.getAccessionNumber())
+                        .dataZdbID(markerDBLink.getDataZdbID())
+                        .markerAbbreviation(markerDBLink.getMarker().getAbbreviation())
+                        .dbName(markerDBLink.getReferenceDatabase().getForeignDB().getDbName().name())
+                        .publicationIDs( markerDBLink.getPublicationIdsAsList())
+                        .build());
             }
-            transformedMap.put(key, sequenceDTOs);
+            transformedMap.put(key, dblinks);
         }
         return transformedMap;
     }
@@ -79,7 +80,6 @@ public class UniProtLoadContext {
     public boolean hasExistingUniprotForGene(String accession, String gene) {
         return getDBLinkByUniprotAndGene(accession, gene) != null;
     }
-
 
     /**
      * Does our current database state (context) have a uniprot entry for this gene? In addition, does it have

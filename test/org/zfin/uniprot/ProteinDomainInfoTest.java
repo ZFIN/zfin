@@ -5,23 +5,27 @@ import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.biojava.bio.BioException;
 import org.jetbrains.annotations.NotNull;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.properties.ZfinPropertiesEnum;
-import org.zfin.uniprot.adapter.RichSequenceAdapter;
+import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.uniprot.datfiles.DatFileReader;
+import org.zfin.uniprot.datfiles.UniprotReleaseRecords;
+import org.zfin.uniprot.dto.*;
 import org.zfin.uniprot.interpro.*;
 import org.zfin.uniprot.secondary.*;
 import org.zfin.uniprot.secondary.handlers.*;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
+import static org.zfin.sequence.ForeignDB.AvailableName.INTERPRO;
+import static org.zfin.sequence.ForeignDB.AvailableName.UNIPROTKB;
+import static org.zfin.uniprot.UniProtFilterTask.readAllZebrafishEntriesFromSourceIntoRecords;
 import static org.zfin.uniprot.secondary.SecondaryLoadContext.*;
 
 public class ProteinDomainInfoTest extends AbstractDatabaseTest {
@@ -32,8 +36,104 @@ public class ProteinDomainInfoTest extends AbstractDatabaseTest {
     private static final String PREZFIN = "/tmp/pre_zfin.dat.2023-11";
 
 
+    /**
+     * Test that we correctly handle the case where an existing protein and gene association
+     * should be changed because the interpro2go file has changed
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testAddNewInterpro() throws IOException, BioException {
+        //pull in the test data from the pre_zfin.dat file with only a single uniprot record
+        BufferedReader inputFileReader = new BufferedReader(new FileReader(
+                ZfinPropertiesEnum.SOURCEROOT.value() + "/test/uniprot-data/mgte/pre_zfin.Q90ZE4.dat"));
+        UniprotReleaseRecords entries = readAllZebrafishEntriesFromSourceIntoRecords(inputFileReader);
+
+        //set up the pipeline
+        SecondaryTermLoadPipeline pipeline = new SecondaryTermLoadPipeline();
+        pipeline.setUniprotRecords(entries);
+        SecondaryLoadContext context = new SecondaryLoadContext();
+
+        SequenceRepository sr = getSequenceRepository();
+
+        //set existing uniprot records as a single entry (normally would be the entire set of uniprot records in our DB ~50k)
+        DBLinkSlimDTO uniprotDBLink = DBLinkSlimDTO.builder()
+            .accession("Q90ZE4")
+            .dataZdbID("ZDB-GENE-000330-9")
+            .markerAbbreviation("psen2")
+            .dbName(UNIPROTKB.toString())
+            .publicationIDs(List.of("ZDB-PUB-230615-71"))
+            .build();
+        context.setUniprotDbLinksByList(List.of(uniprotDBLink));
+
+        //set existing interpro records as a single entry (normally would be the entire set of interpro records in our DB ~80k)
+        DBLinkSlimDTO interproDBLink = DBLinkSlimDTO.builder()
+            .accession("IPR001108")
+            .dataZdbID("ZDB-GENE-000330-9")
+            .markerAbbreviation("psen2")
+            .dbName(INTERPRO.toString())
+            .publicationIDs(List.of("ZDB-PUB-230615-71"))
+            .build();
+        context.setInterproDbLinksByList(List.of(interproDBLink));
+
+        pipeline.setContext(context);
+        pipeline.addHandler(new AddNewDBLinksFromUniProtsActionCreator(INTERPRO), AddNewDBLinksFromUniProtsActionProcessor.class);
+
+        //run the pipeline
+        List<SecondaryTermLoadAction> results = pipeline.createActions();
+
+        //the test fixture pre_zfin.Q90ZE4.dat has 3 interpros:
+        //        DR   InterPro; IPR001108; Peptidase_A22A.
+        //        DR   InterPro; IPR006639; Preselin/SPP.
+        //        DR   InterPro; IPR042524; Presenilin_C.
+        //since our test is simulating a case where the existing DB has IPR001108, we should expect 2 new interpros to be added
+        assertEquals(2, results.size());
+        assertEquals("IPR006639", results.get(0).getAccession());
+        assertEquals("IPR042524", results.get(1).getAccession());
+    }
 
     @Test
+    public void testInterpro2goFileHasChanged() throws IOException, BioException {
+        //pull in the test data from the pre_zfin.dat file with only a single uniprot record
+        BufferedReader inputFileReader = new BufferedReader(new FileReader(
+                ZfinPropertiesEnum.SOURCEROOT.value() + "/test/uniprot-data/mgte/pre_zfin.dat.2023-11"));
+        UniprotReleaseRecords entries = readAllZebrafishEntriesFromSourceIntoRecords(inputFileReader);
+
+        //set up the pipeline
+        SecondaryTermLoadPipeline pipeline = new SecondaryTermLoadPipeline();
+        pipeline.setUniprotRecords(entries);
+        SecondaryLoadContext context = new SecondaryLoadContext();
+
+        //initialize to represent the existing data in the DB
+        context.initializeUniprotDBLinksFromDatabase();
+        context.initializeInterproDBLinksFromDatabase();
+        context.initializeMarkerGoTermEvidenceFromDatabase();
+
+        pipeline.setContext(context);
+
+        //pull in the interpro2go file for translation
+        String ipToGoFile = ZfinPropertiesEnum.SOURCEROOT.value() + "/test/uniprot-data/mgte/interpro2go";
+        List<SecondaryTerm2GoTerm> ipToGoRecords =
+                SecondaryTerm2GoTermTranslator.convertTranslationFileToUnloadFile(ipToGoFile, SecondaryTerm2GoTermTranslator.SecondaryTermType.InterPro);
+
+        pipeline.addHandler(new MarkerGoTermEvidenceActionCreator(INTERPRO, ipToGoRecords), MarkerGoTermEvidenceActionProcessor.class);
+
+
+        //run the pipeline
+        List<SecondaryTermLoadAction> results = pipeline.createActions();
+
+        //the test fixture pre_zfin.Q90ZE4.dat has 3 interpros:
+        //        DR   InterPro; IPR001108; Peptidase_A22A.
+        //        DR   InterPro; IPR006639; Preselin/SPP.
+        //        DR   InterPro; IPR042524; Presenilin_C.
+        //since our test is simulating a case where the existing DB has IPR001108, we should expect 2 new interpros to be added
+        assertEquals(2, results.size());
+        assertEquals("IPR006639", results.get(0).getAccession());
+        assertEquals("IPR042524", results.get(1).getAccession());
+    }
+
+    @Test
+    @Ignore("This test is too specific to a particular desktop environment and takes too long to run")
     public void compareToLegacyOutputDomainText() throws IOException, BioException {
 //        int exitValue = executeBashCommand(PERLBIN + " protein_domain_info_load_for_testing.pl");
 //        assertTrue(exitValue == 0);
@@ -44,7 +144,7 @@ public class ProteinDomainInfoTest extends AbstractDatabaseTest {
         List<InterProProteinDTO> downloadedEntries = EntryListTranslator.parseFile(new File(getWorkingDir() + "entry.list"));
         InterproDomainActionCreator handler = new InterproDomainActionCreator(downloadedEntries);
 
-        Map<String, RichSequenceAdapter> uniprotRecords = new HashMap<>();
+        UniprotReleaseRecords uniprotRecords = new UniprotReleaseRecords();
         List<SecondaryTermLoadAction> actions = new ArrayList<>();
         SecondaryLoadContext context = new SecondaryLoadContext();
         context.setExistingInterproDomainRecords(existingDbRecords);
@@ -70,11 +170,12 @@ public class ProteinDomainInfoTest extends AbstractDatabaseTest {
     }
 
     @Test
+    @Ignore("This test is too specific to a particular desktop environment and takes too long to run")
     public void compareToLegacyOutputProteinText() throws IOException, BioException {
         int exitValue = executeBashCommand(PERLBIN + " protein_domain_info_load_for_testing.pl");
         assertTrue(exitValue == 0);
 
-        Map<String, RichSequenceAdapter> uniprotRecords = DatFileReader.getRecordsFromFile(PREZFIN);
+        UniprotReleaseRecords uniprotRecords = DatFileReader.getRecordsFromFile(PREZFIN);
         List<SecondaryTermLoadAction> actions = new ArrayList<>();
         SecondaryLoadContext context = SecondaryLoadContext.createFromDBConnection();
         context.setExistingProteinRecords(fetchExistingProteinRecords());
@@ -97,12 +198,14 @@ public class ProteinDomainInfoTest extends AbstractDatabaseTest {
         exitValue = executeBashCommand("diff " + getWorkingDir() + "/protein.txt /tmp/protein.txt");
         assertTrue(exitValue == 0);
     }
+
     @Test
+    @Ignore("This test is too specific to a particular desktop environment and takes too long to run")
     public void compareToLegacyOutputMarkerToProteinText() throws IOException, BioException {
 //        int exitValue = executeBashCommand(PERLBIN + " protein_domain_info_load_for_testing.pl");
 //        assertTrue(exitValue == 0);
 
-        Map<String, RichSequenceAdapter> uniprotRecords = DatFileReader.getRecordsFromFile(PREZFIN);
+        UniprotReleaseRecords uniprotRecords = DatFileReader.getRecordsFromFile(PREZFIN);
         List<SecondaryTermLoadAction> actions = new ArrayList<>();
         SecondaryLoadContext context = SecondaryLoadContext.createFromDBConnection();
         context.setExistingMarkerToProteinRecords(fetchExistingMarkerToProteinRecords());
@@ -127,11 +230,12 @@ public class ProteinDomainInfoTest extends AbstractDatabaseTest {
     }
 
     @Test
+    @Ignore("This test is too specific to a particular desktop environment and takes too long to run")
     public void compareToLegacyOutputProteinToInterproText() throws IOException, BioException {
 //        int exitValue = executeBashCommand(PERLBIN + " protein_domain_info_load_for_testing.pl");
 //        assertTrue(exitValue == 0);
 
-        Map<String, RichSequenceAdapter> uniprotRecords = DatFileReader.getRecordsFromFile(PREZFIN);
+        UniprotReleaseRecords uniprotRecords = DatFileReader.getRecordsFromFile(PREZFIN);
         List<SecondaryTermLoadAction> actions = new ArrayList<>();
         SecondaryLoadContext context = SecondaryLoadContext.createFromDBConnection();
         context.setExistingProteinToInterproRecords(fetchExistingProteinToInterproRecords());
@@ -156,11 +260,12 @@ public class ProteinDomainInfoTest extends AbstractDatabaseTest {
     }
     
     @Test
+    @Ignore("This test is too specific to a particular desktop environment and takes too long to run")
     public void compareToLegacyOutputProteinToPDBText() throws IOException, BioException {
 //        int exitValue = executeBashCommand(PERLBIN + " protein_domain_info_load_for_testing.pl");
 //        assertTrue(exitValue == 0);
 
-        Map<String, RichSequenceAdapter> uniprotRecords = DatFileReader.getRecordsFromFile(PREZFIN);
+        UniprotReleaseRecords uniprotRecords = DatFileReader.getRecordsFromFile(PREZFIN);
         List<SecondaryTermLoadAction> actions = new ArrayList<>();
         SecondaryLoadContext context = SecondaryLoadContext.createFromDBConnection();
         context.setExistingPdbRecords(fetchExistingPdbRecords());

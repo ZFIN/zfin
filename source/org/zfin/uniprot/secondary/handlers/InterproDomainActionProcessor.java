@@ -2,7 +2,7 @@ package org.zfin.uniprot.secondary.handlers;
 
 import lombok.extern.log4j.Log4j2;
 import org.zfin.sequence.InterProProtein;
-import org.zfin.uniprot.interpro.InterProProteinDTO;
+import org.zfin.uniprot.dto.InterProProteinDTO;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
 import java.util.List;

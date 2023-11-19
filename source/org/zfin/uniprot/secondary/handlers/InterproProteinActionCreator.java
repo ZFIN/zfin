@@ -1,9 +1,9 @@
-package org.zfin.uniprot.secondary.handlers;
+package org.zfin.uniprot.secondary.handlers; import org.zfin.uniprot.datfiles.UniprotReleaseRecords;
 
 import lombok.extern.log4j.Log4j2;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
 import org.zfin.uniprot.dto.DBLinkSlimDTO;
-import org.zfin.uniprot.interpro.ProteinDTO;
+import org.zfin.uniprot.dto.ProteinDTO;
 import org.zfin.uniprot.secondary.SecondaryLoadContext;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
@@ -24,7 +24,7 @@ public class InterproProteinActionCreator implements ActionCreator {
     }
 
     @Override
-    public List<SecondaryTermLoadAction> createActions(Map<String, RichSequenceAdapter> uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
+    public List<SecondaryTermLoadAction> createActions(UniprotReleaseRecords uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
 
         List<ProteinDTO> existingProteins = context.getExistingProteinRecords();
         List<ProteinDTO> proteinsToKeep = new ArrayList<>();
@@ -32,8 +32,8 @@ public class InterproProteinActionCreator implements ActionCreator {
 
         Map<String, Integer> existingProteinsAsMap = existingProteins.stream().collect(Collectors.toMap(ProteinDTO::accession, ProteinDTO::length));
 
-        for(String uniprotKey : uniProtRecords.keySet()) {
-            RichSequenceAdapter richSequenceAdapter = uniProtRecords.get(uniprotKey);
+        for(String uniprotKey : uniProtRecords.getAccessions()) {
+            RichSequenceAdapter richSequenceAdapter = uniProtRecords.getByAccession(uniprotKey);
             List<String> zdbIDs = richSequenceAdapter.getCrossRefIDsByDatabase(RichSequenceAdapter.DatabaseSource.ZFIN);
             if (zdbIDs.isEmpty()) {
                 continue;

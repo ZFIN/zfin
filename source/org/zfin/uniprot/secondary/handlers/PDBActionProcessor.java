@@ -2,7 +2,7 @@ package org.zfin.uniprot.secondary.handlers;
 
 import lombok.extern.log4j.Log4j2;
 import org.hibernate.query.Query;
-import org.zfin.uniprot.interpro.PdbDTO;
+import org.zfin.uniprot.dto.PdbDTO;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
 import java.util.List;

@@ -1,36 +1,48 @@
 package org.zfin.uniprot.secondary.handlers;
 
 import lombok.extern.log4j.Log4j2;
-import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.sequence.ForeignDB;
-import org.zfin.uniprot.adapter.RichSequenceAdapter;
+import org.zfin.uniprot.datfiles.UniprotReleaseRecords;
+import org.zfin.uniprot.dto.MarkerGoTermEvidenceSlimDTO;
 import org.zfin.uniprot.secondary.SecondaryLoadContext;
 import org.zfin.uniprot.secondary.SecondaryTerm2GoTerm;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
 import java.util.List;
-import java.util.Map;
 
-import static org.zfin.uniprot.secondary.handlers.AddNewSecondaryTermToGoActionCreator.filterTerms;
+import static org.zfin.sequence.ForeignDB.AvailableName.UNIPROTKB;
+import static org.zfin.uniprot.secondary.handlers.MarkerGoTermEvidenceActionCreator.filterTerms;
 
 /**
  * Remove from our marker_go_term_evidence table if the new uniprot release no longer contains it.
  * This is related to AddNewSpKeywordTermToGoHandler which handles inserts
  */
 @Log4j2
-public class RemoveSpKeywordTermToGoActionCreator extends RemoveSecondaryTermToGoActionCreator {
-    private static final ForeignDB.AvailableName FOREIGN_DB_NAME = ForeignDB.AvailableName.UNIPROTKB;
+public class RemoveSpKeywordTermToGoActionCreator implements ActionCreator {
+    @Override
+    public SecondaryTermLoadAction.SubType isSubTypeHandlerFor() {
+        return SecondaryTermLoadAction.SubType.MARKER_GO_TERM_EVIDENCE;
+    }
+    private final List<SecondaryTerm2GoTerm> translationRecords;
+
+    private final ForeignDB.AvailableName dbName;
 
     public RemoveSpKeywordTermToGoActionCreator(ForeignDB.AvailableName dbName, List<SecondaryTerm2GoTerm> translationRecords) {
-        super(dbName, translationRecords);
+        this.dbName = dbName;
+        this.translationRecords = translationRecords;
     }
 
     @Override
-    public List<SecondaryTermLoadAction> createActions(Map<String, RichSequenceAdapter> uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
+    public List<SecondaryTermLoadAction> createActions(UniprotReleaseRecords uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
         log.debug("Creating actions to remove SPKW terms");
+        if (this.dbName != UNIPROTKB) {
+            log.error("Not a SPKW term");
+            throw new RuntimeException("Not a SPKW term");
+        }
 
         //existing SPKW terms
-        List<MarkerGoTermEvidence> existingRecords = context.getExistingMarkerGoTermEvidenceRecordsForSPKW();
+        List<MarkerGoTermEvidenceSlimDTO> existingRecords = context.getExistingMarkerGoTermEvidenceRecords(this.dbName);
+        //TODO: filter to SPKW????
 
         //these are all the marker_go_term_evidence entries that have the SPKW terms based on the parsed uniprot records
         List<SecondaryTermLoadAction> newMarkerGoTermEvidenceLoadActions = AddNewSpKeywordTermToGoActionCreator
@@ -41,7 +53,7 @@ public class RemoveSpKeywordTermToGoActionCreator extends RemoveSecondaryTermToG
         //difference:
         //existingRecords - newMarkerGoTermEvidenceLoadActions
         //this is the list of marker_go_term_evidence entries that need to be removed
-        List<MarkerGoTermEvidence> recordsToRemove = existingRecords.stream().filter(
+        List<MarkerGoTermEvidenceSlimDTO> recordsToRemove = existingRecords.stream().filter(
                 record -> !recordsToPersistContainsExistingRecord(filteredMarkerGoTermEvidences, record)
         ).toList();
 
@@ -49,25 +61,25 @@ public class RemoveSpKeywordTermToGoActionCreator extends RemoveSecondaryTermToG
         return createMarkerGoTermEvidenceLoadActionsToRemove(recordsToRemove);
     }
 
-    private List<SecondaryTermLoadAction> createMarkerGoTermEvidenceLoadActionsToRemove(List<MarkerGoTermEvidence> recordsToRemove) {
+    private List<SecondaryTermLoadAction> createMarkerGoTermEvidenceLoadActionsToRemove(List<MarkerGoTermEvidenceSlimDTO> recordsToRemove) {
         return recordsToRemove.stream().map(
                 record -> SecondaryTermLoadAction.builder()
                         .type(SecondaryTermLoadAction.Type.DELETE)
                         .subType(SecondaryTermLoadAction.SubType.MARKER_GO_TERM_EVIDENCE)
-                        .dbName(FOREIGN_DB_NAME)
-                        .accession(record.getGoTerm().getOboID())
-                        .goID(record.getGoTerm().getOboID())
-                        .goTermZdbID(record.getGoTerm().getZdbID())
-                        .geneZdbID(record.getMarker().getZdbID())
+                        .dbName(UNIPROTKB)
+                        .accession(record.getGoID())
+                        .goID(record.getGoID())
+                        .goTermZdbID(record.getGoTermZdbID())
+                        .geneZdbID(record.getMarkerZdbID())
                         .build()
         ).toList();
     }
 
-    public static boolean recordsToPersistContainsExistingRecord(List<SecondaryTermLoadAction> recordsToPersist, MarkerGoTermEvidence record) {
+    public static boolean recordsToPersistContainsExistingRecord(List<SecondaryTermLoadAction> recordsToPersist, MarkerGoTermEvidenceSlimDTO record) {
         return recordsToPersist.stream().anyMatch(action -> {
             String goID = "GO:" + action.getGoID();
             String markerZdbID = action.getGeneZdbID();
-            boolean match = record.getGoTerm().getOboID().equals(goID) && record.getMarker().getZdbID().equals(markerZdbID);
+            boolean match = record.getGoID().equals(goID) && record.getMarkerZdbID().equals(markerZdbID);
             return match;
         });
     }

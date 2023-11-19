@@ -3,24 +3,24 @@ package org.zfin.uniprot.secondary.handlers;
 import lombok.extern.log4j.Log4j2;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
-import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
+import org.zfin.uniprot.datfiles.UniprotReleaseRecords;
 import org.zfin.uniprot.dto.DBLinkSlimDTO;
+import org.zfin.uniprot.dto.MarkerGoTermEvidenceSlimDTO;
 import org.zfin.uniprot.secondary.SecondaryLoadContext;
 import org.zfin.uniprot.secondary.SecondaryTerm2GoTerm;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Adds new SPKW terms to marker_go_term_evidence table.
  * Special case of AddNewSecondaryTermToGoHandler.
  */
 @Log4j2
-public class AddNewSpKeywordTermToGoActionCreator extends AddNewSecondaryTermToGoActionCreator {
+public class AddNewSpKeywordTermToGoActionCreator extends MarkerGoTermEvidenceActionCreator {
     private static final ForeignDB.AvailableName FOREIGN_DB_NAME = ForeignDB.AvailableName.UNIPROTKB;
 
     public AddNewSpKeywordTermToGoActionCreator(ForeignDB.AvailableName dbName, List<SecondaryTerm2GoTerm> translationRecords) {
@@ -31,7 +31,7 @@ public class AddNewSpKeywordTermToGoActionCreator extends AddNewSecondaryTermToG
 
 
     @Override
-    public List<SecondaryTermLoadAction> createActions(Map<String, RichSequenceAdapter> uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
+    public List<SecondaryTermLoadAction> createActions(UniprotReleaseRecords uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
         //create newMarkerGoTermEvidenceLoadActions from new interpro IDs
         log.debug("Creating newMarkerGoTermEvidenceLoadActions from new " + dbName + " IDs");
         List<SecondaryTermLoadAction> newMarkerGoTermEvidenceLoadActions;
@@ -52,7 +52,7 @@ public class AddNewSpKeywordTermToGoActionCreator extends AddNewSecondaryTermToG
 
 
     public static List<SecondaryTermLoadAction> createMarkerGoTermEvidenceLoadActionsFromUniprotKeywords(
-            Map<String, RichSequenceAdapter> uniProtRecords,
+            UniprotReleaseRecords uniProtRecords,
             SecondaryLoadContext context,
             List<SecondaryTerm2GoTerm> translationRecords) {
 
@@ -64,8 +64,8 @@ public class AddNewSpKeywordTermToGoActionCreator extends AddNewSecondaryTermToG
         // gather all the keywords from the uniprot record and create new MarkerGoTermEvidenceLoadAction
         // for each one. Equivalent to generating the kd_spkeywd.unl file in our old load ("GENE|Keyword")
         int unmatchedGeneCount = 0;
-        for(String key : uniProtRecords.keySet()) {
-            RichSequenceAdapter record = uniProtRecords.get(key);
+        for(String key : uniProtRecords.getAccessions()) {
+            RichSequenceAdapter record = uniProtRecords.getByAccession(key);
             List<String> keywords = record.getPlainKeywords();
             if (keywords == null || keywords.isEmpty()) {
                 continue;
@@ -118,12 +118,13 @@ public class AddNewSpKeywordTermToGoActionCreator extends AddNewSecondaryTermToG
 
 
     private boolean spKwAlreadyExists(SecondaryLoadContext context, SecondaryTermLoadAction newAction) {
-        List<MarkerGoTermEvidence> existingRecords = context.getExistingMarkerGoTermEvidenceRecordsForSPKW();
+        List<MarkerGoTermEvidenceSlimDTO> existingRecords = context.getExistingMarkerGoTermEvidenceRecords();
+        //TODO: do we need to filter for SPKW?
         String goID = "GO:" + newAction.getGoID();
         String geneZdbID = newAction.getGeneZdbID();
         boolean exists = existingRecords.stream()
                 .anyMatch( record -> {
-                    boolean matches = record.getGoTerm().getOboID().equals(goID) && record.getMarker().getZdbID().equals(geneZdbID);
+                    boolean matches = record.getGoID().equals(goID) && record.getMarkerZdbID().equals(geneZdbID);
                     return matches;
                 });
         return exists;

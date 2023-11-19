@@ -3,6 +3,7 @@ package org.zfin.uniprot.secondary.handlers;
 import lombok.extern.log4j.Log4j2;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
+import org.zfin.uniprot.datfiles.UniprotReleaseRecords;
 import org.zfin.uniprot.dto.DBLinkSlimDTO;
 import org.zfin.uniprot.secondary.SecondaryLoadContext;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
@@ -10,7 +11,6 @@ import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -32,21 +32,42 @@ public class RemoveFromLostUniProtsActionCreator implements ActionCreator {
     }
 
     @Override
-    public List<SecondaryTermLoadAction> createActions(Map<String, RichSequenceAdapter> uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
-        //if there is an interpro in the DB, but not in the load file for the corresponding gene, delete it.
-        // corresponding gene means: get the gene by taking the uniprot from the load file and cross referencing it to loaded uniprots (via this load pub?)
-        List<DBLinkSlimDTO> iplinks = context.getDbLinksByDbName(this.dbName).values().stream().flatMap(Collection::stream).toList();
+    public List<SecondaryTermLoadAction> createActions(UniprotReleaseRecords uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
+        log.debug("RemoveFromLostUniProtsActionCreator " + dbName);
         List<SecondaryTermLoadAction> newActions = new ArrayList<>();
 
+        //if there is an interpro (or pfam, or prosite, etc) in the DB, but not in the load file for the corresponding gene, delete it.
+        //start by iterating over all the interpros in the DB
+        List<DBLinkSlimDTO> iplinks = context.getDbLinksByDbName(this.dbName).values().stream().flatMap(Collection::stream).toList();
+        log.debug("existing iplinks: " + iplinks.size());
+
+        int count=0;
         for(DBLinkSlimDTO iplink : iplinks) {
-            DBLinkSlimDTO uniprot = context.getUniprotByGene(iplink.getDataZdbID());
-            if(uniprot == null) {
+            count++;
+
+            //find the gene related to this dblink (perhaps an interpro dblink, for example)
+            //then find the uniprot for that gene that already exists in our DB
+            //then use that uniprot to find the corresponding uniprot record in the load file
+            //if it's not there in the load file, delete it from the DB
+            DBLinkSlimDTO existingUniprotByGene = context.getUniprotByGene(iplink.getDataZdbID());
+            RichSequenceAdapter parsedUniprotRecordFromLoadFile = existingUniprotByGene == null ? null :
+                    uniProtRecords.getByAccession(existingUniprotByGene.getAccession());
+
+            if(parsedUniprotRecordFromLoadFile == null) {
                 newActions.add(SecondaryTermLoadAction.builder().type(SecondaryTermLoadAction.Type.DELETE)
                         .subType(isSubTypeHandlerFor())
                         .dbName(this.dbName)
                         .accession(iplink.getAccession())
                         .geneZdbID(iplink.getDataZdbID())
                         .build());
+                if (count < 10) {
+                    log.debug(" null returned from getByAccession: " + iplink.getAccession() + " " + iplink.getDataZdbID());
+                }
+            } else {
+                if (count < 10) {
+                    log.debug(" found record getByAccession: " + iplink.getAccession() + " " + iplink.getDataZdbID());
+                    log.debug(" Record: " + parsedUniprotRecordFromLoadFile);
+                }
             }
         }
         return newActions;

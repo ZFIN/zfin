@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.jooq.lambda.tuple.Tuple2;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
+import org.zfin.uniprot.datfiles.UniprotReleaseRecords;
 import org.zfin.uniprot.persistence.UniProtRelease;
 import org.zfin.uniprot.secondary.handlers.ActionCreator;
 import org.zfin.uniprot.secondary.handlers.ActionProcessor;
@@ -27,7 +28,7 @@ public class SecondaryTermLoadPipeline {
     private UniProtRelease release;
     private SecondaryLoadContext context;
 
-    private Map<String, RichSequenceAdapter> uniprotRecords;
+    private UniprotReleaseRecords uniprotRecords;
 
     public void addHandler(ActionCreator handler,
                            Class<? extends ActionProcessor> processHandler) {

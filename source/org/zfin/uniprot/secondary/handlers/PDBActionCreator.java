@@ -3,14 +3,14 @@ package org.zfin.uniprot.secondary.handlers;
 import lombok.extern.log4j.Log4j2;
 import org.zfin.uniprot.adapter.CrossRefAdapter;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
-import org.zfin.uniprot.interpro.PdbDTO;
+import org.zfin.uniprot.datfiles.UniprotReleaseRecords;
+import org.zfin.uniprot.dto.PdbDTO;
 import org.zfin.uniprot.secondary.SecondaryLoadContext;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Creates actions for adding and deleting PDB information (replaces part of protein_domain_info_load.pl)
@@ -26,14 +26,14 @@ public class PDBActionCreator implements ActionCreator {
     }
 
     @Override
-    public List<SecondaryTermLoadAction> createActions(Map<String, RichSequenceAdapter> uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
+    public List<SecondaryTermLoadAction> createActions(UniprotReleaseRecords uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
 
         List<PdbDTO> existingRecords = context.getExistingPdbRecords();
         List<PdbDTO> keepRecords = new ArrayList<>(); //all the records to keep (not delete) includes new records too
         List<SecondaryTermLoadAction> newActions = new ArrayList<>();
 
-        for(String uniprotKey : uniProtRecords.keySet()) {
-            RichSequenceAdapter richSequenceAdapter = uniProtRecords.get(uniprotKey);
+        for(String uniprotKey : uniProtRecords.getAccessions()) {
+            RichSequenceAdapter richSequenceAdapter = uniProtRecords.getByAccession(uniprotKey);
             Collection<CrossRefAdapter> zfinCrossRefs = richSequenceAdapter.getCrossRefsByDatabase(RichSequenceAdapter.DatabaseSource.ZFIN);
             if (zfinCrossRefs.isEmpty()) {
                 continue;

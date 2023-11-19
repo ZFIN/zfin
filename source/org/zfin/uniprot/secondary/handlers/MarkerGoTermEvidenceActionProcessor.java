@@ -10,6 +10,7 @@ import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.ontology.GenericTerm;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.uniprot.dto.MarkerGoTermEvidenceSlimDTO;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
 import java.util.Date;
@@ -26,7 +27,7 @@ import static org.zfin.repository.RepositoryFactory.*;
  * (actually, since UniProt Keywords require special handling, that logic is in AddNewSpKeywordTermToGoHandler
  */
 @Log4j2
-public class AddNewSecondaryTermToGoActionProcessor implements ActionProcessor {
+public class MarkerGoTermEvidenceActionProcessor implements ActionProcessor {
     @Override
     public SecondaryTermLoadAction.SubType isSubTypeHandlerFor() {
         return SecondaryTermLoadAction.SubType.MARKER_GO_TERM_EVIDENCE;
@@ -38,7 +39,12 @@ public class AddNewSecondaryTermToGoActionProcessor implements ActionProcessor {
     @Override
     public void processActions(List<SecondaryTermLoadAction> subTypeActions) {
         for(SecondaryTermLoadAction action : subTypeActions) {
-            loadMarkerGoTermEvidence(action);
+            if (action.getType().equals(SecondaryTermLoadAction.Type.LOAD)) {
+                loadMarkerGoTermEvidence(action);
+            }
+            else if (action.getType().equals(SecondaryTermLoadAction.Type.DELETE)) {
+                deleteMarkerGoTermEvidence(action);
+            }
         }
     }
 
@@ -87,5 +93,31 @@ public class AddNewSecondaryTermToGoActionProcessor implements ActionProcessor {
         getMutantRepository().addInferenceToGoMarkerTermEvidence(markerGoTermEvidence, action.getPrefixedAccession());
     }
 
+    private static void deleteMarkerGoTermEvidence(SecondaryTermLoadAction action) {
+        MarkerGoTermEvidenceSlimDTO markerGoTermEvidenceDTO = MarkerGoTermEvidenceSlimDTO.fromMap(action.getRelatedEntityFields());
+        String pubID = markerGoTermEvidenceDTO.getPublicationID();
+        log.debug("Removing " + action.getDbName() + " marker_go_term_evidence for " + action.getGeneZdbID() + " " + action.getGoTermZdbID() + " " + pubID );
+        List<MarkerGoTermEvidence> markerGoTermEvidences = getMarkerGoTermEvidenceRepository().getMarkerGoTermEvidencesForMarkerZdbID(action.getGeneZdbID());
+        if (markerGoTermEvidences.size() == 0) {
+            log.debug("No marker_go_term_evidence found to delete");
+            return;
+        }
+
+        List<MarkerGoTermEvidence> toDelete = markerGoTermEvidences.stream()
+                .filter(markerGoTermEvidence -> pubID.equals(markerGoTermEvidence.getSource().getZdbID()))
+                .filter(markerGoTermEvidence -> action.getGoTermZdbID().equals(markerGoTermEvidence.getGoTerm().getZdbID()))
+                .toList();
+        List<String> toDeleteIDs = toDelete.stream().map(MarkerGoTermEvidence::getZdbID).toList();
+
+        if (toDeleteIDs.size() > 1) {
+            log.info("Found more than one marker_go_term_evidence to delete: " + toDeleteIDs + ". Deleting all...");
+        } else if (toDeleteIDs.size() == 0) {
+            log.debug("No marker_go_term_evidence found to delete after filtering");
+            return;
+        }
+        log.debug("Found the following marker_go_term_evidence to delete: " + toDeleteIDs);
+
+        getMarkerGoTermEvidenceRepository().deleteMarkerGoTermEvidenceByZdbIDs(toDeleteIDs);
+    }
 
 }

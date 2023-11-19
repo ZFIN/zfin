@@ -1,8 +1,6 @@
 package org.zfin.uniprot.dto;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.zfin.uniprot.UniProtTools;
 
 import java.util.List;
@@ -12,6 +10,9 @@ import static org.zfin.uniprot.UniProtTools.isNonLoadPublication;
 @Getter
 @Setter
 @EqualsAndHashCode
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class DBLinkSlimDTO {
     private String accession;
     private String dataZdbID;

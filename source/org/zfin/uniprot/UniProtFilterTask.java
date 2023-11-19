@@ -7,6 +7,7 @@ import org.biojavax.bio.seq.io.RichStreamWriter;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
 import org.zfin.uniprot.adapter.RichStreamReaderAdapter;
+import org.zfin.uniprot.datfiles.UniprotReleaseRecords;
 
 import java.io.*;
 import java.sql.SQLException;
@@ -120,6 +121,10 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
     }
     public static Map<String, RichSequenceAdapter> readAllZebrafishEntriesFromSourceIntoMap(BufferedReader reader) throws BioException, IOException {
         return readAllZebrafishEntriesFromSource(reader).stream().collect(Collectors.toMap(RichSequenceAdapter::getAccession, entry -> entry));
+    }
+
+    public static UniprotReleaseRecords readAllZebrafishEntriesFromSourceIntoRecords(BufferedReader reader) throws BioException, IOException {
+        return new UniprotReleaseRecords(readAllZebrafishEntriesFromSourceIntoMap(reader));
     }
 
 }

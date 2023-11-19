@@ -1,6 +1,7 @@
 package org.zfin.uniprot.secondary.handlers;
 
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
+import org.zfin.uniprot.datfiles.UniprotReleaseRecords;
 import org.zfin.uniprot.secondary.SecondaryLoadContext;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
@@ -15,7 +16,7 @@ public interface ActionCreator {
      * @param actions add new actions to this list (logic may be based on existing entries in the actions list)
      * @param context context for the load (existing database records, downloaded files, translation files, etc.)
      */
-    List<SecondaryTermLoadAction> createActions(Map<String, RichSequenceAdapter> uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context);
+    List<SecondaryTermLoadAction> createActions(UniprotReleaseRecords uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context);
 
     /**
      * Sanity check to make sure the actions are for the correct sub-type

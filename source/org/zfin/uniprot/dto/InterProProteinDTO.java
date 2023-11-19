@@ -1,4 +1,4 @@
-package org.zfin.uniprot.interpro;
+package org.zfin.uniprot.dto;
 
 import org.zfin.sequence.InterProProtein;
 

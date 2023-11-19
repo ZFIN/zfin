@@ -1,6 +1,7 @@
 package org.zfin.uniprot.interpro;
 
 import lombok.extern.log4j.Log4j2;
+import org.zfin.uniprot.dto.InterProProteinDTO;
 
 import java.io.File;
 import java.io.FileNotFoundException;

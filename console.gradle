@@ -65,6 +65,7 @@ task uniprotCompareTask(type: JavaExec) {
 task uniprotReleaseDiffTask(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.uniprot.task.UniProtReleaseDiffTask'
+    systemProperty "log4j2.configurationFile", System.getProperty("log4j2.configurationFile", "./conf/gradle-log4j2.xml")
 }
 
 task uniprotReleaseCheckTask(type: JavaExec) {

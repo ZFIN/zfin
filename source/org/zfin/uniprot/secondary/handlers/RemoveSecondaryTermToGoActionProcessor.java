@@ -7,7 +7,7 @@ import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 import java.util.List;
 
 import static org.zfin.repository.RepositoryFactory.getMarkerGoTermEvidenceRepository;
-import static org.zfin.uniprot.secondary.handlers.AddNewSecondaryTermToGoActionCreator.*;
+import static org.zfin.uniprot.secondary.handlers.MarkerGoTermEvidenceActionCreator.*;
 
 /**
  * Remove from our marker_go_term_evidence table if the new uniprot release no longer contains it.
@@ -33,6 +33,8 @@ public class RemoveSecondaryTermToGoActionProcessor implements ActionProcessor {
     }
 
     private static void deleteMarkerGoTermEvidence(SecondaryTermLoadAction action, String pubID) {
+        //TODO: is this redundant with the code in MarkerGoTermEvidenceActionPRocessor?
+
         log.debug("Removing " + action.getDbName() + " marker_go_term_evidence for " + action.getGeneZdbID() + " " + action.getGoTermZdbID() + " " + pubID );
         List<MarkerGoTermEvidence> markerGoTermEvidences = getMarkerGoTermEvidenceRepository().getMarkerGoTermEvidencesForMarkerZdbID(action.getGeneZdbID());
         if (markerGoTermEvidences.size() == 0) {

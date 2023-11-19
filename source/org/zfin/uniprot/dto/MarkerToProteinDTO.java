@@ -1,4 +1,4 @@
-package org.zfin.uniprot.interpro;
+package org.zfin.uniprot.dto;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -2,12 +2,12 @@ package org.zfin.uniprot.secondary.handlers;
 
 import lombok.extern.log4j.Log4j2;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
-import org.zfin.uniprot.interpro.ProteinToInterproDTO;
+import org.zfin.uniprot.datfiles.UniprotReleaseRecords;
+import org.zfin.uniprot.dto.ProteinToInterproDTO;
 import org.zfin.uniprot.secondary.SecondaryLoadContext;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Creates actions for adding and deleting protein to interpro information (replaces part of protein_domain_info_load.pl)
@@ -24,14 +24,14 @@ public class ProteinToInterproActionCreator implements ActionCreator {
 
 
     @Override
-    public List<SecondaryTermLoadAction> createActions(Map<String, RichSequenceAdapter> uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
+    public List<SecondaryTermLoadAction> createActions(UniprotReleaseRecords uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
 
         List<ProteinToInterproDTO> existingRecords = context.getExistingProteinToInterproRecords();
         List<ProteinToInterproDTO> keepRecords = new java.util.ArrayList<>(); //all the records to keep (not delete) includes new records too
         List<SecondaryTermLoadAction> newActions = new java.util.ArrayList<>();
 
-        for(String uniprotKey : uniProtRecords.keySet()) {
-            RichSequenceAdapter richSequenceAdapter = uniProtRecords.get(uniprotKey);
+        for(String uniprotKey : uniProtRecords.getAccessions()) {
+            RichSequenceAdapter richSequenceAdapter = uniProtRecords.getByAccession(uniprotKey);
             List<String> zdbIDs = richSequenceAdapter.getCrossRefIDsByDatabase(RichSequenceAdapter.DatabaseSource.ZFIN);
             if (!context.hasAnyUniprotGeneAssociation(uniprotKey, zdbIDs)) {
                 continue;

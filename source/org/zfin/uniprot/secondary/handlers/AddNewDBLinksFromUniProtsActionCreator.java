@@ -5,12 +5,12 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.uniprot.adapter.CrossRefAdapter;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
+import org.zfin.uniprot.datfiles.UniprotReleaseRecords;
 import org.zfin.uniprot.dto.DBLinkSlimDTO;
 import org.zfin.uniprot.secondary.SecondaryLoadContext;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.zfin.util.ZfinCollectionUtils.firstInEachGrouping;
 
@@ -33,7 +33,8 @@ public class AddNewDBLinksFromUniProtsActionCreator implements ActionCreator {
     }
 
     @Override
-    public List<SecondaryTermLoadAction> createActions(Map<String, RichSequenceAdapter> uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
+    public List<SecondaryTermLoadAction> createActions(UniprotReleaseRecords uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
+        log.debug("AddNewDBLinksFromUniProtsActionCreator for " + dbName);
         List<SecondaryTermLoadAction> newActions = getLoadActionsNotAlreadyInDatabase(uniProtRecords, context);
 
         //remove duplicates
@@ -46,7 +47,7 @@ public class AddNewDBLinksFromUniProtsActionCreator implements ActionCreator {
         return newActions;
     }
 
-    private List<SecondaryTermLoadAction> getLoadActionsNotAlreadyInDatabase(Map<String, RichSequenceAdapter> uniProtRecords, SecondaryLoadContext context) {
+    private List<SecondaryTermLoadAction> getLoadActionsNotAlreadyInDatabase(UniprotReleaseRecords uniProtRecords, SecondaryLoadContext context) {
         //if there is an interpro in the load file, but not in the DB for the corresponding gene, add it.
         // corresponding gene means: get the gene by taking the uniprot from the load file and cross referencing it to loaded uniprots
 
@@ -54,7 +55,7 @@ public class AddNewDBLinksFromUniProtsActionCreator implements ActionCreator {
         int newlyAddedCount = 0;
 
         List<SecondaryTermLoadAction> newActions = new java.util.ArrayList<>();
-        for(String uniprot : uniProtRecords.keySet()) {
+        for(String uniprot : uniProtRecords.getAccessions()) {
             List<DBLinkSlimDTO> dbls = context.getGeneByUniprot(uniprot);
             if(CollectionUtils.isEmpty(dbls)) {
                 continue;
@@ -65,7 +66,7 @@ public class AddNewDBLinksFromUniProtsActionCreator implements ActionCreator {
             //at this point, we know that the uniprot is in the load file and has a gene in the DB
             //so we should load any interpros for that gene
 
-            RichSequenceAdapter record = uniProtRecords.get(uniprot);
+            RichSequenceAdapter record = uniProtRecords.getByAccession(uniprot);
 
             for(CrossRefAdapter iplink : record.getCrossRefsByDatabase(dbName.toString())) {
                 iplink.getAccession();
