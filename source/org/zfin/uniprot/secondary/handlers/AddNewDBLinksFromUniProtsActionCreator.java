@@ -3,7 +3,6 @@ package org.zfin.uniprot.secondary.handlers;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.CollectionUtils;
 import org.zfin.sequence.ForeignDB;
-import org.zfin.uniprot.adapter.CrossRefAdapter;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
 import org.zfin.uniprot.datfiles.UniprotReleaseRecords;
 import org.zfin.uniprot.dto.DBLinkSlimDTO;
@@ -11,6 +10,7 @@ import org.zfin.uniprot.secondary.SecondaryLoadContext;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.zfin.util.ZfinCollectionUtils.firstInEachGrouping;
 
@@ -55,37 +55,42 @@ public class AddNewDBLinksFromUniProtsActionCreator implements ActionCreator {
         int newlyAddedCount = 0;
 
         List<SecondaryTermLoadAction> newActions = new java.util.ArrayList<>();
-        for(String uniprot : uniProtRecords.getAccessions()) {
-            List<DBLinkSlimDTO> dbls = context.getGeneByUniprot(uniprot);
+        for(Map.Entry<String, RichSequenceAdapter> uniprotEntry : uniProtRecords.getEntriesByAccession()) {
+            RichSequenceAdapter uniprot = uniprotEntry.getValue();
+            String uniprotAccession = uniprot.getAccession();
+
+            List<DBLinkSlimDTO> dbls = context.getGeneByUniprot(uniprotAccession);
             if(CollectionUtils.isEmpty(dbls)) {
                 continue;
             }
 
-            String geneID = dbls.get(0).getDataZdbID(); //TODO: should we account for more than 1 gene?
+            //iterate over all genes that have this uniprot (usually would be one)
+            for(DBLinkSlimDTO dbl : dbls) {
+                String geneID = dbl.getDataZdbID();
+                if(geneID == null) {
+                    continue;
+                }
 
-            //at this point, we know that the uniprot is in the load file and has a gene in the DB
-            //so we should load any interpros for that gene
+                //at this point, we know that the uniprot is in the load file and has a gene in the DB
+                //so we should load any interpros for that gene
+                for(String ipAccession : uniprot.getCrossRefIDsByDatabase(dbName.toString())) {
 
-            RichSequenceAdapter record = uniProtRecords.getByAccession(uniprot);
+                    //does it already exist?
+                    DBLinkSlimDTO interproLink = context.getDbLinkByGeneAndAccession(dbName, geneID, ipAccession);
+                    boolean alreadyExists = interproLink != null;
 
-            for(CrossRefAdapter iplink : record.getCrossRefsByDatabase(dbName.toString())) {
-                iplink.getAccession();
-
-                //does it already exist?
-                DBLinkSlimDTO interproLink = context.getDbLinkByGeneAndAccession(dbName, geneID, iplink.getAccession());
-                boolean alreadyExists = interproLink != null;
-
-                //if not, add it
-                if(!alreadyExists) {
-                    newActions.add(SecondaryTermLoadAction.builder().type(SecondaryTermLoadAction.Type.LOAD)
-                            .subType(SecondaryTermLoadAction.SubType.DB_LINK)
-                            .accession(iplink.getAccession())
-                            .dbName(dbName)
-                            .geneZdbID(geneID)
-                            .build());
-                    newlyAddedCount++;
-                } else {
-                    previouslyExistedCount++;
+                    //if not, add it
+                    if(!alreadyExists) {
+                        newActions.add(SecondaryTermLoadAction.builder().type(SecondaryTermLoadAction.Type.LOAD)
+                                .subType(SecondaryTermLoadAction.SubType.DB_LINK)
+                                .accession(ipAccession)
+                                .dbName(dbName)
+                                .geneZdbID(geneID)
+                                .build());
+                        newlyAddedCount++;
+                    } else {
+                        previouslyExistedCount++;
+                    }
                 }
             }
         }

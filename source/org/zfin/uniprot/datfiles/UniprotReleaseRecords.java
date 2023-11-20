@@ -24,6 +24,10 @@ public class UniprotReleaseRecords implements Iterable<RichSequenceAdapter> {
         return uniprotRecordsIndexedByUniprotAccession.keySet();
     }
 
+    public Set<Map.Entry<String, RichSequenceAdapter>> getEntriesByAccession() {
+        return uniprotRecordsIndexedByUniprotAccession.entrySet();
+    }
+
     public long size() {
         return uniprotRecordsIndexedByUniprotAccession.size();
     }
