@@ -38,12 +38,10 @@ public class RemoveFromLostUniProtsActionCreator implements ActionCreator {
 
         //if there is an interpro (or pfam, or prosite, etc) in the DB, but not in the load file for the corresponding gene, delete it.
         //start by iterating over all the interpros in the DB
-        List<DBLinkSlimDTO> iplinks = context.getDbLinksByDbName(this.dbName).values().stream().flatMap(Collection::stream).toList();
+        List<DBLinkSlimDTO> iplinks = context.getFlattenedDbLinksByDbName(dbName);
         log.debug("existing iplinks: " + iplinks.size());
 
-        int count=0;
         for(DBLinkSlimDTO iplink : iplinks) {
-            count++;
 
             //find the gene related to this dblink (perhaps an interpro dblink, for example)
             //then find the uniprot for that gene that already exists in our DB
@@ -59,15 +57,12 @@ public class RemoveFromLostUniProtsActionCreator implements ActionCreator {
                         .dbName(this.dbName)
                         .accession(iplink.getAccession())
                         .geneZdbID(iplink.getDataZdbID())
+                        .details(
+                                existingUniprotByGene == null ? "" :
+                                    uniProtRecords.getUniprotFormatByAccession(existingUniprotByGene.getAccession())
+                        )
                         .build());
-                if (count < 10) {
-                    log.debug(" null returned from getByAccession: " + iplink.getAccession() + " " + iplink.getDataZdbID());
-                }
-            } else {
-                if (count < 10) {
-                    log.debug(" found record getByAccession: " + iplink.getAccession() + " " + iplink.getDataZdbID());
-                    log.debug(" Record: " + parsedUniprotRecordFromLoadFile);
-                }
+
             }
         }
         return newActions;

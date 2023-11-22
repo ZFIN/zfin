@@ -5,6 +5,7 @@ import org.biojavax.Note;
 import org.biojavax.RankedCrossRef;
 import org.biojavax.SimpleRichAnnotation;
 import org.biojavax.bio.seq.RichSequence;
+import org.zfin.uniprot.datfiles.DatFileWriter;
 import org.zfin.uniprot.datfiles.UniProtFormatZFIN;
 
 import java.text.SimpleDateFormat;
@@ -226,5 +227,9 @@ public class RichSequenceAdapter {
                 .stream()
                 .map(comment -> ((org.biojavax.Comment)comment).getComment().replaceFirst("\\-\\!\\- ", ""))
                 .toList();
+    }
+
+    public String toUniProtFormat() {
+        return DatFileWriter.sequenceToString(this);
     }
 }

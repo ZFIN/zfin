@@ -86,6 +86,7 @@ public class AddNewDBLinksFromUniProtsActionCreator implements ActionCreator {
                                 .accession(ipAccession)
                                 .dbName(dbName)
                                 .geneZdbID(geneID)
+                                .details(uniprot.toUniProtFormat())
                                 .build());
                         newlyAddedCount++;
                     } else {

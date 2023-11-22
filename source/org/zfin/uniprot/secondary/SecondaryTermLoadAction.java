@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Builder;
 import lombok.Getter;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.uniprot.UniProtLoadLink;
 
@@ -97,12 +98,30 @@ public class SecondaryTermLoadAction implements Comparable<SecondaryTermLoadActi
                 " details=" + details +
                 " length=" + length +
                 " handlerClass=" + handlerClass +
-                " relatedEntityFields=" + relatedEntityFields +
+                " relatedEntityFields=" + relatedEntityFieldsToString() +
                 " links=" + links;
     }
 
     public String markerGoTermEvidenceRepresentation() {
         return geneZdbID + "," + goTermZdbID + "," + goID + "," + dbName + ":" + this.accession;
+    }
+
+    public String getMd5() {
+        Md5PasswordEncoder encoder = new Md5PasswordEncoder();
+        return encoder.encodePassword(toString(), null);
+    }
+
+    @JsonIgnore
+    public String relatedEntityFieldsToString() {
+        if (relatedEntityFields == null) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder("{");
+        for (Map.Entry<String, String> entry : relatedEntityFields.entrySet()) {
+            sb.append(entry.getKey()).append("=").append(entry.getValue()).append(";");
+        }
+        sb.append("}");
+        return sb.toString();
     }
 
     public List<UniProtLoadLink> getDynamicLinks() {

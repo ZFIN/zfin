@@ -3,8 +3,8 @@ package org.zfin.uniprot.secondary;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
-import org.jooq.lambda.tuple.Tuple2;
-import org.zfin.uniprot.adapter.RichSequenceAdapter;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.zfin.uniprot.datfiles.UniprotReleaseRecords;
 import org.zfin.uniprot.persistence.UniProtRelease;
 import org.zfin.uniprot.secondary.handlers.ActionCreator;
@@ -23,7 +23,7 @@ import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 @Setter
 @Log4j2
 public class SecondaryTermLoadPipeline {
-    private List<Tuple2<ActionCreator, Class<? extends ActionProcessor>>> handlerPairs = new ArrayList<>();
+    private List<Pair<ActionCreator, Class<? extends ActionProcessor>>> handlerPairs = new ArrayList<>();
     private List<SecondaryTermLoadAction> actions = new ArrayList<>();
     private UniProtRelease release;
     private SecondaryLoadContext context;
@@ -32,7 +32,7 @@ public class SecondaryTermLoadPipeline {
 
     public void addHandler(ActionCreator handler,
                            Class<? extends ActionProcessor> processHandler) {
-        handlerPairs.add(new Tuple2<>(handler, processHandler));
+        handlerPairs.add(new ImmutablePair<>(handler, processHandler));
     }
 
     public List<SecondaryTermLoadAction> createActions() {
@@ -41,15 +41,15 @@ public class SecondaryTermLoadPipeline {
         int previousActionCount = 0;
 
         for (var handlerPair : handlerPairs) {
-            ActionCreator actionCreator = handlerPair.v1();
-            Class<? extends ActionProcessor> actionProcessorClass = handlerPair.v2();
+            ActionCreator actionCreator = handlerPair.getLeft();
+            Class<? extends ActionProcessor> actionProcessorClass = handlerPair.getRight();
 
             log.debug("Starting action creation handler " + i + " of " + handlerPairs.size() + " (" + actionCreator.getClass().getName() + ")");
 
-            actions.addAll(
-                    associateActionsWithProcessor(
-                        actionCreator.createActions(uniprotRecords, Collections.unmodifiableList(actions), context),
-                        actionProcessorClass));
+            List<SecondaryTermLoadAction> calculatedActions =
+                actionCreator.createActions(uniprotRecords, Collections.unmodifiableList(actions), context);
+            List<SecondaryTermLoadAction> actionsWithProcessor = associateActionsWithProcessor(calculatedActions, actionProcessorClass);
+            actions.addAll(actionsWithProcessor);
 
             actionCount = actions.size();
             log.debug("Finished action creation handler " + i + " of " + handlerPairs.size() + " (" + actionCreator.getClass().getName() + ")");

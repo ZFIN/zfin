@@ -7,6 +7,7 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.zfin.marker.Marker;
 import org.zfin.ontology.Subset;
 import org.zfin.sequence.ForeignDB;
+import org.zfin.uniprot.adapter.RichSequenceAdapter;
 import org.zfin.uniprot.datfiles.UniprotReleaseRecords;
 import org.zfin.uniprot.dto.DBLinkSlimDTO;
 import org.zfin.uniprot.dto.MarkerGoTermEvidenceSlimDTO;
@@ -18,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.zfin.ontology.Subset.GO_CHECK_DO_NOT_USE_FOR_ANNOTATIONS;
@@ -125,10 +127,11 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
 
         System.out.println("Timing info 01: " + new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()));
         //all existing db links
-        Collection<List<DBLinkSlimDTO>> existingDbLinks = context.getDbLinksByDbName(dbName).values();
-        System.out.println("Count of existing db links: " + existingDbLinks.stream().flatMap(Collection::stream).count());
+        List<DBLinkSlimDTO> existingDbLinks = context.getFlattenedDbLinksByDbName(dbName);
+        System.out.println("Count of existing db links: " + existingDbLinks.size());
 
         System.out.println("Timing info 02: " + new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()));
+
         //all new db links (based on actions)
         List<DBLinkSlimDTO> actionsLoadedFromNewDBLinks = actions.stream()
                 .filter(action -> dbName.equals(action.getDbName()) && action.getType().equals(SecondaryTermLoadAction.Type.LOAD))
@@ -139,9 +142,10 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
                                 .build()
                 )
                 .toList();
+
         System.out.println("Count of new db links: " + actionsLoadedFromNewDBLinks.size());
 
-        List<DBLinkSlimDTO> allDbLinks = Stream.concat(existingDbLinks.stream().flatMap(Collection::stream), actionsLoadedFromNewDBLinks.stream()).toList();
+        List<DBLinkSlimDTO> allDbLinks = Stream.concat(existingDbLinks.stream(), actionsLoadedFromNewDBLinks.stream()).toList();
         System.out.println("Count of all db links: " + allDbLinks.size());
         //create markerGoTermEvidences for all db links
 
@@ -167,6 +171,7 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
                             .build();
                 }
         ).toList();
+
         System.out.println("Count of calculated marker go term evidences: " + calculatedMarkerGoTermEvidences.size());
 
         System.out.println("Timing info 05: " + new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()));
@@ -192,6 +197,9 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
                                 .relatedEntityFields(markerGoTermEvidence.toMap())
                                 .type(SecondaryTermLoadAction.Type.LOAD)
                                 .subType(SecondaryTermLoadAction.SubType.MARKER_GO_TERM_EVIDENCE)
+                                .details("Uniprot release file record(s) for related gene: " + markerGoTermEvidence.getMarkerZdbID() + "\n\n" +
+                                        uniProtRecords.getByGeneZdbID(markerGoTermEvidence.getMarkerZdbID()).stream().map(RichSequenceAdapter::toUniProtFormat)
+                                                .collect(Collectors.joining("\n\n" + "=".repeat(40) + "\n\n")))
                                 .build()
                 )
                 .toList();
@@ -207,6 +215,9 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
                                 .relatedEntityFields(markerGoTermEvidence.toMap())
                                 .type(SecondaryTermLoadAction.Type.DELETE)
                                 .subType(SecondaryTermLoadAction.SubType.MARKER_GO_TERM_EVIDENCE)
+                                .details("Uniprot release file record(s) for related gene: " + markerGoTermEvidence.getMarkerZdbID() + "\n\n" +
+                                        uniProtRecords.getByGeneZdbID(markerGoTermEvidence.getMarkerZdbID()).stream().map(RichSequenceAdapter::toUniProtFormat)
+                                                .collect(Collectors.joining("\n\n" + "=".repeat(40) + "\n\n")))
                                 .build()
                 )
                 .toList();

@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.zfin.gwt.root.dto.GoDefaultPublication;
-import org.zfin.sequence.DBLinkExternalNote;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.sequence.repository.SequenceRepository;
@@ -324,11 +323,17 @@ public class SecondaryLoadContext {
         return transformedMap;
     }
 
-    public DBLinkSlimDTO getUniprotByGene(String dataZdbID) {
+    public List<DBLinkSlimDTO> getUniprotsByGene(String dataZdbID) {
         if (uniprotDbLinksByGeneZdbID == null) {
             createUniprotDbLinksByGeneZdbID();
         }
-        return uniprotDbLinksByGeneZdbID.get(dataZdbID) == null ? null : uniprotDbLinksByGeneZdbID.get(dataZdbID).stream().findFirst().orElse(null);
+        return uniprotDbLinksByGeneZdbID.get(dataZdbID) == null ?
+                Collections.emptyList() :
+                uniprotDbLinksByGeneZdbID.get(dataZdbID);
+    }
+
+    public DBLinkSlimDTO getUniprotByGene(String dataZdbID) {
+        return getUniprotsByGene(dataZdbID).stream().findFirst().orElse(null);
     }
 
     public List<DBLinkSlimDTO> getGeneByUniprot(String dataZdbID) {
@@ -351,7 +356,7 @@ public class SecondaryLoadContext {
         return dblinks.stream().anyMatch(dbLinkSlimDTO -> dbLinkSlimDTO.getDataZdbID().equals(geneZdbID));
     }
 
-    public Map<String, List<DBLinkSlimDTO>> getDbLinksByDbName(ForeignDB.AvailableName dbName) {
+    public Map<String, List<DBLinkSlimDTO>> getMapOfDbLinksByAccession(ForeignDB.AvailableName dbName) {
         return switch (dbName) {
             case INTERPRO -> getInterproDbLinks();
             case EC -> getEcDbLinks();
@@ -362,8 +367,12 @@ public class SecondaryLoadContext {
         };
     }
 
+    public List<DBLinkSlimDTO> getFlattenedDbLinksByDbName(ForeignDB.AvailableName dbName) {
+        return getMapOfDbLinksByAccession(dbName).values().stream().flatMap(Collection::stream).toList();
+    }
+
     public DBLinkSlimDTO getDbLinkByGeneAndAccession(ForeignDB.AvailableName dbName, String geneID, String accession) {
-        List<DBLinkSlimDTO> dblinks = getDbLinksByDbName(dbName).get(accession);
+        List<DBLinkSlimDTO> dblinks = getMapOfDbLinksByAccession(dbName).get(accession);
         if(dblinks == null) {
             return null;
         }

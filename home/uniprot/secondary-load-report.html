@@ -113,6 +113,8 @@
             width: 800px;
             border: 1px solid #ccc;
             padding: 10px;
+            overflow: scroll;
+            white-space: pre;
         }
     </style>
 </head>
@@ -268,8 +270,9 @@
             return html`
                 <div>
                     <h2>Details for Action</h2>
-                    <!-- NEED TO FIX LOGIC FOR PREVIOUS AND NEXT BUTTONS -->
-                    <div><button disabled href="#" onClick="${() => prevClick()}" className="prev">Prev</button>  <button disabled href="#" onClick="${() => nextClick()}" className="next">Next</button></div>
+
+                    <div><button href="#" onClick="${() => prevClick()}" className="prev">Prev</button>  <button href="#" onClick="${() => nextClick()}" className="next">Next</button></div>
+                    <h3>${item.type}</h3>
                     <h3>${item.subType}</h3>
                     <dl>
                         ${ (item.dbName && html`<dt>Database Name</dt><dd>${dbNameDisplay(item)}</dd>`) }
@@ -384,13 +387,13 @@
             }
 
             function previousDetail() {
-                const index = reportActions.findIndex(item => item.accession == activeDetails.accession);
+                const index = reportActions.findIndex(item => item.md5 == activeDetails.md5);
                 console.log("found index", index);
                 if (index > 0) {
 
                     //find the previous item that matches subtype
                     for(let i = index - 1; i >= 0; i--) {
-                        if (reportActions[i].subType == subTypeName) {
+                        if (reportActions[i].subType == subTypeName && reportActions[i].type == activeDetails.type) {
                             setActiveDetails(reportActions[i]);
                             return;
                         }
@@ -399,7 +402,7 @@
             }
 
             function nextDetail() {
-                const index = reportActions.findIndex(item => item.accession == activeDetails.accession);
+                const index = reportActions.findIndex(item => item.md5 == activeDetails.md5);
                 console.log("found n index", index);
 
                 if (index === -1) {
@@ -408,7 +411,7 @@
 
                 //find the next item that matches subtype
                 for(let i = index + 1; i < reportActions.length; i++) {
-                    if (reportActions[i].subType == subTypeName) {
+                    if (reportActions[i].subType == subTypeName && reportActions[i].type == activeDetails.type) {
                         setActiveDetails(reportActions[i]);
                         return;
                     }

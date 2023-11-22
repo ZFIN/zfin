@@ -41,7 +41,11 @@ public class UniprotReleaseRecords implements Iterable<RichSequenceAdapter> {
         if (uniprotRecordsIndexedByGeneZdbID == null) {
             initializeUniprotRecordsIndexedByZdbID();
         }
-        return uniprotRecordsIndexedByGeneZdbID.get(dataZdbID);
+        List<RichSequenceAdapter> foundRecords = uniprotRecordsIndexedByGeneZdbID.get(dataZdbID);
+        if (foundRecords == null) {
+            return Collections.emptyList();
+        }
+        return foundRecords;
     }
 
     public Optional<RichSequenceAdapter> getFirstByGeneZdbID(String dataZdbID) {
@@ -65,5 +69,13 @@ public class UniprotReleaseRecords implements Iterable<RichSequenceAdapter> {
                 seqs.add(seq);
             }
         }
+    }
+
+    public String getUniprotFormatByAccession(String accession) {
+        RichSequenceAdapter record = this.getByAccession(accession);
+        if (record == null) {
+            return "";
+        }
+        return record.toUniProtFormat();
     }
 }
