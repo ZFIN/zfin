@@ -125,12 +125,9 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
         //and then create markerGoTermEvidences for the remaining DBLinks
         //we will need to delete any existing markerGoTermEvidences that do not correspond to any of the db links
 
-        System.out.println("Timing info 01: " + new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()));
         //all existing db links
         List<DBLinkSlimDTO> existingDbLinks = context.getFlattenedDbLinksByDbName(dbName);
-        System.out.println("Count of existing db links: " + existingDbLinks.size());
-
-        System.out.println("Timing info 02: " + new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()));
+        log.debug("Count of existing db links: " + existingDbLinks.size());
 
         //all new db links (based on actions)
         List<DBLinkSlimDTO> actionsLoadedFromNewDBLinks = actions.stream()
@@ -143,21 +140,20 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
                 )
                 .toList();
 
-        System.out.println("Count of new db links: " + actionsLoadedFromNewDBLinks.size());
+        log.debug("Count of new db links: " + actionsLoadedFromNewDBLinks.size());
 
         List<DBLinkSlimDTO> allDbLinks = Stream.concat(existingDbLinks.stream(), actionsLoadedFromNewDBLinks.stream()).toList();
-        System.out.println("Count of all db links: " + allDbLinks.size());
-        //create markerGoTermEvidences for all db links
+        log.debug("Count of all db links: " + allDbLinks.size());
 
-        System.out.println("Timing info 03: " + new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()));
+        //create markerGoTermEvidences for all db links
+        log.debug("Joining DBLinks with translation records...");
         //join the load actions to the interpro/ec/spkw translation records
         List<Tuple2<DBLinkSlimDTO, SecondaryTerm2GoTerm>> joined = Seq.seq(allDbLinks)
                 .innerJoin(translationRecords,
                         (action, item2go) -> action.getAccession().equals(item2go.dbAccession()))
                 .toList();
-        System.out.println("Count of joined records: " + joined.size());
+        log.debug("Count of joined records: " + joined.size());
 
-        System.out.println("Timing info 04: " + new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()));
         //convert to markerGoTermEvidenceSlimDTOs
         List<MarkerGoTermEvidenceSlimDTO> calculatedMarkerGoTermEvidences = joined.stream().map(
                 joinedRecord -> {
@@ -172,20 +168,16 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
                 }
         ).toList();
 
-        System.out.println("Count of calculated marker go term evidences: " + calculatedMarkerGoTermEvidences.size());
+        log.debug("Count of calculated marker go term evidences: " + calculatedMarkerGoTermEvidences.size());
 
-        System.out.println("Timing info 05: " + new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()));
         List<MarkerGoTermEvidenceSlimDTO> existingMarkerGoTermEvidences = context.getExistingMarkerGoTermEvidenceRecords(dbName);
-        System.out.println("Count of existing marker go term evidences: " + existingMarkerGoTermEvidences.size());
 
         List<MarkerGoTermEvidenceSlimDTO> toAdd = ListUtils.subtract(calculatedMarkerGoTermEvidences, existingMarkerGoTermEvidences);
         toAdd = toAdd.stream().distinct().toList();
-        System.out.println("Count of marker go term evidences to add: " + toAdd.size());
 
         List<MarkerGoTermEvidenceSlimDTO> toDelete = ListUtils.subtract(existingMarkerGoTermEvidences, calculatedMarkerGoTermEvidences);
-        System.out.println("Count of marker go term evidences to delete: " + toDelete.size());
 
-        System.out.println("Timing info 06: " + new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()));
+        log.debug("Count of marker go term evidences to add: " + toAdd.size());
         //convert marker_go_term_evidence records to load actions
         List<SecondaryTermLoadAction> toAddActions = toAdd.stream()
                 .map(
@@ -204,7 +196,7 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
                 )
                 .toList();
 
-        System.out.println("Timing info 07: " + new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()));
+        log.debug("Count of marker go term evidences to delete: " + toDelete.size());
         List<SecondaryTermLoadAction> toDeleteActions = toDelete.stream()
                 .map(
                         markerGoTermEvidence -> SecondaryTermLoadAction.builder()

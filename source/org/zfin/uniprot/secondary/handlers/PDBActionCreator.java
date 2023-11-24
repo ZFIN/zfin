@@ -45,7 +45,7 @@ public class PDBActionCreator implements ActionCreator {
             for(String pdb : pdbs) {
                 PdbDTO newRecord = new PdbDTO(uniprotKey, pdb);
                 if (!existingRecords.contains(newRecord)) {
-                    newActions.add(createLoadAction(newRecord));
+                    newActions.add(createLoadAction(newRecord, richSequenceAdapter));
                 }
                 keepRecords.add(new PdbDTO(uniprotKey, pdb));
             }
@@ -60,11 +60,12 @@ public class PDBActionCreator implements ActionCreator {
         return newActions;
     }
 
-    private SecondaryTermLoadAction createLoadAction(PdbDTO newRecord) {
+    private SecondaryTermLoadAction createLoadAction(PdbDTO newRecord, RichSequenceAdapter richSequenceAdapter) {
         return SecondaryTermLoadAction.builder()
                 .type(SecondaryTermLoadAction.Type.LOAD)
                 .subType(SecondaryTermLoadAction.SubType.PDB)
                 .relatedEntityFields(newRecord.toMap())
+                .details(richSequenceAdapter.toUniProtFormat())
                 .build();
     }
 

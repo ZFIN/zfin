@@ -42,7 +42,7 @@ public class ProteinToInterproActionCreator implements ActionCreator {
             for(String ipr : iprs) {
                 ProteinToInterproDTO newRecord = new ProteinToInterproDTO(uniprotKey, ipr);
                 if (!existingRecords.contains(newRecord)) {
-                    newActions.add(createLoadAction(newRecord));
+                    newActions.add(createLoadAction(newRecord, richSequenceAdapter));
                 }
                 keepRecords.add(newRecord);
             }
@@ -56,19 +56,20 @@ public class ProteinToInterproActionCreator implements ActionCreator {
         return newActions;
     }
 
+    private SecondaryTermLoadAction createLoadAction(ProteinToInterproDTO newRecord, RichSequenceAdapter richSequenceAdapter) {
+        return SecondaryTermLoadAction.builder()
+                .type(SecondaryTermLoadAction.Type.LOAD)
+                .subType(SecondaryTermLoadAction.SubType.PROTEIN_TO_INTERPRO)
+                .relatedEntityFields(newRecord.toMap())
+                .details(richSequenceAdapter.toUniProtFormat())
+                .build();
+    }
+
     private SecondaryTermLoadAction createDeleteAction(ProteinToInterproDTO existingRecord) {
         return SecondaryTermLoadAction.builder()
                 .type(SecondaryTermLoadAction.Type.DELETE)
                 .subType(SecondaryTermLoadAction.SubType.PROTEIN_TO_INTERPRO)
                 .relatedEntityFields(existingRecord.toMap())
-                .build();
-    }
-
-    private SecondaryTermLoadAction createLoadAction(ProteinToInterproDTO newRecord) {
-        return SecondaryTermLoadAction.builder()
-                .type(SecondaryTermLoadAction.Type.LOAD)
-                .subType(SecondaryTermLoadAction.SubType.PROTEIN_TO_INTERPRO)
-                .relatedEntityFields(newRecord.toMap())
                 .build();
     }
 

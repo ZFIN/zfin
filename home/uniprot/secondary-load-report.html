@@ -264,6 +264,8 @@
                     return html`<div className="error"> This item was marked as having an error so won't be loaded.</div>`;
                 } else if (item.type == 'LOAD') {
                     return html`<div className="success"> This item will be loaded.</div>`;
+                } else if (item.type == 'DELETE') {
+                    return html`<div className="error"> This item will be deleted.</div>`;
                 }
             }
 

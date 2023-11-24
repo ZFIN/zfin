@@ -262,7 +262,8 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
             writeContext(context);
         } else {
             try {
-                 context = SecondaryLoadContext.createFromContextFile(contextInputFile);
+                log.debug("Reading context file: " + contextInputFile + ".");
+                context = SecondaryLoadContext.createFromContextFile(contextInputFile);
             } catch (IOException e) {
                 throw new RuntimeException("Error reading context file: " + contextInputFile + ": " + e.getMessage(), e);
             }

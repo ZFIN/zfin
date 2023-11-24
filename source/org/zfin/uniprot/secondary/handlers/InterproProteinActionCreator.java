@@ -1,13 +1,17 @@
-package org.zfin.uniprot.secondary.handlers; import org.zfin.uniprot.datfiles.UniprotReleaseRecords;
+package org.zfin.uniprot.secondary.handlers;
 
 import lombok.extern.log4j.Log4j2;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
+import org.zfin.uniprot.datfiles.UniprotReleaseRecords;
 import org.zfin.uniprot.dto.DBLinkSlimDTO;
 import org.zfin.uniprot.dto.ProteinDTO;
 import org.zfin.uniprot.secondary.SecondaryLoadContext;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -44,14 +48,14 @@ public class InterproProteinActionCreator implements ActionCreator {
                 Integer existingLength = existingProteinsAsMap.get(uniprotKey);
                 if (length > 0 && !existingLength.equals(length)) {
                     existingProteinsAsMap.put(uniprotKey, length);
-                    Optional<SecondaryTermLoadAction> maybeLoadAction = createLoadAction(context, uniprotKey, length, zdbIDs);
+                    Optional<SecondaryTermLoadAction> maybeLoadAction = createLoadAction(context, uniprotKey, length, zdbIDs, uniProtRecords.getByAccession(uniprotKey));
                     maybeLoadAction.ifPresent(newActions::add);
                 } else {
                     proteinsToKeep.add(new ProteinDTO(uniprotKey, length));
                 }
             } else {
                 existingProteinsAsMap.put(uniprotKey, length);
-                Optional<SecondaryTermLoadAction> maybeLoadAction = createLoadAction(context, uniprotKey, length, zdbIDs);
+                Optional<SecondaryTermLoadAction> maybeLoadAction = createLoadAction(context, uniprotKey, length, zdbIDs, uniProtRecords.getByAccession(uniprotKey));
                 maybeLoadAction.ifPresent(newActions::add);
                 proteinsToKeep.add(new ProteinDTO(uniprotKey, length));
             }
@@ -65,10 +69,9 @@ public class InterproProteinActionCreator implements ActionCreator {
         return newActions;
     }
 
-    private Optional<SecondaryTermLoadAction> createLoadAction(SecondaryLoadContext context, String accession, int length, List<String> zdbIDs) {
+    private Optional<SecondaryTermLoadAction> createLoadAction(SecondaryLoadContext context, String accession, int length, List<String> zdbIDs, RichSequenceAdapter uniprotRecord) {
         //if we don't have a gene association, we don't want to add the protein
         if (!context.hasAnyUniprotGeneAssociation(accession, zdbIDs)) {
-            log.warn("No existing gene association found for UniProt accession: " + accession);
             return Optional.empty();
         }
 
@@ -86,6 +89,7 @@ public class InterproProteinActionCreator implements ActionCreator {
                     .subType(SecondaryTermLoadAction.SubType.PROTEIN)
                     .accession(accession)
                     .length(length)
+                    .details(uniprotRecord.toUniProtFormat())
                     .build());
         } else {
             log.debug("No auto-curated gene association found for UniProt accession: " + accession);

@@ -48,7 +48,7 @@ public class InterproMarkerToProteinActionCreator implements ActionCreator {
                 }
 
                 if (!existingRecords.contains(new MarkerToProteinDTO(zdbID, uniprotKey))) {
-                    newActions.add(createLoadAction(newRecord));
+                    newActions.add(createLoadAction(newRecord, richSequenceAdapter));
                     keepRecords.add(newRecord);
                 } else {
                     keepRecords.add(newRecord);
@@ -65,12 +65,13 @@ public class InterproMarkerToProteinActionCreator implements ActionCreator {
         return newActions;
     }
 
-    private SecondaryTermLoadAction createLoadAction(MarkerToProteinDTO newRecord) {
+    private SecondaryTermLoadAction createLoadAction(MarkerToProteinDTO newRecord, RichSequenceAdapter richSequenceAdapter) {
         return SecondaryTermLoadAction.builder()
                 .geneZdbID(newRecord.markerZdbID())
                 .accession(newRecord.accession())
                 .type(SecondaryTermLoadAction.Type.LOAD)
                 .subType(SecondaryTermLoadAction.SubType.INTERPRO_MARKER_TO_PROTEIN)
+                .details(richSequenceAdapter.toUniProtFormat())
                 .build();
     }
 
