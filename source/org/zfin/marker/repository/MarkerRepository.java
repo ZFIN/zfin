@@ -6,6 +6,7 @@ import org.zfin.construct.ConstructComponent;
 import org.zfin.construct.ConstructCuration;
 import org.zfin.construct.presentation.ConstructComponentPresentation;
 import org.zfin.feature.Feature;
+import org.zfin.framework.api.Pagination;
 import org.zfin.framework.presentation.LookupEntry;
 import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
@@ -574,5 +575,7 @@ public interface MarkerRepository {
     void updateMarkerName(String constructZdbID, String toString);
 
     Map<Marker, List<Transcript>> getAllTranscripts();
+
+    Map<Marker, List<Transcript>> getAllTranscripts(Pagination pagination);
 
 }

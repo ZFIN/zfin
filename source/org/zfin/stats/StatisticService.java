@@ -4,16 +4,11 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.Range;
 import org.springframework.util.CollectionUtils;
 import org.zfin.antibody.Antibody;
-import org.zfin.framework.api.FilterService;
-import org.zfin.framework.api.JsonResultResponse;
-import org.zfin.framework.api.Pagination;
-import org.zfin.framework.api.PublicationFiltering;
 import org.zfin.infrastructure.EntityZdbID;
-import org.zfin.infrastructure.ZdbEntity;
 import org.zfin.infrastructure.ZdbID;
 import org.zfin.marker.Marker;
+import org.zfin.marker.Transcript;
 import org.zfin.publication.Publication;
-import org.zfin.publication.PublicationDbXref;
 
 import java.util.*;
 import java.util.function.Function;
@@ -21,7 +16,6 @@ import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.*;
-import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 public class StatisticService<E extends EntityZdbID> {
 
@@ -37,27 +31,18 @@ public class StatisticService<E extends EntityZdbID> {
         return publicationNameStat;
     }
 
-    protected <T extends ZdbID> ColumnStats getColumnStatsEntity(Map<E, List<T>> publicationMap, StatisticRow row) {
-        ColumnStats publicationStat = new ColumnStats("Publication", true, false, false, false);
-        ColumnValues columnValues = getColumnValuesUberEntity(publicationMap);
-        row.put(publicationStat, columnValues);
-        return publicationStat;
+    protected static Map<Marker, Integer> getSortedEntityMap(Map<Marker, List<Transcript>> geneMap) {
+        geneMap.entrySet().removeIf(entry -> CollectionUtils.isEmpty(entry.getValue()));
+        HashMap<Marker, Integer> integerMap;
+        // default sorting: number of entities
+        integerMap = geneMap.entrySet().stream()
+            .collect(HashMap::new, (map, entry) -> map.put(entry.getKey(), entry.getValue().size()), HashMap::putAll);
+        return integerMap.entrySet().
+            stream().
+            sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).
+            collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
     }
 
-    private <Entity extends ZdbID> void filterOnPublication(Pagination pagination, Map<Publication, List<Entity>> publicationMap) {
-        final List<Publication> filteredPubList = new ArrayList<>();
-        pagination.getFieldFilterValueMap()
-            .keySet().stream()
-            .filter(fieldFilter -> fieldFilter.getName().startsWith("publication"))
-            .forEach(fieldFilter -> {
-                FilterService<Publication> filterService = new FilterService<>(new PublicationFiltering());
-                List<Publication> pubList = new ArrayList<>(publicationMap.keySet());
-                filteredPubList.addAll(filterService.filterAnnotations(pubList, pagination.getFieldFilterValueMap()));
-            });
-        if (!CollectionUtils.isEmpty(filteredPubList)) {
-            publicationMap.keySet().removeIf(o -> !filteredPubList.contains(o));
-        }
-    }
 
     private <T extends ZdbID> ColumnValues getColumnValuesMultiValued(Map<Publication, List<T>> publicationMap, Function<T, List<String>> function) {
         ColumnValues assayValues = new ColumnValues();
@@ -68,12 +53,6 @@ public class StatisticService<E extends EntityZdbID> {
         assayValues.setMultiplicity(getCardinalityPerUniqueRow(publicationMap.values(), function));
         assayValues.setUberHistogram(getHistogramMultiValued(publicationMap, function));
         return assayValues;
-    }
-
-    private <T extends ZdbID> ColumnValues getColumnValuesUberEntity(Map<E, List<T>> publicationMap) {
-        ColumnValues columnValues = new ColumnValues();
-        columnValues.setTotalNumber(publicationMap.size());
-        return columnValues;
     }
 
     private <T extends ZdbID> ColumnValues getColumnValuesRowEntity(Map<Publication, List<T>> publicationMap) {
@@ -96,15 +75,18 @@ public class StatisticService<E extends EntityZdbID> {
     }
 
 
-    private <T extends ZdbID> ColumnValues getColumnValues(Map<E, List<T>> publicationMap, Function<T, String> function) {
+    private <T extends ZdbID> ColumnValues getColumnValues(Map<E, List<T>> entityMap, Function<T, String> function, ColumnStats columnStatistic) {
         ColumnValues cloneValues = new ColumnValues();
-        List<T> collect = publicationMap.values().stream().flatMap(Collection::stream).collect(toList());
+        List<T> collect = entityMap.values().stream().flatMap(Collection::stream).collect(toList());
         cloneValues.setTotalNumber(getTotalNumberBase(collect, function));
         cloneValues.setTotalDistinctNumber(getTotalDistinctNumber(collect, function));
-        cloneValues.setMultiplicity(getCardinalityPerRow(publicationMap, function));
-        cloneValues.setHistogram(getHistogram(publicationMap, function));
+        if (columnStatistic.isLimitedValues()) {
+            cloneValues.setHistogram(getHistogram(entityMap, function));
+        }
+        cloneValues.setMultiplicity(getCardinalityPerRow(entityMap, function));
         return cloneValues;
     }
+
 
     public <T extends ZdbID> int getTotalNumber(Collection<List<T>> map) {
         return map.stream()
@@ -163,7 +145,8 @@ public class StatisticService<E extends EntityZdbID> {
         return cardinality;
     }
 
-    private static <T extends ZdbID, O extends Object> int getTotalNumberBase(List<T> list, Function<T, O> function) {
+
+    protected static <T extends ZdbID, O extends Object> int getTotalNumberBase(List<T> list, Function<T, O> function) {
         if (list == null)
             return 0;
         return (int) list.stream()
@@ -206,7 +189,7 @@ public class StatisticService<E extends EntityZdbID> {
             .count();
     }
 
-    private static <T extends ZdbID, ID> Long getTotalDistinctNumber(Collection<List<T>> map, Function<T, List<ID>> function) {
+    protected static <T extends ZdbID, ID> Long getTotalDistinctNumber(Collection<List<T>> map, Function<T, List<ID>> function) {
         return map.stream()
             .flatMap(Collection::stream)
             .map(function)
@@ -215,7 +198,7 @@ public class StatisticService<E extends EntityZdbID> {
             .count();
     }
 
-    private static <T extends ZdbID, ID> long getTotalDistinctNumber(List<T> map, Function<T, ID> function) {
+    protected static <T extends ZdbID, ID> long getTotalDistinctNumber(List<T> map, Function<T, ID> function) {
         if (map == null)
             return 0;
         return map.stream()
@@ -225,7 +208,7 @@ public class StatisticService<E extends EntityZdbID> {
             .count();
     }
 
-    private static <T extends ZdbID, O> long getTotalDistinctNumberOnObject(Collection<List<T>> map, Function<T, O> function) {
+    protected static <T extends ZdbID, O> long getTotalDistinctNumberOnObject(Collection<List<T>> map, Function<T, O> function) {
         return map.stream()
             .flatMap(Collection::stream)
             .map(function)
@@ -233,18 +216,11 @@ public class StatisticService<E extends EntityZdbID> {
             .count();
     }
 
-    private static <T extends ZdbID, ID> int getTotalDistinctNumberPerUberEntity(List<T> alleles, Function<T, List<ID>> function) {
-        return alleles.stream()
-            .map(function)
+    private <T extends ZdbID> Map<String, Integer> getHistogram(Map<E, List<T>> alleleMap, Function<T, String> function) {
+        Map<String, List<String>> histogramRaw = alleleMap.values().stream()
             .flatMap(Collection::stream)
-            .collect(toSet())
-            .size();
-    }
-
-    private Map<String, Integer> getHistogramOnUber(List<Publication> arrayTypeList, Function<Publication, String> function) {
-        Map<String, List<String>> histogramRaw = arrayTypeList.stream()
             .map(function)
-            .collect(toList())
+            .toList()
             .stream()
             .collect(groupingBy(o -> {
                 if (o == null)
@@ -254,12 +230,10 @@ public class StatisticService<E extends EntityZdbID> {
         return getValueSortedMap(histogramRaw);
     }
 
-
-    private <T extends ZdbID> Map<String, Integer> getHistogram(Map<E, List<T>> alleleMap, Function<T, String> function) {
-        Map<String, List<String>> histogramRaw = alleleMap.values().stream()
-            .flatMap(Collection::stream)
+    protected <E extends EntityZdbID> Map<String, Integer> getHistogramOnUberEntity(Set<E> entitySet, Function<E, String> function) {
+        Map<String, List<String>> histogramRaw = entitySet.stream()
             .map(function)
-            .collect(toList())
+            .toList()
             .stream()
             .collect(groupingBy(o -> {
                 if (o == null)
@@ -274,7 +248,7 @@ public class StatisticService<E extends EntityZdbID> {
             .flatMap(Collection::stream)
             .map(function)
             .flatMap(Collection::stream)
-            .collect(toList())
+            .toList()
             .stream()
             .collect(groupingBy(o -> {
                 if (o == null)
@@ -289,7 +263,7 @@ public class StatisticService<E extends EntityZdbID> {
             .flatMap(Collection::stream)
             .map(function)
             .flatMap(Collection::stream)
-            .collect(toList())
+            .toList()
             .stream()
             .collect(groupingBy(o -> {
                 if (o == null)
@@ -313,38 +287,38 @@ public class StatisticService<E extends EntityZdbID> {
             ));
     }
 
-    /*
-        private String getMultiValues(List<Allele> alleles, Function<Allele, ? extends List<?>> multiValueFunction) {
-            if (CollectionUtils.isEmpty(alleles) || alleles.size() > 1)
-                return null;
-            List<?> values = multiValueFunction.apply(alleles.get(0));
-            return values.stream().map(Object::toString).collect(joining(", "));
-        }
-
-
-    */
-    private ColumnStats getRowEntityColumn() {
-        final Optional<ColumnStats<Antibody, ?>> any = stats.stream().filter(ColumnStats::isRowEntity).findAny();
-        if (any.isEmpty())
-            throw new RuntimeException("Missing row entity column");
-        return any.get();
-    }
-
-    private List<ColumnStats<Antibody, ?>> stats;
-
-    protected <T extends ZdbID> void addColumnsToRows(Map<E, List<T>> publicationMap, StatisticRow row, Map<ColumnStats, Function<T, String>> columns) {
+    protected <T extends ZdbID> void addColumnsToRows(Map<E, List<T>> entitytMap,
+                                                      StatisticRow row,
+                                                      Map<ColumnStats, Function<T, String>> columns,
+                                                      Map<E, List<T>> unfilteredEntitytMap) {
         columns.forEach((columnStats, function) ->
         {
-            ColumnValues colValues = getColumnValues(publicationMap, function);
+            ColumnValues colValues = getColumnValues(entitytMap, function, columnStats);
+            // no histogram available then no need to pick the complete list from unfiltered list
+            if(!columnStats.isLimitedValues()){
+                row.put(columnStats, colValues);
+            }
+            ColumnValues colValuesUnfiltered = getColumnValues(unfilteredEntitytMap, function, columnStats);
+            Map<String, Integer> histogramFiltered = colValues.getHistogram();
+            Map<String, Integer> histogramUnfiltered = colValuesUnfiltered.getHistogram();
+            if(histogramUnfiltered == null) {
+                return;
+            }
+            populateFilteredCountsOnUnfilteredHistogram(histogramUnfiltered, histogramFiltered);
+            colValues.setHistogram(histogramUnfiltered);
             row.put(columnStats, colValues);
         });
     }
 
-    private <T extends ZdbID> void addColumnsToRowsList(Map<Publication, List<T>> publicationMap, StatisticRow row, Map<ColumnStats, Function<T, List<String>>> columns) {
-        columns.forEach((columnStats, function) ->
+    protected void populateFilteredCountsOnUnfilteredHistogram(Map<String, Integer> histogramUnfiltered, Map<String, Integer> histogramFiltered) {
+        histogramUnfiltered.forEach((key, count) ->
         {
-            ColumnValues colValues = getColumnValuesMultiValued(publicationMap, function);
-            row.put(columnStats, colValues);
+            Integer filteredCount = histogramFiltered.get(key);
+            if (filteredCount == null) {
+                filteredCount = 0;
+            }
+            histogramUnfiltered.put(key, filteredCount);
         });
     }
+
 }

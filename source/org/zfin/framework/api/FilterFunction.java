@@ -42,4 +42,7 @@ public interface FilterFunction<Entity, FilterValue> {
     }
 
 
+    static boolean valueIsNull(List list){
+        return false;
+    }
 }

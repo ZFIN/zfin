@@ -7,6 +7,7 @@ const DELIMITER = '|';
 const CheckboxListFilter = ({value, onChange, options}) => {
     return (
         <CheckboxList
+            //getItemDisplay={displayFunction ? displayFunction : value}
             items={options}
             value={value ? value.split(DELIMITER) : []}
             onChange={(values) => onChange(values.join(DELIMITER))}

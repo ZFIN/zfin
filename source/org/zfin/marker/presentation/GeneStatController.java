@@ -10,10 +10,8 @@ import org.zfin.framework.api.FieldFilter;
 import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.api.View;
-import org.zfin.marker.repository.MarkerRepository;
-import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.stats.StatisticGeneService;
-import org.zfin.stats.StatisticPublicationService;
+import org.zfin.gwt.root.util.StringUtils;
+import org.zfin.stats.GeneStatisticService;
 import org.zfin.stats.StatisticRow;
 import org.zfin.wiki.presentation.Version;
 
@@ -24,21 +22,47 @@ import javax.servlet.http.HttpServletRequest;
 public class GeneStatController {
 
     @Autowired
-    private PublicationRepository publicationRepository;
-
-    @Autowired
-    private MarkerRepository markerRepository;
-
-    @Autowired
     private HttpServletRequest request;
 
+    private static final String GENE_ID = "geneId";
+    private static final String GENE_SYMBOL = "geneSymbol";
+    private static final String GENE_TYPE = "geneType";
+    private static final String TRANSCRIPT_TYPE = "transcriptType";
+    private static final String TRANSCRIPT_ID = "transcriptId";
+    private static final String TRANSCRIPT_STATUS = "transcriptStatus";
 
     @JsonView(View.API.class)
     @RequestMapping(value = "/transcript/histogram", method = RequestMethod.GET)
-    public JsonResultResponse<StatisticRow> getPublicationDatasetsStats(@RequestParam(value = "filter.markerID", required = false) String publicationID,
+    public JsonResultResponse<StatisticRow> getPublicationDatasetsStats(@RequestParam(value = "filter."+ GENE_ID, required = false) String geneID,
+                                                                        @RequestParam(value = "filter." + GENE_SYMBOL, required = false) String geneSymbol,
+                                                                        @RequestParam(value = "filter." + GENE_TYPE, required = false) String geneType,
+                                                                        @RequestParam(value = "filter." + TRANSCRIPT_TYPE, required = false) String type,
+                                                                        @RequestParam(value = "filter." + TRANSCRIPT_ID, required = false) String transcriptId,
+                                                                        @RequestParam(value = "filter." + TRANSCRIPT_STATUS, required = false) String status,
                                                                         @Version Pagination pagination) {
 
-        StatisticGeneService service = new StatisticGeneService();
+        if (type != null) {
+            pagination.addFieldFilter(FieldFilter.TYPE, type);
+        }
+        // move <empty> into Pagination object
+        if (status != null && status.equals("<empty>")) {
+            pagination.addFieldFilter(FieldFilter.STATUS_EMPTY, status);
+        } else if (status != null) {
+            pagination.addFieldFilter(FieldFilter.STATUS, status);
+        }
+        if(StringUtils.isNotEmpty(geneID)){
+            pagination.addFieldFilter(FieldFilter.ENTITY_ID, geneID);
+        }
+        if(StringUtils.isNotEmpty(transcriptId)){
+            pagination.addFieldFilter(FieldFilter.TRANSCRIPT_ID, transcriptId);
+        }
+        if(StringUtils.isNotEmpty(geneSymbol)){
+            pagination.addFieldFilter(FieldFilter.GENE_ABBREVIATION, geneSymbol);
+        }
+        if(StringUtils.isNotEmpty(geneType)){
+            pagination.addFieldFilter(FieldFilter.ZDB_ENTITY_TYPE, geneType);
+        }
+        GeneStatisticService service = new GeneStatisticService();
         JsonResultResponse<StatisticRow> response = service.getTranscriptStats(pagination);
         response.setHttpServletRequest(request);
         return response;

@@ -115,7 +115,9 @@
                             </td>
                         </tr>
                         <tr>
-                            <td></td>
+                            <td>
+                                <a href="/action/gene/stats/view">Gene Statistics</a>
+                            </td>
                             <td>
                                 <a href="/action/ontology/reports">Ontology Reports</a>
                             </td>
