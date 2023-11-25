@@ -288,8 +288,8 @@ public class StatisticService<E extends EntityZdbID> {
     }
 
     protected <T extends ZdbID> void addColumnsToRows(Map<E, List<T>> entitytMap,
-                                                      StatisticRow row,
-                                                      Map<ColumnStats, Function<T, String>> columns,
+                                                      StatisticRow<E,T> row,
+                                                      Map<ColumnStats<E,T>, Function<T, String>> columns,
                                                       Map<E, List<T>> unfilteredEntitytMap) {
         columns.forEach((columnStats, function) ->
         {

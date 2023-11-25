@@ -26,7 +26,8 @@ public class ColumnStats<Entity, SubEntity> implements Serializable {
     private boolean limitedValues;
 
     private Function<Entity, List<SubEntity>> multiValueFunction;
-    private Function<Entity, String> singleValueFunction;
+    private Function<Entity, String> singleValueEntityFunction;
+    private Function<SubEntity, String> singleValueSubEntityFunction;
 
     public ColumnStats(String name, boolean superEntity, boolean rowEntity, boolean multiValued, boolean limitedValues) {
         this.name = name;
@@ -38,19 +39,24 @@ public class ColumnStats<Entity, SubEntity> implements Serializable {
 
     public ColumnStats(String name, boolean superEntity, boolean rowEntity, boolean multiValued, boolean limitedValues, Function<Entity, List<SubEntity>> function, Function<Entity, String> sfunction) {
         this(name, superEntity, rowEntity, multiValued, limitedValues);
-        this.singleValueFunction = sfunction;
+        this.singleValueEntityFunction = sfunction;
         this.multiValueFunction = function;
     }
 
     public ColumnStats(String name, boolean superEntity, boolean rowEntity, boolean multiValued, boolean limitedValues, Function<Entity, String> function) {
         this(name, superEntity, rowEntity, multiValued, limitedValues);
-        this.singleValueFunction = function;
+        this.singleValueEntityFunction = function;
+    }
+
+    public ColumnStats(String name, Function<Entity, String> function, boolean superEntity, boolean rowEntity, boolean multiValued, boolean limitedValues) {
+        this(name, superEntity, rowEntity, multiValued, limitedValues);
+        this.singleValueEntityFunction = function;
     }
 
     public String getSingleValue(Entity a) {
-        if (singleValueFunction == null)
+        if (singleValueEntityFunction == null)
             return null;
-        return singleValueFunction.apply(a);
+        return singleValueEntityFunction.apply(a);
     }
 
     @JsonView(View.API.class)

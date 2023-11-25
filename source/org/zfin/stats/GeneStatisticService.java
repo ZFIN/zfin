@@ -17,7 +17,7 @@ import static org.zfin.stats.GeneStatisticService.Header.TRANSCRIPT_ID;
 public class GeneStatisticService extends StatisticService<Marker> {
 
 
-    public JsonResultResponse<StatisticRow> getTranscriptStats(Pagination pagination) {
+    public JsonResultResponse<StatisticRow<Marker,Transcript>> getTranscriptStats(Pagination pagination) {
 
         Map<Marker, List<Transcript>> geneMapUnfiltered = getMarkerRepository().getAllTranscripts(pagination);
 
@@ -48,26 +48,22 @@ public class GeneStatisticService extends StatisticService<Marker> {
         // remove empty marker sets
         Map<Marker, Integer> sortedMap = getSortedEntityMap(geneMap);
 
-        StatisticRow row = new StatisticRow();
-        ColumnStats geneStat = new ColumnStats(Header.GENE_ID.columnName, true, false, false, false);
-        initializeEntityColumn(geneMap.keySet(), row, Header.GENE_ID, geneStat, geneMapUnfiltered.keySet());
+        List<ColumnStats<Marker, Transcript>> entityColumnStats = new ArrayList<>();
+        entityColumnStats.add(new ColumnStats<>(Header.GENE_ID.columnName, true, false, false, false, Header.GENE_ID.getAttributeFunction()));
+        entityColumnStats.add(new ColumnStats<>(Header.GENE_SYMBOL.columnName, true, false, false, false, Header.GENE_SYMBOL.getAttributeFunction()));
+        entityColumnStats.add(new ColumnStats<>(Header.GENE_TYPE.columnName, true, false, false, true, Header.GENE_TYPE.getAttributeFunction()));
+        StatisticRow<Marker, Transcript> row = addEntityColumnStatsToStatRow(entityColumnStats, geneMap.keySet(), geneMapUnfiltered.keySet());
 
-        ColumnStats geneSymbolStat = new ColumnStats(Header.GENE_SYMBOL.columnName, true, false, false, false);
-        initializeEntityColumn(geneMap.keySet(), row, Header.GENE_SYMBOL, geneSymbolStat, geneMapUnfiltered.keySet());
-
-        ColumnStats geneTypeStat = new ColumnStats(Header.GENE_TYPE.columnName, true, false, false, true);
-        initializeEntityColumn(geneMap.keySet(), row, Header.GENE_TYPE, geneTypeStat, geneMapUnfiltered.keySet());
-
-        Map<ColumnStats, Function<Transcript, String>> columns = new LinkedHashMap<>();
+        Map<ColumnStats<Marker, Transcript>, Function<Transcript, String>> columns = new LinkedHashMap<>();
         columns.put(
-            new ColumnStats(TRANSCRIPT_ID.columnName, false, true, false, false),
+            new ColumnStats<>(TRANSCRIPT_ID.columnName, false, true, false, false),
             Transcript::getZdbID);
         columns.put(
-            new ColumnStats(Header.TRANSCRIPT_TYPE.columnName, false, false, false, true),
+            new ColumnStats<>(Header.TRANSCRIPT_TYPE.columnName, false, false, false, true),
             transcript -> transcript.getTranscriptType().getType().toString());
 
         columns.put(
-            new ColumnStats(Header.TRANSCRIPT_STATUS.columnName, false, false, false, true),
+            new ColumnStats<>(Header.TRANSCRIPT_STATUS.columnName, false, false, false, true),
             transcript -> {
                 if (transcript.getStatus() != null) {
                     return transcript.getStatus().getStatus().toString();
@@ -79,21 +75,15 @@ public class GeneStatisticService extends StatisticService<Marker> {
         addColumnsToRows(geneMap, row, columns, geneMapUnfiltered);
 
         // create return result set
-        List<StatisticRow> rows = new ArrayList<>();
+        List<StatisticRow<Marker, Transcript>> rows = new ArrayList<>();
         sortedMap.forEach((key, value) -> {
-            StatisticRow statRow = new StatisticRow();
-
-            ColumnValues colValues = new ColumnValues();
-            colValues.setValue(key.getZdbID());
-            statRow.put(geneStat, colValues);
-
-            ColumnValues colPubNameValues = new ColumnValues();
-            colPubNameValues.setValue(key.getAbbreviation());
-            statRow.put(geneSymbolStat, colPubNameValues);
-
-            ColumnValues colMarkerTypeValues = new ColumnValues();
-            colMarkerTypeValues.setValue(key.getMarkerType().getType().toString());
-            statRow.put(geneTypeStat, colMarkerTypeValues);
+            StatisticRow<Marker, Transcript> statRow = new StatisticRow<>();
+            row.getColumns().values().stream().filter(column -> column.getColumnDefinition().isSuperEntity())
+                .forEach(column -> {
+                    ColumnValues colValues = new ColumnValues();
+                    colValues.setValue(column.getColumnDefinition().getSingleValueEntityFunction().apply(key));
+                    statRow.put(column.getColumnDefinition(), colValues);
+                });
 
             columns.forEach((columnStats, function) -> {
                 ColumnValues columnValues = new ColumnValues();
@@ -105,7 +95,7 @@ public class GeneStatisticService extends StatisticService<Marker> {
             rows.add(statRow);
         });
 
-        JsonResultResponse<StatisticRow> response = new JsonResultResponse<>();
+        JsonResultResponse<StatisticRow<Marker,Transcript>> response = new JsonResultResponse<>();
         response.setResults(rows);
         response.setTotal(rows.size());
         response.setResults(rows.stream()
@@ -116,21 +106,29 @@ public class GeneStatisticService extends StatisticService<Marker> {
         return response;
     }
 
-    protected void initializeEntityColumn(Set<Marker> entitySet, StatisticRow row, Header header, ColumnStats columnsStats, Set<Marker> unfilteredEntitySet) {
+    private StatisticRow<Marker, Transcript> addEntityColumnStatsToStatRow(List<ColumnStats<Marker, Transcript>> entityColumnStats, Set<Marker> filteredSet, Set<Marker> unfilteredSet) {
+        StatisticRow<Marker, Transcript> row = new StatisticRow<>();
+        entityColumnStats.forEach(columnStats -> {
+            row.put(columnStats, populateColumnStat(filteredSet, columnStats, unfilteredSet));
+        });
+        return row;
+    }
+
+    protected ColumnValues populateColumnStat(Set<Marker> entitySet, ColumnStats<Marker, Transcript> columnsStats, Set<Marker> unfilteredEntitySet) {
         ColumnValues columnValValues = new ColumnValues();
         columnValValues.setTotalNumber(entitySet.size());
         List<Marker> arrayList = new ArrayList<>(entitySet);
-        columnValValues.setTotalDistinctNumber(getTotalDistinctNumberOnObject(List.of(arrayList), header.attributeFunction));
+        columnValValues.setTotalDistinctNumber(getTotalDistinctNumberOnObject(List.of(arrayList), columnsStats.getSingleValueEntityFunction()));
         if (columnsStats.isLimitedValues()) {
-            Map<String, Integer> filteredHistogram = getHistogramOnUberEntity(entitySet, header.attributeFunction);
-            Map<String, Integer> unfilteredHistogram = getHistogramOnUberEntity(unfilteredEntitySet, header.attributeFunction);
+            Map<String, Integer> filteredHistogram = getHistogramOnUberEntity(entitySet, columnsStats.getSingleValueEntityFunction());
+            Map<String, Integer> unfilteredHistogram = getHistogramOnUberEntity(unfilteredEntitySet, columnsStats.getSingleValueEntityFunction());
             populateFilteredCountsOnUnfilteredHistogram(unfilteredHistogram, filteredHistogram);
             columnValValues.setHistogram(unfilteredHistogram);
         }
-        row.put(columnsStats, columnValValues);
+        return columnValValues;
     }
 
-    public enum Header {
+    public static enum Header {
 
         GENE_ID("Gene ID", Marker::getZdbID),
         GENE_SYMBOL("Gene Symbol", Marker::getAbbreviation),

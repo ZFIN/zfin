@@ -11,6 +11,8 @@ import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
 import org.zfin.framework.api.View;
 import org.zfin.gwt.root.util.StringUtils;
+import org.zfin.marker.Marker;
+import org.zfin.marker.Transcript;
 import org.zfin.stats.GeneStatisticService;
 import org.zfin.stats.StatisticRow;
 import org.zfin.wiki.presentation.Version;
@@ -33,7 +35,7 @@ public class GeneStatController {
 
     @JsonView(View.API.class)
     @RequestMapping(value = "/transcript/histogram", method = RequestMethod.GET)
-    public JsonResultResponse<StatisticRow> getPublicationDatasetsStats(@RequestParam(value = "filter."+ GENE_ID, required = false) String geneID,
+    public JsonResultResponse<StatisticRow<Marker,Transcript>> getPublicationDatasetsStats(@RequestParam(value = "filter."+ GENE_ID, required = false) String geneID,
                                                                         @RequestParam(value = "filter." + GENE_SYMBOL, required = false) String geneSymbol,
                                                                         @RequestParam(value = "filter." + GENE_TYPE, required = false) String geneType,
                                                                         @RequestParam(value = "filter." + TRANSCRIPT_TYPE, required = false) String type,
@@ -63,7 +65,7 @@ public class GeneStatController {
             pagination.addFieldFilter(FieldFilter.ZDB_ENTITY_TYPE, geneType);
         }
         GeneStatisticService service = new GeneStatisticService();
-        JsonResultResponse<StatisticRow> response = service.getTranscriptStats(pagination);
+        JsonResultResponse<StatisticRow<Marker, Transcript>> response = service.getTranscriptStats(pagination);
         response.setHttpServletRequest(request);
         return response;
     }
