@@ -12,12 +12,11 @@ import java.util.function.Function;
 
 import static java.util.stream.Collectors.toList;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
-import static org.zfin.stats.GeneStatisticService.Header.TRANSCRIPT_ID;
 
-public class GeneStatisticService extends StatisticService<Marker> {
+public class GeneStatisticService extends StatisticService<Marker, Transcript> {
 
 
-    public JsonResultResponse<StatisticRow<Marker,Transcript>> getTranscriptStats(Pagination pagination) {
+    public JsonResultResponse<StatisticRow<Marker, Transcript>> getTranscriptStats(Pagination pagination) {
 
         Map<Marker, List<Transcript>> geneMapUnfiltered = getMarkerRepository().getAllTranscripts(pagination);
 
@@ -55,9 +54,9 @@ public class GeneStatisticService extends StatisticService<Marker> {
         StatisticRow<Marker, Transcript> row = addEntityColumnStatsToStatRow(entityColumnStats, geneMap.keySet(), geneMapUnfiltered.keySet());
 
         List<ColumnStats<Marker, Transcript>> subEntityColStats = new ArrayList<>();
-        subEntityColStats.add(new ColumnStats<>(Header.TRANSCRIPT_ID.columnName, false, true, false, false,Transcript::getZdbID));
-        subEntityColStats.add(new ColumnStats<>(Header.TRANSCRIPT_TYPE.columnName, false, false, false, true,transcript -> transcript.getTranscriptType().getType().toString()));
-        subEntityColStats.add(new ColumnStats<>(Header.TRANSCRIPT_STATUS.columnName, false, false, false, true,transcript -> {
+        subEntityColStats.add(new ColumnStats<>(Header.TRANSCRIPT_ID.columnName, false, true, false, false, Transcript::getZdbID));
+        subEntityColStats.add(new ColumnStats<>(Header.TRANSCRIPT_TYPE.columnName, false, false, false, true, transcript -> transcript.getTranscriptType().getType().toString()));
+        subEntityColStats.add(new ColumnStats<>(Header.TRANSCRIPT_STATUS.columnName, false, false, false, true, transcript -> {
             if (transcript.getStatus() != null) {
                 return transcript.getStatus().getStatus().toString();
             }
@@ -78,17 +77,17 @@ public class GeneStatisticService extends StatisticService<Marker> {
                 });
 
             row.getColumns().values().stream().filter(column -> !column.getColumnDefinition().isSuperEntity())
-            .forEach(columnStats -> {
-                ColumnValues columnValues = new ColumnValues();
-                columnValues.setTotalNumber(getTotalNumberBase(geneMap.get(key), columnStats.getColumnDefinition().getSingleValueSubEntityFunction()));
-                columnValues.setTotalDistinctNumber(getTotalDistinctNumber(geneMap.get(key), columnStats.getColumnDefinition().getSingleValueSubEntityFunction()));
-                statRow.put(columnStats.getColumnDefinition(), columnValues);
-            });
+                .forEach(columnStats -> {
+                    ColumnValues columnValues = new ColumnValues();
+                    columnValues.setTotalNumber(getTotalNumberBase(geneMap.get(key), columnStats.getColumnDefinition().getSingleValueSubEntityFunction()));
+                    columnValues.setTotalDistinctNumber(getTotalDistinctNumber(geneMap.get(key), columnStats.getColumnDefinition().getSingleValueSubEntityFunction()));
+                    statRow.put(columnStats.getColumnDefinition(), columnValues);
+                });
 
             rows.add(statRow);
         });
 
-        JsonResultResponse<StatisticRow<Marker,Transcript>> response = new JsonResultResponse<>();
+        JsonResultResponse<StatisticRow<Marker, Transcript>> response = new JsonResultResponse<>();
         response.setResults(rows);
         response.setTotal(rows.size());
         response.setResults(rows.stream()
@@ -107,20 +106,6 @@ public class GeneStatisticService extends StatisticService<Marker> {
         StatisticRow<Marker, Transcript> row = new StatisticRow<>();
         entityColumnStats.forEach(columnStats -> row.put(columnStats, populateColumnStat(filteredSet, columnStats, unfilteredSet)));
         return row;
-    }
-
-    protected ColumnValues populateColumnStat(Set<Marker> entitySet, ColumnStats<Marker, Transcript> columnsStats, Set<Marker> unfilteredEntitySet) {
-        ColumnValues columnValValues = new ColumnValues();
-        columnValValues.setTotalNumber(entitySet.size());
-        List<Marker> arrayList = new ArrayList<>(entitySet);
-        columnValValues.setTotalDistinctNumber(getTotalDistinctNumberOnObject(List.of(arrayList), columnsStats.getSingleValueEntityFunction()));
-        if (columnsStats.isLimitedValues()) {
-            Map<String, Integer> filteredHistogram = getHistogramOnUberEntity(entitySet, columnsStats.getSingleValueEntityFunction());
-            Map<String, Integer> unfilteredHistogram = getHistogramOnUberEntity(unfilteredEntitySet, columnsStats.getSingleValueEntityFunction());
-            populateFilteredCountsOnUnfilteredHistogram(unfilteredHistogram, filteredHistogram);
-            columnValValues.setHistogram(unfilteredHistogram);
-        }
-        return columnValValues;
     }
 
     public enum Header {
