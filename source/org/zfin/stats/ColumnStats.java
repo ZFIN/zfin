@@ -43,9 +43,9 @@ public class ColumnStats<Entity, SubEntity> implements Serializable {
         this.multiValueFunction = function;
     }
 
-    public ColumnStats(String name, boolean superEntity, boolean rowEntity, boolean multiValued, boolean limitedValues, Function<Entity, String> function) {
+    public ColumnStats(String name, boolean superEntity, boolean rowEntity, boolean multiValued, boolean limitedValues, Function<SubEntity, String> function) {
         this(name, superEntity, rowEntity, multiValued, limitedValues);
-        this.singleValueEntityFunction = function;
+        this.singleValueSubEntityFunction = function;
     }
 
     public ColumnStats(String name, Function<Entity, String> function, boolean superEntity, boolean rowEntity, boolean multiValued, boolean limitedValues) {

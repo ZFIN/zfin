@@ -310,6 +310,25 @@ public class StatisticService<E extends EntityZdbID> {
         });
     }
 
+    protected <T extends ZdbID> ColumnValues populateSubEntityColumnStat(Map<E, List<T>> entitytMap,
+                                                      ColumnStats<E,T> columnStats,
+                                                      Map<E, List<T>> unfilteredEntitytMap) {
+            ColumnValues colValues = getColumnValues(entitytMap, columnStats.getSingleValueSubEntityFunction(), columnStats);
+            // no histogram available then no need to pick the complete list from unfiltered list
+            if(!columnStats.isLimitedValues()){
+                return colValues;
+            }
+            ColumnValues colValuesUnfiltered = getColumnValues(unfilteredEntitytMap, columnStats.getSingleValueSubEntityFunction(), columnStats);
+            Map<String, Integer> histogramFiltered = colValues.getHistogram();
+            Map<String, Integer> histogramUnfiltered = colValuesUnfiltered.getHistogram();
+            if(histogramUnfiltered == null) {
+                return null;
+            }
+            populateFilteredCountsOnUnfilteredHistogram(histogramUnfiltered, histogramFiltered);
+            colValues.setHistogram(histogramUnfiltered);
+            return colValues;
+    }
+
     protected void populateFilteredCountsOnUnfilteredHistogram(Map<String, Integer> histogramUnfiltered, Map<String, Integer> histogramFiltered) {
         histogramUnfiltered.forEach((key, count) ->
         {
