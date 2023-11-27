@@ -13,10 +13,9 @@ import org.zfin.framework.api.View;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.marker.Marker;
 import org.zfin.marker.Transcript;
-import org.zfin.sequence.DBLink;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.stats.GeneDbLinkStatisticService;
-import org.zfin.stats.GeneStatisticService;
+import org.zfin.stats.GeneTranscriptStatisticService;
 import org.zfin.stats.StatisticRow;
 import org.zfin.wiki.presentation.Version;
 
@@ -32,6 +31,7 @@ public class GeneStatController {
     private static final String GENE_ID = "geneId";
     private static final String GENE_SYMBOL = "geneSymbol";
     private static final String GENE_TYPE = "geneType";
+    private static final String PLASMID = "plasmidAccession";
     private static final String TRANSCRIPT_TYPE = "transcriptType";
     private static final String TRANSCRIPT_ID = "transcriptId";
     private static final String TRANSCRIPT_STATUS = "transcriptStatus";
@@ -67,7 +67,7 @@ public class GeneStatController {
         if(StringUtils.isNotEmpty(geneType)){
             pagination.addFieldFilter(FieldFilter.ZDB_ENTITY_TYPE, geneType);
         }
-        GeneStatisticService service = new GeneStatisticService();
+        GeneTranscriptStatisticService service = new GeneTranscriptStatisticService();
         JsonResultResponse<StatisticRow<Marker, Transcript>> response = service.getTranscriptStats(pagination);
         response.setHttpServletRequest(request);
         return response;
@@ -78,7 +78,7 @@ public class GeneStatController {
     public JsonResultResponse<StatisticRow<Marker, MarkerDBLink>> getPlasmidsStats(@RequestParam(value = "filter." + GENE_ID, required = false) String geneID,
                                                                                    @RequestParam(value = "filter." + GENE_SYMBOL, required = false) String geneSymbol,
                                                                                    @RequestParam(value = "filter." + GENE_TYPE, required = false) String geneType,
-                                                                                   @RequestParam(value = "filter." + TRANSCRIPT_TYPE, required = false) String type,
+                                                                                   @RequestParam(value = "filter." + PLASMID, required = false) String plasmid,
                                                                                    @Version Pagination pagination) {
 
         if(StringUtils.isNotEmpty(geneID)){
@@ -89,6 +89,9 @@ public class GeneStatController {
         }
         if(StringUtils.isNotEmpty(geneType)){
             pagination.addFieldFilter(FieldFilter.ZDB_ENTITY_TYPE, geneType);
+        }
+        if(StringUtils.isNotEmpty(plasmid)){
+            pagination.addFieldFilter(FieldFilter.PLASMID, plasmid);
         }
         GeneDbLinkStatisticService service = new GeneDbLinkStatisticService();
         JsonResultResponse<StatisticRow<Marker, MarkerDBLink>> response = service.getPlasmidStats(pagination);

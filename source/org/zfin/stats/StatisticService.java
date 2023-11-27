@@ -3,10 +3,11 @@ package org.zfin.stats;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.Range;
 import org.springframework.util.CollectionUtils;
+import org.zfin.framework.api.JsonResultResponse;
+import org.zfin.framework.api.Pagination;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.ZdbID;
 import org.zfin.marker.Marker;
-import org.zfin.sequence.MarkerDBLink;
 
 import java.util.*;
 import java.util.function.Function;
@@ -171,6 +172,45 @@ public class StatisticService<Entity extends EntityZdbID, SubEntity extends Enti
         StatisticRow<Entity, SubEntity> row = new StatisticRow<>();
         entityColumnStats.forEach(columnStats -> row.put(columnStats, populateColumnStat(filteredSet, columnStats, unfilteredSet)));
         return row;
+    }
+
+    protected List<StatisticRow<Entity, SubEntity>> getStatisticResultRows(Map<Entity, List<SubEntity>> geneMap, StatisticRow<Entity, SubEntity> row) {
+        // remove empty marker sets
+        Map<Entity, Integer> sortedMap = getSortedEntityMap(geneMap);
+
+        List<StatisticRow<Entity, SubEntity>> rows = new ArrayList<>();
+        sortedMap.forEach((key, value) -> {
+            StatisticRow<Entity, SubEntity> statRow = new StatisticRow<>();
+            row.getColumns().values().stream().filter(column -> column.getColumnDefinition().isSuperEntity())
+                .forEach(column -> {
+                    ColumnValues colValues = new ColumnValues();
+                    colValues.setValue(column.getColumnDefinition().getSingleValueEntityFunction().apply(key));
+                    statRow.put(column.getColumnDefinition(), colValues);
+                });
+
+            row.getColumns().values().stream().filter(column -> !column.getColumnDefinition().isSuperEntity())
+                .forEach(columnStats -> {
+                    ColumnValues columnValues = new ColumnValues();
+                    columnValues.setTotalNumber(getTotalNumberBase(geneMap.get(key), columnStats.getColumnDefinition().getSingleValueSubEntityFunction()));
+                    columnValues.setTotalDistinctNumber(getTotalDistinctNumber(geneMap.get(key), columnStats.getColumnDefinition().getSingleValueSubEntityFunction()));
+                    statRow.put(columnStats.getColumnDefinition(), columnValues);
+                });
+
+            rows.add(statRow);
+        });
+        return rows;
+    }
+
+    protected JsonResultResponse<StatisticRow<Entity, SubEntity>> getJsonResultResponse(Pagination pagination, StatisticRow<Entity, SubEntity> row, List<StatisticRow<Entity, SubEntity>> resultRows) {
+        JsonResultResponse<StatisticRow<Entity, SubEntity>> response = new JsonResultResponse<>();
+        response.setResults(resultRows);
+        response.setTotal(resultRows.size());
+        response.setResults(resultRows.stream()
+            .skip(pagination.getStart())
+            .limit(pagination.getLimit())
+            .collect(toList()));
+        response.addSupplementalData("statistic", row);
+        return response;
     }
 
 
