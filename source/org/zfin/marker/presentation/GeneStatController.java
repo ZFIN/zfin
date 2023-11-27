@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/api/marker/stats")
 public class GeneStatController {
 
+    public static final String FILTER = "filter.";
     @Autowired
     private HttpServletRequest request;
 
@@ -38,12 +39,12 @@ public class GeneStatController {
 
     @JsonView(View.API.class)
     @RequestMapping(value = "/transcript/histogram", method = RequestMethod.GET)
-    public JsonResultResponse<StatisticRow<Marker,Transcript>> getPublicationDatasetsStats(@RequestParam(value = "filter."+ GENE_ID, required = false) String geneID,
-                                                                        @RequestParam(value = "filter." + GENE_SYMBOL, required = false) String geneSymbol,
-                                                                        @RequestParam(value = "filter." + GENE_TYPE, required = false) String geneType,
-                                                                        @RequestParam(value = "filter." + TRANSCRIPT_TYPE, required = false) String type,
-                                                                        @RequestParam(value = "filter." + TRANSCRIPT_ID, required = false) String transcriptId,
-                                                                        @RequestParam(value = "filter." + TRANSCRIPT_STATUS, required = false) String status,
+    public JsonResultResponse<StatisticRow<Marker,Transcript>> getPublicationDatasetsStats(@RequestParam(value = FILTER + GENE_ID, required = false) String geneID,
+                                                                        @RequestParam(value = FILTER + GENE_SYMBOL, required = false) String geneSymbol,
+                                                                        @RequestParam(value = FILTER + GENE_TYPE, required = false) String geneType,
+                                                                        @RequestParam(value = FILTER + TRANSCRIPT_TYPE, required = false) String type,
+                                                                        @RequestParam(value = FILTER + TRANSCRIPT_ID, required = false) String transcriptId,
+                                                                        @RequestParam(value = FILTER + TRANSCRIPT_STATUS, required = false) String status,
                                                                         @Version Pagination pagination) {
 
         if (type != null) {
@@ -75,10 +76,10 @@ public class GeneStatController {
 
     @JsonView(View.API.class)
     @RequestMapping(value = "/plasmids/histogram", method = RequestMethod.GET)
-    public JsonResultResponse<StatisticRow<Marker, MarkerDBLink>> getPlasmidsStats(@RequestParam(value = "filter." + GENE_ID, required = false) String geneID,
-                                                                                   @RequestParam(value = "filter." + GENE_SYMBOL, required = false) String geneSymbol,
-                                                                                   @RequestParam(value = "filter." + GENE_TYPE, required = false) String geneType,
-                                                                                   @RequestParam(value = "filter." + PLASMID, required = false) String plasmid,
+    public JsonResultResponse<StatisticRow<Marker, MarkerDBLink>> getPlasmidsStats(@RequestParam(value = FILTER + GENE_ID, required = false) String geneID,
+                                                                                   @RequestParam(value = FILTER + GENE_SYMBOL, required = false) String geneSymbol,
+                                                                                   @RequestParam(value = FILTER + GENE_TYPE, required = false) String geneType,
+                                                                                   @RequestParam(value = FILTER + PLASMID, required = false) String plasmid,
                                                                                    @Version Pagination pagination) {
 
         if(StringUtils.isNotEmpty(geneID)){
