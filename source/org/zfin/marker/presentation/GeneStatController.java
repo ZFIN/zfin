@@ -13,6 +13,9 @@ import org.zfin.framework.api.View;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.marker.Marker;
 import org.zfin.marker.Transcript;
+import org.zfin.sequence.DBLink;
+import org.zfin.sequence.MarkerDBLink;
+import org.zfin.stats.GeneDbLinkStatisticService;
 import org.zfin.stats.GeneStatisticService;
 import org.zfin.stats.StatisticRow;
 import org.zfin.wiki.presentation.Version;
@@ -66,6 +69,29 @@ public class GeneStatController {
         }
         GeneStatisticService service = new GeneStatisticService();
         JsonResultResponse<StatisticRow<Marker, Transcript>> response = service.getTranscriptStats(pagination);
+        response.setHttpServletRequest(request);
+        return response;
+    }
+
+    @JsonView(View.API.class)
+    @RequestMapping(value = "/plasmids/histogram", method = RequestMethod.GET)
+    public JsonResultResponse<StatisticRow<Marker, MarkerDBLink>> getPlasmidsStats(@RequestParam(value = "filter." + GENE_ID, required = false) String geneID,
+                                                                                   @RequestParam(value = "filter." + GENE_SYMBOL, required = false) String geneSymbol,
+                                                                                   @RequestParam(value = "filter." + GENE_TYPE, required = false) String geneType,
+                                                                                   @RequestParam(value = "filter." + TRANSCRIPT_TYPE, required = false) String type,
+                                                                                   @Version Pagination pagination) {
+
+        if(StringUtils.isNotEmpty(geneID)){
+            pagination.addFieldFilter(FieldFilter.ENTITY_ID, geneID);
+        }
+        if(StringUtils.isNotEmpty(geneSymbol)){
+            pagination.addFieldFilter(FieldFilter.GENE_ABBREVIATION, geneSymbol);
+        }
+        if(StringUtils.isNotEmpty(geneType)){
+            pagination.addFieldFilter(FieldFilter.ZDB_ENTITY_TYPE, geneType);
+        }
+        GeneDbLinkStatisticService service = new GeneDbLinkStatisticService();
+        JsonResultResponse<StatisticRow<Marker, MarkerDBLink>> response = service.getPlasmidStats(pagination);
         response.setHttpServletRequest(request);
         return response;
     }

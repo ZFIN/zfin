@@ -1,24 +1,20 @@
 package org.zfin.sequence;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
 import org.zfin.framework.api.View;
 import org.zfin.marker.Marker;
 
 import java.io.Serializable;
 
+@Setter
+@Getter
 public class MarkerDBLink extends DBLink implements Comparable<MarkerDBLink>, Serializable {
 
 
     @JsonView(View.SequenceAPI.class)
     private Marker marker;
-
-    public Marker getMarker() {
-        return marker;
-    }
-
-    public void setMarker(Marker marker) {
-        this.marker = marker;
-    }
 
     public boolean equals(Object o) {
         if (o instanceof MarkerDBLink dbLink) {

@@ -2,9 +2,10 @@
 
 <c:set var="SUMMARY" value="Summary"/>
 <c:set var="TRANSCRIPT" value="Transcript"/>
+<c:set var="PLASMIDS" value="Plasmids"/>
 
 <z:dataPage
-        sections="${[SUMMARY, TRANSCRIPT]}">
+        sections="${[SUMMARY, TRANSCRIPT, PLASMIDS]}">
 
     <jsp:body>
 
@@ -15,6 +16,12 @@
         <z:section title="${TRANSCRIPT}">
             <z:section title="">
                 <div class="__react-root" id="MarkerTranscriptStatTable" data-type="transcript"></div>
+            </z:section>
+        </z:section>
+
+        <z:section title="${PLASMIDS}">
+            <z:section title="">
+                <div class="__react-root" id="MarkerTranscriptStatTable" data-type="plasmids"></div>
             </z:section>
         </z:section>
 

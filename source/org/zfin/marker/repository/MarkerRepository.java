@@ -578,4 +578,5 @@ public interface MarkerRepository {
 
     Map<Marker, List<Transcript>> getAllTranscripts(Pagination pagination);
 
+    Map<Marker, List<MarkerDBLink>> getAllPlasmids(Pagination pagination);
 }

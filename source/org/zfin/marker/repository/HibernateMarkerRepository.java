@@ -1786,6 +1786,7 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
             }
             if (tuple.length > 12 && tuple[12] != null) {
+
                 linkDisplay.setTypeOrder(Integer.valueOf(tuple[12].toString()));
 
             }
@@ -2992,6 +2993,20 @@ public class HibernateMarkerRepository implements MarkerRepository {
             list.add(tuple.get(1, Transcript.class));
         });
         return markerTranscriptMap;
+    }
+
+    @Override
+    public Map<Marker, List<MarkerDBLink>> getAllPlasmids(Pagination pagination) {
+        String hql = """
+            select link from MarkerDBLink link, DisplayGroupMember mem, DisplayGroup g
+            where mem.displayGroup = g
+            AND g.groupName= :displayGroup
+            AND mem in elements(link.referenceDatabase.displayGroupMembers)
+             """;
+        Query<MarkerDBLink> query = HibernateUtil.currentSession().createQuery(hql, MarkerDBLink.class);
+        query.setParameter("displayGroup", DisplayGroup.GroupName.PLASMIDS);
+        List<MarkerDBLink> links = query.list();
+        return links.stream().collect(groupingBy(MarkerDBLink::getMarker));
     }
 
     private int deleteMarkerDBLinksFromList(List<MarkerDBLink> dbLinks) {

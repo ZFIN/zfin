@@ -5,7 +5,8 @@ import org.apache.commons.lang3.Range;
 import org.springframework.util.CollectionUtils;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.ZdbID;
-import org.zfin.marker.Transcript;
+import org.zfin.marker.Marker;
+import org.zfin.sequence.MarkerDBLink;
 
 import java.util.*;
 import java.util.function.Function;
@@ -149,7 +150,7 @@ public class StatisticService<Entity extends EntityZdbID, SubEntity extends Enti
         });
     }
 
-    protected ColumnValues populateColumnStat(Set<Entity> entitySet, ColumnStats<Entity, Transcript> columnsStats, Set<Entity> unfilteredEntitySet) {
+    protected ColumnValues populateColumnStat(Set<Entity> entitySet, ColumnStats<Entity, SubEntity> columnsStats, Set<Entity> unfilteredEntitySet) {
         ColumnValues columnValValues = new ColumnValues();
         columnValValues.setTotalNumber(entitySet.size());
         columnValValues.setTotalDistinctNumber(getTotalDistinctNumberOnObject(List.of(new ArrayList<>(entitySet)), columnsStats.getSingleValueEntityFunction()));
@@ -160,6 +161,16 @@ public class StatisticService<Entity extends EntityZdbID, SubEntity extends Enti
             columnValValues.setHistogram(unfilteredHistogram);
         }
         return columnValValues;
+    }
+
+    protected void addSubEntityColumnStatsToStatRow(List<ColumnStats<Entity, SubEntity>> subEntityColStats, Map<Entity, List<SubEntity>> filteredMap, Map<Entity, List<SubEntity>> unfilteredMap, StatisticRow<Entity, SubEntity> row) {
+        subEntityColStats.forEach(columnStats -> row.put(columnStats, populateSubEntityColumnStat(filteredMap, columnStats, unfilteredMap)));
+    }
+
+    protected StatisticRow<Entity, SubEntity> addEntityColumnStatsToStatRow(List<ColumnStats<Entity, SubEntity>> entityColumnStats, Set<Entity> filteredSet, Set<Entity> unfilteredSet) {
+        StatisticRow<Entity, SubEntity> row = new StatisticRow<>();
+        entityColumnStats.forEach(columnStats -> row.put(columnStats, populateColumnStat(filteredSet, columnStats, unfilteredSet)));
+        return row;
     }
 
 
