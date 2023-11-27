@@ -2995,18 +2995,28 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return markerTranscriptMap;
     }
 
+    private static Map<Marker, List<MarkerDBLink>> markerListMap = null;
+
     @Override
-    public Map<Marker, List<MarkerDBLink>> getAllPlasmids(Pagination pagination) {
+    public Map<Marker, List<MarkerDBLink>> getAllPlasmids(DisplayGroup.GroupName... groupNames) {
+        if (markerListMap != null) {
+            return markerListMap;
+        }
         String hql = """
             select link from MarkerDBLink link, DisplayGroupMember mem, DisplayGroup g
             where mem.displayGroup = g
-            AND g.groupName= :displayGroup
             AND mem in elements(link.referenceDatabase.displayGroupMembers)
              """;
+        if (groupNames != null) {
+            hql += "AND g.groupName in (:displayGroup)";
+        }
         Query<MarkerDBLink> query = HibernateUtil.currentSession().createQuery(hql, MarkerDBLink.class);
-        query.setParameter("displayGroup", DisplayGroup.GroupName.PLASMIDS);
+        if (groupNames != null) {
+            query.setParameterList("displayGroup", Arrays.asList(groupNames));
+        }
         List<MarkerDBLink> links = query.list();
-        return links.stream().collect(groupingBy(MarkerDBLink::getMarker));
+        markerListMap = links.stream().collect(groupingBy(MarkerDBLink::getMarker));
+        return markerListMap;
     }
 
     private int deleteMarkerDBLinksFromList(List<MarkerDBLink> dbLinks) {

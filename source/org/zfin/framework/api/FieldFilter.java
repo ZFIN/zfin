@@ -40,7 +40,7 @@ public enum FieldFilter {
     ANATOMY("anatomy"),
 
     STAGE("stage"),
-    EXPERIMENT("experiment"), TYPE("type"), STATUS("status"), STATUS_EMPTY("empty"), TRANSCRIPT_ID("ID"), PLASMID("plasmid");
+    EXPERIMENT("experiment"), TYPE("type"), STATUS("status"), STATUS_EMPTY("empty"), TRANSCRIPT_ID("ID"), PLASMID("plasmid"), DISPLAY_GROUP("displayGroup");
 
     private String name;
 

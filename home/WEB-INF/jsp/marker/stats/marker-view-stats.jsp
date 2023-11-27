@@ -2,7 +2,7 @@
 
 <c:set var="SUMMARY" value="Summary"/>
 <c:set var="TRANSCRIPT" value="Transcript"/>
-<c:set var="PLASMIDS" value="Plasmids"/>
+<c:set var="PLASMIDS" value="Plasmids and Pathways"/>
 
 <z:dataPage
         sections="${[SUMMARY, TRANSCRIPT, PLASMIDS]}">

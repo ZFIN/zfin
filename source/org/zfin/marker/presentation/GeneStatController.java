@@ -33,6 +33,7 @@ public class GeneStatController {
     private static final String GENE_SYMBOL = "geneSymbol";
     private static final String GENE_TYPE = "geneType";
     private static final String PLASMID = "plasmidAccession";
+    private static final String DISPLAY_GROUP = "displayGroup";
     private static final String TRANSCRIPT_TYPE = "transcriptType";
     private static final String TRANSCRIPT_ID = "transcriptId";
     private static final String TRANSCRIPT_STATUS = "transcriptStatus";
@@ -80,6 +81,7 @@ public class GeneStatController {
                                                                                    @RequestParam(value = FILTER + GENE_SYMBOL, required = false) String geneSymbol,
                                                                                    @RequestParam(value = FILTER + GENE_TYPE, required = false) String geneType,
                                                                                    @RequestParam(value = FILTER + PLASMID, required = false) String plasmid,
+                                                                                   @RequestParam(value = FILTER + DISPLAY_GROUP, required = false) String displayGroup,
                                                                                    @Version Pagination pagination) {
 
         if(StringUtils.isNotEmpty(geneID)){
@@ -93,6 +95,9 @@ public class GeneStatController {
         }
         if(StringUtils.isNotEmpty(plasmid)){
             pagination.addFieldFilter(FieldFilter.PLASMID, plasmid);
+        }
+        if(StringUtils.isNotEmpty(displayGroup)){
+            pagination.addFieldFilter(FieldFilter.DISPLAY_GROUP, displayGroup);
         }
         GeneDbLinkStatisticService service = new GeneDbLinkStatisticService();
         JsonResultResponse<StatisticRow<Marker, MarkerDBLink>> response = service.getPlasmidStats(pagination);

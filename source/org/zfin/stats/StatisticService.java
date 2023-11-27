@@ -7,7 +7,6 @@ import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
 import org.zfin.infrastructure.EntityZdbID;
 import org.zfin.infrastructure.ZdbID;
-import org.zfin.marker.Marker;
 
 import java.util.*;
 import java.util.function.Function;
@@ -72,6 +71,16 @@ public class StatisticService<Entity extends EntityZdbID, SubEntity extends Enti
             .count();
     }
 
+    private <ID> Long getTotalDistinctNumber(Collection<List<SubEntity>> map, Function<SubEntity, List<ID>> function) {
+        return map.stream()
+            .flatMap(Collection::stream)
+            .map(function)
+            .flatMap(Collection::stream)
+            .distinct()
+            .count();
+    }
+
+
     protected static <T extends ZdbID, O> long getTotalDistinctNumberOnObject(Collection<List<T>> map, Function<T, O> function) {
         return map.stream()
             .flatMap(Collection::stream)
@@ -124,21 +133,82 @@ public class StatisticService<Entity extends EntityZdbID, SubEntity extends Enti
     protected ColumnValues populateSubEntityColumnStat(Map<Entity, List<SubEntity>> entitytMap,
                                                        ColumnStats<Entity, SubEntity> columnStats,
                                                        Map<Entity, List<SubEntity>> unfilteredEntitytMap) {
-        ColumnValues colValues = getColumnValues(entitytMap, columnStats.getSingleValueSubEntityFunction(), columnStats);
+        ColumnValues columnValuesFiltered;
+        if (columnStats.isMultiValued()) {
+            columnValuesFiltered = getColumnValuesMultiValued(entitytMap, columnStats.getMultiValueSubEntityFunction());
+        } else {
+            columnValuesFiltered = getColumnValues(entitytMap, columnStats.getSingleValueSubEntityFunction(), columnStats);
+        }
         // no histogram available then no need to pick the complete list from unfiltered list
         if (!columnStats.isLimitedValues()) {
-            return colValues;
+            return columnValuesFiltered;
         }
-        ColumnValues colValuesUnfiltered = getColumnValues(unfilteredEntitytMap, columnStats.getSingleValueSubEntityFunction(), columnStats);
-        Map<String, Integer> histogramFiltered = colValues.getHistogram();
+
+        ColumnValues colValuesUnfiltered;
+        if (columnStats.isMultiValued()) {
+            colValuesUnfiltered = getColumnValuesMultiValued(unfilteredEntitytMap, columnStats.getMultiValueSubEntityFunction());
+        } else {
+            colValuesUnfiltered = getColumnValues(unfilteredEntitytMap, columnStats.getSingleValueSubEntityFunction(), columnStats);
+        }
+        Map<String, Integer> histogramFiltered = columnValuesFiltered.getHistogram();
         Map<String, Integer> histogramUnfiltered = colValuesUnfiltered.getHistogram();
         if (histogramUnfiltered == null) {
             return null;
         }
         populateFilteredCountsOnUnfilteredHistogram(histogramUnfiltered, histogramFiltered);
-        colValues.setHistogram(histogramUnfiltered);
-        return colValues;
+        columnValuesFiltered.setHistogram(histogramUnfiltered);
+        return columnValuesFiltered;
     }
+
+    private ColumnValues getColumnValuesMultiValued(Map<Entity, List<SubEntity>> publicationMap, Function<SubEntity, List<String>> function) {
+        ColumnValues assayValues = new ColumnValues();
+        assayValues.setTotalNumber(getTotalNumberMultiValued(publicationMap.values(), function));
+        assayValues.setTotalDistinctNumber(getTotalDistinctNumber(publicationMap.values(), function));
+        assayValues.setHistogram(getHistogramMultiValuedOnUniqueRow(publicationMap.values(), function));
+        assayValues.setCardinality(getCardinalityPerUniqueRow(publicationMap.values(), function));
+        assayValues.setMultiplicity(getCardinalityPerUniqueRow(publicationMap.values(), function));
+        assayValues.setUberHistogram(getHistogramMultiValued(publicationMap, function));
+        return assayValues;
+    }
+
+    private Map<String, Integer> getHistogramMultiValued(Map<Entity, List<SubEntity>> alleleMap, Function<SubEntity, List<String>> function) {
+        Map<String, List<String>> histogramRaw = alleleMap.values().stream()
+            .flatMap(Collection::stream)
+            .map(function)
+            .flatMap(Collection::stream)
+            .toList()
+            .stream()
+            .collect(groupingBy(o -> {
+                if (o == null)
+                    return "";
+                return o;
+            }));
+        return getValueSortedMap(histogramRaw);
+    }
+
+
+    private Map<String, Integer> getHistogramMultiValuedOnUniqueRow(Collection<List<SubEntity>> collection, Function<SubEntity, List<String>> function) {
+        Map<String, List<String>> histogramRaw = collection.stream()
+            .flatMap(Collection::stream)
+            .map(function)
+            .flatMap(Collection::stream)
+            .toList()
+            .stream()
+            .collect(groupingBy(o -> {
+                if (o == null)
+                    return "<empty>";
+                return o;
+            }));
+        return getValueSortedMap(histogramRaw);
+    }
+
+    private int getTotalNumberMultiValued(Collection<List<SubEntity>> map, Function<SubEntity, List<String>> function) {
+        return map.stream()
+            .flatMap(Collection::stream)
+            .map(function)
+            .mapToInt(List::size).sum();
+    }
+
 
     protected void populateFilteredCountsOnUnfilteredHistogram(Map<String, Integer> histogramUnfiltered, Map<String, Integer> histogramFiltered) {
         histogramUnfiltered.forEach((key, count) ->
@@ -191,8 +261,15 @@ public class StatisticService<Entity extends EntityZdbID, SubEntity extends Enti
             row.getColumns().values().stream().filter(column -> !column.getColumnDefinition().isSuperEntity())
                 .forEach(columnStats -> {
                     ColumnValues columnValues = new ColumnValues();
-                    columnValues.setTotalNumber(getTotalNumberBase(geneMap.get(key), columnStats.getColumnDefinition().getSingleValueSubEntityFunction()));
-                    columnValues.setTotalDistinctNumber(getTotalDistinctNumber(geneMap.get(key), columnStats.getColumnDefinition().getSingleValueSubEntityFunction()));
+                    if (columnStats.getColumnDefinition().isMultiValued()) {
+                        columnValues.setTotalNumber(getTotalNumberMultiValuedObject(geneMap.get(key), columnStats.getColumnDefinition().getMultiValueSubEntityFunction()));
+                        columnValues.setTotalDistinctNumber(getTotalDistinctNumberPerUberEntity(geneMap.get(key), columnStats.getColumnDefinition().getMultiValueSubEntityFunction()));
+                        columnValues.setCardinality(getCardinalityPerUniqueRow(List.of(geneMap.get(key)), columnStats.getColumnDefinition().getMultiValueSubEntityFunction()));
+
+                    } else {
+                        columnValues.setTotalNumber(getTotalNumberBase(geneMap.get(key), columnStats.getColumnDefinition().getSingleValueSubEntityFunction()));
+                        columnValues.setTotalDistinctNumber(getTotalDistinctNumber(geneMap.get(key), columnStats.getColumnDefinition().getSingleValueSubEntityFunction()));
+                    }
                     statRow.put(columnStats.getColumnDefinition(), columnValues);
                 });
 
@@ -200,6 +277,40 @@ public class StatisticService<Entity extends EntityZdbID, SubEntity extends Enti
         });
         return rows;
     }
+
+    private <ID> Range<Integer> getCardinalityPerUniqueRow(Collection<List<SubEntity>> map, Function<SubEntity, List<ID>> function) {
+        Map<String, Integer> cardinality = map.stream()
+            .flatMap(Collection::stream)
+            .filter(Objects::nonNull)
+            .collect(toMap(ZdbID::getZdbID,
+                o -> {
+                    List<ID> apply = function.apply(o);
+                    return apply == null ? 0 : apply.size();
+                },
+                // if duplicates occur just take one.
+                (a1, a2) -> a1));
+        if (MapUtils.isNotEmpty(cardinality))
+            return Range.between(Collections.max(cardinality.values()), Collections.min(cardinality.values()));
+        else return null;
+    }
+
+
+    private <ID> int getTotalDistinctNumberPerUberEntity(List<SubEntity> alleles, Function<SubEntity, List<ID>> function) {
+        return alleles.stream()
+            .map(function)
+            .flatMap(Collection::stream)
+            .collect(toSet())
+            .size();
+    }
+
+
+    private int getTotalNumberMultiValuedObject(List<SubEntity> map, Function<SubEntity, List<String>> function) {
+        return map.stream()
+            .map(function)
+            .filter(Objects::nonNull)
+            .mapToInt(List::size).sum();
+    }
+
 
     protected JsonResultResponse<StatisticRow<Entity, SubEntity>> getJsonResultResponse(Pagination pagination, StatisticRow<Entity, SubEntity> row, List<StatisticRow<Entity, SubEntity>> resultRows) {
         JsonResultResponse<StatisticRow<Entity, SubEntity>> response = new JsonResultResponse<>();

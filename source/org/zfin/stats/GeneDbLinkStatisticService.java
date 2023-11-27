@@ -3,12 +3,15 @@ package org.zfin.stats;
 import org.apache.commons.text.CaseUtils;
 import org.zfin.framework.api.*;
 import org.zfin.marker.Marker;
+import org.zfin.sequence.DisplayGroup;
 import org.zfin.sequence.MarkerDBLink;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
@@ -17,13 +20,18 @@ public class GeneDbLinkStatisticService extends GenePageStatisticService<MarkerD
 
     public JsonResultResponse<StatisticRow<Marker, MarkerDBLink>> getPlasmidStats(Pagination pagination) {
 
-        Map<Marker, List<MarkerDBLink>> geneMapUnfiltered = getMarkerRepository().getAllPlasmids(pagination);
+        Map<Marker, List<MarkerDBLink>> geneMapUnfiltered = getMarkerRepository().getAllPlasmids(DisplayGroup.GroupName.PLASMIDS, DisplayGroup.GroupName.PATHWAYS);
         Map<Marker, List<MarkerDBLink>> geneMapFilter = getFilteredMap(geneMapUnfiltered, new PlasmidFiltering(), pagination);
 
         StatisticRow<Marker, MarkerDBLink> row = getMarkerStatisticRowFromEntity(geneMapUnfiltered, geneMapFilter);
 
         List<ColumnStats<Marker, MarkerDBLink>> subEntityColStats = new ArrayList<>();
         subEntityColStats.add(new ColumnStats<>(Header.PLASMID.columnName, false, true, false, false, MarkerDBLink::getAccessionNumber));
+        subEntityColStats.add(new ColumnStats<>(Header.DISPLAY_GROUP.columnName, false, true, true, true, true, markerDBLink -> {
+            Set<DisplayGroup> displayGroups = markerDBLink.getReferenceDatabase().getDisplayGroups();
+            if (displayGroups == null) return null;
+            return displayGroups.stream().map(displayGroup -> displayGroup.getGroupName().name()).toList();
+        }));
 
         addSubEntityColumnStatsToStatRow(subEntityColStats, geneMapFilter, geneMapUnfiltered, row);
 
@@ -34,10 +42,7 @@ public class GeneDbLinkStatisticService extends GenePageStatisticService<MarkerD
 
     public enum Header {
 
-        GENE_ID("Gene ID", Marker::getZdbID),
-        GENE_SYMBOL("Gene Symbol", Marker::getAbbreviation),
-        GENE_TYPE("Gene Type", marker -> marker.getMarkerType().getType().toString()),
-        PLASMID("Plasmid Accession", null);
+        GENE_ID("Gene ID", Marker::getZdbID), GENE_SYMBOL("Gene Symbol", Marker::getAbbreviation), GENE_TYPE("Gene Type", marker -> marker.getMarkerType().getType().toString()), DISPLAY_GROUP("Display Group", null), PLASMID("Plasmid Accession", null);
 
         final String columnName;
         final Function<Marker, String> attributeFunction;
@@ -62,10 +67,16 @@ public class GeneDbLinkStatisticService extends GenePageStatisticService<MarkerD
 
         public PlasmidFiltering() {
             filterFieldMap.put(FieldFilter.PLASMID, idFilter);
+            filterFieldMap.put(FieldFilter.DISPLAY_GROUP, displayGroupFilter);
         }
 
-        public static FilterFunction<MarkerDBLink, String> idFilter =
-            (dbLink, value) -> FilterFunction.contains(dbLink.getAccessionNumber(), value);
+        public static FilterFunction<MarkerDBLink, String> idFilter = (dbLink, value) -> FilterFunction.contains(dbLink.getAccessionNumber(), value);
+
+        public static FilterFunction<MarkerDBLink, String> displayGroupFilter = (dbLink, value) -> {
+            Set<DisplayGroup> displayGroups = dbLink.getReferenceDatabase().getDisplayGroups();
+            if (displayGroups == null) return false;
+            return FilterFunction.contains(String.join(",", displayGroups.stream().map(displayGroup -> displayGroup.getGroupName().name()).collect(Collectors.toSet())), value);
+        };
 
     }
 
