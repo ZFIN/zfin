@@ -26,6 +26,7 @@ public class PDBActionProcessor implements ActionProcessor {
     public void processActions(List<SecondaryTermLoadAction> actions) {
         processInserts(actions);
         processDeletes(actions);
+        currentSession().flush();
     }
 
     private void processInserts(List<SecondaryTermLoadAction> actions) {

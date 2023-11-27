@@ -74,11 +74,13 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
     @Override
-    public void insertActiveDataWithoutValidation(String zdbID) {
-        Session session = HibernateUtil.currentSession();
-        ActiveData activeData = new ActiveData();
-        activeData.setZdbIDWithoutValidation(zdbID);
-        session.save(activeData);
+    public void insertActiveDataWithoutValidationIgnoreConflict(String zdbID) {
+        currentSession().createSQLQuery("""
+            INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES (:zdbID)
+            ON CONFLICT (zactvd_zdb_id)
+            DO NOTHING
+            """).setParameter("zdbID", zdbID)
+                .executeUpdate();
     }
 
     public void insertActiveSource(String zdbID) {

@@ -6,6 +6,7 @@ import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 import java.util.List;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 
 /**
  * Creates actions for adding and deleting protein domain information (replaces part of protein_domain_info_load.pl)
@@ -26,16 +27,12 @@ public class InterproProteinActionProcessor implements ActionProcessor {
     public void processActions(List<SecondaryTermLoadAction> actions) {
         processInsertQueries(actions);
         processDeleteQueries(actions);
+        currentSession().flush();
     }
 
     private static void processInsertQueries(List<SecondaryTermLoadAction> actions) {
         for(SecondaryTermLoadAction action : actions) {
-            currentSession().createSQLQuery("""
-            INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES (:uniprot)
-            ON CONFLICT (zactvd_zdb_id)
-            DO NOTHING
-            """).setParameter("uniprot", action.getAccession())
-                    .executeUpdate();
+            getInfrastructureRepository().insertActiveDataWithoutValidationIgnoreConflict(action.getAccession());
 
             currentSession().createSQLQuery("""
             INSERT INTO protein (up_uniprot_id, up_fdbcont_zdb_id, up_length) VALUES (:uniprot, :fdbcont, :length)

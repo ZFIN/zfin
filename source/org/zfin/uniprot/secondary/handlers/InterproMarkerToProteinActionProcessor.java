@@ -5,6 +5,7 @@ import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
 import java.util.List;
 
+import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 
 
@@ -26,6 +27,7 @@ public class InterproMarkerToProteinActionProcessor implements ActionProcessor {
     public void processActions(List<SecondaryTermLoadAction> actions) {
         processInserts(actions);
         processDeletes(actions);
+        currentSession().flush();
     }
 
     private void processInserts(List<SecondaryTermLoadAction> actions) {

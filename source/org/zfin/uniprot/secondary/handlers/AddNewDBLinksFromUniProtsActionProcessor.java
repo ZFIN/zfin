@@ -10,9 +10,8 @@ import org.zfin.uniprot.secondary.SecondaryTermLoadService;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
+import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.repository.RepositoryFactory.*;
 
 /**
@@ -51,6 +50,7 @@ public class AddNewDBLinksFromUniProtsActionProcessor implements ActionProcessor
         }
         Publication publication = getPublicationRepository().getPublication(SecondaryTermLoadService.DBLINK_PUBLICATION_ATTRIBUTION_ID);
         getSequenceRepository().addDBLinks(dblinks, publication, 50);
+        currentSession().flush();
     }
 
 }

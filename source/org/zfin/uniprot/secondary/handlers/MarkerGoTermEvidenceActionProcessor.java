@@ -16,6 +16,7 @@ import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 import java.util.Date;
 import java.util.List;
 
+import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.repository.RepositoryFactory.*;
 
 /**
@@ -38,7 +39,13 @@ public class MarkerGoTermEvidenceActionProcessor implements ActionProcessor {
 
     @Override
     public void processActions(List<SecondaryTermLoadAction> subTypeActions) {
+        int i = 0;
         for(SecondaryTermLoadAction action : subTypeActions) {
+            i++;
+            if (i == 1000) {
+                log.info("processed " + i + " of " + subTypeActions.size());
+                i = 0;
+            }
             if (action.getType().equals(SecondaryTermLoadAction.Type.LOAD)) {
                 loadMarkerGoTermEvidence(action);
             }
@@ -46,6 +53,7 @@ public class MarkerGoTermEvidenceActionProcessor implements ActionProcessor {
                 deleteMarkerGoTermEvidence(action);
             }
         }
+        currentSession().flush();
     }
 
     private static void loadMarkerGoTermEvidence(SecondaryTermLoadAction action)  {

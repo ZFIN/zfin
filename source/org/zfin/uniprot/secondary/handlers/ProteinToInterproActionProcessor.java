@@ -30,6 +30,7 @@ public class ProteinToInterproActionProcessor implements ActionProcessor {
                 processDelete(action);
             }
         }
+        currentSession().flush();
     }
 
     private void processInsert(SecondaryTermLoadAction action) {

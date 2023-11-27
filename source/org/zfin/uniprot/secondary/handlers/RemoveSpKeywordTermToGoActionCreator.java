@@ -70,6 +70,7 @@ public class RemoveSpKeywordTermToGoActionCreator implements ActionCreator {
                         .accession(record.getGoID())
                         .goID(record.getGoID())
                         .goTermZdbID(record.getGoTermZdbID())
+                        .relatedEntityFields(record.toMap())
                         .geneZdbID(record.getMarkerZdbID())
                         .build()
         ).toList();
