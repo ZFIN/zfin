@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.stream.Collectors.groupingBy;
-
 public class MeshChebiDAO {
 
     protected Session entityManager;
@@ -53,11 +51,7 @@ public class MeshChebiDAO {
     }
 
     public String getMeshID(String oboID) {
-        MeshChebiMapping mapping = findAll().get(oboID);
-        if ( mapping == null) {
-            return null;
-        }
-        return mapping.getMeshID();
+        MeshChebiMapping meshChebiMapping = findAll().get(oboID);
+        return meshChebiMapping == null ? null : meshChebiMapping.getMeshID();
     }
 }
-

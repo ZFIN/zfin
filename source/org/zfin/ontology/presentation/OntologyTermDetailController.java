@@ -287,7 +287,7 @@ public class OntologyTermDetailController {
         }
         if (term.getOntology().equals(Ontology.CHEBI)) {
             String meshID = MatchingTermService.getMeshID(term.getOboID());
-            if (meshID != null) {
+            if(meshID != null) {
                 model.addAttribute("meshID", meshID.replace("MESH:", ""));
             }
         }
