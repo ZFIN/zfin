@@ -11,7 +11,7 @@
           <name>LOAD_NCBI_ONE_WAY_GENES</name>
           <description>Enable this flag to additionally add NCBI genes that have a link to ZFIN without an equivalent link back from ZFIN to NCBI.
           These are validated by having a shared ensembl id.  See ZFIN-8517 for details.</description>
-          <defaultValue>false</defaultValue>
+          <defaultValue>true</defaultValue>
         </hudson.model.BooleanParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>

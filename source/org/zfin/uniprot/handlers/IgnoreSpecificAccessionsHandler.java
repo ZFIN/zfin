@@ -10,6 +10,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.*;
 
+/**
+ * This handler will ignore any accessions that are not explicitly whitelisted via the given file.
+ * This is useful for testing, or troubleshooting
+ * The file should be a list of accessions, one per line.
+ * The file should be specified via the environment variable ACCESSIONS_INCLUSIONS_FILE.
+ */
 @Log4j2
 public class IgnoreSpecificAccessionsHandler implements UniProtLoadHandler {
     @Override

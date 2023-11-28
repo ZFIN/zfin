@@ -26,3 +26,15 @@ DELETE FROM db_link WHERE "dblink_linked_recid" = 'ZDB-GENE-060503-858' and "dbl
 
 -- add column to uniprot_release table: upr_secondary_load_date
 ALTER TABLE uniprot_release ADD COLUMN upr_secondary_load_date timestamp without time zone;
+
+-- add a unique constraint to uniprot_release table: upr_path
+ALTER TABLE uniprot_release ADD CONSTRAINT upr_path_unique UNIQUE (upr_path);
+
+-- populate uniprot_release table:
+INSERT INTO uniprot_release
+("upr_date", "upr_size", "upr_md5", "upr_path", "upr_download_date")
+VALUES
+('2023-06-28', '102650055', '93b8561ec57603f4df80270d03b6f018', '2023-06-28/pre_zfin.dat', '2023-06-28'),
+('2023-09-13', '102916208', 'c14187a949c9995945d23618e2436fd6', '2023-09-13/pre_zfin.dat', '2023-09-13'),
+('2023-11-08', '102714638', 'fe4d82492dc7bd9a67d1fcd943f41b63', '2023-11-08/pre_zfin.dat', '2023-11-08')
+ON CONFLICT DO NOTHING;

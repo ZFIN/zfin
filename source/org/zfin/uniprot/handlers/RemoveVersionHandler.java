@@ -13,6 +13,10 @@ import java.util.Set;
 import static org.zfin.uniprot.UniProtTools.setAccession;
 import static org.zfin.uniprot.UniProtTools.transformCrossRefNoteSetByTerm;
 
+/**
+ * Removes the version number from the RefSeq accession.
+ * For example, NM_001002225.1 becomes NM_001002225
+ */
 public class RemoveVersionHandler implements UniProtLoadHandler {
     @Override
     public void handle(Map<String, RichSequenceAdapter> uniProtRecords, Set<UniProtLoadAction> actions, UniProtLoadContext context) {

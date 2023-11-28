@@ -45,6 +45,7 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
     private final String outputReportName;
     private final boolean commitChanges;
     private final String contextOutputFile;
+    private final String contextInputFile;
     private UniProtLoadContext context;
 
     private UniProtRelease release;
@@ -80,8 +81,9 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         String outputReportName = getArgOrEnvironmentVar(args, 2, "UNIPROT_OUTPUT_REPORT_FILE", calculateDefaultOutputFileName(startTime, "report.html"));
         String commitChanges = getArgOrEnvironmentVar(args, 3, "UNIPROT_COMMIT_CHANGES", "false");
         String contextOutputFile = getArgOrEnvironmentVar(args, 4, "UNIPROT_CONTEXT_FILE", "");
+        String contextInputFile = getArgOrEnvironmentVar(args, 5, "UNIPROT_CONTEXT_INPUT_FILE", "");
 
-        UniProtLoadTask task = new UniProtLoadTask(inputFileName, outputJsonName, outputReportName, "true".equals(commitChanges), contextOutputFile);
+        UniProtLoadTask task = new UniProtLoadTask(inputFileName, outputJsonName, outputReportName, "true".equals(commitChanges), contextOutputFile, contextInputFile);
         task.runTask();
     }
 
@@ -89,12 +91,13 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         return Optional.ofNullable(getInfrastructureRepository().getLatestUnprocessedUniProtRelease());
     }
 
-    public UniProtLoadTask(String inputFileName, String outputJsonName, String outputReportName, boolean commitChanges, String contextOutputFile) {
+    public UniProtLoadTask(String inputFileName, String outputJsonName, String outputReportName, boolean commitChanges, String contextOutputFile, String contextInputFile) {
         this.inputFileName = inputFileName;
         this.outputJsonName = outputJsonName;
         this.outputReportName = outputReportName;
         this.commitChanges = commitChanges;
         this.contextOutputFile = contextOutputFile;
+        this.contextInputFile = contextInputFile;
     }
 
     public void runTask() throws IOException, BioException, SQLException {
@@ -198,7 +201,17 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
 
 
     private void calculateContext() {
-        context = UniProtLoadContext.createFromDBConnection();
+        if (contextInputFile != null && !contextInputFile.isEmpty() && new File(contextInputFile).exists()) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                log.info("Reading context file: " + contextInputFile + ".");
+                context = objectMapper.readValue(new File(contextInputFile), UniProtLoadContext.class);
+            } catch (IOException e) {
+                log.error("Error reading context file " + contextInputFile + ": " + e.getMessage(), e);
+            }
+        } else {
+            context = UniProtLoadContext.createFromDBConnection();
+        }
     }
 
     private static String calculateDefaultOutputFileName(Date startTime, String extension) {

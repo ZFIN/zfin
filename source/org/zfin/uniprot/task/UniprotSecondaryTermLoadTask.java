@@ -74,13 +74,24 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
         String actionsFileName = "";
         String contextInputFile = "";
 
-        //mode can be one of the following:
+        //mode can be one of the following (REPORT is default):
         // 1. "REPORT" - generate actions from the input file and write them to a file (no load)
         // 2. "LOAD" - load actions from a file into the database
         // 3. "LOAD_AND_REPORT" - generate actions from the input file, write them to a file, and load them into the database
-        String mode = getArgOrEnvironmentVar(args, 0, "UNIPROT_LOAD_MODE", "REPORT");
+        String modeArg = getArgOrEnvironmentVar(args, 0, "UNIPROT_LOAD_MODE", "");
+        LoadTaskMode mode = LoadTaskMode.valueOf(modeArg.toUpperCase());
 
-        if (mode.equalsIgnoreCase("REPORT") || mode.equalsIgnoreCase("LOAD_AND_REPORT")) {
+        //if no "mode" is provided, check the environment variable UNIPROT_COMMIT_CHANGES from jenkins
+        if (StringUtils.isEmpty(modeArg)) {
+            String commitChangesEnvironmentVar = System.getenv("UNIPROT_COMMIT_CHANGES");
+            if (StringUtils.isNotEmpty(commitChangesEnvironmentVar) && commitChangesEnvironmentVar.equalsIgnoreCase("true")) {
+                mode = LoadTaskMode.LOAD_AND_REPORT;
+            } else {
+                mode = LoadTaskMode.REPORT;
+            }
+        }
+
+        if (mode.equals(LoadTaskMode.REPORT) || mode.equals(LoadTaskMode.LOAD_AND_REPORT)) {
             inputFileName = getArgOrEnvironmentVar(args, 1, "UNIPROT_INPUT_FILE", "");
             ipToGoTranslationFile = getArgOrEnvironmentVar(args, 2, "IP2GO_FILE", "");
             ecToGoTranslationFile = getArgOrEnvironmentVar(args, 3, "EC2GO_FILE", "");
@@ -88,7 +99,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
             domainFile = getArgOrEnvironmentVar(args, 4, "DOMAIN_FILE", "");
             outputJsonName = getArgOrEnvironmentVar(args, 5, "UNIPROT_OUTPUT_FILE", defaultOutputFileName(inputFileName));
             contextInputFile = getArgOrEnvironmentVar(args, 6, "CONTEXT_INPUT_FILE", "");
-        } else if (mode.equalsIgnoreCase("LOAD")) {
+        } else if (mode.equals(LoadTaskMode.LOAD)) {
             actionsFileName = getArgOrEnvironmentVar(args, 1, "UNIPROT_ACTIONS_FILE", "");
         } else {
             printUsage();
@@ -118,8 +129,8 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
                 .findFirst();
     }
 
-    public UniprotSecondaryTermLoadTask(String mode, String inputFileName, String outputJsonName, String ipToGoTranslationFile, String ecToGoTranslationFile, String upToGoTranslationFile, String domainFile, String contextInputFile, String actionsFileName) {
-        this.mode = LoadTaskMode.valueOf(mode.toUpperCase());
+    public UniprotSecondaryTermLoadTask(LoadTaskMode mode, String inputFileName, String outputJsonName, String ipToGoTranslationFile, String ecToGoTranslationFile, String upToGoTranslationFile, String domainFile, String contextInputFile, String actionsFileName) {
+        this.mode = mode;
         this.inputFileName = inputFileName;
         this.outputJsonName = outputJsonName;
         this.outputReportName = outputJsonName + ".report.html";
