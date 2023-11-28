@@ -33,6 +33,13 @@ const MarkerEditSequences = ({markerId, group = 'marker linked sequence', groupD
             if (values && (!Array.isArray(values.references) || values.references.length === 0)) {
                 return 'At least one reference is required';
             }
+
+            //if the selected DB is not RefSeq, then the accession should not be RefSeq
+            if (values && values.referenceDatabaseZdbID && values.referenceDatabaseZdbID !== 'ZDB-FDBCONT-040412-39') {
+                if (values.accession && values.accession.match(/^[XN][MP]_/)) {
+                    return 'Accession appears to be a RefSeq accession, but the reference database is not RefSeq.';
+                }
+            }
             return false;
         },
     });
