@@ -15,13 +15,13 @@
 
         <z:section title="${TRANSCRIPT}">
             <z:section title="">
-                <div class="__react-root" id="MarkerTranscriptStatTable" data-type="transcript"></div>
+                <div class="__react-root" id="MarkerStatisticTable" data-type="transcript"></div>
             </z:section>
         </z:section>
 
         <z:section title="${PLASMIDS}">
             <z:section title="">
-                <div class="__react-root" id="MarkerTranscriptStatTable" data-type="plasmids"></div>
+                <div class="__react-root" id="MarkerStatisticTable" data-type="plasmids"></div>
             </z:section>
         </z:section>
 

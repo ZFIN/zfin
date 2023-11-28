@@ -47,7 +47,7 @@ const StatisticTable = ({
                                 {( value.columnStat.histogram) && (
                                     <HeaderCell
                                         column={columnGenerateOptions(key, key, value.columnDefinition.filterName,value.columnStat.histogram)}
-                                        selectionFilterDisplay={Object.entries(value.columnStat.histogram).map(() => key+'d')}
+                                        selectionFilterDisplay={(keyName) => keyName + ' [' + value.columnStat.histogram[keyName] + ']'}
                                         filterValue={tableState.filter && tableState.filter[key]}
                                         onFilterChange={handleFilterChange}
                                     />

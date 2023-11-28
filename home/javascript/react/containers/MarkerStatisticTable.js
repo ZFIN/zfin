@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import StatisticDataTable from '../components/data-table/StatisticDataTable';
 
 
-const MarkerTranscriptStatTable = ({type, show = false}) => {
+const MarkerStatisticTable = ({type, show = false}) => {
     const [hasData, setHasData] = useState(false);
 
     function showData() {
@@ -31,9 +31,9 @@ const MarkerTranscriptStatTable = ({type, show = false}) => {
     );
 };
 
-MarkerTranscriptStatTable.propTypes = {
+MarkerStatisticTable.propTypes = {
     type: PropTypes.string,
     show: PropTypes.bool,
 };
 
-export default MarkerTranscriptStatTable;
+export default MarkerStatisticTable;
