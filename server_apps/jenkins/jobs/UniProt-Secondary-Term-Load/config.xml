@@ -14,24 +14,6 @@
   <keepDependencies>false</keepDependencies>
 
   <properties>
-<!--    <hudson.model.ParametersDefinitionProperty>-->
-<!--      <parameterDefinitions>-->
-<!--        <hudson.model.ChoiceParameterDefinition>-->
-<!--          <name>UNIPROT_LOAD_MODE</name>-->
-<!--          <description>Select the run mode. "REPORT" just generates a report of changes that would be loaded.-->
-<!--            "LOAD" assumes a previously run report is available and loads those changes.  "LOAD_AND_REPORT"-->
-<!--            runs the report and then loads the changes.-->
-<!--          </description>-->
-<!--          <choices class="java.util.Arrays$ArrayList">-->
-<!--            <a>-->
-<!--              <string>REPORT</string>-->
-<!--              <string>LOAD</string>-->
-<!--              <string>LOAD_AND_REPORT</string>-->
-<!--            </a>-->
-<!--          </choices>-->
-<!--        </hudson.model.ChoiceParameterDefinition>-->
-<!--      </parameterDefinitions>-->
-<!--    </hudson.model.ParametersDefinitionProperty>-->
 
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>

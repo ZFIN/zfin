@@ -44,7 +44,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
     private enum LoadTaskMode {
         REPORT,
         LOAD,
-        LOAD_AND_REPORT
+        REPORT_AND_LOAD
     }
     private final LoadTaskMode mode;
     private final String actionsFileName;
@@ -77,21 +77,26 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
         //mode can be one of the following (REPORT is default):
         // 1. "REPORT" - generate actions from the input file and write them to a file (no load)
         // 2. "LOAD" - load actions from a file into the database
-        // 3. "LOAD_AND_REPORT" - generate actions from the input file, write them to a file, and load them into the database
+        // 3. "REPORT_AND_LOAD" - generate actions from the input file, write them to a file, and load them into the database
         String modeArg = getArgOrEnvironmentVar(args, 0, "UNIPROT_LOAD_MODE", "");
-        LoadTaskMode mode = LoadTaskMode.valueOf(modeArg.toUpperCase());
+        LoadTaskMode mode = null;
+        try {
+            mode = LoadTaskMode.valueOf(modeArg.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            log.debug("Invalid mode or no mode provided, defaulting to REPORT: " + modeArg);
+        }
 
         //if no "mode" is provided, check the environment variable UNIPROT_COMMIT_CHANGES from jenkins
-        if (StringUtils.isEmpty(modeArg)) {
+        if (mode == null) {
             String commitChangesEnvironmentVar = System.getenv("UNIPROT_COMMIT_CHANGES");
             if (StringUtils.isNotEmpty(commitChangesEnvironmentVar) && commitChangesEnvironmentVar.equalsIgnoreCase("true")) {
-                mode = LoadTaskMode.LOAD_AND_REPORT;
+                mode = LoadTaskMode.REPORT_AND_LOAD;
             } else {
                 mode = LoadTaskMode.REPORT;
             }
         }
 
-        if (mode.equals(LoadTaskMode.REPORT) || mode.equals(LoadTaskMode.LOAD_AND_REPORT)) {
+        if (mode.equals(LoadTaskMode.REPORT) || mode.equals(LoadTaskMode.REPORT_AND_LOAD)) {
             inputFileName = getArgOrEnvironmentVar(args, 1, "UNIPROT_INPUT_FILE", "");
             ipToGoTranslationFile = getArgOrEnvironmentVar(args, 2, "IP2GO_FILE", "");
             ecToGoTranslationFile = getArgOrEnvironmentVar(args, 3, "EC2GO_FILE", "");
@@ -148,7 +153,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
         initialize();
         log.debug("Starting UniProtSecondaryTermLoadTask for file " + inputFileName + ".");
 
-        if (mode.equals(LoadTaskMode.REPORT) || mode.equals(LoadTaskMode.LOAD_AND_REPORT)) {
+        if (mode.equals(LoadTaskMode.REPORT) || mode.equals(LoadTaskMode.REPORT_AND_LOAD)) {
             try (BufferedReader inputFileReader = new BufferedReader(new java.io.FileReader(inputFileName))) {
                 loadTranslationFiles();
                 UniprotReleaseRecords entries = readUniProtEntries(inputFileReader);
@@ -167,7 +172,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
                     System.exit(1);
                 }
 
-                if (mode.equals(LoadTaskMode.LOAD_AND_REPORT)) {
+                if (mode.equals(LoadTaskMode.REPORT_AND_LOAD)) {
                     pipeline.setRelease(release);
                     pipeline.processActions();
                 }
@@ -246,7 +251,6 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
     }
 
     private void writeContext(SecondaryLoadContext context) {
-//        log.debug("TODO: Implement serialization for writing context file: " + contextOutputFile + ".");
         if (contextOutputFile != null && !contextOutputFile.isEmpty()) {
             ObjectMapper objectMapper = new ObjectMapper();
             try {
@@ -378,7 +382,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
         Optional<UniProtRelease> releaseOptional = getLatestUnprocessedUniProtRelease();
 
         //only need an input file if we are generating a report of actions, otherwise, we are loading directly from the actions
-        if (mode.equals(LoadTaskMode.REPORT) || mode.equals(LoadTaskMode.LOAD_AND_REPORT)) {
+        if (mode.equals(LoadTaskMode.REPORT) || mode.equals(LoadTaskMode.REPORT_AND_LOAD)) {
             if (inputFileName.isEmpty() && releaseOptional.isPresent()) {
                 log.debug("Loading from latest UniProt release: " + releaseOptional.get().getPath() + "(md5:" + releaseOptional.get().getMd5() + ")" );
                 inputFileName = releaseOptional.get().getLocalFile().getAbsolutePath();
@@ -398,9 +402,9 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
 
     public static void printUsage() {
         System.out.println("Usage: uniprotSecondaryTermLoadTask <mode> [more args]");
-        System.out.println("  mode: 'load' or 'report' or 'load_and_report'");
-        System.out.println("  if mode is 'load', more args = <actions file>");
-        System.out.println("  if mode is 'load_and_report' or 'report', more args = <input file> <up to go translation file> <ip to go translation file> <ec to go translation file> <output file>");
+        System.out.println("  mode: 'LOAD' or 'REPORT' or 'REPORT_AND_LOAD'");
+        System.out.println("  if mode is 'LOAD', more args = <actions file>");
+        System.out.println("  if mode is 'REPORT_AND_LOAD' or 'REPORT', more args = <input file> <up to go translation file> <ip to go translation file> <ec to go translation file> <output file>");
         System.out.println("  instead of arguments, you can use environment variables: UNIPROT_LOAD_MODE, INPUT_FILE, UP_TO_GO_TRANSLATION_FILE, IP_TO_GO_TRANSLATION_FILE, EC_TO_GO_TRANSLATION_FILE, OUTPUT_FILE");
         System.out.println("  or, for load mode, env vars: UNIPROT_LOAD_MODE, UNIPROT_ACTIONS_FILE");
         System.out.println("  the actions file is generated by the report mode");
