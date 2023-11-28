@@ -2639,6 +2639,7 @@ where psg_mrkr_zdb_id[1,7] = "ZDB-ATB"
             <Column id="31">Protein Consequence Position Start</Column>
             <Column id="32">Protein Consequence Position End</Column>
             <Column id="33">Protein Reference Sequence</Column>
+            <Column id="34">Chromosome</Column>
         </Download>
         <Download orderIndex="1">
             <Name>
