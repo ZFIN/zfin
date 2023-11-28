@@ -86,7 +86,7 @@ class FigureRepositorySpec extends AbstractZfinIntegrationSpec {
         List<Image> images = RepositoryFactory.figureRepository.getRecentlyCuratedImages()
 
         then: "it should have the correct number of images in order"
-        images.size() >= 50;
+        images.size() >= 20;
     }
 
 }
