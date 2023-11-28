@@ -15,7 +15,7 @@ from pub_tracking_history,
      publication
 where zdb_id = pth_pub_zdb_id
   and pth_location_id in (6,10)
-  and ((lower(title) ilike  '%xenograf%') OR (lower(title) ilike  '%xenotranspl%'))
+  and (title ilike  '%xenograf%' OR title ilike  '%xenotranspl%')
 ;
 
 
@@ -26,7 +26,7 @@ where exists(
               from publication
               where zdb_id = pth_pub_zdb_id
                 and pth_location_id in (6,10)
-                and ((lower(title) ilike  '%xenograf%') OR (lower(title) ilike  '%xenotranspl%'))
+                and (title ilike  '%xenograf%' OR title ilike  '%xenotranspl%')
           )
 ;
 
@@ -38,7 +38,7 @@ from pub_tracking_history,
      publication
 where zdb_id = pth_pub_zdb_id
   and pth_location_id in (6,10)
-  and ((lower(pub_abstract) ilike  '%xenograf%') OR (lower(pub_abstract) ilike  '%xenotranspl%'))
+  and (pub_abstract ilike  '%xenograf%' OR pub_abstract ilike  '%xenotranspl%')
 ;
 
 update pub_tracking_history
@@ -48,7 +48,7 @@ where exists(
               from publication
               where zdb_id = pth_pub_zdb_id
                 and pth_location_id in (6,10)
-                and ((lower(pub_abstract) ilike  '%xenograf%') OR (lower(pub_abstract) ilike  '%xenotranspl%'))
+                and (pub_abstract ilike  '%xenograf%' OR pub_abstract ilike  '%xenotranspl%')
           )
 ;
 
@@ -59,7 +59,7 @@ from pub_tracking_history,
      publication
 where zdb_id = pth_pub_zdb_id
   and pth_location_id in (6,10)
-  and ((lower(keywords) ilike  '%xenograf%') OR (lower(keywords) ilike  '%xenotranspl%'))
+  and (keywords ilike  '%xenograf%' OR keywords ilike  '%xenotranspl%')
 ;
 
 
@@ -70,7 +70,7 @@ where exists(
               from publication
               where zdb_id = pth_pub_zdb_id
                 and pth_location_id in (6,10)
-                and ((lower(keywords) ilike  '%xenograf%') OR (lower(keywords) ilike  '%xenotranspl%'))
+                and (keywords ilike  '%xenograf%' OR keywords ilike  '%xenotranspl%')
           )
 ;
 
@@ -84,7 +84,7 @@ where zdb_id = pth_pub_zdb_id
   and mh_pub_zdb_id = zdb_id
   and mesht_mesh_id = mh_mesht_mesh_descriptor_id
   and pth_location_id in (6,10)
-  and ((lower(mesht_term_name) ilike  '%xenograf%') OR (lower(mesht_term_name) ilike  '%xenotranspl%'))
+  and (mesht_term_name ilike  '%xenograf%' OR mesht_term_name ilike  '%xenotranspl%')
 ;
 
 insert into pubs_temp (zdb_id)
@@ -97,7 +97,7 @@ where zdb_id = pth_pub_zdb_id
   and mh_pub_zdb_id = zdb_id
   and mesht_mesh_id = mh_mesht_mesh_descriptor_id
   and pth_location_id in (6,10)
-  and ((lower(mesht_term_name) ilike  '%xenograf%') OR (lower(mesht_term_name) ilike  '%xenotranspl%'))
+  and (mesht_term_name ilike  '%xenograf%' OR mesht_term_name ilike  '%xenotranspl%')
 ;
 
 
@@ -105,14 +105,9 @@ update pub_tracking_history
 set pth_location_id = 19
 where exists(
               select *
-              from publication,
-                   mesh_heading,
-                   mesh_term
+              from pubs_temp
               where zdb_id = pth_pub_zdb_id
-                and mh_pub_zdb_id = zdb_id
-                and mesht_mesh_id = mh_mesht_mesh_descriptor_id
                 and pth_location_id in (6,10)
-                and ((lower(mesht_term_name) ilike  '%xenograf%') OR (lower(mesht_term_name) ilike  '%xenotranspl%'))
           )
 ;
 
