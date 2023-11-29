@@ -3,18 +3,22 @@ package org.zfin.uniprot.task;
 import lombok.extern.log4j.Log4j;
 import org.biojava.bio.BioException;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.uniprot.UniProtFilterTask;
 import org.zfin.uniprot.UniProtRoughTaxonFilter;
+import org.zfin.uniprot.persistence.UniProtRelease;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
+import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 import static org.zfin.uniprot.UniProtTools.getArgOrEnvironmentVar;
 
 /**
@@ -37,26 +41,33 @@ import static org.zfin.uniprot.UniProtTools.getArgOrEnvironmentVar;
  */
 @Log4j
 public class UniProtReleaseDiffTask extends AbstractScriptWrapper {
-    private final String inputFilenameSet1;
-    private final String inputFilenameSet2;
+    private String inputFilenameSet1;
+    private String inputFilenameSet2;
     private final String outputFilename;
+    private final String release1;
+    private final String release2;
     private Path tempDirectory;
 
-    private String keepTempFilesIn;
+    private final String keepTempFilesIn;
 
-    public UniProtReleaseDiffTask(String inputFilenameSet1, String inputFilenameSet2, String outputFilename, String keepTempFiles) {
+    public UniProtReleaseDiffTask(String inputFilenameSet1, String inputFilenameSet2, String release1, String release2, String outputFilename, String keepTempFiles) {
         this.inputFilenameSet1 = inputFilenameSet1;
         this.inputFilenameSet2 = inputFilenameSet2;
+        this.release1 = release1;
+        this.release2 = release2;
         this.outputFilename = outputFilename;
         this.keepTempFilesIn = keepTempFiles;
     }
 
     public static void main(String[] args) {
-        String set1 = getArgOrEnvironmentVar(args, 0, "INPUT_FILESET_1");
-        String set2 = getArgOrEnvironmentVar(args, 1, "INPUT_FILESET_2");
+        String set1 = getArgOrEnvironmentVar(args, 0, "INPUT_FILESET_1", "");
+        String set2 = getArgOrEnvironmentVar(args, 1, "INPUT_FILESET_2", "");
+        String release1 = System.getenv("DB_RELEASE_1");
+        String release2 = System.getenv("DB_RELEASE_2");
+
         String output = getArgOrEnvironmentVar(args, 2, "OUTPUT_FILE");
         String keepTempFiles = getArgOrEnvironmentVar(args, 3, "KEEP_TEMP_FILES_IN");
-        UniProtReleaseDiffTask task = new UniProtReleaseDiffTask(set1, set2, output, keepTempFiles);
+        UniProtReleaseDiffTask task = new UniProtReleaseDiffTask(set1, set2, release1, release2, output, keepTempFiles);
 
         try {
             task.runTask();
@@ -68,6 +79,26 @@ public class UniProtReleaseDiffTask extends AbstractScriptWrapper {
 
         HibernateUtil.closeSession();
         System.exit(0);
+    }
+
+    private void printUsageAndDie() {
+        System.err.println("Usage: UniProtReleaseDiffTask <input fileset 1> <input fileset 2> <output file> <keep temp files in>");
+        System.err.println("       alternatively, the arguments can be specified as environment variables:");
+        System.err.println("       INPUT_FILESET_1, INPUT_FILESET_2, OUTPUT_FILE, KEEP_TEMP_FILES_IN");
+        System.err.println("       The input filesets can be a single file or a comma separated list of files.");
+        System.err.println("       The output file is the name of the report file to be generated.");
+        System.err.println("       The KEEP_TEMP_FILES_IN is the directory to keep the temporary files in. Set to \"\" to not preserve.");
+        System.err.println("       ");
+        System.err.println("       Instead of INPUT_FILESET_1, you can also specify DB_RELEASE_1 as an environment variable and set it to the release number.");
+        System.err.println("       Instead of INPUT_FILESET_2, you can also specify DB_RELEASE_2 as an environment variable and set it to the release number.");
+        System.err.println("       ");
+        System.err.println("       Existing releases for DB_RELEASE_1 and DB_RELEASE_2 are:");
+
+        List<UniProtRelease> allReleases = getInfrastructureRepository().getAllUniProtReleases();
+        allReleases.sort(Comparator.comparing(UniProtRelease::getUpr_id));
+        allReleases.forEach(release -> System.err.println("       " + release.getUpr_id() + ": " + release.getPath() + " (run command with DB_RELEASE_1=" + release.getUpr_id() + " for example)"));
+
+        System.exit(1);
     }
 
 
@@ -122,6 +153,28 @@ public class UniProtReleaseDiffTask extends AbstractScriptWrapper {
             tempDirectory = Files.createTempDirectory("uniprot_diff_" + System.currentTimeMillis());
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+
+        //check arguments
+        if (StringUtils.isEmpty(inputFilenameSet1) || StringUtils.isEmpty(inputFilenameSet2)) {
+            //check release as backup
+            if (StringUtils.isEmpty(release1) || StringUtils.isEmpty(release2)) {
+                System.err.println("No input file sets specified.");
+                printUsageAndDie();
+            } else {
+                //get the release filesets
+                log.debug("Searching for release by ID: " + release1 + " and " + release2 + ".");
+                inputFilenameSet1 = getInfrastructureRepository().getUniProtReleaseByID(Long.valueOf(release1)).getLocalFile().getAbsolutePath();
+                inputFilenameSet2 = getInfrastructureRepository().getUniProtReleaseByID(Long.valueOf(release2)).getLocalFile().getAbsolutePath();
+                log.debug("Input file set 1 based on " + release1 + ": " + inputFilenameSet1);
+                log.debug("Input file set 2 based on " + release2 + ": " + inputFilenameSet2);
+            }
+        }
+
+        //still empty?
+        if (StringUtils.isEmpty(inputFilenameSet1) || StringUtils.isEmpty(inputFilenameSet2)) {
+            System.err.println("No input file sets found based on arguments.");
+            printUsageAndDie();
         }
 
     }
