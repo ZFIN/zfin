@@ -24,8 +24,8 @@ STATICS = paths.txt loadTerms.sql updateDefinitionReferences.sql fixSoAnnotation
 loadSubsets.sql handleSecondaryTerms.sql handleRelationships.sql handleSynonyms.sql handleRelationshipsAndStages.sql \
 loadDBxrefs.sql report.html.template report.properties statistics.html.template obsoleteMergeChebi.sql obsoleteMergeDisease.sql \
 obsoleteMergeGene.sql obsoleteMergeZebrafishExperimentalConditions.sql obsoleteMergeZecoTaxonomy.sql \
-obsoleteMergeZebrafishAnatomical.sql obsoleteMergeEco.sql obsoleteMergeSequence.sql obsoleteMergeQuality.sql \
-obsoleteMergeMousePathology.ontology.sql fixAnnotationsUponOntologyLoad.sql
+obsoleteMergeZebrafishAnatomical.sql obsoleteMergeEco.sql obsoleteMergeSequence.sql \
+fixAnnotationsUponOntologyLoad.sql
 
 # Define targets that require special handling.
 
