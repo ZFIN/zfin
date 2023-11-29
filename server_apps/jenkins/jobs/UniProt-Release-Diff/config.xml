@@ -46,8 +46,8 @@ echo "WORKSPACE=$WORKSPACE"
 echo "DB_RELEASE_1=$DB_RELEASE_1"
 echo "DB_RELEASE_2=$DB_RELEASE_2"
 cd $SOURCEROOT
-export KEEP_TEMP_FILES_IN=/tmp
-export OUTPUT_FILE=$WORKSPACE/uniprot_diff.report
+export KEEP_TEMP_FILES_IN=__DELETE__
+export OUTPUT_FILE=$WORKSPACE/uniprot_diff_report.json
 gradle uniprotReleaseDiffTask
         ]]>
       </command>

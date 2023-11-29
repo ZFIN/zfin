@@ -87,7 +87,7 @@ public class UniProtReleaseDiffTask extends AbstractScriptWrapper {
         System.err.println("       INPUT_FILESET_1, INPUT_FILESET_2, OUTPUT_FILE, KEEP_TEMP_FILES_IN");
         System.err.println("       The input filesets can be a single file or a comma separated list of files.");
         System.err.println("       The output file is the name of the report file to be generated.");
-        System.err.println("       The KEEP_TEMP_FILES_IN is the directory to keep the temporary files in. Set to \"\" to not preserve.");
+        System.err.println("       The KEEP_TEMP_FILES_IN is the directory to keep the temporary files in. Set to \"__DELETE__\" to not preserve.");
         System.err.println("       ");
         System.err.println("       Instead of INPUT_FILESET_1, you can also specify DB_RELEASE_1 as an environment variable and set it to the release number.");
         System.err.println("       Instead of INPUT_FILESET_2, you can also specify DB_RELEASE_2 as an environment variable and set it to the release number.");
