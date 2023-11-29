@@ -175,8 +175,6 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
         }
     }
 
-
-
     private void writeOutputReportFile() {
         if (outputFilename == null) {
             return;
@@ -191,7 +189,7 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
         log.debug("Creating report file: " + reportfile);
         try {
             String outfileContents = FileUtils.readFileToString(new File(outputFilename));
-            String template = ZfinPropertiesEnum.SOURCEROOT.value() + "/home/uniprot/report.html";
+            String template = ZfinPropertiesEnum.SOURCEROOT.value() + "/home/uniprot/uniprot-diff-report.html";
             String templateContents = FileUtils.readFileToString(new File(template));
             String filledTemplate = templateContents.replace("JSON_GOES_HERE", outfileContents);
             FileUtils.writeStringToFile(new File(reportfile), filledTemplate);
