@@ -12,11 +12,14 @@ import org.zfin.uniprot.adapter.RichSequenceAdapter;
 import org.zfin.uniprot.diff.RichSequenceDiff;
 import org.zfin.uniprot.diff.UniProtDiffSet;
 import org.zfin.uniprot.dto.UniProtDiffSetDTO;
+import org.zfin.uniprot.secondary.handlers.*;
 
 import java.io.*;
 import java.sql.SQLException;
 import java.util.*;
 
+import static org.zfin.sequence.ForeignDB.AvailableName.*;
+import static org.zfin.sequence.ForeignDB.AvailableName.UNIPROTKB;
 import static org.zfin.uniprot.UniProtTools.*;
 import static org.zfin.uniprot.datfiles.DatFileReader.getMapOfAccessionsToSequencesFromStreamReader;
 import static org.zfin.uniprot.datfiles.DatFileReader.getRichStreamReaderForUniprotDatFile;
@@ -152,6 +155,10 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
     private boolean hasChangesWeCareAbout(RichSequenceDiff diff) {
         if (diff.hasChangesInDB("RefSeq") ||
             diff.hasChangesInDB("ZFIN") ||
+            diff.hasChangesInDB("InterPro") ||
+            diff.hasChangesInDB("EC") ||
+            diff.hasChangesInDB("Pfam") ||
+            diff.hasChangesInDB("PROSITE") ||
             diff.hasChangesInDB("GeneID")) {
             return true;
         }

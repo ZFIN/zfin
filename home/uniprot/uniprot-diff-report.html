@@ -70,6 +70,18 @@
                 if (label === 'changed ZFIN') {
                     setChangeFilter('ZFIN');
                 }
+                if (label === 'changed InterPro') {
+                    setChangeFilter('InterPro');
+                }
+                if (label === 'changed EC') {
+                    setChangeFilter('EC');
+                }
+                if (label === 'changed Pfam') {
+                    setChangeFilter('Pfam');
+                }
+                if (label === 'changed PROSITE') {
+                    setChangeFilter('PROSITE');
+                }
                 if (label.includes('changed')) {
                     setActiveSection('changed');
                 }
@@ -109,6 +121,10 @@
                                     <ul>
                                         <li><a href="#" onClick=${() => handleSummaryClick('changed GeneID')}>GeneID: ${reportData.summary['changed GeneID']}</a></li>
                                         <li><a href="#" onClick=${() => handleSummaryClick('changed RefSeq')}>RefSeq: ${reportData.summary['changed RefSeq']}</a></li>
+                                        <li><a href="#" onClick=${() => handleSummaryClick('changed InterPro')}>ZFIN: ${reportData.summary['changed InterPro']}</a></li>
+                                        <li><a href="#" onClick=${() => handleSummaryClick('changed EC')}>ZFIN: ${reportData.summary['changed EC']}</a></li>
+                                        <li><a href="#" onClick=${() => handleSummaryClick('changed Pfam')}>ZFIN: ${reportData.summary['changed Pfam']}</a></li>
+                                        <li><a href="#" onClick=${() => handleSummaryClick('changed PROSITE')}>ZFIN: ${reportData.summary['changed PROSITE']}</a></li>
                                         <li><a href="#" onClick=${() => handleSummaryClick('changed ZFIN')}>ZFIN: ${reportData.summary['changed ZFIN']}</a></li>
                                     </ul>
                                 </li>
