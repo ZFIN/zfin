@@ -109,10 +109,13 @@ public class SecondaryTermLoadAction implements Comparable<SecondaryTermLoadActi
         return geneZdbID + "," + goTermZdbID + "," + goID + "," + dbName + ":" + this.accession;
     }
 
-    @JsonProperty("md5")
-    public String computeMd5() {
+    public String getMd5() {
         Md5PasswordEncoder encoder = new Md5PasswordEncoder();
         return encoder.encodePassword(toString(), null);
+    }
+
+    public void setMd5(String md5) {
+        //purposefully empty for deserialization
     }
 
     @JsonIgnore

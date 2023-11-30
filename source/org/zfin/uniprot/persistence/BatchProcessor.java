@@ -1,0 +1,155 @@
+package org.zfin.uniprot.persistence;
+
+import lombok.extern.log4j.Log4j2;
+import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.hibernate.query.NativeQuery;
+import org.zfin.framework.HibernateUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static org.zfin.framework.HibernateUtil.currentSession;
+
+@Log4j2
+public class BatchProcessor {
+
+    private static final String TEMP_TABLE_PREFIX = "temp_bulk_load_";
+    private static final int BATCH_SIZE = 100;
+    private final String baseTableName;
+    private final List<List<Pair<String, Object>>> rowsOfKeyValuePairsToInsert;
+    private final String zdbIdColumnName;
+    private final String zdbType;
+
+    /**
+     *
+     * @param baseTableName The table that will be bulk loaded into.  (eg. db_link)
+     * @param zdbIdColumnName The name of the column that will be populated with ZDB IDs.  (eg. dblink_zdb_id)
+     * @param zdbType The type of ZDB ID that will be generated.  (eg. DBLINK, MRKRGOEV, etc.)
+     * @param rowsOfKeyValuePairsToInsert The data to be inserted.  Each row is a list of key-value pairs.
+     *                                    The key is the column name, the value is the value to be inserted.
+     */
+    public BatchProcessor(String baseTableName,
+                          String zdbIdColumnName,
+                          String zdbType,
+                          List<List<Pair<String, Object>>> rowsOfKeyValuePairsToInsert) {
+        this.baseTableName = baseTableName;
+        this.zdbIdColumnName = zdbIdColumnName;
+        this.zdbType = zdbType;
+        this.rowsOfKeyValuePairsToInsert = rowsOfKeyValuePairsToInsert;
+    }
+
+    public final void execute() {
+        log.debug("creating temp table for bulk load: " + tempTable());
+        createTempTable();
+
+        log.debug("loading data into temp table for bulk load: " + tempTable());
+        loadBatchData();
+
+        log.debug("adding ZDB IDs to temp table for bulk load: " + tempTable());
+        setZdbIdField();
+
+        log.debug("inserting ZDB IDs into active data table");
+        insertActiveData();
+
+        log.debug("inserting data from temp table into base table: " + baseTableName);
+        insertFromTempTable();
+
+        log.debug("dropping temp table: " + tempTable());
+        dropTempTable();
+    }
+
+    private void createTempTable() {
+        String sql = String.format(
+                "create temp table %s as select * from %s where false",
+                tempTable(),
+                baseTableName);
+        log.debug("create temp table sql: " + sql);
+        HibernateUtil.currentSession().createSQLQuery(sql).executeUpdate();
+    }
+
+    private void loadBatchData() {
+        ListUtils.partition(rowsOfKeyValuePairsToInsert, BATCH_SIZE)
+                .forEach((batch) -> loadSingleBatchOfDBLinksToBulkTable(batch));
+    }
+
+    private void loadSingleBatchOfDBLinksToBulkTable(List<List<Pair<String, Object>>> rows) {
+        String sqlOuterTemplate = String.format("""
+                insert into %s
+                  (
+                  %s
+                  ) VALUES
+                """, tempTable(), getCommaSeparatedColumnNames());
+
+        List<String> sqlInnerTemplates = new ArrayList<>();
+
+        //create rows of '?',
+        // eg. (?, ?, ?, ?, ?, ?),
+        //     (?, ?, ?, ?, ?, ?),
+        //     ...
+        String singleRowOfValuesPlaceholder = "(" + getColumnNames().stream().map(c -> "?").collect(Collectors.joining(", ")) + ")";
+        rows.forEach(a -> sqlInnerTemplates.add(singleRowOfValuesPlaceholder));
+        String sql = sqlOuterTemplate + String.join(",\n", sqlInnerTemplates);
+
+        NativeQuery query = currentSession().createSQLQuery(sql);
+
+        int i = 1;
+        for(List<Pair<String, Object>> row : rows) {
+            for(Pair<String, Object> columnValuePair : row) {
+                query.setParameter(i++, columnValuePair.getRight());
+            }
+        }
+        query.executeUpdate();
+    }
+
+    private void setZdbIdField() {
+        String sql = String.format("""
+                update %s
+                set %s = get_id('%s');
+                """, tempTable(), zdbIdColumnName, zdbType);
+        currentSession().createSQLQuery(sql).executeUpdate();
+    }
+
+    private void insertActiveData() {
+        String sql = String.format("""
+                insert into zdb_active_data
+                select %s from %s
+                """, zdbIdColumnName, tempTable());
+        currentSession().createSQLQuery(sql).executeUpdate();
+    }
+
+    private void insertFromTempTable() {
+        String sql = String.format("""
+                insert into %s
+                select * from %s
+                """, baseTableName, tempTable());
+        currentSession().createSQLQuery(sql).executeUpdate();
+    }
+
+    private void dropTempTable() {
+        String sql = String.format("""
+                drop table %s
+                """, tempTable());
+        currentSession().createSQLQuery(sql).executeUpdate();
+    }
+
+
+    // Template method
+    private String tempTable() {
+        return TEMP_TABLE_PREFIX + baseTableName;
+    }
+
+    private String getCommaSeparatedColumnNames() {
+        return String.join(", ", getColumnNames());
+    }
+
+    private List<String> getColumnNames() {
+        Optional<List<Pair<String, Object>>> firstRow = rowsOfKeyValuePairsToInsert.stream().findFirst();
+        if (firstRow.isEmpty()) {
+            throw new RuntimeException("No rows to insert");
+        }
+        return firstRow.get().stream().map(Pair::getLeft).toList();
+    }
+}

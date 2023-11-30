@@ -2,9 +2,12 @@ package org.zfin.uniprot.secondary.handlers;
 
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.hibernate.query.NativeQuery;
+import org.zfin.infrastructure.ActiveData;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.uniprot.dto.MarkerGoTermEvidenceSlimDTO;
+import org.zfin.uniprot.persistence.BatchProcessor;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
 import java.util.ArrayList;
@@ -58,37 +61,24 @@ public class MarkerGoTermEvidenceActionProcessor implements ActionProcessor {
     }
 
     private void bulkProcessLoadActions(List<SecondaryTermLoadAction> secondaryTermLoadActions) {
-        log.debug("creating bulk load temp table");
-        String sql = "create temp table bulk_marker_go_term_evidence as select * from marker_go_term_evidence where false";
-        currentSession().createSQLQuery(sql).executeUpdate();
-
-        //load the data into the bulk table
-        log.debug("loading data into bulk load temp table");
-        List<List<SecondaryTermLoadAction>> batchedActions = ListUtils.partition(secondaryTermLoadActions, 100);
-
-        for(List<SecondaryTermLoadAction> actions : batchedActions) {
-            loadSingleBatchOfMarkerGoTermEvidenceIntoBulkTempTable(actions);
-        }
-
-        //set the zdb_id field
-        log.debug("generating ZDB IDs");
-        sql = "update bulk_marker_go_term_evidence set mrkrgoev_zdb_id = get_id('MRKRGOEV')";
-        currentSession().createSQLQuery(sql).executeUpdate();
-
-        //insert the active data
-        log.debug("inserting ZDB IDs to active data");
-        sql = "insert into zdb_active_data select mrkrgoev_zdb_id from bulk_marker_go_term_evidence";
-        currentSession().createSQLQuery(sql).executeUpdate();
-
-        //insert from the bulk table
-        log.debug("inserting data from bulk load temp table");
-        sql = "insert into marker_go_term_evidence select * from bulk_marker_go_term_evidence";
-        currentSession().createSQLQuery(sql).executeUpdate();
-
-        //drop the bulk table
-        log.debug("dropping bulk load temp table");
-        sql = "drop table bulk_marker_go_term_evidence";
-        currentSession().createSQLQuery(sql).executeUpdate();
+        BatchProcessor batchProcessor = new BatchProcessor(
+                "marker_go_term_evidence",
+                "mrkrgoev_zdb_id",
+                ActiveData.Type.MRKRGOEV.name(),
+                secondaryTermLoadActions.stream().map( action -> {
+                    MarkerGoTermEvidenceSlimDTO dto = MarkerGoTermEvidenceSlimDTO.fromMap(action.getRelatedEntityFields());
+                    List<Pair<String, Object>> rowValues = new ArrayList<>();
+                    rowValues.add(Pair.of("mrkrgoev_mrkr_zdb_id", dto.getMarkerZdbID()));
+                    rowValues.add(Pair.of("mrkrgoev_source_zdb_id", dto.getPublicationID()));
+                    rowValues.add(Pair.of("mrkrgoev_evidence_code", "IEA"));
+                    rowValues.add(Pair.of("mrkrgoev_notes", getNotesForDBName(action.getDbName())));
+                    rowValues.add(Pair.of("mrkrgoev_term_zdb_id", dto.getGoTermZdbID()));
+                    rowValues.add(Pair.of("mrkrgoev_annotation_organization", 5));
+                    rowValues.add(Pair.of("mrkrgoev_annotation_organization_created_by", "ZFIN"));
+                    return rowValues;
+                }).toList()
+            );
+        batchProcessor.execute();
     }
 
     /**
