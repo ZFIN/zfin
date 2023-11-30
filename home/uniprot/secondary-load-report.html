@@ -141,23 +141,23 @@
     }
 
     function itemListingTitle(item) {
-        let title = "";
-        if (item.accession && item.geneZdbID) {
-            title = `${item.accession} - ${item.geneZdbID}`;
-        } else if (item.accession) {
-            title = item.accession;
+        let titleParts = [];
+
+        if (item.accession) {
+            titleParts.push(title);
+        }
+        if (item.geneZdbID) {
+            titleParts.push(item.geneZdbID);
         }
         if (item.goID) {
-            title += " - GO:" + item.goID;
+            titleParts.push("GO:" + item.goID);
         }
         if (item.relatedEntityFields) {
-            let buffer = "";
             Object.keys(item.relatedEntityFields).forEach(key => {
-                buffer += `${key}: ${item.relatedEntityFields[key]} `;
+                titleParts.push(`${key}:${item.relatedEntityFields[key]}`);
             });
-            title += " " + buffer;
         }
-        return title;
+        return titleParts.join(' - ');
     }
 
     function reportApplication() {
@@ -280,8 +280,6 @@
                         ${ (item.dbName && html`<dt>Database Name</dt><dd>${dbNameDisplay(item)}</dd>`) }
                         ${ (item.accession && html`<dt>Accession</dt><dd> ${item.accession}</dd>`) }
                         ${ (item.geneZdbID && html`<dt>Gene ID</dt><dd> ${item.geneZdbID}</dd>`) }
-                        ${ (item.goID && html`<dt>GO ID</dt><dd> ${item.goID}</dd>`) }
-                        ${ (item.goTermZdbID && html`<dt>GO TERM ZDB ID</dt><dd> ${item.goTermZdbID}</dd>`) }
                         ${ (item.relatedEntityFields && Object.keys(item.relatedEntityFields).length > 0) && Object.entries(item.relatedEntityFields).map(
                             ([key, value]) => html`<dt>${key}</dt><dd>${value}</dd>`)
                         }

@@ -306,8 +306,6 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
         pipeline.addHandler(new AddNewSpKeywordTermToGoActionCreator(UNIPROTKB, upToGoRecords), AddNewSpKeywordTermToGoActionProcessor.class);
         pipeline.addHandler(new RemoveSpKeywordTermToGoActionCreator(UNIPROTKB, upToGoRecords), RemoveSpKeywordTermToGoActionProcessor.class);
 
-//        pipeline.addHandler(new ExternalNotesActionCreationHandler(),);
-
         pipeline.addHandler(new InterproDomainActionCreator(downloadedInterproDomainRecords), InterproDomainActionProcessor.class);
         pipeline.addHandler(new InterproProteinActionCreator(), InterproProteinActionProcessor.class);
         pipeline.addHandler(new InterproMarkerToProteinActionCreator(), InterproMarkerToProteinActionProcessor.class);

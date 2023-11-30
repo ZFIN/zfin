@@ -1,23 +1,18 @@
 package org.zfin.uniprot.secondary.handlers;
 
 import lombok.extern.log4j.Log4j2;
-import org.zfin.datatransfer.go.GafOrganization;
-import org.zfin.framework.HibernateUtil;
-import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
-import org.zfin.marker.Marker;
-import org.zfin.mutant.GoEvidenceCode;
-import org.zfin.mutant.MarkerGoTermEvidence;
-import org.zfin.ontology.GenericTerm;
-import org.zfin.publication.Publication;
-import org.zfin.repository.RepositoryFactory;
+import org.apache.commons.collections4.ListUtils;
+import org.hibernate.query.NativeQuery;
+import org.zfin.sequence.ForeignDB;
 import org.zfin.uniprot.dto.MarkerGoTermEvidenceSlimDTO;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
-import static org.zfin.repository.RepositoryFactory.*;
 
 /**
  * Adds to marker_go_term_evidence table
@@ -39,93 +34,161 @@ public class MarkerGoTermEvidenceActionProcessor implements ActionProcessor {
 
     @Override
     public void processActions(List<SecondaryTermLoadAction> subTypeActions) {
-        int i = 0;
-        for(SecondaryTermLoadAction action : subTypeActions) {
-            i++;
-            if (i == 1000) {
-                log.info("processed " + i + " of " + subTypeActions.size());
-                i = 0;
-            }
-            if (action.getType().equals(SecondaryTermLoadAction.Type.LOAD)) {
-                loadMarkerGoTermEvidence(action);
-            }
-            else if (action.getType().equals(SecondaryTermLoadAction.Type.DELETE)) {
-                deleteMarkerGoTermEvidence(action);
-            }
+
+        //group by subtype
+        Map<SecondaryTermLoadAction.Type, List<SecondaryTermLoadAction>> groupedActions = subTypeActions.stream()
+                .collect(Collectors.groupingBy(SecondaryTermLoadAction::getType));
+
+        //assert that there are only 2 types max
+        if (groupedActions.keySet().size() > 2) {
+            throw new RuntimeException("There should only be 2 types of actions for MarkerGoTermEvidenceActionProcessor");
         }
+
+        //process the delete actions first
+        if (groupedActions.containsKey(SecondaryTermLoadAction.Type.DELETE)) {
+            bulkProcessDeleteActions(groupedActions.get(SecondaryTermLoadAction.Type.DELETE));
+        }
+
+        //process the load actions
+        if (groupedActions.containsKey(SecondaryTermLoadAction.Type.LOAD)) {
+            bulkProcessLoadActions(groupedActions.get(SecondaryTermLoadAction.Type.LOAD));
+        }
+
         currentSession().flush();
     }
 
-    private static void loadMarkerGoTermEvidence(SecondaryTermLoadAction action)  {
-        MarkerGoTermEvidence markerGoTermEvidence = new MarkerGoTermEvidence();
-        markerGoTermEvidence.setExternalLoadDate(null);
+    private void bulkProcessLoadActions(List<SecondaryTermLoadAction> secondaryTermLoadActions) {
+        log.debug("creating bulk load temp table");
+        String sql = "create temp table bulk_marker_go_term_evidence as select * from marker_go_term_evidence where false";
+        currentSession().createSQLQuery(sql).executeUpdate();
 
-        GafOrganization uniprotGafOrganization = getMarkerGoTermEvidenceRepository().getGafOrganization(GafOrganization.OrganizationEnum.UNIPROT);
-        markerGoTermEvidence.setGafOrganization(uniprotGafOrganization);
+        //load the data into the bulk table
+        log.debug("loading data into bulk load temp table");
+        List<List<SecondaryTermLoadAction>> batchedActions = ListUtils.partition(secondaryTermLoadActions, 100);
 
-        markerGoTermEvidence.setOrganizationCreatedBy(GafOrganization.OrganizationEnum.ZFIN.name());
-
-        Marker marker = getMarkerRepository().getMarker(action.getGeneZdbID());
-        markerGoTermEvidence.setMarker(marker);
-
-        GenericTerm goTerm = HibernateUtil.currentSession().get(GenericTerm.class, action.getGoTermZdbID());
-        markerGoTermEvidence.setGoTerm(goTerm);
-
-        GoEvidenceCode goEvidenceCode = getMarkerGoTermEvidenceRepository().getGoEvidenceCode(GoEvidenceCodeEnum.IEA.name());
-        markerGoTermEvidence.setEvidenceCode(goEvidenceCode);
-        String pubID = null;
-        switch(action.getDbName()) {
-            case INTERPRO -> {
-                markerGoTermEvidence.setNote("ZFIN InterPro 2 GO");
-                pubID = IP_MRKRGOEV_PUBLICATION_ATTRIBUTION_ID;
-            }
-            case EC -> {
-                markerGoTermEvidence.setNote("ZFIN EC acc 2 GO");
-                pubID = EC_MRKRGOEV_PUBLICATION_ATTRIBUTION_ID;
-            }
-            case UNIPROTKB -> {
-                markerGoTermEvidence.setNote("ZFIN SP keyword 2 GO");
-                pubID = SPKW_MRKRGOEV_PUBLICATION_ATTRIBUTION_ID;
-            }
-            default -> log.error("Unknown marker_go_term_evidence dbname to load " + action.getDbName());
+        for(List<SecondaryTermLoadAction> actions : batchedActions) {
+            loadSingleBatchOfMarkerGoTermEvidenceIntoBulkTempTable(actions);
         }
 
-        // set source
-        Publication publication = RepositoryFactory.getPublicationRepository().getPublication(pubID);
-        markerGoTermEvidence.setSource(publication);
+        //set the zdb_id field
+        log.debug("generating ZDB IDs");
+        sql = "update bulk_marker_go_term_evidence set mrkrgoev_zdb_id = get_id('MRKRGOEV')";
+        currentSession().createSQLQuery(sql).executeUpdate();
 
-        Date rightNow = new Date();
-        markerGoTermEvidence.setModifiedWhen(rightNow);
-        markerGoTermEvidence.setCreatedWhen(rightNow);
-        getMarkerGoTermEvidenceRepository().addEvidence(markerGoTermEvidence, false);
-        getMutantRepository().addInferenceToGoMarkerTermEvidence(markerGoTermEvidence, action.getPrefixedAccession());
+        //insert the active data
+        log.debug("inserting ZDB IDs to active data");
+        sql = "insert into zdb_active_data select mrkrgoev_zdb_id from bulk_marker_go_term_evidence";
+        currentSession().createSQLQuery(sql).executeUpdate();
+
+        //insert from the bulk table
+        log.debug("inserting data from bulk load temp table");
+        sql = "insert into marker_go_term_evidence select * from bulk_marker_go_term_evidence";
+        currentSession().createSQLQuery(sql).executeUpdate();
+
+        //drop the bulk table
+        log.debug("dropping bulk load temp table");
+        sql = "drop table bulk_marker_go_term_evidence";
+        currentSession().createSQLQuery(sql).executeUpdate();
     }
 
-    private static void deleteMarkerGoTermEvidence(SecondaryTermLoadAction action) {
-        MarkerGoTermEvidenceSlimDTO markerGoTermEvidenceDTO = MarkerGoTermEvidenceSlimDTO.fromMap(action.getRelatedEntityFields());
-        String pubID = markerGoTermEvidenceDTO.getPublicationID();
-        log.debug("Removing " + action.getDbName() + " marker_go_term_evidence for " + action.getGeneZdbID() + " " + action.getGoTermZdbID() + " " + pubID );
-        List<MarkerGoTermEvidence> markerGoTermEvidences = getMarkerGoTermEvidenceRepository().getMarkerGoTermEvidencesForMarkerZdbID(action.getGeneZdbID());
-        if (markerGoTermEvidences.size() == 0) {
-            log.debug("No marker_go_term_evidence found to delete");
-            return;
+    /**
+     * Builds up a single batch insert query like so:
+     *        insert into bulk_marker_go_term_evidence
+     *         (
+     *             mrkrgoev_mrkr_zdb_id,
+     *             mrkrgoev_source_zdb_id,
+     *             mrkrgoev_evidence_code,
+     *             mrkrgoev_notes,
+     *             mrkrgoev_term_zdb_id,
+     *             mrkrgoev_annotation_organization,
+     *             mrkrgoev_annotation_organization_created_by
+     *         ) VALUES
+     *         (?, ?, 'IEA', ?, ?, 5, 'ZFIN'),
+     *         (?, ?, 'IEA', ?, ?, 5, 'ZFIN'),
+     *         (?, ?, 'IEA', ?, ?, 5, 'ZFIN'),
+     *         (?, ?, 'IEA', ?, ?, 5, 'ZFIN'),
+     *         (?, ?, 'IEA', ?, ?, 5, 'ZFIN')
+     *         ...
+     * @param actions
+     */
+    private void loadSingleBatchOfMarkerGoTermEvidenceIntoBulkTempTable(List<SecondaryTermLoadAction> actions) {
+        String sqlOuterTemplate = """
+                insert into bulk_marker_go_term_evidence 
+                (
+                    mrkrgoev_mrkr_zdb_id, 
+                    mrkrgoev_source_zdb_id,	
+                    mrkrgoev_evidence_code,	
+                    mrkrgoev_notes,	
+                    mrkrgoev_term_zdb_id,
+                    mrkrgoev_annotation_organization,
+                    mrkrgoev_annotation_organization_created_by
+                ) VALUES
+                """;
+
+        List<String> sqlInnerTemplates = new ArrayList<>();
+        actions.forEach(a -> sqlInnerTemplates.add("(?, ?, 'IEA', ?, ?, 5, 'ZFIN')"));
+
+        String sql = sqlOuterTemplate + String.join(", ", sqlInnerTemplates);
+        NativeQuery query = currentSession().createSQLQuery(sql);
+
+        int i = 1;
+        for(SecondaryTermLoadAction action : actions) {
+            if (action.getRelatedEntityFields() == null) {
+                log.error("Related entity fields should not be null for MarkerGoTermEvidenceActionProcessor");
+                log.error("Action: " + action);
+                throw new RuntimeException("Related entity fields should not be null for MarkerGoTermEvidenceActionProcessor");
+            }
+            MarkerGoTermEvidenceSlimDTO dto = MarkerGoTermEvidenceSlimDTO.fromMap(action.getRelatedEntityFields());
+
+            query.setParameter(i++, dto.getMarkerZdbID());
+            query.setParameter(i++, dto.getPublicationID());
+            query.setParameter(i++, getNotesForDBName(action.getDbName()));
+            query.setParameter(i++, dto.getGoTermZdbID());
+
+            if (!dto.getPublicationID().equals(getPubIDForDBName(action.getDbName()))) {
+                throw new RuntimeException("publication IDs don't match for " + action.getDbName() + " " + dto.getPublicationID() + " " + getPubIDForDBName(action.getDbName()));
+            }
         }
-
-        List<MarkerGoTermEvidence> toDelete = markerGoTermEvidences.stream()
-                .filter(markerGoTermEvidence -> pubID.equals(markerGoTermEvidence.getSource().getZdbID()))
-                .filter(markerGoTermEvidence -> action.getGoTermZdbID().equals(markerGoTermEvidence.getGoTerm().getZdbID()))
-                .toList();
-        List<String> toDeleteIDs = toDelete.stream().map(MarkerGoTermEvidence::getZdbID).toList();
-
-        if (toDeleteIDs.size() > 1) {
-            log.info("Found more than one marker_go_term_evidence to delete: " + toDeleteIDs + ". Deleting all...");
-        } else if (toDeleteIDs.size() == 0) {
-            log.debug("No marker_go_term_evidence found to delete after filtering");
-            return;
-        }
-        log.debug("Found the following marker_go_term_evidence to delete: " + toDeleteIDs);
-
-        getMarkerGoTermEvidenceRepository().deleteMarkerGoTermEvidenceByZdbIDs(toDeleteIDs);
+        query.executeUpdate();
     }
 
+    private void bulkProcessDeleteActions(List<SecondaryTermLoadAction> secondaryTermLoadActions) {
+        for(SecondaryTermLoadAction action : secondaryTermLoadActions) {
+            deleteSingleMarkerGoTermEvidence(action);
+        }
+    }
+
+    private void deleteSingleMarkerGoTermEvidence(SecondaryTermLoadAction action) {
+        MarkerGoTermEvidenceSlimDTO dto = MarkerGoTermEvidenceSlimDTO.fromMap(action.getRelatedEntityFields());
+        String sql = """
+                delete from marker_go_term_evidence 
+                where mrkrgoev_mrkr_zdb_id = :mrkrgoev_mrkr_zdb_id
+                and mrkrgoev_term_zdb_id = :mrkrgoev_term_zdb_id
+                and mrkrgoev_source_zdb_id = :mrkrgoev_source_zdb_id
+                """;
+        currentSession().createSQLQuery(sql)
+                .setParameter("mrkrgoev_mrkr_zdb_id", dto.getMarkerZdbID())
+                .setParameter("mrkrgoev_term_zdb_id", dto.getGoTermZdbID())
+                .setParameter("mrkrgoev_source_zdb_id", dto.getPublicationID())
+                .executeUpdate();
+    }
+
+
+    private String getNotesForDBName(ForeignDB.AvailableName dbName) {
+        return switch(dbName) {
+            case INTERPRO -> "ZFIN InterPro 2 GO";
+            case EC -> "ZFIN EC acc 2 GO";
+            case UNIPROTKB -> "ZFIN SP keyword 2 GO";
+            default -> throw new IllegalStateException("Unexpected value: " + dbName);
+        };
+    }
+
+    private String getPubIDForDBName(ForeignDB.AvailableName dbName) {
+        return switch(dbName) {
+            case INTERPRO -> IP_MRKRGOEV_PUBLICATION_ATTRIBUTION_ID;
+            case EC -> EC_MRKRGOEV_PUBLICATION_ATTRIBUTION_ID;
+            case UNIPROTKB -> SPKW_MRKRGOEV_PUBLICATION_ATTRIBUTION_ID;
+            default -> throw new IllegalStateException("Unexpected value: " + dbName);
+        };
+    }
 }

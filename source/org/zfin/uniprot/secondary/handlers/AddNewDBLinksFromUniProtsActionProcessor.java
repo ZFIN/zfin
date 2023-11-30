@@ -1,18 +1,13 @@
 package org.zfin.uniprot.secondary.handlers;
 
 import lombok.extern.log4j.Log4j2;
-import org.zfin.marker.Marker;
-import org.zfin.publication.Publication;
-import org.zfin.sequence.MarkerDBLink;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
-import org.zfin.uniprot.secondary.SecondaryTermLoadService;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
-import static org.zfin.repository.RepositoryFactory.*;
+import static org.zfin.uniprot.secondary.SecondaryTermLoadService.getReferenceDatabaseIDForAction;
 
 /**
  * Adds InterPro, PFAM, EC, PROSITE accessions to db_links table.
@@ -33,24 +28,52 @@ public class AddNewDBLinksFromUniProtsActionProcessor implements ActionProcessor
     }
 
     @Override
-    public void processActions(List<SecondaryTermLoadAction> actions) {
-        List<MarkerDBLink> dblinks = new ArrayList<>();
+    public void processActions(List<SecondaryTermLoadAction> subTypeActions) {
 
-        for(SecondaryTermLoadAction action : actions) {
-            log.debug("Loading " + action.getDbName() + " dblink for " + action.getGeneZdbID() + " " + action.getAccession());
+        log.debug("creating bulk table for db_link");
+        String sql = "create temp table bulk_db_link as select * from db_link where false";
+        currentSession().createSQLQuery(sql).executeUpdate();
 
-            Marker marker = getMarkerRepository().getMarker(action.getGeneZdbID());
-            MarkerDBLink newLink = new MarkerDBLink();
-            newLink.setAccessionNumber(action.getAccession());
-            newLink.setMarker(marker);
-            newLink.setReferenceDatabase(SecondaryTermLoadService.getReferenceDatabaseForAction(action));
-            newLink.setLength(action.getLength());
-            newLink.setLinkInfo(getDBLinkInfo());
-            dblinks.add(newLink);
+        //load the data into the bulk table
+        log.debug("loading data into bulk table");
+        for(SecondaryTermLoadAction action : subTypeActions) {
+            loadSingleDBLinkToBulkTable(action);
         }
-        Publication publication = getPublicationRepository().getPublication(SecondaryTermLoadService.DBLINK_PUBLICATION_ATTRIBUTION_ID);
-        getSequenceRepository().addDBLinks(dblinks, publication, 50);
-        currentSession().flush();
+
+        //set the zdb_id field
+        log.debug("generating ZDB IDs");
+        sql = "update bulk_db_link set dblink_zdb_id = get_id('DBLINK')";
+        currentSession().createSQLQuery(sql).executeUpdate();
+
+        //insert the active data
+        log.debug("inserting active data");
+        sql = "insert into zdb_active_data select dblink_zdb_id from bulk_db_link";
+        currentSession().createSQLQuery(sql).executeUpdate();
+
+        //insert from the bulk table
+        log.debug("inserting into db_link from bulk table");
+        sql = "insert into db_link select * from bulk_db_link";
+        currentSession().createSQLQuery(sql).executeUpdate();
+
+        //drop the bulk table
+        log.debug("dropping bulk table");
+        sql = "drop table bulk_db_link";
+        currentSession().createSQLQuery(sql).executeUpdate();
+
+    }
+
+    private void loadSingleDBLinkToBulkTable(SecondaryTermLoadAction action) {
+        String sql = """
+                    INSERT INTO bulk_db_link (dblink_linked_recid, dblink_acc_num, dblink_info, dblink_acc_num_display, dblink_length, dblink_fdbcont_zdb_id) 
+                    VALUES (:linkedRecID, :accession, :linkInfo, :accession, :length, :fdbcontZdbID)                
+                """;
+        currentSession().createSQLQuery(sql)
+                .setParameter("linkedRecID", action.getGeneZdbID())
+                .setParameter("accession", action.getAccession())
+                .setParameter("linkInfo", getDBLinkInfo())
+                .setParameter("length", action.getLength())
+                .setParameter("fdbcontZdbID", getReferenceDatabaseIDForAction(action))
+                .executeUpdate();
     }
 
 }

@@ -95,6 +95,13 @@ public class AddNewSpKeywordTermToGoActionCreator extends MarkerGoTermEvidenceAc
         for(var joinedRecord : joined) {
             GeneKeyword geneKeyword = joinedRecord.v1();
             SecondaryTerm2GoTerm item2go = joinedRecord.v2();
+            MarkerGoTermEvidenceSlimDTO markerGoTermEvidenceSlimDTO = MarkerGoTermEvidenceSlimDTO.builder()
+                    .markerZdbID(geneKeyword.geneZdbID)
+                    .publicationID(SPKW_MRKRGOEV_PUBLICATION_ATTRIBUTION_ID)
+                    .goTermZdbID(item2go.termZdbID())
+                    .goID(item2go.goID())
+                    .build();
+
             SecondaryTermLoadAction newAction = SecondaryTermLoadAction.builder()
                     .accession(geneKeyword.keyword())
                     .dbName(FOREIGN_DB_NAME)
@@ -103,6 +110,7 @@ public class AddNewSpKeywordTermToGoActionCreator extends MarkerGoTermEvidenceAc
                     .geneZdbID(geneKeyword.geneZdbID())
                     .goID(item2go.goID())
                     .goTermZdbID(item2go.termZdbID())
+                    .relatedEntityFields(markerGoTermEvidenceSlimDTO.toMap())
                     .build();
             newMarkerGoTermEvidences.add(newAction);
         }
