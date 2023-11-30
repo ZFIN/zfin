@@ -2,8 +2,9 @@ package org.zfin.uniprot.secondary;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
-import lombok.Builder;
-import lombok.Getter;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.*;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.zfin.sequence.ForeignDB;
@@ -12,6 +13,8 @@ import org.zfin.uniprot.UniProtLoadLink;
 import java.util.*;
 
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder(toBuilder = true)
 public class SecondaryTermLoadAction implements Comparable<SecondaryTermLoadAction> {
     public enum Type {LOAD, INFO, WARNING, ERROR, DELETE, IGNORE, DUPES}
@@ -44,19 +47,19 @@ public class SecondaryTermLoadAction implements Comparable<SecondaryTermLoadActi
             return processActionOrder;
         }
     }
-    private final Type type;
-    private final SubType subType;
-    private final ForeignDB.AvailableName dbName;
-    private final String accession;
-    private final String goID;
-    private final String goTermZdbID;
-    private final String geneZdbID;
-    private final String relatedEntityID;
-    private final String details;
-    private final int length;
-    private final String handlerClass;
-    private final Map<String, String> relatedEntityFields;
-    private final Set<UniProtLoadLink> links;
+    private Type type;
+    private SubType subType;
+    private ForeignDB.AvailableName dbName;
+    private String accession;
+    private String goID;
+    private String goTermZdbID;
+    private String geneZdbID;
+    private String relatedEntityID;
+    private String details;
+    private int length;
+    private String handlerClass;
+    private Map<String, String> relatedEntityFields;
+    private Set<UniProtLoadLink> links;
 
     @JsonIgnore
     public String getPrefixedAccession() {
@@ -106,7 +109,8 @@ public class SecondaryTermLoadAction implements Comparable<SecondaryTermLoadActi
         return geneZdbID + "," + goTermZdbID + "," + goID + "," + dbName + ":" + this.accession;
     }
 
-    public String getMd5() {
+    @JsonProperty("md5")
+    public String computeMd5() {
         Md5PasswordEncoder encoder = new Md5PasswordEncoder();
         return encoder.encodePassword(toString(), null);
     }
