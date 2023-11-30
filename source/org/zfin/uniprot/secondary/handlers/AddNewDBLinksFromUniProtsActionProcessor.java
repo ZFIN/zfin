@@ -1,8 +1,11 @@
 package org.zfin.uniprot.secondary.handlers;
 
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.collections4.ListUtils;
+import org.hibernate.query.NativeQuery;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -36,9 +39,7 @@ public class AddNewDBLinksFromUniProtsActionProcessor implements ActionProcessor
 
         //load the data into the bulk table
         log.debug("loading data into bulk table");
-        for(SecondaryTermLoadAction action : subTypeActions) {
-            loadSingleDBLinkToBulkTable(action);
-        }
+        insertDBLinksToBulkTableInBatches(subTypeActions);
 
         //set the zdb_id field
         log.debug("generating ZDB IDs");
@@ -60,6 +61,50 @@ public class AddNewDBLinksFromUniProtsActionProcessor implements ActionProcessor
         sql = "drop table bulk_db_link";
         currentSession().createSQLQuery(sql).executeUpdate();
 
+    }
+
+    private void insertDBLinksToBulkTableInBatches(List<SecondaryTermLoadAction> subTypeActions) {
+        List<List<SecondaryTermLoadAction>> batchedActions = ListUtils.partition(subTypeActions, 100);
+        for(List<SecondaryTermLoadAction> action : batchedActions) {
+            loadSingleBatchOfDBLinksToBulkTable(action);
+        }
+    }
+
+    /**
+     * Builds up a single batch insert query like so:
+     *        insert into bulk_marker_go_term_evidence
+     *         (
+     *         dblink_linked_recid, dblink_acc_num, dblink_info, dblink_acc_num_display, dblink_length, dblink_fdbcont_zdb_id
+     *         ) VALUES
+     *         (?, ?, ?, ?, ?, ?),
+     *         ...
+     *         (?, ?, ?, ?, ?, ?)
+     *         ...
+     * @param actions
+     */
+    private void loadSingleBatchOfDBLinksToBulkTable(List<SecondaryTermLoadAction> actions) {
+        String sqlOuterTemplate = """
+                insert into bulk_db_link
+                  (
+                  dblink_linked_recid, dblink_acc_num, dblink_info, dblink_acc_num_display, dblink_length, dblink_fdbcont_zdb_id
+                  ) VALUES
+                """;
+        List<String> sqlInnerTemplates = new ArrayList<>();
+        actions.forEach(a -> sqlInnerTemplates.add("(?, ?, ?, ?, ?, ?)"));
+
+        String sql = sqlOuterTemplate + String.join(", ", sqlInnerTemplates);
+        NativeQuery query = currentSession().createSQLQuery(sql);
+
+        int i = 1;
+        for(SecondaryTermLoadAction action : actions) {
+            query.setParameter(i++, action.getGeneZdbID());
+            query.setParameter(i++, action.getAccession());
+            query.setParameter(i++, getDBLinkInfo());
+            query.setParameter(i++, action.getAccession());
+            query.setParameter(i++, action.getLength());
+            query.setParameter(i++, getReferenceDatabaseIDForAction(action));
+        }
+        query.executeUpdate();
     }
 
     private void loadSingleDBLinkToBulkTable(SecondaryTermLoadAction action) {
