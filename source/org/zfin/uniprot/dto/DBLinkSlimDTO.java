@@ -33,4 +33,13 @@ public class DBLinkSlimDTO {
         }
         return publicationIDs.stream().anyMatch(UniProtTools::isNonLoadPublication);
     }
+
+    public boolean containsLoadPublication() {
+        if (publicationIDs == null) {
+            return false;
+        }
+        return publicationIDs.stream().anyMatch(UniProtTools::isLoadPublication);
+    }
+
+
 }

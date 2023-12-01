@@ -169,7 +169,7 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         pipeline.addHandler(new RemoveVersionHandler());
         pipeline.addHandler(new IgnoreSpecificAccessionsHandler());
         pipeline.addHandler(new ReportWouldBeLostHandler());
-        pipeline.addHandler(new IgnoreAccessionsAlreadyInDatabaseHandler());
+//        pipeline.addHandler(new IgnoreAccessionsAlreadyInDatabaseHandler());
         pipeline.addHandler(new MatchOnRefSeqHandler());
         pipeline.addHandler(new ReportLegacyProblemFilesHandler());
 

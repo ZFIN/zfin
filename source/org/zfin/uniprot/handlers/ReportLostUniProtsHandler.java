@@ -64,69 +64,114 @@ public class ReportLostUniProtsHandler implements UniProtLoadHandler {
 
         //do some filtering based on attributions for lost UniProts
         List<DBLinkSlimDTO> filteredLostUniProts = new ArrayList<>();
+        List<DBLinkSlimDTO> removeAttributionOnly = new ArrayList<>();
+
         for(DBLinkSlimDTO lostUniProt: genesThatLostUniProts) {
-            if (!lostUniProt.containsNonLoadPublication()) {
+            if (lostUniProt.containsNonLoadPublication()) {
+                if (lostUniProt.containsLoadPublication()) {
+                    removeAttributionOnly.add(lostUniProt);
+                }
+            } else {
                 filteredLostUniProts.add(lostUniProt);
             }
         }
 
         //create actions for lost UniProts
         for(DBLinkSlimDTO lostUniProt: filteredLostUniProts) {
-            UniProtLoadAction action = new UniProtLoadAction();
-
-            String sequenceDetails = "";
-            String sequenceDatFileDetails = "Sequence details: \n=================\n";
-            RichSequenceAdapter richSequence = uniProtRecords.get(lostUniProt.getAccession());
-
-            if (richSequence != null) {
-                sequenceDatFileDetails += DatFileWriter.sequenceToString(richSequence);
-
-                //gene1
-                Set<String> affectedGenes = new HashSet<>();
-                affectedGenes.add(lostUniProt.getDataZdbID());
-
-                //genes 2,3,etc.
-                affectedGenes.addAll(context
-                        .getUniprotDbLinks()
-                        .get(lostUniProt.getAccession())
-                        .stream()
-                        .map(DBLinkSlimDTO::getDataZdbID)
-                        .collect(Collectors.toSet()));
-
-                for(String gene: affectedGenes) {
-                    action.addLink(new UniProtLoadLink("ZFIN: " + gene, "https://zfin.org/" + gene + "#sequences"));
-                }
-
-                sequenceDetails = lostUniProt.getDataZdbID() + " (" + lostUniProt.getMarkerAbbreviation() + ") would lose its UniProt association with " + lostUniProt.getAccession() + ".\n";
-                if (affectedGenes.size() > 1) {
-                        sequenceDetails += "These genes currently have links to " + lostUniProt.getAccession() + " : " + String.join(", ", affectedGenes) + "\n";
-                }
-                sequenceDetails += "\n";
-                sequenceDetails += sequenceDatFileDetails;
-
-            } else {
-                sequenceDetails += "No sequence details found for " + lostUniProt.getAccession();
-            }
-
-            action.setGeneZdbID(lostUniProt.getDataZdbID());
-            action.setSubType(UniProtLoadAction.SubType.LOST_UNIPROT);
-            action.setType(UniProtLoadAction.Type.DELETE);
-            action.setAccession(lostUniProt.getAccession());
-            action.setDetails("This gene currently has a UniProt association, but when we run the latest\n" +
-                    "UniProt release through our matching pipeline, we don't find a match.\n");
-
-            action.addLink(new UniProtLoadLink("ZFIN: " + lostUniProt.getDataZdbID(), "https://zfin.org/" + lostUniProt.getDataZdbID() + "#sequences" ));
-            action.addLink(new UniProtLoadLink("UniProt: " + lostUniProt.getAccession(), "https://www.uniprot.org/uniprot/" + lostUniProt.getAccession()));
-
-            setActionTitleAndDetailsForGenPeptGenBank(lostUniProt, action, context);
-            if (action.getType().equals(UniProtLoadAction.Type.DELETE)) {
-                action.setDetails(action.getDetails() + "\n" + "This association will be removed.");
-            }
-            action.setDetails(action.getDetails() + "\n\n" + sequenceDetails);
-
+            UniProtLoadAction action = createDeleteAction(uniProtRecords, context, lostUniProt);
             actions.add(action);
         }
 
+        //create actions for removing load attribution if associated with non-load publication
+        for(DBLinkSlimDTO lostUniProt: removeAttributionOnly) {
+            UniProtLoadAction action = createRemoveAttributionAction(uniProtRecords, context, lostUniProt);
+            actions.add(action);
+        }
+
+    }
+
+    private UniProtLoadAction createDeleteAction(Map<String, RichSequenceAdapter> uniProtRecords, UniProtLoadContext context, DBLinkSlimDTO lostUniProt) {
+        UniProtLoadAction action = new UniProtLoadAction();
+
+        String sequenceDetails = "";
+        String sequenceDatFileDetails = "Sequence details: \n=================\n";
+        RichSequenceAdapter richSequence = uniProtRecords.get(lostUniProt.getAccession());
+
+        if (richSequence != null) {
+            sequenceDatFileDetails += DatFileWriter.sequenceToString(richSequence);
+
+            //gene1
+            Set<String> affectedGenes = new HashSet<>();
+            affectedGenes.add(lostUniProt.getDataZdbID());
+
+            //genes 2,3,etc.
+            affectedGenes.addAll(context
+                    .getUniprotDbLinks()
+                    .get(lostUniProt.getAccession())
+                    .stream()
+                    .map(DBLinkSlimDTO::getDataZdbID)
+                    .collect(Collectors.toSet()));
+
+            for(String gene: affectedGenes) {
+                action.addLink(new UniProtLoadLink("ZFIN: " + gene, "https://zfin.org/" + gene + "#sequences"));
+            }
+
+            sequenceDetails = lostUniProt.getDataZdbID() + " (" + lostUniProt.getMarkerAbbreviation() + ") would lose its UniProt association with " + lostUniProt.getAccession() + ".\n";
+            if (affectedGenes.size() > 1) {
+                    sequenceDetails += "These genes currently have links to " + lostUniProt.getAccession() + " : " + String.join(", ", affectedGenes) + "\n";
+            }
+            sequenceDetails += "\n";
+            sequenceDetails += sequenceDatFileDetails;
+
+        } else {
+            sequenceDetails += "No sequence details found for " + lostUniProt.getAccession();
+        }
+
+        action.setGeneZdbID(lostUniProt.getDataZdbID());
+        action.setSubType(UniProtLoadAction.SubType.LOST_UNIPROT);
+        action.setType(UniProtLoadAction.Type.DELETE);
+        action.setAccession(lostUniProt.getAccession());
+        action.setDetails("This gene currently has a UniProt association, but when we run the latest\n" +
+                "UniProt release through our matching pipeline, we don't find a match.\n");
+
+        action.addLink(new UniProtLoadLink("ZFIN: " + lostUniProt.getDataZdbID(), "https://zfin.org/" + lostUniProt.getDataZdbID() + "#sequences" ));
+        action.addLink(new UniProtLoadLink("UniProt: " + lostUniProt.getAccession(), "https://www.uniprot.org/uniprot/" + lostUniProt.getAccession()));
+
+        setActionTitleAndDetailsForGenPeptGenBank(lostUniProt, action, context);
+        if (action.getType().equals(UniProtLoadAction.Type.DELETE)) {
+            action.setDetails(action.getDetails() + "\n" + "This association will be removed.");
+        }
+        action.setDetails(action.getDetails() + "\n\n" + sequenceDetails);
+        return action;
+    }
+
+    private UniProtLoadAction createRemoveAttributionAction(Map<String, RichSequenceAdapter> uniProtRecords, UniProtLoadContext context, DBLinkSlimDTO lostUniProt) {
+        UniProtLoadAction action = new UniProtLoadAction();
+
+        String sequenceDetails = "";
+        String sequenceDatFileDetails = "Sequence details: \n=================\n";
+        RichSequenceAdapter richSequence = uniProtRecords.get(lostUniProt.getAccession());
+
+        if (richSequence != null) {
+            sequenceDatFileDetails += DatFileWriter.sequenceToString(richSequence);
+            sequenceDetails += "\n";
+            sequenceDetails += sequenceDatFileDetails;
+
+        } else {
+            sequenceDetails += "No sequence details found for " + lostUniProt.getAccession();
+        }
+
+        action.setGeneZdbID(lostUniProt.getDataZdbID());
+        action.setSubType(UniProtLoadAction.SubType.REMOVE_ATTRIBUTION);
+        action.setType(UniProtLoadAction.Type.DELETE);
+        action.setAccession(lostUniProt.getAccession());
+        action.setDetails("This gene currently has a UniProt association, but when we run the latest\n" +
+                "UniProt release through our matching pipeline, we don't find a match.\n\n\n" + sequenceDetails);
+
+        action.addLink(new UniProtLoadLink("ZFIN: " + lostUniProt.getDataZdbID(), "https://zfin.org/" + lostUniProt.getDataZdbID() + "#sequences"));
+        action.addLink(new UniProtLoadLink("UniProt: " + lostUniProt.getAccession(), "https://www.uniprot.org/uniprot/" + lostUniProt.getAccession()));
+
+        return action;
     }
 
     /**

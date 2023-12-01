@@ -26,7 +26,7 @@ public class UniProtLoadTest extends AbstractDatabaseTest {
      */
     @Test
     public void handleLostUniprotWithGenPept() throws JsonProcessingException {
-        UniProtLoadTask loadTask = new UniProtLoadTask("", "", "", false, "");
+        UniProtLoadTask loadTask = new UniProtLoadTask("", "", "", false, "", "");
         loadTask.initialize();
         String record = testDat();
         loadTask.setContext(testContext());
