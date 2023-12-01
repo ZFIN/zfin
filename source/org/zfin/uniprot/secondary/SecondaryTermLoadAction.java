@@ -139,7 +139,7 @@ public class SecondaryTermLoadAction implements Comparable<SecondaryTermLoadActi
             }
         }
         if ( goID != null ) {
-            dynamicLinks.add(new UniProtLoadLink(goID, "https://zfin.org/GO:" + goID));
+            dynamicLinks.add(new UniProtLoadLink(goID, "https://zfin.org/" + goID));
         }
         if ( goTermZdbID != null ) {
             dynamicLinks.add(new UniProtLoadLink(goTermZdbID, "https://zfin.org/" + goTermZdbID));
