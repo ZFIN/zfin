@@ -28,7 +28,7 @@
         }
 
         #content {
-            width: 1000px;
+            width: 1400px;
             display: flex;
         }
 
@@ -37,7 +37,7 @@
         }
 
         #right-content {
-            width: 730px;
+            width: 1130px;
             padding-left: 50px;
         }
 
@@ -78,7 +78,7 @@
         }
 
         #breadcrumb li::before {
-            content: " \00AB ";
+            content: " \00BB ";
         }
 
         #breadcrumb li:first-child::before {
@@ -115,6 +115,12 @@
             padding: 10px;
             overflow: scroll;
             white-space: pre;
+        }
+        table.subtype-listing {
+            width: 100%;
+        }
+        table.subtype-listing th {
+            text-align: left;
         }
     </style>
 </head>
@@ -158,6 +164,26 @@
             });
         }
         return titleParts.join(' - ');
+    }
+
+    function itemAsKeyValuePairs(item) {
+        let keyValuePairs = new Map();
+
+        if (item.accession) {
+            keyValuePairs.set('accession', item.accession);
+        }
+        if (item.geneZdbID) {
+            keyValuePairs.set('geneZdbID', item.geneZdbID);
+        }
+        if (item.goID) {
+            keyValuePairs.set('goID', item.goID);
+        }
+        if (item.relatedEntityFields) {
+            Object.keys(item.relatedEntityFields).forEach(key => {
+                keyValuePairs.set(key, item.relatedEntityFields[key]);
+            });
+        }
+        return keyValuePairs;
     }
 
     function reportApplication() {
@@ -241,17 +267,45 @@
                 }
             }, [items, type, subtype]);
 
+            if (subTypeItems == null || subTypeItems.length == 0) {
+                return html`
+                    <h2>${type} - ${subtype}</h2>
+                    <div>No items found.</div>
+                `;
+            }
+
+            // const itemsMap = itemAsKeyValuePairs(items);
+            const tableHeaders = Array.from(itemAsKeyValuePairs(subTypeItems[0]).keys());
+
             return html`
                 <h2>${type} - ${subtype}</h2>
-                <p>Click on any of the records below for more details.</p>
-                <ul>
-                    ${subTypeItems.map(item => html`
-                        <li><a href="#" onClick=${() => onClick(item)}>
-                            ${itemListingTitle(item)}
-                            </a>
-                        </li>
-                    `)}
-                </ul>
+                <p>Click on any of the records below for more details. Count: ${subTypeItems.length}</p>
+                <table className='subtype-listing'>
+                    <thead>
+                        <tr>
+                            <th>Details</th>
+                            ${tableHeaders.map(header => html`
+                                <th>${header}</th>
+                            `)}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${subTypeItems.map(item => html`
+                            <tr>
+                                <td>
+                                    <a href="#" onClick=${() => onClick(item)}>
+                                        Details
+                                    </a>
+                                </td>
+                                ${tableHeaders.map(header => html`
+                                    <td>
+                                        ${itemAsKeyValuePairs(item).get(header)}
+                                    </td>
+                                `)}
+                            </tr>
+                        `)}
+                    </tbody>
+                </table>
             `;
         }
 
