@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.zfin.datatransfer.service.DownloadService.downloadFileViaWget;
+import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 import static org.zfin.sequence.ForeignDB.AvailableName.*;
 import static org.zfin.uniprot.UniProtFilterTask.readAllZebrafishEntriesFromSourceIntoRecords;
@@ -157,7 +158,8 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
             try (BufferedReader inputFileReader = new BufferedReader(new java.io.FileReader(inputFileName))) {
                 loadTranslationFiles();
                 UniprotReleaseRecords entries = readUniProtEntries(inputFileReader);
-                executePipeline(entries);
+                setupPipeline(entries);
+                calculatePipelineActions();
                 log.debug("Finished executing pipeline: " + pipeline.getActions().size() + " actions created.");
                 writeActionsToFile(pipeline.getActions());
                 writeOutputReportFile(pipeline.getActions());
@@ -173,11 +175,16 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
                 }
 
                 if (mode.equals(LoadTaskMode.REPORT_AND_LOAD)) {
+                    //clear the session to avoid memory issues that slow down the load inserts and updates
+//                    currentSession().flush();
+                    currentSession().clear();
+
                     pipeline.setRelease(release);
                     pipeline.processActions();
                 }
             }
         } else if (mode.equals(LoadTaskMode.LOAD)) {
+
             List<SecondaryTermLoadAction> actions = readActionsFile();
             log.debug("Finished reading actions file: " + actions.size() + " actions read.");
             pipeline = new SecondaryTermLoadPipeline();
@@ -251,7 +258,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
     }
 
     private void writeContext(SecondaryLoadContext context) {
-        if (contextOutputFile != null && !contextOutputFile.isEmpty()) {
+        if (!contextOutputFile.isEmpty()) {
             ObjectMapper objectMapper = new ObjectMapper();
             try {
                 log.info("Writing context file: " + contextOutputFile + ".");
@@ -260,11 +267,6 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
                 log.error("Error writing context file " + contextOutputFile + ": " + e.getMessage(), e);
             }
         }
-    }
-
-    private void executePipeline(UniprotReleaseRecords entries) {
-        setupPipeline(entries);
-        calculatePipelineActions();
     }
 
     private void setupPipeline(UniprotReleaseRecords entries) {

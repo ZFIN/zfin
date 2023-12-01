@@ -1,16 +1,13 @@
 package org.zfin.uniprot.secondary.handlers;
 
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.collections4.ListUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.hibernate.query.NativeQuery;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.uniprot.dto.MarkerGoTermEvidenceSlimDTO;
 import org.zfin.uniprot.persistence.BatchProcessor;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -67,79 +64,24 @@ public class MarkerGoTermEvidenceActionProcessor implements ActionProcessor {
                 ActiveData.Type.MRKRGOEV.name(),
                 secondaryTermLoadActions.stream().map( action -> {
                     MarkerGoTermEvidenceSlimDTO dto = MarkerGoTermEvidenceSlimDTO.fromMap(action.getRelatedEntityFields());
-                    List<Pair<String, Object>> rowValues = new ArrayList<>();
-                    rowValues.add(Pair.of("mrkrgoev_mrkr_zdb_id", dto.getMarkerZdbID()));
-                    rowValues.add(Pair.of("mrkrgoev_source_zdb_id", dto.getPublicationID()));
-                    rowValues.add(Pair.of("mrkrgoev_evidence_code", "IEA"));
-                    rowValues.add(Pair.of("mrkrgoev_notes", getNotesForDBName(action.getDbName())));
-                    rowValues.add(Pair.of("mrkrgoev_term_zdb_id", dto.getGoTermZdbID()));
-                    rowValues.add(Pair.of("mrkrgoev_annotation_organization", 5));
-                    rowValues.add(Pair.of("mrkrgoev_annotation_organization_created_by", "ZFIN"));
+
+                    //assert dto.getPublicationID().equals ex
+                    if (!dto.getPublicationID().equals(getPubIDForDBName(action.getDbName()))) {
+                        throw new RuntimeException("Publication ID mismatch for " + action.getDbName() + " " + dto.getPublicationID() + " " + getPubIDForDBName(action.getDbName()));
+                    }
+
+                    Map<String, Object> rowValues = new HashMap<>();
+                    rowValues.put("mrkrgoev_mrkr_zdb_id", dto.getMarkerZdbID());
+                    rowValues.put("mrkrgoev_source_zdb_id", dto.getPublicationID());
+                    rowValues.put("mrkrgoev_evidence_code", "IEA");
+                    rowValues.put("mrkrgoev_notes", getNotesForDBName(action.getDbName()));
+                    rowValues.put("mrkrgoev_term_zdb_id", dto.getGoTermZdbID());
+                    rowValues.put("mrkrgoev_annotation_organization", 5);
+                    rowValues.put("mrkrgoev_annotation_organization_created_by", "ZFIN");
                     return rowValues;
                 }).toList()
             );
         batchProcessor.execute();
-    }
-
-    /**
-     * Builds up a single batch insert query like so:
-     *        insert into bulk_marker_go_term_evidence
-     *         (
-     *             mrkrgoev_mrkr_zdb_id,
-     *             mrkrgoev_source_zdb_id,
-     *             mrkrgoev_evidence_code,
-     *             mrkrgoev_notes,
-     *             mrkrgoev_term_zdb_id,
-     *             mrkrgoev_annotation_organization,
-     *             mrkrgoev_annotation_organization_created_by
-     *         ) VALUES
-     *         (?, ?, 'IEA', ?, ?, 5, 'ZFIN'),
-     *         (?, ?, 'IEA', ?, ?, 5, 'ZFIN'),
-     *         (?, ?, 'IEA', ?, ?, 5, 'ZFIN'),
-     *         (?, ?, 'IEA', ?, ?, 5, 'ZFIN'),
-     *         (?, ?, 'IEA', ?, ?, 5, 'ZFIN')
-     *         ...
-     * @param actions
-     */
-    private void loadSingleBatchOfMarkerGoTermEvidenceIntoBulkTempTable(List<SecondaryTermLoadAction> actions) {
-        String sqlOuterTemplate = """
-                insert into bulk_marker_go_term_evidence 
-                (
-                    mrkrgoev_mrkr_zdb_id, 
-                    mrkrgoev_source_zdb_id,	
-                    mrkrgoev_evidence_code,	
-                    mrkrgoev_notes,	
-                    mrkrgoev_term_zdb_id,
-                    mrkrgoev_annotation_organization,
-                    mrkrgoev_annotation_organization_created_by
-                ) VALUES
-                """;
-
-        List<String> sqlInnerTemplates = new ArrayList<>();
-        actions.forEach(a -> sqlInnerTemplates.add("(?, ?, 'IEA', ?, ?, 5, 'ZFIN')"));
-
-        String sql = sqlOuterTemplate + String.join(", ", sqlInnerTemplates);
-        NativeQuery query = currentSession().createSQLQuery(sql);
-
-        int i = 1;
-        for(SecondaryTermLoadAction action : actions) {
-            if (action.getRelatedEntityFields() == null) {
-                log.error("Related entity fields should not be null for MarkerGoTermEvidenceActionProcessor");
-                log.error("Action: " + action);
-                throw new RuntimeException("Related entity fields should not be null for MarkerGoTermEvidenceActionProcessor");
-            }
-            MarkerGoTermEvidenceSlimDTO dto = MarkerGoTermEvidenceSlimDTO.fromMap(action.getRelatedEntityFields());
-
-            query.setParameter(i++, dto.getMarkerZdbID());
-            query.setParameter(i++, dto.getPublicationID());
-            query.setParameter(i++, getNotesForDBName(action.getDbName()));
-            query.setParameter(i++, dto.getGoTermZdbID());
-
-            if (!dto.getPublicationID().equals(getPubIDForDBName(action.getDbName()))) {
-                throw new RuntimeException("publication IDs don't match for " + action.getDbName() + " " + dto.getPublicationID() + " " + getPubIDForDBName(action.getDbName()));
-            }
-        }
-        query.executeUpdate();
     }
 
     private void bulkProcessDeleteActions(List<SecondaryTermLoadAction> secondaryTermLoadActions) {
@@ -151,7 +93,7 @@ public class MarkerGoTermEvidenceActionProcessor implements ActionProcessor {
     private void deleteSingleMarkerGoTermEvidence(SecondaryTermLoadAction action) {
         MarkerGoTermEvidenceSlimDTO dto = MarkerGoTermEvidenceSlimDTO.fromMap(action.getRelatedEntityFields());
         String sql = """
-                delete from marker_go_term_evidence 
+                delete from marker_go_term_evidence
                 where mrkrgoev_mrkr_zdb_id = :mrkrgoev_mrkr_zdb_id
                 and mrkrgoev_term_zdb_id = :mrkrgoev_term_zdb_id
                 and mrkrgoev_source_zdb_id = :mrkrgoev_source_zdb_id

@@ -2,13 +2,12 @@ package org.zfin.uniprot.persistence;
 
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.ListUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.hibernate.query.NativeQuery;
 import org.zfin.framework.HibernateUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
@@ -19,9 +18,12 @@ public class BatchProcessor {
     private static final String TEMP_TABLE_PREFIX = "temp_bulk_load_";
     private static final int BATCH_SIZE = 100;
     private final String baseTableName;
-    private final List<List<Pair<String, Object>>> rowsOfKeyValuePairsToInsert;
+    private final List<Map<String, Object>> rowsOfKeyValuePairsToInsert;
     private final String zdbIdColumnName;
     private final String zdbType;
+
+    //use this to access column names to make sure we get the same order each time
+    private final List<String> columnNames;
 
     /**
      *
@@ -34,11 +36,12 @@ public class BatchProcessor {
     public BatchProcessor(String baseTableName,
                           String zdbIdColumnName,
                           String zdbType,
-                          List<List<Pair<String, Object>>> rowsOfKeyValuePairsToInsert) {
+                          List<Map<String, Object>> rowsOfKeyValuePairsToInsert) {
         this.baseTableName = baseTableName;
         this.zdbIdColumnName = zdbIdColumnName;
         this.zdbType = zdbType;
         this.rowsOfKeyValuePairsToInsert = rowsOfKeyValuePairsToInsert;
+        this.columnNames = new ArrayList<>(rowsOfKeyValuePairsToInsert.get(0).keySet());
     }
 
     public final void execute() {
@@ -75,7 +78,7 @@ public class BatchProcessor {
                 .forEach((batch) -> loadSingleBatchOfDBLinksToBulkTable(batch));
     }
 
-    private void loadSingleBatchOfDBLinksToBulkTable(List<List<Pair<String, Object>>> rows) {
+    private void loadSingleBatchOfDBLinksToBulkTable(List<Map<String, Object>> rows) {
         String sqlOuterTemplate = String.format("""
                 insert into %s
                   (
@@ -96,9 +99,9 @@ public class BatchProcessor {
         NativeQuery query = currentSession().createSQLQuery(sql);
 
         int i = 1;
-        for(List<Pair<String, Object>> row : rows) {
-            for(Pair<String, Object> columnValuePair : row) {
-                query.setParameter(i++, columnValuePair.getRight());
+        for(Map<String, Object> row : rows) {
+            for(String columnKey : this.getColumnNames()) {
+                query.setParameter(i++, row.get(columnKey));
             }
         }
         query.executeUpdate();
@@ -146,10 +149,6 @@ public class BatchProcessor {
     }
 
     private List<String> getColumnNames() {
-        Optional<List<Pair<String, Object>>> firstRow = rowsOfKeyValuePairsToInsert.stream().findFirst();
-        if (firstRow.isEmpty()) {
-            throw new RuntimeException("No rows to insert");
-        }
-        return firstRow.get().stream().map(Pair::getLeft).toList();
+        return columnNames;
     }
 }
