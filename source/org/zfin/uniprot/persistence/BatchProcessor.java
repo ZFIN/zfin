@@ -12,6 +12,13 @@ import java.util.stream.Collectors;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
 
+/**
+ * This class is used to bulk load data into a table.
+ * It is used to load data into tables that have a ZDB ID column.
+ * It will generate ZDB IDs for the new rows based on data type.
+ * It will also create entries in the zdb_active_data table for the new ZDB IDs.
+ * It will insert the data in batches of 100.
+ */
 @Log4j2
 public class BatchProcessor {
 
@@ -78,6 +85,21 @@ public class BatchProcessor {
                 .forEach((batch) -> loadSingleBatchOfDBLinksToBulkTable(batch));
     }
 
+    /**
+     * Generates SQL like:
+     * insert into temp_bulk_load_dblink
+     * (
+     * dblink_acc_num,
+     * dblink_linked_recid,
+     * )
+     * VALUES
+     * (?, ?),
+     * (?, ?),
+     * ...
+     * (?, ?)
+     *
+     * @param rows The data to be inserted.  Each row is a list of key-value pairs that represent a column name and the value for that column.
+     */
     private void loadSingleBatchOfDBLinksToBulkTable(List<Map<String, Object>> rows) {
         String sqlOuterTemplate = String.format("""
                 insert into %s
