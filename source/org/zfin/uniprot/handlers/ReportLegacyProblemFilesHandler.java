@@ -1,5 +1,6 @@
 package org.zfin.uniprot.handlers;
 
+import lombok.extern.log4j.Log4j2;
 import org.zfin.uniprot.UniProtLoadAction;
 import org.zfin.uniprot.UniProtLoadContext;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
@@ -12,6 +13,7 @@ import java.util.Set;
  * This handler reports the accessions that we encounter that were previously in the legacy problem files.
  * Eventually, this class should become unnecessary.
  */
+@Log4j2
 public class ReportLegacyProblemFilesHandler implements UniProtLoadHandler {
 
     @Override
@@ -26,10 +28,35 @@ public class ReportLegacyProblemFilesHandler implements UniProtLoadHandler {
                 action.setAccession(accession);
                 action.setType(UniProtLoadAction.Type.INFO);
                 action.setSubType(UniProtLoadAction.SubType.LEGACY_PROBLEM_FILE);
-                action.setDetails("This accession was in " + problemFile + "\n\n" +
+                action.setDetails("The load encountered an accession in the uniprot release that was previously in the problem file: " + problemFile + ".\n\n" +
                         problemFile + "\n\n" +
                         "Problem File Description: \n" + problemFileDescriptions.get(problemFile)
                 );
+
+                //if we are loading this accession from a different action, then we should include that information here
+                if (actions.stream().anyMatch(a -> a.getAccession().equals(accession))) {
+                    UniProtLoadAction existingAction = actions.stream().filter(a -> a.getAccession().equals(accession)).findFirst().get();
+                    if (existingAction.getType().equals(UniProtLoadAction.Type.LOAD)) {
+                        action.setSubType(UniProtLoadAction.SubType.LEGACY_PROBLEM_FILE_LOAD);
+                        action.setDetails("The load encountered an accession in the uniprot release that was previously in the problem file: " + problemFile + ".\n" +
+                                "The accession will be loaded (" + existingAction.getGeneZdbID() + ") due to our current matching logic.\n" +
+                                "Category: " + existingAction.getSubType() + "\n" +
+                                problemFile + "\n\n" +
+                                "Problem File Description: \n" + problemFileDescriptions.get(problemFile) + "\n\n" +
+                                "This accession was loaded from a different action: \n" + existingAction.getDetails());
+                    } else if (existingAction.getType().equals(UniProtLoadAction.Type.DELETE)) {
+                        action.setSubType(UniProtLoadAction.SubType.LEGACY_PROBLEM_FILE_DELETE);
+                        action.setDetails("The load encountered an accession in the uniprot release that was previously in the problem file: " + problemFile + ".\n" +
+                                "The accession will be deleted due to our current matching logic.\n" +
+                                "Category: " + existingAction.getSubType() + "\n" +
+                                problemFile + "\n\n" +
+                                "Problem File Description: \n" + problemFileDescriptions.get(problemFile) + "\n\n" +
+                                "This accession was deleted from a different action: \n" + existingAction.getDetails());
+                    } else {
+                        log.error("Unknown issue during problem file handler: " + existingAction);
+                    }
+                }
+
                 actions.add(action);
             }
         }
