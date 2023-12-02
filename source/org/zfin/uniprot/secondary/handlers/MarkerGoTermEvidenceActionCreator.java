@@ -57,11 +57,11 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
     public List<SecondaryTermLoadAction> createActions(UniprotReleaseRecords uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
 
         //create markerGoTermEvidenceActions from new interpro IDs
-        log.debug("Creating markerGoTermEvidenceActions from new " + dbName + " IDs");
+        log.info("Creating markerGoTermEvidenceActions from new " + dbName + " IDs");
         List<SecondaryTermLoadAction> markerGoTermEvidenceActions =
                 createMarkerGoTermEvidencesFromNewSecondaryTermIDs(uniProtRecords, actions, context);
 
-        log.debug("Created " + markerGoTermEvidenceActions.size() + " markerGoTermEvidenceActions before filtering");
+        log.info("Created " + markerGoTermEvidenceActions.size() + " markerGoTermEvidenceActions before filtering");
         List<SecondaryTermLoadAction> filteredMarkerGoTermEvidenceActions = filterTerms(markerGoTermEvidenceActions);
         return filteredMarkerGoTermEvidenceActions;
     }
@@ -69,15 +69,15 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
     public static List<SecondaryTermLoadAction> filterTerms(List<SecondaryTermLoadAction> markerGoTermEvidences) {
         //filter out unknown and root terms
         List<SecondaryTermLoadAction> filteredMarkerGoTermEvidences = filterUnknownAndRootTerms(markerGoTermEvidences);
-        log.debug("After first pass of filtering: " + filteredMarkerGoTermEvidences.size() + " markerGoTermEvidences");
+        log.info("After first pass of filtering: " + filteredMarkerGoTermEvidences.size() + " markerGoTermEvidences");
 
         //filter out terms for WITHDRAWN markers
         List<SecondaryTermLoadAction> filteredMarkerGoTermEvidences2 = filterWithdrawnMarkers(filteredMarkerGoTermEvidences);
-        log.debug("After second pass of filtering: " + filteredMarkerGoTermEvidences2.size() + " markerGoTermEvidences");
+        log.info("After second pass of filtering: " + filteredMarkerGoTermEvidences2.size() + " markerGoTermEvidences");
 
         //filter out terms not meant to be annotated
         List<SecondaryTermLoadAction> filteredMarkerGoTermEvidences3 = filterNonAnnotatedTerms(filteredMarkerGoTermEvidences2);
-        log.debug("After third pass of filtering: " + filteredMarkerGoTermEvidences3.size() + " markerGoTermEvidences");
+        log.info("After third pass of filtering: " + filteredMarkerGoTermEvidences3.size() + " markerGoTermEvidences");
 
         return filteredMarkerGoTermEvidences3;
     }
@@ -127,7 +127,7 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
 
         //all existing db links
         List<DBLinkSlimDTO> existingDbLinks = context.getFlattenedDbLinksByDbName(dbName);
-        log.debug("Count of existing db links: " + existingDbLinks.size());
+        log.info("Count of existing db links: " + existingDbLinks.size());
 
         //all new db links (based on actions)
         List<DBLinkSlimDTO> actionsLoadedFromNewDBLinks = actions.stream()
@@ -140,19 +140,19 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
                 )
                 .toList();
 
-        log.debug("Count of new db links: " + actionsLoadedFromNewDBLinks.size());
+        log.info("Count of new db links: " + actionsLoadedFromNewDBLinks.size());
 
         List<DBLinkSlimDTO> allDbLinks = Stream.concat(existingDbLinks.stream(), actionsLoadedFromNewDBLinks.stream()).toList();
-        log.debug("Count of all db links: " + allDbLinks.size());
+        log.info("Count of all db links: " + allDbLinks.size());
 
         //create markerGoTermEvidences for all db links
-        log.debug("Joining DBLinks with translation records...");
+        log.info("Joining DBLinks with translation records...");
         //join the load actions to the interpro/ec/spkw translation records
         List<Tuple2<DBLinkSlimDTO, SecondaryTerm2GoTerm>> joined = Seq.seq(allDbLinks)
                 .innerJoin(translationRecords,
                         (action, item2go) -> action.getAccession().equals(item2go.dbAccession()))
                 .toList();
-        log.debug("Count of joined records: " + joined.size());
+        log.info("Count of joined records: " + joined.size());
 
         //convert to markerGoTermEvidenceSlimDTOs
         List<MarkerGoTermEvidenceSlimDTO> calculatedMarkerGoTermEvidences = joined.stream().map(
@@ -168,7 +168,7 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
                 }
         ).toList();
 
-        log.debug("Count of calculated marker go term evidences: " + calculatedMarkerGoTermEvidences.size());
+        log.info("Count of calculated marker go term evidences: " + calculatedMarkerGoTermEvidences.size());
 
         List<MarkerGoTermEvidenceSlimDTO> existingMarkerGoTermEvidences = context.getExistingMarkerGoTermEvidenceRecords(dbName);
 
@@ -177,7 +177,7 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
 
         List<MarkerGoTermEvidenceSlimDTO> toDelete = ListUtils.subtract(existingMarkerGoTermEvidences, calculatedMarkerGoTermEvidences);
 
-        log.debug("Count of marker go term evidences to add: " + toAdd.size());
+        log.info("Count of marker go term evidences to add: " + toAdd.size());
         //convert marker_go_term_evidence records to load actions
         List<SecondaryTermLoadAction> toAddActions = toAdd.stream()
                 .map(
@@ -196,7 +196,7 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
                 )
                 .toList();
 
-        log.debug("Count of marker go term evidences to delete: " + toDelete.size());
+        log.info("Count of marker go term evidences to delete: " + toDelete.size());
         List<SecondaryTermLoadAction> toDeleteActions = toDelete.stream()
                 .map(
                         markerGoTermEvidence -> SecondaryTermLoadAction.builder()

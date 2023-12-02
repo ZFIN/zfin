@@ -163,11 +163,11 @@ public class UniProtReleaseDiffTask extends AbstractScriptWrapper {
                 printUsageAndDie();
             } else {
                 //get the release filesets
-                log.debug("Searching for release by ID: " + release1 + " and " + release2 + ".");
+                log.info("Searching for release by ID: " + release1 + " and " + release2 + ".");
                 inputFilenameSet1 = getInfrastructureRepository().getUniProtReleaseByID(Long.valueOf(release1)).getLocalFile().getAbsolutePath();
                 inputFilenameSet2 = getInfrastructureRepository().getUniProtReleaseByID(Long.valueOf(release2)).getLocalFile().getAbsolutePath();
-                log.debug("Input file set 1 based on " + release1 + ": " + inputFilenameSet1);
-                log.debug("Input file set 2 based on " + release2 + ": " + inputFilenameSet2);
+                log.info("Input file set 1 based on " + release1 + ": " + inputFilenameSet1);
+                log.info("Input file set 2 based on " + release2 + ": " + inputFilenameSet2);
             }
         }
 
@@ -223,7 +223,7 @@ public class UniProtReleaseDiffTask extends AbstractScriptWrapper {
 
     public static Path combineAndFilterInputFileSet(String inputFileNames, Path outputFile) throws IOException {
         //create a set of input files from the input file set 1 based on comma separated list
-        log.debug("Filtering file(s): " + String.join(",", inputFileNames));
+        log.info("Filtering file(s): " + String.join(",", inputFileNames));
 
         List<File> inputFiles = getInputFiles(inputFileNames);
         return combineAndFilterInputFileSet(inputFiles, outputFile);

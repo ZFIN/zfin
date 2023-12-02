@@ -34,7 +34,7 @@ public class RemoveSpKeywordTermToGoActionCreator implements ActionCreator {
 
     @Override
     public List<SecondaryTermLoadAction> createActions(UniprotReleaseRecords uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
-        log.debug("Creating actions to remove SPKW terms");
+        log.info("Creating actions to remove SPKW terms");
         if (this.dbName != UNIPROTKB) {
             log.error("Not a SPKW term");
             throw new RuntimeException("Not a SPKW term");

@@ -9,6 +9,7 @@ import org.zfin.uniprot.dto.DBLinkSlimDTO;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.zfin.uniprot.UniProtTools.AUTOMATED_CURATION_OF_UNIPROT_DATABASE_LINKS;
 import static org.zfin.uniprot.UniProtTools.isAnyGeneAccessionRelationshipSupportedByNonLoadPublication;
 
 
@@ -21,17 +22,43 @@ public class MatchOnRefSeqHandler implements UniProtLoadHandler {
 
         MatchOnRefSeqResults matchResults = new MatchOnRefSeqResults();
 
+        boolean debug = false;
+
         //build up all the cases where we can match on RefSeq
         //build up data structure that links accession to gene(s) with list of matched refseqs
         //something like {"A0A0R4IKB2":[{"ZDB-GENE-030131-5416":["XP_005170963", "XP_005170964"]}, {"ZDB-GENE-030131-5417":["XP..."]}, ...]}
         for (String accession : uniProtRecords.keySet()) {
+            debug = accession.equals("A0A0R4IRP9");
 
             //all refseqs in the load file for this accession
             Set<String> refseqs = uniProtRecords.get(accession).getRefSeqs();
 
             for(String refseq : refseqs) {
+                if (debug) System.out.println("debug refseq: " + refseq);
                 if (refseqsInDb.containsKey(refseq)) {
+                    if (debug) System.out.println("refseqsInDb: true");
                     for(DBLinkSlimDTO dto : refseqsInDb.get(refseq)) {
+                        if (debug) System.out.println("dto: " + dto);
+
+                        //if we already have this uniprot/gene association, essentially skip it (unless the attributions do not contain our load pub)
+                        if (databaseAlreadyContainsUniProtGeneAssociationWithAutomatedCurationPub(accession, dto, context)) {
+
+                            //creating an ignore action here so that the Remove logic knows to ignore this case
+                            UniProtLoadAction action = new UniProtLoadAction();
+                            action.setAccession(accession);
+                            action.setSubType(UniProtLoadAction.SubType.MATCH_BY_REFSEQ);
+                            action.setGeneZdbID(dto.getDataZdbID());
+                            action.setDetails("This UniProt accession has a RefSeq match to a gene in ZFIN, but the gene is already associated with this UniProt accession.\n\n");
+                            action.setType(UniProtLoadAction.Type.IGNORE);
+                            actions.add(action);
+
+                            if (debug) System.out.println("debug action: " + action);
+
+                            continue;
+                        }
+
+                        if (debug) System.out.println("adding to matchresults");
+
                         matchResults.put(accession, dto);
                     }
                 }
@@ -44,6 +71,7 @@ public class MatchOnRefSeqHandler implements UniProtLoadHandler {
             String uniprotAccession = item.getKey();
             MatchOnRefSeqResult result = item.getValue();
             String details = accessionWithMatchingGeneAndRefSeqToString(uniprotAccession, result);
+            debug = uniprotAccession.equals("A0A0R4IRP9");
 
             UniProtLoadAction action = new UniProtLoadAction();
             action.setAccession(uniprotAccession);
@@ -56,21 +84,50 @@ public class MatchOnRefSeqHandler implements UniProtLoadHandler {
                         context.getUniprotDbLinks().get(uniprotAccession));
 
                 if (isWarning) {
+                    if (debug) System.out.println("DEBUGPOINT01");
                     action.setSubType(UniProtLoadAction.SubType.MULTIPLE_GENES_PER_ACCESSION_BUT_APPROVED);
                     action.setType(UniProtLoadAction.Type.WARNING);
                     action.setDetails("This UniProt accession has multiple genes associated with it, but at least one of the gene associations is supported by a non-load publication.\n\n" + details);
                 } else {
+                    if (debug) System.out.println("DEBUGPOINT02");
                     action.setSubType(UniProtLoadAction.SubType.MULTIPLE_GENES_PER_ACCESSION);
                     action.setType(UniProtLoadAction.Type.ERROR);
                 }
             } else {
-                action.setSubType(UniProtLoadAction.SubType.MATCH_BY_REFSEQ);
-                action.setType(UniProtLoadAction.Type.LOAD);
-                action.setGeneZdbID(result.getGeneZdbIDs().get(0));
-                action.setLength(uniProtRecords.get(uniprotAccession).getLength());
+                boolean hasNonLoadPublication = isAnyGeneAccessionRelationshipSupportedByNonLoadPublication(uniprotAccession,
+                        result.getGeneZdbIDs(),
+                        context.getUniprotDbLinks().get(uniprotAccession));
+                if (hasNonLoadPublication) {
+                    if (debug) System.out.println("DEBUGPOINT03");
+
+                    //load attribution only
+                    action.setSubType(UniProtLoadAction.SubType.ADD_ATTRIBUTION);
+                    action.setType(UniProtLoadAction.Type.LOAD);
+                    action.setGeneZdbID(result.getGeneZdbIDs().get(0));
+                    action.setLength(uniProtRecords.get(uniprotAccession).getLength());
+                } else {
+                    if (debug) System.out.println("DEBUGPOINT04");
+
+                    //create DB Link
+                    action.setSubType(UniProtLoadAction.SubType.MATCH_BY_REFSEQ);
+                    action.setType(UniProtLoadAction.Type.LOAD);
+                    action.setGeneZdbID(result.getGeneZdbIDs().get(0));
+                    action.setLength(uniProtRecords.get(uniprotAccession).getLength());
+                }
             }
             actions.add(action);
         }
+    }
+
+    /*
+    does the database already contain this association? Ignore manual curation pubs
+     */
+    private boolean databaseAlreadyContainsUniProtGeneAssociationWithAutomatedCurationPub(String accession, DBLinkSlimDTO dto, UniProtLoadContext context) {
+        DBLinkSlimDTO existingDBLink = context.getDBLinkByUniprotAndGene(accession, dto.getDataZdbID());
+        if (existingDBLink == null) {
+            return false;
+        }
+        return existingDBLink.getPublicationIDs().contains(AUTOMATED_CURATION_OF_UNIPROT_DATABASE_LINKS);
     }
 
     private void setActionLinks(UniProtLoadAction action, MatchOnRefSeqResult result) {

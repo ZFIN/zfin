@@ -44,7 +44,7 @@ public class SecondaryTermLoadPipeline {
             ActionCreator actionCreator = handlerPair.getLeft();
             Class<? extends ActionProcessor> actionProcessorClass = handlerPair.getRight();
 
-            log.debug("Starting action creation handler " + i + " of " + handlerPairs.size() + " (" + actionCreator.getClass().getName() + ")");
+            log.info("Starting action creation handler " + i + " of " + handlerPairs.size() + " (" + actionCreator.getClass().getName() + ")");
 
             List<SecondaryTermLoadAction> calculatedActions =
                 actionCreator.createActions(uniprotRecords, Collections.unmodifiableList(actions), context);
@@ -52,12 +52,12 @@ public class SecondaryTermLoadPipeline {
             actions.addAll(actionsWithProcessor);
 
             actionCount = actions.size();
-            log.debug("Finished action creation handler " + i + " of " + handlerPairs.size() + " (" + actionCreator.getClass().getName() + ")");
+            log.info("Finished action creation handler " + i + " of " + handlerPairs.size() + " (" + actionCreator.getClass().getName() + ")");
 
             if (actionCount == previousActionCount) {
-                log.debug("No new actions were created by this handler");
+                log.info("No new actions were created by this handler");
             } else {
-                log.debug("This handler created " + (actionCount - previousActionCount) + " new actions");
+                log.info("This handler created " + (actionCount - previousActionCount) + " new actions");
             }
             previousActionCount = actionCount;
             i++;
@@ -106,10 +106,10 @@ public class SecondaryTermLoadPipeline {
         //process the actions
         currentSession().beginTransaction();
         for(SecondaryTermLoadAction.Type type : typesOfActions) {
-            log.debug("Processing action types of " + type);
+            log.info("Processing action types of " + type);
             List<SecondaryTermLoadAction> transactionActions = groupedByType.get(type);
             processLoadActions(type, transactionActions);
-            log.debug("Finished action types of " + type);
+            log.info("Finished action types of " + type);
         }
         if (release != null) {
             if (release.getProcessedDate() == null) {
@@ -120,7 +120,7 @@ public class SecondaryTermLoadPipeline {
             release.setSecondaryLoadDate(new Date());
             getInfrastructureRepository().updateUniProtRelease(release);
         }
-        log.debug("Committing changes");
+        log.info("Committing changes");
         currentSession().getTransaction().commit();
     }
 
@@ -145,12 +145,12 @@ public class SecondaryTermLoadPipeline {
         if (handler.isSubTypeHandlerFor() != subType) {
             throw new RuntimeException("Handler class " + handlerClass + " does not support subType " + subType);
         }
-        log.debug("Processing " + subTypeActions.size() + " actions for " + subType + " using handler " + handlerClass);
+        log.info("Processing " + subTypeActions.size() + " actions for " + subType + " using handler " + handlerClass);
         Date timestamp = new Date();
         handler.processActions(subTypeActions);
         long timeElapsed = new Date().getTime() - timestamp.getTime();
         long secondsElapsed = timeElapsed / 1000;
-        log.debug("Finished processing " + subTypeActions.size() + " actions in " + secondsElapsed + " seconds for " + subType + " using handler " + handlerClass);
+        log.info("Finished processing " + subTypeActions.size() + " actions in " + secondsElapsed + " seconds for " + subType + " using handler " + handlerClass);
     }
 
     /**

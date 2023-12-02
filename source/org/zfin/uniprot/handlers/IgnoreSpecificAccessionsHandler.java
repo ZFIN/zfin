@@ -51,11 +51,11 @@ public class IgnoreSpecificAccessionsHandler implements UniProtLoadHandler {
             Map.Entry<String, RichSequenceAdapter> entry = iter.next();
             String accession = entry.getKey();
             if (!accessionsToInclude.contains(accession)) {
-                log.debug("Removing accession " + accession + " from load file because it is not in the list of accessions to include.");
+                log.info("Removing accession " + accession + " from load file because it is not in the list of accessions to include.");
                 iter.remove();
             }
         }
 
-        log.debug("After filtering, there are " + uniProtRecords.size() + " accessions in the load file.");
+        log.info("After filtering, there are " + uniProtRecords.size() + " accessions in the load file.");
     }
 }

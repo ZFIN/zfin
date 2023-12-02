@@ -29,10 +29,13 @@ public class ReportLostUniProtsHandler implements UniProtLoadHandler {
     @Override
     public void handle(Map<String, RichSequenceAdapter> uniProtRecords, Set<UniProtLoadAction> actions, UniProtLoadContext context) {
         //actions should contain all cases where we have a match based on RefSeq
-        List<UniProtLoadAction> actionsMatchedOnRefSeq = actions.stream().filter(action -> action.getSubType().equals(UniProtLoadAction.SubType.MATCH_BY_REFSEQ)).toList();
+        List<UniProtLoadAction> actionsMatchedOnRefSeq = actions.stream().filter(
+                action -> action.getSubType().equals(UniProtLoadAction.SubType.MATCH_BY_REFSEQ) ||
+                        action.getSubType().equals(UniProtLoadAction.SubType.ADD_ATTRIBUTION)
+        ).toList();
 
-        log.debug("ReportLostUniProtsHandler - Count of actions: " + actions.size());
-        log.debug("ReportLostUniProtsHandler - Filtered count of actions: " + actionsMatchedOnRefSeq.size());
+        log.info("ReportLostUniProtsHandler - Count of actions: " + actions.size());
+        log.info("ReportLostUniProtsHandler - Filtered count of actions: " + actionsMatchedOnRefSeq.size());
 
         //all genes with existing uniprot associations
         List<DBLinkSlimDTO> sequencesForGenesWithExistingUniprotAssociations = context.getUniprotDbLinks()

@@ -52,22 +52,22 @@ public class BatchProcessor {
     }
 
     public final void execute() {
-        log.debug("creating temp table for bulk load: " + tempTable());
+        log.info("creating temp table for bulk load: " + tempTable());
         createTempTable();
 
-        log.debug("loading data into temp table for bulk load: " + tempTable());
+        log.info("loading data into temp table for bulk load: " + tempTable());
         loadBatchData();
 
-        log.debug("adding ZDB IDs to temp table for bulk load: " + tempTable());
+        log.info("adding ZDB IDs to temp table for bulk load: " + tempTable());
         setZdbIdField();
 
-        log.debug("inserting ZDB IDs into active data table");
+        log.info("inserting ZDB IDs into active data table");
         insertActiveData();
 
-        log.debug("inserting data from temp table into base table: " + baseTableName);
+        log.info("inserting data from temp table into base table: " + baseTableName);
         insertFromTempTable();
 
-        log.debug("dropping temp table: " + tempTable());
+        log.info("dropping temp table: " + tempTable());
         dropTempTable();
     }
 
@@ -76,7 +76,7 @@ public class BatchProcessor {
                 "create temp table %s as select * from %s where false",
                 tempTable(),
                 baseTableName);
-        log.debug("create temp table sql: " + sql);
+        log.info("create temp table sql: " + sql);
         HibernateUtil.currentSession().createSQLQuery(sql).executeUpdate();
     }
 

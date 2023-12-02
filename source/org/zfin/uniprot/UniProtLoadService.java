@@ -40,6 +40,7 @@ public class UniProtLoadService {
 
     private static void bulkProcessActions(Set<UniProtLoadAction> actions) {
         Map<UniProtLoadAction.Type, List<UniProtLoadAction>> groupedActions = actions.stream().collect(Collectors.groupingBy(UniProtLoadAction::getType));
+
         for(UniProtLoadAction.Type type : groupedActions.keySet()) {
             if(type.equals(UniProtLoadAction.Type.LOAD)) {
                 bulkLoadAction(groupedActions.get(type));
@@ -52,11 +53,40 @@ public class UniProtLoadService {
     }
 
     private static void bulkLoadAction(List<UniProtLoadAction> actions) {
+        Map<UniProtLoadAction.SubType, List<UniProtLoadAction>> groupedActions =
+                actions.stream().collect(Collectors.groupingBy(UniProtLoadAction::getSubType));
+
+        for(UniProtLoadAction.SubType subType : groupedActions.keySet()) {
+            if (subType.equals(UniProtLoadAction.SubType.ADD_ATTRIBUTION)) {
+                bulkAddAttributionAction(groupedActions.get(subType));
+            } else if (subType.equals(UniProtLoadAction.SubType.MATCH_BY_REFSEQ)) {
+                bulkLoadActionForNewDbLinks(groupedActions.get(subType));
+            } else {
+                //ignore other action types used for reporting
+                throw new RuntimeException("Unknown action load subtype: " + subType);
+            }
+        }
+
+    }
+
+    private static void bulkAddAttributionAction(List<UniProtLoadAction> uniProtLoadActions) {
+        for(UniProtLoadAction action : uniProtLoadActions) {
+            log.info("Adding attribution: " + action.getAccession() + " " + action.getGeneZdbID());
+            DBLink existingDBLink = getSequenceRepository().getDBLink(action.getGeneZdbID(), action.getAccession(), UNIPROTKB.toString());
+            log.info("Existing dblink: " + existingDBLink);
+            if(existingDBLink == null) {
+                throw new RuntimeException("No existing dblink found for: " + action.getAccession() + " " + action.getGeneZdbID());
+            }
+            getInfrastructureRepository().insertRecordAttribution(existingDBLink.getZdbID(), PUBLICATION_ATTRIBUTION_ID);
+        }
+    }
+
+    private static void bulkLoadActionForNewDbLinks(List<UniProtLoadAction> actions) {
         List<Marker> markers = getMarkerRepository().getMarkersByZdbIDs(actions.stream().map(UniProtLoadAction::getGeneZdbID).toList());
         Map<String, Marker> markerMap = markers.stream().collect(Collectors.toMap(Marker::getZdbID, marker -> marker));
         List<MarkerDBLink> dblinks = new ArrayList<>();
         for(UniProtLoadAction action : actions) {
-            log.debug("Adding dblink: " + action.getAccession() + " " + action.getGeneZdbID());
+            log.info("Adding dblink: " + action.getAccession() + " " + action.getGeneZdbID());
             Marker marker = markerMap.get(action.getGeneZdbID());
             MarkerDBLink newLink = new MarkerDBLink();
             newLink.setAccessionNumber(action.getAccession());
@@ -79,7 +109,7 @@ public class UniProtLoadService {
             if (pubIDs.size() == 1 && pubIDs.get(0).equals(PUBLICATION_ATTRIBUTION_ID)) {
                 //only delete if this is the only attribution
                 System.err.println("Removing dblink: " + dblink.getZdbID() + " " + dblink.getAccessionNumber() + " " + action.getGeneZdbID());
-                log.debug("Removing dblink: " + dblink.getZdbID());
+                log.info("Removing dblink: " + dblink.getZdbID());
                 getSequenceRepository().deleteReferenceProteinByDBLinkID(dblink.getZdbID());
                 dblinksToDelete.add(dblink);
             } else {
@@ -92,7 +122,7 @@ public class UniProtLoadService {
 
     private static void removeAttribution(DBLink dblink, UniProtLoadAction action) {
         System.err.println("Removing attribution from dblink: " + dblink.getZdbID() + " " + dblink.getAccessionNumber() + " " + action.getGeneZdbID());
-        log.debug("Removing attribution from dblink: " + dblink.getZdbID());
+        log.info("Removing attribution from dblink: " + dblink.getZdbID());
         dblink.getPublications()
             .stream()
             .filter(attribution -> attribution.getSourceZdbID().equals(PUBLICATION_ATTRIBUTION_ID))

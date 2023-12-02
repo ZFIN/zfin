@@ -35,10 +35,10 @@ public class RemoveSecondaryTermToGoActionProcessor implements ActionProcessor {
     private static void deleteMarkerGoTermEvidence(SecondaryTermLoadAction action, String pubID) {
         //TODO: is this redundant with the code in MarkerGoTermEvidenceActionPRocessor?
 
-        log.debug("Removing " + action.getDbName() + " marker_go_term_evidence for " + action.getGeneZdbID() + " " + action.getGoTermZdbID() + " " + pubID );
+        log.info("Removing " + action.getDbName() + " marker_go_term_evidence for " + action.getGeneZdbID() + " " + action.getGoTermZdbID() + " " + pubID );
         List<MarkerGoTermEvidence> markerGoTermEvidences = getMarkerGoTermEvidenceRepository().getMarkerGoTermEvidencesForMarkerZdbID(action.getGeneZdbID());
         if (markerGoTermEvidences.size() == 0) {
-            log.debug("No marker_go_term_evidence found to delete");
+            log.info("No marker_go_term_evidence found to delete");
             return;
         }
 
@@ -51,10 +51,10 @@ public class RemoveSecondaryTermToGoActionProcessor implements ActionProcessor {
         if (toDeleteIDs.size() > 1) {
             log.info("Found more than one marker_go_term_evidence to delete: " + toDeleteIDs + ". Deleting all...");
         } else if (toDeleteIDs.size() == 0) {
-            log.debug("No marker_go_term_evidence found to delete after filtering");
+            log.info("No marker_go_term_evidence found to delete after filtering");
             return;
         }
-        log.debug("Found the following marker_go_term_evidence to delete: " + toDeleteIDs);
+        log.info("Found the following marker_go_term_evidence to delete: " + toDeleteIDs);
 
         getMarkerGoTermEvidenceRepository().deleteMarkerGoTermEvidenceByZdbIDs(toDeleteIDs);
     }

@@ -33,7 +33,7 @@ public class RemoveFromLostUniProtsActionProcessor implements ActionProcessor {
                 continue;
             }
             System.err.println("Removing dblink: " + dblink.getZdbID() + " " + dblink.getAccessionNumber() + " " + action.getGeneZdbID());
-            log.debug("Removing dblink: " + dblink.getZdbID());
+            log.info("Removing dblink: " + dblink.getZdbID());
             getSequenceRepository().deleteReferenceProteinByDBLinkID(dblink.getZdbID());
             dblinksToDelete.add(dblink);
         }

@@ -33,7 +33,7 @@ public class AddNewSpKeywordTermToGoActionCreator extends MarkerGoTermEvidenceAc
     @Override
     public List<SecondaryTermLoadAction> createActions(UniprotReleaseRecords uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
         //create newMarkerGoTermEvidenceLoadActions from new interpro IDs
-        log.debug("Creating newMarkerGoTermEvidenceLoadActions from new " + dbName + " IDs");
+        log.info("Creating newMarkerGoTermEvidenceLoadActions from new " + dbName + " IDs");
         List<SecondaryTermLoadAction> newMarkerGoTermEvidenceLoadActions;
 
         if (!dbName.equals(ForeignDB.AvailableName.UNIPROTKB)) {
@@ -41,10 +41,10 @@ public class AddNewSpKeywordTermToGoActionCreator extends MarkerGoTermEvidenceAc
         }
         newMarkerGoTermEvidenceLoadActions = createMarkerGoTermEvidenceLoadActionsFromUniprotKeywords(uniProtRecords, context, translationRecords);
 
-        log.debug("Created " + newMarkerGoTermEvidenceLoadActions.size() + " newMarkerGoTermEvidenceLoadActions before filtering out existing ones");
+        log.info("Created " + newMarkerGoTermEvidenceLoadActions.size() + " newMarkerGoTermEvidenceLoadActions before filtering out existing ones");
         newMarkerGoTermEvidenceLoadActions = filterExistingTerms(newMarkerGoTermEvidenceLoadActions, context);
 
-        log.debug("Remaining: " + newMarkerGoTermEvidenceLoadActions.size() + " newMarkerGoTermEvidenceLoadActions before filtering for obsoletes, etc.");
+        log.info("Remaining: " + newMarkerGoTermEvidenceLoadActions.size() + " newMarkerGoTermEvidenceLoadActions before filtering for obsoletes, etc.");
         List<SecondaryTermLoadAction> filteredMarkerGoTermEvidences = filterTerms(newMarkerGoTermEvidenceLoadActions);
 
         return filteredMarkerGoTermEvidences;
@@ -72,7 +72,7 @@ public class AddNewSpKeywordTermToGoActionCreator extends MarkerGoTermEvidenceAc
             }
             List<DBLinkSlimDTO> matchingGeneDBLinks = context.getGeneByUniprot(key);
             if (matchingGeneDBLinks == null || matchingGeneDBLinks.isEmpty()) {
-//                log.debug("No matching gene for " + key + " with " + keywords.size() + " keywords");
+//                log.info("No matching gene for " + key + " with " + keywords.size() + " keywords");
                 unmatchedGeneCount++;
                 continue;
             }
@@ -83,7 +83,7 @@ public class AddNewSpKeywordTermToGoActionCreator extends MarkerGoTermEvidenceAc
                 geneKeywords.add(new GeneKeyword(firstMatchingGeneDBLink.getDataZdbID(), keyword));
             }
         }
-        log.debug("Found " + geneKeywords.size() + " keywords for " + uniProtRecords.size() + " uniprot records. " + unmatchedGeneCount + " uniprot records had no matching gene");
+        log.info("Found " + geneKeywords.size() + " keywords for " + uniProtRecords.size() + " uniprot records. " + unmatchedGeneCount + " uniprot records had no matching gene");
 
         //join the resulting keywords from above to the translation records to get GO terms
         List<Tuple2<GeneKeyword, SecondaryTerm2GoTerm>> joined = Seq.seq(geneKeywords)

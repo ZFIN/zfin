@@ -34,15 +34,15 @@ public class AddNewDBLinksFromUniProtsActionCreator implements ActionCreator {
 
     @Override
     public List<SecondaryTermLoadAction> createActions(UniprotReleaseRecords uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
-        log.debug("AddNewDBLinksFromUniProtsActionCreator for " + dbName);
+        log.info("AddNewDBLinksFromUniProtsActionCreator for " + dbName);
         List<SecondaryTermLoadAction> newActions = getLoadActionsNotAlreadyInDatabase(uniProtRecords, context);
 
         //remove duplicates
-        log.debug("Removing duplicates from " + newActions.size() + " new actions");
+        log.info("Removing duplicates from " + newActions.size() + " new actions");
 
         //first group by gene, accession
         newActions = firstInEachGrouping(newActions, action -> action.getGeneZdbID() + "," + action.getAccession() + "," + action.getDbName());
-        log.debug("Removed duplicates, now have " + newActions.size() + " new actions");
+        log.info("Removed duplicates, now have " + newActions.size() + " new actions");
 
         return newActions;
     }
@@ -95,8 +95,8 @@ public class AddNewDBLinksFromUniProtsActionCreator implements ActionCreator {
                 }
             }
         }
-        log.debug("Previously existed: " + previouslyExistedCount);
-        log.debug("Newly added: " + newlyAddedCount);
+        log.info("Previously existed: " + previouslyExistedCount);
+        log.info("Newly added: " + newlyAddedCount);
         return newActions;
     }
 

@@ -55,7 +55,8 @@ public class UniProtLoadAction implements Comparable<UniProtLoadAction> {
         LOST_UNIPROT_PREV_MATCH_BY_GP("Previously Matched by GenPept: No RefSeq Match"),
         LEGACY_PROBLEM_FILE("Legacy Problem File"),
         DUPLICATE_ACCESSIONS("Duplicate Accessions: tmp category"),
-        REMOVE_ATTRIBUTION("Remove Attribution");
+        REMOVE_ATTRIBUTION("Remove Attribution"),
+        ADD_ATTRIBUTION("Add Attribution");
 
         private final String value;
 

@@ -92,7 +92,7 @@ public class InterproProteinActionCreator implements ActionCreator {
                     .details(uniprotRecord.toUniProtFormat())
                     .build());
         } else {
-            log.debug("No auto-curated gene association found for UniProt accession: " + accession);
+            log.info("No auto-curated gene association found for UniProt accession: " + accession);
         }
         return Optional.empty();
     }

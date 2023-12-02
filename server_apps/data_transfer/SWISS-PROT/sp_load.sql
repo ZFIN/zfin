@@ -451,9 +451,9 @@ and exists (Select 'x' from pre_marker_go_term_evidence
 -- loading cc
         drop table if exists tmp_uniprot_mrkr_cc ;
         create table tmp_uniprot_mrkr_cc (
-                gene_zdb_id      text,
-		        sp_acc_num	    text,
-                cc_note          text
+            gene_zdb_id text,
+            sp_acc_num text,
+            cc_note text
         );
 
 --!echo 'Load cc_external.unl'

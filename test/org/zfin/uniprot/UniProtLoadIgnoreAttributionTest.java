@@ -16,28 +16,22 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
-public class UniProtLoadRemoveAttributionTest extends AbstractDatabaseTest {
+public class UniProtLoadIgnoreAttributionTest extends AbstractDatabaseTest {
 
     /**
-     * If an UniProt record no longer has a RefSeq match, meaning we want delete it, but it already has a manual curation attribution,
-     * we keep the uniprot record and its gene association, but remove the automatic attribution from the dblink.
+     * If a UniProt record has a RefSeq match, meaning we want to load it, but it already has a manual curation attribution and an existing automated curation attribution,
+     * we want to keep both attributions, so do nothing
      */
     @Test
-    public void handleUniprotLoadDisagreesWithManualCuration() throws JsonProcessingException {
+    public void handleUniprotLoadAgreesWithManualCurationAndExistingUniprotAttribution() throws JsonProcessingException {
         UniProtLoadTask loadTask = new UniProtLoadTask("", "", "", false, "", "");
         String record = testDat();
         loadTask.setContext(testContext());
         try (BufferedReader inputFileReader = new BufferedReader(new StringReader(record)) ) {
             Map<String, RichSequenceAdapter> entries = loadTask.readUniProtEntries(inputFileReader);
             Set<UniProtLoadAction> actions = loadTask.executePipeline(entries);
-            assertEquals(1, actions.size());
 
-            UniProtLoadAction action = actions.iterator().next();
-
-            assertEquals(action.getType(), UniProtLoadAction.Type.DELETE);
-            assertEquals(action.getSubType(), UniProtLoadAction.SubType.REMOVE_ATTRIBUTION);
-            assertEquals(action.getAccession(), "A4IGB0");
-            assertEquals(action.getGeneZdbID(), "ZDB-GENE-141215-12");
+            assertEquals(0, actions.size());
 
         } catch (IOException | BioException e) {
             throw new RuntimeException(e);
@@ -56,6 +50,12 @@ public class UniProtLoadRemoveAttributionTest extends AbstractDatabaseTest {
                 """;
     }
 
+    /**
+     * This context sets up the test with an existing gene/uniprot link with only a manual attribution.
+     * And it contains the RefSeq link for matching so the load will automatically make the connection.
+     * @return
+     * @throws JsonProcessingException
+     */
     private UniProtLoadContext testContext() throws JsonProcessingException {
         String json = """
                 {
@@ -73,7 +73,19 @@ public class UniProtLoadRemoveAttributionTest extends AbstractDatabaseTest {
                       }
                     ]
                   },
-                  "refseqDbLinks": {}
+                  "refseqDbLinks": {
+                    "NP_001077286": [
+                      {
+                        "accession": "NP_001077286",
+                        "dataZdbID": "ZDB-GENE-141215-12",
+                        "markerAbbreviation": "si:ch73-42k18.1",
+                        "dbName": "REFSEQ",
+                        "publicationIDs": [
+                          "ZDB-PUB-130725-2"
+                        ]
+                      }
+                    ]
+                  }
                 }
                 """;
         ObjectMapper objectMapper = new ObjectMapper();

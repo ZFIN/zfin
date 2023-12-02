@@ -102,8 +102,8 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
 
     public void runTask() throws IOException, BioException, SQLException {
         initialize();
-        log.debug("Starting UniProtLoadTask for file " + inputFileName + " with output files " + outputJsonName + " and " + outputReportName + ".");
-        log.debug("Commit changes: " + commitChanges + ".");
+        log.info("Starting UniProtLoadTask for file " + inputFileName + " with output files " + outputJsonName + " and " + outputReportName + ".");
+        log.info("Commit changes: " + commitChanges + ".");
 
         try (BufferedReader inputFileReader = new BufferedReader(new java.io.FileReader(inputFileName))) {
             Map<String, RichSequenceAdapter> entries = readUniProtEntries(inputFileReader);
@@ -157,7 +157,7 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
 
     public Map<String, RichSequenceAdapter> readUniProtEntries(BufferedReader inputFileReader) throws BioException, IOException {
         Map<String, RichSequenceAdapter> entries = readAllZebrafishEntriesFromSourceIntoMap(inputFileReader);
-        log.debug("Finished reading file: " + entries.size() + " entries read.");
+        log.info("Finished reading file: " + entries.size() + " entries read.");
         return entries;
     }
 
@@ -171,6 +171,7 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         pipeline.addHandler(new ReportWouldBeLostHandler());
 //        pipeline.addHandler(new IgnoreAccessionsAlreadyInDatabaseHandler());
         pipeline.addHandler(new MatchOnRefSeqHandler());
+        pipeline.addHandler(new RemoveIgnoreActionsHandler());
         pipeline.addHandler(new ReportLegacyProblemFilesHandler());
 
         Set<UniProtLoadAction> actions = pipeline.execute();
@@ -181,7 +182,7 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         String reportFile = this.outputReportName;
         String jsonFile = this.outputJsonName;
 
-        log.debug("Creating report file: " + reportFile);
+        log.info("Creating report file: " + reportFile);
         try {
             String jsonContents = actionsToJson(actions);
             String template = ZfinPropertiesEnum.SOURCEROOT.value() + LOAD_REPORT_TEMPLATE_HTML;
@@ -189,7 +190,7 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
             String filledTemplate = templateContents.replace(JSON_PLACEHOLDER_IN_TEMPLATE, jsonContents);
             FileUtils.writeStringToFile(new File(reportFile), filledTemplate, "UTF-8");
             FileUtils.writeStringToFile(new File(jsonFile), jsonContents, "UTF-8");
-            log.debug("Finished creating report file: " + reportFile + " and json file: " + jsonFile);
+            log.info("Finished creating report file: " + reportFile + " and json file: " + jsonFile);
         } catch (IOException e) {
             log.error("Error creating report (" + reportFile + ") from template\n" + e.getMessage(), e);
         }

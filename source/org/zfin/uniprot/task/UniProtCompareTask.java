@@ -74,7 +74,7 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
         }
 
         HibernateUtil.closeSession();
-        log.debug("Task completed successfully.");
+        log.info("Task completed successfully.");
         System.exit(0);
     }
 
@@ -82,15 +82,15 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
         initIOFiles();
         initAll();
 
-        log.debug("Starting to read file: " + inputFilename1);
+        log.info("Starting to read file: " + inputFilename1);
         sequences1 = getMapOfAccessionsToSequencesFromStreamReader(getRichStreamReaderForUniprotDatFile(inputFilename1, true));
-        log.debug("Finished reading file " + inputFilename1 + ". Found " + sequences1.size() + " entries.");
+        log.info("Finished reading file " + inputFilename1 + ". Found " + sequences1.size() + " entries.");
 
-        log.debug("Starting to read file: " + inputFilename2);
+        log.info("Starting to read file: " + inputFilename2);
         sequences2 = getMapOfAccessionsToSequencesFromStreamReader(getRichStreamReaderForUniprotDatFile(inputFilename2, true));
-        log.debug("Finished reading file " + inputFilename2 + ". Found " + sequences2.size() + " entries.");
+        log.info("Finished reading file " + inputFilename2 + ". Found " + sequences2.size() + " entries.");
 
-        log.debug("Starting to compare files. Writing to file: " + outputFilename);
+        log.info("Starting to compare files. Writing to file: " + outputFilename);
         populateDiffSetForNewAndRemoved();
         populateDiffSetForChangedRecords();
         populateDates();
@@ -193,7 +193,7 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
                 outputFilename.substring(0, outputFilename.lastIndexOf("."));
 
         String reportfile = outputFilenameWithoutExtension + ".report.html";
-        log.debug("Creating report file: " + reportfile);
+        log.info("Creating report file: " + reportfile);
         try {
             String outfileContents = FileUtils.readFileToString(new File(outputFilename));
             String template = ZfinPropertiesEnum.SOURCEROOT.value() + "/home/uniprot/uniprot-diff-report.html";

@@ -85,7 +85,7 @@ public class SecondaryLoadContext {
         initializeMarkerGoTermEvidenceFromDatabase();
 
         // commented out -> need to review the logic and see if it is needed to be specific to SPKW
-//        log.debug("Load Step 7: Getting Existing MarkerGoTermEvidence Records");
+//        log.info("Load Step 7: Getting Existing MarkerGoTermEvidence Records");
 //
 //        loadContext.setExistingMarkerGoTermEvidenceRecordsForSPKW(
 //
@@ -95,34 +95,34 @@ public class SecondaryLoadContext {
 //        );
 
         //initializeExternalNotesFromDatabase
-//        log.debug("Load Step 8: Getting Existing External Notes");
+//        log.info("Load Step 8: Getting Existing External Notes");
 //        setExternalNotesByUniprotAccession(
 //                getInfrastructureRepository().getDBLinkExternalNoteByPublicationID(SecondaryTermLoadService.EXTNOTE_PUBLICATION_ATTRIBUTION_ID)
 //        );
 
         //initializeInterproDomainRecordsFromDatabase
-        log.debug("Load Step 9: Getting Existing Interpro Domain Entry Records");
+        log.info("Load Step 9: Getting Existing Interpro Domain Entry Records");
         setExistingInterproDomainRecords(fetchExistingInterproDomainRecords());
 
         //initializeProteinRecordsFromDatabase
-        log.debug("Load Step 10: Getting Existing Protein Records");
+        log.info("Load Step 10: Getting Existing Protein Records");
         setExistingProteinRecords(fetchExistingProteinRecords());
 
         //initializeMarkerToProteinRecordsFromDatabase
-        log.debug("Load Step 11: Getting Existing Protein Records");
+        log.info("Load Step 11: Getting Existing Protein Records");
         setExistingMarkerToProteinRecords(fetchExistingMarkerToProteinRecords());
 
         //initializeProteinToInterproRecordsFromDatabase
-        log.debug("Load Step 12: Getting Existing Protein to Interpro Records");
+        log.info("Load Step 12: Getting Existing Protein to Interpro Records");
         setExistingProteinToInterproRecords(fetchExistingProteinToInterproRecords());
 
         //initializePdbRecordsFromDatabase
-        log.debug("Load Step 13: Getting Existing PDB Records");
+        log.info("Load Step 13: Getting Existing PDB Records");
         setExistingPdbRecords(fetchExistingPdbRecords());
     }
 
     public void initializeMarkerGoTermEvidenceFromDatabase() {
-        log.debug("Load Step 7: Getting Existing MarkerGoTermEvidence Records");
+        log.info("Load Step 7: Getting Existing MarkerGoTermEvidence Records");
         setExistingMarkerGoTermEvidenceRecords(
                 MarkerGoTermEvidenceSlimDTO.fromMarkerGoTermEvidences(
                         getMarkerGoTermEvidenceRepository()
@@ -145,7 +145,7 @@ public class SecondaryLoadContext {
     public void initializePrositeDBLinksFromDatabase() {
         SequenceRepository sr = getSequenceRepository();
         
-        log.debug("Load Step 5: Getting Existing PROSITE DB Links");
+        log.info("Load Step 5: Getting Existing PROSITE DB Links");
         setPrositeDbLinks(
                 convertToDTO(
                         sr.getMarkerDBLinks(
@@ -155,7 +155,7 @@ public class SecondaryLoadContext {
     public void initializePfamDBLinksFromDatabase() {
         SequenceRepository sr = getSequenceRepository();
         
-        log.debug("Load Step 4: Getting Existing PFAM DB Links");
+        log.info("Load Step 4: Getting Existing PFAM DB Links");
         setPfamDbLinks(
                 convertToDTO(
                         sr.getMarkerDBLinks(
@@ -165,7 +165,7 @@ public class SecondaryLoadContext {
     public void initializeECDBLinksFromDatabase() {
         SequenceRepository sr = getSequenceRepository();
         
-        log.debug("Load Step 3: Getting Existing EC DB Links");
+        log.info("Load Step 3: Getting Existing EC DB Links");
         setEcDbLinks(
                 convertToDTO(
                         sr.getMarkerDBLinks(
@@ -175,7 +175,7 @@ public class SecondaryLoadContext {
     public void initializeInterproDBLinksFromDatabase() {
         SequenceRepository sr = getSequenceRepository();
         
-        log.debug("Load Step 2: Getting Existing Interpro DB Links");
+        log.info("Load Step 2: Getting Existing Interpro DB Links");
         setInterproDbLinks(
                 convertToDTO(
                         sr.getMarkerDBLinks(
@@ -185,7 +185,7 @@ public class SecondaryLoadContext {
     public void initializeUniprotDBLinksFromDatabase() {
         SequenceRepository sr = getSequenceRepository();
         
-        log.debug("Load Step 1: Getting Existing Uniprot DB Links");
+        log.info("Load Step 1: Getting Existing Uniprot DB Links");
         setUniprotDbLinks(
                 convertToDTO(
                         sr.getMarkerDBLinks(
@@ -288,7 +288,7 @@ public class SecondaryLoadContext {
 //    }
 
     private void createUniprotDbLinksByGeneZdbID() {
-        log.debug("Creating uniprotDbLinksByGeneZdbID");
+        log.info("Creating uniprotDbLinksByGeneZdbID");
         this.uniprotDbLinks.values().stream().flatMap(Collection::stream).forEach(uniprotDbLink -> {
             if(uniprotDbLink.getDataZdbID() != null) {
                 if(uniprotDbLinksByGeneZdbID == null) {
@@ -300,7 +300,7 @@ public class SecondaryLoadContext {
                 uniprotDbLinksByGeneZdbID.get(uniprotDbLink.getDataZdbID()).add(uniprotDbLink);
             }
         });
-        log.debug("Finished Creating uniprotDbLinksByGeneZdbID");
+        log.info("Finished Creating uniprotDbLinksByGeneZdbID");
     }
 
     public static Map<String, List<DBLinkSlimDTO>> convertToDTO(Map<String, Collection<MarkerDBLink>> markerDBLinks) {

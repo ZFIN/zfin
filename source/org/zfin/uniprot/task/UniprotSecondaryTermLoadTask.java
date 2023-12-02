@@ -84,7 +84,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
         try {
             mode = LoadTaskMode.valueOf(modeArg.toUpperCase());
         } catch (IllegalArgumentException e) {
-            log.debug("Invalid mode or no mode provided, defaulting to REPORT: " + modeArg);
+            log.info("Invalid mode or no mode provided, defaulting to REPORT: " + modeArg);
         }
 
         //if no "mode" is provided, check the environment variable UNIPROT_COMMIT_CHANGES from jenkins
@@ -152,7 +152,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
 
     public void runTask() throws IOException, BioException, SQLException {
         initialize();
-        log.debug("Starting UniProtSecondaryTermLoadTask for file " + inputFileName + ".");
+        log.info("Starting UniProtSecondaryTermLoadTask for file " + inputFileName + ".");
 
         if (mode.equals(LoadTaskMode.REPORT) || mode.equals(LoadTaskMode.REPORT_AND_LOAD)) {
             try (BufferedReader inputFileReader = new BufferedReader(new java.io.FileReader(inputFileName))) {
@@ -160,7 +160,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
                 UniprotReleaseRecords entries = readUniProtEntries(inputFileReader);
                 setupPipeline(entries);
                 calculatePipelineActions();
-                log.debug("Finished executing pipeline: " + pipeline.getActions().size() + " actions created.");
+                log.info("Finished executing pipeline: " + pipeline.getActions().size() + " actions created.");
                 writeActionsToFile(pipeline.getActions());
                 writeOutputReportFile(pipeline.getActions());
 
@@ -186,7 +186,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
         } else if (mode.equals(LoadTaskMode.LOAD)) {
 
             List<SecondaryTermLoadAction> actions = readActionsFile();
-            log.debug("Finished reading actions file: " + actions.size() + " actions read.");
+            log.info("Finished reading actions file: " + actions.size() + " actions read.");
             pipeline = new SecondaryTermLoadPipeline();
             pipeline.setActions(actions);
             pipeline.setRelease(release);
@@ -205,7 +205,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
             log.error("No actions file specified for mode: " + getMode() +  ".");
             System.exit(6);
         }
-        log.debug("Reading JSON file: " + jsonFile);
+        log.info("Reading JSON file: " + jsonFile);
         try {
             SecondaryTermLoadActionsContainer actionsContainer =
                     new ObjectMapper().readValue(new File(jsonFile), SecondaryTermLoadActionsContainer.class);
@@ -222,7 +222,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
     private void writeOutputReportFile(List<SecondaryTermLoadAction> actions) {
         String reportFile = this.outputReportName;
 
-        log.debug("Creating report file: " + reportFile);
+        log.info("Creating report file: " + reportFile);
         try {
             String jsonContents = actionsToJsonString(actions);
             String template = ZfinPropertiesEnum.SOURCEROOT.value() + LOAD_REPORT_TEMPLATE_HTML;
@@ -279,7 +279,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
             writeContext(context);
         } else {
             try {
-                log.debug("Reading context file: " + contextInputFile + ".");
+                log.info("Reading context file: " + contextInputFile + ".");
                 context = SecondaryLoadContext.createFromContextFile(contextInputFile);
             } catch (IOException e) {
                 throw new RuntimeException("Error reading context file: " + contextInputFile + ": " + e.getMessage(), e);
@@ -332,9 +332,9 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
                 String url1 = ZfinPropertiesEnum.UNIPROT_KW2GO_FILE_URL.value();
                 downloadFileViaWget(url1, downloadedFile1.toPath(), 10_000, log);
             }
-            log.debug("Loading " + upToGo);
+            log.info("Loading " + upToGo);
             upToGoRecords = SecondaryTerm2GoTermTranslator.convertTranslationFileToUnloadFile(upToGo, SecondaryTerm2GoTermTranslator.SecondaryTermType.UniProtKB);
-            log.debug("Loaded " + upToGoRecords.size() + " UP to GO records.");
+            log.info("Loaded " + upToGoRecords.size() + " UP to GO records.");
 
             String ipToGo = ipToGoTranslationFile;
             if (StringUtils.isEmpty(ipToGo)) {
@@ -343,9 +343,9 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
                 String url2 = ZfinPropertiesEnum.UNIPROT_IP2GO_FILE_URL.value();
                 downloadFileViaWget(url2, downloadedFile2.toPath(), 10_000, log);
             }
-            log.debug("Loading " + ipToGo);
+            log.info("Loading " + ipToGo);
             ipToGoRecords = SecondaryTerm2GoTermTranslator.convertTranslationFileToUnloadFile(ipToGo, SecondaryTerm2GoTermTranslator.SecondaryTermType.InterPro);
-            log.debug("Loaded " + ipToGoRecords.size() + " InterPro to GO records.");
+            log.info("Loaded " + ipToGoRecords.size() + " InterPro to GO records.");
 
             String ecToGo = ecToGoTranslationFile;
             if (StringUtils.isEmpty(ecToGo)) {
@@ -354,22 +354,22 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
                 String url3 = ZfinPropertiesEnum.UNIPROT_EC2GO_FILE_URL.value();
                 downloadFileViaWget(url3, downloadedFile3.toPath(), 10_000, log);
             }
-            log.debug("Loading " + ecToGo);
+            log.info("Loading " + ecToGo);
             ecToGoRecords = SecondaryTerm2GoTermTranslator.convertTranslationFileToUnloadFile(ecToGo, SecondaryTerm2GoTermTranslator.SecondaryTermType.EC);
-            log.debug("Loaded " + ecToGoRecords.size() + " EC to GO records.");
+            log.info("Loaded " + ecToGoRecords.size() + " EC to GO records.");
 
             String domainFilename = this.domainFile;
             if (StringUtils.isEmpty(domainFilename)) {
-                log.debug("Downloading entry.list for domain info");
+                log.info("Downloading entry.list for domain info");
                 File downloadedFile4 = File.createTempFile("entry", ".list");
                 //            String url4 = ZfinPropertiesEnum.UNIPROT_ENTRY_LIST_FILE_URL.value();
                 String url4 = "https://ftp.ebi.ac.uk/pub/databases/interpro/current_release/entry.list";
                 downloadFileViaWget(url4, downloadedFile4.toPath(), 10_000, log);
-                log.debug("Loading " + downloadedFile4.getAbsolutePath());
+                log.info("Loading " + downloadedFile4.getAbsolutePath());
                 domainFilename = downloadedFile4.getAbsolutePath();
             }
             List<InterProProteinDTO> entryList = EntryListTranslator.parseFile(new File(domainFilename));
-            log.debug("Loaded " + entryList.size() + " entries.");
+            log.info("Loaded " + entryList.size() + " entries.");
             this.downloadedInterproDomainRecords = entryList;
 
         } catch (IOException e) {
@@ -384,7 +384,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
         //only need an input file if we are generating a report of actions, otherwise, we are loading directly from the actions
         if (mode.equals(LoadTaskMode.REPORT) || mode.equals(LoadTaskMode.REPORT_AND_LOAD)) {
             if (inputFileName.isEmpty() && releaseOptional.isPresent()) {
-                log.debug("Loading from latest UniProt release: " + releaseOptional.get().getPath() + "(md5:" + releaseOptional.get().getMd5() + ")" );
+                log.info("Loading from latest UniProt release: " + releaseOptional.get().getPath() + "(md5:" + releaseOptional.get().getMd5() + ")" );
                 inputFileName = releaseOptional.get().getLocalFile().getAbsolutePath();
                 release = releaseOptional.get();
             } else if (inputFileName.isEmpty()) {
@@ -395,7 +395,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
 
     public UniprotReleaseRecords readUniProtEntries(BufferedReader inputFileReader) throws BioException, IOException {
         UniprotReleaseRecords entries = readAllZebrafishEntriesFromSourceIntoRecords(inputFileReader);
-        log.debug("Finished reading file: " + entries.size() + " entries read.");
+        log.info("Finished reading file: " + entries.size() + " entries read.");
 
         return entries;
     }

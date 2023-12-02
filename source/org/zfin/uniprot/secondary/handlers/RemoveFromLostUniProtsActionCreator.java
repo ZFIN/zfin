@@ -33,13 +33,13 @@ public class RemoveFromLostUniProtsActionCreator implements ActionCreator {
 
     @Override
     public List<SecondaryTermLoadAction> createActions(UniprotReleaseRecords uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
-        log.debug("RemoveFromLostUniProtsActionCreator " + dbName);
+        log.info("RemoveFromLostUniProtsActionCreator " + dbName);
         List<SecondaryTermLoadAction> newActions = new ArrayList<>();
 
         //if there is an interpro (or pfam, or prosite, etc) in the DB, but not in the load file for the corresponding gene, delete it.
         //start by iterating over all the interpros in the DB
         List<DBLinkSlimDTO> iplinks = context.getFlattenedDbLinksByDbName(dbName);
-        log.debug("existing iplinks: " + iplinks.size());
+        log.info("existing iplinks: " + iplinks.size());
 
         for(DBLinkSlimDTO iplink : iplinks) {
 

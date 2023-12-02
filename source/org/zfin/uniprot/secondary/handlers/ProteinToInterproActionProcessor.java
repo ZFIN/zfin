@@ -35,7 +35,7 @@ public class ProteinToInterproActionProcessor implements ActionProcessor {
 
     private void processInsert(SecondaryTermLoadAction action) {
         ProteinToInterproDTO proteinToInterproDTO = ProteinToInterproDTO.fromMap(action.getRelatedEntityFields());
-        log.debug("inserting protein to interpro record: " + proteinToInterproDTO.uniprot() + "/" + proteinToInterproDTO.interpro());
+        log.info("inserting protein to interpro record: " + proteinToInterproDTO.uniprot() + "/" + proteinToInterproDTO.interpro());
         String sqlQuery = """
                 insert into protein_to_interpro (pti_uniprot_id, pti_interpro_id)
                 select :uniprot, :interpro 

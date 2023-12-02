@@ -33,7 +33,7 @@ public class InterproMarkerToProteinActionProcessor implements ActionProcessor {
     private void processInserts(List<SecondaryTermLoadAction> actions) {
         for(SecondaryTermLoadAction action : actions) {
             if (action.getType() == SecondaryTermLoadAction.Type.LOAD) {
-                log.debug("inserting interpro for marker: " + action.getGeneZdbID() + " interpro: " + action.getAccession());
+                log.info("inserting interpro for marker: " + action.getGeneZdbID() + " interpro: " + action.getAccession());
                 getMarkerRepository().insertInterProForMarker(action.getGeneZdbID(), action.getAccession());
             }
         }
@@ -42,7 +42,7 @@ public class InterproMarkerToProteinActionProcessor implements ActionProcessor {
     private void processDeletes(List<SecondaryTermLoadAction> actions) {
         for(SecondaryTermLoadAction action : actions) {
             if (action.getType() == SecondaryTermLoadAction.Type.DELETE) {
-                log.debug("deleting interpro for marker: " + action.getGeneZdbID() + " interpro: " + action.getAccession());
+                log.info("deleting interpro for marker: " + action.getGeneZdbID() + " interpro: " + action.getAccession());
                 getMarkerRepository().deleteInterProForMarker(action.getGeneZdbID(), action.getAccession());
             }
         }

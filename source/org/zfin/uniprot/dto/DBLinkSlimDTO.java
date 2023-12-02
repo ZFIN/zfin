@@ -41,5 +41,14 @@ public class DBLinkSlimDTO {
         return publicationIDs.stream().anyMatch(UniProtTools::isLoadPublication);
     }
 
+    public String toString() {
+        return "DBLinkSlimDTO{" +
+                "accession='" + accession + '\'' +
+                ", dataZdbID='" + dataZdbID + '\'' +
+                ", markerAbbreviation='" + markerAbbreviation + '\'' +
+                ", dbName='" + dbName + '\'' +
+                ", publicationIDs=" + getPublicationIDsAsString() +
+                '}';
+    }
 
 }
