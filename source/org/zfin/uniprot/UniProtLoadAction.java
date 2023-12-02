@@ -73,10 +73,10 @@ public class UniProtLoadAction implements Comparable<UniProtLoadAction> {
     public String toString() {
         return "UniProtLoadAction: " +
                 "accession: " + accession +
-                " title: " + subType +
+                " type: " + type +
+                " subType: " + subType +
                 " geneZdbID: " + geneZdbID +
                 " details: " + details +
-                " type: " + type +
                 " length: " + length +
                 " links: " + links;
     }

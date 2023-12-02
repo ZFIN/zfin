@@ -28,37 +28,17 @@ public class MatchOnRefSeqHandler implements UniProtLoadHandler {
         //build up data structure that links accession to gene(s) with list of matched refseqs
         //something like {"A0A0R4IKB2":[{"ZDB-GENE-030131-5416":["XP_005170963", "XP_005170964"]}, {"ZDB-GENE-030131-5417":["XP..."]}, ...]}
         for (String accession : uniProtRecords.keySet()) {
-            debug = accession.equals("A0A0R4IRP9");
+            debug = accession.equals("A0A8M6Z1T1");
 
             //all refseqs in the load file for this accession
             Set<String> refseqs = uniProtRecords.get(accession).getRefSeqs();
 
             for(String refseq : refseqs) {
-                if (debug) System.out.println("debug refseq: " + refseq);
+                if (debug) System.out.println("01:debug <(A0A8M6Z1T1 - ZDB-GENE-030131-1738)> refseq: " + refseq);
                 if (refseqsInDb.containsKey(refseq)) {
-                    if (debug) System.out.println("refseqsInDb: true");
+                    if (debug) System.out.println("02:debug refseqsInDb: true");
                     for(DBLinkSlimDTO dto : refseqsInDb.get(refseq)) {
-                        if (debug) System.out.println("dto: " + dto);
-
-                        //if we already have this uniprot/gene association, essentially skip it (unless the attributions do not contain our load pub)
-                        if (databaseAlreadyContainsUniProtGeneAssociationWithAutomatedCurationPub(accession, dto, context)) {
-
-                            //creating an ignore action here so that the Remove logic knows to ignore this case
-                            UniProtLoadAction action = new UniProtLoadAction();
-                            action.setAccession(accession);
-                            action.setSubType(UniProtLoadAction.SubType.MATCH_BY_REFSEQ);
-                            action.setGeneZdbID(dto.getDataZdbID());
-                            action.setDetails("This UniProt accession has a RefSeq match to a gene in ZFIN, but the gene is already associated with this UniProt accession.\n\n");
-                            action.setType(UniProtLoadAction.Type.IGNORE);
-                            actions.add(action);
-
-                            if (debug) System.out.println("debug action: " + action);
-
-                            continue;
-                        }
-
-                        if (debug) System.out.println("adding to matchresults");
-
+                        if (debug) System.out.println("03:debug dto: " + dto);
                         matchResults.put(accession, dto);
                     }
                 }
@@ -71,7 +51,7 @@ public class MatchOnRefSeqHandler implements UniProtLoadHandler {
             String uniprotAccession = item.getKey();
             MatchOnRefSeqResult result = item.getValue();
             String details = accessionWithMatchingGeneAndRefSeqToString(uniprotAccession, result);
-            debug = uniprotAccession.equals("A0A0R4IRP9");
+            debug = uniprotAccession.equals("A0A8M6Z1T1");
 
             UniProtLoadAction action = new UniProtLoadAction();
             action.setAccession(uniprotAccession);

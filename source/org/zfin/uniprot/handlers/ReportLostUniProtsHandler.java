@@ -30,8 +30,11 @@ public class ReportLostUniProtsHandler implements UniProtLoadHandler {
     public void handle(Map<String, RichSequenceAdapter> uniProtRecords, Set<UniProtLoadAction> actions, UniProtLoadContext context) {
         //actions should contain all cases where we have a match based on RefSeq
         List<UniProtLoadAction> actionsMatchedOnRefSeq = actions.stream().filter(
-                action -> action.getSubType().equals(UniProtLoadAction.SubType.MATCH_BY_REFSEQ) ||
-                        action.getSubType().equals(UniProtLoadAction.SubType.ADD_ATTRIBUTION)
+                action -> action.getSubType().equals(UniProtLoadAction.SubType.MATCH_BY_REFSEQ
+//                        action.getSubType().equals(UniProtLoadAction.SubType.ADD_ATTRIBUTION) ||
+//                        action.getSubType().equals(UniProtLoadAction.SubType.MULTIPLE_GENES_PER_ACCESSION) ||
+//                        action.getSubType().equals(UniProtLoadAction.SubType.MULTIPLE_GENES_PER_ACCESSION_BUT_APPROVED
+                        )
         ).toList();
 
         log.info("ReportLostUniProtsHandler - Count of actions: " + actions.size());
