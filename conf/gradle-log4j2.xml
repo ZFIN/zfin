@@ -16,7 +16,7 @@
         <Logger name="org.hibernate.type" level="warn"/>
         <Logger name="org.hibernate.orm.deprecation" level="error"/>
         <Logger name="org.hibernate.engine.internal.StatefulPersistenceContext" level="error"/>
-        <Logger name="org.zfin" level="warn"/>
+        <Logger name="org.zfin" level="info"/>
         <Logger name="org.zfin.uniprot" level="info"/>
         <Logger name="org.zfin.ontology.OntologySerializationService" level="info"/>
         <Logger name="org.zfin.ontology.datatransfer.AbstractScriptWrapper" level="info" additivity="false">
