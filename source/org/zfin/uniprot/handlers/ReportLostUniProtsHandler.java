@@ -30,11 +30,12 @@ public class ReportLostUniProtsHandler implements UniProtLoadHandler {
     public void handle(Map<String, RichSequenceAdapter> uniProtRecords, Set<UniProtLoadAction> actions, UniProtLoadContext context) {
         //actions should contain all cases where we have a match based on RefSeq
         List<UniProtLoadAction> actionsMatchedOnRefSeq = actions.stream().filter(
-                action -> action.getSubType().equals(UniProtLoadAction.SubType.MATCH_BY_REFSEQ
-//                        action.getSubType().equals(UniProtLoadAction.SubType.ADD_ATTRIBUTION) ||
-//                        action.getSubType().equals(UniProtLoadAction.SubType.MULTIPLE_GENES_PER_ACCESSION) ||
-//                        action.getSubType().equals(UniProtLoadAction.SubType.MULTIPLE_GENES_PER_ACCESSION_BUT_APPROVED
-                        )
+                action -> action.getSubType().equals(UniProtLoadAction.SubType.MATCH_BY_REFSEQ)
+        ).toList();
+
+        List<UniProtLoadAction> actionsMatchedWithMultipleGenes = actions.stream().filter(
+                action -> action.getSubType().equals(UniProtLoadAction.SubType.MULTIPLE_GENES_PER_ACCESSION) ||
+                        action.getSubType().equals(UniProtLoadAction.SubType.MULTIPLE_GENES_PER_ACCESSION_BUT_APPROVED)
         ).toList();
 
         log.info("ReportLostUniProtsHandler - Count of actions: " + actions.size());
@@ -49,9 +50,14 @@ public class ReportLostUniProtsHandler implements UniProtLoadHandler {
 
 
         //all genes that get matched based on RefSeqs in load file
-        List<String> genesWithMatchesInLoad = actionsMatchedOnRefSeq.stream().map(UniProtLoadAction::getGeneZdbID).toList();
+        List<String> genesWithMatchesInLoad = new ArrayList<>(actionsMatchedOnRefSeq.stream().map(UniProtLoadAction::getGeneZdbID).toList());
 
-        //no duplicate printouts
+        //include in the list of genes with matches in load: genes that get matched based on RefSeqs in load file, but have multiple genes per accession
+        List<String> genesWithMultipleMatches = actionsMatchedWithMultipleGenes.stream().flatMap(
+                action -> Arrays.asList(action.getGeneZdbID().split(";")).stream()
+        ).toList();
+        genesWithMatchesInLoad.addAll(genesWithMultipleMatches);
+
         Set<String> alreadyEncounteredThisGeneID = new HashSet<>();
 
         //build up a list of genes that have existing uniprot associations but are not matched by RefSeq in load file

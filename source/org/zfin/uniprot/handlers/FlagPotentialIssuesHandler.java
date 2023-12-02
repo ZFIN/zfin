@@ -25,13 +25,10 @@ public class FlagPotentialIssuesHandler implements UniProtLoadHandler {
                 .filter(entry -> entry.getValue().size() > 1)
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        log.warn("Found " + duplicates.size() + " duplicate accessions");
-        duplicates.entrySet().forEach(entry -> {
-                    log.warn("Duplicate accession: " + entry.getKey());
-                    entry.getValue().forEach(action -> log.warn(action));
-                });
-
-
+        log.warn("Found " + duplicates.size() + " duplicate accessions in actions. These may be legitimate actions, but they are logged here for review.");
+        duplicates.entrySet().stream().map(
+                kvp -> "Duplicate accession actions: " + kvp.getKey() + ": [" + kvp.getValue().stream().map(action -> action.getType() + " " + action.getSubType() + " " + action.getAccession() + " " + action.getGeneZdbID()).collect(Collectors.joining(",")) + "]"
+        ).forEach(log::warn);
 
         //look for duplicates: (accession + gene)
         duplicates = actions.stream().collect(Collectors.groupingBy(action -> action.getAccession() + "/" + action.getGeneZdbID()))
@@ -39,10 +36,10 @@ public class FlagPotentialIssuesHandler implements UniProtLoadHandler {
                 .filter(entry -> entry.getValue().size() > 1)
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        log.warn("Found " + duplicates.size() + " duplicate accessions + gene");
+        log.warn("Found " + duplicates.size() + " duplicate accessions + gene in actions.  These may be legitimate actions, but they are logged here for review.");
         duplicates.entrySet().forEach(entry -> {
                     log.warn("Duplicate accession + gene: " + entry.getKey());
-                    entry.getValue().forEach(action -> log.warn(action));
+                    entry.getValue().forEach(action -> log.warn(action.getType() + " " + action.getSubType() + " " + action.getAccession() + " " + action.getGeneZdbID()));
                 });
     }
 

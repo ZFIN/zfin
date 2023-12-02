@@ -53,7 +53,7 @@ public class ReportLegacyProblemFilesHandler implements UniProtLoadHandler {
                                 "Problem File Description: \n" + problemFileDescriptions.get(problemFile) + "\n\n" +
                                 "This accession was deleted from a different action: \n" + existingAction.getDetails());
                     } else {
-                        log.error("Unknown issue during problem file handler: " + existingAction);
+                        log.error("Unmatched load action during problem file handler: " + existingAction.getType() + " " + existingAction.getSubType());
                     }
                 }
 
