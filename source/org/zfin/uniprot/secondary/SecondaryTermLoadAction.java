@@ -2,9 +2,10 @@ package org.zfin.uniprot.secondary;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.zfin.sequence.ForeignDB;
@@ -135,17 +136,17 @@ public class SecondaryTermLoadAction implements Comparable<SecondaryTermLoadActi
         List<UniProtLoadLink> dynamicLinks = new ArrayList<>();
         if ( accession != null ) {
             if (dbName != null && dbName.equals(ForeignDB.AvailableName.INTERPRO)) {
-                dynamicLinks.add(new UniProtLoadLink(accession, "http://www.ebi.ac.uk/interpro/entry/" + accession));
+                dynamicLinks.add(UniProtLoadLink.create(dbName, accession));
             }
         }
         if ( goID != null ) {
-            dynamicLinks.add(new UniProtLoadLink(goID, "https://zfin.org/" + goID));
+            dynamicLinks.add(UniProtLoadLink.create(ForeignDB.AvailableName.ZFIN, goID));
         }
         if ( goTermZdbID != null ) {
-            dynamicLinks.add(new UniProtLoadLink(goTermZdbID, "https://zfin.org/" + goTermZdbID));
+            dynamicLinks.add(UniProtLoadLink.create(ForeignDB.AvailableName.ZFIN, goTermZdbID));
         }
         if ( geneZdbID != null ) {
-            dynamicLinks.add(new UniProtLoadLink(geneZdbID, "https://zfin.org/" + geneZdbID));
+            dynamicLinks.add(UniProtLoadLink.create(ForeignDB.AvailableName.ZFIN, geneZdbID));
         }
         return dynamicLinks;
     }

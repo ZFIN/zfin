@@ -41,10 +41,6 @@ import org.zfin.profile.Person;
 import org.zfin.profile.service.BeanFieldUpdate;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
-import org.zfin.publication.repository.PublicationRepository;
-import org.zfin.repository.RepositoryFactory;
-import org.zfin.sequence.DBLink;
-import org.zfin.sequence.DBLinkExternalNote;
 import org.zfin.uniprot.persistence.UniProtRelease;
 import org.zfin.util.DatabaseJdbcStatement;
 import org.zfin.util.DateUtil;
@@ -784,32 +780,6 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return (ExternalNote) session.get(ExternalNote.class, zdbID);
     }
 
-    @Override
-    public List<DBLinkExternalNote> getDBLinkExternalNoteByDataZdbIDAndPublicationID(String dataZdbID, String publicationID) {
-        Session session = HibernateUtil.currentSession();
-        String hql = """
-                from DBLinkExternalNote
-                where externalDataZdbID = :dataZdbID
-                and publication.zdbID = :publicationID
-                """;
-        Query<DBLinkExternalNote> query = session.createQuery(hql);
-        query.setParameter("dataZdbID", dataZdbID);
-        query.setParameter("publicationID", publicationID);
-        return query.list();
-    }
-
-    @Override
-    public List<DBLinkExternalNote> getDBLinkExternalNoteByPublicationID(String publicationID) {
-        Session session = HibernateUtil.currentSession();
-        String hql = """
-                from DBLinkExternalNote
-                where publication.zdbID = :publicationID
-                """;
-        Query<DBLinkExternalNote> query = session.createQuery(hql);
-        query.setParameter("publicationID", publicationID);
-        return query.list();
-    }
-
     public ExternalNote updateExternalNote(ExternalNote note, String text) {
         //TODO: Is this method ever called? It looks like it would generate a NPE
         return updateExternalNote(note, text, null);
@@ -827,41 +797,10 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return note;
     }
 
-    @Override
-    public ExternalNote updateExternalNoteWithoutUpdatesLog(ExternalNote note, String text) {
-        Session session = HibernateUtil.currentSession();
-        note.setNote(text);
-        session.save(note);
-        return note;
-    }
-
-    @Override
-    public DBLinkExternalNote addDBLinkExternalNote(DBLink dblink, String note, String sourceZdbID) {
-        DBLinkExternalNote externalNote = new DBLinkExternalNote();
-        externalNote.setDblink(dblink);
-        externalNote.setNote(note);
-        if (sourceZdbID != null && StringUtils.isNotEmpty(sourceZdbID)) {
-            PublicationRepository pr = RepositoryFactory.getPublicationRepository();
-            Publication publication = pr.getPublication(sourceZdbID);
-            externalNote.setPublication(publication);
-        }
-        HibernateUtil.currentSession().save(externalNote);
-        return externalNote;
-    }
-
     public void deleteExternalNote(ExternalNote note) {
         Session session = HibernateUtil.currentSession();
         insertUpdatesTable(note.getExternalDataZdbID(), "external note", "removed note for " + note.getPublication().getZdbID());
         session.delete(note);
-    }
-
-    @Override
-    public void deleteDBLinkExternalNote(String externalNoteZdbID) {
-        Session session = HibernateUtil.currentSession();
-        DBLinkExternalNote externalNote = session.get(DBLinkExternalNote.class, externalNoteZdbID);
-        if (externalNote != null) {
-            session.delete(externalNote);
-        }
     }
 
     // Todo: ReplacementZdbID is a composite key (why?) and thus this

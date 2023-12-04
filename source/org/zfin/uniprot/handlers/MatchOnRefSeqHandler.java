@@ -9,6 +9,7 @@ import org.zfin.uniprot.dto.DBLinkSlimDTO;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.zfin.sequence.ForeignDB.AvailableName.*;
 import static org.zfin.uniprot.UniProtTools.AUTOMATED_CURATION_OF_UNIPROT_DATABASE_LINKS;
 import static org.zfin.uniprot.UniProtTools.isAnyGeneAccessionRelationshipSupportedByNonLoadPublication;
 
@@ -90,27 +91,16 @@ public class MatchOnRefSeqHandler implements UniProtLoadHandler {
         }
     }
 
-    /*
-    does the database already contain this association? Ignore manual curation pubs
-     */
-    private boolean databaseAlreadyContainsUniProtGeneAssociationWithAutomatedCurationPub(String accession, DBLinkSlimDTO dto, UniProtLoadContext context) {
-        DBLinkSlimDTO existingDBLink = context.getDBLinkByUniprotAndGene(accession, dto.getDataZdbID());
-        if (existingDBLink == null) {
-            return false;
-        }
-        return existingDBLink.getPublicationIDs().contains(AUTOMATED_CURATION_OF_UNIPROT_DATABASE_LINKS);
-    }
-
     private void setActionLinks(UniProtLoadAction action, MatchOnRefSeqResult result) {
         List<UniProtLoadLink> links = new ArrayList<>();
-        links.add(new UniProtLoadLink("UniProtKB: " + result.uniprotAccession, "https://www.uniprot.org/uniprot/" + result.uniprotAccession));
+        links.add(UniProtLoadLink.create(UNIPROTKB, result.uniprotAccession));
 
         for (String refseq: result.refSeqAccessions()) {
-            links.add(new UniProtLoadLink("RefSeq: " + refseq, "https://www.ncbi.nlm.nih.gov/protein/" + refseq));
+            links.add(UniProtLoadLink.create(REFSEQ, refseq));
         }
 
         for (String geneZdbID: result.getGeneZdbIDs()) {
-            links.add(new UniProtLoadLink("ZFIN: " + geneZdbID, "https://zfin.org/" + geneZdbID));
+            links.add(UniProtLoadLink.create(ZFIN, geneZdbID));
         }
         action.addLinks(links);
     }

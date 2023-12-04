@@ -56,7 +56,6 @@ public class UniProtLoadAction implements Comparable<UniProtLoadAction> {
         LEGACY_PROBLEM_FILE("Legacy Problem File"),
         LEGACY_PROBLEM_FILE_LOAD("Legacy Problem File - Load"),
         LEGACY_PROBLEM_FILE_DELETE("Legacy Problem File - Delete"),
-        DUPLICATE_ACCESSIONS("Duplicate Accessions: tmp category"),
         REMOVE_ATTRIBUTION("Remove Attribution"),
         ADD_ATTRIBUTION("Add Attribution");
 

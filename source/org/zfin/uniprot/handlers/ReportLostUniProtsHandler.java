@@ -11,6 +11,8 @@ import org.zfin.uniprot.dto.DBLinkSlimDTO;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.zfin.sequence.ForeignDB.AvailableName.UNIPROTKB;
+import static org.zfin.sequence.ForeignDB.AvailableName.ZFIN;
 import static org.zfin.uniprot.UniProtLoadAction.SubType.LOST_UNIPROT_PREV_MATCH_BY_GB;
 import static org.zfin.uniprot.UniProtLoadAction.SubType.LOST_UNIPROT_PREV_MATCH_BY_GP;
 
@@ -54,7 +56,7 @@ public class ReportLostUniProtsHandler implements UniProtLoadHandler {
 
         //include in the list of genes with matches in load: genes that get matched based on RefSeqs in load file, but have multiple genes per accession
         List<String> genesWithMultipleMatches = actionsMatchedWithMultipleGenes.stream().flatMap(
-                action -> Arrays.asList(action.getGeneZdbID().split(";")).stream()
+                action -> Arrays.stream(action.getGeneZdbID().split(";"))
         ).toList();
         genesWithMatchesInLoad.addAll(genesWithMultipleMatches);
 
@@ -125,7 +127,7 @@ public class ReportLostUniProtsHandler implements UniProtLoadHandler {
                     .collect(Collectors.toSet()));
 
             for(String gene: affectedGenes) {
-                action.addLink(new UniProtLoadLink("ZFIN: " + gene, "https://zfin.org/" + gene + "#sequences"));
+                action.addLink(UniProtLoadLink.create(ZFIN, gene, "#sequences"));
             }
 
             sequenceDetails = lostUniProt.getDataZdbID() + " (" + lostUniProt.getMarkerAbbreviation() + ") would lose its UniProt association with " + lostUniProt.getAccession() + ".\n";
@@ -143,11 +145,14 @@ public class ReportLostUniProtsHandler implements UniProtLoadHandler {
         action.setSubType(UniProtLoadAction.SubType.LOST_UNIPROT);
         action.setType(UniProtLoadAction.Type.DELETE);
         action.setAccession(lostUniProt.getAccession());
-        action.setDetails("This gene currently has a UniProt association, but when we run the latest\n" +
-                "UniProt release through our matching pipeline, we don't find a match.\n");
+        action.setDetails("""
+                This gene currently has a UniProt association, but when we run the latest
+                UniProt release through our matching pipeline, we don't find a match.
+                """);
 
-        action.addLink(new UniProtLoadLink("ZFIN: " + lostUniProt.getDataZdbID(), "https://zfin.org/" + lostUniProt.getDataZdbID() + "#sequences" ));
-        action.addLink(new UniProtLoadLink("UniProt: " + lostUniProt.getAccession(), "https://www.uniprot.org/uniprot/" + lostUniProt.getAccession()));
+        action.addLink(UniProtLoadLink.create(ZFIN, lostUniProt.getDataZdbID(), "#sequences"));
+        action.addLink(UniProtLoadLink.create(UNIPROTKB, lostUniProt.getAccession()));
+
 
         setActionTitleAndDetailsForGenPeptGenBank(lostUniProt, action, context);
         if (action.getType().equals(UniProtLoadAction.Type.DELETE)) {
@@ -180,8 +185,8 @@ public class ReportLostUniProtsHandler implements UniProtLoadHandler {
         action.setDetails("This gene currently has a UniProt association, but when we run the latest\n" +
                 "UniProt release through our matching pipeline, we don't find a match.\n\n\n" + sequenceDetails);
 
-        action.addLink(new UniProtLoadLink("ZFIN: " + lostUniProt.getDataZdbID(), "https://zfin.org/" + lostUniProt.getDataZdbID() + "#sequences"));
-        action.addLink(new UniProtLoadLink("UniProt: " + lostUniProt.getAccession(), "https://www.uniprot.org/uniprot/" + lostUniProt.getAccession()));
+        action.addLink(UniProtLoadLink.create(ZFIN, lostUniProt.getDataZdbID(), "#sequences"));
+        action.addLink(UniProtLoadLink.create(UNIPROTKB, lostUniProt.getAccession()));
 
         return action;
     }

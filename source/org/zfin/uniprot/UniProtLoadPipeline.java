@@ -30,11 +30,6 @@ public class UniProtLoadPipeline {
             log.debug("Finished action creation handler " + handler.getClass().getName());
             log.debug("This handler created " + (actions.size() - actionCount) + " new actions");
             actionCount = actions.size();
-            log.debug("Contains X1WGG3 - ZDB-GENE-060503-858?");
-            actions.stream()
-                    .filter(action -> action.getAccession().equals("X1WGG3"))
-                    .forEach(action -> log.debug(action));
-            log.debug("====================================");
         }
         return actions;
     }

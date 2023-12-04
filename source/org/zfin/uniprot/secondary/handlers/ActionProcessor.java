@@ -15,7 +15,7 @@ public interface ActionProcessor {
 
     /**
      * Sanity check to make sure the actions are for the correct sub-type
-     * This returns the the subtype that the given handler is meant to process
+     * This returns the subtype that the given handler is meant to process
      */
     SecondaryTermLoadAction.SubType isSubTypeHandlerFor();
 
