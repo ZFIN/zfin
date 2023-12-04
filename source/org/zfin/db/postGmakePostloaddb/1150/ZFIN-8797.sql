@@ -20,9 +20,9 @@ DELETE FROM external_note
 
 -- clean up ncbi loaded refseqs for uniprot release:
 -- these refseqs were moved to ZDB-GENE-100922-192
-DELETE FROM db_link WHERE "dblink_linked_recid" = 'ZDB-GENE-060503-858' and "dblink_acc_num" = 'XM_003200579' and "dblink_info" = 'uncurated: NCBI gene load 2023-07-10 18:14:22.673585-07' and "dblink_acc_num_display" = 'XM_003200579' and "dblink_length" = NULL and "dblink_fdbcont_zdb_id" = 'ZDB-FDBCONT-040412-38' and "dblink_zdb_id" = 'ZDB-DBLINK-230710-145250';
-DELETE FROM db_link WHERE "dblink_linked_recid" = 'ZDB-GENE-060503-858' and "dblink_acc_num" = 'XR_002456119' and "dblink_info" = 'uncurated: NCBI gene load 2023-07-10 18:14:22.673585-07' and "dblink_acc_num_display" = 'XR_002456119' and "dblink_length" = NULL and "dblink_fdbcont_zdb_id" = 'ZDB-FDBCONT-040412-38' and "dblink_zdb_id" = 'ZDB-DBLINK-230710-172883';
-DELETE FROM db_link WHERE "dblink_linked_recid" = 'ZDB-GENE-060503-858' and "dblink_acc_num" = 'XR_659022' and "dblink_info" = 'uncurated: NCBI gene load 2023-07-10 18:14:22.673585-07' and "dblink_acc_num_display" = 'XR_659022' and "dblink_length" = NULL and "dblink_fdbcont_zdb_id" = 'ZDB-FDBCONT-040412-38' and "dblink_zdb_id" = 'ZDB-DBLINK-230710-173788';
+DELETE FROM db_link WHERE "dblink_linked_recid" = 'ZDB-GENE-060503-858' and "dblink_acc_num" = 'XM_003200579' and "dblink_info" = 'uncurated: NCBI gene load 2023-07-10 18:14:22.673585-07' and "dblink_acc_num_display" = 'XM_003200579' and "dblink_length" is NULL and "dblink_fdbcont_zdb_id" = 'ZDB-FDBCONT-040412-38' and "dblink_zdb_id" = 'ZDB-DBLINK-230710-145250';
+DELETE FROM db_link WHERE "dblink_linked_recid" = 'ZDB-GENE-060503-858' and "dblink_acc_num" = 'XR_002456119' and "dblink_info" = 'uncurated: NCBI gene load 2023-07-10 18:14:22.673585-07' and "dblink_acc_num_display" = 'XR_002456119' and "dblink_length" is NULL and "dblink_fdbcont_zdb_id" = 'ZDB-FDBCONT-040412-38' and "dblink_zdb_id" = 'ZDB-DBLINK-230710-172883';
+DELETE FROM db_link WHERE "dblink_linked_recid" = 'ZDB-GENE-060503-858' and "dblink_acc_num" = 'XR_659022' and "dblink_info" = 'uncurated: NCBI gene load 2023-07-10 18:14:22.673585-07' and "dblink_acc_num_display" = 'XR_659022' and "dblink_length" is NULL and "dblink_fdbcont_zdb_id" = 'ZDB-FDBCONT-040412-38' and "dblink_zdb_id" = 'ZDB-DBLINK-230710-173788';
 
 -- add column to uniprot_release table: upr_secondary_load_date
 ALTER TABLE uniprot_release ADD COLUMN upr_secondary_load_date timestamp without time zone;
