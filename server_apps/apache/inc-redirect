@@ -29,6 +29,9 @@ Redirect /zf_info/news/siteNews.rss https://wiki.zfin.org/spaces/createrssfeed.a
 #warranty page redirect (ZFIN-7610)
 Redirect 301 /warranty.html https://zfin.atlassian.net/wiki/spaces/general/pages/1942160112
 
+#redirect for ZFIN tips
+Redirect 301 /ZFIN/misc_html/tips.html https://zfin.atlassian.net/wiki/spaces/general/pages/1919656548/ZFIN+Tips
+
 #version independent gbrowse link
 RewriteRule ^/genome-browser    /<!--|GBROWSE_PATH_FROM_ROOT|-->  [NC,R=301]
 RewriteRule ^/cgi-perl/gbrowse  /<!--|GBROWSE_PATH_FROM_ROOT|-->  [NC,R=301]
