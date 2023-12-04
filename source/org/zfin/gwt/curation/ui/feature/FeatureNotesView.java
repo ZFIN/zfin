@@ -8,6 +8,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.curation.ui.AbstractViewComposite;
 import org.zfin.gwt.root.dto.CuratorNoteDTO;
@@ -36,6 +37,8 @@ public class FeatureNotesView extends AbstractViewComposite {
     @UiField
     Button cancelButton;
     @UiField
+    Button infoButton;
+    @UiField
     RevertibleTextArea newNoteTextArea;
     @UiField
     StringListBox typeListBox;
@@ -56,6 +59,15 @@ public class FeatureNotesView extends AbstractViewComposite {
     @UiHandler("cancelButton")
     void onClickCancelButton(@SuppressWarnings("unused") ClickEvent event) {
         clearGUI();
+    }
+
+    @UiHandler("infoButton")
+    void onClickInfoButton(@SuppressWarnings("unused") ClickEvent event) {
+        //alert the user that this is a public note and will be visible to all users
+        Window.alert(
+            "“variant” notes refer to the DNA change, consequence in the RNA/protein, effect of the mutation on the protein domains,…\n\n" +
+            "“feature” notes refer to the actual allele (e.g: homozygote viable, hypomorph,…)\n\n" +
+            "If you have information about both feature and variant, you will need to enter this information in 2 different notes.\n\n" );
     }
 
     @UiHandler("typeListBox")
@@ -99,16 +111,18 @@ public class FeatureNotesView extends AbstractViewComposite {
     }
 
     public void addControlCell(Button saveButton, Button revertButton, DeleteImage deleteImage, int rowindex) {
-        HorizontalPanel panel = getControllPanel(saveButton, revertButton, deleteImage);
+        HorizontalPanel panel = getControlPanel(saveButton, revertButton, deleteImage, null);
         dataTable.setWidget(rowindex, 4, panel);
     }
 
-    private HorizontalPanel getControllPanel(Button saveButton, Button revertButton, DeleteImage deleteImage) {
+    private HorizontalPanel getControlPanel(Button saveButton, Button revertButton, DeleteImage deleteImage, Button infoButton) {
         HorizontalPanel panel = new HorizontalPanel();
         panel.add(saveButton);
         panel.add(revertButton);
         if (deleteImage != null)
             panel.add(deleteImage);
+        if (infoButton != null)
+            panel.add(infoButton);
         return panel;
     }
 
@@ -120,7 +134,7 @@ public class FeatureNotesView extends AbstractViewComposite {
         dataTable.setWidget(lastRow, col++, typeListBox);
         dataTable.setWidget(lastRow, col++, newNoteTextArea);
         dataTable.setWidget(lastRow, col++, noteTypeListBox);;
-        dataTable.setWidget(lastRow, col++, getControllPanel(addButton, cancelButton, null));
+        dataTable.setWidget(lastRow, col++, getControlPanel(addButton, cancelButton, null, infoButton));
 
     }
 
