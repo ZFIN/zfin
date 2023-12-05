@@ -8,8 +8,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
+import org.zfin.mutant.MarkerGoTermEvidence;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.uniprot.UniProtLoadLink;
+import org.zfin.uniprot.dto.MarkerGoTermEvidenceSlimDTO;
 
 import java.util.*;
 
@@ -18,6 +20,7 @@ import java.util.*;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 public class SecondaryTermLoadAction implements Comparable<SecondaryTermLoadAction> {
+
     public enum Type {LOAD, INFO, WARNING, ERROR, DELETE, IGNORE, DUPES}
 
     public enum SubType {
@@ -52,8 +55,6 @@ public class SecondaryTermLoadAction implements Comparable<SecondaryTermLoadActi
     private SubType subType;
     private ForeignDB.AvailableName dbName;
     private String accession;
-    private String goID;
-    private String goTermZdbID;
     private String geneZdbID;
     private String relatedEntityID;
     private String details;
@@ -95,8 +96,6 @@ public class SecondaryTermLoadAction implements Comparable<SecondaryTermLoadActi
         return "InterproLoadAction: " + " action=" + type +
                 " subtype=" + subType +
                 " accession=" + accession +
-                " goID=" + goID +
-                " goTermZdbID=" + goTermZdbID +
                 " geneZdbID=" + geneZdbID +
                 " relatedEntityID=" + relatedEntityID +
                 " details=" + details +
@@ -107,7 +106,7 @@ public class SecondaryTermLoadAction implements Comparable<SecondaryTermLoadActi
     }
 
     public String markerGoTermEvidenceRepresentation() {
-        return geneZdbID + "," + goTermZdbID + "," + goID + "," + dbName + ":" + this.accession;
+        return geneZdbID + ","  + dbName + ":" + this.accession;
     }
 
     public String getMd5() {
@@ -139,16 +138,22 @@ public class SecondaryTermLoadAction implements Comparable<SecondaryTermLoadActi
                 dynamicLinks.add(UniProtLoadLink.create(dbName, accession));
             }
         }
-        if ( goID != null ) {
-            dynamicLinks.add(UniProtLoadLink.create(ForeignDB.AvailableName.ZFIN, goID));
-        }
-        if ( goTermZdbID != null ) {
-            dynamicLinks.add(UniProtLoadLink.create(ForeignDB.AvailableName.ZFIN, goTermZdbID));
-        }
         if ( geneZdbID != null ) {
             dynamicLinks.add(UniProtLoadLink.create(ForeignDB.AvailableName.ZFIN, geneZdbID));
         }
         return dynamicLinks;
+    }
+
+    @JsonIgnore
+    public String getGoTermZdbID() {
+        MarkerGoTermEvidenceSlimDTO markerGoTermEvidence = MarkerGoTermEvidenceSlimDTO.fromMap(this.getRelatedEntityFields());
+        return markerGoTermEvidence.getGoTermZdbID();
+    }
+
+    @JsonIgnore
+    public String getGoID() {
+        MarkerGoTermEvidenceSlimDTO markerGoTermEvidence = MarkerGoTermEvidenceSlimDTO.fromMap(this.getRelatedEntityFields());
+        return markerGoTermEvidence.getGoID();
     }
 
 }

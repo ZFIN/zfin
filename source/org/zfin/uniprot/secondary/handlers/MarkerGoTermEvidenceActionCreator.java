@@ -183,8 +183,6 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
                 .map(
                         markerGoTermEvidence -> SecondaryTermLoadAction.builder()
                                 .geneZdbID(markerGoTermEvidence.getMarkerZdbID())
-                                .goID(markerGoTermEvidence.getGoID())
-                                .goTermZdbID(markerGoTermEvidence.getGoTermZdbID())
                                 .dbName(dbName)
                                 .relatedEntityFields(markerGoTermEvidence.toMap())
                                 .type(SecondaryTermLoadAction.Type.LOAD)
@@ -201,8 +199,6 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
                 .map(
                         markerGoTermEvidence -> SecondaryTermLoadAction.builder()
                                 .geneZdbID(markerGoTermEvidence.getMarkerZdbID())
-                                .goID(markerGoTermEvidence.getGoID())
-                                .goTermZdbID(markerGoTermEvidence.getGoTermZdbID())
                                 .dbName(dbName)
                                 .relatedEntityFields(markerGoTermEvidence.toMap())
                                 .type(SecondaryTermLoadAction.Type.DELETE)

@@ -14,7 +14,7 @@ import java.util.Map;
 @AllArgsConstructor
 @Builder
 public class MarkerGoTermEvidenceSlimDTO {
-    private String goID;
+    private GoID goID;
     private String markerZdbID;
     private String goTermZdbID;
     private String publicationID;
@@ -44,7 +44,7 @@ public class MarkerGoTermEvidenceSlimDTO {
 
     public Map<String, String> toMap() {
         return Map.of(
-                "goID", goID,
+                "goID", goID.toString(),
                 "markerZdbID", markerZdbID,
                 "goTermZdbID", goTermZdbID,
                 "publicationID", publicationID
@@ -57,5 +57,56 @@ public class MarkerGoTermEvidenceSlimDTO {
                 .stream()
                 .map(es -> es.getKey() + ": " + es.getValue() + "\n")
                 .reduce("", String::concat);
+    }
+
+    public String getGoID() {
+        return goID.toString();
+    }
+
+    /**
+     * This is a wrapper class for the GO ID to make sure it is always prefixed with GO:
+     */
+    private static class GoID {
+        private String goID;
+
+        public GoID(String goID) {
+            if (goID.startsWith("GO:")) {
+                this.goID = goID;
+            } else {
+                this.goID = "GO:" + goID;
+            }
+            if (!this.isValidGoID(this.goID)) {
+                throw new RuntimeException("Invalid GO ID: " + this.goID);
+            }
+        }
+
+        private boolean isValidGoID(String goID) {
+            return goID.matches("GO:[0-9]{7}");
+        }
+
+        public String toString() {
+            return goID;
+        }
+
+        public boolean equals(Object o) {
+            if (o == this) {
+                return true;
+            }
+            if (!(o instanceof GoID)) {
+                return false;
+            }
+            GoID other = (GoID) o;
+            return this.goID.equals(other.goID);
+        }
+    }
+
+    /**
+     * Override builder method for the go term
+     */
+    public static class MarkerGoTermEvidenceSlimDTOBuilder {
+        public MarkerGoTermEvidenceSlimDTOBuilder goID(String goID) {
+            this.goID = new GoID(goID);
+            return this;
+        }
     }
 }

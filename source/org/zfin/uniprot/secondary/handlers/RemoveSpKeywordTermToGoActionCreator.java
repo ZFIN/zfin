@@ -68,8 +68,6 @@ public class RemoveSpKeywordTermToGoActionCreator implements ActionCreator {
                         .subType(SecondaryTermLoadAction.SubType.MARKER_GO_TERM_EVIDENCE)
                         .dbName(UNIPROTKB)
                         .accession(record.getGoID())
-                        .goID(record.getGoID())
-                        .goTermZdbID(record.getGoTermZdbID())
                         .relatedEntityFields(record.toMap())
                         .geneZdbID(record.getMarkerZdbID())
                         .build()
@@ -78,7 +76,7 @@ public class RemoveSpKeywordTermToGoActionCreator implements ActionCreator {
 
     public static boolean recordsToPersistContainsExistingRecord(List<SecondaryTermLoadAction> recordsToPersist, MarkerGoTermEvidenceSlimDTO record) {
         return recordsToPersist.stream().anyMatch(action -> {
-            String goID = "GO:" + action.getGoID();
+            String goID = MarkerGoTermEvidenceSlimDTO.fromMap(action.getRelatedEntityFields()).getGoID();
             String markerZdbID = action.getGeneZdbID();
             boolean match = record.getGoID().equals(goID) && record.getMarkerZdbID().equals(markerZdbID);
             return match;

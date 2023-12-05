@@ -108,8 +108,6 @@ public class AddNewSpKeywordTermToGoActionCreator extends MarkerGoTermEvidenceAc
                     .type(SecondaryTermLoadAction.Type.LOAD)
                     .subType(SecondaryTermLoadAction.SubType.MARKER_GO_TERM_EVIDENCE)
                     .geneZdbID(geneKeyword.geneZdbID())
-                    .goID(item2go.goID())
-                    .goTermZdbID(item2go.termZdbID())
                     .relatedEntityFields(markerGoTermEvidenceSlimDTO.toMap())
                     .build();
             newMarkerGoTermEvidences.add(newAction);
@@ -128,7 +126,7 @@ public class AddNewSpKeywordTermToGoActionCreator extends MarkerGoTermEvidenceAc
     private boolean spKwAlreadyExists(SecondaryLoadContext context, SecondaryTermLoadAction newAction) {
         List<MarkerGoTermEvidenceSlimDTO> existingRecords = context.getExistingMarkerGoTermEvidenceRecords();
         //TODO: do we need to filter for SPKW?
-        String goID = "GO:" + newAction.getGoID();
+        String goID = newAction.getGoID();
         String geneZdbID = newAction.getGeneZdbID();
         boolean exists = existingRecords.stream()
                 .anyMatch( record -> {
