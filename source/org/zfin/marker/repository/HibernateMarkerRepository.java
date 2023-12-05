@@ -56,6 +56,7 @@ import org.zfin.repository.PaginationResultFactory;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.Database;
+import org.zfin.sequence.service.TranscriptService;
 import org.zfin.util.NumberAwareStringComparator;
 
 import javax.persistence.Tuple;
@@ -2149,9 +2150,19 @@ public class HibernateMarkerRepository implements MarkerRepository {
     public Genotype getStrainForTranscript(String zdbID) {
 
         // TODO: just use where clauses
-        String hql = " select g from Genotype g, ProbeLibrary pl , MarkerRelationship mr, Clone c   " + "where pl=c.probeLibrary " + "and g=pl.strain " + "and mr.firstMarker=c " + "and mr.secondMarker.zdbID = :zdbID " + "and mr.type = :mrType  ";
+        String hql = """ 
+            select g from Genotype g, ProbeLibrary pl , MarkerRelationship mr, Clone c
+            where pl=c.probeLibrary
+            and g=pl.strain
+            and mr.firstMarker=c
+            and mr.secondMarker.zdbID = :zdbID
+            and mr.type = :mrType
+            """;
 
-        return HibernateUtil.currentSession().createQuery(hql, Genotype.class).setParameter("zdbID", zdbID).setParameter("mrType", MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT).uniqueResult();
+        return HibernateUtil.currentSession().createQuery(hql, Genotype.class)
+            .setParameter("zdbID", zdbID)
+            .setParameter("mrType", MarkerRelationship.Type.CLONE_CONTAINS_TRANSCRIPT)
+            .uniqueResult();
     }
 
 
@@ -2163,8 +2174,20 @@ public class HibernateMarkerRepository implements MarkerRepository {
             return new ArrayList<>();
         }
 
-        String sql = "SELECT DISTINCT " + "        fdbdt.fdbdt_data_type, " + "        dbl.dblink_length, " + "        dbl.dblink_linked_recid," + "        dbl.dblink_acc_num," + "        fdb.fdb_db_name," + "        fdb.fdb_db_query," + "        fdb.fdb_url_suffix," + "        ra.recattrib_source_zdb_id," + "        fdb.fdb_db_significance," + "        dbl.dblink_zdb_id, " + "        fdbc.fdbcont_zdb_id " + "    FROM" + "        db_link dbl  " + "    JOIN" + "        foreign_db_contains fdbc " + "            ON dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id " + "    JOIN" + "        foreign_db fdb " + "            ON fdbc.fdbcont_fdb_db_id=fdb.fdb_db_pk_id " + "    JOIN" + "        foreign_db_data_type fdbdt " + "            ON fdbc.fdbcont_fdbdt_id=fdbdt.fdbdt_pk_id " + "    JOIN " + "    marker_relationship mr " + "    ON mr.mrel_mrkr_2_zdb_id=dbl.dblink_linked_recid" + "    LEFT OUTER JOIN" + "        record_attribution ra " + "            ON ra.recattrib_data_zdb_id=dbl.dblink_zdb_id " + "    WHERE" + "       mr.mrel_mrkr_1_zdb_id = :markerZdbId " + "        AND " + "        mr.mrel_type='gene produces transcript'" + "        AND " + "        fdb.fdb_db_name='VEGA'" + // Ensembl
-                     " ";
+        String sql = """
+                     SELECT DISTINCT fdbdt.fdbdt_data_type, dbl.dblink_length, dbl.dblink_linked_recid, dbl.dblink_acc_num,
+                     fdb.fdb_db_name, fdb.fdb_db_query, fdb.fdb_url_suffix, ra.recattrib_source_zdb_id, fdb.fdb_db_significance,
+                     dbl.dblink_zdb_id, fdbc.fdbcont_zdb_id
+                     FROM db_link dbl
+                     JOIN foreign_db_contains fdbc ON dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id
+                     JOIN foreign_db fdb ON fdbc.fdbcont_fdb_db_id=fdb.fdb_db_pk_id
+                     JOIN foreign_db_data_type fdbdt ON fdbc.fdbcont_fdbdt_id=fdbdt.fdbdt_pk_id
+                     JOIN marker_relationship mr ON mr.mrel_mrkr_2_zdb_id=dbl.dblink_linked_recid
+                     LEFT OUTER JOIN record_attribution ra ON ra.recattrib_data_zdb_id=dbl.dblink_zdb_id
+                     WHERE mr.mrel_mrkr_1_zdb_id = :markerZdbId
+                     AND mr.mrel_type='gene produces transcript'
+                     AND fdb.fdb_db_name='VEGA'
+                     """;
 
         Query query = HibernateUtil.currentSession().createSQLQuery(sql).setParameter("markerZdbId", gene.getZdbID()).setResultTransformer(markerDBLinkTransformer);
 
@@ -3017,6 +3040,29 @@ public class HibernateMarkerRepository implements MarkerRepository {
         List<MarkerDBLink> links = query.list();
         markerListMap = links.stream().collect(groupingBy(MarkerDBLink::getMarker));
         return markerListMap;
+    }
+
+    private Map<Marker, List<TranscriptBean>> markerTranscriptBeanMap = null;
+
+    @Override
+    public Map<Marker, List<TranscriptBean>> getAllTranscriptBeans(Pagination pagination) {
+        if (markerTranscriptBeanMap != null) {
+            return markerTranscriptBeanMap;
+        }
+        String hql = """
+            from Transcript
+            """;
+        List<Transcript> transcriptList = HibernateUtil.currentSession().createQuery(hql, Transcript.class).getResultList();
+
+        markerTranscriptBeanMap = transcriptList.stream().map(transcript -> {
+            TranscriptBean bean = new TranscriptBean();
+            bean.setTranscript(transcript);
+            bean.setRelatedGenes(TranscriptService.getRelatedGenes(transcript));
+            bean.setStrain(getStrainForTranscript(transcript.getZdbID()));
+            bean.setNonReferenceStrains(TranscriptService.getNonReferenceStrainsForTranscript(transcript));
+            return bean;
+        }).collect(groupingBy(TranscriptBean::getTranscript));
+        return markerTranscriptBeanMap;
     }
 
     private int deleteMarkerDBLinksFromList(List<MarkerDBLink> dbLinks) {

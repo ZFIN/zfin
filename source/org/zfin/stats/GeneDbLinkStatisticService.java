@@ -14,13 +14,14 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
+import static org.zfin.sequence.DisplayGroup.GroupName.OTHER_MARKER_PAGES;
 
 public class GeneDbLinkStatisticService extends GenePageStatisticService<MarkerDBLink> {
 
 
     public JsonResultResponse<StatisticRow<Marker, MarkerDBLink>> getPlasmidStats(Pagination pagination) {
 
-        Map<Marker, List<MarkerDBLink>> geneMapUnfiltered = getMarkerRepository().getAllPlasmids(DisplayGroup.GroupName.PLASMIDS, DisplayGroup.GroupName.PATHWAYS);
+        Map<Marker, List<MarkerDBLink>> geneMapUnfiltered = getMarkerRepository().getAllPlasmids(DisplayGroup.GroupName.PLASMIDS, DisplayGroup.GroupName.PATHWAYS, OTHER_MARKER_PAGES);
         Map<Marker, List<MarkerDBLink>> geneMapFilter = getFilteredMap(geneMapUnfiltered, new PlasmidFiltering(), pagination);
 
         StatisticRow<Marker, MarkerDBLink> row = getMarkerStatisticRowFromEntity(geneMapUnfiltered, geneMapFilter);
@@ -32,6 +33,7 @@ public class GeneDbLinkStatisticService extends GenePageStatisticService<MarkerD
             if (displayGroups == null) return null;
             return displayGroups.stream().map(displayGroup -> displayGroup.getGroupName().name()).toList();
         }));
+        subEntityColStats.add(new ColumnStats<>(Header.FOREIGN_DB.columnName, false, true, false, true, markerDBLink -> markerDBLink.getReferenceDatabase().getForeignDB().getDisplayName()));
 
         addSubEntityColumnStatsToStatRow(subEntityColStats, geneMapFilter, geneMapUnfiltered, row);
 
@@ -42,7 +44,12 @@ public class GeneDbLinkStatisticService extends GenePageStatisticService<MarkerD
 
     public enum Header {
 
-        GENE_ID("Gene ID", Marker::getZdbID), GENE_SYMBOL("Gene Symbol", Marker::getAbbreviation), GENE_TYPE("Gene Type", marker -> marker.getMarkerType().getType().toString()), DISPLAY_GROUP("Display Group", null), PLASMID("Plasmid Accession", null);
+        GENE_ID("Gene ID", Marker::getZdbID),
+        GENE_SYMBOL("Gene Symbol", Marker::getAbbreviation),
+        GENE_TYPE("Gene Type", marker -> marker.getMarkerType().getType().toString()),
+        DISPLAY_GROUP("Display Group", null),
+        PLASMID("Plasmid Accession", null),
+        FOREIGN_DB("ExternalDB", null);
 
         final String columnName;
         final Function<Marker, String> attributeFunction;

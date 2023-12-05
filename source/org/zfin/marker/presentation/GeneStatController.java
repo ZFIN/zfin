@@ -17,9 +17,12 @@ import org.zfin.sequence.MarkerDBLink;
 import org.zfin.stats.GeneDbLinkStatisticService;
 import org.zfin.stats.GeneTranscriptStatisticService;
 import org.zfin.stats.StatisticRow;
+import org.zfin.stats.TranscriptHeaderStatisticService;
 import org.zfin.wiki.presentation.Version;
 
 import javax.servlet.http.HttpServletRequest;
+
+import static org.zfin.stats.GeneTranscriptStatisticService.Header.TRANSCRIPT_NON_REF_STRAIN;
 
 @RestController
 @RequestMapping("/api/marker/stats")
@@ -37,6 +40,8 @@ public class GeneStatController {
     private static final String TRANSCRIPT_TYPE = "transcriptType";
     private static final String TRANSCRIPT_ID = "transcriptId";
     private static final String TRANSCRIPT_STATUS = "transcriptStatus";
+    private static final String TRANSCRIPT_STRAIN = "transcriptStrain";
+    private static final String TRANSCRIPT_NON_REF_STRAIN = "transcriptNonRefStrain";
 
     @JsonView(View.API.class)
     @RequestMapping(value = "/transcript/histogram", method = RequestMethod.GET)
@@ -101,6 +106,40 @@ public class GeneStatController {
         }
         GeneDbLinkStatisticService service = new GeneDbLinkStatisticService();
         JsonResultResponse<StatisticRow<Marker, MarkerDBLink>> response = service.getPlasmidStats(pagination);
+        response.setHttpServletRequest(request);
+        return response;
+    }
+
+    @JsonView(View.API.class)
+    @RequestMapping(value = "/transcript-header/histogram", method = RequestMethod.GET)
+    public JsonResultResponse<StatisticRow<Marker, TranscriptBean>> getTranscriptHeaderStats(@RequestParam(value = FILTER + GENE_ID, required = false) String geneID,
+                                                                                   @RequestParam(value = FILTER + GENE_SYMBOL, required = false) String geneSymbol,
+                                                                                   @RequestParam(value = FILTER + GENE_TYPE, required = false) String geneType,
+                                                                                   @RequestParam(value = FILTER + TRANSCRIPT_STRAIN, required = false) String strain,
+                                                                                   @RequestParam(value = FILTER + TRANSCRIPT_STATUS, required = false) String status,
+                                                                                   @RequestParam(value = FILTER + TRANSCRIPT_NON_REF_STRAIN, required = false) String nonRefStrain,
+                                                                                   @Version Pagination pagination) {
+
+        if(StringUtils.isNotEmpty(geneID)){
+            pagination.addFieldFilter(FieldFilter.ENTITY_ID, geneID);
+        }
+        if(StringUtils.isNotEmpty(geneSymbol)){
+            pagination.addFieldFilter(FieldFilter.GENE_ABBREVIATION, geneSymbol);
+        }
+        if(StringUtils.isNotEmpty(geneType)){
+            pagination.addFieldFilter(FieldFilter.ZDB_ENTITY_TYPE, geneType);
+        }
+        if(StringUtils.isNotEmpty(status)){
+            pagination.addFieldFilter(FieldFilter.STATUS, status);
+        }
+        if(StringUtils.isNotEmpty(nonRefStrain)){
+            pagination.addFieldFilter(FieldFilter.NON_REF_STRAIN, nonRefStrain);
+        }
+        if(StringUtils.isNotEmpty(strain)){
+            pagination.addFieldFilter(FieldFilter.STRAIN, strain);
+        }
+        TranscriptHeaderStatisticService service = new TranscriptHeaderStatisticService();
+        JsonResultResponse<StatisticRow<Marker, TranscriptBean>> response = service.getTranscriptHeaderStats(pagination);
         response.setHttpServletRequest(request);
         return response;
     }

@@ -45,7 +45,10 @@ public class GeneTranscriptStatisticService extends GenePageStatisticService<Tra
 
         TRANSCRIPT_ID("Transcript ID", null),
         TRANSCRIPT_TYPE("Transcript Type", null),
-        TRANSCRIPT_STATUS("Transcript Status", null);
+        TRANSCRIPT_RELATED_GENES("Related Genes", null),
+        TRANSCRIPT_STATUS("Transcript Status", null),
+        TRANSCRIPT_NON_REF_STRAIN("Transcript Non-Ref Strain", null),
+        TRANSCRIPT_STRAIN("Transcript Strain", null);
 
         final String columnName;
         final Function<Marker, String> attributeFunction;
