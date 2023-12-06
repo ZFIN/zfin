@@ -1521,15 +1521,17 @@ public class HibernateMutantRepository implements MutantRepository {
         }
         List fishOxList = new ArrayList(fishOx);
 
-        String sql = "SELECT count(*) FROM figure, expression_experiment, expression_result, expression_pattern_figure, fish_experiment,fish" +
-            "  WHERE fig_zdb_id = xpatfig_fig_zdb_id" +
-            " AND xpatex_zdb_id = xpatres_xpatex_zdb_id" +
-            " AND xpatres_zdb_id = xpatfig_xpatres_zdb_id" +
-            " AND genox_fish_zdb_id = fish_zdb_id" +
-            " AND fish_genotype_zdb_id = :genotypeID" +
-            " AND xpatex_genox_zdb_id = genox_zdb_id" +
-            " AND genox_zdb_id IN (:fishOxList)" +
-            " AND exists (SELECT 'x' FROM image WHERE img_fig_Zdb_id = fig_zdb_id)";
+        String sql = """
+            SELECT count(*) FROM figure, expression_experiment2, expression_result2, expression_figure_stage, fish_experiment,fish
+            WHERE fig_zdb_id = efs_fig_zdb_id
+            AND xpatex_zdb_id = efs_xpatex_zdb_id
+            AND xpatres_efs_id = efs_pk_id
+            AND genox_fish_zdb_id = fish_zdb_id
+            AND fish_genotype_zdb_id = :genotypeID
+            AND xpatex_genox_zdb_id = genox_zdb_id
+            AND genox_zdb_id IN (:fishOxList)
+            AND exists (SELECT 'x' FROM image WHERE img_fig_Zdb_id = fig_zdb_id)
+            """;
 
         Query query = currentSession().createSQLQuery(sql);
         query.setParameter("genotypeID", genotypeID);

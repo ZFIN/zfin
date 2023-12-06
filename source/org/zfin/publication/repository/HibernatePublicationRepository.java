@@ -174,11 +174,11 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             SELECT exp.xpatex_gene_zdb_id as geneID, gene.mrkr_abbrev as geneSymbol,
             count(distinct fig.fig_zdb_id) as numOfFig,
             count(distinct img.img_zdb_id) as numOfImg
-            FROM  Expression_Experiment exp
+            FROM  Expression_Experiment2 exp
                   join FISH_EXPERIMENT as genox on genox.genox_zdb_id=exp.xpatex_genox_zdb_id
-                  join EXPRESSION_RESULT as result on result.xpatres_xpatex_zdb_id = exp.xpatex_zdb_id
-                  join EXPRESSION_PATTERN_FIGURE as results on results.xpatfig_xpatres_zdb_id=result.xpatres_zdb_id
-                  join Figure as fig on fig.fig_zdb_id=results.xpatfig_fig_zdb_id
+                  join EXPRESSION_FIGURE_STAGE as efs on efs.efs_xpatex_zdb_id = exp.xpatex_zdb_id
+                  join EXPRESSION_RESULT2 as result on result.xpatres_efs_id = efs.efs_pk_id
+                  join Figure as fig on fig.fig_zdb_id=efs.efs_fig_zdb_id
                   left outer join Image as img on img.img_fig_zdb_id=fig.fig_zdb_id
                   join MARKER as gene on exp.xpatex_gene_zdb_id = gene.mrkr_zdb_id
                   join FISH as fish on fish.fish_zdb_Id = genox.genox_fish_zdb_id
@@ -187,7 +187,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                    result.xpatres_expression_found is true AND
                    fish.fish_is_wildtype is true AND
                    genox.genox_is_std_or_generic_control is true AND
-                   SUBSTRING (gene.mrkr_abbrev from  1 for 9) <> :withdrawn  AND  
+                   SUBSTRING (gene.mrkr_abbrev from  1 for 9) <> :withdrawn  AND
                    not exists(
                        select 'x' from clone
                        where clone.clone_mrkr_zdb_id = exp.xpatex_probe_feature_zdb_id
@@ -196,7 +196,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                    not exists(
                        select 'x' from marker m2
                        where m2.mrkr_zdb_id = exp.xpatex_probe_feature_zdb_id
-                       and SUBSTRING (m2.mrkr_abbrev from 1 for 9) = :withdrawn 
+                       and SUBSTRING (m2.mrkr_abbrev from 1 for 9) = :withdrawn
                    )
                    """;
         if (MapUtils.isNotEmpty(pagination.getFilterMap())) {
@@ -261,9 +261,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         String sql = """
             select count(distinct fig_zdb_id)
             from figure
-                 join expression_pattern_figure on xpatfig_fig_zdb_id = fig_zdb_id
-                 join expression_result on xpatres_zdb_id = xpatfig_xpatres_zdb_id
-                 join expression_experiment on xpatex_zdb_id = xpatres_xpatex_zdb_id
+                 join expression_figure_stage on efs_fig_zdb_id = fig_zdb_id
+                 join expression_result2 on xpatres_efs_id = efs_pk_id
+                 join expression_experiment2 on xpatex_zdb_id = efs_xpatex_zdb_id
                  join fish_experiment on genox_zdb_id = xpatex_genox_zdb_id
                  join marker on mrkr_zdb_id = xpatex_gene_zdb_id
             where (xpatres_superterm_zdb_id = :termZdbId or xpatres_subterm_zdb_id = :termZdbId)
@@ -1222,22 +1222,22 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                      "     and ra2.recattrib_source_zdb_id = :pubID" +
                      " );";
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
-        query.setString("pubID", pubZdbID);
+        query.setParameter("pubID", pubZdbID);
         setTupleResultTransformer(query, (Object[] tuple, String[] aliases) -> tuple[0]);
 
         return query.list();
     }
 
     public int deleteExpressionExperimentIDswithNoExpressionResult(Publication publication) {
-        String sql = "delete from expression_experiment x " +
+        String sql = "delete from expression_experiment2 x " +
                      " where x.xpatex_source_zdb_id = :pubID " +
                      "   and not exists ( " +
                      "                    select 'x' " +
-                     "                      from expression_result ee " +
-                     "                     where ee.xpatres_xpatex_zdb_id = x.xpatex_zdb_id " +
+                     "                      from expression_result2 ee, expression_figure_stage efs " +
+                     "                     where efs.efs_xpatex_zdb_id = x.xpatex_zdb_id AND ee.xpatres_efs_id = efs.efs_pk_id" +
                      "                   ); ";
         Query query = HibernateUtil.currentSession().createSQLQuery(sql);
-        query.setString("pubID", publication.getZdbID());
+        query.setParameter("pubID", publication.getZdbID());
         return query.executeUpdate();
     }
 
@@ -2307,11 +2307,11 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                             " and  :markerZdbID = fmr.fmrel_mrkr_zdb_id " +
                             " and fmr.fmrel_ftr_zdb_id  = gf.genofeat_feature_zdb_id ";
         }
-        // expression_experiment
+        // expression_experiment2
         if (ActiveData.isMarker(dataType)) {
             commonPubSQL += " union " +
                             " select xpatex_source_zdb_id  " +
-                            " from expression_experiment " +
+                            " from expression_experiment2 " +
                             " where :markerZdbID = xpatex_gene_zdb_id ";
         }
         // nomenclature
