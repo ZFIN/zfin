@@ -178,9 +178,17 @@
         if (item.goID) {
             keyValuePairs.set('goID', item.goID);
         }
+        if (item.dbName) {
+            keyValuePairs.set('dbName', item.dbName);
+        }
         if (item.relatedEntityFields) {
             Object.keys(item.relatedEntityFields).forEach(key => {
-                keyValuePairs.set(key, item.relatedEntityFields[key]);
+                if (key === 'markerZdbID') {
+                    //hacky way to remove duplicate information
+                    keyValuePairs.set('geneZdbID', item.relatedEntityFields[key]);
+                } else {
+                    keyValuePairs.set(key, item.relatedEntityFields[key]);
+                }
             });
         }
         return keyValuePairs;
@@ -442,7 +450,6 @@
 
             function previousDetail() {
                 const index = reportActions.findIndex(item => item.md5 == activeDetails.md5);
-                console.log("found index", index);
                 if (index > 0) {
 
                     //find the previous item that matches subtype
@@ -457,7 +464,6 @@
 
             function nextDetail() {
                 const index = reportActions.findIndex(item => item.md5 == activeDetails.md5);
-                console.log("found n index", index);
 
                 if (index === -1) {
                     return;
