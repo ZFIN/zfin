@@ -24,13 +24,13 @@ public class SecondaryTermLoadAction implements Comparable<SecondaryTermLoadActi
     public enum Type {LOAD, INFO, WARNING, ERROR, DELETE, IGNORE, DUPES}
 
     public enum SubType {
-        MARKER_GO_TERM_EVIDENCE("MarkerGoTermEvidence", 1),
-        EXTERNAL_NOTE("ExternalNote", 2),
-        DB_LINK("DBLink", 3),
-        PROTEIN_DOMAIN("ProteinDomain", 4),
+        MARKER_GO_TERM_EVIDENCE("Marker Go Term Evidence", 1),
+        EXTERNAL_NOTE("External Note", 2),
+        DB_LINK("DB Link", 3),
+        PROTEIN_DOMAIN("Protein Domain", 4),
         PROTEIN("Protein", 5),
-        INTERPRO_MARKER_TO_PROTEIN("InterproMarkerToProtein", 6),
-        PROTEIN_TO_INTERPRO("ProteinToInterpro", 7),
+        INTERPRO_MARKER_TO_PROTEIN("Interpro Marker To Protein", 6),
+        PROTEIN_TO_INTERPRO("Protein To Interpro", 7),
         PDB("PDB", 8),
         ;
 
@@ -59,7 +59,8 @@ public class SecondaryTermLoadAction implements Comparable<SecondaryTermLoadActi
     private String relatedEntityID;
     private String details;
     private int length;
-    private String handlerClass;
+    @JsonIgnore
+    private Class handlerClass;
     private Map<String, String> relatedEntityFields;
     private Set<UniProtLoadLink> links;
 

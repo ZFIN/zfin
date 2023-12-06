@@ -1,7 +1,6 @@
 package org.zfin.uniprot.handlers;
 
 import lombok.extern.log4j.Log4j2;
-import org.zfin.uniprot.ResetLoadActionsHandler;
 import org.zfin.uniprot.UniProtLoadAction;
 import org.zfin.uniprot.UniProtLoadContext;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;

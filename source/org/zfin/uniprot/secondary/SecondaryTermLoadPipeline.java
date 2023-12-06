@@ -68,7 +68,7 @@ public class SecondaryTermLoadPipeline {
     private List<SecondaryTermLoadAction> associateActionsWithProcessor(List<SecondaryTermLoadAction> actions, Class<? extends ActionProcessor> actionProcessorClass) {
         return actions
                 .stream()
-                .map(action -> action.toBuilder().handlerClass(actionProcessorClass.getName()).build())
+                .map(action -> action.toBuilder().handlerClass(actionProcessorClass).build())
                 .toList();
     }
 
@@ -140,7 +140,7 @@ public class SecondaryTermLoadPipeline {
     }
 
     private static void processLoadActionsBySubType(SecondaryTermLoadAction.SubType subType, List<SecondaryTermLoadAction> subTypeActions) {
-        String handlerClass = subTypeActions.get(0).getHandlerClass();
+        Class handlerClass = subTypeActions.get(0).getHandlerClass();
         ActionProcessor handler = getHandler(handlerClass);
         if (handler.isSubTypeHandlerFor() != subType) {
             throw new RuntimeException("Handler class " + handlerClass + " does not support subType " + subType);
@@ -158,15 +158,9 @@ public class SecondaryTermLoadPipeline {
      * @param handlerClass the class name
      * @return the handler
      */
-    private static ActionProcessor getHandler(String handlerClass) {
+    private static ActionProcessor getHandler(Class<? extends ActionProcessor> handlerClass) {
         try {
-            Class<?> cls = Class.forName(handlerClass);
-            Object instance = cls.getDeclaredConstructor().newInstance();
-            return (ActionProcessor) instance;
-        } catch (ClassNotFoundException e) {
-            // Handle the case where the class doesn't exist
-            e.printStackTrace();
-            throw new RuntimeException("No such handler class: " + handlerClass);
+            return handlerClass.getDeclaredConstructor().newInstance();
         } catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
             // Handle other potential exceptions
             e.printStackTrace();

@@ -44,7 +44,6 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
 
     private enum LoadTaskMode {
         REPORT,
-        LOAD,
         REPORT_AND_LOAD
     }
     private final LoadTaskMode mode;
@@ -105,8 +104,6 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
             domainFile = getArgOrEnvironmentVar(args, 4, "DOMAIN_FILE", "");
             outputJsonName = getArgOrEnvironmentVar(args, 5, "UNIPROT_OUTPUT_FILE", defaultOutputFileName(inputFileName));
             contextInputFile = getArgOrEnvironmentVar(args, 6, "CONTEXT_INPUT_FILE", "");
-        } else if (mode.equals(LoadTaskMode.LOAD)) {
-            actionsFileName = getArgOrEnvironmentVar(args, 1, "UNIPROT_ACTIONS_FILE", "");
         } else {
             printUsage();
             System.exit(1);
@@ -154,167 +151,38 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
         initialize();
         log.info("Starting UniProtSecondaryTermLoadTask for file " + inputFileName + ".");
 
-        if (mode.equals(LoadTaskMode.REPORT) || mode.equals(LoadTaskMode.REPORT_AND_LOAD)) {
-            try (BufferedReader inputFileReader = new BufferedReader(new java.io.FileReader(inputFileName))) {
-                loadTranslationFiles();
-                UniprotReleaseRecords entries = readUniProtEntries(inputFileReader);
-                setupPipeline(entries);
-                calculatePipelineActions();
-                log.info("Finished executing pipeline: " + pipeline.getActions().size() + " actions created.");
-                writeActionsToFile(pipeline.getActions());
-                writeOutputReportFile(pipeline.getActions());
-
-                String overrideEnv = System.getenv("ACTION_SIZE_ERROR_THRESHOLD");
-                long overrideThreshold = overrideEnv == null ? ACTION_SIZE_ERROR_THRESHOLD : Long.parseLong(overrideEnv);
-                if (pipeline.getActions().size() > overrideThreshold) {
-                    log.error("Too many actions created: " + pipeline.getActions().size() + " actions created.");
-                    log.error("Threshold set to: " + ACTION_SIZE_ERROR_THRESHOLD);
-                    log.error("Override threshold with environment variable: ACTION_SIZE_ERROR_THRESHOLD");
-                    log.error("Exiting script in case this is due to an error.");
-                    System.exit(1);
-                }
-
-                if (mode.equals(LoadTaskMode.REPORT_AND_LOAD)) {
-                    //clear the session to avoid memory issues that slow down the load inserts and updates
-//                    currentSession().flush();
-                    currentSession().clear();
-
-                    pipeline.setRelease(release);
-                    pipeline.processActions();
-                }
-            }
-        } else if (mode.equals(LoadTaskMode.LOAD)) {
-
-            List<SecondaryTermLoadAction> actions = readActionsFile();
-            log.info("Finished reading actions file: " + actions.size() + " actions read.");
-            pipeline = new SecondaryTermLoadPipeline();
-            pipeline.setActions(actions);
-            pipeline.setRelease(release);
-            pipeline.processActions();
-        } else {
+        if (!mode.equals(LoadTaskMode.REPORT) && !mode.equals(LoadTaskMode.REPORT_AND_LOAD)) {
             System.out.println("Invalid mode: " + mode);
             printUsage();
             System.exit(1);
         }
 
-    }
+        try (BufferedReader inputFileReader = new BufferedReader(new java.io.FileReader(inputFileName))) {
+            loadTranslationFiles();
+            UniprotReleaseRecords entries = readUniProtEntries(inputFileReader);
+            setupPipeline(entries);
+            calculatePipelineActions();
+            log.info("Finished executing pipeline: " + pipeline.getActions().size() + " actions created.");
+            writeActionsToFile(pipeline.getActions());
+            writeOutputReportFile(pipeline.getActions());
 
-    private List<SecondaryTermLoadAction> readActionsFile() {
-        String jsonFile = this.actionsFileName;
-        if (StringUtils.isEmpty(jsonFile)) {
-            log.error("No actions file specified for mode: " + getMode() +  ".");
-            System.exit(6);
-        }
-        log.info("Reading JSON file: " + jsonFile);
-        try {
-            SecondaryTermLoadActionsContainer actionsContainer =
-                    new ObjectMapper().readValue(new File(jsonFile), SecondaryTermLoadActionsContainer.class);
-            if (actionsContainer.getReleaseID() != null) {
-                this.release = getInfrastructureRepository().getUniProtReleaseByID(actionsContainer.getReleaseID());
+            String overrideEnv = System.getenv("ACTION_SIZE_ERROR_THRESHOLD");
+            long overrideThreshold = overrideEnv == null ? ACTION_SIZE_ERROR_THRESHOLD : Long.parseLong(overrideEnv);
+            if (pipeline.getActions().size() > overrideThreshold) {
+                log.error("Too many actions created: " + pipeline.getActions().size() + " actions created.");
+                log.error("Threshold set to: " + ACTION_SIZE_ERROR_THRESHOLD);
+                log.error("Override threshold with environment variable: ACTION_SIZE_ERROR_THRESHOLD");
+                log.error("Exiting script in case this is due to an error.");
+                System.exit(1);
             }
-            return actionsContainer.getActions();
-        } catch (IOException e) {
-            log.error("Failed to read JSON file: " + jsonFile, e);
-            return null;
-        }
-    }
 
-    private void writeOutputReportFile(List<SecondaryTermLoadAction> actions) {
-        String reportFile = this.outputReportName;
-
-        log.info("Creating report file: " + reportFile);
-        try {
-            String jsonContents = actionsToJsonString(actions);
-            String template = ZfinPropertiesEnum.SOURCEROOT.value() + LOAD_REPORT_TEMPLATE_HTML;
-            String templateContents = FileUtils.readFileToString(new File(template), "UTF-8");
-            String filledTemplate = templateContents.replace(JSON_PLACEHOLDER_IN_TEMPLATE, jsonContents);
-            FileUtils.writeStringToFile(new File(reportFile), filledTemplate, "UTF-8");
-        } catch (IOException e) {
-            log.error("Error creating report (" + reportFile + ") from template\n" + e.getMessage(), e);
-        }
-    }
-
-    private void writeActionsToFile(List<SecondaryTermLoadAction> actions) {
-        SecondaryTermLoadActionsContainer actionsContainer = new SecondaryTermLoadActionsContainer(
-                this.release == null ? null : this.release.getUpr_id(),
-                new Date(),
-                actions);
-
-        try {
-            (new ObjectMapper()).writeValue(new File(this.outputJsonName), actionsContainer);
-        } catch (IOException e) {
-            log.error("Failed to write JSON file: " + this.outputJsonName, e);
-            //do nothing
-        }
-    }
-
-    private String actionsToJsonString(List<SecondaryTermLoadAction> actions) throws JsonProcessingException {
-        SecondaryTermLoadActionsContainer actionsContainer = new SecondaryTermLoadActionsContainer(
-                this.release == null ? null : this.release.getUpr_id(),
-                new Date(),
-                actions);
-
-        return (new ObjectMapper()).writeValueAsString(actionsContainer);
-    }
-
-    private void writeContext(SecondaryLoadContext context) {
-        if (!contextOutputFile.isEmpty()) {
-            ObjectMapper objectMapper = new ObjectMapper();
-            try {
-                log.info("Writing context file: " + contextOutputFile + ".");
-                objectMapper.writeValue(new File(contextOutputFile), context);
-            } catch (IOException e) {
-                log.error("Error writing context file " + contextOutputFile + ": " + e.getMessage(), e);
+            if (mode.equals(LoadTaskMode.REPORT_AND_LOAD)) {
+                //clear the session to avoid memory issues that slow down the load inserts and updates
+                currentSession().clear();
+                pipeline.setRelease(release);
+                pipeline.processActions();
             }
         }
-    }
-
-    private void setupPipeline(UniprotReleaseRecords entries) {
-        this.pipeline = new SecondaryTermLoadPipeline();
-        pipeline.setUniprotRecords(entries);
-
-        SecondaryLoadContext context;
-        if (StringUtils.isEmpty(contextInputFile)) {
-            context = SecondaryLoadContext.createFromDBConnection();
-            writeContext(context);
-        } else {
-            try {
-                log.info("Reading context file: " + contextInputFile + ".");
-                context = SecondaryLoadContext.createFromContextFile(contextInputFile);
-            } catch (IOException e) {
-                throw new RuntimeException("Error reading context file: " + contextInputFile + ": " + e.getMessage(), e);
-            }
-        }
-
-        pipeline.setContext(context);
-    }
-
-    private void calculatePipelineActions() {
-        pipeline.addHandler(new RemoveFromLostUniProtsActionCreator(INTERPRO), RemoveFromLostUniProtsActionProcessor.class);
-        pipeline.addHandler(new AddNewDBLinksFromUniProtsActionCreator(INTERPRO), AddNewDBLinksFromUniProtsActionProcessor.class);
-
-        pipeline.addHandler(new RemoveFromLostUniProtsActionCreator(EC), RemoveFromLostUniProtsActionProcessor.class);
-        pipeline.addHandler(new AddNewDBLinksFromUniProtsActionCreator(EC), AddNewDBLinksFromUniProtsActionProcessor.class);
-
-        pipeline.addHandler(new RemoveFromLostUniProtsActionCreator(PFAM), RemoveFromLostUniProtsActionProcessor.class);
-        pipeline.addHandler(new AddNewDBLinksFromUniProtsActionCreator(PFAM), AddNewDBLinksFromUniProtsActionProcessor.class);
-
-        pipeline.addHandler(new RemoveFromLostUniProtsActionCreator(PROSITE), RemoveFromLostUniProtsActionProcessor.class);
-        pipeline.addHandler(new AddNewDBLinksFromUniProtsActionCreator(PROSITE), AddNewDBLinksFromUniProtsActionProcessor.class);
-
-        pipeline.addHandler(new MarkerGoTermEvidenceActionCreator(INTERPRO, ipToGoRecords), MarkerGoTermEvidenceActionProcessor.class);
-        pipeline.addHandler(new MarkerGoTermEvidenceActionCreator(EC, ecToGoRecords), MarkerGoTermEvidenceActionProcessor.class);
-
-        pipeline.addHandler(new AddNewSpKeywordTermToGoActionCreator(UNIPROTKB, upToGoRecords), AddNewSpKeywordTermToGoActionProcessor.class);
-        pipeline.addHandler(new RemoveSpKeywordTermToGoActionCreator(UNIPROTKB, upToGoRecords), RemoveSpKeywordTermToGoActionProcessor.class);
-
-        pipeline.addHandler(new InterproDomainActionCreator(downloadedInterproDomainRecords), InterproDomainActionProcessor.class);
-        pipeline.addHandler(new InterproProteinActionCreator(), InterproProteinActionProcessor.class);
-        pipeline.addHandler(new InterproMarkerToProteinActionCreator(), InterproMarkerToProteinActionProcessor.class);
-        pipeline.addHandler(new ProteinToInterproActionCreator(), ProteinToInterproActionProcessor.class);
-        pipeline.addHandler(new PDBActionCreator(), PDBActionProcessor.class);
-
-        pipeline.createActions();
     }
 
     public void initialize() {
@@ -375,6 +243,104 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
         } catch (IOException e) {
             log.error("Failed to load translation file: ", e);
             throw new RuntimeException(e);
+        }
+    }
+
+    private void setupPipeline(UniprotReleaseRecords entries) {
+        this.pipeline = new SecondaryTermLoadPipeline();
+        pipeline.setUniprotRecords(entries);
+
+        SecondaryLoadContext context;
+        if (StringUtils.isEmpty(contextInputFile)) {
+            context = SecondaryLoadContext.createFromDBConnection();
+            writeContext(context);
+        } else {
+            try {
+                log.info("Reading context file: " + contextInputFile + ".");
+                context = SecondaryLoadContext.createFromContextFile(contextInputFile);
+            } catch (IOException e) {
+                throw new RuntimeException("Error reading context file: " + contextInputFile + ": " + e.getMessage(), e);
+            }
+        }
+
+        pipeline.setContext(context);
+    }
+
+    private void calculatePipelineActions() {
+        pipeline.addHandler(new RemoveFromLostUniProtsActionCreator(INTERPRO), RemoveFromLostUniProtsActionProcessor.class);
+        pipeline.addHandler(new AddNewDBLinksFromUniProtsActionCreator(INTERPRO), AddNewDBLinksFromUniProtsActionProcessor.class);
+
+        pipeline.addHandler(new RemoveFromLostUniProtsActionCreator(EC), RemoveFromLostUniProtsActionProcessor.class);
+        pipeline.addHandler(new AddNewDBLinksFromUniProtsActionCreator(EC), AddNewDBLinksFromUniProtsActionProcessor.class);
+
+        pipeline.addHandler(new RemoveFromLostUniProtsActionCreator(PFAM), RemoveFromLostUniProtsActionProcessor.class);
+        pipeline.addHandler(new AddNewDBLinksFromUniProtsActionCreator(PFAM), AddNewDBLinksFromUniProtsActionProcessor.class);
+
+        pipeline.addHandler(new RemoveFromLostUniProtsActionCreator(PROSITE), RemoveFromLostUniProtsActionProcessor.class);
+        pipeline.addHandler(new AddNewDBLinksFromUniProtsActionCreator(PROSITE), AddNewDBLinksFromUniProtsActionProcessor.class);
+
+        pipeline.addHandler(new MarkerGoTermEvidenceActionCreator(INTERPRO, ipToGoRecords), MarkerGoTermEvidenceActionProcessor.class);
+        pipeline.addHandler(new MarkerGoTermEvidenceActionCreator(EC, ecToGoRecords), MarkerGoTermEvidenceActionProcessor.class);
+
+        pipeline.addHandler(new AddNewSpKeywordTermToGoActionCreator(UNIPROTKB, upToGoRecords), AddNewSpKeywordTermToGoActionProcessor.class);
+        pipeline.addHandler(new RemoveSpKeywordTermToGoActionCreator(UNIPROTKB, upToGoRecords), RemoveSpKeywordTermToGoActionProcessor.class);
+
+        pipeline.addHandler(new InterproDomainActionCreator(downloadedInterproDomainRecords), InterproDomainActionProcessor.class);
+        pipeline.addHandler(new InterproProteinActionCreator(), InterproProteinActionProcessor.class);
+        pipeline.addHandler(new InterproMarkerToProteinActionCreator(), InterproMarkerToProteinActionProcessor.class);
+        pipeline.addHandler(new ProteinToInterproActionCreator(), ProteinToInterproActionProcessor.class);
+        pipeline.addHandler(new PDBActionCreator(), PDBActionProcessor.class);
+
+        pipeline.createActions();
+    }
+
+    private void writeActionsToFile(List<SecondaryTermLoadAction> actions) {
+        SecondaryTermLoadActionsContainer actionsContainer = new SecondaryTermLoadActionsContainer(
+                this.release == null ? null : this.release.getUpr_id(),
+                new Date(),
+                actions);
+
+        try {
+            (new ObjectMapper()).writeValue(new File(this.outputJsonName), actionsContainer);
+        } catch (IOException e) {
+            log.error("Failed to write JSON file: " + this.outputJsonName, e);
+            //do nothing
+        }
+    }
+
+    private void writeOutputReportFile(List<SecondaryTermLoadAction> actions) {
+        String reportFile = this.outputReportName;
+
+        log.info("Creating report file: " + reportFile);
+        try {
+            String jsonContents = actionsToJsonString(actions);
+            String template = ZfinPropertiesEnum.SOURCEROOT.value() + LOAD_REPORT_TEMPLATE_HTML;
+            String templateContents = FileUtils.readFileToString(new File(template), "UTF-8");
+            String filledTemplate = templateContents.replace(JSON_PLACEHOLDER_IN_TEMPLATE, jsonContents);
+            FileUtils.writeStringToFile(new File(reportFile), filledTemplate, "UTF-8");
+        } catch (IOException e) {
+            log.error("Error creating report (" + reportFile + ") from template\n" + e.getMessage(), e);
+        }
+    }
+
+    private String actionsToJsonString(List<SecondaryTermLoadAction> actions) throws JsonProcessingException {
+        SecondaryTermLoadActionsContainer actionsContainer = new SecondaryTermLoadActionsContainer(
+                this.release == null ? null : this.release.getUpr_id(),
+                new Date(),
+                actions);
+
+        return (new ObjectMapper()).writeValueAsString(actionsContainer);
+    }
+
+    private void writeContext(SecondaryLoadContext context) {
+        if (!contextOutputFile.isEmpty()) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                log.info("Writing context file: " + contextOutputFile + ".");
+                objectMapper.writeValue(new File(contextOutputFile), context);
+            } catch (IOException e) {
+                log.error("Error writing context file " + contextOutputFile + ": " + e.getMessage(), e);
+            }
         }
     }
 
