@@ -2431,8 +2431,7 @@ CREATE VIEW diseaseAttributions AS
     END
   FROM disease_annotation
     INNER JOIN term ON dat_term_zdb_id = term.term_zdb_id
-    INNER JOIN publication ON dat_source_zdb_id = zdb_id
-  where not exists (select * from disease_annotation_model where damo_dat_zdb_id = dat_zdb_id);
+    INNER JOIN publication ON dat_source_zdb_id = zdb_id;
 \copy (select * from diseaseAttributions) to '<!--|ROOT_PATH|-->/server_apps/data_transfer/Downloads/downloadsStaging/disease_attribution.txt' with delimiter as '	' null as '';
 drop view diseaseAttributions;
 
