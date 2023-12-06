@@ -64,6 +64,16 @@ public class SecondaryTermLoadAction implements Comparable<SecondaryTermLoadActi
     private Map<String, String> relatedEntityFields;
     private Set<UniProtLoadLink> links;
 
+    @JsonIgnore
+    public String getPrefixedAccession() {
+        return switch(dbName) {
+            case INTERPRO ->  "InterPro:" + accession;
+            case UNIPROTKB ->  "UniProtKB-KW:" + accession;
+            case EC -> "EC:" + accession;
+            default ->  dbName.toString() + ":" + accession;
+        };
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

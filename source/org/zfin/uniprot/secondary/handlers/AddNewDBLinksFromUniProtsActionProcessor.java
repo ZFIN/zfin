@@ -1,15 +1,18 @@
 package org.zfin.uniprot.secondary.handlers;
 
 import lombok.extern.log4j.Log4j2;
-import org.zfin.uniprot.persistence.BatchProcessor;
+import org.zfin.marker.Marker;
+import org.zfin.publication.Publication;
+import org.zfin.sequence.MarkerDBLink;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
+import org.zfin.uniprot.secondary.SecondaryTermLoadService;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import static org.zfin.uniprot.secondary.SecondaryTermLoadService.getReferenceDatabaseIDForAction;
+import static org.zfin.framework.HibernateUtil.currentSession;
+import static org.zfin.repository.RepositoryFactory.*;
 
 /**
  * Adds InterPro, PFAM, EC, PROSITE accessions to db_links table.
@@ -30,23 +33,24 @@ public class AddNewDBLinksFromUniProtsActionProcessor implements ActionProcessor
     }
 
     @Override
-    public void processActions(List<SecondaryTermLoadAction> subTypeActions) {
-        BatchProcessor batchProcessor = new BatchProcessor(
-                "db_link","dblink_zdb_id","DBLINK",
-                subTypeActions.stream()
-                        .map(action -> {
-                            Map<String, Object> values = new HashMap<>();
-                            values.put("dblink_linked_recid", action.getGeneZdbID());
-                            values.put("dblink_acc_num", action.getAccession());
-                            values.put("dblink_info", getDBLinkInfo());
-                            values.put("dblink_acc_num_display", action.getAccession());
-                            values.put("dblink_length", action.getLength());
-                            values.put("dblink_fdbcont_zdb_id", getReferenceDatabaseIDForAction(action));
-                            return values;
-                        }).toList()
-        );
-        batchProcessor.execute();
-    }
+    public void processActions(List<SecondaryTermLoadAction> actions) {
+        List<MarkerDBLink> dblinks = new ArrayList<>();
 
+        for(SecondaryTermLoadAction action : actions) {
+            log.debug("Loading " + action.getDbName() + " dblink for " + action.getGeneZdbID() + " " + action.getAccession());
+
+            Marker marker = getMarkerRepository().getMarker(action.getGeneZdbID());
+            MarkerDBLink newLink = new MarkerDBLink();
+            newLink.setAccessionNumber(action.getAccession());
+            newLink.setMarker(marker);
+            newLink.setReferenceDatabase(SecondaryTermLoadService.getReferenceDatabaseForAction(action));
+            newLink.setLength(action.getLength());
+            newLink.setLinkInfo(getDBLinkInfo());
+            dblinks.add(newLink);
+        }
+        Publication publication = getPublicationRepository().getPublication(SecondaryTermLoadService.DBLINK_PUBLICATION_ATTRIBUTION_ID);
+        getSequenceRepository().addDBLinks(dblinks, publication, 50);
+        currentSession().flush();
+    }
 
 }
