@@ -29,11 +29,8 @@ public class IgnoreLoadActionsAlreadyInDatabaseHandler implements UniProtLoadHan
             DBLinkSlimDTO existingRecord = context.getDBLinkByUniprotAndGene(action.getAccession(), action.getGeneZdbID());
             if (existingRecord != null) {
                 if (existingRecord.getPublicationIDs().contains(AUTOMATED_CURATION_OF_UNIPROT_DATABASE_LINKS)) {
-//                    log.info("Removing load action for " + action.getAccession() + " because it is already in the database.");
                     iter.remove();
                 } else {
-//                    log.info("Keeping load action for " + action.getAccession() + " because it is already in the database, but it is not an automated curation record.");
-//                    log.info("Action: " + action);
                     if (existingRecord.getPublicationIDs().size() == 0) {
                         log.info("Keeping load action for " + action.getAccession() + " because it is already in the database, but has no attributions.");
                         action.setSubType(UniProtLoadAction.SubType.ADD_ATTRIBUTION);

@@ -1,16 +1,15 @@
 package org.zfin.uniprot.handlers;
 
-import org.zfin.uniprot.adapter.RichSequenceAdapter;
 import org.zfin.uniprot.UniProtLoadAction;
 import org.zfin.uniprot.UniProtLoadContext;
 import org.zfin.uniprot.UniProtLoadLink;
+import org.zfin.uniprot.adapter.RichSequenceAdapter;
 import org.zfin.uniprot.dto.DBLinkSlimDTO;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.zfin.sequence.ForeignDB.AvailableName.*;
-import static org.zfin.uniprot.UniProtTools.AUTOMATED_CURATION_OF_UNIPROT_DATABASE_LINKS;
 import static org.zfin.uniprot.UniProtTools.isAnyGeneAccessionRelationshipSupportedByNonLoadPublication;
 
 
