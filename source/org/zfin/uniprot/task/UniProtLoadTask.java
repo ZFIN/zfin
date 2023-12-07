@@ -17,11 +17,9 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.zfin.properties.ZfinPropertiesEnum;
-import org.zfin.uniprot.UniProtLoadAction;
-import org.zfin.uniprot.UniProtLoadContext;
-import org.zfin.uniprot.UniProtLoadPipeline;
-import org.zfin.uniprot.UniProtLoadService;
+import org.zfin.uniprot.*;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
+import org.zfin.uniprot.dto.UniProtLoadSummaryDTO;
 import org.zfin.uniprot.handlers.*;
 import org.zfin.uniprot.persistence.UniProtRelease;
 
@@ -108,9 +106,19 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         try (BufferedReader inputFileReader = new BufferedReader(new java.io.FileReader(inputFileName))) {
             Map<String, RichSequenceAdapter> entries = readUniProtEntries(inputFileReader);
             Set<UniProtLoadAction> actions = executePipeline(entries);
-            writeOutputReportFile(actions);
             loadChangesIfNotDryRun(actions);
+            UniProtLoadSummaryDTO summary = calculateSummary(actions);
+            writeOutputReportFile(actions, summary);
         }
+    }
+
+    private UniProtLoadSummaryDTO calculateSummary(Set<UniProtLoadAction> actions) {
+        int preExistingUniprotLinksCount = context.getUniprotDbLinks().size();
+        int newUniprotLinksCount = actions.stream().filter(a -> a.getType().equals(UniProtLoadAction.Type.LOAD)).toList().size();
+        int deletedUniprotLinksCount = actions.stream().filter(a -> a.getType().equals(UniProtLoadAction.Type.DELETE)).toList().size();
+        int netIncrease = newUniprotLinksCount - deletedUniprotLinksCount;
+        int postExistingUniprotLinks = preExistingUniprotLinksCount + netIncrease;
+        return new UniProtLoadSummaryDTO(preExistingUniprotLinksCount, postExistingUniprotLinks);
     }
 
     private void loadChangesIfNotDryRun(Set<UniProtLoadAction> actions) {
@@ -178,13 +186,17 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         return actions;
     }
 
-    private void writeOutputReportFile(Set<UniProtLoadAction> actions) {
+    private void writeOutputReportFile(Set<UniProtLoadAction> actions, UniProtLoadSummaryDTO summary) {
         String reportFile = this.outputReportName;
         String jsonFile = this.outputJsonName;
 
         log.info("Creating report file: " + reportFile);
         try {
-            String jsonContents = actionsToJson(actions);
+            UniProtLoadActionsContainer actionsContainer = UniProtLoadActionsContainer.builder()
+                    .actions(actions)
+                    .summary(summary)
+                    .build();
+            String jsonContents = actionsToJson(actionsContainer);
             String template = ZfinPropertiesEnum.SOURCEROOT.value() + LOAD_REPORT_TEMPLATE_HTML;
             String templateContents = FileUtils.readFileToString(new File(template), "UTF-8");
             String filledTemplate = templateContents.replace(JSON_PLACEHOLDER_IN_TEMPLATE, jsonContents);
@@ -196,7 +208,7 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         }
     }
 
-    private String actionsToJson(Set<UniProtLoadAction> actions) throws JsonProcessingException {
+    private String actionsToJson(UniProtLoadActionsContainer actions) throws JsonProcessingException {
         return (new ObjectMapper()).writeValueAsString(actions);
     }
 
