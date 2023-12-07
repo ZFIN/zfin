@@ -56,6 +56,26 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void testExistingDBLinksPassValidationRules() {
+        Session session = HibernateUtil.currentSession();
+        String hsqlString = "from DBLink dblink";
+        Query query = session.createQuery(hsqlString);
+        List<DBLink> dbLinks = query.list();
+
+        assertNotNull("database contains at least one dblink", dbLinks);
+        assertTrue("database contains at least one dblink", dbLinks.size() > 0);
+
+        List<String> failedLinks = new ArrayList<>();
+        for (DBLink dbLink : dbLinks) {
+            if (dbLink.isValidAccessionFormat()) {
+                failedLinks.add(dbLink.getAccessionNumber());
+            }
+        }
+        assertEquals("existing dblinks should all pass validation rules: " +
+                        String.join("; ", failedLinks), 0, failedLinks.size());
+    }
+
+    @Test
     public void testReferenceDatabaseEntity() {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(ReferenceDatabase.class);

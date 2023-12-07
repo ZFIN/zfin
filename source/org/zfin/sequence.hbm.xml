@@ -75,11 +75,6 @@
         <many-to-one name="foreignDB" column="fdbcont_fdb_db_id" class="org.zfin.sequence.ForeignDB" not-null="true" lazy="no-proxy"/>
         <many-to-one name="primaryBlastDatabase" column="fdbcont_primary_blastdb_zdb_id" class="org.zfin.sequence.blast.Database" not-null="true" lazy="no-proxy"/>
 
-        <!--<set name="relatedBlastDbs" table="int_fdbcont_analysis_tool" >-->
-        <!--<key column="ifat_fdbcont_zdb_id"/>-->
-        <!--<many-to-many class="org.zfin.sequence.blast.Database" column="ifat_blastdb_zdb_id"/>-->
-        <!--</set>-->
-
         <bag name="relatedBlastDbs" table="int_fdbcont_analysis_tool">
             <key column="ifat_fdbcont_zdb_id"/>
             <many-to-many class="org.zfin.sequence.blast.Database" column="ifat_blastdb_zdb_id"/>
@@ -90,6 +85,24 @@
             <one-to-many class="org.zfin.sequence.DisplayGroupMember"/>
         </set>
 
+        <set name="validationRules" table="reference_database_validation_rule" inverse="true" cascade="all">
+            <key column="fdbcvr_fdbcont_zdb_id"/>
+            <one-to-many class="org.zfin.sequence.ReferenceDatabaseValidationRule"/>
+        </set>
+    </class>
+
+    <class name="org.zfin.sequence.ReferenceDatabaseValidationRule" table="foreign_db_contains_validation_rule">
+        <id name="ruleID">
+            <column name="fdbcvr_pk_id" not-null="true"/>
+            <generator class="identity"/>
+        </id>
+
+        <property name="ruleName" column="fdbcvr_rule_name" type="string"/>
+        <property name="ruleDescription" column="fdbcvr_rule_description" type="string"/>
+        <property name="ruleReferenceURL" column="fdbcvr_rule_reference_url" type="string"/>
+        <property name="rulePattern" column="fdbcvr_rule_pattern" type="string"/>
+
+        <many-to-one name="referenceDatabase" column="fdbcvr_fdbcont_zdb_id" class="org.zfin.sequence.ReferenceDatabase" not-null="true"/>
     </class>
 
     <class name="org.zfin.sequence.DisplayGroup" table="foreign_db_contains_display_group">

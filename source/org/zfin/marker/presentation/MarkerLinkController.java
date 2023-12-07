@@ -10,7 +10,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import org.zfin.alliancegenome.ApiException;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.gwt.marker.ui.SequenceValidator;
@@ -34,7 +33,6 @@ import org.zfin.sequence.repository.SequenceRepository;
 import javax.validation.Valid;
 import java.util.*;
 import java.util.stream.Collectors;
-
 
 import static org.zfin.marker.service.MarkerService.addMarkerLinkByAccession;
 
@@ -173,6 +171,14 @@ public class MarkerLinkController {
         Marker marker = markerRepository.getMarkerByID(markerId);
         String accessionNo = newLink.getAccession();
         ReferenceDatabase refDB = sequenceRepository.getReferenceDatabaseByID(newLink.getReferenceDatabaseZdbID());
+
+        //validate accession format
+        if (!refDB.isValidAccessionFormat(accessionNo)) {
+            Optional<String> message = refDB.getValidationFailedMessage(accessionNo);
+            errors.addError(new FieldError("accession", accessionNo, message.orElse("Invalid accession number")));
+            throw new InvalidWebRequestException(message.orElse("Invalid accession number"), errors);
+        }
+
         List<String> referenceIDs = newLink.getReferences().stream()
                 .map(MarkerReferenceBean::getZdbID)
                 .collect(Collectors.toList());
