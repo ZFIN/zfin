@@ -5,6 +5,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
+import org.zfin.gwt.root.util.StringUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -23,7 +24,7 @@ public class BeanCompareService {
     }
 
     public BeanFieldUpdate compareBeanField(String field, Object oldObject, Object newObject, boolean doCopy)
-            throws Exception {
+        throws Exception {
         return compareBeanField(field, oldObject, newObject, doCopy, false);
     }
 
@@ -36,9 +37,9 @@ public class BeanCompareService {
      * @return
      */
     public BeanFieldUpdate compareBeanField(String field, Object oldObject, Object newObject, boolean doCopy, boolean nullAsBoolean)
-            throws Exception {
-        Object oldField = getProperty(oldObject,field);
-        Object newField = getProperty(newObject,field);
+        throws Exception {
+        Object oldField = getProperty(oldObject, field);
+        Object newField = getProperty(newObject, field);
 
         BeanFieldUpdate beanFieldUpdate = null;
 
@@ -49,9 +50,25 @@ public class BeanCompareService {
 
         if (!Objects.equals(oldField, newField)) {
             beanFieldUpdate = new BeanFieldUpdate();
+            if (oldField instanceof String oldFieldString) {
+                if (StringUtils.isEmpty(oldFieldString)) {
+                    beanFieldUpdate.setFrom(null);
+                } else {
+                    beanFieldUpdate.setFrom(oldField);
+                }
+            } else {
+                beanFieldUpdate.setFrom(oldField);
+            }
+            if (newField instanceof String newFieldString) {
+                if (StringUtils.isEmpty(newFieldString)) {
+                    beanFieldUpdate.setTo(null);
+                } else {
+                    beanFieldUpdate.setTo(newField);
+                }
+            } else {
+                beanFieldUpdate.setTo(newField);
+            }
             beanFieldUpdate.setField(field);
-            beanFieldUpdate.setFrom(oldField);
-            beanFieldUpdate.setTo(newField);
             if (doCopy) {
                 PropertyUtils.setProperty(oldObject, field, newField);
             }
@@ -66,7 +83,7 @@ public class BeanCompareService {
         }
     }
 
-    protected void applyUpdate(Object objectToBeUpdated, BeanFieldUpdate field) throws Exception{
+    protected void applyUpdate(Object objectToBeUpdated, BeanFieldUpdate field) throws Exception {
         PropertyUtils.setProperty(objectToBeUpdated, field.getField(), field.getTo());
     }
 
