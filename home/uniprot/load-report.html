@@ -89,6 +89,19 @@
         #breadcrumb a {
             margin-left: 10px;
         }
+
+        table.summary {
+            border-collapse: collapse;
+            border: 1px solid #ccc;
+        }
+        table.summary th {
+            text-align: left;
+        }
+        table.summary th, table.summary td {
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+
     </style>
 </head>
 <body>
@@ -113,22 +126,22 @@
             }
         }
 
-        function ReportSummary({reportSummary, onSummaryClick}) {
+        function ReportNavigation({reportNavigation, onNavigationClick}) {
 
             //sort by LOAD, DELETE, ERROR, INFO, WARNING
             const orderedKeys = ['LOAD', 'DELETE', 'ERROR', 'WARNING', 'INFO'];
-            const remainingKeys = reportSummary.map(item => item.type).filter(item => !orderedKeys.includes(item));
+            const remainingKeys = reportNavigation.map(item => item.type).filter(item => !orderedKeys.includes(item));
             const allKeys = orderedKeys.concat(remainingKeys);
 
             function countByType(type) {
-                const item = reportSummary.find(item => item.type === type);
+                const item = reportNavigation.find(item => item.type === type);
                 return item ? item.count : 0;
             }
 
             return html`
                 <ul>
                     ${allKeys.map(item => html`
-                        <li><a href="#" onClick=${() => onSummaryClick(item)}>
+                        <li><a href="#" onClick=${() => onNavigationClick(item)}>
                             ${item} (${countByType(item)})
                         </a>
                         </li>
@@ -218,6 +231,49 @@
             `;
         }
 
+        function ReportSummary({reportSummary}) {
+            const beforeCount = reportSummary.beforeLoadUniprotCount;
+            const afterCount = reportSummary.afterLoadUniprotCount;
+            const changeCount = afterCount - beforeCount;
+            const percentChange = (changeCount / beforeCount) * 100;
+
+            //human readable
+            const before = beforeCount.toLocaleString('en-US');
+            const after = afterCount.toLocaleString('en-US');
+            const change = changeCount.toLocaleString('en-US');
+            const percent = percentChange.toLocaleString('en-US', {maximumFractionDigits: 2});
+
+            return html`
+                    <h2>Summary</h2>
+                    Before the load, there were ${before} uniprot accessions in the database.
+                    After the load, there are ${after} uniprot accessions in the database.
+                    The total change is ${change} uniprot accessions
+                    (${percent}% change).
+
+                    <h3>Table</h3>
+                    <table class="summary">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th># Before</th>
+                                <th># After</th>
+                                <th>Net Change</th>
+                                <th>Percent Change</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Uniprot</td>
+                                <td>${before}</td>
+                                <td>${after}</td>
+                                <td>${change}</td>
+                                <td>${percent}%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+            `;
+        }
+
         function Breadcrumb({activeTab, type, subtype, details, onClick}) {
             function backToHome() {
                 onClick('');
@@ -262,23 +318,25 @@
         }
 
         function App({reportData}) {
-            const [reportSummary, setReportSummary] = useState([{type: 'test', count: 1}]);
+            const reportActions = reportData.actions;
+            const reportSummary = reportData.summary;
+            const [reportNavigation, setReportNavigation] = useState([{type: 'test', count: 1}]);
             const [showTypeData, setShowTypeData] = useState(null);
             const [activeTab, setActiveTab] = useState('');
             const [activeDetails, setActiveDetails] = useState('');
             const [subTypeName, setSubTypeName] = useState('');
 
             useEffect(() => {
-                if (reportData) {
+                if (reportActions) {
                     let counts = {};
-                    for(let item of reportData) {
+                    for(let item of reportActions) {
                         counts[item.type] = counts[item.type] ? counts[item.type] + 1 : 1;
                     }
-                    setReportSummary(Object.keys(counts).map(type => ({type, count: counts[type]})));
+                    setReportNavigation(Object.keys(counts).map(type => ({type, count: counts[type]})));
                 }
             }, []);
 
-            function handleSummaryClick(type) {
+            function handleNavigationClick(type) {
                 setActiveTab('list');
                 setShowTypeData(type);
             }
@@ -304,14 +362,14 @@
             }
 
             function previousDetail() {
-                const index = reportData.findIndex(item => item.accession == activeDetails.accession);
+                const index = reportActions.findIndex(item => item.accession == activeDetails.accession);
                 console.log("found index", index);
                 if (index > 0) {
 
                     //find the previous item that matches subtype
                     for(let i = index - 1; i >= 0; i--) {
-                        if (reportData[i].subType == subTypeName) {
-                            setActiveDetails(reportData[i]);
+                        if (reportActions[i].subType == subTypeName) {
+                            setActiveDetails(reportActions[i]);
                             return;
                         }
                     }
@@ -319,7 +377,7 @@
             }
 
             function nextDetail() {
-                const index = reportData.findIndex(item => item.accession == activeDetails.accession);
+                const index = reportActions.findIndex(item => item.accession == activeDetails.accession);
                 console.log("found n index", index);
 
                 if (index === -1) {
@@ -327,15 +385,15 @@
                 }
 
                 //find the next item that matches subtype
-                for(let i = index + 1; i < reportData.length; i++) {
-                    if (reportData[i].subType == subTypeName) {
-                        setActiveDetails(reportData[i]);
+                for(let i = index + 1; i < reportActions.length; i++) {
+                    if (reportActions[i].subType == subTypeName) {
+                        setActiveDetails(reportActions[i]);
                         return;
                     }
                 }
             }
 
-            if (!reportData || !reportSummary) {
+            if (!reportActions || !reportNavigation) {
                 return html`
                     <div>
                         <h4>No Report Data Provided</h4>
@@ -350,19 +408,22 @@
                     <${Breadcrumb} activeTab="${activeTab}" type="${showTypeData}" subtype="${subTypeName}" details="${activeDetails}" onClick="${(item) => {breadcrumbClicked(item)}}"/>
                      <div id='content'>
                         <div id="left-nav">
-                            <h2>Summary</h2>
+                            <h2>Navigation</h2>
                             <p>These are the types of actions that will be performed by the load.</p>
-                            <${ReportSummary} reportSummary=${reportSummary} onSummaryClick=${handleSummaryClick}/>
+                            <${ReportNavigation} reportNavigation=${reportNavigation} onNavigationClick=${handleNavigationClick}/>
                         </div>
                         <div id="right-content">
                             ${activeTab == 'list' && html`
-                                <${SubTypeSummary} items="${reportData}" type="${showTypeData}" onClick="${(typeName) => subTypeClicked(typeName)}"/>
+                                <${SubTypeSummary} items="${reportActions}" type="${showTypeData}" onClick="${(typeName) => subTypeClicked(typeName)}"/>
                             `}
                             ${activeTab == 'subtype' && html`
-                                <${SubTypeListing} items="${reportData}" type="${showTypeData}" subtype="${subTypeName}" onClick="${(item) => itemClicked(item)}" />
+                                <${SubTypeListing} items="${reportActions}" type="${showTypeData}" subtype="${subTypeName}" onClick="${(item) => itemClicked(item)}" />
                             `}
                             ${activeTab == 'details' && html`
                                 <${DetailDisplay} item="${activeDetails}" prevClick="${previousDetail}" nextClick="${nextDetail}" />
+                            `}
+                            ${activeTab == '' && html`
+                                <${ReportSummary} reportSummary="${reportSummary}" />
                             `}
                         </div>
                     </div>
