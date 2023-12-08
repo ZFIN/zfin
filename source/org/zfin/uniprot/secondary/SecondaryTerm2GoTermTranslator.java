@@ -3,6 +3,7 @@ package org.zfin.uniprot.secondary;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.FileUtils;
 import org.zfin.ontology.GenericTerm;
+import org.zfin.ontology.Ontology;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -100,10 +101,9 @@ public class SecondaryTerm2GoTermTranslator {
     private static List<String> getGoIDsToIgnore() {
         List<String> ignoreGoIDs = new ArrayList<>();
         ignoreGoIDs.addAll(getOntologyRepository()
-                .getObsoleteAndSecondaryTerms()
+                .getObsoleteAndSecondaryTermsByOntologies(Ontology.GO_MF, Ontology.GO_BP, Ontology.GO_CC)
                 .stream()
                 .map(GenericTerm::getOboID)
-                .filter(id -> id.startsWith("GO:"))
                 .toList());
 
         // FB case: 6392 -- not to map GO:0005515

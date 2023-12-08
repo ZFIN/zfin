@@ -267,6 +267,10 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
     }
 
     private void calculatePipelineActions() {
+        /** The following could be all handled by the same class in a refactoring: **/
+        // TODO: refactor this area
+        // Something like this: pipeline.addHandler(new RemoveFromLostUniProtsActionCreator(List.of(INTERPRO, EC, PFAM, PROSITE)), RemoveFromLostUniProtsActionProcessor.class);
+        // And could even combine the Add and Remove handlers into one class that calls out to the two classes
         pipeline.addHandler(new RemoveFromLostUniProtsActionCreator(INTERPRO), RemoveFromLostUniProtsActionProcessor.class);
         pipeline.addHandler(new AddNewDBLinksFromUniProtsActionCreator(INTERPRO), AddNewDBLinksFromUniProtsActionProcessor.class);
 
@@ -278,6 +282,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
 
         pipeline.addHandler(new RemoveFromLostUniProtsActionCreator(PROSITE), RemoveFromLostUniProtsActionProcessor.class);
         pipeline.addHandler(new AddNewDBLinksFromUniProtsActionCreator(PROSITE), AddNewDBLinksFromUniProtsActionProcessor.class);
+        /** The above could be refactored to all be handled by the same class **/
 
         pipeline.addHandler(new MarkerGoTermEvidenceActionCreator(INTERPRO, ipToGoRecords), MarkerGoTermEvidenceActionProcessor.class);
         pipeline.addHandler(new MarkerGoTermEvidenceActionCreator(EC, ecToGoRecords), MarkerGoTermEvidenceActionProcessor.class);

@@ -1118,12 +1118,27 @@ public class HibernateOntologyRepository implements OntologyRepository {
         return (List<GenericTerm>) query.list();
     }
 
+    @Override
     public List<GenericTerm> getObsoleteAndSecondaryTerms(Ontology ontology) {
         Session session = HibernateUtil.currentSession();
         String hql = "from GenericTerm where (secondary = true OR obsolete = true) and ontology = :ontology";
         Query query = session.createQuery(hql);
         query.setParameter("ontology", ontology);
         return (List<GenericTerm>) query.list();
+    }
+
+    @Override
+    public List<GenericTerm> getObsoleteAndSecondaryTermsByOntologies(Ontology... ontologies) {
+        //TODO: We should be able to do the filtering in the query, but it fails for some reason
+        //      it would be good to figure out why and uncomment the lines below.
+        //      The same bug could be affecting other Repository methods.
+        Session session = HibernateUtil.currentSession();
+        String hql = "from GenericTerm where (secondary = true OR obsolete = true)";
+//        hql += " and ontology in (:ontologies)";
+        Query query = session.createQuery(hql);
+//        query.setParameter("ontologies", ontologies);
+        List<GenericTerm> results = (List<GenericTerm>) query.list();
+        return results.stream().filter(term -> Arrays.asList(ontologies).contains(term.getOntology())).toList();
     }
 
 

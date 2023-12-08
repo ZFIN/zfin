@@ -341,6 +341,8 @@ public interface OntologyRepository {
     List<GenericTerm> getObsoleteAndSecondaryTerms();
     List<GenericTerm> getObsoleteAndSecondaryTerms(Ontology ontology);
 
+    List<GenericTerm> getObsoleteAndSecondaryTermsByOntologies(Ontology... ontologies);
+
     List<GenericTerm> getTermsInSubset(String subsetName);
 
     HumanGeneDetail getHumanGeneDetailById(String id);

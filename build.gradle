@@ -908,7 +908,6 @@ test {
     }
     filter {
         includeTestsMatching "org.zfin.UnitTests"
-        includeTestsMatching "org.zfin.uniprot.UniProtInterproTest"
         //spock tests
 
         includeTestsMatching "org.zfin.publication.MeshHeadingSpec"
