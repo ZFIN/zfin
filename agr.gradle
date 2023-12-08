@@ -75,7 +75,6 @@ task createGPI2File(type: JavaExec) {
 task createDiseaseInfoLinkMLFile(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.marker.agr.DiseaseAnnotationLinkMLInfo'
-    args 'v1.7.3'
 }
 
 task createDiseaseInfoFile(type: JavaExec) {
@@ -124,9 +123,24 @@ task createConstructLinkMLFile(type: JavaExec) {
     main = 'org.zfin.marker.agr.ConstructLinkMLInfo'
 }
 
+task createVariantLinkMLFile(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.marker.agr.VariantLinkMLInfo'
+}
+
 task createFishLinkMLFile(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.marker.agr.FishLinkMLInfo'
+}
+
+task createAllianceLinkMLFiles {
+    dependsOn createGenesLinkMLFile
+    dependsOn createAllelesLinkMLFile
+    dependsOn createFishLinkMLFile
+    dependsOn createDiseaseInfoLinkMLFile
+    dependsOn createConstructLinkMLFile
+    dependsOn createVariantLinkMLFile
+    dependsOn createFishLinkMLFile
 }
 
 task createAllianceFiles {

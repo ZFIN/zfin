@@ -40,8 +40,7 @@ public class GeneLinkMLInfo extends LinkMLInfo {
 
     private void init() throws IOException {
         initAll();
-        IngestDTO ingestDTO = new IngestDTO();
-        ingestDTO.setLinkMLVersion("v1.7.3");
+        IngestDTO ingestDTO = getIngestDTO();
         List<org.alliancegenome.curation_api.model.ingest.dto.GeneDTO> allDiseaseDTO = getAllGenes(numfOfRecords);
         ingestDTO.setGeneIngestSet(allDiseaseDTO);
         ObjectMapper mapper = new ObjectMapper();

@@ -167,13 +167,13 @@ public class FpInferenceGafParser {
             logger.error("bad gaf file: " + line);
         }
         gafEntry.setEvidenceCode(entries[6]);
-        if(entries[7].contains("|")){
+        if (entries[7].contains("|")) {
             countPipes++;
         }
-        if(entries[7].contains(",")){
+        if (entries[7].contains(",")) {
             countCommas++;
         }
-        if((entries[7].contains(","))&&(entries[7].contains("|"))){
+        if ((entries[7].contains(",")) && (entries[7].contains("|"))) {
             countBoth++;
         }
         gafEntry.setInferences(entries[7]
@@ -194,10 +194,13 @@ public class FpInferenceGafParser {
 
         );
 
+        if (entries.length > 15) {
+            gafEntry.setAnnotExtn(entries[15]);
+        }
+        if (entries.length > 16) {
+            gafEntry.setGeneProductFormID(entries[16]);
+        }
 
-        gafEntry.setAnnotExtn(entries[15]);
-
-        gafEntry.setGeneProductFormID(entries[16]);
         gafEntry.setCol8pipes(countPipes);
         gafEntry.setCol8commas(countCommas);
         gafEntry.setCol8both(countBoth);
