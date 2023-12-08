@@ -58,21 +58,47 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void testExistingDBLinksPassValidationRules() {
         Session session = HibernateUtil.currentSession();
-        String hsqlString = "from DBLink dblink";
-        Query query = session.createQuery(hsqlString);
-        List<DBLink> dbLinks = query.list();
 
-        assertNotNull("database contains at least one dblink", dbLinks);
-        assertTrue("database contains at least one dblink", dbLinks.size() > 0);
+        //get all dblinks that have validation rules
+        String hqlString = "from ReferenceDatabase refDb join fetch refDb.validationRules as rule where rule is not null";
+        Query query = session.createQuery(hqlString);
+        List<ReferenceDatabase> dbs = query.list();
 
-        List<String> failedLinks = new ArrayList<>();
-        for (DBLink dbLink : dbLinks) {
-            if (dbLink.isValidAccessionFormat()) {
-                failedLinks.add(dbLink.getAccessionNumber());
-            }
-        }
+        List<String> failedLinkAccessions = new ArrayList<>();
+        dbs.forEach(db -> {
+            List<DBLink> dblinks = getSequenceRepository().getDBLinks(db.getForeignDB().getDbName());
+            dblinks.forEach(dblink -> {
+                if (!dblink.isValidAccessionFormat()) {
+                    failedLinkAccessions.add(dblink.getAccessionNumber());
+                }
+            });
+        });
+
         assertEquals("existing dblinks should all pass validation rules: " +
-                        String.join("; ", failedLinks), 0, failedLinks.size());
+                        String.join("; ", failedLinkAccessions), 0, failedLinkAccessions.size());
+    }
+
+    @Test
+    public void testAccessionFormatValidationRules() {
+        SequenceRepository sr = RepositoryFactory.getSequenceRepository();
+        ReferenceDatabase refDb = sr.getReferenceDatabase(
+                ForeignDB.AvailableName.GENBANK,
+                ForeignDBDataType.DataType.GENOMIC,
+                ForeignDBDataType.SuperType.SEQUENCE,
+                Species.Type.ZEBRAFISH);
+        Set<ReferenceDatabaseValidationRule> rules = refDb.getValidationRules();
+        assertTrue("ReferenceDatabase has validation rules", rules.size() > 0);
+        assertFalse(refDb.isValidAccessionFormat("NM_4214243"));
+        assertFalse(refDb.isValidAccessionFormat("NM_421424.3"));
+        assertFalse(refDb.isValidAccessionFormat("BX957306.12"));
+        assertFalse(refDb.isValidAccessionFormat("DN90345"));
+        assertFalse(refDb.isValidAccessionFormat("CT72701"));
+        assertFalse(refDb.isValidAccessionFormat("NM_123423451234"));
+        assertFalse(refDb.isValidAccessionFormat("MG9579"));
+        assertFalse(refDb.isValidAccessionFormat("C173-A2"));
+        assertFalse(refDb.isValidAccessionFormat("CD75461"));
+        assertFalse(refDb.isValidAccessionFormat("NM_4214243"));
+        assertFalse(refDb.isValidAccessionFormat("XM_123451234"));
     }
 
     @Test

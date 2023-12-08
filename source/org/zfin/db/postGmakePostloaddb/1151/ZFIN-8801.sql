@@ -67,23 +67,6 @@ VALUES ('GenBank',
         '$',
         'ZDB-FDBCONT-040412-36');
 
--- And re-use it again for GenPept:
-INSERT INTO foreign_db_contains_validation_rule (fdbcvr_rule_name, fdbcvr_rule_description, fdbcvr_rule_reference_url, fdbcvr_rule_pattern, fdbcvr_fdbcont_zdb_id)
-VALUES ('GenPept',
-        'GenPept accessions must begin with at least one letter and be followed by a series of only numbers.',
-        'https://zfin.atlassian.net/wiki/spaces/doc/pages/5266079747/Validation+Rules+for+Foreign+DB+Accessions',
-        '^' ||
-        '[A-Z]{1}[0-9]{5}|' || -- 1 letter + 5 numerals
-        '[A-Z]{2}[0-9]{6}|' || -- 2 letters + 6 numerals
-        '[A-Z]{2}[0-9]{8}|' || -- 2 letters + 8 numerals
-        '[A-Z]{3}[0-9]{5}|' || -- 3 letters + 5 numerals
-        '[A-Z]{3}[0-9]{7}|' || -- 3 letters + 7 numerals
-        '[A-Z]{4}[0-9]{8,}|' || -- 4 letters + 8 or more numerals
-        '[A-Z]{6}[0-9]{9,}|' || -- 6 letters + 9 or more numerals
-        '[A-Z]{5}[0-9]{7}' || -- 5 letters + 7 numerals
-        '$',
-        'ZDB-FDBCONT-040412-42');
-
 -- UniProtKB accession numbers consist of 6 or 10 alphanumerical characters in the format below:
 INSERT INTO foreign_db_contains_validation_rule (fdbcvr_rule_name, fdbcvr_rule_description, fdbcvr_rule_reference_url, fdbcvr_rule_pattern, fdbcvr_fdbcont_zdb_id)
 VALUES ('UniProtKB',
@@ -95,5 +78,43 @@ VALUES ('UniProtKB',
         '$',
         'ZDB-FDBCONT-040412-47');
 
+-- And re-use it again for GenPept:
+INSERT INTO foreign_db_contains_validation_rule (fdbcvr_rule_name, fdbcvr_rule_description, fdbcvr_rule_reference_url, fdbcvr_rule_pattern, fdbcvr_fdbcont_zdb_id)
+VALUES ('GenPept',
+        'GenPept accessions must begin with at least one letter and be followed by a series of only numbers.',
+        'https://zfin.atlassian.net/wiki/spaces/doc/pages/5266079747/Validation+Rules+for+Foreign+DB+Accessions',
+        '^' ||
+
+        -- GenPept accessions accept the same rules as GenBank accessions
+        '(?:' || -- non-capturing group
+        '[A-Z]{1}[0-9]{5}|' || -- 1 letter + 5 numerals
+        '[A-Z]{2}[0-9]{6}|' || -- 2 letters + 6 numerals
+        '[A-Z]{2}[0-9]{8}|' || -- 2 letters + 8 numerals
+        '[A-Z]{3}[0-9]{5}|' || -- 3 letters + 5 numerals
+        '[A-Z]{3}[0-9]{7}|' || -- 3 letters + 7 numerals
+        '[A-Z]{4}[0-9]{8,}|' || -- 4 letters + 8 or more numerals
+        '[A-Z]{6}[0-9]{9,}|' || -- 6 letters + 9 or more numerals
+        '[A-Z]{5}[0-9]{7}' || -- 5 letters + 7 numerals
+        ')' ||
+
+        -- GenPept accessions also accept the uniprot format:
+        '|' ||
+        '(?:' || -- non-capturing group
+        '[OPQ][0-9][A-Z0-9]{3}[0-9]|' ||
+        '[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2}' ||
+        ')' ||
+        '$',
+        'ZDB-FDBCONT-040412-42');
 
 
+-- For reference, this query will find rule violations:
+-- select * from (
+--
+-- select db_link.*,
+-- regexp_match(dblink_acc_num, fdbcvr_rule_pattern) as match,
+-- foreign_db_contains_validation_rule.fdbcvr_rule_name as ruleid,
+-- foreign_db_contains_validation_rule.fdbcvr_rule_pattern as pattern
+-- from db_link left join foreign_db_contains_validation_rule on dblink_fdbcont_zdb_id = foreign_db_contains_validation_rule.fdbcvr_fdbcont_zdb_id
+--
+-- ) as subq
+-- where ruleid is not null and match is null
