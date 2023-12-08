@@ -201,74 +201,9 @@ public class ReportLostUniProtsHandler implements UniProtLoadHandler {
      */
     private void setActionTitleAndDetailsForGenPeptGenBank(DBLinkSlimDTO lostUniProt, UniProtLoadAction action, UniProtLoadContext context) {
         Map<String, String> genBankMap = new HashMap<>();
-        genBankMap.put("A0PGL6","ZDB-GENE-060818-12");
-        genBankMap.put("A4GT83","ZDB-GENE-060131-1");
-        genBankMap.put("A4IGB0","ZDB-GENE-041014-76");
-        genBankMap.put("A4QN70","ZDB-GENE-060531-147");
-        genBankMap.put("A4ZNR4","ZDB-GENE-071130-1");
-        genBankMap.put("A4ZNR5","ZDB-GENE-081013-6");
-        genBankMap.put("A7MC74","ZDB-GENE-071004-51");
+
         genBankMap.put("A8E587","ZDB-GENE-980526-285");
         genBankMap.put("A8KBH9","ZDB-GENE-041008-120");
-        genBankMap.put("A8KBI4","ZDB-GENE-060929-816");
-        genBankMap.put("A9UL45","ZDB-GENE-080206-2");
-        genBankMap.put("D3XD84","ZDB-GENE-100402-1");
-        genBankMap.put("D3XD87","ZDB-GENE-100402-2");
-        genBankMap.put("I6LC08","ZDB-GENE-050609-7");
-        genBankMap.put("I6LC25","ZDB-GENE-041118-19");
-        genBankMap.put("I6LC28","ZDB-GENE-050609-5");
-        genBankMap.put("I6LD70","ZDB-GENE-050610-25");
-        genBankMap.put("P51028","ZDB-GENE-980526-332");
-        genBankMap.put("Q1RLY7","ZDB-GENE-060421-7397");
-        genBankMap.put("Q5YCZ2","ZDB-GENE-020225-2");
-        genBankMap.put("Q60H65","ZDB-GENE-041118-15");
-        genBankMap.put("Q60H66","ZDB-GENE-041118-14");
-        genBankMap.put("Q6NTI0","ZDB-GENE-040426-1433");
-        genBankMap.put("Q6P962","ZDB-GENE-040426-2720");
-        genBankMap.put("Q7ZSY6","ZDB-GENE-030131-4174");
-        genBankMap.put("S5TZ97","ZDB-GENE-041008-189");
-
-        Map<String, String> genPeptMap = new HashMap<>();
-        genPeptMap.put("A0A1L2F565","ZDB-GENE-180611-1");
-        genPeptMap.put("A6P6V3","ZDB-GENE-070917-6");
-        genPeptMap.put("A6P6V6","ZDB-GENE-070917-7");
-        genPeptMap.put("A7MCR6","ZDB-GENE-071004-74");
-        genPeptMap.put("A8E5C4","ZDB-GENE-060103-1");
-        genPeptMap.put("A8E5D2","ZDB-GENE-071004-120");
-        genPeptMap.put("A8E5F8","ZDB-GENE-040801-211");
-        genPeptMap.put("A8KB23","ZDB-GENE-080215-16");
-        genPeptMap.put("A8KB82","ZDB-GENE-080220-41");
-        genPeptMap.put("A8KBB5","ZDB-GENE-080219-50");
-        genPeptMap.put("A8WFV9","ZDB-GENE-080220-13");
-        genPeptMap.put("A8WGC1","ZDB-GENE-080220-7");
-        genPeptMap.put("B0R024","ZDB-GENE-030616-587");
-        genPeptMap.put("B3DIC7","ZDB-GENE-060503-136");
-        genPeptMap.put("Q05AK7","ZDB-GENE-061027-337");
-        genPeptMap.put("Q08C32","ZDB-GENE-070209-1");
-        genPeptMap.put("Q1LXQ2","ZDB-GENE-030131-7777");
-        genPeptMap.put("Q2AB30","ZDB-GENE-070917-5");
-        genPeptMap.put("Q2PRM1","ZDB-GENE-070806-89");
-        genPeptMap.put("Q2YDR7","ZDB-GENE-020225-4");
-        genPeptMap.put("Q502S6","ZDB-GENE-050522-264");
-        genPeptMap.put("Q5ICW5","ZDB-GENE-050214-1");
-        genPeptMap.put("Q5RGS7","ZDB-GENE-041014-353");
-        genPeptMap.put("Q6NUW4","ZDB-GENE-040426-2446");
-        genPeptMap.put("Q6P2V0","ZDB-GENE-040426-1844");
-        genPeptMap.put("Q6PC28","ZDB-GENE-040426-1687");
-        genPeptMap.put("Q6T937","ZDB-GENE-040625-1");
-        genPeptMap.put("Q7SZX7","ZDB-GENE-131126-30");
-        genPeptMap.put("Q7T3J0","ZDB-GENE-030707-2");
-        genPeptMap.put("Q7ZT21","ZDB-GENE-980526-80");
-        genPeptMap.put("Q7ZZ76","ZDB-GENE-020430-1");
-        genPeptMap.put("Q8AW62","ZDB-GENE-030616-180");
-        genPeptMap.put("Q8AW68","ZDB-GENE-020225-34");
-        genPeptMap.put("Q9MIY0","ZDB-GENE-011205-12");
-        genPeptMap.put("Q9MIY1","ZDB-GENE-011205-10");
-        genPeptMap.put("Q9MIY3","ZDB-GENE-011205-9");
-        genPeptMap.put("Q9MIY4","ZDB-GENE-011205-16");
-        genPeptMap.put("Q9MIY6","ZDB-GENE-011205-19");
-        genPeptMap.put("Q9MIY9","ZDB-GENE-011205-8");
-        genPeptMap.put("Q9MIZ0","ZDB-GENE-011205-7");
 
         String accession = lostUniProt.getAccession();
         String gene = lostUniProt.getDataZdbID();
@@ -281,17 +216,6 @@ public class ReportLostUniProtsHandler implements UniProtLoadHandler {
             } else {
                 action.setType(UniProtLoadAction.Type.WARNING);
                 action.setDetails("UniProt accession " + accession + " previously matched gene " + gene + " by GenBank.\n" + action.getDetails());
-            }
-        }
-
-        if (genPeptMap.containsKey(accession) && genPeptMap.get(accession).equals(gene)) {
-            action.setSubType(LOST_UNIPROT_PREV_MATCH_BY_GP);
-            if (context.hasExistingUniprotWithNonLoadAttributions(accession, gene)) {
-                action.setType(UniProtLoadAction.Type.INFO);
-                action.setDetails("UniProt accession " + accession + " previously matched gene " + gene + " by GenPept. \nThis also has a non-load attribution.\n" + action.getDetails());
-            } else {
-                action.setType(UniProtLoadAction.Type.WARNING);
-                action.setDetails("UniProt accession " + accession + " previously matched gene " + gene + " by GenPept.\n" + action.getDetails());
             }
         }
 
