@@ -1,14 +1,15 @@
 package org.zfin.uniprot.handlers;
 
-import org.zfin.uniprot.adapter.RichSequenceAdapter;
 import org.zfin.uniprot.UniProtLoadAction;
 import org.zfin.uniprot.UniProtLoadContext;
 import org.zfin.uniprot.UniProtLoadLink;
+import org.zfin.uniprot.adapter.RichSequenceAdapter;
 import org.zfin.uniprot.dto.DBLinkSlimDTO;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.zfin.sequence.ForeignDB.AvailableName.*;
 import static org.zfin.uniprot.UniProtTools.isAnyGeneAccessionRelationshipSupportedByNonLoadPublication;
 
 
@@ -58,16 +59,32 @@ public class MatchOnRefSeqHandler implements UniProtLoadHandler {
                 if (isWarning) {
                     action.setSubType(UniProtLoadAction.SubType.MULTIPLE_GENES_PER_ACCESSION_BUT_APPROVED);
                     action.setType(UniProtLoadAction.Type.WARNING);
+                    action.setGeneZdbID(String.join(";", result.getGeneZdbIDs()));
                     action.setDetails("This UniProt accession has multiple genes associated with it, but at least one of the gene associations is supported by a non-load publication.\n\n" + details);
                 } else {
                     action.setSubType(UniProtLoadAction.SubType.MULTIPLE_GENES_PER_ACCESSION);
+                    action.setGeneZdbID(String.join(";", result.getGeneZdbIDs()));
                     action.setType(UniProtLoadAction.Type.ERROR);
                 }
             } else {
-                action.setSubType(UniProtLoadAction.SubType.MATCH_BY_REFSEQ);
-                action.setType(UniProtLoadAction.Type.LOAD);
-                action.setGeneZdbID(result.getGeneZdbIDs().get(0));
-                action.setLength(uniProtRecords.get(uniprotAccession).getLength());
+                boolean hasNonLoadPublication = isAnyGeneAccessionRelationshipSupportedByNonLoadPublication(uniprotAccession,
+                        result.getGeneZdbIDs(),
+                        context.getUniprotDbLinks().get(uniprotAccession));
+                if (hasNonLoadPublication) {
+
+                    //load attribution only
+                    action.setSubType(UniProtLoadAction.SubType.ADD_ATTRIBUTION);
+                    action.setType(UniProtLoadAction.Type.LOAD);
+                    action.setGeneZdbID(result.getGeneZdbIDs().get(0));
+                    action.setLength(uniProtRecords.get(uniprotAccession).getLength());
+                } else {
+
+                    //create DB Link
+                    action.setSubType(UniProtLoadAction.SubType.MATCH_BY_REFSEQ);
+                    action.setType(UniProtLoadAction.Type.LOAD);
+                    action.setGeneZdbID(result.getGeneZdbIDs().get(0));
+                    action.setLength(uniProtRecords.get(uniprotAccession).getLength());
+                }
             }
             actions.add(action);
         }
@@ -75,14 +92,14 @@ public class MatchOnRefSeqHandler implements UniProtLoadHandler {
 
     private void setActionLinks(UniProtLoadAction action, MatchOnRefSeqResult result) {
         List<UniProtLoadLink> links = new ArrayList<>();
-        links.add(new UniProtLoadLink("UniProtKB: " + result.uniprotAccession, "https://www.uniprot.org/uniprot/" + result.uniprotAccession));
+        links.add(UniProtLoadLink.create(UNIPROTKB, result.uniprotAccession));
 
         for (String refseq: result.refSeqAccessions()) {
-            links.add(new UniProtLoadLink("RefSeq: " + refseq, "https://www.ncbi.nlm.nih.gov/protein/" + refseq));
+            links.add(UniProtLoadLink.create(REFSEQ, refseq));
         }
 
         for (String geneZdbID: result.getGeneZdbIDs()) {
-            links.add(new UniProtLoadLink("ZFIN: " + geneZdbID, "https://zfin.org/" + geneZdbID));
+            links.add(UniProtLoadLink.create(ZFIN, geneZdbID));
         }
         action.addLinks(links);
     }

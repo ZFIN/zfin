@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-<!-- See: https://github.com/rtaylorzfin/embedded-preact-report-template -->
 <head>
     <meta name="viewport" content="width=device-width,initial-scale=1">
 
@@ -71,6 +70,18 @@
                 if (label === 'changed ZFIN') {
                     setChangeFilter('ZFIN');
                 }
+                if (label === 'changed InterPro') {
+                    setChangeFilter('InterPro');
+                }
+                if (label === 'changed EC') {
+                    setChangeFilter('EC');
+                }
+                if (label === 'changed Pfam') {
+                    setChangeFilter('Pfam');
+                }
+                if (label === 'changed PROSITE') {
+                    setChangeFilter('PROSITE');
+                }
                 if (label.includes('changed')) {
                     setActiveSection('changed');
                 }
@@ -110,6 +121,10 @@
                                     <ul>
                                         <li><a href="#" onClick=${() => handleSummaryClick('changed GeneID')}>GeneID: ${reportData.summary['changed GeneID']}</a></li>
                                         <li><a href="#" onClick=${() => handleSummaryClick('changed RefSeq')}>RefSeq: ${reportData.summary['changed RefSeq']}</a></li>
+                                        <li><a href="#" onClick=${() => handleSummaryClick('changed InterPro')}>InterPro: ${reportData.summary['changed InterPro']}</a></li>
+                                        <li><a href="#" onClick=${() => handleSummaryClick('changed EC')}>EC: ${reportData.summary['changed EC']}</a></li>
+                                        <li><a href="#" onClick=${() => handleSummaryClick('changed Pfam')}>Pfam: ${reportData.summary['changed Pfam']}</a></li>
+                                        <li><a href="#" onClick=${() => handleSummaryClick('changed PROSITE')}>PROSITE: ${reportData.summary['changed PROSITE']}</a></li>
                                         <li><a href="#" onClick=${() => handleSummaryClick('changed ZFIN')}>ZFIN: ${reportData.summary['changed ZFIN']}</a></li>
                                     </ul>
                                 </li>
@@ -219,7 +234,12 @@
     });
 </script>
 
-<div id="root"></div>
+<div id="root">
+    <div class="error">
+        <h2>Error Loading Report</h2>
+        <p>If you are viewing this report in Jenkins, you may have to download the file first by pressing ctrl+s or cmd+s</p>
+    </div>
+</div>
 
 </body>
 

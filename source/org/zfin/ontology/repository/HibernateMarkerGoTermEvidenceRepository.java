@@ -74,6 +74,16 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
 
     @Override
     @SuppressWarnings("unchecked")
+    public List<MarkerGoTermEvidence> getMarkerGoTermEvidencesForPubZdbIDs(List<String> publicationIDs) {
+        return publicationIDs
+                .stream()
+                .map(pubID -> getMarkerGoTermEvidencesForPubZdbID(pubID))
+                .flatMap(List::stream)
+                .toList();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
     public List<MarkerGoTermEvidence> getMarkerGoTermEvidencesForMarkerZdbIDOrdered(String markerID) {
         return (List<MarkerGoTermEvidence>)
                 HibernateUtil.currentSession().createQuery(" " +

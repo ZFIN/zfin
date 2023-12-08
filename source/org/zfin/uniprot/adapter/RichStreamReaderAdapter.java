@@ -20,4 +20,5 @@ public class RichStreamReaderAdapter {
     public boolean hasNext() {
         return originalStreamReader.hasNext();
     }
+
 }

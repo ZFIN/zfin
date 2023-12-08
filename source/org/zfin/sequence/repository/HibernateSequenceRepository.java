@@ -677,6 +677,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
         return query.list();
     }
 
+    @Override
     public DBLink getDBLink(String markerZdbID, String accession, String referenceDBName) {
         Session session = HibernateUtil.currentSession();
         String hql = "from DBLink mdbl where mdbl.accessionNumber = :accession " +
@@ -690,6 +691,21 @@ public class HibernateSequenceRepository implements SequenceRepository {
     }
 
     @Override
+    public DBLink getDBLinkByReferenceDatabaseID(String markerZdbID, String accession, String referenceDatabaseID) {
+        Session session = HibernateUtil.currentSession();
+        String hql = """
+                from DBLink mdbl where mdbl.accessionNumber = :accession
+                 and mdbl.dataZdbID = :markerZdbID
+                 and mdbl.referenceDatabase.zdbID = :referenceDatabaseID
+                """;
+        Query query = session.createQuery(hql);
+        query.setString("accession", accession);
+        query.setString("markerZdbID", markerZdbID);
+        query.setString("referenceDatabaseID", referenceDatabaseID);
+        return (DBLink) query.uniqueResult();
+    }
+
+    @Override
     public List<DBLink> getAtlasDBLink(String markerZdbID, String referenceDBName) {
         String hql = "select mdbl from DBLink mdbl where mdbl.dataZdbID = :markerZdbID " +
                 "and mdbl.referenceDatabase.foreignDB.dbName = :referenceDBName";
@@ -697,7 +713,6 @@ public class HibernateSequenceRepository implements SequenceRepository {
         query.setString("referenceDBName", referenceDBName);
         query.setString("markerZdbID", markerZdbID);
         return query.list();
-
     }
 
     @Override

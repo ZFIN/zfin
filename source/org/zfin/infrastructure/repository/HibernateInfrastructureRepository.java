@@ -69,6 +69,16 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         session.save(activeData);
     }
 
+    @Override
+    public void insertActiveDataWithoutValidationIgnoreConflict(String zdbID) {
+        currentSession().createSQLQuery("""
+            INSERT INTO zdb_active_data(zactvd_zdb_id) VALUES (:zdbID)
+            ON CONFLICT (zactvd_zdb_id)
+            DO NOTHING
+            """).setParameter("zdbID", zdbID)
+                .executeUpdate();
+    }
+
     public void insertActiveSource(String zdbID) {
         Session session = HibernateUtil.currentSession();
         ActiveSource activeSource = new ActiveSource();
@@ -771,6 +781,7 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
     }
 
     public ExternalNote updateExternalNote(ExternalNote note, String text) {
+        //TODO: Is this method ever called? It looks like it would generate a NPE
         return updateExternalNote(note, text, null);
     }
 
@@ -2047,6 +2058,22 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         return session.createQuery(query).getResultList().stream().findFirst().orElse(null);
     }
 
+    @Override
+    public List<UniProtRelease> getAllUniProtReleases() {
+        Session session = currentSession();
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+
+        CriteriaQuery<UniProtRelease> query = criteriaBuilder.createQuery(UniProtRelease.class);
+        Root<UniProtRelease> uniProtRelease = query.from(UniProtRelease.class);
+        query.orderBy(criteriaBuilder.desc(uniProtRelease.get("date")));
+
+        return session.createQuery(query).list();
+    }
+
+    @Override
+    public UniProtRelease getUniProtReleaseByID(Long id) {
+        return currentSession().get(UniProtRelease.class, id);
+    }
 
     @Override
     public void insertUniProtRelease(UniProtRelease release) {

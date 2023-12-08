@@ -1,4 +1,4 @@
-package org.zfin.uniprot;
+package org.zfin.uniprot.task;
 
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.csv.CSVPrinter;
@@ -27,6 +27,7 @@ import org.zfin.sequence.DBLink;
 import org.zfin.sequence.ForeignDBDataType;
 import org.zfin.sequence.MarkerDBLink;
 import org.zfin.sequence.service.SequenceService;
+import org.zfin.uniprot.NcbiMatchReportRow;
 
 
 /**

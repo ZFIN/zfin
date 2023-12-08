@@ -54,7 +54,10 @@ public class UniProtLoadAction implements Comparable<UniProtLoadAction> {
         LOST_UNIPROT_PREV_MATCH_BY_GB("Previously Matched by GenBank: No RefSeq Match"),
         LOST_UNIPROT_PREV_MATCH_BY_GP("Previously Matched by GenPept: No RefSeq Match"),
         LEGACY_PROBLEM_FILE("Legacy Problem File"),
-        DUPLICATE_ACCESSIONS("Duplicate Accessions: tmp category");
+        LEGACY_PROBLEM_FILE_LOAD("Legacy Problem File - Load"),
+        LEGACY_PROBLEM_FILE_DELETE("Legacy Problem File - Delete"),
+        REMOVE_ATTRIBUTION("Remove Attribution"),
+        ADD_ATTRIBUTION("Add Attribution");
 
         private final String value;
 
@@ -71,10 +74,10 @@ public class UniProtLoadAction implements Comparable<UniProtLoadAction> {
     public String toString() {
         return "UniProtLoadAction: " +
                 "accession: " + accession +
-                " title: " + subType +
+                " type: " + type +
+                " subType: " + subType +
                 " geneZdbID: " + geneZdbID +
                 " details: " + details +
-                " type: " + type +
                 " length: " + length +
                 " links: " + links;
     }
