@@ -13,7 +13,6 @@ require('./trusted-html.filter');
 
 require('./autocompletify.directive');
 require('./bootstrap-modal.directive');
-require('./curator-notes.directive');
 require('./inline-edit-textarea.directive');
 require('./gene-marker-relationship.directive');
 require('./marker-aliases.directive');
@@ -21,9 +20,7 @@ require('./marker-links.directive');
 require('./marker-notes.directive');
 require('./marker-relationships.directive');
 require('./marker-suppliers.directive');
-require('./other-markers.directive');
 require('./pub-lookup.directive');
-require('./public-note.directive');
 require('./quick-figure.directive');
 require('./reference-editor.directive');
 

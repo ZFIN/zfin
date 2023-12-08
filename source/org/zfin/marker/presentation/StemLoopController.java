@@ -26,8 +26,8 @@ import java.util.List;
 @Controller
 public class StemLoopController {
 
-    private static Logger logger = LogManager.getLogger(MiniGeneController.class);
-    private SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
+    private static final Logger logger = LogManager.getLogger(StemLoopController.class);
+    private final SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
     private ReferenceDatabase referenceDatabase ;
 
     public StemLoopController(){

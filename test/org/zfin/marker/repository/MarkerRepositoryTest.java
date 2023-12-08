@@ -701,14 +701,6 @@ public class MarkerRepositoryTest extends AbstractDatabaseTest {
         assertEquals("ZDB-GENE-070319-1", iter.next().getZdbID());
 
     }
-
-    @Test
-    public void testMiniGene() throws Exception {
-        MiniGeneController miniGeneController = new MiniGeneController();
-        Model model = new ExtendedModelMap();
-        miniGeneController.getMiniGeneView(model, "ZDB-GENE-990603-12", null, null, null);
-    }
-
     @Test
     public void markerHistoryView() {
         assertTrue(markerRepository.getHasMarkerHistory("ZDB-GENE-990603-12"));
