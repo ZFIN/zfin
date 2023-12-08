@@ -9,6 +9,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * This handler is used to filter down the number of UniProt records to consider for loading.
+ * If the UniProt record is already in the database, it is removed from the uniProtRecords map.
+ * This makes it so that the rest of the pipeline only considers UniProt records that are not already in the database.
+ *
+ */
 @Log4j2
 public class IgnoreAccessionsAlreadyInDatabaseHandler implements UniProtLoadHandler {
     @Override

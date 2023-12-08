@@ -6,6 +6,7 @@ import org.biojava.bio.BioException;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
+import org.zfin.uniprot.task.UniProtLoadTask;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,7 +26,7 @@ public class UniProtLoadTest extends AbstractDatabaseTest {
      */
     @Test
     public void handleLostUniprotWithGenPept() throws JsonProcessingException {
-        UniProtLoadTask loadTask = new UniProtLoadTask("", "", "", false, "");
+        UniProtLoadTask loadTask = new UniProtLoadTask("", "", "", false, "", "");
         loadTask.initialize();
         String record = testDat();
         loadTask.setContext(testContext());

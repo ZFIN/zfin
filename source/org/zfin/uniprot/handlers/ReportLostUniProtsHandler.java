@@ -11,6 +11,8 @@ import org.zfin.uniprot.dto.DBLinkSlimDTO;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.zfin.sequence.ForeignDB.AvailableName.UNIPROTKB;
+import static org.zfin.sequence.ForeignDB.AvailableName.ZFIN;
 import static org.zfin.uniprot.UniProtLoadAction.SubType.LOST_UNIPROT_PREV_MATCH_BY_GB;
 import static org.zfin.uniprot.UniProtLoadAction.SubType.LOST_UNIPROT_PREV_MATCH_BY_GP;
 
@@ -29,10 +31,17 @@ public class ReportLostUniProtsHandler implements UniProtLoadHandler {
     @Override
     public void handle(Map<String, RichSequenceAdapter> uniProtRecords, Set<UniProtLoadAction> actions, UniProtLoadContext context) {
         //actions should contain all cases where we have a match based on RefSeq
-        List<UniProtLoadAction> actionsMatchedOnRefSeq = actions.stream().filter(action -> action.getSubType().equals(UniProtLoadAction.SubType.MATCH_BY_REFSEQ)).toList();
+        List<UniProtLoadAction> actionsMatchedOnRefSeq = actions.stream().filter(
+                action -> action.getSubType().equals(UniProtLoadAction.SubType.MATCH_BY_REFSEQ)
+        ).toList();
 
-        log.debug("ReportLostUniProtsHandler - Count of actions: " + actions.size());
-        log.debug("ReportLostUniProtsHandler - Filtered count of actions: " + actionsMatchedOnRefSeq.size());
+        List<UniProtLoadAction> actionsMatchedWithMultipleGenes = actions.stream().filter(
+                action -> action.getSubType().equals(UniProtLoadAction.SubType.MULTIPLE_GENES_PER_ACCESSION) ||
+                        action.getSubType().equals(UniProtLoadAction.SubType.MULTIPLE_GENES_PER_ACCESSION_BUT_APPROVED)
+        ).toList();
+
+        log.info("ReportLostUniProtsHandler - Count of actions: " + actions.size());
+        log.info("ReportLostUniProtsHandler - Filtered count of actions: " + actionsMatchedOnRefSeq.size());
 
         //all genes with existing uniprot associations
         List<DBLinkSlimDTO> sequencesForGenesWithExistingUniprotAssociations = context.getUniprotDbLinks()
@@ -43,9 +52,14 @@ public class ReportLostUniProtsHandler implements UniProtLoadHandler {
 
 
         //all genes that get matched based on RefSeqs in load file
-        List<String> genesWithMatchesInLoad = actionsMatchedOnRefSeq.stream().map(UniProtLoadAction::getGeneZdbID).toList();
+        List<String> genesWithMatchesInLoad = new ArrayList<>(actionsMatchedOnRefSeq.stream().map(UniProtLoadAction::getGeneZdbID).toList());
 
-        //no duplicate printouts
+        //include in the list of genes with matches in load: genes that get matched based on RefSeqs in load file, but have multiple genes per accession
+        List<String> genesWithMultipleMatches = actionsMatchedWithMultipleGenes.stream().flatMap(
+                action -> Arrays.stream(action.getGeneZdbID().split(";"))
+        ).toList();
+        genesWithMatchesInLoad.addAll(genesWithMultipleMatches);
+
         Set<String> alreadyEncounteredThisGeneID = new HashSet<>();
 
         //build up a list of genes that have existing uniprot associations but are not matched by RefSeq in load file
@@ -64,66 +78,117 @@ public class ReportLostUniProtsHandler implements UniProtLoadHandler {
 
         //do some filtering based on attributions for lost UniProts
         List<DBLinkSlimDTO> filteredLostUniProts = new ArrayList<>();
+        List<DBLinkSlimDTO> removeAttributionOnly = new ArrayList<>();
+
         for(DBLinkSlimDTO lostUniProt: genesThatLostUniProts) {
-            if (!lostUniProt.containsNonLoadPublication()) {
+            if (lostUniProt.containsNonLoadPublication()) {
+                if (lostUniProt.containsLoadPublication()) {
+                    removeAttributionOnly.add(lostUniProt);
+                }
+            } else {
                 filteredLostUniProts.add(lostUniProt);
             }
         }
 
         //create actions for lost UniProts
         for(DBLinkSlimDTO lostUniProt: filteredLostUniProts) {
-            UniProtLoadAction action = new UniProtLoadAction();
-
-            String sequenceDetails = "";
-            String sequenceDatFileDetails = "Sequence details: \n=================\n";
-            RichSequenceAdapter richSequence = uniProtRecords.get(lostUniProt.getAccession());
-
-            if (richSequence != null) {
-                sequenceDatFileDetails += DatFileWriter.sequenceToString(richSequence);
-
-                //gene1
-                Set<String> affectedGenes = new HashSet<>();
-                affectedGenes.add(lostUniProt.getDataZdbID());
-
-                //genes 2,3,etc.
-                affectedGenes.addAll(context
-                        .getUniprotDbLinks()
-                        .get(lostUniProt.getAccession())
-                        .stream()
-                        .map(DBLinkSlimDTO::getDataZdbID)
-                        .collect(Collectors.toSet()));
-
-                for(String gene: affectedGenes) {
-                    action.addLink(new UniProtLoadLink("ZFIN: " + gene, "https://zfin.org/" + gene + "#sequences"));
-                }
-
-                sequenceDetails = lostUniProt.getDataZdbID() + " (" + lostUniProt.getMarkerAbbreviation() + ") would lose its UniProt association with " + lostUniProt.getAccession() + ".\n";
-                if (affectedGenes.size() > 1) {
-                        sequenceDetails += "These genes currently have links to " + lostUniProt.getAccession() + " : " + String.join(", ", affectedGenes) + "\n";
-                }
-                sequenceDetails += "\n";
-                sequenceDetails += sequenceDatFileDetails;
-
-            } else {
-                sequenceDetails += "No sequence details found for " + lostUniProt.getAccession();
-            }
-
-            action.setGeneZdbID(lostUniProt.getDataZdbID());
-            action.setSubType(UniProtLoadAction.SubType.LOST_UNIPROT);
-            action.setType(UniProtLoadAction.Type.DELETE);
-            action.setAccession(lostUniProt.getAccession());
-            action.setDetails("This gene currently has a UniProt association, but when we run the latest\n" +
-                    "UniProt release through our matching pipeline, we don't find a match.\n" +
-                    "This UniProt link will be removed.\n\n" + sequenceDetails);
-
-            action.addLink(new UniProtLoadLink("ZFIN: " + lostUniProt.getDataZdbID(), "https://zfin.org/" + lostUniProt.getDataZdbID() + "#sequences" ));
-            action.addLink(new UniProtLoadLink("UniProt: " + lostUniProt.getAccession(), "https://www.uniprot.org/uniprot/" + lostUniProt.getAccession()));
-
-            setActionTitleAndDetailsForGenPeptGenBank(lostUniProt, action);
-
+            UniProtLoadAction action = createDeleteAction(uniProtRecords, context, lostUniProt);
             actions.add(action);
         }
 
+        //create actions for removing load attribution if associated with non-load publication
+        for(DBLinkSlimDTO lostUniProt: removeAttributionOnly) {
+            UniProtLoadAction action = createRemoveAttributionAction(uniProtRecords, context, lostUniProt);
+            actions.add(action);
+        }
+
+    }
+
+    private UniProtLoadAction createDeleteAction(Map<String, RichSequenceAdapter> uniProtRecords, UniProtLoadContext context, DBLinkSlimDTO lostUniProt) {
+        UniProtLoadAction action = new UniProtLoadAction();
+
+        String sequenceDetails = "";
+        String sequenceDatFileDetails = "Sequence details: \n=================\n";
+        RichSequenceAdapter richSequence = uniProtRecords.get(lostUniProt.getAccession());
+
+        if (richSequence != null) {
+            sequenceDatFileDetails += DatFileWriter.sequenceToString(richSequence);
+
+            //gene1
+            Set<String> affectedGenes = new HashSet<>();
+            affectedGenes.add(lostUniProt.getDataZdbID());
+
+            //genes 2,3,etc.
+            affectedGenes.addAll(context
+                    .getUniprotDbLinks()
+                    .get(lostUniProt.getAccession())
+                    .stream()
+                    .map(DBLinkSlimDTO::getDataZdbID)
+                    .collect(Collectors.toSet()));
+
+            for(String gene: affectedGenes) {
+                action.addLink(UniProtLoadLink.create(ZFIN, gene, "#sequences"));
+            }
+
+            sequenceDetails = lostUniProt.getDataZdbID() + " (" + lostUniProt.getMarkerAbbreviation() + ") would lose its UniProt association with " + lostUniProt.getAccession() + ".\n";
+            if (affectedGenes.size() > 1) {
+                    sequenceDetails += "These genes currently have links to " + lostUniProt.getAccession() + " : " + String.join(", ", affectedGenes) + "\n";
+            }
+            sequenceDetails += "\n";
+            sequenceDetails += sequenceDatFileDetails;
+
+        } else {
+            sequenceDetails += "No sequence details found for " + lostUniProt.getAccession();
+        }
+
+        action.setGeneZdbID(lostUniProt.getDataZdbID());
+        action.setSubType(UniProtLoadAction.SubType.LOST_UNIPROT);
+        action.setType(UniProtLoadAction.Type.DELETE);
+        action.setAccession(lostUniProt.getAccession());
+        action.setDetails("""
+                This gene currently has a UniProt association, but when we run the latest
+                UniProt release through our matching pipeline, we don't find a match.
+                """);
+
+        action.addLink(UniProtLoadLink.create(ZFIN, lostUniProt.getDataZdbID(), "#sequences"));
+        action.addLink(UniProtLoadLink.create(UNIPROTKB, lostUniProt.getAccession()));
+
+
+        setActionTitleAndDetailsForGenPeptGenBank(lostUniProt, action, context);
+        if (action.getType().equals(UniProtLoadAction.Type.DELETE)) {
+            action.setDetails(action.getDetails() + "\n" + "This association will be removed.");
+        }
+        action.setDetails(action.getDetails() + "\n\n" + sequenceDetails);
+        return action;
+    }
+
+    private UniProtLoadAction createRemoveAttributionAction(Map<String, RichSequenceAdapter> uniProtRecords, UniProtLoadContext context, DBLinkSlimDTO lostUniProt) {
+        UniProtLoadAction action = new UniProtLoadAction();
+
+        String sequenceDetails = "";
+        String sequenceDatFileDetails = "Sequence details: \n=================\n";
+        RichSequenceAdapter richSequence = uniProtRecords.get(lostUniProt.getAccession());
+
+        if (richSequence != null) {
+            sequenceDatFileDetails += DatFileWriter.sequenceToString(richSequence);
+            sequenceDetails += "\n";
+            sequenceDetails += sequenceDatFileDetails;
+
+        } else {
+            sequenceDetails += "No sequence details found for " + lostUniProt.getAccession();
+        }
+
+        action.setGeneZdbID(lostUniProt.getDataZdbID());
+        action.setSubType(UniProtLoadAction.SubType.REMOVE_ATTRIBUTION);
+        action.setType(UniProtLoadAction.Type.DELETE);
+        action.setAccession(lostUniProt.getAccession());
+        action.setDetails("This gene currently has a UniProt association, but when we run the latest\n" +
+                "UniProt release through our matching pipeline, we don't find a match.\n\n\n" + sequenceDetails);
+
+        action.addLink(UniProtLoadLink.create(ZFIN, lostUniProt.getDataZdbID(), "#sequences"));
+        action.addLink(UniProtLoadLink.create(UNIPROTKB, lostUniProt.getAccession()));
+
+        return action;
     }
 
     /**
@@ -132,91 +197,26 @@ public class ReportLostUniProtsHandler implements UniProtLoadHandler {
      *
      * @param lostUniProt
      * @param action
+     * @param context
      */
-    private void setActionTitleAndDetailsForGenPeptGenBank(DBLinkSlimDTO lostUniProt, UniProtLoadAction action) {
+    private void setActionTitleAndDetailsForGenPeptGenBank(DBLinkSlimDTO lostUniProt, UniProtLoadAction action, UniProtLoadContext context) {
         Map<String, String> genBankMap = new HashMap<>();
-        genBankMap.put("A0PGL6","ZDB-GENE-060818-12");
-        genBankMap.put("A4GT83","ZDB-GENE-060131-1");
-        genBankMap.put("A4IGB0","ZDB-GENE-041014-76");
-        genBankMap.put("A4QN70","ZDB-GENE-060531-147");
-        genBankMap.put("A4ZNR4","ZDB-GENE-071130-1");
-        genBankMap.put("A4ZNR5","ZDB-GENE-081013-6");
-        genBankMap.put("A7MC74","ZDB-GENE-071004-51");
+
         genBankMap.put("A8E587","ZDB-GENE-980526-285");
         genBankMap.put("A8KBH9","ZDB-GENE-041008-120");
-        genBankMap.put("A8KBI4","ZDB-GENE-060929-816");
-        genBankMap.put("A9UL45","ZDB-GENE-080206-2");
-        genBankMap.put("D3XD84","ZDB-GENE-100402-1");
-        genBankMap.put("D3XD87","ZDB-GENE-100402-2");
-        genBankMap.put("I6LC08","ZDB-GENE-050609-7");
-        genBankMap.put("I6LC25","ZDB-GENE-041118-19");
-        genBankMap.put("I6LC28","ZDB-GENE-050609-5");
-        genBankMap.put("I6LD70","ZDB-GENE-050610-25");
-        genBankMap.put("P51028","ZDB-GENE-980526-332");
-        genBankMap.put("Q1RLY7","ZDB-GENE-060421-7397");
-        genBankMap.put("Q5YCZ2","ZDB-GENE-020225-2");
-        genBankMap.put("Q60H65","ZDB-GENE-041118-15");
-        genBankMap.put("Q60H66","ZDB-GENE-041118-14");
-        genBankMap.put("Q6NTI0","ZDB-GENE-040426-1433");
-        genBankMap.put("Q6P962","ZDB-GENE-040426-2720");
-        genBankMap.put("Q7ZSY6","ZDB-GENE-030131-4174");
-        genBankMap.put("S5TZ97","ZDB-GENE-041008-189");
-
-        Map<String, String> genPeptMap = new HashMap<>();
-        genPeptMap.put("A0A1L2F565","ZDB-GENE-180611-1");
-        genPeptMap.put("A6P6V3","ZDB-GENE-070917-6");
-        genPeptMap.put("A6P6V6","ZDB-GENE-070917-7");
-        genPeptMap.put("A7MCR6","ZDB-GENE-071004-74");
-        genPeptMap.put("A8E5C4","ZDB-GENE-060103-1");
-        genPeptMap.put("A8E5D2","ZDB-GENE-071004-120");
-        genPeptMap.put("A8E5F8","ZDB-GENE-040801-211");
-        genPeptMap.put("A8KB23","ZDB-GENE-080215-16");
-        genPeptMap.put("A8KB82","ZDB-GENE-080220-41");
-        genPeptMap.put("A8KBB5","ZDB-GENE-080219-50");
-        genPeptMap.put("A8WFV9","ZDB-GENE-080220-13");
-        genPeptMap.put("A8WGC1","ZDB-GENE-080220-7");
-        genPeptMap.put("B0R024","ZDB-GENE-030616-587");
-        genPeptMap.put("B3DIC7","ZDB-GENE-060503-136");
-        genPeptMap.put("Q05AK7","ZDB-GENE-061027-337");
-        genPeptMap.put("Q08C32","ZDB-GENE-070209-1");
-        genPeptMap.put("Q1LXQ2","ZDB-GENE-030131-7777");
-        genPeptMap.put("Q2AB30","ZDB-GENE-070917-5");
-        genPeptMap.put("Q2PRM1","ZDB-GENE-070806-89");
-        genPeptMap.put("Q2YDR7","ZDB-GENE-020225-4");
-        genPeptMap.put("Q502S6","ZDB-GENE-050522-264");
-        genPeptMap.put("Q5ICW5","ZDB-GENE-050214-1");
-        genPeptMap.put("Q5RGS7","ZDB-GENE-041014-353");
-        genPeptMap.put("Q6NUW4","ZDB-GENE-040426-2446");
-        genPeptMap.put("Q6P2V0","ZDB-GENE-040426-1844");
-        genPeptMap.put("Q6PC28","ZDB-GENE-040426-1687");
-        genPeptMap.put("Q6T937","ZDB-GENE-040625-1");
-        genPeptMap.put("Q7SZX7","ZDB-GENE-131126-30");
-        genPeptMap.put("Q7T3J0","ZDB-GENE-030707-2");
-        genPeptMap.put("Q7ZT21","ZDB-GENE-980526-80");
-        genPeptMap.put("Q7ZZ76","ZDB-GENE-020430-1");
-        genPeptMap.put("Q8AW62","ZDB-GENE-030616-180");
-        genPeptMap.put("Q8AW68","ZDB-GENE-020225-34");
-        genPeptMap.put("Q9MIY0","ZDB-GENE-011205-12");
-        genPeptMap.put("Q9MIY1","ZDB-GENE-011205-10");
-        genPeptMap.put("Q9MIY3","ZDB-GENE-011205-9");
-        genPeptMap.put("Q9MIY4","ZDB-GENE-011205-16");
-        genPeptMap.put("Q9MIY6","ZDB-GENE-011205-19");
-        genPeptMap.put("Q9MIY9","ZDB-GENE-011205-8");
-        genPeptMap.put("Q9MIZ0","ZDB-GENE-011205-7");
 
         String accession = lostUniProt.getAccession();
         String gene = lostUniProt.getDataZdbID();
 
         if (genBankMap.containsKey(accession) && genBankMap.get(accession).equals(gene)) {
             action.setSubType(LOST_UNIPROT_PREV_MATCH_BY_GB);
-            action.setDetails("UniProt accession " + accession + " previously matched gene " + gene + " by GenBank.\n" + action.getDetails());
-            action.setType(UniProtLoadAction.Type.INFO);
-        }
-
-        if (genPeptMap.containsKey(accession) && genPeptMap.get(accession).equals(gene)) {
-            action.setSubType(LOST_UNIPROT_PREV_MATCH_BY_GP);
-            action.setDetails("UniProt accession " + accession + " previously matched gene " + gene + " by GenPept.\n" + action.getDetails());
-            action.setType(UniProtLoadAction.Type.INFO);
+            if(context.hasExistingUniprotWithNonLoadAttributions(accession, gene)) {
+                action.setType(UniProtLoadAction.Type.INFO);
+                action.setDetails("UniProt accession " + accession + " previously matched gene " + gene + " by GenBank. \nThis also has a non-load attribution.\n" + action.getDetails());
+            } else {
+                action.setType(UniProtLoadAction.Type.WARNING);
+                action.setDetails("UniProt accession " + accession + " previously matched gene " + gene + " by GenBank.\n" + action.getDetails());
+            }
         }
 
     }

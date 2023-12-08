@@ -1,4 +1,4 @@
-package org.zfin.uniprot;
+package org.zfin.uniprot.task;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
@@ -12,11 +12,14 @@ import org.zfin.uniprot.adapter.RichSequenceAdapter;
 import org.zfin.uniprot.diff.RichSequenceDiff;
 import org.zfin.uniprot.diff.UniProtDiffSet;
 import org.zfin.uniprot.dto.UniProtDiffSetDTO;
+import org.zfin.uniprot.secondary.handlers.*;
 
 import java.io.*;
 import java.sql.SQLException;
 import java.util.*;
 
+import static org.zfin.sequence.ForeignDB.AvailableName.*;
+import static org.zfin.sequence.ForeignDB.AvailableName.UNIPROTKB;
 import static org.zfin.uniprot.UniProtTools.*;
 import static org.zfin.uniprot.datfiles.DatFileReader.getMapOfAccessionsToSequencesFromStreamReader;
 import static org.zfin.uniprot.datfiles.DatFileReader.getRichStreamReaderForUniprotDatFile;
@@ -71,7 +74,7 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
         }
 
         HibernateUtil.closeSession();
-        log.debug("Task completed successfully.");
+        log.info("Task completed successfully.");
         System.exit(0);
     }
 
@@ -79,15 +82,15 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
         initIOFiles();
         initAll();
 
-        log.debug("Starting to read file: " + inputFilename1);
+        log.info("Starting to read file: " + inputFilename1);
         sequences1 = getMapOfAccessionsToSequencesFromStreamReader(getRichStreamReaderForUniprotDatFile(inputFilename1, true));
-        log.debug("Finished reading file " + inputFilename1 + ". Found " + sequences1.size() + " entries.");
+        log.info("Finished reading file " + inputFilename1 + ". Found " + sequences1.size() + " entries.");
 
-        log.debug("Starting to read file: " + inputFilename2);
+        log.info("Starting to read file: " + inputFilename2);
         sequences2 = getMapOfAccessionsToSequencesFromStreamReader(getRichStreamReaderForUniprotDatFile(inputFilename2, true));
-        log.debug("Finished reading file " + inputFilename2 + ". Found " + sequences2.size() + " entries.");
+        log.info("Finished reading file " + inputFilename2 + ". Found " + sequences2.size() + " entries.");
 
-        log.debug("Starting to compare files. Writing to file: " + outputFilename);
+        log.info("Starting to compare files. Writing to file: " + outputFilename);
         populateDiffSetForNewAndRemoved();
         populateDiffSetForChangedRecords();
         populateDates();
@@ -152,6 +155,10 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
     private boolean hasChangesWeCareAbout(RichSequenceDiff diff) {
         if (diff.hasChangesInDB("RefSeq") ||
             diff.hasChangesInDB("ZFIN") ||
+            diff.hasChangesInDB("InterPro") ||
+            diff.hasChangesInDB("EC") ||
+            diff.hasChangesInDB("Pfam") ||
+            diff.hasChangesInDB("PROSITE") ||
             diff.hasChangesInDB("GeneID")) {
             return true;
         }
@@ -175,8 +182,6 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
         }
     }
 
-
-
     private void writeOutputReportFile() {
         if (outputFilename == null) {
             return;
@@ -188,10 +193,10 @@ public class UniProtCompareTask extends AbstractScriptWrapper {
                 outputFilename.substring(0, outputFilename.lastIndexOf("."));
 
         String reportfile = outputFilenameWithoutExtension + ".report.html";
-        log.debug("Creating report file: " + reportfile);
+        log.info("Creating report file: " + reportfile);
         try {
             String outfileContents = FileUtils.readFileToString(new File(outputFilename));
-            String template = ZfinPropertiesEnum.SOURCEROOT.value() + "/home/uniprot/report.html";
+            String template = ZfinPropertiesEnum.SOURCEROOT.value() + "/home/uniprot/uniprot-diff-report.html";
             String templateContents = FileUtils.readFileToString(new File(template));
             String filledTemplate = templateContents.replace("JSON_GOES_HERE", outfileContents);
             FileUtils.writeStringToFile(new File(reportfile), filledTemplate);

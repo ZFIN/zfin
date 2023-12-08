@@ -265,7 +265,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
         return session.createQuery(cr).uniqueResult();
     }
 
-    public List<GenericTerm> getTermsInOboIDList(List<String> oboIDs, boolean preserveOrder) {
+    private static List<GenericTerm> getTermsInOboIDList(List<String> oboIDs, boolean preserveOrder) {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(GenericTerm.class);
         criteria.add(Restrictions.in("oboID", oboIDs));
@@ -1110,6 +1110,38 @@ public class HibernateOntologyRepository implements OntologyRepository {
         return (List<GenericTerm>) query.list();
     }
 
+    @Override
+    public List<GenericTerm> getObsoleteAndSecondaryTerms() {
+        Session session = HibernateUtil.currentSession();
+        String hql = "from GenericTerm where secondary = true OR obsolete = true";
+        Query query = session.createQuery(hql);
+        return (List<GenericTerm>) query.list();
+    }
+
+    @Override
+    public List<GenericTerm> getObsoleteAndSecondaryTerms(Ontology ontology) {
+        Session session = HibernateUtil.currentSession();
+        String hql = "from GenericTerm where (secondary = true OR obsolete = true) and ontology = :ontology";
+        Query query = session.createQuery(hql);
+        query.setParameter("ontology", ontology);
+        return (List<GenericTerm>) query.list();
+    }
+
+    @Override
+    public List<GenericTerm> getObsoleteAndSecondaryTermsByOntologies(Ontology... ontologies) {
+        //TODO: We should be able to do the filtering in the query, but it fails for some reason
+        //      it would be good to figure out why and uncomment the lines below.
+        //      The same bug could be affecting other Repository methods.
+        Session session = HibernateUtil.currentSession();
+        String hql = "from GenericTerm where (secondary = true OR obsolete = true)";
+//        hql += " and ontology in (:ontologies)";
+        Query query = session.createQuery(hql);
+//        query.setParameter("ontologies", ontologies);
+        List<GenericTerm> results = (List<GenericTerm>) query.list();
+        return results.stream().filter(term -> Arrays.asList(ontologies).contains(term.getOntology())).toList();
+    }
+
+
     private List<Ontology> getDistinctOntologies() {
         Session session = HibernateUtil.currentSession();
         String hql = "select distinct ontology from GenericTerm " +
@@ -1311,6 +1343,13 @@ public class HibernateOntologyRepository implements OntologyRepository {
     @Override
     public void saveMeshChebi(MeshChebiMapping mapping) {
         HibernateUtil.currentStatelessSession().insert(mapping);
+    }
+
+    @Override
+    public Map<String, GenericTerm> getGoTermsToZdbID() {
+        String hql = " from GenericTerm where oboID like 'GO:%' ";
+        org.hibernate.query.Query<GenericTerm> query = HibernateUtil.currentSession().createQuery(hql, GenericTerm.class);
+        return query.getResultList().stream().collect(Collectors.toMap(GenericTerm::getOboID, term -> term));
     }
 
     private List<GenericTerm> filterTermsByOntology(List<GenericTerm> terms, Ontology ontology) {

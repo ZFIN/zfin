@@ -25,7 +25,7 @@ public class UniProtRoughTaxonFilter {
         tempFile = File.createTempFile("uniprot", ".dat");
         tempFile.deleteOnExit();
 
-        log.debug("Temp file used for quick filtering by taxon: " + tempFile.getAbsolutePath());
+        log.info("Temp file used for quick filtering by taxon: " + tempFile.getAbsolutePath());
         long lineCount = 0;
 
         long startTime = System.currentTimeMillis();

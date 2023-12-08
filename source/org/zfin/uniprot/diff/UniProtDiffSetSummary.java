@@ -12,6 +12,11 @@ public record UniProtDiffSetSummary(
         @JsonProperty("changed RefSeq") int changedRefSeq,
         @JsonProperty("changed ZFIN") int changedZFIN,
         @JsonProperty("changed GeneID") int changedGeneID,
+        @JsonProperty("changed InterPro") int changedInterPro,
+        @JsonProperty("changed EC") int changedEC,
+        @JsonProperty("changed Pfam") int changedPfam,
+        @JsonProperty("changed PROSITE") int changedPROSITE,
+
         @JsonProperty("latest update in set 1") String latestUpdateFromSequence1,
         @JsonProperty("latest update in set 2") String latestUpdateFromSequence2
 ) {}

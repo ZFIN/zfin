@@ -173,6 +173,17 @@ public class ZfinStringUtils {
         }
         return builder.toString();
     }
+
+    public static boolean isEqualIgnoringWhiteSpace(String a, String b) {
+        if (a == null && b == null) {
+            return true;
+        }
+        if (a == null || b == null) {
+            return false;
+        }
+        return a.replaceAll("\\s+", "").equals(b.replaceAll("\\s+", ""));
+    }
+
 }
 
 

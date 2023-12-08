@@ -10,6 +10,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.*;
 
+/**
+ * This handler will ignore any accessions that are not explicitly whitelisted via the given file.
+ * This is useful for testing, or troubleshooting
+ * The file should be a list of accessions, one per line.
+ * The file should be specified via the environment variable ACCESSIONS_INCLUSIONS_FILE.
+ */
 @Log4j2
 public class IgnoreSpecificAccessionsHandler implements UniProtLoadHandler {
     @Override
@@ -45,11 +51,11 @@ public class IgnoreSpecificAccessionsHandler implements UniProtLoadHandler {
             Map.Entry<String, RichSequenceAdapter> entry = iter.next();
             String accession = entry.getKey();
             if (!accessionsToInclude.contains(accession)) {
-                log.debug("Removing accession " + accession + " from load file because it is not in the list of accessions to include.");
+                log.info("Removing accession " + accession + " from load file because it is not in the list of accessions to include.");
                 iter.remove();
             }
         }
 
-        log.debug("After filtering, there are " + uniProtRecords.size() + " accessions in the load file.");
+        log.info("After filtering, there are " + uniProtRecords.size() + " accessions in the load file.");
     }
 }

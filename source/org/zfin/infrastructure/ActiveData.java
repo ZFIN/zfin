@@ -39,6 +39,15 @@ public class ActiveData implements ZdbID {
         validateID();
     }
 
+    /**
+     * Like setZdbID but we don't validate the ID
+     * We currently store some things like IPR numbers in this table
+     * @param zdbID
+     */
+    public void setZdbIDWithoutValidation(String zdbID) {
+        this.zdbID = zdbID;
+    }
+
     public static boolean validateActiveData(String id) {
         if (id == null) {
             return false;

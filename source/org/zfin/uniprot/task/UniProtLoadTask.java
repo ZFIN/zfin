@@ -1,4 +1,4 @@
-package org.zfin.uniprot;
+package org.zfin.uniprot.task;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,7 +17,9 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.zfin.properties.ZfinPropertiesEnum;
+import org.zfin.uniprot.*;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
+import org.zfin.uniprot.dto.UniProtLoadSummaryDTO;
 import org.zfin.uniprot.handlers.*;
 import org.zfin.uniprot.persistence.UniProtRelease;
 
@@ -41,6 +43,7 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
     private final String outputReportName;
     private final boolean commitChanges;
     private final String contextOutputFile;
+    private final String contextInputFile;
     private UniProtLoadContext context;
 
     private UniProtRelease release;
@@ -76,8 +79,9 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         String outputReportName = getArgOrEnvironmentVar(args, 2, "UNIPROT_OUTPUT_REPORT_FILE", calculateDefaultOutputFileName(startTime, "report.html"));
         String commitChanges = getArgOrEnvironmentVar(args, 3, "UNIPROT_COMMIT_CHANGES", "false");
         String contextOutputFile = getArgOrEnvironmentVar(args, 4, "UNIPROT_CONTEXT_FILE", "");
+        String contextInputFile = getArgOrEnvironmentVar(args, 5, "UNIPROT_CONTEXT_INPUT_FILE", "");
 
-        UniProtLoadTask task = new UniProtLoadTask(inputFileName, outputJsonName, outputReportName, "true".equals(commitChanges), contextOutputFile);
+        UniProtLoadTask task = new UniProtLoadTask(inputFileName, outputJsonName, outputReportName, "true".equals(commitChanges), contextOutputFile, contextInputFile);
         task.runTask();
     }
 
@@ -85,25 +89,36 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         return Optional.ofNullable(getInfrastructureRepository().getLatestUnprocessedUniProtRelease());
     }
 
-    public UniProtLoadTask(String inputFileName, String outputJsonName, String outputReportName, boolean commitChanges, String contextOutputFile) {
+    public UniProtLoadTask(String inputFileName, String outputJsonName, String outputReportName, boolean commitChanges, String contextOutputFile, String contextInputFile) {
         this.inputFileName = inputFileName;
         this.outputJsonName = outputJsonName;
         this.outputReportName = outputReportName;
         this.commitChanges = commitChanges;
         this.contextOutputFile = contextOutputFile;
+        this.contextInputFile = contextInputFile;
     }
 
     public void runTask() throws IOException, BioException, SQLException {
         initialize();
-        log.debug("Starting UniProtLoadTask for file " + inputFileName + " with output files " + outputJsonName + " and " + outputReportName + ".");
-        log.debug("Commit changes: " + commitChanges + ".");
+        log.info("Starting UniProtLoadTask for file " + inputFileName + " with output files " + outputJsonName + " and " + outputReportName + ".");
+        log.info("Commit changes: " + commitChanges + ".");
 
         try (BufferedReader inputFileReader = new BufferedReader(new java.io.FileReader(inputFileName))) {
             Map<String, RichSequenceAdapter> entries = readUniProtEntries(inputFileReader);
             Set<UniProtLoadAction> actions = executePipeline(entries);
-            writeOutputReportFile(actions);
             loadChangesIfNotDryRun(actions);
+            UniProtLoadSummaryDTO summary = calculateSummary(actions);
+            writeOutputReportFile(actions, summary);
         }
+    }
+
+    private UniProtLoadSummaryDTO calculateSummary(Set<UniProtLoadAction> actions) {
+        int preExistingUniprotLinksCount = context.getUniprotDbLinks().size();
+        int newUniprotLinksCount = actions.stream().filter(a -> a.getType().equals(UniProtLoadAction.Type.LOAD)).toList().size();
+        int deletedUniprotLinksCount = actions.stream().filter(a -> a.getType().equals(UniProtLoadAction.Type.DELETE)).toList().size();
+        int netIncrease = newUniprotLinksCount - deletedUniprotLinksCount;
+        int postExistingUniprotLinks = preExistingUniprotLinksCount + netIncrease;
+        return new UniProtLoadSummaryDTO(preExistingUniprotLinksCount, postExistingUniprotLinks);
     }
 
     private void loadChangesIfNotDryRun(Set<UniProtLoadAction> actions) {
@@ -150,7 +165,7 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
 
     public Map<String, RichSequenceAdapter> readUniProtEntries(BufferedReader inputFileReader) throws BioException, IOException {
         Map<String, RichSequenceAdapter> entries = readAllZebrafishEntriesFromSourceIntoMap(inputFileReader);
-        log.debug("Finished reading file: " + entries.size() + " entries read.");
+        log.info("Finished reading file: " + entries.size() + " entries read.");
         return entries;
     }
 
@@ -161,40 +176,55 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         pipeline.setUniProtRecords(entries);
         pipeline.addHandler(new RemoveVersionHandler());
         pipeline.addHandler(new IgnoreSpecificAccessionsHandler());
-        pipeline.addHandler(new ReportWouldBeLostHandler());
-        pipeline.addHandler(new IgnoreAccessionsAlreadyInDatabaseHandler());
-        pipeline.addHandler(new MatchOnRefSeqHandler());
+        pipeline.addHandler(new DeleteAccessionsHandler());
+        pipeline.addHandler(new MatchOnRefSeqIgnoreExistingHandler());
+        pipeline.addHandler(new RemoveIgnoreActionsHandler());
         pipeline.addHandler(new ReportLegacyProblemFilesHandler());
+        pipeline.addHandler(new FlagPotentialIssuesHandler());
 
         Set<UniProtLoadAction> actions = pipeline.execute();
         return actions;
     }
 
-    private void writeOutputReportFile(Set<UniProtLoadAction> actions) {
+    private void writeOutputReportFile(Set<UniProtLoadAction> actions, UniProtLoadSummaryDTO summary) {
         String reportFile = this.outputReportName;
         String jsonFile = this.outputJsonName;
 
-        log.debug("Creating report file: " + reportFile);
+        log.info("Creating report file: " + reportFile);
         try {
-            String jsonContents = actionsToJson(actions);
+            UniProtLoadActionsContainer actionsContainer = UniProtLoadActionsContainer.builder()
+                    .actions(actions)
+                    .summary(summary)
+                    .build();
+            String jsonContents = actionsToJson(actionsContainer);
             String template = ZfinPropertiesEnum.SOURCEROOT.value() + LOAD_REPORT_TEMPLATE_HTML;
             String templateContents = FileUtils.readFileToString(new File(template), "UTF-8");
             String filledTemplate = templateContents.replace(JSON_PLACEHOLDER_IN_TEMPLATE, jsonContents);
             FileUtils.writeStringToFile(new File(reportFile), filledTemplate, "UTF-8");
             FileUtils.writeStringToFile(new File(jsonFile), jsonContents, "UTF-8");
-            log.debug("Finished creating report file: " + reportFile + " and json file: " + jsonFile);
+            log.info("Finished creating report file: " + reportFile + " and json file: " + jsonFile);
         } catch (IOException e) {
             log.error("Error creating report (" + reportFile + ") from template\n" + e.getMessage(), e);
         }
     }
 
-    private String actionsToJson(Set<UniProtLoadAction> actions) throws JsonProcessingException {
+    private String actionsToJson(UniProtLoadActionsContainer actions) throws JsonProcessingException {
         return (new ObjectMapper()).writeValueAsString(actions);
     }
 
 
     private void calculateContext() {
-        context = UniProtLoadContext.createFromDBConnection();
+        if (contextInputFile != null && !contextInputFile.isEmpty() && new File(contextInputFile).exists()) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                log.info("Reading context file: " + contextInputFile + ".");
+                context = objectMapper.readValue(new File(contextInputFile), UniProtLoadContext.class);
+            } catch (IOException e) {
+                log.error("Error reading context file " + contextInputFile + ": " + e.getMessage(), e);
+            }
+        } else {
+            context = UniProtLoadContext.createFromDBConnection();
+        }
     }
 
     private static String calculateDefaultOutputFileName(Date startTime, String extension) {

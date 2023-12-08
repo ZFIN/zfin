@@ -1,23 +1,17 @@
 package org.zfin.uniprot;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
-import org.biojava.bio.BioException;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
-import org.zfin.uniprot.adapter.RichSequenceAdapter;
+import org.zfin.uniprot.task.UniProtReleaseDiffTask;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
-import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

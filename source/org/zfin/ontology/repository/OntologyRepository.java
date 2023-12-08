@@ -338,6 +338,11 @@ public interface OntologyRepository {
      */
     List<GenericTerm> getActiveTermsWithoutRelationships();
 
+    List<GenericTerm> getObsoleteAndSecondaryTerms();
+    List<GenericTerm> getObsoleteAndSecondaryTerms(Ontology ontology);
+
+    List<GenericTerm> getObsoleteAndSecondaryTermsByOntologies(Ontology... ontologies);
+
     List<GenericTerm> getTermsInSubset(String subsetName);
 
     HumanGeneDetail getHumanGeneDetailById(String id);
@@ -368,6 +373,7 @@ public interface OntologyRepository {
 
     TermExternalReference getTermExternalReference(String casID, String prefix);
     List<TermExternalReference> getAllCasReferences();
+    Map<String, GenericTerm> getGoTermsToZdbID();
 
     void saveMeshChebi(MeshChebiMapping mapping);
 }

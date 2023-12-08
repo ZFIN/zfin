@@ -44,6 +44,10 @@ public class UniProtDiffSet {
                 (int) changedSequences.stream().filter(s -> s.hasChangesInDB("RefSeq")).count(),
                 (int) changedSequences.stream().filter(s -> s.hasChangesInDB("ZFIN")).count(),
                 (int) changedSequences.stream().filter(s -> s.hasChangesInDB("GeneID")).count(),
+                (int) changedSequences.stream().filter(s -> s.hasChangesInDB("InterPro")).count(),
+                (int) changedSequences.stream().filter(s -> s.hasChangesInDB("EC")).count(),
+                (int) changedSequences.stream().filter(s -> s.hasChangesInDB("Pfam")).count(),
+                (int) changedSequences.stream().filter(s -> s.hasChangesInDB("PROSITE")).count(),
                 new java.text.SimpleDateFormat("yyyy-MM-dd").format(latestUpdateFromSequence1),
                 new java.text.SimpleDateFormat("yyyy-MM-dd").format(latestUpdateFromSequence2)
         );

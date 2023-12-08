@@ -22,6 +22,7 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.getAnatomyRepository;
+import static org.zfin.repository.RepositoryFactory.getOntologyRepository;
 
 
 /**
@@ -60,6 +61,33 @@ public class OntologyRepositoryTest extends AbstractDatabaseTest {
         term = ontologyRepository.getTermByOboID(anatomyRootID);
         term.getStart();
         Assert.assertNotNull(term);
+    }
+
+    @Test
+    public void goOntologyContainsAllGOTerms() {
+        List<String> ignoreGoIDs = new ArrayList<>();
+        ignoreGoIDs.addAll(getOntologyRepository()
+                .getObsoleteAndSecondaryTerms()
+                .stream()
+                .map(GenericTerm::getOboID)
+                .filter(id -> id.startsWith("GO:"))
+                .toList());
+
+        assertTrue("filter method gets data", ignoreGoIDs.size() > 0);
+
+        List<String> comparisonGoIDs = new ArrayList<>();
+        comparisonGoIDs.addAll(getOntologyRepository()
+                .getObsoleteAndSecondaryTermsByOntologies(Ontology.GO_MF, Ontology.GO_BP, Ontology.GO_CC)
+                .stream()
+                .map(GenericTerm::getOboID)
+                .toList());
+
+        assertTrue("repository method gets data", comparisonGoIDs.size() > 0);
+
+        assertEquals("fetch from repo returns same number of results as fetch then filter", ignoreGoIDs.size(), comparisonGoIDs.size());
+
+        Collection subtraction = CollectionUtils.subtract(ignoreGoIDs, comparisonGoIDs);
+        assertEquals("If we subtract set A from set B, we should get 0 results meaning they are the same (size is the same)", 0, subtraction.size());
     }
 
     @Test

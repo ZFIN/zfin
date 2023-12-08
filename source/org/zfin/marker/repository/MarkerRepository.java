@@ -11,7 +11,6 @@ import org.zfin.framework.presentation.PaginationBean;
 import org.zfin.framework.presentation.PaginationResult;
 import org.zfin.infrastructure.DataAlias;
 import org.zfin.infrastructure.DataNote;
-import org.zfin.mapping.GenomeLocation;
 import org.zfin.mapping.Location;
 import org.zfin.mapping.MarkerLocation;
 import org.zfin.marker.*;
@@ -35,6 +34,8 @@ public interface MarkerRepository {
     Marker getMarker(String id);
 
     Marker getMarkerByID(String zdbID);
+
+    List<Marker> getMarkersByZdbIDs(List<String> zdbIDs);
 
     SNP getSNPByID(String zdbID);
 
@@ -384,6 +385,9 @@ public interface MarkerRepository {
 
      List<InterProProtein> getInterProForMarker(Marker marker);
 
+    void insertInterProForMarker(String markerZdbID, String uniprot);
+
+    void deleteInterProForMarker(String markerZdbID, String uniprot);
 
     List<String> getProteinType(Marker marker);
     List<String> getIPNames( String uniprot);
@@ -528,6 +532,8 @@ public interface MarkerRepository {
     List<Marker> getMarkerByGroup(Marker.TypeGroup group, int number);
      List<Transcript> getAllNonCodingTranscripts();
     List<Transcript> getTranscriptsForNonCodingGenes();
+
+    List<Marker> getWithdrawnMarkers();
 
     Map<String,GenericTerm> getSoTermMapping();
 

@@ -2,6 +2,8 @@ package org.zfin;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.zfin.framework.api.View;
 import org.zfin.infrastructure.PersonAttribution;
@@ -14,6 +16,8 @@ import java.util.Set;
  * Domain object for ZFIN.
  */
 
+@Setter
+@Getter
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(
@@ -52,62 +56,6 @@ public class ExternalNote implements Comparable<ExternalNote> {
     @JsonProperty("dataZdbID")
     @Column(name = "extnote_data_zdb_id", insertable = false, updatable = false)
     private String externalDataZdbID;
-
-    public String getTag() {
-        return tag;
-    }
-
-    public void setTag(String tag) {
-        this.tag = tag;
-    }
-
-    public String getExternalDataZdbID() {
-        return externalDataZdbID;
-    }
-
-    public void setExternalDataZdbID(String externalDataZdbID) {
-        this.externalDataZdbID = externalDataZdbID;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
-    }
-
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public Publication getPublication() {
-        return publication;
-    }
-
-    public void setPublication(Publication publication) {
-        this.publication = publication;
-    }
-
-    public Set<PersonAttribution> getPersonAttributions() {
-        return personAttributions;
-    }
-
-    public void setPersonAttributions(Set<PersonAttribution> personAttributions) {
-        this.personAttributions = personAttributions;
-    }
 
     public int compareTo(ExternalNote note) {
         if (note.publication == null)

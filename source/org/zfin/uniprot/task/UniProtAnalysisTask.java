@@ -1,4 +1,4 @@
-package org.zfin.uniprot;
+package org.zfin.uniprot.task;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;

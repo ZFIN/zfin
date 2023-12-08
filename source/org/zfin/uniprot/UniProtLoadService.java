@@ -1,6 +1,7 @@
 package org.zfin.uniprot;
 
 import lombok.extern.log4j.Log4j2;
+import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.marker.Marker;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.DBLink;
@@ -8,10 +9,8 @@ import org.zfin.sequence.MarkerDBLink;
 import org.zfin.sequence.ReferenceDatabase;
 import org.zfin.uniprot.persistence.UniProtRelease;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.zfin.Species.Type.ZEBRAFISH;
 import static org.zfin.framework.HibernateUtil.currentSession;
@@ -19,16 +18,19 @@ import static org.zfin.repository.RepositoryFactory.*;
 import static org.zfin.sequence.ForeignDB.AvailableName.UNIPROTKB;
 import static org.zfin.sequence.ForeignDBDataType.DataType.POLYPEPTIDE;
 import static org.zfin.sequence.ForeignDBDataType.SuperType.SEQUENCE;
+import static org.zfin.uniprot.UniProtTools.AUTOMATED_CURATION_OF_UNIPROT_DATABASE_LINKS;
 
 @Log4j2
 public class UniProtLoadService {
 
 
-    private static final String PUBLICATION_ATTRIBUTION_ID = "ZDB-PUB-230615-71";
+    public static final String PUBLICATION_ATTRIBUTION_ID = AUTOMATED_CURATION_OF_UNIPROT_DATABASE_LINKS;
 
     public static void processActions(Set<UniProtLoadAction> actions, UniProtRelease release) {
         currentSession().beginTransaction();
-        for(UniProtLoadAction action : actions) {processAction(action);}
+
+        bulkProcessActions(actions);
+
         if (release != null) {
             release.setProcessedDate(new Date());
             currentSession().saveOrUpdate(release);
@@ -36,43 +38,101 @@ public class UniProtLoadService {
         currentSession().getTransaction().commit();
     }
 
-    public static ReferenceDatabase getUniProtReferenceDatabase() {
-        return getSequenceRepository().getReferenceDatabase(UNIPROTKB, POLYPEPTIDE, SEQUENCE, ZEBRAFISH);
-    }
+    private static void bulkProcessActions(Set<UniProtLoadAction> actions) {
+        Map<UniProtLoadAction.Type, List<UniProtLoadAction>> groupedActions = actions.stream().collect(Collectors.groupingBy(UniProtLoadAction::getType));
 
-    private static void processAction(UniProtLoadAction action) {
-        if (action.getType().equals(UniProtLoadAction.Type.LOAD)) {
-            loadAction(action);
-        } else if (action.getType().equals(UniProtLoadAction.Type.DELETE)) {
-            deleteAction(action);
-        } else {
-            //ignore other action types used for reporting
+        for(UniProtLoadAction.Type type : groupedActions.keySet()) {
+            if(type.equals(UniProtLoadAction.Type.LOAD)) {
+                bulkLoadAction(groupedActions.get(type));
+            } else if(type.equals(UniProtLoadAction.Type.DELETE)) {
+                bulkDeleteAction(groupedActions.get(type));
+            } else {
+                //ignore other action types used for reporting
+            }
         }
     }
 
-    private static void loadAction(UniProtLoadAction action) {
-        Marker marker = getMarkerRepository().getMarker(action.getGeneZdbID());
-        MarkerDBLink newLink = new MarkerDBLink();
-        newLink.setAccessionNumber(action.getAccession());
-        newLink.setMarker(marker);
-        newLink.setReferenceDatabase(getUniProtReferenceDatabase());
-        newLink.setLength(action.getLength());
-        newLink.setLinkInfo(getUniProtLoadLinkInfo());
+    private static void bulkLoadAction(List<UniProtLoadAction> actions) {
+        Map<UniProtLoadAction.SubType, List<UniProtLoadAction>> groupedActions =
+                actions.stream().collect(Collectors.groupingBy(UniProtLoadAction::getSubType));
 
-        Publication publication = getPublicationRepository().getPublication(PUBLICATION_ATTRIBUTION_ID);
+        for(UniProtLoadAction.SubType subType : groupedActions.keySet()) {
+            if (subType.equals(UniProtLoadAction.SubType.ADD_ATTRIBUTION)) {
+                bulkAddAttributionAction(groupedActions.get(subType));
+            } else if (subType.equals(UniProtLoadAction.SubType.MATCH_BY_REFSEQ)) {
+                bulkLoadActionForNewDbLinks(groupedActions.get(subType));
+            } else {
+                //ignore other action types used for reporting
+                throw new RuntimeException("Unknown action load subtype: " + subType);
+            }
+        }
 
-        ArrayList<MarkerDBLink> dblinks = new ArrayList<>();
-        dblinks.add(newLink);
-        getSequenceRepository().addDBLinks(dblinks, publication, 1);
     }
 
-    private static void deleteAction(UniProtLoadAction action) {
+    private static void bulkAddAttributionAction(List<UniProtLoadAction> uniProtLoadActions) {
+        for(UniProtLoadAction action : uniProtLoadActions) {
+            log.info("Adding attribution: " + action.getAccession() + " " + action.getGeneZdbID());
+            DBLink existingDBLink = getSequenceRepository().getDBLink(action.getGeneZdbID(), action.getAccession(), UNIPROTKB.toString());
+            log.info("Existing dblink: " + existingDBLink);
+            if(existingDBLink == null) {
+                throw new RuntimeException("No existing dblink found for: " + action.getAccession() + " " + action.getGeneZdbID());
+            }
+            getInfrastructureRepository().insertRecordAttribution(existingDBLink.getZdbID(), PUBLICATION_ATTRIBUTION_ID);
+        }
+    }
+
+    private static void bulkLoadActionForNewDbLinks(List<UniProtLoadAction> actions) {
+        List<Marker> markers = getMarkerRepository().getMarkersByZdbIDs(actions.stream().map(UniProtLoadAction::getGeneZdbID).toList());
+        Map<String, Marker> markerMap = markers.stream().collect(Collectors.toMap(Marker::getZdbID, marker -> marker));
+        List<MarkerDBLink> dblinks = new ArrayList<>();
+        for(UniProtLoadAction action : actions) {
+            log.info("Adding dblink: " + action.getAccession() + " " + action.getGeneZdbID());
+            Marker marker = markerMap.get(action.getGeneZdbID());
+            MarkerDBLink newLink = new MarkerDBLink();
+            newLink.setAccessionNumber(action.getAccession());
+            newLink.setMarker(marker);
+            newLink.setReferenceDatabase(getUniProtReferenceDatabase());
+            newLink.setLength(action.getLength());
+            newLink.setLinkInfo(getUniProtLoadLinkInfo());
+            dblinks.add(newLink);
+        }
+        Publication publication = getPublicationRepository().getPublication(PUBLICATION_ATTRIBUTION_ID);
+        getSequenceRepository().addDBLinks(dblinks, publication, 50);
+    }
+
+    private static void bulkDeleteAction(List<UniProtLoadAction> actions) {
         ReferenceDatabase referenceDatabase = getUniProtReferenceDatabase();
-        DBLink dblink = getSequenceRepository().getDBLink(action.getGeneZdbID(), action.getAccession(), referenceDatabase.getForeignDB().getDbName().toString());
-        System.err.println("Removing dblink: " + dblink.getZdbID() + " " + dblink.getAccessionNumber() + " " + action.getGeneZdbID());
-        log.debug("Removing dblink: " + dblink.getZdbID());
-        getSequenceRepository().deleteReferenceProteinByDBLinkID(dblink.getZdbID());
-        getSequenceRepository().removeDBLinks(Collections.singletonList(dblink));
+        List<DBLink> dblinksToDelete = new ArrayList<>();
+        for(UniProtLoadAction action : actions) {
+            DBLink dblink = getSequenceRepository().getDBLink(action.getGeneZdbID(), action.getAccession(), referenceDatabase.getForeignDB().getDbName().toString());
+            List<String> pubIDs = dblink.getPublicationIdsAsList();
+            if (pubIDs.size() == 1 && pubIDs.get(0).equals(PUBLICATION_ATTRIBUTION_ID)) {
+                //only delete if this is the only attribution
+                System.err.println("Removing dblink: " + dblink.getZdbID() + " " + dblink.getAccessionNumber() + " " + action.getGeneZdbID());
+                log.info("Removing dblink: " + dblink.getZdbID());
+                getSequenceRepository().deleteReferenceProteinByDBLinkID(dblink.getZdbID());
+                dblinksToDelete.add(dblink);
+            } else {
+                //otherwise just remove the attribution
+                removeAttribution(dblink, action);
+            }
+        }
+        getSequenceRepository().removeDBLinks(dblinksToDelete);
+    }
+
+    private static void removeAttribution(DBLink dblink, UniProtLoadAction action) {
+        System.err.println("Removing attribution from dblink: " + dblink.getZdbID() + " " + dblink.getAccessionNumber() + " " + action.getGeneZdbID());
+        log.info("Removing attribution from dblink: " + dblink.getZdbID());
+        dblink.getPublications()
+            .stream()
+            .filter(attribution -> attribution.getSourceZdbID().equals(PUBLICATION_ATTRIBUTION_ID))
+            .forEach(attribution -> {
+                getInfrastructureRepository().deleteRecordAttribution(dblink.getZdbID(),PUBLICATION_ATTRIBUTION_ID);
+            });
+    }
+
+    public static ReferenceDatabase getUniProtReferenceDatabase() {
+        return getSequenceRepository().getReferenceDatabase(UNIPROTKB, POLYPEPTIDE, SEQUENCE, ZEBRAFISH);
     }
 
     private static String getUniProtLoadLinkInfo() {

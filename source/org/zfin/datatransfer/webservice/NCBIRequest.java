@@ -1,16 +1,14 @@
 package org.zfin.datatransfer.webservice;
 
+import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.params.ClientPNames;
-import org.apache.http.client.params.CookiePolicy;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.w3c.dom.Document;
@@ -27,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Log4j2
 public class NCBIRequest {
 
     private final static String BASE_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/";
@@ -83,6 +82,17 @@ public class NCBIRequest {
                 return result;
             }
         } catch (ParserConfigurationException | SAXException | IOException e) {
+            log.error("Unable to perform EUtils request", e);
+
+            //convert stack trace to string
+            String stackTrace = ExceptionUtils.getStackTrace(e);
+            log.error("Stack trace:\n" + stackTrace);
+
+            if (e.getCause() != null) {
+                String causeTrace = ExceptionUtils.getStackTrace(e.getCause());
+                log.error("Cause trace:\n" + causeTrace);
+            }
+
             throw new ServiceConnectionException("Unable to perform EUtils request", e);
         }
     }
