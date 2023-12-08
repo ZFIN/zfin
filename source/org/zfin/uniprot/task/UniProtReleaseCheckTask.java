@@ -1,4 +1,4 @@
-package org.zfin.uniprot;
+package org.zfin.uniprot.task;
 
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 import static org.zfin.datatransfer.service.DownloadService.*;
 import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
-import static org.zfin.uniprot.UniProtReleaseDiffTask.combineAndFilterInputPathSet;
+import static org.zfin.uniprot.task.UniProtReleaseDiffTask.combineAndFilterInputPathSet;
 
 /**
  * This class is used to check for new releases of uniprot.
@@ -67,14 +67,14 @@ public class UniProtReleaseCheckTask extends AbstractScriptWrapper {
         Date releaseDate = getLatestReleaseTimestamp();
         UniProtRelease up = getInfrastructureRepository().getUniProtReleaseByDate(releaseDate);
         if (up == null) {
-            log.debug("No existing release saved at ZFIN for date: " + releaseDate);
+            log.info("No existing release saved at ZFIN for date: " + releaseDate);
             return releaseDate;
         }
-        log.debug("Found existing entry in DB with release date: " + releaseDate);
-        log.debug("path: " + up.getPath());
+        log.info("Found existing entry in DB with release date: " + releaseDate);
+        log.info("path: " + up.getPath());
 
         if (up.getDownloadDate() == null) {
-            log.debug("Download date is null.  Assuming this is a failed download.");
+            log.info("Download date is null.  Assuming this is a failed download.");
             return releaseDate;
         }
 
@@ -211,7 +211,7 @@ public class UniProtReleaseCheckTask extends AbstractScriptWrapper {
             throw new RuntimeException("No URL found for uniprot release file.");
         }
 
-        log.debug("Getting last modified date from: " + url);
+        log.info("Getting last modified date from: " + url);
         Date lastModified = getLastModifiedOnServer(new URL(url));
 
         //if before 2023, throw exception
@@ -253,15 +253,15 @@ public class UniProtReleaseCheckTask extends AbstractScriptWrapper {
                     getFileSizeOnServer(new URL(downloadUrlForTremblFile));
                     return;
                 } catch (IOException e) {
-                    log.debug("Could not get file size for URL: " + downloadUrlForTremblFile);
+                    log.info("Could not get file size for URL: " + downloadUrlForTremblFile);
                 }
             }
         }
         throw new RuntimeException("Could not find a valid URL for uniprot release file.");
     }
     public void sanityCheck() {
-        log.debug("Using URLS: " + downloadUrlForTremblFile + " and " + downloadUrlForSprotFile);
-        log.debug("Saving to directory: " + downloadDestinationForUniProtReleases);
+        log.info("Using URLS: " + downloadUrlForTremblFile + " and " + downloadUrlForSprotFile);
+        log.info("Saving to directory: " + downloadDestinationForUniProtReleases);
         if (downloadUrlForTremblFile == null || downloadUrlForSprotFile == null) {
             throw new RuntimeException("No URL found for uniprot release file.");
         }

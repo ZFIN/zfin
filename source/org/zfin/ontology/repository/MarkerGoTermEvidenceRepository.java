@@ -23,6 +23,9 @@ public interface MarkerGoTermEvidenceRepository {
 
     List<MarkerGoTermEvidence> getMarkerGoTermEvidencesForPubZdbID(String publicationID);
 
+    @SuppressWarnings("unchecked")
+    List<MarkerGoTermEvidence> getMarkerGoTermEvidencesForPubZdbIDs(List<String> publicationIDs);
+
     List<MarkerGoTermEvidence> getMarkerGoTermEvidencesForMarkerZdbIDOrdered(String markerID);
 
     GoEvidenceCode getGoEvidenceCode(String evidenceCode);

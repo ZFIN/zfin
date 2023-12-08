@@ -43,6 +43,9 @@ public class UniProtRelease {
     @Column(name = "upr_processed_date")
     private Date processedDate;
 
+    @Column(name = "upr_secondary_load_date")
+    private Date secondaryLoadDate;
+
     public File getLocalFile() {
         Path parentDirectoryPath = (new File(ZfinPropertiesEnum.UNIPROT_RELEASE_ARCHIVE_DIR.value())).toPath();
         return new File(parentDirectoryPath.resolve(path).toString());

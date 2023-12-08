@@ -4,10 +4,11 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
-
+    <include file="source/org/zfin/db/postGmakePostloaddb/1150/ZFIN-8797.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1150/ZFIN-8854.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1150/ZFIN-8696.xml" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1150/ZFIN-8707.sql" />
     <include file="source/org/zfin/db/postGmakePostloaddb/1150/ZFIN-8907.sql" />
-
+    <include file="source/org/zfin/db/postGmakePostloaddb/1150/ZFIN-8809.sql" />
+    <include file="source/org/zfin/db/postGmakePostloaddb/1150/ZFIN-8896.sql" />
 </databaseChangeLog>

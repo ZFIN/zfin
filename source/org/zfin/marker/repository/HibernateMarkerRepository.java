@@ -55,7 +55,6 @@ import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.Database;
 import org.zfin.util.NumberAwareStringComparator;
-import org.zfin.util.ZfinCollectionUtils;
 
 import javax.persistence.Tuple;
 import javax.persistence.criteria.*;
@@ -65,7 +64,6 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static org.zfin.framework.HibernateUtil.currentSession;
-import static org.zfin.marker.MarkerHistory.Event.RENAMED;
 import static org.zfin.repository.RepositoryFactory.*;
 
 
@@ -101,6 +99,13 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return session.get(Marker.class, zdbID);
     }
 
+    @Override
+    public List<Marker> getMarkersByZdbIDs(List<String> zdbIDs) {
+        String hql = "select m from Marker m where m.zdbID in (:IDs) ";
+        Query<Marker> query = HibernateUtil.currentSession().createQuery(hql, Marker.class);
+        query.setParameterList("IDs", zdbIDs);
+        return query.list();
+    }
 
     public SNP getSNPByID(String zdbID) {
         Session session = currentSession();
@@ -2215,6 +2220,28 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return query.list();
     }
 
+    @Override
+    public void insertInterProForMarker(String markerZdbID, String uniprot) {
+        Session session = currentSession();
+        String sql = " insert into marker_to_protein (mtp_mrkr_zdb_id, mtp_uniprot_id) " +
+            " values (:markerZdbID, :uniprot) ";
+        Query query = session.createNativeQuery(sql);
+        query.setParameter("markerZdbID", markerZdbID);
+        query.setParameter("uniprot", uniprot);
+        query.executeUpdate();
+    }
+
+    @Override
+    public void deleteInterProForMarker(String markerZdbID, String uniprot) {
+        Session session = currentSession();
+        String sql = " delete from marker_to_protein " +
+            " where mtp_mrkr_zdb_id=:markerZdbID and mtp_uniprot_id=:uniprot ";
+        Query query = session.createNativeQuery(sql);
+        query.setParameter("markerZdbID", markerZdbID);
+        query.setParameter("uniprot", uniprot);
+        query.executeUpdate();
+    }
+
 
     public List<String> getIPNames(String uniprot) {
         String sql = " select ip_name " +
@@ -3299,6 +3326,15 @@ public class HibernateMarkerRepository implements MarkerRepository {
         }
         return query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
     }
+
+    @Override
+    public List<Marker> getWithdrawnMarkers() {
+        String hql = "from Marker where mrkr_abbrev like :withdrawn ";
+        Query<Marker> query = HibernateUtil.currentSession().createQuery(hql, Marker.class);
+        query.setParameter("withdrawn", Marker.WITHDRAWN + "%");
+        return query.list();
+    }
+
 
     @Override
     public Map<String, GenericTerm> getSoTermMapping() {

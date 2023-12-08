@@ -1,7 +1,8 @@
-package org.zfin.uniprot;
+package org.zfin.uniprot.handlers;
 
+import org.zfin.uniprot.UniProtLoadAction;
+import org.zfin.uniprot.UniProtLoadContext;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
-import org.zfin.uniprot.handlers.UniProtLoadHandler;
 
 import java.util.Map;
 import java.util.Set;

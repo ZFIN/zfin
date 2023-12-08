@@ -32,6 +32,8 @@ public interface InfrastructureRepository {
 
     void insertActiveData(String zdbID);
 
+    void insertActiveDataWithoutValidationIgnoreConflict(String zdbID);
+
     void insertActiveSource(String zdbID);
 
     ActiveData getActiveData(String zdbID);
@@ -491,6 +493,10 @@ public interface InfrastructureRepository {
 
     UniProtRelease getUniProtReleaseByDate(Date date);
     UniProtRelease getLatestUnprocessedUniProtRelease();
+
+    List<UniProtRelease> getAllUniProtReleases();
+
+    UniProtRelease getUniProtReleaseByID(Long id);
 
     void insertUniProtRelease(UniProtRelease release);
 

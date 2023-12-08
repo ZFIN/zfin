@@ -270,33 +270,35 @@ public class HibernateSequenceRepository implements SequenceRepository {
     @SuppressWarnings("unchecked")
     public Set<String> getGenbankXpatCdnaDBLinks() {
         // this currently takes 30 seconds, returns about 41K records
-        Set<String> results = new HashSet<String>();
-        results.addAll((List<String>) HibernateUtil.currentSession().createSQLQuery("" +
-                "     select dbl.dblink_acc_num  from db_link dbl, foreign_db_contains, foreign_db, foreign_db_data_type  " +
-                "      where dblink_fdbcont_zdb_id = fdbcont_zdb_id  " +
-                "      and fdb_db_name in ('GenBank','Vega_Trans','PREVEGA','RefSeq')  " +
-                "      and fdbdt_data_type = 'RNA' " +
-                "      and fdbcont_fdbdt_id = fdbdt_pk_id " +
-                "      and fdbcont_fdb_db_id = fdb_db_pk_id " +
-                "      and  " +
-                "      exists ( " +
-                "      select mr.mrel_mrkr_1_zdb_id " +
-                "      from marker_relationship mr, marker g,  expression_experiment ee " +
-                "      where dbl.dblink_linked_recid = mr.mrel_mrkr_2_zdb_id " +
-                "      and g.mrkr_zdb_id=mr.mrel_mrkr_1_zdb_id " +
-                "      and mr.mrel_type='gene encodes small segment' " +
-                "      and substring(g.mrkr_name from 1 for 7)  <> 'microRNA' " +
-                "      and ee.xpatex_gene_zdb_id =  g.mrkr_zdb_id " +
-                "      and exists (select er.xpatres_zdb_id from expression_result er where er.xpatres_xpatex_zdb_id = ee.xpatex_zdb_id) " +
-                "      union " +
-                "      select g.mrkr_zdb_id " +
-                "      from expression_experiment ee, marker g " +
-                "      where dbl.dblink_linked_recid = ee.xpatex_gene_zdb_id " +
-                "      and substring(g.mrkr_name from 1 for 7) <> 'microRNA' " +
-                "      and ee.xpatex_gene_zdb_id =  g.mrkr_zdb_id " +
-                "      and exists (select er.xpatres_zdb_id from expression_result er where er.xpatres_xpatex_zdb_id = ee.xpatex_zdb_id) " +
-                "     ) " +
-                "").list());
+        Set<String> results = new HashSet<>();
+        results.addAll((List<String>) HibernateUtil.currentSession().createSQLQuery(
+            """
+                select dbl.dblink_acc_num  from db_link dbl, foreign_db_contains, foreign_db, foreign_db_data_type
+                where dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                and fdb_db_name in ('GenBank','Vega_Trans','PREVEGA','RefSeq')
+                and fdbdt_data_type = 'RNA'
+                and fdbcont_fdbdt_id = fdbdt_pk_id
+                and fdbcont_fdb_db_id = fdb_db_pk_id
+                and
+                exists (
+                select mr.mrel_mrkr_1_zdb_id
+                from marker_relationship mr, marker g,  expression_experiment2 ee
+                where dbl.dblink_linked_recid = mr.mrel_mrkr_2_zdb_id
+                and g.mrkr_zdb_id=mr.mrel_mrkr_1_zdb_id
+                and mr.mrel_type='gene encodes small segment'
+                and substring(g.mrkr_name from 1 for 7)  <> 'microRNA'
+                and ee.xpatex_gene_zdb_id =  g.mrkr_zdb_id
+                and exists (select er.xpatres_pk_id from expression_result2 er, expression_figure_stage ef where ef.efs_xpatex_zdb_id = ee.xpatex_zdb_id
+                and ef.efs_pk_id = er.xpatres_efs_id)
+                union
+                select g.mrkr_zdb_id
+                from expression_experiment2 ee, marker g
+                where dbl.dblink_linked_recid = ee.xpatex_gene_zdb_id
+                and substring(g.mrkr_name from 1 for 7) <> 'microRNA'
+                and ee.xpatex_gene_zdb_id =  g.mrkr_zdb_id
+                and exists (select er.xpatres_pk_id from expression_result2 er, expression_figure_stage ef where ef.efs_xpatex_zdb_id = ee.xpatex_zdb_id
+                and ef.efs_pk_id = er.xpatres_efs_id))
+                """).list());
         return results;
     }
 
@@ -675,6 +677,7 @@ public class HibernateSequenceRepository implements SequenceRepository {
         return query.list();
     }
 
+    @Override
     public DBLink getDBLink(String markerZdbID, String accession, String referenceDBName) {
         Session session = HibernateUtil.currentSession();
         String hql = "from DBLink mdbl where mdbl.accessionNumber = :accession " +
@@ -688,6 +691,21 @@ public class HibernateSequenceRepository implements SequenceRepository {
     }
 
     @Override
+    public DBLink getDBLinkByReferenceDatabaseID(String markerZdbID, String accession, String referenceDatabaseID) {
+        Session session = HibernateUtil.currentSession();
+        String hql = """
+                from DBLink mdbl where mdbl.accessionNumber = :accession
+                 and mdbl.dataZdbID = :markerZdbID
+                 and mdbl.referenceDatabase.zdbID = :referenceDatabaseID
+                """;
+        Query query = session.createQuery(hql);
+        query.setString("accession", accession);
+        query.setString("markerZdbID", markerZdbID);
+        query.setString("referenceDatabaseID", referenceDatabaseID);
+        return (DBLink) query.uniqueResult();
+    }
+
+    @Override
     public List<DBLink> getAtlasDBLink(String markerZdbID, String referenceDBName) {
         String hql = "select mdbl from DBLink mdbl where mdbl.dataZdbID = :markerZdbID " +
                 "and mdbl.referenceDatabase.foreignDB.dbName = :referenceDBName";
@@ -695,7 +713,6 @@ public class HibernateSequenceRepository implements SequenceRepository {
         query.setString("referenceDBName", referenceDBName);
         query.setString("markerZdbID", markerZdbID);
         return query.list();
-
     }
 
     @Override
