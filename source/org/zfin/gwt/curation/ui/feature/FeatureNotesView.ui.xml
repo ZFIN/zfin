@@ -32,8 +32,7 @@
                     <g:HorizontalPanel horizontalAlignment="left">
                         <g:Button ui:field="addButton" text="Add Note"/>
                         <g:Button ui:field="cancelButton" text="Cancel"/>
-
-
+                        <g:Button ui:field="infoButton" text=" " styleName="feature-info-button fas fa fa-info"/>
                     </g:HorizontalPanel>
                 </g:customCell>
 
