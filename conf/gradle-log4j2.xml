@@ -19,9 +19,7 @@
         <Logger name="org.zfin" level="info"/>
         <Logger name="org.zfin.uniprot" level="info"/>
         <Logger name="org.zfin.ontology.OntologySerializationService" level="info"/>
-        <Logger name="org.zfin.ontology.datatransfer.AbstractScriptWrapper" level="info" additivity="false">
-            <AppenderRef ref="STDOUT"/>
-        </Logger>
+        <Logger name="org.zfin.ontology.datatransfer.AbstractScriptWrapper" level="debug"/>
         <Root level="warn">
             <AppenderRef ref="STDOUT"/>
         </Root>
