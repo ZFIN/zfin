@@ -1303,3 +1303,14 @@ nav.admin {
     background-color: #efefef;
     margin: -1.5rem -1.5rem 1rem -1.5rem;
 }
+
+button.feature-info-button {
+    width: 25px;
+    height: 25px;
+    display: inline-block;
+    background-color: #006fc8;
+    color: white;
+    border: 1px solid black;
+    border-radius: 50%;
+    cursor: pointer;
+}
