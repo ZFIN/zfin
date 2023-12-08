@@ -23,8 +23,6 @@
             <AppenderRef ref="STDOUT"/>
         </Logger>
         <Root level="warn">
-            <AppenderRef ref="rollingFileAppender"/>
-            <AppenderRef ref="rollingJSONFileAppender"/>
             <AppenderRef ref="STDOUT"/>
         </Root>
     </Loggers>
