@@ -1053,7 +1053,7 @@ public class DTOConversionService {
             mfs.setGenotypeExperiment(fishExperiment);
         }
 
-        Figure figure = RepositoryFactory.getPublicationRepository().getFigureByID(mutantFigureStage.getFigure().getZdbID());
+        Figure figure = RepositoryFactory.getFigureRepository().getFigure(mutantFigureStage.getFigure().getZdbID());
         mfs.setFigure(figure);
 
         DevelopmentStage start = RepositoryFactory.getAnatomyRepository().getStageByID(mutantFigureStage.getStart().getZdbID());
@@ -1072,7 +1072,7 @@ public class DTOConversionService {
         Figure figure = mutantFigureStage.getFigure();
         // retrieve full figure object if not existent
         if (figure.getPublication() == null) {
-            figure = RepositoryFactory.getPublicationRepository().getFigureByID(figure.getZdbID());
+            figure = RepositoryFactory.getFigureRepository().getFigure(figure.getZdbID());
             dto.setFigure(convertToFigureDTO(figure));
         } else {
             dto.setFigure(convertToFigureDTO(mutantFigureStage.getFigure()));
@@ -1319,7 +1319,7 @@ public class DTOConversionService {
         FigureDTO dto = new FigureDTO();
         dto.setZdbID(figure.getZdbID());
         if (figure.getLabel() == null) {
-            figure = getPublicationRepository().getFigureByID(figure.getZdbID());
+            figure = getFigureRepository().getFigure(figure.getZdbID());
         }
         dto.setLabel(figure.getLabel());
         dto.setOrderingLabel(figure.getOrderingLabel());

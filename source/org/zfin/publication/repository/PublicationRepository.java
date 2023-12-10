@@ -146,21 +146,9 @@ public interface PublicationRepository extends PaginationParameter {
 
     SourceAlias addJournalAlias(Journal journal, String alias);
 
-    PaginationResult<Figure> getFiguresByGenoExp(Genotype geno);
-
     PaginationResult<Publication> getPublicationsWithFiguresbyGenoExp(Genotype genotype);
 
     int getNumberAssociatedPublicationsForZdbID(String zdbID);
-
-    /**
-     * Retrieve Figure by ID
-     *
-     * @param zdbID ID
-     * @return Figure
-     */
-    Figure getFigure(String zdbID);
-
-    Figure getFigureByID(String figureZdbID);
 
     Image getImageById(String zdbID);
 
@@ -206,14 +194,6 @@ public interface PublicationRepository extends PaginationParameter {
     List<Feature> getFeaturesByPublication(String pubID);
 
     List<Fish> getFishByPublication(String pubID);
-
-    /**
-     * Retrieve list of Genotypes being used in experiments for a given publication
-     *
-     * @param publicationID publication ID
-     * @return list of genotype
-     */
-    List<Genotype> getFishUsedInExperiment(String publicationID);
 
     /**
      * Retrieve list of Genotypes being used in a publication

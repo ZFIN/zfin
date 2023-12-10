@@ -98,12 +98,6 @@ public class PublicationRepositoryRefactorTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getFigureById() {
-        Figure fig = publicationRepository.getFigureByID("ZDB-FIG-080617-24"); //has xpat, pheno & AB
-        assertNotNull(fig);
-    }
-
-    @Test
     public void getPubsForDisplay() {
         assertTrue(publicationRepository.getPubsForDisplay("ZDB-GENE-040426-1855").size() > 10);
         assertTrue(publicationRepository.getPubsForDisplay("ZDB-GENE-051005-1").size() > 15);

@@ -436,7 +436,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         DevelopmentStage start = getAnatomyRepository().getStageByID("ZDB-STAGE-010723-30");
         DevelopmentStage end = getAnatomyRepository().getStageByID("ZDB-STAGE-010723-39");
 
-        Figure fig2 = RepositoryFactory.getPublicationRepository().getFigure("ZDB-FIG-081002-2");
+        Figure fig2 = RepositoryFactory.getFigureRepository().getFigure("ZDB-FIG-081002-2");
         AntibodyService antibodyService = new AntibodyService(antibody);
         ExpressionSummaryCriteria criteria = antibodyService.createExpressionSummaryCriteria(neuron, null, start, end, false);
         antibodyService.createFigureSummary(criteria);
@@ -483,7 +483,7 @@ public class AntibodyServiceTest extends AbstractDatabaseTest {
         DevelopmentStage prim5 = RepositoryFactory.getAnatomyRepository().getStageByID("ZDB-STAGE-010723-10");
         assertNotNull(prim5);
 
-        Figure figS3 = RepositoryFactory.getPublicationRepository().getFigure("ZDB-FIG-081117-50");
+        Figure figS3 = RepositoryFactory.getFigureRepository().getFigure("ZDB-FIG-081117-50");
 
         AntibodyService antibodyService = new AntibodyService(antibody);
 
