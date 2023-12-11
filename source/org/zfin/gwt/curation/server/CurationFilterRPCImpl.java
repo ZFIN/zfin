@@ -7,6 +7,7 @@ import org.hibernate.Transaction;
 import org.zfin.expression.Figure;
 import org.zfin.feature.Feature;
 import org.zfin.feature.repository.FeatureRepository;
+import org.zfin.figure.repository.FigureRepository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.ui.CurationDiseaseRPC;
 import org.zfin.gwt.curation.ui.CurationFilterRPC;
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 public class CurationFilterRPCImpl extends ZfinRemoteServiceServlet implements CurationFilterRPC {
 
     private static ProfileRepository profileRep = RepositoryFactory.getProfileRepository();
+    private static FigureRepository figureRepository = RepositoryFactory.getFigureRepository();
     private static PublicationRepository pubRepository = RepositoryFactory.getPublicationRepository();
     private static FeatureRepository featureRep = RepositoryFactory.getFeatureRepository();
     private CurationDiseaseRPC curationDiseaseRPC = new CurationDiseaseRPCImpl();
@@ -68,7 +70,7 @@ public class CurationFilterRPCImpl extends ZfinRemoteServiceServlet implements C
         CuratorSession attribute = profileRep.getCuratorSession(publicationID, CuratorSession.Attribute.FIGURE_ID);
         if (attribute != null) {
             if (StringUtils.isNotEmpty(attribute.getValue())) {
-                Figure figure = pubRepository.getFigureByID(attribute.getValue());
+                Figure figure = figureRepository.getFigure(attribute.getValue());
                 if (figure == null) {
                     profileRep.deleteCuratorSession(attribute);
                 } else {

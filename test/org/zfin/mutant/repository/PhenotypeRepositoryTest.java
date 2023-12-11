@@ -301,7 +301,7 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
         try {
 
             ExpressionExperiment expressionExperiment = expressionRepository.getExpressionExperiment(expressionExperimentID);
-            Figure figure = pubRepository.getFigureByID(figureID);
+            Figure figure = getFigureRepository().getFigure(figureID);
             DevelopmentStage start = anatomyRepository.getStageByID(startID);
             DevelopmentStage end = anatomyRepository.getStageByID(endID);
             PhenotypeExperiment phenoExperiment = new PhenotypeExperiment();
@@ -411,7 +411,7 @@ public class PhenotypeRepositoryTest extends AbstractOntologyTest {
 
     @Test
     public void getPhenotypeStatements() {
-        Figure figure = getPublicationRepository().getFigure("ZDB-FIG-070601-6");
+        Figure figure = getFigureRepository().getFigure("ZDB-FIG-070601-6");
         List<PhenotypeStatement> phenotypeStatementList = getPhenotypeRepository().getPhenotypeStatements(figure);
         assertNotNull(phenotypeStatementList);
     }

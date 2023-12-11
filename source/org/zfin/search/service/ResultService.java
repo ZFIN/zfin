@@ -264,7 +264,7 @@ public class ResultService {
     }
 
     public void injectFigureAttributes(SearchResult result) {
-        Figure figure = RepositoryFactory.getPublicationRepository().getFigure(result.getId());
+        Figure figure = RepositoryFactory.getFigureRepository().getFigure(result.getId());
 
         result.setEntity(figure);
         result.setDisplayedID(result.getId());
@@ -541,7 +541,7 @@ public class ResultService {
         ExpressionFigureStage efs = RepositoryFactory.getExpressionRepository().getExpressionFigureStage(id);
 
         ExpressionExperiment xpatex = RepositoryFactory.getExpressionRepository().getExpressionExperiment(result.getXpatZdbId());
-        Figure figure = RepositoryFactory.getPublicationRepository().getFigure(result.getFigZdbId());
+        Figure figure = RepositoryFactory.getFigureRepository().getFigure(result.getFigZdbId());
 
         if (xpatex != null && efs != null) {
 
