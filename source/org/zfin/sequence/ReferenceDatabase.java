@@ -25,6 +25,7 @@ public class ReferenceDatabase implements Comparable<ReferenceDatabase>, Seriali
     private Database primaryBlastDatabase;
     private Set<DisplayGroupMember> displayGroupMembers;
     private List<Database> relatedBlastDbs;
+    private Set<ReferenceDatabaseValidationRule> validationRules;
 
     public String getBaseURL() {
         return foreignDB.getDbUrlPrefix();
@@ -102,6 +103,23 @@ public class ReferenceDatabase implements Comparable<ReferenceDatabase>, Seriali
     public boolean isRefSeq() {
         // would better put the hard=coded ids to somewhere else as Enum values
         return (getZdbID().equals("ZDB-FDBCONT-040412-38") || getZdbID().equals("ZDB-FDBCONT-040412-39") || getZdbID().equals("ZDB-FDBCONT-040527-1"));
+    }
+
+    public boolean isValidAccessionFormat(String accessionNo) {
+        return getValidationFailedMessage(accessionNo).isEmpty();
+    }
+
+    public Optional<String> getValidationFailedMessage(String accessionNo) {
+        Set<ReferenceDatabaseValidationRule> rules = getValidationRules();
+        if (rules == null || rules.isEmpty()) {
+            return Optional.empty();
+        }
+        for (ReferenceDatabaseValidationRule rule : rules) {
+            if (!rule.isAccessionFormatValid(accessionNo)) {
+                return Optional.of(rule.getRuleDescription());
+            }
+        }
+        return Optional.empty();
     }
 }
 
