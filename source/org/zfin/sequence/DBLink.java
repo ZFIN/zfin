@@ -344,6 +344,10 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
             this.publications = new HashSet<>();
         this.publications.addAll(publications);
     }
+
+    public boolean isValidAccessionFormat() {
+        return getReferenceDatabase().isValidAccessionFormat(this.getAccessionNumber());
+    }
 }
 
 

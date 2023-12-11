@@ -56,6 +56,83 @@ public class SequenceRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void testExistingDBLinksPassValidationRules() {
+        Session session = HibernateUtil.currentSession();
+
+        //get all dblinks that have validation rules
+        String hqlString = "from ReferenceDatabase refDb join fetch refDb.validationRules as rule where rule is not null";
+        Query query = session.createQuery(hqlString);
+        List<ReferenceDatabase> dbs = query.list();
+
+        List<String> failedLinkAccessions = new ArrayList<>();
+        dbs.forEach(db -> {
+            List<DBLink> dblinks = getSequenceRepository().getDBLinks(db.getForeignDB().getDbName());
+            dblinks.forEach(dblink -> {
+                if (!dblink.isValidAccessionFormat()) {
+                    failedLinkAccessions.add(dblink.getAccessionNumber());
+                }
+            });
+        });
+
+        assertEquals("existing dblinks should all pass validation rules: " +
+                        String.join("; ", failedLinkAccessions), 0, failedLinkAccessions.size());
+    }
+
+    @Test
+    public void testGenBankAccessionFormatValidationRulesFail() {
+        SequenceRepository sr = RepositoryFactory.getSequenceRepository();
+        ReferenceDatabase refDb = sr.getReferenceDatabase(
+                ForeignDB.AvailableName.GENBANK,
+                ForeignDBDataType.DataType.GENOMIC,
+                ForeignDBDataType.SuperType.SEQUENCE,
+                Species.Type.ZEBRAFISH);
+        Set<ReferenceDatabaseValidationRule> rules = refDb.getValidationRules();
+        assertTrue("ReferenceDatabase has validation rules", rules.size() > 0);
+        assertFalse(refDb.isValidAccessionFormat("NM_4214243"));
+        assertFalse(refDb.isValidAccessionFormat("NM_421424.3"));
+        assertFalse(refDb.isValidAccessionFormat("BX957306.12"));
+        assertFalse(refDb.isValidAccessionFormat("DN90345"));
+        assertFalse(refDb.isValidAccessionFormat("CT72701"));
+        assertFalse(refDb.isValidAccessionFormat("NM_123423451234"));
+        assertFalse(refDb.isValidAccessionFormat("MG9579"));
+        assertFalse(refDb.isValidAccessionFormat("C173-A2"));
+        assertFalse(refDb.isValidAccessionFormat("CD75461"));
+        assertFalse(refDb.isValidAccessionFormat("NM_4214243"));
+        assertFalse(refDb.isValidAccessionFormat("XM_123451234"));
+    }
+
+    @Test
+    public void testGenBankAccessionFormatValidationRulesSucceed() {
+        SequenceRepository sr = RepositoryFactory.getSequenceRepository();
+        ReferenceDatabase refDb = sr.getReferenceDatabase(
+                ForeignDB.AvailableName.GENBANK,
+                ForeignDBDataType.DataType.GENOMIC,
+                ForeignDBDataType.SuperType.SEQUENCE,
+                Species.Type.ZEBRAFISH);
+        Set<ReferenceDatabaseValidationRule> rules = refDb.getValidationRules();
+        assertTrue("ReferenceDatabase has validation rules", rules.size() > 0);
+
+
+        //Test some example formats described here: https://zfin.atlassian.net/wiki/spaces/doc/pages/5266079747/Validation+Rules+for+Foreign+DB+Accessions
+//        Nucleotide 1 letter + 5 numerals or 2 letters + 6 numerals or 2 letters + 8 numerals
+        assertTrue(refDb.isValidAccessionFormat("A12345"));
+        assertTrue(refDb.isValidAccessionFormat("AB123456"));
+        assertTrue(refDb.isValidAccessionFormat("AB12345678"));
+
+//        Protein 3 letters + 5 numerals or 3 letters + 7 numerals
+        assertTrue(refDb.isValidAccessionFormat("XYZ12345"));
+        assertTrue(refDb.isValidAccessionFormat("UVW1234567"));
+
+//        WGS 4 letters + 2 numerals for WGS assembly version + 6 or more numerals or
+//        6 letters + 2 numerals for WGS assembly version + 7 or more numerals
+        assertTrue(refDb.isValidAccessionFormat("AAAA00123456"));
+        assertTrue(refDb.isValidAccessionFormat("AABBCC001234567"));
+
+//        MGA 5 letters + 7 numerals
+        assertTrue(refDb.isValidAccessionFormat("ABCDE1234567"));
+    }
+
+    @Test
     public void testReferenceDatabaseEntity() {
         Session session = HibernateUtil.currentSession();
         Criteria criteria = session.createCriteria(ReferenceDatabase.class);
