@@ -14,6 +14,7 @@ import org.zfin.antibody.Antibody;
 import org.zfin.antibody.repository.AntibodyRepository;
 import org.zfin.expression.*;
 import org.zfin.expression.repository.ExpressionRepository;
+import org.zfin.figure.repository.FigureRepository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.dto.UpdateExpressionDTO;
 import org.zfin.gwt.curation.ui.CurationExperimentRPC;
@@ -61,6 +62,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
     private final static Logger LOG = LogManager.getLogger(CurationExperimentRPCImpl.class);
 
     private static PublicationRepository pubRepository = RepositoryFactory.getPublicationRepository();
+    private static FigureRepository figureRepository = RepositoryFactory.getFigureRepository();
     private static ExpressionRepository expRepository = RepositoryFactory.getExpressionRepository();
     private static ProfileRepository profileRep = RepositoryFactory.getProfileRepository();
     private static AnatomyRepository anatomyRep = RepositoryFactory.getAnatomyRepository();
@@ -543,7 +545,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
         ExpressionExperiment expressionExperiment = expRepository.getExpressionExperiment(experimentDTO.getExperiment().getExperimentZdbID());
         efs.setExpressionExperiment(expressionExperiment);
 
-        Figure figure = pubRepository.getFigureByID(experimentDTO.getFigure().getZdbID());
+        Figure figure = figureRepository.getFigure(experimentDTO.getFigure().getZdbID());
         efs.setFigure(figure);
 
         DevelopmentStage start = anatomyRep.getStageByID(experimentDTO.getStart().getZdbID());
@@ -598,7 +600,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
      */
     public FigureDTO getFigureFilter(String publicationID) {
         CuratorSession attribute = profileRep.getCuratorSession(publicationID, CuratorSession.Attribute.FIGURE_ID);
-        Figure figure = pubRepository.getFigureByID(attribute.getValue());
+        Figure figure = figureRepository.getFigure(attribute.getValue());
         FigureDTO dto = new FigureDTO();
         dto.setLabel(figure.getLabel());
         dto.setZdbID(figure.getZdbID());
@@ -630,7 +632,7 @@ public class CurationExperimentRPCImpl extends ZfinRemoteServiceServlet implemen
      */
     public void createPatoRecord(ExpressionFigureStageDTO efs) {
         ExpressionExperiment2 expressionExperiment = expRepository.getExpressionExperiment2(efs.getExperiment().getExperimentZdbID());
-        Figure figure = pubRepository.getFigureByID(efs.getFigure().getZdbID());
+        Figure figure = figureRepository.getFigure(efs.getFigure().getZdbID());
         DevelopmentStage start = anatomyRep.getStageByID(efs.getStart().getZdbID());
         DevelopmentStage end = anatomyRep.getStageByID(efs.getEnd().getZdbID());
         PhenotypeExperiment phenoExperiment = new PhenotypeExperiment();

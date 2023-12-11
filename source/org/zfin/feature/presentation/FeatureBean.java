@@ -2,6 +2,7 @@ package org.zfin.feature.presentation;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.zfin.ExternalNote;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureMarkerRelationship;
 import org.zfin.feature.FeatureNote;
@@ -13,11 +14,9 @@ import org.zfin.mapping.presentation.MappedMarkerBean;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.PreviousNameLight;
 import org.zfin.mutant.GenotypeDisplay;
-import org.zfin.mutant.presentation.GenoExpStatistics;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.FeatureDBLink;
 import org.zfin.zebrashare.FeatureCommunityContribution;
-import org.zfin.ExternalNote;
 
 import java.util.Collection;
 import java.util.List;
@@ -30,7 +29,6 @@ public class FeatureBean {
     private Feature feature;
     private Marker marker;
     private int numPubs;
-    private List<GenoExpStatistics> genoexpStats;
     private MappedMarkerBean mappedMarkerBean;
     private Set<FeatureMarkerRelationship> sortedConstructRelationships;
 
@@ -70,18 +68,18 @@ public class FeatureBean {
 
     public List<PreviousNameLight> getSynonyms() {
         return feature.getAliases().stream()
-                .map(alias -> {
-                    PreviousNameLight previousNameLight = new PreviousNameLight(feature.getName());
-                    previousNameLight.setMarkerZdbID(feature.getZdbID());
-                    previousNameLight.setAlias(alias.getAlias());
-                    if (alias.getPublications() != null) {
-                        previousNameLight.setPublicationCount(alias.getPublicationCount());
-                        if (alias.getPublicationCount() == 1)
-                            previousNameLight.setPublicationZdbID(alias.getSinglePublication().getZdbID());
-                    }
-                    return previousNameLight;
+            .map(alias -> {
+                PreviousNameLight previousNameLight = new PreviousNameLight(feature.getName());
+                previousNameLight.setMarkerZdbID(feature.getZdbID());
+                previousNameLight.setAlias(alias.getAlias());
+                if (alias.getPublications() != null) {
+                    previousNameLight.setPublicationCount(alias.getPublicationCount());
+                    if (alias.getPublicationCount() == 1)
+                        previousNameLight.setPublicationZdbID(alias.getSinglePublication().getZdbID());
+                }
+                return previousNameLight;
 
-                }).collect(Collectors.toList());
+            }).collect(Collectors.toList());
     }
 }
 

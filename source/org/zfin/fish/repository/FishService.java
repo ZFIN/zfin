@@ -286,7 +286,7 @@ public class FishService {
         Set<Figure> figures = new HashSet<>(zfinFigureEntities.size());
         for (ZfinFigureEntity figureEntity : zfinFigureEntities) {
             FigureSummaryDisplay figureSummaryDisplay = new FigureSummaryDisplay();
-            Figure figure = getPublicationRepository().getFigure(figureEntity.getID());
+            Figure figure = getFigureRepository().getFigure(figureEntity.getID());
             if (figures.add(figure)) {
                 figureSummaryDisplay.setFigure(figure);
                 figureSummaryDisplay.setPublication(figure.getPublication());

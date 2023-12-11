@@ -13,6 +13,7 @@ import org.zfin.expression.Figure;
 import org.zfin.expression.FigureFigure;
 import org.zfin.expression.FigureService;
 import org.zfin.expression.Image;
+import org.zfin.figure.repository.FigureRepository;
 import org.zfin.figure.service.ImageService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.presentation.InvalidWebRequestException;
@@ -38,6 +39,9 @@ public class FigureEditController {
 
     @Autowired
     private PublicationRepository publicationRepository;
+
+    @Autowired
+    private FigureRepository figureRepository;
 
     @Autowired
     private PublicationService publicationService;
@@ -104,7 +108,7 @@ public class FigureEditController {
     @ResponseBody
     @RequestMapping(value = "/figure/{zdbID}", method = RequestMethod.DELETE)
     public String deleteFigure(@PathVariable String zdbID) {
-        Figure figure = publicationRepository.getFigure(zdbID);
+        Figure figure = figureRepository.getFigure(zdbID);
         Publication pub = figure.getPublication();
 
         if (CollectionUtils.isNotEmpty(figure.getExpressionResults()) ||
@@ -128,7 +132,7 @@ public class FigureEditController {
     @RequestMapping(value = "/figure/{zdbID}", method = RequestMethod.POST)
     public FigurePresentationBean updateFigure(@PathVariable String zdbID,
                                                @RequestBody FigurePresentationBean figureUpdates) {
-        Figure figure = publicationRepository.getFigure(zdbID);
+        Figure figure = figureRepository.getFigure(zdbID);
 
         if (!StringUtils.equals(figure.getLabel(), figureUpdates.getLabel()) &&
                 publicationService.publicationHasFigureWithLabel(figure.getPublication(), figureUpdates.getLabel())) {
@@ -175,7 +179,7 @@ public class FigureEditController {
             throw new InvalidWebRequestException("File must be an image");
         }
 
-        Figure figure = publicationRepository.getFigure(zdbID);
+        Figure figure = figureRepository.getFigure(zdbID);
         Image image;
 
         Transaction tx = HibernateUtil.createTransaction();

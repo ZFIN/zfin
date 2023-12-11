@@ -5,6 +5,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.expression.presentation.FigureSummaryDisplay;
+import org.zfin.figure.repository.FigureRepository;
 import org.zfin.figure.service.FigureViewService;
 import org.zfin.marker.Marker;
 import org.zfin.marker.repository.MarkerRepository;
@@ -33,6 +34,7 @@ public class FigureServiceTest extends AbstractDatabaseTest {
     static Logger logger = LogManager.getLogger(FigureServiceTest.class);
 
     private PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
+    private FigureRepository figureRepository = RepositoryFactory.getFigureRepository();
     private MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
     private MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
     private OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
@@ -40,7 +42,7 @@ public class FigureServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void expressionGenesTest() {
-        Figure figure = publicationRepository.getFigure("ZDB-FIG-070307-34");
+        Figure figure = figureRepository.getFigure("ZDB-FIG-070307-34");
         Marker pax2a = markerRepository.getMarkerByAbbreviation("pax2a");
         Marker fgf8a = markerRepository.getMarkerByAbbreviation("fgf8a");
 
@@ -54,7 +56,7 @@ public class FigureServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void genotypeExpressionFigureSummaryDisplayTest() {
-        Figure figure = publicationRepository.getFigure("ZDB-FIG-041108-3");
+        Figure figure = figureRepository.getFigure("ZDB-FIG-041108-3");
         FishExperiment genox = mutantRepository.getGenotypeExperiment("ZDB-GENOX-050228-2");
         Marker pax2a = markerRepository.getMarkerByID("ZDB-GENE-990415-8");
 
@@ -116,7 +118,7 @@ public class FigureServiceTest extends AbstractDatabaseTest {
         FishExperiment genox = mutantRepository.getGenotypeExperiment("ZDB-GENOX-050228-2");
         Marker gene = markerRepository.getMarkerByID("ZDB-GENE-990415-8");
 
-        Figure figure = publicationRepository.getFigure("ZDB-FIG-041108-3");
+        Figure figure = figureRepository.getFigure("ZDB-FIG-041108-3");
 
         // optic placode
         ExpressionStatement presentStatement = generateExpressionStatement("ZFA:0000138", null, true);
@@ -139,7 +141,7 @@ public class FigureServiceTest extends AbstractDatabaseTest {
         // myod1
         Marker gene = markerRepository.getMarkerByID("ZDB-GENE-980526-561");
         // Fig. 11 of Hamade et al.
-        Figure figure = publicationRepository.getFigure("ZDB-FIG-060201-11");
+        Figure figure = figureRepository.getFigure("ZDB-FIG-060201-11");
 
         // optic placode
         ExpressionStatement presentStatement = generateExpressionStatement("ZFA:0000138", null, false);

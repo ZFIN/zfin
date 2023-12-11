@@ -75,7 +75,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
         String fishID = fish.getZdbID();
         // Fig S11
         String figureID = "ZDB-FIG-080512-1";
-        Figure figure = RepositoryFactory.getPublicationRepository().getFigure(figureID);
+        Figure figure = RepositoryFactory.getFigureRepository().getFigure(figureID);
         List<PhenotypeStatementWarehouse> phenotypeStatements = FishService.getPhenotypeStatements(figure, fishID);
         assertNotNull(phenotypeStatements);
         assertTrue(phenotypeStatements.size() > 3);

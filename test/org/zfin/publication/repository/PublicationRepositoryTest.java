@@ -2,13 +2,7 @@ package org.zfin.publication.repository;
 
 import org.hibernate.Session;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.zfin.AbstractDatabaseTest;
-import org.zfin.AppConfig;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.antibody.Antibody;
@@ -16,6 +10,7 @@ import org.zfin.expression.Experiment;
 import org.zfin.expression.Figure;
 import org.zfin.expression.Image;
 import org.zfin.expression.ImageStage;
+import org.zfin.feature.Feature;
 import org.zfin.figure.service.FigureViewService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.FieldFilter;
@@ -34,7 +29,10 @@ import org.zfin.ontology.Ontology;
 import org.zfin.ontology.repository.OntologyRepository;
 import org.zfin.orthology.Ortholog;
 import org.zfin.profile.Person;
-import org.zfin.publication.*;
+import org.zfin.publication.Publication;
+import org.zfin.publication.PublicationTrackingHistory;
+import org.zfin.publication.PublicationTrackingLocation;
+import org.zfin.publication.PublicationTrackingStatus;
 import org.zfin.publication.presentation.DashboardPublicationBean;
 import org.zfin.publication.presentation.DashboardPublicationList;
 import org.zfin.repository.RepositoryFactory;
@@ -48,18 +46,14 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.zfin.repository.RepositoryFactory.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {AppConfig.class})
-@WebAppConfiguration
 public class PublicationRepositoryTest extends AbstractDatabaseTest {
 
-    @Autowired
-    private PublicationRepository publicationRepository;
+    private final PublicationRepository publicationRepository = new HibernatePublicationRepository();
 
-    private static MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
-    private static OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
-    private static AnatomyRepository anatomyRepository = RepositoryFactory.getAnatomyRepository();
-    private static FigureViewService figureViewService = new FigureViewService();
+    private static final MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
+    private static final OntologyRepository ontologyRepository = RepositoryFactory.getOntologyRepository();
+    private static final AnatomyRepository anatomyRepository = RepositoryFactory.getAnatomyRepository();
+    private static final FigureViewService figureViewService = new FigureViewService();
 
 
     @Test
@@ -76,7 +70,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     public void getMappingDetailsCount() {
         String pubZdbId = "ZDB-PUB-050607-10";
         Publication testPublication = publicationRepository.getPublication(pubZdbId);
-        long number = publicationRepository.getMappingDetailsCount(testPublication);
+        publicationRepository.getMappingDetailsCount(testPublication);
         assertNotNull("Test publication is retrieved", testPublication);
         assertEquals("Test publication has the right title", "LZIC regulates neuronal survival during zebrafish development", testPublication.getTitle());
     }
@@ -91,7 +85,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         String zdbID = "ZDB-TERM-100331-665";
         GenericTerm term = new GenericTerm();
         term.setZdbID(zdbID);
-        Pagination pagination = new Pagination(1,5,null, null);
+        Pagination pagination = new Pagination(1, 5, null, null);
 
         PaginationResult<MarkerStatistic> paginationResult = publicationRepository.getAllExpressedMarkers(term, pagination);
         List<MarkerStatistic> list = paginationResult.getPopulatedResults();
@@ -262,28 +256,12 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getFiguresForGenotypeExp() {
-        //  genotype adss^hi1433Tg
-        String genoZdbID = "ZDB-GENO-020426-5";
-        Genotype geno = new Genotype();
-        geno.setZdbID(genoZdbID);
-        // brain
-
-
-        PaginationResult<Figure> figs = publicationRepository.getFiguresByGenoExp(geno);
-        assertTrue(figs.getPopulatedResults() != null);
-//        assertEquals("1 figure", 1, figs.size());
-
-    }
-
-    @Test
     public void getFeatureCountForPub() {
         //  genotype adss^hi1433Tg
         String pubZdbID = "ZDB-PUB-140403-2";
         Publication pub = publicationRepository.getPublication(pubZdbID);
         long ftrCount = publicationRepository.getFeatureCount(pub);
         assertTrue(ftrCount > 0);
-//        assertEquals("1 publication", 1, publications.size());
 
     }
 
@@ -298,12 +276,12 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         GenericTerm item = new GenericTerm();
         item.setZdbID(aoZdbID);
         List<Figure> figs = publicationRepository.getFiguresByGeneAndAnatomy(marker, item);
-        assertTrue(figs != null);
+        assertNotNull(figs);
     }
 
     @Test
     public void getExpressedGenesForFigure() {
-        Figure fig = publicationRepository.getFigureByID("ZDB-FIG-080617-24"); //has xpat, pheno & AB
+        Figure fig = getFigureRepository().getFigure("ZDB-FIG-080617-24"); //has xpat, pheno & AB
 
         List<Marker> expressedGenes = figureViewService.getExpressionGenes(fig);
         assertNotNull("FigureService.getExpressedGenes doesn't return a null", expressedGenes);
@@ -316,78 +294,64 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getNumberOfPublicationForPax2aAndMHB() {
         String termName = "midbrain hindbrain boundary";
-        OntologyRepository aoRepository = RepositoryFactory.getOntologyRepository();
-        GenericTerm item = aoRepository.getTermByName(termName, Ontology.ANATOMY);
+        GenericTerm item = RepositoryFactory.getOntologyRepository().getTermByName(termName, Ontology.ANATOMY);
         Marker pax2a = getMarkerRepository().getMarkerByAbbreviation("pax2a");
 
         PaginationResult<Publication> qualityPubs = publicationRepository.getPublicationsWithFigures(pax2a, item);
-        assertTrue(qualityPubs != null);
-//        assertEquals("2 pubs", 2, qualityPubs.size());
+        assertNotNull(qualityPubs);
+        assertTrue(qualityPubs.getTotalCount() > 100);
 
     }
 
     @Test
     public void getMarkersPerPublication() {
         String zdbID = "ZDB-PUB-990507-16";
-
         List<Marker> experiments = publicationRepository.getGenesByPublication(zdbID);
-        assertTrue(experiments != null);
+        assertNotNull(experiments);
     }
 
     @Test
     public void getFigureLabels() {
         String zdbID = "ZDB-PUB-990507-16";
-
         List<String> experiments = publicationRepository.getDistinctFigureLabels(zdbID);
-        assertTrue(experiments != null);
-    }
-
-    @Test
-    public void getFishByPublicationInExperiment() {
-        String zdbID = "ZDB-PUB-990507-16";
-
-        List<Genotype> experiments = publicationRepository.getFishUsedInExperiment(zdbID);
-        assertTrue(experiments != null);
+        assertNotNull(experiments);
     }
 
     @Test
     public void getFishByPublication() {
         String zdbID = "ZDB-PUB-970210-18";
-
         List<Genotype> experiments = publicationRepository.getGenotypesInPublication(zdbID);
-        assertTrue(experiments != null);
+        assertNotNull(experiments);
     }
 
     @Test
     public void getExperimentsByPublications() {
         String zdbID = "ZDB-PUB-990507-16";
-
         List<Experiment> experiments = publicationRepository.getExperimentsByPublication(zdbID);
-        assertTrue(experiments != null);
+        assertNotNull(experiments);
+        assertEquals(5, experiments.size());
     }
 
     @Test
     public void getWTGenotype() {
         String nickname = "WT";
-
         Genotype geno = publicationRepository.getGenotypeByHandle(nickname);
-        assertTrue(geno != null);
+        assertNotNull(geno);
     }
 
     @Test
     public void getGenotypeByPublicationAttribution() {
         String zdbID = "ZDB-PUB-990507-16";
-
         List<Genotype> genotypes = publicationRepository.getNonWTGenotypesByPublication(zdbID);
-        assertTrue(genotypes != null);
+        assertNotNull(genotypes);
+        assertEquals(1, genotypes.size());
     }
 
     @Test
     public void getAntibodiesByPublicationAttribution() {
         String zdbID = "ZDB-PUB-990507-16";
-
         List<Antibody> antibodyList = publicationRepository.getAntibodiesByPublication(zdbID);
-        assertTrue(antibodyList != null);
+        assertNotNull(antibodyList);
     }
 
     @Test
@@ -396,17 +360,19 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         String geneID = "ZDB-GENE-990415-30";
 
         List<Antibody> antibodyList = publicationRepository.getAntibodiesByPublicationAndGene(zdbID, geneID);
-        assertTrue(antibodyList != null);
+        assertNotNull(antibodyList);
+        assertEquals(1, antibodyList.size());
     }
 
     @Test
     public void getGenesByPubAttributionAndAntibody() {
         String zdbID = "ZDB-PUB-990507-16";
         // zn-5
-        String antibodyID = "ZDB-ATB-081002-19 ";
+        String antibodyID = "ZDB-ATB-081002-19";
 
         List<Marker> antibodyList = publicationRepository.getGenesByAntibody(zdbID, antibodyID);
-        assertTrue(antibodyList != null);
+        assertNotNull(antibodyList);
+        assertEquals(1, antibodyList.size());
     }
 
     @Test
@@ -414,7 +380,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         String zdbID = "ZDB-PUB-080306-3";
 
         List<Marker> geneList = publicationRepository.getGenesByPublication(zdbID);
-        assertTrue(geneList != null);
+        assertNotNull(geneList);
     }
 
     @Test
@@ -424,7 +390,8 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         String geneID = "ZDB-GENE-990415-30";
 
         List<MarkerDBLink> antibodyList = publicationRepository.getDBLinksByGene(zdbID, geneID);
-        assertTrue(antibodyList != null);
+        assertNotNull(antibodyList);
+        assertTrue(antibodyList.size() > 10);
     }
 
     @Test
@@ -434,7 +401,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         String geneID = "ZDB-GENE-020426-1";
 
         List<MarkerDBLink> cloneDBLinks = publicationRepository.getDBLinksForCloneByGene(zdbID, geneID);
-        assertTrue(cloneDBLinks != null);
+        assertNotNull(cloneDBLinks);
     }
 
     @Test
@@ -487,7 +454,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         //this image is a table, ensuring that it should start out without any anatomy
         Image image = publicationRepository.getImageById(imageZdbID);
 
-        assertTrue(image.getTerms().size() == 0);
+        assertEquals(0, image.getTerms().size());
 
         GenericTerm liver = ontologyRepository.getTermByName("liver", Ontology.ANATOMY);
         GenericTerm brain = ontologyRepository.getTermByName("brain", Ontology.ANATOMY);
@@ -672,8 +639,8 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void getPublicationsByStatusShouldOnlyReturnCurrentStatuses() {
         List<DashboardPublicationBean> statuses = publicationRepository
-                .getPublicationsByStatus(null, null, null, 20, 0, null)
-                .getPublications();
+            .getPublicationsByStatus(null, null, null, 20, 0, null)
+            .getPublications();
         for (DashboardPublicationBean status : statuses) {
             assertThat(status.getStatus().isCurrent(), is(true));
         }
@@ -683,8 +650,8 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     public void getPublicationsByStatusShouldReturnObjectsWithSpecifiedStatus() {
         long statusId = 1;
         List<DashboardPublicationBean> statuses = publicationRepository
-                .getPublicationsByStatus(statusId, null, null, 20, 0, null)
-                .getPublications();
+            .getPublicationsByStatus(statusId, null, null, 20, 0, null)
+            .getPublications();
         for (DashboardPublicationBean status : statuses) {
             assertThat(status.getStatus().getStatus().getId(), is(statusId));
         }
@@ -694,8 +661,8 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     public void getPublicationsByStatusShouldReturnObjectsWithSpecifiedLocation() {
         long locationId = 1;
         List<DashboardPublicationBean> statuses = publicationRepository
-                .getPublicationsByStatus(null, locationId, null, 20, 0, null)
-                .getPublications();
+            .getPublicationsByStatus(null, locationId, null, 20, 0, null)
+            .getPublications();
         for (DashboardPublicationBean status : statuses) {
             assertThat(status.getStatus().getLocation().getId(), is(locationId));
         }
@@ -705,8 +672,8 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     public void getPublicationsByStatusShouldInterpretZeroAsNullForLocation() {
         long locationId = 0;
         List<DashboardPublicationBean> statuses = publicationRepository
-                .getPublicationsByStatus(null, locationId, null, 20, 0, "location")
-                .getPublications();
+            .getPublicationsByStatus(null, locationId, null, 20, 0, "location")
+            .getPublications();
         for (DashboardPublicationBean status : statuses) {
             assertThat(status.getStatus().getLocation(), is(nullValue()));
         }
@@ -719,8 +686,8 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
         // assigned to her otherwise this test isn't doing anything.
         String ownerId = "ZDB-PERS-100329-1";
         List<DashboardPublicationBean> statuses = publicationRepository
-                .getPublicationsByStatus(null, null, ownerId, 20, 0, null)
-                .getPublications();
+            .getPublicationsByStatus(null, null, ownerId, 20, 0, null)
+            .getPublications();
         for (DashboardPublicationBean status : statuses) {
             assertThat(status.getStatus().getOwner().getZdbID(), is(ownerId));
         }
@@ -730,8 +697,8 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     public void getPublicationsByStatusShouldInterpretStarAsAnyOwner() {
         String ownerId = "*";
         List<DashboardPublicationBean> statuses = publicationRepository
-                .getPublicationsByStatus(null, null, ownerId, 50, 0, "-owner")
-                .getPublications();
+            .getPublicationsByStatus(null, null, ownerId, 50, 0, "-owner")
+            .getPublications();
         for (DashboardPublicationBean status : statuses) {
             assertThat(status.getStatus().getOwner(), is(notNullValue()));
         }
@@ -741,7 +708,7 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     public void getPublicationsByStatusShouldReturnSpecifiedNumberOfObjectsAndPopulateTotalCount() {
         int count = 33;
         DashboardPublicationList statuses = publicationRepository
-                .getPublicationsByStatus(null, null, null, count, 0, null);
+            .getPublicationsByStatus(null, null, null, count, 0, null);
         assertThat(statuses.getPublications(), hasSize(count));
         assertThat(statuses.getTotalCount(), is(greaterThanOrEqualTo(count)));
     }
@@ -786,6 +753,40 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     public void getImageForPub() {
         List<Image> images = publicationRepository.getImages(publicationRepository.getPublication("ZDB-PUB-170608-5"));
         assertNotNull(images);
+    }
+
+    @Test
+    public void getMorpholinoCount() {
+        long count = publicationRepository.getMorpholinoCount(publicationRepository.getPublication("ZDB-PUB-170608-5"));
+        assertThat("count is 4", count == 4L);
+    }
+
+    @Test
+    public void getFeaturesByPublication() {
+        List<Feature> features = publicationRepository.getFeaturesByPublication("ZDB-PUB-170608-5");
+        assertNotNull(features);
+        assertThat("count is 2", features.size() == 2);
+    }
+
+    @Test
+    public void getFishByHandle() {
+        Fish fish = publicationRepository.getFishByHandle("WT");
+        assertNotNull(fish);
+        assertThat("WT", fish.getName().equals("WT"));
+    }
+
+    @Test
+    public void getNonWTFishByPublication() {
+        List<Fish> fish = publicationRepository.getNonWTFishByPublication("ZDB-PUB-170608-5");
+        assertNotNull(fish);
+        assertThat("WT", fish.size() > 5);
+    }
+
+    @Test
+    public void getFishByPublication1() {
+        List<Fish> fish = publicationRepository.getFishByPublication("ZDB-PUB-170608-5");
+        assertNotNull(fish);
+        assertThat("count is 9", fish.size() == 9);
     }
 
     @Test

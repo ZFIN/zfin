@@ -155,7 +155,7 @@ public class FigureService {
             List<String> expressionFigureIDs = RepositoryFactory.getExpressionRepository().getExpressionFigureIDsBySequenceTargetingReagentAndExpressedGene(expressionCriteria.getSequenceTargetingReagent(), expressionCriteria.getGene());
             figures = new ArrayList<>();
             for (String figId : expressionFigureIDs) {
-                Figure fig = RepositoryFactory.getPublicationRepository().getFigureByID(figId);
+                Figure fig = RepositoryFactory.getFigureRepository().getFigure(figId);
                 figures.add(fig);
             }
         } else {

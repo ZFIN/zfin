@@ -16,6 +16,7 @@ import org.zfin.anatomy.repository.AnatomyRepository;
 import org.zfin.expression.*;
 import org.zfin.expression.presentation.*;
 import org.zfin.expression.repository.ExpressionRepository;
+import org.zfin.figure.repository.FigureRepository;
 import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerNotFoundException;
 import org.zfin.marker.repository.MarkerRepository;
@@ -49,6 +50,9 @@ public class ExpressionSearchService {
 
     @Autowired
     private PublicationRepository publicationRepository;
+
+    @Autowired
+    private FigureRepository figureRepository;
 
     @Autowired
     private ExpressionRepository expressionRepository;
@@ -283,7 +287,7 @@ public class ExpressionSearchService {
     private FigureResult buildFigureResult(Group group) {
         FigureResult figureResult = new FigureResult();
 
-        Figure figure = publicationRepository.getFigure(group.getGroupValue());
+        Figure figure = figureRepository.getFigure(group.getGroupValue());
         String pubZdbId = (String) group.getResult().get(0).get(FieldName.PUB_ZDB_ID.getName());
         Publication publication = publicationRepository.getPublication(pubZdbId);
 
@@ -409,7 +413,7 @@ public class ExpressionSearchService {
         result.setFigureCount(figGroup.getNGroups());
         if (figGroup.getNGroups() == 1) {
             String figId = figGroup.getValues().get(0).getGroupValue();
-            Figure figure = RepositoryFactory.getPublicationRepository().getFigure(figId);
+            Figure figure = RepositoryFactory.getFigureRepository().getFigure(figId);
             result.setSingleFigure(figure);
         }
         GroupCommand imageGroup = groups.get(FieldName.HAS_IMAGE.getName());
