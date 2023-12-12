@@ -188,6 +188,7 @@
         <mapping class="org.zfin.sequence.ProteinToInterPro"/>
         <mapping class="org.zfin.sequence.ProteinToPDB"/>
         <mapping class="org.zfin.sequence.MarkerToProtein"/>
+        <mapping class="org.zfin.sequence.ReferenceDatabaseValidationRule"/>
         <mapping class="org.zfin.sequence.ReferenceProtein"/>
         <mapping class="org.zfin.sequence.reno.Candidate"/>
         <mapping class="org.zfin.sequence.reno.NomenclatureRun"/>
