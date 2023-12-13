@@ -122,6 +122,23 @@
         table.subtype-listing th {
             text-align: left;
         }
+
+
+        table.summary {
+            border-collapse: collapse;
+            border: 1px solid #ccc;
+        }
+        table.summary th {
+            text-align: left;
+        }
+        table.summary th, table.summary td {
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        table.summary td.right-align {
+            text-align: right;
+        }
+
     </style>
 </head>
 <body>
@@ -212,15 +229,15 @@
             }
         }
 
-        function ReportSummary({reportSummary, onSummaryClick}) {
+        function ReportNavigation({reportNavigation, onSummaryClick}) {
 
             //sort by LOAD, DELETE, ERROR, INFO, WARNING
             const orderedKeys = ['LOAD', 'DELETE', 'ERROR', 'INFO', 'WARNING'];
-            const remainingKeys = reportSummary.map(item => item.type).filter(item => !orderedKeys.includes(item));
+            const remainingKeys = reportNavigation.map(item => item.type).filter(item => !orderedKeys.includes(item));
             const allKeys = orderedKeys.concat(remainingKeys);
 
             function countByType(type) {
-                const item = reportSummary.find(item => item.type === type);
+                const item = reportNavigation.find(item => item.type === type);
                 return item ? item.count : 0;
             }
 
@@ -362,6 +379,53 @@
             `;
         }
 
+        function ReportSummary({reportSummary, releaseID, creationDate}) {
+            function reportSummaryRow(rowValues) {
+                const beforeCount = rowValues.beforeLoadCount;
+                const afterCount = rowValues.afterLoadCount;
+                const changeCount = afterCount - beforeCount;
+                const percentChange = (changeCount / beforeCount) * 100;
+
+                //human readable
+                const before = beforeCount.toLocaleString('en-US');
+                const after = afterCount.toLocaleString('en-US');
+                const change = changeCount.toLocaleString('en-US');
+                const percent = percentChange.toLocaleString('en-US', {maximumFractionDigits: 2});
+
+                return html`
+                    <tr>
+                        <td>${rowValues.description}</td>
+                        <td className="right-align">${before}</td>
+                        <td className="right-align">${after}</td>
+                        <td className="right-align">${change}</td>
+                        <td className="right-align">${percent}%</td>
+                    </tr>
+                `;
+            }
+
+            return html`
+                    <h2>Summary</h2>
+                    <p>Summary of the changes that will be made to the database (or have been made).</p>
+                    ${releaseID && html`<p>Release ID: ${releaseID}</p>`}
+                    ${creationDate && html`<p>Creation Date: ${new Date(creationDate).toLocaleString()}</p>`}
+                    <h3>Breakdown of Changes by Type</h3>
+                    <table class="summary">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th># Before</th>
+                                <th># After</th>
+                                <th>Net Change</th>
+                                <th>Percent Change</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${reportSummary.map(row => reportSummaryRow(row))}
+                        </tbody>
+                    </table>
+            `;
+        }        
+        
         function Breadcrumb({activeTab, type, subtype, details, onClick}) {
             function backToHome() {
                 onClick('');
@@ -407,7 +471,10 @@
 
         function App({reportData}) {
             const reportActions = reportData.actions;
-            const [reportSummary, setReportSummary] = useState([{type: 'test', count: 1}]);
+            const reportSummary = reportData.summary;
+            const creationDate = reportData.creationDate;
+            const releaseID = reportData.releaseID;
+            const [reportNavigation, setReportNavigation] = useState([{type: 'test', count: 1}]);
             const [showTypeData, setShowTypeData] = useState(null);
             const [activeTab, setActiveTab] = useState('');
             const [activeDetails, setActiveDetails] = useState('');
@@ -419,7 +486,7 @@
                     for(let item of reportActions) {
                         counts[item.type] = counts[item.type] ? counts[item.type] + 1 : 1;
                     }
-                    setReportSummary(Object.keys(counts).map(type => ({type, count: counts[type]})));
+                    setReportNavigation(Object.keys(counts).map(type => ({type, count: counts[type]})));
                 }
             }, []);
 
@@ -478,7 +545,7 @@
                 }
             }
 
-            if (!reportActions || !reportSummary) {
+            if (!reportActions || !reportNavigation) {
                 return html`
                     <div>
                         <h4>No Report Data Provided</h4>
@@ -495,7 +562,7 @@
                         <div id="left-nav">
                             <h2>Summary</h2>
                             <p>These are the types of actions that will be performed by the load.</p>
-                            <${ReportSummary} reportSummary=${reportSummary} onSummaryClick=${handleSummaryClick}/>
+                            <${ReportNavigation} reportNavigation=${reportNavigation} onSummaryClick=${handleSummaryClick}/>
                         </div>
                         <div id="right-content">
                             ${activeTab == 'list' && html`
@@ -506,6 +573,9 @@
                             `}
                             ${activeTab == 'details' && html`
                                 <${DetailDisplay} item="${activeDetails}" prevClick="${previousDetail}" nextClick="${nextDetail}" />
+                            `}
+                            ${activeTab == '' && html`
+                                <${ReportSummary} reportSummary="${reportSummary}" creationDate="${creationDate}" releaseID="${releaseID}" />
                             `}
                         </div>
                     </div>

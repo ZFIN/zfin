@@ -118,7 +118,7 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         int deletedUniprotLinksCount = actions.stream().filter(a -> a.getType().equals(UniProtLoadAction.Type.DELETE)).toList().size();
         int netIncrease = newUniprotLinksCount - deletedUniprotLinksCount;
         int postExistingUniprotLinks = preExistingUniprotLinksCount + netIncrease;
-        return new UniProtLoadSummaryDTO(preExistingUniprotLinksCount, postExistingUniprotLinks);
+        return new UniProtLoadSummaryDTO("db_link records", preExistingUniprotLinksCount, postExistingUniprotLinks);
     }
 
     private void loadChangesIfNotDryRun(Set<UniProtLoadAction> actions) {
@@ -182,8 +182,7 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         pipeline.addHandler(new ReportLegacyProblemFilesHandler());
         pipeline.addHandler(new FlagPotentialIssuesHandler());
 
-        Set<UniProtLoadAction> actions = pipeline.execute();
-        return actions;
+        return pipeline.execute();
     }
 
     private void writeOutputReportFile(Set<UniProtLoadAction> actions, UniProtLoadSummaryDTO summary) {

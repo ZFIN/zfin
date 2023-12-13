@@ -232,8 +232,8 @@
         }
 
         function ReportSummary({reportSummary}) {
-            const beforeCount = reportSummary.beforeLoadUniprotCount;
-            const afterCount = reportSummary.afterLoadUniprotCount;
+            const beforeCount = reportSummary.beforeLoadCount;
+            const afterCount = reportSummary.afterLoadCount;
             const changeCount = afterCount - beforeCount;
             const percentChange = (changeCount / beforeCount) * 100;
 
