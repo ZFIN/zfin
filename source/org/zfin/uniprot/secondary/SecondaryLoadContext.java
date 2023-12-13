@@ -56,6 +56,8 @@ public class SecondaryLoadContext {
     private List<ProteinToInterproDTO> existingProteinToInterproRecords;
     private List<PdbDTO> existingPdbRecords;
 
+    private Map<String, String> termOntologyMap;
+
 
     public static SecondaryLoadContext createFromDBConnection() {
         SecondaryLoadContext loadContext = new SecondaryLoadContext();
@@ -72,57 +74,95 @@ public class SecondaryLoadContext {
 
     public void initializeContext() {
 
+        log.info("Load Step 1: Getting Existing Uniprot DB Links");
         initializeUniprotDBLinksFromDatabase();
 
+        log.info("Load Step 2: Getting Existing Interpro DB Links");
         initializeInterproDBLinksFromDatabase();
 
+        log.info("Load Step 3: Getting Existing EC DB Links");
         initializeECDBLinksFromDatabase();
 
+        log.info("Load Step 4: Getting Existing PFAM DB Links");
         initializePfamDBLinksFromDatabase();
 
+        log.info("Load Step 5: Getting Existing PROSITE DB Links");
         initializePrositeDBLinksFromDatabase();
 
+        log.info("Load Step 7: Getting Existing MarkerGoTermEvidence Records");
         initializeMarkerGoTermEvidenceFromDatabase();
 
-        // commented out -> need to review the logic and see if it is needed to be specific to SPKW
-//        log.info("Load Step 7: Getting Existing MarkerGoTermEvidence Records");
-//
-//        loadContext.setExistingMarkerGoTermEvidenceRecordsForSPKW(
-//
-//                MarkerGoTermEvidenceSlimDTO.fromMarkerGoTermEvidences(
-//                        getMarkerGoTermEvidenceRepository().getMarkerGoTermEvidencesForPubZdbID(SPKW_PUB_ID)
-//                )
-//        );
-
-        //initializeExternalNotesFromDatabase
-//        log.info("Load Step 8: Getting Existing External Notes");
-//        setExternalNotesByUniprotAccession(
-//                getInfrastructureRepository().getDBLinkExternalNoteByPublicationID(SecondaryTermLoadService.EXTNOTE_PUBLICATION_ATTRIBUTION_ID)
-//        );
-
         //initializeInterproDomainRecordsFromDatabase
-        log.info("Load Step 9: Getting Existing Interpro Domain Entry Records");
+        log.info("Load Step 8: Getting Existing Interpro Domain Entry Records");
         setExistingInterproDomainRecords(fetchExistingInterproDomainRecords());
 
         //initializeProteinRecordsFromDatabase
-        log.info("Load Step 10: Getting Existing Protein Records");
+        log.info("Load Step 9: Getting Existing Protein Records");
         setExistingProteinRecords(fetchExistingProteinRecords());
 
         //initializeMarkerToProteinRecordsFromDatabase
-        log.info("Load Step 11: Getting Existing Protein Records");
+        log.info("Load Step 10: Getting Existing Protein Records");
         setExistingMarkerToProteinRecords(fetchExistingMarkerToProteinRecords());
 
         //initializeProteinToInterproRecordsFromDatabase
-        log.info("Load Step 12: Getting Existing Protein to Interpro Records");
+        log.info("Load Step 11: Getting Existing Protein to Interpro Records");
         setExistingProteinToInterproRecords(fetchExistingProteinToInterproRecords());
 
         //initializePdbRecordsFromDatabase
-        log.info("Load Step 13: Getting Existing PDB Records");
+        log.info("Load Step 12: Getting Existing PDB Records");
         setExistingPdbRecords(fetchExistingPdbRecords());
+
+        //initializeTermOntologyMap
+        log.info("Load Step 13: Getting Term Ontology Map");
+        setTermOntologyMap(fetchTermOntologyMap());
+    }
+
+    public void initializeUniprotDBLinksFromDatabase() {
+        SequenceRepository sr = getSequenceRepository();
+
+        setUniprotDbLinks(
+                convertToDTO(
+                        sr.getMarkerDBLinks(
+                                sr.getReferenceDatabase(UNIPROTKB, POLYPEPTIDE, SEQUENCE, ZEBRAFISH))));
+    }
+
+    public void initializeInterproDBLinksFromDatabase() {
+        SequenceRepository sr = getSequenceRepository();
+
+        setInterproDbLinks(
+                convertToDTO(
+                        sr.getMarkerDBLinks(
+                                sr.getReferenceDatabase(INTERPRO, DOMAIN, PROTEIN, ZEBRAFISH))));
+    }
+
+    public void initializeECDBLinksFromDatabase() {
+        SequenceRepository sr = getSequenceRepository();
+
+        setEcDbLinks(
+                convertToDTO(
+                        sr.getMarkerDBLinks(
+                                sr.getReferenceDatabase(EC, DOMAIN, PROTEIN, ZEBRAFISH))));
+    }
+
+    public void initializePfamDBLinksFromDatabase() {
+        SequenceRepository sr = getSequenceRepository();
+
+        setPfamDbLinks(
+                convertToDTO(
+                        sr.getMarkerDBLinks(
+                                sr.getReferenceDatabase(PFAM, DOMAIN, PROTEIN, ZEBRAFISH))));
+    }
+
+    public void initializePrositeDBLinksFromDatabase() {
+        SequenceRepository sr = getSequenceRepository();
+
+        setPrositeDbLinks(
+                convertToDTO(
+                        sr.getMarkerDBLinks(
+                                sr.getReferenceDatabase(PROSITE, DOMAIN, PROTEIN, ZEBRAFISH))));
     }
 
     public void initializeMarkerGoTermEvidenceFromDatabase() {
-        log.info("Load Step 7: Getting Existing MarkerGoTermEvidence Records");
         setExistingMarkerGoTermEvidenceRecords(
                 MarkerGoTermEvidenceSlimDTO.fromMarkerGoTermEvidences(
                         getMarkerGoTermEvidenceRepository()
@@ -140,56 +180,6 @@ public class SecondaryLoadContext {
                                 .toList()
                 )
         );
-    }
-
-    public void initializePrositeDBLinksFromDatabase() {
-        SequenceRepository sr = getSequenceRepository();
-        
-        log.info("Load Step 5: Getting Existing PROSITE DB Links");
-        setPrositeDbLinks(
-                convertToDTO(
-                        sr.getMarkerDBLinks(
-                                sr.getReferenceDatabase(PROSITE, DOMAIN, PROTEIN, ZEBRAFISH))));
-    }
-
-    public void initializePfamDBLinksFromDatabase() {
-        SequenceRepository sr = getSequenceRepository();
-        
-        log.info("Load Step 4: Getting Existing PFAM DB Links");
-        setPfamDbLinks(
-                convertToDTO(
-                        sr.getMarkerDBLinks(
-                                sr.getReferenceDatabase(PFAM, DOMAIN, PROTEIN, ZEBRAFISH))));
-    }
-
-    public void initializeECDBLinksFromDatabase() {
-        SequenceRepository sr = getSequenceRepository();
-        
-        log.info("Load Step 3: Getting Existing EC DB Links");
-        setEcDbLinks(
-                convertToDTO(
-                        sr.getMarkerDBLinks(
-                                sr.getReferenceDatabase(EC, DOMAIN, PROTEIN, ZEBRAFISH))));
-    }
-
-    public void initializeInterproDBLinksFromDatabase() {
-        SequenceRepository sr = getSequenceRepository();
-        
-        log.info("Load Step 2: Getting Existing Interpro DB Links");
-        setInterproDbLinks(
-                convertToDTO(
-                        sr.getMarkerDBLinks(
-                                sr.getReferenceDatabase(INTERPRO, DOMAIN, PROTEIN, ZEBRAFISH))));
-    }
-
-    public void initializeUniprotDBLinksFromDatabase() {
-        SequenceRepository sr = getSequenceRepository();
-        
-        log.info("Load Step 1: Getting Existing Uniprot DB Links");
-        setUniprotDbLinks(
-                convertToDTO(
-                        sr.getMarkerDBLinks(
-                                sr.getReferenceDatabase(UNIPROTKB, POLYPEPTIDE, SEQUENCE, ZEBRAFISH))));
     }
 
     public static List<InterProProteinDTO> fetchExistingInterproDomainRecords() {
@@ -258,6 +248,28 @@ public class SecondaryLoadContext {
         return pdbRecords;
     }
 
+
+    private Map<String, String> fetchTermOntologyMap() {
+        //based on perl logic
+        //TODO: convert to more java-like code
+        String sql = """
+                select distinct term_zdb_id, term_ontology
+                 from marker_go_term_evidence, term
+                         where term_ont_id like 'GO%'
+                           and mrkrgoev_evidence_code = 'IEA'
+                           and term_ontology in ('cellular_component', 'molecular_function', 'biological_process')
+                           and mrkrgoev_term_zdb_id = term_zdb_id                
+                """;
+        List queryResults = currentSession().createSQLQuery(sql).list();
+        Map<String, String> termOntologyMap = new HashMap<>();
+        for(Object result : queryResults) {
+            Object[] row = (Object[]) result;
+            String termZdbID = (String) row[0];
+            String termOntology = (String) row[1];
+            termOntologyMap.put(termZdbID, termOntology);
+        }
+        return termOntologyMap;
+    }
 //    private void setExternalNotesByUniprotAccession(List<DBLinkExternalNote> dbLinkExternalNoteByPublicationID) {
 //        this.externalNotesByUniprotAccession = new HashMap<>();
 //        dbLinkExternalNoteByPublicationID.forEach(dbLinkExternalNote -> {
