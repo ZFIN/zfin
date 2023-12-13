@@ -3,6 +3,7 @@ package org.zfin.uniprot.secondary;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.zfin.uniprot.dto.UniProtLoadSummaryDTO;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,12 +16,8 @@ public class SecondaryTermLoadActionsContainer {
 
     private Long releaseID;
     private Date creationDate;
+    private List<UniProtLoadSummaryDTO> summary;
 
     private List<SecondaryTermLoadAction> actions = new ArrayList<>();
 
-    public SecondaryTermLoadActionsContainer(Long releaseID, Date creationDate, List<SecondaryTermLoadAction> actions) {
-        this.releaseID = releaseID;
-        this.creationDate = creationDate;
-        this.actions = actions;
-    }
 }

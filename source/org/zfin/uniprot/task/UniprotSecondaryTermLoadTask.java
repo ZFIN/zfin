@@ -12,9 +12,10 @@ import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.uniprot.datfiles.UniprotReleaseRecords;
 import org.zfin.uniprot.dto.InterProProteinDTO;
+import org.zfin.uniprot.dto.UniProtLoadSummaryDTO;
 import org.zfin.uniprot.interpro.EntryListTranslator;
-import org.zfin.uniprot.secondary.*;
 import org.zfin.uniprot.persistence.UniProtRelease;
+import org.zfin.uniprot.secondary.*;
 import org.zfin.uniprot.secondary.handlers.*;
 
 import java.io.BufferedReader;
@@ -30,6 +31,7 @@ import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 import static org.zfin.sequence.ForeignDB.AvailableName.*;
 import static org.zfin.uniprot.UniProtFilterTask.readAllZebrafishEntriesFromSourceIntoRecords;
 import static org.zfin.uniprot.UniProtTools.getArgOrEnvironmentVar;
+import static org.zfin.uniprot.secondary.SecondaryTermLoadService.createStatistics;
 
 @Log4j2
 @Getter
@@ -44,7 +46,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
 
     private enum LoadTaskMode {
         REPORT,
-        REPORT_AND_LOAD
+        STATS, REPORT_AND_LOAD
     }
     private final LoadTaskMode mode;
     private final String actionsFileName;
@@ -104,6 +106,9 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
             domainFile = getArgOrEnvironmentVar(args, 4, "DOMAIN_FILE", "");
             outputJsonName = getArgOrEnvironmentVar(args, 5, "UNIPROT_OUTPUT_FILE", defaultOutputFileName(inputFileName));
             contextInputFile = getArgOrEnvironmentVar(args, 6, "CONTEXT_INPUT_FILE", "");
+        } else if (mode.equals(LoadTaskMode.STATS)) {
+            actionsFileName = getArgOrEnvironmentVar(args, 1, "UNIPROT_ACTIONS_FILE", "");
+            contextInputFile = getArgOrEnvironmentVar(args, 2, "CONTEXT_INPUT_FILE", "");
         } else {
             printUsage();
             System.exit(1);
@@ -151,10 +156,23 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
         initialize();
         log.info("Starting UniProtSecondaryTermLoadTask for file " + inputFileName + ".");
 
-        if (!mode.equals(LoadTaskMode.REPORT) && !mode.equals(LoadTaskMode.REPORT_AND_LOAD)) {
+        if (!mode.equals(LoadTaskMode.REPORT) && !mode.equals(LoadTaskMode.REPORT_AND_LOAD) && !mode.equals(LoadTaskMode.STATS)) {
             System.out.println("Invalid mode: " + mode);
             printUsage();
             System.exit(1);
+        }
+
+        //for debugging purposes, we can load actions and context from files and generate statistics
+        if (mode.equals(LoadTaskMode.STATS)) {
+            log.info("Loading actions from file " + actionsFileName + ".");
+            List<SecondaryTermLoadAction> actions = readActionsFromFile(actionsFileName);
+            log.info("Loaded " + actions.size() + " actions from file " + actionsFileName + ".");
+
+            log.info("Reading context file: " + contextInputFile + ".");
+            SecondaryLoadContext context = SecondaryLoadContext.createFromContextFile(contextInputFile);
+            List<UniProtLoadSummaryDTO> statistics = createStatistics(actions, context);
+            statistics.forEach(statistic -> statistic.debugToStdOut());
+            System.exit(0);
         }
 
         try (BufferedReader inputFileReader = new BufferedReader(new java.io.FileReader(inputFileName))) {
@@ -163,8 +181,11 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
             setupPipeline(entries);
             calculatePipelineActions();
             log.info("Finished executing pipeline: " + pipeline.getActions().size() + " actions created.");
-            writeActionsToFile(pipeline.getActions());
-            writeOutputReportFile(pipeline.getActions());
+
+            SecondaryTermLoadActionsContainer container = pipeline.getActionsContainer();
+
+            writeActionsToFile(container);
+            writeOutputReportFile(container);
 
             String overrideEnv = System.getenv("ACTION_SIZE_ERROR_THRESHOLD");
             long overrideThreshold = overrideEnv == null ? ACTION_SIZE_ERROR_THRESHOLD : Long.parseLong(overrideEnv);
@@ -299,12 +320,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
         pipeline.createActions();
     }
 
-    private void writeActionsToFile(List<SecondaryTermLoadAction> actions) {
-        SecondaryTermLoadActionsContainer actionsContainer = new SecondaryTermLoadActionsContainer(
-                this.release == null ? null : this.release.getUpr_id(),
-                new Date(),
-                actions);
-
+    private void writeActionsToFile(SecondaryTermLoadActionsContainer actionsContainer) {
         try {
             (new ObjectMapper()).writeValue(new File(this.outputJsonName), actionsContainer);
         } catch (IOException e) {
@@ -313,12 +329,28 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
         }
     }
 
-    private void writeOutputReportFile(List<SecondaryTermLoadAction> actions) {
+    private List<SecondaryTermLoadAction> readActionsFromFile(String filename) {
+        try {
+            SecondaryTermLoadActionsContainer actionsContainer = (new ObjectMapper()).readValue(new File(filename), SecondaryTermLoadActionsContainer.class);
+            return actionsContainer.getActions();
+        } catch (IOException e) {
+            log.error("Failed to read JSON file: " + filename, e);
+            return null;
+        }
+    }
+
+    /**
+     * Write the actions to a report file for display.
+     * It replaces the placeholder in the template with the JSON string.
+     * The rest of the display logic is handled by the HTML file.
+     * @param container
+     */
+    private void writeOutputReportFile(SecondaryTermLoadActionsContainer container) {
         String reportFile = this.outputReportName;
 
         log.info("Creating report file: " + reportFile);
         try {
-            String jsonContents = actionsToJsonString(actions);
+            String jsonContents = actionsToJsonString(container);
             String template = ZfinPropertiesEnum.SOURCEROOT.value() + LOAD_REPORT_TEMPLATE_HTML;
             String templateContents = FileUtils.readFileToString(new File(template), "UTF-8");
             String filledTemplate = templateContents.replace(JSON_PLACEHOLDER_IN_TEMPLATE, jsonContents);
@@ -328,12 +360,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
         }
     }
 
-    private String actionsToJsonString(List<SecondaryTermLoadAction> actions) throws JsonProcessingException {
-        SecondaryTermLoadActionsContainer actionsContainer = new SecondaryTermLoadActionsContainer(
-                this.release == null ? null : this.release.getUpr_id(),
-                new Date(),
-                actions);
-
+    private String actionsToJsonString(SecondaryTermLoadActionsContainer actionsContainer) throws JsonProcessingException {
         return (new ObjectMapper()).writeValueAsString(actionsContainer);
     }
 
@@ -373,8 +400,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
 
     public static void printUsage() {
         System.out.println("Usage: uniprotSecondaryTermLoadTask <mode> [more args]");
-        System.out.println("  mode: 'LOAD' or 'REPORT' or 'REPORT_AND_LOAD'");
-        System.out.println("  if mode is 'LOAD', more args = <actions file>");
+        System.out.println("  mode: 'REPORT' or 'REPORT_AND_LOAD'");
         System.out.println("  if mode is 'REPORT_AND_LOAD' or 'REPORT', more args = <input file> <up to go translation file> <ip to go translation file> <ec to go translation file> <output file>");
         System.out.println("  instead of arguments, you can use environment variables: UNIPROT_LOAD_MODE, INPUT_FILE, UP_TO_GO_TRANSLATION_FILE, IP_TO_GO_TRANSLATION_FILE, EC_TO_GO_TRANSLATION_FILE, OUTPUT_FILE");
         System.out.println("  or, for load mode, env vars: UNIPROT_LOAD_MODE, UNIPROT_ACTIONS_FILE");
