@@ -1,6 +1,55 @@
 import React, {useEffect, useState, useRef} from 'react';
+import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 
+const QuickFigureDialog = ({pubId, toggle}) => {
+    const [types] = useState(['Fig.', 'text only', 'Table']);
+    const [type, setType] = useState(types[0]);
+    const [label, setLabel] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const [submitting, setSubmitting] = useState(false);
+
+    function submit() {
+        console.log('submit');
+    }
+
+    function readyToSubmit() {
+        return (type === 'text only') || (label !== '');
+    }
+
+    const onToggle = () => {
+        console.log('onToggle');
+        toggle();
+    }
+
+    return (
+        <div className="quick-fig-content">
+            <button type="button" className='close' onClick={() => onToggle()}>×</button>
+            <h4>Quick Figure</h4>
+            <form className='form-inline'>
+                <select className='form-control mr-1' value={type} onChange={e => setType(e.target.value)}>
+                    {types.map(t => (
+                        <option key={t} value={t}>{t}</option>
+                    ))}
+                </select>
+                <input
+                    className='form-control form-control-fixed-width-sm mr-1'
+                    type="text"
+                    value={label}
+                    onChange={e => setLabel(e.target.value)}
+                    disabled={type === 'text only'}
+                />
+                <i className="fas fa-check"></i>
+                <button className='btn btn-primary' type="button" onClick={submit} disabled={submitting || !readyToSubmit()}>
+                    {submitting ? 'Loading...' : 'Submit'}
+                </button>
+            </form>
+            {successMessage && <p>{successMessage}</p>}
+            {errorMessage && <p>{errorMessage}</p>}
+        </div>
+    );
+}
 
 const QuickFigure = ({ pubId }) => {
     const popoverRef = useRef(null);
@@ -11,34 +60,12 @@ const QuickFigure = ({ pubId }) => {
     const [submitting, setSubmitting] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const [isInitialized, setIsInitialized] = useState(false);
 
-    const popoverTemplate = `
-            <div class="quick-fig-content">
-              <div>
-                <button type="button" class="close"><span aria-hidden="true">&times;</span></button>
-                <h4>Quick Figure</h4>
-                <form class="form-inline">
-                  <select class="form-control mr-1">
-                        <option label="Fig." value="string:Fig." selected="selected">Fig.</option>
-                        <option label="text only" value="string:text only">text only</option>
-                        <option label="Table" value="string:Table">Table</option>                  
-                  </select>
-                  <input type="text" class="form-control form-control-fixed-width-sm mr-1">
-                  <button class="btn btn-primary">
-                    <i ng-show="!vm.submitting" class="fas fa-check"></i>
-<!--                    <i ng-show="vm.submitting" class="fas fa-spinner fa-spin"></i>-->
-                  </button>
-                </form>
-                <p class="text-success d-none"></p>
-                <p class="text-danger d-none"></p>
-                <small><a ng-href="/action/publication/${pubId}/edit#figures">Add figure with images and caption</a></small>
-              </div>
-            </div>    
-    `;
+    const popoverTemplate = `<div id="popover-dialog-container"></div>`;
 
     const toggle = () => {
-        setOpen(!open);
-        reset();
+        $(popoverRef.current).popover('toggle');
     };
 
     const submit = () => {
@@ -75,8 +102,14 @@ const QuickFigure = ({ pubId }) => {
         setErrorMessage('');
     };
 
-    const handlePopoverInserted = (a,b,c,d) => {
-        console.log('handlePopoverInserted', a,b,c,d);
+    const handlePopoverInserted = (event) => {
+        console.log('handlePopoverInserted event:', event);
+        if (!isInitialized) {
+            setIsInitialized(true);
+            const popoverEl = document.getElementById('popover-dialog-container');
+            const dialog = <QuickFigureDialog pubId={pubId} toggle={() => toggle()}/>;
+            ReactDOM.render(dialog, popoverEl);
+        }
     }
 
     useEffect(() => {
@@ -102,42 +135,9 @@ const QuickFigure = ({ pubId }) => {
         };
     }, []);
 
-
-    useEffect(() => {
-        if(popoverRef.current) {
-            console.log("popoverRef.current", popoverRef.current);
-            open ? $(popoverRef.current).popover('show') : $(popoverRef.current).popover('hide');
-        }
-    }, [open]);
-
     return (
         <span className='quick-figure-add'>
             <a href="#" ref={popoverRef} data-toggle='popover' onClick={toggle}>Add Figure XYZ</a>
-            <div id="popover-content" className="d-none">
-                <div className="quick-fig-content">
-                    <button type="button" onClick={toggle}>×</button>
-                    <h4>Quick Figure</h4>
-                    <form>
-                        <select value={type} onChange={e => setType(e.target.value)}>
-                            {types.map(t => (
-                                <option key={t} value={t}>{t}</option>
-                            ))}
-                        </select>
-                        <input
-                            type="text"
-                            value={label}
-                            onChange={e => setLabel(e.target.value)}
-                            disabled={type === 'text only'}
-                        />
-                        <button type="button" onClick={submit} disabled={submitting || !readyToSubmit()}>
-                            {submitting ? 'Loading...' : 'Submit'}
-                        </button>
-                    </form>
-                    {successMessage && <p>{successMessage}</p>}
-                    {errorMessage && <p>{errorMessage}</p>}
-                </div>
-            </div>
-            {open && (<div className="d-none"></div>)}
         </span>
     );
 };
