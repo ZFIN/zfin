@@ -10,9 +10,10 @@ import org.biojava.bio.BioException;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.properties.ZfinPropertiesEnum;
+import org.zfin.uniprot.UniProtLoadSummaryService;
 import org.zfin.uniprot.datfiles.UniprotReleaseRecords;
 import org.zfin.uniprot.dto.InterProProteinDTO;
-import org.zfin.uniprot.dto.UniProtLoadSummaryDTO;
+import org.zfin.uniprot.dto.UniProtLoadSummaryListDTO;
 import org.zfin.uniprot.interpro.EntryListTranslator;
 import org.zfin.uniprot.persistence.UniProtRelease;
 import org.zfin.uniprot.secondary.*;
@@ -23,7 +24,9 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Optional;
 
 import static org.zfin.datatransfer.service.DownloadService.downloadFileViaWget;
 import static org.zfin.framework.HibernateUtil.currentSession;
@@ -31,7 +34,6 @@ import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 import static org.zfin.sequence.ForeignDB.AvailableName.*;
 import static org.zfin.uniprot.UniProtFilterTask.readAllZebrafishEntriesFromSourceIntoRecords;
 import static org.zfin.uniprot.UniProtTools.getArgOrEnvironmentVar;
-import static org.zfin.uniprot.secondary.SecondaryTermLoadService.createStatistics;
 
 @Log4j2
 @Getter
@@ -46,7 +48,7 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
 
     private enum LoadTaskMode {
         REPORT,
-        STATS, REPORT_AND_LOAD
+        REPORT_AND_LOAD
     }
     private final LoadTaskMode mode;
     private final String actionsFileName;
@@ -106,9 +108,6 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
             domainFile = getArgOrEnvironmentVar(args, 4, "DOMAIN_FILE", "");
             outputJsonName = getArgOrEnvironmentVar(args, 5, "UNIPROT_OUTPUT_FILE", defaultOutputFileName(inputFileName));
             contextInputFile = getArgOrEnvironmentVar(args, 6, "CONTEXT_INPUT_FILE", "");
-        } else if (mode.equals(LoadTaskMode.STATS)) {
-            actionsFileName = getArgOrEnvironmentVar(args, 1, "UNIPROT_ACTIONS_FILE", "");
-            contextInputFile = getArgOrEnvironmentVar(args, 2, "CONTEXT_INPUT_FILE", "");
         } else {
             printUsage();
             System.exit(1);
@@ -156,23 +155,10 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
         initialize();
         log.info("Starting UniProtSecondaryTermLoadTask for file " + inputFileName + ".");
 
-        if (!mode.equals(LoadTaskMode.REPORT) && !mode.equals(LoadTaskMode.REPORT_AND_LOAD) && !mode.equals(LoadTaskMode.STATS)) {
+        if (!mode.equals(LoadTaskMode.REPORT) && !mode.equals(LoadTaskMode.REPORT_AND_LOAD)) {
             System.out.println("Invalid mode: " + mode);
             printUsage();
             System.exit(1);
-        }
-
-        //for debugging purposes, we can load actions and context from files and generate statistics
-        if (mode.equals(LoadTaskMode.STATS)) {
-            log.info("Loading actions from file " + actionsFileName + ".");
-            List<SecondaryTermLoadAction> actions = readActionsFromFile(actionsFileName);
-            log.info("Loaded " + actions.size() + " actions from file " + actionsFileName + ".");
-
-            log.info("Reading context file: " + contextInputFile + ".");
-            SecondaryLoadContext context = SecondaryLoadContext.createFromContextFile(contextInputFile);
-            List<UniProtLoadSummaryDTO> statistics = createStatistics(actions, context);
-            statistics.forEach(statistic -> statistic.debugToStdOut());
-            System.exit(0);
         }
 
         try (BufferedReader inputFileReader = new BufferedReader(new java.io.FileReader(inputFileName))) {
@@ -185,7 +171,6 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
             SecondaryTermLoadActionsContainer container = pipeline.getActionsContainer();
 
             writeActionsToFile(container);
-            writeOutputReportFile(container);
 
             String overrideEnv = System.getenv("ACTION_SIZE_ERROR_THRESHOLD");
             long overrideThreshold = overrideEnv == null ? ACTION_SIZE_ERROR_THRESHOLD : Long.parseLong(overrideEnv);
@@ -197,12 +182,17 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
                 System.exit(1);
             }
 
+            UniProtLoadSummaryListDTO summary = null;
             if (mode.equals(LoadTaskMode.REPORT_AND_LOAD)) {
+                UniProtLoadSummaryListDTO beforeSummary = UniProtLoadSummaryService.getBeforeSummary();
                 //clear the session to avoid memory issues that slow down the load inserts and updates
                 currentSession().clear();
                 pipeline.setRelease(release);
                 pipeline.processActions();
+                summary = UniProtLoadSummaryService.getAfterSummary(beforeSummary);
             }
+            container.setSummary(summary);
+            writeOutputReportFile(container);
         }
     }
 
