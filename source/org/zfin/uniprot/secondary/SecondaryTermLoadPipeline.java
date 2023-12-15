@@ -173,7 +173,6 @@ public class SecondaryTermLoadPipeline {
         container.setActions(getActions());
         container.setReleaseID(release == null ? null : release.getUpr_id());
         container.setCreationDate(new Date());
-        container.setSummary(SecondaryTermLoadService.createStatistics(getActions(), getContext()));
         return container;
     }
 }
