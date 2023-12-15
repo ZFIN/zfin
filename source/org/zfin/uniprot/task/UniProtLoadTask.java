@@ -19,7 +19,7 @@ import java.util.*;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.uniprot.*;
 import org.zfin.uniprot.adapter.RichSequenceAdapter;
-import org.zfin.uniprot.dto.UniProtLoadSummaryDTO;
+import org.zfin.uniprot.dto.UniProtLoadSummaryItemDTO;
 import org.zfin.uniprot.handlers.*;
 import org.zfin.uniprot.persistence.UniProtRelease;
 
@@ -107,18 +107,18 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
             Map<String, RichSequenceAdapter> entries = readUniProtEntries(inputFileReader);
             Set<UniProtLoadAction> actions = executePipeline(entries);
             loadChangesIfNotDryRun(actions);
-            UniProtLoadSummaryDTO summary = calculateSummary(actions);
+            UniProtLoadSummaryItemDTO summary = calculateSummary(actions);
             writeOutputReportFile(actions, summary);
         }
     }
 
-    private UniProtLoadSummaryDTO calculateSummary(Set<UniProtLoadAction> actions) {
+    private UniProtLoadSummaryItemDTO calculateSummary(Set<UniProtLoadAction> actions) {
         int preExistingUniprotLinksCount = context.getUniprotDbLinks().size();
         int newUniprotLinksCount = actions.stream().filter(a -> a.getType().equals(UniProtLoadAction.Type.LOAD)).toList().size();
         int deletedUniprotLinksCount = actions.stream().filter(a -> a.getType().equals(UniProtLoadAction.Type.DELETE)).toList().size();
         int netIncrease = newUniprotLinksCount - deletedUniprotLinksCount;
         int postExistingUniprotLinks = preExistingUniprotLinksCount + netIncrease;
-        return new UniProtLoadSummaryDTO("db_link records", preExistingUniprotLinksCount, postExistingUniprotLinks);
+        return new UniProtLoadSummaryItemDTO("db_link records", Long.valueOf(preExistingUniprotLinksCount), Long.valueOf(postExistingUniprotLinks));
     }
 
     private void loadChangesIfNotDryRun(Set<UniProtLoadAction> actions) {
@@ -185,7 +185,7 @@ public class UniProtLoadTask extends AbstractScriptWrapper {
         return pipeline.execute();
     }
 
-    private void writeOutputReportFile(Set<UniProtLoadAction> actions, UniProtLoadSummaryDTO summary) {
+    private void writeOutputReportFile(Set<UniProtLoadAction> actions, UniProtLoadSummaryItemDTO summary) {
         String reportFile = this.outputReportName;
         String jsonFile = this.outputJsonName;
 

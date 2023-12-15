@@ -2,7 +2,7 @@ package org.zfin.uniprot;
 
 import lombok.Builder;
 import lombok.Getter;
-import org.zfin.uniprot.dto.UniProtLoadSummaryDTO;
+import org.zfin.uniprot.dto.UniProtLoadSummaryItemDTO;
 
 import java.util.Set;
 
@@ -10,7 +10,7 @@ import java.util.Set;
 @Getter
 public class UniProtLoadActionsContainer {
 
-    private final UniProtLoadSummaryDTO summary;
+    private final UniProtLoadSummaryItemDTO summary;
     private final Set<UniProtLoadAction> actions;
 
 }
