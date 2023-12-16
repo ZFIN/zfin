@@ -2,7 +2,7 @@
 <%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
 
 <z:page bootstrap="true">
-    <script src="${zfn:getAssetPath("angular.js")}"></script>
+<%--    <script src="${zfn:getAssetPath("angular.js")}"></script>--%>
     <script src="${zfn:getAssetPath("curation.js")}"></script>
 
     <c:if test="${hasCorrespondence}">
@@ -47,12 +47,10 @@
                 <a class="small-new-link" href="javascript:"
                    onClick=open("/action/marker/nonTranscribedRegion-add?source=${publication.zdbID}","helpwindow","scrollbars=yes,height=850,width=550,resizable=yes")>
                     Add New NTR</a> |
-
-                    <a class="small-new-link" href="javascript:"
-                       onClick=open("/action/infrastructure/controlled-vocabulary-add","helpwindow","scrollbars=yes,height=850,width=750,resizable=yes")>
-                        Add New Species (for Constructs)</a> |
-
-                <span quick-figure pub-id="${publication.zdbID}"></span> |
+                <a class="small-new-link" href="javascript:"
+                   onClick=open("/action/infrastructure/controlled-vocabulary-add","helpwindow","scrollbars=yes,height=850,width=750,resizable=yes")>
+                    Add New Species (for Constructs)</a> |
+                <span class="__react-root" id="QuickFigure" data-pub-id="${publication.zdbID}"></span> |
                 <a class="small-new-link" href="javascript:"
                    onClick=open("/action/publication/${publication.zdbID}/feature-list","helpwindow","scrollbars=yes,height=850,width=700,resizable=yes")>FEATURE
                     TABLE</a> |
