@@ -21,6 +21,5 @@ require('./marker-notes.directive');
 require('./marker-relationships.directive');
 require('./marker-suppliers.directive');
 require('./pub-lookup.directive');
-require('./quick-figure.directive');
 require('./reference-editor.directive');
 
