@@ -48,6 +48,13 @@ public class BeanCompareService {
             newField = (newField == null ? false : newField);
         }
 
+        //if both are null (or empty string), then they are equal
+        boolean oldFieldIsNull = oldField == null || (oldField instanceof String && StringUtils.isEmpty((String) oldField));
+        boolean newFieldIsNull = newField == null || (newField instanceof String && StringUtils.isEmpty((String) newField));
+        if (oldFieldIsNull && newFieldIsNull) {
+            return null;
+        }
+
         if (!Objects.equals(oldField, newField)) {
             beanFieldUpdate = new BeanFieldUpdate();
             if (oldField instanceof String oldFieldString) {
