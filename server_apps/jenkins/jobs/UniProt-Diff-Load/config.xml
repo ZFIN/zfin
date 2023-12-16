@@ -37,11 +37,12 @@
       <command>
         <![CDATA[
 echo "WORKSPACE=$WORKSPACE"
+echo "PWD=$PWD"
 echo "UNIPROT_COMMIT_CHANGES=$UNIPROT_COMMIT_CHANGES"
-rm -f $WORKSPACE/uniprot_load_report.html $WORKSPACE/uniprot_context.json
+rm -f $PWD/uniprot_load_report.html $PWD/uniprot_context.json
+export UNIPROT_OUTPUT_REPORT_FILE="$PWD/uniprot_load_report.html"
+export UNIPROT_CONTEXT_FILE="$PWD/uniprot_context.json"
 cd $SOURCEROOT
-export UNIPROT_OUTPUT_REPORT_FILE="$WORKSPACE/uniprot_load_report.html"
-export UNIPROT_CONTEXT_FILE="$WORKSPACE/uniprot_context.json"
 gradle uniprotLoadTask
         ]]>
       </command>
