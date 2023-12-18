@@ -36,7 +36,10 @@ INSERT INTO tmp_cur_pub
                                          'ZDB-PERS-220425-1',
                                          'ZDB-PERS-990902-1',
                                          'ZDB-PERS-201217-1',
-                                         'ZDB-PERS-050429-23')
+                                         'ZDB-PERS-990902-1',
+                                        'ZDB-PERS-220425-1',
+                                        'ZDB-PERS-221004-4'
+                                             'ZDB-PERS-050429-23')
   ORDER  BY cur_curator_zdb_id;
 
 INSERT INTO tmp_cur_pub
