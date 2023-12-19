@@ -1,6 +1,8 @@
 package org.zfin.feature;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
@@ -28,6 +30,8 @@ import java.util.stream.Collectors;
  * Feature business entity.
  */
 @Entity
+@Setter
+@Getter
 @Table(name = "feature")
 //@Audited
 // Only update attributes that have changed.
@@ -269,15 +273,6 @@ public class Feature implements EntityNotes, EntityZdbID {
 
     public void setAliases(Set<FeatureAlias> aliases) {
         this.aliases = aliases;
-    }
-
-    public String getZdbID() {
-
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
     }
 
     public String getName() {

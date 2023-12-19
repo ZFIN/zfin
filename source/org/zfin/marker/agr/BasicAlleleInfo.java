@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getFeatureRepository;
 
@@ -27,18 +26,8 @@ import static org.zfin.repository.RepositoryFactory.getFeatureRepository;
 public class BasicAlleleInfo extends AbstractScriptWrapper {
 
 
-    private int numfOfRecords;
-
-    public BasicAlleleInfo(int number) {
-        numfOfRecords = number;
-    }
-
     public static void main(String[] args) throws IOException {
-        int number = 0;
-        if (args.length > 0) {
-            number = Integer.parseInt(args[0]);
-        }
-        BasicAlleleInfo basicAlleleInfo = new BasicAlleleInfo(number);
+        BasicAlleleInfo basicAlleleInfo = new BasicAlleleInfo();
         basicAlleleInfo.init();
         System.exit(0);
     }
@@ -71,12 +60,12 @@ public class BasicAlleleInfo extends AbstractScriptWrapper {
                             List<AlleleRelationDTO> alleleObjectRelations = new ArrayList<>();
                             for (Marker construct : getFeatureRepository().getConstruct(feature.getZdbID())) {
                                 if (construct != null) {
-                                    AlleleRelationDTO cobjectRelation = new AlleleRelationDTO();
+                                    AlleleRelationDTO objectRelation = new AlleleRelationDTO();
                                     ObjectRelationDTO constructRelation = new ObjectRelationDTO();
                                     constructRelation.setAssociationType("contains");
                                     constructRelation.setConstruct("ZFIN:" + construct.getZdbID());
-                                    cobjectRelation.setObjectRelation(constructRelation);
-                                    alleleObjectRelations.add(cobjectRelation);
+                                    objectRelation.setObjectRelation(constructRelation);
+                                    alleleObjectRelations.add(objectRelation);
                                 }
                             }
 
@@ -120,7 +109,7 @@ public class BasicAlleleInfo extends AbstractScriptWrapper {
 
                             return dto;
                         })
-                .collect(Collectors.toList());
+                .toList();
         List<AlleleDTO> allAlleleDTOListRemoveNulls = new ArrayList<>();
 
         allAlleleDTOList.forEach(alleleDTO -> {
