@@ -3357,15 +3357,6 @@ order by 2, 4, 5, 7;
         <Category orderIndex="130">
             <name>Wildtype Lines</name>
         </Category>
-        <Category orderIndex="135">
-            <name>ZFIN Alliance Data (1.0.1.4)</name>
-        </Category>
-        <Category orderIndex="136">
-            <name>ZFIN Alliance Data (1.0.1.1)</name>
-        </Category>
-        <Category orderIndex="137">
-            <name>ZFIN Alliance Data (1.0.1.0)</name>
-        </Category>
         <Category orderIndex="140">
             <name>Genetic Marker Relationships</name>
         </Category>
