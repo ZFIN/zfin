@@ -89,7 +89,8 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             AND publication = exp.publication
             AND res.expressionExperiment = exp
             AND exp.gene.zdbID = :zdbID
-            AND res.expressionFound is true""";
+            AND res.expressionFound is true
+            """;
         String sql = addOrderByParameters(hql);
         Query<Publication> query = session.createQuery(sql, Publication.class);
         addPaginationParameters(query);
@@ -2037,7 +2038,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             where  phenos.phenotypeWarehouse.fishExperiment = fishox  AND
             exists (select 'x' from GeneGenotypeExperiment where fishExperiment = fishox)
             """;
-        org.hibernate.query.Query<PhenotypeStatementWarehouse> query = session.createQuery(hql, PhenotypeStatementWarehouse.class);
+        Query<PhenotypeStatementWarehouse> query = session.createQuery(hql, PhenotypeStatementWarehouse.class);
 
         Map<Fish, List<PhenotypeStatementWarehouse>> phenoMap = query.list().stream()
             .collect(groupingBy((pheno) -> pheno.getPhenotypeExperiment().getFishExperiment().getFish()));

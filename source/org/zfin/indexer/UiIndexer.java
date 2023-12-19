@@ -147,7 +147,8 @@ public abstract class UiIndexer<Entity> extends Thread {
     protected abstract void cleanUiTables();
 
     protected void saveRecords(Collection<List<Entity>> batchedList) {
-        if(this.getClass().equals(UiIndexerConfig.PublicationExpressionIndexer.getIndexClazz())) {
+        if(this.getClass().equals(UiIndexerConfig.PublicationExpressionIndexer.getIndexClazz()) ||
+           this.getClass().equals(UiIndexerConfig.TermPhenotypeIndexer.getIndexClazz())) {
             saveWithStatefulSession(batchedList);
         } else {
             saveWithStatelessSession(batchedList);
