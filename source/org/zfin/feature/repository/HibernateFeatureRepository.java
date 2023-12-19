@@ -106,7 +106,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
     public List<Marker> getConstruct(String featureZdbId) {
         String hql = "select distinct fmrel1.marker from FeatureMarkerRelationship fmrel1" +
                      " where fmrel1.type in (:innocuous, :phenotypic) " +
-                     " and fmrel1.feature = :featureZdbId";
+                     " and fmrel1.feature.zdbID = :featureZdbId";
 
         Query<Marker> query = currentSession().createQuery(hql, Marker.class);
         query.setParameter("innocuous", FeatureMarkerRelationshipTypeEnum.CONTAINS_INNOCUOUS_SEQUENCE_FEATURE.toString());
