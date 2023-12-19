@@ -14,9 +14,9 @@
 -- END COMMENTED OUT SECTION
 
 -- DELETE external notes instead
-DELETE FROM external_note
- WHERE extnote_source_zdb_id = 'ZDB-PUB-230615-71'
-   AND extnote_note_type IS NULL;
+-- DELETE FROM external_note
+--  WHERE extnote_source_zdb_id = 'ZDB-PUB-230615-71'
+--    AND extnote_note_type IS NULL;
 
 -- clean up ncbi loaded refseqs for uniprot release:
 -- these refseqs were moved to ZDB-GENE-100922-192
