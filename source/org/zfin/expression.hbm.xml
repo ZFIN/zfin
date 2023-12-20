@@ -47,6 +47,11 @@
             <many-to-many class="org.zfin.expression.ExpressionResult" column="xpatfig_xpatres_zdb_id"/>
         </set>
 
+        <set name="expressionFigureStage" lazy="true" table="expression_figure_stage">
+            <key column="efs_fig_zdb_id"/>
+            <one-to-many class="org.zfin.expression.ExpressionFigureStage"/>
+        </set>
+
         <set name="phenotypeExperiments" lazy="true" table="phenotype_experiment">
             <key column="phenox_fig_zdb_id"/>
             <one-to-many class="org.zfin.mutant.PhenotypeExperiment"/>

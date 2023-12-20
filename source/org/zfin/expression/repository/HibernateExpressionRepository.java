@@ -2711,20 +2711,21 @@ public class HibernateExpressionRepository implements ExpressionRepository {
 	}
 
 	@Override
-	public List<ExpressionResult> getAllExpressionResults() {
+	public List<ExpressionResult2> getAllExpressionResults() {
 		Session session = HibernateUtil.currentSession();
 		String hql = """
-			select result from ExpressionResult result
-			left join fetch result.expressionExperiment as experiment
+			select result from ExpressionResult2 result
+			left join fetch result.expressionFigureStage as figureStage
+			left join fetch figureStage.expressionExperiment as experiment
 			left join fetch experiment.gene as gene
-			left join fetch result.startStage as start
-			left join fetch result.endStage as end
+			left join fetch figureStage.startStage as start
+			left join fetch figureStage.endStage as end
 			left join fetch experiment.fishExperiment as fishExperiment
 			left join fetch fishExperiment.fish as fish
-			left join fetch result.figures
+			left join fetch figureStage.figure
 			where experiment.gene is not null
 			""";
-		Query<ExpressionResult> query = session.createQuery(hql, ExpressionResult.class);
+		Query<ExpressionResult2> query = session.createQuery(hql, ExpressionResult2.class);
 		return query.list();
 	}
 

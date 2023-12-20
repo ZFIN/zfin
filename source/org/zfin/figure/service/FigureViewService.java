@@ -6,11 +6,9 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.anatomy.DevelopmentStage;
-import org.zfin.expression.Experiment;
-import org.zfin.expression.ExpressionExperiment;
-import org.zfin.expression.ExpressionResult;
-import org.zfin.expression.Figure;
+import org.zfin.expression.*;
 import org.zfin.figure.presentation.*;
+import org.zfin.figure.presentation.FigureExpressionSummary;
 import org.zfin.framework.ComparatorCreator;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
@@ -45,11 +43,13 @@ public class FigureViewService {
     public List<ExpressionTableRow> getExpressionTableRows(Figure figure) {
         List<ExpressionTableRow> rows = new ArrayList<>();
 
-        for (ExpressionResult expressionResult : figure.getExpressionResults()) {
-            if (expressionResult.getExpressionExperiment().getGene() != null) {
-                ExpressionTableRow expressionTableRow = new ExpressionTableRow(expressionResult);
-                expressionTableRow.setFigure(figure);
-                rows.add(expressionTableRow);
+        for (ExpressionFigureStage figureStage : figure.getExpressionFigureStage()) {
+            if (figureStage.getExpressionExperiment().getGene() != null) {
+                for(ExpressionResult2 expressionResult:figureStage.getExpressionResultSet() ) {
+                    ExpressionTableRow expressionTableRow = new ExpressionTableRow(figureStage, expressionResult);
+                    expressionTableRow.setFigure(figure);
+                    rows.add(expressionTableRow);
+                }
             }
         }
 
