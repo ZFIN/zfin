@@ -2033,6 +2033,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         org.hibernate.query.Query<PhenotypeStatementWarehouse> query = session.createQuery(hql, PhenotypeStatementWarehouse.class);
 
         Map<Fish, Map<Experiment, List<PhenotypeStatementWarehouse>>> phenoMap = query.list().stream()
+            .filter(Objects::nonNull)
             .collect(groupingBy((pheno) -> pheno.getPhenotypeExperiment().getFishExperiment().getFish(),
                 groupingBy(pheno -> pheno.getPhenotypeWarehouse().getFishExperiment().getExperiment())));
         Map<Fish, Map<Experiment, Map<GenericTerm, Set<PhenotypeStatementWarehouse>>>> phenMap = new HashMap<>();
