@@ -179,14 +179,32 @@ public class HibernateMarkerRepository implements MarkerRepository {
     public List<ConstructComponent> getConstructComponent(String constructID) {
         Session session = HibernateUtil.currentSession();
 
-        String hql = "select  cc from ConstructComponent cc " +
-            "      where cc.constructZdbID = :pubID " +
-            "   order by cc.componentOrder ";
+        String hql = """
+                    select cc from ConstructComponent cc       
+                    where cc.constructZdbID = :pubID    
+                    order by cc.componentOrder 
+                    """;
 
         Query<ConstructComponent> query = session.createQuery(hql, ConstructComponent.class);
         query.setParameter("pubID", constructID);
 
         return query.list();
+
+    }
+
+    @Override
+    public void deleteConstructComponents(String constructZdbID) {
+        Session session = HibernateUtil.currentSession();
+
+        String hql = """
+                    delete from ConstructComponent cc       
+                    where cc.constructZdbID = :constructID    
+                    """;
+
+        Query query = session.createQuery(hql);
+        query.setParameter("constructID", constructZdbID);
+
+        query.executeUpdate();
 
     }
 
@@ -3521,6 +3539,14 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return HibernateUtil.currentSession().get(FluorescentProtein.class, identifier);
     }
 
+    @Override
+    public void updateMarkerName(String markerZdbID, String newName) {
+        Session session = HibernateUtil.currentSession();
+        Marker marker = getMarkerByID(markerZdbID);
+        marker.setName(newName);
+        session.update(marker);
+    }
+
     private int deleteMarkerDBLinksFromList(List<MarkerDBLink> dbLinks) {
         List<String> ids = dbLinks.stream().map(MarkerDBLink::getZdbID).toList();
         Session session = HibernateUtil.currentSession();
@@ -3558,5 +3584,6 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         return session.createQuery(query).getResultList();
     }
+
 }
 

@@ -6,6 +6,7 @@ import org.zfin.anatomy.DevelopmentStageTest;
 import org.zfin.anatomy.repository.AnatomyRepositoryTest;
 import org.zfin.antibody.AntibodyServiceTest;
 import org.zfin.antibody.repository.AntibodyRepositoryTest;
+import org.zfin.construct.ConstructTest;
 import org.zfin.curation.repository.CurationRepositoryTest;
 import org.zfin.database.InformixUtilTest;
 import org.zfin.database.presentation.DatabaseServiceDbTest;
@@ -46,7 +47,6 @@ import org.zfin.ontology.repository.OntologyRepositoryTest;
 import org.zfin.orthology.OrthologyRepositoryTest;
 import org.zfin.profile.repository.ProfileRepositoryTest;
 import org.zfin.profile.service.ProfileServiceTest;
-import org.zfin.publication.repository.PublicationRepositoryRefactorTest;
 import org.zfin.publication.repository.PublicationRepositoryTest;
 import org.zfin.sequence.*;
 import org.zfin.sequence.blast.BlastRepositoryTest;
@@ -76,6 +76,7 @@ import org.zfin.wiki.service.AntibodyWikiWebServiceTest;
         AntibodyServiceTest.class,
         AntibodyWikiWebServiceTest.class,
         BlastRepositoryTest.class,
+        ConstructTest.class,
         CurationRepositoryTest.class,
         CurationRPCTest.class,
         DatabaseServiceDbTest.class,

@@ -310,7 +310,10 @@ public interface MarkerRepository {
     List<ConstructCuration> getConstructsForAttribution(String publicationZdbID);
 
     List<ConstructComponent> getConstructComponent(String constructZdbID);
-   List<ProteinToPDB> getPDB(String uniProtID);
+
+    void deleteConstructComponents(String constructZdbID);
+
+    List<ProteinToPDB> getPDB(String uniProtID);
 
     /**
      * Create a gene for a given SequenceTargetingReagent which is targeting it.
@@ -566,4 +569,6 @@ public interface MarkerRepository {
 
     List<FluorescentProtein> getFluorescentProteins(String query);
     FluorescentProtein getFluorescentProtein(Long identifier);
+
+    void updateMarkerName(String constructZdbID, String toString);
 }
