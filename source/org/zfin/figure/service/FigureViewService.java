@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.zfin.anatomy.DevelopmentStage;
 import org.zfin.expression.*;
-import org.zfin.figure.presentation.*;
 import org.zfin.figure.presentation.FigureExpressionSummary;
+import org.zfin.figure.presentation.*;
 import org.zfin.framework.ComparatorCreator;
 import org.zfin.marker.Clone;
 import org.zfin.marker.Marker;
@@ -45,7 +45,7 @@ public class FigureViewService {
 
         for (ExpressionFigureStage figureStage : figure.getExpressionFigureStage()) {
             if (figureStage.getExpressionExperiment().getGene() != null) {
-                for(ExpressionResult2 expressionResult:figureStage.getExpressionResultSet() ) {
+                for (ExpressionResult2 expressionResult : figureStage.getExpressionResultSet()) {
                     ExpressionTableRow expressionTableRow = new ExpressionTableRow(figureStage, expressionResult);
                     expressionTableRow.setFigure(figure);
                     rows.add(expressionTableRow);
@@ -99,20 +99,18 @@ public class FigureViewService {
 
 
     /**
-     * Get a a list of AntibodyTableRows for the given figure
+     * Get a list of AntibodyTableRows for the given figure
      */
     public List<AntibodyTableRow> getAntibodyTableRows(Figure figure) {
         List<AntibodyTableRow> rows = new ArrayList<>();
 
-        for (ExpressionResult expressionResult : figure.getExpressionResults()) {
-            if ((expressionResult.getExpressionExperiment().getGene() == null) &&
-                    (expressionResult.getExpressionExperiment().getAntibody() != null)) {
-                rows.add(new AntibodyTableRow(expressionResult));
+        for (ExpressionFigureStage figureStage : figure.getExpressionFigureStage()) {
+            if (figureStage.getExpressionExperiment().getGene() == null &&
+                figureStage.getExpressionExperiment().getAntibody() != null) {
+                figureStage.getExpressionResultSet().forEach(expressionResult -> rows.add(new AntibodyTableRow(figureStage, expressionResult)));
             }
         }
-
         rows.sort(ComparatorCreator.orderBy("antibody", "assay", "fishNameOrder", "experiment", "start", "end", "entity"));
-
         return rows;
     }
 
@@ -157,8 +155,8 @@ public class FigureViewService {
             Marker marker = ee.getGene();
 
             if ((marker != null)
-                    && (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM_AND_EFG) || (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM_AND_NTR)))
-                    && !genes.contains(marker)) {
+                && (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM_AND_EFG) || (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM_AND_NTR)))
+                && !genes.contains(marker)) {
                 genes.add(ee.getGene());
             }
         }
@@ -177,8 +175,8 @@ public class FigureViewService {
             Marker antibody = ee.getAntibody();
 
             if ((antibody != null)
-                    && (antibody.getType() == Marker.Type.ATB)
-                    && !antibodies.contains(antibody)) {
+                && (antibody.getType() == Marker.Type.ATB)
+                && !antibodies.contains(antibody)) {
                 antibodies.add(antibody);
             }
         }
@@ -372,7 +370,7 @@ public class FigureViewService {
                 }
 
                 if (phenotypeStatement.getRelatedEntity() != null
-                        && !entities.contains(phenotypeStatement.getRelatedEntity())) {
+                    && !entities.contains(phenotypeStatement.getRelatedEntity())) {
                     entities.add(phenotypeStatement.getRelatedEntity());
                 }
             }
@@ -419,7 +417,7 @@ public class FigureViewService {
 
     public String getFullFigureLabel(Figure figure) {
         return figure.getPublication().getShortAuthorList().replace("<i>", "").replace("</i>", "")
-                + ", " + figure.getLabel();
+               + ", " + figure.getLabel();
     }
 
     public Clone getProbeForFigure(Figure figure) {
@@ -481,6 +479,7 @@ public class FigureViewService {
     /**
      * Return the figures for a publication. This will just return publication.getFigures() unless
      * the following conditions are met: isZebrashare and isUnpublished and probe is not null
+     *
      * @param publication
      * @param probe
      * @return
@@ -490,7 +489,7 @@ public class FigureViewService {
         List<Figure> figures = new ArrayList<>();
         if (probe != null && !isZebrasharePub(publication) && publication.isUnpublished()) {
             figures = getFigureRepository()
-                        .getFiguresForDirectSubmissionPublication(publication, probe);
+                .getFiguresForDirectSubmissionPublication(publication, probe);
         } else {
             figures.addAll(publication.getFigures());
         }
