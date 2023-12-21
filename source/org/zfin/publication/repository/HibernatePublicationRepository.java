@@ -1468,11 +1468,14 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     public PublicationTrackingHistory currentTrackingStatus(Publication publication) {
-        return (PublicationTrackingHistory) HibernateUtil.currentSession()
-            .createCriteria(PublicationTrackingHistory.class)
-            .add(Restrictions.eq("publication", publication))
-            .add(Restrictions.eq("isCurrent", true))
-            .uniqueResult();
+        Query<PublicationTrackingHistory> query = HibernateUtil.currentSession().createQuery("""
+            from PublicationTrackingHistory
+            where publication = :publication
+            and  isCurrent = true
+            order by date desc
+                        """, PublicationTrackingHistory.class);
+        query.setParameter("publication", publication);
+        return query.uniqueResult();
     }
 
     public List<PublicationTrackingHistory> fullTrackingHistory(Publication publication) {
@@ -1783,9 +1786,9 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     @Override
     public List<String> getDirectlyAttributedZdbids(String publicationId, Pagination pagination) {
         Session session = HibernateUtil.currentSession();
-        String sql = """        
-            select DISTINCT ra.recattrib_data_zdb_id  
-            from record_attribution ra 
+        String sql = """
+            select DISTINCT ra.recattrib_data_zdb_id
+            from record_attribution ra
             where :publicationZdbID = ra.recattrib_source_zdb_id
             """;
 
