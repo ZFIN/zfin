@@ -1430,7 +1430,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             order by date desc
                         """, PublicationTrackingHistory.class);
         query.setParameter("publication", publication);
-        return query.getSingleResult();
+        return query.uniqueResult();
     }
 
     public List<PublicationTrackingHistory> fullTrackingHistory(Publication publication) {
@@ -1749,8 +1749,7 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         String sql = """
             select DISTINCT ra.recattrib_data_zdb_id
             from record_attribution ra
-            where
-            :publicationZdbID = ra.recattrib_source_zdb_id
+            where :publicationZdbID = ra.recattrib_source_zdb_id
             """;
 
         if (pagination.getFieldFilter(FieldFilter.ENTITY_ID) != null) {
