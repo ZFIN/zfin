@@ -15,6 +15,7 @@ import org.zfin.marker.Marker;
 import org.zfin.mutant.*;
 import org.zfin.mutant.repository.PhenotypeRepository;
 import org.zfin.ontology.PostComposedEntity;
+import org.zfin.profile.repository.HibernateProfileRepository;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.publication.Publication;
 
@@ -150,14 +151,14 @@ public class FigureViewService {
      */
     public List<Marker> getExpressionGenes(Figure figure) {
         List<Marker> genes = new ArrayList<>();
-        for (ExpressionResult er : figure.getExpressionResults()) {
-            ExpressionExperiment ee = er.getExpressionExperiment();
+        for (ExpressionFigureStage figureStage : figure.getExpressionFigureStage()) {
+            ExpressionExperiment2 ee = figureStage.getExpressionExperiment();
             Marker marker = ee.getGene();
 
             if ((marker != null)
                 && (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM_AND_EFG) || (marker.isInTypeGroup(Marker.TypeGroup.GENEDOM_AND_NTR)))
                 && !genes.contains(marker)) {
-                genes.add(ee.getGene());
+                genes.add(marker);
             }
         }
         Collections.sort(genes);
@@ -170,8 +171,8 @@ public class FigureViewService {
      */
     public List<Marker> getAntibodies(Figure figure) {
         List<Marker> antibodies = new ArrayList<>();
-        for (ExpressionResult er : figure.getExpressionResults()) {
-            ExpressionExperiment ee = er.getExpressionExperiment();
+        for (ExpressionFigureStage figureStage : figure.getExpressionFigureStage()) {
+            ExpressionExperiment2 ee = figureStage.getExpressionExperiment();
             Marker antibody = ee.getAntibody();
 
             if ((antibody != null)
@@ -190,8 +191,8 @@ public class FigureViewService {
      */
     public List<Fish> getExpressionFish(Figure figure) {
         Set<Fish> fishSet = new TreeSet<>();
-        for (ExpressionResult expressionResult : figure.getExpressionResults()) {
-            fishSet.add(expressionResult.getExpressionExperiment().getFishExperiment().getFish());
+        for (ExpressionFigureStage figureStage : figure.getExpressionFigureStage()) {
+            fishSet.add(figureStage.getExpressionExperiment().getFishExperiment().getFish());
         }
         return new ArrayList<>(fishSet);
     }
@@ -202,8 +203,8 @@ public class FigureViewService {
     public List<SequenceTargetingReagent> getExpressionSTR(Figure figure) {
         List<SequenceTargetingReagent> strs = new ArrayList<>();
 
-        for (ExpressionResult expressionResult : figure.getExpressionResults()) {
-            for (SequenceTargetingReagent str : expressionResult.getExpressionExperiment().getFishExperiment().getFish().getStrList()) {
+        for (ExpressionFigureStage figureStage : figure.getExpressionFigureStage()) {
+            for (SequenceTargetingReagent str : figureStage.getExpressionExperiment().getFishExperiment().getFish().getStrList()) {
                 if (str != null && !strs.contains(str)) {
                     strs.add(str);
                 }
@@ -221,8 +222,8 @@ public class FigureViewService {
     public List<Experiment> getExpressionCondition(Figure figure) {
         List<Experiment> conditions = new ArrayList<>();
         List<String> expConditionUniqueKey = new ArrayList<>();
-        for (ExpressionResult expressonResult : figure.getExpressionResults()) {
-            FishExperiment fishExperiment = expressonResult.getExpressionExperiment().getFishExperiment();
+        for (ExpressionFigureStage figureStage : figure.getExpressionFigureStage()) {
+            FishExperiment fishExperiment = figureStage.getExpressionExperiment().getFishExperiment();
             if (canAddExperimentToConditionsList(fishExperiment)) {
                 String key = fishExperiment.getExperiment().getDisplayAllConditions();
                 if (!expConditionUniqueKey.contains(key)) {
@@ -243,10 +244,12 @@ public class FigureViewService {
     public List<PostComposedEntity> getExpressionEntities(Figure figure) {
         List<PostComposedEntity> entities = new ArrayList<>();
 
-        for (ExpressionResult expressionResult : figure.getExpressionResults()) {
-            if (expressionResult.isExpressionFound()) {
-                if (!entities.contains(expressionResult.getEntity())) {
-                    entities.add(expressionResult.getEntity());
+        for (ExpressionFigureStage figureStage : figure.getExpressionFigureStage()) {
+            for (ExpressionResult2 expressionResult : figureStage.getExpressionResultSet()) {
+                if (expressionResult.isExpressionFound()) {
+                    if (!entities.contains(expressionResult.getEntity())) {
+                        entities.add(expressionResult.getEntity());
+                    }
                 }
             }
         }
@@ -262,10 +265,9 @@ public class FigureViewService {
 
         List<DevelopmentStage> stages = new ArrayList<>();
 
-        for (ExpressionResult expressionResult : figure.getExpressionResults()) {
-            stages.add(expressionResult.getStartStage());
+        for (ExpressionFigureStage figureStage : figure.getExpressionFigureStage()) {
+            stages.add(figureStage.getStartStage());
         }
-
         if (stages.size() == 0) {
             return null;
         }
@@ -280,8 +282,8 @@ public class FigureViewService {
 
         List<DevelopmentStage> stages = new ArrayList<>();
 
-        for (ExpressionResult expressionResult : figure.getExpressionResults()) {
-            stages.add(expressionResult.getEndStage());
+        for (ExpressionFigureStage figureStage : figure.getExpressionFigureStage()) {
+            stages.add(figureStage.getEndStage());
         }
 
         if (stages.size() == 0) {
@@ -422,10 +424,10 @@ public class FigureViewService {
 
     public Clone getProbeForFigure(Figure figure) {
         Clone probe = null;
-        if (!CollectionUtils.isEmpty(figure.getExpressionResults())) {
-            ExpressionResult firstExpressionResult = figure.getExpressionResults().iterator().next();
-            if (firstExpressionResult != null) {
-                probe = firstExpressionResult.getExpressionExperiment().getProbe();
+        if (!CollectionUtils.isEmpty(figure.getExpressionFigureStage())) {
+            ExpressionFigureStage figureStage = figure.getExpressionFigureStage().iterator().next();
+            if (figureStage != null) {
+                probe = figureStage.getExpressionExperiment().getProbe();
             }
         }
 
